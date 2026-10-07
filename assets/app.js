@@ -482,7 +482,7 @@
 
   V.method = function () {
     return '<div class="grid">' + panel('span-7', '這是什麼', '', '<div class="prose"><p>破曉（Daybreak）是每天清晨的第一份比特幣簡報：先告訴你今天發生了什麼、為什麼重要，再用數據說明市場在週期裡的位置，以及離分批出場還有多遠。</p><p>每天兩段更新：台北 08:20（UTC 00:20）資料管線自動抓取 Kraken、Deribit、CoinMetrics、bitcoin-data、mempool.space、FRED、13 個交易所掛單簿與 Tidemark，算出所有指標；之後由 Claude 查證當天新聞、讀數據，寫成頭條、今日要聞解讀與各版的「今日判讀」。數字全部來自管線，判讀只解釋數字，不改數字。</p>' +
-      '<h3>原則</h3><p>先給結論再給證據。寧可標示「本日未取得」，也不推估或沿用舊數字。不同資料商的數字不相減。分數一律附樣本數，樣本少於 30 不下結論。</p><h3>限制</h3><p>週期模型只有 3–4 輪歷史，所有「遞減」推論都假設趨勢延續。冪律擬合線會隨新資料下修。掛單隨時可撤。短線預測不連動出場規則。</p>' +
+      '<h3>原則</h3><p>先給結論再給證據。寧可標示「本日未取得」，也不推估或沿用舊數字。不同資料商的數字不相減。分數一律附樣本數，樣本少於 30 不下結論。</p><h3>限制</h3><p>週期模型只有 3–4 輪歷史，所有「遞減」推論都假設趨勢延續。冪律擬合線會隨新資料下修。掛單隨時可撤。短線預測不連動出場規則。bitcoin-data 免費額度有限，部分變化較慢的鏈上指標每 2 天更新一次，以資料日期標示。</p>' +
       '<h3>免責聲明</h3><p>本站內容僅供研究與教育參考，不構成投資建議。加密資產波動極大，請依自身情況判斷並自負風險。</p></div>') +
       panel('span-5', '資料來源', '', '<div class="events">' + [['價格、均線、ATR', 'Kraken 日線（UTC）'], ['波動率、基差、選擇權', 'Deribit 公開 API'], ['MVRV、交易所供給、冪律', 'CoinMetrics Community'], ['SOPR、NUPL、籌碼', 'bitcoin-data.com'], ['算力、難度', 'mempool.space'], ['相關係數、利率', 'FRED'], ['ETF 流量', 'Farside Investors'], ['掛單簿', 'Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Hyperliquid'], ['綜合訊號', 'Tidemark（north7.github.io）']].map(function (r) { return '<div class="event" style="grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)"><span>' + r[0] + '</span><span style="color:var(--ink-2)">' + r[1] + '</span></div>'; }).join('') + '</div><p class="note">資料日 ' + D.meta.bar_date + ' · 管線產出 ' + (D.meta.generated_utc || '').replace('T', ' ').slice(0, 16) + ' UTC · 結論 ' + (N ? (N.written_utc || '').replace('T', ' ').slice(0, 16) + ' UTC' : '—') + '</p>') + '</div>';
   };

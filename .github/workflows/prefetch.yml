@@ -1,0 +1,41 @@
+name: Prefetch on-chain
+
+on:
+  schedule:
+    - cron: "50 22 * * *"   # 每天 UTC 22:50（台北 06:50），比 Daily data 早 90 分鐘，避開 bitcoin-data 每小時 10 次上限
+  workflow_dispatch:
+    inputs:
+      group:
+        description: "A 或 B；留空依日期輪替"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-data
+  cancel-in-progress: false
+
+jobs:
+  prefetch:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fetch rotating bitcoin-data series
+        env:
+          GROUP: ${{ inputs.group }}
+        run: python3 pipeline/bd_rotation.py ${GROUP:+--group "$GROUP"}
+      - name: Commit
+        run: |
+          git config user.name "apogee-bot"
+          git config user.email "apogee-bot@users.noreply.github.com"
+          git add pipeline/bd_cache
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "cache: bitcoin-data rotation $(date -u +%F)"
+          git pull --rebase
+          git push

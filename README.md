@@ -17,9 +17,12 @@ data/history/index.json 每日快照索引
 pipeline/collect.py     抓取所有 API 並計算指標 → pipeline/today.json
 pipeline/build.py       today.json → data/latest.json
 pipeline/brief.py       印出精簡摘要給 Claude 讀
+pipeline/bd_rotation.py bitcoin-data 請求分配：每日即時 10 個 + 前一晚輪替 5 個
+pipeline/bd_cache/      輪替指標的快取（由 Prefetch on-chain 寫入）
 pipeline/params.json    collect.py 需要的兩個參數
 pipeline/state_min.json 前一日的最小狀態（URPD 週變化、ATR 回測）
-.github/workflows/daily.yml  每天 UTC 00:20 自動更新資料
+.github/workflows/daily.yml     每天 UTC 00:20 自動更新資料
+.github/workflows/prefetch.yml  每天 UTC 22:50 抓輪替的鏈上指標
 docs/CLAUDE_DAILY.md    Claude 每日結論任務的完整指示
 ```
 
@@ -35,6 +38,7 @@ docs/CLAUDE_DAILY.md    Claude 每日結論任務的完整指示
 
 | 時間（UTC） | 誰 | 做什麼 | 耗 token |
 |---|---|---|---|
+| 22:50（前一天） | GitHub Actions | 輪流抓 5 個變化較慢的鏈上指標進 `pipeline/bd_cache/` | 0 |
 | 00:20 | GitHub Actions | 抓資料、算指標、更新 `data/latest.json`、提交 | 0 |
 | 01:10 | Claude 排程任務 | 讀摘要、查新聞、更新 ETF、寫頭條與消息解讀到 `data/notes.json`、提交 | 少量 |
 
@@ -46,7 +50,7 @@ docs/CLAUDE_DAILY.md    Claude 每日結論任務的完整指示
 
 ## 已知限制
 
-- bitcoin-data.com 免費層每小時約 10 次請求；GitHub Actions 的共用 IP 偶爾會被限流，失敗的項目在網站上顯示「本日未取得」。
+- bitcoin-data.com 免費層每小時 10 次、每日 15 次，管線共用 20 個端點，所以分兩批：00:20 即時抓 10 個（頂部三指標、成本基礎、籌碼流向），其餘 10 個分 A／B 兩組在前一晚 22:50 輪流抓，每個每 2 天更新一次，頁面顯示的是資料本身的日期。清單見 `pipeline/bd_rotation.py`。GitHub Actions 的共用 IP 偶爾仍會被限流，失敗的項目在網站上顯示「本日未取得」。
 - Farside 擋自動化請求，所以 ETF 由 Claude 任務用網頁讀取更新。
 - 掛單簿是 Actions 執行當下的快照；Binance 期貨與 Bybit 讀不到。
 

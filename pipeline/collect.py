@@ -21,6 +21,13 @@ def get(url):
         return json.loads(out) if out.strip().startswith(('{', '[')) else out
     except Exception as e:
         errors.append(f'{url}: {e}'); return None
+# 2026-10-08：bitcoin-data 免費層每小時 10 次、每日 15 次，20 個端點改由 bd_rotation.py 分配：CORE 即時抓，其餘讀前一晚輪替快取（頁面照常顯示資料本身日期）
+import bd_rotation
+R_bd = {}   # 讀快取的端點 → 抓取時間，寫進 R['bd_rotation']
+def bd(m):
+    if m in bd_rotation.CORE: return bd_rotation.fetch(m)
+    rows, fetched = bd_rotation.load(m); R_bd[m] = fetched
+    return rows
 now = dt.datetime.now(dt.timezone.utc)
 LAST = (now.date() - dt.timedelta(days=1)).isoformat()   # 最後一根已收盤日線
 R = {'generated_utc': now.isoformat(timespec='seconds'), 'bar_date': LAST}
@@ -240,7 +247,7 @@ OC = {'mvrv-zscore': 'mvrvZscore', 'nupl': 'nupl', 'puell-multiple': 'puellMulti
 R['onchain'] = {}; SER = {}
 for m, fld in OC.items():
     try:
-        js = get(f'https://bitcoin-data.com/v1/{m}'); ser = {}
+        js = bd(m); ser = {}
         for r in js:
             vv = r.get(fld, r.get(fld.lower()))
             if vv not in (None, ''): ser[r['d']] = float(vv)
@@ -362,7 +369,7 @@ RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProf
 R['top_radar'] = {}
 for m, fld in RAD.items():
     try:
-        js = get(f'https://bitcoin-data.com/v1/{m}'); ser = sorted((r['d'], float(r[fld])) for r in js if r.get(fld) not in (None, ''))
+        js = bd(m); ser = sorted((r['d'], float(r[fld])) for r in js if r.get(fld) not in (None, ''))
         cy = [v for d_, v in ser if d_ >= '2022-11-21']; v = ser[-1][1]
         at_top = [v_ for d_, v_ in ser if '2025-09-22' <= d_ <= '2025-10-20']
         R['top_radar'][m] = dict(date=ser[-1][0], value=round(v, 4), pct_since_2022_11=round(sum(x < v for x in cy) / len(cy) * 100, 1),
@@ -372,7 +379,7 @@ for m, fld in RAD.items():
 # G4. 2026-09-29 使用者要求：籌碼流向（Murphy 框架，只作讀值、不連動 P19／P20）。bitcoin-data 每日 +4 次；失敗記 null、不推估
 R['murphy_flow'] = {}; MFS = {}   # MFS：G4 抓到的完整序列，給 G4b 畫圖用（2026-10-02）
 def _bd_series(m, fld):
-    js = get(f'https://bitcoin-data.com/v1/{m}')
+    js = bd(m)
     try: json.dump(js, open(f'raw_{m}.json', 'w'))
     except Exception: pass
     out_ = sorted((r['d'], float(r[fld])) for r in js if r.get(fld) not in (None, '')); MFS[m] = out_
@@ -404,7 +411,7 @@ try:
         note='bitcoin-data 自身兩條序列同日比較；已知 2023-11-23 上穿、2026-04-27 下穿可驗算')
 except Exception as e: errors.append(f'murphy true-market-mean: {e}'); R['murphy_flow']['sth_vs_tmm'] = None
 try:
-    js = get('https://bitcoin-data.com/v1/urpd')
+    js = bd('urpd')
     try: json.dump(js, open('raw_urpd.json', 'w'))
     except Exception: pass
     B = sorted((float(r['priceLower']), float(r['priceUpper']), float(r['btcSupply']), float(r.get('pctSupply') or 0)) for r in js); ud = js[-1].get('theDate'); MFS['urpd'] = B; MFS['urpd_date'] = ud
@@ -771,6 +778,7 @@ try:
     R['touch5d_continuous'] = {str(x): round(min(1, 2 * N(-abs(math.log(x / c)) / (_s1 * math.sqrt(5)))) * 100, 1) for x in _lv}
 except Exception as e: errors.append(f'touch5d {e}')
 R.pop('_sig5', None); R.pop('_sig1', None)
+R['bd_rotation'] = R_bd
 R['errors'] = errors
 json.dump(R, open('today.json', 'w'), ensure_ascii=False, indent=1)
 print(json.dumps({k_: R[k_] for k_ in ('bar_date', 'bar', 'mayer', 'baserate') if k_ in R}, ensure_ascii=False))
