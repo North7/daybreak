@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>破曉 Daybreak</title>
+<meta name="description" content="破曉 Daybreak：每天清晨的第一份比特幣簡報。今日要聞與解讀、市場數據、週期位置與分批出場框架。">
+<meta property="og:title" content="破曉 Daybreak">
+<meta property="og:description" content="每天清晨的第一份比特幣簡報。">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="assets/app.css">
+</head>
+<body>
+<div class="app">
+  <aside class="rail">
+    <a class="brand" href="#overview" aria-label="破曉 Daybreak 頭版">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 40a14 14 0 0 1 28 0" fill="none" stroke="var(--red)" stroke-width="5"/><path d="M6 40h52" stroke="var(--ink)" stroke-width="5"/></svg>
+      <span class="wordmark"><b>DAYBREAK</b><span>破曉</span></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="模組"></nav>
+    <div class="rail-foot">
+      <div class="edition"><span class="k">本期</span><span class="v" id="ed-date">—</span><span class="live"><i></i><span id="ed-gen">每天台北 08:20 更新</span></span></div>
+      <div class="theme-toggle" id="theme" role="group" aria-label="版本"><button type="button" data-t="light" aria-pressed="true">日刊</button><button type="button" data-t="dark" aria-pressed="false">夜刊</button></div>
+    </div>
+  </aside>
+  <div class="stage">
+    <header class="top">
+      <div class="crumb"><small id="crumb-k">今天的結論</small><h1 id="crumb-t">總覽</h1></div><div class="clock" aria-live="off">下一期 <b id="nxt">T−--:--:--</b></div>
+      <div class="ticker"><span class="chip flare" id="tk-stance"><i></i>—</span><span class="px" id="tk-px">—</span><span class="chip" id="tk-chg">—</span><span class="asof" id="tk-asof"></span><button type="button" class="fs-btn" id="fs" aria-label="全螢幕"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>全螢幕</button></div>
+    </header>
+    <main id="view" tabindex="-1"><p class="err">載入中…</p></main>
+    <footer class="foot"><span>© 破曉 Daybreak</span><span>僅供研究參考，非投資建議</span><span>按 1–9、0 切換版面</span></footer>
+  </div>
+</div>
+<div id="tip" class="tip" role="tooltip" hidden></div>
+<div class="wipe" id="wipe" aria-hidden="true"></div>
+<script src="assets/app.js"></script>
+</body>
+</html>

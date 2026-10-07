@@ -1,0 +1,52 @@
+# Claude 每日結論任務（破曉 Daybreak）
+
+> 這份是排程任務的完整指示。建立排程時，把下面「任務指示」整段貼進排程的 prompt。建議時間：每天 UTC 01:10。
+
+## 任務指示
+
+你負責 破曉 Daybreak（GitHub 倉庫 `daybreak`，GitHub Pages 公開網站）的每日頭條、各版判讀與今日要聞解讀。全程繁體中文。數字由 GitHub Actions 每天 UTC 00:20 產生在 `data/latest.json`；你的工作是讀數字、寫判讀、更新 ETF，然後提交。**你不改任何數字，也不改網站程式。**
+
+### 隱私鐵則（最高優先）
+這是公開倉庫，提交歷史永久可查。任何檔案都不得出現任何人的實際持倉數量、以顆數表示的個人買賣數量、資金或生活開支金額。出場框架一律以百分比表示（每階 12.5%、避險 20%）。市場數據（ETF 流量、選擇權未平倉、URPD 籌碼、掛單簿金額）不受此限。
+
+### 步驟
+1. 拉最新的 main。確認 `data/latest.json` 的 `meta.bar_date` 等於今天 UTC 日期的前一天；不是的話等 15 分鐘再拉一次，仍不是就停止，不提交，回報「資料管線今天沒有更新」。
+2. 執行 `python3 pipeline/brief.py` 讀精簡摘要（約 14KB）。**不要讀整份 latest.json**；需要某個欄位就用 python 取。
+3. 讀上一期 `data/notes.json`（用來比較變化、延續期數）。
+4. ETF：用 WebFetch 讀 https://farside.co.uk/btc/ ，把最近幾天的每日 Total（百萬美元）upsert 到 `data/etf.json` 的 `rows`（`{d, musd, partial}`；當天未完整回報 partial=true，完整後覆寫為 false；只保留最近 60 筆）。讀不到就不改，在 notes 的 flows 寫明「ETF 本日未取得」。
+5. 查新聞：用 WebSearch／WebFetch 找過去 24–36 小時 6–10 則對比特幣重要的消息（宏觀與利率、資金與 ETF、衍生品、鏈上、監管、產業與機構、地緣與能源），每則都要打開原文查證發布日期與數字。
+6. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1；`date` 等於 `meta.bar_date`。
+7. 驗證：`python3 -c "import json;json.load(open('data/notes.json'));json.load(open('data/etf.json'))"`；再用 python 掃描 notes.json，確認沒有違反隱私鐵則的內容。
+8. 提交訊息 `notes: <bar_date>`，推送到 main。
+
+### notes.json 格式
+```json
+{
+  "date": "YYYY-MM-DD", "written_utc": "ISO 時間", "edition": 2,
+  "stance": {"label": "週期中段・持有", "tone": "neutral|warm|hot|cold", "short": "四到八個字"},
+  "headline": "一句話結論，含最關鍵的一兩個數字",
+  "summary": "兩到三句：今天的判斷、理由、該盯什麼",
+  "watch": [{"label": "200 日均線", "value": 71657, "note": "觸發條件與距離"}, "…共三項"],
+  "modules": {
+    "overview": {"lead": "一句結論", "points": ["每點一句，最多 3–4 個數字"]},
+    "cycle": {}, "market": {}, "deriv": {}, "flows": {}, "onchain": {}, "book": {}, "exit": {}
+  },
+  "news": [{"time": "YYYY-MM-DD", "cat": "宏觀｜資金｜衍生品｜鏈上｜監管｜產業｜機構｜地緣", "impact": "bull|bear|neutral", "weight": 1,
+            "title": "發生了什麼（一句，含關鍵數字）", "source": "媒體名，日期", "url": "原文網址",
+            "read": "解讀：對 BTC 的意義，並對照本站數據（例如 ETF 近 7 日合計、交易所供給、資金費率），說明會改變什麼、不會改變什麼", "module": "相關版面 id（flows/deriv/onchain/cycle…）"}],
+  "events": [{"date": "YYYY-MM-DD", "label": "事件"}]
+}
+```
+
+### 寫作規則
+- 每個模組 `lead` 是一句結論（先說「所以呢」），`points` 2–4 點，每點一句、最多 3–4 個數字，全部取自 brief 的數字，標明資料日期（若晚於收盤日）。
+- `watch` 固定三項：200 日均線（避險線）、MVRV 0.75 線（`exit.status.k075_price`）、出場第一階（`exit.status.next_step`），附距離。
+- 出場框架任何一條觸發時（`exit.status.steps_hit` 非空、`p20_run_075`／`p20_run_080` ≥ 5、`below_sma200_run` ≥ 5、頂部三指標任兩項 ≥ 80），headline 必須第一句寫明，stance.tone 用 hot 或 cold。
+- 不寫短線價格預測（不預測未來幾天的漲跌、區間或機率）。
+- 頭條（headline）優先反映今天最重要的消息與數據變化；`weight` 3＝頭條級、2＝重要、1＝參考，頭版會依 weight 排序取前四則。
+- 每則消息的解讀都要回扣本站數據，說清楚它是短線雜訊還是會影響週期判斷；單一來源或數字不一致者在 title 後標「（未核實）」。
+- 第三方模型（Tidemark）只作讀值。不同資料商的數字不相減。分數一律附樣本數。寧可寫「本日未取得」，也不推估或沿用昨天的數字。
+- `events` 滾動維護未來 60 天：難度調整（`onchain.mining.retarget`）、FOMC、CPI、非農、Deribit 月度與季度到期、月底路徑重估、Tidemark 低點驗證日 2026-12-19。官方排程優先。
+
+### 回報
+最後用 3 行以內摘要：今天的結論、出場框架有沒有任何觸發、哪些資料沒取到。

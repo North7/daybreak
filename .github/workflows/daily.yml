@@ -1,0 +1,39 @@
+name: Daily data
+
+on:
+  schedule:
+    - cron: "20 0 * * *"   # 每天 UTC 00:20（台北 08:20），日線收盤後
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-data
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Collect market data
+        working-directory: pipeline
+        run: |
+          UP=$(python3 -c "import json;print(json.load(open('params.json'))['up'])")
+          DOWN=$(python3 -c "import json;print(json.load(open('params.json'))['down'])")
+          python3 collect.py --up "$UP" --down "$DOWN" --prev-state state_min.json
+      - name: Build site data
+        run: python3 pipeline/build.py pipeline/today.json
+      - name: Commit
+        run: |
+          git config user.name "apogee-bot"
+          git config user.email "apogee-bot@users.noreply.github.com"
+          git add data pipeline/state_min.json
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "data: $(python3 -c "import json;print(json.load(open('data/latest.json'))['meta']['bar_date'])")"
+          git push

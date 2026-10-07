@@ -1,0 +1,90 @@
+{
+"_about": "ETF 每日淨流量（百萬美元，Farside 全部現貨 ETF 合計）。由每日結論任務更新；partial=true 表示當天尚未完整回報。",
+"rows": [
+{
+"d": "2026-09-14",
+"musd": 159.9,
+"partial": false
+},
+{
+"d": "2026-09-15",
+"musd": -450.4,
+"partial": false
+},
+{
+"d": "2026-09-16",
+"musd": -295.9,
+"partial": false
+},
+{
+"d": "2026-09-17",
+"musd": 159.5,
+"partial": false
+},
+{
+"d": "2026-09-18",
+"musd": 433.0,
+"partial": false
+},
+{
+"d": "2026-09-21",
+"musd": 999.0,
+"partial": false
+},
+{
+"d": "2026-09-22",
+"musd": 714.7,
+"partial": false
+},
+{
+"d": "2026-09-23",
+"musd": 346.9,
+"partial": false
+},
+{
+"d": "2026-09-24",
+"musd": 190.7,
+"partial": false
+},
+{
+"d": "2026-09-25",
+"musd": 134.5,
+"partial": false
+},
+{
+"d": "2026-09-28",
+"musd": 31.0,
+"partial": false
+},
+{
+"d": "2026-09-29",
+"musd": 66.2,
+"partial": false
+},
+{
+"d": "2026-09-30",
+"musd": -148.7,
+"partial": false
+},
+{
+"d": "2026-10-01",
+"musd": 102.7,
+"partial": false
+},
+{
+"d": "2026-10-02",
+"musd": 189.9,
+"partial": false
+},
+{
+"d": "2026-10-05",
+"musd": -89.8,
+"partial": false
+},
+{
+"d": "2026-10-06",
+"musd": -3.2,
+"partial": true
+}
+]
+}

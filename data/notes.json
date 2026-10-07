@@ -1,0 +1,216 @@
+{
+  "date": "2026-10-06",
+  "written_utc": "2026-10-07T16:10:00Z",
+  "edition": 1,
+  "stance": {
+    "label": "中段整理・持有",
+    "tone": "neutral",
+    "short": "利率逆風，不動"
+  },
+  "headline": "殖利率創 2002 年來新高，BTC 跌回 83,000 附近；離任何出場點仍很遠。",
+  "summary": "美國 10 年期殖利率升到 5.34%，ETF 流入縮到前一週的十分之一，BTC 從 87,000 下方回落、盤中跌破 83,000。這是利率與資金面的短線壓力，不是週期轉向：鏈上估值、冪律與 Tidemark 都仍在週期中段，避險線在下方約 16%，第一個賣出階在上方約 46%。今晚的 FOMC 會議紀要是下一個看點。",
+  "watch": [
+    {
+      "label": "200 日均線",
+      "value": 71657,
+      "note": "連 5 日收在其下才啟動 20% 避險；目前距離 −16.2%"
+    },
+    {
+      "label": "MVRV 0.75 線",
+      "value": 111953,
+      "note": "鏈上第一個賣出觸發；比值 0.573，還差 30.9%"
+    },
+    {
+      "label": "出場第一階",
+      "value": 125000,
+      "note": "收盤觸及即賣 12.5%；還差 46.1%"
+    }
+  ],
+  "modules": {
+    "overview": {
+      "lead": "三個週期視角一致：中段，持有。",
+      "points": [
+        "MVRV ÷ 前一輪高點 0.573，2025 頂部是 0.78；鏈上離賣出線還差約三成。",
+        "冪律倍數 0.60：在歷史底部區（0.24–0.48）之上、合理價之下，屬週期中段。",
+        "Tidemark 頂部訊號 0、底部訊號 21.6，兩邊都沒有訊號。"
+      ]
+    },
+    "cycle": {
+      "lead": "週期位置：底部已過、頂部未到，四條長期路徑都還在包絡內。",
+      "points": [
+        "10/06 收 85,542，最接近「直接修復」路徑；四條路徑權重 30／20／25／25，每月底重估。",
+        "收盤在上升的 200 日均線上第 27 天，滿 30 天且交易所供給 90 日轉負才判牛市；供給仍 +0.2%，最快 10/09 檢查。",
+        "冪律推估下一輪頂部約 13.7 萬–29.8 萬，本頁頂部模型中位 17.2 萬落在其中；兩者都只有 4 輪樣本。",
+        "Tidemark 在驗證：12/19 前不破 6/30 低點 58,525，就支持那是本輪週期底部。"
+      ]
+    },
+    "market": {
+      "lead": "日線站在 20 日均線上方整理，85K 一帶籌碼與成交最密集。",
+      "points": [
+        "收盤 85,542，在近 20 日區間的 90% 位置，但當日收在區間下 28%，上影偏長。",
+        "近 20 日成交最密集價 84,250；價值區 83,000–86,750。",
+        "價格高於 200 日均線 19%、Mayer 倍數 1.19，屬週期中段的正常水位。"
+      ]
+    },
+    "deriv": {
+      "lead": "槓桿很輕、波動率便宜：市場沒有在押大行情。",
+      "points": [
+        "DVOL 36.1，在一年第 11 百分位；隱含波動略低於實際波動（−1.6 點）。",
+        "永續資金費率年化 0.2%，接近零；期貨基差 5–6%，曲線平順向上。",
+        "25Δ 風險逆轉 −0.6：賣權略貴，避險需求溫和。"
+      ]
+    },
+    "flows": {
+      "lead": "ETF 流入轉弱，BTC 與那斯達克同步度偏高。",
+      "points": [
+        "最近完整日 10/05 淨流出 8,980 萬美元；10/02 為流入 1.9 億。10/06 尚未完整回報。",
+        "BTC 與那斯達克 30 日相關 0.65，美股回檔時 BTC 較難獨立走強。",
+        "美國 10 年期實質利率 2.95%，20 個交易日上升 52 個基點，是宏觀面的逆風。"
+      ]
+    },
+    "onchain": {
+      "lead": "籌碼大量換手到 84–86K，短期持有者九成獲利。",
+      "points": [
+        "84–86K 這一格堆了約 147 萬顆，是現價附近最大的籌碼區；下方最近的大堆在 76–78K。",
+        "短期持有者 89.8% 獲利、成本 73,468；獲利盤多時容易有賣壓。",
+        "算力 7 日均 974 EH/s 再創新高，下次難度調整約 +5.4%（10/16）。"
+      ]
+    },
+    "book": {
+      "lead": "價格兩側都是大牆：83K 上下各約 2 億美元。",
+      "points": [
+        "快照時點 10/07 16:00 UTC，中間價 83,422。",
+        "上方 83–84K 賣牆合計約 3.2 億、下方 82–83K 買牆約 3.7 億；大部分來自 Hyperliquid 永續。",
+        "掛單可隨時撤，只作讀值；Binance 期貨與 Bybit 讀不到，永續部分偏低估。"
+      ]
+    },
+    "exit": {
+      "lead": "出場框架今天 0 條觸發，也沒有任何一條在接近。",
+      "points": [
+        "價格階梯 125K 起每階 12.5%，共 8 階；第一階還差 46.1%。",
+        "鏈上觸發 0／5 天；頂部三指標百分位 43／43／50，離 80 很遠。",
+        "200 日均線避險 0／5 天，距離 −16.2%。"
+      ]
+    }
+  },
+  "events": [
+    {
+      "date": "2026-10-07",
+      "label": "FOMC 9 月會議紀要（美東 14:00）"
+    },
+    {
+      "date": "2026-10-09",
+      "label": "牛市判定最快檢查日（200 日均線上第 30 天）"
+    },
+    {
+      "date": "2026-10-16",
+      "label": "難度調整（預估 +5.4%）"
+    },
+    {
+      "date": "2026-10-28",
+      "label": "FOMC 利率決議"
+    },
+    {
+      "date": "2026-10-30",
+      "label": "Deribit 月度選擇權到期"
+    },
+    {
+      "date": "2026-10-31",
+      "label": "長期路徑月度重估"
+    },
+    {
+      "date": "2026-12-19",
+      "label": "Tidemark 週期低點驗證日"
+    }
+  ],
+  "news": [
+    {
+      "time": "2026-10-07",
+      "cat": "宏觀",
+      "impact": "bear",
+      "weight": 3,
+      "title": "美國 10 年期公債殖利率升到 5.34%，2002 年以來最高；BTC 盤中跌破 83,000",
+      "source": "Charles Schwab 盤前快報／CoinDesk，10/07",
+      "url": "https://www.schwab.com/learn/story/stock-market-update-open",
+      "read": "這是本輪最直接的逆風。殖利率越高，無息資產的持有成本越高；本站數據也顯示 10 年期實質利率 2.95%、20 個交易日升了 52 個基點，BTC 與那斯達克 30 日相關 0.65，美股一回檔 BTC 很難獨立走強。壓力在短線，離 200 日均線避險線（71,657）仍有約 14%，不觸發任何出場規則。",
+      "module": "flows"
+    },
+    {
+      "time": "2026-10-07",
+      "cat": "宏觀",
+      "impact": "neutral",
+      "weight": 3,
+      "title": "FOMC 9 月會議紀要今晚公布（美東 14:00、台北 02:00）",
+      "source": "Charles Schwab，10/07；Central Banking，9/16",
+      "url": "https://www.centralbanking.com/central-banks/monetary-policy/7976918/federal-reserve-delivers-first-rate-hike-since-2023",
+      "read": "Fed 9/16 一致同意升息 1 碼到 3.75–4.00%，是 2023 年以來首次；點陣圖暗示年底前還有一次，四位委員預期兩次。紀要若比市場預期更鷹，殖利率可能再上、BTC 承壓；若透露委員對繼續升息有分歧，則有機會緩解。下一次利率決議是 10/28。",
+      "module": "flows"
+    },
+    {
+      "time": "2026-10-07",
+      "cat": "宏觀",
+      "impact": "bear",
+      "weight": 2,
+      "title": "伊朗油輪遭攻擊，原油升到每桶約 90 美元",
+      "source": "CoinDesk／Charles Schwab，10/06–10/07",
+      "url": "https://www.schwab.com/learn/story/stock-market-update-open",
+      "read": "油價上漲會推高通膨預期，讓 Fed 更有理由維持升息路徑，和殖利率上升是同一條傳導鏈。對 BTC 的影響是間接的，要看是否持續推升利率。",
+      "module": "flows"
+    },
+    {
+      "time": "2026-10-06",
+      "cat": "衍生品",
+      "impact": "neutral",
+      "weight": 2,
+      "title": "多頭爆倉 4.87 億美元，BTC 一度跌破 84,000",
+      "source": "The Block，10/06 23:57 ET",
+      "url": "https://www.theblock.co/news/markets/2026-10-06-bitcoin-slides-crypto-long-liquidations-surge-417882",
+      "read": "全市場 24 小時爆倉 5.56 億美元，其中多頭 4.87 億。這是槓桿清洗，不是基本面轉弱：本站數據顯示永續資金費率年化只剩 0.2%、未平倉約 8.2 億美元，追高的槓桿已經洗掉，後續連環爆倉的風險比前幾天低。",
+      "module": "deriv"
+    },
+    {
+      "time": "2026-10-05",
+      "cat": "資金",
+      "impact": "bear",
+      "weight": 2,
+      "title": "現貨 ETF 10/05 淨流出 8,990 萬美元，結束兩天 2.93 億流入",
+      "source": "Cointelegraph／Farside，10/06",
+      "url": "https://cointelegraph.com/markets/bitcoin-etf-90-million-outflow-btc-32-below-record-oct-6",
+      "read": "單日規模不大，但方向明顯轉弱：近 7 個完整發布日合計只剩約 +2.9 億美元，前 7 日是 +25.5 億。ETF 是這一輪最主要的買盤，流入縮成十分之一左右，價格要站上 87,000 會更吃力。",
+      "module": "flows"
+    },
+    {
+      "time": "2026-10-06",
+      "cat": "鏈上",
+      "impact": "bull",
+      "weight": 2,
+      "title": "Binance 單週淨流出 23,137 顆 BTC，2023 年 6 月以來最多；鯨魚穩定幣存入升到 305 億美元",
+      "source": "Cointelegraph／CryptoQuant，10/06（資料為 9/27 當週）",
+      "url": "https://cointelegraph.com/markets/binance-btc-outflows-hit-highest-since-mid-2023-as-whales-deposit-stablecoins",
+      "read": "幣離開交易所、穩定幣彈藥增加，通常是累積的訊號。和本站的交易所供給數據一致：CoinMetrics 交易所餘額 7 日 −0.97%，在一年的第 4 百分位，屬於罕見的快速流出。但這是兩週前的資料，要看接下來是否延續。",
+      "module": "onchain"
+    },
+    {
+      "time": "2026-10-06",
+      "cat": "產業",
+      "impact": "neutral",
+      "weight": 1,
+      "title": "Coinbase 完成 Deribit 整合，成立 Coinbase Global Exchange；年底重推 Coinbase Pro",
+      "source": "The Block，10/06 23:00 ET",
+      "url": "https://www.theblock.co/news/business/2026-10-06-coinbase-pro-deribit-integration-coinbase-global-exchange-417867",
+      "read": "美國與海外衍生品流動性首次併成同一個池，長期會讓 BTC 選擇權市場更深。Deribit 是本站波動率（DVOL）與選擇權資料的來源，短期不影響判讀，但要留意整合後資料口徑是否改變。",
+      "module": "deriv"
+    },
+    {
+      "time": "2026-10-07",
+      "cat": "機構",
+      "impact": "bull",
+      "weight": 1,
+      "title": "Robinhood 將 2,500 萬美元 BTC 放上資產負債表",
+      "source": "The Block，10/07",
+      "url": "https://www.theblock.co/news/business/2026-10-07-robinhood-adds-25-million-bitcoin-balance-sheet-417890",
+      "read": "象徵意義大於買盤影響：金額約占 Robinhood 市值的 0.025%，公司自己也說不會改變營運軌跡。值得注意的是大型券商持續把 BTC 當作資產負債表項目，屬於長期結構面的小幅利多。",
+      "module": "flows"
+    }
+  ]
+}
