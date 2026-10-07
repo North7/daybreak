@@ -15,9 +15,10 @@
 3. 讀上一期 `data/notes.json`（用來比較變化、延續期數）。
 4. ETF：用 WebFetch 讀 https://farside.co.uk/btc/ ，把最近幾天的每日 Total（百萬美元）upsert 到 `data/etf.json` 的 `rows`（`{d, musd, partial}`；當天未完整回報 partial=true，完整後覆寫為 false；只保留最近 60 筆）。讀不到就不改，在 notes 的 flows 寫明「ETF 本日未取得」。
 5. 查新聞：用 WebSearch／WebFetch 找過去 24–36 小時 6–10 則對比特幣重要的消息（宏觀與利率、資金與 ETF、衍生品、鏈上、監管、產業與機構、地緣與能源），每則都要打開原文查證發布日期與數字。
-6. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1；`date` 等於 `meta.bar_date`。
-7. 驗證：`python3 -c "import json;json.load(open('data/notes.json'));json.load(open('data/etf.json'))"`；再用 python 掃描 notes.json，確認沒有違反隱私鐵則的內容。
-8. 提交訊息 `notes: <bar_date>`，推送到 main。
+6. 查研報：Glassnode（The Week On-chain、Market Pulse、Macro Special）、The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。沒有新一期就沿用最近一期並在 `research.summary` 寫明「無新一期」。
+7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1；`date` 等於 `meta.bar_date`。
+8. 驗證：`python3 -c "import json;json.load(open('data/notes.json'));json.load(open('data/etf.json'))"`；再用 python 掃描 notes.json，確認沒有違反隱私鐵則的內容。
+9. 提交訊息 `notes: <bar_date>`，推送到 main。
 
 ### notes.json 格式
 ```json
@@ -34,7 +35,12 @@
   "news": [{"time": "YYYY-MM-DD", "cat": "宏觀｜資金｜衍生品｜鏈上｜監管｜產業｜機構｜地緣", "impact": "bull|bear|neutral", "weight": 1,
             "title": "發生了什麼（一句，含關鍵數字）", "source": "媒體名，日期", "url": "原文網址",
             "read": "解讀：對 BTC 的意義，並對照本站數據（例如 ETF 近 7 日合計、交易所供給、資金費率），說明會改變什麼、不會改變什麼", "module": "相關版面 id（flows/deriv/onchain/cycle…）"}],
-  "events": [{"date": "YYYY-MM-DD", "label": "事件"}]
+  "events": [{"date": "YYYY-MM-DD", "label": "事件"}],
+  "actions": [{"kind": "do|dont|watch|flip", "head": "一句粗體結論", "text": "補充：價位、距離、條件"}],
+  "changes": [{"dir": "up|down|flat", "title": "變了什麼（含數字）", "fig": "前後對照的數字", "say": "所以呢：會改變什麼、不會改變什麼"}],
+  "research": {"summary": "一句話：最新研報和本站讀值是否一致",
+               "items": [{"source": "Glassnode", "title": "研報名稱", "date": "YYYY-MM-DD", "url": "原文網址", "access": "full|title_only",
+                          "points": "重點（含價位數字）", "meaning": "對本站判斷的意義"}]}
 }
 ```
 
@@ -46,7 +52,11 @@
 - 頭條（headline）優先反映今天最重要的消息與數據變化；`weight` 3＝頭條級、2＝重要、1＝參考，頭版會依 weight 排序取前四則。
 - 每則消息的解讀都要回扣本站數據，說清楚它是短線雜訊還是會影響週期判斷；單一來源或數字不一致者在 title 後標「（未核實）」。
 - 第三方模型（Tidemark）只作讀值。不同資料商的數字不相減。分數一律附樣本數。寧可寫「本日未取得」，也不推估或沿用昨天的數字。
+- `actions`（今天該做什麼、盯什麼）4–6 項，依序：`do` 可以做（依出場框架今天的動作，沒有觸發就寫不動）、`dont` 不要做（最容易犯的錯）、`watch` 要盯（今明兩天的事件與價位，附台北時間）、`flip` 會推翻（什麼收盤條件會讓框架動作，附價位與距離）。一律用框架語言（「依框架」「避險減 20%」），不寫任何人的持倉狀態。
+- `changes`（今天變了什麼）3–5 項，只寫相對上一期真正改變的事：價格與量、資金流、衍生品、鏈上、掛單簿、市場階段天數；`fig` 寫「昨天 → 今天」的數字。沒有變化的不列。
+- `research`（權威研報）：每列寫來源與日期、重點（含價位數字）、對本站判斷的意義；沒讀到全文的 `access` 填 `title_only`，且不作判斷依據。研報結論與本站讀值衝突時，在 `meaning` 寫明衝突與本站採用哪個、為什麼。
+- 市場階段由資料管線依寫死規則計算（`cycle.stage`：熊市／轉換期／牛市），你只引用，不改判；`cycle` 模組要寫現在的階段、天數（`above_rising_run`／30）與交易所供給 90 日（`xs90`）。
 - `events` 滾動維護未來 60 天：難度調整（`onchain.mining.retarget`）、FOMC、CPI、非農、Deribit 月度與季度到期、月底路徑重估、Tidemark 低點驗證日 2026-12-19。官方排程優先。
 
 ### 回報
-最後用 3 行以內摘要：今天的結論、出場框架有沒有任何觸發、哪些資料沒取到。
+最後用 3 行以內摘要：今天的結論、出場框架有沒有任何觸發、市場階段、哪些資料沒取到。

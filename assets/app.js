@@ -255,6 +255,48 @@
     });
   }
   function impChip(i) { return '<span class="imp ' + i + '">' + ({ bull: '偏多', bear: '偏空', neutral: '中性' })[i] + '</span>'; }
+
+  // 市場階段 P23：資料管線依寫死規則計算（data/latest.json cycle.stage），不連動出場規則
+  var STAGE = { '熊市': ['熊市', 'down'], '轉換期': ['熊牛轉換期', 'orbit'], '牛市': ['牛市', 'up'] };
+  function stageChip() { var s = STAGE[(D.cycle.stage || {}).stage]; return s ? '<span class="chip ' + s[1] + '">' + s[0] + '</span>' : ''; }
+  function stageHtml() {
+    var st = D.cycle.stage || {}, s = STAGE[st.stage], c = D.price.bar.c;
+    if (!s) return '<p class="err">本日未取得市場階段。</p>';
+    var need = (st.bull_need || {}).run || 30, run = st.above_rising_run || 0, xs = st.xs90, sma = st.sma200, gap = [];
+    if (run < need) gap.push('再站穩 ' + (need - run) + ' 天');
+    if (!(xs < 0)) gap.push('交易所供給 90 日轉負（現在 ' + fmt.pct(xs, 2) + '）');
+    var lines = st.stage === '牛市' ? [['✓', '牛市（單向鎖定）', fmt.md(st.since) + ' 起成立；之後不因短線跌破而改判。'], ['↩', '什麼會退回熊市', '收盤連 30 日在下降的 200 日均線之下；現在 ' + (st.below_falling_run || 0) + ' 天。']]
+      : st.stage === '轉換期' ? [['✓', '不是熊市了', '收盤連 ' + run + ' 天站在上升的 200 日均線（' + fmt.usd(sma) + '）之上，高出 ' + fmt.pct((c / sma - 1) * 100, 1) + '。'],
+          ['△', '還不是牛市', gap.length ? '差 ' + gap.join('、') + '。' : '條件已齊，下一次收盤確認。'],
+          ['↩', '什麼會退回熊市', '收盤連 5 日在 200 日均線（' + fmt.usd(sma) + '，' + fmt.pct((sma / c - 1) * 100, 1) + '）之下；現在 ' + (st.below_run || 0) + '/5。']]
+      : [['×', '仍是熊市', '收盤' + (run ? '在上升的 200 日均線之上 ' + run + ' 天' : '不在上升的 200 日均線之上') + '。'], ['↗', '什麼會轉為轉換期', st.capitulation_seen ? '收盤站上上升中的 200 日均線。' : '燈號一（投降）重新出現，且收盤站上上升中的 200 日均線。']];
+    var light = function (ok, name, val, cond) { return '<div class="light' + (ok ? ' on' : '') + '"><span class="mk">' + (ok ? '✓' : '·') + '</span><b>' + name + '</b><span class="v num">' + val + '</span><span class="note">' + cond + '</span></div>'; };
+    return '<p class="say">現在是 <b>' + s[0] + '</b>（' + fmt.md(st.since) + ' 起）' + (st.stale ? '；本日缺資料，沿用前一日判定' : '') + '。</p>' +
+      '<div class="lights">' + light(st.capitulation_seen, '燈號一：投降', st.capitulation_seen ? '已出現過' : '未出現', '過去式；一個週期只看一次') +
+        light(run >= need, '上升 200 日線上', run + ' / ' + need + ' 天', '線 ' + fmt.usd(sma) + (st.sma200_rising ? '，上升中' : '，下降中')) +
+        light(xs < 0, '燈號二：交易所供給', fmt.pct(xs, 2), '90 日變化要 <0 · 7 日 ' + fmt.pct(st.xs7, 2) + '（' + fmt.md(st.xs_date) + '）') + '</div>' +
+      '<div class="rules">' + lines.map(function (l) { return '<div class="rule"><span class="t"><span class="mk-s">' + l[0] + '</span>' + l[1] + '</span><span class="d">' + l[2] + '</span><span></span></div>'; }).join('') + '</div>' +
+      '<p class="note">規則寫死：轉換期＝燈號一 ✓ 且收盤在上升的 200 日均線之上（上升＝高於 30 天前）；牛市＝同一天燈號一、燈號二都 ✓ 且收盤連 30 日在上升的 200 日均線之上，成立後單向鎖定；退回熊市＝轉換期中連 5 日收在 200 日均線下，牛市則需連 30 日在下降的 200 日均線下。回測（CoinMetrics 2013 起）只有 3 輪，牛市條件在頂部附近也會亮，所以不是賣出訊號。市場階段只是標籤，不連動出場框架。</p>';
+  }
+  // 以下三塊由每日結論任務寫進 notes.json；不是當天的就標「上一期」
+  function staleTag() { return N && N.stale ? '<span class="chip">上一期 ' + fmt.md(N.date) + '</span>' : ''; }
+  function actionsHtml() {
+    var a = N && N.actions || [], L = { do: '可以做', dont: '不要做', watch: '要盯', flip: '會推翻' };
+    if (!a.length) return '<p class="note">本期沒有寫。</p>';
+    return '<ul class="acts">' + a.map(function (x) { return '<li><span class="b ' + esc(x.kind) + '">' + (L[x.kind] || esc(x.kind)) + '</span><span><b>' + esc(x.head) + '</b>' + esc(x.text || '') + '</span></li>'; }).join('') + '</ul>';
+  }
+  function changesHtml() {
+    var a = N && N.changes || [], AR = { up: ['▲', 'u'], down: ['▼', 'd'], flat: ['■', ''] };
+    if (!a.length) return '<p class="note">本期沒有寫。</p>';
+    return '<ul class="deltas">' + a.map(function (x) { var r = AR[x.dir] || AR.flat; return '<li><span class="ar ' + r[1] + '">' + r[0] + '</span><div><h3>' + esc(x.title) + '</h3>' + (x.fig ? '<div class="fig num">' + esc(x.fig) + '</div>' : '') + '<p>' + esc(x.say || '') + '</p></div></li>'; }).join('') + '</ul>';
+  }
+  function researchHtml() {
+    var r = N && N.research || {}, rows = r.items || [];
+    if (!rows.length) return '<p class="note">' + esc(r.summary || '本期沒有新的機構研報。') + '</p>';
+    return (r.summary ? '<p class="say">' + esc(r.summary) + '</p>' : '') + '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:20%"><col style="width:44%"><col style="width:36%"></colgroup><thead><tr><th>來源</th><th>重點</th><th>對本站判斷的意義</th></tr></thead><tbody>' +
+      rows.map(function (x) { var src = x.url ? '<a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.source) + '</a>' : esc(x.source); return '<tr><td><b>' + src + '</b><br><span class="note">' + esc(x.title || '') + (x.date ? '，' + fmt.md(x.date) : '') + (x.access === 'title_only' ? '・只取得標題' : '') + '</span></td><td>' + esc(x.points) + '</td><td>' + esc(x.meaning) + '</td></tr>'; }).join('') +
+      '</tbody></table></div><p class="note">研報只作文字對照，不改變任何規則；只取得標題的不作判斷依據。</p>';
+  }
   function newsItem(n, lead, ix) {
     return '<article class="' + (lead ? 'news-lead' : 'news-item') + '">' + (ix ? '<span class="idx">' + ('0' + ix).slice(-2) + '</span>' : '') + '<div class="news-meta"><span class="cat">' + esc(n.cat) + '</span>' + impChip(n.impact) + '<span>' + esc(n.time.slice(5).replace('-', '/')) + '</span></div><h3>' + esc(n.title) + '</h3><div class="read-box"><b class="lbl">解讀</b>' + esc(n.read) + '</div><div class="src-link">來源：<a href="' + esc(n.url) + '" target="_blank" rel="noopener">' + esc(n.source) + '</a>' + (n.module ? ' · <a href="#' + n.module + '">看相關數據 →</a>' : '') + '</div></article>';
   }
@@ -282,7 +324,7 @@
     var watch = (N && N.watch || []).map(function (w) { var dd = (w.value / c.c - 1) * 100; return '<div><span class="k">' + esc(w.label) + '</span><span class="v ' + (dd >= 0 ? 'up' : 'dn') + '">' + fmt.pct(dd, 1) + '</span><span class="px">' + fmt.usd(w.value) + '</span><span class="n">' + esc(w.note) + '</span></div>'; }).join('');
     var front = '<section class="front" id="front"><div class="dateline"><b>號外</b><span>DAYBREAK No.' + ('00' + (N ? N.edition : 0)).slice(-3) + '</span><hr><span>' + D.meta.bar_date.replace(/-/g, '.') + '（' + wd + '）收盤版</span></div>' +
       '<h2 class="reveal">' + hl + '</h2>' + megaHtml(c) +
-      '<div class="front-foot"><div class="dek"><div class="stamp"><span class="chip flare"><i></i>' + esc(N ? N.stance.label : '—') + '</span><span class="chip">' + (N ? esc(N.stance.short) : '') + '</span></div><p>' + esc(N ? N.summary : '') + '</p></div><div class="watch">' + watch + '</div></div></section>';
+      '<div class="front-foot"><div class="dek"><div class="stamp"><span class="chip flare"><i></i>' + esc(N ? N.stance.label : '—') + '</span><span class="chip">' + (N ? esc(N.stance.short) : '') + '</span>' + stageChip() + '</div><p>' + esc(N ? N.summary : '') + '</p></div><div class="watch">' + watch + '</div></div></section>';
     var newsBlock = news.length ? '<div class="sec-h"><h2>今日要聞</h2><span class="en">The Brief</span><hr><a href="#news">全部 ' + news.length + ' 則 →</a></div><div class="news-front">' + newsItem(news[0], true) + '<div class="news-side">' + news.slice(1, 4).map(function (n, i) { return newsItem(n); }).join('') + '</div></div>' : '';
     var kp = '<div class="kpis">' +
       kpi('MVRV ÷ 前一輪高點', fmt.n(cm.mvrv_vs_prior, 3), '賣出線 0.75 · 2025 頂 0.78', cm.mvrv_vs_prior / 0.75 * 100) +
@@ -291,7 +333,9 @@
       kpi('頂部三指標百分位', ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n(p6[k], 0); }).join(' / '), '任兩項到 80 進入頂部區', ((p6.mvrv_z || 0) + (p6.nupl || 0) + (p6.puell || 0)) / 3 / 0.8) +
       kpi('離出場第一階', fmt.pct(ex.next_step_dist_pct, 0), fmt.usd(ex.next_step) + ' 起每階 12.5%', 100 - Math.min(100, ex.next_step_dist_pct)) + '</div>';
     var ev = (N && N.events || []).map(function (e) { var dd = dnOf(e.date) - dnOf(D.meta.bar_date); return '<div class="event"><span class="d">' + e.date.slice(5).replace('-', '/') + '</span><span>' + esc(e.label) + '</span><span class="in' + (dd === 1 ? ' now' : '') + '">' + (dd > 1 ? dd - 1 + ' 天後' : dd === 1 ? '今天' : '已過') + '</span></div>'; }).join('');
-    return front + tapeHtml() + newsBlock +
+    var plan = '<div class="sec-h"><h2>今天該做什麼</h2><span class="en">The Plan</span><hr>' + staleTag() + '</div><div class="grid">' +
+      panel('span-7', '今天該做什麼、盯什麼', '依出場框架 · 非投資建議', actionsHtml()) + panel('span-5', '今天變了什麼', '相對上一期', changesHtml()) + '</div>';
+    return front + tapeHtml() + newsBlock + plan +
       '<div class="sec-h"><h2>今日數據</h2><span class="en">The Numbers</span><hr></div>' + kp +
       '<div class="grid">' + panel('span-12', '離出場線還多遠', '以 ' + fmt.md(D.meta.bar_date) + ' 收盤計 · 對數刻度', '<div class="runway">' + runwaySvg() + '</div>') +
       panel('span-7', '價格近一年', 'CoinMetrics 每 7 天', '<div class="chart" id="c-ov-px"></div>') +
@@ -305,12 +349,13 @@
 
   V.news = function () {
     var news = (N && N.news || []);
-    if (!news.length) return '<p class="err">今天還沒有整理好的消息。</p>';
+    var rs = '<div class="grid" style="margin-top:28px">' + panel('span-12', '權威研報怎麼看', 'Glassnode · The Block · K33 · Coinbase Institutional 等', researchHtml(), staleTag()) + '</div>';
+    if (!news.length) return '<p class="err">今天還沒有整理好的消息。</p>' + rs;
     var cats = ['全部'].concat(news.map(function (n) { return n.cat; }).filter(function (c, i, a) { return a.indexOf(c) === i; }));
     var cnt = function (k) { return news.filter(function (n) { return n.impact === k; }).length; };
     return '<div class="news-sum"><div><span class="note">偏多</span><b style="color:var(--up)">' + ('0' + cnt('bull')).slice(-2) + '</b></div><div><span class="note">偏空</span><b style="color:var(--down)">' + ('0' + cnt('bear')).slice(-2) + '</b></div><div><span class="note">中性</span><b>' + ('0' + cnt('neutral')).slice(-2) + '</b></div></div>' +
       '<div class="filters" id="nf" role="group" aria-label="分類">' + cats.map(function (c, i) { return '<button type="button" aria-pressed="' + (i === 0) + '" data-c="' + esc(c) + '">' + esc(c) + '</button>'; }).join('') + '</div>' +
-      '<div class="news-grid" id="ng"></div><p class="note">每則消息都查證過發布日期；「解讀」說明它對比特幣的意義，並對照本站的數據。消息只作參考，不改變任何出場規則。</p>';
+      '<div class="news-grid" id="ng"></div><p class="note">每則消息都查證過發布日期；「解讀」說明它對比特幣的意義，並對照本站的數據。消息只作參考，不改變任何出場規則。</p>' + rs;
   };
   V.news.after = function () {
     var news = (N && N.news || []).slice().sort(function (a, b) { return (b.weight || 0) - (a.weight || 0) || (b.time > a.time ? 1 : -1); });
@@ -323,10 +368,10 @@
     var cm = D.cycle.cm, pl = D.cycle.powerlaw || {}, tm = D.cycle.tidemark || {}, p6 = D.cycle.p6 || {}, st = D.cycle.stage || {}, M = D.cycle.model;
     var w = M.weights;
     return readBar('cycle') + '<div class="grid">' +
+      panel('span-12', '市場階段：' + (STAGE[st.stage] || ['—'])[0], 'P23 · 熊市 → 轉換期 → 牛市', stageHtml()) +
       panel('span-12', '長期路徑：四種走法', '每月底重估 · 下次 ' + M.next_review, legend([['直接修復 ' + w['直接修復'] + '%', 'var(--s4)', 'dash'], ['淺回檔 ' + w['淺回檔'] + '%', 'var(--s1)', 'dash'], ['基準雙底 ' + w['基準雙底'] + '%', 'var(--s2)', 'dash'], ['延後新低 ' + w['延後新低'] + '%', 'var(--s3)', 'dash'], ['已實現', 'var(--ink)'], ['頂部 80% 區間', 'var(--flare)', 'box']]) + '<div class="chart" id="c-path"></div><p class="note">頂部模型：中位 ' + fmt.usd(M.top_model.median) + '，80% 區間 ' + fmt.k(M.top_model.p10) + '–' + fmt.k(M.top_model.p90) + '，時間 ' + esc(M.top_model.timing) + '。路徑是本站的預測，2028 年以後只供量級參考。</p>') +
       panel('span-7', 'MVRV ÷ 前一輪高點', 'CoinMetrics · 2021 起', '<p class="say">現在 <b>' + fmt.n(cm.mvrv_vs_prior, 3) + '</b>；連 5 天站上 0.75（約 ' + fmt.usd(cm.k075_price) + '）是出場框架的第一個鏈上賣點。</p><div class="chart" id="c-p20"></div>') +
-      panel('span-5', '頂部三指標', fmt.md(D.cycle.p6_date) + ' · 四年百分位', '<div class="meters">' + meter('MVRV Z', '<0 底 · >3.5 頂', p6.mvrv_z, fmt.n(p6.mvrv_z, 0), '百分位', [80, 85, 90]) + meter('NUPL', '淨未實現損益', p6.nupl, fmt.n(p6.nupl, 0), '百分位', [80, 85, 90]) + meter('Puell', '礦工收入倍數', p6.puell, fmt.n(p6.puell, 0), '百分位', [80, 85, 90]) + '</div><p class="note">任兩項到 80 進入頂部區；到 85 連 5 天多賣兩階；到 90 在 10 個交易日內賣完。</p>' +
-        '<div class="rules" style="margin-top:6px">' + '<div class="rule"><span class="t">市場階段</span><span class="d">收盤在上升的 200 日均線上第 <b class="num">' + st.above_rising_run + '</b> 天（滿 30 天且交易所供給 90 日轉負 → 牛市）；供給 90 日 ' + fmt.pct((D.onchain.exchange || {}).exchange_supply_chg90_pct, 2) + '</span><span class="chip orbit">轉換期</span></div></div>') +
+      panel('span-5', '頂部三指標', fmt.md(D.cycle.p6_date) + ' · 四年百分位', '<div class="meters">' + meter('MVRV Z', '<0 底 · >3.5 頂', p6.mvrv_z, fmt.n(p6.mvrv_z, 0), '百分位', [80, 85, 90]) + meter('NUPL', '淨未實現損益', p6.nupl, fmt.n(p6.nupl, 0), '百分位', [80, 85, 90]) + meter('Puell', '礦工收入倍數', p6.puell, fmt.n(p6.puell, 0), '百分位', [80, 85, 90]) + '</div><p class="note">任兩項到 80 進入頂部區；到 85 連 5 天多賣兩階；到 90 在 10 個交易日內賣完。</p>' ) +
       panel('span-7', '冪律：價格 ÷ 合理價', '每天只用當天以前資料擬合', '<p class="say">現在 <b>' + fmt.n(pl.ratio, 2) + ' 倍</b>（合理價 ' + fmt.usd(pl.fair) + '）。頂部倍數每輪縮小，照這個速度，下一輪頂部約在合理價的 ' + fmt.n((pl.next_top_ratio || [])[0], 2) + '–' + fmt.n((pl.next_top_ratio || [])[1], 2) + ' 倍。</p><div class="chart" id="c-pl"></div>', '<div class="seg" id="pl-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="2020">2020 起</button></div>') +
       panel('span-5', 'Tidemark 綜合訊號', '第三方模型 · ' + fmt.md(tm.price_date) + ' 資料', '<div class="meters">' + meter('頂部訊號', '≥50 窗口 · ≥70 警戒', (tm.top || {}).signal || 0, fmt.n((tm.top || {}).signal, 1), (tm.top || {}).level || '—', [50, 70]) + meter('熱度', '五類加權', (tm.top || {}).heat || 0, fmt.n((tm.top || {}).heat, 1), (tm.top || {}).zone || '', [40, 65]) + meter('底部訊號', '≥50 底部區', (tm.bottom || {}).signal || 0, fmt.n((tm.bottom || {}).signal, 1), (tm.bottom || {}).level || '—', [50, 70]) + meter('冷度', '估值・礦工・價格結構', (tm.bottom || {}).cold || 0, fmt.n((tm.bottom || {}).cold, 1), '', []) + '</div>' +
         '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:62%"><col style="width:38%"></colgroup><tbody>' + (tm.cats || []).map(function (x) { return '<tr><td>' + esc(x[0]) + (x[2] === 'partial' ? '＊' : '') + '</td><td><div class="pct"><i><b class="' + ((x[1] || 0) >= 80 ? 'hot' : '') + '" style="width:' + (x[1] || 0) + '%"></b></i><span class="num">' + (x[1] == null ? '—' : fmt.n(x[1], 0)) + '</span></div></td></tr>'; }).join('') + '</tbody></table></div><p class="note">' + esc((tm.cycle_test || {}).verdict || '') + '</p>') +

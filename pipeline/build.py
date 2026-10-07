@@ -26,6 +26,29 @@ except Exception as e:
     print('price history failed', e)
 
 c = td['bar']['c']; ma = td['ma']; cmr = td.get('cm_radar') or {}
+sm_f = P('pipeline', 'state_min.json')
+sm = json.load(open(sm_f)) if os.path.exists(sm_f) else {'series': [], '_conventions': {'position_framework_p19_state': {'ladder_filled': [], 'cancelled_price_levels': []}}}
+
+# 市場階段 P23（只是標籤，不連動出場規則）。熊市 → 熊牛轉換期 → 牛市；牛市單向鎖定，狀態存在 state_min.json。
+#   轉換期：燈號一（投降出現過）✓ 且收盤在上升的 200 日均線之上（上升＝高於 30 天前）
+#   牛市：同一天燈號一 ✓、燈號二（CoinMetrics 交易所供給 90 日 <0）✓、收盤連 30 日在上升的 200 日均線之上
+#   退回熊市：轉換期中連 5 日收在 200 日均線之下；牛市鎖定後需連 30 日在下降的 200 日均線之下（之後燈號一需重新出現）
+def stage_p23(prev, ms, xs90):
+    cur, cap = prev['stage'], prev.get('capitulation_seen', False)
+    if not ms or ms.get('above_rising_run') is None: return dict(prev, stale=True)
+    ar, br, bfr = ms['above_rising_run'], ms['below_run'], ms['below_falling_run']
+    new = cur
+    if cur == '牛市':
+        if bfr >= 30: new, cap = '熊市', False
+    else:
+        if cur == '轉換期' and br >= 5: new = '熊市'
+        elif cur == '熊市' and cap and ar > 0: new = '轉換期'
+        if new == '轉換期' and cap and xs90 is not None and xs90 < 0 and ar >= 30: new = '牛市'
+    return {'stage': new, 'since': td['bar_date'] if new != cur else prev['since'], 'capitulation_seen': cap}
+ms = td.get('market_stage') or {}; xs90 = cmr.get('exchange_supply_chg90_pct')
+sm['market_stage_p23'] = st23 = stage_p23(sm.get('market_stage_p23') or {'stage': '轉換期', 'since': '2026-09-10', 'capitulation_seen': True}, ms, xs90)
+stage = dict({k: v for k, v in ms.items() if k != 'note'}, **st23, xs90=xs90, xs7=cmr.get('exchange_supply_chg7_pct'), xs_date=cmr.get('exchange_supply_date'),
+             bull_need=dict(run=30, xs90_below=0), bear_back=dict(transition_below_run=5, bull_below_falling_run=30))
 ladder = model['exit_framework']['ladder']
 nxt = next((x for x in ladder if x > c), None)
 onchain = {k: {kk: v.get(kk) for kk in ('date', 'value', 'pct_4y', 'ma7', 'chg30_pct')} for k, v in (td.get('onchain') or {}).items() if isinstance(v, dict)}
@@ -46,7 +69,7 @@ out = {
   'cycle': {'cm': {k: cmr.get(k) for k in ('date', 'mvrv', 'realized_price', 'prior_cycle_peak', 'mvrv_vs_prior', 'k075_price', 'k080_price', 'mvrv_vs_365d_max', 'price_ath_close', 'divergence', 'p20_run_ge075', 'p20_run_ge080')},
             'p20': (td.get('ex_viz') or {}).get('p20'), 'p6': (td.get('ex_viz') or {}).get('p6'), 'p6_date': (td.get('ex_viz') or {}).get('p6_date'),
             'powerlaw': dict(td.get('powerlaw') or {}, rows=((td.get('ex_viz') or {}).get('powerlaw') or {}).get('rows')),
-            'tidemark': td.get('tidemark'), 'stage': td.get('market_stage'), 'model': model['paths'], 'halvings': model['halvings'],
+            'tidemark': td.get('tidemark'), 'stage': stage, 'model': model['paths'], 'halvings': model['halvings'],
             'next_halving_est': model['next_halving_est'], 'tops': model['cycle_tops'], 'bottoms': model['cycle_bottoms']},
   'exit': {'framework': model['exit_framework'], 'status': {
             'close': c, 'sma200': ma.get('sma200'), 'below_sma200_run': (td.get('p19') or {}).get('below_sma200_run'),
@@ -65,8 +88,6 @@ json.dump(sorted(idx, key=lambda x: x['date'])[-800:], open(idx_f, 'w'), ensure_
 print('built data/latest.json', td['bar_date'], os.path.getsize(P('data', 'latest.json')), 'bytes')
 
 # 給下一次 collect.py 用的最小前一日狀態（URPD 週變化、ATR 回測）；只含市場資料
-sm_f = P('pipeline', 'state_min.json')
-sm = json.load(open(sm_f)) if os.path.exists(sm_f) else {'series': [], '_conventions': {'position_framework_p19_state': {'ladder_filled': [], 'cancelled_price_levels': []}}}
 row = {'bar_date': td['bar_date'], 'c': c, 'atr14': (td.get('atr') or {}).get('atr14'), 'atr7': (td.get('atr') or {}).get('atr7'),
        'murphy_flow': {'urpd': {k: ((td.get('murphy_flow') or {}).get('urpd') or {}).get(k) for k in ('date', 'band')}}}
 sm['series'] = [r for r in sm['series'] if r.get('bar_date') != row['bar_date']] + [row]

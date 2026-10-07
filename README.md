@@ -10,7 +10,7 @@ assets/app.css          品牌與版面（深色優先，含淺色主題）
 assets/app.js           路由、圖表、互動（無外部套件）
 assets/logo.svg         Logo（也是 favicon）
 data/latest.json        每日資料（由 GitHub Actions 產生，不要手改）
-data/notes.json         每日頭條、各版判讀與今日要聞解讀（由 Claude 每日任務寫入）
+data/notes.json         每日頭條、各版判讀、今天該做什麼、今天變了什麼、今日要聞與研報解讀（由 Claude 每日任務寫入）
 data/etf.json           ETF 每日淨流量（由 Claude 每日任務從 Farside 更新）
 data/model.json         固定模型參數：出場框架、長期路徑（每月檢討時才改）
 data/history/index.json 每日快照索引
