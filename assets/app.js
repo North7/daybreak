@@ -541,6 +541,7 @@
   var cur = null, seen = {};
   function ids0() { return ROUTES.map(function (r) { return r[0]; }); }
   function stickyH() { var el = MQ.matches ? document.querySelector('.rail') : document.querySelector('.top'); return el ? el.offsetHeight : 0; }
+  var GAP = 16;   // 跳轉與換頁頓點時，版面標題上方留白
   function renderAll() {
     var v = $('#view');
     v.innerHTML = ROUTES.map(function (r, i) {
@@ -574,10 +575,10 @@
     document.querySelectorAll('#view .pg').forEach(function (sec) { if (sec.getBoundingClientRect().top <= line) pick = sec.getAttribute('data-r'); });
     activate(pick);
   }
+  function docTop(sec) { var y = 0; for (var el = sec; el; el = el.offsetParent) y += el.offsetTop; return y; }   // 用 offsetTop 計算，不受進場動畫的位移影響
   function go(id) {
     var sec = $('#pg-' + id); if (!sec) return;
-    var y = 0; for (var el = sec; el; el = el.offsetParent) y += el.offsetTop;   // 用 offsetTop 計算，不受進場動畫的位移影響
-    window.scrollTo({ top: id === ROUTES[0][0] ? 0 : y - stickyH(), behavior: 'instant' });
+    window.scrollTo({ top: id === ROUTES[0][0] ? 0 : docTop(sec) - stickyH() - GAP, behavior: 'instant' });
     spy();
   }
   function shell() {
@@ -585,6 +586,21 @@
     $('#nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) go(b.getAttribute('data-r')); });
     document.addEventListener('keydown', function (e) { if ((e.target.closest && e.target.closest('input,textarea')) || e.metaKey || e.ctrlKey || e.altKey) return; var n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROUTES.length) go(ROUTES[n - 1][0]); });
     window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h !== cur) go(h); });
+    // 桌面換頁頓點：滾輪捲過版面開頭時，先停在「該版標題貼齊頂部列」的位置，頓 HOLD 毫秒（期間的滾輪與慣性吃掉），之後照常捲動
+    var hold = 0, HOLD = 260;
+    window.addEventListener('wheel', function (e) {
+      if (MQ.matches || e.ctrlKey || !e.deltaY || Math.abs(e.deltaX) > Math.abs(e.deltaY)) return;
+      var now = Date.now();
+      if (now < hold) { e.preventDefault(); return; }
+      var dy = e.deltaY * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1), doc = document.documentElement;
+      for (var el = e.target; el && el.nodeType === 1 && el !== doc; el = el.parentElement)   // 內層可捲動區還沒捲完就交給它
+        if (el.scrollHeight > el.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(el).overflowY) && (dy > 0 ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollTop > 0)) return;
+      var y = window.scrollY, to = y + dy, sh = stickyH(), secs = document.querySelectorAll('#view .pg');
+      for (var i = 1; i < secs.length; i++) {
+        var b = docTop(secs[i]) - sh - GAP;
+        if ((dy > 0 && y < b - 1 && to >= b) || (dy < 0 && y > b + 1 && to <= b)) { e.preventDefault(); window.scrollTo({ top: b, behavior: 'instant' }); hold = now + HOLD; return; }
+      }
+    }, { passive: false });
     var ticking = false;
     window.addEventListener('scroll', function () { if (ticking) return; ticking = true; requestAnimationFrame(function () { ticking = false; spy(); }); }, { passive: true });
     // 行動版：在內容區左右滑動切換到相鄰版面。圖表、表格、滑桿等本身要橫向操作的區域，以及螢幕邊緣（瀏覽器返回手勢）不觸發
