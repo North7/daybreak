@@ -580,8 +580,8 @@
   function docTop(sec) { var y = 0; for (var el = sec; el; el = el.offsetParent) y += el.offsetTop; return y; }   // 用 offsetTop 計算，不受進場動畫的位移影響
   function go(id) {
     var sec = $('#pg-' + id); if (!sec) return;
-    if (MQ.matches) { activate(id); window.scrollTo({ top: 0, behavior: 'instant' }); return; }
-    window.scrollTo({ top: id === ROUTES[0][0] ? 0 : docTop(sec) - stickyH() - GAP, behavior: 'instant' });
+    if (MQ.matches) { activate(id); window.scrollTo(0, 0); return; }
+    window.scrollTo(0, id === ROUTES[0][0] ? 0 : docTop(sec) - stickyH() - GAP);
     spy();
   }
   function shell() {
@@ -589,7 +589,7 @@
     $('#nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) go(b.getAttribute('data-r')); });
     document.addEventListener('keydown', function (e) { if ((e.target.closest && e.target.closest('input,textarea')) || e.metaKey || e.ctrlKey || e.altKey) return; var n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROUTES.length) go(ROUTES[n - 1][0]); });
     // 跨過 860px（旋轉、縮放視窗）時切換顯示方式，停在同一版
-    var onMode = function () { if (MQ.matches) window.scrollTo({ top: 0, behavior: 'instant' }); else go(cur); };
+    var onMode = function () { if (MQ.matches) window.scrollTo(0, 0); else go(cur); };
     if (MQ.addEventListener) MQ.addEventListener('change', onMode); else if (MQ.addListener) MQ.addListener(onMode);
     window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h !== cur) go(h); });
     // 桌面換頁頓點：滾輪捲過版面開頭時，先停在「該版標題貼齊頂部列」的位置，頓 HOLD 毫秒（期間的滾輪與慣性吃掉），之後照常捲動
@@ -604,7 +604,7 @@
       var y = window.scrollY, to = y + dy, sh = stickyH(), secs = document.querySelectorAll('#view .pg');
       for (var i = 1; i < secs.length; i++) {
         var b = docTop(secs[i]) - sh - GAP;
-        if ((dy > 0 && y < b - 1 && to >= b) || (dy < 0 && y > b + 1 && to <= b)) { e.preventDefault(); window.scrollTo({ top: b, behavior: 'instant' }); hold = now + HOLD; return; }
+        if ((dy > 0 && y < b - 1 && to >= b) || (dy < 0 && y > b + 1 && to <= b)) { e.preventDefault(); window.scrollTo(0, b); hold = now + HOLD; return; }
       }
     }, { passive: false });
     var ticking = false;
@@ -653,6 +653,6 @@
     if (start && start !== 'overview' && $('#pg-' + start)) {
       go(start);   // 字型載入後版面會變高，載完再對齊一次（使用者已自行捲動就不動）
       var y0 = window.scrollY; if (document.fonts) document.fonts.ready.then(function () { if (Math.abs(window.scrollY - y0) < 2) go(start); });
-    } else { window.scrollTo({ top: 0, behavior: 'instant' }); activate(ROUTES[0][0]); }
+    } else { window.scrollTo(0, 0); activate(ROUTES[0][0]); }
   }).catch(function (e) { $('#view').innerHTML = '<p class="err">資料載入失敗：' + esc(e.message) + '。請稍後重新整理。</p>'; });
 })();

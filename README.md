@@ -17,6 +17,7 @@ data/history/index.json 每日快照索引
 pipeline/collect.py     抓取所有 API 並計算指標 → pipeline/today.json
 pipeline/build.py       today.json → data/latest.json
 pipeline/brief.py       印出精簡摘要給 Claude 讀
+pipeline/stamp_assets.py 改過 assets/ 後執行：更新 index.html 的 ?v= 版本號，避免手機拿到新舊混搭的 CSS／JS
 pipeline/bd_rotation.py bitcoin-data 請求分配：每日即時 10 個 + 前一晚輪替 5 個
 pipeline/bd_cache/      輪替指標的快取（由 Prefetch on-chain 寫入）
 pipeline/params.json    collect.py 需要的兩個參數
