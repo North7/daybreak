@@ -12,6 +12,9 @@ def slim(o, depth=0):
         return [slim(x, depth + 1) for x in o]
     return o
 out = slim(d)
+if (d.get('flows') or {}).get('etf'):   # ETF 有 60 筆會被上面省略，摘要只放最近 10 個交易日與最新完整日
+    e = d['flows']['etf']; out['flows']['etf'] = e[-10:]
+    out['flows']['etf_last_complete'] = next((r['d'] for r in reversed(e) if not r.get('partial')), None)
 if d.get('orderbook'):
     ob = d['orderbook']; out['orderbook'] = {k: ob.get(k) for k in ('ts', 'mid', 'walls', 'rounds', 'totals')}
 print(json.dumps(out, ensure_ascii=False, separators=(',', ':')))
