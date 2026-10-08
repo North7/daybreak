@@ -632,7 +632,7 @@
     tt.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var v = b.getAttribute('data-t'); setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {} mounted.forEach(function (el) { el._draw && el._draw(el); }); });
     try { setTheme(localStorage.getItem('daybreak.theme') === 'dark' ? 'dark' : 'light'); } catch (e) {}
     var pad = function (x) { return ('0' + x).slice(-2); };
-    function tick() { var t = new Date(); var nx = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate(), 1, 10)); if (nx <= t) nx = new Date(+nx + 864e5); var d = Math.floor((nx - t) / 1000); $('#nxt').textContent = 'T−' + pad(Math.floor(d / 3600)) + ':' + pad(Math.floor(d % 3600 / 60)) + ':' + pad(d % 60); }
+    function tick() { var t = new Date(); var nx = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate(), 0, 30)); if (nx <= t) nx = new Date(+nx + 864e5); var d = Math.floor((nx - t) / 1000); $('#nxt').textContent = 'T−' + pad(Math.floor(d / 3600)) + ':' + pad(Math.floor(d % 3600 / 60)) + ':' + pad(d % 60); }
     tick(); setInterval(tick, 1000);
     var fs = $('#fs'); fs.addEventListener('click', function () { var d = document; try { if (d.fullscreenElement) d.exitFullscreen(); else d.documentElement.requestFullscreen().catch(function () {}); } catch (e) {} });
     var c = D.price.bar;

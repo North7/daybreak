@@ -23,8 +23,9 @@ pipeline/bd_rotation.py bitcoin-data 請求分配：每日即時 10 個 + 前一
 pipeline/bd_cache/      輪替指標的快取（由 Prefetch on-chain 寫入）
 pipeline/params.json    collect.py 需要的兩個參數
 pipeline/state_min.json 前一日的最小狀態（URPD 週變化、ATR 回測）
-.github/workflows/daily.yml     每天 UTC 00:20 自動更新資料
-.github/workflows/prefetch.yml  每天 UTC 22:50 抓輪替的鏈上指標
+.github/workflows/daily.yml     每天 UTC 00:05 自動更新資料（備援 00:15／00:25／00:45／01:05）
+.github/workflows/prefetch.yml  每天 UTC 22:40 抓輪替的鏈上指標（備援 23:00）
+.github/workflows/etf.yml       每天 UTC 14:00 補抓 ETF 流量
 docs/CLAUDE_DAILY.md    Claude 每日結論任務的完整指示
 ```
 
@@ -34,15 +35,15 @@ docs/CLAUDE_DAILY.md    Claude 每日結論任務的完整指示
 2. Settings → Pages → Source 選「Deploy from a branch」，Branch 選 `main`、資料夾 `/ (root)`。
 3. Settings → Actions → General → Workflow permissions 選「Read and write permissions」。
 4. Actions 頁面手動執行一次「Daily data」，確認 `data/latest.json` 有更新。
-5. 在 Claude Code 連上這個倉庫，建立每日排程任務，指示內容見 `docs/CLAUDE_DAILY.md`（建議 UTC 01:10，晚於資料更新）。
+5. 在 Claude Code 連上這個倉庫，建立每日排程任務，指示內容見 `docs/CLAUDE_DAILY.md`（UTC 00:30＝台北 08:30，晚於資料更新）。
 
 ## 每日流程
 
 | 時間（UTC） | 誰 | 做什麼 | 耗 token |
 |---|---|---|---|
-| 22:50（前一天） | GitHub Actions | 輪流抓 5 個變化較慢的鏈上指標進 `pipeline/bd_cache/` | 0 |
-| 00:20 | GitHub Actions | 抓資料、算指標、更新 `data/latest.json`、提交 | 0 |
-| 01:10 | Claude 排程任務 | 讀摘要、查新聞、更新 ETF、寫頭條與消息解讀到 `data/notes.json`、提交 | 少量 |
+| 22:40（前一天） | GitHub Actions | 輪流抓 5 個變化較慢的鏈上指標進 `pipeline/bd_cache/` | 0 |
+| 00:05 | GitHub Actions | 抓資料（含 ETF）、算指標、更新 `data/latest.json`、提交 | 0 |
+| 00:30 | Claude 排程任務 | 讀摘要、查新聞與研報、寫頭條與消息解讀到 `data/notes.json`、提交 | 少量 |
 
 網站讀到的 `notes.json` 日期若和資料日不同，仍會顯示上一期的判讀，數字部分永遠是最新的。
 
@@ -52,7 +53,7 @@ docs/CLAUDE_DAILY.md    Claude 每日結論任務的完整指示
 
 ## 已知限制
 
-- bitcoin-data.com 免費層每小時 10 次、每日 15 次，管線共用 20 個端點，所以分兩批：00:20 即時抓 10 個（頂部三指標、成本基礎、籌碼流向），其餘 10 個分 A／B 兩組在前一晚 22:50 輪流抓，每個每 2 天更新一次，頁面顯示的是資料本身的日期。清單見 `pipeline/bd_rotation.py`。GitHub Actions 的共用 IP 偶爾仍會被限流，失敗的項目在網站上顯示「本日未取得」。
+- bitcoin-data.com 免費層每小時 10 次、每日 15 次，管線共用 20 個端點，所以分兩批：00:05 即時抓 10 個（頂部三指標、成本基礎、籌碼流向），其餘 10 個分 A／B 兩組在前一晚 22:40 輪流抓，每個每 2 天更新一次，頁面顯示的是資料本身的日期。清單見 `pipeline/bd_rotation.py`。GitHub Actions 的共用 IP 偶爾仍會被限流，失敗的項目在網站上顯示「本日未取得」。
 - Farside 用 Cloudflare 擋所有自動抓取，ETF 改用 The Block 的圖表 JSON（pipeline/etf.py，逐日與 Farside 比對一致）；The Block 只公布已完整的交易日，約晚一天。
 - 掛單簿是 Actions 執行當下的快照；Binance 期貨與 Bybit 讀不到。
 

@@ -2,7 +2,7 @@ name: ETF flows
 
 on:
   schedule:
-    - cron: "0 14 * * *"   # 每天 UTC 14:00（台北 22:00）：The Block 白天更新前一個完整交易日後再抓一次；Daily data 00:20 也會抓
+    - cron: "0 14 * * *"   # 每天 UTC 14:00（台北 22:00）：The Block 白天更新前一個完整交易日後再抓一次；Daily data 00:05 也會抓
   workflow_dispatch: {}
 
 permissions:

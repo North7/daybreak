@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """bitcoin-data.com 請求分配（2026-10-08 建立）。
 免費層每個 IP 每小時 10 次、每日 15 次（實測第 11 次回 429 RATE_LIMIT_HOUR_EXCEEDED）；管線共用 20 個端點，一次抓完必定超限。
-分配：每日 UTC 00:20 collect.py 即時抓 CORE 10 個；其餘 10 個分 A／B 兩組，由本腳本在前一晚 UTC 22:50 依日期輪替抓 5 個寫進 bd_cache/，
+分配：每日 UTC 00:05 collect.py 即時抓 CORE 10 個；其餘 10 個分 A／B 兩組，由本腳本在前一晚 UTC 22:40 依日期輪替抓 5 個寫進 bd_cache/，
 collect.py 只讀快取。合計每日 15 次、任一小時不超過 10 次。輪替指標每 2 天更新一次，頁面照常顯示資料本身的日期。
 用法（在倉庫根目錄）：python3 pipeline/bd_rotation.py [--group A|B]   # 不給 --group 時依 UTC 日期奇偶輪替"""
 import json, os, sys, subprocess, argparse, datetime as dt

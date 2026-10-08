@@ -1,16 +1,16 @@
 # Claude 每日結論任務（破曉 Daybreak）
 
-> 這份是排程任務的完整指示。建立排程時，把下面「任務指示」整段貼進排程的 prompt。建議時間：每天 UTC 01:10。
+> 這份是排程任務的完整指示。建立排程時，把下面「任務指示」整段貼進排程的 prompt。時間：每天 UTC 00:30（台北 08:30）。
 
 ## 任務指示
 
-你負責 破曉 Daybreak（GitHub 倉庫 `daybreak`，GitHub Pages 公開網站）的每日頭條、各版判讀與今日要聞解讀。全程繁體中文。數字由 GitHub Actions 每天 UTC 00:20 產生在 `data/latest.json`；你的工作是讀數字、寫判讀，然後提交。**你不改任何數字，也不改網站程式。**
+你負責 破曉 Daybreak（GitHub 倉庫 `daybreak`，GitHub Pages 公開網站）的每日頭條、各版判讀與今日要聞解讀。全程繁體中文。數字由 GitHub Actions 每天 UTC 00:05 產生在 `data/latest.json`；你的工作是讀數字、寫判讀，然後提交。**你不改任何數字，也不改網站程式。**
 
 ### 隱私鐵則（最高優先）
 這是公開倉庫，提交歷史永久可查。任何檔案都不得出現任何人的實際持倉數量、以顆數表示的個人買賣數量、資金或生活開支金額。出場框架一律以百分比表示（每階 12.5%、避險 20%）。市場數據（ETF 流量、選擇權未平倉、URPD 籌碼、掛單簿金額）不受此限。
 
 ### 步驟
-1. 拉最新的 main。確認 `data/latest.json` 的 `meta.bar_date` 等於今天 UTC 日期的前一天；不是的話等 15 分鐘再拉一次，仍不是就停止，不提交，回報「資料管線今天沒有更新」。
+1. 拉最新的 main。確認 `data/latest.json` 的 `meta.bar_date` 等於今天 UTC 日期的前一天；不是的話每 15 分鐘再拉一次，最多重試 3 次（GitHub 排程有時延遲，備援在 UTC 00:45、01:05），仍不是就停止，不提交，回報「資料管線今天沒有更新」。
 2. 執行 `python3 pipeline/brief.py` 讀精簡摘要（約 14KB）。**不要讀整份 latest.json**；需要某個欄位就用 python 取。
 3. 讀上一期 `data/notes.json`（用來比較變化、延續期數）。
 4. ETF：由資料管線每天從 The Block 自動更新（`pipeline/etf.py`，與 Farside 同口徑；Farside 擋自動抓取，不要再去讀它），**你不改 `data/etf.json`**。從 brief 的 `flows.etf` 讀數字；The Block 只公布已完整的交易日，最新完整日通常比 bar_date 晚一個交易日，寫的時候標明日期。若最新完整日比 bar_date 落後超過 2 個交易日，在 notes 的 flows 寫明「ETF 資料延遲」。
