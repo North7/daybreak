@@ -38,5 +38,5 @@ jobs:
           git add data pipeline/state_min.json
           git diff --cached --quiet && echo "no changes" && exit 0
           git commit -m "data: $(python3 -c "import json;print(json.load(open('data/latest.json'))['meta']['bar_date'])")"
-          git pull --rebase
+          git pull --rebase --autostash
           git push

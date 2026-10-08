@@ -37,5 +37,5 @@ jobs:
           git add pipeline/bd_cache
           git diff --cached --quiet && echo "no changes" && exit 0
           git commit -m "cache: bitcoin-data rotation $(date -u +%F)"
-          git pull --rebase
+          git pull --rebase --autostash
           git push
