@@ -3,6 +3,9 @@ name: Daily data
 on:
   schedule:
     - cron: "20 0 * * *"   # 每天 UTC 00:20（台北 08:20），日線收盤後
+    # GitHub 高負載時排程可能延遲或整次被丟掉（2026-10-08 22:50／00:20 兩個排程都沒觸發），加兩個備援時間；已更新就直接結束
+    - cron: "45 0 * * *"
+    - cron: "5 1 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -18,20 +21,34 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
+      - name: Skip if already updated
+        id: chk
+        if: github.event_name == 'schedule'
+        run: |
+          python3 - <<'PY' >> "$GITHUB_OUTPUT"
+          import json, datetime as dt
+          y = (dt.datetime.now(dt.timezone.utc).date() - dt.timedelta(days=1)).isoformat()
+          print('skip=' + ('true' if json.load(open('data/latest.json'))['meta']['bar_date'] == y else 'false'))
+          PY
       - uses: actions/setup-python@v5
+        if: steps.chk.outputs.skip != 'true'
         with:
           python-version: "3.12"
       - name: Install dependencies
+        if: steps.chk.outputs.skip != 'true'
         run: pip install numpy
       - name: Collect market data
+        if: steps.chk.outputs.skip != 'true'
         working-directory: pipeline
         run: |
           UP=$(python3 -c "import json;print(json.load(open('params.json'))['up'])")
           DOWN=$(python3 -c "import json;print(json.load(open('params.json'))['down'])")
           python3 collect.py --up "$UP" --down "$DOWN" --prev-state state_min.json
       - name: Build site data
+        if: steps.chk.outputs.skip != 'true'
         run: python3 pipeline/build.py pipeline/today.json
       - name: Commit
+        if: steps.chk.outputs.skip != 'true'
         run: |
           git config user.name "apogee-bot"
           git config user.email "apogee-bot@users.noreply.github.com"

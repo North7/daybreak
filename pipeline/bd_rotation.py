@@ -44,7 +44,13 @@ def save(m, rows):
 
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--group', choices=sorted(GROUPS))
-    g = ap.parse_args().group or 'AB'[dt.datetime.now(dt.timezone.utc).date().toordinal() % 2]
+    ap.add_argument('--skip-if-fresh', action='store_true', help='這組今天（UTC）已抓過就不再打 API（備援排程用）')
+    args = ap.parse_args(); today = dt.datetime.now(dt.timezone.utc).date()
+    g = args.group or 'AB'[today.toordinal() % 2]
+    if args.skip_if_fresh:
+        try:
+            if all(load(m)[1][:10] == today.isoformat() for m in GROUPS[g]): print(f'{g} 今天已抓過，略過'); sys.exit(0)
+        except RuntimeError: pass
     ok = 0
     for m in GROUPS[g]:
         try: rows = fetch(m); save(m, rows); ok += 1; print(f'{g} {m}: {len(rows)} 筆，最新 {rows[-1].get("d") or rows[-1].get("theDate")}')

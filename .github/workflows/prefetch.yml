@@ -3,6 +3,7 @@ name: Prefetch on-chain
 on:
   schedule:
     - cron: "50 22 * * *"   # 每天 UTC 22:50（台北 06:50），比 Daily data 早 90 分鐘，避開 bitcoin-data 每小時 10 次上限
+    - cron: "15 23 * * *"   # 備援：GitHub 排程可能被丟掉；今天這組已抓過就直接結束
   workflow_dispatch:
     inputs:
       group:
@@ -29,7 +30,7 @@ jobs:
       - name: Fetch rotating bitcoin-data series
         env:
           GROUP: ${{ inputs.group }}
-        run: python3 pipeline/bd_rotation.py ${GROUP:+--group "$GROUP"}
+        run: python3 pipeline/bd_rotation.py ${GROUP:+--group "$GROUP"} ${{ github.event_name == 'schedule' && '--skip-if-fresh' || '' }}
       - name: Commit
         run: |
           git config user.name "apogee-bot"
