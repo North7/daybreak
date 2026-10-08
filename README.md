@@ -11,12 +11,13 @@ assets/app.js           路由、圖表、互動（無外部套件）
 assets/logo.svg         Logo（也是 favicon）
 data/latest.json        每日資料（由 GitHub Actions 產生，不要手改）
 data/notes.json         每日頭條、各版判讀、今天該做什麼、今天變了什麼、今日要聞與研報解讀（由 Claude 每日任務寫入）
-data/etf.json           ETF 每日淨流量（由 Claude 每日任務從 Farside 更新）
+data/etf.json           ETF 每日淨流量（資料管線從 The Block 自動更新，與 Farside 同口徑）
 data/model.json         固定模型參數：出場框架、長期路徑（每月檢討時才改）
 data/history/index.json 每日快照索引
 pipeline/collect.py     抓取所有 API 並計算指標 → pipeline/today.json
 pipeline/build.py       today.json → data/latest.json
 pipeline/brief.py       印出精簡摘要給 Claude 讀
+pipeline/etf.py         從 The Block 更新 ETF 每日淨流量
 pipeline/stamp_assets.py 改過 assets/ 後執行：更新 index.html 的 ?v= 版本號，避免手機拿到新舊混搭的 CSS／JS
 pipeline/bd_rotation.py bitcoin-data 請求分配：每日即時 10 個 + 前一晚輪替 5 個
 pipeline/bd_cache/      輪替指標的快取（由 Prefetch on-chain 寫入）
@@ -52,7 +53,7 @@ docs/CLAUDE_DAILY.md    Claude 每日結論任務的完整指示
 ## 已知限制
 
 - bitcoin-data.com 免費層每小時 10 次、每日 15 次，管線共用 20 個端點，所以分兩批：00:20 即時抓 10 個（頂部三指標、成本基礎、籌碼流向），其餘 10 個分 A／B 兩組在前一晚 22:50 輪流抓，每個每 2 天更新一次，頁面顯示的是資料本身的日期。清單見 `pipeline/bd_rotation.py`。GitHub Actions 的共用 IP 偶爾仍會被限流，失敗的項目在網站上顯示「本日未取得」。
-- Farside 擋自動化請求，所以 ETF 由 Claude 任務用網頁讀取更新。
+- Farside 用 Cloudflare 擋所有自動抓取，ETF 改用 The Block 的圖表 JSON（pipeline/etf.py，逐日與 Farside 比對一致）；The Block 只公布已完整的交易日，約晚一天。
 - 掛單簿是 Actions 執行當下的快照；Binance 期貨與 Bybit 讀不到。
 
 僅供研究參考，非投資建議。

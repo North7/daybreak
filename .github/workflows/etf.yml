@@ -1,0 +1,31 @@
+name: ETF flows
+
+on:
+  schedule:
+    - cron: "0 14 * * *"   # 每天 UTC 14:00（台北 22:00）：The Block 白天更新前一個完整交易日後再抓一次；Daily data 00:20 也會抓
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-data
+  cancel-in-progress: false
+
+jobs:
+  etf:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Update ETF flows from The Block
+        run: python3 pipeline/etf.py
+      - name: Commit
+        run: |
+          git config user.name "apogee-bot"
+          git config user.email "apogee-bot@users.noreply.github.com"
+          git add data/etf.json data/latest.json
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "etf: $(python3 -c "import json;print(json.load(open('data/etf.json')).get('last_complete'))")"
+          git pull --rebase --autostash
+          git push

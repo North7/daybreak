@@ -44,6 +44,9 @@ jobs:
           UP=$(python3 -c "import json;print(json.load(open('params.json'))['up'])")
           DOWN=$(python3 -c "import json;print(json.load(open('params.json'))['down'])")
           python3 collect.py --up "$UP" --down "$DOWN" --prev-state state_min.json
+      - name: Update ETF flows
+        if: steps.chk.outputs.skip != 'true'
+        run: python3 pipeline/etf.py
       - name: Build site data
         if: steps.chk.outputs.skip != 'true'
         run: python3 pipeline/build.py pipeline/today.json

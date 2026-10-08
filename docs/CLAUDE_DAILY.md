@@ -4,7 +4,7 @@
 
 ## 任務指示
 
-你負責 破曉 Daybreak（GitHub 倉庫 `daybreak`，GitHub Pages 公開網站）的每日頭條、各版判讀與今日要聞解讀。全程繁體中文。數字由 GitHub Actions 每天 UTC 00:20 產生在 `data/latest.json`；你的工作是讀數字、寫判讀、更新 ETF，然後提交。**你不改任何數字，也不改網站程式。**
+你負責 破曉 Daybreak（GitHub 倉庫 `daybreak`，GitHub Pages 公開網站）的每日頭條、各版判讀與今日要聞解讀。全程繁體中文。數字由 GitHub Actions 每天 UTC 00:20 產生在 `data/latest.json`；你的工作是讀數字、寫判讀，然後提交。**你不改任何數字，也不改網站程式。**
 
 ### 隱私鐵則（最高優先）
 這是公開倉庫，提交歷史永久可查。任何檔案都不得出現任何人的實際持倉數量、以顆數表示的個人買賣數量、資金或生活開支金額。出場框架一律以百分比表示（每階 12.5%、避險 20%）。市場數據（ETF 流量、選擇權未平倉、URPD 籌碼、掛單簿金額）不受此限。
@@ -13,11 +13,11 @@
 1. 拉最新的 main。確認 `data/latest.json` 的 `meta.bar_date` 等於今天 UTC 日期的前一天；不是的話等 15 分鐘再拉一次，仍不是就停止，不提交，回報「資料管線今天沒有更新」。
 2. 執行 `python3 pipeline/brief.py` 讀精簡摘要（約 14KB）。**不要讀整份 latest.json**；需要某個欄位就用 python 取。
 3. 讀上一期 `data/notes.json`（用來比較變化、延續期數）。
-4. ETF：用 WebFetch 讀 https://farside.co.uk/btc/ ，把最近幾天的每日 Total（百萬美元）upsert 到 `data/etf.json` 的 `rows`（`{d, musd, partial}`；當天未完整回報 partial=true，完整後覆寫為 false；只保留最近 60 筆）。讀不到就不改，在 notes 的 flows 寫明「ETF 本日未取得」。
+4. ETF：由資料管線每天從 The Block 自動更新（`pipeline/etf.py`，與 Farside 同口徑；Farside 擋自動抓取，不要再去讀它），**你不改 `data/etf.json`**。從 brief 的 `flows.etf` 讀數字；The Block 只公布已完整的交易日，最新完整日通常比 bar_date 晚一個交易日，寫的時候標明日期。若最新完整日比 bar_date 落後超過 2 個交易日，在 notes 的 flows 寫明「ETF 資料延遲」。
 5. 查新聞：用 WebSearch／WebFetch 找過去 24–36 小時 6–10 則對比特幣重要的消息（宏觀與利率、資金與 ETF、衍生品、鏈上、監管、產業與機構、地緣與能源），每則都要打開原文查證發布日期與數字。
 6. 查研報：先用 WebFetch 打開 Glassnode 研報列表 https://research.glassnode.com （The Week On-chain 約每週二／三、Market Pulse 每週日、Macro Special 不定期），找出最近 7 天的每一期並打開原文讀重點；再查 The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。每一期的 `date` 寫原文發布日、`url` 寫原文網址。確認列表上真的沒有新一期，才沿用最近一期並在 `research.summary` 寫明「無新一期」。
 7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。
-8. 驗證：`python3 -c "import json;json.load(open('data/notes.json'));json.load(open('data/etf.json'))"`；再用 python 掃描 notes.json，確認沒有違反隱私鐵則的內容。
+8. 驗證：`python3 -c "import json;json.load(open('data/notes.json'))"`；再用 python 掃描 notes.json，確認沒有違反隱私鐵則的內容。
 9. 提交訊息 `notes: <bar_date>`，推送到 main。
 
 ### notes.json 格式
