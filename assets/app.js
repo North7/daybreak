@@ -538,6 +538,8 @@
     var r = ROUTES.filter(function (x) { return x[0] === id; })[0] || ROUTES[0]; id = r[0];
     mounted.forEach(function (el) { if (ro) ro.unobserve(el); }); mounted = []; hideTip();
     document.querySelectorAll('.nav button').forEach(function (b) { b.setAttribute('aria-current', b.getAttribute('data-r') === id ? 'page' : 'false'); });
+    var nv = $('#nav'), nb = nv.querySelector('[aria-current="page"]');   // 行動版頂部導航可橫向捲動：把目前版面捲到中間
+    if (nb && nv.scrollWidth > nv.clientWidth) nv.scrollTo({ left: nb.offsetLeft - nv.offsetLeft - (nv.clientWidth - nb.offsetWidth) / 2, behavior: reduced ? 'auto' : 'smooth' });
     $('#crumb-k').textContent = r[2]; $('#crumb-t').textContent = r[1];
     document.title = (id === 'overview' ? '破曉 Daybreak' : r[1] + '｜破曉 Daybreak');
     var v = $('#view'); v.classList.remove('view-enter');
@@ -558,6 +560,24 @@
     $('#nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) go(b.getAttribute('data-r')); });
     document.addEventListener('keydown', function (e) { if (e.target.closest('input,textarea') || e.metaKey || e.ctrlKey || e.altKey) return; var n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROUTES.length) go(ROUTES[n - 1][0]); });
     window.addEventListener('hashchange', function () { render(location.hash.slice(1)); });
+    // 行動版：在內容區左右滑動切換到相鄰版面。圖表、表格、滑桿等本身要橫向操作的區域，以及螢幕邊緣（瀏覽器返回手勢）不觸發
+    var sw = null, view = $('#view'), mq = window.matchMedia('(max-width: 860px)');
+    view.addEventListener('touchstart', function (e) {
+      sw = null;
+      var p = e.touches[0];
+      if (e.touches.length !== 1 || !mq.matches || p.clientX < 24 || p.clientX > window.innerWidth - 24) return;
+      if (e.target.closest('input, textarea, select, svg, .chart, .runway, #mega, .tbl-wrap, .seg, .filters')) return;
+      for (var el = e.target; el && el !== view; el = el.parentElement) if (el.scrollWidth > el.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(el).overflowX)) return;
+      sw = { x: p.clientX, y: p.clientY, t: Date.now() };
+    }, { passive: true });
+    view.addEventListener('touchcancel', function () { sw = null; }, { passive: true });
+    view.addEventListener('touchend', function (e) {
+      if (!sw) return;
+      var p = e.changedTouches[0], dx = p.clientX - sw.x, dy = p.clientY - sw.y, dt = Date.now() - sw.t; sw = null;
+      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.8 || dt > 800) return;
+      var i = ROUTES.map(function (r) { return r[0]; }).indexOf(cur) + (dx < 0 ? 1 : -1);
+      if (i >= 0 && i < ROUTES.length) go(ROUTES[i][0]);
+    }, { passive: true });
     var tt = $('#theme');
     function setTheme(v) { if (v === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); else document.documentElement.removeAttribute('data-theme'); tt.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-t') === v); }); }
     tt.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var v = b.getAttribute('data-t'); setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {} mounted.forEach(function (el) { el._draw && el._draw(el); }); });

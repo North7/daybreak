@@ -466,3 +466,7 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .deltas .fig { font-family: var(--f-mono); font-size: 12px; color: var(--red-ink); margin-bottom: 3px; }
 .deltas p { margin: 0; font-size: 13px; color: var(--ink-2); line-height: 1.65; }
 @media (max-width: 560px) { .acts li { grid-template-columns: minmax(0, 1fr); gap: 4px; } .light + .light { border-left: 0; padding-left: 0; border-top: 1px solid var(--line); } }
+
+/* 切換版面提示：桌面顯示鍵盤、行動版顯示滑動 */
+.hint-sw { display: none; }
+@media (max-width: 860px) { .hint-kb { display: none; } .hint-sw { display: inline; } }
