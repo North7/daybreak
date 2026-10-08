@@ -9,6 +9,11 @@ on:
     - cron: "45 0 * * *"
     - cron: "5 1 * * *"
   workflow_dispatch: {}
+  # GitHub 定時排程常延遲數小時（2026-10-08 實測：00:45 的排程 06:14 才跑）。08:30 的 Claude 日報發現資料還沒更新時，
+  # 會把目前時間寫進 .github/run-daily 並推送，推送觸發的工作會立刻執行
+  push:
+    branches: [main]
+    paths: [".github/run-daily"]
 
 permissions:
   contents: write
