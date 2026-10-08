@@ -16,6 +16,7 @@
   var css = function (v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); };
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   var MQ = window.matchMedia('(max-width: 860px)');   // 行動版：導航橫排
+  try { history.scrollRestoration = 'manual'; } catch (e) {}   // 由網址決定開在哪一版，不沿用瀏覽器記住的捲動位置
 
   /* ---------------- Tooltip ---------------- */
   var tip = null;
@@ -533,40 +534,59 @@
       panel('span-5', '資料來源', '', '<div class="events">' + [['價格、均線、ATR', 'Kraken 日線（UTC）'], ['波動率、基差、選擇權', 'Deribit 公開 API'], ['MVRV、交易所供給、冪律', 'CoinMetrics Community'], ['SOPR、NUPL、籌碼', 'bitcoin-data.com'], ['算力、難度', 'mempool.space'], ['相關係數、利率', 'FRED'], ['ETF 流量', 'Farside Investors'], ['掛單簿', 'Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Hyperliquid'], ['綜合訊號', 'Tidemark（north7.github.io）']].map(function (r) { return '<div class="event" style="grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)"><span>' + r[0] + '</span><span style="color:var(--ink-2)">' + r[1] + '</span></div>'; }).join('') + '</div><p class="note">資料日 ' + D.meta.bar_date + ' · 管線產出 ' + (D.meta.generated_utc || '').replace('T', ' ').slice(0, 16) + ' UTC · 結論 ' + (N ? (N.written_utc || '').replace('T', ' ').slice(0, 16) + ' UTC' : '—') + '</p>') + '</div>';
   };
 
-  /* ---------------- Router ---------------- */
-  var cur = null;
-  function render(id) {
-    var r = ROUTES.filter(function (x) { return x[0] === id; })[0] || ROUTES[0]; id = r[0];
-    mounted.forEach(function (el) { if (ro) ro.unobserve(el); }); mounted = []; hideTip();
+  /* ---------------- 連續版面 ----------------
+     十個版面依序疊成一頁，只靠捲動就能從頭版看到方法、再捲回來。捲過版面交界時：導航、標題與網址跟著切換，
+     並掃一道換頁線（桌面往下一版由下往上、往上一版由上往下；行動版往下一版由右往左、往上一版由左往右）。
+     點導航、按數字鍵、行動版左右滑則直接跳到該版面開頭。 */
+  var cur = null, seen = {};
+  function ids0() { return ROUTES.map(function (r) { return r[0]; }); }
+  function stickyH() { var el = MQ.matches ? document.querySelector('.rail') : document.querySelector('.top'); return el ? el.offsetHeight : 0; }
+  function renderAll() {
+    var v = $('#view');
+    v.innerHTML = ROUTES.map(function (r, i) {
+      var mh = r[0] === 'overview' ? '' : '<header class="mod-h"><span class="idx">' + ('0' + (i + 1)).slice(-2) + '</span><h1>' + r[1] + '</h1><p>' + r[2] + ' · ' + fmt.md(D.meta.bar_date) + ' 收盤版</p></header>';
+      var body; try { body = V[r[0]](); } catch (e) { body = '<p class="err">這個模組載入失敗：' + esc(e.message) + '</p>'; console.error(e); }
+      return '<section class="pg" id="pg-' + r[0] + '" data-r="' + r[0] + '" aria-label="' + r[1] + '">' + mh + body + '</section>';
+    }).join('');
+    ROUTES.forEach(function (r) { try { if (V[r[0]].after) V[r[0]].after(); } catch (e) { console.error(e); } });
+    mounted.forEach(observe); settleMeters(v);
+    void v.offsetWidth; v.classList.add('view-enter');
+  }
+  function activate(id) {
+    if (id === cur) return;
+    var r = ROUTES.filter(function (x) { return x[0] === id; })[0], ids = ids0();
+    if (cur && !reduced) {
+      var fwd = ids.indexOf(id) > ids.indexOf(cur), w = $('#wipe');
+      w.className = 'wipe ' + (MQ.matches ? (fwd ? 'rtl' : 'ltr') : 'v ' + (fwd ? 'up' : 'down')); void w.offsetWidth; w.classList.add('on');
+    }
+    cur = id; hideTip();
     document.querySelectorAll('.nav button').forEach(function (b) { b.setAttribute('aria-current', b.getAttribute('data-r') === id ? 'page' : 'false'); });
     var nv = $('#nav'), nb = nv.querySelector('[aria-current="page"]');   // 行動版頂部導航可橫向捲動：把目前版面捲到中間
     if (nb && nv.scrollWidth > nv.clientWidth) nv.scrollTo({ left: nb.offsetLeft - nv.offsetLeft - (nv.clientWidth - nb.offsetWidth) / 2, behavior: reduced ? 'auto' : 'smooth' });
     $('#crumb-k').textContent = r[2]; $('#crumb-t').textContent = r[1];
     document.title = (id === 'overview' ? '破曉 Daybreak' : r[1] + '｜破曉 Daybreak');
-    var v = $('#view'); v.classList.remove('view-enter');
-    var ix = ('0' + (ROUTES.indexOf(r) + 1)).slice(-2), mh = id === 'overview' ? '' : '<header class="mod-h"><span class="idx">' + ix + '</span><h1>' + r[1] + '</h1><p>' + r[2] + ' · ' + fmt.md(D.meta.bar_date) + ' 收盤版</p></header>';
-    var ids = ROUTES.map(function (x) { return x[0]; }), fwd = ids.indexOf(id) > ids.indexOf(cur);
-    if (cur && cur !== id && !reduced) {   // 掃描線方向跟著換頁方向：行動版往下一版由右往左（同手指左滑），桌面往下一版由下往上
-      var w = $('#wipe'); w.className = 'wipe ' + (MQ.matches ? (fwd ? 'rtl' : 'ltr') : 'v ' + (fwd ? 'up' : 'down')); void w.offsetWidth; w.classList.add('on');
-    }
-    var nx = ROUTES[ids.indexOf(id) + 1];
-    var nextHtml = nx ? '<a class="next-pg" href="#' + nx[0] + '" data-r="' + nx[0] + '"><span class="k">下一版</span><span class="i">' + ('0' + (ids.indexOf(id) + 2)).slice(-2) + '</span><b>' + nx[1] + '</b><span class="h"></span><span class="bar" id="next-bar"></span></a>' : '';
-    cur = id;
-    try { v.innerHTML = mh + V[id]() + nextHtml; } catch (e) { v.innerHTML = '<p class="err">這個模組載入失敗：' + esc(e.message) + '</p>'; console.error(e); }
-    void v.offsetWidth; v.classList.add('view-enter');
-    try { if (V[id].after) V[id].after(); } catch (e) { console.error(e); }
-    decodeNums(v);
-    mounted.forEach(observe); settleMeters(v);
-    try { localStorage.setItem('daybreak.route', id); } catch (e) {}
+    if (location.hash.slice(1) !== id) { try { history.replaceState(null, '', '#' + id); } catch (e) {} }
+    if (!seen[id]) { seen[id] = 1; decodeNums($('#pg-' + id)); }
   }
-  function go(id) { if (location.hash.slice(1) !== id) { try { history.replaceState(null, '', '#' + id); } catch (e) {} } render(id); window.scrollTo(0, 0); }
-
-  function ids0() { return ROUTES.map(function (r) { return r[0]; }); }
+  // 目前版面＝開頭已經捲過畫面 40% 高度的最後一個版面
+  function spy() {
+    var line = stickyH() + (window.innerHeight - stickyH()) * 0.4, pick = ROUTES[0][0];
+    document.querySelectorAll('#view .pg').forEach(function (sec) { if (sec.getBoundingClientRect().top <= line) pick = sec.getAttribute('data-r'); });
+    activate(pick);
+  }
+  function go(id) {
+    var sec = $('#pg-' + id); if (!sec) return;
+    var y = 0; for (var el = sec; el; el = el.offsetParent) y += el.offsetTop;   // 用 offsetTop 計算，不受進場動畫的位移影響
+    window.scrollTo({ top: id === ROUTES[0][0] ? 0 : y - stickyH(), behavior: 'instant' });
+    spy();
+  }
   function shell() {
     $('#nav').innerHTML = ROUTES.map(function (r, i) { return '<button type="button" data-r="' + r[0] + '"><span class="i">' + ('0' + (i + 1)).slice(-2) + '</span><span>' + r[1] + '</span></button>'; }).join('');
     $('#nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) go(b.getAttribute('data-r')); });
-    document.addEventListener('keydown', function (e) { if (e.target.closest('input,textarea') || e.metaKey || e.ctrlKey || e.altKey) return; var n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROUTES.length) go(ROUTES[n - 1][0]); });
-    window.addEventListener('hashchange', function () { render(location.hash.slice(1)); });
+    document.addEventListener('keydown', function (e) { if ((e.target.closest && e.target.closest('input,textarea')) || e.metaKey || e.ctrlKey || e.altKey) return; var n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROUTES.length) go(ROUTES[n - 1][0]); });
+    window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h !== cur) go(h); });
+    var ticking = false;
+    window.addEventListener('scroll', function () { if (ticking) return; ticking = true; requestAnimationFrame(function () { ticking = false; spy(); }); }, { passive: true });
     // 行動版：在內容區左右滑動切換到相鄰版面。圖表、表格、滑桿等本身要橫向操作的區域，以及螢幕邊緣（瀏覽器返回手勢）不觸發
     var sw = null, view = $('#view');
     view.addEventListener('touchstart', function (e) {
@@ -584,30 +604,6 @@
       if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.8 || dt > 800) return;
       var i = ROUTES.map(function (r) { return r[0]; }).indexOf(cur) + (dx < 0 ? 1 : -1);
       if (i >= 0 && i < ROUTES.length) go(ROUTES[i][0]);
-    }, { passive: true });
-    view.addEventListener('click', function (e) { var a = e.target.closest('.next-pg'); if (a) { e.preventDefault(); go(a.getAttribute('data-r')); } });
-    // 桌面：捲到版末後再往下捲一段 → 下一版；在版首再往上捲一段 → 上一版（停在上一版末尾）。
-    // 必須在「這一輪滾動開始時」就已經到底／到頂，避免一路捲到底的慣性直接翻頁；翻頁後等滾輪停 350ms 才接受下一次
-    var wh = { acc: 0, last: 0, edge: 0, lock: 0 }, NEED = 240;
-    function unlock() { clearTimeout(wh.lock); wh.lock = setTimeout(function () { wh.lock = 0; }, 350); }
-    window.addEventListener('wheel', function (e) {
-      if (MQ.matches || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY) || !e.deltaY) return;
-      var now = Date.now(), gap = now - wh.last; wh.last = now;
-      if (wh.lock) { unlock(); return; }
-      var dir = e.deltaY > 0 ? 1 : -1, doc = document.documentElement;
-      for (var el = e.target; el && el.nodeType === 1 && el !== doc; el = el.parentElement)   // 內層可捲動區還沒捲完就交給它
-        if (el.scrollHeight > el.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(el).overflowY) && (dir > 0 ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollTop > 0)) return;
-      var atEdge = dir > 0 ? window.innerHeight + window.scrollY >= doc.scrollHeight - 2 : window.scrollY <= 0;
-      if (gap > 300) { wh.acc = 0; wh.edge = atEdge ? dir : 0; }
-      var bar = $('#next-bar');
-      if (wh.edge !== dir || !atEdge) { wh.acc = 0; if (bar) bar.style.transform = ''; return; }
-      wh.acc += Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
-      if (bar && dir > 0) bar.style.transform = 'scaleX(' + Math.min(1, wh.acc / NEED) + ')';
-      if (wh.acc < NEED) return;
-      var i = ids0().indexOf(cur) + dir; wh.acc = 0; wh.edge = 0;
-      if (i < 0 || i >= ROUTES.length) return;
-      unlock(); go(ROUTES[i][0]);
-      if (dir < 0) window.scrollTo(0, doc.scrollHeight);
     }, { passive: true });
     var tt = $('#theme');
     function setTheme(v) { if (v === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); else document.documentElement.removeAttribute('data-theme'); tt.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-t') === v); }); }
@@ -630,7 +626,11 @@
   Promise.all([load('data/latest.json'), load('data/notes.json').catch(function () { return null; })]).then(function (a) {
     D = a[0]; N = a[1] && a[1].date === D.meta.bar_date ? a[1] : (a[1] ? Object.assign({}, a[1], { stale: true }) : null);
     shell();
-    var start = location.hash.slice(1); if (!start) { try { start = localStorage.getItem('daybreak.route') || 'overview'; } catch (e) { start = 'overview'; } }
-    render(start);
+    renderAll();
+    var start = location.hash.slice(1);
+    if (start && start !== 'overview' && $('#pg-' + start)) {
+      go(start);   // 字型載入後版面會變高，載完再對齊一次（使用者已自行捲動就不動）
+      var y0 = window.scrollY; if (document.fonts) document.fonts.ready.then(function () { if (Math.abs(window.scrollY - y0) < 2) go(start); });
+    } else { window.scrollTo({ top: 0, behavior: 'instant' }); spy(); }
   }).catch(function (e) { $('#view').innerHTML = '<p class="err">資料載入失敗：' + esc(e.message) + '。請稍後重新整理。</p>'; });
 })();

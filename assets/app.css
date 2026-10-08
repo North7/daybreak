@@ -478,13 +478,8 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .hint-sw { display: none; }
 @media (max-width: 860px) { .hint-kb { display: none; } .hint-sw { display: inline; } }
 
-/* 版末「下一版」：桌面繼續往下捲動或點擊即翻頁，行動版點擊或左滑 */
-.next-pg { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-top: 8px; padding: 18px 0 4px; border-top: 1px solid var(--ink); color: var(--ink); text-decoration: none; }
-.next-pg .k { font-size: 11.5px; color: var(--ink-3); letter-spacing: .04em; }
-.next-pg .i { font-family: var(--f-mono); font-size: 13px; color: var(--red-ink); }
-.next-pg b { font-family: var(--f-cjk-display); font-size: 20px; font-weight: 900; }
-.next-pg .h { margin-left: auto; font-size: 12px; color: var(--ink-3); }
-.next-pg .h::after { content: "繼續往下捲動 ↓"; }
-.next-pg:hover b { color: var(--red-ink); }
-.next-pg .bar { flex-basis: 100%; display: block; height: 2px; background: var(--red); transform-origin: left; transform: scaleX(0); transition: transform .12s linear; }
-@media (max-width: 860px) { .next-pg .h::after { content: "向左滑 ←"; } }
+/* 連續版面：十個版面依序疊成一頁；最後一版至少一屏高，才能捲到畫面頂端成為目前版面 */
+.pg { display: grid; gap: 28px; min-width: 0; align-content: start; }
+.pg + .pg { margin-top: 88px; }
+.pg:last-child { min-height: calc(100vh - 120px); }
+@media (max-width: 860px) { .pg { gap: 24px; } .pg + .pg { margin-top: 56px; } }
