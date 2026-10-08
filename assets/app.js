@@ -15,6 +15,7 @@
   var dnOf = function (s) { return Math.round(Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)) / 864e5); };
   var css = function (v) { return getComputedStyle(document.documentElement).getPropertyValue(v).trim(); };
   var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var MQ = window.matchMedia('(max-width: 860px)');   // 行動版：導航橫排
 
   /* ---------------- Tooltip ---------------- */
   var tip = null;
@@ -544,9 +545,14 @@
     document.title = (id === 'overview' ? '破曉 Daybreak' : r[1] + '｜破曉 Daybreak');
     var v = $('#view'); v.classList.remove('view-enter');
     var ix = ('0' + (ROUTES.indexOf(r) + 1)).slice(-2), mh = id === 'overview' ? '' : '<header class="mod-h"><span class="idx">' + ix + '</span><h1>' + r[1] + '</h1><p>' + r[2] + ' · ' + fmt.md(D.meta.bar_date) + ' 收盤版</p></header>';
-    if (cur && cur !== id && !reduced) { var w = $('#wipe'); w.classList.remove('on'); void w.offsetWidth; w.classList.add('on'); }
+    var ids = ROUTES.map(function (x) { return x[0]; }), fwd = ids.indexOf(id) > ids.indexOf(cur);
+    if (cur && cur !== id && !reduced) {   // 掃描線方向跟著換頁方向：行動版往下一版由右往左（同手指左滑），桌面往下一版由下往上
+      var w = $('#wipe'); w.className = 'wipe ' + (MQ.matches ? (fwd ? 'rtl' : 'ltr') : 'v ' + (fwd ? 'up' : 'down')); void w.offsetWidth; w.classList.add('on');
+    }
+    var nx = ROUTES[ids.indexOf(id) + 1];
+    var nextHtml = nx ? '<a class="next-pg" href="#' + nx[0] + '" data-r="' + nx[0] + '"><span class="k">下一版</span><span class="i">' + ('0' + (ids.indexOf(id) + 2)).slice(-2) + '</span><b>' + nx[1] + '</b><span class="h"></span><span class="bar" id="next-bar"></span></a>' : '';
     cur = id;
-    try { v.innerHTML = mh + V[id](); } catch (e) { v.innerHTML = '<p class="err">這個模組載入失敗：' + esc(e.message) + '</p>'; console.error(e); }
+    try { v.innerHTML = mh + V[id]() + nextHtml; } catch (e) { v.innerHTML = '<p class="err">這個模組載入失敗：' + esc(e.message) + '</p>'; console.error(e); }
     void v.offsetWidth; v.classList.add('view-enter');
     try { if (V[id].after) V[id].after(); } catch (e) { console.error(e); }
     decodeNums(v);
@@ -555,17 +561,18 @@
   }
   function go(id) { if (location.hash.slice(1) !== id) { try { history.replaceState(null, '', '#' + id); } catch (e) {} } render(id); window.scrollTo(0, 0); }
 
+  function ids0() { return ROUTES.map(function (r) { return r[0]; }); }
   function shell() {
     $('#nav').innerHTML = ROUTES.map(function (r, i) { return '<button type="button" data-r="' + r[0] + '"><span class="i">' + ('0' + (i + 1)).slice(-2) + '</span><span>' + r[1] + '</span></button>'; }).join('');
     $('#nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) go(b.getAttribute('data-r')); });
     document.addEventListener('keydown', function (e) { if (e.target.closest('input,textarea') || e.metaKey || e.ctrlKey || e.altKey) return; var n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROUTES.length) go(ROUTES[n - 1][0]); });
     window.addEventListener('hashchange', function () { render(location.hash.slice(1)); });
     // 行動版：在內容區左右滑動切換到相鄰版面。圖表、表格、滑桿等本身要橫向操作的區域，以及螢幕邊緣（瀏覽器返回手勢）不觸發
-    var sw = null, view = $('#view'), mq = window.matchMedia('(max-width: 860px)');
+    var sw = null, view = $('#view');
     view.addEventListener('touchstart', function (e) {
       sw = null;
       var p = e.touches[0];
-      if (e.touches.length !== 1 || !mq.matches || p.clientX < 24 || p.clientX > window.innerWidth - 24) return;
+      if (e.touches.length !== 1 || !MQ.matches || p.clientX < 24 || p.clientX > window.innerWidth - 24) return;
       if (e.target.closest('input, textarea, select, svg, .chart, .runway, #mega, .tbl-wrap, .seg, .filters')) return;
       for (var el = e.target; el && el !== view; el = el.parentElement) if (el.scrollWidth > el.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(el).overflowX)) return;
       sw = { x: p.clientX, y: p.clientY, t: Date.now() };
@@ -577,6 +584,30 @@
       if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.8 || dt > 800) return;
       var i = ROUTES.map(function (r) { return r[0]; }).indexOf(cur) + (dx < 0 ? 1 : -1);
       if (i >= 0 && i < ROUTES.length) go(ROUTES[i][0]);
+    }, { passive: true });
+    view.addEventListener('click', function (e) { var a = e.target.closest('.next-pg'); if (a) { e.preventDefault(); go(a.getAttribute('data-r')); } });
+    // 桌面：捲到版末後再往下捲一段 → 下一版；在版首再往上捲一段 → 上一版（停在上一版末尾）。
+    // 必須在「這一輪滾動開始時」就已經到底／到頂，避免一路捲到底的慣性直接翻頁；翻頁後等滾輪停 350ms 才接受下一次
+    var wh = { acc: 0, last: 0, edge: 0, lock: 0 }, NEED = 240;
+    function unlock() { clearTimeout(wh.lock); wh.lock = setTimeout(function () { wh.lock = 0; }, 350); }
+    window.addEventListener('wheel', function (e) {
+      if (MQ.matches || e.ctrlKey || Math.abs(e.deltaX) > Math.abs(e.deltaY) || !e.deltaY) return;
+      var now = Date.now(), gap = now - wh.last; wh.last = now;
+      if (wh.lock) { unlock(); return; }
+      var dir = e.deltaY > 0 ? 1 : -1, doc = document.documentElement;
+      for (var el = e.target; el && el.nodeType === 1 && el !== doc; el = el.parentElement)   // 內層可捲動區還沒捲完就交給它
+        if (el.scrollHeight > el.clientHeight + 1 && /auto|scroll/.test(getComputedStyle(el).overflowY) && (dir > 0 ? el.scrollTop + el.clientHeight < el.scrollHeight - 1 : el.scrollTop > 0)) return;
+      var atEdge = dir > 0 ? window.innerHeight + window.scrollY >= doc.scrollHeight - 2 : window.scrollY <= 0;
+      if (gap > 300) { wh.acc = 0; wh.edge = atEdge ? dir : 0; }
+      var bar = $('#next-bar');
+      if (wh.edge !== dir || !atEdge) { wh.acc = 0; if (bar) bar.style.transform = ''; return; }
+      wh.acc += Math.abs(e.deltaY) * (e.deltaMode === 1 ? 16 : e.deltaMode === 2 ? window.innerHeight : 1);
+      if (bar && dir > 0) bar.style.transform = 'scaleX(' + Math.min(1, wh.acc / NEED) + ')';
+      if (wh.acc < NEED) return;
+      var i = ids0().indexOf(cur) + dir; wh.acc = 0; wh.edge = 0;
+      if (i < 0 || i >= ROUTES.length) return;
+      unlock(); go(ROUTES[i][0]);
+      if (dir < 0) window.scrollTo(0, doc.scrollHeight);
     }, { passive: true });
     var tt = $('#theme');
     function setTheme(v) { if (v === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); else document.documentElement.removeAttribute('data-theme'); tt.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-t') === v); }); }

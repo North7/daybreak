@@ -123,9 +123,17 @@ main#view { padding: 32px var(--gut) 64px; display: grid; gap: 28px; outline: no
 .view-enter > *:nth-child(n+5) { animation-delay: .28s; }
 @keyframes materialize { from { opacity: 0; transform: translateY(16px); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
 /* 換版：一道紅色掃描線橫越舞台 */
-.wipe { position: fixed; top: 0; bottom: 0; left: var(--rail); width: 2px; z-index: 80; pointer-events: none; background: var(--red); box-shadow: 0 0 24px 4px color-mix(in srgb, var(--red) 45%, transparent); opacity: 0; }
-.wipe.on { animation: scan .7s var(--snap) forwards; }
-@keyframes scan { 0% { opacity: 1; transform: translateX(0); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(calc(100vw - var(--rail))); } }
+/* 換頁掃描線：方向跟著換頁方向。行動版（導航橫排）左右掃；桌面（導航直排）上下掃——往下一版由下往上、往上一版由上往下 */
+.wipe { --span-x: calc(100vw - var(--rail)); position: fixed; top: 0; bottom: 0; left: var(--rail); width: 2px; z-index: 80; pointer-events: none; background: var(--red); box-shadow: 0 0 24px 4px color-mix(in srgb, var(--red) 45%, transparent); opacity: 0; }
+.wipe.v { bottom: auto; right: 0; width: auto; height: 2px; }
+.wipe.on.ltr { animation: scan-ltr .7s var(--snap) forwards; }
+.wipe.on.rtl { animation: scan-rtl .7s var(--snap) forwards; }
+.wipe.on.up { animation: scan-up .7s var(--snap) forwards; }
+.wipe.on.down { animation: scan-down .7s var(--snap) forwards; }
+@keyframes scan-ltr { 0% { opacity: 1; transform: translateX(0); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(var(--span-x)); } }
+@keyframes scan-rtl { 0% { opacity: 1; transform: translateX(calc(var(--span-x) - 2px)); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(0); } }
+@keyframes scan-up { 0% { opacity: 1; transform: translateY(calc(100vh - 2px)); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(0); } }
+@keyframes scan-down { 0% { opacity: 1; transform: translateY(0); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateY(100vh); } }
 
 /* ---------- Panels ---------- */
 .grid { display: grid; gap: 28px; grid-template-columns: repeat(12, minmax(0, 1fr)); }
@@ -409,8 +417,7 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
   .nav button[aria-current="page"]::before { transform: scaleX(1); }
   .top { position: static; padding: 10px 16px; gap: 10px; }
   .clock, .ticker .asof, .fs-btn { display: none; }
-  .wipe { left: 0; }
-  @keyframes scan { 0% { opacity: 1; transform: translateX(0); } 85% { opacity: 1; } 100% { opacity: 0; transform: translateX(100vw); } }
+  .wipe { left: 0; --span-x: 100vw; }
   main#view { padding: 20px 16px 48px; gap: 24px; }
   .front h2 { font-size: 30px; }
   .mega-hint { display: none; }
@@ -470,3 +477,14 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 /* 切換版面提示：桌面顯示鍵盤、行動版顯示滑動 */
 .hint-sw { display: none; }
 @media (max-width: 860px) { .hint-kb { display: none; } .hint-sw { display: inline; } }
+
+/* 版末「下一版」：桌面繼續往下捲動或點擊即翻頁，行動版點擊或左滑 */
+.next-pg { display: flex; flex-wrap: wrap; align-items: baseline; gap: 12px; margin-top: 8px; padding: 18px 0 4px; border-top: 1px solid var(--ink); color: var(--ink); text-decoration: none; }
+.next-pg .k { font-size: 11.5px; color: var(--ink-3); letter-spacing: .04em; }
+.next-pg .i { font-family: var(--f-mono); font-size: 13px; color: var(--red-ink); }
+.next-pg b { font-family: var(--f-cjk-display); font-size: 20px; font-weight: 900; }
+.next-pg .h { margin-left: auto; font-size: 12px; color: var(--ink-3); }
+.next-pg .h::after { content: "繼續往下捲動 ↓"; }
+.next-pg:hover b { color: var(--red-ink); }
+.next-pg .bar { flex-basis: 100%; display: block; height: 2px; background: var(--red); transform-origin: left; transform: scaleX(0); transition: transform .12s linear; }
+@media (max-width: 860px) { .next-pg .h::after { content: "向左滑 ←"; } }
