@@ -15,8 +15,8 @@
 3. 讀上一期 `data/notes.json`（用來比較變化、延續期數）。
 4. ETF：用 WebFetch 讀 https://farside.co.uk/btc/ ，把最近幾天的每日 Total（百萬美元）upsert 到 `data/etf.json` 的 `rows`（`{d, musd, partial}`；當天未完整回報 partial=true，完整後覆寫為 false；只保留最近 60 筆）。讀不到就不改，在 notes 的 flows 寫明「ETF 本日未取得」。
 5. 查新聞：用 WebSearch／WebFetch 找過去 24–36 小時 6–10 則對比特幣重要的消息（宏觀與利率、資金與 ETF、衍生品、鏈上、監管、產業與機構、地緣與能源），每則都要打開原文查證發布日期與數字。
-6. 查研報：Glassnode（The Week On-chain、Market Pulse、Macro Special）、The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。沒有新一期就沿用最近一期並在 `research.summary` 寫明「無新一期」。
-7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1；`date` 等於 `meta.bar_date`。
+6. 查研報：先用 WebFetch 打開 Glassnode 研報列表 https://research.glassnode.com （The Week On-chain 約每週二／三、Market Pulse 每週日、Macro Special 不定期），找出最近 7 天的每一期並打開原文讀重點；再查 The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。每一期的 `date` 寫原文發布日、`url` 寫原文網址。確認列表上真的沒有新一期，才沿用最近一期並在 `research.summary` 寫明「無新一期」。
+7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。
 8. 驗證：`python3 -c "import json;json.load(open('data/notes.json'));json.load(open('data/etf.json'))"`；再用 python 掃描 notes.json，確認沒有違反隱私鐵則的內容。
 9. 提交訊息 `notes: <bar_date>`，推送到 main。
 
