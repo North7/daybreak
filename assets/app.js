@@ -534,10 +534,10 @@
       panel('span-5', '資料來源', '', '<div class="events">' + [['價格、均線、ATR', 'Kraken 日線（UTC）'], ['波動率、基差、選擇權', 'Deribit 公開 API'], ['MVRV、交易所供給、冪律', 'CoinMetrics Community'], ['SOPR、NUPL、籌碼', 'bitcoin-data.com'], ['算力、難度', 'mempool.space'], ['相關係數、利率', 'FRED'], ['ETF 流量', 'Farside Investors'], ['掛單簿', 'Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Hyperliquid'], ['綜合訊號', 'Tidemark（north7.github.io）']].map(function (r) { return '<div class="event" style="grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)"><span>' + r[0] + '</span><span style="color:var(--ink-2)">' + r[1] + '</span></div>'; }).join('') + '</div><p class="note">資料日 ' + D.meta.bar_date + ' · 管線產出 ' + (D.meta.generated_utc || '').replace('T', ' ').slice(0, 16) + ' UTC · 結論 ' + (N ? (N.written_utc || '').replace('T', ' ').slice(0, 16) + ' UTC' : '—') + '</p>') + '</div>';
   };
 
-  /* ---------------- 連續版面 ----------------
-     十個版面依序疊成一頁，只靠捲動就能從頭版看到方法、再捲回來。捲過版面交界時：導航、標題與網址跟著切換，
-     並掃一道換頁線（桌面往下一版由下往上、往上一版由上往下；行動版往下一版由右往左、往上一版由左往右）。
-     點導航、按數字鍵、行動版左右滑則直接跳到該版面開頭。 */
+  /* ---------------- 版面 ----------------
+     桌面（導航直排）：十個版面依序疊成一頁，只靠捲動就能從頭版看到方法、再捲回來；捲過版面交界時導航、標題與網址跟著切換，
+     掃一道換頁線（往下一版由下往上、往上一版由上往下），點導航或按數字鍵跳到該版開頭。
+     行動版（導航橫排）：一次只顯示一版（.pg.cur），左右滑或點導航換版，換頁線往下一版由右往左、往上一版由左往右。 */
   var cur = null, seen = {};
   function ids0() { return ROUTES.map(function (r) { return r[0]; }); }
   function stickyH() { var el = MQ.matches ? document.querySelector('.rail') : document.querySelector('.top'); return el ? el.offsetHeight : 0; }
@@ -561,6 +561,7 @@
       w.className = 'wipe ' + (MQ.matches ? (fwd ? 'rtl' : 'ltr') : 'v ' + (fwd ? 'up' : 'down')); void w.offsetWidth; w.classList.add('on');
     }
     cur = id; hideTip();
+    document.querySelectorAll('#view .pg').forEach(function (sec) { sec.classList.toggle('cur', sec.getAttribute('data-r') === id); });
     document.querySelectorAll('.nav button').forEach(function (b) { b.setAttribute('aria-current', b.getAttribute('data-r') === id ? 'page' : 'false'); });
     var nv = $('#nav'), nb = nv.querySelector('[aria-current="page"]');   // 行動版頂部導航可橫向捲動：把目前版面捲到中間
     if (nb && nv.scrollWidth > nv.clientWidth) nv.scrollTo({ left: nb.offsetLeft - nv.offsetLeft - (nv.clientWidth - nb.offsetWidth) / 2, behavior: reduced ? 'auto' : 'smooth' });
@@ -571,6 +572,7 @@
   }
   // 目前版面＝開頭已經捲過畫面 40% 高度的最後一個版面
   function spy() {
+    if (MQ.matches) return;   // 行動版分頁顯示，不跟捲動切換
     var line = stickyH() + (window.innerHeight - stickyH()) * 0.4, pick = ROUTES[0][0];
     document.querySelectorAll('#view .pg').forEach(function (sec) { if (sec.getBoundingClientRect().top <= line) pick = sec.getAttribute('data-r'); });
     activate(pick);
@@ -578,6 +580,7 @@
   function docTop(sec) { var y = 0; for (var el = sec; el; el = el.offsetParent) y += el.offsetTop; return y; }   // 用 offsetTop 計算，不受進場動畫的位移影響
   function go(id) {
     var sec = $('#pg-' + id); if (!sec) return;
+    if (MQ.matches) { activate(id); window.scrollTo({ top: 0, behavior: 'instant' }); return; }
     window.scrollTo({ top: id === ROUTES[0][0] ? 0 : docTop(sec) - stickyH() - GAP, behavior: 'instant' });
     spy();
   }
@@ -585,6 +588,9 @@
     $('#nav').innerHTML = ROUTES.map(function (r, i) { return '<button type="button" data-r="' + r[0] + '"><span class="i">' + ('0' + (i + 1)).slice(-2) + '</span><span>' + r[1] + '</span></button>'; }).join('');
     $('#nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) go(b.getAttribute('data-r')); });
     document.addEventListener('keydown', function (e) { if ((e.target.closest && e.target.closest('input,textarea')) || e.metaKey || e.ctrlKey || e.altKey) return; var n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROUTES.length) go(ROUTES[n - 1][0]); });
+    // 跨過 860px（旋轉、縮放視窗）時切換顯示方式，停在同一版
+    var onMode = function () { if (MQ.matches) window.scrollTo({ top: 0, behavior: 'instant' }); else go(cur); };
+    if (MQ.addEventListener) MQ.addEventListener('change', onMode); else if (MQ.addListener) MQ.addListener(onMode);
     window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h !== cur) go(h); });
     // 桌面換頁頓點：滾輪捲過版面開頭時，先停在「該版標題貼齊頂部列」的位置，頓 HOLD 毫秒（期間的滾輪與慣性吃掉），之後照常捲動
     var hold = 0, HOLD = 260;
@@ -608,8 +614,8 @@
     view.addEventListener('touchstart', function (e) {
       sw = null;
       var p = e.touches[0];
-      if (e.touches.length !== 1 || !MQ.matches || p.clientX < 24 || p.clientX > window.innerWidth - 24) return;
-      if (e.target.closest('input, textarea, select, svg, .chart, .runway, #mega, .tbl-wrap, .seg, .filters')) return;
+      if (e.touches.length !== 1 || !MQ.matches || p.clientX < 16 || p.clientX > window.innerWidth - 16) return;
+      if (e.target.closest('input, textarea, select')) return;   // 滑桿要自己用橫向手勢
       for (var el = e.target; el && el !== view; el = el.parentElement) if (el.scrollWidth > el.clientWidth + 1 && /auto|scroll/.test(getComputedStyle(el).overflowX)) return;
       sw = { x: p.clientX, y: p.clientY, t: Date.now() };
     }, { passive: true });
@@ -617,7 +623,7 @@
     view.addEventListener('touchend', function (e) {
       if (!sw) return;
       var p = e.changedTouches[0], dx = p.clientX - sw.x, dy = p.clientY - sw.y, dt = Date.now() - sw.t; sw = null;
-      if (Math.abs(dx) < 60 || Math.abs(dx) < Math.abs(dy) * 1.8 || dt > 800) return;
+      if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.2 || dt > 1000) return;
       var i = ROUTES.map(function (r) { return r[0]; }).indexOf(cur) + (dx < 0 ? 1 : -1);
       if (i >= 0 && i < ROUTES.length) go(ROUTES[i][0]);
     }, { passive: true });
@@ -647,6 +653,6 @@
     if (start && start !== 'overview' && $('#pg-' + start)) {
       go(start);   // 字型載入後版面會變高，載完再對齊一次（使用者已自行捲動就不動）
       var y0 = window.scrollY; if (document.fonts) document.fonts.ready.then(function () { if (Math.abs(window.scrollY - y0) < 2) go(start); });
-    } else { window.scrollTo({ top: 0, behavior: 'instant' }); spy(); }
+    } else { window.scrollTo({ top: 0, behavior: 'instant' }); activate(ROUTES[0][0]); }
   }).catch(function (e) { $('#view').innerHTML = '<p class="err">資料載入失敗：' + esc(e.message) + '。請稍後重新整理。</p>'; });
 })();

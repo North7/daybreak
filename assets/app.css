@@ -482,9 +482,9 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .pg { display: grid; gap: 28px; min-width: 0; align-content: start; }
 .pg + .pg { margin-top: 88px; }
 .pg:last-child { min-height: calc(100vh - 120px); }
+/* 行動版：一次只顯示一版，左右滑換版；內容區只讓瀏覽器處理直向捲動，橫向手勢留給換版 */
 @media (max-width: 860px) {
-  .pg { gap: 24px; } .pg + .pg { margin-top: 56px; }
-  /* 行動版換頁頓點：手指捲到版面開頭附近放開時，輕輕吸附到該版標題（proximity 只在接近時吸附，版面中間照常自由捲動） */
-  html { scroll-snap-type: y proximity; }
-  .pg { scroll-snap-align: start; scroll-margin-top: 70px; }
+  .pg { display: none; gap: 24px; } .pg.cur { display: grid; }
+  .pg + .pg { margin-top: 0; } .pg:last-child { min-height: 0; }
+  main#view { touch-action: pan-y pinch-zoom; }
 }
