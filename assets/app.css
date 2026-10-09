@@ -488,3 +488,8 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
   .pg + .pg { margin-top: 0; } .pg:last-child { min-height: 0; }
   main#view { touch-action: pan-y pinch-zoom; }
 }
+
+/* 市場階段佐證燈號表 */
+.tbl.evid td { font-size: 13px; }
+.tbl.evid .mk-s { color: var(--ink-3); }
+.tbl.evid .mk-s.ok { color: var(--up); }

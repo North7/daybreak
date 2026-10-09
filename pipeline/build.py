@@ -31,9 +31,9 @@ sm = json.load(open(sm_f)) if os.path.exists(sm_f) else {'series': [], '_convent
 
 # 市場階段 P23（只是標籤，不連動出場規則）。熊市 → 熊牛轉換期 → 牛市；牛市單向鎖定，狀態存在 state_min.json。
 #   轉換期：燈號一（投降出現過）✓ 且收盤在上升的 200 日均線之上（上升＝高於 30 天前）
-#   牛市：同一天燈號一 ✓、燈號二（CoinMetrics 交易所供給 90 日 <0）✓、收盤連 30 日在上升的 200 日均線之上
+#   牛市：燈號一 ✓ 且收盤連 30 日在上升的 200 日均線之上（2026-10-09 使用者裁示：交易所供給 90 日 <0 由必要條件降為佐證燈號，見 stage_evidence）
 #   退回熊市：轉換期中連 5 日收在 200 日均線之下；牛市鎖定後需連 30 日在下降的 200 日均線之下（之後燈號一需重新出現）
-def stage_p23(prev, ms, xs90):
+def stage_p23(prev, ms):
     cur, cap = prev['stage'], prev.get('capitulation_seen', False)
     if not ms or ms.get('above_rising_run') is None: return dict(prev, stale=True)
     ar, br, bfr = ms['above_rising_run'], ms['below_run'], ms['below_falling_run']
@@ -43,12 +43,12 @@ def stage_p23(prev, ms, xs90):
     else:
         if cur == '轉換期' and br >= 5: new = '熊市'
         elif cur == '熊市' and cap and ar > 0: new = '轉換期'
-        if new == '轉換期' and cap and xs90 is not None and xs90 < 0 and ar >= 30: new = '牛市'
+        if new == '轉換期' and cap and ar >= 30: new = '牛市'
     return {'stage': new, 'since': td['bar_date'] if new != cur else prev['since'], 'capitulation_seen': cap}
-ms = td.get('market_stage') or {}; xs90 = cmr.get('exchange_supply_chg90_pct')
-sm['market_stage_p23'] = st23 = stage_p23(sm.get('market_stage_p23') or {'stage': '轉換期', 'since': '2026-09-10', 'capitulation_seen': True}, ms, xs90)
-stage = dict({k: v for k, v in ms.items() if k != 'note'}, **st23, xs90=xs90, xs7=cmr.get('exchange_supply_chg7_pct'), xs_date=cmr.get('exchange_supply_date'),
-             bull_need=dict(run=30, xs90_below=0), bear_back=dict(transition_below_run=5, bull_below_falling_run=30))
+ms = td.get('market_stage') or {}
+sm['market_stage_p23'] = st23 = stage_p23(sm.get('market_stage_p23') or {'stage': '轉換期', 'since': '2026-09-10', 'capitulation_seen': True}, ms)
+stage = dict({k: v for k, v in ms.items() if k != 'note'}, **st23, evidence=td.get('stage_evidence'),
+             bull_need=dict(run=30), bear_back=dict(transition_below_run=5, bull_below_falling_run=30))
 ladder = model['exit_framework']['ladder']
 nxt = next((x for x in ladder if x > c), None)
 onchain = {k: {kk: v.get(kk) for kk in ('date', 'value', 'pct_4y', 'ma7', 'chg30_pct')} for k, v in (td.get('onchain') or {}).items() if isinstance(v, dict)}

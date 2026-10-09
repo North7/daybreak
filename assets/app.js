@@ -264,9 +264,8 @@
   function stageHtml() {
     var st = D.cycle.stage || {}, s = STAGE[st.stage], c = D.price.bar.c;
     if (!s) return '<p class="err">本日未取得市場階段。</p>';
-    var need = (st.bull_need || {}).run || 30, run = st.above_rising_run || 0, xs = st.xs90, sma = st.sma200, gap = [];
+    var need = (st.bull_need || {}).run || 30, run = st.above_rising_run || 0, sma = st.sma200, ev = st.evidence || {}, gap = [];
     if (run < need) gap.push('再站穩 ' + (need - run) + ' 天');
-    if (!(xs < 0)) gap.push('交易所供給 90 日轉負（現在 ' + fmt.pct(xs, 2) + '）');
     var lines = st.stage === '牛市' ? [['✓', '牛市（單向鎖定）', fmt.md(st.since) + ' 起成立；之後不因短線跌破而改判。'], ['↩', '什麼會退回熊市', '收盤連 30 日在下降的 200 日均線之下；現在 ' + (st.below_falling_run || 0) + ' 天。']]
       : st.stage === '轉換期' ? [['✓', '不是熊市了', '收盤連 ' + run + ' 天站在上升的 200 日均線（' + fmt.usd(sma) + '）之上，高出 ' + fmt.pct((c / sma - 1) * 100, 1) + '。'],
           ['△', '還不是牛市', gap.length ? '差 ' + gap.join('、') + '。' : '條件已齊，下一次收盤確認。'],
@@ -276,9 +275,14 @@
     return '<p class="say">現在是 <b>' + s[0] + '</b>（' + fmt.md(st.since) + ' 起）' + (st.stale ? '；本日缺資料，沿用前一日判定' : '') + '。</p>' +
       '<div class="lights">' + light(st.capitulation_seen, '燈號一：投降', st.capitulation_seen ? '已出現過' : '未出現', '過去式；一個週期只看一次') +
         light(run >= need, '上升 200 日線上', run + ' / ' + need + ' 天', '線 ' + fmt.usd(sma) + (st.sma200_rising ? '，上升中' : '，下降中')) +
-        light(xs < 0, '燈號二：交易所供給', fmt.pct(xs, 2), '90 日變化要 <0 · 7 日 ' + fmt.pct(st.xs7, 2) + '（' + fmt.md(st.xs_date) + '）') + '</div>' +
+        light(ev.n && ev.ok * 2 > ev.n, '佐證燈號', ev.n ? ev.ok + ' / ' + ev.n : '—', '只顯示、不參與判定；過半亮起才打勾') + '</div>' +
+      (ev.items ? '<div class="tbl-wrap"><table class="tbl evid"><tbody>' + ev.items.map(function (e) {
+        var v = e.id === 'mvrv1y' ? fmt.n(e.value, 3) + '（均值 ' + fmt.n(e.ref, 3) + '）' : e.id === 'sth' ? fmt.usd(e.value) : fmt.pct(e.value, e.id === 'rcgrowth' ? 2 : 1);
+        return '<tr><td><span class="mk-s' + (e.ok ? ' ok' : '') + '">' + (e.ok ? '✓' : '×') + '</span><b>' + esc(e.label) + '</b></td><td class="num">' + v + '</td><td>' + esc(e.cond) + '</td><td class="num">' + fmt.md(e.date) + '</td></tr>';
+      }).join('') + '</tbody></table></div>' : '') +
       '<div class="rules">' + lines.map(function (l) { return '<div class="rule"><span class="t"><span class="mk-s">' + l[0] + '</span>' + l[1] + '</span><span class="d">' + l[2] + '</span><span></span></div>'; }).join('') + '</div>' +
-      '<p class="note">規則寫死：轉換期＝燈號一 ✓ 且收盤在上升的 200 日均線之上（上升＝高於 30 天前）；牛市＝同一天燈號一、燈號二都 ✓ 且收盤連 30 日在上升的 200 日均線之上，成立後單向鎖定；退回熊市＝轉換期中連 5 日收在 200 日均線下，牛市則需連 30 日在下降的 200 日均線下。回測（CoinMetrics 2013 起）只有 3 輪，牛市條件在頂部附近也會亮，所以不是賣出訊號。市場階段只是標籤，不連動出場框架。</p>';
+      '<p class="note">判定規則：轉換期＝燈號一（投降）✓ 且收盤在上升的 200 日均線之上（上升＝高於 30 天前）；牛市＝燈號一 ✓ 且收盤連 30 日在上升的 200 日均線之上，成立後單向鎖定；退回熊市＝轉換期中連 5 日收在 200 日均線下，牛市則需連 30 日在下降的 200 日均線下。佐證燈號只顯示證據強弱，不參與判定。</p>' +
+      '<p class="note">限制：2014 年起只有 3–4 輪週期可回測。這條價格規則在候選標準中假訊號最少，但 2019 年中一樣誤判為牛市，之後跌了近五成；沒有任何規則能同時又快又少假訊號。交易所供給 90 日轉負原為必要條件，回測顯示換視窗長度就失效、地址歸屬會事後修正（有前視偏差），且 2025 年 99% 的日子成立，2026-10-09 起降為佐證。牛市條件在頂部附近也會亮，不是賣出訊號；市場階段只是標籤，不連動出場框架。</p>';
   }
   // 以下三塊由每日結論任務寫進 notes.json；不是當天的就標「上一期」
   function staleTag() { return N && N.stale ? '<span class="chip">上一期 ' + fmt.md(N.date) + '</span>' : ''; }

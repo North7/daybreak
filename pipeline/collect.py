@@ -110,7 +110,7 @@ try:
         above_rising_run=_cnt(lambda j: C[j] > _s200(j) and _s200(j) > _s200(j - 30)),
         below_run=_cnt(lambda j: C[j] < _s200(j)),
         below_falling_run=_cnt(lambda j: C[j] < _s200(j) and _s200(j) < _s200(j - 30)),
-        note='燈號二看 cm_radar.exchange_supply_chg90_pct <0；判定規則見 _conventions.market_stage_p23')
+        note='判定規則見 build.py stage_p23；佐證燈號見 stage_evidence')
 except Exception as e: errors.append(f'market_stage {e}')
 
 # ---------- 條件式基準率（P8）＋ P13 阻力特徵 ----------
@@ -363,6 +363,26 @@ try:
                          exchange_supply_chg30_pct=round((ex[-1][1] / ex[-31][1] - 1) * 100, 2), exchange_supply_chg7_pct=round((ex[-1][1] / ex[-8][1] - 1) * 100, 2), exchange_supply_chg7_1y_pctile=round(sum((ex[j][1] / ex[j - 7][1] - 1) < (ex[-1][1] / ex[-8][1] - 1) for j in range(len(ex) - 365, len(ex))) / 365 * 100, 1), exchange_supply_chg90_pct=round((ex[-1][1] / ex[-91][1] - 1) * 100, 2),
                          note='CoinMetrics community；MVRV 口徑與 bitcoin-data 的 MVRV Z 不同，不相減、不混用。交易所供給為 CoinMetrics 自有地址歸屬')
 except Exception as e: errors.append(f'coinmetrics {e}')
+# 2026-10-09 P23 修訂：市場階段的佐證燈號（只顯示、不作為門檻）。回測（2014 起、3–4 輪）沒有任何單一指標同時兼顧速度與少假訊號，
+# 交易所供給 90 日轉負換視窗長度就失效、且 2025 年 99% 的日子成立，所以從牛市必要條件降為佐證之一
+try:
+    _d = [x[0] for x in mv]; _p = [x[1] for x in mv]; _m = [x[2] for x in mv]; _rc = [x[3] / x[2] for x in mv]; k = len(mv) - 1
+    def _back(days):   # 以日期回推，不以列位置（資料缺日時位置會偏）
+        import bisect
+        return max(0, bisect.bisect_right(_d, (dt.date.fromisoformat(_d[k]) - dt.timedelta(days=days)).isoformat()) - 1)
+    j365, j30 = _back(365), _back(30); m1y = sum(_m[k - 364:k + 1]) / 365
+    ev = [dict(id='mom12', label='12 個月動能', ok=_p[k] > _p[j365], value=round((_p[k] / _p[j365] - 1) * 100, 1), unit='%', cond='收盤高於一年前', date=_d[k]),
+          dict(id='mvrv1y', label='MVRV 對一年均值', ok=_m[k] > m1y, value=round(_m[k], 3), ref=round(m1y, 3), cond='MVRV 高於自己的一年均值', date=_d[k]),
+          dict(id='rcgrowth', label='資金流入', ok=_rc[k] > _rc[j30], value=round((_rc[k] / _rc[j30] - 1) * 100, 2), unit='%', cond='已實現市值 30 日成長為正', date=_d[k])]
+    cr = R.get('cm_radar') or {}
+    if cr.get('exchange_supply_chg90_pct') is not None:
+        ev.append(dict(id='xs90', label='交易所供給', ok=cr['exchange_supply_chg90_pct'] < 0, value=cr['exchange_supply_chg90_pct'], unit='%', cond='90 日變化為負', date=cr.get('exchange_supply_date')))
+    sth = sorted((SER.get('sth-realized-price') or {}).items())
+    if sth:
+        ev.append(dict(id='sth', label='短期持有者成本', ok=c > sth[-1][1], value=round(sth[-1][1]), cond='收盤高於短期持有者成本（bitcoin-data）', date=sth[-1][0]))
+    R['stage_evidence'] = dict(items=ev, ok=sum(e['ok'] for e in ev), n=len(ev),
+                               note='只作佐證、不參與判定。樣本 3–4 輪，任何規則都無法避免 2019 年式的假突破')
+except Exception as e: errors.append(f'stage_evidence {e}')
 # G2. bitcoin-data 頂部雷達（放在既有 14 個端點之後；免費層文件寫每小時 10 次、每日 15 次，超額時只有這幾格記 null）
 RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProfitPct', 'realized-cap-growth-rate': 'realizedCapGrowthRate',
        'lth-net-position-change-30d-btc': 'lthNetPositionChange30dBtc'}
