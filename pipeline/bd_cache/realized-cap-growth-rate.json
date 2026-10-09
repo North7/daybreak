@@ -1,5 +1,4 @@
-{"m": "realized-cap-growth-rate", "fetched_utc": "2026-10-08T01:13:43+00:00", "rows": [
-{"d":"2022-10-08","realizedCapGrowthRate":-0.1646},
+{"m": "realized-cap-growth-rate", "fetched_utc": "2026-10-09T02:31:13+00:00", "rows": [
 {"d":"2022-10-09","realizedCapGrowthRate":-0.3137},
 {"d":"2022-10-10","realizedCapGrowthRate":-0.5106},
 {"d":"2022-10-11","realizedCapGrowthRate":-0.8428},
@@ -1453,5 +1452,6 @@
 {"d":"2026-09-28","realizedCapGrowthRate":0.4162},
 {"d":"2026-09-29","realizedCapGrowthRate":0.5297},
 {"d":"2026-09-30","realizedCapGrowthRate":0.4588},
-{"d":"2026-10-01","realizedCapGrowthRate":0.0563}
+{"d":"2026-10-01","realizedCapGrowthRate":0.0563},
+{"d":"2026-10-02","realizedCapGrowthRate":-0.0887}
 ]}
