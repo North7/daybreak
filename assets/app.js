@@ -459,11 +459,11 @@
     var last = full[full.length - 1] || {}, s7 = full.slice(-7).reduce(function (a, r) { return a + r.musd; }, 0), p7 = full.slice(-14, -7).reduce(function (a, r) { return a + r.musd; }, 0);
     var nq = fr.NASDAQCOM || {}, dx = fr.DTWEXBGS || {}, tn = fr.DGS10 || {}, rr = D.flows.dfii10 || {};
     return readBar('flows') + '<div class="kpis">' + kpi('最近完整日 ETF', (last.musd >= 0 ? '+' : '') + fmt.n(last.musd, 1) + 'M', fmt.md(last.d) + ' · 美元') + kpi('近 7 個完整日', (s7 >= 0 ? '+' : '') + fmt.n(s7, 0) + 'M', '前 7 日 ' + (p7 >= 0 ? '+' : '') + fmt.n(p7, 0) + 'M') + kpi('BTC–那斯達克 30 日相關', fmt.n(nq.corr30, 2), fmt.md(nq.last_date) + ' · 高於 0.5 代表同漲同跌', (nq.corr30 + 1) * 50) + kpi('BTC–美元 30 日相關', fmt.n(dx.corr30, 2), 'FRED 廣義美元指數', (dx.corr30 + 1) * 50) + kpi('10 年期實質利率', fmt.n(rr.value, 2) + '%', '20 日 ' + (rr.chg_20obs_bp >= 0 ? '+' : '') + rr.chg_20obs_bp + 'bp · 名目 ' + fmt.n(tn.last, 2) + '%') + '</div><div class="grid">' +
-      panel('span-12', '現貨 ETF 每日淨流量', 'The Block（與 Farside 同口徑）· 百萬美元 · 淡色＝當天尚未完整回報', '<div class="chart" id="c-etf"></div>') + '</div>';
+      panel('span-12', '現貨 ETF 每日淨流量', 'The Block（與 Farside 同口徑）· 百萬美元 · 淡色＝暫定或尚未完整', '<div class="chart" id="c-etf"></div>') + '</div>';
   };
   V.flows.after = function () {
     var etf = D.flows.etf || [];
-    mount($('#c-etf'), function (el) { barChart(el, { h: 260, data: etf.map(function (r) { return [fmt.md(r.d), r.musd, '<div class="t">' + r.d + (r.partial ? '（部分回報）' : '') + '</div><div class="r"><i style="background:' + (r.musd >= 0 ? 'var(--up)' : 'var(--down)') + '"></i><span>淨流量</span><b>' + (r.musd >= 0 ? '+' : '') + fmt.n(r.musd, 1) + 'M</b></div>', r.partial]; }), yFmt: function (v) { return v + 'M'; }, aria: 'ETF 淨流量' }); });
+    mount($('#c-etf'), function (el) { barChart(el, { h: 260, data: etf.map(function (r) { return [fmt.md(r.d), r.musd, '<div class="t">' + r.d + (r.partial ? (r.src ? '（暫定）' : '（部分回報）') : '') + '</div><div class="r"><i style="background:' + (r.musd >= 0 ? 'var(--up)' : 'var(--down)') + '"></i><span>淨流量</span><b>' + (r.musd >= 0 ? '+' : '') + fmt.n(r.musd, 1) + 'M</b></div>' + (r.src ? '<div class="t" style="font-weight:400;max-width:240px;white-space:normal">' + esc(r.src) + '</div>' : ''), r.partial]; }), yFmt: function (v) { return v + 'M'; }, aria: 'ETF 淨流量' }); });
   };
 
   V.onchain = function () {

@@ -2,20 +2,27 @@
 """美國現貨 BTC ETF 每日淨流量（2026-10-08 建立）。
 Farside 用 Cloudflare 擋所有自動抓取（雲端與本機都回 403），改用 The Block 的圖表 JSON：
 各檔 ETF 逐日淨流量，2026-09-14～10-05 逐日與 Farside 合計比對，差距 ≤ 0.1 百萬美元。
-The Block 只公布已完整的交易日（約晚一天）；它還沒有的日子保留原本的列（例如 Farside 的當日部分值），之後由完整數字覆寫。
+The Block 只公布已完整的交易日（約晚一到兩天）；它還沒有的日子保留原本的列（partial=true，例如每日任務依兩個獨立來源寫入的暫定值，附 src），之後由 The Block 的完整數字覆寫。
 用法（在倉庫根目錄）：python3 pipeline/etf.py   # 更新 data/etf.json，並同步 data/latest.json 的 flows.etf
 失敗時不改任何檔案、照常結束，網站沿用既有數字並以資料日期標示。"""
 import json, os, sys, urllib.request, datetime as dt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 P = lambda *a: os.path.join(ROOT, *a)
-URL = 'https://www.theblock.co/api/charts/chart/etfs/bitcoin-etf/spot-bitcoin-etf-flows'
+# 2026-10-09：舊網址 /api/charts/... 開始回 410 Gone，網站改走 /api/tbco/...（外面多包一層 data）；新網址失敗才試舊的
+URLS = ['https://www.theblock.co/api/tbco/charts/chart/etfs/bitcoin-etf/spot-bitcoin-etf-flows',
+        'https://www.theblock.co/api/charts/chart/etfs/bitcoin-etf/spot-bitcoin-etf-flows']
 KEEP = 60
 
 def fetch():
-    req = urllib.request.Request(URL, headers={'User-Agent': 'Mozilla/5.0 (daybreak data pipeline)', 'Accept': 'application/json'})
-    with urllib.request.urlopen(req, timeout=40) as r:
-        series = json.load(r)['chart']['jsonFile']['Series']
+    err = None
+    for url in URLS:
+        try:
+            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (daybreak data pipeline)', 'Accept': 'application/json'})
+            with urllib.request.urlopen(req, timeout=40) as r: js = json.load(r)
+            series = (js.get('data') or js)['chart']['jsonFile']['Series']; break
+        except Exception as e: err = f'{url}: {e}'
+    else: raise RuntimeError(err)
     tot, n = {}, {}
     for fund in series.values():
         for p in fund['Data']:
