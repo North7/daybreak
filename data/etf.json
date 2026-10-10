@@ -300,6 +300,12 @@
    "d": "2026-10-07",
    "musd": -487.1,
    "partial": false
+  },
+  {
+   "d": "2026-10-08",
+   "musd": -244.1,
+   "partial": true,
+   "src": "暫定：Farside（經 Cointelegraph 10/09）−244.1；SoSoValue（經 TokenPost／Bitcoin.com 10/09）−244.13"
   }
  ],
  "source": "The Block",
