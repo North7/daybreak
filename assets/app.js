@@ -326,7 +326,8 @@
     var c = D.price.bar, ex = D.exit.status, cm = D.cycle.cm, pl = D.cycle.powerlaw || {}, tm = D.cycle.tidemark || {}, p6 = D.cycle.p6 || {};
     var news = (N && N.news || []).slice().sort(function (a, b) { return (b.weight || 0) - (a.weight || 0); });
     var wd = ['日', '一', '二', '三', '四', '五', '六'][new Date(D.meta.bar_date + 'T12:00:00Z').getUTCDay()];
-    var hl = esc(N ? N.headline : '').replace(/(\d[\d,.]*%|\d{2},\d{3})/g, '<em>$1</em>');
+    // 標題裡的數字（連同緊接的單位：%、億、萬、倍、基點、K 等）一律用號外紅
+    var hl = esc(N ? N.headline : '').replace(/(\d{1,2}\/\d{1,2}(?!\d)|[+\-−]?\d[\d,.]*(?:\s?(?:%|億|萬|千|兆|倍|個基點|基點|bp|K|M|B)(?![A-Za-z]))?)/g, '<em>$1</em>');
     var watch = (N && N.watch || []).map(function (w) { var dd = (w.value / c.c - 1) * 100; return '<div><span class="k">' + esc(w.label) + '</span><span class="v ' + (dd >= 0 ? 'up' : 'dn') + '">' + fmt.pct(dd, 1) + '</span><span class="px">' + fmt.usd(w.value) + '</span><span class="n">' + esc(w.note) + '</span></div>'; }).join('');
     var front = '<section class="front" id="front"><div class="dateline"><b>號外</b><span>DAYBREAK No.' + ('00' + (N ? N.edition : 0)).slice(-3) + '</span><hr><span>' + D.meta.bar_date.replace(/-/g, '.') + '（' + wd + '）收盤版</span></div>' +
       '<h2 class="reveal">' + hl + '</h2>' + megaHtml(c) +
@@ -582,9 +583,18 @@
     activate(pick);
   }
   function docTop(sec) { var y = 0; for (var el = sec; el; el = el.offsetParent) y += el.offsetTop; return y; }   // 用 offsetTop 計算，不受進場動畫的位移影響
+  // 行動版換版後回到頂部：手指左右滑常帶一點上下動作，手機會在換版後繼續慣性捲動、把回頂蓋掉；
+  // 先短暫鎖住捲動讓慣性停下，再回頂，之後幾個時間點再確認一次
+  function toTop() {
+    var de = document.documentElement, b = document.body;
+    de.style.overflow = b.style.overflow = 'hidden';
+    window.scrollTo(0, 0); de.scrollTop = b.scrollTop = 0;
+    requestAnimationFrame(function () { de.style.overflow = b.style.overflow = ''; window.scrollTo(0, 0); });
+    [80, 250, 500].forEach(function (t) { setTimeout(function () { if (MQ.matches && window.scrollY > 0) window.scrollTo(0, 0); }, t); });
+  }
   function go(id) {
     var sec = $('#pg-' + id); if (!sec) return;
-    if (MQ.matches) { activate(id); window.scrollTo(0, 0); return; }
+    if (MQ.matches) { activate(id); toTop(); return; }
     window.scrollTo(0, id === ROUTES[0][0] ? 0 : docTop(sec) - stickyH() - GAP);
     spy();
   }
