@@ -300,6 +300,12 @@
    "d": "2026-10-08",
    "musd": -244.1,
    "partial": false
+  },
+  {
+   "d": "2026-10-09",
+   "musd": 21.1,
+   "partial": true,
+   "src": "暫定：Farside 21.1；SoSoValue 21.13（TokenPost／The Block 轉述）"
   }
  ],
  "source": "The Block",
