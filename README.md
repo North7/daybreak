@@ -61,6 +61,7 @@ docs/CLAUDE_DAILY.md    Claude 每日結論任務的完整指示
 ## 已知限制
 
 - bitcoin-data.com 免費層每小時 10 次、每日 15 次，管線共用 20 個端點，所以分兩批：00:05 即時抓 10 個（頂部三指標、成本基礎、籌碼流向），其餘 10 個分 A／B 兩組在前一晚 22:40 輪流抓，每個每 2 天更新一次，頁面顯示的是資料本身的日期。清單見 `pipeline/bd_rotation.py`。GitHub Actions 的共用 IP 偶爾仍會被限流，失敗的項目在網站上顯示「本日未取得」。
+- 鯨魚分層持幣來自 BitInfoCharts 的分布歷史頁（一次請求、不佔 bitcoin-data 額度）；地址不等於實體，≥10K 多為交易所與託管。若對方改版或擋 GitHub Actions，該區塊顯示「本日未取得」，不影響其他資料。
 - Farside 用 Cloudflare 擋所有自動抓取，ETF 改用 The Block 的圖表 JSON（pipeline/etf.py，逐日與 Farside 比對一致）；The Block 只公布已完整的交易日，約晚一天。
 - 掛單簿是 Actions 執行當下的快照；Binance 期貨與 Bybit 讀不到。
 

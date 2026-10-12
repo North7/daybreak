@@ -521,3 +521,5 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
   .m-prefs svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
   .crumb { padding-right: 96px; }
 }
+/* 鯨魚分層表：手機上隱藏 7d、90d 欄（解讀列裡仍有） */
+@media (max-width: 560px) { .tbl .mh { display: none; } }
