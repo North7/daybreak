@@ -432,7 +432,7 @@
     var big = (o.expiries || []).slice().sort(function (a, b) { return b.oi - a.oi; })[0] || {};
     return readBar('deriv') + '<div class="kpis">' + kpi('DVOL', fmt.n((dv.dvol || {}).value, 1), '一年第 ' + fmt.n((dv.dvol || {}).pct_1y, 0) + ' 百分位', (dv.dvol || {}).pct_1y) + kpi('IV − RV30（同源）', fmt.n((dv.samesource || {}).iv_minus_rv30, 2), '負值＝隱含波動比實際便宜') + kpi('永續資金費率', fmt.pct(d.funding_ann, 1), '年化 · 期貨基差中位 ' + fmt.n(d.basis_median, 1) + '%') + kpi('25Δ 風險逆轉', fmt.n(r.rr, 2), r.expiry + ' · ATM ' + fmt.n(r.atm_iv, 1) + '%') + kpi('選擇權未平倉', fmt.n(o.total_oi) + ' 顆', '最大到期 ' + (big.expiry || '—') + '（' + fmt.n(big.share, 0) + '%）') + '</div><div class="grid">' +
       panel('span-8', '隱含波動 vs 實際波動', 'Deribit DVOL · Kraken RV30 · 近一年', legend([['DVOL', 'var(--s1)'], ['RV30', 'var(--s2)']]) + '<div class="chart" id="c-vol"></div>') +
-      panel('span-4', '期貨基差曲線', '年化 % · 排除 7 天內到期', '<div class="chart" id="c-basis"></div><p class="note">資金費率年化 ' + fmt.pct(d.funding_ann, 1) + '；永續 OI ' + fmt.usd(d.perp_oi_usd_m) + 'M。</p>') +
+      panel('span-4', '期貨基差曲線', '年化 % · 排除 7 天內到期', '<div class="chart" id="c-basis"></div><p class="note">資金費率年化 ' + fmt.pct(d.funding_ann, 1) + '；永續 OI ' + fmt.usd(d.perp_oi_usd_m) + 'M。</p><div class="src-link">外部：<a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">CoinGlass 爆倉熱力圖 ↗</a>（以 OI 與假設槓桿推估，非實際倉位）</div>') +
       panel('span-6', '各到期未平倉', '買權 / 賣權（顆）', legend([['買權', 'var(--s4)'], ['賣權', 'var(--s3)']]) + '<div class="chart" id="c-oi"></div>') +
       panel('span-6', '最大到期的履約價分布', ((dv.viz || {}).options || {}).strikes ? dv.viz.options.strikes.expiry + ' · Max Pain ' + fmt.k(dv.viz.options.strikes.maxpain) : '', '<div id="c-strike"></div>') + '</div>';
   };
