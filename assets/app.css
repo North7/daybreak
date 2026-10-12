@@ -493,3 +493,20 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .tbl.evid td { font-size: 13px; }
 .tbl.evid .mk-s { color: var(--ink-3); }
 .tbl.evid .mk-s.ok { color: var(--up); }
+
+/* 數字解讀（2026-10-12）：各版「這些數字代表什麼」與表格下方的解讀列 */
+.interp { display: grid; }
+.interp .it { display: grid; grid-template-columns: 150px 96px 44px minmax(0, 1fr); gap: 14px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.interp .it:last-child { border-bottom: 0; }
+.interp .k { font-weight: 900; font-size: 13px; }
+.interp .v { font-size: 13px; text-align: right; white-space: nowrap; }
+.interp .d { color: var(--ink-2); font-size: 13.5px; line-height: 1.7; max-width: 92ch; }
+.tn { display: inline-block; justify-self: start; font-size: 11px; font-weight: 700; line-height: 1.5; padding: 0 5px; border: 1px solid currentColor; border-radius: 3px; color: var(--ink-3); white-space: nowrap; }
+.tn.up { color: var(--up); } .tn.down { color: var(--down); } .tn.warn { color: var(--warn); }
+.tbl tr.has-rd td { border-bottom: 0; padding-bottom: 4px; }
+.tbl tr.rd td { padding-top: 0; color: var(--ink-2); font-size: 13px; line-height: 1.65; }
+.tbl tr.rd .tn { margin-right: 8px; }
+@media (max-width: 560px) {
+  .interp .it { grid-template-columns: minmax(0, 1fr) auto auto; gap: 4px 10px; }
+  .interp .d { grid-column: 1 / -1; }
+}

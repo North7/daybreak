@@ -307,6 +307,180 @@
     return '<article class="' + (lead ? 'news-lead' : 'news-item') + '">' + (ix ? '<span class="idx">' + ('0' + ix).slice(-2) + '</span>' : '') + '<div class="news-meta"><span class="cat">' + esc(n.cat) + '</span>' + impChip(n.impact) + '<span>' + esc(n.time.slice(5).replace('-', '/')) + '</span></div><h3>' + esc(n.title) + '</h3><div class="read-box"><b class="lbl">解讀</b>' + esc(n.read) + '</div><div class="src-link">來源：<a href="' + esc(n.url) + '" target="_blank" rel="noopener">' + esc(n.source) + '</a>' + (n.module ? ' · <a href="#' + n.module + '">看相關數據 →</a>' : '') + '</div></article>';
   }
 
+  /* ---------------- 數字解讀（2026-10-12 使用者要求：每個數字都說明「現在代表什麼」） ----------------
+     由當日數值套固定門檻自動產生（門檻寫在句子裡），不是預測，也不連動出場規則。
+     tone：pos 偏多（對價格有利）、neg 偏空（對價格不利）、warn 留意（偏熱或接近門檻）、neu 中性 */
+  var TONE = { pos: ['偏多', 'up'], neg: ['偏空', 'down'], warn: ['留意', 'warn'], neu: ['中性', ''] };
+  function band(v, cuts, words) { for (var i = 0; i < cuts.length; i++) if (v < cuts[i]) return words[i]; return words[cuts.length]; }
+  function pctWord(p, lab) { return p == null ? '' : (lab || '四年') + '第 ' + fmt.n(p, 0) + ' 百分位（' + band(p, [20, 40, 60, 80], ['低檔', '偏低', '中間', '偏高', '高檔']) + '）'; }
+  function tnHtml(t) { t = TONE[t] || TONE.neu; return '<span class="tn ' + t[1] + '">' + t[0] + '</span>'; }
+  /* items：[名稱, 數值 HTML, 解讀文字, tone]；解讀為空的整列略過 */
+  function interpHtml(items) {
+    items = items.filter(function (x) { return x && x[2]; });
+    return items.length ? '<div class="interp">' + items.map(function (x) { return '<div class="it"><span class="k">' + esc(x[0]) + '</span><span class="v num">' + x[1] + '</span>' + tnHtml(x[3]) + '<span class="d">' + esc(x[2]) + '</span></div>'; }).join('') + '</div>' : '';
+  }
+  function interpPanel(items, src) { var h = interpHtml(items); return h ? panel('span-12', '這些數字代表什麼', src || '依當日數值套固定門檻自動產生 · 非投資建議', h) : ''; }
+  function rdRow(rd, cols) { return rd && rd[0] ? '<tr class="rd"><td colspan="' + cols + '">' + tnHtml(rd[1]) + esc(rd[0]) + '</td></tr>' : ''; }
+  function top3Line(p, key) {   // 頂部三指標共用的提醒
+    if (p == null) return '';
+    return p >= 80 ? '這是頂部三指標之一，四年百分位已過 80；三項中任兩項到 80 才進入頂部區。' : '這是頂部三指標之一，四年百分位到 80 才算到線，現在還差 ' + fmt.n(80 - p, 0) + ' 個百分位。';
+  }
+  function chgLine(v) { return v.chg30_pct == null ? '' : '30 日 ' + fmt.pct(v.chg30_pct, 1) + '。'; }
+
+  /* 鏈上指標表（bitcoin-data） */
+  var OC_READ = {
+    'mvrv-zscore': function (v) { var x = v.value;
+      return [band(x, [0, 1, 2.5, 3.5], ['低於 0：市值低於全體持有者的總成本，歷來是週期底部區', '0–1：偏低估', '1–2.5：估值中性，不便宜也不貴', '2.5–3.5：偏熱', '3.5 以上：歷史頂部區']) + '；' + pctWord(v.pct_4y) + '。' + top3Line(v.pct_4y), x < 1 ? 'pos' : x < 2.5 ? 'neu' : x < 3.5 ? 'warn' : 'neg']; },
+    'nupl': function (v) { var x = v.value;
+      return [band(x, [0, 0.25, 0.5, 0.75], ['低於 0（投降區）：整體帳面虧損', '0–0.25（希望／恐懼區）', '0.25–0.5（樂觀／焦慮區）', '0.5–0.75（信念區）：牛市中後段常見', '0.75 以上（狂熱區）：歷史頂部']) + '，市值中約 ' + fmt.n(x * 100, 0) + '% 是還沒實現的帳面獲利；' + pctWord(v.pct_4y) + '。' + top3Line(v.pct_4y), x < 0.25 ? 'pos' : x < 0.5 ? 'neu' : x < 0.75 ? 'warn' : 'neg']; },
+    'puell-multiple': function (v) { var x = v.value, p = v.pct_4y;
+      var s = band(x, [0.5, 1, 2, 4], ['低於 0.5：礦工收入極低，歷來對應底部', '0.5–1：礦工收入低於一年平均', '1–2：礦工收入略高於一年平均，屬正常', '2–4：礦工收入明顯偏高', '4 以上：歷史頂部區']);
+      if (p >= 80 && x < 2) s += '。絕對值不高，但過去四年多數時間比現在更低，所以百分位已過 80';
+      return [s + '；' + pctWord(p) + '，' + chgLine(v) + top3Line(p), p >= 80 || x >= 2 ? 'warn' : x < 0.5 ? 'pos' : 'neu']; },
+    'sopr': function (v) { return [soprLine(v.value, '賣出的幣'), 'neu']; },
+    'asopr': function (v) { return [soprLine(v.value, '排除一小時內轉手後，賣出的幣'), 'neu']; },
+    'sth-sopr': function (v) { var x = v.value, d = (x - 1) * 100;
+      return [Math.abs(d) <= 0.5 ? '短期持有者幾乎在成本價賣出（' + fmt.pct(d, 1) + '），多空正在成本線拉鋸；牛市裡回到 1 附近又彈起常是支撐，持續低於 1 代表短線資金在停損。'
+        : d < 0 ? '短期持有者平均虧損 ' + fmt.n(-d, 1) + '% 賣出：新進場的人在停損，短線賣壓偏重。' : '短期持有者平均獲利 ' + fmt.n(d, 1) + '% 賣出：新進場的人有賺錢可以了結，短線結構健康。', d < -0.5 ? 'neg' : d > 0.5 ? 'pos' : 'neu']; },
+    'lth-sopr': function (v) { var x = v.value, s = x >= 1 ? '長期持有者賣出時平均獲利 ' + fmt.n((x - 1) * 100, 0) + '%' : '長期持有者在虧損賣出（少見，常出現在深熊）';
+      if (v.ma7 && Math.abs(x / v.ma7 - 1) > 0.2) s += '；單日值跳動大，7 日均 ' + fmt.n(v.ma7, 2) + ' 比較能代表趨勢';
+      if (v.chg30_pct > 30) s += '；30 日上升 ' + fmt.n(v.chg30_pct, 0) + '%，老手獲利了結增加';
+      return [s + '。', x >= 3 ? 'warn' : 'neu']; },
+    'illiquid-supply': function (v) { var p = v.pct_4y;
+      return ['長期不動的幣有 ' + fmt.n(v.value / 1e6, 2) + 'M 顆，' + pctWord(p) + '，' + chgLine(v) + (p >= 80 ? '囤幣量在高檔，籌碼鎖得緊，市場上可賣的幣少。' : p < 20 ? '囤幣量在四年低檔，長期持有的幣在被釋出，供給偏鬆。' : '囤幣量中性。'), p >= 80 ? 'pos' : p < 20 ? 'neg' : 'neu']; },
+    'highly-liquid-supply': function (v) { var p = v.pct_4y;
+      return ['隨時可交易的幣有 ' + fmt.n(v.value / 1e6, 2) + 'M 顆，' + pctWord(p) + '，' + chgLine(v) + (p >= 80 ? '浮動籌碼在高檔，可賣的幣多，潛在賣壓較大（也可能是交易熱度回升）。' : p < 20 ? '浮動籌碼少，賣壓來源有限。' : '浮動籌碼中性。'), p >= 80 ? 'neg' : p < 20 ? 'pos' : 'neu']; }
+  };
+  function soprLine(x, who) { var d = (x - 1) * 100;
+    return d < -2 ? who + '平均虧損 ' + fmt.n(-d, 1) + '% 賣出，常見於恐慌拋售。' : d < 0 ? who + '平均小虧 ' + fmt.n(-d, 1) + '% 賣出，有人在認賠。' : d <= 2 ? who + '平均小賺 ' + fmt.n(d, 1) + '% 賣出，獲利了結溫和。' : who + '平均獲利 ' + fmt.n(d, 1) + '% 賣出，獲利了結明顯。'; }
+
+  /* 頂部雷達（本輪 2022/11 起百分位） */
+  var RADAR_READ = {
+    'lth-mvrv-zscore': function (v) { var p = v.pct_since_2022_11, tp = v.extreme_near_2025_top;
+      return ['長期持有者的帳面獲利約是 2025 頂部時的 ' + fmt.n(v.value / tp * 100, 0) + '%；' + pctWord(p, '本輪') + (p >= 90 ? '，接近本輪高點，頂部風險升高。' : '。'), p >= 90 ? 'neg' : 'neu']; },
+    'supply-in-profit-pct': function (v) { var x = v.value;
+      return ['約 ' + fmt.n(100 - x, 0) + '% 的幣處於虧損；2025 頂部時 ' + fmt.n(v.extreme_near_2025_top, 1) + '% 的幣在獲利。' + (x >= 95 ? '幾乎人人獲利，歷來是頂部特徵。' : x <= 50 ? '一半以上的幣虧損，歷來是底部特徵。' : '介於頂部（95% 以上）與底部（50% 以下）之間。'), x >= 95 ? 'neg' : x <= 50 ? 'pos' : 'neu']; },
+    'realized-cap-growth-rate': function (v) { var p = v.pct_since_2022_11;
+      return [pctWord(p, '本輪') + (v.value <= 0 ? '；小於等於 0，實現市值沒有成長，代表沒有新資金淨流入。' : p >= 90 ? '；資金流入接近本輪最快，2025 頂部時是 ' + fmt.n(v.extreme_near_2025_top, 1) + '。' : '；有資金流入但不快。') + '（bitcoin-data 口徑，與資金版 CoinMetrics 的 30 日變化在日期與算法上不同，數字會有差異）', v.value <= 0 ? 'neg' : p >= 90 ? 'warn' : 'pos']; },
+    'lth-net-position-change-30d-btc': function (v) { var x = v.value, tp = v.extreme_near_2025_top;
+      return [x < 0 ? '長期持有者 30 日淨減少 ' + fmt.n(-x / 1e4, 1) + ' 萬顆，正在賣出（分配）' + (tp < 0 ? '，但規模只有 2025 頂部時（' + fmt.n(-tp / 1e4, 1) + ' 萬顆）的 ' + fmt.n(x / tp * 100, 0) + '%。' : '。')
+        : '長期持有者 30 日淨增加 ' + fmt.n(x / 1e4, 1) + ' 萬顆，正在累積，籌碼被鎖住。', x > 0 ? 'pos' : x <= v.p10_since_2022_11 ? 'neg' : 'neu']; }
+  };
+
+  /* 週期與出場（頭版、週期版、出場框架版共用） */
+  function p20Read() { var cm = D.cycle.cm, r = cm.mvrv_vs_prior, c = D.price.bar.c, k = cm.k075_price;
+    if (r == null) return null;
+    return [r >= 0.75 ? '已站上 0.75 賣出線，連 5 天即觸發第一個鏈上賣點（現在 ' + (cm.p20_run_ge075 || 0) + '/5 天）。' : '離 0.75 賣出線還很遠：價格約要到 ' + fmt.usd(k) + '（比收盤高 ' + fmt.pct((k / c - 1) * 100, 0) + '）才會碰到；2025 頂部時是 0.78。', r >= 0.75 ? 'neg' : r >= 0.7 ? 'warn' : 'neu']; }
+  function plRead() { var pl = D.cycle.powerlaw || {}, r = pl.ratio, bb = pl.bottom_band || [0.24, 0.48];
+    if (r == null) return null;
+    return ['價格是冪律合理價（' + fmt.usd(pl.fair) + '）的 ' + fmt.n(r * 100, 0) + '%：' + (r <= bb[1] ? '落在歷史底部帶（' + bb[0] + '–' + bb[1] + ' 倍），長期看很便宜。' : r < 1 ? '低於合理價、高於歷史底部帶（' + bb[1] + ' 倍），長期看偏便宜。' : r < 1.12 ? '高於合理價，但還低於 2025 頂部的 1.12 倍。' : '已超過 2025 頂部的 1.12 倍，偏貴。'), r <= bb[1] ? 'pos' : r < 1 ? 'neu' : r < 1.12 ? 'warn' : 'neg']; }
+  function tmRead() { var tm = D.cycle.tidemark || {}, t = (tm.top || {}).signal, b = (tm.bottom || {}).signal, ct = tm.cycle_test || {};
+    if (t == null && b == null) return null;
+    return ['頂部訊號 ' + fmt.n(t, 0) + '（' + (t >= 70 ? '高度警戒' : t >= 50 ? '進入頂部窗口' : '低於 50，沒有頂部跡象') + '）、底部訊號 ' + fmt.n(b, 0) + '（' + (b >= 70 ? '強烈底部' : b >= 50 ? '進入底部區' : '低於 50，不在底部區') + '）' + (t < 50 && b < 50 ? '：模型認為現在既不是頂也不是底，在週期中段。' : '。') + (ct.status === 'testing' && ct.decisive_date ? '本輪低點假說驗證到 ' + ct.decisive_date + '。' : ''), t >= 50 ? 'neg' : b >= 50 ? 'pos' : 'neu']; }
+  function p6Read() { var p6 = D.cycle.p6 || {}, nm = { mvrv_z: 'MVRV Z', nupl: 'NUPL', puell: 'Puell' }, hit = Object.keys(nm).filter(function (k) { return p6[k] >= 80; });
+    if (p6.mvrv_z == null) return null;
+    return [hit.length + ' 項到 80' + (hit.length ? '（' + hit.map(function (k) { return nm[k]; }).join('、') + '）' : '') + '；' + (hit.length >= 2 ? '已進入頂部區，出場框架的加速規則開始適用。' : '任兩項到 80 才進入頂部區，現在還差' + (hit.length ? '一' : '兩') + '項。'), hit.length >= 2 ? 'neg' : hit.length ? 'warn' : 'neu']; }
+  function ladderRead() { var ex = D.exit.status, n = (ex.steps_hit || []).length;
+    if (!ex.next_step) return ['價格階梯 8 階都已觸發。', 'neg'];
+    return ['收盤要再漲 ' + fmt.n(ex.next_step_dist_pct, 0) + '% 到 ' + fmt.usd(ex.next_step) + ' 才賣' + (n ? '第 ' + (n + 1) + ' 階' : '第一階') + '（每階 12.5%）' + (n ? '；已觸發 ' + n + ' 階。' : '；目前一階都還沒觸發，價格階梯沒有任何賣出動作。'), ex.next_step_dist_pct < 10 ? 'warn' : 'neu']; }
+  function hedgeRead() { var c = D.price.bar.c, s = D.exit.status, sma = s.sma200, run = s.below_sma200_run || 0;
+    if (!sma) return null;
+    return [c < sma ? '收盤在 200 日均線（' + fmt.usd(sma) + '）之下，第 ' + run + '/5 天；連 5 天就減 20%。' : '收盤高於 200 日均線（' + fmt.usd(sma) + '）' + fmt.n((c / sma - 1) * 100, 0) + '%；要跌到線下並連 5 日收在下方才會減 20%。', c < sma ? 'neg' : c / sma - 1 < 0.05 ? 'warn' : 'pos']; }
+  function rd2(label, val, r) { return r ? [label, val, r[0], r[1]] : null; }
+  function ovInterp() {
+    var cm = D.cycle.cm, pl = D.cycle.powerlaw || {}, tm = D.cycle.tidemark || {}, p6 = D.cycle.p6 || {}, ex = D.exit.status;
+    return [rd2('MVRV ÷ 前一輪高點', fmt.n(cm.mvrv_vs_prior, 3), p20Read()), rd2('冪律倍數', fmt.n(pl.ratio, 2) + '×', plRead()), rd2('Tidemark 頂 / 底', fmt.n((tm.top || {}).signal, 0) + ' / ' + fmt.n((tm.bottom || {}).signal, 0), tmRead()),
+      rd2('頂部三指標', ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n(p6[k], 0); }).join(' / '), p6Read()), rd2('離出場第一階', fmt.pct(ex.next_step_dist_pct, 0), ladderRead()), rd2('200 日均線避險', fmt.k(ex.sma200), hedgeRead())];
+  }
+
+  /* 價格版 */
+  function mkInterp() {
+    var p = D.price, b = p.bar, c = b.c, a = p.atr || {}, v = p.vol || {}, my = (p.mayer || {}).mayer, pi = p.pi_cycle, it = [];
+    if (b.close_pos_pct != null) it.push(['收盤', fmt.pct(b.chg_pct, 2), '收在當日高低區間的 ' + fmt.n(b.close_pos_pct, 0) + '% 位置（' + (b.close_pos_pct >= 70 ? '收在高檔，買方較強' : b.close_pos_pct <= 30 ? '收在低檔，賣方較強' : '收在中段，多空互有攻守') + '）' + (b.vol_vs_20dma != null ? '；成交量是 20 日均量的 ' + fmt.n(b.vol_vs_20dma, 2) + ' 倍' + (b.vol_vs_20dma < 0.6 ? '，量縮，這根 K 線的訊號力道弱。' : b.vol_vs_20dma > 1.5 ? '，放量，訊號較可信。' : '。') : '。'), b.close_pos_pct >= 70 ? 'pos' : b.close_pos_pct <= 30 ? 'neg' : 'neu']);
+    if (a.atr14) it.push(['ATR14', fmt.usd(a.atr14), '一天的正常波動約 ±' + fmt.usd(a.atr14) + '（' + fmt.n(a.atr14 / c * 100, 1) + '%）：這個範圍內的漲跌屬日常雜訊；掛單或停損的距離小於它，很容易被正常波動掃到。', 'neu']);
+    if (v.rv30 != null) it.push(['實際波動 RV30', fmt.n(v.rv30, 1) + '%', band(v.rv30, [30, 50, 70], ['年化 30% 以下，低波動', '年化 30–50%，一般水準', '年化 50–70%，偏高', '年化 70% 以上，劇烈']) + (v.rv7_rv30 < 0.75 ? '；近 7 天明顯比近 30 天平靜（RV7 只有 RV30 的 ' + fmt.n(v.rv7_rv30 * 100, 0) + '%），價格在收斂盤整，之後常出現方向性突破。' : v.rv7_rv30 > 1.3 ? '；近 7 天波動明顯放大（RV7 是 RV30 的 ' + fmt.n(v.rv7_rv30, 2) + ' 倍）。' : '。'), 'neu']);
+    if (my != null) it.push(['Mayer 倍數', fmt.n(my, 2), band(my, [0.8, 1, 1.5, 2.4], ['0.8 以下：歷史便宜區', '0.8–1：價格低於 200 日均線，偏弱但不算便宜', '1–1.5：價格高於 200 日均線、還沒過熱', '1.5–2.4：偏熱', '2.4 以上：歷史過熱區']) + '。', my < 0.8 ? 'pos' : my >= 2.4 ? 'neg' : my >= 1.5 ? 'warn' : 'neu']);
+    if (pi != null) it.push(['Pi Cycle', fmt.n(pi, 2), pi >= 1 ? '已到 1：歷史頂部訊號觸發。' : pi >= 0.9 ? '接近 1，頂部訊號逼近。' : '只有 ' + fmt.n(pi, 2) + '，離觸發（1）很遠，沒有頂部跡象。', pi >= 1 ? 'neg' : pi >= 0.9 ? 'warn' : 'neu']);
+    return it;
+  }
+  function levelsSay(lv, c) {
+    var up = lv.filter(function (x) { return x[0] > c; }).pop(), dn = lv.filter(function (x) { return x[0] <= c; })[0];
+    return '<p class="say">上方最近：<b>' + (up ? up[1] + ' ' + fmt.k(up[0]) : '—') + '</b>' + (up ? '（' + fmt.pct((up[0] / c - 1) * 100) + '）' : '') + '；下方最近：<b>' + (dn ? dn[1] + ' ' + fmt.k(dn[0]) : '—') + '</b>' + (dn ? '（' + fmt.pct((dn[0] / c - 1) * 100) + '）' : '') + '。價格常在這些位置停頓或反轉，但沒有一條是必守的。</p>';
+  }
+  function maSay(ma, c) {
+    var s = function (v) { return c >= v; }, L = s(ma.sma200), M = s(ma.sma50), S = s(ma.sma20);
+    var w = L && M && S ? '長、中、短線都在均線之上，多頭排列' : L && M ? '長線、中線仍是多頭，短線（20 日）跌到均線下方在整理' : L ? '長線（200 日）仍是多頭，但中短線轉弱' : !M && !S ? '長、中、短線都在均線之下，空頭排列' : '長線（200 日）在均線之下，中短線反彈中';
+    return '<p class="say">' + w + '。</p>';
+  }
+
+  /* 衍生品版 */
+  function dvInterp() {
+    var dv = D.deriv, d = dv.deriv || {}, r = dv.rr25 || {}, o = dv.options || {}, c = D.price.bar.c, it = [], dvol = dv.dvol || {}, x = (dv.samesource || {}).iv_minus_rv30;
+    var big = (o.expiries || []).slice().sort(function (a, b) { return b.oi - a.oi; })[0];
+    if (dvol.value != null) it.push(['DVOL', fmt.n(dvol.value, 1), '一年第 ' + fmt.n(dvol.pct_1y, 0) + ' 百分位：' + band(dvol.pct_1y, [20, 50, 80], ['在一年低檔，選擇權市場預期平靜，買保護很便宜；長時間低波動之後常接大波動，但不指方向。', '偏低，市場預期平靜。', '偏高，市場預期波動放大。', '在一年高檔，市場緊張或有大事件，買保護很貴。']), dvol.pct_1y >= 80 ? 'warn' : 'neu']);
+    if (x != null) it.push(['IV − RV30', fmt.n(x, 2), Math.abs(x) < 3 ? '隱含波動和實際波動相差不到 3 點：選擇權定價大致公允，沒有恐慌溢價。' : x < 0 ? '隱含波動比實際低 ' + fmt.n(-x, 1) + ' 點：選擇權相對便宜，市場可能低估了波動。' : '隱含波動比實際高 ' + fmt.n(x, 1) + ' 點：市場在為未來波動付溢價（避險需求或事件前）。', 'neu']);
+    if (d.funding_ann != null) it.push(['永續資金費率', fmt.pct(d.funding_ann, 1), '年化 ' + band(d.funding_ann, [0, 10, 20, 40], ['低於 0：空頭付費給多頭，空單擁擠，容易出現軋空', '0–10%：中性，多頭槓桿不擁擠', '10–20%：偏熱，多頭願意付較高成本', '20–40%：槓桿過熱，回檔時容易連環爆倉', '40% 以上：極端過熱']) + '；期貨基差中位 ' + fmt.n(d.basis_median, 1) + '%。', d.funding_ann < 0 ? 'pos' : d.funding_ann < 10 ? 'neu' : d.funding_ann < 20 ? 'warn' : 'neg']);
+    if (r.rr != null) it.push(['25Δ 風險逆轉', fmt.n(r.rr, 2), r.rr > 2 ? '買權比賣權貴 ' + fmt.n(r.rr, 1) + ' 點：選擇權市場偏向押漲。' : r.rr < -2 ? '賣權比買權貴 ' + fmt.n(-r.rr, 1) + ' 點：市場在買下跌保護，偏防守。' : '接近 0：押漲和押跌的需求大致平衡。', r.rr > 2 ? 'pos' : r.rr < -2 ? 'neg' : 'neu']);
+    else it.push(['25Δ 風險逆轉', '—', '本日沒有符合條件（20–45 天到期）的合約可計算。', 'neu']);
+    if (big) it.push(['最大到期', big.expiry, '佔全部未平倉 ' + fmt.n(big.share, 0) + '%，賣權／買權 ' + fmt.n(big.pc, 2) + (big.pc < 0.7 ? '（買權明顯較多，偏多佈局）' : big.pc > 1 ? '（賣權較多，偏避險）' : '（大致平衡）') + '；Max Pain ' + fmt.k(big.maxpain) + '，' + (big.maxpain < c ? '低於' : '高於') + '收盤 ' + fmt.n(Math.abs(big.maxpain / c - 1) * 100, 0) + '%。到期前價格有時被拉向 Max Pain，但這個效應的證據薄弱，只作參考。', big.pc < 0.7 ? 'pos' : big.pc > 1 ? 'neg' : 'neu']);
+    return it;
+  }
+  function basisSay(cv) {
+    if (!cv || !cv.length) return '';
+    var ys = cv.map(function (p) { return p[1]; }), lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys), sl = ys[ys.length - 1] - ys[0];
+    return '<p class="say">各期限年化 <b>' + fmt.n(lo, 1) + '–' + fmt.n(hi, 1) + '%</b>，' + (sl > 0.5 ? '遠月較高（正常的正價差）' : sl < -0.5 ? '近月較高，短期做多需求較強' : '曲線平坦') + '；' + (hi > 15 ? '水準偏高，槓桿偏熱。' : lo < 3 ? '水準很低，做多需求冷淡。' : '水準中性（3–15% 屬常態）。') + '</p>';
+  }
+  function strikeSay(big) {
+    if (!big || !big.top_calls) return '';
+    var k = function (a) { return a.map(function (x) { return fmt.k(x[0]); }).join('、'); };
+    return '<p class="say">買權集中在 <b>' + k(big.top_calls) + '</b>，賣權保護集中在 <b>' + k(big.top_puts) + '</b>：大戶押注的上檔目標和下檔防線大致在這些價位。</p>';
+  }
+
+  /* 資金版 */
+  function flInterp(last, s7, p7) {
+    var fr = D.flows.fred || {}, nq = fr.NASDAQCOM || {}, dx = fr.DTWEXBGS || {}, rr = D.flows.dfii10 || {}, rc = D.flows.rc_liq || {}, it = [];
+    if (last.musd != null) it.push(['最近完整日 ETF', (last.musd >= 0 ? '+' : '') + fmt.n(last.musd, 1) + 'M', fmt.md(last.d) + (last.musd >= 0 ? ' 淨流入' : ' 淨流出') + (Math.abs(last.musd) >= 300 ? '，屬大額。' : Math.abs(last.musd) < 100 ? '，金額不大，單日意義有限。' : '。'), last.musd >= 0 ? 'pos' : 'neg']);
+    it.push(['近 7 個完整日', (s7 >= 0 ? '+' : '') + fmt.n(s7, 0) + 'M', (s7 >= 0 ? '淨流入' : '淨流出') + (s7 * p7 > 0 ? '，前 7 日也是' + (p7 >= 0 ? '流入，機構買盤延續。' : '流出，機構需求連兩週偏弱。') : '，與前 7 日方向相反，還不算趨勢。'), s7 >= 0 ? 'pos' : 'neg']);
+    if (nq.corr30 != null) it.push(['BTC–那斯達克', fmt.n(nq.corr30, 2), nq.corr30 >= 0.5 ? '高度同步：BTC 目前跟美股科技股同漲同跌，美股大跌時 BTC 很難獨善其身。' : nq.corr30 >= 0.2 ? '有些同步，但不緊密。' : nq.corr30 > -0.2 ? '幾乎無關，BTC 走自己的路。' : '反向，少見。', nq.corr30 >= 0.5 ? 'warn' : 'neu']);
+    if (dx.corr30 != null) it.push(['BTC–美元', fmt.n(dx.corr30, 2), dx.corr30 <= -0.3 ? '明顯反向：美元走強時 BTC 通常受壓。' : dx.corr30 >= 0.3 ? '同向，少見。' : '關係不明顯，美元不是現在的主要驅動。', 'neu']);
+    if (rr.value != null) it.push(['10 年期實質利率', fmt.n(rr.value, 2) + '%', band(rr.value, [0, 1, 2], ['低於 0：實質利率為負，對無息資產有利', '0–1%：寬鬆', '1–2%：中性偏緊', '2% 以上：偏緊，持有不生息資產（如 BTC）的機會成本高']) + (rr.chg_20obs_bp >= 20 ? '；近 20 個交易日上升 ' + rr.chg_20obs_bp + 'bp，緊縮壓力增加，對 BTC 不利。' : rr.chg_20obs_bp <= -20 ? '；近 20 個交易日下降 ' + (-rr.chg_20obs_bp) + 'bp，壓力減輕。' : '；近 20 日變化不大。'), rr.chg_20obs_bp >= 20 ? 'neg' : rr.chg_20obs_bp <= -20 ? 'pos' : 'neu']);
+    if (rc.chg30_pct != null) it.push(['實現市值 30 日', fmt.pct(rc.chg30_pct, 2), (rc.zero_now ? '小於等於 0：新資金停止流入，已 ' : '大於 0：仍有新資金流入，已持續 ') + rc.state_run_days + ' 天。只是資金背景，不是買賣訊號（見下方說明）。', rc.zero_now ? 'neg' : 'pos']);
+    return it;
+  }
+
+  /* 鏈上版 */
+  function ocInterp() {
+    var fl = D.chips.flow || {}, sp = fl.sth_in_profit_pct || {}, sv = fl.sth_vs_tmm || {}, ex = D.onchain.exchange || {}, mi = D.onchain.mining || {}, c = D.price.bar.c, it = [];
+    if (sp.value != null) it.push(['短期持有者獲利比例', fmt.n(sp.value, 1) + '%', band(sp.value, [20, 50, 90], ['低於 20%：短期持有者幾乎全數虧損，歷來是短線恐慌底部', '20–50%：多數短期持有者虧損，停損賣壓仍在', '50–90%：多數短期持有者獲利，結構健康', '90% 以上：短期持有者幾乎全數獲利，短線過熱，容易出現獲利了結']) + (sp.d7 != null && Math.abs(sp.value - sp.d7) >= 10 ? '；7 天前 ' + fmt.n(sp.d7, 1) + '%，一週內' + (sp.value < sp.d7 ? '下降 ' : '上升 ') + fmt.n(Math.abs(sp.value - sp.d7), 0) + ' 個百分點。' : '。'), sp.value < 20 ? 'pos' : sp.value < 50 ? 'neg' : sp.value < 90 ? 'pos' : 'warn']);
+    if (sv.sth_cost) { var d = (c / sv.sth_cost - 1) * 100;
+      it.push(['短期持有者成本', fmt.usd(sv.sth_cost), (d >= 0 ? '收盤高於短期持有者（持有不到 155 天）的平均成本 ' + fmt.n(d, 1) + '%：新進場的資金整體在賺錢，是多頭結構；跌回這條線時常有回本或停損賣壓。' : '收盤低於短期持有者的平均成本 ' + fmt.n(-d, 1) + '%：新進場的資金整體虧損，反彈到成本線附近容易遇到解套賣壓。') +
+        (sv.tmm ? (sv.sth_cost < sv.tmm ? '短期成本仍低於真實市場均價（' + fmt.usd(sv.tmm) + '）' + (sv.last_cross_down ? '，自 ' + sv.last_cross_down + ' 下穿後還沒收復' : '') + '；籌碼流向框架把「短期成本上穿真實市場均價」視為多頭結構確認，現在還沒有。' : '短期成本已高於真實市場均價（' + fmt.usd(sv.tmm) + '），多頭結構確認。') : ''), d >= 0 ? 'pos' : 'neg']); }
+    if (ex.exchange_supply_chg30_pct != null) { var a = ex.exchange_supply_chg30_pct, b = ex.exchange_supply_chg90_pct;
+      it.push(['交易所供給', fmt.n(ex.exchange_supply_share_pct, 2) + '%', '30 日 ' + fmt.pct(a, 2) + (a < 0 ? '（幣在離開交易所，可賣的現貨變少，偏多）' : '（幣在流入交易所，潛在賣壓增加）') + '；90 日 ' + fmt.pct(b, 2) + (a * b < 0 ? '，與 30 日方向相反，趨勢還不明確。' : '，方向一致。') + '地址歸屬會事後修正，看方向不看小數。', a < 0 && b < 0 ? 'pos' : a > 0 && b > 0 ? 'neg' : 'neu']); }
+    if (mi.hash7 != null) { var be = mi.breakeven || {}, up = [], dn = [];
+      Object.keys(be).forEach(function (k) { var m = k.match(/(\d+)J@([\d.]+)/), lab = m ? m[1] + ' J/TH（電價 $' + m[2] + '）' : k; (c >= be[k] ? up : dn).push(lab + ' ' + fmt.k(be[k])); });
+      it.push(['算力', fmt.n(mi.hash7, 0) + ' EH/s', (mi.wk_chg_pct >= 0 ? '週 ' + fmt.pct(mi.wk_chg_pct, 1) + '，礦工持續投入，沒有投降跡象' : '週 ' + fmt.pct(mi.wk_chg_pct, 1) + (mi.wk_chg_pct < -5 ? '，明顯下降，留意礦工投降（歷來接近底部）' : '，小幅下降')) + '。' + (up.length ? '收盤高於 ' + up.join('、') + ' 的電費損益兩平價' : '') + (dn.length ? (up.length ? '，' : '') + '低於 ' + dn.join('、') + '（這類礦機在虧電費）' : '') + '。', mi.wk_chg_pct < -5 ? 'warn' : 'neu']); }
+    if (mi.diff_next_pct != null) it.push(['下次難度調整', fmt.pct(mi.diff_next_pct, 1), '目前平均 ' + fmt.n(mi.block_time_s / 60, 1) + ' 分鐘出一個塊（目標 10 分鐘），' + fmt.md(mi.retarget) + ' 預計' + (mi.diff_next_pct >= 0 ? '上調：礦工競爭加劇、成本上升。' : '下調：礦工壓力減輕。'), 'neu']);
+    return it;
+  }
+  function urpdSay(u) {
+    if (!u.cur_btc) return '';
+    var ab = u.above_cluster, bl = u.below_cluster, r = function (x) { return fmt.k(x.range[0]) + '–' + fmt.k(x.range[1]); };
+    return '<p class="say">現價這一格（' + r({ range: u.cur_bucket }) + '）堆了 <b>' + fmt.n(u.cur_btc / 1e4, 0) + ' 萬顆</b>（' + fmt.n(u.cur_pct, 1) + '%）。' +
+      (ab ? '上方最近的大堆在 <b>' + r(ab) + '</b>（' + fmt.n(ab.btc / 1e4, 0) + ' 萬顆）：價格回到那裡時，在那裡買的人剛好回本，常出現解套賣壓；站穩之後則轉為支撐。' : '') +
+      (bl ? '下方最近的大堆在 <b>' + r(bl) + '</b>（' + fmt.n(bl.btc / 1e4, 0) + ' 萬顆），是第一道籌碼支撐。' : '') + '</p>';
+  }
+
+  /* 掛單簿 */
+  function bkInterp(o) {
+    var t = o.totals || {}, w = o.walls || {}, r = t.wide_bid / t.wide_ask, it = [];
+    if (isFinite(r)) it.push(['買賣比', fmt.n(r, 2), band(r, [0.8, 1.2], ['低於 0.8：上方賣單明顯比下方買單厚，上漲阻力較大。', '0.8–1.2：上下掛單大致平衡。', '高於 1.2：下方承接明顯較厚，下跌有緩衝。']), r < 0.8 ? 'neg' : r > 1.2 ? 'pos' : 'neu']);
+    var a = (w.ask || [])[0], b = (w.bid || [])[0], c = o.mid;
+    if (a) it.push(['最大賣牆', fmt.k(a[0]), a[2] + ' 掛了 $' + fmt.n(a[1], 1) + 'M，在中間價上方 ' + fmt.n((a[0] / c - 1) * 100, 1) + '%：價格接近時可能先被擋住；但掛單隨時可撤，假牆很常見。', 'neu']);
+    if (b) it.push(['最大買牆', fmt.k(b[0]), b[2] + ' 掛了 $' + fmt.n(b[1], 1) + 'M，在中間價下方 ' + fmt.n((1 - b[0] / c) * 100, 1) + '%：可能是下檔第一道承接，同樣可以隨時撤。', 'neu']);
+    return it;
+  }
+
   /* ---------------- Views ---------------- */
   var V = {};
   var ROUTES = [
@@ -344,7 +518,7 @@
       panel('span-7', '今天該做什麼、盯什麼', '依出場框架 · 非投資建議', actionsHtml()) + panel('span-5', '今天變了什麼', '相對上一期', changesHtml()) + '</div>';
     return front + tapeHtml() + newsBlock + plan +
       '<div class="sec-h"><h2>今日數據</h2><span class="en">The Numbers</span><hr></div>' + kp +
-      '<div class="grid">' + panel('span-12', '離出場線還多遠', '以 ' + fmt.md(D.meta.bar_date) + ' 收盤計 · 對數刻度', '<div class="runway">' + runwaySvg() + '</div>') +
+      '<div class="grid">' + interpPanel(ovInterp()) + panel('span-12', '離出場線還多遠', '以 ' + fmt.md(D.meta.bar_date) + ' 收盤計 · 對數刻度', '<div class="runway">' + runwaySvg() + '</div>') +
       panel('span-7', '價格近一年', 'CoinMetrics 每 7 天', '<div class="chart" id="c-ov-px"></div>') +
       panel('span-5', '接下來的日期', '', '<div class="events">' + ev + '</div>') + '</div>';
   };
@@ -377,10 +551,10 @@
     return readBar('cycle') + '<div class="grid">' +
       panel('span-12', '市場階段：' + (STAGE[st.stage] || ['—'])[0], 'P23 · 熊市 → 轉換期 → 牛市', stageHtml()) +
       panel('span-12', '長期路徑：四種走法', '每月底重估 · 下次 ' + M.next_review, legend([['直接修復 ' + w['直接修復'] + '%', 'var(--s4)', 'dash'], ['淺回檔 ' + w['淺回檔'] + '%', 'var(--s1)', 'dash'], ['基準雙底 ' + w['基準雙底'] + '%', 'var(--s2)', 'dash'], ['延後新低 ' + w['延後新低'] + '%', 'var(--s3)', 'dash'], ['已實現', 'var(--ink)'], ['頂部 80% 區間', 'var(--flare)', 'box']]) + '<div class="chart" id="c-path"></div><p class="note">頂部模型：中位 ' + fmt.usd(M.top_model.median) + '，80% 區間 ' + fmt.k(M.top_model.p10) + '–' + fmt.k(M.top_model.p90) + '，時間 ' + esc(M.top_model.timing) + '。路徑是本站的預測，2028 年以後只供量級參考。</p>') +
-      panel('span-7', 'MVRV ÷ 前一輪高點', 'CoinMetrics · 2021 起', '<p class="say">現在 <b>' + fmt.n(cm.mvrv_vs_prior, 3) + '</b>；連 5 天站上 0.75（約 ' + fmt.usd(cm.k075_price) + '）是出場框架的第一個鏈上賣點。</p><div class="chart" id="c-p20"></div>') +
-      panel('span-5', '頂部三指標', fmt.md(D.cycle.p6_date) + ' · 四年百分位', '<div class="meters">' + meter('MVRV Z', '<0 底 · >3.5 頂', p6.mvrv_z, fmt.n(p6.mvrv_z, 0), '百分位', [80, 85, 90]) + meter('NUPL', '淨未實現損益', p6.nupl, fmt.n(p6.nupl, 0), '百分位', [80, 85, 90]) + meter('Puell', '礦工收入倍數', p6.puell, fmt.n(p6.puell, 0), '百分位', [80, 85, 90]) + '</div><p class="note">任兩項到 80 進入頂部區；到 85 連 5 天多賣兩階；到 90 在 10 個交易日內賣完。</p>' ) +
-      panel('span-7', '冪律：價格 ÷ 合理價', '每天只用當天以前資料擬合', '<p class="say">現在 <b>' + fmt.n(pl.ratio, 2) + ' 倍</b>（合理價 ' + fmt.usd(pl.fair) + '）。頂部倍數每輪縮小，照這個速度，下一輪頂部約在合理價的 ' + fmt.n((pl.next_top_ratio || [])[0], 2) + '–' + fmt.n((pl.next_top_ratio || [])[1], 2) + ' 倍。</p><div class="chart" id="c-pl"></div>', '<div class="seg" id="pl-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="2020">2020 起</button></div>') +
-      panel('span-5', 'Tidemark 綜合訊號', '第三方模型 · ' + fmt.md(tm.price_date) + ' 資料', '<div class="meters">' + meter('頂部訊號', '≥50 窗口 · ≥70 警戒', (tm.top || {}).signal || 0, fmt.n((tm.top || {}).signal, 1), (tm.top || {}).level || '—', [50, 70]) + meter('熱度', '五類加權', (tm.top || {}).heat || 0, fmt.n((tm.top || {}).heat, 1), (tm.top || {}).zone || '', [40, 65]) + meter('底部訊號', '≥50 底部區', (tm.bottom || {}).signal || 0, fmt.n((tm.bottom || {}).signal, 1), (tm.bottom || {}).level || '—', [50, 70]) + meter('冷度', '估值・礦工・價格結構', (tm.bottom || {}).cold || 0, fmt.n((tm.bottom || {}).cold, 1), '', []) + '</div>' +
+      panel('span-7', 'MVRV ÷ 前一輪高點', 'CoinMetrics · 2021 起', '<p class="say">現在 <b>' + fmt.n(cm.mvrv_vs_prior, 3) + '</b>；連 5 天站上 0.75 是出場框架的第一個鏈上賣點。' + esc((p20Read() || [''])[0]) + '</p><div class="chart" id="c-p20"></div>') +
+      panel('span-5', '頂部三指標', fmt.md(D.cycle.p6_date) + ' · 四年百分位', '<p class="say">' + esc((p6Read() || [''])[0]) + '</p><div class="meters">' + meter('MVRV Z', '<0 底 · >3.5 頂', p6.mvrv_z, fmt.n(p6.mvrv_z, 0), '百分位', [80, 85, 90]) + meter('NUPL', '淨未實現損益', p6.nupl, fmt.n(p6.nupl, 0), '百分位', [80, 85, 90]) + meter('Puell', '礦工收入倍數', p6.puell, fmt.n(p6.puell, 0), '百分位', [80, 85, 90]) + '</div><p class="note">任兩項到 80 進入頂部區；到 85 連 5 天多賣兩階；到 90 在 10 個交易日內賣完。</p>' ) +
+      panel('span-7', '冪律：價格 ÷ 合理價', '每天只用當天以前資料擬合', '<p class="say">現在 <b>' + fmt.n(pl.ratio, 2) + ' 倍</b>（合理價 ' + fmt.usd(pl.fair) + '）。頂部倍數每輪縮小，照這個速度，下一輪頂部約在合理價的 ' + fmt.n((pl.next_top_ratio || [])[0], 2) + '–' + fmt.n((pl.next_top_ratio || [])[1], 2) + ' 倍。' + esc((plRead() || [''])[0]) + '</p><div class="chart" id="c-pl"></div>', '<div class="seg" id="pl-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="2020">2020 起</button></div>') +
+      panel('span-5', 'Tidemark 綜合訊號', '第三方模型 · ' + fmt.md(tm.price_date) + ' 資料', '<p class="say">' + esc((tmRead() || [''])[0]) + '</p><div class="meters">' + meter('頂部訊號', '≥50 窗口 · ≥70 警戒', (tm.top || {}).signal || 0, fmt.n((tm.top || {}).signal, 1), (tm.top || {}).level || '—', [50, 70]) + meter('熱度', '五類加權', (tm.top || {}).heat || 0, fmt.n((tm.top || {}).heat, 1), (tm.top || {}).zone || '', [40, 65]) + meter('底部訊號', '≥50 底部區', (tm.bottom || {}).signal || 0, fmt.n((tm.bottom || {}).signal, 1), (tm.bottom || {}).level || '—', [50, 70]) + meter('冷度', '估值・礦工・價格結構', (tm.bottom || {}).cold || 0, fmt.n((tm.bottom || {}).cold, 1), '', []) + '</div>' +
         '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:62%"><col style="width:38%"></colgroup><tbody>' + (tm.cats || []).map(function (x) { return '<tr><td>' + esc(x[0]) + (x[2] === 'partial' ? '＊' : '') + '</td><td><div class="pct"><i><b class="' + ((x[1] || 0) >= 80 ? 'hot' : '') + '" style="width:' + (x[1] || 0) + '%"></b></i><span class="num">' + (x[1] == null ? '—' : fmt.n(x[1], 0)) + '</span></div></td></tr>'; }).join('') + '</tbody></table></div><p class="note">' + esc((tm.cycle_test || {}).verdict || '') + '</p>') +
       '</div>';
   };
@@ -409,10 +583,10 @@
     var tbl = '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:30%"><col style="width:24%"><col style="width:46%"></colgroup><thead><tr><th>價位</th><th class="num">距收盤</th><th>是什麼</th></tr></thead><tbody>' + lv.map(function (x) { var d = (x[0] / c - 1) * 100; return '<tr><td class="num" style="text-align:left">' + fmt.usd(x[0]) + '</td><td class="num" style="color:' + (d >= 0 ? 'var(--up)' : 'var(--down)') + '">' + fmt.pct(d) + '</td><td>' + x[1] + '</td></tr>'; }).join('') + '</tbody></table></div>';
     var ma2 = [['5 日', ma.sma5], ['20 日', ma.sma20], ['50 日', ma.sma50], ['111 日', ma.sma111], ['200 日', ma.sma200], ['350 日', ma.sma350]];
     var mat = '<div class="meters">' + ma2.map(function (m) { var d = (c / m[1] - 1) * 100; return meter(m[0] + '均線', fmt.usd(m[1]), 50 + Math.max(-50, Math.min(50, d * 2)), fmt.pct(d), d >= 0 ? '價格在上方' : '價格在下方', [50]); }).join('') + '</div><p class="note">中線＝均線位置；圓點越往右，價格越高於該均線。</p>';
-    return readBar('market') + '<div class="kpis">' + kpi('收盤', fmt.usd(c), fmt.pct(p.bar.chg_pct, 2) + ' · 當日區間位置 ' + fmt.n(p.bar.close_pos_pct, 0) + '%') + kpi('ATR14（簡單平均）', fmt.usd(p.atr.atr14), '約 ' + fmt.n(p.atr.atr14 / c * 100, 1) + '% / 日') + kpi('實際波動 RV30', fmt.n(p.vol.rv30, 1) + '%', 'RV7 ' + fmt.n(p.vol.rv7, 1) + '% · RV90 ' + fmt.n(p.vol.rv90, 1) + '%') + kpi('Mayer 倍數', fmt.n(p.mayer.mayer, 2), '價格 ÷ 200 日均線') + kpi('Pi Cycle', fmt.n(p.pi_cycle, 2), '111 日 ÷ 2×350 日；≥1 為歷史頂部訊號', p.pi_cycle * 100) + '</div><div class="grid">' +
+    return readBar('market') + '<div class="kpis">' + kpi('收盤', fmt.usd(c), fmt.pct(p.bar.chg_pct, 2) + ' · 當日區間位置 ' + fmt.n(p.bar.close_pos_pct, 0) + '%') + kpi('ATR14（簡單平均）', fmt.usd(p.atr.atr14), '約 ' + fmt.n(p.atr.atr14 / c * 100, 1) + '% / 日') + kpi('實際波動 RV30', fmt.n(p.vol.rv30, 1) + '%', 'RV7 ' + fmt.n(p.vol.rv7, 1) + '% · RV90 ' + fmt.n(p.vol.rv90, 1) + '%') + kpi('Mayer 倍數', fmt.n(p.mayer.mayer, 2), '價格 ÷ 200 日均線') + kpi('Pi Cycle', fmt.n(p.pi_cycle, 2), '111 日 ÷ 2×350 日；≥1 為歷史頂部訊號', p.pi_cycle * 100) + '</div><div class="grid">' + interpPanel(mkInterp()) +
       panel('span-8', '近 20 天 K 線', 'Kraken 日線 · UTC', '<div class="chart" id="c-cd"></div>') +
-      panel('span-4', '關鍵價位', '', tbl) +
-      panel('span-6', '價格與均線', '', mat) +
+      panel('span-4', '關鍵價位', '', levelsSay(lv, c) + tbl) +
+      panel('span-6', '價格與均線', '', maSay(ma, c) + mat) +
       panel('span-6', '價格長期走勢', 'CoinMetrics · 對數刻度', '<div class="chart" id="c-long"></div>', '<div class="seg" id="lg-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="4y">近 4 年</button></div>') + '</div>';
   };
   V.market.after = function () {
@@ -430,11 +604,11 @@
   V.deriv = function () {
     var dv = D.deriv, d = dv.deriv || {}, r = dv.rr25 || {}, o = dv.options || {};
     var big = (o.expiries || []).slice().sort(function (a, b) { return b.oi - a.oi; })[0] || {};
-    return readBar('deriv') + '<div class="kpis">' + kpi('DVOL', fmt.n((dv.dvol || {}).value, 1), '一年第 ' + fmt.n((dv.dvol || {}).pct_1y, 0) + ' 百分位', (dv.dvol || {}).pct_1y) + kpi('IV − RV30（同源）', fmt.n((dv.samesource || {}).iv_minus_rv30, 2), '負值＝隱含波動比實際便宜') + kpi('永續資金費率', fmt.pct(d.funding_ann, 1), '年化 · 期貨基差中位 ' + fmt.n(d.basis_median, 1) + '%') + kpi('25Δ 風險逆轉', fmt.n(r.rr, 2), r.expiry + ' · ATM ' + fmt.n(r.atm_iv, 1) + '%') + kpi('選擇權未平倉', fmt.n(o.total_oi) + ' 顆', '最大到期 ' + (big.expiry || '—') + '（' + fmt.n(big.share, 0) + '%）') + '</div><div class="grid">' +
+    return readBar('deriv') + '<div class="kpis">' + kpi('DVOL', fmt.n((dv.dvol || {}).value, 1), '一年第 ' + fmt.n((dv.dvol || {}).pct_1y, 0) + ' 百分位', (dv.dvol || {}).pct_1y) + kpi('IV − RV30（同源）', fmt.n((dv.samesource || {}).iv_minus_rv30, 2), '負值＝隱含波動比實際便宜') + kpi('永續資金費率', fmt.pct(d.funding_ann, 1), '年化 · 期貨基差中位 ' + fmt.n(d.basis_median, 1) + '%') + kpi('25Δ 風險逆轉', fmt.n(r.rr, 2), r.expiry ? r.expiry + ' · ATM ' + fmt.n(r.atm_iv, 1) + '%' : '本日沒有可計算的合約') + kpi('選擇權未平倉', fmt.n(o.total_oi) + ' 顆', '最大到期 ' + (big.expiry || '—') + '（' + fmt.n(big.share, 0) + '%）') + '</div><div class="grid">' + interpPanel(dvInterp()) +
       panel('span-8', '隱含波動 vs 實際波動', 'Deribit DVOL · Kraken RV30 · 近一年', legend([['DVOL', 'var(--s1)'], ['RV30', 'var(--s2)']]) + '<div class="chart" id="c-vol"></div>') +
-      panel('span-4', '期貨基差曲線', '年化 % · 排除 7 天內到期', '<div class="chart" id="c-basis"></div><p class="note">資金費率年化 ' + fmt.pct(d.funding_ann, 1) + '；永續 OI ' + fmt.usd(d.perp_oi_usd_m) + 'M。</p><div class="src-link">外部：<a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">CoinGlass 爆倉熱力圖 ↗</a>（以 OI 與假設槓桿推估，非實際倉位）</div>') +
+      panel('span-4', '期貨基差曲線', '年化 % · 排除 7 天內到期', basisSay(d.basis_curve) + '<div class="chart" id="c-basis"></div><p class="note">資金費率年化 ' + fmt.pct(d.funding_ann, 1) + '；永續 OI ' + fmt.usd(d.perp_oi_usd_m) + 'M。</p><div class="src-link">外部：<a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">CoinGlass 爆倉熱力圖 ↗</a>（以 OI 與假設槓桿推估，非實際倉位）</div>') +
       panel('span-6', '各到期未平倉', '買權 / 賣權（顆）', legend([['買權', 'var(--s4)'], ['賣權', 'var(--s3)']]) + '<div class="chart" id="c-oi"></div>') +
-      panel('span-6', '最大到期的履約價分布', ((dv.viz || {}).options || {}).strikes ? dv.viz.options.strikes.expiry + ' · Max Pain ' + fmt.k(dv.viz.options.strikes.maxpain) : '', '<div id="c-strike"></div>') + '</div>';
+      panel('span-6', '最大到期的履約價分布', ((dv.viz || {}).options || {}).strikes ? dv.viz.options.strikes.expiry + ' · Max Pain ' + fmt.k(dv.viz.options.strikes.maxpain) : '', strikeSay((o.expiries || []).filter(function (e) { return e.expiry === (((dv.viz || {}).options || {}).strikes || {}).expiry; })[0] || big) + '<div id="c-strike"></div>') + '</div>';
   };
   V.deriv.after = function () {
     var v = D.deriv.viz || {};
@@ -475,7 +649,7 @@
     var fr = D.flows.fred || {}, etf = D.flows.etf || [], full = etf.filter(function (r) { return !r.partial; });
     var last = full[full.length - 1] || {}, s7 = full.slice(-7).reduce(function (a, r) { return a + r.musd; }, 0), p7 = full.slice(-14, -7).reduce(function (a, r) { return a + r.musd; }, 0);
     var nq = fr.NASDAQCOM || {}, dx = fr.DTWEXBGS || {}, tn = fr.DGS10 || {}, rr = D.flows.dfii10 || {}, rc = D.flows.rc_liq || {};
-    return readBar('flows') + '<div class="kpis">' + kpi('最近完整日 ETF', (last.musd >= 0 ? '+' : '') + fmt.n(last.musd, 1) + 'M', fmt.md(last.d) + ' · 美元') + kpi('近 7 個完整日', (s7 >= 0 ? '+' : '') + fmt.n(s7, 0) + 'M', '前 7 日 ' + (p7 >= 0 ? '+' : '') + fmt.n(p7, 0) + 'M') + kpi('BTC–那斯達克 30 日相關', fmt.n(nq.corr30, 2), fmt.md(nq.last_date) + ' · 高於 0.5 代表同漲同跌', (nq.corr30 + 1) * 50) + kpi('BTC–美元 30 日相關', fmt.n(dx.corr30, 2), 'FRED 廣義美元指數', (dx.corr30 + 1) * 50) + kpi('10 年期實質利率', fmt.n(rr.value, 2) + '%', '20 日 ' + (rr.chg_20obs_bp >= 0 ? '+' : '') + rr.chg_20obs_bp + 'bp · 名目 ' + fmt.n(tn.last, 2) + '%') + (rc.chg30_pct != null ? kpi('實現市值 30 日', fmt.pct(rc.chg30_pct, 2), (rc.zero_now ? '≤0 已 ' : '>0 已 ') + rc.state_run_days + ' 天 · 90 日 ' + fmt.pct(rc.chg90_pct, 2)) : '') + '</div><div class="grid">' +
+    return readBar('flows') + '<div class="kpis">' + kpi('最近完整日 ETF', (last.musd >= 0 ? '+' : '') + fmt.n(last.musd, 1) + 'M', fmt.md(last.d) + ' · 美元') + kpi('近 7 個完整日', (s7 >= 0 ? '+' : '') + fmt.n(s7, 0) + 'M', '前 7 日 ' + (p7 >= 0 ? '+' : '') + fmt.n(p7, 0) + 'M') + kpi('BTC–那斯達克 30 日相關', fmt.n(nq.corr30, 2), fmt.md(nq.last_date) + ' · 高於 0.5 代表同漲同跌', (nq.corr30 + 1) * 50) + kpi('BTC–美元 30 日相關', fmt.n(dx.corr30, 2), 'FRED 廣義美元指數', (dx.corr30 + 1) * 50) + kpi('10 年期實質利率', fmt.n(rr.value, 2) + '%', '20 日 ' + (rr.chg_20obs_bp >= 0 ? '+' : '') + rr.chg_20obs_bp + 'bp · 名目 ' + fmt.n(tn.last, 2) + '%') + (rc.chg30_pct != null ? kpi('實現市值 30 日', fmt.pct(rc.chg30_pct, 2), (rc.zero_now ? '≤0 已 ' : '>0 已 ') + rc.state_run_days + ' 天 · 90 日 ' + fmt.pct(rc.chg90_pct, 2)) : '') + '</div><div class="grid">' + interpPanel(flInterp(last, s7, p7)) +
       panel('span-12', '現貨 ETF 每日淨流量', 'The Block（與 Farside 同口徑）· 百萬美元 · 淡色＝暫定或尚未完整', '<div class="chart" id="c-etf"></div>') + rcPanel(rc) + '</div>';
   };
   V.flows.after = function () {
@@ -488,15 +662,15 @@
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};
     var rows = [
-      ['MVRV Z', m['mvrv-zscore'], '估值；<0 底部、>3.5 頂部'], ['NUPL', m['nupl'], '淨未實現損益'], ['Puell', m['puell-multiple'], '礦工收入倍數'],
-      ['SOPR', m['sopr'], '>1 平均獲利出場'], ['aSOPR', m['asopr'], '排除一小時內轉手'], ['STH-SOPR', m['sth-sopr'], '短期持有者'], ['LTH-SOPR', m['lth-sopr'], '長期持有者'],
-      ['非流動性供給', m['illiquid-supply'], '長期不動的幣'], ['高流動性供給', m['highly-liquid-supply'], '浮動籌碼']
-    ].filter(function (r) { return r[1]; });
-    var t = '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:22%"><col style="width:20%"><col style="width:28%"><col style="width:30%"></colgroup><thead><tr><th>指標</th><th class="num">讀值</th><th>四年百分位</th><th>說明</th></tr></thead><tbody>' + rows.map(function (r) { var v = r[1], big = Math.abs(v.value) > 1e5; return '<tr><td>' + r[0] + '<div class="note">' + fmt.md(v.date) + '</div></td><td class="num">' + (big ? fmt.n(v.value / 1e6, 2) + 'M' : fmt.n(v.value, 3)) + '</td><td>' + (v.pct_4y == null ? '—' : '<div class="pct"><i><b class="' + (v.pct_4y >= 80 ? 'hot' : '') + '" style="width:' + v.pct_4y + '%"></b></i><span class="num">' + fmt.n(v.pct_4y, 0) + '</span></div>') + '</td><td style="color:var(--ink-2)">' + r[2] + '</td></tr>'; }).join('') + '</tbody></table></div>';
-    var radar = [['LTH MVRV Z', tr['lth-mvrv-zscore'], 2], ['獲利供給 %', tr['supply-in-profit-pct'], 1], ['實現市值成長率', tr['realized-cap-growth-rate'], 2], ['LTH 30 日淨部位', tr['lth-net-position-change-30d-btc'], 0]].filter(function (r) { return r[1]; });
-    var rt = '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:34%"><col style="width:22%"><col style="width:22%"><col style="width:22%"></colgroup><thead><tr><th>頂部雷達</th><th class="num">現在</th><th class="num">2025 頂部</th><th>本輪位置</th></tr></thead><tbody>' + radar.map(function (r) { var v = r[1]; return '<tr><td>' + r[0] + '</td><td class="num">' + fmt.n(v.value, r[2]) + '</td><td class="num">' + fmt.n(v.extreme_near_2025_top, r[2]) + '</td><td><div class="pct"><i><b style="width:' + v.pct_since_2022_11 + '%"></b></i><span class="num">' + fmt.n(v.pct_since_2022_11, 0) + '</span></div></td></tr>'; }).join('') + '</tbody></table></div>';
-    return readBar('onchain') + '<div class="kpis">' + kpi('短期持有者獲利比例', fmt.n((fl.sth_in_profit_pct || {}).value, 1) + '%', '7 天前 ' + fmt.n((fl.sth_in_profit_pct || {}).d7, 1) + '%', (fl.sth_in_profit_pct || {}).value) + kpi('短期持有者成本', fmt.usd((fl.sth_vs_tmm || {}).sth_cost), '真實市場均價 ' + fmt.usd((fl.sth_vs_tmm || {}).tmm)) + kpi('交易所供給', fmt.n(ex.exchange_supply_share_pct, 2) + '%', '7 日 ' + fmt.pct(ex.exchange_supply_chg7_pct, 2) + ' · 90 日 ' + fmt.pct(ex.exchange_supply_chg90_pct, 2)) + kpi('算力 7 日均', fmt.n(mi.hash7, 0) + ' EH/s', '週 ' + fmt.pct(mi.wk_chg_pct, 1) + ' · hashprice $' + fmt.n(mi.hashprice, 1)) + kpi('下次難度調整', fmt.pct(mi.diff_next_pct, 1), fmt.md(mi.retarget) + ' · 進度 ' + fmt.n(mi.diff_progress, 0) + '%', mi.diff_progress) + '</div><div class="grid">' +
-      panel('span-5', '籌碼分布（URPD）', fmt.md(u.date) + ' · 每 2,000 美元一格', '<p class="say">現價這一格堆了 <b>' + fmt.n(u.cur_btc / 1e4, 0) + ' 萬顆</b>（' + fmt.n(u.cur_pct, 1) + '%）；下方最近大堆 ' + (u.below_cluster ? fmt.k(u.below_cluster.range[0]) + '–' + fmt.k(u.below_cluster.range[1]) : '—') + '。</p><div id="c-urpd"></div>') +
+      ['MVRV Z', 'mvrv-zscore', '估值：市值與實現市值的差距'], ['NUPL', 'nupl', '淨未實現損益：帳面獲利佔市值比例'], ['Puell', 'puell-multiple', '礦工收入 ÷ 一年平均'],
+      ['SOPR', 'sopr', '賣出時的獲利倍數，>1 平均獲利'], ['aSOPR', 'asopr', 'SOPR 排除一小時內轉手'], ['STH-SOPR', 'sth-sopr', '短期持有者的 SOPR'], ['LTH-SOPR', 'lth-sopr', '長期持有者的 SOPR'],
+      ['非流動性供給', 'illiquid-supply', '長期不動的幣'], ['高流動性供給', 'highly-liquid-supply', '浮動籌碼']
+    ].map(function (r) { return [r[0], m[r[1]], r[2], r[1]]; }).filter(function (r) { return r[1]; });
+    var t = '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:46%"><col style="width:20%"><col style="width:34%"></colgroup><thead><tr><th>指標</th><th class="num">讀值</th><th>四年百分位</th></tr></thead><tbody>' + rows.map(function (r) { var v = r[1], big = Math.abs(v.value) > 1e5, rd = OC_READ[r[3]] ? OC_READ[r[3]](v) : null; return '<tr' + (rd ? ' class="has-rd"' : '') + '><td><b>' + r[0] + '</b><div class="note">' + esc(r[2]) + ' · ' + fmt.md(v.date) + '</div></td><td class="num">' + (big ? fmt.n(v.value / 1e6, 2) + 'M' : fmt.n(v.value, 3)) + '</td><td>' + (v.pct_4y == null ? '—' : '<div class="pct"><i><b class="' + (v.pct_4y >= 80 ? 'hot' : '') + '" style="width:' + v.pct_4y + '%"></b></i><span class="num">' + fmt.n(v.pct_4y, 0) + '</span></div>') + '</td></tr>' + rdRow(rd, 3); }).join('') + '</tbody></table></div>';
+    var radar = [['LTH MVRV Z', tr['lth-mvrv-zscore'], 2, 'lth-mvrv-zscore'], ['獲利供給 %', tr['supply-in-profit-pct'], 1, 'supply-in-profit-pct'], ['實現市值成長率', tr['realized-cap-growth-rate'], 2, 'realized-cap-growth-rate'], ['LTH 30 日淨部位', tr['lth-net-position-change-30d-btc'], 0, 'lth-net-position-change-30d-btc']].filter(function (r) { return r[1]; });
+    var rt = '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:34%"><col style="width:22%"><col style="width:22%"><col style="width:22%"></colgroup><thead><tr><th>頂部雷達</th><th class="num">現在</th><th class="num">2025 頂部</th><th>本輪位置</th></tr></thead><tbody>' + radar.map(function (r) { var v = r[1], rd = RADAR_READ[r[3]](v); return '<tr class="has-rd"><td><b>' + r[0] + '</b></td><td class="num">' + fmt.n(v.value, r[2]) + '</td><td class="num">' + fmt.n(v.extreme_near_2025_top, r[2]) + '</td><td><div class="pct"><i><b style="width:' + v.pct_since_2022_11 + '%"></b></i><span class="num">' + fmt.n(v.pct_since_2022_11, 0) + '</span></div></td></tr>' + rdRow(rd, 4); }).join('') + '</tbody></table></div>';
+    return readBar('onchain') + '<div class="kpis">' + kpi('短期持有者獲利比例', fmt.n((fl.sth_in_profit_pct || {}).value, 1) + '%', '7 天前 ' + fmt.n((fl.sth_in_profit_pct || {}).d7, 1) + '%', (fl.sth_in_profit_pct || {}).value) + kpi('短期持有者成本', fmt.usd((fl.sth_vs_tmm || {}).sth_cost), '真實市場均價 ' + fmt.usd((fl.sth_vs_tmm || {}).tmm)) + kpi('交易所供給', fmt.n(ex.exchange_supply_share_pct, 2) + '%', '7 日 ' + fmt.pct(ex.exchange_supply_chg7_pct, 2) + ' · 90 日 ' + fmt.pct(ex.exchange_supply_chg90_pct, 2)) + kpi('算力 7 日均', fmt.n(mi.hash7, 0) + ' EH/s', '週 ' + fmt.pct(mi.wk_chg_pct, 1) + ' · hashprice $' + fmt.n(mi.hashprice, 1)) + kpi('下次難度調整', fmt.pct(mi.diff_next_pct, 1), fmt.md(mi.retarget) + ' · 進度 ' + fmt.n(mi.diff_progress, 0) + '%', mi.diff_progress) + '</div><div class="grid">' + interpPanel(ocInterp()) +
+      panel('span-5', '籌碼分布（URPD）', fmt.md(u.date) + ' · 每 2,000 美元一格', urpdSay(u) + '<div id="c-urpd"></div>') +
       panel('span-7', '短期持有者：成本 vs 價格', 'bitcoin-data · 近 2 年', legend([['短期持有者成本', 'var(--s2)'], ['真實市場均價', 'var(--s3)']]) + '<div class="chart" id="c-cost"></div>' + '<div class="panel-h" style="margin-top:6px"><h2>短期持有者獲利比例</h2><span class="src">2025 頂部 ' + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%</span></div><div class="chart" id="c-profit"></div>') +
       panel('span-7', '鏈上指標', 'bitcoin-data.com', t) + panel('span-5', '頂部雷達', '2022/11 起本輪百分位', rt) + '</div>';
   };
@@ -515,7 +689,7 @@
     var o = D.orderbook; if (!o) return '<p class="err">本日未取得掛單簿資料。</p>';
     var w = o.walls || {}, rd = o.rounds || {}, t = o.totals || {};
     var walls = function (arr, col) { return (arr || []).slice(0, 5).map(function (x) { return '<div class="event"><span class="d">' + fmt.usd(x[0]) + '</span><span style="color:var(--ink-2)">' + esc(x[2]) + ' 最多</span><span class="num" style="color:' + col + '">$' + fmt.n(x[1], 1) + 'M</span></div>'; }).join(''); };
-    return readBar('book') + '<div class="kpis">' + kpi('快照中間價', fmt.usd(o.mid), (o.ts || '').replace('T', ' ').replace('+00:00', ' UTC')) + kpi('±15% 買單合計', '$' + fmt.n(t.wide_bid, 0) + 'M', '現貨 $' + fmt.n(t.wide_bid_spot, 0) + 'M') + kpi('±15% 賣單合計', '$' + fmt.n(t.wide_ask, 0) + 'M', '現貨 $' + fmt.n(t.wide_ask_spot, 0) + 'M') + kpi('買賣比', fmt.n(t.wide_bid / t.wide_ask, 2), '>1 下方承接較厚') + '</div><div class="grid">' +
+    return readBar('book') + '<div class="kpis">' + kpi('快照中間價', fmt.usd(o.mid), (o.ts || '').replace('T', ' ').replace('+00:00', ' UTC')) + kpi('±15% 買單合計', '$' + fmt.n(t.wide_bid, 0) + 'M', '現貨 $' + fmt.n(t.wide_bid_spot, 0) + 'M') + kpi('±15% 賣單合計', '$' + fmt.n(t.wide_ask, 0) + 'M', '現貨 $' + fmt.n(t.wide_ask_spot, 0) + 'M') + kpi('買賣比', fmt.n(t.wide_bid / t.wide_ask, 2), '>1 下方承接較厚') + '</div><div class="grid">' + interpPanel(bkInterp(o), '依快照當下的掛單自動產生 · 掛單可隨時撤') +
       panel('span-8', '全景：每 1,000 美元一格', '7 個整本可得的場所 · ±15%', legend([['買單', 'var(--up)'], ['賣單', 'var(--down)']]) + '<div id="c-book"></div>') +
       panel('span-4', '最大的牆', '', '<div class="panel-h"><h2 style="color:var(--down)">上方賣牆</h2></div><div class="events">' + walls(w.ask, 'var(--down)') + '</div><div class="panel-h" style="margin-top:8px"><h2 style="color:var(--up)">下方買牆</h2></div><div class="events">' + walls(w.bid, 'var(--up)') + '</div>' +
         '<div class="panel-h" style="margin-top:8px"><h2>整數關卡</h2></div><div class="events">' + Object.keys(rd).sort().reverse().map(function (k) { var r = rd[k]; return '<div class="event"><span class="d">' + fmt.usd(+k) + '</span><span style="color:var(--ink-2)">' + (r.side === 'a' ? '賣' : '買') + '方第 ' + r.rank + '／' + r.of + ' 名</span><span class="num">$' + fmt.n(r.musd, 1) + 'M</span></div>'; }).join('') + '</div><p class="note">掛單可隨時撤；Binance 期貨與 Bybit 讀不到，永續部分偏低估。</p>') + '</div>';
@@ -529,7 +703,7 @@
 
   V.exit = function () {
     var F = D.exit.framework, S = D.exit.status, c = S.close;
-    return readBar('exit') + '<div class="grid">' +
+    return readBar('exit') + '<div class="grid">' + panel('span-12', '現在離每條出場規則多遠', '依當日數值自動產生 · 非投資建議', interpHtml([rd2('價格階梯', fmt.k(S.next_step), ladderRead()), rd2('MVRV ÷ 前一輪高點', fmt.n(S.p20_ratio, 3), p20Read()), rd2('頂部三指標', ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n((S.p6 || {})[k], 0); }).join(' / '), p6Read()), rd2('200 日均線避險', fmt.k(S.sma200), hedgeRead()), ['時間停損', '2029/10', '2029/10–2030/03 才適用，現在不作用。', 'neu']])) +
       panel('span-12', '出場模擬器', esc(F.unit), '<div class="sim"><div class="sim-ctrl"><label for="sim-px">拖動看看：如果收盤到這個價位，框架會賣出多少？</label><span class="big" id="sim-v">' + fmt.usd(c) + '</span><input type="range" id="sim-px" min="60000" max="240000" step="1000" value="' + Math.round(c / 1000) * 1000 + '"><div class="legend"><span>60K</span><span style="margin-left:auto">240K</span></div><div class="stair" id="sim-stair"></div></div><div class="donut-wrap" id="sim-donut"></div></div>') +
       panel('span-6', '鏈上觸發', 'MVRV ÷ 前一輪高點', '<div class="rules">' + F.onchain.map(function (r) { var run = r.id === 'p20a' ? S.p20_run_075 : r.id === 'p20b' ? S.p20_run_080 : null; return '<div class="rule"><span class="t">' + (r.k ? '比值 ≥ ' + r.k : '新高背離') + '</span><span class="d">' + esc(r.rule) + '</span><span class="chip">' + (run != null ? run + ' / 5 天' : '未啟用') + '</span></div>'; }).join('') + '</div><p class="note">現在比值 ' + fmt.n(S.p20_ratio, 3) + '；0.75 約對應 ' + fmt.usd(S.k075_price) + '、0.80 約 ' + fmt.usd(S.k080_price) + '（隨實現價每天移動）。</p>') +
       panel('span-6', '其他規則', '', '<div class="rules"><div class="rule"><span class="t">200 日均線避險</span><span class="d">' + esc(F.hedge.rule) + '</span><span class="chip">' + S.below_sma200_run + ' / 5 天</span></div><div class="rule"><span class="t">訊號加速</span><span class="d">' + esc(F.accelerate) + '</span><span class="chip">' + ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n((S.p6 || {})[k], 0); }).join('／') + '</span></div><div class="rule"><span class="t">時間停損</span><span class="d">' + esc(F.time_stop) + '</span><span class="chip">2029/10 起</span></div></div><p class="note">框架是本站對「週期頂部分批出場」的建議做法，只是參考，不是投資建議；每個人的部位與需求不同。</p>') + '</div>';
@@ -548,7 +722,7 @@
 
   V.method = function () {
     return '<div class="grid">' + panel('span-7', '這是什麼', '', '<div class="prose"><p>破曉（Daybreak）是每天清晨的第一份比特幣簡報：先告訴你今天發生了什麼、為什麼重要，再用數據說明市場在週期裡的位置，以及離分批出場還有多遠。</p><p>每天兩段更新：台北 08:20（UTC 00:20）資料管線自動抓取 Kraken、Deribit、CoinMetrics、bitcoin-data、mempool.space、FRED、13 個交易所掛單簿與 Tidemark，算出所有指標；之後由 Claude 查證當天新聞、讀數據，寫成頭條、今日要聞解讀與各版的「今日判讀」。數字全部來自管線，判讀只解釋數字，不改數字。</p>' +
-      '<h3>原則</h3><p>先給結論再給證據。寧可標示「本日未取得」，也不推估或沿用舊數字。不同資料商的數字不相減。分數一律附樣本數，樣本少於 30 不下結論。</p><h3>限制</h3><p>週期模型只有 3–4 輪歷史，所有「遞減」推論都假設趨勢延續。冪律擬合線會隨新資料下修。掛單隨時可撤。短線預測不連動出場規則。bitcoin-data 免費額度有限，部分變化較慢的鏈上指標每 2 天更新一次，以資料日期標示。</p>' +
+      '<h3>原則</h3><p>先給結論再給證據。各版「這些數字代表什麼」與表格下方的解讀，是用當日數值套固定門檻自動產生（門檻寫在句子裡），標籤「偏多／偏空／留意／中性」只描述該數字對價格的一般含意，不是預測，也不連動出場規則。寧可標示「本日未取得」，也不推估或沿用舊數字。不同資料商的數字不相減。分數一律附樣本數，樣本少於 30 不下結論。</p><h3>限制</h3><p>週期模型只有 3–4 輪歷史，所有「遞減」推論都假設趨勢延續。冪律擬合線會隨新資料下修。掛單隨時可撤。短線預測不連動出場規則。bitcoin-data 免費額度有限，部分變化較慢的鏈上指標每 2 天更新一次，以資料日期標示。</p>' +
       '<h3>免責聲明</h3><p>本站內容僅供研究與教育參考，不構成投資建議。加密資產波動極大，請依自身情況判斷並自負風險。</p></div>') +
       panel('span-5', '資料來源', '', '<div class="events">' + [['價格、均線、ATR', 'Kraken 日線（UTC）'], ['波動率、基差、選擇權', 'Deribit 公開 API'], ['MVRV、交易所供給、冪律', 'CoinMetrics Community'], ['SOPR、NUPL、籌碼', 'bitcoin-data.com'], ['算力、難度', 'mempool.space'], ['相關係數、利率', 'FRED'], ['ETF 流量', 'The Block（與 Farside 同口徑）'], ['掛單簿', 'Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Hyperliquid'], ['綜合訊號', 'Tidemark（north7.github.io）']].map(function (r) { return '<div class="event" style="grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)"><span>' + r[0] + '</span><span style="color:var(--ink-2)">' + r[1] + '</span></div>'; }).join('') + '</div><p class="note">資料日 ' + D.meta.bar_date + ' · 管線產出 ' + (D.meta.generated_utc || '').replace('T', ' ').slice(0, 16) + ' UTC · 結論 ' + (N ? (N.written_utc || '').replace('T', ' ').slice(0, 16) + ' UTC' : '—') + '</p>') + '</div>';
   };
