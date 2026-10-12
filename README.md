@@ -7,9 +7,11 @@
 ```
 index.html              網站入口（10 個版面：頭版、消息、週期、價格、衍生品、資金、鏈上、掛單簿、出場框架、方法；號外風格，日刊／夜刊兩種主題）
 assets/app.css          品牌與版面（深色優先，含淺色主題）
-assets/app.js           路由、圖表、互動（無外部套件）
+assets/app.js           路由、圖表、互動（無外部套件）；文字用 _t() 包起來，英文版查 assets/i18n-en.js
+assets/i18n-en.js       英文字典（中文原句 → 英文）；改過 app.js 的文字後跑 pipeline/check_i18n.py
 assets/logo.svg         Logo（也是 favicon）
 data/latest.json        每日資料（由 GitHub Actions 產生，不要手改）
+data/notes.en.json      notes.json 的英文版（每日任務同時寫；缺檔時英文版退回中文）
 data/notes.json         每日頭條、各版判讀、今天該做什麼、今天變了什麼、今日要聞與研報解讀（由 Claude 每日任務寫入）
 data/etf.json           ETF 每日淨流量（資料管線從 The Block 自動更新，與 Farside 同口徑）
 data/model.json         固定模型參數：出場框架、長期路徑（每月檢討時才改）
@@ -18,6 +20,7 @@ pipeline/collect.py     抓取所有 API 並計算指標 → pipeline/today.json
 pipeline/build.py       today.json → data/latest.json
 pipeline/brief.py       印出精簡摘要給 Claude 讀
 pipeline/etf.py         從 The Block 更新 ETF 每日淨流量
+pipeline/check_i18n.py  檢查 app.js 每個 _t() 字串都有英文
 pipeline/stamp_assets.py 改過 assets/ 後執行：更新 index.html 的 ?v= 版本號，避免手機拿到新舊混搭的 CSS／JS
 pipeline/bd_rotation.py bitcoin-data 請求分配：每日即時 10 個 + 前一晚輪替 5 個
 pipeline/bd_cache/      輪替指標的快取（由 Prefetch on-chain 寫入）
@@ -47,6 +50,10 @@ docs/CLAUDE_DAILY.md    Claude 每日結論任務的完整指示
 
 網站讀到的 `notes.json` 日期若和資料日不同，仍會顯示上一期的判讀，數字部分永遠是最新的。
 
+## 語言
+
+網站有中文與英文兩種版本。使用者在頁面上選過語言就一直沿用（存在瀏覽器 localStorage）；沒選過時，依訪客 IP 所在國家決定預設：台灣、香港、澳門、中國大陸、新加坡用中文，其他地區用英文。國家由瀏覽器向 api.country.is（備援 get.geojs.io）查詢，結果快取 7 天；查不到時看瀏覽器語言。數字的解讀由前端產生，兩種語言都有；每日判讀與新聞需要每日任務另寫 `data/notes.en.json`。
+
 ## 隱私
 
 這是公開倉庫，所有歷史提交永久可查。網站只放市場資料與通用的出場框架（以「100% ＝ 本週期打算賣出的全部持倉」計），不得出現任何人的實際持倉數量、買賣數量或資金金額。
@@ -54,6 +61,7 @@ docs/CLAUDE_DAILY.md    Claude 每日結論任務的完整指示
 ## 已知限制
 
 - bitcoin-data.com 免費層每小時 10 次、每日 15 次，管線共用 20 個端點，所以分兩批：00:05 即時抓 10 個（頂部三指標、成本基礎、籌碼流向），其餘 10 個分 A／B 兩組在前一晚 22:40 輪流抓，每個每 2 天更新一次，頁面顯示的是資料本身的日期。清單見 `pipeline/bd_rotation.py`。GitHub Actions 的共用 IP 偶爾仍會被限流，失敗的項目在網站上顯示「本日未取得」。
+- 鯨魚分層持幣來自 BitInfoCharts 的分布歷史頁（一次請求、不佔 bitcoin-data 額度）；地址不等於實體，≥10K 多為交易所與託管。若對方改版或擋 GitHub Actions，該區塊顯示「本日未取得」，不影響其他資料。
 - Farside 用 Cloudflare 擋所有自動抓取，ETF 改用 The Block 的圖表 JSON（pipeline/etf.py，逐日與 Farside 比對一致）；The Block 只公布已完整的交易日，約晚一天。
 - 掛單簿是 Actions 執行當下的快照；Binance 期貨與 Bybit 讀不到。
 

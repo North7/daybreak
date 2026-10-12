@@ -6,17 +6,17 @@
   "cycle_bottoms": [["2015-01-14", 176], ["2018-12-15", 3185], ["2022-11-21", 15778], ["2026-06-30", 58525]],
   "exit_framework": {
     "name": "Daybreak 出場框架 v2",
-    "unit": "以「100% ＝ 本週期打算賣出的全部持倉」計，不涉及任何人的實際持倉",
+    "unit": "以「100% ＝ 本週期打算賣出的全部持倉」計，不涉及任何人的實際持倉", "unit_en": "Measured as \"100% = everything you plan to sell this cycle\"; no one's actual holdings are involved",
     "ladder": [125000, 135000, 145000, 155000, 165000, 180000, 195000, 215000],
     "per_step_pct": 12.5,
-    "hedge": {"rule": "收盤連 5 日在 200 日均線之下 → 減 20%；連 5 日收回或 MVRV Z 7 日均 < 0.5 → 補回", "pct": 20, "active_before_top_zone": true},
+    "hedge": {"rule": "收盤連 5 日在 200 日均線之下 → 減 20%；連 5 日收回或 MVRV Z 7 日均 < 0.5 → 補回", "rule_en": "Close below the 200-day MA for 5 straight days → cut 20%; buy back after 5 straight closes above it, or when the MVRV Z 7-day average < 0.5", "pct": 20, "active_before_top_zone": true},
     "onchain": [
-      {"id": "p20a", "rule": "MVRV ÷ 前一輪高點連 5 日 ≥ 0.75 → 賣一階", "k": 0.75},
-      {"id": "p20b", "rule": "連 5 日 ≥ 0.80 → 再賣一階", "k": 0.80},
-      {"id": "div", "rule": "前兩條觸發過後，每次收盤創新高但 MVRV ≤ 一年最高的 0.9 倍 → 賣一階"}
+      {"id": "p20a", "rule": "MVRV ÷ 前一輪高點連 5 日 ≥ 0.75 → 賣一階", "rule_en": "MVRV ÷ prior-cycle peak ≥ 0.75 for 5 straight days → sell one step", "k": 0.75},
+      {"id": "p20b", "rule": "連 5 日 ≥ 0.80 → 再賣一階", "rule_en": "≥ 0.80 for 5 straight days → sell one more step", "k": 0.80},
+      {"id": "div", "rule": "前兩條觸發過後，每次收盤創新高但 MVRV ≤ 一年最高的 0.9 倍 → 賣一階", "rule_en": "After both have fired: each new closing high with MVRV ≤ 0.9× its 1-year high → sell one step"}
     ],
-    "accelerate": "頂部三指標（MVRV Z／NUPL／Puell 四年百分位）任兩項 ≥ 80 → 進入頂部區；≥ 85 連 5 日 → 多賣兩階；≥ 90 → 10 個交易日內賣完",
-    "time_stop": "2029/10–2030/03 剩餘部位每月等量賣完"
+    "accelerate": "頂部三指標（MVRV Z／NUPL／Puell 四年百分位）任兩項 ≥ 80 → 進入頂部區；≥ 85 連 5 日 → 多賣兩階；≥ 90 → 10 個交易日內賣完", "accelerate_en": "Top three indicators (MVRV Z / NUPL / Puell, 4-year percentiles): any two ≥ 80 → top zone; ≥ 85 for 5 days → sell two extra steps; ≥ 90 → sell everything within 10 trading days",
+    "time_stop": "2029/10–2030/03 剩餘部位每月等量賣完", "time_stop_en": "2029/10–2030/03: sell the remainder in equal monthly amounts"
   },
   "paths": {
     "anchor": ["2026-09-28", 83463],
@@ -28,7 +28,7 @@
       "延後新低": [[2026, 9, 83463], [2026, 12, 66000], [2027, 4, 50000], [2027, 12, 65000], [2028, 6, 85000], [2029, 3, 110000], [2030, 2, 145000], [2030, 6, 125000]]
     },
     "realized": [[2025, 10, 126198], [2026, 2, 60000], [2026, 4, 72700], [2026, 6, 61000], [2026, 8, 78566], [2026, 9, 83565]],
-    "top_model": {"median": 172000, "p10": 126000, "p90": 225000, "timing": "2029 年 5–10 月"},
+    "top_model": {"median": 172000, "p10": 126000, "p90": 225000, "timing": "2029 年 5–10 月", "timing_en": "May–Oct 2029"},
     "next_review": "2026-10-31"
   }
 }

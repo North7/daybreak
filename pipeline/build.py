@@ -55,14 +55,14 @@ onchain = {k: {kk: v.get(kk) for kk in ('date', 'value', 'pct_4y', 'ma7', 'chg30
 
 out = {
   'meta': {'bar_date': td['bar_date'], 'generated_utc': td.get('generated_utc'), 'errors': td.get('errors', []), 'bd_rotation': td.get('bd_rotation'),
-           'sources': ['Kraken', 'Deribit', 'CoinMetrics Community', 'bitcoin-data.com', 'mempool.space', 'FRED', 'The Block（ETF）', 'Tidemark', '13 個交易所掛單簿']},
+           'sources': ['Kraken', 'Deribit', 'CoinMetrics Community', 'bitcoin-data.com', 'mempool.space', 'FRED', 'The Block（ETF）', 'Tidemark', 'BitInfoCharts（鯨魚分層）', '13 個交易所掛單簿']},
   'price': {'bar': td['bar'], 'ma': ma, 'atr': td.get('atr'), 'vol': td.get('vol'), 'mayer': td.get('mayer'), 'pi_cycle': td.get('pi_cycle'),
-            'range20_pos_pct': td.get('range20_pos_pct'), 'volprofile': td.get('volprofile_v2'), 'rows20': td.get('chart_rows_20d'), 'history': hist},
+            'range20_pos_pct': td.get('range20_pos_pct'), 'swing': td.get('swing'), 'volprofile': td.get('volprofile_v2'), 'rows20': td.get('chart_rows_20d'), 'history': hist},
   'deriv': {'dvol': td.get('dvol'), 'deriv': td.get('deriv'), 'rr25': td.get('rr25'), 'samesource': td.get('samesource'),
             'options': {'total_oi': (td.get('options') or {}).get('total_oi'), 'expiries': [{k: e.get(k) for k in ('expiry', 'dte', 'oi', 'share', 'pc', 'maxpain', 'top_calls', 'top_puts')} for e in (td.get('options') or {}).get('expiries', [])]},
             'viz': {k: (td.get('ex_viz') or {}).get(k) for k in ('vol', 'basis', 'options')}},
-  'flows': {'etf': etf['rows'], 'fred': td.get('fred'), 'dfii10': (td.get('extra') or {}).get('dfii10')},
-  'onchain': {'metrics': onchain, 'top_radar': td.get('top_radar'), 'cost_ratio': td.get('lth_sth_cost_ratio'), 'mining': td.get('mining'),
+  'flows': {'etf': etf['rows'], 'fred': td.get('fred'), 'dfii10': (td.get('extra') or {}).get('dfii10'), 'rc_liq': td.get('rc_liquidity')},
+  'onchain': {'metrics': onchain, 'top_radar': td.get('top_radar'), 'cost_ratio': td.get('lth_sth_cost_ratio'), 'mining': td.get('mining'), 'whales': td.get('whales'),
               'exchange': {k: cmr.get(k) for k in ('exchange_supply_btc', 'exchange_supply_share_pct', 'exchange_supply_chg7_pct', 'exchange_supply_chg30_pct', 'exchange_supply_chg90_pct', 'exchange_supply_date')}},
   'chips': {'flow': {k: v for k, v in (td.get('murphy_flow') or {}).items() if k != 'urpd'}, 'urpd': {k: v for k, v in ((td.get('murphy_flow') or {}).get('urpd') or {}).items() if k != 'band'}, 'viz': td.get('murphy_viz')},
   'orderbook': td.get('orderbook_viz'),

@@ -383,6 +383,105 @@ try:
     R['stage_evidence'] = dict(items=ev, ok=sum(e['ok'] for e in ev), n=len(ev),
                                note='只作佐證、不參與判定。樣本 3–4 輪，任何規則都無法避免 2019 年式的假突破')
 except Exception as e: errors.append(f'stage_evidence {e}')
+# G1b. 2026-10-12 使用者要求：實現市值 30 日變化（Checkonchain「Realised Cap Liquidity Cycle」的核心），只作資金背景讀值、不作買賣訊號、不連動任何規則。
+#   實現市值＝CoinMetrics 市值 ÷ MVRV（與 stage_evidence 的「資金流入」同一數字），不另外請求。回推一律以日期，不以列位置。
+try:
+    _ep0 = dt.date(1970, 1, 1); _dd = [dt.date.fromisoformat(x) for x in _d]
+    def _ago(j, days):   # 第 j 天往前 days 天（含）最近一筆的索引；不足則 None
+        t_ = (_dd[j] - dt.timedelta(days=days)).isoformat(); b_ = bisect.bisect_right(_d, t_) - 1
+        return b_ if b_ >= 0 else None
+    def _chg(j, days):
+        b_ = _ago(j, days); return None if b_ is None else _rc[j] / _rc[b_] - 1
+    ch30 = [_chg(j, 30) for j in range(len(_d))]
+    def _fwd(j, days):   # 第 j 天之後 days 天的價格報酬；資料不夠長回傳 None
+        t_ = (_dd[j] + dt.timedelta(days=days)).isoformat(); b_ = bisect.bisect_left(_d, t_)
+        return round((_p[b_] / _p[j] - 1) * 100) if b_ < len(_d) else None
+    eps, s_ = [], None   # 30 日變化 ≤ 0 的連續期間（2014 起、至少 7 天才列入，避免單日雜訊）
+    for j in range(len(_d)):
+        z = ch30[j] is not None and ch30[j] <= 0
+        if z and s_ is None: s_ = j
+        if (not z or j == len(_d) - 1) and s_ is not None:
+            e_ = j if z else j - 1
+            if _d[s_] >= '2014-01-01' and (_dd[e_] - _dd[s_]).days + 1 >= 7:
+                eps.append(dict(start=_d[s_], end=_d[e_], days=(_dd[e_] - _dd[s_]).days + 1, px_start=round(_p[s_]), px_end=round(_p[e_]),
+                                ongoing=bool(z and j == len(_d) - 1), fwd180=_fwd(e_, 180), fwd365=_fwd(e_, 365)))
+            s_ = None
+    run = 0; zero_now = ch30[k] <= 0
+    for j in range(k, 0, -1):
+        if (ch30[j] is not None and ch30[j] <= 0) == zero_now and (_dd[j] - _dd[j - 1]).days == 1: run += 1
+        else: break
+    rows = [[(_dd[j] - _ep0).days, round(ch30[j] * 100, 2)] for j in range(len(_d)) if _d[j] >= '2019-01-01' and ch30[j] is not None][::-3][::-1]   # 每 3 天一點（含最新一天）
+    R['rc_liquidity'] = dict(date=_d[k], realized_cap_usd_b=round(_rc[k] / 1e9, 1),
+                             chg30_pct=round(ch30[k] * 100, 2), chg90_pct=round(_chg(k, 90) * 100, 2), chg180_pct=round(_chg(k, 180) * 100, 2),
+                             zero_now=bool(zero_now), state_run_days=run, last_episode=eps[-1] if eps else None, episodes=eps, rows=rows,
+                             note='CoinMetrics community 市值 ÷ MVRV 推得；只作資金背景讀值，不作買賣訊號')
+except Exception as e: errors.append(f'rc_liquidity {e}')
+# G1c. 2026-10-12 使用者要求：短週期＝目前這一段行情。收盤價 15% 反轉才算新的一段（zigzag），只作讀值、不連動任何規則。
+#   價格：CoinMetrics 每日（自 2010）＋ Kraken 已收盤日線補到 LAST；本輪＝2022-11-21 低點起的完成段落。
+try:
+    px = dict(zip(_d, _p)); px.update({b_['d']: b_['c'] for b_ in bars})
+    SD = sorted(px); SP = [px[d_] for d_ in SD]; TH = 0.15
+    piv, hi_, lo_, dirn = [], 0, 0, 0
+    for j in range(1, len(SP)):
+        if dirn == 0:
+            if SP[j] > SP[hi_]: hi_ = j
+            if SP[j] < SP[lo_]: lo_ = j
+            if SP[j] >= SP[lo_] * (1 + TH): dirn, piv, hi_ = 1, [lo_], j
+            elif SP[j] <= SP[hi_] * (1 - TH): dirn, piv, lo_ = -1, [hi_], j
+        elif dirn == 1:
+            if SP[j] > SP[hi_]: hi_ = j
+            elif SP[j] <= SP[hi_] * (1 - TH): piv.append(hi_); dirn, lo_ = -1, j
+        else:
+            if SP[j] < SP[lo_]: lo_ = j
+            elif SP[j] >= SP[lo_] * (1 + TH): piv.append(lo_); dirn, hi_ = 1, j
+    k2 = len(SP) - 1; s0 = piv[-1]; ex_ = hi_ if dirn == 1 else lo_
+    cyc = [j for j in piv if SD[j] >= '2022-11-21']
+    legs = [dict(start=SD[a_], end=SD[b_], p0=round(SP[a_]), p1=round(SP[b_]), pct=round((SP[b_] / SP[a_] - 1) * 100, 1), days=(dt.date.fromisoformat(SD[b_]) - dt.date.fromisoformat(SD[a_])).days) for a_, b_ in zip(cyc, cyc[1:])]
+    ups = [g for g in legs if g['pct'] > 0]; dns = [g for g in legs if g['pct'] < 0]
+    cur = dict(dir='up' if dirn == 1 else 'down', start=SD[s0], p0=round(SP[s0]), ext_date=SD[ex_], ext=round(SP[ex_]), close=round(SP[k2]),
+               pct=round((SP[k2] / SP[s0] - 1) * 100, 1), ext_pct=round((SP[ex_] / SP[s0] - 1) * 100, 1), days=(dt.date.fromisoformat(SD[k2]) - dt.date.fromisoformat(SD[s0])).days,
+               from_ext_pct=round((SP[k2] / SP[ex_] - 1) * 100, 1), end_level=round(SP[ex_] * (1 - TH) if dirn == 1 else SP[ex_] * (1 + TH)))
+    same = ups if dirn == 1 else dns
+    R['swing'] = dict(date=SD[k2], threshold_pct=round(TH * 100), current=cur, legs=legs[-8:], n_up=len(ups), n_down=len(dns),
+                      up_median_pct=round(st.median(g['pct'] for g in ups), 1) if ups else None, up_median_days=st.median(g['days'] for g in ups) if ups else None,
+                      down_median_pct=round(st.median(g['pct'] for g in dns), 1) if dns else None, down_median_days=st.median(g['days'] for g in dns) if dns else None,
+                      size_rank_pct=round(sum(abs(g['pct']) < abs(cur['ext_pct']) for g in same) / len(same) * 100) if same else None,
+                      days_rank_pct=round(sum(g['days'] < cur['days'] for g in same) / len(same) * 100) if same else None,
+                      note='收盤價 15% 反轉才算新的一段；本輪＝2022-11-21 低點起已完成的段落；只作讀值，不連動任何規則')
+except Exception as e: errors.append(f'swing {e}')
+# G1d. 2026-10-12 使用者要求：鯨魚與大戶。BitInfoCharts「依地址餘額分層的持幣量」每日歷史（2021-05 起，一次請求，不佔 bitcoin-data 額度）。
+#   地址不等於實體：≥10K 多為交易所冷錢包、ETF 託管；錢包整理會讓幣在分層之間移動。只作讀值。
+try:
+    hs = get('https://bitinfocharts.com/bitcoin-distribution-history.html') or ''
+    blk = re.search(r'new Dygraph\([^,]+,\s*(\[\[.*?\]\])\s*,\s*\{(.*?)\}\s*\)', hs, re.S)
+    labs = json.loads(re.search(r'labels:\s*(\[[^\]]*\])', blk.group(2)).group(1).replace("'", '"'))
+    assert labs[1:] == ['0-0.1', '0.1-1', '1-10', '10-100', '100-1,000', '1,000-10,000', '10,000-100,000', '100,000-1,000,000'], f'欄位改了：{labs}'
+    WR = [(d_.replace('/', '-'), [float(x) for x in v_.split(',')]) for d_, v_ in re.findall(r'new Date\("([\d/]+)"\),([\d.,]+)\]', blk.group(1))]
+    WR = [r_ for r_ in WR if r_[0] <= LAST]; WD = [r_[0] for r_ in WR]
+    COH = [('lt1', [0, 1]), ('1_10', [2]), ('10_100', [3]), ('100_1k', [4]), ('1k_10k', [5]), ('ge10k', [6, 7])]
+    wv = lambda j, ix: sum(WR[j][1][q_] for q_ in ix)
+    def wb(j, days):
+        t_ = (dt.date.fromisoformat(WD[j]) - dt.timedelta(days=days)).isoformat(); b_ = bisect.bisect_right(WD, t_) - 1
+        return b_ if b_ >= 0 and (dt.date.fromisoformat(WD[j]) - dt.date.fromisoformat(WD[b_])).days <= days + 3 else None   # 缺資料超過 3 天就不算
+    k3 = len(WD) - 1; leg0 = (R.get('swing') or {}).get('current', {}).get('start')
+    jl = bisect.bisect_right(WD, leg0) - 1 if leg0 else None
+    out = []
+    for key_, ix in COH:
+        v_ = wv(k3, ix); chg = {w_: (round(v_ - wv(wb(k3, w_), ix)) if wb(k3, w_) is not None else None) for w_ in (7, 30, 90)}
+        h30 = [wv(j, ix) - wv(wb(j, 30), ix) for j in range(len(WD)) if wb(j, 30) is not None]
+        out.append(dict(key=key_, btc=round(v_), chg7=chg[7], chg30=chg[30], chg90=chg[90],
+                        pct30=round(sum(x < chg[30] for x in h30) / len(h30) * 100, 1) if chg[30] is not None else None, n30=len(h30),
+                        since_leg=round(v_ - wv(jl, ix)) if jl is not None and jl >= 0 else None))
+    rows_w = []
+    for j in range(len(WD)):
+        if WD[j] < (dt.date.fromisoformat(WD[k3]) - dt.timedelta(days=400)).isoformat(): continue
+        r_ = [(dt.date.fromisoformat(WD[j]) - dt.date(1970, 1, 1)).days]
+        for ix in ([4], [5], [6, 7]):
+            b_ = wb(j, 30); r_.append(round(wv(j, ix) - wv(b_, ix)) if b_ is not None else None)
+        rows_w.append(r_)
+    R['whales'] = dict(date=WD[k3], cohorts=out, leg_start=leg0, rows=rows_w[::-2][::-1],
+                       note='BitInfoCharts 依地址餘額分層；地址不等於實體，≥10K 多為交易所與託管；只作讀值')
+except Exception as e: errors.append(f'whales {e}')
 # G2. bitcoin-data 頂部雷達（放在既有 14 個端點之後；免費層文件寫每小時 10 次、每日 15 次，超額時只有這幾格記 null）
 RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProfitPct', 'realized-cap-growth-rate': 'realizedCapGrowthRate',
        'lth-net-position-change-30d-btc': 'lthNetPositionChange30dBtc'}

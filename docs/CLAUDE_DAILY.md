@@ -14,10 +14,14 @@
 2. 執行 `python3 pipeline/brief.py` 讀精簡摘要（約 14KB）。**不要讀整份 latest.json**；需要某個欄位就用 python 取。
 3. 讀上一期 `data/notes.json`（用來比較變化、延續期數）。
 4. ETF：由資料管線每天從 The Block 自動更新（`pipeline/etf.py`，與 Farside 同口徑；Farside 擋自動抓取，不要再去讀它），**除了下面的暫定值例外，你不改 `data/etf.json`**。從 brief 的 `flows.etf` 讀數字；The Block 只公布已完整的交易日，最新完整日通常比 bar_date 晚一到兩個交易日，寫的時候標明日期。若最新完整日比 bar_date 落後超過 2 個交易日，在 notes 的 flows 寫明「ETF 資料延遲」。唯一例外：比最新完整日更新的交易日，如果查到**兩個獨立來源**（例如 Farside 經媒體轉述、SoSoValue）的合計淨流量差距在 2% 以內，可以在 `data/etf.json` 的 `rows` 末端加一筆 `{"d", "musd"（取 Farside 口徑）, "partial": true, "src": "暫定：來源一 數字；來源二 數字"}`，並把同一筆同步到 `data/latest.json` 的 `flows.etf`；只有一個來源或差距超過 2% 就不加。The Block 公布後資料管線會自動覆寫。
+   - 實現市值 30 日變化（brief 的 `flows.rc_liq`）：只當資金背景寫進 flows 判讀（例：「實現市值 30 日 +1.3%，資金仍在流入」）；轉為 ≤0 或由 ≤0 轉正時在 changes 記一筆。不得寫成加倉或賣出訊號，也不連動市場階段與出場框架（歷史上 2018、2021-06、2022-01 的歸零之後仍大跌，見資金版說明）。
+   - 頁面上每個數字已有依固定門檻自動產生的解讀（`assets/app.js` 的「數字解讀」區塊：各版「這些數字代表什麼」與鏈上表格下方的解讀列）。各版 `modules` 的判讀不必逐項重述，重點放在跨指標的綜合結論與今天的變化；若你的判讀和自動解讀方向不同，要寫出原因。
+   - 短週期（brief 的 `price.swing`，收盤價 15% 反轉才算新的一段）與鯨魚分層（`onchain.whales`，BitInfoCharts 依地址餘額）：market 判讀可寫目前這一段走了多久、多少、離本段結束線多遠；onchain 判讀可寫大戶（100–10K）30 日與本段以來的增減。≥10K 多為交易所與託管，不寫成大戶買賣；兩者都只作讀值，不連動任何規則。
 5. 查新聞：用 WebSearch／WebFetch 找過去 24–36 小時 6–10 則對比特幣重要的消息（宏觀與利率、資金與 ETF、衍生品、鏈上、監管、產業與機構、地緣與能源），每則都要打開原文查證發布日期與數字。
 6. 查研報：先用 WebFetch 打開 Glassnode 研報列表 https://research.glassnode.com （The Week On-chain 約每週二／三、Market Pulse 每週日、Macro Special 不定期），找出最近 7 天的每一期並打開原文讀重點；再查 The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。每一期的 `date` 寫原文發布日、`url` 寫原文網址。確認列表上真的沒有新一期，才沿用最近一期並在 `research.summary` 寫明「無新一期」。
 7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。
-8. 驗證：`python3 -c "import json;json.load(open('data/notes.json'))"`；再用 python 掃描 notes.json，確認沒有違反隱私鐵則的內容。
+   - 英文版（2026-10-12 起）：寫完 `data/notes.json` 後，另寫 `data/notes.en.json`：結構、欄位、數字、日期、網址、`impact`、`kind`、`dir`、`module` 與中文版完全相同，只把文字欄位（headline、summary、stance.label／short、watch[].label／note、modules 各版 lead／points、news[].title／cat／read／source 以外的說明文字、events[].label、actions[].head／text、changes[].title／fig／say、research.summary 與 items[].title／points／meaning）翻成自然的英文；金額用 $ 與 K／M／B，不用「萬／億」。英文版網站讀這個檔，缺檔或日期比中文舊時會退回中文並標示。隱私鐵則同樣適用。
+8. 驗證：`python3 -c "import json;[json.load(open(f)) for f in ('data/notes.json','data/notes.en.json')]"`；再用 python 掃描兩個檔，確認沒有違反隱私鐵則的內容。
 9. 提交訊息 `notes: <bar_date>`，推送到 main。
 
 ### notes.json 格式
