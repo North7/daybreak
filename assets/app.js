@@ -653,7 +653,6 @@
     ['flows', _t('資金'), _t('ETF 與宏觀'), 'M4 7h16M4 12h10M4 17h6', 'FLOWS · MACRO'],
     ['onchain', _t('鏈上'), _t('持有者與籌碼'), 'M7 7h4v4H7zM13 13h4v4h-4zM11 9h4M9 11v4', 'ON-CHAIN'],
     ['exit', _t('出場框架'), _t('何時分批賣'), 'M4 20h4v-4h4v-4h4V8h4V4', 'EXIT PLAN'],
-    ['archive', _T('往期', 'Archive'), _T('過去的判讀與回顧', 'Past editions and review'), 'M4 5h16v4H4zM6 9v10h12V9M10 13h4', 'ARCHIVE'],
     ['method', _t('方法'), _t('資料與限制'), 'M12 3v18M3 12h18M6 6l12 12', 'METHOD']
   ];
 
@@ -857,7 +856,7 @@
     return panel('span-12', _T('掛單簿摘要', 'Order book snapshot'), _T('13 個交易所 · ±15% · 快照 ', '13 exchanges · ±15% · snapshot ') + (o.ts || '').replace('T', ' ').slice(5, 16) + ' UTC',
       interpHtml(bkInterp(o)) + '<div class="grid" style="margin-top:8px"><div class="span-6"><div class="panel-h"><h2 style="color:var(--down)">' + _T('上方賣牆', 'Ask walls above') + '</h2><span class="src">' + _T('賣單合計 ', 'total asks ') + '$' + fmt.n(t.wide_ask, 0) + 'M</span></div><div class="events">' + walls(w.ask, 'var(--down)') + '</div></div>' +
       '<div class="span-6"><div class="panel-h"><h2 style="color:var(--up)">' + _T('下方買牆', 'Bid walls below') + '</h2><span class="src">' + _T('買單合計 ', 'total bids ') + '$' + fmt.n(t.wide_bid, 0) + 'M</span></div><div class="events">' + walls(w.bid, 'var(--up)') + '</div></div></div>' +
-      '<p class="note">' + _T('快照時間是 UTC 00:05，讀的時候可能已過好幾個小時；掛單隨時可撤，假牆常見。Binance 期貨與 Bybit 讀不到，永續部分偏低估。', 'The snapshot is taken at 00:05 UTC and may be hours old by the time you read it; orders can be pulled at any time and fake walls are common. Binance futures and Bybit are not readable, so perpetual depth is understated.') + '</p>');
+      '<p class="note">' + _T('快照時間是 UTC ' + (o.ts || '').slice(11, 16) + '，讀的時候可能已過好幾個小時；掛單隨時可撤，假牆常見。Binance 期貨與 Bybit 讀不到，永續部分偏低估。', 'The snapshot was taken at ' + (o.ts || '').slice(11, 16) + ' UTC and may be hours old by the time you read it; orders can be pulled at any time and fake walls are common. Binance futures and Bybit are not readable, so perpetual depth is understated.') + '</p>');
   }
 
   V.exit = function () {
@@ -877,39 +876,6 @@
       $('#sim-donut').innerHTML = _t('<svg viewBox="0 0 200 200" role="img" aria-label="已賣出比例"><circle cx="100" cy="100" r="') + R + '" fill="none" stroke="var(--deck-3)" stroke-width="16"/><circle cx="100" cy="100" r="' + R + '" fill="none" stroke="var(--flare)" stroke-width="16" stroke-dasharray="' + (C * frac).toFixed(1) + ' ' + C.toFixed(1) + '" transform="rotate(-90 100 100)" style="transition:stroke-dasharray .4s var(--ease)"/><text x="100" y="98" text-anchor="middle" style="font-family:var(--f-mono);font-size:34px" fill="var(--ink)">' + sold + _t('%</text><text x="100" y="124" text-anchor="middle" style="font-size:12px" fill="var(--ink-3)">已分批賣出</text></svg><span class="note">價格階梯單獨計算；鏈上觸發會提前賣出、從最高的階往下註銷，總量不變。</span>');
     }
     inp.addEventListener('input', upd); upd();
-  };
-
-  /* 往期與回顧（2026-10-12）：讀 data/archive/index.json（build.py 每天更新）；點開某一期再讀該期全文 */
-  V.archive = function () {
-    return '<div class="grid">' + panel('span-12', _T('往期與判讀回顧', 'Past editions and review'), _T('每天自動封存 · 收盤取自每日快照', 'Archived daily · closes from daily snapshots'),
-      '<div id="arch"><p class="note">' + _T('載入中…', 'Loading…') + '</p></div><p class="note">' + _T('回顧只檢查兩件事：當期之後價格走了多少，以及當期點名要盯的價位之後有沒有被收盤碰到。它不替判讀打分數，也不代表判讀對或錯。', 'The review checks only two things: how far price moved after each edition, and whether the levels it said to watch were later reached on a closing basis. It does not score the commentary or say whether it was right.') + '</p>') + '</div>';
-  };
-  V.archive.after = function () {
-    var box = $('#arch'); if (!box) return;
-    load('data/archive/index.json').then(function (j) {
-      var eds = j.editions || [], nW = 0, nH = 0;
-      eds.forEach(function (e) { (e.watch || []).forEach(function (w) { if (e.days_since > 0) { nW++; if (w.hit) nH++; } }); });
-      var head = '<p class="say">' + _T('共 <b>' + eds.length + ' 期</b>；已過至少一天的各期一共點名 ' + nW + ' 個要盯的價位，其中 <b>' + nH + ' 個</b>之後被收盤碰到。', '<b>' + eds.length + ' editions</b>; editions at least a day old named ' + nW + ' levels to watch, of which <b>' + nH + '</b> were later reached on a close.') + '</p>';
-      box.innerHTML = head + eds.map(function (e, i) {
-        var hl = LANG === 'en' && e.headline_en ? e.headline_en : e.headline, stc = LANG === 'en' && e.stance_en ? e.stance_en : e.stance;
-        var moved = e.chg_since_pct == null ? _T('（最新一期）', '(latest edition)') : _T('之後 ' + e.days_since + ' 天：', 'since then (' + e.days_since + ' days): ') + '<b style="color:var(--' + (e.chg_since_pct >= 0 ? 'up' : 'down') + ')">' + fmt.pct(e.chg_since_pct, 1) + '</b>';
-        var w = (e.watch || []).map(function (x) { var lab = LANG === 'en' && x.label_en ? x.label_en : x.label;
-          return '<tr><td>' + esc(lab) + '</td><td class="num">' + fmt.usd(x.value) + '</td><td class="num">' + fmt.pct(x.dist_pct, 1) + '</td><td class="num">' + (x.hit ? '<span style="color:var(--warn)">' + _T('已觸及 ', 'reached ') + fmt.md(x.hit) + '</span>' : e.days_since ? _T('未觸及', 'not reached') : '—') + '</td></tr>'; }).join('');
-        return '<article class="arch-item"><div class="news-meta"><span class="cat">' + fmt.md(e.date) + ' · No.' + ('00' + e.edition).slice(-3) + '</span>' + (stc ? '<span class="chip">' + esc(stc) + '</span>' : '') + '</div>' +
-          '<h3>' + esc(hl || '') + '</h3><p class="note">' + _T('當天收盤 ', 'Close that day ') + fmt.usd(e.close) + ' · ' + moved + '</p>' +
-          (w ? '<div class="tbl-wrap"><table class="tbl"><thead><tr><th>' + _T('當期要盯的價位', 'Levels to watch') + '</th><th class="num">' + _T('價位', 'Level') + '</th><th class="num">' + _T('當時距離', 'Distance then') + '</th><th class="num">' + _T('之後', 'Since') + '</th></tr></thead><tbody>' + w + '</tbody></table></div>' : '') +
-          '<details class="arch-full" data-d="' + e.date + '"><summary class="note">' + _T('看這一期的摘要與行動', 'Show this edition’s summary and plan') + '</summary><div class="arch-body"></div></details></article>';
-      }).join('');
-      box.querySelectorAll('details.arch-full').forEach(function (dt_) {
-        dt_.addEventListener('toggle', function () {
-          if (!dt_.open || dt_._loaded) return; dt_._loaded = 1; var d = dt_.getAttribute('data-d'), body = dt_.querySelector('.arch-body');
-          var get = LANG === 'en' ? load('data/archive/' + d + '.en.json').catch(function () { return load('data/archive/' + d + '.json'); }) : load('data/archive/' + d + '.json');
-          get.then(function (n) { var L = { do: _T('可以做', 'Do'), dont: _T('不要做', 'Don’t'), watch: _T('要盯', 'Watch'), flip: _T('會推翻', 'Would flip') };
-            body.innerHTML = '<p>' + esc(n.summary || '') + '</p>' + ((n.actions || []).length ? '<ul class="acts">' + n.actions.map(function (x) { return '<li><span class="b ' + esc(x.kind) + '">' + (L[x.kind] || esc(x.kind)) + '</span><span><b>' + esc(x.head) + '</b>' + esc(x.text || '') + '</span></li>'; }).join('') + '</ul>' : ''); })
-            .catch(function () { body.innerHTML = '<p class="note">' + _T('這一期的全文讀取失敗。', 'Could not load this edition.') + '</p>'; });
-        });
-      });
-    }).catch(function () { box.innerHTML = '<p class="note">' + _T('還沒有封存的期數。', 'No archived editions yet.') + '</p>'; });
   };
 
   V.method = function () {
@@ -989,7 +955,7 @@
     set('#m-theme', 'Toggle light / dark', 'aria-label');
     var ck = $('.clock'); if (ck && ck.firstChild && ck.firstChild.nodeType === 3) ck.firstChild.nodeValue = 'Next ';
     var fs = $('#fs'); if (fs) { fs.setAttribute('aria-label', 'Full screen'); fs.lastChild.nodeValue = 'Full screen'; }
-    var ft = document.querySelectorAll('.foot span'); ['© Daybreak', 'For research only — not investment advice', 'Press 1–9, 0 to switch sections', 'Swipe left/right to switch sections'].forEach(function (x, i) { if (ft[i]) ft[i].textContent = x; });
+    var ft = document.querySelectorAll('.foot span'); ['© Daybreak', 'For research only — not investment advice', 'Press 1–9 to switch sections', 'Swipe left/right to switch sections'].forEach(function (x, i) { if (ft[i]) ft[i].textContent = x; });
     document.title = 'Daybreak';
     var md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', 'Daybreak: the first Bitcoin brief of the morning — news with analysis, market data, cycle position and a staged exit framework.');
   }

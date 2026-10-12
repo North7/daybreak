@@ -535,11 +535,5 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .health ul.note { margin: 4px 0 8px; padding-left: 18px; }
 /* 2026-10-12：巨型收盤價的走勢線端點在手機上超出容器約 20px，造成整頁可以橫向捲動 */
 .mega { overflow-x: hidden; overflow-x: clip; }
-/* 往期（2026-10-12） */
-.arch-item { padding: 16px 0; border-bottom: 1px solid var(--line); display: grid; gap: 8px; }
-.arch-item:last-child { border-bottom: 0; }
-.arch-item h3 { margin: 0; font-family: var(--f-cjk-display); font-weight: 900; font-size: 17px; line-height: 1.45; }
-.arch-full summary { cursor: pointer; }
-.arch-body p { font-size: 14px; color: var(--ink-2); line-height: 1.75; }
 /* 2026-10-12：Archivo 沒載到時（Google Fonts 被擋或很慢，例如中國大陸），備用字型較寬，頭版「要盯的價位」大數字會撐出右緣、整頁可橫向捲動 */
 .watch div { overflow: hidden; }

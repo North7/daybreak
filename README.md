@@ -5,7 +5,7 @@
 ## 結構
 
 ```
-index.html              網站入口（10 個版面：頭版、消息、週期、價格、衍生品、資金、鏈上、出場框架、往期、方法；號外風格，日刊／夜刊兩種主題；掛單簿 2026-10-12 起縮成衍生品版的小卡）
+index.html              網站入口（9 個版面：頭版、消息、週期、價格、衍生品、資金、鏈上、出場框架、方法；號外風格，日刊／夜刊兩種主題；掛單簿 2026-10-12 起縮成衍生品版的小卡）
 manifest.webmanifest    加到手機主畫面用（圖示在 assets/icon-*.png；分享預覽圖 assets/og.png）
 assets/app.css          品牌與版面（深色優先，含淺色主題）
 assets/app.js           路由、圖表、互動（無外部套件）；文字用 _t() 包起來，英文版查 assets/i18n-en.js
@@ -17,7 +17,7 @@ data/notes.json         每日頭條、各版判讀、今天該做什麼、今�
 data/etf.json           ETF 每日淨流量（資料管線從 The Block 自動更新，與 Farside 同口徑）
 data/model.json         固定模型參數：出場框架、長期路徑（每月檢討時才改）
 data/history/index.json 每日快照索引
-data/archive/           往期封存：每一期的 notes（與英文版）＋ index.json（頭條、當天收盤、之後漲跌、要盯的價位有沒有被碰到）
+data/archive/           往期封存：每一期的 notes（與英文版）＋ index.json（頭條、當天收盤、之後漲跌、要盯的價位有沒有被碰到）。目前只封存、網站上沒有往期頁面（2026-10-12 決定，之後再設計）
 pipeline/collect.py     抓取所有 API 並計算指標 → pipeline/today.json
 pipeline/build.py       today.json → data/latest.json；最後呼叫 archive.py 封存前一期
 pipeline/archive.py     往期封存與判讀回顧（一次性回填：python3 pipeline/archive.py --backfill-git）

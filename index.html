@@ -27,7 +27,7 @@ window.DAYBREAK_BOOT = (function () {
   function go(l) {
     window.DAYBREAK_LANG = l; document.documentElement.lang = l === 'en' ? 'en' : 'zh-Hant';
     if (l !== 'en') return Promise.resolve();
-    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=81e30928b2'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
+    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=7cebf3aceb'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
   }
   var pick = ls('daybreak.lang'); if (pick === 'zh' || pick === 'en') return go(pick);
   var byCC = function (cc) { return ZH.indexOf(String(cc).toUpperCase()) >= 0 ? 'zh' : 'en'; };
@@ -42,7 +42,7 @@ window.DAYBREAK_BOOT = (function () {
   });
 })();
 </script>
-<link rel="stylesheet" href="assets/app.css?v=81e30928b2">
+<link rel="stylesheet" href="assets/app.css?v=7cebf3aceb">
 </head>
 <body>
 <div class="app">
@@ -64,11 +64,11 @@ window.DAYBREAK_BOOT = (function () {
       <div class="ticker"><span class="chip flare" id="tk-stance"><i></i>—</span><span class="px" id="tk-px">—</span><span class="chip" id="tk-chg">—</span><span class="asof" id="tk-asof"></span><button type="button" class="fs-btn" id="fs" aria-label="全螢幕"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>全螢幕</button></div>
     </header>
     <main id="view" tabindex="-1"><p class="err">載入中… Loading…</p></main>
-    <footer class="foot"><span>© 破曉 Daybreak</span><span>僅供研究參考，非投資建議</span><span class="hint-kb">按 1–9、0 切換版面</span><span class="hint-sw">左右滑動切換版面</span></footer>
+    <footer class="foot"><span>© 破曉 Daybreak</span><span>僅供研究參考，非投資建議</span><span class="hint-kb">按 1–9 切換版面</span><span class="hint-sw">左右滑動切換版面</span></footer>
   </div>
 </div>
 <div id="tip" class="tip" role="tooltip" hidden></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
-<script src="assets/app.js?v=81e30928b2"></script>
+<script src="assets/app.js?v=7cebf3aceb"></script>
 </body>
 </html>
