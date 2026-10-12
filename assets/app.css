@@ -510,3 +510,14 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
   .interp .it { grid-template-columns: minmax(0, 1fr) auto auto; gap: 4px 10px; }
   .interp .d { grid-column: 1 / -1; }
 }
+
+/* 語言切換與行動版偏好（2026-10-12）：桌面在側欄底部；行動版側欄底部隱藏，改放在頂部列右上 */
+:root[lang="en"] .lang-toggle::before { transform: translateX(100%); }
+.m-prefs { display: none; }
+@media (max-width: 860px) {
+  .top { position: relative; }
+  .m-prefs { display: flex; gap: 6px; position: absolute; top: 10px; right: 16px; }
+  .m-prefs button { min-width: 38px; height: 30px; padding: 0 8px; border: 1px solid var(--line-2); background: var(--deck); color: var(--ink); font-size: 12px; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 4px; }
+  .m-prefs svg { width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 2; }
+  .crumb { padding-right: 96px; }
+}

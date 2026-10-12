@@ -19,7 +19,8 @@
 5. 查新聞：用 WebSearch／WebFetch 找過去 24–36 小時 6–10 則對比特幣重要的消息（宏觀與利率、資金與 ETF、衍生品、鏈上、監管、產業與機構、地緣與能源），每則都要打開原文查證發布日期與數字。
 6. 查研報：先用 WebFetch 打開 Glassnode 研報列表 https://research.glassnode.com （The Week On-chain 約每週二／三、Market Pulse 每週日、Macro Special 不定期），找出最近 7 天的每一期並打開原文讀重點；再查 The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。每一期的 `date` 寫原文發布日、`url` 寫原文網址。確認列表上真的沒有新一期，才沿用最近一期並在 `research.summary` 寫明「無新一期」。
 7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。
-8. 驗證：`python3 -c "import json;json.load(open('data/notes.json'))"`；再用 python 掃描 notes.json，確認沒有違反隱私鐵則的內容。
+   - 英文版（2026-10-12 起）：寫完 `data/notes.json` 後，另寫 `data/notes.en.json`：結構、欄位、數字、日期、網址、`impact`、`kind`、`dir`、`module` 與中文版完全相同，只把文字欄位（headline、summary、stance.label／short、watch[].label／note、modules 各版 lead／points、news[].title／cat／read／source 以外的說明文字、events[].label、actions[].head／text、changes[].title／fig／say、research.summary 與 items[].title／points／meaning）翻成自然的英文；金額用 $ 與 K／M／B，不用「萬／億」。英文版網站讀這個檔，缺檔或日期比中文舊時會退回中文並標示。隱私鐵則同樣適用。
+8. 驗證：`python3 -c "import json;[json.load(open(f)) for f in ('data/notes.json','data/notes.en.json')]"`；再用 python 掃描兩個檔，確認沒有違反隱私鐵則的內容。
 9. 提交訊息 `notes: <bar_date>`，推送到 main。
 
 ### notes.json 格式
