@@ -681,10 +681,13 @@
     return zhNote + front + tapeHtml() + healthHtml() + newsBlock + plan +
       _t('<div class="sec-h"><h2>今日數據</h2><span class="en">The Numbers</span><hr></div>') + kp +
       '<div class="grid">' + interpPanel(ovInterp()) + panel('span-12', _t('離出場線還多遠'), _t('以 ') + fmt.md(D.meta.bar_date) + _t(' 收盤計 · 對數刻度'), '<div class="runway">' + runwaySvg() + '</div>') +
-      panel('span-12', _t('接下來的日期'), '', '<div class="events">' + ev + '</div>') + '</div>';
+      panel('span-7', _t('價格近一年'), _t('CoinMetrics 每 7 天'), '<div class="chart" id="c-ov-px"></div>') +
+      panel('span-5', _t('接下來的日期'), '', '<div class="events">' + ev + '</div>') + '</div>';
   };
   V.overview.after = function () {
     bindMega();
+    var hist = D.price.history || [], cut = hist[hist.length - 1][0] - 400;
+    mount($('#c-ov-px'), function (el) { lineChart(el, { h: 250, series: [{ name: _t('價格'), data: hist.filter(function (p) { return p[0] >= cut; }), color: 'var(--s1)', area: true }], refs: [{ y: D.price.ma.sma200, color: 'var(--ink-3)', label: _t('200 日均線 ') + fmt.k(D.price.ma.sma200), below: true }], tipFmt: fmt.usd, aria: _t('近一年價格') }); });
   };
 
   V.news = function () {
