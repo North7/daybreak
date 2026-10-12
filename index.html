@@ -27,7 +27,7 @@ window.DAYBREAK_BOOT = (function () {
   function go(l) {
     window.DAYBREAK_LANG = l; document.documentElement.lang = l === 'en' ? 'en' : 'zh-Hant';
     if (l !== 'en') return Promise.resolve();
-    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=7cebf3aceb'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
+    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=15573b37ec'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
   }
   var pick = ls('daybreak.lang'); if (pick === 'zh' || pick === 'en') return go(pick);
   var byCC = function (cc) { return ZH.indexOf(String(cc).toUpperCase()) >= 0 ? 'zh' : 'en'; };
@@ -42,7 +42,7 @@ window.DAYBREAK_BOOT = (function () {
   });
 })();
 </script>
-<link rel="stylesheet" href="assets/app.css?v=7cebf3aceb">
+<link rel="stylesheet" href="assets/app.css?v=15573b37ec">
 </head>
 <body>
 <div class="app">
@@ -69,6 +69,6 @@ window.DAYBREAK_BOOT = (function () {
 </div>
 <div id="tip" class="tip" role="tooltip" hidden></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
-<script src="assets/app.js?v=7cebf3aceb"></script>
+<script src="assets/app.js?v=15573b37ec"></script>
 </body>
 </html>

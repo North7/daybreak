@@ -772,6 +772,7 @@
       panel('span-6', _t('最大到期的履約價分布'), ((dv.viz || {}).options || {}).strikes ? dv.viz.options.strikes.expiry + ' · Max Pain ' + fmt.k(dv.viz.options.strikes.maxpain) : '', strikeSay((o.expiries || []).filter(function (e) { return e.expiry === (((dv.viz || {}).options || {}).strikes || {}).expiry; })[0] || big) + '<div id="c-strike"></div>') + bookCard() + '</div>';
   };
   V.deriv.after = function () {
+    drawBook();
     var v = D.deriv.viz || {};
     mount($('#c-vol'), function (el) { var rows = (v.vol || {}).rows || []; lineChart(el, { series: [{ name: 'DVOL', data: rows.map(function (r) { return [r[0], r[1]]; }), color: 'var(--s1)' }, { name: 'RV30', data: rows.map(function (r) { return [r[0], r[2]]; }), color: 'var(--s2)' }], yFmt: function (x) { return x.toFixed(0); }, tipFmt: function (x) { return x.toFixed(1) + '%'; }, aria: _t('波動率') }); });
     mount($('#c-basis'), function (el) { var cv = (v.basis || {}).curve || []; lineChart(el, { h: 200, xType: 'num', series: [{ name: _t('年化基差'), data: cv, color: 'var(--s4)', area: true }], xticks: cv.filter(function (p, i) { return i % 2 === 0; }).map(function (p) { return [p[0], Math.round(p[0]) + 'd']; }), xTipFmt: function (x) { return Math.round(x) + _t(' 天到期'); }, yFmt: function (x) { return x.toFixed(1) + '%'; }, tipFmt: function (x) { return x.toFixed(2) + '%'; }, y0: 0, aria: _t('基差曲線') }); });
@@ -851,13 +852,23 @@
   /* 掛單簿摘要（2026-10-12 由獨立版面縮成衍生品版的一張卡）：快照在 UTC 00:05、掛單隨時可撤，只留買賣比與最大的牆 */
   function bookCard() {
     var o = D.orderbook; if (!o) return '';
-    var w = o.walls || {}, t = o.totals || {};
-    var walls = function (arr, col) { return (arr || []).slice(0, 3).map(function (x) { return '<div class="event"><span class="d">' + fmt.k(x[0]) + '–' + fmt.k(x[0] + 1000) + '</span><span style="color:var(--ink-2)">' + esc(venue(x[2])) + '</span><span class="num" style="color:' + col + '">$' + fmt.n(x[1], 1) + 'M</span></div>'; }).join(''); };
-    return panel('span-12', _T('掛單簿摘要', 'Order book snapshot'), _T('13 個交易所 · ±15% · 快照 ', '13 exchanges · ±15% · snapshot ') + (o.ts || '').replace('T', ' ').slice(5, 16) + ' UTC',
-      interpHtml(bkInterp(o)) + '<div class="grid" style="margin-top:8px"><div class="span-6"><div class="panel-h"><h2 style="color:var(--down)">' + _T('上方賣牆', 'Ask walls above') + '</h2><span class="src">' + _T('賣單合計 ', 'total asks ') + '$' + fmt.n(t.wide_ask, 0) + 'M</span></div><div class="events">' + walls(w.ask, 'var(--down)') + '</div></div>' +
-      '<div class="span-6"><div class="panel-h"><h2 style="color:var(--up)">' + _T('下方買牆', 'Bid walls below') + '</h2><span class="src">' + _T('買單合計 ', 'total bids ') + '$' + fmt.n(t.wide_bid, 0) + 'M</span></div><div class="events">' + walls(w.bid, 'var(--up)') + '</div></div></div>' +
+    var w = o.walls || {}, t = o.totals || {}, rd = o.rounds || {};
+    var walls = function (arr, col) { return (arr || []).slice(0, 5).map(function (x) { return '<div class="event"><span class="d">' + fmt.k(x[0]) + '–' + fmt.k(x[0] + 1000) + '</span><span style="color:var(--ink-2)">' + esc(venue(x[2])) + '</span><span class="num" style="color:' + col + '">$' + fmt.n(x[1], 1) + 'M</span></div>'; }).join(''); };
+    return panel('span-12', _T('掛單簿', 'Order book'), _T('13 個交易所 · ±15% · 快照 ', '13 exchanges · ±15% · snapshot ') + (o.ts || '').replace('T', ' ').slice(5, 16) + ' UTC',
+      interpHtml(bkInterp(o)) + '<div class="grid" style="margin-top:8px">' +
+      (o.wide ? '<div class="span-8"><div class="panel-h"><h2>' + _T('全景：每 1,000 美元一格', 'Full view: $1,000 buckets') + '</h2><span class="src">' + _T('7 個整本可得的場所 · ±15%', '7 venues with full books · ±15%') + '</span></div>' + legend([[_t('買單'), 'var(--up)'], [_t('賣單'), 'var(--down)']]) + '<div id="c-book"></div></div>' : '') +
+      '<div class="' + (o.wide ? 'span-4' : 'span-12') + '"><div class="panel-h"><h2 style="color:var(--down)">' + _T('上方賣牆', 'Ask walls above') + '</h2><span class="src">' + _T('賣單合計 ', 'total asks ') + '$' + fmt.n(t.wide_ask, 0) + 'M</span></div><div class="events">' + walls(w.ask, 'var(--down)') + '</div>' +
+      '<div class="panel-h" style="margin-top:8px"><h2 style="color:var(--up)">' + _T('下方買牆', 'Bid walls below') + '</h2><span class="src">' + _T('買單合計 ', 'total bids ') + '$' + fmt.n(t.wide_bid, 0) + 'M</span></div><div class="events">' + walls(w.bid, 'var(--up)') + '</div>' +
+      _t('<div class="panel-h" style="margin-top:8px"><h2>整數關卡</h2></div><div class="events">') + Object.keys(rd).sort().reverse().map(function (k) { var r = rd[k]; return '<div class="event"><span class="d">' + fmt.usd(+k) + '</span><span style="color:var(--ink-2)">' + (r.side === 'a' ? _t('賣') : _t('買')) + _t('方第 ') + r.rank + _t('／') + r.of + _t(' 名</span><span class="num">$') + fmt.n(r.musd, 1) + 'M</span></div>'; }).join('') + '</div></div></div>' +
       '<p class="note">' + _T('快照時間是 UTC ' + (o.ts || '').slice(11, 16) + '，讀的時候可能已過好幾個小時；掛單隨時可撤，假牆常見。Binance 期貨與 Bybit 讀不到，永續部分偏低估。', 'The snapshot was taken at ' + (o.ts || '').slice(11, 16) + ' UTC and may be hours old by the time you read it; orders can be pulled at any time and fake walls are common. Binance futures and Bybit are not readable, so perpetual depth is understated.') + '</p>');
   }
+  function drawBook() {   // 2026-10-12 使用者要求保留原本的掛單簿柱狀圖（每 1,000 美元一格，滑過看各交易所）
+    var o = D.orderbook, el = $('#c-book'); if (!o || !el) return;
+    var ven = o.wide.venues, lab = function (k) { return venue((o.meta[k] || {}).label || k); };
+    var rows = o.wide.rows.map(function (r) { var tot = r[2].reduce(function (a, b) { return a + b; }, 0); return { label: fmt.k(r[0]) + (r[1] === 'a' ? ' ▲' : ' ▼'), v: tot, color: r[1] === 'a' ? 'var(--down)' : 'var(--up)', cls: r[0] === Math.floor(o.mid / 1000) * 1000 ? 'mid' : '', right: '$' + fmt.n(tot, 1) + 'M', tip: '<div class="t">' + fmt.usd(r[0]) + ' · ' + (r[1] === 'a' ? _t('賣單') : _t('買單')) + '</div>' + r[2].map(function (v, i) { return v >= 0.5 ? '<div class="r"><i style="background:' + (r[1] === 'a' ? 'var(--down)' : 'var(--up)') + '"></i><span>' + esc(lab(ven[i])) + '</span><b>$' + fmt.n(v, 1) + 'M</b></div>' : ''; }).join('') }; });
+    el.innerHTML = ladderHtml(rows, { dense: true }); bindLadder(el, rows);
+  }
+
 
   V.exit = function () {
     var F = D.exit.framework, S = D.exit.status, c = S.close;

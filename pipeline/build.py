@@ -66,7 +66,7 @@ out = {
   'onchain': {'metrics': onchain, 'top_radar': td.get('top_radar'), 'cost_ratio': td.get('lth_sth_cost_ratio'), 'mining': td.get('mining'), 'whales': td.get('whales'), 'hash_ribbons': td.get('hash_ribbons'),
               'exchange': {k: cmr.get(k) for k in ('exchange_supply_btc', 'exchange_supply_share_pct', 'exchange_supply_chg7_pct', 'exchange_supply_chg30_pct', 'exchange_supply_chg90_pct', 'exchange_supply_date')}},
   'chips': {'flow': {k: v for k, v in (td.get('murphy_flow') or {}).items() if k != 'urpd'}, 'urpd': {k: v for k, v in ((td.get('murphy_flow') or {}).get('urpd') or {}).items() if k != 'band'}, 'viz': td.get('murphy_viz')},
-  'orderbook': {k: v for k, v in (td.get('orderbook_viz') or {}).items() if k in ('ts', 'mid', 'walls', 'rounds', 'totals')} or None,   # 2026-10-12 掛單簿縮成衍生品版小卡，不再輸出全景分格
+  'orderbook': {k: v for k, v in (td.get('orderbook_viz') or {}).items() if k != 'near'} or None,   # 2026-10-12 掛單簿併入衍生品版（保留全景柱狀圖；不再用的 ±1% 近端分格不輸出）
   'cycle': {'cm': {k: cmr.get(k) for k in ('date', 'mvrv', 'realized_price', 'prior_cycle_peak', 'mvrv_vs_prior', 'k075_price', 'k080_price', 'mvrv_vs_365d_max', 'price_ath_close', 'divergence', 'p20_run_ge075', 'p20_run_ge080')},
             'p20': (td.get('ex_viz') or {}).get('p20'), 'p6': (td.get('ex_viz') or {}).get('p6'), 'p6_date': (td.get('ex_viz') or {}).get('p6_date'),
             'powerlaw': dict(td.get('powerlaw') or {}, rows=((td.get('ex_viz') or {}).get('powerlaw') or {}).get('rows')),

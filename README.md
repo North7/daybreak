@@ -5,7 +5,7 @@
 ## 結構
 
 ```
-index.html              網站入口（9 個版面：頭版、消息、週期、價格、衍生品、資金、鏈上、出場框架、方法；號外風格，日刊／夜刊兩種主題；掛單簿 2026-10-12 起縮成衍生品版的小卡）
+index.html              網站入口（9 個版面：頭版、消息、週期、價格、衍生品、資金、鏈上、出場框架、方法；號外風格，日刊／夜刊兩種主題；掛單簿 2026-10-12 起併入衍生品版最下方，保留原本的全景柱狀圖）
 manifest.webmanifest    加到手機主畫面用（圖示在 assets/icon-*.png；分享預覽圖 assets/og.png）
 assets/app.css          品牌與版面（深色優先，含淺色主題）
 assets/app.js           路由、圖表、互動（無外部套件）；文字用 _t() 包起來，英文版查 assets/i18n-en.js
@@ -69,7 +69,7 @@ docs/CRON_JOB.md        cron-job.org 準時觸發的設定步驟
 - 其他免費來源（2026-10-12 新增）：DefiLlama（穩定幣供給）、Coinbase 與 Binance 日線（Coinbase 溢價）、OKX 與 Hyperliquid（資金費率，與 Deribit 以未平倉加權）、alternative.me（恐懼貪婪指數）；任一失敗只影響該項。
 - 鯨魚分層持幣來自 BitInfoCharts 的分布歷史頁（一次請求、不佔 bitcoin-data 額度）；地址不等於實體，≥10K 多為交易所與託管。若對方改版或擋 GitHub Actions，該區塊顯示「本日未取得」，不影響其他資料。
 - Farside 用 Cloudflare 擋所有自動抓取，ETF 改用 The Block 的圖表 JSON（pipeline/etf.py，逐日與 Farside 比對一致）；The Block 只公布已完整的交易日，約晚一天。
-- 掛單簿是 Actions 執行當下的快照；Binance 期貨與 Bybit 讀不到。2026-10-12 起只在衍生品版留一張摘要卡。
+- 掛單簿是 Actions 執行當下的快照；Binance 期貨與 Bybit 讀不到。2026-10-12 起併入衍生品版（柱狀圖、最大的牆、整數關卡都保留）。
 - 內文中文用系統字型，只有標題載入 Noto Sans TC 900；Google Fonts 在中國大陸讀不到時，版面用備用字型，已確認不會橫向溢出。
 
 僅供研究參考，非投資建議。
