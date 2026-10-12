@@ -17,6 +17,7 @@
    - 實現市值 30 日變化（brief 的 `flows.rc_liq`）：只當資金背景寫進 flows 判讀（例：「實現市值 30 日 +1.3%，資金仍在流入」）；轉為 ≤0 或由 ≤0 轉正時在 changes 記一筆。不得寫成加倉或賣出訊號，也不連動市場階段與出場框架（歷史上 2018、2021-06、2022-01 的歸零之後仍大跌，見資金版說明）。
    - 頁面上每個數字已有依固定門檻自動產生的解讀（`assets/app.js` 的「數字解讀」區塊：各版「這些數字代表什麼」與鏈上表格下方的解讀列）。各版 `modules` 的判讀不必逐項重述，重點放在跨指標的綜合結論與今天的變化；若你的判讀和自動解讀方向不同，要寫出原因。
    - 短週期（brief 的 `price.swing`，收盤價 15% 反轉才算新的一段）與鯨魚分層（`onchain.whales`，BitInfoCharts 依地址餘額）：market 判讀可寫目前這一段走了多久、多少、離本段結束線多遠；onchain 判讀可寫大戶（100–10K）30 日與本段以來的增減。≥10K 多為交易所與託管，不寫成大戶買賣；兩者都只作讀值，不連動任何規則。
+   - 2026-10-12 起：頂部三指標（MVRV Z／NUPL／Puell）由 CoinMetrics 自算，資料日期通常是收盤前一天，不再寫「（10/05）」這種 bitcoin-data 的舊日期；掛單簿不再是獨立版面，掛單重點寫進 deriv 判讀（modules 不再有 book）；deriv 的資金費率用 brief 的 `deriv.funding_multi.weighted_now`（Deribit、OKX、Hyperliquid 以未平倉加權），25Δ 風險逆轉是 30 天固定期限；flows 可引用穩定幣供給（`flows.stables`）、Coinbase 溢價（`flows.cb_premium`）、恐懼貪婪（`flows.fear_greed`）；onchain 可引用算力帶（`onchain.hash_ribbons`）。頁首「資料狀態」若顯示延遲，判讀要標明。
 5. 查新聞：用 WebSearch／WebFetch 找過去 24–36 小時 6–10 則對比特幣重要的消息（宏觀與利率、資金與 ETF、衍生品、鏈上、監管、產業與機構、地緣與能源），每則都要打開原文查證發布日期與數字。
 6. 查研報：先用 WebFetch 打開 Glassnode 研報列表 https://research.glassnode.com （The Week On-chain 約每週二／三、Market Pulse 每週日、Macro Special 不定期），找出最近 7 天的每一期並打開原文讀重點；再查 The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。每一期的 `date` 寫原文發布日、`url` 寫原文網址。確認列表上真的沒有新一期，才沿用最近一期並在 `research.summary` 寫明「無新一期」。
 7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。
@@ -34,7 +35,7 @@
   "watch": [{"label": "200 日均線", "value": 71657, "note": "觸發條件與距離"}, "…共三項"],
   "modules": {
     "overview": {"lead": "一句結論", "points": ["每點一句，最多 3–4 個數字"]},
-    "cycle": {}, "market": {}, "deriv": {}, "flows": {}, "onchain": {}, "book": {}, "exit": {}
+    "cycle": {}, "market": {}, "deriv": {}, "flows": {}, "onchain": {}, "exit": {}
   },
   "news": [{"time": "YYYY-MM-DD", "cat": "宏觀｜資金｜衍生品｜鏈上｜監管｜產業｜機構｜地緣", "impact": "bull|bear|neutral", "weight": 1,
             "title": "發生了什麼（一句，含關鍵數字）", "source": "媒體名，日期", "url": "原文網址",
@@ -57,7 +58,7 @@
 - 每則消息的解讀都要回扣本站數據，說清楚它是短線雜訊還是會影響週期判斷；單一來源或數字不一致者在 title 後標「（未核實）」。
 - 第三方模型（Tidemark）只作讀值。不同資料商的數字不相減。分數一律附樣本數。寧可寫「本日未取得」，也不推估或沿用昨天的數字。
 - `actions`（今天該做什麼、盯什麼）4–6 項，依序：`do` 可以做（依出場框架今天的動作，沒有觸發就寫不動）、`dont` 不要做（最容易犯的錯）、`watch` 要盯（今明兩天的事件與價位，附台北時間）、`flip` 會推翻（什麼收盤條件會讓框架動作，附價位與距離）。一律用框架語言（「依框架」「避險減 20%」），不寫任何人的持倉狀態。
-- `changes`（今天變了什麼）3–5 項，只寫相對上一期真正改變的事：價格與量、資金流、衍生品、鏈上、掛單簿、市場階段天數；`fig` 寫「昨天 → 今天」的數字。沒有變化的不列。
+- `changes`（今天變了什麼）3–5 項，只寫相對上一期真正改變的事：價格與量、資金流、衍生品、鏈上、市場階段天數；`fig` 寫「昨天 → 今天」的數字。沒有變化的不列。
 - `research`（權威研報）：每列寫來源與日期、重點（含價位數字）、對本站判斷的意義；沒讀到全文的 `access` 填 `title_only`，且不作判斷依據。研報結論與本站讀值衝突時，在 `meaning` 寫明衝突與本站採用哪個、為什麼。
 - 市場階段由資料管線依寫死規則計算（`cycle.stage`：熊市／轉換期／牛市；牛市＝投降出現過且收盤連 30 日在上升的 200 日均線之上），你只引用，不改判；`cycle` 模組要寫現在的階段、天數（`above_rising_run`／30）與佐證燈號（`cycle.stage.evidence` 的 `ok`／`n`，並點名哪幾項亮、哪幾項沒亮）。佐證燈號只表示證據強弱，不要寫成「還差某條件才算牛市」。
 - `events` 滾動維護未來 60 天：難度調整（`onchain.mining.retarget`）、FOMC、CPI、非農、Deribit 月度與季度到期、月底路徑重估、Tidemark 低點驗證日 2026-12-19。官方排程優先。

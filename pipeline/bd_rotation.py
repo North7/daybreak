@@ -1,17 +1,18 @@
 #!/usr/bin/env python3
 """bitcoin-data.com 請求分配（2026-10-08 建立）。
 免費層每個 IP 每小時 10 次、每日 15 次（實測第 11 次回 429 RATE_LIMIT_HOUR_EXCEEDED）；管線共用 20 個端點，一次抓完必定超限。
-分配：每日 UTC 00:05 collect.py 即時抓 CORE 10 個；其餘 10 個分 A／B 兩組，由本腳本在前一晚 UTC 22:40 依日期輪替抓 5 個寫進 bd_cache/，
-collect.py 只讀快取。合計每日 15 次、任一小時不超過 10 次。輪替指標每 2 天更新一次，頁面照常顯示資料本身的日期。
-用法（在倉庫根目錄）：python3 pipeline/bd_rotation.py [--group A|B]   # 不給 --group 時依 UTC 日期奇偶輪替"""
+2026-10-12 重排：頂部三指標（MVRV Z／NUPL／Puell）改由 collect.py 用 CoinMetrics 自算（只晚 1 天；bitcoin-data 版晚約 6 天），
+realized-price（頁面沒用到）、realized-cap-growth-rate（與 CoinMetrics 重複且結論相反）、sopr（與 aSOPR 幾乎相同）退役。
+分配：每日 UTC 00:05 collect.py 即時抓 CORE 6 個；其餘 8 個（A 組）由本腳本在前一晚 UTC 22:40 抓進 bd_cache/，collect.py 只讀快取。
+合計每日 14 次、任一小時不超過 8 次，全部指標每天更新，不再兩天輪替。
+用法（在倉庫根目錄）：python3 pipeline/bd_rotation.py [--group A]"""
 import json, os, sys, subprocess, argparse, datetime as dt
 
 CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'bd_cache')
-# 每日即時：頂部三指標（出場框架 P6）、成本基礎（成本比需同日）、籌碼流向四項（頁面圖表）
-CORE = {'mvrv-zscore', 'nupl', 'puell-multiple', 'realized-price', 'sth-realized-price', 'lth-realized-price',
-        'sth-lth-ratio', 'percent-sth-in-profit', 'true-market-mean', 'urpd'}
-GROUPS = {'A': ['sopr', 'asopr', 'sth-sopr', 'lth-sopr', 'realized-cap-growth-rate'],
-          'B': ['illiquid-supply', 'highly-liquid-supply', 'lth-mvrv-zscore', 'supply-in-profit-pct', 'lth-net-position-change-30d-btc']}
+# 每日即時：成本基礎（成本比需同日）、籌碼流向四項（頁面圖表）
+CORE = {'sth-realized-price', 'lth-realized-price', 'sth-lth-ratio', 'percent-sth-in-profit', 'true-market-mean', 'urpd'}
+GROUPS = {'A': ['asopr', 'sth-sopr', 'lth-sopr', 'illiquid-supply', 'highly-liquid-supply', 'lth-mvrv-zscore', 'supply-in-profit-pct',
+                'lth-net-position-change-30d-btc']}
 
 
 def fetch(m):
@@ -46,7 +47,7 @@ if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--group', choices=sorted(GROUPS))
     ap.add_argument('--skip-if-fresh', action='store_true', help='這組今天（UTC）已抓過就不再打 API（備援排程用）')
     args = ap.parse_args(); today = dt.datetime.now(dt.timezone.utc).date()
-    g = args.group or 'AB'[today.toordinal() % 2]
+    g = args.group or 'A'
     if args.skip_if_fresh:
         try:
             if all(load(m)[1][:10] == today.isoformat() for m in GROUPS[g]): print(f'{g} 今天已抓過，略過'); sys.exit(0)

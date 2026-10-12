@@ -4,10 +4,13 @@ on:
   schedule:
     - cron: "40 22 * * *"   # 每天 UTC 22:40（台北 06:40），比 Daily data 00:05 早 85 分鐘，避開 bitcoin-data 每小時 10 次上限
     - cron: "0 23 * * *"    # 備援：GitHub 排程可能被丟掉；今天這組已抓過就直接結束
+  # 2026-10-12：由 cron-job.org 在 UTC 22:40 準時呼叫（event_type: prefetch），見 docs/CRON_JOB.md；schedule 保留當備援
+  repository_dispatch:
+    types: [prefetch]
   workflow_dispatch:
     inputs:
       group:
-        description: "A 或 B；留空依日期輪替"
+        description: "只有 A 組（2026-10-12 起全部每天抓）；可留空"
         required: false
         default: ""
 
@@ -30,7 +33,7 @@ jobs:
       - name: Fetch rotating bitcoin-data series
         env:
           GROUP: ${{ inputs.group }}
-        run: python3 pipeline/bd_rotation.py ${GROUP:+--group "$GROUP"} ${{ github.event_name == 'schedule' && '--skip-if-fresh' || '' }}
+        run: python3 pipeline/bd_rotation.py ${GROUP:+--group "$GROUP"} ${{ (github.event_name == 'schedule' || github.event_name == 'repository_dispatch') && '--skip-if-fresh' || '' }}
       - name: Commit
         run: |
           git config user.name "apogee-bot"

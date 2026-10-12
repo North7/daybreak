@@ -9,6 +9,10 @@ on:
     - cron: "45 0 * * *"
     - cron: "5 1 * * *"
   workflow_dispatch: {}
+  # 2026-10-12：GitHub 自己的排程每天晚 5–7 小時，改由 cron-job.org 準時呼叫 repository_dispatch（event_type: daily-data）。
+  # 設定方法見 docs/CRON_JOB.md；上面的 schedule 與下面的 push 觸發保留當備援
+  repository_dispatch:
+    types: [daily-data]
   # GitHub 定時排程常延遲數小時（2026-10-08 實測：00:45 的排程 06:14 才跑）。08:30 的 Claude 日報發現資料還沒更新時，
   # 會把目前時間寫進 .github/run-daily 並推送，推送觸發的工作會立刻執行
   push:
@@ -30,7 +34,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Skip if already updated
         id: chk
-        if: github.event_name == 'schedule'
+        if: github.event_name == 'schedule' || github.event_name == 'repository_dispatch'
         run: |
           python3 - <<'PY' >> "$GITHUB_OUTPUT"
           import json, datetime as dt

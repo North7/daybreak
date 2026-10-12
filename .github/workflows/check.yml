@@ -1,0 +1,37 @@
+name: Site checks
+
+# 2026-10-12：PR 合併前自動檢查，避免把網站弄壞。資料管線每天直接推 main，不經過這裡
+on:
+  pull_request:
+  workflow_dispatch: {}
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: Syntax
+        run: |
+          node --check assets/app.js
+          node --check assets/i18n-en.js
+          python3 -m py_compile pipeline/*.py
+          python3 -c "import json,glob;[json.load(open(f)) for f in glob.glob('data/*.json')+['manifest.webmanifest']]"
+      - name: English dictionary covers every string
+        run: python3 pipeline/check_i18n.py
+      - name: Asset versions are stamped
+        run: |
+          cp index.html /tmp/index.before && python3 pipeline/stamp_assets.py && diff -q /tmp/index.before index.html || (echo "index.html 的 ?v= 版本號沒更新：請執行 python3 pipeline/stamp_assets.py 後再提交" && exit 1)
+      - name: Render every section (zh/en × desktop/mobile)
+        run: |
+          npm i --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium
+          python3 -m http.server 8765 >/dev/null 2>&1 &
+          sleep 1
+          node tests/smoke.js
