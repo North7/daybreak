@@ -383,6 +383,39 @@ try:
     R['stage_evidence'] = dict(items=ev, ok=sum(e['ok'] for e in ev), n=len(ev),
                                note='只作佐證、不參與判定。樣本 3–4 輪，任何規則都無法避免 2019 年式的假突破')
 except Exception as e: errors.append(f'stage_evidence {e}')
+# G1b. 2026-10-12 使用者要求：實現市值 30 日變化（Checkonchain「Realised Cap Liquidity Cycle」的核心），只作資金背景讀值、不作買賣訊號、不連動任何規則。
+#   實現市值＝CoinMetrics 市值 ÷ MVRV（與 stage_evidence 的「資金流入」同一數字），不另外請求。回推一律以日期，不以列位置。
+try:
+    _ep0 = dt.date(1970, 1, 1); _dd = [dt.date.fromisoformat(x) for x in _d]
+    def _ago(j, days):   # 第 j 天往前 days 天（含）最近一筆的索引；不足則 None
+        t_ = (_dd[j] - dt.timedelta(days=days)).isoformat(); b_ = bisect.bisect_right(_d, t_) - 1
+        return b_ if b_ >= 0 else None
+    def _chg(j, days):
+        b_ = _ago(j, days); return None if b_ is None else _rc[j] / _rc[b_] - 1
+    ch30 = [_chg(j, 30) for j in range(len(_d))]
+    def _fwd(j, days):   # 第 j 天之後 days 天的價格報酬；資料不夠長回傳 None
+        t_ = (_dd[j] + dt.timedelta(days=days)).isoformat(); b_ = bisect.bisect_left(_d, t_)
+        return round((_p[b_] / _p[j] - 1) * 100) if b_ < len(_d) else None
+    eps, s_ = [], None   # 30 日變化 ≤ 0 的連續期間（2014 起、至少 7 天才列入，避免單日雜訊）
+    for j in range(len(_d)):
+        z = ch30[j] is not None and ch30[j] <= 0
+        if z and s_ is None: s_ = j
+        if (not z or j == len(_d) - 1) and s_ is not None:
+            e_ = j if z else j - 1
+            if _d[s_] >= '2014-01-01' and (_dd[e_] - _dd[s_]).days + 1 >= 7:
+                eps.append(dict(start=_d[s_], end=_d[e_], days=(_dd[e_] - _dd[s_]).days + 1, px_start=round(_p[s_]), px_end=round(_p[e_]),
+                                ongoing=bool(z and j == len(_d) - 1), fwd180=_fwd(e_, 180), fwd365=_fwd(e_, 365)))
+            s_ = None
+    run = 0; zero_now = ch30[k] <= 0
+    for j in range(k, 0, -1):
+        if (ch30[j] is not None and ch30[j] <= 0) == zero_now and (_dd[j] - _dd[j - 1]).days == 1: run += 1
+        else: break
+    rows = [[(_dd[j] - _ep0).days, round(ch30[j] * 100, 2)] for j in range(len(_d)) if _d[j] >= '2019-01-01' and ch30[j] is not None][::-3][::-1]   # 每 3 天一點（含最新一天）
+    R['rc_liquidity'] = dict(date=_d[k], realized_cap_usd_b=round(_rc[k] / 1e9, 1),
+                             chg30_pct=round(ch30[k] * 100, 2), chg90_pct=round(_chg(k, 90) * 100, 2), chg180_pct=round(_chg(k, 180) * 100, 2),
+                             zero_now=bool(zero_now), state_run_days=run, last_episode=eps[-1] if eps else None, episodes=eps, rows=rows,
+                             note='CoinMetrics community 市值 ÷ MVRV 推得；只作資金背景讀值，不作買賣訊號')
+except Exception as e: errors.append(f'rc_liquidity {e}')
 # G2. bitcoin-data 頂部雷達（放在既有 14 個端點之後；免費層文件寫每小時 10 次、每日 15 次，超額時只有這幾格記 null）
 RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProfitPct', 'realized-cap-growth-rate': 'realizedCapGrowthRate',
        'lth-net-position-change-30d-btc': 'lthNetPositionChange30dBtc'}

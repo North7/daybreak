@@ -3,7 +3,7 @@
 import json, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 d = json.load(open(os.path.join(ROOT, 'data', 'latest.json')))
-DROP = {'rows', 'rows20', 'history', 'viz', 'wide', 'near', 'band', 'cost', 'profit', 'ratio', 'meta_venues', 'nodes', 'realized'}
+DROP = {'rows', 'rows20', 'history', 'viz', 'wide', 'near', 'band', 'cost', 'profit', 'ratio', 'meta_venues', 'nodes', 'realized', 'episodes'}
 def slim(o, depth=0):
     if isinstance(o, dict):
         return {k: slim(v, depth + 1) for k, v in o.items() if k not in DROP}

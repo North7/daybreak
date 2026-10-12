@@ -61,7 +61,7 @@ out = {
   'deriv': {'dvol': td.get('dvol'), 'deriv': td.get('deriv'), 'rr25': td.get('rr25'), 'samesource': td.get('samesource'),
             'options': {'total_oi': (td.get('options') or {}).get('total_oi'), 'expiries': [{k: e.get(k) for k in ('expiry', 'dte', 'oi', 'share', 'pc', 'maxpain', 'top_calls', 'top_puts')} for e in (td.get('options') or {}).get('expiries', [])]},
             'viz': {k: (td.get('ex_viz') or {}).get(k) for k in ('vol', 'basis', 'options')}},
-  'flows': {'etf': etf['rows'], 'fred': td.get('fred'), 'dfii10': (td.get('extra') or {}).get('dfii10')},
+  'flows': {'etf': etf['rows'], 'fred': td.get('fred'), 'dfii10': (td.get('extra') or {}).get('dfii10'), 'rc_liq': td.get('rc_liquidity')},
   'onchain': {'metrics': onchain, 'top_radar': td.get('top_radar'), 'cost_ratio': td.get('lth_sth_cost_ratio'), 'mining': td.get('mining'),
               'exchange': {k: cmr.get(k) for k in ('exchange_supply_btc', 'exchange_supply_share_pct', 'exchange_supply_chg7_pct', 'exchange_supply_chg30_pct', 'exchange_supply_chg90_pct', 'exchange_supply_date')}},
   'chips': {'flow': {k: v for k, v in (td.get('murphy_flow') or {}).items() if k != 'urpd'}, 'urpd': {k: v for k, v in ((td.get('murphy_flow') or {}).get('urpd') or {}).items() if k != 'band'}, 'viz': td.get('murphy_viz')},
