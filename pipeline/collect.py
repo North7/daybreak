@@ -213,21 +213,37 @@ try:
                          top_puts=[[K, round(q['P'])] for K, q in sorted(v['k'].items(), key=lambda z: -z[1]['P'])[:3]],
                          call_80k=round(v['k'].get(80000, {}).get('C', 0))))
     R['options'] = dict(total_oi=round(tot), expiries=rows)
-    # 真 25Δ RR：DTE 20–45 中最近的一個到期
-    cand = [r for r in rows if 20 <= r['dte'] <= 45]
-    if cand:
-        ex = cand[0]['expiry']; T = (cand[0]['dte'] + 8 / 24) / 365; F = ix * math.exp(R['deriv']['basis_median'] / 100 * T)
+    # 真 25Δ RR。2026-10-12 改為 30 天固定期限：取 30 天前後最近的兩個到期（各自 OI ≥ 1000 顆、DTE ≥ 7），
+    #   各自求 25Δ 買權／賣權與 ATM 的隱含波動，再以總變異數（σ²T）線性內插到 30 天。舊規則只取 DTE 20–45 的單一到期，
+    #   月度到期之間（例如 18 天與 46 天）每月約一週算不出來。兩側缺一時退回舊規則。
+    def smile(r_):
+        ex_, T_ = r_['expiry'], (r_['dte'] + 8 / 24) / 365; F_ = ix * math.exp(R['deriv']['basis_median'] / 100 * T_)
         def dl(K, cp, s):
-            d1 = (math.log(F / K) + .5 * s * s * T) / (s * math.sqrt(T)); return N(d1) if cp == 'C' else N(d1) - 1
+            d1 = (math.log(F_ / K) + .5 * s * s * T_) / (s * math.sqrt(T_)); return N(d1) if cp == 'C' else N(d1) - 1
         def at(cp, tgt):
-            arr = sorted((dl(K, cp, s), K, s) for K, c_, s in E[ex]['iv'] if c_ == cp)
+            arr = sorted((dl(K, cp, s), K, s) for K, c_, s in E[ex_]['iv'] if c_ == cp)
             for (d0, k0, s0), (d1_, k1, s1) in zip(arr, arr[1:]):
                 if (d0 - tgt) * (d1_ - tgt) <= 0:
                     w = (tgt - d0) / (d1_ - d0) if d1_ != d0 else 0; return s0 + (s1 - s0) * w, k0 + (k1 - k0) * w
+            raise ValueError(f'{ex_} 找不到 {cp} {tgt} Δ')
         civ, ck = at('C', .25); piv, pk = at('P', -.25)
-        atm = min((z for z in E[ex]['iv'] if z[1] == 'C'), key=lambda z: abs(z[0] - F))
-        R['rr25'] = dict(expiry=ex, dte=cand[0]['dte'], fwd=round(F), atm_iv=round(atm[2] * 100, 2), call_iv=round(civ * 100, 2), call_k=round(ck),
-                         put_iv=round(piv * 100, 2), put_k=round(pk), rr=round((civ - piv) * 100, 2))
+        atm = min((z for z in E[ex_]['iv'] if z[1] == 'C'), key=lambda z: abs(z[0] - F_))[2]
+        return dict(T=T_, F=F_, c=civ, ck=ck, p=piv, pk=pk, a=atm, r=r_)
+    lo_ = [r for r in rows if 7 <= r['dte'] < 30]; hi2 = [r for r in rows if r['dte'] >= 30]
+    if lo_ and hi2:
+        s1_, s2_ = smile(lo_[-1]), smile(hi2[0]); T30 = 30 / 365; wq = (T30 - s1_['T']) / (s2_['T'] - s1_['T'])
+        iv30 = lambda k_: math.sqrt(max((s1_[k_] ** 2 * s1_['T'] + (s2_[k_] ** 2 * s2_['T'] - s1_[k_] ** 2 * s1_['T']) * wq) / T30, 0))
+        civ, piv, atm = iv30('c'), iv30('p'), iv30('a')
+        R['rr25'] = dict(expiry='30d', method='30 天固定期限（' + s1_['r']['expiry'] + '／' + s2_['r']['expiry'] + ' 總變異數內插）', dte=30,
+                         pair=[s1_['r']['expiry'], s2_['r']['expiry']], fwd=round(s1_['F'] + (s2_['F'] - s1_['F']) * wq), atm_iv=round(atm * 100, 2),
+                         call_iv=round(civ * 100, 2), put_iv=round(piv * 100, 2), rr=round((civ - piv) * 100, 2),
+                         rr_near=round((s1_['c'] - s1_['p']) * 100, 2), rr_far=round((s2_['c'] - s2_['p']) * 100, 2))
+    else:
+        cand = [r for r in rows if 20 <= r['dte'] <= 45]
+        if cand:
+            s1_ = smile(cand[0])
+            R['rr25'] = dict(expiry=cand[0]['expiry'], method='單一到期（DTE 20–45）', dte=cand[0]['dte'], fwd=round(s1_['F']), atm_iv=round(s1_['a'] * 100, 2),
+                             call_iv=round(s1_['c'] * 100, 2), call_k=round(s1_['ck']), put_iv=round(s1_['p'] * 100, 2), put_k=round(s1_['pk']), rr=round((s1_['c'] - s1_['p']) * 100, 2))
 except Exception as e: errors.append(f'options {e}')
 # 同源 RV30（Deribit 永續小時線自建 00:00 UTC 日界）
 hh = get(f'https://www.deribit.com/api/v2/public/get_tradingview_chart_data?instrument_name=BTC-PERPETUAL&start_timestamp={int((now.timestamp()-45*86400)*1000)}&end_timestamp={int(now.timestamp()*1000)}&resolution=60')
@@ -240,8 +256,9 @@ try:
 except Exception as e: errors.append(f'samesource {e}')
 
 # ---------- B. 鏈上 ----------
-OC = {'mvrv-zscore': 'mvrvZscore', 'nupl': 'nupl', 'puell-multiple': 'puellMultiple', 'sopr': 'sopr', 'asopr': 'aSopr', 'sth-sopr': 'sthSopr',
-      'lth-sopr': 'lthSopr', 'realized-price': 'realizedPrice', 'sth-realized-price': 'sthRealizedPrice',
+# 2026-10-12：mvrv-zscore、nupl、puell-multiple 改由 G1a 用 CoinMetrics 自算（bitcoin-data 版晚約 6 天）；sopr、realized-price 退役（見 bd_rotation.py）
+OC = {'asopr': 'aSopr', 'sth-sopr': 'sthSopr',
+      'lth-sopr': 'lthSopr', 'sth-realized-price': 'sthRealizedPrice',
       'lth-realized-price': 'lthRealizedPrice', 'illiquid-supply': 'illiquidSupply', 'highly-liquid-supply': 'highlyLiquidSupply'}
 # 2026-10-01 月度複盤：reserve-risk、active-addresses 退役（零資訊量、零結論變更；省 bitcoin-data 2 次請求，見 revisions／b12）
 R['onchain'] = {}; SER = {}
@@ -329,7 +346,7 @@ except Exception as e: errors.append(f'bitstamp {e}')
 # ---------- G. 2026-09-25 新增：頂部／底部雷達（使用者要求加重頂部鏈上指標） ----------
 # G1. CoinMetrics community（免金鑰、自 2010 年、每日）：MVRV 比值、實現價、週期衰減校正、價格新高 vs MVRV 背離、交易所供給
 try:
-    cmj = get('https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?assets=btc&metrics=PriceUSD,CapMVRVCur,CapMrktCurUSD,SplyCur,SplyExNtv&frequency=1d&start_time=2010-07-18&page_size=10000')['data']
+    cmj = get('https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?assets=btc&metrics=PriceUSD,CapMVRVCur,CapMrktCurUSD,SplyCur,SplyExNtv,IssTotUSD&frequency=1d&start_time=2010-07-18&page_size=10000')['data']
     cm = [(x['time'][:10], float(x['PriceUSD']), float(x['CapMVRVCur']) if x.get('CapMVRVCur') else None, float(x['CapMrktCurUSD']), float(x['SplyCur']),
            float(x['SplyExNtv']) if x.get('SplyExNtv') else None) for x in cmj if x.get('PriceUSD') and x.get('CapMrktCurUSD') and x.get('SplyCur') and x['time'][:10] <= LAST]   # 2026-09-26 修正：CoinMetrics 最新一天常只有 PriceUSD、其餘 null，須一併排除
     mv = [(d_, pr, m_, mc, sp) for d_, pr, m_, mc, sp, _ in cm if m_]
@@ -363,6 +380,29 @@ try:
                          exchange_supply_chg30_pct=round((ex[-1][1] / ex[-31][1] - 1) * 100, 2), exchange_supply_chg7_pct=round((ex[-1][1] / ex[-8][1] - 1) * 100, 2), exchange_supply_chg7_1y_pctile=round(sum((ex[j][1] / ex[j - 7][1] - 1) < (ex[-1][1] / ex[-8][1] - 1) for j in range(len(ex) - 365, len(ex))) / 365 * 100, 1), exchange_supply_chg90_pct=round((ex[-1][1] / ex[-91][1] - 1) * 100, 2),
                          note='CoinMetrics community；MVRV 口徑與 bitcoin-data 的 MVRV Z 不同，不相減、不混用。交易所供給為 CoinMetrics 自有地址歸屬')
 except Exception as e: errors.append(f'coinmetrics {e}')
+# G1a. 2026-10-12：頂部三指標（出場框架 P6）改用 CoinMetrics 自算，只晚 1 天（bitcoin-data 版晚約 6 天）。
+#   MVRV Z＝(市值−實現市值)÷市值的全歷史標準差（到當日為止）；NUPL＝(市值−實現市值)÷市值；Puell＝當日發行美元÷近 365 日平均。
+#   2026-10-05 同日對照 bitcoin-data：四年百分位 44.7／45.5／82.8 對 44.5／45.0／82.7。輸出欄位與原本 R['onchain'][m] 相同。
+try:
+    iss = {x['time'][:10]: float(x['IssTotUSD']) for x in cmj if x.get('IssTotUSD')}
+    S3 = {'mvrv-zscore': {}, 'nupl': {}, 'puell-multiple': {}}; s1 = s2 = 0.0
+    for j_, (d_, _, m_, mc_, _) in enumerate(mv):
+        rc_ = mc_ / m_; s1 += mc_; s2 += mc_ * mc_; n_ = j_ + 1
+        sd_ = math.sqrt(max(s2 / n_ - (s1 / n_) ** 2, 0)) if n_ > 1 else 0
+        if sd_: S3['mvrv-zscore'][d_] = (mc_ - rc_) / sd_
+        S3['nupl'][d_] = (mc_ - rc_) / mc_
+    isd = sorted(iss)
+    for j_ in range(364, len(isd)):
+        if (dt.date.fromisoformat(isd[j_]) - dt.date.fromisoformat(isd[j_ - 364])).days == 364:   # 365 個連續日才算
+            S3['puell-multiple'][isd[j_]] = iss[isd[j_]] / (sum(iss[t_] for t_ in isd[j_ - 364:j_ + 1]) / 365)
+    for m, ser in S3.items():
+        SER[m] = ser; s_ = sorted(ser.items()); d_, v_ = s_[-1]
+        cut = (dt.date.fromisoformat(d_) - dt.timedelta(days=1461)).isoformat(); w4 = [x for dd, x in s_ if dd >= cut]
+        ma7 = sum(x for _, x in s_[-7:]) / 7; m7s = [sum(x for _, x in s_[q_ - 6:q_ + 1]) / 7 for q_ in range(6, len(s_))]
+        R['onchain'][m] = dict(date=d_, value=round(v_, 4), pct_4y=round(sum(x < v_ for x in w4) / len(w4) * 100, 1), n=len(w4),
+                               chg7_pct=_dchg(ser, d_, 7, v_), chg30_pct=_dchg(ser, d_, 30, v_),
+                               ma7=round(ma7, 4), ma7_pct_own=round(sum(x < ma7 for x in m7s) / len(m7s) * 100, 1), source='CoinMetrics')
+except Exception as e: errors.append(f'top3 coinmetrics {e}')
 # 2026-10-09 P23 修訂：市場階段的佐證燈號（只顯示、不作為門檻）。回測（2014 起、3–4 輪）沒有任何單一指標同時兼顧速度與少假訊號，
 # 交易所供給 90 日轉負換視窗長度就失效、且 2025 年 99% 的日子成立，所以從牛市必要條件降為佐證之一
 try:
@@ -452,8 +492,8 @@ except Exception as e: errors.append(f'swing {e}')
 # G1d. 2026-10-12 使用者要求：鯨魚與大戶。BitInfoCharts「依地址餘額分層的持幣量」每日歷史（2021-05 起，一次請求，不佔 bitcoin-data 額度）。
 #   地址不等於實體：≥10K 多為交易所冷錢包、ETF 託管；錢包整理會讓幣在分層之間移動。只作讀值。
 try:
-    hs = get('https://bitinfocharts.com/bitcoin-distribution-history.html') or ''
-    blk = re.search(r'new Dygraph\([^,]+,\s*(\[\[.*?\]\])\s*,\s*\{(.*?)\}\s*\)', hs, re.S)
+    bic_html = get('https://bitinfocharts.com/bitcoin-distribution-history.html') or ''
+    blk = re.search(r'new Dygraph\([^,]+,\s*(\[\[.*?\]\])\s*,\s*\{(.*?)\}\s*\)', bic_html, re.S)
     labs = json.loads(re.search(r'labels:\s*(\[[^\]]*\])', blk.group(2)).group(1).replace("'", '"'))
     assert labs[1:] == ['0-0.1', '0.1-1', '1-10', '10-100', '100-1,000', '1,000-10,000', '10,000-100,000', '100,000-1,000,000'], f'欄位改了：{labs}'
     WR = [(d_.replace('/', '-'), [float(x) for x in v_.split(',')]) for d_, v_ in re.findall(r'new Date\("([\d/]+)"\),([\d.,]+)\]', blk.group(1))]
@@ -483,7 +523,7 @@ try:
                        note='BitInfoCharts 依地址餘額分層；地址不等於實體，≥10K 多為交易所與託管；只作讀值')
 except Exception as e: errors.append(f'whales {e}')
 # G2. bitcoin-data 頂部雷達（放在既有 14 個端點之後；免費層文件寫每小時 10 次、每日 15 次，超額時只有這幾格記 null）
-RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProfitPct', 'realized-cap-growth-rate': 'realizedCapGrowthRate',
+RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProfitPct',
        'lth-net-position-change-30d-btc': 'lthNetPositionChange30dBtc'}
 R['top_radar'] = {}
 for m, fld in RAD.items():
@@ -896,6 +936,79 @@ try:
     R['touch5d'] = {str(x): _tmc(x) for x in _lv}
     R['touch5d_continuous'] = {str(x): round(min(1, 2 * N(-abs(math.log(x / c)) / (_s1 * math.sqrt(5)))) * 100, 1) for x in _lv}
 except Exception as e: errors.append(f'touch5d {e}')
+# ---------- G9. 2026-10-12 使用者要求：新增指標（全部免費、只作讀值、不連動任何規則） ----------
+def _pctl(arr, v): arr = [x for x in arr if x is not None]; return round(sum(x < v for x in arr) / len(arr) * 100, 1) if arr else None
+_ep9 = dt.date(1970, 1, 1); _dn9 = lambda s_: (dt.date.fromisoformat(s_) - _ep9).days
+# G9a. 穩定幣總供給（DefiLlama，所有美元穩定幣流通量）：場外可進場的資金量
+try:
+    sj = get('https://stablecoins.llama.fi/stablecoincharts/all')
+    sc = sorted((ymd(int(x['date'])), x['totalCirculatingUSD']['peggedUSD']) for x in sj if (x.get('totalCirculatingUSD') or {}).get('peggedUSD'))
+    sc = [x for x in sc if x[0] <= LAST]; sd_ = dict(sc); dS = [x[0] for x in sc]; k9 = len(sc) - 1
+    def _sb(j, days):
+        t_ = (dt.date.fromisoformat(dS[j]) - dt.timedelta(days=days)).isoformat(); return sd_.get(t_)
+    ch = lambda days: (round((sc[k9][1] / _sb(k9, days) - 1) * 100, 2) if _sb(k9, days) else None)
+    h30 = [(sc[j][1] / _sb(j, 30) - 1) * 100 for j in range(len(sc)) if dS[j] >= '2021-01-01' and _sb(j, 30)]
+    R['stables'] = dict(date=dS[k9], usd_b=round(sc[k9][1] / 1e9, 1), chg7_pct=ch(7), chg30_pct=ch(30), chg90_pct=ch(90),
+                        chg30_usd_b=round((sc[k9][1] - _sb(k9, 30)) / 1e9, 1) if _sb(k9, 30) else None, pct30=_pctl(h30, ch(30)), n30=len(h30),
+                        rows=[[_dn9(d_), round(v_ / 1e9, 1)] for d_, v_ in sc if d_ >= (dt.date.fromisoformat(LAST) - dt.timedelta(days=730)).isoformat()][::-3][::-1],
+                        note='DefiLlama 全部美元穩定幣流通量；只作讀值')
+except Exception as e: errors.append(f'stables {e}')
+# G9b. Coinbase 溢價：Coinbase BTC-USD 與 Binance BTC-USDT 每日收盤的價差（%）。正值＝美國買盤較強；USDT 偏離 1 美元時會有誤差
+try:
+    cbk = get('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400')
+    bnk = get('https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=300')
+    cb_ = {ymd(int(x[0])): float(x[4]) for x in cbk}; bn_ = {ymd(int(x[0]) // 1000): float(x[4]) for x in bnk}
+    cd9 = sorted(d_ for d_ in set(cb_) & set(bn_) if d_ <= LAST)
+    pr9 = [(d_, (cb_[d_] / bn_[d_] - 1) * 100) for d_ in cd9]; v9 = [x[1] for x in pr9]
+    R['cb_premium'] = dict(date=pr9[-1][0], pct=round(v9[-1], 3), avg7=round(sum(v9[-7:]) / 7, 3), avg30=round(sum(v9[-30:]) / 30, 3),
+                           pct_own=_pctl(v9, v9[-1]), avg30_pct_own=_pctl([sum(v9[j - 29:j + 1]) / 30 for j in range(29, len(v9))], sum(v9[-30:]) / 30), n=len(v9),
+                           rows=[[_dn9(d_), round(x_, 3)] for d_, x_ in pr9], note='Coinbase BTC-USD ÷ Binance BTC-USDT 每日收盤 − 1；只作讀值')
+except Exception as e: errors.append(f'cb_premium {e}')
+# G9c. 算力帶（Hash Ribbons）：算力 30 日均 ÷ 60 日均。<1＝礦工投降期；由 <1 回到 >1 的那天是歷史上常見的底部訊號
+try:
+    hv = [x[1] for x in hs]; hd = [x[0] for x in hs]
+    rib = [(hd[j], sum(hv[j - 29:j + 1]) / 30, sum(hv[j - 59:j + 1]) / 60) for j in range(59, len(hv))]
+    st9 = [r_[1] >= r_[2] for r_ in rib]; run9 = 0
+    for x_ in reversed(st9):
+        if x_ == st9[-1]: run9 += 1
+        else: break
+    last_cross = next((rib[j][0] for j in range(len(rib) - 1, 0, -1) if st9[j] != st9[j - 1]), None)
+    R['hash_ribbons'] = dict(date=rib[-1][0], ma30=round(rib[-1][1], 1), ma60=round(rib[-1][2], 1), ratio=round(rib[-1][1] / rib[-1][2], 4),
+                             capitulation=not st9[-1], state_days=run9, last_cross=last_cross, min_ratio_90d=round(min(r_[1] / r_[2] for r_ in rib[-90:]), 4),
+                             note='mempool.space 近一年每日算力；30 日均 ÷ 60 日均；只作讀值')
+except Exception as e: errors.append(f'hash_ribbons {e}')
+# G9d. 多家永續資金費率：Deribit（已抓）、OKX、Hyperliquid 的現值與 7 日平均（年化 %），以未平倉美元加權
+try:
+    fv = {}
+    if R.get('deriv'): fv['Deribit'] = dict(now=R['deriv']['funding_ann'], avg7=None, oi=R['deriv']['perp_oi_usd_m'] * 1e6)
+    try:
+        oh = get('https://www.okx.com/api/v5/public/funding-rate-history?instId=BTC-USDT-SWAP&limit=21')['data']
+        ooi = float(get('https://www.okx.com/api/v5/public/open-interest?instId=BTC-USDT-SWAP')['data'][0]['oiUsd'])
+        fv['OKX'] = dict(now=round(float(oh[0]['fundingRate']) * 3 * 365 * 100, 2), avg7=round(sum(float(x['fundingRate']) for x in oh) / len(oh) * 3 * 365 * 100, 2), oi=ooi)
+    except Exception as e: errors.append(f'funding okx {e}')
+    try:
+        hh9 = subprocess.run(['curl', '-sS', '--max-time', '40', '-X', 'POST', 'https://api.hyperliquid.xyz/info', '-H', 'content-type: application/json', '-d',
+                              json.dumps({'type': 'fundingHistory', 'coin': 'BTC', 'startTime': int((now.timestamp() - 7 * 86400) * 1000)})], capture_output=True, text=True).stdout
+        hh9 = json.loads(hh9)
+        ctx9 = json.loads(subprocess.run(['curl', '-sS', '--max-time', '40', '-X', 'POST', 'https://api.hyperliquid.xyz/info', '-H', 'content-type: application/json', '-d',
+                                          json.dumps({'type': 'metaAndAssetCtxs'})], capture_output=True, text=True).stdout)
+        bi = [u['name'] for u in ctx9[0]['universe']].index('BTC'); bc = ctx9[1][bi]
+        fv['Hyperliquid'] = dict(now=round(float(bc['funding']) * 24 * 365 * 100, 2), avg7=round(sum(float(x['fundingRate']) for x in hh9) / len(hh9) * 24 * 365 * 100, 2),
+                                 oi=float(bc['openInterest']) * float(bc['markPx']))
+    except Exception as e: errors.append(f'funding hyperliquid {e}')
+    w9 = sum(v_['oi'] for v_ in fv.values())
+    R['funding_multi'] = dict(venues={k_: dict(now=v_['now'], avg7=v_['avg7'], oi_usd_m=round(v_['oi'] / 1e6)) for k_, v_ in fv.items()},
+                              weighted_now=round(sum(v_['now'] * v_['oi'] for v_ in fv.values()) / w9, 2) if w9 else None,
+                              note='年化 %；Deribit 為現值、OKX 每 8 小時、Hyperliquid 每小時結算；以未平倉美元加權；Binance、Bybit 讀不到')
+except Exception as e: errors.append(f'funding_multi {e}')
+# G9e. 恐懼貪婪指數（alternative.me）
+try:
+    fg = get('https://api.alternative.me/fng/?limit=400')['data']
+    fg = sorted((ymd(int(x['timestamp'])), int(x['value']), x['value_classification']) for x in fg); fg = [x for x in fg if x[0] <= LAST]
+    fvv = [x[1] for x in fg]
+    R['fear_greed'] = dict(date=fg[-1][0], value=fvv[-1], label=fg[-1][2], d7=fvv[-8] if len(fvv) > 7 else None, avg30=round(sum(fvv[-30:]) / 30, 1),
+                           pct_1y=_pctl(fvv[-365:], fvv[-1]), note='alternative.me；0 極度恐懼、100 極度貪婪；只作讀值')
+except Exception as e: errors.append(f'fear_greed {e}')
 R.pop('_sig5', None); R.pop('_sig1', None)
 R['bd_rotation'] = R_bd
 R['errors'] = errors

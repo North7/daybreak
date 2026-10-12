@@ -29,10 +29,13 @@
   --grid: rgba(10, 10, 10, .07);
   --tape-bg: #0A0A0A; --tape-ink: #F2F0EA; --tape-ink-2: #8E8A82; --tape-line: #262626;
 
-  --f-cond: "Archivo", "Noto Sans TC", sans-serif;
-  --f-display: "Archivo", "Noto Sans TC", sans-serif;
-  --f-cjk-display: "Noto Sans TC", "Archivo", sans-serif;
-  --f-body: "Archivo", "Noto Sans TC", system-ui, -apple-system, "PingFang TC", "Microsoft JhengHei", sans-serif;
+  /* 2026-10-12 字型瘦身：Noto Sans TC 只載 900（標題用）；內文中文改用系統字（蘋果 PingFang、Windows 正黑、Android 內建 Noto CJK），
+     實測首頁字型從約 1.4 MB 降到約 0.6 MB。注意：Noto Sans TC 只有 900，內文字族不可列它，否則會整段變粗體 */
+  --f-sys-cjk: system-ui, -apple-system, "PingFang TC", "Microsoft JhengHei", "Noto Sans CJK TC", "Heiti TC", sans-serif;
+  --f-cond: "Archivo", var(--f-sys-cjk);
+  --f-display: "Archivo", var(--f-sys-cjk);
+  --f-cjk-display: "Noto Sans TC", "Archivo", var(--f-sys-cjk);
+  --f-body: "Archivo", var(--f-sys-cjk);
   --f-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, monospace;
 
   --rail: 220px;
@@ -523,3 +526,14 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 }
 /* 鯨魚分層表：手機上隱藏 7d、90d 欄（解讀列裡仍有） */
 @media (max-width: 560px) { .tbl .mh { display: none; } }
+/* 資料健康列（2026-10-12） */
+.health { border: 1px solid var(--line); padding: 8px 12px; font-size: 13px; }
+.health summary { cursor: pointer; color: var(--ink-2); }
+.health.warn { border-color: var(--warn); }
+.health.warn summary { color: var(--warn); font-weight: 700; }
+.health[open] summary { margin-bottom: 8px; }
+.health ul.note { margin: 4px 0 8px; padding-left: 18px; }
+/* 2026-10-12：巨型收盤價的走勢線端點在手機上超出容器約 20px，造成整頁可以橫向捲動 */
+.mega { overflow-x: hidden; overflow-x: clip; }
+/* 2026-10-12：Archivo 沒載到時（Google Fonts 被擋或很慢，例如中國大陸），備用字型較寬，頭版「要盯的價位」大數字會撐出右緣、整頁可橫向捲動 */
+.watch div { overflow: hidden; }

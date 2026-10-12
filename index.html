@@ -7,10 +7,18 @@
 <meta name="description" content="破曉 Daybreak：每天清晨的第一份比特幣簡報。今日要聞與解讀、市場數據、週期位置與分批出場框架。">
 <meta property="og:title" content="破曉 Daybreak">
 <meta property="og:description" content="每天清晨的第一份比特幣簡報。">
+<meta property="og:image" content="https://north7.github.io/daybreak/assets/og.png">
+<meta property="og:url" content="https://north7.github.io/daybreak/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="theme-color" content="#F2F0EA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C0C0D" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="破曉">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@900&display=swap">
 <script>
 /* 開機：先決定語言再啟動 app.js（2026-10-12）。使用者在頁面上選過語言 → 一律沿用（daybreak.lang）；
    沒選過 → 依 IP 國家：台灣、香港、澳門、中國大陸、新加坡用中文，其他用英文（查詢結果快取 7 天）；IP 查不到 → 看瀏覽器語言。 */
@@ -19,7 +27,7 @@ window.DAYBREAK_BOOT = (function () {
   function go(l) {
     window.DAYBREAK_LANG = l; document.documentElement.lang = l === 'en' ? 'en' : 'zh-Hant';
     if (l !== 'en') return Promise.resolve();
-    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=cf9d3b2e1b'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
+    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=15573b37ec'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
   }
   var pick = ls('daybreak.lang'); if (pick === 'zh' || pick === 'en') return go(pick);
   var byCC = function (cc) { return ZH.indexOf(String(cc).toUpperCase()) >= 0 ? 'zh' : 'en'; };
@@ -34,7 +42,7 @@ window.DAYBREAK_BOOT = (function () {
   });
 })();
 </script>
-<link rel="stylesheet" href="assets/app.css?v=cf9d3b2e1b">
+<link rel="stylesheet" href="assets/app.css?v=15573b37ec">
 </head>
 <body>
 <div class="app">
@@ -56,11 +64,11 @@ window.DAYBREAK_BOOT = (function () {
       <div class="ticker"><span class="chip flare" id="tk-stance"><i></i>—</span><span class="px" id="tk-px">—</span><span class="chip" id="tk-chg">—</span><span class="asof" id="tk-asof"></span><button type="button" class="fs-btn" id="fs" aria-label="全螢幕"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>全螢幕</button></div>
     </header>
     <main id="view" tabindex="-1"><p class="err">載入中… Loading…</p></main>
-    <footer class="foot"><span>© 破曉 Daybreak</span><span>僅供研究參考，非投資建議</span><span class="hint-kb">按 1–9、0 切換版面</span><span class="hint-sw">左右滑動切換版面</span></footer>
+    <footer class="foot"><span>© 破曉 Daybreak</span><span>僅供研究參考，非投資建議</span><span class="hint-kb">按 1–9 切換版面</span><span class="hint-sw">左右滑動切換版面</span></footer>
   </div>
 </div>
 <div id="tip" class="tip" role="tooltip" hidden></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
-<script src="assets/app.js?v=cf9d3b2e1b"></script>
+<script src="assets/app.js?v=15573b37ec"></script>
 </body>
 </html>
