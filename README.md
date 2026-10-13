@@ -187,6 +187,8 @@ pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一
 pipeline/bd_cache/       前一晚抓的鏈上指標快取
 pipeline/check_i18n.py   檢查 app.js 每個 _t() 都有英文
 pipeline/stamp_assets.py 更新 index.html 的 ?v= 版本號
+pipeline/share_card.py   每日分享圖 data/share.png、data/share-en.png（X 貼文附圖）
+pipeline/x_len.py        檢查 data/x_post.json 中英貼文在 X 的 280 字內
 pipeline/params.json     collect.py 需要的兩個參數（T+5 上下門檻）
 pipeline/state_min.json  前一日的最小狀態（URPD 週變化、ATR 回測、市場階段）
 tests/smoke.js           渲染測試
@@ -194,6 +196,7 @@ tests/smoke.js           渲染測試
 .github/workflows/prefetch.yml  鏈上快取（cron-job.org 22:40 UTC 觸發）
 .github/workflows/etf.yml       每天 14:00 UTC 補抓 ETF
 .github/workflows/check.yml     PR 檢查
+.github/workflows/share.yml     日報推送後自動產生分享圖
 docs/CLAUDE_DAILY.md     Claude 每日任務的完整指示
 docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 ```
@@ -215,6 +218,13 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 - **Coinbase 溢價**以 Binance 的 USDT 報價比較，USDT 偏離 1 美元時會有誤差。
 - **字型**：內文中文用系統字型，只有標題載入 Noto Sans TC 900；Google Fonts 在中國大陸讀不到時改用備用字型，版面已確認不會橫向溢出。
 - **IP 判斷語言**會把訪客 IP 送到 api.country.is／get.geojs.io 查國家（只查國家代碼，結果存在訪客自己的瀏覽器）。
+
+## X 推廣
+
+- 每天 08:30 的日報任務寫完後，另寫 `data/x_post.json`（中英各一則 X 貼文草稿）並推播到手機，複製貼上即可發。
+- 日報推送後，`share.yml` 自動產生號外風格的分享圖：`data/share.png`（中文）、`data/share-en.png`（英文）。
+- 網站側欄與頁尾有追蹤 [@songpu717](https://x.com/songpu717) 的連結；貼文連結帶 `?utm_source=x`。
+- 訪客統計用 GoatCounter（不用 cookie、不收個資），站點代號 `daybreak`，只在正式網址計數。
 
 ## 隱私
 
@@ -391,6 +401,13 @@ Pull requests run **Site checks** (`.github/workflows/check.yml`): syntax, Engli
 - **Coinbase premium** is measured against Binance's USDT price; USDT deviating from $1 adds noise.
 - **Fonts**: body Chinese uses system fonts; only headings load Noto Sans TC 900. Where Google Fonts is unreachable (e.g. mainland China), fallback fonts are used and the layout has been checked for horizontal overflow.
 - **IP-based language** sends the visitor's IP to api.country.is / get.geojs.io to get a country code (stored only in the visitor's own browser).
+
+### Promotion on X
+
+- After the 08:30 daily task finishes the notes, it writes `data/x_post.json` (one X post draft in Chinese, one in English) and sends it to the phone as a push notification, ready to copy and post.
+- Once the notes are pushed, `share.yml` draws Extra-style share cards: `data/share.png` (Chinese) and `data/share-en.png` (English).
+- The sidebar and footer link to [@songpu717](https://x.com/songpu717); post links carry `?utm_source=x`.
+- Visitor stats use GoatCounter (no cookies, no personal data), site code `daybreak`, counted on the live URL only.
 
 ### Privacy
 

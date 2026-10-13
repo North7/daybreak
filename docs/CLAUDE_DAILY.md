@@ -25,7 +25,23 @@
 7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。
    - 英文版（2026-10-12 起）：寫完 `data/notes.json` 後，另寫 `data/notes.en.json`：結構、欄位、數字、日期、網址、`impact`、`kind`、`dir`、`module` 與中文版完全相同，只把文字欄位（headline、summary、stance.label／short、watch[].label／note、modules 各版 lead／points、news[].title／read／source、events[].label、actions[].head／text、changes[].title／fig／say、research.summary 與 items[].points／meaning；研報原文標題本來就是英文的照抄）翻成自然的英文；`news[].cat` **保持中文**（網站用它篩選，英文版顯示時自動換成 Macro／Flows 等）；台北時間後面加註 UTC；金額用 $ 與 K／M／B，不用「萬／億」。英文版網站讀這個檔，缺檔或日期比中文舊時會退回中文並標示。隱私鐵則同樣適用。寫完用 python 掃描 notes.en.json，除了 `news[].cat` 以外不應有任何中文字。
 8. 驗證：`python3 -c "import json;[json.load(open(f)) for f in ('data/notes.json','data/notes.en.json')]"`；再用 python 掃描兩個檔，確認沒有違反隱私鐵則的內容。
-9. 提交訊息 `notes: <bar_date>`，推送到 main。
+9. X 貼文草稿（2026-10-13 起，中英各一則）：寫 `data/x_post.json` = `{"date": bar_date, "edition", "zh", "en", "image_zh": "https://north7.github.io/daybreak/data/share.png", "image_en": "https://north7.github.io/daybreak/data/share-en.png", "link": "https://north7.github.io/daybreak/?utm_source=x"}`。分享圖由 GitHub Actions 在你推送後自動產生（`pipeline/share_card.py`，用 headline 與資料），你不用畫。
+   - 格式（中文；英文同結構，用 `【Daybreak No.007｜Oct 12】`）：
+     ```
+     【破曉 No.007｜10/12】
+     <headline，可縮短，保留關鍵數字>
+
+     ・市場階段：牛市（第 4 天）
+     ・ETF 近 7 日：−5.58 億美元
+     ・<今天最重要的一個數字或事件>
+
+     完整解讀 👉 https://north7.github.io/daybreak/?utm_source=x
+     ```
+   - 數字一律取自 brief 與當期 notes，不新增查不到出處的數字；市場階段天數＝bar_date 減 `cycle.stage.since` 加 1；ETF 近 7 日＝`flows.etf` 最後 7 個非暫定日合計（與分享圖一致）。
+   - 執行 `python3 pipeline/x_len.py`，兩則都要 ≤ 280（X 的算法：中文字算 2、網址算 23）；超過就縮短 headline 那行。
+   - 不放 hashtag 以外的標記；hashtag 最多 1 個（中文 `#比特幣`、英文 `#Bitcoin`）。不喊單、不寫價格目標或「該買／該賣」；出場框架只用百分比；隱私鐵則同樣適用。
+10. 提交訊息 `notes: <bar_date>`（notes.json、notes.en.json、x_post.json 一起），推送到 main。
+11. 推播：用 PushNotification 送出 X 草稿，內容依序為中文全文、一行 `---`、英文全文，最後一行附 `圖：<image_zh>`；不要加其他說明。
 
 ### notes.json 格式
 ```json

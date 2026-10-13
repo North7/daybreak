@@ -1,0 +1,51 @@
+name: Share cards
+
+on:
+  # 每日任務推送中英文日報後立刻產生分享圖（data/share.png、data/share-en.png），給 X 貼文附圖用
+  push:
+    branches: [main]
+    paths: ["data/notes.json", "data/notes.en.json"]
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+concurrency:
+  group: share-cards
+  cancel-in-progress: true
+
+jobs:
+  cards:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Fonts cache
+        id: fonts
+        uses: actions/cache@v4
+        with:
+          path: ~/fonts
+          key: share-fonts-v1
+      - name: Download fonts (same as the site)
+        if: steps.fonts.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p ~/fonts && cd ~/fonts
+          curl -sSfL -o 'NotoSansTC[wght].ttf' 'https://github.com/google/fonts/raw/main/ofl/notosanstc/NotoSansTC%5Bwght%5D.ttf'
+          curl -sSfL -o 'Archivo[wdth,wght].ttf' 'https://github.com/google/fonts/raw/main/ofl/archivo/Archivo%5Bwdth,wght%5D.ttf'
+          curl -sSfL -o 'JetBrainsMono[wght].ttf' 'https://github.com/google/fonts/raw/main/ofl/jetbrainsmono/JetBrainsMono%5Bwght%5D.ttf'
+      - name: Draw cards
+        run: |
+          pip install -q pillow
+          python3 pipeline/share_card.py --fonts ~/fonts
+      - name: Commit
+        run: |
+          git config user.name "apogee-bot"
+          git config user.email "apogee-bot@users.noreply.github.com"
+          git add data/share.png data/share-en.png 2>/dev/null || true
+          git diff --cached --quiet && echo "no changes" && exit 0
+          git commit -m "share: $(python3 -c "import json;print(json.load(open('data/notes.json'))['date'])")"
+          git pull --rebase --autostash
+          git push
