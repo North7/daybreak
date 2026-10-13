@@ -537,3 +537,15 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .mega { overflow-x: hidden; overflow-x: clip; }
 /* 2026-10-12：Archivo 沒載到時（Google Fonts 被擋或很慢，例如中國大陸），備用字型較寬，頭版「要盯的價位」大數字會撐出右緣、整頁可橫向捲動 */
 .watch div { overflow: hidden; }
+
+/* 追蹤 X：側欄底部一行、頁尾一句（行動版側欄隱藏，靠頁尾） */
+.follow { display: flex; align-items: baseline; gap: 8px; border-top: 1px solid var(--line); padding-top: 12px; color: var(--ink); text-decoration: none; }
+.follow .k { font-family: var(--f-mono); font-size: 10px; letter-spacing: .16em; color: var(--ink-3); }
+.follow b { font-family: var(--f-mono); font-size: 12px; font-weight: 600; transition: color .2s; }
+.follow .arr { margin-left: auto; color: var(--red-ink); transition: transform .2s var(--ease); }
+.follow:hover b { color: var(--red-ink); }
+.follow:hover .arr { transform: translate(2px, -2px); }
+.foot .follow-foot { margin-left: auto; color: var(--ink-2); text-decoration: none; }
+.foot .follow-foot b { color: var(--red-ink); font-weight: 600; }
+.foot .follow-foot:hover { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 860px) { .foot .follow-foot { margin-left: 0; flex-basis: 100%; font-size: 12.5px; } }

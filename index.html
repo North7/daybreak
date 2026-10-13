@@ -27,7 +27,7 @@ window.DAYBREAK_BOOT = (function () {
   function go(l) {
     window.DAYBREAK_LANG = l; document.documentElement.lang = l === 'en' ? 'en' : 'zh-Hant';
     if (l !== 'en') return Promise.resolve();
-    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=cc50b653ec'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
+    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=41f8a7a09d'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
   }
   var pick = ls('daybreak.lang'); if (pick === 'zh' || pick === 'en') return go(pick);
   var byCC = function (cc) { return ZH.indexOf(String(cc).toUpperCase()) >= 0 ? 'zh' : 'en'; };
@@ -42,7 +42,7 @@ window.DAYBREAK_BOOT = (function () {
   });
 })();
 </script>
-<link rel="stylesheet" href="assets/app.css?v=cc50b653ec">
+<link rel="stylesheet" href="assets/app.css?v=41f8a7a09d">
 </head>
 <body>
 <div class="app">
@@ -54,6 +54,7 @@ window.DAYBREAK_BOOT = (function () {
     <nav class="nav" id="nav" aria-label="模組"></nav>
     <div class="rail-foot">
       <div class="edition"><span class="k">本期</span><span class="v" id="ed-date">—</span><span class="live"><i></i><span id="ed-gen">每天台北 08:30 更新</span></span></div>
+      <a class="follow" id="follow-rail" href="https://x.com/songpu717" target="_blank" rel="noopener"><span class="k">追蹤</span><b>X @songpu717</b><span class="arr" aria-hidden="true">↗</span></a>
       <div class="theme-toggle" id="theme" role="group" aria-label="版本"><button type="button" data-t="light" aria-pressed="true">日刊</button><button type="button" data-t="dark" aria-pressed="false">夜刊</button></div>
       <div class="theme-toggle lang-toggle" id="lang" role="group" aria-label="語言 Language"><button type="button" data-l="zh" aria-pressed="true">中文</button><button type="button" data-l="en" aria-pressed="false">EN</button></div>
     </div>
@@ -64,11 +65,11 @@ window.DAYBREAK_BOOT = (function () {
       <div class="ticker"><span class="chip flare" id="tk-stance"><i></i>—</span><span class="px" id="tk-px">—</span><span class="chip" id="tk-chg">—</span><span class="asof" id="tk-asof"></span><button type="button" class="fs-btn" id="fs" aria-label="全螢幕"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>全螢幕</button></div>
     </header>
     <main id="view" tabindex="-1"><p class="err">載入中… Loading…</p></main>
-    <footer class="foot"><span>© 破曉 Daybreak</span><span>僅供研究參考，非投資建議</span><span class="hint-kb">按 1–9 切換版面</span><span class="hint-sw">左右滑動切換版面</span></footer>
+    <footer class="foot"><span>© 破曉 Daybreak</span><span>僅供研究參考，非投資建議</span><span class="hint-kb">按 1–9 切換版面</span><span class="hint-sw">左右滑動切換版面</span><a class="follow-foot" id="follow-foot" href="https://x.com/songpu717" target="_blank" rel="noopener">每天 08:30 更新・追蹤 <b>X @songpu717</b> ↗</a></footer>
   </div>
 </div>
 <div id="tip" class="tip" role="tooltip" hidden></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
-<script src="assets/app.js?v=cc50b653ec"></script>
+<script src="assets/app.js?v=41f8a7a09d"></script>
 </body>
 </html>

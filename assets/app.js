@@ -967,6 +967,8 @@
     var ck = $('.clock'); if (ck && ck.firstChild && ck.firstChild.nodeType === 3) ck.firstChild.nodeValue = 'Next ';
     var fs = $('#fs'); if (fs) { fs.setAttribute('aria-label', 'Full screen'); fs.lastChild.nodeValue = 'Full screen'; }
     var ft = document.querySelectorAll('.foot span'); ['© Daybreak', 'For research only — not investment advice', 'Press 1–9 to switch sections', 'Swipe left/right to switch sections'].forEach(function (x, i) { if (ft[i]) ft[i].textContent = x; });
+    var fr = $('#follow-rail .k'); if (fr) fr.textContent = 'FOLLOW';
+    var ff = $('#follow-foot'); if (ff) ff.innerHTML = 'Daily at 08:30 Taipei · follow <b>@songpu717</b> on X ↗';
     document.title = 'Daybreak';
     var md = document.querySelector('meta[name="description"]'); if (md) md.setAttribute('content', 'Daybreak: the first Bitcoin brief of the morning — news with analysis, market data, cycle position and a staged exit framework.');
   }
