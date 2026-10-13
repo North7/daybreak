@@ -324,7 +324,7 @@
       _t('</tbody></table></div><p class="note">研報只作文字對照，不改變任何規則；只取得標題的不作判斷依據。</p>');
   }
   function newsItem(n, lead, ix) {
-    return '<article class="' + (lead ? 'news-lead' : 'news-item') + '">' + (ix ? '<span class="idx">' + ('0' + ix).slice(-2) + '</span>' : '') + '<div class="news-meta"><span class="cat">' + esc(n.cat) + '</span>' + impChip(n.impact) + '<span>' + esc(n.time.slice(5).replace('-', '/')) + '</span></div><h3>' + esc(n.title) + _t('</h3><div class="read-box"><b class="lbl">解讀</b>') + esc(n.read) + _t('</div><div class="src-link">來源：<a href="') + esc(n.url) + '" target="_blank" rel="noopener">' + esc(n.source) + '</a>' + (n.module ? ' · <a href="#' + n.module + _t('">看相關數據 →</a>') : '') + '</div></article>';
+    return '<article class="' + (lead ? 'news-lead' : 'news-item') + '">' + (ix ? '<span class="idx">' + ('0' + ix).slice(-2) + '</span>' : '') + '<div class="news-meta"><span class="cat">' + esc(catT(n.cat)) + '</span>' + impChip(n.impact) + '<span>' + esc(n.time.slice(5).replace('-', '/')) + '</span></div><h3>' + esc(n.title) + _t('</h3><div class="read-box"><b class="lbl">解讀</b>') + esc(n.read) + _t('</div><div class="src-link">來源：<a href="') + esc(n.url) + '" target="_blank" rel="noopener">' + esc(n.source) + '</a>' + (n.module ? ' · <a href="#' + n.module + _t('">看相關數據 →</a>') : '') + '</div></article>';
   }
 
   /* ---------------- 數字解讀（2026-10-12 使用者要求：每個數字都說明「現在代表什麼」） ----------------
@@ -693,16 +693,16 @@
     var news = (N && N.news || []);
     var rs = '<div class="grid" style="margin-top:28px">' + panel('span-12', _t('權威研報怎麼看'), _t('Glassnode · The Block · K33 · Coinbase Institutional 等'), researchHtml(), staleTag()) + '</div>';
     if (!news.length) return _t('<p class="err">今天還沒有整理好的消息。</p>') + rs;
-    var cats = ['全部'].concat(news.map(function (n) { return n.cat; }).filter(function (c, i, a) { return a.indexOf(c) === i; }));
+    var cats = ['*'].concat(news.map(function (n) { return n.cat; }).filter(function (c, i, a) { return a.indexOf(c) === i; }));
     var cnt = function (k) { return news.filter(function (n) { return n.impact === k; }).length; };
     return _t('<div class="news-sum"><div><span class="note">偏多</span><b style="color:var(--up)">') + ('0' + cnt('bull')).slice(-2) + _t('</b></div><div><span class="note">偏空</span><b style="color:var(--down)">') + ('0' + cnt('bear')).slice(-2) + _t('</b></div><div><span class="note">中性</span><b>') + ('0' + cnt('neutral')).slice(-2) + '</b></div></div>' +
-      _t('<div class="filters" id="nf" role="group" aria-label="分類">') + cats.map(function (c, i) { return '<button type="button" aria-pressed="' + (i === 0) + '" data-c="' + esc(c) + '">' + esc(c) + '</button>'; }).join('') + '</div>' +
+      _t('<div class="filters" id="nf" role="group" aria-label="分類">') + cats.map(function (c, i) { return '<button type="button" aria-pressed="' + (i === 0) + '" data-c="' + esc(c) + '">' + esc(c === '*' ? _t('全部') : catT(c)) + '</button>'; }).join('') + '</div>' +
       _t('<div class="news-grid" id="ng"></div><p class="note">每則消息都查證過發布日期；「解讀」說明它對比特幣的意義，並對照本站的數據。消息只作參考，不改變任何出場規則。</p>') + rs;
   };
   V.news.after = function () {
     var news = (N && N.news || []).slice().sort(function (a, b) { return (b.weight || 0) - (a.weight || 0) || (b.time > a.time ? 1 : -1); });
-    function draw(cat) { $('#ng').innerHTML = news.filter(function (n) { return cat === '全部' || n.cat === cat; }).map(function (n, i) { return '<article class="news-card"><div class="news-meta"><span class="cat">' + esc(n.cat) + '</span>' + impChip(n.impact) + '<span>' + esc(n.time.slice(5).replace('-', '/')) + '</span></div><h3>' + esc(n.title) + _t('</h3><div class="read-box"><b class="lbl">解讀</b>') + esc(n.read) + _t('</div><div class="src-link">來源：<a href="') + esc(n.url) + '" target="_blank" rel="noopener">' + esc(n.source) + '</a></div>' + (n.module ? '<a class="go" href="#' + n.module + _t('">看相關數據 →</a>') : '') + '</article>'; }).join(''); }
-    draw(_t('全部'));
+    function draw(cat) { $('#ng').innerHTML = news.filter(function (n) { return cat === '*' || n.cat === cat; }).map(function (n, i) { return '<article class="news-card"><div class="news-meta"><span class="cat">' + esc(catT(n.cat)) + '</span>' + impChip(n.impact) + '<span>' + esc(n.time.slice(5).replace('-', '/')) + '</span></div><h3>' + esc(n.title) + _t('</h3><div class="read-box"><b class="lbl">解讀</b>') + esc(n.read) + _t('</div><div class="src-link">來源：<a href="') + esc(n.url) + '" target="_blank" rel="noopener">' + esc(n.source) + '</a></div>' + (n.module ? '<a class="go" href="#' + n.module + _t('">看相關數據 →</a>') : '') + '</article>'; }).join(''); }
+    draw('*');
     $('#nf').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; this.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); draw(b.getAttribute('data-c')); });
   };
 
@@ -1042,6 +1042,9 @@
     $('#ed-gen').textContent = _t('資料 ') + (D.meta.generated_utc || '').slice(11, 16) + _t(' UTC 產出');
   }
 
+  // 新聞分類：notes 裡固定用中文分類（篩選用），英文版只在顯示時換字
+  var CAT_EN = { '宏觀': 'Macro', '資金': 'Flows', '衍生品': 'Derivatives', '鏈上': 'On-chain', '監管': 'Regulation', '產業': 'Industry', '機構': 'Institutions', '地緣': 'Geopolitics' };
+  function catT(c) { return LANG === 'en' && CAT_EN[c] || c; }
   function load(u) { return fetch(u, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); }
   // 英文版讀 data/notes.en.json（每日任務與中文同時寫）；沒有或日期比中文舊時，退回中文並標示
   Promise.all([load('data/latest.json'), load('data/notes.json').catch(function () { return null; }), LANG === 'en' ? load('data/notes.en.json').catch(function () { return null; }) : null]).then(function (a) {
