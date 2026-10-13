@@ -1,0 +1,319 @@
+{
+ "date": "2026-10-12",
+ "written_utc": "2026-10-13T00:35:59Z",
+ "edition": 7,
+ "stance": {
+  "label": "Early bull phase · Hold",
+  "tone": "warm",
+  "short": "Bull day 4, no action"
+ },
+ "headline": "$406M in long liquidations and Brent back at $106 push BTC below its value area; ETFs bled $681M last week as the market waits for Wednesday's CPI.",
+ "summary": "The market stage stays bull (since 10/09; 33 straight closes above a rising 200-day average), and no exit-framework rule is triggered or close. Monday's drop was a leverage flush plus macro pressure from oil and yields: funding cooled and risk reversals tilted to puts, but valuation and on-chain structure did not change. Next to watch: Monday's ETF flows (published 10/13), US September CPI on 10/14 at 12:30 UTC (20:30 Taipei), and the 80,000 and 76–78K supply zones.",
+ "watch": [
+  {
+   "label": "200-day average",
+   "value": 72044,
+   "note": "The 20% hedge starts after 5 straight closes below it; now −11.9% away (last edition −14.0%), streak 0"
+  },
+  {
+   "label": "MVRV 0.75 line",
+   "value": 112095,
+   "note": "First on-chain sell trigger; ratio 0.560, streak 0, still 37.1% away (CoinMetrics 10/11)"
+  },
+  {
+   "label": "Exit step 1",
+   "value": 125000,
+   "note": "Sell 12.5% on a close at this level; still 52.9% away"
+  }
+ ],
+ "modules": {
+  "overview": {
+   "lead": "Bull day 4. Monday's pullback is short-term leverage and macro pressure; valuation is still mid-cycle, and all three views say hold, no action.",
+   "points": [
+    "Market stage: bull (since 10/09), 33 straight closes above the rising 200-day average.",
+    "MVRV ÷ prior-cycle high 0.560 (last edition 0.555; the 2025 top was about 0.78), 37.1% below the on-chain sell line (CoinMetrics 10/11).",
+    "Power-law multiple about 0.585 (10/11): above the historical bottom zone 0.24–0.48, below the fair price of 142,947.",
+    "Tidemark top signal 0, bottom signal 22.2: no signal on either side (price date 10/11, not stale)."
+   ]
+  },
+  "cycle": {
+   "lead": "Market stage: bull (since 2026-10-09); 33 straight closes above the rising 200-day average (threshold 30).",
+   "points": [
+    "200-day average 72,044, above 70,093 thirty days ago, so still rising; capitulation already happened (2026-06-30, 58,525).",
+    "Evidence lights 3/5 (strength of evidence only, not part of the call): MVRV above its one-year mean (1.553 vs 1.443), realized cap +1.27% over 30 days, and close above the short-term holder cost of 74,264 (10/06) are lit; 12-month momentum (−24.6%) and 90-day exchange supply (+0.58%) are not.",
+    "By rule, falling back to bear requires 30 straight closes below a falling 200-day average; days below it now: 0.",
+    "Tidemark low check: hold above 58,525 until 12/19; long-term path weights 30/20/25/25, next reweighting 10/31."
+   ]
+  },
+  "market": {
+   "lead": "Monday closed near the day's low on heavy volume, back below the value area and at the bottom of the 20-day range, but still above the 50-day average.",
+   "points": [
+    "Close 81,737 (−2.32%), intraday 81,636–84,250, closing at 3.9% of the day's range; volume 2.78× the prior day and about equal to the 20-day average (0.99×).",
+    "Value area 82,750–85,500, point of control 84,000; the close is below the value area's lower edge. Position in the 20-day range 1.1% (last edition 41.3%).",
+    "The 20-day (84,006) and 10-day (83,839) averages are overhead; the 50-day average (81,020) is just 0.9% below. Mayer multiple 1.135."
+   ]
+  },
+  "deriv": {
+   "lead": "Leveraged longs were flushed and funding cooled; options shifted toward buying protection, but overall leverage is still light.",
+   "points": [
+    "Deribit perpetual funding 6.28% annualized (last edition 8.08%); OI-weighted across three venues −0.12%, with Hyperliquid negative at −3.97%.",
+    "30-day 25Δ risk reversal −2.42 (puts 38.17 vs calls 35.75): downside protection is pricier.",
+    "DVOL 37.71 (prior day 37.34), 22.5th percentile of the past year; implied vol is 1.56 points below 30-day realized.",
+    "The 10/30 expiry holds 37.6% of total open interest, max pain 78,000; 12/25 holds 33.4%, max pain 75,000."
+   ]
+  },
+  "flows": {
+   "lead": "The latest complete ETF day is still 10/08 and Monday's data is not out yet; rate and oil pressure persist, so flows remain soft.",
+   "points": [
+    "Latest complete ETF day 10/08: net outflow $244.1M (The Block); seven trading days 9/30–10/08 total −$558M.",
+    "10/09 provisional +$21.1M (Farside 21.1, SoSoValue 21.13); the 10/05–10/09 week totals about −$681M; 10/12 not available today.",
+    "US 10-year yield 5.22%, real yield 2.87%, up 32 bp over 20 observation days (FRED 10/08).",
+    "BTC–Nasdaq 30-day correlation 0.682 (10/09); Coinbase premium −0.131% (7-day mean −0.084%): US buying is soft."
+   ]
+  },
+  "onchain": {
+   "lead": "Monday's drop did not change the on-chain structure: exchange supply is flat and hashrate keeps setting highs, though most data predates the drop.",
+   "points": [
+    "Short-term holders 83.02% in profit (10/11; last edition 75.07%; does not yet reflect the 10/12 drop); their cost basis 74,264 (10/06) is about 9.1% below price.",
+    "The 80–82K band at price holds 311K BTC; overhead 82–84K (750K BTC) and 84–86K (1.273M BTC) are underwater supply; below, 76–78K holds 561K BTC (URPD 10/11).",
+    "Exchange supply 7-day −0.03%, 30-day −1.25%, 90-day +0.58% (10/11); long-term holders net −62.1K BTC over 30 days (10/11).",
+    "Hashrate 7-day mean 1,021.6 EH/s, up 6.26% on the week; next difficulty adjustment about +4.80% (10/16)."
+   ]
+  },
+  "book": {
+   "lead": "Bids still outweigh asks; bid and ask walls face off around 81,000, with the second-largest round-number bid at 80,000 below. Orders can be pulled any time, so this is a reading only.",
+   "points": [
+    "Snapshot 10/13 00:06 UTC, mid 81,515.",
+    "Within ±10%: bids about $797M, asks about $541M; near the mid, bids $449M vs asks $376M.",
+    "The largest walls are on Hyperliquid perps: 81,000 bid about $202M and ask about $190M; 80,000 bid about $144M; further down, 77,000 and 74,000 each have about $87–89M of bids."
+   ]
+  },
+  "exit": {
+   "lead": "Zero exit-framework rules triggered today and none are close; the Puell percentile is back below 80.",
+   "points": [
+    "Price ladder from 125K, 12.5% per step, 8 steps; step 1 is still 52.9% away.",
+    "On-chain MVRV ratio 0.560; streaks at 0.75/0.80 both 0. Top-3 percentiles MVRV Z 42.5 / NUPL 43.0 / Puell 63.5 (10/11); any two must reach ≥ 80 to enter the top zone.",
+    "200-day hedge streak 0, distance −11.9%; the trigger is 5 straight closes below 72,044, reducing 20%."
+   ]
+  }
+ },
+ "news": [
+  {
+   "time": "2026-10-12",
+   "cat": "衍生品",
+   "impact": "bear",
+   "weight": 3,
+   "title": "BTC broke below 82,000 Monday evening; $489M liquidated market-wide in 24 hours, $406M of it longs (83.2%), $107M in BTC positions",
+   "source": "Bitcoin.com News (CoinGlass), 2026-10-12",
+   "url": "https://news.bitcoin.com/market-updates/bitcoin-price-falls-below-82k-as-406m-in-longs-get-liquidated/",
+   "read": "A leverage flush: Deribit funding on this site fell from 8.08% to 6.28%, Hyperliquid turned negative at −3.97%, and the 30-day risk reversal at −2.42 shows more demand for protection. Funding and chase-long positioning had risen in the prior edition and were washed out today. Deribit perpetual open interest is still only about $858M, so this is not a large-scale deleveraging; it is short-term noise that does not change the market stage, and the 200-day average is still 11.9% below.",
+   "module": "deriv"
+  },
+  {
+   "time": "2026-10-12",
+   "cat": "地緣",
+   "impact": "bear",
+   "weight": 3,
+   "title": "Houthis attack Saudi Arabia and two tankers are hit near Hormuz; Brent rises 2% Monday to $106.80, a two-week high. Zelensky accuses Russia of breaking the energy ceasefire the same day",
+   "source": "OilPrice.com, 2026-10-12",
+   "url": "https://oilprice.com/Latest-Energy-News/World-News/Oil-Jumps-2-as-Saudi-Attacks-and-Tanker-Strikes-Revive-Hormuz-Fears.html",
+   "read": "The prior edition's 'energy ceasefire' tailwind was erased within a day. Higher oil lifts inflation expectations, in the same direction as this site's high-rate backdrop (10-year 5.22%, real yield 2.87%), and is one macro reason for the ETF outflows. If oil stays above $100 it will weigh on CPI and rate-cut hopes; that affects flows, but it is not an exit-framework condition.",
+   "module": "flows"
+  },
+  {
+   "time": "2026-10-12",
+   "cat": "宏觀",
+   "impact": "neutral",
+   "weight": 2,
+   "title": "US September CPI out Wednesday: headline seen +0.5–0.6% m/m and about 3.6% y/y, core about +0.19% m/m; CME FedWatch puts a 25 bp hike on 10/28 at 19.4% (42.5% a month ago)",
+   "source": "Decrypt, 2026-10-12; Kitco (Natixis), 2026-10-09",
+   "url": "https://decrypt.co/380669/bitcoin-ranges-near-83k-as-traders-look-to-us-inflation-data",
+   "read": "Energy lifting headline CPI is consensus; core is what matters. Core ≥ 0.3% could revive October hike bets, ≤ 0.2% favors a Fed hold. With a 0.682 30-day BTC–Nasdaq correlation, CPI will move BTC short term through yields and equities, but it will not change the market stage (set by the 200-day average) or on-chain valuation.",
+   "module": "flows"
+  },
+  {
+   "time": "2026-10-12",
+   "cat": "資金",
+   "impact": "bear",
+   "weight": 2,
+   "title": "US spot BTC ETFs saw about $681M of net outflows over 10/05–10/09; Friday 10/09 had a small $21.13M net inflow (SoSoValue)",
+   "source": "Decrypt (SoSoValue), 2026-10-12",
+   "url": "https://decrypt.co/380669/bitcoin-ranges-near-83k-as-traders-look-to-us-inflation-data",
+   "read": "Consistent with this site: 10/07 −$487.1M, 10/08 −$244.1M (The Block), 10/09 provisional +$21.1M. Glassnode's weekly also attributes this week's pullback to selling by perp traders and ETF holders. ETFs are the largest marginal buyer this cycle; continued outflows would make the 1.27M BTC of underwater supply at 84–86K harder to absorb, but realized cap is still +1.27% over 30 days, so capital has not turned to net outflow.",
+   "module": "flows"
+  },
+  {
+   "time": "2026-10-12",
+   "cat": "機構",
+   "impact": "bull",
+   "weight": 2,
+   "title": "Strategy bought 250 BTC over 10/05–10/11 ($21.5M, average 86,194), bringing holdings to 848,250 BTC; it also repurchased $192M of STRC preferred stock",
+   "source": "CryptoPotato (Saylor post), 2026-10-12",
+   "url": "https://cryptopotato.com/strategy-buys-another-21m-in-bitcoin-as-accumulation-streak-rolls-on/",
+   "read": "A fourth straight week of buying, but only about one-ninth the size of the buyback, so its BTC buying stays weak; its USD cash reserve fell to about $5.5B. Against last week's −$681M ETF outflow, corporate buying cannot offset it. For reference only; it changes no framework condition.",
+   "module": "flows"
+  },
+  {
+   "time": "2026-10-12",
+   "cat": "機構",
+   "impact": "bull",
+   "weight": 1,
+   "title": "South Korea's Jeonbuk Bank issues the first won-denominated corporate loan collateralized by BTC; on default the collateral is auctioned through the courts under civil-enforcement rules effective 10/01",
+   "source": "CoinDesk, 2026-10-12",
+   "url": "https://www.coindesk.com/business/2026/10/12/south-korea-just-got-its-first-traditional-bank-loans-backed-by-bitcoin",
+   "read": "A traditional bank accepting BTC as collateral is a long-term adoption step, but the amount, rate and loan-to-value are undisclosed, so there is no quantifiable near-term demand effect. None of this site's indicators change; background only.",
+   "module": "flows"
+  },
+  {
+   "time": "2026-10-12",
+   "cat": "產業",
+   "impact": "neutral",
+   "weight": 1,
+   "title": "SWI Group raises €800M (about $894M) to convert the US and Swedish sites of former FTX-backed miner Genesis Digital to AI compute and sell its Kazakhstan sites",
+   "source": "CoinDesk, 2026-10-12",
+   "url": "https://www.coindesk.com/business/2026/10/12/swi-raises-usd894-million-to-repurpose-former-ftx-bitcoin-miner-genesis-digital-to-ai",
+   "read": "Miners pivoting to AI is an ongoing industry trend that could pull some hashrate offline over time, but hashrate here is 1,021.6 EH/s (7-day mean), up 6.26% on the week, and the 30/60-day hash ribbons show no capitulation, so no near-term effect is visible.",
+   "module": "onchain"
+  }
+ ],
+ "events": [
+  {
+   "date": "2026-10-14",
+   "label": "US September CPI (12:30 UTC / 20:30 Taipei)"
+  },
+  {
+   "date": "2026-10-15",
+   "label": "US September PPI (single source; awaiting official schedule)"
+  },
+  {
+   "date": "2026-10-16",
+   "label": "Difficulty adjustment (est. +4.80%); Thailand BTC/ETH ETF rules take effect; Deribit weekly options expiry (08:00 UTC, 4.2% of total OI); MSCI non-operating company screening result (single source, unverified); Fed Chair speaks at IMF/World Bank meetings (single source)"
+  },
+  {
+   "date": "2026-10-28",
+   "label": "FOMC rate decision (10/27–28; 18:00 UTC 10/28)"
+  },
+  {
+   "date": "2026-10-30",
+   "label": "Deribit monthly options expiry (08:00 UTC, 37.6% of total OI, max pain 78,000)"
+  },
+  {
+   "date": "2026-10-31",
+   "label": "Monthly reweighting of long-term paths"
+  },
+  {
+   "date": "2026-11-03",
+   "label": "US midterm elections"
+  },
+  {
+   "date": "2026-11-06",
+   "label": "US October nonfarm payrolls (first Friday by convention; awaiting official schedule)"
+  },
+  {
+   "date": "2026-11-27",
+   "label": "Deribit monthly options expiry (6.4% of total OI)"
+  },
+  {
+   "date": "2026-12-09",
+   "label": "FOMC rate decision (12/8–9; 19:00 UTC 12/9)"
+  },
+  {
+   "date": "2026-12-19",
+   "label": "Tidemark cycle-low check date (hold above 58,525)"
+  }
+ ],
+ "actions": [
+  {
+   "kind": "do",
+   "head": "No framework step is triggered today: no action.",
+   "text": "Both nearest action points are far away: the 200-day average at 72,044 below (−11.9%) and the MVRV 0.75 line at 112,095 above (+37.1%)."
+  },
+  {
+   "kind": "dont",
+   "head": "Don't hedge early because of the liquidations and the drop below the value area, and don't add leverage to buy the dip before CPI.",
+   "text": "The hedge condition is 5 straight closes below 72,044, still 11.9% away; the close sits at 1.1% of the 20-day range, so short-term swings may widen."
+  },
+  {
+   "kind": "watch",
+   "head": "10/14 at 12:30 UTC (20:30 Taipei): US September CPI; the key is whether core m/m is ≥ 0.3%.",
+   "text": "Also watch the 10/12 ETF flows published 10/13, and whether Brent holds above $100."
+  },
+  {
+   "kind": "watch",
+   "head": "Levels: 50-day average 81,020 and the 80,000 bid wall; below that, the 76–78K zone holding 561K BTC.",
+   "text": "Overhead, the value area's lower edge at 82,750 and the 20-day average at 84,006 are now resistance; max pain for the 10/30 expiry is 78,000."
+  },
+  {
+   "kind": "flip",
+   "head": "5 straight closes below 72,044 → framework hedge, reduce 20%.",
+   "text": "Now −11.9% away, streak 0; falling back to bear requires 30 straight closes below a falling 200-day average."
+  }
+ ],
+ "changes": [
+  {
+   "dir": "down",
+   "title": "Heavy-volume drop back below the value area to the bottom of the 20-day range",
+   "fig": "Close 83,676 → 81,737; volume 0.35 → 0.99× the 20-day mean; range position 41.3% → 1.1%",
+   "say": "Short-term structure weakened, but price is still above the 50-day average (81,020); distance to the 200-day average narrowed from −14.0% to −11.9%, still far from the hedge condition."
+  },
+  {
+   "dir": "down",
+   "title": "Funding cooled and options shifted to buying protection",
+   "fig": "Deribit annualized 8.08% → 6.28%; risk reversal n/a → −2.42; DVOL 37.34 → 37.71",
+   "say": "The chase-long leverage added last edition was flushed and leverage is lighter; not a framework condition."
+  },
+  {
+   "dir": "down",
+   "title": "Puell four-year percentile back below 80",
+   "fig": "Top-3 indicators 44.5/45.0/82.7 (10/05) → 42.5/43.0/63.5 (10/11)",
+   "say": "The only reading ≥ 80 last edition has retreated; all three are far from the top-zone threshold."
+  },
+  {
+   "dir": "up",
+   "title": "Hashrate keeps setting highs",
+   "fig": "7-day mean 1,009.8 → 1,021.6 EH/s; weekly change 4.91% → 6.26%",
+   "say": "Miners keep expanding with no stress signal; estimated difficulty change +4.96% → +4.80% (10/16)."
+  }
+ ],
+ "research": {
+  "summary": "Glassnode's new Market Pulse Week 42 (10/12) attributes the pullback to selling by perp traders and ETF holders while new capital keeps flowing in, consistent with this site's cooling funding, −$681M weekly ETF flows and +1.27% 30-day realized cap growth. K33's latest is still 10/05; no new weekly from The Block Research or Coinbase Institutional this edition.",
+  "items": [
+   {
+    "source": "Glassnode",
+    "title": "BTC Market Pulse: Week 42",
+    "date": "2026-10-12",
+    "url": "https://research.glassnode.com/btc-market-pulse-week-42-2026/",
+    "access": "full",
+    "points": "Thursday's break below 81K returned price to where the breakout began three weeks ago; the week closed about 3% lower. Weekly ETF net flow +$118M → −$702M; perp CVD fell to −$682M; 25Δ skew 2.1% → 4.46%; supply in profit 74.5% → 71.4%; monthly realized cap change +1.2%.",
+    "meaning": "Consistent with this site: risk reversal −2.42, ETF outflows, realized cap still growing. Its weekly ETF figure uses a different basis from this site's −$681M, so the two are not netted. Short-term structure; it does not change the market stage or exit framework."
+   },
+   {
+    "source": "Glassnode",
+    "title": "The Week On-chain: A Rally Running Light",
+    "date": "2026-10-07",
+    "url": "https://research.glassnode.com/the-week-onchain-week-40-2026/",
+    "access": "full",
+    "points": "Sell wall at 86.5K–86.75K, largest bid wall 81K–81.25K; reclaiming 85.5K is needed for recovery. New capital over 30 days about $4.9B vs a $12.8B realized cap increase; long liquidation band 81.7K–83.3K, then 75K.",
+    "meaning": "The 10/12 close at 81,737 has cut through its 81.7K–83.3K long liquidation band, matching Monday's $406M of long liquidations; the close is still near the 81K bid wall. The next reference level, 75K, is close to this site's 76–78K supply zone."
+   },
+   {
+    "source": "K33 Research",
+    "title": "Few buyers, even fewer sellers",
+    "date": "2026-10-05",
+    "url": "https://k33.com/research/articles/few-buyers-even-fewer-sellers",
+    "access": "title_only",
+    "points": "(Preview only) Consolidation capped by the 87,500 yearly open; Q3 closed at 83,563; the main risk is the 10-year at 5.35%.",
+    "meaning": "Full text is paywalled, so it is not used as a basis for judgment; its warning on rate risk does not conflict with this site's readings."
+   },
+   {
+    "source": "Glassnode",
+    "title": "BTC Market Pulse: Week 41",
+    "date": "2026-10-05",
+    "url": "https://research.glassnode.com/btc-market-pulse-week-41-2026/",
+    "access": "full",
+    "points": "BTC around 86K, the week closed about 2% higher; derivatives positioning normalized; ETF inflows cooled; on-chain activity strengthened.",
+    "meaning": "Its call that ETF inflows were cooling was confirmed by the following week's outflows; consistent with this site."
+   }
+  ]
+ }
+}
