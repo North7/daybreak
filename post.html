@@ -35,35 +35,49 @@ img { width:100%; border:1px solid var(--line); border-radius:6px; display:block
     <p class="sub" id="meta">讀取中… Loading…</p>
   </header>
   <div id="posts"></div>
-  <p class="tip">步驟：①「在 X 發文」會打開已填好文字的發文視窗 ② 圖片要自己附上：手機長按圖片存到相簿，電腦按「下載圖片」，再在 X 發文視窗加入圖片。<br>
-  Steps: ① "Post on X" opens the composer with the text filled in. ② Attach the image yourself: long-press to save it on a phone, or use "Download image" on a computer.</p>
+  <p class="tip">手機：按「分享到 X（含圖）」→ 在分享選單選 X，圖和文字一起帶進發文視窗；若 X 只帶了圖，文字已自動複製，在發文框貼上即可。「存到相簿」→ 選「儲存影像」。「在 X App 發文」直接打開 X App 的發文視窗（只有文字）。<br>
+  Phone: "Share to X (with image)" → pick X in the share sheet; the text is also copied, so paste it if X keeps only the image. "Save to Photos" → choose "Save Image". "Post in X app" opens the X app composer (text only).</p>
 </main>
 <script>
 (function () {
-  var URL_RE = /https?:\/\/\S+/g;
-  function weight(t) {   // 與 pipeline/x_len.py 相同：中日韓全形 2、其他 1、網址 23
+  var URL_RE = /https?:\/\/\S+/g, MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  function weight(t) {   // 與 pipeline/x_len.py 相同：中日韓全形與 emoji 2、其他 1、網址 23
     var n = (t.match(URL_RE) || []).length * 23; t = t.replace(URL_RE, '');
-    for (var ch of t) n += /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹏＀-｠￠-￦　-〿\u{1F300}-\u{1FAFF}\u{20000}-\u{3FFFD}]/u.test(ch) ? 2 : 1;
+    for (var ch of t) n += /[\u1100-\u115F\u2E80-\uA4CF\uAC00-\uD7A3\uF900-\uFAFF\uFE30-\uFE4F\uFF00-\uFF60\uFFE0-\uFFE6\u3000-\u303F\u{1F300}-\u{1FAFF}\u{20000}-\u{3FFFD}]/u.test(ch) ? 2 : 1;
     return n;
   }
   function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function flash(b, msg) { var l = b.dataset.label || (b.dataset.label = b.textContent); b.textContent = msg; setTimeout(function () { b.textContent = l; }, 1500); }
+  function copy(t) { try { return navigator.clipboard.writeText(t); } catch (e) { return Promise.reject(e); } }
   fetch('data/x_post.json?t=' + Date.now()).then(function (r) { return r.json(); }).then(function (p) {
     document.getElementById('meta').textContent = 'No.' + String(p.edition || 0).padStart(3, '0') + ' · ' + p.date;
-    var langs = [['en', 'English', p.image_en, 'Copy text', 'Post on X', 'Download image'],
-                 ['zh', '中文', p.image_zh, '複製文字', '在 X 發文', '下載圖片']];
+    var files = {};   // 先把圖抓好，分享時才能在同一次點擊內叫出 iOS 分享選單
+    var langs = [['en', 'English', p.image_en, ['Share to X (with image)', 'Save to Photos', 'Post in X app', 'Copy text', 'Download image']],
+                 ['zh', '中文', p.image_zh, ['分享到 X（含圖）', '存到相簿', '在 X App 發文', '複製文字', '下載圖片']]];
     document.getElementById('posts').innerHTML = langs.map(function (L) {
-      var t = p[L[0]] || '', w = weight(t), img = L[2] ? L[2].replace(/^https:\/\/north7\.github\.io\/daybreak\//, '') + '?t=' + Date.now() : '';
+      var k = L[0], t = p[k] || '', w = weight(t), B = L[3], img = L[2] ? L[2].replace(/^https:\/\/north7\.github\.io\/daybreak\//, '') + '?t=' + Date.now() : '';
+      if (img) fetch(img).then(function (r) { return r.blob(); }).then(function (bl) { files[k] = new File([bl], 'daybreak-' + p.date + '-' + k + '.png', { type: 'image/png' }); });
+      // 手機用 X App 的網址協定直接開發文視窗（網頁版 intent 會落在未登入的內建瀏覽器）；電腦用網頁版
+      var xurl = MOBILE ? 'twitter://post?message=' + encodeURIComponent(t) : 'https://x.com/intent/post?text=' + encodeURIComponent(t);
       return '<section><h2>' + L[1] + ' <small class="' + (w > 280 ? 'over' : '') + '">' + w + ' / 280</small></h2>' +
-        '<pre>' + esc(t) + '</pre>' + (img ? '<img src="' + img + '" alt="">' : '') +
-        '<div class="btns"><button data-copy="' + L[0] + '">' + L[3] + '</button>' +
-        '<a class="go" target="_blank" rel="noopener" href="https://x.com/intent/post?text=' + encodeURIComponent(t) + '">' + L[4] + '</a>' +
-        (img ? '<a href="' + img + '" download="daybreak-' + p.date + '-' + L[0] + '.png">' + L[5] + '</a>' : '') + '</div></section>';
+        '<pre>' + esc(t) + '</pre>' + (img ? '<img src="' + img + '" alt="">' : '') + '<div class="btns">' +
+        (img ? '<button class="go share" data-k="' + k + '">' + B[0] + '</button>' + '<button class="save" data-k="' + k + '">' + B[1] + '</button>' : '') +
+        '<a href="' + xurl + '"' + (MOBILE ? '' : ' target="_blank" rel="noopener"') + '>' + (MOBILE ? B[2] : 'Post on X / 在 X 發文') + '</a>' +
+        '<button class="copy" data-k="' + k + '">' + B[3] + '</button>' +
+        (img && !MOBILE ? '<a href="' + img + '" download="daybreak-' + p.date + '-' + k + '.png">' + B[4] + '</a>' : '') + '</div></section>';
     }).join('');
-    document.querySelectorAll('[data-copy]').forEach(function (b) {
+    var canShare = function (f) { return f && navigator.canShare && navigator.canShare({ files: [f] }); };
+    document.querySelectorAll('.share, .save').forEach(function (b) {
+      if (!navigator.share) { b.hidden = true; return; }   // 不支援分享選單的瀏覽器（多數電腦）就藏起來，改用下載
       b.onclick = function () {
-        var label = b.textContent;
-        navigator.clipboard.writeText(p[b.dataset.copy]).then(function () { b.textContent = '✓'; setTimeout(function () { b.textContent = label; }, 1500); });
+        var k = b.dataset.k, f = files[k], text = b.classList.contains('share') ? p[k] : null;
+        if (!canShare(f)) { flash(b, '圖還在載入 · loading…'); return; }
+        if (text) copy(text).catch(function () {});
+        navigator.share(text ? { files: [f], text: text } : { files: [f] }).catch(function () {});
       };
+    });
+    document.querySelectorAll('.copy').forEach(function (b) {
+      b.onclick = function () { copy(p[b.dataset.k]).then(function () { flash(b, '✓'); }, function () { flash(b, '✗'); }); };
     });
   }).catch(function () { document.getElementById('meta').textContent = '讀取失敗 · Failed to load data/x_post.json'; });
 })();

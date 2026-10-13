@@ -188,7 +188,7 @@ pipeline/bd_cache/       前一晚抓的鏈上指標快取
 pipeline/check_i18n.py   檢查 app.js 每個 _t() 都有英文
 pipeline/stamp_assets.py 更新 index.html 的 ?v= 版本號
 pipeline/share_card.py   每日分享圖 data/share.png、data/share-en.png（X 貼文附圖）
-post.html                X 發文小幫手（讀 data/x_post.json：一鍵複製中英文貼文、開 X 發文視窗、下載分享圖）
+post.html                X 發文小幫手（讀 data/x_post.json：手機用分享選單把圖文一起送進 X、存圖到相簿、開 X App 發文視窗、複製文字）
 pipeline/og_card.py      連結預覽卡 assets/og-en.png（網址貼到 X 時自動顯示，預設英文；中文版 assets/og.png）
 pipeline/x_len.py        檢查 data/x_post.json 中英貼文在 X 的 280 字內
 pipeline/params.json     collect.py 需要的兩個參數（T+5 上下門檻）
