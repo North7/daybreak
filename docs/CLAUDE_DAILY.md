@@ -41,7 +41,7 @@
    - 執行 `python3 pipeline/x_len.py`，兩則都要 ≤ 280（X 的算法：中文字算 2、網址算 23）；超過就縮短 headline 那行。
    - 不放 hashtag 以外的標記；hashtag 最多 1 個（中文 `#比特幣`、英文 `#Bitcoin`）。不喊單、不寫價格目標或「該買／該賣」；出場框架只用百分比；隱私鐵則同樣適用。
 10. 提交訊息 `notes: <bar_date>`（notes.json、notes.en.json、x_post.json 一起），推送到 main。
-11. 推播：用 PushNotification 送出 X 草稿，內容依序為中文全文、一行 `---`、英文全文，最後一行附 `圖：<image_zh>`；不要加其他說明。
+11. 推播：用 PushNotification 送出 X 草稿，內容依序為中文全文、一行 `---`、英文全文，最後一行附 `發文小幫手：https://north7.github.io/daybreak/post.html`（可一鍵複製、開 X 發文視窗、存圖）；不要加其他說明。
 
 ### notes.json 格式
 ```json

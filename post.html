@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>Daybreak X Post</title>
+<!-- 發文小幫手（2026-10-13）：讀 data/x_post.json，中英文貼文一鍵複製、一鍵開 X 發文視窗、下載當日分享圖 -->
+<style>
+:root { --paper:#F1F0EC; --card:#FFFFFF; --ink:#0A0A0A; --ink3:#7A766F; --line:#D2CEC4; --red:#FF3B1F; }
+@media (prefers-color-scheme: dark) { :root { --paper:#121110; --card:#1C1B19; --ink:#EEECE6; --ink3:#9A958C; --line:#34312C; } }
+* { box-sizing:border-box; }
+body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.6 -apple-system, "PingFang TC", "Noto Sans TC", sans-serif; }
+main { max-width:720px; margin:0 auto; padding:20px 16px 48px; }
+header { border-top:6px solid var(--red); padding-top:14px; }
+h1 { font-size:22px; margin:0; }
+.sub { color:var(--ink3); font-size:14px; margin:4px 0 0; }
+section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin-top:18px; }
+h2 { font-size:15px; margin:0 0 10px; display:flex; justify-content:space-between; gap:8px; }
+h2 small { color:var(--ink3); font-weight:500; }
+pre { white-space:pre-wrap; word-break:break-word; font:inherit; margin:0 0 14px; }
+img { width:100%; border:1px solid var(--line); border-radius:6px; display:block; }
+.btns { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 4px; }
+.btns a, .btns button { font:inherit; font-size:15px; font-weight:700; padding:10px 14px; border-radius:8px; border:1.5px solid var(--ink);
+  background:transparent; color:var(--ink); text-decoration:none; cursor:pointer; }
+.btns .go { background:var(--red); border-color:var(--red); color:#fff; }
+.tip { color:var(--ink3); font-size:13px; margin:8px 0 0; }
+.over { color:var(--red); }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>X 發文小幫手 · X post helper</h1>
+    <p class="sub" id="meta">讀取中… Loading…</p>
+  </header>
+  <div id="posts"></div>
+  <p class="tip">步驟：①「在 X 發文」會打開已填好文字的發文視窗 ② 圖片要自己附上：手機長按圖片存到相簿，電腦按「下載圖片」，再在 X 發文視窗加入圖片。<br>
+  Steps: ① "Post on X" opens the composer with the text filled in. ② Attach the image yourself: long-press to save it on a phone, or use "Download image" on a computer.</p>
+</main>
+<script>
+(function () {
+  var URL_RE = /https?:\/\/\S+/g;
+  function weight(t) {   // 與 pipeline/x_len.py 相同：中日韓全形 2、其他 1、網址 23
+    var n = (t.match(URL_RE) || []).length * 23; t = t.replace(URL_RE, '');
+    for (var ch of t) n += /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹏＀-｠￠-￦　-〿\u{1F300}-\u{1FAFF}\u{20000}-\u{3FFFD}]/u.test(ch) ? 2 : 1;
+    return n;
+  }
+  function esc(s) { return s.replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  fetch('data/x_post.json?t=' + Date.now()).then(function (r) { return r.json(); }).then(function (p) {
+    document.getElementById('meta').textContent = 'No.' + String(p.edition || 0).padStart(3, '0') + ' · ' + p.date;
+    var langs = [['en', 'English', p.image_en, 'Copy text', 'Post on X', 'Download image'],
+                 ['zh', '中文', p.image_zh, '複製文字', '在 X 發文', '下載圖片']];
+    document.getElementById('posts').innerHTML = langs.map(function (L) {
+      var t = p[L[0]] || '', w = weight(t), img = L[2] ? L[2].replace(/^https:\/\/north7\.github\.io\/daybreak\//, '') + '?t=' + Date.now() : '';
+      return '<section><h2>' + L[1] + ' <small class="' + (w > 280 ? 'over' : '') + '">' + w + ' / 280</small></h2>' +
+        '<pre>' + esc(t) + '</pre>' + (img ? '<img src="' + img + '" alt="">' : '') +
+        '<div class="btns"><button data-copy="' + L[0] + '">' + L[3] + '</button>' +
+        '<a class="go" target="_blank" rel="noopener" href="https://x.com/intent/post?text=' + encodeURIComponent(t) + '">' + L[4] + '</a>' +
+        (img ? '<a href="' + img + '" download="daybreak-' + p.date + '-' + L[0] + '.png">' + L[5] + '</a>' : '') + '</div></section>';
+    }).join('');
+    document.querySelectorAll('[data-copy]').forEach(function (b) {
+      b.onclick = function () {
+        var label = b.textContent;
+        navigator.clipboard.writeText(p[b.dataset.copy]).then(function () { b.textContent = '✓'; setTimeout(function () { b.textContent = label; }, 1500); });
+      };
+    });
+  }).catch(function () { document.getElementById('meta').textContent = '讀取失敗 · Failed to load data/x_post.json'; });
+})();
+</script>
+</body>
+</html>
