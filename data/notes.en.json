@@ -1,14 +1,14 @@
 {
  "date": "2026-10-13",
- "written_utc": "2026-10-14T00:37:57Z",
+ "written_utc": "2026-10-14T13:20:23Z",
  "edition": 8,
  "stance": {
   "label": "Early bull phase · Hold",
   "tone": "warm",
   "short": "Bull day 5, no action"
  },
- "headline": "The 10-year yield eased to 5.19% and Brent slipped below $105, letting spot buyers drive a rebound; but ETFs bled another $65.4M on Monday and weighted funding sits at just 2.67% annualized as the market waits flat for tonight's CPI.",
- "summary": "The market stage remains bull (since 10/09; 34 straight closes above a rising 200-day average), and no exit-framework rule has fired or is close. Tuesday's bounce was spot-led as macro pressure eased, but ETFs are still seeing outflows, leverage has not returned and the share of short-term holders in profit fell to 68%, so this is consolidation rather than renewed strength. Next: core CPI for September at 20:30 Taipei on 10/14 (12:30 UTC), and the orders and supply clusters between 82,000 and 84,000.",
+ "headline": "September CPI ran hot across the board: 3.7% y/y and core +0.3% m/m pushed the 10-year yield up 9bp to 5.31%, BTC slipped, and an October hike is back in play.",
+ "summary": "US September CPI, released at 20:30 Taipei (12:30 UTC), beat forecasts (3.7% y/y, core 2.6% y/y); the 10-year yield rose to 5.31% and the 2-year to 4.92%, and BTC fell about $1,000 to 82,800 within minutes. That is a macro headwind, but the market stage remains bull (since 10/09; 34 straight closes above a rising 200-day average) and no exit-framework rule has fired or is close; only the daily close counts. Next: PPI on 10/15 and the FOMC on 10/27–28.",
  "watch": [
   {
    "label": "200-day average",
@@ -28,7 +28,7 @@
  ],
  "modules": {
   "overview": {
-   "lead": "Day 5 of the bull stage: Tuesday recovered about half the drop without new money following, valuation is still mid-cycle, and all three views say hold, no action.",
+   "lead": "Bull day 5. A hot September CPI is a macro headwind and yields are rising again, but valuation is still mid-cycle and no rule has fired; all three views say hold, no action.",
    "points": [
     "Market stage: bull (since 10/09), 34 straight closes above a rising 200-day average.",
     "MVRV ÷ prior-cycle peak 0.547 (last edition 0.560), still 34.9% from the on-chain sell line (CoinMetrics 10/12).",
@@ -103,14 +103,14 @@
    "module": "flows"
   },
   {
-   "time": "2026-10-13",
+   "time": "2026-10-14",
    "cat": "宏觀",
-   "impact": "neutral",
+   "impact": "bear",
    "weight": 3,
-   "title": "US September CPI due tonight: headline seen +0.6% m/m and 3.6% y/y (from 3.4%), core about +0.2% m/m; October hike odds about 23%",
-   "source": "CoinDesk, 2026-10-13",
-   "url": "https://www.coindesk.com/markets/2026/10/13/live-updates-bitcoin-whipsaws-between-usd81-000-and-usd84-000-as-altcoins-slide",
-   "read": "Energy lifting the headline is consensus; core is the swing factor: a hot core revives 10/28 hike bets and lifts yields, a soft one cements a hold. With a 0.678 BTC–Nasdaq 30-day correlation, CPI will move BTC short term via yields and stocks, but it won't change the market stage (watch the 200-day average, −13.2% away) or on-chain valuation.",
+   "title": "US September CPI rose 0.6% m/m and 3.7% y/y (forecast 3.6%, prior 3.4%); core rose 0.3% m/m and 2.6% y/y (forecasts 0.2% and 2.5%), with gasoline up 9.1% accounting for about half the gain.",
+   "source": "US Bureau of Labor Statistics (BLS), CoinDesk, 2026-10-14",
+   "url": "https://www.bls.gov/news.release/cpi.nr0.htm",
+   "read": "Both core and headline beat forecasts; the 10-year yield rose 9.3bp to 5.31%, the 2-year 13.1bp to 4.92%, and BTC fell about $1,000 to 82,800 (CoinDesk). Against our data: ETFs are still seeing outflows and weighted funding is only 2.67%, so the spot bounce already lacked funding confirmation, and higher yields may stretch the consolidation. But this is short-term macro pressure: it does not touch the market stage (set by the 200-day average) or any exit condition, and nothing changes before the daily close.",
    "module": "flows"
   },
   {
@@ -194,7 +194,7 @@
  "events": [
   {
    "date": "2026-10-14",
-   "label": "US September CPI (20:30 Taipei / 12:30 UTC)"
+   "label": "US September CPI (released: 3.7% y/y, core +0.3% m/m, above forecasts)"
   },
   {
    "date": "2026-10-15",
@@ -249,13 +249,13 @@
   },
   {
    "kind": "dont",
-   "head": "Don't chase a one-day spot bounce as a trend change, and don't add leverage to bet on CPI.",
-   "text": "ETFs are still bleeding, weighted funding is just 2.67% and the risk reversal is −2.98 — no flow or leverage confirmation; the close is still below the 20-day average of 83,942."
+   "head": "Don't chase the post-CPI drop, and don't add leverage to bet on direction.",
+   "text": "Intraday moves are not closes; the hedge only counts 5 straight closes below the 200-day average at 72,128, now −13.2% away. ETFs are still seeing outflows and weighted funding is 2.67%, so leverage is light and sentiment can swing both ways."
   },
   {
    "kind": "watch",
-   "head": "10/14 20:30 Taipei (12:30 UTC): US September CPI — watch whether core m/m comes in clearly above 0.2%.",
-   "text": "Also watch today's 10/13 ETF flow print and whether the 10-year yield holds near or below 5.2%."
+   "head": "US September PPI on 10/15 and the FOMC on 10/27–28 (02:00 Taipei 10/29, 18:00 UTC 10/28): after a hot CPI, markets are discussing an October hike.",
+   "text": "Tonight's close: whether the 82,000 bid wall and the 50-day average at 81,103 hold; also whether the 10-year yield stays above 5.3%, and the 10/13 ETF flows."
   },
   {
    "kind": "watch",
@@ -269,6 +269,12 @@
   }
  ],
  "changes": [
+  {
+   "dir": "up",
+   "title": "Treasury yields jumped after CPI",
+   "fig": "10-year 5.19% → 5.31% (+9.3bp); 2-year +13.1bp to 4.92%",
+   "say": "Rate pressure is back, which caps valuation expansion, but no framework condition changes; Tuesday's macro relief has been undone."
+  },
   {
    "dir": "up",
    "title": "High-volume rebound back into the value area; 20-day range position recovers",
