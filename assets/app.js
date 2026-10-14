@@ -61,10 +61,10 @@
   function lineChart(el, cfg) {
     var W = Math.max(280, el.clientWidth), Ht = cfg.h || (W < 520 ? 210 : 260);
     var ML = cfg.ml || 8, MR = cfg.mr || 58, MT = 14, MB = 24, pw = W - ML - MR, ph = Ht - MT - MB;
-    var all = []; cfg.series.forEach(function (s) { s.data.forEach(function (p) { if (p[1] != null) all.push(p); }); });
+    var all = [], all2 = [], xa = []; cfg.series.forEach(function (s) { s.data.forEach(function (p) { if (p[1] != null) { (s.y2 ? all2 : all).push(p); xa.push(p[0]); } }); });
     if (all.length < 2) { el.innerHTML = _t('<p class="note">本日未取得資料。</p>'); return; }
-    var x0 = cfg.x0 != null ? cfg.x0 : Math.min.apply(null, all.map(function (p) { return p[0]; }));
-    var x1 = cfg.x1 != null ? cfg.x1 : Math.max.apply(null, all.map(function (p) { return p[0]; }));
+    var x0 = cfg.x0 != null ? cfg.x0 : Math.min.apply(null, xa);
+    var x1 = cfg.x1 != null ? cfg.x1 : Math.max.apply(null, xa);
     var ys = all.map(function (p) { return p[1]; }); (cfg.refs || []).forEach(function (r) { if (r.inRange !== false) ys.push(r.y); });
     var lo = Math.min.apply(null, ys), hi = Math.max.apply(null, ys);
     if (cfg.y0 != null) lo = Math.min(lo, cfg.y0); if (cfg.y1 != null) hi = Math.max(hi, cfg.y1);
@@ -72,6 +72,9 @@
     var tl = T(lo), th = T(hi), pad = (th - tl) * 0.08 || 1; tl -= pad; th += pad;
     var X = function (x) { return ML + (x - x0) / (x1 - x0 || 1) * pw; };
     var Y = function (v) { return MT + (1 - (T(v) - tl) / (th - tl)) * ph; };
+    // 第二 y 軸（2026-10-14）：series 帶 y2 的用自己的刻度（例如佐證燈號圖上的價格線），不畫刻度、tooltip 照列
+    var Y2 = Y;
+    if (all2.length) { var T2 = function (v) { return cfg.log2 ? Math.log10(v) : v; }, v2 = all2.map(function (p) { return T2(p[1]); }), l2 = Math.min.apply(null, v2), h2 = Math.max.apply(null, v2), p2 = (h2 - l2) * 0.08 || 1; l2 -= p2; h2 += p2; Y2 = function (v) { return MT + (1 - (T2(v) - l2) / (h2 - l2)) * ph; }; }
     var s = '', yf = cfg.yFmt || function (v) { return fmt.k(v); };
     // y grid
     var ticks = [];
@@ -93,7 +96,7 @@
     } else (cfg.xticks || []).forEach(function (t) { s += '<text class="ax" x="' + X(t[0]).toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + esc(t[1]) + '</text>'; });
     // vertical bands & lines
     (cfg.vbands || []).forEach(function (b) { var a = Math.max(ML, X(b.x0)), z = Math.min(ML + pw, X(b.x1)); if (z > a) s += '<rect x="' + a.toFixed(1) + '" y="' + MT + '" width="' + (z - a).toFixed(1) + '" height="' + ph + '" fill="' + (b.color || 'var(--flare-dim)') + '"/>' + (b.label ? '<text class="ax" x="' + (a + 6).toFixed(1) + '" y="' + (MT + 12) + '">' + esc(b.label) + '</text>' : ''); });
-    (cfg.vlines || []).forEach(function (v) { var xx = X(v.x); if (xx < ML || xx > ML + pw) return; s += '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="' + MT + '" y2="' + (MT + ph) + '" stroke="var(--ink-3)" stroke-dasharray="2 4" stroke-width="1"/>' + (v.label ? '<text class="ax" x="' + (xx + 5).toFixed(1) + '" y="' + (MT + ph - 6) + '">' + esc(v.label) + '</text>' : ''); });
+    (cfg.vlines || []).forEach(function (v) { var xx = X(v.x); if (xx < ML || xx > ML + pw) return; s += '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="' + MT + '" y2="' + (MT + ph) + '" stroke="var(--ink-3)" stroke-dasharray="2 4" stroke-width="1"/>' + (v.label ? '<text class="ax" x="' + (xx > ML + pw - 70 ? xx - 5 : xx + 5).toFixed(1) + '" y="' + (MT + ph - 6) + '"' + (xx > ML + pw - 70 ? ' text-anchor="end"' : '') + '>' + esc(v.label) + '</text>' : ''); });
     (cfg.hbands || []).forEach(function (b) { var a = Math.max(MT, Y(b.y1)), z = Math.min(MT + ph, Y(b.y0)); if (z <= a) return; s += '<rect x="' + ML + '" y="' + a.toFixed(1) + '" width="' + pw + '" height="' + Math.max(1, z - a).toFixed(1) + '" fill="' + b.color + '"/>'; });
     // refs
     (cfg.refs || []).forEach(function (r) { var y = Y(r.y); if (y < MT - 2 || y > MT + ph + 2) return; s += '<line class="ref" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="' + r.color + '"/>'; if (r.label) s += '<text class="reflab" x="' + (ML + 6) + '" y="' + (y + (r.below ? 13 : -5)).toFixed(1) + '" fill="' + r.color + '">' + esc(r.label) + '</text>'; });
@@ -101,10 +104,10 @@
     var defs = '';
     cfg.series.forEach(function (sr, si) {
       var pts = sr.data.filter(function (p) { return p[1] != null; }); if (pts.length < 2) return;
-      var dpath = pts.map(function (p, i) { return (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ',' + Y(p[1]).toFixed(1); }).join('');
+      var Yf = sr.y2 ? Y2 : Y, dpath = pts.map(function (p, i) { return (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ',' + Yf(p[1]).toFixed(1); }).join('');
       if (sr.area) { var gid = 'g' + Math.random().toString(36).slice(2, 8); defs += '<linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + sr.color + '" stop-opacity=".28"/><stop offset="1" stop-color="' + sr.color + '" stop-opacity="0"/></linearGradient>'; s += '<path d="' + dpath + 'L' + X(pts[pts.length - 1][0]).toFixed(1) + ',' + (MT + ph) + 'L' + X(pts[0][0]).toFixed(1) + ',' + (MT + ph) + 'Z" fill="url(#' + gid + ')"/>'; }
       s += '<path class="ln" d="' + dpath + '" stroke="' + sr.color + '" stroke-width="' + (sr.w || 2) + '"' + (sr.dash ? ' stroke-dasharray="' + sr.dash + '"' : '') + ' style="animation-delay:' + (si * 0.12) + 's"/>';
-      if (sr.end !== false) { var lp = pts[pts.length - 1]; s += '<circle cx="' + X(lp[0]).toFixed(1) + '" cy="' + Y(lp[1]).toFixed(1) + '" r="4" fill="' + sr.color + '" stroke="var(--deck)" stroke-width="2"/>'; }
+      if (sr.end !== false) { var lp = pts[pts.length - 1]; s += '<circle cx="' + X(lp[0]).toFixed(1) + '" cy="' + Yf(lp[1]).toFixed(1) + '" r="4" fill="' + sr.color + '" stroke="var(--deck)" stroke-width="2"/>'; }
     });
     (cfg.marks || []).forEach(function (m) { var xx = X(m.x), yy = Y(m.y); s += '<circle cx="' + xx.toFixed(1) + '" cy="' + yy.toFixed(1) + '" r="4.5" fill="var(--deck)" stroke="' + (m.color || 'var(--flare)') + '" stroke-width="2"/>' + (m.label ? '<text class="reflab" x="' + (xx + (m.left ? -8 : 8)).toFixed(1) + '" y="' + (yy + (m.below ? 15 : -8)).toFixed(1) + '" fill="' + (m.color || 'var(--flare)') + '"' + (m.left ? ' text-anchor="end"' : '') + '>' + esc(m.label) + '</text>' : ''); });
     s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (MT + ph) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + ph + '"/>';
@@ -116,8 +119,9 @@
       cfg.series.forEach(function (sr) {
         var pts = sr.data.filter(function (p) { return p[1] != null; }); if (!pts.length || sr.tip === false) return;
         var i = bisect(pts, xv), p = pts[i]; if (xs == null) xs = p[0];
-        g += '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Y(p[1]).toFixed(1) + '" r="4" fill="' + sr.color + '" stroke="var(--deck)" stroke-width="2"/>';
-        rows.push('<div class="r"><i style="background:' + sr.color + '"></i><span>' + esc(sr.name) + '</span><b>' + (cfg.tipFmt || yf)(p[1]) + '</b></div>');
+        if (Math.abs(p[0] - xv) > (cfg.tipGap || 1e9)) return;   // 這條線在游標附近沒有資料（例如外推線）就不列
+        g += '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + (sr.y2 ? Y2 : Y)(p[1]).toFixed(1) + '" r="4" fill="' + sr.color + '" stroke="var(--deck)" stroke-width="2"/>';
+        rows.push('<div class="r"><i style="background:' + sr.color + '"></i><span>' + esc(sr.name) + '</span><b>' + (sr.fmt || cfg.tipFmt || yf)(p[1]) + '</b></div>');
       });
       if (xs == null) return;
       xh.setAttribute('x1', X(xs)); xh.setAttribute('x2', X(xs)); xh.setAttribute('visibility', 'visible'); dots.innerHTML = g;
@@ -290,7 +294,7 @@
       (ev.items ? '<div class="tbl-wrap"><table class="tbl evid"><tbody>' + ev.items.map(function (e) {
         var v = e.id === 'mvrv1y' ? fmt.n(e.value, 3) + _t('（均值 ') + fmt.n(e.ref, 3) + _t('）') : e.id === 'sth' ? fmt.usd(e.value) : fmt.pct(e.value, e.id === 'rcgrowth' ? 2 : 1);
         return '<tr><td><span class="mk-s' + (e.ok ? ' ok' : '') + '">' + (e.ok ? '✓' : '×') + '</span><b>' + esc(_T(e.label, (EV_EN[e.id] || [])[0] || e.label)) + '</b></td><td class="num">' + v + '</td><td>' + esc(_T(e.cond, (EV_EN[e.id] || [])[1] || e.cond)) + '</td><td class="num">' + fmt.md(e.date) + '</td></tr>';
-      }).join('') + '</tbody></table></div>' : '') +
+      }).join('') + '</tbody></table></div>' : '') + evCharts(ev) +
       '<div class="rules">' + lines.map(function (l) { return '<div class="rule"><span class="t"><span class="mk-s">' + l[0] + '</span>' + l[1] + '</span><span class="d">' + l[2] + '</span><span></span></div>'; }).join('') + '</div>' +
       _t('<p class="note">判定規則：轉換期＝燈號一（投降）✓ 且收盤在上升的 200 日均線之上（上升＝高於 30 天前）；牛市＝燈號一 ✓ 且收盤連 30 日在上升的 200 日均線之上，成立後單向鎖定；退回熊市＝轉換期中連 5 日收在 200 日均線下，牛市則需連 30 日在下降的 200 日均線下。佐證燈號只顯示證據強弱，不參與判定。</p>') +
       _t('<p class="note">限制：2014 年起只有 3–4 輪週期可回測。這條價格規則在候選標準中假訊號最少，但 2019 年中一樣誤判為牛市，之後跌了近五成；沒有任何規則能同時又快又少假訊號。交易所供給 90 日轉負原為必要條件，回測顯示換視窗長度就失效、地址歸屬會事後修正（有前視偏差），且 2025 年 99% 的日子成立，2026-10-09 起降為佐證。牛市條件在頂部附近也會亮，不是賣出訊號；市場階段只是標籤，不連動出場框架。</p>');
@@ -298,7 +302,72 @@
   // 以下三塊由每日結論任務寫進 notes.json；不是當天的就標「上一期」
   /* 資料管線寫進 latest.json 的中文標籤，英文版在這裡對照 */
   var EV_EN = { mom12: ['12-month momentum', 'Close above its level a year ago'], mvrv1y: ['MVRV vs 1-year mean', 'MVRV above its own 1-year average'],
-    rcgrowth: ['Capital inflow', 'Realized cap 30-day growth is positive'], xs90: ['Exchange supply', '90-day change is negative'], sth: ['Short-term holder cost', 'Close above short-term holder cost (bitcoin-data)'] };
+    rcgrowth: ['Capital inflow', 'Realized cap 30-day growth is positive'], xs90: ['Exchange supply', '90-day change is negative'], sth: ['Short-term holder cost', 'Close above short-term holder cost (bitcoin-data)'],
+    tmm: ['STH cost vs true market mean', 'Short-term holder cost above the true market mean (bitcoin-data, ~7 days late)'] };
+  /* 佐證燈號走勢圖（2026-10-14）：每盞燈一張、配 BTC 價格線；上方一句「離翻轉多遠、大概何時」。只作讀值，外推不是預測 */
+  var EV_ORDER = ['tmm', 'sth', 'mom12', 'mvrv1y', 'rcgrowth', 'xs90'];
+  function evSay(e, sv) {
+    var c = D.price.bar.c, m = sv.mom12 || {}, t = (sv.tmm || {}).est || e.est || {}, ymd = function (d) { return d ? d.replace(/-/g, '/') : '—'; }, sgn = function (v) { return (v >= 0 ? '+' : '−') + fmt.n(Math.abs(v), 0); };
+    switch (e.id) {
+      case 'mom12':
+        var f = m.flat_flip, s1 = _T('現價比一年前 ', 'Price vs a year ago: ') + fmt.pct(e.value, 1) + _T('。', '. ');
+        if (m.hi30) s1 += _T('未來 30 天要比的一年前價格最高 ' + fmt.usd(m.hi30.price) + '（' + ymd(m.hi30.date) + '）。', 'The year-ago price to beat peaks at ' + fmt.usd(m.hi30.price) + ' (' + ymd(m.hi30.date) + ') over the next 30 days. ');
+        if (f) s1 += _T('價格不動的話，' + ymd(f.date) + ' 前後燈號' + (e.ok ? '熄滅' : '亮起') + '（一年前價格' + (e.ok ? '升到 ' : '降到 ') + fmt.usd(f.price) + '）。', 'If price stays flat, the light turns ' + (e.ok ? 'off' : 'on') + ' around ' + ymd(f.date) + ' (the year-ago price ' + (e.ok ? 'rises to ' : 'falls to ') + fmt.usd(f.price) + ').');
+        return s1;
+      case 'mvrv1y': return _T('MVRV ', 'MVRV ') + fmt.n(e.value, 3) + _T('，一年均值 ', ', 1-year mean ') + fmt.n(e.ref, 3) + _T('，差 ', ', gap ') + fmt.pct((e.value / e.ref - 1) * 100, 1) + _T('；均值線移動慢，看 MVRV 何時穿過它。', '; the mean moves slowly, so watch where MVRV crosses it.');
+      case 'rcgrowth': return _T('實現市值 30 日 ', 'Realized cap, 30 days: ') + fmt.pct(e.value, 2) + _T('；轉負燈號就熄。', '; the light goes off if it turns negative.');
+      case 'xs90': return _T('交易所供給 90 日 ', 'Exchange supply, 90 days: ') + fmt.pct(e.value, 2) + _T('；轉正燈號就熄（CoinMetrics 地址歸屬會事後修正）。', '; the light goes off if it turns positive (CoinMetrics address tags get revised).');
+      case 'sth': return _T('收盤比短期持有者成本 ', 'Close vs short-term holder cost: ') + fmt.pct((c / e.value - 1) * 100, 1) + _T('（成本 ' + fmt.usd(e.value) + '，' + ymd(e.date) + '）。', ' (cost ' + fmt.usd(e.value) + ', ' + ymd(e.date) + ').');
+      case 'tmm':
+        var up = t.direction === 'up', s2 = _T('差距 ', 'Gap ') + fmt.pct(e.value, 2) + _T('（' + ymd(e.date) + '）。', ' (' + ymd(e.date) + '). ');
+        s2 += t.days ? _T('以近 30 日速度（短期持有者成本每天 ' + sgn(t.sth_per_day) + '、真實市場均價 ' + sgn(t.tmm_per_day) + ' 美元），約 ' + t.days + ' 天後、' + ymd(t.date) + ' 前後' + (up ? '上穿' : '下穿') + '（約 ' + fmt.usd(t.sth_at) + '）。',
+                                'At the last 30 days\' pace (STH cost ' + sgn(t.sth_per_day) + '/day, true market mean ' + sgn(t.tmm_per_day) + '/day), they cross ' + (up ? 'up' : 'down') + ' in about ' + t.days + ' days, around ' + ymd(t.date) + ' (near ' + fmt.usd(t.sth_at) + '). ')
+                     : _T('以近 30 日速度不會交叉。', 'At the last 30 days\' pace they do not cross. ');
+        return s2 + _T('只是線性外推：價格跌破短期持有者成本時，成本線就不再上升。', 'Linear extrapolation only: if price falls below the STH cost, that line stops rising.');
+    }
+    return '';
+  }
+  function evCharts(ev) {
+    var sv = (D.cycle.stage || {}).viz; if (!sv || !ev.items) return '';
+    var by = {}; ev.items.forEach(function (e) { by[e.id] = e; });
+    return '<div class="evcharts">' + EV_ORDER.filter(function (id) { return by[id]; }).map(function (id) {
+      var e = by[id], PX = [_T('BTC 價格', 'BTC price'), 'var(--ink-3)'], PX2 = [_T('BTC 價格（另一刻度）', 'BTC price (own scale)'), 'var(--ink-3)'], STH = [_T('短期持有者成本', 'STH cost'), 'var(--s2)'];
+      var lg = { tmm: [STH, [_T('真實市場均價', 'True market mean'), 'var(--s3)'], PX, [_T('近 30 日速度外推', 'Extrapolated at 30-day pace'), 'var(--ink-3)', 'dash']], sth: [STH, PX],
+        mom12: [PX, [_T('一年前的價格', 'Price a year earlier'), 'var(--s2)'], [_T('未來要比的價格（已知）', 'Year-ago price ahead (known)'), 'var(--s2)', 'dash']],
+        mvrv1y: [['MVRV', 'var(--s1)'], [_T('一年均值', '1-year mean'), 'var(--s3)', 'dash'], PX2], rcgrowth: [[_T('實現市值 30 日變化', 'Realized cap, 30-day change'), 'var(--s4)'], PX2], xs90: [[_T('交易所供給 90 日變化', 'Exchange supply, 90-day change'), 'var(--s2)'], PX2] }[id];
+      var seg = id === 'tmm' ? '<div class="seg" id="ev-tmm-seg"><button aria-pressed="true" data-v="1">' + _T('近 1 年', '1 year') + '</button><button aria-pressed="false" data-v="3">' + _T('3 年', '3 years') + '</button></div>' : '';
+      return '<div class="evc' + (id === 'tmm' ? ' wide' : '') + '"><div class="panel-h"><h3><span class="mk-s' + (e.ok ? ' ok' : '') + '">' + (e.ok ? '✓' : '×') + '</span>' + esc(_T(e.label, (EV_EN[id] || [])[0] || e.label)) + '</h3>' + seg + '</div><p class="note">' + esc(evSay(e, sv)) + '</p>' + legend(lg) + '<div class="chart" id="c-ev-' + id + '"></div></div>';
+    }).join('') + '</div>' + _T('<p class="note">走勢圖近 3 年、每 3 天一點；灰線是 BTC 價格（CoinMetrics；不同刻度的圖只看方向）。外推與「價格不動」都只是讀值，不是預測。</p>', '<p class="note">Charts cover 3 years, one point every 3 days; the grey line is the BTC price (CoinMetrics; where it has its own scale, read only its direction). Extrapolations and “if price stays flat” are readings, not forecasts.</p>');
+  }
+  var evTmmYears = 1;
+  function drawEv() {
+    var sv = (D.cycle.stage || {}).viz; if (!sv) return;
+    var px = sv.px || [], today = dnOf(D.meta.bar_date), PXn = _T('BTC 價格', 'BTC price');
+    var px2 = { name: PXn, data: px, color: 'var(--ink-3)', w: 1.2, end: false, y2: true, fmt: fmt.usd };
+    var pxS = { name: PXn, data: px, color: 'var(--ink-3)', w: 1.4, end: false };
+    var pctf = function (d) { return function (v) { return (v > 0 ? '+' : '') + v.toFixed(d) + '%'; }; };
+    var C = {
+      mom12: function (el) { var a = (sv.mom12 || {}).ago || [], af = (sv.mom12 || {}).ahead_from; lineChart(el, { h: 200, log: true, series: [pxS, { name: _T('一年前的價格', 'Price a year earlier'), data: a.filter(function (r) { return r[0] <= af; }), color: 'var(--s2)', w: 1.6, end: false }, { name: _T('未來要比的價格', 'Year-ago price ahead'), data: a.filter(function (r) { return r[0] >= af; }), color: 'var(--s2)', dash: '4 4', w: 1.6, end: false }], vlines: [{ x: today, label: _T('今天', 'today') }], tipFmt: fmt.usd, aria: _T('12 個月動能', '12-month momentum') }); },
+      mvrv1y: function (el) { var v = sv.mvrv1y || {}; lineChart(el, { h: 200, log2: true, series: [px2, { name: 'MVRV', data: v.v || [], color: 'var(--s1)', w: 1.8 }, { name: _T('一年均值', '1-year mean'), data: v.ma || [], color: 'var(--s3)', dash: '5 4', w: 1.6, end: false }], yFmt: function (x) { return x.toFixed(1); }, tipFmt: function (x) { return x.toFixed(3); }, aria: _T('MVRV 對一年均值', 'MVRV vs 1-year mean') }); },
+      rcgrowth: function (el) { lineChart(el, { h: 200, log2: true, series: [px2, { name: _T('30 日變化', '30-day change'), data: (sv.rcgrowth || {}).v || [], color: 'var(--s4)', area: true }], refs: [{ y: 0, color: 'var(--ink-3)' }], yFmt: pctf(0), tipFmt: pctf(2), aria: _T('資金流入', 'Capital inflow') }); },
+      xs90: function (el) { lineChart(el, { h: 200, log2: true, series: [px2, { name: _T('90 日變化', '90-day change'), data: (sv.xs90 || {}).v || [], color: 'var(--s2)', area: true }], refs: [{ y: 0, color: 'var(--ink-3)' }], yFmt: pctf(0), tipFmt: pctf(2), aria: _T('交易所供給', 'Exchange supply') }); },
+      sth: function (el) { lineChart(el, { h: 200, log: true, series: [pxS, { name: _T('短期持有者成本', 'STH cost'), data: (sv.sth || {}).v || [], color: 'var(--s2)', w: 1.8 }], tipFmt: fmt.usd, aria: _T('短期持有者成本', 'STH cost') }); },
+      tmm: function (el) {
+        var t = sv.tmm || {}, pj = t.proj || {}, est = t.est || {}, sth = (sv.sth || {}).v || [], x0 = t.tmm && t.tmm.length ? t.tmm[0][0] : null;
+        if (evTmmYears === 1) x0 = Math.max(x0 || 0, today - 365);
+        t = Object.assign({}, t, { tmm: (t.tmm || []).filter(function (r) { return r[0] >= x0; }), crosses: (t.crosses || []).filter(function (c) { return c[0] >= x0; }) });
+        var mk = (t.crosses || []).map(function (c) {   // 歷史交叉點：標在真實市場均價線上
+          var r = (t.tmm || []).filter(function (q) { return q[0] >= c[0]; })[0], d = new Date(c[0] * 864e5); if (!r) return null;
+          return { x: c[0], y: r[1], label: (c[1] === 'up' ? '↑ ' : '↓ ') + d.getUTCFullYear() + '/' + (d.getUTCMonth() + 1), color: c[1] === 'up' ? 'var(--up)' : 'var(--down)', below: c[1] === 'down' };
+        }).filter(Boolean);
+        lineChart(el, { series: [{ name: PXn, data: px.filter(function (r) { return x0 == null || r[0] >= x0; }), color: 'var(--ink-3)', w: 1.2, end: false }, { name: _T('短期持有者成本', 'STH cost'), data: sth.filter(function (r) { return x0 == null || r[0] >= x0; }), color: 'var(--s2)', w: 2 }, { name: _T('真實市場均價', 'True market mean'), data: t.tmm || [], color: 'var(--s3)', w: 2 },
+          { name: _T('外推', 'Extrapolated'), data: pj.sth || [], color: 'var(--s2)', dash: '4 4', w: 1.6, end: false, tip: false }, { name: _T('外推', 'Extrapolated'), data: pj.tmm || [], color: 'var(--s3)', dash: '4 4', w: 1.6, end: false, tip: false }],
+          h: evTmmYears === 1 ? 240 : 220, marks: mk, vlines: est.days ? [{ x: dnOf(est.date), label: _T('外推交叉 ', 'cross ') + est.date.slice(5).replace('-', '/') }] : [], tipFmt: fmt.usd, aria: _T('短期持有者成本 vs 真實市場均價', 'STH cost vs true market mean') });
+      }
+    };
+    EV_ORDER.forEach(function (id) { var el = $('#c-ev-' + id); if (el && C[id]) mount(el, C[id]); });
+    var sg = $('#ev-tmm-seg'); if (sg) sg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; evTmmYears = +b.getAttribute('data-v'); this.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); C.tmm($('#c-ev-tmm')); });
+  }
   var TM_CAT_EN = { '鏈上估值': 'On-chain valuation', '持有者行為': 'Holder behavior', '資金流與機構': 'Flows & institutions', '槓桿與衍生品': 'Leverage & derivatives', '情緒': 'Sentiment' };
   function tmVerdict(ct) {
     if (!ct || !ct.verdict) return '';
@@ -720,6 +789,7 @@
       '</div>';
   };
   V.cycle.after = function () {
+    drawEv();
     var M = D.cycle.model, cols = { '直接修復': 'var(--s4)', '淺回檔': 'var(--s1)', '基準雙底': 'var(--s2)', '延後新低': 'var(--s3)' };
     var md = function (y, m) { return Math.round(Date.UTC(y, m - 1, 15) / 864e5); };
     var series = Object.keys(M.nodes).map(function (k) { return { name: _t(k), data: M.nodes[k].map(function (p) { return [md(p[0], p[1]), p[2]]; }), color: cols[k], dash: '5 5', w: 1.8, end: false }; });

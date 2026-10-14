@@ -622,6 +622,16 @@ try:
     MV['note'] = '只作讀值；供給比、STH 獲利比例每 2 天取一點（2022-10 起，bitcoin-data 免費歷史起點）；成本圖近 2 年：價格 Kraken 收盤、STH 成本與 TMM 為 bitcoin-data（市場組晚約 7 天）；URPD 2,000 美元一格'
     R['murphy_viz'] = MV
 except Exception as e: errors.append(f'murphy_viz {e}')
+# G4c. 2026-10-14 使用者要求：佐證燈號第 6 盞（短期持有者成本 vs 真實市場均價，Murphy 的 STH-RP vs TMMP；只作佐證、不參與 P23 判定），
+#   與六盞燈的走勢圖資料（近 3 年、配價格線；只作讀值）。不另打 API：沿用 G1 的 CoinMetrics 與 G4 已抓的 bitcoin-data 序列。見 stage_viz.py
+try:
+    import stage_viz
+    _tmd = dict(MFS.get('true-market-mean') or []); _sthd = SER.get('sth-realized-price') or {}
+    _it = stage_viz.tmm_light(_sthd, _tmd) if _tmd and _sthd else None
+    if _it and R.get('stage_evidence'):
+        _se = R['stage_evidence']; _se['items'].append(_it); _se['ok'] = sum(e['ok'] for e in _se['items']); _se['n'] = len(_se['items'])
+    R['stage_viz'] = stage_viz.build(mv, ex, _sthd, _tmd, LAST)
+except Exception as e: errors.append(f'stage_viz {e}')
 
 # ---------- G5. 2026-10-02 使用者要求：掛單簿深度（Coinbase／Kraken／Bitstamp 三家合計，舊口徑保留供序列比較；Binance 現貨改由 G5b 經 data-api.binance.vision 取得，Binance 期貨 451、Bybit 403 不可用）。只作讀值，不連動任何規則 ----------
 try:

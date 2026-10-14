@@ -549,3 +549,12 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .foot .follow-foot b { color: var(--red-ink); font-weight: 600; }
 .foot .follow-foot:hover { text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 860px) { .foot .follow-foot { margin-left: 0; flex-basis: 100%; font-size: 12.5px; } }
+
+/* 佐證燈號走勢圖（2026-10-14）：桌機兩欄、手機一欄 */
+.evcharts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px 24px; margin: 14px 0 6px; }
+.evc { min-width: 0; }
+.evc .panel-h h3 { font-size: 14px; margin: 0; display: flex; align-items: center; gap: 6px; }
+.evc > .note { margin: 4px 0 6px; }
+@media (max-width: 860px) { .evcharts { grid-template-columns: minmax(0, 1fr); } }
+.evc.wide { grid-column: 1 / -1; }
+.evc .panel-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }

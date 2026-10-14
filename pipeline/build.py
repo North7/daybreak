@@ -47,7 +47,7 @@ def stage_p23(prev, ms):
     return {'stage': new, 'since': td['bar_date'] if new != cur else prev['since'], 'capitulation_seen': cap}
 ms = td.get('market_stage') or {}
 sm['market_stage_p23'] = st23 = stage_p23(sm.get('market_stage_p23') or {'stage': '轉換期', 'since': '2026-09-10', 'capitulation_seen': True}, ms)
-stage = dict({k: v for k, v in ms.items() if k != 'note'}, **st23, evidence=td.get('stage_evidence'),
+stage = dict({k: v for k, v in ms.items() if k != 'note'}, **st23, evidence=td.get('stage_evidence'), viz=td.get('stage_viz'),
              bull_need=dict(run=30), bear_back=dict(transition_below_run=5, bull_below_falling_run=30))
 ladder = model['exit_framework']['ladder']
 nxt = next((x for x in ladder if x > c), None)
