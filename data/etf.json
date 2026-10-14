@@ -300,6 +300,12 @@
    "d": "2026-10-09",
    "musd": 21.1,
    "partial": false
+  },
+  {
+   "d": "2026-10-12",
+   "musd": -65.4,
+   "partial": true,
+   "src": "暫定：Farside −65.4（官網表格與官方 X 貼文）；SoSoValue −65.401（Crypto Briefing、PANews 轉述）"
   }
  ],
  "source": "The Block",
