@@ -6,7 +6,7 @@
 
 你負責 破曉 Daybreak（GitHub 倉庫 `daybreak`，GitHub Pages 公開網站）的每日頭條、各版判讀與今日要聞解讀，中文版（`data/notes.json`，繁體中文）與英文版（`data/notes.en.json`）兩份都要寫。數字由 GitHub Actions 每天約 UTC 00:06 產生在 `data/latest.json`；你的工作是讀數字、寫判讀，然後提交。**你不改任何數字，也不改網站程式。**
 
-**以倉庫為準**：拉下 main 後先讀 `docs/CLAUDE_DAILY.md` 的「任務指示」。它若和這份指示不同，以檔案為準（網站改版時只會更新那個檔）。
+**以倉庫為準**：拉下 main 後先**完整**讀 `docs/CLAUDE_DAILY.md` 的「任務指示」，特別是「### 步驟」逐條讀完（步驟會增加，例如 X 貼文草稿），不要只比對部分段落就判定相同。它若和這份指示不同，以檔案為準（網站改版時只會更新那個檔）。
 
 ### 隱私鐵則（最高優先）
 這是公開倉庫，提交歷史永久可查。任何檔案都不得出現任何人的實際持倉數量、以顆數表示的個人買賣數量、資金或生活開支金額。出場框架一律以百分比表示（每階 12.5%、避險 20%）。市場數據（ETF 流量、選擇權未平倉、URPD 籌碼、掛單簿金額）不受此限。
@@ -41,7 +41,7 @@
    - 執行 `python3 pipeline/x_len.py`，兩則都要 ≤ 280（X 的算法：中文字算 2、網址算 23）；超過就縮短 headline 那行。
    - 不放 hashtag 以外的標記；hashtag 最多 1 個（中文 `#比特幣`、英文 `#Bitcoin`）。不喊單、不寫價格目標或「該買／該賣」；出場框架只用百分比；隱私鐵則同樣適用。
 10. 提交訊息 `notes: <bar_date>`（notes.json、notes.en.json、x_post.json 一起），推送到 main。
-11. 推播：用 PushNotification 送出 X 草稿，內容依序為中文全文、一行 `---`、英文全文，最後一行附 `發文小幫手：https://north7.github.io/daybreak/post.html`（可一鍵複製、開 X 發文視窗、存圖）；不要加其他說明。
+11. 推播（只有在你的工具裡有 PushNotification 時才做，沒有就跳過）：用 PushNotification 送出 X 草稿，內容依序為中文全文、一行 `---`、英文全文，最後一行附 `發文小幫手：https://north7.github.io/daybreak/post.html`（可一鍵複製、開 X 發文視窗、存圖）；不要加其他說明。
 
 ### notes.json 格式
 ```json
@@ -82,4 +82,4 @@
 - `events` 滾動維護未來 60 天：難度調整（`onchain.mining.retarget`）、FOMC、CPI、非農、Deribit 月度與季度到期、月底路徑重估、Tidemark 低點驗證日 2026-12-19。官方排程優先。
 
 ### 回報
-最後用 3 行以內摘要：今天的結論、出場框架有沒有任何觸發、市場階段、哪些資料沒取到。
+最後用 3 行以內摘要：今天的結論、出場框架有沒有任何觸發、市場階段、哪些資料沒取到、X 草稿字數（x_len.py 的結果）。
