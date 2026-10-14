@@ -54,7 +54,8 @@
   function bisect(a, x) { var lo = 0, hi = a.length - 1; while (hi - lo > 1) { var m = (lo + hi) >> 1; if (a[m][0] < x) lo = m; else hi = m; } return Math.abs(a[lo][0] - x) <= Math.abs(a[hi][0] - x) ? lo : hi; }
   function animateLines(el) {
     if (reduced || el._drawn) return; el._drawn = true;
-    el.querySelectorAll('path.ln').forEach(function (p) { try { var L = p.getTotalLength(); p.style.setProperty('--len', L); p.classList.add('draw'); } catch (e) {} });
+    // 2026-10-14：虛線（推測、還沒發生的部分）不套描線動畫，動畫的 stroke-dasharray 會蓋掉虛線樣式、讓它變成實線
+    el.querySelectorAll('path.ln:not([stroke-dasharray])').forEach(function (p) { try { var L = p.getTotalLength(); p.style.setProperty('--len', L); p.classList.add('draw'); } catch (e) {} });
   }
 
   /* 折線／面積圖：x 為日期序號（天）或數值；可對數 y；參考線、區段、標記；十字線 tooltip */
@@ -334,7 +335,7 @@
       var e = by[id], PX = [_T('BTC 價格', 'BTC price'), 'var(--ink-3)'], PX2 = [_T('BTC 價格（另一刻度）', 'BTC price (own scale)'), 'var(--ink-3)'], STH = [_T('短期持有者成本', 'STH cost'), 'var(--s2)'];
       var lg = { tmm: [STH, [_T('真實市場均價', 'True market mean'), 'var(--s3)'], PX, [_T('近 30 日速度外推', 'Extrapolated at 30-day pace'), 'var(--ink-3)', 'dash']], sth: [STH, PX],
         mom12: [PX, [_T('一年前的價格', 'Price a year earlier'), 'var(--s2)'], [_T('未來要比的價格（已知）', 'Year-ago price ahead (known)'), 'var(--s2)', 'dash']],
-        mvrv1y: [['MVRV', 'var(--s1)'], [_T('一年均值', '1-year mean'), 'var(--s3)', 'dash'], PX2], rcgrowth: [[_T('實現市值 30 日變化', 'Realized cap, 30-day change'), 'var(--s4)'], PX2], xs90: [[_T('交易所供給 90 日變化', 'Exchange supply, 90-day change'), 'var(--s2)'], PX2] }[id];
+        mvrv1y: [['MVRV', 'var(--s1)'], [_T('一年均值', '1-year mean'), 'var(--s3)'], PX2], rcgrowth: [[_T('實現市值 30 日變化', 'Realized cap, 30-day change'), 'var(--s4)'], PX2], xs90: [[_T('交易所供給 90 日變化', 'Exchange supply, 90-day change'), 'var(--s2)'], PX2] }[id];
       var seg = id === 'tmm' ? '<div class="seg" id="ev-tmm-seg"><button aria-pressed="true" data-v="1">' + _T('近 1 年', '1 year') + '</button><button aria-pressed="false" data-v="3">' + _T('3 年', '3 years') + '</button></div>' : '';
       return '<div class="evc' + (id === 'tmm' ? ' wide' : '') + '"><div class="panel-h"><h3><span class="mk-s' + (e.ok ? ' ok' : '') + '">' + (e.ok ? '✓' : '×') + '</span>' + esc(_T(e.label, (EV_EN[id] || [])[0] || e.label)) + '</h3>' + seg + '</div><p class="note">' + esc(evSay(e, sv)) + '</p>' + legend(lg) + '<div class="chart" id="c-ev-' + id + '"></div></div>';
     }).join('') + '</div>' + _T('<p class="note">走勢圖近 3 年、每 3 天一點；灰線是 BTC 價格（CoinMetrics；不同刻度的圖只看方向）。外推與「價格不動」都只是讀值，不是預測。</p>', '<p class="note">Charts cover 3 years, one point every 3 days; the grey line is the BTC price (CoinMetrics; where it has its own scale, read only its direction). Extrapolations and “if price stays flat” are readings, not forecasts.</p>');
@@ -348,7 +349,7 @@
     var pctf = function (d) { return function (v) { return (v > 0 ? '+' : '') + v.toFixed(d) + '%'; }; };
     var C = {
       mom12: function (el) { var a = (sv.mom12 || {}).ago || [], af = (sv.mom12 || {}).ahead_from; lineChart(el, { h: 200, log: true, series: [pxS, { name: _T('一年前的價格', 'Price a year earlier'), data: a.filter(function (r) { return r[0] <= af; }), color: 'var(--s2)', w: 1.6, end: false }, { name: _T('未來要比的價格', 'Year-ago price ahead'), data: a.filter(function (r) { return r[0] >= af; }), color: 'var(--s2)', dash: '4 4', w: 1.6, end: false }], vlines: [{ x: today, label: _T('今天', 'today') }], tipFmt: fmt.usd, aria: _T('12 個月動能', '12-month momentum') }); },
-      mvrv1y: function (el) { var v = sv.mvrv1y || {}; lineChart(el, { h: 200, log2: true, series: [px2, { name: 'MVRV', data: v.v || [], color: 'var(--s1)', w: 1.8 }, { name: _T('一年均值', '1-year mean'), data: v.ma || [], color: 'var(--s3)', dash: '5 4', w: 1.6, end: false }], yFmt: function (x) { return x.toFixed(1); }, tipFmt: function (x) { return x.toFixed(3); }, aria: _T('MVRV 對一年均值', 'MVRV vs 1-year mean') }); },
+      mvrv1y: function (el) { var v = sv.mvrv1y || {}; lineChart(el, { h: 200, log2: true, series: [px2, { name: 'MVRV', data: v.v || [], color: 'var(--s1)', w: 1.8 }, { name: _T('一年均值', '1-year mean'), data: v.ma || [], color: 'var(--s3)', w: 1.6, end: false }], yFmt: function (x) { return x.toFixed(1); }, tipFmt: function (x) { return x.toFixed(3); }, aria: _T('MVRV 對一年均值', 'MVRV vs 1-year mean') }); },
       rcgrowth: function (el) { lineChart(el, { h: 200, log2: true, series: [px2, { name: _T('30 日變化', '30-day change'), data: (sv.rcgrowth || {}).v || [], color: 'var(--s4)', area: true }], refs: [{ y: 0, color: 'var(--ink-3)' }], yFmt: pctf(0), tipFmt: pctf(2), aria: _T('資金流入', 'Capital inflow') }); },
       xs90: function (el) { lineChart(el, { h: 200, log2: true, series: [px2, { name: _T('90 日變化', '90-day change'), data: (sv.xs90 || {}).v || [], color: 'var(--s2)', area: true }], refs: [{ y: 0, color: 'var(--ink-3)' }], yFmt: pctf(0), tipFmt: pctf(2), aria: _T('交易所供給', 'Exchange supply') }); },
       sth: function (el) { lineChart(el, { h: 200, log: true, series: [pxS, { name: _T('短期持有者成本', 'STH cost'), data: (sv.sth || {}).v || [], color: 'var(--s2)', w: 1.8 }], tipFmt: fmt.usd, aria: _T('短期持有者成本', 'STH cost') }); },

@@ -558,3 +558,4 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 @media (max-width: 860px) { .evcharts { grid-template-columns: minmax(0, 1fr); } }
 .evc.wide { grid-column: 1 / -1; }
 .evc .panel-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+/* 虛線＝推測、還沒發生的部分（2026-10-14）：不套描線動畫，直接顯示（見 app.js animateLines） */
