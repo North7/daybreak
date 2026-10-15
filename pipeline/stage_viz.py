@@ -92,7 +92,7 @@ def build(mv, ex, sth, tmm, last):
 
 
 def sopr_viz(sopr, px, days=365, depth=0.995, near=0.04, within=60):
-    """2026-10-14 使用者要求：短期持有者認賠賣壓（STH-SOPR，bitcoin-data，晚約 7 天）。只作讀值、不連動任何規則。
+    """2026-10-14 使用者要求：短期持有者認賠賣壓（STH-SOPR；2026-10-15 起資料來自 CheckOnChain，晚約 1 天）。只作讀值、不連動任何規則。
     認賠段＝SOPR 連續低於 1 的日子；段內最低點＝這次認賠的深度（最低 < depth 才算一次）。
     價格回到前一次認賠低點附近（±near）、且相隔 ≤ within 天時，比較兩次深度：比上次淺＝賣壓遞減，比上次深＝賣壓加重。
     日線粒度：隔幾天內的兩次下殺可能落在同一段。"""
@@ -117,7 +117,7 @@ def sopr_viz(sopr, px, days=365, depth=0.995, near=0.04, within=60):
     lv = s[-1][1]
     return dict(date=last, value=round(lv, 4), rows=rows, dips=[dict(dp, x=dn(dp['d'])) for dp in dips if dp['d'] >= start],
                 below_run=next((k for k, (_, v) in enumerate(reversed(s)) if v >= 1), len(s)),
-                note='bitcoin-data，晚約 7 天；日線。只作讀值')
+                note='CheckOnChain，晚約 1 天；日線。只作讀值')
 
 
 # 2026-10-14 使用者要求：鏈上指標表與頂部雷達的每一項都畫近 3 年走勢（配價格線，價格沿用 build() 的 px）。只作讀值。

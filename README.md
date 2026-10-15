@@ -78,7 +78,8 @@
 |---|---|---|
 | Kraken | 日線價格、均線、ATR、波動、短週期 | 每日 |
 | CoinMetrics Community | MVRV、實現價、**頂部三指標（MVRV Z／NUPL／Puell）**、交易所供給、實現市值、冪律、長期價格 | 每日（晚 1 天） |
-| bitcoin-data.com | 持有者成本、STH／LTH SOPR、籌碼流向、URPD、流動性供給、頂部雷達 | 每日 14 次請求（免費層上限 15） |
+| bitcoin-data.com | 持有者成本、LTH SOPR、籌碼流向、URPD、流動性供給、頂部雷達 | 每日 13 次請求（免費層上限 15） |
+| CheckOnChain 公開圖表 | STH-SOPR（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
 | Deribit | DVOL、期貨基差、選擇權、永續資金費率 | 每日 |
 | OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權） | 每日 |
 | 13 個交易所掛單簿 | Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Kraken Futures、OKX Swap、Hyperliquid | 每日快照 |
@@ -97,7 +98,7 @@
 
 ```
 cron-job.org ──(repository_dispatch)──▶ GitHub Actions
-   22:40 UTC  prefetch.yml  → bd_rotation.py → pipeline/bd_cache/        （bitcoin-data 8 個）
+   22:40 UTC  prefetch.yml  → bd_rotation.py → pipeline/bd_cache/        （bitcoin-data 7 個）
    00:06 UTC  daily.yml     → collect.py → today.json
                             → etf.py     → data/etf.json
                             → build.py   → data/latest.json、data/history/、data/archive/
@@ -183,7 +184,8 @@ pipeline/build.py        today.json → data/latest.json；最後呼叫 archive.
 pipeline/archive.py      往期封存（一次性回填：python3 pipeline/archive.py --backfill-git）
 pipeline/brief.py        印出精簡摘要給 Claude 讀
 pipeline/etf.py          從 The Block 更新 ETF 每日淨流量
-pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 8 個
+pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 7 個
+pipeline/coc.py          STH-SOPR：讀 CheckOnChain 公開圖表（晚約 1 天）
 pipeline/bd_cache/       前一晚抓的鏈上指標快取
 pipeline/check_i18n.py   檢查 app.js 每個 _t() 都有英文
 pipeline/stamp_assets.py 更新 index.html 的 ?v= 版本號
@@ -213,7 +215,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 
 ## 已知限制
 
-- **bitcoin-data.com** 免費層每小時 10 次、每日 15 次；目前每天用 14 次。部分序列（例如持有者成本）本身就晚 5–6 天，頁首「資料狀態」會標出落後天數。
+- **bitcoin-data.com** 免費層每小時 10 次、每日 15 次；目前每天用 13 次（STH-SOPR 改由 CheckOnChain 提供）。部分序列（例如持有者成本）本身就晚 5–6 天，頁首「資料狀態」會標出落後天數。
 - **ETF**：Farside 用 Cloudflare 擋自動抓取，改用 The Block 的圖表 JSON（逐日與 Farside 比對一致）；The Block 只公布已完整的交易日，約晚一天。
 - **掛單簿**是資料管線執行當下的快照；Binance 期貨與 Bybit 讀不到，永續部分偏低估；掛單隨時可撤。
 - **鯨魚分層**：地址不等於實體，≥10K BTC 的地址多為交易所冷錢包與 ETF 託管，錢包整理會讓幣在分層之間移動；若 BitInfoCharts 改版或擋 GitHub Actions，該區塊顯示「本日未取得」。
@@ -245,6 +247,8 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 每個數字附解讀；英文版與依 IP 判斷語言；手機日夜／語言切換。
   - 新增：實現市值 30 日變化、鯨魚與大戶、短週期、穩定幣、Coinbase 溢價、算力帶、ETF 換算 BTC、多家資金費率、恐懼貪婪。
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
+- **2026-10-15**
+  - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
 - **2026-10-14**
   - 市場階段佐證燈號加第 6 盞：短期持有者成本 vs 真實市場均價（只作佐證）；六盞燈都有近 3 年走勢圖配 BTC 價格線，附「離翻轉多遠、以近 30 日速度大約何時交叉」的讀值（`pipeline/stage_viz.py`）。
   - X 推廣：英文連結預覽卡、發文小幫手 `post.html`。
@@ -310,7 +314,8 @@ All free public APIs; no keys required.
 |---|---|---|
 | Kraken | Daily price, moving averages, ATR, volatility, short cycle | Daily |
 | CoinMetrics Community | MVRV, realized price, **top-3 indicators (MVRV Z / NUPL / Puell)**, exchange supply, realized cap, power law, long-term price | Daily (1-day lag) |
-| bitcoin-data.com | Holder cost basis, STH/LTH SOPR, supply flows, URPD, liquid supply, top radar | 14 requests a day (free tier allows 15) |
+| bitcoin-data.com | Holder cost basis, LTH SOPR, supply flows, URPD, liquid supply, top radar | 13 requests a day (free tier allows 15) |
+| CheckOnChain public charts | STH-SOPR (about 1 day late; `pipeline/coc.py` reads it once a day and falls back to `pipeline/coc_cache/`) | Doesn't use bitcoin-data quota |
 | Deribit | DVOL, futures basis, options, perp funding | Daily |
 | OKX, Hyperliquid | Funding (OI-weighted with Deribit) | Daily |
 | 13 exchange order books | Coinbase, Bitstamp, Gemini, Bitfinex, Kraken, Binance, OKX, Gate, MEXC, Deribit, Kraken Futures, OKX Swap, Hyperliquid | Daily snapshot |
@@ -329,7 +334,7 @@ The "Data status" bar at the top lists every source's data date and lag. If a so
 
 ```
 cron-job.org ──(repository_dispatch)──▶ GitHub Actions
-   22:40 UTC  prefetch.yml  → bd_rotation.py → pipeline/bd_cache/        (8 bitcoin-data series)
+   22:40 UTC  prefetch.yml  → bd_rotation.py → pipeline/bd_cache/        (7 bitcoin-data series)
    00:06 UTC  daily.yml     → collect.py → today.json
                             → etf.py     → data/etf.json
                             → build.py   → data/latest.json, data/history/, data/archive/
@@ -403,7 +408,7 @@ Pull requests run **Site checks** (`.github/workflows/check.yml`): syntax, Engli
 
 ### Known limits
 
-- **bitcoin-data.com** free tier: 10 requests per hour, 15 per day; we use 14. Some series (e.g. holder cost basis) are themselves 5–6 days behind; the data-status bar shows the lag.
+- **bitcoin-data.com** free tier: 10 requests per hour, 15 per day; we use 13 (STH-SOPR now comes from CheckOnChain). Some series (e.g. holder cost basis) are themselves 5–6 days behind; the data-status bar shows the lag.
 - **ETF flows**: Farside blocks automated access behind Cloudflare, so we use The Block's chart JSON (matches Farside day by day); The Block only publishes complete trading days, about one day late.
 - **Order book** is a snapshot at pipeline run time; Binance futures and Bybit are not readable, so perpetual depth is understated; orders can be pulled at any time.
 - **Whale tiers**: one address is not one entity; ≥10K BTC addresses are mostly exchange cold wallets and ETF custodians, and wallet reshuffles move coins between tiers. If BitInfoCharts changes its page or blocks GitHub Actions, the panel shows "not available today".
@@ -435,6 +440,8 @@ This repository is public and its history is permanent. The site holds only mark
   - A reading under every number; English edition with IP-based default language; theme/language switch on phones.
   - New: realized-cap 30-day change, whales and big holders, short cycle, stablecoins, Coinbase premium, Hash Ribbons, ETF flows in BTC, multi-venue funding, Fear & Greed.
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
+- **2026-10-15**
+  - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
 - **2026-10-14**
   - Sixth supporting light for the market stage: short-term holder cost vs true market mean (supporting only). All six lights get 3-year charts with the BTC price, plus a reading of how far each is from flipping and, at the last 30 days' pace, roughly when the lines cross (`pipeline/stage_viz.py`).
   - Promotion on X: English link-preview card, posting helper `post.html`.

@@ -257,11 +257,19 @@ except Exception as e: errors.append(f'samesource {e}')
 
 # ---------- B. 鏈上 ----------
 # 2026-10-12：mvrv-zscore、nupl、puell-multiple 改由 G1a 用 CoinMetrics 自算（bitcoin-data 版晚約 6 天）；sopr、realized-price 退役（見 bd_rotation.py）
-OC = {'asopr': 'aSopr', 'sth-sopr': 'sthSopr',
+# 2026-10-15：sth-sopr 改用 CheckOnChain（晚約 1 天，見下方 B2 與 coc.py），不再向 bitcoin-data 要（它的 SOPR 系列晚約 7 天）
+OC = {'asopr': 'aSopr',
       'lth-sopr': 'lthSopr', 'sth-realized-price': 'sthRealizedPrice',
       'lth-realized-price': 'lthRealizedPrice', 'illiquid-supply': 'illiquidSupply', 'highly-liquid-supply': 'highlyLiquidSupply'}
 # 2026-10-01 月度複盤：reserve-risk、active-addresses 退役（零資訊量、零結論變更；省 bitcoin-data 2 次請求，見 revisions／b12）
 R['onchain'] = {}; SER = {}
+def _oc_stat(m, ser):   # 鏈上指標表的統一算法：最新值、四年百分位、7／30 日變化、7 日均與其百分位
+    SER[m] = ser; s_ = sorted(ser.items()); d_, v_ = s_[-1]
+    cut = (dt.date.fromisoformat(d_) - dt.timedelta(days=1461)).isoformat(); w4 = [x for dd, x in s_ if dd >= cut]
+    ma7 = sum(x for _, x in s_[-7:]) / 7; m7s = [sum(x for _, x in s_[i - 6:i + 1]) / 7 for i in range(6, len(s_))]
+    return dict(date=d_, value=v_, pct_4y=round(sum(x < v_ for x in w4) / len(w4) * 100, 1), n=len(w4),
+                chg7_pct=_dchg(ser, d_, 7, v_), chg30_pct=_dchg(ser, d_, 30, v_),
+                ma7=round(ma7, 4), ma7_pct_own=round(sum(x < ma7 for x in m7s) / len(m7s) * 100, 1))
 for m, fld in OC.items():
     try:
         js = bd(m); ser = {}
@@ -276,6 +284,13 @@ for m, fld in OC.items():
                                ma7=round(ma7, 4), ma7_pct_own=round(sum(x < ma7 for x in m7s) / len(m7s) * 100, 1))
         if m == 'illiquid-supply': R['onchain'][m]['aug31'] = ser.get('2026-08-31')
     except Exception as e: errors.append(f'onchain {m}: {e}')
+# B2. 2026-10-15 使用者選擇：STH-SOPR 改讀 CheckOnChain 公開圖表（晚約 1 天；失敗時用上次成功的快取），不佔 bitcoin-data 額度
+try:
+    import coc
+    _cs, _cst = coc.get()
+    R['onchain']['sth-sopr'] = dict(_oc_stat('sth-sopr', _cs), source='CheckOnChain', source_url=coc.PAGE)
+    if _cst != 'live': errors.append(f'checkonchain sth-sopr 用快取：{_cst}')
+except Exception as e: errors.append(f'checkonchain sth-sopr: {e}')
 try:
     # 2026-09-23 週檢：第三轉換條件量化＝STH 成本基礎 ÷ LTH 成本基礎（＝LTH-MVRV ÷ STH-MVRV，與價格無關）
     sr, lr_ = R['onchain']['sth-realized-price'], R['onchain']['lth-realized-price']
