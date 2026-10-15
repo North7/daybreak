@@ -63,7 +63,7 @@ out = {
             'viz': {k: (td.get('ex_viz') or {}).get(k) for k in ('vol', 'basis', 'options')}},
   'flows': {'etf': etf['rows'], 'fred': td.get('fred'), 'dfii10': (td.get('extra') or {}).get('dfii10'), 'rc_liq': td.get('rc_liquidity'),
             'stables': td.get('stables'), 'cb_premium': td.get('cb_premium'), 'fear_greed': td.get('fear_greed')},
-  'onchain': {'metrics': onchain, 'top_radar': td.get('top_radar'), 'cost_ratio': td.get('lth_sth_cost_ratio'), 'mining': td.get('mining'), 'whales': td.get('whales'), 'hash_ribbons': td.get('hash_ribbons'),
+  'onchain': {'metrics': onchain, 'top_radar': td.get('top_radar'), 'viz': td.get('onchain_viz'), 'cost_ratio': td.get('lth_sth_cost_ratio'), 'mining': td.get('mining'), 'whales': td.get('whales'), 'hash_ribbons': td.get('hash_ribbons'),
               'exchange': {k: cmr.get(k) for k in ('exchange_supply_btc', 'exchange_supply_share_pct', 'exchange_supply_chg7_pct', 'exchange_supply_chg30_pct', 'exchange_supply_chg90_pct', 'exchange_supply_date')}},
   'chips': {'flow': {k: v for k, v in (td.get('murphy_flow') or {}).items() if k != 'urpd'}, 'urpd': {k: v for k, v in ((td.get('murphy_flow') or {}).get('urpd') or {}).items() if k != 'band'}, 'viz': td.get('murphy_viz')},
   'orderbook': {k: v for k, v in (td.get('orderbook_viz') or {}).items() if k != 'near'} or None,   # 2026-10-12 掛單簿併入衍生品版（保留全景柱狀圖；不再用的 ±1% 近端分格不輸出）

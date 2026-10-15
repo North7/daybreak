@@ -528,7 +528,7 @@ RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProf
 R['top_radar'] = {}
 for m, fld in RAD.items():
     try:
-        js = bd(m); ser = sorted((r['d'], float(r[fld])) for r in js if r.get(fld) not in (None, ''))
+        js = bd(m); ser = sorted((r['d'], float(r[fld])) for r in js if r.get(fld) not in (None, '')); SER[m] = dict(ser)   # 2026-10-14：完整序列給鏈上走勢圖
         cy = [v for d_, v in ser if d_ >= '2022-11-21']; v = ser[-1][1]
         at_top = [v_ for d_, v_ in ser if '2025-09-22' <= d_ <= '2025-10-20']
         R['top_radar'][m] = dict(date=ser[-1][0], value=round(v, 4), pct_since_2022_11=round(sum(x < v for x in cy) / len(cy) * 100, 1),
@@ -631,6 +631,10 @@ try:
     if _it and R.get('stage_evidence'):
         _se = R['stage_evidence']; _se['items'].append(_it); _se['ok'] = sum(e['ok'] for e in _se['items']); _se['n'] = len(_se['items'])
     R['stage_viz'] = stage_viz.build(mv, ex, _sthd, _tmd, LAST)
+    R['onchain_viz'] = stage_viz.onchain_viz(SER)   # 鏈上指標走勢（近 3 年；價格線沿用 stage_viz 的 px）
+    # 短期持有者認賠賣壓（STH-SOPR ＋ 價格；放進籌碼流向圖表資料，頁面在鏈上版）
+    if SER.get('sth-sopr') and R.get('murphy_viz') is not None:
+        R['murphy_viz']['sopr'] = stage_viz.sopr_viz(SER['sth-sopr'], {x[0]: x[1] for x in mv})
 except Exception as e: errors.append(f'stage_viz {e}')
 
 # ---------- G5. 2026-10-02 使用者要求：掛單簿深度（Coinbase／Kraken／Bitstamp 三家合計，舊口徑保留供序列比較；Binance 現貨改由 G5b 經 data-api.binance.vision 取得，Binance 期貨 451、Bybit 403 不可用）。只作讀值，不連動任何規則 ----------

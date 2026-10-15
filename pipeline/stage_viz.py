@@ -89,3 +89,65 @@ def build(mv, ex, sth, tmm, last):
                         crosses=[[dn(cd[k]), 'up' if sth[cd[k]] > tmm[cd[k]] else 'down'] for k in range(1, len(cd))
                                  if (sth[cd[k]] > tmm[cd[k]]) != (sth[cd[k - 1]] > tmm[cd[k - 1]]) and cd[k] >= start])
     return V
+
+
+def sopr_viz(sopr, px, days=365, depth=0.995, near=0.04, within=60):
+    """2026-10-14 使用者要求：短期持有者認賠賣壓（STH-SOPR，bitcoin-data，晚約 7 天）。只作讀值、不連動任何規則。
+    認賠段＝SOPR 連續低於 1 的日子；段內最低點＝這次認賠的深度（最低 < depth 才算一次）。
+    價格回到前一次認賠低點附近（±near）、且相隔 ≤ within 天時，比較兩次深度：比上次淺＝賣壓遞減，比上次深＝賣壓加重。
+    日線粒度：隔幾天內的兩次下殺可能落在同一段。"""
+    s = sorted(sopr.items())
+    if len(s) < 60: return None
+    last = s[-1][0]; start = (dt.date.fromisoformat(last) - dt.timedelta(days=days)).isoformat()
+    dips, seg = [], []
+    for t, v in s + [(None, 9)]:
+        if t is not None and v < 1: seg.append((t, v)); continue
+        if seg:
+            m = min(seg, key=lambda z: z[1])
+            if m[1] < depth: dips.append(dict(d=m[0], sopr=round(m[1], 4), days_below=len(seg), open=t is None))
+            seg = []
+    for i, dp in enumerate(dips):
+        p = px.get(dp['d']); dp['price'] = round(p) if p else None
+        if not p: continue
+        prev = [q for q in dips[:i] if q.get('price') and 0 < (dt.date.fromisoformat(dp['d']) - dt.date.fromisoformat(q['d'])).days <= within and abs(p / q['price'] - 1) <= near]
+        if prev:
+            q = prev[-1]; dp['vs'] = dict(d=q['d'], sopr=q['sopr'], price=q['price'])
+            dp['kind'] = 'easing' if dp['sopr'] > q['sopr'] else 'heavier' if dp['sopr'] < q['sopr'] else 'flat'
+    rows = [[dn(t), round(v, 4), round(px[t]) if t in px else None] for t, v in s if t >= start]
+    lv = s[-1][1]
+    return dict(date=last, value=round(lv, 4), rows=rows, dips=[dict(dp, x=dn(dp['d'])) for dp in dips if dp['d'] >= start],
+                below_run=next((k for k, (_, v) in enumerate(reversed(s)) if v >= 1), len(s)),
+                note='bitcoin-data，晚約 7 天；日線。只作讀值')
+
+
+# 2026-10-14 使用者要求：鏈上指標表與頂部雷達的每一項都畫近 3 年走勢（配價格線，價格沿用 build() 的 px）。只作讀值。
+#   (key, 畫法, 參考線)：ma7＝畫 7 日均（SOPR 日值雜訊大）；p80＝四年 80 百分位（頂部三指標的頂部區門檻）；top2025＝2025 頂部附近的極值；one＝1.0
+OC_VIZ = [('mvrv-zscore', 'raw', 'p80'), ('nupl', 'raw', 'p80'), ('puell-multiple', 'raw', 'p80'),
+          ('asopr', 'ma7', 'one'), ('sth-sopr', 'ma7', 'one'), ('lth-sopr', 'ma7', 'one'),
+          ('illiquid-supply', 'raw', None), ('highly-liquid-supply', 'raw', None),
+          ('lth-mvrv-zscore', 'raw', 'top2025'), ('supply-in-profit-pct', 'raw', 'top2025'), ('lth-net-position-change-30d-btc', 'raw', 'top2025')]
+
+
+def onchain_viz(SER, years=YEARS, step=STEP):
+    out = {}
+    for key, how, ref in OC_VIZ:
+        ser = sorted((SER.get(key) or {}).items())
+        if len(ser) < 30: continue
+        last = ser[-1][0]; start = (dt.date.fromisoformat(last) - dt.timedelta(days=365 * years)).isoformat()
+        vals = [v for _, v in ser]
+        if how == 'ma7': pts = [[dn(ser[k][0]), round(sum(vals[k - 6:k + 1]) / 7, 4)] for k in range(6, len(ser)) if ser[k][0] >= start]
+        else: pts = [[dn(t), round(v, 4) if abs(v) < 1e4 else round(v)] for t, v in ser if t >= start]
+        o = dict(date=last, how=how, rows=thin(pts, step), last=pts[-1][1] if pts else None)
+        if ref == 'p80':
+            w4 = sorted(v for t, v in ser if t >= (dt.date.fromisoformat(last) - dt.timedelta(days=1461)).isoformat())
+            o['ref'] = dict(kind='p80', y=round(w4[int(len(w4) * 0.8)], 4))
+        elif ref == 'top2025':
+            at = [v for t, v in ser if '2025-09-22' <= t <= '2025-10-20']
+            if at: o['ref'] = dict(kind='top2025', y=round((min if 'net-position' in key else max)(at), 4))
+        elif ref == 'one': o['ref'] = dict(kind='one', y=1.0)
+        # 方向：與 30 天前、90 天前比（同一畫法）
+        for dd in (30, 90):
+            j = _at_or_before([ds(r[0]) for r in pts], ds(pts[-1][0] - dd)) if pts else None
+            if j is not None: o[f'chg{dd}'] = round(pts[-1][1] - pts[j][1], 4)
+        out[key] = o
+    return out

@@ -17,6 +17,8 @@ if (d.get('flows') or {}).get('etf'):   # ETF 有 60 筆會被上面省略，摘
     out['flows']['etf_last_complete'] = next((r['d'] for r in reversed(e) if not r.get('partial')), None)
 sv = ((d.get('cycle') or {}).get('stage') or {}).get('viz') or {}   # 2026-10-14：佐證燈號走勢圖只留讀值（陣列略去）
 if sv: out['cycle']['stage']['viz_reads'] = dict(mom12={k: (sv.get('mom12') or {}).get(k) for k in ('hi30', 'flat_flip')}, tmm_cross=(sv.get('tmm') or {}).get('est'))
+so = ((d.get('chips') or {}).get('viz') or {}).get('sopr')   # 2026-10-14：短期持有者認賠賣壓只留讀值
+if so: out.setdefault('chips', {})['sopr_read'] = dict(date=so.get('date'), value=so.get('value'), below_run=so.get('below_run'), last_dips=(so.get('dips') or [])[-3:])
 if d.get('orderbook'):
     ob = d['orderbook']; out['orderbook'] = {k: ob.get(k) for k in ('ts', 'mid', 'walls', 'rounds', 'totals')}
 print(json.dumps(out, ensure_ascii=False, separators=(',', ':')))

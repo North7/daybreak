@@ -559,3 +559,15 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .evc.wide { grid-column: 1 / -1; }
 .evc .panel-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 /* 虛線＝推測、還沒發生的部分（2026-10-14）：不套描線動畫，直接顯示（見 app.js animateLines） */
+
+/* 讀圖（2026-10-14）：每張圖下方「現在」一句＋可展開的「怎麼讀這張圖」 */
+.rd { margin: 6px 0 2px; font-size: 13px; line-height: 1.6; color: var(--ink-2); }
+.rd-now { margin: 0 0 4px; }
+.rd-now b { display: inline-block; margin-right: 6px; padding: 0 5px; font-size: 11px; letter-spacing: .04em; color: var(--deck); background: var(--ink-2); border-radius: 2px; }
+.rd-how summary { cursor: pointer; color: var(--ink-3); font-size: 12px; list-style: none; }
+.rd-how summary::-webkit-details-marker { display: none; }
+.rd-how summary::before { content: '＋ '; }
+.rd-how[open] summary::before { content: '－ '; }
+.rd-how ul { margin: 4px 0 0; padding-left: 0; list-style: none; }
+.rd-how li { margin: 2px 0; }
+.rd-how li b { display: inline-block; min-width: 3.4em; margin-right: 4px; color: var(--ink); font-weight: 600; }
