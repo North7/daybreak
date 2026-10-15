@@ -637,6 +637,16 @@ try:
     MV['note'] = '只作讀值；供給比、STH 獲利比例每 2 天取一點（2022-10 起，bitcoin-data 免費歷史起點）；成本圖近 2 年：價格 Kraken 收盤、STH 成本與 TMM 為 bitcoin-data（市場組晚約 7 天）；URPD 2,000 美元一格'
     R['murphy_viz'] = MV
 except Exception as e: errors.append(f'murphy_viz {e}')
+# G4d. 2026-10-15 使用者要求：籌碼集中度（Murphy 的「現價 ±5% 內籌碼佔比」，只作讀值、不套他的 13%／15% 門檻）。
+#   不另打 API：G4 的 URPD（2,000 美元一格，格內視為均勻分布，按 ±5% 區間重疊比例計入）÷ CoinMetrics 流通量（G1）。
+#   分母不用 bitcoin-data 的 pctSupply（其合計約 21M，大於流通量）。價格用當天收盤；URPD 本身晚約 7–9 天。歷史由 build.py 存進 data/history/index.json
+try:
+    B_ = MFS['urpd']; lo5, hi5 = c * 0.95, c * 1.05
+    btc5 = sum(bs * max(0, min(hi_, hi5) - max(lo_, lo5)) / (hi_ - lo_) for lo_, hi_, bs, _ in B_ if hi_ > lo_)
+    sply = cm[-1][4]
+    R['murphy_flow']['conc5'] = dict(urpd_date=MFS['urpd_date'], price=round(c), lo=round(lo5), hi=round(hi5), btc=round(btc5), supply=round(sply),
+                                     pct=round(btc5 / sply * 100, 2), note='URPD 格內均勻分布、按重疊比例計；分母為 CoinMetrics 流通量；只作讀值')
+except Exception as e: errors.append(f'conc5 {e}')
 # G4c. 2026-10-14 使用者要求：佐證燈號第 6 盞（短期持有者成本 vs 真實市場均價，Murphy 的 STH-RP vs TMMP；只作佐證、不參與 P23 判定），
 #   與六盞燈的走勢圖資料（近 3 年、配價格線；只作讀值）。不另打 API：沿用 G1 的 CoinMetrics 與 G4 已抓的 bitcoin-data 序列。見 stage_viz.py
 try:

@@ -79,13 +79,17 @@ out = {
             'p20_run_075': cmr.get('p20_run_ge075'), 'p20_run_080': cmr.get('p20_run_ge080'),
             'p6': (td.get('ex_viz') or {}).get('p6')}},
 }
-json.dump(out, open(P('data', 'latest.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
 snap = {'date': td['bar_date'], 'close': c, 'chg_pct': td['bar'].get('chg_pct'), 'p20': cmr.get('mvrv_vs_prior'), 'pl_ratio': (td.get('powerlaw') or {}).get('ratio'),
-        'dvol': (td.get('dvol') or {}).get('value'), 'tm_top': ((td.get('tidemark') or {}).get('top') or {}).get('signal'), 'tm_bottom': ((td.get('tidemark') or {}).get('bottom') or {}).get('signal')}
+        'dvol': (td.get('dvol') or {}).get('value'), 'tm_top': ((td.get('tidemark') or {}).get('top') or {}).get('signal'), 'tm_bottom': ((td.get('tidemark') or {}).get('bottom') or {}).get('signal'),
+        'conc5': ((td.get('murphy_flow') or {}).get('conc5') or {}).get('pct'), 'conc5_urpd': ((td.get('murphy_flow') or {}).get('conc5') or {}).get('urpd_date')}
 idx_f = P('data', 'history', 'index.json')
 idx = json.load(open(idx_f)) if os.path.exists(idx_f) else []
 idx = [x for x in idx if x['date'] != snap['date']] + [snap]
-json.dump(sorted(idx, key=lambda x: x['date'])[-800:], open(idx_f, 'w'), ensure_ascii=False, indent=0)
+idx = sorted(idx, key=lambda x: x['date'])[-800:]
+json.dump(idx, open(idx_f, 'w'), ensure_ascii=False, indent=0)
+# 2026-10-15：籌碼集中度（現價 ±5%）每日走勢 [天數, 收盤, 佔流通 %]，只作讀值
+out['chips']['conc_hist'] = [[dn(x['date']), x['close'], x['conc5']] for x in idx if x.get('conc5') is not None]
+json.dump(out, open(P('data', 'latest.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
 print('built data/latest.json', td['bar_date'], os.path.getsize(P('data', 'latest.json')), 'bytes')
 
 # 給下一次 collect.py 用的最小前一日狀態（URPD 週變化、ATR 回測）；只含市場資料

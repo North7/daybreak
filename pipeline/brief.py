@@ -3,7 +3,7 @@
 import json, os
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 d = json.load(open(os.path.join(ROOT, 'data', 'latest.json')))
-DROP = {'rows', 'rows20', 'history', 'viz', 'wide', 'near', 'band', 'cost', 'profit', 'ratio', 'meta_venues', 'nodes', 'realized', 'episodes'}
+DROP = {'rows', 'rows20', 'history', 'viz', 'wide', 'near', 'band', 'cost', 'profit', 'ratio', 'meta_venues', 'nodes', 'realized', 'episodes', 'conc_hist'}
 def slim(o, depth=0):
     if isinstance(o, dict):
         return {k: slim(v, depth + 1) for k, v in o.items() if k not in DROP}
@@ -19,6 +19,8 @@ sv = ((d.get('cycle') or {}).get('stage') or {}).get('viz') or {}   # 2026-10-14
 if sv: out['cycle']['stage']['viz_reads'] = dict(mom12={k: (sv.get('mom12') or {}).get(k) for k in ('hi30', 'flat_flip')}, tmm_cross=(sv.get('tmm') or {}).get('est'))
 so = ((d.get('chips') or {}).get('viz') or {}).get('sopr')   # 2026-10-14：短期持有者認賠賣壓只留讀值
 if so: out.setdefault('chips', {})['sopr_read'] = dict(date=so.get('date'), value=so.get('value'), below_run=so.get('below_run'), last_dips=(so.get('dips') or [])[-3:])
+ch = (d.get('chips') or {}).get('conc_hist') or []   # 2026-10-15：籌碼集中度（現價 ±5%）只留最新與 7 天前、紀錄天數
+if ch: out.setdefault('chips', {})['conc5_read'] = dict(pct=ch[-1][2], d7=next((r[2] for r in reversed(ch) if r[0] <= ch[-1][0] - 7), None), days=len(ch), since='2026-10-01')
 if d.get('orderbook'):
     ob = d['orderbook']; out['orderbook'] = {k: ob.get(k) for k in ('ts', 'mid', 'walls', 'rounds', 'totals')}
 print(json.dumps(out, ensure_ascii=False, separators=(',', ':')))
