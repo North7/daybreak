@@ -300,6 +300,12 @@
    "d": "2026-10-12",
    "musd": -65.4,
    "partial": false
+  },
+  {
+   "d": "2026-10-13",
+   "musd": 175.7,
+   "partial": true,
+   "src": "暫定：Farside（Altcoin Buzz 轉述）175.7；SoSoValue（TokenPost）175.62"
   }
  ],
  "source": "The Block",
