@@ -300,6 +300,12 @@
    "d": "2026-10-14",
    "musd": -261.4,
    "partial": false
+  },
+  {
+   "d": "2026-10-15",
+   "musd": 5.1,
+   "partial": true,
+   "src": "暫定：SoSoValue +5.06；Trader T 監測 +5.07（百萬美元）"
   }
  ],
  "source": "The Block",
