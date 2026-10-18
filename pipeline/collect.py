@@ -435,6 +435,27 @@ try:
                     loss_spike_last=next((dict(date=_nd[j][0], usd_m=round(_nd[j][2] / 1e6), rank=_rank(j)) for j in range(len(_nd) - 1, len(_nd) - 366, -1) if (_rank(j) or 100) <= 2), None),
                     profit_spike_last=next((dict(date=_nd[j][0], usd_m=round(_nd[j][2] / 1e6), rank=_rank(j)) for j in range(len(_nd) - 1, len(_nd) - 366, -1) if (_rank(j) or 0) >= 98), None),
                     rows=rows_, note='CoinMetrics 實現市值日變化 − 新發行；只有淨值；rank＝之前 365 天百分位（÷ 市值）；只作讀值')
+    # 2026-10-18 使用者要求：30 日累計版（週期級別的認賠）。ratio＝30 日累計 ÷ 當日市值；thr＝之前 4 年（1,460 天）的第 3 百分位；
+    #   trig＝ratio ≤ thr 的第一天（相隔 90 天以上才算新的一次）。即時可行回測：2015-01、2018-11、2020-03、2022-06、2022-11 五次，
+    #   1 年與 2 年後全部上漲，但其中 3 次之後還再跌 17–44%；2025-10 頂部之後最深只到第 8.7 百分位（2026-02），本輪沒有觸發
+    _c30 = []
+    for j in range(29, len(_nd)):
+        if (dt.date.fromisoformat(_nd[j][0]) - dt.date.fromisoformat(_nd[j - 29][0])).days == 29:
+            cs_ = sum(x[2] for x in _nd[j - 29:j + 1]); _c30.append((_nd[j][0], _nd[j][1], cs_, cs_ / _nd[j][3]))
+    _cr = [x[3] for x in _c30]; c_rows, trig, last_t = [], [], None
+    for j, (d_, p_, cs_, r_) in enumerate(_c30):
+        w_ = sorted(_cr[max(0, j - 1460):j])
+        if d_ < '2015-01-01' or len(w_) < 700: continue
+        thr_ = w_[int(len(w_) * 0.03)]; pc_ = round(sum(v_ < r_ for v_ in w_) / len(w_) * 100, 1)
+        c_rows.append([_dn0(d_), round(p_), round(r_ * 100, 3), round(thr_ * 100, 3), round(cs_ / 1e6), pc_])
+        if r_ <= thr_:
+            if last_t is None or (dt.date.fromisoformat(d_) - dt.date.fromisoformat(last_t)).days > 90: trig.append(dict(date=d_, x=_dn0(d_), price=round(p_), usd_m=round(cs_ / 1e6)))
+            last_t = d_
+    _top = (MV.get('top2025') if 'MV' in globals() else None) or '2025-10-06'; _tx = _dn0(_top)   # 最近一次週期頂部之後最深的一點（看本輪有沒有觸發）
+    _mn = min((r_ for r_ in c_rows if r_[0] >= _tx), key=lambda r_: r_[5], default=None)
+    R['npl']['cum30'] = dict(date=_c30[-1][0], usd_m=c_rows[-1][4], pct_mcap=c_rows[-1][2], pct_4y=c_rows[-1][5], thr_pct_mcap=c_rows[-1][3], trig=trig,
+                             min_since_top=dict(top=_top, x=_mn[0], price=_mn[1], pct_4y=_mn[5], usd_m=_mn[4]) if _mn else None,
+                             rows=c_rows[::-1][::2][::-1], note='30 日累計 ÷ 市值；thr＝之前 4 年第 3 百分位；trig＝首次跌破（相隔 90 天）；2015 起每 2 天一點；只作讀值')
 except Exception as e: errors.append(f'npl {e}')
 # 2026-10-09 P23 修訂：市場階段的佐證燈號（只顯示、不作為門檻）。回測（2014 起、3–4 輪）沒有任何單一指標同時兼顧速度與少假訊號，
 # 交易所供給 90 日轉負換視窗長度就失效、且 2025 年 99% 的日子成立，所以從牛市必要條件降為佐證之一
