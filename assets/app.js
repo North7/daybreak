@@ -704,6 +704,8 @@
       'profit': { h: h('短期持有者中處於獲利的比例。', 'Share of short-term holder supply in profit.', '長時間 > 90%＝過熱、容易回檔；跌到 50% 以下＝短期持有者普遍套牢，回調中常接近階段低點。', 'Long stretches above 90% mean overheating and pullback risk; below 50% means most recent buyers are underwater, often near a local low in a correction.', '同一個數字在牛市回調和熊市裡意義不同。', 'The same reading means different things in a bull correction and a bear market.'),
         now: function () { var p = (D.chips.flow || {}).sth_in_profit_pct || {}; return _T(fmt.n(p.value, 1) + '%（7 天前 ' + fmt.n(p.d7, 1) + '%），30 日最低 ' + fmt.n(p.min30, 1) + '%（' + ymd(p.min30_date) + '）。', fmt.n(p.value, 1) + '% (' + fmt.n(p.d7, 1) + '% a week ago); 30-day low ' + fmt.n(p.min30, 1) + '% (' + ymd(p.min30_date) + ').'); } },
       'urpd': { h: h('每 2,000 美元一格：有多少顆 BTC 最後一次移動是在這個價位；橘格是現價，淡框是 7 天前。', '$2,000 buckets: how many BTC last moved at each price; the orange bucket is the current price, faint outlines are 7 days ago.', '籌碼厚的價位常成支撐或壓力（買在那裡的人會防守或解套賣出）；籌碼薄的區間價格走得快。', 'Thick buckets often act as support or resistance (holders defend or sell to break even); price moves fast through thin zones.', '交易所內部轉帳也會重設成本。', 'Exchange-internal transfers also reset the cost basis.') },
+      'npl': { h: h('上層：BTC 價格與每天的淨實現損益氣泡（綠＝當天整體獲利賣出、紅＝認賠賣出，越大金額越大，粗外圈＝在之前一年最極端的 2%）；下層：同一數字的每日柱。', 'Top: BTC price with a bubble for each day\'s net realized profit/loss (green = net profit selling, red = net loss selling, bigger = larger, thick ring = most extreme 2% of the prior year); bottom: the same numbers as daily bars.', '大綠泡集中在急漲與高點那幾天＝獲利了結；綠泡變小＝想在現價賣的人變少。回檔時出現大紅泡＝認賠出清，歷史上之後 30 天的表現比平常好。', 'Big green bubbles cluster on rallies and highs: profit taking; shrinking green bubbles mean fewer holders want to sell at this price. Big red bubbles on pullbacks are loss capitulation, after which the next 30 days have historically done better than usual.', '只有淨值（獲利減認賠），看不到兩邊各有多少；交易所內部轉帳也會實現損益。2015 起回測，認賠高峰只有約 4 成剛好在低點，獲利高峰不是頂部訊號。', 'Net only (profit minus loss), so the two sides are not visible separately; exchange-internal transfers also realize P/L. In tests since 2015, only about 4 in 10 loss spikes landed at the low, and profit spikes are not a top signal.'),
+        now: function () { var n = D.onchain.npl; if (!n) return ''; return _T('近 7 日合計 ' + nplB(n.sum7_usd_m) + '，前 7 日 ' + nplB(n.sum7_prev_usd_m) + '；最新一天 ' + nplB(n.usd_m) + '（近一年第 ' + fmt.n(n.rank_1y, 0) + ' 百分位）。', 'Past 7 days ' + nplB(n.sum7_usd_m) + ', prior 7 days ' + nplB(n.sum7_prev_usd_m) + '; latest day ' + nplB(n.usd_m) + ' (1-year percentile ' + fmt.n(n.rank_1y, 0) + ').'); } },
       'whale': { h: h('依地址餘額分層的 30 日淨變化（顆）。', '30-day net change by address-balance tier (BTC).', '鯊魚（100–1K）與鯨魚（1K–10K）同向增加＝大戶在累積；≥ 10K 多是交易所與託管，不算大戶買賣。', 'Sharks (100–1K) and whales (1K–10K) rising together means big holders are accumulating; ≥10K is mostly exchanges and custodians.', '一個地址不等於一個人，錢包整理會讓幣在分層之間移動。', 'One address is not one person; wallet reshuffles move coins between tiers.') },
       'sopr': { h: h('STH-SOPR＝短期持有者當天賣出的幣「賣價 ÷ 買價」；灰線是價格，標記是每一次認賠的最低點。', 'STH-SOPR = sale price ÷ purchase price for coins short-term holders sold that day; the grey line is price, markers are the low of each loss-selling episode.', '低於 1＝短期持有者賠錢賣（停損或恐慌）。價格回到前一次認賠的低點附近，SOPR 卻沒跌得更深＝願意認賠的人變少、賣壓遞減，常是階段性止跌的特徵；跌得更深＝賣壓加重。', 'Below 1 means short-term holders are selling at a loss. When price revisits a previous loss-selling low but SOPR doesn\'t dip as deep, fewer holders are willing to sell at a loss — a common sign of a local bottom forming; a deeper dip means selling is getting heavier.', '日線（CheckOnChain，晚約 1 天）：盤中的集中認賠會被同一天其他人的獲利賣出平均掉，單日下殺不一定跌破 1；隔幾天內的兩次下殺可能算成同一次。只是讀值，不是買點。', 'Daily data (CheckOnChain, about 1 day late): intraday loss bursts get averaged out by the same day\'s profit-taking, so a sharp drop may not push it below 1, and two drops a few days apart may merge into one episode. A reading, not a buy signal.') },
       'p20': { h: h('MVRV 除以前一輪週期高點（只用當時已知的資料）；紅線 0.75／0.80 是出場框架的鏈上賣點。', 'MVRV divided by the previous cycle\'s peak (using only data known at the time); red lines at 0.75/0.80 are the exit framework\'s on-chain sell points.', '比值越高越接近上一輪的狂熱程度；連 5 天站上 0.75 啟動第一個鏈上賣出。', 'The higher the ratio, the closer to last cycle\'s euphoria; 5 straight days above 0.75 trigger the first on-chain sale.', '每輪頂部的 MVRV 越來越低，所以用相對前一輪的比例。', 'MVRV peaks lower each cycle, hence the ratio to the previous peak.') },
@@ -769,6 +771,57 @@
         robust: 0.01, hbands: [{ y0: 0.9, y1: 1, color: 'var(--down-dim)' }], refs: [{ y: 1, color: 'var(--ink-3)', label: _T('1.0＝賣在成本', '1.0 = selling at cost') }], marks: mk,
         yFmt: function (x) { return x.toFixed(2); }, tipFmt: function (x) { return x.toFixed(4); }, aria: _T('短期持有者 SOPR', 'Short-term holder SOPR') });
     });
+  }
+  /* 每日淨實現損益（2026-10-18）：仿 Glassnode「Net Realized Profit/Loss」——上層價格線＋氣泡（面積＝淨值大小，綠＝淨獲利、紅＝淨認賠，粗外圈＝之前一年的 ≤2／≥98 百分位），
+     下層每日柱。資料為 CoinMetrics 實現市值日變化 − 新發行，只有淨值。只作讀值，不是買賣訊號 */
+  var nplRng = 180;
+  function nplB(m) { return (m >= 0 ? '+' : '−') + '$' + (Math.abs(m) >= 1000 ? fmt.n(Math.abs(m) / 1e3, 2) + 'B' : fmt.n(Math.abs(m), 0) + 'M'); }
+  function nplSay(n) {
+    if (!n) return '';
+    var ymd = function (d) { return d.replace(/-/g, '/'); }, s7 = n.sum7_usd_m, p7 = n.sum7_prev_usd_m, ls = n.loss_spike_last;
+    var tr = s7 < 0 ? ['近一週整體轉為認賠賣出', 'the past week turned to net loss selling'] : p7 <= 0 ? ['前一週以認賠為主，這週轉為獲利賣出', 'the prior week was net loss selling; this week is net profit'] : s7 < p7 * 0.6 ? ['獲利了結明顯降溫', 'profit taking has clearly cooled'] : s7 > p7 * 1.4 ? ['獲利了結增溫', 'profit taking is heating up'] : ['獲利了結大致持平', 'profit taking is roughly flat'];
+    return _T('最新 ' + ymd(n.date) + ' ' + nplB(n.usd_m) + '（近一年第 ' + fmt.n(n.rank_1y, 0) + ' 百分位）。近 7 日合計 ' + nplB(s7) + '，前 7 日 ' + nplB(p7) + '：' + tr[0] + '。' + (ls ? '最近一次明顯認賠（近一年最極端的 2%）是 ' + ymd(ls.date) + ' ' + nplB(ls.usd_m) + '。' : ''),
+      'Latest ' + ymd(n.date) + ' ' + nplB(n.usd_m) + ' (1-year percentile ' + fmt.n(n.rank_1y, 0) + '). Past 7 days ' + nplB(s7) + ', prior 7 days ' + nplB(p7) + ': ' + tr[1] + '.' + (ls ? ' The last clear loss spike (most extreme 2% of the past year) was ' + ymd(ls.date) + ' ' + nplB(ls.usd_m) + '.' : ''));
+  }
+  function nplPanel() {
+    var n = D.onchain.npl; if (!n || !n.rows) return '';
+    var seg = '<div class="seg" id="npl-seg">' + [[90, '近 3 個月', '3M'], [180, '近半年', '6M'], [365, '近 1 年', '1Y']].map(function (o) { return '<button aria-pressed="' + (o[0] === nplRng) + '" data-v="' + o[0] + '">' + _T(o[1], o[2]) + '</button>'; }).join('') + '</div>';
+    return panel('span-12', _T('每日淨實現損益', 'Daily net realized profit/loss'), _T('CoinMetrics 推算 · 晚約 1 天', 'Derived from CoinMetrics · ~1 day late'),
+      '<p class="say">' + esc(nplSay(n)) + '</p>' + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink)'], [_T('淨獲利', 'Net profit'), 'var(--up)'], [_T('淨認賠', 'Net loss'), 'var(--down)']]) + '<div class="chart" id="c-npl"></div>' +
+      _T('<p class="note">算法：實現市值（市值 ÷ MVRV）當日變化減去當天新挖出的幣，等於當天移動的幣「賣價 − 上次移動價」的淨和；和 Glassnode 的 Net Realized Profit/Loss 對照，方向與大小相符。只有淨值；粗外圈＝在之前一年最極端的 2%。只作讀值。</p>',
+         '<p class="note">Method: the daily change in realized cap (market cap ÷ MVRV) minus newly mined coins equals the net of “sale price − last-moved price” for coins moved that day; it matches Glassnode\'s Net Realized Profit/Loss in direction and size. Net only; a thick ring marks the most extreme 2% of the prior year. Reading only.</p>'), seg);
+  }
+  function drawNpl(el) {
+    var n = D.onchain.npl; if (!n || !n.rows || !el) return;
+    var r = n.rows.slice(-nplRng), W = Math.max(280, el.clientWidth), sm = W < 520;
+    var ML = 8, MR = 58, MT = 12, H1 = sm ? 190 : 250, G = 18, H2 = sm ? 84 : 112, MB = 22, Ht = MT + H1 + G + H2 + MB, pw = W - ML - MR;
+    var x0 = r[0][0], x1 = r[r.length - 1][0], X = function (d) { return ML + (d - x0) / Math.max(1, x1 - x0) * pw; };
+    var ps = r.map(function (x) { return x[1]; }), plo = Math.min.apply(null, ps), phi = Math.max.apply(null, ps), pd = (phi - plo) * 0.14 || 1; plo -= pd; phi += pd;
+    var YP = function (v) { return MT + (1 - (v - plo) / (phi - plo)) * H1; };
+    var mx = Math.max.apply(null, r.map(function (x) { return Math.abs(x[2]); })) || 1, st2 = niceStep(mx, 2), top2 = Math.ceil(mx / st2) * st2;
+    var yc = MT + H1 + G + H2 / 2, YB = function (v) { return yc - v / top2 * (H2 / 2); }, rmax = sm ? 11 : 18;
+    var col = function (v) { return v >= 0 ? 'var(--up)' : 'var(--down)'; }, s = '', pst = niceStep(phi - plo, 4), q;
+    for (q = Math.ceil(plo / pst) * pst; q <= phi; q += pst) s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + YP(q).toFixed(1) + '" y2="' + YP(q).toFixed(1) + '"/><text class="ax" x="' + (ML + pw + 8) + '" y="' + (YP(q) + 3.5).toFixed(1) + '">' + fmt.k(q) + '</text>';
+    for (q = -top2; q <= top2 + 1e-9; q += st2) s += '<line class="' + (Math.abs(q) < 1e-9 ? 'base' : 'gl') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + YB(q).toFixed(1) + '" y2="' + YB(q).toFixed(1) + '"/><text class="ax" x="' + (ML + pw + 8) + '" y="' + (YB(q) + 3.5).toFixed(1) + '">' + (Math.abs(q) < 1e-9 ? '0' : (q > 0 ? '+' : '−') + (Math.abs(q) >= 1000 ? +(Math.abs(q) / 1e3).toFixed(1) + 'B' : Math.round(Math.abs(q)) + 'M')) + '</text>';
+    r.map(function (x, i) { return i; }).sort(function (a, b) { return Math.abs(r[b][2]) - Math.abs(r[a][2]); }).forEach(function (i) {   // 大泡先畫，小泡疊在上面
+      var x = r[i], ex = x[3] != null && (x[3] <= 2 || x[3] >= 98);
+      s += '<circle cx="' + X(x[0]).toFixed(1) + '" cy="' + YP(x[1]).toFixed(1) + '" r="' + Math.max(1.5, Math.sqrt(Math.abs(x[2]) / mx) * rmax).toFixed(1) + '" fill="' + col(x[2]) + '" fill-opacity=".26" stroke="' + col(x[2]) + '" stroke-opacity="' + (ex ? '.95' : '.4') + '" stroke-width="' + (ex ? 1.8 : 0.8) + '"/>';
+    });
+    s += '<path d="' + r.map(function (x, i) { return (i ? 'L' : 'M') + X(x[0]).toFixed(1) + ' ' + YP(x[1]).toFixed(1); }).join('') + '" fill="none" stroke="var(--ink)" stroke-width="1.3" stroke-linejoin="round"/>';
+    var bw = Math.max(1, pw / r.length * 0.72);
+    r.forEach(function (x) { var y = YB(Math.max(0, x[2])), h = Math.max(0.6, Math.abs(YB(x[2]) - YB(0))); s += '<rect x="' + (X(x[0]) - bw / 2).toFixed(1) + '" y="' + y.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + h.toFixed(1) + '" fill="' + col(x[2]) + '" opacity=".8"/>'; });
+    var mo = r.filter(function (x) { return new Date(x[0] * 864e5).getUTCDate() === 1; }), every = Math.ceil(mo.length / (sm ? 4 : 8));
+    mo.forEach(function (x, i) { if (i % every) return; var t = new Date(x[0] * 864e5); s += '<text class="ax" x="' + X(x[0]).toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + _T((t.getUTCMonth() + 1) + ' 月', ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][t.getUTCMonth()]) + '</text>'; });
+    s += '<line id="npl-x" x1="0" x2="0" y1="' + MT + '" y2="' + (Ht - MB) + '" stroke="var(--ink-3)" stroke-dasharray="2 3" visibility="hidden"/>';
+    el.innerHTML = '<svg width="' + W + '" height="' + Ht + '" viewBox="0 0 ' + W + ' ' + Ht + '" role="img" aria-label="' + esc(_T('每日淨實現損益', 'Daily net realized profit/loss')) + '">' + s + '</svg>';
+    var sv = el.querySelector('svg'), vl = el.querySelector('#npl-x');
+    sv.addEventListener('pointermove', function (ev) {
+      var bx = ev.clientX - sv.getBoundingClientRect().left, d = x0 + (bx - ML) / pw * (x1 - x0), i = 0;
+      r.forEach(function (x, j) { if (Math.abs(x[0] - d) < Math.abs(r[i][0] - d)) i = j; });
+      var x = r[i], px = X(x[0]).toFixed(1); vl.setAttribute('x1', px); vl.setAttribute('x2', px); vl.setAttribute('visibility', 'visible');
+      showTip(ev.clientX, ev.clientY, '<div class="t">' + fmt.date(x[0]) + '</div><div class="r"><i style="background:var(--ink)"></i><span>' + _T('BTC 價格', 'BTC price') + '</span><b>' + fmt.usd(x[1]) + '</b></div><div class="r"><i style="background:' + col(x[2]) + '"></i><span>' + _T('淨實現損益', 'Net realized P/L') + '</span><b>' + nplB(x[2]) + '</b></div>' + (x[3] != null ? '<div class="r"><i></i><span>' + _T('近一年百分位', '1-year percentile') + '</span><b>' + fmt.n(x[3], 0) + '</b></div>' : ''));
+    });
+    sv.addEventListener('pointerleave', function () { vl.setAttribute('visibility', 'hidden'); hideTip(); });
   }
   function whalePanel() {
     var W = D.onchain.whales; if (!W || !W.cohorts) return '';
@@ -1052,10 +1105,11 @@
     return readBar('onchain') + '<div class="kpis">' + kpi(_t('短期持有者獲利比例'), fmt.n((fl.sth_in_profit_pct || {}).value, 1) + '%', _t('7 天前 ') + fmt.n((fl.sth_in_profit_pct || {}).d7, 1) + '%', (fl.sth_in_profit_pct || {}).value) + kpi(_t('短期持有者成本'), fmt.usd((fl.sth_vs_tmm || {}).sth_cost), _t('真實市場均價 ') + fmt.usd((fl.sth_vs_tmm || {}).tmm)) + kpi(_t('交易所供給'), fmt.n(ex.exchange_supply_share_pct, 2) + '%', _t('7 日 ') + fmt.pct(ex.exchange_supply_chg7_pct, 2) + _t(' · 90 日 ') + fmt.pct(ex.exchange_supply_chg90_pct, 2)) + kpi(_t('算力 7 日均'), fmt.n(mi.hash7, 0) + ' EH/s', _t('週 ') + fmt.pct(mi.wk_chg_pct, 1) + ' · hashprice $' + fmt.n(mi.hashprice, 1)) + kpi(_t('下次難度調整'), fmt.pct(mi.diff_next_pct, 1), fmt.md(mi.retarget) + _t(' · 進度 ') + fmt.n(mi.diff_progress, 0) + '%', mi.diff_progress) + '</div><div class="grid">' + interpPanel(ocInterp()) +
       panel('span-5', _t('籌碼分布（URPD）'), fmt.md(u.date) + _t(' · 每 2,000 美元一格'), urpdSay(u) + '<div id="c-urpd"></div>') +
       panel('span-7', _t('短期持有者：成本 vs 價格'), _t('bitcoin-data · 近 2 年'), legend([[_t('短期持有者成本'), 'var(--s2)'], [_t('真實市場均價'), 'var(--s3)']]) + '<div class="chart" id="c-cost"></div>' + _t('<div class="panel-h" style="margin-top:6px"><h2>短期持有者獲利比例</h2><span class="src">2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%</span></div><div class="chart" id="c-profit"></div>') +
-      soprPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
+      soprPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
-    mount($('#c-whale'), drawWhale); drawSopr(); drawOc();
+    mount($('#c-whale'), drawWhale); drawSopr(); drawOc(); mount($('#c-npl'), drawNpl);
+    var ns = $('#npl-seg'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; nplRng = +b.getAttribute('data-v'); this.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); drawNpl($('#c-npl')); });
     var v = D.chips.viz || {}, u = v.urpd || {}, c = D.price.bar.c, el = $('#c-urpd');
     if (el && u.band) {
       var pv = {}; ((u.prev7 || {}).band || []).forEach(function (b) { pv[b[0]] = b[1]; });

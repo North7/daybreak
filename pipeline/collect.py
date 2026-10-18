@@ -418,6 +418,24 @@ try:
                                chg7_pct=_dchg(ser, d_, 7, v_), chg30_pct=_dchg(ser, d_, 30, v_),
                                ma7=round(ma7, 4), ma7_pct_own=round(sum(x < ma7 for x in m7s) / len(m7s) * 100, 1), source='CoinMetrics')
 except Exception as e: errors.append(f'top3 coinmetrics {e}')
+# G1e. 2026-10-18 使用者要求：每日淨實現損益（Glassnode 的 Net Realized Profit/Loss 24h，只作讀值）。不另打 API：
+#   實現市值（市值 ÷ MVRV）當日變化 − 當日新發行美元＝當天移動的幣「賣價 − 上次移動價」的淨和。只有淨值，沒有獲利／認賠各自的總額。
+#   2026-10-18 對照 Glassnode 圖：8/1 −0.98B、8/21 +1.89B、9/22 +2.11B、10/14 −0.20B，方向與大小相符。
+#   rank＝當日（÷ 市值）在之前 365 天的百分位；2015 起回測：≤2 的認賠高峰之後 30 日中位報酬高於平常（約 4 成剛好在局部低點），≥98 的獲利高峰沒有優勢
+try:
+    _iss = {x['time'][:10]: float(x['IssTotUSD']) for x in cmj if x.get('IssTotUSD')}
+    _nd = [(mv[j][0], mv[j][1], (mv[j][3] / mv[j][2] - mv[j - 1][3] / mv[j - 1][2] - _iss[mv[j][0]]), mv[j][3]) for j in range(1, len(mv))
+           if mv[j][0] in _iss and (dt.date.fromisoformat(mv[j][0]) - dt.date.fromisoformat(mv[j - 1][0])).days == 1]
+    _nr = [x[2] / x[3] for x in _nd]
+    def _rank(j): w_ = _nr[max(0, j - 365):j]; return round(sum(v_ < _nr[j] for v_ in w_) / len(w_) * 100, 1) if len(w_) >= 300 else None
+    _dn0 = lambda s_: (dt.date.fromisoformat(s_) - dt.date(1970, 1, 1)).days   # G4b 的 _dn 在後面才定義
+    rows_ = [[_dn0(d_), round(p_), round(v_ / 1e6, 1), _rank(j)] for j, (d_, p_, v_, _) in enumerate(_nd) if j >= len(_nd) - 365]
+    last_ = _nd[-1]
+    R['npl'] = dict(date=last_[0], usd_m=round(last_[2] / 1e6, 1), rank_1y=rows_[-1][3], sum7_usd_m=round(sum(x[2] for x in _nd[-7:]) / 1e6), sum7_prev_usd_m=round(sum(x[2] for x in _nd[-14:-7]) / 1e6),
+                    loss_spike_last=next((dict(date=_nd[j][0], usd_m=round(_nd[j][2] / 1e6), rank=_rank(j)) for j in range(len(_nd) - 1, len(_nd) - 366, -1) if (_rank(j) or 100) <= 2), None),
+                    profit_spike_last=next((dict(date=_nd[j][0], usd_m=round(_nd[j][2] / 1e6), rank=_rank(j)) for j in range(len(_nd) - 1, len(_nd) - 366, -1) if (_rank(j) or 0) >= 98), None),
+                    rows=rows_, note='CoinMetrics 實現市值日變化 − 新發行；只有淨值；rank＝之前 365 天百分位（÷ 市值）；只作讀值')
+except Exception as e: errors.append(f'npl {e}')
 # 2026-10-09 P23 修訂：市場階段的佐證燈號（只顯示、不作為門檻）。回測（2014 起、3–4 輪）沒有任何單一指標同時兼顧速度與少假訊號，
 # 交易所供給 90 日轉負換視窗長度就失效、且 2025 年 99% 的日子成立，所以從牛市必要條件降為佐證之一
 try:
