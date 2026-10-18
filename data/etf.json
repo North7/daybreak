@@ -300,6 +300,12 @@
    "d": "2026-10-15",
    "musd": 5.1,
    "partial": false
+  },
+  {
+   "d": "2026-10-16",
+   "musd": -82.4,
+   "partial": true,
+   "src": "暫定：SoSoValue −82.39；Trader T −82.41"
   }
  ],
  "source": "The Block",
