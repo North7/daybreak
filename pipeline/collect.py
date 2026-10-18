@@ -421,7 +421,7 @@ except Exception as e: errors.append(f'top3 coinmetrics {e}')
 # G1e. 2026-10-18 使用者要求：每日淨實現損益（Glassnode 的 Net Realized Profit/Loss 24h，只作讀值）。不另打 API：
 #   實現市值（市值 ÷ MVRV）當日變化 − 當日新發行美元＝當天移動的幣「賣價 − 上次移動價」的淨和。只有淨值，沒有獲利／認賠各自的總額。
 #   2026-10-18 對照 Glassnode 圖：8/1 −0.98B、8/21 +1.89B、9/22 +2.11B、10/14 −0.20B，方向與大小相符。
-#   rank＝當日（÷ 市值）在之前 365 天的百分位；2015 起回測：≤2 的認賠高峰之後 30 日中位報酬高於平常（約 4 成剛好在局部低點），≥98 的獲利高峰沒有優勢
+#   rank＝當日（÷ 市值）在之前 365 天的百分位；2015 起即時可行回測（每串取第一天）：≤2 的認賠高峰之後與平常無異；≥98 的獲利高峰之後 30 日多半續漲、逐輪減弱
 try:
     _iss = {x['time'][:10]: float(x['IssTotUSD']) for x in cmj if x.get('IssTotUSD')}
     _nd = [(mv[j][0], mv[j][1], (mv[j][3] / mv[j][2] - mv[j - 1][3] / mv[j - 1][2] - _iss[mv[j][0]]), mv[j][3]) for j in range(1, len(mv))
