@@ -299,12 +299,11 @@
   {
    "d": "2026-10-16",
    "musd": -82.4,
-   "partial": true,
-   "src": "暫定：SoSoValue −82.39；Trader T −82.41"
+   "partial": false
   }
  ],
  "source": "The Block",
  "source_url": "https://www.theblock.co/data/etfs/bitcoin-etf/spot-bitcoin-etf-flows",
- "updated_utc": "2026-10-19T00:06:38+00:00",
- "last_complete": "2026-10-15"
+ "updated_utc": "2026-10-19T19:35:12+00:00",
+ "last_complete": "2026-10-16"
 }
