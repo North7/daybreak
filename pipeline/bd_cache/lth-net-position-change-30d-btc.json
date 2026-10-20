@@ -1,5 +1,4 @@
-{"m": "lth-net-position-change-30d-btc", "fetched_utc": "2026-10-19T00:26:10+00:00", "rows": [
-{"d":"2022-10-19","lthNetPositionChange30dBtc":227957.57642901},
+{"m": "lth-net-position-change-30d-btc", "fetched_utc": "2026-10-20T01:12:54+00:00", "rows": [
 {"d":"2022-10-20","lthNetPositionChange30dBtc":237344.11432752},
 {"d":"2022-10-21","lthNetPositionChange30dBtc":224945.02535519},
 {"d":"2022-10-22","lthNetPositionChange30dBtc":193548.40110655},
@@ -1458,5 +1457,6 @@
 {"d":"2026-10-14","lthNetPositionChange30dBtc":-96823.42717672},
 {"d":"2026-10-15","lthNetPositionChange30dBtc":-112042.25410965},
 {"d":"2026-10-16","lthNetPositionChange30dBtc":-122999.55782937},
-{"d":"2026-10-17","lthNetPositionChange30dBtc":-75426.91741516}
+{"d":"2026-10-17","lthNetPositionChange30dBtc":-75426.91741516},
+{"d":"2026-10-18","lthNetPositionChange30dBtc":-77852.28286455}
 ]}
