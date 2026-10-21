@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """每日分享圖（2026-10-13 建立）：號外風格 16:9 圖卡，給 X 貼文附圖用。
 讀 data/latest.json 與 data/notes.json（英文版讀 data/notes.en.json），輸出 data/share.png、data/share-en.png。
-頭條取自當期日報；標題裡的數字標號外紅（規則與網站相同）；底部三格固定為市場階段、ETF 近 7 個完整交易日、離出場第一階。
+頭條取自當期日報；標題裡的數字標號外紅（規則與網站相同）；底部三格固定為市場階段、ETF 7 個完整交易日（標明截至哪天）、離出場第一階。
 字型與網站相同（Noto Sans TC 900、Archivo 窄體、JetBrains Mono），由 --fonts 指定的資料夾讀取。
 用法（在倉庫根目錄）：python3 pipeline/share_card.py --fonts <字型資料夾>"""
 import json, os, re, sys, argparse, datetime as dt
@@ -13,9 +13,9 @@ W, H, M = 1200, 675, 64
 PAPER, INK, INK3, RED, LINE = '#EEECE6', '#0A0A0A', '#7A766F', '#FF3B1F', '#D2CEC4'
 NUM = re.compile(r'(\d{1,2}/\d{1,2}(?!\d)|[+\-−$]?\d[\d,.]*(?:\s?(?:%|億|萬|千|兆|倍|個基點|基點|bp|K|M|B)(?![A-Za-z]))?)')
 TXT = {
-    'zh': dict(tag='號外', stage='市場階段', etf='ETF 近 7 日', exit='離出場第一階', day='第 {} 天', hit='已觸發',
+    'zh': dict(tag='號外', stage='市場階段', etf='ETF 7 個交易日（至 {}）', exit='離出場第一階', day='第 {} 天', hit='已觸發',
                names={'熊市': '熊市', '轉換期': '熊牛轉換期', '牛市': '牛市'}, wd='一二三四五六日', close='收盤版'),
-    'en': dict(tag='EXTRA', stage='MARKET STAGE', etf='ETF · LAST 7 DAYS', exit='TO FIRST EXIT STEP', day='day {}', hit='triggered',
+    'en': dict(tag='EXTRA', stage='MARKET STAGE', etf='ETF · 7 DAYS TO {}', exit='TO FIRST EXIT STEP', day='day {}', hit='triggered',
                names={'熊市': 'Bear', '轉換期': 'Transition', '牛市': 'Bull'}, wd=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], close='close'),
 }
 
@@ -72,7 +72,9 @@ def card(lang, latest, notes, F, out):
     etf = '—' if s7 is None else (f"{'+' if s7 >= 0 else '−'}{abs(s7) / 100:.2f} 億" if lang == 'zh' else f"{'+' if s7 >= 0 else '−'}${abs(s7):,.0f}M")
     nxt = T['hit'] if ex.get('steps_hit') else ('—' if ex.get('next_step_dist_pct') is None else f"+{ex['next_step_dist_pct']:.0f}%")
     top = 470; d.rectangle([M, top, W - M, top + 2], fill=INK); cw = (W - 2 * M) / 3
-    for i, (k, v) in enumerate(((T['stage'], stage), (T['etf'], etf), (T['exit'], nxt))):
+    # 2026-10-21：標上最後一個完整交易日。The Block 通常晚一到兩個交易日，頭條若寫更新的暫定值，「近 7 日」看起來會和頭條矛盾
+    etf_k = T['etf'].format((f"{dt.date.fromisoformat(rows[-1]['d']):%-m/%-d}" if lang == 'zh' else f"{dt.date.fromisoformat(rows[-1]['d']):%b %-d}".upper()) if rows else '—')
+    for i, (k, v) in enumerate(((T['stage'], stage), (etf_k, etf), (T['exit'], nxt))):
         x = M + i * cw + (0 if i == 0 else 24)
         if i: d.line([M + i * cw, top + 22, M + i * cw, top + 118], fill=LINE, width=1)
         d.text((x, top + 30), k, font=F['mono'](17) if lang == 'en' else F['cjk'](18, 500), fill=INK3)

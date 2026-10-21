@@ -547,7 +547,10 @@ except Exception as e: errors.append(f'swing {e}')
 #   地址不等於實體：≥10K 多為交易所冷錢包、ETF 託管；錢包整理會讓幣在分層之間移動。只作讀值。
 try:
     bic_html = get('https://bitinfocharts.com/bitcoin-distribution-history.html') or ''
+    # 2026-10-21：BitInfoCharts 改用 Cloudflare 驗證頁擋自動抓取（403），錯誤訊息會顯示在頁首「資料狀態」，寫成看得懂的原因
+    if 'Just a moment' in bic_html or 'challenges.cloudflare.com' in bic_html: raise RuntimeError('BitInfoCharts 被 Cloudflare 驗證頁擋下（自動抓取被拒），本日未取得')
     blk = re.search(r'new Dygraph\([^,]+,\s*(\[\[.*?\]\])\s*,\s*\{(.*?)\}\s*\)', bic_html, re.S)
+    if not blk: raise RuntimeError('BitInfoCharts 頁面找不到分層圖表資料（可能改版），本日未取得')
     labs = json.loads(re.search(r'labels:\s*(\[[^\]]*\])', blk.group(2)).group(1).replace("'", '"'))
     assert labs[1:] == ['0-0.1', '0.1-1', '1-10', '10-100', '100-1,000', '1,000-10,000', '10,000-100,000', '100,000-1,000,000'], f'欄位改了：{labs}'
     WR = [(d_.replace('/', '-'), [float(x) for x in v_.split(',')]) for d_, v_ in re.findall(r'new Date\("([\d/]+)"\),([\d.,]+)\]', blk.group(1))]
@@ -575,7 +578,7 @@ try:
         rows_w.append(r_)
     R['whales'] = dict(date=WD[k3], cohorts=out, leg_start=leg0, rows=rows_w[::-2][::-1],
                        note='BitInfoCharts 依地址餘額分層；地址不等於實體，≥10K 多為交易所與託管；只作讀值')
-except Exception as e: errors.append(f'whales {e}')
+except Exception as e: errors.append(f'whales: {e}')
 # G2. bitcoin-data 頂部雷達（放在既有 14 個端點之後；免費層文件寫每小時 10 次、每日 15 次，超額時只有這幾格記 null）
 RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProfitPct',
        'lth-net-position-change-30d-btc': 'lthNetPositionChange30dBtc'}

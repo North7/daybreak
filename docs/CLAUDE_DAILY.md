@@ -13,18 +13,18 @@
 
 ### 步驟
 1. 拉最新的 main。確認 `data/latest.json` 的 `meta.bar_date` 等於今天 UTC 日期的前一天。不是的話（GitHub 定時排程常延遲數小時）：執行 `date -u +%FT%TZ > .github/run-daily`，提交（訊息 `ci: trigger daily data`）並推送到 main，這會立刻觸發資料管線（約 2–3 分鐘）；之後每 3 分鐘拉一次，最多等 20 分鐘。仍不是就停止，不寫 notes，回報「資料管線今天沒有更新」。
-2. 執行 `python3 pipeline/brief.py` 讀精簡摘要（約 14KB）。**不要讀整份 latest.json**；需要某個欄位就用 python 取。
+2. 執行 `python3 pipeline/brief.py` 讀精簡摘要（約 20KB）。**不要讀整份 latest.json**；需要某個欄位就用 python 取。
 3. 讀上一期 `data/notes.json`（用來比較變化、延續期數）。
 4. ETF：由資料管線每天從 The Block 自動更新（`pipeline/etf.py`，與 Farside 同口徑；Farside 擋自動抓取，不要再去讀它），**除了下面的暫定值例外，你不改 `data/etf.json`**。從 brief 的 `flows.etf` 讀數字；The Block 只公布已完整的交易日，最新完整日通常比 bar_date 晚一到兩個交易日，寫的時候標明日期。若最新完整日比 bar_date 落後超過 2 個交易日，在 notes 的 flows 寫明「ETF 資料延遲」。唯一例外：比最新完整日更新的交易日，如果查到**兩個獨立來源**（例如 Farside 經媒體轉述、SoSoValue）的合計淨流量差距在 2% 以內，可以在 `data/etf.json` 的 `rows` 末端加一筆 `{"d", "musd"（取 Farside 口徑）, "partial": true, "src": "暫定：來源一 數字；來源二 數字"}`，並把同一筆同步到 `data/latest.json` 的 `flows.etf`；只有一個來源或差距超過 2% 就不加。The Block 公布後資料管線會自動覆寫。
    - 實現市值 30 日變化（brief 的 `flows.rc_liq`）：只當資金背景寫進 flows 判讀（例：「實現市值 30 日 +1.3%，資金仍在流入」）；轉為 ≤0 或由 ≤0 轉正時在 changes 記一筆。不得寫成加倉或賣出訊號，也不連動市場階段與出場框架（歷史上 2018、2021-06、2022-01 的歸零之後仍大跌，見資金版說明）。
    - 頁面上每個數字已有依固定門檻自動產生的解讀（`assets/app.js` 的「數字解讀」區塊：各版「這些數字代表什麼」與鏈上表格下方的解讀列）。各版 `modules` 的判讀不必逐項重述，重點放在跨指標的綜合結論與今天的變化；若你的判讀和自動解讀方向不同，要寫出原因。
    - 短週期（brief 的 `price.swing`，收盤價 15% 反轉才算新的一段）與鯨魚分層（`onchain.whales`，BitInfoCharts 依地址餘額）：market 判讀可寫目前這一段走了多久、多少、離本段結束線多遠；onchain 判讀可寫大戶（100–10K）30 日與本段以來的增減。≥10K 多為交易所與託管，不寫成大戶買賣；兩者都只作讀值，不連動任何規則。
-   - 2026-10-12 起：頂部三指標（MVRV Z／NUPL／Puell）由 CoinMetrics 自算，資料日期通常是收盤前一天，不再寫「（10/05）」這種 bitcoin-data 的舊日期；掛單簿不再是獨立版面，掛單重點寫進 deriv 判讀（modules 不再有 book）；deriv 的資金費率用 brief 的 `deriv.funding_multi.weighted_now`（Deribit、OKX、Hyperliquid 以未平倉加權），25Δ 風險逆轉是 30 天固定期限；flows 可引用穩定幣供給（`flows.stables`）、Coinbase 溢價（`flows.cb_premium`）、恐懼貪婪（`flows.fear_greed`）；onchain 可引用算力帶（`onchain.hash_ribbons`）。頁首「資料狀態」若顯示延遲，判讀要標明。
+   - 2026-10-12 起：頂部三指標（MVRV Z／NUPL／Puell）由 CoinMetrics 自算，資料日期通常是收盤前一天，不再寫「（10/05）」這種 bitcoin-data 的舊日期；掛單簿不再是獨立版面，掛單重點寫進 deriv 判讀（modules 不再有 book）；deriv 的資金費率用 brief 的 `deriv.funding_multi.weighted_now`（Deribit、OKX、Hyperliquid 以未平倉加權），25Δ 風險逆轉是 30 天固定期限；flows 可引用穩定幣供給（`flows.stables`）、Coinbase 溢價（`flows.cb_premium`）、恐懼貪婪（`flows.fear_greed`）；onchain 可引用算力帶（`onchain.hash_ribbons`）。頁首「資料狀態」若顯示延遲，判讀要標明。某項資料沒取到（`meta.errors` 有它）時寫「本日未取得」並照抄錯誤訊息裡的原因（例如 BitInfoCharts 被 Cloudflare 擋下），不要自己猜成「解析失敗」。
 5. 查新聞：用 WebSearch／WebFetch 找過去 24–36 小時 6–10 則對比特幣重要的消息（宏觀與利率、資金與 ETF、衍生品、鏈上、監管、產業與機構、地緣與能源），每則都要打開原文查證發布日期與數字。
 6. 查研報：先用 WebFetch 打開 Glassnode 研報列表 https://research.glassnode.com （The Week On-chain 約每週二／三、Market Pulse 每週日、Macro Special 不定期），找出最近 7 天的每一期並打開原文讀重點；再查 The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。每一期的 `date` 寫原文發布日、`url` 寫原文網址。確認列表上真的沒有新一期，才沿用最近一期並在 `research.summary` 寫明「無新一期」。
 7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。
-   - 英文版（2026-10-12 起）：寫完 `data/notes.json` 後，另寫 `data/notes.en.json`：結構、欄位、數字、日期、網址、`impact`、`kind`、`dir`、`module` 與中文版完全相同，只把文字欄位（headline、summary、stance.label／short、watch[].label／note、modules 各版 lead／points、news[].title／read／source、events[].label、actions[].head／text、changes[].title／fig／say、research.summary 與 items[].points／meaning；研報原文標題本來就是英文的照抄）翻成自然的英文；`news[].cat` **保持中文**（網站用它篩選，英文版顯示時自動換成 Macro／Flows 等）；台北時間後面加註 UTC；金額用 $ 與 K／M／B，不用「萬／億」。英文版網站讀這個檔，缺檔或日期比中文舊時會退回中文並標示。隱私鐵則同樣適用。寫完用 python 掃描 notes.en.json，除了 `news[].cat` 以外不應有任何中文字。
-8. 驗證：`python3 -c "import json;[json.load(open(f)) for f in ('data/notes.json','data/notes.en.json')]"`；再用 python 掃描兩個檔，確認沒有違反隱私鐵則的內容。
+   - 英文版（2026-10-12 起）：寫完 `data/notes.json` 後，另寫 `data/notes.en.json`：結構、欄位、數字、日期、網址、`impact`、`kind`、`dir`、`module` 與中文版完全相同，只把文字欄位（headline、summary、stance.label／short、watch[].label／note、modules 各版 lead／points、news[].title／read／source、events[].label、actions[].head／text、changes[].title／fig／say、research.summary 與 items[].points／meaning；研報原文標題本來就是英文的照抄）翻成自然的英文；`news[].cat` **保持中文**（網站用它篩選，英文版顯示時自動換成 Macro／Flows 等）；台北時間後面加註 UTC；金額用 $ 與 K／M／B，不用「萬／億」；「資金面」譯成 flows（funding 只指資金費率）。英文版網站讀這個檔，缺檔或日期比中文舊時會退回中文並標示。隱私鐵則同樣適用。寫完用 python 掃描 notes.en.json，除了 `news[].cat` 以外不應有任何中文字。
+8. 驗證：執行 `python3 pipeline/notes_lint.py`（2026-10-21 起），檢查格式、各項數量、頭條與摘要長度、制式提醒句次數、事件表必備項目、英文版沒有中文字；有任何一項沒過就改到通過才提交。再用 python 掃描兩個檔，確認沒有違反隱私鐵則的內容。
 9. X 貼文草稿（2026-10-13 起，中英各一則）：寫 `data/x_post.json` = `{"date": bar_date, "edition", "zh", "en", "image_zh": "https://north7.github.io/daybreak/data/share.png", "image_en": "https://north7.github.io/daybreak/data/share-en.png", "link": "https://north7.github.io/daybreak/?utm_source=x"}`。分享圖由 GitHub Actions 在你推送後自動產生（`pipeline/share_card.py`，用 headline 與資料），你不用畫。
    - 格式（中文；英文同結構，用 `【Daybreak No.007｜Oct 12】`）：
      ```
@@ -32,12 +32,12 @@
      <headline，可縮短，保留關鍵數字>
 
      ・市場階段：牛市（第 4 天）
-     ・ETF 近 7 日：−5.58 億美元
+     ・ETF 7 個交易日（至 10/09）：−5.58 億美元
      ・<今天最重要的一個數字或事件>
 
      完整解讀 👉 https://north7.github.io/daybreak/?utm_source=x
      ```
-   - 數字一律取自 brief 與當期 notes，不新增查不到出處的數字；市場階段天數＝bar_date 減 `cycle.stage.since` 加 1；ETF 近 7 日＝`flows.etf` 最後 7 個非暫定日合計（與分享圖一致）。
+   - 數字一律取自 brief 與當期 notes，不新增查不到出處的數字；市場階段天數＝bar_date 減 `cycle.stage.since` 加 1；ETF 那一行＝`flows.etf` 最後 7 個非暫定日合計，括號寫最後一個非暫定日（英文 `・ETF 7 trading days to Oct 9: −$558M`），與分享圖一致；不寫「近 7 日」，因為 The Block 常晚一到兩個交易日，頭條若寫更新的暫定值，讀者會以為兩個數字矛盾。
    - 執行 `python3 pipeline/x_len.py`，兩則都要 ≤ 280（X 的算法：中文字算 2、網址算 23）；超過就縮短 headline 那行。
    - 不放 hashtag 以外的標記；hashtag 最多 1 個（中文 `#比特幣`、英文 `#Bitcoin`）。不喊單、不寫價格目標或「該買／該賣」；出場框架只用百分比；隱私鐵則同樣適用。
 10. 提交訊息 `notes: <bar_date>`（notes.json、notes.en.json、x_post.json 一起），推送到 main。
@@ -49,7 +49,7 @@
   "date": "YYYY-MM-DD", "written_utc": "ISO 時間", "edition": 2,
   "stance": {"label": "週期中段・持有", "tone": "neutral|warm|hot|cold", "short": "四到八個字"},
   "headline": "號外大標題：一句話總結今天 BTC 市場的全貌，或今天最重大的消息；至少含一個關鍵數字（不放收盤價、漲跌幅）",
-  "summary": "兩到三句：今天的判斷、理由、該盯什麼",
+  "summary": "最多三句、180 字以內：今天的判斷、理由、該盯什麼",
   "watch": [{"label": "200 日均線", "value": 71657, "note": "觸發條件與距離"}, "…共三項"],
   "modules": {
     "overview": {"lead": "一句結論", "points": ["每點一句，最多 3–4 個數字"]},
@@ -72,6 +72,8 @@
 - `watch` 固定三項：200 日均線（避險線）、MVRV 0.75 線（`exit.status.k075_price`）、出場第一階（`exit.status.next_step`），附距離。
 - 出場框架任何一條觸發時（`exit.status.steps_hit` 非空、`p20_run_075`／`p20_run_080` ≥ 5、`below_sma200_run` ≥ 5、頂部三指標任兩項 ≥ 80），headline 必須第一句寫明，stance.tone 用 hot 或 cold。接近觸發時（收盤距 200 日均線、MVRV 0.75 線或出場第一階 5% 以內；`below_sma200_run`、`p20_run_075`、`p20_run_080` 任一 ≥ 3；或頂部三指標任兩項 ≥ 75）可以在 headline 點出。沒有觸發也不接近時，headline 不提出場框架、不寫「0 條觸發」、不寫離 200 日均線多遠（這些留在 watch 與各版）。
 - 不寫短線價格預測（不預測未來幾天的漲跌、區間或機率）。
+- 長度（2026-10-21 起，`notes_lint.py` 會檢查）：頭條 60 字以內（英文 150 字元）；摘要最多三句、180 字以內（英文 480 字元）。10/13–10/20 頭條 76–107 字、摘要 4–6 句，分享圖要縮到四行小字，手機上也太長；寧可少一個數字，也不要把整段寫進頭條。
+- 制式提醒句（「只作讀值」「不改變框架」「不是框架條件」「不碰…」）全期最多 4 次（新聞的 `read` 不算，那裡本來就要說影不影響週期判斷）。網站的方法說明與每張圖下方的讀法已經寫過，不必每點重複；只在讀值容易被誤會成買賣訊號，或你的判讀和自動解讀方向不同時才寫。規則指定要附的限制（例如「線性外推、不是預測」、淨實現損益在 ETF 時代可能變鈍）照寫，不算在內。
 - 頭條（headline）是號外大標題：一句話總結今天整個 BTC 市場的狀況（資金、宏觀、衍生品、鏈上，誰在主導、方向是什麼），或今天最重大的單一消息。**至少要有一個關鍵數字**（網站會把標題裡的數字標成號外紅，全黑的標題不好看），選最能說明今天狀況的數字，例如 ETF 淨流量、殖利率、清算金額、資金費率、鏈上轉移量、市場階段天數；不要用收盤價、漲跌幅、盤中高低點這類頁面上已經顯示的數字。不好的例子：「BTC 收 81,684（−1.91%）；離 200 日均線仍有 13.8%，出場框架 0 條觸發。」好的例子：「10 年期美債殖利率衝上 5.36%、油價破 100 美元，ETF 單日流出 4.85 億，市場轉入避險。」新聞 `weight` 3＝頭條級、2＝重要、1＝參考，頭版會依 weight 排序取前四則。
 - 每則消息的解讀都要回扣本站數據，說清楚它是短線雜訊還是會影響週期判斷；單一來源或數字不一致者在 title 後標「（未核實）」。
 - 第三方模型（Tidemark）只作讀值。不同資料商的數字不相減。分數一律附樣本數。寧可寫「本日未取得」，也不推估或沿用昨天的數字。
@@ -83,7 +85,7 @@
 - 2026-10-14 起鏈上版有「短期持有者認賠賣壓（STH-SOPR）」圖：brief 的 `chips.sopr_read` 有最新值與最近三次認賠低點（`kind`：easing＝價格回到前次認賠低點附近但深度較淺、賣壓遞減；heavier＝較深、賣壓加重）。onchain 判讀可引用，但要寫明資料日期（2026-10-15 起 STH-SOPR 來自 CheckOnChain，晚約 1 天、日線；盤中集中認賠會被當天的獲利賣出平均掉，日線不一定跌破 1），只作讀值、不寫成買點或見底預測。網站每張圖下方已有自動「現在／怎麼讀」，各版判讀不必重述圖上讀數。
 - 2026-10-15 起衍生品版有「籌碼集中度（現價 ±5%）」：brief 的 `chips.flow.conc5`（URPD 晚約 1 天，按 ±5% 區間重疊比例計、除以 CoinMetrics 流通量）與 `chips.conc5_read`（7 天前、紀錄天數）。deriv 判讀可和 DVOL 一起寫「籌碼擠在現價附近時，離開這一帶波動容易放大」，但只說波動、不說方向；本站自 2026-10-01 才有紀錄，**不套任何門檻（包括 Murphy 的 13%／15%）**、不寫「偏高／偏低」，只寫數值與 7 日變化。
 - 2026-10-18 起鏈上版有「每日淨實現損益」圖：brief 的 `onchain.npl`（CoinMetrics 實現市值日變化 − 新發行，晚約 1 天；`usd_m` 當日淨值百萬美元、`rank_1y` 在之前 365 天的百分位、`sum7_usd_m`／`sum7_prev_usd_m` 近 7 日與前 7 日合計、`loss_spike_last`／`profit_spike_last` 最近一次 ≤2／≥98 百分位）。onchain 判讀可寫「獲利了結降溫／增溫」「出現明顯認賠」並附數字與日期；只有淨值，不寫成獲利或認賠的總額。2026-10-18 即時可行回測（2015 起、每串高峰取第一天）：認賠高峰之後 30／90 日與平常沒有差別；獲利高峰之後 30 日中位 +12.9%（平常 +3.2%），但一輪比一輪弱（+21.5%→+12.3%→+5.0%），只能當趨勢強的佐證；30 日累計模式（`onchain.npl.cum30`：`pct_4y` 4 年百分位、`thr_pct_mcap` 觸發線、`trig` 歷次首次跌破、`min_since_top` 本輪最深）跌破 4 年第 3 百分位過去 5 次（2015–2022）1 年後都上漲，但 3 次之後還再跌 17–44%，本輪沒有觸發，只能寫成「週期級別的認賠／底部區佐證」；而且 ETF 時代這個訊號可能變鈍（ETF 股份在股市換手不上鏈、只有淨贖回才移動鏈上的幣；2025-10～2026-06 下跌中 ETF 只淨贖回約 13.4 萬顆、約一成八，本輪按跌幅換算的認賠只有前幾輪一半；過去 5 次觸發都在 2024-01 ETF 上市之前），寫到它時要附這個限制，不寫「沒觸發所以還沒見底」：**不把認賠高峰寫成買點或見底，不把獲利高峰寫成頂部**。
-- `events` 滾動維護未來 60 天：難度調整（`onchain.mining.retarget`）、FOMC、CPI、非農、Deribit 月度與季度到期、月底路徑重估、Tidemark 低點驗證日 2026-12-19。官方排程優先。
+- `events` 滾動維護未來 60 天：難度調整（`onchain.mining.retarget`）、FOMC、CPI、非農、Deribit 月度與季度到期、每個月底的路徑重估、Tidemark 低點驗證日 2026-12-19。官方排程優先；官方還沒公布的寫慣例日期並標「待官方排程確認」。**每一類都必須在**：CPI 公布後要立刻補上下一次（10/14–10/20 連 7 期漏掉 11 月的 CPI）；季度到期（例如 12/25）在 60 天內就要列，不能只寫在衍生品版。
 
 ### 回報
 最後用 3 行以內摘要：今天的結論、出場框架有沒有任何觸發、市場階段、哪些資料沒取到、X 草稿字數（x_len.py 的結果）。

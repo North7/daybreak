@@ -1,8 +1,12 @@
 name: Site checks
 
 # 2026-10-12：PR 合併前自動檢查，避免把網站弄壞。資料管線每天直接推 main，不經過這裡
+# 2026-10-21：網站更新大多直接推 main（10/13 之後約 10 次都沒跑過檢查），推送有動到程式時也檢查；只動資料的推送不觸發
 on:
   pull_request:
+  push:
+    branches: [main]
+    paths: ["assets/**", "index.html", "post.html", "manifest.webmanifest", "pipeline/**.py", "tests/**", ".github/workflows/check.yml"]
   workflow_dispatch: {}
 
 jobs:
