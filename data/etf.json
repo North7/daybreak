@@ -300,6 +300,12 @@
    "d": "2026-10-16",
    "musd": -82.4,
    "partial": false
+  },
+  {
+   "d": "2026-10-19",
+   "musd": 526.7,
+   "partial": true,
+   "src": "暫定：Farside 526.7；SoSoValue 526.6"
   }
  ],
  "source": "The Block",
