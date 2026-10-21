@@ -11,7 +11,8 @@ on:
 
 jobs:
   check:
-    runs-on: ubuntu-latest
+    # 2026-10-21：ubuntu-latest 已是 26.04，Playwright 1.56.1 不支援（裝不了 chromium），固定在 24.04
+    runs-on: ubuntu-24.04
     timeout-minutes: 10
     steps:
       - uses: actions/checkout@v4
