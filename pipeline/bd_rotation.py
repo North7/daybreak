@@ -47,11 +47,15 @@ def save(m, rows):
 if __name__ == '__main__':
     ap = argparse.ArgumentParser(); ap.add_argument('--group', choices=sorted(GROUPS))
     ap.add_argument('--skip-if-fresh', action='store_true', help='這組今天（UTC）已抓過就不再打 API（備援排程用）')
-    args = ap.parse_args(); today = dt.datetime.now(dt.timezone.utc).date()
+    args = ap.parse_args(); now = dt.datetime.now(dt.timezone.utc)
     g = args.group or 'A'
+    # 2026-10-21：「已抓過」以這一輪的起點（最近一次 UTC 20:00）判斷，不再用 UTC 日期。舊寫法下，延遲到隔天 00:xx 才跑的
+    # GitHub 備援排程（資料建置之後）先把當天標成已抓過，22:40 準時的那次反而被略過，快取序列每天多舊一天
+    cut = now.replace(hour=20, minute=0, second=0, microsecond=0)
+    if now < cut: cut -= dt.timedelta(days=1)
     if args.skip_if_fresh:
         try:
-            if all(load(m)[1][:10] == today.isoformat() for m in GROUPS[g]): print(f'{g} 今天已抓過，略過'); sys.exit(0)
+            if all(dt.datetime.fromisoformat(load(m)[1]) >= cut for m in GROUPS[g]): print(f'{g} 這一輪（{cut:%m-%d %H:%M} UTC 起）已抓過，略過'); sys.exit(0)
         except RuntimeError: pass
     ok = 0
     for m in GROUPS[g]:
