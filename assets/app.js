@@ -890,7 +890,12 @@
       [_T('流動性供給（bitcoin-data）', 'Liquid supply (bitcoin-data)'), (oc['illiquid-supply'] || {}).date, 3],
       [_T('鯨魚分層（BitInfoCharts）', 'Whale tiers (BitInfoCharts)'), (D.onchain.whales || {}).date, 2],
       [_T('ETF 流量（The Block）', 'ETF flows (The Block)'), (etf[etf.length - 1] || {}).d, 4],
-      ['Tidemark', tm.price_date, 2]
+      ['Tidemark', tm.price_date, 2],
+      // 2026-10-21：補上 10/14 之後新增、原本沒列的來源
+      [_T('短期持有者 SOPR（CheckOnChain）', 'STH-SOPR (CheckOnChain)'), (((D.chips || {}).viz || {}).sopr || {}).date, 2],
+      [_T('淨實現損益（CoinMetrics）', 'Net realized P/L (CoinMetrics)'), (D.onchain.npl || {}).date, 2],
+      [_T('籌碼分布 URPD（bitcoin-data）', 'URPD (bitcoin-data)'), ((D.chips || {}).urpd || {}).date, 2],
+      [_T('美債殖利率（FRED）', 'Treasury yields (FRED)'), (((D.flows.fred || {}).DGS10) || {}).last_date, 4]
     ];
     if (D.flows.stables) src.push([_T('穩定幣（DefiLlama）', 'Stablecoins (DefiLlama)'), D.flows.stables.date, 2]);
     var rows = src.map(function (x) { var a = age(x[1]); return { name: x[0], date: x[1], age: a, bad: x[1] == null || a > x[2], max: x[2] }; });
