@@ -55,7 +55,7 @@ onchain = {k: {kk: v.get(kk) for kk in ('date', 'value', 'pct_4y', 'ma7', 'chg30
 
 out = {
   'meta': {'bar_date': td['bar_date'], 'generated_utc': td.get('generated_utc'), 'errors': td.get('errors', []), 'bd_rotation': td.get('bd_rotation'),
-           'sources': ['Kraken', 'Deribit', 'CoinMetrics Community', 'bitcoin-data.com', 'CheckOnChain（STH-SOPR）', 'mempool.space', 'FRED', 'The Block（ETF）', 'Tidemark', 'BitInfoCharts（鯨魚分層）', 'DefiLlama（穩定幣）', 'Coinbase／Binance（溢價）', 'OKX／Hyperliquid（資金費率）', 'alternative.me（恐懼貪婪）', '13 個交易所掛單簿']},
+           'sources': ['Kraken', 'Deribit', 'CoinMetrics Community', 'bitcoin-data.com', 'CheckOnChain（STH-SOPR）', 'mempool.space', 'FRED', 'The Block（ETF）', 'Tidemark', 'DefiLlama（穩定幣）', 'Coinbase／Binance（溢價）', 'OKX／Hyperliquid（資金費率）', 'alternative.me（恐懼貪婪）', '13 個交易所掛單簿']},
   'price': {'bar': td['bar'], 'ma': ma, 'atr': td.get('atr'), 'vol': td.get('vol'), 'mayer': td.get('mayer'), 'pi_cycle': td.get('pi_cycle'),
             'range20_pos_pct': td.get('range20_pos_pct'), 'swing': td.get('swing'), 'volprofile': td.get('volprofile_v2'), 'rows20': td.get('chart_rows_20d'), 'history': hist},
   'deriv': {'dvol': td.get('dvol'), 'deriv': td.get('deriv'), 'rr25': td.get('rr25'), 'samesource': td.get('samesource'), 'funding_multi': td.get('funding_multi'),

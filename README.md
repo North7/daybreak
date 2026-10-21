@@ -86,7 +86,7 @@
 | The Block | 現貨 ETF 每日淨流量（與 Farside 同口徑） | 每日 |
 | FRED | 10 年期殖利率與實質利率、美元指數、那斯達克 | 每日 |
 | mempool.space | 算力、難度、礦工收入 | 每日 |
-| BitInfoCharts | 依地址餘額分層的持幣量（鯨魚與大戶） | 每日 |
+| BitInfoCharts | 依地址餘額分層的持幣量（鯨魚與大戶）；2026-10-21 起暫停（被 Cloudflare 擋自動抓取，頁面不顯示），找到替代資料再回補 | — |
 | DefiLlama | 穩定幣總供給 | 每日 |
 | Coinbase、Binance | Coinbase 溢價（兩邊日線收盤價差） | 每日 |
 | alternative.me | 恐懼貪婪指數 | 每日 |
@@ -322,7 +322,7 @@ All free public APIs; no keys required.
 | The Block | Spot ETF daily net flows (same basis as Farside) | Daily |
 | FRED | 10-yr nominal and real yields, dollar index, Nasdaq | Daily |
 | mempool.space | Hashrate, difficulty, miner revenue | Daily |
-| BitInfoCharts | Holdings by address-balance tier (whales and big holders) | Daily |
+| BitInfoCharts | Holdings by address-balance tier (whales and big holders); paused since 2026-10-21 (Cloudflare blocks automated requests; hidden on the site) until a replacement source is found | — |
 | DefiLlama | Total stablecoin supply | Daily |
 | Coinbase, Binance | Coinbase premium (difference between their daily closes) | Daily |
 | alternative.me | Fear & Greed Index | Daily |

@@ -545,40 +545,44 @@ try:
 except Exception as e: errors.append(f'swing {e}')
 # G1d. 2026-10-12 使用者要求：鯨魚與大戶。BitInfoCharts「依地址餘額分層的持幣量」每日歷史（2021-05 起，一次請求，不佔 bitcoin-data 額度）。
 #   地址不等於實體：≥10K 多為交易所冷錢包、ETF 託管；錢包整理會讓幣在分層之間移動。只作讀值。
-try:
-    bic_html = get('https://bitinfocharts.com/bitcoin-distribution-history.html') or ''
-    # 2026-10-21：BitInfoCharts 改用 Cloudflare 驗證頁擋自動抓取（403），錯誤訊息會顯示在頁首「資料狀態」，寫成看得懂的原因
-    if 'Just a moment' in bic_html or 'challenges.cloudflare.com' in bic_html: raise RuntimeError('BitInfoCharts 被 Cloudflare 驗證頁擋下（自動抓取被拒），本日未取得')
-    blk = re.search(r'new Dygraph\([^,]+,\s*(\[\[.*?\]\])\s*,\s*\{(.*?)\}\s*\)', bic_html, re.S)
-    if not blk: raise RuntimeError('BitInfoCharts 頁面找不到分層圖表資料（可能改版），本日未取得')
-    labs = json.loads(re.search(r'labels:\s*(\[[^\]]*\])', blk.group(2)).group(1).replace("'", '"'))
-    assert labs[1:] == ['0-0.1', '0.1-1', '1-10', '10-100', '100-1,000', '1,000-10,000', '10,000-100,000', '100,000-1,000,000'], f'欄位改了：{labs}'
-    WR = [(d_.replace('/', '-'), [float(x) for x in v_.split(',')]) for d_, v_ in re.findall(r'new Date\("([\d/]+)"\),([\d.,]+)\]', blk.group(1))]
-    WR = [r_ for r_ in WR if r_[0] <= LAST]; WD = [r_[0] for r_ in WR]
-    COH = [('lt1', [0, 1]), ('1_10', [2]), ('10_100', [3]), ('100_1k', [4]), ('1k_10k', [5]), ('ge10k', [6, 7])]
-    wv = lambda j, ix: sum(WR[j][1][q_] for q_ in ix)
-    def wb(j, days):
-        t_ = (dt.date.fromisoformat(WD[j]) - dt.timedelta(days=days)).isoformat(); b_ = bisect.bisect_right(WD, t_) - 1
-        return b_ if b_ >= 0 and (dt.date.fromisoformat(WD[j]) - dt.date.fromisoformat(WD[b_])).days <= days + 3 else None   # 缺資料超過 3 天就不算
-    k3 = len(WD) - 1; leg0 = (R.get('swing') or {}).get('current', {}).get('start')
-    jl = bisect.bisect_right(WD, leg0) - 1 if leg0 else None
-    out = []
-    for key_, ix in COH:
-        v_ = wv(k3, ix); chg = {w_: (round(v_ - wv(wb(k3, w_), ix)) if wb(k3, w_) is not None else None) for w_ in (7, 30, 90)}
-        h30 = [wv(j, ix) - wv(wb(j, 30), ix) for j in range(len(WD)) if wb(j, 30) is not None]
-        out.append(dict(key=key_, btc=round(v_), chg7=chg[7], chg30=chg[30], chg90=chg[90],
-                        pct30=round(sum(x < chg[30] for x in h30) / len(h30) * 100, 1) if chg[30] is not None else None, n30=len(h30),
-                        since_leg=round(v_ - wv(jl, ix)) if jl is not None and jl >= 0 else None))
-    rows_w = []
-    for j in range(len(WD)):
-        if WD[j] < (dt.date.fromisoformat(WD[k3]) - dt.timedelta(days=400)).isoformat(): continue
-        r_ = [(dt.date.fromisoformat(WD[j]) - dt.date(1970, 1, 1)).days]
-        for ix in ([4], [5], [6, 7]):
-            b_ = wb(j, 30); r_.append(round(wv(j, ix) - wv(b_, ix)) if b_ is not None else None)
-        rows_w.append(r_)
-    R['whales'] = dict(date=WD[k3], cohorts=out, leg_start=leg0, rows=rows_w[::-2][::-1],
-                       note='BitInfoCharts 依地址餘額分層；地址不等於實體，≥10K 多為交易所與託管；只作讀值')
-except Exception as e: errors.append(f'whales: {e}')
+# 2026-10-21 暫停：BitInfoCharts 改用 Cloudflare 驗證頁擋自動抓取，免費來源找不到替代（CoinMetrics 免費層沒有分層、bitcoin-data 額度已滿）。
+#   不抓、不記錯誤，頁面整塊不顯示；找到資料後把 WHALES 改回 True（或換來源）即可回補，下面的計算與頁面都保留。
+WHALES = False
+if WHALES:
+    try:
+        bic_html = get('https://bitinfocharts.com/bitcoin-distribution-history.html') or ''
+        # 2026-10-21：BitInfoCharts 改用 Cloudflare 驗證頁擋自動抓取（403），錯誤訊息會顯示在頁首「資料狀態」，寫成看得懂的原因
+        if 'Just a moment' in bic_html or 'challenges.cloudflare.com' in bic_html: raise RuntimeError('BitInfoCharts 被 Cloudflare 驗證頁擋下（自動抓取被拒），本日未取得')
+        blk = re.search(r'new Dygraph\([^,]+,\s*(\[\[.*?\]\])\s*,\s*\{(.*?)\}\s*\)', bic_html, re.S)
+        if not blk: raise RuntimeError('BitInfoCharts 頁面找不到分層圖表資料（可能改版），本日未取得')
+        labs = json.loads(re.search(r'labels:\s*(\[[^\]]*\])', blk.group(2)).group(1).replace("'", '"'))
+        assert labs[1:] == ['0-0.1', '0.1-1', '1-10', '10-100', '100-1,000', '1,000-10,000', '10,000-100,000', '100,000-1,000,000'], f'欄位改了：{labs}'
+        WR = [(d_.replace('/', '-'), [float(x) for x in v_.split(',')]) for d_, v_ in re.findall(r'new Date\("([\d/]+)"\),([\d.,]+)\]', blk.group(1))]
+        WR = [r_ for r_ in WR if r_[0] <= LAST]; WD = [r_[0] for r_ in WR]
+        COH = [('lt1', [0, 1]), ('1_10', [2]), ('10_100', [3]), ('100_1k', [4]), ('1k_10k', [5]), ('ge10k', [6, 7])]
+        wv = lambda j, ix: sum(WR[j][1][q_] for q_ in ix)
+        def wb(j, days):
+            t_ = (dt.date.fromisoformat(WD[j]) - dt.timedelta(days=days)).isoformat(); b_ = bisect.bisect_right(WD, t_) - 1
+            return b_ if b_ >= 0 and (dt.date.fromisoformat(WD[j]) - dt.date.fromisoformat(WD[b_])).days <= days + 3 else None   # 缺資料超過 3 天就不算
+        k3 = len(WD) - 1; leg0 = (R.get('swing') or {}).get('current', {}).get('start')
+        jl = bisect.bisect_right(WD, leg0) - 1 if leg0 else None
+        out = []
+        for key_, ix in COH:
+            v_ = wv(k3, ix); chg = {w_: (round(v_ - wv(wb(k3, w_), ix)) if wb(k3, w_) is not None else None) for w_ in (7, 30, 90)}
+            h30 = [wv(j, ix) - wv(wb(j, 30), ix) for j in range(len(WD)) if wb(j, 30) is not None]
+            out.append(dict(key=key_, btc=round(v_), chg7=chg[7], chg30=chg[30], chg90=chg[90],
+                            pct30=round(sum(x < chg[30] for x in h30) / len(h30) * 100, 1) if chg[30] is not None else None, n30=len(h30),
+                            since_leg=round(v_ - wv(jl, ix)) if jl is not None and jl >= 0 else None))
+        rows_w = []
+        for j in range(len(WD)):
+            if WD[j] < (dt.date.fromisoformat(WD[k3]) - dt.timedelta(days=400)).isoformat(): continue
+            r_ = [(dt.date.fromisoformat(WD[j]) - dt.date(1970, 1, 1)).days]
+            for ix in ([4], [5], [6, 7]):
+                b_ = wb(j, 30); r_.append(round(wv(j, ix) - wv(b_, ix)) if b_ is not None else None)
+            rows_w.append(r_)
+        R['whales'] = dict(date=WD[k3], cohorts=out, leg_start=leg0, rows=rows_w[::-2][::-1],
+                           note='BitInfoCharts 依地址餘額分層；地址不等於實體，≥10K 多為交易所與託管；只作讀值')
+    except Exception as e: errors.append(f'whales: {e}')
 # G2. bitcoin-data 頂部雷達（放在既有 14 個端點之後；免費層文件寫每小時 10 次、每日 15 次，超額時只有這幾格記 null）
 RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProfitPct',
        'lth-net-position-change-30d-btc': 'lthNetPositionChange30dBtc'}

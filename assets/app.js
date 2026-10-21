@@ -888,7 +888,6 @@
       [_T('持有者成本（bitcoin-data）', 'Holder cost basis (bitcoin-data)'), (oc['sth-realized-price'] || {}).date, 7],
       [_T('短期持有者獲利（bitcoin-data）', 'STH in profit (bitcoin-data)'), (fl.sth_in_profit_pct || {}).date, 3],
       [_T('流動性供給（bitcoin-data）', 'Liquid supply (bitcoin-data)'), (oc['illiquid-supply'] || {}).date, 3],
-      [_T('鯨魚分層（BitInfoCharts）', 'Whale tiers (BitInfoCharts)'), (D.onchain.whales || {}).date, 2],
       [_T('ETF 流量（The Block）', 'ETF flows (The Block)'), (etf[etf.length - 1] || {}).d, 4],
       ['Tidemark', tm.price_date, 2],
       // 2026-10-21：補上 10/14 之後新增、原本沒列的來源
@@ -897,6 +896,7 @@
       [_T('籌碼分布 URPD（bitcoin-data）', 'URPD (bitcoin-data)'), ((D.chips || {}).urpd || {}).date, 2],
       [_T('美債殖利率（FRED）', 'Treasury yields (FRED)'), (((D.flows.fred || {}).DGS10) || {}).last_date, 4]
     ];
+    if (D.onchain.whales) src.push([_T('鯨魚分層（BitInfoCharts）', 'Whale tiers (BitInfoCharts)'), D.onchain.whales.date, 2]);   // 2026-10-21 起暫停，沒有資料就不列
     if (D.flows.stables) src.push([_T('穩定幣（DefiLlama）', 'Stablecoins (DefiLlama)'), D.flows.stables.date, 2]);
     var rows = src.map(function (x) { var a = age(x[1]); return { name: x[0], date: x[1], age: a, bad: x[1] == null || a > x[2], max: x[2] }; });
     var errs = D.meta.errors || [], bad = rows.filter(function (r) { return r.bad; }), notesOld = N && N.stale;
@@ -1206,7 +1206,7 @@
     return '<div class="grid">' + panel('span-7', _t('這是什麼'), '', _t('<div class="prose"><p>破曉（Daybreak）是每天清晨的第一份比特幣簡報：先告訴你今天發生了什麼、為什麼重要，再用數據說明市場在週期裡的位置，以及離分批出場還有多遠。</p><p>每天兩段更新：台北 08:20（UTC 00:20）資料管線自動抓取 Kraken、Deribit、CoinMetrics、bitcoin-data、mempool.space、FRED、13 個交易所掛單簿與 Tidemark，算出所有指標；之後由 Claude 查證當天新聞、讀數據，寫成頭條、今日要聞解讀與各版的「今日判讀」。數字全部來自管線，判讀只解釋數字，不改數字。</p>') +
       _t('<h3>原則</h3><p>先給結論再給證據。各版「這些數字代表什麼」與表格下方的解讀，是用當日數值套固定門檻自動產生（門檻寫在句子裡），標籤「偏多／偏空／留意／中性」只描述該數字對價格的一般含意，不是預測，也不連動出場規則。寧可標示「本日未取得」，也不推估或沿用舊數字。不同資料商的數字不相減。分數一律附樣本數，樣本少於 30 不下結論。</p><h3>限制</h3><p>週期模型只有 3–4 輪歷史，所有「遞減」推論都假設趨勢延續。冪律擬合線會隨新資料下修。掛單隨時可撤。短線預測不連動出場規則。bitcoin-data 的部分序列本身晚 5–6 天，頁首「資料狀態」列出每個來源的資料日期與落後天數。</p>') +
       _t('<h3>免責聲明</h3><p>本站內容僅供研究與教育參考，不構成投資建議。加密資產波動極大，請依自身情況判斷並自負風險。</p></div>')) +
-      panel('span-5', _t('資料來源'), '', '<div class="events">' + [[_t('價格、均線、ATR'), _t('Kraken 日線（UTC）')], [_t('波動率、基差、選擇權'), _t('Deribit 公開 API')], [_T('MVRV、頂部三指標、交易所供給、冪律', 'MVRV, top-3 indicators, exchange supply, power law'), 'CoinMetrics Community'], [_T('SOPR、持有者成本、籌碼', 'SOPR, holder cost basis, supply distribution'), 'bitcoin-data.com'], ['STH-SOPR', 'CheckOnChain'], [_t('算力、難度'), 'mempool.space'], [_t('相關係數、利率'), 'FRED'], [_t('ETF 流量'), _t('The Block（與 Farside 同口徑）')], [_t('掛單簿'), _t('Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Hyperliquid')], [_t('綜合訊號'), _t('Tidemark（north7.github.io）')], [_T('鯨魚分層持幣', 'Holdings by balance tier (whales)'), 'BitInfoCharts']].map(function (r) { return '<div class="event" style="grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)"><span>' + r[0] + '</span><span style="color:var(--ink-2)">' + r[1] + '</span></div>'; }).join('') + _t('</div><p class="note">資料日 ') + D.meta.bar_date + _t(' · 管線產出 ') + (D.meta.generated_utc || '').replace('T', ' ').slice(0, 16) + _t(' UTC · 結論 ') + (N ? (N.written_utc || '').replace('T', ' ').slice(0, 16) + ' UTC' : '—') + '</p>') + '</div>';
+      panel('span-5', _t('資料來源'), '', '<div class="events">' + [[_t('價格、均線、ATR'), _t('Kraken 日線（UTC）')], [_t('波動率、基差、選擇權'), _t('Deribit 公開 API')], [_T('MVRV、頂部三指標、交易所供給、冪律', 'MVRV, top-3 indicators, exchange supply, power law'), 'CoinMetrics Community'], [_T('SOPR、持有者成本、籌碼', 'SOPR, holder cost basis, supply distribution'), 'bitcoin-data.com'], ['STH-SOPR', 'CheckOnChain'], [_t('算力、難度'), 'mempool.space'], [_t('相關係數、利率'), 'FRED'], [_t('ETF 流量'), _t('The Block（與 Farside 同口徑）')], [_t('掛單簿'), _t('Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Hyperliquid')], [_t('綜合訊號'), _t('Tidemark（north7.github.io）')]].concat(D.onchain.whales ? [[_T('鯨魚分層持幣', 'Holdings by balance tier (whales)'), 'BitInfoCharts']] : []).map(function (r) { return '<div class="event" style="grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)"><span>' + r[0] + '</span><span style="color:var(--ink-2)">' + r[1] + '</span></div>'; }).join('') + _t('</div><p class="note">資料日 ') + D.meta.bar_date + _t(' · 管線產出 ') + (D.meta.generated_utc || '').replace('T', ' ').slice(0, 16) + _t(' UTC · 結論 ') + (N ? (N.written_utc || '').replace('T', ' ').slice(0, 16) + ' UTC' : '—') + '</p>') + '</div>';
   };
 
   /* ---------------- 版面 ----------------
