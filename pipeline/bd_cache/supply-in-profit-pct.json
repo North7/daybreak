@@ -1,5 +1,4 @@
-{"m": "supply-in-profit-pct", "fetched_utc": "2026-10-21T22:40:38+00:00", "rows": [
-{"d":"2022-10-21","supplyInProfitPct":50.32},
+{"m": "supply-in-profit-pct", "fetched_utc": "2026-10-22T22:40:35+00:00", "rows": [
 {"d":"2022-10-22","supplyInProfitPct":50.39},
 {"d":"2022-10-23","supplyInProfitPct":54.91},
 {"d":"2022-10-24","supplyInProfitPct":52.82},
@@ -1452,5 +1451,6 @@
 {"d":"2026-10-17","supplyInProfitPct":68.15},
 {"d":"2026-10-18","supplyInProfitPct":69.32},
 {"d":"2026-10-19","supplyInProfitPct":68.83},
-{"d":"2026-10-20","supplyInProfitPct":70.82}
+{"d":"2026-10-20","supplyInProfitPct":70.82},
+{"d":"2026-10-21","supplyInProfitPct":73.34}
 ]}
