@@ -413,7 +413,7 @@
       var c = CONF[f.confidence] || CONF.medium, cks = Array.isArray(f.check) ? f.check : f.check ? [f.check] : [];
       var ck = cks.length ? '<div><dt>' + _T('追蹤條件', 'Checks') + '</dt><dd>' + cks.map(function (k) { return esc(k.label || (k.path + ' ' + k.op + ' ' + k.value)) + _T('（成立＝' + (k.means === 'refute' ? '推翻' : '確認') + '，期限 ' + fmt.md(k.by) + '）', ' (' + (k.means === 'refute' ? 'refutes' : 'confirms') + ' if met, by ' + fmt.md(k.by) + ')'); }).join('<br>') + '</dd></div>' : '';
       return '<article class="find"><div class="find-h"><span class="idx">' + ('0' + (i + 1)).slice(-2) + '</span><span class="chip ' + c[2] + '">' + _T(c[0], c[1]) + '</span>' + jumpA(f.module, f.chart, _T('看圖 →', 'See chart →')) + '</div>' +
-        '<h3>' + esc(f.title) + '</h3><p class="what">' + esc(f.what || '') + '</p>' +
+        '<h3>' + esc(f.title) + '</h3>' + (f.lean ? '<p class="lean">' + impChip(f.lean) + (f.lean_why ? '<span>' + esc(f.lean_why.replace(/^(偏多|偏空|中性)[：:]\s*|^(Bullish|Bearish|Neutral):\s*/, '')) + '</span>' : '') + '</p>' : '') + '<p class="what">' + esc(f.what || '') + '</p>' +
         '<details><summary>' + _T('拆解、其他解釋與追蹤條件', 'Breakdown, alternatives and checks') + '</summary><dl>' + row(f.why, '拆解', 'Breakdown') + row(f.alt, '其他解釋', 'Alternatives') + row(f.history, '過去', 'History') + row(f.so, '所以呢', 'So what') + row(f.next, '接下來看', 'Watch next') + ck + '</dl></details></article>';
     }).join('');
     var fuH = fu.length ? '<div class="fu"><h4>' + _T('上期發現的後續', 'Follow-ups') + '</h4><ul class="deltas">' + fu.map(function (f) { var st = FU_ST[f.status] || FU_ST.open; return '<li><span class="ar ' + st[3] + '">' + st[0] + '</span><div><h3>' + esc(f.title) + ' <span class="chip">' + _T(st[1], st[2]) + '</span></h3>' + (f.since ? '<div class="fig num">' + _T('自 ', 'since ') + fmt.md(f.since) + '</div>' : '') + '<p>' + esc(f.say || '') + '</p></div></li>'; }).join('') + '</ul></div>' : '';
@@ -422,9 +422,14 @@
         return '<li><span class="chip ' + (x.dir === 'up' ? 'up' : x.dir === 'down' ? 'down' : '') + '">' + _T(k[0], k[1]) + '</span>' + (x.new ? '<span class="new">' + _T('新', 'New') + '</span>' : '<span class="days">' + _T('第 ' + x.days + ' 天', 'day ' + x.days) + '</span>') +
           '<div><b>' + esc(lt(x.title)) + '</b> ' + jumpA(x.page, x.chart, '→') + '<span class="fig num">' + esc(lt(x.fig)) + '</span>' + [x.ctx, x.decomp, x.caveat].filter(Boolean).map(function (t) { return '<span class="note">' + esc(lt(t)) + '</span>'; }).join('') + '</div></li>';
       }).join('') + '</ul><p class="note">' + _T('資料管線每天依寫死的規則偵測：一年最極端的 2%、7 日急變、狀態翻轉、關鍵價位 ±3%、連續、跨指標組合。上面的發現才是判讀；這裡只作讀值。', 'Detected daily by fixed rules: the most extreme 2% of the past year, sharp 7-day moves, state flips, key levels within ±3%, streaks, cross-indicator combos. The findings above are the interpretation; these are readings only.') + '</p></details>' : '';
+    // 整體多空（2026-10-23 使用者要求）：依各則 lean 計數，偏多多於偏空＝整體偏多，反之偏空，相同＝多空互見
+    var cnt = { bull: 0, bear: 0, neutral: 0 }; fs.forEach(function (f) { if (cnt[f.lean] != null) cnt[f.lean]++; });
+    var ov = cnt.bull > cnt.bear ? 'bull' : cnt.bear > cnt.bull ? 'bear' : 'neutral', nl = cnt.bull + cnt.bear + cnt.neutral;
+    var sum = nl ? '<p class="find-sum"><span class="imp ' + ov + '">' + (ov === 'bull' ? _T('整體偏多', 'Leaning bullish') : ov === 'bear' ? _T('整體偏空', 'Leaning bearish') : cnt.bull ? _T('多空互見', 'Mixed') : _T('整體中性', 'Neutral overall')) + '</span><span>' +
+      _T('偏多 ' + cnt.bull + ' · 偏空 ' + cnt.bear + ' · 中性 ' + cnt.neutral, cnt.bull + ' bullish · ' + cnt.bear + ' bearish · ' + cnt.neutral + ' neutral') + '</span><span class="note">' + _T('描述這些發現對價格的一般含意，不是預測', 'what these findings usually mean for price; not a forecast') + '</span></p>' : '';
     var empty = has ? _T('本期沒有值得特別注意的異動。', 'Nothing unusual enough to call out today.') : _T('本期判讀還沒有寫發現；下面是自動偵測的異動。', 'Today\'s commentary has no findings yet; detected signals are below.');
     return _T('<div class="sec-h"><h2>今日發現</h2><span class="en">The Findings</span><hr></div>', '<div class="sec-h"><h2>Today\'s findings</h2><span class="en">The Findings</span><hr></div>') +
-      '<div class="finds">' + (cards || '<p class="note">' + empty + '</p>') + '</div>' + fuH + sgH;
+      sum + '<div class="finds">' + (cards || '<p class="note">' + empty + '</p>') + '</div>' + fuH + sgH;
   }
   /* 有異動的圖：圖上方標一行（哪一項、數字），圖上標日期線（lineChart 的 sigV） */
   function markSignals(root) {

@@ -10,7 +10,7 @@ CJK = re.compile(r'[一-鿿]')
 HEAD_ZH, HEAD_EN, SUM_ZH, SUM_EN = 60, 150, 180, 480   # 頭條與摘要的字數上限（字元）
 BOILER = ('只作讀值', '不改變', '不是框架條件', '不碰')   # 制式提醒句；news[].read 本來就要寫影不影響週期，不算在內
 BOILER_MAX = 4
-F_KEYS = ('id', 'title', 'module', 'signals', 'confidence', 'what', 'why', 'alt', 'history', 'so', 'next', 'check')   # 2026-10-23 發現與追蹤
+F_KEYS = ('id', 'title', 'module', 'signals', 'confidence', 'lean', 'lean_why', 'what', 'why', 'alt', 'history', 'so', 'next', 'check')   # 2026-10-23 發現與追蹤
 F_TITLE_ZH, F_TITLE_EN = 30, 90
 STATUS = ('open', 'confirmed', 'refuted', 'expired')
 EVENTS = {'CPI': 'CPI', 'FOMC': 'FOMC', '非農': '非農', '難度調整': '難度', 'Deribit 到期': 'Deribit', '月底路徑重估': '路徑'}
@@ -47,6 +47,7 @@ def lint_findings(n, en, L, prev):
         if not str(fid).startswith(n.get('date', '') + '-'): bad.append(f'finding id {fid} 應為 {n.get("date")}-序號')
         if len(f.get('title', '')) > F_TITLE_ZH: bad.append(f'finding {fid} 標題 {len(f.get("title", ""))} 字，上限 {F_TITLE_ZH}')
         if f.get('confidence') not in ('high', 'medium', 'low'): bad.append(f'finding {fid} confidence 要是 high／medium／low')
+        if f.get('lean') not in ('bull', 'bear', 'neutral'): bad.append(f'finding {fid} lean 要是 bull／bear／neutral')
         unk = [x for x in f.get('signals') or [] if x not in known]
         if unk: bad.append(f'finding {fid} 引用了 signals 沒有的 id：{unk}')
         if not f.get('signals') and len(f.get('why', '')) < 40: bad.append(f'finding {fid} 沒有引用 signal，why 要寫明依據')
@@ -62,6 +63,7 @@ def lint_findings(n, en, L, prev):
     if en is not None:
         if [f.get('id') for f in en.get('findings') or []] != ids: bad.append('英文版 findings 的 id／順序和中文版不同')
         if [f.get('id') for f in en.get('followups') or []] != [f.get('id') for f in fu]: bad.append('英文版 followups 和中文版不同')
+        if [f.get('lean') for f in en.get('findings') or []] != [f.get('lean') for f in fs]: bad.append('英文版 findings 的 lean 和中文版不同')
         if [json.dumps([(c.get('path'), c.get('op'), c.get('value')) for c in _cl(f.get('check'))]) for f in en.get('findings') or []] != [json.dumps([(c.get('path'), c.get('op'), c.get('value')) for c in _cl(f.get('check'))]) for f in fs]:
             bad.append('英文版 findings 的 check 和中文版不同')
         for f in en.get('findings') or []:

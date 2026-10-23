@@ -373,6 +373,8 @@
     "combo:cluster:holders"
    ],
    "confidence": "medium",
+   "lean": "bear",
+   "lean_why": "Profit-taking supply hit the market on a down day; it is not panic selling and does not mean the cycle has turned.",
    "what": "Short-term holders realized 7,940 BTC of profit (10/22, 1-year percentile 98.9, the most in 55 days) against only 1,782 BTC of loss; STH-SOPR hit 1.038, the highest in the series (since Oct 2025); the close was −3.22%.",
    "why": "Breaking SOPR apart: versus 7 days ago, realized profit is +142% and realized loss −14%, so the rise came from profit taking, not less loss selling. CoinMetrics daily net realized P/L (all holders, 10/21) was +$604M, and +$1.885B over 7 days, more than double the prior week's +$857M, pointing the same way; the share of short-term supply in profit is 88.4% (10/21, 65.3% a week earlier), so more holders can sell at a gain. Exchange supply moved −0.02% over 7 days (10/21): no large transfers onto exchanges.",
    "alt": "CheckOnChain smooths these values, so a jump from about 2,900 to 7,900 BTC in one day means the raw figure that day was very large; it could also be a large transfer counted as selling. It is one day, and CheckOnChain may revise it.",
@@ -408,6 +410,8 @@
     "level:tmm"
    ],
    "confidence": "medium",
+   "lean": "bear",
+   "lean_why": "Spot demand is weak while leveraged longs add on the dip, so further drops face more long liquidations.",
    "what": "Weighted funding flipped from −4.48% to +8.65% (annualized) on a −3.22% close; the 81,316 close is only +2.45% above the true market mean of 79,374 (10/16).",
    "why": "All three venues turned positive: OKX +7.32%, Hyperliquid +10.95%, Deribit +2.92%, so it is not one exchange. CoinGlass shows $210M of the $222M liquidated in the 12 hours of the drop were longs, and longs kept paying as price fell: traders are buying the dip with leverage. Spot looks weak: the Coinbase premium 7-day average is −0.123%, its own 11th percentile; the provisional $525M ETF inflow on 10/21 did not hold price up.",
    "alt": "Funding is a 00:05 UTC snapshot and 8.65% annualized is not extreme on its own; ETF flows and the Coinbase premium measure different buyers, and the premium only compares Coinbase with Binance. The true market mean comes from bitcoin-data and runs about 6 days behind.",

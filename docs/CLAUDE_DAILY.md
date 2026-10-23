@@ -60,6 +60,7 @@
   "changes": [{"dir": "up|down|flat", "title": "變了什麼（含數字）", "fig": "前後對照的數字", "say": "所以呢：會改變什麼、不會改變什麼"}],
   "findings": [{"id": "YYYY-MM-DD-1（bar_date 加序號）", "title": "結論一句（有判斷，不是數字描述）", "module": "onchain", "chart": "sthpnl（圖表 id，連結用）",
                 "signals": ["extreme:sth-profit:hi", "combo:profit-into-drop"], "confidence": "high|medium|low",
+                "lean": "bull|bear|neutral", "lean_why": "一句：為什麼偏多／偏空（對價格的一般含意）",
                 "what": "發生了什麼：關鍵數字與資料日期", "why": "拆解與交叉比對：是哪一邊在動、哪些獨立資料印證或矛盾",
                 "alt": "其他解釋與資料限制", "history": "過去同樣情況（日期、樣本數）", "so": "改變了什麼、沒改變什麼",
                 "next": "接下來看什麼：條件與時間",
@@ -95,6 +96,7 @@
   6. **所以呢**（`so`）：改變了什麼、沒改變什麼（對市場階段、出場框架、其他判讀的影響）。
   7. **可驗證**（`next` 與 `check`）：寫出接下來會確認或推翻這個判斷的條件與期限（通常 1–7 天）。`check` 1–2 個，`path` 必須是 latest.json 裡存在的數字欄位（例如 `onchain.sth_pnl.profit`、`chips.viz.sopr.value`、`deriv.funding_multi.weighted_now`、`price.bar.c`、`deriv.dvol.value`），`means` 寫這個條件成立代表 confirm（確認）還是 refute（推翻）。資料管線下一期會自動算出成不成立（`signals.checks`）。
   8. **confidence**：high＝多個獨立來源一致且不是單日；medium＝有印證但有明顯限制；low＝單一來源或單日。
+  9. **多空**（`lean`，2026-10-23 使用者要求）：這則發現整體偏多（bull）、偏空（bear）還是中性（neutral），`lean_why` 一句說為什麼，開頭不要再寫「偏多／偏空」（網站已經標了；例：「獲利籌碼在下跌中湧出，短線供給增加；不是恐慌，不代表週期轉空」）。和新聞的 `impact` 同一套標準：描述這件事對價格的一般含意，不是預測；多空互見、真的分不出來才用 neutral，不要為了保險都寫中性。網站會依各則的 lean 算出整體多空。
 - **不准**：價格預測、買賣建議、把同時發生寫成因果、把同一個數字換句話說當發現、引用 brief 沒有的數字。
 - **追蹤**（`followups`）：上一期的每一則 finding，以及上一期 followups 裡 status 為 open 的，這期都要列一筆（`notes_lint.py` 會檢查）。依 `signals.checks`：條件成立且 means＝confirm → confirmed；成立且 means＝refute → refuted；過了期限（`expired`）還沒成立 → expired；其他 → open（可以更新 check 繼續追）。`say` 一句講結果，引用今天的數值。confirmed／refuted／expired 列這一次就結案，下期不用再列。
 - **和其他欄位的關係**：最重要的 finding 若比今天的新聞重要，頭條就寫它的結論；摘要第一句也從 findings 來。`changes` 只記 findings 沒寫到的其他變化，不要重複。
@@ -150,7 +152,7 @@
 - `events` 滾動維護未來 60 天：難度調整（`onchain.mining.retarget`）、FOMC、CPI、非農、Deribit 月度與季度到期、每個月底的路徑重估、Tidemark 低點驗證日 2026-12-19。官方排程優先；官方還沒公布的寫慣例日期並標「待官方排程確認」。**每一類都必須在**：CPI 公布後要立刻補上下一次（10/14–10/20 連 7 期漏掉 11 月的 CPI）；季度到期（例如 12/25）在 60 天內就要列，不能只寫在衍生品版。
 
 #### 英文版
-- 寫完 `data/notes.json` 後，另寫 `data/notes.en.json`：結構、欄位、數字、日期、網址、`impact`、`kind`、`dir`、`module` 與中文版完全相同，只把文字欄位（headline、summary、stance.label／short、watch[].label／note、modules 各版 lead／points、news[].title／read／source、events[].label、actions[].head／text、changes[].title／fig／say、findings[] 的 title／what／why／alt／history／so／next 與 check[].label、followups[].title／say、research.summary 與 items[].points／meaning；研報原文標題本來就是英文的照抄）翻成自然的英文。
+- 寫完 `data/notes.json` 後，另寫 `data/notes.en.json`：結構、欄位、數字、日期、網址、`impact`、`kind`、`dir`、`module` 與中文版完全相同，只把文字欄位（headline、summary、stance.label／short、watch[].label／note、modules 各版 lead／points、news[].title／read／source、events[].label、actions[].head／text、changes[].title／fig／say、findings[] 的 title／lean_why／what／why／alt／history／so／next 與 check[].label、followups[].title／say、research.summary 與 items[].points／meaning；研報原文標題本來就是英文的照抄）翻成自然的英文。
 - `news[].cat` **保持中文**（網站用它篩選，英文版顯示時自動換成 Macro／Flows 等）；除此之外不應有任何中文字（`notes_lint.py` 會掃描）。
 - 台北時間後面加註 UTC；金額用 $ 與 K／M／B，不用「萬／億」；「資金面」譯成 flows（funding 只指資金費率）。
 - 英文版網站讀這個檔，缺檔或日期比中文舊時會退回中文並標示。隱私鐵則同樣適用。

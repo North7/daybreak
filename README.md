@@ -254,7 +254,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
 - **2026-10-23**
   - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。
-  - 頭版「今日發現」：異動偵測（`pipeline/signals.py`）＋每日任務寫的發現與後續；有異動的圖上方標出異動並畫日期線，「看圖 →」直接跳到那張圖。每日任務規則、`notes_lint.py` 與往期索引跟著加上 findings／followups。
+  - 頭版「今日發現」：異動偵測（`pipeline/signals.py`）＋每日任務寫的發現與後續；有異動的圖上方標出異動並畫日期線，「看圖 →」直接跳到那張圖；每則發現標偏多／偏空／中性，並算出整體多空。每日任務規則、`notes_lint.py` 與往期索引跟著加上 findings／followups。
 - **2026-10-14**
   - 市場階段佐證燈號加第 6 盞：短期持有者成本 vs 真實市場均價（只作佐證）；六盞燈都有近 3 年走勢圖配 BTC 價格線，附「離翻轉多遠、以近 30 日速度大約何時交叉」的讀值（`pipeline/stage_viz.py`）。
   - X 推廣：英文連結預覽卡、發文小幫手 `post.html`。
@@ -452,7 +452,7 @@ This repository is public and its history is permanent. The site holds only mark
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
 - **2026-10-23**
   - On-chain page: short-term holder realized profit and loss (CheckOnChain, two separate lines, in BTC, smoothed), with a note on which side drove the profit ÷ loss change versus 7 days ago. Doesn't use bitcoin-data quota.
-  - Front page "Today's findings": signal detection (`pipeline/signals.py`) plus findings and follow-ups written by the daily task; charts with a signal get a flag and a dated marker, and "See chart →" jumps straight to the chart. Daily-task rules, `notes_lint.py` and the edition index now cover findings / follow-ups.
+  - Front page "Today's findings": signal detection (`pipeline/signals.py`) plus findings and follow-ups written by the daily task; charts with a signal get a flag and a dated marker, and "See chart →" jumps straight to the chart; each finding is tagged bullish / bearish / neutral, with an overall lean. Daily-task rules, `notes_lint.py` and the edition index now cover findings / follow-ups.
 - **2026-10-14**
   - Sixth supporting light for the market stage: short-term holder cost vs true market mean (supporting only). All six lights get 3-year charts with the BTC price, plus a reading of how far each is from flipping and, at the last 30 days' pace, roughly when the lines cross (`pipeline/stage_viz.py`).
   - Promotion on X: English link-preview card, posting helper `post.html`.
