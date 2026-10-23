@@ -89,6 +89,16 @@ idx = sorted(idx, key=lambda x: x['date'])[-800:]
 json.dump(idx, open(idx_f, 'w'), ensure_ascii=False, indent=0)
 # 2026-10-15：籌碼集中度（現價 ±5%）每日走勢 [天數, 收盤, 佔流通 %]，只作讀值
 out['chips']['conc_hist'] = [[dn(x['date']), x['close'], x['conc5']] for x in idx if x.get('conc5') is not None]
+# 2026-10-23 使用者要求：異動偵測（pipeline/signals.py）。和上一期比狀態翻轉（只存一小份上一期快照 signals.base，不存整份）；
+#   notes.json 此時還是上一期，用來檢查它寫下的追蹤條件。同一天重建時沿用第一次建置的上一期快照
+try:
+    import signals
+    _lf = P('data', 'latest.json'); _nf = P('data', 'notes.json')
+    _old = json.load(open(_lf)) if os.path.exists(_lf) else None
+    _base = ((_old.get('signals') or {}).get('base') if _old['meta']['bar_date'] == td['bar_date'] else signals.snapshot(_old)) if _old else None
+    out['signals'] = signals.build(out, _base, json.load(open(_nf)) if os.path.exists(_nf) else None)
+except Exception as e:
+    print('signals failed', e); out['meta']['errors'] = out['meta']['errors'] + [f'signals {e}']
 json.dump(out, open(P('data', 'latest.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
 print('built data/latest.json', td['bar_date'], os.path.getsize(P('data', 'latest.json')), 'bytes')
 

@@ -49,6 +49,10 @@ def rebuild_index():
         e = dict(date=d, edition=n.get('edition'), headline=n.get('headline'), stance=(n.get('stance') or {}).get('label'),
                  close=c0, chg_since_pct=round((close[last] / c0 - 1) * 100, 1) if c0 and last and last > d else None, days_since=len(after), watch=watch)
         if en: e.update(headline_en=en.get('headline'), stance_en=(en.get('stance') or {}).get('label'))
+        # 2026-10-23：發現與追蹤結果也進索引（之後可以算有幾成被確認／推翻）
+        if n.get('findings') is not None:
+            e['findings'] = [dict(id=f.get('id'), title=f.get('title'), confidence=f.get('confidence'), signals=f.get('signals')) for f in n.get('findings') or []]
+            e['followups'] = [dict(id=f.get('id'), status=f.get('status')) for f in n.get('followups') or []]
         out.append(e)
     out.sort(key=lambda e: e['date'], reverse=True)
     with open(os.path.join(A, 'index.json'), 'w') as f:

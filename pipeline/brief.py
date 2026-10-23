@@ -1,8 +1,9 @@
 """印出 data/latest.json 的精簡數字摘要（略去圖表陣列），給每日結論任務讀，避免把整份資料讀進上下文。
-用法：python3 pipeline/brief.py"""
-import json, os
+用法：python3 pipeline/brief.py [latest.json 路徑]
+2026-10-23：異動偵測 signals 放在最前面（每日任務先讀它找「發現」）；active／base 是偵測器自己的狀態，略去"""
+import json, os, sys
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-d = json.load(open(os.path.join(ROOT, 'data', 'latest.json')))
+d = json.load(open(sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, 'data', 'latest.json')))
 DROP = {'rows', 'rows20', 'history', 'viz', 'wide', 'near', 'band', 'cost', 'profit', 'ratio', 'meta_venues', 'nodes', 'realized', 'episodes', 'conc_hist'}
 def slim(o, depth=0):
     if isinstance(o, dict):
@@ -11,7 +12,10 @@ def slim(o, depth=0):
         if len(o) > 24: return f'[{len(o)} 筆，略]'
         return [slim(x, depth + 1) for x in o]
     return o
-out = slim(d)
+sg = d.get('signals') or {}
+out = dict(signals={k: v for k, v in sg.items() if k not in ('active', 'base')}, **slim({k: v for k, v in d.items() if k != 'signals'}))
+sp = (d.get('onchain') or {}).get('sth_pnl')   # 2026-10-23：DROP 的 ratio（籌碼圖用）會連帶刪掉這裡的 ratio，補回摘要
+if sp: out['onchain']['sth_pnl'] = {k: v for k, v in sp.items() if k != 'rows'}
 if (d.get('flows') or {}).get('etf'):   # ETF 有 60 筆會被上面省略，摘要只放最近 10 個交易日與最新完整日
     e = d['flows']['etf']; out['flows']['etf'] = e[-10:]
     out['flows']['etf_last_complete'] = next((r['d'] for r in reversed(e) if not r.get('partial')), None)

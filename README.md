@@ -40,7 +40,7 @@
 
 | # | 版面 | 看什麼 |
 |---|---|---|
-| 01 | **頭版** | 號外大標題、巨型收盤價（滑過可回看近 20 天）、立場與市場階段、要盯的三個價位、數據帶、資料狀態、今日要聞、今天該做什麼／今天變了什麼、今日數據與解讀、離出場線的跑道圖、價格近一年、接下來的日期 |
+| 01 | **頭版** | 號外大標題、巨型收盤價（滑過可回看近 20 天）、立場與市場階段、要盯的三個價位、數據帶、資料狀態、**今日發現**（異動、關鍵節點與主要變化的判讀，附上期發現的後續與自動偵測的異動）、今日要聞、今天該做什麼／今天變了什麼、今日數據與解讀、離出場線的跑道圖、價格近一年、接下來的日期 |
 | 02 | **消息** | 過去 24–36 小時的重要消息（依分類篩選），每則附「對 BTC 的意義」並對照本站數據；機構研報（Glassnode、K33 等）重點 |
 | 03 | **週期** | 市場階段（熊市 → 轉換期 → 牛市，規則化判定與佐證燈號）、長期路徑四種走法、MVRV ÷ 前一輪高點、頂部三指標、冪律合理價、Tidemark 頂部／底部綜合訊號 |
 | 04 | **價格** | 近 20 天 K 線、ATR、實際波動、Mayer 倍數、Pi Cycle、**短週期（目前這一段行情：起點、幅度、天數、與本輪中位數比較、本段結束線）**、關鍵價位、均線排列、長期走勢 |
@@ -69,6 +69,8 @@
 頁面上每個數字都附一句「現在代表什麼」：由前端用當天的數值套固定門檻產生（門檻寫在句子裡），並標上 **偏多／偏空／留意／中性**。標籤只描述該數字對價格的一般含意，不是預測，也不連動出場規則。
 
 每版最上方的「今日判讀」與頭條、新聞、行動清單，則由 Claude 每日任務讀數據後撰寫（`data/notes.json`、英文版 `data/notes.en.json`），只解釋數字、不改數字。
+
+**今日發現**（2026-10-23 起）：資料管線先依寫死的規則偵測異動（`pipeline/signals.py`：一年最極端的 2%、7 日急變、狀態翻轉、關鍵價位 ±3%、連續、跨指標組合），每日任務再從中寫 0–3 則發現：拆解是哪一邊在動、用不同來源交叉比對、列出其他解釋與資料限制、引用過去同樣情況（附樣本數）、寫下會確認或推翻的條件。下一期資料管線自動檢查這些條件，任務再寫後續（確認／推翻／到期／追蹤中）。
 
 ## 資料來源
 
@@ -182,7 +184,8 @@ data/archive/            往期封存：每期 notes（含英文版）與 index.
 pipeline/collect.py      抓取所有 API 並計算指標 → pipeline/today.json
 pipeline/build.py        today.json → data/latest.json；最後呼叫 archive.py 封存前一期
 pipeline/archive.py      往期封存（一次性回填：python3 pipeline/archive.py --backfill-git）
-pipeline/brief.py        印出精簡摘要給 Claude 讀
+pipeline/brief.py        印出精簡摘要給 Claude 讀（異動偵測放最前面）
+pipeline/signals.py      異動偵測：極端值、急變、狀態翻轉、關鍵價位、連續、跨指標組合；檢查上期發現的追蹤條件（build.py 呼叫）
 pipeline/etf.py          從 The Block 更新 ETF 每日淨流量
 pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 7 個
 pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損：讀 CheckOnChain 公開圖表（晚約 1 天）
@@ -251,6 +254,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
 - **2026-10-23**
   - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。
+  - 頭版「今日發現」：異動偵測（`pipeline/signals.py`）＋每日任務寫的發現與後續；有異動的圖上方標出異動並畫日期線，「看圖 →」直接跳到那張圖。每日任務規則、`notes_lint.py` 與往期索引跟著加上 findings／followups。
 - **2026-10-14**
   - 市場階段佐證燈號加第 6 盞：短期持有者成本 vs 真實市場均價（只作佐證）；六盞燈都有近 3 年走勢圖配 BTC 價格線，附「離翻轉多遠、以近 30 日速度大約何時交叉」的讀值（`pipeline/stage_viz.py`）。
   - X 推廣：英文連結預覽卡、發文小幫手 `post.html`。
@@ -278,7 +282,7 @@ Nine sections. On desktop they stack into one page and switch as you scroll (key
 
 | # | Section | What you see |
 |---|---|---|
-| 01 | **Front page** | Headline, the giant closing price (hover to step back through 20 days), stance and market stage, three levels to watch, data tape, data-status bar, today's news, what to do / what changed, today's numbers with readings, the runway to each exit line, the 12-month price chart, upcoming dates |
+| 01 | **Front page** | Headline, the giant closing price (hover to step back through 20 days), stance and market stage, three levels to watch, data tape, data-status bar, **today's findings** (what is unusual, key levels and major changes, with follow-ups on earlier findings and the auto-detected signals), today's news, what to do / what changed, today's numbers with readings, the runway to each exit line, the 12-month price chart, upcoming dates |
 | 02 | **News** | Key stories from the last 24–36 hours (filter by category), each with what it means for BTC checked against our data; institutional research (Glassnode, K33, …) |
 | 03 | **Cycle** | Market stage (bear → transition → bull, rule-based with supporting signals), four long-term paths, MVRV ÷ prior-cycle peak, the top-3 indicators, power-law fair value, Tidemark top/bottom signals |
 | 04 | **Price** | 20 daily candles, ATR, realized volatility, Mayer multiple, Pi Cycle, **short cycle (the current price leg: start, size, length vs. this cycle's median, the close that would end it)**, key levels, moving-average alignment, long-term chart |
@@ -307,6 +311,8 @@ Measured as "100% = everything you plan to sell this cycle"; nobody's actual hol
 Every number on the page carries a one-line "what this means now", generated in the browser from the day's value and fixed thresholds (the thresholds are written in the sentence) and tagged **Bullish / Bearish / Caution / Neutral**. Tags describe what the number usually means for price; they are not forecasts and do not drive the exit rules.
 
 The "Today's read" at the top of each section, the headline, the news and the action list are written by a scheduled Claude task after it reads the data (`data/notes.json`, English in `data/notes.en.json`). The commentary explains numbers; it never changes them.
+
+**Today's findings** (from 2026-10-23): the pipeline first detects signals with fixed rules (`pipeline/signals.py`: the most extreme 2% of the past year, sharp 7-day moves, state flips, key levels within ±3%, streaks, cross-indicator combos); the daily task then writes 0–3 findings from them: which side is moving, cross-checks against other sources, alternative explanations and data limits, past occurrences (with sample size), and conditions that would confirm or refute it. The next build checks those conditions automatically and the task writes the follow-up (confirmed / refuted / expired / watching).
 
 ### Data sources
 
@@ -446,6 +452,7 @@ This repository is public and its history is permanent. The site holds only mark
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
 - **2026-10-23**
   - On-chain page: short-term holder realized profit and loss (CheckOnChain, two separate lines, in BTC, smoothed), with a note on which side drove the profit ÷ loss change versus 7 days ago. Doesn't use bitcoin-data quota.
+  - Front page "Today's findings": signal detection (`pipeline/signals.py`) plus findings and follow-ups written by the daily task; charts with a signal get a flag and a dated marker, and "See chart →" jumps straight to the chart. Daily-task rules, `notes_lint.py` and the edition index now cover findings / follow-ups.
 - **2026-10-14**
   - Sixth supporting light for the market stage: short-term holder cost vs true market mean (supporting only). All six lights get 3-year charts with the BTC price, plus a reading of how far each is from flipping and, at the last 30 days' pace, roughly when the lines cross (`pipeline/stage_viz.py`).
   - Promotion on X: English link-preview card, posting helper `post.html`.

@@ -108,7 +108,7 @@
     } else (cfg.xticks || []).forEach(function (t) { s += '<text class="ax" x="' + X(t[0]).toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + esc(t[1]) + '</text>'; });
     // vertical bands & lines
     (cfg.vbands || []).forEach(function (b) { var a = Math.max(ML, X(b.x0)), z = Math.min(ML + pw, X(b.x1)); if (z > a) s += '<rect x="' + a.toFixed(1) + '" y="' + MT + '" width="' + (z - a).toFixed(1) + '" height="' + ph + '" fill="' + (b.color || 'var(--flare-dim)') + '"/>' + (b.label ? '<text class="ax" x="' + (a + 6).toFixed(1) + '" y="' + (MT + 12) + '">' + esc(b.label) + '</text>' : ''); });
-    (cfg.vlines || []).forEach(function (v) { var xx = X(v.x); if (xx < ML || xx > ML + pw) return; s += '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="' + MT + '" y2="' + (MT + ph) + '" stroke="var(--ink-3)" stroke-dasharray="2 4" stroke-width="1"/>' + (v.label ? '<text class="ax" x="' + (xx > ML + pw - 70 ? xx - 5 : xx + 5).toFixed(1) + '" y="' + (MT + ph - 6) + '"' + (xx > ML + pw - 70 ? ' text-anchor="end"' : '') + '>' + esc(v.label) + '</text>' : ''); });
+    (cfg.vlines || []).concat(sigV(el)).forEach(function (v) { var xx = X(v.x); if (xx < ML || xx > ML + pw) return; s += '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="' + MT + '" y2="' + (MT + ph) + '" stroke="var(--ink-3)" stroke-dasharray="2 4" stroke-width="1"/>' + (v.label ? '<text class="ax" x="' + (xx > ML + pw - 70 ? xx - 5 : xx + 5).toFixed(1) + '" y="' + (MT + ph - 6) + '"' + (xx > ML + pw - 70 ? ' text-anchor="end"' : '') + '>' + esc(v.label) + '</text>' : ''); });
     (cfg.hbands || []).forEach(function (b) { var a = Math.max(MT, Y(b.y1)), z = Math.min(MT + ph, Y(b.y0)); if (z <= a) return; s += '<rect x="' + ML + '" y="' + a.toFixed(1) + '" width="' + pw + '" height="' + Math.max(1, z - a).toFixed(1) + '" fill="' + b.color + '"/>'; });
     // refs
     (cfg.refs || []).forEach(function (r) { var y = Y(r.y); if (y < MT - 2 || y > MT + ph + 2) return; s += '<line class="ref" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="' + r.color + '"/>'; if (r.label) s += '<text class="reflab" x="' + (ML + 6) + '" y="' + (y + (r.below ? 13 : -5)).toFixed(1) + '" fill="' + r.color + '">' + esc(r.label) + '</text>'; });
@@ -396,6 +396,43 @@
     var a = N && N.changes || [], AR = { up: ['▲', 'u'], down: ['▼', 'd'], flat: ['■', ''] };
     if (!a.length) return _t('<p class="note">本期沒有寫。</p>');
     return '<ul class="deltas">' + a.map(function (x) { var r = AR[x.dir] || AR.flat; return '<li><span class="ar ' + r[1] + '">' + r[0] + '</span><div><h3>' + esc(x.title) + '</h3>' + (x.fig ? '<div class="fig num">' + esc(x.fig) + '</div>' : '') + '<p>' + esc(x.say || '') + '</p></div></li>'; }).join('') + '</ul>';
+  }
+  /* 今日發現（2026-10-23）：每日任務寫的 findings（拆解、交叉比對、其他解釋、追蹤條件）、上期發現的後續，以及資料管線自動偵測的異動（pipeline/signals.py） */
+  var CONF = { high: ['可信度高', 'High confidence', 'up'], medium: ['可信度中', 'Medium confidence', ''], low: ['可信度低', 'Low confidence', 'down'] };
+  var FU_ST = { confirmed: ['✓', '確認', 'Confirmed', 'u'], refuted: ['✗', '推翻', 'Refuted', 'd'], expired: ['–', '到期結案', 'Expired', ''], open: ['…', '追蹤中', 'Watching', ''] };
+  var SIG_K = { extreme: ['極端值', 'Extreme'], jump: ['急變', 'Sharp move'], cross: ['翻轉', 'Flip'], level: ['關鍵價位', 'Key level'], streak: ['連續', 'Streak'], combo: ['組合', 'Combo'] };
+  function lt(o) { return !o ? '' : typeof o === 'string' ? o : (LANG === 'en' && o.en) || o.zh || ''; }
+  function jumpA(page, chart, label) { return page ? '<a class="jump" href="#' + esc(page) + '" data-chart="' + esc(chart || '') + '">' + label + '</a>' : ''; }
+  function sigOn(chart) { return ((D.signals || {}).items || []).filter(function (s) { return s.chart && s.chart === chart; }); }
+  function sigV(el) { return el && el.id ? sigOn(el.id.replace(/^c-/, '')).filter(function (s) { return s.x != null; }).map(function (s) { return { x: s.x, label: _T('異動', 'Signal') }; }) : []; }
+  function findingsHtml() {
+    var has = N && N.findings, fs = (N && N.findings) || [], fu = (N && N.followups) || [], sg = (D.signals || {}).items || [];
+    if (!has && !sg.length) return '';
+    var row = function (v, z, e) { return v ? '<div><dt>' + _T(z, e) + '</dt><dd>' + esc(v) + '</dd></div>' : ''; };
+    var cards = fs.map(function (f, i) {
+      var c = CONF[f.confidence] || CONF.medium, cks = Array.isArray(f.check) ? f.check : f.check ? [f.check] : [];
+      var ck = cks.length ? '<div><dt>' + _T('追蹤條件', 'Checks') + '</dt><dd>' + cks.map(function (k) { return esc(k.label || (k.path + ' ' + k.op + ' ' + k.value)) + _T('（成立＝' + (k.means === 'refute' ? '推翻' : '確認') + '，期限 ' + fmt.md(k.by) + '）', ' (' + (k.means === 'refute' ? 'refutes' : 'confirms') + ' if met, by ' + fmt.md(k.by) + ')'); }).join('<br>') + '</dd></div>' : '';
+      return '<article class="find"><div class="find-h"><span class="idx">' + ('0' + (i + 1)).slice(-2) + '</span><span class="chip ' + c[2] + '">' + _T(c[0], c[1]) + '</span>' + jumpA(f.module, f.chart, _T('看圖 →', 'See chart →')) + '</div>' +
+        '<h3>' + esc(f.title) + '</h3><p class="what">' + esc(f.what || '') + '</p>' +
+        '<details><summary>' + _T('拆解、其他解釋與追蹤條件', 'Breakdown, alternatives and checks') + '</summary><dl>' + row(f.why, '拆解', 'Breakdown') + row(f.alt, '其他解釋', 'Alternatives') + row(f.history, '過去', 'History') + row(f.so, '所以呢', 'So what') + row(f.next, '接下來看', 'Watch next') + ck + '</dl></details></article>';
+    }).join('');
+    var fuH = fu.length ? '<div class="fu"><h4>' + _T('上期發現的後續', 'Follow-ups') + '</h4><ul class="deltas">' + fu.map(function (f) { var st = FU_ST[f.status] || FU_ST.open; return '<li><span class="ar ' + st[3] + '">' + st[0] + '</span><div><h3>' + esc(f.title) + ' <span class="chip">' + _T(st[1], st[2]) + '</span></h3>' + (f.since ? '<div class="fig num">' + _T('自 ', 'since ') + fmt.md(f.since) + '</div>' : '') + '<p>' + esc(f.say || '') + '</p></div></li>'; }).join('') + '</ul></div>' : '';
+    var sgH = sg.length ? '<details class="sigs"' + (fs.length ? '' : ' open') + '><summary>' + _T('自動偵測的異動 ', 'Detected signals ') + sg.length + (D.signals.n > sg.length ? ' / ' + D.signals.n : '') + '</summary><ul>' + sg.map(function (x) {
+        var k = SIG_K[x.kind] || ['', ''];
+        return '<li><span class="chip ' + (x.dir === 'up' ? 'up' : x.dir === 'down' ? 'down' : '') + '">' + _T(k[0], k[1]) + '</span>' + (x.new ? '<span class="new">' + _T('新', 'New') + '</span>' : '<span class="days">' + _T('第 ' + x.days + ' 天', 'day ' + x.days) + '</span>') +
+          '<div><b>' + esc(lt(x.title)) + '</b> ' + jumpA(x.page, x.chart, '→') + '<span class="fig num">' + esc(lt(x.fig)) + '</span>' + [x.ctx, x.decomp, x.caveat].filter(Boolean).map(function (t) { return '<span class="note">' + esc(lt(t)) + '</span>'; }).join('') + '</div></li>';
+      }).join('') + '</ul><p class="note">' + _T('資料管線每天依寫死的規則偵測：一年最極端的 2%、7 日急變、狀態翻轉、關鍵價位 ±3%、連續、跨指標組合。上面的發現才是判讀；這裡只作讀值。', 'Detected daily by fixed rules: the most extreme 2% of the past year, sharp 7-day moves, state flips, key levels within ±3%, streaks, cross-indicator combos. The findings above are the interpretation; these are readings only.') + '</p></details>' : '';
+    var empty = has ? _T('本期沒有值得特別注意的異動。', 'Nothing unusual enough to call out today.') : _T('本期判讀還沒有寫發現；下面是自動偵測的異動。', 'Today\'s commentary has no findings yet; detected signals are below.');
+    return _T('<div class="sec-h"><h2>今日發現</h2><span class="en">The Findings</span><hr></div>', '<div class="sec-h"><h2>Today\'s findings</h2><span class="en">The Findings</span><hr></div>') +
+      '<div class="finds">' + (cards || '<p class="note">' + empty + '</p>') + '</div>' + fuH + sgH;
+  }
+  /* 有異動的圖：圖上方標一行（哪一項、數字），圖上標日期線（lineChart 的 sigV） */
+  function markSignals(root) {
+    var by = {}; ((D.signals || {}).items || []).forEach(function (s) { if (s.chart) (by[s.chart] = by[s.chart] || []).push(s); });
+    Object.keys(by).forEach(function (ch) {
+      var el = (root || document).querySelector('#c-' + ch); if (!el || (el.previousElementSibling && el.previousElementSibling.classList.contains('sig-flag'))) return;
+      el.insertAdjacentHTML('beforebegin', '<p class="sig-flag"><span class="chip flare"><i></i>' + _T('異動', 'Signal') + '</span>' + by[ch].map(function (s) { return '<span><b>' + esc(lt(s.title)) + '</b> ' + esc(lt(s.fig)) + '</span>'; }).join('') + '</p>');
+    });
   }
   function researchHtml() {
     var r = N && N.research || {}, rows = r.items || [];
@@ -1026,7 +1063,7 @@
     var plan = _t('<div class="sec-h"><h2>今天該做什麼</h2><span class="en">The Plan</span><hr>') + staleTag() + '</div><div class="grid">' +
       panel('span-7', _t('今天該做什麼、盯什麼'), _t('依出場框架 · 非投資建議'), actionsHtml()) + panel('span-5', _t('今天變了什麼'), _t('相對上一期'), changesHtml()) + '</div>';
     var zhNote = ZH_ONLY ? '<p class="note" style="margin:0">The English edition of today’s written commentary (headline, news and plan) is not published yet, so those parts are shown in Chinese. All data and readings are in English.</p>' : '';
-    return zhNote + front + tapeHtml() + healthHtml() + newsBlock + plan +
+    return zhNote + front + tapeHtml() + healthHtml() + findingsHtml() + newsBlock + plan +
       _t('<div class="sec-h"><h2>今日數據</h2><span class="en">The Numbers</span><hr></div>') + kp +
       '<div class="grid">' + interpPanel(ovInterp()) + panel('span-12', _t('離出場線還多遠'), _t('以 ') + fmt.md(D.meta.bar_date) + _t(' 收盤計 · 對數刻度'), '<div class="runway">' + runwaySvg() + '</div>') +
       panel('span-7', _t('價格近一年'), _t('CoinMetrics 每 7 天'), '<div class="chart" id="c-ov-px"></div>') +
@@ -1266,6 +1303,7 @@
     }).join('');
     ROUTES.forEach(function (r) { try { if (V[r[0]].after) V[r[0]].after(); } catch (e) { console.error(e); } });
     try { attachReads(v); } catch (e) { console.error(e); }
+    try { markSignals(v); } catch (e) { console.error(e); }
     mounted.forEach(observe); settleMeters(v);
     void v.offsetWidth; v.classList.add('view-enter');
   }
@@ -1334,6 +1372,12 @@
     var onMode = function () { if (MQ.matches) window.scrollTo(0, 0); else go(cur); };
     if (MQ.addEventListener) MQ.addEventListener('change', onMode); else if (MQ.addListener) MQ.addListener(onMode);
     window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h !== cur) go(h); });
+    // 2026-10-23：「看圖 →」連結：換到那一版後捲到那張圖並閃一下
+    document.addEventListener('click', function (e) {
+      var a = e.target.closest && e.target.closest('a.jump'); if (!a) return; var ch = a.getAttribute('data-chart'); if (!ch) return;
+      e.preventDefault(); go(a.getAttribute('href').slice(1));
+      setTimeout(function () { var el = $('#c-' + ch); if (!el) return; el.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash'); }, 1800); }, MQ.matches ? 350 : 500);
+    });
     // 桌面換頁頓點：滾輪捲過版面開頭時，先停在「該版標題貼齊頂部列」的位置，頓 HOLD 毫秒（期間的滾輪與慣性吃掉），之後照常捲動
     var hold = 0, HOLD = 260;
     window.addEventListener('wheel', function (e) {

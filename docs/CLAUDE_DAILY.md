@@ -16,6 +16,7 @@
 1. 拉最新的 main。確認 `data/latest.json` 的 `meta.bar_date` 等於今天 UTC 日期的前一天。不是的話（GitHub 定時排程常延遲數小時）：執行 `date -u +%FT%TZ > .github/run-daily`，提交（訊息 `ci: trigger daily data`）並推送到 main，這會立刻觸發資料管線（約 2–3 分鐘）；之後每 3 分鐘拉一次，最多等 20 分鐘。仍不是就停止，不寫 notes，回報「資料管線今天沒有更新」。
 2. 執行 `python3 pipeline/brief.py` 讀精簡摘要（約 20KB）。**不要讀整份 latest.json**；需要某個欄位就用 python 取。各欄位怎麼寫，見下面「各版判讀」。
 3. 讀上一期 `data/notes.json`（用來比較變化、延續期數）。
+3a. **找發現（今天最重要的一步，2026-10-23 起）**：brief 最前面的 `signals` 是資料管線依寫死規則偵測出的異動（`pipeline/signals.py`），`signals.checks` 是上一期 findings／followups 寫下的追蹤條件今天成不成立。先讀完這兩塊，再讀其他數字；依下面「發現與追蹤」的規則寫 `findings` 與 `followups`，頭條、摘要、各版判讀都從這裡出發。
 4. ETF 暫定值（你唯一可以改資料檔的情況）：ETF 由資料管線每天從 The Block 自動更新（`pipeline/etf.py`，與 Farside 同口徑；Farside 擋自動抓取，不要再去讀它），**除了這個例外，你不改 `data/etf.json`**。比最新完整日更新的交易日，如果查到**兩個獨立來源**（例如 Farside 經媒體轉述、SoSoValue）的合計淨流量差距在 2% 以內，可以在 `data/etf.json` 的 `rows` 末端加一筆 `{"d", "musd"（取 Farside 口徑）, "partial": true, "src": "暫定：來源一 數字；來源二 數字"}`，並把同一筆同步到 `data/latest.json` 的 `flows.etf`；只有一個來源或差距超過 2% 就不加。The Block 公布後資料管線會自動覆寫。
 5. 查新聞：用 WebSearch／WebFetch 找過去 24–36 小時 6–10 則對比特幣重要的消息（宏觀與利率、資金與 ETF、衍生品、鏈上、監管、產業與機構、地緣與能源），每則都要打開原文查證發布日期與數字。來源與寫法見「新聞」。
 6. 查研報：先用 WebFetch 打開 Glassnode 研報列表 https://research.glassnode.com （The Week On-chain 約每週二／三、Market Pulse 每週日、Macro Special 不定期），找出最近 7 天的每一期並打開原文讀重點；再查 The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。每一期的 `date` 寫原文發布日、`url` 寫原文網址。確認列表上真的沒有新一期，才沿用最近一期並在 `research.summary` 寫明「無新一期」。
@@ -29,7 +30,7 @@
 
      ・市場階段：牛市（第 4 天）
      ・ETF 7 個交易日（至 10/09）：−5.58 億美元
-     ・<今天最重要的一個數字或事件>
+     ・<今天最重要的 finding：結論＋一個關鍵數字；沒有 finding 才用最重要的數字或事件>
 
      完整解讀 👉 https://north7.github.io/daybreak/?utm_source=x
      ```
@@ -57,6 +58,14 @@
   "events": [{"date": "YYYY-MM-DD", "label": "事件"}],
   "actions": [{"kind": "do|dont|watch|flip", "head": "一句粗體結論", "text": "補充：價位、距離、條件"}],
   "changes": [{"dir": "up|down|flat", "title": "變了什麼（含數字）", "fig": "前後對照的數字", "say": "所以呢：會改變什麼、不會改變什麼"}],
+  "findings": [{"id": "YYYY-MM-DD-1（bar_date 加序號）", "title": "結論一句（有判斷，不是數字描述）", "module": "onchain", "chart": "sthpnl（圖表 id，連結用）",
+                "signals": ["extreme:sth-profit:hi", "combo:profit-into-drop"], "confidence": "high|medium|low",
+                "what": "發生了什麼：關鍵數字與資料日期", "why": "拆解與交叉比對：是哪一邊在動、哪些獨立資料印證或矛盾",
+                "alt": "其他解釋與資料限制", "history": "過去同樣情況（日期、樣本數）", "so": "改變了什麼、沒改變什麼",
+                "next": "接下來看什麼：條件與時間",
+                "check": [{"path": "onchain.sth_pnl.profit", "op": "<|<=|>|>=", "value": 4000, "by": "YYYY-MM-DD", "means": "confirm|refute", "label": "實現獲利回到 4,000 顆以下"}]}],
+  "followups": [{"id": "上期 finding 的 id", "title": "原標題", "since": "第一次發現的日期", "status": "open|confirmed|refuted|expired",
+                 "say": "一句：結果如何（引用 signals.checks 的今天數值）", "check": "繼續追蹤時可更新條件（格式同上，可省略）"}],
   "research": {"summary": "一句話：最新研報和本站讀值是否一致",
                "items": [{"source": "Glassnode", "title": "研報名稱", "date": "YYYY-MM-DD", "url": "原文網址", "access": "full|title_only",
                           "points": "重點（含價位數字）", "meaning": "對本站判斷的意義"}]}
@@ -66,12 +75,29 @@
 ### 寫作規則
 
 #### 共通
-- 每個模組 `lead` 是一句結論（先說「所以呢」），`points` 2–4 點，每點一句、最多 3–4 個數字，全部取自 brief 的數字，標明資料日期（若晚於收盤日）。
+- 每個模組 `lead` 是一句結論（先說「所以呢」：這一版今天最值得注意的是什麼、代表什麼），**不是數字清單**；不好的例子：「短期持有者回到獲利：獲利比例由 68.6% 升到 78.2%、賣出盈虧比 1.008；近 7 日淨實現獲利 +10.85 億…」（整句都是數字）。`points` 2–4 點，每點一句、最多 3–4 個數字，全部取自 brief 的數字，標明資料日期（若晚於收盤日）；這一版有 finding 時，第一點寫它和這一版其他數字的關係。
 - 不寫短線價格預測（不預測未來幾天的漲跌、區間或機率）。
 - 第三方模型（Tidemark）只作讀值。不同資料商的數字不相減。分數一律附樣本數。寧可寫「本日未取得」，也不推估或沿用昨天的數字。
 - 頁首「資料狀態」若顯示延遲，判讀要標明。某項資料沒取到（`meta.errors` 有它）時寫「本日未取得」並照抄錯誤訊息裡的原因（例如某來源被 Cloudflare 擋下），不要自己猜成「解析失敗」。
 - 頁面上每個數字已有依固定門檻自動產生的解讀（`assets/app.js` 的「數字解讀」區塊：各版「這些數字代表什麼」與鏈上表格下方的解讀列），每張圖下方也有自動「現在／怎麼讀」。各版 `modules` 的判讀不必逐項重述，也不必重述圖上讀數，重點放在跨指標的綜合結論與今天的變化；若你的判讀和自動解讀方向不同，要寫出原因。
 - 制式提醒句（「只作讀值」「不改變框架」「不是框架條件」「不碰…」）全期最多 4 次（新聞的 `read` 不算，那裡本來就要說影不影響週期判斷）。網站的方法說明與每張圖下方的讀法已經寫過，不必每點重複；只在讀值容易被誤會成買賣訊號，或你的判讀和自動解讀方向不同時才寫。規則指定要附的限制（例如「線性外推、不是預測」、淨實現損益在 ETF 時代可能變鈍）照寫，不算在內。
+
+#### 發現與追蹤（findings／followups，2026-10-23 起；網站頭版最上方「今日發現」）
+這是日報最有價值的部分：讀者自己看得到數字，看不到的是「哪裡不尋常、為什麼、代表什麼、接下來看什麼」。各版判讀只是補充。
+- **數量**：`findings` 0–3 則，依重要性排序。今天真的沒有值得寫的，就給空陣列，不要硬湊；硬湊的發現比沒有更糟。
+- **從哪裡來**：先看 `signals.items`（依分數排序；`kind`：extreme 一年 2% 極端值、jump 7 日急變、cross 狀態翻轉、level 關鍵價位、streak 連續、combo 跨指標組合與同主題多項同時異動）。每則 finding 的 `signals` 至少列一個 id；signals 沒抓到、但你從數據或新聞看出的，可以 `signals: []`，在 `why` 寫明依據。同一件事的多個 signal 合成一則，不要拆成好幾則。`new: true` 的優先；連續好幾天的（`days`）只有在有新發展時才再寫成 finding，否則放進 followups。
+- **深度要求（每則都要做到）**：
+  1. **title 是結論**：一句有判斷的話（例：「短線買家趁跌集中獲利了結」），不是數字描述（不要「實現獲利 7,940 顆、第 98.9 百分位」）。30 字以內。
+  2. **拆解**：先問「是哪一邊在動」。能拆就拆：SOPR → 實現獲利／實現虧損（`decomp`）；資金費率 → 各交易所；ETF → 哪幾天、是不是單日；價格 → 現貨（Coinbase 溢價、ETF）還是衍生品（資金費率、清算）推動。
+  3. **交叉比對**：至少用兩個不同來源或不同類型的指標互相印證，或指出它們矛盾（矛盾本身常常就是發現）。寫明各自的資料日期；不同資料商的數字不相減。
+  4. **其他解釋**（`alt`）：至少一個，加上資料限制（平滑、晚幾天、單日、口徑、交易所錢包整理或大額轉帳）。
+  5. **歷史**（`history`）：signal 的 `hist` 有過去同樣情況的日期、`fwd30`（之後 30 天價格變化）、`fwd30_med` 與同期基準 `base30_med`、樣本數 `n`。可以引用，但一定附樣本數；`n` < 5 寫「樣本太少，只能當背景」；不得寫成預測（不要「歷史上之後會漲」）。`ctx`（「N 天來最高，上次 …」）也可以用。
+  6. **所以呢**（`so`）：改變了什麼、沒改變什麼（對市場階段、出場框架、其他判讀的影響）。
+  7. **可驗證**（`next` 與 `check`）：寫出接下來會確認或推翻這個判斷的條件與期限（通常 1–7 天）。`check` 1–2 個，`path` 必須是 latest.json 裡存在的數字欄位（例如 `onchain.sth_pnl.profit`、`chips.viz.sopr.value`、`deriv.funding_multi.weighted_now`、`price.bar.c`、`deriv.dvol.value`），`means` 寫這個條件成立代表 confirm（確認）還是 refute（推翻）。資料管線下一期會自動算出成不成立（`signals.checks`）。
+  8. **confidence**：high＝多個獨立來源一致且不是單日；medium＝有印證但有明顯限制；low＝單一來源或單日。
+- **不准**：價格預測、買賣建議、把同時發生寫成因果、把同一個數字換句話說當發現、引用 brief 沒有的數字。
+- **追蹤**（`followups`）：上一期的每一則 finding，以及上一期 followups 裡 status 為 open 的，這期都要列一筆（`notes_lint.py` 會檢查）。依 `signals.checks`：條件成立且 means＝confirm → confirmed；成立且 means＝refute → refuted；過了期限（`expired`）還沒成立 → expired；其他 → open（可以更新 check 繼續追）。`say` 一句講結果，引用今天的數值。confirmed／refuted／expired 列這一次就結案，下期不用再列。
+- **和其他欄位的關係**：最重要的 finding 若比今天的新聞重要，頭條就寫它的結論；摘要第一句也從 findings 來。`changes` 只記 findings 沒寫到的其他變化，不要重複。
 
 #### 頭條與摘要
 - 頭條（headline）是號外大標題：一句話總結今天整個 BTC 市場的狀況（資金、宏觀、衍生品、鏈上，誰在主導、方向是什麼），或今天最重大的單一消息。**至少要有一個關鍵數字**（網站會把標題裡的數字標成號外紅，全黑的標題不好看），選最能說明今天狀況的數字，例如 ETF 淨流量、殖利率、清算金額、資金費率、鏈上轉移量、市場階段天數；不要用收盤價、漲跌幅、盤中高低點這類頁面上已經顯示的數字。不好的例子：「BTC 收 81,684（−1.91%）；離 200 日均線仍有 13.8%，出場框架 0 條觸發。」好的例子：「10 年期美債殖利率衝上 5.36%、油價破 100 美元，ETF 單日流出 4.85 億，市場轉入避險。」
@@ -124,10 +150,10 @@
 - `events` 滾動維護未來 60 天：難度調整（`onchain.mining.retarget`）、FOMC、CPI、非農、Deribit 月度與季度到期、每個月底的路徑重估、Tidemark 低點驗證日 2026-12-19。官方排程優先；官方還沒公布的寫慣例日期並標「待官方排程確認」。**每一類都必須在**：CPI 公布後要立刻補上下一次（10/14–10/20 連 7 期漏掉 11 月的 CPI）；季度到期（例如 12/25）在 60 天內就要列，不能只寫在衍生品版。
 
 #### 英文版
-- 寫完 `data/notes.json` 後，另寫 `data/notes.en.json`：結構、欄位、數字、日期、網址、`impact`、`kind`、`dir`、`module` 與中文版完全相同，只把文字欄位（headline、summary、stance.label／short、watch[].label／note、modules 各版 lead／points、news[].title／read／source、events[].label、actions[].head／text、changes[].title／fig／say、research.summary 與 items[].points／meaning；研報原文標題本來就是英文的照抄）翻成自然的英文。
+- 寫完 `data/notes.json` 後，另寫 `data/notes.en.json`：結構、欄位、數字、日期、網址、`impact`、`kind`、`dir`、`module` 與中文版完全相同，只把文字欄位（headline、summary、stance.label／short、watch[].label／note、modules 各版 lead／points、news[].title／read／source、events[].label、actions[].head／text、changes[].title／fig／say、findings[] 的 title／what／why／alt／history／so／next 與 check[].label、followups[].title／say、research.summary 與 items[].points／meaning；研報原文標題本來就是英文的照抄）翻成自然的英文。
 - `news[].cat` **保持中文**（網站用它篩選，英文版顯示時自動換成 Macro／Flows 等）；除此之外不應有任何中文字（`notes_lint.py` 會掃描）。
 - 台北時間後面加註 UTC；金額用 $ 與 K／M／B，不用「萬／億」；「資金面」譯成 flows（funding 只指資金費率）。
 - 英文版網站讀這個檔，缺檔或日期比中文舊時會退回中文並標示。隱私鐵則同樣適用。
 
 ### 回報
-最後用 3 行以內摘要：今天的結論、出場框架有沒有任何觸發、市場階段、哪些資料沒取到、X 草稿字數（x_len.py 的結果）。
+最後用 3 行以內摘要：今天的結論、findings 幾則（標題）與 followups 結果、出場框架有沒有任何觸發、市場階段、哪些資料沒取到、X 草稿字數（x_len.py 的結果）。

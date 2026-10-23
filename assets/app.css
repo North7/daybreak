@@ -571,3 +571,35 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .rd-how ul { margin: 4px 0 0; padding-left: 0; list-style: none; }
 .rd-how li { margin: 2px 0; }
 .rd-how li b { display: inline-block; min-width: 3.4em; margin-right: 4px; color: var(--ink); font-weight: 600; }
+
+/* 今日發現（2026-10-23）：每日任務寫的 findings、上期後續、自動偵測的異動，以及圖上方的異動標記 */
+.finds { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 0 28px; border-top: 2px solid var(--ink); }
+.find { padding: 14px 0 16px; border-bottom: 1px solid var(--line); display: grid; gap: 6px; align-content: start; min-width: 0; }
+.find-h { display: flex; align-items: center; gap: 10px; }
+.find-h .idx { font-family: var(--f-mono); font-size: 12px; color: var(--red-ink); font-weight: 700; }
+.find-h .jump { margin-left: auto; font-size: 12.5px; color: var(--red-ink); text-decoration: none; }
+.find h3 { margin: 0; font-family: var(--f-cjk-display); font-size: 19px; font-weight: 900; line-height: 1.35; text-wrap: pretty; }
+.find .what { margin: 0; font-size: 14px; line-height: 1.65; color: var(--ink-2); }
+.find details summary, .sigs summary { cursor: pointer; font-size: 12.5px; color: var(--ink-3); }
+.find dl { margin: 8px 0 0; display: grid; gap: 8px; }
+.find dl div { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 10px; }
+.find dt { font-size: 12px; font-weight: 700; color: var(--ink); }
+.find dd { margin: 0; font-size: 13px; line-height: 1.65; color: var(--ink-2); }
+.fu { margin-top: 10px; }
+.fu h4, .sigs summary { margin: 0; font-size: 13px; font-weight: 700; }
+.fu .deltas h3 .chip { font-size: 11px; margin-left: 6px; vertical-align: 1px; }
+.sigs { margin-top: 12px; border-top: 1px solid var(--line); padding-top: 10px; }
+.sigs ul { margin: 8px 0; padding: 0; list-style: none; display: grid; }
+.sigs li { display: grid; grid-template-columns: auto 44px minmax(0, 1fr); gap: 4px 10px; align-items: baseline; padding: 7px 0; border-bottom: 1px dashed var(--line); }
+.sigs li .chip { font-size: 11px; justify-self: start; }
+.sigs li .new { font-size: 11px; font-weight: 700; color: var(--red-ink); }
+.sigs li .days { font-size: 11px; color: var(--ink-3); }
+.sigs li b { font-size: 13.5px; }
+.sigs li .jump { color: var(--red-ink); text-decoration: none; }
+.sigs li .fig { display: block; font-family: var(--f-mono); font-size: 12px; color: var(--red-ink); }
+.sigs li .note { display: block; margin: 2px 0 0; padding: 0; }
+.sig-flag { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 12.5px; color: var(--ink-2); }
+.sig-flag .chip { font-size: 11px; }
+.sig-flag b { color: var(--ink); }
+.chart.flash { outline: 2px solid var(--red); outline-offset: 6px; transition: outline-color 1.6s; }
+@media (max-width: 520px) { .sigs li { grid-template-columns: auto minmax(0, 1fr); } .sigs li > div { grid-column: 1 / -1; } .find dl div { grid-template-columns: 1fr; gap: 2px; } }
