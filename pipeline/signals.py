@@ -127,6 +127,8 @@ def _px_map(L):
     for path, i in (('price.history', 1), ('cycle.stage.viz.px', 1), ('chips.viz.sopr.rows', 2), ('onchain.sth_pnl.rows', 3)):
         for r in g(L, path) or []:
             if r[i]: m[r[0]] = r[i]
+    c, bd = g(L, 'price.bar.c'), g(L, 'meta.bar_date')   # 收盤當天：CoinMetrics 序列還沒有，用 Kraken 收盤補上
+    if c and bd: m.setdefault(dn(bd), c)
     return sorted(m.items())
 
 

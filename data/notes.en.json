@@ -359,5 +359,80 @@
     "meaning": "Full text is paywalled, not used for the call; its 'volatility won't stay low for long' view matches the site's 7-day realized volatility rising to 30.5% and DVOL at the 25.8th percentile of the year."
    }
   ]
- }
+ },
+ "findings": [
+  {
+   "id": "2026-10-22-1",
+   "title": "Short-term buyers cashed in on the drop; no panic selling",
+   "module": "onchain",
+   "chart": "sthpnl",
+   "signals": [
+    "combo:profit-into-drop",
+    "extreme:sth-sopr:hi",
+    "extreme:sth-profit:hi",
+    "combo:cluster:holders"
+   ],
+   "confidence": "medium",
+   "what": "Short-term holders realized 7,940 BTC of profit (10/22, 1-year percentile 98.9, the most in 55 days) against only 1,782 BTC of loss; STH-SOPR hit 1.038, the highest in the series (since Oct 2025); the close was −3.22%.",
+   "why": "Breaking SOPR apart: versus 7 days ago, realized profit is +142% and realized loss −14%, so the rise came from profit taking, not less loss selling. CoinMetrics daily net realized P/L (all holders, 10/21) was +$604M, and +$1.885B over 7 days, more than double the prior week's +$857M, pointing the same way; the share of short-term supply in profit is 88.4% (10/21, 65.3% a week earlier), so more holders can sell at a gain. Exchange supply moved −0.02% over 7 days (10/21): no large transfers onto exchanges.",
+   "alt": "CheckOnChain smooths these values, so a jump from about 2,900 to 7,900 BTC in one day means the raw figure that day was very large; it could also be a large transfer counted as selling. It is one day, and CheckOnChain may revise it.",
+   "history": "Over the past year, \"extreme realized profit on a down day\" happened 4 times (3/05, 4/14, 8/22, 9/22); price 30 days later was −5.2%, +9.4%, +12.3%, −5.7%. Four cases is too few to read as a pattern; background only.",
+   "so": "Most short-term holders are still in profit and loss selling is low: no panic. Paper gains from the two up days were cashed in on the down day. The market stage (bull, day 14) and the exit framework are unaffected.",
+   "next": "Watch 10/23–10/27: does realized profit fall back below 4,000 BTC (the burst is over), and does SOPR hold above 1? A drop below 1 would mean selling turned into loss selling.",
+   "check": [
+    {
+     "path": "onchain.sth_pnl.profit",
+     "op": "<",
+     "value": 4000,
+     "by": "2026-10-27",
+     "means": "confirm",
+     "label": "Realized profit back below 4,000 BTC"
+    },
+    {
+     "path": "chips.viz.sopr.value",
+     "op": "<",
+     "value": 1,
+     "by": "2026-10-27",
+     "means": "refute",
+     "label": "STH-SOPR below 1"
+    }
+   ]
+  },
+  {
+   "id": "2026-10-22-2",
+   "title": "Price fell but funding turned positive: leveraged longs are back, spot is weak",
+   "module": "deriv",
+   "chart": null,
+   "signals": [
+    "cross:funding_pos:on",
+    "level:tmm"
+   ],
+   "confidence": "medium",
+   "what": "Weighted funding flipped from −4.48% to +8.65% (annualized) on a −3.22% close; the 81,316 close is only +2.45% above the true market mean of 79,374 (10/16).",
+   "why": "All three venues turned positive: OKX +7.32%, Hyperliquid +10.95%, Deribit +2.92%, so it is not one exchange. CoinGlass shows $210M of the $222M liquidated in the 12 hours of the drop were longs, and longs kept paying as price fell: traders are buying the dip with leverage. Spot looks weak: the Coinbase premium 7-day average is −0.123%, its own 11th percentile; the provisional $525M ETF inflow on 10/21 did not hold price up.",
+   "alt": "Funding is a 00:05 UTC snapshot and 8.65% annualized is not extreme on its own; ETF flows and the Coinbase premium measure different buyers, and the premium only compares Coinbase with Binance. The true market mean comes from bitcoin-data and runs about 6 days behind.",
+   "history": "Since price fell below the true market mean on 1/31, it got back above three times (5/04, 8/26, 9/04) and each lasted only 6–9 days; this time it has stayed above since 9/19, 33 days, the longest this year (from data sampled every 3 days).",
+   "so": "Derivatives lean long while spot is weak, so long-liquidation pressure on dips is back; the true market mean is the nearest key level. The market stage depends on the 200-day average (still 10.5% below) and is unaffected.",
+   "next": "Watch whether funding stays above 5% through 10/27 and whether the Coinbase premium 7-day average gets back above 0 (spot returning would undo this reading); and whether closes hold above 79,374.",
+   "check": [
+    {
+     "path": "deriv.funding_multi.weighted_now",
+     "op": ">",
+     "value": 5,
+     "by": "2026-10-27",
+     "means": "confirm",
+     "label": "Weighted funding stays above 5%"
+    },
+    {
+     "path": "flows.cb_premium.avg7",
+     "op": ">",
+     "value": 0,
+     "by": "2026-10-29",
+     "means": "refute",
+     "label": "Coinbase premium 7-day average back above 0"
+    }
+   ]
+  }
+ ],
+ "followups": []
 }
