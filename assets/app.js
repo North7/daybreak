@@ -59,6 +59,16 @@
   }
 
   /* 折線／面積圖：x 為日期序號（天）或數值；可對數 y；參考線、區段、標記；十字線 tooltip */
+  // 2026-10-23：單調三次曲線（Fritsch–Carlson），通過每個節點、不會衝過節點（頂部不會被畫得比預測高）
+  function smoothPath(xy) {
+    var n = xy.length, dx = [], m = [], t = [];
+    for (var i = 0; i < n - 1; i++) { dx.push(xy[i + 1][0] - xy[i][0]); m.push((xy[i + 1][1] - xy[i][1]) / (dx[i] || 1)); }
+    t[0] = m[0]; t[n - 1] = m[n - 2];
+    for (i = 1; i < n - 1; i++) t[i] = m[i - 1] * m[i] <= 0 ? 0 : 3 * (dx[i - 1] + dx[i]) / ((2 * dx[i] + dx[i - 1]) / m[i - 1] + (dx[i] + 2 * dx[i - 1]) / m[i]);
+    var d = 'M' + xy[0][0].toFixed(1) + ',' + xy[0][1].toFixed(1);
+    for (i = 0; i < n - 1; i++) { var h = dx[i] / 3; d += 'C' + (xy[i][0] + h).toFixed(1) + ',' + (xy[i][1] + t[i] * h).toFixed(1) + ' ' + (xy[i + 1][0] - h).toFixed(1) + ',' + (xy[i + 1][1] - t[i + 1] * h).toFixed(1) + ' ' + xy[i + 1][0].toFixed(1) + ',' + xy[i + 1][1].toFixed(1); }
+    return d;
+  }
   function lineChart(el, cfg) {
     var W = Math.max(280, el.clientWidth), Ht = cfg.h || (W < 520 ? 210 : 260);
     var ML = cfg.ml || 8, MR = cfg.mr || 58, MT = 14, MB = 24, pw = W - ML - MR, ph = Ht - MT - MB;
@@ -106,7 +116,7 @@
     var defs = '';
     cfg.series.forEach(function (sr, si) {
       var pts = sr.data.filter(function (p) { return p[1] != null; }); if (pts.length < 2) return;
-      var Yf = sr.y2 ? Y2 : Y, dpath = pts.map(function (p, i) { return (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ',' + Yf(p[1]).toFixed(1); }).join('');
+      var Yf = sr.y2 ? Y2 : Y, dpath = sr.smooth ? smoothPath(pts.map(function (p) { return [X(p[0]), Yf(p[1])]; })) : pts.map(function (p, i) { return (i ? 'L' : 'M') + X(p[0]).toFixed(1) + ',' + Yf(p[1]).toFixed(1); }).join('');
       if (sr.area) { var gid = 'g' + Math.random().toString(36).slice(2, 8); defs += '<linearGradient id="' + gid + '" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="' + sr.color + '" stop-opacity=".28"/><stop offset="1" stop-color="' + sr.color + '" stop-opacity="0"/></linearGradient>'; s += '<path d="' + dpath + 'L' + X(pts[pts.length - 1][0]).toFixed(1) + ',' + (MT + ph) + 'L' + X(pts[0][0]).toFixed(1) + ',' + (MT + ph) + 'Z" fill="url(#' + gid + ')"/>'; }
       s += '<path class="ln" d="' + dpath + '" stroke="' + sr.color + '" stroke-width="' + (sr.w || 2) + '"' + (sr.dash ? ' stroke-dasharray="' + sr.dash + '"' : '') + ' style="animation-delay:' + (si * 0.12) + 's"/>';
       if (sr.end !== false) { var lp = pts[pts.length - 1]; s += '<circle cx="' + X(lp[0]).toFixed(1) + '" cy="' + Yf(lp[1]).toFixed(1) + '" r="4" fill="' + sr.color + '" stroke="var(--deck)" stroke-width="2"/>'; }
@@ -708,6 +718,7 @@
         now: function () { var n = D.onchain.npl; if (!n) return ''; return _T('近 7 日合計 ' + nplB(n.sum7_usd_m) + '，前 7 日 ' + nplB(n.sum7_prev_usd_m) + '；最新一天 ' + nplB(n.usd_m) + '（近一年第 ' + fmt.n(n.rank_1y, 0) + ' 百分位）。', 'Past 7 days ' + nplB(n.sum7_usd_m) + ', prior 7 days ' + nplB(n.sum7_prev_usd_m) + '; latest day ' + nplB(n.usd_m) + ' (1-year percentile ' + fmt.n(n.rank_1y, 0) + ').'); } },
       'whale': { h: h('依地址餘額分層的 30 日淨變化（顆）。', '30-day net change by address-balance tier (BTC).', '鯊魚（100–1K）與鯨魚（1K–10K）同向增加＝大戶在累積；≥ 10K 多是交易所與託管，不算大戶買賣。', 'Sharks (100–1K) and whales (1K–10K) rising together means big holders are accumulating; ≥10K is mostly exchanges and custodians.', '一個地址不等於一個人，錢包整理會讓幣在分層之間移動。', 'One address is not one person; wallet reshuffles move coins between tiers.') },
       'sopr': { h: h('STH-SOPR＝短期持有者當天賣出的幣「賣價 ÷ 買價」；灰線是價格，標記是每一次認賠的最低點。', 'STH-SOPR = sale price ÷ purchase price for coins short-term holders sold that day; the grey line is price, markers are the low of each loss-selling episode.', '低於 1＝短期持有者賠錢賣（停損或恐慌）。價格回到前一次認賠的低點附近，SOPR 卻沒跌得更深＝願意認賠的人變少、賣壓遞減，常是階段性止跌的特徵；跌得更深＝賣壓加重。', 'Below 1 means short-term holders are selling at a loss. When price revisits a previous loss-selling low but SOPR doesn\'t dip as deep, fewer holders are willing to sell at a loss — a common sign of a local bottom forming; a deeper dip means selling is getting heavier.', '日線（CheckOnChain，晚約 1 天）：盤中的集中認賠會被同一天其他人的獲利賣出平均掉，單日下殺不一定跌破 1；隔幾天內的兩次下殺可能算成同一次。只是讀值，不是買點。', 'Daily data (CheckOnChain, about 1 day late): intraday loss bursts get averaged out by the same day\'s profit-taking, so a sharp drop may not push it below 1, and two drops a few days apart may merge into one episode. A reading, not a buy signal.') },
+      'sthpnl': { h: h('短期持有者當天賣出時實現的獲利與虧損（顆，已平滑），分開兩條；灰線是價格。', 'Profit and loss short-term holders realized on coins sold (BTC, smoothed), as two separate lines; the grey line is price.', 'STH-SOPR 只是兩者合起來的比例，這張圖看是哪一邊在動：獲利線上升＝獲利了結變多，虧損線下降＝認賠變少；虧損線衝高＝集中認賠。', 'STH-SOPR only shows the two combined as a ratio; this chart shows which side moved: profit rising means more profit taking, loss falling means less loss selling, a loss spike means capitulation.', '數值是 CheckOnChain 平滑過的，單日大額轉帳也會被算進去，要看幾天才算數。只是讀值，不是買點。', 'Values are smoothed by CheckOnChain and a single large transfer can show up as a spike; wait a few days before reading much into it. A reading, not a buy signal.') },
       'p20': { h: h('MVRV 除以前一輪週期高點（只用當時已知的資料）；紅線 0.75／0.80 是出場框架的鏈上賣點。', 'MVRV divided by the previous cycle\'s peak (using only data known at the time); red lines at 0.75/0.80 are the exit framework\'s on-chain sell points.', '比值越高越接近上一輪的狂熱程度；連 5 天站上 0.75 啟動第一個鏈上賣出。', 'The higher the ratio, the closer to last cycle\'s euphoria; 5 straight days above 0.75 trigger the first on-chain sale.', '每輪頂部的 MVRV 越來越低，所以用相對前一輪的比例。', 'MVRV peaks lower each cycle, hence the ratio to the previous peak.') },
       'path': { h: h('四種長期走法（虛線，本站的預測）與已實現價格（實線）；橘色帶是頂部模型的 80% 區間。', 'Four long-term paths (dashed, our forecasts) and the realized price (solid); the orange band is the top model\'s 80% range.', '看實線貼近哪一條；權重每月底依實際走勢重估。', 'See which path the solid line is tracking; weights are re-estimated at each month end.', '2028 年以後只供量級參考。', 'Beyond 2028, treat it as order-of-magnitude only.') },
       'pl': { h: h('價格除以冪律合理價（對數刻度）；藍帶是歷史底部區，橘點頂、藍點底。', 'Price divided by the power-law fair value (log scale); the blue band is the historical bottom zone, orange dots tops, blue dots bottoms.', '倍數越高越貴；歷輪頂部倍數一輪比一輪小。', 'Higher multiples mean more expensive; each cycle\'s top multiple has been smaller than the last.', '冪律是擬合出來的；每天只用當天以前的資料。', 'The power law is a fit; each day uses only data up to that day.') },
@@ -770,6 +781,34 @@
         { name: 'STH-SOPR', data: (v.rows || []).map(function (r) { return [r[0], r[1]]; }), color: 'var(--s1)', w: 1.6 }],
         robust: 0.01, hbands: [{ y0: 0.9, y1: 1, color: 'var(--down-dim)' }], refs: [{ y: 1, color: 'var(--ink-3)', label: _T('1.0＝賣在成本', '1.0 = selling at cost') }], marks: mk,
         yFmt: function (x) { return x.toFixed(2); }, tipFmt: function (x) { return x.toFixed(4); }, aria: _T('短期持有者 SOPR', 'Short-term holder SOPR') });
+    });
+  }
+  /* 短期持有者實現獲利與虧損（2026-10-23）：CheckOnChain 兩條分開的序列（BTC，已平滑），分辨 SOPR 升降是獲利了結變多還是認賠變少（只作讀值） */
+  function sthPnlSay(v) {
+    if (!v) return '';
+    var ymd = function (d) { return d.replace(/-/g, '/'); }, sg = function (x) { return (x >= 0 ? '+' : '−') + fmt.n(Math.abs(x), 1) + '%'; }, w = v.d7;
+    var s = _T('最新 ' + ymd(v.date) + '：實現獲利 ' + fmt.n(v.profit, 0) + ' 顆、實現虧損 ' + fmt.n(v.loss, 0) + ' 顆，獲利是虧損的 ' + fmt.n(v.ratio, 2) + ' 倍',
+               'Latest ' + ymd(v.date) + ': realized profit ' + fmt.n(v.profit, 0) + ' BTC, realized loss ' + fmt.n(v.loss, 0) + ' BTC; profit is ' + fmt.n(v.ratio, 2) + '× loss');
+    if (!w) return s + _T('。', '.');
+    var up = v.ratio >= w.ratio, k = w.drive === 'profit' ? (up ? ['主要是獲利了結變多', 'mainly more profit taking'] : ['主要是獲利了結變少', 'mainly less profit taking']) : (up ? ['主要是認賠變少', 'mainly less loss selling'] : ['主要是認賠變多', 'mainly more loss selling']);
+    return s + _T('（7 天前 ' + fmt.n(w.ratio, 2) + ' 倍）。和 7 天前比，獲利 ' + sg(w.profit_chg_pct) + '、虧損 ' + sg(w.loss_chg_pct) + '：' + k[0] + '。',
+                  ' (' + fmt.n(w.ratio, 2) + '× 7 days ago). Versus 7 days ago, profit ' + sg(w.profit_chg_pct) + ', loss ' + sg(w.loss_chg_pct) + ': ' + k[1] + '.');
+  }
+  function sthPnlPanel() {
+    var v = D.onchain.sth_pnl; if (!v) return '';
+    return panel('span-12', _T('短期持有者實現獲利與虧損', 'Short-term holder realized profit and loss'), _T('CheckOnChain · 晚約 1 天 · 近 1 年', 'CheckOnChain · ~1 day late · 1 year'),
+      '<p class="say">' + esc(sthPnlSay(v)) + '</p>' + legend([[_T('實現獲利', 'Realized profit'), 'var(--up)'], [_T('實現虧損', 'Realized loss'), 'var(--down)'], [_T('BTC 價格（另一刻度）', 'BTC price (own scale)'), 'var(--ink-3)']]) + '<div class="chart" id="c-sthpnl"></div>' +
+      _T('<p class="note">資料：<a href="https://charts.checkonchain.com/btconchain/realised/realisedpnl_bycohort_2/realisedpnl_bycohort_2_light.html" target="_blank" rel="noopener">CheckOnChain Realised Value [BTC]</a>（公開圖表，晚約 1 天）。單位是顆，數值已經 CheckOnChain 平滑（圖上沒標明視窗）；對數刻度。</p>',
+         '<p class="note">Data: <a href="https://charts.checkonchain.com/btconchain/realised/realisedpnl_bycohort_2/realisedpnl_bycohort_2_light.html" target="_blank" rel="noopener">CheckOnChain Realised Value [BTC]</a> (public chart, about 1 day late). In BTC, already smoothed by CheckOnChain (window not stated); log scale.</p>'));
+  }
+  function drawSthPnl() {
+    var v = D.onchain.sth_pnl; if (!v) return;
+    mount($('#c-sthpnl'), function (el) {
+      var r = v.rows || [], bt = function (x) { return fmt.n(x, 0) + ' BTC'; };
+      lineChart(el, { h: 240, log: true, log2: true, series: [{ name: _T('BTC 價格', 'BTC price'), data: r.map(function (x) { return [x[0], x[3]]; }), color: 'var(--ink-3)', w: 1.2, end: false, y2: true, fmt: fmt.usd },
+        { name: _T('實現獲利', 'Realized profit'), data: r.map(function (x) { return [x[0], x[1]]; }), color: 'var(--up)', w: 1.6, fmt: bt },
+        { name: _T('實現虧損', 'Realized loss'), data: r.map(function (x) { return [x[0], x[2]]; }), color: 'var(--down)', w: 1.6, fmt: bt }],
+        yFmt: fmt.k, tipFmt: bt, aria: _T('短期持有者實現獲利與虧損', 'Short-term holder realized profit and loss') });
     });
   }
   /* 每日淨實現損益（2026-10-18）：仿 Glassnode「Net Realized Profit/Loss」——上層價格線＋氣泡（面積＝淨值大小，綠＝淨獲利、紅＝淨認賠，粗外圈＝之前一年的 ≤2／≥98 百分位），
@@ -898,6 +937,7 @@
     ];
     if (D.onchain.whales) src.push([_T('鯨魚分層（BitInfoCharts）', 'Whale tiers (BitInfoCharts)'), D.onchain.whales.date, 2]);   // 2026-10-21 起暫停，沒有資料就不列
     if (D.flows.stables) src.push([_T('穩定幣（DefiLlama）', 'Stablecoins (DefiLlama)'), D.flows.stables.date, 2]);
+    if (D.onchain.sth_pnl) src.push([_T('短期持有者實現損益（CheckOnChain）', 'STH realized P/L (CheckOnChain)'), D.onchain.sth_pnl.date, 2]);   // 2026-10-23 起；第一次跑管線前沒有資料就不列
     var rows = src.map(function (x) { var a = age(x[1]); return { name: x[0], date: x[1], age: a, bad: x[1] == null || a > x[2], max: x[2] }; });
     var errs = D.meta.errors || [], bad = rows.filter(function (r) { return r.bad; }), notesOld = N && N.stale;
     var n = bad.length + errs.length + (notesOld ? 1 : 0);
@@ -1032,9 +1072,9 @@
     drawEv();
     var M = D.cycle.model, cols = { '直接修復': 'var(--s4)', '淺回檔': 'var(--s1)', '基準雙底': 'var(--s2)', '延後新低': 'var(--s3)' };
     var md = function (y, m) { return Math.round(Date.UTC(y, m - 1, 15) / 864e5); };
-    var series = Object.keys(M.nodes).map(function (k) { return { name: _t(k), data: M.nodes[k].map(function (p) { return [md(p[0], p[1]), p[2]]; }), color: cols[k], dash: '5 5', w: 1.8, end: false }; });
+    var series = Object.keys(M.nodes).map(function (k) { return { name: _t(k), data: M.nodes[k].map(function (p) { return [md(p[0], p[1]), p[2]]; }), color: cols[k], dash: '5 5', w: 1.8, end: false, smooth: true }; });
     var real = M.realized.map(function (p) { return [md(p[0], p[1]), p[2]]; }); real.push([dnOf(D.meta.bar_date), D.price.bar.c]);
-    series.push({ name: _t('已實現'), data: real, color: 'var(--ink)', w: 2.6 });
+    series.push({ name: _t('已實現'), data: real, color: 'var(--ink)', w: 2.6, smooth: true });
     mount($('#c-path'), function (el) { lineChart(el, { h: el.clientWidth < 520 ? 260 : 340, log: true, series: series, hbands: [{ y0: M.top_model.p10, y1: M.top_model.p90, color: 'var(--flare-dim)' }], refs: [{ y: M.top_model.median, color: 'var(--flare)', label: _t('頂部中位 ') + fmt.k(M.top_model.median) }], vlines: [{ x: dnOf(D.cycle.next_halving_est), label: _t('2028/04 減半') }], tipFmt: fmt.usd, aria: _t('四條長期路徑') }); });
     var p20 = D.cycle.p20 || {};
     mount($('#c-p20'), function (el) { var top = dnOf('2025-10-06'), tv = (p20.rows || []).filter(function (r) { return Math.abs(r[0] - top) <= 2; })[0]; lineChart(el, { series: [{ name: _t('比值'), data: p20.rows || [], color: 'var(--s1)', area: true }], refs: [{ y: 0.75, color: 'var(--down)', label: _t('0.75 第一階 ≈ ') + fmt.k(p20.k075) }, { y: 0.8, color: 'var(--down)', label: _t('0.80 第二階'), below: false }], marks: tv ? [{ x: tv[0], y: tv[1], label: _t('2025 頂 ') + tv[1].toFixed(2), left: true }] : [], yFmt: function (v) { return v.toFixed(1); }, tipFmt: function (v) { return v.toFixed(3); }, aria: _t('MVRV 除以前一輪高點') }); });
@@ -1147,10 +1187,10 @@
     return readBar('onchain') + '<div class="kpis">' + kpi(_t('短期持有者獲利比例'), fmt.n((fl.sth_in_profit_pct || {}).value, 1) + '%', _t('7 天前 ') + fmt.n((fl.sth_in_profit_pct || {}).d7, 1) + '%', (fl.sth_in_profit_pct || {}).value) + kpi(_t('短期持有者成本'), fmt.usd((fl.sth_vs_tmm || {}).sth_cost), _t('真實市場均價 ') + fmt.usd((fl.sth_vs_tmm || {}).tmm)) + kpi(_t('交易所供給'), fmt.n(ex.exchange_supply_share_pct, 2) + '%', _t('7 日 ') + fmt.pct(ex.exchange_supply_chg7_pct, 2) + _t(' · 90 日 ') + fmt.pct(ex.exchange_supply_chg90_pct, 2)) + kpi(_t('算力 7 日均'), fmt.n(mi.hash7, 0) + ' EH/s', _t('週 ') + fmt.pct(mi.wk_chg_pct, 1) + ' · hashprice $' + fmt.n(mi.hashprice, 1)) + kpi(_t('下次難度調整'), fmt.pct(mi.diff_next_pct, 1), fmt.md(mi.retarget) + _t(' · 進度 ') + fmt.n(mi.diff_progress, 0) + '%', mi.diff_progress) + '</div><div class="grid">' + interpPanel(ocInterp()) +
       panel('span-5', _t('籌碼分布（URPD）'), fmt.md(u.date) + _t(' · 每 2,000 美元一格'), urpdSay(u) + '<div id="c-urpd"></div>') +
       panel('span-7', _t('短期持有者：成本 vs 價格'), _t('bitcoin-data · 近 2 年'), legend([[_t('短期持有者成本'), 'var(--s2)'], [_t('真實市場均價'), 'var(--s3)']]) + '<div class="chart" id="c-cost"></div>' + _t('<div class="panel-h" style="margin-top:6px"><h2>短期持有者獲利比例</h2><span class="src">2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%</span></div><div class="chart" id="c-profit"></div>') +
-      soprPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
+      soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
-    mount($('#c-whale'), drawWhale); drawSopr(); drawOc(); mount($('#c-npl'), drawNpl);
+    mount($('#c-whale'), drawWhale); drawSopr(); drawSthPnl(); drawOc(); mount($('#c-npl'), drawNpl);
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
     var v = D.chips.viz || {}, u = v.urpd || {}, c = D.price.bar.c, el = $('#c-urpd');
     if (el && u.band) {

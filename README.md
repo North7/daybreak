@@ -79,7 +79,7 @@
 | Kraken | 日線價格、均線、ATR、波動、短週期 | 每日 |
 | CoinMetrics Community | MVRV、實現價、**頂部三指標（MVRV Z／NUPL／Puell）**、交易所供給、實現市值、冪律、長期價格 | 每日（晚 1 天） |
 | bitcoin-data.com | 持有者成本、LTH SOPR、籌碼流向、URPD、流動性供給、頂部雷達 | 每日 13 次請求（免費層上限 15） |
-| CheckOnChain 公開圖表 | STH-SOPR（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
+| CheckOnChain 公開圖表 | STH-SOPR、短期持有者實現獲利／虧損（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
 | Deribit | DVOL、期貨基差、選擇權、永續資金費率 | 每日 |
 | OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權） | 每日 |
 | 13 個交易所掛單簿 | Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Kraken Futures、OKX Swap、Hyperliquid | 每日快照 |
@@ -185,7 +185,7 @@ pipeline/archive.py      往期封存（一次性回填：python3 pipeline/archi
 pipeline/brief.py        印出精簡摘要給 Claude 讀
 pipeline/etf.py          從 The Block 更新 ETF 每日淨流量
 pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 7 個
-pipeline/coc.py          STH-SOPR：讀 CheckOnChain 公開圖表（晚約 1 天）
+pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損：讀 CheckOnChain 公開圖表（晚約 1 天）
 pipeline/bd_cache/       前一晚抓的鏈上指標快取
 pipeline/check_i18n.py   檢查 app.js 每個 _t() 都有英文
 pipeline/stamp_assets.py 更新 index.html 的 ?v= 版本號
@@ -249,6 +249,8 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-10-23**
+  - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。
 - **2026-10-14**
   - 市場階段佐證燈號加第 6 盞：短期持有者成本 vs 真實市場均價（只作佐證）；六盞燈都有近 3 年走勢圖配 BTC 價格線，附「離翻轉多遠、以近 30 日速度大約何時交叉」的讀值（`pipeline/stage_viz.py`）。
   - X 推廣：英文連結預覽卡、發文小幫手 `post.html`。
@@ -315,7 +317,7 @@ All free public APIs; no keys required.
 | Kraken | Daily price, moving averages, ATR, volatility, short cycle | Daily |
 | CoinMetrics Community | MVRV, realized price, **top-3 indicators (MVRV Z / NUPL / Puell)**, exchange supply, realized cap, power law, long-term price | Daily (1-day lag) |
 | bitcoin-data.com | Holder cost basis, LTH SOPR, supply flows, URPD, liquid supply, top radar | 13 requests a day (free tier allows 15) |
-| CheckOnChain public charts | STH-SOPR (about 1 day late; `pipeline/coc.py` reads it once a day and falls back to `pipeline/coc_cache/`) | Doesn't use bitcoin-data quota |
+| CheckOnChain public charts | STH-SOPR, short-term holder realized profit/loss (about 1 day late; `pipeline/coc.py` reads it once a day and falls back to `pipeline/coc_cache/`) | Doesn't use bitcoin-data quota |
 | Deribit | DVOL, futures basis, options, perp funding | Daily |
 | OKX, Hyperliquid | Funding (OI-weighted with Deribit) | Daily |
 | 13 exchange order books | Coinbase, Bitstamp, Gemini, Bitfinex, Kraken, Binance, OKX, Gate, MEXC, Deribit, Kraken Futures, OKX Swap, Hyperliquid | Daily snapshot |
@@ -442,6 +444,8 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-10-23**
+  - On-chain page: short-term holder realized profit and loss (CheckOnChain, two separate lines, in BTC, smoothed), with a note on which side drove the profit ÷ loss change versus 7 days ago. Doesn't use bitcoin-data quota.
 - **2026-10-14**
   - Sixth supporting light for the market stage: short-term holder cost vs true market mean (supporting only). All six lights get 3-year charts with the BTC price, plus a reading of how far each is from flipping and, at the last 30 days' pace, roughly when the lines cross (`pipeline/stage_viz.py`).
   - Promotion on X: English link-preview card, posting helper `post.html`.

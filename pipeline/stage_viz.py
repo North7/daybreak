@@ -1,7 +1,7 @@
 """市場階段佐證燈號的走勢圖資料與第 6 盞燈（2026-10-14 使用者要求）。
 只作讀值、不參與 P23 判定；collect.py 在 G4c 呼叫，不另打 API（沿用 CoinMetrics 與 bitcoin-data 已抓的序列）。
 x 一律為 1970-01-01 起的天數（頁面 JS 轉回日期）；序列每 STEP 天取一點，最後一點一定保留。"""
-import bisect, datetime as dt
+import bisect, datetime as dt, math
 
 EP = dt.date(1970, 1, 1)
 YEARS, STEP, AHEAD, PROJ_MAX = 3, 3, 120, 365
@@ -118,6 +118,25 @@ def sopr_viz(sopr, px, days=365, depth=0.995, near=0.04, within=60):
     return dict(date=last, value=round(lv, 4), rows=rows, dips=[dict(dp, x=dn(dp['d'])) for dp in dips if dp['d'] >= start],
                 below_run=next((k for k, (_, v) in enumerate(reversed(s)) if v >= 1), len(s)),
                 note='CheckOnChain，晚約 1 天；日線。只作讀值')
+
+
+def sth_pnl_viz(pnl, px, days=365):
+    """2026-10-23 使用者要求：短期持有者實現獲利與實現虧損（CheckOnChain，BTC，已平滑）。只作讀值、不連動任何規則。
+    和 7 天前比，各自變化多少，用來分辨獲利 ÷ 虧損的升降是哪一邊帶動的（兩邊取對數變化比大小）。"""
+    s = sorted(pnl.items())
+    if len(s) < 30: return None
+    last, (p, l) = s[-1]; start = (dt.date.fromisoformat(last) - dt.timedelta(days=days)).isoformat()
+    d7 = (dt.date.fromisoformat(last) - dt.timedelta(days=7)).isoformat()
+    p7, l7 = pnl.get(d7, (None, None))
+    out = dict(date=last, profit=round(p), loss=round(l), ratio=round(p / l, 2) if l else None,
+               rows=[[dn(t), round(a), round(b), round(px[t]) if t in px else None] for t, (a, b) in s if t >= start],
+               note='CheckOnChain，晚約 1 天；BTC；數值已平滑。只作讀值')
+    if p7 and l7:
+        lp, ll = math.log(p / p7), -math.log(l / l7)   # 兩項相加＝獲利 ÷ 虧損的對數變化
+        out['d7'] = dict(date=d7, profit=round(p7), loss=round(l7), ratio=round(p7 / l7, 2),
+                         profit_chg_pct=round((p / p7 - 1) * 100, 1), loss_chg_pct=round((l / l7 - 1) * 100, 1),
+                         drive='profit' if abs(lp) >= abs(ll) else 'loss')
+    return out
 
 
 # 2026-10-14 使用者要求：鏈上指標表與頂部雷達的每一項都畫近 3 年走勢（配價格線，價格沿用 build() 的 px）。只作讀值。

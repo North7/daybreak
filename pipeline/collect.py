@@ -291,6 +291,13 @@ try:
     R['onchain']['sth-sopr'] = dict(_oc_stat('sth-sopr', _cs), source='CheckOnChain', source_url=coc.PAGE)
     if _cst != 'live': errors.append(f'checkonchain sth-sopr 用快取：{_cst}')
 except Exception as e: errors.append(f'checkonchain sth-sopr: {e}')
+# B3. 2026-10-23 使用者要求：短期持有者實現獲利／實現虧損分開兩條（CheckOnChain，BTC，已平滑），分辨 SOPR 升降是哪一邊帶動的
+_pnl = None
+try:
+    import coc
+    _pnl, _pst = coc.get_pnl()
+    if _pst != 'live': errors.append(f'checkonchain sth-pnl 用快取：{_pst}')
+except Exception as e: errors.append(f'checkonchain sth-pnl: {e}')
 try:
     # 2026-09-23 週檢：第三轉換條件量化＝STH 成本基礎 ÷ LTH 成本基礎（＝LTH-MVRV ÷ STH-MVRV，與價格無關）
     sr, lr_ = R['onchain']['sth-realized-price'], R['onchain']['lth-realized-price']
@@ -706,6 +713,7 @@ try:
     # 短期持有者認賠賣壓（STH-SOPR ＋ 價格；放進籌碼流向圖表資料，頁面在鏈上版）
     if SER.get('sth-sopr') and R.get('murphy_viz') is not None:
         R['murphy_viz']['sopr'] = stage_viz.sopr_viz(SER['sth-sopr'], {x[0]: x[1] for x in mv})
+    if _pnl: R['sth_pnl'] = stage_viz.sth_pnl_viz(_pnl, {x[0]: x[1] for x in mv})
 except Exception as e: errors.append(f'stage_viz {e}')
 
 # ---------- G5. 2026-10-02 使用者要求：掛單簿深度（Coinbase／Kraken／Bitstamp 三家合計，舊口徑保留供序列比較；Binance 現貨改由 G5b 經 data-api.binance.vision 取得，Binance 期貨 451、Bybit 403 不可用）。只作讀值，不連動任何規則 ----------
