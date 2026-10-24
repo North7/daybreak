@@ -1,0 +1,542 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Daybreak Product Case Study</title>
+<meta name="description" content="Daybreak product case study: problem, principles, three-layer architecture, decision log, the findings feature, iterations and success metrics.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Daybreak Product Case Study">
+<meta property="og:description" content="Daybreak product case study: problem, principles, three-layer architecture, decision log, the findings feature, iterations and success metrics.">
+<meta property="og:url" content="https://north7.github.io/daybreak/case-study/en/">
+<meta property="og:image" content="https://north7.github.io/daybreak/case-study/en/img/front.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+/* Layout: the product's own "號外" newspaper identity, reused as a dossier.
+   Left label column + right reading column; heavy ink rules open each section; red only on key numbers. */
+html, body { margin: 0; }
+:root {
+  --paper: #EEECE6;
+  --paper-2: #F6F5F1;
+  --rule: #D2CEC4;
+  --ink: #0A0A0A;
+  --ink-2: #3D3C39;
+  --ink-3: #6B675F;
+  --red: #FF3B1F;
+  --red-ink: #D12C10;
+  --up: #00805A;
+  --tag-ink: #FFFFFF;
+
+  --f-cjk: system-ui, -apple-system, "PingFang TC", "Microsoft JhengHei", "Noto Sans CJK TC", sans-serif;
+  --f-display: "Archivo", var(--f-cjk);
+  --f-head: "Archivo", var(--f-cjk);
+  --f-body: "Archivo", var(--f-cjk);
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0C0C0D; --paper-2: #151517; --rule: #2C2C31;
+    --ink: #F2F0EA; --ink-2: #B6B2AA; --ink-3: #8C887F;
+    --red: #FF4A2E; --red-ink: #FF6A50; --up: #2FD08A; --tag-ink: #0C0C0D;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0C0C0D; --paper-2: #151517; --rule: #2C2C31;
+  --ink: #F2F0EA; --ink-2: #B6B2AA; --ink-3: #8C887F;
+  --red: #FF4A2E; --red-ink: #FF6A50; --up: #2FD08A; --tag-ink: #0C0C0D;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.65;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 72px;
+}
+a { color: var(--ink); text-decoration-color: var(--red); text-underline-offset: 3px; }
+a:hover { color: var(--red-ink); }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+::selection { background: var(--red); color: #fff; }
+img { display: block; max-width: 100%; height: auto; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.r { color: var(--red-ink); }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+
+/* masthead */
+.mast { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  border-top: 6px solid var(--ink); padding-top: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 800; letter-spacing: .08em; font-size: 15px; }
+.brand svg { width: 30px; height: 14px; }
+.mast .mono { font-size: 12px; color: var(--ink-3); letter-spacing: .04em; }
+.tag { display: inline-block; background: var(--red); color: var(--tag-ink); font-family: var(--f-head); font-weight: 900;
+  font-size: 13px; padding: 3px 10px; letter-spacing: .06em; line-height: 1.5; }
+
+/* hero */
+.hero { display: grid; gap: 28px; padding-block: 44px 36px; }
+.hero .kicker { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.hero .kicker .mono { font-size: 12px; letter-spacing: .08em; color: var(--ink-3); text-transform: uppercase; }
+.name { font-family: var(--f-display); font-weight: 900; font-stretch: 62%; font-size: clamp(64px, 13vw, 168px);
+  line-height: .86; letter-spacing: -.01em; text-transform: uppercase; }
+.name small { display: block; font-family: var(--f-head); font-size: .32em; letter-spacing: .1em; margin-top: 14px; font-stretch: 100%; }
+.deck { font-family: var(--f-head); font-weight: 800; font-size: clamp(24px, 3.4vw, 40px); line-height: 1.22; letter-spacing: -.01em; max-width: 24em; }
+.deck .r { color: var(--red); }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+.facts > div { padding: 14px 16px 16px 0; min-width: 0; }
+.facts > div + div { padding-left: 16px; border-left: 1px solid var(--rule); }
+.lbl { font-family: var(--f-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.facts p { font-size: 14px; line-height: 1.6; margin-top: 6px; color: var(--ink-2); }
+.facts strong { color: var(--ink); }
+.shot { border: 1px solid var(--rule); background: var(--paper-2); }
+figure { margin: 0; display: grid; gap: 10px; }
+figcaption { font-size: 13px; color: var(--ink-3); line-height: 1.6; }
+
+/* tape */
+.tape { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); background: var(--ink); color: var(--paper); margin-block: 8px 0; }
+.tape > div { padding: 18px 16px; min-width: 0; }
+.tape > div + div { border-left: 1px solid color-mix(in srgb, var(--paper) 18%, transparent); }
+.tape b { display: block; font-family: var(--f-display); font-weight: 900; font-stretch: 62%; font-size: 44px; line-height: 1; font-variant-numeric: tabular-nums; }
+.tape b .u { display: inline; font-size: .5em; margin: 0 0 0 2px; opacity: 1; }
+.tape span { display: block; font-size: 12.5px; line-height: 1.5; margin-top: 8px; opacity: .78; }
+
+/* sections */
+section.s { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 16px 40px; border-top: 3px solid var(--ink); padding-top: 22px; margin-top: 72px; }
+.s > .side { display: grid; align-content: start; gap: 6px; }
+.s > .side .en { font-family: var(--f-mono); font-size: 11px; letter-spacing: .12em; color: var(--ink-3); text-transform: uppercase; }
+.s > .side h2 { font-family: var(--f-head); font-weight: 900; font-size: 26px; line-height: 1.25; }
+.s > .main { display: grid; gap: 28px; min-width: 0; }
+.lead { font-family: var(--f-head); font-weight: 900; font-size: clamp(20px, 2.4vw, 26px); line-height: 1.45; max-width: 30em; }
+.prose { display: grid; gap: 14px; max-width: 42em; color: var(--ink-2); }
+.prose strong { color: var(--ink); }
+h3 { font-family: var(--f-head); font-weight: 900; font-size: 19px; line-height: 1.4; }
+
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--ink); }
+.cols > div { padding: 16px 20px 18px 0; display: grid; align-content: start; gap: 8px; min-width: 0; }
+.cols > div + div { padding-left: 20px; border-left: 1px solid var(--rule); }
+.cols p { font-size: 15px; color: var(--ink-2); }
+.cols.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.pain { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.pain li { display: grid; grid-template-columns: 10em minmax(0, 1fr); gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rule); font-size: 15px; color: var(--ink-2); }
+.pain li b { color: var(--ink); font-family: var(--f-head); font-weight: 900; }
+
+.quote { border-left: 4px solid var(--red); padding: 4px 0 4px 18px; font-family: var(--f-head); font-weight: 900; font-size: 20px; line-height: 1.5; max-width: 32em; }
+.quote .lbl { display: block; margin-bottom: 6px; font-family: var(--f-mono); font-weight: 400; }
+
+.scope { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.scope ul { margin: 8px 0 0; padding-left: 1.1em; color: var(--ink-2); font-size: 15px; display: grid; gap: 4px; }
+.scope .no li::marker { content: "×  "; color: var(--red-ink); }
+.scope .yes li::marker { content: "✓  "; color: var(--up); }
+
+/* principles */
+.prin { counter-reset: p; display: grid; gap: 0; border-top: 1px solid var(--ink); }
+.prin > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.prin h3 { font-size: 17px; }
+.prin p { font-size: 15px; color: var(--ink-2); }
+
+/* flow */
+.layers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.layer { border: 1px solid var(--rule); background: var(--paper-2); padding: 16px 18px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.layer.hot { border-color: var(--red); }
+.layer p { font-size: 14.5px; color: var(--ink-2); }
+.layer .who { font-family: var(--f-mono); font-size: 12px; color: var(--red-ink); }
+.flow { overflow-x: auto; }
+.flow table { width: 100%; border-collapse: collapse; min-width: 560px; font-size: 14.5px; }
+.flow th { text-align: left; font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: 8px 12px 8px 0; border-bottom: 1px solid var(--ink); }
+.flow td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--ink-2); }
+.flow td:first-child { font-family: var(--f-mono); font-weight: 700; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.flow td:nth-child(2) { white-space: nowrap; color: var(--ink); }
+.chip { display: inline-block; font-family: var(--f-mono); font-size: 11.5px; padding: 1px 7px; border: 1px solid var(--ink-3); color: var(--ink-2); white-space: nowrap; }
+.chip.ai { border-color: var(--red-ink); color: var(--red-ink); }
+
+/* decisions */
+.dec { display: grid; gap: 0; border-top: 1px solid var(--ink); }
+.dec article { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 12px 32px; padding: 22px 0 24px; border-bottom: 1px solid var(--rule); }
+.dec .when { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); margin-bottom: 6px; display: block; }
+.dec dl { margin: 0; display: grid; grid-template-columns: 5.8em minmax(0, 1fr); gap: 8px 14px; font-size: 15px; }
+.dec dt { font-family: var(--f-mono); font-weight: 700; font-size: 11.5px; letter-spacing: .04em; text-transform: uppercase; padding-top: 2px; color: var(--ink-3); }
+.dec dt.k { color: var(--red-ink); }
+.dec dd { margin: 0; color: var(--ink-2); }
+.dec dd strong { color: var(--ink); }
+
+/* loop */
+.loop { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid var(--ink); }
+.loop > div { padding: 14px 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; position: relative; }
+.loop > div + div { border-left: 1px solid var(--rule); }
+.loop .step { font-family: var(--f-mono); font-size: 11px; color: var(--red-ink); letter-spacing: .08em; }
+.loop b { font-family: var(--f-head); font-weight: 900; font-size: 16px; line-height: 1.35; }
+.loop p { font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+.loop .who { font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); }
+.loop-back { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); text-align: right; margin-top: -18px; }
+
+/* timeline */
+.tl { list-style: none; margin: 0; padding: 0; display: grid; border-left: 2px solid var(--ink); }
+.tl li { display: grid; grid-template-columns: 5.5em minmax(0, 1fr); gap: 16px; padding: 0 0 18px 18px; position: relative; }
+.tl li::before { content: ""; position: absolute; left: -6px; top: 8px; width: 10px; height: 10px; background: var(--paper); border: 2px solid var(--ink); }
+.tl li.key::before { background: var(--red); border-color: var(--red); }
+.tl time { font-family: var(--f-mono); font-size: 13px; font-weight: 700; padding-top: 2px; }
+.tl b { font-family: var(--f-head); font-weight: 900; }
+.tl p { font-size: 15px; color: var(--ink-2); }
+
+/* gallery */
+.gal { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.gal .stack { display: grid; gap: 16px; }
+
+/* metrics */
+.mt { width: 100%; border-collapse: collapse; font-size: 15px; }
+.mt th { text-align: left; font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: 8px 12px 8px 0; border-bottom: 1px solid var(--ink); }
+.mt td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--ink-2); }
+.mt td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.tblwrap { overflow-x: auto; }
+.tblwrap .mt { min-width: 560px; }
+
+.learn { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; max-width: 44em; }
+.learn li { display: grid; gap: 4px; }
+.learn p { color: var(--ink-2); font-size: 15px; }
+
+footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; font-size: 13px; color: var(--ink-3); }
+
+@media (max-width: 860px) {
+  section.s { grid-template-columns: minmax(0, 1fr); margin-top: 56px; }
+  .tape { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tape > div:nth-child(4) { border-left: 0; }
+  .tape > div:nth-child(n+4) { border-top: 1px solid color-mix(in srgb, var(--paper) 18%, transparent); }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .facts > div:nth-child(3) { border-left: 0; padding-left: 0; }
+  .facts > div:nth-child(n+3) { border-top: 1px solid var(--rule); }
+  .loop { grid-template-columns: minmax(0, 1fr); }
+  .loop > div + div { border-left: 0; border-top: 1px solid var(--rule); }
+  .loop-back { margin-top: 0; text-align: left; }
+  .layers, .cols, .cols.two { grid-template-columns: minmax(0, 1fr); }
+  .cols > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+  .dec article, .prin > div { grid-template-columns: minmax(0, 1fr); }
+  .gal { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  body { font-size: 15px; }
+  .tape b { font-size: 34px; }
+  .facts { grid-template-columns: minmax(0, 1fr); }
+  .facts > div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--rule); }
+  .scope { grid-template-columns: minmax(0, 1fr); }
+  .pain li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .tl li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .dec dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .dec dd { margin-bottom: 8px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .name { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from { transform: translateY(10px); } to { transform: none; } }
+}
+</style>
+</head>
+<body>
+
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="brand">
+    <svg viewBox="0 0 30 14" aria-hidden="true"><path d="M7 11a8 8 0 0 1 16 0" fill="none" stroke="var(--red)" stroke-width="3"/><rect x="0" y="11" width="30" height="3" fill="var(--ink)"/></svg>
+    DAYBREAK · CASE STUDY
+  </div>
+  <span class="mono">Product management · 2026.09.22 – 2026.10.23 · <a href="../" hreflang="zh-Hant" lang="zh-Hant">中文</a></span>
+</header>
+
+<section class="hero">
+  <div class="kicker"><span class="tag">EXTRA</span><span class="mono">Solo product · zero to a daily edition</span></div>
+  <h1 class="name">Daybreak<small>破曉</small></h1>
+  <p class="deck">Turning <span class="r">15</span> free data sources into a Bitcoin brief that ships every morning at <span class="r">08:30</span> and checks its own calls.</p>
+
+  <div class="facts">
+    <div><span class="lbl">Role</span><p><strong>Product owner (solo project)</strong><br>Problem framing, rule design, data strategy, AI editorial workflow, quality bar</p></div>
+    <div><span class="lbl">Built with</span><p><strong>Claude Code for the build</strong><br>A scheduled Claude task writes the daily read; GitHub Actions runs the data pipeline</p></div>
+    <div><span class="lbl">Platform</span><p><strong>Static site + PWA</strong><br>GitHub Pages, Chinese and English, day and night themes, installable on phones</p></div>
+    <div><span class="lbl">Links</span><p><a href="https://north7.github.io/daybreak/">north7.github.io/daybreak</a><br><a href="https://github.com/North7/daybreak">Source on GitHub</a></p></div>
+  </div>
+
+  <figure>
+    <img class="shot" src="img/front.jpg" width="1400" height="933" alt="Daybreak desktop front page: a nine-section index on the left, an EXTRA headline about ETF outflows and a 334-day high in net realized profit, and the closing price 81,086 set very large.">
+    <figcaption>Front page, Oct 23 close edition (No. 018). The headline sums up the market; the closing price is the only heavy visual on the page.</figcaption>
+  </figure>
+</section>
+
+<div class="tape" role="list" aria-label="Project figures">
+  <div role="listitem"><b>18</b><span>daily editions in a row since Oct 6</span></div>
+  <div role="listitem"><b>15</b><span>public data sources, zero API keys</span></div>
+  <div role="listitem"><b>$0</b><span>data and hosting cost</span></div>
+  <div role="listitem"><b>26</b><span>series scanned for anomalies every day</span></div>
+  <div role="listitem"><b>9</b><span>sections in two languages</span></div>
+  <div role="listitem"><b>155</b><span>commits in the first 16 days of the public repo</span></div>
+</div>
+
+<section class="s" id="tldr">
+  <div class="side"><span class="en">TL;DR</span><h2>At a glance</h2></div>
+  <div class="main">
+    <div class="cols">
+      <div><span class="lbl">Problem</span><h3>Lots of data, few conclusions</h3><p>Long-term holders want to sell in stages before a cycle top. The on-chain, ETF and derivatives data they need is spread over a dozen sites, none of it says what a number means, and discipline fails exactly when it matters most.</p></div>
+      <div><span class="lbl">Approach</span><h3>Separate numbers, reading and rules</h3><p>Code produces the numbers, AI only explains them, and the exit rules are fixed and reviewed monthly. The brief ships automatically every day, and "Today's findings" points attention at what is unusual, then checks the next day whether the call held.</p></div>
+      <div><span class="lbl">Outcome</span><h3>Free to run, on time every day</h3><p>18 consecutive editions on free APIs only. The one manual step left each day is posting to X. Findings come with testable conditions; the first batch came back the next day as one confirmed and one still being watched.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="problem">
+  <div class="side"><span class="en">Problem</span><h2>Problem and users</h2></div>
+  <div class="main">
+    <p class="lead">The target user holds Bitcoin and plans to sell in stages during this cycle. The first user was me.</p>
+    <ul class="pain">
+      <li><b>Scattered</b><span>On-chain metrics live on Glassnode and CheckOnChain, ETF flows on Farside, derivatives on Deribit and CoinGlass. Every morning meant a round of tabs and lining up dates by hand.</span></li>
+      <li><b>Unexplained</b><span>Is an MVRV of 1.5 high or low? What does 10% funding mean? What changed since yesterday? Tools give numbers; the user needs a judgment.</span></li>
+      <li><b>Discipline</b><span>An exit plan written in advance often gets ignored at the top. The hotter the price, the easier it is to find a reason why this time is different.</span></li>
+      <li><b>Free data traps</b><span>Free tiers have daily quotas, some series arrive 5 to 7 days late, and sites block automated requests. Professional tools need ongoing subscriptions.</span></li>
+    </ul>
+    <div class="quote"><span class="lbl">Job to be done</span>In a few minutes each morning, know where the market sits in the cycle, whether any exit rule fired today, and which prices and dates to watch next.</div>
+    <div class="scope">
+      <div><span class="lbl">In scope</span><ul class="yes"><li>A conclusion-first daily brief</li><li>Cycle position and distance to each exit rule</li><li>A plain-language reading for every number</li><li>Readable on phones, in Chinese and English</li></ul></div>
+      <div><span class="lbl">Deliberately out</span><ul class="no"><li>Short-term price calls or trade tips</li><li>Anyone's actual holdings or amounts</li><li>Order placement or account links</li><li>Data that needs keys or payment</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="principles">
+  <div class="side"><span class="en">Principles</span><h2>Product principles</h2></div>
+  <div class="main">
+    <p class="prose">These five are written into the README and the daily task's rules. Every trade-off later on traces back to them.</p>
+    <div class="prin">
+      <div><h3>Conclusion first, evidence second</h3><p>Each section opens with "Today's read": one sentence on what matters most there today. The numbers follow as evidence.</p></div>
+      <div><h3>"Not available today" beats a guess</h3><p>A failed source affects only its own item, and the page says so. Yesterday's number is never carried forward. A status row shows how many days each source lags.</p></div>
+      <div><h3>Never subtract across vendors</h3><p>CoinMetrics and bitcoin-data define MVRV differently. Mixing them produces conclusions that look precise and are wrong.</p></div>
+      <div><h3>Every rate comes with its sample size</h3><p>Historical references always state the sample; under 30, no conclusion. Bitcoin has only 3 or 4 cycles, so every "diminishing returns" claim names its assumption.</p></div>
+      <div><h3>Readings never move the rules</h3><p>Market stage, number readings, news and third-party models are context only. They cannot change the exit framework, whose parameters change only at the monthly review.</p></div>
+    </div>
+    <figure>
+      <img class="shot" src="img/cycle.jpg" width="1180" height="1000" alt="Cycle section: Today's read states the market stage is bull, day 15, with 44 straight closes above a rising 200-day average; below are the two stage conditions and the supporting signals count of 3 out of 6.">
+      <figcaption>The cycle section. Market stage is set by fixed rules (capitulation has occurred, then 30 closes above a rising 200-day average). The six supporting lights are shown but take no part in the call.</figcaption>
+    </figure>
+  </div>
+</section>
+
+<section class="s" id="system">
+  <div class="side"><span class="en">How it works</span><h2>Three layers and the daily run</h2></div>
+  <div class="main">
+    <p class="lead">The most important architectural decision: AI explains. It does not calculate, and it does not decide.</p>
+    <div class="layers">
+      <div class="layer"><span class="who">Deterministic code</span><h3>Numbers</h3><p>A Python pipeline pulls 15 sources, computes indicators, detects anomalies and archives the previous edition. Same input, same output, every time.</p></div>
+      <div class="layer hot"><span class="who">Scheduled Claude task</span><h3>Reading</h3><p>Reads a compact brief, verifies news and research, and writes the headline, section reads and findings in both languages. It changes no numbers and no site code.</p></div>
+      <div class="layer"><span class="who">Fixed parameters</span><h3>Rules</h3><p>The exit framework: an 8-step price ladder, on-chain triggers, top acceleration, a 200-day average hedge and a time stop. Changed only at the monthly review.</p></div>
+    </div>
+    <div class="flow">
+      <table>
+        <thead><tr><th>Taipei time</th><th>Who</th><th>What</th></tr></thead>
+        <tbody>
+          <tr><td>06:40</td><td><span class="chip">Actions</span></td><td>Prefetch 7 on-chain series, splitting the free tier's 15 daily requests into two batches.</td></tr>
+          <tr><td>08:06</td><td><span class="chip">Actions</span></td><td>Fetch everything, compute indicators, run anomaly detection, archive the previous edition, publish.</td></tr>
+          <tr><td>08:30</td><td><span class="chip ai">Claude</span></td><td>Read the brief, verify news and research, write both language editions and the findings; commit only after the format check and privacy scan pass.</td></tr>
+          <tr><td>08:3x</td><td><span class="chip">Actions</span></td><td>Render share images in both languages; push the X post drafts to my phone.</td></tr>
+          <tr><td>22:00</td><td><span class="chip">Actions</span></td><td>Backfill the previous trading day's ETF flows, which the source publishes about a day late.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="decisions">
+  <div class="side"><span class="en">Decision log</span><h2>Key decisions and trade-offs</h2></div>
+  <div class="main">
+    <div class="dec">
+      <article>
+        <div><span class="when">Core design</span><h3>AI writes the read but never touches the numbers</h3></div>
+        <dl>
+          <dt>Context</dt><dd>Letting a model read raw data and write the brief is fast, but numbers can get rewritten, invented or mixed across definitions.</dd>
+          <dt class="k">Decision</dt><dd>Only the pipeline produces numbers. The AI reads a 20KB brief, and every figure it cites must exist there. The rules live in one task document, and <span class="mono">notes_lint.py</span> checks format, counts, length, no Chinese in the English edition, and at most 4 boilerplate caveats per edition before anything is committed.</dd>
+          <dt>Trade-off</dt><dd>Less freedom in the writing, in exchange for <strong>auditability</strong>: every sentence traces back to a data field. Quality comes from rules and a checker, not daily manual review.</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">Oct 8 · Oct 15</span><h3>A zero-cost data strategy</h3></div>
+        <dl>
+          <dt>Context</dt><dd>bitcoin-data's free tier allows 15 requests a day, its STH-SOPR ran about 7 days late, and Farside blocks automated requests behind Cloudflare.</dd>
+          <dt class="k">Decision</dt><dd>Split requests into 7 the night before and 6 on the day. Read STH-SOPR from CheckOnChain's public chart instead. Switch ETF flows to The Block, adopted only after matching Farside day by day.</dd>
+          <dt>Trade-off</dt><dd>More caching and rotation logic. STH-SOPR latency dropped <strong>from about 7 days to about 1</strong>, and it freed quota, keeping usage at 13 requests a day.</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">Oct 8 · Oct 21</span><h3>On time beats clever</h3></div>
+        <dl>
+          <dt>Context</dt><dd>GitHub's built-in scheduler ran 5 to 7 hours late on this repo every day. The morning brief was becoming a lunch brief.</dd>
+          <dt class="k">Decision</dt><dd>Trigger runs from cron-job.org instead. The original schedule stays as a backup, and duplicate runs on the same day skip themselves. When the AI task finds stale data, it triggers the pipeline itself and waits. On Oct 21 the "already fetched today" check moved from the UTC date to the start of the data cycle.</dd>
+          <dt>Trade-off</dt><dd>One more external service to maintain. In return the brief is back to a morning release, with no missed edition in 18 since launch.</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">Oct 21</span><h3>Remove a panel rather than show stale data</h3></div>
+        <dl>
+          <dt>Context</dt><dd>BitInfoCharts, the source for the whale and large-holder tiers, started blocking automated requests.</dd>
+          <dt class="k">Decision</dt><dd>Pause the panel. The pipeline does not error, and the site hides the panel, its status row and its source entry when there is no data. The code stays for a backfill once a replacement source is found.</dd>
+          <dt>Trade-off</dt><dd>One popular panel fewer, and the "never carry old numbers" principle intact.</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">Oct 18</span><h3>Catching my own backtest error and correcting it publicly</h3></div>
+        <dl>
+          <dt>Context</dt><dd>When the net realized profit/loss panel launched, its backtest used the most extreme day of each spike, which is only known in hindsight.</dd>
+          <dt class="k">Decision</dt><dd>Re-test using the first day of each spike, which is knowable in real time. The conclusion flipped: loss spikes were followed by ordinary returns, so not a buy signal; profit spikes were often followed by further gains, so not a sell signal. I also added a caveat that every past trigger predates spot ETFs, so the signal may be blunter now.</dd>
+          <dt>Trade-off</dt><dd>One attractive "buy signal" gone. Readers get a reading they can trust, and the daily task gained a rule: never write "no trigger" as "no bottom yet".</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">Oct 8 → Oct 12</span><h3>Different reading modes for phone and desktop</h3></div>
+        <dl>
+          <dt>Context</dt><dd>Nine dense sections. On launch day alone I tried five ways to move between them.</dd>
+          <dt class="k">Decision</dt><dd>On phones, one section at a time with left and right swipes, always landing at the top. On desktop, continuous scroll with keys 1 to 9 to jump. CSS and JS carry a version stamp so phones never load a mismatched pair.</dd>
+          <dt>Trade-off</dt><dd>Two navigation models to test, so every PR renders each section in both languages on desktop and mobile, failing on JS errors or horizontal scroll.</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">Oct 12</span><h3>Default language by region</h3></div>
+        <dl>
+          <dt>Context</dt><dd>Most readers arriving from X read English; the core users read Chinese.</dd>
+          <dt class="k">Decision</dt><dd>Taiwan, Hong Kong, Macau, mainland China and Singapore default to Chinese; everywhere else defaults to English. A manual choice always sticks. Only the country code is looked up, and the result stays in the visitor's own browser.</dd>
+          <dt>Trade-off</dt><dd>One extra third-party lookup, and the AI writes a second edition every day. If the English file is missing, the site falls back to Chinese and says so.</dd>
+        </dl>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="findings">
+  <div class="side"><span class="en">Feature deep dive</span><h2>Today's findings: from dashboard to judgment</h2></div>
+  <div class="main">
+    <p class="lead">Two weeks in, the pattern was clear: readers can see the numbers themselves. What they can't see is what is unusual, why, and what to watch next.</p>
+    <div class="prose">
+      <p>The first 16 editions gave each section its own paragraph. The coverage was complete, but attention was spread evenly, and the one real anomaly could drown in nine sections. "Today's findings", launched Oct 23, starts from the anomalies, writes a judgment, and makes every judgment testable in the next edition.</p>
+    </div>
+    <div class="loop">
+      <div><span class="step">STEP 1</span><b>Detect</b><p>Fixed rules over 26 series: 1-year 2% extremes, sharp 7-day moves, state flips, key levels within ±3%, streaks, cross-indicator combos.</p><span class="who">signals.py</span></div>
+      <div><span class="step">STEP 2</span><b>Write 0 to 3</b><p>Break down which side moved, cross-check sources, list other explanations, cite past cases with sample sizes.</p><span class="who">Claude</span></div>
+      <div><span class="step">STEP 3</span><b>Set conditions</b><p>For example "realized profit back below 4,000 BTC", with a deadline and whether it would confirm or refute.</p><span class="who">Claude</span></div>
+      <div><span class="step">STEP 4</span><b>Check next day</b><p>The pipeline reads the previous conditions and tests them against today's numbers.</p><span class="who">signals.py</span></div>
+      <div><span class="step">STEP 5</span><b>Follow up</b><p>Confirmed, refuted, expired or still watching. Outcomes go into the archive index.</p><span class="who">Claude</span></div>
+    </div>
+    <p class="loop-back">↺ Step 5 feeds step 1 of the next edition</p>
+    <figure>
+      <img class="shot" src="img/findings.jpg" width="1180" height="800" alt="Today's findings block: leaning bearish overall, two findings each with a confidence label and a bearish tag; below, follow-ups on the previous findings, one watching and one confirmed.">
+      <figcaption>Findings in the Oct 23 edition. Of the previous two, one is confirmed (funding stayed above 5%) and one is still being watched. Each carries a bullish, bearish or neutral tag with its reason, rolled up into an overall lean at the top.</figcaption>
+    </figure>
+    <div class="cols two">
+      <div><span class="lbl">Design rule</span><h3>A forced finding is worse than none</h3><p>At most three, and zero is allowed. Several signals about one event merge into one finding. A multi-day anomaly is only written up again when something new happens; otherwise it goes to follow-ups.</p></div>
+      <div><span class="lbl">Why this design</span><h3>Make the AI's judgment scoreable</h3><p>Every finding states what would prove it wrong, and the system grades it automatically the next day. Over time that yields a confirmation rate, a direct measure of reading quality.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="timeline">
+  <div class="side"><span class="en">Iterations</span><h2>Timeline</h2></div>
+  <div class="main">
+    <ol class="tl">
+      <li><time>Sep 22</time><div><b>Data pipeline and site</b><p>First, a correct set of numbers every day. Interpretation came later.</p></div></li>
+      <li><time>Oct 2</time><div><b>Supply flows and order-book depth</b><p>Order books grew from 3 to 13 exchanges (Oct 6), plus a third-party top and bottom model shown as a reading.</p></div></li>
+      <li><time>Oct 8</time><div><b>Public launch</b><p>Request rotation, a new ETF source, swipe navigation on phones, asset version stamps.</p></div></li>
+      <li><time>Oct 9</time><div><b>Market stage rules revised</b><p>A bull call now needs capitulation first, then 30 closes above a rising 200-day average; supporting lights added.</p></div></li>
+      <li class="key"><time>Oct 12</time><div><b>A reading for every number; English edition</b><p>Fixed thresholds generate "what this means now", tagged bullish, bearish, caution or neutral. Automated PR checks go live.</p></div></li>
+      <li><time>Oct 13</time><div><b>Distribution</b><p>Share images in both languages, daily X drafts, a posting helper, cookie-free analytics.</p></div></li>
+      <li><time>Oct 14–15</time><div><b>A "how to read" note under every chart</b><p>"Now" is generated from the day's data; "how to read" says what to be careful about. Dashed lines always mean projection. Eleven on-chain metrics gain 3-year history.</p></div></li>
+      <li><time>Oct 18</time><div><b>Net realized P/L and a backtest correction</b><p>Found hindsight bias, re-tested in real time, published the reversed conclusion.</p></div></li>
+      <li><time>Oct 21</time><div><b>Reliability week</b><p>Prefetch timing fix, whale panel paused, daily task rules reorganized by section.</p></div></li>
+      <li class="key"><time>Oct 23</time><div><b>Today's findings with follow-ups</b><p>From one paragraph per section to anomalies first, with judgments that can be tested.</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="s" id="distribution">
+  <div class="side"><span class="en">Distribution</span><h2>Distribution and growth</h2></div>
+  <div class="main">
+    <p class="lead">The content is generated daily, so distribution had to be nearly free too: images render themselves, drafts write themselves, and I only press send.</p>
+    <div class="gal">
+      <div class="stack">
+        <figure><img class="shot" src="../img/share-en.jpg" width="1200" height="675" alt="English share image: red EXTRA tag, headline that ETFs took a provisional 525 million dollars yet a 2.6% Nasdaq drop pulled Bitcoin into risk-off selling, and three stats for market stage, 7-day ETF flow and distance to the first exit step."><figcaption>Share image, rendered by Actions after each edition is pushed.</figcaption></figure>
+        <figure><img class="shot" src="../img/og.jpg" width="1200" height="630" alt="Link preview card: DAYBREAK 破曉 wordmark with the line The first Bitcoin brief of the morning."><figcaption>Link preview card shown when the URL is posted on X; English by default.</figcaption></figure>
+      </div>
+      <figure><img class="shot" src="../img/short.jpg" width="720" height="1280" alt="Vertical short-video cover in Chinese: Bitcoin rose, but shorts pushed it; 188 million dollars of shorts liquidated in a day."><figcaption>Short-video cover (Chinese edition). Social content carries market information only, never the exit framework.</figcaption></figure>
+    </div>
+    <div class="cols">
+      <div><span class="lbl">Automation</span><h3>A draft every day</h3><p>After the brief, the AI writes an X post in each language, <span class="mono">x_len.py</span> confirms both fit in 280 characters, and the drafts arrive as a phone notification. A posting helper copies the text, saves the image and opens the X composer.</p></div>
+      <div><span class="lbl">Boundary</span><h3>Information is public; strategy stays on site</h3><p>Shorts and posts leave out the exit framework, trigger counts and action calls like "no action today". Social brings people in; the framework is explained in full on the site.</p></div>
+      <div><span class="lbl">Measurement</span><h3>Analytics without personal data</h3><p>GoatCounter uses no cookies and counts only on the production URL. Links from X carry <span class="mono">utm_source=x</span>, so social traffic is separable.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="quality">
+  <div class="side"><span class="en">Trust &amp; quality</span><h2>Quality and risk</h2></div>
+  <div class="main">
+    <div class="tblwrap">
+      <table class="mt">
+        <thead><tr><th>Risk</th><th>Control</th></tr></thead>
+        <tbody>
+          <tr><td>Personal data leaks via the public repo</td><td>Privacy is the top rule: no one's actual holdings or amounts, ever; the exit framework is expressed in percentages only; every commit is scanned first.</td></tr>
+          <tr><td>AI invents or misstates numbers</td><td>It reads the brief only and changes no numbers; a checker enforces format and counts, and nothing is committed until it passes.</td></tr>
+          <tr><td>Readings mistaken for trade signals</td><td>Tags describe only what a number usually means for price; when the AI's read disagrees with the automatic reading, it must say why.</td></tr>
+          <tr><td>Late or failed data</td><td>A status row lists each source's date and lag; failed items show "not available today".</td></tr>
+          <tr><td>A redesign breaks the site</td><td>Every PR checks syntax, the English dictionary and version stamps, and renders every section in both languages on desktop and mobile.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="next">
+  <div class="side"><span class="en">Metrics &amp; next</span><h2>Success metrics and next steps</h2></div>
+  <div class="main">
+    <p class="prose">The product has been live for about two weeks. Analytics are in place but the sample is still small, so here are the metrics I will use to judge it.</p>
+    <div class="tblwrap">
+      <table class="mt">
+        <thead><tr><th>Metric</th><th>Definition</th><th>Status</th></tr></thead>
+        <tbody>
+          <tr><td>North star</td><td>Returning readers who open the brief each day</td><td>Instrumented, collecting</td></tr>
+          <tr><td>On-time rate</td><td>Share of days with data and reading updated by 08:30</td><td>18 consecutive editions</td></tr>
+          <tr><td>Data completeness</td><td>Items marked "not available today" per edition</td><td>Shown daily in the status row</td></tr>
+          <tr><td>Reading quality</td><td>Confirmed versus refuted findings at expiry</td><td>Tracking since Oct 22; first batch 1 confirmed, 1 watching</td></tr>
+          <tr><td>Distribution</td><td>Share of visits tagged utm_source=x</td><td>Instrumented, collecting</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cols">
+      <div><span class="lbl">Next</span><h3>Back-issue pages</h3><p>Every edition already archives its headline, close, later move and whether watched levels were hit. On Oct 12 I chose to archive only, and design a browsable page once there is enough history.</p></div>
+      <div><span class="lbl">Next</span><h3>A public scoreboard for findings</h3><p>Put the confirmation rate on the site and let readers decide how much to trust the brief.</p></div>
+      <div><span class="lbl">Next</span><h3>A replacement whale source</h3><p>Find address-tier data that allows automated access, then bring back the paused panel.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="s" id="learnings">
+  <div class="side"><span class="en">Learnings</span><h2>What I learned</h2></div>
+  <div class="main">
+    <ul class="learn">
+      <li><h3>With AI in the product, the spec is the rules document</h3><p>The daily task's instructions run past 160 lines, covering format, counts, prohibitions and how each section should be written. When a quality problem shows up, I fix the rule and the checker, not that day's paragraph, so the same mistake does not come back.</p></li>
+      <li><h3>Trust is cumulative</h3><p>"Not available today", sample sizes, dashed projections, a public backtest correction: each one makes the product look less impressive on its own. Together they are why readers believe the rest of the numbers.</p></li>
+      <li><h3>Ship daily first, get smart second</h3><p>Most of the first two weeks went into sources, schedules and quotas. Only once the brief was reliably on time and correct did a judgment-heavy feature like findings make sense.</p></li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <span>Screenshots from the Oct 23, 2026 close edition (No. 018). The live site is the source for all figures.</span>
+  <span>Daybreak is for research and education only and is not investment advice.</span>
+</footer>
+
+</div>
+
+</body>
+</html>

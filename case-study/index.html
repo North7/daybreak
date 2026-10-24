@@ -1,0 +1,552 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>破曉 Daybreak 產品案例</title>
+<meta name="description" content="破曉 Daybreak 的產品經理作品集案例：問題、原則、三層架構、關鍵決策、今日發現功能、迭代與成效指標。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="破曉 Daybreak 產品案例">
+<meta property="og:description" content="破曉 Daybreak 的產品經理作品集案例：問題、原則、三層架構、關鍵決策、今日發現功能、迭代與成效指標。">
+<meta property="og:url" content="https://north7.github.io/daybreak/case-study/">
+<meta property="og:image" content="https://north7.github.io/daybreak/case-study/img/front.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@900&display=swap">
+<style>
+/* Layout: the product's own "號外" newspaper identity, reused as a dossier.
+   Left label column + right reading column; heavy ink rules open each section; red only on key numbers. */
+html, body { margin: 0; }
+:root {
+  --paper: #EEECE6;
+  --paper-2: #F6F5F1;
+  --rule: #D2CEC4;
+  --ink: #0A0A0A;
+  --ink-2: #3D3C39;
+  --ink-3: #6B675F;
+  --red: #FF3B1F;
+  --red-ink: #D12C10;
+  --up: #00805A;
+  --tag-ink: #FFFFFF;
+
+  --f-cjk: system-ui, -apple-system, "PingFang TC", "Microsoft JhengHei", "Noto Sans CJK TC", sans-serif;
+  --f-display: "Archivo", var(--f-cjk);
+  --f-head: "Noto Sans TC", "Archivo", var(--f-cjk);
+  --f-body: "Archivo", var(--f-cjk);
+  --f-mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0C0C0D; --paper-2: #151517; --rule: #2C2C31;
+    --ink: #F2F0EA; --ink-2: #B6B2AA; --ink-3: #8C887F;
+    --red: #FF4A2E; --red-ink: #FF6A50; --up: #2FD08A; --tag-ink: #0C0C0D;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0C0C0D; --paper-2: #151517; --rule: #2C2C31;
+  --ink: #F2F0EA; --ink-2: #B6B2AA; --ink-3: #8C887F;
+  --red: #FF4A2E; --red-ink: #FF6A50; --up: #2FD08A; --tag-ink: #0C0C0D;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: var(--f-body); font-size: 16px; line-height: 1.75;
+  -webkit-font-smoothing: antialiased;
+}
+.wrap {
+  max-width: 1120px; margin: 0 auto;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  padding-block: 40px 72px;
+}
+a { color: var(--ink); text-decoration-color: var(--red); text-underline-offset: 3px; }
+a:hover { color: var(--red-ink); }
+:focus-visible { outline: 2px solid var(--red); outline-offset: 2px; }
+::selection { background: var(--red); color: #fff; }
+img { display: block; max-width: 100%; height: auto; }
+.mono { font-family: var(--f-mono); font-variant-numeric: tabular-nums; }
+.r { color: var(--red-ink); }
+p { margin: 0; }
+h1, h2, h3 { margin: 0; text-wrap: balance; }
+
+/* masthead */
+.mast { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap;
+  border-top: 6px solid var(--ink); padding-top: 14px; }
+.brand { display: flex; align-items: center; gap: 10px; font-family: var(--f-display); font-weight: 800; letter-spacing: .08em; font-size: 15px; }
+.brand svg { width: 30px; height: 14px; }
+.mast .mono { font-size: 12px; color: var(--ink-3); letter-spacing: .04em; }
+.tag { display: inline-block; background: var(--red); color: var(--tag-ink); font-family: var(--f-head); font-weight: 900;
+  font-size: 13px; padding: 3px 10px; letter-spacing: .06em; line-height: 1.5; }
+
+/* hero */
+.hero { display: grid; gap: 28px; padding-block: 44px 36px; }
+.hero .kicker { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; }
+.hero .kicker .mono { font-size: 12px; letter-spacing: .08em; color: var(--ink-3); text-transform: uppercase; }
+.name { font-family: var(--f-display); font-weight: 900; font-stretch: 62%; font-size: clamp(64px, 13vw, 168px);
+  line-height: .86; letter-spacing: -.01em; text-transform: uppercase; }
+.name small { display: block; font-family: var(--f-head); font-size: .32em; letter-spacing: .1em; margin-top: 14px; font-stretch: 100%; }
+.deck { font-family: var(--f-head); font-weight: 900; font-size: clamp(24px, 3.4vw, 40px); line-height: 1.32; max-width: 28em; }
+.deck .r { color: var(--red); }
+.facts { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--ink); border-bottom: 1px solid var(--rule); }
+.facts > div { padding: 14px 16px 16px 0; min-width: 0; }
+.facts > div + div { padding-left: 16px; border-left: 1px solid var(--rule); }
+.lbl { font-family: var(--f-mono); font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); }
+.facts p { font-size: 14px; line-height: 1.6; margin-top: 6px; color: var(--ink-2); }
+.facts strong { color: var(--ink); }
+.shot { border: 1px solid var(--rule); background: var(--paper-2); }
+figure { margin: 0; display: grid; gap: 10px; }
+figcaption { font-size: 13px; color: var(--ink-3); line-height: 1.6; }
+
+/* tape */
+.tape { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); background: var(--ink); color: var(--paper); margin-block: 8px 0; }
+.tape > div { padding: 18px 16px; min-width: 0; }
+.tape > div + div { border-left: 1px solid color-mix(in srgb, var(--paper) 18%, transparent); }
+.tape b { display: block; font-family: var(--f-display); font-weight: 900; font-stretch: 62%; font-size: 44px; line-height: 1; font-variant-numeric: tabular-nums; }
+.tape b .u { display: inline; font-size: .5em; margin: 0 0 0 2px; opacity: 1; }
+.tape span { display: block; font-size: 12.5px; line-height: 1.5; margin-top: 8px; opacity: .78; }
+
+/* sections */
+section.s { display: grid; grid-template-columns: 200px minmax(0, 1fr); gap: 16px 40px; border-top: 3px solid var(--ink); padding-top: 22px; margin-top: 72px; }
+.s > .side { display: grid; align-content: start; gap: 6px; }
+.s > .side .en { font-family: var(--f-mono); font-size: 11px; letter-spacing: .12em; color: var(--ink-3); text-transform: uppercase; }
+.s > .side h2 { font-family: var(--f-head); font-weight: 900; font-size: 26px; line-height: 1.25; }
+.s > .main { display: grid; gap: 28px; min-width: 0; }
+.lead { font-family: var(--f-head); font-weight: 900; font-size: clamp(20px, 2.4vw, 26px); line-height: 1.45; max-width: 30em; }
+.prose { display: grid; gap: 14px; max-width: 42em; color: var(--ink-2); }
+.prose strong { color: var(--ink); }
+h3 { font-family: var(--f-head); font-weight: 900; font-size: 19px; line-height: 1.4; }
+
+.cols { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--ink); }
+.cols > div { padding: 16px 20px 18px 0; display: grid; align-content: start; gap: 8px; min-width: 0; }
+.cols > div + div { padding-left: 20px; border-left: 1px solid var(--rule); }
+.cols p { font-size: 15px; color: var(--ink-2); }
+.cols.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+
+.pain { list-style: none; padding: 0; margin: 0; display: grid; gap: 0; border-top: 1px solid var(--rule); }
+.pain li { display: grid; grid-template-columns: 9em minmax(0, 1fr); gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--rule); font-size: 15px; color: var(--ink-2); }
+.pain li b { color: var(--ink); font-family: var(--f-head); font-weight: 900; }
+
+.quote { border-left: 4px solid var(--red); padding: 4px 0 4px 18px; font-family: var(--f-head); font-weight: 900; font-size: 20px; line-height: 1.5; max-width: 32em; }
+.quote .lbl { display: block; margin-bottom: 6px; font-family: var(--f-mono); font-weight: 400; }
+
+.scope { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; }
+.scope ul { margin: 8px 0 0; padding-left: 1.1em; color: var(--ink-2); font-size: 15px; display: grid; gap: 4px; }
+.scope .no li::marker { content: "×  "; color: var(--red-ink); }
+.scope .yes li::marker { content: "✓  "; color: var(--up); }
+
+/* principles */
+.prin { counter-reset: p; display: grid; gap: 0; border-top: 1px solid var(--ink); }
+.prin > div { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.25fr); gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--rule); }
+.prin h3 { font-size: 17px; }
+.prin p { font-size: 15px; color: var(--ink-2); }
+
+/* flow */
+.layers { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.layer { border: 1px solid var(--rule); background: var(--paper-2); padding: 16px 18px; display: grid; gap: 8px; align-content: start; min-width: 0; }
+.layer.hot { border-color: var(--red); }
+.layer p { font-size: 14.5px; color: var(--ink-2); }
+.layer .who { font-family: var(--f-mono); font-size: 12px; color: var(--red-ink); }
+.flow { overflow-x: auto; }
+.flow table { width: 100%; border-collapse: collapse; min-width: 560px; font-size: 14.5px; }
+.flow th { text-align: left; font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: 8px 12px 8px 0; border-bottom: 1px solid var(--ink); }
+.flow td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--ink-2); }
+.flow td:first-child { font-family: var(--f-mono); font-weight: 700; color: var(--ink); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.flow td:nth-child(2) { white-space: nowrap; color: var(--ink); }
+.chip { display: inline-block; font-family: var(--f-mono); font-size: 11.5px; padding: 1px 7px; border: 1px solid var(--ink-3); color: var(--ink-2); white-space: nowrap; }
+.chip.ai { border-color: var(--red-ink); color: var(--red-ink); }
+
+/* decisions */
+.dec { display: grid; gap: 0; border-top: 1px solid var(--ink); }
+.dec article { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr); gap: 12px 32px; padding: 22px 0 24px; border-bottom: 1px solid var(--rule); }
+.dec .when { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); margin-bottom: 6px; display: block; }
+.dec dl { margin: 0; display: grid; grid-template-columns: 4.2em minmax(0, 1fr); gap: 8px 14px; font-size: 15px; }
+.dec dt { font-family: var(--f-head); font-weight: 900; font-size: 13px; padding-top: 2px; color: var(--ink-3); }
+.dec dt.k { color: var(--red-ink); }
+.dec dd { margin: 0; color: var(--ink-2); }
+.dec dd strong { color: var(--ink); }
+
+/* loop */
+.loop { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border: 1px solid var(--ink); }
+.loop > div { padding: 14px 14px 16px; display: grid; gap: 6px; align-content: start; min-width: 0; position: relative; }
+.loop > div + div { border-left: 1px solid var(--rule); }
+.loop .step { font-family: var(--f-mono); font-size: 11px; color: var(--red-ink); letter-spacing: .08em; }
+.loop b { font-family: var(--f-head); font-weight: 900; font-size: 16px; line-height: 1.35; }
+.loop p { font-size: 13.5px; line-height: 1.6; color: var(--ink-2); }
+.loop .who { font-family: var(--f-mono); font-size: 11px; color: var(--ink-3); }
+.loop-back { font-family: var(--f-mono); font-size: 12px; color: var(--ink-3); text-align: right; margin-top: -18px; }
+
+/* timeline */
+.tl { list-style: none; margin: 0; padding: 0; display: grid; border-left: 2px solid var(--ink); }
+.tl li { display: grid; grid-template-columns: 6.5em minmax(0, 1fr); gap: 16px; padding: 0 0 18px 18px; position: relative; }
+.tl li::before { content: ""; position: absolute; left: -6px; top: 8px; width: 10px; height: 10px; background: var(--paper); border: 2px solid var(--ink); }
+.tl li.key::before { background: var(--red); border-color: var(--red); }
+.tl time { font-family: var(--f-mono); font-size: 13px; font-weight: 700; padding-top: 2px; }
+.tl b { font-family: var(--f-head); font-weight: 900; }
+.tl p { font-size: 15px; color: var(--ink-2); }
+
+/* gallery */
+.gal { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+.gal .stack { display: grid; gap: 16px; }
+
+/* metrics */
+.mt { width: 100%; border-collapse: collapse; font-size: 15px; }
+.mt th { text-align: left; font-family: var(--f-mono); font-size: 11px; font-weight: 500; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding: 8px 12px 8px 0; border-bottom: 1px solid var(--ink); }
+.mt td { padding: 12px 12px 12px 0; border-bottom: 1px solid var(--rule); vertical-align: top; color: var(--ink-2); }
+.mt td:first-child { color: var(--ink); font-weight: 600; white-space: nowrap; }
+.tblwrap { overflow-x: auto; }
+.tblwrap .mt { min-width: 560px; }
+
+.learn { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; max-width: 44em; }
+.learn li { display: grid; gap: 4px; }
+.learn p { color: var(--ink-2); font-size: 15px; }
+
+footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; display: flex; justify-content: space-between; gap: 12px 24px; flex-wrap: wrap; font-size: 13px; color: var(--ink-3); }
+
+@media (max-width: 860px) {
+  section.s { grid-template-columns: minmax(0, 1fr); margin-top: 56px; }
+  .tape { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .tape > div:nth-child(4) { border-left: 0; }
+  .tape > div:nth-child(n+4) { border-top: 1px solid color-mix(in srgb, var(--paper) 18%, transparent); }
+  .facts { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .facts > div:nth-child(3) { border-left: 0; padding-left: 0; }
+  .facts > div:nth-child(n+3) { border-top: 1px solid var(--rule); }
+  .loop { grid-template-columns: minmax(0, 1fr); }
+  .loop > div + div { border-left: 0; border-top: 1px solid var(--rule); }
+  .loop-back { margin-top: 0; text-align: left; }
+  .layers, .cols, .cols.two { grid-template-columns: minmax(0, 1fr); }
+  .cols > div + div { padding-left: 0; border-left: 0; border-top: 1px solid var(--rule); }
+  .dec article, .prin > div { grid-template-columns: minmax(0, 1fr); }
+  .gal { grid-template-columns: minmax(0, 1fr); }
+}
+@media (max-width: 520px) {
+  body { font-size: 15px; }
+  .tape b { font-size: 34px; }
+  .facts { grid-template-columns: minmax(0, 1fr); }
+  .facts > div + div { border-left: 0; padding-left: 0; border-top: 1px solid var(--rule); }
+  .scope { grid-template-columns: minmax(0, 1fr); }
+  .pain li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .tl li { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .dec dl { grid-template-columns: minmax(0, 1fr); gap: 2px; }
+  .dec dd { margin-bottom: 8px; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .name { animation: rise .7s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes rise { from { transform: translateY(10px); } to { transform: none; } }
+}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header class="mast">
+  <div class="brand">
+    <svg viewBox="0 0 30 14" aria-hidden="true"><path d="M7 11a8 8 0 0 1 16 0" fill="none" stroke="var(--red)" stroke-width="3"/><rect x="0" y="11" width="30" height="3" fill="var(--ink)"/></svg>
+    DAYBREAK · CASE STUDY
+  </div>
+  <span class="mono">產品經理視角 · 2026.09.22 — 2026.10.23 · <a href="en/" hreflang="en" lang="en">English</a></span>
+</header>
+
+<section class="hero">
+  <div class="kicker"><span class="tag">號外</span><span class="mono">個人產品 · 從零到每日出刊</span></div>
+  <h1 class="name">Daybreak<small>破曉</small></h1>
+  <p class="deck">把 <span class="r">15</span> 個免費資料源，變成每天台北 <span class="r">08:30</span> 出刊、會自己追蹤對錯的比特幣簡報。</p>
+
+  <div class="facts">
+    <div><span class="lbl">角色</span><p><strong>產品負責人（個人專案）</strong><br>問題定義、規則設計、資料策略、AI 編輯流程與品質標準</p></div>
+    <div><span class="lbl">協作</span><p><strong>Claude Code 實作</strong><br>Claude 排程任務每日撰寫判讀；GitHub Actions 跑資料管線</p></div>
+    <div><span class="lbl">平台</span><p><strong>靜態網站 + PWA</strong><br>GitHub Pages、中文／英文、日刊／夜刊、可加到手機主畫面</p></div>
+    <div><span class="lbl">連結</span><p><a href="https://north7.github.io/daybreak/">north7.github.io/daybreak</a><br><a href="https://github.com/North7/daybreak">GitHub 原始碼</a></p></div>
+  </div>
+
+  <figure>
+    <img class="shot" src="img/front.jpg" width="1400" height="933" alt="Daybreak 桌面版頭版：左側九個版面的目錄，上方是號外標題，中間是超大的收盤價 81,086。">
+    <figcaption>頭版，2026-10-23 收盤版（第 18 期）。號外標題總結當天市場，收盤價是全頁唯一的視覺重量。</figcaption>
+  </figure>
+</section>
+
+<div class="tape" role="list" aria-label="專案數字">
+  <div role="listitem"><b>18<span class="u">期</span></b><span>連續每日出刊（10/06 起）</span></div>
+  <div role="listitem"><b>15</b><span>個公開資料來源，0 把 API 金鑰</span></div>
+  <div role="listitem"><b>$0</b><span>資料與主機成本</span></div>
+  <div role="listitem"><b>26</b><span>條序列每天自動掃描異動</span></div>
+  <div role="listitem"><b>9</b><span>個版面 × 中英兩種語言</span></div>
+  <div role="listitem"><b>155</b><span>次提交，公開倉庫 16 天內</span></div>
+</div>
+
+<!-- TL;DR -->
+<section class="s" id="tldr">
+  <div class="side"><span class="en">TL;DR</span><h2>一頁看完</h2></div>
+  <div class="main">
+    <div class="cols">
+      <div><span class="lbl">問題</span><h3>資料很多，結論很少</h3><p>長期持有者要在週期頂部前分批賣出，但鏈上、ETF、衍生品數據散在十幾個網站，每個數字都沒有「所以呢」，最需要紀律的時候最容易被情緒帶走。</p></div>
+      <div><span class="lbl">做法</span><h3>數字、判讀、規則分三層</h3><p>程式產生數字，AI 只負責解釋，出場規則寫死、每月才檢討。每天自動出刊，再用「今日發現」把注意力集中到不尋常的地方，並在下一期檢查自己說得對不對。</p></div>
+      <div><span class="lbl">結果</span><h3>零成本、每天準時</h3><p>18 期連續出刊，全程用免費 API；每天人工只剩一步（發 X 貼文）。發現有可驗證的追蹤條件，第一批已在隔天得到「確認」或「追蹤中」的結果。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Problem -->
+<section class="s" id="problem">
+  <div class="side"><span class="en">Problem</span><h2>問題與使用者</h2></div>
+  <div class="main">
+    <p class="lead">目標使用者是手上有比特幣、打算在這一輪週期分批賣出的長期持有者。第一位使用者是我自己。</p>
+    <ul class="pain">
+      <li><b>資訊分散</b><span>鏈上指標在 Glassnode、CheckOnChain，ETF 流量在 Farside，衍生品在 Deribit、CoinGlass。每天早上要開一輪分頁，還得自己對齊日期。</span></li>
+      <li><b>數字沒有解讀</b><span>MVRV 1.5 是高還是低？資金費率 10% 代表什麼？跟昨天比變了什麼？工具給的是數字，使用者要的是判斷。</span></li>
+      <li><b>紀律最難</b><span>事先寫好的出場計畫，到了頂部常常不照做。價格越熱，越容易找到「這次不一樣」的理由。</span></li>
+      <li><b>免費資料有坑</b><span>免費層有每日額度，部分序列晚 5 到 7 天，網站會擋自動抓取。付費工具則要長期訂閱。</span></li>
+    </ul>
+    <div class="quote"><span class="lbl">Job to be done</span>每天早上花幾分鐘就知道：市場在週期的哪裡、今天有沒有任何出場規則被觸發、接下來該盯哪幾個價位和日期。</div>
+    <div class="scope">
+      <div><span class="lbl">要做</span><ul class="yes"><li>結論先行的每日簡報</li><li>週期位置與出場框架的距離</li><li>每個數字附一句白話解讀</li><li>手機上也好讀，中英文都有</li></ul></div>
+      <div><span class="lbl">刻意不做</span><ul class="no"><li>短線價格預測與喊單</li><li>顯示任何人的實際持倉或金額</li><li>交易下單或串接帳戶</li><li>需要金鑰或付費的資料源</li></ul></div>
+    </div>
+  </div>
+</section>
+
+<!-- Principles -->
+<section class="s" id="principles">
+  <div class="side"><span class="en">Principles</span><h2>產品原則</h2></div>
+  <div class="main">
+    <p class="prose">這五條寫在 README 和每日任務的規則裡，後面所有取捨都回到它們。</p>
+    <div class="prin">
+      <div><h3>先給結論，再給證據</h3><p>每一版最上方是「今日判讀」，一句話說這一版今天最值得注意的事，數字放在後面當證據。</p></div>
+      <div><h3>寧可「本日未取得」，也不推估</h3><p>來源失敗只影響那一項，頁面照實標示，絕不沿用昨天的數字。頁首的資料狀態列出每個來源落後幾天。</p></div>
+      <div><h3>不同資料商的數字不相減</h3><p>CoinMetrics 和 bitcoin-data 的 MVRV 口徑不同，混算會產生看起來精確、實際錯誤的結論。</p></div>
+      <div><h3>分數附樣本數</h3><p>引用歷史一律寫出樣本數，少於 30 不下結論。比特幣只有 3 到 4 輪週期，所有「遞減」推論都標明假設。</p></div>
+      <div><h3>讀值不連動規則</h3><p>市場階段、數字解讀、新聞、第三方模型都只作參考，不能改變出場框架。規則參數每月檢討時才改。</p></div>
+    </div>
+    <figure>
+      <img class="shot" src="img/cycle.jpg" width="1180" height="940" alt="週期版：今日判讀說明市場階段為牛市第 15 天，下方是三個判定燈號與六個佐證燈號的表格，以及短期持有者成本與真實市場均價的走勢圖。">
+      <figcaption>週期版。市場階段用寫死的規則判定（投降出現過、在上升的 200 日均線上連 30 天），六盞佐證燈號只顯示、不參與判定；圖上的虛線一律代表外推。</figcaption>
+    </figure>
+  </div>
+</section>
+
+<!-- System -->
+<section class="s" id="system">
+  <div class="side"><span class="en">How it works</span><h2>三層分工與每日流程</h2></div>
+  <div class="main">
+    <p class="lead">最重要的架構決定，是讓 AI 只負責「解釋」，不負責「算」，也不負責「決定」。</p>
+    <div class="layers">
+      <div class="layer"><span class="who">確定性程式</span><h3>數字層</h3><p>Python 管線抓 15 個來源、計算指標、偵測異動、封存前一期。同樣的輸入永遠得到同樣的輸出。</p></div>
+      <div class="layer hot"><span class="who">Claude 排程任務</span><h3>判讀層</h3><p>讀精簡摘要、查證新聞與研報，寫中英文頭條、各版判讀和今日發現。不改任何數字，也不改網站程式。</p></div>
+      <div class="layer"><span class="who">寫死的參數</span><h3>規則層</h3><p>出場框架：8 階價格階梯、鏈上觸發、頂部加速、200 日均線避險、時間停損。只有每月檢討時才改。</p></div>
+    </div>
+    <div class="flow">
+      <table>
+        <thead><tr><th>台北時間</th><th>誰</th><th>做什麼</th></tr></thead>
+        <tbody>
+          <tr><td>06:40</td><td><span class="chip">Actions</span></td><td>預先抓 7 個鏈上指標，把免費層每天 15 次的額度分成兩批用。</td></tr>
+          <tr><td>08:06</td><td><span class="chip">Actions</span></td><td>抓全部資料、算指標、跑異動偵測、封存前一期、發布到網站。</td></tr>
+          <tr><td>08:30</td><td><span class="chip ai">Claude</span></td><td>讀摘要、查證新聞與研報，寫中英文判讀與發現；格式檢查與隱私掃描通過才提交。</td></tr>
+          <tr><td>08:3x</td><td><span class="chip">Actions</span></td><td>產生中英文分享圖；X 貼文草稿推播到手機。</td></tr>
+          <tr><td>22:00</td><td><span class="chip">Actions</span></td><td>補抓前一個交易日的 ETF 流量（來源約晚一天公布）。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Decisions -->
+<section class="s" id="decisions">
+  <div class="side"><span class="en">Decision log</span><h2>關鍵決策與取捨</h2></div>
+  <div class="main">
+    <div class="dec">
+      <article>
+        <div><span class="when">核心設計</span><h3>AI 寫判讀，但不碰數字</h3></div>
+        <dl>
+          <dt>情境</dt><dd>讓模型直接看原始資料寫日報很快，但數字可能被改寫、捏造，或混用不同口徑。</dd>
+          <dt class="k">決定</dt><dd>數字只由管線產生；AI 只讀約 20KB 的精簡摘要，所有數字都要能在摘要裡找到。規則寫成一份任務文件，提交前由 <span class="mono">notes_lint.py</span> 檢查格式、數量、長度、英文版沒有中文、制式提醒句全期最多 4 次。</dd>
+          <dt>取捨</dt><dd>文字彈性變小，換來<strong>可審計</strong>：每句判讀都能追到資料欄位。品質靠規則和檢查器維持，不靠每天人工審稿。</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">10/08 · 10/15</span><h3>零成本資料策略</h3></div>
+        <dl>
+          <dt>情境</dt><dd>bitcoin-data 免費層每天只有 15 次請求；它的 STH-SOPR 晚約 7 天；Farside 用 Cloudflare 擋自動抓取。</dd>
+          <dt class="k">決定</dt><dd>請求分前一晚 7 個、當天 6 個輪替；STH-SOPR 改讀 CheckOnChain 公開圖表；ETF 改用 The Block，逐日和 Farside 比對一致才採用。</dd>
+          <dt>取捨</dt><dd>多了快取與輪替的複雜度。STH-SOPR 的延遲從<strong>約 7 天降到約 1 天</strong>，同時每天省下額度，總用量維持在 13 次。</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">10/08 · 10/21</span><h3>準時比聰明重要</h3></div>
+        <dl>
+          <dt>情境</dt><dd>GitHub 內建排程在這個倉庫每天晚 5 到 7 小時，晨報變午報。</dd>
+          <dt class="k">決定</dt><dd>改由 cron-job.org 準時觸發；原排程保留當備援，同一天重複觸發自動略過。AI 任務發現資料過期時，會自己觸發管線並等待。10/21 再修正「今天抓過沒」的判斷，改以週期起點計算，不再用 UTC 日期。</dd>
+          <dt>取捨</dt><dd>多一個外部服務要維護。換到的是晨報回到早上出刊，公開以來 18 期沒有斷過。</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">10/21</span><h3>寧可拿掉，也不顯示舊資料</h3></div>
+        <dl>
+          <dt>情境</dt><dd>鯨魚與大戶分層的來源 BitInfoCharts 開始擋自動抓取。</dd>
+          <dt class="k">決定</dt><dd>暫停這個面板。管線不報錯，網站在沒有資料時連同狀態列和來源說明一起隱藏；程式碼保留，找到替代來源再回補。</dd>
+          <dt>取捨</dt><dd>少一個受歡迎的面板，但守住「不沿用舊數字」的原則。</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">10/18</span><h3>發現自己的回測錯了，公開更正</h3></div>
+        <dl>
+          <dt>情境</dt><dd>淨實現損益面板上線時，回測用的是每段尖峰「最極端的那一天」，這是事後才知道的資訊。</dd>
+          <dt class="k">決定</dt><dd>改用即時可得的「每段第一天」重測，結論反轉：虧損尖峰之後的報酬普通，不是買點；獲利尖峰之後常繼續漲，也不是賣點。同時補上限制：歷次觸發都在現貨 ETF 之前，訊號在 ETF 時代可能變鈍。</dd>
+          <dt>取捨</dt><dd>少了一個好看的「買點訊號」。讀者拿到的是可信的讀值，每日任務也加上一條規則：不能把「沒觸發」寫成「還沒見底」。</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">10/08 → 10/12</span><h3>手機和桌面用不同的閱讀方式</h3></div>
+        <dl>
+          <dt>情境</dt><dd>9 個版面，資訊密度很高。上線第一天就試了 5 種換版方式。</dd>
+          <dt class="k">決定</dt><dd>手機一次一版、左右滑動、換版一律回到頂部；桌面連續捲動、鍵盤 1 到 9 跳版。CSS 和 JS 加版本號，避免手機拿到新舊混搭的檔案。</dd>
+          <dt>取捨</dt><dd>兩套導覽要各自測試，所以每個 PR 都用無頭瀏覽器渲染中英文 × 桌面手機，確認沒有 JS 錯誤、不會橫向捲動。</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">10/12</span><h3>英文版的預設語言依地區決定</h3></div>
+        <dl>
+          <dt>情境</dt><dd>X 上的讀者大多看英文，但核心使用者讀中文。</dd>
+          <dt class="k">決定</dt><dd>台灣、香港、澳門、中國大陸、新加坡預設中文，其他地區預設英文；使用者選過就一直沿用。只查國家代碼，結果存在訪客自己的瀏覽器。</dd>
+          <dt>取捨</dt><dd>多一次第三方查詢。AI 每天要多寫一份英文判讀，缺檔時退回中文並標示。</dd>
+        </dl>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- Findings -->
+<section class="s" id="findings">
+  <div class="side"><span class="en">Feature deep dive</span><h2>今日發現：從儀表板到判斷</h2></div>
+  <div class="main">
+    <p class="lead">上線兩週後的觀察：讀者自己看得到數字，看不到的是「哪裡不尋常、為什麼、接下來看什麼」。</p>
+    <div class="prose">
+      <p>前 16 期的日報是「每個版面一段判讀」。資訊完整，但重點平均分配，真正異常的訊號會被淹沒在 9 個版面裡。10/23 上線的「今日發現」改成先找異常、再寫判斷，並讓每個判斷都能在下一期被檢驗。</p>
+    </div>
+    <div class="loop">
+      <div><span class="step">STEP 1</span><b>偵測</b><p>26 條序列套固定規則：一年 2% 極端值、7 日急變、狀態翻轉、關鍵價位 ±3%、連續、跨指標組合。</p><span class="who">signals.py</span></div>
+      <div><span class="step">STEP 2</span><b>撰寫 0 到 3 則</b><p>拆解是哪一邊在動、交叉比對、列出其他解釋、引用過去同樣情況與樣本數。</p><span class="who">Claude</span></div>
+      <div><span class="step">STEP 3</span><b>寫下追蹤條件</b><p>例如「實現獲利回到 4,000 顆以下」，附期限，並標明成立時代表確認或推翻。</p><span class="who">Claude</span></div>
+      <div><span class="step">STEP 4</span><b>隔天自動檢查</b><p>管線讀上期條件，用今天的數字判斷成立與否。</p><span class="who">signals.py</span></div>
+      <div><span class="step">STEP 5</span><b>寫後續</b><p>確認、推翻、到期或追蹤中。結果寫進往期索引。</p><span class="who">Claude</span></div>
+    </div>
+    <p class="loop-back">↺ 第 5 步的結果成為下一期第 1 步的輸入</p>
+    <figure>
+      <img class="shot" src="img/findings.jpg" width="1180" height="660" alt="今日發現區塊：整體偏空，兩則發現各附可信度與偏空標籤；下方是上期發現的後續，一則追蹤中，一則確認。">
+      <figcaption>10/23 版的今日發現。上期兩則發現，一則「確認」（資金費率維持在 5% 以上），一則仍在「追蹤中」。每則都標偏多／偏空／中性與理由，頂端彙總整體方向。</figcaption>
+    </figure>
+    <div class="cols two">
+      <div><span class="lbl">設計規則</span><h3>硬湊的發現比沒有更糟</h3><p>數量上限 3 則，可以是 0。同一件事的多個訊號合成一則；連續多天的異常只有出現新發展才再寫，否則放進後續。</p></div>
+      <div><span class="lbl">為什麼這樣設計</span><h3>讓 AI 的判斷可以被記分</h3><p>每則發現都寫出會推翻自己的條件，系統隔天自動對答案。累積下來，就能算出發現的確認率，評估判讀品質。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Timeline -->
+<section class="s" id="timeline">
+  <div class="side"><span class="en">Iterations</span><h2>迭代時間軸</h2></div>
+  <div class="main">
+    <ol class="tl">
+      <li><time>09/22</time><div><b>資料管線與網站</b><p>先解決「每天有一份正確的數字」，再談解讀。</p></div></li>
+      <li><time>10/02</time><div><b>籌碼流向、掛單簿深度</b><p>掛單簿從 3 家擴大到 13 個交易所（10/06），加入第三方頂底模型讀值。</p></div></li>
+      <li><time>10/08</time><div><b>公開上線</b><p>請求輪替、ETF 換源、手機滑動換版、資產版本號。</p></div></li>
+      <li><time>10/09</time><div><b>市場階段規則修訂</b><p>牛市需投降出現過，加上在上升的 200 日均線上連 30 天；加入佐證燈號。</p></div></li>
+      <li class="key"><time>10/12</time><div><b>每個數字附白話解讀；英文版</b><p>依固定門檻自動產生「現在代表什麼」，標上偏多／偏空／留意／中性。PR 自動檢查上線。</p></div></li>
+      <li><time>10/13</time><div><b>分發</b><p>中英文分享圖、每日 X 草稿、發文小幫手、無 cookie 的訪客統計。</p></div></li>
+      <li><time>10/14–15</time><div><b>每張圖都有「讀圖」</b><p>「現在」一句自動產生，「怎麼讀」說明要小心什麼；虛線一律代表推測。11 項鏈上指標補上 3 年走勢。</p></div></li>
+      <li><time>10/18</time><div><b>淨實現損益與回測更正</b><p>發現後見之明偏誤，改用即時測試，結論反轉並公開更正。</p></div></li>
+      <li><time>10/21</time><div><b>可靠性週</b><p>修正預抓排程、鯨魚面板暫停、每日任務規則依版面重整。</p></div></li>
+      <li class="key"><time>10/23</time><div><b>今日發現與後續追蹤</b><p>從「每版一段判讀」轉向「先找異常、再寫可檢驗的判斷」。</p></div></li>
+    </ol>
+  </div>
+</section>
+
+<!-- Distribution -->
+<section class="s" id="distribution">
+  <div class="side"><span class="en">Distribution</span><h2>分發與成長</h2></div>
+  <div class="main">
+    <p class="lead">內容每天自動產生，分發也要接近零成本：圖自動畫，文案自動寫，人只按發送。</p>
+    <div class="gal">
+      <div class="stack">
+        <figure><img class="shot" src="img/share-en.jpg" width="1200" height="675" alt="英文分享圖：號外紅標，標題寫 ETF 流入 5.25 億美元但那斯達克下跌 2.6%，下方三格是市場階段、ETF 七日流量與離出場第一階的距離。"><figcaption>每期推送後由 Actions 自動產生的分享圖（英文版）。</figcaption></figure>
+        <figure><img class="shot" src="img/og.jpg" width="1200" height="630" alt="連結預覽卡：DAYBREAK 破曉字標，副標 The first Bitcoin brief of the morning。"><figcaption>網址貼到 X 時的預覽卡，預設英文。</figcaption></figure>
+      </div>
+      <figure><img class="shot" src="img/short.jpg" width="720" height="1280" alt="直式短影片封面：比特幣漲了，推它的卻是空頭；空單一天被清算 1.88 億美元。"><figcaption>短影片封面。社群內容只放市場資訊，不放出場框架。</figcaption></figure>
+    </div>
+    <div class="cols">
+      <div><span class="lbl">自動化</span><h3>每天一份草稿</h3><p>AI 寫完日報後另寫中英文 X 貼文，用 <span class="mono">x_len.py</span> 確認在 280 字內，推播到手機。發文小幫手一鍵複製、存圖、開 X 發文視窗。</p></div>
+      <div><span class="lbl">邊界</span><h3>資訊公開，策略留在站內</h3><p>短影片與貼文不放出場框架、觸發條數或「今天不動」之類的動作結論。社群負責帶人進來，判斷框架留在網站裡完整說明。</p></div>
+      <div><span class="lbl">量測</span><h3>不收個資的統計</h3><p>GoatCounter 不用 cookie，只在正式網址計數；X 連結帶 <span class="mono">utm_source=x</span>，分得出社群帶來的流量。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Quality -->
+<section class="s" id="quality">
+  <div class="side"><span class="en">Trust &amp; quality</span><h2>品質與風險控管</h2></div>
+  <div class="main">
+    <div class="tblwrap">
+      <table class="mt">
+        <thead><tr><th>風險</th><th>對策</th></tr></thead>
+        <tbody>
+          <tr><td>公開倉庫洩漏個人資訊</td><td>隱私鐵則列為最高優先：不得出現任何人的實際持倉或金額，出場框架只用百分比；每次提交前掃描。</td></tr>
+          <tr><td>AI 捏造或誤植數字</td><td>只讀摘要、不改數字；格式與數量由檢查器把關，沒過就不能提交。</td></tr>
+          <tr><td>讀值被誤會成買賣訊號</td><td>標籤只描述「對價格的一般含意」；與自動解讀方向不同時必須寫出原因。</td></tr>
+          <tr><td>資料延遲或失敗</td><td>頁首資料狀態列出每個來源的日期與落後天數；失敗的項目顯示「本日未取得」。</td></tr>
+          <tr><td>改版弄壞網站</td><td>每個 PR 檢查語法、英文字典、版本號，並渲染每一版的中英文 × 桌面手機。</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- Metrics & next -->
+<section class="s" id="next">
+  <div class="side"><span class="en">Metrics &amp; next</span><h2>成效指標與下一步</h2></div>
+  <div class="main">
+    <p class="prose">產品上線約兩週，流量統計已經埋好但樣本還小，這裡先列出我會用來判斷成敗的指標。</p>
+    <div class="tblwrap">
+      <table class="mt">
+        <thead><tr><th>指標</th><th>定義</th><th>現況</th></tr></thead>
+        <tbody>
+          <tr><td>北極星</td><td>每天開啟日報的回訪讀者數</td><td>已埋點，累積中</td></tr>
+          <tr><td>準時率</td><td>08:30 前資料與判讀都已更新的天數比例</td><td>18 期連續出刊</td></tr>
+          <tr><td>資料完整度</td><td>每期「本日未取得」的項目數</td><td>頁首每天顯示</td></tr>
+          <tr><td>判讀品質</td><td>發現到期時「確認」對「推翻」的比例</td><td>10/22 起累積，首批 1 確認、1 追蹤中</td></tr>
+          <tr><td>分發效率</td><td>帶 utm_source=x 的造訪占比</td><td>已埋點，累積中</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="cols">
+      <div><span class="lbl">下一步</span><h3>往期頁面</h3><p>每期已自動封存頭條、當天收盤、之後漲跌與價位有沒有被碰到。10/12 決定先只封存，等資料夠多再設計成可回顧的頁面。</p></div>
+      <div><span class="lbl">下一步</span><h3>發現的公開記分板</h3><p>把確認率放到網站上，讓讀者自己判斷這份簡報值不值得信。</p></div>
+      <div><span class="lbl">下一步</span><h3>鯨魚資料替代來源</h3><p>找到不擋自動抓取的地址分層資料，再回補暫停中的面板。</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Learnings -->
+<section class="s" id="learnings">
+  <div class="side"><span class="en">Learnings</span><h2>學到的事</h2></div>
+  <div class="main">
+    <ul class="learn">
+      <li><h3>用 AI 做產品，規格就是規則文件</h3><p>每日任務的指示有 160 多行，寫清楚格式、數量、禁止事項和每一版要怎麼寫。品質問題出現時，修的是規則和檢查器，不是當天的那段文字，所以同樣的錯不會再犯。</p></li>
+      <li><h3>可信度是累積出來的</h3><p>「本日未取得」、樣本數、虛線代表推測、公開更正回測，每一項單看都讓產品顯得不那麼厲害，放在一起才讓讀者願意相信剩下的數字。</p></li>
+      <li><h3>先讓它每天出刊，再讓它變聰明</h3><p>前兩週大部分的工作是資料來源、排程與額度。準時、正確的基礎打好之後，「今日發現」這種需要判斷力的功能才有意義。</p></li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <span>截圖取自 2026-10-23 收盤版（第 18 期）。數字以當期網站為準。</span>
+  <span>Daybreak 僅供研究與教育參考，不構成投資建議。</span>
+</footer>
+
+</div>
+
+</body>
+</html>
