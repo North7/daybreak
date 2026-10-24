@@ -300,6 +300,12 @@
    "d": "2026-10-21",
    "musd": 528.4,
    "partial": false
+  },
+  {
+   "d": "2026-10-22",
+   "musd": -635.6,
+   "partial": true,
+   "src": "暫定：The Block 新聞 −635.6（10/23）；SoSoValue −635.49（TokenPost 10/23）"
   }
  ],
  "source": "The Block",
