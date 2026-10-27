@@ -113,13 +113,54 @@ def ipf(t, b, v, T, U, R, cap=None, tol=1e-7, iters=3000):
     return v, res
 
 
-def run(U, HW, px):
-    """跑整條鏈；回傳 {日期: dict(t, b, v, T, urpd, sth, lth, resid, sth_cost, lth_cost)}（t/b/v 依附加順序，前一個快照的項目在前）"""
+TRANSFER_MIN, TRANSFER_X = 80000, 5    # 單日遠離現價的流出 ≥ 8 萬顆、而且 ≥ 前 30 天中位數 5 倍 → 疑似同一實體內部轉帳
+
+
+def transfers(U, px):
+    """「搬家日」（2026-10-27 加，Murphy 與 @market_beggar 指正）：某天離當天價格區間 10% 以外的格子大量流出，
+    等量出現在當天價格的格子。逐筆 UTXO 分不出這是賣出還是同一實體把不同成本的幣併成新 UTXO；平常這種流出一天 2–3 萬顆，
+    量大又集中的多半是後者（2026-10-22：62–66K、114K 一天流出 22 萬顆、全進 80–82K，Glassnode 實體調整的 STH 實現獲利沒有反應）。
+    需要連續兩天的快照。回傳 [dict(date, btc, src=[[價位, BTC]], dst=[[價位, BTC]])]：src／dst 只算超出平常量（前 30 天中位數）的部分"""
+    out, hist = [], []; ds = sorted(U)
+    for p_, d in zip(ds, ds[1:]):
+        if _i(d) - _i(p_) != 1 or d not in px: continue
+        a, b = dict(U[p_]), dict(U[d]); lo, hi = px[d]
+        ch = {int(k): b.get(k, 0) - a.get(k, 0) for k in set(a) | set(b) if k >= 40000}
+        far = {k: -x for k, x in ch.items() if x < 0 and (k + W < lo * 0.9 or k > hi * 1.1)}
+        f = sum(far.values()); h = sorted(hist[-30:]); med = h[len(h) // 2] if h else 0
+        if f >= TRANSFER_MIN and f >= TRANSFER_X * med:
+            ex = f - med; gains = {k: x for k, x in ch.items() if x > 0}; g = sum(gains.values())
+            if g <= 0: continue
+            out.append(dict(date=d, btc=round(ex), src=[[k, round(x * ex / f)] for k, x in sorted(far.items()) if x * ex / f >= 500],
+                            dst=[[k, round(x * ex / g)] for k, x in sorted(gains.items()) if x * ex / g >= 500]))
+        else: hist.append(f)
+    return out
+
+
+def run(U, HW, px, moves=()):
+    """跑整條鏈；回傳 {日期: dict(t, b, v, T, urpd, sth, lth, resid, sth_cost, lth_cost)}（t/b/v 依附加順序，前一個快照的項目在前）。
+    moves＝transfers() 的搬家日：之後每個快照的 URPD 把那批幣從當天價格格搬回原本的格子，幣齡分布也把它們從「剛產生」放回原本的年齡
+    （年齡依前一個快照裡那幾格的組成按比例分），模型就不會把它們當成新的短期持有者。不傳就是逐筆 UTXO 的原樣（驗證用）"""
     S = snapshots(U, HW); ds = thin(sorted(S))
     if not ds: return {}
-    FT, FB, FV = prior(px, ds[-1]); out = {}; t = b = v = None; prev = None
+    FT, FB, FV = prior(px, ds[-1]); out = {}; t = b = v = None; prev = None; reg = []
     for d in ds:
-        u, R = S[d]; T = _i(d)
+        u, R = S[d]; T = _i(d); u0 = u
+        if prev is not None:   # 這一步跨過的搬家日：記下那批幣原本是哪幾天產生的
+            for mv in moves:
+                if prev < mv['date'] <= d:
+                    ta, aa = [], []
+                    for k, x in mv['src']:
+                        m_ = b == k // W; tot = v[m_].sum()
+                        if tot > 0: ta.append(t[m_]); aa.append(v[m_] * x / tot)
+                    if ta: reg.append((_i(mv['date']), mv['btc'], mv['src'], mv['dst'], np.concatenate(ta), np.concatenate(aa)))
+        if reg:
+            u = u.copy(); R = R.copy()
+            for day, btc, src, dst, ta, aa in reg:
+                for k, x in src: u[k // W] += x
+                for k, x in dst: u[k // W] -= x
+                R += np.bincount(np.searchsorted(EDGES, T - ta, side='right'), aa, len(R)); R[np.searchsorted(EDGES, T - day, side='right')] -= btc
+            u = np.maximum(u, 0); R = np.maximum(R, 0)
         if v is None:
             m = FT <= T; t, b, v = FT[m], FB[m], FV[m]
         else:
@@ -129,14 +170,14 @@ def run(U, HW, px):
         v, res = ipf(t, b, v, T, u, R, None if prev is None else cap)
         s_ = t > T - LTH_DAYS
         sth, lth = np.bincount(b[s_], v[s_], NB), np.bincount(b[~s_], v[~s_], NB)
-        out[d] = dict(t=t, b=b, v=v, T=T, urpd=u, sth=sth, lth=lth, resid=res,
+        out[d] = dict(t=t, b=b, v=v, T=T, urpd=u, urpd_raw=u0, sth=sth, lth=lth, resid=res,
                       sth_cost=float((sth * MID).sum() / sth.sum()), lth_cost=float((lth * MID).sum() / lth.sum()))
         prev = d
     return out
 
 
-def summarize(res, px, close, bd_sth_cost=None):
-    """頁面與每日摘要要的讀值（只作讀值；推算，附驗證）"""
+def summarize(res, px, close, bd_sth_cost=None, moves=(), raw=None):
+    """頁面與每日摘要要的讀值（只作讀值；推算，附驗證）。raw＝不處理搬家日的原樣結果：bitcoin-data 的 STH 成本也是逐筆 UTXO，驗證要同口徑"""
     ds = sorted(res); d = ds[-1]; r = res[d]; T = r['T']
     rows = lambda x: [[k * W, round(float(x['sth'][k])), round(float(x['lth'][k]))] for k in range(ROW0, NB)]
     # 過去 155 天價格走過的區間：區間外只有 LTH，不靠模型
@@ -164,13 +205,19 @@ def summarize(res, px, close, bd_sth_cost=None):
                            untouched=dict(above=round(hi_since), below=round(lo_since)))
         # 價格這段期間沒碰過、而且 155 天內也沒碰過的格子：只有 LTH、也沒有新幣進來，變化就是賣出（不靠模型）
         top = int(max(hi_since, hi155) // W) + 1
-        out['flow']['model_free_above'] = dict(lo=top * W, before=round(float(a['urpd'][top:].sum())), after=round(float(r['urpd'][top:].sum())))
+        out['flow']['model_free_above'] = dict(lo=top * W, before=round(float(a['urpd_raw'][top:].sum())), after=round(float(r['urpd_raw'][top:].sum())))   # 用原始 URPD，不套搬家修正
     # 跌到哪裡誰套牢：成本在該價位之上的幣
     p0 = int(close // W) * W
     out['loss'] = [[p, round(float(r['sth'][p // W:].sum())), round(float(r['lth'][p // W:].sum()))] for p in range(p0, max(int(close * 0.75), 0), -W)]
+    vr = raw or res
     if bd_sth_cost:   # 驗證：bitcoin-data 晚約 7 天，取鏈上最晚一個兩邊都有的日期
-        v_ = [x for x in ds if x in bd_sth_cost]
-        if v_: x = v_[-1]; out['val'] = dict(date=x, ours=round(res[x]['sth_cost']), bd=round(bd_sth_cost[x]), diff_pct=round((res[x]['sth_cost'] / bd_sth_cost[x] - 1) * 100, 2))
+        v_ = [x for x in sorted(vr) if x in bd_sth_cost]
+        if v_: x = v_[-1]; out['val'] = dict(date=x, ours=round(vr[x]['sth_cost']), bd=round(bd_sth_cost[x]), diff_pct=round((vr[x]['sth_cost'] / bd_sth_cost[x] - 1) * 100, 2))
+    # 近 90 天的搬家日（頁面與每日任務提醒：這幾天的流出不當成賣出）；raw 的 80–82K 等格子是逐筆 UTXO 原樣，供對照
+    mv = [m_ for m_ in moves if T - _i(m_['date']) <= 90]
+    if mv:
+        out['transfers'] = mv
+        if raw and d in raw: out['raw'] = dict(sth=round(float(raw[d]['sth'].sum())), sth_cost=round(raw[d]['sth_cost']), rows=rows(raw[d]))
     out['note'] = '推算（IPF：bitcoin-data URPD × 幣齡分布 × 每日價格區間）；逐筆 UTXO、不是實體調整；只作讀值'
     return out
 
@@ -178,8 +225,9 @@ def summarize(res, px, close, bd_sth_cost=None):
 def daily(urpd_rows, hw_rows, px, close, bd_sth_cost=None):
     """collect.py 每天呼叫：存檔 → 跑鏈 → 讀值"""
     U, HW = archive(urpd_rows, hw_rows)
-    res = run(U, HW, px)
-    return summarize(res, px, close, bd_sth_cost) if res else None
+    mv = transfers(U, px)
+    res = run(U, HW, px, mv); raw = run(U, HW, px) if mv else None
+    return summarize(res, px, close, bd_sth_cost, mv, raw) if res else None
 
 
 def _get(url):
@@ -197,8 +245,9 @@ def prices():
 
 if __name__ == '__main__':
     U, HW = _load('urpd.json'), _load('hodl_waves.json'); px = prices()
-    res = run(U, HW, px)
+    mv = transfers(U, px); print('搬家日', json.dumps(mv, ensure_ascii=False))
+    res = run(U, HW, px, mv)
     for d, r in res.items():
         print(f"{d} 殘差 {r['resid']:.5f}  STH {r['sth'].sum()/1e4:,.0f} 萬顆 成本 {r['sth_cost']:,.0f}  LTH {r['lth'].sum()/1e4:,.0f} 萬顆 成本 {r['lth_cost']:,.0f}")
-    s = summarize(res, px, px[max(px)][1])
+    s = summarize(res, px, px[max(px)][1], None, mv, run(U, HW, px) if mv else None)
     print(json.dumps({k: v for k, v in s.items() if k not in ('rows', 'cmp', 'loss')} | {'flow': {k: v for k, v in (s.get('flow') or {}).items() if k != 'rows'}}, ensure_ascii=False))
