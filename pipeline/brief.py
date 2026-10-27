@@ -25,6 +25,12 @@ so = ((d.get('chips') or {}).get('viz') or {}).get('sopr')   # 2026-10-14：短�
 if so: out.setdefault('chips', {})['sopr_read'] = dict(date=so.get('date'), value=so.get('value'), below_run=so.get('below_run'), last_dips=(so.get('dips') or [])[-3:])
 ch = (d.get('chips') or {}).get('conc_hist') or []   # 2026-10-15：籌碼集中度（現價 ±5%）只留最新與 7 天前、紀錄天數
 if ch: out.setdefault('chips', {})['conc5_read'] = dict(pct=ch[-1][2], d7=next((r[2] for r in reversed(ch) if r[0] <= ch[-1][0] - 7), None), days=len(ch), since='2026-10-01')
+co = (d.get('chips') or {}).get('cohort')   # 2026-10-27：長短期持有者籌碼（推算）：格子陣列略去，只留最厚的格子與近 30 天換手最多的格子
+if co:
+    top = lambda rows, k, n=3: [[r[0], r[k]] for r in sorted(rows or [], key=lambda r: -r[k])[:n]]
+    f = co.get('flow') or {}
+    out.setdefault('chips', {})['cohort_read'] = dict(sth_top=top(co.get('rows'), 1), lth_top_above_price=top([r for r in co.get('rows') or [] if r[0] >= co.get('price', 0)], 2),
+                                                      sth_spent_top=top(f.get('rows'), 1), lth_spent_top=top(f.get('rows'), 2), new_top=top(f.get('rows'), 3))
 if d.get('orderbook'):
     ob = d['orderbook']; out['orderbook'] = {k: ob.get(k) for k in ('ts', 'mid', 'walls', 'rounds', 'totals')}
 print(json.dumps(out, ensure_ascii=False, separators=(',', ':')))

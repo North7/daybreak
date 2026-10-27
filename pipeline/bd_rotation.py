@@ -6,6 +6,7 @@ realized-price（頁面沒用到）、realized-cap-growth-rate（與 CoinMetrics
 分配：每日 UTC 00:05 collect.py 即時抓 CORE 6 個；其餘 8 個（A 組）由本腳本在前一晚 UTC 22:40 抓進 bd_cache/，collect.py 只讀快取。
 合計每日 14 次、任一小時不超過 8 次，全部指標每天更新，不再兩天輪替。
 2026-10-15：sth-sopr 改由 coc.py 讀 CheckOnChain（晚約 1 天），A 組剩 7 個，每日 13 次。
+2026-10-27：A 組加 hodl-waves-supply（幣齡分布，LTH／STH 籌碼拆解用，見 cohort_urpd.py），每日 14 次；只要近 30 天（免費層一次給 4 年、約 600KB，沒必要）。
 用法（在倉庫根目錄）：python3 pipeline/bd_rotation.py [--group A]"""
 import json, os, sys, subprocess, argparse, datetime as dt
 
@@ -13,12 +14,15 @@ CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'bd_cache')
 # 每日即時：成本基礎（成本比需同日）、籌碼流向四項（頁面圖表）
 CORE = {'sth-realized-price', 'lth-realized-price', 'sth-lth-ratio', 'percent-sth-in-profit', 'true-market-mean', 'urpd'}
 GROUPS = {'A': ['asopr', 'lth-sopr', 'illiquid-supply', 'highly-liquid-supply', 'lth-mvrv-zscore', 'supply-in-profit-pct',
-                'lth-net-position-change-30d-btc']}
+                'lth-net-position-change-30d-btc', 'hodl-waves-supply']}
+# 端點要帶的查詢參數（2026-10-27）：幣齡分布只取近 30 天，cohort_urpd.py 會把每天的值累積進 cohort_cache/hodl_waves.json
+QUERY = {'hodl-waves-supply': lambda: '?startday=' + (dt.date.today() - dt.timedelta(days=30)).isoformat()}
 
 
 def fetch(m):
     """回傳序列（list）；限流或格式不對時丟出可讀的錯誤。"""
-    out = subprocess.run(['curl', '-sS', '--max-time', '40', f'https://bitcoin-data.com/v1/{m}'], capture_output=True, text=True).stdout
+    q = QUERY[m]() if m in QUERY else ''
+    out = subprocess.run(['curl', '-sS', '--max-time', '40', f'https://bitcoin-data.com/v1/{m}{q}'], capture_output=True, text=True).stdout
     try: js = json.loads(out)
     except ValueError: raise RuntimeError(f'bitcoin-data 回應不是 JSON：{out[:80]!r}')
     if isinstance(js, dict) and js.get('error'):

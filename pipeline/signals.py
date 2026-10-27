@@ -306,6 +306,13 @@ def _levels(L, bar):
             out.append(dict(id=f'level:{key}', kind='level', key=key, dir='up' if d >= 0 else 'down', theme=th, page=page, chart=chart, score=3 + (NEAR - abs(d)) / NEAR, value=round(v), dist_pct=round(d, 2),
                             title=T(f'價格貼近{zh}（{F(d, "spct", "zh")}）', f'Price near the {en} ({F(d, "spct", "en")})'),
                             fig=T(f'收盤 {F(c, "usd", "zh")}，{zh} {F(v, "usd", "zh")}', f'close {F(c, "usd", "en")}; {en} {F(v, "usd", "en")}')))
+    co = g(L, 'chips.cohort')   # 2026-10-27：長短期持有者籌碼（推算，cohort_urpd.py）：短期持有者最厚的一格是成本最集中的地方，價格在附近時容易出現停損或解套賣壓
+    if co and co.get('rows'):
+        r = max(co['rows'], key=lambda x: x[1]); w = co.get('width') or 2000; v = r[0] + w / 2; d = (c / v - 1) * 100
+        if abs(d) <= NEAR:
+            out.append(dict(id='level:sth-cluster', kind='level', key='sth-cluster', dir='up' if d >= 0 else 'down', theme='holders', page='onchain', chart='cohort', score=3 + (NEAR - abs(d)) / NEAR, value=round(v), dist_pct=round(d, 2),
+                            title=T(f'價格貼近短期持有者最厚的籌碼（{F(d, "spct", "zh")}）', f'Price near the thickest short-term holder pile ({F(d, "spct", "en")})'),
+                            fig=T(f'{r[0] // 1000}K–{(r[0] + w) // 1000}K 有 {r[1] / 1e4:.0f} 萬顆（推算，URPD {co.get("date")}）', f'{r[0] // 1000}K–{(r[0] + w) // 1000}K holds {r[1] / 1e3:,.0f}K BTC (estimate, URPD {co.get("date")})')))
     for key, path, dpath, zh, en in (('exit-step', 'exit.status.next_step', 'exit.status.next_step_dist_pct', '出場第一階', 'the first exit step'),
                                      ('k075', 'exit.status.k075_price', None, 'MVRV 0.75 線', 'the MVRV 0.75 line')):
         v = g(L, path); d = g(L, dpath) if dpath else ((v / c - 1) * 100 if v else None)
