@@ -98,7 +98,8 @@ def thin(dates, keep_days=400, every=7):
 def ipf(t, b, v, T, U, R, cap=None, tol=1e-7, iters=3000):
     """交替縮放 v，讓各幣齡帶合計＝R、各格合計＝U。
     cap＝前一個快照的值：舊幣只會被花掉、不會變多，所以前 len(cap) 項不得超過 cap；這時只對齊 6 個月以內的幣齡帶（STH 所在），
-    更老的帶不強制（帶內每天的分配是近似的，強制對齊會逼模型把老幣搬來搬去；2026-10-27 不設上限時，價格沒碰過的 84–86K 會被搬約 16 萬顆 LTH 到 STH）"""
+    更老的帶不強制（帶內每天的分配是近似的，強制對齊會逼模型把老幣在日子之間搬來搬去）。2026-10-27 對照：不設上限時 LTH 30 日變化（9/20→10/20）
+    算成 −24.5 萬顆，設上限後 −17.4 萬顆，bitcoin-data lth-net-position-change-30d 是 −11.4 萬顆"""
     band = np.searchsorted(EDGES, T - t, side='right')
     R = R.copy(); R[-1] -= R.sum() - U.sum()              # URPD 少的約 200 萬顆視為最古老的幣
     v = v.copy(); n = 0 if cap is None else len(cap); on = np.arange(len(R)) < (len(R) if cap is None else YOUNG)
