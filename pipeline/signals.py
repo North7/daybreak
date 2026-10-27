@@ -313,6 +313,13 @@ def _levels(L, bar):
             out.append(dict(id='level:sth-cluster', kind='level', key='sth-cluster', dir='up' if d >= 0 else 'down', theme='holders', page='onchain', chart='cohort', score=3 + (NEAR - abs(d)) / NEAR, value=round(v), dist_pct=round(d, 2),
                             title=T(f'價格貼近短期持有者最厚的籌碼（{F(d, "spct", "zh")}）', f'Price near the thickest short-term holder pile ({F(d, "spct", "en")})'),
                             fig=T(f'{r[0] // 1000}K–{(r[0] + w) // 1000}K 有 {r[1] / 1e4:.0f} 萬顆（推算，URPD {co.get("date")}）', f'{r[0] // 1000}K–{(r[0] + w) // 1000}K holds {r[1] / 1e3:,.0f}K BTC (estimate, URPD {co.get("date")})')))
+    for mv in (co or {}).get('transfers') or []:   # 2026-10-27：疑似同一實體內部轉帳的「搬家日」（cohort_urpd.transfers），近 3 天內出現才提示
+        if dn(co['date']) - dn(mv['date']) <= 2:
+            src = '、'.join(f'{k // 1000}–{k // 1000 + 2}K' for k, _ in mv['src']); src_en = ', '.join(f'{k // 1000}–{k // 1000 + 2}K' for k, _ in mv['src'])
+            dst = '、'.join(f'{k // 1000}–{k // 1000 + 2}K' for k, _ in mv['dst']); dst_en = ', '.join(f'{k // 1000}–{k // 1000 + 2}K' for k, _ in mv['dst'])
+            out.append(dict(id='jump:urpd-transfer', kind='jump', key='urpd-transfer', dir='flat', theme='holders', page='onchain', chart='cohort', score=4.5, date=mv['date'],
+                            title=T(f'疑似內部轉帳：{mv["btc"] / 1e4:.0f} 萬顆一天內搬到現價', f'Likely internal transfer: {mv["btc"] / 1e3:,.0f}K BTC moved to the current price in one day'),
+                            fig=T(f'{mv["date"]}：{src} → {dst}；逐筆 UTXO 會把它算成賣出再買進', f'{mv["date"]}: {src_en} → {dst_en}; per-UTXO data reads it as selling and rebuying')))
     for key, path, dpath, zh, en in (('exit-step', 'exit.status.next_step', 'exit.status.next_step_dist_pct', '出場第一階', 'the first exit step'),
                                      ('k075', 'exit.status.k075_price', None, 'MVRV 0.75 線', 'the MVRV 0.75 line')):
         v = g(L, path); d = g(L, dpath) if dpath else ((v / c - 1) * 100 if v else None)

@@ -257,6 +257,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 - **2026-10-27**
   - 鏈上版：長短期持有者籌碼（Murphy〈跌破 $80K 的 BTC，潛在拋壓有多大？〉的拆法）。bitcoin-data 的 URPD 不分持有時間，用幣齡分布（hodl-waves-supply，每日 +1 次請求）與每日價格區間推算出 LTH／STH 各在哪個價位（`pipeline/cohort_urpd.py`）；附和約 30 天前比誰賣誰買、價格沒碰過的高位套牢盤變化（不靠模型）、跌到各價位的帳面虧損，以及推算的短期持有者成本 vs bitcoin-data 公布值（2026-09-30～10-20 差 −0.8%～−0.2%）。逐筆 UTXO、不是實體調整，只作讀值。
   - 每天的 URPD 完整存檔（`pipeline/cohort_cache/`）；異動偵測加「價格貼近短期持有者最厚的籌碼」。
+  - 搬家日：單日大量從遠離現價的格子搬到現價（疑似同一實體內部轉帳，例如 10/22 約 21 萬顆從 62–66K、114K 進 80–82K），模型把這批幣放回原本的成本與幣齡，頁面與異動偵測（`jump:urpd-transfer`）標出；驗證仍用不修正的原樣（bitcoin-data 也是逐筆 UTXO）。感謝 Murphy 與 @market_beggar 指正。
   - 每日任務加「結構分析」：先問一個行情問題，拆參與者、比較前後、分清事實與推算、用行為確認、寫情境與推翻條件（`docs/CLAUDE_DAILY.md`）。
 - **2026-10-23**
   - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。
@@ -459,6 +460,7 @@ This repository is public and its history is permanent. The site holds only mark
 - **2026-10-27**
   - On-chain page: long- vs short-term holder supply (the split Murphy uses in “How much selling pressure if BTC breaks $80K?”). bitcoin-data's URPD has no holding-period split, so coin-age bands (hodl-waves-supply, one more request a day) and daily price ranges are used to estimate where LTH and STH coins sit (`pipeline/cohort_urpd.py`); with who sold and bought versus about 30 days ago, the change in trapped supply above any price touched (no model involved), coins underwater at each price, and the estimated STH cost vs bitcoin-data's figure (−0.8% to −0.2% on 2026-09-30 to 10-20). Per-UTXO, not entity-adjusted; reading only.
   - Full daily URPD archive (`pipeline/cohort_cache/`); new signal for price near the thickest short-term holder pile.
+  - Transfer days: large one-day moves from buckets far from the price into the current price (likely one entity moving its own coins, e.g. ~209K BTC from 62–66K and 114K into 80–82K on Oct 22) are put back at their original cost and age, flagged on the page and as a signal (`jump:urpd-transfer`); validation still uses the uncorrected run, since bitcoin-data is per-UTXO too. Thanks to Murphy and @market_beggar for pointing this out.
   - Daily task gets a “structural analysis” method: start from a market question, split the participants, compare before and after, separate facts from estimates, confirm with behaviour, write scenarios and what would prove it wrong (`docs/CLAUDE_DAILY.md`).
 - **2026-10-23**
   - On-chain page: short-term holder realized profit and loss (CheckOnChain, two separate lines, in BTC, smoothed), with a note on which side drove the profit ÷ loss change versus 7 days ago. Doesn't use bitcoin-data quota.
