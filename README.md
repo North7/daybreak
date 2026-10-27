@@ -46,7 +46,7 @@
 | 04 | **價格** | 近 20 天 K 線、ATR、實際波動、Mayer 倍數、Pi Cycle、**短週期（目前這一段行情：起點、幅度、天數、與本輪中位數比較、本段結束線）**、關鍵價位、均線排列、長期走勢 |
 | 05 | **衍生品** | DVOL、IV − RV、永續資金費率（Deribit／OKX／Hyperliquid 以未平倉加權）、25Δ 風險逆轉（30 天固定期限）、選擇權未平倉與履約價分布、期貨基差曲線、**掛單簿**（13 個交易所 ±15% 全景柱狀圖、最大的牆、整數關卡）、CoinGlass 爆倉熱力圖連結 |
 | 06 | **資金** | 現貨 ETF 每日淨流量（並換算成 BTC 與新挖出量比較）、BTC 與那斯達克／美元相關、10 年期實質利率、穩定幣供給、Coinbase 溢價、恐懼貪婪指數、實現市值 30 日變化（附歷次歸零之後的價格表現） |
-| 07 | **鏈上** | 短期持有者獲利比例與成本、真實市場均價、交易所供給、算力與算力帶（Hash Ribbons）、難度、籌碼分布（URPD）、**鯨魚與大戶動向（依地址餘額分層，7／30／90 日與本段以來）**、鏈上指標表、頂部雷達 |
+| 07 | **鏈上** | 短期持有者獲利比例與成本、真實市場均價、交易所供給、算力與算力帶（Hash Ribbons）、難度、籌碼分布（URPD）、**長短期持有者籌碼（URPD 依持有時間拆成 LTH／STH，推算；和約 30 天前比誰賣誰買、跌到哪裡誰套牢）**、**鯨魚與大戶動向（依地址餘額分層，7／30／90 日與本段以來）**、鏈上指標表、頂部雷達 |
 | 08 | **出場框架** | 現在離每條出場規則多遠、出場模擬器（拖動價格看框架會賣多少）、鏈上觸發、200 日均線避險、加速與時間停損 |
 | 09 | **方法** | 這是什麼、原則、限制、資料來源與更新時間 |
 
@@ -80,7 +80,7 @@
 |---|---|---|
 | Kraken | 日線價格、均線、ATR、波動、短週期 | 每日 |
 | CoinMetrics Community | MVRV、實現價、**頂部三指標（MVRV Z／NUPL／Puell）**、交易所供給、實現市值、冪律、長期價格 | 每日（晚 1 天） |
-| bitcoin-data.com | 持有者成本、LTH SOPR、籌碼流向、URPD、流動性供給、頂部雷達 | 每日 13 次請求（免費層上限 15） |
+| bitcoin-data.com | 持有者成本、LTH SOPR、籌碼流向、URPD、幣齡分布（長短期持有者籌碼推算用）、流動性供給、頂部雷達 | 每日 14 次請求（免費層上限 15） |
 | CheckOnChain 公開圖表 | STH-SOPR、短期持有者實現獲利／虧損（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
 | Deribit | DVOL、期貨基差、選擇權、永續資金費率 | 每日 |
 | OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權） | 每日 |
@@ -189,6 +189,8 @@ pipeline/signals.py      異動偵測：極端值、急變、狀態翻轉、關�
 pipeline/etf.py          從 The Block 更新 ETF 每日淨流量
 pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 7 個
 pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損：讀 CheckOnChain 公開圖表（晚約 1 天）
+pipeline/cohort_urpd.py  長短期持有者籌碼：URPD × 幣齡分布 × 每日價格區間推算 LTH／STH 籌碼（collect.py 每天呼叫）
+pipeline/cohort_cache/   每天的完整 URPD（63 格）與幣齡分布存檔（bitcoin-data 免費層的 URPD 歷史只到約 2026-08-10）
 pipeline/bd_cache/       前一晚抓的鏈上指標快取
 pipeline/check_i18n.py   檢查 app.js 每個 _t() 都有英文
 pipeline/stamp_assets.py 更新 index.html 的 ?v= 版本號
@@ -218,7 +220,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 
 ## 已知限制
 
-- **bitcoin-data.com** 免費層每小時 10 次、每日 15 次；目前每天用 13 次（STH-SOPR 改由 CheckOnChain 提供）。部分序列（例如持有者成本）本身就晚 5–6 天，頁首「資料狀態」會標出落後天數。
+- **bitcoin-data.com** 免費層每小時 10 次、每日 15 次；目前每天用 14 次（STH-SOPR 改由 CheckOnChain 提供；2026-10-27 加幣齡分布）。部分序列（例如持有者成本）本身就晚 5–6 天，頁首「資料狀態」會標出落後天數。
 - **ETF**：Farside 用 Cloudflare 擋自動抓取，改用 The Block 的圖表 JSON（逐日與 Farside 比對一致）；The Block 只公布已完整的交易日，約晚一天。
 - **掛單簿**是資料管線執行當下的快照；Binance 期貨與 Bybit 讀不到，永續部分偏低估；掛單隨時可撤。
 - **鯨魚分層**：地址不等於實體，≥10K BTC 的地址多為交易所冷錢包與 ETF 託管，錢包整理會讓幣在分層之間移動；若 BitInfoCharts 改版或擋 GitHub Actions，該區塊顯示「本日未取得」。
@@ -252,6 +254,10 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-10-27**
+  - 鏈上版：長短期持有者籌碼（Murphy〈跌破 $80K 的 BTC，潛在拋壓有多大？〉的拆法）。bitcoin-data 的 URPD 不分持有時間，用幣齡分布（hodl-waves-supply，每日 +1 次請求）與每日價格區間推算出 LTH／STH 各在哪個價位（`pipeline/cohort_urpd.py`）；附和約 30 天前比誰賣誰買、價格沒碰過的高位套牢盤變化（不靠模型）、跌到各價位的帳面虧損，以及推算的短期持有者成本 vs bitcoin-data 公布值（2026-09-30～10-20 差 −0.8%～−0.2%）。逐筆 UTXO、不是實體調整，只作讀值。
+  - 每天的 URPD 完整存檔（`pipeline/cohort_cache/`）；異動偵測加「價格貼近短期持有者最厚的籌碼」。
+  - 每日任務加「結構分析」：先問一個行情問題，拆參與者、比較前後、分清事實與推算、用行為確認、寫情境與推翻條件（`docs/CLAUDE_DAILY.md`）。
 - **2026-10-23**
   - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。
   - 頭版「今日發現」：異動偵測（`pipeline/signals.py`）＋每日任務寫的發現與後續；有異動的圖上方標出異動並畫日期線，「看圖 →」直接跳到那張圖；每則發現標偏多／偏空／中性，並算出整體多空。每日任務規則、`notes_lint.py` 與往期索引跟著加上 findings／followups。
@@ -288,7 +294,7 @@ Nine sections. On desktop they stack into one page and switch as you scroll (key
 | 04 | **Price** | 20 daily candles, ATR, realized volatility, Mayer multiple, Pi Cycle, **short cycle (the current price leg: start, size, length vs. this cycle's median, the close that would end it)**, key levels, moving-average alignment, long-term chart |
 | 05 | **Derivatives** | DVOL, IV − RV, perp funding (Deribit / OKX / Hyperliquid, open-interest weighted), 25Δ risk reversal (30-day constant maturity), options open interest and strikes, futures basis curve, **order book** (13 exchanges, ±15% full-view bar chart, biggest walls, round numbers), link to the CoinGlass liquidation heatmap |
 | 06 | **Flows** | Spot ETF daily net flows (also in BTC vs. newly mined supply), BTC correlation with Nasdaq / USD, 10-yr real yield, stablecoin supply, Coinbase premium, Fear & Greed, realized-cap 30-day change (with what price did after every past zero) |
-| 07 | **On-chain** | Short-term holders in profit and their cost basis, True Market Mean, exchange supply, hashrate and Hash Ribbons, difficulty, supply distribution (URPD), **whale and big-holder activity (by address-balance tier: 7 / 30 / 90 days and this leg)**, on-chain metrics table, top radar |
+| 07 | **On-chain** | Short-term holders in profit and their cost basis, True Market Mean, exchange supply, hashrate and Hash Ribbons, difficulty, supply distribution (URPD), **long- vs short-term holder supply (URPD split into LTH / STH, estimated; who sold and bought versus about 30 days ago, who is underwater at each price)**, **whale and big-holder activity (by address-balance tier: 7 / 30 / 90 days and this leg)**, on-chain metrics table, top radar |
 | 08 | **Exit plan** | How far price is from each exit rule, an exit simulator (drag a price and see what the plan would have sold), on-chain triggers, 200-day MA hedge, acceleration and time stop |
 | 09 | **Method** | What this is, principles, limits, data sources and update times |
 
@@ -322,7 +328,7 @@ All free public APIs; no keys required.
 |---|---|---|
 | Kraken | Daily price, moving averages, ATR, volatility, short cycle | Daily |
 | CoinMetrics Community | MVRV, realized price, **top-3 indicators (MVRV Z / NUPL / Puell)**, exchange supply, realized cap, power law, long-term price | Daily (1-day lag) |
-| bitcoin-data.com | Holder cost basis, LTH SOPR, supply flows, URPD, liquid supply, top radar | 13 requests a day (free tier allows 15) |
+| bitcoin-data.com | Holder cost basis, LTH SOPR, supply flows, URPD, coin-age bands (for the LTH / STH split), liquid supply, top radar | 14 requests a day (free tier allows 15) |
 | CheckOnChain public charts | STH-SOPR, short-term holder realized profit/loss (about 1 day late; `pipeline/coc.py` reads it once a day and falls back to `pipeline/coc_cache/`) | Doesn't use bitcoin-data quota |
 | Deribit | DVOL, futures basis, options, perp funding | Daily |
 | OKX, Hyperliquid | Funding (OI-weighted with Deribit) | Daily |
@@ -416,7 +422,7 @@ Pull requests run **Site checks** (`.github/workflows/check.yml`): syntax, Engli
 
 ### Known limits
 
-- **bitcoin-data.com** free tier: 10 requests per hour, 15 per day; we use 13 (STH-SOPR now comes from CheckOnChain). Some series (e.g. holder cost basis) are themselves 5–6 days behind; the data-status bar shows the lag.
+- **bitcoin-data.com** free tier: 10 requests per hour, 15 per day; we use 14 (STH-SOPR now comes from CheckOnChain; coin-age bands added 2026-10-27). Some series (e.g. holder cost basis) are themselves 5–6 days behind; the data-status bar shows the lag.
 - **ETF flows**: Farside blocks automated access behind Cloudflare, so we use The Block's chart JSON (matches Farside day by day); The Block only publishes complete trading days, about one day late.
 - **Order book** is a snapshot at pipeline run time; Binance futures and Bybit are not readable, so perpetual depth is understated; orders can be pulled at any time.
 - **Whale tiers**: one address is not one entity; ≥10K BTC addresses are mostly exchange cold wallets and ETF custodians, and wallet reshuffles move coins between tiers. If BitInfoCharts changes its page or blocks GitHub Actions, the panel shows "not available today".
@@ -450,6 +456,10 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-10-27**
+  - On-chain page: long- vs short-term holder supply (the split Murphy uses in “How much selling pressure if BTC breaks $80K?”). bitcoin-data's URPD has no holding-period split, so coin-age bands (hodl-waves-supply, one more request a day) and daily price ranges are used to estimate where LTH and STH coins sit (`pipeline/cohort_urpd.py`); with who sold and bought versus about 30 days ago, the change in trapped supply above any price touched (no model involved), coins underwater at each price, and the estimated STH cost vs bitcoin-data's figure (−0.8% to −0.2% on 2026-09-30 to 10-20). Per-UTXO, not entity-adjusted; reading only.
+  - Full daily URPD archive (`pipeline/cohort_cache/`); new signal for price near the thickest short-term holder pile.
+  - Daily task gets a “structural analysis” method: start from a market question, split the participants, compare before and after, separate facts from estimates, confirm with behaviour, write scenarios and what would prove it wrong (`docs/CLAUDE_DAILY.md`).
 - **2026-10-23**
   - On-chain page: short-term holder realized profit and loss (CheckOnChain, two separate lines, in BTC, smoothed), with a note on which side drove the profit ÷ loss change versus 7 days ago. Doesn't use bitcoin-data quota.
   - Front page "Today's findings": signal detection (`pipeline/signals.py`) plus findings and follow-ups written by the daily task; charts with a signal get a flag and a dated marker, and "See chart →" jumps straight to the chart; each finding is tagged bullish / bearish / neutral, with an overall lean. Daily-task rules, `notes_lint.py` and the edition index now cover findings / follow-ups.

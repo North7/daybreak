@@ -638,7 +638,7 @@ try:
         note='bitcoin-data 自身兩條序列同日比較；已知 2023-11-23 上穿、2026-04-27 下穿可驗算')
 except Exception as e: errors.append(f'murphy true-market-mean: {e}'); R['murphy_flow']['sth_vs_tmm'] = None
 try:
-    js = bd('urpd')
+    js = bd('urpd'); MFS['urpd_raw'] = js   # 2026-10-27：原始 63 格留給 G4e 存檔
     try: json.dump(js, open('raw_urpd.json', 'w'))
     except Exception: pass
     B = sorted((float(r['priceLower']), float(r['priceUpper']), float(r['btcSupply']), float(r.get('pctSupply') or 0)) for r in js); ud = js[-1].get('theDate'); MFS['urpd'] = B; MFS['urpd_date'] = ud
@@ -715,6 +715,16 @@ try:
         R['murphy_viz']['sopr'] = stage_viz.sopr_viz(SER['sth-sopr'], {x[0]: x[1] for x in mv})
     if _pnl: R['sth_pnl'] = stage_viz.sth_pnl_viz(_pnl, {x[0]: x[1] for x in mv})
 except Exception as e: errors.append(f'stage_viz {e}')
+# G4e. 2026-10-27 使用者要求：長期／短期持有者籌碼（LTH／STH URPD，Murphy 的拆法）。bitcoin-data 的 URPD 不分持有時間，
+#   用 G4 的 URPD × 前一晚 A 組快取的幣齡分布（hodl-waves-supply）× 每日價格區間（Kraken 日線、更早用 CoinMetrics）推算，見 cohort_urpd.py。
+#   推算、不是實體調整，只作讀值；每天的 URPD 與幣齡分布存進 cohort_cache/（bitcoin-data 免費層的 URPD 歷史只到約 2026-08-10）
+try:
+    import cohort_urpd
+    try: _hw = bd('hodl-waves-supply')
+    except Exception as e: _hw = []; errors.append(f'cohort hodl-waves-supply: {e}')
+    _px = {x[0]: (x[1], x[1]) for x in cm}; _px.update({b_['d']: (b_['l'], b_['h']) for b_ in bars})
+    R['cohort'] = cohort_urpd.daily(MFS.get('urpd_raw'), _hw, _px, c, SER.get('sth-realized-price'))
+except Exception as e: errors.append(f'cohort {e}'); R['cohort'] = None
 
 # ---------- G5. 2026-10-02 使用者要求：掛單簿深度（Coinbase／Kraken／Bitstamp 三家合計，舊口徑保留供序列比較；Binance 現貨改由 G5b 經 data-api.binance.vision 取得，Binance 期貨 451、Bybit 403 不可用）。只作讀值，不連動任何規則 ----------
 try:

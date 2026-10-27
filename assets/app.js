@@ -758,6 +758,10 @@
       'urpd': { h: h('每 2,000 美元一格：有多少顆 BTC 最後一次移動是在這個價位；橘格是現價，淡框是 7 天前。', '$2,000 buckets: how many BTC last moved at each price; the orange bucket is the current price, faint outlines are 7 days ago.', '籌碼厚的價位常成支撐或壓力（買在那裡的人會防守或解套賣出）；籌碼薄的區間價格走得快。', 'Thick buckets often act as support or resistance (holders defend or sell to break even); price moves fast through thin zones.', '交易所內部轉帳也會重設成本。', 'Exchange-internal transfers also reset the cost basis.') },
       'npl': { h: h('上層：BTC 價格與每天的淨實現損益氣泡（綠＝當天整體獲利賣出、紅＝認賠賣出，越大金額越大，粗外圈＝在之前一年最極端的 2%）；下層：同一數字的每日柱。切到「30 日累計」看週期級別：下層是 30 日累計佔市值的比例，紅線是之前 4 年最極端的 3%，橘圈是首次跌破。', 'Top: BTC price with a bubble for each day\'s net realized profit/loss (green = net profit selling, red = net loss selling, bigger = larger, thick ring = most extreme 2% of the prior year); bottom: the same numbers as daily bars. Switch to “30-day total” for the cycle view: the bottom pane is the 30-day total as % of market cap, the red line the most extreme 3% of the prior 4 years, and orange rings the first breaches.', '大綠泡集中在急漲與高點那幾天＝獲利了結；綠泡變小＝想在現價賣的人變少。回檔時出現大紅泡＝認賠出清，但不代表已經見底。', 'Big green bubbles cluster on rallies and highs: profit taking; shrinking green bubbles mean fewer holders want to sell at this price. Big red bubbles on pullbacks are loss capitulation, which does not mean the low is in.', '只有淨值（獲利減認賠），看不到兩邊各有多少；交易所內部轉帳也會實現損益。2015 起只用當天已知資料回測：認賠高峰之後的表現和平常差不多，不是買點；獲利高峰之後反而多半續漲（一輪比一輪弱），不是賣點。30 日累計跌破紅線過去 5 次（2015–2022）1 年後都上漲，但其中 3 次之後還再跌 17–44%，而且 2025 頂部之後這一輪沒有觸發。ETF 時代這個訊號可能變鈍：ETF 持有人在股市互相買賣不會移動鏈上的幣，只有淨贖回才會；2025-10 到 2026-06 的下跌中 ETF 只淨贖回約 13 萬顆（約一成八），這一輪按跌幅換算的認賠也只有前幾輪的一半。過去 5 次觸發都在 ETF 上市（2024-01）之前。', 'Net only (profit minus loss), so the two sides are not visible separately; exchange-internal transfers also realize P/L. In tests since 2015 using only data known on the day, loss spikes were followed by ordinary returns (not a buy signal), and profit spikes were more often followed by further gains, weaker each cycle (not a sell signal). The 5 breaches of the 30-day red line (2015–2022) were all higher a year later, but 3 fell another 17–44% first, and it has not triggered since the 2025 top. The signal may be blunter in the ETF era: ETF shares changing hands on the stock market do not move coins on-chain, only net redemptions do; in the Oct 2025–Jun 2026 decline ETFs net-redeemed only about 134K BTC (roughly 18% of their holdings), and loss realization per point of drawdown was about half that of past cycles. All 5 past triggers came before spot ETFs launched (Jan 2024).'),
         now: function () { var n = D.onchain.npl; if (!n) return ''; return _T('近 7 日合計 ' + nplB(n.sum7_usd_m) + '，前 7 日 ' + nplB(n.sum7_prev_usd_m) + '；最新一天 ' + nplB(n.usd_m) + '（近一年第 ' + fmt.n(n.rank_1y, 0) + ' 百分位）。', 'Past 7 days ' + nplB(n.sum7_usd_m) + ', prior 7 days ' + nplB(n.sum7_prev_usd_m) + '; latest day ' + nplB(n.usd_m) + ' (1-year percentile ' + fmt.n(n.rank_1y, 0) + ').'); } },
+      'cohort': { h: h('每 2,000 美元一格：左邊是持有不到 155 天的短期持有者（STH），右邊是長期持有者（LTH），橫線是收盤；灰底是過去 155 天價格走過的區間。切到「STH 變化／LTH 變化」看和約 30 天前比：灰條是當時，彩條是現在。', '$2,000 buckets: short-term holders (held under 155 days) on the left, long-term holders on the right, the line is the close; the shaded band is the range price covered in the past 155 days. Switch to “STH change / LTH change” to compare with about 30 days ago: grey is then, colour is now.',
+          '短期持有者堆在收盤上方＝那批人帳面虧損，價格回到成本時容易解套賣出；堆在下方＝跌回去之前他們還在獲利，是第一道承接。長期持有者的堆動得慢，變少的格子代表那個成本的老手在賣。', 'Short-term holders piled above the close are underwater and tend to sell when price returns to their cost; piled below, they stay in profit until price falls back, the first layer of support. Long-term holder piles move slowly; a shrinking bucket means veterans with that cost are selling.',
+          '推算：用 URPD、幣齡分布與每日價格區間拆出來，逐筆 UTXO、不是實體調整，交易所整理錢包會被當成賣出再買進；灰底區間外只有長期持有者，不靠模型。', 'An estimate built from URPD, coin-age bands and daily price ranges; per-UTXO, not entity-adjusted, so exchange wallet reshuffles look like selling and rebuying. Outside the shaded band there are only long-term holders, no model involved.'),
+        now: function () { var co = D.chips.cohort; if (!co) return ''; return _T('短期持有者 ' + coins(co.tot.sth) + '、平均成本 ' + fmt.usd(co.tot.sth_cost) + '；長期持有者 ' + coins(co.tot.lth) + '（URPD ' + ymd(co.date) + '，推算）。', 'Short-term holders ' + coins(co.tot.sth) + ', average cost ' + fmt.usd(co.tot.sth_cost) + '; long-term holders ' + coins(co.tot.lth) + ' (URPD ' + ymd(co.date) + ', estimated).'); } },
       'whale': { h: h('依地址餘額分層的 30 日淨變化（顆）。', '30-day net change by address-balance tier (BTC).', '鯊魚（100–1K）與鯨魚（1K–10K）同向增加＝大戶在累積；≥ 10K 多是交易所與託管，不算大戶買賣。', 'Sharks (100–1K) and whales (1K–10K) rising together means big holders are accumulating; ≥10K is mostly exchanges and custodians.', '一個地址不等於一個人，錢包整理會讓幣在分層之間移動。', 'One address is not one person; wallet reshuffles move coins between tiers.') },
       'sopr': { h: h('STH-SOPR＝短期持有者當天賣出的幣「賣價 ÷ 買價」；灰線是價格，標記是每一次認賠的最低點。', 'STH-SOPR = sale price ÷ purchase price for coins short-term holders sold that day; the grey line is price, markers are the low of each loss-selling episode.', '低於 1＝短期持有者賠錢賣（停損或恐慌）。價格回到前一次認賠的低點附近，SOPR 卻沒跌得更深＝願意認賠的人變少、賣壓遞減，常是階段性止跌的特徵；跌得更深＝賣壓加重。', 'Below 1 means short-term holders are selling at a loss. When price revisits a previous loss-selling low but SOPR doesn\'t dip as deep, fewer holders are willing to sell at a loss — a common sign of a local bottom forming; a deeper dip means selling is getting heavier.', '日線（CheckOnChain，晚約 1 天）：盤中的集中認賠會被同一天其他人的獲利賣出平均掉，單日下殺不一定跌破 1；隔幾天內的兩次下殺可能算成同一次。只是讀值，不是買點。', 'Daily data (CheckOnChain, about 1 day late): intraday loss bursts get averaged out by the same day\'s profit-taking, so a sharp drop may not push it below 1, and two drops a few days apart may merge into one episode. A reading, not a buy signal.') },
       'sthpnl': { h: h('短期持有者當天賣出時實現的獲利與虧損（顆，已平滑），分開兩條；灰線是價格。', 'Profit and loss short-term holders realized on coins sold (BTC, smoothed), as two separate lines; the grey line is price.', 'STH-SOPR 只是兩者合起來的比例，這張圖看是哪一邊在動：獲利線上升＝獲利了結變多，虧損線下降＝認賠變少；虧損線衝高＝集中認賠。', 'STH-SOPR only shows the two combined as a ratio; this chart shows which side moved: profit rising means more profit taking, loss falling means less loss selling, a loss spike means capitulation.', '數值是 CheckOnChain 平滑過的，單日大額轉帳也會被算進去，要看幾天才算數。只是讀值，不是買點。', 'Values are smoothed by CheckOnChain and a single large transfer can show up as a spike; wait a few days before reading much into it. A reading, not a buy signal.') },
@@ -979,6 +983,7 @@
     ];
     if (D.onchain.whales) src.push([_T('鯨魚分層（BitInfoCharts）', 'Whale tiers (BitInfoCharts)'), D.onchain.whales.date, 2]);   // 2026-10-21 起暫停，沒有資料就不列
     if (D.flows.stables) src.push([_T('穩定幣（DefiLlama）', 'Stablecoins (DefiLlama)'), D.flows.stables.date, 2]);
+    if ((D.chips || {}).cohort) src.push([_T('長短期持有者籌碼（推算）', 'LTH/STH supply split (estimate)'), D.chips.cohort.date, 3]);   // 2026-10-27 起
     if (D.onchain.sth_pnl) src.push([_T('短期持有者實現損益（CheckOnChain）', 'STH realized P/L (CheckOnChain)'), D.onchain.sth_pnl.date, 2]);   // 2026-10-23 起；第一次跑管線前沒有資料就不列
     var rows = src.map(function (x) { var a = age(x[1]); return { name: x[0], date: x[1], age: a, bad: x[1] == null || a > x[2], max: x[2] }; });
     var errs = D.meta.errors || [], bad = rows.filter(function (r) { return r.bad; }), notesOld = N && N.stale;
@@ -1216,6 +1221,114 @@
     mount($('#c-etf'), function (el) { barChart(el, { h: 260, data: etf.map(function (r) { return [fmt.md(r.d), r.musd, '<div class="t">' + r.d + (r.partial ? (r.src ? _t('（暫定）') : _t('（部分回報）')) : '') + '</div><div class="r"><i style="background:' + (r.musd >= 0 ? 'var(--up)' : 'var(--down)') + _t('"></i><span>淨流量</span><b>') + (r.musd >= 0 ? '+' : '') + fmt.n(r.musd, 1) + 'M</b></div>' + (r.src ? '<div class="t" style="font-weight:400;max-width:240px;white-space:normal">' + esc(r.src) + '</div>' : ''), r.partial]; }), yFmt: function (v) { return v + 'M'; }, aria: _t('ETF 淨流量') }); });
   };
 
+  /* 長短期持有者籌碼（2026-10-27 使用者要求，Murphy〈跌破 $80K 的 BTC，潛在拋壓有多大？〉的拆法）：bitcoin-data 的 URPD 依持有時間拆成
+     LTH／STH，推算（pipeline/cohort_urpd.py：URPD × 幣齡分布 × 每日價格區間），不是實體調整，只作讀值。
+     三種看法：現在（左 STH、右 LTH）、STH 和約 30 天前比、LTH 和約 30 天前比 */
+  var cohMode = 'now';
+  function cohLo() { var co = D.chips.cohort; return Math.floor(Math.min(co.window.lo, co.price * 0.7) / co.width) * co.width; }
+  function cohRange(lo, hi) { return function (r) { return r[0] + D.chips.cohort.width > lo && r[0] < hi; }; }
+  function cohTop(rows, k, n) { return rows.slice().sort(function (a, b) { return b[k] - a[k]; }).slice(0, n || 1); }
+  function cohB(r) { return fmt.k(r[0]) + '–' + fmt.k(r[0] + D.chips.cohort.width); }
+  function cohCoins(x) { return coins(x, Math.abs(x) < 1e5 ? 1 : 0); }
+  function cohSay() {
+    var co = D.chips.cohort, c = co.price, w = co.width, it = [], T = co.tot;
+    var big = cohTop(co.rows, 1)[0], inB = c >= big[0] && c < big[0] + w;
+    it.push([_T('短期持有者', 'Short-term holders'), cohCoins(T.sth), _T('平均成本（推算）' + fmt.usd(T.sth_cost) + '，收盤比它 ' + fmt.pct((c / T.sth_cost - 1) * 100, 1) + '。最厚的一格在 ' + cohB(big) + '（' + cohCoins(big[1]) + '）' +
+      (inB ? '，就是現價這一格：這批買家在成本附近，往下就轉虧，最容易出現停損賣壓。' : big[0] > c ? '，在現價上方：這批買家已經帳面虧損，價格回到那裡時容易遇到解套賣壓。' : '，在現價下方：跌回那裡之前大多數短期持有者還在獲利，是第一道承接。'),
+      'Average cost (estimated) ' + fmt.usd(T.sth_cost) + '; the close is ' + fmt.pct((c / T.sth_cost - 1) * 100, 1) + ' from it. The thickest bucket is ' + cohB(big) + ' (' + cohCoins(big[1]) + ')' +
+      (inB ? ', right at the current price: these buyers are at cost and turn to a loss on any drop, the most likely source of stop-loss selling.' : big[0] > c ? ', above the price: these buyers are underwater and may sell to break even when price returns there.' : ', below the price: most short-term holders stay in profit until price falls back there, the first layer of support.')),
+      inB || big[0] > c ? 'warn' : 'pos']);
+    var L = co.loss || [];
+    if (L.length > 2) {
+      var l0 = L[0], l2 = L[2], p = function (x) { return fmt.n(x / T.sth * 100, 0) + '%'; }, inc = 0, at = null;
+      for (var i = 1; i < L.length; i++) { var d = L[i][1] - L[i - 1][1]; if (d > inc) { inc = d; at = L[i][0]; } }
+      it.push([_T('跌到哪裡誰套牢', 'Who is underwater where'), p(l0[1]), _T('成本在 ' + fmt.k(l0[0]) + ' 以上的短期持有者有 ' + cohCoins(l0[1]) + '（' + p(l0[1]) + '），價格在這之下就是帳面虧損；跌到 ' + fmt.k(l2[0]) + ' 增加到 ' + cohCoins(l2[1]) + '（' + p(l2[1]) + '）。' + (at != null ? '往下 25% 內，新增虧損最多的一層在 ' + fmt.k(at) + '–' + fmt.k(at + w) + '（' + cohCoins(inc) + '）。' : '') + '虧損不等於會賣，要搭配 STH-SOPR 與實現虧損看。',
+        'Short-term holders with a cost at or above ' + fmt.k(l0[0]) + ': ' + cohCoins(l0[1]) + ' (' + p(l0[1]) + '), underwater below that price; at ' + fmt.k(l2[0]) + ' this rises to ' + cohCoins(l2[1]) + ' (' + p(l2[1]) + ').' + (at != null ? ' Within 25% below, the layer that adds the most is ' + fmt.k(at) + '–' + fmt.k(at + w) + ' (' + cohCoins(inc) + ').' : '') + ' Underwater does not mean selling; read it with STH-SOPR and realized loss.'),
+        l0[1] / T.sth >= 0.5 ? 'warn' : 'neu']);
+    }
+    var f = co.flow;
+    if (f) {
+      var fr = f.rows, sp = cohTop(fr, 1, 2), nw = cohTop(fr, 3, 2), rng = function (a) { var lo = Math.min(a[0][0], a[1][0]), hi = Math.max(a[0][0], a[1][0]) + w; return fmt.k(lo) + '–' + fmt.k(hi); };
+      it.push([_T('近 ' + f.days + ' 天誰在賣', 'Who sold in the last ' + f.days + ' days'), cohCoins(f.sth_spent + f.lth_spent), _T(fmt.md(f.start) + ' 的短期持有者動了 ' + cohCoins(f.sth_spent) + '（當時共 ' + cohCoins(f.sth0) + '，主要成本在 ' + rng(sp) + '）；長期持有者動了 ' + cohCoins(f.lth_spent) + '（' + fmt.n(f.lth_spent / f.lth0 * 100, 1) + '%）。之後買進、到現在還沒動的有 ' + cohCoins(f.new) + '，集中在 ' + rng(nw) + '。',
+        'Short-term holders as of ' + fmt.md(f.start) + ' moved ' + cohCoins(f.sth_spent) + ' (out of ' + cohCoins(f.sth0) + ', mostly with a cost of ' + rng(sp) + '); long-term holders moved ' + cohCoins(f.lth_spent) + ' (' + fmt.n(f.lth_spent / f.lth0 * 100, 1) + '%). Coins bought since and still unmoved: ' + cohCoins(f.new) + ', concentrated at ' + rng(nw) + '.'), 'neu']);
+      var mf = f.model_free_above;
+      if (mf && mf.before) { var ch = (mf.after / mf.before - 1) * 100;
+        it.push([_T(fmt.k(mf.lo) + ' 以上的套牢盤', 'Trapped supply above ' + fmt.k(mf.lo)), fmt.pct(ch, 1), _T('這一段全部是長期持有者，而且價格 ' + f.days + ' 天內沒碰過，變化就是賣出、不靠模型：從 ' + cohCoins(mf.before) + ' 到 ' + cohCoins(mf.after) + '。' + (ch < -5 ? '高位套牢的老手還在陸續出清，上方的潛在解套賣壓在變少。' : '高位套牢盤沒什麼動，價格回到那裡時仍可能遇到解套賣壓。'),
+          'All long-term holders, and price has not touched this range in ' + f.days + ' days, so any change is selling, no model involved: ' + cohCoins(mf.before) + ' to ' + cohCoins(mf.after) + '. ' + (ch < -5 ? 'Holders trapped at the highs keep selling out, so there is less overhead supply waiting to break even.' : 'Little has moved, so price may still meet break-even selling up there.')), ch < -5 ? 'pos' : 'neu']); }
+    }
+    if (co.val) it.push([_T('驗證', 'Check'), fmt.pct(co.val.diff_pct, 2), _T('推算的短期持有者成本 ' + fmt.usd(co.val.ours) + '，bitcoin-data 公布 ' + fmt.usd(co.val.bd) + '（' + fmt.md(co.val.date) + '）。這個數字沒有拿去校正，差距小代表拆分可信。',
+      'Estimated STH cost ' + fmt.usd(co.val.ours) + ' vs ' + fmt.usd(co.val.bd) + ' published by bitcoin-data (' + fmt.md(co.val.date) + '). It is not used in the fit, so a small gap means the split holds up.'), Math.abs(co.val.diff_pct) <= 1 ? 'neu' : 'warn']);
+    return it;
+  }
+  function cohLegend() {
+    var f = (D.chips.cohort || {}).flow;
+    if (cohMode === 'now') return legend([[_T('短期持有者 STH（< 155 天）', 'Short-term holders (< 155 days)'), 'var(--s2)'], [_T('長期持有者 LTH', 'Long-term holders'), 'var(--s1)'], [_T('收盤', 'Close'), 'var(--ink)']]);
+    return legend([[fmt.md(f.start), 'var(--ink-3)'], [fmt.md(f.end), cohMode === 'sth' ? 'var(--s2)' : 'var(--s1)']]);
+  }
+  function cohSegs() {
+    var b = function (v, z, e) { return '<button aria-pressed="' + (cohMode === v) + '" data-c="' + v + '">' + _T(z, e) + '</button>'; };
+    return '<span class="seg">' + b('now', '現在', 'Now') + ((D.chips.cohort || {}).flow ? b('sth', 'STH 變化', 'STH change') + b('lth', 'LTH 變化', 'LTH change') : '') + '</span>';
+  }
+  function cohortPanel() {
+    var co = (D.chips || {}).cohort; if (!co || !co.rows) return '';
+    var L = (co.loss || []).slice(0, 8);
+    var tbl = L.length ? '<div class="tbl-wrap" style="margin-top:12px"><table class="tbl"><thead><tr><th>' + _T('收盤跌到', 'If price falls to') + '</th><th class="num">' + _T('STH 帳面虧損', 'STH underwater') + '</th><th class="num">' + _T('佔 STH', 'Share of STH') + '</th><th class="num">' + _T('LTH 帳面虧損', 'LTH underwater') + '</th></tr></thead><tbody>' +
+      L.map(function (r) { return '<tr><td><span class="num">' + fmt.usd(r[0]) + '</span></td><td class="num">' + cohCoins(r[1]) + '</td><td class="num">' + fmt.n(r[1] / co.tot.sth * 100, 0) + '%</td><td class="num">' + cohCoins(r[2]) + '</td></tr>'; }).join('') + '</tbody></table></div>' : '';
+    return panel('span-12', _T('長短期持有者籌碼', 'Long- vs short-term holder supply'), _T('推算 · bitcoin-data URPD × 幣齡分布 · ' + fmt.md(co.date), 'Estimate · bitcoin-data URPD × coin age · ' + fmt.md(co.date)),
+      interpHtml(cohSay()) + '<div id="coh-lg" style="margin-top:10px">' + cohLegend() + '</div><div class="chart" id="c-cohort"></div>' + tbl +
+      '<p class="note">' + _T('做法：每天新產生的幣放進當天價格區間所在的格子，再讓各幣齡帶與各價格格的總量同時對上 bitcoin-data 的幣齡分布與 URPD；持有不到 155 天算短期持有者。過去 155 天價格走過 ' + fmt.k(co.window.lo) + '–' + fmt.k(co.window.hi) + '，這個區間外只有長期持有者，不靠模型；區間內的拆分是推算。逐筆 UTXO、不是 Glassnode 的實體調整：交易所與託管整理錢包會被當成賣出再買進，換手量偏高。',
+        'Method: coins created each day go into the buckets that day\'s price range covered; then age-band and price-bucket totals are matched to bitcoin-data\'s HODL waves and URPD at the same time. Held under 155 days = short-term holder. Price covered ' + fmt.k(co.window.lo) + '–' + fmt.k(co.window.hi) + ' in the past 155 days; outside that range there are only long-term holders, no model involved; inside it the split is an estimate. Per-UTXO, not entity-adjusted like Glassnode: exchange and custodian wallet reshuffles look like selling and rebuying, so turnover reads high.') + '</p>',
+      '<span id="coh-segs" style="display:contents">' + cohSegs() + '</span>');
+  }
+  function drawCohort(el) {
+    var co = (D.chips || {}).cohort; if (!co || !el) return;
+    var w = co.width, c = co.price, W = Math.max(300, el.clientWidth), cs = { sth: 'var(--s2)', lth: 'var(--s1)' }, s = '', rows, rh = W < 520 ? 13 : 14;
+    var pxRow = function (rws, top) { for (var i = 0; i < rws.length; i++) if (c >= rws[i][0] && c < rws[i][0] + w) return top + i * rh + rh * (1 - (c - rws[i][0]) / w); return null; };
+    var bar = function (x0, x1, y, h, col) { var L_ = Math.abs(x1 - x0); if (L_ < 0.5) return ''; var r = Math.min(3, L_, h / 2), d = x1 >= x0 ? 1 : -1;
+      return '<path fill="' + col + '" d="M' + x0.toFixed(1) + ',' + y + 'H' + (x1 - d * r).toFixed(1) + 'Q' + x1.toFixed(1) + ',' + y + ' ' + x1.toFixed(1) + ',' + (y + r) + 'V' + (y + h - r) + 'Q' + x1.toFixed(1) + ',' + (y + h) + ' ' + (x1 - d * r).toFixed(1) + ',' + (y + h) + 'H' + x0.toFixed(1) + 'Z"/>'; };
+    var tx_ = function (x, y, t, a, cls) { return '<text x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + ' class="' + (cls || 'ax') + '">' + esc(t) + '</text>'; };
+    var unit = _T('萬顆', 'K BTC'), u = function (v) { return LANG === 'en' ? fmt.n(v / 1e3, 0) : fmt.n(v / 1e4, 0); };
+    var tipRow = function (lab, items) { return '<div class="t">' + lab + '</div>' + items.map(function (x) { return '<div class="r"><i style="background:' + x[1] + '"></i><span>' + x[0] + '</span><b>' + cohCoins(x[2]) + '</b></div>'; }).join(''); }, tips = [];
+    if (cohMode === 'now') {
+      rows = co.rows.filter(cohRange(cohLo(), 1e9)).slice().reverse();
+      var top = 18, mid = 46, pad = W < 520 ? 52 : 60, side = (W - mid) / 2, mx = Math.max.apply(null, rows.map(function (r) { return Math.max(r[1], r[2]); })) || 1, sx = function (v) { return v / mx * (side - pad); };
+      var x0 = side, x1 = side + mid, yb = top + rows.length * rh, Ht = yb + 20, st = niceStep(mx, 3);
+      var wlo = rows.findIndex(function (r) { return r[0] < co.window.hi; }), whi = rows.findIndex(function (r) { return r[0] + w <= co.window.lo; });
+      if (wlo >= 0) s += '<rect x="0" y="' + (top + wlo * rh) + '" width="' + x0 + '" height="' + ((whi < 0 ? rows.length : whi) - wlo) * rh + '" fill="var(--deck-2)"/>';
+      for (var g = st; g < mx; g += st) [x0 - sx(g), x1 + sx(g)].forEach(function (x) { s += '<line x1="' + x.toFixed(1) + '" x2="' + x.toFixed(1) + '" y1="' + (top - 2) + '" y2="' + yb + '" stroke="var(--grid)"/>' + tx_(x, yb + 13, u(g), 'middle'); });
+      s += tx_(0, yb + 13, unit) + tx_(W, yb + 13, unit, 'end') + tx_(x0 - 4, 11, _T('← 短期持有者', '← Short-term'), 'end') + tx_(x1 + 4, 11, _T('長期持有者 →', 'Long-term →'));
+      rows.forEach(function (r, i) {
+        var y = top + i * rh, cur = c >= r[0] && c < r[0] + w;
+        s += '<g class="hit" data-i="' + i + '"><rect x="0" y="' + y + '" width="' + W + '" height="' + rh + '" fill="transparent"/>' + bar(x0, x0 - sx(r[1]), y + 2, rh - 4, cs.sth) + bar(x1, x1 + sx(r[2]), y + 2, rh - 4, cs.lth) + tx_(x0 + mid / 2, y + rh - 3, fmt.k(r[0]), 'middle', cur ? 'ax hi' : 'ax') + '</g>';
+        tips.push(tipRow(fmt.usd(r[0]) + '–' + fmt.usd(r[0] + w), [[_T('短期持有者', 'Short-term'), cs.sth, r[1]], [_T('長期持有者', 'Long-term'), cs.lth, r[2]]]));
+      });
+      var bs = cohTop(rows, 1)[0], bl = cohTop(rows.filter(function (r) { return r[0] >= c; }), 2)[0];
+      [[bs, 1, -1], [bl, 2, 1]].forEach(function (q) { if (!q[0]) return; var i = rows.indexOf(q[0]), y = top + i * rh + rh - 3; s += q[2] < 0 ? tx_(x0 - sx(q[0][1]) - 4, y, cohCoins(q[0][1]), 'end', 'ax hi') : tx_(x1 + sx(q[0][2]) + 4, y, cohCoins(q[0][2]), 'start', 'ax hi'); });
+      var yp = pxRow(rows, top); if (yp != null) s += '<line x1="0" x2="' + W + '" y1="' + yp.toFixed(1) + '" y2="' + yp.toFixed(1) + '" stroke="var(--ink)" stroke-width="1"/>' + tx_(W, yp - 3, _T('收盤 ', 'Close ') + fmt.usd(c), 'end', 'ax hi');
+      if (wlo >= 0) s += tx_(4, top + wlo * rh + 10, _T('155 天內價格走過的區間', 'Range price covered in 155 days'), 'start');
+    } else {
+      var k = cohMode === 'sth' ? 1 : 2, f = co.flow, cmp = {}; co.cmp.rows.forEach(function (r) { cmp[r[0]] = r; });
+      rows = co.rows.filter(k === 1 ? cohRange(Math.floor(co.window.lo / w) * w, co.window.hi) : cohRange(cohLo(), 1e9)).slice().reverse();
+      var lab = 44, right = 64, top2 = 6, mx2 = Math.max.apply(null, rows.map(function (r) { return Math.max(r[k], (cmp[r[0]] || [])[k] || 0); })) || 1, sx2 = function (v) { return v / mx2 * (W - lab - right); }, yb2 = top2 + rows.length * (rh + 2), Ht2 = yb2 + 6;
+      var big = rows.map(function (r) { return Math.abs(r[k] - ((cmp[r[0]] || [])[k] || 0)); }).sort(function (a, b) { return b - a; })[3] || 0;
+      if (k === 2 && f.model_free_above) { var j = rows.findIndex(function (r) { return r[0] < f.model_free_above.lo; }); if (j > 0) s += '<rect x="' + lab + '" y="' + top2 + '" width="' + (W - lab) + '" height="' + j * (rh + 2) + '" fill="var(--deck-2)"/>' + tx_(W - 2, top2 + 11, _T('價格沒碰過：變化就是賣出，不靠模型', 'Untouched by price: changes are selling, no model'), 'end'); }
+      rows.forEach(function (r, i) {
+        var y = top2 + i * (rh + 2), a = (cmp[r[0]] || [])[k] || 0, d = r[k] - a, cur = c >= r[0] && c < r[0] + w;
+        s += '<g class="hit" data-i="' + i + '"><rect x="0" y="' + y + '" width="' + W + '" height="' + (rh + 2) + '" fill="transparent"/>' + bar(lab, lab + sx2(a), y + 2, 4, 'var(--ink-3)') + bar(lab, lab + sx2(r[k]), y + 7, rh - 6, k === 1 ? cs.sth : cs.lth) + tx_(lab - 6, y + rh - 1, fmt.k(r[0]), 'end', cur ? 'ax hi' : 'ax') +
+          (Math.abs(d) >= big && Math.abs(d) > 0 ? tx_(lab + sx2(Math.max(a, r[k])) + 5, y + rh - 1, (d > 0 ? '+' : '−') + cohCoins(Math.abs(d)), 'start', 'ax hi') : '') + '</g>';
+        tips.push('<div class="t">' + fmt.usd(r[0]) + '–' + fmt.usd(r[0] + w) + '</div><div class="r"><i style="background:var(--ink-3)"></i><span>' + fmt.md(f.start) + '</span><b>' + cohCoins(a) + '</b></div><div class="r"><i style="background:' + (k === 1 ? cs.sth : cs.lth) + '"></i><span>' + fmt.md(f.end) + '</span><b>' + cohCoins(r[k]) + '</b></div><div class="r"><i></i><span>' + _T('變化', 'Change') + '</span><b>' + (d >= 0 ? '+' : '−') + cohCoins(Math.abs(d)) + '</b></div>');
+      });
+      s += '<line x1="' + lab + '" x2="' + lab + '" y1="' + top2 + '" y2="' + yb2 + '" stroke="var(--line)"/>';
+      Ht = Ht2;
+    }
+    el.innerHTML = svgEl(W, Ht, s, _T('長短期持有者籌碼分布', 'Supply by long- and short-term holders'));
+    el.querySelectorAll('g.hit').forEach(function (n) { var i = +n.getAttribute('data-i'); n.addEventListener('pointermove', function (ev) { showTip(ev.clientX, ev.clientY, tips[i]); }); n.addEventListener('pointerleave', hideTip); });
+  }
+  function cohortAfter() {
+    mount($('#c-cohort'), drawCohort);
+    var sg = $('#coh-segs'); if (sg) sg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-c') === cohMode) return; cohMode = b.getAttribute('data-c'); sg.innerHTML = cohSegs(); $('#coh-lg').innerHTML = cohLegend(); drawCohort($('#c-cohort')); });
+  }
+
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};
     var rows = [
@@ -1229,10 +1342,10 @@
     return readBar('onchain') + '<div class="kpis">' + kpi(_t('短期持有者獲利比例'), fmt.n((fl.sth_in_profit_pct || {}).value, 1) + '%', _t('7 天前 ') + fmt.n((fl.sth_in_profit_pct || {}).d7, 1) + '%', (fl.sth_in_profit_pct || {}).value) + kpi(_t('短期持有者成本'), fmt.usd((fl.sth_vs_tmm || {}).sth_cost), _t('真實市場均價 ') + fmt.usd((fl.sth_vs_tmm || {}).tmm)) + kpi(_t('交易所供給'), fmt.n(ex.exchange_supply_share_pct, 2) + '%', _t('7 日 ') + fmt.pct(ex.exchange_supply_chg7_pct, 2) + _t(' · 90 日 ') + fmt.pct(ex.exchange_supply_chg90_pct, 2)) + kpi(_t('算力 7 日均'), fmt.n(mi.hash7, 0) + ' EH/s', _t('週 ') + fmt.pct(mi.wk_chg_pct, 1) + ' · hashprice $' + fmt.n(mi.hashprice, 1)) + kpi(_t('下次難度調整'), fmt.pct(mi.diff_next_pct, 1), fmt.md(mi.retarget) + _t(' · 進度 ') + fmt.n(mi.diff_progress, 0) + '%', mi.diff_progress) + '</div><div class="grid">' + interpPanel(ocInterp()) +
       panel('span-5', _t('籌碼分布（URPD）'), fmt.md(u.date) + _t(' · 每 2,000 美元一格'), urpdSay(u) + '<div id="c-urpd"></div>') +
       panel('span-7', _t('短期持有者：成本 vs 價格'), _t('bitcoin-data · 近 2 年'), legend([[_t('短期持有者成本'), 'var(--s2)'], [_t('真實市場均價'), 'var(--s3)']]) + '<div class="chart" id="c-cost"></div>' + _t('<div class="panel-h" style="margin-top:6px"><h2>短期持有者獲利比例</h2><span class="src">2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%</span></div><div class="chart" id="c-profit"></div>') +
-      soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
+      cohortPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
-    mount($('#c-whale'), drawWhale); drawSopr(); drawSthPnl(); drawOc(); mount($('#c-npl'), drawNpl);
+    mount($('#c-whale'), drawWhale); drawSopr(); drawSthPnl(); drawOc(); mount($('#c-npl'), drawNpl); cohortAfter();
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
     var v = D.chips.viz || {}, u = v.urpd || {}, c = D.price.bar.c, el = $('#c-urpd');
     if (el && u.band) {
