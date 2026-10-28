@@ -312,7 +312,8 @@ def _levels(L, bar):
         if abs(d) <= NEAR:
             out.append(dict(id='level:sth-cluster', kind='level', key='sth-cluster', dir='up' if d >= 0 else 'down', theme='holders', page='onchain', chart='cohort', score=3 + (NEAR - abs(d)) / NEAR, value=round(v), dist_pct=round(d, 2),
                             title=T(f'價格貼近短期持有者最厚的籌碼（{F(d, "spct", "zh")}）', f'Price near the thickest short-term holder pile ({F(d, "spct", "en")})'),
-                            fig=T(f'{r[0] // 1000}K–{(r[0] + w) // 1000}K 有 {r[1] / 1e4:.0f} 萬顆（推算，URPD {co.get("date")}）', f'{r[0] // 1000}K–{(r[0] + w) // 1000}K holds {r[1] / 1e3:,.0f}K BTC (estimate, URPD {co.get("date")})')))
+                            fig=T(f'{r[0] // 1000}K–{(r[0] + w) // 1000}K 有 {r[1] / 1e4:.0f} 萬顆（' + (f'CheckOnChain {co.get("now_date")}' if co.get('src') == 'checkonchain' else f'推算，URPD {co.get("date")}') + '）',
+                                  f'{r[0] // 1000}K–{(r[0] + w) // 1000}K holds {r[1] / 1e3:,.0f}K BTC (' + (f'CheckOnChain {co.get("now_date")}' if co.get('src') == 'checkonchain' else f'estimate, URPD {co.get("date")}') + ')')))
     for mv in (co or {}).get('transfers') or []:   # 2026-10-27：疑似同一實體內部轉帳的「搬家日」（cohort_urpd.transfers），近 3 天內出現才提示
         if dn(co['date']) - dn(mv['date']) <= 2:
             src = '、'.join(f'{k // 1000}–{k // 1000 + 2}K' for k, _ in mv['src']); src_en = ', '.join(f'{k // 1000}–{k // 1000 + 2}K' for k, _ in mv['src'])

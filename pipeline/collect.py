@@ -285,6 +285,7 @@ for m, fld in OC.items():
         if m == 'illiquid-supply': R['onchain'][m]['aug31'] = ser.get('2026-08-31')
     except Exception as e: errors.append(f'onchain {m}: {e}')
 # B2. 2026-10-15 使用者選擇：STH-SOPR 改讀 CheckOnChain 公開圖表（晚約 1 天；失敗時用上次成功的快取），不佔 bitcoin-data 額度
+_cs = None
 try:
     import coc
     _cs, _cst = coc.get()
@@ -298,6 +299,14 @@ try:
     _pnl, _pst = coc.get_pnl()
     if _pst != 'live': errors.append(f'checkonchain sth-pnl 用快取：{_pst}')
 except Exception as e: errors.append(f'checkonchain sth-pnl: {e}')
+# B4. 2026-10-28 使用者要求：長短期持有者的實際籌碼分布（CheckOnChain urpd_cohort，Bitcoin Research Kit 依每顆幣的實際幣齡算），
+#   給 G4e「現在」那一張用，取代推算值。圖上沒有日期，推定與同一輪 STH-SOPR 的最新一天相同；不佔 bitcoin-data 額度
+_coh = None
+try:
+    import coc
+    _coh, _chst = coc.get_cohort(max(_cs) if _cs else None)
+    if _chst != 'live': errors.append(f'checkonchain urpd-cohort 用快取：{_chst}')
+except Exception as e: errors.append(f'checkonchain urpd-cohort: {e}')
 try:
     # 2026-09-23 週檢：第三轉換條件量化＝STH 成本基礎 ÷ LTH 成本基礎（＝LTH-MVRV ÷ STH-MVRV，與價格無關）
     sr, lr_ = R['onchain']['sth-realized-price'], R['onchain']['lth-realized-price']
@@ -723,7 +732,7 @@ try:
     try: _hw = bd('hodl-waves-supply')
     except Exception as e: _hw = []; errors.append(f'cohort hodl-waves-supply: {e}')
     _px = {x[0]: (x[1], x[1]) for x in cm}; _px.update({b_['d']: (b_['l'], b_['h']) for b_ in bars})
-    R['cohort'] = cohort_urpd.daily(MFS.get('urpd_raw'), _hw, _px, c, SER.get('sth-realized-price'))
+    R['cohort'] = cohort_urpd.daily(MFS.get('urpd_raw'), _hw, _px, c, SER.get('sth-realized-price'), _coh)
 except Exception as e: errors.append(f'cohort {e}'); R['cohort'] = None
 
 # ---------- G5. 2026-10-02 使用者要求：掛單簿深度（Coinbase／Kraken／Bitstamp 三家合計，舊口徑保留供序列比較；Binance 現貨改由 G5b 經 data-api.binance.vision 取得，Binance 期貨 451、Bybit 403 不可用）。只作讀值，不連動任何規則 ----------
