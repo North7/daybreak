@@ -300,6 +300,12 @@
    "d": "2026-10-23",
    "musd": -137.9,
    "partial": false
+  },
+  {
+   "d": "2026-10-26",
+   "musd": 110.0,
+   "partial": true,
+   "src": "暫定：Farside（CoinDesk 10/27 轉述）約 1.10 億美元；SoSoValue（Crypto Briefing 轉述）1.103 億美元"
   }
  ],
  "source": "The Block",
