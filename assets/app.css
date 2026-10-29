@@ -27,6 +27,7 @@
   --down-dim: rgba(215, 38, 28, .1);
   --s1: #5B49D6; --s2: #C2531A; --s3: #008571; --s4: #9C6A00;
   --grid: rgba(10, 10, 10, .07);
+  --lc-neg: #D7261C; --lc-mid: #7A766F; --lc-pos: #2340E0;   /* 2026-10-29 價格 × 長期持有者淨部位：紅＝淨減、灰＝持平、藍＝淨增（已用色盲檢查） */
   --tape-bg: #0A0A0A; --tape-ink: #F2F0EA; --tape-ink-2: #8E8A82; --tape-line: #262626;
 
   /* 2026-10-12 字型瘦身：Noto Sans TC 只載 900（標題用）；內文中文改用系統字（蘋果 PingFang、Windows 正黑、Android 內建 Noto CJK），
@@ -52,6 +53,7 @@
   --up: #2FD08A; --down: #FF5A4E; --warn: #E8B54A; --up-dim: rgba(47, 208, 138, .12); --down-dim: rgba(255, 90, 78, .12);
   --s1: #8573F2; --s2: #D9692F; --s3: #2A9F8E; --s4: #A88A30;
   --grid: rgba(242, 240, 234, .07);
+  --lc-neg: #E8503F; --lc-mid: #A9A59D; --lc-pos: #6F86F5;
   --tape-bg: #F2F0EA; --tape-ink: #0A0A0A; --tape-ink-2: #6B675F; --tape-line: #D2CEC4;
 }
 
@@ -207,6 +209,12 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; table-layou
 .chart svg { display: block; width: 100%; overflow: visible; }
 .chart .ax { font-family: var(--f-mono); font-size: 10px; fill: var(--ink-3); }
 .chart .ax.hi { fill: var(--ink); font-weight: 600; }   /* 2026-10-27 長短期持有者籌碼：現價那一格與標註 */
+/* 2026-10-29 價格線上色的 9 階（--lc0 最紅、--lc4 持平、--lc8 最藍）；不支援 color-mix 的瀏覽器只分三色 */
+:root { --lc0: var(--lc-neg); --lc1: var(--lc-neg); --lc2: var(--lc-neg); --lc3: var(--lc-neg); --lc4: var(--lc-mid); --lc5: var(--lc-pos); --lc6: var(--lc-pos); --lc7: var(--lc-pos); --lc8: var(--lc-pos); }
+@supports (color: color-mix(in oklab, red, blue)) {
+  :root { --lc3: color-mix(in oklab, var(--lc-neg) 35%, var(--lc-mid)); --lc5: color-mix(in oklab, var(--lc-pos) 35%, var(--lc-mid)); --lc2: color-mix(in oklab, var(--lc-neg) 60%, var(--lc-mid)); --lc6: color-mix(in oklab, var(--lc-pos) 60%, var(--lc-mid)); --lc1: color-mix(in oklab, var(--lc-neg) 80%, var(--lc-mid)); --lc7: color-mix(in oklab, var(--lc-pos) 80%, var(--lc-mid)); }
+}
+.legend i.lc-bar { display: inline-block; width: 120px; height: 8px; border-radius: 4px; vertical-align: middle; background: linear-gradient(90deg, var(--lc0), var(--lc2), var(--lc4), var(--lc6), var(--lc8)); }
 .chart .gl { stroke: var(--grid); stroke-width: 1; }
 .chart .base { stroke: var(--ink); stroke-width: 1; }
 .chart .ref { stroke-width: 1; stroke-dasharray: 4 4; }
