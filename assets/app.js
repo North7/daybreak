@@ -1348,7 +1348,7 @@
   function lcCoins(v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + cohCoins(Math.abs(v)); }
   function lcSay() {
     var x = D.onchain.lth_color, r = x.run, it = [], up = r.price_chg_pct > 5, dn_ = r.price_chg_pct < -5, sell = r.sign < 0;
-    var since = _T('從 ' + fmt.md(r.start) + ' 起連續 ' + r.days + ' 天淨' + (sell ? '減' : '增') + '（最多 ' + lcCoins(r.extreme) + '），同期價格 ' + fmt.pct(r.price_chg_pct, 0) + '（' + fmt.usd(r.price0) + ' → ' + fmt.usd(r.price) + '）：',
+    var since = _T('從 ' + fmt.md(r.start) + ' 起連續 ' + r.days + ' 天淨' + (sell ? '減' : '增') + '（最多 ' + lcCoins(r.extreme) + '），同期價格 ' + fmt.pct(r.price_chg_pct, 0) + '（' + fmt.usd(r.price0) + ' → ' + fmt.usd(r.price) + '）。',
       'Net ' + (sell ? 'reducing' : 'adding') + ' for ' + r.days + ' straight days since ' + fmt.md(r.start) + ' (peak ' + lcCoins(r.extreme) + '), while price moved ' + fmt.pct(r.price_chg_pct, 0) + ' (' + fmt.usd(r.price0) + ' → ' + fmt.usd(r.price) + '): ');
     var why = sell ? (up ? _T('價格漲、老手減：老手趁反彈出貨，上方一直有人供貨。', 'price up while veterans cut, so long-term holders are selling into the rally and supplying the market above.') :
       dn_ ? _T('價格跌、老手也減：賣壓有一部分來自持有很久的人。', 'price down and veterans cutting too, so part of the selling comes from long-held coins.') :
