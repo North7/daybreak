@@ -170,3 +170,35 @@ def onchain_viz(SER, years=YEARS, step=STEP):
             if j is not None: o[f'chg{dd}'] = round(pts[-1][1] - pts[j][1], 4)
         out[key] = o
     return out
+
+
+# 2026-10-29 使用者要求（貝格先生轉的 Glassnode「吸籌趨勢評分」圖）：價格線依長期持有者 30 日淨部位上色。只作讀值。
+#   Glassnode 的評分要先把地址歸成實體、排除交易所與礦工（付費資料），做不出來；bitcoin-data 同名的 accumulation-trend-score
+#   與 LTH 30 日淨部位相關 0.97（同一個數字換算），所以直接用已抓的 lth-net-position-change-30d-btc，不另打 API。
+#   淨部位上升也包括幣放滿 155 天自動算成長期持有者，不等於有人買入。
+LC_CLIP, LC_FLAT = 400000, 50000   # 顏色最深（±40 萬顆）；|淨部位| < 5 萬顆算持平
+
+
+def lth_color_viz(lth, px, step=2, clip=LC_CLIP, flat=LC_FLAT):
+    """lth：{date: 30 日淨部位（顆）}；px：{date: 收盤}。回傳價格線上色資料與讀值（目前這段顏色從哪天開始、期間價格變化、上一次一樣深）。"""
+    cd = sorted(t for t in lth if t in px)
+    if len(cd) < 60: return None
+    last = cd[-1]; v = lth[last]; vals = sorted(lth[t] for t in cd)
+    sg = lambda x: (x > 0) - (x < 0)   # 這段從哪天開始只看正負（顏色的「持平」只是幅度小，方向沒變）
+    k = len(cd) - 1
+    while k > 0 and sg(lth[cd[k - 1]]) == sg(v): k -= 1
+    seg = [lth[t] for t in cd[k:]]
+    run = dict(start=cd[k], days=(dt.date.fromisoformat(last) - dt.date.fromisoformat(cd[k])).days + 1, sign=sg(v),
+               price0=round(px[cd[k]]), price=round(px[last]), price_chg_pct=round((px[last] / px[cd[k]] - 1) * 100, 1),
+               extreme=round(min(seg) if v < 0 else max(seg)))
+    # 這段之前，上一次淨部位一樣深（同方向、絕對值不小於現在）
+    prev = next((t for t in reversed(cd[:k]) if abs(v) >= flat and (lth[t] <= v if v < 0 else lth[t] >= v)), None)
+    y1 = [px[t] for t in px if ds(dn(last) - 365) <= t <= last]
+    out = dict(date=last, last=round(v), pct_4y=round(sum(x < v for x in vals) / len(vals) * 100, 1), clip=clip, flat=flat, run=run,
+               prev_same=dict(date=prev, value=round(lth[prev]), price=round(px[prev])) if prev else None,
+               hi1y=round(max(y1)), vs_hi1y_pct=round((px[last] / max(y1) - 1) * 100, 1),
+               rows=thin([[dn(t), round(px[t]), round(lth[t])] for t in cd], step),
+               note='bitcoin-data lth-net-position-change-30d；不是 Glassnode 的吸籌趨勢評分（那個以實體計、排除交易所）；淨部位上升也包括幣放滿 155 天自動轉成長期持有者；只作讀值')
+    j = _at_or_before(cd, ds(dn(last) - 30))
+    if j is not None: out['chg30'] = round(v - lth[cd[j]])
+    return out

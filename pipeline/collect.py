@@ -719,6 +719,10 @@ try:
         _se = R['stage_evidence']; _se['items'].append(_it); _se['ok'] = sum(e['ok'] for e in _se['items']); _se['n'] = len(_se['items'])
     R['stage_viz'] = stage_viz.build(mv, ex, _sthd, _tmd, LAST)
     R['onchain_viz'] = stage_viz.onchain_viz(SER)   # 鏈上指標走勢（近 3 年；價格線沿用 stage_viz 的 px）
+    # 2026-10-29：價格 × 長期持有者 30 日淨部位（價格線依淨部位上色；不另打 API）
+    try:
+        if SER.get('lth-net-position-change-30d-btc'): R['lth_color'] = stage_viz.lth_color_viz(SER['lth-net-position-change-30d-btc'], {x[0]: x[1] for x in mv})
+    except Exception as e: errors.append(f'lth_color {e}')
     # 短期持有者認賠賣壓（STH-SOPR ＋ 價格；放進籌碼流向圖表資料，頁面在鏈上版）
     if SER.get('sth-sopr') and R.get('murphy_viz') is not None:
         R['murphy_viz']['sopr'] = stage_viz.sopr_viz(SER['sth-sopr'], {x[0]: x[1] for x in mv})
