@@ -1,546 +1,229 @@
 {
- "date": "2026-10-27",
- "written_utc": "2026-10-28T00:41:21Z",
- "edition": 22,
- "stance": {
-  "label": "Early bull phase · Hold",
-  "tone": "warm",
-  "short": "Bull day 19, no action"
- },
- "headline": "Price sits on 734K BTC of new buyers' cost at $80–82K and STH-SOPR slips below 1; a $110M ETF inflow does not yet reverse weak spot demand.",
- "summary": "The largest batch of new coins since June ($80–82K, about 734K BTC, estimate) sits right at price, and STH-SOPR at 0.9997 dipped below 1 for the first time, so these buyers have begun exiting at cost. Held, it is the absorbing layer; lost, short-term supply is thin from $76K down to $66K. Bull day 19, no exit rule triggered; watch the FOMC at 02:00 Taipei Oct 29 (18:00 UTC Oct 28) and the Oct 30 monthly expiry.",
+ "date": "2026-10-28",
+ "written_utc": "2026-10-29T00:40:36Z",
+ "edition": 23,
+ "stance": {"label": "Early bull cycle · Hold", "tone": "warm", "short": "Bull day 20, no action"},
+ "headline": "Fed holds 10–2 with 86% odds of a December hike; ETFs take in $286M over two days as new buyers defend their $80K cost.",
+ "summary": "STH-SOPR is back at 1.0029, about 743K BTC of new supply at $80–82K is back in profit and ETFs posted two days of inflows, so the cost line held; but the Coinbase premium is still negative, long-term holders cut 212K BTC over 30 days and 819K BTC of long-term supply sits at $84K. Volatility is at a 1-year low with supply packed within ±5% of price, so a break from this zone can move fast. Bull day 20, no exit trigger; watch the Oct 30 monthly expiry.",
  "watch": [
-  {
-   "label": "200-day MA",
-   "value": 73025,
-   "note": "20% hedge only after 5 straight closes below it; now −9.6% away (prior −8.8%), streak 0"
-  },
-  {
-   "label": "MVRV 0.75 line",
-   "value": 112590,
-   "note": "First on-chain sell trigger; ratio 0.533, streak 0, 39.3% away (CoinMetrics Oct 26)"
-  },
-  {
-   "label": "Exit step 1",
-   "value": 125000,
-   "note": "A close at this level sells 12.5%; 54.7% away"
-  }
+  {"label": "200-day MA", "value": 73066, "note": "5 straight closes below it start the 20% hedge; now −10.1% away (last −9.6%), run 0 days"},
+  {"label": "MVRV 0.75 line", "value": 112598, "note": "First on-chain sell trigger; ratio 0.538, run 0 days, 38.5% away (CoinMetrics Oct 27)"},
+  {"label": "Exit step 1", "value": 125000, "note": "A close there sells 12.5%; 53.8% away"}
  ],
  "modules": {
   "overview": {
-   "lead": "Price is back on the thickest layer of new coins since June, those buyers have begun exiting at cost, and spot demand has not stepped in ahead of the FOMC.",
+   "lead": "A hawkish FOMC was already priced; new buyers held their cost line and ETF money returned, but the US spot premium and long-term holder selling have not turned.",
    "points": [
-    "Today's finding: about 734K BTC of short-term holder supply sits at $80–82K (estimate, URPD Oct 26), and the $80,801 close is inside that bucket; STH-SOPR 0.9997 (Oct 27) is the first dip below 1 since Aug 14.",
-    "Market stage: bull, day 19, evidence 3/6; no exit rule triggered, nearest action point is the 200-day MA at $73,025 (−9.6%).",
-    "ETF Oct 26 provisional +$110M (Farside and SoSoValue agree), ending two days of outflows; Coinbase premium still negative at −0.136%; 7 trading days to Oct 23: +$228M."
+    "Today's finding: STH-SOPR 1.0029 (Oct 28) is back above 1, and about 742.9K BTC of short-term supply at $80–82K (CheckOnChain Oct 28) is back in profit; the $84K bucket above holds 819K BTC of long-term holder supply.",
+    "The Fed held at 3.75–4.00% in a 10–2 vote (two dissents for a hike); CME FedWatch puts December hike odds at 86%; the 10-year yield is 5.025% (CoinDesk).",
+    "ETFs: Oct 26 confirmed by The Block at +$110.3M, Oct 27 provisional +$176M; 7 trading days to Oct 26: +$333M.",
+    "Market stage: Bull day 20, evidence lights 3/6; no exit trigger, nearest action point is the 200-day MA at $73,066 (−10.1%)."
    ]
   },
   "cycle": {
-   "lead": "Bull day 19, evidence still 3/6, and price is only 1.7% above the true market mean.",
+   "lead": "Bull day 20 with evidence still at 3/6; the gap between short-term holder cost and the true market mean is shrinking but still 4.8%.",
    "points": [
-    "48 straight closes above the rising 200-day MA ($73,025; $71,074 30 days ago); bull stage since 2026-10-09.",
-    "Lit (3): MVRV vs its 1-year mean (1.478 > 1.423), realized cap 30d +1.08%, close above STH cost $74,865 (Oct 21). Unlit: 12-month momentum −30.2%, exchange supply 90d +1.79%, STH cost 5.79% below the true market mean (Oct 21).",
-    "Extrapolating the last 30 days linearly, STH cost crosses above the true market mean around 2027-01-14; with price flat, 12-month momentum turns positive around 2027-01-31; both are linear-extrapolation / flat-price assumptions, not forecasts.",
-    "Tidemark (Oct 27): top signal 0, bottom 23.5; low test in progress: no break of $58,525 before Dec 19."
+    "49 straight closes above a rising 200-day MA ($73,066; $71,139 30 days ago); Bull since 2026-10-09.",
+    "Lit (3): MVRV vs its 1-year mean (1.494 > 1.421), realized cap 30-day +1.08%, close above short-term holder cost $75,781 (Oct 22). Unlit: 12-month momentum −29.2%, exchange supply 90-day +0.87%, short-term cost 4.83% below the true market mean (Oct 22).",
+    "At the last 30 days' pace, short-term cost would cross the true market mean around 2026-12-16 (last estimate 2027-01-14); with price flat, 12-month momentum turns positive around 2027-01-31. Both are linear extrapolation / flat-price assumptions, not forecasts.",
+    "Tidemark (Oct 28): top signal 0, bottom 23.6; the low test runs until Dec 19: no break of $58,525."
    ]
   },
   "market": {
-   "lead": "The day before the FOMC closed near its high, but still below the 20- and 50-day MAs and inside the thickest supply bucket.",
+   "lead": "Less than 2% of range on FOMC day; price closed near the volume node, still consolidating just under the 20- and 50-day averages.",
    "points": [
-    "Oct 27 closed +1.0%, at 78.1% of the daily range; the intraday low of $79,379 touched the true market mean ($79,468); volume 1.09× the 20-day average, 0.86× the prior day.",
-    "Close $80,801 is below the 20-day MA $81,855 and 50-day MA $81,831; volume POC $81,750 (+1.2%), and price closed back above the value-area low of $80,500.",
-    "Current leg (since Jun 30): up 119 days, +38.0%, −6.7% from the Sep 21 high of $86,594; leg-end line $73,605 (−8.9%).",
-    "RV7 28.6% above RV30 25.4% (ratio 1.13); short-term volatility is still rising, but less than last issue."
+    "Oct 28 closed +0.6% with a 1.77% range, finishing at 70.4% of the day's range; volume 0.96× the 20-day average and 0.83× the prior day.",
+    "The $81,287 close is just under the 20-day MA $81,835 and 50-day MA $81,888; volume POC $81,500 (+0.3%), value area $80,250–83,250.",
+    "Current leg (since Jun 30): up 120 days, +38.9%, −6.1% from the Sep 21 high of $86,594; leg-end line $73,605 (−9.5%).",
+    "RV7 26.5% vs RV30 25.2% (ratio 1.05); last issue's short-term pickup has faded."
    ]
   },
   "deriv": {
-   "lead": "Deribit long funding halved in a day and put skew eased again: derivatives are pulling back, not adding, into the FOMC.",
+   "lead": "Options price volatility near a 1-year low and Deribit long funding halved again, but leverage on OKX and Hyperliquid is still not cleared.",
    "points": [
-    "OI-weighted funding 10.23% (prior 10.61%): OKX and Hyperliquid both 10.95%, Deribit down from 8.18% to 4.90%, 0.73 pp below the median futures basis of 5.63%.",
-    "30-day 25Δ risk reversal −3.13 (prior −3.72), puts 38.48 vs calls 35.35; DVOL 37.69, 23.8th percentile of the year, priced above RV7 of 28.6%.",
-    "Oct 30 monthly expiry holds 34.1% of total OI, max pain $78,000; calls cluster at $95,000 and $100,000, puts at $70,000 and $75,000; the Dec 25 quarterly holds 34.2%.",
-    "Order book: $80,000 bid wall about $241M, $81,000 ask wall about $171M, both on Hyperliquid perps; supply concentration (±5%) 14.87% (URPD Oct 26, 14.93% 7 days ago, 26 days of history); with supply packed around price, volatility tends to expand once price leaves this zone."
+    "Link to today's finding: DVOL 37.26 (1-year percentile 19.2) is still 12.2 points above same-source RV30; supply concentration within ±5% is 15.94% (URPD Oct 27; 14.91% 7 days ago; 27 days of records). With supply packed near price, a move out of this zone tends to amplify volatility.",
+    "Weighted funding 10.00% (last 10.23%): OKX and Hyperliquid both 10.95%, Deribit down from 4.90% to 2.52%, 3.0 points below the median futures basis of 5.52%.",
+    "30-day 25Δ risk reversal −3.04 (last −3.13), puts 37.76 vs calls 34.73; the Oct 30 monthly expiry holds 34.1% of total OI with max pain $78,000, calls clustered at $95,000 and $100,000, puts at $70,000 and $75,000.",
+    "Order book: $81,000 ask wall about $267M, $80,000 bid wall about $178M, both on Hyperliquid perps; the Dec 25 quarterly expiry holds 34.0%, max pain $75,000."
    ]
   },
   "flows": {
-   "lead": "ETFs took in one day of inflows and the Coinbase premium left its record-low zone, but neither has become sustained spot buying.",
+   "lead": "Two straight days of ETF inflows, the first in ten days, but the US spot premium and stablecoins have not followed, and buying is concentrated in IBIT.",
    "points": [
-    "ETF Oct 26 provisional +$110M (Farside via CoinDesk about $110M, SoSoValue $110.3M, all into IBIT); latest complete day Oct 23 −$137.9M (The Block); 7 trading days to Oct 23: +$228M.",
-    "Coinbase premium −0.136% (prior −0.177%), up from the 1.3th to the 11.0th percentile of our record (n=299); 7-day average −0.134%.",
-    "Stablecoin supply $301.6B, 7d −0.72%, 30d −$3.7B; realized cap 30d +1.08% (Oct 26), positive for 65 straight days, so capital is still flowing in on net.",
-    "Fear & Greed 48 (neutral), 55 a week ago, 30-day average 62.3; 10-year yield 5.00%, real yield 2.66% (FRED Oct 26)."
+    "ETFs: Oct 26 confirmed by The Block at +$110.3M; Oct 27 provisional +$176M (Farside via FinanceFeeds and SoSoValue via Bloomingbit agree; IBIT about $150M, FBTC $24.5M); 7 trading days to Oct 26: +$333M.",
+    "Coinbase premium −0.116% (last −0.136%), own-history percentile 18.4 (n=299), 7-day average −0.139%, still negative.",
+    "Stablecoin supply $301.6B, 7-day −0.64%, 30-day −$5.0B; realized cap 30-day +1.08% (Oct 27), positive for 66 days, so capital is still flowing in on net.",
+    "Fear & Greed 51 (Neutral), 63 a week ago, 30-day average 61.5; 10-year yield 4.99%, real yield 2.64% (FRED Oct 27, −26bp over 20 sessions)."
    ]
   },
   "onchain": {
-   "lead": "Short-term holders took their first loss at cost while long-term holders cut nearly 200K BTC over 30 days: selling is coming from both ends.",
+   "lead": "Short-term buyers are back in profit and losses did not spread, but long-term holders' 30-day net selling widened to 212K BTC, moving the supply pressure overhead.",
    "points": [
-    "Link to today's finding: STH-SOPR 0.9997 (Oct 27, CheckOnChain daily) fell below 1, but smoothed realized profit of 5,042 BTC is still 2.48× realized loss of 2,034 BTC, so loss-taking is shallow.",
-    "LTH 30-day net position −199,687 BTC (bitcoin-data Oct 26, 22.7th percentile since 2022-11); exchange supply 7d +0.48% (Oct 26).",
-    "Daily net realized P/L +$148.9M (Oct 26, 73.7th percentile of the year); 7-day total +$3.65B, mostly the +$2.31B spike on Oct 22, which was also the 209K BTC suspected internal-transfer day, so the figure may be inflated.",
-    "Top three indicators (Oct 26): MVRV Z 39.1, NUPL 36.9, Puell 64.5; 7-day hashrate +3.85% w/w, difficulty on Oct 29 est. +6.42%."
+    "Link to today's finding: STH-SOPR 1.0029 (Oct 28); smoothed short-term holder realized profit 4,866 BTC vs loss 1,975 BTC (ratio 2.46); versus 7 days ago profit +68.5%, loss +41.2%, mainly profit taking.",
+    "Long-term holder 30-day net position −212,480 BTC (bitcoin-data Oct 27; last −199,687; percentile 20.7 since Nov 2022); exchange supply 7-day −0.13% (Oct 27; last +0.48%).",
+    "Network daily net realized P/L +$60.0M (Oct 27, 1-year percentile 63.3); 7-day total +$3.27B, mostly the Oct 22 spike on a suspected internal transfer day, so it is inflated.",
+    "Top three indicators (Oct 27): MVRV Z 39.8, NUPL 38.6, Puell 62.2; Puell 1.15 is in the top 2% of the past year (percentile 98.3; 7-day hashrate +2.16% w/w, blocks coming fast); difficulty est. +5.91% on Oct 29."
    ]
   },
   "exit": {
-   "lead": "No exit rule has triggered, and none is close.",
+   "lead": "No exit-framework rule has fired, and none is close.",
    "points": [
-    "200-day MA $73,025 is 9.6% below the close; closes below it: 0 days.",
-    "MVRV ÷ prior-cycle peak 0.533; 0.75 line $112,590 (+39.3%), 0.80 line $120,096 (+48.6%), both streaks 0.",
-    "Exit step 1 at $125,000 is 54.7% away; the highest top indicator, Puell at 64.5, is far from the top zone at 80."
+    "The 200-day MA at $73,066 is 10.1% below the close; closes below it: 0 days.",
+    "MVRV ÷ prior-cycle peak 0.538; 0.75 line $112,598 (+38.5%), 0.80 line $120,104 (+47.8%), both runs 0.",
+    "Exit step 1 at $125,000 is 53.8% away; the highest top indicator, Puell at 62.2, is far from the top zone of 80."
    ]
   }
  },
  "news": [
-  {
-   "time": "2026-10-27",
-   "cat": "宏觀",
-   "impact": "neutral",
-   "weight": 3,
-   "title": "FOMC two-day meeting opened Oct 27 with the decision Oct 28; CME FedWatch about 90% odds of a hold; BTC dipped to $79,700 before the meeting",
-   "source": "CoinDesk, 2026-10-27",
-   "url": "https://www.coindesk.com/markets/2026/10/27/bitcoin-drops-below-usd80-000-as-crypto-ignores-asian-tech-rally-fed-meeting-begins",
-   "read": "A hold is fully priced; the variable is the statement and press conference. The same report shows futures OI +0.95% and liquidations down 13% to $133M; our OI-weighted funding is 10.23% and 30-day risk reversal −3.13, so derivatives neither added nor hedged hard before the event. Event risk; does not affect the cycle call.",
-   "module": "deriv"
-  },
-  {
-   "time": "2026-10-27",
-   "cat": "資金",
-   "impact": "bull",
-   "weight": 2,
-   "title": "US spot BTC ETFs took in about $110M on Oct 26, all into IBIT, ending two days of roughly $773M outflows",
-   "source": "CoinDesk (citing Farside), 2026-10-27",
-   "url": "https://www.coindesk.com/markets/2026/10/27/bitcoin-drops-below-usd80-000-as-crypto-ignores-asian-tech-rally-fed-meeting-begins",
-   "read": "Farside and SoSoValue ($110.3M via Crypto Briefing) agree, so we list a provisional value; one day of inflow offsets only about a sixth of the Oct 22 outflow, and the Coinbase premium is still negative at −0.136%. Short-term flows; does not affect the cycle call.",
-   "module": "flows"
-  },
-  {
-   "time": "2026-10-27",
-   "cat": "宏觀",
-   "impact": "neutral",
-   "weight": 2,
-   "title": "Nasdaq +1.15%, 10-year Treasury yield 5.0%, WTI touched $102.56 then fell below $100; October consumer confidence 91.7 vs 81.0 expected",
-   "source": "CoinDesk, 2026-10-27",
-   "url": "https://www.coindesk.com/tech/2026/10/27/live-updates-bitcoin-holds-below-usd80-000-as-ai-buildout-draws-more-capital",
-   "read": "Stocks up, BTC down for a second day: BTC–Nasdaq 30-day correlation is 0.621, but capital is flowing to AI and big IPOs; a 5.00% yield and 2.66% real yield (FRED Oct 26) keep the rate headwind in place. Macro backdrop; does not affect the cycle call.",
-   "module": "flows"
-  },
-  {
-   "time": "2026-10-28",
-   "cat": "鏈上",
-   "impact": "bear",
-   "weight": 2,
-   "title": "Bitfinex estimates about 874K BTC accumulated at $81,000–82,500, with $81,300 turning from support to resistance (unverified)",
-   "source": "DigitalToday (relaying CryptoSlate's report on Bitfinex analysis), 2026-10-28",
-   "url": "https://digitaltoday.co.kr/en/view/120330/bitcoin-rebound-faces-874000-btc-overhang-spot-demand-key",
-   "read": "We could not find the Bitfinex original, so it is marked unverified. The direction matches our estimate: 734K BTC of short-term supply at $80–82K and 416K newly bought at $82–84K; but the price range and method differ, and we keep our own URPD estimate. Matters for short-term structure; does not affect the cycle call.",
-   "module": "onchain"
-  },
-  {
-   "time": "2026-10-27",
-   "cat": "監管",
-   "impact": "neutral",
-   "weight": 2,
-   "title": "Treasury Secretary Bessent says over 90% of stablecoins are dollar-based and will be an important Treasury funding source; with the Clarity Act stalled, the SEC and CFTC will fill the gap through rules",
-   "source": "CoinDesk, 2026-10-27",
-   "url": "https://www.coindesk.com/policy/2026/10/27/treasury-s-bessent-sees-crypto-as-america-s-next-tool-for-keeping-the-u-s-dollar-on-top",
-   "read": "Friendly policy tone, but the market-structure bill failed and agency rules are less durable than law. Stablecoin supply is $301.6B, 7d −0.72%; the remarks brought no new money. Long-term backdrop; does not affect the cycle call.",
-   "module": "flows"
-  },
-  {
-   "time": "2026-10-27",
-   "cat": "機構",
-   "impact": "bull",
-   "weight": 1,
-   "title": "Galaxy says \"now is the time to accumulate\": BTC has 5 weekly closes above the 50-week MA, CME asset-manager net long down 57% from peak; only a weekly close below $76,540 not recovered within a month would challenge the view",
-   "source": "CoinDesk, 2026-10-27",
-   "url": "https://www.coindesk.com/markets/2026/10/27/now-is-the-time-to-accumulate-bitcoin-galaxy-says",
-   "read": "Consistent with our bull stage, day 19; its $76,540 invalidation is 5.3% below the close, right at the top of the thin short-term supply zone in our estimate (below $76K). Institutional view; does not affect the cycle call.",
-   "module": "cycle"
-  },
-  {
-   "time": "2026-10-27",
-   "cat": "產業",
-   "impact": "bear",
-   "weight": 1,
-   "title": "Robinhood Q3 crypto revenue $120M, down 55% y/y (from $268M); shares −4.4% after hours",
-   "source": "CoinDesk, 2026-10-27",
-   "url": "https://www.coindesk.com/markets/2026/10/27/robinhood-s-crypto-revenue-plunges-55-even-as-trading-platform-posts-record-sales",
-   "read": "Retail trading activity is still far below last year, in line with Fear & Greed at 48 and a negative Coinbase premium; lagging quarterly data, does not affect the cycle call.",
-   "module": "flows"
-  },
-  {
-   "time": "2026-10-27",
-   "cat": "監管",
-   "impact": "neutral",
-   "weight": 1,
-   "title": "Ripple receives final approval for a US national trust bank",
-   "source": "CoinDesk, 2026-10-27",
-   "url": "https://www.coindesk.com/markets/2026/10/27/ripple-gets-a-final-go-ahead-to-launch-its-own-u-s-national-trust-bank",
-   "read": "Another step for crypto firms into the banking system, with little direct effect on BTC flows; our ETF and premium readings did not react. Long-term industry news; does not affect the cycle call.",
-   "module": "flows"
-  }
+  {"time": "2026-10-28", "cat": "宏觀", "impact": "bear", "weight": 3,
+   "title": "Fed holds at 3.75–4.00% in a 10–2 vote, Cook and Hammack wanted a hike; CME December hike odds 86%, 10-year yield up to 5.025%",
+   "source": "Federal Reserve / CoinDesk, 2026-10-28", "url": "https://www.federalreserve.gov/newsevents/pressreleases/monetary20261028a.htm",
+   "read": "The statement says 'Inflation remains elevated', two members voted to hike and a December hike is almost fully priced, so funding costs are still rising; yet BTC edged up to $81,000 after the decision, a sign this hawkishness was expected. Versus our data: real yield 2.64% (Oct 27), −26bp over 20 sessions, a tight but not worsening rate backdrop; no effect on the market-stage call, Dec 9 is the next test.",
+   "module": "flows"},
+  {"time": "2026-10-27", "cat": "資金", "impact": "bull", "weight": 2,
+   "title": "US spot BTC ETFs took in about $176M on Oct 27, a second day of inflows; IBIT about $150M, FBTC $24.5M, other funds flat",
+   "source": "FinanceFeeds (citing Farside), 2026-10-28", "url": "https://financefeeds.com/us-crypto-etfs-record-96-6-million-in-net-inflows-on-october-27-as-bitcoin-leads-institutional-demand/",
+   "read": "With Oct 26's $110.3M, two days total about $286M, offsetting over 40% of the $636M Oct 22 outflow; but it sits in two funds and the Coinbase premium is still −0.116%, so US spot demand is not broadly back. We added it as a provisional value since two sources agree; the 7-trading-day total stays on The Block's confirmed +$333M to Oct 26.",
+   "module": "flows"},
+  {"time": "2026-10-28", "cat": "地緣", "impact": "bear", "weight": 2,
+   "title": "WSJ: the US warned Gulf states of a brief, intense renewal of Iran operations after the midterms; Brent up to $111, WTI briefly $103",
+   "source": "CoinDesk (citing WSJ), 2026-10-28", "url": "https://www.coindesk.com/business/2026/10/28/live-updates-bitcoin-climbs-above-usd81-000-as-majors-rally-ahead-of-fed-decision",
+   "read": "Higher oil pushes inflation and hike pressure up, the same direction as the two Fed dissents; BTC did not react that day. Versus our data: BTC's 30-day correlation with the Nasdaq is 0.61, so a risk-asset pullback on oil and rates would be hard for BTC to dodge; macro backdrop only, no effect on the cycle call.",
+   "module": "flows"},
+  {"time": "2026-10-28", "cat": "機構", "impact": "neutral", "weight": 1,
+   "title": "Strategy shareholders preliminarily approve daily preferred dividends with 99.3%; STRC yields 12% at $99.72, near par, first record date Nov 1",
+   "source": "CoinDesk, 2026-10-28", "url": "https://www.coindesk.com/business/2026/10/28/live-updates-bitcoin-climbs-above-usd81-000-as-majors-rally-ahead-of-fed-decision",
+   "read": "Daily dividends aim to make STRC more cash-like and widen its funding base; only with STRC near par can Strategy keep issuing and buying BTC, and last week it bought back STRC instead. We cannot see corporate buying directly, only indirectly via the Coinbase premium (still negative); no effect on the cycle call.",
+   "module": "flows"},
+  {"time": "2026-10-28", "cat": "產業", "impact": "bear", "weight": 1,
+   "title": "Datavault AI says it has been unable since June to withdraw the rest of about 1,309 BTC from Biconomy and will restate results; shares fell 49.6% in a day",
+   "source": "CoinDesk, 2026-10-28", "url": "https://www.coindesk.com/markets/2026/10/28/bitcoin-treasury-datavault-ai-plunges-50-after-firm-says-it-can-t-access-its-btc",
+   "read": "Counterparty risk at a small treasury company; the size is small (491 BTC were already sold back) and has no direct effect on BTC supply and demand, but it makes the market warier of the treasury-company model; together with Strategy's STRC buyback last week, corporate demand is cooling. Short-term noise.",
+   "module": "flows"},
+  {"time": "2026-10-28", "cat": "機構", "impact": "bull", "weight": 1,
+   "title": "Bitwise lifts its 2036 BTC base case from $1.3M to $1.6M (34.3% a year); bear case $130,686, bull $3.67M",
+   "source": "The Block, 2026-10-28", "url": "https://www.theblock.co/news/markets/2026-10-28-bitwise-raises-bitcoin-price-target-to-1-6-million-by-2036-projects-34-annualized-returns-432010",
+   "read": "A ten-year allocation assumption, not a market call; it treats the Oct 2025–Jun 2026 drawdown (about 50–53%) as shallower than the past 77–86%, in line with Tidemark's 'shallower bear in the ETF era' hypothesis, but we rely on the Dec 19 low test. No effect on the cycle call.",
+   "module": "cycle"},
+  {"time": "2026-10-28", "cat": "監管", "impact": "bear", "weight": 1,
+   "title": "Ahead of the midterms Kalshi gives Democrats 90% for the House and 64% for the Senate; Democratic lawmakers say the Clarity Act would not be a priority",
+   "source": "The Block, 2026-10-28", "url": "https://www.theblock.co/news/regulation/2026-10-28-crypto-braces-for-potential-shift-in-congressional-oversight-after-midterms-431949",
+   "read": "If the market-structure bill stalls in a new Congress, regulation keeps relying on SEC and CFTC rulemaking; limited effect on BTC supply and demand, mainly industry sentiment. Election week (Nov 3) may bring volatility while our volatility readings sit at a 1-year low; no effect on the cycle call.",
+   "module": "cycle"},
+  {"time": "2026-10-28", "cat": "宏觀", "impact": "bear", "weight": 1,
+   "title": "Bank of Canada hikes 25bp to 2.50%, saying inflation is 'higher and more persistent than in the July Report'",
+   "source": "CoinDesk, 2026-10-28", "url": "https://www.coindesk.com/business/2026/10/28/live-updates-bitcoin-climbs-above-usd81-000-as-majors-rally-ahead-of-fed-decision",
+   "read": "Major central banks are turning to hikes under the oil shock, lifting global funding costs, consistent with US 10-year yields above 5%; a tighter backdrop for BTC with no direct short-term effect.",
+   "module": "flows"}
  ],
  "events": [
-  {
-   "date": "2026-10-28",
-   "label": "FOMC decision (02:00 Taipei Oct 29 / 18:00 UTC Oct 28; press conference 30 min later); Strategy STRC special shareholder meeting (22:00 Taipei / 14:00 UTC)"
-  },
-  {
-   "date": "2026-10-29",
-   "label": "Difficulty adjustment (est. +6.42%); US Q3 GDP advance and September PCE (20:30 Taipei / 12:30 UTC, pending official schedule); ECB rate decision; Coinbase and Strategy earnings (after US close)"
-  },
-  {
-   "date": "2026-10-30",
-   "label": "Deribit monthly options expiry (16:00 Taipei / 08:00 UTC; 34.1% of total OI, max pain $78,000); Bank of Japan rate decision"
-  },
-  {
-   "date": "2026-10-31",
-   "label": "Monthly long-term path review"
-  },
-  {
-   "date": "2026-11-03",
-   "label": "US midterm elections"
-  },
-  {
-   "date": "2026-11-06",
-   "label": "US October nonfarm payrolls (21:30 Taipei / 13:30 UTC; first Friday by convention, pending official schedule)"
-  },
-  {
-   "date": "2026-11-10",
-   "label": "US October CPI (BLS, 21:30 Taipei / 13:30 UTC)"
-  },
-  {
-   "date": "2026-11-11",
-   "label": "MSCI publishes list of affected non-operating companies"
-  },
-  {
-   "date": "2026-11-12",
-   "label": "European Banking Authority begins direct supervision of USDC"
-  },
-  {
-   "date": "2026-11-27",
-   "label": "Deribit monthly options expiry (16:00 Taipei / 08:00 UTC; 10.0% of total OI, max pain $81,000)"
-  },
-  {
-   "date": "2026-11-30",
-   "label": "Monthly long-term path review; MSCI non-operating company rule takes effect after the November index review close"
-  },
-  {
-   "date": "2026-12-01",
-   "label": "Sberbank opens crypto trading to all clients (expected)"
-  },
-  {
-   "date": "2026-12-04",
-   "label": "US November nonfarm payrolls (first Friday by convention, pending official schedule)"
-  },
-  {
-   "date": "2026-12-09",
-   "label": "FOMC decision (Dec 8–9; 03:00 Taipei Dec 10 / 19:00 UTC Dec 9)"
-  },
-  {
-   "date": "2026-12-10",
-   "label": "US November CPI (conventional date, pending official schedule)"
-  },
-  {
-   "date": "2026-12-19",
-   "label": "Tidemark cycle-low test date (no break of $58,525)"
-  },
-  {
-   "date": "2026-12-25",
-   "label": "Deribit quarterly options expiry (16:00 Taipei / 08:00 UTC; 34.2% of total OI, max pain $75,000)"
-  }
+  {"date": "2026-10-29", "label": "Difficulty adjustment (est. +5.91%); US Q3 GDP advance and September PCE (20:30 Taipei / 12:30 UTC, pending official schedule); ECB rate decision; Coinbase and Strategy earnings (after US close)"},
+  {"date": "2026-10-30", "label": "Deribit monthly options expiry (16:00 Taipei / 08:00 UTC; 34.1% of total OI, max pain $78,000); Bank of Japan rate decision"},
+  {"date": "2026-10-31", "label": "Monthly long-term path review"},
+  {"date": "2026-11-01", "label": "First record date for Strategy's daily preferred dividends"},
+  {"date": "2026-11-03", "label": "US midterm elections"},
+  {"date": "2026-11-06", "label": "US October nonfarm payrolls (21:30 Taipei / 13:30 UTC; first Friday by convention, pending official schedule)"},
+  {"date": "2026-11-10", "label": "US October CPI (BLS, 21:30 Taipei / 13:30 UTC)"},
+  {"date": "2026-11-11", "label": "MSCI publishes the list of affected non-operating companies"},
+  {"date": "2026-11-12", "label": "Next difficulty adjustment (about two weeks out, estimated date); European Banking Authority begins direct supervision of USDC"},
+  {"date": "2026-11-27", "label": "Deribit monthly options expiry (16:00 Taipei / 08:00 UTC; 10.3% of total OI, max pain $81,000)"},
+  {"date": "2026-11-30", "label": "Monthly long-term path review; MSCI non-operating company rule takes effect after the November index review close"},
+  {"date": "2026-12-01", "label": "Sberbank opens crypto trading to all clients (expected)"},
+  {"date": "2026-12-04", "label": "US November nonfarm payrolls (first Friday by convention, pending official schedule)"},
+  {"date": "2026-12-09", "label": "FOMC decision (Dec 8–9; 03:00 Taipei Dec 10 / 19:00 UTC Dec 9)"},
+  {"date": "2026-12-10", "label": "US November CPI (conventional date, pending official schedule)"},
+  {"date": "2026-12-19", "label": "Tidemark cycle-low test date (no break of $58,525)"},
+  {"date": "2026-12-25", "label": "Deribit quarterly options expiry (16:00 Taipei / 08:00 UTC; 34.0% of total OI, max pain $75,000)"}
  ],
  "actions": [
-  {
-   "kind": "do",
-   "head": "No step triggers under the framework today; no action.",
-   "text": "Both nearest action points are far: the 200-day MA at $73,025 below (−9.6%) and the MVRV 0.75 line at $112,590 above (+39.3%)."
-  },
-  {
-   "kind": "dont",
-   "head": "Don't read one day of ETF inflow as spot buyers returning.",
-   "text": "The Oct 26 provisional +$110M offsets only about a sixth of the Oct 22 outflow; the Coinbase premium is still −0.136% and stablecoins are −0.72% over 7 days."
-  },
-  {
-   "kind": "watch",
-   "head": "FOMC at 02:00 Taipei Oct 29 (18:00 UTC Oct 28; press conference 30 min later), GDP and PCE at 20:30 Taipei Oct 29 (12:30 UTC, pending official schedule), monthly options expiry at 16:00 Taipei Oct 30 (08:00 UTC; max pain $78,000).",
-   "text": "Watch whether STH-SOPR gets back above 1 after the event, and whether the 10.95% funding on OKX and Hyperliquid gets flushed."
-  },
-  {
-   "kind": "watch",
-   "head": "Levels: $80–82K is the thickest short-term holder bucket (about 734K BTC, estimate); below, the true market mean $79,468 (−1.7%) and a $241M bid wall at $80,000; above, a $171M ask wall at $81,000 and POC $81,750 (+1.2%).",
-   "text": "Further down is Galaxy's $76,540 invalidation (−5.3%); short-term supply is thin from $76K to $66K; leg-end line $73,605 (−8.9%)."
-  },
-  {
-   "kind": "flip",
-   "head": "5 straight closes below $73,025 → framework hedge cuts 20%.",
-   "text": "Now −9.6% away, streak 0; a return from bull to bear needs 30 straight closes below a falling 200-day MA."
-  }
+  {"kind": "do", "head": "No framework step has fired today; no action.", "text": "Both nearest action points are far: the 200-day MA at $73,066 below (−10.1%), the MVRV 0.75 line at $112,598 above (+38.5%)."},
+  {"kind": "dont", "head": "Don't read STH-SOPR back above 1 as overhead supply being cleared.", "text": "The $84K bucket holds 819K BTC of long-term holder supply (CheckOnChain Oct 28), long-term holders cut 212.5K BTC over 30 days, and the Coinbase premium is still −0.116%."},
+  {"kind": "watch", "head": "Oct 29 20:30 Taipei (12:30 UTC) GDP and PCE (pending official schedule), Coinbase and Strategy earnings after the US close on Oct 29, and the Oct 30 16:00 Taipei (08:00 UTC) monthly options expiry (34.1%, max pain $78,000).", "text": "With volatility at a 1-year low and supply packed within ±5%, watch whether DVOL 37.26 gets pulled up after the expiry."},
+  {"kind": "watch", "head": "Levels: above, the $81,000 ask wall (~$267M), $82,000 as the top of the $80–82K bucket (+0.9%), and the $84K long-term holder bucket (+3.3%); below, the $80,000 bid wall (~$178M) and the true market mean $79,625 (−2.0%).", "text": "Further down: short-term holder cost $75,781 (−6.8%, Oct 22); leg-end line $73,605 (−9.5%)."},
+  {"kind": "flip", "head": "5 straight closes below $73,066 → framework hedge, cut 20%.", "text": "Now −10.1% away, run 0 days; falling back from Bull to Bear requires 30 straight closes below a falling 200-day MA."}
  ],
  "changes": [
-  {
-   "dir": "up",
-   "title": "ETF two-day outflow ends (provisional)",
-   "fig": "Oct 23 −$137.9M → Oct 26 provisional +$110M",
-   "say": "Two sources agree but it is one day; the 7-trading-day total still uses The Block's confirmed +$228M to Oct 23."
-  },
-  {
-   "dir": "up",
-   "title": "Coinbase premium leaves its record-low zone",
-   "fig": "−0.177% → −0.136% (1.3th → 11.0th percentile)",
-   "say": "US spot discount narrowed but is still negative; the refute line of the first follow-up (daily value back above 0) is not reached."
-  },
-  {
-   "dir": "up",
-   "title": "Put skew eases again",
-   "fig": "30-day risk reversal −3.72 → −3.13",
-   "say": "Only 0.13 from the −3 refute line of 2026-10-24-1, deadline Oct 30."
-  },
-  {
-   "dir": "down",
-   "title": "Deribit funding halves",
-   "fig": "8.18% → 4.90%; weighted 10.61% → 10.23%",
-   "say": "The cooling is only on Deribit; OKX and Hyperliquid are still at 10.95%, so leverage overall has not been flushed."
-  },
-  {
-   "dir": "up",
-   "title": "Puell percentile keeps rising",
-   "fig": "59.2 → 64.5 (Oct 25 → Oct 26)",
-   "say": "Hashrate +3.85% w/w lifts issuance; still far from the top zone at 80."
-  }
+  {"dir": "up", "title": "Two straight days of ETF inflows", "fig": "Oct 26 provisional +$110M → confirmed by The Block +$110.3M; Oct 27 provisional +$176M", "say": "The 7-trading-day total rises from +$228M (to Oct 23) to +$333M (to Oct 26); inflows were only in IBIT and FBTC."},
+  {"dir": "down", "title": "Deribit funding halved again", "fig": "4.90% → 2.52%; weighted 10.23% → 10.00%", "say": "Deribit is now below the basis, but OKX and Hyperliquid stay at 10.95%; leverage on the two venues with the most open interest is not cleared."},
+  {"dir": "down", "title": "Exchange supply turns to a 7-day decline", "fig": "+0.48% → −0.13% (Oct 26 → Oct 27)", "say": "Coins went from flowing into exchanges to slight outflows, consistent with losses not spreading; 90-day is still +0.87%, so the evidence light stays off."},
+  {"dir": "down", "title": "Long-term holder 30-day net selling widens", "fig": "−199,687 → −212,480 BTC (bitcoin-data Oct 26 → Oct 27)", "say": "Long-term holder distribution is still accelerating and is the main source of overhead supply; still short of the 10th percentile since Nov 2022 (−335,404)."}
  ],
  "findings": [
-  {
-   "id": "2026-10-27-1",
-   "title": "Price sits on new $80–82K supply; below $76K the book thins",
-   "module": "onchain",
-   "chart": "cohort",
-   "signals": [
-    "combo:cluster:holders",
-    "level:sth-cluster",
-    "level:tmm"
-   ],
-   "confidence": "medium",
-   "lean": "bear",
-   "lean_why": "The thickest new supply is right at price and has started selling at cost while long-term holders distribute; if it fails, thin short-term supply below lets price move fast.",
-   "what": "Question: with price back at $80–82K, will this bucket's new buyers absorb or sell? The $80,801 close sits in the thickest short-term holder bucket, $80–82K (about 734K BTC, estimate, URPD Oct 26), only +1.68% above the true market mean of $79,468 (this level signal has run 6 days); the same day STH-SOPR fell below 1 to 0.9997 (CheckOnChain Oct 27).",
-   "why": "Participants (estimate, per-UTXO; our estimated STH cost $74,518 vs bitcoin-data's $74,865, −0.46%): short-term holders 3.516M BTC at an average cost of $74,562; long-term holders 14.289M BTC at $55,010. Two points in time (Sep 20 → Oct 26): of the 3.622M short-term coins then, 1.084M moved, 404K aged into long-term and 2.135M stayed put; long-term holders moved 589K; 1.382M were newly bought and are still unmoved, most at the $80K bucket (606K), $82K (416K) and $84K (269K). So supply has changed hands into $80–86K and short-term cost rose about $2,700 in 30 days. Model-free fact (price never traded there): trapped supply above $88K fell from 4.054M to 3.830M BTC, a real 225K BTC sold. Behavior check: STH-SOPR fell below 1, yet smoothed realized profit of 5,042 BTC is still 2.48× the 2,034 BTC loss (CheckOnChain Oct 27); LTH 30-day net position −199,687 BTC (bitcoin-data Oct 26) and exchange supply 7d +0.48% show long-term holders distributing, consistent with the shrinking trapped supply; the only buyer signal is the Oct 26 provisional ETF +$110M, while the Coinbase premium is still −0.136%.",
-   "alt": "Part of the 734K BTC at $80–82K comes from the 209K BTC suspected internal transfer on Oct 22 (the model puts those coins back at their original cost and age, but the correction itself is an estimate); per-UTXO data counts exchange wallet consolidation as turnover, overstating it. URPD lags 1 day (Oct 26), and the LTH net position is bitcoin-data's measure, not netted against our estimate. Paper losses do not mean selling.",
-   "history": "The brief has no historical samples of 'price on the thickest new supply + SOPR just below 1'; the last three STH-SOPR loss lows were all near $62K (Jul 13 0.9762, Aug 1 0.9936, Aug 14 0.9946), when the cost bucket was $62–66K; today's thickest bucket has moved up to $80–82K. Too few samples; background only.",
-   "so": "Scenarios (conditional): at a $80,000 close about 1.51M short-term and 5.18M long-term coins would be at a paper loss; at $78,000 short-term rises to 1.81M, at $76,000 to 2.12M; further down to $66,000 short-term only reaches 2.24M, so $76K–66K is thin for short-term supply; it jumps to 2.76M only at $64,000 (the June-low buyers at $62–66K). Logic chain: supply has already rotated into $80–86K, so price is now the new buyers' cost defense; they have started exiting at cost while long-term holders distribute, but the loss depth is still shallow, so 'defense broken' is not yet established. Market stage and exit framework unchanged.",
-   "next": "By Nov 3 (covering the FOMC, monthly expiry and midterms): short-term realized loss above 2,500 BTC would mean this new supply is capitulating and confirm the defense is loosening; a close above $82,000 (top of the $80–82K bucket) would put new buyers back in profit and refute this bearish read.",
+  {"id": "2026-10-28-1", "title": "New buyers held cost and are back in profit; $84K long-term supply is the next hurdle", "module": "onchain", "chart": "cohort",
+   "signals": ["cross:sopr_ge1:on", "level:sth-cluster", "combo:cluster:holders", "level:tmm"], "confidence": "medium",
+   "lean": "bull", "lean_why": "The thickest pile of new supply did not capitulate at its cost edge and is back in profit while ETF money returned, so the support layer holds; long-term holders are still distributing overhead, so this is a hold, not a breakout.",
+   "what": "Question: did the $80–82K new buyers hold, and who sells above? STH-SOPR rose from 0.9997 (Oct 27) to 1.0029 (Oct 28, CheckOnChain); the $81,287 close sits 0.9% below the top of the $80–82K bucket, the thickest short-term holder pile (742.9K BTC, CheckOnChain actual coin age, data date Oct 28); ETFs +$110.3M on Oct 26 (The Block) and provisional +$176M on Oct 27.",
+   "why": "Participants (CheckOnChain Oct 28): short-term holders 3.637M BTC at an average cost of $75,142, long-term holders 16.465M BTC at $49,528. Cost map: true market mean $79,625 (−2.0%) and short-term cost $75,781 (bitcoin-data Oct 22) below; above, the $84K bucket is the thickest long-term supply over price at 819K BTC, then 395K at $90K and 328K at $104K. Two points in time (estimate, Sep 20 → Oct 27): of the 3.623M BTC short-term supply then, 1.107M moved, 411K aged into long-term and 2.104M stayed put; long-term holders moved 601K; new buying since then that has not moved is 1.446M BTC, concentrated at $80K (650K), $82K (416K) and $84K (269K). Fact (model-free): supply above $88K fell from 4.054M to 3.822M BTC, so 233K BTC really sold. Behavior check: short-term holder realized profit 4,866 BTC vs loss 1,975 BTC (ratio 2.46, Oct 28); losses rose only 41.2% over 7 days and did not turn into capitulation; exchange supply 7-day −0.13% (Oct 27). The contradiction: the long-term holder 30-day net position of −212,480 BTC (Oct 27) is still widening and the Coinbase premium is still −0.116%; the only buyers are two ETFs.",
+   "alt": "SOPR 1.0029 is only 0.29% above 1 and a single-day reading; the 7-day comparison is distorted by the suspected 209K BTC internal transfer on Oct 22. A large part of the $84K long-term bucket may be one entity's internal transfer on 2025-11-22 (Glassnode noted on Oct 28 that about 4.3% of supply at $84–85K mostly came from that day), not dispersed sellers waiting to break even. Changes are estimates (estimated STH total is −2.4% off actual, 8.7% misplaced); per-UTXO, not entity-adjusted, so not comparable in size with Glassnode.",
+   "history": "The last three STH-SOPR loss lows (Jul 13 0.9762, Aug 1 0.9936, Aug 14 0.9946) were all near $62K and each was followed by a return above 1; this Oct 27 dip to 0.9997 was shallower than all three and recovered in one day. Only 3 samples, too few; background only.",
+   "so": "Scenario (conditional, CheckOnChain Oct 28): at a close of $80,000 about 1.71M BTC of short-term supply would be underwater, 2.06M at $78,000 and 2.29M at $76,000; from $76K down to $66K it only rises to 2.46M (thin supply), jumping to 2.89M at $64,000. Logic: new buyers did not capitulate at their cost edge and SOPR recovered, so $80–82K is a support layer; long-term holder distribution and the US spot premium have not turned and the $84K long-term supply has not been absorbed, so a 'breakout' does not hold yet. Market stage and exit framework unchanged.",
+   "next": "By Nov 6 (covering the monthly expiry, the midterms and payrolls): a close above $86,000 (clearing the $84K bucket and Glassnode's $84–85K resistance band) would mean the overhead supply was absorbed, refuting '$84K is the hurdle'; long-term holder 30-day net selling widening beyond 250K BTC would confirm that long-term holders are supplying the overhead pressure.",
    "check": [
-    {
-     "path": "onchain.sth_pnl.loss",
-     "op": ">",
-     "value": 2500,
-     "by": "2026-11-03",
-     "means": "confirm",
-     "label": "Short-term realized loss above 2,500 BTC"
-    },
-    {
-     "path": "price.bar.c",
-     "op": ">",
-     "value": 82000,
-     "by": "2026-11-03",
-     "means": "refute",
-     "label": "Close above $82,000"
-    }
-   ]
-  },
-  {
-   "id": "2026-10-27-2",
-   "title": "Short-term buyers take first loss at cost, far shallower than July",
-   "module": "onchain",
-   "chart": "sopr",
-   "signals": [
-    "cross:sopr_ge1:off"
-   ],
-   "confidence": "low",
-   "lean": "neutral",
-   "lean_why": "Falling below cost in a bull market leans bearish, but the depth is only 0.03% and realized profit is still 2.5× loss, so the signals are mixed.",
-   "what": "STH-SOPR fell from 1.0014 (Oct 26) to 0.9997 (Oct 27, CheckOnChain daily), its first dip below 1 since the Aug 14 loss low; the same day smoothed short-term realized profit was 5,042 BTC and loss 2,034 BTC, a ratio of 2.48.",
-   "why": "Breakdown: versus 7 days ago (Oct 20), realized profit +90.1% (2,653 → 5,042) and realized loss +28.5% (1,582 → 2,034); both rose, mostly profit taking. SOPR is a value-weighted daily print while realized P/L is a smoothed coin count; their disagreement suggests the loss-taking is concentrated in the last day or two and has not yet entered the smoothed series. Cross-check: short-term holders in profit 51.63% (Oct 26; 30-day low 49.06%), so about half are under water; net realized P/L on Oct 26 was +$148.9M (CoinMetrics), so the network is still net in profit.",
-   "alt": "0.9997 is just 0.03% below 1 and a single-day print, possibly one intraday selling wave; CheckOnChain lags about a day and the daily series averages intraday loss and profit selling. The Oct 20 baseline for the 7-day comparison is also affected by the swings around the Oct 22 transfer day.",
-   "history": "Last three loss lows: Jul 13 0.9762 (11 days below 1, deeper than Jun 25), Aug 1 0.9936 (6 days, easing), Aug 14 0.9946 (8 days, easing); only 3 samples, background only. Today's depth is shallower than all three.",
-   "so": "The prior read 'profit taking into the drop, not panic selling' is refuted by SOPR dropping below 1 (see follow-ups); but so far this is shallow loss-taking at cost, not capitulation. Market stage and exit framework unchanged.",
-   "next": "By Oct 31: STH-SOPR below 0.99 (deeper than both August lows) would mean heavier losses and refute the 'shallow loss' read; back above 1 would confirm it was brief selling at cost.",
+    {"path": "price.bar.c", "op": ">", "value": 86000, "by": "2026-11-06", "means": "refute", "label": "Close above $86,000"},
+    {"path": "onchain.top_radar.lth-net-position-change-30d-btc.value", "op": "<", "value": -250000, "by": "2026-11-06", "means": "confirm", "label": "Long-term holder 30-day net selling widens beyond 250K BTC"}
+   ]},
+  {"id": "2026-10-28-2", "title": "Volatility and supply are compressed together; a break from the $80K zone can move fast", "module": "deriv", "chart": "vol",
+   "signals": ["combo:vol-squeeze"], "confidence": "medium",
+   "lean": "neutral", "lean_why": "Compression only says a move out of the range may be larger, not which way; there is long-term supply above and thin short-term supply below $76K, so either side can move fast.",
+   "what": "DVOL 37.26 (Oct 28, 1-year percentile 19.2); RV30 25.21% is at the 3rd percentile of the past six months; supply within ±5% of price ($77,223–85,351) is 15.94% of circulating supply (URPD Oct 27), versus 14.91% 7 days ago.",
+   "why": "Breakdown: implied (Deribit DVOL) and realized (Kraken daily RV30) volatility, two different sources, are both low, and DVOL is still 12.2 points above same-source RV30, so options are not pricing volatility below what is realized. Cross-check: supply concentration rose 1.03 points in 7 days and the FOMC-day range was only 1.77%; Glassnode noted on Oct 28 that 1-month realized volatility is about 25% and only about 5% of days since 2015 were calmer (different method, direction only). The Oct 30 monthly expiry holds 34.1% of total OI, and released hedges after expiry are a common source of volatility.",
+   "alt": "Low volatility can persist for a long time (realized volatility reached 18% in summer 2023); our concentration record only starts Oct 1, 27 days, and no threshold is applied. The RV30 percentile covers only six months. DVOL fell only 0.43 in a day, not a sharp drop.",
+   "history": "The brief has no historical sample for this combination of low DVOL, low RV30 and concentrated supply; our concentration record is only 27 days, too few, background only.",
+   "so": "What changes is the likely size of the next move, not its direction: if price leaves the $80–86K zone, the side with thin supply can move fast (short-term supply is thin from $76K down to $66K). Market stage, exit framework and other reads unchanged.",
+   "next": "By Nov 6: DVOL above 42 would mean the compression has ended and volatility is expanding, confirming this read; if price and DVOL both stay put, compression continues and we reassess next issue.",
    "check": [
-    {
-     "path": "chips.viz.sopr.value",
-     "op": "<",
-     "value": 0.99,
-     "by": "2026-10-31",
-     "means": "refute",
-     "label": "STH-SOPR below 0.99"
-    },
-    {
-     "path": "chips.viz.sopr.value",
-     "op": ">",
-     "value": 1,
-     "by": "2026-10-31",
-     "means": "confirm",
-     "label": "STH-SOPR back above 1"
-    }
-   ]
-  }
+    {"path": "deriv.dvol.value", "op": ">", "value": 42, "by": "2026-11-06", "means": "confirm", "label": "DVOL above 42"}
+   ]}
  ],
  "followups": [
-  {
-   "id": "2026-10-26-1",
-   "title": "Leverage refilled in a day while the spot premium fell to a record-low zone",
-   "since": "2026-10-26",
-   "status": "open",
-   "say": "Coinbase premium −0.136% is still below 0 and the $80,801 close is above $78,000, so neither condition is met; Deribit funding fell to 4.90%, but OKX and Hyperliquid are still at 10.95%; deadline Oct 30.",
+  {"id": "2026-10-27-1", "title": "Price sits on new $80–82K supply; losing it thins support below $76K", "since": "2026-10-27", "status": "open",
+   "say": "Short-term holder realized loss 1,975 BTC (Oct 28) is below 2,500 and the $81,287 close is below $82,000, so neither condition is met; SOPR is back above 1, see 2026-10-28-1; deadline Nov 3.",
    "check": [
-    {
-     "path": "flows.cb_premium.pct",
-     "op": ">",
-     "value": 0,
-     "by": "2026-10-30",
-     "means": "refute",
-     "label": "Coinbase premium daily value back above 0"
-    },
-    {
-     "path": "price.bar.c",
-     "op": "<",
-     "value": 78000,
-     "by": "2026-10-30",
-     "means": "confirm",
-     "label": "Close below $78,000"
-    }
-   ]
-  },
-  {
-   "id": "2026-10-22-1",
-   "title": "Short-term buyers took profits into the drop, not panic selling",
-   "since": "2026-10-22",
-   "status": "refuted",
-   "say": "STH-SOPR 0.9997 fell below 1 (refute condition met), and realized profit of 5,042 BTC did not fall below 4,000: 'just profit taking' is refuted, closed; continued in 2026-10-27-2."
-  },
-  {
-   "id": "2026-10-23-1",
-   "title": "Profit taking spread to all holders; supply above $84K turned to loss",
-   "since": "2026-10-23",
-   "status": "open",
-   "say": "Close $80,801 is above $79,375 (+1.8%), with the intraday low of $79,379 just $4 away; short-term holders in profit 51.63% (Oct 26) is still far below the 70% refute line: neither condition met.",
+    {"path": "onchain.sth_pnl.loss", "op": ">", "value": 2500, "by": "2026-11-03", "means": "confirm", "label": "Short-term holder realized loss above 2,500 BTC"},
+    {"path": "price.bar.c", "op": ">", "value": 82000, "by": "2026-11-03", "means": "refute", "label": "Close above $82,000"}
+   ]},
+  {"id": "2026-10-27-2", "title": "Short-term buyers took their first losses at the cost edge, far shallower than July", "since": "2026-10-27", "status": "confirmed",
+   "say": "STH-SOPR returned to 1.0029 within a day (the confirm condition is met) and never broke 0.99: this was only brief selling at the cost edge. Closed."},
+  {"id": "2026-10-26-1", "title": "Leverage rebuilt in a day while the spot premium fell to record lows", "since": "2026-10-26", "status": "open",
+   "say": "The Coinbase premium is still below 0 at −0.116% and the $81,287 close is above $78,000, so neither condition is met; Deribit funding fell further to 2.52%, OKX and Hyperliquid still 10.95%; deadline Oct 30.",
    "check": [
-    {
-     "path": "price.bar.c",
-     "op": "<",
-     "value": 79375,
-     "by": "2026-10-30",
-     "means": "confirm",
-     "label": "Close below the true market mean of $79,375"
-    },
-    {
-     "path": "chips.flow.sth_in_profit_pct.value",
-     "op": ">",
-     "value": 70,
-     "by": "2026-10-30",
-     "means": "refute",
-     "label": "Short-term holders in profit back above 70%"
-    }
-   ]
-  },
-  {
-   "id": "2026-10-23-2",
-   "title": "Three days of ETF inflows erased in one day; US spot buying still absent",
-   "since": "2026-10-23",
-   "status": "open",
-   "say": "Coinbase premium 7-day average −0.134% and stablecoins 7d −0.72%, so neither refute condition is met; the Oct 26 provisional ETF +$110M is the first sign the other way, but only one day.",
+    {"path": "flows.cb_premium.pct", "op": ">", "value": 0, "by": "2026-10-30", "means": "refute", "label": "Coinbase premium daily value back above 0"},
+    {"path": "price.bar.c", "op": "<", "value": 78000, "by": "2026-10-30", "means": "confirm", "label": "Close below $78,000"}
+   ]},
+  {"id": "2026-10-23-1", "title": "Profit taking spread to all holders; supply above $84K turned to a loss", "since": "2026-10-23", "status": "open",
+   "say": "The $81,287 close is above $79,375 (+2.4%) and the share of short-term holders in profit, 58.27% (Oct 27), recovered from 51.63% but is below 70%: neither condition is met; deadline Oct 30.",
    "check": [
-    {
-     "path": "flows.cb_premium.avg7",
-     "op": ">",
-     "value": 0,
-     "by": "2026-10-30",
-     "means": "refute",
-     "label": "Coinbase premium 7-day average back above 0"
-    },
-    {
-     "path": "flows.stables.chg7_pct",
-     "op": ">",
-     "value": 0,
-     "by": "2026-10-30",
-     "means": "refute",
-     "label": "Stablecoin supply 7-day change turns positive"
-    }
-   ]
-  },
-  {
-   "id": "2026-10-24-1",
-   "title": "Longs flushed; options shifted to paying up for downside protection",
-   "since": "2026-10-24",
-   "status": "open",
-   "say": "30-day risk reversal −3.13 (prior −3.72), just 0.13 from the −3 refute line; protection has eased two days running; deadline Oct 30.",
+    {"path": "price.bar.c", "op": "<", "value": 79375, "by": "2026-10-30", "means": "confirm", "label": "Close below the true market mean $79,375"},
+    {"path": "chips.flow.sth_in_profit_pct.value", "op": ">", "value": 70, "by": "2026-10-30", "means": "refute", "label": "Short-term holders in profit back above 70%"}
+   ]},
+  {"id": "2026-10-23-2", "title": "One day erased three days of ETF inflows; US spot demand still absent", "since": "2026-10-23", "status": "open",
+   "say": "Coinbase premium 7-day average −0.139% and stablecoins 7-day −0.64%, so neither refute condition is met; ETFs have now had two days of inflows (Oct 27 provisional), but only in IBIT and FBTC; deadline Oct 30.",
    "check": [
-    {
-     "path": "deriv.rr25.rr",
-     "op": "<",
-     "value": -6,
-     "by": "2026-10-30",
-     "means": "confirm",
-     "label": "30-day risk reversal widens below −6"
-    },
-    {
-     "path": "deriv.rr25.rr",
-     "op": ">",
-     "value": -3,
-     "by": "2026-10-30",
-     "means": "refute",
-     "label": "30-day risk reversal back above −3"
-    }
-   ]
-  }
+    {"path": "flows.cb_premium.avg7", "op": ">", "value": 0, "by": "2026-10-30", "means": "refute", "label": "Coinbase premium 7-day average back above 0"},
+    {"path": "flows.stables.chg7_pct", "op": ">", "value": 0, "by": "2026-10-30", "means": "refute", "label": "Stablecoin supply 7-day change turns positive"}
+   ]},
+  {"id": "2026-10-24-1", "title": "Longs flushed out; options now pay up for downside protection", "since": "2026-10-24", "status": "open",
+   "say": "The 30-day risk reversal is −3.04, just 0.04 from the −3 refute line; downside protection has eased for three days but has not crossed; deadline Oct 30.",
+   "check": [
+    {"path": "deriv.rr25.rr", "op": "<", "value": -6, "by": "2026-10-30", "means": "confirm", "label": "30-day risk reversal widens below −6"},
+    {"path": "deriv.rr25.rr", "op": ">", "value": -3, "by": "2026-10-30", "means": "refute", "label": "30-day risk reversal back above −3"}
+   ]}
  ],
  "research": {
-  "summary": "Glassnode has no new issue after the Oct 26 Market Pulse (this week's The Week On-chain is not out yet), so we keep the last 7 days of issues; 'leverage not flushed, spot buyers gone' still matches today's negative Coinbase premium and 10.95% funding on OKX and Hyperliquid.",
+  "summary": "New Glassnode Week On-chain (Oct 28): thin demand but light selling around $80K, and $84–85K is a band that has turned price back four times this year, consistent with our read that $80–82K held and $84K is the overhead hurdle.",
   "items": [
-   {
-    "source": "Glassnode",
-    "title": "BTC Market Pulse: Week 44",
-    "date": "2026-10-26",
-    "url": "https://research.glassnode.com/btc-market-pulse-week-44-2026/",
-    "access": "full",
-    "points": "After a failed push to 85K, BTC is back near 80K; futures OI $37.5B (+2.7%), long funding payments above the high band; perp CVD −$288M, spot CVD −$80.5M; 25Δ skew 10.4% (prior 8.9%); weekly ETF net inflow $296.8M but front-loaded; ETF MVRV 1.4, below its low band; supply in profit 67.3%. Conclusion: weak and defensive, not a structural break.",
-    "meaning": "'Leverage not flushed, spot exiting' matches us: OKX and Hyperliquid funding still 10.95% and Coinbase premium −0.136% today; its skew uses a different tenor, and our 30-day risk reversal narrowed to −3.13 today, so we don't compare them and keep our own series."
-   },
-   {
-    "source": "Glassnode × Fasanara Digital",
-    "title": "Fasanara Digital + Glassnode: Q4 2026 Institutional Market Perspectives",
-    "date": "2026-10-23",
-    "url": "https://research.glassnode.com/fasanara-digital-glassnode-q4-2026-institutional-market-perspectives/",
-    "access": "full",
-    "points": "After the August short squeeze BTC reclaimed its three main on-chain cost bases, which the report treats as a hallmark of a healthy bull market; it argues the data since August is more than short covering. No current key levels are given.",
-    "meaning": "Consistent with our bull stage (day 19); but the close is only +1.68% above the true market mean, so the margin 'above cost' is thin."
-   },
-   {
-    "source": "Glassnode",
-    "title": "The Week On-chain: Swept and Refilled",
-    "date": "2026-10-21",
-    "url": "https://research.glassnode.com/the-week-onchain-week-42-2026/",
-    "access": "full",
-    "points": "Oct 15 swept ~80K and recovered; US spot ETF cost basis slightly above 80K, treasury companies ~80.2K, true market mean ~77.6K; main ask block 86.5–87.5K; below 80K the average ETF and treasury holder is under water.",
-    "meaning": "The Oct 27 close of $80,801 is still near its estimated ETF/treasury cost line, in the same zone as our thickest $80–82K short-term bucket; its true market mean of $77.6K differs in method from our bitcoin-data reading of $79,468, and we keep our own series."
-   },
-   {
-    "source": "Glassnode",
-    "title": "Quantifying Support and Resistance: Proximity-Weighted CBD",
-    "date": "2026-10-20",
-    "url": "https://research.glassnode.com/quantifying-support-and-resistance-proximity-weighted-cbd/",
-    "access": "full",
-    "points": "Weights the cost-basis distribution by distance from spot; when PSI (weighted share of supply below spot) rises above 50%, support dominates; in Apr–May 2026 an 83.6K–85.4K resistance band formed before price fell to the low 60Ks; related October posts treat 85K–87.5K as resistance and ~80K as support.",
-    "meaning": "Methodology research; compare with our ±5% supply concentration of 14.87% and the supply pile at $80–86K; we don't apply its thresholds."
-   },
-   {
-    "source": "Fidelity Digital Assets",
-    "title": "Perpetual Preferred Stock: The Newest Demand Catalyst for Bitcoin",
-    "date": "2026-10-20",
-    "url": "https://www.fidelitydigitalassets.com/research-and-insights/perpetual-preferred-stock-newest-demand-catalyst-bitcoin",
-    "access": "full",
-    "points": "Perpetual preferreds have funded 135,979 BTC of corporate buying since 2025-07 (to Oct 5, over 0.5% of supply), more than 95,000 BTC in March–May alone with over $7B raised; it works only while BTC's gains exceed the dividend cost.",
-    "meaning": "Strategy buying back STRC instead of bitcoin last week confirms this demand channel is slowing; consistent with the spot absence in the site's Coinbase premium, and not used for the cycle call."
-   }
+   {"source": "Glassnode", "title": "The Week On-chain: Quiet Under $85K", "date": "2026-10-28", "url": "https://research.glassnode.com/the-week-onchain-week-43-2026/", "access": "full",
+    "points": "$84–85K has turned price back four times this year (about 4.3% of supply, mostly one entity's internal transfer on 2025-11-22); US spot ETF cost basis $81.5K, true market mean $77.9K, short-term holder cost $75.8K; $78–79K bids about $42M; about 4M BTC of long-term supply has a cost of $85–118K; the $3.7B realized profit on Oct 22 was one entity moving coins internally; entity-adjusted profit taking about $260M a day, half the pace of the September-high week; 1-month realized volatility about 25%. Conclusion: range-bound, thin demand but light selling; a daily close above $85K is the first step.",
+    "meaning": "Same direction as ours: support at $80–82K, long-term supply overhead from $84K, and Oct 22 was an internal transfer (already corrected on our side). Its true market mean $77.9K and STH cost $75.8K use a different method from our bitcoin-data readings of $79,625 / $75,781; we keep our own series, and its entity-adjusted figures are not compared in size with our per-UTXO data."},
+   {"source": "Glassnode", "title": "BTC Market Pulse: Week 44", "date": "2026-10-26", "url": "https://research.glassnode.com/btc-market-pulse-week-44-2026/", "access": "full",
+    "points": "Back near $80K after failing at $85K; futures open interest $37.5B (+2.7%), long funding payments above the range top; spot CVD −$80.5M; weekly ETF net inflow $296.8M but front-loaded; supply in profit 67.3%. Conclusion: weak and defensive, but not structurally broken.",
+    "meaning": "'Leverage not cleared' still holds today: OKX and Hyperliquid funding at 10.95%; but ETFs have had two days of inflows, so the spot side is slightly better than when it was published."},
+   {"source": "Glassnode × Fasanara Digital", "title": "Fasanara Digital + Glassnode: Q4 2026 Institutional Market Perspectives", "date": "2026-10-23", "url": "https://research.glassnode.com/fasanara-digital-glassnode-q4-2026-institutional-market-perspectives/", "access": "full",
+    "points": "After the August short squeeze BTC reclaimed the three main on-chain cost bases, which the report sees as a feature of a healthy bull market; it argues the data since August is more than short covering. No current key levels given.",
+    "meaning": "Consistent with our market stage (Bull day 20); the close is +2.09% above the true market mean, still a thin margin."},
+   {"source": "Bitwise", "title": "2027 Bitcoin Long-Term Capital Market Assumptions", "date": "2026-10-28", "url": "https://www.theblock.co/news/markets/2026-10-28-bitwise-raises-bitcoin-price-target-to-1-6-million-by-2036-projects-34-annualized-returns-432010", "access": "title_only",
+    "points": "Via The Block: 2036 base case $1.6M (34.3% a year), bear $130,686, bull $3.67M; this cycle's drawdown from the Oct 2025 high was about 53%, shallower than the past 77–86%; expected average volatility 27.8%.",
+    "meaning": "Original not read, so not used as evidence; a ten-year assumption unrelated to our cycle call."}
   ]
  }
 }
