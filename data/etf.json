@@ -300,6 +300,12 @@
    "d": "2026-10-26",
    "musd": 110.3,
    "partial": false
+  },
+  {
+   "d": "2026-10-27",
+   "musd": 176.0,
+   "partial": true,
+   "src": "暫定：Farside（FinanceFeeds 轉述）1.76 億；SoSoValue（Bloomingbit 轉述）1.76 億"
   }
  ],
  "source": "The Block",
