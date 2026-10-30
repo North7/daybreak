@@ -300,6 +300,12 @@
    "d": "2026-10-27",
    "musd": 176.0,
    "partial": false
+  },
+  {
+   "d": "2026-10-28",
+   "musd": 137.3,
+   "partial": true,
+   "src": "暫定：Farside（經 Bloomingbit）137.3；SoSoValue（經 TokenPost）137.33"
   }
  ],
  "source": "The Block",
