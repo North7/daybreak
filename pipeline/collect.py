@@ -675,6 +675,16 @@ try:
         MV['ratio'] = [[_dn(t), round(v_, 4)] for t, v_ in _thin(MFS['sth-lth-ratio'], 2)]
     if MFS.get('percent-sth-in-profit'):
         MV['profit'] = [[_dn(t), round(v_, 1)] for t, v_ in _thin(MFS['percent-sth-in-profit'], 2)]
+        # 2026-10-31 使用者要求：獲利比例圖上方配 BTC 週 K 對照價格。Kraken 週線（週四 00:00 UTC 起算，2013 年起）；
+        #   最後一根含今天未收盤的部分，改用已收盤的日線（bars）重算到 LAST。失敗只少 K 線，獲利比例照畫
+        try:
+            kw_ = get('https://api.kraken.com/0/public/OHLC?pair=XBTUSD&interval=10080')['result']
+            kw_ = next(v_ for k_, v_ in kw_.items() if k_ != 'last'); w0 = MV['profit'][0][0] - 7
+            KW = [[_dn(ymd(int(r_[0])))] + [float(x_) for x_ in r_[1:5]] for r_ in kw_ if ymd(int(r_[0])) <= LAST and _dn(ymd(int(r_[0]))) >= w0]
+            bb_ = [b_ for b_ in bars if _dn(b_['d']) >= KW[-1][0]]
+            if bb_: KW[-1] = [KW[-1][0], bb_[0]['o'], max(b_['h'] for b_ in bb_), min(b_['l'] for b_ in bb_), bb_[-1]['c']]
+            MV['kw'] = [[r_[0]] + [round(x_) for x_ in r_[1:]] for r_ in KW]
+        except Exception as e: errors.append(f'kraken 週線: {e}')
     _tm = dict(MFS.get('true-market-mean') or []); _sth = SER.get('sth-realized-price', {}); _px = {b_['d']: b_['c'] for b_ in bars}
     if _tm and _sth:
         d0 = (dt.date.fromisoformat(LAST) - dt.timedelta(days=730)).isoformat()

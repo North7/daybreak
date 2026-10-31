@@ -1401,6 +1401,52 @@
     hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
   }
 
+  /* 短期持有者獲利比例 ＋ BTC 週 K（2026-10-31 使用者要求：對照價格）：上下兩格共用時間軸與十字線，不疊成雙 y 軸。
+     週 K 是 Kraken 週線（週四起算）；沒有 kw 時退回只畫獲利比例 */
+  function drawProfitK(el) {
+    var v = D.chips.viz || {}, P = (v.profit || []).filter(function (p) { return p[1] != null; }), K = v.kw || [];
+    if (P.length < 2) { el.innerHTML = _t('<p class="note">本日未取得資料。</p>'); return; }
+    var W = Math.max(280, el.clientWidth), sm = W < 520, ML = 8, MR = 58, MT = 16, hk = K.length ? (sm ? 120 : 150) : 0, gap = K.length ? 28 : 0, hp = sm ? 110 : 130, MB = 24, Ht = MT + hk + gap + hp + MB, pw = W - ML - MR;
+    var x0 = Math.min(P[0][0], K.length ? K[0][0] : Infinity), x1 = Math.max(P[P.length - 1][0], K.length ? K[K.length - 1][0] + 6 : -Infinity);
+    var X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; }, s = '', yp0 = MT + hk + gap;
+    var Yp = function (q) { return yp0 + (1 - q / 100) * hp; };
+    var tx = function (x, y, t, a) { return '<text class="ax" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + esc(t) + '</text>'; };
+    if (K.length) {
+      var lo = Math.log10(Math.min.apply(null, K.map(function (k) { return k[3]; }))), hi = Math.log10(Math.max.apply(null, K.map(function (k) { return k[2]; }))), pd = (hi - lo) * 0.05; lo -= pd; hi += pd;
+      var Yk = function (q) { return MT + (1 - (Math.log10(q) - lo) / (hi - lo)) * hk; }, bw = Math.max(1, (X(7) - X(0)) * 0.62);
+      [1e4, 2e4, 3e4, 5e4, 8e4, 12e4, 2e5].forEach(function (t) { var l = Math.log10(t); if (l < lo || l > hi) return; var y = Yk(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, fmt.k(t)); });
+      K.forEach(function (k) {
+        var cx = X(k[0] + 3.5), up = k[4] >= k[1], col = up ? 'var(--up)' : 'var(--down)', yo = Yk(k[1]), yc = Yk(k[4]);
+        s += '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + Yk(k[2]).toFixed(1) + '" y2="' + Yk(k[3]).toFixed(1) + '" stroke="' + col + '" stroke-width="1"/><rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(yo, yc).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, Math.abs(yo - yc)).toFixed(1) + '" fill="' + col + '"/>';
+      });
+      s += tx(ML, MT - 5, _T('BTC 週 K（對數刻度）', 'BTC weekly candles (log scale)'));
+    }
+    [0, 50, 100].forEach(function (q) { var y = Yp(q); s += '<line class="' + (q ? 'gl' : 'base') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, q + '%'); });
+    s += tx(ML, yp0 - 9, _T('短期持有者獲利比例', 'STH supply in profit'));
+    var pts = P.map(function (p) { return X(p[0]).toFixed(1) + ',' + Yp(p[1]).toFixed(1); }), line = 'M' + pts.join('L');
+    s += '<defs><linearGradient id="gpk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--s4)" stop-opacity=".28"/><stop offset="1" stop-color="var(--s4)" stop-opacity="0"/></linearGradient></defs>' +
+      '<path d="' + line + 'L' + X(P[P.length - 1][0]).toFixed(1) + ',' + Yp(0).toFixed(1) + 'L' + X(P[0][0]).toFixed(1) + ',' + Yp(0).toFixed(1) + 'Z" fill="url(#gpk)"/><path class="ln" d="' + line + '" stroke="var(--s4)"/>';
+    var lp = P[P.length - 1]; s += '<circle cx="' + X(lp[0]).toFixed(1) + '" cy="' + Yp(lp[1]).toFixed(1) + '" r="4" fill="var(--s4)" stroke="var(--deck)" stroke-width="2"/>';
+    // 年份刻度與異動標記（貫穿上下兩格）
+    for (var y = new Date(x0 * 864e5).getUTCFullYear() + 1; y <= new Date(x1 * 864e5).getUTCFullYear(); y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if (xx > ML + 16 && xx < ML + pw - 16) s += tx(xx, Ht - 6, String(y), 'middle'); }
+    sigV(el).forEach(function (g) { var xx = X(g.x); if (xx < ML || xx > ML + pw) return; s += '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="' + MT + '" y2="' + (yp0 + hp) + '" stroke="var(--ink-3)" stroke-dasharray="2 4" stroke-width="1"/>' + tx(xx > ML + pw - 70 ? xx - 5 : xx + 5, yp0 + hp - 6, g.label, xx > ML + pw - 70 ? 'end' : ''); });
+    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (yp0 + hp) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (yp0 + hp - MT) + '"/>';
+    el.innerHTML = svgEl(W, Ht, s, _T('BTC 週 K 與短期持有者獲利比例', 'BTC weekly candles and STH supply in profit'));
+    animateLines(el);
+    var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
+    function move(ev) {
+      var r = svg.getBoundingClientRect(), xv = x0 + ((ev.clientX - r.left) * W / r.width - ML) / pw * (x1 - x0), p = P[bisect(P, xv)], k = null;
+      for (var i = K.length - 1; i >= 0; i--) if (K[i][0] <= p[0]) { k = p[0] - K[i][0] < 7 ? K[i] : null; break; }
+      xh.setAttribute('x1', X(p[0])); xh.setAttribute('x2', X(p[0])); xh.setAttribute('visibility', 'visible');
+      dots.innerHTML = '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Yp(p[1]).toFixed(1) + '" r="4" fill="var(--s4)" stroke="var(--deck)" stroke-width="2"/>';
+      var kc = k ? (k[4] >= k[1] ? 'var(--up)' : 'var(--down)') : '';
+      showTip(ev.clientX, ev.clientY, '<div class="t">' + fmt.date(p[0]) + '</div><div class="r"><i style="background:var(--s4)"></i><span>' + _T('獲利比例', 'In profit') + '</span><b>' + p[1].toFixed(1) + '%</b></div>' +
+        (k ? '<div class="r"><i style="background:' + kc + '"></i><span>' + _T('週收（' + fmt.md(fmt.date(k[0]).replace(/\//g, '-')) + ' 起）', 'Week from ' + fmt.md(fmt.date(k[0]).replace(/\//g, '-')) + ', close') + '</span><b>' + fmt.usd(k[4]) + '</b></div><div class="r"><i></i><span>' + _T('開／高／低', 'O / H / L') + '</span><b>' + fmt.k(k[1]) + ' / ' + fmt.k(k[2]) + ' / ' + fmt.k(k[3]) + '</b></div>' : ''));
+    }
+    hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
+    hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
+  }
+
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};
     var rows = [
@@ -1426,7 +1472,7 @@
       el.innerHTML = ladderHtml(rows, { dense: true }); bindLadder(el, rows);
     }
     mount($('#c-cost'), function (el) { var r = v.cost || []; lineChart(el, { h: 220, series: [{ name: _t('短期持有者成本'), data: r.map(function (x) { return [x[0], x[2]]; }), color: 'var(--s2)' }, { name: _t('真實市場均價'), data: r.map(function (x) { return [x[0], x[3]]; }), color: 'var(--s3)' }], refs: [{ y: c, color: 'var(--ink-3)', label: _t('收盤 ') + fmt.k(c), below: true }], tipFmt: fmt.usd, aria: _t('成本線') }); });
-    mount($('#c-profit'), function (el) { lineChart(el, { h: 170, series: [{ name: _t('獲利比例'), data: v.profit || [], color: 'var(--s4)', area: true }], y0: 0, y1: 100, yFmt: function (x) { return x + '%'; }, tipFmt: function (x) { return x.toFixed(1) + '%'; }, aria: _t('短期持有者獲利比例') }); });
+    mount($('#c-profit'), drawProfitK);
   };
 
   /* 掛單簿摘要（2026-10-12 由獨立版面縮成衍生品版的一張卡）：快照在 UTC 00:05、掛單隨時可撤，只留買賣比與最大的牆 */
