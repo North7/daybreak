@@ -2,11 +2,6 @@
  "_about": "美國現貨 BTC ETF 每日淨流量（百萬美元，全部現貨 ETF 合計）。資料管線每天從 The Block 自動更新，與 Farside 同口徑；partial=true 表示當天尚未完整回報。",
  "rows": [
   {
-   "d": "2026-08-05",
-   "musd": 244.4,
-   "partial": false
-  },
-  {
    "d": "2026-08-06",
    "musd": 128.5,
    "partial": false
@@ -303,13 +298,12 @@
   },
   {
    "d": "2026-10-29",
-   "musd": 17.0,
-   "partial": true,
-   "src": "暫定：Farside（經 CoinDesk）17.0；SoSoValue（經 TokenPost）17.07"
+   "musd": 17.2,
+   "partial": false
   }
  ],
  "source": "The Block",
  "source_url": "https://www.theblock.co/data/etfs/bitcoin-etf/spot-bitcoin-etf-flows",
- "updated_utc": "2026-10-31T00:06:44+00:00",
- "last_complete": "2026-10-28"
+ "updated_utc": "2026-10-31T18:04:14+00:00",
+ "last_complete": "2026-10-29"
 }
