@@ -300,6 +300,12 @@
    "d": "2026-10-29",
    "musd": 17.2,
    "partial": false
+  },
+  {
+   "d": "2026-10-30",
+   "musd": -643.2,
+   "partial": true,
+   "src": "暫定：Farside（經 24/7 Wall St.）−643.2；SoSoValue（經 Bitcoin.com News）−643.33"
   }
  ],
  "source": "The Block",
