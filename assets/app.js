@@ -765,6 +765,9 @@
       'liq': { h: h('每一格是某個小時、某個價位推算還沒被清算的槓桿倉位量，越亮越多；疊的是 OKX 小時 K 線，虛線是最後收盤。收盤下方是多單的清算價、上方是空單的。', 'Each cell is the estimated leveraged position size still awaiting liquidation at that hour and price; brighter means more. Hourly OKX candles on top, the dashed line is the last close. Long liquidation prices sit below the close, shorts above.',
           '亮帶＝槓桿倉位堆積的價位。價格走到那裡會觸發強制平倉：多單強平是市價賣、空單強平是市價買，常讓行情在那一段走得更快；價格走過之後那一帶會變暗（被清掉）。', 'Bright bands are where leverage is stacked. Price reaching them triggers forced closes: longs are market-sold, shorts market-bought, which often speeds up the move through that zone; once price passes, the band goes dark (cleared).',
           '推算：只有 OKX，槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；清算量多不代表價格會往那裡走。', 'An estimate: OKX only, with an assumed leverage mix that moves the bands; a daily snapshot, not real time; more liquidations on one side does not mean price will go there.') },
+      'sec': { h: h('上格是 BTC 價格，下格是賣方衰竭常數（都是對數刻度）；紅底是極端區（低於 0.13），紅圈是每次跌破後 90 天內的最低點。', 'Top: BTC price; bottom: the seller exhaustion constant (both log scale). The red band is the extreme zone (below 0.13); red circles mark the lowest point within 90 days of each break.',
+          '常數很低＝價格很平靜、同時很多人在虧損，想賣的人大多已經賣了，過去多出現在熊市底部或大跌後的整理期。跌破之後再出現、但沒有更低的低點，有人當成第二個訊號點。', 'A very low reading means calm prices while many holders are underwater, so most would-be sellers have sold; historically it shows up near bear-market bottoms or in post-crash consolidations. A later low that does not undercut the first is read by some as a second signal.',
+          '不是精準的底：2018/11 跌破後價格又先跌了 50%；也不只出現在週期底部（2023/8 在牛市中段）。刻度和 Glassnode 版不同，0.01 的門檻不能套。', 'Not a precise bottom: after the Nov 2018 break price fell another 50% first; nor only at cycle bottoms (Aug 2023 was mid-bull). The scale differs from Glassnode\'s, so the 0.01 line does not apply.') },
       'lthc': { h: h('BTC 價格（對數刻度），線的顏色是長期持有者（持有 ≥155 天）過去 30 天的淨增減：紅＝淨減、灰＝持平、藍＝淨增，±40 萬顆最深。', 'BTC price on a log scale, coloured by long-term holders\' (held 155+ days) net change over 30 days: red = net cut, grey = flat, blue = net add, deepest at ±400K BTC.',
           '高價區出現紅色＝老手趁高出貨（2024/3、2024 年底、2025/9–11 都是）；下跌後轉藍＝老手不賣、籌碼沉澱。價格在漲、線卻是紅的，代表上漲一路有人供貨。', 'Red at high prices means veterans selling into strength (as in Mar 2024, late 2024 and Sep–Nov 2025); turning blue after a drop means veterans are holding and supply is settling. Price rising on a red line means the rally is being met with supply.',
           '藍色不等於有人在買：幣放滿 155 天就自動算成長期持有者。這是依幣齡分組，不排除交易所；Glassnode 的吸籌趨勢評分以實體計，是不同指標。', 'Blue is not buying: coins become long-term automatically at 155 days. Grouped by coin age with exchanges included; Glassnode\'s Accumulation Trend Score is entity-based and a different metric.') },
@@ -1526,6 +1529,79 @@
     hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
   }
 
+  /* 賣方衰竭常數（2026-11-02 使用者要求，Murphy〈卖方衰竭指数〉；Checkmate 設計，資料取自 CheckOnChain）：獲利供給比例 × 30 天價格波動。
+     刻度和 Glassnode 版不同，極端區用本身的歷史分布（低於 0.13 約是 2011 年起最低 1% 的日子）。上下兩格共用時間軸，不疊成雙 y 軸。只作讀值 */
+  function secYm(s) { return s.slice(0, 7).replace('-', '/'); }
+  function secSay() {
+    var x = D.onchain.sec, it = [], H = x.hits || [], last = H[H.length - 1], rl = x.recent_low;
+    var done = H.filter(function (h) { return h.done; }), up = done.filter(function (h) { return h.r365 > 0; }), deep = done.filter(function (h) { return h.dd365 <= -10; });
+    var days = last ? dnOf(x.date) - dnOf(last.date) : null, ymd = function (s) { return s.replace(/-/g, '/'); };
+    it.push([_T('賣方衰竭常數', 'Seller exhaustion constant'), fmt.n(x.value, 3),
+      _T('2011 年起第 ' + fmt.n(x.pct, 0) + ' 百分位（越低＝價格越平靜、虧損的人越多）；低於 ' + x.th + ' 的日子只佔 ' + fmt.n(x.th_share, 1) + '%。' + (x.value < x.th ? '現在就在極端區內。' : last ? '上次跌破是 ' + ymd(last.date) + '（' + days + ' 天前），之後最低 ' + fmt.n(last.low, 3) + '（' + ymd(last.low_date) + '，價格 ' + fmt.usd(last.low_price) + '）。' : ''),
+        fmt.n(x.pct, 0) + 'th percentile since 2011 (lower = calmer price and more holders at a loss); only ' + fmt.n(x.th_share, 1) + '% of days were below ' + x.th + '. ' + (x.value < x.th ? 'It is inside the extreme zone now.' : last ? 'Last break: ' + ymd(last.date) + ' (' + days + ' days ago), bottoming at ' + fmt.n(last.low, 3) + ' (' + ymd(last.low_date) + ', price ' + fmt.usd(last.low_price) + ').' : '')), 'neu']);
+    if (rl && last && rl.date > last.low_date) {
+      var now = rl.date === x.date, hl = rl.value > last.low, ph = rl.price > last.low_price;
+      it.push([_T('近 30 天低點', 'Low of the past 30 days'), fmt.n(rl.value, 3) + ' · ' + fmt.md(rl.date),
+        now ? _T('近 30 天最低就是最新一天，還在往下，低點還沒出現。', 'The 30-day low is the latest day; it is still falling, so no low has formed yet.') :
+        _T('比 ' + ymd(last.low_date) + ' 的 ' + fmt.n(last.low, 3) + (hl ? ' 高' : ' 更低') + '，當天價格 ' + fmt.usd(rl.price) + (ph ? '，也比當時的 ' + fmt.usd(last.low_price) + ' 高' : '，比當時的 ' + fmt.usd(last.low_price) + ' 低') + '。' + (rl.value < x.th ? '這次也進了極端區。' : '這次沒有回到 ' + x.th + ' 以下。') + (hl ? '跌破之後再出現、但沒有更低的低點，有人當成第二個訊號點；這只是形狀上的比對。' : ''),
+          (hl ? 'Higher' : 'Lower') + ' than ' + fmt.n(last.low, 3) + ' on ' + ymd(last.low_date) + '; price that day was ' + fmt.usd(rl.price) + (ph ? ', also above the ' + fmt.usd(last.low_price) + ' of then' : ', below the ' + fmt.usd(last.low_price) + ' of then') + '. ' + (rl.value < x.th ? 'It re-entered the extreme zone.' : 'It did not return below ' + x.th + '.') + (hl ? ' A later low that does not undercut the first is read by some as a second signal; this is only a shape comparison.' : '')), 'neu']);
+    }
+    if (done.length) {
+      var mn = Math.min.apply(null, done.map(function (h) { return h.r365; }));
+      it.push([_T('歷次跌破之後', 'After past breaks'), up.length + ' / ' + done.length,
+        _T('2011 年起跌破 ' + x.th + ' 共 ' + H.length + ' 次（隔 90 天以上算新的一次）；已滿一年的 ' + done.length + ' 次中，' + up.length + ' 次一年後價格較高（最少 ' + fmt.pct(mn, 0) + '）' + (deep.length ? '，但 ' + deep.length + ' 次在一年內先跌超過 10%（' + deep.map(function (h) { return secYm(h.date) + ' ' + fmt.pct(h.dd365, 0); }).join('、') + '）' : '') + '。次數少，只代表過去，不是買進訊號。',
+          'Since 2011 it broke below ' + x.th + ' ' + H.length + ' times (90+ days apart counts as new); of the ' + done.length + ' with a full year since, ' + up.length + ' saw a higher price a year later (smallest ' + fmt.pct(mn, 0) + ')' + (deep.length ? ', but ' + deep.length + ' first fell more than 10% within the year (' + deep.map(function (h) { return secYm(h.date) + ' ' + fmt.pct(h.dd365, 0); }).join(', ') + ')' : '') + '. A small sample of the past, not a buy signal.'), 'neu']);
+    }
+    return it;
+  }
+  function secTable() {
+    var x = D.onchain.sec, H = (x.hits || []).slice().reverse(), c = function (v) { return v == null ? '<span class="note">' + _T('未滿', 'n/a') + '</span>' : '<span style="color:var(--' + (v >= 0 ? 'up' : 'down') + ')">' + fmt.pct(v, 0) + '</span>'; };
+    return '<div class="tbl-wrap" style="margin-top:12px"><table class="tbl"><thead><tr><th>' + _T('跌破日', 'Break date') + '</th><th class="num hide-sm">' + _T('價格', 'Price') + '</th><th class="num hide-sm">' + _T('90 天內最低', 'Low within 90d') + '</th><th class="num hide-sm">90 ' + _T('天', 'd') + '</th><th class="num">180 ' + _T('天', 'd') + '</th><th class="num">365 ' + _T('天', 'd') + '</th><th class="num">' + _T('一年內最大回撤', 'Max drawdown in 1y') + '</th></tr></thead><tbody>' +
+      H.map(function (h) { return '<tr><td><span class="num">' + h.date.replace(/-/g, '/') + '</span></td><td class="num hide-sm">' + fmt.usd(h.price) + '</td><td class="num hide-sm">' + fmt.n(h.low, 3) + '</td><td class="num hide-sm">' + c(h.r90) + '</td><td class="num">' + c(h.r180) + '</td><td class="num">' + c(h.r365) + '</td><td class="num">' + (h.done ? c(h.dd365) : c(h.dd365) + '*') + '</td></tr>'; }).join('') + '</tbody></table></div>' + (H.some(function (h) { return !h.done; }) ? '<p class="note">' + _T('* 還不滿一年，算到最新一天。', '* Less than a year so far; measured to the latest day.') + '</p>' : '');
+  }
+  function secPanel() {
+    var x = (D.onchain || {}).sec; if (!x || !x.rows) return '';
+    return panel('span-12', _T('賣方衰竭常數', 'Seller exhaustion constant'), _T('CheckOnChain · ' + fmt.md(x.date), 'CheckOnChain · ' + fmt.md(x.date)),
+      interpHtml(secSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('賣方衰竭常數', 'Seller exhaustion constant'), 'var(--s1)'], [_T('極端區（低於 ' + x.th + '）', 'Extreme zone (below ' + x.th + ')'), 'var(--down)', 'box']]) + '<div class="chart" id="c-sec"></div>' + secTable() +
+      '<p class="note">' + _T('賣方衰竭常數＝獲利供給比例 × 30 天價格波動（Checkmate 設計）：價格很平靜、同時很多人在虧損時會很低，代表想賣的人大多已經賣了。資料取自 CheckOnChain 的公開圖表（晚約 1 天）。刻度和 Glassnode 版不同，網路上常見的 0.01 門檻不能套用；這裡的極端區用它自己的歷史分布。',
+        'Seller exhaustion constant = percent supply in profit × 30-day price volatility (designed by Checkmate): it is very low when price is calm while many holders are at a loss, a sign that most would-be sellers have already sold. Data from CheckOnChain\'s public chart (about a day behind). Its scale differs from Glassnode\'s, so the 0.01 line often quoted online does not apply; the extreme zone here comes from its own history.') +
+      ' <a href="' + 'https://charts.checkonchain.com/btconchain/unrealised/seller_exhaustion_constant_supply/seller_exhaustion_constant_supply_light.html' + '" target="_blank" rel="noopener">' + _T('原圖 ↗', 'Source chart ↗') + '</a></p>');
+  }
+  function drawSec(el) {
+    var x = (D.onchain || {}).sec; if (!x || !el) return;
+    var R_ = x.rows, H = x.hits || [], W = Math.max(280, el.clientWidth), sm = W < 520, ML = 8, MR = 58, MT = 16, hp = sm ? 110 : 140, gap = 28, hs = sm ? 150 : 200, MB = 24, LR = sm ? 0 : 16, Ht = MT + hp + gap + hs + LR + MB, pw = W - ML - MR, ys0 = MT + hp + gap;
+    var x0 = R_[0][0], x1 = R_[R_.length - 1][0], X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; }, s = '';
+    var L = Math.log10, pl = L(Math.min.apply(null, R_.map(function (r) { return r[2]; }))), ph = L(Math.max.apply(null, R_.map(function (r) { return r[2]; }))), pp = (ph - pl) * 0.05; pl -= pp; ph += pp;
+    var sl = L(Math.min(x.th, Math.min.apply(null, R_.map(function (r) { return r[1]; }))) * 0.9), sh = L(Math.max.apply(null, R_.map(function (r) { return r[1]; })) * 1.1);
+    var Yp = function (v) { return MT + (1 - (L(v) - pl) / (ph - pl)) * hp; }, Ys = function (v) { return ys0 + (1 - (L(v) - sl) / (sh - sl)) * hs; };
+    var tx = function (xx, y, t, a, cls) { return '<text class="' + (cls || 'ax') + '" x="' + xx.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + esc(t) + '</text>'; };
+    [1, 10, 100, 1e3, 1e4, 1e5].forEach(function (t) { if (L(t) < pl || L(t) > ph) return; var y = Yp(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, t >= 1000 ? fmt.k(t) : '$' + t); });
+    var yt = Ys(x.th); s += '<rect x="' + ML + '" y="' + yt.toFixed(1) + '" width="' + pw + '" height="' + (ys0 + hs - yt).toFixed(1) + '" fill="var(--down-dim)"/><line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + yt.toFixed(1) + '" y2="' + yt.toFixed(1) + '" stroke="var(--down)" stroke-dasharray="3 4" stroke-width="1"/>';
+    [0.1, 0.2, 0.5, 1, 2].forEach(function (t) { if (L(t) < sl || L(t) > sh) return; var y = Ys(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, String(t)); });
+    s += tx(ML + pw + 8, yt + 3.5, String(x.th)).replace('class="ax"', 'class="ax" fill="var(--down)"');
+    s += tx(ML, MT - 5, _T('BTC 價格（對數刻度）', 'BTC price (log scale)')) + tx(ML, ys0 - 9, _T('賣方衰竭常數（對數刻度）', 'Seller exhaustion constant (log scale)'));
+    var y0 = new Date(x0 * 864e5).getUTCFullYear() + 1, y1 = new Date(x1 * 864e5).getUTCFullYear(), every = sm ? 3 : W < 900 ? 2 : 1;
+    for (var y = y0; y <= y1; y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if ((y - y0) % every === 0 && xx > ML + 14 && xx < ML + pw - 14) s += tx(xx, Ht - 6, String(y), 'middle'); }
+    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Yp(r[2]).toFixed(1); }).join('L') + '" stroke="var(--ink-2)" stroke-width="1.3"/>';
+    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Ys(r[1]).toFixed(1); }).join('L') + '" stroke="var(--s1)" stroke-width="1.5"/>';
+    var lx = Infinity;   // 由新到舊標日期，和右邊已標的距離不到 56px 就略過
+    H.slice().reverse().forEach(function (h) { var xx = X(dnOf(h.low_date)), yy = Ys(h.low); s += '<circle cx="' + xx.toFixed(1) + '" cy="' + yy.toFixed(1) + '" r="4" fill="var(--deck)" stroke="var(--down)" stroke-width="2"/>';
+      if (!sm && lx - xx >= 56) { s += tx(Math.min(xx, ML + pw - 22), ys0 + hs + 13, secYm(h.low_date), 'middle'); lx = xx; } });
+    var z = R_[R_.length - 1]; s += '<circle cx="' + X(z[0]).toFixed(1) + '" cy="' + Ys(z[1]).toFixed(1) + '" r="4" fill="var(--s1)" stroke="var(--deck)" stroke-width="2"/><circle cx="' + X(z[0]).toFixed(1) + '" cy="' + Yp(z[2]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>';
+    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (ys0 + hs) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (ys0 + hs - MT) + '"/>';
+    el.innerHTML = svgEl(W, Ht, s, _T('BTC 價格與賣方衰竭常數', 'BTC price and seller exhaustion constant'));
+    animateLines(el);
+    var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
+    function move(ev) {
+      var r = svg.getBoundingClientRect(), xv = x0 + ((ev.clientX - r.left) * W / r.width - ML) / pw * (x1 - x0), p = R_[bisect(R_, xv)];
+      xh.setAttribute('x1', X(p[0])); xh.setAttribute('x2', X(p[0])); xh.setAttribute('visibility', 'visible');
+      dots.innerHTML = '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Ys(p[1]).toFixed(1) + '" r="4" fill="var(--s1)" stroke="var(--deck)" stroke-width="2"/><circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Yp(p[2]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>';
+      showTip(ev.clientX, ev.clientY, '<div class="t">' + fmt.date(p[0]) + '</div><div class="r"><i style="background:var(--s1)"></i><span>' + _T('賣方衰竭常數', 'Seller exhaustion') + '</span><b>' + fmt.n(p[1], 3) + '</b></div><div class="r"><i style="background:var(--ink-2)"></i><span>' + _T('BTC 價格', 'BTC price') + '</span><b>' + fmt.usd(p[2]) + '</b></div>');
+    }
+    hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
+    hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
+  }
+
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};
     var rows = [
@@ -1539,10 +1615,10 @@
     return readBar('onchain') + '<div class="kpis">' + kpi(_t('短期持有者獲利比例'), fmt.n((fl.sth_in_profit_pct || {}).value, 1) + '%', _t('7 天前 ') + fmt.n((fl.sth_in_profit_pct || {}).d7, 1) + '%', (fl.sth_in_profit_pct || {}).value) + kpi(_t('短期持有者成本'), fmt.usd((fl.sth_vs_tmm || {}).sth_cost), _t('真實市場均價 ') + fmt.usd((fl.sth_vs_tmm || {}).tmm)) + kpi(_t('交易所供給'), fmt.n(ex.exchange_supply_share_pct, 2) + '%', _t('7 日 ') + fmt.pct(ex.exchange_supply_chg7_pct, 2) + _t(' · 90 日 ') + fmt.pct(ex.exchange_supply_chg90_pct, 2)) + kpi(_t('算力 7 日均'), fmt.n(mi.hash7, 0) + ' EH/s', _t('週 ') + fmt.pct(mi.wk_chg_pct, 1) + ' · hashprice $' + fmt.n(mi.hashprice, 1)) + kpi(_t('下次難度調整'), fmt.pct(mi.diff_next_pct, 1), fmt.md(mi.retarget) + _t(' · 進度 ') + fmt.n(mi.diff_progress, 0) + '%', mi.diff_progress) + '</div><div class="grid">' + interpPanel(ocInterp()) +
       panel('span-5', _t('籌碼分布（URPD）'), fmt.md(u.date) + _t(' · 每 2,000 美元一格'), urpdSay(u) + '<div id="c-urpd"></div>') +
       panel('span-7', _t('短期持有者：成本 vs 價格'), _t('bitcoin-data · 近 2 年'), legend([[_t('短期持有者成本'), 'var(--s2)'], [_t('真實市場均價'), 'var(--s3)']]) + '<div class="chart" id="c-cost"></div>' + _t('<div class="panel-h" style="margin-top:6px"><h2>短期持有者獲利比例</h2><span class="src">2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%</span></div><div class="chart" id="c-profit"></div>') +
-      cohortPanel() + lthColorPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
+      cohortPanel() + lthColorPanel() + secPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
-    mount($('#c-whale'), drawWhale); drawSopr(); drawSthPnl(); drawOc(); mount($('#c-npl'), drawNpl); cohortAfter(); mount($('#c-lthc'), drawLthColor);
+    mount($('#c-whale'), drawWhale); drawSopr(); drawSthPnl(); drawOc(); mount($('#c-npl'), drawNpl); cohortAfter(); mount($('#c-lthc'), drawLthColor); mount($('#c-sec'), drawSec);
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
     var v = D.chips.viz || {}, u = v.urpd || {}, c = D.price.bar.c, el = $('#c-urpd');
     if (el && u.band) {

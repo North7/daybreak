@@ -193,6 +193,7 @@ main#view { padding: 32px var(--gut) 64px; display: grid; gap: 28px; outline: no
 
 /* 表格 */
 .tbl-wrap { overflow: hidden; }
+@media (max-width: 520px) { .tbl .hide-sm { display: none; } }   /* 2026-11-02 賣方衰竭常數歷次表：手機只留日期與之後的漲跌 */
 table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; table-layout: fixed; }
 .tbl th { text-align: left; font-weight: 500; font-size: 11.5px; color: var(--ink-3); padding: 0 10px 8px 0; border-bottom: 1px solid var(--ink); }
 .tbl td { padding: 9px 10px 9px 0; border-bottom: 1px solid var(--line); vertical-align: top; overflow-wrap: anywhere; transition: background .2s; }

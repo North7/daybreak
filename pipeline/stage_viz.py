@@ -202,3 +202,39 @@ def lth_color_viz(lth, px, step=2, clip=LC_CLIP, flat=LC_FLAT):
     j = _at_or_before(cd, ds(dn(last) - 30))
     if j is not None: out['chg30'] = round(v - lth[cd[j]])
     return out
+
+
+# 2026-11-02 使用者要求（Murphy〈卖方衰竭指数〉）：賣方衰竭常數＝獲利供給比例 × 30 天價格波動（Checkmate 設計，資料取自 CheckOnChain，見 coc.get_sec）。
+#   CheckOnChain 的刻度和 Glassnode 版不同（Murphy 的 0.01 線不能套），極端區用本身的歷史分布：低於 0.13 約是 2011 年起最低 1% 的日子。只作讀值
+SEC_TH, SEC_FROM, SEC_ROWS = 0.13, '2011-01-01', '2012-01-01'
+
+
+def sec_viz(ser, last, th=SEC_TH, block=4):
+    """ser：{date: (常數, 價格)}。回傳圖表資料（每 block 天取最低值，低點不會被抽樣漏掉）、現值百分位、歷次跌破與之後的價格表現。"""
+    D = sorted(d for d in ser if SEC_FROM <= d <= last)
+    if len(D) < 1000: return None
+    v = {d: ser[d][0] for d in D}; px = {d: ser[d][1] for d in D}; d1 = D[-1]; cur = v[d1]
+    hits, lastb = [], None
+    for d in D:
+        if v[d] < th:
+            if lastb is None or dn(d) - dn(lastb) > 90: hits.append(dict(date=d, price=round(px[d])))
+            lastb = d
+    for h in hits:   # 第一次跌破後 90 天內的最低值；之後 90／180／365 天的漲跌與一年內最大回撤
+        t = dn(h['date']); p0 = px[h['date']]; win = [x for x in D if t <= dn(x) <= t + 90]; m = min(win, key=v.get)
+        h.update(low=round(v[m], 4), low_date=m, low_price=round(px[m]))
+        for n in (90, 180, 365):
+            x = ds(t + n); h[f'r{n}'] = round((px[x] / p0 - 1) * 100, 1) if x in px else None
+        y = [px[x] for x in D if t <= dn(x) <= t + 365]
+        h['dd365'] = round((min(y) / p0 - 1) * 100, 1) + 0.0; h['done'] = dn(d1) - t >= 365
+    w30 = [x for x in D if dn(x) > dn(d1) - 30]; r = min(w30, key=v.get)
+    rows, k0 = [], next(i for i, d in enumerate(D) if d >= SEC_ROWS)
+    for i in range(len(D) - 1, k0 - 1, -block):   # 由最新往回切，最後一段一定是最新一天
+        seg = D[max(k0, i - block + 1): i + 1]; m = min(seg, key=v.get)
+        rows.append([dn(seg[-1]), round(v[m], 4), round(px[seg[-1]])])
+    rows.reverse()
+    vals = sorted(v.values())
+    return dict(date=d1, value=round(cur, 4), price=round(px[d1]), pct=round(sum(x < cur for x in vals) / len(vals) * 100, 1), th=th,
+                th_share=round(sum(x < th for x in vals) / len(vals) * 100, 1), since=D[0],
+                min=dict(date=min(D, key=v.get), value=round(min(vals), 4)), hits=hits,
+                recent_low=dict(date=r, value=round(v[r], 4), price=round(px[r])), rows=rows,
+                note='CheckOnChain（Checkmate）賣方衰竭常數＝獲利供給比例 × 30 天價格波動；刻度和 Glassnode 版不同；極端區＝低於 0.13（本身歷史最低約 1%）；只作讀值')
