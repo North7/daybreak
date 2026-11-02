@@ -147,3 +147,30 @@ def get_sec():
     except Exception as e:
         cj = json.load(open(SEC_CACHE))
         return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
+
+
+# 2026-11-02 使用者要求（貝格先生的 Realized Profit / Realized Loss 比率圖）：全網實現獲利 ÷ 實現虧損。
+#   原圖把每日比值取 log10 後拆成正、負兩條（＋ve／−ve），這裡合併再還原成比值；90 天平均在 stage_viz.rpl_viz 算
+RPL_URL = 'https://charts-cdn.checkonchain.com/btconchain/realised/realisedpnl_ratio_all/realisedpnl_ratio_all_light.html'
+RPL_PAGE = 'https://charts.checkonchain.com/btconchain/realised/realisedpnl_ratio_all/realisedpnl_ratio_all_light.html'
+RPL_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'coc_cache', 'realised-pl-ratio.json')
+
+
+def fetch_rpl():
+    """{date: (實現獲利 ÷ 實現虧損 每日比值, 價格)}"""
+    traces = _traces(RPL_URL)
+    pos, neg, px = _trace(traces, 'Realised Profit/Loss Ratio (+ve)'), _trace(traces, 'Realised Profit/Loss Ratio (-ve)'), _trace(traces, 'Price')
+    ser = {d: (10 ** (pos[d] if pos[d] != 0 else neg.get(d, 0)), px[d]) for d in pos if d in px and px[d] > 0}
+    if len(ser) < 3000: raise RuntimeError(f'CheckOnChain 實現損益比只有 {len(ser)} 筆，格式可能改了')
+    return ser
+
+
+def get_rpl():
+    """回傳 (序列 {date: (比值, 價格)}, 狀態說明)。失敗時用上一次成功的快取。"""
+    try:
+        ser = fetch_rpl()
+        _save(RPL_CACHE, RPL_PAGE, [[d, round(v, 4), round(p, 2)] for d, (v, p) in sorted(ser.items())], keep=10000)
+        return ser, 'live'
+    except Exception as e:
+        cj = json.load(open(RPL_CACHE))
+        return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'

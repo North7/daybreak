@@ -238,3 +238,49 @@ def sec_viz(ser, last, th=SEC_TH, block=4):
                 min=dict(date=min(D, key=v.get), value=round(min(vals), 4)), hits=hits,
                 recent_low=dict(date=r, value=round(v[r], 4), price=round(px[r])), rows=rows,
                 note='CheckOnChain（Checkmate）賣方衰竭常數＝獲利供給比例 × 30 天價格波動；刻度和 Glassnode 版不同；極端區＝低於 0.13（本身歷史最低約 1%）；只作讀值')
+
+
+# 2026-11-02 使用者要求（貝格先生的 Realized P/L 比率圖）：全網實現獲利 ÷ 實現虧損，取 90 天平均（Glassnode 圖的做法），資料取自 CheckOnChain（coc.get_rpl）。
+#   低於 1＝認賠多於獲利（紅色）。歷史上大段紅色都在熊市；回到 1 以上之後多半到週期頂部都沒再跌破，但 2019/12–2020/1 例外。只作讀值
+RPL_N, RPL_FROM, RPL_MAJOR = 90, '2011-01-01', 60
+
+
+def rpl_viz(ser, last, block=4):
+    """ser：{date: (每日比值, 價格)}。回傳 90 天平均的圖表資料、紅色期間（低於 1）、最近 7 天每日比值與「維持這個水準何時跌破 1」的試算。"""
+    D = sorted(d for d in ser if d <= last)
+    if len(D) < 1000: return None
+    r = [ser[d][0] for d in D]; px = {d: ser[d][1] for d in D}
+    m = {D[i]: sum(r[i - RPL_N + 1:i + 1]) / RPL_N for i in range(RPL_N - 1, len(D))}
+    M = [d for d in D if d in m and d >= RPL_FROM]; d1 = M[-1]
+    reds, cur = [], None
+    for d in M:
+        if m[d] < 1:
+            if cur is None: cur = dict(start=d, end=d, low=m[d], low_date=d)
+            cur['end'] = d
+            if m[d] < cur['low']: cur['low'], cur['low_date'] = m[d], d
+        elif cur: reds.append(cur); cur = None
+    if cur: reds.append(dict(cur, open=True))
+    reds = [x for x in reds if dn(x['end']) - dn(x['start']) + 1 >= 5]
+    for x in reds:
+        x['days'] = dn(x['end']) - dn(x['start']) + 1; x['low'] = round(x['low'], 3); x['low_price'] = round(px[x['low_date']]); x['major'] = x['days'] >= RPL_MAJOR
+        e = ds(dn(x['end']) + 365); x['r365'] = round((px[e] / px[x['end']] - 1) * 100, 1) if e in px and not x.get('open') else None
+    for x in reds:   # 大段紅色結束後一年內，有沒有再跌回 1 以下
+        if x['major'] and not x.get('open'):
+            t = dn(x['end']); x['relapse'] = [dict(start=y['start'], days=y['days'], low=y['low']) for y in reds if t < dn(y['start']) <= t + 365]
+    above = m[d1] >= 1
+    k = len(M) - 1
+    while k > 0 and (m[M[k - 1]] >= 1) == above: k -= 1
+    l7 = sum(r[-7:]) / 7
+    proj = None   # 每日比值維持最近 7 天平均時，90 天平均哪天會穿過 1（只是試算）
+    w = r[-RPL_N:]
+    for n in range(1, 366):
+        w = w[1:] + [l7]
+        if (sum(w) / RPL_N >= 1) != above: proj = dict(date=ds(dn(D[-1]) + n), days=n, daily=round(l7, 3)); break
+    rows, k0 = [], next(i for i, d in enumerate(M) if d >= '2012-01-01')
+    for i in range(len(M) - 1, k0 - 1, -block):
+        rows.append([dn(M[i]), round(m[M[i]], 3), round(px[M[i]])])
+    rows.reverse()
+    return dict(date=d1, value=round(m[d1], 3), price=round(px[d1]), above=above, since=M[k], since_days=dn(d1) - dn(M[k]),
+                first2=next((d for d in M[k:] if m[d] >= 2), None) if above else None,
+                daily=[[d, round(ser[d][0], 3)] for d in D[-14:]], last7=round(l7, 3), proj=proj, reds=reds, rows=rows,
+                note='CheckOnChain 全網實現獲利 ÷ 實現虧損，每日比值取 90 天平均；低於 1＝認賠多於獲利；試算假設每日比值維持最近 7 天平均；只作讀值')
