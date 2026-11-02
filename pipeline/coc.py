@@ -32,12 +32,12 @@ def _traces(url):
     return json.JSONDecoder().raw_decode(html[html.find('[', i):])[0]
 
 
-def _save(path, page, lines):
+def _save(path, page, lines, keep=1500):
     os.makedirs(os.path.dirname(path), exist_ok=True)
     now = dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds')
     with open(path, 'w') as f:   # 只留最近 1,500 天（四年百分位夠用）；一列一筆，每日提交的 diff 只有新增的幾行
         f.write('{"fetched_utc": "%s", "source": "%s", "rows": [\n' % (now, page))
-        f.write(',\n'.join(json.dumps(r) for r in lines[-1500:]) + '\n]}\n')
+        f.write(',\n'.join(json.dumps(r) for r in lines[-keep:]) + '\n]}\n')
 
 
 def fetch():
@@ -119,3 +119,31 @@ def get_pnl():
     except Exception as e:
         cj = json.load(open(PNL_CACHE))
         return {d: (p, l) for d, p, l in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
+
+
+# 2026-11-02 使用者要求（Murphy〈卖方衰竭指数〉）：賣方衰竭常數＝獲利供給比例 × 30 天價格波動（Checkmate 設計）。
+#   CheckOnChain 的圖從 2010 起、晚約 1 天；刻度和 Glassnode 版（Murphy 的 0.01 線）不同，頁面用自己的歷史分布畫極端區。
+#   快取存完整歷史（約 6,000 行），歷次跌破的統計要用到 2011 年起的資料
+SEC_URL = 'https://charts-cdn.checkonchain.com/btconchain/unrealised/seller_exhaustion_constant_supply/seller_exhaustion_constant_supply_light.html'
+SEC_PAGE = 'https://charts.checkonchain.com/btconchain/unrealised/seller_exhaustion_constant_supply/seller_exhaustion_constant_supply_light.html'
+SEC_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'coc_cache', 'seller-exhaustion.json')
+
+
+def fetch_sec():
+    """{date: (賣方衰竭常數, 價格)}"""
+    traces = _traces(SEC_URL)
+    se, px = _trace(traces, 'Seller Exhaustion Constant'), _trace(traces, 'Price')
+    ser = {d: (se[d], px[d]) for d in se if d in px and se[d] > 0}
+    if len(ser) < 3000: raise RuntimeError(f'CheckOnChain 賣方衰竭常數只有 {len(ser)} 筆，格式可能改了')
+    return ser
+
+
+def get_sec():
+    """回傳 (序列 {date: (常數, 價格)}, 狀態說明)。失敗時用上一次成功的快取。"""
+    try:
+        ser = fetch_sec()
+        _save(SEC_CACHE, SEC_PAGE, [[d, round(v, 5), round(p, 2)] for d, (v, p) in sorted(ser.items())], keep=10000)
+        return ser, 'live'
+    except Exception as e:
+        cj = json.load(open(SEC_CACHE))
+        return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'

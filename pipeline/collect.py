@@ -307,6 +307,13 @@ try:
     _coh, _chst = coc.get_cohort(max(_cs) if _cs else None)
     if _chst != 'live': errors.append(f'checkonchain urpd-cohort 用快取：{_chst}')
 except Exception as e: errors.append(f'checkonchain urpd-cohort: {e}')
+# B5. 2026-11-02 使用者要求（Murphy〈卖方衰竭指数〉）：賣方衰竭常數（CheckOnChain，從 2010 起、晚約 1 天；見 coc.get_sec、stage_viz.sec_viz）
+try:
+    import coc, stage_viz
+    _sec, _sest = coc.get_sec()
+    if _sest != 'live': errors.append(f'checkonchain seller-exhaustion 用快取：{_sest}')
+    R['sec'] = stage_viz.sec_viz(_sec, LAST)
+except Exception as e: errors.append(f'checkonchain seller-exhaustion: {e}')
 try:
     # 2026-09-23 週檢：第三轉換條件量化＝STH 成本基礎 ÷ LTH 成本基礎（＝LTH-MVRV ÷ STH-MVRV，與價格無關）
     sr, lr_ = R['onchain']['sth-realized-price'], R['onchain']['lth-realized-price']
