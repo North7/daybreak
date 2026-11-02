@@ -314,6 +314,13 @@ try:
     if _sest != 'live': errors.append(f'checkonchain seller-exhaustion 用快取：{_sest}')
     R['sec'] = stage_viz.sec_viz(_sec, LAST)
 except Exception as e: errors.append(f'checkonchain seller-exhaustion: {e}')
+# B6. 2026-11-02 使用者要求（貝格先生的 Realized P/L 比率）：全網實現獲利 ÷ 實現虧損（CheckOnChain；90 天平均，見 coc.get_rpl、stage_viz.rpl_viz）
+try:
+    import coc, stage_viz
+    _rpl, _rpst = coc.get_rpl()
+    if _rpst != 'live': errors.append(f'checkonchain realised-pl-ratio 用快取：{_rpst}')
+    R['rpl'] = stage_viz.rpl_viz(_rpl, LAST)
+except Exception as e: errors.append(f'checkonchain realised-pl-ratio: {e}')
 try:
     # 2026-09-23 週檢：第三轉換條件量化＝STH 成本基礎 ÷ LTH 成本基礎（＝LTH-MVRV ÷ STH-MVRV，與價格無關）
     sr, lr_ = R['onchain']['sth-realized-price'], R['onchain']['lth-realized-price']

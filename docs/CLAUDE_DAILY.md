@@ -120,7 +120,7 @@
   | 籌碼與潛在賣壓 | 長期／短期持有者 × 成本格、約 30 天換手、跌到各價位的帳面虧損 | `chips.cohort`、`chips.cohort_read`、`chips.urpd` |
   | 短線買家是否投降 | 實現獲利 vs 實現虧損、SOPR 認賠低點一次比一次深或淺 | `onchain.sth_pnl`、`chips.sopr_read`、`onchain.npl` |
   | 老手是否派發 | LTH 30 日淨部位（這段方向從哪天開始、同期價格怎麼走）、高位套牢盤的變化（不靠模型）、LTH-SOPR | `onchain.lth_color`、`onchain.top_radar`、`chips.cohort.flow.model_free_above`、`onchain.metrics.lth-sopr` |
-  | 賣方是否衰竭 | 低波動＋高虧損（賣方衰竭常數）、短期持有者認賠 | `onchain.sec`、`chips.sopr_read`、`onchain.sth_pnl` |
+  | 賣方是否衰竭 | 低波動＋高虧損（賣方衰竭常數）、全網與短期持有者是獲利了結還是認賠 | `onchain.sec`、`onchain.rpl`、`chips.sopr_read`、`onchain.sth_pnl` |
   | 誰在推價格 | 現貨（ETF、Coinbase 溢價）vs 槓桿（資金費率、基差、DVOL） | `flows.etf`、`flows.cb_premium`、`deriv.funding_multi`、`deriv.deriv`、`deriv.dvol` |
   | 上下方的牆 | 掛單簿、選擇權履約價與到期、整數關卡、推算的槓桿清算帶 | `orderbook`、`deriv.options`、`deriv.liq_heat` |
   | 資金背景 | 穩定幣、實現市值 30 日變化、實質利率、美元 | `flows.stables`、`flows.rc_liq`、`flows.dfii10`、`flows.fred` |
@@ -168,6 +168,7 @@
   - **搬家日**（`chips.cohort.transfers`、signal `jump:urpd-transfer`，2026-10-27 起）：某天遠離現價的格子大量流出、同一天等量出現在現價那一格，逐筆 UTXO 會把它算成賣出再買進，但量大又集中的多半是同一實體整併錢包。模型已把這批幣放回原本的成本與幣齡（`raw` 是不修正的原樣）。寫法：這幾天的流出**不寫成賣出或低點買家離場**，寫「疑似內部轉帳」；同一天的淨實現獲利、STH-SOPR、短期持有者實現獲利高峰也是逐筆 UTXO 算的，會被同一筆搬家灌大，不能拿來佐證有人在賣。教訓（2026-10-22）：62–66K 一天少 19 萬顆、全進 80–82K，本站當時寫成「低點買家在賣」；Murphy 與 @market_beggar 指出 Glassnode 實體調整的 STH 已實現利潤當天沒有反應，是機構內部調倉。
 - 價格 × 長期持有者動向（`onchain.lth_color`，2026-10-29 起，`pipeline/stage_viz.py` 的 `lth_color_viz`）：鏈上版的價格線依長期持有者 30 日淨部位上色（紅＝淨減、灰＝持平 ±5 萬顆內、藍＝淨增，±40 萬顆最深），資料就是 bitcoin-data `lth-net-position-change-30d`，不另打 API。`run` 是這段方向（只看正負）從 `start` 起連續 `days` 天、期間最深 `extreme`、同期價格 `price0`→`price`（`price_chg_pct`）；`prev_same` 是這段之前上一次一樣深的日子；`pct_4y` 四年百分位；`vs_hi1y_pct` 距一年高點。寫法：重點是**方向和價格的組合**——價格漲、老手淨減＝趁反彈出貨，上方有供給；價格跌、老手淨增＝持有者不賣；價格跌、老手也減＝賣壓來自老幣。`run.days` 很短（例如 ≤ 7）代表剛翻方向，值得當發現寫。不可寫成「吸籌評分」或和 Glassnode 的 Accumulation Trend Score 比較：那個以實體計、排除交易所，是不同指標；bitcoin-data 同名的 `accumulation-trend-score` 是這條線的換算。淨增也包括幣放滿 155 天自動轉成長期持有者，不寫成「有人在買」。
 - 賣方衰竭常數（`onchain.sec`，2026-11-02 起，資料 CheckOnChain，`coc.get_sec`／`stage_viz.sec_viz`）：獲利供給比例 × 30 天價格波動（Checkmate 設計），越低＝價格越平靜、虧損的人越多。`value` 現值、`pct` 2011 年起百分位、`th` 極端區門檻（0.13，本身歷史最低約 1%）、`hits` 歷次跌破（隔 90 天以上算新的一次；`low` 之後 90 天內最低、`r90`／`r180`／`r365` 之後漲跌、`dd365` 一年內最大回撤、`done` 是否滿一年）、`recent_low` 近 30 天低點。寫法：**刻度和 Glassnode 版不同，不寫「跌破 0.01」**，也不和 Murphy 圖上的數字比大小；可寫「近 30 天低點比上次跌破後的最低高（較高的低點）」這類形狀比較，標明只是形狀；歷次統計必須同時寫出回撤（2018/11 跌破後先跌 50%、2023/8 先跌 14%）與樣本少，不寫成買進訊號或「底部確認」。跌破 0.13（`value` < `th`）或近 30 天出現新低點時當成發現寫。
+- 實現獲利 ÷ 實現虧損（`onchain.rpl`，2026-11-02 起，資料 CheckOnChain，`coc.get_rpl`／`stage_viz.rpl_viz`）：全網每日比值取 90 天平均；低於 1＝賣出的人整體在認賠（紅色）。`value` 90 天平均、`above`／`since`／`since_days` 目前在 1 的哪一邊與從哪天起、`first2` 這次第一次超過 2、`last7` 最近 7 天每日比值平均、`daily` 最近 14 天每日值、`proj` 每日比值維持 `last7` 時 90 天平均哪天跨過 1（試算）、`reds` 歷次低於 1 的期間（`major` 60 天以上、`relapse` 結束後一年內又跌回的期間）。寫法：90 天平均反應慢，**先看 `last7`**；`last7` < 1 連續出現或 `proj` 有日期時當發現寫；不寫「牛市確認」或「不會再回到紅色」，必須同時提 2019/12–2020/1 的例外（回到 1 以上 7 個月後又跌回 37 天）。
 - 鯨魚分層（`onchain.whales`，BitInfoCharts 依地址餘額）**2026-10-21 起暫停**（BitInfoCharts 擋自動抓取，brief 沒有 `onchain.whales`）：判讀不提鯨魚分層，也不寫「本日未取得」；brief 重新出現 `onchain.whales` 時才恢復，恢復後的寫法：可寫大戶（100–10K）30 日與本段以來的增減；≥10K 多為交易所與託管，不寫成大戶買賣；只作讀值，不連動任何規則。
 
 #### 新聞
