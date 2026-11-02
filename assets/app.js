@@ -762,6 +762,9 @@
           '短期持有者堆在收盤上方＝那批人帳面虧損，價格回到成本時容易解套賣出；堆在下方＝跌回去之前他們還在獲利，是第一道承接。長期持有者的堆動得慢，變少的格子代表那個成本的老手在賣。', 'Short-term holders piled above the close are underwater and tend to sell when price returns to their cost; piled below, they stay in profit until price falls back, the first layer of support. Long-term holder piles move slowly; a shrinking bucket means veterans with that cost are selling.',
           '「現在」是 CheckOnChain 依實際幣齡算的（取不到時退回推算）；「變化」是推算。都是逐筆 UTXO、不是實體調整，交易所整理錢包會被當成賣出再買進（單日大量又集中的搬家已放回原本的成本）；灰底區間外只有長期持有者。', '“Now” is CheckOnChain\'s actual coin-age data (falls back to the estimate if unavailable); “changes” are estimated. Both are per-UTXO, not entity-adjusted, so exchange wallet reshuffles look like selling and rebuying (large, concentrated one-day moves are put back at their original cost). Outside the shaded band there are only long-term holders.'),
         now: function () { var co = D.chips.cohort; if (!co) return ''; var ex = co.src === 'checkonchain'; return _T('短期持有者 ' + coins(co.tot.sth) + '、平均成本 ' + fmt.usd(co.tot.sth_cost) + '；長期持有者 ' + coins(co.tot.lth) + '（' + (ex ? 'CheckOnChain ' + ymd(co.now_date) + '，已扣搬家日' : 'URPD ' + ymd(co.date) + '，推算') + '）。', 'Short-term holders ' + coins(co.tot.sth) + ', average cost ' + fmt.usd(co.tot.sth_cost) + '; long-term holders ' + coins(co.tot.lth) + ' (' + (ex ? 'CheckOnChain ' + ymd(co.now_date) + ', transfer days removed' : 'URPD ' + ymd(co.date) + ', estimated') + ').'); } },
+      'liq': { h: h('每一格是某個小時、某個價位推算還沒被清算的槓桿倉位量，越亮越多；疊的是 OKX 小時 K 線，虛線是最後收盤。收盤下方是多單的清算價、上方是空單的。', 'Each cell is the estimated leveraged position size still awaiting liquidation at that hour and price; brighter means more. Hourly OKX candles on top, the dashed line is the last close. Long liquidation prices sit below the close, shorts above.',
+          '亮帶＝槓桿倉位堆積的價位。價格走到那裡會觸發強制平倉：多單強平是市價賣、空單強平是市價買，常讓行情在那一段走得更快；價格走過之後那一帶會變暗（被清掉）。', 'Bright bands are where leverage is stacked. Price reaching them triggers forced closes: longs are market-sold, shorts market-bought, which often speeds up the move through that zone; once price passes, the band goes dark (cleared).',
+          '推算：只有 OKX，槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；清算量多不代表價格會往那裡走。', 'An estimate: OKX only, with an assumed leverage mix that moves the bands; a daily snapshot, not real time; more liquidations on one side does not mean price will go there.') },
       'lthc': { h: h('BTC 價格（對數刻度），線的顏色是長期持有者（持有 ≥155 天）過去 30 天的淨增減：紅＝淨減、灰＝持平、藍＝淨增，±40 萬顆最深。', 'BTC price on a log scale, coloured by long-term holders\' (held 155+ days) net change over 30 days: red = net cut, grey = flat, blue = net add, deepest at ±400K BTC.',
           '高價區出現紅色＝老手趁高出貨（2024/3、2024 年底、2025/9–11 都是）；下跌後轉藍＝老手不賣、籌碼沉澱。價格在漲、線卻是紅的，代表上漲一路有人供貨。', 'Red at high prices means veterans selling into strength (as in Mar 2024, late 2024 and Sep–Nov 2025); turning blue after a drop means veterans are holding and supply is settling. Price rising on a red line means the rally is being met with supply.',
           '藍色不等於有人在買：幣放滿 155 天就自動算成長期持有者。這是依幣齡分組，不排除交易所；Glassnode 的吸籌趨勢評分以實體計，是不同指標。', 'Blue is not buying: coins become long-term automatically at 155 days. Grouped by coin age with exchanges included; Glassnode\'s Accumulation Trend Score is entity-based and a different metric.') },
@@ -1162,18 +1165,94 @@
     $('#lg-seg').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; rng = b.getAttribute('data-v'); this.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); drawLong($('#c-long')); });
   };
 
+  /* 清算熱力圖（推算；2026-11-02 使用者要求，參考 CoinGlass 爆倉熱力圖）：OKX 永續逐小時未平倉量＋假設槓桿 5–100 倍，見 pipeline/liq_heat.py。
+     畫布畫熱力（越亮＝推算的待清算量越多），SVG 疊小時 K 線與十字線。不是實際倉位，只作讀值 */
+  var liqDays = 3, liqBytes = null;
+  var VIR = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
+  function liqCol(v) { v = Math.max(0, Math.min(1, v)); var s = v * 4, i = Math.min(3, Math.floor(s)), f = s - i; return VIR[i].map(function (a, k) { return Math.round(a + (VIR[i + 1][k] - a) * f); }); }
+  function liqData() {
+    var x = (D.deriv || {}).liq_heat; if (!x || !x.heat) return null;
+    if (!liqBytes) { var b = atob(x.heat); liqBytes = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) liqBytes[i] = b.charCodeAt(i); }
+    return x;
+  }
+  function liqBand(b) { return fmt.k(b.lo) + '–' + fmt.k(b.hi); }
+  function liqBtc(v) { return _T('約 ' + fmt.n(v) + ' 顆', '~' + fmt.n(v) + ' BTC'); }
+  function liqHour(ms) { var t = new Date(ms); return (t.getUTCMonth() + 1) + '/' + t.getUTCDate() + ' ' + ('0' + t.getUTCHours()).slice(-2) + ':00'; }
+  function liqSay() {
+    var x = D.deriv.liq_heat, it = [], b = (x.below || [])[0], a = (x.above || [])[0], w = x.within5 || {};
+    if (b) it.push([_T('下方最亮（多單）', 'Brightest below (longs)'), liqBand(b), _T('推算' + liqBtc(b.btc) + '，在收盤下方 ' + fmt.n(-b.dist_pct, 1) + '%。跌到這裡會觸發這批多單強制平倉；強平是市價賣出，可能讓下跌加速。',
+      'Estimated ' + liqBtc(b.btc) + ', ' + fmt.n(-b.dist_pct, 1) + '% below the close. A drop there would force-close these longs; forced closes are market sells and can speed up a decline.'), 'neu']);
+    if (a) it.push([_T('上方最亮（空單）', 'Brightest above (shorts)'), liqBand(a), _T('推算' + liqBtc(a.btc) + '，在收盤上方 ' + fmt.n(a.dist_pct, 1) + '%。漲到這裡會觸發空單強制平倉；強平是市價買進，可能讓上漲加速。',
+      'Estimated ' + liqBtc(a.btc) + ', ' + fmt.n(a.dist_pct, 1) + '% above the close. A rise there would force-close these shorts; forced closes are market buys and can speed up a rally.'), 'neu']);
+    if (w.above != null && w.below != null) {
+      var r = w.below / (w.above || 1), side = r >= 1.2 ? _T('下方較多（約 ' + fmt.n(r, 1) + ' 倍）', 'more below (about ' + fmt.n(r, 1) + 'x)') : r <= 1 / 1.2 ? _T('上方較多（約 ' + fmt.n(1 / r, 1) + ' 倍）', 'more above (about ' + fmt.n(1 / r, 1) + 'x)') : _T('兩邊差不多', 'roughly balanced');
+      it.push([_T('收盤下／上 5% 內', 'Below / above, within 5%'), fmt.n(w.below) + ' / ' + fmt.n(w.above),
+        _T('推算的待清算量：下方多單 ' + fmt.n(w.below) + ' 顆、上方空單 ' + fmt.n(w.above) + ' 顆，' + side + '。只代表哪一側堆了較多槓桿，不代表價格會往那裡走。', 'Estimated BTC awaiting liquidation: ' + fmt.n(w.below) + ' in longs below, ' + fmt.n(w.above) + ' in shorts above, ' + side + '. It shows where leverage is stacked, not where price will go.'), 'neu']);
+    }
+    return it;
+  }
+  function liqSegs() { var b = function (d) { return '<button aria-pressed="' + (liqDays === d) + '" data-d="' + d + '">' + _T(d + ' 天', d + 'D') + '</button>'; }; return '<span class="seg">' + b(3) + b(7) + '</span>'; }
+  function liqPanel() {
+    var x = liqData(); if (!x) return '';
+    return panel('span-12', _T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'), _T('OKX 永續 · 快照 ' + liqHour(Date.parse(x.asof)) + ' UTC', 'OKX perpetuals · snapshot ' + liqHour(Date.parse(x.asof)) + ' UTC'),
+      interpHtml(liqSay()) + '<div class="legend" style="margin-top:10px"><span><b style="color:var(--ink-2);font-weight:400">' + _T('少', 'Less') + '</b><i class="liq-bar"></i><b style="color:var(--ink-2);font-weight:400">' + _T('多', 'More') + '</b></span><span><b style="color:var(--ink-2);font-weight:400">' + _T('推算的待清算量；收盤下方是多單、上方是空單', 'estimated BTC awaiting liquidation; longs below the close, shorts above') + '</b></span></div><div class="chart" id="c-liq"></div>' +
+      '<p class="note">' + _T('做法：OKX BTC 永續（USDT＋幣本位）每小時未平倉量增加當成新開倉，一多一空各記一份；槓桿假設 5–100 倍、進場價攤在那一小時的高低之間，算出清算價；價格走過就算清算掉，未平倉量減少時按比例減。只有 OKX（Binance、Bybit 從本站伺服器讀不到），槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；不是 CoinGlass 的數字。',
+        'Method: each hour\'s rise in OKX BTC perpetual open interest (USDT- and coin-margined) counts as new positions, one long and one short; leverage is assumed between 5x and 100x with entries spread across the hour\'s range, giving liquidation prices; levels are cleared once price trades through them, and scaled down when open interest falls. OKX only (Binance and Bybit can\'t be reached from the site\'s servers); the leverage mix is an assumption and moves the bands; a daily snapshot, not real time; not CoinGlass\'s numbers.') +
+      ' <a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">' + _T('對照 CoinGlass ↗', 'Compare with CoinGlass ↗') + '</a></p>',
+      '<span id="liq-segs" style="display:contents">' + liqSegs() + '</span>');
+  }
+  function drawLiq(el) {
+    var x = liqData(); if (!x || !el) return;
+    var nb = x.nb, nh = Math.min(x.hours, liqDays * 24), h0 = x.hours - nh, K = x.candles.slice(h0), i, j;
+    var plo = Math.min.apply(null, K.map(function (k) { return k[2]; })) * 0.95, phi = Math.max.apply(null, K.map(function (k) { return k[1]; })) * 1.05;
+    (x.below || []).slice(0, 1).forEach(function (b) { plo = Math.min(plo, b.lo - 500); }); (x.above || []).slice(0, 1).forEach(function (b) { phi = Math.max(phi, b.hi + 500); });   // 讀值提到的最亮帶一定在圖內
+    var b0 = Math.max(0, Math.floor((plo - x.lo) / x.step)), b1 = Math.min(nb, Math.ceil((phi - x.lo) / x.step)), rows = b1 - b0, pLo = x.lo + b0 * x.step, pHi = x.lo + b1 * x.step;
+    var vis = []; for (i = h0; i < x.hours; i++) for (j = b0; j < b1; j++) { var q0 = liqBytes[i * nb + j]; if (q0) vis.push(q0); }
+    vis.sort(function (a, b) { return a - b; }); var top = vis.length ? Math.max(1, vis[Math.floor(vis.length * 0.998)]) : 255, gam = function (v) { return Math.pow(Math.min(1, v), 1.6); };   // 色階偏向突顯最亮的帶（越亮越多，不是等距）
+    var W = Math.max(280, el.clientWidth), Ht = W < 520 ? 300 : 420, ML = 8, MR = 58, MT = 8, MB = 24, pw = W - ML - MR, ph = Ht - MT - MB, dpr = window.devicePixelRatio || 1;
+    var X = function (k) { return ML + (k + 0.5) * pw / nh; }, Y = function (p) { return MT + (1 - (p - pLo) / (pHi - pLo)) * ph; }, s = '';
+    var st = niceStep(pHi - pLo, W < 520 ? 4 : 6);
+    for (var p = Math.ceil(pLo / st) * st; p <= pHi; p += st) s += '<line x1="' + (ML + pw) + '" x2="' + (ML + pw + 4) + '" y1="' + Y(p).toFixed(1) + '" y2="' + Y(p).toFixed(1) + '" stroke="var(--ink-3)"/><text class="ax" x="' + (ML + pw + 8) + '" y="' + (Y(p) + 3.5).toFixed(1) + '">' + fmt.k(p) + '</text>';
+    for (i = 0; i < nh; i++) { var t = new Date(x.t0 + (h0 + i) * 36e5); if (t.getUTCHours() === 0) s += '<text class="ax" x="' + X(i).toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + (t.getUTCMonth() + 1) + '/' + t.getUTCDate() + '</text>'; }
+    var bw = Math.max(1, pw / nh * 0.6);
+    K.forEach(function (k, i) { var c = k[3] >= k[0] ? '#2FD08A' : '#FF5A4E', cx = X(i), yo = Y(k[0]), yc = Y(k[3]); s += '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + Y(k[1]).toFixed(1) + '" y2="' + Y(k[2]).toFixed(1) + '" stroke="' + c + '" stroke-width="1"/><rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(yo, yc).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, Math.abs(yo - yc)).toFixed(1) + '" fill="' + c + '"/>'; });
+    var lc = K[K.length - 1][3]; s += '<line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + Y(lc).toFixed(1) + '" y2="' + Y(lc).toFixed(1) + '" stroke="#F2F0EA" stroke-dasharray="2 4" stroke-width="1" opacity=".6"/>';
+    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (MT + ph) + '" visibility="hidden"/><line class="xh yh" x1="' + ML + '" x2="' + (ML + pw) + '" y1="0" y2="0" visibility="hidden"/><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + ph + '"/>';
+    el.innerHTML = '<canvas width="' + Math.round(pw * dpr) + '" height="' + Math.round(ph * dpr) + '" style="position:absolute;left:' + ML + 'px;top:' + MT + 'px;width:' + pw + 'px;height:' + ph + 'px"></canvas>' + svgEl(W, Ht, s, _T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'));
+    var svg = el.querySelector('svg'); svg.style.position = 'relative';
+    var oc = document.createElement('canvas'); oc.width = nh; oc.height = rows; var ox = oc.getContext('2d'), im = ox.createImageData(nh, rows);
+    for (i = 0; i < nh; i++) for (j = 0; j < rows; j++) { var cc = liqCol(gam(liqBytes[(h0 + i) * nb + b0 + j] / top)), q = ((rows - 1 - j) * nh + i) * 4; im.data[q] = cc[0]; im.data[q + 1] = cc[1]; im.data[q + 2] = cc[2]; im.data[q + 3] = 255; }
+    ox.putImageData(im, 0, 0);
+    var cv = el.querySelector('canvas').getContext('2d'); cv.imageSmoothingEnabled = false; cv.drawImage(oc, 0, 0, Math.round(pw * dpr), Math.round(ph * dpr));
+    var xh = svg.querySelector('.xh'), yh = svg.querySelector('.yh'), hit = svg.querySelector('.hit');
+    function move(ev) {
+      var r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width, my = (ev.clientY - r.top) * Ht / r.height;
+      var i = Math.max(0, Math.min(nh - 1, Math.floor((mx - ML) / pw * nh))), j = Math.max(0, Math.min(rows - 1, Math.floor((1 - (my - MT) / ph) * rows))), k = K[i], lo = pLo + j * x.step;
+      xh.setAttribute('x1', X(i)); xh.setAttribute('x2', X(i)); xh.setAttribute('visibility', 'visible'); yh.setAttribute('y1', my); yh.setAttribute('y2', my); yh.setAttribute('visibility', 'visible');
+      var v = liqBytes[(h0 + i) * nb + b0 + j] / 255 * x.cap, side = lo >= k[3] ? _T('空單', 'shorts') : _T('多單', 'longs');
+      showTip(ev.clientX, ev.clientY, '<div class="t">' + liqHour(x.t0 + (h0 + i) * 36e5) + ' UTC</div><div class="r"><i style="background:rgb(' + liqCol(gam(v / x.cap * 255 / top)).join(',') + ')"></i><span>' + fmt.usd(lo) + '–' + fmt.n(lo + x.step) + ' ' + side + '</span><b>' + (v >= 0.5 ? liqBtc(Math.round(v)) : '—') + '</b></div><div class="r"><i style="background:' + (k[3] >= k[0] ? '#2FD08A' : '#FF5A4E') + '"></i><span>' + _T('這小時收盤', 'Hour close') + '</span><b>' + fmt.usd(k[3]) + '</b></div>');
+    }
+    hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
+    hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); yh.setAttribute('visibility', 'hidden'); hideTip(); });
+  }
+  function liqAfter() {
+    mount($('#c-liq'), drawLiq);
+    var sg = $('#liq-segs'); if (sg) sg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || +b.getAttribute('data-d') === liqDays) return; liqDays = +b.getAttribute('data-d'); sg.innerHTML = liqSegs(); drawLiq($('#c-liq')); });
+  }
+
   V.deriv = function () {
     var dv = D.deriv, d = dv.deriv || {}, r = dv.rr25 || {}, o = dv.options || {};
     var big = (o.expiries || []).slice().sort(function (a, b) { return b.oi - a.oi; })[0] || {};
     return readBar('deriv') + '<div class="kpis">' + kpi('DVOL', fmt.n((dv.dvol || {}).value, 1), _t('一年第 ') + fmt.n((dv.dvol || {}).pct_1y, 0) + _t(' 百分位'), (dv.dvol || {}).pct_1y) + (concNow() ? kpi(_T('籌碼集中度 ±5%', 'Supply within ±5%'), fmt.n(concNow().pct, 1) + '%', _T('URPD ' + fmt.md(concNow().urpd_date) + ' · 只作讀值', 'URPD ' + fmt.md(concNow().urpd_date) + ' · reading only')) : '') + kpi(_t('IV − RV30（同源）'), fmt.n((dv.samesource || {}).iv_minus_rv30, 2), _t('負值＝隱含波動比實際便宜')) + kpi(_t('永續資金費率'), fmt.pct(fundNow(), 1), _T('年化 · 多家加權 · 基差中位 ', 'annualized · multi-venue weighted · basis ') + fmt.n(d.basis_median, 1) + '%') + kpi(_t('25Δ 風險逆轉'), fmt.n(r.rr, 2), r.expiry ? r.expiry + ' · ATM ' + fmt.n(r.atm_iv, 1) + '%' : _t('本日沒有可計算的合約')) + kpi(_t('選擇權未平倉'), fmt.n(o.total_oi) + _t(' 顆'), _t('最大到期 ') + (big.expiry || '—') + _t('（') + fmt.n(big.share, 0) + _t('%）')) + '</div><div class="grid">' + interpPanel(dvInterp()) +
       panel('span-8', _t('隱含波動 vs 實際波動'), _t('Deribit DVOL · Kraken RV30 · 近一年'), legend([['DVOL', 'var(--s1)'], ['RV30', 'var(--s2)']]) + '<div class="chart" id="c-vol"></div>') +
       panel('span-4', _t('期貨基差曲線'), _t('年化 % · 排除 7 天內到期'), basisSay(d.basis_curve) + _t('<div class="chart" id="c-basis"></div><p class="note">資金費率年化 ') + fmt.pct(fundNow(), 1) + _t('；永續 OI ') + fmt.usd(d.perp_oi_usd_m) + _t('M。</p><div class="src-link">外部：<a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">CoinGlass 爆倉熱力圖 ↗</a>（以 OI 與假設槓桿推估，非實際倉位）</div>')) +
+      liqPanel() +
       (concNow() ? panel('span-12', _T('籌碼集中度（現價 ±5%）', 'Supply concentration (±5% of price)'), _T('URPD ÷ 流通量 · 2026-10-01 起 · 只作讀值', 'URPD ÷ circulating supply · since 2026-10-01 · reading only'), legend([[_T('集中度', 'Concentration'), 'var(--s1)'], [_T('BTC 價格（另一刻度）', 'BTC price (own scale)'), 'var(--ink-3)']]) + '<div class="chart" id="c-conc"></div>') : '') +
       panel('span-6', _t('各到期未平倉'), _t('買權 / 賣權（顆）'), legend([[_t('買權'), 'var(--s4)'], [_t('賣權'), 'var(--s3)']]) + '<div class="chart" id="c-oi"></div>') +
       panel('span-6', _t('最大到期的履約價分布'), ((dv.viz || {}).options || {}).strikes ? dv.viz.options.strikes.expiry + ' · Max Pain ' + fmt.k(dv.viz.options.strikes.maxpain) : '', strikeSay((o.expiries || []).filter(function (e) { return e.expiry === (((dv.viz || {}).options || {}).strikes || {}).expiry; })[0] || big) + '<div id="c-strike"></div>') + bookCard() + '</div>';
   };
   V.deriv.after = function () {
-    drawBook();
+    drawBook(); liqAfter();
     var v = D.deriv.viz || {};
     mount($('#c-vol'), function (el) { var rows = (v.vol || {}).rows || []; lineChart(el, { series: [{ name: 'DVOL', data: rows.map(function (r) { return [r[0], r[1]]; }), color: 'var(--s1)' }, { name: 'RV30', data: rows.map(function (r) { return [r[0], r[2]]; }), color: 'var(--s2)' }], yFmt: function (x) { return x.toFixed(0); }, tipFmt: function (x) { return x.toFixed(1) + '%'; }, aria: _t('波動率') }); });
     mount($('#c-conc'), function (el) { var h = (D.chips || {}).conc_hist || []; lineChart(el, { h: 200, series: [{ name: _T('BTC 價格', 'BTC price'), data: h.map(function (r) { return [r[0], r[1]]; }), color: 'var(--ink-3)', w: 1.1, end: false, y2: true, fmt: fmt.usd }, { name: _T('集中度', 'Concentration'), data: h.map(function (r) { return [r[0], r[2]]; }), color: 'var(--s1)' }], yFmt: function (x) { return x.toFixed(1) + '%'; }, tipFmt: function (x) { return x.toFixed(2) + '%'; }, aria: _T('籌碼集中度', 'Supply concentration') }); });

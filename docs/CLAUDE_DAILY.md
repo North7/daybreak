@@ -121,7 +121,7 @@
   | 短線買家是否投降 | 實現獲利 vs 實現虧損、SOPR 認賠低點一次比一次深或淺 | `onchain.sth_pnl`、`chips.sopr_read`、`onchain.npl` |
   | 老手是否派發 | LTH 30 日淨部位（這段方向從哪天開始、同期價格怎麼走）、高位套牢盤的變化（不靠模型）、LTH-SOPR | `onchain.lth_color`、`onchain.top_radar`、`chips.cohort.flow.model_free_above`、`onchain.metrics.lth-sopr` |
   | 誰在推價格 | 現貨（ETF、Coinbase 溢價）vs 槓桿（資金費率、基差、DVOL） | `flows.etf`、`flows.cb_premium`、`deriv.funding_multi`、`deriv.deriv`、`deriv.dvol` |
-  | 上下方的牆 | 掛單簿、選擇權履約價與到期、整數關卡 | `orderbook`、`deriv.options` |
+  | 上下方的牆 | 掛單簿、選擇權履約價與到期、整數關卡、推算的槓桿清算帶 | `orderbook`、`deriv.options`、`deriv.liq_heat` |
   | 資金背景 | 穩定幣、實現市值 30 日變化、實質利率、美元 | `flows.stables`、`flows.rc_liq`、`flows.dfii10`、`flows.fred` |
 - **寫法**：先結論再證據；每個數字附資料日期與來源；推算的數字標「推算」；不同資料商的數字不相減；本站是逐筆 UTXO，不和 Glassnode 實體調整的數字比大小（方向可以比）；引用外部分析師（例如 Murphy）時寫明他用的資料口徑，和本站數字不同時說明可能原因，不要硬湊成一致。
 
@@ -147,6 +147,7 @@
 
 **deriv（衍生品）**
 - 資金費率用 brief 的 `deriv.funding_multi.weighted_now`（Deribit、OKX、Hyperliquid 以未平倉加權）；25Δ 風險逆轉是 30 天固定期限。
+- 清算熱力圖（`deriv.liq_heat`，2026-11-02 起，`pipeline/liq_heat.py`）：**推算**，不是實際倉位。OKX BTC 永續（USDT＋幣本位）逐小時未平倉量增加當成新開倉（一多一空），槓桿假設 5–100 倍、進場價攤在那一小時的高低之間，價格走過就算清算掉。`asof` 是快照時間（每日更新時的整點，UTC）；`below`／`above` 是收盤下方／上方最亮的價格帶（`lo`–`hi`、推算顆數 `btc`、離收盤 `dist_pct`）；`within5` 是收盤上下 5% 內推算的待清算量。寫法：寫成「推算的多單清算帶在 X–Y（收盤下方 Z%）」，必須標「推算、只有 OKX」；顆數只在同一張圖上下比較，不和 CoinGlass 或其他網站的數字比；**不寫「價格會被吸過去」「先到 X」這類預測**，可寫條件句（「跌到 X–Y 會觸發一批多單強平，強平是市價賣出，可能讓下跌加速」）。只有 OKX 一家、槓桿分布是假設，亮帶位置會隨假設移動。
 - 掛單簿不是獨立版面（modules 沒有 book），掛單重點寫進 deriv 判讀。
 - 籌碼集中度（現價 ±5%）：brief 的 `chips.flow.conc5`（URPD 晚約 1 天，按 ±5% 區間重疊比例計、除以 CoinMetrics 流通量）與 `chips.conc5_read`（7 天前、紀錄天數）。可和 DVOL 一起寫「籌碼擠在現價附近時，離開這一帶波動容易放大」，但只說波動、不說方向；本站自 2026-10-01 才有紀錄，**不套任何門檻（包括 Murphy 的 13%／15%）**、不寫「偏高／偏低」，只寫數值與 7 日變化。
 
