@@ -214,6 +214,8 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; table-layou
 @supports (color: color-mix(in oklab, red, blue)) {
   :root { --lc3: color-mix(in oklab, var(--lc-neg) 35%, var(--lc-mid)); --lc5: color-mix(in oklab, var(--lc-pos) 35%, var(--lc-mid)); --lc2: color-mix(in oklab, var(--lc-neg) 60%, var(--lc-mid)); --lc6: color-mix(in oklab, var(--lc-pos) 60%, var(--lc-mid)); --lc1: color-mix(in oklab, var(--lc-neg) 80%, var(--lc-mid)); --lc7: color-mix(in oklab, var(--lc-pos) 80%, var(--lc-mid)); }
 }
+.legend i.liq-bar { display: inline-block; width: 120px; height: 8px; border-radius: 4px; vertical-align: middle; background: linear-gradient(90deg, rgb(68,1,84), rgb(59,82,139), rgb(33,145,140), rgb(94,201,98), rgb(253,231,37)); }   /* 2026-11-02 清算熱力圖（viridis） */
+#c-liq canvas { border-radius: 4px; }
 .legend i.lc-bar { display: inline-block; width: 120px; height: 8px; border-radius: 4px; vertical-align: middle; background: linear-gradient(90deg, var(--lc0), var(--lc2), var(--lc4), var(--lc6), var(--lc8)); }
 .chart .gl { stroke: var(--grid); stroke-width: 1; }
 .chart .base { stroke: var(--ink); stroke-width: 1; }

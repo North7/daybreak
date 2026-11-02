@@ -83,7 +83,7 @@
 | bitcoin-data.com | 持有者成本、LTH SOPR、籌碼流向、URPD、幣齡分布（長短期持有者籌碼推算用）、流動性供給、頂部雷達 | 每日 14 次請求（免費層上限 15） |
 | CheckOnChain 公開圖表 | STH-SOPR、短期持有者實現獲利／虧損、長短期持有者的實際籌碼分布（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
 | Deribit | DVOL、期貨基差、選擇權、永續資金費率 | 每日 |
-| OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權） | 每日 |
+| OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權）；OKX 永續逐小時未平倉量與 K 線（清算熱力圖，推算） | 每日 |
 | 13 個交易所掛單簿 | Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Kraken Futures、OKX Swap、Hyperliquid | 每日快照 |
 | The Block | 現貨 ETF 每日淨流量（與 Farside 同口徑） | 每日 |
 | FRED | 10 年期殖利率與實質利率、美元指數、那斯達克 | 每日 |
@@ -190,6 +190,7 @@ pipeline/etf.py          從 The Block 更新 ETF 每日淨流量
 pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 7 個
 pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損：讀 CheckOnChain 公開圖表（晚約 1 天）
 pipeline/cohort_urpd.py  長短期持有者籌碼：URPD × 幣齡分布 × 每日價格區間推算 LTH／STH 籌碼（collect.py 每天呼叫）
+pipeline/liq_heat.py     清算熱力圖：OKX 永續逐小時未平倉量＋假設槓桿推算各價位的待清算量（collect.py 每天呼叫）
 pipeline/cohort_cache/   每天的完整 URPD（63 格）與幣齡分布存檔（bitcoin-data 免費層的 URPD 歷史只到約 2026-08-10）
 pipeline/bd_cache/       前一晚抓的鏈上指標快取
 pipeline/check_i18n.py   檢查 app.js 每個 _t() 都有英文
@@ -261,6 +262,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 2026-10-28：長短期持有者籌碼「現在」那一張改用 CheckOnChain 依實際幣齡算的公開圖表（urpd_cohort，Bitcoin Research Kit；`pipeline/coc.py` 每天讀一次，不佔 bitcoin-data 額度），同樣套用搬家修正；「和約 30 天前比」仍是推算，並列出推算和實際的差距（10/28：STH 總量 −3.2%、約一成分到別的價位）。CheckOnChain 只有當下的快照，從 10/28 起每天存檔（`cohort_cache/coc_cohort.json`）。
   - 2026-10-29：鏈上版新增「價格 × 長期持有者動向」：價格線依長期持有者 30 日淨部位上色（紅＝淨減、灰＝持平、藍＝淨增），並寫出這段方向從哪天開始、同期價格怎麼走。畫法參考 Glassnode 的吸籌趨勢評分，但那個要實體歸類（付費）做不出來；bitcoin-data 同名的 accumulation-trend-score 和 LTH 30 日淨部位相關 0.97，等於同一個數字，所以直接用已抓的序列，不另打 API（`pipeline/stage_viz.py` 的 `lth_color_viz`）。
   - 2026-10-31：鏈上版「短期持有者獲利比例」上方加 BTC 週 K（Kraken 週線，週四起算；最後一根用已收盤日線重算），上下兩格共用時間軸與十字線，方便對照價格。
+  - 2026-11-02：衍生品版新增「清算熱力圖（推算）」：用 OKX BTC 永續（USDT＋幣本位）逐小時未平倉量與 K 線，假設槓桿 5–100 倍，推算各價位等著被強制平倉的多單（收盤下方）與空單（上方），價格走過就清掉；可切 3 天／7 天，疊小時 K 線。每日快照（不是即時），只有 OKX（Binance、Bybit 從本站伺服器讀不到），不是 CoinGlass 的數字（`pipeline/liq_heat.py`；每天約 30 次 OKX 請求，不佔 bitcoin-data 額度）。
   - 每日任務加「結構分析」：先問一個行情問題，拆參與者、比較前後、分清事實與推算、用行為確認、寫情境與推翻條件（`docs/CLAUDE_DAILY.md`）。
 - **2026-10-23**
   - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。
@@ -335,7 +337,7 @@ All free public APIs; no keys required.
 | bitcoin-data.com | Holder cost basis, LTH SOPR, supply flows, URPD, coin-age bands (for the LTH / STH split), liquid supply, top radar | 14 requests a day (free tier allows 15) |
 | CheckOnChain public charts | STH-SOPR, short-term holder realized profit/loss, actual supply distribution by long- and short-term holders (about 1 day late; `pipeline/coc.py` reads it once a day and falls back to `pipeline/coc_cache/`) | Doesn't use bitcoin-data quota |
 | Deribit | DVOL, futures basis, options, perp funding | Daily |
-| OKX, Hyperliquid | Funding (OI-weighted with Deribit) | Daily |
+| OKX, Hyperliquid | Funding (OI-weighted with Deribit); OKX perpetuals' hourly open interest and candles (liquidation heatmap, estimate) | Daily |
 | 13 exchange order books | Coinbase, Bitstamp, Gemini, Bitfinex, Kraken, Binance, OKX, Gate, MEXC, Deribit, Kraken Futures, OKX Swap, Hyperliquid | Daily snapshot |
 | The Block | Spot ETF daily net flows (same basis as Farside) | Daily |
 | FRED | 10-yr nominal and real yields, dollar index, Nasdaq | Daily |
@@ -467,6 +469,7 @@ This repository is public and its history is permanent. The site holds only mark
   - 2026-10-28: the “now” view of long- vs short-term holder supply switches to CheckOnChain's public chart computed from each coin's actual age (urpd_cohort, Bitcoin Research Kit; read once a day by `pipeline/coc.py`, no bitcoin-data quota), with the same transfer-day correction; the comparison with about 30 days ago stays an estimate and the gap between estimate and actual is shown (Oct 28: STH total −3.2%, about 10% in a different bucket). CheckOnChain only has the current snapshot, so it is archived daily from Oct 28 (`cohort_cache/coc_cohort.json`).
   - 2026-10-29: new on-chain panel “Price × long-term holder flow”: the price line is coloured by long-term holders' 30-day net position (red = net cut, grey = flat, blue = net add), with when the current direction began and how price moved since. The look follows Glassnode's Accumulation Trend Score, which needs entity clustering (paid) and can't be rebuilt; bitcoin-data's indicator of that name correlates 0.97 with the LTH 30-day net position, i.e. the same number, so the panel uses the series already fetched, no extra API calls (`lth_color_viz` in `pipeline/stage_viz.py`).
   - 2026-10-31: the on-chain “STH supply in profit” chart now has BTC weekly candles above it (Kraken weekly, weeks start Thursday; the last candle is rebuilt from closed daily bars), sharing the time axis and crosshair for comparison with price.
+  - 2026-11-02: new derivatives panel “Liquidation heatmap (estimate)”: from OKX BTC perpetuals' hourly open interest (USDT- and coin-margined) and candles, assuming 5–100x leverage, it estimates where long (below price) and short (above price) positions would be force-closed, clearing levels once price trades through them; 3- and 7-day views with hourly candles. A daily snapshot, not real time; OKX only (Binance and Bybit can't be reached from the site's servers); not CoinGlass's numbers (`pipeline/liq_heat.py`; about 30 OKX requests a day, no bitcoin-data quota).
   - Daily task gets a “structural analysis” method: start from a market question, split the participants, compare before and after, separate facts from estimates, confirm with behaviour, write scenarios and what would prove it wrong (`docs/CLAUDE_DAILY.md`).
 - **2026-10-23**
   - On-chain page: short-term holder realized profit and loss (CheckOnChain, two separate lines, in BTC, smoothed), with a note on which side drove the profit ÷ loss change versus 7 days ago. Doesn't use bitcoin-data quota.

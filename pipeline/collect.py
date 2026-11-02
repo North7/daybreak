@@ -1135,6 +1135,11 @@ try:
     R['fear_greed'] = dict(date=fg[-1][0], value=fvv[-1], label=fg[-1][2], d7=fvv[-8] if len(fvv) > 7 else None, avg30=round(sum(fvv[-30:]) / 30, 1),
                            pct_1y=_pctl(fvv[-365:], fvv[-1]), note='alternative.me；0 極度恐懼、100 極度貪婪；只作讀值')
 except Exception as e: errors.append(f'fear_greed {e}')
+# G9f. 2026-11-02 使用者要求：清算熱力圖（推算；OKX 逐小時未平倉量＋假設槓桿，見 liq_heat.py）。約 30 次 OKX 請求，不佔 bitcoin-data 額度
+try:
+    import liq_heat
+    R['liq_heat'] = liq_heat.build(get)
+except Exception as e: errors.append(f'liq_heat {e}')
 R.pop('_sig5', None); R.pop('_sig1', None)
 R['bd_rotation'] = R_bd
 R['errors'] = errors
