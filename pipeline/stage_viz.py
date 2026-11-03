@@ -345,3 +345,48 @@ def regime_viz(cm, rpl, last, step=7):
                 comps=[dict(key=k, raw=round(raw[d1][k], 4) if raw[d1][k] is not None else None, val=round(math.tanh(raw[d1][k] / sc[k]), 2) if raw[d1][k] is not None else None) for k in REG_KEYS],
                 scales={k: round(sc[k], 4) for k in REG_KEYS}, flips=flips, rows=[[dn(d), round(v, 2), round(pi[d])] for d, v in S],
                 note='六項（200 日均線位置、12 個月動能、MVRV 對一年均值、實現市值 30 日、交易所供給 90 日、實現獲利 ÷ 虧損 90 天）各除以自己的歷史中位數取 tanh 後平均 ×6；連續 4 週在另一邊才算翻轉；只作讀值')
+
+
+# 2026-11-03 使用者要求（CryptoQuant 的 Apparent Demand，@xwinfinance 的圖）：表觀需求（30 天合計）＝30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化。
+#   1 年以上供給取自 CheckOnChain HODL Waves（coc.get_hodl1y，逐筆 UTXO、不是實體調整）；新挖出的幣照減半時程 × 每天 144 個區塊估。
+#   單日 1 年以上供給掉超過 max(10 萬, 20 倍日變化中位數) 標成「疑似搬家」（交易所／託管整理錢包，CryptoQuant 的版本看不到這種尖峰），
+#   這批幣若一直不動會在一年後同一天滿一年、把數值拉低同樣的量（回音）。數字照實顯示、不修改。只作讀值
+AD_FROM, AD_MOVE = '2020-01-01', 100000
+
+
+def _subsidy(d):
+    for h, s in (('2028-04-15', 1.5625), ('2024-04-20', 3.125), ('2020-05-11', 6.25), ('2016-07-09', 12.5), ('2012-11-28', 25.0)):
+        if d >= h: return s * 144
+    return 50.0 * 144
+
+
+def ad_viz(ser, last, step=3):
+    """ser：{date: (1 年以上供給, 價格)}。回傳 30 天表觀需求、它的 30 日平均、疑似搬家日與回音、圖表資料。"""
+    D = sorted(d for d in ser if d <= last)
+    if len(D) < 800: return None
+    iv = {d: ser[d][0] for d in D}; px = {d: ser[d][1] for d in D}; ix = {d: k for k, d in enumerate(D)}
+    ad = {}
+    for k in range(30, len(D)):
+        d = D[k]; ad[d] = sum(_subsidy(D[j]) for j in range(k - 29, k + 1)) - (iv[d] - iv[D[k - 30]])
+    A = [d for d in D if d in ad]
+    sma = {A[k]: sum(ad[A[j]] for j in range(k - 29, k + 1)) / 30 for k in range(29, len(A))}
+    dl = [(D[k], iv[D[k]] - iv[D[k - 1]]) for k in range(1, len(D)) if D[k] >= '2016-01-01']
+    med = sorted(abs(v) for _, v in dl)[len(dl) // 2]; thr = max(AD_MOVE, 20 * med)
+    moves = []
+    for d, v in dl:   # 相鄰幾天的大量搬動併成一次
+        if v > -thr: continue
+        if moves and dn(d) - dn(moves[-1]['end']) <= 2: moves[-1]['end'] = d; moves[-1]['btc'] += round(-v)
+        else: moves.append(dict(start=d, end=d, btc=round(-v)))
+    dmap = dict(dl)
+    for m in moves:   # 回音：一年後那幾天 1 年以上供給的最大單日增加（驗證過 2023-07-28 → 2024-07-27、2024-10-08 → 2025-10-08 都對得上）
+        m['echo'] = ds(dn(m['start']) + 365)
+        if m['echo'] <= last: m['echo_rise'] = round(max(dmap.get(ds(dn(m['echo']) + k), 0) for k in range(-2, 4)))
+    d1 = A[-1]; w7 = A[-8] if len(A) > 8 else None
+    vals = sorted(ad[d] for d in A if d >= AD_FROM)
+    rows = [[dn(d), round(ad[d]), round(sma[d]) if d in sma else None, round(px[d])] for d in A if d >= AD_FROM][::-1][::step][::-1]
+    up = [m for m in moves if d1 < m['echo'] <= ds(dn(d1) + 60)]
+    rec = [m for m in moves if dn(d1) - 30 < dn(m['start']) <= dn(d1) or dn(d1) - 30 < dn(m['echo']) <= dn(d1)]
+    return dict(date=d1, value=round(ad[d1]), sma30=round(sma[d1]), d7=round(ad[w7]) if w7 else None, price=round(px[d1]),
+                inact=round(iv[d1]), inact_chg30=round(iv[d1] - iv[D[ix[d1] - 30]]), issued30=round(sum(_subsidy(D[j]) for j in range(ix[d1] - 29, ix[d1] + 1))),
+                pct=round(sum(x < ad[d1] for x in vals) / len(vals) * 100, 1), since=AD_FROM, moves=moves[-12:], echo_soon=up, in_window=rec, move_thr=round(thr),
+                rows=rows, note='CryptoQuant 定義：30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化；1 年以上供給取自 CheckOnChain HODL Waves（逐筆 UTXO）；新挖出的幣照減半時程估；只作讀值')

@@ -81,7 +81,7 @@
 | Kraken | 日線價格、均線、ATR、波動、短週期 | 每日 |
 | CoinMetrics Community | MVRV、實現價、**頂部三指標（MVRV Z／NUPL／Puell）**、交易所供給、實現市值、冪律、長期價格 | 每日（晚 1 天） |
 | bitcoin-data.com | 持有者成本、LTH SOPR、籌碼流向、URPD、幣齡分布（長短期持有者籌碼推算用）、流動性供給、頂部雷達 | 每日 14 次請求（免費層上限 15） |
-| CheckOnChain 公開圖表 | STH-SOPR、短期持有者實現獲利／虧損、長短期持有者的實際籌碼分布、賣方衰竭常數、全網實現獲利 ÷ 虧損（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
+| CheckOnChain 公開圖表 | STH-SOPR、短期持有者實現獲利／虧損、長短期持有者的實際籌碼分布、賣方衰竭常數、全網實現獲利 ÷ 虧損、HODL Waves（表觀需求）（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
 | Deribit | DVOL、期貨基差、選擇權、永續資金費率 | 每日 |
 | OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權）；OKX 永續逐小時未平倉量與 K 線（清算熱力圖，推算）；OKX 場外 USDT/CNY 報價與永續對現貨日線（三地溢價） | 每日 |
 | 13 個交易所掛單簿 | Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Kraken Futures、OKX Swap、Hyperliquid | 每日快照 |
@@ -189,7 +189,7 @@ pipeline/brief.py        印出精簡摘要給 Claude 讀（異動偵測放最�
 pipeline/signals.py      異動偵測：極端值、急變、狀態翻轉、關鍵價位、連續、跨指標組合；檢查上期發現的追蹤條件（build.py 呼叫）
 pipeline/etf.py          從 The Block 更新 ETF 每日淨流量
 pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 7 個
-pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損、長短期持有者籌碼、賣方衰竭常數、全網實現獲利 ÷ 虧損：讀 CheckOnChain 公開圖表（晚約 1 天）
+pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損、長短期持有者籌碼、賣方衰竭常數、全網實現獲利 ÷ 虧損、1 年以上未動供給：讀 CheckOnChain 公開圖表（晚約 1 天）
 pipeline/cohort_urpd.py  長短期持有者籌碼：URPD × 幣齡分布 × 每日價格區間推算 LTH／STH 籌碼（collect.py 每天呼叫）
 pipeline/liq_heat.py     清算熱力圖：OKX 永續逐小時未平倉量＋假設槓桿推算各價位的待清算量（collect.py 每天呼叫）
 pipeline/cohort_cache/   每天的完整 URPD（63 格）與幣齡分布存檔（bitcoin-data 免費層的 URPD 歷史只到約 2026-08-10）
@@ -269,6 +269,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 2026-11-03：週期版新增「週線多空分數」（CryptoPainter 的 JT_Regime_Osc 不公開，改做本站自己的版本）：六項已有訊號（200 日均線位置、12 個月動能、MVRV 對一年均值、實現市值 30 日、交易所供給 90 日、實現獲利 ÷ 虧損 90 天）各除以歷史中位數取 tanh、平均 ×6，2013 年起每週一根；連續 4 週在另一邊才算翻轉，附歷次翻轉與 26／52 週後漲跌（`stage_viz.regime_viz`，不另打 API）。
   - 2026-11-03：資金版新增「三地溢價」（參考 CryptoPainter 的期現差價加權 USDT 溢價率，權重不公開，改成三條分開看）：美國 Coinbase 溢價、亞洲 OKX 場外 USDT/CNY 對匯率的溢價（只有快照，從 2026-11-02 起每日記在 `data/history/index.json`）、槓桿 OKX 永續對現貨（近 300 天日線），讀值寫出誰在推、誰在缺席（`collect.py` G9c；每天約 9 次 OKX 請求）。
   - 2026-11-03：長期路徑的每月重估自動化（10/31 那次因為沒有任何流程負責而漏掉，這次補做）：`pipeline/path_review.py` 每天由 build.py 呼叫，到了月底就依舊日報已裁示的規則換錨（起點＝月底收盤）、補已實現點、用月底收盤對各路徑當月值的對數常態似然（σ 12%）貝氏更新權重、收破 61,000 時「直接修復」歸零，計算過程寫進 `data/model.json` 的 `paths.reviews` 並在週期版公開；每天做包絡檢查，收盤連 10 天超出四條路徑上下 12% 才標記需要重估形狀（形狀仍須人工）。10 月結果：月底收 77,437，權重 30/20/25/25 → 27/21/26/26（直接修復／淺回檔／基準雙底／延後新低），包絡 0 天超出、形狀不變。
+  - 2026-11-03：鏈上版新增「表觀需求（30 天合計）」（CryptoQuant 的 Apparent Demand）：30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化，1 年以上供給取自 CheckOnChain HODL Waves（2010 年起、每天 1 次，`coc.get_hodl1y`，快取 `coc_cache/hodl-1y.json`）；2020 年起畫圖並疊 30 日平均。單日大量舊幣搬動（≥ 10 萬顆）標成疑似搬家，並提醒一年後的回音日（2025/11/22–23 搬了約 47 萬顆，回音在 2026/11/22 前後）（`stage_viz.ad_viz`）。
   - 每日任務加「結構分析」：先問一個行情問題，拆參與者、比較前後、分清事實與推算、用行為確認、寫情境與推翻條件（`docs/CLAUDE_DAILY.md`）。
 - **2026-10-23**
   - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。
@@ -341,7 +342,7 @@ All free public APIs; no keys required.
 | Kraken | Daily price, moving averages, ATR, volatility, short cycle | Daily |
 | CoinMetrics Community | MVRV, realized price, **top-3 indicators (MVRV Z / NUPL / Puell)**, exchange supply, realized cap, power law, long-term price | Daily (1-day lag) |
 | bitcoin-data.com | Holder cost basis, LTH SOPR, supply flows, URPD, coin-age bands (for the LTH / STH split), liquid supply, top radar | 14 requests a day (free tier allows 15) |
-| CheckOnChain public charts | STH-SOPR, short-term holder realized profit/loss, actual supply distribution by long- and short-term holders, seller exhaustion constant, network realized profit ÷ loss (about 1 day late; `pipeline/coc.py` reads it once a day and falls back to `pipeline/coc_cache/`) | Doesn't use bitcoin-data quota |
+| CheckOnChain public charts | STH-SOPR, short-term holder realized profit/loss, actual supply distribution by long- and short-term holders, seller exhaustion constant, network realized profit ÷ loss, HODL waves (apparent demand) (about 1 day late; `pipeline/coc.py` reads it once a day and falls back to `pipeline/coc_cache/`) | Doesn't use bitcoin-data quota |
 | Deribit | DVOL, futures basis, options, perp funding | Daily |
 | OKX, Hyperliquid | Funding (OI-weighted with Deribit); OKX perpetuals' hourly open interest and candles (liquidation heatmap, estimate); OKX OTC USDT/CNY quotes and perp-vs-spot daily bars (three premiums) | Daily |
 | 13 exchange order books | Coinbase, Bitstamp, Gemini, Bitfinex, Kraken, Binance, OKX, Gate, MEXC, Deribit, Kraken Futures, OKX Swap, Hyperliquid | Daily snapshot |
@@ -481,6 +482,7 @@ This repository is public and its history is permanent. The site holds only mark
   - 2026-11-03: new cycle panel “Weekly regime score” (CryptoPainter's JT_Regime_Osc is closed, so this is the site's own version): six existing signals (price vs 200-day MA, 12-month momentum, MVRV vs its 1-year mean, 30-day realized cap, 90-day exchange supply, 90-day realized profit ÷ loss), each divided by its historical median, squashed with tanh, averaged and ×6; one bar a week since 2013; a flip needs 4 straight weeks, with every past flip and its 26/52-week returns (`stage_viz.regime_viz`, no extra API calls).
   - 2026-11-03: new flows panel “Three premiums” (inspired by CryptoPainter's spot-futures-weighted USDT premium, whose weights are private, so the three are shown separately): US Coinbase premium, Asian OKX OTC USDT/CNY premium vs the FX rate (snapshot only, logged daily in `data/history/index.json` from 2026-11-02), and leverage as OKX perp vs spot (300 days of daily bars); the reading says who is pushing and who is absent (`collect.py` G9c; about 9 OKX requests a day).
   - 2026-11-03: the monthly long-term path review is now automatic (the Oct 31 review was missed because no process owned it; done now): `pipeline/path_review.py`, called by build.py daily, re-anchors at each month end (start = month-end close), adds the realized point, updates weights with a Bayesian step from a log-normal likelihood (σ 12%) of the month-end close against each path's value for the month, and zeroes “Direct recovery” on a close below 61,000; the working is saved in `paths.reviews` of `data/model.json` and shown on the cycle page. A daily envelope check flags a shape review after 10 straight closes more than 12% outside all four paths (shapes stay a manual call). October: close 77,437; weights 30/20/25/25 → 27/21/26/26 (direct recovery / shallow pullback / base-case double bottom / delayed new low); 0 days outside the envelope, shapes unchanged.
+  - 2026-11-03: new on-chain panel “Apparent demand (30-day sum)” (CryptoQuant's Apparent Demand): coins mined in 30 days − the 30-day change in supply unmoved for a year or more, with the 1y+ supply from CheckOnChain's HODL waves (since 2010, once a day, `coc.get_hodl1y`, cached in `coc_cache/hodl-1y.json`); charted from 2020 with its 30-day average. Single days moving ≥100K old coins are flagged as likely transfers, with a warning for the echo a year later (about 470K moved on 2025-11-22/23, echo around 2026-11-22) (`stage_viz.ad_viz`).
   - Daily task gets a “structural analysis” method: start from a market question, split the participants, compare before and after, separate facts from estimates, confirm with behaviour, write scenarios and what would prove it wrong (`docs/CLAUDE_DAILY.md`).
 - **2026-10-23**
   - On-chain page: short-term holder realized profit and loss (CheckOnChain, two separate lines, in BTC, smoothed), with a note on which side drove the profit ÷ loss change versus 7 days ago. Doesn't use bitcoin-data quota.

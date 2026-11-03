@@ -786,6 +786,10 @@
       'regime': { h: h('上格是 BTC 價格，下格是每週的多空分數：零軸以上綠（多方）、以下紅（空方），範圍 −6 到 +6。', 'Top: BTC price; bottom: the weekly regime score, green above zero (bullish) and red below (bearish), range −6 to +6.',
           '把六個看趨勢、估值、資金和獲利了結的訊號合成一個數字：大段綠色對應牛市、大段紅色對應熊市；柱子越長，六項越一致。分數在零軸附近（絕對值小於 1）代表訊號互相矛盾。', 'Six trend, valuation, capital-flow and profit-taking signals combined into one number: long green stretches match bull markets, long red ones bear markets; longer bars mean the six agree more. Near zero (under 1 in size) the signals conflict.',
           '是我們自己的合成方法，不是 CryptoPainter 的 JT_Regime_Osc。翻轉要連續 4 週才算，所以會晚幾週；2014/6、2021/8 的翻多一年後價格反而較低。', 'Our own composite, not CryptoPainter\'s JT_Regime_Osc. A flip needs 4 straight weeks, so it lags; the bullish flips of Jun 2014 and Aug 2021 saw lower prices a year later.') },
+      'ad': { h: h('上格是 BTC 價格，下格是 30 天的表觀需求（顆）：綠＝正、紅＝負，虛線是它的 30 日平均，橘點虛線是疑似搬家日。', 'Top: BTC price; bottom: 30-day apparent demand (BTC), green positive and red negative, the dashed line its 30-day average, orange markers likely transfer days.',
+          '正＝舊幣醒來被市場接走，需求夠；負＝滿一年沒動的幣增加得比新挖出的快，換手少、需求偏弱。跌到自己的 30 日平均之下＝需求在轉弱；大段紅色常出現在下跌或盤整期。', 'Positive means old coins wake and get absorbed: enough demand. Negative means coins reaching one year unmoved outpace issuance: little turnover, soft demand. Dropping below its own 30-day average means demand is weakening; long red stretches tend to come with declines or chop.',
+          '會受一年前換手量影響（那批幣滿一年時把它拉低）；交易所整理錢包會造成尖峰，一年後還有回音。逐筆計算、不是實體調整，和 CryptoQuant 的數值不完全相同。', 'It echoes turnover from a year earlier (those coins drag it down when they turn one); exchange wallet reshuffles cause spikes with an echo a year later. Per-UTXO, not entity-adjusted, so it differs somewhat from CryptoQuant\'s numbers.'),
+        now: function () { var x = (D.onchain || {}).ad; if (!x) return ''; return _T(adK(x.value) + '（' + fmt.md(x.date) + '），30 日平均 ' + adK(x.sma30) + (x.value < x.sma30 ? '，在平均之下。' : '，在平均之上。'), adK(x.value) + ' (' + fmt.md(x.date) + '), 30-day average ' + adK(x.sma30) + (x.value < x.sma30 ? ', below the average.' : ', above the average.')); } },
       'rpl': { h: h('上格是 BTC 價格，下格是全網實現獲利 ÷ 實現虧損的 90 天平均（都是對數刻度）；1 以上綠、以下紅，紅底是低於 1 的期間。', 'Top: BTC price; bottom: network-wide realized profit ÷ realized loss, 90-day average (both log scale). Green above 1, red below; red bands mark the stretches below 1.',
           '低於 1＝賣出的人整體在認賠，大段紅色都出現在熊市；回到 1 以上代表賣出的人又開始賺錢。歷史上大段紅色結束後，多半到週期頂部都沒再跌回 1 以下。', 'Below 1 means sellers as a whole are realizing losses; long red stretches all came in bear markets. Moving back above 1 means sellers are taking profits again; historically, after a long red stretch it mostly stayed above 1 until the cycle top.',
           '不是保證：2019/5 回到 1 以上後，2019/12–2020/1 又跌回 37 天。90 天平均反應慢，要搭配最近 7 天的每日比值看。', 'Not a guarantee: after returning above 1 in May 2019 it fell back below for 37 days in Dec 2019–Jan 2020. The 90-day average is slow; read it with the last 7 daily values.') },
@@ -1827,6 +1831,65 @@
     hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
   }
 
+  /* 表觀需求（2026-11-03 使用者要求，CryptoQuant 的 Apparent Demand）：30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化。
+     資料取自 CheckOnChain HODL Waves（逐筆 UTXO）；單日大量舊幣搬動標「疑似搬家」，一年後的回音預先提醒。上下兩格共用時間軸。只作讀值 */
+  function adK(v) { var a = Math.abs(v); return (v > 0 ? '+' : v < 0 ? '−' : '') + (a < 1e4 ? _T(fmt.n(a) + ' 顆', fmt.n(a) + ' BTC') : cohCoins(a)); }
+  function adSay() {
+    var x = D.onchain.ad, it = [], ymd = function (s) { return s.replace(/-/g, '/'); }, below = x.value < x.sma30, M = x.moves || [];
+    it.push([_T('表觀需求（30 天）', 'Apparent demand (30d)'), adK(x.value),
+      _T((x.value >= 0 ? '正：' : '負：') + '30 天新挖出 ' + cohCoins(x.issued30) + '，1 年以上沒動的幣卻' + (x.inact_chg30 >= 0 ? '多了 ' : '少了 ') + cohCoins(Math.abs(x.inact_chg30)) + '。' + (below ? '低於自己的 30 日平均（' + adK(x.sma30) + '）' : '高於自己的 30 日平均（' + adK(x.sma30) + '）') + (x.d7 != null ? '，一週前 ' + adK(x.d7) : '') + '；2020 年以來第 ' + fmt.n(x.pct, 0) + ' 百分位。',
+        (x.value >= 0 ? 'Positive: ' : 'Negative: ') + cohCoins(x.issued30) + ' mined in 30 days while coins unmoved for 1y+ ' + (x.inact_chg30 >= 0 ? 'grew by ' : 'fell by ') + cohCoins(Math.abs(x.inact_chg30)) + '. ' + (below ? 'Below' : 'Above') + ' its 30-day average (' + adK(x.sma30) + ')' + (x.d7 != null ? '; a week ago ' + adK(x.d7) : '') + '; ' + fmt.n(x.pct, 0) + 'th percentile since 2020.'), x.value < 0 && below ? 'warn' : 'neu']);
+    it.push([_T('怎麼變負的', 'Why negative'), _T('一年前換手', 'Aging'),
+      _T('這個數字扣掉的是「滿一年還沒動的幣」：一年前大量換手的籌碼只要沒再動，滿一年時就會把它拉低，不全是今天的買盤變弱。現在扣掉的是一年前（' + ymd(ds_(dnOf(x.date) - 395)) + '–' + ymd(ds_(dnOf(x.date) - 365)) + '）換手、到現在還沒動的幣。',
+        'It subtracts coins reaching one year unmoved: heavy turnover a year ago drags it down as those coins age, so it is not all weaker buying today. Right now it is subtracting coins that changed hands ' + ymd(ds_(dnOf(x.date) - 395)) + '–' + ymd(ds_(dnOf(x.date) - 365)) + ' and have not moved since.'), 'neu']);
+    var soon = (x.echo_soon || [])[0], seen = M.filter(function (m) { return m.echo_rise != null; }), hit = seen.filter(function (m) { return m.echo_rise >= m.btc * 0.5; });
+    if (soon || M.length) it.push([_T('疑似搬家', 'Likely transfers'), soon ? ymd(soon.echo).slice(5) : String(M.length),
+      _T((soon ? ymd(soon.start) + (soon.end !== soon.start ? '–' + ymd(soon.end).slice(5) : '') + ' 一天搬動 ' + cohCoins(soon.btc) + ' 1 年以上的舊幣（疑似交易所或託管整理錢包），這批幣若一直沒動，會在 ' + ymd(soon.echo) + ' 前後滿一年，把這條線拉低同樣的量——那是搬家的回音，不是需求崩掉。' : '') + (seen.length ? '過去 ' + seen.length + ' 次中 ' + hit.length + ' 次一年後真的出現回音（其他幾次那批幣又被動過）。' : ''),
+        (soon ? ymd(soon.start) + ' moved ' + cohCoins(soon.btc) + ' of 1y+ coins in a day (likely an exchange or custodian reshuffle). If they stay put they turn one year old around ' + ymd(soon.echo) + ' and drag this line down by the same amount — an echo of the transfer, not collapsing demand. ' : '') + (seen.length ? 'Of ' + seen.length + ' past cases, ' + hit.length + ' produced the echo a year later (the rest moved again).' : '')), 'neu']);
+    return it;
+  }
+  function ds_(n) { var t = new Date(n * 864e5); return t.toISOString().slice(0, 10); }
+  function adPanel() {
+    var x = (D.onchain || {}).ad; if (!x || !x.rows) return '';
+    return panel('span-12', _T('表觀需求（30 天合計）', 'Apparent demand (30-day sum)'), _T('CheckOnChain HODL Waves · ' + fmt.md(x.date), 'CheckOnChain HODL waves · ' + fmt.md(x.date)),
+      interpHtml(adSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('表觀需求 ≥ 0', 'Demand ≥ 0'), 'var(--up)', 'box'], [_T('表觀需求 < 0', 'Demand < 0'), 'var(--down)', 'box'], [_T('它的 30 日平均', 'Its 30-day average'), 'var(--s1)', 'dash'], [_T('疑似搬家', 'Likely transfer'), 'var(--warn)']]) + '<div class="chart" id="c-ad"></div>' +
+      '<p class="note">' + _T('CryptoQuant 的定義：30 天新挖出的幣 − 30 天內「1 年以上沒動過的供給」的變化。舊幣醒來、被市場接走時為正；滿一年還沒動的幣增加得比新挖出的快時為負，代表換手少、需求偏弱。1 年以上供給取自 CheckOnChain 的 HODL Waves（逐筆計算、不是實體調整，所以交易所整理錢包會出現尖峰，CryptoQuant 的版本看不到）；新挖出的幣照減半時程估。數字照實顯示、不修改。',
+        'CryptoQuant\'s definition: coins mined in 30 days − the 30-day change in supply unmoved for a year or more. Positive when old coins wake and are absorbed; negative when coins reaching one year unmoved outpace issuance — little turnover, soft demand. The 1y+ supply comes from CheckOnChain\'s HODL waves (per-UTXO, not entity-adjusted, so exchange wallet reshuffles show up as spikes that CryptoQuant\'s version filters out); issuance follows the halving schedule. Numbers are shown as they are.') + '</p>');
+  }
+  function drawAd(el) {
+    var x = (D.onchain || {}).ad; if (!x || !el) return;
+    var R_ = x.rows, W = Math.max(280, el.clientWidth), sm = W < 520, ML = 8, MR = 58, MT = 16, hp = sm ? 100 : 130, gap = 28, hs = sm ? 160 : 210, MB = 24, Ht = MT + hp + gap + hs + MB, pw = W - ML - MR, ys0 = MT + hp + gap;
+    var x0 = R_[0][0], x1 = R_[R_.length - 1][0], X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; }, s = '', L = Math.log10;
+    var pl = L(Math.min.apply(null, R_.map(function (r) { return r[3]; }))), ph = L(Math.max.apply(null, R_.map(function (r) { return r[3]; }))), pp = (ph - pl) * 0.05; pl -= pp; ph += pp;
+    var vs = R_.map(function (r) { return r[1]; }).concat(R_.filter(function (r) { return r[2] != null; }).map(function (r) { return r[2]; })), lo = Math.min.apply(null, vs), hi = Math.max.apply(null, vs), st = niceStep(hi - lo, sm ? 4 : 6); lo = Math.floor(lo / st) * st; hi = Math.ceil(hi / st) * st;
+    var Yp = function (v) { return MT + (1 - (L(v) - pl) / (ph - pl)) * hp; }, Ys = function (v) { return ys0 + (1 - (v - lo) / (hi - lo)) * hs; };
+    var tx = function (xx, y, t, a) { return '<text class="ax" x="' + xx.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + esc(t) + '</text>'; }, kf = function (v) { return (v > 0 ? '+' : '') + fmt.k(v); };
+    [1e3, 2e3, 5e3, 1e4, 2e4, 5e4, 1e5, 2e5].forEach(function (t) { if (L(t) < pl || L(t) > ph) return; var y = Yp(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, fmt.k(t)); });
+    for (var g = lo; g <= hi + 1; g += st) { var yg = Ys(g); s += '<line class="' + (g ? 'gl' : 'base') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + yg.toFixed(1) + '" y2="' + yg.toFixed(1) + '"/>' + tx(ML + pw + 8, yg + 3.5, kf(g)); }
+    s += tx(ML, MT - 5, _T('BTC 價格（對數刻度）', 'BTC price (log scale)')) + tx(ML, ys0 - 9, _T('表觀需求（30 天合計，顆）', 'Apparent demand (30-day sum, BTC)'));
+    var y0 = new Date(x0 * 864e5).getUTCFullYear() + 1, y1 = new Date(x1 * 864e5).getUTCFullYear();
+    for (var y = y0; y <= y1; y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if ((!sm || y % 2 === 0) && xx > ML + 14 && xx < ML + pw - 14) s += tx(xx, Ht - 6, String(y), 'middle'); }
+    var bw = Math.max(1, pw / R_.length + 0.3), z0 = Ys(0);
+    R_.forEach(function (r) { var cx = X(r[0]), yv = Ys(r[1]); s += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(z0, yv).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, Math.abs(yv - z0)).toFixed(1) + '" fill="var(--' + (r[1] >= 0 ? 'up' : 'down') + ')" opacity=".55"/>'; });
+    s += '<path class="ln" d="M' + R_.filter(function (r) { return r[2] != null; }).map(function (r) { return X(r[0]).toFixed(1) + ',' + Ys(r[2]).toFixed(1); }).join('L') + '" stroke="var(--s1)" stroke-width="1.3" stroke-dasharray="4 3"/>';
+    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Yp(r[3]).toFixed(1); }).join('L') + '" stroke="var(--ink-2)" stroke-width="1.3"/>';
+    (x.moves || []).forEach(function (m) { var xm = X(dnOf(m.start)); if (xm < ML || xm > ML + pw) return; s += '<line x1="' + xm.toFixed(1) + '" x2="' + xm.toFixed(1) + '" y1="' + ys0 + '" y2="' + (ys0 + hs) + '" stroke="var(--warn)" stroke-dasharray="2 4" stroke-width="1"/><circle cx="' + xm.toFixed(1) + '" cy="' + (ys0 + 4) + '" r="3" fill="var(--warn)"/>'; });
+    var zz = R_[R_.length - 1]; s += '<circle cx="' + X(zz[0]).toFixed(1) + '" cy="' + Ys(zz[1]).toFixed(1) + '" r="4" fill="var(--' + (zz[1] >= 0 ? 'up' : 'down') + ')" stroke="var(--deck)" stroke-width="2"/>';
+    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (ys0 + hs) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (ys0 + hs - MT) + '"/>';
+    el.innerHTML = svgEl(W, Ht, s, _T('BTC 價格與表觀需求', 'BTC price and apparent demand'));
+    animateLines(el);
+    var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
+    function move(ev) {
+      var r = svg.getBoundingClientRect(), xv = x0 + ((ev.clientX - r.left) * W / r.width - ML) / pw * (x1 - x0), p = R_[bisect(R_, xv)], c = 'var(--' + (p[1] >= 0 ? 'up' : 'down') + ')';
+      var mv = (x.moves || []).filter(function (m) { return Math.abs(dnOf(m.start) - p[0]) <= 3; })[0];
+      xh.setAttribute('x1', X(p[0])); xh.setAttribute('x2', X(p[0])); xh.setAttribute('visibility', 'visible');
+      dots.innerHTML = '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Ys(p[1]).toFixed(1) + '" r="4" fill="' + c + '" stroke="var(--deck)" stroke-width="2"/>';
+      showTip(ev.clientX, ev.clientY, '<div class="t">' + fmt.date(p[0]) + '</div><div class="r"><i style="background:' + c + '"></i><span>' + _T('表觀需求（30 天）', 'Apparent demand (30d)') + '</span><b>' + adK(p[1]) + '</b></div>' + (p[2] != null ? '<div class="r"><i style="background:var(--s1)"></i><span>' + _T('30 日平均', '30-day avg') + '</span><b>' + adK(p[2]) + '</b></div>' : '') + '<div class="r"><i style="background:var(--ink-2)"></i><span>' + _T('BTC 價格', 'BTC price') + '</span><b>' + fmt.usd(p[3]) + '</b></div>' + (mv ? '<div class="r"><i style="background:var(--warn)"></i><span>' + _T('疑似搬家', 'Likely transfer') + '</span><b>' + cohCoins(mv.btc) + '</b></div>' : ''));
+    }
+    hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
+    hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
+  }
+
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};
     var rows = [
@@ -1840,10 +1903,10 @@
     return readBar('onchain') + '<div class="kpis">' + kpi(_t('短期持有者獲利比例'), fmt.n((fl.sth_in_profit_pct || {}).value, 1) + '%', _t('7 天前 ') + fmt.n((fl.sth_in_profit_pct || {}).d7, 1) + '%', (fl.sth_in_profit_pct || {}).value) + kpi(_t('短期持有者成本'), fmt.usd((fl.sth_vs_tmm || {}).sth_cost), _t('真實市場均價 ') + fmt.usd((fl.sth_vs_tmm || {}).tmm)) + kpi(_t('交易所供給'), fmt.n(ex.exchange_supply_share_pct, 2) + '%', _t('7 日 ') + fmt.pct(ex.exchange_supply_chg7_pct, 2) + _t(' · 90 日 ') + fmt.pct(ex.exchange_supply_chg90_pct, 2)) + kpi(_t('算力 7 日均'), fmt.n(mi.hash7, 0) + ' EH/s', _t('週 ') + fmt.pct(mi.wk_chg_pct, 1) + ' · hashprice $' + fmt.n(mi.hashprice, 1)) + kpi(_t('下次難度調整'), fmt.pct(mi.diff_next_pct, 1), fmt.md(mi.retarget) + _t(' · 進度 ') + fmt.n(mi.diff_progress, 0) + '%', mi.diff_progress) + '</div><div class="grid">' + interpPanel(ocInterp()) +
       panel('span-5', _t('籌碼分布（URPD）'), fmt.md(u.date) + _t(' · 每 2,000 美元一格'), urpdSay(u) + '<div id="c-urpd"></div>') +
       panel('span-7', _t('短期持有者：成本 vs 價格'), _t('bitcoin-data · 近 2 年'), legend([[_t('短期持有者成本'), 'var(--s2)'], [_t('真實市場均價'), 'var(--s3)']]) + '<div class="chart" id="c-cost"></div>' + _t('<div class="panel-h" style="margin-top:6px"><h2>短期持有者獲利比例</h2><span class="src">2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%</span></div><div class="chart" id="c-profit"></div>') +
-      cohortPanel() + lthColorPanel() + secPanel() + rplPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
+      cohortPanel() + lthColorPanel() + secPanel() + rplPanel() + adPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
-    mount($('#c-whale'), drawWhale); drawSopr(); drawSthPnl(); drawOc(); mount($('#c-npl'), drawNpl); cohortAfter(); mount($('#c-lthc'), drawLthColor); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl);
+    mount($('#c-whale'), drawWhale); drawSopr(); drawSthPnl(); drawOc(); mount($('#c-npl'), drawNpl); cohortAfter(); mount($('#c-lthc'), drawLthColor); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd);
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
     var v = D.chips.viz || {}, u = v.urpd || {}, c = D.price.bar.c, el = $('#c-urpd');
     if (el && u.band) {
