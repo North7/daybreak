@@ -52,7 +52,7 @@
 
 ## 出場框架
 
-以「100% ＝ 本週期打算賣出的全部持倉」計，不涉及任何人的實際持倉。參數在 `data/model.json`，每月檢討時才改。
+以「100% ＝ 本週期打算賣出的全部持倉」計，不涉及任何人的實際持倉。參數在 `data/model.json`，每月檢討時才改（長期路徑的權重與起點每月底自動更新）。
 
 | 規則 | 內容 |
 |---|---|
@@ -177,7 +177,8 @@ data/latest.json         每日資料（由 Actions 產生，不要手改）
 data/notes.json          每日頭條、各版判讀、行動、變化、要聞與研報（Claude 每日任務寫入）
 data/notes.en.json       notes.json 的英文版
 data/etf.json            ETF 每日淨流量
-data/model.json          固定模型參數：出場框架、長期路徑（每月檢討時才改；含 *_en 英文規則文字）
+data/model.json          固定模型參數：出場框架、長期路徑（出場框架每月檢討時才改；路徑的換錨、已實現點與權重由 path_review.py 每月底自動更新；含 *_en 英文規則文字）
+pipeline/path_review.py  長期路徑每月重估：換錨、補已實現點、貝氏更新權重、61,000 失效、每日包絡檢查（build.py 每天呼叫）
 data/history/index.json  每日快照索引
 data/archive/            往期封存：每期 notes（含英文版）與 index.json（頭條、當天收盤、之後漲跌、要盯的價位有沒有被碰到）。
                          目前只封存，網站上沒有往期頁面（2026-10-12 決定，之後再設計）
@@ -267,6 +268,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 2026-11-02：鏈上版新增「實現獲利 ÷ 實現虧損（90 天平均）」（貝格先生分享的 Glassnode 圖的做法）：CheckOnChain 全網每日比值（2010 年起、晚約 1 天，每天 1 次；`coc.get_rpl`，快取 `coc_cache/realised-pl-ratio.json`）取 90 天平均，1 以上綠、以下紅；附歷次低於 1 的期間、大段紅色結束後一年內有沒有再跌破（2019/12–2020/1 例外）、最近 7 天每日比值與「維持這個水準何時跨過 1」的試算（`stage_viz.rpl_viz`）。
   - 2026-11-03：週期版新增「週線多空分數」（CryptoPainter 的 JT_Regime_Osc 不公開，改做本站自己的版本）：六項已有訊號（200 日均線位置、12 個月動能、MVRV 對一年均值、實現市值 30 日、交易所供給 90 日、實現獲利 ÷ 虧損 90 天）各除以歷史中位數取 tanh、平均 ×6，2013 年起每週一根；連續 4 週在另一邊才算翻轉，附歷次翻轉與 26／52 週後漲跌（`stage_viz.regime_viz`，不另打 API）。
   - 2026-11-03：資金版新增「三地溢價」（參考 CryptoPainter 的期現差價加權 USDT 溢價率，權重不公開，改成三條分開看）：美國 Coinbase 溢價、亞洲 OKX 場外 USDT/CNY 對匯率的溢價（只有快照，從 2026-11-02 起每日記在 `data/history/index.json`）、槓桿 OKX 永續對現貨（近 300 天日線），讀值寫出誰在推、誰在缺席（`collect.py` G9c；每天約 9 次 OKX 請求）。
+  - 2026-11-03：長期路徑的每月重估自動化（10/31 那次因為沒有任何流程負責而漏掉，這次補做）：`pipeline/path_review.py` 每天由 build.py 呼叫，到了月底就依舊日報已裁示的規則換錨（起點＝月底收盤）、補已實現點、用月底收盤對各路徑當月值的對數常態似然（σ 12%）貝氏更新權重、收破 61,000 時「直接修復」歸零，計算過程寫進 `data/model.json` 的 `paths.reviews` 並在週期版公開；每天做包絡檢查，收盤連 10 天超出四條路徑上下 12% 才標記需要重估形狀（形狀仍須人工）。10 月結果：月底收 77,437，權重 30/20/25/25 → 27/21/26/26（直接修復／淺回檔／基準雙底／延後新低），包絡 0 天超出、形狀不變。
   - 每日任務加「結構分析」：先問一個行情問題，拆參與者、比較前後、分清事實與推算、用行為確認、寫情境與推翻條件（`docs/CLAUDE_DAILY.md`）。
 - **2026-10-23**
   - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。
@@ -310,7 +312,7 @@ Nine sections. On desktop they stack into one page and switch as you scroll (key
 
 ### The exit plan
 
-Measured as "100% = everything you plan to sell this cycle"; nobody's actual holdings are involved. Parameters live in `data/model.json` and only change at the monthly review.
+Measured as "100% = everything you plan to sell this cycle"; nobody's actual holdings are involved. Parameters live in `data/model.json` and only change at the monthly review (the long-term paths' weights and start update automatically each month end).
 
 | Rule | What it does |
 |---|---|
@@ -478,6 +480,7 @@ This repository is public and its history is permanent. The site holds only mark
   - 2026-11-02: new on-chain panel “Realized profit ÷ realized loss (90-day avg)” (the method of the Glassnode chart shared by 貝格先生 (market_beggar)): CheckOnChain's network-wide daily ratio (since 2010, about a day late, once a day; `coc.get_rpl`, cached in `coc_cache/realised-pl-ratio.json`) averaged over 90 days, green above 1 and red below; with every stretch below 1, whether it fell back below within a year after each long red stretch (Dec 2019–Jan 2020 was the exception), the last 7 daily values, and when the average would cross 1 if they held (`stage_viz.rpl_viz`).
   - 2026-11-03: new cycle panel “Weekly regime score” (CryptoPainter's JT_Regime_Osc is closed, so this is the site's own version): six existing signals (price vs 200-day MA, 12-month momentum, MVRV vs its 1-year mean, 30-day realized cap, 90-day exchange supply, 90-day realized profit ÷ loss), each divided by its historical median, squashed with tanh, averaged and ×6; one bar a week since 2013; a flip needs 4 straight weeks, with every past flip and its 26/52-week returns (`stage_viz.regime_viz`, no extra API calls).
   - 2026-11-03: new flows panel “Three premiums” (inspired by CryptoPainter's spot-futures-weighted USDT premium, whose weights are private, so the three are shown separately): US Coinbase premium, Asian OKX OTC USDT/CNY premium vs the FX rate (snapshot only, logged daily in `data/history/index.json` from 2026-11-02), and leverage as OKX perp vs spot (300 days of daily bars); the reading says who is pushing and who is absent (`collect.py` G9c; about 9 OKX requests a day).
+  - 2026-11-03: the monthly long-term path review is now automatic (the Oct 31 review was missed because no process owned it; done now): `pipeline/path_review.py`, called by build.py daily, re-anchors at each month end (start = month-end close), adds the realized point, updates weights with a Bayesian step from a log-normal likelihood (σ 12%) of the month-end close against each path's value for the month, and zeroes “Direct recovery” on a close below 61,000; the working is saved in `paths.reviews` of `data/model.json` and shown on the cycle page. A daily envelope check flags a shape review after 10 straight closes more than 12% outside all four paths (shapes stay a manual call). October: close 77,437; weights 30/20/25/25 → 27/21/26/26 (direct recovery / shallow pullback / base-case double bottom / delayed new low); 0 days outside the envelope, shapes unchanged.
   - Daily task gets a “structural analysis” method: start from a market question, split the participants, compare before and after, separate facts from estimates, confirm with behaviour, write scenarios and what would prove it wrong (`docs/CLAUDE_DAILY.md`).
 - **2026-10-23**
   - On-chain page: short-term holder realized profit and loss (CheckOnChain, two separate lines, in BTC, smoothed), with a note on which side drove the profit ÷ loss change versus 7 days ago. Doesn't use bitcoin-data quota.

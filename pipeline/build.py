@@ -7,6 +7,17 @@ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 P = lambda *a: os.path.join(ROOT, *a)
 td = json.load(open(sys.argv[1] if len(sys.argv) > 1 else P('pipeline', 'today.json')))
 model = json.load(open(P('data', 'model.json')))
+# 2026-11-03 使用者要求：長期路徑的每月例行重估自動化（換錨、補已實現點、貝氏更新權重、61,000 失效、包絡檢查），規則見 path_review.py。
+#   到了月底就做一次並寫回 data/model.json；形狀要不要重畫需要判斷，只標記 fan.reshape_needed
+try:
+    import path_review
+    _ix = P('data', 'history', 'index.json')
+    _closes = {x['date']: x['close'] for x in (json.load(open(_ix)) if os.path.exists(_ix) else []) if x.get('close')}
+    _closes[td['bar_date']] = td['bar']['c']
+    _pchg, _pdone = path_review.review(model['paths'], _closes, td['bar_date'])
+    if _pchg: path_review.write_paths(P('data', 'model.json'), model['paths']); print('path_review', [(r['kind'], r.get('month') or r['date'], r['after']) for r in _pdone])
+    model['paths']['fan'] = path_review.fan(model['paths'], _closes, td['bar_date'])
+except Exception as e: print('path_review 失敗', e)
 etf = json.load(open(P('data', 'etf.json')))
 EP = dt.date(1970, 1, 1)
 dn = lambda s: (dt.date.fromisoformat(s[:10]) - EP).days
