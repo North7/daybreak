@@ -174,3 +174,34 @@ def get_rpl():
     except Exception as e:
         cj = json.load(open(RPL_CACHE))
         return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
+
+
+# 2026-11-03 使用者要求（CryptoQuant 的 Apparent Demand）：1 年以上沒動過的供給＝HODL Waves（BTC）中 1 年以上各帶的合計。
+#   圖約 4.5MB、從 2009 起；快取只存 [日期, 1 年以上供給, 價格]，表觀需求在 stage_viz.ad_viz 算
+HW_URL = 'https://charts-cdn.checkonchain.com/btconchain/supply/hodl_waves_0/hodl_waves_0_light.html'
+HW_PAGE = 'https://charts.checkonchain.com/btconchain/supply/hodl_waves_0/hodl_waves_0_light.html'
+HW_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'coc_cache', 'hodl-1y.json')
+HW_1Y = ('1y-18m', '18m-2y', '2y-3y', '3y-4y', '4y-5y', '5y-6y', '6y-7y', '7y-8y', '8y-10y', '>10y')
+
+
+def fetch_hodl1y():
+    """{date: (1 年以上供給, 價格)}"""
+    traces = _traces(HW_URL)
+    names = {t.get('name') for t in traces}
+    miss = [b for b in HW_1Y if b not in names]
+    if miss: raise RuntimeError(f'CheckOnChain HODL Waves 少了 {miss}，格式可能改了')
+    bands = [_trace(traces, b) for b in HW_1Y]; px = _trace(traces, 'Price (USD)')
+    ser = {d: (sum(b.get(d, 0) for b in bands), px[d]) for d in bands[-1] if d in px and px[d] > 0}
+    if len(ser) < 3000: raise RuntimeError(f'CheckOnChain HODL Waves 只有 {len(ser)} 筆，格式可能改了')
+    return ser
+
+
+def get_hodl1y():
+    """回傳 (序列 {date: (1 年以上供給, 價格)}, 狀態說明)。失敗時用上一次成功的快取。"""
+    try:
+        ser = fetch_hodl1y()
+        _save(HW_CACHE, HW_PAGE, [[d, round(v), round(p, 2)] for d, (v, p) in sorted(ser.items())], keep=10000)
+        return ser, 'live'
+    except Exception as e:
+        cj = json.load(open(HW_CACHE))
+        return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'

@@ -321,6 +321,13 @@ try:
     if _rpst != 'live': errors.append(f'checkonchain realised-pl-ratio 用快取：{_rpst}')
     R['rpl'] = stage_viz.rpl_viz(_rpl, LAST)
 except Exception as e: errors.append(f'checkonchain realised-pl-ratio: {e}')
+# B7. 2026-11-03 使用者要求（CryptoQuant 的 Apparent Demand）：表觀需求＝30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化（CheckOnChain HODL Waves；見 coc.get_hodl1y、stage_viz.ad_viz）
+try:
+    import coc, stage_viz
+    _hw1, _hwst = coc.get_hodl1y()
+    if _hwst != 'live': errors.append(f'checkonchain hodl-waves 用快取：{_hwst}')
+    R['ad'] = stage_viz.ad_viz(_hw1, LAST)
+except Exception as e: errors.append(f'checkonchain hodl-waves: {e}')
 try:
     # 2026-09-23 週檢：第三轉換條件量化＝STH 成本基礎 ÷ LTH 成本基礎（＝LTH-MVRV ÷ STH-MVRV，與價格無關）
     sr, lr_ = R['onchain']['sth-realized-price'], R['onchain']['lth-realized-price']
