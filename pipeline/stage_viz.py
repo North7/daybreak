@@ -284,3 +284,64 @@ def rpl_viz(ser, last, block=4):
                 first2=next((d for d in M[k:] if m[d] >= 2), None) if above else None,
                 daily=[[d, round(ser[d][0], 3)] for d in D[-14:]], last7=round(l7, 3), proj=proj, reds=reds, rows=rows,
                 note='CheckOnChain 全網實現獲利 ÷ 實現虧損，每日比值取 90 天平均；低於 1＝認賠多於獲利；試算假設每日比值維持最近 7 天平均；只作讀值')
+
+
+# 2026-11-03 使用者要求（CryptoPainter 的 JT_Regime_Osc 不公開，做我們自己的版本）：週線多空分數。
+#   用網站已有、可追溯到 2013 年的六個訊號合成一條以零為中心的柱狀圖，每一項都看得到原因：
+#   200 日均線位置、12 個月動能、MVRV 對一年均值、實現市值 30 日、交易所供給 90 日（減少為正）、實現獲利 ÷ 虧損 90 天平均（log10）。
+#   每項先除以自己 2013 年起絕對值的中位數再取 tanh（典型大小約 ±0.76、極端趨近 ±1），六項平均後乘 6，範圍 −6 到 +6。
+#   多空翻轉＝連續 4 週在另一邊才算（第一週為翻轉日），避免在零軸附近來回跳。只作讀值
+REG_KEYS = ('d200', 'mom12', 'mvrv1y', 'rc30', 'xs90', 'rpl')
+REG_FROM, REG_CONFIRM = '2013-01-01', 4
+
+
+def regime_viz(cm, rpl, last, step=7):
+    """cm：CoinMetrics [(date, 價格, MVRV, 市值, 流通量, 交易所供給)]；rpl：{date: 每日實現獲利 ÷ 虧損 或 (比值, 價格)}。"""
+    rows = [x for x in cm if x[0] <= last and x[2]]
+    D = [x[0] for x in rows]; P = [x[1] for x in rows]; MV = [x[2] for x in rows]; RC = [x[3] / x[2] for x in rows]; EX = [x[5] for x in rows]
+    n = len(D)
+    if n < 800: return None
+    cp, cm_ = [0.0], [0.0]
+    for i in range(n): cp.append(cp[-1] + P[i]); cm_.append(cm_[-1] + MV[i])
+    rr = {d: (v[0] if isinstance(v, (list, tuple)) else v) for d, v in (rpl or {}).items()}
+    RD = sorted(rr); r90, s = {}, 0.0
+    for i, d in enumerate(RD):
+        s += rr[d]
+        if i >= 90: s -= rr[RD[i - 90]]
+        if i >= 89: r90[d] = s / 90
+    raw = {}
+    for i in range(365, n):
+        d = D[i]
+        raw[d] = dict(d200=P[i] / ((cp[i + 1] - cp[i - 199]) / 200) - 1, mom12=math.log(P[i] / P[i - 365]),
+                      mvrv1y=MV[i] / ((cm_[i + 1] - cm_[i - 364]) / 365) - 1, rc30=RC[i] / RC[i - 30] - 1,
+                      xs90=-(EX[i] / EX[i - 90] - 1) if EX[i] and EX[i - 90] else None, rpl=math.log10(r90[d]) if r90.get(d) else None)
+    days = [d for d in D if d in raw and d >= REG_FROM]
+    sc = {}
+    for k in REG_KEYS:
+        a = sorted(abs(raw[d][k]) for d in days if raw[d][k] is not None)
+        sc[k] = a[len(a) // 2] or 1e-9
+    def score(d):
+        v = [math.tanh(raw[d][k] / sc[k]) for k in REG_KEYS if raw[d][k] is not None]
+        return sum(v) / len(v) * len(REG_KEYS) if v else None
+    W = days[::-1][::step][::-1]   # 由最新一天往回每 7 天一點
+    S = [(d, score(d)) for d in W]; S = [x for x in S if x[1] is not None]
+    pi = {d: P[i] for i, d in enumerate(D)}
+    flips, reg, run = [], (1 if S[0][1] >= 0 else -1), 0
+    for j, (d, v) in enumerate(S):
+        sg = 1 if v >= 0 else -1
+        run = run + 1 if sg != reg else 0
+        if run >= REG_CONFIRM:
+            reg = sg; f = S[j - REG_CONFIRM + 1][0]; t = dn(f)
+            fw = {w: (round((pi[ds(t + w * 7)] / pi[f] - 1) * 100, 1) if ds(t + w * 7) in pi else None) for w in (26, 52)}
+            flips.append(dict(date=f, dir=sg, price=round(pi[f]), r26=fw[26], r52=fw[52])); run = 0
+    for a, b in zip(flips, flips[1:]): a['weeks'] = (dn(b['date']) - dn(a['date'])) // 7
+    d1, v1 = S[-1]; last_f = flips[-1] if flips else None
+    pend = 0
+    for d, v in reversed(S):
+        if (1 if v >= 0 else -1) != reg: pend += 1
+        else: break
+    return dict(date=d1, value=round(v1, 2), prev=round(S[-2][1], 2), prev4=round(S[-5][1], 2), regime=reg,
+                since=last_f['date'] if last_f else None, weeks=(dn(d1) - dn(last_f['date'])) // 7 if last_f else None, pending=pend,
+                comps=[dict(key=k, raw=round(raw[d1][k], 4) if raw[d1][k] is not None else None, val=round(math.tanh(raw[d1][k] / sc[k]), 2) if raw[d1][k] is not None else None) for k in REG_KEYS],
+                scales={k: round(sc[k], 4) for k in REG_KEYS}, flips=flips, rows=[[dn(d), round(v, 2), round(pi[d])] for d, v in S],
+                note='六項（200 日均線位置、12 個月動能、MVRV 對一年均值、實現市值 30 日、交易所供給 90 日、實現獲利 ÷ 虧損 90 天）各除以自己的歷史中位數取 tanh 後平均 ×6；連續 4 週在另一邊才算翻轉；只作讀值')

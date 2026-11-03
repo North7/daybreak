@@ -747,6 +747,10 @@ try:
     try:
         if SER.get('lth-net-position-change-30d-btc'): R['lth_color'] = stage_viz.lth_color_viz(SER['lth-net-position-change-30d-btc'], {x[0]: x[1] for x in mv})
     except Exception as e: errors.append(f'lth_color {e}')
+    # 2026-11-03：週線多空分數（六項已有訊號合成；不另打 API，實現獲利 ÷ 虧損沿用 B6 的 _rpl）
+    try:
+        R['regime'] = stage_viz.regime_viz(cm, globals().get('_rpl'), LAST)
+    except Exception as e: errors.append(f'regime {e}')
     # 短期持有者認賠賣壓（STH-SOPR ＋ 價格；放進籌碼流向圖表資料，頁面在鏈上版）
     if SER.get('sth-sopr') and R.get('murphy_viz') is not None:
         R['murphy_viz']['sopr'] = stage_viz.sopr_viz(SER['sth-sopr'], {x[0]: x[1] for x in mv})
@@ -1104,6 +1108,39 @@ try:
                            pct_own=_pctl(v9, v9[-1]), avg30_pct_own=_pctl([sum(v9[j - 29:j + 1]) / 30 for j in range(29, len(v9))], sum(v9[-30:]) / 30), n=len(v9),
                            rows=[[_dn9(d_), round(x_, 3)] for d_, x_ in pr9], note='Coinbase BTC-USD ÷ Binance BTC-USDT 每日收盤 − 1；只作讀值')
 except Exception as e: errors.append(f'cb_premium {e}')
+# G9c. 2026-11-03 使用者要求（CryptoPainter 的「期現差價加權 USDT 溢價率」，權重不公開，改做三地分開看）：三地溢價的另外兩條（美國＝上面的 Coinbase 溢價）。
+#   亞洲：OKX 場外 USDT/CNY 報價，買賣兩邊各取最前面 5 筆平均、取中間 ÷ OKX 的美元兌人民幣匯率 − 1。只有當下快照，歷史由 build.py 寫進 data/history/index.json 每日累積。
+#   槓桿：OKX BTC 永續 ÷ 現貨，每日（UTC）收盤 − 1，近 300 天。只作讀值
+R['premium3'] = {}
+try:
+    def _c2c(side):
+        ads = get(f'https://www.okx.com/v3/c2c/tradingOrders/books?quoteCurrency=CNY&baseCurrency=USDT&side={side}&paymentMethod=all&userType=all')['data'][side]
+        ps = sorted((float(x_['price']) for x_ in ads), reverse=(side == 'buy'))[:5]
+        if len(ps) < 3: raise RuntimeError(f'OKX 場外 {side} 報價只有 {len(ps)} 筆')
+        return sum(ps) / len(ps), ps[0], len(ads)
+    s9, sb9, ns9 = _c2c('sell'); b9, bb9, nb9 = _c2c('buy')
+    fx9 = float(get('https://www.okx.com/api/v5/market/exchange-rate')['data'][0]['usdCny'])
+    mid9 = (s9 + b9) / 2
+    R['premium3']['usdt'] = dict(ts=now.isoformat(timespec='minutes'), mid=round(mid9, 4), sell5=round(s9, 4), buy5=round(b9, 4), best_sell=sb9, best_buy=bb9,
+                                 fx=fx9, pct=round((mid9 / fx9 - 1) * 100, 3), n_ads=ns9 + nb9, note='OKX 場外 USDT/CNY 買賣各前 5 筆平均的中間價 ÷ OKX 美元兌人民幣匯率 − 1；快照')
+except Exception as e: errors.append(f'premium3 usdt {e}')
+try:
+    def _okx1d(inst):
+        out_, cur_ = {}, ''
+        for _ in range(3):
+            d_ = get(f'https://www.okx.com/api/v5/market/history-candles?instId={inst}&bar=1Dutc&limit=100' + (f'&after={cur_}' if cur_ else ''))['data']
+            if not d_: break
+            for r_ in d_:
+                if r_[8] == '1': out_[ymd(int(r_[0]) // 1000)] = float(r_[4])
+            cur_ = d_[-1][0]
+        return out_
+    sw9, sp9 = _okx1d('BTC-USDT-SWAP'), _okx1d('BTC-USDT')
+    pd9 = sorted(d_ for d_ in set(sw9) & set(sp9) if d_ <= LAST)
+    pv9 = [(d_, (sw9[d_] / sp9[d_] - 1) * 100) for d_ in pd9]; vv9 = [x_[1] for x_ in pv9]
+    a7 = [sum(vv9[j - 6:j + 1]) / 7 for j in range(6, len(vv9))]
+    R['premium3']['perp'] = dict(date=pd9[-1], pct=round(vv9[-1], 4), avg7=round(a7[-1], 4), avg30=round(sum(vv9[-30:]) / 30, 4), avg7_pct_own=_pctl(a7, a7[-1]), n=len(vv9),
+                                 rows=[[_dn9(d_), round(x_, 4)] for d_, x_ in pv9], note='OKX BTC-USDT 永續 ÷ 現貨 每日（UTC）收盤 − 1')
+except Exception as e: errors.append(f'premium3 perp {e}')
 # G9c. 算力帶（Hash Ribbons）：算力 30 日均 ÷ 60 日均。<1＝礦工投降期；由 <1 回到 >1 的那天是歷史上常見的底部訊號
 try:
     hv = [x[1] for x in hs]; hd = [x[0] for x in hs]
