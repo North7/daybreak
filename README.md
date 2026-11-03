@@ -83,7 +83,7 @@
 | bitcoin-data.com | 持有者成本、LTH SOPR、籌碼流向、URPD、幣齡分布（長短期持有者籌碼推算用）、流動性供給、頂部雷達 | 每日 14 次請求（免費層上限 15） |
 | CheckOnChain 公開圖表 | STH-SOPR、短期持有者實現獲利／虧損、長短期持有者的實際籌碼分布、賣方衰竭常數、全網實現獲利 ÷ 虧損（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
 | Deribit | DVOL、期貨基差、選擇權、永續資金費率 | 每日 |
-| OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權）；OKX 永續逐小時未平倉量與 K 線（清算熱力圖，推算） | 每日 |
+| OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權）；OKX 永續逐小時未平倉量與 K 線（清算熱力圖，推算）；OKX 場外 USDT/CNY 報價與永續對現貨日線（三地溢價） | 每日 |
 | 13 個交易所掛單簿 | Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Kraken Futures、OKX Swap、Hyperliquid | 每日快照 |
 | The Block | 現貨 ETF 每日淨流量（與 Farside 同口徑） | 每日 |
 | FRED | 10 年期殖利率與實質利率、美元指數、那斯達克 | 每日 |
@@ -265,6 +265,8 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 2026-11-02：衍生品版新增「清算熱力圖（推算）」：用 OKX BTC 永續（USDT＋幣本位）逐小時未平倉量與 K 線，假設槓桿 5–100 倍，推算各價位等著被強制平倉的多單（收盤下方）與空單（上方），價格走過就清掉；可切 3 天／7 天，疊小時 K 線。每日快照（不是即時），只有 OKX（Binance、Bybit 從本站伺服器讀不到），不是 CoinGlass 的數字（`pipeline/liq_heat.py`；每天約 30 次 OKX 請求，不佔 bitcoin-data 額度）。
   - 2026-11-02：鏈上版新增「賣方衰竭常數」（Checkmate 設計：獲利供給比例 × 30 天價格波動；Murphy〈卖方衰竭指数〉用的是 Glassnode 版）。資料取自 CheckOnChain 公開圖表（2010 年起、晚約 1 天，每天 1 次，不佔 bitcoin-data 額度；`coc.get_sec`，快取 `coc_cache/seller-exhaustion.json`）。刻度和 Glassnode 版不同，0.01 的門檻不能套，極端區改用本身的歷史分布（低於 0.13，約 2011 年起最低 1.2% 的日子）；上格價格、下格指標，附歷次跌破後 90／180／365 天的漲跌與一年內最大回撤（`stage_viz.sec_viz`）。
   - 2026-11-02：鏈上版新增「實現獲利 ÷ 實現虧損（90 天平均）」（貝格先生分享的 Glassnode 圖的做法）：CheckOnChain 全網每日比值（2010 年起、晚約 1 天，每天 1 次；`coc.get_rpl`，快取 `coc_cache/realised-pl-ratio.json`）取 90 天平均，1 以上綠、以下紅；附歷次低於 1 的期間、大段紅色結束後一年內有沒有再跌破（2019/12–2020/1 例外）、最近 7 天每日比值與「維持這個水準何時跨過 1」的試算（`stage_viz.rpl_viz`）。
+  - 2026-11-03：週期版新增「週線多空分數」（CryptoPainter 的 JT_Regime_Osc 不公開，改做本站自己的版本）：六項已有訊號（200 日均線位置、12 個月動能、MVRV 對一年均值、實現市值 30 日、交易所供給 90 日、實現獲利 ÷ 虧損 90 天）各除以歷史中位數取 tanh、平均 ×6，2013 年起每週一根；連續 4 週在另一邊才算翻轉，附歷次翻轉與 26／52 週後漲跌（`stage_viz.regime_viz`，不另打 API）。
+  - 2026-11-03：資金版新增「三地溢價」（參考 CryptoPainter 的期現差價加權 USDT 溢價率，權重不公開，改成三條分開看）：美國 Coinbase 溢價、亞洲 OKX 場外 USDT/CNY 對匯率的溢價（只有快照，從 2026-11-02 起每日記在 `data/history/index.json`）、槓桿 OKX 永續對現貨（近 300 天日線），讀值寫出誰在推、誰在缺席（`collect.py` G9c；每天約 9 次 OKX 請求）。
   - 每日任務加「結構分析」：先問一個行情問題，拆參與者、比較前後、分清事實與推算、用行為確認、寫情境與推翻條件（`docs/CLAUDE_DAILY.md`）。
 - **2026-10-23**
   - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。
@@ -339,7 +341,7 @@ All free public APIs; no keys required.
 | bitcoin-data.com | Holder cost basis, LTH SOPR, supply flows, URPD, coin-age bands (for the LTH / STH split), liquid supply, top radar | 14 requests a day (free tier allows 15) |
 | CheckOnChain public charts | STH-SOPR, short-term holder realized profit/loss, actual supply distribution by long- and short-term holders, seller exhaustion constant, network realized profit ÷ loss (about 1 day late; `pipeline/coc.py` reads it once a day and falls back to `pipeline/coc_cache/`) | Doesn't use bitcoin-data quota |
 | Deribit | DVOL, futures basis, options, perp funding | Daily |
-| OKX, Hyperliquid | Funding (OI-weighted with Deribit); OKX perpetuals' hourly open interest and candles (liquidation heatmap, estimate) | Daily |
+| OKX, Hyperliquid | Funding (OI-weighted with Deribit); OKX perpetuals' hourly open interest and candles (liquidation heatmap, estimate); OKX OTC USDT/CNY quotes and perp-vs-spot daily bars (three premiums) | Daily |
 | 13 exchange order books | Coinbase, Bitstamp, Gemini, Bitfinex, Kraken, Binance, OKX, Gate, MEXC, Deribit, Kraken Futures, OKX Swap, Hyperliquid | Daily snapshot |
 | The Block | Spot ETF daily net flows (same basis as Farside) | Daily |
 | FRED | 10-yr nominal and real yields, dollar index, Nasdaq | Daily |
@@ -474,6 +476,8 @@ This repository is public and its history is permanent. The site holds only mark
   - 2026-11-02: new derivatives panel “Liquidation heatmap (estimate)”: from OKX BTC perpetuals' hourly open interest (USDT- and coin-margined) and candles, assuming 5–100x leverage, it estimates where long (below price) and short (above price) positions would be force-closed, clearing levels once price trades through them; 3- and 7-day views with hourly candles. A daily snapshot, not real time; OKX only (Binance and Bybit can't be reached from the site's servers); not CoinGlass's numbers (`pipeline/liq_heat.py`; about 30 OKX requests a day, no bitcoin-data quota).
   - 2026-11-02: new on-chain panel “Seller exhaustion constant” (designed by Checkmate: percent supply in profit × 30-day price volatility; Murphy's post uses Glassnode's version). Data from CheckOnChain's public chart (since 2010, about a day late, once a day, no bitcoin-data quota; `coc.get_sec`, cached in `coc_cache/seller-exhaustion.json`). Its scale differs from Glassnode's, so the 0.01 line doesn't apply; the extreme zone comes from its own history (below 0.13, about the lowest 1.2% of days since 2011). Price on top, the index below, with each past break's 90/180/365-day returns and max one-year drawdown (`stage_viz.sec_viz`).
   - 2026-11-02: new on-chain panel “Realized profit ÷ realized loss (90-day avg)” (the method of the Glassnode chart shared by 貝格先生 (market_beggar)): CheckOnChain's network-wide daily ratio (since 2010, about a day late, once a day; `coc.get_rpl`, cached in `coc_cache/realised-pl-ratio.json`) averaged over 90 days, green above 1 and red below; with every stretch below 1, whether it fell back below within a year after each long red stretch (Dec 2019–Jan 2020 was the exception), the last 7 daily values, and when the average would cross 1 if they held (`stage_viz.rpl_viz`).
+  - 2026-11-03: new cycle panel “Weekly regime score” (CryptoPainter's JT_Regime_Osc is closed, so this is the site's own version): six existing signals (price vs 200-day MA, 12-month momentum, MVRV vs its 1-year mean, 30-day realized cap, 90-day exchange supply, 90-day realized profit ÷ loss), each divided by its historical median, squashed with tanh, averaged and ×6; one bar a week since 2013; a flip needs 4 straight weeks, with every past flip and its 26/52-week returns (`stage_viz.regime_viz`, no extra API calls).
+  - 2026-11-03: new flows panel “Three premiums” (inspired by CryptoPainter's spot-futures-weighted USDT premium, whose weights are private, so the three are shown separately): US Coinbase premium, Asian OKX OTC USDT/CNY premium vs the FX rate (snapshot only, logged daily in `data/history/index.json` from 2026-11-02), and leverage as OKX perp vs spot (300 days of daily bars); the reading says who is pushing and who is absent (`collect.py` G9c; about 9 OKX requests a day).
   - Daily task gets a “structural analysis” method: start from a market question, split the participants, compare before and after, separate facts from estimates, confirm with behaviour, write scenarios and what would prove it wrong (`docs/CLAUDE_DAILY.md`).
 - **2026-10-23**
   - On-chain page: short-term holder realized profit and loss (CheckOnChain, two separate lines, in BTC, smoothed), with a note on which side drove the profit ÷ loss change versus 7 days ago. Doesn't use bitcoin-data quota.
