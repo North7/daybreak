@@ -33,7 +33,7 @@ def fig(n, cap, lang):
 
 def body(text, lang):
     """把一段 markdown 轉成 HTML，同時回傳要貼進 X 的純文字（拿掉圖位標記）。"""
-    out, plain, ul, ol = [], [], False, False
+    out, plain, ul, ol = ['<div class="part">'], [], False, False
     def close():
         nonlocal ul, ol
         if ul: out.append('</ul>'); ul = False
@@ -43,7 +43,7 @@ def body(text, lang):
         rest = MARK.sub(' ', ln).rstrip()
         if not rest.strip():
             close()
-            for n, c in figs: out.append(fig(n, c, lang))
+            for n, c in figs: out.append('</div>' + fig(n, c, lang) + '<div class="part">')
             if not figs: plain.append('')
             continue
         plain.append(rest.replace('**', '').replace('*', ''))
@@ -62,9 +62,9 @@ def body(text, lang):
             close(); out.append(f'<p class="tags">{inline(rest)}</p>')
         else:
             close(); out.append(f'<p>{inline(rest)}</p>')
-        for n, c in figs: close(); out.append(fig(n, c, lang))
-    close()
-    return '\n'.join(out), re.sub(r'\n{3,}', '\n\n', '\n'.join(plain)).strip()
+        for n, c in figs: close(); out.append('</div>' + fig(n, c, lang) + '<div class="part">')
+    close(); out.append('</div>')
+    return re.sub(r'<div class="part">\s*</div>', '', '\n'.join(out))   # 圖和圖之間的一段＝一個 part，各有複製鈕（JS 加）
 
 
 def section(lang, head):
@@ -73,20 +73,20 @@ def section(lang, head):
     b = s.split('### ', 3)[2].split('\n', 1)[1]
     short = s.split('### ', 4)[3].split('\n', 1)[1]
     short = '\n'.join(l[2:] if l.startswith('> ') else l.lstrip('>') for l in short.strip().splitlines())
-    h, plain = body(b, lang)
-    steps = {'zh': ['在 X 開「文章」（Articles）→ 新增', '封面放圖 1，標題貼上', '內文依序貼上；看到圖的位置就插入那張圖（右下角可下載）',
+    h = body(b, lang)
+    steps = {'zh': ['在 X 開「文章」（Articles）→ 新增', '封面放圖 1，標題貼上', '內文一段一段來：按每段右上的「複製這段」→ 貼到 X → 插入下面那張圖（圖下方可下載）→ 再複製下一段',
                     '發布後，用下面的短貼文「引用」這篇長文再發一次'],
-             'en': ['On X, open Articles → Write', 'Use Chart 1 as the cover; paste the title', 'Paste the body in order; insert each chart where it appears (download link under each)',
+             'en': ['On X, open Articles → Write', 'Use Chart 1 as the cover; paste the title', 'Work part by part: tap "Copy part" → paste into X → insert the chart below it (download link under each) → copy the next part',
                     'After publishing, quote the article with the short post below']}[lang]
     nfig = len({n for (n, l) in IMG if l == lang})
     return f'''<section id="{lang}" class="art" lang="{'zh-Hant' if lang == 'zh' else 'en'}">
 <div class="how"><b>{'怎麼發' if lang == 'zh' else 'How to post'}</b><ol>{''.join(f'<li>{x}</li>' for x in steps)}</ol>
-<div class="btns"><button data-copy="{lang}-title">{'複製標題' if lang == 'zh' else 'Copy title'}</button><button data-copy="{lang}-body">{'複製內文（不含圖位）' if lang == 'zh' else 'Copy body (no chart markers)'}</button><button data-copy="{lang}-short">{'複製短貼文' if lang == 'zh' else 'Copy short post'}</button></div>
+<div class="btns"><button data-copy="{lang}-title">{'複製標題' if lang == 'zh' else 'Copy title'}</button><button data-copyall="{lang}">{'一次複製全文（不含圖）' if lang == 'zh' else 'Copy full text (no charts)'}</button><button data-copy="{lang}-short">{'複製短貼文' if lang == 'zh' else 'Copy short post'}</button></div>
 <p class="meta">{nfig} {'張圖' if lang == 'zh' else 'charts'} · ops/articles/img/{date}/</p></div>
 <h1>{html.escape(title)}</h1>
 {h}
 <div class="short"><b>{'帶出長文的短貼文' if lang == 'zh' else 'Short post to share the article'}</b><p>{inline(short).replace(chr(10), '<br>')}</p></div>
-<textarea hidden id="{lang}-title">{html.escape(title)}</textarea><textarea hidden id="{lang}-body">{html.escape(plain)}</textarea><textarea hidden id="{lang}-short">{html.escape(short)}</textarea>
+<textarea hidden id="{lang}-title">{html.escape(title)}</textarea><textarea hidden id="{lang}-short">{html.escape(short)}</textarea>
 </section>'''
 
 
@@ -112,6 +112,9 @@ figcaption .n{{background:var(--red);color:#fff;padding:0 8px;font-weight:700}}f
 .how,.short{{background:var(--card);border:1px solid var(--line);padding:12px 16px;margin:16px 0;font-size:15px}}.how ol{{margin:6px 0;padding-left:22px}}
 .btns{{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}}.meta{{color:var(--ink3);font-size:14px;margin:8px 0 0}}
 .tags{{color:var(--ink3)}}.miss{{color:var(--red)}}
+.part{{position:relative;border-left:3px solid transparent;padding-left:12px;margin-left:-15px}}.part:hover{{border-left-color:var(--line)}}
+.pbtn{{float:right;font:inherit;font-size:13px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);padding:2px 10px;margin:6px 0 6px 10px;cursor:pointer}}
+.pbtn small{{color:var(--ink3);font-size:12px}}
 </style></head><body>
 <header><b>破曉 Daybreak · 長文預覽</b><span style="color:var(--ink3);font-size:14px">{html.escape(ttl)}</span>
 <div class="tabs"><button data-tab="zh" aria-pressed="true">中文</button><button data-tab="en" aria-pressed="false">English</button></div></header>
@@ -120,6 +123,15 @@ figcaption .n{{background:var(--red);color:#fff;padding:0 8px;font-weight:700}}f
 const show=l=>{{document.querySelectorAll('.art').forEach(s=>s.classList.toggle('on',s.id===l));document.querySelectorAll('[data-tab]').forEach(b=>b.setAttribute('aria-pressed',b.dataset.tab===l));try{{localStorage.setItem('art-lang',l)}}catch(e){{}}}};
 document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>show(b.dataset.tab));
 let l='zh';try{{l=localStorage.getItem('art-lang')||(location.hash.slice(1)==='en'?'en':'zh')}}catch(e){{}}show(l);
+// 長文內文用 rich text 複製：段落、標題、粗體、清單照原樣進 X 編輯器；純文字一行一段、不留空行（X 會把空行變成空段落）
+const block=n=>n.matches('li')?(n.parentElement.matches('ol')?[...n.parentElement.children].indexOf(n)+1+'. ':'・')+n.textContent.trim():n.textContent.trim();
+const rich=async(parts,b)=>{{const box=document.createElement('div');parts.forEach(p=>{{const c=p.cloneNode(true);c.querySelectorAll('.pbtn').forEach(x=>x.remove());c.querySelectorAll('[class]').forEach(x=>x.removeAttribute('class'));box.append(...c.childNodes)}});
+ const text=[...box.querySelectorAll('h2,h3,p,li')].map(block).join('\\n'),o=b.innerHTML;
+ try{{await navigator.clipboard.write([new ClipboardItem({{'text/html':new Blob([box.innerHTML],{{type:'text/html'}}),'text/plain':new Blob([text],{{type:'text/plain'}})}})])}}catch(e){{try{{await navigator.clipboard.writeText(text)}}catch(e2){{b.textContent='✗';setTimeout(()=>b.innerHTML=o,1200);return}}}}
+ b.textContent='✓';setTimeout(()=>b.innerHTML=o,1200)}};
+document.querySelectorAll('.art').forEach(s=>{{const zh=s.id==='zh',ps=[...s.querySelectorAll('.part')];ps.forEach((p,i)=>{{const f=p.nextElementSibling&&p.nextElementSibling.matches('figure')?p.nextElementSibling.querySelector('.n').textContent:'';
+ const b=document.createElement('button');b.className='pbtn';b.innerHTML=(zh?'複製這段':'Copy part')+` ${{i+1}}/${{ps.length}}`+(f?` <small>${{zh?'貼完插入':'then insert'}} ${{f}}</small>`:'');b.onclick=()=>rich([p],b);p.prepend(b)}});
+ const all=s.querySelector('[data-copyall]');if(all)all.onclick=()=>rich(ps,all)}});
 document.querySelectorAll('[data-copy]').forEach(b=>b.onclick=async()=>{{const t=document.getElementById(b.dataset.copy).value,o=b.textContent;try{{await navigator.clipboard.writeText(t);b.textContent='✓'}}catch(e){{b.textContent='✗'}}setTimeout(()=>b.textContent=o,1200)}});
 </script></body></html>'''
 out = os.path.join(base, stem + '.html'); open(out, 'w', encoding='utf-8').write(page); print('wrote', os.path.relpath(out))
