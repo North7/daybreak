@@ -142,6 +142,68 @@ def plan(L):
     ]
 
 
+COVER = {'zh': dict(title='牛到底來了沒？', sub=['從低點起算第 18 週 +31%', '和 2015 年一樣慢'], tag='長文', max=200),
+         'en': dict(title='Is the bull actually here?', sub=['Week 18 from the low: +31%,', 'as slow as 2015'], tag='LONG READ', max=150)}
+
+
+def cover(L, lang, Fn, out):
+    """X 長文封面：5:2 橫圖（以 2 倍畫 3000×1200，存成 1500×600）。左邊標題、右邊四輪對照的線（同 c_analog）。"""
+    from PIL import Image, ImageDraw
+    import share_card as SC
+    W2, H2, M2 = 3000, 1200, 150; C = COVER[lang]; sp = c_analog(L)
+    img = Image.new('RGB', (W2, H2), PK.PAPER); d = ImageDraw.Draw(img)
+    d.rectangle([M2, 110, W2 - M2, 122], fill=INK)
+    # 左：標籤、標題、副標
+    tf = Fn['cjk'](60, 900) if lang == 'zh' else Fn['mono'](54, 800)
+    tw = d.textlength(C['tag'], font=tf); d.rectangle([M2, 180, M2 + tw + 64, 272], fill=RED); d.text((M2 + 32, 226), C['tag'], font=tf, fill='#FFFFFF', anchor='lm')
+    bd = dt.date.fromisoformat(L['meta']['bar_date'])
+    d.text((M2 + tw + 104, 226), f'DAYBREAK   {bd:%Y.%m.%d}' + (' 收盤數據' if lang == 'zh' else ' close data'), font=Fn['cjk'](44, 500) if lang == 'zh' else Fn['mono'](44, 500), fill=INK3, anchor='lm')
+    lw = 1420
+    for size in range(C['max'], 90, -6):
+        hf = Fn['head'](size); lines = SC.wrap(C['title'], hf, lw)
+        if len(lines) <= 2: break
+    y = 330
+    for ln in lines:
+        x = M2
+        for a, _ in ln: d.text((x, y), a, font=hf, fill=INK); x += hf.getlength(a)
+        y += int(size * 1.22)
+    sf = Fn['head'](78 if lang == 'zh' else 66); y += 30
+    for s_ in C['sub']:
+        x = M2
+        for a, red in SC.atoms(s_): d.text((x, y), a, font=sf, fill=RED if red else INK); x += sf.getlength(a)
+        y += 100
+    # 右：四輪對照
+    x0, y0, x1, y1 = 1720, 300, W2 - M2 - 170, 1000
+    xs = [r[0] for s in sp['series'] for r in s['rows']]; ys = [r[1] for s in sp['series'] for r in s['rows']]
+    xa, xb, ya, yb = 0, max(xs), min(ys + [0]) - 8, max(ys) + 8
+    X = lambda v: x0 + (v - xa) / (xb - xa) * (x1 - x0); Y = lambda v: y1 - (v - ya) / (yb - ya) * (y1 - y0)
+    af = Fn['mono'](36, 500)
+    for t in (0, 100, 200):
+        d.line([x0, Y(t), x1, Y(t)], fill=INK if t == 0 else LINE, width=3 if t == 0 else 2)
+        d.text((x1 + 16, Y(t)), f'+{t}%' if t else '0%', font=af, fill=INK3, anchor='lm')
+    for w in (0, 26, 52):
+        lab = ('低點' if lang == 'zh' else 'Low') if w == 0 else (f'{w} 週' if lang == 'zh' else f'wk {w}')
+        d.text((X(w), y1 + 24), lab, font=Fn['cjk'](36, 500) if lang == 'zh' else af, fill=INK3, anchor='mt')
+    lf = Fn['cjk'](40, 900) if lang == 'zh' else Fn['mono'](38, 800)
+    for s in sp['series']:
+        pts = [(X(a), Y(b)) for a, b in s['rows']]; w = 12 if s['color'] == RED else 6
+        d.line(pts, fill=s['color'], width=w, joint='curve')
+        lx, ly = pts[-1]; r = w + 6; d.ellipse([lx - r, ly - r, lx + r, ly + r], fill=s['color'], outline=PK.PAPER, width=4)
+        if s['color'] == RED:   # 只標這輪，墊紙色底
+            bb = d.textbbox((lx, ly - r - 16), s['name'][lang], font=lf, anchor='mb'); d.rectangle([bb[0] - 8, bb[1] - 6, bb[2] + 8, bb[3] + 6], fill=PK.PAPER)
+            d.text((lx, ly - r - 16), s['name'][lang], font=lf, fill=RED, anchor='mb')
+    lx = x0   # 圖例（和標籤列同一行）
+    for s in sp['series']:
+        d.rectangle([lx, 220, lx + 48, 234], fill=s['color']); lx += 62
+        d.text((lx, 227), s['name'][lang], font=lf, fill=INK, anchor='lm'); lx += d.textlength(s['name'][lang], font=lf) + 44
+    # 頁尾
+    fy = H2 - 90
+    d.arc([M2, fy - 28, M2 + 56, fy + 28], 180, 360, fill=RED, width=8); d.line([M2 - 8, fy, M2 + 64, fy], fill=INK, width=8)
+    d.text((M2 + 88, fy), '破曉 DAYBREAK' if lang == 'zh' else 'DAYBREAK', font=Fn['cjk'](42, 900) if lang == 'zh' else Fn['mono'](42, 800), fill=INK, anchor='lm')
+    d.text((W2 - M2, fy), 'north7.github.io/daybreak   ·   X @songpu717', font=Fn['mono'](40), fill=INK3, anchor='rm')
+    img.resize((W2 // 2, H2 // 2), Image.LANCZOS).save(out, optimize=True); print('wrote', os.path.relpath(out, ROOT))
+
+
 if __name__ == '__main__':
     import share_card as SC
     ap = argparse.ArgumentParser(); ap.add_argument('--fonts', required=True); ap.add_argument('--out')
@@ -150,6 +212,7 @@ if __name__ == '__main__':
     notes = {'zh': json.load(open(os.path.join(ROOT, 'data', 'notes.json'))), 'en': json.load(open(os.path.join(ROOT, 'data', 'notes.en.json')))}
     od = a.out or os.path.join(ROOT, 'ops', 'articles', 'img', dt.date.today().isoformat()); os.makedirs(od, exist_ok=True)
     Fn = SC.fonts(a.fonts)
+    cover(L, 'zh', Fn, os.path.join(od, '0-cover.png')); cover(L, 'en', Fn, os.path.join(od, '0-cover-en.png'))
     for fid, sp, tz, te in plan(L):
         if not sp: print('skip', fid); continue
         for lang, title, fn in (('zh', tz, f'{fid}.png'), ('en', te, f'{fid}-en.png')):

@@ -4,7 +4,7 @@
 - 數據：破曉 No.029（`data/notes.json`、`data/latest.json`，bar_date 2026-11-03）
 - 原則：只放資訊（價格、市場階段、週期位置、資金、鏈上、接下來的日期與價位）；不放出場框架、不給買賣建議、不預測價格
 - 配圖：`ops/articles/img/2026-11-04/`，共 8 張，中文 `<n>-<id>.png`、英文 `<n>-<id>-en.png`；文中 `［圖 n］` 是插圖的位置。重畫：`python3 ops/articles/charts.py --fonts <字型資料夾> --out ops/articles/img/2026-11-04`
-- 封面：用 `1-analog.png`（四輪對照最能一眼說明「慢，但不是沒來」），或日報分享圖 `data/share.png`
+- 封面：`0-cover.png`／`0-cover-en.png`（X 長文封面是 5:2 橫圖，1500×600；內文的 8 張是 4:5 直式，當封面會被裁掉）
 
 ---
 

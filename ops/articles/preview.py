@@ -74,15 +74,18 @@ def section(lang, head):
     short = s.split('### ', 4)[3].split('\n', 1)[1]
     short = '\n'.join(l[2:] if l.startswith('> ') else l.lstrip('>') for l in short.strip().splitlines())
     h = body(b, lang)
-    steps = {'zh': ['在 X 開「文章」（Articles）→ 新增', '封面放圖 1，標題貼上', '內文一段一段來：按每段右上的「複製這段」→ 貼到 X → 插入下面那張圖（圖下方可下載）→ 再複製下一段',
+    steps = {'zh': ['在 X 開「文章」（Articles）→ 新增', '封面上傳下面的封面圖（5:2 橫圖），標題按「複製標題」貼上', '內文一段一段來：按每段右上的「複製這段」→ 貼到 X → 插入下面那張圖（圖下方可下載）→ 再複製下一段',
                     '發布後，用下面的短貼文「引用」這篇長文再發一次'],
-             'en': ['On X, open Articles → Write', 'Use Chart 1 as the cover; paste the title', 'Work part by part: tap "Copy part" → paste into X → insert the chart below it (download link under each) → copy the next part',
+             'en': ['On X, open Articles → Write', 'Upload the cover below (5:2 landscape); paste the title with "Copy title"', 'Work part by part: tap "Copy part" → paste into X → insert the chart below it (download link under each) → copy the next part',
                     'After publishing, quote the article with the short post below']}[lang]
-    nfig = len({n for (n, l) in IMG if l == lang})
+    nfig = len({n for (n, l) in IMG if l == lang and n})
+    cv = IMG.get((0, lang))
+    cov = (f'<figure class="cover"><img src="{cv}" alt="cover"><figcaption><span class="n">{"封面" if lang == "zh" else "Cover"}</span>5:2'
+           f'<a class="dl" href="{cv}" download>{os.path.basename(cv)} ↓</a></figcaption></figure>') if cv else ''
     return f'''<section id="{lang}" class="art" lang="{'zh-Hant' if lang == 'zh' else 'en'}">
 <div class="how"><b>{'怎麼發' if lang == 'zh' else 'How to post'}</b><ol>{''.join(f'<li>{x}</li>' for x in steps)}</ol>
 <div class="btns"><button data-copy="{lang}-title">{'複製標題' if lang == 'zh' else 'Copy title'}</button><button data-copyall="{lang}">{'一次複製全文（不含圖）' if lang == 'zh' else 'Copy full text (no charts)'}</button><button data-copy="{lang}-short">{'複製短貼文' if lang == 'zh' else 'Copy short post'}</button></div>
-<p class="meta">{nfig} {'張圖' if lang == 'zh' else 'charts'} · ops/articles/img/{date}/</p></div>
+<p class="meta">{nfig} {'張圖' if lang == 'zh' else 'charts'} · ops/articles/img/{date}/</p>{cov}</div>
 <h1>{html.escape(title)}</h1>
 {h}
 <div class="short"><b>{'帶出長文的短貼文' if lang == 'zh' else 'Short post to share the article'}</b><p>{inline(short).replace(chr(10), '<br>')}</p></div>
