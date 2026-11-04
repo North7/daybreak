@@ -300,6 +300,12 @@
    "d": "2026-10-30",
    "musd": -643.2,
    "partial": false
+  },
+  {
+   "d": "2026-11-02",
+   "musd": -398.6,
+   "partial": true,
+   "src": "暫定：Farside（火星財經轉述）−398.6；SoSoValue（Bitcoin.com 轉述）−398.62"
   }
  ],
  "source": "The Block",
