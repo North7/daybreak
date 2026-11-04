@@ -313,7 +313,7 @@
     }
     m.addEventListener('pointermove', function (ev) { var b = sp.getBoundingClientRect(); var i = Math.round(Math.max(0, Math.min(1, (ev.clientX - b.left) / b.width)) * (n - 1)); m.classList.add('scrubbing'); show(i); });
     m.addEventListener('pointerleave', function () { m.classList.remove('scrubbing'); show(n - 1); $('#h-d').textContent = D.meta.bar_date.replace(/-/g, '.') + ' UTC'; var hc = $('#h-c'); hc.textContent = fmt.pct(c.chg_pct, 2); hc.className = c.chg_pct >= 0 ? 'up' : 'down'; });
-    mount(m, function () { var cw = m.clientWidth - parseFloat(getComputedStyle(m).paddingLeft) * 2; big.style.fontSize = ''; var cur = big.textContent; big.textContent = fin; var fs = parseFloat(getComputedStyle(big).fontSize), w = big.offsetWidth; big.textContent = cur; if (w > 0) big.style.fontSize = Math.min(fs * cw / w * 0.97, 560) + 'px'; });
+    mount(m, function () { var cw = m.clientWidth - parseFloat(getComputedStyle(m).paddingLeft) * 2; big.style.fontSize = ''; var cur = big.textContent; big.textContent = fin; var fs = parseFloat(getComputedStyle(big).fontSize), w = big.offsetWidth; big.textContent = cur; if (w > 0) big.style.fontSize = Math.min(fs * cw / w * 0.97, 560, MQ.matches ? 560 : Math.max(180, innerHeight * 0.26)) + 'px'; });   // 2026-11-04：桌面限高（約視窗 26%），讓立場與三個價位進到第一屏
     if (document.fonts && document.fonts.ready) document.fonts.ready.then(function () { m._draw && m._draw(m); });
     countUp(big, c.c);
   }
@@ -463,7 +463,13 @@
         '<h3>' + esc(f.title) + '</h3>' + (f.lean ? '<p class="lean">' + impChip(f.lean) + (f.lean_why ? '<span>' + esc(f.lean_why.replace(/^(偏多|偏空|中性)[：:]\s*|^(Bullish|Bearish|Neutral):\s*/, '')) + '</span>' : '') + '</p>' : '') + '<p class="what">' + esc(f.what || '') + '</p>' +
         '<details><summary>' + _T('拆解、其他解釋與追蹤條件', 'Breakdown, alternatives and checks') + '</summary><dl>' + row(f.why, '拆解', 'Breakdown') + row(f.alt, '其他解釋', 'Alternatives') + row(f.history, '過去', 'History') + row(f.so, '所以呢', 'So what') + row(f.next, '接下來看', 'Watch next') + ck + '</dl></details></article>';
     }).join('');
-    var fuH = fu.length ? '<div class="fu"><h4>' + _T('上期發現的後續', 'Follow-ups') + '</h4><ul class="deltas">' + fu.map(function (f) { var st = FU_ST[f.status] || FU_ST.open; return '<li><span class="ar ' + st[3] + '">' + st[0] + '</span><div><h3>' + esc(f.title) + ' <span class="chip">' + _T(st[1], st[2]) + '</span></h3>' + (f.since ? '<div class="fig num">' + _T('自 ', 'since ') + fmt.md(f.since) + '</div>' : '') + '<p>' + esc(f.say || '') + '</p></div></li>'; }).join('') + '</ul></div>' : '';
+    // 2026-11-04 頭版重排：今天結案的（確認／推翻／到期）照常列出；仍在追蹤的收成一行，點開才看（原本 12 則「追蹤中」把新發現壓到下面）
+    var fuLi = function (f) { var st = FU_ST[f.status] || FU_ST.open; return '<li><span class="ar ' + st[3] + '">' + st[0] + '</span><div><h3>' + esc(f.title) + ' <span class="chip">' + _T(st[1], st[2]) + '</span></h3>' + (f.since ? '<div class="fig num">' + _T('自 ', 'since ') + fmt.md(f.since) + '</div>' : '') + '<p>' + esc(f.say || '') + '</p></div></li>'; };
+    var fuDone = fu.filter(function (f) { return f.status && f.status !== 'open' && FU_ST[f.status]; }), fuOpen = fu.filter(function (f) { return fuDone.indexOf(f) < 0; });
+    var fuCnt = ['confirmed', 'refuted', 'expired', 'open'].map(function (k) { var n = (k === 'open' ? fuOpen : fuDone.filter(function (f) { return f.status === k; })).length; return n ? _T(FU_ST[k][1] + ' ' + n, n + ' ' + FU_ST[k][2].toLowerCase()) : ''; }).filter(Boolean).join(' · ');
+    var fuH = fu.length ? '<div class="fu"><h4>' + _T('上期發現的後續', 'Follow-ups') + '<span class="note">' + (fuDone.length ? '' : _T('今天沒有結案 · ', 'none resolved today · ')) + fuCnt + '</span></h4>' +
+      (fuDone.length ? '<ul class="deltas">' + fuDone.map(fuLi).join('') + '</ul>' : '') +
+      (fuOpen.length ? '<details class="fu-open"><summary>' + _T('看追蹤中的 ' + fuOpen.length + ' 則（條件還沒成立，期限內每天檢查）', 'Show the ' + fuOpen.length + ' being tracked (conditions not met yet; checked daily until the deadline)') + '</summary><ul class="deltas">' + fuOpen.map(fuLi).join('') + '</ul></details>' : '') + '</div>' : '';
     var sgH = sg.length ? '<details class="sigs"' + (fs.length ? '' : ' open') + '><summary>' + _T('自動偵測的異動 ', 'Detected signals ') + sg.length + (D.signals.n > sg.length ? ' / ' + D.signals.n : '') + '</summary><ul>' + sg.map(function (x) {
         var k = SIG_K[x.kind] || ['', ''];
         return '<li><span class="chip ' + (x.dir === 'up' ? 'up' : x.dir === 'down' ? 'down' : '') + '">' + _T(k[0], k[1]) + '</span>' + (x.new ? '<span class="new">' + _T('新', 'New') + '</span>' : '<span class="days">' + _T('第 ' + x.days + ' 天', 'day ' + x.days) + '</span>') +
@@ -578,11 +584,6 @@
     if (!sma) return null;
     return [c < sma ? _t('收盤在 200 日均線（') + fmt.usd(sma) + _t('）之下，第 ') + run + _t('/5 天；連 5 天就減 20%。') : _t('收盤高於 200 日均線（') + fmt.usd(sma) + _t('），高出 ') + fmt.n((c / sma - 1) * 100, 0) + _t('%；要跌到線下並連 5 日收在下方才會減 20%。'), c < sma ? 'neg' : c / sma - 1 < 0.05 ? 'warn' : 'pos']; }
   function rd2(label, val, r) { return r ? [label, val, r[0], r[1]] : null; }
-  function ovInterp() {
-    var cm = D.cycle.cm, pl = D.cycle.powerlaw || {}, tm = D.cycle.tidemark || {}, p6 = D.cycle.p6 || {}, ex = D.exit.status;
-    return [rd2(_t('MVRV ÷ 前一輪高點'), fmt.n(cm.mvrv_vs_prior, 3), p20Read()), rd2(_t('冪律倍數'), fmt.n(pl.ratio, 2) + '×', plRead()), rd2(_t('Tidemark 頂 / 底'), fmt.n((tm.top || {}).signal, 0) + ' / ' + fmt.n((tm.bottom || {}).signal, 0), tmRead()),
-      rd2(_t('頂部三指標'), ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n(p6[k], 0); }).join(' / '), p6Read()), rd2(_t('離出場第一階'), fmt.pct(ex.next_step_dist_pct, 0), ladderRead()), rd2(_t('200 日均線避險'), fmt.k(ex.sma200), hedgeRead())];
-  }
 
   /* 價格版 */
   function mkInterp() {
@@ -1161,19 +1162,23 @@
       '<h2 class="reveal">' + hl + '</h2>' + megaHtml(c) +
       '<div class="front-foot"><div class="dek"><div class="stamp"><span class="chip flare"><i></i>' + esc(N ? N.stance.label : '—') + '</span><span class="chip">' + (N ? esc(N.stance.short) : '') + '</span>' + stageChip() + '</div><p>' + esc(N ? N.summary : '') + '</p></div><div class="watch">' + watch + '</div></div></section>';
     var newsBlock = news.length ? _t('<div class="sec-h"><h2>今日要聞</h2><span class="en">The Brief</span><hr><a href="#news">全部 ') + news.length + _t(' 則 →</a></div><div class="news-front">') + newsItem(news[0], true) + '<div class="news-side">' + news.slice(1, 4).map(function (n, i) { return newsItem(n); }).join('') + '</div></div>' : '';
-    var kp = '<div class="kpis">' +
-      kpi(_t('MVRV ÷ 前一輪高點'), fmt.n(cm.mvrv_vs_prior, 3), _t('賣出線 0.75 · 2025 頂 0.78'), cm.mvrv_vs_prior / 0.75 * 100) +
-      kpi(_t('冪律倍數'), fmt.n(pl.ratio, 2) + '×', _t('合理價 ') + fmt.usd(pl.fair), (pl.ratio || 0) / 1.2 * 100) +
-      kpi(_t('Tidemark 頂 / 底'), fmt.n((tm.top || {}).signal, 0) + ' / ' + fmt.n((tm.bottom || {}).signal, 0), _t('門檻 50 · ') + fmt.md(tm.price_date) + _t(' 資料')) +
-      kpi(_t('頂部三指標百分位'), ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n(p6[k], 0); }).join(' / '), _t('任兩項到 80 進入頂部區'), ((p6.mvrv_z || 0) + (p6.nupl || 0) + (p6.puell || 0)) / 3 / 0.8) +
-      kpi(_t('離出場第一階'), fmt.pct(ex.next_step_dist_pct, 0), fmt.usd(ex.next_step) + _t(' 起每階 12.5%'), 100 - Math.min(100, ex.next_step_dist_pct)) + '</div>';
+    // 2026-11-04 頭版重排：數字卡與「這些數字代表什麼」合併——原本同樣 6 個數字先列一排卡片、緊接著表格再列一次；現在每張卡直接附標籤與解讀
+    var kpr = function (k, v, n, bar, r) { return '<div class="kpi"><span class="k"><span>' + k + '</span>' + (r ? tnHtml(r[1]) : '') + '</span><span class="v">' + v + '</span>' + (n ? '<span class="n">' + n + '</span>' : '') + (bar != null ? '<span class="bar"><i style="width:' + Math.max(2, Math.min(100, bar)).toFixed(1) + '%"></i></span>' : '') + (r && r[0] ? '<p class="d">' + esc(r[0]) + '</p>' : '') + '</div>'; };
+    var kp = '<div class="kpis kpis-r">' +
+      kpr(_t('MVRV ÷ 前一輪高點'), fmt.n(cm.mvrv_vs_prior, 3), _t('賣出線 0.75 · 2025 頂 0.78'), cm.mvrv_vs_prior / 0.75 * 100, p20Read()) +
+      kpr(_t('冪律倍數'), fmt.n(pl.ratio, 2) + '×', _t('合理價 ') + fmt.usd(pl.fair), (pl.ratio || 0) / 1.2 * 100, plRead()) +
+      kpr(_t('Tidemark 頂 / 底'), fmt.n((tm.top || {}).signal, 0) + ' / ' + fmt.n((tm.bottom || {}).signal, 0), _t('門檻 50 · ') + fmt.md(tm.price_date) + _t(' 資料'), null, tmRead()) +
+      kpr(_t('頂部三指標百分位'), ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n(p6[k], 0); }).join(' / '), _t('任兩項到 80 進入頂部區'), ((p6.mvrv_z || 0) + (p6.nupl || 0) + (p6.puell || 0)) / 3 / 0.8, p6Read()) +
+      kpr(_t('離出場第一階'), fmt.pct(ex.next_step_dist_pct, 0), fmt.usd(ex.next_step) + _t(' 起每階 12.5%'), 100 - Math.min(100, ex.next_step_dist_pct), ladderRead()) +
+      kpr(_t('200 日均線避險'), fmt.k(ex.sma200), _t('收盤距均線 ') + fmt.pct((c.c / ex.sma200 - 1) * 100, 1), null, hedgeRead()) + '</div>';
     var ev = (N && N.events || []).map(function (e) { var dd = dnOf(e.date) - dnOf(D.meta.bar_date); return '<div class="event"><span class="d">' + e.date.slice(5).replace('-', '/') + '</span><span>' + esc(e.label) + '</span><span class="in' + (dd === 1 ? ' now' : '') + '">' + (dd > 1 ? dd - 1 + _t(' 天後') : dd === 1 ? _t('今天') : _t('已過')) + '</span></div>'; }).join('');
     var plan = _t('<div class="sec-h"><h2>今天該做什麼</h2><span class="en">The Plan</span><hr>') + staleTag() + '</div><div class="grid">' +
-      panel('span-7', _t('今天該做什麼、盯什麼'), _t('依出場框架 · 非投資建議'), actionsHtml()) + panel('span-5', _t('今天變了什麼'), _t('相對上一期'), changesHtml()) + '</div>';
+      panel('span-7', _t('行動與要盯的價位'), _t('依出場框架 · 非投資建議'), actionsHtml()) + panel('span-5', _t('今天變了什麼'), _t('相對上一期'), changesHtml()) + '</div>';
     var zhNote = ZH_ONLY ? '<p class="note" style="margin:0">The English edition of today’s written commentary (headline, news and plan) is not published yet, so those parts are shown in Chinese. All data and readings are in English.</p>' : '';
-    return zhNote + front + tapeHtml() + healthHtml() + findingsHtml() + newsBlock + plan +
-      _t('<div class="sec-h"><h2>今日數據</h2><span class="en">The Numbers</span><hr></div>') + kp +
-      '<div class="grid">' + interpPanel(ovInterp()) + panel('span-12', _t('離出場線還多遠'), _t('以 ') + fmt.md(D.meta.bar_date) + _t(' 收盤計 · 對數刻度'), '<div class="runway" id="c-runway"></div>') +
+    // 2026-11-04 頭版重排：結論（號外＋立場）→ 今天該做什麼／變了什麼 → 今日發現 → 要聞 → 數據（原本行動清單排在發現與要聞之後，約第 4–5 屏）
+    return zhNote + front + tapeHtml() + healthHtml() + plan + findingsHtml() + newsBlock +
+      _t('<div class="sec-h"><h2>今日數據</h2><span class="en">The Numbers</span><hr>') + '<span class="src">' + _t('依當日數值套固定門檻自動產生 · 非投資建議') + '</span></div>' + kp +
+      '<div class="grid">' + panel('span-12', _t('離出場線還多遠'), _t('以 ') + fmt.md(D.meta.bar_date) + _t(' 收盤計 · 對數刻度'), '<div class="runway" id="c-runway"></div>') +
       panel('span-7', _t('價格近一年'), _t('CoinMetrics 每 7 天'), '<div class="chart" id="c-ov-px"></div>') +
       panel('span-5', _t('接下來的日期'), '', '<div class="events">' + ev + '</div>') + '</div>';
   };

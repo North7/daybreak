@@ -40,7 +40,7 @@
 
 | # | 版面 | 看什麼 |
 |---|---|---|
-| 01 | **頭版** | 號外大標題、巨型收盤價（滑過可回看近 20 天）、立場與市場階段、要盯的三個價位、數據帶、資料狀態、**今日發現**（異動、關鍵節點與主要變化的判讀，附上期發現的後續與自動偵測的異動）、今日要聞、今天該做什麼／今天變了什麼、今日數據與解讀、離出場線的跑道圖、價格近一年、接下來的日期 |
+| 01 | **頭版** | 號外大標題、巨型收盤價（滑過可回看近 20 天）、立場與市場階段、要盯的三個價位、數據帶、資料狀態、今天該做什麼／今天變了什麼、**今日發現**（異動、關鍵節點與主要變化的判讀；上期發現的後續只列今天結案的，追蹤中的收合；附自動偵測的異動）、今日要聞、今日數據（每張卡附多空標籤與解讀）、離出場線的跑道圖、價格近一年、接下來的日期 |
 | 02 | **消息** | 過去 24–36 小時的重要消息（依分類篩選），每則附「對 BTC 的意義」並對照本站數據；機構研報（Glassnode、K33 等）重點 |
 | 03 | **週期** | 市場階段（熊市 → 轉換期 → 牛市，規則化判定與佐證燈號）、長期路徑四種走法、MVRV ÷ 前一輪高點、頂部三指標、冪律合理價、Tidemark 頂部／底部綜合訊號 |
 | 04 | **價格** | 近 20 天 K 線、ATR、實際波動、Mayer 倍數、Pi Cycle、**短週期（目前這一段行情：起點、幅度、天數、與本輪中位數比較、本段結束線）**、關鍵價位、均線排列、長期走勢 |
@@ -256,6 +256,10 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-04** 頭版重排
+  - 順序改成結論 → 今天該做什麼／今天變了什麼 → 今日發現 → 要聞 → 數據（行動清單原本在第 4–5 屏）；桌面巨型收盤價限高約視窗 26%，立場與三個價位進到第一屏。
+  - 上期發現的後續：今天結案的照列，追蹤中的收成一行（原本 12–13 則「追蹤中」把新發現壓到下面）。
+  - 「今日數據」6 張卡直接附多空標籤與解讀，拿掉緊接著重複同樣 6 個數字的「這些數字代表什麼」表格。頭版高度桌面 6,065 → 4,478px、手機 10,031 → 7,838px。
 - **2026-11-04** 圖表自我檢查與修正
   - 資料狀態：10/27 之後新增的 8 張圖（賣方衰竭、實現損益比、表觀需求、價格 × 長期持有者、週線多空分數、三地溢價、清算熱力圖）列進「資料狀態」；CheckOnChain 快取超過 4 天沒更新就不再沿用，該項顯示本日未取得。
   - 穩定性：一張圖出錯只影響自己（原本同一版後面的圖會全部空白）；週線多空分數少一項輸入時用其餘五項照算；槓桿百分位缺值時不再被當成「比平常便宜」。
@@ -308,7 +312,7 @@ Nine sections. On desktop they stack into one page and switch as you scroll (key
 
 | # | Section | What you see |
 |---|---|---|
-| 01 | **Front page** | Headline, the giant closing price (hover to step back through 20 days), stance and market stage, three levels to watch, data tape, data-status bar, **today's findings** (what is unusual, key levels and major changes, with follow-ups on earlier findings and the auto-detected signals), today's news, what to do / what changed, today's numbers with readings, the runway to each exit line, the 12-month price chart, upcoming dates |
+| 01 | **Front page** | Headline, the giant closing price (hover to step back through 20 days), stance and market stage, three levels to watch, data tape, data-status bar, what to do / what changed, **today's findings** (what is unusual, key levels and major changes; follow-ups show only those resolved today, with the ones still tracked folded away; plus the auto-detected signals), today's news, today's numbers (each card carries its tag and reading), the runway to each exit line, the 12-month price chart, upcoming dates |
 | 02 | **News** | Key stories from the last 24–36 hours (filter by category), each with what it means for BTC checked against our data; institutional research (Glassnode, K33, …) |
 | 03 | **Cycle** | Market stage (bear → transition → bull, rule-based with supporting signals), four long-term paths, MVRV ÷ prior-cycle peak, the top-3 indicators, power-law fair value, Tidemark top/bottom signals |
 | 04 | **Price** | 20 daily candles, ATR, realized volatility, Mayer multiple, Pi Cycle, **short cycle (the current price leg: start, size, length vs. this cycle's median, the close that would end it)**, key levels, moving-average alignment, long-term chart |
@@ -476,6 +480,10 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-04** Front page reordered
+  - New order: conclusion → what to do / what changed → findings → news → numbers (the action list used to sit 4–5 screens down); on desktop the giant closing price is capped at about 26% of the window so the stance and three levels fit on the first screen.
+  - Follow-ups: those resolved today are listed; the ones still being tracked fold into one line (12–13 “watching” items used to push the new findings down).
+  - The six “Today's numbers” cards now carry their tag and reading, replacing the table right below that repeated the same six numbers. Front page height: desktop 6,065 → 4,478px, mobile 10,031 → 7,838px.
 - **2026-11-04** Chart self-check and fixes
   - Data status now lists the eight charts added after 10/27 (seller exhaustion, realized P/L ratio, apparent demand, price × LTH, weekly regime score, three premiums, liquidation heatmap); CheckOnChain caches older than 4 days are no longer reused, so the item shows as not available.
   - One failing chart no longer blanks the rest of its section; the regime score still scores with five inputs if one is missing; a missing leverage percentile is no longer read as "cheaper than usual".

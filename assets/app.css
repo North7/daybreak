@@ -627,3 +627,25 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .find-sum { margin: 0 0 8px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; font-size: 13px; color: var(--ink-2); }
 .find-sum .imp { font-size: 14px; }
 .find-sum .note { margin: 0; padding: 0; }
+
+/* 2026-11-04 頭版重排：數字卡附解讀（原本卡片＋「這些數字代表什麼」表格重複列同樣 6 個數字）、上期後續收合 */
+.kpis-r { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.kpis-r .kpi { padding: 14px 18px 16px; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.kpis-r .kpi:nth-child(3n+1) { padding-left: 0; border-left: 0; }
+.kpis-r .kpi .k { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.kpis-r .kpi .d { margin: 4px 0 0; font-size: 13px; line-height: 1.7; color: var(--ink-2); }
+.sec-h .src { font-size: 12px; color: var(--ink-3); }
+@media (max-width: 860px) { .sec-h .src { display: none; } }
+@media (max-width: 1180px) {
+  .kpis-r { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .kpis-r .kpi:nth-child(3n+1) { padding-left: 18px; border-left: 1px solid var(--line); }
+  .kpis-r .kpi:nth-child(2n+1) { padding-left: 0; border-left: 0; }
+}
+@media (max-width: 560px) {
+  .kpis-r { grid-template-columns: minmax(0, 1fr); }
+  .kpis-r .kpi, .kpis-r .kpi:nth-child(3n+1) { padding: 12px 0 14px; border-left: 0; }
+}
+.fu h4 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.fu h4 .note { margin: 0; padding: 0; font-weight: 400; }
+.fu-open { margin-top: 8px; }
+.fu-open summary { cursor: pointer; font-size: 12.5px; color: var(--ink-3); padding: 6px 0; }
