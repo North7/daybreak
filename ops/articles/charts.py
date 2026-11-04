@@ -19,7 +19,7 @@ import picks as PK                                        # noqa: E402
 from picks import T, S, INK, INK3, LINE, RED, S1, S2, S3, UP, dashed, nice   # noqa: E402
 from signals import dn, ds                                # noqa: E402
 
-TAG = {'zh': '長文圖表', 'en': 'LONG READ'}
+TAG = {'zh': '', 'en': ''}   # 長文配圖不加標籤（2026-11-04 使用者要求）
 
 
 def years(xa, xb, every=2):
