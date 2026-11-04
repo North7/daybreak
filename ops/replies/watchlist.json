@@ -1,0 +1,27 @@
+{
+ "_about": "固定名單：scan.py 每天直接讀這些帳號最近的貼文（不靠 Grok）。type：blogger（博主）／research（研究機構）。must：一律列出、排最上面。新增帳號照 README「固定名單」一節。2026-11-04 建立；Phyrex_Ni、woonomic 當天讀不到（改名或停用），先不列。",
+ "accounts": [
+  {"handle": "Murphychen888", "name": "Murphy", "lang": "zh", "type": "blogger", "must": true, "note": "鏈上籌碼、URPD、LTH/STH；重點關注"},
+  {"handle": "serlo123", "name": "wander", "lang": "zh", "type": "blogger", "note": "成本線、Ahr999；11/04 回覆後回追"},
+  {"handle": "paulxue1979", "name": "Paul Xue", "lang": "zh", "type": "blogger", "note": "鏈上金叉、牛熊轉換帶；常引用 wander"},
+  {"handle": "mks1231237549", "name": "阿布", "lang": "zh", "type": "blogger", "note": "ETF 分項、貝萊德轉幣；互動積極"},
+  {"handle": "joke_henry", "name": "J•H 小喜", "lang": "zh", "type": "blogger", "note": "每日 ETF 與巨鯨整理"},
+  {"handle": "A9dengbo", "name": "邓博", "lang": "zh", "type": "blogger", "note": "每日數據＋宏觀"},
+  {"handle": "yytttt_1982", "name": "我是YT", "lang": "zh", "type": "blogger", "note": "ETF、機構"},
+  {"handle": "EmberCN", "name": "余烬", "lang": "zh", "type": "blogger", "note": "巨鯨與機構地址追蹤"},
+  {"handle": "ai_9684xtpa", "name": "Ai 姨", "lang": "zh", "type": "blogger", "note": "巨鯨地址追蹤"},
+  {"handle": "BTCdayu", "name": "大宇", "lang": "zh", "type": "blogger", "note": "大帳號，宏觀與行情"},
+  {"handle": "CryptoPainter", "name": "Painter", "lang": "zh", "type": "blogger", "note": "鏈上與衍生品圖表"},
+  {"handle": "Bobbxu", "name": "Bob Xu", "lang": "en", "type": "blogger", "note": "ETF 與錢包資金流"},
+  {"handle": "_Checkmatey_", "name": "James Check", "lang": "en", "type": "blogger", "note": "CheckOnChain；STH、SOPR 的資料源"},
+  {"handle": "ki_young_ju", "name": "Ki Young Ju", "lang": "en", "type": "blogger", "note": "CryptoQuant；大帳號"},
+  {"handle": "VetleLunde", "name": "Vetle Lunde", "lang": "en", "type": "blogger", "note": "K33；衍生品、ETF"},
+  {"handle": "EricBalchunas", "name": "Eric Balchunas", "lang": "en", "type": "blogger", "note": "Bloomberg ETF；大帳號"},
+  {"handle": "JSeyff", "name": "James Seyffart", "lang": "en", "type": "blogger", "note": "Bloomberg ETF"},
+  {"handle": "JoeConsorti", "name": "Joe Consorti", "lang": "en", "type": "blogger", "note": "宏觀、ETF"},
+  {"handle": "DaanCrypto", "name": "Daan Crypto Trades", "lang": "en", "type": "blogger", "note": "價位、清算；大帳號"},
+  {"handle": "ecoinometrics", "name": "ecoinometrics", "lang": "en", "type": "blogger", "note": "週期、宏觀圖表"},
+  {"handle": "glassnode", "name": "glassnode", "lang": "en", "type": "research", "note": "鏈上研報"},
+  {"handle": "GreeksLive", "name": "Greeks.live", "lang": "en", "type": "research", "note": "選擇權"}
+ ]
+}

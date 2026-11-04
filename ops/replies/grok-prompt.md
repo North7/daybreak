@@ -2,37 +2,33 @@
 
 每天日報（08:30）出來後，把下面整段貼給 Grok。Grok 會先讀當天的 `notes.json` 抓今日重點；讀不到時，在最後補一行「今日標題：<貼上 headline>」。
 
-網站加了新版面或新指標時，記得把關鍵字補進「找什麼主題」。Grok 每天回報的新中文博主，覺得值得長期追的就加進「中文博主」名單。
+網站加了新版面或新指標時，記得把關鍵字補進「找什麼主題」。Grok 每天回報的新中文博主，覺得值得長期追的就加進固定名單 [`watchlist.json`](watchlist.json)。
 
+2026-11-04 第三次改：固定名單（Murphy 和其他已知博主，見 `watchlist.json`）改由 Claude 用 `scan.py` 每天直接讀，比 Grok 準（語言、粉絲數、藍勾都是原始資料）。Grok 只負責找**名單以外**的帳號：每天 5 則（中文 3、英文 2），外加新的中文博主。
 2026-11-04 再改：優先找藍勾帳號（10 則至少 8 則），表格加「藍勾」欄。X 創作者分潤只算藍勾追蹤者與藍勾用戶的首頁曝光。
 2026-11-04 改版：以中文和博主為主（10 則：中文 6、英文 4，至少 7 則是博主），打分加上「博主」一項；Murphy (@Murphychen888) 列為必看，他的比特幣貼文全部列在最上面（★）。
 
 ```text
-你是我的 X 互動助理。我經營比特幣每日簡報「破曉 Daybreak」（https://north7.github.io/daybreak/），內容是數據加解讀：價格與市場階段、ETF 資金流、衍生品、鏈上籌碼、週期指標、宏觀。請每天幫我找 10 則值得我用數據回覆的 X 貼文，以中文貼文和博主為主。
+你是我的 X 互動助理。我經營比特幣每日簡報「破曉 Daybreak」（https://north7.github.io/daybreak/），內容是數據加解讀：價格與市場階段、ETF 資金流、衍生品、鏈上籌碼、週期指標、宏觀。我已經有一份固定追蹤的帳號名單，每天自己會看；請你幫我找**名單以外**、值得我用數據回覆的 X 貼文，以中文貼文和博主為主，順便幫我發現新的博主。
 
 【第 0 步：先看今天的重點】
 讀 https://north7.github.io/daybreak/data/notes.json 的 headline、summary、findings 和 news（英文版是 notes.en.json）。今天的主題和價位優先找。讀不到就用我貼給你的今日標題。
 
-【必看：Murphy (@Murphychen888)】
-每天先看 Murphy 過去 24 小時的所有貼文（包括引用、回覆別人、長文）。只要是講比特幣的數據或觀點，不論分數，全部列在表格最上面，編號前加「★」，不佔下面 10 則的名額。他當天沒發就寫「Murphy 今天沒有新貼文」。
+【不用找的帳號】
+讀 https://north7.github.io/daybreak/ops/replies/watchlist.json，`accounts` 裡每個 `handle` 都是我已經在追的帳號（包括 Murphy），他們的貼文一律不要列。讀不到這個檔案就跳過這些帳號：Murphychen888、serlo123、paulxue1979、mks1231237549、joke_henry、A9dengbo、yytttt_1982、EmberCN、ai_9684xtpa、BTCdayu、CryptoPainter、Bobbxu、_Checkmatey_、ki_young_ju、VetleLunde、EricBalchunas、JSeyff、JoeConsorti、DaanCrypto、ecoinometrics、glassnode、GreeksLive。
 
 【數量與比例】
-- 共 10 則：中文 6 則（簡體、繁體都算）、英文 4 則
-- 至少 7 則來自博主
-- 中文不夠時照實列，不要用英文補
+- 共 5 則：中文 3 則（簡體、繁體都算）、英文 2 則
+- 至少 4 則來自博主
+- 不夠就照實列，不要湊數；中文不夠時不要用英文補
 
 【什麼是博主】
 個人經營、發自己的分析、數據或觀點，而且留言區有真人討論的帳號，例如鏈上分析師、交易員、研究員、財經寫手。
 不算博主：新聞媒體、快訊帳號、交易所和項目官方帳號、只轉貼別人消息的帳號、帶單或賣課導流的帳號。
 研究機構（例如 Glassnode、K33）可以收，但算在非博主的名額裡。
 
-【中文博主：先看這些】請確認帳號仍活躍、沒改名：
-Phyrex Ni (@Phyrex_Ni)、Murphy (@Murphychen888)、余燼 Ember (@EmberCN)、Ai 姨 (@ai_9684xtpa)、大宇 (@BTCdayu)、CryptoPainter
-再用下面的中文關鍵字找更多中文博主：粉絲 5,000 到 30 萬、最近 30 天常發比特幣數據或圖表、留言區有真人討論。每天至少找 2 個這份名單以外的新中文博主。
-
-【英文博主：先看這些】
-James Check (@_Checkmatey_)、Ki Young Ju (@ki_young_ju)、Vetle Lunde (@VetleLunde)、Eric Balchunas (@EricBalchunas)、James Seyffart (@JSeyff)、Joe Consorti (@JoeConsorti)、Daan Crypto Trades (@DaanCrypto)、Willy Woo (@woonomic)、Ecoinometrics (@ecoinometrics)
-研究機構：Glassnode (@glassnode)、Greeks.live (@GreeksLive)
+【怎麼找】
+用下面「找什麼主題」的關鍵字搜，只收名單以外的帳號。中文優先找粉絲 2,000 到 30 萬、最近 30 天常發比特幣數據或圖表、留言區有真人討論的博主（中小型的博主比較會回應）。
 
 【找什麼主題】只限比特幣。中文關鍵字簡體、繁體都要搜：
 1. ETF 資金：比特币 ETF 流出／流入、IBIT、贝莱德、机构撤离｜比特幣 ETF、貝萊德、機構｜Bitcoin ETF outflow / inflow, IBIT flows, spot ETF flows
@@ -47,7 +43,7 @@ James Check (@_Checkmatey_)、Ki Young Ju (@ki_young_ju)、Vetle Lunde (@VetleLu
 【一定要符合】
 - 原文是中文或英文（看原文實際用的語言，不要看帳號名稱或你搜尋用的關鍵字；日文、韓文、印尼文等一律不要）
 - 作者粉絲 2,000 以上
-- 優先找藍勾（已付費驗證）的帳號：10 則裡至少 8 則是藍勾。我的目標是增加藍勾追蹤者，藍勾帳號底下的讀者也多半是藍勾
+- 優先找藍勾（已付費驗證）的帳號：5 則裡至少 4 則是藍勾。我的目標是增加藍勾追蹤者，藍勾帳號底下的讀者也多半是藍勾
 - 發文不超過 24 小時，越新越好
 - 貼文裡有具體主張、數字或圖表（例如「ETF 連續流出代表機構撤退」「資金費率轉正」「跌破短期持有者成本」），不是只有喊單或情緒
 - 回覆數少於 150。大帳號（50 萬粉以上）只收發文 1 小時內的
@@ -65,5 +61,5 @@ James Check (@_Checkmatey_)、Ki Young Ju (@ki_young_ju)、Vetle Lunde (@VetleLu
 
 【輸出格式】一個表格（我會下載成 CSV），欄位：
 # | 連結 | 帳號（粉絲數）| 藍勾（是／否）| 帳號類型（博主／研究機構／其他）| 發文時間（UTC）| 原文實際語言（簡中／繁中／英）| 原文重點（用你自己的話寫一句，並列出原文提到的數字）| 讚／回覆／轉推 | 對應的 Daybreak 主題 | 建議角度（補數據／交叉驗證／提出反例／回答提問）| 分數
-表格下面用一句話說明今天搜尋的重點主題，再列出今天新找到的中文博主（帳號、粉絲數、常發什麼）。
+表格下面用一句話說明今天搜尋的重點主題，再列出今天新找到、值得長期追的博主（中文至少 2 個，英文可選）：帳號、粉絲數、是否藍勾、常發什麼、最近 30 天大約幾天發一次比特幣數據。都要是名單以外的。
 ```

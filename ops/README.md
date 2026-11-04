@@ -26,6 +26,8 @@ ops/
     grok-prompt.md     給 Grok 的找文規則（每天整段貼給 Grok）
     README.md          回覆流程、Claude 寫回覆的規則、replies.json 格式
     fetch.py           讀 X 原文（api.fxtwitter.com），核對 Grok 的摘要
+    scan.py            掃固定名單最近 24 小時的貼文，排序、建議主題與配圖
+    watchlist.json     固定名單（Murphy 等 22 個帳號）；Grok 只找名單以外的
     cards.py           回覆配圖 → data/replies/<n>.png
     check.py           檢查 replies.json 與 flash.json（語言、字數、簡體字、框架用詞、配圖）
   brand/             品牌與內容方向（2026-11-04 起）
@@ -58,7 +60,7 @@ ops/
 | 推送後 | GitHub Actions `share.yml` | 畫當日分享圖、今日推薦圖表 | `data/share.png`、`data/share-en.png`、`data/picks/` |
 | 你 | 手機開發文小幫手 | 一鍵把圖文送進 X | <https://north7.github.io/daybreak/ops/post/> |
 | 你／Claude | 本機 | 做當日短影片（見下） | `ops/video/out/` |
-| 日報後 | Grok → Claude → 你 | Grok 找可回覆的 X 貼文，Claude 讀原文、依當日數據寫回覆和配圖，你在回覆小幫手照順序回（標「建議引用」的用引用發） | `data/replies.json`、`data/replies/`；<https://north7.github.io/daybreak/ops/replies/> |
+| 日報後 | Claude＋Grok → Claude → 你 | Claude 掃固定名單、Grok 找名單以外的貼文，Claude 讀原文、依當日數據寫回覆和配圖，你在回覆小幫手照順序回（標「建議引用」的用引用發） | `data/replies.json`、`data/replies/`；<https://north7.github.io/daybreak/ops/replies/> |
 | 盤中有事時 | Claude → 你 | 新低／新高、ETF 數據、大爆倉：寫中英文快訊和配圖，放到發文小幫手最上面 | `data/flash.json`、`data/flash/` |
 | 你傳通知截圖時；隔天寫回覆前 | Claude | 記錄當天發了什麼、誰回應、瀏覽多少；隔天更新數字並彙整 | `ops/log/<日期>.json`（見 [`log/README.md`](log/README.md)） |
 
@@ -96,7 +98,7 @@ python make_short_017.py ../.. ~/fonts out/daybreak-017-short.mp4 --audio out/01
 
 ## 互動回覆
 
-每天請 Grok 找 10 則值得用數據回覆的 X 貼文（中文 6、英文 4，以藍勾博主為主，Murphy 必看）（規則在 [`replies/grok-prompt.md`](replies/grok-prompt.md)），把結果貼給 Claude 寫回覆和配圖（規則在 [`replies/README.md`](replies/README.md)），再到回覆小幫手 <https://north7.github.io/daybreak/ops/replies/> 照順序回。英文貼文回英文、中文貼文回繁體中文；和短影片同一個原則：只放資訊，預設不貼連結。
+每天找約 10 則值得用數據回覆的 X 貼文（Claude 用 `replies/scan.py` 自己掃固定名單 `replies/watchlist.json`，Murphy 必看；Grok 只找名單以外的 5 則，規則在 [`replies/grok-prompt.md`](replies/grok-prompt.md)），把結果貼給 Claude 寫回覆和配圖（規則在 [`replies/README.md`](replies/README.md)），再到回覆小幫手 <https://north7.github.io/daybreak/ops/replies/> 照順序回。英文貼文回英文、中文貼文回繁體中文；和短影片同一個原則：只放資訊，預設不貼連結。
 
 ## 成效紀錄
 

@@ -6,8 +6,10 @@
 
 ## 每日流程
 
-1. **找文（Grok）**：日報出來後，把 [`grok-prompt.md`](grok-prompt.md) 裡的整段貼給 Grok。它會讀當天的 `data/notes.json`，回傳一張最多 10 則的候選表（中文 6、英文 4，至少 7 則是博主；每則有帳號類型、分數和建議角度），另外列出當天新找到的中文博主。
-2. **寫回覆（Claude）**：在 `daybreak-ops` 資料夾開 session，把 Grok 的表格（或 CSV 檔）貼上，說「幫我寫回覆」。Claude 照下面的步驟寫好，推到 main。
+1. **找文（兩路）**：
+   - **固定名單（Claude 自己掃）**：[`watchlist.json`](watchlist.json) 裡的帳號（Murphy 和其他已知博主），由 Claude 跑 `python3 ops/replies/scan.py` 直接讀最近 24 小時的原創貼文，依同一套 12 分制排序、建議主題和配圖。Murphy 標 ★ 排最上面。
+   - **名單以外（Grok）**：日報出來後，把 [`grok-prompt.md`](grok-prompt.md) 裡的整段貼給 Grok，它會找 5 則名單以外的貼文（中文 3、英文 2），另外列出新找到的博主。
+2. **寫回覆（Claude）**：在 `daybreak-ops` 資料夾開 session，說「幫我寫回覆」，有 Grok 的表格（或 CSV 檔）就一起貼上；沒有也可以，只用固定名單。Claude 照下面的步驟寫好，推到 main。
 3. **回覆（你）**：手機打開回覆小幫手 <https://north7.github.io/daybreak/ops/replies/>，照順序一則一則回。
 
 ## 回覆小幫手
@@ -33,7 +35,8 @@ X 創作者分潤只算**原創貼文**的藍勾首頁曝光，回覆不算；�
 ## Claude 寫回覆的步驟
 
 0. **先看昨天的成效**：前一天有 `ops/log/<日期>.json` 的話，先 `python3 ops/log/log.py refresh <昨天>`、`python3 ops/log/log.py summary`，用一兩句話告訴使用者昨天哪些有效，寫今天的回覆時參考（見 [`../log/README.md`](../log/README.md)）。
-1. **讀原文**：`python3 ops/replies/fetch.py <Grok 的 CSV 或網址>`。Grok 的摘要、語言、粉絲數常常錯，一律以原文為準。原文不是中文或英文、粉絲不到 2,000、或內容是標題黨、喊單、操作建議的，標成跳過並寫原因。
+1. **掃固定名單**：`python3 ops/replies/scan.py --out <暫存區>/scan.csv`，和 Grok 的表格合在一起挑；同一則只留一次。scan 只是初篩（用關鍵字判斷主題），一定要讀原文再決定。
+1. **讀原文**：`python3 ops/replies/fetch.py <scan.csv、Grok 的 CSV 或網址>`。Grok 的摘要、語言、粉絲數常常錯，一律以原文為準。原文不是中文或英文、粉絲不到 2,000、或內容是標題黨、喊單、操作建議的，標成跳過並寫原因。
 2. **讀當天的數據**：`data/notes.json`（英文 `data/notes.en.json`）的 headline、findings、news、modules，數字細節查 `data/latest.json`、`data/etf.json` 等。只引用數據裡有的數字，不改數字、不自己推算新數字。`notes.json` 的日期不是當期時，先跟使用者確認。
 3. **寫 `data/replies.json`**（格式見下），需要配圖的加 `image`。寫之前讀 [`../brand/voice.md`](../brand/voice.md)，特別是最後的「使用者改稿紀錄」。
 4. **出圖**：`python3 ops/replies/cards.py --fonts <字型資料夾>`（需要 `pipeline/picks.py` 與 Pillow；字型同 `share_card.py`）。打開每張圖看一遍。
@@ -41,11 +44,19 @@ X 創作者分潤只算**原創貼文**的藍勾首頁曝光，回覆不算；�
 6. **提交**：`replies: <日期>`（`data/replies.json` 與 `data/replies/`），推到 main。GitHub Pages 約 1 分鐘後更新。
 7. 在對話裡回報：發文順序、跳過哪些與原因、需要使用者留意的地方。
 
+## 固定名單（watchlist.json）
+
+2026-11-04 建立，22 個帳號：Murphy 和中文鏈上博主為主，加上幾個英文 ETF、鏈上帳號和研究機構。`scan.py` 讀的是 api.fxtwitter.com 的個人頁貼文（第三方、公開、不需登入），只有原創和引用，看不到他們回覆別人的貼文。
+
+- **加帳號**：Grok 回報的新博主、或回覆後有互動的帳號（回覆、回追），連續一週常發比特幣數據的，加進 `accounts`：`handle`、`name`、`lang`（zh／en）、`type`（blogger／research）、`note`。加之前用 `https://api.fxtwitter.com/<handle>` 確認帳號讀得到、粉絲 2,000 以上。
+- **拿掉帳號**：一個月幾乎沒有講比特幣數據的貼文，或改成以喊單、廣告為主的。
+- **讀不到時**（fxtwitter 改版或限流），`scan.py` 會列出讀不到的帳號；全部讀不到就改回請 Grok 找 10 則（`grok-prompt.md` 舊版在 git 紀錄裡）。
+
 ## 重點關注：Murphy (@Murphychen888)
 
 使用者要求重點關注 Murphy（2026-11-04）。他是中文圈主要的鏈上分析博主（約 8.2 萬粉），常用 URPD 籌碼分布、長短期持有者（LTH／STH）、MVRV、實現價格這類指標，和 Daybreak 的鏈上與籌碼版面幾乎一一對得上；Daybreak 的長短期持有者籌碼拆分，本來就是參考他的〈BTC 跌破 8 萬會有多少拋壓？〉。
 
-- **一律優先**：Grok 表格裡標「★」的 Murphy 貼文，只要是比特幣的數據或觀點，都要寫回覆，排在當天第 1 位；除非內容是廣告、活動或和比特幣無關，才跳過並寫原因。
+- **一律優先**：`scan.py` 標「★」的 Murphy 貼文（他在固定名單上，`must: true`），只要是比特幣的數據或觀點，都要寫回覆，排在當天第 1 位；除非內容是廣告、活動或和比特幣無關，才跳過並寫原因。
 - **使用者自己貼來的 Murphy 貼文**也照這個規則，馬上寫。
 - **角度**：同行交流。用 Daybreak 的同類數據對照他的數字（同一個指標不同資料源的差異、他沒提到的另一面），或回答他文末的問題；不爭論、不糾正。他的「交易框架」不評論，我們的出場框架也不提。
 - **配圖**：他講籌碼就配 `cohort`，講短期持有者成本配 `cost`，講 SOPR 配 `sopr`；圖的標題直接回應他的論點。
