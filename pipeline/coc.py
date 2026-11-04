@@ -217,3 +217,29 @@ def get_hodl1y():
     except Exception as e:
         cj = _cache(HW_CACHE)
         return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
+
+
+# 2026-11-04 使用者要求（ForeDex／加密貝兒的 Supply In Loss % - LTH）：長期持有者虧損比例（CheckOnChain，2009 起、晚約 1 天）
+LL_URL = 'https://charts-cdn.checkonchain.com/btconchain/unrealised/topheavy_supplyinloss_lth/topheavy_supplyinloss_lth_light.html'
+LL_PAGE = 'https://charts.checkonchain.com/btconchain/unrealised/topheavy_supplyinloss_lth/topheavy_supplyinloss_lth_light.html'
+LL_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'coc_cache', 'lth-loss.json')
+
+
+def fetch_lthloss():
+    """{date: (長期持有者虧損比例 0–1, 價格)}"""
+    traces = _traces(LL_URL)
+    ll, px = _trace(traces, 'Percent LTH Supply in Loss'), _trace(traces, 'Price')
+    ser = {d: (ll[d], px[d]) for d in ll if d in px and px[d] > 0}
+    if len(ser) < 3000: raise RuntimeError(f'CheckOnChain 長期持有者虧損比例只有 {len(ser)} 筆，格式可能改了')
+    return ser
+
+
+def get_lthloss():
+    """回傳 (序列 {date: (比例, 價格)}, 狀態說明)。失敗時用上一次成功的快取。"""
+    try:
+        ser = fetch_lthloss()
+        _save(LL_CACHE, LL_PAGE, [[d, round(v, 4), round(p, 2)] for d, (v, p) in sorted(ser.items())], keep=10000)
+        return ser, 'live'
+    except Exception as e:
+        cj = json.load(open(LL_CACHE))
+        return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'

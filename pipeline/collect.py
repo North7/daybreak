@@ -326,6 +326,14 @@ try:
     _hw1, _hwst = coc.get_hodl1y()
     if _hwst != 'live': errors.append(f'checkonchain hodl-waves 用快取：{_hwst}')
 except Exception as e: errors.append(f'checkonchain hodl-waves: {e}')
+# B8. 2026-11-04 使用者要求（Supply In Loss % - LTH）：長期持有者虧損比例（CheckOnChain；打破規律的價位用 B4 的長期持有者籌碼 _coh 推算，見 stage_viz.lthloss_viz）
+try:
+    import coc, stage_viz, os
+    _ll, _llst = coc.get_lthloss()
+    if _llst != 'live': errors.append(f'checkonchain lth-loss 用快取：{_llst}')
+    _bt = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json')))['cycle_bottoms']
+    R['lthloss'] = stage_viz.lthloss_viz(_ll, LAST, _bt, globals().get('_coh'))
+except Exception as e: errors.append(f'checkonchain lth-loss: {e}')
 try:
     # 2026-09-23 週檢：第三轉換條件量化＝STH 成本基礎 ÷ LTH 成本基礎（＝LTH-MVRV ÷ STH-MVRV，與價格無關）
     sr, lr_ = R['onchain']['sth-realized-price'], R['onchain']['lth-realized-price']
