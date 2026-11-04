@@ -3,6 +3,7 @@
 版面、字型、配色沿用 pipeline/picks.py 的「今日圖表」卡（1080×1350，X 不會裁切）；圖上的語言跟著回覆（en → 英文圖、zh → 中文圖）。
 image 欄位：{"chart": "<picks.py 的圖表 id，例如 cbp、sopr、etf、cohort、cost>", "title": "<圖上的大標題>"}
            或 {"chart": "liq", "title": "...", "marks": [75000, 76200, ...]}：本站推算的清算價位分布（OKX），marks 是原文提到的價位。
+           或 {"chart": "ad", "title": "..."}：老幣累積（供給端，近兩年），適合回應講需求端／新買家／賣方枯竭的貼文。
 需要 pipeline/picks.py（PR #19「每日推薦發文圖表」）與 Pillow；字型同 share_card.py。
 用法（在倉庫根目錄）：python3 ops/replies/cards.py --fonts <字型資料夾>
 只作讀值：圖只放市場資訊，不放出場框架。"""
@@ -34,6 +35,25 @@ def c_liq(L, marks):
                 stats=[PK.S('下方 5% 內多單', 'Longs within 5% below', f'{h["within5"]["below"]:,} 顆', f'{h["within5"]["below"]:,} BTC'),
                        PK.S('上方 5% 內空單', 'Shorts within 5% above', f'{h["within5"]["above"]:,} 顆', f'{h["within5"]["above"]:,} BTC'),
                        PK.S('最大多單帶', 'Largest long band', f'{k(lb["lo"])}–{k(lb["hi"])}')])
+
+
+def c_ad(L, end):
+    """供給端：一年以上未動供給的 30 天變化 − 30 天新挖出的幣（onchain.ad 是 CryptoQuant 定義「新挖出 − 未動變化」，這裡反過來畫，
+    高於 0＝老幣增加得比新挖出的還多，比較直覺）。"""
+    a = g(L, 'onchain.ad'); rows = [r for r in a['rows'] if r[0] > end - 730]; net = -a['value']
+    sg = lambda v, d, u: ('+' if v >= 0 else '−') + format(abs(v) / d, u)
+    return dict(kind='line', name=T('老幣淨增加（供給端）', 'Old coins vs new supply'),
+                sub=T('一年以上沒動的幣 30 天變化 − 同期新挖出的幣；高於 0＝老幣增加得比新挖出的還多',
+                      '30-day change in coins unmoved for 1+ year, minus 30-day new issuance; above 0 means old coins grow faster than new supply'),
+                series=[dict(name=T('每日值', 'Daily'), rows=[(r[0], -r[1]) for r in rows], color=PK.INK3, width=3),
+                        dict(name=T('30 日平均', '30-day average'), rows=[(r[0], -r[2]) for r in rows], color=PK.S1, width=7)],
+                refs=[dict(y=0)], yf=lambda v: f'{v / 1e3:,.0f}K', src='CheckOnChain HODL Waves（推算）', asof=a['date'],
+                stats=[PK.S('一年以上未動 30 日', '1y+ unmoved, 30 days', sg(a['inact_chg30'], 1e4, '.1f') + ' 萬顆', sg(a['inact_chg30'], 1e3, ',.0f') + 'K BTC'),
+                       PK.S('30 天新挖出', 'Mined in 30 days', f'{a["issued30"] / 1e4:.2f} 萬顆', f'{a["issued30"] / 1e3:,.1f}K BTC'),
+                       PK.S('老幣淨增加', 'Net old-coin growth', sg(net, 1e4, '.1f') + ' 萬顆', sg(net, 1e3, ',.0f') + 'K BTC')])
+
+
+EXTRA = {'ad': c_ad}   # picks.py 沒有、回覆配圖另外加的圖表
 
 
 def vdash(d, x, y0, y1, color, w=3, dash=16, gap=12):
@@ -91,7 +111,9 @@ def main(fonts_dir):
         im = it.get('image')
         if not im: continue
         lang = 'zh' if it['lang'] == 'zh' else 'en'
-        sp = c_liq(L, im.get('marks')) if im['chart'] == 'liq' else PK.spec(L, im['chart'])
+        end = PK.dn(g(L, 'meta.bar_date'))
+        sp = (c_liq(L, im.get('marks')) if im['chart'] == 'liq' else EXTRA[im['chart']](L, end) if im['chart'] in EXTRA
+              else PK.spec(L, im['chart']))
         if not sp: print('skip', it['n'], im['chart'], '（沒有這張圖或資料不足）'); continue
         fn = f'{it["n"]}.png'
         PK.card(L, notes[lang], sp, im['title'], lang, Fn, os.path.join(OUT, fn)); keep.add(fn)
