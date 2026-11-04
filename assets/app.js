@@ -651,8 +651,8 @@
   function p20Read() { var cm = D.cycle.cm, r = cm.mvrv_vs_prior, c = D.price.bar.c, k = cm.k075_price;
     if (r == null) return null;
     return [r >= 0.75 ? _t('已站上 0.75 賣出線，連 5 天即觸發第一個鏈上賣點（現在 ') + (cm.p20_run_ge075 || 0) + _t('/5 天）。') : _t('離 0.75 賣出線還很遠：價格約要到 ') + fmt.usd(k) + _t('（比收盤高 ') + fmt.pct((k / c - 1) * 100, 0) + _t('）才會碰到；2025 頂部時是 0.78。'), r >= 0.75 ? 'neg' : r >= 0.7 ? 'warn' : 'neu']; }
-  // 2026-11-04：倍數旁加白話「低於趨勢 X%」（PiusSprenger 等人的說法，一般讀者比較好懂）
-  // 2026-11-04 使用者要求（gaah_im 的已實現波動率年低）：RV30 在近一年裡的百分位；第 10 百分位以下註明「低波動後常有大波動，方向不一定」
+  // 2026-11-04：倍數旁加白話「低於趨勢 X%」（一般讀者比較好懂）
+  // 2026-11-04 使用者要求（已實現波動率年低）：RV30 在近一年裡的百分位；第 10 百分位以下註明「低波動後常有大波動，方向不一定」
   function rvYear(v) {
     if (v.rv30_pct1y == null) return '';
     var lo = v.rv30_pct1y <= 10, md = fmt.md(v.rv30_min1y_date);
@@ -899,7 +899,7 @@
       'profit': { h: h('短期持有者中處於獲利的比例。', 'Share of short-term holder supply in profit.', '長時間 > 90%＝過熱、容易回檔；跌到 50% 以下＝短期持有者普遍套牢，回調中常接近階段低點。', 'Long stretches above 90% mean overheating and pullback risk; below 50% means most recent buyers are underwater, often near a local low in a correction.', '同一個數字在牛市回調和熊市裡意義不同。', 'The same reading means different things in a bull correction and a bear market.'),
         now: function () { var p = (D.chips.flow || {}).sth_in_profit_pct || {}; return _T(fmt.n(p.value, 1) + '%（7 天前 ' + fmt.n(p.d7, 1) + '%），30 日最低 ' + fmt.n(p.min30, 1) + '%（' + ymd(p.min30_date) + '）。', fmt.n(p.value, 1) + '% (' + fmt.n(p.d7, 1) + '% a week ago); 30-day low ' + fmt.n(p.min30, 1) + '% (' + ymd(p.min30_date) + ').'); } },
       'urpd': { h: h('每 2,000 美元一格：有多少顆 BTC 最後一次移動是在這個價位；橘格是現價，淡框是 7 天前。', '$2,000 buckets: how many BTC last moved at each price; the orange bucket is the current price, faint outlines are 7 days ago.', '籌碼厚的價位常成支撐或壓力（買在那裡的人會防守或解套賣出）；籌碼薄的區間價格走得快。', 'Thick buckets often act as support or resistance (holders defend or sell to break even); price moves fast through thin zones.', '交易所內部轉帳也會重設成本。', 'Exchange-internal transfers also reset the cost basis.') },
-      'npl': { h: h('上層：BTC 價格與每天的淨實現損益氣泡（綠＝當天整體獲利賣出、紅＝認賠賣出，越大金額越大，粗外圈＝在之前一年最極端的 2%）；下層：同一數字的每日柱。切到「30 日累計」看週期級別：下層是 30 日累計佔市值的比例，紅線是之前 4 年最極端的 3%，橘圈是首次跌破。', 'Top: BTC price with a bubble for each day\'s net realized profit/loss (green = net profit selling, red = net loss selling, bigger = larger, thick ring = most extreme 2% of the prior year); bottom: the same numbers as daily bars. Switch to “30-day total” for the cycle view: the bottom pane is the 30-day total as % of market cap, the red line the most extreme 3% of the prior 4 years, and orange rings the first breaches.', '大綠泡集中在急漲與高點那幾天＝獲利了結；綠泡變小＝想在現價賣的人變少。回檔時出現大紅泡＝認賠出清，但不代表已經見底。', 'Big green bubbles cluster on rallies and highs: profit taking; shrinking green bubbles mean fewer holders want to sell at this price. Big red bubbles on pullbacks are loss capitulation, which does not mean the low is in.', '只有淨值（獲利減認賠），看不到兩邊各有多少；交易所內部轉帳也會實現損益。2015 起只用當天已知資料回測：認賠高峰之後的表現和平常差不多，不是買點；獲利高峰之後反而多半續漲（一輪比一輪弱），不是賣點。30 日累計跌破紅線過去 5 次（2015–2022）1 年後都上漲，但其中 3 次之後還再跌 17–44%，而且 2025 頂部之後這一輪沒有觸發。ETF 時代這個訊號可能變鈍：ETF 持有人在股市互相買賣不會移動鏈上的幣，只有淨贖回才會；2025-10 到 2026-06 的下跌中 ETF 只淨贖回約 13 萬顆（約一成八），這一輪按跌幅換算的認賠也只有前幾輪的一半。過去 5 次觸發都在 ETF 上市（2024-01）之前。', 'Net only (profit minus loss), so the two sides are not visible separately; exchange-internal transfers also realize P/L. In tests since 2015 using only data known on the day, loss spikes were followed by ordinary returns (not a buy signal), and profit spikes were more often followed by further gains, weaker each cycle (not a sell signal). The 5 breaches of the 30-day red line (2015–2022) were all higher a year later, but 3 fell another 17–44% first, and it has not triggered since the 2025 top. The signal may be blunter in the ETF era: ETF shares changing hands on the stock market do not move coins on-chain, only net redemptions do; in the Oct 2025–Jun 2026 decline ETFs net-redeemed only about 134K BTC (roughly 18% of their holdings), and loss realization per point of drawdown was about half that of past cycles. All 5 past triggers came before spot ETFs launched (Jan 2024).'),
+      'npl': { h: h('上層：BTC 價格與每天的淨實現損益氣泡（綠＝當天整體獲利賣出、紅＝認賠賣出，越大金額越大，粗外圈＝在之前一年最極端的 2%）；下層：同一數字的每日柱。切到「30 日累計」看週期級別：下層是 30 日累計佔市值的比例，紅線是之前 4 年最大 30 日淨獲利的 1/4（取負），橘圈是首次跌破。', 'Top: BTC price with a bubble for each day\'s net realized profit/loss (green = net profit selling, red = net loss selling, bigger = larger, thick ring = most extreme 2% of the prior year); bottom: the same numbers as daily bars. Switch to “30-day total” for the cycle view: the bottom pane is the 30-day total as % of market cap, the red line minus a quarter of the prior 4 years\' largest 30-day net profit, and orange rings the first breaches.', '大綠泡集中在急漲與高點那幾天＝獲利了結；綠泡變小＝想在現價賣的人變少。回檔時出現大紅泡＝認賠出清，但不代表已經見底。', 'Big green bubbles cluster on rallies and highs: profit taking; shrinking green bubbles mean fewer holders want to sell at this price. Big red bubbles on pullbacks are loss capitulation, which does not mean the low is in.', '只有淨值（獲利減認賠），看不到兩邊各有多少；交易所內部轉帳也會實現損益。2015 起只用當天已知資料回測：認賠高峰之後的表現和平常差不多，不是買點；獲利高峰之後反而多半續漲（一輪比一輪弱），不是賣點。30 日累計首次跌破紅線（2015 起）：2015/01、2018/11、2020/03、2022/05、2022/11、2026/02、2026/06；2023 年以前的 5 次有 4 次 1 年後上漲（2022/05 那次 −7%），而且 2018/11、2022/05 之後還再跌 26%、46%。2026-11-04 起才改成這條線，是看過這一輪結果才定的，樣本只有 3–4 輪；舊規則（4 年第 3 百分位）沒有 2026 兩次，2022 年那次是 6/16。2028 年 3 月以後 2024/3 的獲利高點移出 4 年視窗，紅線會變淺到約 −1%。ETF 時代這個訊號可能變鈍：ETF 持有人在股市互相買賣不會移動鏈上的幣，只有淨贖回才會；這一輪最深的認賠只有同輪最大獲利的 3–4 成，前兩輪約 7 成。', 'Net only (profit minus loss), so the two sides are not visible separately; exchange-internal transfers also realize P/L. In tests since 2015 using only data known on the day, loss spikes were followed by ordinary returns (not a buy signal), and profit spikes were more often followed by further gains, weaker each cycle (not a sell signal). First breaches of the 30-day red line since 2015: 2015/01, 2018/11, 2020/03, 2022/05, 2022/11, 2026/02, 2026/06; 4 of the 5 before 2023 were higher a year later (2022/05 was −7%), and after 2018/11 and 2022/05 price still fell another 26% and 46%. The line was changed on 2026-11-04 after seeing this cycle, with only 3–4 cycles of history; the old rule (4-year 3rd percentile) missed both 2026 breaches and triggered 2022 on 6/16. After March 2028 the 2024/3 profit peak leaves the 4-year window and the line will rise to about −1%. The signal may be blunter in the ETF era: ETF shares changing hands on the stock market do not move coins on-chain, only net redemptions do; this cycle\'s deepest loss was only 30–40% of its largest profit, versus about 70% in the previous two.'),
         now: function () { var n = D.onchain.npl; if (!n) return ''; return _T('近 7 日合計 ' + nplB(n.sum7_usd_m) + '，前 7 日 ' + nplB(n.sum7_prev_usd_m) + '；最新一天 ' + nplB(n.usd_m) + '（近一年第 ' + fmt.n(n.rank_1y, 0) + ' 百分位）。', 'Past 7 days ' + nplB(n.sum7_usd_m) + ', prior 7 days ' + nplB(n.sum7_prev_usd_m) + '; latest day ' + nplB(n.usd_m) + ' (1-year percentile ' + fmt.n(n.rank_1y, 0) + ').'); } },
       'cohort': { h: h('每 2,000 美元一格：左邊是持有不到 155 天的短期持有者（STH），右邊是長期持有者（LTH），橫線是收盤；灰底是過去 155 天價格走過的區間。切到「STH 變化／LTH 變化」看和約 30 天前比：灰條是當時，彩條是現在。', '$2,000 buckets: short-term holders (held under 155 days) on the left, long-term holders on the right, the line is the close; the shaded band is the range price covered in the past 155 days. Switch to “STH change / LTH change” to compare with about 30 days ago: grey is then, colour is now.',
           '短期持有者堆在收盤上方＝那批人帳面虧損，價格回到成本時容易解套賣出；堆在下方＝跌回去之前他們還在獲利，是第一道承接。長期持有者的堆動得慢，變少的格子代表那個成本的老手在賣。', 'Short-term holders piled above the close are underwater and tend to sell when price returns to their cost; piled below, they stay in profit until price falls back, the first layer of support. Long-term holder piles move slowly; a shrinking bucket means veterans with that cost are selling.',
@@ -928,7 +928,7 @@
             '7-day average ' + fmt.pct(pp.avg7, 3) + ', usually (30-day) ' + fmt.pct(pp.avg30, 3) + ', ' + fmt.n(pp.avg7_pct_own, 0) + 'th percentile of ' + pp.n + ' days' + (fw != null ? '; funding ' + fmt.n(fw, 1) + '% a year' : '') + '. ' + (pp.avg7_pct_own == null ? '' : pp.avg7_pct_own >= 70 ? 'Richer than usual: longs pay up to chase.' : pp.avg7_pct_own <= 30 ? 'Cheaper than usual: leverage leans short.' : 'About usual.')); } },
       'regime': { h: h('上格是 BTC 價格，下格是每週的多空分數：零軸以上綠（多方）、以下紅（空方），範圍 −6 到 +6。', 'Top: BTC price; bottom: the weekly regime score, green above zero (bullish) and red below (bearish), range −6 to +6.',
           '把六個看趨勢、估值、資金和獲利了結的訊號合成一個數字：大段綠色對應牛市、大段紅色對應熊市；柱子越長，六項越一致。分數在零軸附近（絕對值小於 1）代表訊號互相矛盾。', 'Six trend, valuation, capital-flow and profit-taking signals combined into one number: long green stretches match bull markets, long red ones bear markets; longer bars mean the six agree more. Near zero (under 1 in size) the signals conflict.',
-          '是我們自己的合成方法，不是 CryptoPainter 的 JT_Regime_Osc。翻轉要連續 4 週才算，所以會晚幾週；2014/6、2021/8 的翻多一年後價格反而較低。', 'Our own composite, not CryptoPainter\'s JT_Regime_Osc. A flip needs 4 straight weeks, so it lags; the bullish flips of Jun 2014 and Aug 2021 saw lower prices a year later.') },
+          '是本站自己的合成方法，不是任何不公開指標的複製。翻轉要連續 4 週才算，所以會晚幾週；2014/6、2021/8 的翻多一年後價格反而較低。', 'Our own composite, not a copy of any unpublished indicator. A flip needs 4 straight weeks, so it lags; the bullish flips of Jun 2014 and Aug 2021 saw lower prices a year later.') },
       'ad': { h: h('上格是 BTC 價格，下格是 30 天的表觀需求（顆）：綠＝正、紅＝負，虛線是它的 30 日平均，橘點虛線是疑似搬家日。', 'Top: BTC price; bottom: 30-day apparent demand (BTC), green positive and red negative, the dashed line its 30-day average, orange markers likely transfer days.',
           '正＝舊幣醒來被市場接走，需求夠；負＝滿一年沒動的幣增加得比新挖出的快，換手少、需求偏弱。跌到自己的 30 日平均之下＝需求在轉弱；大段紅色常出現在下跌或盤整期。', 'Positive means old coins wake and get absorbed: enough demand. Negative means coins reaching one year unmoved outpace issuance: little turnover, soft demand. Dropping below its own 30-day average means demand is weakening; long red stretches tend to come with declines or chop.',
           '會受一年前換手量影響（那批幣滿一年時把它拉低）；交易所整理錢包會造成尖峰，一年後還有回音。逐筆計算、不是實體調整，和 CryptoQuant 的數值不完全相同。', 'It echoes turnover from a year earlier (those coins drag it down when they turn one); exchange wallet reshuffles cause spikes with an echo a year later. Per-UTXO, not entity-adjusted, so it differs somewhat from CryptoQuant\'s numbers.'),
@@ -941,7 +941,7 @@
           '不只受價格影響：最近高價買進的短期持有者滿 155 天後會被算成長期持有者，價格不漲也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。', 'Not price alone: recent high-priced buyers become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight.'),
         now: function () { var x = (D.onchain || {}).lthloss; if (!x) return ''; var c = x.cohort; return _T(fmt.n(x.value, 1) + '%（' + fmt.md(x.date) + '）' + (c && c.break_price ? '；跌破約 ' + fmt.usd(c.break_price) + ' 會超過這輪高點。' : '。'), fmt.n(x.value, 1) + '% (' + fmt.md(x.date) + ')' + (c && c.break_price ? '; below about ' + fmt.usd(c.break_price) + ' it would top this cycle\'s peak.' : '.')); } },
       'sthband': { h: h('BTC 價格、短期持有者成本（橘）和上下各兩條標準差帶（對數刻度）。', 'BTC price, short-term holder cost (orange) and two standard-deviation bands on each side (log scale).',
-          '價格在 +1 標準差以上＝新買家獲利豐厚，過去常在這附近遇到賣壓（Murphy 舉 2023 年 1–9 月：碰到 +1 標準差後，回踩到成本線或 −1 標準差）；跌到 −1 標準差以下＝新買家普遍套牢，多半是急跌後的恐慌區。', 'Above +1σ recent buyers sit on big gains and selling has often shown up nearby (Murphy\'s example: Jan–Sep 2023, each touch of +1σ was followed by a pullback to the cost line or −1σ); below −1σ recent buyers are broadly under water, usually after a sharp drop.',
+          '價格在 +1 標準差以上＝新買家獲利豐厚，過去常在這附近遇到賣壓（例如 2023 年 1–9 月：碰到 +1 標準差後，回踩到成本線或 −1 標準差）；跌到 −1 標準差以下＝新買家普遍套牢，多半是急跌後的恐慌區。', 'Above +1σ recent buyers sit on big gains and selling has often shown up nearby (e.g. Jan–Sep 2023: each touch of +1σ was followed by a pullback to the cost line or −1σ); below −1σ recent buyers are broadly under water, usually after a sharp drop.',
           '帶寬用近 4 年的價格起伏算，會隨時間改變；碰到帶不代表一定反轉。只有一家資料（Bitview），和 Glassnode 原版的數字會有小差距。', 'The band width comes from the last 4 years of price swings and changes over time; touching a band does not mean a reversal. One data source (Bitview), so small differences from Glassnode\'s original are expected.'),
         now: function () { var x = (D.onchain || {}).sth_bands; if (!x) return ''; var n = x.now; return _T('收盤在 ' + sbZ(n.z) + ' 標準差（' + fmt.md(x.date) + '）；+1 標準差 ' + fmt.usd(n.bands['1']) + '、−1 標準差 ' + fmt.usd(n.bands['-1']) + '。', 'Close at ' + sbZ(n.z) + 'σ (' + fmt.md(x.date) + '); +1σ ' + fmt.usd(n.bands['1']) + ', −1σ ' + fmt.usd(n.bands['-1']) + '.'); } },
       'agecost': { h: h('BTC 價格、6–12 個月（綠）與 12–18 個月（藍）持幣成本；紅點死叉、綠點金叉（對數刻度）。', 'BTC price and the cost of coins aged 6–12 months (green) and 12–18 months (blue); red dots are death crosses, green dots golden crosses (log scale).',
@@ -1059,10 +1059,11 @@
   function nplSay(n) {
     if (!n) return '';
     var ymd = function (d) { return d.replace(/-/g, '/'); };
-    if (nplMode === 'cum') {
-      var c = n.cum30 || {}, tg = (c.trig || [])[(c.trig || []).length - 1], mn = c.min_since_top;
-      return _T('30 日累計 ' + nplB(c.usd_m) + '（市值的 ' + nplPct(c.pct_mcap) + '，4 年第 ' + fmt.n(c.pct_4y, 0) + ' 百分位）；觸發線（之前 4 年最極端的 3%）在 ' + nplPct(c.thr_pct_mcap) + '。' + (tg ? '上一次觸發是 ' + ymd(tg.date) + '（' + fmt.usd(tg.price) + '）。' : '') + (mn ? ymd(mn.top) + ' 週期頂部之後最深只到第 ' + fmt.n(mn.pct_4y, 1) + ' 百分位（' + fmt.date(mn.x) + '，' + fmt.usd(mn.price) + '）' + (mn.pct_4y > 3 ? '，本輪沒有觸發。' : '。') : ''),
-        '30-day total ' + nplB(c.usd_m) + ' (' + nplPct(c.pct_mcap) + ' of market cap, 4-year percentile ' + fmt.n(c.pct_4y, 0) + '); the trigger line (most extreme 3% of the prior 4 years) is at ' + nplPct(c.thr_pct_mcap) + '.' + (tg ? ' The last trigger was ' + ymd(tg.date) + ' (' + fmt.usd(tg.price) + ').' : '') + (mn ? ' Since the ' + ymd(mn.top) + ' cycle top the deepest reading was only percentile ' + fmt.n(mn.pct_4y, 1) + ' (' + fmt.date(mn.x) + ', ' + fmt.usd(mn.price) + ')' + (mn.pct_4y > 3 ? '; it has not triggered this cycle.' : '.') : ''));
+    if (nplMode === 'cum') {   // 2026-11-04：觸發線改成「之前 4 年最大 30 日淨獲利 × −1/4」（舊規則 4 年第 3 百分位的觸發在 trig_old）
+      var c = n.cum30 || {}, T = c.trig || [], g = c.green_max, mn = c.min_since_top, tx = mn ? dnOf(mn.top) : null, cyc = T.filter(function (t) { return tx != null && t.x >= tx; }), tg = T[T.length - 1];
+      var ge = g ? ' (' + ymd(g.date) + ', ' + nplPct(g.pct_mcap) + ')' : '';
+      return _T('30 日累計 ' + nplB(c.usd_m) + '（市值的 ' + nplPct(c.pct_mcap) + '，4 年第 ' + fmt.n(c.pct_4y, 0) + ' 百分位）；觸發線＝之前 4 年最大 30 日淨獲利' + (g ? '（' + ymd(g.date) + '，' + nplPct(g.pct_mcap) + '）' : '') + '的 1/4，取負，在 ' + nplPct(c.thr_pct_mcap) + '。' + (cyc.length ? ymd(mn.top) + ' 週期頂部之後觸發 ' + cyc.length + ' 次：' + cyc.map(function (t) { return ymd(t.date) + '（' + fmt.usd(t.price) + '）'; }).join('、') + '。' : (tg ? '上一次觸發是 ' + ymd(tg.date) + '（' + fmt.usd(tg.price) + '）。' : '') + (mn ? ymd(mn.top) + ' 週期頂部之後還沒有觸發。' : '')),
+        '30-day total ' + nplB(c.usd_m) + ' (' + nplPct(c.pct_mcap) + ' of market cap, 4-year percentile ' + fmt.n(c.pct_4y, 0) + '); the trigger line is minus a quarter of the largest 30-day net profit of the prior 4 years' + ge + ', at ' + nplPct(c.thr_pct_mcap) + '.' + (cyc.length ? ' Since the ' + ymd(mn.top) + ' cycle top it has triggered ' + cyc.length + ' time' + (cyc.length > 1 ? 's' : '') + ': ' + cyc.map(function (t) { return ymd(t.date) + ' (' + fmt.usd(t.price) + ')'; }).join(', ') + '.' : (tg ? ' The last trigger was ' + ymd(tg.date) + ' (' + fmt.usd(tg.price) + ').' : '') + (mn ? ' It has not triggered since the ' + ymd(mn.top) + ' cycle top.' : '')));
     }
     var s7 = n.sum7_usd_m, p7 = n.sum7_prev_usd_m, ls = n.loss_spike_last;
     var tr = s7 < 0 ? ['近一週整體轉為認賠賣出', 'the past week turned to net loss selling'] : p7 <= 0 ? ['前一週以認賠為主，這週轉為獲利賣出', 'the prior week was net loss selling; this week is net profit'] : s7 < p7 * 0.6 ? ['獲利了結明顯降溫', 'profit taking has clearly cooled'] : s7 > p7 * 1.4 ? ['獲利了結增溫', 'profit taking is heating up'] : ['獲利了結大致持平', 'profit taking is roughly flat'];
@@ -1070,7 +1071,7 @@
       'Latest ' + ymd(n.date) + ' ' + nplB(n.usd_m) + ' (1-year percentile ' + fmt.n(n.rank_1y, 0) + '). Past 7 days ' + nplB(s7) + ', prior 7 days ' + nplB(p7) + ': ' + tr[1] + '.' + (ls ? ' The last clear loss spike (most extreme 2% of the past year) was ' + ymd(ls.date) + ' ' + nplB(ls.usd_m) + '.' : ''));
   }
   function nplLegend() {
-    return nplMode === 'cum' ? legend([[_T('BTC 價格（對數）', 'BTC price (log)'), 'var(--ink)'], [_T('30 日累計淨獲利', '30-day net profit'), 'var(--up)'], [_T('30 日累計淨認賠', '30-day net loss'), 'var(--down)'], [_T('觸發線：4 年第 3 百分位', 'Trigger: 4-year 3rd percentile'), 'var(--down)'], [_T('首次觸發', 'First trigger'), 'var(--s2)']])
+    return nplMode === 'cum' ? legend([[_T('BTC 價格（對數）', 'BTC price (log)'), 'var(--ink)'], [_T('30 日累計淨獲利', '30-day net profit'), 'var(--up)'], [_T('30 日累計淨認賠', '30-day net loss'), 'var(--down)'], [_T('觸發線：4 年最大獲利 × −1/4', 'Trigger: −¼ × 4-year max profit'), 'var(--down)'], [_T('首次觸發', 'First trigger'), 'var(--s2)']])
       : legend([[_T('BTC 價格', 'BTC price'), 'var(--ink)'], [_T('淨獲利', 'Net profit'), 'var(--up)'], [_T('淨認賠', 'Net loss'), 'var(--down)']]);
   }
   function nplSegs() {
@@ -1082,8 +1083,8 @@
     var n = D.onchain.npl; if (!n || !n.rows) return '';
     return panel('span-12', _T('每日淨實現損益', 'Daily net realized profit/loss'), _T('CoinMetrics 推算 · 晚約 1 天', 'Derived from CoinMetrics · ~1 day late'),
       '<p class="say" id="npl-say">' + esc(nplSay(n)) + '</p><div id="npl-lg">' + nplLegend() + '</div><div class="chart" id="c-npl"></div>' +
-      _T('<p class="note">算法：實現市值（市值 ÷ MVRV）當日變化減去當天新挖出的幣，等於當天移動的幣「賣價 − 上次移動價」的淨和；和 Glassnode 的 Net Realized Profit/Loss 對照，方向與大小相符。只有淨值；每日模式的粗外圈＝在之前一年最極端的 2%；30 日累計模式以市值百分比顯示，紅線是之前 4 年第 3 百分位（逐日計算，只用當時已知資料）。只作讀值。</p>',
-         '<p class="note">Method: the daily change in realized cap (market cap ÷ MVRV) minus newly mined coins equals the net of “sale price − last-moved price” for coins moved that day; it matches Glassnode\'s Net Realized Profit/Loss in direction and size. Net only; in daily mode a thick ring marks the most extreme 2% of the prior year; the 30-day mode is shown as % of market cap, and the red line is the prior 4 years\' 3rd percentile (computed day by day from data known at the time). Reading only.</p>'),
+      _T('<p class="note">算法：實現市值（市值 ÷ MVRV）當日變化減去當天新挖出的幣，等於當天移動的幣「賣價 − 上次移動價」的淨和；和 Glassnode 的 Net Realized Profit/Loss 對照，方向與大小相符。只有淨值；每日模式的粗外圈＝在之前一年最極端的 2%；30 日累計模式以市值百分比顯示，紅線是之前 4 年最大 30 日淨獲利的 1/4（取負；逐日計算，只用當時已知資料）。2026-11-04 起改用這條線：獲利與認賠的幅度每輪都變小（最大獲利約 15% → 10% → 5.75%），舊的「之前 4 年第 3 百分位」拿上一輪熊市的大認賠當標準，這一輪兩次低點都沒觸發。新規則是看過這一輪結果才定的，代價是 2022 年那次由 6/16 提早到 5/20，之後還再跌約 40%。只作讀值。</p>',
+         '<p class="note">Method: the daily change in realized cap (market cap ÷ MVRV) minus newly mined coins equals the net of “sale price − last-moved price” for coins moved that day; it matches Glassnode\'s Net Realized Profit/Loss in direction and size. Net only; in daily mode a thick ring marks the most extreme 2% of the prior year; the 30-day mode is shown as % of market cap, and the red line is minus a quarter of the largest 30-day net profit of the prior 4 years (computed day by day from data known at the time). This line replaced the prior-4-year 3rd percentile on 2026-11-04: both profit and loss swings shrink every cycle (largest profit about 15% → 10% → 5.75%), so the old line measured against the previous bear market\'s heavy losses and missed both lows of this cycle. The new rule was chosen after seeing this cycle; the cost is that 2022\'s trigger moves from 6/16 to 5/20, after which price still fell about 40%. Reading only.</p>'),
       '<span id="npl-segs" style="display:contents">' + nplSegs() + '</span>');
   }
   function nplSync() { var n = D.onchain.npl; $('#npl-say').textContent = nplSay(n); $('#npl-lg').innerHTML = nplLegend(); $('#npl-segs').innerHTML = nplSegs(); drawNpl($('#c-npl')); }
@@ -1349,7 +1350,7 @@
   function tipRow1(col, name, val) { return '<div class="r"><i style="background:' + col + '"></i><span>' + name + '</span><b>' + val + '</b></div>'; }
   function dot1(x, y, col) { return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4" fill="' + col + '" stroke="var(--deck)" stroke-width="2"/>'; }
 
-  /* 週線多空分數（2026-11-03 使用者要求；CryptoPainter 的 JT_Regime_Osc 不公開，這是我們自己的版本）：
+  /* 週線多空分數（2026-11-03 使用者要求；參考的指標不公開，這是我們自己的版本）：
      六項已有訊號各除以自己的歷史中位數取 tanh、平均後 ×6（−6 到 +6）；連續 4 週在另一邊才算翻轉。上下兩格共用時間軸。只作讀值 */
   var REG_LAB = { d200: ['200 日均線位置', 'Price vs 200-day MA'], mom12: ['12 個月動能', '12-month momentum'], mvrv1y: ['MVRV 對一年均值', 'MVRV vs its 1-year mean'], rc30: ['實現市值 30 日', 'Realized cap, 30 days'], xs90: ['交易所供給 90 日', 'Exchange supply, 90 days'], rpl: ['實現獲利 ÷ 虧損（90 天）', 'Realized profit ÷ loss (90d)'] };
   function regRaw(c) {
@@ -1612,7 +1613,7 @@
       _t('<p><b>口徑：</b>CoinMetrics 社群版「市值 ÷ MVRV」推得，與 Checkonchain、bitcoin-data 的數值可能略有差異；期間至少連續 7 天才列入；「結束後」報酬以期間最後一天收盤計。</p></div>');
     return panel('span-12', _t('資金流入：實現市值 30 日變化'), 'CoinMetrics · ' + fmt.md(rc.date) + _t(' · 2019 起 · 紅底＝≤0'), say + '<div class="chart" id="c-rcliq"></div>' + note + _t('<details style="margin-top:10px"><summary class="note" style="cursor:pointer">歷次 ≤0 期間與之後的價格表現（') + eps.length + _t(' 次）</summary>') + tb + '</details>');
   }
-  /* 三地溢價（2026-11-03 使用者要求；CryptoPainter 的「期現差價加權 USDT 溢價率」權重不公開，改成三條分開看）：
+  /* 三地溢價（2026-11-03 使用者要求；參考的「期現差價加權 USDT 溢價率」權重不公開，改成三條分開看）：
      美國現貨＝Coinbase 溢價、亞洲＝OKX 場外 USDT/CNY 對匯率的溢價（只有快照，從 2026-11-03 起每日累積）、槓桿＝OKX 永續對現貨。只作讀值 */
   function premSay() {
     var cp = D.flows.cb_premium || {}, p3 = D.flows.premium3 || {}, u = p3.usdt, pp = p3.perp, it = [], sgn = [], nm = [], fw = (D.deriv.funding_multi || {}).weighted_now;
@@ -1678,7 +1679,7 @@
     mount($('#c-etf'), function (el) { barChart(el, { h: 260, data: etf.map(function (r) { return [fmt.md(r.d), r.musd, '<div class="t">' + r.d + (r.partial ? (r.src ? _t('（暫定）') : _t('（部分回報）')) : '') + '</div><div class="r"><i style="background:' + (r.musd >= 0 ? 'var(--up)' : 'var(--down)') + _t('"></i><span>淨流量</span><b>') + (r.musd >= 0 ? '+' : '') + fmt.n(r.musd, 1) + 'M</b></div>' + (r.src ? '<div class="t" style="font-weight:400;max-width:240px;white-space:normal">' + esc(r.src) + '</div>' : ''), r.partial]; }), yFmt: function (v) { return v + 'M'; }, aria: _t('ETF 淨流量') }); });
   };
 
-  /* 長短期持有者籌碼（2026-10-27 使用者要求，Murphy〈跌破 $80K 的 BTC，潛在拋壓有多大？〉的拆法）：bitcoin-data 的 URPD 依持有時間拆成
+  /* 長短期持有者籌碼（2026-10-27 使用者要求，「跌破 $80K 的潛在拋壓」的拆法）：bitcoin-data 的 URPD 依持有時間拆成
      LTH／STH，推算（pipeline/cohort_urpd.py：URPD × 幣齡分布 × 每日價格區間），不是實體調整，只作讀值。
      三種看法：現在（左 STH、右 LTH）、STH 和約 30 天前比、LTH 和約 30 天前比 */
   var cohMode = 'now';
@@ -1901,7 +1902,7 @@
     hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
   }
 
-  /* 賣方衰竭常數（2026-11-02 使用者要求，Murphy〈卖方衰竭指数〉；Checkmate 設計，資料取自 CheckOnChain）：獲利供給比例 × 30 天價格波動。
+  /* 賣方衰竭常數（2026-11-02 使用者要求，賣方衰竭指數；資料取自 CheckOnChain）：獲利供給比例 × 30 天價格波動。
      刻度和 Glassnode 版不同，極端區用本身的歷史分布（低於 0.13 約是 2011 年起最低 1% 的日子）。上下兩格共用時間軸，不疊成雙 y 軸。只作讀值 */
   function secYm(s) { return s.slice(0, 7).replace('-', '/'); }
   function secSay() {
@@ -1935,8 +1936,8 @@
     var x = (D.onchain || {}).sec; if (!x || !x.rows) return '';
     return panel('span-12', _T('賣方衰竭常數', 'Seller exhaustion constant'), _T('CheckOnChain · ' + fmt.md(x.date), 'CheckOnChain · ' + fmt.md(x.date)),
       interpHtml(secSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('賣方衰竭常數', 'Seller exhaustion constant'), 'var(--s1)'], [_T('極端區（低於 ' + x.th + '）', 'Extreme zone (below ' + x.th + ')'), 'var(--down)', 'box']]) + '<div class="chart" id="c-sec"></div>' + secTable() +
-      '<p class="note">' + _T('賣方衰竭常數＝獲利供給比例 × 30 天價格波動（Checkmate 設計）：價格很平靜、同時很多人在虧損時會很低，代表想賣的人大多已經賣了。資料取自 CheckOnChain 的公開圖表（晚約 1 天）。刻度和 Glassnode 版不同，網路上常見的 0.01 門檻不能套用；這裡的極端區用它自己的歷史分布。',
-        'Seller exhaustion constant = percent supply in profit × 30-day price volatility (designed by Checkmate): it is very low when price is calm while many holders are at a loss, a sign that most would-be sellers have already sold. Data from CheckOnChain\'s public chart (about a day behind). Its scale differs from Glassnode\'s, so the 0.01 line often quoted online does not apply; the extreme zone here comes from its own history.') +
+      '<p class="note">' + _T('賣方衰竭常數＝獲利供給比例 × 30 天價格波動：價格很平靜、同時很多人在虧損時會很低，代表想賣的人大多已經賣了。資料取自 CheckOnChain 的公開圖表（晚約 1 天）。刻度和 Glassnode 版不同，網路上常見的 0.01 門檻不能套用；這裡的極端區用它自己的歷史分布。',
+        'Seller exhaustion constant = percent supply in profit × 30-day price volatility: it is very low when price is calm while many holders are at a loss, a sign that most would-be sellers have already sold. Data from CheckOnChain\'s public chart (about a day behind). Its scale differs from Glassnode\'s, so the 0.01 line often quoted online does not apply; the extreme zone here comes from its own history.') +
       ' <a href="' + 'https://charts.checkonchain.com/btconchain/unrealised/seller_exhaustion_constant_supply/seller_exhaustion_constant_supply_light.html' + '" target="_blank" rel="noopener">' + _T('原圖 ↗', 'Source chart ↗') + '</a></p>');
   }
   function drawSec(el) {
@@ -1963,7 +1964,7 @@
   }
 
 
-  /* 實現獲利 ÷ 實現虧損（90 天平均；2026-11-02 使用者要求，貝格先生的 Realized P/L 比率圖；資料取自 CheckOnChain）：
+  /* 實現獲利 ÷ 實現虧損（90 天平均；2026-11-02 使用者要求，Realized P/L 比率；資料取自 CheckOnChain）：
      1 以上綠、以下紅。上下兩格共用時間軸，不疊成雙 y 軸。只作讀值 */
   function rplSay() {
     var x = D.onchain.rpl, it = [], R = x.reds || [], ymd = ymdS;
@@ -2072,7 +2073,7 @@
   }
 
 
-  /* 長期持有者虧損比例（2026-11-04 使用者要求，ForeDex／加密貝兒的 Supply In Loss % - LTH；資料 CheckOnChain）：
+  /* 長期持有者虧損比例（2026-11-04 使用者要求，Supply In Loss % - LTH；資料 CheckOnChain）：
      標出歷輪熊市底部的高點與「這輪高點」線；打破「脫離底部後不再創新高」的價位用長期持有者籌碼分布每天重算。上下兩格共用時間軸。只作讀值 */
   function llSay() {
     var x = D.onchain.lthloss, it = [], P = x.peaks || [], lp = P[P.length - 1], pm = x.post_min, c = x.cohort, ymd = function (s) { return s.replace(/-/g, '/'); };
@@ -2131,7 +2132,7 @@
     hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
   }
 
-  /* 短期持有者成本帶（2026-11-04 使用者要求，Murphy〈短期持有者成本基礎模型〉＝Glassnode 的 STH cost basis ±1/±2 標準差；資料 Bitview）：
+  /* 短期持有者成本帶（2026-11-04 使用者要求，Glassnode 的 STH cost basis ±1/±2 標準差；資料 Bitview）：
      帶＝短期持有者成本 ×（近 4 年「價格 ÷ 成本」的平均 ± k 個標準差），帶的中心不是成本線，所以上下不對稱。只作讀值 */
   var SB_K = [[2, 'var(--s1)', '5 4'], [1, 'var(--s4)', ''], [-1, 'var(--s3)', ''], [-2, 'var(--down)', '5 4']];
   function sbLab(k) { return (k > 0 ? '+' : '−') + Math.abs(k) + _T(' 標準差', 'σ'); }
@@ -2154,8 +2155,8 @@
     var x = (D.onchain || {}).sth_bands; if (!x || !x.rows) return '';
     return panel('span-12', _T('短期持有者成本帶', 'Short-term holder cost bands'), 'Bitview · ' + fmt.md(x.date),
       interpHtml(sbSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('短期持有者成本', 'STH cost'), 'var(--s2)']].concat(SB_K.map(function (k) { return [sbLab(k[0]), k[1], k[2] ? 'dash' : '']; }))) + '<div class="chart" id="c-sthband"></div>' +
-      '<p class="note">' + _T('短期持有者＝持有不到 155 天的幣，成本是它們的平均買價。帶的算法和 Glassnode／Murphy 的「短期持有者成本基礎模型」相同：成本 ×（近 4 年「價格 ÷ 成本」的平均 ± 1、2 個標準差）；帶的中心不是成本線，所以上下不對稱。2026-11-04 驗算：−1 標準差算出 68,991，Murphy 寫約 68,900。資料 Bitview（Bitcoin Research Kit 的公開 API），價格用本站統一收盤。',
-        'Short-term holders = coins held under 155 days; their cost is the average purchase price. The bands follow Glassnode\'s / Murphy\'s short-term holder cost basis model: cost × (the 4-year average of price ÷ cost ± 1 and 2 standard deviations); the centre is not the cost line, so the bands are asymmetric. Checked on 2026-11-04: −1σ comes out at 68,991 vs about 68,900 in Murphy\'s post. Data from Bitview (Bitcoin Research Kit\'s public API); price is the site\'s standard close.') + '</p>');
+      '<p class="note">' + _T('短期持有者＝持有不到 155 天的幣，成本是它們的平均買價。帶的算法和 Glassnode 的「短期持有者成本基礎模型」相同：成本 ×（近 4 年「價格 ÷ 成本」的平均 ± 1、2 個標準差）；帶的中心不是成本線，所以上下不對稱。2026-11-04 驗算：−1 標準差算出 68,991，和用 Glassnode 資料算出的公開數字（約 68,900）差不到 0.2%。資料 Bitview（Bitcoin Research Kit 的公開 API），價格用本站統一收盤。',
+        'Short-term holders = coins held under 155 days; their cost is the average purchase price. The bands follow Glassnode\'s short-term holder cost basis model: cost × (the 4-year average of price ÷ cost ± 1 and 2 standard deviations); the centre is not the cost line, so the bands are asymmetric. Checked on 2026-11-04: −1σ comes out at 68,991, within 0.2% of a published figure based on Glassnode data (about 68,900). Data from Bitview (Bitcoin Research Kit\'s public API); price is the site\'s standard close.') + '</p>');
   }
   function drawSthBand(el) {
     var x = (D.onchain || {}).sth_bands; if (!x || !el) return;
@@ -2166,7 +2167,7 @@
   }
 
 
-  /* 6–12 與 12–18 個月持幣成本（2026-11-04 使用者要求，wander〈6M–12M 與 12M–18M 成本線〉；資料 Bitview）。
+  /* 6–12 與 12–18 個月持幣成本（2026-11-04 使用者要求，6M–12M 與 12M–18M 成本線；資料 Bitview）。
      6–12 個月線跌破 12–18 個月線（死叉）大致在熊底附近，重新升過（金叉）在主升段前後；交叉日與間隔照實列出。只作讀值 */
   function acSay() {
     var x = D.cycle.age_cost, lx = x.last_cross, X = x.crosses || [], it = [], d0 = dnOf(x.date);
@@ -2177,8 +2178,8 @@
       _T(ago(365) + '–' + ago(182) + ' 買進、到現在沒動的幣，平均成本 ' + fmt.usd(x.c612) + '；再早半年（' + ago(548) + '–' + ago(365) + '）買進的是 ' + fmt.usd(x.c1218) + '，前者' + (x.gap_pct < 0 ? '低 ' : '高 ') + fmt.n(Math.abs(x.gap_pct), 1) + '%。收盤 ' + fmt.usd(x.price) + '，' + where[0],
         'Coins bought ' + ago(365) + '–' + ago(182) + ' and unmoved since cost ' + fmt.usd(x.c612) + ' on average; those from ' + ago(548) + '–' + ago(365) + ' cost ' + fmt.usd(x.c1218) + ', so the first group is ' + fmt.n(Math.abs(x.gap_pct), 1) + '% ' + (x.gap_pct < 0 ? 'lower' : 'higher') + '. Close ' + fmt.usd(x.price) + '. ' + where[1]), x.gap_pct < 0 ? 'neg' : 'pos']);
     if (lx) it.push([_T('上次交叉', 'Last cross'), (lx.kind === 'death' ? _T('死叉 ', 'Death ') : _T('金叉 ', 'Golden ')) + fmt.md(lx.date),
-      _T('6–12 個月線在 ' + ymdD(lx.date) + (lx.kind === 'death' ? ' 跌破' : ' 升過') + ' 12–18 個月線，至今 ' + x.days_since + ' 天。過去從死叉到重新金叉：' + pairs.map(function (p) { return ym(p[0]) + '→' + ym(p[1]) + '（' + p[2] + ' 天）'; }).join('、') + '；2020/09→2021/02 那次在疫情急跌之後，wander 視為例外。',
-        'The 6–12 month line ' + (lx.kind === 'death' ? 'fell below' : 'rose above') + ' the 12–18 month line on ' + ymdD(lx.date) + ', ' + x.days_since + ' days ago. Past death-to-golden gaps: ' + pairs.map(function (p) { return ym(p[0]) + '→' + ym(p[1]) + ' (' + p[2] + ' days)'; }).join(', ') + '; the 2020/09→2021/02 one came after the pandemic crash and wander treats it as an exception.'), 'neu']);
+      _T('6–12 個月線在 ' + ymdD(lx.date) + (lx.kind === 'death' ? ' 跌破' : ' 升過') + ' 12–18 個月線，至今 ' + x.days_since + ' 天。過去從死叉到重新金叉：' + pairs.map(function (p) { return ym(p[0]) + '→' + ym(p[1]) + '（' + p[2] + ' 天）'; }).join('、') + '；2020/09→2021/02 那次在疫情急跌之後，一般視為例外。',
+        'The 6–12 month line ' + (lx.kind === 'death' ? 'fell below' : 'rose above') + ' the 12–18 month line on ' + ymdD(lx.date) + ', ' + x.days_since + ' days ago. Past death-to-golden gaps: ' + pairs.map(function (p) { return ym(p[0]) + '→' + ym(p[1]) + ' (' + p[2] + ' days)'; }).join(', ') + '; the 2020/09→2021/02 one came after the pandemic crash and is usually treated as an exception.'), 'neu']);
     it.push([_T('怎麼看', 'How to read it'), _T('落後', 'Lagging'),
       _T('兩條線是半年到一年半前的平均買價，比價格落後很多。半年後，12–18 個月這一段會由現在 6–12 個月的這批幣（成本 ' + fmt.usd(x.c612) + '）遞補，只要它們不動，12–18 個月線就會往這個水準移；重新金叉要等那時 6–12 個月段（也就是這半年買進的幣）的成本高過它。',
         'Both lines are average purchase prices from six to eighteen months ago, so they lag price a lot. In six months the 12–18 month band will be filled by today\'s 6–12 month coins (cost ' + fmt.usd(x.c612) + '); if they stay put, the 12–18 month line moves toward that level, and a golden cross needs the coins bought in these six months to cost more than that.'), 'neu']);
@@ -2188,8 +2189,8 @@
     var x = (D.cycle || {}).age_cost; if (!x || !x.rows) return '';
     return panel('span-12', _T('6–12 與 12–18 個月持幣成本', '6–12 and 12–18 month holder cost'), 'Bitview · ' + fmt.md(x.date),
       interpHtml(acSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('6–12 個月成本', '6–12 month cost'), 'var(--s3)'], [_T('12–18 個月成本', '12–18 month cost'), 'var(--s1)'], [_T('↓ 死叉', '↓ Death cross'), 'var(--down)', 'dot'], [_T('↑ 金叉', '↑ Golden cross'), 'var(--up)', 'dot']]) + '<div class="chart" id="c-agecost"></div>' +
-      '<p class="note">' + _T('持有時間（幣齡）6–12 個月、12–18 個月的幣，各自的平均買價（實現價格）。wander 的觀察：6–12 個月線跌破 12–18 個月線大致在熊底附近，重新升過在主升段前後。資料 Bitview（Bitcoin Research Kit，和 wander 原圖同一個來源；6–12 個月由 6–9、9–12 個月兩段合併），價格用本站統一收盤。',
-        'Average purchase price (realized price) of coins aged 6–12 and 12–18 months. wander\'s observation: the 6–12 month line falling below the 12–18 month line has come near bear-market bottoms, and crossing back above around the start of the main bull leg. Data from Bitview (Bitcoin Research Kit, the same source as wander\'s chart; 6–12 months combines the 6–9 and 9–12 month bands); price is the site\'s standard close.') + '</p>');
+      '<p class="note">' + _T('持有時間（幣齡）6–12 個月、12–18 個月的幣，各自的平均買價（實現價格）。常見的讀法：6–12 個月線跌破 12–18 個月線大致在熊底附近，重新升過在主升段前後。資料 Bitview（Bitcoin Research Kit；6–12 個月由 6–9、9–12 個月兩段合併），價格用本站統一收盤。',
+        'Average purchase price (realized price) of coins aged 6–12 and 12–18 months. The usual reading: the 6–12 month line falling below the 12–18 month line has come near bear-market bottoms, and crossing back above around the start of the main bull leg. Data from Bitview (Bitcoin Research Kit; 6–12 months combines the 6–9 and 9–12 month bands); price is the site\'s standard close.') + '</p>');
   }
   function drawAgeCost(el) {
     var x = (D.cycle || {}).age_cost; if (!x || !el) return;
