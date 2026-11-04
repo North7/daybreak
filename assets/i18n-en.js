@@ -437,6 +437,7 @@ window.DAYBREAK_EN = {
   '今天': "Today",
   '已過': "Past",
   '<div class="sec-h"><h2>今天該做什麼</h2><span class="en">The Plan</span><hr>': "<div class=\"sec-h\"><h2>What to do today</h2><span class=\"en\">The Plan</span><hr>",
+  '2025 頂部 ': "2025 top ",
   '行動與要盯的價位': "Actions and levels to watch",
   '收盤距均線 ': "Close vs the average ",
   '依出場框架 · 非投資建議': "Per the exit framework · not investment advice",

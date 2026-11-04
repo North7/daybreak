@@ -609,6 +609,11 @@
     return body ? '<div class="board">' + body + '</div>' : '';
   }
 
+  /* 頂部三指標的原始讀值（2026-11-04：鏈上版的指標表不再重複這三列，原始值改附在週期版這裡） */
+  function p6Raw() {
+    var m = D.onchain.metrics || {}, it = [['MVRV Z', 'mvrv-zscore', 3], ['NUPL', 'nupl', 3], ['Puell', 'puell-multiple', 3]].filter(function (r) { return m[r[1]] && m[r[1]].value != null; });
+    return it.length ? '<p class="note">' + _T('原始讀值：', 'Raw values: ') + it.map(function (r) { return r[0] + ' ' + fmt.n(m[r[1]].value, r[2]); }).join(' · ') + ' · ' + fmt.md(m[it[0][1]].date) + '</p>' : '';
+  }
   /* 週期與出場（頭版、週期版、出場框架版共用） */
   function p20Read() { var cm = D.cycle.cm, r = cm.mvrv_vs_prior, c = D.price.bar.c, k = cm.k075_price;
     if (r == null) return null;
@@ -1154,8 +1159,7 @@
     var it = [], sc = D.flows.stables, cp = D.flows.cb_premium, fg = D.flows.fear_greed, c = D.price.bar.c, mi = D.onchain.mining || {}, etf = (D.flows.etf || []).filter(function (r) { return !r.partial; }).slice(-7);
     if (sc && sc.chg30_pct != null) it.push([_T('穩定幣供給', 'Stablecoin supply'), usdB(sc.usd_b), _T('30 日 ' + usdB(sc.chg30_usd_b, true) + '（' + fmt.pct(sc.chg30_pct, 2) + '，落在 2021 年以來第 ' + fmt.n(sc.pct30, 0) + ' 百分位）：', '30-day ' + usdB(sc.chg30_usd_b, true) + ' (' + fmt.pct(sc.chg30_pct, 2) + ', ' + ord(sc.pct30) + ' percentile since 2021): ') +
       (sc.pct30 >= 80 ? _T('場外美元快速增加，潛在買盤充沛。', 'dollars on the sidelines are growing fast — plenty of potential buying power.') : sc.pct30 <= 20 ? _T('場外美元在萎縮，潛在買盤減少。', 'sidelined dollars are shrinking — less potential buying power.') : _T('場外美元溫和變化，不是現在的主要推力。', 'sidelined dollars are changing modestly; not a main driver right now.')) + _T('穩定幣是加密市場裡等待進場的資金。', ' Stablecoins are the cash waiting to be deployed in crypto.'), sc.pct30 >= 80 ? 'pos' : sc.pct30 <= 20 ? 'neg' : 'neu']);
-    if (cp) it.push([_T('Coinbase 溢價', 'Coinbase premium'), fmt.pct(cp.avg7, 3), _T('Coinbase（美元）比 Binance（USDT）貴 ' + fmt.pct(cp.avg7, 3) + '（7 日平均；30 日平均 ' + fmt.pct(cp.avg30, 3) + '）：', 'Coinbase (USD) vs. Binance (USDT): ' + fmt.pct(cp.avg7, 3) + ' (7-day avg; 30-day avg ' + fmt.pct(cp.avg30, 3) + '): ') +
-      (cp.avg7 > 0.05 ? _T('美國買盤較強，常見於機構或 ETF 需求升溫。', 'US demand is stronger, often a sign of rising institutional or ETF demand.') : cp.avg7 < -0.05 ? _T('美國買盤偏弱，賣壓多來自美國。', 'US demand is weaker; selling is coming more from the US.') : _T('兩邊差不多，美國與海外買盤平衡。', 'roughly even — US and offshore demand are balanced.')) + _T('USDT 偏離 1 美元時會有誤差。', ' Deviations of USDT from $1 add noise.'), cp.avg7 > 0.05 ? 'pos' : cp.avg7 < -0.05 ? 'neg' : 'neu']);
+    // 2026-11-04：Coinbase 溢價的讀值只留在「三地溢價」（premSay），這裡不再重複一列
     if (etf.length >= 5 && mi.btc_day) {
       var span = dnOf(etf[etf.length - 1].d) - dnOf(etf[0].d) + 1, btc = s7 * 1e6 / c, mined = mi.btc_day * span, r = btc / mined;
       it.push([_T('ETF 換算 BTC', 'ETF flows in BTC'), cK(btc, true), _T('近 7 個完整交易日淨' + (btc >= 0 ? '買進' : '賣出') + '約 ' + cK(Math.abs(btc)) + ' 顆（以今天收盤換算），同期（' + span + ' 天）礦工新挖約 ' + cK(mined) + ' 顆，', 'Over the last 7 full trading days ETFs net ' + (btc >= 0 ? 'bought' : 'sold') + ' about ' + cK(Math.abs(btc)) + ' BTC (at today’s close), while miners produced about ' + cK(mined) + ' BTC over the same ' + span + ' days, ') +
@@ -1172,14 +1176,13 @@
   }
   function flowCharts() {
     var sc = D.flows.stables, cp = D.flows.cb_premium; if (!sc && !cp) return '';
-    return (sc ? panel('span-6', _T('穩定幣總供給', 'Total stablecoin supply'), 'DefiLlama · ' + _T('近 2 年 · 十億美元', 'last 2 years · USD billions'), '<div class="chart" id="c-stab"></div>') : '') +
-      (cp ? panel('span-6', _T('Coinbase 溢價', 'Coinbase premium'), _T('Coinbase ÷ Binance 收盤 − 1 · 近 300 天', 'Coinbase ÷ Binance close − 1 · last 300 days'), legend([[_T('每日', 'Daily'), 'var(--ink-3)'], [_T('7 日平均', '7-day avg'), 'var(--s1)']]) + '<div class="chart" id="c-cbp"></div>') : '');
+    // 2026-11-04 每個指標只有一個家：獨立的 Coinbase 溢價圖併進「三地溢價」的美國現貨（舊連結 #flows/cbp 由 ALIAS 導過去）
+    return sc ? panel('span-12', _T('穩定幣總供給', 'Total stablecoin supply'), 'DefiLlama · ' + _T('近 2 年 · 十億美元', 'last 2 years · USD billions'), '<div class="chart" id="c-stab"></div>') : '';
   }
   function drawFlowCharts() {
     var sc = D.flows.stables, cp = D.flows.cb_premium;
     if (sc) mount($('#c-stab'), function (el) { lineChart(el, { h: 200, series: [{ name: _T('穩定幣', 'Stablecoins'), data: sc.rows, color: 'var(--s4)', area: true }], yFmt: function (x) { return '$' + x.toFixed(0) + 'B'; }, tipFmt: function (x) { return '$' + x.toFixed(1) + 'B'; }, aria: _T('穩定幣總供給', 'Total stablecoin supply') }); });
-    if (cp) mount($('#c-cbp'), function (el) { var r = cp.rows, ma = r.map(function (x, i) { if (i < 6) return [x[0], null]; var s = 0; for (var k = i - 6; k <= i; k++) s += r[k][1]; return [x[0], s / 7]; });
-      lineChart(el, { h: 200, series: [{ name: _T('每日', 'Daily'), data: r, color: 'var(--ink-3)', w: 1, end: false }, { name: _T('7 日平均', '7-day avg'), data: ma, color: 'var(--s1)' }], refs: [{ y: 0, color: 'var(--ink-3)' }], yFmt: function (x) { return x.toFixed(2) + '%'; }, tipFmt: function (x) { return (x > 0 ? '+' : '') + x.toFixed(3) + '%'; }, aria: _T('Coinbase 溢價', 'Coinbase premium') }); });
+
   }
 
   /* ---------------- Views ---------------- */
@@ -1364,7 +1367,7 @@
       regPanel() +
       panel('span-12', _t('長期路徑：四種走法'), _t('每月底重估 · 下次 ') + M.next_review, legend([[_t('直接修復 ') + w['直接修復'] + '%', 'var(--s4)', 'dash'], [_t('淺回檔 ') + w['淺回檔'] + '%', 'var(--s1)', 'dash'], [_t('基準雙底 ') + w['基準雙底'] + '%', 'var(--s2)', 'dash'], [_t('延後新低 ') + w['延後新低'] + '%', 'var(--s3)', 'dash'], [_t('已實現'), 'var(--ink)'], [_t('頂部 80% 區間'), 'var(--flare)', 'box']]) + _t('<div class="chart" id="c-path"></div><p class="note">頂部模型：中位 ') + fmt.usd(M.top_model.median) + _t('，80% 區間 ') + fmt.k(M.top_model.p10) + '–' + fmt.k(M.top_model.p90) + _t('，時間 ') + esc(tx(M.top_model, 'timing')) + _t('。路徑是本站的預測，2028 年以後只供量級參考。</p>') + pathReviewHtml()) +
       panel('span-7', _t('MVRV ÷ 前一輪高點'), _t('CoinMetrics · 2021 起'), _t('<p class="say">現在 <b>') + fmt.n(cm.mvrv_vs_prior, 3) + _t('</b>；連 5 天站上 0.75 是出場框架的第一個鏈上賣點。') + esc((p20Read() || [''])[0]) + '</p><div class="chart" id="c-p20"></div>') +
-      panel('span-5', _t('頂部三指標'), fmt.md(D.cycle.p6_date) + _t(' · 四年百分位'), '<p class="say">' + esc((p6Read() || [''])[0]) + '</p><div class="meters">' + meter('MVRV Z', _t('<0 底 · >3.5 頂'), p6.mvrv_z, fmt.n(p6.mvrv_z, 0), _t('百分位'), [80, 85, 90]) + meter('NUPL', _t('淨未實現損益'), p6.nupl, fmt.n(p6.nupl, 0), _t('百分位'), [80, 85, 90]) + meter('Puell', _t('礦工收入倍數'), p6.puell, fmt.n(p6.puell, 0), _t('百分位'), [80, 85, 90]) + _t('</div><p class="note">任兩項到 80 進入頂部區；到 85 連 5 天多賣兩階；到 90 在 10 個交易日內賣完。</p>'), '', 'p6') +
+      panel('span-5', _t('頂部三指標'), fmt.md(D.cycle.p6_date) + _t(' · 四年百分位'), '<p class="say">' + esc((p6Read() || [''])[0]) + '</p><div class="meters">' + meter('MVRV Z', _t('<0 底 · >3.5 頂'), p6.mvrv_z, fmt.n(p6.mvrv_z, 0), _t('百分位'), [80, 85, 90]) + meter('NUPL', _t('淨未實現損益'), p6.nupl, fmt.n(p6.nupl, 0), _t('百分位'), [80, 85, 90]) + meter('Puell', _t('礦工收入倍數'), p6.puell, fmt.n(p6.puell, 0), _t('百分位'), [80, 85, 90]) + _t('</div><p class="note">任兩項到 80 進入頂部區；到 85 連 5 天多賣兩階；到 90 在 10 個交易日內賣完。</p>') + p6Raw(), '', 'p6') +
       panel('span-7', _t('冪律：價格 ÷ 合理價'), _t('每天只用當天以前資料擬合'), _t('<p class="say">現在 <b>') + fmt.n(pl.ratio, 2) + _t(' 倍</b>（合理價 ') + fmt.usd(pl.fair) + _t('）。頂部倍數每輪縮小，照這個速度，下一輪頂部約在合理價的 ') + fmt.n((pl.next_top_ratio || [])[0], 2) + '–' + fmt.n((pl.next_top_ratio || [])[1], 2) + _t(' 倍。') + esc((plRead() || [''])[0]) + '</p><div class="chart" id="c-pl"></div>', _t('<div class="seg" id="pl-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="2020">2020 起</button></div>')) +
       panel('span-5', _t('Tidemark 綜合訊號'), _t('第三方模型 · ') + fmt.md(tm.price_date) + _t(' 資料'), '<p class="say">' + esc((tmRead() || [''])[0]) + '</p><div class="meters">' + meter(_t('頂部訊號'), _t('≥50 窗口 · ≥70 警戒'), (tm.top || {}).signal || 0, fmt.n((tm.top || {}).signal, 1), (tm.top || {}).level || '—', [50, 70]) + meter(_t('熱度'), _t('五類加權'), (tm.top || {}).heat || 0, fmt.n((tm.top || {}).heat, 1), (tm.top || {}).zone || '', [40, 65]) + meter(_t('底部訊號'), _t('≥50 底部區'), (tm.bottom || {}).signal || 0, fmt.n((tm.bottom || {}).signal, 1), (tm.bottom || {}).level || '—', [50, 70]) + meter(_t('冷度'), _t('估值・礦工・價格結構'), (tm.bottom || {}).cold || 0, fmt.n((tm.bottom || {}).cold, 1), '', []) + '</div>' +
         '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:62%"><col style="width:38%"></colgroup><tbody>' + (tm.cats || []).map(function (x) { return '<tr><td>' + esc(_T(x[0], TM_CAT_EN[x[0]] || x[0])) + (x[2] === 'partial' ? _t('＊') : '') + '</td><td><div class="pct"><i><b class="' + ((x[1] || 0) >= 80 ? 'hot' : '') + '" style="width:' + (x[1] || 0) + '%"></b></i><span class="num">' + (x[1] == null ? '—' : fmt.n(x[1], 0)) + '</span></div></td></tr>'; }).join('') + '</tbody></table></div><p class="note">' + esc(tmVerdict(tm.cycle_test)) + '</p>', '', 'tm') +
@@ -2006,7 +2009,7 @@
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};
     var rows = [
-      ['MVRV Z', 'mvrv-zscore', _t('估值：市值與實現市值的差距')], ['NUPL', 'nupl', _t('淨未實現損益：帳面獲利佔市值比例')], ['Puell', 'puell-multiple', _t('礦工收入 ÷ 一年平均')],
+      // 2026-11-04：MVRV Z／NUPL／Puell 只在週期版「頂部三指標」（同一份 CoinMetrics 資料），這張表不再重複
       ['aSOPR', 'asopr', _T('賣出時的獲利倍數（排除一小時內轉手），>1 平均獲利', 'Profit multiple on coins sold (excluding coins moved within an hour); >1 = sold at a profit on average')], ['STH-SOPR', 'sth-sopr', _t('短期持有者的 SOPR')], ['LTH-SOPR', 'lth-sopr', _t('長期持有者的 SOPR')],
       [_t('非流動性供給'), 'illiquid-supply', _t('長期不動的幣')], [_t('高流動性供給'), 'highly-liquid-supply', _t('浮動籌碼')]
     ].map(function (r) { return [r[0], m[r[1]], r[2], r[1]]; }).filter(function (r) { return r[1]; });
@@ -2015,8 +2018,8 @@
     var rt = _t('<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:34%"><col style="width:22%"><col style="width:22%"><col style="width:22%"></colgroup><thead><tr><th>頂部雷達</th><th class="num">現在</th><th class="num">2025 頂部</th><th>本輪位置</th></tr></thead><tbody>') + radar.map(function (r) { var v = r[1], rd = RADAR_READ[r[3]](v); return '<tr class="has-rd"><td><b>' + r[0] + '</b></td><td class="num">' + fmt.n(v.value, r[2]) + '</td><td class="num">' + fmt.n(v.extreme_near_2025_top, r[2]) + '</td><td><div class="pct"><i><b style="width:' + v.pct_since_2022_11 + '%"></b></i><span class="num">' + fmt.n(v.pct_since_2022_11, 0) + '</span></div></td></tr>' + rdRow(rd, 4); }).join('') + '</tbody></table></div>';
     return readBar('onchain') + '<div class="kpis">' + kpi(_t('短期持有者獲利比例'), fmt.n((fl.sth_in_profit_pct || {}).value, 1) + '%', _t('7 天前 ') + fmt.n((fl.sth_in_profit_pct || {}).d7, 1) + '%', (fl.sth_in_profit_pct || {}).value) + kpi(_t('短期持有者成本'), fmt.usd((fl.sth_vs_tmm || {}).sth_cost), _t('真實市場均價 ') + fmt.usd((fl.sth_vs_tmm || {}).tmm)) + kpi(_t('交易所供給'), fmt.n(ex.exchange_supply_share_pct, 2) + '%', _t('7 日 ') + fmt.pct(ex.exchange_supply_chg7_pct, 2) + _t(' · 90 日 ') + fmt.pct(ex.exchange_supply_chg90_pct, 2)) + kpi(_t('算力 7 日均'), fmt.n(mi.hash7, 0) + ' EH/s', _t('週 ') + fmt.pct(mi.wk_chg_pct, 1) + ' · hashprice $' + fmt.n(mi.hashprice, 1)) + kpi(_t('下次難度調整'), fmt.pct(mi.diff_next_pct, 1), fmt.md(mi.retarget) + _t(' · 進度 ') + fmt.n(mi.diff_progress, 0) + '%', mi.diff_progress) + '</div><div class="grid">' + interpPanel(ocInterp()) +
       panel('span-5', _t('籌碼分布（URPD）'), fmt.md(u.date) + _t(' · 每 2,000 美元一格'), urpdSay(u) + '<div id="c-urpd"></div>') +
-      panel('span-7', _t('短期持有者：成本 vs 價格'), _t('bitcoin-data · 近 2 年'), legend([[_t('短期持有者成本'), 'var(--s2)'], [_t('真實市場均價'), 'var(--s3)']]) + '<div class="chart" id="c-cost"></div>' + _t('<div class="panel-h" style="margin-top:6px"><h2>短期持有者獲利比例</h2><span class="src">2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%</span></div><div class="chart" id="c-profit"></div>') +
-      cohortPanel() + lthColorPanel() + secPanel() + rplPanel() + adPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
+      panel('span-7', _t('短期持有者獲利比例'), _t('2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%', '<div class="chart" id="c-profit"></div><p class="note">' + _T('短期持有者成本與真實市場均價的走勢在週期版「市場階段」的佐證圖 ', 'Short-term holder cost vs the true market mean is charted with the market-stage evidence on the Cycle page ') + jumpA('cycle', 'ev-tmm', _T('看圖 →', 'See chart →')) + '</p>') +
+      cohortPanel() + lthColorPanel() + secPanel() + rplPanel() + adPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'STH-SOPR: CheckOnChain · others: bitcoin-data'), t + '<p class="note">' + _T('MVRV Z、NUPL、Puell 在週期版「頂部三指標」', 'MVRV Z, NUPL and Puell are on the Cycle page under the top-3 indicators ') + jumpA('cycle', 'p6', '→') + '</p>') + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
     mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, drawOc); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd);
@@ -2027,7 +2030,6 @@
       var rows = u.band.filter(function (b) { return b[0] >= c * 0.62 && b[0] <= c * 1.4; }).slice().reverse().map(function (b) { var cur = c >= b[0] && c < b[0] + (u.width || 2000); return { label: fmt.k(b[0]), v: b[1], color: cur ? 'var(--flare)' : 'var(--s1)', cls: cur ? 'cur' : '', right: _T(fmt.n(b[1] / 1e4, 1) + '萬', fmt.n(b[1] / 1e3, 0) + 'K'), prev: pv[b[0]], tip: '<div class="t">' + fmt.usd(b[0]) + '–' + fmt.usd(b[0] + (u.width || 2000)) + _t('</div><div class="r"><i style="background:var(--s1)"></i><span>籌碼</span><b>') + fmt.n(b[1]) + _t(' 顆</b></div>') + (pv[b[0]] != null ? _t('<div class="r"><i></i><span>7 天前</span><b>') + fmt.n(pv[b[0]]) + '</b></div>' : '') }; });
       el.innerHTML = ladderHtml(rows, { dense: true }); bindLadder(el, rows);
     }
-    mount($('#c-cost'), function (el) { var r = v.cost || []; lineChart(el, { h: 220, series: [{ name: _t('短期持有者成本'), data: r.map(function (x) { return [x[0], x[2]]; }), color: 'var(--s2)' }, { name: _t('真實市場均價'), data: r.map(function (x) { return [x[0], x[3]]; }), color: 'var(--s3)' }], refs: [{ y: c, color: 'var(--ink-3)', label: _t('收盤 ') + fmt.k(c), below: true }], tipFmt: fmt.usd, aria: _t('成本線') }); });
     mount($('#c-profit'), drawProfitK);
   };
 
