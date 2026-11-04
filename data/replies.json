@@ -354,6 +354,27 @@
     "chart": "sec",
     "title": "這波次低點 0.1571，比 8 月高、沒再進極端區"
    }
+  },
+  {
+   "n": 18,
+   "order": 0.3,
+   "status": "send",
+   "url": "https://x.com/PiusSprenger/status/2117934000496894365",
+   "id": "2117934000496894365",
+   "author": "PiusSprenger",
+   "name": "Pius the Banker",
+   "followers": 14677,
+   "posted": "2026-11-04T10:56:29Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "「便宜的比特幣聽起來很好，直到它真的便宜」：比特幣比冪律趨勢低 46%，附冪律走勢圖。",
+   "reply": "That \"until it's cheap\" part is showing up on-chain. The 7 days to Nov 2 saw a net realized loss of $1.55B, after a $3.65B net profit the week before. Short-term holders are selling slightly underwater too (STH-SOPR 0.995), with price hovering around their ~$75.9K cost basis.",
+   "sources": "淨實現損益近 7 日 −15.54 億美元、前 7 日 +36.47 億（CoinMetrics，至 11/02）；STH-SOPR 0.9954（11/03）；短期持有者成本 75,892（bitcoin-data，10/28）",
+   "note": "使用者指定。同意他的「真的便宜時大家就怕了」，用鏈上認賠數字佐證；不談冪律準不準、不談要不要買。他剛加入固定名單。",
+   "image": {
+    "chart": "npl",
+    "title": "Holders booked a $1.55B net loss in 7 days"
+   }
   }
  ]
 }
