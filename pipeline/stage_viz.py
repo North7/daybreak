@@ -532,3 +532,29 @@ def _c36_view(c3, P, D, d1):
     return dict(cost=round(c3[d1]), price=round(P(d1)), gap_pct=round((P(d1) / c3[d1] - 1) * 100, 1), above=above,
                 chg30=round(c3[d1] - c3[DD[-31]]) if len(DD) > 31 else None, ups=[u for u in ups if u['date'] >= AC_FROM],
                 since=dict(date=last_up['date'], days=dn(d1) - dn(last_up['date'])) if above and last_up else None)
+
+
+# 2026-11-04 使用者要求（Glassnode 週報〈Retesting the Breakout〉）：價格和下方各條成本線、均線放在同一張圖。
+#   均線用統一收盤（px：Kraken 優先、更早 CoinMetrics）；短期持有者成本、真實市場均價、實現價、長期持有者成本用 Bitview（同一家）。
+#   50 週均線＝350 日均線。只作讀值：列出價格上下各條線的位置與距離，不說「守住就延續」
+LV_FROM, LV_NEAR = '2025-06-01', 8
+LV_KEYS = ('sma200', 'sma365', 'sma350', 'sth', 'tmm', 'rp', 'lth')
+
+
+def levels_viz(bv, px, last, step=2):
+    D = sorted(d for d in px if d <= last)
+    P = [px[d] for d in D]; n = len(D)
+    if n < 400: return None
+    cs = [0.0]
+    for v in P: cs.append(cs[-1] + v)
+    sma = lambda i, w: (cs[i + 1] - cs[i + 1 - w]) / w if i >= w - 1 else None
+    bvv = lambda k, d: (bv.get(k) or {}).get(d)
+    def row(i):
+        d = D[i]; vals = [sma(i, 200), sma(i, 365), sma(i, 350)] + [bvv(k, d) for k in ('sth', 'tmm', 'rp', 'lth')]
+        return [dn(d), round(P[i])] + [round(v) if v else None for v in vals]
+    rows = thin([row(i) for i in range(n) if D[i] >= LV_FROM], step)
+    i = n - 1; c = P[i]; now = row(i)
+    levels = sorted([dict(key=k, value=v, dist_pct=round((v / c - 1) * 100, 1)) for k, v in zip(LV_KEYS, now[2:]) if v], key=lambda x: -x['value'])
+    near = [x for x in levels if x['value'] < c and x['dist_pct'] >= -LV_NEAR]
+    return dict(date=D[i], price=round(c), levels=levels, near=dict(pct=LV_NEAR, lo=min(x['value'] for x in near), hi=max(x['value'] for x in near), keys=[x['key'] for x in near]) if near else None,
+                rows=rows, note='價格、200／365／350 日均線（統一收盤）與 Bitview 的短期持有者成本、真實市場均價、實現價、長期持有者成本；50 週＝350 日；只作讀值')
