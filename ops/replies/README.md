@@ -38,7 +38,7 @@ X 創作者分潤只算**原創貼文**的藍勾首頁曝光，回覆不算；�
 1. **掃固定名單**：`python3 ops/replies/scan.py --out <暫存區>/scan.csv`，和 Grok 的表格合在一起挑；同一則只留一次。scan 只是初篩（用關鍵字判斷主題），一定要讀原文再決定。
 1. **讀原文**：`python3 ops/replies/fetch.py <scan.csv、Grok 的 CSV 或網址>`。Grok 的摘要、語言、粉絲數常常錯，一律以原文為準。原文不是中文或英文、粉絲不到 2,000、或內容是標題黨、喊單、操作建議的，標成跳過並寫原因。
    讀原文時順手看：有沒有網站還沒有、值得加的比特幣指標或圖（例如別人常用的鏈上指標、好懂的呈現方式）。有就記到 [`../../docs/indicator-ideas.md`](../../docs/indicator-ideas.md)（先確認網站有沒有；同一個指標又出現就加次數），回報時一起告訴使用者。
-2. **讀當天的數據**：`data/notes.json`（英文 `data/notes.en.json`）的 headline、findings、news、modules，數字細節查 `data/latest.json`、`data/etf.json` 等。只引用數據裡有的數字，不改數字、不自己推算新數字。`notes.json` 的日期不是當期時，先跟使用者確認。
+2. **讀當天的數據**：`data/notes.json`（英文 `data/notes.en.json`）的 headline、findings、news、modules，數字細節查 `data/latest.json`、`data/etf.json` 等。只引用數據裡有的數字，不改數字、不自己推算新數字。`notes.json` 的日期不是當期時，先跟使用者確認。短期持有者成本和真實市場均價 2026-11-04 起用 Bitview（`chips.flow.sth_vs_tmm`，當天、和 `cost` 圖一致）；`onchain.metrics.sth-realized-price` 是 bitcoin-data（晚約 7 天、真實市場均價偏高約 1.5%），兩家不要混用。
 3. **寫 `data/replies.json`**（格式見下），需要配圖的加 `image`。寫之前讀 [`../brand/voice.md`](../brand/voice.md)，特別是最後的「使用者改稿紀錄」。
 4. **出圖**：`python3 ops/replies/cards.py --fonts <字型資料夾>`（需要 `pipeline/picks.py` 與 Pillow；字型同 `share_card.py`）。打開每張圖看一遍。
 5. **檢查**：`python3 ops/replies/check.py`（欄位、語言、簡體字、字數、出場框架用詞、配圖檔）。
@@ -60,7 +60,7 @@ X 創作者分潤只算**原創貼文**的藍勾首頁曝光，回覆不算；�
 - **一律優先**：`scan.py` 標「★」的 Murphy 貼文（他在固定名單上，`must: true`），只要是比特幣的數據或觀點，都要寫回覆，排在當天第 1 位；除非內容是廣告、活動或和比特幣無關，才跳過並寫原因。
 - **使用者自己貼來的 Murphy 貼文**也照這個規則，馬上寫。
 - **角度**：同行交流。用 Daybreak 的同類數據對照他的數字（同一個指標不同資料源的差異、他沒提到的另一面），或回答他文末的問題；不爭論、不糾正。他的「交易框架」不評論，我們的出場框架也不提。
-- **配圖**：他講籌碼就配 `cohort`，講短期持有者成本配 `cost`，講 SOPR 配 `sopr`；圖的標題直接回應他的論點。
+- **配圖**：他講籌碼就配 `cohort`，講短期持有者成本配 `cost`，講成本線的標準差帶配 `bands`，講 SOPR 配 `sopr`，講長期持有者虧損配 `lthloss`；圖的標題直接回應他的論點。
 - **原文讀不到時**（例如 X 沒登入、fxtwitter 失敗），請使用者在內建瀏覽器登入 X 或直接貼網址，不要用鏡像站繞過。
 
 ## 回覆規則
@@ -125,4 +125,4 @@ X 創作者分潤只算**原創貼文**的藍勾首頁曝光，回覆不算；�
 }
 ```
 
-`image.chart` 可用 `pipeline/picks.py` 的圖表 id（`cbp`、`sopr`、`etf`、`cohort`、`cost`、`stab`、`npl` 等），或 `liq`（推算清算價位分布，OKX）。
+`image.chart` 可用 `pipeline/picks.py` 的圖表 id（`cbp`、`sopr`、`etf`、`cohort`、`cost`、`stab`、`npl`、`vol` 等），或 `cards.py` 另外加的：`liq`（推算清算價位分布，OKX）、`ad`（老幣淨增加）、`sec`（賣方衰竭常數）、`lthloss`（長期持有者虧損比例）、`bands`（短期持有者成本 ±1、±2 標準差帶）、`agecost`（6–12 與 12–18 個月持幣成本、死叉／金叉）。後三張是 2026-11-04 網站新加的圖。
