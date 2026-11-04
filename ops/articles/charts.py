@@ -155,9 +155,8 @@ def cover(L, lang, Fn, out):
     d.rectangle([M2, 110, W2 - M2, 122], fill=INK)
     # 左：標籤、標題、副標
     tf = Fn['cjk'](60, 900) if lang == 'zh' else Fn['mono'](54, 800)
-    tw = d.textlength(C['tag'], font=tf); d.rectangle([M2, 180, M2 + tw + 64, 272], fill=RED); d.text((M2 + 32, 226), C['tag'], font=tf, fill='#FFFFFF', anchor='lm')
-    bd = dt.date.fromisoformat(L['meta']['bar_date'])
-    d.text((M2 + tw + 104, 226), f'DAYBREAK   {bd:%Y.%m.%d}' + (' 收盤數據' if lang == 'zh' else ' close data'), font=Fn['cjk'](44, 500) if lang == 'zh' else Fn['mono'](44, 500), fill=INK3, anchor='lm')
+    bd = dt.date.fromisoformat(L['meta']['bar_date'])   # 封面不加「長文」標籤（2026-11-04 使用者要求）
+    d.text((M2, 226), f'DAYBREAK   {bd:%Y.%m.%d}' + (' 收盤數據' if lang == 'zh' else ' close data'), font=Fn['cjk'](44, 500) if lang == 'zh' else Fn['mono'](44, 500), fill=INK3, anchor='lm')
     lw = 1420
     for size in range(C['max'], 90, -6):
         hf = Fn['head'](size); lines = SC.wrap(C['title'], hf, lw)
