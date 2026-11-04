@@ -81,16 +81,16 @@
 |---|---|---|
 | Kraken | 日線價格、均線、ATR、波動、短週期 | 每日 |
 | CoinMetrics Community | MVRV、實現價、**頂部三指標（MVRV Z／NUPL／Puell）**、交易所供給、實現市值、冪律、長期價格 | 每日（晚 1 天） |
-| bitcoin-data.com | 持有者成本、LTH SOPR、籌碼流向、URPD、幣齡分布（長短期持有者籌碼推算用）、流動性供給、頂部雷達 | 每日 14 次請求（免費層上限 15） |
+| bitcoin-data.com | 籌碼流向（供給比、短期持有者獲利比例）、URPD、幣齡分布（長短期持有者籌碼推算用）、流動性供給、頂部雷達；長短期持有者成本、aSOPR、LTH SOPR、真實市場均價 2026-11-04 起改用 Bitview，只在 Bitview 失敗時即時要成本與均價 | 每日 10 次請求（免費層上限 15） |
 | CheckOnChain 公開圖表 | STH-SOPR、短期持有者實現獲利／虧損、長短期持有者的實際籌碼分布、賣方衰竭常數、全網實現獲利 ÷ 虧損、HODL Waves（表觀需求）、長期持有者虧損比例（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
-| Bitview（Bitcoin Research Kit 公開 API） | 短期持有者成本與真實市場均價（佐證燈號第 6 盞、鏈上版讀值）、短期持有者成本帶、6–12／12–18 個月持幣成本；真實市場均價每天和 CheckOnChain 對照 | 每日（晚 1 天，免費、不用金鑰） |
+| Bitview（Bitcoin Research Kit 公開 API） | 長短期持有者成本、aSOPR、LTH SOPR、真實市場均價（佐證燈號、鏈上指標表）、短期持有者成本帶、3–6／6–12／12–18 個月持幣成本、依地址餘額分層的持幣量（鯨魚與大戶）、長短期持有者籌碼「30 天前」的實際分布；真實市場均價每天和 CheckOnChain 對照 | 每日（晚 1 天，免費、不用金鑰） |
 | Deribit | DVOL、期貨基差、選擇權、永續資金費率 | 每日 |
 | OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權）；OKX 永續逐小時未平倉量與 K 線（清算熱力圖，推算）；OKX 場外 USDT/CNY 報價與永續對現貨日線（三地溢價） | 每日 |
 | 13 個交易所掛單簿 | Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Kraken Futures、OKX Swap、Hyperliquid | 每日快照 |
 | The Block | 現貨 ETF 每日淨流量（與 Farside 同口徑） | 每日 |
 | FRED | 10 年期殖利率與實質利率、美元指數、那斯達克 | 每日 |
 | mempool.space | 算力、難度、礦工收入 | 每日 |
-| BitInfoCharts | 依地址餘額分層的持幣量（鯨魚與大戶）；2026-10-21 起暫停（被 Cloudflare 擋自動抓取，頁面不顯示），找到替代資料再回補 | — |
+| BitInfoCharts | 2026-10-21 起被 Cloudflare 擋下；2026-11-04 起鯨魚分層改用 Bitview | — |
 | DefiLlama | 穩定幣總供給 | 每日 |
 | Coinbase、Binance | Coinbase 溢價（兩邊日線收盤價差） | 每日 |
 | alternative.me | 恐懼貪婪指數 | 每日 |
@@ -193,6 +193,7 @@ pipeline/etf.py          從 The Block 更新 ETF 每日淨流量
 pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 7 個
 pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損、長短期持有者籌碼、賣方衰竭常數、全網實現獲利 ÷ 虧損、1 年以上未動供給、長期持有者虧損比例：讀 CheckOnChain 公開圖表（晚約 1 天）
 pipeline/bitview.py      Bitview（BRK 公開 API）：短期持有者成本、真實市場均價、6–12／12–18 個月持幣成本，快取 coc_cache/bitview.json；真實市場均價每天和 CheckOnChain 對照
+pipeline/hl_whales.py    Hyperliquid 帳戶淨值前 300 名的 BTC 部位彙總（不列個別帳戶，少於 2 個帳戶的組只給帳戶數）
 pipeline/cohort_urpd.py  長短期持有者籌碼：URPD × 幣齡分布 × 每日價格區間推算 LTH／STH 籌碼（collect.py 每天呼叫）
 pipeline/liq_heat.py     清算熱力圖：OKX 永續逐小時未平倉量＋假設槓桿推算各價位的待清算量（collect.py 每天呼叫）
 pipeline/cohort_cache/   每天的完整 URPD（63 格）與幣齡分布存檔（bitcoin-data 免費層的 URPD 歷史只到約 2026-08-10）
@@ -299,6 +300,8 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 2026-11-04：RV30 加一年分位與一年低點（gaah_im 的低波動觀察）；冪律倍數旁加白話「低於趨勢 X%」。
   - 2026-11-04：每日淨實現損益「30 日累計」的觸發線改成「之前 4 年最大 30 日淨獲利 × −1/4」（使用者決定）：獲利與認賠的幅度每輪變小，舊的 4 年第 3 百分位拿上一輪熊市的大認賠當標準，本輪兩次低點都沒觸發。新規則 2015 起觸發 7 次（含 2026/02、2026/06），牛市回落最多只走到線的 46%；代價是 2022 年那次由 6/16 提早到 5/20。舊規則的結果另存 `trig_old`。
   - 2026-11-04：網站內容不再提個人名字（使用者要求）：圖表說明、讀值與 app.js 註解拿掉分析師／KOL 名字，每日任務加同一條規則。
+  - 2026-11-04：長短期持有者成本、aSOPR、LTH SOPR 改用 Bitview（bitcoin-data 版晚 6–7 天；每日請求由 14 次降到 10 次）。長短期持有者籌碼的「STH 變化／LTH 變化」改成實際對實際（30 天前用 Bitview 依實際幣齡的分布，套用同樣的搬家修正）；誰賣了、誰轉成長期仍是推算。
+  - 2026-11-04：鯨魚分層改用 Bitview 依地址餘額分層的持幣量（2011 起），整塊恢復顯示；週期版持幣成本加 3–6 個月切換（熊市後第一次上穿與之後的半年高點）；衍生品版清算熱力圖下加 Hyperliquid 大戶的 BTC 部位彙總（實際部位；原本想在熱力圖上畫個別清算價，但前 300 名只有約 35 個帳戶有 BTC 部位、收盤 ±30% 內只有 5 個清算價，畫出來等於公開個人部位，改成只給彙總）。
   - 每日任務加「結構分析」：先問一個行情問題，拆參與者、比較前後、分清事實與推算、用行為確認、寫情境與推翻條件（`docs/CLAUDE_DAILY.md`）。
 - **2026-10-23**
   - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。
@@ -371,7 +374,7 @@ All free public APIs; no keys required.
 |---|---|---|
 | Kraken | Daily price, moving averages, ATR, volatility, short cycle | Daily |
 | CoinMetrics Community | MVRV, realized price, **top-3 indicators (MVRV Z / NUPL / Puell)**, exchange supply, realized cap, power law, long-term price | Daily (1-day lag) |
-| bitcoin-data.com | Holder cost basis, LTH SOPR, supply flows, URPD, coin-age bands (for the LTH / STH split), liquid supply, top radar | 14 requests a day (free tier allows 15) |
+| bitcoin-data.com | Supply flows (STH/LTH ratio, STH in profit), URPD, coin-age bands (for the LTH / STH split), liquid supply, top radar; holder costs, aSOPR, LTH SOPR and true market mean moved to Bitview on 2026-11-04 | 10 requests a day (free tier allows 15) |
 | CheckOnChain public charts | STH-SOPR, short-term holder realized profit/loss, actual supply distribution by long- and short-term holders, seller exhaustion constant, network realized profit ÷ loss, HODL waves (apparent demand), LTH supply in loss (about 1 day late; `pipeline/coc.py` reads it once a day and falls back to `pipeline/coc_cache/`) | Doesn't use bitcoin-data quota |
 | Deribit | DVOL, futures basis, options, perp funding | Daily |
 | OKX, Hyperliquid | Funding (OI-weighted with Deribit); OKX perpetuals' hourly open interest and candles (liquidation heatmap, estimate); OKX OTC USDT/CNY quotes and perp-vs-spot daily bars (three premiums) | Daily |
@@ -379,7 +382,7 @@ All free public APIs; no keys required.
 | The Block | Spot ETF daily net flows (same basis as Farside) | Daily |
 | FRED | 10-yr nominal and real yields, dollar index, Nasdaq | Daily |
 | mempool.space | Hashrate, difficulty, miner revenue | Daily |
-| BitInfoCharts | Holdings by address-balance tier (whales and big holders); paused since 2026-10-21 (Cloudflare blocks automated requests; hidden on the site) until a replacement source is found | — |
+| BitInfoCharts | Blocked by Cloudflare since 2026-10-21; whale tiers come from Bitview since 2026-11-04 | — |
 | DefiLlama | Total stablecoin supply | Daily |
 | Coinbase, Binance | Coinbase premium (difference between their daily closes) | Daily |
 | alternative.me | Fear & Greed Index | Daily |

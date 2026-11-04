@@ -12,8 +12,9 @@ import json, os, sys, subprocess, argparse, datetime as dt
 
 CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'bd_cache')
 # 每日即時：成本基礎（成本比需同日）、籌碼流向四項（頁面圖表）
-CORE = {'sth-realized-price', 'lth-realized-price', 'sth-lth-ratio', 'percent-sth-in-profit', 'true-market-mean', 'urpd'}
-GROUPS = {'A': ['asopr', 'lth-sopr', 'illiquid-supply', 'highly-liquid-supply', 'lth-mvrv-zscore', 'supply-in-profit-pct',
+# 2026-11-04：長短期持有者成本、真實市場均價、aSOPR、長期持有者 SOPR 改用 Bitview（collect.py B0），移出每日清單；Bitview 失敗時 collect.py 才即時要成本兩項與真實市場均價
+CORE = {'sth-lth-ratio', 'percent-sth-in-profit', 'urpd'}
+GROUPS = {'A': ['illiquid-supply', 'highly-liquid-supply', 'lth-mvrv-zscore', 'supply-in-profit-pct',
                 'lth-net-position-change-30d-btc', 'hodl-waves-supply']}
 # 端點要帶的查詢參數（2026-10-27）：幣齡分布只取近 30 天，cohort_urpd.py 會把每天的值累積進 cohort_cache/hodl_waves.json
 QUERY = {'hodl-waves-supply': lambda: '?startday=' + (dt.date.today() - dt.timedelta(days=30)).isoformat()}

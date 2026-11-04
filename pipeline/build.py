@@ -69,7 +69,7 @@ out = {
            'sources': ['Kraken', 'Deribit', 'CoinMetrics Community', 'bitcoin-data.com', 'CheckOnChain（STH-SOPR）', 'mempool.space', 'FRED', 'The Block（ETF）', 'Tidemark', 'DefiLlama（穩定幣）', 'Coinbase／Binance（溢價）', 'OKX／Hyperliquid（資金費率；OKX 未平倉量另供清算熱力圖）', 'alternative.me（恐懼貪婪）', '13 個交易所掛單簿']},
   'price': {'bar': td['bar'], 'ma': ma, 'atr': td.get('atr'), 'vol': td.get('vol'), 'mayer': td.get('mayer'), 'pi_cycle': td.get('pi_cycle'),
             'range20_pos_pct': td.get('range20_pos_pct'), 'swing': td.get('swing'), 'volprofile': td.get('volprofile_v2'), 'rows20': td.get('chart_rows_20d'), 'history': hist},
-  'deriv': {'dvol': td.get('dvol'), 'deriv': td.get('deriv'), 'rr25': td.get('rr25'), 'samesource': td.get('samesource'), 'funding_multi': td.get('funding_multi'), 'liq_heat': td.get('liq_heat'),
+  'deriv': {'dvol': td.get('dvol'), 'deriv': td.get('deriv'), 'rr25': td.get('rr25'), 'samesource': td.get('samesource'), 'funding_multi': td.get('funding_multi'), 'liq_heat': td.get('liq_heat'), 'hl_whales': td.get('hl_whales'),
             'options': {'total_oi': (td.get('options') or {}).get('total_oi'), 'expiries': [{k: e.get(k) for k in ('expiry', 'dte', 'oi', 'share', 'pc', 'maxpain', 'top_calls', 'top_puts')} for e in (td.get('options') or {}).get('expiries', [])]},
             'viz': {k: (td.get('ex_viz') or {}).get(k) for k in ('vol', 'basis', 'options')}},
   'flows': {'etf': etf['rows'], 'fred': td.get('fred'), 'dfii10': (td.get('extra') or {}).get('dfii10'), 'rc_liq': td.get('rc_liquidity'),

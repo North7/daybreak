@@ -261,6 +261,20 @@ try:
 except Exception as e: errors.append(f'samesource {e}')
 
 # ---------- B. 鏈上 ----------
+# B0（原 B9，2026-11-04 移到鏈上段最前面：B 段的長短期持有者成本、SOPR 也用它）。使用者決定：短期持有者成本 vs 真實市場均價改用 Bitview（當天、免費；bitcoin-data 晚約 7 天、真實市場均價偏高約 1.5%），
+#   並新增短期持有者成本帶與 6–12／12–18 個月成本線（見 bitview.py、G4f）。兩條線一律同一家（_CSRC）；Bitview 失敗且快取超過 4 天時退回 bitcoin-data。
+#   每天拿 CheckOnChain 的真實市場均價驗算，差超過 0.5% 記進 errors
+BV, _ST, _TM, _CSRC, _BVCHK = None, None, None, 'bitcoin-data', None
+try:
+    import bitview
+    _bvr, _bvst = bitview.get(); BV = bitview.cols(_bvr)
+    if _bvst != 'live': errors.append(f'bitview 用快取：{_bvst}')
+    if BV['sth'] and BV['tmm']: _ST, _TM, _CSRC = BV['sth'], BV['tmm'], 'Bitview'
+    try:
+        _BVCHK = bitview.check_tmm(BV['tmm'])
+        if abs(_BVCHK['diff_pct']) > 0.5: errors.append(f"bitview 真實市場均價和 CheckOnChain 差 {_BVCHK['diff_pct']}%（{_BVCHK['date']}）")
+    except Exception as e: errors.append(f'bitview 驗算（CheckOnChain 真實市場均價）: {e}')
+except Exception as e: errors.append(f'bitview: {e}（短期持有者成本 vs 真實市場均價退回 bitcoin-data）')
 # 2026-10-12：mvrv-zscore、nupl、puell-multiple 改由 G1a 用 CoinMetrics 自算（bitcoin-data 版晚約 6 天）；sopr、realized-price 退役（見 bd_rotation.py）
 # 2026-10-15：sth-sopr 改用 CheckOnChain（晚約 1 天，見下方 B2 與 coc.py），不再向 bitcoin-data 要（它的 SOPR 系列晚約 7 天）
 OC = {'asopr': 'aSopr',
@@ -275,9 +289,15 @@ def _oc_stat(m, ser):   # 鏈上指標表的統一算法：最新值、四年百
     return dict(date=d_, value=v_, pct_4y=round(sum(x < v_ for x in w4) / len(w4) * 100, 1), n=len(w4),
                 chg7_pct=_dchg(ser, d_, 7, v_), chg30_pct=_dchg(ser, d_, 30, v_),
                 ma7=round(ma7, 4), ma7_pct_own=round(sum(x < ma7 for x in m7s) / len(m7s) * 100, 1))
+# 2026-11-04 使用者要求：長短期持有者成本、aSOPR、長期持有者 SOPR 改用 Bitview（B0；bitcoin-data 版晚 6–7 天，也省它的每日額度）。
+#   Bitview 失敗時，成本兩項即時向 bitcoin-data 要（不經輪替快取）；兩個 SOPR 已移出輪替，當天就記「本日未取得」
+OC_BV = {'sth-realized-price': 'sth', 'lth-realized-price': 'lth', 'asopr': 'asopr', 'lth-sopr': 'lsopr'}
 for m, fld in OC.items():
+    if m in OC_BV and BV and BV.get(OC_BV[m]):
+        try: R['onchain'][m] = dict(_oc_stat(m, BV[OC_BV[m]]), source='Bitview'); continue
+        except Exception as e: errors.append(f'onchain {m}（Bitview）: {e}')
     try:
-        js = bd(m); ser = {}
+        js = bd_rotation.fetch(m) if m in ('sth-realized-price', 'lth-realized-price') else bd(m); ser = {}
         for r in js:
             vv = r.get(fld, r.get(fld.lower()))
             if vv not in (None, ''): ser[r['d']] = float(vv)
@@ -339,20 +359,6 @@ try:
     _bt = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json')))['cycle_bottoms']
     R['lthloss'] = stage_viz.lthloss_viz(_ll, LAST, _bt, globals().get('_coh'))
 except Exception as e: errors.append(f'checkonchain lth-loss: {e}')
-# B9. 2026-11-04 使用者決定：短期持有者成本 vs 真實市場均價改用 Bitview（當天、免費；bitcoin-data 晚約 7 天、真實市場均價偏高約 1.5%），
-#   並新增短期持有者成本帶與 6–12／12–18 個月成本線（見 bitview.py、G4f）。兩條線一律同一家（_CSRC）；Bitview 失敗且快取超過 4 天時退回 bitcoin-data。
-#   每天拿 CheckOnChain 的真實市場均價驗算，差超過 0.5% 記進 errors
-BV, _ST, _TM, _CSRC, _BVCHK = None, None, None, 'bitcoin-data', None
-try:
-    import bitview
-    _bvr, _bvst = bitview.get(); BV = bitview.cols(_bvr)
-    if _bvst != 'live': errors.append(f'bitview 用快取：{_bvst}')
-    if BV['sth'] and BV['tmm']: _ST, _TM, _CSRC = BV['sth'], BV['tmm'], 'Bitview'
-    try:
-        _BVCHK = bitview.check_tmm(BV['tmm'])
-        if abs(_BVCHK['diff_pct']) > 0.5: errors.append(f"bitview 真實市場均價和 CheckOnChain 差 {_BVCHK['diff_pct']}%（{_BVCHK['date']}）")
-    except Exception as e: errors.append(f'bitview 驗算（CheckOnChain 真實市場均價）: {e}')
-except Exception as e: errors.append(f'bitview: {e}（短期持有者成本 vs 真實市場均價退回 bitcoin-data）')
 try:
     # 2026-09-23 週檢：第三轉換條件量化＝STH 成本基礎 ÷ LTH 成本基礎（＝LTH-MVRV ÷ STH-MVRV，與價格無關）
     sr, lr_ = R['onchain']['sth-realized-price'], R['onchain']['lth-realized-price']
@@ -619,19 +625,18 @@ except Exception as e: errors.append(f'swing {e}')
 #   地址不等於實體：≥10K 多為交易所冷錢包、ETF 託管；錢包整理會讓幣在分層之間移動。只作讀值。
 # 2026-10-21 暫停：BitInfoCharts 改用 Cloudflare 驗證頁擋自動抓取，免費來源找不到替代（CoinMetrics 免費層沒有分層、bitcoin-data 額度已滿）。
 #   不抓、不記錯誤，頁面整塊不顯示；找到資料後把 WHALES 改回 True（或換來源）即可回補，下面的計算與頁面都保留。
-WHALES = False
+# 2026-11-04 使用者要求：改用 Bitview 依地址餘額分層的每日持幣量（2011 起，B0 已抓，不另打 API），整塊恢復顯示。
+#   小於 1 顆＝長短期持有者供給合計 − 1 顆以上各層；≥10K 含 10K–100K 與 100K 以上兩層。地址不等於實體：交易所、ETF 託管、提幣潮都會讓幣在層之間移動
+WHALES = bool(BV and BV.get('b1'))
 if WHALES:
     try:
-        bic_html = get('https://bitinfocharts.com/bitcoin-distribution-history.html') or ''
-        # 2026-10-21：BitInfoCharts 改用 Cloudflare 驗證頁擋自動抓取（403），錯誤訊息會顯示在頁首「資料狀態」，寫成看得懂的原因
-        if 'Just a moment' in bic_html or 'challenges.cloudflare.com' in bic_html: raise RuntimeError('BitInfoCharts 被 Cloudflare 驗證頁擋下（自動抓取被拒），本日未取得')
-        blk = re.search(r'new Dygraph\([^,]+,\s*(\[\[.*?\]\])\s*,\s*\{(.*?)\}\s*\)', bic_html, re.S)
-        if not blk: raise RuntimeError('BitInfoCharts 頁面找不到分層圖表資料（可能改版），本日未取得')
-        labs = json.loads(re.search(r'labels:\s*(\[[^\]]*\])', blk.group(2)).group(1).replace("'", '"'))
-        assert labs[1:] == ['0-0.1', '0.1-1', '1-10', '10-100', '100-1,000', '1,000-10,000', '10,000-100,000', '100,000-1,000,000'], f'欄位改了：{labs}'
-        WR = [(d_.replace('/', '-'), [float(x) for x in v_.split(',')]) for d_, v_ in re.findall(r'new Date\("([\d/]+)"\),([\d.,]+)\]', blk.group(1))]
-        WR = [r_ for r_ in WR if r_[0] <= LAST]; WD = [r_[0] for r_ in WR]
-        COH = [('lt1', [0, 1]), ('1_10', [2]), ('10_100', [3]), ('100_1k', [4]), ('1k_10k', [5]), ('ge10k', [6, 7])]
+        import bisect
+        _wk = ('b1', 'b10', 'b100', 'b1k', 'b10k', 'b100k')
+        WD = [d_ for d_ in sorted(BV['b1']) if d_ <= LAST and all(d_ in BV[k_] for k_ in _wk + ('sths', 'lths'))]
+        WR = []
+        for d_ in WD:
+            b_ = [BV[k_][d_] for k_ in _wk]; WR.append((d_, [BV['sths'][d_] + BV['lths'][d_] - sum(b_)] + b_[:4] + [b_[4] + b_[5]]))
+        COH = [('lt1', [0]), ('1_10', [1]), ('10_100', [2]), ('100_1k', [3]), ('1k_10k', [4]), ('ge10k', [5])]
         wv = lambda j, ix: sum(WR[j][1][q_] for q_ in ix)
         def wb(j, days):
             t_ = (dt.date.fromisoformat(WD[j]) - dt.timedelta(days=days)).isoformat(); b_ = bisect.bisect_right(WD, t_) - 1
@@ -641,7 +646,7 @@ if WHALES:
         out = []
         for key_, ix in COH:
             v_ = wv(k3, ix); chg = {w_: (round(v_ - wv(wb(k3, w_), ix)) if wb(k3, w_) is not None else None) for w_ in (7, 30, 90)}
-            h30 = [wv(j, ix) - wv(wb(j, 30), ix) for j in range(len(WD)) if wb(j, 30) is not None]
+            h30 = [wv(j, ix) - wv(wb(j, 30), ix) for j in range(max(0, len(WD) - 1461), len(WD)) if wb(j, 30) is not None]   # 近 4 年
             out.append(dict(key=key_, btc=round(v_), chg7=chg[7], chg30=chg[30], chg90=chg[90],
                             pct30=round(sum(x < chg[30] for x in h30) / len(h30) * 100, 1) if chg[30] is not None else None, n30=len(h30),
                             since_leg=round(v_ - wv(jl, ix)) if jl is not None and jl >= 0 else None))
@@ -649,11 +654,11 @@ if WHALES:
         for j in range(len(WD)):
             if WD[j] < (dt.date.fromisoformat(WD[k3]) - dt.timedelta(days=400)).isoformat(): continue
             r_ = [(dt.date.fromisoformat(WD[j]) - dt.date(1970, 1, 1)).days]
-            for ix in ([4], [5], [6, 7]):
+            for ix in ([3], [4], [5]):
                 b_ = wb(j, 30); r_.append(round(wv(j, ix) - wv(b_, ix)) if b_ is not None else None)
             rows_w.append(r_)
         R['whales'] = dict(date=WD[k3], cohorts=out, leg_start=leg0, rows=rows_w[::-2][::-1],
-                           note='BitInfoCharts 依地址餘額分層；地址不等於實體，≥10K 多為交易所與託管；只作讀值')
+                           src='Bitview', note='Bitview 依地址餘額分層（2011 起；百分位用近 4 年）；地址不等於實體，≥10K 多為交易所與託管；只作讀值')
     except Exception as e: errors.append(f'whales: {e}')
 # G2. bitcoin-data 頂部雷達（放在既有 14 個端點之後；免費層文件寫每小時 10 次、每日 15 次，超額時只有這幾格記 null）
 RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProfitPct',
@@ -691,7 +696,7 @@ try:
 except Exception as e: errors.append(f'murphy percent-sth-in-profit: {e}'); R['murphy_flow']['sth_in_profit_pct'] = None
 try:
     if _CSRC == 'Bitview': tm, sth = _TM, _ST   # B9；bitcoin-data 的真實市場均價只在 Bitview 失敗時才抓（省每日額度）
-    else: tm = dict(_bd_series('true-market-mean', 'trueMarketMean')); sth = SER.get('sth-realized-price', {}); _ST, _TM = sth, tm
+    else: tm = {r_['d']: float(r_['trueMarketMean']) for r_ in bd_rotation.fetch('true-market-mean') if r_.get('trueMarketMean') not in (None, '')}; sth = SER.get('sth-realized-price', {}); _ST, _TM = sth, tm   # 已移出 CORE，退回時即時抓
     cd = sorted(set(tm) & set(sth)); d_ = cd[-1]
     diff = [(t, sth[t] / tm[t] - 1) for t in cd]
     last_up = last_dn = None
@@ -820,7 +825,7 @@ try:
     try: _hw = bd('hodl-waves-supply')
     except Exception as e: _hw = []; errors.append(f'cohort hodl-waves-supply: {e}')
     _px = {x[0]: (x[1], x[1]) for x in cm}; _px.update({b_['d']: (b_['l'], b_['h']) for b_ in bars})
-    R['cohort'] = cohort_urpd.daily(MFS.get('urpd_raw'), _hw, _px, c, SER.get('sth-realized-price'), _coh)
+    R['cohort'] = cohort_urpd.daily(MFS.get('urpd_raw'), _hw, _px, c, SER.get('sth-realized-price'), _coh, bitview.urpd_rows if BV else None)   # 2026-11-04：30 天前也用 Bitview 實際分布
 except Exception as e: errors.append(f'cohort {e}'); R['cohort'] = None
 
 # ---------- G5. 2026-10-02 使用者要求：掛單簿深度（Coinbase／Kraken／Bitstamp 三家合計，舊口徑保留供序列比較；Binance 現貨改由 G5b 經 data-api.binance.vision 取得，Binance 期貨 451、Bybit 403 不可用）。只作讀值，不連動任何規則 ----------
@@ -1247,6 +1252,11 @@ try:
     import liq_heat
     R['liq_heat'] = liq_heat.build(get)
 except Exception as e: errors.append(f'liq_heat {e}')
+# G9g. 2026-11-04 使用者要求：Hyperliquid 大戶（帳戶淨值前 300 名）的 BTC 部位彙總（見 hl_whales.py；不列個別帳戶）。約 300 次 Hyperliquid 請求、2–3 分鐘
+try:
+    import hl_whales
+    R['hl_whales'] = hl_whales.build(c, now.isoformat(timespec='minutes'))
+except Exception as e: errors.append(f'hl_whales {e}')
 R.pop('_sig5', None); R.pop('_sig1', None)
 R['bd_rotation'] = R_bd
 R['errors'] = errors

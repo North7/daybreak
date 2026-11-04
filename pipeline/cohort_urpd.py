@@ -185,10 +185,12 @@ def run(U, HW, px, moves=()):
     return out
 
 
-def summarize(res, px, close, bd_sth_cost=None, moves=(), raw=None, exact=None):
+def summarize(res, px, close, bd_sth_cost=None, moves=(), raw=None, exact=None, exact_at=None):
     """頁面與每日摘要要的讀值（只作讀值）。raw＝不處理搬家日的推算原樣：bitcoin-data 的 STH 成本也是逐筆 UTXO，驗證要同口徑。
     exact＝CheckOnChain 依實際幣齡算的長短期持有者分布 dict(date, rows=[[價位, STH, LTH]])（coc.get_cohort）：有的話「現在」的 rows／tot／loss 用它
-    （套用同樣的搬家修正），src='checkonchain'；model_rows／model_tot、cmp、flow 一律是推算（CheckOnChain 只有當下的快照）"""
+    （套用同樣的搬家修正），src='checkonchain'；model_rows／model_tot、flow 一律是推算（CheckOnChain 只有當下的快照）。
+    exact_at＝依日期取實際分布的函式（2026-11-04 起 bitview.urpd_rows）：有的話「約 30 天前」的 cmp 也用實際值（套用那天的搬家修正），
+    cmp.src='bitview'，推算的 30 天前另存 cmp_model 供對照；失敗時 cmp 照舊是推算"""
     ds = sorted(res); d = ds[-1]; r = res[d]; T = r['T']
     rows = lambda x: [[k * W, round(float(x['sth'][k])), round(float(x['lth'][k]))] for k in range(ROW0, NB)]
     vec = lambda rr, i: np.bincount([int(x[0]) // W for x in rr], [x[i] for x in rr], NB)
@@ -219,7 +221,14 @@ def summarize(res, px, close, bd_sth_cost=None, moves=(), raw=None, exact=None):
         new_b = np.bincount(r['b'][newm], r['v'][newm], NB)
         aged = vb[old_sth & (tb <= T - LTH_DAYS)].sum()
         hi_since = max(h for x, (_, h) in px.items() if a['T'] < _i(x) <= T); lo_since = min(l_ for x, (l_, _) in px.items() if a['T'] < _i(x) <= T)
-        out['cmp'] = dict(date=c0[-1], rows=rows(a), tot=dict(sth=round(float(a['sth'].sum())), lth=round(float(a['lth'].sum())), sth_cost=round(a['sth_cost'])))
+        out['cmp'] = dict(date=c0[-1], rows=rows(a), tot=dict(sth=round(float(a['sth'].sum())), lth=round(float(a['lth'].sum())), sth_cost=round(a['sth_cost'])), src='model')
+        if exact_at and src == 'checkonchain':
+            try:
+                ex0 = exact_at(c0[-1]); s0, l0 = vec(ex0['rows'], 1), vec(ex0['rows'], 2)
+                e0 = dict(sth=np.maximum(s0 + a['adj'][0], 0), lth=np.maximum(l0 + a['adj'][1], 0))
+                out['cmp_model'] = out['cmp']
+                out['cmp'] = dict(date=c0[-1], rows=rows(e0), tot=st_(e0), src='bitview')
+            except Exception as e: out['cmp_err'] = str(e)[:200]
         out['flow'] = dict(start=c0[-1], end=d, days=T - Ta, sth0=round(float(va[old_sth].sum())), sth_spent=round(float(sp_sth.sum())),
                            sth_aged=round(float(aged)), sth_still=round(float(vb[old_sth & (tb > T - LTH_DAYS)].sum())),
                            lth0=round(float(va[~old_sth].sum())), lth_spent=round(float(sp_lth.sum())), new=round(float(new_b.sum())),
@@ -241,16 +250,16 @@ def summarize(res, px, close, bd_sth_cost=None, moves=(), raw=None, exact=None):
         out['transfers'] = mv
         if src == 'checkonchain': out['raw'] = dict(sth=round(float(se.sum())), rows=rows(dict(sth=se, lth=le)))   # 「現在」不修正的原樣
         elif raw and d in raw: out['raw'] = dict(sth=round(float(raw[d]['sth'].sum())), sth_cost=round(raw[d]['sth_cost']), rows=rows(raw[d]))
-    out['note'] = ('現在：CheckOnChain 依實際幣齡（Bitcoin Research Kit）' if src == 'checkonchain' else '現在：推算') + '；變化：推算（IPF：bitcoin-data URPD × 幣齡分布 × 每日價格區間）；逐筆 UTXO、搬家日已修正；只作讀值'
+    out['note'] = ('現在：CheckOnChain 依實際幣齡（Bitcoin Research Kit）' if src == 'checkonchain' else '現在：推算') + ('；30 天前：Bitview 實際幣齡（同一套 Bitcoin Research Kit）' if (out.get('cmp') or {}).get('src') == 'bitview' else '') + '；誰賣了／誰轉成長期（flow）：推算（IPF：bitcoin-data URPD × 幣齡分布 × 每日價格區間）；逐筆 UTXO、搬家日已修正；只作讀值'
     return out
 
 
-def daily(urpd_rows, hw_rows, px, close, bd_sth_cost=None, exact=None):
+def daily(urpd_rows, hw_rows, px, close, bd_sth_cost=None, exact=None, exact_at=None):
     """collect.py 每天呼叫：存檔 → 跑鏈 → 讀值。exact＝coc.get_cohort() 的結果（失敗時 None，「現在」退回推算）"""
     U, HW = archive(urpd_rows, hw_rows, exact)
     mv = transfers(U, px)
     res = run(U, HW, px, mv); raw = run(U, HW, px) if mv else None
-    return summarize(res, px, close, bd_sth_cost, mv, raw, exact) if res else None
+    return summarize(res, px, close, bd_sth_cost, mv, raw, exact, exact_at) if res else None
 
 
 def _get(url):
