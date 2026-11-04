@@ -241,5 +241,5 @@ def get_lthloss():
         _save(LL_CACHE, LL_PAGE, [[d, round(v, 4), round(p, 2)] for d, (v, p) in sorted(ser.items())], keep=10000)
         return ser, 'live'
     except Exception as e:
-        cj = json.load(open(LL_CACHE))
+        cj = _cache(LL_CACHE)
         return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'

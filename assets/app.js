@@ -381,7 +381,7 @@
         light(ev.n && ev.ok * 2 > ev.n, _t('佐證燈號'), ev.n ? ev.ok + ' / ' + ev.n : '—', _t('只顯示、不參與判定；過半亮起才打勾')) + '</div>' +
       (ev.items ? '<div class="tbl-wrap"><table class="tbl evid"><tbody>' + ev.items.map(function (e) {
         var v = e.id === 'mvrv1y' ? fmt.n(e.value, 3) + _t('（均值 ') + fmt.n(e.ref, 3) + _t('）') : e.id === 'sth' ? fmt.usd(e.value) : fmt.pct(e.value, e.id === 'rcgrowth' ? 2 : 1);
-        return '<tr><td><span class="mk-s' + (e.ok ? ' ok' : '') + '">' + (e.ok ? '✓' : '×') + '</span><b>' + esc(_T(e.label, (EV_EN[e.id] || [])[0] || e.label)) + '</b></td><td class="num">' + v + '</td><td>' + esc(_T(e.cond, (EV_EN[e.id] || [])[1] || e.cond)) + '</td><td class="num">' + fmt.md(e.date) + '</td></tr>';
+        return '<tr><td><span class="mk-s' + (e.ok ? ' ok' : '') + '">' + (e.ok ? '✓' : '×') + '</span><b>' + esc(_T(e.label, (EV_EN[e.id] || [])[0] || e.label)) + '</b></td><td class="num">' + v + '</td><td>' + esc(_T(e.cond, evCondEn(e))) + '</td><td class="num">' + fmt.md(e.date) + '</td></tr>';
       }).join('') + '</tbody></table></div>' : '') + evCharts(ev) +
       '<div class="rules">' + lines.map(function (l) { return '<div class="rule"><span class="t"><span class="mk-s">' + l[0] + '</span>' + l[1] + '</span><span class="d">' + l[2] + '</span><span></span></div>'; }).join('') + '</div>' +
       _t('<p class="note">判定規則：轉換期＝燈號一（投降）✓ 且收盤在上升的 200 日均線之上（上升＝高於 30 天前）；牛市＝燈號一 ✓ 且收盤連 30 日在上升的 200 日均線之上，成立後單向鎖定；退回熊市＝轉換期中連 5 日收在 200 日均線下，牛市則需連 30 日在下降的 200 日均線下。佐證燈號只顯示證據強弱，不參與判定。</p>') +
@@ -390,8 +390,10 @@
   // 以下三塊由每日結論任務寫進 notes.json；不是當天的就標「上一期」
   /* 資料管線寫進 latest.json 的中文標籤，英文版在這裡對照 */
   var EV_EN = { mom12: ['12-month momentum', 'Close above its level a year ago'], mvrv1y: ['MVRV vs 1-year mean', 'MVRV above its own 1-year average'],
-    rcgrowth: ['Capital inflow', 'Realized cap 30-day growth is positive'], xs90: ['Exchange supply', '90-day change is negative'], sth: ['Short-term holder cost', 'Close above short-term holder cost (bitcoin-data)'],
-    tmm: ['STH cost vs true market mean', 'Short-term holder cost above the true market mean (bitcoin-data, ~7 days late)'] };
+    rcgrowth: ['Capital inflow', 'Realized cap 30-day growth is positive'], xs90: ['Exchange supply', '90-day change is negative'], sth: ['Short-term holder cost', 'Close above short-term holder cost ({src})'],
+    tmm: ['STH cost vs true market mean', 'Short-term holder cost above the true market mean ({src})'] };
+  // 2026-11-04：短期持有者成本與真實市場均價改用 Bitview（失敗時退回 bitcoin-data），英文條件依資料來源帶入
+  function evCondEn(e) { var t = (EV_EN[e.id] || [])[1]; return t ? t.replace('{src}', e.src === 'Bitview' ? 'Bitview' : e.id === 'tmm' ? 'bitcoin-data, ~7 days late' : 'bitcoin-data') : e.cond; }
   /* 佐證燈號走勢圖（2026-10-14）：每盞燈一張、配 BTC 價格線；上方一句「離翻轉多遠、大概何時」。只作讀值，外推不是預測 */
   var EV_ORDER = ['tmm', 'sth', 'mom12', 'mvrv1y', 'rcgrowth', 'xs90'];
   function evSay(e, sv) {
@@ -649,9 +651,18 @@
   function p20Read() { var cm = D.cycle.cm, r = cm.mvrv_vs_prior, c = D.price.bar.c, k = cm.k075_price;
     if (r == null) return null;
     return [r >= 0.75 ? _t('已站上 0.75 賣出線，連 5 天即觸發第一個鏈上賣點（現在 ') + (cm.p20_run_ge075 || 0) + _t('/5 天）。') : _t('離 0.75 賣出線還很遠：價格約要到 ') + fmt.usd(k) + _t('（比收盤高 ') + fmt.pct((k / c - 1) * 100, 0) + _t('）才會碰到；2025 頂部時是 0.78。'), r >= 0.75 ? 'neg' : r >= 0.7 ? 'warn' : 'neu']; }
+  // 2026-11-04：倍數旁加白話「低於趨勢 X%」（PiusSprenger 等人的說法，一般讀者比較好懂）
+  // 2026-11-04 使用者要求（gaah_im 的已實現波動率年低）：RV30 在近一年裡的百分位；第 10 百分位以下註明「低波動後常有大波動，方向不一定」
+  function rvYear(v) {
+    if (v.rv30_pct1y == null) return '';
+    var lo = v.rv30_pct1y <= 10, md = fmt.md(v.rv30_min1y_date);
+    return _T('；近一年第 ' + fmt.n(v.rv30_pct1y, 0) + ' 百分位（一年最低 ' + fmt.n(v.rv30_min1y, 1) + '%，' + md + '）' + (lo ? '，接近一年低點：低波動之後常接著大波動，但方向不一定' : ''),
+      '; ' + fmt.n(v.rv30_pct1y, 0) + 'th percentile of the past year (low ' + fmt.n(v.rv30_min1y, 1) + '% on ' + md + ')' + (lo ? ', near a one-year low: quiet spells are often followed by big moves, in either direction' : ''));
+  }
+  function plGap(r) { var g = fmt.n(Math.abs(1 - r) * 100, 0); return r < 1 ? _T('低於趨勢 ' + g + '%', g + '% below trend') : _T('高於趨勢 ' + g + '%', g + '% above trend'); }
   function plRead() { var pl = D.cycle.powerlaw || {}, r = pl.ratio, bb = pl.bottom_band || [0.24, 0.48];
     if (r == null) return null;
-    return [_T('價格是冪律合理價（' + fmt.usd(pl.fair) + '）的 ' + fmt.n(r * 100, 0) + '%：', 'Price is ' + fmt.n(r * 100, 0) + '% of the power-law fair value (' + fmt.usd(pl.fair) + '): ') + (r <= bb[1] ? _t('落在歷史底部帶（') + bb[0] + '–' + bb[1] + _t(' 倍），長期看很便宜。') : r < 1 ? _t('低於合理價、高於歷史底部帶（') + bb[1] + _t(' 倍），長期看偏便宜。') : r < 1.12 ? _t('高於合理價，但還低於 2025 頂部的 1.12 倍。') : _t('已超過 2025 頂部的 1.12 倍，偏貴。')), r <= bb[1] ? 'pos' : r < 1 ? 'neu' : r < 1.12 ? 'warn' : 'neg']; }
+    return [_T('價格是冪律合理價（' + fmt.usd(pl.fair) + '）的 ' + fmt.n(r * 100, 0) + '%，' + plGap(r) + '：', 'Price is ' + fmt.n(r * 100, 0) + '% of the power-law fair value (' + fmt.usd(pl.fair) + '), ' + plGap(r) + ': ') + (r <= bb[1] ? _t('落在歷史底部帶（') + bb[0] + '–' + bb[1] + _t(' 倍），長期看很便宜。') : r < 1 ? _t('低於合理價、高於歷史底部帶（') + bb[1] + _t(' 倍），長期看偏便宜。') : r < 1.12 ? _t('高於合理價，但還低於 2025 頂部的 1.12 倍。') : _t('已超過 2025 頂部的 1.12 倍，偏貴。')), r <= bb[1] ? 'pos' : r < 1 ? 'neu' : r < 1.12 ? 'warn' : 'neg']; }
   function tmRead() { var tm = D.cycle.tidemark || {}, t = (tm.top || {}).signal, b = (tm.bottom || {}).signal, ct = tm.cycle_test || {};
     if (t == null && b == null) return null;
     return [_t('頂部訊號 ') + fmt.n(t, 0) + _t('（') + (t >= 70 ? _t('高度警戒') : t >= 50 ? _t('進入頂部窗口') : _t('低於 50，沒有頂部跡象')) + _t('）、底部訊號 ') + fmt.n(b, 0) + _t('（') + (b >= 70 ? _t('強烈底部') : b >= 50 ? _t('進入底部區') : _t('低於 50，不在底部區')) + _t('）') + (t < 50 && b < 50 ? _t('：模型認為現在既不是頂也不是底，在週期中段。') : _t('。')) + (ct.status === 'testing' && ct.decisive_date ? _t('本輪低點假說驗證到 ') + ct.decisive_date + _t('。') : ''), t >= 50 ? 'neg' : b >= 50 ? 'pos' : 'neu']; }
@@ -671,7 +682,7 @@
     var p = D.price, b = p.bar, c = b.c, a = p.atr || {}, v = p.vol || {}, my = (p.mayer || {}).mayer, pi = p.pi_cycle, it = [];
     if (b.close_pos_pct != null) it.push([_t('收盤'), fmt.pct(b.chg_pct, 2), _t('收在當日高低區間的 ') + fmt.n(b.close_pos_pct, 0) + _t('% 位置（') + (b.close_pos_pct >= 70 ? _t('收在高檔，買方較強') : b.close_pos_pct <= 30 ? _t('收在低檔，賣方較強') : _t('收在中段，多空互有攻守')) + _t('）') + (b.vol_vs_20dma != null ? _t('；成交量是 20 日均量的 ') + fmt.n(b.vol_vs_20dma, 2) + _t(' 倍') + (b.vol_vs_20dma < 0.6 ? _t('，量縮，這根 K 線的訊號力道弱。') : b.vol_vs_20dma > 1.5 ? _t('，放量，訊號較可信。') : _t('。')) : _t('。')), b.close_pos_pct >= 70 ? 'pos' : b.close_pos_pct <= 30 ? 'neg' : 'neu']);
     if (a.atr14) it.push(['ATR14', fmt.usd(a.atr14), _t('一天的正常波動約 ±') + fmt.usd(a.atr14) + _t('（') + fmt.n(a.atr14 / c * 100, 1) + _t('%）：這個範圍內的漲跌屬日常雜訊；掛單或停損的距離小於它，很容易被正常波動掃到。'), 'neu']);
-    if (v.rv30 != null) it.push([_t('實際波動 RV30'), fmt.n(v.rv30, 1) + '%', band(v.rv30, [30, 50, 70], [_t('年化 30% 以下，低波動'), _t('年化 30–50%，一般水準'), _t('年化 50–70%，偏高'), _t('年化 70% 以上，劇烈')]) + (v.rv7_rv30 < 0.75 ? _t('；近 7 天明顯比近 30 天平靜（RV7 只有 RV30 的 ') + fmt.n(v.rv7_rv30 * 100, 0) + _t('%），價格在收斂盤整，之後常出現方向性突破。') : v.rv7_rv30 > 1.3 ? _t('；近 7 天波動明顯放大（RV7 是 RV30 的 ') + fmt.n(v.rv7_rv30, 2) + _t(' 倍）。') : _t('。')), 'neu']);
+    if (v.rv30 != null) it.push([_t('實際波動 RV30'), fmt.n(v.rv30, 1) + '%', band(v.rv30, [30, 50, 70], [_t('年化 30% 以下，低波動'), _t('年化 30–50%，一般水準'), _t('年化 50–70%，偏高'), _t('年化 70% 以上，劇烈')]) + rvYear(v) + (v.rv7_rv30 < 0.75 ? _t('；近 7 天明顯比近 30 天平靜（RV7 只有 RV30 的 ') + fmt.n(v.rv7_rv30 * 100, 0) + _t('%），價格在收斂盤整，之後常出現方向性突破。') : v.rv7_rv30 > 1.3 ? _t('；近 7 天波動明顯放大（RV7 是 RV30 的 ') + fmt.n(v.rv7_rv30, 2) + _t(' 倍）。') : _t('。')), 'neu']);
     if (my != null) it.push([_t('Mayer 倍數'), fmt.n(my, 2), band(my, [0.8, 1, 1.5, 2.4], [_t('0.8 以下：歷史便宜區'), _t('0.8–1：價格低於 200 日均線，偏弱但不算便宜'), _t('1–1.5：價格高於 200 日均線、還沒過熱'), _t('1.5–2.4：偏熱'), _t('2.4 以上：歷史過熱區')]) + _t('。'), my < 0.8 ? 'pos' : my >= 2.4 ? 'neg' : my >= 1.5 ? 'warn' : 'neu']);
     if (pi != null) it.push(['Pi Cycle', fmt.n(pi, 2), pi >= 1 ? _t('已到 1：歷史頂部訊號觸發。') : pi >= 0.9 ? _t('接近 1，頂部訊號逼近。') : _t('只有 ') + fmt.n(pi, 2) + _t('，離觸發（1）很遠，沒有頂部跡象。'), pi >= 1 ? 'neg' : pi >= 0.9 ? 'warn' : 'neu']);
     return it;
@@ -929,6 +940,14 @@
           '熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高，回升（價格回調）時常是牛初的加碼段。跌破虛線那一天，等於這個規律被打破。', 'It peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high, and its rebounds (price pullbacks) were often early-bull buying windows. A move above the dashed line would break that pattern.',
           '不只受價格影響：最近高價買進的短期持有者滿 155 天後會被算成長期持有者，價格不漲也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。', 'Not price alone: recent high-priced buyers become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight.'),
         now: function () { var x = (D.onchain || {}).lthloss; if (!x) return ''; var c = x.cohort; return _T(fmt.n(x.value, 1) + '%（' + fmt.md(x.date) + '）' + (c && c.break_price ? '；跌破約 ' + fmt.usd(c.break_price) + ' 會超過這輪高點。' : '。'), fmt.n(x.value, 1) + '% (' + fmt.md(x.date) + ')' + (c && c.break_price ? '; below about ' + fmt.usd(c.break_price) + ' it would top this cycle\'s peak.' : '.')); } },
+      'sthband': { h: h('BTC 價格、短期持有者成本（橘）和上下各兩條標準差帶（對數刻度）。', 'BTC price, short-term holder cost (orange) and two standard-deviation bands on each side (log scale).',
+          '價格在 +1 標準差以上＝新買家獲利豐厚，過去常在這附近遇到賣壓（Murphy 舉 2023 年 1–9 月：碰到 +1 標準差後，回踩到成本線或 −1 標準差）；跌到 −1 標準差以下＝新買家普遍套牢，多半是急跌後的恐慌區。', 'Above +1σ recent buyers sit on big gains and selling has often shown up nearby (Murphy\'s example: Jan–Sep 2023, each touch of +1σ was followed by a pullback to the cost line or −1σ); below −1σ recent buyers are broadly under water, usually after a sharp drop.',
+          '帶寬用近 4 年的價格起伏算，會隨時間改變；碰到帶不代表一定反轉。只有一家資料（Bitview），和 Glassnode 原版的數字會有小差距。', 'The band width comes from the last 4 years of price swings and changes over time; touching a band does not mean a reversal. One data source (Bitview), so small differences from Glassnode\'s original are expected.'),
+        now: function () { var x = (D.onchain || {}).sth_bands; if (!x) return ''; var n = x.now; return _T('收盤在 ' + sbZ(n.z) + ' 標準差（' + fmt.md(x.date) + '）；+1 標準差 ' + fmt.usd(n.bands['1']) + '、−1 標準差 ' + fmt.usd(n.bands['-1']) + '。', 'Close at ' + sbZ(n.z) + 'σ (' + fmt.md(x.date) + '); +1σ ' + fmt.usd(n.bands['1']) + ', −1σ ' + fmt.usd(n.bands['-1']) + '.'); } },
+      'agecost': { h: h('BTC 價格、6–12 個月（綠）與 12–18 個月（藍）持幣成本；紅點死叉、綠點金叉（對數刻度）。', 'BTC price and the cost of coins aged 6–12 months (green) and 12–18 months (blue); red dots are death crosses, green dots golden crosses (log scale).',
+          '6–12 個月線跌破 12–18 個月線＝近一年買的人比更早一批便宜，過去大致在熊底附近；重新升過＝新進場的成本拉高，過去在主升段前後。從死叉到金叉：2019 約 11 個月、2023 約 12 個月。', 'The 6–12 month line dropping below the 12–18 month line means last year\'s buyers paid less than the earlier group, historically near bear-market bottoms; crossing back above means new money is paying up, historically around the main bull leg. Death to golden took about 11 months in 2019 and 12 in 2023.',
+          '兩條線比價格落後半年以上，交叉時價格往往已經走了一段；樣本只有 3–4 輪，2020 年有一次疫情後的短暫交叉。', 'Both lines lag price by six months or more, so price has usually moved a lot by the cross; only 3–4 cycles, plus a brief post-pandemic cross in 2020.'),
+        now: function () { var x = (D.cycle || {}).age_cost; if (!x) return ''; var lx = x.last_cross || {}; return _T('6–12 個月 ' + fmt.usd(x.c612) + '、12–18 個月 ' + fmt.usd(x.c1218) + '（' + fmt.md(x.date) + '）；' + (lx.kind === 'death' ? '死叉' : '金叉') + '至今 ' + x.days_since + ' 天。', '6–12 months ' + fmt.usd(x.c612) + ', 12–18 months ' + fmt.usd(x.c1218) + ' (' + fmt.md(x.date) + '); ' + x.days_since + ' days since the ' + (lx.kind === 'death' ? 'death' : 'golden') + ' cross.'); } },
       'sec': { h: h('上格是 BTC 價格，下格是賣方衰竭常數（都是對數刻度）；紅底是極端區（低於 0.13），紅圈是每次跌破後 90 天內的最低點。', 'Top: BTC price; bottom: the seller exhaustion constant (both log scale). The red band is the extreme zone (below 0.13); red circles mark the lowest point within 90 days of each break.',
           '常數很低＝價格很平靜、同時很多人在虧損，想賣的人大多已經賣了，過去多出現在熊市底部或大跌後的整理期。跌破之後再出現、但沒有更低的低點，有人當成第二個訊號點。', 'A very low reading means calm prices while many holders are underwater, so most would-be sellers have sold; historically it shows up near bear-market bottoms or in post-crash consolidations. A later low that does not undercut the first is read by some as a second signal.',
           '不是精準的底：2018/11 跌破後價格又先跌了 50%；也不只出現在週期底部（2023/8 在牛市中段）。刻度和 Glassnode 版不同，0.01 的門檻不能套。', 'Not a precise bottom: after the Nov 2018 break price fell another 50% first; nor only at cycle bottoms (Aug 2023 was mid-bull). The scale differs from Glassnode\'s, so the 0.01 line does not apply.') },
@@ -941,8 +960,8 @@
       'p20': { h: h('MVRV 除以前一輪週期高點（只用當時已知的資料）；紅線 0.75／0.80 是出場框架的鏈上賣點。', 'MVRV divided by the previous cycle\'s peak (using only data known at the time); red lines at 0.75/0.80 are the exit framework\'s on-chain sell points.', '比值越高越接近上一輪的狂熱程度；連 5 天站上 0.75 啟動第一個鏈上賣出。', 'The higher the ratio, the closer to last cycle\'s euphoria; 5 straight days above 0.75 trigger the first on-chain sale.', '每輪頂部的 MVRV 越來越低，所以用相對前一輪的比例。', 'MVRV peaks lower each cycle, hence the ratio to the previous peak.') },
       'path': { h: h('四種長期走法（虛線，本站的預測）與已實現價格（實線）；橘色帶是頂部模型的 80% 區間。', 'Four long-term paths (dashed, our forecasts) and the realized price (solid); the orange band is the top model\'s 80% range.', '看實線貼近哪一條。每月底自動重估：起點換成月底收盤，權重依收盤離各路徑多遠做貝氏更新；收盤連 10 天超出四條路徑上下 12% 才重畫形狀。', 'See which path the solid line is tracking. Re-estimated automatically each month end: the start moves to the month-end close and weights get a Bayesian update from how far the close is from each path; shapes are re-drawn only after 10 straight closes more than 12% outside all four.', '2028 年以後只供量級參考。', 'Beyond 2028, treat it as order-of-magnitude only.') },
       'pl': { h: h('價格除以冪律合理價（對數刻度）；藍帶是歷史底部區，橘點頂、藍點底。', 'Price divided by the power-law fair value (log scale); the blue band is the historical bottom zone, orange dots tops, blue dots bottoms.', '倍數越高越貴；歷輪頂部倍數一輪比一輪小。', 'Higher multiples mean more expensive; each cycle\'s top multiple has been smaller than the last.', '冪律是擬合出來的；每天只用當天以前的資料。', 'The power law is a fit; each day uses only data up to that day.') },
-      'ev-tmm': { h: h('短期持有者成本、真實市場均價與價格；虛線是用近 30 日速度外推。', 'STH cost, true market mean and price; dashed lines extrapolate the last 30 days\' pace.', '短期持有者成本上穿真實市場均價＝新資金用更高價進場，過去三次（2016、2019、2023）之後都走入牛市段。', 'STH cost crossing above the true market mean means new money is paying up; the last three crosses (2016, 2019, 2023) were followed by bull phases.', '落後指標；2019 年上穿後仍跌近六成。', 'A lagging signal; after the 2019 cross price still fell about 60%.') },
-      'ev-sth': { h: h('價格與短期持有者成本。', 'Price and short-term holder cost.', '價格在成本之上＝新買家整體獲利，牛市回檔常在這條線止跌。', 'Price above cost means recent buyers are in profit; bull-market pullbacks often stop here.', 'bitcoin-data 晚約 7 天。', 'bitcoin-data runs about 7 days late.') },
+      'ev-tmm': { h: h('短期持有者成本、真實市場均價與價格；虛線是用近 30 日速度外推。', 'STH cost, true market mean and price; dashed lines extrapolate the last 30 days\' pace.', '短期持有者成本上穿真實市場均價＝新資金用更高價進場，過去三次（2016、2019、2023）之後都走入牛市段。', 'STH cost crossing above the true market mean means new money is paying up; the last three crosses (2016, 2019, 2023) were followed by bull phases.', '落後指標；2019 年上穿後仍跌近六成。2026-11-04 起兩條線改用 Bitview（真實市場均價和 CheckOnChain 幾乎一致）；之前用的 bitcoin-data 真實市場均價偏高約 1.5%，下穿日記成 4/26，Bitview 是 5/18。', 'A lagging signal; after the 2019 cross price still fell about 60%. Since 2026-11-04 both lines come from Bitview (its true market mean matches CheckOnChain almost exactly); the bitcoin-data version used before runs about 1.5% higher and dated the down-cross 4/26, Bitview 5/18.') },
+      'ev-sth': { h: h('價格與短期持有者成本。', 'Price and short-term holder cost.', '價格在成本之上＝新買家整體獲利，牛市回檔常在這條線止跌。', 'Price above cost means recent buyers are in profit; bull-market pullbacks often stop here.', '2026-11-04 起用 Bitview，晚 1 天（之前用 bitcoin-data，晚約 7 天）。', 'From 2026-11-04 the data is Bitview, 1 day late (previously bitcoin-data, about 7 days late).') },
       'ev-mom12': { h: h('價格與一年前的價格；虛線是未來每一天要比的那個價格（已知）。', 'Price and the price a year earlier; the dashed line is the year-ago price each future day will be compared with (already known).', '價格在一年前之上＝12 個月動能為正；虛線往下走，代表接下來的門檻在降低。', 'Price above its year-ago level means positive 12-month momentum; a falling dashed line means the bar is getting lower.', '門檻已知，但價格未知；「價格不動」只是假設。', 'The bar is known, the price isn\'t; "if price stays flat" is an assumption.') },
       'ev-mvrv1y': { h: h('MVRV 與自己的一年均值；上格是價格。', 'MVRV and its own 1-year average; the top pane is price.', 'MVRV 在均值之上＝估值相對一年來在擴張。', 'MVRV above its average means valuation is expanding relative to the past year.', '均值線移動慢，盤整時容易來回穿越。', 'The average moves slowly, so sideways markets cause back-and-forth crosses.') },
       'ev-rcgrowth': { h: h('實現市值 30 日變化；上格是價格。', 'Realized cap 30-day change; the top pane is price.', '> 0＝資金在流入。', 'Above zero means money is flowing in.', '不是買賣訊號。', 'Not a trade signal.') },
@@ -1144,6 +1163,7 @@
       [_T('價格（Kraken）', 'Price (Kraken)'), bd, 0],
       [_T('頂部三指標（CoinMetrics）', 'Top-3 indicators (CoinMetrics)'), D.cycle.p6_date, 2],
       [_T('持有者成本（bitcoin-data）', 'Holder cost basis (bitcoin-data)'), (oc['sth-realized-price'] || {}).date, 7],
+      [_T('短期成本與真實市場均價（' + (fl.sth_vs_tmm || {}).source + '）', 'STH cost and true market mean (' + (fl.sth_vs_tmm || {}).source + ')'), (fl.sth_vs_tmm || {}).date, (fl.sth_vs_tmm || {}).source === 'Bitview' ? 2 : 7],
       [_T('短期持有者獲利（bitcoin-data）', 'STH in profit (bitcoin-data)'), (fl.sth_in_profit_pct || {}).date, 3],
       [_T('流動性供給（bitcoin-data）', 'Liquid supply (bitcoin-data)'), (oc['illiquid-supply'] || {}).date, 3],
       [_T('ETF 流量（The Block）', 'ETF flows (The Block)'), (etf[etf.length - 1] || {}).d, 4],
@@ -1410,17 +1430,17 @@
     var w = M.weights;
     return readBar('cycle') + '<div class="grid">' +
       panel('span-12', _t('市場階段：') + (STAGE[st.stage] || ['—'])[0], _t('P23 · 熊市 → 轉換期 → 牛市'), stageHtml()) +
-      regPanel() +
+      regPanel() + acPanel() +
       panel('span-12', _t('長期路徑：四種走法'), _t('每月底重估 · 下次 ') + M.next_review, legend([[_t('直接修復 ') + w['直接修復'] + '%', 'var(--s4)', 'dash'], [_t('淺回檔 ') + w['淺回檔'] + '%', 'var(--s1)', 'dash'], [_t('基準雙底 ') + w['基準雙底'] + '%', 'var(--s2)', 'dash'], [_t('延後新低 ') + w['延後新低'] + '%', 'var(--s3)', 'dash'], [_t('已實現'), 'var(--ink)'], [_t('頂部 80% 區間'), 'var(--flare)', 'box']]) + _t('<div class="chart" id="c-path"></div><p class="note">頂部模型：中位 ') + fmt.usd(M.top_model.median) + _t('，80% 區間 ') + fmt.k(M.top_model.p10) + '–' + fmt.k(M.top_model.p90) + _t('，時間 ') + esc(tx(M.top_model, 'timing')) + _t('。路徑是本站的預測，2028 年以後只供量級參考。</p>') + pathReviewHtml()) +
       panel('span-7', _t('MVRV ÷ 前一輪高點'), _t('CoinMetrics · 2021 起'), _t('<p class="say">現在 <b>') + fmt.n(cm.mvrv_vs_prior, 3) + _t('</b>；連 5 天站上 0.75 是出場框架的第一個鏈上賣點。') + esc((p20Read() || [''])[0]) + '</p><div class="chart" id="c-p20"></div>') +
       panel('span-5', _t('頂部三指標'), fmt.md(D.cycle.p6_date) + _t(' · 四年百分位'), '<p class="say">' + esc((p6Read() || [''])[0]) + '</p><div class="meters">' + meter('MVRV Z', _t('<0 底 · >3.5 頂'), p6.mvrv_z, fmt.n(p6.mvrv_z, 0), _t('百分位'), [80, 85, 90]) + meter('NUPL', _t('淨未實現損益'), p6.nupl, fmt.n(p6.nupl, 0), _t('百分位'), [80, 85, 90]) + meter('Puell', _t('礦工收入倍數'), p6.puell, fmt.n(p6.puell, 0), _t('百分位'), [80, 85, 90]) + _t('</div><p class="note">任兩項到 80 進入頂部區；到 85 連 5 天多賣兩階；到 90 在 10 個交易日內賣完。</p>') + p6Raw(), '', 'p6') +
-      panel('span-7', _t('冪律：價格 ÷ 合理價'), _t('每天只用當天以前資料擬合'), _t('<p class="say">現在 <b>') + fmt.n(pl.ratio, 2) + _t(' 倍</b>（合理價 ') + fmt.usd(pl.fair) + _t('）。頂部倍數每輪縮小，照這個速度，下一輪頂部約在合理價的 ') + fmt.n((pl.next_top_ratio || [])[0], 2) + '–' + fmt.n((pl.next_top_ratio || [])[1], 2) + _t(' 倍。') + esc((plRead() || [''])[0]) + '</p><div class="chart" id="c-pl"></div>', _t('<div class="seg" id="pl-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="2020">2020 起</button></div>')) +
+      panel('span-7', _t('冪律：價格 ÷ 合理價'), _t('每天只用當天以前資料擬合'), _t('<p class="say">現在 <b>') + fmt.n(pl.ratio, 2) + _t(' 倍</b>（合理價 ') + fmt.usd(pl.fair) + _T('，', ', ') + plGap(pl.ratio) + _t('）。頂部倍數每輪縮小，照這個速度，下一輪頂部約在合理價的 ') + fmt.n((pl.next_top_ratio || [])[0], 2) + '–' + fmt.n((pl.next_top_ratio || [])[1], 2) + _t(' 倍。') + esc((plRead() || [''])[0]) + '</p><div class="chart" id="c-pl"></div>', _t('<div class="seg" id="pl-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="2020">2020 起</button></div>')) +
       panel('span-5', _t('Tidemark 綜合訊號'), _t('第三方模型 · ') + fmt.md(tm.price_date) + _t(' 資料'), '<p class="say">' + esc((tmRead() || [''])[0]) + '</p><div class="meters">' + meter(_t('頂部訊號'), _t('≥50 窗口 · ≥70 警戒'), (tm.top || {}).signal || 0, fmt.n((tm.top || {}).signal, 1), (tm.top || {}).level || '—', [50, 70]) + meter(_t('熱度'), _t('五類加權'), (tm.top || {}).heat || 0, fmt.n((tm.top || {}).heat, 1), (tm.top || {}).zone || '', [40, 65]) + meter(_t('底部訊號'), _t('≥50 底部區'), (tm.bottom || {}).signal || 0, fmt.n((tm.bottom || {}).signal, 1), (tm.bottom || {}).level || '—', [50, 70]) + meter(_t('冷度'), _t('估值・礦工・價格結構'), (tm.bottom || {}).cold || 0, fmt.n((tm.bottom || {}).cold, 1), '', []) + '</div>' +
         '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:62%"><col style="width:38%"></colgroup><tbody>' + (tm.cats || []).map(function (x) { return '<tr><td>' + esc(_T(x[0], TM_CAT_EN[x[0]] || x[0])) + (x[2] === 'partial' ? _t('＊') : '') + '</td><td><div class="pct"><i><b class="' + ((x[1] || 0) >= 80 ? 'hot' : '') + '" style="width:' + (x[1] || 0) + '%"></b></i><span class="num">' + (x[1] == null ? '—' : fmt.n(x[1], 0)) + '</span></div></td></tr>'; }).join('') + '</tbody></table></div><p class="note">' + esc(tmVerdict(tm.cycle_test)) + '</p>', '', 'tm') + radarPanel() + ocPanel(true) +
       '</div>';
   };
   V.cycle.after = function () {
-    safe(drawEv, function () { drawOc(true); }); mount($('#c-regime'), drawRegime);
+    safe(drawEv, function () { drawOc(true); }); mount($('#c-regime'), drawRegime); mount($('#c-agecost'), drawAgeCost);
     var M = D.cycle.model, cols = { '直接修復': 'var(--s4)', '淺回檔': 'var(--s1)', '基準雙底': 'var(--s2)', '延後新低': 'var(--s3)' };
     var md = function (y, m) { return Math.round(Date.UTC(y, m - 1, 15) / 864e5); };
     var series = Object.keys(M.nodes).map(function (k) { return { name: _t(k), data: M.nodes[k].map(function (p) { return [md(p[0], p[1]), p[2]]; }), color: cols[k], dash: '5 5', w: 1.8, end: false, smooth: true }; });
@@ -1445,7 +1465,7 @@
     var tbl = _t('<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:30%"><col style="width:24%"><col style="width:46%"></colgroup><thead><tr><th>價位</th><th class="num">距收盤</th><th>是什麼</th></tr></thead><tbody>') + lv.map(function (x) { var d = (x[0] / c - 1) * 100; return '<tr><td class="num" style="text-align:left">' + fmt.usd(x[0]) + '</td><td class="num" style="color:' + (d >= 0 ? 'var(--up)' : 'var(--down)') + '">' + fmt.pct(d) + '</td><td>' + x[1] + '</td></tr>'; }).join('') + '</tbody></table></div>';
     var ma2 = [[_t('5 日'), ma.sma5], [_t('20 日'), ma.sma20], [_t('50 日'), ma.sma50], [_t('111 日'), ma.sma111], [_t('200 日'), ma.sma200], [_t('350 日'), ma.sma350]];
     var mat = '<div class="meters">' + ma2.map(function (m) { var d = (c / m[1] - 1) * 100; return meter(m[0] + _t('均線'), fmt.usd(m[1]), 50 + Math.max(-50, Math.min(50, d * 2)), fmt.pct(d), d >= 0 ? _t('價格在上方') : _t('價格在下方'), [50]); }).join('') + _t('</div><p class="note">中線＝均線位置；圓點越往右，價格越高於該均線。</p>');
-    return readBar('market') + '<div class="kpis">' + kpi(_t('收盤'), fmt.usd(c), fmt.pct(p.bar.chg_pct, 2) + _t(' · 當日區間位置 ') + fmt.n(p.bar.close_pos_pct, 0) + '%') + kpi(_t('ATR14（簡單平均）'), fmt.usd(p.atr.atr14), _t('約 ') + fmt.n(p.atr.atr14 / c * 100, 1) + _t('% / 日')) + kpi(_t('實際波動 RV30'), fmt.n(p.vol.rv30, 1) + '%', 'RV7 ' + fmt.n(p.vol.rv7, 1) + '% · RV90 ' + fmt.n(p.vol.rv90, 1) + '%') + kpi(_t('Mayer 倍數'), fmt.n(p.mayer.mayer, 2), _t('價格 ÷ 200 日均線')) + kpi('Pi Cycle', fmt.n(p.pi_cycle, 2), _t('111 日 ÷ 2×350 日；≥1 為歷史頂部訊號'), p.pi_cycle * 100) + '</div><div class="grid">' + interpPanel(mkInterp()) + swingPanel() +
+    return readBar('market') + '<div class="kpis">' + kpi(_t('收盤'), fmt.usd(c), fmt.pct(p.bar.chg_pct, 2) + _t(' · 當日區間位置 ') + fmt.n(p.bar.close_pos_pct, 0) + '%') + kpi(_t('ATR14（簡單平均）'), fmt.usd(p.atr.atr14), _t('約 ') + fmt.n(p.atr.atr14 / c * 100, 1) + _t('% / 日')) + kpi(_t('實際波動 RV30'), fmt.n(p.vol.rv30, 1) + '%', 'RV7 ' + fmt.n(p.vol.rv7, 1) + '% · RV90 ' + fmt.n(p.vol.rv90, 1) + '%' + (p.vol.rv30_pct1y != null ? _T(' · 一年第 ' + fmt.n(p.vol.rv30_pct1y, 0) + ' 百分位', ' · ' + fmt.n(p.vol.rv30_pct1y, 0) + 'th pct (1y)') : '')) + kpi(_t('Mayer 倍數'), fmt.n(p.mayer.mayer, 2), _t('價格 ÷ 200 日均線')) + kpi('Pi Cycle', fmt.n(p.pi_cycle, 2), _t('111 日 ÷ 2×350 日；≥1 為歷史頂部訊號'), p.pi_cycle * 100) + '</div><div class="grid">' + interpPanel(mkInterp()) + swingPanel() +
       panel('span-8', _t('近 20 天 K 線'), _t('Kraken 日線 · UTC'), '<div class="chart" id="c-cd"></div>') +
       panel('span-4', _t('關鍵價位'), '', levelsSay(lv, c) + tbl) +
       panel('span-6', _t('價格與均線'), '', maSay(ma, c) + mat) +
@@ -2111,6 +2131,75 @@
     hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
   }
 
+  /* 短期持有者成本帶（2026-11-04 使用者要求，Murphy〈短期持有者成本基礎模型〉＝Glassnode 的 STH cost basis ±1/±2 標準差；資料 Bitview）：
+     帶＝短期持有者成本 ×（近 4 年「價格 ÷ 成本」的平均 ± k 個標準差），帶的中心不是成本線，所以上下不對稱。只作讀值 */
+  var SB_K = [[2, 'var(--s1)', '5 4'], [1, 'var(--s4)', ''], [-1, 'var(--s3)', ''], [-2, 'var(--down)', '5 4']];
+  function sbLab(k) { return (k > 0 ? '+' : '−') + Math.abs(k) + _T(' 標準差', 'σ'); }
+  function sbZ(z) { return (z >= 0 ? '+' : '−') + fmt.n(Math.abs(z), 1); }
+  function ymdD(s) { return s ? s.replace(/-/g, '/') : '—'; }
+  function sbSay() {
+    var x = D.onchain.sth_bands, n = x.now, st = x.stats || {}, b = n.bands, it = [], gp = fmt.n(Math.abs(n.px / n.sth - 1) * 100, 1), mx = st.max120, fell = mx && mx.z >= 0.8 && n.z < mx.z - 0.5;
+    it.push([_T('現在位置', 'Where price sits'), sbZ(n.z) + _T(' 標準差', 'σ'),
+      _T('收盤 ' + fmt.usd(n.px) + '，在短期持有者成本 ' + fmt.usd(n.sth) + (n.px >= n.sth ? ' 上方 ' : ' 下方 ') + gp + '%。帶的中心（近 4 年平均）是成本 ×' + fmt.n(n.mu, 3) + '＝' + fmt.usd(n.center) + '，現在在中心' + (n.z >= 0 ? '上方' : '下方') + '。',
+        'Close ' + fmt.usd(n.px) + ', ' + gp + '% ' + (n.px >= n.sth ? 'above' : 'below') + ' the short-term holder cost of ' + fmt.usd(n.sth) + '. The centre of the bands (4-year average) is cost ×' + fmt.n(n.mu, 3) + ' = ' + fmt.usd(n.center) + '; price is ' + (n.z >= 0 ? 'above' : 'below') + ' it.'), Math.abs(n.z) >= 1 ? 'warn' : 'neu']);
+    it.push([_T('上緣', 'Upper bands'), fmt.k(b['1']) + ' / ' + fmt.k(b['2']),
+      _T('+1 標準差 ' + fmt.usd(b['1']) + '、+2 標準差 ' + fmt.usd(b['2']) + '。近 4 年只有 ' + fmt.n(st.above1_pct, 0) + '% 的日子收在 +1 標準差以上' + (fell ? '；近 120 天最高到 ' + sbZ(mx.z) + ' 標準差（' + ymdD(mx.date) + '）後回落' : '') + '。',
+        '+1σ ' + fmt.usd(b['1']) + ', +2σ ' + fmt.usd(b['2']) + '. Only ' + fmt.n(st.above1_pct, 0) + '% of days in the past 4 years closed above +1σ' + (fell ? '; the last 120 days peaked at ' + sbZ(mx.z) + 'σ (' + ymdD(mx.date) + ') and fell back' : '') + '.'), 'neu']);
+    it.push([_T('下緣', 'Lower bands'), fmt.k(b['-1']) + ' / ' + fmt.k(b['-2']),
+      _T('−1 標準差 ' + fmt.usd(b['-1']) + '、−2 標準差 ' + fmt.usd(b['-2']) + '。近 4 年 ' + fmt.n(st.below1_pct, 0) + '% 的日子收在 −1 標準差以下' + (st.last_below1 ? '，上一次是 ' + ymdD(st.last_below1) : '') + '。',
+        '−1σ ' + fmt.usd(b['-1']) + ', −2σ ' + fmt.usd(b['-2']) + '. ' + fmt.n(st.below1_pct, 0) + '% of days in the past 4 years closed below −1σ' + (st.last_below1 ? '; the last was ' + ymdD(st.last_below1) : '') + '.'), 'neu']);
+    return it;
+  }
+  function sbPanel() {
+    var x = (D.onchain || {}).sth_bands; if (!x || !x.rows) return '';
+    return panel('span-12', _T('短期持有者成本帶', 'Short-term holder cost bands'), 'Bitview · ' + fmt.md(x.date),
+      interpHtml(sbSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('短期持有者成本', 'STH cost'), 'var(--s2)']].concat(SB_K.map(function (k) { return [sbLab(k[0]), k[1], k[2] ? 'dash' : '']; }))) + '<div class="chart" id="c-sthband"></div>' +
+      '<p class="note">' + _T('短期持有者＝持有不到 155 天的幣，成本是它們的平均買價。帶的算法和 Glassnode／Murphy 的「短期持有者成本基礎模型」相同：成本 ×（近 4 年「價格 ÷ 成本」的平均 ± 1、2 個標準差）；帶的中心不是成本線，所以上下不對稱。2026-11-04 驗算：−1 標準差算出 68,991，Murphy 寫約 68,900。資料 Bitview（Bitcoin Research Kit 的公開 API），價格用本站統一收盤。',
+        'Short-term holders = coins held under 155 days; their cost is the average purchase price. The bands follow Glassnode\'s / Murphy\'s short-term holder cost basis model: cost × (the 4-year average of price ÷ cost ± 1 and 2 standard deviations); the centre is not the cost line, so the bands are asymmetric. Checked on 2026-11-04: −1σ comes out at 68,991 vs about 68,900 in Murphy\'s post. Data from Bitview (Bitcoin Research Kit\'s public API); price is the site\'s standard close.') + '</p>');
+  }
+  function drawSthBand(el) {
+    var x = (D.onchain || {}).sth_bands; if (!x || !el) return;
+    var R_ = x.rows, ser = [{ name: _T('BTC 價格', 'BTC price'), data: R_.map(function (r) { return [r[0], r[1]]; }), color: 'var(--ink-2)', w: 1.3 }];
+    SB_K.forEach(function (k) { var q = { name: sbLab(k[0]), data: R_.map(function (r) { return [r[0], Math.round(r[2] * (r[3] + k[0] * r[4]))]; }), color: k[1], w: 1.2 }; if (k[2]) q.dash = k[2]; ser.push(q); });
+    ser.splice(3, 0, { name: _T('短期持有者成本', 'STH cost'), data: R_.map(function (r) { return [r[0], r[2]]; }), color: 'var(--s2)', w: 2 });
+    lineChart(el, { log: true, h: el.clientWidth < 520 ? 260 : 340, series: ser, tipFmt: fmt.usd, aria: _T('BTC 價格與短期持有者成本帶', 'BTC price and short-term holder cost bands') });
+  }
+
+
+  /* 6–12 與 12–18 個月持幣成本（2026-11-04 使用者要求，wander〈6M–12M 與 12M–18M 成本線〉；資料 Bitview）。
+     6–12 個月線跌破 12–18 個月線（死叉）大致在熊底附近，重新升過（金叉）在主升段前後；交叉日與間隔照實列出。只作讀值 */
+  function acSay() {
+    var x = D.cycle.age_cost, lx = x.last_cross, X = x.crosses || [], it = [], d0 = dnOf(x.date);
+    var ym = function (s) { return s.slice(0, 7).replace('-', '/'); }, ago = function (k) { return ym(ds_(d0 - k)); };
+    var pairs = X.filter(function (c, i) { return c.kind === 'death' && X[i + 1]; }).map(function (c) { return [c.date, X[X.indexOf(c) + 1].date, c.days_to_next]; });
+    var where = x.price < Math.min(x.c612, x.c1218) ? ['兩條線都在收盤上方：這兩批買家都還在虧損。', 'Both lines sit above the close: both groups of buyers are under water.'] : x.price < Math.max(x.c612, x.c1218) ? ['收盤在兩條線之間。', 'The close sits between the two lines.'] : ['收盤在兩條線上方。', 'The close sits above both lines.'];
+    it.push([_T('兩條成本線', 'The two cost lines'), fmt.k(x.c612) + ' / ' + fmt.k(x.c1218),
+      _T(ago(365) + '–' + ago(182) + ' 買進、到現在沒動的幣，平均成本 ' + fmt.usd(x.c612) + '；再早半年（' + ago(548) + '–' + ago(365) + '）買進的是 ' + fmt.usd(x.c1218) + '，前者' + (x.gap_pct < 0 ? '低 ' : '高 ') + fmt.n(Math.abs(x.gap_pct), 1) + '%。收盤 ' + fmt.usd(x.price) + '，' + where[0],
+        'Coins bought ' + ago(365) + '–' + ago(182) + ' and unmoved since cost ' + fmt.usd(x.c612) + ' on average; those from ' + ago(548) + '–' + ago(365) + ' cost ' + fmt.usd(x.c1218) + ', so the first group is ' + fmt.n(Math.abs(x.gap_pct), 1) + '% ' + (x.gap_pct < 0 ? 'lower' : 'higher') + '. Close ' + fmt.usd(x.price) + '. ' + where[1]), x.gap_pct < 0 ? 'neg' : 'pos']);
+    if (lx) it.push([_T('上次交叉', 'Last cross'), (lx.kind === 'death' ? _T('死叉 ', 'Death ') : _T('金叉 ', 'Golden ')) + fmt.md(lx.date),
+      _T('6–12 個月線在 ' + ymdD(lx.date) + (lx.kind === 'death' ? ' 跌破' : ' 升過') + ' 12–18 個月線，至今 ' + x.days_since + ' 天。過去從死叉到重新金叉：' + pairs.map(function (p) { return ym(p[0]) + '→' + ym(p[1]) + '（' + p[2] + ' 天）'; }).join('、') + '；2020/09→2021/02 那次在疫情急跌之後，wander 視為例外。',
+        'The 6–12 month line ' + (lx.kind === 'death' ? 'fell below' : 'rose above') + ' the 12–18 month line on ' + ymdD(lx.date) + ', ' + x.days_since + ' days ago. Past death-to-golden gaps: ' + pairs.map(function (p) { return ym(p[0]) + '→' + ym(p[1]) + ' (' + p[2] + ' days)'; }).join(', ') + '; the 2020/09→2021/02 one came after the pandemic crash and wander treats it as an exception.'), 'neu']);
+    it.push([_T('怎麼看', 'How to read it'), _T('落後', 'Lagging'),
+      _T('兩條線是半年到一年半前的平均買價，比價格落後很多。半年後，12–18 個月這一段會由現在 6–12 個月的這批幣（成本 ' + fmt.usd(x.c612) + '）遞補，只要它們不動，12–18 個月線就會往這個水準移；重新金叉要等那時 6–12 個月段（也就是這半年買進的幣）的成本高過它。',
+        'Both lines are average purchase prices from six to eighteen months ago, so they lag price a lot. In six months the 12–18 month band will be filled by today\'s 6–12 month coins (cost ' + fmt.usd(x.c612) + '); if they stay put, the 12–18 month line moves toward that level, and a golden cross needs the coins bought in these six months to cost more than that.'), 'neu']);
+    return it;
+  }
+  function acPanel() {
+    var x = (D.cycle || {}).age_cost; if (!x || !x.rows) return '';
+    return panel('span-12', _T('6–12 與 12–18 個月持幣成本', '6–12 and 12–18 month holder cost'), 'Bitview · ' + fmt.md(x.date),
+      interpHtml(acSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('6–12 個月成本', '6–12 month cost'), 'var(--s3)'], [_T('12–18 個月成本', '12–18 month cost'), 'var(--s1)'], [_T('↓ 死叉', '↓ Death cross'), 'var(--down)', 'dot'], [_T('↑ 金叉', '↑ Golden cross'), 'var(--up)', 'dot']]) + '<div class="chart" id="c-agecost"></div>' +
+      '<p class="note">' + _T('持有時間（幣齡）6–12 個月、12–18 個月的幣，各自的平均買價（實現價格）。wander 的觀察：6–12 個月線跌破 12–18 個月線大致在熊底附近，重新升過在主升段前後。資料 Bitview（Bitcoin Research Kit，和 wander 原圖同一個來源；6–12 個月由 6–9、9–12 個月兩段合併），價格用本站統一收盤。',
+        'Average purchase price (realized price) of coins aged 6–12 and 12–18 months. wander\'s observation: the 6–12 month line falling below the 12–18 month line has come near bear-market bottoms, and crossing back above around the start of the main bull leg. Data from Bitview (Bitcoin Research Kit, the same source as wander\'s chart; 6–12 months combines the 6–9 and 9–12 month bands); price is the site\'s standard close.') + '</p>');
+  }
+  function drawAgeCost(el) {
+    var x = (D.cycle || {}).age_cost; if (!x || !el) return;
+    var R_ = x.rows, col = function (r, i) { return R_.map(function (q) { return [q[0], q[i]]; }).filter(function (p) { return p[1] != null; }); };
+    var XC = x.crosses || [], sm = el.clientWidth < 520;   // 手機只標最近一次的日期，其他只畫點（游標看日期）
+    var mk = XC.map(function (c, i) { var g = c.kind === 'golden'; return { x: dnOf(c.date), y: c.cost, label: sm && i < XC.length - 1 ? '' : (g ? '↑ ' : '↓ ') + c.date.slice(2, 7).replace('-', '/').replace('/0', '/'), color: g ? 'var(--up)' : 'var(--down)', below: !g }; });
+    lineChart(el, { log: true, h: el.clientWidth < 520 ? 260 : 340, marks: mk, tipFmt: fmt.usd, aria: _T('BTC 價格與 6–12、12–18 個月持幣成本', 'BTC price and 6–12 / 12–18 month holder cost'),
+      series: [{ name: _T('BTC 價格', 'BTC price'), data: col(R_, 1), color: 'var(--ink-2)', w: 1.2 }, { name: _T('6–12 個月成本', '6–12 month cost'), data: col(R_, 2), color: 'var(--s3)', w: 2 }, { name: _T('12–18 個月成本', '12–18 month cost'), data: col(R_, 3), color: 'var(--s1)', w: 2 }] });
+  }
+
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};
     var rows = [
@@ -2122,10 +2211,10 @@
     return readBar('onchain') + '<div class="kpis">' + kpi(_t('短期持有者獲利比例'), fmt.n((fl.sth_in_profit_pct || {}).value, 1) + '%', _t('7 天前 ') + fmt.n((fl.sth_in_profit_pct || {}).d7, 1) + '%', (fl.sth_in_profit_pct || {}).value) + kpi(_t('短期持有者成本'), fmt.usd((fl.sth_vs_tmm || {}).sth_cost), _t('真實市場均價 ') + fmt.usd((fl.sth_vs_tmm || {}).tmm)) + kpi(_t('交易所供給'), fmt.n(ex.exchange_supply_share_pct, 2) + '%', _t('7 日 ') + fmt.pct(ex.exchange_supply_chg7_pct, 2) + _t(' · 90 日 ') + fmt.pct(ex.exchange_supply_chg90_pct, 2)) + kpi(_t('算力 7 日均'), fmt.n(mi.hash7, 0) + ' EH/s', _t('週 ') + fmt.pct(mi.wk_chg_pct, 1) + ' · hashprice $' + fmt.n(mi.hashprice, 1)) + kpi(_t('下次難度調整'), fmt.pct(mi.diff_next_pct, 1), fmt.md(mi.retarget) + _t(' · 進度 ') + fmt.n(mi.diff_progress, 0) + '%', mi.diff_progress) + '</div><div class="grid">' + interpPanel(ocInterp()) +
       panel('span-5', _t('籌碼分布（URPD）'), fmt.md(u.date) + _t(' · 每 2,000 美元一格'), urpdSay(u) + '<div id="c-urpd"></div>') +
       panel('span-7', _t('短期持有者獲利比例'), _t('2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%', '<div class="chart" id="c-profit"></div><p class="note">' + _T('短期持有者成本與真實市場均價的走勢在週期版「市場階段」的佐證圖 ', 'Short-term holder cost vs the true market mean is charted with the market-stage evidence on the Cycle page ') + jumpA('cycle', 'ev-tmm', _T('看圖 →', 'See chart →')) + '</p>') +
-      cohortPanel() + lthColorPanel() + lthLossPanel() + secPanel() + rplPanel() + adPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-12', _t('鏈上指標'), _T('STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'STH-SOPR: CheckOnChain · others: bitcoin-data'), t + '<p class="note">' + _T('MVRV Z、NUPL、Puell 在週期版「頂部三指標」', 'MVRV Z, NUPL and Puell are on the Cycle page under the top-3 indicators ') + jumpA('cycle', 'p6', '→') + '</p>') + ocPanel() + '</div>';
+      cohortPanel() + sbPanel() + lthColorPanel() + lthLossPanel() + secPanel() + rplPanel() + adPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-12', _t('鏈上指標'), _T('STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'STH-SOPR: CheckOnChain · others: bitcoin-data'), t + '<p class="note">' + _T('MVRV Z、NUPL、Puell 在週期版「頂部三指標」', 'MVRV Z, NUPL and Puell are on the Cycle page under the top-3 indicators ') + jumpA('cycle', 'p6', '→') + '</p>') + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
-    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd);
+    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-sthband'), drawSthBand); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd);
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
     var v = D.chips.viz || {}, u = v.urpd || {}, c = D.price.bar.c, el = $('#c-urpd');
     if (el && u.band) {
@@ -2232,7 +2321,7 @@
     return '<div class="grid">' + panel('span-7', _t('這是什麼'), '', _t('<div class="prose"><p>破曉（Daybreak）是每天清晨的第一份比特幣簡報：先告訴你今天發生了什麼、為什麼重要，再用數據說明市場在週期裡的位置，以及離分批出場還有多遠。</p><p>每天兩段更新：台北 08:20（UTC 00:20）資料管線自動抓取 Kraken、Deribit、CoinMetrics、bitcoin-data、mempool.space、FRED、13 個交易所掛單簿與 Tidemark，算出所有指標；之後由 Claude 查證當天新聞、讀數據，寫成頭條、今日要聞解讀與各版的「今日判讀」。數字全部來自管線，判讀只解釋數字，不改數字。</p>') +
       _t('<h3>原則</h3><p>先給結論再給證據。各版「這些數字代表什麼」與表格下方的解讀，是用當日數值套固定門檻自動產生（門檻寫在句子裡），標籤「偏多／偏空／留意／中性」只描述該數字對價格的一般含意，不是預測，也不連動出場規則。寧可標示「本日未取得」，也不推估或沿用舊數字。不同資料商的數字不相減。分數一律附樣本數，樣本少於 30 不下結論。</p><h3>限制</h3><p>週期模型只有 3–4 輪歷史，所有「遞減」推論都假設趨勢延續。冪律擬合線會隨新資料下修。掛單隨時可撤。短線預測不連動出場規則。bitcoin-data 的部分序列本身晚 5–6 天，頁首「資料狀態」列出每個來源的資料日期與落後天數。</p>') +
       _t('<h3>免責聲明</h3><p>本站內容僅供研究與教育參考，不構成投資建議。加密資產波動極大，請依自身情況判斷並自負風險。</p></div>')) +
-      panel('span-5', _t('資料來源'), '', '<div class="events">' + [[_t('價格、均線、ATR'), _t('Kraken 日線（UTC）')], [_t('波動率、基差、選擇權'), _t('Deribit 公開 API')], [_T('MVRV、頂部三指標、交易所供給、冪律', 'MVRV, top-3 indicators, exchange supply, power law'), 'CoinMetrics Community'], [_T('SOPR、持有者成本、籌碼', 'SOPR, holder cost basis, supply distribution'), 'bitcoin-data.com'], ['STH-SOPR', 'CheckOnChain'], [_t('算力、難度'), 'mempool.space'], [_t('相關係數、利率'), 'FRED'], [_t('ETF 流量'), _t('The Block（與 Farside 同口徑）')], [_t('掛單簿'), _t('Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Hyperliquid')], [_t('綜合訊號'), _t('Tidemark（north7.github.io）')]].concat(D.onchain.whales ? [[_T('鯨魚分層持幣', 'Holdings by balance tier (whales)'), 'BitInfoCharts']] : []).map(function (r) { return '<div class="event" style="grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)"><span>' + r[0] + '</span><span style="color:var(--ink-2)">' + r[1] + '</span></div>'; }).join('') + _t('</div><p class="note">資料日 ') + D.meta.bar_date + _t(' · 管線產出 ') + (D.meta.generated_utc || '').replace('T', ' ').slice(0, 16) + _t(' UTC · 結論 ') + (N ? (N.written_utc || '').replace('T', ' ').slice(0, 16) + ' UTC' : '—') + '</p>') + '</div>';
+      panel('span-5', _t('資料來源'), '', '<div class="events">' + [[_t('價格、均線、ATR'), _t('Kraken 日線（UTC）')], [_t('波動率、基差、選擇權'), _t('Deribit 公開 API')], [_T('MVRV、頂部三指標、交易所供給、冪律', 'MVRV, top-3 indicators, exchange supply, power law'), 'CoinMetrics Community'], [_T('SOPR、持有者成本、籌碼', 'SOPR, holder cost basis, supply distribution'), 'bitcoin-data.com'], ['STH-SOPR', 'CheckOnChain'], [_T('短期成本對真實市場均價、成本帶、年齡層成本', 'STH cost vs true market mean, cost bands, age-band cost'), _T('Bitview（Bitcoin Research Kit）', 'Bitview (Bitcoin Research Kit)')], [_t('算力、難度'), 'mempool.space'], [_t('相關係數、利率'), 'FRED'], [_t('ETF 流量'), _t('The Block（與 Farside 同口徑）')], [_t('掛單簿'), _t('Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Hyperliquid')], [_t('綜合訊號'), _t('Tidemark（north7.github.io）')]].concat(D.onchain.whales ? [[_T('鯨魚分層持幣', 'Holdings by balance tier (whales)'), 'BitInfoCharts']] : []).map(function (r) { return '<div class="event" style="grid-template-columns:minmax(0,1fr) minmax(0,1.2fr)"><span>' + r[0] + '</span><span style="color:var(--ink-2)">' + r[1] + '</span></div>'; }).join('') + _t('</div><p class="note">資料日 ') + D.meta.bar_date + _t(' · 管線產出 ') + (D.meta.generated_utc || '').replace('T', ' ').slice(0, 16) + _t(' UTC · 結論 ') + (N ? (N.written_utc || '').replace('T', ' ').slice(0, 16) + ' UTC' : '—') + '</p>') + '</div>';
   };
 
   /* ---------------- 版面 ----------------

@@ -83,6 +83,7 @@
 | CoinMetrics Community | MVRV、實現價、**頂部三指標（MVRV Z／NUPL／Puell）**、交易所供給、實現市值、冪律、長期價格 | 每日（晚 1 天） |
 | bitcoin-data.com | 持有者成本、LTH SOPR、籌碼流向、URPD、幣齡分布（長短期持有者籌碼推算用）、流動性供給、頂部雷達 | 每日 14 次請求（免費層上限 15） |
 | CheckOnChain 公開圖表 | STH-SOPR、短期持有者實現獲利／虧損、長短期持有者的實際籌碼分布、賣方衰竭常數、全網實現獲利 ÷ 虧損、HODL Waves（表觀需求）、長期持有者虧損比例（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
+| Bitview（Bitcoin Research Kit 公開 API） | 短期持有者成本與真實市場均價（佐證燈號第 6 盞、鏈上版讀值）、短期持有者成本帶、6–12／12–18 個月持幣成本；真實市場均價每天和 CheckOnChain 對照 | 每日（晚 1 天，免費、不用金鑰） |
 | Deribit | DVOL、期貨基差、選擇權、永續資金費率 | 每日 |
 | OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權）；OKX 永續逐小時未平倉量與 K 線（清算熱力圖，推算）；OKX 場外 USDT/CNY 報價與永續對現貨日線（三地溢價） | 每日 |
 | 13 個交易所掛單簿 | Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Kraken Futures、OKX Swap、Hyperliquid | 每日快照 |
@@ -191,6 +192,7 @@ pipeline/signals.py      異動偵測：極端值、急變、狀態翻轉、關�
 pipeline/etf.py          從 The Block 更新 ETF 每日淨流量
 pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 7 個
 pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損、長短期持有者籌碼、賣方衰竭常數、全網實現獲利 ÷ 虧損、1 年以上未動供給、長期持有者虧損比例：讀 CheckOnChain 公開圖表（晚約 1 天）
+pipeline/bitview.py      Bitview（BRK 公開 API）：短期持有者成本、真實市場均價、6–12／12–18 個月持幣成本，快取 coc_cache/bitview.json；真實市場均價每天和 CheckOnChain 對照
 pipeline/cohort_urpd.py  長短期持有者籌碼：URPD × 幣齡分布 × 每日價格區間推算 LTH／STH 籌碼（collect.py 每天呼叫）
 pipeline/liq_heat.py     清算熱力圖：OKX 永續逐小時未平倉量＋假設槓桿推算各價位的待清算量（collect.py 每天呼叫）
 pipeline/cohort_cache/   每天的完整 URPD（63 格）與幣齡分布存檔（bitcoin-data 免費層的 URPD 歷史只到約 2026-08-10）
@@ -292,6 +294,9 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 2026-11-03：長期路徑的每月重估自動化（10/31 那次因為沒有任何流程負責而漏掉，這次補做）：`pipeline/path_review.py` 每天由 build.py 呼叫，到了月底就依舊日報已裁示的規則換錨（起點＝月底收盤）、補已實現點、用月底收盤對各路徑當月值的對數常態似然（σ 12%）貝氏更新權重、收破 61,000 時「直接修復」歸零，計算過程寫進 `data/model.json` 的 `paths.reviews` 並在週期版公開；每天做包絡檢查，收盤連 10 天超出四條路徑上下 12% 才標記需要重估形狀（形狀仍須人工）。10 月結果：月底收 77,437，權重 30/20/25/25 → 27/21/26/26（直接修復／淺回檔／基準雙底／延後新低），包絡 0 天超出、形狀不變。
   - 2026-11-03：鏈上版新增「表觀需求（30 天合計）」（CryptoQuant 的 Apparent Demand）：30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化，1 年以上供給取自 CheckOnChain HODL Waves（2010 年起、每天 1 次，`coc.get_hodl1y`，快取 `coc_cache/hodl-1y.json`）；2020 年起畫圖並疊 30 日平均。單日大量舊幣搬動（≥ 10 萬顆）標成疑似搬家，並提醒一年後的回音日（2025/11/22–23 搬了約 47 萬顆，回音在 2026/11/22 前後）（`stage_viz.ad_viz`）。
   - 2026-11-04：鏈上版新增「長期持有者虧損比例」（ForeDex 的 Supply In Loss % - LTH）：CheckOnChain 公開圖表（2009 年起、每天 1 次，`coc.get_lthloss`，快取 `coc_cache/lth-loss.json`），2013 年起畫圖，標出歷輪熊市底部的高點（2015/08 53.0%、2019/03 46.4%、2022/12 44.7%、2026/06 45.4%）與高點後的最高值；並用長期持有者籌碼分布每天重算「跌到多少會超過這輪高點」（11/03 約 61,000）（`stage_viz.lthloss_viz`）。
+  - 2026-11-04：「短期持有者成本 vs 真實市場均價」由 bitcoin-data 改用 Bitview（使用者決定）：Bitview 和 CheckOnChain 的真實市場均價 2016 年以來差距中位數 0.01%，bitcoin-data 一直偏高約 1.5%、而且晚約 7 天；兩條線一律同一家，Bitview 失敗且快取超過 4 天時退回 bitcoin-data。下穿日因此由 4/26 改為 5/18。`pipeline/bitview.py`，每天拿 CheckOnChain 的真實市場均價驗算（差超過 0.5% 記進錯誤清單）。
+  - 2026-11-04：鏈上版新增「短期持有者成本帶」（Murphy 的「短期持有者成本基礎模型」）：成本 ×（近 4 年「價格 ÷ 成本」的平均 ± 1、2 個標準差），−1 標準差和 Murphy 原文差不到 0.2%。週期版新增「6–12 與 12–18 個月持幣成本」（wander）：兩條年齡層成本線與歷次死叉／金叉，數字和原圖一致。兩張都用 Bitview。
+  - 2026-11-04：RV30 加一年分位與一年低點（gaah_im 的低波動觀察）；冪律倍數旁加白話「低於趨勢 X%」。
   - 每日任務加「結構分析」：先問一個行情問題，拆參與者、比較前後、分清事實與推算、用行為確認、寫情境與推翻條件（`docs/CLAUDE_DAILY.md`）。
 - **2026-10-23**
   - 鏈上版：短期持有者實現獲利與虧損（CheckOnChain，兩條分開、單位 BTC、已平滑），和 7 天前比，標出獲利 ÷ 虧損的變化主要是哪一邊帶動的。不佔 bitcoin-data 額度。

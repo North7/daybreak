@@ -18,13 +18,13 @@ def _at_or_before(dates, t):   # 以日期回推（資料缺日時不以列位�
     return b if b >= 0 else None
 
 
-def tmm_light(sth, tmm):
-    """第 6 盞：短期持有者成本 vs 真實市場均價（兩條都是 bitcoin-data，同一家同日比較，不跨資料商相減）。"""
+def tmm_light(sth, tmm, src='bitcoin-data，晚約 7 天'):
+    """第 6 盞：短期持有者成本 vs 真實市場均價（兩條同一家同日比較，不跨資料商相減；2026-11-04 起是 Bitview，失敗時退回 bitcoin-data）。"""
     cd = sorted(set(sth) & set(tmm))
     if len(cd) < 31: return None
     d = cd[-1]; s0, t0 = sth[d], tmm[d]
     return dict(id='tmm', label='短期持有者成本 vs 真實市場均價', ok=s0 > t0, value=round((s0 / t0 - 1) * 100, 2), unit='%',
-                cond='短期持有者成本高於真實市場均價（bitcoin-data，晚約 7 天）', date=d, est=_cross(sth, tmm, cd))
+                cond=f'短期持有者成本高於真實市場均價（{src}）', src=src.split('，')[0], date=d, est=_cross(sth, tmm, cd))
 
 
 def _cross(sth, tmm, cd):
@@ -43,11 +43,11 @@ def _cross(sth, tmm, cd):
     return dict(out, days=days, date=ds(dn(d) + days), sth_at=round(sth[d] + a * days), tmm_at=round(tmm[d] + b * days))
 
 
-def build(mv, ex, sth, tmm, last):
-    """mv：CoinMetrics (date, price, mvrv, mktcap, supply)；ex：(date, 交易所供給)；sth、tmm：bitcoin-data {date: 美元}。"""
+def build(mv, ex, sth, tmm, last, src='bitcoin-data'):
+    """mv：CoinMetrics (date, price, mvrv, mktcap, supply)；ex：(date, 交易所供給)；sth、tmm：{date: 美元}（src 那一家，2026-11-04 起是 Bitview）。"""
     d = [x[0] for x in mv]; p = [x[1] for x in mv]; m = [x[2] for x in mv]; rc = [x[3] / x[2] for x in mv]
     start = (dt.date.fromisoformat(d[-1]) - dt.timedelta(days=365 * YEARS)).isoformat(); i0 = bisect.bisect_left(d, start)
-    V = dict(start=start, step=STEP, source='價格與 MVRV、實現市值、交易所供給：CoinMetrics；短期持有者成本、真實市場均價：bitcoin-data')
+    V = dict(start=start, step=STEP, source=f'價格與 MVRV、實現市值、交易所供給：CoinMetrics；短期持有者成本、真實市場均價：{src}', cost_src=src)
     V['px'] = thin([[dn(d[k]), round(p[k])] for k in range(i0, len(d))])
     # 12 個月動能：一年前的價格（往後延伸 AHEAD 天：未來每一天要比的那個價格現在就已知道）
     ago = []
@@ -74,9 +74,13 @@ def build(mv, ex, sth, tmm, last):
     # 交易所供給 90 日變化（%；與燈號同算法：往前第 90 筆）
     ed = [x[0] for x in ex]; e0 = bisect.bisect_left(ed, start)
     V['xs90'] = dict(v=thin([[dn(ex[k][0]), round((ex[k][1] / ex[k - 90][1] - 1) * 100, 2)] for k in range(max(e0, 90), len(ex))]))
-    # 短期持有者成本（與價格同一張圖）
-    V['sth'] = dict(v=thin([[dn(t), round(v)] for t, v in sorted(sth.items()) if t >= start]))
-    # 短期持有者成本 vs 真實市場均價 ＋ 以近 30 日速度的外推
+    V.update(cost_viz(sth, tmm, start))
+    return V
+
+
+def cost_viz(sth, tmm, start):
+    """短期持有者成本（與價格同一張圖）、短期持有者成本 vs 真實市場均價 ＋ 以近 30 日速度的外推（2026-11-04 從 build 拆出，補值時可單獨重算）"""
+    V = dict(sth=dict(v=thin([[dn(t), round(v)] for t, v in sorted(sth.items()) if t >= start])))
     cd = sorted(set(sth) & set(tmm))
     if cd:
         est = _cross(sth, tmm, cd); x0 = dn(cd[-1])
@@ -448,3 +452,58 @@ def lthloss_viz(ser, last, bottoms, cohort=None, block=4):
         out['cohort'] = dict(date=cohort.get('date'), at_close=round(_loss_at(R, px[d1]) * 100, 1), break_price=bp,
                              table=[[p, round(_loss_at(R, p) * 100, 1)] for p in range(int(px[d1]) // 2000 * 2000, max(20000, (bp or 50000) - 4000), -4000)])
     return out
+
+
+# 2026-11-04 使用者要求（Murphy〈短期持有者成本基礎模型〉，Glassnode 的 STH cost basis ±1/±2 標準差）：資料 Bitview（bitview.get）。
+#   帶＝短期持有者成本 ×（近 4 年〔1,460 天〕「價格 ÷ 短期持有者成本」的平均 ± k 個標準差）。帶的中心不是成本線，所以上下不對稱。
+#   驗算：2026-11-04 的 −1 標準差算出 68,991，Murphy 寫約 68,900。價格用網站統一收盤（px，沒有的日子用 Bitview 自帶的價格）。只作讀值
+SB_W, SB_FROM = 1460, '2022-01-01'
+
+
+def sth_bands_viz(bv, px, last, step=3):
+    sth = bv['sth']; P = {d: px.get(d, bv['px'].get(d)) for d in sth}
+    D = [d for d in sorted(sth) if d <= last and P.get(d)]
+    if len(D) < SB_W + 200: return None
+    r = [P[d] / sth[d] for d in D]; s1 = s2 = 0.0; mu, sd = {}, {}
+    for i, x in enumerate(r):
+        s1 += x; s2 += x * x
+        if i >= SB_W: s1 -= r[i - SB_W]; s2 -= r[i - SB_W] ** 2
+        if i >= SB_W - 1:
+            m = s1 / SB_W; mu[D[i]] = m; sd[D[i]] = math.sqrt(max(0.0, s2 / SB_W - m * m))
+    z = {d: (P[d] / sth[d] - mu[d]) / sd[d] for d in mu if sd[d] > 0}
+    d1 = D[-1]; S = sth[d1]; Z = sorted(z)
+    last4 = [d for d in Z if dn(d) > dn(d1) - SB_W]
+    hi120 = max((d for d in Z if dn(d) > dn(d1) - 120), key=z.get)
+    lastof = lambda f: next((d for d in reversed(Z) if f(z[d])), None)
+    rows = thin([[dn(d), round(P[d]), round(sth[d]), round(mu[d], 4), round(sd[d], 4)] for d in D if d >= SB_FROM and d in mu], step)
+    return dict(date=d1, src='Bitview', window=SB_W, rows=rows,
+                now=dict(px=round(P[d1]), sth=round(S), mu=round(mu[d1], 4), sd=round(sd[d1], 4), z=round(z[d1], 2), center=round(S * mu[d1]),
+                         bands={str(k): round(S * (mu[d1] + k * sd[d1])) for k in (-2, -1, 1, 2)}),
+                stats=dict(above1_pct=round(sum(z[d] >= 1 for d in last4) / len(last4) * 100, 1), below1_pct=round(sum(z[d] <= -1 for d in last4) / len(last4) * 100, 1),
+                           last_above1=lastof(lambda v: v >= 1), last_below1=lastof(lambda v: v <= -1), max120=dict(date=hi120, z=round(z[hi120], 2))),
+                note='短期持有者成本（Bitview）×（近 4 年價格 ÷ 成本的平均 ± k 個標準差）；Glassnode／Murphy 的同類模型；只作讀值')
+
+
+# 2026-11-04 使用者要求（wander〈6M–12M 與 12M–18M 成本線〉，原圖用 Bitview／BRK）：兩個年齡層的平均買價（實現價格）。資料 Bitview（bitview.get）。
+#   6–12 個月線跌破 12–18 個月線（死叉）大致在熊底附近，重新上穿（金叉）在主升段前後；交叉日與間隔照實列出。只作讀值
+AC_FROM, AC_X = '2015-01-01', '2012-01-01'   # 圖從 2015 起（2014 年 12–18 個月線還在反映 2012–13 年的幣，會把刻度拉到 10 美元）
+
+
+def age_cost_viz(bv, px, last, step=4):
+    a, b = bv['c612'], bv['c1218']
+    D = [d for d in sorted(set(a) & set(b)) if d <= last]
+    if len(D) < 1000: return None
+    P = lambda d: px.get(d, bv['px'].get(d))
+    xs = []
+    for i in range(1, len(D)):
+        if D[i] < AC_X: continue
+        up0, up1 = a[D[i - 1]] > b[D[i - 1]], a[D[i]] > b[D[i]]
+        if up0 != up1: xs.append(dict(date=D[i], kind='golden' if up1 else 'death', cost=round(a[D[i]]), price=round(P(D[i]) or 0)))
+    for i, x in enumerate(xs):
+        nx = xs[i + 1] if i + 1 < len(xs) else None
+        x['days_to_next'] = dn(nx['date']) - dn(x['date']) if nx else None
+    d1 = D[-1]; lx = xs[-1] if xs else None
+    rows = thin([[dn(d), round(P(d)) if P(d) else None, round(a[d]), round(b[d])] for d in D if d >= AC_FROM], step)
+    return dict(date=d1, src='Bitview', rows=rows, crosses=[x for x in xs if x['date'] >= AC_FROM], c612=round(a[d1]), c1218=round(b[d1]),
+                gap_pct=round((a[d1] / b[d1] - 1) * 100, 1), price=round(P(d1)), last_cross=lx, days_since=dn(d1) - dn(lx['date']) if lx else None,
+                note='Bitview：6–12 個月＝6–9、9–12 個月兩段的實現市值合計 ÷ 供給合計；12–18 個月＝age_1y_to_18m_realized_price；只作讀值')
