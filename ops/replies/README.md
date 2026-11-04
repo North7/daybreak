@@ -6,7 +6,7 @@
 
 ## 每日流程
 
-1. **找文（Grok）**：日報出來後，把 [`grok-prompt.md`](grok-prompt.md) 裡的整段貼給 Grok。它會讀當天的 `data/notes.json`，回傳一張最多 8 則的候選表（英文 5、中文 3，每則有分數和建議角度）。
+1. **找文（Grok）**：日報出來後，把 [`grok-prompt.md`](grok-prompt.md) 裡的整段貼給 Grok。它會讀當天的 `data/notes.json`，回傳一張最多 10 則的候選表（中文 6、英文 4，至少 7 則是博主；每則有帳號類型、分數和建議角度），另外列出當天新找到的中文博主。
 2. **寫回覆（Claude）**：在 `daybreak-ops` 資料夾開 session，把 Grok 的表格（或 CSV 檔）貼上，說「幫我寫回覆」。Claude 照下面的步驟寫好，推到 main。
 3. **回覆（你）**：手機打開回覆小幫手 <https://north7.github.io/daybreak/ops/replies/>，照順序一則一則回。
 
