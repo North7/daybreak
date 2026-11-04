@@ -248,7 +248,7 @@ def sec_viz(ser, last, th=SEC_TH, block=4):
                 th_share=round(sum(x < th for x in vals) / len(vals) * 100, 1), since=D[0],
                 min=dict(date=min(D, key=v.get), value=round(min(vals), 4)), hits=hits,
                 recent_low=dict(date=r, value=round(v[r], 4), price=round(px[r])), rows=rows,
-                note='CheckOnChain（Checkmate）賣方衰竭常數＝獲利供給比例 × 30 天價格波動；刻度和 Glassnode 版不同；極端區＝低於 0.13（本身歷史最低約 1%）；只作讀值')
+                note='CheckOnChain 賣方衰竭常數＝獲利供給比例 × 30 天價格波動；刻度和 Glassnode 版不同；極端區＝低於 0.13（本身歷史最低約 1%）；只作讀值')
 
 
 # 2026-11-02 使用者要求（貝格先生的 Realized P/L 比率圖）：全網實現獲利 ÷ 實現虧損，取 90 天平均（Glassnode 圖的做法），資料取自 CheckOnChain（coc.get_rpl）。
@@ -481,7 +481,7 @@ def sth_bands_viz(bv, px, last, step=3):
                          bands={str(k): round(S * (mu[d1] + k * sd[d1])) for k in (-2, -1, 1, 2)}),
                 stats=dict(above1_pct=round(sum(z[d] >= 1 for d in last4) / len(last4) * 100, 1), below1_pct=round(sum(z[d] <= -1 for d in last4) / len(last4) * 100, 1),
                            last_above1=lastof(lambda v: v >= 1), last_below1=lastof(lambda v: v <= -1), max120=dict(date=hi120, z=round(z[hi120], 2))),
-                note='短期持有者成本（Bitview）×（近 4 年價格 ÷ 成本的平均 ± k 個標準差）；Glassnode／Murphy 的同類模型；只作讀值')
+                note='短期持有者成本（Bitview）×（近 4 年價格 ÷ 成本的平均 ± k 個標準差）；Glassnode 的同類模型；只作讀值')
 
 
 # 2026-11-04 使用者要求（wander〈6M–12M 與 12M–18M 成本線〉，原圖用 Bitview／BRK）：兩個年齡層的平均買價（實現價格）。資料 Bitview（bitview.get）。
