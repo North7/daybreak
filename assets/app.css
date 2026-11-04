@@ -672,3 +672,8 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .fu h4 .note { margin: 0; padding: 0; font-weight: 400; }
 .fu-open { margin-top: 8px; }
 .fu-open summary { cursor: pointer; font-size: 12.5px; color: var(--ink-3); padding: 6px 0; }
+/* 2026-11-04 市場階段的 6 張佐證圖預設收起 */
+.evfold .ev-open { display: none; }
+.evfold.fold .evcharts, .evfold.fold > .note { display: none; }
+.evfold.fold .ev-open { display: block; width: 100%; margin: 14px 0 6px; padding: 12px; border: 1px solid var(--line-2); background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+.evfold.fold .ev-open:hover { border-color: var(--ink); }
