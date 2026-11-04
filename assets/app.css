@@ -688,3 +688,5 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 a.term { color: inherit; text-decoration: underline dotted var(--ink-3); text-underline-offset: 3px; }
 a.term:hover { color: var(--red-ink); text-decoration-color: currentColor; }
 .tip .term-def { max-width: 300px; font-size: 12.5px; line-height: 1.6; white-space: normal; }
+/* 2026-11-04 長歷史折線圖的時間範圍切換（lineChart 自動加） */
+.seg.rng { display: flex; width: fit-content; margin: 0 0 4px auto; }

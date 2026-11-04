@@ -86,9 +86,28 @@
     for (i = 0; i < n - 1; i++) { var h = dx[i] / 3; d += 'C' + (xy[i][0] + h).toFixed(1) + ',' + (xy[i][1] + t[i] * h).toFixed(1) + ' ' + (xy[i + 1][0] - h).toFixed(1) + ',' + (xy[i + 1][1] - t[i + 1] * h).toFixed(1) + ' ' + xy[i + 1][0].toFixed(1) + ',' + xy[i + 1][1].toFixed(1); }
     return d;
   }
+  /* 時間範圍切換（2026-11-04 整體審查）：歷史超過約兩年的日期折線圖，右上角一律有「1 年／3 年／全部」，預設全部（維持原本的樣子）。
+     圖本身已經有自己的切換（.seg）、寬度不到 420px 或 x 不是日期的不加。選擇記在元素上，重畫時沿用 */
+  var RNG = [[365, '1 年', '1Y'], [1095, '3 年', '3Y'], [0, '全部', 'All']];
+  function rangeOf(el, cfg, W) {
+    if (cfg.xType === 'num' || cfg.noRange || W < 420 || (cfg.h && cfg.h < 190)) return null;   // 小圖（鏈上指標走勢的小格）不加，太擠
+    var host = el.closest('.evc, .panel'); if (host && [].some.call(host.querySelectorAll('.seg'), function (g) { return !g.classList.contains('rng'); })) return null;
+    var xs = []; cfg.series.forEach(function (s) { s.data.forEach(function (p) { if (p[1] != null) xs.push(p[0]); }); }); if (xs.length < 2) return null;
+    var lo = Math.min.apply(null, xs), hi = Math.max.apply(null, xs), span = hi - lo; if (span < 700) return null;
+    var opts = RNG.filter(function (o) { return !o[0] || o[0] < span * 0.8; }), sel = el._rng || 0;
+    if (opts.every(function (o) { return o[0] !== sel; })) sel = 0;
+    var html = '<div class="seg rng" role="group" aria-label="' + _T('時間範圍', 'Time range') + '">' + opts.map(function (o) { return '<button type="button" data-d="' + o[0] + '" aria-pressed="' + (o[0] === sel) + '">' + _T(o[1], o[2]) + '</button>'; }).join('') + '</div>';
+    return { html: html, x0: sel ? hi - sel : null };
+  }
+  function bindRng(el, rg) { if (rg) el.querySelector('.rng').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; el._rng = +b.getAttribute('data-d'); if (el._draw) el._draw(el); }); }
   function lineChart(el, cfg) {
     var W = Math.max(280, el.clientWidth), Ht = cfg.h || (W < 520 ? 210 : 260);
+    var rg = rangeOf(el, cfg, W);
+    if (rg && rg.x0 != null) { var rx0 = rg.x0; cfg = Object.assign({}, cfg, { x0: cfg.x0 != null ? Math.max(cfg.x0, rx0) : rx0, series: cfg.series.map(function (q) { return Object.assign({}, q, { data: q.data.filter(function (p) { return p[0] >= rx0; }) }); }), marks: (cfg.marks || []).filter(function (m) { return m.x >= rx0; }) }); }
     var ML = cfg.ml || 8, MR = cfg.mr || 58, MT = 14, MB = 24, pw = W - ML - MR, ph = Ht - MT - MB;
+    /* 2026-11-04 整體審查：BTC 價格「另一刻度」不再疊在同一格（兩條線的交叉沒有意義），改成上下兩格：上格價格（有自己的刻度）、下格指標，共用時間軸 */
+    var stack = cfg.stack !== false && cfg.series.some(function (s) { return s.y2; }), MT0 = MT, topH = 0;
+    if (stack) { topH = Math.round(Math.max(70, ph * 0.5)); Ht += topH + 20; MT = MT0 + topH + 20; }
     var all = [], all2 = [], xa = []; cfg.series.forEach(function (s) { s.data.forEach(function (p) { if (p[1] != null) { (s.y2 ? all2 : all).push(p); xa.push(p[0]); } }); });
     if (all.length < 2) { el.innerHTML = _t('<p class="note">本日未取得資料。</p>'); return; }
     var x0 = cfg.x0 != null ? cfg.x0 : Math.min.apply(null, xa);
@@ -103,13 +122,21 @@
     var Y = function (v) { var y = MT + (1 - (T(v) - tl) / (th - tl)) * ph; return cfg.robust ? Math.max(MT, Math.min(MT + ph, y)) : y; };
     // 第二 y 軸（2026-10-14）：series 帶 y2 的用自己的刻度（例如佐證燈號圖上的價格線），不畫刻度、tooltip 照列
     var Y2 = Y;
-    if (all2.length) { var T2 = function (v) { return cfg.log2 ? Math.log10(v) : v; }, v2 = all2.map(function (p) { return T2(p[1]); }), l2 = Math.min.apply(null, v2), h2 = Math.max.apply(null, v2), p2 = (h2 - l2) * 0.08 || 1; l2 -= p2; h2 += p2; Y2 = function (v) { return MT + (1 - (T2(v) - l2) / (h2 - l2)) * ph; }; }
+    if (all2.length) { var T2 = function (v) { return cfg.log2 ? Math.log10(v) : v; }, v2 = all2.map(function (p) { return T2(p[1]); }), l2 = Math.min.apply(null, v2), h2 = Math.max.apply(null, v2), p2 = (h2 - l2) * 0.08 || 1; l2 -= p2; h2 += p2; Y2 = stack ? function (v) { return MT0 + (1 - (T2(v) - l2) / (h2 - l2)) * topH; } : function (v) { return MT + (1 - (T2(v) - l2) / (h2 - l2)) * ph; }; }
     var s = '', yf = cfg.yFmt || function (v) { return fmt.k(v); };
     // y grid
     var ticks = [];
     if (lg) { [0.1, 0.2, 0.3, 0.5, 1, 2, 3, 5, 10, 20, 50, 100, 200, 500, 1e3, 2e3, 5e3, 1e4, 2e4, 5e4, 1e5, 2e5, 5e5, 1e6].forEach(function (t) { if (T(t) >= tl && T(t) <= th) ticks.push(t); }); if (ticks.length > 7) ticks = ticks.filter(function (t, i) { return i % 2 === 0; }); }
     else { var st = niceStep(th - tl, W < 520 ? 3 : 4); for (var t = Math.ceil(tl / st) * st; t <= th + 1e-9; t += st) ticks.push(+t.toFixed(10)); }
     ticks.forEach(function (t) { var y = Y(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/><text class="ax" x="' + (ML + pw + 8) + '" y="' + (y + 3.5).toFixed(1) + '">' + yf(t) + '</text>'; });
+    if (stack && all2.length) {   // 上格（價格）的刻度與標題
+      var t2s = [], y2n = cfg.series.filter(function (q) { return q.y2; })[0], y1n = cfg.series.filter(function (q) { return !q.y2; })[0];
+      if (cfg.log2) [100, 1e3, 2e3, 5e3, 1e4, 2e4, 5e4, 1e5, 2e5].forEach(function (t) { var v = Math.log10(t); if (v >= l2 && v <= h2) t2s.push(t); });
+      else { var st2 = niceStep(h2 - l2, 2); for (var t2 = Math.ceil(l2 / st2) * st2; t2 <= h2 + 1e-9; t2 += st2) t2s.push(+t2.toFixed(10)); }
+      if (t2s.length > 4) t2s = t2s.filter(function (t, i) { return i % 2 === (t2s.length - 1) % 2; });
+      t2s.forEach(function (t) { var y = Y2(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/><text class="ax" x="' + (ML + pw + 8) + '" y="' + (y + 3.5).toFixed(1) + '">' + (t >= 1000 ? fmt.k(t) : fmt.n(t)) + '</text>'; });
+      s += axText(ML, MT0 - 3, y2n.name) + (y1n ? axText(ML, MT - 6, y1n.name) : '');
+    }
     // x ticks
     if (cfg.xType !== 'num') {
       var span = x1 - x0, step = span > 2500 ? 24 : span > 1100 ? 12 : span > 500 ? 6 : span > 150 ? 2 : 1, d = new Date(x0 * 864e5), lastX = -99;
@@ -153,8 +180,10 @@
       mk = '<circle cx="' + xx.toFixed(1) + '" cy="' + yy.toFixed(1) + '" r="4.5" fill="var(--deck)" stroke="' + col + '" stroke-width="2"/>' + lab + mk;
     });
     s += mk;
-    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (MT + ph) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + ph + '"/>';
-    el.innerHTML = svgEl(W, Ht, '<defs>' + defs + '</defs>' + s, cfg.aria);
+    var HT0 = stack ? MT0 : MT;   // 上下兩格時十字線與滑過區涵蓋兩格
+    s += '<line class="xh" x1="0" x2="0" y1="' + HT0 + '" y2="' + (MT + ph) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + HT0 + '" width="' + pw + '" height="' + (MT + ph - HT0) + '"/>';
+    el.innerHTML = (rg ? rg.html : '') + svgEl(W, Ht, '<defs>' + defs + '</defs>' + s, cfg.aria);
+    bindRng(el, rg);
     animateLines(el);
     var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
     function move(ev) {
@@ -1256,7 +1285,7 @@
      o.rows：[[日, …]]；o.pi：價格在第幾欄；o.hp／o.hs：[手機, 桌面] 上下兩格高度；o.scale(C) 回傳下格的 Y 函式；
      o.body(C) 畫下格（格線、柱、線）；o.over(C) 畫在最上層（標記點）；o.tip(p, C) 回傳 { t: 標題, rows: 指標列, dots: 下格的點 } */
   function twoPane(el, o) {
-    var R_ = o.rows, W = Math.max(280, el.clientWidth), sm = W < 520, ML = 8, MR = 58, MT = 16, gap = 28, MB = 24, hp = o.hp[sm ? 0 : 1], hs = o.hs[sm ? 0 : 1], LR = o.lr ? o.lr(sm) : 0;
+    var W = Math.max(280, el.clientWidth), rg = rangeOf(el, { series: [{ data: o.rows.map(function (r) { return [r[0], 1]; }) }] }, W), R_ = rg && rg.x0 != null ? o.rows.filter(function (r) { return r[0] >= rg.x0; }) : o.rows, sm = W < 520, ML = 8, MR = 58, MT = 16, gap = 28, MB = 24, hp = o.hp[sm ? 0 : 1], hs = o.hs[sm ? 0 : 1], LR = o.lr ? o.lr(sm) : 0;
     var Ht = MT + hp + gap + hs + LR + MB, pw = W - ML - MR, ys0 = MT + hp + gap, L = Math.log10;
     var x0 = R_[0][0], x1 = R_[R_.length - 1][0], X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; };
     var pv = R_.map(function (r) { return r[o.pi]; }), pl = L(Math.min.apply(null, pv)), ph = L(Math.max.apply(null, pv)), pp = (ph - pl) * 0.05 || 0.1; pl -= pp; ph += pp;
@@ -1270,15 +1299,17 @@
       if ((t === 2e3 || t === 5e3 || t === 2e4 || t === 5e4 || t === 2e5) && ph - pl > 2.2) return;   // 跨好幾個數量級時只標 10 的次方
       s += C.gl(Yp(t), t >= 1000 ? fmt.k(t) : '$' + t);
     });
-    s += o.body(C);
+    var cid = 'cp' + Math.random().toString(36).slice(2, 8), clip = '<defs><clipPath id="' + cid + '"><rect x="' + ML + '" y="0" width="' + pw + '" height="' + Ht + '"/></clipPath></defs>';   // 選了 1 年／3 年時，下格用的是完整資料，超出左緣的部分剪掉
+    s += clip + '<g clip-path="url(#' + cid + ')">' + o.body(C) + '</g>';
     s += axText(ML, MT - 5, _T('BTC 價格（對數刻度）', 'BTC price (log scale)')) + axText(ML, ys0 - 9, o.label);
     var ya = new Date(x0 * 864e5).getUTCFullYear() + 1, yz = new Date(x1 * 864e5).getUTCFullYear(), every = Math.max(1, Math.ceil(46 * (yz - ya + 1) / pw));   // 年份標籤至少隔 46px
     for (var y = ya; y <= yz; y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if ((yz - y) % every === 0 && xx > ML + 14 && xx < ML + pw - 14) s += axText(xx, Ht - 6, String(y), 'middle'); }
     s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Yp(r[o.pi]).toFixed(1); }).join('L') + '" stroke="var(--ink-2)" stroke-width="1.3"/>';
     var pdot = function (r) { return '<circle cx="' + X(r[0]).toFixed(1) + '" cy="' + Yp(r[o.pi]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>'; };
-    s += (o.over ? o.over(C) : '') + pdot(R_[R_.length - 1]);
+    s += (o.over ? '<g clip-path="url(#' + cid + ')">' + o.over(C) + '</g>' : '') + pdot(R_[R_.length - 1]);
     s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + C.yb + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (C.yb - MT) + '"/>';
-    el.innerHTML = svgEl(W, Ht, s, o.aria);
+    el.innerHTML = (rg ? rg.html : '') + svgEl(W, Ht, s, o.aria);
+    bindRng(el, rg);
     animateLines(el);
     var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
     function move(ev) {
@@ -1340,7 +1371,7 @@
       body: function (C) {
         var s = '';
         for (var g = -mx; g <= mx; g += mx > 4 ? 2 : 1) s += C.gl(C.Ys(g), (g > 0 ? '+' : '') + g, g ? 'gl' : 'base');
-        var bw = Math.max(1, C.pw / R_.length * 0.8), z0 = C.Ys(0);
+        var bw = Math.max(1, C.pw / C.rows.length * 0.8), z0 = C.Ys(0);   // C.rows＝目前時間範圍內的列
         R_.forEach(function (r) { var cx = C.X(r[0]), yv = C.Ys(r[1]); s += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(z0, yv).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, Math.abs(yv - z0)).toFixed(1) + '" fill="' + col(r[1]) + '"/>'; });
         return s;
       },
@@ -2001,7 +2032,7 @@
       body: function (C) {
         var s = '';
         for (var g = lo; g <= hi + 1; g += C.st) s += C.gl(C.Ys(g), kf(g), g ? 'gl' : 'base');
-        var bw = Math.max(1, C.pw / R_.length + 0.3), z0 = C.Ys(0);
+        var bw = Math.max(1, C.pw / C.rows.length + 0.3), z0 = C.Ys(0);
         R_.forEach(function (r) { var cx = C.X(r[0]), yv = C.Ys(r[1]); s += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(z0, yv).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, Math.abs(yv - z0)).toFixed(1) + '" fill="' + col(r[1]) + '" opacity=".55"/>'; });
         s += '<path class="ln" d="M' + R_.filter(function (r) { return r[2] != null; }).map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(r[2]).toFixed(1); }).join('L') + '" stroke="var(--s1)" stroke-width="1.3" stroke-dasharray="4 3"/>';
         (x.moves || []).forEach(function (m) { var xm = C.X(dnOf(m.start)); if (xm < C.ML || xm > C.ML + C.pw) return; s += '<line x1="' + xm.toFixed(1) + '" x2="' + xm.toFixed(1) + '" y1="' + C.ys0 + '" y2="' + C.yb + '" stroke="var(--warn)" stroke-dasharray="2 4" stroke-width="1"/><circle cx="' + xm.toFixed(1) + '" cy="' + (C.ys0 + 4) + '" r="3" fill="var(--warn)"/>'; });
