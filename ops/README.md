@@ -27,7 +27,7 @@ ops/
     README.md          回覆流程、Claude 寫回覆的規則、replies.json 格式
     fetch.py           讀 X 原文（api.fxtwitter.com），核對 Grok 的摘要
     scan.py            掃固定名單最近 24 小時的貼文，排序、建議主題與配圖
-    watchlist.json     固定名單（Murphy 等 22 個帳號）；Grok 只找名單以外的
+    watchlist.json     固定名單（Murphy 等 26 個帳號）；Grok 只找名單以外的
     cards.py           回覆配圖 → data/replies/<n>.png
     check.py           檢查 replies.json 與 flash.json（語言、字數、簡體字、框架用詞、配圖）
   brand/             品牌與內容方向（2026-11-04 起）

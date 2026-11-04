@@ -1,5 +1,5 @@
 {
- "_about": "固定名單：scan.py 每天直接讀這些帳號最近的貼文（不靠 Grok）。type：blogger（博主）／research（研究機構）。must：一律列出、排最上面。新增帳號照 README「固定名單」一節。2026-11-04 建立；Phyrex_Ni、woonomic 當天讀不到（改名或停用），先不列。",
+ "_about": "固定名單：scan.py 每天直接讀這些帳號最近的貼文（不靠 Grok）。type：blogger（博主）／research（研究機構）。must：一律列出、排最上面。新增帳號照 README「固定名單」一節。2026-11-04 建立；Phyrex_Ni、woonomic 當天讀不到（改名或停用），先不列。2026-11-04 Grok 推薦 10 個，核對後加 4 個（0xGummyBear、KevinZbtc、BlockScholes、gaah_im）；沒加的：liusian123、PmgLiljayrock（比特幣數據少、瀏覽中位數不到 40）、Ye__Miao（2026 年新帳號，近 7 天 20 則只有 3 則講比特幣，瀏覽中位數 72，像新聞整理號）、cfsq143（交易計劃、喊多空，和 voice.md 反對喊單衝突）、Chille（價位交易，簡介導流 Telegram）、woonomic（讀不到）。",
  "accounts": [
   {"handle": "Murphychen888", "name": "Murphy", "lang": "zh", "type": "blogger", "must": true, "note": "鏈上籌碼、URPD、LTH/STH；重點關注"},
   {"handle": "serlo123", "name": "wander", "lang": "zh", "type": "blogger", "note": "成本線、Ahr999；11/04 回覆後回追"},
@@ -12,6 +12,8 @@
   {"handle": "ai_9684xtpa", "name": "Ai 姨", "lang": "zh", "type": "blogger", "note": "巨鯨地址追蹤"},
   {"handle": "BTCdayu", "name": "大宇", "lang": "zh", "type": "blogger", "note": "大帳號，宏觀與行情"},
   {"handle": "CryptoPainter", "name": "Painter", "lang": "zh", "type": "blogger", "note": "鏈上與衍生品圖表"},
+  {"handle": "0xGummyBear", "name": "加密貝兒", "lang": "zh", "type": "blogger", "note": "2026-11-04 Grok 推薦加入：LTH 虧損供給等鏈上指標，7 天 5 則比特幣數據文"},
+  {"handle": "KevinZbtc", "name": "KevinZ", "lang": "zh", "type": "blogger", "note": "2026-11-04 Grok 推薦加入：全職交易員，多資產（美股為主），比特幣約三成；瀏覽中位數約 2,000"},
   {"handle": "Bobbxu", "name": "Bob Xu", "lang": "en", "type": "blogger", "note": "ETF 與錢包資金流"},
   {"handle": "_Checkmatey_", "name": "James Check", "lang": "en", "type": "blogger", "note": "CheckOnChain；STH、SOPR 的資料源"},
   {"handle": "ki_young_ju", "name": "Ki Young Ju", "lang": "en", "type": "blogger", "note": "CryptoQuant；大帳號"},
@@ -21,7 +23,9 @@
   {"handle": "JoeConsorti", "name": "Joe Consorti", "lang": "en", "type": "blogger", "note": "宏觀、ETF"},
   {"handle": "DaanCrypto", "name": "Daan Crypto Trades", "lang": "en", "type": "blogger", "note": "價位、清算；大帳號"},
   {"handle": "ecoinometrics", "name": "ecoinometrics", "lang": "en", "type": "blogger", "note": "週期、宏觀圖表"},
+  {"handle": "gaah_im", "name": "Gaah", "lang": "en", "type": "blogger", "note": "2026-11-04 Grok 推薦加入：交易所流量、Coinbase 溢價等鏈上數據，7 天 15 則講比特幣"},
   {"handle": "glassnode", "name": "glassnode", "lang": "en", "type": "research", "note": "鏈上研報"},
-  {"handle": "GreeksLive", "name": "Greeks.live", "lang": "en", "type": "research", "note": "選擇權"}
+  {"handle": "GreeksLive", "name": "Greeks.live", "lang": "en", "type": "research", "note": "選擇權"},
+  {"handle": "BlockScholes", "name": "Block Scholes", "lang": "en", "type": "research", "note": "2026-11-04 Grok 推薦加入：每日評論、ETF 與選擇權數據，7 天 10 則講比特幣"}
  ]
 }
