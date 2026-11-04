@@ -925,6 +925,10 @@
       'rpl': { h: h('上格是 BTC 價格，下格是全網實現獲利 ÷ 實現虧損的 90 天平均（都是對數刻度）；1 以上綠、以下紅，紅底是低於 1 的期間。', 'Top: BTC price; bottom: network-wide realized profit ÷ realized loss, 90-day average (both log scale). Green above 1, red below; red bands mark the stretches below 1.',
           '低於 1＝賣出的人整體在認賠，大段紅色都出現在熊市；回到 1 以上代表賣出的人又開始賺錢。歷史上大段紅色結束後，多半到週期頂部都沒再跌回 1 以下。', 'Below 1 means sellers as a whole are realizing losses; long red stretches all came in bear markets. Moving back above 1 means sellers are taking profits again; historically, after a long red stretch it mostly stayed above 1 until the cycle top.',
           '不是保證：2019/5 回到 1 以上後，2019/12–2020/1 又跌回 37 天。90 天平均反應慢，要搭配最近 7 天的每日比值看。', 'Not a guarantee: after returning above 1 in May 2019 it fell back below for 37 days in Dec 2019–Jan 2020. The 90-day average is slow; read it with the last 7 daily values.') },
+      'lthloss': { h: h('上格是 BTC 價格，下格是長期持有者（持有 ≥155 天）帳面虧損的比例；紅圈是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這輪高點。', 'Top: BTC price; bottom: the share of long-term holder (155+ days) supply at a loss. Red circles mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle\'s peak.',
+          '熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高，回升（價格回調）時常是牛初的加碼段。跌破虛線那一天，等於這個規律被打破。', 'It peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high, and its rebounds (price pullbacks) were often early-bull buying windows. A move above the dashed line would break that pattern.',
+          '不只受價格影響：最近高價買進的短期持有者滿 155 天後會被算成長期持有者，價格不漲也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。', 'Not price alone: recent high-priced buyers become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight.'),
+        now: function () { var x = (D.onchain || {}).lthloss; if (!x) return ''; var c = x.cohort; return _T(fmt.n(x.value, 1) + '%（' + fmt.md(x.date) + '）' + (c && c.break_price ? '；跌破約 ' + fmt.usd(c.break_price) + ' 會超過這輪高點。' : '。'), fmt.n(x.value, 1) + '% (' + fmt.md(x.date) + ')' + (c && c.break_price ? '; below about ' + fmt.usd(c.break_price) + ' it would top this cycle\'s peak.' : '.')); } },
       'sec': { h: h('上格是 BTC 價格，下格是賣方衰竭常數（都是對數刻度）；紅底是極端區（低於 0.13），紅圈是每次跌破後 90 天內的最低點。', 'Top: BTC price; bottom: the seller exhaustion constant (both log scale). The red band is the extreme zone (below 0.13); red circles mark the lowest point within 90 days of each break.',
           '常數很低＝價格很平靜、同時很多人在虧損，想賣的人大多已經賣了，過去多出現在熊市底部或大跌後的整理期。跌破之後再出現、但沒有更低的低點，有人當成第二個訊號點。', 'A very low reading means calm prices while many holders are underwater, so most would-be sellers have sold; historically it shows up near bear-market bottoms or in post-crash consolidations. A later low that does not undercut the first is read by some as a second signal.',
           '不是精準的底：2018/11 跌破後價格又先跌了 50%；也不只出現在週期底部（2023/8 在牛市中段）。刻度和 Glassnode 版不同，0.01 的門檻不能套。', 'Not a precise bottom: after the Nov 2018 break price fell another 50% first; nor only at cycle bottoms (Aug 2023 was mid-bull). The scale differs from Glassnode\'s, so the 0.01 line does not apply.') },
@@ -2048,6 +2052,65 @@
   }
 
 
+  /* 長期持有者虧損比例（2026-11-04 使用者要求，ForeDex／加密貝兒的 Supply In Loss % - LTH；資料 CheckOnChain）：
+     標出歷輪熊市底部的高點與「這輪高點」線；打破「脫離底部後不再創新高」的價位用長期持有者籌碼分布每天重算。上下兩格共用時間軸。只作讀值 */
+  function llSay() {
+    var x = D.onchain.lthloss, it = [], P = x.peaks || [], lp = P[P.length - 1], pm = x.post_min, c = x.cohort, ymd = function (s) { return s.replace(/-/g, '/'); };
+    it.push([_T('長期持有者虧損比例', 'LTH supply in loss'), fmt.n(x.value, 1) + '%',
+      _T('持有 155 天以上的幣，有 ' + fmt.n(x.value, 1) + '% 成本在現價之上。' + (lp ? '這輪高點 ' + fmt.n(lp.value, 1) + '%（' + ymd(lp.date) + '，價格 ' + fmt.usd(lp.price) + '）' : '') + (pm ? '，之後最低 ' + fmt.n(pm.value, 1) + '%（' + ymd(pm.date) + '），現在' + (x.value >= pm.value ? '回升 ' : '再降 ') + fmt.n(Math.abs(x.value - pm.value), 1) + ' 個百分點。' : '。'),
+        fmt.n(x.value, 1) + '% of coins held 155+ days cost more than today\'s price. ' + (lp ? 'This cycle\'s peak was ' + fmt.n(lp.value, 1) + '% (' + ymd(lp.date) + ', price ' + fmt.usd(lp.price) + ')' : '') + (pm ? ', the low since ' + fmt.n(pm.value, 1) + '% (' + ymd(pm.date) + '); now ' + (x.value >= pm.value ? 'up ' : 'down ') + fmt.n(Math.abs(x.value - pm.value), 1) + ' points.' : '.')), 'neu']);
+    if (c && c.break_price && lp) {
+      var t70 = (c.table || []).filter(function (r) { return r[0] <= 70000; })[0];
+      it.push([_T('規律的分界', 'Where the pattern breaks'), '≈ ' + fmt.k(c.break_price),
+        _T('照現在的長期持有者籌碼（CheckOnChain，' + fmt.md(c.date) + '）推算，價格跌到約 ' + fmt.usd(c.break_price) + ' 時虧損比例會超過這輪高點 ' + fmt.n(lp.value, 1) + '%，等於打破「脫離底部後不再創新高」' + (t70 ? '；跌到 ' + fmt.k(t70[0]) + ' 約 ' + fmt.n(t70[1], 0) + '%' : '') + '。最近在高價買進的短期持有者滿 155 天後會轉成長期持有者，價格不漲時這條線會慢慢上移，所以每天重算。',
+          'From today\'s long-term holder supply map (CheckOnChain, ' + fmt.md(c.date) + '), a drop to about ' + fmt.usd(c.break_price) + ' would push the share above this cycle\'s ' + fmt.n(lp.value, 1) + '% peak, breaking the “no new high after the bottom” pattern' + (t70 ? '; at ' + fmt.k(t70[0]) + ' it would be about ' + fmt.n(t70[1], 0) + '%' : '') + '. Recent high-priced buyers turn long-term after 155 days, so the line drifts up if price stalls; it is recomputed daily.'), 'neu']);
+    }
+    var past = P.filter(function (p) { return p.after_max; });
+    if (past.length) it.push([_T('歷輪底部', 'Past cycle bottoms'), P.length + _T(' 輪', ' cycles'),
+      _T('熊市底部的高點：' + P.map(function (p) { return p.date.slice(0, 7).replace('-', '/') + ' ' + fmt.n(p.value, 1) + '%'; }).join('、') + '。之前幾輪脫離底部後都沒有再創新高：' + past.map(function (p) { return p.date.slice(0, 4) + ' 之後最高 ' + fmt.n(p.after_max.value, 1) + '%（' + p.after_max.date.slice(0, 7).replace('-', '/') + '）'; }).join('、') + '。樣本只有 3–4 輪，2015 年那輪高點 53% 也比後來高。',
+        'Peaks at bear-market bottoms: ' + P.map(function (p) { return p.date.slice(0, 7).replace('-', '/') + ' ' + fmt.n(p.value, 1) + '%'; }).join(', ') + '. In earlier cycles it never made a new high after leaving the bottom: ' + past.map(function (p) { return 'after ' + p.date.slice(0, 4) + ' the max was ' + fmt.n(p.after_max.value, 1) + '% (' + p.after_max.date.slice(0, 7).replace('-', '/') + ')'; }).join(', ') + '. Only 3–4 cycles; 2015\'s 53% peak was also higher than later ones.'), 'neu']);
+    return it;
+  }
+  function lthLossPanel() {
+    var x = (D.onchain || {}).lthloss; if (!x || !x.rows) return '';
+    return panel('span-12', _T('長期持有者虧損比例', 'Long-term holder supply in loss'), _T('CheckOnChain · ' + fmt.md(x.date), 'CheckOnChain · ' + fmt.md(x.date)),
+      interpHtml(llSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('長期持有者虧損比例', 'LTH supply in loss'), 'var(--s2)'], [_T('這輪高點', 'This cycle\'s peak'), 'var(--down)', 'dash'], [_T('歷輪底部區 42–48%', 'Past bottoms 42–48%'), 'var(--down)', 'box']]) + '<div class="chart" id="c-lthloss"></div>' +
+      '<p class="note">' + _T('持有 155 天以上（長期持有者）的幣裡，成本高於現價、帳面虧損的比例。熊市底部時大量老手被套，這個比例衝到高點；之後隨價格回升下降。資料取自 CheckOnChain（Bitcoin Research Kit，依每顆幣的實際幣齡算）。', 'The share of coins held 155+ days (long-term holders) whose cost is above the current price. At bear-market bottoms many veterans are underwater and it peaks; it falls as price recovers. Data from CheckOnChain (Bitcoin Research Kit, by each coin\'s actual age).') +
+      ' <a href="https://charts.checkonchain.com/btconchain/unrealised/topheavy_supplyinloss_lth/topheavy_supplyinloss_lth_light.html" target="_blank" rel="noopener">' + _T('原圖 ↗', 'Source chart ↗') + '</a></p>');
+  }
+  function drawLthLoss(el) {
+    var x = (D.onchain || {}).lthloss; if (!x || !el) return;
+    var R_ = x.rows, P = x.peaks || [], lp = P[P.length - 1], W = Math.max(280, el.clientWidth), sm = W < 520, ML = 8, MR = 58, MT = 16, hp = sm ? 100 : 130, gap = 28, hs = sm ? 150 : 190, MB = 24, Ht = MT + hp + gap + hs + MB, pw = W - ML - MR, ys0 = MT + hp + gap;
+    var x0 = R_[0][0], x1 = R_[R_.length - 1][0], X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; }, s = '', L = Math.log10;
+    var pl = L(Math.min.apply(null, R_.map(function (r) { return r[2]; }))), ph = L(Math.max.apply(null, R_.map(function (r) { return r[2]; }))), pp = (ph - pl) * 0.05; pl -= pp; ph += pp;
+    var top = Math.max(60, Math.ceil(Math.max.apply(null, R_.map(function (r) { return r[1]; })) / 10) * 10);
+    var Yp = function (v) { return MT + (1 - (L(v) - pl) / (ph - pl)) * hp; }, Ys = function (v) { return ys0 + (1 - v / top) * hs; };
+    var tx = function (xx, y, t, a, cls) { return '<text class="' + (cls || 'ax') + '" x="' + xx.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + esc(t) + '</text>'; };
+    [10, 100, 1e3, 1e4, 1e5].forEach(function (t) { if (L(t) < pl || L(t) > ph) return; var y = Yp(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, t >= 1000 ? fmt.k(t) : '$' + t); });
+    s += '<rect x="' + ML + '" y="' + Ys(48).toFixed(1) + '" width="' + pw + '" height="' + (Ys(42) - Ys(48)).toFixed(1) + '" fill="var(--down-dim)"/>';
+    for (var g = 0; g <= top; g += 10) { var yg = Ys(g); s += '<line class="' + (g ? 'gl' : 'base') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + yg.toFixed(1) + '" y2="' + yg.toFixed(1) + '"/>' + tx(ML + pw + 8, yg + 3.5, g + '%'); }
+    if (lp) s += '<line x1="' + X(dnOf(lp.date)).toFixed(1) + '" x2="' + (ML + pw) + '" y1="' + Ys(lp.value).toFixed(1) + '" y2="' + Ys(lp.value).toFixed(1) + '" stroke="var(--down)" stroke-dasharray="4 4" stroke-width="1"/>';
+    s += tx(ML, MT - 5, _T('BTC 價格（對數刻度）', 'BTC price (log scale)')) + tx(ML, ys0 - 9, _T('長期持有者虧損比例', 'LTH supply in loss'));
+    var y0 = new Date(x0 * 864e5).getUTCFullYear() + 1, y1 = new Date(x1 * 864e5).getUTCFullYear(), every = sm ? 3 : W < 900 ? 2 : 1;
+    for (var y = y0; y <= y1; y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if ((y - y0) % every === 0 && xx > ML + 14 && xx < ML + pw - 14) s += tx(xx, Ht - 6, String(y), 'middle'); }
+    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Yp(r[2]).toFixed(1); }).join('L') + '" stroke="var(--ink-2)" stroke-width="1.3"/>';
+    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Ys(r[1]).toFixed(1); }).join('L') + '" stroke="var(--s2)" stroke-width="1.5"/>';
+    P.forEach(function (p) { var xp = X(dnOf(p.date)), yp = Ys(p.value); if (xp < ML) return; s += '<circle cx="' + xp.toFixed(1) + '" cy="' + yp.toFixed(1) + '" r="4" fill="var(--deck)" stroke="var(--down)" stroke-width="2"/>' + (sm ? '' : tx(xp > ML + pw - 90 ? xp - 8 : xp, yp - 9, p.date.slice(0, 7).replace('-', '/') + ' ' + fmt.n(p.value, 1) + '%', xp > ML + pw - 90 ? 'end' : 'middle', 'ax hi')); });
+    var zz = R_[R_.length - 1]; s += '<circle cx="' + X(zz[0]).toFixed(1) + '" cy="' + Ys(zz[1]).toFixed(1) + '" r="4" fill="var(--s2)" stroke="var(--deck)" stroke-width="2"/>';
+    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (ys0 + hs) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (ys0 + hs - MT) + '"/>';
+    el.innerHTML = svgEl(W, Ht, s, _T('BTC 價格與長期持有者虧損比例', 'BTC price and long-term holder supply in loss'));
+    animateLines(el);
+    var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
+    function move(ev) {
+      var r = svg.getBoundingClientRect(), xv = x0 + ((ev.clientX - r.left) * W / r.width - ML) / pw * (x1 - x0), p = R_[bisect(R_, xv)];
+      xh.setAttribute('x1', X(p[0])); xh.setAttribute('x2', X(p[0])); xh.setAttribute('visibility', 'visible');
+      dots.innerHTML = '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Ys(p[1]).toFixed(1) + '" r="4" fill="var(--s2)" stroke="var(--deck)" stroke-width="2"/><circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Yp(p[2]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>';
+      showTip(ev.clientX, ev.clientY, '<div class="t">' + fmt.date(p[0]) + '</div><div class="r"><i style="background:var(--s2)"></i><span>' + _T('長期持有者虧損比例', 'LTH supply in loss') + '</span><b>' + fmt.n(p[1], 1) + '%</b></div><div class="r"><i style="background:var(--ink-2)"></i><span>' + _T('BTC 價格', 'BTC price') + '</span><b>' + fmt.usd(p[2]) + '</b></div>');
+    }
+    hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
+    hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
+  }
+
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};
     var rows = [
@@ -2059,10 +2122,10 @@
     return readBar('onchain') + '<div class="kpis">' + kpi(_t('短期持有者獲利比例'), fmt.n((fl.sth_in_profit_pct || {}).value, 1) + '%', _t('7 天前 ') + fmt.n((fl.sth_in_profit_pct || {}).d7, 1) + '%', (fl.sth_in_profit_pct || {}).value) + kpi(_t('短期持有者成本'), fmt.usd((fl.sth_vs_tmm || {}).sth_cost), _t('真實市場均價 ') + fmt.usd((fl.sth_vs_tmm || {}).tmm)) + kpi(_t('交易所供給'), fmt.n(ex.exchange_supply_share_pct, 2) + '%', _t('7 日 ') + fmt.pct(ex.exchange_supply_chg7_pct, 2) + _t(' · 90 日 ') + fmt.pct(ex.exchange_supply_chg90_pct, 2)) + kpi(_t('算力 7 日均'), fmt.n(mi.hash7, 0) + ' EH/s', _t('週 ') + fmt.pct(mi.wk_chg_pct, 1) + ' · hashprice $' + fmt.n(mi.hashprice, 1)) + kpi(_t('下次難度調整'), fmt.pct(mi.diff_next_pct, 1), fmt.md(mi.retarget) + _t(' · 進度 ') + fmt.n(mi.diff_progress, 0) + '%', mi.diff_progress) + '</div><div class="grid">' + interpPanel(ocInterp()) +
       panel('span-5', _t('籌碼分布（URPD）'), fmt.md(u.date) + _t(' · 每 2,000 美元一格'), urpdSay(u) + '<div id="c-urpd"></div>') +
       panel('span-7', _t('短期持有者獲利比例'), _t('2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%', '<div class="chart" id="c-profit"></div><p class="note">' + _T('短期持有者成本與真實市場均價的走勢在週期版「市場階段」的佐證圖 ', 'Short-term holder cost vs the true market mean is charted with the market-stage evidence on the Cycle page ') + jumpA('cycle', 'ev-tmm', _T('看圖 →', 'See chart →')) + '</p>') +
-      cohortPanel() + lthColorPanel() + secPanel() + rplPanel() + adPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-12', _t('鏈上指標'), _T('STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'STH-SOPR: CheckOnChain · others: bitcoin-data'), t + '<p class="note">' + _T('MVRV Z、NUPL、Puell 在週期版「頂部三指標」', 'MVRV Z, NUPL and Puell are on the Cycle page under the top-3 indicators ') + jumpA('cycle', 'p6', '→') + '</p>') + ocPanel() + '</div>';
+      cohortPanel() + lthColorPanel() + lthLossPanel() + secPanel() + rplPanel() + adPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-12', _t('鏈上指標'), _T('STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'STH-SOPR: CheckOnChain · others: bitcoin-data'), t + '<p class="note">' + _T('MVRV Z、NUPL、Puell 在週期版「頂部三指標」', 'MVRV Z, NUPL and Puell are on the Cycle page under the top-3 indicators ') + jumpA('cycle', 'p6', '→') + '</p>') + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
-    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd);
+    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd);
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
     var v = D.chips.viz || {}, u = v.urpd || {}, c = D.price.bar.c, el = $('#c-urpd');
     if (el && u.band) {

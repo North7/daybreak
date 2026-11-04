@@ -400,3 +400,51 @@ def ad_viz(ser, last, step=3):
                 inact=round(iv[d1]), inact_chg30=round(iv[d1] - iv[D[ix[d1] - 30]]), issued30=round(sum(_subsidy(D[j]) for j in range(ix[d1] - 29, ix[d1] + 1))),
                 pct=round(sum(x < ad[d1] for x in vals) / len(vals) * 100, 1), since=AD_FROM, moves=moves[-12:], echo_soon=up, in_window=rec, move_thr=round(thr),
                 rows=rows, note='CryptoQuant 定義：30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化；1 年以上供給取自 CheckOnChain HODL Waves（逐筆 UTXO）；新挖出的幣照減半時程估；只作讀值')
+
+
+# 2026-11-04 使用者要求（ForeDex／加密貝兒的 Supply In Loss % - LTH）：長期持有者虧損比例（CheckOnChain，coc.get_lthloss）。只作讀值。
+#   歷輪高點＝各熊市底部（model.json 的 cycle_bottoms）前後 240 天內的最高值；「之後最高」＝高點後 90–730 天內的最高值（驗證「脫離底部後不再創新高」）。
+#   打破規律的價位：用 CheckOnChain 依實際幣齡算的長期持有者籌碼分布（cohort，每 2,000 美元一格、格內均勻）推算虧損比例超過這輪高點的價格；
+#   最近買進的短期持有者滿 155 天後會轉成長期持有者，價格不漲時這條線會上移，所以每天重算
+LL_FROM = '2013-01-01'
+
+
+def _loss_at(rows, p):
+    tot = sum(r[2] for r in rows) or 1; s = 0.0
+    for lo, sth, lth in rows:
+        if lo >= p: s += lth
+        elif lo + 2000 > p: s += lth * (lo + 2000 - p) / 2000
+    return s / tot
+
+
+def lthloss_viz(ser, last, bottoms, cohort=None, block=4):
+    """ser：{date: (比例 0–1, 價格)}；bottoms：[[date, price], ...]；cohort：{date, rows:[[價位下緣, STH, LTH]]}"""
+    D = sorted(d for d in ser if LL_FROM <= d <= last)
+    if len(D) < 800: return None
+    v = {d: ser[d][0] for d in D}; px = {d: ser[d][1] for d in D}; d1 = D[-1]
+    peaks = []
+    for bd, bp in bottoms:
+        w = [d for d in D if abs(dn(d) - dn(bd)) <= 240]
+        if not w: continue
+        pk = max(w, key=v.get); a = [d for d in D if dn(pk) + 90 <= dn(d) <= dn(pk) + 730]
+        am = max(a, key=v.get) if a and dn(d1) - dn(pk) >= 730 else None
+        peaks.append(dict(bottom=bd, date=pk, value=round(v[pk] * 100, 1), price=round(px[pk]),
+                          after_max=dict(date=am, value=round(v[am] * 100, 1), price=round(px[am])) if am else None))
+    lp = peaks[-1] if peaks else None
+    pm = min((d for d in D if lp and d > lp['date']), key=v.get, default=None)
+    out = dict(date=d1, value=round(v[d1] * 100, 1), price=round(px[d1]), peaks=peaks,
+               post_min=dict(date=pm, value=round(v[pm] * 100, 1), price=round(px[pm])) if pm else None,
+               post_max=round(max(v[d] for d in D if lp and d > lp['date']) * 100, 1) if lp and d1 > lp['date'] else None,
+               note='CheckOnChain 長期持有者（持有 ≥155 天）虧損比例；打破規律的價位由 CheckOnChain 長期持有者籌碼分布推算，每天重算；只作讀值')
+    rows = []
+    for i in range(len(D) - 1, -1, -block):   # 每 4 天取最高值，高點不會被抽樣漏掉
+        seg = D[max(0, i - block + 1): i + 1]; m = max(seg, key=v.get)
+        rows.append([dn(seg[-1]), round(v[m] * 100, 1), round(px[seg[-1]])])
+    out['rows'] = rows[::-1]
+    if cohort and cohort.get('rows') and lp:
+        R = cohort['rows']; tgt = lp['value'] / 100
+        grid = [p for p in range(int(px[d1]) // 500 * 500, 20000, -500)]
+        bp = next((p for p in grid if _loss_at(R, p) >= tgt), None)
+        out['cohort'] = dict(date=cohort.get('date'), at_close=round(_loss_at(R, px[d1]) * 100, 1), break_price=bp,
+                             table=[[p, round(_loss_at(R, p) * 100, 1)] for p in range(int(px[d1]) // 2000 * 2000, max(20000, (bp or 50000) - 4000), -4000)])
+    return out
