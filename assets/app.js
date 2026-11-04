@@ -1228,6 +1228,7 @@
     ['deriv', _t('衍生品'), _t('波動率與選擇權'), 'M3 17c3-8 6-8 9 0s6 8 9 0', 'DERIVATIVES'],
     ['flows', _t('資金'), _t('ETF 與宏觀'), 'M4 7h16M4 12h10M4 17h6', 'FLOWS · MACRO'],
     ['onchain', _t('鏈上'), _t('持有者與籌碼'), 'M7 7h4v4H7zM13 13h4v4h-4zM11 9h4M9 11v4', 'ON-CHAIN'],
+    ['archive', _t('往期'), _t('過去的判讀與戰績'), 'M4 6h16M4 12h16M4 18h10', 'ARCHIVE'],
     ['method', _t('方法'), _t('資料與限制'), 'M12 3v18M3 12h18M6 6l12 12', 'METHOD']
   ];
 
@@ -2112,6 +2113,58 @@
     inp.addEventListener('input', upd); upd();
   };
 
+  /* 往期與戰績（2026-11-04 整體審查）：data/archive/index.json 每天都有封存，網站上一直沒有入口（2026-10-12 決定之後再設計）。
+     發現戰績：每則發現的最終狀態取最後一次出現的後續（確認／推翻／到期／追蹤中）；今天這期的後續最新。
+     結案少於 30 則時不算命中率（本站原則：樣本少於 30 不下結論）。往期列表：頭條、立場、當天收盤、到現在的漲跌。
+     要捲到這一版附近才讀檔（英文版另讀各期的 .en.json 取英文標題） */
+  var AR = null;
+  function arLoad() {
+    if (AR) return AR;
+    AR = load('data/archive/index.json').then(function (ix) {
+      var E = (ix.editions || []).slice().sort(function (a, b) { return a.date < b.date ? -1 : a.date > b.date ? 1 : 0; });
+      var wf = E.filter(function (e) { return (e.findings || []).length; });
+      var en = LANG === 'en' ? Promise.all(wf.map(function (e) { return load('data/archive/' + e.date + '.en.json').catch(function () { return null; }); })) : Promise.resolve([]);
+      return en.then(function (ns) { var T = {}; ns.forEach(function (n) { ((n && n.findings) || []).forEach(function (f) { T[f.id] = f.title; }); }); return { E: E, T: T, asof: ix.as_of }; });
+    });
+    return AR;
+  }
+  function arRender() {
+    var rec = $('#ar-rec'), lst = $('#ar-list'); if (!rec || rec._done) return; rec._done = 1;
+    arLoad().then(function (a) {
+      var E = a.E, st = {}, all = [];
+      E.forEach(function (e) { (e.findings || []).forEach(function (f) { all.push(Object.assign({ date: e.date }, f)); }); (e.followups || []).forEach(function (f) { if (f.status) st[f.id] = f.status; }); });
+      ((N && N.followups) || []).forEach(function (f) { if (f.status) st[f.id] = f.status; });
+      var K = ['confirmed', 'refuted', 'expired', 'open'], cnt = { confirmed: 0, refuted: 0, expired: 0, open: 0 };
+      all.forEach(function (f) { f.st = FU_ST[st[f.id]] ? st[f.id] : 'open'; cnt[f.st]++; });
+      var done = cnt.confirmed + cnt.refuted + cnt.expired, ttl = function (f) { return esc((LANG === 'en' && a.T[f.id]) || f.title || f.id); };
+      var stChip = function (k) { var x = FU_ST[k]; return '<span class="chip ' + (k === 'confirmed' ? 'up' : k === 'refuted' ? 'down' : '') + '">' + x[0] + ' ' + _T(x[1], x[2]) + '</span>'; };
+      var row = function (f) { var c = CONF[f.confidence] || CONF.medium; return '<tr><td class="ar-d">' + fmt.md(f.date) + '</td><td>' + ttl(f) + '</td><td class="hide-sm">' + _T(c[0], c[1]) + '</td><td class="hide-sm">' + (f.lean ? impChip(f.lean) : '') + '</td><td>' + stChip(f.st) + '</td></tr>'; };
+      var head = '<colgroup><col style="width:9%"><col style="width:53%"><col class="hide-sm" style="width:13%"><col class="hide-sm" style="width:11%"><col style="width:14%"></colgroup><thead><tr><th>' + _T('日期', 'Date') + '</th><th>' + _T('發現', 'Finding') + '</th><th class="hide-sm">' + _T('可信度', 'Confidence') + '</th><th class="hide-sm">' + _T('當時判讀', 'Lean') + '</th><th>' + _T('結果', 'Outcome') + '</th></tr></thead>';
+      var closed = all.filter(function (f) { return f.st !== 'open'; }).reverse(), open = all.filter(function (f) { return f.st === 'open'; }).reverse();
+      rec.innerHTML = !all.length ? '<p class="note">' + _T('還沒有封存的發現。', 'No archived findings yet.') + '</p>' :
+        '<div class="ar-sum">' + [[_T('發現', 'Findings'), all.length, '']].concat(K.map(function (k) { return [_T(FU_ST[k][1], FU_ST[k][2]), cnt[k], k]; })).map(function (x) { return '<div><span class="k">' + x[0] + '</span><b class="num ' + (x[2] === 'confirmed' ? 'up' : x[2] === 'refuted' ? 'down' : '') + '">' + x[1] + '</b></div>'; }).join('') + '</div>' +
+        '<p class="note">' + (done >= 30 ? _T('已結案 ' + done + ' 則：確認 ' + fmt.n(cnt.confirmed / done * 100, 0) + '%、推翻 ' + fmt.n(cnt.refuted / done * 100, 0) + '%、到期沒有結果 ' + fmt.n(cnt.expired / done * 100, 0) + '%。', done + ' resolved: ' + fmt.n(cnt.confirmed / done * 100, 0) + '% confirmed, ' + fmt.n(cnt.refuted / done * 100, 0) + '% refuted, ' + fmt.n(cnt.expired / done * 100, 0) + '% expired without an outcome.')
+          : _T('已結案 ' + done + ' 則，還不到 30 則，先不算命中率（本站原則：樣本少於 30 不下結論）。', done + ' resolved so far — fewer than 30, so no hit rate yet (site rule: no conclusions from fewer than 30 samples).')) +
+          _T('每則發現寫下會確認或推翻它的條件與期限，之後每天由資料管線檢查。', ' Each finding states the conditions and deadline that would confirm or refute it; the pipeline checks them daily.') + '</p>' +
+        (closed.length ? '<div class="tbl-wrap"><table class="tbl">' + head + '<tbody>' + closed.map(row).join('') + '</tbody></table></div>' : '') +
+        (open.length ? '<details class="fu-open"><summary>' + _T('看追蹤中的 ' + open.length + ' 則', 'Show the ' + open.length + ' still being tracked') + '</summary><div class="tbl-wrap"><table class="tbl">' + head + '<tbody>' + open.map(row).join('') + '</tbody></table></div></details>' : '');
+      var c = D.price.bar.c;
+      lst.innerHTML = '<div class="tbl-wrap"><table class="tbl ar-ed"><colgroup><col style="width:9%"><col style="width:57%"><col class="hide-sm" style="width:15%"><col class="hide-sm" style="width:10%"><col style="width:9%"></colgroup><thead><tr><th>' + _T('日期', 'Date') + '</th><th>' + _T('頭條', 'Headline') + '</th><th class="hide-sm">' + _T('立場', 'Stance') + '</th><th class="num hide-sm">' + _T('當天收盤', 'Close') + '</th><th class="num">' + _T('到今天', 'Since') + '</th></tr></thead><tbody>' +
+        E.slice().reverse().map(function (e) { var ch = e.close ? (c / e.close - 1) * 100 : e.chg_since_pct; return '<tr><td class="ar-d">' + e.date.slice(5).replace('-', '/') + '<br><span class="note">No.' + ('00' + e.edition).slice(-3) + '</span></td><td>' + esc((LANG === 'en' && e.headline_en) || e.headline || '') + '</td><td class="hide-sm">' + esc((LANG === 'en' && e.stance_en) || e.stance || '') + '</td><td class="num hide-sm">' + fmt.usd(e.close) + '</td><td class="num"><span style="color:var(--' + (ch >= 0 ? 'up' : 'down') + ')">' + fmt.pct(ch, 1) + '</span></td></tr>'; }).join('') + '</tbody></table></div>' +
+        '<p class="note">' + _T('「到今天」＝今天收盤 ' + fmt.usd(c) + ' 相對那一期收盤的漲跌。各期完整內容封存在 data/archive/。', '“Since” = today\'s close of ' + fmt.usd(c) + ' vs that edition\'s close. Full editions are archived in data/archive/.') + '</p>';
+    }).catch(function () { rec.innerHTML = '<p class="note">' + _T('往期資料本日未取得。', 'The archive could not be loaded today.') + '</p>'; lst.innerHTML = ''; });
+  }
+  V.archive = function () {
+    return '<div class="grid">' + panel('span-12', _T('發現戰績', 'Findings track record'), _T('2026/10/23 起 · 每期的發現與後續', 'since 2026/10/23 · each edition\'s findings and follow-ups'), '<div id="ar-rec"><p class="note">' + _T('載入中…', 'Loading…') + '</p></div>', '', 'record') +
+      panel('span-12', _T('往期', 'Past editions'), _T('每天台北 08:30 一期', 'one edition a day at 08:30 Taipei'), '<div id="ar-list"></div>', '', 'editions') + '</div>';
+  };
+  V.archive.after = function () {
+    var sec = $('#pg-archive'); if (!sec) return;
+    if (!window.IntersectionObserver) return arRender();
+    var io = new IntersectionObserver(function (es) { if (es.some(function (e) { return e.isIntersecting; })) { io.disconnect(); arRender(); } }, { rootMargin: '800px 0px' });
+    io.observe(sec);
+  };
+
   V.method = function () {
     return '<div class="grid">' + panel('span-7', _t('這是什麼'), '', _t('<div class="prose"><p>破曉（Daybreak）是每天清晨的第一份比特幣簡報：先告訴你今天發生了什麼、為什麼重要，再用數據說明市場在週期裡的位置，以及離分批出場還有多遠。</p><p>每天兩段更新：台北 08:20（UTC 00:20）資料管線自動抓取 Kraken、Deribit、CoinMetrics、bitcoin-data、mempool.space、FRED、13 個交易所掛單簿與 Tidemark，算出所有指標；之後由 Claude 查證當天新聞、讀數據，寫成頭條、今日要聞解讀與各版的「今日判讀」。數字全部來自管線，判讀只解釋數字，不改數字。</p>') +
       _t('<h3>原則</h3><p>先給結論再給證據。各版「這些數字代表什麼」與表格下方的解讀，是用當日數值套固定門檻自動產生（門檻寫在句子裡），標籤「偏多／偏空／留意／中性」只描述該數字對價格的一般含意，不是預測，也不連動出場規則。寧可標示「本日未取得」，也不推估或沿用舊數字。不同資料商的數字不相減。分數一律附樣本數，樣本少於 30 不下結論。</p><h3>限制</h3><p>週期模型只有 3–4 輪歷史，所有「遞減」推論都假設趨勢延續。冪律擬合線會隨新資料下修。掛單隨時可撤。短線預測不連動出場規則。bitcoin-data 的部分序列本身晚 5–6 天，頁首「資料狀態」列出每個來源的資料日期與落後天數。</p>') +
@@ -2285,7 +2338,7 @@
     set('#m-theme', 'Toggle light / dark', 'aria-label');
     var ck = $('.clock'); if (ck && ck.firstChild && ck.firstChild.nodeType === 3) ck.firstChild.nodeValue = 'Next ';
     var fs = $('#fs'); if (fs) { fs.setAttribute('aria-label', 'Full screen'); fs.lastChild.nodeValue = 'Full screen'; }
-    var ft = document.querySelectorAll('.foot span'); ['© Daybreak', 'For research only — not investment advice', 'Press 1–9 to switch sections', 'Swipe left/right to switch sections'].forEach(function (x, i) { if (ft[i]) ft[i].textContent = x; });
+    var ft = document.querySelectorAll('.foot span'); ['© Daybreak', 'For research only — not investment advice', 'Press 1–9, 0 to switch sections', 'Swipe left/right to switch sections'].forEach(function (x, i) { if (ft[i]) ft[i].textContent = x; });
     var fr = $('#follow-rail .k'); if (fr) fr.textContent = 'FOLLOW';
     var ff = $('#follow-foot'); if (ff) ff.innerHTML = 'Daily at 08:30 Taipei · follow <b>@songpu717</b> on X ↗';
     document.title = 'Daybreak';
