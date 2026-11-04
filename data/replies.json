@@ -1,0 +1,92 @@
+{
+ "date": "2026-11-04",
+ "data_date": "2026-11-03",
+ "edition": 29,
+ "items": [
+  {
+   "n": 5, "order": 1, "status": "send",
+   "url": "https://x.com/DaanCrypto/status/2117663344781877287", "id": "2117663344781877287",
+   "author": "DaanCrypto", "name": "Daan Crypto Trades", "followers": 414401, "posted": "2026-11-03T17:01:00Z", "lang": "en",
+   "angle": "交叉驗證",
+   "summary": "列出選舉日要看的流動性價位：下方 $75K、$76.2K；上方 $82.6K、$85K、$87.5K。",
+   "reply": "Our OKX-only liquidation estimate lines up: long clusters at 75.2–76.3K and 74.0–74.8K, shorts at 82–83K and 84.9–85.9K. Within ±5% of the Nov 3 close, ~7.2K BTC of longs sit below vs ~3.7K BTC of shorts above. An estimate from one venue.",
+   "sources": "推算清算帶（OKX，11/04 00:00 UTC）：多單 75,200–76,300、74,000–74,800；空單 84,900–85,900、82,000–83,000；收盤上下 5% 內下方 7,238 顆、上方 3,677 顆",
+   "note": "他的 $76.2K 落在推算多單帶裡，$85K 落在最大空單帶裡；配圖標出他提到的價位。",
+   "image": {"chart": "liq", "title": "Estimated long liquidations sit at $75.2K–$76.3K, just under the close", "marks": [75000, 76200, 82600, 85000, 87500]}
+  },
+  {
+   "n": 1, "order": 2, "status": "send",
+   "url": "https://x.com/ninjatoolsio/status/2117629297779200302", "id": "2117629297779200302",
+   "author": "ninjatoolsio", "name": "Ninja Tools", "followers": 10687, "posted": "2026-11-03T14:45:42Z", "lang": "en",
+   "angle": "補數據",
+   "summary": "Coinbase 溢價自 10/6 起每小時都是負的，10/30 低點 −0.30%、現在 −0.19%；美國 ETF 30 天 −12 億美元。問美國買盤何時回來。",
+   "reply": "Daily data agrees: Coinbase premium 7-day avg hit −0.19% on Nov 3, the lowest since our series began in January (299 days). Asia isn't stepping in either: OKX P2P USDT/CNY trades at a 1.14% discount.",
+   "sources": "Coinbase 溢價 7 日均 −0.190%（11/03，2026-01 起 299 天最低）；OKX 場外 USDT/CNY −1.137%（11/03）",
+   "note": "USDT 折價只有 2 天紀錄，也可能是人民幣端的因素；有人追問就照實說。",
+   "image": {"chart": "cbp", "title": "Coinbase premium 7-day average hits −0.19%, the lowest since January"}
+  },
+  {
+   "n": 3, "order": 3, "status": "send",
+   "url": "https://x.com/mks1231237549/status/2117792472030134363", "id": "2117792472030134363",
+   "author": "mks1231237549", "name": "阿布", "followers": 4752, "posted": "2026-11-04T01:34:06Z", "lang": "zh",
+   "angle": "交叉驗證",
+   "summary": "貝萊德 ETF 地址轉 7,244 BTC 到 Coinbase Prime，作者認為是 10/30、11/02 贖回的鏈上落地，但不確定已經賣了多少。",
+   "reply": "ETF 這邊：IBIT 11/02 單檔 −4.05 億美元（暫定），全體兩日 −10.4 億。賣壓也看得到落在美國現貨：Coinbase 對幣安溢價 7 日均 −0.19%，是今年 1 月有紀錄以來最低。",
+   "sources": "IBIT −4.053 億美元（11/02 暫定）；全體 10/30 −6.432 億（The Block）＋11/02 −3.986 億（Farside、SoSoValue 暫定）；Coinbase 溢價 7 日均 −0.190%",
+   "note": "本站沒有那筆轉帳的數據，回覆不評論轉帳本身。",
+   "image": {"chart": "etf", "title": "美國現貨 ETF 兩日流出 10.4 億美元"}
+  },
+  {
+   "n": 7, "order": 4, "status": "send",
+   "url": "https://x.com/bitfinex/status/2117578986993668415", "id": "2117578986993668415",
+   "author": "bitfinex", "name": "Bitfinex", "followers": 917512, "posted": "2026-11-03T11:25:47Z", "lang": "en",
+   "angle": "交叉驗證",
+   "summary": "STH-SOPR 10/30 觸及 0.992，是 7/14 以來最低；短期持有者成本 $75,772 是下一道價位。",
+   "reply": "CheckOnChain shows the same low: STH-SOPR 0.9918 on Oct 30, deeper than the Aug 1 (0.9936) and Aug 14 (0.9946) lows, and still below 1 (0.9954 on Nov 3). STH cost basis estimates bracket yours: 75.9K (bitcoin-data, Oct 28) and 75.2K (CheckOnChain).",
+   "sources": "STH-SOPR 10/30 0.9918、8/1 0.9936、8/14 0.9946、11/03 0.9954（CheckOnChain）；短期成本 75,892（bitcoin-data 10/28）、75,192（CheckOnChain 11/03）",
+   "note": "Bitfinex 的 $75,772 落在本站兩個估計之間；7/13 低點 0.9762，和他說的「7/14 以來最低」一致。",
+   "image": {"chart": "sopr", "title": "STH-SOPR below 1 for 5 straight days; the Oct 30 low was 0.9918"}
+  },
+  {
+   "n": 2, "order": 5, "status": "send",
+   "url": "https://x.com/yytttt_1982/status/2117791439127978333", "id": "2117791439127978333",
+   "author": "yytttt_1982", "name": "我是YT", "followers": 5290, "posted": "2026-11-04T01:30:00Z", "lang": "zh",
+   "angle": "補數據",
+   "summary": "機構在走、幣價在撐：ETF 兩日流出 10.4 億、IBIT 單日 −4.05 億、幣安淨提款 47.2 億；問今晚先守 77,000 還是先回 76,300。",
+   "reply": "補一個籌碼數字：76–78K 這層短期籌碼 11/03 一天由 59.4 萬增到 72.9 萬顆，短期持有者總量卻只多 2.4 萬，是高位買的人認賠搬到這裡。STH-SOPR 11/03 是 0.9954，已連 5 天低於 1。（CheckOnChain）",
+   "sources": "76–78K 短期籌碼 59.4 萬 → 72.9 萬顆、短期總量 368.8 萬 → 371.2 萬（CheckOnChain 11/02→11/03）；STH-SOPR 0.9954",
+   "note": "",
+   "image": {"chart": "cohort", "title": "76–78K 短期籌碼一天多 13.5 萬顆"}
+  },
+  {
+   "n": 4, "order": 6, "status": "skip",
+   "url": "https://x.com/DumpDetected/status/2117793254708252973", "id": "2117793254708252973",
+   "author": "DumpDetected", "name": "DumpDetected", "followers": 13642, "posted": "2026-11-04T01:37:13Z", "lang": "id",
+   "angle": "補數據",
+   "summary": "（印尼文）OI 升到 109.8 億美元、資金費率 +0.0098%、幣安永續／現貨成交量比 15 倍，ETF 仍在流出；質疑反彈沒有現貨支撐，並建議停損、留 USDT。",
+   "reply": "0.0098% per 8h is ~10.7% annualized, the same as the OI-weighted rate across Deribit, OKX and Hyperliquid. Spot says the opposite: Coinbase premium 7-day avg −0.19%, lowest since January. K33 also flags CME OI at a 3-year low.",
+   "sources": "加權資金費率年化 10.7%；Coinbase 溢價 7 日均 −0.190%；K33（11/02）CME 未平倉三年低點",
+   "note": "跳過：原文是印尼文（Grok 標成英文），結尾是停損建議。只回中文和英文貼文。"
+  },
+  {
+   "n": 6, "order": 7, "status": "skip",
+   "url": "https://x.com/hibino_news/status/2117792023973663042", "id": "2117792023973663042",
+   "author": "hibino_news", "name": "日比野常法", "followers": 216, "posted": "2026-11-04T01:32:19Z", "lang": "ja",
+   "angle": "補充",
+   "summary": "（日文）ETF 兩天流出約 10 億美元，BTC 跌破 77,000，恐跌到 70,000。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：原文是日文的標題黨新聞，帳號只有 216 粉。"
+  },
+  {
+   "n": 8, "order": 8, "status": "skip",
+   "url": "https://x.com/xiaozhubao888/status/2117790423355969611", "id": "2117790423355969611",
+   "author": "xiaozhubao888", "name": "小猪盖被", "followers": 34, "posted": "2026-11-04T01:25:58Z", "lang": "en",
+   "angle": "補數據",
+   "summary": "資金費率還很高，短期大反彈機率小，只能繼續往下等更好的價格。",
+   "reply": "Funding is elevated: 10.7% annualized, OI-weighted across Deribit, OKX and Hyperliquid. But spot trades at a discount in both the US and Asia, so leverage is doing the lifting. Within 5% of the close, est. 7,238 BTC of longs sit below vs 3,677 BTC of shorts above (OKX only).",
+   "sources": "加權資金費率 10.7%；Coinbase 溢價 7 日均 −0.190%、OKX 場外 USDT −1.137%；推算清算（OKX）",
+   "note": "跳過：34 粉、5 次瀏覽，沒有曝光。原文是英文（Grok 標成中文），所以回覆改成英文。"
+  }
+ ]
+}

@@ -18,8 +18,12 @@ ops/
     lines_016.json     No.016 旁白 {"base": [每場景秒數], "lines": [每場景一句]}
     out/               輸出的 mp4、封面、字幕（不進 git，影片太大）
   replies/           X 互動回覆
+    index.html         回覆小幫手（讀 data/replies.json 與 data/replies/ 的配圖）
     grok-prompt.md     給 Grok 的找文規則（每天整段貼給 Grok）
-    README.md          回覆流程與 Claude 寫回覆的規則
+    README.md          回覆流程、Claude 寫回覆的規則、replies.json 格式
+    fetch.py           讀 X 原文（api.fxtwitter.com），核對 Grok 的摘要
+    cards.py           回覆配圖 → data/replies/<n>.png
+    check.py           檢查 replies.json（語言、字數、簡體字、框架用詞、配圖）
 ```
 
 ## 每日流程
@@ -30,7 +34,7 @@ ops/
 | 推送後 | GitHub Actions `share.yml` | 畫當日分享圖 | `data/share.png`、`data/share-en.png` |
 | 你 | 手機開發文小幫手 | 一鍵把圖文送進 X | <https://north7.github.io/daybreak/ops/post/> |
 | 你／Claude | 本機 | 做當日短影片（見下） | `ops/video/out/` |
-| 日報後 | Grok → Claude → 你 | Grok 找可回覆的 X 貼文，Claude 依當日數據寫回覆，你挑著發 | 見 `ops/replies/` |
+| 日報後 | Grok → Claude → 你 | Grok 找可回覆的 X 貼文，Claude 讀原文、依當日數據寫回覆和配圖，你在回覆小幫手照順序回 | `data/replies.json`、`data/replies/`；<https://north7.github.io/daybreak/ops/replies/> |
 
 ## 發文小幫手
 
@@ -52,7 +56,7 @@ python make_short_017.py ../.. ~/fonts out/daybreak-017-short.mp4 --audio out/01
 
 ## 互動回覆
 
-每天請 Grok 找 8 則值得用數據回覆的 X 貼文（規則在 [`replies/grok-prompt.md`](replies/grok-prompt.md)），把結果貼給 Claude 寫回覆（規則在 [`replies/README.md`](replies/README.md)）。回覆和短影片同一個原則：只放資訊，預設不貼連結。
+每天請 Grok 找 8 則值得用數據回覆的 X 貼文（規則在 [`replies/grok-prompt.md`](replies/grok-prompt.md)），把結果貼給 Claude 寫回覆和配圖（規則在 [`replies/README.md`](replies/README.md)），再到回覆小幫手 <https://north7.github.io/daybreak/ops/replies/> 照順序回。英文貼文回英文、中文貼文回繁體中文；和短影片同一個原則：只放資訊，預設不貼連結。
 
 ## 之後可以加
 

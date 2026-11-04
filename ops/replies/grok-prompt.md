@@ -23,6 +23,8 @@
 【優先看的帳號】請先確認帳號仍然活躍：Glassnode (@glassnode)、James Check (@_Checkmatey_)、Ki Young Ju (@ki_young_ju)、K33 的 Vetle Lunde (@VetleLunde)、Eric Balchunas (@EricBalchunas)、James Seyffart (@JSeyff)、Joe Consorti (@JoeConsorti)、Daan Crypto Trades (@DaanCrypto)、Willy Woo (@woonomic)、Ecoinometrics (@ecoinometrics)、Greeks.live (@GreeksLive)、Murphy (@Murphychen888)、Phyrex Ni (@Phyrex_Ni)。除了這些，也找粉絲 1 萬到 30 萬、近期常發比特幣數據的中英文帳號。
 
 【一定要符合】
+- 原文是中文或英文（請看原文實際用的語言，不要看帳號名稱或你搜尋用的關鍵字；日文、韓文、印尼文等一律不要）
+- 作者粉絲 2,000 以上
 - 發文不超過 24 小時，越新越好
 - 貼文裡有具體主張、數字或圖表（例如「ETF 連續流出代表機構撤退」「資金費率轉正」「跌破 STH 成本」），不是只有喊單或情緒
 - 回覆數少於 150。大帳號（50 萬粉以上）只收發文 1 小時內的
@@ -38,6 +40,6 @@
 英文 5 則、中文 3 則；數量不夠就照實列，不要湊數。
 
 【輸出格式】一個表格，欄位：
-# | 連結 | 帳號（粉絲數）| 發文時間 | 語言 | 原文重點（用你自己的話寫一句，並列出原文提到的數字）| 讚／回覆／轉推 | 對應的 Daybreak 主題 | 建議角度（補數據／交叉驗證／提出反例／回答提問）| 分數
+# | 連結 | 帳號（粉絲數）| 發文時間 | 原文實際語言 | 原文重點（用你自己的話寫一句，並列出原文提到的數字）| 讚／回覆／轉推 | 對應的 Daybreak 主題 | 建議角度（補數據／交叉驗證／提出反例／回答提問）| 分數
 表格下面用一句話說明今天搜尋的重點主題。
 ```
