@@ -22,16 +22,21 @@ figcaption .n{background:var(--red);color:#fff;padding:0 8px;font-weight:700}fig
 .part{position:relative;border-left:3px solid transparent;padding-left:12px;margin-left:-15px}.part:hover{border-left-color:var(--line)}
 .pbtn{float:right;font:inherit;font-size:13px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);padding:2px 10px;margin:6px 0 6px 10px;cursor:pointer}
 .pbtn small{color:var(--ink3);font-size:12px}
+.singles{margin-top:40px}.single{background:var(--card);border:1px solid var(--line);padding:12px 16px;margin:14px 0}
+.sh{font-size:14px;font-weight:700;margin-bottom:8px}.sb{display:flex;gap:14px;align-items:flex-start}.sb img{width:120px;height:auto;flex:none;border:1px solid var(--line)}.sb p{margin:0;font-size:15px}
+a.btn{font-size:14px;border:2px solid var(--ink);color:var(--ink);padding:4px 12px;text-decoration:none}
+@media (max-width:480px){.sb{flex-direction:column}.sb img{width:100%}}
 </style></head><body>
 <header><b>破曉 Daybreak · 長文預覽</b><span style="color:var(--ink3);font-size:14px">長文：牛到底來了沒？ / Is the bull actually here?</span>
 <div class="tabs"><button data-tab="zh" aria-pressed="true">中文</button><button data-tab="en" aria-pressed="false">English</button></div></header>
 <main><section id="zh" class="art" lang="zh-Hant">
-<div class="how"><b>怎麼發</b><ol><li>在 X 開「文章」（Articles）→ 新增</li><li>封面上傳下面的封面圖（5:2 橫圖），標題按「複製標題」貼上</li><li>內文一段一段來：按每段右上的「複製這段」→ 貼到 X → 插入下面那張圖（圖下方可下載）→ 再複製下一段</li><li>發布後，用下面的短貼文「引用」這篇長文再發一次</li></ol>
+<div class="how"><b>怎麼發</b><ol><li>在 X 開「文章」（Articles）→ 新增</li><li>封面上傳下面的封面圖（5:2 橫圖），標題按「複製標題」貼上</li><li>內文一段一段來：按每段右上的「複製這段」→ 貼到 X → 插入下面那張圖（圖下方可下載）→ 再複製下一段</li><li>發布後，用下面的短貼文「引用」這篇長文再發一次；之後幾天照最下面的「單則貼文」各引用一次</li></ol>
 <div class="btns"><button data-copy="zh-title">複製標題</button><button data-copyall="zh">一次複製全文（不含圖）</button><button data-copy="zh-short">複製短貼文</button></div>
 <p class="meta">8 張圖 · ops/articles/img/2026-11-04/</p><figure class="cover"><img src="img/2026-11-04/0-cover.png" alt="cover"><figcaption><span class="n">封面</span>5:2<a class="dl" href="img/2026-11-04/0-cover.png" download>0-cover.png ↓</a></figcaption></figure></div>
 <h1>牛到底來了沒？我把週期數字攤開來看</h1>
 <div class="part">
-<p>這幾天看到很多人在問同一件事：不是說牛市來了嗎，怎麼越走越弱？</p>
+<p>從低點起算第 18 週，這輪比特幣只漲了 31%。2019 和 2023 年的同一週，都已經漲了將近 70%。</p>
+<p>難怪這幾天很多人在問同一件事：不是說牛市來了嗎，怎麼越走越弱？</p>
 <p>心情我懂。從 9/21 的高點 86,594 到 11/03 收盤 77,332，跌了 10.7%。ETF 10/30 和 11/02 兩天流出 10.4 億美元，恐懼貪婪指數一週內從 48 掉到 26。價格還比一年前低 30.5%。這種時候說「牛市」，聽起來確實有點刺耳。</p>
 <p>所以我想把這件事拆成三個問題：「牛市」到底怎麼算、這輪在週期裡走到哪裡、正反兩邊各有哪些數字。</p>
 <h2>一、先講清楚「牛市」怎麼算</h2>
@@ -110,11 +115,37 @@ figcaption .n{background:var(--red);color:#fff;padding:0 8px;font-weight:700}fig
 <h2>結論</h2>
 <p>照規則，牛市已經來了，今天是第 26 天。週期位置上，價格離過熱很遠、比較靠近歷史底部那一側；走法上，這輪跟 2015 年一樣慢。但這是一個「價格先走、現貨資金還沒跟上」的牛市初段，賣壓來自認賠的短線買家和趁反彈出貨的老手，撐盤的是槓桿。</p>
 <p>我覺得大家懷疑一點都不奇怪。比起爭論牛來了沒，更值得盯的是：現貨買盤會不會回來。</p>
+<p>你覺得這輪比較像 2015 年那樣慢慢磨上去，還是 2019 年那種假突破？很想聽聽你看到的。</p>
 <p>這篇只整理數據，不是買賣建議。每天的數字我都放在破曉 Daybreak：<a href="https://north7.github.io/daybreak/">https://north7.github.io/daybreak/</a></p>
 <p class="tags">#比特幣 #BTC #牛市</p>
 <p>數據來源：價格、MVRV、實現市值、交易所供給 CoinMetrics；冪律為 Daybreak 以 CoinMetrics 價格擬合；短期持有者成本、真實市場均價、長期持有者淨部位 bitcoin-data；短期籌碼與 STH-SOPR CheckOnChain；Coinbase 溢價 Coinbase、Binance；ETF Farside、SoSoValue、The Block；資金費率 Deribit、OKX、Hyperliquid。</p>
 </div>
 <div class="short"><b>帶出長文的短貼文</b><p>很多人在問：牛市不是來了嗎，怎麼越走越弱？<br><br>從低點起算第 18 週，這輪漲 31%，2019、2023 同期是 +69%、+72%。慢，但 2015 年同期也只有 +32%。<br><br>我把週期位置、支持和懷疑的數字都攤開了，配 8 張圖 👇<br><br>#比特幣 #BTC #牛市</p></div>
+<div class="singles"><h2>拆出來的單則貼文</h2><p class="meta">每則都是獨立的原創貼文：在長文上按「引用」發（引用算原創，串文的第 2 則以後算回覆）。數據是 11/03；標「當天更新」的，發之前請 Claude 用當天數據改數字。</p><div class="single"><div class="sh">1｜11/05（四）20:00｜配圖 <code>7-lth.png</code>｜當天更新</div><div class="sb"><a href="img/2026-11-04/7-lth.png" download><img src="img/2026-11-04/7-lth.png" alt="" loading="lazy"></a><p>這波反彈，老手一直在賣。<br><br>長期持有者 30 天淨減持 149,737 顆。這段淨減持從 8/4 開始已經 91 天，同期價格反而漲了 19.5%。<br><br>每次反彈上面都有人出貨，這也是這輪牛市走得這麼慢的原因之一。完整的週期數字我整理在這篇 👇<br><br>#比特幣 #BTC #鏈上數據</p></div><div class="btns"><button data-copy="zh-single1">複製文字</button><a class="btn" href="img/2026-11-04/7-lth.png" download>下載配圖</a></div><textarea hidden id="zh-single1">這波反彈，老手一直在賣。
+
+長期持有者 30 天淨減持 149,737 顆。這段淨減持從 8/4 開始已經 91 天，同期價格反而漲了 19.5%。
+
+每次反彈上面都有人出貨，這也是這輪牛市走得這麼慢的原因之一。完整的週期數字我整理在這篇 👇
+
+#比特幣 #BTC #鏈上數據</textarea></div><div class="single"><div class="sh">2｜11/06（五）19:30，非農（21:30）之前｜配圖 <code>3-powerlaw.png</code></div><div class="sb"><a href="img/2026-11-04/3-powerlaw.png" download><img src="img/2026-11-04/3-powerlaw.png" alt="" loading="lazy"></a><p>覺得牛市已經到頂了？頂部指標可不這麼看。<br><br>價格只有冪律趨勢價的 0.53 倍。過去四輪的底部落在 0.24–0.48 倍，頂部最低的一次也有 1.12 倍。Tidemark 頂部訊號是 0，Pi Cycle 比值 0.50。<br><br>現在離過熱很遠，反而比較靠近歷史底部那一側 👇<br><br>#比特幣 #BTC #週期</p></div><div class="btns"><button data-copy="zh-single2">複製文字</button><a class="btn" href="img/2026-11-04/3-powerlaw.png" download>下載配圖</a></div><textarea hidden id="zh-single2">覺得牛市已經到頂了？頂部指標可不這麼看。
+
+價格只有冪律趨勢價的 0.53 倍。過去四輪的底部落在 0.24–0.48 倍，頂部最低的一次也有 1.12 倍。Tidemark 頂部訊號是 0，Pi Cycle 比值 0.50。
+
+現在離過熱很遠，反而比較靠近歷史底部那一側 👇
+
+#比特幣 #BTC #週期</textarea></div><div class="single"><div class="sh">3｜11/07（六）20:00｜配圖 <code>2-regime.png</code></div><div class="sb"><a href="img/2026-11-04/2-regime.png" download><img src="img/2026-11-04/2-regime.png" alt="" loading="lazy"></a><p>週線多空分數 9/21 翻多，到現在 6 週，但分數只有 0.88。<br><br>過去幾輪真正的牛市，這個分數都衝到 +3 以上。現在才剛冒出零軸。<br><br>上次 2023/01 翻多，之後維持了 153 週；2019/04 那次只撐了 30 週。這次是哪一種，我覺得要看現貨回不回來 👇<br><br>#比特幣 #BTC #牛市</p></div><div class="btns"><button data-copy="zh-single3">複製文字</button><a class="btn" href="img/2026-11-04/2-regime.png" download>下載配圖</a></div><textarea hidden id="zh-single3">週線多空分數 9/21 翻多，到現在 6 週，但分數只有 0.88。
+
+過去幾輪真正的牛市，這個分數都衝到 +3 以上。現在才剛冒出零軸。
+
+上次 2023/01 翻多，之後維持了 153 週；2019/04 那次只撐了 30 週。這次是哪一種，我覺得要看現貨回不回來 👇
+
+#比特幣 #BTC #牛市</textarea></div><div class="single"><div class="sh">4｜11/08（日）20:00｜配圖 <code>4-cost.png</code>｜當天更新</div><div class="sb"><a href="img/2026-11-04/4-cost.png" download><img src="img/2026-11-04/4-cost.png" alt="" loading="lazy"></a><p>76K–75K 是這輪最重要的一層。<br><br>短期持有者的平均成本在 75,192–75,892，收盤 77,332 還站在上面。11/03 這一層一天多了 13.5 萬顆短線籌碼。<br><br>守住，成本就在這裡重新墊高；跌破，帳面虧損的人會一下子變多。我會一直盯著這一層 👇<br><br>#比特幣 #BTC #鏈上數據</p></div><div class="btns"><button data-copy="zh-single4">複製文字</button><a class="btn" href="img/2026-11-04/4-cost.png" download>下載配圖</a></div><textarea hidden id="zh-single4">76K–75K 是這輪最重要的一層。
+
+短期持有者的平均成本在 75,192–75,892，收盤 77,332 還站在上面。11/03 這一層一天多了 13.5 萬顆短線籌碼。
+
+守住，成本就在這裡重新墊高；跌破，帳面虧損的人會一下子變多。我會一直盯著這一層 👇
+
+#比特幣 #BTC #鏈上數據</textarea></div></div>
 <textarea hidden id="zh-title">牛到底來了沒？我把週期數字攤開來看</textarea><textarea hidden id="zh-short">很多人在問：牛市不是來了嗎，怎麼越走越弱？
 
 從低點起算第 18 週，這輪漲 31%，2019、2023 同期是 +69%、+72%。慢，但 2015 年同期也只有 +32%。
@@ -123,12 +154,13 @@ figcaption .n{background:var(--red);color:#fff;padding:0 8px;font-weight:700}fig
 
 #比特幣 #BTC #牛市</textarea>
 </section><section id="en" class="art" lang="en">
-<div class="how"><b>How to post</b><ol><li>On X, open Articles → Write</li><li>Upload the cover below (5:2 landscape); paste the title with "Copy title"</li><li>Work part by part: tap "Copy part" → paste into X → insert the chart below it (download link under each) → copy the next part</li><li>After publishing, quote the article with the short post below</li></ol>
+<div class="how"><b>How to post</b><ol><li>On X, open Articles → Write</li><li>Upload the cover below (5:2 landscape); paste the title with "Copy title"</li><li>Work part by part: tap "Copy part" → paste into X → insert the chart below it (download link under each) → copy the next part</li><li>After publishing, quote the article with the short post below; over the next days, quote it again with each standalone post at the bottom</li></ol>
 <div class="btns"><button data-copy="en-title">Copy title</button><button data-copyall="en">Copy full text (no charts)</button><button data-copy="en-short">Copy short post</button></div>
 <p class="meta">8 charts · ops/articles/img/2026-11-04/</p><figure class="cover"><img src="img/2026-11-04/0-cover-en.png" alt="cover"><figcaption><span class="n">Cover</span>5:2<a class="dl" href="img/2026-11-04/0-cover-en.png" download>0-cover-en.png ↓</a></figcaption></figure></div>
 <h1>Is the bull actually here? Here&#x27;s what the cycle numbers say</h1>
 <div class="part">
-<p>I keep seeing the same question this week: if we&#x27;re in a bull market, why does it feel like it&#x27;s getting weaker?</p>
+<p>Eighteen weeks off the low, this cycle is up just 31%. By the same week, 2019 and 2023 were both up close to 70%.</p>
+<p>No wonder I keep seeing the same question: if we&#x27;re in a bull market, why does it feel like it&#x27;s getting weaker?</p>
 <p>Fair enough. BTC is down 10.7% from the Sep 21 high of 86,594 to a 77,332 close on Nov 3. ETFs lost $1.04B across Oct 30 and Nov 2. Fear &amp; Greed dropped from 48 to 26 in a week. Price is still 30.5% below where it was a year ago. Calling this a bull market sounds a bit off right now.</p>
 <p>So I split it into three questions: what counts as a bull market, where this cycle actually stands, and which numbers argue for it versus against it.</p>
 <h2>1. What counts as a bull market</h2>
@@ -207,11 +239,37 @@ figcaption .n{background:var(--red);color:#fff;padding:0 8px;font-weight:700}fig
 <h2>Bottom line</h2>
 <p>By the rule, the bull is here, and today is day 26. On cycle position, price is far from overheated and closer to past lows than past tops. On pace, this cycle is as slow as 2015. But it&#x27;s an early bull where price moved first and spot money hasn&#x27;t caught up. The selling comes from short-term buyers taking losses and long-term holders selling into strength. Leverage is holding it up.</p>
 <p>The doubt makes sense to me. Instead of arguing about whether the bull is here, I&#x27;d watch whether spot buyers come back.</p>
+<p>Does this cycle look more like 2015&#x27;s slow grind or 2019&#x27;s false breakout to you? Curious what you&#x27;re seeing.</p>
 <p>This is a data roundup, not trading advice. I post the numbers daily at Daybreak: <a href="https://north7.github.io/daybreak/">https://north7.github.io/daybreak/</a></p>
 <p class="tags">#Bitcoin #BTC #BullMarket</p>
 <p>Sources: price, MVRV, realized cap, exchange supply from CoinMetrics; power law fitted by Daybreak on CoinMetrics prices; short-term holder cost, true market mean, LTH net position from bitcoin-data; short-term supply bands and STH-SOPR from CheckOnChain; Coinbase premium from Coinbase and Binance; ETF flows from Farside, SoSoValue, The Block; funding from Deribit, OKX, Hyperliquid.</p>
 </div>
 <div class="short"><b>Short post to share the article</b><p>If this is a bull market, why does it feel so weak?<br><br>At week 18 from the low, this cycle is up 31%. 2019 and 2023 were +69% and +72% by then. Slow, but 2015 was only +32%.<br><br>Cycle position, the bull case and the doubts, with 8 charts 👇<br><br>#Bitcoin #BTC #BullMarket</p></div>
+<div class="singles"><h2>Standalone posts</h2><p class="meta">Each is its own original post: quote the article to publish it (quotes count as originals; thread replies don&#x27;t). Data as of Nov 3; ones marked &quot;refresh&quot; should get that day&#x27;s numbers before posting.</p><div class="single"><div class="sh">1 | Nov 5 (Thu), 8 PM Taipei | chart <code>7-lth-en.png</code> | refresh</div><div class="sb"><a href="img/2026-11-04/7-lth-en.png" download><img src="img/2026-11-04/7-lth-en.png" alt="" loading="lazy"></a><p>Long-term holders have sold this entire bounce.<br><br>Net −149,737 BTC in 30 days, and net sellers for 91 days since Aug 4 while price rose 19.5%.<br><br>Every rally meets supply. Part of why this bull feels slow 👇<br><br>#Bitcoin #BTC #onchain</p></div><div class="btns"><button data-copy="en-single1">Copy text</button><a class="btn" href="img/2026-11-04/7-lth-en.png" download>Download chart</a></div><textarea hidden id="en-single1">Long-term holders have sold this entire bounce.
+
+Net −149,737 BTC in 30 days, and net sellers for 91 days since Aug 4 while price rose 19.5%.
+
+Every rally meets supply. Part of why this bull feels slow 👇
+
+#Bitcoin #BTC #onchain</textarea></div><div class="single"><div class="sh">2 | Nov 6 (Fri), 7:30 PM Taipei, before payrolls | chart <code>3-powerlaw-en.png</code></div><div class="sb"><a href="img/2026-11-04/3-powerlaw-en.png" download><img src="img/2026-11-04/3-powerlaw-en.png" alt="" loading="lazy"></a><p>Think this bull already topped? Top gauges disagree.<br><br>Price is 0.53x the power-law trend. Past lows: 0.24–0.48x; smallest top: 1.12x. Tidemark top signal: 0. Pi Cycle: 0.50.<br><br>Closer to past lows than past tops 👇<br><br>#Bitcoin #BTC #PowerLaw</p></div><div class="btns"><button data-copy="en-single2">Copy text</button><a class="btn" href="img/2026-11-04/3-powerlaw-en.png" download>Download chart</a></div><textarea hidden id="en-single2">Think this bull already topped? Top gauges disagree.
+
+Price is 0.53x the power-law trend. Past lows: 0.24–0.48x; smallest top: 1.12x. Tidemark top signal: 0. Pi Cycle: 0.50.
+
+Closer to past lows than past tops 👇
+
+#Bitcoin #BTC #PowerLaw</textarea></div><div class="single"><div class="sh">3 | Nov 7 (Sat), 8 PM Taipei | chart <code>2-regime-en.png</code></div><div class="sb"><a href="img/2026-11-04/2-regime-en.png" download><img src="img/2026-11-04/2-regime-en.png" alt="" loading="lazy"></a><p>My weekly regime score flipped bullish Sep 21. Six weeks in, it&#x27;s 0.88.<br><br>Past bull runs pushed it above +3. This one barely cleared zero.<br><br>Jan 2023&#x27;s flip lasted 153 weeks, Apr 2019&#x27;s just 30. Spot buyers decide which this is 👇<br><br>#Bitcoin #BTC #BullMarket</p></div><div class="btns"><button data-copy="en-single3">Copy text</button><a class="btn" href="img/2026-11-04/2-regime-en.png" download>Download chart</a></div><textarea hidden id="en-single3">My weekly regime score flipped bullish Sep 21. Six weeks in, it&#x27;s 0.88.
+
+Past bull runs pushed it above +3. This one barely cleared zero.
+
+Jan 2023&#x27;s flip lasted 153 weeks, Apr 2019&#x27;s just 30. Spot buyers decide which this is 👇
+
+#Bitcoin #BTC #BullMarket</textarea></div><div class="single"><div class="sh">4 | Nov 8 (Sun), 8 PM Taipei | chart <code>4-cost-en.png</code> | refresh</div><div class="sb"><a href="img/2026-11-04/4-cost-en.png" download><img src="img/2026-11-04/4-cost-en.png" alt="" loading="lazy"></a><p>76K–75K is the zone that matters now.<br><br>STH cost basis: 75,192–75,892. The 77,332 close sits above it, and the band added 135K BTC of short-term supply on Nov 3.<br><br>Hold, and the cost base resets here. Break, and many go underwater 👇<br><br>#Bitcoin #BTC #onchain</p></div><div class="btns"><button data-copy="en-single4">Copy text</button><a class="btn" href="img/2026-11-04/4-cost-en.png" download>Download chart</a></div><textarea hidden id="en-single4">76K–75K is the zone that matters now.
+
+STH cost basis: 75,192–75,892. The 77,332 close sits above it, and the band added 135K BTC of short-term supply on Nov 3.
+
+Hold, and the cost base resets here. Break, and many go underwater 👇
+
+#Bitcoin #BTC #onchain</textarea></div></div>
 <textarea hidden id="en-title">Is the bull actually here? Here&#x27;s what the cycle numbers say</textarea><textarea hidden id="en-short">If this is a bull market, why does it feel so weak?
 
 At week 18 from the low, this cycle is up 31%. 2019 and 2023 were +69% and +72% by then. Slow, but 2015 was only +32%.
