@@ -21,7 +21,7 @@ OUT = os.path.join(ROOT, 'data', 'replies')
 def k(v): return f'{v / 1000:.1f}K'.replace('.0K', 'K')
 
 
-def c_liq(L, marks):
+def c_liq(L, marks, marks_label=None):
     h = g(L, 'deriv.liq_heat'); nb, lo, step, c = h['nb'], h['lo'], h['step'], h['close']
     raw = base64.b64decode(h['heat'])[-nb:]                     # 最後一個小時的分布（每 100 美元一格；超過 cap 的格子被截在 cap）
     rows = [(lo + j * step, raw[j] / 255 * h['cap']) for j in range(nb)]
@@ -31,7 +31,7 @@ def c_liq(L, marks):
                 sub=T('OKX 永續未平倉量＋假設 5–100 倍槓桿推算；每 100 美元一格的顆數；不是實際倉位',
                       'From OKX perpetual open interest with assumed 5–100x leverage; BTC per $100 bucket; a model, not actual positions'),
                 series=[dict(name=T('多單清算', 'Long liquidations'), color=PK.S2), dict(name=T('空單清算', 'Short liquidations'), color=PK.S1)]
-                       + ([dict(name=T('原文價位', 'Levels in the post'), color=PK.INK)] if marks else []),
+                       + ([dict(name=T(*(marks_label or ('原文價位', 'Levels in the post'))), color=PK.INK)] if marks else []),
                 src='OKX（推算）', asof=h['asof'][:10],
                 stats=[PK.S('下方 5% 內多單', 'Longs within 5% below', f'{h["within5"]["below"]:,} 顆', f'{h["within5"]["below"]:,} BTC'),
                        PK.S('上方 5% 內空單', 'Shorts within 5% above', f'{h["within5"]["above"]:,} 顆', f'{h["within5"]["above"]:,} BTC'),
@@ -108,7 +108,7 @@ def draw_liq(d, box, sp, lang, Fn):
     for x, y, t in labs:
         bb = d.textbbox((x, y), t, font=lf, anchor='mb'); d.rectangle([bb[0] - 6, bb[1] - 4, bb[2] + 6, bb[3] + 4], fill=PK.PAPER)
         d.text((x, y), t, font=lf, fill=PK.INK, anchor='mb')
-    cl = f'收盤 {PK.usd(c)}' if lang == 'zh' else f'Close {PK.usd(c)}'
+    cl = f'推算時 {PK.usd(c)}' if lang == 'zh' else f'At estimate {PK.usd(c)}'   # 清算快照當下（每天 08:00）的價格，不是日線收盤
     d.text((X(c) + 14, pb - (pb - top) * 0.55), cl, font=Fn['cjk'](34, 900) if lang == 'zh' else Fn['mono'](32, 800), fill=PK.RED, anchor='lm')
 
 
@@ -119,7 +119,9 @@ PK.draw_line_chart = lambda d, box, sp, lang, Fn: (draw_liq if sp.get('kind') ==
 def build_spec(L, im):
     """image 欄位 → 圖表規格。stats 可覆寫底部三格：[{"zh_label", "en_label", "zh", "en"}]（快訊用，例如換成盤中低點）。"""
     end = PK.dn(g(L, 'meta.bar_date'))
-    sp = (c_liq(L, im.get('marks')) if im['chart'] == 'liq' else EXTRA[im['chart']](L, end) if im['chart'] in EXTRA
+    ml = im.get('marks_label')   # 例如 {"zh": "今天低點", "en": "Today's low"}；預設「原文價位」
+    sp = (c_liq(L, im.get('marks'), (ml['zh'], ml['en']) if ml else None) if im['chart'] == 'liq'
+          else EXTRA[im['chart']](L, end) if im['chart'] in EXTRA
           else PK.spec(L, im['chart']))
     if sp and im.get('stats'):
         sp['stats'] = [PK.S(s['zh_label'], s['en_label'], s['zh'], s.get('en', s['zh'])) for s in im['stats']]

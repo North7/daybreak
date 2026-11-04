@@ -38,8 +38,41 @@
    "id": "2026-11-04-leverage",
    "time": "2026-11-04T03:25:00Z",
    "title": "新低之後：槓桿沒退、現貨還在折價",
-   "note": "適合當上一則底下的第二則，或幾小時後再發。資金費率與 Coinbase 價差是 11:20 的即時值。",
-   "zh": "跌到 75,625，但槓桿好像沒在怕。\n\nOKX 資金費率還是正的 0.01%（年化約 11%），Coinbase 也還比幣安便宜 0.15%。現貨沒人接，多單也沒退。\n\n我推算的多單清算帶在 75.2–76.3K，這次大概被掃了一半。\n\n#比特幣 #BTC #資金費率"
+   "note": "適合當上一則底下的第二則，或幾小時後再發。資金費率與 Coinbase 價差是 11:20 的即時值（12:00 再查：資金費率不變、價差約 −0.17%）。圖上的清算分布是今天 08:00 的推算（只算 OKX），黑虛線是今天低點。",
+   "zh": "跌到 75,625，但槓桿好像沒在怕。\n\nOKX 資金費率還是正的 0.01%（年化約 11%），Coinbase 也還比幣安便宜 0.15%。現貨沒人接，多單也沒退。\n\n我推算的多單清算帶在 75.2–76.3K，這次大概被掃了一半。\n\n#比特幣 #BTC #資金費率",
+   "en": "BTC tagged $75,625, but leverage doesn't look scared.\n\nOKX funding is still +0.01% (~11% annualized) and Coinbase trades 0.15% under Binance. Spot isn't buying, longs aren't leaving.\n\nMy estimated long-liquidation band was 75.2–76.3K. About half of it got swept.\n\n#Bitcoin #BTC",
+   "image": {
+    "chart": "liq",
+    "marks": [
+     75625
+    ],
+    "marks_label": {
+     "zh": "今天低點",
+     "en": "Today's low"
+    },
+    "title_zh": "推算的多單清算帶，今天被掃了一半",
+    "title_en": "About half of the estimated long-liquidation band got swept",
+    "stats": [
+     {
+      "zh_label": "11/04 盤中低點",
+      "en_label": "Nov 4 intraday low",
+      "zh": "$75,625",
+      "en": "$75,625"
+     },
+     {
+      "zh_label": "OKX 資金費率（8 小時）",
+      "en_label": "OKX funding (8h)",
+      "zh": "+0.01%",
+      "en": "+0.01%"
+     },
+     {
+      "zh_label": "Coinbase 對幣安",
+      "en_label": "Coinbase vs Binance",
+      "zh": "−0.15%",
+      "en": "−0.15%"
+     }
+    ]
+   }
   }
  ]
 }
