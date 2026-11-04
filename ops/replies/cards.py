@@ -4,6 +4,7 @@
 image 欄位：{"chart": "<picks.py 的圖表 id，例如 cbp、sopr、etf、cohort、cost>", "title": "<圖上的大標題>"}
            或 {"chart": "liq", "title": "...", "marks": [75000, 76200, ...]}：本站推算的清算價位分布（OKX），marks 是原文提到的價位。
            或 {"chart": "ad", "title": "..."}：老幣累積（供給端，近兩年），適合回應講需求端／新買家／賣方枯竭的貼文。
+           或 {"chart": "sec", "title": "..."}：賣方衰竭常數（CheckOnChain，近兩年，標 0.13 極端線）。
 需要 pipeline/picks.py（PR #19「每日推薦發文圖表」）與 Pillow；字型同 share_card.py。
 用法（在倉庫根目錄）：python3 ops/replies/cards.py --fonts <字型資料夾>
 只作讀值：圖只放市場資訊，不放出場框架。"""
@@ -53,7 +54,23 @@ def c_ad(L, end):
                        PK.S('老幣淨增加', 'Net old-coin growth', sg(net, 1e4, '.1f') + ' 萬顆', sg(net, 1e3, ',.0f') + 'K BTC')])
 
 
-EXTRA = {'ad': c_ad}   # picks.py 沒有、回覆配圖另外加的圖表
+def c_sec(L, end):
+    """賣方衰竭常數（CheckOnChain）：近兩年，0.13 極端線；底部三格：上次進極端區的低點、之後的次低點、最新。"""
+    s = g(L, 'onchain.sec'); rows = [(r[0], r[1]) for r in s['rows'] if r[0] > end - 730]
+    hit = next((h for h in reversed(s.get('hits') or []) if h.get('low_date')), None); rl = s.get('recent_low') or {}
+    st = []
+    if hit: st.append(PK.S(f'極端區低點（{PK.md(hit["low_date"], "zh")}）', f'Extreme low ({PK.md(hit["low_date"], "en")})', f'{hit["low"]:.4f}'))
+    if rl: st.append(PK.S(f'次低點（{PK.md(rl["date"], "zh")}）', f'Higher low ({PK.md(rl["date"], "en")})', f'{rl["value"]:.4f}'))
+    st.append(PK.S(f'最新（{PK.md(s["date"], "zh")}）', f'Latest ({PK.md(s["date"], "en")})', f'{s["value"]:.4f}'))
+    return dict(kind='line', name=T('賣方衰竭常數', 'Seller exhaustion constant'),
+                sub=T(f'獲利供給比例 × 30 天價格波動；低於 {s["th"]}＝極端衰竭區（歷史上約 {s["th_share"]}% 的日子）',
+                      f'Supply in profit × 30-day volatility; below {s["th"]} is the extreme zone (about {s["th_share"]}% of days in history)'),
+                series=[dict(name=T('賣方衰竭常數', 'SEC'), rows=rows, color=PK.S1, width=5)],
+                refs=[dict(y=s['th'], label=T(f'{s["th"]} 極端區', f'{s["th"]} extreme zone'))], yf=lambda v: f'{v:.2f}',
+                src='CheckOnChain', asof=s['date'], stats=st)
+
+
+EXTRA = {'ad': c_ad, 'sec': c_sec}   # picks.py 沒有、回覆配圖另外加的圖表
 
 
 def vdash(d, x, y0, y1, color, w=3, dash=16, gap=12):
