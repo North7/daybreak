@@ -34,7 +34,7 @@ ops/
     references.md      參考帳號（Murphy 等）什麼貼文有人看、我們借用什麼
   log/               成效紀錄（2026-11-04 起）
     README.md          什麼時候記、格式
-    log.py             add 加入當天發的貼文、refresh 更新瀏覽等數字、summary 彙整
+    log.py             update 自動記原創貼文、瀏覽、留言、追蹤者（含藍勾數）；add 手動加回覆；summary 彙整
     <日期>.json        每天一份
 ```
 
@@ -100,7 +100,7 @@ python make_short_017.py ../.. ~/fonts out/daybreak-017-short.mp4 --audio out/01
 
 ## 成效紀錄
 
-2026-11-04 開始。你傳 X 通知截圖、或說「記錄今天」時，Claude 讀你的 X 個人頁（內建瀏覽器已登入）把當天每一則貼文和回覆記下來，依截圖填對方的回應；隔天寫新回覆之前先更新前一天的數字、跑 `python3 ops/log/log.py summary`，告訴你哪些有效。細節見 [`log/README.md`](log/README.md)。
+2026-11-04 開始。你傳 X 通知截圖、或說「記錄今天」時，Claude 跑 `python3 ops/log/log.py update` 自動記下當天的原創貼文、瀏覽、底下的留言和追蹤者快照（藍勾追蹤離 500 還差多少），回覆再用內建瀏覽器讀「回覆」分頁補上、按讚看截圖；隔天寫新回覆之前先更新前一天、跑 `summary`，告訴你哪些有效。細節見 [`log/README.md`](log/README.md)。
 
 ## 之後可以加
 

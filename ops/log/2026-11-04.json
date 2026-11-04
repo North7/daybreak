@@ -1,10 +1,12 @@
 {
  "date": "2026-11-04",
  "account": {
-  "followers": 393,
-  "verified_followers": 91,
+  "followers": 396,
+  "verified_followers": 105,
   "new_followers": 12,
-  "note": "追蹤 393 是 16:20（台北）個人頁的數字；藍勾追蹤 91 是當天稍早創作者分潤頁的截圖，在這 12 個新追蹤之前。新追蹤看通知截圖：BomNie 和另外 7 人、Zippy、Magic Hunter、Ashe、sam（看得到的都是藍勾）。當天約 12:00（台北）藍勾生效。"
+  "note": "追蹤數和藍勾追蹤（105）是 18:38（台北）用追蹤者名單數的；當天稍早創作者分潤頁的截圖是 91。新追蹤 12 是看通知截圖：BomNie 和另外 7 人、Zippy、Magic Hunter、Ashe、sam。當天約 12:00（台北）藍勾生效。這天是第一次追蹤者快照，之後的新增會自動比對。",
+  "followers_listed": 394,
+  "followers_at": "2026-11-04T10:39Z"
  },
  "posts": [
   {
@@ -17,11 +19,12 @@
    "image": true,
    "text": "【破曉 No.029｜11/03】 ETF 兩日流出 10.4 億、美亞現貨折價，76K 一天多接 13.5 萬顆短線籌碼  ・市場階段：牛市（第 26 天） ",
    "views": 28,
-   "likes": 1,
+   "likes": 0,
    "replies": 0,
    "rt": 0,
    "back": {},
-   "style": "公告式"
+   "style": "公告式",
+   "comments": []
   },
   {
    "id": "2117820837428674722",
@@ -32,11 +35,12 @@
    "to_id": null,
    "image": true,
    "text": "BTC 剛剛最低到 75,625，9/16 以來最低。  我比較在意的是 76K 這個位置。76–78K 這層昨天才一天多了 13.5 萬顆短期籌碼，現在這批人",
-   "views": 28,
-   "likes": 1,
+   "views": 34,
+   "likes": 2,
    "replies": 0,
    "rt": 0,
-   "back": {}
+   "back": {},
+   "comments": []
   },
   {
    "id": "2117830109487141325",
@@ -51,13 +55,43 @@
    "angle": "補數據",
    "chart": "ad",
    "to_followers": 82031,
-   "views": 112,
-   "likes": 3,
+   "views": 163,
+   "likes": 4,
    "replies": 2,
    "rt": 0,
    "back": {
     "note": "Murphy 本人沒回應；留言來自 wander、CoinScoop（CoinScoop 也按讚）"
-   }
+   },
+   "comments": [
+    {
+     "by": "Coin_Scoop",
+     "verified": true,
+     "followers": 1863,
+     "id": "2117863593379262584",
+     "text": "@songpu717 感謝整理供給端與需求端的數據，這樣看市場的結構更清楚了。"
+    },
+    {
+     "by": "Coin_Scoop",
+     "verified": true,
+     "followers": 1863,
+     "id": "2117905219921334712",
+     "text": "@songpu717 谢谢补充，这个角度很有参考价值。"
+    },
+    {
+     "by": "serlo123",
+     "verified": true,
+     "followers": 8457,
+     "id": "2117863613683912866",
+     "text": "@songpu717 这轮愿意接手人多，大饼绝对跌幅也比前两轮也小很多。"
+    },
+    {
+     "by": "serlo123",
+     "verified": true,
+     "followers": 8457,
+     "id": "2117906657992958429",
+     "text": "@songpu717 市场越来越成熟了。波动就变小了"
+    }
+   ]
   },
   {
    "id": "2117830513847398452",
@@ -72,11 +106,12 @@
    "angle": "交叉驗證",
    "chart": "liq",
    "to_followers": 414401,
-   "views": 56,
+   "views": 63,
    "likes": 2,
    "replies": 0,
    "rt": 0,
-   "back": {}
+   "back": {},
+   "comments": []
   },
   {
    "id": "2117811996880191858",
@@ -91,12 +126,13 @@
    "angle": "交叉驗證",
    "chart": "liq",
    "to_followers": 414401,
-   "views": 17,
+   "views": 20,
    "likes": 0,
    "replies": 0,
    "rt": 0,
    "back": {},
-   "style": "機械版"
+   "style": "機械版",
+   "comments": []
   },
   {
    "id": "2117812210479317064",
@@ -111,12 +147,13 @@
    "angle": "補數據",
    "chart": "cbp",
    "to_followers": 10687,
-   "views": 4,
+   "views": 6,
    "likes": 0,
    "replies": 0,
    "rt": 0,
    "back": {},
-   "style": "機械版"
+   "style": "機械版",
+   "comments": []
   },
   {
    "id": "2117812449491730927",
@@ -131,16 +168,32 @@
    "angle": "交叉驗證",
    "chart": "etf",
    "to_followers": 4752,
-   "views": 27,
+   "views": 30,
    "likes": 1,
    "replies": 1,
    "rt": 0,
    "back": {
     "liked": true,
-    "replied": 1,
+    "replied": 2,
     "note": "補了一則 Coinbase 溢價連 39 天為負、10/30 與 11/02 ETF 分項"
    },
-   "style": "機械版"
+   "style": "機械版",
+   "comments": [
+    {
+     "by": "mks1231237549",
+     "verified": true,
+     "followers": 4759,
+     "id": "2117819259015565631",
+     "text": "再补一条时间尺度：Coinbase 溢价到 11/01 已经连续 39 天为负 现在 40 天以上了，所以不是几天的卖压"
+    },
+    {
+     "by": "mks1231237549",
+     "verified": true,
+     "followers": 4759,
+     "id": "2117898004594307254",
+     "text": "@songpu717 是的。另外，IBIT支持实物赎回。也有可能赎回方拿的是币，不是现金。现在看盘面更像这个"
+    }
+   ]
   },
   {
    "id": "2117812649698414959",
@@ -160,7 +213,8 @@
    "replies": 0,
    "rt": 0,
    "back": {},
-   "style": "機械版"
+   "style": "機械版",
+   "comments": []
   },
   {
    "id": "2117812787779121516",
@@ -180,7 +234,8 @@
    "replies": 0,
    "rt": 0,
    "back": {},
-   "style": "機械版"
+   "style": "機械版",
+   "comments": []
   },
   {
    "id": "2117819002764558698",
@@ -195,16 +250,26 @@
    "angle": "交叉驗證",
    "chart": "cost",
    "to_followers": 8453,
-   "views": 64,
+   "views": 75,
    "likes": 1,
    "replies": 1,
    "rt": 0,
    "back": {
     "liked": true,
     "replied": 1,
-    "note": "回「如果 BTC 能上漲，金叉會更快發生」；另外按讚你 4 則貼文，也在 Murphy 引用文底下留言"
+    "note": "回「如果 BTC 能上漲，金叉會更快發生」；另外按讚你 4 則貼文，也在 Murphy 引用文底下留言；當天也回追了你（追蹤者名單）",
+    "followed": true
    },
-   "style": "人味版"
+   "style": "人味版",
+   "comments": [
+    {
+     "by": "serlo123",
+     "verified": true,
+     "followers": 8457,
+     "id": "2117863294266703940",
+     "text": "@songpu717 我最近也一直在盯着。如果BTC能上涨，金叉会更快发生。"
+    }
+   ]
   },
   {
    "id": "2117819132855124396",
@@ -224,7 +289,8 @@
    "replies": 0,
    "rt": 0,
    "back": {},
-   "style": "人味版"
+   "style": "人味版",
+   "comments": []
   },
   {
    "id": "2117819264724021411",
@@ -239,14 +305,15 @@
    "angle": "補數據",
    "chart": "sopr",
    "to_followers": 3838,
-   "views": 23,
+   "views": 26,
    "likes": 0,
    "replies": 0,
    "rt": 0,
    "back": {
     "liked": true
    },
-   "style": "人味版"
+   "style": "人味版",
+   "comments": []
   },
   {
    "id": "2117819399642202344",
@@ -261,12 +328,13 @@
    "angle": "交叉驗證",
    "chart": "cbp",
    "to_followers": 4932,
-   "views": 12,
+   "views": 16,
    "likes": 0,
    "replies": 0,
    "rt": 0,
    "back": {},
-   "style": "人味版"
+   "style": "人味版",
+   "comments": []
   },
   {
    "id": "2117819574896996486",
@@ -290,7 +358,16 @@
     "replied": 1,
     "note": "回「有可能是幣安錢包的周轉」"
    },
-   "style": "人味版"
+   "style": "人味版",
+   "comments": [
+    {
+     "by": "joke_henry",
+     "verified": true,
+     "followers": 9295,
+     "id": "2117831861498224768",
+     "text": "@songpu717 是的，有可能是币安钱包的周转"
+    }
+   ]
   },
   {
    "id": "2117824801226244271",
@@ -305,12 +382,13 @@
    "angle": "補數據",
    "chart": "ad",
    "to_followers": 82031,
-   "views": 194,
+   "views": 213,
    "likes": 0,
    "replies": 0,
    "rt": 0,
    "back": {},
-   "style": "人味版"
+   "style": "人味版",
+   "comments": []
   },
   {
    "id": "2117825030868684801",
@@ -330,7 +408,8 @@
    "replies": 0,
    "rt": 0,
    "back": {},
-   "style": "人味版"
+   "style": "人味版",
+   "comments": []
   },
   {
    "id": "2117892029535629576",
@@ -342,11 +421,22 @@
    "image": false,
    "text": "@serlo123 跌幅這個我也有在追。用收盤價算頂到底：2018 年 −84%、2022 年 −77%，這輪從 124,824 到 6/30 的 58,525",
    "to_followers": 8456,
-   "views": 7,
-   "likes": 0,
-   "replies": 0,
+   "views": 13,
+   "likes": 1,
+   "replies": 1,
    "rt": 0,
-   "back": {}
+   "back": {
+    "replied": 1
+   },
+   "comments": [
+    {
+     "by": "serlo123",
+     "verified": true,
+     "followers": 8457,
+     "id": "2117906657992958429",
+     "text": "@songpu717 市场越来越成熟了。波动就变小了"
+    }
+   ]
   },
   {
    "id": "2117892341277282483",
@@ -358,11 +448,22 @@
    "image": false,
    "text": "@Coin_Scoop 謝謝～但Coinbase 溢價從 9/6 到現在天天是負的。接手的人變多了，但看起來不太是美國現貨。",
    "to_followers": 1859,
-   "views": 7,
-   "likes": 0,
-   "replies": 0,
+   "views": 15,
+   "likes": 1,
+   "replies": 1,
    "rt": 0,
-   "back": {}
+   "back": {
+    "replied": 1
+   },
+   "comments": [
+    {
+     "by": "Coin_Scoop",
+     "verified": true,
+     "followers": 1863,
+     "id": "2117905219921334712",
+     "text": "@songpu717 谢谢补充，这个角度很有参考价值。"
+    }
+   ]
   },
   {
    "id": "2117893611522232424",
@@ -374,11 +475,38 @@
    "image": true,
    "text": "@mks1231237549 時間尺度這點補得好。我用每日收盤算的更長：Coinbase 溢價從 9/6 起已經連續 59 天為負。  11/02 像單一大客戶",
    "to_followers": 4757,
-   "views": 10,
+   "views": 15,
+   "likes": 1,
+   "replies": 1,
+   "rt": 0,
+   "back": {
+    "replied": 1
+   },
+   "comments": [
+    {
+     "by": "mks1231237549",
+     "verified": true,
+     "followers": 4759,
+     "id": "2117898004594307254",
+     "text": "@songpu717 是的。另外，IBIT支持实物赎回。也有可能赎回方拿的是币，不是现金。现在看盘面更像这个"
+    }
+   ]
+  },
+  {
+   "id": "2117921051766337872",
+   "kind": "article",
+   "at": "Wed Nov 04 10:05:02 +0000 2026",
+   "lang": "zh",
+   "to": null,
+   "to_id": null,
+   "image": false,
+   "text": "很多人在問：牛市不是來了嗎，怎麼越走越弱？  從低點起算第 18 週，這輪漲 31%，2019、2023 同期是 +69%、+72%。慢，但 2015 年同期也",
+   "views": 51,
    "likes": 0,
    "replies": 0,
    "rt": 0,
-   "back": {}
+   "back": {},
+   "comments": []
   }
  ],
  "notes": [
@@ -386,14 +514,16 @@
   "早上先發的 5 則是第一版（「Daily data agrees」「補一個籌碼數字」這類開頭），之後改成有人味的版本：第一版 5 則只有阿布回應，人味版扣掉 Murphy 5 則有 3 則回應。樣本很小，先記著。",
   "對方 1 萬粉以下的 6 則回覆有 4 則得到回應；1 萬粉以上的 6 則（Murphy、Daan、Bitfinex 等）都沒有。中小型中文博主比較會回頭互動。",
   "瀏覽最高的是 Murphy 新買家那則底下的回覆（194），比同一個內容的引用文（111）還多；他那則本身 1.3 萬瀏覽。回覆在大帳號串裡排得夠前面，瀏覽就有。",
-  "日報貼文和快訊各約 28 瀏覽，和 10 月的日報差不多（22–44）。"
+  "日報貼文和快訊各約 28 瀏覽，和 10 月的日報差不多（22–44）。",
+  "wander（回覆 #9）當天回追。第一個因為回覆而回追的目標帳號。"
  ],
- "metrics_at": "2026-11-04T08:27Z",
+ "metrics_at": "2026-11-04T10:38Z",
  "unsent": [
   "回覆 #17 Murphy 賣方衰竭常數",
   "快訊「新低之後：槓桿沒退、現貨還在折價」（中英）",
   "日報英文貼文",
   "今日推薦圖表 3 張（籌碼分布、Coinbase 溢價、短期成本）",
   "回覆留言：J+H「幣安錢包的周轉」、wander「金叉」（草稿已寫，還沒發）"
- ]
+ ],
+ "comments_at": "2026-11-04T10:39Z"
 }
