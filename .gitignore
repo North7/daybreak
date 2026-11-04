@@ -3,3 +3,4 @@ __pycache__/
 pipeline/raw_*.json
 .claude/
 pipeline/today.json
+ops/video/out/
