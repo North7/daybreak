@@ -191,3 +191,7 @@
 - 短期持有者成本帶（`onchain.sth_bands`，2026-11-04 起，資料 Bitview，`bitview.get`／`stage_viz.sth_bands_viz`；Murphy 的「短期持有者成本基礎模型」）：帶＝短期持有者成本 ×（近 4 年「價格 ÷ 成本」的平均 ± 1、2 個標準差）。`now.z` 是收盤在第幾個標準差，`now.bands` 是四條帶的價位，`stats` 有近 4 年在 ±1 標準差外的天數比例和最近一次。寫法：只寫位置和帶的價位（「收盤在 −0.2 個標準差，+1 標準差 88,869」），不寫「會回踩到哪」；碰到 +1 標準差或跌破 −1 標準差時可以當發現寫。
 - 6–12 與 12–18 個月持幣成本（`cycle.age_cost`，2026-11-04 起，資料 Bitview，`stage_viz.age_cost_viz`；wander 的成本線交叉）：`c612`、`c1218` 兩條線，`crosses` 歷次死叉／金叉與間隔天數，`last_cross`、`days_since`。兩條線是半年到一年半前的平均買價，非常落後；真的交叉時在 changes 記一筆，平常不必寫。
 - RV30 一年分位（`price.vol.rv30_pct1y`、`rv30_min1y`、`rv30_min1y_date`，2026-11-04 起，Kraken）：第 10 百分位以下時可以寫「低波動之後常有大波動」，一定要接「方向不一定」。
+- 資料來源（2026-11-04 起）：鏈上指標表的長短期持有者成本、aSOPR、LTH-SOPR 改用 Bitview（`onchain.metrics.*.source`，晚 1 天），數字和以前的 bitcoin-data 版略有不同，寫日期時用資料本身的 `date`。長短期持有者籌碼的 `chips.cohort.cmp.src`＝`bitview` 時「30 天前」是實際值（`cmp_model` 是舊的推算），可以寫「實際」；`flow`（誰賣了、誰轉成長期）仍是推算。
+- 鯨魚分層（`onchain.whales`，2026-11-04 起 Bitview，`src`）：依地址餘額分層，地址不等於實體；交易所大量提幣時幣從大地址分散到小地址，看起來像大戶賣、散戶買，寫之前先看同期 ETF 流量與交易所供給。
+- 3–6 個月持幣成本（`cycle.age_cost.c36`）：`since` 是價格上穿至今的天數，`ups` 是歷次上穿（`bear`＝熊市後第一次）。不寫「上穿後約 80 天到頂」這類倒數：只有 2019 年吻合。
+- Hyperliquid 大戶（`deriv.hl_whales`）：帳戶淨值前 300 名的 BTC 部位彙總（實際部位）；只有 Hyperliquid，大帳戶可能是做市或避險，不寫成「大戶看空」。不寫個別帳戶，也不要從別處補個別帳戶的部位。

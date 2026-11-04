@@ -503,7 +503,32 @@ def age_cost_viz(bv, px, last, step=4):
         nx = xs[i + 1] if i + 1 < len(xs) else None
         x['days_to_next'] = dn(nx['date']) - dn(x['date']) if nx else None
     d1 = D[-1]; lx = xs[-1] if xs else None
-    rows = thin([[dn(d), round(P(d)) if P(d) else None, round(a[d]), round(b[d])] for d in D if d >= AC_FROM], step)
+    c3 = bv.get('c36') or {}
+    rows = thin([[dn(d), round(P(d)) if P(d) else None, round(a[d]), round(b[d]), round(c3[d]) if d in c3 else None] for d in D if d >= AC_FROM], step)
     return dict(date=d1, src='Bitview', rows=rows, crosses=[x for x in xs if x['date'] >= AC_FROM], c612=round(a[d1]), c1218=round(b[d1]),
                 gap_pct=round((a[d1] / b[d1] - 1) * 100, 1), price=round(P(d1)), last_cross=lx, days_since=dn(d1) - dn(lx['date']) if lx else None,
-                note='Bitview：6–12 個月＝6–9、9–12 個月兩段的實現市值合計 ÷ 供給合計；12–18 個月＝age_1y_to_18m_realized_price；只作讀值')
+                c36=_c36_view(c3, P, D, d1),
+                note='Bitview：6–12 個月＝6–9、9–12 個月兩段的實現市值合計 ÷ 供給合計；12–18 個月＝age_1y_to_18m_realized_price；3–6 個月＝3–4、4–5、5–6 個月三段合計；只作讀值')
+
+
+# 2026-11-04 使用者要求（3–6 個月持幣成本，價格上穿後的天數）：價格由下往上穿越 3–6 個月成本的日子。熊市後的第一次（之前在線下 ≥ 250 天）另外標出，
+#   列出之後 180 天內的最高收盤與天數（「約 80 天到頂」只有 2019 年吻合：2015、2023 的半年高點在 170 天後）。只作讀值，不做到頂倒數
+C36_BEAR = 250
+
+
+def _c36_view(c3, P, D, d1):
+    if not c3: return None
+    DD = [d for d in D if d in c3 and P(d)]
+    ups, below = [], 0
+    for i, d in enumerate(DD):
+        if P(d) < c3[d]: below += 1; continue
+        if below >= 30 and d >= '2012-01-01':
+            w = [x for x in DD[i:] if dn(x) - dn(d) <= 180]; hi = max(w, key=P)
+            ups.append(dict(date=d, below=below, price=round(P(d)), cost=round(c3[d]), bear=below >= C36_BEAR,
+                            hi=dict(date=hi, price=round(P(hi)), days=dn(hi) - dn(d)), done=dn(d1) - dn(d) >= 180))
+        below = 0
+    last_up = ups[-1] if ups else None
+    above = P(d1) >= c3[d1]
+    return dict(cost=round(c3[d1]), price=round(P(d1)), gap_pct=round((P(d1) / c3[d1] - 1) * 100, 1), above=above,
+                chg30=round(c3[d1] - c3[DD[-31]]) if len(DD) > 31 else None, ups=[u for u in ups if u['date'] >= AC_FROM],
+                since=dict(date=last_up['date'], days=dn(d1) - dn(last_up['date'])) if above and last_up else None)
