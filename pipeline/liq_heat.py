@@ -82,6 +82,7 @@ def build(get):
     out = dict(asof=dt.datetime.fromtimestamp((t_last + H) / 1000, dt.timezone.utc).isoformat(timespec='minutes'),
                t0=snaps[0][0], hours=len(snaps), lo=lo, step=DB, nb=nb, cap=round(cap, 2), close=round(c),
                heat=base64.b64encode(raw).decode(), candles=[[round(x) for x in s[1]] for s in snaps],
+               hr=[(s[0] - snaps[0][0]) // H for s in snaps],   # 2026-11-04：每根 K 線距 t0 幾小時（OKX 漏一小時時，頁面的時間標籤不會整段錯位）
                above=_bands(last, lo, c, 1), below=_bands(last, lo, c, -1),
                within5=dict(above=round(sum(v for j, v in enumerate(last) if c < lo + j * DB <= c * 1.05)),
                             below=round(sum(v for j, v in enumerate(last) if c * 0.95 <= lo + (j + 1) * DB < c))),

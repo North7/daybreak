@@ -204,6 +204,11 @@ def lth_color_viz(lth, px, step=2, clip=LC_CLIP, flat=LC_FLAT):
     return out
 
 
+def canon_px(ser, px):
+    """2026-11-04：{date: (值…, 來源自帶的價格)} 的價格換成網站統一的收盤（px，Kraken 優先、更早 CoinMetrics）；px 沒有的日子保留原值"""
+    return {d: tuple(v[:-1]) + (px.get(d, v[-1]),) for d, v in ser.items()}
+
+
 # 2026-11-02 使用者要求（Murphy〈卖方衰竭指数〉）：賣方衰竭常數＝獲利供給比例 × 30 天價格波動（Checkmate 設計，資料取自 CheckOnChain，見 coc.get_sec）。
 #   CheckOnChain 的刻度和 Glassnode 版不同（Murphy 的 0.01 線不能套），極端區用本身的歷史分布：低於 0.13 約是 2011 年起最低 1% 的日子。只作讀值
 SEC_TH, SEC_FROM, SEC_ROWS = 0.13, '2011-01-01', '2012-01-01'
@@ -228,9 +233,11 @@ def sec_viz(ser, last, th=SEC_TH, block=4):
         h['dd365'] = round((min(y) / p0 - 1) * 100, 1) + 0.0; h['done'] = dn(d1) - t >= 365
     w30 = [x for x in D if dn(x) > dn(d1) - 30]; r = min(w30, key=v.get)
     rows, k0 = [], next(i for i, d in enumerate(D) if d >= SEC_ROWS)
-    for i in range(len(D) - 1, k0 - 1, -block):   # 由最新往回切，最後一段一定是最新一天
+    for i in range(len(D) - 1, k0 - 1, -block):   # 由最新往回切
         seg = D[max(k0, i - block + 1): i + 1]; m = min(seg, key=v.get)
-        rows.append([dn(seg[-1]), round(v[m], 4), round(px[seg[-1]])])
+        # 2026-11-04：低點標在它自己那天（原本標在段尾，日期最多差 3 天、價格也是段尾的）；最新一天另外補上，圖的終點一定是最新值
+        if i == len(D) - 1 and m != seg[-1]: rows.append([dn(seg[-1]), round(v[seg[-1]], 4), round(px[seg[-1]])])
+        rows.append([dn(m), round(v[m], 4), round(px[m])])
     rows.reverse()
     vals = sorted(v.values())
     return dict(date=d1, value=round(cur, 4), price=round(px[d1]), pct=round(sum(x < cur for x in vals) / len(vals) * 100, 1), th=th,
@@ -278,7 +285,10 @@ def rpl_viz(ser, last, block=4):
         if (sum(w) / RPL_N >= 1) != above: proj = dict(date=ds(dn(D[-1]) + n), days=n, daily=round(l7, 3)); break
     rows, k0 = [], next(i for i, d in enumerate(M) if d >= '2012-01-01')
     for i in range(len(M) - 1, k0 - 1, -block):
-        rows.append([dn(M[i]), round(m[M[i]], 3), round(px[M[i]])])
+        # 2026-11-04：每 block 天取一點；段內有低於 1 的日子就取最低那天（原本固定取段尾，5–59 天的短紅段可能在線上看不到）
+        seg = M[max(k0, i - block + 1): i + 1]; lo_ = min(seg, key=m.get); d_ = lo_ if m[lo_] < 1 else seg[-1]
+        if i == len(M) - 1 and d_ != seg[-1]: rows.append([dn(seg[-1]), round(m[seg[-1]], 3), round(px[seg[-1]])])
+        rows.append([dn(d_), round(m[d_], 3), round(px[d_])])
     rows.reverse()
     return dict(date=d1, value=round(m[d1], 3), price=round(px[d1]), above=above, since=M[k], since_days=dn(d1) - dn(M[k]),
                 first2=next((d for d in M[k:] if m[d] >= 2), None) if above else None,
@@ -295,7 +305,7 @@ REG_KEYS = ('d200', 'mom12', 'mvrv1y', 'rc30', 'xs90', 'rpl')
 REG_FROM, REG_CONFIRM = '2013-01-01', 4
 
 
-def regime_viz(cm, rpl, last, step=7):
+def regime_viz(cm, rpl, last, step=7, px=None):
     """cm：CoinMetrics [(date, 價格, MVRV, 市值, 流通量, 交易所供給)]；rpl：{date: 每日實現獲利 ÷ 虧損 或 (比值, 價格)}。"""
     rows = [x for x in cm if x[0] <= last and x[2]]
     D = [x[0] for x in rows]; P = [x[1] for x in rows]; MV = [x[2] for x in rows]; RC = [x[3] / x[2] for x in rows]; EX = [x[5] for x in rows]
@@ -319,13 +329,13 @@ def regime_viz(cm, rpl, last, step=7):
     sc = {}
     for k in REG_KEYS:
         a = sorted(abs(raw[d][k]) for d in days if raw[d][k] is not None)
-        sc[k] = a[len(a) // 2] or 1e-9
+        sc[k] = (a[len(a) // 2] if a else 0) or 1e-9   # 2026-11-04：某一項整條缺（例如實現損益比沒抓到）時其餘五項照算，不讓整張消失
     def score(d):
         v = [math.tanh(raw[d][k] / sc[k]) for k in REG_KEYS if raw[d][k] is not None]
         return sum(v) / len(v) * len(REG_KEYS) if v else None
     W = days[::-1][::step][::-1]   # 由最新一天往回每 7 天一點
     S = [(d, score(d)) for d in W]; S = [x for x in S if x[1] is not None]
-    pi = {d: P[i] for i, d in enumerate(D)}
+    pi = {d: (px or {}).get(d, P[i]) for i, d in enumerate(D)}   # 顯示與翻轉後漲跌用統一收盤（2026-11-04）；分數本身仍用 CoinMetrics 價格算
     flips, reg, run = [], (1 if S[0][1] >= 0 else -1), 0
     for j, (d, v) in enumerate(S):
         sg = 1 if v >= 0 else -1

@@ -215,7 +215,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; table-layou
 @supports (color: color-mix(in oklab, red, blue)) {
   :root { --lc3: color-mix(in oklab, var(--lc-neg) 35%, var(--lc-mid)); --lc5: color-mix(in oklab, var(--lc-pos) 35%, var(--lc-mid)); --lc2: color-mix(in oklab, var(--lc-neg) 60%, var(--lc-mid)); --lc6: color-mix(in oklab, var(--lc-pos) 60%, var(--lc-mid)); --lc1: color-mix(in oklab, var(--lc-neg) 80%, var(--lc-mid)); --lc7: color-mix(in oklab, var(--lc-pos) 80%, var(--lc-mid)); }
 }
-.legend i.liq-bar { display: inline-block; width: 120px; height: 8px; border-radius: 4px; vertical-align: middle; background: linear-gradient(90deg, rgb(68,1,84), rgb(59,82,139), rgb(33,145,140), rgb(94,201,98), rgb(253,231,37)); }   /* 2026-11-02 清算熱力圖（viridis） */
+.legend i.liq-bar { display: inline-block; width: 120px; height: 8px; border-radius: 4px; vertical-align: middle; }   /* 2026-11-02 清算熱力圖（viridis）；漸層由 app.js 的 VIR 產生，只有一份色表 */
 #c-liq canvas { border-radius: 4px; }
 .legend i.lc-bar { display: inline-block; width: 120px; height: 8px; border-radius: 4px; vertical-align: middle; background: linear-gradient(90deg, var(--lc0), var(--lc2), var(--lc4), var(--lc6), var(--lc8)); }
 .chart .gl { stroke: var(--grid); stroke-width: 1; }
@@ -293,6 +293,7 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .prose p { margin: 0; }
 .foot { margin: 0 var(--gut); padding: 16px 0 30px; border-top: 1px solid var(--line); color: var(--ink-3); font-size: 11.5px; display: flex; gap: 18px; flex-wrap: wrap; }
 .err { padding: 40px; color: var(--ink-2); }
+.err.chart-err { padding: 24px 0; font-size: 13px; }   /* 2026-11-04：單張圖畫不出來時的說明 */
 
 /* ================= 頭版 ================= */
 .front { position: relative; display: grid; gap: 22px; padding-top: 14px; border-top: 6px solid var(--ink); }
@@ -568,6 +569,12 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .evc .panel-h h3 { font-size: 14px; margin: 0; display: flex; align-items: center; gap: 6px; }
 .evc > .note { margin: 4px 0 6px; }
 @media (max-width: 860px) { .evcharts { grid-template-columns: minmax(0, 1fr); } }
+/* 2026-11-04：手機上鏈上指標小圖先收起一部分（見 app.js ocPanel） */
+.oc-more { display: none; }
+@media (max-width: 860px) {
+  .evcharts.fold .evc.more { display: none; }
+  .evcharts.fold .oc-more { display: block; width: 100%; padding: 12px; border: 1px solid var(--line-2); background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+}
 .evc.wide { grid-column: 1 / -1; }
 .evc .panel-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 /* 虛線＝推測、還沒發生的部分（2026-10-14）：不套描線動畫，直接顯示（見 app.js animateLines） */
