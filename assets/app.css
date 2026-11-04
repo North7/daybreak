@@ -627,3 +627,78 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .find-sum { margin: 0 0 8px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 14px; font-size: 13px; color: var(--ink-2); }
 .find-sum .imp { font-size: 14px; }
 .find-sum .note { margin: 0; padding: 0; }
+
+/* 2026-11-04 頭版重排：上期後續收合；訊號總表（取代「今日數據」卡片與解讀表） */
+.sec-h .src { font-size: 12px; color: var(--ink-3); }
+@media (max-width: 860px) { .sec-h .src { display: none; } }
+.board { border-top: 2px solid var(--ink); }
+.bd-g h3 { margin: 16px 0 2px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; font-size: 13.5px; font-weight: 900; }
+.bd-g h3 small { font-size: 12px; font-weight: 400; color: var(--ink-3); }
+.bd-r { display: grid; grid-template-columns: 190px 112px minmax(120px, 240px) 44px 18px minmax(0, 1fr); grid-template-areas: "k v g t j d"; gap: 4px 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.bd-r .k { grid-area: k; font-weight: 700; font-size: 13.5px; line-height: 1.35; }
+.bd-r .k small { display: block; font-weight: 400; font-size: 11.5px; color: var(--ink-3); }
+.bd-r .v { grid-area: v; font-size: 15px; font-weight: 700; white-space: nowrap; text-align: right; }
+.bd-r .gauge, .bd-r .steps, .bd-r .dvg { grid-area: g; }
+.bd-r .tn { grid-area: t; }
+.bd-r .jump { grid-area: j; color: var(--red-ink); text-decoration: none; font-weight: 700; }
+.bd-r .d { grid-area: d; margin: 0; font-size: 13px; line-height: 1.65; color: var(--ink-2); }
+.gauge { position: relative; display: block; height: 18px; background: var(--line); border-right: 2px solid var(--down); }
+.gauge i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink-3); }
+.gauge.near i { background: var(--flare); }
+.gauge.hit i { background: var(--down); }
+.gauge b { position: relative; display: block; padding-left: 6px; font-family: var(--f-mono); font-size: 11px; font-weight: 500; line-height: 18px; color: var(--ink); white-space: nowrap; }
+.gauge.none { background: transparent; border-right: 0; }
+.steps { display: flex; gap: 2px; }
+.steps i { flex: 1; font-style: normal; font-size: 11px; line-height: 18px; text-align: center; background: var(--line); color: var(--ink-3); white-space: nowrap; }
+.steps i.on { font-weight: 700; color: var(--ink); }
+.steps i.on.up { background: var(--up-dim); color: var(--up); }
+.steps i.on.down { background: var(--down-dim); color: var(--down); }
+.steps i.on.orbit { background: var(--orbit-dim); color: var(--orbit); }
+.dvg { position: relative; display: block; height: 18px; background: var(--line); }
+.dvg::after { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--ink-2); }
+.dvg i { position: absolute; top: 3px; bottom: 3px; }
+.dvg i.up { background: var(--up); } .dvg i.down { background: var(--down); }
+.dvg b { position: absolute; right: 4px; top: 0; font-family: var(--f-mono); font-size: 10px; font-weight: 400; line-height: 18px; color: var(--ink-3); }
+@media (max-width: 1180px) {
+  .bd-r { grid-template-columns: 170px 100px minmax(0, 1fr) 44px 18px; grid-template-areas: "k v g t j" "d d d d d"; }
+}
+@media (max-width: 560px) {
+  .bd-r { grid-template-columns: minmax(0, 1fr) auto auto 18px; grid-template-areas: "k v t j" "g g g g" "d d d d"; gap: 6px 10px; }
+}
+.news-item.brief h3 { margin: 4px 0 0; font-size: 15px; }
+.news-item.brief h3 a { color: inherit; text-decoration: none; }
+.news-item.brief h3 a:hover { text-decoration: underline; }
+.fu h4 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
+.fu h4 .note { margin: 0; padding: 0; font-weight: 400; }
+.fu-open { margin-top: 8px; }
+.fu-open summary { cursor: pointer; font-size: 12.5px; color: var(--ink-3); padding: 6px 0; }
+/* 2026-11-04 市場階段的 6 張佐證圖預設收起 */
+.evfold .ev-open { display: none; }
+.evfold.fold .evcharts, .evfold.fold > .note { display: none; }
+.evfold.fold .ev-open { display: block; width: 100%; margin: 14px 0 6px; padding: 12px; border: 1px solid var(--line-2); background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
+.evfold.fold .ev-open:hover { border-color: var(--ink); }
+/* 2026-11-04 版內目錄、複製連結、指標名連結 */
+.toc { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0 0 18px; }
+.toc a { font-size: 12.5px; color: var(--ink-2); text-decoration: none; padding: 3px 10px; border: 1px solid var(--line-2); border-radius: 999px; white-space: nowrap; max-width: 16em; overflow: hidden; text-overflow: ellipsis; }
+.toc a:hover { color: var(--ink); border-color: var(--ink); }
+@media (max-width: 860px) { .toc { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px 14px; padding: 0 16px 2px; } .toc::-webkit-scrollbar { display: none; } }
+.cp-link { margin-left: 8px; padding: 0 6px; border: 1px solid transparent; border-radius: 3px; background: none; color: var(--ink-3); font: 600 12px/1.6 var(--f-mono); cursor: pointer; flex: none; }
+.cp-link:hover { color: var(--ink); border-color: var(--line-2); }
+.cp-link.ok { color: var(--up); font-family: inherit; }
+a.term { color: inherit; text-decoration: underline dotted var(--ink-3); text-underline-offset: 3px; }
+a.term:hover { color: var(--red-ink); text-decoration-color: currentColor; }
+.tip .term-def { max-width: 300px; font-size: 12.5px; line-height: 1.6; white-space: normal; }
+/* 2026-11-04 長歷史折線圖的時間範圍切換（lineChart 自動加） */
+.seg.rng { display: flex; width: fit-content; margin: 0 0 4px auto; }
+/* 2026-11-04 往期與戰績 */
+.ar-sum { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 2px solid var(--ink); margin-bottom: 10px; }
+.ar-sum div { display: grid; gap: 4px; padding: 12px 14px 10px; border-left: 1px solid var(--line); }
+.ar-sum div:first-child { border-left: 0; padding-left: 0; }
+.ar-sum .k { font-size: 12px; color: var(--ink-3); }
+.ar-sum b { font-family: var(--f-cond); font-stretch: 68%; font-weight: 900; font-size: clamp(32px, 2.6vw, 46px); line-height: 1; }
+.ar-sum b.up { color: var(--up); } .ar-sum b.down { color: var(--down); }
+@media (max-width: 560px) { .ar-sum { grid-template-columns: repeat(3, minmax(0, 1fr)); } .ar-sum div:nth-child(4) { border-left: 0; padding-left: 0; } }
+.ar-ed td:nth-child(2) { line-height: 1.55; }
+.tbl .ar-d { font-family: var(--f-mono); font-size: 12.5px; white-space: nowrap; }
+.toc a { flex: none; }
+.gauge.none { height: 0; }
