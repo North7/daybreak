@@ -24,6 +24,7 @@
   {"handle": "DaanCrypto", "name": "Daan Crypto Trades", "lang": "en", "type": "blogger", "note": "價位、清算；大帳號"},
   {"handle": "ecoinometrics", "name": "ecoinometrics", "lang": "en", "type": "blogger", "note": "週期、宏觀圖表"},
   {"handle": "gaah_im", "name": "Gaah", "lang": "en", "type": "blogger", "note": "2026-11-04 Grok 推薦加入：交易所流量、Coinbase 溢價等鏈上數據，7 天 15 則講比特幣"},
+  {"handle": "PiusSprenger", "name": "Pius the Banker", "lang": "en", "type": "blogger", "note": "2026-11-04 使用者指定加入：數學博士、前華爾街，冪律模型；7 天 20 則有 9 則講比特幣，瀏覽中位數約 3,000"},
   {"handle": "glassnode", "name": "glassnode", "lang": "en", "type": "research", "note": "鏈上研報"},
   {"handle": "GreeksLive", "name": "Greeks.live", "lang": "en", "type": "research", "note": "選擇權"},
   {"handle": "BlockScholes", "name": "Block Scholes", "lang": "en", "type": "research", "note": "2026-11-04 Grok 推薦加入：每日評論、ETF 與選擇權數據，7 天 10 則講比特幣"}

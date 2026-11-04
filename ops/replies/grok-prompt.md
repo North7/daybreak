@@ -15,7 +15,7 @@
 讀 https://north7.github.io/daybreak/data/notes.json 的 headline、summary、findings 和 news（英文版是 notes.en.json）。今天的主題和價位優先找。讀不到就用我貼給你的今日標題。
 
 【不用找的帳號】
-讀 https://north7.github.io/daybreak/ops/replies/watchlist.json，`accounts` 裡每個 `handle` 都是我已經在追的帳號（包括 Murphy），他們的貼文一律不要列。讀不到這個檔案就跳過這些帳號：Murphychen888、serlo123、paulxue1979、mks1231237549、joke_henry、A9dengbo、yytttt_1982、EmberCN、ai_9684xtpa、BTCdayu、CryptoPainter、Bobbxu、_Checkmatey_、ki_young_ju、VetleLunde、EricBalchunas、JSeyff、JoeConsorti、DaanCrypto、ecoinometrics、glassnode、GreeksLive、0xGummyBear、KevinZbtc、BlockScholes、gaah_im。
+讀 https://north7.github.io/daybreak/ops/replies/watchlist.json，`accounts` 裡每個 `handle` 都是我已經在追的帳號（包括 Murphy），他們的貼文一律不要列。讀不到這個檔案就跳過這些帳號：Murphychen888、serlo123、paulxue1979、mks1231237549、joke_henry、A9dengbo、yytttt_1982、EmberCN、ai_9684xtpa、BTCdayu、CryptoPainter、Bobbxu、_Checkmatey_、ki_young_ju、VetleLunde、EricBalchunas、JSeyff、JoeConsorti、DaanCrypto、ecoinometrics、glassnode、GreeksLive、0xGummyBear、KevinZbtc、BlockScholes、gaah_im、PiusSprenger。
 
 【數量與比例】
 - 共 5 則：中文 3 則（簡體、繁體都算）、英文 2 則
