@@ -6,7 +6,7 @@ on:
   pull_request:
   push:
     branches: [main]
-    paths: ["assets/**", "index.html", "post.html", "manifest.webmanifest", "pipeline/**.py", "tests/**", ".github/workflows/check.yml"]
+    paths: ["assets/**", "index.html", "post.html", "ops/**", "manifest.webmanifest", "pipeline/**.py", "tests/**", ".github/workflows/check.yml"]
   workflow_dispatch: {}
 
 jobs:

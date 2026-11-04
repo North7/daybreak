@@ -197,7 +197,9 @@ pipeline/bd_cache/       前一晚抓的鏈上指標快取
 pipeline/check_i18n.py   檢查 app.js 每個 _t() 都有英文
 pipeline/stamp_assets.py 更新 index.html 的 ?v= 版本號
 pipeline/share_card.py   每日分享圖 data/share.png、data/share-en.png（X 貼文附圖）
-post.html                X 發文小幫手（讀 data/x_post.json：手機用分享選單把圖文一起送進 X、存圖到相簿、開 X App 發文視窗、複製文字）
+post.html                轉址到 ops/post/（舊網址相容）
+ops/                     運營：發文小幫手 post/、每日推薦圖表 picks/、短影片 video/（見 ops/README.md）
+ops/post/index.html      X 發文小幫手（讀 data/x_post.json：手機用分享選單把圖文一起送進 X、存圖到相簿、開 X App 發文視窗、複製文字）
 pipeline/og_card.py      連結預覽卡 assets/og-en.png（網址貼到 X 時自動顯示，預設英文；中文版 assets/og.png）
 pipeline/x_len.py        檢查 data/x_post.json 中英貼文在 X 的 280 字內
 pipeline/params.json     collect.py 需要的兩個參數（T+5 上下門檻）
@@ -236,7 +238,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 - 日報推送後，`share.yml` 自動產生號外風格的分享圖：`data/share.png`（中文）、`data/share-en.png`（英文）。
 - 網站側欄與頁尾有追蹤 [@songpu717](https://x.com/songpu717) 的連結；貼文連結帶 `?utm_source=x`。
 - 訪客統計用 GoatCounter（不用 cookie、不收個資），站點代號 `daybreak`，只在正式網址計數。
-- 發文小幫手 [`post.html`](https://north7.github.io/daybreak/post.html)：一鍵複製中英文貼文、開好 X 發文視窗、存分享圖。
+- 發文小幫手 [`ops/post/`](https://north7.github.io/daybreak/ops/post/)：一鍵複製中英文貼文、開好 X 發文視窗、存分享圖。
 - 網址貼到 X 時自動顯示的連結預覽卡預設英文（`assets/og-en.png`，由 `pipeline/og_card.py` 產生）；中文版是 `assets/og.png`。
 
 ## 隱私
@@ -449,7 +451,7 @@ Pull requests run **Site checks** (`.github/workflows/check.yml`): syntax, Engli
 - Once the notes are pushed, `share.yml` draws Extra-style share cards: `data/share.png` (Chinese) and `data/share-en.png` (English).
 - The sidebar and footer link to [@songpu717](https://x.com/songpu717); post links carry `?utm_source=x`.
 - Visitor stats use GoatCounter (no cookies, no personal data), site code `daybreak`, counted on the live URL only.
-- [`post.html`](https://north7.github.io/daybreak/post.html) is the posting helper: copy either draft with one tap, open X's composer pre-filled, save the share card.
+- [`ops/post/`](https://north7.github.io/daybreak/ops/post/) is the posting helper: copy either draft with one tap, open X's composer pre-filled, save the share card.
 - The link preview X shows for the site URL defaults to English (`assets/og-en.png`, drawn by `pipeline/og_card.py`); the Chinese card is `assets/og.png`.
 
 ### Privacy
