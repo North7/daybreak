@@ -412,12 +412,12 @@ def draw_cohort(d, box, sp, lang, Fn):
         d.text((x, y), t, font=f, fill=c, anchor=an)
     d.text((x1, yp - 10), (f'收盤 {usd(px)}' if lang == 'zh' else f'Close {usd(px)}'), font=Fn['cjk'](34, 900) if lang == 'zh' else Fn['mono'](32, 800), fill=RED, anchor='rb')
 
-def card(L, notes, sp, title, lang, Fn, out):
+def card(L, notes, sp, title, lang, Fn, out, tag=None):
     from PIL import Image, ImageDraw
     import share_card as SC
     img = Image.new('RGB', (W, H), PAPER); d = ImageDraw.Draw(img)
     d.rectangle([M, 104, W - M, 116], fill=INK)
-    tag = '今日圖表' if lang == 'zh' else 'CHART OF THE DAY'
+    tag = (tag or {}).get(lang) or ('今日圖表' if lang == 'zh' else 'CHART OF THE DAY')   # 長文配圖可換標籤（ops/articles/charts.py）
     tf = Fn['cjk'](52, 900) if lang == 'zh' else Fn['mono'](44, 800)
     tw = d.textlength(tag, font=tf); d.rectangle([M, 152, M + tw + 56, 232], fill=RED); d.text((M + 28, 192), tag, font=tf, fill='#FFFFFF', anchor='lm')
     bd = dt.date.fromisoformat(g(L, 'meta.bar_date')); ed = (notes or {}).get('edition', 0) if (notes or {}).get('date') == g(L, 'meta.bar_date') else 0
