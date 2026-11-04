@@ -690,9 +690,12 @@ try:
         pct_since_2022_11=round(sum(x < v for x in cy) / len(cy) * 100, 1), min90=round(mn[1], 4), min90_date=mn[0])
 except Exception as e: errors.append(f'murphy sth-lth-ratio: {e}'); R['murphy_flow']['sth_lth_ratio'] = None
 try:
-    ser = _bd_series('percent-sth-in-profit', 'percentSthInProfit'); d_, v = ser[-1]
+    # 2026-11-04 使用者要求：改用 Bitview（2011 起、晚 1 天；圖可以畫到 2019），失敗時才即時向 bitcoin-data 要（已移出 CORE）
+    if BV and BV.get('sthp'): ser = sorted(BV['sthp'].items()); MFS['percent-sth-in-profit'] = ser; _SIP_SRC = 'Bitview'
+    else: ser = sorted((r_['d'], float(r_['percentSthInProfit'])) for r_ in bd_rotation.fetch('percent-sth-in-profit') if r_.get('percentSthInProfit') not in (None, '')); MFS['percent-sth-in-profit'] = ser; _SIP_SRC = 'bitcoin-data'
+    d_, v = ser[-1]
     l30 = [(t, x) for t, x in ser if t >= (dt.date.fromisoformat(d_) - dt.timedelta(days=30)).isoformat()]; mn = min(l30, key=lambda z: z[1])
-    R['murphy_flow']['sth_in_profit_pct'] = dict(date=d_, value=round(v, 2), d7=round(ser[-8][1], 2), min30=round(mn[1], 2), min30_date=mn[0])
+    R['murphy_flow']['sth_in_profit_pct'] = dict(date=d_, value=round(v, 2), d7=round(ser[-8][1], 2), min30=round(mn[1], 2), min30_date=mn[0], source=_SIP_SRC)
 except Exception as e: errors.append(f'murphy percent-sth-in-profit: {e}'); R['murphy_flow']['sth_in_profit_pct'] = None
 try:
     if _CSRC == 'Bitview': tm, sth = _TM, _ST   # B9；bitcoin-data 的真實市場均價只在 Bitview 失敗時才抓（省每日額度）
@@ -737,7 +740,7 @@ try:
     if MFS.get('sth-lth-ratio'):
         MV['ratio'] = [[_dn(t), round(v_, 4)] for t, v_ in _thin(MFS['sth-lth-ratio'], 2)]
     if MFS.get('percent-sth-in-profit'):
-        MV['profit'] = [[_dn(t), round(v_, 1)] for t, v_ in _thin(MFS['percent-sth-in-profit'], 2)]
+        MV['profit'] = [[_dn(t), round(v_, 1)] for t, v_ in _thin([x_ for x_ in MFS['percent-sth-in-profit'] if x_[0] >= '2019-01-01'], 2)]   # 2026-11-04：Bitview 版畫到 2019
         # 2026-10-31 使用者要求：獲利比例圖上方配 BTC 週 K 對照價格。Kraken 週線（週四 00:00 UTC 起算，2013 年起）；
         #   最後一根含今天未收盤的部分，改用已收盤的日線（bars）重算到 LAST。失敗只少 K 線，獲利比例照畫
         try:
@@ -814,7 +817,7 @@ for _k, _ser, _fn in (('sec', _sec, stage_viz.sec_viz), ('rpl', _rpl, stage_viz.
     except Exception as e: errors.append(f'checkonchain {_k} {e}')
 # G4f. 2026-11-04 使用者要求：短期持有者成本帶（Murphy 的 STH 成本基礎模型）、6–12／12–18 個月成本線（wander）。資料 Bitview（B9），價格用統一收盤 PXC
 if BV:
-    for _k, _fn in (('sth_bands', stage_viz.sth_bands_viz), ('age_cost', stage_viz.age_cost_viz)):
+    for _k, _fn in (('sth_bands', stage_viz.sth_bands_viz), ('age_cost', stage_viz.age_cost_viz), ('levels', stage_viz.levels_viz)):   # levels：2026-11-04 關鍵價位圖
         try: R[_k] = _fn(BV, globals().get('PXC') or {}, LAST)
         except Exception as e: errors.append(f'bitview {_k} {e}')
 # G4e. 2026-10-27 使用者要求：長期／短期持有者籌碼（LTH／STH URPD，Murphy 的拆法）。bitcoin-data 的 URPD 不分持有時間，
@@ -1026,13 +1029,13 @@ try:
         for r_ in R['options']['expiries']:
             e_ = E.get(r_['expiry'], {})
             exps.append([r_['expiry'], r_['dte'], round(e_.get('C', 0)), round(e_.get('P', 0)), r_['maxpain']])
-        big = max((r_ for r_ in R['options']['expiries'] if r_['dte'] >= 7), key=lambda z: z['oi'], default=None)
-        strikes = None
-        if big:
-            kk_ = E[big['expiry']]['k']
-            strikes = dict(expiry=big['expiry'], maxpain=big['maxpain'],
-                           rows=[[K_, round(q_['C']), round(q_['P'])] for K_, q_ in sorted(kk_.items()) if c * 0.65 <= K_ <= c * 1.35 and (q_['C'] + q_['P']) >= 50])
-        EX['options'] = dict(total=R['options']['total_oi'], expiries=exps, strikes=strikes)
+        # 2026-11-04 使用者要求（Glassnode 週報的兩大到期對照）：未平倉最大的兩個到期（DTE ≥ 7）都給履約價分布，另給全部到期的買權／賣權合計
+        bigs = sorted((r_ for r_ in R['options']['expiries'] if r_['dte'] >= 7), key=lambda z: -z['oi'])[:2]
+        _sk = lambda r_: dict(expiry=r_['expiry'], maxpain=r_['maxpain'], rows=[[K_, round(q_['C']), round(q_['P'])] for K_, q_ in sorted(E[r_['expiry']]['k'].items()) if c * 0.65 <= K_ <= c * 1.35 and (q_['C'] + q_['P']) >= 50])
+        strikes = _sk(bigs[0]) if bigs else None; strikes2 = _sk(bigs[1]) if len(bigs) > 1 else None
+        cb_, pb_ = sum(v_['C'] for v_ in E.values()), sum(v_['P'] for v_ in E.values())
+        EX['options'] = dict(total=R['options']['total_oi'], expiries=exps, strikes=strikes, strikes2=strikes2,
+                             totals=dict(call_btc=round(cb_), put_btc=round(pb_), call_usd_b=round(cb_ * c / 1e9, 1), put_usd_b=round(pb_ * c / 1e9, 1)))
     # ④ P20 觸發距離：CoinMetrics MVRV ÷ 前一輪高點（[t−4 年, t−1 年] 最高值，無前視），2021 起每 3 天一點
     try:
         j0 = next(j_ for j_ in range(len(dts)) if dts[j_] >= '2021-01-01')
@@ -1257,6 +1260,33 @@ try:
     import hl_whales
     R['hl_whales'] = hl_whales.build(c, now.isoformat(timespec='minutes'))
 except Exception as e: errors.append(f'hl_whales {e}')
+# G9h. 2026-11-04 使用者要求（Glassnode 週報）：BTC 對 S&P 500 近 90 個交易日的勝率（BTC 當天漲幅大於標普的比例）與每日平均超額報酬；
+#   以及近兩個月和 S&P 500、那斯達克、黃金（Kraken 的 PAXG 代替金價）的相對表現。BTC 用 UTC 日收盤、美股用紐約收盤，兩者差約 3 小時。只作讀值
+try:
+    def _fred(sid):
+        raw = get(f'https://fred.stlouisfed.org/graph/fredgraph.csv?id={sid}')
+        return {l.split(',')[0]: float(l.split(',')[1]) for l in raw.splitlines()[1:] if l.split(',')[1] not in ('.', '')}
+    _spx, _ndq = _fred('SP500'), _fred('NASDAQCOM'); _bc = globals().get('PXC') or {b_['d']: b_['c'] for b_ in bars}
+    _S = sorted(d_ for d_ in _spx if d_ in _bc and d_ <= LAST)
+    _ex = [(_S[j], _bc[_S[j]] / _bc[_S[j - 1]] - 1, _spx[_S[j]] / _spx[_S[j - 1]] - 1) for j in range(1, len(_S))]
+    _wr = []
+    for j in range(89, len(_ex)):
+        w_ = _ex[j - 89:j + 1]; _wr.append([_ex[j][0], sum(b_ > s_ for _, b_, s_ in w_) / 90 * 100, sum(b_ - s_ for _, b_, s_ in w_) / 90 * 100])
+    _above = next((r_[0] for r_ in reversed(_wr[:-1]) if r_[1] > 50), None)
+    _kp = get('https://api.kraken.com/0/public/OHLC?pair=PAXGUSD&interval=1440')['result']; _kp = next(v_ for k_, v_ in _kp.items() if k_ != 'last')
+    _gold = {ymd(int(r_[0])): float(r_[4]) for r_ in _kp if ymd(int(r_[0])) <= LAST}
+    _d0 = dt.date.fromisoformat(LAST) - dt.timedelta(days=61); _rel, _base, _lv = [], {}, {}
+    for q_ in range(62):
+        d_ = (_d0 + dt.timedelta(days=q_)).isoformat(); r_ = [(dt.date.fromisoformat(d_) - dt.date(1970, 1, 1)).days]
+        for nm_, ser_ in (('btc', _bc), ('spx', _spx), ('ndq', _ndq), ('gold', _gold)):
+            if d_ in ser_: _lv[nm_] = ser_[d_]; _base.setdefault(nm_, ser_[d_])
+            r_.append(round((_lv[nm_] / _base[nm_] - 1) * 100, 2) if nm_ in _lv else None)
+        _rel.append(r_)
+    R['btc_vs_stocks'] = dict(date=_wr[-1][0], win90=round(_wr[-1][1], 1), excess90=round(_wr[-1][2], 3), last_above50=_above,
+                              rows=[[(dt.date.fromisoformat(r_[0]) - dt.date(1970, 1, 1)).days, round(r_[1], 1), round(r_[2], 3)] for r_ in _wr if r_[0] >= '2021-01-01'][::-1][::2][::-1],
+                              rel=dict(start=_d0.isoformat(), rows=_rel, last=dict(zip(('btc', 'spx', 'ndq', 'gold'), _rel[-1][1:]))),
+                              note='勝率＝近 90 個美股交易日裡 BTC 漲幅大於 S&P 500 的比例；超額＝每日平均差（百分點）；BTC 用 UTC 收盤、美股紐約收盤；黃金用 PAXG；只作讀值')
+except Exception as e: errors.append(f'btc_vs_stocks {e}')
 R.pop('_sig5', None); R.pop('_sig1', None)
 R['bd_rotation'] = R_bd
 R['errors'] = errors

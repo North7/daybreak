@@ -25,7 +25,8 @@ COLS = [('px', 'price_close', 2), ('sth', 'sth_realized_price', 2), ('tmm', 'tru
         ('lth', 'lth_realized_price', 2), ('asopr', 'adjusted_sopr_24h', 4), ('lsopr', 'lth_sopr_24h', 4),
         ('c36', _band(('3m_to_4m', '4m_to_5m', '5m_to_6m')), 2), ('sths', 'sth_supply', 0), ('lths', 'lth_supply', 0),
         ('b1', 'balance_1_to_10_btc_supply', 0), ('b10', 'balance_10_to_100_btc_supply', 0), ('b100', 'balance_100_to_1k_btc_supply', 0),
-        ('b1k', 'balance_1k_to_10k_btc_supply', 0), ('b10k', 'balance_10k_to_100k_btc_supply', 0), ('b100k', 'balance_over_100k_btc_supply', 0)]
+        ('b1k', 'balance_1k_to_10k_btc_supply', 0), ('b10k', 'balance_10k_to_100k_btc_supply', 0), ('b100k', 'balance_over_100k_btc_supply', 0),
+        ('sthp', 'sth_supply_in_profit_share', 2), ('rp', 'realized_price', 2)]   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
 KEYS = [k for k, _, _ in COLS]
 COC_TMM = 'https://charts-cdn.checkonchain.com/btconchain/cointime/cointime_pricing_all_1/cointime_pricing_all_1_light.html'
 
