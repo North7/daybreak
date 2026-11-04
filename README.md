@@ -256,6 +256,13 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-04** 圖表自我檢查與修正
+  - 資料狀態：10/27 之後新增的 8 張圖（賣方衰竭、實現損益比、表觀需求、價格 × 長期持有者、週線多空分數、三地溢價、清算熱力圖）列進「資料狀態」；CheckOnChain 快取超過 4 天沒更新就不再沿用，該項顯示本日未取得。
+  - 穩定性：一張圖出錯只影響自己（原本同一版後面的圖會全部空白）；週線多空分數少一項輸入時用其餘五項照算；槓桿百分位缺值時不再被當成「比平常便宜」。
+  - 同一天各圖的價格統一用 Kraken 收盤（更早用 CoinMetrics），不再各用 CheckOnChain 自帶的價格；賣方衰竭的低點標在它自己那天，實現損益比的短紅段不會被抽樣漏掉。
+  - 手機：頭版跑道圖依實際寬度排版（原本字只有約 4px）；各到期未平倉、基差曲線的日期標籤不再重疊；圖上的標註會自動避開彼此；鏈上指標小圖先顯示 3 張、其餘收在按鈕後；載入時只畫目前那一版。
+  - 亞洲 USDT 溢價：歷史還短時 x 軸從第一點起算，不擠在 300 天軸的最右邊；清算熱力圖色階用整份快照算（切換 3／7 天顏色一致）、每根 K 線帶自己的時間。
+  - `pipeline/check_i18n.py` 也檢查寫在 `_t`／`_T`／`h` 以外的中文字串。
 - **2026-10-27**
   - 鏈上版：長短期持有者籌碼（Murphy〈跌破 $80K 的 BTC，潛在拋壓有多大？〉的拆法）。bitcoin-data 的 URPD 不分持有時間，用幣齡分布（hodl-waves-supply，每日 +1 次請求）與每日價格區間推算出 LTH／STH 各在哪個價位（`pipeline/cohort_urpd.py`）；附和約 30 天前比誰賣誰買、價格沒碰過的高位套牢盤變化（不靠模型）、跌到各價位的帳面虧損，以及推算的短期持有者成本 vs bitcoin-data 公布值（2026-09-30～10-20 差 −0.8%～−0.2%）。逐筆 UTXO、不是實體調整，只作讀值。
   - 每天的 URPD 完整存檔（`pipeline/cohort_cache/`）；異動偵測加「價格貼近短期持有者最厚的籌碼」。
@@ -469,6 +476,13 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-04** Chart self-check and fixes
+  - Data status now lists the eight charts added after 10/27 (seller exhaustion, realized P/L ratio, apparent demand, price × LTH, weekly regime score, three premiums, liquidation heatmap); CheckOnChain caches older than 4 days are no longer reused, so the item shows as not available.
+  - One failing chart no longer blanks the rest of its section; the regime score still scores with five inputs if one is missing; a missing leverage percentile is no longer read as "cheaper than usual".
+  - Prices on all charts for the same day now come from one source (Kraken close, CoinMetrics before that); seller-exhaustion lows are dated to their own day and short red spells in the realized P/L ratio are no longer lost to sampling.
+  - Mobile: the front-page runway is drawn at real width (its text was about 4px); expiry and basis labels no longer collide; chart annotations avoid each other; the on-chain small charts show three and fold the rest; only the current section is drawn on load.
+  - Asia USDT premium starts its x-axis at the first point while history is short; the liquidation heatmap uses one colour scale per snapshot and a timestamp per candle.
+  - `pipeline/check_i18n.py` also flags Chinese strings outside `_t` / `_T` / `h`.
 - **2026-10-27**
   - On-chain page: long- vs short-term holder supply (the split Murphy uses in “How much selling pressure if BTC breaks $80K?”). bitcoin-data's URPD has no holding-period split, so coin-age bands (hodl-waves-supply, one more request a day) and daily price ranges are used to estimate where LTH and STH coins sit (`pipeline/cohort_urpd.py`); with who sold and bought versus about 30 days ago, the change in trapped supply above any price touched (no model involved), coins underwater at each price, and the estimated STH cost vs bitcoin-data's figure (−0.8% to −0.2% on 2026-09-30 to 10-20). Per-UTXO, not entity-adjusted; reading only.
   - Full daily URPD archive (`pipeline/cohort_cache/`); new signal for price near the thickest short-term holder pile.

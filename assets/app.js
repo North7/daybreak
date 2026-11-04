@@ -43,13 +43,30 @@
 
   /* ---------------- Chart kit ---------------- */
   var mounted = [];
-  function mount(el, draw) { if (!el) return; el._draw = draw; mounted.push(el); draw(el); }
+  /* 2026-11-04 自我檢查：一張圖出錯只影響自己——原本同一版的圖依序畫，前面一張丟錯，後面全部空白。
+     出錯的那一張顯示說明（class 帶 err，冒煙測試會抓到），其他照畫 */
+  function chartErr(el, e) { console.error(e); if (el) el.innerHTML = '<p class="err chart-err">' + _T('這張圖今天畫不出來（資料格式異常），其他圖不受影響。', 'This chart could not be drawn today (unexpected data); other charts are unaffected.') + '</p>'; }
+  function mount(el, draw) { if (!el) return; el._draw = function (e) { try { draw(e); } catch (er) { chartErr(e, er); } }; mounted.push(el); el._draw(el); }
+  /* 不經 mount 的繪圖（自己找元素、綁按鈕）：個別包起來，出錯只記錄、不中斷同一版其他圖 */
+  function safe() { for (var i = 0; i < arguments.length; i++) { try { arguments[i](); } catch (e) { console.error(e); } } }
   var ro = window.ResizeObserver ? new ResizeObserver(function (es) {
     es.forEach(function (e) { var el = e.target; if (el._w !== el.clientWidth && el._draw) { el._w = el.clientWidth; el._draw(el); } });
   }) : null;
+  /* 2026-11-04：換到解析度不同的螢幕（devicePixelRatio 變了）時，canvas 圖重畫，不然會糊；寬度沒變 ResizeObserver 不會觸發 */
+  (function watchDpr() {
+    if (!window.matchMedia) return; var mq = window.matchMedia('(resolution: ' + (window.devicePixelRatio || 1) + 'dppx)');
+    var f = function () { mounted.forEach(function (el) { if (el._draw && el.querySelector('canvas')) el._draw(el); }); watchDpr(); };
+    if (mq.addEventListener) mq.addEventListener('change', f, { once: true });
+  })();
   function observe(el) { if (ro && el) { el._w = el.clientWidth; ro.observe(el); } }
 
   function niceStep(span, n) { var r = span / n, p = Math.pow(10, Math.floor(Math.log10(r))), m = r / p; return (m < 1.5 ? 1 : m < 3.5 ? 2 : m < 7.5 ? 5 : 10) * p; }
+  /* 圖上標註文字的大約寬度（reflab 11px：中日韓字約 11px、其他約 6.3px），用來避免重疊 */
+  /* 2026-11-04 → 2026/11/04（原本五個讀值函式各寫一份） */
+  function ymdS(d) { return String(d).replace(/-/g, '/'); }
+  /* 圖上的軸文字（原本各圖各寫一個區域 tx，蓋過模組層的 tx(o, k)） */
+  function axText(xx, y, t, a, cls) { return '<text class="' + (cls || 'ax') + '" x="' + xx.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + esc(t) + '</text>'; }
+  function lblW(t) { var w = 0; String(t).replace(/[\s\S]/g, function (c) { w += /[\u2e80-\uffef]/.test(c) ? 11 : 6.3; }); return w; }
   function svgEl(W, Ht, inner, label) { return '<svg viewBox="0 0 ' + W + ' ' + Ht + '" width="' + W + '" height="' + Ht + '" role="img" aria-label="' + esc(label || '') + '">' + inner + '</svg>'; }
   function bisect(a, x) { var lo = 0, hi = a.length - 1; while (hi - lo > 1) { var m = (lo + hi) >> 1; if (a[m][0] < x) lo = m; else hi = m; } return Math.abs(a[lo][0] - x) <= Math.abs(a[hi][0] - x) ? lo : hi; }
   function animateLines(el) {
@@ -105,7 +122,7 @@
         }
         d.setUTCMonth(d.getUTCMonth() + 1);
       }
-    } else (cfg.xticks || []).forEach(function (t) { s += '<text class="ax" x="' + X(t[0]).toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + esc(t[1]) + '</text>'; });
+    } else { var lxt = -99; (cfg.xticks || []).forEach(function (t) { var xx = X(t[0]), w = lblW(t[1]) * 10 / 10.5; if (xx - w / 2 < lxt + 6) return; lxt = xx + w / 2; s += '<text class="ax" x="' + xx.toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + esc(t[1]) + '</text>'; }); }   // 2026-11-04：太近的刻度略過（基差曲線 9d／23d 疊在一起）
     // vertical bands & lines
     (cfg.vbands || []).forEach(function (b) { var a = Math.max(ML, X(b.x0)), z = Math.min(ML + pw, X(b.x1)); if (z > a) s += '<rect x="' + a.toFixed(1) + '" y="' + MT + '" width="' + (z - a).toFixed(1) + '" height="' + ph + '" fill="' + (b.color || 'var(--flare-dim)') + '"/>' + (b.label ? '<text class="ax" x="' + (a + 6).toFixed(1) + '" y="' + (MT + 12) + '">' + esc(b.label) + '</text>' : ''); });
     (cfg.vlines || []).concat(sigV(el)).forEach(function (v) { var xx = X(v.x); if (xx < ML || xx > ML + pw) return; s += '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="' + MT + '" y2="' + (MT + ph) + '" stroke="var(--ink-3)" stroke-dasharray="2 4" stroke-width="1"/>' + (v.label ? '<text class="ax" x="' + (xx > ML + pw - 70 ? xx - 5 : xx + 5).toFixed(1) + '" y="' + (MT + ph - 6) + '"' + (xx > ML + pw - 70 ? ' text-anchor="end"' : '') + '>' + esc(v.label) + '</text>' : ''); });
@@ -121,7 +138,21 @@
       s += '<path class="ln" d="' + dpath + '" stroke="' + sr.color + '" stroke-width="' + (sr.w || 2) + '"' + (sr.dash ? ' stroke-dasharray="' + sr.dash + '"' : '') + ' style="animation-delay:' + (si * 0.12) + 's"/>';
       if (sr.end !== false) { var lp = pts[pts.length - 1]; s += '<circle cx="' + X(lp[0]).toFixed(1) + '" cy="' + Yf(lp[1]).toFixed(1) + '" r="4" fill="' + sr.color + '" stroke="var(--deck)" stroke-width="2"/>'; }
     });
-    (cfg.marks || []).forEach(function (m) { var xx = X(m.x), yy = Y(m.y); s += '<circle cx="' + xx.toFixed(1) + '" cy="' + yy.toFixed(1) + '" r="4.5" fill="var(--deck)" stroke="' + (m.color || 'var(--flare)') + '" stroke-width="2"/>' + (m.label ? '<text class="reflab" x="' + (xx + (m.left ? -8 : 8)).toFixed(1) + '" y="' + (yy + (m.below ? 15 : -8)).toFixed(1) + '" fill="' + (m.color || 'var(--flare)') + '"' + (m.left ? ' text-anchor="end"' : '') + '>' + esc(m.label) + '</text>' : ''); });
+    // 2026-11-04 自我檢查：標註文字不再互相重疊——由最新一個往回放，撞到已放的字（含參考線標籤）就換到另一側，兩側都撞就只畫點不寫字；超出右緣改成向左寫
+    var placed = (cfg.refs || []).filter(function (r) { return r.label; }).map(function (r) { var y = Y(r.y) + (r.below ? 13 : -5); return [ML + 6, ML + 6 + lblW(r.label), y - 10, y + 2]; }), mk = '';
+    (cfg.marks || []).slice().reverse().forEach(function (m) {
+      var xx = X(m.x), yy = Y(m.y), col = m.color || 'var(--flare)', lab = '';
+      if (m.label) {
+        var w = lblW(m.label), left = (m.left || xx + 8 + w > ML + pw) && xx - 8 - w >= 0, x0 = left ? xx - 8 - w : xx + 8;   // 往左寫會超出左緣就改往右
+        [m.below, !m.below].some(function (bl) {
+          var ty = yy + (bl ? 15 : -8), bx = [x0, x0 + w, ty - 10, ty + 2];
+          if (placed.some(function (p) { return bx[0] < p[1] && bx[1] > p[0] && bx[2] < p[3] && bx[3] > p[2]; })) return false;
+          placed.push(bx); lab = '<text class="reflab" x="' + (xx + (left ? -8 : 8)).toFixed(1) + '" y="' + ty.toFixed(1) + '" fill="' + col + '"' + (left ? ' text-anchor="end"' : '') + '>' + esc(m.label) + '</text>'; return true;
+        });
+      }
+      mk = '<circle cx="' + xx.toFixed(1) + '" cy="' + yy.toFixed(1) + '" r="4.5" fill="var(--deck)" stroke="' + col + '" stroke-width="2"/>' + lab + mk;
+    });
+    s += mk;
     s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (MT + ph) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + ph + '"/>';
     el.innerHTML = svgEl(W, Ht, '<defs>' + defs + '</defs>' + s, cfg.aria);
     animateLines(el);
@@ -168,6 +199,9 @@
   }
 
   /* K 線 */
+  /* 一根 K 線：影線＋實體（2026-11-04 抽出，近 20 天 K 線、清算熱力圖、短期持有者獲利比例的週 K 共用）。y 是已換算的像素 */
+  function candleMark(cx, w, yo, yh, yl, yc, col, o) { o = o || {};
+    return '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + yh.toFixed(1) + '" y2="' + yl.toFixed(1) + '" stroke="' + col + '" stroke-width="' + (o.sw || 1) + '"/><rect x="' + (cx - w / 2).toFixed(1) + '" y="' + Math.min(yo, yc).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + Math.max(o.minH || 1, Math.abs(yo - yc)).toFixed(1) + '"' + (o.rx ? ' rx="' + o.rx + '"' : '') + ' fill="' + col + '"/>'; }
   function candleChart(el, rows, lines) {
     var W = Math.max(280, el.clientWidth), Ht = W < 520 ? 240 : 300, ML = 8, MR = 62, MT = 12, MB = 24, pw = W - ML - MR, ph = Ht - MT - MB;
     var lo = Math.min.apply(null, rows.map(function (r) { return r[3]; })), hi = Math.max.apply(null, rows.map(function (r) { return r[2]; }));
@@ -178,8 +212,7 @@
     var used = []; lines.filter(function (l) { return l.v >= lo && l.v <= hi; }).sort(function (a, b) { return b.v - a.v; }).forEach(function (l) { var y = Y(l.v), ty = y - 4; while (used.some(function (u) { return Math.abs(u - ty) < 12; })) ty += 13; used.push(ty); s += '<line class="ref" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="' + l.color + '"/><text class="reflab" x="' + (ML + 4) + '" y="' + ty.toFixed(1) + '" fill="' + l.color + '">' + esc(l.label) + '</text>'; });
     rows.forEach(function (r, i) {
       var x = ML + i * bw + bw / 2, up = r[4] >= r[1], col = up ? 'var(--up)' : 'var(--down)', w = Math.max(3, bw * 0.56);
-      s += '<g class="cd" data-i="' + i + '"><rect x="' + (ML + i * bw) + '" y="' + MT + '" width="' + bw + '" height="' + ph + '" fill="transparent"/><line x1="' + x.toFixed(1) + '" x2="' + x.toFixed(1) + '" y1="' + Y(r[2]).toFixed(1) + '" y2="' + Y(r[3]).toFixed(1) + '" stroke="' + col + '" stroke-width="1.4"/>' +
-        '<rect x="' + (x - w / 2).toFixed(1) + '" y="' + Y(Math.max(r[1], r[4])).toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + Math.max(1.5, Math.abs(Y(r[1]) - Y(r[4]))).toFixed(1) + '" rx="1.5" fill="' + col + '"/></g>';
+      s += '<g class="cd" data-i="' + i + '"><rect x="' + (ML + i * bw) + '" y="' + MT + '" width="' + bw + '" height="' + ph + '" fill="transparent"/>' + candleMark(x, w, Y(r[1]), Y(r[2]), Y(r[3]), Y(r[4]), col, { sw: 1.4, minH: 1.5, rx: 1.5 }) + '</g>';
       var ev = Math.ceil(rows.length / Math.max(1, Math.floor(pw / 52))); if ((i % ev === 0 && rows.length - 1 - i >= ev) || i === rows.length - 1) s += '<text class="ax" x="' + x.toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + r[0] + '</text>';
     });
     el.innerHTML = svgEl(W, Ht, s, _t('近 20 日 K 線'));
@@ -222,21 +255,35 @@
     return it.map(function (x) { return '<span class="tape-item">' + x[0] + ' <b>' + x[1] + '</b>' + (x[2] ? '<i class="' + (x[3] === true ? 'up' : x[3] === false ? 'down' : '') + '">' + x[2] + '</i>' : '') + '</span>'; }).join('');
   }
 
-  function runwaySvg() { /* 收盤到各出場線的距離（對數刻度） */
-    var c = D.price.bar.c, S = D.exit.status, F = D.exit.framework, lo = 55000, hi = 240000, W = 1000, Ht = 150, ML = 20, MR = 20, pw = W - ML - MR, y = 78;
+  /* 收盤到各出場線的距離（對數刻度）。2026-11-04 自我檢查：原本固定 1000 寬的 viewBox 等比縮放，手機上字只剩約 4px；
+     改成依實際寬度畫（字維持 11–13px），窄螢幕把標籤分到上下兩排、靠邊的改成往內寫 */
+  function runwaySvg(W) {
+    var c = D.price.bar.c, S = D.exit.status, F = D.exit.framework, lo = 55000, hi = 240000, nar = W < 560, ML = 12, MR = 12, pw = W - ML - MR, y = 50, Ht = nar ? 138 : 112;
     var X = function (v) { return ML + (Math.log(v) - Math.log(lo)) / (Math.log(hi) - Math.log(lo)) * pw; }, s = '';
+    // 文字：置中，但碰到左右邊緣就往內收
+    var lab = function (xx, ty, txt, col, size, mono) {
+      var w = lblW(txt) * size / 10.5, a = 'middle';
+      if (xx - w / 2 < 2) { xx = Math.max(2, xx - 10); a = 'start'; } else if (xx + w / 2 > W - 2) { xx = Math.min(W - 2, xx + 10); a = 'end'; }
+      return '<text x="' + xx.toFixed(1) + '" y="' + ty + '" text-anchor="' + a + '" style="font-size:' + size + 'px' + (mono ? ';font-family:var(--f-mono)' : '') + '" fill="' + col + '">' + esc(txt) + '</text>';
+    };
     s += '<defs><linearGradient id="rw" x1="0" x2="1"><stop offset="0" stop-color="var(--orbit)"/><stop offset="1" stop-color="var(--flare)"/></linearGradient></defs>';
     s += '<line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y + '" y2="' + y + '" stroke="var(--line-2)" stroke-width="2"/>';
-    [60000, 80000, 100000, 150000, 200000].forEach(function (t) { s += '<text class="ax" x="' + X(t).toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle" style="font-family:var(--f-mono);font-size:11px" fill="var(--ink-3)">' + fmt.k(t) + '</text>'; });
-    s += '<rect x="' + X(S.sma200).toFixed(1) + '" y="' + (y - 3) + '" width="' + (X(c) - X(S.sma200)).toFixed(1) + '" height="6" rx="3" fill="var(--orbit)" opacity=".5"/>';
-    s += '<rect x="' + X(c).toFixed(1) + '" y="' + (y - 3) + '" width="' + (X(F.ladder[0]) - X(c)).toFixed(1) + '" height="6" rx="3" fill="url(#rw)" opacity=".35"/>';
-    F.ladder.forEach(function (v, i) { s += '<rect x="' + (X(v) - 2).toFixed(1) + '" y="' + (y - 14) + '" width="4" height="28" rx="2" fill="var(--flare)" opacity="' + (1 - i * .08).toFixed(2) + _t('"><title>出場第 ') + (i + 1) + _t(' 階 ') + fmt.usd(v) + '</title></rect>'; });
-    s += '<text x="' + X(F.ladder[0]).toFixed(1) + '" y="' + (y - 24) + _t('" style="font-size:12px" fill="var(--flare)">出場階梯 125K–215K（8 階）</text>');
-    var mk = function (v, lab, col, up) { var xx = X(v); return '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="' + (y - 12) + '" y2="' + (y + 12) + '" stroke="' + col + '" stroke-width="2"/><text x="' + xx.toFixed(1) + '" y="' + (up ? y - 22 : y + 30) + '" text-anchor="middle" style="font-size:12px" fill="' + col + '">' + lab + '</text>'; };
-    s += mk(S.sma200, _t('避險線 ') + fmt.k(S.sma200) + _t('（') + fmt.pct((S.sma200 / c - 1) * 100, 0) + _t('）'), 'var(--orbit)', true);
-    s += mk(S.k075_price, 'MVRV 0.75 ' + fmt.k(S.k075_price) + _t('（') + fmt.pct((S.k075_price / c - 1) * 100, 0) + _t('）'), 'var(--rose)', false);
-    s += '<circle cx="' + X(c).toFixed(1) + '" cy="' + y + '" r="14" fill="var(--flare)" opacity=".18"><animate attributeName="r" values="11;18;11" dur="3s" repeatCount="indefinite"/></circle><circle cx="' + X(c).toFixed(1) + '" cy="' + y + '" r="7" fill="var(--ink)" stroke="var(--deck)" stroke-width="2.5"/><text x="' + X(c).toFixed(1) + '" y="' + (y + 32) + _t('" text-anchor="middle" style="font-family:var(--f-mono);font-size:13px" fill="var(--ink)">收盤 ') + fmt.k(c) + '</text>';
-    return '<svg viewBox="0 0 ' + W + ' ' + Ht + _t('" role="img" aria-label="收盤到避險線與出場階梯的距離">') + s + '</svg>';
+    (nar ? [60000, 100000, 200000] : [60000, 80000, 100000, 150000, 200000]).forEach(function (t) { s += '<text class="ax" x="' + X(t).toFixed(1) + '" y="' + (Ht - 4) + '" text-anchor="middle" style="font-family:var(--f-mono);font-size:11px" fill="var(--ink-3)">' + fmt.k(t) + '</text>'; });
+    s += '<rect x="' + Math.min(X(S.sma200), X(c)).toFixed(1) + '" y="' + (y - 3) + '" width="' + Math.abs(X(c) - X(S.sma200)).toFixed(1) + '" height="6" rx="3" fill="var(--orbit)" opacity=".5"/>';
+    s += '<rect x="' + X(c).toFixed(1) + '" y="' + (y - 3) + '" width="' + Math.max(0, X(F.ladder[0]) - X(c)).toFixed(1) + '" height="6" rx="3" fill="url(#rw)" opacity=".35"/>';
+    F.ladder.forEach(function (v, i) { s += '<rect x="' + (X(v) - 2).toFixed(1) + '" y="' + (y - 14) + '" width="4" height="28" rx="2" fill="var(--flare)" opacity="' + (1 - i * .08).toFixed(2) + '"><title>' + _T('出場第 ' + (i + 1) + ' 階 ', 'Exit step ' + (i + 1) + ' ') + fmt.usd(v) + '</title></rect>'; });
+    var lad = _T('出場階梯 ' + fmt.k(F.ladder[0]) + '–' + fmt.k(F.ladder[F.ladder.length - 1]) + '（' + F.ladder.length + ' 階）', 'Exit ladder ' + fmt.k(F.ladder[0]) + '–' + fmt.k(F.ladder[F.ladder.length - 1]) + ' (' + F.ladder.length + ' steps)');
+    var ladX = X(F.ladder[0]), ladW = lblW(lad) * 12 / 10.5;
+    s += '<text x="' + (ladX + ladW > W - 2 ? W - 2 : ladX).toFixed(1) + '" y="' + (y - 22) + '" text-anchor="' + (ladX + ladW > W - 2 ? 'end' : 'start') + '" style="font-size:12px" fill="var(--flare)">' + esc(lad) + '</text>';
+    var tick = function (v, col) { var xx = X(v).toFixed(1); return '<line x1="' + xx + '" x2="' + xx + '" y1="' + (y - 12) + '" y2="' + (y + 12) + '" stroke="' + col + '" stroke-width="2"/>'; };
+    var pc = function (v) { return _T('（', ' (') + fmt.pct((v / c - 1) * 100, 0) + _T('）', ')'); };
+    s += tick(S.sma200, 'var(--orbit)') + tick(S.k075_price, 'var(--rose)');
+    // 寬螢幕：避險線、階梯在上，MVRV 與收盤在下同一排；窄螢幕只有階梯在上，下方依序收盤、避險線、MVRV 各一排
+    s += lab(X(S.sma200), nar ? y + 48 : y - 22, _T('避險線 ', 'Hedge line ') + fmt.k(S.sma200) + pc(S.sma200), 'var(--orbit)', 12);
+    s += lab(X(S.k075_price), y + (nar ? 66 : 30), 'MVRV 0.75 ' + fmt.k(S.k075_price) + pc(S.k075_price), 'var(--rose)', 12);
+    s += '<circle cx="' + X(c).toFixed(1) + '" cy="' + y + '" r="14" fill="var(--flare)" opacity=".18"><animate attributeName="r" values="11;18;11" dur="3s" repeatCount="indefinite"/></circle><circle cx="' + X(c).toFixed(1) + '" cy="' + y + '" r="7" fill="var(--ink)" stroke="var(--deck)" stroke-width="2.5"/>';
+    s += lab(X(c), y + 30, _T('收盤 ', 'Close ') + fmt.k(c), 'var(--ink)', 13, true);
+    return svgEl(W, Ht, s, _T('收盤到避險線與出場階梯的距離', 'Distance from the close to the hedge line and the exit ladder'));
   }
   /* 巨型收盤價：數字本身是主視覺，近 20 日收盤線疊在數字上；滑過可逐日回看 */
   function megaHtml(c) {
@@ -701,14 +748,17 @@
   var OC_REF = { p80: ['四年 80 百分位（頂部區門檻）', '4-year 80th percentile (top-zone line)'], top2025: ['2025 頂部附近的極值', 'Extreme near the 2025 top'], one: ['1.0＝賣在成本', '1.0 = selling at cost'] };
   function ocPanel() {
     var V_ = (D.onchain || {}).viz; if (!V_ || !(D.cycle.stage || {}).viz) return '';
+    // 2026-11-04 自我檢查：手機上鏈上版約 22 個螢幕高，這 11 張小圖佔了一半。手機只先顯示前 3 張與有「異動」的，其餘收在按鈕後面（桌面照舊全部顯示）
+    var sigd = {}, nShow = 0, nMore = 0; ((D.signals || {}).items || []).forEach(function (x) { if (x.chart) sigd[x.chart] = 1; });
     var cells = OCV.filter(function (o) { return V_[o[0]]; }).map(function (o) {
+      var more = nShow >= 3 && !sigd['oc-' + o[0]]; if (more) nMore++; else nShow++;
       var x = V_[o[0]], r = x.ref, f = o[3];
       var say = _T('現在 ', 'Now ') + ocFmt(x.last, f) + _T('（' + fmt.md(x.date) + '）· 30 日 ', ' (' + fmt.md(x.date) + ') · 30d ') + ocDelta(x.chg30, f) + _T(' · 90 日 ', ' · 90d ') + ocDelta(x.chg90, f) +
         (r ? _T(' · ' + OC_REF[r.kind][0] + ' ', ' · ' + OC_REF[r.kind][1] + ' ') + ocFmt(r.y, f) : '');
-      return '<div class="evc"><div class="panel-h"><h3>' + esc(_T(o[1], o[2])) + '</h3></div><p class="note">' + esc(say) + '</p><div class="chart" id="c-oc-' + o[0] + '"></div></div>';
-    }).join('');
+      return '<div class="evc' + (more ? ' more' : '') + '"><div class="panel-h"><h3>' + esc(_T(o[1], o[2])) + '</h3></div><p class="note">' + esc(say) + '</p><div class="chart" id="c-oc-' + o[0] + '"></div></div>';
+    }).join('') + (nMore ? '<button type="button" class="oc-more" onclick="this.parentNode.classList.remove(\'fold\')">' + _T('展開其餘 ' + nMore + ' 張圖', 'Show ' + nMore + ' more charts') + '</button>' : '');
     return panel('span-12', _T('鏈上指標走勢', 'On-chain indicators over time'), _T('近 3 年 · 灰線是 BTC 價格（另一刻度）', '3 years · grey line is the BTC price (own scale)'),
-      legend([[_T('指標', 'Indicator'), 'var(--s1)'], [_T('參考線', 'Reference line'), 'var(--down)'], [_T('BTC 價格（另一刻度）', 'BTC price (own scale)'), 'var(--ink-3)']]) + '<div class="evcharts">' + cells + '</div>');
+      legend([[_T('指標', 'Indicator'), 'var(--s1)'], [_T('參考線', 'Reference line'), 'var(--down)'], [_T('BTC 價格（另一刻度）', 'BTC price (own scale)'), 'var(--ink-3)']]) + '<div class="evcharts fold">' + cells + '</div>');
   }
   function drawOc() {
     var V_ = (D.onchain || {}).viz, px = ((D.cycle.stage || {}).viz || {}).px || []; if (!V_) return;
@@ -768,10 +818,10 @@
       'pr-us': { h: h('Coinbase 溢價的 7 日平均：Coinbase BTC-USD 收盤比 Binance BTC-USDT 貴多少（%）；虛線是 0。', '7-day average Coinbase premium: how much Coinbase BTC-USD closes above Binance BTC-USDT (%); the dashed line is 0.',
           '正＝美國現貨（機構、ETF 相關）買得比海外積極；長時間停在 0 以下＝美國買盤缺席。牛市主升段多半維持正值。', 'Positive means US spot buyers (institutions, ETF-related) are keener than offshore; staying below 0 for long means US demand is absent. Bull-market advances usually run positive.',
           '以 USDT 計價，USDT 偏離 1 美元時會有誤差；看方向和持續多久，不看單日。', 'Priced against USDT, so a USDT depeg distorts it; read the direction and how long it lasts, not single days.'),
-        now: function () { var cp = D.flows.cb_premium || {}, r = cp.rows || []; if (cp.avg7 == null) return ''; var a7 = r.map(function (x, i) { if (i < 6) return null; var s = 0; for (var k = i - 6; k <= i; k++) s += r[k][1]; return s / 7; }), n = 0;
+        now: function () { var cp = D.flows.cb_premium || {}, r = cp.rows || []; if (cp.avg7 == null) return ''; var a7 = ma7r(r).map(function (x) { return x[1]; }), n = 0;
           for (var i = a7.length - 1; i >= 0 && a7[i] != null && (a7[i] < 0) === (cp.avg7 < 0); i--) n++;
           return _T('7 日平均 ' + fmt.pct(cp.avg7, 3) + '，近 ' + cp.n + ' 天第 ' + fmt.n(cp.pct_own, 0) + ' 百分位；已連續 ' + n + ' 天在 0 ' + (cp.avg7 < 0 ? '以下' : '以上') + '。' + (cp.avg7 < 0 ? '美國現貨買盤比海外弱。' : '美國現貨買盤比海外積極。'), '7-day average ' + fmt.pct(cp.avg7, 3) + ', ' + fmt.n(cp.pct_own, 0) + 'th percentile of ' + cp.n + ' days; ' + n + ' straight days ' + (cp.avg7 < 0 ? 'below' : 'above') + ' 0. ' + (cp.avg7 < 0 ? 'US spot demand is weaker than offshore.' : 'US spot demand is keener than offshore.')); } },
-      'pr-asia': { h: h('OKX 場外 USDT 兌人民幣的中間價，比美元兌人民幣匯率高或低多少（%）；每天 00:06 UTC 記一個快照。', 'OKX OTC USDT/CNY mid price vs the USD/CNY rate (%); one snapshot a day at 00:06 UTC.',
+      'pr-asia': { h: h('OKX 場外 USDT 兌人民幣的中間價，比美元兌人民幣匯率高或低多少（%）；每天 00:06 UTC 記一個快照，標在剛收盤的那一天。', 'OKX OTC USDT/CNY mid price vs the USD/CNY rate (%); one snapshot a day at 00:06 UTC, dated to the day that just closed.',
           '正（溢價）＝有人搶著用人民幣換 USDT 進場；負（折價）＝換回人民幣的人多，亞洲資金偏離場。過去牛市常見溢價，熊市或監管收緊時常見折價。', 'Positive (premium) means buyers are rushing to swap CNY into USDT; negative (discount) means more are cashing out to CNY and Asian money is leaning out. Premiums are common in bull markets, discounts in bear markets or crackdowns.',
           '場外報價受人民幣管制、商家與付款方式影響，±0.3% 內視為持平；歷史從 2026/11/02 才開始累積，不到 30 天不談百分位。', 'OTC quotes depend on capital controls, merchants and payment methods; treat ±0.3% as flat. The record only starts 2026-11-02, so no percentiles before 30 days.'),
         now: function () { var p3 = D.flows.premium3 || {}, u = p3.usdt, h = p3.usdt_hist || []; if (!u) return ''; var a = h.length > 7 ? h[h.length - 8][1] : null;
@@ -781,8 +831,8 @@
           '永續平常就比現貨低一點（這一年平均約 −0.04%），所以和它自己的歷史比：比平常高＝多單願意付錢追價，比平常低＝槓桿偏空或在避險。', 'Perps usually sit slightly below spot (about −0.04% on average this year), so compare with its own history: higher than usual means longs pay up to chase; lower means leverage leans short or is hedging.',
           '只有 OKX 一家，價差只有百分之零點零幾；要搭配資金費率一起看。', 'OKX only, and the gap is only a few hundredths of a percent; read it with funding rates.'),
         now: function () { var pp = (D.flows.premium3 || {}).perp, fw = (D.deriv.funding_multi || {}).weighted_now; if (!pp) return '';
-          return _T('7 日平均 ' + fmt.pct(pp.avg7, 3) + '，平常（30 日）' + fmt.pct(pp.avg30, 3) + '，在近 ' + pp.n + ' 天第 ' + fmt.n(pp.avg7_pct_own, 0) + ' 百分位' + (fw != null ? '；資金費率年化 ' + fmt.n(fw, 1) + '%' : '') + '。' + (pp.avg7_pct_own >= 70 ? '比平常貴，多單在付錢追價。' : pp.avg7_pct_own <= 30 ? '比平常便宜，槓桿偏空。' : '和平常差不多。'),
-            '7-day average ' + fmt.pct(pp.avg7, 3) + ', usually (30-day) ' + fmt.pct(pp.avg30, 3) + ', ' + fmt.n(pp.avg7_pct_own, 0) + 'th percentile of ' + pp.n + ' days' + (fw != null ? '; funding ' + fmt.n(fw, 1) + '% a year' : '') + '. ' + (pp.avg7_pct_own >= 70 ? 'Richer than usual: longs pay up to chase.' : pp.avg7_pct_own <= 30 ? 'Cheaper than usual: leverage leans short.' : 'About usual.')); } },
+          return _T('7 日平均 ' + fmt.pct(pp.avg7, 3) + '，平常（30 日）' + fmt.pct(pp.avg30, 3) + '，在近 ' + pp.n + ' 天第 ' + fmt.n(pp.avg7_pct_own, 0) + ' 百分位' + (fw != null ? '；資金費率年化 ' + fmt.n(fw, 1) + '%' : '') + '。' + (pp.avg7_pct_own == null ? '' : pp.avg7_pct_own >= 70 ? '比平常貴，多單在付錢追價。' : pp.avg7_pct_own <= 30 ? '比平常便宜，槓桿偏空。' : '和平常差不多。'),
+            '7-day average ' + fmt.pct(pp.avg7, 3) + ', usually (30-day) ' + fmt.pct(pp.avg30, 3) + ', ' + fmt.n(pp.avg7_pct_own, 0) + 'th percentile of ' + pp.n + ' days' + (fw != null ? '; funding ' + fmt.n(fw, 1) + '% a year' : '') + '. ' + (pp.avg7_pct_own == null ? '' : pp.avg7_pct_own >= 70 ? 'Richer than usual: longs pay up to chase.' : pp.avg7_pct_own <= 30 ? 'Cheaper than usual: leverage leans short.' : 'About usual.')); } },
       'regime': { h: h('上格是 BTC 價格，下格是每週的多空分數：零軸以上綠（多方）、以下紅（空方），範圍 −6 到 +6。', 'Top: BTC price; bottom: the weekly regime score, green above zero (bullish) and red below (bearish), range −6 to +6.',
           '把六個看趨勢、估值、資金和獲利了結的訊號合成一個數字：大段綠色對應牛市、大段紅色對應熊市；柱子越長，六項越一致。分數在零軸附近（絕對值小於 1）代表訊號互相矛盾。', 'Six trend, valuation, capital-flow and profit-taking signals combined into one number: long green stretches match bull markets, long red ones bear markets; longer bars mean the six agree more. Near zero (under 1 in size) the signals conflict.',
           '是我們自己的合成方法，不是 CryptoPainter 的 JT_Regime_Osc。翻轉要連續 4 週才算，所以會晚幾週；2014/6、2021/8 的翻多一年後價格反而較低。', 'Our own composite, not CryptoPainter\'s JT_Regime_Osc. A flip needs 4 straight weeks, so it lags; the bullish flips of Jun 2014 and Aug 2021 saw lower prices a year later.') },
@@ -1002,7 +1052,7 @@
 
   /* 資料健康（2026-10-12）：管線錯誤（meta.errors）與各來源資料日期。超過預期延遲的標 ⚠；全部正常時只顯示一行 */
   function healthHtml() {
-    var bd = D.meta.bar_date, age = function (d) { return d ? dnOf(bd) - dnOf(String(d).slice(0, 10)) : null; };
+    var bd = D.meta.bar_date, age = function (d) { return d ? Math.max(0, dnOf(bd) - dnOf(String(d).slice(0, 10))) : null; };   // 快照（場外 USDT、清算熱力圖）在收盤後隔天 00:06 UTC 拍，不算負的落後
     var oc = D.onchain.metrics || {}, etf = (D.flows.etf || []).filter(function (r) { return !r.partial; }), tm = D.cycle.tidemark || {}, fl = (D.chips || {}).flow || {};
     var src = [   // [名稱, 資料日期, 可接受的最大延遲（天）]
       [_T('價格（Kraken）', 'Price (Kraken)'), bd, 0],
@@ -1022,6 +1072,17 @@
     if (D.flows.stables) src.push([_T('穩定幣（DefiLlama）', 'Stablecoins (DefiLlama)'), D.flows.stables.date, 2]);
     if ((D.chips || {}).cohort) src.push([_T('長短期持有者籌碼（CheckOnChain／推算）', 'LTH/STH supply split (CheckOnChain / estimate)'), D.chips.cohort.now_date || D.chips.cohort.date, 3]);   // 2026-10-27 起
     if (D.onchain.sth_pnl) src.push([_T('短期持有者實現損益（CheckOnChain）', 'STH realized P/L (CheckOnChain)'), D.onchain.sth_pnl.date, 2]);   // 2026-10-23 起；第一次跑管線前沒有資料就不列
+    // 2026-11-04 自我檢查：10/27 之後新增的圖表也列進來（原本只有管線錯誤那一行會提示）。欄位整個沒有＝本日未取得，同樣標 ⚠
+    var p3 = D.flows.premium3 || {};
+    [[_T('賣方衰竭常數（CheckOnChain）', 'Seller exhaustion (CheckOnChain)'), D.onchain.sec, 2],
+     [_T('實現獲利 ÷ 虧損（CheckOnChain）', 'Realized profit ÷ loss (CheckOnChain)'), D.onchain.rpl, 2],
+     [_T('表觀需求（CheckOnChain HODL Waves）', 'Apparent demand (CheckOnChain HODL Waves)'), D.onchain.ad, 2],
+     [_T('價格 × 長期持有者（bitcoin-data）', 'Price × LTH (bitcoin-data)'), D.onchain.lth_color, 7],
+     [_T('週線多空分數', 'Weekly bull/bear score'), D.cycle.regime, 8],
+     [_T('永續對現貨（OKX）', 'Perp vs spot (OKX)'), p3.perp, 1]
+    ].forEach(function (x) { src.push([x[0], (x[1] || {}).date, x[2]]); });
+    src.push([_T('場外 USDT 溢價（OKX）', 'OTC USDT premium (OKX)'), (p3.usdt || {}).ts, 1]);
+    src.push([_T('清算熱力圖（OKX 推算）', 'Liquidation heatmap (OKX estimate)'), (D.deriv.liq_heat || {}).asof, 1]);
     var rows = src.map(function (x) { var a = age(x[1]); return { name: x[0], date: x[1], age: a, bad: x[1] == null || a > x[2], max: x[2] }; });
     var errs = D.meta.errors || [], bad = rows.filter(function (r) { return r.bad; }), notesOld = N && N.stale;
     var n = bad.length + errs.length + (notesOld ? 1 : 0);
@@ -1112,12 +1173,13 @@
     var zhNote = ZH_ONLY ? '<p class="note" style="margin:0">The English edition of today’s written commentary (headline, news and plan) is not published yet, so those parts are shown in Chinese. All data and readings are in English.</p>' : '';
     return zhNote + front + tapeHtml() + healthHtml() + findingsHtml() + newsBlock + plan +
       _t('<div class="sec-h"><h2>今日數據</h2><span class="en">The Numbers</span><hr></div>') + kp +
-      '<div class="grid">' + interpPanel(ovInterp()) + panel('span-12', _t('離出場線還多遠'), _t('以 ') + fmt.md(D.meta.bar_date) + _t(' 收盤計 · 對數刻度'), '<div class="runway">' + runwaySvg() + '</div>') +
+      '<div class="grid">' + interpPanel(ovInterp()) + panel('span-12', _t('離出場線還多遠'), _t('以 ') + fmt.md(D.meta.bar_date) + _t(' 收盤計 · 對數刻度'), '<div class="runway" id="c-runway"></div>') +
       panel('span-7', _t('價格近一年'), _t('CoinMetrics 每 7 天'), '<div class="chart" id="c-ov-px"></div>') +
       panel('span-5', _t('接下來的日期'), '', '<div class="events">' + ev + '</div>') + '</div>';
   };
   V.overview.after = function () {
     bindMega();
+    mount($('#c-runway'), function (el) { el.innerHTML = runwaySvg(Math.max(280, el.clientWidth)); });
     var hist = D.price.history || [], cut = hist[hist.length - 1][0] - 400;
     mount($('#c-ov-px'), function (el) { lineChart(el, { h: 250, series: [{ name: _t('價格'), data: hist.filter(function (p) { return p[0] >= cut; }), color: 'var(--s1)', area: true }], refs: [{ y: D.price.ma.sma200, color: 'var(--ink-3)', label: _t('200 日均線 ') + fmt.k(D.price.ma.sma200), below: true }], tipFmt: fmt.usd, aria: _t('近一年價格') }); });
   };
@@ -1139,6 +1201,48 @@
     $('#nf').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; this.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); draw(b.getAttribute('data-c')); });
   };
 
+  /* 上下兩格：上＝BTC 價格（對數刻度）、下＝指標，共用時間軸與十字線，不疊成雙 y 軸。
+     2026-11-04 自我檢查：週線多空分數、賣方衰竭常數、實現獲利 ÷ 虧損、表觀需求原本各寫一份約 20 行的同樣骨架，抽成這一個。
+     o.rows：[[日, …]]；o.pi：價格在第幾欄；o.hp／o.hs：[手機, 桌面] 上下兩格高度；o.scale(C) 回傳下格的 Y 函式；
+     o.body(C) 畫下格（格線、柱、線）；o.over(C) 畫在最上層（標記點）；o.tip(p, C) 回傳 { t: 標題, rows: 指標列, dots: 下格的點 } */
+  function twoPane(el, o) {
+    var R_ = o.rows, W = Math.max(280, el.clientWidth), sm = W < 520, ML = 8, MR = 58, MT = 16, gap = 28, MB = 24, hp = o.hp[sm ? 0 : 1], hs = o.hs[sm ? 0 : 1], LR = o.lr ? o.lr(sm) : 0;
+    var Ht = MT + hp + gap + hs + LR + MB, pw = W - ML - MR, ys0 = MT + hp + gap, L = Math.log10;
+    var x0 = R_[0][0], x1 = R_[R_.length - 1][0], X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; };
+    var pv = R_.map(function (r) { return r[o.pi]; }), pl = L(Math.min.apply(null, pv)), ph = L(Math.max.apply(null, pv)), pp = (ph - pl) * 0.05 || 0.1; pl -= pp; ph += pp;
+    var Yp = function (v) { return MT + (1 - (L(v) - pl) / (ph - pl)) * hp; };
+    var C = { W: W, sm: sm, ML: ML, pw: pw, MT: MT, hp: hp, hs: hs, ys0: ys0, yb: ys0 + hs, Ht: Ht, X: X, Yp: Yp, L: L, tx: axText, rows: R_ };
+    C.gl = function (y, lab, cls, col) { return '<line class="' + (cls || 'gl') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + (lab == null ? '' : axText(ML + pw + 8, y + 3.5, lab).replace('class="ax"', 'class="ax"' + (col ? ' fill="' + col + '"' : ''))); };
+    C.Ys = o.scale(C);
+    var s = '';
+    [1, 10, 100, 1e3, 2e3, 5e3, 1e4, 2e4, 5e4, 1e5, 2e5].forEach(function (t) {
+      if (L(t) < pl || L(t) > ph) return;
+      if ((t === 2e3 || t === 5e3 || t === 2e4 || t === 5e4 || t === 2e5) && ph - pl > 2.2) return;   // 跨好幾個數量級時只標 10 的次方
+      s += C.gl(Yp(t), t >= 1000 ? fmt.k(t) : '$' + t);
+    });
+    s += o.body(C);
+    s += axText(ML, MT - 5, _T('BTC 價格（對數刻度）', 'BTC price (log scale)')) + axText(ML, ys0 - 9, o.label);
+    var ya = new Date(x0 * 864e5).getUTCFullYear() + 1, yz = new Date(x1 * 864e5).getUTCFullYear(), every = Math.max(1, Math.ceil(46 * (yz - ya + 1) / pw));   // 年份標籤至少隔 46px
+    for (var y = ya; y <= yz; y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if ((yz - y) % every === 0 && xx > ML + 14 && xx < ML + pw - 14) s += axText(xx, Ht - 6, String(y), 'middle'); }
+    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Yp(r[o.pi]).toFixed(1); }).join('L') + '" stroke="var(--ink-2)" stroke-width="1.3"/>';
+    var pdot = function (r) { return '<circle cx="' + X(r[0]).toFixed(1) + '" cy="' + Yp(r[o.pi]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>'; };
+    s += (o.over ? o.over(C) : '') + pdot(R_[R_.length - 1]);
+    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + C.yb + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (C.yb - MT) + '"/>';
+    el.innerHTML = svgEl(W, Ht, s, o.aria);
+    animateLines(el);
+    var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
+    function move(ev) {
+      var r = svg.getBoundingClientRect(), xv = x0 + ((ev.clientX - r.left) * W / r.width - ML) / pw * (x1 - x0), p = R_[bisect(R_, xv)], q = o.tip(p, C);
+      xh.setAttribute('x1', X(p[0])); xh.setAttribute('x2', X(p[0])); xh.setAttribute('visibility', 'visible');
+      dots.innerHTML = (q.dots || '') + pdot(p);
+      showTip(ev.clientX, ev.clientY, '<div class="t">' + (q.t || fmt.date(p[0])) + '</div>' + q.rows + '<div class="r"><i style="background:var(--ink-2)"></i><span>' + _T('BTC 價格', 'BTC price') + '</span><b>' + fmt.usd(p[o.pi]) + '</b></div>' + (q.after || ''));
+    }
+    hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
+    hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
+  }
+  function tipRow1(col, name, val) { return '<div class="r"><i style="background:' + col + '"></i><span>' + name + '</span><b>' + val + '</b></div>'; }
+  function dot1(x, y, col) { return '<circle cx="' + x.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="4" fill="' + col + '" stroke="var(--deck)" stroke-width="2"/>'; }
+
   /* 週線多空分數（2026-11-03 使用者要求；CryptoPainter 的 JT_Regime_Osc 不公開，這是我們自己的版本）：
      六項已有訊號各除以自己的歷史中位數取 tanh、平均後 ×6（−6 到 +6）；連續 4 週在另一邊才算翻轉。上下兩格共用時間軸。只作讀值 */
   var REG_LAB = { d200: ['200 日均線位置', 'Price vs 200-day MA'], mom12: ['12 個月動能', '12-month momentum'], mvrv1y: ['MVRV 對一年均值', 'MVRV vs its 1-year mean'], rc30: ['實現市值 30 日', 'Realized cap, 30 days'], xs90: ['交易所供給 90 日', 'Exchange supply, 90 days'], rpl: ['實現獲利 ÷ 虧損（90 天）', 'Realized profit ÷ loss (90d)'] };
@@ -1150,13 +1254,13 @@
     return fmt.pct(c.raw * 100, c.key === 'rc30' ? 2 : 1);
   }
   function regSay() {
-    var x = D.cycle.regime, it = [], F = x.flips || [], ymd = function (s) { return s.replace(/-/g, '/'); }, sg = function (v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + fmt.n(Math.abs(v), 2); };
+    var x = D.cycle.regime, it = [], F = x.flips || [], ymd = ymdS, sg = function (v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + fmt.n(Math.abs(v), 2); };
     var side = x.regime > 0 ? _T('多方', 'bullish') : _T('空方', 'bearish');
     it.push([_T('多空分數', 'Regime score'), sg(x.value),
       _T(side + '（' + (x.since ? ymd(x.since) + ' 起，第 ' + (x.weeks + 1) + ' 週' : '') + '）；一週前 ' + sg(x.prev) + '、四週前 ' + sg(x.prev4) + '。範圍 −6 到 +6，絕對值小於 1 屬於弱勢，方向容易反覆。' + (x.pending ? '最近 ' + x.pending + ' 週已在另一邊，再 ' + (4 - x.pending) + ' 週就算翻轉。' : ''),
         'Regime ' + side + (x.since ? ' since ' + ymd(x.since) + ' (week ' + (x.weeks + 1) + ')' : '') + '; ' + sg(x.prev) + ' a week ago, ' + sg(x.prev4) + ' four weeks ago. Range −6 to +6; below 1 in size is weak and prone to flip.' + (x.pending ? ' The last ' + x.pending + ' week(s) sit on the other side; ' + (4 - x.pending) + ' more and it flips.' : '')), 'neu']);
     var C = x.comps || [], pos = C.filter(function (c) { return c.val != null && c.val >= 0.15; }), neg = C.filter(function (c) { return c.val != null && c.val <= -0.15; }), flat = C.filter(function (c) { return c.val != null && Math.abs(c.val) < 0.15; });
-    var lst = function (a) { return a.map(function (c) { return _T(REG_LAB[c.key][0], REG_LAB[c.key][1]) + ' ' + regRaw(c); }).join(_T('、', ', ')); };
+    var lst = function (a) { return a.map(function (c) { var L = REG_LAB[c.key] || [c.key, c.key]; return _T(L[0], L[1]) + ' ' + regRaw(c); }).join(_T('、', ', ')); };   // 2026-11-04：管線多一項時不讓整個週期版壞掉
     it.push([_T('六項拆解', 'Six inputs'), pos.length + ' / ' + neg.length,
       _T((pos.length ? '偏多：' + lst(pos) + '。' : '') + (neg.length ? '偏空：' + lst(neg) + '。' : '') + (flat.length ? '持平：' + lst(flat) + '。' : ''),
         (pos.length ? 'Bullish: ' + lst(pos) + '. ' : '') + (neg.length ? 'Bearish: ' + lst(neg) + '. ' : '') + (flat.length ? 'Flat: ' + lst(flat) + '.' : '')), 'neu']);
@@ -1180,33 +1284,19 @@
   }
   function drawRegime(el) {
     var x = (D.cycle || {}).regime; if (!x || !el) return;
-    var R_ = x.rows, W = Math.max(280, el.clientWidth), sm = W < 520, ML = 8, MR = 58, MT = 16, hp = sm ? 110 : 150, gap = 28, hs = sm ? 140 : 180, MB = 24, Ht = MT + hp + gap + hs + MB, pw = W - ML - MR, ys0 = MT + hp + gap;
-    var x0 = R_[0][0], x1 = R_[R_.length - 1][0], X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; }, s = '', L = Math.log10;
-    var pl = L(Math.min.apply(null, R_.map(function (r) { return r[2]; }))), ph = L(Math.max.apply(null, R_.map(function (r) { return r[2]; }))), pp = (ph - pl) * 0.05; pl -= pp; ph += pp;
-    var mx = Math.max(3, Math.ceil(Math.max.apply(null, R_.map(function (r) { return Math.abs(r[1]); })))), Yp = function (v) { return MT + (1 - (L(v) - pl) / (ph - pl)) * hp; }, Ys = function (v) { return ys0 + (1 - (v + mx) / (2 * mx)) * hs; };
-    var tx = function (xx, y, t, a) { return '<text class="ax" x="' + xx.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + esc(t) + '</text>'; };
-    [10, 100, 1e3, 1e4, 1e5].forEach(function (t) { if (L(t) < pl || L(t) > ph) return; var y = Yp(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, t >= 1000 ? fmt.k(t) : '$' + t); });
-    for (var g = -mx; g <= mx; g += mx > 4 ? 2 : 1) { var yg = Ys(g); s += '<line class="' + (g ? 'gl' : 'base') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + yg.toFixed(1) + '" y2="' + yg.toFixed(1) + '"/>' + tx(ML + pw + 8, yg + 3.5, (g > 0 ? '+' : '') + g); }
-    s += tx(ML, MT - 5, _T('BTC 價格（對數刻度）', 'BTC price (log scale)')) + tx(ML, ys0 - 9, _T('多空分數（每週）', 'Regime score (weekly)'));
-    var y0 = new Date(x0 * 864e5).getUTCFullYear() + 1, y1 = new Date(x1 * 864e5).getUTCFullYear(), every = sm ? 3 : W < 900 ? 2 : 1;
-    for (var y = y0; y <= y1; y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if ((y - y0) % every === 0 && xx > ML + 14 && xx < ML + pw - 14) s += tx(xx, Ht - 6, String(y), 'middle'); }
-    var bw = Math.max(1, pw / R_.length * 0.8), z0 = Ys(0);
-    R_.forEach(function (r) { var cx = X(r[0]), yv = Ys(r[1]); s += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(z0, yv).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, Math.abs(yv - z0)).toFixed(1) + '" fill="var(--' + (r[1] >= 0 ? 'up' : 'down') + ')"/>'; });
-    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Yp(r[2]).toFixed(1); }).join('L') + '" stroke="var(--ink-2)" stroke-width="1.3"/>';
-    var zz = R_[R_.length - 1]; s += '<circle cx="' + X(zz[0]).toFixed(1) + '" cy="' + Yp(zz[2]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>';
-    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (ys0 + hs) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (ys0 + hs - MT) + '"/>';
-    el.innerHTML = svgEl(W, Ht, s, _T('BTC 價格與週線多空分數', 'BTC price and weekly regime score'));
-    animateLines(el);
-    var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
-    function move(ev) {
-      var r = svg.getBoundingClientRect(), xv = x0 + ((ev.clientX - r.left) * W / r.width - ML) / pw * (x1 - x0), p = R_[bisect(R_, xv)], c = 'var(--' + (p[1] >= 0 ? 'up' : 'down') + ')';
-      xh.setAttribute('x1', X(p[0])); xh.setAttribute('x2', X(p[0])); xh.setAttribute('visibility', 'visible');
-      dots.innerHTML = '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Yp(p[2]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>';
-      showTip(ev.clientX, ev.clientY, '<div class="t">' + _T('週至 ', 'Week to ') + fmt.date(p[0]) + '</div><div class="r"><i style="background:' + c + '"></i><span>' + _T('多空分數', 'Regime score') + '</span><b>' + (p[1] > 0 ? '+' : '') + fmt.n(p[1], 2) + '</b></div><div class="r"><i style="background:var(--ink-2)"></i><span>' + _T('BTC 價格', 'BTC price') + '</span><b>' + fmt.usd(p[2]) + '</b></div>');
-    }
-    hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
-    hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
+    var R_ = x.rows, mx = Math.max(3, Math.ceil(Math.max.apply(null, R_.map(function (r) { return Math.abs(r[1]); })))), col = function (v) { return 'var(--' + (v >= 0 ? 'up' : 'down') + ')'; };
+    twoPane(el, { rows: R_, pi: 2, hp: [110, 150], hs: [140, 180], label: _T('多空分數（每週）', 'Regime score (weekly)'), aria: _T('BTC 價格與週線多空分數', 'BTC price and weekly regime score'),
+      scale: function (C) { return function (v) { return C.ys0 + (1 - (v + mx) / (2 * mx)) * C.hs; }; },
+      body: function (C) {
+        var s = '';
+        for (var g = -mx; g <= mx; g += mx > 4 ? 2 : 1) s += C.gl(C.Ys(g), (g > 0 ? '+' : '') + g, g ? 'gl' : 'base');
+        var bw = Math.max(1, C.pw / R_.length * 0.8), z0 = C.Ys(0);
+        R_.forEach(function (r) { var cx = C.X(r[0]), yv = C.Ys(r[1]); s += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(z0, yv).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, Math.abs(yv - z0)).toFixed(1) + '" fill="' + col(r[1]) + '"/>'; });
+        return s;
+      },
+      tip: function (p) { return { t: _T('週至 ', 'Week to ') + fmt.date(p[0]), rows: tipRow1(col(p[1]), _T('多空分數', 'Regime score'), (p[1] > 0 ? '+' : '') + fmt.n(p[1], 2)) }; } });
   }
+
 
   /* 長期路徑的每月重估紀錄（2026-11-03 起自動，pipeline/path_review.py）：公開最近一次的計算過程與包絡檢查。規則沿用舊日報 P3／P4／P26 (a) */
   var PATH_EN = { '直接修復': 'Direct recovery', '淺回檔': 'Shallow pullback', '基準雙底': 'Base-case double bottom', '延後新低': 'Delayed new low' };
@@ -1237,7 +1327,7 @@
       '</div>';
   };
   V.cycle.after = function () {
-    drawEv(); mount($('#c-regime'), drawRegime);
+    safe(drawEv); mount($('#c-regime'), drawRegime);
     var M = D.cycle.model, cols = { '直接修復': 'var(--s4)', '淺回檔': 'var(--s1)', '基準雙底': 'var(--s2)', '延後新低': 'var(--s3)' };
     var md = function (y, m) { return Math.round(Date.UTC(y, m - 1, 15) / 864e5); };
     var series = Object.keys(M.nodes).map(function (k) { return { name: _t(k), data: M.nodes[k].map(function (p) { return [md(p[0], p[1]), p[2]]; }), color: cols[k], dash: '5 5', w: 1.8, end: false, smooth: true }; });
@@ -1282,7 +1372,13 @@
 
   /* 清算熱力圖（推算；2026-11-02 使用者要求，參考 CoinGlass 爆倉熱力圖）：OKX 永續逐小時未平倉量＋假設槓桿 5–100 倍，見 pipeline/liq_heat.py。
      畫布畫熱力（越亮＝推算的待清算量越多），SVG 疊小時 K 線與十字線。不是實際倉位，只作讀值 */
-  var liqDays = 3, liqBytes = null;
+  var liqDays = 3, liqBytes = null, liqTop_ = null;
+  /* 熱力圖底色永遠是深色的 viridis（淺色主題也一樣），K 線與收盤線用深色主題的亮色才看得清楚，所以這三個色不跟主題變（2026-11-04 註明，刻意的） */
+  var LIQ_UP = '#2FD08A', LIQ_DN = '#FF5A4E', LIQ_INK = '#F2F0EA';
+  /* 2026-11-04 自我檢查：色階上限用整份快照算一次（原本每次依畫面內的格子重算，切換 3／7 天同一格會變色，縮放視窗也重排序一次） */
+  function liqTop() { if (liqTop_ == null) { var v = []; for (var i = 0; i < liqBytes.length; i++) if (liqBytes[i]) v.push(liqBytes[i]); v.sort(function (a, b) { return a - b; }); liqTop_ = v.length ? Math.max(1, v[Math.floor(v.length * 0.998)]) : 255; } return liqTop_; }
+  /* 第 i 根 K 線的時間：管線有給 hr（距 t0 的小時數）就用它，漏掉的小時不會讓後面整段錯位 */
+  function liqT(x, i) { return x.t0 + (x.hr ? x.hr[i] : i) * 36e5; }
   var VIR = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
   function liqCol(v) { v = Math.max(0, Math.min(1, v)); var s = v * 4, i = Math.min(3, Math.floor(s)), f = s - i; return VIR[i].map(function (a, k) { return Math.round(a + (VIR[i + 1][k] - a) * f); }); }
   function liqData() {
@@ -1310,7 +1406,7 @@
   function liqPanel() {
     var x = liqData(); if (!x) return '';
     return panel('span-12', _T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'), _T('OKX 永續 · 快照 ' + liqHour(Date.parse(x.asof)) + ' UTC', 'OKX perpetuals · snapshot ' + liqHour(Date.parse(x.asof)) + ' UTC'),
-      interpHtml(liqSay()) + '<div class="legend" style="margin-top:10px"><span><b style="color:var(--ink-2);font-weight:400">' + _T('少', 'Less') + '</b><i class="liq-bar"></i><b style="color:var(--ink-2);font-weight:400">' + _T('多', 'More') + '</b></span><span><b style="color:var(--ink-2);font-weight:400">' + _T('推算的待清算量；收盤下方是多單、上方是空單', 'estimated BTC awaiting liquidation; longs below the close, shorts above') + '</b></span></div><div class="chart" id="c-liq"></div>' +
+      interpHtml(liqSay()) + '<div class="legend" style="margin-top:10px"><span><b style="color:var(--ink-2);font-weight:400">' + _T('少', 'Less') + '</b><i class="liq-bar" style="background:linear-gradient(90deg,' + VIR.map(function (c) { return 'rgb(' + c.join(',') + ')'; }).join(',') + ')"></i><b style="color:var(--ink-2);font-weight:400">' + _T('多', 'More') + '</b></span><span><b style="color:var(--ink-2);font-weight:400">' + _T('推算的待清算量；收盤下方是多單、上方是空單', 'estimated BTC awaiting liquidation; longs below the close, shorts above') + '</b></span></div><div class="chart" id="c-liq"></div>' +
       '<p class="note">' + _T('做法：OKX BTC 永續（USDT＋幣本位）每小時未平倉量增加當成新開倉，一多一空各記一份；槓桿假設 5–100 倍、進場價攤在那一小時的高低之間，算出清算價；價格走過就算清算掉，未平倉量減少時按比例減。只有 OKX（Binance、Bybit 從本站伺服器讀不到），槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；不是 CoinGlass 的數字。',
         'Method: each hour\'s rise in OKX BTC perpetual open interest (USDT- and coin-margined) counts as new positions, one long and one short; leverage is assumed between 5x and 100x with entries spread across the hour\'s range, giving liquidation prices; levels are cleared once price trades through them, and scaled down when open interest falls. OKX only (Binance and Bybit can\'t be reached from the site\'s servers); the leverage mix is an assumption and moves the bands; a daily snapshot, not real time; not CoinGlass\'s numbers.') +
       ' <a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">' + _T('對照 CoinGlass ↗', 'Compare with CoinGlass ↗') + '</a></p>',
@@ -1322,18 +1418,17 @@
     var plo = Math.min.apply(null, K.map(function (k) { return k[2]; })) * 0.95, phi = Math.max.apply(null, K.map(function (k) { return k[1]; })) * 1.05;
     (x.below || []).slice(0, 1).forEach(function (b) { plo = Math.min(plo, b.lo - 500); }); (x.above || []).slice(0, 1).forEach(function (b) { phi = Math.max(phi, b.hi + 500); });   // 讀值提到的最亮帶一定在圖內
     var b0 = Math.max(0, Math.floor((plo - x.lo) / x.step)), b1 = Math.min(nb, Math.ceil((phi - x.lo) / x.step)), rows = b1 - b0, pLo = x.lo + b0 * x.step, pHi = x.lo + b1 * x.step;
-    var vis = []; for (i = h0; i < x.hours; i++) for (j = b0; j < b1; j++) { var q0 = liqBytes[i * nb + j]; if (q0) vis.push(q0); }
-    vis.sort(function (a, b) { return a - b; }); var top = vis.length ? Math.max(1, vis[Math.floor(vis.length * 0.998)]) : 255, gam = function (v) { return Math.pow(Math.min(1, v), 1.6); };   // 色階偏向突顯最亮的帶（越亮越多，不是等距）
+    var top = liqTop(), gam = function (v) { return Math.pow(Math.min(1, v), 1.6); };   // 色階偏向突顯最亮的帶（越亮越多，不是等距）
     var W = Math.max(280, el.clientWidth), Ht = W < 520 ? 300 : 420, ML = 8, MR = 58, MT = 8, MB = 24, pw = W - ML - MR, ph = Ht - MT - MB, dpr = window.devicePixelRatio || 1;
     var X = function (k) { return ML + (k + 0.5) * pw / nh; }, Y = function (p) { return MT + (1 - (p - pLo) / (pHi - pLo)) * ph; }, s = '';
     var st = niceStep(pHi - pLo, W < 520 ? 4 : 6);
     for (var p = Math.ceil(pLo / st) * st; p <= pHi; p += st) s += '<line x1="' + (ML + pw) + '" x2="' + (ML + pw + 4) + '" y1="' + Y(p).toFixed(1) + '" y2="' + Y(p).toFixed(1) + '" stroke="var(--ink-3)"/><text class="ax" x="' + (ML + pw + 8) + '" y="' + (Y(p) + 3.5).toFixed(1) + '">' + fmt.k(p) + '</text>';
-    for (i = 0; i < nh; i++) { var t = new Date(x.t0 + (h0 + i) * 36e5); if (t.getUTCHours() === 0) s += '<text class="ax" x="' + X(i).toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + (t.getUTCMonth() + 1) + '/' + t.getUTCDate() + '</text>'; }
+    for (i = 0; i < nh; i++) { var t = new Date(liqT(x, h0 + i)), lx = X(i); if (t.getUTCHours() === 0 && lx > ML + 16 && lx < ML + pw - 16) s += '<text class="ax" x="' + lx.toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + (t.getUTCMonth() + 1) + '/' + t.getUTCDate() + '</text>'; }
     var bw = Math.max(1, pw / nh * 0.6);
-    K.forEach(function (k, i) { var c = k[3] >= k[0] ? '#2FD08A' : '#FF5A4E', cx = X(i), yo = Y(k[0]), yc = Y(k[3]); s += '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + Y(k[1]).toFixed(1) + '" y2="' + Y(k[2]).toFixed(1) + '" stroke="' + c + '" stroke-width="1"/><rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(yo, yc).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, Math.abs(yo - yc)).toFixed(1) + '" fill="' + c + '"/>'; });
-    var lc = K[K.length - 1][3]; s += '<line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + Y(lc).toFixed(1) + '" y2="' + Y(lc).toFixed(1) + '" stroke="#F2F0EA" stroke-dasharray="2 4" stroke-width="1" opacity=".6"/>';
+    K.forEach(function (k, i) { var c = k[3] >= k[0] ? LIQ_UP : LIQ_DN, cx = X(i); s += candleMark(cx, bw, Y(k[0]), Y(k[1]), Y(k[2]), Y(k[3]), c); });
+    var lc = K[K.length - 1][3]; s += '<line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + Y(lc).toFixed(1) + '" y2="' + Y(lc).toFixed(1) + '" stroke="' + LIQ_INK + '" stroke-dasharray="2 4" stroke-width="1" opacity=".6"/>';
     s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (MT + ph) + '" visibility="hidden"/><line class="xh yh" x1="' + ML + '" x2="' + (ML + pw) + '" y1="0" y2="0" visibility="hidden"/><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + ph + '"/>';
-    el.innerHTML = '<canvas width="' + Math.round(pw * dpr) + '" height="' + Math.round(ph * dpr) + '" style="position:absolute;left:' + ML + 'px;top:' + MT + 'px;width:' + pw + 'px;height:' + ph + 'px"></canvas>' + svgEl(W, Ht, s, _T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'));
+    el.innerHTML = '<canvas width="' + Math.round(pw * dpr) + '" height="' + Math.round(ph * dpr) + '" style="position:absolute;left:' + (ML / W * 100).toFixed(3) + '%;top:' + (MT / Ht * 100).toFixed(3) + '%;width:' + (pw / W * 100).toFixed(3) + '%;height:' + (ph / Ht * 100).toFixed(3) + '%"></canvas>' + svgEl(W, Ht, s, _T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'));
     var svg = el.querySelector('svg'); svg.style.position = 'relative';
     var oc = document.createElement('canvas'); oc.width = nh; oc.height = rows; var ox = oc.getContext('2d'), im = ox.createImageData(nh, rows);
     for (i = 0; i < nh; i++) for (j = 0; j < rows; j++) { var cc = liqCol(gam(liqBytes[(h0 + i) * nb + b0 + j] / top)), q = ((rows - 1 - j) * nh + i) * 4; im.data[q] = cc[0]; im.data[q + 1] = cc[1]; im.data[q + 2] = cc[2]; im.data[q + 3] = 255; }
@@ -1345,7 +1440,7 @@
       var i = Math.max(0, Math.min(nh - 1, Math.floor((mx - ML) / pw * nh))), j = Math.max(0, Math.min(rows - 1, Math.floor((1 - (my - MT) / ph) * rows))), k = K[i], lo = pLo + j * x.step;
       xh.setAttribute('x1', X(i)); xh.setAttribute('x2', X(i)); xh.setAttribute('visibility', 'visible'); yh.setAttribute('y1', my); yh.setAttribute('y2', my); yh.setAttribute('visibility', 'visible');
       var v = liqBytes[(h0 + i) * nb + b0 + j] / 255 * x.cap, side = lo >= k[3] ? _T('空單', 'shorts') : _T('多單', 'longs');
-      showTip(ev.clientX, ev.clientY, '<div class="t">' + liqHour(x.t0 + (h0 + i) * 36e5) + ' UTC</div><div class="r"><i style="background:rgb(' + liqCol(gam(v / x.cap * 255 / top)).join(',') + ')"></i><span>' + fmt.usd(lo) + '–' + fmt.n(lo + x.step) + ' ' + side + '</span><b>' + (v >= 0.5 ? liqBtc(Math.round(v)) : '—') + '</b></div><div class="r"><i style="background:' + (k[3] >= k[0] ? '#2FD08A' : '#FF5A4E') + '"></i><span>' + _T('這小時收盤', 'Hour close') + '</span><b>' + fmt.usd(k[3]) + '</b></div>');
+      showTip(ev.clientX, ev.clientY, '<div class="t">' + liqHour(liqT(x, h0 + i)) + ' UTC</div><div class="r"><i style="background:rgb(' + liqCol(gam(v / x.cap * 255 / top)).join(',') + ')"></i><span>' + fmt.usd(lo) + '–' + fmt.n(lo + x.step) + ' ' + side + '</span><b>' + (v >= 0.5 ? liqBtc(Math.round(v)) : '—') + '</b></div><div class="r"><i style="background:' + (k[3] >= k[0] ? LIQ_UP : LIQ_DN) + '"></i><span>' + _T('這小時收盤', 'Hour close') + '</span><b>' + fmt.usd(k[3]) + '</b></div>');
     }
     hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
     hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); yh.setAttribute('visibility', 'hidden'); hideTip(); });
@@ -1375,9 +1470,10 @@
     mount($('#c-oi'), function (el) {
       var ex = ((v.options || {}).expiries || []), W = Math.max(280, el.clientWidth), Ht = 230, ML = 8, MR = 52, MT = 10, MB = 26, pw = W - ML - MR, ph = Ht - MT - MB;
       var mx = Math.max.apply(null, ex.map(function (e) { return e[2] + e[3]; })) || 1, st = niceStep(mx, 4), top = Math.ceil(mx / st) * st, bw = pw / ex.length, s = '';
+      var lbEvery = Math.max(1, Math.ceil(40 / bw));   // 2026-11-04：日期標籤約 36px 寬，手機上柱子太窄時隔幾根標一次（原本每根都標、全部疊在一起）
       var Y = function (q) { return MT + (1 - q / top) * ph; };
       for (var t = 0; t <= top; t += st) s += '<line class="' + (t ? 'gl' : 'base') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + Y(t).toFixed(1) + '" y2="' + Y(t).toFixed(1) + '"/><text class="ax" x="' + (ML + pw + 8) + '" y="' + (Y(t) + 3.5).toFixed(1) + '">' + fmt.k(t) + '</text>';
-      ex.forEach(function (e, i) { var x = ML + i * bw + 3, w = bw - 6, yc = Y(e[2]), yp = Y(e[2] + e[3]); s += '<g class="oi" data-i="' + i + '"><rect x="' + x.toFixed(1) + '" y="' + yc.toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + (MT + ph - yc).toFixed(1) + '" rx="3" fill="var(--s4)"/><rect x="' + x.toFixed(1) + '" y="' + yp.toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + Math.max(0, yc - yp - 2).toFixed(1) + '" rx="3" fill="var(--s3)"/></g><text class="ax" x="' + (x + w / 2).toFixed(1) + '" y="' + (Ht - 8) + '" text-anchor="middle">' + fmt.md(e[0]) + '</text>'; });
+      ex.forEach(function (e, i) { var x = ML + i * bw + 3, w = bw - 6, yc = Y(e[2]), yp = Y(e[2] + e[3]); s += '<g class="oi" data-i="' + i + '"><rect x="' + x.toFixed(1) + '" y="' + yc.toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + (MT + ph - yc).toFixed(1) + '" rx="3" fill="var(--s4)"/><rect x="' + x.toFixed(1) + '" y="' + yp.toFixed(1) + '" width="' + w.toFixed(1) + '" height="' + Math.max(0, yc - yp - 2).toFixed(1) + '" rx="3" fill="var(--s3)"/></g>' + (i % lbEvery === 0 || i === ex.length - 1 && i % lbEvery >= lbEvery / 2 ? '<text class="ax" x="' + (x + w / 2).toFixed(1) + '" y="' + (Ht - 8) + '" text-anchor="middle">' + fmt.md(e[0]) + '</text>' : ''); });
       el.innerHTML = svgEl(W, Ht, s, _t('各到期未平倉'));
       el.querySelectorAll('.oi').forEach(function (g) { var e = ex[+g.getAttribute('data-i')]; g.addEventListener('pointermove', function (ev) { showTip(ev.clientX, ev.clientY, '<div class="t">' + e[0] + ' · ' + e[1] + _t(' 天</div><div class="r"><i style="background:var(--s4)"></i><span>買權</span><b>') + fmt.n(e[2]) + _t('</b></div><div class="r"><i style="background:var(--s3)"></i><span>賣權</span><b>') + fmt.n(e[3]) + '</b></div><div class="r"><i></i><span>Max Pain</span><b>' + fmt.k(e[4]) + '</b></div>'); }); g.addEventListener('pointerleave', hideTip); });
     });
@@ -1414,7 +1510,7 @@
     if (u) { sgn.push(u.pct > 0.3 ? 1 : u.pct < -0.3 ? -1 : 0); nm.push(_T('亞洲 USDT', 'Asian USDT')); var h = p3.usdt_hist || [], h0 = h.length ? fmt.date(h[0][0]) : '';
       it.push([_T('亞洲（USDT 場外）', 'Asia (USDT OTC)'), pc(u.pct, 2), _T('OKX 場外 USDT 約 ' + fmt.n(u.mid, 3) + ' 人民幣，匯率 ' + fmt.n(u.fx, 3) + '。' + (u.pct > 0.3 ? '溢價：有人搶著用人民幣換 USDT 進場。' : u.pct < -0.3 ? '折價：換回人民幣的人比較多，亞洲資金偏離場。' : '接近匯率，亞洲買賣大致平衡。') + (h.length < 30 ? '這條只有每日快照（這次 ' + u.ts.slice(5, 10).replace('-', '/') + ' ' + u.ts.slice(11, 16) + ' UTC），紀錄從 ' + h0 + ' 開始累積（目前 ' + h.length + ' 天）。' : ''),
         'OKX OTC USDT at about ' + fmt.n(u.mid, 3) + ' CNY vs a ' + fmt.n(u.fx, 3) + ' FX rate. ' + (u.pct > 0.3 ? 'Premium: buyers are swapping CNY into USDT to enter.' : u.pct < -0.3 ? 'Discount: more people are cashing USDT back into CNY; Asian money is leaning out.' : 'Near the FX rate; Asian flows roughly balanced.') + (h.length < 30 ? ' Daily snapshot only (this one ' + u.ts.slice(0, 16).replace('T', ' ') + ' UTC); the record starts ' + h0 + ' (' + h.length + ' day(s) so far).' : '')), 'neu']); }
-    if (pp) { var hi = pp.avg7_pct_own >= 70, lo = pp.avg7_pct_own <= 30; sgn.push(hi ? 1 : lo ? -1 : 0); nm.push(_T('槓桿', 'leverage'));   // 永續平常就略低於現貨，所以和自己的歷史比，不看正負號
+    if (pp) { var pk = pp.avg7_pct_own, hi = pk != null && pk >= 70, lo = pk != null && pk <= 30; if (pk != null) { sgn.push(hi ? 1 : lo ? -1 : 0); nm.push(_T('槓桿', 'leverage')); }   // 2026-11-04：百分位缺時不當成「比平常便宜」   // 永續平常就略低於現貨，所以和自己的歷史比，不看正負號
       it.push([_T('槓桿（永續對現貨）', 'Leverage (perp vs spot)'), pc(pp.avg7, 3), _T('OKX 永續對現貨 7 日平均；平常（30 日平均）是 ' + pc(pp.avg30, 3) + '，現在在近 ' + pp.n + ' 天第 ' + fmt.n(pp.avg7_pct_own, 0) + ' 百分位' + (fw != null ? '；加權資金費率年化 ' + fmt.n(fw, 1) + '%' : '') + '。' + (hi ? '比平常貴：多單願意付溢價追價。' : lo ? '比平常便宜：槓桿偏空或在避險。' : '和平常差不多，槓桿沒有明顯偏向。'),
         'OKX perp vs spot, 7-day average; usually (30-day avg) ' + pc(pp.avg30, 3) + ', now at the ' + fmt.n(pp.avg7_pct_own, 0) + 'th percentile of ' + pp.n + ' days' + (fw != null ? '; weighted funding ' + fmt.n(fw, 1) + '% a year' : '') + '. ' + (hi ? 'Richer than usual: longs pay up to chase.' : lo ? 'Cheaper than usual: leverage leans short or is hedging.' : 'About usual; no clear leverage tilt.')), 'neu']); }
     if (sgn.length >= 2) { var P_ = nm.filter(function (n, i) { return sgn[i] > 0; }), N_ = nm.filter(function (n, i) { return sgn[i] < 0; }), Z_ = nm.filter(function (n, i) { return !sgn[i]; }), j_ = function (a) { return a.join(_T('、', ', ')); };
@@ -1430,24 +1526,28 @@
       '<p class="note">' + _T('三條都是「和基準差多少 %」：Coinbase ÷ Binance、場外 USDT ÷ 美元兌人民幣匯率、永續 ÷ 現貨，大於 0＝那一邊的買方比較積極；永續平常就略低於現貨，所以槓桿這條和自己的歷史比。不合成一個數字（權重沒有客觀答案），分開看誰在推、誰在缺席。場外報價只有當下快照，歷史從上線那天開始累積。',
         'All three are “% away from a benchmark”: Coinbase ÷ Binance, OTC USDT ÷ the USD/CNY rate, and perp ÷ spot; above 0 means buyers on that side are keener; perps usually sit slightly below spot, so the leverage line is judged against its own history. They are not merged into one number (no objective weights); read them side by side to see who pushes and who is absent. The OTC quote is a snapshot, so its history builds from launch.') + '</p>');
   }
+  /* [[日, 值]] 的 7 日平均（前 6 天為 null）；三地溢價圖與「現在」讀值共用（2026-11-04） */
+  function ma7r(r) { return r.map(function (x, i) { if (i < 6) return [x[0], null]; var s = 0; for (var k = i - 6; k <= i; k++) s += r[k][1]; return [x[0], s / 7]; }); }
   function drawPrem() {
-    var cp = D.flows.cb_premium || {}, p3 = D.flows.premium3 || {}, ma7 = function (r) { return r.map(function (x, i) { if (i < 6) return [x[0], null]; var s = 0; for (var k = i - 6; k <= i; k++) s += r[k][1]; return [x[0], s / 7]; }); };
+    var cp = D.flows.cb_premium || {}, p3 = D.flows.premium3 || {}, ma7 = ma7r;
     var X1 = dnOf(D.meta.bar_date), X0 = X1 - 300, pf = function (d) { return function (v) { return (v > 0 ? '+' : '') + v.toFixed(d) + '%'; }; };
-    var one = function (id, data, d, color) { mount($('#' + id), function (el) { var pts = (data || []).filter(function (p) { return p[1] != null && p[0] >= X0; });
+    var one = function (id, data, d, color, title) { mount($('#' + id), function (el) { var pts = (data || []).filter(function (p) { return p[1] != null && p[0] >= X0; });
+      // 2026-11-04：歷史還很短（場外 USDT 從 11/02 才開始）時，x 軸從第一點往前留同樣長度，不要擠在 300 天軸的最右邊 1px
+      var x0 = pts.length && X1 - pts[0][0] < 150 ? pts[0][0] - Math.max(14, X1 - pts[0][0]) : X0;
       if (pts.length < 2) {   // 2026-11-03：只有一天時畫一個點和零軸（場外 USDT 溢價從 11/02 才開始累積），不留空白
         if (!pts.length) { el.innerHTML = '<p class="note">' + _T('本日未取得資料。', 'No data today.') + '</p>'; return; }
         var W = Math.max(280, el.clientWidth), Ht = 150, ML = 8, MR = 58, MT = 14, MB = 24, pw = W - ML - MR, ph = Ht - MT - MB, v0 = pts[0][1], lo = Math.min(-1.5, v0 - 0.5), hi = Math.max(1.5, v0 + 0.5);
-        var Y = function (v) { return MT + (1 - (v - lo) / (hi - lo)) * ph; }, X = function (t) { return ML + (t - X0) / (X1 - X0) * pw; }, sv = '';
+        var Y = function (v) { return MT + (1 - (v - lo) / (hi - lo)) * ph; }, X = function (t) { return ML + (t - x0) / (X1 - x0) * pw; }, sv = '';
         [lo, 0, hi].forEach(function (g) { var gy = Y(g); sv += '<line class="' + (g ? 'gl' : 'base') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + gy.toFixed(1) + '" y2="' + gy.toFixed(1) + '"' + (g ? '' : ' stroke-dasharray="4 4"') + '/><text class="ax" x="' + (ML + pw + 8) + '" y="' + (gy + 3.5).toFixed(1) + '">' + pf(1)(+g.toFixed(1)) + '</text>'; });
         var px_ = X(pts[0][0]), py_ = Y(v0);
         sv += '<circle cx="' + px_.toFixed(1) + '" cy="' + py_.toFixed(1) + '" r="4.5" fill="' + color + '" stroke="var(--deck)" stroke-width="2"/><text class="ax hi" x="' + (px_ - 8).toFixed(1) + '" y="' + (py_ - 9).toFixed(1) + '" text-anchor="end">' + fmt.md(fmt.date(pts[0][0]).replace(/\//g, '-')) + ' ' + pf(d)(v0) + '</text>' +
-          '<text class="ax" x="' + (ML + pw / 2).toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + _T('紀錄從這天開始，每天累積一點，兩天後連成線', 'The record starts here: one point a day, a line from day two') + '</text>';
-        el.innerHTML = svgEl(W, Ht, sv, id); return;
+          '<text class="ax" x="' + (ML + pw / 2).toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + _T('紀錄從這天開始，每天累積一點，兩天後連成線', 'Record starts here; one point a day') + '</text>';
+        el.innerHTML = svgEl(W, Ht, sv, title); return;
       }
-      lineChart(el, { h: 150, x0: X0, x1: X1, series: [{ name: _T('溢價', 'Premium'), data: pts, color: color }], refs: [{ y: 0, color: 'var(--ink-3)' }], yFmt: pf(d > 2 ? 2 : d), tipFmt: pf(d), aria: id }); }); };
-    one('c-pr-us', ma7(cp.rows || []), 3, 'var(--s1)');
-    one('c-pr-asia', p3.usdt_hist || [], 2, 'var(--s2)');
-    one('c-pr-perp', ma7((p3.perp || {}).rows || []), 3, 'var(--s3)');
+      lineChart(el, { h: 150, x0: x0, x1: X1, series: [{ name: _T('溢價', 'Premium'), data: pts, color: color }], refs: [{ y: 0, color: 'var(--ink-3)' }], yFmt: pf(d > 2 ? 2 : d), tipFmt: pf(d), aria: title }); }); };
+    one('c-pr-us', ma7(cp.rows || []), 3, 'var(--s1)', _T('Coinbase 溢價（7 日平均）', 'Coinbase premium (7-day avg)'));
+    one('c-pr-asia', p3.usdt_hist || [], 2, 'var(--s2)', _T('場外 USDT 溢價', 'OTC USDT premium'));
+    one('c-pr-perp', ma7((p3.perp || {}).rows || []), 3, 'var(--s3)', _T('永續對現貨（7 日平均）', 'Perp vs spot (7-day avg)'));
   }
 
   V.flows = function () {
@@ -1559,13 +1659,13 @@
       var bs = cohTop(rows, 1)[0], bl = cohTop(rows.filter(function (r) { return r[0] >= c; }), 2)[0];
       [[bs, 1, -1], [bl, 2, 1]].forEach(function (q) { if (!q[0]) return; var i = rows.indexOf(q[0]), y = top + i * rh + rh - 3; s += q[2] < 0 ? tx_(x0 - sx(q[0][1]) - 4, y, cohCoins(q[0][1]), 'end', 'ax hi') : tx_(x1 + sx(q[0][2]) + 4, y, cohCoins(q[0][2]), 'start', 'ax hi'); });
       var yp = pxRow(rows, top); if (yp != null) s += '<line x1="0" x2="' + W + '" y1="' + yp.toFixed(1) + '" y2="' + yp.toFixed(1) + '" stroke="var(--ink)" stroke-width="1"/>' + tx_(W, yp - 3, _T('收盤 ', 'Close ') + fmt.usd(c), 'end', 'ax hi');
-      if (wlo >= 0) s += tx_(4, top + wlo * rh + 10, _T('155 天內價格走過的區間', 'Range price covered in 155 days'), 'start');
+      if (wlo >= 0) s += tx_(4, top + wlo * rh + 10, (W < 520 ? _T('155 天內價格走過', 'Traded within 155d') : _T('155 天內價格走過的區間', 'Range price covered in 155 days'))   /* 2026-11-04：手機用短句，英文原句會撞到中間的價位欄 */, 'start');
     } else {
       var k = cohMode === 'sth' ? 1 : 2, f = co.flow, cmp = {}; co.cmp.rows.forEach(function (r) { cmp[r[0]] = r; });
       rows = (co.model_rows || co.rows).filter(k === 1 ? cohRange(Math.floor(co.window.lo / w) * w, co.window.hi) : cohRange(cohLo(), 1e9)).slice().reverse();
       var lab = 44, right = 64, top2 = 6, mx2 = Math.max.apply(null, rows.map(function (r) { return Math.max(r[k], (cmp[r[0]] || [])[k] || 0); })) || 1, sx2 = function (v) { return v / mx2 * (W - lab - right); }, yb2 = top2 + rows.length * (rh + 2), Ht2 = yb2 + 6;
       var big = rows.map(function (r) { return Math.abs(r[k] - ((cmp[r[0]] || [])[k] || 0)); }).sort(function (a, b) { return b - a; })[3] || 0;
-      if (k === 2 && f.model_free_above) { var j = rows.findIndex(function (r) { return r[0] < f.model_free_above.lo; }); if (j > 0) s += '<rect x="' + lab + '" y="' + top2 + '" width="' + (W - lab) + '" height="' + j * (rh + 2) + '" fill="var(--deck-2)"/>' + tx_(W - 2, top2 + 11, _T('價格沒碰過：變化就是賣出，不靠模型', 'Untouched by price: changes are selling, no model'), 'end'); }
+      if (k === 2 && f.model_free_above) { var j = rows.findIndex(function (r) { return r[0] < f.model_free_above.lo; }); if (j > 0) s += '<rect x="' + lab + '" y="' + top2 + '" width="' + (W - lab) + '" height="' + j * (rh + 2) + '" fill="var(--deck-2)"/>' + tx_(W - 2, top2 + 11, (W < 520 ? _T('價格沒碰過：變化就是賣出', 'Untouched: changes = selling') : _T('價格沒碰過：變化就是賣出，不靠模型', 'Untouched by price: changes are selling, no model')), 'end'); }
       rows.forEach(function (r, i) {
         var y = top2 + i * (rh + 2), a = (cmp[r[0]] || [])[k] || 0, d = r[k] - a, cur = c >= r[0] && c < r[0] + w;
         s += '<g class="hit" data-i="' + i + '"><rect x="0" y="' + y + '" width="' + W + '" height="' + (rh + 2) + '" fill="transparent"/>' + bar(lab, lab + sx2(a), y + 2, 4, 'var(--ink-3)') + bar(lab, lab + sx2(r[k]), y + 7, rh - 6, k === 1 ? cs.sth : cs.lth) + tx_(lab - 6, y + rh - 1, fmt.k(r[0]), 'end', cur ? 'ax hi' : 'ax') +
@@ -1585,6 +1685,7 @@
 
   /* 價格 × 長期持有者 30 日淨部位（2026-10-29 使用者要求，參考 Glassnode「吸籌趨勢評分」的畫法）：價格線依淨部位上色，
      紅＝淨減、灰＝持平、藍＝淨增，±40 萬顆最深。不是 Glassnode 的評分（那個以實體計、排除交易所）。只作讀值 */
+  /* 9 階：|淨部位| < clip ÷ 8 是中間的灰（持平）；圖例的「持平」範圍也由 clip 算，改 LC_CLIP 不會對不上（2026-11-04） */
   function lcLv(v, clip) { return Math.max(0, Math.min(8, Math.round(v / clip * 4) + 4)); }
   function lcCoins(v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + cohCoins(Math.abs(v)); }
   function lcSay() {
@@ -1608,7 +1709,7 @@
     var x = (D.onchain || {}).lth_color; if (!x || !x.rows) return '';
     var k = x.clip / (LANG === 'en' ? 1e3 : 1e4) + _T(' 萬', 'K');
     return panel('span-12', _T('價格 × 長期持有者動向', 'Price × long-term holder flow'), _T('bitcoin-data · 長期持有者 30 日淨部位 · ' + fmt.md(x.date), 'bitcoin-data · LTH 30-day net position · ' + fmt.md(x.date)),
-      interpHtml(lcSay()) + '<div class="legend" style="margin-top:10px"><span><b style="color:var(--ink-2);font-weight:400">' + _T('淨減 ≥' + k, 'Net cut ≥' + k) + '</b><i class="lc-bar"></i><b style="color:var(--ink-2);font-weight:400">' + _T('淨增 ≥' + k, 'Net add ≥' + k) + '</b></span><span><b style="color:var(--ink-2);font-weight:400">' + _T('中間灰色＝持平（±5 萬內）', 'grey middle = flat (within ±50K)') + '</b></span></div><div class="chart" id="c-lthc"></div>' +
+      interpHtml(lcSay()) + '<div class="legend" style="margin-top:10px"><span><b style="color:var(--ink-2);font-weight:400">' + _T('淨減 ≥' + k, 'Net cut ≥' + k) + '</b><i class="lc-bar"></i><b style="color:var(--ink-2);font-weight:400">' + _T('淨增 ≥' + k, 'Net add ≥' + k) + '</b></span><span><b style="color:var(--ink-2);font-weight:400">' + _T('中間灰色＝持平（±' + fmt.n(x.clip / 8 / 1e4, 0) + ' 萬內）', 'grey middle = flat (within ±' + fmt.n(x.clip / 8 / 1e3, 0) + 'K)') + '</b></span></div><div class="chart" id="c-lthc"></div>' +
       '<p class="note">' + _T('長期持有者＝持有 155 天以上。淨部位上升不全是買入：幣放滿 155 天就自動算成長期持有者。這不是 Glassnode 的吸籌趨勢評分（那個先把地址歸成實體、排除交易所，屬付費資料）；bitcoin-data 同名的指標和這條線是同一個數字換算。',
         'Long-term holder = held 155 days or more. A rising net position is not all buying: coins become “long-term” automatically once they reach 155 days. This is not Glassnode\'s Accumulation Trend Score (entity-based, exchanges excluded, paid data); bitcoin-data\'s indicator of that name is a rescaling of this same series.') + '</p>');
   }
@@ -1651,26 +1752,25 @@
     var x0 = Math.min(P[0][0], K.length ? K[0][0] : Infinity), x1 = Math.max(P[P.length - 1][0], K.length ? K[K.length - 1][0] + 6 : -Infinity);
     var X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; }, s = '', yp0 = MT + hk + gap;
     var Yp = function (q) { return yp0 + (1 - q / 100) * hp; };
-    var tx = function (x, y, t, a) { return '<text class="ax" x="' + x.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + esc(t) + '</text>'; };
     if (K.length) {
       var lo = Math.log10(Math.min.apply(null, K.map(function (k) { return k[3]; }))), hi = Math.log10(Math.max.apply(null, K.map(function (k) { return k[2]; }))), pd = (hi - lo) * 0.05; lo -= pd; hi += pd;
       var Yk = function (q) { return MT + (1 - (Math.log10(q) - lo) / (hi - lo)) * hk; }, bw = Math.max(1, (X(7) - X(0)) * 0.62);
-      [1e4, 2e4, 3e4, 5e4, 8e4, 12e4, 2e5].forEach(function (t) { var l = Math.log10(t); if (l < lo || l > hi) return; var y = Yk(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, fmt.k(t)); });
+      [1e4, 2e4, 3e4, 5e4, 8e4, 12e4, 2e5].forEach(function (t) { var l = Math.log10(t); if (l < lo || l > hi) return; var y = Yk(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + axText(ML + pw + 8, y + 3.5, fmt.k(t)); });
       K.forEach(function (k) {
         var cx = X(k[0] + 3.5), up = k[4] >= k[1], col = up ? 'var(--up)' : 'var(--down)', yo = Yk(k[1]), yc = Yk(k[4]);
-        s += '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + Yk(k[2]).toFixed(1) + '" y2="' + Yk(k[3]).toFixed(1) + '" stroke="' + col + '" stroke-width="1"/><rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(yo, yc).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(1, Math.abs(yo - yc)).toFixed(1) + '" fill="' + col + '"/>';
+        s += candleMark(cx, bw, yo, Yk(k[2]), Yk(k[3]), yc, col);
       });
-      s += tx(ML, MT - 5, _T('BTC 週 K（對數刻度）', 'BTC weekly candles (log scale)'));
+      s += axText(ML, MT - 5, _T('BTC 週 K（對數刻度）', 'BTC weekly candles (log scale)'));
     }
-    [0, 50, 100].forEach(function (q) { var y = Yp(q); s += '<line class="' + (q ? 'gl' : 'base') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, q + '%'); });
-    s += tx(ML, yp0 - 9, _T('短期持有者獲利比例', 'STH supply in profit'));
+    [0, 50, 100].forEach(function (q) { var y = Yp(q); s += '<line class="' + (q ? 'gl' : 'base') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + axText(ML + pw + 8, y + 3.5, q + '%'); });
+    s += axText(ML, yp0 - 9, _T('短期持有者獲利比例', 'STH supply in profit'));
     var pts = P.map(function (p) { return X(p[0]).toFixed(1) + ',' + Yp(p[1]).toFixed(1); }), line = 'M' + pts.join('L');
     s += '<defs><linearGradient id="gpk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="var(--s4)" stop-opacity=".28"/><stop offset="1" stop-color="var(--s4)" stop-opacity="0"/></linearGradient></defs>' +
       '<path d="' + line + 'L' + X(P[P.length - 1][0]).toFixed(1) + ',' + Yp(0).toFixed(1) + 'L' + X(P[0][0]).toFixed(1) + ',' + Yp(0).toFixed(1) + 'Z" fill="url(#gpk)"/><path class="ln" d="' + line + '" stroke="var(--s4)"/>';
     var lp = P[P.length - 1]; s += '<circle cx="' + X(lp[0]).toFixed(1) + '" cy="' + Yp(lp[1]).toFixed(1) + '" r="4" fill="var(--s4)" stroke="var(--deck)" stroke-width="2"/>';
     // 年份刻度與異動標記（貫穿上下兩格）
-    for (var y = new Date(x0 * 864e5).getUTCFullYear() + 1; y <= new Date(x1 * 864e5).getUTCFullYear(); y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if (xx > ML + 16 && xx < ML + pw - 16) s += tx(xx, Ht - 6, String(y), 'middle'); }
-    sigV(el).forEach(function (g) { var xx = X(g.x); if (xx < ML || xx > ML + pw) return; s += '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="' + MT + '" y2="' + (yp0 + hp) + '" stroke="var(--ink-3)" stroke-dasharray="2 4" stroke-width="1"/>' + tx(xx > ML + pw - 70 ? xx - 5 : xx + 5, yp0 + hp - 6, g.label, xx > ML + pw - 70 ? 'end' : ''); });
+    for (var y = new Date(x0 * 864e5).getUTCFullYear() + 1; y <= new Date(x1 * 864e5).getUTCFullYear(); y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if (xx > ML + 16 && xx < ML + pw - 16) s += axText(xx, Ht - 6, String(y), 'middle'); }
+    sigV(el).forEach(function (g) { var xx = X(g.x); if (xx < ML || xx > ML + pw) return; s += '<line x1="' + xx.toFixed(1) + '" x2="' + xx.toFixed(1) + '" y1="' + MT + '" y2="' + (yp0 + hp) + '" stroke="var(--ink-3)" stroke-dasharray="2 4" stroke-width="1"/>' + axText(xx > ML + pw - 70 ? xx - 5 : xx + 5, yp0 + hp - 6, g.label, xx > ML + pw - 70 ? 'end' : ''); });
     s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (yp0 + hp) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (yp0 + hp - MT) + '"/>';
     el.innerHTML = svgEl(W, Ht, s, _T('BTC 週 K 與短期持有者獲利比例', 'BTC weekly candles and STH supply in profit'));
     animateLines(el);
@@ -1694,7 +1794,7 @@
   function secSay() {
     var x = D.onchain.sec, it = [], H = x.hits || [], last = H[H.length - 1], rl = x.recent_low;
     var done = H.filter(function (h) { return h.done; }), up = done.filter(function (h) { return h.r365 > 0; }), deep = done.filter(function (h) { return h.dd365 <= -10; });
-    var days = last ? dnOf(x.date) - dnOf(last.date) : null, ymd = function (s) { return s.replace(/-/g, '/'); };
+    var days = last ? dnOf(x.date) - dnOf(last.date) : null, ymd = ymdS;
     it.push([_T('賣方衰竭常數', 'Seller exhaustion constant'), fmt.n(x.value, 3),
       _T('2011 年起第 ' + fmt.n(x.pct, 0) + ' 百分位（越低＝價格越平靜、虧損的人越多）；低於 ' + x.th + ' 的日子只佔 ' + fmt.n(x.th_share, 1) + '%。' + (x.value < x.th ? '現在就在極端區內。' : last ? '上次跌破是 ' + ymd(last.date) + '（' + days + ' 天前），之後最低 ' + fmt.n(last.low, 3) + '（' + ymd(last.low_date) + '，價格 ' + fmt.usd(last.low_price) + '）。' : ''),
         fmt.n(x.pct, 0) + 'th percentile since 2011 (lower = calmer price and more holders at a loss); only ' + fmt.n(x.th_share, 1) + '% of days were below ' + x.th + '. ' + (x.value < x.th ? 'It is inside the extreme zone now.' : last ? 'Last break: ' + ymd(last.date) + ' (' + days + ' days ago), bottoming at ' + fmt.n(last.low, 3) + ' (' + ymd(last.low_date) + ', price ' + fmt.usd(last.low_price) + ').' : '')), 'neu']);
@@ -1728,43 +1828,32 @@
   }
   function drawSec(el) {
     var x = (D.onchain || {}).sec; if (!x || !el) return;
-    var R_ = x.rows, H = x.hits || [], W = Math.max(280, el.clientWidth), sm = W < 520, ML = 8, MR = 58, MT = 16, hp = sm ? 110 : 140, gap = 28, hs = sm ? 150 : 200, MB = 24, LR = sm ? 0 : 16, Ht = MT + hp + gap + hs + LR + MB, pw = W - ML - MR, ys0 = MT + hp + gap;
-    var x0 = R_[0][0], x1 = R_[R_.length - 1][0], X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; }, s = '';
-    var L = Math.log10, pl = L(Math.min.apply(null, R_.map(function (r) { return r[2]; }))), ph = L(Math.max.apply(null, R_.map(function (r) { return r[2]; }))), pp = (ph - pl) * 0.05; pl -= pp; ph += pp;
+    var R_ = x.rows, H = x.hits || [], L = Math.log10;
     var sl = L(Math.min(x.th, Math.min.apply(null, R_.map(function (r) { return r[1]; }))) * 0.9), sh = L(Math.max.apply(null, R_.map(function (r) { return r[1]; })) * 1.1);
-    var Yp = function (v) { return MT + (1 - (L(v) - pl) / (ph - pl)) * hp; }, Ys = function (v) { return ys0 + (1 - (L(v) - sl) / (sh - sl)) * hs; };
-    var tx = function (xx, y, t, a, cls) { return '<text class="' + (cls || 'ax') + '" x="' + xx.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + esc(t) + '</text>'; };
-    [1, 10, 100, 1e3, 1e4, 1e5].forEach(function (t) { if (L(t) < pl || L(t) > ph) return; var y = Yp(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, t >= 1000 ? fmt.k(t) : '$' + t); });
-    var yt = Ys(x.th); s += '<rect x="' + ML + '" y="' + yt.toFixed(1) + '" width="' + pw + '" height="' + (ys0 + hs - yt).toFixed(1) + '" fill="var(--down-dim)"/><line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + yt.toFixed(1) + '" y2="' + yt.toFixed(1) + '" stroke="var(--down)" stroke-dasharray="3 4" stroke-width="1"/>';
-    [0.1, 0.2, 0.5, 1, 2].forEach(function (t) { if (L(t) < sl || L(t) > sh) return; var y = Ys(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, String(t)); });
-    s += tx(ML + pw + 8, yt + 3.5, String(x.th)).replace('class="ax"', 'class="ax" fill="var(--down)"');
-    s += tx(ML, MT - 5, _T('BTC 價格（對數刻度）', 'BTC price (log scale)')) + tx(ML, ys0 - 9, _T('賣方衰竭常數（對數刻度）', 'Seller exhaustion constant (log scale)'));
-    var y0 = new Date(x0 * 864e5).getUTCFullYear() + 1, y1 = new Date(x1 * 864e5).getUTCFullYear(), every = sm ? 3 : W < 900 ? 2 : 1;
-    for (var y = y0; y <= y1; y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if ((y - y0) % every === 0 && xx > ML + 14 && xx < ML + pw - 14) s += tx(xx, Ht - 6, String(y), 'middle'); }
-    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Yp(r[2]).toFixed(1); }).join('L') + '" stroke="var(--ink-2)" stroke-width="1.3"/>';
-    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Ys(r[1]).toFixed(1); }).join('L') + '" stroke="var(--s1)" stroke-width="1.5"/>';
-    var lx = Infinity;   // 由新到舊標日期，和右邊已標的距離不到 56px 就略過
-    H.slice().reverse().forEach(function (h) { var xx = X(dnOf(h.low_date)), yy = Ys(h.low); s += '<circle cx="' + xx.toFixed(1) + '" cy="' + yy.toFixed(1) + '" r="4" fill="var(--deck)" stroke="var(--down)" stroke-width="2"/>';
-      if (!sm && lx - xx >= 56) { s += tx(Math.min(xx, ML + pw - 22), ys0 + hs + 13, secYm(h.low_date), 'middle'); lx = xx; } });
-    var z = R_[R_.length - 1]; s += '<circle cx="' + X(z[0]).toFixed(1) + '" cy="' + Ys(z[1]).toFixed(1) + '" r="4" fill="var(--s1)" stroke="var(--deck)" stroke-width="2"/><circle cx="' + X(z[0]).toFixed(1) + '" cy="' + Yp(z[2]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>';
-    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (ys0 + hs) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (ys0 + hs - MT) + '"/>';
-    el.innerHTML = svgEl(W, Ht, s, _T('BTC 價格與賣方衰竭常數', 'BTC price and seller exhaustion constant'));
-    animateLines(el);
-    var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
-    function move(ev) {
-      var r = svg.getBoundingClientRect(), xv = x0 + ((ev.clientX - r.left) * W / r.width - ML) / pw * (x1 - x0), p = R_[bisect(R_, xv)];
-      xh.setAttribute('x1', X(p[0])); xh.setAttribute('x2', X(p[0])); xh.setAttribute('visibility', 'visible');
-      dots.innerHTML = '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Ys(p[1]).toFixed(1) + '" r="4" fill="var(--s1)" stroke="var(--deck)" stroke-width="2"/><circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Yp(p[2]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>';
-      showTip(ev.clientX, ev.clientY, '<div class="t">' + fmt.date(p[0]) + '</div><div class="r"><i style="background:var(--s1)"></i><span>' + _T('賣方衰竭常數', 'Seller exhaustion') + '</span><b>' + fmt.n(p[1], 3) + '</b></div><div class="r"><i style="background:var(--ink-2)"></i><span>' + _T('BTC 價格', 'BTC price') + '</span><b>' + fmt.usd(p[2]) + '</b></div>');
-    }
-    hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
-    hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
+    twoPane(el, { rows: R_, pi: 2, hp: [110, 140], hs: [150, 200], lr: function (sm) { return sm ? 0 : 16; }, label: _T('賣方衰竭常數（對數刻度）', 'Seller exhaustion constant (log scale)'), aria: _T('BTC 價格與賣方衰竭常數', 'BTC price and seller exhaustion constant'),
+      scale: function (C) { return function (v) { return C.ys0 + (1 - (L(v) - sl) / (sh - sl)) * C.hs; }; },
+      body: function (C) {
+        var yt = C.Ys(x.th), s = '<rect x="' + C.ML + '" y="' + yt.toFixed(1) + '" width="' + C.pw + '" height="' + (C.yb - yt).toFixed(1) + '" fill="var(--down-dim)"/><line x1="' + C.ML + '" x2="' + (C.ML + C.pw) + '" y1="' + yt.toFixed(1) + '" y2="' + yt.toFixed(1) + '" stroke="var(--down)" stroke-dasharray="3 4" stroke-width="1"/>';
+        // 2026-11-04：和門檻 0.13 的標籤距離不到 11px 的刻度只畫線不寫字（原本 0.1 和 0.13 疊在一起）
+        [0.1, 0.2, 0.5, 1, 2].forEach(function (t) { if (L(t) < sl || L(t) > sh) return; var y = C.Ys(t); s += C.gl(y, Math.abs(y - yt) < 11 ? null : String(t)); });
+        s += C.tx(C.ML + C.pw + 8, yt + 3.5, String(x.th)).replace('class="ax"', 'class="ax" fill="var(--down)"');
+        s += '<path class="ln" d="M' + R_.map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(r[1]).toFixed(1); }).join('L') + '" stroke="var(--s1)" stroke-width="1.5"/>';
+        return s;
+      },
+      over: function (C) {
+        var s = '', lx = Infinity;   // 由新到舊標日期，和右邊已標的距離不到 56px 就略過
+        H.slice().reverse().forEach(function (h) { var xx = C.X(dnOf(h.low_date)), yy = C.Ys(h.low); s += '<circle cx="' + xx.toFixed(1) + '" cy="' + yy.toFixed(1) + '" r="4" fill="var(--deck)" stroke="var(--down)" stroke-width="2"/>';
+          if (!C.sm && lx - xx >= 56) { s += C.tx(Math.min(xx, C.ML + C.pw - 22), C.yb + 13, secYm(h.low_date), 'middle'); lx = xx; } });
+        var z = R_[R_.length - 1]; return s + dot1(C.X(z[0]), C.Ys(z[1]), 'var(--s1)');
+      },
+      tip: function (p, C) { return { dots: dot1(C.X(p[0]), C.Ys(p[1]), 'var(--s1)'), rows: tipRow1('var(--s1)', _T('賣方衰竭常數', 'Seller exhaustion'), fmt.n(p[1], 3)) }; } });
   }
+
 
   /* 實現獲利 ÷ 實現虧損（90 天平均；2026-11-02 使用者要求，貝格先生的 Realized P/L 比率圖；資料取自 CheckOnChain）：
      1 以上綠、以下紅。上下兩格共用時間軸，不疊成雙 y 軸。只作讀值 */
   function rplSay() {
-    var x = D.onchain.rpl, it = [], R = x.reds || [], ymd = function (s) { return s.replace(/-/g, '/'); };
+    var x = D.onchain.rpl, it = [], R = x.reds || [], ymd = ymdS;
     var maj = R.filter(function (y) { return y.major; }), lastMaj = maj[maj.length - 1];
     it.push([_T('90 天平均', '90-day average'), fmt.n(x.value, 2),
       x.above ? _T('獲利了結多於認賠。' + ymd(x.since) + ' 回到 1 以上（' + x.since_days + ' 天前）' + (x.first2 ? '，' + ymd(x.first2) + ' 超過 2' : '') + '。' + (lastMaj && !lastMaj.open ? '上一段紅色是 ' + ymd(lastMaj.start) + '–' + ymd(lastMaj.end) + '（' + lastMaj.days + ' 天，最低 ' + fmt.n(lastMaj.low, 2) + '）。' : ''),
@@ -1784,7 +1873,7 @@
     return it;
   }
   function rplTable() {
-    var x = D.onchain.rpl, R = (x.reds || []).slice().reverse(), ymd = function (s) { return s.replace(/-/g, '/'); };
+    var x = D.onchain.rpl, R = (x.reds || []).slice().reverse(), ymd = ymdS;
     return '<div class="tbl-wrap" style="margin-top:12px"><table class="tbl"><thead><tr><th>' + _T('低於 1 的期間', 'Below 1') + '</th><th class="num">' + _T('天數', 'Days') + '</th><th class="num">' + _T('最低', 'Low') + '</th><th class="num hide-sm">' + _T('最低時價格', 'Price at low') + '</th><th class="num">' + _T('結束後一年', '1y after end') + '</th></tr></thead><tbody>' +
       R.map(function (y) { var v = y.r365; return '<tr><td><span class="num">' + secYm(y.start) + '–' + (y.open ? _T('至今', 'now') : secYm(y.end).slice(2)) + '</span>' + (y.major ? '' : ' <span class="note">' + _T('短', 'brief') + '</span>') + '</td><td class="num">' + y.days + '</td><td class="num">' + fmt.n(y.low, 2) + '</td><td class="num hide-sm">' + fmt.usd(y.low_price) + '</td><td class="num">' + (v == null ? '<span class="note">' + _T('未滿', 'n/a') + '</span>' : '<span style="color:var(--' + (v >= 0 ? 'up' : 'down') + ')">' + fmt.pct(v, 0) + '</span>') + '</td></tr>'; }).join('') + '</tbody></table></div>';
   }
@@ -1798,44 +1887,31 @@
   }
   function drawRpl(el) {
     var x = (D.onchain || {}).rpl; if (!x || !el) return;
-    var R_ = x.rows, W = Math.max(280, el.clientWidth), sm = W < 520, ML = 8, MR = 58, MT = 16, hp = sm ? 110 : 140, gap = 28, hs = sm ? 150 : 200, MB = 24, Ht = MT + hp + gap + hs + MB, pw = W - ML - MR, ys0 = MT + hp + gap;
-    var x0 = R_[0][0], x1 = R_[R_.length - 1][0], X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; }, s = '', L = Math.log10;
-    var pl = L(Math.min.apply(null, R_.map(function (r) { return r[2]; }))), ph = L(Math.max.apply(null, R_.map(function (r) { return r[2]; }))), pp = (ph - pl) * 0.05; pl -= pp; ph += pp;
+    var R_ = x.rows, L = Math.log10, col = function (v) { return 'var(--' + (v >= 1 ? 'up' : 'down') + ')'; };
     var sl = L(Math.min.apply(null, R_.map(function (r) { return r[1]; })) * 0.85), sh = L(Math.max.apply(null, R_.map(function (r) { return r[1]; })) * 1.15);
-    var Yp = function (v) { return MT + (1 - (L(v) - pl) / (ph - pl)) * hp; }, Ys = function (v) { return ys0 + (1 - (L(v) - sl) / (sh - sl)) * hs; };
-    var tx = function (xx, y, t, a) { return '<text class="ax" x="' + xx.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + esc(t) + '</text>'; };
-    [1, 10, 100, 1e3, 1e4, 1e5].forEach(function (t) { if (L(t) < pl || L(t) > ph) return; var y = Yp(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, t >= 1000 ? fmt.k(t) : '$' + t); });
-    (x.reds || []).forEach(function (y) { var a = Math.max(ML, X(dnOf(y.start))), b = X(dnOf(y.end)); if (b < ML) return; s += '<rect x="' + a.toFixed(1) + '" y="' + Ys(1).toFixed(1) + '" width="' + Math.max(1, b - a).toFixed(1) + '" height="' + (ys0 + hs - Ys(1)).toFixed(1) + '" fill="var(--down-dim)"/>'; });
-    [0.2, 0.5, 2, 5, 10, 20, 50].forEach(function (t) { if (L(t) < sl || L(t) > sh) return; var y = Ys(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, String(t)); });
-    s += '<line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + Ys(1).toFixed(1) + '" y2="' + Ys(1).toFixed(1) + '" stroke="var(--ink-2)" stroke-width="1"/>' + tx(ML + pw + 8, Ys(1) + 3.5, '1');
-    s += tx(ML, MT - 5, _T('BTC 價格（對數刻度）', 'BTC price (log scale)')) + tx(ML, ys0 - 9, _T('實現獲利 ÷ 實現虧損，90 天平均（對數刻度）', 'Realized profit ÷ loss, 90-day avg (log scale)'));
-    var y0 = new Date(x0 * 864e5).getUTCFullYear() + 1, y1 = new Date(x1 * 864e5).getUTCFullYear(), every = sm ? 3 : W < 900 ? 2 : 1;
-    for (var y = y0; y <= y1; y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if ((y - y0) % every === 0 && xx > ML + 14 && xx < ML + pw - 14) s += tx(xx, Ht - 6, String(y), 'middle'); }
-    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Yp(r[2]).toFixed(1); }).join('L') + '" stroke="var(--ink-2)" stroke-width="1.3"/>';
-    var cur = null, pts = [];   // 1 以上綠、以下紅：顏色一換就斷開，換色點兩段共用
-    var flush = function () { if (pts.length > 1) s += '<path d="M' + pts.join('L') + '" fill="none" stroke="var(--' + (cur ? 'up' : 'down') + ')" stroke-width="1.6" stroke-linejoin="round"/>'; };
-    R_.forEach(function (r) { var up = r[1] >= 1, pt = X(r[0]).toFixed(1) + ',' + Ys(r[1]).toFixed(1); if (up !== cur) { flush(); pts = pts.length ? [pts[pts.length - 1]] : []; cur = up; } pts.push(pt); });
-    flush();
-    var z = R_[R_.length - 1]; s += '<circle cx="' + X(z[0]).toFixed(1) + '" cy="' + Ys(z[1]).toFixed(1) + '" r="4" fill="var(--' + (z[1] >= 1 ? 'up' : 'down') + ')" stroke="var(--deck)" stroke-width="2"/><circle cx="' + X(z[0]).toFixed(1) + '" cy="' + Yp(z[2]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>';
-    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (ys0 + hs) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (ys0 + hs - MT) + '"/>';
-    el.innerHTML = svgEl(W, Ht, s, _T('BTC 價格與實現獲利 ÷ 實現虧損', 'BTC price and realized profit ÷ loss'));
-    animateLines(el);
-    var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
-    function move(ev) {
-      var r = svg.getBoundingClientRect(), xv = x0 + ((ev.clientX - r.left) * W / r.width - ML) / pw * (x1 - x0), p = R_[bisect(R_, xv)], c = 'var(--' + (p[1] >= 1 ? 'up' : 'down') + ')';
-      xh.setAttribute('x1', X(p[0])); xh.setAttribute('x2', X(p[0])); xh.setAttribute('visibility', 'visible');
-      dots.innerHTML = '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Ys(p[1]).toFixed(1) + '" r="4" fill="' + c + '" stroke="var(--deck)" stroke-width="2"/><circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Yp(p[2]).toFixed(1) + '" r="3.5" fill="var(--ink-2)" stroke="var(--deck)" stroke-width="2"/>';
-      showTip(ev.clientX, ev.clientY, '<div class="t">' + fmt.date(p[0]) + '</div><div class="r"><i style="background:' + c + '"></i><span>' + _T('獲利 ÷ 虧損（90 天）', 'Profit ÷ loss (90d)') + '</span><b>' + fmt.n(p[1], 2) + '</b></div><div class="r"><i style="background:var(--ink-2)"></i><span>' + _T('BTC 價格', 'BTC price') + '</span><b>' + fmt.usd(p[2]) + '</b></div>');
-    }
-    hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
-    hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
+    twoPane(el, { rows: R_, pi: 2, hp: [110, 140], hs: [150, 200], label: _T('實現獲利 ÷ 實現虧損，90 天平均（對數刻度）', 'Realized profit ÷ loss, 90-day avg (log scale)'), aria: _T('BTC 價格與實現獲利 ÷ 實現虧損', 'BTC price and realized profit ÷ loss'),
+      scale: function (C) { return function (v) { return C.ys0 + (1 - (L(v) - sl) / (sh - sl)) * C.hs; }; },
+      body: function (C) {
+        var s = '', y1 = C.Ys(1);
+        (x.reds || []).forEach(function (y) { var a = Math.max(C.ML, C.X(dnOf(y.start))), b = C.X(dnOf(y.end)); if (b < C.ML) return; s += '<rect x="' + a.toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + Math.max(1, b - a).toFixed(1) + '" height="' + (C.yb - y1).toFixed(1) + '" fill="var(--down-dim)"/>'; });
+        [0.2, 0.5, 2, 5, 10, 20, 50].forEach(function (t) { if (L(t) < sl || L(t) > sh) return; s += C.gl(C.Ys(t), String(t)); });
+        s += '<line x1="' + C.ML + '" x2="' + (C.ML + C.pw) + '" y1="' + y1.toFixed(1) + '" y2="' + y1.toFixed(1) + '" stroke="var(--ink-2)" stroke-width="1"/>' + C.tx(C.ML + C.pw + 8, y1 + 3.5, '1');
+        var cur = null, pts = [];   // 1 以上綠、以下紅：顏色一換就斷開，換色點兩段共用
+        var flush = function () { if (pts.length > 1) s += '<path d="M' + pts.join('L') + '" fill="none" stroke="' + col(cur ? 1 : 0) + '" stroke-width="1.6" stroke-linejoin="round"/>'; };
+        R_.forEach(function (r) { var up = r[1] >= 1, pt = C.X(r[0]).toFixed(1) + ',' + C.Ys(r[1]).toFixed(1); if (up !== cur) { flush(); pts = pts.length ? [pts[pts.length - 1]] : []; cur = up; } pts.push(pt); });
+        flush();
+        return s;
+      },
+      over: function (C) { var z = R_[R_.length - 1]; return dot1(C.X(z[0]), C.Ys(z[1]), col(z[1])); },
+      tip: function (p, C) { return { dots: dot1(C.X(p[0]), C.Ys(p[1]), col(p[1])), rows: tipRow1(col(p[1]), _T('獲利 ÷ 虧損（90 天）', 'Profit ÷ loss (90d)'), fmt.n(p[1], 2)) }; } });
   }
+
 
   /* 表觀需求（2026-11-03 使用者要求，CryptoQuant 的 Apparent Demand）：30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化。
      資料取自 CheckOnChain HODL Waves（逐筆 UTXO）；單日大量舊幣搬動標「疑似搬家」，一年後的回音預先提醒。上下兩格共用時間軸。只作讀值 */
   function adK(v) { var a = Math.abs(v); return (v > 0 ? '+' : v < 0 ? '−' : '') + (a < 1e4 ? _T(fmt.n(a) + ' 顆', fmt.n(a) + ' BTC') : cohCoins(a)); }
   function adSay() {
-    var x = D.onchain.ad, it = [], ymd = function (s) { return s.replace(/-/g, '/'); }, below = x.value < x.sma30, M = x.moves || [];
+    var x = D.onchain.ad, it = [], ymd = ymdS, below = x.value < x.sma30, M = x.moves || [];
     it.push([_T('表觀需求（30 天）', 'Apparent demand (30d)'), adK(x.value),
       _T((x.value >= 0 ? '正：' : '負：') + '30 天新挖出 ' + cohCoins(x.issued30) + '，1 年以上沒動的幣卻' + (x.inact_chg30 >= 0 ? '多了 ' : '少了 ') + cohCoins(Math.abs(x.inact_chg30)) + '。' + (below ? '低於自己的 30 日平均（' + adK(x.sma30) + '）' : '高於自己的 30 日平均（' + adK(x.sma30) + '）') + (x.d7 != null ? '，一週前 ' + adK(x.d7) : '') + '；2020 年以來第 ' + fmt.n(x.pct, 0) + ' 百分位。',
         (x.value >= 0 ? 'Positive: ' : 'Negative: ') + cohCoins(x.issued30) + ' mined in 30 days while coins unmoved for 1y+ ' + (x.inact_chg30 >= 0 ? 'grew by ' : 'fell by ') + cohCoins(Math.abs(x.inact_chg30)) + '. ' + (below ? 'Below' : 'Above') + ' its 30-day average (' + adK(x.sma30) + ')' + (x.d7 != null ? '; a week ago ' + adK(x.d7) : '') + '; ' + fmt.n(x.pct, 0) + 'th percentile since 2020.'), x.value < 0 && below ? 'warn' : 'neu']);
@@ -1858,37 +1934,30 @@
   }
   function drawAd(el) {
     var x = (D.onchain || {}).ad; if (!x || !el) return;
-    var R_ = x.rows, W = Math.max(280, el.clientWidth), sm = W < 520, ML = 8, MR = 58, MT = 16, hp = sm ? 100 : 130, gap = 28, hs = sm ? 160 : 210, MB = 24, Ht = MT + hp + gap + hs + MB, pw = W - ML - MR, ys0 = MT + hp + gap;
-    var x0 = R_[0][0], x1 = R_[R_.length - 1][0], X = function (t) { return ML + (t - x0) / (x1 - x0 || 1) * pw; }, s = '', L = Math.log10;
-    var pl = L(Math.min.apply(null, R_.map(function (r) { return r[3]; }))), ph = L(Math.max.apply(null, R_.map(function (r) { return r[3]; }))), pp = (ph - pl) * 0.05; pl -= pp; ph += pp;
-    var vs = R_.map(function (r) { return r[1]; }).concat(R_.filter(function (r) { return r[2] != null; }).map(function (r) { return r[2]; })), lo = Math.min.apply(null, vs), hi = Math.max.apply(null, vs), st = niceStep(hi - lo, sm ? 4 : 6); lo = Math.floor(lo / st) * st; hi = Math.ceil(hi / st) * st;
-    var Yp = function (v) { return MT + (1 - (L(v) - pl) / (ph - pl)) * hp; }, Ys = function (v) { return ys0 + (1 - (v - lo) / (hi - lo)) * hs; };
-    var tx = function (xx, y, t, a) { return '<text class="ax" x="' + xx.toFixed(1) + '" y="' + y.toFixed(1) + '"' + (a ? ' text-anchor="' + a + '"' : '') + '>' + esc(t) + '</text>'; }, kf = function (v) { return (v > 0 ? '+' : '') + fmt.k(v); };
-    [1e3, 2e3, 5e3, 1e4, 2e4, 5e4, 1e5, 2e5].forEach(function (t) { if (L(t) < pl || L(t) > ph) return; var y = Yp(t); s += '<line class="gl" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '"/>' + tx(ML + pw + 8, y + 3.5, fmt.k(t)); });
-    for (var g = lo; g <= hi + 1; g += st) { var yg = Ys(g); s += '<line class="' + (g ? 'gl' : 'base') + '" x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + yg.toFixed(1) + '" y2="' + yg.toFixed(1) + '"/>' + tx(ML + pw + 8, yg + 3.5, kf(g)); }
-    s += tx(ML, MT - 5, _T('BTC 價格（對數刻度）', 'BTC price (log scale)')) + tx(ML, ys0 - 9, _T('表觀需求（30 天合計，顆）', 'Apparent demand (30-day sum, BTC)'));
-    var y0 = new Date(x0 * 864e5).getUTCFullYear() + 1, y1 = new Date(x1 * 864e5).getUTCFullYear();
-    for (var y = y0; y <= y1; y++) { var xx = X(Date.UTC(y, 0, 1) / 864e5); if ((!sm || y % 2 === 0) && xx > ML + 14 && xx < ML + pw - 14) s += tx(xx, Ht - 6, String(y), 'middle'); }
-    var bw = Math.max(1, pw / R_.length + 0.3), z0 = Ys(0);
-    R_.forEach(function (r) { var cx = X(r[0]), yv = Ys(r[1]); s += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(z0, yv).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, Math.abs(yv - z0)).toFixed(1) + '" fill="var(--' + (r[1] >= 0 ? 'up' : 'down') + ')" opacity=".55"/>'; });
-    s += '<path class="ln" d="M' + R_.filter(function (r) { return r[2] != null; }).map(function (r) { return X(r[0]).toFixed(1) + ',' + Ys(r[2]).toFixed(1); }).join('L') + '" stroke="var(--s1)" stroke-width="1.3" stroke-dasharray="4 3"/>';
-    s += '<path class="ln" d="M' + R_.map(function (r) { return X(r[0]).toFixed(1) + ',' + Yp(r[3]).toFixed(1); }).join('L') + '" stroke="var(--ink-2)" stroke-width="1.3"/>';
-    (x.moves || []).forEach(function (m) { var xm = X(dnOf(m.start)); if (xm < ML || xm > ML + pw) return; s += '<line x1="' + xm.toFixed(1) + '" x2="' + xm.toFixed(1) + '" y1="' + ys0 + '" y2="' + (ys0 + hs) + '" stroke="var(--warn)" stroke-dasharray="2 4" stroke-width="1"/><circle cx="' + xm.toFixed(1) + '" cy="' + (ys0 + 4) + '" r="3" fill="var(--warn)"/>'; });
-    var zz = R_[R_.length - 1]; s += '<circle cx="' + X(zz[0]).toFixed(1) + '" cy="' + Ys(zz[1]).toFixed(1) + '" r="4" fill="var(--' + (zz[1] >= 0 ? 'up' : 'down') + ')" stroke="var(--deck)" stroke-width="2"/>';
-    s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (ys0 + hs) + '" visibility="hidden"/><g class="hdots"></g><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + (ys0 + hs - MT) + '"/>';
-    el.innerHTML = svgEl(W, Ht, s, _T('BTC 價格與表觀需求', 'BTC price and apparent demand'));
-    animateLines(el);
-    var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), dots = svg.querySelector('.hdots'), hit = svg.querySelector('.hit');
-    function move(ev) {
-      var r = svg.getBoundingClientRect(), xv = x0 + ((ev.clientX - r.left) * W / r.width - ML) / pw * (x1 - x0), p = R_[bisect(R_, xv)], c = 'var(--' + (p[1] >= 0 ? 'up' : 'down') + ')';
-      var mv = (x.moves || []).filter(function (m) { return Math.abs(dnOf(m.start) - p[0]) <= 3; })[0];
-      xh.setAttribute('x1', X(p[0])); xh.setAttribute('x2', X(p[0])); xh.setAttribute('visibility', 'visible');
-      dots.innerHTML = '<circle cx="' + X(p[0]).toFixed(1) + '" cy="' + Ys(p[1]).toFixed(1) + '" r="4" fill="' + c + '" stroke="var(--deck)" stroke-width="2"/>';
-      showTip(ev.clientX, ev.clientY, '<div class="t">' + fmt.date(p[0]) + '</div><div class="r"><i style="background:' + c + '"></i><span>' + _T('表觀需求（30 天）', 'Apparent demand (30d)') + '</span><b>' + adK(p[1]) + '</b></div>' + (p[2] != null ? '<div class="r"><i style="background:var(--s1)"></i><span>' + _T('30 日平均', '30-day avg') + '</span><b>' + adK(p[2]) + '</b></div>' : '') + '<div class="r"><i style="background:var(--ink-2)"></i><span>' + _T('BTC 價格', 'BTC price') + '</span><b>' + fmt.usd(p[3]) + '</b></div>' + (mv ? '<div class="r"><i style="background:var(--warn)"></i><span>' + _T('疑似搬家', 'Likely transfer') + '</span><b>' + cohCoins(mv.btc) + '</b></div>' : ''));
-    }
-    hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
-    hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); dots.innerHTML = ''; hideTip(); });
+    var R_ = x.rows, lo, hi, col = function (v) { return 'var(--' + (v >= 0 ? 'up' : 'down') + ')'; }, kf = function (v) { return (v > 0 ? '+' : '') + fmt.k(v); };
+    twoPane(el, { rows: R_, pi: 3, hp: [100, 130], hs: [160, 210], label: _T('表觀需求（30 天合計，顆）', 'Apparent demand (30-day sum, BTC)'), aria: _T('BTC 價格與表觀需求', 'BTC price and apparent demand'),
+      scale: function (C) {
+        var vs = R_.map(function (r) { return r[1]; }).concat(R_.filter(function (r) { return r[2] != null; }).map(function (r) { return r[2]; })), st = niceStep(Math.max.apply(null, vs) - Math.min.apply(null, vs) || 1, C.sm ? 4 : 6);
+        lo = Math.floor(Math.min.apply(null, vs) / st) * st; hi = Math.ceil(Math.max.apply(null, vs) / st) * st; C.st = st;
+        return function (v) { return C.ys0 + (1 - (v - lo) / (hi - lo || 1)) * C.hs; };
+      },
+      body: function (C) {
+        var s = '';
+        for (var g = lo; g <= hi + 1; g += C.st) s += C.gl(C.Ys(g), kf(g), g ? 'gl' : 'base');
+        var bw = Math.max(1, C.pw / R_.length + 0.3), z0 = C.Ys(0);
+        R_.forEach(function (r) { var cx = C.X(r[0]), yv = C.Ys(r[1]); s += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(z0, yv).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, Math.abs(yv - z0)).toFixed(1) + '" fill="' + col(r[1]) + '" opacity=".55"/>'; });
+        s += '<path class="ln" d="M' + R_.filter(function (r) { return r[2] != null; }).map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(r[2]).toFixed(1); }).join('L') + '" stroke="var(--s1)" stroke-width="1.3" stroke-dasharray="4 3"/>';
+        (x.moves || []).forEach(function (m) { var xm = C.X(dnOf(m.start)); if (xm < C.ML || xm > C.ML + C.pw) return; s += '<line x1="' + xm.toFixed(1) + '" x2="' + xm.toFixed(1) + '" y1="' + C.ys0 + '" y2="' + C.yb + '" stroke="var(--warn)" stroke-dasharray="2 4" stroke-width="1"/><circle cx="' + xm.toFixed(1) + '" cy="' + (C.ys0 + 4) + '" r="3" fill="var(--warn)"/>'; });
+        return s;
+      },
+      over: function (C) { var z = R_[R_.length - 1]; return dot1(C.X(z[0]), C.Ys(z[1]), col(z[1])); },
+      tip: function (p, C) {
+        var mv = (x.moves || []).filter(function (m) { return Math.abs(dnOf(m.start) - p[0]) <= 3; })[0];
+        return { dots: dot1(C.X(p[0]), C.Ys(p[1]), col(p[1])), rows: tipRow1(col(p[1]), _T('表觀需求（30 天）', 'Apparent demand (30d)'), adK(p[1])) + (p[2] != null ? tipRow1('var(--s1)', _T('30 日平均', '30-day avg'), adK(p[2])) : ''),
+          after: mv ? tipRow1('var(--warn)', _T('疑似搬家', 'Likely transfer'), cohCoins(mv.btc)) : '' };
+      } });
   }
+
 
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};
@@ -1906,7 +1975,7 @@
       cohortPanel() + lthColorPanel() + secPanel() + rplPanel() + adPanel() + soprPanel() + sthPnlPanel() + nplPanel() + whalePanel() + panel('span-7', _t('鏈上指標'), _T('MVRV Z／NUPL／Puell：CoinMetrics · STH-SOPR：CheckOnChain · 其他：bitcoin-data', 'MVRV Z / NUPL / Puell: CoinMetrics · STH-SOPR: CheckOnChain · others: bitcoin-data'), t) + panel('span-5', _t('頂部雷達'), _t('2022/11 起本輪百分位'), rt) + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
-    mount($('#c-whale'), drawWhale); drawSopr(); drawSthPnl(); drawOc(); mount($('#c-npl'), drawNpl); cohortAfter(); mount($('#c-lthc'), drawLthColor); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd);
+    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, drawOc); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd);
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
     var v = D.chips.viz || {}, u = v.urpd || {}, c = D.price.bar.c, el = $('#c-urpd');
     if (el && u.band) {
@@ -1980,11 +2049,24 @@
       var body; try { body = V[r[0]](); } catch (e) { body = _t('<p class="err">這個模組載入失敗：') + esc(e.message) + '</p>'; console.error(e); }
       return '<section class="pg" id="pg-' + r[0] + '" data-r="' + r[0] + '" aria-label="' + r[1] + '">' + mh + body + '</section>';
     }).join('');
-    ROUTES.forEach(function (r) { try { if (V[r[0]].after) V[r[0]].after(); } catch (e) { console.error(e); } });
-    try { attachReads(v); } catch (e) { console.error(e); }
-    try { markSignals(v); } catch (e) { console.error(e); }
-    mounted.forEach(observe); settleMeters(v);
+    // 2026-11-04 自我檢查：手機一次只顯示一版，其他版是 display:none——原本載入時 9 版約 50 張圖全畫（寬度 0 先畫成 280px，切過去再重畫一次）。
+    //   改成手機只畫目前這一版，切換時才畫，閒置時順手畫左右兩版；桌面是一整頁往下捲，版面高度要先定，維持一次畫完
+    if (!MQ.matches) drawAllPages();
     void v.offsetWidth; v.classList.add('view-enter');
+  }
+  var drawn = {};
+  function drawPage(id) {
+    if (drawn[id] || !V[id]) return; drawn[id] = 1;
+    var sec = $('#pg-' + id); if (!sec) return;
+    try { if (V[id].after) V[id].after(); } catch (e) { console.error(e); }
+    try { attachReads(sec); } catch (e) { console.error(e); }
+    try { markSignals(sec); } catch (e) { console.error(e); }
+    mounted.forEach(observe); settleMeters(sec);
+  }
+  function drawAllPages() { ROUTES.forEach(function (r) { drawPage(r[0]); }); }
+  function drawNear(id) {   // 閒置時先畫左右兩版，滑過去不用等
+    var ids = ids0(), k = ids.indexOf(id), idle = window.requestIdleCallback || function (f) { return setTimeout(f, 200); };
+    [ids[k + 1], ids[k - 1]].forEach(function (n) { if (n && !drawn[n]) idle(function () { drawPage(n); }); });
   }
   function activate(id) {
     if (id === cur) return;
@@ -1995,6 +2077,7 @@
     }
     cur = id; hideTip();
     document.querySelectorAll('#view .pg').forEach(function (sec) { sec.classList.toggle('cur', sec.getAttribute('data-r') === id); });
+    drawPage(id); if (MQ.matches) drawNear(id);
     document.querySelectorAll('.nav button').forEach(function (b) { b.setAttribute('aria-current', b.getAttribute('data-r') === id ? 'page' : 'false'); });
     var nv = $('#nav'), nb = nv.querySelector('[aria-current="page"]');   // 行動版頂部導航可橫向捲動：把目前版面捲到中間
     if (nb && nv.scrollWidth > nv.clientWidth) nv.scrollTo({ left: nb.offsetLeft - nv.offsetLeft - (nv.clientWidth - nb.offsetWidth) / 2, behavior: reduced ? 'auto' : 'smooth' });
@@ -2048,14 +2131,14 @@
     $('#nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) go(b.getAttribute('data-r')); });
     document.addEventListener('keydown', function (e) { if ((e.target.closest && e.target.closest('input,textarea')) || e.metaKey || e.ctrlKey || e.altKey) return; var n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROUTES.length) go(ROUTES[n - 1][0]); });
     // 跨過 860px（旋轉、縮放視窗）時切換顯示方式，停在同一版
-    var onMode = function () { if (MQ.matches) window.scrollTo(0, 0); else go(cur); };
+    var onMode = function () { if (MQ.matches) window.scrollTo(0, 0); else { drawAllPages(); go(cur); } };   // 換成桌面版：沒畫過的版一次補齊
     if (MQ.addEventListener) MQ.addEventListener('change', onMode); else if (MQ.addListener) MQ.addListener(onMode);
     window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h !== cur) go(h); });
     // 2026-10-23：「看圖 →」連結：換到那一版後捲到那張圖並閃一下
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a.jump'); if (!a) return; var ch = a.getAttribute('data-chart'); if (!ch) return;
       e.preventDefault(); go(a.getAttribute('href').slice(1));
-      setTimeout(function () { var el = $('#c-' + ch); if (!el) return; el.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash'); }, 1800); }, MQ.matches ? 350 : 500);
+      setTimeout(function () { var el = $('#c-' + ch); if (!el) return; var fd = el.closest('.fold'); if (fd) fd.classList.remove('fold'); el.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash'); }, 1800); }, MQ.matches ? 350 : 500);
     });
     // 桌面換頁頓點：滾輪捲過版面開頭時，先停在「該版標題貼齊頂部列」的位置，頓 HOLD 毫秒（期間的滾輪與慣性吃掉），之後照常捲動
     var hold = 0, HOLD = 260;

@@ -307,26 +307,24 @@ try:
     _coh, _chst = coc.get_cohort(max(_cs) if _cs else None)
     if _chst != 'live': errors.append(f'checkonchain urpd-cohort 用快取：{_chst}')
 except Exception as e: errors.append(f'checkonchain urpd-cohort: {e}')
+_sec = _rpl = _hw1 = None   # B5–B7 只抓資料；圖表在 G1 CoinMetrics 之後用統一的價格算（見 G1b）
 # B5. 2026-11-02 使用者要求（Murphy〈卖方衰竭指数〉）：賣方衰竭常數（CheckOnChain，從 2010 起、晚約 1 天；見 coc.get_sec、stage_viz.sec_viz）
 try:
     import coc, stage_viz
     _sec, _sest = coc.get_sec()
     if _sest != 'live': errors.append(f'checkonchain seller-exhaustion 用快取：{_sest}')
-    R['sec'] = stage_viz.sec_viz(_sec, LAST)
 except Exception as e: errors.append(f'checkonchain seller-exhaustion: {e}')
 # B6. 2026-11-02 使用者要求（貝格先生的 Realized P/L 比率）：全網實現獲利 ÷ 實現虧損（CheckOnChain；90 天平均，見 coc.get_rpl、stage_viz.rpl_viz）
 try:
     import coc, stage_viz
     _rpl, _rpst = coc.get_rpl()
     if _rpst != 'live': errors.append(f'checkonchain realised-pl-ratio 用快取：{_rpst}')
-    R['rpl'] = stage_viz.rpl_viz(_rpl, LAST)
 except Exception as e: errors.append(f'checkonchain realised-pl-ratio: {e}')
 # B7. 2026-11-03 使用者要求（CryptoQuant 的 Apparent Demand）：表觀需求＝30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化（CheckOnChain HODL Waves；見 coc.get_hodl1y、stage_viz.ad_viz）
 try:
     import coc, stage_viz
     _hw1, _hwst = coc.get_hodl1y()
     if _hwst != 'live': errors.append(f'checkonchain hodl-waves 用快取：{_hwst}')
-    R['ad'] = stage_viz.ad_viz(_hw1, LAST)
 except Exception as e: errors.append(f'checkonchain hodl-waves: {e}')
 try:
     # 2026-09-23 週檢：第三轉換條件量化＝STH 成本基礎 ÷ LTH 成本基礎（＝LTH-MVRV ÷ STH-MVRV，與價格無關）
@@ -402,6 +400,8 @@ try:
     cm = [(x['time'][:10], float(x['PriceUSD']), float(x['CapMVRVCur']) if x.get('CapMVRVCur') else None, float(x['CapMrktCurUSD']), float(x['SplyCur']),
            float(x['SplyExNtv']) if x.get('SplyExNtv') else None) for x in cmj if x.get('PriceUSD') and x.get('CapMrktCurUSD') and x.get('SplyCur') and x['time'][:10] <= LAST]   # 2026-09-26 修正：CoinMetrics 最新一天常只有 PriceUSD、其餘 null，須一併排除
     mv = [(d_, pr, m_, mc, sp) for d_, pr, m_, mc, sp, _ in cm if m_]
+    # 2026-11-04 自我檢查：同一天各圖的價格統一（原本 CheckOnChain 各張圖自帶價格，11/02 四張圖差到 $70）。Kraken 日線收盤優先（頭版的價格），更早的用 CoinMetrics
+    PXC = {d_: pr for d_, pr, *_ in cm}; PXC.update({b_['d']: b_['c'] for b_ in bars})
     dts = [x[0] for x in mv]; M_ = [x[2] for x in mv]; PR = [x[1] for x in mv]; i = len(mv) - 1
     import bisect
     def _win(j):   # 2026-10-07 a9：以日期邊界 [t−1461d, t−365d] 篩選，不以列位置代替（資料缺日時位置會偏）
@@ -752,17 +752,24 @@ try:
     R['onchain_viz'] = stage_viz.onchain_viz(SER)   # 鏈上指標走勢（近 3 年；價格線沿用 stage_viz 的 px）
     # 2026-10-29：價格 × 長期持有者 30 日淨部位（價格線依淨部位上色；不另打 API）
     try:
-        if SER.get('lth-net-position-change-30d-btc'): R['lth_color'] = stage_viz.lth_color_viz(SER['lth-net-position-change-30d-btc'], {x[0]: x[1] for x in mv})
+        if SER.get('lth-net-position-change-30d-btc'): R['lth_color'] = stage_viz.lth_color_viz(SER['lth-net-position-change-30d-btc'], PXC)
     except Exception as e: errors.append(f'lth_color {e}')
     # 2026-11-03：週線多空分數（六項已有訊號合成；不另打 API，實現獲利 ÷ 虧損沿用 B6 的 _rpl）
     try:
-        R['regime'] = stage_viz.regime_viz(cm, globals().get('_rpl'), LAST)
+        R['regime'] = stage_viz.regime_viz(cm, _rpl, LAST, px=PXC)
     except Exception as e: errors.append(f'regime {e}')
     # 短期持有者認賠賣壓（STH-SOPR ＋ 價格；放進籌碼流向圖表資料，頁面在鏈上版）
     if SER.get('sth-sopr') and R.get('murphy_viz') is not None:
-        R['murphy_viz']['sopr'] = stage_viz.sopr_viz(SER['sth-sopr'], {x[0]: x[1] for x in mv})
-    if _pnl: R['sth_pnl'] = stage_viz.sth_pnl_viz(_pnl, {x[0]: x[1] for x in mv})
+        R['murphy_viz']['sopr'] = stage_viz.sopr_viz(SER['sth-sopr'], PXC)
+    if _pnl: R['sth_pnl'] = stage_viz.sth_pnl_viz(_pnl, PXC)
 except Exception as e: errors.append(f'stage_viz {e}')
+# G1b. 2026-11-04 自我檢查：B5–B7 抓到的 CheckOnChain 序列在這裡畫，價格欄換成統一的收盤（PXC：Kraken 優先、更早 CoinMetrics；指標本身不變）。
+#   獨立一段：上面 stage_viz 出錯不影響這三張；CoinMetrics 沒抓到時沿用 CheckOnChain 自帶的價格
+import stage_viz
+for _k, _ser, _fn in (('sec', _sec, stage_viz.sec_viz), ('rpl', _rpl, stage_viz.rpl_viz), ('ad', _hw1, stage_viz.ad_viz)):
+    if not _ser: continue
+    try: R[_k] = _fn(stage_viz.canon_px(_ser, globals().get('PXC') or {}), LAST)
+    except Exception as e: errors.append(f'checkonchain {_k} {e}')
 # G4e. 2026-10-27 使用者要求：長期／短期持有者籌碼（LTH／STH URPD，Murphy 的拆法）。bitcoin-data 的 URPD 不分持有時間，
 #   用 G4 的 URPD × 前一晚 A 組快取的幣齡分布（hodl-waves-supply）× 每日價格區間（Kraken 日線、更早用 CoinMetrics）推算，見 cohort_urpd.py。
 #   推算、不是實體調整，只作讀值；每天的 URPD 與幣齡分布存進 cohort_cache/（bitcoin-data 免費層的 URPD 歷史只到約 2026-08-10）

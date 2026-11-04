@@ -40,6 +40,18 @@ def _save(path, page, lines, keep=1500):
         f.write(',\n'.join(json.dumps(r) for r in lines[-keep:]) + '\n]}\n')
 
 
+# 2026-11-04 自我檢查：快取只當短暫備援。超過 CACHE_MAX_DAYS 天沒成功抓到就讓錯誤往上丟，
+#   該項在頁面上顯示「本日未取得」，不再無限期沿用舊資料（資料原則：不推估、不沿用舊數字）
+CACHE_MAX_DAYS = 4
+
+
+def _cache(path):
+    cj = json.load(open(path))
+    age = (dt.datetime.now(dt.timezone.utc) - dt.datetime.fromisoformat(cj['fetched_utc'])).total_seconds() / 86400
+    if age > CACHE_MAX_DAYS: raise RuntimeError(f'快取已 {age:.0f} 天沒更新（上限 {CACHE_MAX_DAYS} 天），不再沿用')
+    return cj
+
+
 def fetch():
     traces = _traces(URL)
     gt, lt = _trace(traces, 'STH-SOPR > 1'), _trace(traces, 'STH-SOPR < 1')
@@ -55,7 +67,7 @@ def get():
         _save(CACHE, PAGE, [[d, round(v, 5)] for d, v in sorted(ser.items())])
         return ser, 'live'
     except Exception as e:
-        cj = json.load(open(CACHE))   # 沒有快取就讓錯誤往上丟，由呼叫端記錄
+        cj = _cache(CACHE)   # 沒有快取就讓錯誤往上丟，由呼叫端記錄
         return {d: v for d, v in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
 
 
@@ -97,7 +109,7 @@ def get_cohort(date_hint):
         json.dump(dict(fetched_utc=now, source=COH_PAGE, date=date_hint, rows=rows), open(COH_CACHE, 'w'), separators=(',', ':'))
         return dict(date=date_hint, rows=rows), 'live'
     except Exception as e:
-        cj = json.load(open(COH_CACHE))
+        cj = _cache(COH_CACHE)
         return dict(date=cj['date'], rows=cj['rows']), f'cache {cj["fetched_utc"]}（{e}）'
 
 
@@ -117,7 +129,7 @@ def get_pnl():
         _save(PNL_CACHE, PNL_PAGE, [[d, round(p, 2), round(l, 2)] for d, (p, l) in sorted(ser.items())])
         return ser, 'live'
     except Exception as e:
-        cj = json.load(open(PNL_CACHE))
+        cj = _cache(PNL_CACHE)
         return {d: (p, l) for d, p, l in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
 
 
@@ -145,7 +157,7 @@ def get_sec():
         _save(SEC_CACHE, SEC_PAGE, [[d, round(v, 5), round(p, 2)] for d, (v, p) in sorted(ser.items())], keep=10000)
         return ser, 'live'
     except Exception as e:
-        cj = json.load(open(SEC_CACHE))
+        cj = _cache(SEC_CACHE)
         return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
 
 
@@ -172,7 +184,7 @@ def get_rpl():
         _save(RPL_CACHE, RPL_PAGE, [[d, round(v, 4), round(p, 2)] for d, (v, p) in sorted(ser.items())], keep=10000)
         return ser, 'live'
     except Exception as e:
-        cj = json.load(open(RPL_CACHE))
+        cj = _cache(RPL_CACHE)
         return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
 
 
@@ -203,5 +215,5 @@ def get_hodl1y():
         _save(HW_CACHE, HW_PAGE, [[d, round(v), round(p, 2)] for d, (v, p) in sorted(ser.items())], keep=10000)
         return ser, 'live'
     except Exception as e:
-        cj = json.load(open(HW_CACHE))
+        cj = _cache(HW_CACHE)
         return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
