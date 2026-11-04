@@ -60,7 +60,7 @@ ops/
 | 推送後 | GitHub Actions `share.yml` | 畫當日分享圖、今日推薦圖表 | `data/share.png`、`data/share-en.png`、`data/picks/` |
 | 你 | 手機開發文小幫手 | 一鍵把圖文送進 X | <https://north7.github.io/daybreak/ops/post/> |
 | 你／Claude | 本機 | 做當日短影片（見下） | `ops/video/out/` |
-| 日報後 | Claude＋Grok → Claude → 你 | Claude 掃固定名單、Grok 找名單以外的貼文，Claude 讀原文、依當日數據寫回覆和配圖，你在回覆小幫手照順序回（標「建議引用」的用引用發） | `data/replies.json`、`data/replies/`；<https://north7.github.io/daybreak/ops/replies/> |
+| 日報後 | Claude＋Grok → Claude → 你 | Claude 掃固定名單、Grok 找名單以外的貼文，Claude 讀原文、依當日數據寫回覆和配圖，你在回覆小幫手照順序回（標「建議引用」的用引用發）；讀原文時看到網站還沒有的指標或圖，順手記下 | `data/replies.json`、`data/replies/`；<https://north7.github.io/daybreak/ops/replies/>；點子記在 [`docs/indicator-ideas.md`](../docs/indicator-ideas.md) |
 | 盤中有事時 | Claude → 你 | 新低／新高、ETF 數據、大爆倉：寫中英文快訊和配圖，放到發文小幫手最上面 | `data/flash.json`、`data/flash/` |
 | 你傳通知截圖時；隔天寫回覆前 | Claude | 記錄當天發了什麼、誰回應、瀏覽多少；隔天更新數字並彙整 | `ops/log/<日期>.json`（見 [`log/README.md`](log/README.md)） |
 
