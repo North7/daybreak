@@ -151,12 +151,14 @@ def summary():
               f'| {len(D["posts"])} | {tot:,} | {D.get("metrics_at", "-")} |')
     ps = [p for D in days for p in D['posts']]
     table('依類型', [(KIND_ZH[k], [p for p in ps if p['kind'] == k]) for k in KINDS])
+    for k in KINDS:
+        kp = [p for p in ps if p['kind'] == k and p.get('style')]
+        styles = sorted({p['style'] for p in kp})
+        if len(styles) > 1:
+            table(f'{KIND_ZH[k]}：依寫法', [(s, [p for p in kp if p['style'] == s]) for s in styles], k == 'reply')
     rs = [p for p in ps if p['kind'] == 'reply']
     if rs:
         table('回覆：依語言', [(l, [p for p in rs if p.get('lang') == l]) for l in ('zh', 'en')], True)
-        styles = sorted({p.get('style') for p in rs if p.get('style')})
-        if styles:
-            table('回覆：依寫法', [(s, [p for p in rs if p.get('style') == s]) for s in styles], True)
         table('回覆：有沒有配圖', [('有圖', [p for p in rs if p.get('image')]), ('沒圖', [p for p in rs if not p.get('image')])], True)
         tiers = ('對方 < 1 萬粉', '對方 1–10 萬粉', '對方 > 10 萬粉', '粉絲數不明')
         table('回覆：依對方大小', [(t, [p for p in rs if tier(p.get('to_followers')) == t]) for t in tiers], True)

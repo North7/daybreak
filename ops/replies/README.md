@@ -35,7 +35,7 @@ X 創作者分潤只算**原創貼文**的藍勾首頁曝光，回覆不算；�
 0. **先看昨天的成效**：前一天有 `ops/log/<日期>.json` 的話，先 `python3 ops/log/log.py refresh <昨天>`、`python3 ops/log/log.py summary`，用一兩句話告訴使用者昨天哪些有效，寫今天的回覆時參考（見 [`../log/README.md`](../log/README.md)）。
 1. **讀原文**：`python3 ops/replies/fetch.py <Grok 的 CSV 或網址>`。Grok 的摘要、語言、粉絲數常常錯，一律以原文為準。原文不是中文或英文、粉絲不到 2,000、或內容是標題黨、喊單、操作建議的，標成跳過並寫原因。
 2. **讀當天的數據**：`data/notes.json`（英文 `data/notes.en.json`）的 headline、findings、news、modules，數字細節查 `data/latest.json`、`data/etf.json` 等。只引用數據裡有的數字，不改數字、不自己推算新數字。`notes.json` 的日期不是當期時，先跟使用者確認。
-3. **寫 `data/replies.json`**（格式見下），需要配圖的加 `image`。
+3. **寫 `data/replies.json`**（格式見下），需要配圖的加 `image`。寫之前讀 [`../brand/voice.md`](../brand/voice.md)，特別是最後的「使用者改稿紀錄」。
 4. **出圖**：`python3 ops/replies/cards.py --fonts <字型資料夾>`（需要 `pipeline/picks.py` 與 Pillow；字型同 `share_card.py`）。打開每張圖看一遍。
 5. **檢查**：`python3 ops/replies/check.py`（欄位、語言、簡體字、字數、出場框架用詞、配圖檔）。
 6. **提交**：`replies: <日期>`（`data/replies.json` 與 `data/replies/`），推到 main。GitHub Pages 約 1 分鐘後更新。

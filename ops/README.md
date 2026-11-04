@@ -25,6 +25,10 @@ ops/
     fetch.py           讀 X 原文（api.fxtwitter.com），核對 Grok 的摘要
     cards.py           回覆配圖 → data/replies/<n>.png
     check.py           檢查 replies.json 與 flash.json（語言、字數、簡體字、框架用詞、配圖）
+  brand/             品牌與內容方向（2026-11-04 起）
+    voice.md           品牌文件：寫給誰、相信什麼、反對什麼、語氣、用詞、使用者改稿紀錄（寫任何要發的東西前先讀）
+    content-map.md     內容地圖：四個主題、解說題目、一週節奏、實驗清單
+    references.md      參考帳號（Murphy 等）什麼貼文有人看、我們借用什麼
   log/               成效紀錄（2026-11-04 起）
     README.md          什麼時候記、格式
     log.py             add 加入當天發的貼文、refresh 更新瀏覽等數字、summary 彙整
@@ -38,6 +42,10 @@ ops/
 - **回覆負責漲追蹤**：只挑藍勾大帳號、發文 30 分鐘內回、帶圖（Grok 規則已要求 10 則至少 8 則藍勾）。
 - **原創貼文負責衝曝光**：每天 3–5 則原創、都帶圖；日報中英文分兩則發；盤中有事件就發快訊；大帳號的貼文用「引用」而不是只回覆（引用算原創）。
 - 不做互粉、買粉、互刷互動（違反 X 的平台操縱規則，可能失去分潤資格）。
+
+## 品牌與內容方向
+
+寫任何要發出去的東西（日報貼文、快訊、解說、回覆、引用、長文、影片）之前，先讀 [`brand/voice.md`](brand/voice.md)：主要寫給拿現貨的中文持有者，角色是「一起看盤的同行」，第一句是數字，只講資訊。要發什麼主題看 [`brand/content-map.md`](brand/content-map.md)（四個主題：籌碼、資金、槓桿、週期，每週一則解說），寫法參考 [`brand/references.md`](brand/references.md)。
 
 ## 每日流程
 
@@ -66,7 +74,7 @@ ops/
 什麼時候發：這一段行情的新低／新高、關鍵價位被穿過（短期持有者成本、清算帶、整數關卡）、ETF 單日大額流入流出公布、大爆倉。使用者說「有什麼可以發」時也照這個做。
 
 1. 查即時數字：Kraken 價格與當日高低點、OKX 資金費率、Coinbase 對幣安的價差；和 `data/latest.json`、`data/notes.json` 的價位、籌碼、清算帶對照。
-2. 寫 `data/flash.json`：每則 `{"id", "time"（UTC）, "title", "note", "zh", "en", "image"}`；中英文分開寫、都要有人味（同 `replies/README.md`），只講資訊，結尾帶 2–3 個 hashtag（中文 `#比特幣 #BTC`＋主題、英文 `#Bitcoin #BTC`＋主題）。`image` 同回覆配圖，另可用 `title_zh`／`title_en` 和 `stats`（覆寫底部三格，例如換成盤中低點）。
+2. 寫 `data/flash.json`：每則 `{"id", "time"（UTC）, "title", "note", "zh", "en", "image"}`；中英文分開寫、語氣照 `brand/voice.md`（第一句是數字；數字更新到以前發過的快訊時，建議用引用自己那則來發），只講資訊，結尾帶 2–3 個 hashtag（中文 `#比特幣 #BTC`＋主題、英文 `#Bitcoin #BTC`＋主題）。`image` 同回覆配圖，另可用 `title_zh`／`title_en` 和 `stats`（覆寫底部三格，例如換成盤中低點）。
 3. 出圖：`python3 ops/post/flash.py --fonts <字型資料夾>`，打開圖看一遍。
 4. 檢查：`python3 ops/replies/check.py`（會一起檢查 flash.json）。
 5. 提交 `flash: <日期> <事件>`，推到 main；約 1 分鐘後手機打開發文小幫手就在最上面。
