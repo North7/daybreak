@@ -156,7 +156,7 @@
 #### 各版判讀
 **cycle（市場階段）**
 - 市場階段由資料管線依寫死規則計算（`cycle.stage`：熊市／轉換期／牛市；牛市＝投降出現過且收盤連 30 日在上升的 200 日均線之上），你只引用，不改判；`cycle` 模組要寫現在的階段、天數（`above_rising_run`／30）與佐證燈號（`cycle.stage.evidence` 的 `ok`／`n`，並點名哪幾項亮、哪幾項沒亮）。佐證燈號只表示證據強弱，不要寫成「還差某條件才算牛市」。
-- 佐證燈號有 6 盞，第 6 盞 `tmm`＝短期持有者成本高於真實市場均價（Murphy 的 STH-RP vs TMMP；bitcoin-data，晚約 7 天）。它是落後指標（2016、2019、2023 三次上穿都比週期底部晚 12–18 個月，2019 年上穿後仍跌近六成），只作佐證。真的交叉時在 changes 記一筆。
+- 佐證燈號有 6 盞，第 6 盞 `tmm`＝短期持有者成本高於真實市場均價（Murphy 的 STH-RP vs TMMP；2026-11-04 起兩條線都用 Bitview、晚 1 天，`chips.flow.sth_vs_tmm.source`；Bitview 失敗時退回 bitcoin-data、晚約 7 天）。換資料商後交叉日不同：Bitview 下穿 2026-05-18（bitcoin-data 版是 4/26），寫日期時用 `last_cross_down`，不要沿用舊報告的 4/26。它是落後指標（2016、2019、2023 三次上穿都比週期底部晚 12–18 個月，2019 年上穿後仍跌近六成），只作佐證。真的交叉時在 changes 記一筆。
 - brief 的 `cycle.stage.viz_reads` 有兩個讀值：`tmm_cross`（以近 30 日速度線性外推的交叉日）與 `mom12.flat_flip`（價格不動時 12 個月動能燈號翻轉的日子）；引用時一律寫明「線性外推／價格不動的假設，不是預測」，不寫成時間壓力或買賣建議。
 
 **market（價格）**
@@ -187,27 +187,6 @@
 - 實現獲利 ÷ 實現虧損（`onchain.rpl`，2026-11-02 起，資料 CheckOnChain，`coc.get_rpl`／`stage_viz.rpl_viz`）：全網每日比值取 90 天平均；低於 1＝賣出的人整體在認賠（紅色）。`value` 90 天平均、`above`／`since`／`since_days` 目前在 1 的哪一邊與從哪天起、`first2` 這次第一次超過 2、`last7` 最近 7 天每日比值平均、`daily` 最近 14 天每日值、`proj` 每日比值維持 `last7` 時 90 天平均哪天跨過 1（試算）、`reds` 歷次低於 1 的期間（`major` 60 天以上、`relapse` 結束後一年內又跌回的期間）。寫法：90 天平均反應慢，**先看 `last7`**；`last7` < 1 連續出現或 `proj` 有日期時當發現寫；不寫「牛市確認」或「不會再回到紅色」，必須同時提 2019/12–2020/1 的例外（回到 1 以上 7 個月後又跌回 37 天）。
 - 表觀需求（`onchain.ad`，2026-11-03 起，資料 CheckOnChain HODL Waves，`coc.get_hodl1y`／`stage_viz.ad_viz`）：CryptoQuant 的定義，30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化；`value` 30 天合計、`sma30` 它的 30 日平均、`inact_chg30` 1 年以上供給 30 天變化、`moves` 疑似搬家日（單日 1 年以上供給掉超過 `move_thr`，`echo` 一年後的回音日、`echo_rise` 回音當時實際增加多少）、`echo_soon` 60 天內會到的回音。寫法：負值要同時說明「一年前換手的幣滿一年」的機械效果，不單獨寫成需求崩潰；`value` 跌破 `sma30` 才寫「需求轉弱」；回音日前後（例如 2026-11-22）的大幅下跌寫「疑似搬家的回音」，不當發現；逐筆 UTXO、不是實體調整，不和 CryptoQuant 的數值比大小。
 - 長期持有者虧損比例（`onchain.lthloss`，2026-11-04 起，資料 CheckOnChain，`coc.get_lthloss`／`stage_viz.lthloss_viz`）：持有 ≥155 天的幣裡帳面虧損的比例。`peaks` 歷輪熊市底部的高點（`after_max` 高點後 90–730 天內的最高，用來驗證「脫離底部後不再創新高」）、`post_min` 這輪高點後的最低、`cohort.break_price` 用 CheckOnChain 長期持有者籌碼推算「虧損比例超過這輪高點」的價格（每天重算）。寫法：價格接近或跌破 `break_price` 時當發現寫（等於打破規律）；回升時可以寫「指標回調、測試支撐」，但要同時寫明樣本只有 3–4 輪、2020/3 是先暴跌才回升；比例上升也可能來自高價買進的短期持有者滿 155 天轉成長期持有者，不全是價格造成。
-- 週線多空分數（`cycle.regime`，2026-11-03 起，`stage_viz.regime_viz`）：六項（200 日均線位置、12 個月動能、MVRV 對一年均值、實現市值 30 日、交易所供給 90 日、實現獲利 ÷ 虧損 90 天）各除以自己的歷史中位數取 tanh、平均 ×6，範圍 −6 到 +6；`regime` 目前多（1）或空（−1）、`since`／`weeks` 從哪週起、`pending` 已在另一邊幾週（滿 4 週才翻轉）、`comps` 各項原值與貢獻、`flips` 歷次翻轉與 26／52 週後漲跌。寫法：是本站自己的合成，**不是** CryptoPainter 的 JT_Regime_Osc，不和他的數值比；|分數| < 1 寫「弱勢、方向容易反覆」；`pending` > 0 或剛翻轉時當發現寫；引用歷次統計要同時寫錯的那幾次（2014/6、2021/8）。
-- 三地溢價（`flows.premium3`＋`flows.cb_premium`，2026-11-03 起）：美國＝Coinbase 溢價、亞洲＝OKX 場外 USDT/CNY 對 OKX 匯率的溢價（`usdt`，只有快照、`usdt_hist` 從 2026-11-02 起每日累積）、槓桿＝OKX 永續對現貨（`perp`，平常就略低於現貨，看 `avg7_pct_own` 和自己的歷史比，不看正負號）。寫法：分開寫誰在推、誰在缺席（例如「現貨買盤缺席、只有槓桿在撐」），不合成一個數字；USDT 場外報價會受人民幣管制與 P2P 商家影響，單日 ±0.3% 內視為持平；紀錄不足 30 天時不寫百分位。
-- 長期路徑的每月重估（`cycle.model`，2026-11-03 起自動，`pipeline/path_review.py`，build.py 每天呼叫）：到了 `next_review`（月底）就依舊日報已裁示的規則自動做——起點換成月底收盤、已實現線補上該月、權重用月底收盤對各路徑當月值的對數常態似然（σ 12%）做貝氏更新後與舊權重平均、收盤跌破 61,000 時「直接修復」歸零；計算過程在 `reviews`（`m` 路徑當月值、`L` 似然、`post`、`before`／`after`）。`fan` 是每天的包絡檢查：`run` 收盤連續超出四條路徑上下 12% 的天數，`reshape_needed`（滿 10 天）＝路徑形狀需要重估。寫法：每月 1 日那一期把權重變化當發現寫（哪條升、哪條降、為什麼）；`fan.run` ≥ 5 開始提醒、`reshape_needed` 為 true 時在 headline 寫明並在回報請使用者處理（形狀重估需要判斷，日報不改 model.json）。你不改 `data/model.json`。
-- 鯨魚分層（`onchain.whales`，BitInfoCharts 依地址餘額）**2026-10-21 起暫停**（BitInfoCharts 擋自動抓取，brief 沒有 `onchain.whales`）：判讀不提鯨魚分層，也不寫「本日未取得」；brief 重新出現 `onchain.whales` 時才恢復，恢復後的寫法：可寫大戶（100–10K）30 日與本段以來的增減；≥10K 多為交易所與託管，不寫成大戶買賣；只作讀值，不連動任何規則。
-
-#### 新聞
-- 每則消息的解讀都要回扣本站數據，說清楚它是短線雜訊還是會影響週期判斷；單一來源或數字不一致者在 title 後標「（未核實）」。
-- 新聞的 `url` 與 `source` 用原始報導（通訊社、主流財經與加密媒體、官方公告、發行商網站）。Substack 摘要、每日彙整頁、行情回顧網站（10/18–10/19 用過 bitcoinnewsdigest、investrade）只能拿來找線索，要點進它引用的原文查證後引用原文；找不到原文就不列，或在 title 後標「（未核實）」。
-- 新聞 `weight` 3＝頭條級、2＝重要、1＝參考，頭版會依 weight 排序取前四則。
-
-#### 研報
-- `research`（權威研報）：每列寫來源與日期、重點（含價位數字）、對本站判斷的意義；沒讀到全文的 `access` 填 `title_only`，且不作判斷依據。研報結論與本站讀值衝突時，在 `meaning` 寫明衝突與本站採用哪個、為什麼。
-
-#### 事件表
-- `events` 滾動維護未來 60 天：難度調整（`onchain.mining.retarget`）、FOMC、CPI、非農、Deribit 月度與季度到期、每個月底的路徑重估、Tidemark 低點驗證日 2026-12-19。官方排程優先；官方還沒公布的寫慣例日期並標「待官方排程確認」。**每一類都必須在**：CPI 公布後要立刻補上下一次（10/14–10/20 連 7 期漏掉 11 月的 CPI）；季度到期（例如 12/25）在 60 天內就要列，不能只寫在衍生品版。
-
-#### 英文版
-- 寫完 `data/notes.json` 後，另寫 `data/notes.en.json`：結構、欄位、數字、日期、網址、`impact`、`kind`、`dir`、`module` 與中文版完全相同，只把文字欄位（headline、summary、stance.label／short、watch[].label／note、modules 各版 lead／points、news[].title／read／source、events[].label、actions[].head／text、changes[].title／fig／say、findings[] 的 title／lean_why／what／why／alt／history／so／next 與 check[].label、followups[].title／say、research.summary 與 items[].points／meaning；研報原文標題本來就是英文的照抄）翻成自然的英文。
-- `news[].cat` **保持中文**（網站用它篩選，英文版顯示時自動換成 Macro／Flows 等）；除此之外不應有任何中文字（`notes_lint.py` 會掃描）。
-- 台北時間後面加註 UTC；金額用 $ 與 K／M／B，不用「萬／億」；「資金面」譯成 flows（funding 只指資金費率）。
-- 英文版網站讀這個檔，缺檔或日期比中文舊時會退回中文並標示。隱私鐵則同樣適用。
-
-### 回報
-最後用 3 行以內摘要：今天的結論、findings 幾則（標題）與 followups 結果、出場框架有沒有任何觸發、市場階段、哪些資料沒取到、X 草稿字數（x_len.py 的結果）。
+- 短期持有者成本帶（`onchain.sth_bands`，2026-11-04 起，資料 Bitview，`bitview.get`／`stage_viz.sth_bands_viz`；Murphy 的「短期持有者成本基礎模型」）：帶＝短期持有者成本 ×（近 4 年「價格 ÷ 成本」的平均 ± 1、2 個標準差）。`now.z` 是收盤在第幾個標準差，`now.bands` 是四條帶的價位，`stats` 有近 4 年在 ±1 標準差外的天數比例和最近一次。寫法：只寫位置和帶的價位（「收盤在 −0.2 個標準差，+1 標準差 88,869」），不寫「會回踩到哪」；碰到 +1 標準差或跌破 −1 標準差時可以當發現寫。
+- 6–12 與 12–18 個月持幣成本（`cycle.age_cost`，2026-11-04 起，資料 Bitview，`stage_viz.age_cost_viz`；wander 的成本線交叉）：`c612`、`c1218` 兩條線，`crosses` 歷次死叉／金叉與間隔天數，`last_cross`、`days_since`。兩條線是半年到一年半前的平均買價，非常落後；真的交叉時在 changes 記一筆，平常不必寫。
+- RV30 一年分位（`price.vol.rv30_pct1y`、`rv30_min1y`、`rv30_min1y_date`，2026-11-04 起，Kraken）：第 10 百分位以下時可以寫「低波動之後常有大波動」，一定要接「方向不一定」。

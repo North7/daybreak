@@ -89,7 +89,7 @@ def c_cost(L, end):
                 series=[dict(name=T('收盤', 'Close'), rows=ser(1), color=INK3, width=4),
                         dict(name=T('短期持有者成本', 'STH cost basis'), rows=ser(2), color=S1, width=7),
                         dict(name=T('真實市場均價', 'True market mean'), rows=ser(3), color=S2, width=7)],
-                yf=lambda v: f'{v / 1e3:,.0f}K', src='bitcoin-data · Kraken', asof=f.get('date') or g(L, 'meta.bar_date'),
+                yf=lambda v: f'{v / 1e3:,.0f}K', src=(f.get('source') or 'bitcoin-data') + ' · Kraken', asof=f.get('date') or g(L, 'meta.bar_date'),
                 stats=[S('收盤', 'Close', usd(g(L, 'price.bar.c'))), S('短期持有者成本', 'STH cost basis', usd(f['sth_cost'])), S('真實市場均價', 'True market mean', usd(f['tmm']))])
 
 
