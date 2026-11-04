@@ -17,6 +17,9 @@ ops/
     make_short_016.py  No.016 分鏡（目前最新的版本，下一期從這份複製）
     lines_016.json     No.016 旁白 {"base": [每場景秒數], "lines": [每場景一句]}
     out/               輸出的 mp4、封面、字幕（不進 git，影片太大）
+  replies/           X 互動回覆
+    grok-prompt.md     給 Grok 的找文規則（每天整段貼給 Grok）
+    README.md          回覆流程與 Claude 寫回覆的規則
 ```
 
 ## 每日流程
@@ -27,6 +30,7 @@ ops/
 | 推送後 | GitHub Actions `share.yml` | 畫當日分享圖 | `data/share.png`、`data/share-en.png` |
 | 你 | 手機開發文小幫手 | 一鍵把圖文送進 X | <https://north7.github.io/daybreak/ops/post/> |
 | 你／Claude | 本機 | 做當日短影片（見下） | `ops/video/out/` |
+| 日報後 | Grok → Claude → 你 | Grok 找可回覆的 X 貼文，Claude 依當日數據寫回覆，你挑著發 | 見 `ops/replies/` |
 
 ## 發文小幫手
 
@@ -45,6 +49,10 @@ python make_short_017.py ../.. ~/fonts out/daybreak-017-short.mp4 --audio out/01
 需要 Pillow、numpy、ffmpeg、edge-tts，字型與分享圖相同（`share.yml` 下載的 Noto Sans TC、Archivo、JetBrains Mono）。
 
 **內容原則：影片只放資訊**（價格、市場階段、衍生品、ETF 資金、消息、接下來的日期與價位），**不放出場框架**（觸發條數、價格階梯、MVRV 賣出線、200 日均線避險、「今天不動」這類動作結論）。做分鏡與旁白時跳過 `notes.json` 的 `exit` 模組、`watch` 裡的框架線、`actions` 的動作建議。
+
+## 互動回覆
+
+每天請 Grok 找 8 則值得用數據回覆的 X 貼文（規則在 [`replies/grok-prompt.md`](replies/grok-prompt.md)），把結果貼給 Claude 寫回覆（規則在 [`replies/README.md`](replies/README.md)）。回覆和短影片同一個原則：只放資訊，預設不貼連結。
 
 ## 之後可以加
 
