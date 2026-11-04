@@ -10,7 +10,7 @@
 ops/
   README.md          這份說明
   post/index.html    X 發文小幫手（原本的根目錄 post.html，2026-11-04 搬進來；根目錄 post.html 現在只轉址到這裡）
-  picks/             每日推薦發文圖表＋解說（規劃中，見 picks/README.md）
+  picks/             每日推薦發文圖表＋解說的說明（程式在 pipeline/picks.py，圖在 data/picks/，見 picks/README.md）
   video/             每日短影片腳本（原本在 media/）
     make_audio.py      配音（edge-tts 台灣語音）＋自製配樂 → timing.json、mix.wav
     make_short_015.py  No.015 分鏡（1080×1920、30fps，Pillow 逐格畫、ffmpeg 編碼）
@@ -23,8 +23,8 @@ ops/
 
 | 時間 | 誰做 | 做什麼 | 產出 |
 |---|---|---|---|
-| 08:30 | Claude 每日任務（`docs/CLAUDE_DAILY.md`） | 寫中英 X 貼文草稿並推播到手機 | `data/x_post.json` |
-| 推送後 | GitHub Actions `share.yml` | 畫當日分享圖 | `data/share.png`、`data/share-en.png` |
+| 08:30 | Claude 每日任務（`docs/CLAUDE_DAILY.md`） | 寫中英 X 貼文草稿並推播到手機；挑今日推薦圖表、寫中英解說 | `data/x_post.json`、`data/picks.json` |
+| 推送後 | GitHub Actions `share.yml` | 畫當日分享圖、今日推薦圖表 | `data/share.png`、`data/share-en.png`、`data/picks/` |
 | 你 | 手機開發文小幫手 | 一鍵把圖文送進 X | <https://north7.github.io/daybreak/ops/post/> |
 | 你／Claude | 本機 | 做當日短影片（見下） | `ops/video/out/` |
 
@@ -33,6 +33,8 @@ ops/
 <https://north7.github.io/daybreak/ops/post/>（舊網址 `post.html` 會自動轉過來，手機書籤不用改）
 
 讀 `data/x_post.json`：中英文各一則，顯示 X 字數（與 `pipeline/x_len.py` 相同算法），手機可用分享選單把圖文一起送進 X、存圖到相簿、開 X App 發文視窗、複製文字。
+
+下方「今日推薦圖表 · Today's picks」讀 `data/picks.json` 與 `data/picks/index.json`：每張圖中英文各一份，可分享（圖＋解說）、存到相簿、複製解說、下載。`picks.json` 還不是當天的時候，只顯示 Actions 自動挑好的圖（沒有解說）。
 
 ## 短影片
 
@@ -48,6 +50,5 @@ python make_short_017.py ../.. ~/fonts out/daybreak-017-short.mp4 --audio out/01
 
 ## 之後可以加
 
-- `picks/`：每天從當日數據挑 1–3 張最值得發的圖，附一段可直接貼的解說（見 `picks/README.md`）。
 - 影片模板化：把 `make_short_0xx.py` 共用的繪圖函式抽成一份，每期只換分鏡與旁白 JSON。
 - 發文紀錄：每天發了什麼、哪張圖、成效（手動填），回頭看哪種內容有效。
