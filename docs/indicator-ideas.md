@@ -21,6 +21,7 @@
 | Hyperliquid 大戶倉位與清算距離 | [@ai_9684xtpa 11/04](https://x.com/ai_9684xtpa/status/2117816316417679730) | 追蹤高倍槓桿地址的浮虧、離清算還差多少 | 已確認免費：排行榜 `stats-data.hyperliquid.xyz/Mainnet/leaderboard`（不用金鑰，約 40 MB）可拿到大戶地址；`api.hyperliquid.xyz/info` 的 `clearinghouseState` 查每個地址的 BTC 倉位、進場價、清算價。他貼的那個地址查得到（倉位細節不記在這裡，依隱私規則） | 取帳戶淨值前幾百名的 BTC 倉位，在清算熱力圖上標「已知大戶的實際清算價」；只有 Hyperliquid | 1 |
 | DeFi 借貸流動性（DeFi Lending Liquidity） | [@0xGummyBear](https://x.com/0xGummyBear/status/2117920767669387734)（11/04 這則引用的前一則，ForeDex 新指標） | 追蹤 DeFi 借貸平台的存款與抵押流入，看鏈上槓桿和情緒 | ForeDex 自家指標，算法沒公開；DefiLlama 有借貸協議 TVL 和借出金額（免費，我們已經在用它的穩定幣資料）可以近似 | 槓桿模組加「鏈上借貸」讀值；優先度低 | 1 |
 | ETF 發行商鏈上轉帳（例：貝萊德 → Coinbase Prime） | [@joke_henry 11/04](https://x.com/joke_henry/status/2117928163519107555)、阿布 [11/04 留言](https://x.com/mks1231237549/status/2117898004594307254)（IBIT 可以實物贖回） | 一小時 7,244 枚轉進 Coinbase Prime，判斷是申購入帳還是贖回備貨；實物贖回時贖回方拿走的是幣 | 要有標籤地址；Arkham 的 API 要金鑰，沒找到免費來源。轉進 Coinbase Prime 本身方向不明（申購、贖回、實物贖回都會經過） | 先不做；網站已有 ETF 每日流量 | 2 |
+| 按地址餘額分層的持幣變化（0.001–1／1–10／10–100／100+ BTC） | [@crypto_punkX 11/04](https://x.com/crypto_punkX/status/2117978165872296179)（每天發，標題寫「大鯨魚買入／賣出」） | 四級的持幣量、當天和 30 天變化，加 2 週每日變化長條圖；100+ 增加就說是鯨魚買入 | 我們現在只有按幣齡（HODL waves）和成本（URPD）分的籌碼，沒有按地址大小分。CoinMetrics community 有按餘額分級的地址數，持幣量要再查；**交易所錢包要排除**（實體口徑），不然像 11/02 幣安提幣潮那樣，交易所冷錢包發幣給用戶會被看成「鯨魚賣出」 | 籌碼模組加「地址大小分層」讀值，附註交易所錢包的影響；找不到排除交易所的免費資料就先不做 | 1 |
 
 ## 已有、可以改進
 
