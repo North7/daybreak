@@ -375,6 +375,90 @@
     "chart": "npl",
     "title": "Holders booked a $1.55B net loss in 7 days"
    }
+  },
+  {
+   "n": 19,
+   "order": 0.4,
+   "status": "send",
+   "url": "https://x.com/Murphychen888/status/2117959134993854738",
+   "id": "2117959134993854738",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82036,
+   "posted": "2026-11-04T12:36:22Z",
+   "lang": "zh",
+   "angle": "補數據",
+   "summary": "這波反彈還沒看到超大額短期籌碼衝進 Coinbase；1 小時前有一筆 2,200 枚 BTC 轉入，「不知道這算大嗎？」",
+   "reply": "2200 枚算不算大我不好說，但這波反彈美國現貨確實還沒跟上：Coinbase 對幣安的溢價 11/03 收在 −0.15%，7 日均 −0.19%，是我這邊 1 月以來最低。賣的人不急著砸，買的人也還在等。",
+   "sources": "Coinbase 溢價 11/03 −0.151%、7 日均 −0.190%（2026-01 起 299 天最低）",
+   "note": "今天第 3 則回 Murphy（前兩則是 15、16），他剛發、瀏覽最高。只講現貨溢價，不談價位。",
+   "image": {
+    "chart": "cbp",
+    "title": "7 日均 −0.19%，今年最低"
+   }
+  },
+  {
+   "n": 20,
+   "order": 0.45,
+   "status": "send",
+   "url": "https://x.com/gaah_im/status/2117965336133660929",
+   "id": "2117965336133660929",
+   "author": "gaah_im",
+   "name": "Gaah",
+   "followers": 13361,
+   "posted": "2026-11-04T13:01:00Z",
+   "lang": "en",
+   "angle": "交叉驗證",
+   "summary": "價格一路下跌，已實現波動率卻沒有放大；他認為這波下跌不是方向性走勢，等價格往上走時波動率才會跳升。",
+   "reply": "Agree the 30-day hasn't budged, 28.7% on my end. Two things I'd add: the 7-day is already up to 37.7%, and options price more than either, DVOL 39.7. Puts still trade 3.5 vol points over calls though, so nobody's positioned for an upside burst yet.",
+   "sources": "RV30 28.7%、RV7 37.71%（Kraken，11/03）；DVOL 39.73（Deribit，11/03）；30 天 25-delta 風險逆轉 −3.51（賣權 40.42、買權 36.91）",
+   "note": "剛發不到半小時、只有 1 則回覆。同意 30 日波動率低，補 7 日、DVOL 和偏斜，不談方向。",
+   "image": {
+    "chart": "vol",
+    "title": "Implied vol sits 11 points above realized"
+   }
+  },
+  {
+   "n": 21,
+   "order": 0.5,
+   "status": "send",
+   "url": "https://x.com/0xGummyBear/status/2117920767669387734",
+   "id": "2117920767669387734",
+   "author": "0xGummyBear",
+   "name": "加密貝兒",
+   "followers": 3966,
+   "posted": "2026-11-04T10:03:54Z",
+   "lang": "zh",
+   "angle": "補數據",
+   "summary": "2019 年以來每輪熊底 LTH 虧損供給比例約 42–48%，熊牛轉換時會回調再上；最後問：如果價格回踩短期持有者成本（STH-RP）不破／跌破，該怎麼做？",
+   "reply": "你問的回踩短期成本，今天剛好測了一次：bitcoin-data 的短期成本約 75.9K（10/28），Kraken 盤中最低 75,625，戳進去又收回 78K 上方。這條線 30 天上移了 3.7%；11/03 短期 SOPR 0.995，在這附近賣的人多半是小賠賣掉。",
+   "sources": "短期持有者成本 75,892、30 天 +3.67%（bitcoin-data 10/28）；Kraken 11/04 盤中最低 75,625、回覆時約 78,300；STH-SOPR 0.9954（CheckOnChain 11/03）",
+   "note": "原文最後的問題是交易計劃，我們只回「今天實際測了一次」的數據，不說該怎麼做。",
+   "image": {
+    "chart": "cost",
+    "title": "短期持有者成本 75.9K，30 天上移 3.7%"
+   }
+  },
+  {
+   "n": 22,
+   "order": 0.55,
+   "status": "send",
+   "url": "https://x.com/KevinZbtc/status/2117929214909481108",
+   "id": "2117929214909481108",
+   "author": "KevinZbtc",
+   "name": "KevinZ",
+   "followers": 15202,
+   "posted": "2026-11-04T10:37:28Z",
+   "lang": "zh",
+   "angle": "交叉驗證",
+   "summary": "選舉落地，BTC 刺破 76,000 後收長下影回到 78K，「76 以下有主力承接」；下一關 79,685，站上前當反彈看。",
+   "reply": "76K 下面那層我這邊也看得到：短期持有者的平均成本在 75.2K–75.9K（CheckOnChain 和 bitcoin-data 兩個口徑），今天最低 75,625 剛好落在這一格。11/03 76–78K 的短期籌碼一天多了 13.5 萬顆，這區本來就很擠。",
+   "sources": "短期平均成本 75,192（CheckOnChain 11/03）、75,892（bitcoin-data 10/28）；Kraken 11/04 盤中最低 75,625；76–78K 短期籌碼 59.4 萬 → 72.9 萬顆（CheckOnChain 11/02→11/03）",
+   "note": "只對照「76K 下面有人接」，不評論他的 79,685 和反彈判斷。",
+   "image": {
+    "chart": "cohort",
+    "title": "76–78K 這層短期籌碼最厚，一天多 13.5 萬顆"
+   }
   }
  ]
 }
