@@ -5,6 +5,10 @@ image 欄位：{"chart": "<picks.py 的圖表 id，例如 cbp、sopr、etf、coh
            或 {"chart": "liq", "title": "...", "marks": [75000, 76200, ...]}：本站推算的清算價位分布（OKX），marks 是原文提到的價位。
            或 {"chart": "ad", "title": "..."}：老幣累積（供給端，近兩年），適合回應講需求端／新買家／賣方枯竭的貼文。
            或 {"chart": "sec", "title": "..."}：賣方衰竭常數（CheckOnChain，近兩年，標 0.13 極端線）。
+           或 {"chart": "lthloss", ...}：長期持有者虧損比例（CheckOnChain，2018 年起，虛線＝本輪熊底高點）。
+           或 {"chart": "bands", ...}：短期持有者成本帶（Bitview，近兩年，±1、±2 標準差）。
+           或 {"chart": "agecost", ...}：6–12 與 12–18 個月持幣成本（Bitview，2023 年起，底部寫上次死叉／金叉）。
+           後三張是 2026-11-04 網站新加的圖（資料在 latest.json 的 onchain.lthloss、onchain.sth_bands、cycle.age_cost）。
 需要 pipeline/picks.py（PR #19「每日推薦發文圖表」）與 Pillow；字型同 share_card.py。
 用法（在倉庫根目錄）：python3 ops/replies/cards.py --fonts <字型資料夾>
 只作讀值：圖只放市場資訊，不放出場框架。"""
@@ -70,7 +74,60 @@ def c_sec(L, end):
                 src='CheckOnChain', asof=s['date'], stats=st)
 
 
-EXTRA = {'ad': c_ad, 'sec': c_sec}   # picks.py 沒有、回覆配圖另外加的圖表
+def c_lthloss(L, end):
+    """長期持有者虧損比例（CheckOnChain，2018 年起，含 2019、2022、本輪三個熊底高點）；虛線＝本輪高點。"""
+    s = g(L, 'onchain.lthloss'); rows = [(r[0], r[1]) for r in s['rows'] if r[0] >= PK.dn('2018-06-01')]
+    pk = s['peaks'][-1]; prev = s['peaks'][-2]
+    return dict(kind='line', name=T('長期持有者虧損比例', 'Long-term holder supply in loss'),
+                sub=T('持有 155 天以上的幣，有多少比例買在現價之上（%）；虛線是本輪熊底的高點',
+                      'Share of coins held 155+ days that were bought above today\'s price (%); dashed line is this cycle\'s bear-market peak'),
+                series=[dict(name=T('長期持有者虧損比例', 'LTH supply in loss'), rows=rows, color=PK.S1, width=5, area=True)],
+                refs=[dict(y=pk['value'])],   # 不加文字標籤：會壓到 2019 年的高點，副標已經說明虛線
+                yf=lambda v: f'{v:.0f}%', src='CheckOnChain', asof=s['date'],
+                stats=[PK.S(f'最新（{PK.md(s["date"], "zh")}）', f'Latest ({PK.md(s["date"], "en")})', f'{s["value"]}%'),
+                       PK.S(f'本輪高點（{pk["date"][:7].replace("-", "/")}）', f'This cycle\'s peak ({pk["date"][:7]})', f'{pk["value"]}%'),
+                       PK.S(f'上一輪（{prev["date"][:7].replace("-", "/")}）', f'Last cycle ({prev["date"][:7]})', f'{prev["value"]}%')])
+
+
+def c_bands(L, end):
+    """短期持有者成本帶（Bitview）：成本 ×（近 4 年「價格 ÷ 成本」的平均 ± 1、2 個標準差），近兩年。"""
+    b = g(L, 'onchain.sth_bands'); now = b['now']
+    rows = [r for r in b['rows'] if r[0] > end - 730]
+    band = lambda k_: [(r[0], r[2] * (r[3] + k_ * r[4])) for r in rows]
+    z = now['z']
+    return dict(kind='line', name=T('短期持有者成本帶', 'STH cost basis bands'),
+                sub=T('短期持有者成本 ×（近 4 年「價格 ÷ 成本」的平均 ± 1、2 個標準差）',
+                      'STH cost basis × (4-year mean of price ÷ cost, ± 1 and 2 standard deviations)'),
+                series=[dict(name=T('+2 標準差', '+2 SD'), rows=band(2), color=PK.S3, width=3),
+                        dict(name=T('±1 標準差', '±1 SD'), rows=band(1), color=PK.S2, width=4),
+                        dict(name=T('−1', '−1'), rows=band(-1), color=PK.S2, width=4, faint=True),
+                        dict(name=T('−2', '−2'), rows=band(-2), color=PK.S3, width=3, faint=True),
+                        dict(name=T('短期持有者成本', 'STH cost basis'), rows=[(r[0], r[2]) for r in rows], color=PK.S1, width=6),
+                        dict(name=T('收盤', 'Close'), rows=[(r[0], r[1]) for r in rows], color=PK.INK3, width=4)],
+                yf=lambda v: f'{v / 1e3:,.0f}K', src='Bitview · Kraken', asof=b['date'],
+                stats=[PK.S('現在位置', 'Now at', ('+' if z >= 0 else '−') + f'{abs(z):.2f} 個標準差', ('+' if z >= 0 else '−') + f'{abs(z):.2f} SD'),
+                       PK.S('−1 標準差', '−1 SD', PK.usd(now['bands']['-1'])),
+                       PK.S('+1 標準差', '+1 SD', PK.usd(now['bands']['1']))])
+
+
+def c_agecost(L, end):
+    """6–12 與 12–18 個月持幣成本（Bitview），2023 年起；底部三格：兩條線的現值、上次交叉。"""
+    a = g(L, 'cycle.age_cost'); rows = [r for r in a['rows'] if r[0] >= PK.dn('2023-01-01')]
+    lc = a['last_cross']; kind = {'death': ('死叉', 'death cross'), 'golden': ('金叉', 'golden cross')}.get(lc['kind'], (lc['kind'], lc['kind']))
+    return dict(kind='line', name=T('6–12 與 12–18 個月持幣成本', '6–12 vs 12–18 month cost basis'),
+                sub=T('兩個年齡層的平均買價；6–12 個月線跌破 12–18 個月線＝死叉，重新上穿＝金叉',
+                      'Average buy price of two age bands; 6–12m falling below 12–18m is a death cross, crossing back above a golden cross'),
+                series=[dict(name=T('收盤', 'Close'), rows=[(r[0], r[1]) for r in rows if r[1]], color=PK.INK3, width=3),
+                        dict(name=T('6–12 個月', '6–12 months'), rows=[(r[0], r[2]) for r in rows], color=PK.S1, width=6),
+                        dict(name=T('12–18 個月', '12–18 months'), rows=[(r[0], r[3]) for r in rows], color=PK.S2, width=6)],
+                yf=lambda v: f'{v / 1e3:,.0f}K', src='Bitview · Kraken', asof=a['date'],
+                stats=[PK.S('6–12 個月成本', '6–12m cost', PK.usd(a['c612'])),
+                       PK.S('12–18 個月成本', '12–18m cost', PK.usd(a['c1218'])),
+                       PK.S(f'上次交叉（{PK.md(lc["date"], "zh")}）', f'Last cross ({PK.md(lc["date"], "en")})',
+                            f'{kind[0]}，{a["days_since"]} 天前', f'{kind[1]}, {a["days_since"]}d ago')])
+
+
+EXTRA = {'ad': c_ad, 'sec': c_sec, 'lthloss': c_lthloss, 'bands': c_bands, 'agecost': c_agecost}   # picks.py 沒有、回覆配圖另外加的圖表
 
 
 def vdash(d, x, y0, y1, color, w=3, dash=16, gap=12):
