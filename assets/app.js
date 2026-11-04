@@ -2105,8 +2105,72 @@
     }).join('');
     // 2026-11-04 自我檢查：手機一次只顯示一版，其他版是 display:none——原本載入時 9 版約 50 張圖全畫（寬度 0 先畫成 280px，切過去再重畫一次）。
     //   改成手機只畫目前這一版，切換時才畫，閒置時順手畫左右兩版；桌面是一整頁往下捲，版面高度要先定，維持一次畫完
+    try { buildToc(); } catch (e) { console.error(e); }
     if (!MQ.matches) drawAllPages();
     void v.offsetWidth; v.classList.add('view-enter');
+  }
+  /* 2026-11-04 整體審查：長版面加版內目錄（5 個區塊以上的版面，頂端一排可點的區塊名）；每張有圖的區塊標題列加「複製連結」。
+     錨點：區塊沒有 id 的，用第一張（沒收起的）圖命名 pn-圖，沒有圖就用 pn-版面-序號 */
+  function buildToc() {
+    document.querySelectorAll('#view .pg').forEach(function (sec) {
+      var page = sec.getAttribute('data-r'), pns = [].slice.call(sec.querySelectorAll(':scope > .grid > .panel'));
+      pns.forEach(function (pn, i) {
+        var c = [].slice.call(pn.querySelectorAll('[id^="c-"]')).filter(function (e) { return !e.closest('.fold'); })[0], key = c ? c.id.slice(2) : null;
+        if (!pn.id) pn.id = 'pn-' + (key && !$('#pn-' + key) ? key : page + '-' + (i + 1));
+        var h = pn.querySelector(':scope > .panel-h');
+        if (h && (key || pn.id.indexOf('pn-' + page + '-') !== 0) && page !== 'overview') h.insertAdjacentHTML('beforeend', '<button type="button" class="cp-link" data-u="' + page + '/' + (key || pn.id.slice(3)) + '" aria-label="' + _T('複製這一格的連結', 'Copy a link to this section') + '" title="' + _T('複製這一格的連結', 'Copy a link to this section') + '">#</button>');
+      });
+      if (pns.length < 5 || page === 'overview' || page === 'method') return;
+      var toc = '<nav class="toc" aria-label="' + _T('這一版的區塊', 'Sections on this page') + '">' + pns.map(function (pn) { var t = pn.querySelector(':scope > .panel-h h2'); return t ? '<a href="#' + page + '/' + pn.id.slice(3) + '" data-pn="' + pn.id + '">' + esc(t.textContent.replace(/[（(].*$/, '').trim()) + '</a>' : ''; }).join('') + '</nav>';
+      var after = sec.querySelector(':scope > .mod-h'); if (after) after.insertAdjacentHTML('afterend', toc);
+    });
+  }
+  function copyText(t) {   // 剪貼簿 API 被拒（沒有焦點、舊瀏覽器）時改用 textarea＋execCommand
+    var old = function () { var ta = document.createElement('textarea'); ta.value = t; ta.style.position = 'fixed'; ta.style.opacity = '0'; document.body.appendChild(ta); ta.select(); try { document.execCommand('copy'); } catch (e) {} document.body.removeChild(ta); };
+    if (navigator.clipboard && navigator.clipboard.writeText) return navigator.clipboard.writeText(t).catch(old);
+    old(); return Promise.resolve();
+  }
+  /* 指標名可點（2026-11-04）：每日判讀、發現、摘要、行動、變化、新聞解讀裡第一次出現的指標名，連到它的圖，滑過顯示一句解釋 */
+  var TERMS = [
+    ['STH-SOPR', 'onchain', 'sopr', '短期持有者（持有不到 155 天）賣出時的平均獲利倍數；大於 1＝平均賺錢賣，小於 1＝認賠賣。', 'Profit multiple on coins sold by short-term holders (held under 155 days); above 1 = sold at a profit on average, below 1 = at a loss.'],
+    ['LTH-SOPR', 'onchain', 'oc-lth-sopr', '長期持有者（持有 155 天以上）賣出時的平均獲利倍數。', 'Profit multiple on coins sold by long-term holders (held 155+ days).'],
+    ['aSOPR', 'onchain', 'oc-asopr', '所有賣出的幣的平均獲利倍數（排除一小時內轉手）。', 'Average profit multiple on all coins sold (excluding coins moved within an hour).'],
+    ['MVRV Z', 'cycle', 'p6', '市值減實現市值，再除以歷史標準差；越高代表整體帳面獲利越大、越接近過熱。頂部三指標之一。', 'Market cap minus realized cap, divided by its historical standard deviation; higher = bigger paper profits, closer to overheating. One of the top-3 indicators.'],
+    ['MVRV', 'cycle', 'p20', '市值 ÷ 實現市值（每顆幣最後一次移動時的價格加總）；大於 1 代表整體帳面獲利。', 'Market cap ÷ realized cap (every coin valued at the price it last moved); above 1 = the market is in profit overall.'],
+    ['NUPL', 'cycle', 'p6', '淨未實現損益：帳面獲利佔市值的比例。頂部三指標之一。', 'Net unrealized profit/loss: paper profit as a share of market cap. One of the top-3 indicators.'],
+    ['Puell', 'cycle', 'p6', '礦工每日收入 ÷ 一年平均。頂部三指標之一。', 'Daily miner revenue ÷ its 1-year average. One of the top-3 indicators.'],
+    ['URPD', 'onchain', 'urpd', '籌碼分布：每個價格區間有多少幣最後一次在那裡換手。', 'Supply distribution: how many coins last moved in each price band.'],
+    ['真實市場均價', 'cycle', 'ev-tmm', '排除長期不動的幣之後，活躍投資人的平均成本（True Market Mean）。', 'Average cost basis of active investors, excluding long-dormant coins (True Market Mean).', 'true market mean'],
+    ['短期持有者', 'onchain', 'cohort', '持有不到 155 天的幣（STH），通常是新進場的買家。', 'Coins held for under 155 days (STH), usually newer buyers.', 'short-term holder'],
+    ['長期持有者', 'onchain', 'cohort', '持有 155 天以上的幣（LTH），通常是老手。', 'Coins held for 155 days or more (LTH), usually seasoned holders.', 'long-term holder'],
+    ['Coinbase 溢價', 'flows', 'pr-us', 'Coinbase（美元）比 Binance（USDT）貴多少；大於 0＝美國買盤比較積極。', 'How much pricier Coinbase (USD) is than Binance (USDT); above 0 = US buyers are keener.', 'Coinbase premium'],
+    ['資金費率', 'deriv', '', '永續合約多空雙方定期互付的費用；正值＝做多的人付錢，槓桿偏多。', 'The periodic fee between longs and shorts on perpetual futures; positive = longs pay, leverage leans long.', 'funding'],
+    ['DVOL', 'deriv', 'vol', 'Deribit 的比特幣 30 天隱含波動率指數。', 'Deribit\'s 30-day implied volatility index for bitcoin.'],
+    ['Tidemark', 'cycle', 'tm', '第三方的頂部／底部綜合模型，本站只作讀值。', 'A third-party top/bottom composite model; shown as a reading only.'],
+    ['賣方衰竭', 'onchain', 'sec', '獲利供給 × 波動的乘積；跌到很低代表賣壓與波動同時枯竭。', 'Supply in profit × volatility; very low readings mean selling and volatility have both dried up.', 'seller exhaustion'],
+    ['表觀需求', 'onchain', 'ad', '新挖出的幣減去一年以上未動供給的變化，粗估市場吸收了多少。', 'New issuance minus the change in coins unmoved for a year — a rough gauge of how much the market absorbed.', 'apparent demand'],
+    ['週線多空分數', 'cycle', 'regime', '六項已有訊號合成的週線分數，−6 到 +6。', 'A weekly score built from six existing signals, −6 to +6.', 'regime score'],
+    ['頂部三指標', 'cycle', 'p6', 'MVRV Z、NUPL、Puell 的四年百分位；任兩項到 80 進入頂部區。', 'Four-year percentiles of MVRV Z, NUPL and Puell; any two at 80 = top zone.', 'top-3 indicators']
+  ];
+  function termify(root) {
+    var boxes = root.querySelectorAll('.read, .find .what, .dek p, .acts li > span, .deltas p, .read-box');
+    var list = TERMS.map(function (t) { var w = LANG === 'en' && t[5] ? t[5] : t[0]; return { w: w, lw: w.toLowerCase(), t: t }; }).sort(function (a, b) { return b.w.length - a.w.length; });
+    var ascii = function (c) { return c && /[A-Za-z0-9-]/.test(c); };
+    [].forEach.call(boxes, function (box) {
+      list.forEach(function (it) {
+        var walk = document.createTreeWalker(box, NodeFilter.SHOW_TEXT, null), n;
+        while ((n = walk.nextNode())) {
+          if (n.parentNode.closest('a')) continue;
+          var tx = n.nodeValue, i = (LANG === 'en' ? tx.toLowerCase() : tx).indexOf(LANG === 'en' ? it.lw : it.w);
+          if (i < 0) continue;
+          if (/^[\x00-\x7f]+$/.test(it.w) && (ascii(tx[i - 1]) || ascii(tx[i + it.w.length]))) continue;   // 英數詞要整詞相符（STH 不吃到 STH-SOPR 的一部分）
+          var t = it.t, a = document.createElement('a'); a.className = 'term' + (t[2] ? ' jump' : ''); a.href = '#' + t[1]; if (t[2]) a.setAttribute('data-chart', t[2]);
+          a.setAttribute('data-def', _T(t[3], t[4])); a.textContent = tx.substr(i, it.w.length);
+          var rest = n.splitText(i); rest.nodeValue = rest.nodeValue.slice(it.w.length); n.parentNode.insertBefore(a, rest);
+          break;   // 每個區塊只連第一次出現
+        }
+      });
+    });
   }
   var drawn = {};
   function drawPage(id) {
@@ -2115,6 +2179,7 @@
     try { if (V[id].after) V[id].after(); } catch (e) { console.error(e); }
     try { attachReads(sec); } catch (e) { console.error(e); }
     try { markSignals(sec); } catch (e) { console.error(e); }
+    try { termify(sec); } catch (e) { console.error(e); }
     mounted.forEach(observe); settleMeters(sec);
   }
   function drawAllPages() { ROUTES.forEach(function (r) { drawPage(r[0]); }); }
@@ -2205,6 +2270,12 @@
     window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h !== cur) go(h); });
     // 2026-10-23：「看圖 →」連結：換到那一版後捲到那張圖並閃一下
     document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.ev-open, .oc-more'); if (b) unfold(b.closest('.fold')); });
+    document.addEventListener('click', function (e) {
+      var t = e.target.closest && e.target.closest('.toc a'); if (t) { e.preventDefault(); var pn = document.getElementById(t.getAttribute('data-pn')); if (pn) { var far = Math.abs(pn.getBoundingClientRect().top) > innerHeight * 2; window.scrollTo({ top: pn.getBoundingClientRect().top + scrollY - stickyH() - GAP, behavior: reduced || far ? 'auto' : 'smooth' }); } return; }
+      var cp = e.target.closest && e.target.closest('.cp-link'); if (cp) { copyText(location.origin + location.pathname + '#' + cp.getAttribute('data-u')).then(function () { cp.textContent = _T('已複製', 'Copied'); cp.classList.add('ok'); setTimeout(function () { cp.textContent = '#'; cp.classList.remove('ok'); }, 1500); }); }
+    });
+    document.addEventListener('pointerover', function (e) { var a = e.target.closest && e.target.closest('a.term'); if (a && e.pointerType !== 'touch') showTip(e.clientX, e.clientY, '<div class="t">' + esc(a.textContent) + '</div><div class="term-def">' + esc(a.getAttribute('data-def')) + '</div>'); });
+    document.addEventListener('pointerout', function (e) { if (e.target.closest && e.target.closest('a.term')) hideTip(); });
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a.jump'); if (!a) return; var ch = a.getAttribute('data-chart'); if (!ch) return;
       e.preventDefault(); jumpTo(a.getAttribute('href').slice(1), ch);

@@ -677,3 +677,14 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .evfold.fold .evcharts, .evfold.fold > .note { display: none; }
 .evfold.fold .ev-open { display: block; width: 100%; margin: 14px 0 6px; padding: 12px; border: 1px solid var(--line-2); background: transparent; color: var(--ink); font: inherit; font-size: 14px; cursor: pointer; }
 .evfold.fold .ev-open:hover { border-color: var(--ink); }
+/* 2026-11-04 版內目錄、複製連結、指標名連結 */
+.toc { display: flex; flex-wrap: wrap; gap: 6px 8px; margin: 0 0 18px; }
+.toc a { font-size: 12.5px; color: var(--ink-2); text-decoration: none; padding: 3px 10px; border: 1px solid var(--line-2); border-radius: 999px; white-space: nowrap; max-width: 16em; overflow: hidden; text-overflow: ellipsis; }
+.toc a:hover { color: var(--ink); border-color: var(--ink); }
+@media (max-width: 860px) { .toc { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; margin: 0 -16px 14px; padding: 0 16px 2px; } .toc::-webkit-scrollbar { display: none; } }
+.cp-link { margin-left: 8px; padding: 0 6px; border: 1px solid transparent; border-radius: 3px; background: none; color: var(--ink-3); font: 600 12px/1.6 var(--f-mono); cursor: pointer; flex: none; }
+.cp-link:hover { color: var(--ink); border-color: var(--line-2); }
+.cp-link.ok { color: var(--up); font-family: inherit; }
+a.term { color: inherit; text-decoration: underline dotted var(--ink-3); text-underline-offset: 3px; }
+a.term:hover { color: var(--red-ink); text-decoration-color: currentColor; }
+.tip .term-def { max-width: 300px; font-size: 12.5px; line-height: 1.6; white-space: normal; }
