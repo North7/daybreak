@@ -16,7 +16,9 @@
 
 ### 內文
 
-這幾天看到很多人在問同一件事：不是說牛市來了嗎，怎麼越走越弱？
+從低點起算第 18 週，這輪比特幣只漲了 31%。2019 和 2023 年的同一週，都已經漲了將近 70%。
+
+難怪這幾天很多人在問同一件事：不是說牛市來了嗎，怎麼越走越弱？
 
 心情我懂。從 9/21 的高點 86,594 到 11/03 收盤 77,332，跌了 10.7%。ETF 10/30 和 11/02 兩天流出 10.4 億美元，恐懼貪婪指數一週內從 48 掉到 26。價格還比一年前低 30.5%。這種時候說「牛市」，聽起來確實有點刺耳。
 
@@ -125,6 +127,8 @@
 
 我覺得大家懷疑一點都不奇怪。比起爭論牛來了沒，更值得盯的是：現貨買盤會不會回來。
 
+你覺得這輪比較像 2015 年那樣慢慢磨上去，還是 2019 年那種假突破？很想聽聽你看到的。
+
 這篇只整理數據，不是買賣建議。每天的數字我都放在破曉 Daybreak：https://north7.github.io/daybreak/
 
 #比特幣 #BTC #牛市
@@ -141,6 +145,50 @@
 >
 > #比特幣 #BTC #牛市
 
+### 拆出來的單則貼文
+
+每則都是獨立的原創貼文：在長文上按「引用」發（引用算原創，串文的第 2 則以後算回覆）。數據是 11/03；標「當天更新」的，發之前請 Claude 用當天數據改數字。
+
+#### 1｜11/05（四）20:00｜配圖 `7-lth.png`｜當天更新
+
+> 這波反彈，老手一直在賣。
+>
+> 長期持有者 30 天淨減持 149,737 顆。這段淨減持從 8/4 開始已經 91 天，同期價格反而漲了 19.5%。
+>
+> 每次反彈上面都有人出貨，這也是這輪牛市走得這麼慢的原因之一。完整的週期數字我整理在這篇 👇
+>
+> #比特幣 #BTC #鏈上數據
+
+#### 2｜11/06（五）19:30，非農（21:30）之前｜配圖 `3-powerlaw.png`
+
+> 覺得牛市已經到頂了？頂部指標可不這麼看。
+>
+> 價格只有冪律趨勢價的 0.53 倍。過去四輪的底部落在 0.24–0.48 倍，頂部最低的一次也有 1.12 倍。Tidemark 頂部訊號是 0，Pi Cycle 比值 0.50。
+>
+> 現在離過熱很遠，反而比較靠近歷史底部那一側 👇
+>
+> #比特幣 #BTC #週期
+
+#### 3｜11/07（六）20:00｜配圖 `2-regime.png`
+
+> 週線多空分數 9/21 翻多，到現在 6 週，但分數只有 0.88。
+>
+> 過去幾輪真正的牛市，這個分數都衝到 +3 以上。現在才剛冒出零軸。
+>
+> 上次 2023/01 翻多，之後維持了 153 週；2019/04 那次只撐了 30 週。這次是哪一種，我覺得要看現貨回不回來 👇
+>
+> #比特幣 #BTC #牛市
+
+#### 4｜11/08（日）20:00｜配圖 `4-cost.png`｜當天更新
+
+> 76K–75K 是這輪最重要的一層。
+>
+> 短期持有者的平均成本在 75,192–75,892，收盤 77,332 還站在上面。11/03 這一層一天多了 13.5 萬顆短線籌碼。
+>
+> 守住，成本就在這裡重新墊高；跌破，帳面虧損的人會一下子變多。我會一直盯著這一層 👇
+>
+> #比特幣 #BTC #鏈上數據
+
 ---
 
 ## English
@@ -151,7 +199,9 @@ Is the bull actually here? Here's what the cycle numbers say
 
 ### Body
 
-I keep seeing the same question this week: if we're in a bull market, why does it feel like it's getting weaker?
+Eighteen weeks off the low, this cycle is up just 31%. By the same week, 2019 and 2023 were both up close to 70%.
+
+No wonder I keep seeing the same question: if we're in a bull market, why does it feel like it's getting weaker?
 
 Fair enough. BTC is down 10.7% from the Sep 21 high of 86,594 to a 77,332 close on Nov 3. ETFs lost $1.04B across Oct 30 and Nov 2. Fear & Greed dropped from 48 to 26 in a week. Price is still 30.5% below where it was a year ago. Calling this a bull market sounds a bit off right now.
 
@@ -260,6 +310,8 @@ By the rule, the bull is here, and today is day 26. On cycle position, price is 
 
 The doubt makes sense to me. Instead of arguing about whether the bull is here, I'd watch whether spot buyers come back.
 
+Does this cycle look more like 2015's slow grind or 2019's false breakout to you? Curious what you're seeing.
+
 This is a data roundup, not trading advice. I post the numbers daily at Daybreak: https://north7.github.io/daybreak/
 
 #Bitcoin #BTC #BullMarket
@@ -275,3 +327,47 @@ Sources: price, MVRV, realized cap, exchange supply from CoinMetrics; power law 
 > Cycle position, the bull case and the doubts, with 8 charts 👇
 >
 > #Bitcoin #BTC #BullMarket
+
+### Standalone posts
+
+Each is its own original post: quote the article to publish it (quotes count as originals; thread replies don't). Data as of Nov 3; ones marked "refresh" should get that day's numbers before posting.
+
+#### 1 | Nov 5 (Thu), 8 PM Taipei | chart `7-lth-en.png` | refresh
+
+> Long-term holders have sold this entire bounce.
+>
+> Net −149,737 BTC in 30 days, and net sellers for 91 days since Aug 4 while price rose 19.5%.
+>
+> Every rally meets supply. Part of why this bull feels slow 👇
+>
+> #Bitcoin #BTC #onchain
+
+#### 2 | Nov 6 (Fri), 7:30 PM Taipei, before payrolls | chart `3-powerlaw-en.png`
+
+> Think this bull already topped? Top gauges disagree.
+>
+> Price is 0.53x the power-law trend. Past lows: 0.24–0.48x; smallest top: 1.12x. Tidemark top signal: 0. Pi Cycle: 0.50.
+>
+> Closer to past lows than past tops 👇
+>
+> #Bitcoin #BTC #PowerLaw
+
+#### 3 | Nov 7 (Sat), 8 PM Taipei | chart `2-regime-en.png`
+
+> My weekly regime score flipped bullish Sep 21. Six weeks in, it's 0.88.
+>
+> Past bull runs pushed it above +3. This one barely cleared zero.
+>
+> Jan 2023's flip lasted 153 weeks, Apr 2019's just 30. Spot buyers decide which this is 👇
+>
+> #Bitcoin #BTC #BullMarket
+
+#### 4 | Nov 8 (Sun), 8 PM Taipei | chart `4-cost-en.png` | refresh
+
+> 76K–75K is the zone that matters now.
+>
+> STH cost basis: 75,192–75,892. The 77,332 close sits above it, and the band added 135K BTC of short-term supply on Nov 3.
+>
+> Hold, and the cost base resets here. Break, and many go underwater 👇
+>
+> #Bitcoin #BTC #onchain

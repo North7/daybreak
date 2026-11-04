@@ -67,17 +67,36 @@ def body(text, lang):
     return re.sub(r'<div class="part">\s*</div>', '', '\n'.join(out))   # 圖和圖之間的一段＝一個 part，各有複製鈕（JS 加）
 
 
+def singles(s, lang):
+    """「拆出來的單則貼文」：每則一張卡，附複製文字與配圖下載。"""
+    head, rest = s.split('\n', 1); items = rest.split('#### ')
+    intro = items[0].strip(); cards = []
+    for k, it in enumerate(items[1:], 1):
+        lab, body_ = it.split('\n', 1)
+        txt = '\n'.join(l[2:] if l.startswith('> ') else l.lstrip('>') for l in body_.strip().splitlines())
+        m = re.search(r'`(\d+)-[\w-]+?(?:-en)?\.png`', lab); p = IMG.get((int(m.group(1)), lang)) if m else None
+        im = f'<a href="{p}" download><img src="{p}" alt="" loading="lazy"></a>' if p else ''
+        cid = f'{lang}-single{k}'
+        cards.append(f'<div class="single"><div class="sh">{inline(lab)}</div><div class="sb">{im}<p>{inline(txt).replace(chr(10), "<br>")}</p></div>'
+                     f'<div class="btns"><button data-copy="{cid}">{"複製文字" if lang == "zh" else "Copy text"}</button>'
+                     + (f'<a class="btn" href="{p}" download>{"下載配圖" if lang == "zh" else "Download chart"}</a>' if p else '') +
+                     f'</div><textarea hidden id="{cid}">{html.escape(txt)}</textarea></div>')
+    return f'<div class="singles"><h2>{html.escape(head.strip())}</h2><p class="meta">{inline(intro)}</p>{"".join(cards)}</div>'
+
+
 def section(lang, head):
     s = md.split(f'## {head}', 1)[1]; s = re.split(r'\n---\n|\n## ', s, 1)[0]
     title = s.split('### ', 2)[1].split('\n', 1)[1].strip()
     b = s.split('### ', 3)[2].split('\n', 1)[1]
-    short = s.split('### ', 4)[3].split('\n', 1)[1]
+    parts = s.split('### ', 4)
+    short = parts[3].split('\n', 1)[1]
+    sing = singles(parts[4], lang) if len(parts) > 4 else ''
     short = '\n'.join(l[2:] if l.startswith('> ') else l.lstrip('>') for l in short.strip().splitlines())
     h = body(b, lang)
     steps = {'zh': ['在 X 開「文章」（Articles）→ 新增', '封面上傳下面的封面圖（5:2 橫圖），標題按「複製標題」貼上', '內文一段一段來：按每段右上的「複製這段」→ 貼到 X → 插入下面那張圖（圖下方可下載）→ 再複製下一段',
-                    '發布後，用下面的短貼文「引用」這篇長文再發一次'],
+                    '發布後，用下面的短貼文「引用」這篇長文再發一次；之後幾天照最下面的「單則貼文」各引用一次'],
              'en': ['On X, open Articles → Write', 'Upload the cover below (5:2 landscape); paste the title with "Copy title"', 'Work part by part: tap "Copy part" → paste into X → insert the chart below it (download link under each) → copy the next part',
-                    'After publishing, quote the article with the short post below']}[lang]
+                    'After publishing, quote the article with the short post below; over the next days, quote it again with each standalone post at the bottom']}[lang]
     nfig = len({n for (n, l) in IMG if l == lang and n})
     cv = IMG.get((0, lang))
     cov = (f'<figure class="cover"><img src="{cv}" alt="cover"><figcaption><span class="n">{"封面" if lang == "zh" else "Cover"}</span>5:2'
@@ -89,6 +108,7 @@ def section(lang, head):
 <h1>{html.escape(title)}</h1>
 {h}
 <div class="short"><b>{'帶出長文的短貼文' if lang == 'zh' else 'Short post to share the article'}</b><p>{inline(short).replace(chr(10), '<br>')}</p></div>
+{sing}
 <textarea hidden id="{lang}-title">{html.escape(title)}</textarea><textarea hidden id="{lang}-short">{html.escape(short)}</textarea>
 </section>'''
 
@@ -118,6 +138,10 @@ figcaption .n{{background:var(--red);color:#fff;padding:0 8px;font-weight:700}}f
 .part{{position:relative;border-left:3px solid transparent;padding-left:12px;margin-left:-15px}}.part:hover{{border-left-color:var(--line)}}
 .pbtn{{float:right;font:inherit;font-size:13px;border:2px solid var(--ink);background:var(--paper);color:var(--ink);padding:2px 10px;margin:6px 0 6px 10px;cursor:pointer}}
 .pbtn small{{color:var(--ink3);font-size:12px}}
+.singles{{margin-top:40px}}.single{{background:var(--card);border:1px solid var(--line);padding:12px 16px;margin:14px 0}}
+.sh{{font-size:14px;font-weight:700;margin-bottom:8px}}.sb{{display:flex;gap:14px;align-items:flex-start}}.sb img{{width:120px;height:auto;flex:none;border:1px solid var(--line)}}.sb p{{margin:0;font-size:15px}}
+a.btn{{font-size:14px;border:2px solid var(--ink);color:var(--ink);padding:4px 12px;text-decoration:none}}
+@media (max-width:480px){{.sb{{flex-direction:column}}.sb img{{width:100%}}}}
 </style></head><body>
 <header><b>破曉 Daybreak · 長文預覽</b><span style="color:var(--ink3);font-size:14px">{html.escape(ttl)}</span>
 <div class="tabs"><button data-tab="zh" aria-pressed="true">中文</button><button data-tab="en" aria-pressed="false">English</button></div></header>
