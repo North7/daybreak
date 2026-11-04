@@ -18,6 +18,7 @@ ops/
     make_short_016.py  No.016 分鏡（目前最新的版本，下一期從這份複製）
     lines_016.json     No.016 旁白 {"base": [每場景秒數], "lines": [每場景一句]}
     out/               輸出的 mp4、封面、字幕（不進 git，影片太大）
+  articles/          X 長文草稿（中英文各一篇＋帶出長文的短貼文），檔名 <日期>-<主題>.md
   replies/           X 互動回覆
     index.html         回覆小幫手（讀 data/replies.json 與 data/replies/ 的配圖）
     grok-prompt.md     給 Grok 的找文規則（每天整段貼給 Grok）
