@@ -628,23 +628,46 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .find-sum .imp { font-size: 14px; }
 .find-sum .note { margin: 0; padding: 0; }
 
-/* 2026-11-04 頭版重排：數字卡附解讀（原本卡片＋「這些數字代表什麼」表格重複列同樣 6 個數字）、上期後續收合 */
-.kpis-r { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.kpis-r .kpi { padding: 14px 18px 16px; border-left: 1px solid var(--line); border-bottom: 1px solid var(--line); }
-.kpis-r .kpi:nth-child(3n+1) { padding-left: 0; border-left: 0; }
-.kpis-r .kpi .k { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
-.kpis-r .kpi .d { margin: 4px 0 0; font-size: 13px; line-height: 1.7; color: var(--ink-2); }
+/* 2026-11-04 頭版重排：上期後續收合；訊號總表（取代「今日數據」卡片與解讀表） */
 .sec-h .src { font-size: 12px; color: var(--ink-3); }
 @media (max-width: 860px) { .sec-h .src { display: none; } }
+.board { border-top: 2px solid var(--ink); }
+.bd-g h3 { margin: 16px 0 2px; display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 12px; font-size: 13.5px; font-weight: 900; }
+.bd-g h3 small { font-size: 12px; font-weight: 400; color: var(--ink-3); }
+.bd-r { display: grid; grid-template-columns: 190px 112px minmax(120px, 240px) 44px 18px minmax(0, 1fr); grid-template-areas: "k v g t j d"; gap: 4px 14px; align-items: center; padding: 10px 0; border-bottom: 1px solid var(--line); }
+.bd-r .k { grid-area: k; font-weight: 700; font-size: 13.5px; line-height: 1.35; }
+.bd-r .k small { display: block; font-weight: 400; font-size: 11.5px; color: var(--ink-3); }
+.bd-r .v { grid-area: v; font-size: 15px; font-weight: 700; white-space: nowrap; text-align: right; }
+.bd-r .gauge, .bd-r .steps, .bd-r .dvg { grid-area: g; }
+.bd-r .tn { grid-area: t; }
+.bd-r .jump { grid-area: j; color: var(--red-ink); text-decoration: none; font-weight: 700; }
+.bd-r .d { grid-area: d; margin: 0; font-size: 13px; line-height: 1.65; color: var(--ink-2); }
+.gauge { position: relative; display: block; height: 18px; background: var(--line); border-right: 2px solid var(--down); }
+.gauge i { position: absolute; left: 0; top: 0; bottom: 0; background: var(--ink-3); }
+.gauge.near i { background: var(--flare); }
+.gauge.hit i { background: var(--down); }
+.gauge b { position: relative; display: block; padding-left: 6px; font-family: var(--f-mono); font-size: 11px; font-weight: 500; line-height: 18px; color: var(--ink); white-space: nowrap; }
+.gauge.none { background: transparent; border-right: 0; }
+.steps { display: flex; gap: 2px; }
+.steps i { flex: 1; font-style: normal; font-size: 11px; line-height: 18px; text-align: center; background: var(--line); color: var(--ink-3); white-space: nowrap; }
+.steps i.on { font-weight: 700; color: var(--ink); }
+.steps i.on.up { background: var(--up-dim); color: var(--up); }
+.steps i.on.down { background: var(--down-dim); color: var(--down); }
+.steps i.on.orbit { background: var(--orbit-dim); color: var(--orbit); }
+.dvg { position: relative; display: block; height: 18px; background: var(--line); }
+.dvg::after { content: ""; position: absolute; left: 50%; top: -2px; bottom: -2px; width: 1px; background: var(--ink-2); }
+.dvg i { position: absolute; top: 3px; bottom: 3px; }
+.dvg i.up { background: var(--up); } .dvg i.down { background: var(--down); }
+.dvg b { position: absolute; right: 4px; top: 0; font-family: var(--f-mono); font-size: 10px; font-weight: 400; line-height: 18px; color: var(--ink-3); }
 @media (max-width: 1180px) {
-  .kpis-r { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .kpis-r .kpi:nth-child(3n+1) { padding-left: 18px; border-left: 1px solid var(--line); }
-  .kpis-r .kpi:nth-child(2n+1) { padding-left: 0; border-left: 0; }
+  .bd-r { grid-template-columns: 170px 100px minmax(0, 1fr) 44px 18px; grid-template-areas: "k v g t j" "d d d d d"; }
 }
 @media (max-width: 560px) {
-  .kpis-r { grid-template-columns: minmax(0, 1fr); }
-  .kpis-r .kpi, .kpis-r .kpi:nth-child(3n+1) { padding: 12px 0 14px; border-left: 0; }
+  .bd-r { grid-template-columns: minmax(0, 1fr) auto auto 18px; grid-template-areas: "k v t j" "g g g g" "d d d d"; gap: 6px 10px; }
 }
+.news-item.brief h3 { margin: 4px 0 0; font-size: 15px; }
+.news-item.brief h3 a { color: inherit; text-decoration: none; }
+.news-item.brief h3 a:hover { text-decoration: underline; }
 .fu h4 { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; }
 .fu h4 .note { margin: 0; padding: 0; font-weight: 400; }
 .fu-open { margin-top: 8px; }

@@ -235,7 +235,7 @@
   }
 
   /* ---------------- Shared bits ---------------- */
-  function panel(cls, title, src, body, extra) { return '<section class="panel ' + cls + '"><div class="panel-h"><h2>' + title + '</h2>' + (extra || '') + (src ? '<span class="src">' + src + '</span>' : '') + '</div>' + body + '</section>'; }
+  function panel(cls, title, src, body, extra, id) { return '<section class="panel ' + cls + '"' + (id ? ' id="pn-' + id + '"' : '') + '><div class="panel-h"><h2>' + title + '</h2>' + (extra || '') + (src ? '<span class="src">' + src + '</span>' : '') + '</div>' + body + '</section>'; }
   function readBar(key, bare) {
     var m = N && N.modules && N.modules[key]; if (!m) return '';
     if (ZH_ONLY) return '<div class="read' + (bare ? ' bare' : '') + '" data-k="' + key + '">' + (bare ? '' : '<span class="tag">TODAY’S READ</span>') + '<div><p class="note">The written commentary for this edition is available in Chinese only. All numbers and the readings under them are in English.</p></div></div>';
@@ -450,7 +450,8 @@
   var SIG_K = { extreme: ['極端值', 'Extreme'], jump: ['急變', 'Sharp move'], cross: ['翻轉', 'Flip'], level: ['關鍵價位', 'Key level'], streak: ['連續', 'Streak'], combo: ['組合', 'Combo'] };
   function lt(o) { return !o ? '' : typeof o === 'string' ? o : (LANG === 'en' && o.en) || o.zh || ''; }
   function jumpA(page, chart, label) { return page ? '<a class="jump" href="#' + esc(page) + '" data-chart="' + esc(chart || '') + '">' + label + '</a>' : ''; }
-  function sigOn(chart) { return ((D.signals || {}).items || []).filter(function (s) { return s.chart && s.chart === chart; }); }
+  function chartKey(ch) { return ALIAS[ch] ? ALIAS[ch][1] : ch; }   // 併掉的圖：異動標記改標在保留的那一張
+  function sigOn(chart) { return ((D.signals || {}).items || []).filter(function (s) { return s.chart && chartKey(s.chart) === chart; }); }
   function sigV(el) { return el && el.id ? sigOn(el.id.replace(/^c-/, '')).filter(function (s) { return s.x != null; }).map(function (s) { return { x: s.x, label: _T('異動', 'Signal') }; }) : []; }
   function findingsHtml() {
     var has = N && N.findings, fs = (N && N.findings) || [], fu = (N && N.followups) || [], sg = (D.signals || {}).items || [];
@@ -481,12 +482,12 @@
     var sum = nl ? '<p class="find-sum"><span class="imp ' + ov + '">' + (ov === 'bull' ? _T('整體偏多', 'Leaning bullish') : ov === 'bear' ? _T('整體偏空', 'Leaning bearish') : cnt.bull ? _T('多空互見', 'Mixed') : _T('整體中性', 'Neutral overall')) + '</span><span>' +
       _T('偏多 ' + cnt.bull + ' · 偏空 ' + cnt.bear + ' · 中性 ' + cnt.neutral, cnt.bull + ' bullish · ' + cnt.bear + ' bearish · ' + cnt.neutral + ' neutral') + '</span><span class="note">' + _T('描述這些發現對價格的一般含意，不是預測', 'what these findings usually mean for price; not a forecast') + '</span></p>' : '';
     var empty = has ? _T('本期沒有值得特別注意的異動。', 'Nothing unusual enough to call out today.') : _T('本期判讀還沒有寫發現；下面是自動偵測的異動。', 'Today\'s commentary has no findings yet; detected signals are below.');
-    return _T('<div class="sec-h"><h2>今日發現</h2><span class="en">The Findings</span><hr></div>', '<div class="sec-h"><h2>Today\'s findings</h2><span class="en">The Findings</span><hr></div>') +
+    return _T('<div class="sec-h" id="pn-findings"><h2>今日發現</h2><span class="en">The Findings</span><hr></div>', '<div class="sec-h" id="pn-findings"><h2>Today\'s findings</h2><span class="en">The Findings</span><hr></div>') +
       sum + '<div class="finds">' + (cards || '<p class="note">' + empty + '</p>') + '</div>' + fuH + sgH;
   }
   /* 有異動的圖：圖上方標一行（哪一項、數字），圖上標日期線（lineChart 的 sigV） */
   function markSignals(root) {
-    var by = {}; ((D.signals || {}).items || []).forEach(function (s) { if (s.chart) (by[s.chart] = by[s.chart] || []).push(s); });
+    var by = {}; ((D.signals || {}).items || []).forEach(function (s) { if (s.chart) { var k = chartKey(s.chart); (by[k] = by[k] || []).push(s); } });
     Object.keys(by).forEach(function (ch) {
       var el = (root || document).querySelector('#c-' + ch); if (!el || (el.previousElementSibling && el.previousElementSibling.classList.contains('sig-flag'))) return;
       el.insertAdjacentHTML('beforebegin', '<p class="sig-flag"><span class="chip flare"><i></i>' + _T('異動', 'Signal') + '</span>' + by[ch].map(function (s) { return '<span><b>' + esc(lt(s.title)) + '</b> ' + esc(lt(s.fig)) + '</span>'; }).join('') + '</p>');
@@ -499,7 +500,8 @@
       rows.map(function (x) { var src = x.url ? '<a href="' + esc(x.url) + '" target="_blank" rel="noopener">' + esc(x.source) + '</a>' : esc(x.source); return '<tr><td><b>' + src + '</b><br><span class="note">' + esc(x.title || '') + (x.date ? _t('，') + fmt.md(x.date) : '') + (x.access === 'title_only' ? _t('・只取得標題') : '') + '</span></td><td>' + esc(x.points) + '</td><td>' + esc(x.meaning) + '</td></tr>'; }).join('') +
       _t('</tbody></table></div><p class="note">研報只作文字對照，不改變任何規則；只取得標題的不作判斷依據。</p>');
   }
-  function newsItem(n, lead, ix) {
+  function newsItem(n, lead, ix, brief) {   // brief：頭版側欄只列標題（2026-11-04；完整解讀在消息版，原本頭版與消息版各印一次）
+    if (brief) return '<article class="news-item brief"><div class="news-meta"><span class="cat">' + esc(catT(n.cat)) + '</span>' + impChip(n.impact) + '<span>' + esc(n.time.slice(5).replace('-', '/')) + '</span></div><h3><a href="#news">' + esc(n.title) + '</a></h3></article>';
     return '<article class="' + (lead ? 'news-lead' : 'news-item') + '">' + (ix ? '<span class="idx">' + ('0' + ix).slice(-2) + '</span>' : '') + '<div class="news-meta"><span class="cat">' + esc(catT(n.cat)) + '</span>' + impChip(n.impact) + '<span>' + esc(n.time.slice(5).replace('-', '/')) + '</span></div><h3>' + esc(n.title) + _t('</h3><div class="read-box"><b class="lbl">解讀</b>') + esc(n.read) + _t('</div><div class="src-link">來源：<a href="') + esc(n.url) + '" target="_blank" rel="noopener">' + esc(n.source) + '</a>' + (n.module ? ' · <a href="#' + n.module + _t('">看相關數據 →</a>') : '') + '</div></article>';
   }
 
@@ -563,6 +565,49 @@
       return [x < 0 ? _T('長期持有者 30 日淨減少 ', 'Long-term holders shed a net ') + coins(-x, 1) + _T('，正在賣出（分配）', ' over 30 days — they are distributing') + (tp < 0 ? _T('，但規模只有 2025 頂部時（' + coins(-tp, 1) + '）的 ' + fmt.n(x / tp * 100, 0) + '%。', ', but that is only ' + fmt.n(x / tp * 100, 0) + '% of the 2025-top pace (' + coins(-tp, 1) + ').') : _t('。'))
         : _T('長期持有者 30 日淨增加 ' + coins(x, 1) + '，正在累積，籌碼被鎖住。', 'Long-term holders added a net ' + coins(x, 1) + ' over 30 days — accumulating and locking up supply.'), x > 0 ? 'pos' : x <= v.p10_since_2022_11 ? 'neg' : 'neu']; }
   };
+
+  /* 訊號總表（2026-11-04 整體審查）：原本 8 個綜合讀數散在頭版、週期、鏈上三版，彼此關係沒交代。這裡分三組排在一起：
+     方向（現在偏多還是偏空）、離頂部多近、離出場多遠。後兩組的條一律是「離觸發多近」：100% ＝碰到觸發線（或本輪極值），
+     讀法一致；方向組用自己的刻度（階段三格、多空分數 −6～+6）。每列連到該指標的詳細圖。只作讀值，不新增任何判定 */
+  function boardHtml() {
+    var cm = D.cycle.cm || {}, p6 = D.cycle.p6 || {}, tm = D.cycle.tidemark || {}, pl = D.cycle.powerlaw || {}, st = D.cycle.stage || {}, rg = D.cycle.regime || {}, ex = D.exit.status || {}, c = D.price.bar.c, tr = D.onchain.top_radar || {};
+    var sg = function (v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + fmt.n(Math.abs(v), 2); };
+    var gauge = function (p, lab) { if (p == null || !isFinite(p)) return '<span class="gauge none"></span>'; var w = Math.max(0, Math.min(100, p)); return '<span class="gauge' + (p >= 100 ? ' hit' : p >= 85 ? ' near' : '') + '"><i style="width:' + w.toFixed(1) + '%"></i><b>' + (lab || fmt.n(p, 0) + '%') + '</b></span>'; };
+    var row = function (o) { return '<div class="bd-r"><span class="k">' + o.k + (o.sub ? '<small>' + o.sub + '</small>' : '') + '</span><span class="v num">' + o.v + '</span>' + (o.viz || gauge(o.p, o.pl)) + tnHtml(o.r ? o.r[1] : 'neu') + jumpA(o.to[0], o.to[1], '→') + (o.r && o.r[0] ? '<p class="d">' + esc(o.r[0]) + '</p>' : '') + '</div>'; };
+    var grp = function (h, note, rows) { rows = rows.filter(Boolean); return rows.length ? '<div class="bd-g"><h3>' + h + (note ? '<small>' + note + '</small>' : '') + '</h3>' + rows.map(row).join('') + '</div>' : ''; };
+    // 方向
+    var S3 = Object.keys(STAGE), si = S3.indexOf(st.stage), ev = st.evidence || {};
+    var stageViz = '<span class="steps">' + S3.map(function (s, i) { return '<i class="' + (i === si ? 'on ' + (STAGE[s] || [])[1] : i < si ? 'past' : '') + '">' + (STAGE[s] || [s])[0] + '</i>'; }).join('') + '</span>';
+    var stageR = si < 0 ? null : [_T((STAGE[st.stage] || [''])[0] + '（' + fmt.md(st.since) + ' 起）' + (ev.n ? '；佐證燈 ' + ev.ok + ' / ' + ev.n + ' 亮（只顯示、不參與判定）' : '') + '。', (STAGE[st.stage] || [''])[0] + ' since ' + fmt.md(st.since) + (ev.n ? '; ' + ev.ok + ' of ' + ev.n + ' supporting lights on (shown only, not used in the call)' : '') + '.'), si === 2 ? 'pos' : si === 0 ? 'neg' : 'neu'];
+    var rv = rg.value, rgViz = rv == null ? null : '<span class="dvg"><i style="' + (rv >= 0 ? 'left:50%;width:' : 'right:50%;width:') + Math.min(50, Math.abs(rv) / 6 * 50).toFixed(1) + '%" class="' + (rv >= 0 ? 'up' : 'down') + '"></i><b>−6 · 0 · +6</b></span>';
+    var rgR = rv == null ? null : [_T((rg.regime > 0 ? '多方' : '空方') + (rg.since ? '第 ' + ((rg.weeks || 0) + 1) + ' 週' : '') + '；一週前 ' + sg(rg.prev) + '。絕對值小於 1 屬於弱勢，方向容易反覆。', (rg.regime > 0 ? 'Bullish' : 'Bearish') + (rg.since ? ', week ' + ((rg.weeks || 0) + 1) : '') + '; ' + sg(rg.prev) + ' a week ago. Below 1 in size is weak and prone to flip.'), rv >= 1 ? 'pos' : rv <= -1 ? 'neg' : 'neu'];
+    var fs = (N && N.findings) || [], cnt = { bull: 0, bear: 0, neutral: 0 }; fs.forEach(function (f) { if (cnt[f.lean] != null) cnt[f.lean]++; });
+    var dirRows = [
+      si < 0 ? null : { k: _T('市場階段', 'Market stage'), sub: 'P23', v: (STAGE[st.stage] || ['—'])[0], viz: stageViz, r: stageR, to: ['cycle', ''] },
+      rv == null ? null : { k: _T('週線多空分數', 'Weekly regime score'), sub: _T('六項合成', 'six inputs'), v: sg(rv), viz: rgViz, r: rgR, to: ['cycle', 'regime'] },
+      fs.length ? { k: _T('今日發現', "Today's findings"), sub: _T('每日判讀', 'daily read'), v: _T('多 ' + cnt.bull + ' · 空 ' + cnt.bear, cnt.bull + ' bull · ' + cnt.bear + ' bear'), viz: '<span class="gauge none"></span>', r: [_T('今天 ' + fs.length + ' 則發現：偏多 ' + cnt.bull + '、偏空 ' + cnt.bear + '、中性 ' + cnt.neutral + '。描述一般含意，不是預測。', fs.length + ' findings today: ' + cnt.bull + ' bullish, ' + cnt.bear + ' bearish, ' + cnt.neutral + ' neutral. What they usually mean, not a forecast.'), cnt.bull > cnt.bear ? 'pos' : cnt.bear > cnt.bull ? 'neg' : 'neu'], to: ['overview', 'findings'] } : null
+    ];
+    // 離頂部多近
+    var p6v = ['mvrv_z', 'nupl', 'puell'].map(function (k) { return p6[k]; }).filter(function (v) { return v != null; }).sort(function (a, b) { return b - a; });
+    var rk = Object.keys(tr).filter(function (k) { return tr[k] && tr[k].pct_since_2022_11 != null && RADAR_READ[k]; }).sort(function (a, b) { return tr[b].pct_since_2022_11 - tr[a].pct_since_2022_11; })[0];
+    var RN = { 'lth-mvrv-zscore': 'LTH MVRV Z', 'supply-in-profit-pct': _T('獲利供給 %', 'Supply in profit'), 'lth-net-position-change-30d-btc': _T('LTH 30 日淨部位', 'LTH 30d net position') };
+    var topRows = [
+      cm.mvrv_vs_prior == null ? null : { k: _T('MVRV ÷ 前一輪高點', 'MVRV ÷ prior peak'), sub: _T('第一個鏈上賣點 0.75', 'first on-chain sell 0.75'), v: fmt.n(cm.mvrv_vs_prior, 3), p: cm.mvrv_vs_prior / 0.75 * 100, r: p20Read(), to: ['cycle', 'p20'] },
+      p6v.length < 2 ? null : { k: _T('頂部三指標', 'Top-3 indicators'), sub: _T('第二高的到 80 進頂部區', '2nd-highest to 80 = top zone'), v: ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n(p6[k], 0); }).join(' / '), p: p6v[1] / 80 * 100, r: p6Read(), to: ['cycle', 'p6'] },
+      (tm.top || {}).signal == null ? null : { k: _T('Tidemark 頂部訊號', 'Tidemark top signal'), sub: _T('第三方 · 50 進窗口', 'third-party · 50 = window'), v: fmt.n(tm.top.signal, 0) + ' / ' + fmt.n((tm.bottom || {}).signal, 0), p: tm.top.signal / 50 * 100, r: tmRead(), to: ['cycle', 'tm'] },
+      !rk ? null : { k: _T('頂部雷達', 'Top radar'), sub: _T('三項中最高：', 'highest of 3: ') + RN[rk], v: fmt.n(tr[rk].pct_since_2022_11, 0), p: tr[rk].pct_since_2022_11, pl: _T('本輪第 ' + fmt.n(tr[rk].pct_since_2022_11, 0) + ' 百分位', fmt.n(tr[rk].pct_since_2022_11, 0) + 'th pct this cycle'), r: RADAR_READ[rk](tr[rk]), to: ['cycle', 'radar'] },
+      pl.ratio == null ? null : { k: _T('冪律倍數', 'Power-law multiple'), sub: _T('價格 ÷ 合理價', 'price ÷ fair value'), v: fmt.n(pl.ratio, 2) + '×', viz: '<span class="gauge none"></span>', r: plRead(), to: ['cycle', 'pl'] }
+    ];
+    // 離出場多遠
+    var exRows = [
+      { k: _T('價格階梯第一階', 'Price ladder, next step'), sub: ex.next_step ? fmt.usd(ex.next_step) : '', v: ex.next_step ? fmt.pct(ex.next_step_dist_pct, 0) : '—', p: ex.next_step ? c / ex.next_step * 100 : 100, r: ladderRead(), to: ['exit', 'sim'] },
+      ex.sma200 ? { k: _T('200 日均線避險', '200-day MA hedge'), sub: fmt.usd(ex.sma200), v: fmt.pct((c / ex.sma200 - 1) * 100, 1), p: c > ex.sma200 ? ex.sma200 / c * 100 : 100, pl: c > ex.sma200 ? fmt.n(ex.sma200 / c * 100, 0) + '%' : _T('跌破 ' + (ex.below_sma200_run || 0) + ' / 5 天', 'below ' + (ex.below_sma200_run || 0) + ' / 5 days'), r: hedgeRead(), to: ['exit', ''] } : null
+    ];
+    var body = grp(_T('方向：現在偏多還是偏空', 'Direction: bullish or bearish now'), '', dirRows) +
+      grp(_T('離頂部多近', 'How close to a top'), _T('條＝離觸發多近，100% ＝碰到觸發線（頂部雷達是本輪極值）', 'bar = how close to its trigger; 100% = at the trigger (top radar: this cycle\'s extreme)'), topRows) +
+      grp(_T('離出場多遠', 'How far from the exit rules'), _T('100% ＝規則觸發', '100% = rule fires'), exRows);
+    return body ? '<div class="board">' + body + '</div>' : '';
+  }
 
   /* 週期與出場（頭版、週期版、出場框架版共用） */
   function p20Read() { var cm = D.cycle.cm, r = cm.mvrv_vs_prior, c = D.price.bar.c, k = cm.k075_price;
@@ -1161,23 +1206,17 @@
     var front = _t('<section class="front" id="front"><div class="dateline"><b>號外</b><span>DAYBREAK No.') + ('00' + (N ? N.edition : 0)).slice(-3) + '</span><hr><span>' + D.meta.bar_date.replace(/-/g, '.') + _t('（') + wd + _t('）收盤版</span></div>') +
       '<h2 class="reveal">' + hl + '</h2>' + megaHtml(c) +
       '<div class="front-foot"><div class="dek"><div class="stamp"><span class="chip flare"><i></i>' + esc(N ? N.stance.label : '—') + '</span><span class="chip">' + (N ? esc(N.stance.short) : '') + '</span>' + stageChip() + '</div><p>' + esc(N ? N.summary : '') + '</p></div><div class="watch">' + watch + '</div></div></section>';
-    var newsBlock = news.length ? _t('<div class="sec-h"><h2>今日要聞</h2><span class="en">The Brief</span><hr><a href="#news">全部 ') + news.length + _t(' 則 →</a></div><div class="news-front">') + newsItem(news[0], true) + '<div class="news-side">' + news.slice(1, 4).map(function (n, i) { return newsItem(n); }).join('') + '</div></div>' : '';
-    // 2026-11-04 頭版重排：數字卡與「這些數字代表什麼」合併——原本同樣 6 個數字先列一排卡片、緊接著表格再列一次；現在每張卡直接附標籤與解讀
-    var kpr = function (k, v, n, bar, r) { return '<div class="kpi"><span class="k"><span>' + k + '</span>' + (r ? tnHtml(r[1]) : '') + '</span><span class="v">' + v + '</span>' + (n ? '<span class="n">' + n + '</span>' : '') + (bar != null ? '<span class="bar"><i style="width:' + Math.max(2, Math.min(100, bar)).toFixed(1) + '%"></i></span>' : '') + (r && r[0] ? '<p class="d">' + esc(r[0]) + '</p>' : '') + '</div>'; };
-    var kp = '<div class="kpis kpis-r">' +
-      kpr(_t('MVRV ÷ 前一輪高點'), fmt.n(cm.mvrv_vs_prior, 3), _t('賣出線 0.75 · 2025 頂 0.78'), cm.mvrv_vs_prior / 0.75 * 100, p20Read()) +
-      kpr(_t('冪律倍數'), fmt.n(pl.ratio, 2) + '×', _t('合理價 ') + fmt.usd(pl.fair), (pl.ratio || 0) / 1.2 * 100, plRead()) +
-      kpr(_t('Tidemark 頂 / 底'), fmt.n((tm.top || {}).signal, 0) + ' / ' + fmt.n((tm.bottom || {}).signal, 0), _t('門檻 50 · ') + fmt.md(tm.price_date) + _t(' 資料'), null, tmRead()) +
-      kpr(_t('頂部三指標百分位'), ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n(p6[k], 0); }).join(' / '), _t('任兩項到 80 進入頂部區'), ((p6.mvrv_z || 0) + (p6.nupl || 0) + (p6.puell || 0)) / 3 / 0.8, p6Read()) +
-      kpr(_t('離出場第一階'), fmt.pct(ex.next_step_dist_pct, 0), fmt.usd(ex.next_step) + _t(' 起每階 12.5%'), 100 - Math.min(100, ex.next_step_dist_pct), ladderRead()) +
-      kpr(_t('200 日均線避險'), fmt.k(ex.sma200), _t('收盤距均線 ') + fmt.pct((c.c / ex.sma200 - 1) * 100, 1), null, hedgeRead()) + '</div>';
+    var newsBlock = news.length ? _t('<div class="sec-h"><h2>今日要聞</h2><span class="en">The Brief</span><hr><a href="#news">全部 ') + news.length + _t(' 則 →</a></div><div class="news-front">') + newsItem(news[0], true) + '<div class="news-side">' + news.slice(1, 4).map(function (n, i) { return newsItem(n, false, 0, true); }).join('') + '</div></div>' : '';
     var ev = (N && N.events || []).map(function (e) { var dd = dnOf(e.date) - dnOf(D.meta.bar_date); return '<div class="event"><span class="d">' + e.date.slice(5).replace('-', '/') + '</span><span>' + esc(e.label) + '</span><span class="in' + (dd === 1 ? ' now' : '') + '">' + (dd > 1 ? dd - 1 + _t(' 天後') : dd === 1 ? _t('今天') : _t('已過')) + '</span></div>'; }).join('');
     var plan = _t('<div class="sec-h"><h2>今天該做什麼</h2><span class="en">The Plan</span><hr>') + staleTag() + '</div><div class="grid">' +
       panel('span-7', _t('行動與要盯的價位'), _t('依出場框架 · 非投資建議'), actionsHtml()) + panel('span-5', _t('今天變了什麼'), _t('相對上一期'), changesHtml()) + '</div>';
     var zhNote = ZH_ONLY ? '<p class="note" style="margin:0">The English edition of today’s written commentary (headline, news and plan) is not published yet, so those parts are shown in Chinese. All data and readings are in English.</p>' : '';
     // 2026-11-04 頭版重排：結論（號外＋立場）→ 今天該做什麼／變了什麼 → 今日發現 → 要聞 → 數據（原本行動清單排在發現與要聞之後，約第 4–5 屏）
-    return zhNote + front + tapeHtml() + healthHtml() + plan + findingsHtml() + newsBlock +
-      _t('<div class="sec-h"><h2>今日數據</h2><span class="en">The Numbers</span><hr>') + '<span class="src">' + _t('依當日數值套固定門檻自動產生 · 非投資建議') + '</span></div>' + kp +
+    // 2026-11-04 訊號總表取代「今日數據」6 張卡：同樣的數字加上市場階段、週線多空、頂部雷達，分組排在一起
+    var board = boardHtml();
+    return zhNote + front + tapeHtml() + healthHtml() + plan +
+      (board ? _T('<div class="sec-h"><h2>訊號總表</h2><span class="en">The Board</span><hr>', '<div class="sec-h"><h2>Signal board</h2><span class="en">The Board</span><hr>') + '<span class="src">' + _t('依當日數值套固定門檻自動產生 · 非投資建議') + '</span></div>' + board : '') +
+      findingsHtml() + newsBlock +
       '<div class="grid">' + panel('span-12', _t('離出場線還多遠'), _t('以 ') + fmt.md(D.meta.bar_date) + _t(' 收盤計 · 對數刻度'), '<div class="runway" id="c-runway"></div>') +
       panel('span-7', _t('價格近一年'), _t('CoinMetrics 每 7 天'), '<div class="chart" id="c-ov-px"></div>') +
       panel('span-5', _t('接下來的日期'), '', '<div class="events">' + ev + '</div>') + '</div>';
@@ -1325,10 +1364,10 @@
       regPanel() +
       panel('span-12', _t('長期路徑：四種走法'), _t('每月底重估 · 下次 ') + M.next_review, legend([[_t('直接修復 ') + w['直接修復'] + '%', 'var(--s4)', 'dash'], [_t('淺回檔 ') + w['淺回檔'] + '%', 'var(--s1)', 'dash'], [_t('基準雙底 ') + w['基準雙底'] + '%', 'var(--s2)', 'dash'], [_t('延後新低 ') + w['延後新低'] + '%', 'var(--s3)', 'dash'], [_t('已實現'), 'var(--ink)'], [_t('頂部 80% 區間'), 'var(--flare)', 'box']]) + _t('<div class="chart" id="c-path"></div><p class="note">頂部模型：中位 ') + fmt.usd(M.top_model.median) + _t('，80% 區間 ') + fmt.k(M.top_model.p10) + '–' + fmt.k(M.top_model.p90) + _t('，時間 ') + esc(tx(M.top_model, 'timing')) + _t('。路徑是本站的預測，2028 年以後只供量級參考。</p>') + pathReviewHtml()) +
       panel('span-7', _t('MVRV ÷ 前一輪高點'), _t('CoinMetrics · 2021 起'), _t('<p class="say">現在 <b>') + fmt.n(cm.mvrv_vs_prior, 3) + _t('</b>；連 5 天站上 0.75 是出場框架的第一個鏈上賣點。') + esc((p20Read() || [''])[0]) + '</p><div class="chart" id="c-p20"></div>') +
-      panel('span-5', _t('頂部三指標'), fmt.md(D.cycle.p6_date) + _t(' · 四年百分位'), '<p class="say">' + esc((p6Read() || [''])[0]) + '</p><div class="meters">' + meter('MVRV Z', _t('<0 底 · >3.5 頂'), p6.mvrv_z, fmt.n(p6.mvrv_z, 0), _t('百分位'), [80, 85, 90]) + meter('NUPL', _t('淨未實現損益'), p6.nupl, fmt.n(p6.nupl, 0), _t('百分位'), [80, 85, 90]) + meter('Puell', _t('礦工收入倍數'), p6.puell, fmt.n(p6.puell, 0), _t('百分位'), [80, 85, 90]) + _t('</div><p class="note">任兩項到 80 進入頂部區；到 85 連 5 天多賣兩階；到 90 在 10 個交易日內賣完。</p>') ) +
+      panel('span-5', _t('頂部三指標'), fmt.md(D.cycle.p6_date) + _t(' · 四年百分位'), '<p class="say">' + esc((p6Read() || [''])[0]) + '</p><div class="meters">' + meter('MVRV Z', _t('<0 底 · >3.5 頂'), p6.mvrv_z, fmt.n(p6.mvrv_z, 0), _t('百分位'), [80, 85, 90]) + meter('NUPL', _t('淨未實現損益'), p6.nupl, fmt.n(p6.nupl, 0), _t('百分位'), [80, 85, 90]) + meter('Puell', _t('礦工收入倍數'), p6.puell, fmt.n(p6.puell, 0), _t('百分位'), [80, 85, 90]) + _t('</div><p class="note">任兩項到 80 進入頂部區；到 85 連 5 天多賣兩階；到 90 在 10 個交易日內賣完。</p>'), '', 'p6') +
       panel('span-7', _t('冪律：價格 ÷ 合理價'), _t('每天只用當天以前資料擬合'), _t('<p class="say">現在 <b>') + fmt.n(pl.ratio, 2) + _t(' 倍</b>（合理價 ') + fmt.usd(pl.fair) + _t('）。頂部倍數每輪縮小，照這個速度，下一輪頂部約在合理價的 ') + fmt.n((pl.next_top_ratio || [])[0], 2) + '–' + fmt.n((pl.next_top_ratio || [])[1], 2) + _t(' 倍。') + esc((plRead() || [''])[0]) + '</p><div class="chart" id="c-pl"></div>', _t('<div class="seg" id="pl-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="2020">2020 起</button></div>')) +
       panel('span-5', _t('Tidemark 綜合訊號'), _t('第三方模型 · ') + fmt.md(tm.price_date) + _t(' 資料'), '<p class="say">' + esc((tmRead() || [''])[0]) + '</p><div class="meters">' + meter(_t('頂部訊號'), _t('≥50 窗口 · ≥70 警戒'), (tm.top || {}).signal || 0, fmt.n((tm.top || {}).signal, 1), (tm.top || {}).level || '—', [50, 70]) + meter(_t('熱度'), _t('五類加權'), (tm.top || {}).heat || 0, fmt.n((tm.top || {}).heat, 1), (tm.top || {}).zone || '', [40, 65]) + meter(_t('底部訊號'), _t('≥50 底部區'), (tm.bottom || {}).signal || 0, fmt.n((tm.bottom || {}).signal, 1), (tm.bottom || {}).level || '—', [50, 70]) + meter(_t('冷度'), _t('估值・礦工・價格結構'), (tm.bottom || {}).cold || 0, fmt.n((tm.bottom || {}).cold, 1), '', []) + '</div>' +
-        '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:62%"><col style="width:38%"></colgroup><tbody>' + (tm.cats || []).map(function (x) { return '<tr><td>' + esc(_T(x[0], TM_CAT_EN[x[0]] || x[0])) + (x[2] === 'partial' ? _t('＊') : '') + '</td><td><div class="pct"><i><b class="' + ((x[1] || 0) >= 80 ? 'hot' : '') + '" style="width:' + (x[1] || 0) + '%"></b></i><span class="num">' + (x[1] == null ? '—' : fmt.n(x[1], 0)) + '</span></div></td></tr>'; }).join('') + '</tbody></table></div><p class="note">' + esc(tmVerdict(tm.cycle_test)) + '</p>') +
+        '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:62%"><col style="width:38%"></colgroup><tbody>' + (tm.cats || []).map(function (x) { return '<tr><td>' + esc(_T(x[0], TM_CAT_EN[x[0]] || x[0])) + (x[2] === 'partial' ? _t('＊') : '') + '</td><td><div class="pct"><i><b class="' + ((x[1] || 0) >= 80 ? 'hot' : '') + '" style="width:' + (x[1] || 0) + '%"></b></i><span class="num">' + (x[1] == null ? '—' : fmt.n(x[1], 0)) + '</span></div></td></tr>'; }).join('') + '</tbody></table></div><p class="note">' + esc(tmVerdict(tm.cycle_test)) + '</p>', '', 'tm') +
       '</div>';
   };
   V.cycle.after = function () {
@@ -2016,7 +2055,7 @@
   V.exit = function () {
     var F = D.exit.framework, S = D.exit.status, c = S.close;
     return readBar('exit') + '<div class="grid">' + panel('span-12', _t('現在離每條出場規則多遠'), _t('依當日數值自動產生 · 非投資建議'), interpHtml([rd2(_t('價格階梯'), fmt.k(S.next_step), ladderRead()), rd2(_t('MVRV ÷ 前一輪高點'), fmt.n(S.p20_ratio, 3), p20Read()), rd2(_t('頂部三指標'), ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n((S.p6 || {})[k], 0); }).join(' / '), p6Read()), rd2(_t('200 日均線避險'), fmt.k(S.sma200), hedgeRead()), [_t('時間停損'), '2029/10', _t('2029/10–2030/03 才適用，現在不作用。'), 'neu']])) +
-      panel('span-12', _t('出場模擬器'), esc(tx(F, 'unit')), _t('<div class="sim"><div class="sim-ctrl"><label for="sim-px">拖動看看：如果收盤到這個價位，框架會賣出多少？</label><span class="big" id="sim-v">') + fmt.usd(c) + '</span><input type="range" id="sim-px" min="60000" max="240000" step="1000" value="' + Math.round(c / 1000) * 1000 + '"><div class="legend"><span>60K</span><span style="margin-left:auto">240K</span></div><div class="stair" id="sim-stair"></div></div><div class="donut-wrap" id="sim-donut"></div></div>') +
+      panel('span-12', _t('出場模擬器'), esc(tx(F, 'unit')), _t('<div class="sim"><div class="sim-ctrl"><label for="sim-px">拖動看看：如果收盤到這個價位，框架會賣出多少？</label><span class="big" id="sim-v">') + fmt.usd(c) + '</span><input type="range" id="sim-px" min="60000" max="240000" step="1000" value="' + Math.round(c / 1000) * 1000 + '"><div class="legend"><span>60K</span><span style="margin-left:auto">240K</span></div><div class="stair" id="sim-stair"></div></div><div class="donut-wrap" id="sim-donut"></div></div>', '', 'sim') +
       panel('span-6', _t('鏈上觸發'), _t('MVRV ÷ 前一輪高點'), '<div class="rules">' + F.onchain.map(function (r) { var run = r.id === 'p20a' ? S.p20_run_075 : r.id === 'p20b' ? S.p20_run_080 : null; return '<div class="rule"><span class="t">' + (r.k ? _t('比值 ≥ ') + r.k : _t('新高背離')) + '</span><span class="d">' + esc(tx(r, 'rule')) + '</span><span class="chip">' + (run != null ? run + _t(' / 5 天') : _t('未啟用')) + '</span></div>'; }).join('') + _t('</div><p class="note">現在比值 ') + fmt.n(S.p20_ratio, 3) + _t('；0.75 約對應 ') + fmt.usd(S.k075_price) + _t('、0.80 約 ') + fmt.usd(S.k080_price) + _t('（隨實現價每天移動）。</p>')) +
       panel('span-6', _t('其他規則'), '', _t('<div class="rules"><div class="rule"><span class="t">200 日均線避險</span><span class="d">') + esc(tx(F.hedge, 'rule')) + '</span><span class="chip">' + S.below_sma200_run + _t(' / 5 天</span></div><div class="rule"><span class="t">訊號加速</span><span class="d">') + esc(tx(F, 'accelerate')) + '</span><span class="chip">' + ['mvrv_z', 'nupl', 'puell'].map(function (k) { return fmt.n((S.p6 || {})[k], 0); }).join(_t('／')) + _t('</span></div><div class="rule"><span class="t">時間停損</span><span class="d">') + esc(tx(F, 'time_stop')) + _t('</span><span class="chip">2029/10 起</span></div></div><p class="note">框架是本站對「週期頂部分批出場」的建議做法，只是參考，不是投資建議；每個人的部位與需求不同。</p>')) + '</div>';
   };
@@ -2108,7 +2147,20 @@
     requestAnimationFrame(function () { de.style.overflow = b.style.overflow = ''; window.scrollTo(0, 0); });
     [80, 250, 500].forEach(function (t) { setTimeout(function () { if (MQ.matches && window.scrollY > 0) window.scrollTo(0, 0); }, t); });
   }
+  /* 2026-11-04 每張圖都有網址：#版面/圖（例如 #onchain/sopr）。錨點依序找 #c-圖、#pn-面板；
+     併掉的圖用 ALIAS 導到保留的那一張（舊的 notes、異動偵測、分享出去的連結都還能用） */
+  var ALIAS = { cbp: ['flows', 'pr-us'], cost: ['cycle', 'ev-tmm'] };
+  function anchorEl(ch) { return ch ? $('#c-' + ch) || $('#pn-' + ch) : null; }
+  function jumpTo(page, ch) {
+    if (ALIAS[ch]) { page = ALIAS[ch][0]; ch = ALIAS[ch][1]; }
+    go(page);
+    if (!ch) return;
+    setTimeout(function () { var el = anchorEl(ch); if (!el) return; var fd = el.closest('.fold'); if (fd) fd.classList.remove('fold'); var dt = el.closest('details'); if (dt) dt.open = true;
+      var far = Math.abs(el.getBoundingClientRect().top) > innerHeight * 2;   // 遠的直接跳，近的才平滑捲
+      el.scrollIntoView({ block: el.offsetHeight > innerHeight * 0.7 ? 'start' : 'center', behavior: reduced || far ? 'auto' : 'smooth' }); el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash'); }, 1800); }, MQ.matches ? 350 : 500);
+  }
   function go(id) {
+    if (id && id.indexOf('/') > 0) { var pr = id.split('/'); jumpTo(pr[0], pr[1]); return; }
     if (id === 'book') id = 'deriv';   // 2026-10-12 掛單簿版面併入衍生品版，舊連結導過去
     var sec = $('#pg-' + id); if (!sec) return;
     if (MQ.matches) { activate(id); toTop(); return; }
@@ -2142,8 +2194,7 @@
     // 2026-10-23：「看圖 →」連結：換到那一版後捲到那張圖並閃一下
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a.jump'); if (!a) return; var ch = a.getAttribute('data-chart'); if (!ch) return;
-      e.preventDefault(); go(a.getAttribute('href').slice(1));
-      setTimeout(function () { var el = $('#c-' + ch); if (!el) return; var fd = el.closest('.fold'); if (fd) fd.classList.remove('fold'); el.scrollIntoView({ block: 'center', behavior: reduced ? 'auto' : 'smooth' }); el.classList.add('flash'); setTimeout(function () { el.classList.remove('flash'); }, 1800); }, MQ.matches ? 350 : 500);
+      e.preventDefault(); jumpTo(a.getAttribute('href').slice(1), ch);
     });
     // 桌面換頁頓點：滾輪捲過版面開頭時，先停在「該版標題貼齊頂部列」的位置，頓 HOLD 毫秒（期間的滾輪與慣性吃掉），之後照常捲動
     var hold = 0, HOLD = 260;
@@ -2221,7 +2272,7 @@
     shell();
     renderAll();
     var start = location.hash.slice(1);
-    if (start && start !== 'overview' && $('#pg-' + start)) {
+    if (start && start !== 'overview' && (/^\w+\/[\w-]+$/.test(start) || (/^[\w-]+$/.test(start) && $('#pg-' + start)))) {
       go(start);   // 字型載入後版面會變高，載完再對齊一次（使用者已自行捲動就不動）
       var y0 = window.scrollY; if (document.fonts) document.fonts.ready.then(function () { if (Math.abs(window.scrollY - y0) < 2) go(start); });
     } else { window.scrollTo(0, 0); activate(ROUTES[0][0]); }
