@@ -16,7 +16,7 @@
    "lang": "en",
    "angle": "交叉驗證",
    "summary": "列出選舉日要看的流動性價位：下方 $75K、$76.2K；上方 $82.6K、$85K、$87.5K。",
-   "reply": "Our OKX-only liquidation estimate lines up: long clusters at 75.2–76.3K and 74.0–74.8K, shorts at 82–83K and 84.9–85.9K. Within ±5% of the Nov 3 close, ~7.2K BTC of longs sit below vs ~3.7K BTC of shorts above. An estimate from one venue.",
+   "reply": "Your 76.2K lines up almost exactly with the biggest long-liquidation cluster I see, 75.2–76.3K (OKX-only estimate). Shorts stack up around 82–83K and 85–86K. Within 5% of price there's roughly 2x more long fuel below than short fuel above.",
    "sources": "推算清算帶（OKX，11/04 00:00 UTC）：多單 75,200–76,300、74,000–74,800；空單 84,900–85,900、82,000–83,000；收盤上下 5% 內下方 7,238 顆、上方 3,677 顆",
    "note": "他的 $76.2K 落在推算多單帶裡，$85K 落在最大空單帶裡；配圖標出他提到的價位。",
    "image": {
@@ -44,7 +44,7 @@
    "lang": "en",
    "angle": "補數據",
    "summary": "Coinbase 溢價自 10/6 起每小時都是負的，10/30 低點 −0.30%、現在 −0.19%；美國 ETF 30 天 −12 億美元。問美國買盤何時回來。",
-   "reply": "Daily data agrees: Coinbase premium 7-day avg hit −0.19% on Nov 3, the lowest since our series began in January (299 days). Asia isn't stepping in either: OKX P2P USDT/CNY trades at a 1.14% discount.",
+   "reply": "Been watching the same thing. The 7-day average just hit −0.19%, the lowest I've had since January. What gets me is Asia isn't picking up the slack either: USDT on OKX P2P trades about 1.1% under the yuan rate. Nobody's chasing spot right now.",
    "sources": "Coinbase 溢價 7 日均 −0.190%（11/03，2026-01 起 299 天最低）；OKX 場外 USDT/CNY −1.137%（11/03）",
    "note": "USDT 折價只有 2 天紀錄，也可能是人民幣端的因素；有人追問就照實說。",
    "image": {
@@ -65,9 +65,9 @@
    "lang": "zh",
    "angle": "交叉驗證",
    "summary": "貝萊德 ETF 地址轉 7,244 BTC 到 Coinbase Prime，作者認為是 10/30、11/02 贖回的鏈上落地，但不確定已經賣了多少。",
-   "reply": "ETF 這邊：IBIT 11/02 單檔 −4.05 億美元（暫定），全體兩日 −10.4 億。賣壓也看得到落在美國現貨：Coinbase 對幣安溢價 7 日均 −0.19%，是今年 1 月有紀錄以來最低。",
-   "sources": "IBIT −4.053 億美元（11/02 暫定）；全體 10/30 −6.432 億（The Block）＋11/02 −3.986 億（Farside、SoSoValue 暫定）；Coinbase 溢價 7 日均 −0.190%",
-   "note": "本站沒有那筆轉帳的數據，回覆不評論轉帳本身。",
+   "reply": "你說的時滯我也在想。從價格看，賣壓應該已經在落地了：Coinbase 對幣安的溢價 7 日均 −0.19%，是我今年 1 月開始記錄以來最低，美國這邊一直比較便宜。IBIT 光 11/02 一天就 −4.05 億，跟那筆轉帳的量級差不多。",
+   "sources": "Coinbase 溢價 7 日均 −0.190%（2026-01 起最低）；IBIT −4.053 億美元（11/02 暫定）",
+   "note": "本站沒有那筆轉帳的數據，回覆不評論轉帳本身；「量級差不多」是指 4.05 億美元對 5.59 億美元。",
    "image": {
     "chart": "etf",
     "title": "美國現貨 ETF 兩日流出 10.4 億美元"
@@ -86,7 +86,7 @@
    "lang": "en",
    "angle": "交叉驗證",
    "summary": "STH-SOPR 10/30 觸及 0.992，是 7/14 以來最低；短期持有者成本 $75,772 是下一道價位。",
-   "reply": "CheckOnChain shows the same low: STH-SOPR 0.9918 on Oct 30, deeper than the Aug 1 (0.9936) and Aug 14 (0.9946) lows, and still below 1 (0.9954 on Nov 3). STH cost basis estimates bracket yours: 75.9K (bitcoin-data, Oct 28) and 75.2K (CheckOnChain).",
+   "reply": "Same low on CheckOnChain's data: 0.9918 on Oct 30, a touch deeper than the two August dips (0.9936, 0.9946). Still under 1 five days later, so the loss-selling hasn't wrapped up. Your 75,772 sits right between the two cost-basis estimates I track (75.2K / 75.9K).",
    "sources": "STH-SOPR 10/30 0.9918、8/1 0.9936、8/14 0.9946、11/03 0.9954（CheckOnChain）；短期成本 75,892（bitcoin-data 10/28）、75,192（CheckOnChain 11/03）",
    "note": "Bitfinex 的 $75,772 落在本站兩個估計之間；7/13 低點 0.9762，和他說的「7/14 以來最低」一致。",
    "image": {
@@ -107,8 +107,8 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "機構在走、幣價在撐：ETF 兩日流出 10.4 億、IBIT 單日 −4.05 億、幣安淨提款 47.2 億；問今晚先守 77,000 還是先回 76,300。",
-   "reply": "補一個籌碼數字：76–78K 這層短期籌碼 11/03 一天由 59.4 萬增到 72.9 萬顆，短期持有者總量卻只多 2.4 萬，是高位買的人認賠搬到這裡。STH-SOPR 11/03 是 0.9954，已連 5 天低於 1。（CheckOnChain）",
-   "sources": "76–78K 短期籌碼 59.4 萬 → 72.9 萬顆、短期總量 368.8 萬 → 371.2 萬（CheckOnChain 11/02→11/03）；STH-SOPR 0.9954",
+   "reply": "77,000 還是 76,300 我不敢猜，但有個數字蠻有意思：76–78K 這一層的短期籌碼，11/03 一天就多了 13.5 萬顆，短期持有者總數卻只多 2.4 萬。等於是高位套住的人在這裡認賠換手，還沒換完。",
+   "sources": "76–78K 短期籌碼 59.4 萬 → 72.9 萬顆、短期總量 368.8 萬 → 371.2 萬（CheckOnChain 11/02→11/03）",
    "note": "",
    "image": {
     "chart": "cohort",
@@ -179,7 +179,7 @@
    "lang": "zh",
    "angle": "交叉驗證",
    "summary": "短期持有者成本 STH-RP 約 75.88K、真實市場均價 TMMP 約 77.65K，只差約 1.8K；歷史上 STH-RP 上穿 TMMP 代表最佳建倉期結束，2023 年交叉前磨了很久。",
-   "reply": "同一組線補兩個來源：bitcoin-data 10/28 是短期成本 75,892、真實市場均價 79,394，差 4.4%（這組資料晚約 7 天）；Glassnode 10/28 週報寫 75.8K 對 77.9K，和你的 1.8K 接近。照近 30 天速度線性外推，約 12/22 交叉，只是外推。",
+   "reply": "這組線我也一直在追，不過我這邊差得比較多：bitcoin-data 10/28 是短期成本 75,892、真實市場均價 79,394，還差 4.4%（這份資料晚約一週）。Glassnode 同期寫 75.8K 對 77.9K，比較接近你的。照最近的速度大概 12 月下旬碰到，就看這次會不會也磨很久。",
    "sources": "短期成本 75,892、真實市場均價 79,394、差 4.41%（bitcoin-data 10/28）；Glassnode The Week On-chain（10/28）77.9K／75.8K；12/22 為本站依近 30 日速度的線性外推",
    "note": "本站的真實市場均價比他高約 1.7K，是資料來源和日期不同；回覆裡已說明。",
    "image": {
@@ -200,7 +200,7 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "BTC 約 77,524，散戶多頭帳戶約 65%、24h 爆倉約 1 億多空各半，ETF 連兩天淨流出；只盯放量站穩 78,000 或跌破 76,400。",
-   "reply": "補一組衍生品數字：Deribit、OKX、Hyperliquid 加權資金費率年化 10.7%，Coinbase 溢價 7 日均 −0.19%、OKX 場外 USDT 折價 1.14%，撐盤的是槓桿不是現貨。你盯的 76,400 下方，推算的多單清算帶在 75,200–76,300（只算 OKX）。",
+   "reply": "「方向沒來，槓桿先死」這句很到位。資金費率還在年化 10.7%，但 Coinbase 跟 OKX 場外 USDT 都在折價，等於現貨沒人追、全靠槓桿撐。你盯的 76,400 下面，剛好就是我推算多單清算最密的一帶（75.2K–76.3K）。",
    "sources": "加權資金費率 10.7%；Coinbase 溢價 7 日均 −0.190%；OKX 場外 USDT/CNY −1.137%（11/03）；推算多單清算帶 75,200–76,300（OKX，11/04 00:00 UTC）",
    "note": "圖上標出他盯的 76,400 和 78,000。",
    "image": {
@@ -225,9 +225,9 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "引用 wander 的 STH-RP 與 TMMP 差約 1,800 美元，回顧 2016、2019、2023 年交叉後的復甦；認為牛初在震盪和籌碼換手中修復，看能否收復 77.65K。",
-   "reply": "「換手」在數據上看得到：76–78K 的短期籌碼 11/03 一天多了 13.5 萬顆，短期持有者總量卻只增加 2.4 萬，代表是高位買的人認賠換到這一層。STH-SOPR 0.9954，連 5 天低於 1，換手還在進行。（CheckOnChain）",
-   "sources": "76–78K 短期籌碼 59.4 萬 → 72.9 萬顆、短期總量 +2.4 萬（CheckOnChain 11/02→11/03）；STH-SOPR 0.9954、連 5 天低於 1",
-   "note": "他引用的是 wander（上一則），兩則回覆用不同數據，不要重複。",
+   "reply": "「在換手中修復」這點我很認同，STH-SOPR 也看得出來：10/30 認賠到 0.9918，比 8 月那兩次（0.9936、0.9946）還深一點，到 11/03 已經連 5 天低於 1。等它站回 1 以上，大概就是這輪換手告一段落。",
+   "sources": "STH-SOPR 10/30 0.9918、8/1 0.9936、8/14 0.9946、11/03 0.9954，連 5 天低於 1（CheckOnChain）",
+   "note": "他引用的是 wander（第 6 則），兩則用不同數據；也和第 5 則（我是YT）錯開，那則講籌碼、這則講 SOPR。",
    "image": {
     "chart": "sopr",
     "title": "STH-SOPR 0.9954，連 5 天低於 1"
@@ -246,7 +246,7 @@
    "lang": "en",
    "angle": "交叉驗證",
    "summary": "ETF 11/02 流出 3.99 億、貝萊德轉 7,244 BTC 到 Coinbase Prime，同時約 4,346 BTC 從 OKX 提走；認為這週的弱手是基金，75K 是關鍵線。",
-   "reply": "Price data agrees the sellers are US funds: Coinbase keeps trading below Binance, 7-day avg premium −0.19%, the lowest since January. And $75K sits just under the STH cost basis (75.2K CheckOnChain, 75.9K bitcoin-data), where recent buyers go underwater.",
+   "reply": "Agree on who the weak hands are, and you can see it in price too: Coinbase keeps trading under Binance, 7-day avg −0.19%, lowest since January. $75K as the line makes sense. Short-term holder cost basis sits at 75.2–75.9K, right where recent buyers flip to a loss.",
    "sources": "Coinbase 溢價 7 日均 −0.190%（11/03，2026-01 起最低）；短期成本 75,192（CheckOnChain 11/03）、75,892（bitcoin-data 10/28）",
    "note": "",
    "image": {
@@ -267,7 +267,7 @@
    "lang": "zh",
    "angle": "回答提問",
    "summary": "ETF 昨天淨流出近 4 億，但 6 小時內三個地址從幣安和 OKX 提走 1,164 BTC，其中一個休眠一年的地址提 800 BTC；問是巨鯨抄底還是挪出交易所。",
-   "reply": "交易所整體也在流出：餘額 7 日 −1.67%（CoinMetrics，11/02）。不過同一週幣安恢復提款後有一波提領潮，提幣不一定是抄底，也可能只是換地方放。現貨買盤要看溢價：Coinbase 7 日均 −0.19%，還在折價。",
+   "reply": "抄底還是挪幣，我覺得現在很難分。幣安剛恢復提款，這週本來就有一波提領潮，交易所整體餘額 7 天少了 1.67%。如果是真的抄底，現貨溢價通常會先轉正，但 Coinbase 7 日均還在 −0.19%，所以我比較傾向是換地方放。",
    "sources": "交易所供給 7 日 −1.67%、30 日 −0.92%（CoinMetrics 11/02）；幣安恢復提款後淨流出 36.4 億美元（新聞）；Coinbase 溢價 7 日均 −0.190%",
    "note": "他問的「抄底還是挪幣」本站分辨不出來，回覆只給背景，不下結論。"
   },

@@ -12,6 +12,8 @@ CJK = re.compile(r'[㐀-鿿]')
 SIMP = set('这们说为来对时国会个过还没发么从动场实现价币机构资线买卖盘关头应该开间觉进处净链亿万点涨')
 BAN = re.compile(r'出場|階梯|避險|賣出線|減碼|分批賣|exit (plan|ladder|framework)|sell (signal|trigger)|take profit', re.I)
 NEED = ('n', 'order', 'status', 'url', 'id', 'author', 'followers', 'posted', 'lang', 'angle', 'summary', 'reply')
+# 太機械的寫法（README「要有人味」）：報告式開頭、自稱本站
+ROBOT = re.compile(r'^(補一個|補一組|補兩個|Daily data|Our .{0,40}estimate|Data shows)|本站', re.I)
 
 
 def check():
@@ -40,6 +42,7 @@ def check():
             s = sorted(set(t) & SIMP)
             if s: err.append(f'{tag} 回覆有簡體字：{"".join(s)}')
         if BAN.search(t): err.append(f'{tag} 回覆提到出場框架或買賣動作：{BAN.search(t).group(0)}')
+        if ROBOT.search(t): err.append(f'{tag} 回覆太機械（「{ROBOT.search(t).group(0)}」）：先回應對方、用「我」，見 README「要有人味」')
         if it.get('image') and not os.path.exists(os.path.join(ROOT, 'data', 'replies', f'{it["n"]}.png')):
             err.append(f'{tag} 有 image 但 data/replies/{it["n"]}.png 不存在（先跑 cards.py）')
     return err
