@@ -69,6 +69,9 @@ def _ma7(rows):
 
 
 SM = T('CheckOnChain 已平滑，單日大額轉帳也會被算成賣出', 'smoothed by CheckOnChain; a single large transfer can show up as selling')
+# 2026-11-04 網站「每個指標一個家」：頂部三指標與頂部雷達的走勢圖在週期版（app.js 的 OC_TOP），其餘鏈上小圖在鏈上版；
+# Coinbase 溢價圖併進三地溢價（#c-pr-us）、短期 ÷ 長期持有者供給連到長短期持有者籌碼（#c-cohort）
+OC_TOP = ('mvrv-zscore', 'nupl', 'puell-multiple', 'lth-mvrv-zscore', 'supply-in-profit-pct', 'lth-net-position-change-30d-btc')
 SERIES = [
     ('price', '收盤價', 'Close', 'price', 'overview', 'ov-px', lambda L: _rows(L, 'chips.viz.sopr.rows', 2), 'usd', 'j', 'rel', None),
     ('dvol', 'DVOL（隱含波動）', 'DVOL (implied vol)', 'vol', 'deriv', 'vol', lambda L: _rows(L, 'deriv.viz.vol.rows', 1), 1, 'ej', 'diff', None),
@@ -81,12 +84,12 @@ SERIES = [
     ('npl', '每日淨實現損益', 'Daily net realized P/L', 'holders', 'onchain', 'npl', lambda L: _rows(L, 'onchain.npl.rows', 2), 'musd', 'e', None, None),
     ('npl-cum30', '30 日累計淨實現損益（占市值）', '30-day net realized P/L (% of market cap)', 'holders', 'onchain', 'npl', lambda L: _rows(L, 'onchain.npl.cum30.rows', 2), 'spct', 'e4', None, None),
     ('sth-in-profit', '短期持有者獲利比例', 'STH supply in profit', 'holders', 'onchain', 'profit', lambda L: [(r[0], r[1]) for r in g(L, 'chips.viz.profit') or []], 'pct', 'ej', 'diff', None),
-    ('sth-lth', '短期 ÷ 長期持有者供給', 'STH ÷ LTH supply', 'holders', 'onchain', 'cost', lambda L: [(r[0], r[1]) for r in g(L, 'chips.viz.ratio') or []], 4, 'j', 'diff', None),
-    ('cbp', 'Coinbase 溢價（7 日均）', 'Coinbase premium (7-day avg)', 'flows', 'flows', 'cbp', lambda L: _ma7(_rows(L, 'flows.cb_premium.rows', 1)), 3, 'ej', 'diff', None),
+    ('sth-lth', '短期 ÷ 長期持有者供給', 'STH ÷ LTH supply', 'holders', 'onchain', 'cohort', lambda L: [(r[0], r[1]) for r in g(L, 'chips.viz.ratio') or []], 4, 'j', 'diff', None),
+    ('cbp', 'Coinbase 溢價（7 日均）', 'Coinbase premium (7-day avg)', 'flows', 'flows', 'pr-us', lambda L: _ma7(_rows(L, 'flows.cb_premium.rows', 1)), 3, 'ej', 'diff', None),
     ('stables', '穩定幣供給', 'Stablecoin supply', 'flows', 'flows', 'stab', lambda L: _rows(L, 'flows.stables.rows', 1), 'busd', 'j', 'rel', None),
     ('rcliq', '實現市值 30 日變化', 'Realized cap 30-day change', 'flows', 'flows', 'rcliq', lambda L: _rows(L, 'flows.rc_liq.rows', 1), 'spct', 'ej', 'diff', None),
     ('p20', 'MVRV ÷ 前一輪高點', 'MVRV ÷ prior cycle peak', 'cycle', 'cycle', 'p20', lambda L: _rows(L, 'cycle.p20.rows', 1), 3, 'j', 'diff', None),
-] + [('oc-' + k, zh, en, th, 'onchain', 'oc-' + k, (lambda k: lambda L: _rows(L, 'onchain.viz.' + k + '.rows', 1))(k), f, rule, chg, None) for k, zh, en, th, f, rule, chg in (
+] + [('oc-' + k, zh, en, th, 'cycle' if k in OC_TOP else 'onchain', 'oc-' + k, (lambda k: lambda L: _rows(L, 'onchain.viz.' + k + '.rows', 1))(k), f, rule, chg, None) for k, zh, en, th, f, rule, chg in (
     ('mvrv-zscore', 'MVRV Z', 'MVRV Z', 'cycle', 2, 'ej', 'diff'), ('nupl', 'NUPL', 'NUPL', 'cycle', 3, 'ej', 'diff'), ('puell-multiple', 'Puell 倍數', 'Puell multiple', 'cycle', 2, 'ej', 'diff'),
     ('asopr', 'aSOPR（7 日均）', 'aSOPR (7-day avg)', 'holders', 4, 'ej', 'diff'), ('lth-sopr', '長期持有者 SOPR（7 日均）', 'LTH-SOPR (7-day avg)', 'holders', 3, 'ej', 'diff'),
     ('illiquid-supply', '非流動供給', 'Illiquid supply', 'holders', 'int', 'j', 'rel'), ('highly-liquid-supply', '高流動供給', 'Highly liquid supply', 'holders', 'int', 'j', 'rel'),
@@ -248,7 +251,7 @@ FLIP = {
     'sopr_ge1': ('holders', 'onchain', 'sopr', T('短期持有者 SOPR 回到 1 之上', 'STH-SOPR back above 1'), T('短期持有者 SOPR 跌破 1（轉為賠錢賣）', 'STH-SOPR fell below 1 (selling at a loss)')),
     'npl7_pos': ('holders', 'onchain', 'npl', T('近 7 日淨實現損益轉為淨獲利', '7-day net realized P/L turned to net profit'), T('近 7 日淨實現損益轉為淨認賠', '7-day net realized P/L turned to net loss')),
     'rcliq_pos': ('flows', 'flows', 'rcliq', T('實現市值 30 日變化轉正（資金回流）', 'Realized cap 30-day change turned positive'), T('實現市值 30 日變化轉負（資金流出）', 'Realized cap 30-day change turned negative')),
-    'cbp_pos': ('flows', 'flows', 'cbp', T('Coinbase 溢價 7 日均轉正', 'Coinbase premium 7-day average turned positive'), T('Coinbase 溢價 7 日均轉負', 'Coinbase premium 7-day average turned negative')),
+    'cbp_pos': ('flows', 'flows', 'pr-us', T('Coinbase 溢價 7 日均轉正', 'Coinbase premium 7-day average turned positive'), T('Coinbase 溢價 7 日均轉負', 'Coinbase premium 7-day average turned negative')),
     'hash_cap': ('cycle', 'onchain', None, T('算力帶進入礦工投降', 'Hash Ribbons: miner capitulation started'), T('算力帶脫離礦工投降', 'Hash Ribbons: miner capitulation ended')),
     'tm_top': ('cycle', 'cycle', None, T('Tidemark 頂部訊號站上 50', 'Tidemark top signal at or above 50'), T('Tidemark 頂部訊號跌回 50 之下', 'Tidemark top signal back below 50')),
     'tm_bottom': ('cycle', 'cycle', None, T('Tidemark 底部訊號站上 50', 'Tidemark bottom signal at or above 50'), T('Tidemark 底部訊號跌回 50 之下', 'Tidemark bottom signal back below 50')),

@@ -42,12 +42,12 @@
 |---|---|---|
 | 01 | **頭版** | 號外大標題、巨型收盤價（滑過可回看近 20 天）、立場與市場階段、要盯的三個價位、數據帶、資料狀態、今天該做什麼／今天變了什麼、**訊號總表**（方向：市場階段、週線多空分數、今日發現；離頂部多近：MVRV ÷ 前高、頂部三指標、Tidemark、頂部雷達、冪律；離出場多遠：價格階梯、200 日均線避險；條一律是「離觸發多近」）、**今日發現**（上期發現的後續只列今天結案的，追蹤中的收合；附自動偵測的異動）、今日要聞（側欄只列標題）、離出場線的跑道圖、價格近一年、接下來的日期 |
 | 02 | **消息** | 過去 24–36 小時的重要消息（依分類篩選），每則附「對 BTC 的意義」並對照本站數據；機構研報（Glassnode、K33 等）重點 |
-| 03 | **週期** | 市場階段（熊市 → 轉換期 → 牛市，規則化判定與佐證燈號；6 張佐證圖預設收起）、週線多空分數、長期路徑四種走法、MVRV ÷ 前一輪高點、頂部三指標（附原始讀值）、冪律合理價、Tidemark 頂部／底部綜合訊號、頂部雷達 |
+| 03 | **週期** | 市場階段（熊市 → 轉換期 → 牛市，規則化判定與佐證燈號；6 張佐證圖預設收起）、週線多空分數、長期路徑四種走法、MVRV ÷ 前一輪高點、頂部三指標（附原始讀值）、冪律合理價、Tidemark 頂部／底部綜合訊號、頂部雷達、頂部三指標與頂部雷達 6 項的近 3 年走勢 |
 | 04 | **出場框架** | 現在離每條出場規則多遠、出場模擬器（拖動價格看框架會賣多少）、鏈上觸發、200 日均線避險、加速與時間停損 |
 | 05 | **價格** | 近 20 天 K 線、ATR、實際波動、Mayer 倍數、Pi Cycle、**短週期（目前這一段行情：起點、幅度、天數、與本輪中位數比較、本段結束線）**、關鍵價位、均線排列、長期走勢 |
 | 06 | **衍生品** | DVOL、IV − RV、永續資金費率（Deribit／OKX／Hyperliquid 以未平倉加權）、25Δ 風險逆轉（30 天固定期限）、選擇權未平倉與履約價分布、期貨基差曲線、**掛單簿**（13 個交易所 ±15% 全景柱狀圖、最大的牆、整數關卡）、CoinGlass 爆倉熱力圖連結 |
 | 07 | **資金** | 現貨 ETF 每日淨流量（並換算成 BTC 與新挖出量比較）、BTC 與那斯達克／美元相關、10 年期實質利率、三地溢價（美國現貨 Coinbase、亞洲 USDT 場外、永續對現貨）、穩定幣供給、恐懼貪婪指數、實現市值 30 日變化（附歷次歸零之後的價格表現） |
-| 08 | **鏈上** | 短期持有者獲利比例、交易所供給、算力與算力帶（Hash Ribbons）、難度、籌碼分布（URPD）、**長短期持有者籌碼（URPD 依持有時間拆成 LTH／STH；和約 30 天前比誰賣誰買、跌到哪裡誰套牢）**、價格 × 長期持有者動向、賣方衰竭常數、實現獲利 ÷ 虧損、表觀需求、STH-SOPR、短期持有者實現損益、每日淨實現損益、鏈上指標表與走勢小圖 |
+| 08 | **鏈上** | 短期持有者獲利比例、交易所供給、算力與算力帶（Hash Ribbons）、難度、籌碼分布（URPD）、**長短期持有者籌碼（URPD 依持有時間拆成 LTH／STH；和約 30 天前比誰賣誰買、跌到哪裡誰套牢）**、價格 × 長期持有者動向、賣方衰竭常數、實現獲利 ÷ 虧損、表觀需求、STH-SOPR、短期持有者實現損益、每日淨實現損益、鏈上指標表與走勢小圖（aSOPR、LTH-SOPR、流動性供給） |
 | 09 | **往期** | 發現戰績（2026/10/23 起每則發現的最終結果：確認／推翻／到期／追蹤中；結案少於 30 則不算命中率）、往期列表（頭條、立場、當天收盤、到今天的漲跌） |
 | 10 | **方法** | 這是什麼、原則、限制、資料來源與更新時間 |
 
@@ -265,7 +265,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頭版順序改成結論 → 今天該做什麼／今天變了什麼 → 訊號總表 → 今日發現 → 要聞（行動清單原本在第 4–5 屏）；桌面巨型收盤價限高約視窗 26%，立場與三個價位進到第一屏。
   - 上期發現的後續：今天結案的照列，追蹤中的收成一行（原本 12–13 則「追蹤中」把新發現壓到下面）。
   - 訊號總表取代「今日數據」6 張卡與重複同樣數字的解讀表：方向、離頂部多近、離出場多遠三組，條一律是「離觸發多近」，每列連到詳細圖。頭版要聞側欄只列標題。頭版高度手機 10,031 → 7,655px。
-  - 每個指標只有一個家：獨立的 Coinbase 溢價圖併進三地溢價、鏈上版的短期持有者成本圖（與週期版佐證圖相同）拿掉、鏈上指標表不再重複 MVRV Z／NUPL／Puell；舊連結與異動標記用 ALIAS 導到保留的圖。
+  - 每個指標只有一個家：獨立的 Coinbase 溢價圖併進三地溢價、鏈上版的短期持有者成本圖（與週期版佐證圖相同）拿掉、鏈上指標表不再重複 MVRV Z／NUPL／Puell；頂部三指標與頂部雷達的 6 張走勢小圖搬到週期版、和讀值放在一起；STH-SOPR 小圖拿掉（已有完整的圖）；舊連結會跟著圖走到新版面，異動偵測（`signals.py`）也改指到新的圖。
   - 結構：出場框架從第 8 版移到第 4 版；頂部雷達搬到週期版；市場階段 6 張佐證圖預設收起（週期版桌面 5,824 → 4,780px）；新增第 9 版「往期」（發現戰績與往期列表）。
   - 導覽：版內目錄、每格複製網址（`#版面/圖`）、判讀文字裡的指標名可點並附一句解釋。
   - 圖表：BTC 價格「另一刻度」的疊圖改成上下兩格；長歷史的圖加 1 年／3 年／全部。
@@ -324,12 +324,12 @@ Ten sections. On desktop they stack into one page and switch as you scroll (keys
 |---|---|---|
 | 01 | **Front page** | Headline, the giant closing price (hover to step back through 20 days), stance and market stage, three levels to watch, data tape, data-status bar, what to do / what changed, the **signal board** (direction: market stage, weekly regime score, today's findings; how close to a top: MVRV ÷ prior peak, top-3 indicators, Tidemark, top radar, power law; how far from the exit rules: price ladder, 200-day MA hedge; every bar reads as “how close to its trigger”), **today's findings** (follow-ups show only those resolved today, the rest folded away; plus the auto-detected signals), today's news (headlines only in the side column), the runway to each exit line, the 12-month price chart, upcoming dates |
 | 02 | **News** | Key stories from the last 24–36 hours (filter by category), each with what it means for BTC checked against our data; institutional research (Glassnode, K33, …) |
-| 03 | **Cycle** | Market stage (bear → transition → bull, rule-based with supporting signals; the six evidence charts start folded), weekly regime score, four long-term paths, MVRV ÷ prior-cycle peak, the top-3 indicators (with raw values), power-law fair value, Tidemark top/bottom signals, top radar |
+| 03 | **Cycle** | Market stage (bear → transition → bull, rule-based with supporting signals; the six evidence charts start folded), weekly regime score, four long-term paths, MVRV ÷ prior-cycle peak, the top-3 indicators (with raw values), power-law fair value, Tidemark top/bottom signals, top radar, 3-year trends of the top-3 and top-radar series |
 | 04 | **Exit plan** | How far price is from each exit rule, an exit simulator (drag a price and see what the plan would have sold), on-chain triggers, 200-day MA hedge, acceleration and time stop |
 | 05 | **Price** | 20 daily candles, ATR, realized volatility, Mayer multiple, Pi Cycle, **short cycle (the current price leg: start, size, length vs. this cycle's median, the close that would end it)**, key levels, moving-average alignment, long-term chart |
 | 06 | **Derivatives** | DVOL, IV − RV, perp funding (Deribit / OKX / Hyperliquid, open-interest weighted), 25Δ risk reversal (30-day constant maturity), options open interest and strikes, futures basis curve, **order book** (13 exchanges, ±15% full-view bar chart, biggest walls, round numbers), link to the CoinGlass liquidation heatmap |
 | 07 | **Flows** | Spot ETF daily net flows (also in BTC vs. newly mined supply), BTC correlation with Nasdaq / USD, 10-yr real yield, three premiums (US spot via Coinbase, Asian OTC USDT, perp vs spot), stablecoin supply, Fear & Greed, realized-cap 30-day change (with what price did after every past zero) |
-| 08 | **On-chain** | Short-term holders in profit, exchange supply, hashrate and Hash Ribbons, difficulty, supply distribution (URPD), **long- vs short-term holder supply (URPD split into LTH / STH; who sold and bought versus about 30 days ago, who is underwater at each price)**, price × long-term holder activity, seller exhaustion, realized profit ÷ loss, apparent demand, STH-SOPR, short-term holder realized P/L, daily net realized P/L, on-chain metrics table and small-multiple trends |
+| 08 | **On-chain** | Short-term holders in profit, exchange supply, hashrate and Hash Ribbons, difficulty, supply distribution (URPD), **long- vs short-term holder supply (URPD split into LTH / STH; who sold and bought versus about 30 days ago, who is underwater at each price)**, price × long-term holder activity, seller exhaustion, realized profit ÷ loss, apparent demand, STH-SOPR, short-term holder realized P/L, daily net realized P/L, on-chain metrics table and small-multiple trends (aSOPR, LTH-SOPR, liquidity supply) |
 | 09 | **Archive** | Findings track record (every finding since 2026/10/23 and how it ended: confirmed / refuted / expired / still tracked; no hit rate until 30 are resolved) and past editions (headline, stance, that day's close, change since) |
 | 10 | **Method** | What this is, principles, limits, data sources and update times |
 
@@ -496,7 +496,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Front-page order: conclusion → what to do / what changed → signal board → findings → news (the action list used to sit 4–5 screens down); on desktop the giant closing price is capped at about 26% of the window so the stance and three levels fit on the first screen.
   - Follow-ups: those resolved today are listed; the ones still being tracked fold into one line (12–13 “watching” items used to push the new findings down).
   - A signal board replaces the six “Today's numbers” cards and the table that repeated them: direction, how close to a top, how far from the exit rules; every bar reads as “how close to its trigger”, and each row links to its chart. News in the front-page side column is headlines only. Front page on mobile: 10,031 → 7,655px.
-  - One home per indicator: the separate Coinbase premium chart folds into the three premiums, the on-chain STH cost chart (same lines as the cycle evidence chart) is gone, and the on-chain table no longer repeats MVRV Z / NUPL / Puell; old links and signal markers are redirected (ALIAS).
+  - One home per indicator: the separate Coinbase premium chart folds into the three premiums, the on-chain STH cost chart (same lines as the cycle evidence chart) is gone, the on-chain table no longer repeats MVRV Z / NUPL / Puell; the six top-3 / top-radar trend charts move to Cycle next to their readings; the duplicate STH-SOPR small chart is gone; old links follow a chart to its new section, and the signal detector (`signals.py`) points at the new charts.
   - Structure: the exit plan moves from section 8 to 4; the top radar moves to Cycle; the six market-stage evidence charts start folded (Cycle on desktop 5,824 → 4,780px); new section 9 “Archive” (findings track record and past editions).
   - Navigation: in-page table of contents, a copyable link for every chart block (`#section/chart`), indicator names in the commentary link to their chart with a one-line definition.
   - Charts: “BTC price on its own scale” overlays become two stacked panes; long-history charts get 1Y / 3Y / All.
