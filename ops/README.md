@@ -25,6 +25,10 @@ ops/
     fetch.py           讀 X 原文（api.fxtwitter.com），核對 Grok 的摘要
     cards.py           回覆配圖 → data/replies/<n>.png
     check.py           檢查 replies.json 與 flash.json（語言、字數、簡體字、框架用詞、配圖）
+  log/               成效紀錄（2026-11-04 起）
+    README.md          什麼時候記、格式
+    log.py             add 加入當天發的貼文、refresh 更新瀏覽等數字、summary 彙整
+    <日期>.json        每天一份
 ```
 
 ## 目標：X 創作者分潤（Original Content Rewards）
@@ -45,6 +49,7 @@ ops/
 | 你／Claude | 本機 | 做當日短影片（見下） | `ops/video/out/` |
 | 日報後 | Grok → Claude → 你 | Grok 找可回覆的 X 貼文，Claude 讀原文、依當日數據寫回覆和配圖，你在回覆小幫手照順序回（標「建議引用」的用引用發） | `data/replies.json`、`data/replies/`；<https://north7.github.io/daybreak/ops/replies/> |
 | 盤中有事時 | Claude → 你 | 新低／新高、ETF 數據、大爆倉：寫中英文快訊和配圖，放到發文小幫手最上面 | `data/flash.json`、`data/flash/` |
+| 你傳通知截圖時；隔天寫回覆前 | Claude | 記錄當天發了什麼、誰回應、瀏覽多少；隔天更新數字並彙整 | `ops/log/<日期>.json`（見 [`log/README.md`](log/README.md)） |
 
 ## 發文小幫手
 
@@ -82,7 +87,10 @@ python make_short_017.py ../.. ~/fonts out/daybreak-017-short.mp4 --audio out/01
 
 每天請 Grok 找 10 則值得用數據回覆的 X 貼文（中文 6、英文 4，以藍勾博主為主，Murphy 必看）（規則在 [`replies/grok-prompt.md`](replies/grok-prompt.md)），把結果貼給 Claude 寫回覆和配圖（規則在 [`replies/README.md`](replies/README.md)），再到回覆小幫手 <https://north7.github.io/daybreak/ops/replies/> 照順序回。英文貼文回英文、中文貼文回繁體中文；和短影片同一個原則：只放資訊，預設不貼連結。
 
+## 成效紀錄
+
+2026-11-04 開始。你傳 X 通知截圖、或說「記錄今天」時，Claude 讀你的 X 個人頁（內建瀏覽器已登入）把當天每一則貼文和回覆記下來，依截圖填對方的回應；隔天寫新回覆之前先更新前一天的數字、跑 `python3 ops/log/log.py summary`，告訴你哪些有效。細節見 [`log/README.md`](log/README.md)。
+
 ## 之後可以加
 
 - 影片模板化：把 `make_short_0xx.py` 共用的繪圖函式抽成一份，每期只換分鏡與旁白 JSON。
-- 發文紀錄：每天發了什麼、哪張圖、成效（手動填），回頭看哪種內容有效。
