@@ -25,6 +25,8 @@ section.card.done { opacity:.5; }
 .done .head .ord { background:var(--ok); }
 .head a { color:var(--ink); font-weight:700; text-decoration:none; }
 .tag { border:1px solid var(--line); border-radius:999px; padding:0 8px; font-size:12px; }
+.tag.hot { border-color:var(--red); color:var(--red); }
+.tag.blue { border-color:#1D9BF0; color:#1D9BF0; }
 .orig { margin:12px 0 0; padding:10px 12px; background:var(--soft); border-left:3px solid var(--line); border-radius:4px; font-size:15px; white-space:pre-wrap; word-break:break-word; }
 .orig.clamp { max-height:10.5em; overflow:hidden; }
 .orig .meta { display:block; color:var(--ink3); font-size:12px; margin-top:6px; white-space:normal; }
@@ -56,7 +58,8 @@ details > summary { cursor:pointer; font-weight:700; color:var(--ink3); }
   <details id="skipped" hidden><summary id="skipsum"></summary><div id="skiplist"></div></details>
   <p class="tip">手機：有配圖的先按「存配圖」→ 選「儲存影像」；再按「複製回覆並開原文」，X App 打開那則貼文後按回覆、貼上文字、從相簿加圖。<br>
   電腦：「在 X 回覆」會開好回覆視窗並帶入文字；配圖要先下載，再在視窗裡自己加。<br>
-  回覆完按「標記已回覆」，只記在這台裝置。原文即時讀自 fxtwitter，讀不到時顯示摘要。</p>
+  標「建議引用」的：用引用發文（手機：「複製引用文並開原文」→ 轉推 → 引用 → 貼上、加圖）。引用算原創貼文，會計入首頁曝光；回覆不算。<br>
+  回覆完按「標記已回覆」，只記在這台裝置。原文即時讀自 fxtwitter，讀不到時顯示摘要；「藍勾」也是即時讀的。</p>
 </main>
 <script>
 (function () {
@@ -109,16 +112,26 @@ details > summary { cursor:pointer; font-weight:700; color:var(--ink3); }
         b += '<button class="copy" data-id="' + x.id + '">複製回覆</button>';
       }
       if (!MOBILE || !t) b += '<a href="' + esc(x.url) + '" target="_blank" rel="noopener">開原文</a>';
+      // 引用發文：算原創貼文、會計入首頁曝光（回覆不算）；手機走 X 原生的「轉推 → 引用」，電腦用 intent 帶入原文網址
+      var q = x.quote || '', qb = '';
+      if (q) {
+        qb = MOBILE ? '<a class="' + (x.mode === 'quote' ? 'go ' : '') + 'open" data-kind="quote" data-id="' + x.id + '" href="' + esc(x.url) + '">複製引用文並開原文</a>' +
+                      '<button class="copy" data-kind="quote" data-id="' + x.id + '">複製引用文</button>'
+                    : '<a class="' + (x.mode === 'quote' ? 'go' : '') + '" href="' + esc('https://x.com/intent/post?text=' + encodeURIComponent(q) + '&url=' + encodeURIComponent(x.url)) + '" target="_blank" rel="noopener">引用發文</a>' +
+                      '<button class="copy" data-kind="quote" data-id="' + x.id + '">複製引用文</button>';
+      }
       if (x.status !== 'skip') b += '<button class="mark' + (on ? ' on' : '') + '" data-id="' + x.id + '">' + (on ? '✓ 已回覆' : '標記已回覆') + '</button>';
       return '<section class="card' + (on ? ' done' : '') + '" id="c' + x.id + '">' +
         '<div class="head"><span class="ord">' + (x.status === 'skip' ? '—' : i + 1) + '</span>' +
         '<a href="' + esc(x.url) + '" target="_blank" rel="noopener">@' + esc(x.author) + '</a><span>' + fans(x.followers) + ' · ' + ago(x.posted) + '</span>' +
-        '<span class="tag">' + (LANG[x.lang] || esc(x.lang)) + '</span><span class="tag">' + esc(x.angle) + '</span>' + (x.status === 'optional' ? '<span class="tag">可選</span>' : '') + '</div>' +
+        '<span class="tag">' + (LANG[x.lang] || esc(x.lang)) + '</span><span class="tag">' + esc(x.angle) + '</span>' + (x.status === 'optional' ? '<span class="tag">可選</span>' : '') +
+        (x.mode === 'quote' ? '<span class="tag hot">建議引用</span>' : '') + '<span class="tag blue" id="v' + x.id + '" hidden>藍勾</span></div>' +
         '<div class="orig clamp" id="o' + x.id + '">' + esc(x.summary) + '<span class="meta">Grok／Claude 摘要（原文讀取中…）</span></div>' +
         '<button class="more" data-id="' + x.id + '" hidden>展開全文</button>' +
         (t ? '<div class="lab">回覆 <small class="' + (w > 280 ? 'over' : '') + '">' + w + ' / 280</small></div><pre>' + esc(t) + '</pre>' : '') +
         (img ? '<img src="' + img + '" alt="回覆配圖" loading="lazy">' : '') +
         '<div class="btns">' + b + '</div>' +
+        (q ? '<div class="lab">引用發文 <small>算曝光 · ' + (weight(q) + 23) + ' / 280（含原文網址）</small></div><pre>' + esc(q) + '</pre><div class="btns">' + qb + '</div>' : '') +
         (x.sources ? '<p class="src">數字：' + esc(x.sources) + '</p>' : '') + (x.note ? '<p class="note">' + esc(x.note) + '</p>' : '') + '</section>';
     }
 
@@ -134,6 +147,7 @@ details > summary { cursor:pointer; font-weight:700; color:var(--ink3); }
       fetch('https://api.fxtwitter.com/status/' + x.id).then(function (r) { return r.json(); }).then(function (j) {
         var tw = j && j.tweet; if (!tw) throw 0;
         var el = document.getElementById('o' + x.id);
+        if (tw.author && tw.author.verification && tw.author.verification.verified) document.getElementById('v' + x.id).hidden = false;
         el.innerHTML = esc(tw.text) + '<span class="meta">原文 · ♥ ' + num(tw.likes) + ' · 回覆 ' + num(tw.replies) + ' · 轉推 ' + num(tw.retweets) +
           (tw.views ? ' · 瀏覽 ' + num(tw.views) : '') + (tw.media && tw.media.all && tw.media.all.length ? ' · 附圖 ' + tw.media.all.length : '') + '</span>';
         if (el.scrollHeight > el.clientHeight + 4) document.querySelector('.more[data-id="' + x.id + '"]').hidden = false;
@@ -146,8 +160,9 @@ details > summary { cursor:pointer; font-weight:700; color:var(--ink3); }
     document.addEventListener('click', function (e) {
       var b = e.target.closest('button, a.open'); if (!b) return;
       var x = byId[b.dataset.id]; if (!x) return;
-      if (b.classList.contains('open')) { copy(x.reply).catch(function () {}); return; }   // 不擋預設動作：連結照常打開（手機會跳到 X App）
-      if (b.classList.contains('copy')) copy(x.reply).then(function () { flash(b, '✓ 已複製'); }, function () { flash(b, '✗'); });
+      var txt = b.dataset.kind === 'quote' ? x.quote : x.reply;
+      if (b.classList.contains('open')) { copy(txt).catch(function () {}); return; }   // 不擋預設動作：連結照常打開（手機會跳到 X App）
+      if (b.classList.contains('copy')) copy(txt).then(function () { flash(b, '✓ 已複製'); }, function () { flash(b, '✗'); });
       if (b.classList.contains('more')) { document.getElementById('o' + x.id).classList.remove('clamp'); b.hidden = true; }
       if (b.classList.contains('save')) {
         var f = files[x.id];

@@ -31,7 +31,8 @@ if __name__ == '__main__':
         try: t = get(i)
         except Exception as e: print(f'#{n} {i}: 讀取失敗 {e}\n'); continue
         a = t.get('author') or {}
-        print(f'#{n} @{a.get("screen_name")}（{a.get("followers"):,} 粉）{t.get("created_at")}  語言={t.get("lang")}  '
+        blue = '藍勾' if (a.get('verification') or {}).get('verified') else '非藍勾'
+        print(f'#{n} @{a.get("screen_name")}（{a.get("followers"):,} 粉，{blue}）{t.get("created_at")}  語言={t.get("lang")}  '
               f'讚 {t.get("likes")} / 回覆 {t.get("replies")} / 轉推 {t.get("retweets")} / 瀏覽 {t.get("views")}  {t.get("url")}')
         print(t.get('text', ''))
         q = t.get('quote')

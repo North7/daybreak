@@ -116,6 +116,16 @@ _line = PK.draw_line_chart
 PK.draw_line_chart = lambda d, box, sp, lang, Fn: (draw_liq if sp.get('kind') == 'liq' else _line)(d, box, sp, lang, Fn)
 
 
+def build_spec(L, im):
+    """image 欄位 → 圖表規格。stats 可覆寫底部三格：[{"zh_label", "en_label", "zh", "en"}]（快訊用，例如換成盤中低點）。"""
+    end = PK.dn(g(L, 'meta.bar_date'))
+    sp = (c_liq(L, im.get('marks')) if im['chart'] == 'liq' else EXTRA[im['chart']](L, end) if im['chart'] in EXTRA
+          else PK.spec(L, im['chart']))
+    if sp and im.get('stats'):
+        sp['stats'] = [PK.S(s['zh_label'], s['en_label'], s['zh'], s.get('en', s['zh'])) for s in im['stats']]
+    return sp
+
+
 def main(fonts_dir):
     import share_card as SC
     Fn = SC.fonts(fonts_dir)
@@ -128,9 +138,7 @@ def main(fonts_dir):
         im = it.get('image')
         if not im: continue
         lang = 'zh' if it['lang'] == 'zh' else 'en'
-        end = PK.dn(g(L, 'meta.bar_date'))
-        sp = (c_liq(L, im.get('marks')) if im['chart'] == 'liq' else EXTRA[im['chart']](L, end) if im['chart'] in EXTRA
-              else PK.spec(L, im['chart']))
+        sp = build_spec(L, im)
         if not sp: print('skip', it['n'], im['chart'], '（沒有這張圖或資料不足）'); continue
         fn = f'{it["n"]}.png'
         PK.card(L, notes[lang], sp, im['title'], lang, Fn, os.path.join(OUT, fn)); keep.add(fn)

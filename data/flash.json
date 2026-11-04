@@ -1,0 +1,45 @@
+{
+ "updated": "2026-11-04T03:55:00Z",
+ "items": [
+  {
+   "id": "2026-11-04-newlow",
+   "time": "2026-11-04T03:20:00Z",
+   "title": "盤中新低 75,625，9/16 以來最低",
+   "note": "價格還在動，發之前先看一下現價；若跌破 75,625 要改數字。",
+   "zh": "BTC 剛剛最低到 75,625，9/16 以來最低。\n\n我比較在意的是 76K 這個位置。76–78K 這層昨天才一天多了 13.5 萬顆短期籌碼，現在這批人幾乎都在虧損。再往下呢？76K 到 66K 之間的短期籌碼加起來只有約 12.8 萬顆，很空。\n\n今天收盤守不守得住 75K，我會盯著看。\n\n#比特幣 #BTC #鏈上數據",
+   "en": "BTC just tagged $75,625, the lowest since Sep 16.\n\n76K is the level that matters. The 76–78K band added 135K BTC of short-term holder supply in one day, and almost all of it is underwater now. Below it, only ~128K BTC of STH supply between 76K and 66K. Thin air.\n\n#Bitcoin #BTC",
+   "image": {
+    "chart": "cohort",
+    "title_zh": "76K 這層最厚，往下到 66K 很空",
+    "title_en": "Thick at 76K, thin all the way down to 66K",
+    "stats": [
+     {
+      "zh_label": "11/04 盤中低點",
+      "en_label": "Nov 4 intraday low",
+      "zh": "$75,625",
+      "en": "$75,625"
+     },
+     {
+      "zh_label": "76–78K 短期籌碼",
+      "en_label": "STH supply at 76–78K",
+      "zh": "72.9 萬顆",
+      "en": "729K BTC"
+     },
+     {
+      "zh_label": "66–76K 短期籌碼",
+      "en_label": "STH supply at 66–76K",
+      "zh": "12.8 萬顆",
+      "en": "128K BTC"
+     }
+    ]
+   }
+  },
+  {
+   "id": "2026-11-04-leverage",
+   "time": "2026-11-04T03:25:00Z",
+   "title": "新低之後：槓桿沒退、現貨還在折價",
+   "note": "適合當上一則底下的第二則，或幾小時後再發。資金費率與 Coinbase 價差是 11:20 的即時值。",
+   "zh": "跌到 75,625，但槓桿好像沒在怕。\n\nOKX 資金費率還是正的 0.01%（年化約 11%），Coinbase 也還比幣安便宜 0.15%。現貨沒人接，多單也沒退。\n\n我推算的多單清算帶在 75.2–76.3K，這次大概被掃了一半。\n\n#比特幣 #BTC #資金費率"
+  }
+ ]
+}
