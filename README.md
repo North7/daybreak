@@ -313,6 +313,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 2026-11-05：版面順序調整（使用者要求）：頭版、消息、**鏈上**、週期、價格、資金、衍生品、**出場框架**、往期、方法。鏈上是重點，移到第 3；出場框架離現在還遠，由第 4 移到第 8。
   - 2026-11-05：修正切到夜刊時語言切換的底色跑到 EN（實際語言沒變、「中文」字看不見）：夜刊的底色移動只套用在日刊／夜刊切換。
   - 2026-11-05：出場框架 v3：取消「加速」規則（頂部三指標任兩項 ≥ 85 連 5 日多賣兩階、≥ 90 十個交易日內賣完），頂部三指標改為只作讀值，任兩項 ≥ 80 仍標為頂部區。用網站自己的算法（CoinMetrics，2011 起）重播四輪：≥ 90 首次觸發都在週期中段（2017-04 在當輪頂部價的 7%、2020-12 的 39%、2024-03 的 58%），2021、2025 兩次真頂部當天都沒到 90；2021→2025 這輪平均賣價由頂部的 55% 變成 71%，四輪都不比原本差。也試過「已賣過一階才生效＋≥ 90 改成多賣兩階」：價格階梯從前高起算，2024-03 的中段高點正好剛突破前高，閘門只延後一天，平均只到 59%。限制：重播沒納入 200 日均線避險，舊週期的價格階梯以「前高 × 同樣倍數」換算，只有四輪樣本。
+  - 2026-11-05：鏈上版「短期持有者成本帶」加 ±0.5 標準差兩條較細的點線（點子清單）：離現價最近的上下兩條，判讀的上緣／下緣也列出。11/04 的 +0.5 標準差 84,022、−0.5 標準差 74,071。
   - 2026-11-04（參考 Glassnode 週報）：價格版新增「成本線與均線」（200／365 日、50 週均線＋短期持有者成本、真實市場均價、實現價、長期持有者成本）；資金版新增「BTC 對美股」（近 90 個美股交易日勝率與平均超額、近兩個月和 S&P 500、那斯達克、黃金〔PAXG〕的相對表現，FRED＋Kraken）；選擇權履約價分布可切換未平倉最大的兩個到期，加全部到期的買權／賣權合計；短期持有者獲利比例改用 Bitview、畫到 2019 並加 97.5% 賣出線與 50% 線；清算熱力圖用 OKX 4 小時線把歷史補到約 130 天（1 小時線只有 60 天），另列畫面外 ±25% 內最亮的一塊，並修正同一帶重複列出的問題。
   - 每日任務加「結構分析」：先問一個行情問題，拆參與者、比較前後、分清事實與推算、用行為確認、寫情境與推翻條件（`docs/CLAUDE_DAILY.md`）。
 - **2026-10-23**
@@ -515,8 +516,9 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
-- **2026-11-05** Exit plan v3
+- **2026-11-05** Exit plan v3; cost-band lines
   - The acceleration rule (top-3 indicators, any two ≥ 85 for 5 days → sell two extra steps; ≥ 90 → sell everything within 10 trading days) is dropped. The top-3 indicators are now a reading only; any two ≥ 80 still marks the top zone. A replay of four cycles since 2011 with the site's own method (CoinMetrics): ≥ 90 first fired mid-cycle every time (2017-04 at 7% of that cycle's top, 2020-12 at 39%, 2024-03 at 58%) and was not reached on the day of the 2021 or 2025 top; in 2021→2025 the average sale price goes from 55% to 71% of the top, and no cycle comes out worse. Gating the rule on "at least one step sold" with ≥ 90 selling only two steps reached 59%: the ladder starts at the prior high, which the 2024-03 mid-cycle peak had just broken, so the gate opened a day later. Limits: the replay leaves out the 200-day MA hedge, scales older ladders by the prior top, and has only four cycles.
+  - On-chain “Short-term holder cost bands” gains thinner dotted lines at ±0.5σ, the nearest bands above and below price; the upper/lower readings list them too. On 11/04: +0.5σ 84,022, −0.5σ 74,071.
 - **2026-11-04** Product review: front page, signal board, structure and charts
   - Front-page order: conclusion → what to do / what changed → signal board → findings → news (the action list used to sit 4–5 screens down); on desktop the giant closing price is capped at about 26% of the window so the stance and three levels fit on the first screen.
   - Follow-ups: those resolved today are listed; the ones still being tracked fold into one line (12–13 “watching” items used to push the new findings down).

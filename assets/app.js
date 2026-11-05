@@ -2431,7 +2431,8 @@
 
   /* 短期持有者成本帶（2026-11-04 使用者要求，Glassnode 的 STH cost basis ±1/±2 標準差；資料 Bitview）：
      帶＝短期持有者成本 ×（近 4 年「價格 ÷ 成本」的平均 ± k 個標準差），帶的中心不是成本線，所以上下不對稱。只作讀值 */
-  var SB_K = [[2, 'var(--s1)', '5 4'], [1, 'var(--s4)', ''], [-1, 'var(--s3)', ''], [-2, 'var(--down)', '5 4']];
+  // 2026-11-05 加 ±0.5 標準差（點線、較細）：離現價最近的上下兩條。第 4 欄是線寬
+  var SB_K = [[2, 'var(--s1)', '5 4'], [1, 'var(--s4)', ''], [0.5, 'var(--s4)', '2 3', 0.9], [-0.5, 'var(--s3)', '2 3', 0.9], [-1, 'var(--s3)', ''], [-2, 'var(--down)', '5 4']];
   function sbLab(k) { return (k > 0 ? '+' : '−') + Math.abs(k) + _T(' 標準差', 'σ'); }
   function sbZ(z) { return (z >= 0 ? '+' : '−') + fmt.n(Math.abs(z), 1); }
   function ymdD(s) { return s ? s.replace(/-/g, '/') : '—'; }
@@ -2440,26 +2441,27 @@
     it.push([_T('現在位置', 'Where price sits'), sbZ(n.z) + _T(' 標準差', 'σ'),
       _T('收盤 ' + fmt.usd(n.px) + '，在短期持有者成本 ' + fmt.usd(n.sth) + (n.px >= n.sth ? ' 上方 ' : ' 下方 ') + gp + '%。帶的中心（近 4 年平均）是成本 ×' + fmt.n(n.mu, 3) + '＝' + fmt.usd(n.center) + '，現在在中心' + (n.z >= 0 ? '上方' : '下方') + '。',
         'Close ' + fmt.usd(n.px) + ', ' + gp + '% ' + (n.px >= n.sth ? 'above' : 'below') + ' the short-term holder cost of ' + fmt.usd(n.sth) + '. The centre of the bands (4-year average) is cost ×' + fmt.n(n.mu, 3) + ' = ' + fmt.usd(n.center) + '; price is ' + (n.z >= 0 ? 'above' : 'below') + ' it.'), Math.abs(n.z) >= 1 ? 'warn' : 'neu']);
-    it.push([_T('上緣', 'Upper bands'), fmt.k(b['1']) + ' / ' + fmt.k(b['2']),
-      _T('+1 標準差 ' + fmt.usd(b['1']) + '、+2 標準差 ' + fmt.usd(b['2']) + '。近 4 年只有 ' + fmt.n(st.above1_pct, 0) + '% 的日子收在 +1 標準差以上' + (fell ? '；近 120 天最高到 ' + sbZ(mx.z) + ' 標準差（' + ymdD(mx.date) + '）後回落' : '') + '。',
-        '+1σ ' + fmt.usd(b['1']) + ', +2σ ' + fmt.usd(b['2']) + '. Only ' + fmt.n(st.above1_pct, 0) + '% of days in the past 4 years closed above +1σ' + (fell ? '; the last 120 days peaked at ' + sbZ(mx.z) + 'σ (' + ymdD(mx.date) + ') and fell back' : '') + '.'), 'neu']);
-    it.push([_T('下緣', 'Lower bands'), fmt.k(b['-1']) + ' / ' + fmt.k(b['-2']),
-      _T('−1 標準差 ' + fmt.usd(b['-1']) + '、−2 標準差 ' + fmt.usd(b['-2']) + '。近 4 年 ' + fmt.n(st.below1_pct, 0) + '% 的日子收在 −1 標準差以下' + (st.last_below1 ? '，上一次是 ' + ymdD(st.last_below1) : '') + '。',
-        '−1σ ' + fmt.usd(b['-1']) + ', −2σ ' + fmt.usd(b['-2']) + '. ' + fmt.n(st.below1_pct, 0) + '% of days in the past 4 years closed below −1σ' + (st.last_below1 ? '; the last was ' + ymdD(st.last_below1) : '') + '.'), 'neu']);
+    var h5 = b['0.5'] != null, l5 = b['-0.5'] != null;
+    it.push([_T('上緣', 'Upper bands'), (h5 ? fmt.k(b['0.5']) + ' / ' : '') + fmt.k(b['1']) + ' / ' + fmt.k(b['2']),
+      _T((h5 ? '+0.5 標準差 ' + fmt.usd(b['0.5']) + '、' : '') + '+1 標準差 ' + fmt.usd(b['1']) + '、+2 標準差 ' + fmt.usd(b['2']) + '。近 4 年只有 ' + fmt.n(st.above1_pct, 0) + '% 的日子收在 +1 標準差以上' + (fell ? '；近 120 天最高到 ' + sbZ(mx.z) + ' 標準差（' + ymdD(mx.date) + '）後回落' : '') + '。',
+        (h5 ? '+0.5σ ' + fmt.usd(b['0.5']) + ', ' : '') + '+1σ ' + fmt.usd(b['1']) + ', +2σ ' + fmt.usd(b['2']) + '. Only ' + fmt.n(st.above1_pct, 0) + '% of days in the past 4 years closed above +1σ' + (fell ? '; the last 120 days peaked at ' + sbZ(mx.z) + 'σ (' + ymdD(mx.date) + ') and fell back' : '') + '.'), 'neu']);
+    it.push([_T('下緣', 'Lower bands'), (l5 ? fmt.k(b['-0.5']) + ' / ' : '') + fmt.k(b['-1']) + ' / ' + fmt.k(b['-2']),
+      _T((l5 ? '−0.5 標準差 ' + fmt.usd(b['-0.5']) + '、' : '') + '−1 標準差 ' + fmt.usd(b['-1']) + '、−2 標準差 ' + fmt.usd(b['-2']) + '。近 4 年 ' + fmt.n(st.below1_pct, 0) + '% 的日子收在 −1 標準差以下' + (st.last_below1 ? '，上一次是 ' + ymdD(st.last_below1) : '') + '。',
+        (l5 ? '−0.5σ ' + fmt.usd(b['-0.5']) + ', ' : '') + '−1σ ' + fmt.usd(b['-1']) + ', −2σ ' + fmt.usd(b['-2']) + '. ' + fmt.n(st.below1_pct, 0) + '% of days in the past 4 years closed below −1σ' + (st.last_below1 ? '; the last was ' + ymdD(st.last_below1) : '') + '.'), 'neu']);
     return it;
   }
   function sbPanel() {
     var x = (D.onchain || {}).sth_bands; if (!x || !x.rows) return '';
     return panel('span-12', _T('短期持有者成本帶', 'Short-term holder cost bands'), 'Bitview · ' + fmt.md(x.date),
-      interpHtml(sbSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('短期持有者成本', 'STH cost'), 'var(--s2)']].concat(SB_K.map(function (k) { return [sbLab(k[0]), k[1], k[2] ? 'dash' : '']; }))) + '<div class="chart" id="c-sthband"></div>' +
-      '<p class="note">' + _T('短期持有者＝持有不到 155 天的幣，成本是它們的平均買價。帶的算法和 Glassnode 的「短期持有者成本基礎模型」相同：成本 ×（近 4 年「價格 ÷ 成本」的平均 ± 1、2 個標準差）；帶的中心不是成本線，所以上下不對稱。2026-11-04 驗算：−1 標準差算出 68,991，和用 Glassnode 資料算出的公開數字（約 68,900）差不到 0.2%。資料 Bitview（Bitcoin Research Kit 的公開 API），價格用本站統一收盤。',
-        'Short-term holders = coins held under 155 days; their cost is the average purchase price. The bands follow Glassnode\'s short-term holder cost basis model: cost × (the 4-year average of price ÷ cost ± 1 and 2 standard deviations); the centre is not the cost line, so the bands are asymmetric. Checked on 2026-11-04: −1σ comes out at 68,991, within 0.2% of a published figure based on Glassnode data (about 68,900). Data from Bitview (Bitcoin Research Kit\'s public API); price is the site\'s standard close.') + '</p>');
+      interpHtml(sbSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('短期持有者成本', 'STH cost'), 'var(--s2)']].concat(SB_K.map(function (k) { return [sbLab(k[0]), k[1], k[2] ? (k[3] ? 'dots' : 'dash') : '']; }))) + '<div class="chart" id="c-sthband"></div>' +
+      '<p class="note">' + _T('短期持有者＝持有不到 155 天的幣，成本是它們的平均買價。帶的算法和 Glassnode 的「短期持有者成本基礎模型」相同：成本 ×（近 4 年「價格 ÷ 成本」的平均 ± 0.5、1、2 個標準差，±0.5 是較細的點線）；帶的中心不是成本線，所以上下不對稱。2026-11-04 驗算：−1 標準差算出 68,991，和用 Glassnode 資料算出的公開數字（約 68,900）差不到 0.2%。資料 Bitview（Bitcoin Research Kit 的公開 API），價格用本站統一收盤。',
+        'Short-term holders = coins held under 155 days; their cost is the average purchase price. The bands follow Glassnode\'s short-term holder cost basis model: cost × (the 4-year average of price ÷ cost ± 0.5, 1 and 2 standard deviations; ±0.5 are the thinner dotted lines); the centre is not the cost line, so the bands are asymmetric. Checked on 2026-11-04: −1σ comes out at 68,991, within 0.2% of a published figure based on Glassnode data (about 68,900). Data from Bitview (Bitcoin Research Kit\'s public API); price is the site\'s standard close.') + '</p>');
   }
   function drawSthBand(el) {
     var x = (D.onchain || {}).sth_bands; if (!x || !el) return;
     var R_ = x.rows, ser = [{ name: _T('BTC 價格', 'BTC price'), data: R_.map(function (r) { return [r[0], r[1]]; }), color: 'var(--ink-2)', w: 1.3 }];
-    SB_K.forEach(function (k) { var q = { name: sbLab(k[0]), data: R_.map(function (r) { return [r[0], Math.round(r[2] * (r[3] + k[0] * r[4]))]; }), color: k[1], w: 1.2 }; if (k[2]) q.dash = k[2]; ser.push(q); });
-    ser.splice(3, 0, { name: _T('短期持有者成本', 'STH cost'), data: R_.map(function (r) { return [r[0], r[2]]; }), color: 'var(--s2)', w: 2 });
+    SB_K.forEach(function (k) { var q = { name: sbLab(k[0]), data: R_.map(function (r) { return [r[0], Math.round(r[2] * (r[3] + k[0] * r[4]))]; }), color: k[1], w: k[3] || 1.2 }; if (k[2]) q.dash = k[2]; ser.push(q); });
+    ser.splice(1 + SB_K.filter(function (k) { return k[0] > 0; }).length, 0, { name: _T('短期持有者成本', 'STH cost'), data: R_.map(function (r) { return [r[0], r[2]]; }), color: 'var(--s2)', w: 2 });
     lineChart(el, { log: true, h: el.clientWidth < 520 ? 260 : 340, series: ser, tipFmt: fmt.usd, aria: _T('BTC 價格與短期持有者成本帶', 'BTC price and short-term holder cost bands') });
   }
 

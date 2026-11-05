@@ -234,6 +234,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; table-layou
 .legend span { display: inline-flex; align-items: center; gap: 7px; }
 .legend i { width: 14px; height: 2px; background: currentColor; }
 .legend i.dash { background: repeating-linear-gradient(90deg, currentColor 0 4px, transparent 4px 7px); }
+.legend i.dots { background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px); height: 1.5px; }   /* 2026-11-05 點線（成本帶 ±0.5 標準差） */
 .legend i.box { height: 10px; width: 10px; opacity: .5; }
 .legend i.dot { width: 9px; height: 9px; border-radius: 50%; background: transparent; border: 2px solid currentColor; }   /* 2026-11-04 交叉點等標記 */
 .tip { position: fixed; z-index: 70; pointer-events: none; min-width: 150px; max-width: 290px; background: var(--ink); color: var(--void); padding: 9px 12px; font-size: 12px; animation: tipin .18s var(--ease); }
