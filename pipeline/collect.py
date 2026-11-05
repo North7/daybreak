@@ -817,7 +817,7 @@ for _k, _ser, _fn in (('sec', _sec, stage_viz.sec_viz), ('rpl', _rpl, stage_viz.
     except Exception as e: errors.append(f'checkonchain {_k} {e}')
 # G4f. 2026-11-04 使用者要求：短期持有者成本帶（Murphy 的 STH 成本基礎模型）、6–12／12–18 個月成本線（wander）。資料 Bitview（B9），價格用統一收盤 PXC
 if BV:
-    for _k, _fn in (('sth_bands', stage_viz.sth_bands_viz), ('age_cost', stage_viz.age_cost_viz), ('levels', stage_viz.levels_viz)):   # levels：2026-11-04 關鍵價位圖
+    for _k, _fn in (('sth_bands', stage_viz.sth_bands_viz), ('age_cost', stage_viz.age_cost_viz), ('levels', stage_viz.levels_viz), ('capflow', stage_viz.capflow_viz)):   # levels：2026-11-04 關鍵價位圖
         try: R[_k] = _fn(BV, globals().get('PXC') or {}, LAST)
         except Exception as e: errors.append(f'bitview {_k} {e}')
 # G4e. 2026-10-27 使用者要求：長期／短期持有者籌碼（LTH／STH URPD，Murphy 的拆法）。bitcoin-data 的 URPD 不分持有時間，

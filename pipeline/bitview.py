@@ -26,7 +26,10 @@ COLS = [('px', 'price_close', 2), ('sth', 'sth_realized_price', 2), ('tmm', 'tru
         ('c36', _band(('3m_to_4m', '4m_to_5m', '5m_to_6m')), 2), ('sths', 'sth_supply', 0), ('lths', 'lth_supply', 0),
         ('b1', 'balance_1_to_10_btc_supply', 0), ('b10', 'balance_10_to_100_btc_supply', 0), ('b100', 'balance_100_to_1k_btc_supply', 0),
         ('b1k', 'balance_1k_to_10k_btc_supply', 0), ('b10k', 'balance_10k_to_100k_btc_supply', 0), ('b100k', 'balance_over_100k_btc_supply', 0),
-        ('sthp', 'sth_supply_in_profit_share', 2), ('rp', 'realized_price', 2)]   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
+        ('sthp', 'sth_supply_in_profit_share', 2), ('rp', 'realized_price', 2),
+        # 2026-11-05：循環資金流（實現市值加權的幣齡：1 個月內、1–2 年各佔全體實現市值的 %）
+        ('cf1m', ('share', ['age_under_1h_realized_cap', 'age_1h_to_1d_realized_cap', 'age_1d_to_1w_realized_cap', 'age_1w_to_1m_realized_cap'], 'realized_cap'), 2),
+        ('cf12', ('share', ['age_1y_to_18m_realized_cap', 'age_18m_to_2y_realized_cap'], 'realized_cap'), 2)]   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
 KEYS = [k for k, _, _ in COLS]
 COC_TMM = 'https://charts-cdn.checkonchain.com/btconchain/cointime/cointime_pricing_all_1/cointime_pricing_all_1_light.html'
 
@@ -50,7 +53,8 @@ def _r(v, nd):
 
 def fetch(today=None):
     today = today or dt.datetime.now(dt.timezone.utc).date().isoformat()
-    names = ['date'] + [n for _, src, _ in COLS for n in ([src] if isinstance(src, str) else src[0] + src[1])]
+    _ns = lambda src: [src] if isinstance(src, str) else (src[1] + [src[2]] if src[0] == 'share' else src[0] + src[1])
+    names = ['date'] + [n for _, src, _ in COLS for n in _ns(src)]
     S = {n: _get(n) for n in dict.fromkeys(names)}
     if len({s for s, _ in S.values()}) != 1:
         raise RuntimeError('Bitview 各序列的起點不一致：' + ', '.join(f'{n} {s}' for n, (s, d) in S.items()))
@@ -61,6 +65,8 @@ def fetch(today=None):
         row = [d]
         for k, src, nd in COLS:
             if isinstance(src, str): v = g[src][i]
+            elif src[0] == 'share':
+                den = g[src[2]][i] or 0; v = sum(g[c][i] or 0 for c in src[1]) / den * 100 if den > 0 else None
             else:
                 sup = sum(g[s][i] or 0 for s in src[1]); v = sum(g[c][i] or 0 for c in src[0]) / sup if sup > 1 else None
             row.append(_r(v, nd))
