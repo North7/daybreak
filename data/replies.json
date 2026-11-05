@@ -475,6 +475,73 @@
    "note": "主題是礦企財報，和我們的數據只對得上一半（礦工端），所以列可選、不配圖。"
   },
   {
+   "n": 95,
+   "order": 21,
+   "status": "send",
+   "url": "https://x.com/Darkfost_Coc/status/2117873585326817698",
+   "id": "2117873585326817698",
+   "author": "Darkfost_Coc",
+   "name": "Darkfost",
+   "followers": 12213,
+   "posted": "2026-11-04T06:56:25Z",
+   "lang": "en",
+   "angle": "交叉驗證",
+   "summary": "Seller exhaustion model (supply in profit vs monthly volatility) is back at its lowest bear market levels; historically that let bottoms form, but it does not predict recovery: demand is still missing.",
+   "reply": "Seeing the same calm. My seller exhaustion constant is 0.2051, 10.8th percentile since 2011, though not as extreme as August. Agreed on demand too: apparent demand is −156,497 BTC over 30 days. Tired sellers, absent buyers. That gap is the whole story.",
+   "sources": "賣方衰竭常數 0.2051（2011 起第 10.8 百分位；極端區 < 0.13，上次在 2026/08）；表觀需求 30 天 −156,497 顆 · 11/04 · CheckOnChain",
+   "note": "1.2 萬粉、3,067 瀏覽，是 CryptoQuant 的分析師，建議用引用。他的立場是「賣方累了、需求還沒來」，順著講。我們的讀值還沒回到極端區，回覆照實寫「不像 8 月那麼極端」。",
+   "image": {
+    "site": {
+     "page": "onchain",
+     "sel": "#c-sec"
+    },
+    "title": "Seller exhaustion constant 0.2051: 10.8th percentile since 2011"
+   },
+   "quote": "Darkfost: Bitcoin sellers are getting exhausted. My seller exhaustion constant agrees at 0.2051, 10.8th pct since 2011. The missing half is demand: −156,497 BTC over 30 days. Tired sellers set up bottoms; buyers still need to show.\n\n#Bitcoin #BTC #onchain",
+   "mode": "quote"
+  },
+  {
+   "n": 96,
+   "order": 22,
+   "status": "send",
+   "url": "https://x.com/raychix/status/2117953219997638777",
+   "id": "2117953219997638777",
+   "author": "raychix",
+   "name": "raychix",
+   "followers": 3842,
+   "posted": "2026-11-04T12:12:51Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "Relays Darkfost: seller exhaustion back at bear market lows; historically lines up with bottoms, but demand is still missing.",
+   "reply": "The demand half is what I keep checking. Apparent demand just fell below its own 30-day average (−64,340 BTC). Part of that is last year's buys crossing the 1-year mark: +170K BTC in 30 days. So missing demand is partly a holding-period effect, not only fresh selling.",
+   "sources": "表觀需求 30 天 −156,497 顆、自己的 30 日均 −64,340；滿一年未動的幣 30 天 +17.0 萬顆 · 11/04 · CheckOnChain HODL waves",
+   "note": "轉述 Darkfost 的貼文，角度錯開：回需求那一半。",
+   "image": {
+    "site": {
+     "page": "onchain",
+     "sel": "#c-ad"
+    },
+    "title": "Apparent demand: −156,497 BTC over 30 days"
+   }
+  },
+  {
+   "n": 97,
+   "order": 23,
+   "status": "optional",
+   "url": "https://x.com/EyeOnChain/status/2117452542208884812",
+   "id": "2117452542208884812",
+   "author": "EyeOnChain",
+   "name": "EyeOnChain",
+   "followers": 6374,
+   "posted": "2026-11-03T03:03:21Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "A whale wallet dormant for 22 days woke up and sold ~$8.18M of BTC (WBTC/cbBTC) and ETH during the morning dip; asks if it is the start of a bigger exit.",
+   "reply": "One wallet is noise, but zoom out and long-term holders do look like they're distributing: LTH 30-day net position is −166,633 BTC, net negative for 92 days straight, while price rose 20.7% over that stretch. That's the bigger exit worth watching.",
+   "sources": "長期持有者 30 日淨部位 −166,633 顆（11/03）、自 8/4 起淨減 92 天、同期價格 +20.7% · bitcoin-data",
+   "note": "兩天前的貼文、單一以太坊錢包（WBTC），所以列可選。不配圖：網站的長期持有者 30 日淨部位圖目前是空的（只畫出最後一點）。"
+  },
+  {
    "n": 32,
    "order": 52,
    "status": "skip",
@@ -1170,6 +1237,74 @@
    "reply": "",
    "sources": "",
    "note": "跳過：粉絲 1,677（STH-SOPR 角度已給 1st_knight）。"
+  },
+  {
+   "n": 73,
+   "order": 93,
+   "status": "skip",
+   "url": "https://x.com/MorenoDV_/status/2118020695363924078",
+   "id": "2118020695363924078",
+   "author": "MorenoDV_",
+   "name": "MorenoDV_",
+   "followers": 1091,
+   "posted": "2026-11-04T16:40:59Z",
+   "lang": "en",
+   "angle": "—",
+   "summary": "4.4 萬 BTC 以虧損進交易所。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：粉絲 1,091、非藍勾。"
+  },
+  {
+   "n": 74,
+   "order": 94,
+   "status": "skip",
+   "url": "https://x.com/OnchainIns5699/status/2117976506039243231",
+   "id": "2117976506039243231",
+   "author": "OnchainIns5699",
+   "name": "OnchainIns5699",
+   "followers": 532,
+   "posted": "2026-11-04T13:45:23Z",
+   "lang": "en",
+   "angle": "—",
+   "summary": "Puell 約 1.00、7 日降 10%。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：粉絲 532。"
+  },
+  {
+   "n": 75,
+   "order": 95,
+   "status": "skip",
+   "url": "https://x.com/vov_btc/status/2117974617474089222",
+   "id": "2117974617474089222",
+   "author": "vov_btc",
+   "name": "vov_btc",
+   "followers": 130,
+   "posted": "2026-11-04T13:37:53Z",
+   "lang": "en",
+   "angle": "—",
+   "summary": "NUPL 說明加圖表連結。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：粉絲 130、非藍勾，導流連結。"
+  },
+  {
+   "n": 76,
+   "order": 96,
+   "status": "skip",
+   "url": "https://x.com/blackhacksbtc/status/2118118642927739275",
+   "id": "2118118642927739275",
+   "author": "blackhacksbtc",
+   "name": "blackhacksbtc",
+   "followers": 260,
+   "posted": "2026-11-04T23:10:11Z",
+   "lang": "pt",
+   "angle": "—",
+   "summary": "（葡萄牙文）NUPL 0.33。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：葡萄牙文（Grok 標成英文）、粉絲 260。"
   }
  ]
 }
