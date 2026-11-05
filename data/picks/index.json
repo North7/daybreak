@@ -1,7 +1,16 @@
 {
- "date": "2026-11-03",
+ "date": "2026-11-04",
  "captions": true,
  "picks": [
+  {
+   "id": "cost",
+   "chart": "data/picks/cost.png",
+   "chart_en": "data/picks/cost-en.png",
+   "name": {
+    "zh": "短期持有者成本與真實市場均價",
+    "en": "STH cost basis and true market mean"
+   }
+  },
   {
    "id": "cohort",
    "chart": "data/picks/cohort.png",
@@ -18,15 +27,6 @@
    "name": {
     "zh": "Coinbase 溢價",
     "en": "Coinbase premium"
-   }
-  },
-  {
-   "id": "cost",
-   "chart": "data/picks/cost.png",
-   "chart_en": "data/picks/cost-en.png",
-   "name": {
-    "zh": "短期持有者成本與真實市場均價",
-    "en": "STH cost basis and true market mean"
    }
   }
  ]
