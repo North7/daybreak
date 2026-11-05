@@ -62,7 +62,7 @@ stage = dict({k: v for k, v in ms.items() if k != 'note'}, **st23, evidence=td.g
              bull_need=dict(run=30), bear_back=dict(transition_below_run=5, bull_below_falling_run=30))
 ladder = model['exit_framework']['ladder']
 nxt = next((x for x in ladder if x > c), None)
-onchain = {k: {kk: v.get(kk) for kk in ('date', 'value', 'pct_4y', 'ma7', 'chg30_pct')} for k, v in (td.get('onchain') or {}).items() if isinstance(v, dict)}
+onchain = {k: {kk: v.get(kk) for kk in ('date', 'value', 'pct_4y', 'ma7', 'chg30_pct', 'source') if kk != 'source' or v.get('source')} for k, v in (td.get('onchain') or {}).items() if isinstance(v, dict)}   # 2026-11-05：帶上 source（Bitview／CheckOnChain），頁面的資料狀態與驗證列才標得對
 
 out = {
   'meta': {'bar_date': td['bar_date'], 'generated_utc': td.get('generated_utc'), 'errors': td.get('errors', []), 'bd_rotation': td.get('bd_rotation'),
