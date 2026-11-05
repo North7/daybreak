@@ -4,6 +4,25 @@
  "edition": 30,
  "items": [
   {
+   "n": 105,
+   "order": 0,
+   "status": "send",
+   "url": "https://x.com/cryptogoos/status/2118345124422058357",
+   "id": "2118345124422058357",
+   "author": "cryptogoos",
+   "name": "CryptoGoos",
+   "followers": 116917,
+   "posted": "2026-11-05T14:10:09Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "距下次減半 530 天；規則：減半前 500 天買、減半後 500 天賣（附減半週期圖）",
+   "reply": "The top side of this has been weirdly consistent. Last three tops came 525, 546 and 534 days after the halving. Lows lined up too, 513 to 542 days before the next one. Except this cycle, the low hit June 30, about 655 days out. Pretty early by this clock",
+   "sources": "cycle.halvings＋cycle.cycle_cmp：頂部 2017-12-16／2021-11-08／2025-10-06 分別在減半後 525／546／534 天；低點 2015-01-14／2018-12-15／2022-11-09 在下次減半前 542／513／528 天；這輪低點 2026-06-30，距 next_halving_est 2028-04-15 約 655 天",
+   "note": "使用者指定，剛發（14:10 UTC）。原文是買賣規則，回覆只講減半時間表的歷史數字，不接買賣；他的時間表頂部那半邊很準，補一個這輪不一樣的地方（低點提早）。不配圖：一句話講得完。",
+   "mode": "reply",
+   "style": "真人版"
+  },
+  {
    "n": 104,
    "order": 0,
    "status": "send",
