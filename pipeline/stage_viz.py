@@ -460,6 +460,7 @@ def lthloss_viz(ser, last, bottoms, cohort=None, block=4):
 # 2026-11-04 使用者要求（Murphy〈短期持有者成本基礎模型〉，Glassnode 的 STH cost basis ±1/±2 標準差）：資料 Bitview（bitview.get）。
 #   帶＝短期持有者成本 ×（近 4 年〔1,460 天〕「價格 ÷ 短期持有者成本」的平均 ± k 個標準差）。帶的中心不是成本線，所以上下不對稱。
 #   驗算：2026-11-04 的 −1 標準差算出 68,991，Murphy 寫約 68,900。價格用網站統一收盤（px，沒有的日子用 Bitview 自帶的價格）。只作讀值
+#   2026-11-05 加 ±0.5 標準差兩條（bands 的鍵 '0.5'、'-0.5'）：離現價最近的上下兩條，前端畫成點線
 SB_W, SB_FROM = 1460, '2022-01-01'
 
 
@@ -481,7 +482,7 @@ def sth_bands_viz(bv, px, last, step=3):
     rows = thin([[dn(d), round(P[d]), round(sth[d]), round(mu[d], 4), round(sd[d], 4)] for d in D if d >= SB_FROM and d in mu], step)
     return dict(date=d1, src='Bitview', window=SB_W, rows=rows,
                 now=dict(px=round(P[d1]), sth=round(S), mu=round(mu[d1], 4), sd=round(sd[d1], 4), z=round(z[d1], 2), center=round(S * mu[d1]),
-                         bands={str(k): round(S * (mu[d1] + k * sd[d1])) for k in (-2, -1, 1, 2)}),
+                         bands={str(k): round(S * (mu[d1] + k * sd[d1])) for k in (-2, -1, -0.5, 0.5, 1, 2)}),   # 2026-11-05 加 ±0.5（使用者決定，點子清單）
                 stats=dict(above1_pct=round(sum(z[d] >= 1 for d in last4) / len(last4) * 100, 1), below1_pct=round(sum(z[d] <= -1 for d in last4) / len(last4) * 100, 1),
                            last_above1=lastof(lambda v: v >= 1), last_below1=lastof(lambda v: v <= -1), max120=dict(date=hi120, z=round(z[hi120], 2))),
                 note='短期持有者成本（Bitview）×（近 4 年價格 ÷ 成本的平均 ± k 個標準差）；Glassnode 的同類模型；只作讀值')
