@@ -560,8 +560,12 @@
   /* items：[名稱, 數值 HTML, 解讀文字, tone]；解讀為空的整列略過 */
   function interpHtml(items) {
     items = items.filter(function (x) { return x && x[2]; });
-    return items.length ? '<div class="interp">' + items.map(function (x) { return '<div class="it"><span class="k">' + esc(x[0]) + '</span><span class="v num">' + x[1] + '</span>' + tnHtml(x[3]) + '<span class="d">' + esc(x[2]) + '</span></div>'; }).join('') + '</div>' : '';
+    return items.length ? '<div class="interp">' + items.map(function (x) { return '<div class="it' + (x[4] ? ' view' : '') + '"><span class="k">' + esc(x[0]) + '</span><span class="v num">' + x[1] + '</span>' + tnHtml(x[3]) + '<span class="d">' + esc(x[2]) + '</span></div>'; }).join('') + '</div>' : '';
   }
+  /* 2026-11-05 使用者要求：不只說數據，要基於數據給出具體觀點。每個面板最後一列「我們的看法」：傾向＋理由（可引用其他面板互相印證）＋會改變看法的條件。
+     由當天資料自動判斷；不寫目標價、不標買賣區、不連動任何倉位 */
+  function viewRow(stance, text, change, tone) { return [_T('我們的看法', 'Our read'), stance, text + (change ? _T('會改變看法：', ' What would change it: ') + change : ''), tone || 'neu', 1]; }
+  function lvOf(k) { var L = ((D.cycle || {}).levels || {}).levels || []; for (var i = 0; i < L.length; i++) if (L[i].key === k) return L[i].value; return null; }
   function interpPanel(items, src) { var h = interpHtml(items); return h ? panel('span-12', _t('這些數字代表什麼'), src || _t('依當日數值套固定門檻自動產生 · 非投資建議'), h) : ''; }
   function rdRow(rd, cols) { return rd && rd[0] ? '<tr class="rd"><td colspan="' + cols + '">' + tnHtml(rd[1]) + esc(rd[0]) + '</td></tr>' : ''; }
   function top3Line(p, key) {   // 頂部三指標共用的提醒
@@ -2100,7 +2104,7 @@
   function lcLv(v, clip) { return Math.max(0, Math.min(8, Math.round(v / clip * 4) + 4)); }
   function lcCoins(v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + cohCoins(Math.abs(v)); }
   function lcSay() {
-    var x = D.onchain.lth_color, r = x.run, it = [], up = r.price_chg_pct > 5, dn_ = r.price_chg_pct < -5, sell = r.sign < 0;
+    var x = D.onchain.lth_color, r = x.run, it = [], up = r.price_chg_pct > 5, dn_ = r.price_chg_pct < -5, sell = r.sign < 0, ls = (D.onchain || {}).lsr;
     var since = _T('從 ' + fmt.md(r.start) + ' 起連續 ' + r.days + ' 天淨' + (sell ? '減' : '增') + '（最多 ' + lcCoins(r.extreme) + '），同期價格 ' + fmt.pct(r.price_chg_pct, 0) + '（' + fmt.usd(r.price0) + ' → ' + fmt.usd(r.price) + '）。',
       'Net ' + (sell ? 'reducing' : 'adding') + ' for ' + r.days + ' straight days since ' + fmt.md(r.start) + ' (peak ' + lcCoins(r.extreme) + '), while price moved ' + fmt.pct(r.price_chg_pct, 0) + ' (' + fmt.usd(r.price0) + ' → ' + fmt.usd(r.price) + '): ');
     var why = sell ? (up ? _T('價格漲、老手減：老手趁反彈出貨，上方一直有人供貨。', 'price up while veterans cut, so long-term holders are selling into the rally and supplying the market above.') :
@@ -2111,13 +2115,24 @@
       _T('價格沒什麼動、老手淨增：籌碼在沉澱。', 'price flat and veterans growing, so supply is settling into stronger hands.'));
     it.push([_T('長期持有者 30 日淨部位', 'LTH 30-day net position'), lcCoins(x.last), since + why, sell ? 'warn' : 'pos']);
     var p = x.prev_same;
-    var ls = (D.onchain || {}).lsr, md_ = function (s) { return s.replace(/-/g, '/'); };   // 2026-11-05 長短期持有者供給比（Bitview）
+    var md_ = function (s) { return s.replace(/-/g, '/'); };   // 2026-11-05 長短期持有者供給比（Bitview）
     if (ls) it.push([_T('長短期持有者供給比', 'LTH ÷ STH supply'), fmt.n(ls.value, 2),
       _T('長期持有者 ' + cohCoins(ls.lth) + ' ÷ 短期持有者 ' + cohCoins(ls.sth) + '（Bitview，' + fmt.md(ls.date) + '）。30 天前 ' + fmt.n(ls.d30, 2) + '（' + fmt.pct(ls.chg30_pct, 1) + '）' + (ls.d365 != null ? '、一年前 ' + fmt.n(ls.d365, 2) : '') + '；一年內最高 ' + fmt.n(ls.hi1y.value, 2) + '（' + md_(ls.hi1y.date) + '）、最低 ' + fmt.n(ls.lo1y.value, 2) + '（' + md_(ls.lo1y.date) + '）；2015 年以來第 ' + fmt.n(ls.pct, 0) + ' 百分位。下降＝短期籌碼變多（老手分發或新買家進場），上升＝籌碼沉澱（也包括幣放滿 155 天自動轉成長期）。',
         'Long-term ' + cohCoins(ls.lth) + ' ÷ short-term ' + cohCoins(ls.sth) + ' (Bitview, ' + fmt.md(ls.date) + '). 30 days ago ' + fmt.n(ls.d30, 2) + ' (' + fmt.pct(ls.chg30_pct, 1) + ')' + (ls.d365 != null ? ', a year ago ' + fmt.n(ls.d365, 2) : '') + '; 1-year high ' + fmt.n(ls.hi1y.value, 2) + ' (' + md_(ls.hi1y.date) + '), low ' + fmt.n(ls.lo1y.value, 2) + ' (' + md_(ls.lo1y.date) + '); ' + fmt.n(ls.pct, 0) + 'th percentile since 2015. Falling = more short-term supply (veterans distributing or new buyers arriving); rising = supply settling (including coins simply aging past 155 days).'), 'neu']);
+    var lcView = sell && !dn_ ? viewRow(_T('換手中', 'Handover under way'),
+        _T('老手從 ' + fmt.md(r.start) + ' 起淨減 ' + r.days + ' 天，同期價格 ' + fmt.pct(r.price_chg_pct, 0) + (ls && ls.chg30_pct < 0 ? '，長短期持有者供給比從一年內高點 ' + fmt.n(ls.hi1y.value, 2) + ' 降到 ' + fmt.n(ls.value, 2) : '') + '：籌碼正從老手轉到新買家手上，而且有人接得住（價格沒跌）。從真實市場均價走到新高，前幾輪都要經過這種換手，而且都花了很久；我們看這是中段的消化，不是頂部出貨。',
+          'Long-term holders have been net sellers for ' + r.days + ' days since ' + fmt.md(r.start) + ' while price moved ' + fmt.pct(r.price_chg_pct, 0) + (ls && ls.chg30_pct < 0 ? ', and the LTH ÷ STH supply ratio fell from a 1-year high of ' + fmt.n(ls.hi1y.value, 2) + ' to ' + fmt.n(ls.value, 2) : '') + ': supply is passing from veterans to new buyers, and it is being absorbed (price has not fallen). Every past climb from the true market mean to a new high needed this handover, and it always took a while; we read it as mid-cycle digestion, not top distribution. '),
+        _T('老手繼續減、價格開始跌（派發接不住）。', 'veterans keep selling while price starts falling (distribution not absorbed).'), 'neu')
+      : sell ? viewRow(_T('派發', 'Distribution'),
+        _T('老手在減、價格也在跌：賣壓有一部分來自持有很久的人，接盤不夠。我們看偏弱。', 'Veterans selling into a falling price: part of the selling comes from long-held coins and buyers are not absorbing it. Soft. '),
+        _T('老手轉為淨增，或價格止跌。', 'veterans turning net buyers, or price stabilising.'), 'warn')
+      : viewRow(_T('籌碼沉澱', 'Supply settling'),
+        _T('老手淨增：持有的人沒在賣（也包括幣放滿 155 天自動轉成長期）。供給在變少，我們看結構偏多。', 'Veterans net adding: holders are not selling (coins ageing past 155 days also count). Supply is thinning; structurally constructive. '),
+        _T('老手轉為淨減。', 'veterans turning net sellers.'), 'pos');
     it.push([_T('四年位置', '4-year rank'), fmt.n(x.pct_4y, 0) + _T(' 百分位', 'th pct'), _T('0＝四年來淨減最多的一天、100＝淨增最多。', '0 = the heaviest net reduction in four years, 100 = the heaviest net addition. ') +
       (p ? _T('這段之前，上一次淨' + (x.last < 0 ? '減' : '增') + '這麼多是 ' + p.date.replace(/-/g, '/') + '（' + lcCoins(p.value) + '，價格 ' + fmt.usd(p.price) + '）。', 'Before this run, the last time it was this ' + (x.last < 0 ? 'negative' : 'positive') + ' was ' + p.date.replace(/-/g, '/') + ' (' + lcCoins(p.value) + ', price ' + fmt.usd(p.price) + '). ') : '') +
       (x.vs_hi1y_pct > -2 ? _T('價格就在一年高點 ' + fmt.usd(x.hi1y) + ' 附近。', 'Price is at the one-year high of ' + fmt.usd(x.hi1y) + '.') : _T('價格比一年高點 ' + fmt.usd(x.hi1y) + ' 低 ' + fmt.n(-x.vs_hi1y_pct, 0) + '%。', 'Price is ' + fmt.n(-x.vs_hi1y_pct, 0) + '% below the one-year high of ' + fmt.usd(x.hi1y) + '.')), 'neu']);
+    it.push(lcView);
     return it;
   }
   function lthColorPanel() {
@@ -2347,10 +2362,26 @@
           (cb.days ? (now2 ? 'Right now 30d is negative and 1y positive, often read as a bull-market pullback; ' : '“30d negative, 1y positive” is often read as a bull-market pullback (not now: 30d ' + (x.value >= 0 ? 'positive' : 'negative') + ', 1y ' + (y.value >= 0 ? 'positive' : 'negative') + '); ') +
             'since 2016 that combination lasted ' + cb.days + ' days and price was higher 90 days later ' + cb.up90_pct + '% of the time (median ' + fmt.pct(cb.med90, 1) + '), ' + cmp + cb.all_up90_pct + '%, median ' + fmt.pct(cb.all_med90, 1) + cmpEnd + '.' : '')), 'neu']);
     }
+    var vy = (x.y1 || {}).value, adView = null;
+    if (vy != null) {
+      if (x.value < 0 && vy < 0) adView = viewRow(_T('需求偏弱', 'Weak demand'),
+        _T('30 天和 1 年都是負的：舊幣醒來被市場接走的量，追不上滿一年沒動的幣增加的速度——換手少、新買盤不積極。30 天版有一部分是一年前頂部附近換手的回音，可能誇大了弱勢；但 1 年版也是負的，所以需求偏弱不只是回音。',
+          'Both the 30-day and 1-year readings are negative: old coins waking up and being absorbed do not keep pace with coins ageing past one year, so there is little turnover and new buying is not aggressive. Part of the 30-day figure is an echo of heavy turnover near last year\'s top and may overstate the weakness, but the 1-year reading is negative too, so it is not only an echo. '),
+        _T('30 天版回到正值，或回到自己的 30 日平均之上。', 'the 30-day reading turning positive, or back above its own 30-day average.'), 'warn');
+      else if (x.value > 0 && vy > 0) adView = viewRow(_T('需求在吸收供給', 'Demand absorbing supply'),
+        _T('30 天和 1 年都是正的：舊幣醒來被市場接走，需求追得上供給。',
+          'Both readings are positive: old coins are waking and being absorbed, and demand keeps up with supply. '),
+        _T('30 天版轉負。', 'the 30-day reading turning negative.'), 'pos');
+      else adView = viewRow(_T('分歧', 'Mixed'),
+        _T('30 天' + (x.value >= 0 ? '正' : '負') + '、1 年' + (vy >= 0 ? '正' : '負') + '：短期和長期方向不一致。常聽到「30 天負、1 年正＝牛市回調」，但 2016 年以來這種組合之後 90 天的表現比平均差，所以我們不把它當成看多的理由。',
+          '30-day ' + (x.value >= 0 ? 'positive' : 'negative') + ', 1-year ' + (vy >= 0 ? 'positive' : 'negative') + ': short and long run disagree. “30d negative, 1y positive” is often called a bull-market pullback, but since 2016 that mix was followed by worse-than-average 90-day returns, so we do not treat it as a bullish sign. '),
+        _T('兩者同向。', 'both pointing the same way.'), 'neu');
+    }
     var soon = (x.echo_soon || [])[0], seen = M.filter(function (m) { return m.echo_rise != null; }), hit = seen.filter(function (m) { return m.echo_rise >= m.btc * 0.5; });
     if (soon || M.length) it.push([_T('疑似搬家', 'Likely transfers'), soon ? ymd(soon.echo).slice(5) : String(M.length),
       _T((soon ? ymd(soon.start) + (soon.end !== soon.start ? '–' + ymd(soon.end).slice(5) : '') + ' 一天搬動 ' + cohCoins(soon.btc) + ' 1 年以上的舊幣（疑似交易所或託管整理錢包），這批幣若一直沒動，會在 ' + ymd(soon.echo) + ' 前後滿一年，把這條線拉低同樣的量——那是搬家的回音，不是需求崩掉。' : '') + (seen.length ? '過去 ' + seen.length + ' 次中 ' + hit.length + ' 次一年後真的出現回音（其他幾次那批幣又被動過）。' : ''),
         (soon ? ymd(soon.start) + ' moved ' + cohCoins(soon.btc) + ' of 1y+ coins in a day (likely an exchange or custodian reshuffle). If they stay put they turn one year old around ' + ymd(soon.echo) + ' and drag this line down by the same amount — an echo of the transfer, not collapsing demand. ' : '') + (seen.length ? 'Of ' + seen.length + ' past cases, ' + hit.length + ' produced the echo a year later (the rest moved again).' : '')), 'neu']);
+    if (adView) it.push(adView);
     return it;
   }
   var AD_Y = 30 / 365;   // 1 年版畫在 30 天的刻度上
@@ -2428,6 +2459,12 @@
         _T((all ? '前 ' + past.length + ' 次熊市都是底部那次低點的虧損最大：' : '前幾次熊市最大的一次：') + past.map(function (b) { return ym(b.max.date) + ' ' + fmt.n(b.max.rel, 2) + '%'; }).join('、') + '。2018 年 6→8→10 月虧損一度縮小，之後還有最大的一次投降，所以「價格新低但虧損變小」不能單獨當成賣壓衰竭。',
           (all ? 'In each of the past ' + past.length + ' bear markets the bottom brought the largest loss: ' : 'Largest in past bear markets: ') + past.map(function (b) { return ym(b.max.date) + ' ' + fmt.n(b.max.rel, 2) + '%'; }).join(', ') + '. In 2018 the loss shrank from June to August to October and the biggest capitulation still came after, so “a new low with a smaller loss” is not on its own a sign of seller exhaustion.'), 'neu']);
     }
+    var mx = L.length ? L.reduce(function (a, b) { return b.rel > a.rel ? b : a; }) : null, pmin = past.length ? Math.min.apply(null, past.map(function (b) { return b.max.rel; })) : null;
+    var cc = (D.cycle || {}).cycle_cmp, cur = cc ? (cc.cycles || []).filter(function (c) { return c.now; })[0] : null, ll = (D.onchain || {}).lthloss, lp = ll && ll.peaks ? ll.peaks[ll.peaks.length - 1] : null;
+    if (mx && pmin) it.push(viewRow(_T('這輪沒有大投降', 'No big capitulation this cycle'),
+      _T('這輪老手認賠最多只有 ' + fmt.n(mx.rel, 2) + '%（' + ym(mx.date) + '），前幾次熊市底部至少 ' + fmt.n(pmin, 2) + '%。兩種讀法：這輪本來跌得淺' + (cur ? '（最深 ' + fmt.pct(cur.low.pct, 0) + '，前幾輪 −77%～−85%）' : '') + '，不需要大規模投降；或真正的投降還沒來。我們偏向前者' + (lp ? '——長期持有者虧損比例 ' + ym(lp.date) + ' 的高點 ' + fmt.n(lp.value, 1) + '% 已經落在歷輪底部的 42–48% 區間' : '') + '，和「這輪低點已經出現」一致。近 7 天 ' + fmt.n(x.rel, 2) + '%（第 ' + fmt.n(x.pct, 0) + ' 百分位），代表老手在現價附近仍有人認賠，賣壓還沒清乾淨。',
+        'This cycle\'s largest veteran capitulation was only ' + fmt.n(mx.rel, 2) + '% (' + ym(mx.date) + '); past bear-market bottoms reached at least ' + fmt.n(pmin, 2) + '%. Two readings: this cycle fell less' + (cur ? ' (deepest ' + fmt.pct(cur.low.pct, 0) + ' vs −77% to −85% before)' : '') + ' and never needed a mass capitulation, or the real one is still ahead. We lean to the first' + (lp ? ': long-term holders\' share in loss peaked at ' + fmt.n(lp.value, 1) + '% in ' + ym(lp.date) + ', inside the 42–48% band of past bottoms' : '') + ', consistent with this cycle\'s low already being in. The last 7 days at ' + fmt.n(x.rel, 2) + '% (' + fmt.n(x.pct, 0) + 'th percentile) show some veterans still selling at a loss near current prices, so the overhang is not fully cleared. '),
+      _T('出現 ' + fmt.n(pmin, 2) + '% 以上的尖峰（那才是過去底部那種投降）。', 'a spike above ' + fmt.n(pmin, 2) + '% (the kind of capitulation past bottoms had).'), 'neu'));
     return it;
   }
   function drawLthRl(el) {
@@ -2500,6 +2537,23 @@
     it.push([_T('下緣', 'Lower bands'), (l5 ? fmt.k(b['-0.5']) + ' / ' : '') + fmt.k(b['-1']) + ' / ' + fmt.k(b['-2']),
       _T((l5 ? '−0.5 標準差 ' + fmt.usd(b['-0.5']) + '、' : '') + '−1 標準差 ' + fmt.usd(b['-1']) + '、−2 標準差 ' + fmt.usd(b['-2']) + '。近 4 年 ' + fmt.n(st.below1_pct, 0) + '% 的日子收在 −1 標準差以下' + (st.last_below1 ? '，上一次是 ' + ymdD(st.last_below1) : '') + '。',
         (l5 ? '−0.5σ ' + fmt.usd(b['-0.5']) + ', ' : '') + '−1σ ' + fmt.usd(b['-1']) + ', −2σ ' + fmt.usd(b['-2']) + '. ' + fmt.n(st.below1_pct, 0) + '% of days in the past 4 years closed below −1σ' + (st.last_below1 ? '; the last was ' + ymdD(st.last_below1) : '') + '.'), 'neu']);
+    var act = ((D.cycle || {}).levels || {}).act, z = n.z, ov = act && b['0.5'] && Math.abs(act.value / b['0.5'] - 1) < 0.03;
+    if (z >= 1) it.push(viewRow(_T('過熱', 'Stretched'),
+      _T('收盤在 +' + fmt.n(z, 1) + ' 標準差：近 4 年只有 ' + fmt.n(st.above1_pct, 0) + '% 的日子在 +1 標準差以上，短期持有者帳面獲利很厚，獲利了結的壓力大。我們看漲勢延續的空間有限。',
+        'The close is at +' + fmt.n(z, 1) + 'σ: only ' + fmt.n(st.above1_pct, 0) + '% of days in four years sat above +1σ, so short-term holders sit on fat paper gains and profit-taking pressure is high. Limited room to keep running. '),
+      _T('收回 +1 標準差 ' + fmt.usd(b['1']) + ' 下方。', 'a close back below +1σ at ' + fmt.usd(b['1']) + '.'), 'warn'));
+    else if (z >= 0) it.push(viewRow(_T('健康但不強', 'Healthy, not strong'),
+      _T('收盤在成本上方 ' + fmt.n((n.px / n.sth - 1) * 100, 1) + '%、+' + fmt.n(z, 1) + ' 標準差：短期持有者整體小賺，這是上漲中正常的回測區。' + (ov ? '上方 +0.5 標準差 ' + fmt.usd(b['0.5']) + ' 和活躍投資人成本 ' + fmt.usd(act.value) + ' 幾乎重疊，兩個角度都指向同一個壓力帶。' : '上方先看 +0.5 標準差 ' + fmt.usd(b['0.5']) + '。'),
+        'The close is ' + fmt.n((n.px / n.sth - 1) * 100, 1) + '% above cost, at +' + fmt.n(z, 1) + 'σ: short-term holders are slightly in profit, a normal retest zone in an uptrend. ' + (ov ? 'Above, +0.5σ at ' + fmt.usd(b['0.5']) + ' nearly coincides with the active investor price of ' + fmt.usd(act.value) + ', so two separate measures point at the same resistance. ' : 'The first level above is +0.5σ at ' + fmt.usd(b['0.5']) + '. ')),
+      _T('收破短期持有者成本 ' + fmt.usd(n.sth) + '（短期持有者整體轉虧）。', 'a close below the short-term holder cost of ' + fmt.usd(n.sth) + ' (short-term holders turn to a loss).'), 'neu'));
+    else if (z > -1) it.push(viewRow(_T('偏弱', 'Soft'),
+      _T('收盤在成本下方：短期持有者整體虧損，反彈到成本線 ' + fmt.usd(n.sth) + ' 附近會遇到回本賣壓。',
+        'The close is below cost: short-term holders are under water as a group, and rallies toward the cost line at ' + fmt.usd(n.sth) + ' meet break-even selling. '),
+      _T('收回 ' + fmt.usd(n.sth) + ' 上方。', 'a close back above ' + fmt.usd(n.sth) + '.'), 'warn'));
+    else it.push(viewRow(_T('壓力極大', 'Deep stress'),
+      _T('收盤在 −' + fmt.n(-z, 1) + ' 標準差：近 4 年只有 ' + fmt.n(st.below1_pct, 0) + '% 的日子這麼低，短期持有者大面積認賠。這是恐慌區，賣壓多半已經集中釋放。',
+        'The close is at −' + fmt.n(-z, 1) + 'σ, a level seen on only ' + fmt.n(st.below1_pct, 0) + '% of days in four years: short-term holders are capitulating broadly. This is panic territory, where much of the selling has usually already happened. '),
+      _T('再跌破 −2 標準差 ' + fmt.usd(b['-2']) + '。', 'a further break below −2σ at ' + fmt.usd(b['-2']) + '.'), 'neg'));
     return it;
   }
   function sbPanel() {
@@ -2537,7 +2591,7 @@
     return it;
   }
   // 2026-11-04 使用者要求：加 3–6 個月持幣成本（價格上穿後的天數），和 6–12／12–18 個月放在同一張圖切換
-  var acMode = '612';
+  var acMode = '1m';   // 2026-11-05 預設改成 1 週–1 個月（新買家成本，附「我們的看法」）；沒有資料時退回 6–12 vs 12–18
   function acSegs() { var b = function (v, z, e) { return '<button aria-pressed="' + (acMode === v) + '" data-a="' + v + '">' + _T(z, e) + '</button>'; }; return '<span class="seg" id="ac-segs">' + ((D.cycle.age_cost || {}).c1m ? b('1m', '1 週–1 個月', '1w–1m') : '') + b('36', '3–6 個月', '3–6 months') + b('612', '6–12 vs 12–18 個月', '6–12 vs 12–18 months') + '</span>'; }
   function acSay36() {
     var x = D.cycle.age_cost, c = x.c36, it = [], d0 = dnOf(x.date), ym = function (k) { return ds_(d0 - k).slice(0, 7).replace('-', '/'); };
@@ -2562,6 +2616,14 @@
     if (c.sth) it.push([_T('和短期持有者成本比', 'Vs STH cost'), fmt.pct(c.vs_sth_pct, 1),
       _T('短期持有者（持有不到 155 天的全部）成本是 ' + fmt.usd(c.sth) + '；最近一個月的買家' + (c.vs_sth_pct >= 0 ? '買得比較貴，價格回到短期持有者成本時，他們平均帳面虧損約 ' + fmt.n(Math.abs((c.sth / c.cost - 1) * 100), 1) + '%。' : '買得比較便宜。'),
         'Short-term holders overall (under 155 days) paid ' + fmt.usd(c.sth) + '; the last month\'s buyers ' + (c.vs_sth_pct >= 0 ? 'paid more, so if price returns to the STH cost they would be about ' + fmt.n(Math.abs((c.sth / c.cost - 1) * 100), 1) + '% under water on average.' : 'paid less.')), 'neu']);
+    if (!c.above) it.push(viewRow(_T('新買家套牢', 'New buyers under water'),
+      _T('最近一個月進場的人平均虧 ' + fmt.n(Math.abs(c.gap_pct), 1) + '%，已經 ' + c.days + ' 天在線下。反彈到 ' + fmt.usd(c.cost) + ' 附近，這批人回本就想走，賣壓會先出現；在站回去之前，短線偏弱。',
+        'The last month\'s buyers are ' + fmt.n(Math.abs(c.gap_pct), 1) + '% under water and have been for ' + c.days + ' days. A bounce to about ' + fmt.usd(c.cost) + ' lets them exit at break-even, so selling shows up there first; short-term soft until that level is reclaimed. '),
+      _T('收盤站回 ' + fmt.usd(c.cost) + ' 上方。', 'a close back above ' + fmt.usd(c.cost) + '.'), 'warn'));
+    else it.push(viewRow(_T('新買家獲利', 'New buyers in profit'),
+      _T('最近一個月進場的人平均賺 ' + fmt.n(c.gap_pct, 1) + '%：新資金還撐得住，回測 ' + fmt.usd(c.cost) + ' 時這批人通常會守住自己的成本。',
+        'The last month\'s buyers are ' + fmt.n(c.gap_pct, 1) + '% in profit: new money is holding up, and on a retest of ' + fmt.usd(c.cost) + ' they tend to defend their cost. '),
+      _T('收破 ' + fmt.usd(c.cost) + '。', 'a close below ' + fmt.usd(c.cost) + '.'), 'pos'));
     return it;
   }
   function acSayNow() { return acMode === '1m' ? acSay1m() : acMode === '36' ? acSay36() : acSay(); }
@@ -2585,6 +2647,15 @@
     if (bk.length) it.push([_T('回到頂部價', 'Back to the top'), bk.map(function (c) { return c.back_day; }).join(' / ') + _T(' 天', 'd'),
       _T('前幾輪從頂部到重新收上頂部價：' + bk.map(function (c) { return y(c) + ' ' + fmt.n(c.back_day) + ' 天（最低點後 ' + fmt.n(c.back_after_low) + ' 天）'; }).join('、') + '，從最低點回來都比跌下去花得久。這輪還沒回到。只有三輪樣本，這輪的回撤也淺得多，前幾輪的時間不代表這輪會照著走。',
         'Past cycles took this long from the top to close above it again: ' + bk.map(function (c) { return y(c) + ' ' + fmt.n(c.back_day) + ' days (' + fmt.n(c.back_after_low) + ' after the low)'; }).join(', ') + '; the climb back always took longer than the fall. This cycle has not got back yet. Only three past cycles, and this drawdown is much shallower, so their timing is no guide to this one.'), 'neu']);
+    var pl = Math.max.apply(null, past.map(function (c) { return c.low.pct; })), lowPx = cur.low.price || Math.round(cur.top_price * (1 + cur.low.pct / 100));
+    if (cur.low.pct > pl + 15) it.push(viewRow(_T('不是典型深熊', 'Not a classic deep bear'),
+      _T('同一天前幾輪都還在 ' + past.map(function (c) { return fmt.pct(c.at.pct, 0); }).join('、') + '，這輪 ' + fmt.pct(cur.at.pct, 0) + '，最深也只到 ' + fmt.pct(cur.low.pct, 0) + '。四年週期的深熊這輪沒有出現，所以前幾輪「跌一年、爬兩年」的時間表不適合直接套用；我們看這輪更像 ETF 時代的淺週期。',
+        'On the same day past cycles were still at ' + past.map(function (c) { return fmt.pct(c.at.pct, 0); }).join(', ') + '; this one is at ' + fmt.pct(cur.at.pct, 0) + ' and never went deeper than ' + fmt.pct(cur.low.pct, 0) + '. The deep four-year-cycle bear did not show up, so the old “a year down, two years back” timetable does not transfer; we read this as a shallower, ETF-era cycle. '),
+      _T('收破這輪低點 ' + fmt.usd(lowPx) + '（' + fmt.pct(cur.low.pct, 0) + '），走勢才開始像前幾輪。', 'a close below this cycle\'s low of ' + fmt.usd(lowPx) + ' (' + fmt.pct(cur.low.pct, 0) + '), which is when it would start to look like past cycles.'), 'neu'));
+    else it.push(viewRow(_T('和前幾輪相近', 'Tracking past cycles'),
+      _T('這輪的回撤已經接近前幾輪（最深 ' + fmt.pct(cur.low.pct, 0) + '，前幾輪 ' + past.map(function (c) { return fmt.pct(c.low.pct, 0); }).join('、') + '），前幾輪的時間表有參考價值，但樣本只有三輪。',
+        'This drawdown is close to past cycles (deepest ' + fmt.pct(cur.low.pct, 0) + ' vs ' + past.map(function (c) { return fmt.pct(c.low.pct, 0); }).join(', ') + '), so their timing is a useful reference, though there are only three. '),
+      '', 'neu'));
     return it;
   }
   function ccPanel() {
@@ -2649,6 +2720,21 @@
     if (a) it.push([lvName('act'), fmt.k(a.value),
       _T('以「幣有多活躍」加權的平均成本，長期不動的幣幾乎不算進去。收盤' + (a.above ? '在它上方 ' : '在它下方 ') + fmt.n(Math.abs(a.dist_pct), 1) + '%；今年 ' + a.ytd_days + ' 天裡收在它上方的有 ' + a.ytd_above + ' 天' + (a.last_above ? '，最近一次是 ' + ymdD(a.last_above) : '') + (a.last_cross ? '；' + ymdD(a.last_cross.date) + (a.last_cross.up ? ' 站上' : ' 跌回下方') : '') + '。',
         'Average cost weighted by how active coins are, so long-dormant coins barely count. The close is ' + fmt.n(Math.abs(a.dist_pct), 1) + '% ' + (a.above ? 'above' : 'below') + ' it; this year ' + a.ytd_above + ' of ' + a.ytd_days + ' days closed above it' + (a.last_above ? ', most recently ' + ymdD(a.last_above) : '') + (a.last_cross ? '; it ' + (a.last_cross.up ? 'moved above' : 'fell back below') + ' on ' + ymdD(a.last_cross.date) : '') + '.'), a.above ? 'pos' : 'neu']);
+    var T = lvOf('tmm'), S = lvOf('sth'), c = x.price;
+    if (a && T) {
+      if (c > a.value) it.push(viewRow(_T('偏多', 'Constructive'),
+        _T('收盤站上活躍投資人成本 ' + fmt.usd(a.value) + '：最活躍的那群人整體回到獲利，所有成本線都在下方。今年 ' + a.ytd_days + ' 天只有 ' + a.ytd_above + ' 天做到，這是結構轉強的位置。',
+          'The close is above the active investor price of ' + fmt.usd(a.value) + ': the most active holders are back in profit and every cost line sits below. Only ' + a.ytd_above + ' of ' + a.ytd_days + ' days this year managed that, so the structure is turning stronger. '),
+        _T('收回 ' + fmt.usd(a.value) + ' 下方。', 'a close back below ' + fmt.usd(a.value) + '.'), 'pos'));
+      else if (c > T) it.push(viewRow(_T('區間整理', 'Range'),
+        _T('收盤夾在真實市場均價 ' + fmt.usd(T) + '（多空分界）和活躍投資人成本 ' + fmt.usd(a.value) + ' 之間。下方 ' + fmt.k(Math.min(S || T, T)) + '–' + fmt.k(T) + ' 是短期持有者成本和真實市場均價，跌到這裡這兩群人回到成本、通常有人守；上方 ' + fmt.k(a.value) + ' 是今年的天花板（' + a.ytd_days + ' 天只有 ' + a.ytd_above + ' 天站上）。多頭結構還在，但這是區間整理，還不是新一段上漲。',
+          'The close sits between the true market mean of ' + fmt.usd(T) + ' (the bull/bear line) and the active investor price of ' + fmt.usd(a.value) + '. Below, ' + fmt.k(Math.min(S || T, T)) + '–' + fmt.k(T) + ' holds the short-term holder cost and the true market mean, where those buyers break even and which usually gets defended; above, ' + fmt.k(a.value) + ' has been this year\'s ceiling (only ' + a.ytd_above + ' of ' + a.ytd_days + ' days closed above). The bull structure holds, but this is a range, not a new leg up. '),
+        _T('收盤站上 ' + fmt.usd(a.value) + ' 轉偏多；收破 ' + fmt.usd(T) + ' 轉偏空。', 'a close above ' + fmt.usd(a.value) + ' turns it constructive; a close below ' + fmt.usd(T) + ' turns it bearish.'), 'neu'));
+      else it.push(viewRow(_T('偏空', 'Bearish'),
+        _T('收盤跌破真實市場均價 ' + fmt.usd(T) + '：活躍投資人整體轉為虧損，這條線歷來是多空分界。站回去之前，我們看偏空。',
+          'The close is below the true market mean of ' + fmt.usd(T) + ': active investors as a group are under water, and this line has long separated bull and bear phases. Bearish until it is reclaimed. '),
+        _T('收回 ' + fmt.usd(T) + ' 上方。', 'a close back above ' + fmt.usd(T) + '.'), 'neg'));
+    }
     return it;
   }
   function lvPanel() {

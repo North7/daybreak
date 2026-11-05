@@ -517,6 +517,8 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .interp { display: grid; }
 .interp .it { display: grid; grid-template-columns: 150px 96px 44px minmax(0, 1fr); gap: 14px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--line); }
 .interp .it:last-child { border-bottom: 0; }
+.interp .it.view { background: color-mix(in srgb, var(--flare) 7%, transparent); border-left: 3px solid var(--flare); padding-left: 12px; padding-right: 10px; margin-top: 4px; }   /* 2026-11-05「我們的看法」列 */
+.interp .it.view .k { color: var(--flare); }
 .interp .k { font-weight: 900; font-size: 13px; }
 .interp .v { font-size: 13px; text-align: right; white-space: nowrap; }
 @media (min-width: 521px) { .interp .v { white-space: normal; } }   /* 2026-11-05：太長的讀值（例如「64K–70K / 88K–93K」）在空格處換行，原本會壓到右邊的「中性」標籤 */
