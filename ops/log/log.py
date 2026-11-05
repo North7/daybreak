@@ -20,7 +20,8 @@ from datetime import datetime, timedelta, timezone
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 DIR = os.path.join(ROOT, 'ops', 'log')
 HANDLE = 'songpu717'
-GOAL = 500                                   # 創作者分潤要的藍勾追蹤數
+GOAL = 500                                   # 原創內容獎勵（2026-09-07 起取代創作者分潤）要的藍勾追蹤數
+GOAL_IMP = 500_000                           # 原創內容獎勵要的近 90 天藍勾首頁曝光（回覆不算）
 TPE = timezone(timedelta(hours=8))
 CACHE = os.path.expanduser('~/.cache/daybreak-ops')
 UA = {'User-Agent': 'daybreak-ops-log'}
@@ -312,7 +313,12 @@ def summary():
         sys.exit('還沒有紀錄')
     last = next((D['account'] for D in reversed(days) if (D.get('account') or {}).get('verified_followers')), None)
     if last:
-        print(f'藍勾追蹤 {last["verified_followers"]}／{GOAL}（還差 {GOAL - last["verified_followers"]}）\n')
+        print(f'藍勾追蹤 {last["verified_followers"]}／{GOAL}（還差 {GOAL - last["verified_followers"]}）')
+    imp = next(((D['date'], D['account']['verified_impressions_90d']) for D in reversed(days) if (D.get('account') or {}).get('verified_impressions_90d')), None)
+    if imp:
+        print(f'近 90 天藍勾曝光 {imp[1]:,}／{GOAL_IMP:,}（{imp[0]}，後台數字含回覆，只算原創會更少）')
+    if last or imp:
+        print()
     print('### 每天\n')
     print('| 日期 | 追蹤 | 藍勾追蹤 | 新追蹤 | 發了幾則 | 總瀏覽 | 數字讀取時間 |')
     print('|---|---|---|---|---|---|---|')
