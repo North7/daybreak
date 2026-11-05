@@ -443,7 +443,10 @@ def lthloss_viz(ser, last, bottoms, cohort=None, block=4):
     rows = []
     for i in range(len(D) - 1, -1, -block):   # 每 4 天取最高值，高點不會被抽樣漏掉
         seg = D[max(0, i - block + 1): i + 1]; m = max(seg, key=v.get)
-        rows.append([dn(seg[-1]), round(v[m] * 100, 1), round(px[seg[-1]])])
+        # 2026-11-05：高點標在它自己那天（原本標在段尾）；最新一天另外補上，線尾一定是當天值。
+        #   原本最後一段取 4 天最高，11/04 線尾畫在 33.6%、旁邊文字寫 31.5%（同 sec_viz、rpl_viz 的做法）
+        if i == len(D) - 1 and m != seg[-1]: rows.append([dn(seg[-1]), round(v[seg[-1]] * 100, 1), round(px[seg[-1]])])
+        rows.append([dn(m), round(v[m] * 100, 1), round(px[m])])
     out['rows'] = rows[::-1]
     if cohort and cohort.get('rows') and lp:
         R = cohort['rows']; tgt = lp['value'] / 100
