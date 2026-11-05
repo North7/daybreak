@@ -1,13 +1,13 @@
 """Hyperliquid 大戶的 BTC 部位（2026-11-04 使用者要求；Hyperliquid 公開 API，免費、不用金鑰）。只作讀值。
 做法：排行榜（stats-data.hyperliquid.xyz，約 40MB）取帳戶淨值前 TOP 名，逐一查 clearinghouseState，彙總 BTC 永續部位：
 多空各有幾個帳戶、合計幾顆、名目價值、名目加權槓桿，以及清算價落在收盤上下 10% 內的合計。
-隱私（docs/CLAUDE_DAILY.md：不出現任何人的實際持倉數量）：不存地址、不存單一帳戶的部位；任何一組少於 MIN_N 個帳戶時只給帳戶數、不給數量。
+隱私（docs/CLAUDE_DAILY.md：不出現任何人的實際持倉數量）：不存地址、不存單一帳戶的部位；多空全體少於 MIN_N 個帳戶時只給帳戶數；清算價附近（near）和價位格子（bands）要 ≥ BAND_MIN 個帳戶且最大一個不超過一半才給數量。
 2026-11-04 試做時，前 300 名只有 36 個帳戶有 BTC 部位，清算價在收盤 ±30% 內的只有 5 個帳戶、各自一個價位，
 所以當時不在清算熱力圖上畫個別清算價（等於公開個人部位、而且資訊很少），只給彙總。
 2026-11-05 使用者要求把 Hyperliquid 畫進清算熱力圖：改掃前 TOP＝2000 名（3 條連線並行，約 4–5 分鐘），
 清算價在收盤 ±BAND_PCT 內的帳戶按 BAND_W 美元一格彙總成 bands，每格要同時滿足：
   ① 至少 BAND_MIN 個帳戶；② 最大一個帳戶佔該格顆數不超過 BAND_TOP（避免一格其實就是一個人）。
-不符合的格子不畫，只併進 hidden（全部不畫的格子合計；帳戶數少於 MIN_N 時也只給帳戶數）。這是實際清算價，不是推算。
+不符合的格子不畫，只併進 hidden（不畫的部分按多空各給一個合計，同樣要 ≥ BAND_MIN 個帳戶且最大一個不超過一半才給顆數）。這是實際清算價，不是推算。
 限制：只有 Hyperliquid；大帳戶可能是做市或避險（空單多不一定代表看空）；排行榜每天更新一次；清算價會隨保證金和價格變動。"""
 import json, subprocess, time
 from concurrent.futures import ThreadPoolExecutor
@@ -60,6 +60,11 @@ def build(close, asof):
         return g
     L = [x for x in pos if x[0] > 0]; S = [x for x in pos if x[0] < 0]
     nl = [x for x in L if x[2] and close * (1 - NEAR) <= x[2] < close]; ns = [x for x in S if x[2] and close < x[2] <= close * (1 + NEAR)]
+
+    def grp_near(P):   # 2026-11-05：清算價附近的組通常只有幾個帳戶，改用和熱力圖白條同一個標準（≥ BAND_MIN 個帳戶、最大一個不超過一半）才給數量
+        g = dict(n=len(P)); sz = [abs(x[0]) for x in P]
+        if len(P) >= BAND_MIN and max(sz) / sum(sz) <= BAND_TOP: g.update(btc=round(sum(sz)), usd_m=round(sum(x[1] for x in P) / 1e6))
+        return g
     # 清算價分格（多單的清算價在收盤下方、空單在上方；反方向的是已經深度獲利、清算價很遠的，不在這個範圍）
     cells = {}
     for x in pos:
@@ -68,16 +73,20 @@ def build(close, asof):
         side = 'long' if x[0] > 0 else 'short'
         if (side == 'long') != (lp < close): continue
         cells.setdefault((int(lp // BAND_W * BAND_W), side), []).append(abs(x[0]))
-    bands, hid = [], []
+    bands, hid = [], {'long': [], 'short': []}
     for (lo, side), sz in sorted(cells.items()):
         tot = sum(sz)
         if len(sz) >= BAND_MIN and tot > 0 and max(sz) / tot <= BAND_TOP:
             bands.append(dict(lo=lo, hi=lo + BAND_W, side=side, n=len(sz), btc=round(tot)))
-        else: hid += sz
-    hidden = dict(n=len(hid))
-    if len(hid) >= MIN_N: hidden['btc'] = round(sum(hid))
+        else: hid[side] += sz
+
+    def safe(sz):   # 不畫的部分按多空各給一個合計：同樣要 ≥ BAND_MIN 個帳戶、最大一個不超過一半才給顆數
+        g = dict(n=len(sz))
+        if len(sz) >= BAND_MIN and max(sz) / sum(sz) <= BAND_TOP: g['btc'] = round(sum(sz))
+        return g
+    hidden = dict(n=len(hid['long']) + len(hid['short']), long=safe(hid['long']), short=safe(hid['short']))
     return dict(asof=asof, scanned=len(top) - fails, floor_usd_m=round(floor / 1e6, 1), with_btc=len(pos), long=grp(L), short=grp(S),
-                near=dict(pct=round(NEAR * 100), long=grp(nl), short=grp(ns)),
+                near=dict(pct=round(NEAR * 100), long=grp_near(nl), short=grp_near(ns)),
                 bands=dict(w=BAND_W, pct=round(BAND_PCT * 100), min_n=BAND_MIN, max_share=BAND_TOP, rows=bands, hidden=hidden),
                 note=f'Hyperliquid 帳戶淨值前 {TOP} 名的 BTC 永續部位彙總；不列個別帳戶，少於 {MIN_N} 個帳戶的組只給帳戶數；'
                      f'熱力圖上的 Hyperliquid 清算價每格 {BAND_W} 美元、至少 {BAND_MIN} 個帳戶且最大一個不超過一半才畫；只有 Hyperliquid、大帳戶可能是做市或避險；只作讀值')

@@ -950,12 +950,12 @@
       'liq': { h: h('每一格是某個小時、某個價位推算還沒被清算的槓桿倉位量，越亮越多；疊的是 OKX 小時 K 線，虛線是最後收盤。收盤下方是多單的清算價、上方是空單的。', 'Each cell is the estimated leveraged position size still awaiting liquidation at that hour and price; brighter means more. Hourly OKX candles on top, the dashed line is the last close. Long liquidation prices sit below the close, shorts above.',
           '亮帶＝槓桿倉位堆積的價位。價格走到那裡會觸發強制平倉：多單強平是市價賣、空單強平是市價買，常讓行情在那一段走得更快；價格走過之後那一帶會變暗（被清掉）。', 'Bright bands are where leverage is stacked. Price reaching them triggers forced closes: longs are market-sold, shorts market-bought, which often speeds up the move through that zone; once price passes, the band goes dark (cleared).',
           '推算：只有 OKX，槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；清算量多不代表價格會往那裡走。', 'An estimate: OKX only, with an assumed leverage mix that moves the bands; a daily snapshot, not real time; more liquidations on one side does not mean price will go there.') },
-      'pr-us': { h: h('Coinbase 溢價的 7 日平均：Coinbase BTC-USD 收盤比 Binance BTC-USDT 貴多少（%）；虛線是 0。', '7-day average Coinbase premium: how much Coinbase BTC-USD closes above Binance BTC-USDT (%); the dashed line is 0.',
+      'pr-us': { h: h('上格是 BTC 價格；下格是 Coinbase 溢價：Coinbase BTC-USD 收盤比 Binance BTC-USDT 貴多少（%）。柱子是每日值（和 TradingView 的 CB-BN basis 同一種算法），金線是 7 日平均，紅虛線是 −0.15% 深度折價線，紅圈是歷次跌破、旁邊寫 30 天後漲跌；最右邊的空心點是打開網頁時的即時值。', 'Top: BTC price; bottom: the Coinbase premium, how much Coinbase BTC-USD closes above Binance BTC-USDT (%). Bars are daily values (the same calculation as TradingView\'s CB-BN basis), the gold line the 7-day average, the red dashed line the −0.15% deep-discount line; red rings mark past breaks with the 30-day change; the hollow dot at the right edge is the live value when the page opens.',
           '正＝美國現貨（機構、ETF 相關）買得比海外積極；長時間停在 0 以下＝美國買盤缺席。牛市主升段多半維持正值。', 'Positive means US spot buyers (institutions, ETF-related) are keener than offshore; staying below 0 for long means US demand is absent. Bull-market advances usually run positive.',
           '以 USDT 計價，USDT 偏離 1 美元時會有誤差；看方向和持續多久，不看單日。', 'Priced against USDT, so a USDT depeg distorts it; read the direction and how long it lasts, not single days.'),
         now: function () { var cp = D.flows.cb_premium || {}, r = cp.rows || []; if (cp.avg7 == null) return ''; var a7 = ma7r(r).map(function (x) { return x[1]; }), n = 0;
           for (var i = a7.length - 1; i >= 0 && a7[i] != null && (a7[i] < 0) === (cp.avg7 < 0); i--) n++;
-          return _T('7 日平均 ' + fmt.pct(cp.avg7, 3) + '，近 ' + cp.n + ' 天第 ' + fmt.n(cp.pct_own, 0) + ' 百分位；已連續 ' + n + ' 天在 0 ' + (cp.avg7 < 0 ? '以下' : '以上') + '。' + (cp.avg7 < 0 ? '美國現貨買盤比海外弱。' : '美國現貨買盤比海外積極。'), '7-day average ' + fmt.pct(cp.avg7, 3) + ', ' + fmt.n(cp.pct_own, 0) + 'th percentile of ' + cp.n + ' days; ' + n + ' straight days ' + (cp.avg7 < 0 ? 'below' : 'above') + ' 0. ' + (cp.avg7 < 0 ? 'US spot demand is weaker than offshore.' : 'US spot demand is keener than offshore.')); } },
+          return _T('每日 ' + fmt.pct(cp.pct, 3) + '，7 日平均 ' + fmt.pct(cp.avg7, 3) + '；7 日平均已連續 ' + n + ' 天在 0 ' + (cp.avg7 < 0 ? '以下' : '以上') + '。' + (cp.avg7 < 0 ? '美國現貨買盤比海外弱。' : '美國現貨買盤比海外積極。'), 'Daily ' + fmt.pct(cp.pct, 3) + ', 7-day average ' + fmt.pct(cp.avg7, 3) + '; the 7-day average has been ' + (cp.avg7 < 0 ? 'below' : 'above') + ' 0 for ' + n + ' straight days. ' + (cp.avg7 < 0 ? 'US spot demand is weaker than offshore.' : 'US spot demand is keener than offshore.')); } },
       'pr-asia': { h: h('OKX 場外 USDT 兌人民幣的中間價，比美元兌人民幣匯率高或低多少（%）；每天 00:06 UTC 記一個快照，標在剛收盤的那一天。', 'OKX OTC USDT/CNY mid price vs the USD/CNY rate (%); one snapshot a day at 00:06 UTC, dated to the day that just closed.',
           '正（溢價）＝有人搶著用人民幣換 USDT 進場；負（折價）＝換回人民幣的人多，亞洲資金偏離場。過去牛市常見溢價，熊市或監管收緊時常見折價。', 'Positive (premium) means buyers are rushing to swap CNY into USDT; negative (discount) means more are cashing out to CNY and Asian money is leaning out. Premiums are common in bull markets, discounts in bear markets or crackdowns.',
           '場外報價受人民幣管制、商家與付款方式影響，±0.3% 內視為持平；歷史從 2026/11/02 才開始累積，不到 30 天不談百分位。', 'OTC quotes depend on capital controls, merchants and payment methods; treat ±0.3% as flat. The record only starts 2026-11-02, so no percentiles before 30 days.'),
@@ -1608,7 +1608,9 @@
   function hlBandSay() {   // 2026-11-05：熱力圖右緣的 Hyperliquid 白條（實際清算價，每格至少 5 個帳戶、最大一個不超過一半）
     var hb = hlBands(); if (!hb) return '';
     var L = hlSide(hb, 'long'), S = hlSide(hb, 'short'), h = hb.hidden || {}, k = function (b) { return fmt.k(b.lo) + '–' + fmt.k(b.hi); };
-    if (!hb.rows.length) return _T('清算價在收盤 ±' + hb.pct + '% 內的帳戶都太分散（每 ' + fmt.n(hb.w) + ' 美元一格不到 ' + hb.min_n + ' 個帳戶），熱力圖上不畫。', 'Liquidation prices within ±' + hb.pct + '% are too scattered (fewer than ' + hb.min_n + ' accounts per $' + fmt.n(hb.w) + ' bucket), so none are drawn on the heatmap. ');
+    var hs = function (g, L) { g = g || {}; return g.btc != null ? _T((L ? '多單 ' : '空單 ') + g.n + ' 個帳戶 ' + fmt.n(g.btc) + ' 顆', (L ? 'longs ' : 'shorts ') + g.n + ' accounts, ' + fmt.n(g.btc) + ' BTC') : _T((L ? '多單 ' : '空單 ') + (g.n || 0) + ' 個帳戶', (L ? 'longs ' : 'shorts ') + (g.n || 0) + ' account(s)'); };
+    if (!hb.rows.length) return _T('清算價在收盤 ±' + hb.pct + '% 內的有' + (h.long ? '下方' + hs(h.long, 1) + '、上方' + hs(h.short, 0) : ' ' + (h.n || 0) + ' 個帳戶') + '，分散在各價位：沒有任何 ' + fmt.n(hb.w) + ' 美元的價位聚了 ' + hb.min_n + ' 個以上帳戶（大戶清算價大多離現價很遠），所以熱力圖上沒有 Hyperliquid 白條；聚集時會自動畫出來。',
+      'Within ±' + hb.pct + '% of the close: ' + (h.long ? hs(h.long, 1) + ' below, ' + hs(h.short, 0) + ' above' : (h.n || 0) + ' accounts') + ', scattered: no $' + fmt.n(hb.w) + ' bucket holds ' + hb.min_n + '+ accounts (big accounts mostly sit far from the price), so no Hyperliquid bars are drawn; they appear automatically when positions cluster. ');
     return _T('熱力圖右緣的白條是清算價在收盤 ±' + hb.pct + '% 內、每 ' + fmt.n(hb.w) + ' 美元一格至少 ' + hb.min_n + ' 個帳戶的價位：' + (L.cells ? '下方多單 ' + L.n + ' 個帳戶 ' + fmt.n(L.btc) + ' 顆（最多在 ' + k(L.top) + '）' : '下方沒有') + '、' + (S.cells ? '上方空單 ' + S.n + ' 個帳戶 ' + fmt.n(S.btc) + ' 顆（最多在 ' + k(S.top) + '）' : '上方沒有') + '；其餘 ' + (h.n || 0) + ' 個帳戶太分散、不畫。',
       'White bars on the heatmap\'s right edge mark liquidation prices within ±' + hb.pct + '% where a $' + fmt.n(hb.w) + ' bucket holds at least ' + hb.min_n + ' accounts: ' + (L.cells ? 'longs below, ' + L.n + ' accounts and ' + fmt.n(L.btc) + ' BTC (most at ' + k(L.top) + ')' : 'none below') + '; ' + (S.cells ? 'shorts above, ' + S.n + ' accounts and ' + fmt.n(S.btc) + ' BTC (most at ' + k(S.top) + ')' : 'none above') + '; the other ' + (h.n || 0) + ' accounts are too scattered to draw. ');
   }
@@ -1633,8 +1635,8 @@
       var lq = gq(hw.long, 1), sq = gq(hw.short, 0), nl = gq(hw.near.long, 1), ns = gq(hw.near.short, 0);
       var net = hw.long.btc != null && hw.short.btc != null ? hw.long.btc - hw.short.btc : null;
       it.push([_T('Hyperliquid 大戶', 'Hyperliquid big accounts'), net != null ? (net >= 0 ? _T('淨多 ', 'Net long ') : _T('淨空 ', 'Net short ')) + fmt.n(Math.abs(net)) : hw.with_btc + _T(' 個帳戶', ' accounts'),
-        _T('帳戶淨值前 ' + hw.scanned + ' 名（≥ ' + fmt.n(hw.floor_usd_m, 0) + ' 百萬美元）裡 ' + hw.with_btc + ' 個有 BTC 部位：' + lq + '、' + sq + '；清算價在收盤 ±' + hw.near.pct + '% 內：' + nl + '、' + ns + '。' + hlBandSay() + '實際部位，不是推算；只有 Hyperliquid 一家，大帳戶可能是做市或避險，空單多不一定代表看空。',
-          hw.with_btc + ' of the top ' + hw.scanned + ' accounts by equity (≥ $' + fmt.n(hw.floor_usd_m, 0) + 'M) hold BTC: ' + lq + ', ' + sq + '; liquidation prices within ±' + hw.near.pct + '% of the close: ' + nl + ', ' + ns + '. ' + hlBandSay() + 'Actual positions, not an estimate; Hyperliquid only, and big accounts may be market makers or hedgers, so more shorts does not necessarily mean bearish.'), 'neu']);
+        _T('帳戶淨值前 ' + hw.scanned + ' 名（≥ ' + fmt.n(hw.floor_usd_m, hw.floor_usd_m < 10 ? 1 : 0) + ' 百萬美元）裡 ' + hw.with_btc + ' 個有 BTC 部位：' + lq + '、' + sq + '；清算價在收盤 ±' + hw.near.pct + '% 內：' + nl + '、' + ns + '。' + hlBandSay() + '實際部位，不是推算；只有 Hyperliquid 一家，大帳戶可能是做市或避險，空單多不一定代表看空。',
+          hw.with_btc + ' of the top ' + hw.scanned + ' accounts by equity (≥ $' + fmt.n(hw.floor_usd_m, hw.floor_usd_m < 10 ? 1 : 0) + 'M) hold BTC: ' + lq + ', ' + sq + '; liquidation prices within ±' + hw.near.pct + '% of the close: ' + nl + ', ' + ns + '. ' + hlBandSay() + 'Actual positions, not an estimate; Hyperliquid only, and big accounts may be market makers or hedgers, so more shorts does not necessarily mean bearish.'), 'neu']);
     }
     return it;
   }
@@ -1673,7 +1675,7 @@
         if (b.hi <= pLo || b.lo >= pHi) return;
         var yt = Y(Math.min(b.hi, pHi)), yb = Y(Math.max(b.lo, pLo)), len = Math.max(8, b.btc / hm * pw * 0.22), x0 = ML + pw - len;
         hg.push({ b: b, x0: x0, yt: yt, yb: yb });
-        s += '<rect x="' + x0.toFixed(1) + '" y="' + (yt + 0.5).toFixed(1) + '" width="' + len.toFixed(1) + '" height="' + Math.max(2, yb - yt - 1).toFixed(1) + '" rx="1.5" fill="' + LIQ_HL + '" fill-opacity=".88" stroke="#0C0C0D" stroke-opacity=".55" stroke-width="1"/>';
+        s += '<rect x="' + x0.toFixed(1) + '" y="' + (yt + 0.5).toFixed(1) + '" width="' + len.toFixed(1) + '" height="' + Math.max(2, yb - yt - 1).toFixed(1) + '" rx="1.5" fill="' + LIQ_HL + '" fill-opacity=".72" stroke="#0C0C0D" stroke-opacity=".55" stroke-width="1"/>';
       });
       var big = hg.slice().sort(function (a, c) { return c.b.btc - a.b.btc; })[0];
       if (big) s += '<text class="ax" x="' + (big.x0 - 4).toFixed(1) + '" y="' + ((big.yt + big.yb) / 2 + 3.5).toFixed(1) + '" text-anchor="end" style="fill:' + LIQ_HL + ';paint-order:stroke;stroke:#0C0C0D;stroke-width:3px">HL ' + fmt.n(big.b.btc) + _T(' 顆', ' BTC') + '</text>';
@@ -1756,12 +1758,54 @@
   }
   /* 三地溢價（2026-11-03 使用者要求；參考的「期現差價加權 USDT 溢價率」權重不公開，改成三條分開看）：
      美國現貨＝Coinbase 溢價、亞洲＝OKX 場外 USDT/CNY 對匯率的溢價（只有快照，從 2026-11-03 起每日累積）、槓桿＝OKX 永續對現貨。只作讀值 */
+  /* 2026-11-05 使用者：「Coinbase 溢價在 TradingView 已經收斂，你的圖還在底部」「運營回覆時用到溢價圖，沒什麼說服力」。
+     原因是圖畫 7 日平均（還含上週的低點）；資料和 TradingView 的 CB-BN basis 同一種算法。改成：每日值＋7 日平均、上格價格、約 4 年歷史、
+     過去深度折價之後的走勢（樣本照實寫），以及瀏覽器打開時直接向 Coinbase、Binance 取最新一小時（不經本站伺服器）。只作讀值 */
+  var CB_DEEP = -0.15, CB_REARM = -0.05, CB_LIVE = null;
+  function cbA7(r) { return ma7r(r.map(function (x) { return [x[0], x[1]]; })).map(function (x) { return x[1]; }); }
+  function cbStats() {
+    var cp = D.flows.cb_premium || {}, r = cp.rows || []; if (r.length < 60 || r[0].length < 3) return null;
+    var a7 = cbA7(r), at = function (i, n) { var t = r[i][0] + n; for (var k = i; k < r.length; k++) if (r[k][0] >= t) return (r[k][2] / r[i][2] - 1) * 100; return null; };
+    var ev = [], armed = true, cv = [];
+    for (var i = 0; i < r.length; i++) { var a = a7[i]; if (a == null) continue;
+      if (armed && a < CB_DEEP) { ev.push({ i: i, t: r[i][0], a: a, f30: at(i, 30) }); armed = false; } else if (!armed && a > CB_REARM) armed = true;
+      if (i > 0 && a7[i - 1] != null && a7[i - 1] <= 0 && a > 0) { var mn = Infinity; for (var k = Math.max(0, i - 30); k < i; k++) if (a7[k] != null) mn = Math.min(mn, a7[k]); if (mn < -0.1) cv.push({ t: r[i][0], f30: at(i, 30) }); } }
+    var all = []; for (i = 0; i < r.length; i++) { var f = at(i, 30); if (f != null) all.push(f); }
+    var done = ev.filter(function (e) { return e.f30 != null; }), cdone = cv.filter(function (e) { return e.f30 != null; });
+    // 最近 14 天每日最低（看是不是已經從低點收斂）
+    var lo = null; for (i = Math.max(0, r.length - 14); i < r.length; i++) if (!lo || r[i][1] < lo[1]) lo = r[i];
+    return { a7: a7, ev: ev, done: done, up: done.filter(function (e) { return e.f30 > 0; }).length, cv: cdone, cup: cdone.filter(function (e) { return e.f30 > 0; }).length,
+      base: all.length ? all.filter(function (x) { return x > 0; }).length / all.length * 100 : null, lo14: lo, since: r[0][0] };
+  }
+  function cbLive(cb) {   // 瀏覽器直接取 Coinbase 與 Binance 的 1 小時 K 線（兩邊都允許跨網域讀取）；失敗就不顯示，不影響其他內容
+    if (CB_LIVE !== null) { if (CB_LIVE) cb(); return; } CB_LIVE = false;
+    var j = function (u) { return fetch(u).then(function (x) { if (!x.ok) throw 0; return x.json(); }); };
+    Promise.all([j('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=3600'), j('https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval=1h&limit=48')]).then(function (a) {
+      var c = {}; a[0].forEach(function (k) { c[k[0]] = k[4]; });
+      var m = a[1].map(function (k) { var t = Math.round(k[0] / 1000); return c[t] ? [t, (c[t] / +k[4] - 1) * 100] : null; }).filter(Boolean);
+      if (m.length < 6) return;
+      var last = m[m.length - 1], d24 = m.slice(-24);
+      CB_LIVE = { t: last[0], v: last[1], a24: d24.reduce(function (s_, x) { return s_ + x[1]; }, 0) / d24.length, n: d24.length }; cb();
+    }).catch(function () {});
+  }
+  function cbLiveTxt() {
+    if (!CB_LIVE) return '';
+    var d = new Date(CB_LIVE.t * 1000), hm = ('0' + d.getUTCHours()).slice(-2) + ':00', pc = function (v) { return (v > 0 ? '+' : '') + fmt.n(v, 3) + '%'; };
+    return _T('即時（' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + ' ' + hm + ' UTC 那一小時）' + pc(CB_LIVE.v) + '，近 24 小時平均 ' + pc(CB_LIVE.a24) + '；打開網頁時直接向 Coinbase、Binance 取得',
+      'Live (hour of ' + (d.getUTCMonth() + 1) + '/' + d.getUTCDate() + ' ' + hm + ' UTC) ' + pc(CB_LIVE.v) + ', 24-hour average ' + pc(CB_LIVE.a24) + '; fetched from Coinbase and Binance when the page opens');
+  }
   function premSay() {
     var cp = D.flows.cb_premium || {}, p3 = D.flows.premium3 || {}, u = p3.usdt, pp = p3.perp, it = [], sgn = [], nm = [], fw = (D.deriv.funding_multi || {}).weighted_now;
     var pc = function (v, d) { return (v > 0 ? '+' : '') + fmt.n(v, d) + '%'; };
     if (cp.avg7 != null) { sgn.push(cp.avg7 > 0.02 ? 1 : cp.avg7 < -0.02 ? -1 : 0); nm.push(_T('美國現貨', 'US spot'));
-      it.push([_T('美國現貨（Coinbase）', 'US spot (Coinbase)'), pc(cp.avg7, 3), _T('7 日平均，近 ' + cp.n + ' 天第 ' + fmt.n(cp.pct_own, 0) + ' 百分位。' + (cp.avg7 > 0.02 ? '美國買盤比海外積極。' : cp.avg7 < -0.02 ? '美國現貨比海外便宜，美國買盤（含 ETF 相關）偏弱。' : '和海外差不多。'),
-        '7-day average, ' + fmt.n(cp.pct_own, 0) + 'th percentile of the last ' + cp.n + ' days. ' + (cp.avg7 > 0.02 ? 'US buyers are more eager than offshore.' : cp.avg7 < -0.02 ? 'US spot trades below offshore; US demand (incl. ETF-related) is soft.' : 'In line with offshore.')), 'neu']); }
+      var cs = cbStats(), lo14 = cs && cs.lo14, conv = lo14 && cp.pct != null && cp.pct - lo14[1] >= 0.08 && lo14[0] < dnOf(cp.date);
+      it.push([_T('美國現貨（Coinbase）', 'US spot (Coinbase)'), _T('每日 ', 'Daily ') + pc(cp.pct, 3), _T('每日 ' + pc(cp.pct, 3) + '（' + fmt.md(cp.date) + '），7 日平均 ' + pc(cp.avg7, 3) + '、30 日平均 ' + pc(cp.avg30, 3) + '。' + (conv ? '每日值已從 ' + fmt.date(lo14[0]).slice(5) + ' 的 ' + pc(lo14[1], 3) + ' 收斂回來；7 日平均還含前幾天的低點，所以看起來還在底部。' : '') + (cp.avg7 > 0.02 ? '美國買盤比海外積極。' : cp.avg7 < -0.02 ? '美國現貨比海外便宜，美國買盤（含 ETF 相關）偏弱。' : '和海外差不多。'),
+        'Daily ' + pc(cp.pct, 3) + ' (' + fmt.md(cp.date) + '); 7-day average ' + pc(cp.avg7, 3) + ', 30-day ' + pc(cp.avg30, 3) + '. ' + (conv ? 'The daily value has recovered from ' + pc(lo14[1], 3) + ' on ' + fmt.date(lo14[0]).slice(5) + '; the 7-day average still holds the recent lows, so it looks stuck at the bottom. ' : '') + (cp.avg7 > 0.02 ? 'US buyers are more eager than offshore.' : cp.avg7 < -0.02 ? 'US spot trades below offshore; US demand (incl. ETF-related) is soft.' : 'In line with offshore.')), 'neu']);
+      if (cs && cs.done.length) { var rr = cs.done.map(function (e) { return fmt.date(e.t).slice(0, 7) + ' ' + fmt.pct(e.f30, 0); }).join(_T('、', ', ')), cur = cs.ev.filter(function (e) { return e.f30 == null; })[0];
+        it.push([_T('過去的深度折價', 'Past deep discounts'), cs.up + ' / ' + cs.done.length,
+          _T(fmt.date(cs.since).slice(0, 4) + ' 年以來 7 日平均跌破 ' + CB_DEEP + '% 共 ' + cs.ev.length + ' 次' + (cur ? '（最近一次是 ' + fmt.md(fmt.date(cur.t).replace(/\//g, '-')) + '，還沒滿 30 天）' : '') + '；之前 ' + cs.done.length + ' 次，30 天後價格 ' + cs.up + ' 次較高（' + rr + '），都在當時的階段低點附近。樣本只有 ' + cs.done.length + ' 次。另外，7 日平均「收斂回 0 以上」本身沒有額外資訊：過去 ' + cs.cv.length + ' 次 30 天後 ' + cs.cup + ' 次較高，和隨便一天（' + fmt.n(cs.base, 0) + '%）差不多。',
+            'Since ' + fmt.date(cs.since).slice(0, 4) + ' the 7-day average has fallen below ' + CB_DEEP + '% ' + cs.ev.length + ' times' + (cur ? ' (latest ' + fmt.date(cur.t).slice(5) + ', under 30 days ago)' : '') + '; after the earlier ' + cs.done.length + ', price was higher 30 days later ' + cs.up + ' times (' + rr + '), each near a local low at the time. Only ' + cs.done.length + ' cases. Separately, the 7-day average turning back above 0 carries no extra information: of ' + cs.cv.length + ' cases, ' + cs.cup + ' were higher 30 days later, about the same as any day (' + fmt.n(cs.base, 0) + '%).'), 'neu']); }
+    }
     if (u) { sgn.push(u.pct > 0.3 ? 1 : u.pct < -0.3 ? -1 : 0); nm.push(_T('亞洲 USDT', 'Asian USDT')); var h = p3.usdt_hist || [], h0 = h.length ? fmt.date(h[0][0]) : '';
       it.push([_T('亞洲（USDT 場外）', 'Asia (USDT OTC)'), pc(u.pct, 2), _T('OKX 場外 USDT 約 ' + fmt.n(u.mid, 3) + ' 人民幣，匯率 ' + fmt.n(u.fx, 3) + '。' + (u.pct > 0.3 ? '溢價：有人搶著用人民幣換 USDT 進場。' : u.pct < -0.3 ? '折價：換回人民幣的人比較多，亞洲資金偏離場。' : '接近匯率，亞洲買賣大致平衡。') + (h.length < 30 ? '這條只有每日快照（這次 ' + u.ts.slice(5, 10).replace('-', '/') + ' ' + u.ts.slice(11, 16) + ' UTC），紀錄從 ' + h0 + ' 開始累積（目前 ' + h.length + ' 天）。' : ''),
         'OKX OTC USDT at about ' + fmt.n(u.mid, 3) + ' CNY vs a ' + fmt.n(u.fx, 3) + ' FX rate. ' + (u.pct > 0.3 ? 'Premium: buyers are swapping CNY into USDT to enter.' : u.pct < -0.3 ? 'Discount: more people are cashing USDT back into CNY; Asian money is leaning out.' : 'Near the FX rate; Asian flows roughly balanced.') + (h.length < 30 ? ' Daily snapshot only (this one ' + u.ts.slice(0, 16).replace('T', ' ') + ' UTC); the record starts ' + h0 + ' (' + h.length + ' day(s) so far).' : '')), 'neu']); }
@@ -1777,12 +1821,44 @@
   function premPanel() {
     var p3 = D.flows.premium3; if (!p3 || (!p3.usdt && !p3.perp)) return '';
     return panel('span-12', _T('三地溢價：買盤從哪裡來', 'Three premiums: where the buying comes from'), _T('Coinbase · OKX 場外 · OKX 永續', 'Coinbase · OKX OTC · OKX perps'),
-      interpHtml(premSay()) + '<div class="evcharts">' + [['c-pr-us', _T('美國現貨：Coinbase 溢價（7 日平均）', 'US spot: Coinbase premium (7-day avg)')], ['c-pr-asia', _T('亞洲：USDT 場外溢價（每日快照）', 'Asia: USDT OTC premium (daily snapshot)')], ['c-pr-perp', _T('槓桿：永續對現貨（7 日平均）', 'Leverage: perp vs spot (7-day avg)')]].map(function (c) { return '<div class="evc"><div class="panel-h"><h3>' + c[1] + '</h3></div><div class="chart" id="' + c[0] + '"></div></div>'; }).join('') + '</div>' +
+      interpHtml(premSay()) + '<div class="panel-h" style="margin-top:14px"><h3>' + _T('美國現貨：Coinbase 溢價（每日與 7 日平均）', 'US spot: Coinbase premium (daily and 7-day average)') + '</h3></div><p class="note" id="cb-live"></p>' +
+      legend([[_T('BTC 價格（上格）', 'BTC price (top)'), 'var(--ink-2)'], [_T('每日 ≥ 0', 'Daily ≥ 0'), 'var(--up)', 'box'], [_T('每日 < 0', 'Daily < 0'), 'var(--down)', 'box'], [_T('7 日平均', '7-day average'), 'var(--s4)'], [_T('深度折價線 ' + CB_DEEP + '%', 'Deep-discount line ' + CB_DEEP + '%'), 'var(--down)', 'dash'], [_T('即時（最新一小時）', 'Live (latest hour)'), 'var(--s4)', 'dot']]) + '<div class="chart" id="c-pr-us"></div>' +
+      '<div class="evcharts">' + [['c-pr-asia', _T('亞洲：USDT 場外溢價（每日快照）', 'Asia: USDT OTC premium (daily snapshot)')], ['c-pr-perp', _T('槓桿：永續對現貨（7 日平均）', 'Leverage: perp vs spot (7-day avg)')]].map(function (c) { return '<div class="evc"><div class="panel-h"><h3>' + c[1] + '</h3></div><div class="chart" id="' + c[0] + '"></div></div>'; }).join('') + '</div>' +
       '<p class="note">' + _T('三條都是「和基準差多少 %」：Coinbase ÷ Binance、場外 USDT ÷ 美元兌人民幣匯率、永續 ÷ 現貨，大於 0＝那一邊的買方比較積極；永續平常就略低於現貨，所以槓桿這條和自己的歷史比。不合成一個數字（權重沒有客觀答案），分開看誰在推、誰在缺席。場外報價只有當下快照，歷史從上線那天開始累積。',
         'All three are “% away from a benchmark”: Coinbase ÷ Binance, OTC USDT ÷ the USD/CNY rate, and perp ÷ spot; above 0 means buyers on that side are keener; perps usually sit slightly below spot, so the leverage line is judged against its own history. They are not merged into one number (no objective weights); read them side by side to see who pushes and who is absent. The OTC quote is a snapshot, so its history builds from launch.') + '</p>');
   }
   /* [[日, 值]] 的 7 日平均（前 6 天為 null）；三地溢價圖與「現在」讀值共用（2026-11-04） */
   function ma7r(r) { return r.map(function (x, i) { if (i < 6) return [x[0], null]; var s = 0; for (var k = i - 6; k <= i; k++) s += r[k][1]; return [x[0], s / 7]; }); }
+  function drawCbPrem(el) {
+    var cp = D.flows.cb_premium || {}, R_ = (cp.rows || []).filter(function (r) { return r[2] != null; }); if (R_.length < 60 || !el) return;
+    var cs = cbStats(), a7 = {}; R_.forEach(function (r, i) { a7[r[0]] = cs.a7[i]; });
+    var vs = R_.map(function (r) { return r[1]; }).slice().sort(function (a, b) { return a - b; }), q = function (p) { return vs[Math.floor((vs.length - 1) * p)]; };
+    var lo = Math.min(-0.3, q(0.005) * 1.1), hi = Math.max(0.2, q(0.995) * 1.1), pf = function (v) { return (v > 0 ? '+' : '') + v.toFixed(2) + '%'; };
+    twoPane(el, { rows: R_, pi: 2, hp: [110, 150], hs: [150, 200], label: _T('Coinbase 溢價（%）', 'Coinbase premium (%)'), aria: _T('BTC 價格與 Coinbase 溢價', 'BTC price and Coinbase premium'),
+      scale: function (C) { return function (v) { return C.ys0 + (1 - (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * C.hs; }; },
+      body: function (C) {
+        var s = '', z = C.Ys(0), yd = C.Ys(CB_DEEP), st = hi - lo > 0.6 ? 0.2 : 0.1;
+        for (var g = Math.ceil(lo / st) * st; g <= hi + 1e-9; g += st) { if (Math.abs(g) < 1e-9) continue; var gy = C.Ys(g); s += C.gl(gy, Math.abs(gy - yd) < 11 ? null : pf(+g.toFixed(2))); }
+        s += C.gl(z, '0', 'base');
+        s += '<rect x="' + C.ML + '" y="' + yd.toFixed(1) + '" width="' + C.pw + '" height="' + (C.yb - yd).toFixed(1) + '" fill="var(--down-dim)"/><line x1="' + C.ML + '" x2="' + (C.ML + C.pw) + '" y1="' + yd.toFixed(1) + '" y2="' + yd.toFixed(1) + '" stroke="var(--down)" stroke-dasharray="3 4" stroke-width="1"/>' + C.tx(C.ML + C.pw + 8, yd + 3.5, CB_DEEP + '%').replace('class="ax"', 'class="ax" fill="var(--down)"');
+        var bw = Math.max(0.8, C.pw / C.rows.length * 0.7);
+        C.rows.forEach(function (r) { var y = C.Ys(r[1]); s += '<rect x="' + (C.X(r[0]) - bw / 2).toFixed(1) + '" y="' + Math.min(y, z).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, Math.abs(y - z)).toFixed(1) + '" fill="var(--' + (r[1] >= 0 ? 'up' : 'down') + ')" opacity=".42"/>'; });
+        var pts = C.rows.filter(function (r) { return a7[r[0]] != null; });
+        s += '<path class="ln" d="M' + pts.map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(a7[r[0]]).toFixed(1); }).join('L') + '" stroke="var(--s4)" stroke-width="1.8"/>';
+        return s;
+      },
+      over: function (C) {
+        var s = '', x0 = C.rows[0][0], lx = -Infinity;
+        cs.ev.forEach(function (e) { if (e.t < x0) return; var xx = C.X(e.t), yy = C.Ys(e.a); s += '<circle cx="' + xx.toFixed(1) + '" cy="' + yy.toFixed(1) + '" r="4.5" fill="var(--deck)" stroke="var(--down)" stroke-width="2"/>';
+          if (e.f30 != null && xx - lx > (C.sm ? 30 : 44)) { var tx_ = Math.max(C.ML + (C.sm ? 14 : 26), Math.min(C.ML + C.pw - 26, xx)); s += '<text class="ax hi" x="' + tx_.toFixed(1) + '" y="' + (yy + 16).toFixed(1) + '" text-anchor="middle">' + (C.sm ? '' : _T('30 天 ', '30d ')) + fmt.pct(e.f30, 0) + '</text>'; lx = xx; } });
+        var lr = C.rows[C.rows.length - 1], la = a7[lr[0]];
+        if (la != null) s += '<circle cx="' + C.X(lr[0]).toFixed(1) + '" cy="' + C.Ys(la).toFixed(1) + '" r="4" fill="var(--s4)" stroke="var(--deck)" stroke-width="2"/>';
+        if (CB_LIVE) { var lx2 = C.ML + C.pw, ly = C.Ys(CB_LIVE.v); s += '<circle cx="' + lx2.toFixed(1) + '" cy="' + ly.toFixed(1) + '" r="5" fill="var(--deck)" stroke="var(--s4)" stroke-width="2.5"/><text class="ax hi" x="' + (lx2 - 8).toFixed(1) + '" y="' + (ly - 9).toFixed(1) + '" text-anchor="end">' + _T('即時 ', 'Live ') + pf(CB_LIVE.v) + '</text>'; }
+        return s;
+      },
+      tip: function (p, C) { var a = a7[p[0]]; return { dots: '<circle cx="' + C.X(p[0]).toFixed(1) + '" cy="' + C.Ys(p[1]).toFixed(1) + '" r="3.5" fill="var(--' + (p[1] >= 0 ? 'up' : 'down') + ')" stroke="var(--deck)" stroke-width="1.5"/>',
+        rows: tipRow1('var(--' + (p[1] >= 0 ? 'up' : 'down') + ')', _T('每日', 'Daily'), (p[1] > 0 ? '+' : '') + fmt.n(p[1], 3) + '%') + (a != null ? tipRow1('var(--s4)', _T('7 日平均', '7-day avg'), (a > 0 ? '+' : '') + fmt.n(a, 3) + '%') : '') }; } });
+  }
   function drawPrem() {
     var cp = D.flows.cb_premium || {}, p3 = D.flows.premium3 || {}, ma7 = ma7r;
     var X1 = dnOf(D.meta.bar_date), X0 = X1 - 300, pf = function (d) { return function (v) { return (v > 0 ? '+' : '') + v.toFixed(d) + '%'; }; };
@@ -1800,7 +1876,7 @@
         el.innerHTML = svgEl(W, Ht, sv, title); return;
       }
       lineChart(el, { h: 150, x0: x0, x1: X1, series: [{ name: _T('溢價', 'Premium'), data: pts, color: color }], refs: [{ y: 0, color: 'var(--ink-3)' }], yFmt: pf(d > 2 ? 2 : d), tipFmt: pf(d), aria: title }); }); };
-    one('c-pr-us', ma7(cp.rows || []), 3, 'var(--s4)', _T('Coinbase 溢價（7 日平均）', 'Coinbase premium (7-day avg)'));
+    mount($('#c-pr-us'), drawCbPrem); cbLive(function () { var e = $('#cb-live'); if (e) e.textContent = cbLiveTxt(); var c = $('#c-pr-us'); if (c && c._draw) c._draw(c); });
     one('c-pr-asia', p3.usdt_hist || [], 2, 'var(--s4)', _T('場外 USDT 溢價', 'OTC USDT premium'));
     one('c-pr-perp', ma7((p3.perp || {}).rows || []), 3, 'var(--s4)', _T('永續對現貨（7 日平均）', 'Perp vs spot (7-day avg)'));
   }
