@@ -8,7 +8,8 @@ image 欄位：{"chart": "<picks.py 的圖表 id，例如 cbp、sopr、etf、coh
            或 {"chart": "lthloss", ...}：長期持有者虧損比例（CheckOnChain，2018 年起，虛線＝本輪熊底高點）。
            或 {"chart": "bands", ...}：短期持有者成本帶（Bitview，近兩年，±1、±2 標準差）。
            或 {"chart": "agecost", ...}：6–12 與 12–18 個月持幣成本（Bitview，2023 年起，底部寫上次死叉／金叉）。
-           後三張是 2026-11-04 網站新加的圖（資料在 latest.json 的 onchain.lthloss、onchain.sth_bands、cycle.age_cost）。
+           或 {"chart": "rpl", ...}：實現獲利 ÷ 實現虧損 90 天平均（CheckOnChain，2018 年起，對數刻度，1＝獲利和虧損一樣多；2026-11-05 加）。
+           lthloss、bands、agecost 是 2026-11-04 網站新加的圖（資料在 latest.json 的 onchain.lthloss、onchain.sth_bands、cycle.age_cost）。
 需要 pipeline/picks.py（PR #19「每日推薦發文圖表」）與 Pillow；字型同 share_card.py。
 用法（在倉庫根目錄）：python3 ops/replies/cards.py --fonts <字型資料夾>
 只作讀值：圖只放市場資訊，不放出場框架。"""
@@ -18,6 +19,8 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, os.path.join(ROOT, 'pipeline'))
 import picks as PK   # noqa: E402
 from signals import g, T   # noqa: E402
+sys.path.insert(0, os.path.join(ROOT, 'ops', 'articles'))
+import charts as AC   # noqa: E402  長文的畫法：可自訂 x／y 刻度（rpl 用對數刻度）；要在下面包 draw_line_chart 之前 import
 
 OUT = os.path.join(ROOT, 'data', 'replies')
 
@@ -77,6 +80,7 @@ def c_sec(L, end):
 def c_lthloss(L, end):
     """長期持有者虧損比例（CheckOnChain，2018 年起，含 2019、2022、本輪三個熊底高點）；虛線＝本輪高點。"""
     s = g(L, 'onchain.lthloss'); rows = [(r[0], r[1]) for r in s['rows'] if r[0] >= PK.dn('2018-06-01')]
+    if rows and rows[-1][0] == PK.dn(s['date']): rows[-1] = (rows[-1][0], s['value'])   # rows 是每 4 天取最高值；線尾換成當天的值，和標題、底部數字一致
     pk = s['peaks'][-1]; prev = s['peaks'][-2]
     return dict(kind='line', name=T('長期持有者虧損比例', 'Long-term holder supply in loss'),
                 sub=T('持有 155 天以上的幣，有多少比例買在現價之上（%）；虛線是本輪熊底的高點',
@@ -127,7 +131,24 @@ def c_agecost(L, end):
                             f'{kind[0]}，{a["days_since"]} 天前', f'{kind[1]}, {a["days_since"]}d ago')])
 
 
-EXTRA = {'ad': c_ad, 'sec': c_sec, 'lthloss': c_lthloss, 'bands': c_bands, 'agecost': c_agecost}   # picks.py 沒有、回覆配圖另外加的圖表
+def c_rpl(L, end):
+    """實現獲利 ÷ 實現虧損，90 天平均（CheckOnChain），2018 年起，對數刻度；1＝獲利和虧損一樣多。"""
+    import math
+    r = g(L, 'onchain.rpl'); lg = math.log10
+    rows = [(x[0], lg(x[1])) for x in r['rows'] if x[0] >= PK.dn('2018-01-01') and x[1] > 0]
+    return dict(kind='line', name=T('實現獲利 ÷ 實現虧損（90 天平均）', 'Realized profit ÷ realized loss (90-day avg)'),
+                sub=T('全網賣出時實現的獲利除以虧損，取 90 天平均；對數刻度；低於 1＝認賠多於獲利',
+                      'Network-wide realized profit ÷ realized loss, 90-day average; log scale; below 1 = more loss-taking'),
+                series=[dict(name=T('90 天平均', '90-day average'), rows=rows, color=PK.S1, width=5)],
+                refs=[dict(y=0, lx=0.3, label=T('1＝獲利和虧損一樣多', '1 = profit equals loss'))],
+                xticks=AC.years(rows[0][0], rows[-1][0], 1), yticks=[lg(v) for v in (0.3, 1, 3, 10, 30)],
+                yf=lambda v: f'{10 ** v:.2g}', src='CheckOnChain', asof=r['date'],
+                stats=[PK.S(f'最新（{PK.md(r["date"], "zh")}）', f'Latest ({PK.md(r["date"], "en")})', f'{r["value"]:.2f}'),
+                       PK.S(f'高於 1（{PK.md(r["since"], "zh")} 起）', f'Above 1 (since {PK.md(r["since"], "en")})', f'{r["since_days"]} 天', f'{r["since_days"]} days'),
+                       PK.S('最近 7 天每日比值', 'Daily ratio, last 7 days', f'{r["last7"]:.2f}')])
+
+
+EXTRA = {'ad': c_ad, 'sec': c_sec, 'lthloss': c_lthloss, 'bands': c_bands, 'agecost': c_agecost, 'rpl': c_rpl}   # picks.py 沒有、回覆配圖另外加的圖表
 
 
 def vdash(d, x, y0, y1, color, w=3, dash=16, gap=12):
