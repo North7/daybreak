@@ -73,7 +73,9 @@
   function svgEl(W, Ht, inner, label) { return '<svg viewBox="0 0 ' + W + ' ' + Ht + '" width="' + W + '" height="' + Ht + '" role="img" aria-label="' + esc(label || '') + '">' + inner + '</svg>'; }
   function bisect(a, x) { var lo = 0, hi = a.length - 1; while (hi - lo > 1) { var m = (lo + hi) >> 1; if (a[m][0] < x) lo = m; else hi = m; } return Math.abs(a[lo][0] - x) <= Math.abs(a[hi][0] - x) ? lo : hi; }
   function animateLines(el) {
-    if (reduced || el._drawn) return; el._drawn = true;
+    // 2026-11-05：畫的時候圖還藏著（例如手機上收在「展開其餘」後面的小圖）就不套描線動畫：
+    //   藏著時動畫不會跑，線會停在看不見的狀態，只剩最後一點（截圖工具直接截這種圖時就是空的）
+    if (reduced || el._drawn || el.offsetParent === null) return; el._drawn = true;
     // 2026-10-14：虛線（推測、還沒發生的部分）不套描線動畫，動畫的 stroke-dasharray 會蓋掉虛線樣式、讓它變成實線
     el.querySelectorAll('path.ln:not([stroke-dasharray])').forEach(function (p) { try { var L = p.getTotalLength(); p.style.setProperty('--len', L); p.classList.add('draw'); } catch (e) {} });
   }
@@ -752,12 +754,17 @@
       _T('集中度在前 10%（≥ ' + fmt.n(cs.p90, 1) + '%）的日子，之後 30 天最大波動的中位數 ' + fmt.n(cs.hi_med30, 1) + '%、超過 15% 的佔 ' + cs.hi_gt15 + '%；其他日子 ' + fmt.n(cs.lo_med30, 1) + '%、' + cs.lo_gt15 + '%。方向不定：' + cs.since.slice(0, 4) + ' 年以來首次衝上前 10% 的 ' + hiN.length + ' 次，30 天後 ' + up + ' 次漲、' + (hiN.length - up) + ' 次跌' + (big.length ? '（例如 ' + big.map(ex).join('、') + '）' : '') + '。',
         'Days in the top 10% (≥ ' + fmt.n(cs.p90, 1) + '%) saw a median 30-day maximum move of ' + fmt.n(cs.hi_med30, 1) + '%, with ' + cs.hi_gt15 + '% above 15%; other days ' + fmt.n(cs.lo_med30, 1) + '% and ' + cs.lo_gt15 + '%. No direction: of ' + hiN.length + ' first entries into the top 10% since ' + cs.since.slice(0, 4) + ', ' + up + ' were higher 30 days later and ' + (hiN.length - up) + ' lower' + (big.length ? ' (e.g. ' + big.map(ex).join(', ') + ')' : '') + '.'), 'neu']);
     var cc = concCohortSay(); if (cc) it.push(cc);
+    var sx = (D.chips || {}).stress;   // 2026-11-05 使用者要求放進來看相對關係：本站自製的短期壓力分數（不是 BRS）
+    if (sx && sx.rows && sx.rows.length > 2) { var pv = sx.rows[sx.rows.length - 2][1], er = sx.era || [], et = function (e) { return e.lo + '–' + e.hi.slice(2) + _T(' 年 ' + e.n + ' 次 ' + e.win + ' 次獲利', ': ' + e.win + ' of ' + e.n); };
+      it.push([_T('短期壓力（自製）', 'Short-term stress (ours)'), sx.value + ' / 100', _T('現在 ' + sx.value + '（' + fmt.md(sx.date) + '，前一天 ' + pv + '；近 30 天最高 ' + sx.max30 + '）。四項短期持有者指標各和自己近 ' + sx.w + ' 天比，越接近 100＝短期壓力越接近半年來最差，0＝不比平常差。走勢和 Glassnode 的 BRS 公開圖大致同向，但不是 BRS（那是付費、算法不公開的）。照「到 100 買、回 0 賣」回測：' + er.map(et).join('、') + '；熊市裡沒有優勢，只看相對高低、不當買賣訊號。',
+        'Now ' + sx.value + ' (' + fmt.md(sx.date) + '; ' + pv + ' the day before; 30-day high ' + sx.max30 + '). Four short-term holder measures, each against its own last ' + sx.w + ' days; near 100 means stress near its worst in half a year, 0 means no worse than usual. It moves broadly with Glassnode\'s BRS charts but is not BRS (that one is paid and its method is not public). Buying at 100 and selling back at 0 would have won ' + er.map(et).join(', ') + '; no edge in bear markets, so read it for relative highs and lows, not as a trade signal.'), sx.value >= 75 ? 'warn' : 'neu']); }
     return it;
   }
   function concPanel() {
     var k = concNow(), cs = (D.chips || {}).conc_stats || {}; if (!k) return '';
     return panel('span-12', _T('籌碼結構與集中度', 'Supply structure and concentration'), _T('Bitview · ' + (cs.since || '').slice(0, 4) + ' 起 · 只作讀值', 'Bitview · since ' + (cs.since || '').slice(0, 4) + ' · reading only'),
-      interpHtml(concItems()) + legend([[_T('BTC 價格（上格）', 'BTC price (top)'), 'var(--ink-2)'], [_T('長期持有者籌碼', 'Long-term holder supply'), 'var(--s1)', 'box'], [_T('短期持有者籌碼', 'Short-term holder supply'), 'var(--s2)', 'box'], [_T('現價 ±5% 區間', '±5% of price'), 'var(--s3)', 'box'], [_T('集中度（下格）', 'Concentration (bottom)'), 'var(--s3)'], [_T('前 10% 高水位', 'Top-10% line'), 'var(--warn)', 'dash']]) + '<div class="chart" id="c-conc"></div>');
+      interpHtml(concItems()) + legend([[_T('BTC 價格（上格）', 'BTC price (top)'), 'var(--ink-2)'], [_T('長期持有者籌碼', 'Long-term holder supply'), 'var(--s1)', 'box'], [_T('短期持有者籌碼', 'Short-term holder supply'), 'var(--s2)', 'box'], [_T('現價 ±5% 區間', '±5% of price'), 'var(--s3)', 'box'], [_T('集中度（下格）', 'Concentration (bottom)'), 'var(--s3)'], [_T('前 10% 高水位', 'Top-10% line'), 'var(--warn)', 'dash']]) + '<div class="chart" id="c-conc"></div>' +
+      (((D.chips || {}).stress || {}).rows ? '<div class="panel-h" style="margin-top:6px"><h3>' + _T('短期壓力分數（本站自製，0–100；時間範圍跟著上圖）', 'Short-term stress score (ours, 0–100; follows the range above)') + '</h3></div>' + legend([[_T('短期壓力', 'Short-term stress'), 'var(--s1)'], [_T('75 以上：壓力接近半年來最差', '75+: near the worst in half a year'), 'var(--down)', 'box']]) + '<div class="chart" id="c-stress"></div>' : ''));
   }
   function drawConc(el) {
     var h = ((D.chips || {}).conc_hist || []).filter(function (r) { return r[1] && r[2] != null; }), cs = (D.chips || {}).conc_stats || {}, co = (D.chips || {}).cohort || {}, k = concNow(); if (h.length < 30 || !el) return;
@@ -790,6 +797,12 @@
         return s;
       },
       tip: function (p, C) { return { dots: '<circle cx="' + C.X(p[0]).toFixed(1) + '" cy="' + C.Ys(p[2]).toFixed(1) + '" r="3.5" fill="var(--s3)" stroke="var(--deck)" stroke-width="1.5"/>', rows: tipRow1('var(--s3)', _T('集中度', 'Concentration'), fmt.n(p[2], 2) + '%') + tipRow1('var(--ink-2)', _T('收盤', 'Close'), fmt.usd(p[1])) }; } });
+    var sx = (D.chips || {}).stress, se = $('#c-stress');
+    if (sx && sx.rows && se) {   // 時間範圍跟著上面的圖（手機只畫近 1 年）
+      var x1 = h[h.length - 1][0], x0 = el.clientWidth < 420 ? x1 - 365 : el._rng ? x1 - el._rng : h[0][0], sr = sx.rows.filter(function (r) { return r[0] >= x0; });
+      lineChart(se, { h: 150, noRange: true, x0: x0, x1: x1, y0: 0, y1: 100, series: [{ name: _T('短期壓力', 'Short-term stress'), data: sr, color: 'var(--s1)', w: 1.6, area: true }],
+        hbands: [{ y0: 75, y1: 100, color: 'var(--down-dim)' }], refs: [{ y: 25, color: 'var(--ink-3)' }], yFmt: function (v) { return v.toFixed(0); }, tipFmt: function (v) { return v.toFixed(0) + ' / 100'; }, aria: _T('短期壓力分數', 'Short-term stress score') });
+    }
   }
   function concSay(k, dvol) {
     var a = concAgo(7), h = (D.chips || {}).conc_hist || [];
