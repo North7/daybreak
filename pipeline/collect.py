@@ -1163,14 +1163,22 @@ try:
 except Exception as e: errors.append(f'stables {e}')
 # G9b. Coinbase 溢價：Coinbase BTC-USD 與 Binance BTC-USDT 每日收盤的價差（%）。正值＝美國買盤較強；USDT 偏離 1 美元時會有誤差
 try:
-    cbk = get('https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400')
-    bnk = get('https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=300')
-    cb_ = {ymd(int(x[0])): float(x[4]) for x in cbk}; bn_ = {ymd(int(x[0]) // 1000): float(x[4]) for x in bnk}
+    # 2026-11-05 使用者說「沒說服力」：歷史由 300 天延長到約 4 年（Coinbase 每次最多 300 根，分 5 次；Binance 每次 1,000 根，分 2 次），列裡多帶 Coinbase 收盤給價格上格
+    _e9 = dt.datetime.combine(dt.date.fromisoformat(LAST) + dt.timedelta(days=1), dt.time(), dt.timezone.utc); cb_, bn_ = {}, {}
+    for k_ in range(5):
+        e_ = _e9 - dt.timedelta(days=300 * k_); s_ = e_ - dt.timedelta(days=300)
+        for x in get(f'https://api.exchange.coinbase.com/products/BTC-USD/candles?granularity=86400&start={s_.isoformat()}&end={e_.isoformat()}'): cb_[ymd(int(x[0]))] = float(x[4])
+        __import__("time").sleep(0.3)
+    et_ = int(_e9.timestamp() * 1000)
+    for k_ in range(2):
+        bnk = get(f'https://data-api.binance.vision/api/v3/klines?symbol=BTCUSDT&interval=1d&limit=1000&endTime={et_}')
+        for x in bnk: bn_[ymd(int(x[0]) // 1000)] = float(x[4])
+        et_ = int(bnk[0][0]) - 1
     cd9 = sorted(d_ for d_ in set(cb_) & set(bn_) if d_ <= LAST)
     pr9 = [(d_, (cb_[d_] / bn_[d_] - 1) * 100) for d_ in cd9]; v9 = [x[1] for x in pr9]
     R['cb_premium'] = dict(date=pr9[-1][0], pct=round(v9[-1], 3), avg7=round(sum(v9[-7:]) / 7, 3), avg30=round(sum(v9[-30:]) / 30, 3),
                            pct_own=_pctl(v9, v9[-1]), avg30_pct_own=_pctl([sum(v9[j - 29:j + 1]) / 30 for j in range(29, len(v9))], sum(v9[-30:]) / 30), n=len(v9),
-                           rows=[[_dn9(d_), round(x_, 3)] for d_, x_ in pr9], note='Coinbase BTC-USD ÷ Binance BTC-USDT 每日收盤 − 1；只作讀值')
+                           rows=[[_dn9(d_), round(x_, 3), round(cb_[d_])] for d_, x_ in pr9], since=pr9[0][0], note='Coinbase BTC-USD ÷ Binance BTC-USDT 每日收盤 − 1；只作讀值')
 except Exception as e: errors.append(f'cb_premium {e}')
 # G9c. 2026-11-03 使用者要求（CryptoPainter 的「期現差價加權 USDT 溢價率」，權重不公開，改做三地分開看）：三地溢價的另外兩條（美國＝上面的 Coinbase 溢價）。
 #   亞洲：OKX 場外 USDT/CNY 報價，買賣兩邊各取最前面 5 筆平均、取中間 ÷ OKX 的美元兌人民幣匯率 − 1。只有當下快照，歷史由 build.py 寫進 data/history/index.json 每日累積。
