@@ -86,6 +86,8 @@ def tone_notes(items):
     q = share(lambda t: QEND.search(t))
     if q > 0.3: out.append(f'問句收尾 {q:.0%}：只在真的想知道時問')
     if share(lambda t: re.search(r'[。.]\s*$', t)) > 0.5: out.append('超過一半句尾有句號：手機上打字通常不加')
+    im = sum(1 for it in R if it.get('image')) / n
+    if im > 0.5: out.append(f'配圖 {im:.0%}：只有圖本身就是重點時才配')
     heads = {}
     for it in R: heads.setdefault(it['reply'][:3].lower(), []).append(it['n'])
     dup = {k: v for k, v in heads.items() if len(v) >= 3}

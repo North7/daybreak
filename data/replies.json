@@ -4,6 +4,32 @@
  "edition": 30,
  "items": [
   {
+   "n": 104,
+   "order": 0,
+   "status": "send",
+   "url": "https://x.com/CryptoJelleNL/status/2118246951108149604",
+   "id": "2118246951108149604",
+   "author": "CryptoJelleNL",
+   "name": "Jelle",
+   "followers": 117159,
+   "posted": "2026-11-05T07:40:02Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "掃過低點＋看漲背離、回到 200 日 EMA，選舉過了；短線可能再震盪，預期 2027 創新高（10K 瀏覽、18 回覆）",
+   "reply": "Same, and honestly the drawdown is a big part of why 2027 doesn't sound crazy to me. Day 394 after the top, past cycles were down 72–81%. This one's −36%, worst was −53%. Tough to run the old \"down a year, climb two\" clock on a cycle this shallow",
+   "sources": "cycle.cycle_cmp（11/04，頂部後第 394 天）：這輪 −36%、最深 −53%；2013／2017／2021 頂部後同一天 −72%／−81%／−75%。網站「和前幾輪比」面板：前幾輪「跌一年、爬兩年」的時間表不適合直接套用",
+   "note": "使用者指定。明顯偏多，順著他的 2027 新高：用頂部後同一天的跌幅說明這輪是淺週期，不給價位。發文已近 7 小時，他 12:05 UTC 有一則較新的（cycle high anchored VWAP），想要曝光多一點可以改回那則。",
+   "image": {
+    "site": {
+     "page": "cycle",
+     "sel": "#c-cyccmp"
+    },
+    "title": "Day 394 after the top: −36% now, past cycles −72% to −81%"
+   },
+   "mode": "reply",
+   "style": "真人版"
+  },
+  {
    "n": 98,
    "order": 1,
    "status": "send",
