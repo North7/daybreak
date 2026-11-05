@@ -28,7 +28,7 @@
    },
    "quote": "Murphy 列了三種回撤情境，我最看好第一檔：該換手的上週已經換完了。76K 有 65.1 萬顆高位認賠交出來的新籌碼，現在由虧轉盈，75,700 就在他們的成本附近。\n\n#比特幣 #BTC #鏈上數據",
    "mode": "quote",
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 2,
@@ -55,7 +55,7 @@
     },
     "title": "短期成本還在真實市場均價下方 2.15%"
    },
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 3,
@@ -80,7 +80,7 @@
     },
     "title": "6–12 個月持幣成本 83,569，就在 8.4 萬"
    },
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 4,
@@ -95,7 +95,7 @@
    "lang": "zh",
    "angle": "提出反例",
    "summary": "CoinGlass 清算地圖：往上突破 82,000 空單清算強度 3.37 億，往下踩穿 79,000 多單 9.19 億，是上方的 2.7 倍；另有 5 億 USDT 從 Tether Treasury 進幣安。",
-   "reply": "哈，我這邊的清算地圖剛好翻過來。\n用 OKX 推算，上方空單反而比下方多單多好幾倍（5,542 顆對 776 顆）。口徑不一樣，但「喂清算引擎」我覺得還言之過早。",
+   "reply": "哈，我這邊用 OKX 推算的清算地圖剛好翻過來：上方空單反而比下方多單多好幾倍（5,542 顆對 776 顆）。口徑不一樣，但「喂清算引擎」我覺得還言之過早。",
    "sources": "收盤上下 5% 內推算待清算：上方 5,542 顆、下方 776 顆；空單清算帶 82,000–83,000 · 11/05 00:00 UTC · OKX 未平倉推算",
    "note": "昨天有按讚、回覆。和他的 CoinGlass 數字方向相反，回覆已說明口徑不同，語氣是並列不是糾正。同一作者 USDT 那則不回。",
    "image": {
@@ -105,7 +105,7 @@
     },
     "title": "OKX 推算：上方空單 5,542 顆，下方多單 776 顆"
    },
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 5,
@@ -120,10 +120,10 @@
    "lang": "zh",
    "angle": "交叉驗證",
    "summary": "一夜漲 4.19%，大戶空頭名義反而加了 1.86 億、多頭只加 0.37 億；24 小時空單爆倉 1.573 億，說明上漲主要是空頭被迫買回，不是多頭加倉。",
-   "reply": "現在主動權在空頭手上。\nHyperliquid 大戶空單 11,576 顆，比多單 8,482 顆多不少，而且還沒撤。這波是他們被擠上去的，下一步也看他們。\n你覺得他們會繼續加空，還是認輸？",
+   "reply": "現在主動權在空頭手上。\nHyperliquid 大戶空單 11,576 顆，比多單 8,482 顆多不少，而且還沒撤。這波是他們被擠上去的，下一步也看他們。",
    "sources": "Hyperliquid 淨值前 2,000 名、有 BTC 部位 225 戶：空 11,576 顆（102 戶）、多 8,482 顆（123 戶）· 11/05 03:07 UTC；加權資金費率 10.7% → 8.68% · 11/04 · OKX、Hyperliquid、Deribit",
    "note": "昨天互動最多的帳號之一（按讚、回覆、在我們貼文底下留言 3 則）。這則不配圖。11/05 網站改掃前 2,000 名（PR #34），數字已換成新口徑；前 300 名的舊數字（空 7,891、多 3,646）不要再用。熱力圖上的 Hyperliquid 白條今天沒有聚集，所以不截圖。",
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 6,
@@ -138,7 +138,7 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "BTC 一天從 75,734 拉到 81,200（約 +7%），但 ETF 11 月頭兩個交易日淨流出約 5.1 億；引 Bitfinex、Wintermute 說法：反彈主要靠被動掛單與合約槓桿，只當反彈不當反轉，問讀者站得住還是要回踩。",
-   "reply": "同意，賣得少不等於有人買。\nCoinbase 溢價每日值從 −0.271% 收到 −0.094%，但一天都還沒翻正。翻正那天我才會改口。",
+   "reply": "同意，賣得少不等於有人買。Coinbase 溢價每日值從 −0.271% 收到 −0.094%，但一天都還沒翻正。翻正那天我才會改口。",
    "sources": "Coinbase 溢價每日值 10/29 −0.271% → 11/04 −0.094%、7 日均 −0.187% · Coinbase／Binance（網站 11/05 改版後的每日柱）",
    "note": "順著他「只當反彈」的立場。網站 11/05 改版提醒：「收斂回 0 以上」本身沒什麼參考價值，不要講成看多，所以回覆寫成「賣壓變輕、不是買盤回來」。",
    "image": {
@@ -148,7 +148,7 @@
     },
     "title": "Coinbase 溢價每日值收到 −0.094%，還沒翻正"
    },
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 7,
@@ -163,7 +163,7 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "現貨 ETF 連三日淨流出（11/3 約 1.16 億、10/30 約 6.43 億），企業財庫增持也放緩，認為問題是新增買盤不足；更關注 ETF 何時恢復持續淨流入。",
-   "reply": "我反而更擔心穩定幣這條。\n30 天少了 122 億美元，等於整個圈子的子彈在變少。ETF 一天就能轉正，子彈回來要慢得多。\n你會先看哪一條？",
+   "reply": "我反而更擔心穩定幣這條。\n30 天少了 122 億美元，等於整個圈子的子彈在變少。ETF 一天就能轉正，子彈回來要慢得多。",
    "sources": "穩定幣總量 2,951 億美元、30 日 −122 億 · 11/04 · DefiLlama",
    "note": "ETF 的數字留給 ecoinometrics（英文），這則換穩定幣，避免同一天重複。7 日變化不寫：notes 是 −2.15%、網站圖上的異動標籤是 −2.38%（起點不同），兩個數字對不上。",
    "image": {
@@ -173,7 +173,7 @@
     },
     "title": "穩定幣 30 天少了 122 億美元"
    },
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 8,
@@ -188,7 +188,7 @@
    "lang": "en",
    "angle": "補數據",
    "summary": "Bitcoin ETF demand has changed regime: late October inflows faded within days, flows flipped to strong outflows, and in that regime BTC daily returns have usually been negative.",
-   "reply": "Feels like the tail of a selling wave to me, not a new leg.\nEach daily print has been smaller: −$643M, −$399M, then −$116M. A big Nov 4 number would change my mind.\nAre you weighting the streak or the size?",
+   "reply": "Feels like the tail of a selling wave to me, not a new leg.\nEach daily print has been smaller: −$643M, −$399M, then −$116M. A big Nov 4 number would change my mind.",
    "sources": "ETF 淨流量 10/30 −643.2M、11/02 −398.6M、11/03 −115.6M（暫定，Farside、SoSoValue）· The Block",
    "note": "10 萬粉大帳號、發文 11 小時、7 則回覆，建議用引用。",
    "image": {
@@ -200,7 +200,7 @@
    },
    "quote": "ecoinometrics says ETF demand flipped to strong outflows. To me it looks like the tail of a selling wave: −$643M, −$399M, then −$116M (Oct 30 to Nov 3). Still red, each day smaller.\n\n#Bitcoin #BTC #ETF",
    "mode": "quote",
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 9,
@@ -227,7 +227,7 @@
    },
    "quote": "Mark Moss is reading 19 midterms. Fun detail: in 2022 the on-chain death cross (6–12m vs 12–18m holder cost) landed on election day itself. This cycle it came in July, 112 days ago. 2022 isn't the template.\n\n#Bitcoin #BTC #onchain",
    "mode": "quote",
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 10,
@@ -252,7 +252,7 @@
     },
     "title": "LTH supply in loss peaked at 45.4% on June 30"
    },
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 11,
@@ -267,7 +267,7 @@
    "lang": "en",
    "angle": "提出反例",
    "summary": "BTC back above 80K after the midterms; CoinGlass shows $363M liquidated in one hour, $269M of it shorts. \"Nothing changed on chain last night, people just stopped being scared.\" Prefers spot and patience over leverage.",
-   "reply": "I'd push back a little: something did change on chain.\nShort-term holders went from 30% in profit to 63% overnight. Last week's dip buyers are back above water, so the forced loss selling is off.\nWhat were you watching that night?",
+   "reply": "I'd push back a little: something did change on chain.\nShort-term holders went from 30% in profit to 63% overnight. Last week's dip buyers are back above water, so the forced loss selling is off.",
    "sources": "STH-SOPR 0.9954 → 1.0021（CheckOnChain，11/04）；短期持有者獲利比例 30.25%（11/02）→ 62.89%（11/04，Bitview）",
    "note": "",
    "image": {
@@ -278,7 +278,7 @@
     },
     "title": "STH-SOPR back above 1: 0.9954 → 1.0021"
    },
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 28,
@@ -293,7 +293,7 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "三次期中選舉後都先跌後漲（2014 71 天跌 48%、2018 39 天跌 51%、2022 13 天跌 15%），時間和跌幅一次比一次短；自己判斷 76,000 已經很低、差不多了。",
-   "reply": "76000 差不多了，我也這麼覺得。\n那裡剛好是短期持有者的成本線 75,961，11/04 插下去一碰就被買回來。第一次測試就守住，比看選舉日曆實在。",
+   "reply": "我也覺得 76000 差不多了，那裡剛好是短期持有者的成本線 75,961，11/04 插下去一碰就被買回來。第一次測試就守住，比看選舉日曆實在。",
    "sources": "短期持有者成本 75,961、11/04 盤中低點 75,625、收盤 80,441 · Bitview、Kraken",
    "note": "15 萬粉、發文 13 小時。偏多（「76000 差不多了」），順著他：76,000 剛好是短期持有者成本，第一次測試就守住。只講成本線，不呼應他的價位推算。",
    "image": {
@@ -303,7 +303,7 @@
     },
     "title": "76,000 就是短期持有者成本：75,961"
    },
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 29,
@@ -329,7 +329,7 @@
     },
     "title": "8/21 站回 3–6 個月持幣成本：前三次是 2015、2019、2023"
    },
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 30,
@@ -354,7 +354,7 @@
     },
     "title": "Coinbase premium: −0.094% on squeeze day, still not positive"
    },
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 31,
@@ -369,7 +369,7 @@
    "lang": "en",
    "angle": "交叉驗證",
    "summary": "Divided government after the midterms; BTC V-shaped from 75.8K to 78.4K. Lower 10Y yields help risk assets, CLARITY Act likely stalls. IV rose ~1% but options market stays bearish on any big move by year-end.",
-   "reply": "Options basically shrugged at the election.\nDVOL actually slipped to 38.06 after the vote, bottom third of the past year. Nobody's paying up for a big move either way.",
+   "reply": "Options basically shrugged at the election. DVOL actually slipped to 38.06 after the vote, bottom third of the past year. Nobody's paying up for a big move either way.",
    "sources": "DVOL 39.73 → 38.06（一年第 27.7 百分位）；30 天 25Δ 風險逆轉 −3.51 → −2.88 · 11/04 · Deribit",
    "note": "選擇權研究帳號，同行交流。順著他「選擇權不看大行情」。",
    "image": {
@@ -379,7 +379,7 @@
     },
     "title": "DVOL 38.06 after the vote, 27.7th percentile of the year"
    },
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 90,
@@ -404,7 +404,7 @@
     },
     "title": "長期持有者虧損比例 6/30 到 45.4%：和前兩輪熊底同一區"
    },
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 91,
@@ -419,7 +419,7 @@
    "lang": "en",
    "angle": "補數據",
    "summary": "BTC entered the 2026 midterm vote up 20.4% over 90 days, the first positive pre-midterm window since 2010 (2014 ~−44%, 2018 −8.3%, 2022 −16.5%); a four-cycle sample is too small for a trading rule.",
-   "reply": "On-chain it looks like a reset, not a blow-off.\nPrice is sitting near the middle of the STH cost bands (+0.14 SD), way down from +1.26 in September. Agree the election sample is tiny, so I lean on cost basis.\nDo you track one too?",
+   "reply": "On-chain it looks like a reset, not a blow-off.\nPrice is sitting near the middle of the STH cost bands (+0.14 SD), way down from +1.26 in September. Agree the election sample is tiny, so I lean on cost basis.",
    "sources": "短期持有者成本帶：現在 +0.14 個標準差、120 日最高 +1.26（2026-09-21）· 11/04 · Bitview（近 4 年價格÷成本的平均 ± 標準差）",
    "note": "3 萬粉、剛發。態度謹慎（樣本太少），回覆順著他，補鏈上的另一面：漲上來但沒有過熱。",
    "image": {
@@ -429,7 +429,7 @@
     },
     "title": "Price at +0.14 SD in the STH cost bands, down from +1.26"
    },
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 92,
@@ -456,7 +456,7 @@
    },
    "quote": "Jackyi 說 82,600 是第二波的關，我也覺得關鍵：50 日均線 81,993、近 20 天價值區上緣 82,750 全擠在那裡。收盤站上去，最近套牢的那段就全踩在腳下了。\n\n#比特幣 #BTC #技術分析",
    "mode": "quote",
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 93,
@@ -471,10 +471,10 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "BTC 要有效站穩 82K 才算拐點，短期先看 81K 上方突破是否有效；認為真正的驗證窗口在下週，風險管理優先於方向判斷。",
-   "reply": "82K 這週應該不好過，選擇權在拉扯。\n明天週到期的買權最集中在 82,000，最大痛點在 79,000。我也跟你一樣，等週五到期後再看突破算不算數。",
+   "reply": "82K 的突破我也會等週五再認。明天週到期的買權最集中在 82,000，最大痛點在 79,000，到期前價格被兩邊拉扯很正常。",
    "sources": "11/6 週到期占 9.9%、最大痛點 79,000、買權集中在 82,000 與 85,000 · 11/05 · Deribit",
    "note": "偏謹慎，順著他「驗證窗口在下週」。不配圖：網站的履約價圖只有主要到期日（12/25），沒有 11/6 週到期。",
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 94,
@@ -492,7 +492,7 @@
    "reply": "The stress is in the stock, not the hash.\nMiners don't look forced at all: hashrate is only down ~4% on the week and the next difficulty adjustment is expected to drop. Agree on watching revenue over the BTC mark.",
    "sources": "算力 7 日均 1,028 EH/s、週 −4.28%；11/13 難度預估 −2.26% · 11/04 · mempool.space",
    "note": "主題是礦企財報，和我們的數據只對得上一半（礦工端），所以列可選、不配圖。",
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 95,
@@ -519,7 +519,7 @@
    },
    "quote": "Darkfost: Bitcoin sellers are getting exhausted. I see the same: my seller exhaustion read sits at the 10.8th pct since 2011. But apparent demand is still −156K BTC over 30 days. Tired sellers, no buyers yet.\n\n#Bitcoin #BTC #onchain",
    "mode": "quote",
-   "style": "鉤子＋提問版"
+   "style": "口語版"
   },
   {
    "n": 96,
@@ -544,7 +544,7 @@
     },
     "title": "Apparent demand: −156,497 BTC over 30 days"
    },
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 97,
@@ -559,10 +559,10 @@
    "lang": "en",
    "angle": "補數據",
    "summary": "A whale wallet dormant for 22 days woke up and sold ~$8.18M of BTC (WBTC/cbBTC) and ETH during the morning dip; asks if it is the start of a bigger exit.",
-   "reply": "One wallet is noise, but the big picture agrees with you.\nLong-term holders have been net sellers for 92 days straight, about 167K BTC over the last 30. That's the exit worth watching.",
+   "reply": "One wallet is noise, but the big picture agrees with you. Long-term holders have been net sellers for 92 days straight, about 167K BTC over the last 30. That's the exit worth watching.",
    "sources": "長期持有者 30 日淨部位 −166,633 顆（11/03）、自 8/4 起淨減 92 天、同期價格 +20.7% · bitcoin-data",
    "note": "兩天前的貼文、單一以太坊錢包（WBTC），所以列可選。不配圖：網站的長期持有者 30 日淨部位圖目前是空的（只畫出最後一點）。",
-   "style": "鉤子版"
+   "style": "口語版"
   },
   {
    "n": 32,
