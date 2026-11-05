@@ -5,7 +5,7 @@
 ## 1. 專案是什麼
 
 - 比特幣每日簡報網站：<https://north7.github.io/daybreak/>（GitHub Pages，repo `North7/daybreak`，分支 `main`）。
-- 十個版面：頭版、消息、鏈上、週期、價格、資金、衍生品、出場框架、往期、方法。中英雙語（`_t`／`_T`）、日刊／夜刊兩種主題。
+- 十個版面：頭版、消息、週期、鏈上、價格、資金、衍生品、出場框架、往期、方法。中英雙語（`_t`／`_T`）、日刊／夜刊兩種主題。
 - 每天的流程：
   1. **資料**：`.github/workflows/daily.yml`，每天 UTC 00:05（台北 08:05）起跑；GitHub 自己的排程常延遲，由 cron-job.org 準時呼叫（見 `docs/CRON_JOB.md`）。跑 `pipeline/collect.py` → `pipeline/build.py` → 寫 `data/latest.json`，並提交 `data/`、`pipeline/coc_cache/` 等快取。
   2. **文字日報**：另一個排程（UTC 00:30，台北 08:30）照 `docs/CLAUDE_DAILY.md` 寫 `notes.json`、`notes.en.json`、`x_post.json`。
