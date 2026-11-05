@@ -183,7 +183,8 @@
    "image": {
     "site": {
      "page": "cycle",
-     "sel": "#c-agecost"
+     "sel": "#c-agecost",
+     "pre": "document.querySelector('#ac-segs button[data-a=\"612\"]').click(); true"
     },
     "title": "6–12 個月持幣成本 83,569，就在 8.4 萬"
    },
@@ -328,7 +329,8 @@
    "image": {
     "site": {
      "page": "cycle",
-     "sel": "#c-agecost"
+     "sel": "#c-agecost",
+     "pre": "document.querySelector('#ac-segs button[data-a=\"612\"]').click(); true"
     },
     "title": "2022: death cross on election day. 2026: July 15"
    },
