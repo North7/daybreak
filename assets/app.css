@@ -743,8 +743,8 @@ a.term:hover { color: var(--red-ink); text-decoration-color: currentColor; }
 .chart path.ln[stroke="var(--flare)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--flare) var(--glow-a), transparent)); }
 .chart path.ln[stroke="var(--orbit)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--orbit) var(--glow-a), transparent)); }
 @keyframes nowBeat { 0%, 100% { transform: scale(1); } 45% { transform: scale(1.5); } }
-.inview .now-dot, .inview .now-g circle { animation: nowBeat 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
-.scrolling .now-dot, .scrolling .now-g circle { animation-play-state: paused; }
+.inview .now-dot, .inview .now-g circle:not([fill="var(--deck)"]) { animation: nowBeat 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.scrolling .now-dot, .scrolling .now-g circle { animation-play-state: paused; }   /* 空心圈（底色填滿的歷史標記）不跳，只有實心的最新一點跳 */
 @media (prefers-reduced-motion: reduce) { .inview .now-dot, .inview .now-g circle { animation: none; } }
 .interp:has(~ .chart, ~ .legend) .it:first-child { grid-template-columns: 150px minmax(96px, auto) 44px minmax(0, 1fr); }
 .interp:has(~ .chart, ~ .legend) .it:first-child .v { font-size: 22px; font-weight: 800; letter-spacing: -.01em; line-height: 1.1; }

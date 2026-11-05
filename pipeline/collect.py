@@ -785,6 +785,35 @@ try:
     R['murphy_flow']['conc5'] = dict(urpd_date=MFS['urpd_date'], price=round(c), lo=round(lo5), hi=round(hi5), btc=round(btc5), supply=round(sply),
                                      pct=round(btc5 / sply * 100, 2), note='URPD 格內均勻分布、按重疊比例計；分母為 CoinMetrics 流通量；只作讀值')
 except Exception as e: errors.append(f'conc5 {e}')
+# G4d-2. 2026-11-05 使用者要求（籌碼結構＋集中度）：集中度改用 Bitview 全體 URPD（log1000 分格，見 bitview.conc_rows），歷史 2018 起；
+#   取得當天值時取代上面 CheckOnChain 的算法（原值留在 pct_checkonchain 對照）；取不到時沿用上面的。只作讀值
+try:
+    import bitview as _bvm
+    _cr, _c1 = _bvm.conc_rows(LAST)
+    if _c1 and _c1['date'] == LAST:
+        _old = (R.get('murphy_flow') or {}).get('conc5') or {}
+        R.setdefault('murphy_flow', {})['conc5'] = dict(urpd_date=LAST, price=round(_c1['close']), lo=round(_c1['close'] * 0.95), hi=round(_c1['close'] * 1.05), btc=_c1['btc5'], supply=_c1['supply'],
+                                                       pct=_c1['c5'], pct10=_c1['c10'], pct_checkonchain=_old.get('pct'), src='Bitview',
+                                                       note='Bitview 全體 URPD（log1000 分格）裡最後一次移動在收盤 ±5% 內的幣 ÷ 全部供給；2026-11-05 起取代 CheckOnChain 算法；只作讀值')
+    R['conc_long'] = [[r[0], round(r[1]), r[2]] for r in _cr]
+    # 歷史上集中度高之後的波動：前 10%（2018 起的分位）的日子 vs 其他，之後 30 天的最大單向變動；以及每次首次衝上前 10%（回到中位數以下才重新計）後 30 天漲跌
+    _P = (BV or {}).get('px') or {}; _v = sorted(r[2] for r in _cr); _q = lambda p_: _v[int((len(_v) - 1) * p_)]
+    def _mv(d_, n_=30):
+        t_ = dt.date.fromisoformat(d_); xs = [_P[(t_ + dt.timedelta(days=k_)).isoformat()] for k_ in range(1, n_ + 1) if (t_ + dt.timedelta(days=k_)).isoformat() in _P]
+        return max(abs(max(xs) / _P[d_] - 1), abs(min(xs) / _P[d_] - 1)) * 100 if d_ in _P and len(xs) >= n_ * 0.9 else None
+    _hi = [m_ for m_ in (_mv(r[0]) for r in _cr if r[2] >= _q(0.9)) if m_ is not None]; _lo = [m_ for m_ in (_mv(r[0]) for r in _cr if r[2] < _q(0.9)) if m_ is not None]
+    _ev, _arm = [], True
+    for r in _cr:
+        if _arm and r[2] >= _q(0.9):
+            t_ = (dt.date.fromisoformat(r[0]) + dt.timedelta(days=30)).isoformat()
+            _ev.append([r[0], r[2], round((_P[t_] / _P[r[0]] - 1) * 100, 1) if t_ in _P and r[0] in _P else None]); _arm = False
+        elif not _arm and r[2] < _q(0.5): _arm = True
+    _cn = R['murphy_flow']['conc5']['pct'] if (R.get('murphy_flow') or {}).get('conc5') else _cr[-1][2]
+    R['conc_stats'] = dict(since=_cr[0][0], n=len(_cr), p50=_q(0.5), p90=_q(0.9), p95=_q(0.95), max=_v[-1], pct_now=round(sum(x < _cn for x in _v) / len(_v) * 100, 1),
+                           hi_med30=round(st.median(_hi), 1) if _hi else None, lo_med30=round(st.median(_lo), 1) if _lo else None,
+                           hi_gt15=round(sum(x > 15 for x in _hi) / len(_hi) * 100) if _hi else None, lo_gt15=round(sum(x > 15 for x in _lo) / len(_lo) * 100) if _lo else None,
+                           episodes=_ev, note='之後 30 天的最大單向變動（相對當天收盤，取漲或跌較大的一邊）；價格用 Bitview 收盤；只作讀值')
+except Exception as e: errors.append(f'conc bitview {e}')
 # G4c. 2026-10-14 使用者要求：佐證燈號第 6 盞（短期持有者成本 vs 真實市場均價，Murphy 的 STH-RP vs TMMP；只作佐證、不參與 P23 判定），
 #   與六盞燈的走勢圖資料（近 3 年、配價格線；只作讀值）。不另打 API：沿用 G1 的 CoinMetrics 與 G4 已抓的 bitcoin-data 序列。見 stage_viz.py
 try:

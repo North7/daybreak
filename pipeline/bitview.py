@@ -113,3 +113,35 @@ def urpd_rows(date, w=2000):
             k = int(p // w * w); out.setdefault(k, [0.0, 0.0])[j] += s or 0
         time.sleep(0.3)
     return dict(date=date, rows=[[k, round(v[0]), round(v[1])] for k, v in sorted(out.items())])
+
+
+# 2026-11-05 使用者要求（籌碼結構＋集中度）：籌碼集中度＝全體 URPD 裡「最後一次移動價格在當天收盤 ±5% 內」的幣 ÷ 全部供給。
+#   用 Bitview 的 log1000 分格（每格約 0.2%，2018 年的低價位也夠細）；歷史 2018 起一次補好（每 3 天一點、近 60 天每天），之後每天補新的一天。
+#   2026-11-05 起網站上的集中度統一用這個（原本是 CheckOnChain URPD 2,000 美元一格 ÷ CoinMetrics 流通量，數字約低 1–3 個百分點、只有 10/01 起）。只作讀值
+CONC = os.path.join(os.path.dirname(CACHE), 'conc.json')
+URPD_ALL = 'https://bitview.space/api/urpd/all/{}?agg=log1000'
+
+
+def conc_one(date):
+    j = _curl(URPD_ALL.format(date)); b = j.get('buckets') or {}
+    if j.get('date') != date or not b.get('price') or not j.get('supply'): raise RuntimeError(f'Bitview URPD all {date}：{str(j)[:120]}')
+    c, tot = j['close'], j['supply']
+    s = lambda k: sum(v for p, v in zip(b['price'], b['supply']) if v and c * (1 - k) <= p <= c * (1 + k))
+    s5 = s(0.05)
+    return dict(date=date, close=round(c, 2), c5=round(s5 / tot * 100, 2), c10=round(s(0.10) / tot * 100, 2), btc5=round(s5), supply=round(tot))
+
+
+def conc_rows(last, max_new=20):
+    """回傳 (rows=[[日期, 收盤, ±5% %, ±10% %]], 最新一天的明細 dict 或 None)。快取 coc_cache/conc.json，缺的日子補到 last 為止"""
+    rows = json.load(open(CONC))['rows'] if os.path.exists(CONC) else []
+    d = dt.date.fromisoformat(rows[-1][0]) + dt.timedelta(days=1) if rows else dt.date.fromisoformat(last) - dt.timedelta(days=30)
+    one, n = None, 0
+    while d.isoformat() <= last and n < max_new:
+        one = conc_one(d.isoformat()); rows.append([one['date'], one['close'], one['c5'], one['c10']]); d += dt.timedelta(days=1); n += 1; time.sleep(0.3)
+    if n:
+        with open(CONC, 'w') as f:
+            f.write('{"fetched_utc": "%s", "source": "%s", "cols": ["close", "c5", "c10"], "rows": [\n' % (dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds'), PAGE))
+            f.write(',\n'.join(json.dumps(r) for r in rows) + '\n]}\n')
+    if one is None and rows and rows[-1][0] == last:   # 今天已經在快取裡（同一天重跑）：再取一次明細給讀值用
+        one = conc_one(last)
+    return rows, one

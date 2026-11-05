@@ -732,6 +732,65 @@
   /* 籌碼集中度（2026-10-15）：現價 ±5% 內的 URPD 籌碼佔流通量，只作讀值、不設門檻 */
   function concNow() { return ((D.chips || {}).flow || {}).conc5 || null; }
   function concAgo(days) { var h = (D.chips || {}).conc_hist || [], t = h.length ? h[h.length - 1][0] - days : 0, r = null; h.forEach(function (x) { if (x[0] <= t) r = x; }); return r; }
+  /* 2026-11-05 使用者要求「籌碼結構＋集中度」（BRS 是 Glassnode 付費專有指標、算法不公開，使用者決定不放替代分數）：
+     上格價格＋右緣當天的長短期持有者籌碼分布、現價 ±5% 區間；下格 2018 起的集中度（Bitview），標出前 10% 的高水位。只作讀值 */
+  function concCohortSay() {
+    var co = (D.chips || {}).cohort || {}, R_ = co.rows || [], c = D.price.bar.c, w = co.width || 2000; if (!R_.length) return null;
+    var side = function (lo, hi) { var b = R_.filter(function (r) { return r[0] + w > lo && r[0] < hi; }).sort(function (a, b) { return (b[1] + b[2]) - (a[1] + a[2]); })[0]; return b && b[1] + b[2] > 0 ? b : null; };
+    var dn_ = side(c * 0.9, c), up_ = side(c, c * 1.1), f = function (b) { var t = b[1] + b[2]; return fmt.k(b[0]) + '–' + fmt.k(b[0] + w) + _T('（' + fmt.n(t / 1e4, 0) + ' 萬顆，短期持有者佔 ' + fmt.n(b[1] / t * 100, 0) + '%）', ' (' + fmt.n(t / 1e3, 0) + 'K BTC, ' + fmt.n(b[1] / t * 100, 0) + '% short-term holders)'); };
+    return [_T('籌碼結構', 'Supply structure'), dn_ && up_ ? fmt.k(dn_[0]) + ' / ' + fmt.k(up_[0]) : '—',
+      _T('現價下方 10% 內最厚的一格：' + (dn_ ? f(dn_) : '沒有') + '；上方 10% 內最厚：' + (up_ ? f(up_) : '沒有') + '。短期持有者多的格子是近 155 天買進的，價格回到這裡時比較容易出現解套賣壓或防守買盤。籌碼分布是 ' + fmt.md(co.now_date || co.date) + ' 的（CheckOnChain，逐筆 UTXO）。',
+        'Thickest bucket within 10% below: ' + (dn_ ? f(dn_) : 'none') + '; within 10% above: ' + (up_ ? f(up_) : 'none') + '. Buckets heavy in short-term holders were bought in the last 155 days, so price returning there tends to meet break-even selling or defensive buying. Distribution as of ' + fmt.md(co.now_date || co.date) + ' (CheckOnChain, per UTXO).'), 'neu'];
+  }
+  function concItems() {
+    var k = concNow(), cs = (D.chips || {}).conc_stats || {}, a = concAgo(7), it = []; if (!k) return it;
+    var hiN = (cs.episodes || []).filter(function (e) { return e[2] != null; }), up = hiN.filter(function (e) { return e[2] > 0; }).length, ex = function (e) { return fmt.date(dnOf(e[0])).slice(0, 7) + ' ' + fmt.pct(e[2], 0); };
+    var big = hiN.slice().sort(function (x, y) { return Math.abs(y[2]) - Math.abs(x[2]); }).slice(0, 2).sort(function (x, y) { return x[0] < y[0] ? -1 : 1; });
+    it.push([_T('現價 ±5% 籌碼', 'Within ±5% of price'), fmt.n(k.pct, 1) + '%', _T('現價 ±5%（' + fmt.k(k.lo) + '–' + fmt.k(k.hi) + '）內有 ' + fmt.n(k.btc / 1e4, 0) + ' 萬顆，佔全部供給 ' + fmt.n(k.pct, 1) + '%' + (a ? '，7 天前 ' + fmt.n(a[2], 1) + '%' : '') + '；' + (cs.since ? cs.since.slice(0, 4) + ' 年以來第 ' + fmt.n(cs.pct_now, 0) + ' 百分位（最高 ' + fmt.n(cs.max, 1) + '%）' : '') + '。籌碼越集中，價格離開這一帶時越容易一起停損或一起解套，波動容易放大；它不指方向。',
+      'Within ±5% of price (' + fmt.k(k.lo) + '–' + fmt.k(k.hi) + ') sit ' + (k.btc / 1e6).toFixed(2) + 'M BTC, ' + fmt.n(k.pct, 1) + '% of supply' + (a ? ' (' + fmt.n(a[2], 1) + '% a week ago)' : '') + (cs.since ? '; ' + fmt.n(cs.pct_now, 0) + 'th percentile since ' + cs.since.slice(0, 4) + ' (record ' + fmt.n(cs.max, 1) + '%)' : '') + '. The more crowded, the more a move out of this band triggers stops or break-even selling together, so volatility tends to expand; it says nothing about direction.'), k.pct >= (cs.p90 || 99) ? 'warn' : 'neu']);
+    if (cs.hi_med30 != null) it.push([_T('高集中之後', 'After high concentration'), fmt.n(cs.hi_med30, 0) + '% / ' + fmt.n(cs.lo_med30, 0) + '%',
+      _T('集中度在前 10%（≥ ' + fmt.n(cs.p90, 1) + '%）的日子，之後 30 天最大波動的中位數 ' + fmt.n(cs.hi_med30, 1) + '%、超過 15% 的佔 ' + cs.hi_gt15 + '%；其他日子 ' + fmt.n(cs.lo_med30, 1) + '%、' + cs.lo_gt15 + '%。方向不定：' + cs.since.slice(0, 4) + ' 年以來首次衝上前 10% 的 ' + hiN.length + ' 次，30 天後 ' + up + ' 次漲、' + (hiN.length - up) + ' 次跌' + (big.length ? '（例如 ' + big.map(ex).join('、') + '）' : '') + '。',
+        'Days in the top 10% (≥ ' + fmt.n(cs.p90, 1) + '%) saw a median 30-day maximum move of ' + fmt.n(cs.hi_med30, 1) + '%, with ' + cs.hi_gt15 + '% above 15%; other days ' + fmt.n(cs.lo_med30, 1) + '% and ' + cs.lo_gt15 + '%. No direction: of ' + hiN.length + ' first entries into the top 10% since ' + cs.since.slice(0, 4) + ', ' + up + ' were higher 30 days later and ' + (hiN.length - up) + ' lower' + (big.length ? ' (e.g. ' + big.map(ex).join(', ') + ')' : '') + '.'), 'neu']);
+    var cc = concCohortSay(); if (cc) it.push(cc);
+    return it;
+  }
+  function concPanel() {
+    var k = concNow(), cs = (D.chips || {}).conc_stats || {}; if (!k) return '';
+    return panel('span-12', _T('籌碼結構與集中度', 'Supply structure and concentration'), _T('Bitview · ' + (cs.since || '').slice(0, 4) + ' 起 · 只作讀值', 'Bitview · since ' + (cs.since || '').slice(0, 4) + ' · reading only'),
+      interpHtml(concItems()) + legend([[_T('BTC 價格（上格）', 'BTC price (top)'), 'var(--ink-2)'], [_T('長期持有者籌碼', 'Long-term holder supply'), 'var(--s1)', 'box'], [_T('短期持有者籌碼', 'Short-term holder supply'), 'var(--s2)', 'box'], [_T('現價 ±5% 區間', '±5% of price'), 'var(--s3)', 'box'], [_T('集中度（下格）', 'Concentration (bottom)'), 'var(--s3)'], [_T('前 10% 高水位', 'Top-10% line'), 'var(--warn)', 'dash']]) + '<div class="chart" id="c-conc"></div>');
+  }
+  function drawConc(el) {
+    var h = ((D.chips || {}).conc_hist || []).filter(function (r) { return r[1] && r[2] != null; }), cs = (D.chips || {}).conc_stats || {}, co = (D.chips || {}).cohort || {}, k = concNow(); if (h.length < 30 || !el) return;
+    var mx = Math.max(10, Math.ceil(Math.max.apply(null, h.map(function (r) { return r[2]; })) / 5) * 5), p90 = cs.p90;
+    if (el._rng == null) el._rng = 365;   // 預設近 1 年：全部（2018 起、價格 3K–120K）時右緣的籌碼分布會被壓得很扁
+    if (el.clientWidth < 420) h = h.filter(function (r) { return r[0] >= h[h.length - 1][0] - 365; });   // 手機沒有時間範圍按鈕，直接只畫近 1 年
+    twoPane(el, { rows: h, pi: 1, hp: [150, 210], hs: [130, 170], label: _T('集中度：現價 ±5% 內的籌碼佔全部供給（%）', 'Concentration: supply within ±5% of price (%)'), aria: _T('BTC 價格、籌碼分布與集中度', 'BTC price, supply distribution and concentration'),
+      scale: function (C) { return function (v) { return C.ys0 + (1 - v / mx) * C.hs; }; },
+      body: function (C) {
+        var s = '';
+        for (var g = 0; g <= mx; g += 5) s += C.gl(C.Ys(g), g + '%', g ? 'gl' : 'base');
+        if (p90) { var yp = C.Ys(p90); s += '<rect x="' + C.ML + '" y="' + C.Ys(mx).toFixed(1) + '" width="' + C.pw + '" height="' + (yp - C.Ys(mx)).toFixed(1) + '" fill="color-mix(in srgb, var(--warn) 9%, transparent)"/><line x1="' + C.ML + '" x2="' + (C.ML + C.pw) + '" y1="' + yp.toFixed(1) + '" y2="' + yp.toFixed(1) + '" stroke="var(--warn)" stroke-dasharray="4 4" stroke-width="1"/>' + C.tx(C.ML + 6, yp - 5, _T('前 10%（' + fmt.n(p90, 1) + '%）', 'top 10% (' + fmt.n(p90, 1) + '%)')).replace('class="ax"', 'class="ax" fill="var(--warn)"'); }
+        var pts = C.rows.map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(r[2]).toFixed(1); });
+        s += '<path d="M' + C.X(C.rows[0][0]).toFixed(1) + ',' + C.yb.toFixed(1) + 'L' + pts.join('L') + 'L' + C.X(C.rows[C.rows.length - 1][0]).toFixed(1) + ',' + C.yb.toFixed(1) + 'Z" fill="color-mix(in srgb, var(--s3) 16%, transparent)"/>';
+        s += '<path class="ln" d="M' + pts.join('L') + '" stroke="var(--s3)" stroke-width="1.6"/>';
+        return s;
+      },
+      over: function (C) {
+        var s = '', R_ = co.rows || [], w = co.width || 2000, ps = C.rows.map(function (r) { return r[1]; }), lo = Math.min.apply(null, ps), hi = Math.max.apply(null, ps);
+        var vis = R_.filter(function (r) { var yt = C.Yp(r[0] + w), yb = C.Yp(r[0]); return yt >= C.MT && yb <= C.MT + C.hp && r[1] + r[2] > 0; }), m = Math.max.apply(null, vis.map(function (r) { return r[1] + r[2]; }).concat([1])), L = C.pw * 0.24, xr = C.ML + C.pw;
+        if (k) { var y1 = C.Yp(k.hi), y0 = C.Yp(k.lo), bx = xr - L - 14; s += '<rect x="' + bx.toFixed(1) + '" y="' + y1.toFixed(1) + '" width="' + (xr - bx).toFixed(1) + '" height="' + (y0 - y1).toFixed(1) + '" fill="color-mix(in srgb, var(--s3) 18%, transparent)" stroke="var(--s3)" stroke-opacity=".5" stroke-dasharray="3 3"/>'; }   // 現價 ±5%：只畫在右緣分布旁邊
+        vis.forEach(function (r) {   // 右緣籌碼分布：長期持有者（紫）貼右邊、短期持有者（橙）接在左邊；長度按顆數
+          var yt = C.Yp(r[0] + w), yb = C.Yp(r[0]), hh = Math.max(1, yb - yt - 1), ll = r[2] / m * L, sl = r[1] / m * L;
+          if (yt < C.MT || yb > C.MT + C.hp) return;   // 只畫在上格的價格範圍內
+          if (ll > 0.3) s += '<rect x="' + (xr - ll).toFixed(1) + '" y="' + (yt + 0.5).toFixed(1) + '" width="' + ll.toFixed(1) + '" height="' + hh.toFixed(1) + '" fill="var(--s1)" opacity=".5"/>';
+          if (sl > 0.3) s += '<rect x="' + (xr - ll - sl).toFixed(1) + '" y="' + (yt + 0.5).toFixed(1) + '" width="' + sl.toFixed(1) + '" height="' + hh.toFixed(1) + '" fill="var(--s2)" opacity=".6"/>';
+        });
+        (cs.episodes || []).forEach(function (e) { var t = dnOf(e[0]); if (t < C.rows[0][0]) return; s += '<circle cx="' + C.X(t).toFixed(1) + '" cy="' + C.Ys(e[1]).toFixed(1) + '" r="3.5" fill="var(--deck)" stroke="var(--warn)" stroke-width="1.8"/>'; });
+        var lr = C.rows[C.rows.length - 1]; s += '<circle cx="' + C.X(lr[0]).toFixed(1) + '" cy="' + C.Ys(lr[2]).toFixed(1) + '" r="4" fill="var(--s3)" stroke="var(--deck)" stroke-width="2"/>';
+        return s;
+      },
+      tip: function (p, C) { return { dots: '<circle cx="' + C.X(p[0]).toFixed(1) + '" cy="' + C.Ys(p[2]).toFixed(1) + '" r="3.5" fill="var(--s3)" stroke="var(--deck)" stroke-width="1.5"/>', rows: tipRow1('var(--s3)', _T('集中度', 'Concentration'), fmt.n(p[2], 2) + '%') + tipRow1('var(--ink-2)', _T('收盤', 'Close'), fmt.usd(p[1])) }; } });
+  }
   function concSay(k, dvol) {
     var a = concAgo(7), h = (D.chips || {}).conc_hist || [];
     var wk = a ? _T('，7 天前 ' + fmt.n(a[2], 1) + '%', '; ' + fmt.n(a[2], 1) + '% a week ago') : '';
@@ -921,7 +980,7 @@
         now: function () { var t = D.cycle.tops[D.cycle.tops.length - 1], hv = D.cycle.halvings[D.cycle.halvings.length - 1], days = dnOf(D.meta.bar_date) - dnOf(hv); return _T('比上一輪頂（' + ymd(t[0]) + ' ' + fmt.usd(t[1]) + '）' + pc(c(), t[1]) + '；距上次減半 ' + days + ' 天。', 'vs the last top (' + ymd(t[0]) + ', ' + fmt.usd(t[1]) + '): ' + pc(c(), t[1]) + '; ' + days + ' days since the last halving.'); } },
       'vol': { h: h('DVOL＝Deribit 選擇權隱含的未來 30 天年化波動；RV30＝過去 30 天實際波動。', 'DVOL = implied 30-day annualized volatility from Deribit options; RV30 = realized volatility over the past 30 days.', 'DVOL 高於 RV30＝市場花錢買保護、預期波動變大；兩者都在低檔＝波動壓縮，常在大行情之前。', 'DVOL above RV30 means traders pay up for protection and expect bigger moves; both low means compressed volatility, which often precedes a big move.', '波動率不告訴你方向。', 'Volatility says nothing about direction.'),
         now: function () { var dv = D.deriv.dvol || {}, rv = (D.deriv.samesource || {}).rv30; return _T('DVOL ' + fmt.n(dv.value, 1) + '（一年百分位 ' + fmt.n(dv.pct_1y, 0) + '）、RV30 ' + fmt.n(rv, 1) + '：' + (dv.value > rv ? '隱含高於實際，市場在預期波動放大。' : '隱含不高於實際，選擇權不貴、市場不預期大波動。'), 'DVOL ' + fmt.n(dv.value, 1) + ' (1-year percentile ' + fmt.n(dv.pct_1y, 0) + '), RV30 ' + fmt.n(rv, 1) + ': ' + (dv.value > rv ? 'implied above realized; the market expects bigger moves.' : 'implied not above realized; options are cheap and no big move is priced in.')); } },
-      'conc': { h: h('現價 ±5% 內的籌碼（最後一次移動在這個價格帶的 BTC）佔流通量的比例；灰線是 BTC 價格。', 'Share of circulating supply whose last move was within ±5% of the current price; the grey line is the BTC price.', '比例上升＝越多人的成本擠在現價附近；價格離開這一帶時，買在這裡的人容易一起停損或一起解套，波動常放大。', 'A rising share means more holders\' cost basis is crowded near price; when price leaves the band they tend to cut or sell at break-even together, and volatility often expands.', '只說波動可能變大，不說方向。URPD 以 2,000 美元一格估算、晚約 1 天；本站從 2026-10-01 才有紀錄，樣本太短，不設門檻。', 'It flags bigger moves, not direction. URPD uses $2,000 buckets and lags about a day; our record starts 2026-10-01, too short to set any threshold.'),
+      'conc': { h: h('上格是 BTC 價格，右緣是當天的籌碼分布（每 2,000 美元一格，紫＝長期持有者、橙＝短期持有者，越長越多），青綠色帶是現價 ±5%。下格是集中度：最後一次移動在當天收盤 ±5% 內的幣佔全部供給的比例（Bitview，2018 起），黃虛線以上是歷史前 10%，黃圈是每次首次衝上前 10%。', 'Top: BTC price, with the day\'s supply distribution on the right edge ($2,000 buckets; purple long-term holders, orange short-term holders; longer = more) and the ±5% band in teal. Bottom: concentration, the share of supply last moved within ±5% of that day\'s close (Bitview, since 2018); above the yellow dashed line is the historical top 10%, yellow rings mark each first entry.', '比例上升＝越多人的成本擠在現價附近；價格離開這一帶時，買在這裡的人容易一起停損或一起解套，波動常放大。', 'A rising share means more holders\' cost basis is crowded near price; when price leaves the band they tend to cut or sell at break-even together, and volatility often expands.', '只說波動可能變大，不說方向。URPD 以 2,000 美元一格估算、晚約 1 天；本站從 2026-10-01 才有紀錄，樣本太短，不設門檻。', 'It flags bigger moves, not direction. URPD uses $2,000 buckets and lags about a day; our record starts 2026-10-01, too short to set any threshold.'),
         now: function () { var k = concNow(), a = concAgo(7); if (!k) return ''; return _T(fmt.n(k.pct, 1) + '%（URPD ' + ymd(k.urpd_date) + '，價格帶 ' + fmt.k(k.lo) + '–' + fmt.k(k.hi) + '）' + (a ? '，7 天前 ' + fmt.n(a[2], 1) + '%' : '') + '。', fmt.n(k.pct, 1) + '% (URPD ' + ymd(k.urpd_date) + ', band ' + fmt.k(k.lo) + '–' + fmt.k(k.hi) + ')' + (a ? '; ' + fmt.n(a[2], 1) + '% a week ago' : '') + '.'); } },
       'basis': { h: h('橫軸是到期天數，縱軸是期貨相對現貨的年化溢價。', 'X axis: days to expiry; Y axis: annualized futures premium over spot.', '正常是遠月高於近月；整體 >10% 代表槓桿多頭擁擠，接近 0 或近月高於遠月（倒掛）代表恐慌或去槓桿。', 'Normally longer expiries pay more; above 10% means crowded leveraged longs, near zero or inverted means fear or deleveraging.', '7 天內到期的合約雜訊大，已排除。', 'Contracts within 7 days of expiry are noisy and excluded.'),
         now: function () { var b = D.deriv.deriv || {}, cv = b.basis_curve || [], a = cv[0], z = cv[cv.length - 1], m = b.basis_median; if (!a) return ''; var lv = m > 10 ? ['偏熱', 'hot'] : m >= 5 ? ['正常', 'normal'] : ['偏冷', 'cool']; return _T('中位 ' + fmt.n(m, 2) + '%（' + lv[0] + '），近月 ' + fmt.n(a[1], 2) + '% → 最遠 ' + fmt.n(z[1], 2) + '%：' + (z[1] > a[1] + 0.3 ? '正價差。' : z[1] < a[1] - 0.3 ? '倒掛。' : '幾乎平。'), 'Median ' + fmt.n(m, 2) + '% (' + lv[1] + '), front ' + fmt.n(a[1], 2) + '% → far ' + fmt.n(z[1], 2) + '%: ' + (z[1] > a[1] + 0.3 ? 'upward sloping.' : z[1] < a[1] - 0.3 ? 'inverted.' : 'nearly flat.')); } },
@@ -1710,7 +1769,7 @@
       panel('span-8', _t('隱含波動 vs 實際波動'), _t('Deribit DVOL · Kraken RV30 · 近一年'), legend([['DVOL', 'var(--s4)'], ['RV30', 'var(--s1)']]) + '<div class="chart" id="c-vol"></div>') +
       panel('span-4', _t('期貨基差曲線'), _t('年化 % · 排除 7 天內到期'), basisSay(d.basis_curve) + _t('<div class="chart" id="c-basis"></div><p class="note">資金費率年化 ') + fmt.pct(fundNow(), 1) + _t('；永續 OI ') + fmt.usd(d.perp_oi_usd_m) + _t('M。</p><div class="src-link">外部：<a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">CoinGlass 爆倉熱力圖 ↗</a>（以 OI 與假設槓桿推估，非實際倉位）</div>')) +
       liqPanel() +
-      (concNow() ? panel('span-12', _T('籌碼集中度（現價 ±5%）', 'Supply concentration (±5% of price)'), _T('URPD ÷ 流通量 · 2026-10-01 起 · 只作讀值', 'URPD ÷ circulating supply · since 2026-10-01 · reading only'), legend([[_T('集中度', 'Concentration'), 'var(--s3)'], [_T('BTC 價格（上格）', 'BTC price (top pane)'), 'var(--ink-3)']]) + '<div class="chart" id="c-conc"></div>') : '') +
+      concPanel() +
       panel('span-6', _t('各到期未平倉'), _t('買權 / 賣權（顆）'), legend([[_t('買權'), 'var(--s4)'], [_t('賣權'), 'var(--s3)']]) + '<div class="chart" id="c-oi"></div>') +
       panel('span-6', _T('主要到期的履約價分布', 'Open interest by strike, main expiries'), skTotals(), '<div id="sk-say">' + strikeSay(skRow() || big) + '</div><div id="c-strike"></div>', skSegs()) + bookCard() + '</div>';
   };
@@ -1718,7 +1777,7 @@
     drawBook(); liqAfter();
     var v = D.deriv.viz || {};
     mount($('#c-vol'), function (el) { var rows = (v.vol || {}).rows || []; lineChart(el, { series: [{ name: 'DVOL', data: rows.map(function (r) { return [r[0], r[1]]; }), color: 'var(--s4)' }, { name: 'RV30', data: rows.map(function (r) { return [r[0], r[2]]; }), color: 'var(--s1)' }], yFmt: function (x) { return x.toFixed(0); }, tipFmt: function (x) { return x.toFixed(1) + '%'; }, aria: _t('波動率') }); });
-    mount($('#c-conc'), function (el) { var h = (D.chips || {}).conc_hist || []; lineChart(el, { h: 200, series: [{ name: _T('BTC 價格', 'BTC price'), data: h.map(function (r) { return [r[0], r[1]]; }), color: 'var(--ink-3)', w: 1.1, end: false, y2: true, fmt: fmt.usd }, { name: _T('集中度', 'Concentration'), data: h.map(function (r) { return [r[0], r[2]]; }), color: 'var(--s3)' }], yFmt: function (x) { return x.toFixed(1) + '%'; }, tipFmt: function (x) { return x.toFixed(2) + '%'; }, aria: _T('籌碼集中度', 'Supply concentration') }); });
+    mount($('#c-conc'), drawConc);
     mount($('#c-basis'), function (el) { var cv = (v.basis || {}).curve || []; lineChart(el, { h: 200, xType: 'num', series: [{ name: _t('年化基差'), data: cv, color: 'var(--s4)', area: true }], xticks: cv.filter(function (p, i) { return i % 2 === 0; }).map(function (p) { return [p[0], Math.round(p[0]) + 'd']; }), xTipFmt: function (x) { return Math.round(x) + _t(' 天到期'); }, yFmt: function (x) { return x.toFixed(1) + '%'; }, tipFmt: function (x) { return x.toFixed(2) + '%'; }, y0: 0, aria: _t('基差曲線') }); });
     mount($('#c-oi'), function (el) {
       var ex = ((v.options || {}).expiries || []), W = Math.max(280, el.clientWidth), Ht = 230, ML = 8, MR = 52, MT = 10, MB = 26, pw = W - ML - MR, ph = Ht - MT - MB;

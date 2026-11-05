@@ -101,6 +101,8 @@ idx = sorted(idx, key=lambda x: x['date'])[-800:]
 json.dump(idx, open(idx_f, 'w'), ensure_ascii=False, indent=0)
 # 2026-10-15：籌碼集中度（現價 ±5%）每日走勢 [天數, 收盤, 佔流通 %]，只作讀值
 out['chips']['conc_hist'] = [[dn(x['date']), x['close'], x['conc5']] for x in idx if x.get('conc5') is not None]
+if td.get('conc_long'): out['chips']['conc_hist'] = [[dn(r[0]), r[1], r[2]] for r in td['conc_long']]
+if td.get('conc_stats'): out['chips']['conc_stats'] = td['conc_stats']   # 2026-11-05：改用 Bitview 2018 起的序列（舊的只有 10/01 起、算法不同）
 if out['flows'].get('premium3') is not None: out['flows']['premium3']['usdt_hist'] = [[dn(x['date']), x['usdt_prem']] for x in idx if x.get('usdt_prem') is not None]
 # 2026-10-23 使用者要求：異動偵測（pipeline/signals.py）。和上一期比狀態翻轉（只存一小份上一期快照 signals.base，不存整份）；
 #   notes.json 此時還是上一期，用來檢查它寫下的追蹤條件。同一天重建時沿用第一次建置的上一期快照
