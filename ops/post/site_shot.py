@@ -111,7 +111,8 @@ def main():
                 ws.call('Page.navigate', url=SITE + '?v=' + str(int(time.time())) + '#' + it['page']); cur = it['page']
                 wait(ws, '!window.__old'); wait(ws, "location.href.indexOf(\"8790\") > 0 && document.readyState === \"complete\""); time.sleep(1.0)
             sel = json.dumps(it['sel'])
-            ok = wait(ws, f'(function(){{var e=document.querySelector({sel}); return !!(e && e.querySelector("svg,canvas"));}})()', 40)
+            need = '' if it.get('html') else ' && e.querySelector("svg,canvas")'   # html=1：用 div 畫的圖（例如籌碼分布 URPD）不等 svg
+            ok = wait(ws, f'(function(){{var e=document.querySelector({sel}); return !!(e{need});}})()', 40)
             if not ok: print('MISSING', it['sel']); continue
             if it.get('pre'): ws.js(it['pre']); time.sleep(0.8)
             if it.get('dump'): print(ws.js(f'''(function(){{var p=document.querySelector({sel}).closest("section.panel"); return Array.from(p.children).map(function(c){{return c.tagName+"."+c.className+"#"+c.id+" | "+(c.textContent||"").slice(0,50).replace(/\\s+/g," ")+" | h="+Math.round(c.getBoundingClientRect().height);}}).join("\\n");}})()''')); continue
