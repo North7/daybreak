@@ -270,8 +270,105 @@
    }
   },
   {
-   "n": 12,
+   "n": 28,
    "order": 12,
+   "status": "send",
+   "url": "https://x.com/DOGEbaby6666/status/2117979161193263378",
+   "id": "2117979161193263378",
+   "author": "DOGEbaby6666",
+   "name": "DOGEbaby",
+   "followers": 150028,
+   "posted": "2026-11-04T13:55:56Z",
+   "lang": "zh",
+   "angle": "補數據",
+   "summary": "三次期中選舉後都先跌後漲（2014 71 天跌 48%、2018 39 天跌 51%、2022 13 天跌 15%），時間和跌幅一次比一次短；自己判斷 76,000 已經很低、差不多了。",
+   "reply": "「76000 差不多了」這個判斷，鏈上有個數字撐你：短期持有者成本就在 75,961。11/04 盤中插到 75,625，一碰成本線就被買回去，收在 80,441。成本線第一次測試就守住，我也覺得這個位置比選舉日曆更有說服力。",
+   "sources": "短期持有者成本 75,961、11/04 盤中低點 75,625、收盤 80,441 · Bitview、Kraken",
+   "note": "15 萬粉、發文 13 小時。偏多（「76000 差不多了」），順著他：76,000 剛好是短期持有者成本，第一次測試就守住。只講成本線，不呼應他的價位推算。",
+   "image": {
+    "site": {
+     "page": "onchain",
+     "sel": "#c-sthband"
+    },
+    "title": "76,000 就是短期持有者成本：75,961"
+   }
+  },
+  {
+   "n": 29,
+   "order": 13,
+   "status": "send",
+   "url": "https://x.com/xincheng6688/status/2117869131324375280",
+   "id": "2117869131324375280",
+   "author": "xincheng6688",
+   "name": "xincheng",
+   "followers": 8301,
+   "posted": "2026-11-04T06:38:43Z",
+   "lang": "zh",
+   "angle": "補數據",
+   "summary": "三次期中選舉後 BTC 都先跌、出清、再大反彈，見底天數 71→39→13 遞減；認為有 ETF 承接，這次跌幅更淺、見底更快。",
+   "reply": "見底越來越快這點，我這邊有個更早的訊號：價格在 3–6 個月持幣成本下面待了 295 天，8/21 站回去。前三次在下面這麼久之後站回，是 2015、2019、2023 年熊市結束。對我來說，這輪該跌的那段在選舉前就跌完了。",
+   "sources": "價格站回 3–6 個月持幣成本：2026-08-21（之前在下面 295 天）；前三次長時間在下方後站回：2015-06-30、2019-04-02、2023-01-16；現在 3–6 個月成本 65,994、價格高 21.9% · 11/04 · Bitview",
+   "note": "2,504 瀏覽、13 則回覆。偏多，順著他「見底越來越快」：用 3–6 個月持幣成本說明這輪的轉折更早。原文有「最後一跌的布局窗口」，回覆不呼應買賣。",
+   "image": {
+    "site": {
+     "page": "cycle",
+     "sel": "#c-agecost",
+     "pre": "document.querySelector('#ac-segs button[data-a=\"36\"]').click(); true"
+    },
+    "title": "8/21 站回 3–6 個月持幣成本：前三次是 2015、2019、2023"
+   }
+  },
+  {
+   "n": 30,
+   "order": 14,
+   "status": "send",
+   "url": "https://x.com/Bobbxu/status/2118174477540282730",
+   "id": "2118174477540282730",
+   "author": "Bobbxu",
+   "name": "Bobb",
+   "followers": 4933,
+   "posted": "2026-11-05T02:52:03Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "BTC didn't rally on the midterm result, it rallied on shorts getting liquidated ($269M of $364M in one hour); ETFs were still net sellers on Nov 3. Forced buying gets you to $80K, real buyers have to keep it there.",
+   "reply": "\"Real buyers have to keep it there\" is the right test. On squeeze day the Coinbase premium was still −0.094%. Less negative than −0.271% on Oct 29, but it never flipped positive. Less selling isn't buying, so until it turns positive I'd call this a squeeze, not demand.",
+   "sources": "Coinbase 溢價每日值 10/29 −0.271% → 11/04 −0.094%（仍為負）· Coinbase／Binance",
+   "note": "昨天回過他另一則。偏謹慎，順著他「真買家還沒來」。",
+   "image": {
+    "site": {
+     "page": "flows",
+     "sel": "#c-pr-us"
+    },
+    "title": "Coinbase premium: −0.094% on squeeze day, still not positive"
+   }
+  },
+  {
+   "n": 31,
+   "order": 15,
+   "status": "send",
+   "url": "https://x.com/GreeksLive/status/2117983431061868937",
+   "id": "2117983431061868937",
+   "author": "GreeksLive",
+   "name": "Greeks.live",
+   "followers": 18409,
+   "posted": "2026-11-04T14:12:54Z",
+   "lang": "en",
+   "angle": "交叉驗證",
+   "summary": "Divided government after the midterms; BTC V-shaped from 75.8K to 78.4K. Lower 10Y yields help risk assets, CLARITY Act likely stalls. IV rose ~1% but options market stays bearish on any big move by year-end.",
+   "reply": "Seeing the same on Deribit. DVOL actually slipped from 39.73 to 38.06 after the vote, only the 27.7th percentile of the past year, and 25-delta skew eased from −3.51 to −2.88. Nobody's paying up for a big move either way. To me that says election risk is fully priced out.",
+   "sources": "DVOL 39.73 → 38.06（一年第 27.7 百分位）；30 天 25Δ 風險逆轉 −3.51 → −2.88 · 11/04 · Deribit",
+   "note": "選擇權研究帳號，同行交流。順著他「選擇權不看大行情」。",
+   "image": {
+    "site": {
+     "page": "deriv",
+     "sel": "#c-vol"
+    },
+    "title": "DVOL 38.06 after the vote, 27.7th percentile of the year"
+   }
+  },
+  {
+   "n": 32,
+   "order": 52,
    "status": "skip",
    "url": "https://x.com/ms2capital/status/2118013795394007437",
    "id": "2118013795394007437",
@@ -287,8 +384,8 @@
    "note": "跳過：粉絲 1,975，不到 2,000。內容不錯（STH floor $75.9K），下次粉絲過門檻可以回。"
   },
   {
-   "n": 13,
-   "order": 13,
+   "n": 33,
+   "order": 53,
    "status": "skip",
    "url": "https://x.com/MasterCryptoHq/status/2117996172770152832",
    "id": "2117996172770152832",
@@ -304,8 +401,8 @@
    "note": "跳過：期中選舉的角度（2022 死叉在選舉日）給了 1MarkMoss，比較新、互動也多；這則只有逐日漲跌、0 回覆。"
   },
   {
-   "n": 14,
-   "order": 14,
+   "n": 34,
+   "order": 54,
    "status": "skip",
    "url": "https://x.com/CryptoNews_op/status/2117827999269593407",
    "id": "2117827999269593407",
@@ -321,8 +418,8 @@
    "note": "跳過：主題是 200 日均線（和出場框架的避險線同一條，不碰）；74 瀏覽。"
   },
   {
-   "n": 15,
-   "order": 15,
+   "n": 35,
+   "order": 55,
    "status": "skip",
    "url": "https://x.com/CryptoHotep/status/2117819675002249551",
    "id": "2117819675002249551",
@@ -338,8 +435,8 @@
    "note": "跳過：和 1MarkMoss 同主題，0 互動。"
   },
   {
-   "n": 16,
-   "order": 16,
+   "n": 36,
+   "order": 56,
    "status": "skip",
    "url": "https://x.com/CryptoDad_DDC/status/2118141272070246634",
    "id": "2118141272070246634",
@@ -355,8 +452,8 @@
    "note": "跳過：粉絲 606（Grok 沒標）。"
   },
   {
-   "n": 17,
-   "order": 17,
+   "n": 37,
+   "order": 57,
    "status": "skip",
    "url": "https://x.com/maobidao/status/2118142422295470267",
    "id": "2118142422295470267",
@@ -372,8 +469,8 @@
    "note": "跳過：粉絲 530，看起來是轉貼日報的帳號。"
   },
   {
-   "n": 18,
-   "order": 18,
+   "n": 38,
+   "order": 58,
    "status": "skip",
    "url": "https://x.com/thisisJaSingh/status/2118143892662956394",
    "id": "2118143892662956394",
@@ -389,8 +486,8 @@
    "note": "跳過：我們沒有主導率數據；非藍勾、0 互動。"
   },
   {
-   "n": 19,
-   "order": 19,
+   "n": 39,
+   "order": 59,
    "status": "skip",
    "url": "https://x.com/K2anKaradeniz/status/2118141775789297717",
    "id": "2118141775789297717",
@@ -406,8 +503,8 @@
    "note": "跳過：原文是土耳其文（Grok 標成英文）、粉絲 699。"
   },
   {
-   "n": 20,
-   "order": 20,
+   "n": 40,
+   "order": 60,
    "status": "skip",
    "url": "https://x.com/chainlonely/status/2118142178631495914",
    "id": "2118142178631495914",
@@ -423,8 +520,8 @@
    "note": "跳過：粉絲 986。"
   },
   {
-   "n": 21,
-   "order": 21,
+   "n": 41,
+   "order": 61,
    "status": "skip",
    "url": "https://x.com/jiu_chen_yi_xi/status/2118142704118845715",
    "id": "2118142704118845715",
@@ -440,8 +537,8 @@
    "note": "跳過：粉絲 49，而且是回覆別人的貼文。"
   },
   {
-   "n": 22,
-   "order": 22,
+   "n": 42,
+   "order": 62,
    "status": "skip",
    "url": "https://x.com/MetaArt/status/2118024667030011993",
    "id": "2118024667030011993",
@@ -457,8 +554,8 @@
    "note": "跳過：結尾 NFA／DYOR 加自家代幣推廣（$BRICK）。"
   },
   {
-   "n": 23,
-   "order": 23,
+   "n": 43,
+   "order": 63,
    "status": "skip",
    "url": "https://x.com/JoeBitcoin_/status/2118139265808785855",
    "id": "2118139265808785855",
@@ -474,8 +571,8 @@
    "note": "跳過：文內有操作建議（不要追、回踩再買）；Coinbase 溢價和 ETF 角度已給 ldld、ecoinometrics。"
   },
   {
-   "n": 24,
-   "order": 24,
+   "n": 44,
+   "order": 64,
    "status": "skip",
    "url": "https://x.com/vnas4you/status/2117971372915798062",
    "id": "2117971372915798062",
@@ -491,8 +588,8 @@
    "note": "跳過：粉絲 264。"
   },
   {
-   "n": 25,
-   "order": 25,
+   "n": 45,
+   "order": 65,
    "status": "skip",
    "url": "https://x.com/ai_9684xtpa/status/2117993992176734235",
    "id": "2117993992176734235",
@@ -508,8 +605,8 @@
    "note": "跳過（固定名單）：個別地址盈虧，沒有對得上的數字，還帶導流連結。"
   },
   {
-   "n": 26,
-   "order": 26,
+   "n": 46,
+   "order": 66,
    "status": "skip",
    "url": "https://x.com/gaah_im/status/2118101104537817195",
    "id": "2118101104537817195",
@@ -525,8 +622,8 @@
    "note": "跳過（固定名單）：一句話快訊；資金費率的角度給了 mks。昨天已回過 gaah_im。"
   },
   {
-   "n": 27,
-   "order": 27,
+   "n": 47,
+   "order": 67,
    "status": "skip",
    "url": "https://x.com/A9dengbo/status/2117951244614660466",
    "id": "2117951244614660466",
@@ -540,6 +637,210 @@
    "reply": "",
    "sources": "",
    "note": "跳過（固定名單）：以立法與監管觀點為主，沒有對得上的數字；同帳號另一則是 RGB 開發更新，不是比特幣數據。"
+  },
+  {
+   "n": 48,
+   "order": 68,
+   "status": "skip",
+   "url": "https://x.com/huangmi12916508/status/2118178047363059777",
+   "id": "2118178047363059777",
+   "author": "huangmi12916508",
+   "name": "huangmi12916508",
+   "followers": 3823,
+   "posted": "2026-11-05T03:06:14Z",
+   "lang": "zh",
+   "angle": "—",
+   "summary": "期中選舉後都先跌後漲，這次「該摔的還沒摔」，劇本是跌到 64,000–40,000。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：主結論是價格劇本（64,000–40,000），15 瀏覽。"
+  },
+  {
+   "n": 49,
+   "order": 69,
+   "status": "skip",
+   "url": "https://x.com/KateBarnes28/status/2117804276949094818",
+   "id": "2117804276949094818",
+   "author": "KateBarnes28",
+   "name": "KateBarnes28",
+   "followers": 1916,
+   "posted": "2026-11-04T02:21:01Z",
+   "lang": "zh",
+   "angle": "—",
+   "summary": "選舉日 BTC 首次在 200 日均線上方，附三種情景與年終價位。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：粉絲 1,916；主題是 200 日均線。"
+  },
+  {
+   "n": 50,
+   "order": 70,
+   "status": "skip",
+   "url": "https://x.com/evan__official/status/2117893334677229652",
+   "id": "2117893334677229652",
+   "author": "evan__official",
+   "name": "evan__official",
+   "followers": 2445,
+   "posted": "2026-11-04T08:14:54Z",
+   "lang": "zh",
+   "angle": "—",
+   "summary": "四次期中選舉日相對 200 日均線：這次唯一在上方。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：主題是 200 日均線（和出場框架的避險線同一條，不碰）。"
+  },
+  {
+   "n": 51,
+   "order": 71,
+   "status": "skip",
+   "url": "https://x.com/Ash_RS9/status/2117881002316214424",
+   "id": "2117881002316214424",
+   "author": "Ash_RS9",
+   "name": "Ash_RS9",
+   "followers": 10304,
+   "posted": "2026-11-04T07:25:53Z",
+   "lang": "zh",
+   "angle": "—",
+   "summary": "中期選舉後 12 個月標普、BTC 平均漲幅，「現在就是最適合買入的時機」。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：喊買入。"
+  },
+  {
+   "n": 52,
+   "order": 72,
+   "status": "skip",
+   "url": "https://x.com/0xfengxun/status/2118177881981591969",
+   "id": "2118177881981591969",
+   "author": "0xfengxun",
+   "name": "0xfengxun",
+   "followers": 26166,
+   "posted": "2026-11-05T03:05:35Z",
+   "lang": "zh",
+   "angle": "—",
+   "summary": "自己在 7.6–7.8 萬的抄底操作與「知行合一」心得。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：個人操作心得，沒有數據可接。"
+  },
+  {
+   "n": 53,
+   "order": 73,
+   "status": "skip",
+   "url": "https://x.com/RPTIME/status/2117883306738115001",
+   "id": "2117883306738115001",
+   "author": "RPTIME",
+   "name": "RPTIME",
+   "followers": 1464,
+   "posted": "2026-11-04T07:35:03Z",
+   "lang": "en",
+   "angle": "—",
+   "summary": "期中選舉日相對 200 日均線的位置。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：粉絲 1,464；主題是 200 日均線。"
+  },
+  {
+   "n": 54,
+   "order": 74,
+   "status": "skip",
+   "url": "https://x.com/ApeElyot/status/2118123627308589167",
+   "id": "2118123627308589167",
+   "author": "ApeElyot",
+   "name": "ApeElyot",
+   "followers": 102,
+   "posted": "2026-11-04T23:30:00Z",
+   "lang": "en",
+   "angle": "—",
+   "summary": "期中選舉日相對 200 日均線。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：粉絲 102。"
+  },
+  {
+   "n": 55,
+   "order": 75,
+   "status": "skip",
+   "url": "https://x.com/DjakhongirMukh1/status/2118177822166442079",
+   "id": "2118177822166442079",
+   "author": "DjakhongirMukh1",
+   "name": "DjakhongirMukh1",
+   "followers": 253,
+   "posted": "2026-11-05T03:05:21Z",
+   "lang": "en",
+   "angle": "—",
+   "summary": "現貨／期貨流量、清算、價格結構長文。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過：粉絲 253。"
+  },
+  {
+   "n": 56,
+   "order": 76,
+   "status": "skip",
+   "url": "https://x.com/Murphychen888/status/2118178775531946312",
+   "id": "2118178775531946312",
+   "author": "Murphychen888",
+   "name": "Murphychen888",
+   "followers": 82032,
+   "posted": "2026-11-05T03:09:08Z",
+   "lang": "zh",
+   "angle": "—",
+   "summary": "本輪第一次買入 ETH（2,400／2,300／2,200 三筆，均價 2,260）。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過（固定名單 ★）：講 ETH 買入，不是比特幣數據；他另一則（Coinbase 2,200 枚）昨天已回。"
+  },
+  {
+   "n": 57,
+   "order": 77,
+   "status": "skip",
+   "url": "https://x.com/A9dengbo/status/2118177854030778561",
+   "id": "2118177854030778561",
+   "author": "A9dengbo",
+   "name": "A9dengbo",
+   "followers": 25353,
+   "posted": "2026-11-05T03:05:28Z",
+   "lang": "zh",
+   "angle": "—",
+   "summary": "反彈分增量／存量／再流出三種模式，判斷目前是空頭回補的存量模式。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過（固定名單）：結尾是順勢做多、減倉的操作紀律加 DYOR；今天同帳號已跳過兩則。"
+  },
+  {
+   "n": 58,
+   "order": 78,
+   "status": "skip",
+   "url": "https://x.com/paulxue1979/status/2118171926082597114",
+   "id": "2118171926082597114",
+   "author": "paulxue1979",
+   "name": "paulxue1979",
+   "followers": 3865,
+   "posted": "2026-11-05T02:41:55Z",
+   "lang": "zh",
+   "angle": "—",
+   "summary": "問 Grok 和讀者：選舉利空出盡開啟上漲，還是空頭回補的超跌反彈。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過（固定名單）：今天已回他關鍵價位那則，同一作者只回一則。"
+  },
+  {
+   "n": 59,
+   "order": 79,
+   "status": "skip",
+   "url": "https://x.com/yytttt_1982/status/2117978163808452645",
+   "id": "2117978163808452645",
+   "author": "yytttt_1982",
+   "name": "yytttt_1982",
+   "followers": 5320,
+   "posted": "2026-11-04T13:51:59Z",
+   "lang": "zh",
+   "angle": "—",
+   "summary": "選舉夜 V 轉、ETF 縮量流出，問 79,800 這道門今晚能不能推開。",
+   "reply": "",
+   "sources": "",
+   "note": "跳過（固定名單）：13 小時前，問的 79,800 當天已收過（收盤 80,441），角度和 ETF、清算那幾則重複。"
   }
  ]
 }

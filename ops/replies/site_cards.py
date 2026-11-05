@@ -70,11 +70,12 @@ def compose(png, title, lang, Fn, out):
     im = Image.open(io.BytesIO(png)).convert('RGB'); bg = im.getpixel((im.width // 2, 8))
     P = 72; W = im.width + 2 * P; tf = Fn['cjk'](64, 900)
     d0 = ImageDraw.Draw(Image.new('RGB', (10, 10)))
-    lines, cur = [], ''   # 標題太長就斷行（逐字，中英都適用）
-    for ch in title:
-        if d0.textlength(cur + ch, font=tf) > W - 2 * P: lines.append(cur); cur = ch
-        else: cur += ch
-    lines.append(cur); lh = 88; TOP = 64 + lh * len(lines) + 36; FOOT = 150
+    import re
+    lines, cur = [], ''   # 標題太長就斷行：中文逐字、英數整詞
+    for tok in re.findall(r'[A-Za-z0-9$.,%:+\-−–’\']+\s*|\s+|.', title):
+        if cur and d0.textlength(cur + tok.rstrip(), font=tf) > W - 2 * P: lines.append(cur.rstrip()); cur = tok.lstrip()
+        else: cur += tok
+    lines.append(cur.rstrip()); lh = 88; TOP = 64 + lh * len(lines) + 36; FOOT = 150
     img = Image.new('RGB', (W, TOP + im.height + FOOT), bg); d = ImageDraw.Draw(img)
     d.rectangle([P, 40, P + 90, 48], fill=RED)
     for i, t in enumerate(lines): d.text((P, 64 + i * lh + lh / 2), t, font=tf, fill=INK, anchor='lm')
