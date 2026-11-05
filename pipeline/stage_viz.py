@@ -558,3 +558,32 @@ def levels_viz(bv, px, last, step=2):
     near = [x for x in levels if x['value'] < c and x['dist_pct'] >= -LV_NEAR]
     return dict(date=D[i], price=round(c), levels=levels, near=dict(pct=LV_NEAR, lo=min(x['value'] for x in near), hi=max(x['value'] for x in near), keys=[x['key'] for x in near]) if near else None,
                 rows=rows, note='價格、200／365／350 日均線（統一收盤）與 Bitview 的短期持有者成本、真實市場均價、實現價、長期持有者成本；50 週＝350 日；只作讀值')
+
+
+# 2026-11-05 使用者要求（Look Into Bitcoin〈Bitcoin Cycle Capital Flows〉）：實現市值加權的幣齡，1 個月內換手（投機、新錢）與 1–2 年沒動（長線、循環投資人）
+#   各佔全體實現市值的 %（Bitview）。頂部時 1 個月內的比例衝高（2017 年 66%、2021 年 51%），熊底時 1–2 年的比例最高（2019 年 42%、2022 年 47%）。只作讀值
+CF_FROM = '2015-06-01'
+
+
+def _peaks(ser, D, sep=500, top=6, floor=0):
+    out = []
+    for d in sorted(D, key=lambda x: -ser[x]):
+        if ser[d] < floor: break
+        if any(abs(dn(d) - dn(p)) < sep for p in out): continue
+        out.append(d)
+        if len(out) == top: break
+    return sorted(out)
+
+
+def capflow_viz(bv, px, last, step=3):
+    a, b = bv.get('cf1m') or {}, bv.get('cf12') or {}
+    D = [d for d in sorted(set(a) & set(b)) if CF_FROM <= d <= last]
+    if len(D) < 800: return None
+    P = lambda d: px.get(d, bv['px'].get(d))
+    d1 = D[-1]; back = lambda k: max((d for d in D if dn(d) <= dn(d1) - k), default=None)
+    d30, d365 = back(30), back(365)
+    rows = thin([[dn(d), round(P(d)) if P(d) else None, round(a[d], 1), round(b[d], 1)] for d in D], step)
+    return dict(date=d1, src='Bitview', price=round(P(d1)), m1=round(a[d1], 1), y12=round(b[d1], 1),
+                m1_30=round(a[d30], 1) if d30 else None, y12_30=round(b[d30], 1) if d30 else None, m1_1y=round(a[d365], 1) if d365 else None, y12_1y=round(b[d365], 1) if d365 else None,
+                peaks_m1=[[d, round(a[d], 1)] for d in _peaks(a, D, floor=15)], peaks_y12=[[d, round(b[d], 1)] for d in _peaks(b, D, floor=25)],
+                rows=rows, note='Bitview：1 個月內＝<1h、1h–1d、1d–1w、1w–1m 四段實現市值合計；1–2 年＝1y–18m、18m–2y；÷ 全體實現市值；只作讀值')
