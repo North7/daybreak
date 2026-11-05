@@ -760,7 +760,7 @@ def cycle_cmp_viz(px, tops, last):
         rows = [[n, round(r, 4)] for n, r in pts if n % CC_STEP == 0 or n == pts[-1][0]]
         out.append(dict(top=t, top_price=round(top), now=t == t_now, rows=rows,
                         at=dict(day=at[0], pct=round((at[1] - 1) * 100, 1)) if at else None,
-                        low=dict(day=lo[0], pct=round((lo[1] - 1) * 100, 1), date=ds(dn(t) + lo[0])),
+                        low=dict(day=lo[0], pct=round((lo[1] - 1) * 100, 1), date=ds(dn(t) + lo[0]), price=round(top * lo[1])),
                         back_day=back, back_after_low=back - lo[0] if back else None))
     return dict(date=last, day_now=n_now, cycles=out, days=CC_DAYS,
                 note='各輪週期頂部（model.json cycle_tops）之後每天收盤 ÷ 頂部收盤；at＝今天這個天數時的位置；low＝頂部後最低；back_day＝最低之後第一次收回頂部價的天數；只作讀值')
