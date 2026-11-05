@@ -43,7 +43,7 @@
 | 01 | **頭版** | 號外大標題、巨型收盤價（滑過可回看近 20 天）、立場與市場階段、要盯的三個價位、數據帶、資料狀態、今天該做什麼／今天變了什麼、**訊號總表**（方向：市場階段、週線多空分數、今日發現；離頂部多近：MVRV ÷ 前高、頂部三指標、Tidemark、頂部雷達、冪律；離出場多遠：價格階梯、200 日均線避險；條一律是「離觸發多近」）、**今日發現**（上期發現的後續只列今天結案的，追蹤中的收合；附自動偵測的異動）、今日要聞（側欄只列標題）、離出場線的跑道圖、價格近一年、接下來的日期 |
 | 02 | **消息** | 過去 24–36 小時的重要消息（依分類篩選），每則附「對 BTC 的意義」並對照本站數據；機構研報（Glassnode、K33 等）重點 |
 | 03 | **週期** | 市場階段（熊市 → 轉換期 → 牛市，規則化判定與佐證燈號；6 張佐證圖預設收起）、週線多空分數、長期路徑四種走法、MVRV ÷ 前一輪高點、頂部三指標（附原始讀值）、冪律合理價、Tidemark 頂部／底部綜合訊號、頂部雷達、頂部三指標與頂部雷達 6 項的近 3 年走勢 |
-| 04 | **出場框架** | 現在離每條出場規則多遠、出場模擬器（拖動價格看框架會賣多少）、鏈上觸發、200 日均線避險、加速與時間停損 |
+| 04 | **出場框架** | 現在離每條出場規則多遠、出場模擬器（拖動價格看框架會賣多少）、鏈上觸發、200 日均線避險、頂部三指標（只作讀值）與時間停損 |
 | 05 | **價格** | 近 20 天 K 線、ATR、實際波動、Mayer 倍數、Pi Cycle、**短週期（目前這一段行情：起點、幅度、天數、與本輪中位數比較、本段結束線）**、關鍵價位、均線排列、長期走勢 |
 | 06 | **衍生品** | DVOL、IV − RV、永續資金費率（Deribit／OKX／Hyperliquid 以未平倉加權）、25Δ 風險逆轉（30 天固定期限）、選擇權未平倉與履約價分布、期貨基差曲線、**掛單簿**（13 個交易所 ±15% 全景柱狀圖、最大的牆、整數關卡）、CoinGlass 爆倉熱力圖連結 |
 | 07 | **資金** | 現貨 ETF 每日淨流量（並換算成 BTC 與新挖出量比較）、BTC 與那斯達克／美元相關、10 年期實質利率、三地溢價（美國現貨 Coinbase、亞洲 USDT 場外、永續對現貨）、穩定幣供給、恐懼貪婪指數、實現市值 30 日變化（附歷次歸零之後的價格表現） |
@@ -59,7 +59,7 @@
 |---|---|
 | 價格階梯 | 125K、135K、145K、155K、165K、180K、195K、215K，共 8 階，每階賣 12.5% |
 | 鏈上觸發 | MVRV ÷ 前一輪高點連 5 日 ≥ 0.75 → 賣一階；連 5 日 ≥ 0.80 → 再賣一階；之後每次收盤創新高但 MVRV ≤ 一年最高的 0.9 倍 → 賣一階 |
-| 加速 | 頂部三指標（MVRV Z／NUPL／Puell 四年百分位）任兩項 ≥ 80 → 頂部區；≥ 85 連 5 日 → 多賣兩階；≥ 90 → 10 個交易日內賣完 |
+| 頂部三指標（只作讀值） | MVRV Z／NUPL／Puell 四年百分位任兩項 ≥ 80 → 標為頂部區，不連動賣出（2026-11-05 起取消原本的加速規則，見變更紀錄） |
 | 200 日均線避險 | 收盤連 5 日在 200 日均線之下 → 減 20%；連 5 日收回，或 MVRV Z 7 日均 < 0.5 → 補回 |
 | 時間停損 | 2029/10–2030/03 剩餘部位每月等量賣完 |
 
@@ -312,6 +312,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 2026-11-05：週期階段配色（使用者要求「同樣牛熊，到了什麼階段，顏色要顯示」）：週線多空分數的柱子改五段——極熊（≤ −4）、熊、初牛（熊市滿 26 週後轉正的頭 26 週）、牛、過熱（≥ +4），面板上方直接寫目前階段；冪律圖新增「通道位置」看法（0%＝歷次底部連線、100%＝逐輪下降的頂部連線，對照冪律衰減通道震盪），線的顏色按五段變。
   - 2026-11-05：版面順序調整（使用者要求）：頭版、消息、**鏈上**、週期、價格、資金、衍生品、**出場框架**、往期、方法。鏈上是重點，移到第 3；出場框架離現在還遠，由第 4 移到第 8。
   - 2026-11-05：修正切到夜刊時語言切換的底色跑到 EN（實際語言沒變、「中文」字看不見）：夜刊的底色移動只套用在日刊／夜刊切換。
+  - 2026-11-05：出場框架 v3：取消「加速」規則（頂部三指標任兩項 ≥ 85 連 5 日多賣兩階、≥ 90 十個交易日內賣完），頂部三指標改為只作讀值，任兩項 ≥ 80 仍標為頂部區。用網站自己的算法（CoinMetrics，2011 起）重播四輪：≥ 90 首次觸發都在週期中段（2017-04 在當輪頂部價的 7%、2020-12 的 39%、2024-03 的 58%），2021、2025 兩次真頂部當天都沒到 90；2021→2025 這輪平均賣價由頂部的 55% 變成 71%，四輪都不比原本差。也試過「已賣過一階才生效＋≥ 90 改成多賣兩階」：價格階梯從前高起算，2024-03 的中段高點正好剛突破前高，閘門只延後一天，平均只到 59%。限制：重播沒納入 200 日均線避險，舊週期的價格階梯以「前高 × 同樣倍數」換算，只有四輪樣本。
   - 2026-11-04（參考 Glassnode 週報）：價格版新增「成本線與均線」（200／365 日、50 週均線＋短期持有者成本、真實市場均價、實現價、長期持有者成本）；資金版新增「BTC 對美股」（近 90 個美股交易日勝率與平均超額、近兩個月和 S&P 500、那斯達克、黃金〔PAXG〕的相對表現，FRED＋Kraken）；選擇權履約價分布可切換未平倉最大的兩個到期，加全部到期的買權／賣權合計；短期持有者獲利比例改用 Bitview、畫到 2019 並加 97.5% 賣出線與 50% 線；清算熱力圖用 OKX 4 小時線把歷史補到約 130 天（1 小時線只有 60 天），另列畫面外 ±25% 內最亮的一塊，並修正同一帶重複列出的問題。
   - 每日任務加「結構分析」：先問一個行情問題，拆參與者、比較前後、分清事實與推算、用行為確認、寫情境與推翻條件（`docs/CLAUDE_DAILY.md`）。
 - **2026-10-23**
@@ -347,7 +348,7 @@ Ten sections. On desktop they stack into one page and switch as you scroll (keys
 | 01 | **Front page** | Headline, the giant closing price (hover to step back through 20 days), stance and market stage, three levels to watch, data tape, data-status bar, what to do / what changed, the **signal board** (direction: market stage, weekly regime score, today's findings; how close to a top: MVRV ÷ prior peak, top-3 indicators, Tidemark, top radar, power law; how far from the exit rules: price ladder, 200-day MA hedge; every bar reads as “how close to its trigger”), **today's findings** (follow-ups show only those resolved today, the rest folded away; plus the auto-detected signals), today's news (headlines only in the side column), the runway to each exit line, the 12-month price chart, upcoming dates |
 | 02 | **News** | Key stories from the last 24–36 hours (filter by category), each with what it means for BTC checked against our data; institutional research (Glassnode, K33, …) |
 | 03 | **Cycle** | Market stage (bear → transition → bull, rule-based with supporting signals; the six evidence charts start folded), weekly regime score, four long-term paths, MVRV ÷ prior-cycle peak, the top-3 indicators (with raw values), power-law fair value, Tidemark top/bottom signals, top radar, 3-year trends of the top-3 and top-radar series |
-| 04 | **Exit plan** | How far price is from each exit rule, an exit simulator (drag a price and see what the plan would have sold), on-chain triggers, 200-day MA hedge, acceleration and time stop |
+| 04 | **Exit plan** | How far price is from each exit rule, an exit simulator (drag a price and see what the plan would have sold), on-chain triggers, 200-day MA hedge, top-3 indicators (reading only) and time stop |
 | 05 | **Price** | 20 daily candles, ATR, realized volatility, Mayer multiple, Pi Cycle, **short cycle (the current price leg: start, size, length vs. this cycle's median, the close that would end it)**, key levels, moving-average alignment, long-term chart |
 | 06 | **Derivatives** | DVOL, IV − RV, perp funding (Deribit / OKX / Hyperliquid, open-interest weighted), 25Δ risk reversal (30-day constant maturity), options open interest and strikes, futures basis curve, **order book** (13 exchanges, ±15% full-view bar chart, biggest walls, round numbers), link to the CoinGlass liquidation heatmap |
 | 07 | **Flows** | Spot ETF daily net flows (also in BTC vs. newly mined supply), BTC correlation with Nasdaq / USD, 10-yr real yield, three premiums (US spot via Coinbase, Asian OTC USDT, perp vs spot), stablecoin supply, Fear & Greed, realized-cap 30-day change (with what price did after every past zero) |
@@ -363,7 +364,7 @@ Measured as "100% = everything you plan to sell this cycle"; nobody's actual hol
 |---|---|
 | Price ladder | 125K, 135K, 145K, 155K, 165K, 180K, 195K, 215K — 8 steps, 12.5% each |
 | On-chain triggers | MVRV ÷ prior-cycle peak ≥ 0.75 for 5 days → sell one step; ≥ 0.80 for 5 days → one more; after both, each new closing high with MVRV ≤ 0.9× its 1-year high → one more |
-| Acceleration | Top-3 indicators (MVRV Z / NUPL / Puell, 4-year percentiles): any two ≥ 80 → top zone; ≥ 85 for 5 days → sell two extra steps; ≥ 90 → sell everything within 10 trading days |
+| Top-3 indicators (reading only) | MVRV Z / NUPL / Puell 4-year percentiles: any two ≥ 80 → marked as the top zone, no selling attached (the old acceleration rule was dropped on 2026-11-05; see the changelog) |
 | 200-day MA hedge | Close below the 200-day MA for 5 days → cut 20%; buy back after 5 closes above it, or when the MVRV Z 7-day average < 0.5 |
 | Time stop | 2029/10–2030/03: sell what is left in equal monthly amounts |
 
@@ -514,6 +515,8 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-05** Exit plan v3
+  - The acceleration rule (top-3 indicators, any two ≥ 85 for 5 days → sell two extra steps; ≥ 90 → sell everything within 10 trading days) is dropped. The top-3 indicators are now a reading only; any two ≥ 80 still marks the top zone. A replay of four cycles since 2011 with the site's own method (CoinMetrics): ≥ 90 first fired mid-cycle every time (2017-04 at 7% of that cycle's top, 2020-12 at 39%, 2024-03 at 58%) and was not reached on the day of the 2021 or 2025 top; in 2021→2025 the average sale price goes from 55% to 71% of the top, and no cycle comes out worse. Gating the rule on "at least one step sold" with ≥ 90 selling only two steps reached 59%: the ladder starts at the prior high, which the 2024-03 mid-cycle peak had just broken, so the gate opened a day later. Limits: the replay leaves out the 200-day MA hedge, scales older ladders by the prior top, and has only four cycles.
 - **2026-11-04** Product review: front page, signal board, structure and charts
   - Front-page order: conclusion → what to do / what changed → signal board → findings → news (the action list used to sit 4–5 screens down); on desktop the giant closing price is capped at about 26% of the window so the stance and three levels fit on the first screen.
   - Follow-ups: those resolved today are listed; the ones still being tracked fold into one line (12–13 “watching” items used to push the new findings down).
