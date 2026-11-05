@@ -73,7 +73,7 @@
 
 每版最上方的「今日判讀」與頭條、新聞、行動清單，則由 Claude 每日任務讀數據後撰寫（`data/notes.json`、英文版 `data/notes.en.json`），只解釋數字、不改數字。
 
-**今日發現**（2026-10-23 起）：資料管線先依寫死的規則偵測異動（`pipeline/signals.py`：一年最極端的 2%、7 日急變、狀態翻轉、關鍵價位 ±3%、連續、跨指標組合），每日任務再從中寫 0–3 則發現：拆解是哪一邊在動、用不同來源交叉比對、列出其他解釋與資料限制、引用過去同樣情況（附樣本數）、寫下會確認或推翻的條件。下一期資料管線自動檢查這些條件，任務再寫後續（確認／推翻／到期／追蹤中）。
+**今日發現**（2026-10-23 起）：資料管線先依寫死的規則偵測異動（`pipeline/signals.py`：一年最極端的 2%、7 日急變、狀態翻轉、關鍵價位 ±3%、連續、跨指標組合），每日任務再從中寫 0–3 則發現：拆解是哪一邊在動、用不同來源交叉比對、列出其他解釋與資料限制、引用過去同樣情況（附樣本數）、寫下會確認或推翻的條件。下一期資料管線自動檢查這些條件，任務再寫後續（確認／推翻／到期／追蹤中）。圖上的「異動」可以點開：觸發了哪條規則、從哪天開始、背景與拆解、這類異動一般代表什麼、過去同樣情況之後 30 天價格（附樣本數）；頭版的異動清單也有同樣內容（2026-11-06 起，`pipeline/signal_means.py`）。
 
 ## 資料來源
 
@@ -191,6 +191,7 @@ pipeline/build.py        today.json → data/latest.json；最後呼叫 archive.
 pipeline/archive.py      往期封存（一次性回填：python3 pipeline/archive.py --backfill-git）
 pipeline/brief.py        印出精簡摘要給 Claude 讀（異動偵測放最前面）
 pipeline/signals.py      異動偵測：極端值、急變、狀態翻轉、關鍵價位、連續、跨指標組合；檢查上期發現的追蹤條件（build.py 呼叫）
+pipeline/signal_means.py 異動的白話說明：觸發的規則、一般含意（依方向）、翻轉類的歷史對照（signals.build 呼叫）
 pipeline/etf.py          從 The Block 更新 ETF 每日淨流量
 pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 7 個
 pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損、長短期持有者籌碼、賣方衰竭常數、全網實現獲利 ÷ 虧損、1 年以上未動供給、長期持有者虧損比例：讀 CheckOnChain 公開圖表（晚約 1 天）
@@ -272,6 +273,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 鏈上版分四組（成本與位置、獲利了結與認賠、長期持有者、需求與資金）＋指標總表，版內目錄也分組；「依持有時間的持幣成本」從週期版搬到鏈上版的成本組（舊連結 `#cycle/agecost` 會自動跟著圖走）；STH-SOPR 和短期持有者實現損益在桌面並排。
   - 週期版分三組：現在的階段 → 離頂部多近 → 和歷史與模型比。資金版的 ETF 流量和穩定幣在桌面並排。
   - 圖表面板裡，圖後面的表格（歷次紀錄、情境表）收成「展開表格」；長的說明只露前兩行，點「展開說明」看全文。頭版、消息、出場、往期、方法版不動。
+  - 「異動」說明（使用者：「圖上有異動字樣的，不知道在哪裡可以看怎樣的異動、異動哪裡了、說明什麼、意味著什麼」）：圖上的「異動」改成可以點開，依序寫哪種異動（觸發的規則與門檻）、什麼時候（從哪天開始、第幾天、圖上橘色直線就是那天）、背景與拆解、代表什麼（這類異動一般的含意，只寫一般含意、不寫預測）、過去同樣情況之後 30 天價格（次數、中位數、和同期任一天比，附樣本數）。頭版「自動偵測的異動」每則直接顯示一般含意，其餘收在「規則、數字與過去同樣情況」。含意由 `pipeline/signal_means.py` 產生（26 個序列 × 上下、14 種翻轉、價位、連續與組合），翻轉類（SOPR 穿越 1、價格穿越 200 日均線／短期持有者成本／真實市場均價、資金流入、Coinbase 溢價、IV−RV）也補上歷史對照；11/04 的資料一次性補值。
   - 結果（桌面、中文）：週期版 7,927 → 6,730px；鏈上版多了搬來的持幣成本仍從 17,268 → 16,575px。只改版面與順序，資料、管線、看法判斷都沒動。
   - 版面順序改成頭版、消息、**週期**、**鏈上**、價格、資金、衍生品、出場框架、往期、方法（使用者要求週期放在鏈上前面；鍵盤 3＝週期、4＝鏈上）。
 - **2026-11-04** 整體審查：頭版、訊號總表、結構與圖表
@@ -537,6 +539,7 @@ This repository is public and its history is permanent. The site holds only mark
   - On-chain is split into four groups (cost and position, profit-taking and loss-selling, long-term holders, demand and money) plus the metrics table, with a grouped page index; “Holder cost by coin age” moves here from Cycle (old `#cycle/agecost` links follow the chart); STH-SOPR and short-term holder realized P/L sit side by side on desktop.
   - Cycle is split into three groups: where we are → how close to a top → against history and models. ETF flows and stablecoins sit side by side on Flows.
   - Page order is now Front page, News, **Cycle**, **On-chain**, Price, Flows, Derivatives, Exit plan, Archive, Method (keys 3 = Cycle, 4 = On-chain).
+  - Chart “Signal” flags now open into a full note: which rule fired (with its threshold), when it started and which day it is (the orange line on the chart marks that day), context and breakdown, what this kind of signal usually means (general meaning only, no forecast), and what price did over the next 30 days in past cases (count, median and a same-period baseline, with sample size). The front-page signal list shows the meaning directly with the rest folded. Text comes from `pipeline/signal_means.py`; flips now get past cases too.
   - In chart panels, tables after the chart (past episodes, scenarios) fold under “Show table”, and long notes show two lines until “More” is clicked. Layout and order only; data, pipeline and views are unchanged.
 - **2026-11-05** Exit plan v3; cost-band lines; indicator additions
   - Seven panels gain “Our read”, the site's own view built from the data (lean, reasons, and what would change it), drawing on how analysts read these measures (true market mean as the bull/bear line, short-term holder cost as support in uptrends, a veteran-to-new-buyer handover before new highs, loss-selling bursts at local lows). On 11/04: range between 77.6K and 85.1K, new buyers under water, weak demand, handover under way, no big capitulation this cycle (leaning to the low being in), not a classic deep bear.

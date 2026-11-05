@@ -633,9 +633,31 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .sigs li .jump { color: var(--red-ink); text-decoration: none; }
 .sigs li .fig { display: block; font-family: var(--f-mono); font-size: 12px; color: var(--red-ink); }
 .sigs li .note { display: block; margin: 2px 0 0; padding: 0; }
-.sig-flag { margin: 0; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 12px; font-size: 12.5px; color: var(--ink-2); }
+/* 2026-11-06 圖上的「異動」：一則一行，點開看規則、含意與歷史 */
+.sig-flag { margin: 0; display: grid; gap: 4px; font-size: 12.5px; color: var(--ink-2); }
+.sig-flag details { border-left: 2px solid var(--flare); padding-left: 10px; }
+.sig-flag summary { cursor: pointer; list-style: none; display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 2px 0; }
+.sig-flag summary::-webkit-details-marker { display: none; }
 .sig-flag .chip { font-size: 11px; }
 .sig-flag b { color: var(--ink); }
+.sig-flag .more { font-size: 12px; font-weight: 700; color: var(--red-ink); }
+.sig-flag .more::after { content: " ▾"; }
+.sig-flag details[open] .more::after { content: " ▴"; }
+.sig-d { margin: 8px 0 10px; display: grid; gap: 0; background: color-mix(in srgb, var(--flare) 5%, transparent); padding: 4px 12px 8px; }
+.sd-r { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 4px 14px; padding: 8px 0; border-bottom: 1px solid var(--line); font-size: 13px; line-height: 1.7; color: var(--ink-2); }
+.sd-r:last-of-type { border-bottom: 0; }
+.sd-k { font-weight: 900; color: var(--ink); }
+.sd-v p { margin: 0 0 4px; }
+.sd-v .chip { font-size: 11px; margin-right: 4px; }
+.sd-v .note { display: block; margin-top: 4px; }
+.sig-h { list-style: none; margin: 4px 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.sig-h li, .sigs .sig-h li { display: flex; gap: 8px; font-size: 12.5px; padding: 0; border: 0; grid-template-columns: none; }
+.sig-h .up { color: var(--up); } .sig-h .dn { color: var(--down); }
+.sig-d > .note { margin: 6px 0 0; }
+@media (max-width: 560px) { .sd-r { grid-template-columns: minmax(0, 1fr); gap: 2px; } }
+.sigs li .means { display: block; margin-top: 3px; font-size: 13px; line-height: 1.65; color: var(--ink-2); }
+.sig-more { margin-top: 4px; }
+.sig-more > summary { font-size: 12px !important; font-weight: 700; color: var(--red-ink) !important; }
 .chart.flash { outline: 2px solid var(--red); outline-offset: 6px; transition: outline-color 1.6s; }
 @media (max-width: 520px) { .sigs li { grid-template-columns: auto minmax(0, 1fr); } .sigs li > div { grid-column: 1 / -1; } .find dl div { grid-template-columns: 1fr; gap: 2px; } }
 .find .lean { margin: 0; display: flex; align-items: baseline; gap: 8px; font-size: 12.5px; color: var(--ink-2); line-height: 1.55; }

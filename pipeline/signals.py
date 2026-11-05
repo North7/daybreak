@@ -7,7 +7,8 @@ build.py 組好 latest.json 之後呼叫 build(L, prev, notes)，輸出 L['signa
   level    靠近關鍵價位（±3%）、收盤一年新高／新低、離出場第一階或 MVRV 0.75 線 5% 以內
   streak   連續：ETF 同方向連 5 個交易日以上、SOPR 連 5 天低於 1
   combo    跨指標組合（趁跌獲利了結、集中認賠、軋空、槓桿追價、波動壓縮、資金與價格背離）與同一主題 3 項以上同時異動
-每個異動附：資料日期、上一次同樣極端是哪天（「N 天來最高」）、過去幾次同樣情況與之後 30 天的價格變化（附樣本數，只給每日任務當背景，網站不顯示）。
+每個異動附：資料日期、上一次同樣極端是哪天（「N 天來最高」）、過去幾次同樣情況與之後 30 天的價格變化（附樣本數）。
+2026-11-06 起另附 rule（觸發的規則）、means（一般含意）與翻轉類的歷史對照（signal_means.py），網站圖上的「異動」點開就看得到。
 另外檢查上一期 notes.json 的 findings／followups 寫下的追蹤條件（check），自動算出成立與否，給下一期回顧用。
 只作讀值：不連動任何規則，也不是買賣訊號。"""
 import datetime as dt, statistics as stx
@@ -479,6 +480,9 @@ def build(L, prev=None, notes=None):
     try: sig += _combos(L, sig, px)
     except Exception as e: sig.append(dict(id='error:combo', kind='error', title=T(f'組合規則失敗：{e}', f'combo rules failed: {e}'), score=0))
     sig += _clusters(sig)
+    try:   # 2026-11-06 使用者要求：每則異動附觸發規則與一般含意（signal_means.py），翻轉類補歷史對照
+        import sys, signal_means; signal_means.annotate(sig, L, px, sys.modules[__name__])
+    except Exception as e: sig.append(dict(id='error:means', kind='error', title=T(f'異動說明失敗：{e}', f'signal notes failed: {e}'), score=0))
     act0 = g(prev or {}, 'signals.active') or {}; act = {}
     for s in sig:
         if s.get('kind') == 'error': continue
@@ -492,4 +496,4 @@ def build(L, prev=None, notes=None):
     except Exception as e: ck = [dict(id='error', title=f'追蹤條件檢查失敗：{e}')]
     return dict(base=prev, date=g(L, 'meta.bar_date'), n=len([s for s in sig if s.get('kind') != 'error']), n_series=len(SERIES), items=sig[:TOP], more=[s['id'] for s in sig[TOP:]],
                 errors=[s['title']['zh'] for s in sig if s.get('kind') == 'error'], active=act, checks=ck, states=states(L),
-                note='規則寫死（pipeline/signals.py）：一年 2% 極端值、7 日變化 2% 極端值、狀態翻轉、關鍵價位 ±3%、連續、跨指標組合；hist 只給每日任務當背景。只作讀值')
+                note='規則寫死（pipeline/signals.py）：一年 2% 極端值、7 日變化 2% 極端值、狀態翻轉、關鍵價位 ±3%、連續、跨指標組合；rule／means 見 signal_means.py；hist 是過去同樣情況與之後 30 天價格。只作讀值')
