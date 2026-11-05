@@ -53,7 +53,8 @@ def shoot(items, lang, tmp):
             if st.get('pre'): ws.js(st['pre']); time.sleep(1.2)
             ws.js(f'{CLEAN}(document.querySelector({sel}).closest({box}), {json.dumps(bool(st.get("keep_note")))})'); time.sleep(0.6)
             ws.js(f'document.querySelector({sel}).closest({box}).scrollIntoView({{block:"start"}}); true'); time.sleep(1.2)
-            ws.js('document.getAnimations().forEach(function(a){try{a.finish();}catch(e){}}); true'); time.sleep(0.3)   # 描線動畫直接跑完（晚觸發的小圖不會只截到第一格）
+            # 拿掉描線動畫：captureBeyondViewport 會暫時改視窗大小，.more 小圖的描線動畫會重播，只截到第 0 幀（2026-11-05「本地數據分析」查到）
+            ws.js("document.querySelectorAll('.chart .draw').forEach(function(p){p.classList.remove('draw')}); document.getAnimations().forEach(function(a){try{a.finish();}catch(e){}}); true"); time.sleep(0.3)
             r = ws.js(f'''(function(){{var c=document.querySelector({sel}), p=c.closest({box}), b=p.getBoundingClientRect(), cr=c.getBoundingClientRect();
                 return {{x:b.left+scrollX, y:b.top+scrollY, w:b.width, h:cr.bottom-b.top+16}};}})()''')
             if r['h'] < 80: print('TOO SMALL', n, st['sel'], r); continue

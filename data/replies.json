@@ -568,7 +568,15 @@
    "summary": "A whale wallet dormant for 22 days woke up and sold ~$8.18M of BTC (WBTC/cbBTC) and ETH during the morning dip; asks if it is the start of a bigger exit.",
    "reply": "One wallet is noise, but the big picture agrees with you. Long-term holders have been net sellers for 92 days straight, about 167K BTC over the last 30. That's the exit worth watching.",
    "sources": "長期持有者 30 日淨部位 −166,633 顆（11/03）、自 8/4 起淨減 92 天、同期價格 +20.7% · bitcoin-data",
-   "note": "兩天前的貼文、單一以太坊錢包（WBTC），所以列可選。不配圖：網站週期版的長期持有者 30 日淨部位小圖在桌面版仍是空的（11/05 PR #37 只修了手機）。",
+   "note": "兩天前的貼文、單一以太坊錢包（WBTC），所以列可選。",
+   "image": {
+    "site": {
+     "page": "cycle",
+     "sel": "#c-oc-lth-net-position-change-30d-btc",
+     "box": ".evc"
+    },
+    "title": "Long-term holders: net sellers for 92 days"
+   },
    "style": "口語版"
   },
   {
