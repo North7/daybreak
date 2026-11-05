@@ -514,11 +514,21 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .tbl.evid .mk-s.ok { color: var(--up); }
 
 /* 數字解讀（2026-10-12）：各版「這些數字代表什麼」與表格下方的解讀列 */
-.interp { display: grid; }
+.interp { display: grid; grid-template-columns: minmax(0, 1fr); }   /* 2026-11-06：收起的讀值（details）不能把欄寬撐開 */
 .interp .it { display: grid; grid-template-columns: 150px 96px 44px minmax(0, 1fr); gap: 14px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--line); }
 .interp .it:last-child { border-bottom: 0; }
-.interp .it.view { background: color-mix(in srgb, var(--flare) 7%, transparent); border-left: 3px solid var(--flare); padding-left: 12px; padding-right: 10px; margin-top: 4px; }   /* 2026-11-05「我們的看法」列 */
+.interp .it.view { background: color-mix(in srgb, var(--flare) 7%, transparent); border-left: 3px solid var(--flare); padding-left: 12px; padding-right: 10px; margin-bottom: 4px; }   /* 2026-11-05「我們的看法」列；11-06 起排第一列 */
+.interp .it.view .chg { display: block; margin-top: 6px; color: var(--ink-2); }
+.interp .it.view .chg b { margin-right: 8px; font-weight: 900; color: var(--ink); }
+.interp .it.view .chg b::after { content: "→"; margin-left: 6px; color: var(--flare); font-weight: 400; }
+/* 2026-11-06 細項讀值超過 3 列時收起 */
+.rd-more summary { cursor: pointer; list-style: none; padding: 9px 0; font-size: 12.5px; font-weight: 700; color: var(--ink-3); border-bottom: 1px solid var(--line); }
+.rd-more summary::-webkit-details-marker { display: none; }
+.rd-more summary::before { content: "+"; display: inline-block; width: 16px; font-family: var(--f-mono); color: var(--flare); }
+.rd-more[open] summary::before { content: "−"; }
+.rd-more summary:hover { color: var(--ink); }
 .interp .it.view .k { color: var(--flare); }
+.interp .it.view .v { white-space: normal; text-align: left; }   /* 2026-11-06 看法排第一列：英文傾向（例如 No big capitulation this cycle）在手機上要能換行 */
 .interp .k { font-weight: 900; font-size: 13px; }
 .interp .v { font-size: 13px; text-align: right; white-space: nowrap; }
 @media (min-width: 521px) { .interp .v { white-space: normal; } }   /* 2026-11-05：太長的讀值（例如「64K–70K / 88K–93K」）在空格處換行，原本會壓到右邊的「中性」標籤 */
@@ -752,3 +762,40 @@ a.term:hover { color: var(--red-ink); text-decoration-color: currentColor; }
 .interp:has(~ .chart, ~ .legend) .it:first-child { grid-template-columns: 150px minmax(96px, auto) 44px minmax(0, 1fr); }
 .interp:has(~ .chart, ~ .legend) .it:first-child .v { font-size: 22px; font-weight: 800; letter-spacing: -.01em; line-height: 1.1; }
 @media (max-width: 520px) { .interp:has(~ .chart, ~ .legend) .it:first-child { grid-template-columns: minmax(0, 1fr) auto auto; } .interp:has(~ .chart, ~ .legend) .it:first-child .v { font-size: 20px; } }
+
+/* 2026-11-06 頭版「我們的看法」總表：7 張圖的傾向與會改變看法的條件 */
+.views { border-top: 2px solid var(--ink); }
+.vw-r { display: grid; grid-template-columns: 210px 150px 44px 18px minmax(0, 1fr); grid-template-areas: "k v t j d"; gap: 4px 14px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--line); }
+.vw-r .k { grid-area: k; font-weight: 700; font-size: 13.5px; }
+.vw-r .v { grid-area: v; font-size: 16px; font-weight: 900; }
+.vw-r .tn { grid-area: t; }
+.vw-r .jump { grid-area: j; color: var(--red-ink); text-decoration: none; font-weight: 700; }
+.vw-r .d { grid-area: d; margin: 0; font-size: 13px; line-height: 1.65; color: var(--ink-2); }
+.vw-r .d b { margin-right: 8px; color: var(--ink); font-weight: 700; }
+@media (max-width: 1180px) { .vw-r { grid-template-columns: 190px minmax(0, 1fr) 44px 18px; grid-template-areas: "k v t j" "d d d d"; } }
+@media (max-width: 560px) { .vw-r { grid-template-columns: minmax(0, 1fr) auto 18px; grid-template-areas: "k k k" "v t j" "d d d"; gap: 4px 10px; } }
+
+/* 2026-11-06 版面整理：版內分組標題與分組目錄 */
+.grid > .grp-h { margin-top: 22px; margin-bottom: -8px; }
+.grid > .grp-h:first-child { margin-top: 0; }
+.grp-h h2 { font-size: clamp(20px, 1.6vw, 26px); }
+.toc.grouped { display: grid; gap: 6px; }
+.toc-g { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 8px; }
+.toc a.g { border: 0; padding: 3px 4px 3px 0; min-width: 8.5em; font-weight: 900; color: var(--ink); }
+.toc a.g:hover { color: var(--red-ink); }
+@media (max-width: 860px) {
+  .toc.grouped { display: flex; }
+  .toc-g { display: contents; }
+  .toc a.g { min-width: 0; padding-left: 8px; border-left: 2px solid var(--flare); border-radius: 0; }
+  .grid > .grp-h { margin-top: 10px; margin-bottom: -10px; }
+}
+/* 2026-11-06 圖後面的表格收起、長說明只露兩行 */
+.tbl-more { margin-top: 10px; }
+.tbl-more > summary { cursor: pointer; list-style: none; padding: 8px 0; font-size: 12.5px; font-weight: 700; color: var(--ink-3); border-top: 1px solid var(--line); }
+.tbl-more > summary::-webkit-details-marker { display: none; }
+.tbl-more > summary::before { content: "+"; display: inline-block; width: 16px; font-family: var(--f-mono); color: var(--flare); }
+.tbl-more[open] > summary::before { content: "−"; }
+.tbl-more > summary:hover { color: var(--ink); }
+p.note.clamp:not(.open) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.note-tg { display: block; text-align: left; margin: 2px 0 0; padding: 0; border: 0; background: none; font: inherit; font-size: 12px; font-weight: 700; color: var(--ink-3); cursor: pointer; }
+.note-tg:hover { color: var(--ink); }
