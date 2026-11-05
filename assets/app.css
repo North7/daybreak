@@ -97,7 +97,7 @@ button { font: inherit; color: inherit; }
 .theme-toggle button { position: relative; z-index: 1; border: 0; background: transparent; padding: 5px 0; font-size: 12px; color: var(--ink-2); cursor: pointer; transition: color .3s; }
 .theme-toggle button[aria-pressed="true"] { color: var(--void); }
 .theme-toggle::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 50%; background: var(--ink); transition: transform .4s var(--snap); }
-:root[data-theme="dark"] .theme-toggle::before { transform: translateX(100%); }
+:root[data-theme="dark"] .theme-toggle:not(.lang-toggle)::before { transform: translateX(100%); }   /* 2026-11-05 修正：夜刊時只移日刊／夜刊的底色；語言切換的底色只看語言（見 .lang-toggle），原本中文版切到夜刊時底色跑到 EN、「中文」字看不見 */
 
 .stage { min-width: 0; display: flex; flex-direction: column; position: relative; }
 .top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 12px var(--gut); border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--void) 88%, transparent); backdrop-filter: blur(10px); }
