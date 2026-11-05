@@ -9,7 +9,7 @@
      2026-11-04：加「今日推薦圖表」：讀 ../../data/picks.json（每日任務寫的解說）與 ../../data/picks/index.json（Actions 畫了哪些圖），每張圖都能分享、存圖、複製解說
      2026-11-04：加「快訊」：讀 ../../data/flash.json（盤中事件的中英文貼文；2026-11-05 起只顯示台北時間今天的，過期的直接從資料刪掉），配圖在 ../../data/flash/
      2026-11-05：依發文類型分區（快訊、日報貼文、長貼文、推薦圖表，上方有跳轉標籤，回覆另一頁）
-     2026-11-05：加「長貼文」：讀 ../../data/longposts.json（每日圖表長貼文，Premium 長文、不是 X Article；只顯示台北時間今天的；每天整份換新、舊圖刪掉），配圖在 ../../data/longposts/，一則可多張 -->
+     2026-11-05：加「長貼文」：讀 ../../data/longposts.json（每日圖表長貼文，Premium 長文、不是 X Article；沒處理的一直顯示，「標記已處理」只記在這台裝置、隔天不再顯示；舊則由 Claude 寫新長貼文時清掉），配圖在 ../../data/longposts/，一則可多張 -->
 <style>
 :root { --paper:#F1F0EC; --card:#FFFFFF; --ink:#0A0A0A; --ink3:#7A766F; --line:#D2CEC4; --red:#FF3B1F; }
 @media (prefers-color-scheme: dark) { :root { --paper:#121110; --card:#1C1B19; --ink:#EEECE6; --ink3:#9A958C; --line:#34312C; } }
@@ -38,6 +38,10 @@ h3 small { color:var(--ink3); font-weight:500; }
 .flash-h small { color:var(--ink3); font-weight:500; }
 #flash section { border-color:var(--red); }
 .long-h { font-size:18px; margin:22px 0 0; }
+#long-list section.done { opacity:.55; }
+#long-list section.done pre, #long-list section.done img, #long-list section.done h3, #long-list section.done .btns:not(.done-row) { display:none; }
+.done-row { margin:0 0 10px; }
+.done-row button.on { background:var(--ink); color:var(--card); }
 .long-h small { color:var(--ink3); font-weight:500; }
 #long section { border-color:var(--ink); border-width:1.5px; }
 #long pre { max-height:340px; overflow:auto; border-bottom:1px dashed var(--line); padding-bottom:10px; }
@@ -72,7 +76,7 @@ h3 small { color:var(--ink3); font-weight:500; }
   <div id="t-daily" class="grp"><h2 class="grp-h">日報貼文 · Daily post <small>每天早上</small></h2>
     <p class="desc">當日簡報的摘要加分享圖，中英各一則，280 字內，結尾帶網站連結。每天早上日報出來就發。</p><div id="posts"></div></div>
   <div id="long" class="grp" hidden><h2 class="grp-h">長貼文 · Long posts <small id="long-meta"></small></h2>
-    <p class="desc">每天 1–2 則圖表長貼文（X Premium 長貼文，不是 Article）：一個核心指標講透，配網站原圖，文中數字標在圖上。照建議時間發。</p><div id="long-list"></div>
+    <p class="desc">每天 1–2 則圖表長貼文（X Premium 長貼文，不是 Article）：一個核心指標講透，配網站原圖，文中數字標在圖上。照建議時間發。沒處理的會一直留著；發完按「標記已處理」，當天收起來，隔天就不再顯示（只記在這台裝置）。</p><div id="long-list"></div>
     <p class="tip">長貼文（手機）：按「在 X 發文（圖＋全文）」→ 分享選單裡選 X，配圖和全文會一起帶進發文框。全文同時已複製：如果文字沒帶進去或被截斷，把發文框的字全選刪掉、直接貼上。<br>
     電腦：按「在 X 發文」會打開 X 網頁版發文框；全文在約 730 字以內會直接帶入（同日報），更長的 X 網址收不下，會先複製全文、打開空白發文框，貼上即可 → 回來按「複製圖片」→ 在發文框再貼一次就加上圖了。文字框可以點一下展開。</p></div>
   <div id="t-picks" class="grp"><h2 class="grp-h">推薦圖表 · Today's picks <small id="picks-meta"></small></h2>
@@ -200,19 +204,26 @@ h3 small { color:var(--ink3); font-weight:500; }
 
   // ---------- 長貼文（2026-11-05）----------
   // data/longposts.json：{"items": [{"id", "time"（建議發文時間，UTC）, "title", "note", "zh", "en"（可省）, "images": ["data/longposts/<id>.png", ...]}]}
-  // 只顯示台北時間今天的，依建議時間排；X Premium 長貼文，不受 280 字限制（只顯示字數）
+  // 2026-11-05 改：不只今天，沒處理的一直顯示；「標記已處理」記在這台裝置（localStorage daybreak.longdone：{id: 處理那天的台北日期}），
+  // 當天收起來排到最後，隔天起不再顯示。檔案裡的舊則由 Claude 寫新長貼文時清掉（見 ops/README.md「長貼文」）。X Premium 長貼文，不受 280 字限制（只顯示字數）
+  var LDK = 'daybreak.longdone', ldone = function () { try { return JSON.parse(localStorage.getItem(LDK) || '{}'); } catch (e) { return {}; } };
   getJSON('data/longposts.json').then(function (F) {
-    var list = (F.items || []).filter(function (x) { return tpe(x.time) === TODAY; });
+    var D = ldone(), list = (F.items || []).filter(function (x) { return !D[x.id] || D[x.id] >= TODAY; });
     if (!list.length) return;
-    list.sort(function (a, b) { return new Date(a.time) - new Date(b.time); });
+    list.sort(function (a, b) { return (!!D[a.id] - !!D[b.id]) || (new Date(a.time) - new Date(b.time)); });
     var el = document.getElementById('long-list'), LB = { zh: ['中文', '', '存到相簿', '只複製全文', '下載圖片', ' 字', MOBILE ? '在 X 發文（圖＋全文）' : '在 X 發文（先貼全文）', '全文太長帶不進去，已複製，打開 X 後貼上', '複製圖片'],
                                                          en: ['English', '', 'Save to Photos', 'Copy text only', 'Download image', ' chars', MOBILE ? 'Post on X (images + text)' : 'Post on X (paste text)', 'Too long to prefill: text copied, paste it in X', 'Copy image'] };
     document.getElementById('long').hidden = false; document.getElementById('nav-long').hidden = false;
-    document.getElementById('long-meta').textContent = list.length + ' 則 · ' + TODAY;
+    var meta = function (D3) { var left = list.filter(function (x) { return !D3[x.id]; }).length;
+      document.getElementById('long-meta').textContent = left + ' 則未處理' + (list.length > left ? ' · ' + (list.length - left) + ' 則今天處理過' : ''); };
+    meta(D);
     el.innerHTML = list.map(function (x) {
       var hm = new Date(x.time).toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
       var ims = (x.images || []).map(function (p) { return img(p); });
-      return '<section><h2>' + esc(x.title || '') + ' <small>建議 ' + hm + '</small></h2>' + (x.note ? '<p class="why">' + esc(x.note) + '</p>' : '') +
+      var dn = !!D[x.id];
+      return '<section class="' + (dn ? 'done' : '') + '" data-id="' + esc(x.id) + '"><h2>' + esc(x.title || '') + ' <small>建議 ' + hm + '</small></h2>' +
+        '<div class="btns done-row"><button class="ldone' + (dn ? ' on' : '') + '" data-id="' + esc(x.id) + '">' + (dn ? '✓ 已處理（明天就不顯示）· 復原' : '標記已處理') + '</button></div>' +
+        (x.note && !dn ? '<p class="why">' + esc(x.note) + '</p>' : '') +
         ['zh', 'en'].filter(function (lang) { return x[lang]; }).map(function (lang) {
           var k = 'long:' + x.id + ':' + lang, t = x[lang], B = LB[lang];
           var names = ims.map(function (_, i) { return 'daybreak-' + x.id + (ims.length > 1 ? '-' + (i + 1) : '') + (lang === 'en' ? '-en' : '') + '.png'; });
@@ -227,6 +238,17 @@ h3 small { color:var(--ink3); font-weight:500; }
         }).join('') + '</section>';
     }).join('');
     bind(el);
+    el.querySelectorAll('.ldone').forEach(function (b) {
+      b.onclick = function () {
+        var D2 = ldone(), id = b.dataset.id, on = !D2[id];
+        if (on) D2[id] = TODAY; else delete D2[id];
+        try { localStorage.setItem(LDK, JSON.stringify(D2)); } catch (e) {}
+        var s = b.closest('section'); s.classList.toggle('done', on); b.classList.toggle('on', on);
+        b.textContent = on ? '✓ 已處理（明天就不顯示）· 復原' : '標記已處理';
+        var why = s.querySelector('.why'); if (why) why.hidden = on;
+        meta(D2);
+      };
+    });
   }).catch(function () {});
 
   // ---------- 今日推薦圖表 ----------
