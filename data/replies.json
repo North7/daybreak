@@ -16,17 +16,17 @@
    "lang": "zh",
    "angle": "交叉驗證",
    "summary": "用 2023 年 1–9 月的經驗看短期持有者成本線（STH-RP）的標準差帶：碰到 +1 標準差遇阻後回調，回到成本線或 −1 標準差之間。現在成本線約 75,700、−1 標準差約 68,900，列出三種回撤情境，「不做預測，只做計劃」。",
-   "reply": "我用 Bitview 的成本算了同一組帶，數字跟你很接近：成本 75,961、−1 標準差 69,096。這輪 9/21 的高點剛好碰到 +1.26 個標準差就回頭，跟你說的 2023 年遇阻是同一個樣子；現在回到 +0.14，貼著均值。",
-   "sources": "短期持有者成本 75,961、−1 標準差 69,096、現在 +0.14 個標準差、120 日最高 +1.26（9/21）· 11/04 · Bitview（近 4 年價格÷成本的平均 ± 標準差）",
-   "note": "Murphy 一律優先。他的帶是成本 ± 標準差，我們是成本 ×（價格÷成本的平均 ± 標準差），所以 +1 的位置不同（我們的 +1 是 88,997），回覆只對 −1 和成本，不碰他的 +1；他的三種情境（交易計劃）不評論。",
+   "reply": "三種情境裡，我最在意第一檔。76K 這格有 65.1 萬顆上週才換手的短期籌碼，跌回 76,000 的話，水下的短期籌碼會從 136.7 萬跳到 252.5 萬，再往下 74K–66K 幾乎是空的。所以 75,700 這次比 2023 年那幾次更要命，失守就不會是慢慢磨。",
+   "sources": "短期持有者籌碼 76K 這格 65.1 萬顆；收盤 80,000 時帳面虧損的短期持有者 136.7 萬顆、76,000 時 252.5 萬顆（條件句）· 11/04 · CheckOnChain（實際幣齡）；74K–66K 的短期籌碼看圖",
+   "note": "Murphy 一律優先。我們的成本帶就是照他 11/04 這則做的，所以不再對帶上的數字（那只是附和）；改成回答他的三種情境「到了那個價位會發生什麼」：籌碼厚度與水下籌碼變化。他的交易計劃不評論。",
    "image": {
     "site": {
      "page": "onchain",
-     "sel": "#c-sthband"
+     "sel": "#c-cohort"
     },
-    "title": "同一組成本帶：成本 75,961、−1 標準差 69,096"
+    "title": "跌回 76K：水下的短期籌碼從 136.7 萬顆跳到 252.5 萬"
    },
-   "quote": "Murphy 用短期持有者成本的標準差帶回看 2023 年：碰到 +1 標準差遇阻，回到成本線附近。我用 Bitview 算同一組帶，成本 75,961、−1 標準差 69,096，和他的 75,700、68,900 幾乎一樣。這輪 9/21 高點到 +1.26 就回頭，現在 +0.14。\n\n#比特幣 #BTC #鏈上數據",
+   "quote": "Murphy 列了三種回撤情境：75,700、72,300、或兩者之間。我最在意第一檔：76K 有 65.1 萬顆上週才換手的短期籌碼，跌回 76,000，水下的短期籌碼會從 136.7 萬跳到 252.5 萬，下面 74K–66K 幾乎是空的。\n\n#比特幣 #BTC #鏈上數據",
    "mode": "quote"
   },
   {
@@ -42,7 +42,7 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "牛市初期 BTC 很少有效跌破 365 日均線；這次插針碰到短期持有者成本（STH-RP）後反彈、收回真實市場均價（TMMP）上方，牛市結構完好；上方先看 STH +0.5σ 約 83.86K。",
-   "reply": "插針碰成本線那下我也有看到。想補一個比較慢的數字：短期成本 75,961 其實還在真實市場均價 77,627 下面 2.15%，上次由下往上穿過去是 2023-11-12。照近 30 天的速度線性外推，大約 12/2 會碰到，這條我會一直追。",
+   "reply": "插針那一下我也看到了，嚇一跳又拉回來。不過我會說結構完好、但還沒確認：短期成本 75,961 還在真實市場均價 77,627 下面 2.15%，新進場的人整體還沒買貴。照近 30 天的速度外推約 12/2 上穿，我會把那天當成這輪換手完成。",
    "sources": "短期持有者成本 75,961、真實市場均價 77,627、差 −2.15%、上次上穿 2023-11-12、線性外推約 2026-12-02 · 11/04 · Bitview",
    "note": "昨天互動最多的帳號（按讚、回覆、回追）。12/2 是線性外推，回覆裡已寫明。他的 +0.5σ 83.86K 我們沒有同口徑數字，不提。",
    "image": {
@@ -68,15 +68,15 @@
    "lang": "zh",
    "angle": "交叉驗證",
    "summary": "BTC 重回 8 萬（約 80,400），用 Glassnode 圖列關鍵位：真實市場均值 7.77 萬、365 日均線 7.68 萬、短期持有者成本與 50 週均線 7.57–7.58 萬、200 日均線 7.32 萬；判斷是「結構複雜的牛初」，接下來看能否挑戰 8.4–8.5 萬。",
-   "reply": "你列的幾條線我這邊幾乎一樣：真實市場均價 77,627、短期成本 75,961。往上 8.4 萬那段我也特別在看，籌碼圖上那是長期持有者最厚的一格，84K 有 80.1 萬顆，等於老手的貨大多堆在那裡。",
-   "sources": "真實市場均價 77,627（Bitview）、短期持有者成本 75,961（Bitview）、長期持有者籌碼 84K 這格 80.1 萬顆（CheckOnChain）· 11/04",
-   "note": "昨天有按讚。同一作者另一則（50 週均線）不回。",
+   "reply": "你列的線我這邊幾乎一樣。我反而覺得 8.4 萬才是牛初真正的考驗：6–12 個月前買的人平均成本 83,569，套了大半年，好不容易回本最想走。能站過那裡，比收復 8 萬更有說服力。",
+   "sources": "6–12 個月持幣成本 83,569（12–18 個月 111,808）· 11/04 · Bitview",
+   "note": "昨天有按讚。同一作者另一則（50 週均線）不回。籌碼圖給了 Murphy，這則改用持幣成本圖。",
    "image": {
     "site": {
-     "page": "onchain",
-     "sel": "#c-cohort"
+     "page": "cycle",
+     "sel": "#c-agecost"
     },
-    "title": "84K：長期持有者最厚的一格，80.1 萬顆"
+    "title": "6–12 個月持幣成本 83,569，就在 8.4 萬"
    }
   },
   {
@@ -92,7 +92,7 @@
    "lang": "zh",
    "angle": "提出反例",
    "summary": "CoinGlass 清算地圖：往上突破 82,000 空單清算強度 3.37 億，往下踩穿 79,000 多單 9.19 億，是上方的 2.7 倍；另有 5 億 USDT 從 Tether Treasury 進幣安。",
-   "reply": "「清算地圖翻個面」這個角度很好。不過我用 OKX 未平倉推算的版本，結果剛好反過來：收盤上下 5% 內，上方待清算的空單約 5,542 顆，下方多單只有 776 顆。口徑不同（只有 OKX、是推算），兩張擺一起看反而有意思。",
+   "reply": "「清算地圖翻個面」這招我喜歡。好玩的是，我用 OKX 未平倉推算的版本剛好相反：收盤上下 5% 內，上方空單約 5,542 顆、下方多單只有 776 顆。兩邊口徑打架，至少說明多頭沒有一面倒堆在下面，「喂清算引擎」先別急著下結論。",
    "sources": "收盤上下 5% 內推算待清算：上方 5,542 顆、下方 776 顆；空單清算帶 82,000–83,000 · 11/05 00:00 UTC · OKX 未平倉推算",
    "note": "昨天有按讚、回覆。和他的 CoinGlass 數字方向相反，回覆已說明口徑不同，語氣是並列不是糾正。同一作者 USDT 那則不回。",
    "image": {
@@ -116,7 +116,7 @@
    "lang": "zh",
    "angle": "交叉驗證",
    "summary": "一夜漲 4.19%，大戶空頭名義反而加了 1.86 億、多頭只加 0.37 億；24 小時空單爆倉 1.573 億，說明上漲主要是空頭被迫買回，不是多頭加倉。",
-   "reply": "大戶空頭在加這點，Hyperliquid 那邊也看得到：帳戶淨值前 300 名裡，空單 7,891 顆、多單 3,646 顆，空方是多方的兩倍多。資金費率也從 10.7% 降到 8.68%，價格漲、多單付的錢反而少，跟你說的「強制買回」對得上。",
+   "reply": "這組數字很清楚。Hyperliquid 那邊也是同一個畫面：淨值前 300 名空 7,891 顆、多 3,646 顆，資金費率還從 10.7% 降到 8.68%。我同意是空單買回推上來的，而且大戶空方還沒撤，8 萬站不站得住，球其實在空頭手上。",
    "sources": "Hyperliquid 淨值前 300 名：空 7,891 顆（22 戶）、多 3,646 顆（16 戶）· 11/05 00:06 UTC；加權資金費率 10.7% → 8.68% · 11/04 · OKX、Hyperliquid、Deribit",
    "note": "昨天互動最多的帳號之一（按讚、回覆、在我們貼文底下留言 3 則）。這則不配圖：Hyperliquid 大戶在網站上沒有圖。"
   },
@@ -133,7 +133,7 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "BTC 一天從 75,734 拉到 81,200（約 +7%），但 ETF 11 月頭兩個交易日淨流出約 5.1 億；引 Bitfinex、Wintermute 說法：反彈主要靠被動掛單與合約槓桿，只當反彈不當反轉，問讀者站得住還是要回踩。",
-   "reply": "「漲得快不稀奇，現貨和 ETF 肯買才算數」同意。不過有個地方在動：Coinbase 溢價每日值從 −0.151% 收斂到 −0.094%，還是負的，但賣壓在變輕；亞洲場外 USDT 折價也從 1.137% 縮到 0.838%。我會先看美國這條什麼時候翻正。",
+   "reply": "「漲得快不稀奇，現貨和 ETF 肯買才算數」這句我同意。但說沒人買也不太對：Coinbase 溢價每日值從 −0.151% 收到 −0.094%，美國現貨賣得越來越少；亞洲場外折價也從 1.137% 縮到 0.838%。需求在回暖、還沒到位，等溢價翻正我才會叫它反轉。",
    "sources": "Coinbase 溢價每日值 −0.151% → −0.094%、7 日均 −0.187%（近一年第 0.7 百分位）；OKX 場外 USDT 折價 1.137% → 0.838% · 11/04 · Coinbase／Binance、OKX",
    "note": "依 11/05 改稿紀錄：講資金流向看每日值方向。圖上左邊是 7 日均（還在一年低點），右邊是亞洲場外，標題兩邊都講到。",
    "image": {
@@ -157,7 +157,7 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "現貨 ETF 連三日淨流出（11/3 約 1.16 億、10/30 約 6.43 億），企業財庫增持也放緩，認為問題是新增買盤不足；更關注 ETF 何時恢復持續淨流入。",
-   "reply": "買盤不足這點，我這邊還有一條線在講同一件事：穩定幣。總量 2,951 億美元，30 天少了 122 億。ETF 和穩定幣同時在退，場外的新錢確實還沒回來。",
+   "reply": "同意，卡住的就是新增買盤。我甚至覺得源頭比 ETF 更上游：穩定幣總量 2,951 億美元，30 天少了 122 億。ETF 是機構的入口，穩定幣是整個圈子的子彈，兩邊一起退。比起 ETF 哪天轉正，我更在意穩定幣什麼時候止跌。",
    "sources": "穩定幣總量 2,951 億美元、30 日 −122 億 · 11/04 · DefiLlama",
    "note": "ETF 的數字留給 ecoinometrics（英文），這則換穩定幣，避免同一天重複。7 日變化不寫：notes 是 −2.15%、網站圖上的異動標籤是 −2.38%（起點不同），兩個數字對不上。",
    "image": {
@@ -181,7 +181,7 @@
    "lang": "en",
    "angle": "補數據",
    "summary": "Bitcoin ETF demand has changed regime: late October inflows faded within days, flows flipped to strong outflows, and in that regime BTC daily returns have usually been negative.",
-   "reply": "Agree on the regime shift. One thing in the daily prints though: −$643M on Oct 30, −$399M on Nov 2, −$116M on Nov 3 (provisional). Still outflows, but each day smaller. Nov 4 hasn't printed yet, and that's the one I'm watching.",
+   "reply": "Same regime read here. What stands out to me is how fast the daily prints are shrinking: −$643M Oct 30, −$399M Nov 2, −$116M Nov 3 (provisional). That looks like the tail of the late-October wave, not a new leg. A big Nov 4 number would change my mind.",
    "sources": "ETF 淨流量 10/30 −643.2M、11/02 −398.6M、11/03 −115.6M（暫定，Farside、SoSoValue）· The Block",
    "note": "10 萬粉大帳號、發文 11 小時、7 則回覆，建議用引用。",
    "image": {
@@ -191,7 +191,7 @@
     },
     "title": "Spot ETF outflows: three days in a row, each one smaller"
    },
-   "quote": "ecoinometrics says Bitcoin ETF demand has flipped to strong outflows. The daily prints agree on direction, but each day is smaller: −$643M (Oct 30), −$399M (Nov 2), −$116M (Nov 3, provisional). Nov 4 is the next print.\n\n#Bitcoin #BTC #ETF",
+   "quote": "ecoinometrics says ETF demand flipped to strong outflows. Fair, but each day is smaller: −$643M (Oct 30), −$399M (Nov 2), −$116M (Nov 3, provisional). I read it as the tail of a selling wave, not a new leg.\n\n#Bitcoin #BTC #ETF",
    "mode": "quote"
   },
   {
@@ -207,7 +207,7 @@
    "lang": "en",
    "angle": "補數據",
    "summary": "Midterms came and went; looks at 70+ years / 19 midterms for what comes next for markets and Bitcoin. Midterm years are tough, October is usually the worst month.",
-   "reply": "One midterm detail from on-chain I didn't expect: in 2022, the 6–12 month holder cost fell below the 12–18 month cost on Nov 8, election day itself. The golden cross took 367 days to come. This cycle that death cross already happened on July 15, 112 days ago.",
+   "reply": "Here's a midterm detail I didn't expect: in 2022 the 6–12 month holder cost fell below the 12–18 month cost on Nov 8, election day itself. The golden cross took 367 days. This cycle that cross came July 15, 112 days ago. I don't think 2022 is the right template.",
    "sources": "6–12 月持幣成本跌破 12–18 月：2022-11-08（死叉）→ 2023-11-10（金叉，367 天）；本輪 2026-07-15 死叉、112 天前；現值 83,569 vs 111,808 · 11/04 · Bitview",
    "note": "18 萬粉、發文約 2 小時，建議用引用；只講歷史，不推論後市。",
    "image": {
@@ -217,7 +217,7 @@
     },
     "title": "2022: death cross on election day. 2026: July 15"
    },
-   "quote": "Mark Moss is looking at 19 midterms. One on-chain detail: in 2022 the 6–12m holder cost crossed below the 12–18m cost on election day (Nov 8), and the golden cross took 367 days. This cycle it came July 15, 112 days ago.\n\n#Bitcoin #BTC #onchain",
+   "quote": "Mark Moss is reading 19 midterms. On-chain, 2022's death cross (6–12m vs 12–18m holder cost) hit on election day, and the golden cross took 367 days. This cycle it came July 15, already 112 days ago. 2022 isn't the right template.\n\n#Bitcoin #BTC #onchain",
    "mode": "quote"
   },
   {
@@ -233,7 +233,7 @@
    "lang": "en",
    "angle": "交叉驗證",
    "summary": "2022 midterms marked the cycle bottom ($18.5K on election day, then ~$15.5K). 2026 midterms: $77K, 39% off ATH, low already in at $58.5K months ago; bottom looks front-loaded this cycle.",
-   "reply": "The $58.5K low lines up with something I track: long-term holder supply in loss peaked at 45.4% on June 30, right at $58.4K. 2019 topped at 46.4%, 2022 at 44.7%. It's back down to 31.5% now.",
+   "reply": "Same feeling here, and the LTH data backs it. LTH supply in loss peaked at 45.4% on June 30, right at $58.4K, in line with 2019 (46.4%) and 2022 (44.7%). It's 31.5% now. I'm convinced the long-term holder capitulation already happened in June.",
    "sources": "長期持有者虧損比例：本輪高點 45.4%（2026-06-30，價格 58,367）、2019/03 46.4%、2022/12 44.7%、最新 31.5% · 11/04 · CheckOnChain",
    "note": "原文結尾有「慢慢 DCA」的建議，回覆只講數據，不呼應。",
    "image": {
@@ -257,7 +257,7 @@
    "lang": "en",
    "angle": "提出反例",
    "summary": "BTC back above 80K after the midterms; CoinGlass shows $363M liquidated in one hour, $269M of it shorts. \"Nothing changed on chain last night, people just stopped being scared.\" Prefers spot and patience over leverage.",
-   "reply": "Agree on the leverage part. Small pushback on \"nothing changed on chain\" though: STH-SOPR went from 0.9954 to 1.0021, and the share of short-term holder supply in profit jumped from 30.25% on Nov 2 to 62.89%. New buyers flipped from selling at a loss to selling at cost.",
+   "reply": "Agree on the leverage part. But something did change on chain: STH-SOPR went 0.9954 → 1.0021, and STH supply in profit jumped from 30.25% to 62.89%. The squeeze put last week's dip buyers back above water, and that takes forced loss selling off the table for now.",
    "sources": "STH-SOPR 0.9954 → 1.0021（CheckOnChain，11/04）；短期持有者獲利比例 30.25%（11/02）→ 62.89%（11/04，Bitview）",
    "note": "",
    "image": {
