@@ -49,7 +49,7 @@ X 的「原創內容獎勵」（2026-09-07 起取代創作者分潤，見 [`../R
 
 ## 固定名單（watchlist.json）
 
-2026-11-04 建立，目前 27 個帳號（同一天加了 Grok 推薦的 4 個、你指定的 PiusSprenger）：Murphy 和中文鏈上博主為主，加上幾個英文 ETF、鏈上帳號和研究機構。`scan.py` 讀的是 api.fxtwitter.com 的個人頁貼文（第三方、公開、不需登入），只有原創和引用，看不到他們回覆別人的貼文。
+2026-11-04 建立，目前 36 個帳號（同一天加了 Grok 推薦的 4 個、你指定的 PiusSprenger；11-05 加了你指定的 9 個英文鏈上帳號：glassnodealerts、cryptoquant_com、AxelAdlerJr、CryptoVizArt、willywoo、lookonchain、whale_alert、caprioleio、rektcapital）：Murphy 和中文鏈上博主為主，加上幾個英文 ETF、鏈上帳號和研究機構。`scan.py` 讀的是 api.fxtwitter.com 的個人頁貼文（第三方、公開、不需登入），只有原創和引用，看不到他們回覆別人的貼文。
 
 - **加帳號**：Grok 回報的新博主、或回覆後有互動的帳號（回覆、回追），連續一週常發比特幣數據的，加進 `accounts`：`handle`、`name`、`lang`（zh／en）、`type`（blogger／research）、`note`。加之前用 `https://api.fxtwitter.com/<handle>` 確認帳號讀得到、粉絲 2,000 以上。
 - **拿掉帳號**：一個月幾乎沒有講比特幣數據的貼文，或改成以喊單、廣告為主的。
