@@ -590,3 +590,52 @@ def capflow_viz(bv, px, last, step=3):
                 m1_30=round(a[d30], 1) if d30 else None, y12_30=round(b[d30], 1) if d30 else None, m1_1y=round(a[d365], 1) if d365 else None, y12_1y=round(b[d365], 1) if d365 else None,
                 peaks_m1=[[d, round(a[d], 1)] for d in _peaks(a, D, floor=15)], peaks_y12=[[d, round(b[d], 1)] for d in _peaks(b, D, floor=25)],
                 rows=rows, note='Bitview：1 個月內＝<1h、1h–1d、1d–1w、1w–1m 四段實現市值合計；1–2 年＝1y–18m、18m–2y；÷ 全體實現市值；只作讀值')
+
+
+# 2026-11-05 使用者要求（籌碼結構＋BRS＋集中度）：BRS 是 Glassnode 付費專有指標、算法不公開，改做本站自製的「短期壓力分數」，只看相對高低、不當買賣訊號。
+#   四項（Bitview）：短期持有者獲利比例、價格 ÷ 短期持有者成本、短期持有者 SOPR（7 日平均）、距近 60 天高點的跌幅；
+#   每項和自己近 180 天比（百分位，無前視），四項平均後只取「比平常更差」的那一半：平均百分位 ≥ 50% 為 0，越往最差越接近 100（≤ 10% 為 100）。
+#   走勢和 BRS 的公開圖大致同向（2018 年 2、6、11–12 月與 2025/10–2026/02 都到 100；2026/10 下旬約 20–30，BRS 約 25），
+#   但照「到 100 買、回 0 賣」回測：2013–17 年 11/12 次獲利、2018–22 年只有 1/7、2023 年起 7/9 次，熊市裡沒有優勢，所以只作讀值。
+ST_W, ST_FROM = 180, '2018-01-01'
+
+
+def stress_viz(bv, px, last, step=1):
+    import bisect
+    sp, st_, so = bv.get('sthp') or {}, bv.get('sth') or {}, bv.get('ssopr') or {}
+    P = lambda d: px.get(d, bv['px'].get(d))
+    D = [d for d in sorted(set(sp) & set(st_) & set(so) & set(bv['px'])) if '2012-01-01' <= d <= last]
+    if len(D) < 800: return None
+    s7, dd = {}, {}
+    for i, d in enumerate(D):
+        w = [so[x] for x in D[max(0, i - 6): i + 1]]; s7[d] = sum(w) / len(w)
+        dd[d] = P(d) / max(P(x) for x in D[max(0, i - 59): i + 1]) - 1
+    comp = [sp, {d: P(d) / st_[d] for d in D}, s7, dd]
+
+    def pctl(ser):
+        out, win = {}, []
+        for i, d in enumerate(D):
+            bisect.insort(win, ser[d])
+            if i >= ST_W: win.pop(bisect.bisect_left(win, ser[D[i - ST_W]]))
+            if i >= ST_W: out[d] = bisect.bisect_left(win, ser[d]) / len(win)
+        return out
+    Pc = [pctl(c) for c in comp]
+    sc = {d: round(max(0.0, min(1.0, (0.5 - sum(p[d] for p in Pc) / 4) / 0.4)) * 100) for d in D if all(d in p for p in Pc)}
+    S = sorted(sc); d1 = S[-1]
+    # 照 BRS 的用法回測（到 100、之後第一次回到 0），分三段照實列出
+    ev, armed, i = [], True, 0
+    while i < len(S):
+        d = S[i]
+        if armed and sc[d] >= 100:
+            k = next((m for m in range(i + 1, len(S)) if sc[S[m]] <= 0), None)
+            ev.append([d, round(P(d)), S[k] if k else None, round((P(S[k]) / P(d) - 1) * 100, 1) if k else None]); armed = False; i = k if k else len(S); continue
+        if not armed and sc[d] <= 0: armed = True
+        i += 1
+    era = []
+    for lo, hi in (('2013-01-01', '2017-12-31'), ('2018-01-01', '2022-12-31'), ('2023-01-01', last)):
+        x = [e for e in ev if lo <= e[0] <= hi and e[3] is not None]
+        era.append(dict(lo=lo[:4], hi=hi[:4], n=len(x), win=sum(e[3] > 0 for e in x), med=round(sorted(e[3] for e in x)[len(x) // 2], 1) if x else None))
+    rows = thin([[dn(d), sc[d]] for d in S if d >= ST_FROM], step)
+    run0 = next((k for k, d in enumerate(reversed(S)) if sc[d] > 0), len(S))   # 已經連續幾天是 0
+    return dict(date=d1, value=sc[d1], max30=max(sc[d] for d in S[-30:]), zero_run=run0, rows=rows, events=ev[-12:], era=era, w=ST_W,
+                note='本站自製（不是 Glassnode 的 BRS）：短期持有者獲利比例、價格 ÷ 短期持有者成本、短期持有者 SOPR 7 日平均、距近 60 天高點跌幅，各和近 180 天比的百分位平均，只取比平常差的一半映成 0–100；只作讀值、不是買賣訊號')
