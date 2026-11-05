@@ -11,6 +11,9 @@ ops/
   README.md          這份說明
   post/index.html    X 發文小幫手（原本的根目錄 post.html，2026-11-04 搬進來；根目錄 post.html 現在只轉址到這裡）
   post/flash.py      快訊配圖 → data/flash/<id>-<語言>.png（依 data/flash.json）
+  post/site_shot.py  網站圖表截圖（本機 Chrome 無頭模式＋內建小伺服器；深色；藏掉解讀文字）＋圖上文字位置 .json
+  post/annotate.py   把文中引用的數字標在截圖上（座標由圖自己的刻度換算）
+  post/longpost_img.py 長貼文配圖：幾張截圖疊成一張，標「圖1、圖2…」＋頁尾 → data/longposts/<id>.png
   picks/             每日推薦發文圖表＋解說的說明（程式在 pipeline/picks.py，圖在 data/picks/，見 picks/README.md）
   video/             每日短影片腳本（原本在 media/）
     make_audio.py      配音（edge-tts 台灣語音）＋自製配樂 → timing.json、mix.wav
@@ -61,6 +64,7 @@ ops/
 | 你 | 手機開發文小幫手 | 一鍵把圖文送進 X | <https://north7.github.io/daybreak/ops/post/> |
 | 你／Claude | 本機 | 做當日短影片（見下） | `ops/video/out/` |
 | 日報後 | Claude＋Grok → Claude → 你 | Claude 掃固定名單、Grok 找名單以外的貼文，Claude 讀原文、依當日數據寫回覆和配圖，你在回覆小幫手照順序回（標「建議引用」的用引用發）；讀原文時看到網站還沒有的指標或圖，順手記下 | `data/replies.json`、`data/replies/`；<https://north7.github.io/daybreak/ops/replies/>；點子記在 [`docs/indicator-ideas.md`](../docs/indicator-ideas.md) |
+| 中午、晚上 | Claude → 你 | 每天 1–2 則圖表長貼文（X Premium 長貼文，不是 Article）：寫法見 [`brand/voice.md`](brand/voice.md) 改稿紀錄；配網站原圖（深色、文中數字標在圖上），放到發文小幫手「長貼文」 | `data/longposts.json`、`data/longposts/` |
 | 盤中有事時 | Claude → 你 | 新低／新高、ETF 數據、大爆倉：寫中英文快訊和配圖，放到發文小幫手最上面 | `data/flash.json`、`data/flash/` |
 | 你傳通知截圖時；隔天寫回覆前 | Claude | 記錄當天發了什麼、誰回應、瀏覽多少；隔天更新數字並彙整 | `ops/log/<日期>.json`（見 [`log/README.md`](log/README.md)） |
 
@@ -107,3 +111,14 @@ python make_short_017.py ../.. ~/fonts out/daybreak-017-short.mp4 --audio out/01
 ## 之後可以加
 
 - 影片模板化：把 `make_short_0xx.py` 共用的繪圖函式抽成一份，每期只換分鏡與旁白 JSON。
+
+## 長貼文（2026-11-05 起）
+
+每天 1–2 則，X Premium 長貼文（不是 X 長文 Article）。發文小幫手的「長貼文」一區只顯示台北時間今天的；**每天整份換新**：`data/longposts.json` 只留當天的 items，`data/longposts/` 刪掉前一天的圖（快訊 `data/flash.json`、`data/flash/` 也一樣，過期就刪）。
+
+- **寫法**（細節在 `brand/voice.md`）：像 Murphy 日常長貼文的深度和長度（約 600–1,000 字），一個核心指標＋1–2 個佐證；標題句 → 帶日期的數字 → 「何謂…」白話 → 歷史規律 → 現在 → 誰在買、誰在賣（只從大週期講）→ 我的判斷（有信心）→ 什麼情況會改看法 → 之後會再追。引用的極值用每日資料核對（`pipeline/coc_cache/bitview.json` 等），不要用 latest.json 裡抽樣過的 rows。
+- **配圖**（在倉庫根目錄）：
+  1. `python3 ops/post/site_shot.py <jobs.json> <資料夾>`：jobs 寫 `"theme": "dark"`、每張 `"clean": 1`，截網站原圖（上格價格、下格指標）。
+  2. `python3 ops/post/annotate.py <spec.json> <資料夾> <輸出> <字型>`：文中提到、圖上找得到的數字都標上去。
+  3. `python3 ops/post/longpost_img.py data/longposts/<id>.png <字型> <圖1> <圖2> ...`：疊成一張，標「圖1、圖2…」。X 多圖格子會把橫圖裁掉，所以一則只放這一張。
+- `data/longposts.json`：`{"items": [{"id", "time"（建議發文時間，UTC）, "title", "note", "zh", "en"（可省）, "images": ["data/longposts/<id>.png"]}]}`
