@@ -74,7 +74,7 @@ h3 small { color:var(--ink3); font-weight:500; }
   <div id="long" class="grp" hidden><h2 class="grp-h">長貼文 · Long posts <small id="long-meta"></small></h2>
     <p class="desc">每天 1–2 則圖表長貼文（X Premium 長貼文，不是 Article）：一個核心指標講透，配網站原圖，文中數字標在圖上。照建議時間發。</p><div id="long-list"></div>
     <p class="tip">長貼文（手機）：按「在 X 發文（圖＋全文）」→ 分享選單裡選 X，配圖和全文會一起帶進發文框。全文同時已複製：如果文字沒帶進去或被截斷，把發文框的字全選刪掉、直接貼上。<br>
-    電腦：按「在 X 發文」會打開 X 網頁版發文框（全文已複製），貼上後把「下載圖片」的圖拖進去。文字框可以點一下展開。</p></div>
+    電腦：按「在 X 發文」會複製全文並打開 X 網頁版發文框 → 貼上全文 → 回來按「複製圖片」→ 在發文框再貼一次就加上圖了。文字框可以點一下展開。</p></div>
   <div id="t-picks" class="grp"><h2 class="grp-h">推薦圖表 · Today's picks <small id="picks-meta"></small></h2>
     <p class="desc">短圖說（280 字內）加一張圖。可以在長貼文之外補發，或貼到 Threads 等其他平台。</p>
     <div id="picks"><p class="sub">讀取中… Loading…</p></div></div>
@@ -105,12 +105,19 @@ h3 small { color:var(--ink3); font-weight:500; }
     var list = function (f) { return f ? (Array.isArray(f) ? f : [f]) : null; };
     var canShare = function (f) { return f && navigator.canShare && navigator.canShare({ files: f }); };
     root.querySelectorAll('.share, .save').forEach(function (b) {
-      if (!navigator.share) { b.hidden = true; return; }   // 不支援分享選單的瀏覽器（多數電腦）就藏起來，改用下載
+      if (!navigator.share || !MOBILE) { b.hidden = true; return; }   // 電腦藏起來（Mac 的分享選單沒有 X、也沒有存相簿），改用下載／複製圖片
       b.onclick = function () {
         var k = b.dataset.k, f = list(files[k]), text = b.classList.contains('share') ? texts[k] : null;
         if (!canShare(f)) { flash(b, '圖還在載入 · loading…'); return; }
         if (text) copy(text).catch(function () {});
         navigator.share(text ? { files: f, text: text } : { files: f }).catch(function () {});
+      };
+    });
+    root.querySelectorAll('.copyimg').forEach(function (b) {   // 電腦：圖片複製到剪貼簿，在 X 網頁版發文框直接貼上
+      if (MOBILE || !window.ClipboardItem || !navigator.clipboard || !navigator.clipboard.write) { b.hidden = true; return; }
+      b.onclick = function () {
+        var f = list(files[b.dataset.k]); if (!f) { flash(b, '圖還在載入…'); return; }
+        navigator.clipboard.write([new ClipboardItem({ 'image/png': f[+(b.dataset.i || 0)] })]).then(function () { flash(b, '✓ 已複製，貼到 X'); }, function () { flash(b, '✗'); });
       };
     });
     root.querySelectorAll('pre.fold').forEach(function (p) { p.onclick = function () { p.classList.toggle('open'); }; });
@@ -123,7 +130,7 @@ h3 small { color:var(--ink3); font-weight:500; }
       b.onclick = function () {
         var k = b.dataset.k, t = texts[k] || '', f = list(files[k]);
         copy(t).catch(function () {});
-        if (navigator.share) {
+        if (MOBILE && navigator.share) {
           var data = canShare(f) ? { files: f, text: t } : { text: t };
           if (!canShare(f)) flash(b, '圖還在載入，先只帶文字…');
           navigator.share(data).catch(function () {});
@@ -196,8 +203,8 @@ h3 small { color:var(--ink3); font-weight:500; }
     var list = (F.items || []).filter(function (x) { return tpe(x.time) === TODAY; });
     if (!list.length) return;
     list.sort(function (a, b) { return new Date(a.time) - new Date(b.time); });
-    var el = document.getElementById('long-list'), LB = { zh: ['中文', '', '存到相簿', '只複製全文', '下載圖片', ' 字', '在 X 發文（圖＋全文）', '已複製全文，打開 X…'],
-                                                         en: ['English', '', 'Save to Photos', 'Copy text only', 'Download image', ' chars', 'Post on X (images + text)', 'Text copied, opening X…'] };
+    var el = document.getElementById('long-list'), LB = { zh: ['中文', '', '存到相簿', '只複製全文', '下載圖片', ' 字', MOBILE ? '在 X 發文（圖＋全文）' : '在 X 發文（先貼全文）', '已複製全文，打開 X…', '複製圖片'],
+                                                         en: ['English', '', 'Save to Photos', 'Copy text only', 'Download image', ' chars', MOBILE ? 'Post on X (images + text)' : 'Post on X (paste text)', 'Text copied, opening X…', 'Copy image'] };
     document.getElementById('long').hidden = false; document.getElementById('nav-long').hidden = false;
     document.getElementById('long-meta').textContent = list.length + ' 則 · ' + TODAY;
     el.innerHTML = list.map(function (x) {
@@ -213,6 +220,7 @@ h3 small { color:var(--ink3); font-weight:500; }
             '<button class="go xpost" data-k="' + k + '" data-done="' + B[7] + '">' + B[6] + '</button>' +
             '<button class="copy" data-k="' + k + '">' + B[3] + '</button>' +
             (ims.length ? '<button class="save" data-k="' + k + '">' + B[2] + '</button>' : '') +
+            ims.map(function (_, i) { return '<button class="copyimg" data-k="' + k + '" data-i="' + i + '">' + B[8] + (ims.length > 1 ? ' ' + (i + 1) : '') + '</button>'; }).join('') +
             (!MOBILE ? ims.map(function (u, i) { return '<a href="' + u + '" download="' + names[i] + '">' + B[4] + (ims.length > 1 ? ' ' + (i + 1) : '') + '</a>'; }).join('') : '') + '</div>';
         }).join('') + '</section>';
     }).join('');
