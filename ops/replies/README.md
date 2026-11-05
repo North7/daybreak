@@ -84,7 +84,8 @@ X 的「原創內容獎勵」（2026-09-07 起取代創作者分潤，見 [`../R
   - 數字少一點：通常一兩個就夠，可以取整數，完整數字放 `sources`。不要一開口就塞滿數字。
   - 開頭不固定：有時先講結論（「8 萬好收，8.4 萬才難。」），有時接住對方的話，有時一句感受（「插針那下真的嚇人」）。同一天不要每則都同一個結構。
   - **反問只在合適的時候用**：對方是在討論、會回的人，或貼文本身在問，問題才自然；不要為了互動硬加，不問買賣。
-  - 每則標 `style: "口語版"`，和之前的「人味版」比較成效。
+  - **不要 AI 腔**（2026-11-05 使用者：X 大幅降低 AI 文章的權重）：寫之前讀 [`../brand/voice.md`](../brand/voice.md) 的「真人說話，不要 AI 腔」。重點：少用「不是 X，是 Y」、金句開頭、冒號揭曉；數字取整；一則只做一件事；長短打散，大約三分之一一行就好；句尾不加句號。`check.py` 會擋明顯的 AI 用語，並對整批回覆印出提醒（對比句、小數、長度、問句收尾、開頭重複）。
+  - 每則標 `style`：11/06 起用 `"真人版"`，和之前的「口語版」「人味版」比較成效。
 - **先回應對方，再給數字**：第一句接住對方的話，例如引用他的原話（「『方向沒來，槓桿先死』這句很到位」）、表示同感（「Been watching the same thing」）、或回應他的問題（「77,000 還是 76,300 我不敢猜，但……」）。不要用「補一個數字：」「Daily data agrees:」「Our estimate lines up:」這種報告式開頭。
 - **用第一人稱「我」**：「我這邊看到」「我一直在追」「I track」。不要寫「本站」。
 - **像聊天**：句子長短交錯，少用分號和括號堆疊；英文可以用縮寫（I've、isn't、there's）。
@@ -95,6 +96,8 @@ X 的「原創內容獎勵」（2026-09-07 起取代創作者分潤，見 [`../R
 |---|---|
 | 補一個籌碼數字：76–78K 這層短期籌碼 11/03 一天由 59.4 萬增到 72.9 萬顆（CheckOnChain） | 77,000 還是 76,300 我不敢猜，但有個數字蠻有意思：76–78K 這一層的短期籌碼，11/03 一天就多了 13.5 萬顆 |
 | Daily data agrees: Coinbase premium 7-day avg hit −0.19% on Nov 3 | Been watching the same thing. The 7-day average just hit −0.19%, the lowest I've had since January. |
+| 同意，賣得少不等於有人買。Coinbase 溢價每日值從 −0.271% 收到 −0.094%，但一天都還沒翻正。翻正那天我才會改口。（AI 腔：對比句＋兩個小數＋工整收尾） | 同意 Coinbase 溢價這幾天是有收窄啦 但到現在一天都還沒翻正過 翻正那天我再改口 |
+| Tired sellers, no buyers. That's the whole story right now. My seller exhaustion read is near bear lows too (10.8th pct since 2011), but… （AI 腔：金句開頭＋總結句＋精確百分位） | Mine's sitting near bear lows too, bottom 10% or so since 2011. Demand is what bugs me though, still negative on both the 30d and 1y |
 
 **依建議角度寫**
 

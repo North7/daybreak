@@ -15,6 +15,14 @@ NEED = ('n', 'order', 'status', 'url', 'id', 'author', 'followers', 'posted', 'l
 HASH = re.compile(r'(^|\s)#[^\s#]+')   # hashtag：原創貼文（引用、快訊）要帶，回覆不帶
 # 太機械的寫法（README「要有人味」）：報告式開頭、自稱本站
 ROBOT = re.compile(r'^(補一個|補一組|補兩個|Daily data|Our .{0,40}estimate|Data shows)|本站', re.I)
+# AI 腔（2026-11-05 研究後訂，見 ops/brand/voice.md「真人說話，不要 AI 腔」）：一出現就擋
+AI_WORDS = re.compile(r'值得注意的是|值得一提|整體而言|總的來說|總而言之|綜上|首先[，,].{0,40}其次|不僅僅?是|而且老實說|說到底|這就是全部|'
+                      r'\b(delve|crucial|pivotal|underscores?|testament|tapestry|showcases?|Additionally|Moreover|Furthermore|'
+                      r"Here's the thing|That's the whole story|Fun (fact|detail)|No fluff|Let that sink in)\b|——|—", re.I)
+# 只提醒、不擋：一天裡出現太多次才是問題
+CONTRAST = re.compile(r'不是[^，。？\n]{1,24}[，,、 ]?(而)?是|不等於|\bnot (just |only )?an? [^,.]{1,30}, (but )?|, not an? |isn\'t [^,.]{1,30}[,.] it\'s|rather than', re.I)
+DECIMAL = re.compile(r'\d\.\d')
+QEND = re.compile(r'[？?]\s*$')
 
 
 def check():
@@ -61,7 +69,28 @@ def text_errors(tag, t, lang):
         if s: err.append(f'{tag} 有簡體字：{"".join(s)}')
     if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
     if ROBOT.search(t): err.append(f'{tag} 太機械（「{ROBOT.search(t).group(0)}」）：先回應對方、用「我」，見 README「要有人味」')
+    if AI_WORDS.search(t): err.append(f'{tag} AI 腔（「{AI_WORDS.search(t).group(0)}」）：見 voice.md「真人說話，不要 AI 腔」')
     return err
+
+
+def tone_notes(items):
+    """整批回覆的 AI 腔提醒（不擋）：單則看不出來，排在一起才看得出是同一個模板。"""
+    R = [it for it in items if it.get('status') != 'skip' and it.get('reply')]
+    if len(R) < 5: return []
+    n = len(R); out = []
+    def share(f): return sum(1 for it in R if f(it['reply'])) / n
+    c = [it['n'] for it in R if CONTRAST.search(it['reply'])]
+    if len(c) > max(2, n // 8): out.append(f'對比句（不是 X 是 Y／X 不等於 Y／not X）{len(c)} 則：{c}，一天一兩次就好')
+    if share(lambda t: len(DECIMAL.findall(t)) >= 1) > 0.3: out.append(f'帶小數的回覆 {share(lambda t: DECIMAL.search(t)):.0%}，超過三成：能取整就取整')
+    if share(lambda t: len(t) <= 40) < 0.25: out.append(f'一行就好的短回覆（40 字內）只有 {share(lambda t: len(t) <= 40):.0%}，長短要打散，約三分之一')
+    q = share(lambda t: QEND.search(t))
+    if q > 0.3: out.append(f'問句收尾 {q:.0%}：只在真的想知道時問')
+    if share(lambda t: re.search(r'[。.]\s*$', t)) > 0.5: out.append('超過一半句尾有句號：手機上打字通常不加')
+    heads = {}
+    for it in R: heads.setdefault(it['reply'][:3].lower(), []).append(it['n'])
+    dup = {k: v for k, v in heads.items() if len(v) >= 3}
+    if dup: out.append(f'開頭重複：{dup}')
+    return out
 
 
 def check_flash():
@@ -87,4 +116,6 @@ def check_flash():
 if __name__ == '__main__':
     e = check()
     print('\n'.join(e) if e else 'replies.json OK')
+    tn = tone_notes(json.load(open(os.path.join(ROOT, 'data', 'replies.json'), encoding='utf-8')).get('items', []))
+    if tn: print('AI 腔提醒（不擋，排在一起看）：\n- ' + '\n- '.join(tn))
     sys.exit(1 if e else 0)

@@ -323,7 +323,7 @@
    "lang": "en",
    "angle": "補數據",
    "summary": "Midterms came and went; looks at 70+ years / 19 midterms for what comes next for markets and Bitcoin. Midterm years are tough, October is usually the worst month.",
-   "reply": "Fun detail I didn't expect: in 2022 the on-chain death cross (6–12m vs 12–18m holder cost) landed on election day itself.\nThis cycle it already happened in July. So I don't think 2022 is the right template this time.",
+   "reply": "Something I only noticed digging into this: in 2022 the on-chain death cross (6–12m vs 12–18m holder cost) hit right on election day. This cycle it already happened back in July, so I wouldn't lean on 2022 much this time",
    "sources": "6–12 月持幣成本跌破 12–18 月：2022-11-08（死叉）→ 2023-11-10（金叉，367 天）；本輪 2026-07-15 死叉、112 天前；現值 83,569 vs 111,808 · 11/04 · Bitview",
    "note": "18 萬粉、發文約 2 小時，建議用引用；只講歷史，不推論後市。",
    "image": {
@@ -334,7 +334,7 @@
     },
     "title": "2022: death cross on election day. 2026: July 15"
    },
-   "quote": "Mark Moss is reading 19 midterms. Fun detail: in 2022 the on-chain death cross (6–12m vs 12–18m holder cost) landed on election day itself. This cycle it came in July, 112 days ago. 2022 isn't the template.\n\n#Bitcoin #BTC #onchain",
+   "quote": "Went through the same midterm history. In 2022 the on-chain death cross (6–12m vs 12–18m holder cost) hit right on election day. This cycle it came in July, 112 days ago, so I wouldn't lean on 2022 much\n\n#Bitcoin #BTC #onchain",
    "mode": "quote",
    "style": "口語版"
   },
@@ -623,7 +623,7 @@
    "lang": "en",
    "angle": "交叉驗證",
    "summary": "Seller exhaustion model (supply in profit vs monthly volatility) is back at its lowest bear market levels; historically that let bottoms form, but it does not predict recovery: demand is still missing.",
-   "reply": "Tired sellers, no buyers. That's the whole story right now.\nMy seller exhaustion read is near bear lows too (10.8th pct since 2011), but apparent demand is still −156K BTC over 30 days.\nWhat are you watching for demand to come back?",
+   "reply": "Mine's sitting near bear lows too, bottom 10% or so since 2011. Demand is what bugs me though, apparent demand still around −156K BTC over 30 days",
    "sources": "賣方衰竭常數 0.2051（2011 起第 10.8 百分位；極端區 < 0.13，上次在 2026/08）；表觀需求 30 天 −156,497 顆 · 11/04 · CheckOnChain",
    "note": "1.2 萬粉、3,067 瀏覽，是 CryptoQuant 的分析師，建議用引用。他的立場是「賣方累了、需求還沒來」，順著講。我們的讀值還沒回到極端區，回覆照實寫「不像 8 月那麼極端」。",
    "image": {
@@ -633,7 +633,7 @@
     },
     "title": "Seller exhaustion constant 0.2051: 10.8th percentile since 2011"
    },
-   "quote": "Darkfost: Bitcoin sellers are getting exhausted. I see the same: my seller exhaustion read sits at the 10.8th pct since 2011. But apparent demand is still −156K BTC over 30 days. Tired sellers, no buyers yet.\n\n#Bitcoin #BTC #onchain",
+   "quote": "Seeing the same thing on my end, seller exhaustion is down near bear lows (bottom ~10% since 2011). Demand's the part that still bugs me, around −156K BTC over 30 days\n\n#Bitcoin #BTC #onchain",
    "mode": "quote",
    "style": "口語版"
   },
