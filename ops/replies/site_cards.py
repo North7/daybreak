@@ -48,7 +48,7 @@ def shoot(items, lang, tmp):
             ws.call('Page.navigate', url=SS.SITE + '?v=' + str(int(time.time() * 1000)) + '#' + st['page'])
             SS.wait(ws, '!window.__old'); SS.wait(ws, 'document.readyState === "complete"'); time.sleep(1.0)
             sel = json.dumps(st['sel']); box = json.dumps(st.get('box', 'section.panel'))
-            if not SS.wait(ws, f'(function(){{var e=document.querySelector({sel}); return !!(e && e.querySelector("svg,canvas"));}})()', 40):
+            if not SS.wait(ws, f'(function(){{var e=document.querySelector({sel}); return !!(e && (e.querySelector("svg,canvas") || e.children.length));}})()', 40):
                 print('MISSING', n, st['sel']); continue
             if st.get('pre'): ws.js(st['pre']); time.sleep(1.2)
             ws.js(f'{CLEAN}(document.querySelector({sel}).closest({box}), {json.dumps(bool(st.get("keep_note")))})'); time.sleep(0.6)
@@ -68,7 +68,7 @@ def compose(png, title, lang, Fn, out):
     """上：大標題；中：網站截圖；下：破曉頁尾。輸出寬 1600。"""
     RED, INK, INK3, LINE = '#FF3B1F', '#F2F0EA', '#9C978E', '#3A3936'
     im = Image.open(io.BytesIO(png)).convert('RGB'); bg = im.getpixel((im.width // 2, 8))
-    P = 72; W = im.width + 2 * P; tf = Fn['cjk'](64, 900)
+    P = 72; W = max(im.width + 2 * P, 2200); tf = Fn['cjk'](64, 900)   # 窄面板（半寬圖）也撐到 2200，標題和頁尾才放得下；圖置中
     d0 = ImageDraw.Draw(Image.new('RGB', (10, 10)))
     import re
     lines, cur = [], ''   # 標題太長就斷行：中文逐字、英數整詞
@@ -79,7 +79,7 @@ def compose(png, title, lang, Fn, out):
     img = Image.new('RGB', (W, TOP + im.height + FOOT), bg); d = ImageDraw.Draw(img)
     d.rectangle([P, 40, P + 90, 48], fill=RED)
     for i, t in enumerate(lines): d.text((P, 64 + i * lh + lh / 2), t, font=tf, fill=INK, anchor='lm')
-    img.paste(im, (P, TOP))
+    img.paste(im, ((W - im.width) // 2, TOP))
     fy = img.height - 70; d.line([P, fy - 52, W - P, fy - 52], fill=LINE, width=2)
     d.arc([P, fy - 26, P + 52, fy + 26], 180, 360, fill=RED, width=8); d.line([P - 8, fy, P + 60, fy], fill=INK, width=8)
     d.text((P + 84, fy), '破曉 DAYBREAK' if lang == 'zh' else 'DAYBREAK', font=Fn['cjk'](38, 900), fill=INK, anchor='lm')
