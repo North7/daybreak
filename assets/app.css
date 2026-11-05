@@ -517,6 +517,7 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .interp .it:last-child { border-bottom: 0; }
 .interp .k { font-weight: 900; font-size: 13px; }
 .interp .v { font-size: 13px; text-align: right; white-space: nowrap; }
+@media (min-width: 521px) { .interp .v { white-space: normal; } }   /* 2026-11-05：太長的讀值（例如「64K–70K / 88K–93K」）在空格處換行，原本會壓到右邊的「中性」標籤 */
 .interp .d { color: var(--ink-2); font-size: 13.5px; line-height: 1.7; max-width: 92ch; }
 .tn { display: inline-block; justify-self: start; font-size: 11px; font-weight: 700; line-height: 1.5; padding: 0 5px; border: 1px solid currentColor; border-radius: 3px; color: var(--ink-3); white-space: nowrap; }
 .tn.up { color: var(--up); } .tn.down { color: var(--down); } .tn.warn { color: var(--warn); }
