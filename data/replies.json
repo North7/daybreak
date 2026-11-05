@@ -471,9 +471,16 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "BTC 要有效站穩 82K 才算拐點，短期先看 81K 上方突破是否有效；認為真正的驗證窗口在下週，風險管理優先於方向判斷。",
-   "reply": "82K 的突破我也會等週五再認。明天週到期的買權最集中在 82,000，最大痛點在 79,000，到期前價格被兩邊拉扯很正常。",
-   "sources": "11/6 週到期占 9.9%、最大痛點 79,000、買權集中在 82,000 與 85,000 · 11/05 · Deribit",
-   "note": "偏謹慎，順著他「驗證窗口在下週」。不配圖：網站的履約價圖只有主要到期日（12/25），沒有 11/6 週到期。",
+   "reply": "同意風控擺前面，籌碼現在擠得很誇張：18% 的幣最後一次移動就在現價上下 5% 內，2018 年以來第 98.6 百分位。以前擠成這樣，接下來一個月通常不會小動。82K 的突破我也等週五到期後再認。",
+   "sources": "最後移動在收盤 ±5%（76,355–84,392）的籌碼 18.25%、2018 起第 98.6 百分位；高集中之後 30 天最大單向變動中位 22.7%（其他時候 15.9%）· 11/04 · Bitview；11/6 週到期最大痛點 79,000 · Deribit",
+   "note": "偏謹慎，順著他「風險管理優先、驗證窗口在下週」。配 11/05 網站新加的「籌碼結構與集中度」：籌碼擠在現價附近，歷史上之後一個月波動較大，支持他先顧風控。",
+   "image": {
+    "site": {
+     "page": "deriv",
+     "sel": "#c-conc"
+    },
+    "title": "18% 的籌碼擠在現價上下 5%：2018 年以來第 98.6 百分位"
+   },
    "style": "口語版"
   },
   {
@@ -561,7 +568,7 @@
    "summary": "A whale wallet dormant for 22 days woke up and sold ~$8.18M of BTC (WBTC/cbBTC) and ETH during the morning dip; asks if it is the start of a bigger exit.",
    "reply": "One wallet is noise, but the big picture agrees with you. Long-term holders have been net sellers for 92 days straight, about 167K BTC over the last 30. That's the exit worth watching.",
    "sources": "長期持有者 30 日淨部位 −166,633 顆（11/03）、自 8/4 起淨減 92 天、同期價格 +20.7% · bitcoin-data",
-   "note": "兩天前的貼文、單一以太坊錢包（WBTC），所以列可選。不配圖：網站的長期持有者 30 日淨部位圖目前是空的（只畫出最後一點）。",
+   "note": "兩天前的貼文、單一以太坊錢包（WBTC），所以列可選。不配圖：網站週期版的長期持有者 30 日淨部位小圖在桌面版仍是空的（11/05 PR #37 只修了手機）。",
    "style": "口語版"
   },
   {

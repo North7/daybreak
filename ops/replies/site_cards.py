@@ -53,6 +53,7 @@ def shoot(items, lang, tmp):
             if st.get('pre'): ws.js(st['pre']); time.sleep(1.2)
             ws.js(f'{CLEAN}(document.querySelector({sel}).closest({box}), {json.dumps(bool(st.get("keep_note")))})'); time.sleep(0.6)
             ws.js(f'document.querySelector({sel}).closest({box}).scrollIntoView({{block:"start"}}); true'); time.sleep(1.2)
+            ws.js('document.getAnimations().forEach(function(a){try{a.finish();}catch(e){}}); true'); time.sleep(0.3)   # 描線動畫直接跑完（晚觸發的小圖不會只截到第一格）
             r = ws.js(f'''(function(){{var c=document.querySelector({sel}), p=c.closest({box}), b=p.getBoundingClientRect(), cr=c.getBoundingClientRect();
                 return {{x:b.left+scrollX, y:b.top+scrollY, w:b.width, h:cr.bottom-b.top+16}};}})()''')
             if r['h'] < 80: print('TOO SMALL', n, st['sel'], r); continue
