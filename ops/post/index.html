@@ -74,7 +74,7 @@ h3 small { color:var(--ink3); font-weight:500; }
   <div id="long" class="grp" hidden><h2 class="grp-h">長貼文 · Long posts <small id="long-meta"></small></h2>
     <p class="desc">每天 1–2 則圖表長貼文（X Premium 長貼文，不是 Article）：一個核心指標講透，配網站原圖，文中數字標在圖上。照建議時間發。</p><div id="long-list"></div>
     <p class="tip">長貼文（手機）：按「在 X 發文（圖＋全文）」→ 分享選單裡選 X，配圖和全文會一起帶進發文框。全文同時已複製：如果文字沒帶進去或被截斷，把發文框的字全選刪掉、直接貼上。<br>
-    電腦：按「在 X 發文」會複製全文並打開 X 網頁版發文框 → 貼上全文 → 回來按「複製圖片」→ 在發文框再貼一次就加上圖了。文字框可以點一下展開。</p></div>
+    電腦：按「在 X 發文」會打開 X 網頁版發文框；全文在約 730 字以內會直接帶入（同日報），更長的 X 網址收不下，會先複製全文、打開空白發文框，貼上即可 → 回來按「複製圖片」→ 在發文框再貼一次就加上圖了。文字框可以點一下展開。</p></div>
   <div id="t-picks" class="grp"><h2 class="grp-h">推薦圖表 · Today's picks <small id="picks-meta"></small></h2>
     <p class="desc">短圖說（280 字內）加一張圖。可以在長貼文之外補發，或貼到 Threads 等其他平台。</p>
     <div id="picks"><p class="sub">讀取中… Loading…</p></div></div>
@@ -136,8 +136,10 @@ h3 small { color:var(--ink3); font-weight:500; }
           navigator.share(data).catch(function () {});
           return;
         }
-        flash(b, b.dataset.done || '✓');
-        window.open('https://x.com/compose/post', '_blank', 'noopener');
+        // X 的 intent 網址上限約 5,000 字元（2026-11-05 實測：中文約 730 字以內 307 正常、超過回 500）。短的直接帶入全文（同日報）；太長只開發文框、貼上剛複製的全文
+        var u = 'https://x.com/intent/post?text=' + encodeURIComponent(t);
+        flash(b, u.length <= 4900 ? '✓' : (b.dataset.done || '✓'));
+        window.open(u.length <= 4900 ? u : 'https://x.com/compose/post', '_blank', 'noopener');
       };
     });
   }
@@ -203,8 +205,8 @@ h3 small { color:var(--ink3); font-weight:500; }
     var list = (F.items || []).filter(function (x) { return tpe(x.time) === TODAY; });
     if (!list.length) return;
     list.sort(function (a, b) { return new Date(a.time) - new Date(b.time); });
-    var el = document.getElementById('long-list'), LB = { zh: ['中文', '', '存到相簿', '只複製全文', '下載圖片', ' 字', MOBILE ? '在 X 發文（圖＋全文）' : '在 X 發文（先貼全文）', '已複製全文，打開 X…', '複製圖片'],
-                                                         en: ['English', '', 'Save to Photos', 'Copy text only', 'Download image', ' chars', MOBILE ? 'Post on X (images + text)' : 'Post on X (paste text)', 'Text copied, opening X…', 'Copy image'] };
+    var el = document.getElementById('long-list'), LB = { zh: ['中文', '', '存到相簿', '只複製全文', '下載圖片', ' 字', MOBILE ? '在 X 發文（圖＋全文）' : '在 X 發文（先貼全文）', '全文太長帶不進去，已複製，打開 X 後貼上', '複製圖片'],
+                                                         en: ['English', '', 'Save to Photos', 'Copy text only', 'Download image', ' chars', MOBILE ? 'Post on X (images + text)' : 'Post on X (paste text)', 'Too long to prefill: text copied, paste it in X', 'Copy image'] };
     document.getElementById('long').hidden = false; document.getElementById('nav-long').hidden = false;
     document.getElementById('long-meta').textContent = list.length + ' 則 · ' + TODAY;
     el.innerHTML = list.map(function (x) {
