@@ -1590,7 +1590,7 @@
      畫布畫熱力（越亮＝推算的待清算量越多），SVG 疊小時 K 線與十字線。不是實際倉位，只作讀值 */
   var liqDays = 3, liqBytes = null, liqTop_ = null;
   /* 熱力圖底色永遠是深色的 viridis（淺色主題也一樣），K 線與收盤線用深色主題的亮色才看得清楚，所以這三個色不跟主題變（2026-11-04 註明，刻意的） */
-  var LIQ_UP = '#2FD08A', LIQ_DN = '#FF5A4E', LIQ_INK = '#F2F0EA';
+  var LIQ_UP = '#2FD08A', LIQ_DN = '#FF5A4E', LIQ_INK = '#F2F0EA', LIQ_HL = '#FFFFFF';   // LIQ_HL：Hyperliquid 實際清算價的橫條（2026-11-05），白色和 viridis、K 線的紅綠都分得開
   /* 2026-11-04 自我檢查：色階上限用整份快照算一次（原本每次依畫面內的格子重算，切換 3／7 天同一格會變色，縮放視窗也重排序一次） */
   function liqTop() { if (liqTop_ == null) { var v = []; for (var i = 0; i < liqBytes.length; i++) if (liqBytes[i]) v.push(liqBytes[i]); v.sort(function (a, b) { return a - b; }); liqTop_ = v.length ? Math.max(1, v[Math.floor(v.length * 0.998)]) : 255; } return liqTop_; }
   /* 第 i 根 K 線的時間：管線有給 hr（距 t0 的小時數）就用它，漏掉的小時不會讓後面整段錯位 */
@@ -1605,6 +1605,13 @@
   function liqBand(b) { return fmt.k(b.lo) + '–' + fmt.k(b.hi); }
   function liqBtc(v) { return _T('約 ' + fmt.n(v) + ' 顆', '~' + fmt.n(v) + ' BTC'); }
   function liqHour(ms) { var t = new Date(ms); return (t.getUTCMonth() + 1) + '/' + t.getUTCDate() + ' ' + ('0' + t.getUTCHours()).slice(-2) + ':00'; }
+  function hlBandSay() {   // 2026-11-05：熱力圖右緣的 Hyperliquid 白條（實際清算價，每格至少 5 個帳戶、最大一個不超過一半）
+    var hb = hlBands(); if (!hb) return '';
+    var L = hlSide(hb, 'long'), S = hlSide(hb, 'short'), h = hb.hidden || {}, k = function (b) { return fmt.k(b.lo) + '–' + fmt.k(b.hi); };
+    if (!hb.rows.length) return _T('清算價在收盤 ±' + hb.pct + '% 內的帳戶都太分散（每 ' + fmt.n(hb.w) + ' 美元一格不到 ' + hb.min_n + ' 個帳戶），熱力圖上不畫。', 'Liquidation prices within ±' + hb.pct + '% are too scattered (fewer than ' + hb.min_n + ' accounts per $' + fmt.n(hb.w) + ' bucket), so none are drawn on the heatmap. ');
+    return _T('熱力圖右緣的白條是清算價在收盤 ±' + hb.pct + '% 內、每 ' + fmt.n(hb.w) + ' 美元一格至少 ' + hb.min_n + ' 個帳戶的價位：' + (L.cells ? '下方多單 ' + L.n + ' 個帳戶 ' + fmt.n(L.btc) + ' 顆（最多在 ' + k(L.top) + '）' : '下方沒有') + '、' + (S.cells ? '上方空單 ' + S.n + ' 個帳戶 ' + fmt.n(S.btc) + ' 顆（最多在 ' + k(S.top) + '）' : '上方沒有') + '；其餘 ' + (h.n || 0) + ' 個帳戶太分散、不畫。',
+      'White bars on the heatmap\'s right edge mark liquidation prices within ±' + hb.pct + '% where a $' + fmt.n(hb.w) + ' bucket holds at least ' + hb.min_n + ' accounts: ' + (L.cells ? 'longs below, ' + L.n + ' accounts and ' + fmt.n(L.btc) + ' BTC (most at ' + k(L.top) + ')' : 'none below') + '; ' + (S.cells ? 'shorts above, ' + S.n + ' accounts and ' + fmt.n(S.btc) + ' BTC (most at ' + k(S.top) + ')' : 'none above') + '; the other ' + (h.n || 0) + ' accounts are too scattered to draw. ');
+  }
   function liqSay() {
     var x = D.deriv.liq_heat, it = [], b = (x.below || [])[0], a = (x.above || [])[0], w = x.within5 || {};
     if (b) it.push([_T('下方最亮（多單）', 'Brightest below (longs)'), liqBand(b), _T('推算' + liqBtc(b.btc) + '，在收盤下方 ' + fmt.n(-b.dist_pct, 1) + '%。跌到這裡會觸發這批多單強制平倉；強平是市價賣出，可能讓下跌加速。',
@@ -1626,16 +1633,18 @@
       var lq = gq(hw.long, 1), sq = gq(hw.short, 0), nl = gq(hw.near.long, 1), ns = gq(hw.near.short, 0);
       var net = hw.long.btc != null && hw.short.btc != null ? hw.long.btc - hw.short.btc : null;
       it.push([_T('Hyperliquid 大戶', 'Hyperliquid big accounts'), net != null ? (net >= 0 ? _T('淨多 ', 'Net long ') : _T('淨空 ', 'Net short ')) + fmt.n(Math.abs(net)) : hw.with_btc + _T(' 個帳戶', ' accounts'),
-        _T('帳戶淨值前 ' + hw.scanned + ' 名（≥ ' + fmt.n(hw.floor_usd_m, 0) + ' 百萬美元）裡 ' + hw.with_btc + ' 個有 BTC 部位：' + lq + '、' + sq + '；清算價在收盤 ±' + hw.near.pct + '% 內：' + nl + '、' + ns + '。實際部位，不是推算；只有 Hyperliquid 一家，大帳戶可能是做市或避險，空單多不一定代表看空。',
-          hw.with_btc + ' of the top ' + hw.scanned + ' accounts by equity (≥ $' + fmt.n(hw.floor_usd_m, 0) + 'M) hold BTC: ' + lq + ', ' + sq + '; liquidation prices within ±' + hw.near.pct + '% of the close: ' + nl + ', ' + ns + '. Actual positions, not an estimate; Hyperliquid only, and big accounts may be market makers or hedgers, so more shorts does not necessarily mean bearish.'), 'neu']);
+        _T('帳戶淨值前 ' + hw.scanned + ' 名（≥ ' + fmt.n(hw.floor_usd_m, 0) + ' 百萬美元）裡 ' + hw.with_btc + ' 個有 BTC 部位：' + lq + '、' + sq + '；清算價在收盤 ±' + hw.near.pct + '% 內：' + nl + '、' + ns + '。' + hlBandSay() + '實際部位，不是推算；只有 Hyperliquid 一家，大帳戶可能是做市或避險，空單多不一定代表看空。',
+          hw.with_btc + ' of the top ' + hw.scanned + ' accounts by equity (≥ $' + fmt.n(hw.floor_usd_m, 0) + 'M) hold BTC: ' + lq + ', ' + sq + '; liquidation prices within ±' + hw.near.pct + '% of the close: ' + nl + ', ' + ns + '. ' + hlBandSay() + 'Actual positions, not an estimate; Hyperliquid only, and big accounts may be market makers or hedgers, so more shorts does not necessarily mean bearish.'), 'neu']);
     }
     return it;
   }
+  function hlBands() { var hb = (D.deriv.hl_whales || {}).bands; return hb && hb.rows ? hb : null; }
+  function hlSide(hb, side) { var r = hb.rows.filter(function (b) { return b.side === side; }); return { n: r.reduce(function (a, b) { return a + b.n; }, 0), btc: r.reduce(function (a, b) { return a + b.btc; }, 0), cells: r.length, top: r.slice().sort(function (a, b) { return b.btc - a.btc; })[0] }; }
   function liqSegs() { var b = function (d) { return '<button aria-pressed="' + (liqDays === d) + '" data-d="' + d + '">' + _T(d + ' 天', d + 'D') + '</button>'; }; return '<span class="seg">' + b(3) + b(7) + '</span>'; }
   function liqPanel() {
     var x = liqData(); if (!x) return '';
     return panel('span-12', _T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'), _T('OKX 永續 · 快照 ' + liqHour(Date.parse(x.asof)) + ' UTC', 'OKX perpetuals · snapshot ' + liqHour(Date.parse(x.asof)) + ' UTC'),
-      interpHtml(liqSay()) + '<div class="legend" style="margin-top:10px"><span><b style="color:var(--ink-2);font-weight:400">' + _T('少', 'Less') + '</b><i class="liq-bar" style="background:linear-gradient(90deg,' + VIR.map(function (c) { return 'rgb(' + c.join(',') + ')'; }).join(',') + ')"></i><b style="color:var(--ink-2);font-weight:400">' + _T('多', 'More') + '</b></span><span><b style="color:var(--ink-2);font-weight:400">' + _T('推算的待清算量；收盤下方是多單、上方是空單', 'estimated BTC awaiting liquidation; longs below the close, shorts above') + '</b></span></div><div class="chart" id="c-liq"></div>' +
+      interpHtml(liqSay()) + '<div class="legend" style="margin-top:10px"><span><b style="color:var(--ink-2);font-weight:400">' + _T('少', 'Less') + '</b><i class="liq-bar" style="background:linear-gradient(90deg,' + VIR.map(function (c) { return 'rgb(' + c.join(',') + ')'; }).join(',') + ')"></i><b style="color:var(--ink-2);font-weight:400">' + _T('多', 'More') + '</b></span><span><b style="color:var(--ink-2);font-weight:400">' + _T('推算的待清算量；收盤下方是多單、上方是空單', 'estimated BTC awaiting liquidation; longs below the close, shorts above') + '</b></span>' + (hlBands() && hlBands().rows.length ? '<span><i class="liq-hl"></i><b style="color:var(--ink-2);font-weight:400">' + _T('Hyperliquid 大戶實際清算價（右緣，越長越多）', 'Hyperliquid big accounts\' actual liquidation prices (right edge; longer = more)') + '</b></span>' : '') + '</div><div class="chart" id="c-liq"></div>' +
       '<p class="note">' + _T('做法：OKX BTC 永續（USDT＋幣本位）每小時未平倉量增加當成新開倉，一多一空各記一份；槓桿假設 5–100 倍、進場價攤在那一小時的高低之間，算出清算價；價格走過就算清算掉，未平倉量減少時按比例減。只有 OKX（Binance、Bybit 從本站伺服器讀不到），槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；不是 CoinGlass 的數字。',
         'Method: each hour\'s rise in OKX BTC perpetual open interest (USDT- and coin-margined) counts as new positions, one long and one short; leverage is assumed between 5x and 100x with entries spread across the hour\'s range, giving liquidation prices; levels are cleared once price trades through them, and scaled down when open interest falls. OKX only (Binance and Bybit can\'t be reached from the site\'s servers); the leverage mix is an assumption and moves the bands; a daily snapshot, not real time; not CoinGlass\'s numbers.') +
       ' <a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">' + _T('對照 CoinGlass ↗', 'Compare with CoinGlass ↗') + '</a></p>',
@@ -1656,6 +1665,19 @@
     var bw = Math.max(1, pw / nh * 0.6);
     K.forEach(function (k, i) { var c = k[3] >= k[0] ? LIQ_UP : LIQ_DN, cx = X(i); s += candleMark(cx, bw, Y(k[0]), Y(k[1]), Y(k[2]), Y(k[3]), c); });
     var lc = K[K.length - 1][3]; s += '<line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + Y(lc).toFixed(1) + '" y2="' + Y(lc).toFixed(1) + '" stroke="' + LIQ_INK + '" stroke-dasharray="2 4" stroke-width="1" opacity=".6"/>';
+    var hb = hlBands(), hg = [];   // Hyperliquid 實際清算價：右緣往左的橫條，長度按顆數（最長約畫面寬的 22%）
+    var hlTip = function (mx, my) { var g = hg.filter(function (q) { return mx >= q.x0 - 2 && my >= q.yt && my <= q.yb; })[0]; if (!g) return ''; return '<div class="r"><i style="background:' + LIQ_HL + '"></i><span>' + _T('Hyperliquid 實際清算（快照）', 'Hyperliquid actual (snapshot)') + ' ' + fmt.k(g.b.lo) + '–' + fmt.k(g.b.hi) + '</span><b>' + _T(g.b.n + ' 個帳戶 · ' + fmt.n(g.b.btc) + ' 顆', g.b.n + ' accts · ' + fmt.n(g.b.btc) + ' BTC') + '</b></div>'; };
+    if (hb && hb.rows.length) {
+      var hm = Math.max.apply(null, hb.rows.map(function (b) { return b.btc; }));
+      hb.rows.forEach(function (b) {
+        if (b.hi <= pLo || b.lo >= pHi) return;
+        var yt = Y(Math.min(b.hi, pHi)), yb = Y(Math.max(b.lo, pLo)), len = Math.max(8, b.btc / hm * pw * 0.22), x0 = ML + pw - len;
+        hg.push({ b: b, x0: x0, yt: yt, yb: yb });
+        s += '<rect x="' + x0.toFixed(1) + '" y="' + (yt + 0.5).toFixed(1) + '" width="' + len.toFixed(1) + '" height="' + Math.max(2, yb - yt - 1).toFixed(1) + '" rx="1.5" fill="' + LIQ_HL + '" fill-opacity=".88" stroke="#0C0C0D" stroke-opacity=".55" stroke-width="1"/>';
+      });
+      var big = hg.slice().sort(function (a, c) { return c.b.btc - a.b.btc; })[0];
+      if (big) s += '<text class="ax" x="' + (big.x0 - 4).toFixed(1) + '" y="' + ((big.yt + big.yb) / 2 + 3.5).toFixed(1) + '" text-anchor="end" style="fill:' + LIQ_HL + ';paint-order:stroke;stroke:#0C0C0D;stroke-width:3px">HL ' + fmt.n(big.b.btc) + _T(' 顆', ' BTC') + '</text>';
+    }
     s += '<line class="xh" x1="0" x2="0" y1="' + MT + '" y2="' + (MT + ph) + '" visibility="hidden"/><line class="xh yh" x1="' + ML + '" x2="' + (ML + pw) + '" y1="0" y2="0" visibility="hidden"/><rect class="hit" x="' + ML + '" y="' + MT + '" width="' + pw + '" height="' + ph + '"/>';
     el.innerHTML = '<canvas width="' + Math.round(pw * dpr) + '" height="' + Math.round(ph * dpr) + '" style="position:absolute;left:' + (ML / W * 100).toFixed(3) + '%;top:' + (MT / Ht * 100).toFixed(3) + '%;width:' + (pw / W * 100).toFixed(3) + '%;height:' + (ph / Ht * 100).toFixed(3) + '%"></canvas>' + svgEl(W, Ht, s, _T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'));
     var svg = el.querySelector('svg'); svg.style.position = 'relative';
@@ -1669,7 +1691,7 @@
       var i = Math.max(0, Math.min(nh - 1, Math.floor((mx - ML) / pw * nh))), j = Math.max(0, Math.min(rows - 1, Math.floor((1 - (my - MT) / ph) * rows))), k = K[i], lo = pLo + j * x.step;
       xh.setAttribute('x1', X(i)); xh.setAttribute('x2', X(i)); xh.setAttribute('visibility', 'visible'); yh.setAttribute('y1', my); yh.setAttribute('y2', my); yh.setAttribute('visibility', 'visible');
       var v = liqBytes[(h0 + i) * nb + b0 + j] / 255 * x.cap, side = lo >= k[3] ? _T('空單', 'shorts') : _T('多單', 'longs');
-      showTip(ev.clientX, ev.clientY, '<div class="t">' + liqHour(liqT(x, h0 + i)) + ' UTC</div><div class="r"><i style="background:rgb(' + liqCol(gam(v / x.cap * 255 / top)).join(',') + ')"></i><span>' + fmt.usd(lo) + '–' + fmt.n(lo + x.step) + ' ' + side + '</span><b>' + (v >= 0.5 ? liqBtc(Math.round(v)) : '—') + '</b></div><div class="r"><i style="background:' + (k[3] >= k[0] ? LIQ_UP : LIQ_DN) + '"></i><span>' + _T('這小時收盤', 'Hour close') + '</span><b>' + fmt.usd(k[3]) + '</b></div>');
+      showTip(ev.clientX, ev.clientY, '<div class="t">' + liqHour(liqT(x, h0 + i)) + ' UTC</div><div class="r"><i style="background:rgb(' + liqCol(gam(v / x.cap * 255 / top)).join(',') + ')"></i><span>' + fmt.usd(lo) + '–' + fmt.n(lo + x.step) + ' ' + side + '</span><b>' + (v >= 0.5 ? liqBtc(Math.round(v)) : '—') + '</b></div><div class="r"><i style="background:' + (k[3] >= k[0] ? LIQ_UP : LIQ_DN) + '"></i><span>' + _T('這小時收盤', 'Hour close') + '</span><b>' + fmt.usd(k[3]) + '</b></div>' + hlTip(mx, my));
     }
     hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
     hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); yh.setAttribute('visibility', 'hidden'); hideTip(); });
