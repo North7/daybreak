@@ -41,6 +41,7 @@ X 創作者分潤只算**原創貼文**的藍勾首頁曝光，回覆不算；�
 2. **讀當天的數據**：`data/notes.json`（英文 `data/notes.en.json`）的 headline、findings、news、modules，數字細節查 `data/latest.json`、`data/etf.json` 等。只引用數據裡有的數字，不改數字、不自己推算新數字。`notes.json` 的日期不是當期時，先跟使用者確認。短期持有者成本和真實市場均價 2026-11-04 起用 Bitview（`chips.flow.sth_vs_tmm`，當天、和 `cost` 圖一致）；`onchain.metrics.sth-realized-price` 是 bitcoin-data（晚約 7 天、真實市場均價偏高約 1.5%），兩家不要混用。
 3. **寫 `data/replies.json`**（格式見下），需要配圖的加 `image`。寫之前讀 [`../brand/voice.md`](../brand/voice.md)，特別是最後的「使用者改稿紀錄」。
 4. **出圖**：`python3 ops/replies/cards.py --fonts <字型資料夾>`（需要 `pipeline/picks.py` 與 Pillow；字型同 `share_card.py`）。打開每張圖看一遍。
+   **優先用網站原圖**（2026-11-05 使用者要求）：`image` 寫 `{"site": {"page": "onchain", "sel": "#c-sthband"}, "title": "…"}`，再跑 `python3 ops/replies/site_cards.py --fonts <字型資料夾>`，用本機 Chrome 截網站那張圖（深色、語言跟回覆一樣），加大標題和頁尾。`cards.py` 會跳過帶 `site` 的。各圖在哪一頁：onchain（`c-sthband`、`c-lthloss`、`c-cohort`、`c-sopr`、`c-sthpnl`、`c-sec`、`c-rpl`、`c-ad`、`c-npl`）、cycle（`c-agecost`、`c-regime`；佐證圖 `c-ev-tmm` 等要加 `"box": ".evc", "pre": "document.querySelector('.ev-open').click(); true"`）、flows（`c-etf`、`c-pr-us`、`c-stab`）、deriv（`c-liq`、`c-oi`）。網站上沒有的（例如 Hyperliquid 大戶）才用 `cards.py` 或不配圖。依賴 `ops/post/site_shot.py`。
 5. **檢查**：`python3 ops/replies/check.py`（欄位、語言、簡體字、字數、出場框架用詞、配圖檔）。
 6. **提交**：`replies: <日期>`（`data/replies.json` 與 `data/replies/`），推到 main。GitHub Pages 約 1 分鐘後更新。
 7. 在對話裡回報：發文順序、跳過哪些與原因、需要使用者留意的地方，以及這次新記的指標點子。

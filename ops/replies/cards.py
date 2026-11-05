@@ -217,6 +217,7 @@ def main(fonts_dir):
     for it in rp['items']:
         im = it.get('image')
         if not im: continue
+        if im.get('site'): keep.add(f'{it["n"]}.png'); continue   # 網站原圖由 site_cards.py 截
         lang = 'zh' if it['lang'] == 'zh' else 'en'
         sp = build_spec(L, im)
         if not sp: print('skip', it['n'], im['chart'], '（沒有這張圖或資料不足）'); continue
