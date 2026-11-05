@@ -192,13 +192,6 @@
    "note": "2026-11-04 Grok 推薦加入：每日評論、ETF 與選擇權數據，7 天 10 則講比特幣"
   },
   {
-   "handle": "glassnodealerts",
-   "name": "glassnode alerts",
-   "lang": "en",
-   "type": "research",
-   "note": "2026-11-05 使用者指定保持關注（Grok 列的鏈上數據帳號）：Glassnode 警報帳，關鍵指標異動"
-  },
-  {
    "handle": "cryptoquant_com",
    "name": "CryptoQuant",
    "lang": "en",
