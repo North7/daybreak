@@ -718,3 +718,32 @@ a.term:hover { color: var(--red-ink); text-decoration-color: currentColor; }
 @keyframes cfPulse { 0% { r: 5; opacity: .55; } 100% { r: 16; opacity: 0; } }
 .cf-chart .cf-pulse { animation: cfPulse 1.8s ease-out infinite; transform-box: fill-box; }
 @media (prefers-reduced-motion: reduce) { .cf-chart .cf-pulse { animation: none; opacity: 0; } }
+
+/* 2026-11-05 全站圖表升級（使用者要求：所有圖統一華麗一點，見 docs/chart-style.md）：
+   圖表區頂端漸層色條、圖底淡光暈、彩色線發光、面積漸層加深（app.js）、最新一點心跳、第一個讀值放大 */
+.panel:has(.chart) { border-top-color: transparent; }
+.panel:has(.chart)::before { content: ""; position: absolute; left: 0; right: 0; top: -2px; height: 3px; background: linear-gradient(90deg, var(--s1), var(--s2) 55%, var(--s3)); }
+.chart svg { background: radial-gradient(90% 70% at 0% 0%, color-mix(in srgb, var(--s1) 5%, transparent), transparent 65%); border-radius: 4px; }
+:root[data-theme="dark"] .chart svg { background: radial-gradient(90% 70% at 0% 0%, color-mix(in srgb, var(--s1) 10%, transparent), transparent 65%), radial-gradient(70% 60% at 100% 100%, color-mix(in srgb, var(--s2) 8%, transparent), transparent 60%); }
+/* 2026-11-05 週期階段五色（冷→熱）：極熊／底部區、熊／偏低、初牛／中段、牛／偏高、過熱／頂部區（週線多空分數、冪律通道位置共用）。
+   深淺兩色底同一組，dataviz 驗色：色盲分辨全過；淺色底的淺藍、琥珀對比略低於 3:1，靠圖例與「目前階段」文字補 */
+:root { --stg0: #3C5CDD; --stg1: #2CA0CF; --stg2: #008149; --stg3: #C38700; --stg4: #CC2827; }
+/* 發光強度：淺色底發光太強會像模糊，所以淡一點 */
+:root { --glow-r: 1.6px; --glow-a: 40%; }
+:root[data-theme="dark"] { --glow-r: 2.5px; --glow-a: 65%; }
+.chart path.ln[stroke="var(--s1)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--s1) var(--glow-a), transparent)); }
+.chart path.ln[stroke="var(--s2)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--s2) var(--glow-a), transparent)); }
+.chart path.ln[stroke="var(--s3)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--s3) var(--glow-a), transparent)); }
+.chart path.ln[stroke="var(--s4)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--s4) var(--glow-a), transparent)); }
+.chart path.ln[stroke="var(--up)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--up) var(--glow-a), transparent)); }
+.chart path.ln[stroke="var(--down)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--down) var(--glow-a), transparent)); }
+.chart path.ln[stroke="var(--warn)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--warn) var(--glow-a), transparent)); }
+.chart path.ln[stroke="var(--flare)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--flare) var(--glow-a), transparent)); }
+.chart path.ln[stroke="var(--orbit)"] { filter: drop-shadow(0 0 var(--glow-r) color-mix(in srgb, var(--orbit) var(--glow-a), transparent)); }
+@keyframes nowBeat { 0%, 100% { transform: scale(1); } 45% { transform: scale(1.5); } }
+.inview .now-dot, .inview .now-g circle { animation: nowBeat 1.6s ease-in-out infinite; transform-box: fill-box; transform-origin: center; }
+.scrolling .now-dot, .scrolling .now-g circle { animation-play-state: paused; }
+@media (prefers-reduced-motion: reduce) { .inview .now-dot, .inview .now-g circle { animation: none; } }
+.interp:has(~ .chart, ~ .legend) .it:first-child { grid-template-columns: 150px minmax(96px, auto) 44px minmax(0, 1fr); }
+.interp:has(~ .chart, ~ .legend) .it:first-child .v { font-size: 22px; font-weight: 800; letter-spacing: -.01em; line-height: 1.1; }
+@media (max-width: 520px) { .interp:has(~ .chart, ~ .legend) .it:first-child { grid-template-columns: minmax(0, 1fr) auto auto; } .interp:has(~ .chart, ~ .legend) .it:first-child .v { font-size: 20px; } }
