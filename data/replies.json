@@ -23,6 +23,25 @@
    "style": "真人版"
   },
   {
+   "n": 107,
+   "order": 0,
+   "status": "send",
+   "url": "https://x.com/misterrcrypto/status/2118298027089666419",
+   "id": "2118298027089666419",
+   "author": "misterrcrypto",
+   "name": "Mister Crypto",
+   "followers": 135086,
+   "posted": "2026-11-05T11:03:00Z",
+   "lang": "en",
+   "angle": "交叉驗證",
+   "summary": "Coinbase 溢價連續 43 天為負，但折價從 −0.27% 收窄到 −0.10%，賣壓在減輕；翻正會加強下一段上漲的理由",
+   "reply": "On my numbers it's even longer, 60 days straight since Sept 6 (Coinbase vs Binance daily close). Zoom out and it's been negative 266 of 308 days this year. So yeah, a flip would actually mean US buyers are back",
+   "sources": "flows.cb_premium.rows（Coinbase 對幣安每日收盤）：2026-09-06 起連續 60 天為負，11/04 −0.094%；2026 年 308 天裡 266 天為負（86%）",
+   "note": "使用者指定，和上一則同一個作者（減半那則）。他數 43 天、我們數 60 天，口徑不同，回覆寫「on my numbers」，不糾正。順著他「翻正是好訊號」，但只說翻正代表美國買盤回來，不說會漲（網站提醒收斂本身參考價值低）。不配圖。",
+   "mode": "reply",
+   "style": "真人版"
+  },
+  {
    "n": 105,
    "order": 0,
    "status": "send",
