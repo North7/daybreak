@@ -17,10 +17,13 @@
 
 | 指標 | 誰在用 | 他怎麼用 | 資料來源 | 我們可以怎麼做 | 次數 |
 |---|---|---|---|---|---|
+| Bitcoin Yardstick（市值 ÷ 算力，2 年滾動 Z 分數） | [@caprioleio 09/24](https://x.com/caprioleio/status/2102980516052115569) | 「脫離深度折價區＝熊市結束」 | CoinMetrics `CapMrktCurUSD`、`HashRate`（免費） | 照字面算 11/04 是 −0.92、2026/02 最低 −2.97；平滑方式沒公開，門檻要自己回測，「之後漲三位數」不照搬 | 1 |
+| 選擇權 Put/Call 比 | [@caprioleio 10/26](https://x.com/caprioleio/status/2114525099772752339) | 比值極端時短線下跌有限 | Deribit `get_book_summary_by_currency`（已在抓） | 歷史只能從開始記錄起累積；先記錄，滿一年再判讀 | 1 |
+| 現貨主動買賣量（分交易所）＋現貨總成交量 | [@Murphychen888 10/28](https://x.com/Murphychen888/status/2115381214416871637)、[@glassnode 11/04](https://x.com/glassnode/status/2118084798803517712) | Binance 主動買、Coinbase 主動賣；成交量是否到投降水準 | Binance K 線有主動買量（要確認 GitHub Actions 能連）；Coinbase 要逐筆成交 | 先測連線 | 1 |
+| 公鑰已曝光的供給（量子風險） | [@glassnode 10/08](https://x.com/glassnode/status/2108314003936022889) | 量子風險話題 | Bitview `exposed_address_supply`（35.6%，Glassnode 說 31.2%，定義要先對齊） | 和價格判讀關係小，優先度低 | 1 |
 | Ahr999 囤幣指標 | wander（[@serlo123](https://x.com/serlo123)，固定名單備註：常用） | 中文圈常用的長期估值指標：價格相對 200 日定投成本 × 相對指數成長估值 | 只要價格歷史，可以自己算：11/04 約 0.46（200 日定投成本約 72,600）。成長估值是 2019 年的擬合，現在約 18.3 萬，比網站冪律趨勢（約 14.5 萬）高很多，數值會長期偏低；和冪律倍數、200 日均線大量重疊 | 週期版加一個讀值和歷史分位；不照原版標「抄底區、定投區」；優先度低 | 1 |
 | DeFi 借貸流動性（DeFi Lending Liquidity） | [@0xGummyBear](https://x.com/0xGummyBear/status/2117920767669387734)（11/04 這則引用的前一則，ForeDex 新指標） | 追蹤 DeFi 借貸平台的存款與抵押流入，看鏈上槓桿和情緒 | ForeDex 自家指標，算法沒公開；DefiLlama 有借貸協議 TVL 和借出金額（免費，我們已經在用它的穩定幣資料）可以近似 | 槓桿模組加「鏈上借貸」讀值；優先度低 | 1 |
 | ETF 發行商鏈上轉帳（例：貝萊德 → Coinbase Prime） | [@joke_henry 11/04](https://x.com/joke_henry/status/2117928163519107555)、阿布 [11/04 留言](https://x.com/mks1231237549/status/2117898004594307254)（IBIT 可以實物贖回） | 一小時 7,244 枚轉進 Coinbase Prime，判斷是申購入帳還是贖回備貨；實物贖回時贖回方拿走的是幣 | 要有標籤地址；Arkham 的 API 要金鑰，沒找到免費來源。轉進 Coinbase Prime 本身方向不明（申購、贖回、實物贖回都會經過） | 先不做；網站已有 ETF 每日流量 | 3（11/05 [@joke_henry](https://x.com/joke_henry/status/2118131371998851130)：813 枚由未知錢包轉進 Coinbase Institutional） |
-| Active Realized Price（活躍實現價格） | [@K2anKaradeniz 11/05](https://x.com/K2anKaradeniz/status/2118141775789297717)（土耳其文，85,160 當壓力） | 和真實市場均價一組的鏈上成本線 | CheckOnChain／Bitview 可能有（真實市場均價同一套模型） | 先確認資料來源；有的話加在週期版真實市場均價那張圖 | 1 |
 | BTC 主導率 | [@thisisJaSingh 11/05](https://x.com/thisisJaSingh/status/2118143892662956394) | 主導率高於 50% 時不會是週期頂／底部的論點 | CoinGecko global（免費） | 優先度低；和比特幣本身的數據關係不大 | 1 |
 
 ## 已有、可以改進
@@ -34,6 +37,10 @@
 
 | 指標 | 誰在用 | 結果 |
 |---|---|---|
+| Active Realized Price（活躍投資人成本） | [@K2anKaradeniz 11/05](https://x.com/K2anKaradeniz/status/2118141775789297717)（土耳其文，85,160 當壓力）；[@glassnode 10/28](https://x.com/glassnode/status/2115427475635196352)（11/05 X 帳號掃描） | 11/05 做在週期版「成本線與均線」（Bitview `active_price`）：11/04 是 85,113，今年 308 天只有 35 天收在上方 |
+| 1 週–1 個月持幣成本（新買家成本、Trader Realized Price） | [@cryptoquant_com 11/04](https://x.com/cryptoquant_com/status/2117903607433478375)、[@AxelAdlerJr 10/26](https://x.com/AxelAdlerJr/status/2114628845580025990)（11/05 X 帳號掃描） | 11/05 做在週期版「依持有時間的持幣成本」的切換（Bitview）：81,762，收盤低 1.6% |
+| 和前幾輪比（頂部後天數 × 回撤、回到前高的時間） | [@n3ocortex 10/29](https://x.com/n3ocortex/status/2115799546475209168)（@glassnode 轉推）、[@cryptoquant_com 10/21](https://x.com/cryptoquant_com/status/2112938792042578403)（11/05 X 帳號掃描） | 11/05 做在週期版「和前幾輪比：頂部之後」（統一收盤） |
+| ETF 持倉成本 | [@glassnode 10/13](https://x.com/glassnode/status/2109988784607772792)、[10/22](https://x.com/glassnode/status/2113211463863296008)（11/05 X 帳號掃描） | 不做：The Block 流量自算 84.4K（平均成本），加 GBTC 舊持幣 74.1K，都對不上 Glassnode 的 81.5K（ETF 錢包鏈上實現價，要實體資料）。5 月反彈高點 82,256 確實卡在它說的線下方 |
 | 表觀需求 1 年版 | 使用者 11/05 轉來的補充指標整理（PDF） | 11/05 做在鏈上版「表觀需求（30 天與 1 年）」：1 年合計換算成每 30 天畫在同一刻度。「30 天負、1 年正＝牛市回調」驗證不成立：2016 起 767 天，之後 90 天上漲 52%（中位 +1.1%），所有日子 60%（+9.9%） |
 | 長短期持有者供給比（LTH／STH Supply Ratio） | 使用者 11/05 轉來的補充指標整理（PDF） | 11/05 放進「價格 × 長期持有者動向」的判讀（Bitview），不另開圖：和 LTH 30 日淨部位是同一件事的比例版 |
 | 長期持有者已實現虧損（Entity-Adjusted Realized Loss） | 使用者 11/05 轉來的補充指標整理（PDF） | 11/05 做在「長期持有者虧損比例」下方（Bitview，不是實體調整版）。「新低但虧損變小＝賣壓衰竭」驗證不成立：前三次熊市都是底部那次最大 |
