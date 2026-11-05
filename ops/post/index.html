@@ -73,7 +73,7 @@ h3 small { color:var(--ink3); font-weight:500; }
     <p class="desc">當日簡報的摘要加分享圖，中英各一則，280 字內，結尾帶網站連結。每天早上日報出來就發。</p><div id="posts"></div></div>
   <div id="long" class="grp" hidden><h2 class="grp-h">長貼文 · Long posts <small id="long-meta"></small></h2>
     <p class="desc">每天 1–2 則圖表長貼文（X Premium 長貼文，不是 Article）：一個核心指標講透，配網站原圖，文中數字標在圖上。照建議時間發。</p><div id="long-list"></div>
-    <p class="tip">長貼文：按「複製全文」，再按「存到相簿」，到 X 發文框貼上、加圖。分享選單可能只帶進前面一段文字，所以全文會同時自動複製。文字框可以點一下展開。</p></div>
+    <p class="tip">長貼文：先按「1. 存到相簿」把配圖存起來，再按「2. 在 X 發文」：會打開 X 的發文框並帶入全文（全文也同時複製了，沒帶進去或被截斷就全選刪掉、直接貼上），最後從相簿加圖。電腦版沒有存相簿，用「下載圖片」。文字框可以點一下展開。</p></div>
   <div id="t-picks" class="grp"><h2 class="grp-h">推薦圖表 · Today's picks <small id="picks-meta"></small></h2>
     <p class="desc">短圖說（280 字內）加一張圖。可以在長貼文之外補發，或貼到 Threads 等其他平台。</p>
     <div id="picks"><p class="sub">讀取中… Loading…</p></div></div>
@@ -115,6 +115,16 @@ h3 small { color:var(--ink3); font-weight:500; }
     root.querySelectorAll('pre.fold').forEach(function (p) { p.onclick = function () { p.classList.toggle('open'); }; });
     root.querySelectorAll('.copy').forEach(function (b) {
       b.onclick = function () { copy(texts[b.dataset.k] || '').then(function () { flash(b, '✓'); }, function () { flash(b, '✗'); }); };
+    });
+    // 長貼文「在 X 發文」（2026-11-05）：先複製全文，再打開 X 發文框並帶入全文。手機開 X App；電腦開網頁版，網址太長（約 6,000 字元以上）就只開空白發文框、直接貼上
+    root.querySelectorAll('.xpost').forEach(function (b) {
+      b.onclick = function () {
+        var t = texts[b.dataset.k] || '', enc = encodeURIComponent(t);
+        copy(t).catch(function () {});
+        flash(b, b.dataset.done || '✓');
+        if (MOBILE) { location.href = 'twitter://post?message=' + enc; return; }
+        window.open(enc.length < 6000 ? 'https://x.com/intent/post?text=' + enc : 'https://x.com/compose/post', '_blank', 'noopener');
+      };
     });
   }
   function tpe(d) { return new Date(d).toLocaleDateString('sv-SE', { timeZone: 'Asia/Taipei' }); }   // 台北日期 YYYY-MM-DD
@@ -179,8 +189,8 @@ h3 small { color:var(--ink3); font-weight:500; }
     var list = (F.items || []).filter(function (x) { return tpe(x.time) === TODAY; });
     if (!list.length) return;
     list.sort(function (a, b) { return new Date(a.time) - new Date(b.time); });
-    var el = document.getElementById('long-list'), LB = { zh: ['中文', '分享到 X（含圖）', '存到相簿', '複製全文', '下載圖片', ' 字'],
-                                                         en: ['English', 'Share to X (with images)', 'Save to Photos', 'Copy full text', 'Download image', ' chars'] };
+    var el = document.getElementById('long-list'), LB = { zh: ['中文', '分享（含圖）', '1. 存到相簿', '複製全文', '下載圖片', ' 字', '2. 在 X 發文', '已複製全文，打開 X…'],
+                                                         en: ['English', 'Share (with images)', '1. Save to Photos', 'Copy full text', 'Download image', ' chars', '2. Post on X', 'Text copied, opening X…'] };
     document.getElementById('long').hidden = false; document.getElementById('nav-long').hidden = false;
     document.getElementById('long-meta').textContent = list.length + ' 則 · ' + TODAY;
     el.innerHTML = list.map(function (x) {
@@ -193,8 +203,10 @@ h3 small { color:var(--ink3); font-weight:500; }
           texts[k] = t; if (ims.length) prefetchAll(k, ims, names);
           return '<h3>' + B[0] + ' <small>' + [...t].length + B[5] + '</small></h3><pre class="fold">' + esc(t) + '</pre>' +
             ims.map(function (u) { return '<img src="' + u + '" alt="">'; }).join('') + '<div class="btns">' +
-            '<button class="go copy" data-k="' + k + '">' + B[3] + '</button>' +
-            (ims.length ? '<button class="save" data-k="' + k + '">' + B[2] + '</button><button class="share" data-k="' + k + '">' + B[1] + '</button>' : '') +
+            (ims.length ? '<button class="save" data-k="' + k + '">' + B[2] + '</button>' : '') +
+            '<button class="go xpost" data-k="' + k + '" data-done="' + B[7] + '">' + B[6] + '</button>' +
+            '<button class="copy" data-k="' + k + '">' + B[3] + '</button>' +
+            (ims.length ? '<button class="share" data-k="' + k + '">' + B[1] + '</button>' : '') +
             (!MOBILE ? ims.map(function (u, i) { return '<a href="' + u + '" download="' + names[i] + '">' + B[4] + (ims.length > 1 ? ' ' + (i + 1) : '') + '</a>'; }).join('') : '') + '</div>';
         }).join('') + '</section>';
     }).join('');
