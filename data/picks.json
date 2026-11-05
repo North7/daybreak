@@ -1,30 +1,30 @@
 {
-  "date": "2026-11-03",
-  "edition": 29,
+  "date": "2026-11-04",
+  "edition": 30,
   "picks": [
+    {
+      "id": "cost",
+      "chart": "data/picks/cost.png",
+      "chart_en": "data/picks/cost-en.png",
+      "why": "異動：價格站上真實市場均價（cross:above_tmm:on），今日發現 2026-11-04-1 的起點",
+      "zh": "收盤由 $77,332 跳到 $80,441，站回真實市場均價 $77,627 之上；下方的短期持有者成本在 $75,961。上週在這兩條線之間接手的人，現在都在獲利。\n#比特幣 #BTC #鏈上數據",
+      "en": "The close jumped from $77,332 to $80,441, back above the true market mean at $77,627; the STH cost basis sits below at $75,961. Those who bought between the two lines last week are now in profit.\n#Bitcoin #BTC #onchain"
+    },
     {
       "id": "cohort",
       "chart": "data/picks/cohort.png",
       "chart_en": "data/picks/cohort-en.png",
-      "why": "今日發現 2026-11-03-1：價格貼近短期持有者最厚的籌碼（level:sth-cluster）",
-      "zh": "短期持有者的籌碼現在最集中在 76K–78K：這一格有 72.9 萬顆（CheckOnChain，11/03），一天多了 13.5 萬顆。收盤 $77,332 就落在這一格裡，短期持有者平均成本 $75,192。",
-      "en": "Short-term holder coins are now most concentrated at $76K–78K: 729K BTC in that bucket (CheckOnChain, Nov 3), up 135K in one day. The $77,332 close sits right inside it; the short-term holder average cost is $75,192."
+      "why": "今日發現 2026-11-04-1：76K 新籌碼轉為獲利，84K 是上方供給",
+      "zh": "短期持有者 371.3 萬顆、平均成本 $75,292，最厚一格在 76–78K（65.1 萬顆，CheckOnChain，11/04）。收盤在這一格上方，這批籌碼由虧轉盈；收盤上方最厚的長期持有者籌碼在 84K。\n#比特幣 #BTC #鏈上數據",
+      "en": "Short-term holders hold 3.71M BTC at an average cost of $75,292, thickest at 76–78K (651K BTC, CheckOnChain, Nov 4). The close is above that bucket, so it flipped from loss to profit; the thickest LTH supply above the close sits at 84K.\n#Bitcoin #BTC #onchain"
     },
     {
       "id": "cbp",
       "chart": "data/picks/cbp.png",
       "chart_en": "data/picks/cbp-en.png",
-      "why": "今日發現 2026-11-03-2：Coinbase 溢價 7 日均到近一年最低的 2%（extreme:cbp:lo）",
-      "zh": "Coinbase 溢價 7 日均 −0.190%，落在近一年最低的 2%，也是這段資料（2026-01 起）的最低。最新一天 −0.151%、30 日均 −0.129%：美國現貨價格持續低於 Binance。",
-      "en": "The Coinbase premium 7-day average is −0.190%, in the bottom 2% of the past year and the lowest since the series began in Jan 2026. Latest day −0.151%, 30-day average −0.129%: US spot keeps trading below Binance."
-    },
-    {
-      "id": "cost",
-      "chart": "data/picks/cost.png",
-      "chart_en": "data/picks/cost-en.png",
-      "why": "異動：價格貼近真實市場均價（−2.60%）與短期持有者成本（+1.90%）",
-      "zh": "收盤 $77,332 夾在兩條成本線中間：上方是真實市場均價 $79,394（收盤低 2.60%），下方是短期持有者成本 $75,892（收盤高 1.90%）。",
-      "en": "The $77,332 close sits between two cost lines: the true market mean at $79,394 above (close 2.60% below it) and the short-term holder cost basis at $75,892 below (close 1.90% above it)."
+      "why": "今日發現 2026-11-04-2：大漲那天美元現貨仍在折價",
+      "zh": "價格一天漲 4%，Coinbase 溢價還是負的：最新一天 −0.094%、7 日平均 −0.187%、30 日平均 −0.132%。美國現貨價格仍低於幣安，推上去的不是美元買盤。\n#比特幣 #BTC #資金流",
+      "en": "Price rose 4% in a day, yet the Coinbase premium stayed negative: −0.094% on the latest day, −0.187% on a 7-day average, −0.132% over 30 days. US spot still trades below Binance; dollar buyers did not drive this.\n#Bitcoin #BTC #flows"
     }
   ]
 }
