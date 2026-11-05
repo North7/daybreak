@@ -379,9 +379,11 @@ def ad_viz(ser, last, step=3):
     D = sorted(d for d in ser if d <= last)
     if len(D) < 800: return None
     iv = {d: ser[d][0] for d in D}; px = {d: ser[d][1] for d in D}; ix = {d: k for k, d in enumerate(D)}
-    ad = {}
+    ad = {}; ad1y = {}; sub = [_subsidy(d) for d in D]; cs = [0.0]
+    for v in sub: cs.append(cs[-1] + v)
     for k in range(30, len(D)):
-        d = D[k]; ad[d] = sum(_subsidy(D[j]) for j in range(k - 29, k + 1)) - (iv[d] - iv[D[k - 30]])
+        d = D[k]; ad[d] = cs[k + 1] - cs[k - 29] - (iv[d] - iv[D[k - 30]])
+        if k >= 365: ad1y[d] = cs[k + 1] - cs[k - 364] - (iv[d] - iv[D[k - 365]])   # 2026-11-05 1 年版（365 天合計）
     A = [d for d in D if d in ad]
     sma = {A[k]: sum(ad[A[j]] for j in range(k - 29, k + 1)) / 30 for k in range(29, len(A))}
     dl = [(D[k], iv[D[k]] - iv[D[k - 1]]) for k in range(1, len(D)) if D[k] >= '2016-01-01']
@@ -397,13 +399,85 @@ def ad_viz(ser, last, step=3):
         if m['echo'] <= last: m['echo_rise'] = round(max(dmap.get(ds(dn(m['echo']) + k), 0) for k in range(-2, 4)))
     d1 = A[-1]; w7 = A[-8] if len(A) > 8 else None
     vals = sorted(ad[d] for d in A if d >= AD_FROM)
-    rows = [[dn(d), round(ad[d]), round(sma[d]) if d in sma else None, round(px[d])] for d in A if d >= AD_FROM][::-1][::step][::-1]
+    rows = [[dn(d), round(ad[d]), round(sma[d]) if d in sma else None, round(px[d]), round(ad1y[d]) if d in ad1y else None] for d in A if d >= AD_FROM][::-1][::step][::-1]
+    # 2026-11-05 使用者要求（補充指標 PDF）：1 年版。「30 天負、1 年正」常被說成牛市中的回調，照實列出 2016 起這種組合之後 90 天的價格變化
+    v1 = sorted(ad1y[d] for d in A if d >= AD_FROM and d in ad1y)
+    fw = [(px[D[ix[d] + 90]] / px[d] - 1) * 100 for d in A if d >= '2016-01-01' and d in ad1y and ad[d] < 0 < ad1y[d] and ix[d] + 90 < len(D)]
+    fa = [(px[D[ix[d] + 90]] / px[d] - 1) * 100 for d in A if d >= '2016-01-01' and ix[d] + 90 < len(D)]
+    med = lambda a: sorted(a)[len(a) // 2] if a else None
+    y1 = dict(value=round(ad1y[d1]), issued=round(cs[ix[d1] + 1] - cs[ix[d1] - 364]), inact_chg=round(iv[d1] - iv[D[ix[d1] - 365]]),
+              pct=round(sum(x < ad1y[d1] for x in v1) / len(v1) * 100, 1),
+              combo=dict(days=len(fw), up90_pct=round(sum(x > 0 for x in fw) / len(fw) * 100) if fw else None, med90=round(med(fw), 1) if fw else None,
+                         all_up90_pct=round(sum(x > 0 for x in fa) / len(fa) * 100), all_med90=round(med(fa), 1), since='2016-01-01')) if d1 in ad1y else None
     up = [m for m in moves if d1 < m['echo'] <= ds(dn(d1) + 60)]
     rec = [m for m in moves if dn(d1) - 30 < dn(m['start']) <= dn(d1) or dn(d1) - 30 < dn(m['echo']) <= dn(d1)]
     return dict(date=d1, value=round(ad[d1]), sma30=round(sma[d1]), d7=round(ad[w7]) if w7 else None, price=round(px[d1]),
                 inact=round(iv[d1]), inact_chg30=round(iv[d1] - iv[D[ix[d1] - 30]]), issued30=round(sum(_subsidy(D[j]) for j in range(ix[d1] - 29, ix[d1] + 1))),
                 pct=round(sum(x < ad[d1] for x in vals) / len(vals) * 100, 1), since=AD_FROM, moves=moves[-12:], echo_soon=up, in_window=rec, move_thr=round(thr),
-                rows=rows, note='CryptoQuant 定義：30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化；1 年以上供給取自 CheckOnChain HODL Waves（逐筆 UTXO）；新挖出的幣照減半時程估；只作讀值')
+                y1=y1, rows=rows, note='rows 第 5 欄是 1 年版（365 天合計）；CryptoQuant 定義：30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化；1 年以上供給取自 CheckOnChain HODL Waves（逐筆 UTXO）；新挖出的幣照減半時程估；只作讀值')
+
+
+# 2026-11-05 使用者要求（補充指標 PDF：LTH／STH Supply Ratio）：長短期持有者供給比＝長期持有者供給 ÷ 短期持有者供給（Bitview lth_supply／sth_supply）。
+#   上升＝籌碼沉澱（也包括幣放滿 155 天自動轉成長期），下降＝短期籌碼增加（老手分發或新買家進場）。和「長期持有者 30 日淨部位」同一件事的比例版，
+#   只放進「價格 × 長期持有者動向」的判讀，不另開圖。只作讀值
+LS_FROM = '2015-01-01'
+
+
+def lsr_viz(bv, last):
+    ls, ss = bv.get('lths') or {}, bv.get('sths') or {}
+    D = [d for d in sorted(ls) if d <= last and ss.get(d)]
+    if len(D) < 800: return None
+    r = {d: ls[d] / ss[d] for d in D}; d1 = D[-1]
+    at = lambda n: next((d for d in reversed(D) if dn(d) <= dn(d1) - n), None)
+    a30, a365 = at(30), at(365)
+    y = [d for d in D if dn(d) > dn(d1) - 365]; hi, lo = max(y, key=r.get), min(y, key=r.get)
+    H = [r[d] for d in D if d >= LS_FROM]
+    return dict(date=d1, value=round(r[d1], 2), lth=round(ls[d1]), sth=round(ss[d1]),
+                d30=round(r[a30], 2) if a30 else None, chg30_pct=round((r[d1] / r[a30] - 1) * 100, 1) if a30 else None,
+                d365=round(r[a365], 2) if a365 else None, hi1y=dict(date=hi, value=round(r[hi], 2)), lo1y=dict(date=lo, value=round(r[lo], 2)),
+                pct=round(sum(v < r[d1] for v in H) / len(H) * 100, 1), since=LS_FROM, src='Bitview',
+                note='長期持有者供給 ÷ 短期持有者供給（Bitview，持有 155 天分界）；上升也包括幣放滿 155 天自動轉成長期；只作讀值')
+
+
+# 2026-11-05 使用者要求（補充指標 PDF：已實現虧損）：長期持有者已實現虧損（Bitview lth_realized_loss_sum_24h，美元；不是 Glassnode 的實體調整版）。
+#   相對值＝7 日合計 ÷ 市值（價格 × 長短期持有者供給合計），跨年份才能比。擺動低點＝收盤是前後 30 天最低、且比之前 180 天最高跌 ≥ 20%；低點的值取前後 7 天內最大。
+#   2011 起驗證：「低點一次比一次低、虧損一次比一次小＝賣壓衰竭」不成立。2015、2018、2022 三次熊市（前一個頂部到底部後 45 天）都是底部那次低點虧損最大
+#   （2015-01 0.86%、2018-12 2.86%、2022-11 1.30%；本輪 2026-06 0.29%）；2018 年 6→8→10 月虧損縮小（0.84 → 0.29 → 0.48）之後還有一次最大的投降。只作讀值
+RL_FROM, RL_WIN = '2015-01-01', 30
+
+
+def lthrl_viz(bv, px, last, bottoms, tops, step=3):
+    L, ls, ss = bv.get('lthrl') or {}, bv.get('lths') or {}, bv.get('sths') or {}
+    P = lambda d: px.get(d, bv['px'].get(d))
+    D = [d for d in sorted(L) if d <= last and P(d) and ls.get(d) and ss.get(d)]
+    if len(D) < 1500: return None
+    usd, rel = {}, {}
+    for j, d in enumerate(D):
+        u = sum(L[D[i]] for i in range(max(0, j - 6), j + 1)); usd[d] = u; rel[d] = u / (P(d) * (ls[d] + ss[d])) * 100
+    lows = []
+    for j in range(RL_WIN, len(D) - RL_WIN):
+        p = P(D[j])
+        if p == min(P(D[i]) for i in range(j - RL_WIN, j + RL_WIN + 1)) and p <= 0.8 * max(P(D[i]) for i in range(max(0, j - 180), j)):
+            k = max(range(max(0, j - 7), min(len(D), j + 8)), key=lambda i: rel[D[i]])
+            lows.append(dict(date=D[j], price=round(p), rel=round(rel[D[k]], 3), usd_m=round(usd[D[k]] / 1e6)))
+    tp = [t for t, _ in tops]; bear = []
+    for bd, _ in bottoms:   # 每次熊市：前一個頂部之後到這個底部（含前後 45 天）的擺動低點
+        t0 = max((t for t in tp if t < bd), default=None)
+        if not t0 or bd < RL_FROM: continue
+        w = [x for x in lows if t0 < x['date'] <= ds(dn(bd) + 45)]
+        if not w: continue
+        b = max(w, key=lambda x: x['rel'])
+        bear.append(dict(top=t0, bottom=bd, lows=w, max=b, last_is_max=b is w[-1]))
+    d1 = D[-1]; t_last = tp[-1] if tp else None
+    H = [rel[d] for d in D if d >= RL_FROM]
+    rows = []
+    E = [d for d in D if d >= RL_FROM]
+    for i in range(0, len(E), step):   # 每段取最大，尖峰不會被抽樣抽掉
+        blk = E[i:i + step]; m = max(blk, key=rel.get); rows.append([dn(m), round(rel[m], 3), round(P(m))])
+    if rows and rows[-1][0] != dn(d1): rows.append([dn(d1), round(rel[d1], 3), round(P(d1))])
+    return dict(date=d1, rel=round(rel[d1], 3), usd7_m=round(usd[d1] / 1e6), price=round(P(d1)), pct=round(sum(v < rel[d1] for v in H) / len(H) * 100, 1),
+                since=RL_FROM, lows_now=[x for x in lows if t_last and x['date'] > t_last], bears=bear, rows=rows, src='Bitview',
+                note='長期持有者已實現虧損（Bitview，美元，不是實體調整）7 日合計 ÷ 市值；擺動低點＝前後 30 天最低且比之前 180 天最高跌 ≥ 20%；只作讀值')
 
 
 # 2026-11-04 使用者要求（ForeDex／加密貝兒的 Supply In Loss % - LTH）：長期持有者虧損比例（CheckOnChain，coc.get_lthloss）。只作讀值。

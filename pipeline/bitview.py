@@ -30,7 +30,8 @@ COLS = [('px', 'price_close', 2), ('sth', 'sth_realized_price', 2), ('tmm', 'tru
         # 2026-11-05：循環資金流（實現市值加權的幣齡：1 個月內、1–2 年各佔全體實現市值的 %）
         ('cf1m', ('share', ['age_under_1h_realized_cap', 'age_1h_to_1d_realized_cap', 'age_1d_to_1w_realized_cap', 'age_1w_to_1m_realized_cap'], 'realized_cap'), 2),
         ('cf12', ('share', ['age_1y_to_18m_realized_cap', 'age_18m_to_2y_realized_cap'], 'realized_cap'), 2),
-        ('ssopr', 'sth_sopr_24h', 4)]   # 2026-11-05：短期持有者 SOPR（每日），給本站自製的短期壓力分數（stage_viz.stress_viz）   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
+        ('ssopr', 'sth_sopr_24h', 4),
+        ('lthrl', 'lth_realized_loss_sum_24h', 0)]   # 2026-11-05：長期持有者已實現虧損（美元／日，stage_viz.lthrl_viz）   # 2026-11-05：短期持有者 SOPR（每日），給本站自製的短期壓力分數（stage_viz.stress_viz）   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
 KEYS = [k for k, _, _ in COLS]
 COC_TMM = 'https://charts-cdn.checkonchain.com/btconchain/cointime/cointime_pricing_all_1/cointime_pricing_all_1_light.html'
 
