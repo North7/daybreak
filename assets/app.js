@@ -77,7 +77,9 @@
     //   藏著時動畫不會跑，線會停在看不見的狀態，只剩最後一點（截圖工具直接截這種圖時就是空的）
     if (reduced || el._drawn || el.offsetParent === null) return; el._drawn = true;
     // 2026-10-14：虛線（推測、還沒發生的部分）不套描線動畫，動畫的 stroke-dasharray 會蓋掉虛線樣式、讓它變成實線
-    el.querySelectorAll('path.ln:not([stroke-dasharray])').forEach(function (p) { try { var L = p.getTotalLength(); p.style.setProperty('--len', L); p.classList.add('draw'); } catch (e) {} });
+    // 2026-11-05：描線跑完就拿掉 draw class。否則圖之後被藏起來再顯示（截圖工具 captureBeyondViewport 會暫時改視窗大小、
+    //   視窗跨過 860px 再拉回）動畫會從頭重播，桌面版「展開其餘」那幾張小圖在截圖裡只剩最後一點
+    el.querySelectorAll('path.ln:not([stroke-dasharray])').forEach(function (p) { try { var L = p.getTotalLength(); p.style.setProperty('--len', L); p.classList.add('draw'); p.addEventListener('animationend', function () { p.classList.remove('draw'); p.style.removeProperty('--len'); }, { once: true }); } catch (e) {} });
   }
 
   /* 折線／面積圖：x 為日期序號（天）或數值；可對數 y；參考線、區段、標記；十字線 tooltip */
