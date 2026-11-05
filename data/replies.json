@@ -4,6 +4,25 @@
  "edition": 30,
  "items": [
   {
+   "n": 106,
+   "order": 0,
+   "status": "send",
+   "url": "https://x.com/misterrcrypto/status/2118313378275852589",
+   "id": "2118313378275852589",
+   "author": "misterrcrypto",
+   "name": "Mister Crypto",
+   "followers": 135086,
+   "posted": "2026-11-05T12:04:00Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "減半前 500 天買、減半後 500 天賣，就這麼簡單（附月線圖，標出每輪 500 天）",
+   "reply": "Been checking this against the bottoms. In past cycles the 500 day mark landed 2 to 6 weeks after the bear low. This time it falls around Dec 2, but the low already came on June 30, five months early",
+   "sources": "cycle.halvings、next_halving_est 2028-04-15、cycle.cycle_cmp 低點：減半前 500 天的日子 2015-02-25／2018-12-28／2022-12-07，分別在熊市低點 2015-01-14／2018-12-15／2022-11-09 之後 42／13／28 天；這輪是 2026-12-02，低點 2026-06-30，相隔約 155 天",
+   "note": "使用者指定。和 cryptogoos 那則同一個題目（減半前後 500 天），角度錯開：那則講頂部和低點距減半的天數，這則只講「減半前 500 天」和熊市低點的距離。不接買賣，不配圖。",
+   "mode": "reply",
+   "style": "真人版"
+  },
+  {
    "n": 105,
    "order": 0,
    "status": "send",
