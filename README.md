@@ -40,14 +40,14 @@
 
 | # | 版面 | 看什麼 |
 |---|---|---|
-| 01 | **頭版** | 號外大標題、巨型收盤價（滑過可回看近 20 天）、立場與市場階段、要盯的三個價位、數據帶、資料狀態、今天該做什麼／今天變了什麼、**訊號總表**（方向：市場階段、週線多空分數、今日發現；離頂部多近：MVRV ÷ 前高、頂部三指標、Tidemark、頂部雷達、冪律；離出場多遠：價格階梯、200 日均線避險；條一律是「離觸發多近」）、**今日發現**（上期發現的後續只列今天結案的，追蹤中的收合；附自動偵測的異動）、今日要聞（側欄只列標題）、離出場線的跑道圖、價格近一年、接下來的日期 |
+| 01 | **頭版** | 號外大標題、巨型收盤價（滑過可回看近 20 天）、立場與市場階段、要盯的三個價位、數據帶、資料狀態、今天該做什麼／今天變了什麼、**我們的看法**（7 張圖的傾向與會改變看法的條件，從長線到短線排，點了跳到那張圖）、**訊號總表**（方向：市場階段、週線多空分數、今日發現；離頂部多近：MVRV ÷ 前高、頂部三指標、Tidemark、頂部雷達、冪律；離出場多遠：價格階梯、200 日均線避險；條一律是「離觸發多近」）、**今日發現**（上期發現的後續只列今天結案的，追蹤中的收合；附自動偵測的異動）、今日要聞（側欄只列標題）、離出場線的跑道圖、價格近一年、接下來的日期 |
 | 02 | **消息** | 過去 24–36 小時的重要消息（依分類篩選），每則附「對 BTC 的意義」並對照本站數據；機構研報（Glassnode、K33 等）重點 |
-| 03 | **週期** | 市場階段（熊市 → 轉換期 → 牛市，規則化判定與佐證燈號；6 張佐證圖預設收起）、週線多空分數、長期路徑四種走法、MVRV ÷ 前一輪高點、頂部三指標（附原始讀值）、冪律合理價、Tidemark 頂部／底部綜合訊號、頂部雷達、頂部三指標與頂部雷達 6 項的近 3 年走勢 |
-| 04 | **出場框架** | 現在離每條出場規則多遠、出場模擬器（拖動價格看框架會賣多少）、鏈上觸發、200 日均線避險、頂部三指標（只作讀值）與時間停損 |
-| 05 | **價格** | 近 20 天 K 線、ATR、實際波動、Mayer 倍數、Pi Cycle、**短週期（目前這一段行情：起點、幅度、天數、與本輪中位數比較、本段結束線）**、關鍵價位、均線排列、長期走勢 |
-| 06 | **衍生品** | DVOL、IV − RV、永續資金費率（Deribit／OKX／Hyperliquid 以未平倉加權）、25Δ 風險逆轉（30 天固定期限）、選擇權未平倉與履約價分布、期貨基差曲線、**掛單簿**（13 個交易所 ±15% 全景柱狀圖、最大的牆、整數關卡）、CoinGlass 爆倉熱力圖連結 |
-| 07 | **資金** | 現貨 ETF 每日淨流量（並換算成 BTC 與新挖出量比較）、BTC 與那斯達克／美元相關、10 年期實質利率、三地溢價（美國現貨 Coinbase、亞洲 USDT 場外、永續對現貨）、穩定幣供給、恐懼貪婪指數、實現市值 30 日變化（附歷次歸零之後的價格表現） |
-| 08 | **鏈上** | 短期持有者獲利比例、交易所供給、算力與算力帶（Hash Ribbons）、難度、籌碼分布（URPD）、**長短期持有者籌碼（URPD 依持有時間拆成 LTH／STH；和約 30 天前比誰賣誰買、跌到哪裡誰套牢）**、價格 × 長期持有者動向、賣方衰竭常數、實現獲利 ÷ 虧損、表觀需求、STH-SOPR、短期持有者實現損益、每日淨實現損益、鏈上指標表與走勢小圖（aSOPR、LTH-SOPR、流動性供給） |
+| 03 | **鏈上** | 分四組（版內目錄也分組）：**成本與位置**（籌碼分布 URPD、短期持有者獲利比例、短期持有者成本帶、依持有時間的持幣成本）；**獲利了結與認賠**（STH-SOPR 與短期持有者實現損益並排、每日淨實現損益、實現獲利 ÷ 虧損、賣方衰竭常數）；**長期持有者**（長短期持有者籌碼、價格 × 長期持有者動向、長期持有者虧損比例與已實現虧損）；**需求與資金**（表觀需求、循環資金流、鯨魚與大戶）；最後是鏈上指標表與走勢小圖。頂端另有短期持有者獲利比例、交易所供給、算力、難度的數字卡 |
+| 04 | **週期** | 分三組：**現在的階段**（市場階段：熊市 → 轉換期 → 牛市，規則化判定與佐證燈號，6 張佐證圖預設收起；週線多空分數）；**離頂部多近**（MVRV ÷ 前一輪高點、頂部三指標、頂部雷達、兩者 6 項的近 3 年走勢）；**和歷史與模型比**（和前幾輪比：頂部之後、冪律合理價、Tidemark 綜合訊號、長期路徑四種走法） |
+| 05 | **價格** | 近 20 天 K 線、ATR、實際波動、Mayer 倍數、Pi Cycle、**短週期（目前這一段行情：起點、幅度、天數、與本輪中位數比較、本段結束線）**、關鍵價位、成本線與均線（短期持有者成本、真實市場均價、活躍投資人成本等，附我們的看法）、均線排列、長期走勢 |
+| 06 | **資金** | 現貨 ETF 每日淨流量（並換算成 BTC 與新挖出量比較）、BTC 與那斯達克／美元相關、10 年期實質利率、三地溢價（美國現貨 Coinbase、亞洲 USDT 場外、永續對現貨）、穩定幣供給、恐懼貪婪指數、實現市值 30 日變化（附歷次歸零之後的價格表現） |
+| 07 | **衍生品** | DVOL、IV − RV、永續資金費率（Deribit／OKX／Hyperliquid 以未平倉加權）、25Δ 風險逆轉（30 天固定期限）、選擇權未平倉與履約價分布、期貨基差曲線、**掛單簿**（13 個交易所 ±15% 全景柱狀圖、最大的牆、整數關卡）、CoinGlass 爆倉熱力圖連結 |
+| 08 | **出場框架** | 現在離每條出場規則多遠、出場模擬器（拖動價格看框架會賣多少）、鏈上觸發、200 日均線避險、頂部三指標（只作讀值）與時間停損 |
 | 09 | **往期** | 發現戰績（2026/10/23 起每則發現的最終結果：確認／推翻／到期／追蹤中；結案少於 30 則不算命中率）、往期列表（頭條、立場、當天收盤、到今天的漲跌） |
 | 10 | **方法** | 這是什麼、原則、限制、資料來源與更新時間 |
 
@@ -266,6 +266,13 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-06** 版面整理（使用者要求「整體整理一下目前的所有內容，優化版面，佈局」）
+  - 「我們的看法」排到每張圖讀值的第一列，「會改變看法」的條件另起一行；細項讀值超過 3 列時，其餘收進「更多讀值」，圖往上移。
+  - 頭版新增「我們的看法」總表：7 張圖的傾向與會改變看法的條件，從長線到短線排，點了跳到那張圖（看法本身仍在各面板，同一份判斷）。
+  - 鏈上版分四組（成本與位置、獲利了結與認賠、長期持有者、需求與資金）＋指標總表，版內目錄也分組；「依持有時間的持幣成本」從週期版搬到鏈上版的成本組（舊連結 `#cycle/agecost` 會自動跟著圖走）；STH-SOPR 和短期持有者實現損益在桌面並排。
+  - 週期版分三組：現在的階段 → 離頂部多近 → 和歷史與模型比。資金版的 ETF 流量和穩定幣在桌面並排。
+  - 圖表面板裡，圖後面的表格（歷次紀錄、情境表）收成「展開表格」；長的說明只露前兩行，點「展開說明」看全文。頭版、消息、出場、往期、方法版不動。
+  - 結果（桌面、中文）：週期版 7,927 → 6,730px；鏈上版多了搬來的持幣成本仍從 17,268 → 16,575px。只改版面與順序，資料、管線、看法判斷都沒動。
 - **2026-11-04** 整體審查：頭版、訊號總表、結構與圖表
   - 頭版順序改成結論 → 今天該做什麼／今天變了什麼 → 訊號總表 → 今日發現 → 要聞（行動清單原本在第 4–5 屏）；桌面巨型收盤價限高約視窗 26%，立場與三個價位進到第一屏。
   - 上期發現的後續：今天結案的照列，追蹤中的收成一行（原本 12–13 則「追蹤中」把新發現壓到下面）。
@@ -351,14 +358,14 @@ Ten sections. On desktop they stack into one page and switch as you scroll (keys
 
 | # | Section | What you see |
 |---|---|---|
-| 01 | **Front page** | Headline, the giant closing price (hover to step back through 20 days), stance and market stage, three levels to watch, data tape, data-status bar, what to do / what changed, the **signal board** (direction: market stage, weekly regime score, today's findings; how close to a top: MVRV ÷ prior peak, top-3 indicators, Tidemark, top radar, power law; how far from the exit rules: price ladder, 200-day MA hedge; every bar reads as “how close to its trigger”), **today's findings** (follow-ups show only those resolved today, the rest folded away; plus the auto-detected signals), today's news (headlines only in the side column), the runway to each exit line, the 12-month price chart, upcoming dates |
+| 01 | **Front page** | Headline, the giant closing price (hover to step back through 20 days), stance and market stage, three levels to watch, data tape, data-status bar, what to do / what changed, **our read** (the lean and what would change it for seven charts, long-term to short-term, each linking to its chart), the **signal board** (direction: market stage, weekly regime score, today's findings; how close to a top: MVRV ÷ prior peak, top-3 indicators, Tidemark, top radar, power law; how far from the exit rules: price ladder, 200-day MA hedge; every bar reads as “how close to its trigger”), **today's findings** (follow-ups show only those resolved today, the rest folded away; plus the auto-detected signals), today's news (headlines only in the side column), the runway to each exit line, the 12-month price chart, upcoming dates |
 | 02 | **News** | Key stories from the last 24–36 hours (filter by category), each with what it means for BTC checked against our data; institutional research (Glassnode, K33, …) |
-| 03 | **Cycle** | Market stage (bear → transition → bull, rule-based with supporting signals; the six evidence charts start folded), weekly regime score, four long-term paths, MVRV ÷ prior-cycle peak, the top-3 indicators (with raw values), power-law fair value, Tidemark top/bottom signals, top radar, 3-year trends of the top-3 and top-radar series |
-| 04 | **Exit plan** | How far price is from each exit rule, an exit simulator (drag a price and see what the plan would have sold), on-chain triggers, 200-day MA hedge, top-3 indicators (reading only) and time stop |
-| 05 | **Price** | 20 daily candles, ATR, realized volatility, Mayer multiple, Pi Cycle, **short cycle (the current price leg: start, size, length vs. this cycle's median, the close that would end it)**, key levels, moving-average alignment, long-term chart |
-| 06 | **Derivatives** | DVOL, IV − RV, perp funding (Deribit / OKX / Hyperliquid, open-interest weighted), 25Δ risk reversal (30-day constant maturity), options open interest and strikes, futures basis curve, **order book** (13 exchanges, ±15% full-view bar chart, biggest walls, round numbers), link to the CoinGlass liquidation heatmap |
-| 07 | **Flows** | Spot ETF daily net flows (also in BTC vs. newly mined supply), BTC correlation with Nasdaq / USD, 10-yr real yield, three premiums (US spot via Coinbase, Asian OTC USDT, perp vs spot), stablecoin supply, Fear & Greed, realized-cap 30-day change (with what price did after every past zero) |
-| 08 | **On-chain** | Short-term holders in profit, exchange supply, hashrate and Hash Ribbons, difficulty, supply distribution (URPD), **long- vs short-term holder supply (URPD split into LTH / STH; who sold and bought versus about 30 days ago, who is underwater at each price)**, price × long-term holder activity, seller exhaustion, realized profit ÷ loss, apparent demand, STH-SOPR, short-term holder realized P/L, daily net realized P/L, on-chain metrics table and small-multiple trends (aSOPR, LTH-SOPR, liquidity supply) |
+| 03 | **On-chain** | Four groups (the page index is grouped too): **cost and position** (URPD, short-term holders in profit, short-term holder cost bands, holder cost by coin age); **profit-taking and loss-selling** (STH-SOPR and short-term holder realized P/L side by side, daily net realized P/L, realized profit ÷ loss, seller exhaustion constant); **long-term holders** (long- vs short-term holder supply, price × long-term holder flow, LTH supply in loss and LTH realized loss); **demand and money** (apparent demand, capital flow, whales); then the on-chain table and small trend charts. Number cards on top: short-term holders in profit, exchange supply, hashrate, difficulty |
+| 04 | **Cycle** | Three groups: **where we are** (market stage: bear → transition → bull, rule-based with supporting signals, the six evidence charts start folded; weekly regime score); **how close to a top** (MVRV ÷ prior-cycle peak, top-3 indicators, top radar, 3-year trends of all six); **against history and models** (versus past cycles after the top, power-law fair value, Tidemark composite, four long-term paths) |
+| 05 | **Price** | 20 daily candles, ATR, realized volatility, Mayer multiple, Pi Cycle, **short cycle (the current price leg: start, size, length vs. this cycle's median, the close that would end it)**, key levels, cost bases and moving averages (short-term holder cost, true market mean, active investor price and more, with our read), moving-average alignment, long-term chart |
+| 06 | **Flows** | Spot ETF daily net flows (also in BTC vs. newly mined supply), BTC correlation with Nasdaq / USD, 10-yr real yield, three premiums (US spot via Coinbase, Asian OTC USDT, perp vs spot), stablecoin supply, Fear & Greed, realized-cap 30-day change (with what price did after every past zero) |
+| 07 | **Derivatives** | DVOL, IV − RV, perp funding (Deribit / OKX / Hyperliquid, open-interest weighted), 25Δ risk reversal (30-day constant maturity), options open interest and strikes, futures basis curve, **order book** (13 exchanges, ±15% full-view bar chart, biggest walls, round numbers), link to the CoinGlass liquidation heatmap |
+| 08 | **Exit plan** | How far price is from each exit rule, an exit simulator (drag a price and see what the plan would have sold), on-chain triggers, 200-day MA hedge, top-3 indicators (reading only) and time stop |
 | 09 | **Archive** | Findings track record (every finding since 2026/10/23 and how it ended: confirmed / refuted / expired / still tracked; no hit rate until 30 are resolved) and past editions (headline, stance, that day's close, change since) |
 | 10 | **Method** | What this is, principles, limits, data sources and update times |
 
@@ -523,6 +530,12 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-06** Layout clean-up
+  - “Our read” now leads each chart's readings, with what would change it on its own line; when a panel has more than three detail readings, the rest fold under “More readings” so the chart moves up.
+  - The front page gains an “Our read” table: the lean and what would change it for seven charts, long-term to short-term, each linking to its chart.
+  - On-chain is split into four groups (cost and position, profit-taking and loss-selling, long-term holders, demand and money) plus the metrics table, with a grouped page index; “Holder cost by coin age” moves here from Cycle (old `#cycle/agecost` links follow the chart); STH-SOPR and short-term holder realized P/L sit side by side on desktop.
+  - Cycle is split into three groups: where we are → how close to a top → against history and models. ETF flows and stablecoins sit side by side on Flows.
+  - In chart panels, tables after the chart (past episodes, scenarios) fold under “Show table”, and long notes show two lines until “More” is clicked. Layout and order only; data, pipeline and views are unchanged.
 - **2026-11-05** Exit plan v3; cost-band lines; indicator additions
   - Seven panels gain “Our read”, the site's own view built from the data (lean, reasons, and what would change it), drawing on how analysts read these measures (true market mean as the bull/bear line, short-term holder cost as support in uptrends, a veteran-to-new-buyer handover before new highs, loss-selling bursts at local lows). On 11/04: range between 77.6K and 85.1K, new buyers under water, weak demand, handover under way, no big capitulation this cycle (leaning to the low being in), not a classic deep bear.
   - After scanning 14 on-chain X accounts: (1) “Cost bases and moving averages” gains the active investor price (Bitview, Cointime Active Price): 85,113 on 11/04, with only 35 of 308 days this year closing above it, in line with Glassnode's “85K keeps turning BTC back” (the match is our own observation). (2) “Holder cost by coin age” gains a 1-week–1-month view (new buyers' cost, Bitview): 81,762, with the close 1.6% below since 10/22. (3) Cycle gains “Versus past cycles: after the top”: on day 394 past cycles were −72%, −81% and −75%, this one −35.5%; past cycles took 1,177, 1,080 and 847 days to close above the top again. Not added: ETF cost basis, since our own figure from The Block flows (84.4K average cost; 74.1K with GBTC's legacy coins) does not match Glassnode's 81.5K, which uses on-chain ETF wallets (entity data).
