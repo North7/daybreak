@@ -1595,6 +1595,7 @@
       panel('span-12', _t('市場階段：') + (STAGE[st.stage] || ['—'])[0], _t('P23 · 熊市 → 轉換期 → 牛市'), stageHtml()) +
       regPanel() + acPanel() +
       panel('span-12', _t('長期路徑：四種走法'), _t('每月底重估 · 下次 ') + M.next_review, legend([[_t('直接修復 ') + w['直接修復'] + '%', 'var(--s4)', 'dash'], [_t('淺回檔 ') + w['淺回檔'] + '%', 'var(--s1)', 'dash'], [_t('基準雙底 ') + w['基準雙底'] + '%', 'var(--s2)', 'dash'], [_t('延後新低 ') + w['延後新低'] + '%', 'var(--s3)', 'dash'], [_t('已實現'), 'var(--ink)'], [_t('頂部 80% 區間'), 'var(--flare)', 'box']]) + _t('<div class="chart" id="c-path"></div><p class="note">頂部模型：中位 ') + fmt.usd(M.top_model.median) + _t('，80% 區間 ') + fmt.k(M.top_model.p10) + '–' + fmt.k(M.top_model.p90) + _t('，時間 ') + esc(tx(M.top_model, 'timing')) + _t('。路徑是本站的預測，2028 年以後只供量級參考。</p>') + pathReviewHtml()) +
+      ccPanel() +
       panel('span-7', _t('MVRV ÷ 前一輪高點'), _t('CoinMetrics · 2021 起'), _t('<p class="say">現在 <b>') + fmt.n(cm.mvrv_vs_prior, 3) + _t('</b>；連 5 天站上 0.75 是出場框架的第一個鏈上賣點。') + esc((p20Read() || [''])[0]) + '</p><div class="chart" id="c-p20"></div>') +
       panel('span-5', _t('頂部三指標'), fmt.md(D.cycle.p6_date) + _t(' · 四年百分位'), '<p class="say">' + esc((p6Read() || [''])[0]) + '</p><div class="meters">' + meter('MVRV Z', _t('<0 底 · >3.5 頂'), p6.mvrv_z, fmt.n(p6.mvrv_z, 0), _t('百分位'), [80]) + meter('NUPL', _t('淨未實現損益'), p6.nupl, fmt.n(p6.nupl, 0), _t('百分位'), [80]) + meter('Puell', _t('礦工收入倍數'), p6.puell, fmt.n(p6.puell, 0), _t('百分位'), [80]) + _t('</div><p class="note">任兩項到 80 標為頂部區；只作讀值，不連動賣出。舊的 85／90 加速規則已取消：過去四輪都在週期中段就先到。</p>') + p6Raw(), '', 'p6') +
       panel('span-7', _t('冪律：價格 ÷ 合理價'), _t('每天只用當天以前資料擬合'), _t('<p class="say">現在 <b>') + fmt.n(pl.ratio, 2) + _t(' 倍</b>（合理價 ') + fmt.usd(pl.fair) + _T('，', ', ') + plGap(pl.ratio) + _t('）。頂部倍數每輪縮小，照這個速度，下一輪頂部約在合理價的 ') + fmt.n((pl.next_top_ratio || [])[0], 2) + '–' + fmt.n((pl.next_top_ratio || [])[1], 2) + _t(' 倍。') + esc((plRead() || [''])[0]) + esc(plChanSay()) + '</p><div id="pl-lg">' + plLegend(plChan() ? 'chan' : 'ratio') + '</div><div class="chart" id="c-pl"></div>', (plChan() ? '<div class="seg" id="pl-mode"><button aria-pressed="true" data-m="chan">' + _T('通道位置', 'Channel') + '</button><button aria-pressed="false" data-m="ratio">' + _T('倍數', 'Multiple') + '</button></div>' : '') + _t('<div class="seg" id="pl-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="2020">2020 起</button></div>')) +
@@ -1603,7 +1604,7 @@
       '</div>';
   };
   V.cycle.after = function () {
-    safe(drawEv, function () { drawOc(true); }); mount($('#c-regime'), drawRegime); mount($('#c-agecost'), drawAgeCost); var acs = $('#ac-segs'); if (acs) acs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-a') === acMode) return; acMode = b.getAttribute('data-a'); acs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); $('#ac-say').innerHTML = interpHtml(acMode === '36' ? acSay36() : acSay()); $('#ac-lg').innerHTML = acLegend(); drawAgeCost($('#c-agecost')); });
+    safe(drawEv, function () { drawOc(true); }); mount($('#c-regime'), drawRegime); mount($('#c-agecost'), drawAgeCost); mount($('#c-cyccmp'), drawCycCmp); var acs = $('#ac-segs'); if (acs) acs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-a') === acMode) return; acMode = b.getAttribute('data-a'); acs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); $('#ac-say').innerHTML = interpHtml(acSayNow()); $('#ac-lg').innerHTML = acLegend(); drawAgeCost($('#c-agecost')); });
     var M = D.cycle.model, cols = { '直接修復': 'var(--s4)', '淺回檔': 'var(--s1)', '基準雙底': 'var(--s2)', '延後新低': 'var(--s3)' };
     var md = function (y, m) { return Math.round(Date.UTC(y, m - 1, 15) / 864e5); };
     var series = Object.keys(M.nodes).map(function (k) { return { name: _t(k), data: M.nodes[k].map(function (p) { return [md(p[0], p[1]), p[2]]; }), color: cols[k], dash: '5 5', w: 1.8, end: false, smooth: true }; });
@@ -2537,7 +2538,7 @@
   }
   // 2026-11-04 使用者要求：加 3–6 個月持幣成本（價格上穿後的天數），和 6–12／12–18 個月放在同一張圖切換
   var acMode = '612';
-  function acSegs() { var b = function (v, z, e) { return '<button aria-pressed="' + (acMode === v) + '" data-a="' + v + '">' + _T(z, e) + '</button>'; }; return '<span class="seg" id="ac-segs">' + b('36', '3–6 個月', '3–6 months') + b('612', '6–12 vs 12–18 個月', '6–12 vs 12–18 months') + '</span>'; }
+  function acSegs() { var b = function (v, z, e) { return '<button aria-pressed="' + (acMode === v) + '" data-a="' + v + '">' + _T(z, e) + '</button>'; }; return '<span class="seg" id="ac-segs">' + ((D.cycle.age_cost || {}).c1m ? b('1m', '1 週–1 個月', '1w–1m') : '') + b('36', '3–6 個月', '3–6 months') + b('612', '6–12 vs 12–18 個月', '6–12 vs 12–18 months') + '</span>'; }
   function acSay36() {
     var x = D.cycle.age_cost, c = x.c36, it = [], d0 = dnOf(x.date), ym = function (k) { return ds_(d0 - k).slice(0, 7).replace('-', '/'); };
     var U = c.ups || [], bear = U.filter(function (u) { return u.bear; }), cur = bear.length && !bear[bear.length - 1].done ? bear[bear.length - 1] : null, past = bear.filter(function (u) { return u.done; });
@@ -2552,21 +2553,71 @@
         'Back above the line after 250+ days below: ' + past.map(function (u) { return ymdD(u.date) + ', six-month high on day ' + u.hi.days; }).join('; ') + '. The oft-cited “about 80 days to the top” only fits 2019; in 2015 and 2023 the six-month high came after day 170. The other ' + (U.length - bear.length) + ' returns above the line (under 250 days below) ended bull-market pullbacks.'), 'neu']);
     return it;
   }
+  // 2026-11-05 使用者要求（X 帳號掃描：新買家成本）：1 週–1 個月持幣成本
+  function acSay1m() {
+    var c = D.cycle.age_cost.c1m, it = [];
+    it.push([_T('1 週–1 個月成本', '1w–1m cost'), fmt.k(c.cost),
+      _T('最近 1 週到 1 個月進場、到現在沒動的人，平均買價 ' + fmt.usd(c.cost) + '；收盤 ' + fmt.usd(c.price) + '，' + (c.above ? '高 ' : '低 ') + fmt.n(Math.abs(c.gap_pct), 1) + '%，從 ' + ymdD(c.since) + ' 起連續 ' + c.days + ' 天在線' + (c.above ? '上' : '下') + '。' + (c.chg30 != null ? '這條線 30 天' + (c.chg30 < 0 ? '下降 ' : '上升 ') + fmt.usd(Math.abs(c.chg30)) + '。' : ''),
+        'People who bought 1 week to 1 month ago and still hold paid ' + fmt.usd(c.cost) + ' on average; the close of ' + fmt.usd(c.price) + ' is ' + fmt.n(Math.abs(c.gap_pct), 1) + '% ' + (c.above ? 'above' : 'below') + ' it, for ' + c.days + ' straight days since ' + ymdD(c.since) + '.' + (c.chg30 != null ? ' The line ' + (c.chg30 < 0 ? 'fell ' : 'rose ') + fmt.usd(Math.abs(c.chg30)) + ' in 30 days.' : '')), c.above ? 'pos' : 'neg']);
+    if (c.sth) it.push([_T('和短期持有者成本比', 'Vs STH cost'), fmt.pct(c.vs_sth_pct, 1),
+      _T('短期持有者（持有不到 155 天的全部）成本是 ' + fmt.usd(c.sth) + '；最近一個月的買家' + (c.vs_sth_pct >= 0 ? '買得比較貴，價格回到短期持有者成本時，他們平均帳面虧損約 ' + fmt.n(Math.abs((c.sth / c.cost - 1) * 100), 1) + '%。' : '買得比較便宜。'),
+        'Short-term holders overall (under 155 days) paid ' + fmt.usd(c.sth) + '; the last month\'s buyers ' + (c.vs_sth_pct >= 0 ? 'paid more, so if price returns to the STH cost they would be about ' + fmt.n(Math.abs((c.sth / c.cost - 1) * 100), 1) + '% under water on average.' : 'paid less.')), 'neu']);
+    return it;
+  }
+  function acSayNow() { return acMode === '1m' ? acSay1m() : acMode === '36' ? acSay36() : acSay(); }
   function acLegend() {
+    if (acMode === '1m') return legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('1 週–1 個月成本', '1w–1m cost'), 'var(--s2)']]);
     return acMode === '36' ? legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('3–6 個月成本', '3–6 month cost'), 'var(--s2)'], [_T('↑ 熊市後第一次上穿', '↑ First cross after a bear market'), 'var(--up)', 'dot'], [_T('其他上穿', 'Other crosses'), 'var(--ink-3)', 'dot']])
       : legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('6–12 個月成本', '6–12 month cost'), 'var(--s2)'], [_T('12–18 個月成本', '12–18 month cost'), 'var(--s1)'], [_T('↓ 死叉', '↓ Death cross'), 'var(--down)', 'dot'], [_T('↑ 金叉', '↑ Golden cross'), 'var(--up)', 'dot']]);
   }
+  /* 和前幾輪比（2026-11-05 使用者要求，X 帳號掃描）：各輪週期頂部之後每天收盤 ÷ 頂部收盤，畫在同一個「頂部後第幾天」的橫軸上（對數）。只作讀值 */
+  var CC_COL = ['var(--ink-3)', 'var(--s1)', 'var(--s3)', 'var(--s2)'];
+  function ccSay() {
+    var x = D.cycle.cycle_cmp, C = x.cycles || [], cur = C.filter(function (c) { return c.now; })[0], past = C.filter(function (c) { return !c.now; }), it = [], y = function (c) { return c.top.slice(0, 4); };
+    if (!cur) return it;
+    it.push([_T('頂部後第 ' + x.day_now + ' 天', 'Day ' + x.day_now + ' after the top'), fmt.pct(cur.at.pct, 1),
+      _T('這輪頂部 ' + ymdD(cur.top) + ' 收盤 ' + fmt.usd(cur.top_price) + '，今天收盤在它的 ' + fmt.pct(cur.at.pct, 1) + '。前幾輪同一天：' + past.map(function (c) { return y(c) + ' ' + fmt.pct(c.at.pct, 0); }).join('、') + '。',
+        'This cycle\'s top closed at ' + fmt.usd(cur.top_price) + ' on ' + ymdD(cur.top) + '; today\'s close is ' + fmt.pct(cur.at.pct, 1) + ' from it. Past cycles on the same day: ' + past.map(function (c) { return y(c) + ' ' + fmt.pct(c.at.pct, 0); }).join(', ') + '.'), 'neu']);
+    it.push([_T('最低點', 'Deepest point'), fmt.pct(cur.low.pct, 1),
+      _T('這輪到目前最低 ' + fmt.pct(cur.low.pct, 1) + '（第 ' + cur.low.day + ' 天，' + ymdD(cur.low.date) + '）。前幾輪：' + past.map(function (c) { return y(c) + ' ' + fmt.pct(c.low.pct, 1) + '（第 ' + c.low.day + ' 天）'; }).join('、') + '。',
+        'This cycle\'s low so far is ' + fmt.pct(cur.low.pct, 1) + ' (day ' + cur.low.day + ', ' + ymdD(cur.low.date) + '). Past cycles: ' + past.map(function (c) { return y(c) + ' ' + fmt.pct(c.low.pct, 1) + ' (day ' + c.low.day + ')'; }).join(', ') + '.'), 'neu']);
+    var bk = past.filter(function (c) { return c.back_day; });
+    if (bk.length) it.push([_T('回到頂部價', 'Back to the top'), bk.map(function (c) { return c.back_day; }).join(' / ') + _T(' 天', 'd'),
+      _T('前幾輪從頂部到重新收上頂部價：' + bk.map(function (c) { return y(c) + ' ' + fmt.n(c.back_day) + ' 天（最低點後 ' + fmt.n(c.back_after_low) + ' 天）'; }).join('、') + '，從最低點回來都比跌下去花得久。這輪還沒回到。只有三輪樣本，這輪的回撤也淺得多，前幾輪的時間不代表這輪會照著走。',
+        'Past cycles took this long from the top to close above it again: ' + bk.map(function (c) { return y(c) + ' ' + fmt.n(c.back_day) + ' days (' + fmt.n(c.back_after_low) + ' after the low)'; }).join(', ') + '; the climb back always took longer than the fall. This cycle has not got back yet. Only three past cycles, and this drawdown is much shallower, so their timing is no guide to this one.'), 'neu']);
+    return it;
+  }
+  function ccPanel() {
+    var x = (D.cycle || {}).cycle_cmp; if (!x || !x.cycles) return '';
+    return panel('span-12', _T('和前幾輪比：頂部之後', 'Versus past cycles: after the top'), _T('統一收盤 · ' + fmt.md(x.date), 'standard close · ' + fmt.md(x.date)),
+      interpHtml(ccSay()) + legend(x.cycles.map(function (c, i) { return [c.top.slice(0, 4) + (c.now ? _T(' 頂部（這輪）', ' top (this cycle)') : _T(' 頂部', ' top')), CC_COL[(i + CC_COL.length - x.cycles.length) % CC_COL.length]]; }).concat([[_T('頂部價', 'Top price'), 'var(--ink-3)', 'dash']])) + '<div class="chart" id="c-cyccmp"></div>' +
+      '<p class="note">' + _T('各輪週期頂部的收盤設為 0%，之後每天收盤相對頂部的位置，畫在同一個「頂部後第幾天」的橫軸上（對數刻度，同樣高度＝同樣的漲跌比例）。頂部日期取自本站的週期頂部表，價格用本站統一收盤。只作讀值，前幾輪的時間不代表這輪會照著走。',
+        'Each cycle top\'s close is set to 0%, and every later close is drawn by its distance from that top on a shared “days after the top” axis (log scale, so equal heights are equal percentage moves). Top dates come from the site\'s cycle-top table; prices are the site\'s standard close. A reading only; past timing is no guide to this cycle.') + '</p>');
+  }
+  function drawCycCmp(el) {
+    var x = (D.cycle || {}).cycle_cmp; if (!x || !el) return;
+    var n = x.cycles.length, pf = function (v) { var p = (v - 1) * 100; return (p > 0 ? '+' : '') + p.toFixed(0) + '%'; };
+    var ser = x.cycles.map(function (c, i) { return { name: c.top.slice(0, 4), data: c.rows, color: CC_COL[(i + CC_COL.length - n) % CC_COL.length], w: c.now ? 2.4 : 1.4, end: c.now }; });
+    lineChart(el, { log: true, xType: 'num', h: el.clientWidth < 520 ? 260 : 320, series: ser, refs: [{ y: 1, color: 'var(--ink-3)' }],
+      xticks: [[0, _T('頂部', 'top')], [365, _T('1 年', '1y')], [730, _T('2 年', '2y')], [1095, _T('3 年', '3y')]], vlines: [{ x: x.day_now, label: _T('今天', 'today') }],
+      xTipFmt: function (d) { return _T('頂部後第 ' + Math.round(d) + ' 天', 'Day ' + Math.round(d) + ' after the top'); }, yFmt: pf, tipFmt: pf, aria: _T('各輪頂部之後的價格對照', 'Price after each cycle top, compared') });
+  }
   function acPanel() {
     var x = (D.cycle || {}).age_cost; if (!x || !x.rows) return '';
-    if (!x.c36) acMode = '612';
+    if (!x.c36 && acMode === '36' || !x.c1m && acMode === '1m') acMode = '612';
     return panel('span-12', _T('依持有時間的持幣成本', 'Holder cost by coin age'), 'Bitview · ' + fmt.md(x.date),
-      '<div id="ac-say">' + interpHtml(acMode === '36' ? acSay36() : acSay()) + '</div><div id="ac-lg">' + acLegend() + '</div><div class="chart" id="c-agecost"></div>' +
-      '<p class="note">' + _T('持有時間（幣齡）在某一段的幣，各自的平均買價（實現價格）。3–6 個月：價格站回這條線＝3–6 個月前進場、到現在沒動的人整體回到獲利。6–12 vs 12–18 個月：常見的讀法是 6–12 個月線跌破 12–18 個月線大致在熊底附近，重新升過在主升段前後。資料 Bitview（Bitcoin Research Kit；6–12 個月由 6–9、9–12 個月合併，3–6 個月由 3–4、4–5、5–6 個月合併），價格用本站統一收盤。',
-        'Average purchase price (realized price) of coins in each age band. 3–6 months: price back above this line means people who bought 3–6 months ago and still hold are in profit again. 6–12 vs 12–18 months: the usual reading is that the 6–12 month line dropping below the 12–18 month line comes near bear-market bottoms, and crossing back above around the start of the main bull leg. Data from Bitview (Bitcoin Research Kit; 6–12 months combines the 6–9 and 9–12 month bands, 3–6 months the 3–4, 4–5 and 5–6 month bands); price is the site\'s standard close.') + '</p>', x.c36 ? acSegs() : '');
+      '<div id="ac-say">' + interpHtml(acSayNow()) + '</div><div id="ac-lg">' + acLegend() + '</div><div class="chart" id="c-agecost"></div>' +
+      '<p class="note">' + _T('持有時間（幣齡）在某一段的幣，各自的平均買價（實現價格）。1 週–1 個月：最近一個月進場的新買家成本，價格在它下方＝新買家整體在虧損。3–6 個月：價格站回這條線＝3–6 個月前進場、到現在沒動的人整體回到獲利。6–12 vs 12–18 個月：常見的讀法是 6–12 個月線跌破 12–18 個月線大致在熊底附近，重新升過在主升段前後。資料 Bitview（Bitcoin Research Kit；6–12 個月由 6–9、9–12 個月合併，3–6 個月由 3–4、4–5、5–6 個月合併），價格用本站統一收盤。',
+        'Average purchase price (realized price) of coins in each age band. 1 week–1 month: the cost of the last month\'s new buyers; price below it means they are under water as a group. 3–6 months: price back above this line means people who bought 3–6 months ago and still hold are in profit again. 6–12 vs 12–18 months: the usual reading is that the 6–12 month line dropping below the 12–18 month line comes near bear-market bottoms, and crossing back above around the start of the main bull leg. Data from Bitview (Bitcoin Research Kit; 6–12 months combines the 6–9 and 9–12 month bands, 3–6 months the 3–4, 4–5 and 5–6 month bands); price is the site\'s standard close.') + '</p>', x.c36 ? acSegs() : '');
   }
   function drawAgeCost(el) {
     var x = (D.cycle || {}).age_cost; if (!x || !el) return;
     var R_ = x.rows, col = function (r, i) { return R_.map(function (q) { return [q[0], q[i]]; }).filter(function (p) { return p[1] != null; }); }, sm = el.clientWidth < 520, mk;
+    if (acMode === '1m') {
+      lineChart(el, { log: true, h: sm ? 260 : 340, tipFmt: fmt.usd, aria: _T('BTC 價格與 1 週–1 個月持幣成本', 'BTC price and 1-week–1-month holder cost'),
+        series: [{ name: _T('BTC 價格', 'BTC price'), data: col(R_, 1), color: 'var(--ink-2)', w: 1.2 }, { name: _T('1 週–1 個月成本', '1w–1m cost'), data: col(R_, 5), color: 'var(--s2)', w: 2 }] });
+      return;
+    }
     if (acMode === '36') {
       var U = (x.c36 || {}).ups || [], nb = U.filter(function (u) { return u.bear; }).length, kb = 0;
       mk = U.map(function (u) { var b = u.bear, lab = b ? (++kb, sm && kb < nb ? '' : '↑ ' + u.date.slice(2, 7).replace('-', '/').replace('/0', '/')) : ''; return { x: dnOf(u.date), y: u.cost, label: lab, color: b ? 'var(--up)' : 'var(--ink-3)' }; });
@@ -2583,9 +2634,9 @@
 
   /* 成本線與均線（2026-11-04 使用者要求，Glassnode 週報〈Retesting the Breakout〉）：價格和 200／365 日、50 週均線、短期持有者成本、
      真實市場均價、實現價、長期持有者成本放在同一張圖；均線用統一收盤，成本線用 Bitview。只作讀值 */
-  var LV_NAME = { sma200: ['200 日均線', '200-day MA'], sma365: ['365 日均線', '365-day MA'], sma350: ['50 週均線', '50-week MA'], sth: ['短期持有者成本', 'STH cost basis'], tmm: ['真實市場均價', 'True market mean'], rp: ['實現價', 'Realized price'], lth: ['長期持有者成本', 'LTH cost basis'] };
-  var LV_COL = { sma200: ['var(--s1)', ''], sma365: ['var(--s4)', ''], sma350: ['var(--ink-2)', '5 4'], sth: ['var(--s2)', ''], tmm: ['var(--s3)', ''], rp: ['var(--ink-3)', '5 4'], lth: ['var(--ink-3)', '2 3'] };
-  var LV_IDX = { sma200: 2, sma365: 3, sma350: 4, sth: 5, tmm: 6, rp: 7, lth: 8 };
+  var LV_NAME = { sma200: ['200 日均線', '200-day MA'], sma365: ['365 日均線', '365-day MA'], sma350: ['50 週均線', '50-week MA'], sth: ['短期持有者成本', 'STH cost basis'], tmm: ['真實市場均價', 'True market mean'], rp: ['實現價', 'Realized price'], lth: ['長期持有者成本', 'LTH cost basis'], act: ['活躍投資人成本', 'Active investor price'] };
+  var LV_COL = { sma200: ['var(--s1)', ''], sma365: ['var(--s4)', ''], sma350: ['var(--ink-2)', '5 4'], sth: ['var(--s2)', ''], tmm: ['var(--s3)', ''], rp: ['var(--ink-3)', '5 4'], lth: ['var(--ink-3)', '2 3'], act: ['var(--s2)', '5 4'] };   // 2026-11-05 活躍投資人成本：成本類用橙色，虛線和短期持有者成本區分
+  var LV_IDX = { sma200: 2, sma365: 3, sma350: 4, sth: 5, tmm: 6, rp: 7, lth: 8, act: 9 };
   function lvName(k) { return _T(LV_NAME[k][0], LV_NAME[k][1]); }
   function lvSay() {
     var x = D.cycle.levels, it = [], up = x.levels.filter(function (l) { return l.value > x.price; }), dn = x.levels.filter(function (l) { return l.value <= x.price; }), nr = x.near;
@@ -2594,14 +2645,18 @@
     if (nr) it.push([_T('下方 ' + nr.pct + '% 內', 'Within ' + nr.pct + '% below'), fmt.k(nr.lo) + '–' + fmt.k(nr.hi), _T('收盤下方 ' + nr.pct + '% 內有 ' + nr.keys.length + ' 條線擠在 ' + fmt.usd(nr.lo) + '–' + fmt.usd(nr.hi) + '：' + nr.keys.map(lvName).join('、') + '。這幾條線是不同買家的平均成本或長期趨勢，重疊的地方常被拿來當支撐看；只是讀值，不代表一定守得住。', nr.keys.length + ' lines sit within ' + nr.pct + '% below the close, between ' + fmt.usd(nr.lo) + ' and ' + fmt.usd(nr.hi) + ': ' + nr.keys.map(lvName).join(', ') + '. They are the average costs of different groups of buyers or long-term trends, and where they overlap is often read as support; a reading only, not a promise it holds.'), 'neu']);
     var far = dn.filter(function (l) { return !nr || nr.keys.indexOf(l.key) < 0; });
     if (far.length) it.push([_T('更下方', 'Further below'), far.length + _T(' 條', ''), _T(li(far) + '。', li(far) + '.'), 'neu']);
+    var a = x.act;   // 2026-11-05 活躍投資人成本（Cointime Active Price，Bitview）
+    if (a) it.push([lvName('act'), fmt.k(a.value),
+      _T('以「幣有多活躍」加權的平均成本，長期不動的幣幾乎不算進去。收盤' + (a.above ? '在它上方 ' : '在它下方 ') + fmt.n(Math.abs(a.dist_pct), 1) + '%；今年 ' + a.ytd_days + ' 天裡收在它上方的有 ' + a.ytd_above + ' 天' + (a.last_above ? '，最近一次是 ' + ymdD(a.last_above) : '') + (a.last_cross ? '；' + ymdD(a.last_cross.date) + (a.last_cross.up ? ' 站上' : ' 跌回下方') : '') + '。',
+        'Average cost weighted by how active coins are, so long-dormant coins barely count. The close is ' + fmt.n(Math.abs(a.dist_pct), 1) + '% ' + (a.above ? 'above' : 'below') + ' it; this year ' + a.ytd_above + ' of ' + a.ytd_days + ' days closed above it' + (a.last_above ? ', most recently ' + ymdD(a.last_above) : '') + (a.last_cross ? '; it ' + (a.last_cross.up ? 'moved above' : 'fell back below') + ' on ' + ymdD(a.last_cross.date) : '') + '.'), a.above ? 'pos' : 'neu']);
     return it;
   }
   function lvPanel() {
     var x = (D.cycle || {}).levels; if (!x || !x.rows) return '';
     return panel('span-12', _T('成本線與均線', 'Cost bases and moving averages'), _T('均線：統一收盤 · 成本線：Bitview · ' + fmt.md(x.date), 'MAs: standard close · cost bases: Bitview · ' + fmt.md(x.date)),
       interpHtml(lvSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink)']].concat(Object.keys(LV_NAME).map(function (k) { return [lvName(k), LV_COL[k][0], LV_COL[k][1] ? 'dash' : '']; }))) + '<div class="chart" id="c-levels"></div>' +
-      '<p class="note">' + _T('均線用本站統一收盤（50 週均線＝350 日均線）；短期持有者成本（持有不到 155 天的幣的平均買價）、真實市場均價（排除長期不動的幣後活躍投資人的平均成本）、實現價（全體持有者的平均成本）、長期持有者成本都來自 Bitview。',
-        'Moving averages use the site\'s standard close (50-week = 350-day); the short-term holder cost basis (average purchase price of coins held under 155 days), true market mean (average cost of active investors, excluding long-dormant coins), realized price (average cost of all holders) and long-term holder cost basis come from Bitview.') + '</p>');
+      '<p class="note">' + _T('均線用本站統一收盤（50 週均線＝350 日均線）；短期持有者成本（持有不到 155 天的幣的平均買價）、真實市場均價（排除長期不動的幣後活躍投資人的平均成本）、實現價（全體持有者的平均成本）、長期持有者成本、活躍投資人成本（Cointime 的 Active Price：依幣的活躍程度加權，長期不動的幣幾乎不算）都來自 Bitview。',
+        'Moving averages use the site\'s standard close (50-week = 350-day); the short-term holder cost basis (average purchase price of coins held under 155 days), true market mean (average cost of active investors, excluding long-dormant coins), realized price (average cost of all holders), long-term holder cost basis and active investor price (Cointime Active Price: weighted by how active coins are, so dormant coins barely count) come from Bitview.') + '</p>');
   }
   function drawLevels(el) {
     var x = (D.cycle || {}).levels; if (!x || !el) return;

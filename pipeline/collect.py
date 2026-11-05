@@ -856,6 +856,11 @@ if BV:
         _md = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json')))
         R['lthrl'] = stage_viz.lthrl_viz(BV, globals().get('PXC') or {}, LAST, _md['cycle_bottoms'], _md['cycle_tops'])
     except Exception as e: errors.append(f'bitview lthrl {e}')
+# 2026-11-05 使用者要求（X 帳號掃描）：和前幾輪比（頂部之後的天數 × 距頂部；只用統一收盤，不靠 Bitview）
+try:
+    _tops = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json')))['cycle_tops']
+    R['cycle_cmp'] = stage_viz.cycle_cmp_viz(globals().get('PXC') or {}, _tops, LAST)
+except Exception as e: errors.append(f'cycle_cmp {e}')
 # G4e. 2026-10-27 使用者要求：長期／短期持有者籌碼（LTH／STH URPD，Murphy 的拆法）。bitcoin-data 的 URPD 不分持有時間，
 #   用 G4 的 URPD × 前一晚 A 組快取的幣齡分布（hodl-waves-supply）× 每日價格區間（Kraken 日線、更早用 CoinMetrics）推算，見 cohort_urpd.py。
 #   推算、不是實體調整，只作讀值；每天的 URPD 與幣齡分布存進 cohort_cache/（bitcoin-data 免費層的 URPD 歷史只到約 2026-08-10）

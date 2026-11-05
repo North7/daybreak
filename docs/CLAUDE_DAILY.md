@@ -199,8 +199,11 @@
 - 資料來源（2026-11-04 起）：鏈上指標表的長短期持有者成本、aSOPR、LTH-SOPR 改用 Bitview（`onchain.metrics.*.source`，晚 1 天），數字和以前的 bitcoin-data 版略有不同，寫日期時用資料本身的 `date`。長短期持有者籌碼的 `chips.cohort.cmp.src`＝`bitview` 時「30 天前」是實際值（`cmp_model` 是舊的推算），可以寫「實際」；`flow`（誰賣了、誰轉成長期）仍是推算。
 - 鯨魚分層（`onchain.whales`，2026-11-04 起 Bitview，`src`）：依地址餘額分層，地址不等於實體；交易所大量提幣時幣從大地址分散到小地址，看起來像大戶賣、散戶買，寫之前先看同期 ETF 流量與交易所供給。
 - 3–6 個月持幣成本（`cycle.age_cost.c36`）：`since` 是價格上穿至今的天數，`ups` 是歷次上穿（`bear`＝熊市後第一次）。不寫「上穿後約 80 天到頂」這類倒數：只有 2019 年吻合。
+- 1 週–1 個月持幣成本（`cycle.age_cost.c1m`，2026-11-05 起，Bitview `age_1w_to_1m_realized_price`）：最近一個月進場、還沒動的新買家平均成本。`gap_pct` 收盤距離、`since`／`days` 這次在線上／線下從哪天起連續幾天、`chg30` 30 天變化、`vs_sth_pct` 比短期持有者成本高多少。寫法：只寫位置和距離，不說「守住就延續」。
 - Hyperliquid 大戶（`deriv.hl_whales`）：帳戶淨值前 2,000 名（2026-11-05 起，原 300 名）的 BTC 部位彙總（實際部位）；只有 Hyperliquid，大帳戶可能是做市或避險，不寫成「大戶看空」。不寫個別帳戶，也不要從別處補個別帳戶的部位。`bands.rows` 是清算價在收盤 ±25% 內、每 1,000 美元一格、至少 5 個帳戶且最大一個不超過一半的價位（網站在清算熱力圖右緣畫白條）；空的時候代表大戶清算價分散、沒有聚集，照實寫「沒有聚集」，不要改用更寬的格子去湊。`bands.hidden.long／short` 是不畫的部分按多空的合計（帳戶太少時只有帳戶數）。
 - 成本線與均線（`cycle.levels`，2026-11-04 起）：`levels` 各條線的價位與離收盤的距離，`near` 收盤下方 8% 內擠在一起的線。寫法：列位置與距離，不寫「守住就延續、跌破就整理」這類條件預測。
+  - 活躍投資人成本（`cycle.levels.act`，2026-11-05 起，Bitview `active_price`，Cointime 的 Active Price）：依幣的活躍程度加權的平均成本，也在 `levels` 裡（key `act`）。`ytd_above`／`ytd_days` 今年收在它上方的天數、`last_above` 最近一次收在上方、`last_cross` 最近一次穿越。可以寫「今年 308 天只有 35 天收在它上方」這種事實，不寫成壓力位預測。
+- 和前幾輪比（`cycle.cycle_cmp`，2026-11-05 起，統一收盤＋model.json 的週期頂部）：各輪頂部之後每天收盤 ÷ 頂部收盤。`day_now` 今天是這輪頂部後第幾天；`cycles[].at` 各輪同一天的位置、`low` 頂部後最低（第幾天、跌幅）、`back_day`／`back_after_low` 重新收上頂部價花的天數。寫法：可以比較「同一天前幾輪在哪裡」，但只有三輪樣本，不推論這輪的時間表。
 - BTC 對美股（`flows.btc_vs_stocks`）：`win90` 近 90 個美股交易日勝率、`excess90` 每日平均超額（百分點）、`rel.last` 近兩個月各資產漲跌（黃金是 PAXG）。BTC 與美股收盤差約 3 小時。
 - 選擇權：`deriv.viz.options.strikes2` 是未平倉第二大的到期，`totals` 是全部到期的買權／賣權（顆、十億美元）；未平倉不分買方賣方，買權多不等於大家看漲。
 - 短期持有者獲利比例（`chips.flow.sth_in_profit_pct`）2026-11-04 起是 Bitview（`source`），和以前的 bitcoin-data 版差幾個百分點；97.5% 以上是常見的「賣出線」。清算熱力圖 `deriv.liq_heat.far` 是畫面外 ±25% 內最亮的一塊。

@@ -581,12 +581,24 @@ def age_cost_viz(bv, px, last, step=4):
         nx = xs[i + 1] if i + 1 < len(xs) else None
         x['days_to_next'] = dn(nx['date']) - dn(x['date']) if nx else None
     d1 = D[-1]; lx = xs[-1] if xs else None
-    c3 = bv.get('c36') or {}
-    rows = thin([[dn(d), round(P(d)) if P(d) else None, round(a[d]), round(b[d]), round(c3[d]) if d in c3 else None] for d in D if d >= AC_FROM], step)
+    c3 = bv.get('c36') or {}; c1 = bv.get('c1m') or {}
+    rows = thin([[dn(d), round(P(d)) if P(d) else None, round(a[d]), round(b[d]), round(c3[d]) if d in c3 else None, round(c1[d]) if d in c1 else None] for d in D if d >= AC_FROM], step)
     return dict(date=d1, src='Bitview', rows=rows, crosses=[x for x in xs if x['date'] >= AC_FROM], c612=round(a[d1]), c1218=round(b[d1]),
                 gap_pct=round((a[d1] / b[d1] - 1) * 100, 1), price=round(P(d1)), last_cross=lx, days_since=dn(d1) - dn(lx['date']) if lx else None,
-                c36=_c36_view(c3, P, D, d1),
+                c36=_c36_view(c3, P, D, d1), c1m=_c1m_view(c1, P, D, d1, bv.get('sth') or {}),
                 note='Bitview：6–12 個月＝6–9、9–12 個月兩段的實現市值合計 ÷ 供給合計；12–18 個月＝age_1y_to_18m_realized_price；3–6 個月＝3–4、4–5、5–6 個月三段合計；只作讀值')
+
+
+# 2026-11-05 使用者要求（X 帳號掃描：CryptoQuant 的 Trader Realized Price、新買家成本）：1 週–1 個月持幣成本（Bitview age_1w_to_1m_realized_price）＝最近一個月進場、
+#   還沒動的人的平均買價。列出和收盤的距離、30 天變化、這次在線上／線下連續幾天、和短期持有者成本的距離。只作讀值
+def _c1m_view(c1, P, D, d1, sth):
+    DD = [d for d in D if d in c1 and P(d)]
+    if not DD or DD[-1] != d1: return None
+    above = P(d1) >= c1[d1]; k = len(DD) - 1
+    while k > 0 and (P(DD[k - 1]) >= c1[DD[k - 1]]) == above: k -= 1
+    return dict(cost=round(c1[d1]), price=round(P(d1)), gap_pct=round((P(d1) / c1[d1] - 1) * 100, 1), above=above, since=DD[k], days=len(DD) - k,
+                chg30=round(c1[d1] - c1[DD[-31]]) if len(DD) > 31 else None, sth=round(sth[d1]) if sth.get(d1) else None,
+                vs_sth_pct=round((c1[d1] / sth[d1] - 1) * 100, 1) if sth.get(d1) else None)
 
 
 # 2026-11-04 使用者要求（3–6 個月持幣成本，價格上穿後的天數）：價格由下往上穿越 3–6 個月成本的日子。熊市後的第一次（之前在線下 ≥ 250 天）另外標出，
@@ -616,7 +628,7 @@ def _c36_view(c3, P, D, d1):
 #   均線用統一收盤（px：Kraken 優先、更早 CoinMetrics）；短期持有者成本、真實市場均價、實現價、長期持有者成本用 Bitview（同一家）。
 #   50 週均線＝350 日均線。只作讀值：列出價格上下各條線的位置與距離，不說「守住就延續」
 LV_FROM, LV_NEAR = '2025-06-01', 8
-LV_KEYS = ('sma200', 'sma365', 'sma350', 'sth', 'tmm', 'rp', 'lth')
+LV_KEYS = ('sma200', 'sma365', 'sma350', 'sth', 'tmm', 'rp', 'lth', 'act')   # 2026-11-05 加 act：活躍投資人成本（Bitview active_price，Cointime）
 
 
 def levels_viz(bv, px, last, step=2):
@@ -628,14 +640,21 @@ def levels_viz(bv, px, last, step=2):
     sma = lambda i, w: (cs[i + 1] - cs[i + 1 - w]) / w if i >= w - 1 else None
     bvv = lambda k, d: (bv.get(k) or {}).get(d)
     def row(i):
-        d = D[i]; vals = [sma(i, 200), sma(i, 365), sma(i, 350)] + [bvv(k, d) for k in ('sth', 'tmm', 'rp', 'lth')]
+        d = D[i]; vals = [sma(i, 200), sma(i, 365), sma(i, 350)] + [bvv(k, d) for k in ('sth', 'tmm', 'rp', 'lth', 'act')]
         return [dn(d), round(P[i])] + [round(v) if v else None for v in vals]
     rows = thin([row(i) for i in range(n) if D[i] >= LV_FROM], step)
     i = n - 1; c = P[i]; now = row(i)
     levels = sorted([dict(key=k, value=v, dist_pct=round((v / c - 1) * 100, 1)) for k, v in zip(LV_KEYS, now[2:]) if v], key=lambda x: -x['value'])
     near = [x for x in levels if x['value'] < c and x['dist_pct'] >= -LV_NEAR]
+    # 2026-11-05 使用者要求（X 帳號掃描：Glassnode「85K 一直把價格擋回來」）：活躍投資人成本今年收在上方的天數、最近一次穿越。只作讀值
+    A = bv.get('act') or {}; act = None
+    if A.get(D[i]):
+        y0 = D[i][:4] + '-01-01'; YD = [d for d in D if d >= y0 and A.get(d)]; ab = [d for d in YD if px[d] > A[d]]
+        AD = [d for d in D if A.get(d)]; xs = [AD[k] for k in range(1, len(AD)) if (px[AD[k]] > A[AD[k]]) != (px[AD[k - 1]] > A[AD[k - 1]])]
+        act = dict(value=round(A[D[i]]), dist_pct=round((A[D[i]] / c - 1) * 100, 1), above=c > A[D[i]], ytd_days=len(YD), ytd_above=len(ab),
+                   last_above=ab[-1] if ab else None, last_cross=dict(date=xs[-1], up=px[xs[-1]] > A[xs[-1]]) if xs else None)
     return dict(date=D[i], price=round(c), levels=levels, near=dict(pct=LV_NEAR, lo=min(x['value'] for x in near), hi=max(x['value'] for x in near), keys=[x['key'] for x in near]) if near else None,
-                rows=rows, note='價格、200／365／350 日均線（統一收盤）與 Bitview 的短期持有者成本、真實市場均價、實現價、長期持有者成本；50 週＝350 日；只作讀值')
+                act=act, rows=rows, note='價格、200／365／350 日均線（統一收盤）與 Bitview 的短期持有者成本、真實市場均價、實現價、長期持有者成本、活躍投資人成本（rows 第 10 欄）；50 週＝350 日；只作讀值')
 
 
 # 2026-11-05 使用者要求（Look Into Bitcoin〈Bitcoin Cycle Capital Flows〉）：實現市值加權的幣齡，1 個月內換手（投機、新錢）與 1–2 年沒動（長線、循環投資人）
@@ -714,3 +733,34 @@ def stress_viz(bv, px, last, step=1):
     run0 = next((k for k, d in enumerate(reversed(S)) if sc[d] > 0), len(S))   # 已經連續幾天是 0
     return dict(date=d1, value=sc[d1], max30=max(sc[d] for d in S[-30:]), zero_run=run0, rows=rows, events=ev[-12:], era=era, w=ST_W,
                 note='本站自製（不是 Glassnode 的 BRS）：短期持有者獲利比例、價格 ÷ 短期持有者成本、短期持有者 SOPR 7 日平均、距近 60 天高點跌幅，各和近 180 天比的百分位平均，只取比平常差的一半映成 0–100；只作讀值、不是買賣訊號')
+
+
+# 2026-11-05 使用者要求（X 帳號掃描：頂部後 13 個月前幾輪跌 71–80%、這輪約 35%；回到前高花的時間比跌下去久）：各輪週期頂部之後，
+#   每天收盤 ÷ 頂部收盤，畫在同一個「頂部後第幾天」的橫軸上。頂部用 model.json 的 cycle_tops（收盤價），價格用統一收盤。
+#   每輪列出：今天這個天數時的位置、最低點（第幾天、跌幅）、從底部到重新站上頂部價花幾天。只作讀值，不推論這輪會怎麼走
+CC_DAYS, CC_STEP = 1300, 3
+
+
+def cycle_cmp_viz(px, tops, last):
+    D = sorted(d for d in px if d <= last)
+    if len(D) < 2000 or len(tops) < 2: return None
+    I = {d: k for k, d in enumerate(D)}
+    t_now = tops[-1][0]; n_now = dn(last) - dn(t_now)
+    out = []
+    for t, tp in tops:
+        if t not in I: continue
+        k0 = I[t]; top = px[t]; pts = []
+        for k in range(k0, len(D)):
+            n = dn(D[k]) - dn(t)
+            if n > CC_DAYS: break
+            pts.append((n, px[D[k]] / top))
+        if len(pts) < 30: continue
+        lo = min(pts, key=lambda p: p[1]); back = next((p[0] for p in pts if p[0] > lo[0] and p[1] >= 1), None)
+        at = next((p for p in reversed(pts) if p[0] <= n_now), None)
+        rows = [[n, round(r, 4)] for n, r in pts if n % CC_STEP == 0 or n == pts[-1][0]]
+        out.append(dict(top=t, top_price=round(top), now=t == t_now, rows=rows,
+                        at=dict(day=at[0], pct=round((at[1] - 1) * 100, 1)) if at else None,
+                        low=dict(day=lo[0], pct=round((lo[1] - 1) * 100, 1), date=ds(dn(t) + lo[0])),
+                        back_day=back, back_after_low=back - lo[0] if back else None))
+    return dict(date=last, day_now=n_now, cycles=out, days=CC_DAYS,
+                note='各輪週期頂部（model.json cycle_tops）之後每天收盤 ÷ 頂部收盤；at＝今天這個天數時的位置；low＝頂部後最低；back_day＝最低之後第一次收回頂部價的天數；只作讀值')
