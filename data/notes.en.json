@@ -8,7 +8,7 @@
   "short": "Bull day 28, no action"
  },
  "headline": "Nasdaq −5.5% drags BTC back to the 75,989 short-term holder cost basis; 70% of short-term coins are now at a loss.",
- "summary": "A tech-led stock rout cut BTC 5.55% in a day, back to the short-term holder cost basis, with only 27.4% of short-term coins still in profit. STH-SOPR is still 1.0015: newer buyers have not started selling at a loss, so the latent supply has not been released. Watch bids at 74,000–75,000, the Coinbase premium and tonight's payrolls.",
+ "summary": "A tech-led stock rout cut BTC 5.55% in a day, back to the short-term holder cost basis, with only 27.4% of short-term coins still in profit. STH-SOPR is still 1.0015: short-term holders have not started selling at a loss, so the latent supply has not been released. Watch bids at 74,000–75,000, the Coinbase premium and tonight's payrolls.",
  "watch": [
   {
    "label": "200-day MA",
@@ -73,7 +73,7 @@
    ]
   },
   "onchain": {
-   "lead": "Price is back at the newer buyers' cost: on paper 70% of short-term coins are underwater, but actual loss-taking has not picked up; LTH net selling narrowed, and apparent demand weakened.",
+   "lead": "Price is back at the short-term holders' cost: on paper 70% of short-term coins are underwater, but actual loss-taking has not picked up; LTH net selling narrowed, and apparent demand weakened.",
    "points": [
     "Link to today's finding: STH realized profit 4,279 vs loss 3,834 BTC (CheckOnChain, Nov 5; ratio 1.12, 2.13 a week ago); losses are up 69% in a week but still below 5,000 BTC.",
     "Network-wide daily realized profit ÷ loss 7-day average 0.837, 90-day average 2.355; at the 7-day pace the 90-day average would cross below 1 around 2027-01-14 (projection; in 2019/12 it fell back for 37 days after 7 months above 1).",
@@ -243,7 +243,7 @@
   {
    "kind": "watch",
    "head": "Levels: the 75,000 bid wall, estimated long-liquidation band 73,800–75,100 (−2.1%) and the 200-day MA at 73,192 below; the true market mean at 77,618 (+2.2%) above.",
-   "text": "The liquidation band is an estimate from OKX only; also watch whether STH-SOPR drops below 0.99, which would mean newer buyers are selling at a loss."
+   "text": "The liquidation band is an estimate from OKX only; also watch whether STH-SOPR drops below 0.99, which would mean short-term holders are selling at a loss."
   },
   {
    "kind": "flip",
@@ -286,7 +286,7 @@
  "findings": [
   {
    "id": "2026-11-05-1",
-   "title": "70% of short-term coins are at a loss, but newer buyers have not sold at a loss yet",
+   "title": "70% of short-term coins are at a loss, but short-term holders have not sold at a loss yet",
    "module": "onchain",
    "chart": "cohort",
    "signals": [
@@ -298,13 +298,13 @@
    ],
    "confidence": "medium",
    "lean": "bear",
-   "lean_why": "Most newer buyers are underwater and their break-even or stop-loss selling has not been released; supply is thin from 74K down to 66K, so price can move fast if 74K gives way.",
-   "what": "Question: how much latent selling sits below now that price is back at newer buyers' cost? Price fell back to the STH cost basis in one day, putting 70% of short-term coins at a loss on paper, yet those actually selling are still mostly in small profit. Close 75,980 vs STH cost basis 75,989; supply in profit 41.6% → 27.4%; STH-SOPR 1.0015 (Bitview, CheckOnChain, Nov 5).",
+   "lean_why": "Most short-term holders are underwater and their break-even or stop-loss selling has not been released; supply is thin from 74K down to 66K, so price can move fast if 74K gives way.",
+   "what": "Question: how much latent selling sits below now that price is back at short-term holders' cost? Price fell back to the STH cost basis in one day, putting 70% of short-term coins at a loss on paper, yet those actually selling are still mostly in small profit. Close 75,980 vs STH cost basis 75,989; supply in profit 41.6% → 27.4%; STH-SOPR 1.0015 (Bitview, CheckOnChain, Nov 5).",
    "why": "Participants (CheckOnChain actual coin age, Nov 5): short-term holders hold 3.728M BTC at an average cost of 75,344; the thickest buckets are 76K (625K), 80K (614K) and 78K (508K), and the close sits right at the bottom of the thickest one. Thirty days ago (Bitview actual, Oct 4) it was 3.509M at 73,784. Estimated (Oct 4 → Nov 4) new coins concentrated at 80K (561K) and 76K (469K). Cost map: the true market mean at 77,618 is 2.2% above; the thickest LTH supply above the close is 84K (800K BTC). Behavior: STH realized loss 3,834 BTC, +69% in a week, but realized profit of 4,279 still exceeds it (ratio 1.12); STH-SOPR has not fallen below 1, and the last loss-taking low was 0.9918 on Oct 30. Network net realized P/L was +$561M on Nov 4 and −$1.674B over 7 days (CoinMetrics). Contradiction: illiquid supply +1.49% over 7 days (1-year percentile 99.2, Nov 4); coins are moving into dormant wallets, which does not look like panic.",
    "alt": "STH-SOPR is daily and about a day late; concentrated selling on the afternoon of Nov 5 may be averaged out by profit-taking earlier that day, so tomorrow's print is more complete. The estimated part (30-day new coins) differs from actual STH totals by 4.4%, with 8.2% misplaced; it is per-UTXO, so exchange wallet consolidation counts as turnover. Bitview and CheckOnChain STH cost differ by about $650, and the 'break' is only $9, so price is effectively on the line.",
    "history": "Price crossing below the STH cost basis happened 4 times since 2025-06 (2025-08-30, 09-25, 10-11, 2026-05-17), followed by +3.4%, +2.2%, −6.8% and −15.2% over 30 days, median −2.3% (baseline −0.5%); n=4, too small, background only. Crossing below the true market mean: also 4 times, median −6.5%.",
    "so": "Logic chain: those who bought at 76–80K last week are back at cost as a group, so the view that the 76K handover was done (2026-11-04-1) is refuted; but they have not sold at a loss yet, so the real selling is still ahead. Scenario (conditional, CheckOnChain Nov 5): at a 74,000 close 2.588M BTC of short-term coins would be at a loss; at 66,000 that only rises to 2.679M, so supply in between is thin; it jumps to 3.082M at 64,000. In other words, if 74K gives way there is no thick cost zone below until 66K. The market stage and exit framework are unchanged.",
-   "next": "By Nov 12: STH-SOPR below 0.99 means newer buyers are selling at a loss and latent supply has turned into real selling — confirms; a close back above 78,000 (above the thickest pile) refutes.",
+   "next": "By Nov 12: STH-SOPR below 0.99 means short-term holders are selling at a loss and latent supply has turned into real selling — confirms; a close back above 78,000 (above the thickest pile) refutes.",
    "check": [
     {
      "path": "onchain.metrics.sth-sopr.value",
@@ -312,7 +312,7 @@
      "value": 0.99,
      "by": "2026-11-12",
      "means": "confirm",
-     "label": "STH-SOPR falls below 0.99 (newer buyers start selling at a loss)"
+     "label": "STH-SOPR falls below 0.99 (short-term holders start selling at a loss)"
     },
     {
      "path": "price.bar.c",

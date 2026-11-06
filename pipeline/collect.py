@@ -881,7 +881,7 @@ if BV:
         _md2 = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json')))
         _pxc, _trf = globals().get('PXC') or {}, (R.get('cohort') or {}).get('transfers') or []
         for _k, _fn in (('quant', lambda: oc_extra.quant_viz(BV, _pxc, LAST, _md2['cycle_bottoms'])), ('sthl', lambda: oc_extra.sthl_viz(BV, _pxc, LAST)),
-                        ('rup', lambda: oc_extra.rup_viz(BV, _pxc, LAST)), ('rloss', lambda: oc_extra.rloss_viz(BV, _pxc, LAST, _trf)),
+                        ('rup', lambda: oc_extra.rup_viz(BV, _pxc, LAST, _md2['cycle_tops'])), ('rloss', lambda: oc_extra.rloss_viz(BV, _pxc, LAST, _trf)),
                         ('lsrchg', lambda: oc_extra.lsrchg_viz(BV, _pxc, LAST, _md2['cycle_bottoms'], _md2['cycle_tops'])),
                         ('grad', lambda: oc_extra.grad_viz(BV, _pxc, LAST)), ('mom', lambda: oc_extra.mom_viz(BV, _pxc, LAST)),
                         ('pullback', lambda: oc_extra.pullback_viz(BV, _pxc, LAST, R.get('sec'), R.get('rloss')))):
