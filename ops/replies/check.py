@@ -16,13 +16,45 @@ HASH = re.compile(r'(^|\s)#[^\s#]+')   # hashtag：原創貼文（引用、快�
 # 太機械的寫法（README「要有人味」）：報告式開頭、自稱本站
 ROBOT = re.compile(r'^(補一個|補一組|補兩個|Daily data|Our .{0,40}estimate|Data shows)|本站', re.I)
 # AI 腔（2026-11-05 研究後訂，見 ops/brand/voice.md「真人說話，不要 AI 腔」）：一出現就擋
-AI_WORDS = re.compile(r'值得注意的是|值得一提|整體而言|總的來說|總而言之|綜上|我的(看法|判斷|結論)是|所以我的判斷|什麼情況會讓我改看法|會讓我改看法|首先[，,].{0,40}其次|不僅僅?是|而且老實說|說到底|這就是全部|'
+AI_WORDS = re.compile(r'值得注意的是|值得一提|整體而言|總的來說|總而言之|綜上|我的(看法|判斷|結論)是|所以我的判斷|什麼情況會讓我改看法|會讓我改看法|說白了|說穿了|先說結論|結論先講|首先[，,].{0,40}其次|不僅僅?是|而且老實說|說到底|這就是全部|'
                       r'\b(delve|crucial|pivotal|underscores?|testament|tapestry|showcases?|Additionally|Moreover|Furthermore|'
                       r"Here's the thing|That's the whole story|Fun (fact|detail)|No fluff|Let that sink in)\b|——|—", re.I)
 # 只提醒、不擋：一天裡出現太多次才是問題
 CONTRAST = re.compile(r'不是[^，。？\n]{1,24}[，,、 ]?(而)?是|不等於|\bnot (just |only )?an? [^,.]{1,30}, (but )?|, not an? |isn\'t [^,.]{1,30}[,.] it\'s|rather than', re.I)
 DECIMAL = re.compile(r'\d\.\d')
 QEND = re.compile(r'[？?]\s*$')
+# 2026-11-06 依 @lieflat_3 配對實測（voice.md AI 腔清單）：逐句提醒、不擋
+LIST3 = re.compile(r'[^，。！？；：\n]*、[^，。！？；：\n]*、[^，。！？；：\n]*')        # 一個分句裡兩個以上頓號
+PREMOD = re.compile(r'[^，。！？；：\n、]{16,}的[^，。！？；：\n、的]{1,6}(?=[，。！？；\n]|$)|的[^，。！？；：\n]{0,8}的[^，。！？；：\n]{0,8}的')  # 過長前置定語／連著三個「的」
+SHELL = re.compile(r'對於[^，。]{1,15}(來說|而言)|就[^，。]{1,10}而言|當[^，。]{2,20}時，|(^|\n)(然而|因此|此外)，')
+
+
+def sentence_notes(tag, t):
+    """單篇文字的逐句提醒（長貼文、快訊、回覆共用）：頓號罗列、前置定語、話題殼／句首路標、相鄰三句同款開頭。"""
+    out = [f'{tag} 頓號罗列：「{m.group(0).strip()[:40]}」' for m in LIST3.finditer(t)]
+    out += [f'{tag} 前置定語太長：「{m.group(0)[:40]}」' for m in PREMOD.finditer(t)]
+    out += [f'{tag} 話題殼／句首路標：「{m.group(0).strip()[:30]}」' for m in SHELL.finditer(t)]
+    s = [x.strip() for x in re.split(r'[。！？\n]', t) if len(x.strip()) >= 6]
+    for i in range(len(s) - 2):
+        if s[i][:2] == s[i + 1][:2] == s[i + 2][:2]: out.append(f'{tag} 連三句同款開頭：「{s[i][:12]}…」')
+    return out
+
+
+def check_longposts():
+    """data/longposts.json（長貼文）：AI 用語、簡體、框架用詞直接擋；逐句提醒另外印。"""
+    p = os.path.join(ROOT, 'data', 'longposts.json')
+    if not os.path.exists(p): return [], []
+    err, notes = [], []
+    for it in json.load(open(p, encoding='utf-8')).get('items', []):
+        for lang in ('zh', 'en'):
+            t = it.get(lang)
+            if not t: continue
+            tag = f'長貼文 {it.get("id")} {lang}'
+            if AI_WORDS.search(t): err.append(f'{tag} AI 腔（「{AI_WORDS.search(t).group(0)}」）')
+            if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
+            if lang == 'zh' and set(t) & SIMP: err.append(f'{tag} 有簡體字：{"".join(sorted(set(t) & SIMP))}')
+            notes += sentence_notes(tag, t)
+    return err, notes
 
 
 def check():
@@ -120,4 +152,7 @@ if __name__ == '__main__':
     print('\n'.join(e) if e else 'replies.json OK')
     tn = tone_notes(json.load(open(os.path.join(ROOT, 'data', 'replies.json'), encoding='utf-8')).get('items', []))
     if tn: print('AI 腔提醒（不擋，排在一起看）：\n- ' + '\n- '.join(tn))
+    le, ln = check_longposts()
+    if le: print('長貼文（要修，但不影響回覆的檢查結果；已發出的就留著，隔天清掉）：\n- ' + '\n- '.join(le))
+    if ln: print('長貼文逐句提醒（不擋，見 voice.md AI 腔清單）：\n- ' + '\n- '.join(ln))
     sys.exit(1 if e else 0)
