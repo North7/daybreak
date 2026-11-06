@@ -74,6 +74,7 @@ BASE=https://north7.github.io/daybreak/ node tests/smoke.js   # 上線後再跑�
 - 做不到：BRS、BSS（Glassnode 付費 ML 模型）；交易所流量依轉帳金額分層、實體調整的指標（要付費的實體標籤）；他的 TradingView 付費腳本。
 - `coc_cache/deribit_flow.json`：Deribit 選擇權逐筆成交的每日權利金與每個未到期合約的主動方向淨量（Gamma 曝險的做市商方向靠它）。第一次在本機回補了一年（約 4,400 頁、45 分鐘）；每日管線只補前一天（約 12 頁）。**快取不見時每日管線只補 3 天**，Gamma 曝險的覆蓋率會很低，要在本機重跑 `python3 -c "import opt_flow as F; F.update_trades(backfill_days=366, max_pages=7000)"`（在 pipeline/ 底下）再提交。
 - `coc_cache/okx_taker.json`：OKX 日線（UTC+8 日界）會一直累積，API 本身只給 180 天。
+- **Bitview 依賴變大**（2026-11-06）：鏈上與週期版約 20 張圖靠 Bitview（`bitview.py` 每天約 110 次請求、全表約 70 秒，含 `bv_extra.py` 六項）。Bitview 失敗時用 `coc_cache/bitview.json` 快取，超過 4 天就顯示「本日未取得」，會一次空掉很多張；若常失敗，考慮把部分序列改回 CheckOnChain 或分兩批抓。
 
 ## 6. 容易踩的坑
 
