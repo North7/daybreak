@@ -3278,12 +3278,12 @@
   }
 
   /* ⑪ 選擇權 Gamma 曝險（依履約價）：做市商部位用逐筆成交推算。正 Gamma＝逆勢對沖（吸住價格），負＝順勢對沖（放大波動）。下方淡色＝籌碼分布 */
-  var gxMode = 'main';
+  var gxMode = 'all';
   function gxSay() {
     var x = D.deriv.gex, it = [], k = function (r) { return fmt.k(r[0]) + ' ' + (r[2] >= 0 ? '+' : '−') + '$' + fmt.n(Math.abs(r[2]), 0) + 'M'; };
     it.push([_T('現價附近', 'Around spot'), fmt.k(x.spot),
-      _T('45 天內到期的合約合計：現價上方 ' + fmt.n(x.above, 0) + '、下方 ' + fmt.n(x.below, 0) + ' 百萬美元（價格每動 1% 做市商要對沖的金額，正＝漲賣跌買）。正 Gamma 最大：' + x.pos.map(k).join('、') + '；負 Gamma 最大：' + x.neg.map(k).join('、') + '。',
-        'Expiries within 45 days: ' + fmt.n(x.above, 0) + ' above spot and ' + fmt.n(x.below, 0) + ' below ($M dealers must hedge per 1% move; positive = sell rallies, buy dips). Largest positive: ' + x.pos.map(k).join(', ') + '; largest negative: ' + x.neg.map(k).join(', ') + '.'), 'neu']);
+      _T('45 天內到期的合約合計：現價上方 ' + (x.above >= 0 ? '+' : '−') + '$' + fmt.n(Math.abs(x.above), 0) + 'M、下方 ' + (x.below >= 0 ? '+' : '−') + '$' + fmt.n(Math.abs(x.below), 0) + 'M（價格每動 1% 做市商要對沖的金額，正＝漲賣跌買、負＝追漲殺跌）。正 Gamma 最大：' + x.pos.map(k).join('、') + '；負 Gamma 最大：' + x.neg.map(k).join('、') + '。',
+        'Expiries within 45 days: ' + (x.above >= 0 ? '+' : '−') + '$' + fmt.n(Math.abs(x.above), 0) + 'M above spot and ' + (x.below >= 0 ? '+' : '−') + '$' + fmt.n(Math.abs(x.below), 0) + 'M below (what dealers must hedge per 1% move; positive = sell rallies and buy dips, negative = chase the move). Largest positive: ' + x.pos.map(k).join(', ') + '; largest negative: ' + x.neg.map(k).join(', ') + '.'), 'neu']);
     if ((x.overlap || []).length) it.push([_T('和籌碼峰重疊', 'Overlap with supply clusters'), x.overlap.map(function (o) { return fmt.k(o.strike); }).join(' / '),
       _T(x.overlap.map(function (o) { return fmt.k(o.strike) + '（正 Gamma $' + fmt.n(o.gex, 0) + 'M，籌碼 ' + fmt.n(o.btc / 1e4, 1) + ' 萬顆）'; }).join('、') + '：衍生品的對沖買盤和鏈上的成本密集區在同一個價位。',
         x.overlap.map(function (o) { return fmt.k(o.strike) + ' (positive gamma $' + fmt.n(o.gex, 0) + 'M, ' + fmt.n(o.btc / 1e3, 0) + 'K BTC of supply)'; }).join(', ') + ': dealer hedging and an on-chain cost cluster sit at the same price.'), 'neu']);
@@ -3293,7 +3293,7 @@
   }
   function gxPanel() {
     var x = (D.deriv || {}).gex; if (!x || !x.rows) return '';
-    var segs = '<div class="seg" id="gx-seg"><button aria-pressed="' + (gxMode === 'main') + '" data-m="main">' + fmt.md(x.main) + '</button><button aria-pressed="' + (gxMode === 'all') + '" data-m="all">' + _T('45 天內', 'Within 45d') + '</button></div>';
+    var segs = '<div class="seg" id="gx-seg"><button aria-pressed="' + (gxMode === 'all') + '" data-m="all">' + _T('45 天內', 'Within 45d') + '</button><button aria-pressed="' + (gxMode === 'main') + '" data-m="main">' + fmt.md(x.main) + '</button></div>';
     return panel('span-12', _T('選擇權 Gamma 曝險（推算）', 'Options gamma exposure (estimated)'), 'Deribit · ' + x.ts.slice(5, 16).replace('T', ' ') + ' UTC',
       interpHtml(gxSay()) + legend([[_T('正 Gamma（吸住價格）', 'Positive gamma (pins price)'), 'var(--s3)', 'box'], [_T('負 Gamma（放大波動）', 'Negative gamma (amplifies moves)'), 'var(--s2)', 'box'], [_T('籌碼分布', 'Supply distribution'), 'var(--ink-3)', 'box'], [_T('現價', 'Spot'), 'var(--flare)']]) +
       '<div class="chart cf-chart" id="c-gex"></div><p class="note">' + _T('每個合約：未平倉 × Black-Scholes gamma × 價格² × 1%，乘上推算的做市商部位方向（Deribit 逐筆成交裡主動買進＝做市商賣出，累計後限制在未平倉以內）。正負號是推算，Glassnode 等付費資料的做法可能不同；只作讀值。',
@@ -3310,8 +3310,9 @@
     var U = (((D.chips || {}).viz || {}).urpd || {}).band || [], uw = (((D.chips || {}).viz || {}).urpd || {}).width || 2000, ub = MT + hg + gap + hu, um = Math.max.apply(null, U.filter(function (b) { return b[0] + uw > k0 && b[0] < k1; }).map(function (b) { return b[1]; }).concat([1]));
     U.forEach(function (b) { if (b[0] + uw <= k0 || b[0] >= k1) return; var a = Math.max(ML, X(b[0])), c = Math.min(ML + pw, X(b[0] + uw)), h = b[1] / um * (hu - 4); s += '<rect x="' + (a + 0.5).toFixed(1) + '" y="' + (ub - h).toFixed(1) + '" width="' + Math.max(0.5, c - a - 1).toFixed(1) + '" height="' + h.toFixed(1) + '" fill="var(--ink-3)" opacity=".45"/>'; });
     s += axText(ML, MT + hg + gap - 4, _T('籌碼分布', 'Supply distribution'));
-    var sx = X(x.spot); s += '<line x1="' + sx.toFixed(1) + '" x2="' + sx.toFixed(1) + '" y1="' + MT + '" y2="' + ub + '" stroke="var(--flare)" stroke-width="1.5" stroke-dasharray="4 3"/>' + axText(sx + 4, MT + 10, _T('現價 ', 'Spot ') + fmt.k(x.spot)).replace('class="ax"', 'class="ax" style="fill:var(--flare);font-weight:700"');
-    if (!sm) x.pos.concat(x.neg).forEach(function (r) { var v = r[j]; if (!v) return; s += axText(X(r[0]), v >= 0 ? Y(v) - 5 : Y(v) + 13, (v >= 0 ? '+' : '−') + fmt.n(Math.abs(v), 0), 'middle').replace('class="ax"', 'class="ax" style="font-weight:700;fill:' + (v >= 0 ? 'var(--s3)' : 'var(--s2)') + '"'); });
+    var sx = X(x.spot); s += '<line x1="' + sx.toFixed(1) + '" x2="' + sx.toFixed(1) + '" y1="' + MT + '" y2="' + ub + '" stroke="var(--flare)" stroke-width="1.5" stroke-dasharray="4 3"/>' + axText(sx + 4, MT + hg - 6, _T('現價 ', 'Spot ') + fmt.k(x.spot)).replace('class="ax"', 'class="ax" style="fill:var(--flare);font-weight:700"');
+    var srt = R_.slice().sort(function (a, b) { return b[j] - a[j]; }), lab = srt.slice(0, 3).filter(function (r) { return r[j] > 0; }).concat(srt.slice(-3).filter(function (r) { return r[j] < 0; }));   // 依目前的檢視挑正負各前三
+    if (!sm) lab.forEach(function (r) { var v = r[j]; if (Math.abs(v) < 0.5) return; s += axText(X(r[0]), v >= 0 ? Y(v) - 5 : Y(v) + 13, (v >= 0 ? '+' : '−') + fmt.n(Math.abs(v), 0), 'middle').replace('class="ax"', 'class="ax" style="font-weight:700;fill:' + (v >= 0 ? 'var(--s3)' : 'var(--s2)') + '"'); });
     var every = Math.max(1, Math.ceil(R_.length / (pw / 44)));
     R_.forEach(function (r, i) { if (i % every === 0) s += axText(X(r[0]), H - 8, fmt.k(r[0]), 'middle'); });
     s += axText(ML, MT - 5, _T('Gamma 曝險（百萬美元／價格變動 1%）', 'Gamma exposure ($M per 1% move)'));
@@ -3332,8 +3333,8 @@
   function prSay() {
     var x = D.deriv.prem, it = [];
     it.push([_T('7 日平均', '7-day average'), (x.a7 >= 0 ? '+' : '−') + '$' + fmt.n(Math.abs(x.a7), 1) + 'M',
-      _T('最近一天買方花在買權 ' + fmt.usd(x.call * 1e6) + '、賣權 ' + fmt.usd(x.put * 1e6) + '；7 日平均' + (x.a7 >= 0 ? '偏向押上漲' : '偏向買下跌保護') + '，已連 ' + x.run + ' 天。',
-        'On the latest day buyers spent ' + fmt.usd(x.call * 1e6) + ' on calls and ' + fmt.usd(x.put * 1e6) + ' on puts; the 7-day average leans ' + (x.a7 >= 0 ? 'toward upside bets' : 'toward downside protection') + ' for ' + x.run + ' days.'), x.a7 >= 0 ? 'neu' : 'warn']);
+      _T('最近一天買方花在買權 ' + oxUsd(x.call * 1e6) + '、賣權 ' + oxUsd(x.put * 1e6) + '；7 日平均' + (x.a7 >= 0 ? '偏向押上漲' : '偏向買下跌保護') + '，已連 ' + x.run + ' 天。',
+        'On the latest day buyers spent ' + oxUsd(x.call * 1e6) + ' on calls and ' + oxUsd(x.put * 1e6) + ' on puts; the 7-day average leans ' + (x.a7 >= 0 ? 'toward upside bets' : 'toward downside protection') + ' for ' + x.run + ' days.'), x.a7 >= 0 ? 'neu' : 'warn']);
     it.push([_T('轉負之後', 'After turning negative'), x.r30.n ? x.r30.up + ' / ' + x.r30.n : '—',
       _T(ymdS(x.since) + ' 起，7 日平均轉負 ' + x.n_flips + ' 次（隔 30 天算新的一次），30 天後' + (x.r30.n ? ' ' + x.r30.up + '/' + x.r30.n + ' 次上漲、中位數 ' + fmt.pct(x.r30.med, 1) : '樣本不足') + '：' + (x.flips || []).map(function (f) { return fmt.md(f.date) + (f.r30 != null ? ' ' + fmt.pct(f.r30, 0) : ''); }).join('、') + '。資料只有一年，樣本很少；在熊牛過渡期，恐慌時買保護的人多，事後看常是相對低點，但不是規則。',
         'Since ' + ymdS(x.since) + ' the 7-day average turned negative ' + x.n_flips + ' times (30+ days apart); 30 days later ' + (x.r30.n ? x.r30.up + ' of ' + x.r30.n + ' rose, median ' + fmt.pct(x.r30.med, 1) : 'too few cases') + ': ' + (x.flips || []).map(function (f) { return fmt.md(f.date) + (f.r30 != null ? ' ' + fmt.pct(f.r30, 0) : ''); }).join(', ') + '. Only one year of data; in transitions, panic protection-buying often marked relative lows in hindsight, but it is not a rule.'), 'neu']);
