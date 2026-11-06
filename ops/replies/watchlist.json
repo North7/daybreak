@@ -1,5 +1,5 @@
 {
- "_about": "固定名單：scan.py 每天直接讀這些帳號最近的貼文（不靠 Grok）。type：blogger（博主）／research（研究機構）。must：一律列出、排最上面。新增帳號照 README「固定名單」一節。2026-11-04 建立；Phyrex_Ni、woonomic 當天讀不到（改名或停用），先不列。2026-11-04 Grok 推薦 10 個，核對後加 4 個（0xGummyBear、KevinZbtc、BlockScholes、gaah_im）；沒加的：liusian123、PmgLiljayrock（比特幣數據少、瀏覽中位數不到 40）、Ye__Miao（2026 年新帳號，近 7 天 20 則只有 3 則講比特幣，瀏覽中位數 72，像新聞整理號）、cfsq143（交易計劃、喊多空，和 voice.md 反對喊單衝突）、Chille（價位交易，簡介導流 Telegram）、woonomic（讀不到）。",
+ "_about": "固定名單：scan.py 每天直接讀這些帳號最近的貼文（不靠 Grok）。type：blogger（博主）／research（研究機構）。must：一律列出、排最上面。新增帳號照 README「固定名單」一節。2026-11-04 建立；Phyrex_Ni、woonomic 當天讀不到（改名或停用），先不列。2026-11-04 Grok 推薦 10 個，核對後加 4 個（0xGummyBear、KevinZbtc、BlockScholes、gaah_im）；沒加的：liusian123、PmgLiljayrock（比特幣數據少、瀏覽中位數不到 40）、Ye__Miao（2026 年新帳號，近 7 天 20 則只有 3 則講比特幣，瀏覽中位數 72，像新聞整理號）、cfsq143（交易計劃、喊多空，和 voice.md 反對喊單衝突）、Chille（價位交易，簡介導流 Telegram）、woonomic（讀不到）。 2026-11-06 Grok 名單核對：加 AYBTC6；沒加的：MicNguyenn105（近 21 則瀏覽中位數 19）、KobeissiLetter（近 13 則沒有比特幣，宏觀大帳號，當天有比特幣相關才當引用候選）、flyiiawei（幣安廣場推廣號）、hiply0625（瀏覽中位數 57）。",
  "accounts": [
   {
    "handle": "Murphychen888",
@@ -246,6 +246,13 @@
    "lang": "en",
    "type": "blogger",
    "note": "2026-11-05 使用者指定保持關注（Grok 列的鏈上數據帳號）：週期與技術結構，常引用鏈上"
+  },
+  {
+   "handle": "AYBTC6",
+   "name": "AYBTC6",
+   "lang": "zh",
+   "type": "blogger",
+   "note": "2026-11-06 從 Grok 名單加入：6.5 萬粉藍勾，近 23 則瀏覽中位數約 1.5 萬，宏觀＋BTC 長文分析。比特幣貼文只佔約兩成（scan 會篩），結尾常帶買點、停損，回覆只接數據和觀點，不接買賣"
   }
  ]
 }
