@@ -3231,11 +3231,22 @@
       (function () { var cs = chState(); return cs ? oxCard(CH_KIND[cs.c.kind][2], _T('認賠峰值的背離', 'Loss-peak divergence'), '<span style="font-size:.62em">' + cs.t + '</span>', fmt.md(cs.c.a) + ' ' + oxUsd(cs.c.ua * 1e6) + ' → ' + fmt.md(cs.c.b) + ' ' + oxUsd(cs.c.ub * 1e6)) : ''; })() + '</div>' +
       interpHtml(rlSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('每日實現虧損（百萬美元）', 'Daily realized loss ($M)'), 'var(--down)', 'box'], [_T('搬家日', 'Internal-transfer day'), 'var(--ink-3)', 'box'], [_T('背離', 'Divergence'), 'var(--s3)'], [_T('背離被打破', 'Divergence broken'), 'var(--down)'], [_T('認賠放大', 'Loss grows'), 'var(--warn)']]) +
       '<div class="chart cf-chart" id="c-rloss"></div>' + tb +
-      '<p class="note">' + _T('全網每日實現虧損（賣出價低於最後移動價格的部分，Bitview 逐筆 UTXO、不是實體調整）。擺動低點＝前後 7 天最低、比之前 30 天最高跌 6% 以上，取前後 3 天內最大的認賠；和 75 天內前一個低點比，小 20% 以上算背離、大 25% 以上算投降。只作讀值。',
-        'Network realized loss per day (sold below the last-moved price; Bitview per-UTXO, not entity-adjusted). A swing low is the lowest close within 7 days either side and 6%+ below the prior 30-day high; its loss peak is the largest within 3 days. Against the previous low within 75 days, 20%+ smaller counts as divergence and 25%+ larger as capitulation. Reading only.') + '</p>', '', 'rloss');
+      '<p class="note">' + _T('長期圖：每日實現虧損 ÷ 市值（萬分之，跨年份才能比），每 4 天取最大，刻度壓縮過；輔助線只畫二次以上的背離與背離被打破。', 'Long view: daily realized loss ÷ market cap (basis points, comparable across years), the largest of every 4 days, on a compressed scale; helper lines show only 2nd-or-later divergences and broken divergences.') + ' ' + _T('全網每日實現虧損（賣出價低於最後移動價格的部分，Bitview 逐筆 UTXO、不是實體調整）。擺動低點＝前後 7 天最低、比之前 30 天最高跌 6% 以上，取前後 3 天內最大的認賠；和 75 天內前一個低點比，小 20% 以上算背離、大 25% 以上算投降。只作讀值。',
+        'Network realized loss per day (sold below the last-moved price; Bitview per-UTXO, not entity-adjusted). A swing low is the lowest close within 7 days either side and 6%+ below the prior 30-day high; its loss peak is the largest within 3 days. Against the previous low within 75 days, 20%+ smaller counts as divergence and 25%+ larger as capitulation. Reading only.') + '</p>',
+      (x.hist ? '<div class="seg" id="rl-seg"><button aria-pressed="' + (rlMode === 'near') + '" data-m="near">' + _T('近 150 天', 'Last 150 days') + '</button><button aria-pressed="' + (rlMode === 'all') + '" data-m="all">' + _T('全部歷史', 'Full history') + '</button></div>' : ''), 'rloss');
   }
+  var rlMode = 'near';   // 2026-11-06 使用者：「只有短期的？沒有長期的圖？」→ 近 150 天／全部歷史切換
+  var RL_T = function (v) { return Math.sqrt(Math.max(0, v)); };
   function drawRl(el) {
     var x = (D.onchain || {}).rloss; if (!x || !el) return;
+    if (rlMode === 'all' && x.hist) {
+      var HL = x.hlinks || [], lk2 = [];
+      HL.forEach(function (c) { var col = CH_KIND[c.kind][2], d = c.kind === 'div' ? null : '5 4'; lk2.push({ x0: dnOf(c.a), y0: c.pa, x1: dnOf(c.b), y1: c.pb, col: col, price: true, dash: d }, { x0: dnOf(c.a), y0: c.ra, x1: dnOf(c.b), y1: c.rb, col: col, dash: d, w: 1.8 }); });
+      oxPane(el, { rows: x.hist, label: _T('每日實現虧損 ÷ 市值（萬分之，壓縮刻度）', 'Daily realized loss ÷ market cap (bp, compressed scale)'), aria: _T('BTC 價格與實現虧損（全部歷史）', 'BTC price and realized loss (full history)'), y0: 0, tf: RL_T,
+        ticks: [0, 5, 25, 100, 400], fmt: function (t) { return t + ' bp'; }, links: lk2,
+        lines: [{ i: 2, col: 'var(--down)', area: true, w: 1.1, name: _T('實現虧損 ÷ 市值', 'Realized loss ÷ market cap'), tfmt: function (v) { return fmt.n(v, 1) + ' bp'; } }] });
+      return;
+    }
     var CH = (x.chain || []).filter(function (c) { return c.kind === 'div' || c.kind === 'break' || c.kind === 'cap'; }), lk = [];
     var labN = CH.filter(function (c) { return c.kind !== 'cap'; }).slice(-3);   // 線上文字只標最近三段的背離／打破，避免擠在一起
     CH.forEach(function (c) { var col = CH_KIND[c.kind][2], d = c.kind === 'div' ? null : '5 4';   // 上格連兩個峰值當天的價格、下格連兩個認賠峰值
@@ -3511,6 +3522,7 @@
   V.onchain.after = function () {
     mount($('#c-agecost'), drawAgeCost); var acs = $('#ac-segs'); if (acs) acs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-a') === acMode) return; acMode = b.getAttribute('data-a'); acs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); $('#ac-say').innerHTML = interpHtml(acSayNow()); $('#ac-lg').innerHTML = acLegend(); drawAgeCost($('#c-agecost')); });   // 2026-11-06 持幣成本從週期版搬來
     mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-lthrl'), drawLthRl); mount($('#c-sthband'), drawSthBand); mount($('#c-capflow'), drawCapflow); mount($('#c-quant'), drawQuant); mount($('#c-rloss'), drawRl); mount($('#c-lsrchg'), drawLc); mount($('#c-grad'), drawGr); mount($('#c-mom'), drawMo); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd);   /* 2026-11-06 指標擴充的 mount 接在前面；註解只能放行尾（之前插在行中把後面三張圖註解掉了） */
+    var rs = $('#rl-seg'); if (rs) rs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-m') === rlMode) return; rlMode = b.getAttribute('data-m'); rs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); drawRl($('#c-rloss')); });   /* 2026-11-06 實現虧損 近 150 天／全部歷史 */
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
     var v = D.chips.viz || {}, u = v.urpd || {}, c = D.price.bar.c, el = $('#c-urpd');
     if (el && u.band) {
