@@ -515,7 +515,8 @@
     var sgH = sg.length ? '<details class="sigs"' + (fs.length ? '' : ' open') + '><summary>' + _T('自動偵測的異動 ', 'Detected signals ') + sg.length + (D.signals.n > sg.length ? ' / ' + D.signals.n : '') + '</summary><ul>' + sg.map(function (x) {
         var k = SIG_K[x.kind] || ['', ''];
         return '<li><span class="chip ' + (x.dir === 'up' ? 'up' : x.dir === 'down' ? 'down' : '') + '">' + _T(k[0], k[1]) + '</span>' + (x.new ? '<span class="new">' + _T('新', 'New') + '</span>' : '<span class="days">' + _T('第 ' + x.days + ' 天', 'day ' + x.days) + '</span>') +
-          '<div><b>' + esc(lt(x.title)) + '</b> ' + jumpA(x.page, x.chart, '→') + '<span class="fig num">' + esc(lt(x.fig)) + '</span>' + [x.ctx, x.decomp, x.caveat].filter(Boolean).map(function (t) { return '<span class="note">' + esc(lt(t)) + '</span>'; }).join('') + '</div></li>';
+          '<div><b>' + esc(lt(x.title)) + '</b> ' + jumpA(x.page, x.chart, '→') + '<span class="fig num">' + esc(lt(x.fig)) + '</span>' + (x.means ? '<span class="means">' + esc(lt(x.means)) + '</span>' : '') +
+          '<details class="sig-more"><summary>' + _T('規則、數字與過去同樣情況', 'Rule, numbers and past cases') + '</summary>' + sigDetail(x, true) + '</details></div></li>';
       }).join('') + '</ul><p class="note">' + _T('資料管線每天依寫死的規則偵測：一年最極端的 2%、7 日急變、狀態翻轉、關鍵價位 ±3%、連續、跨指標組合。上面的發現才是判讀；這裡只作讀值。', 'Detected daily by fixed rules: the most extreme 2% of the past year, sharp 7-day moves, state flips, key levels within ±3%, streaks, cross-indicator combos. The findings above are the interpretation; these are readings only.') + '</p></details>' : '';
     // 整體多空（2026-10-23 使用者要求）：依各則 lean 計數，偏多多於偏空＝整體偏多，反之偏空，相同＝多空互見
     var cnt = { bull: 0, bear: 0, neutral: 0 }; fs.forEach(function (f) { if (cnt[f.lean] != null) cnt[f.lean]++; });
@@ -526,12 +527,36 @@
     return _T('<div class="sec-h" id="pn-findings"><h2>今日發現</h2><span class="en">The Findings</span><hr></div>', '<div class="sec-h" id="pn-findings"><h2>Today\'s findings</h2><span class="en">The Findings</span><hr></div>') +
       sum + '<div class="finds">' + (cards || '<p class="note">' + empty + '</p>') + '</div>' + fuH + sgH;
   }
-  /* 有異動的圖：圖上方標一行（哪一項、數字），圖上標日期線（lineChart 的 sigV） */
+  /* 2026-11-06 使用者要求（「不知道在哪裡可以看怎樣的異動，異動哪裡了，說明什麼，意味著什麼」）：每則異動的完整說明——
+     觸發的規則、從哪天開始、數字變化、一般含意、過去同樣情況之後 30 天價格。rule／means／hist 由 pipeline/signal_means.py 產生 */
+  function sigHist(h) {
+    if (!h) return '';
+    var pc = function (v) { return v == null ? _T('未滿 30 天', 'n/a yet') : fmt.pct(v, 1); };
+    if (!h.n) return '<p>' + _T('資料期間（' + ymdD(h.since) + ' 起）裡，過去沒有同樣的情況。', 'No earlier case in the data (since ' + ymdD(h.since) + ').') + '</p>';
+    return '<p>' + _T(ymdD(h.since) + ' 起出現過 ' + h.n + ' 次（不含這次）' + (h.fwd30_med != null ? '，之後 30 天價格的中位數 <b>' + fmt.pct(h.fwd30_med, 1) + '</b>' : '') + (h.base30_med != null ? '；同一段期間任選一天，之後 30 天的中位數是 ' + fmt.pct(h.base30_med, 1) : '') + '。',
+        h.n + ' earlier case' + (h.n > 1 ? 's' : '') + ' since ' + ymdD(h.since) + (h.fwd30_med != null ? '; median price change over the next 30 days <b>' + fmt.pct(h.fwd30_med, 1) + '</b>' : '') + (h.base30_med != null ? ', versus ' + fmt.pct(h.base30_med, 1) + ' for any day in the same period' : '') + '.') + '</p>' +
+      '<ul class="sig-h">' + (h.last || []).slice().reverse().map(function (p) { return '<li><span class="num">' + ymdD(p.d) + '</span><span class="num ' + (p.fwd30 == null ? '' : p.fwd30 >= 0 ? 'up' : 'dn') + '">' + pc(p.fwd30) + '</span></li>'; }).join('') + '</ul>' +
+      '<p class="note">' + _T(((h.last || []).length < h.n ? '列出最近 ' + h.last.length + ' 次；' : '') + '右邊是那次之後 30 天的價格變化；' + (h.n < 10 ? '只有 ' + h.n + ' 次，樣本很少，只當背景參考。' : '過去不代表這次。'), ((h.last || []).length < h.n ? 'The latest ' + h.last.length + ' are listed. ' : '') + 'Right: price change over the following 30 days. ' + (h.n < 10 ? 'Only ' + h.n + ' cases — background only.' : 'The past does not decide this time.')) + '</p>';
+  }
+  function sigDetail(x, inList) {
+    var k = SIG_K[x.kind] || ['', ''], row = function (h, b) { return b ? '<div class="sd-r"><span class="sd-k">' + h + '</span><div class="sd-v">' + b + '</div></div>' : ''; };
+    var when = _T('資料日期 ' + ymdD(x.date) + '；' + (x.new ? '今天第一次出現' : ymdD(x.first_seen) + ' 起連續出現，今天第 ' + x.days + ' 天') + '。', 'Data date ' + ymdD(x.date) + '; ' + (x.new ? 'first seen today' : 'seen every day since ' + ymdD(x.first_seen) + ', day ' + x.days) + '.') +
+      (x.x != null && !inList ? _T('圖上橘色直線「異動」標的就是這一天。', ' The orange "Signal" line on the chart marks this day.') : '');
+    var num = [x.ctx, x.decomp].filter(Boolean).map(function (t) { return esc(lt(t)); }).join('；') + (x.caveat ? '<span class="note">' + _T('注意：', 'Note: ') + esc(lt(x.caveat)) + '</span>' : '');
+    return '<div class="sig-d">' +
+      row(_T('哪種異動', 'What fired'), '<span class="chip">' + _T(k[0], k[1]) + '</span> ' + esc(lt(x.rule) || '')) +
+      row(_T('什麼時候', 'When'), when) +
+      row(_T('背景', 'Context'), num) +
+      row(_T('代表什麼', 'What it usually means'), x.means ? esc(lt(x.means)) : '') +
+      row(_T(x.hist && x.hist.what === 'cross' ? '過去同樣翻轉' : '過去同樣情況', 'Past cases'), sigHist(x.hist)) +
+      (inList ? '' : '<p class="note">' + _T('自動偵測、規則寫死，只作讀值，不是買賣訊號。當天的判讀看頭版「今日發現」', 'Detected automatically by fixed rules; a reading, not a trade signal. For the day\'s interpretation see Today\'s findings on the front page ') + jumpA('overview', 'findings', '→') + '</p>') + '</div>';
+  }
+  /* 有異動的圖：圖上方一行（哪一項、數字），點開看完整說明；圖上標日期線（lineChart 的 sigV） */
   function markSignals(root) {
     var by = {}; ((D.signals || {}).items || []).forEach(function (s) { if (s.chart) { var k = chartKey(s.chart); (by[k] = by[k] || []).push(s); } });
     Object.keys(by).forEach(function (ch) {
       var el = (root || document).querySelector('#c-' + ch); if (!el || (el.previousElementSibling && el.previousElementSibling.classList.contains('sig-flag'))) return;
-      el.insertAdjacentHTML('beforebegin', '<p class="sig-flag"><span class="chip flare"><i></i>' + _T('異動', 'Signal') + '</span>' + by[ch].map(function (s) { return '<span><b>' + esc(lt(s.title)) + '</b> ' + esc(lt(s.fig)) + '</span>'; }).join('') + '</p>');
+      el.insertAdjacentHTML('beforebegin', '<div class="sig-flag">' + by[ch].map(function (s) { return '<details><summary><span class="chip flare"><i></i>' + _T('異動', 'Signal') + '</span><b>' + esc(lt(s.title)) + '</b> <span class="fig">' + esc(lt(s.fig)) + '</span><span class="more">' + _T('看說明', 'Details') + '</span></summary>' + sigDetail(s) + '</details>'; }).join('') + '</div>');
     });
   }
   function researchHtml() {
