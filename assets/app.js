@@ -3779,7 +3779,7 @@
     var x = (D.onchain || {}).dmd; if (!x) return [];
     var it = [], k = (x.spot_pos ? 'p' : 'n') + (x.perp_pos == null ? '' : x.perp_pos ? 'p' : 'n'), K = DMD_K[k], lf = (x.flips || [])[(x.flips || []).length - 1];
     if (!K) it.push([_T('現在', 'Now'), cqBtc(x.spot) + _T(' 顆', ' BTC'), _T('現貨需求（表觀需求 30 天）' + cqBtc(x.spot) + ' 顆；今天沒有永續的資料。', 'Spot demand (30-day apparent demand) ' + cqBtc(x.spot) + ' BTC; no perpetual data today.'), x.spot_pos ? 'pos' : 'neg']);
-    if (K) it.push([_T('現在', 'Now'), _T(K[1], K[2]), _T('現貨需求（表觀需求 30 天）' + cqBtc(x.spot) + ' 顆；OKX 永續 30 天主動買 − 主動賣 ' + cqB(x.perp / 1000) + '。' + K[3], 'Spot demand (30-day apparent demand) ' + cqBtc(x.spot) + ' BTC; OKX perps 30-day taker buy − sell ' + cqB(x.perp / 1000) + '. ' + K[4]), K[0]]);
+    if (K) it.push([_T('現在', 'Now'), cqBtc(x.spot) + _T(' 顆', ' BTC'), _T(K[1] + '：現貨需求（表觀需求 30 天）' + cqBtc(x.spot) + ' 顆；OKX 永續 30 天主動買 − 主動賣 ' + cqB(x.perp / 1000) + '。' + K[3], K[2] + ': spot demand (30-day apparent demand) ' + cqBtc(x.spot) + ' BTC; OKX perps 30-day taker buy − sell ' + cqB(x.perp / 1000) + '. ' + K[4]), K[0]]);   // 數值欄不換行，手機上長標籤會撐出版面（CI 390px 抓到），標籤放進文字
     if (x.r60 && x.r60.n) it.push([_T('現貨需求轉正之後', 'After spot demand turns positive'), x.r60.n + _T(' 次', ' times'),
       _T('2020 起，現貨需求 30 天合計由負轉正（相隔 60 天以上才算新的一次）' + x.r60.n + ' 次，之後 60 天 ' + x.r60.up + ' 次上漲、中位數 ' + fmt.pct(x.r60.med, 1) + '（同期任一天 ' + x.base60.up + '% 上漲、中位數 ' + fmt.pct(x.base60.med, 1) + '）。',
         'Since 2020 the 30-day spot demand turned from negative to positive ' + x.r60.n + ' times (60+ days apart); 60 days later ' + x.r60.up + ' rose, median ' + fmt.pct(x.r60.med, 1) + ' (any day: ' + x.base60.up + '% rose, median ' + fmt.pct(x.base60.med, 1) + ').') +
