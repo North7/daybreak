@@ -3109,7 +3109,7 @@
         '<p class="ox-f">' + _T('相對未實現獲利 ＝ Σ（現價 − 成本）× 顆數 ÷ 市值　（只算現價高於成本的幣）', 'Relative unrealized profit = Σ (price − cost) × coins ÷ market cap   (coins above their cost only)') + '</p>' +
         p(_T('資料是 Bitview 從區塊鏈逐筆 UTXO 算的；不是實體調整，交易所內部搬幣會把那批幣的成本改成搬動當天的價格。',
           'Data: Bitview, computed per UTXO from the blockchain. It is not entity-adjusted, so an exchange moving coins internally resets their cost to that day\'s price.'))) +
-      sec(_T('白話：反映什麼', 'In plain words'),
+      sec(_T('反映什麼', 'What it reflects'),   /* 2026-11-06 使用者：「白話」是要求用白話寫，不是標題 */
         p(_T('市值每 100 美元裡，有多少是持有人「還沒賣掉的賺頭」。現在 ' + fmt.n(x.value, 1) + '%，就是每 100 美元裡有 ' + fmt.n(x.value, 1) + ' 美元是帳面獲利。',
           'Of every $100 of market value, how much is holders\' gain not yet cashed in. Now ' + fmt.n(x.value, 1) + '%: $' + fmt.n(x.value, 1) + ' of every $100 is paper profit.')) +
         p(_T('數字高＝大家都賺很多，想獲利了結的人多，週期頂部附近最高（' + tops + '，一輪比一輪低）。數字低＝帳面獲利被擠乾了：高價買的人已經套牢或認賠離場，剩下的獲利多半在很早以前低價買、幾乎不動的老幣身上。2012 年起的中位數是 ' + fmt.n(x.med, 1) + '%。',
