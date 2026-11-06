@@ -3506,30 +3506,30 @@
   function ssrSay() {
     var x = D.onchain.ssr, it = [], E = (x.eps || []).filter(function (e) { return e.r365 != null; }).slice(-5);
     it.push([_T('全網（7 天）', 'Network (7d)'), fmt.n(x.all * 100, 2) + '%',
-      _T('7 天實現的獲利＋虧損是實現市值的 ' + fmt.n(x.all * 100, 2) + '%，在 2012 年起的第 ' + fmt.n(x.pct, 0) + ' 百分位（30 天前 ' + fmt.n(x.all30 * 100, 2) + '%）。短期持有者 ' + fmt.n(x.sth * 100, 2) + '%（第 ' + fmt.n(x.pct_s, 0) + ' 百分位）、長期持有者 ' + fmt.n(x.lth * 100, 2) + '%（第 ' + fmt.n(x.pct_l, 0) + ' 百分位）。' + (x.run ? '已連 ' + x.run + ' 天在低檔區。' : '低檔區要到 ' + fmt.n(x.lo * 100, 2) + '% 以下。'),
-        'Profit plus loss realized over 7 days equals ' + fmt.n(x.all * 100, 2) + '% of realized cap, the ' + fmt.n(x.pct, 0) + 'th percentile since 2012 (' + fmt.n(x.all30 * 100, 2) + '% 30 days ago). Short-term holders ' + fmt.n(x.sth * 100, 2) + '% (' + fmt.n(x.pct_s, 0) + 'th), long-term holders ' + fmt.n(x.lth * 100, 2) + '% (' + fmt.n(x.pct_l, 0) + 'th). ' + (x.run ? 'In the low zone for ' + x.run + ' days.' : 'The low zone starts below ' + fmt.n(x.lo * 100, 2) + '%.')), x.run ? 'pos' : 'neu']);
+      _T('7 天實現的獲利＋虧損是實現市值的 ' + fmt.n(x.all * 100, 2) + '%，在近 4 年的第 ' + fmt.n(x.pct4, 0) + ' 百分位（全部歷史第 ' + fmt.n(x.pct, 0) + '；30 天前 ' + fmt.n(x.all30 * 100, 2) + '%）。短期持有者 ' + fmt.n(x.sth * 100, 2) + '%（第 ' + fmt.n(x.pct_s, 0) + ' 百分位）、長期持有者 ' + fmt.n(x.lth * 100, 2) + '%（第 ' + fmt.n(x.pct_l, 0) + ' 百分位）。' + (x.run ? '已連 ' + x.run + ' 天在低檔區。' : '低檔區（近 4 年最低 10%）現在要到 ' + fmt.n(x.lo4 * 100, 2) + '% 以下。'),
+        'Profit plus loss realized over 7 days equals ' + fmt.n(x.all * 100, 2) + '% of realized cap, the ' + fmt.n(x.pct4, 0) + 'th percentile of the last 4 years (' + fmt.n(x.pct, 0) + 'th of all history; ' + fmt.n(x.all30 * 100, 2) + '% 30 days ago). Short-term holders ' + fmt.n(x.sth * 100, 2) + '% (' + fmt.n(x.pct_s, 0) + 'th), long-term holders ' + fmt.n(x.lth * 100, 2) + '% (' + fmt.n(x.pct_l, 0) + 'th). ' + (x.run ? 'In the low zone for ' + x.run + ' days.' : 'The low zone (bottom 10% of 4 years) now starts below ' + fmt.n(x.lo4 * 100, 2) + '%.')), x.run ? 'pos' : 'neu']);
     it.push([_T('進入低檔區之後', 'After entering the low zone'), (x.r365 || {}).n ? x.r365.up + ' / ' + x.r365.n : '—',
-      _T('2012 年起進入低檔區（最低 10%）' + x.n_eps + ' 段，一年後 ' + oxStat(x.r365, x.base365) + '；90 天後 ' + oxStat(x.r90, x.base90) + '。最近幾段：' + E.map(function (e) { return ymdS(e.start) + '（' + e.days + ' 天，一年後 ' + oxP0(e.r365) + '）'; }).join('、') + '。低檔區代表賣的人少、賣價接近成本，常在盤整末端；不是精準買點。',
-        'Since 2012 it entered the low zone (bottom 10%) ' + x.n_eps + ' times: a year later ' + oxStat(x.r365, x.base365) + '; 90 days later ' + oxStat(x.r90, x.base90) + '. Recent: ' + E.map(function (e) { return ymdS(e.start) + ' (' + e.days + ' days, 1y ' + oxP0(e.r365) + ')'; }).join(', ') + '. The low zone means few sellers selling near cost, often late in a consolidation; not a precise entry.'), 'neu']);
+      _T('近 4 年百分位 ≤ 10 的段落 ' + x.n_eps + ' 段（' + x.n_recent + ' 段在 2022 年之後），一年後 ' + oxStat(x.r365, x.base365) + '；90 天後 ' + oxStat(x.r90, x.base90) + '。最近幾段：' + E.map(function (e) { return ymdS(e.start) + '（' + e.days + ' 天，一年後 ' + oxP0(e.r365) + '）'; }).join('、') + '。低檔區代表賣的人少、賣價接近成本，常在盤整末端；不是精準買點。',
+        'Stretches at or below the 10th percentile of 4 years: ' + x.n_eps + ' (' + x.n_recent + ' since 2022); a year later ' + oxStat(x.r365, x.base365) + '; 90 days later ' + oxStat(x.r90, x.base90) + '. Recent: ' + E.map(function (e) { return ymdS(e.start) + ' (' + e.days + ' days, 1y ' + oxP0(e.r365) + ')'; }).join(', ') + '. The low zone means few sellers selling near cost, often late in a consolidation; not a precise entry.'), 'neu']);
     it.push([_T('頂部的讀數', 'Readings at tops'), (x.tops || []).length + _T(' 輪', ' cycles'),
-      _T('全網在週期頂部的最高值：' + (x.tops || []).map(function (t) { return t.date.slice(0, 4) + ' ' + fmt.n(t.value * 100, 1) + '%'; }).join('、') + '，一輪比一輪低，所以只比相對位置，不套固定門檻。', 'Network peaks at cycle tops: ' + (x.tops || []).map(function (t) { return t.date.slice(0, 4) + ' ' + fmt.n(t.value * 100, 1) + '%'; }).join(', ') + ' — lower each cycle, so read relative position, not a fixed line.'), 'neu']);
+      _T('全網在週期頂部的最高值：' + (x.tops || []).map(function (t) { return t.date.slice(0, 4) + ' ' + fmt.n(t.value * 100, 1) + '%'; }).join('、') + '，一輪比一輪低，所以用近 4 年的滾動百分位，不用全部歷史、也不套固定門檻。', 'Network peaks at cycle tops: ' + (x.tops || []).map(function (t) { return t.date.slice(0, 4) + ' ' + fmt.n(t.value * 100, 1) + '%'; }).join(', ') + ' — lower each cycle, so read relative position, not a fixed line.'), 'neu']);
     return it;
   }
   function ssrPanel() {
     var x = (D.onchain || {}).ssr; if (!x || !x.rows) return '';
     return panel('span-12', _T('賣方風險比', 'Sell-side risk ratio'), 'Bitview · ' + fmt.md(x.date),
-      '<div class="cf-hero">' + oxCard('var(--s4)', _T('全網（7 天）', 'Network (7d)'), fmt.n(x.all * 100, 2) + '%', _T('2012 年起第 ' + fmt.n(x.pct, 0) + ' 百分位', fmt.n(x.pct, 0) + 'th percentile since 2012'), oxArrow(x.all * 100, x.all30 * 100, _T(' 個百分點 / 30 天', ' pts / 30d'), 2)) +
+      '<div class="cf-hero">' + oxCard('var(--s4)', _T('全網（7 天）', 'Network (7d)'), fmt.n(x.all * 100, 2) + '%', _T('近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位', fmt.n(x.pct4, 0) + 'th percentile of 4 years'), oxArrow(x.all * 100, x.all30 * 100, _T(' 個百分點 / 30 天', ' pts / 30d'), 2)) +
       oxCard('var(--s2)', 'STH', fmt.n(x.sth * 100, 2) + '%', _T('第 ' + fmt.n(x.pct_s, 0) + ' 百分位', fmt.n(x.pct_s, 0) + 'th percentile')) + oxCard('var(--s1)', 'LTH', fmt.n(x.lth * 100, 2) + '%', _T('第 ' + fmt.n(x.pct_l, 0) + ' 百分位', fmt.n(x.pct_l, 0) + 'th percentile')) + '</div>' +
-      interpHtml(ssrSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('全網', 'Network'), 'var(--s4)'], ['STH', 'var(--s2)'], ['LTH', 'var(--s1)'], [_T('低檔區（最低 10%）', 'Low zone (bottom 10%)'), 'var(--s3)', 'box'], [_T('高檔區（最高 10%）', 'High zone (top 10%)'), 'var(--warn)', 'box']]) +
-      '<div class="chart cf-chart" id="c-ssr"></div><p class="note">' + _T('7 天實現的獲利＋虧損 ÷ 實現市值（Bitview，逐筆 UTXO）：賣出的人一共兌現了多少帳面損益。對數刻度。低檔區、高檔區是全網值在 2012 年起的最低、最高 10%。只作讀值。', 'Profit plus loss realized over 7 days ÷ realized cap (Bitview, per UTXO): how much paper gain or loss sellers cashed in. Log scale. Low and high zones are the network value\'s bottom and top 10% since 2012. Reading only.') + '</p>', '', 'ssr');
+      interpHtml(ssrSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('全網', 'Network'), 'var(--s4)'], ['STH', 'var(--s2)'], ['LTH', 'var(--s1)'], [_T('近 4 年最低 10% 線', '4-year bottom-10% line'), 'var(--s3)'], [_T('在低檔區的期間', 'Time in the low zone'), 'var(--s3)', 'box']]) +
+      '<div class="chart cf-chart" id="c-ssr"></div><p class="note">' + _T('7 天實現的獲利＋虧損 ÷ 實現市值（Bitview，逐筆 UTXO）：賣出的人一共兌現了多少帳面損益。對數刻度。頂部一輪比一輪低，所以低檔區用全網近 4 年的滾動百分位（≤ 10）判定。只作讀值。', 'Profit plus loss realized over 7 days ÷ realized cap (Bitview, per UTXO): how much paper gain or loss sellers cashed in. Log scale. Tops fall each cycle, so the low zone uses the network value\'s rolling 4-year percentile (≤ 10). Reading only.') + '</p>', '', 'ssr');
   }
   function drawSsr(el) {
     var x = (D.onchain || {}).ssr; if (!x || !el) return;
     var pc = function (v) { return fmt.n(v * 100, v < 0.01 ? 2 : 1) + '%'; };
     oxPane(el, { rows: x.rows, label: _T('賣方風險比（對數刻度）', 'Sell-side risk ratio (log scale)'), aria: _T('BTC 價格與賣方風險比', 'BTC price and sell-side risk ratio'), tf: LOG10,
       ticks: [0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.3, 1], fmt: pc, y1: 1.4, y0: 0.0015,
-      zones: [{ y0: 0.0015, y1: x.lo, col: 'var(--s3)', op: 0.15 }, { y0: x.hi, y1: 1.4, col: 'var(--warn)', op: 0.08 }],
-      lines: [{ i: 4, col: 'var(--s1)', w: 1, op: 0.6, name: 'LTH', tfmt: pc }, { i: 3, col: 'var(--s2)', w: 1, op: 0.6, name: 'STH', tfmt: pc }, { i: 2, col: 'var(--s4)', w: 1.8, name: _T('全網', 'Network'), tfmt: pc }],
+      vbands: (x.eps || []).map(function (e) { return { x0: dnOf(e.start), x1: dnOf(e.end) + 3, col: 'var(--s3)', op: 0.18 }; }),
+      lines: [{ i: 5, col: 'var(--s3)', w: 1, dash: '4 3', glow: false, name: _T('近 4 年最低 10%', '4y bottom 10%'), tfmt: pc }, { i: 4, col: 'var(--s1)', w: 1, op: 0.6, name: 'LTH', tfmt: pc }, { i: 3, col: 'var(--s2)', w: 1, op: 0.6, name: 'STH', tfmt: pc }, { i: 2, col: 'var(--s4)', w: 1.8, name: _T('全網', 'Network'), tfmt: pc }],
       now: { i: 2, col: 'var(--s4)', lab: _T('現在 ', 'Now ') + pc(x.all) } });
   }
 
@@ -3579,8 +3579,8 @@
   function dmSay() {
     var x = D.onchain.dorm, it = [];
     it.push([_T('Dormancy（7 天）', 'Dormancy (7d)'), fmt.n(x.dorm, 1) + _T(' 天', ' days'),
-      _T('最近 7 天賣出的幣平均放了 ' + fmt.n(x.dorm, 1) + ' 天，30 天平均 ' + fmt.n(x.dorm30, 1) + ' 天（2012 年起第 ' + fmt.n(x.a30_pct, 0) + ' 百分位）：' + (x.a30_pct >= 80 ? '老幣動得比平常多，長期持有者在賣或搬幣。' : x.a30_pct <= 30 ? '賣出的多半是新幣，老幣很安靜。' : '老幣的動靜在平常範圍。') + '週期頂部附近：' + cyList(x.tops, 1, _T(' 天', 'd')) + '；底部附近：' + cyList(x.bottoms, 1, _T(' 天', 'd')) + '。',
-        'Coins spent over the last 7 days had been held ' + fmt.n(x.dorm, 1) + ' days on average; the 30-day average is ' + fmt.n(x.dorm30, 1) + ' days (' + fmt.n(x.a30_pct, 0) + 'th percentile since 2012): ' + (x.a30_pct >= 80 ? 'old coins are moving more than usual — long-term holders selling or moving coins.' : x.a30_pct <= 30 ? 'what sells is mostly young coins; old coins are quiet.' : 'old-coin activity is in its normal range.') + ' Near cycle tops: ' + cyList(x.tops, 1, 'd') + '; near bottoms: ' + cyList(x.bottoms, 1, 'd') + '.'), x.a30_pct >= 80 ? 'warn' : 'neu']);
+      _T('最近 7 天賣出的幣平均放了 ' + fmt.n(x.dorm, 1) + ' 天，30 天平均 ' + fmt.n(x.dorm30, 1) + ' 天（近 4 年第 ' + fmt.n(x.a30_pct4, 0) + ' 百分位，全部歷史第 ' + fmt.n(x.a30_pct, 0) + '）：' + (x.a30_pct4 >= 80 ? '老幣動得比近幾年平常多，長期持有者在賣或搬幣。' : x.a30_pct4 <= 30 ? '賣出的多半是新幣，老幣很安靜。' : '老幣的動靜在近幾年的平常範圍。') + '週期頂部附近：' + cyList(x.tops, 1, _T(' 天', 'd')) + '；底部附近：' + cyList(x.bottoms, 1, _T(' 天', 'd')) + '。',
+        'Coins spent over the last 7 days had been held ' + fmt.n(x.dorm, 1) + ' days on average; the 30-day average is ' + fmt.n(x.dorm30, 1) + ' days (' + fmt.n(x.a30_pct4, 0) + 'th percentile of 4 years, ' + fmt.n(x.a30_pct, 0) + 'th of all history): ' + (x.a30_pct4 >= 80 ? 'old coins are moving more than in recent years — long-term holders selling or moving coins.' : x.a30_pct4 <= 30 ? 'what sells is mostly young coins; old coins are quiet.' : 'old-coin activity is within its recent normal range.') + ' Near cycle tops: ' + cyList(x.tops, 1, 'd') + '; near bottoms: ' + cyList(x.bottoms, 1, 'd') + '.'), x.a30_pct4 >= 80 ? 'warn' : 'neu']);
     it.push([_T('Liveliness（90 天變化）', 'Liveliness (90-day change)'), (x.live90 >= 0 ? '+' : '') + fmt.n(x.live90, 2) + '‰',
       _T('Liveliness ' + fmt.n(x.live, 4) + '，90 天' + (x.live90 >= 0 ? '上升' : '下降') + ' ' + fmt.n(Math.abs(x.live90), 2) + ' 個千分點（' + ymdS(x.live_since) + ' 起同方向）：' + (x.live90 >= 0 ? '花掉的持有時間比新累積的多，長期持有者在花費。' : '新累積的持有時間比花掉的多，大家在囤。') + '它長期往上漂，看方向不看絕對值。',
         'Liveliness ' + fmt.n(x.live, 4) + ', ' + (x.live90 >= 0 ? 'up' : 'down') + ' ' + fmt.n(Math.abs(x.live90), 2) + ' per mille over 90 days (same direction since ' + ymdS(x.live_since) + '): ' + (x.live90 >= 0 ? 'more holding time is being spent than built up — long-term holders are spending.' : 'more holding time is building up than being spent — holders are hoarding.') + ' It drifts up over the years, so read the direction, not the level.'), 'neu']);
@@ -3589,7 +3589,7 @@
   function dmPanel() {
     var x = (D.onchain || {}).dorm; if (!x || !x.rows) return '';
     return panel('span-12', _T('Dormancy 與 Liveliness：老幣在不在動', 'Dormancy and liveliness: are old coins moving'), 'Bitview · ' + fmt.md(x.date),
-      '<div class="cf-hero">' + oxCard('var(--s1)', _T('Dormancy（30 天平均）', 'Dormancy (30-day avg)'), fmt.n(x.dorm30, 1) + _T(' 天', ' d'), _T('2012 年起第 ' + fmt.n(x.a30_pct, 0) + ' 百分位', fmt.n(x.a30_pct, 0) + 'th percentile since 2012')) +
+      '<div class="cf-hero">' + oxCard('var(--s1)', _T('Dormancy（30 天平均）', 'Dormancy (30-day avg)'), fmt.n(x.dorm30, 1) + _T(' 天', ' d'), _T('近 4 年第 ' + fmt.n(x.a30_pct4, 0) + ' 百分位', fmt.n(x.a30_pct4, 0) + 'th percentile of 4 years')) +
       oxCard('var(--s3)', _T('Liveliness（90 天）', 'Liveliness (90d)'), (x.live90 >= 0 ? '+' : '') + fmt.n(x.live90, 2) + '‰', x.live90 >= 0 ? _T('上升：長期持有者在花費', 'Rising: long-term holders spending') : _T('下降：大家在囤', 'Falling: holders hoarding')) + '</div>' +
       interpHtml(dmSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('Dormancy（7 天）', 'Dormancy (7d)'), 'var(--s1)'], [_T('30 天平均', '30-day average'), 'var(--s2)']]) +
       '<div class="chart cf-chart" id="c-dorm"></div><p class="note">' + _T('Dormancy＝賣出的幣平均放了幾天（銷毀幣天數 ÷ 賣出量），對數刻度；Liveliness＝全部持有時間裡已經花掉的比例（Cointime）。資料 Bitview。只作讀值。', 'Dormancy = average days held of coins spent (coin days destroyed ÷ volume), log scale; liveliness = share of all holding time already spent (Cointime). Data: Bitview. Reading only.') + '</p>', '', 'dorm');
@@ -3636,8 +3636,8 @@
   function avSay() {
     var x = D.onchain.aviv, it = [], E = (x.eps || []).filter(function (e) { return e.r365 != null; }).slice(-5);
     it.push([_T('現在', 'Now'), fmt.n(x.value, 3),
-      _T('價格是真實市場均價（' + fmt.usd(x.tmm) + '）的 ' + fmt.n(x.value, 3) + ' 倍：' + (x.below ? '活躍投資人整體在虧損，已連 ' + x.run + ' 天低於 1。' : '活躍投資人整體在獲利，已連 ' + x.run + ' 天高於 1。') + '2012 年起第 ' + fmt.n(x.pct, 0) + ' 百分位。頂部：' + cyList(x.tops, 2) + '，一輪比一輪低；底部：' + cyList(x.bottoms, 2) + '，一輪比一輪高。',
-        'Price is ' + fmt.n(x.value, 3) + '× the true market mean (' + fmt.usd(x.tmm) + '): ' + (x.below ? 'active investors are at a loss as a group, below 1 for ' + x.run + ' days.' : 'active investors are in profit as a group, above 1 for ' + x.run + ' days.') + ' ' + fmt.n(x.pct, 0) + 'th percentile since 2012. Tops: ' + cyList(x.tops, 2) + ', lower each cycle; bottoms: ' + cyList(x.bottoms, 2) + ', higher each cycle.'), x.below ? 'warn' : 'neu']);
+      _T('價格是真實市場均價（' + fmt.usd(x.tmm) + '）的 ' + fmt.n(x.value, 3) + ' 倍：' + (x.below ? '活躍投資人整體在虧損，已連 ' + x.run + ' 天低於 1。' : '活躍投資人整體在獲利，已連 ' + x.run + ' 天高於 1。') + '近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位（全部歷史第 ' + fmt.n(x.pct, 0) + '；頂部一輪比一輪低，全部歷史的百分位會偏向近年）。頂部：' + cyList(x.tops, 2) + '，一輪比一輪低；底部：' + cyList(x.bottoms, 2) + '，一輪比一輪高。',
+        'Price is ' + fmt.n(x.value, 3) + '× the true market mean (' + fmt.usd(x.tmm) + '): ' + (x.below ? 'active investors are at a loss as a group, below 1 for ' + x.run + ' days.' : 'active investors are in profit as a group, above 1 for ' + x.run + ' days.') + ' ' + fmt.n(x.pct4, 0) + 'th percentile of 4 years (' + fmt.n(x.pct, 0) + 'th of all history; tops fall each cycle, so all-history percentiles lean recent). Tops: ' + cyList(x.tops, 2) + ', lower each cycle; bottoms: ' + cyList(x.bottoms, 2) + ', higher each cycle.'), x.below ? 'warn' : 'neu']);
     it.push([_T('跌破 1 之後', 'After dropping below 1'), (x.r365 || {}).n ? x.r365.up + ' / ' + x.r365.n : '—',
       _T('2012 年起低於 1 達 10 天以上的段落，一年後 ' + oxStat(x.r365, x.base365) + '。最近幾段：' + E.map(function (e) { return ymdS(e.start) + '–' + ymdS(e.end) + '（' + e.days + ' 天，一年後 ' + oxP0(e.r365) + '）'; }).join('、') + '。在熊市裡會長時間待在 1 以下（2014–16、2018–19、2022–23），所以低於 1 本身不是買點。',
         'Since 2012, stretches below 1 lasting 10+ days: a year later ' + oxStat(x.r365, x.base365) + '. Recent: ' + E.map(function (e) { return ymdS(e.start) + '–' + ymdS(e.end) + ' (' + e.days + ' days, 1y ' + oxP0(e.r365) + ')'; }).join(', ') + '. In bear markets it stays below 1 for long stretches (2014–16, 2018–19, 2022–23), so being below 1 is not a buy signal by itself.'), 'neu']);
@@ -3660,39 +3660,42 @@
   }
 
   /* ⑥ 儲備風險（週期版） */
-  function rrSay() {
-    var x = D.onchain.rrisk, it = [], E = (x.eps || []).filter(function (e) { return e.r365 != null; }).slice(-5), f = function (v) { return fmt.n(v * 1000, 2) + '‰'; };
-    it.push([_T('現在', 'Now'), f(x.value),
-      _T('儲備風險 ' + f(x.value) + '，在 2012 年起的第 ' + fmt.n(x.pct, 0) + ' 百分位' + (x.run ? '，已連 ' + x.run + ' 天在低檔區（最低 10%，' + f(x.lo) + ' 以下）' : '；低檔區要到 ' + f(x.lo) + ' 以下') + '。頂部：' + (x.tops || []).map(function (t) { return t.date.slice(0, 4) + ' ' + f(t.value); }).join('、') + '；底部：' + (x.bottoms || []).map(function (t) { return t.date.slice(0, 4) + ' ' + f(t.value); }).join('、') + '。',
-        'Reserve risk ' + f(x.value) + ', the ' + fmt.n(x.pct, 0) + 'th percentile since 2012' + (x.run ? '; in the low zone (bottom 10%, below ' + f(x.lo) + ') for ' + x.run + ' days' : '; the low zone starts below ' + f(x.lo)) + '. Tops: ' + (x.tops || []).map(function (t) { return t.date.slice(0, 4) + ' ' + f(t.value); }).join(', ') + '; bottoms: ' + (x.bottoms || []).map(function (t) { return t.date.slice(0, 4) + ' ' + f(t.value); }).join(', ') + '.'), x.run ? 'pos' : 'neu']);
+  function rrSay() {   /* 2026-11-06 使用者（經長文 session）：「看起來儲備風險的峰值在逐漸降低中」→ 低檔區改用近 4 年滾動百分位 */
+    var x = D.onchain.rrisk, it = [], E = (x.eps || []).filter(function (e) { return e.r365 != null; }), f = function (v) { return fmt.n(v * 1000, 2) + '‰'; };
+    it.push([_T('現在', 'Now'), _T('近 4 年第 ' + fmt.n(x.pct4, 0), fmt.n(x.pct4, 0) + 'th (4y)'),
+      _T('儲備風險 ' + f(x.value) + '，在近 4 年的第 ' + fmt.n(x.pct4, 0) + ' 百分位（全部歷史第 ' + fmt.n(x.pct, 0) + '）' + (x.run ? '，已連 ' + x.run + ' 天在低檔區' : '；低檔區（近 4 年最低 10%）現在要到 ' + f(x.lo4) + ' 以下') + '。頂部一輪比一輪低：' + (x.tops || []).map(function (t) { return t.date.slice(0, 4) + ' ' + f(t.value); }).join('、') + '，底部一直在 0.8–1.6‰，整條線被壓扁了，所以全部歷史的百分位會偏向近年，這裡用近 4 年比。',
+        'Reserve risk ' + f(x.value) + ', the ' + fmt.n(x.pct4, 0) + 'th percentile of the last 4 years (' + fmt.n(x.pct, 0) + 'th of all history)' + (x.run ? '; in the low zone for ' + x.run + ' days' : '; the low zone (bottom 10% of 4 years) now starts below ' + f(x.lo4)) + '. Tops fall each cycle — ' + (x.tops || []).map(function (t) { return t.date.slice(0, 4) + ' ' + f(t.value); }).join(', ') + ' — while bottoms stay around 0.8–1.6‰, flattening the series, so an all-history percentile leans toward recent years; this uses the last 4 years.'), x.run ? 'pos' : 'neu']);
+    it.push([_T('歷次底部的位置', 'Past bottoms'), (x.bp4 || []).map(function (b) { return fmt.n(b.pct4, 0); }).join(' / '),
+      _T('各輪熊市底部在當時近 4 年的百分位：' + (x.bp4 || []).map(function (b) { return b.date.slice(0, 7).replace('-', '/') + ' 第 ' + fmt.n(b.pct4, 0); }).join('、') + '。2018 年底的底部只到第 26，所以單看這一項會漏掉底部。',
+        'Each bear-market bottom against its own previous 4 years: ' + (x.bp4 || []).map(function (b) { return b.date.slice(0, 7).replace('-', '/') + ' ' + fmt.n(b.pct4, 0) + 'th'; }).join(', ') + '. The late-2018 bottom only reached the 26th, so this gauge alone can miss a bottom.'), 'neu']);
     it.push([_T('進入低檔區之後', 'After entering the low zone'), (x.r365 || {}).n ? x.r365.up + ' / ' + x.r365.n : '—',
-      _T('2012 年起進入低檔區 ' + x.n_eps + ' 段，一年後 ' + oxStat(x.r365, x.base365) + '；90 天後 ' + oxStat(x.r90, x.base90) + '。最近幾段：' + E.map(function (e) { return ymdS(e.start) + '（' + e.days + ' 天，一年後 ' + oxP0(e.r365) + '）'; }).join('、') + '。低檔區可以待很久（2022/06–2023/03 有 244 天），是「風險報酬好」，不是「明天就漲」。',
-        'Since 2012 it entered the low zone ' + x.n_eps + ' times: a year later ' + oxStat(x.r365, x.base365) + '; 90 days later ' + oxStat(x.r90, x.base90) + '. Recent: ' + E.map(function (e) { return ymdS(e.start) + ' (' + e.days + ' days, 1y ' + oxP0(e.r365) + ')'; }).join(', ') + '. It can stay low a long time (244 days in Jun 2022–Mar 2023): good risk/reward, not "up tomorrow".'), 'neu']);
+      _T('近 4 年百分位 ≤ 10 的段落共 ' + x.n_eps + ' 段（' + x.n_recent + ' 段在 2022 年之後），走完一年的 ' + x.r365.n + ' 段中 ' + x.r365.up + ' 段一年後上漲：' + E.map(function (e) { return ymdS(e.start) + '（' + e.days + ' 天，一年後 ' + oxP0(e.r365) + '）'; }).join('、') + '。樣本少、結果不一致，只作讀值。',
+        'Stretches at or below the 10th percentile of 4 years: ' + x.n_eps + ' (' + x.n_recent + ' since 2022); of the ' + x.r365.n + ' with a full year since, ' + x.r365.up + ' were higher a year later: ' + E.map(function (e) { return ymdS(e.start) + ' (' + e.days + ' days, 1y ' + oxP0(e.r365) + ')'; }).join(', ') + '. Few cases with mixed results; reading only.'), 'neu']);
     return it;
   }
   function rrPanel() {
     var x = (D.onchain || {}).rrisk; if (!x || !x.rows) return '';
     return panel('span-12', _T('儲備風險', 'Reserve risk'), 'Bitview · ' + fmt.md(x.date),
-      '<div class="cf-hero">' + oxCard(x.run ? 'var(--s3)' : 'var(--s1)', _T('儲備風險', 'Reserve risk'), fmt.n(x.value * 1000, 2) + '‰', _T('2012 年起第 ' + fmt.n(x.pct, 0) + ' 百分位', fmt.n(x.pct, 0) + 'th percentile since 2012') + (x.run ? _T('・在低檔區', ' · low zone') : '')) + '</div>' +
-      interpHtml(rrSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('儲備風險', 'Reserve risk'), 'var(--s1)'], [_T('低檔區（最低 10%）', 'Low zone (bottom 10%)'), 'var(--s3)', 'box'], [_T('高檔區（最高 10%）', 'High zone (top 10%)'), 'var(--warn)', 'box']]) +
+      '<div class="cf-hero">' + oxCard(x.run ? 'var(--s3)' : 'var(--s1)', _T('儲備風險', 'Reserve risk'), fmt.n(x.value * 1000, 2) + '‰', _T('近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位', fmt.n(x.pct4, 0) + 'th percentile of 4 years') + (x.run ? _T('・在低檔區', ' · low zone') : '')) + '</div>' +
+      interpHtml(rrSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('儲備風險', 'Reserve risk'), 'var(--s1)'], [_T('近 4 年最低 10% 線', '4-year bottom-10% line'), 'var(--s3)'], [_T('近 4 年最高 10% 線', '4-year top-10% line'), 'var(--warn)'], [_T('在低檔區的期間', 'Time in the low zone'), 'var(--s3)', 'box']]) +
       '<div class="chart cf-chart" id="c-rrisk"></div><p class="note">' + _T('儲備風險＝價格 ÷ 長期持有者的信心（他們放著不賣所累積的持有時間）。低＝價格相對長期持有者的信心便宜、風險報酬好；高＝頂部區。對數刻度，單位千分之。資料 Bitview。只作讀值。', 'Reserve risk = price ÷ long-term holder conviction (the holding time they built up by not selling). Low = price is cheap relative to that conviction, good risk/reward; high = top zone. Log scale, in per mille. Data: Bitview. Reading only.') + '</p>', '', 'rrisk');
   }
   function drawRr(el) {
     var x = (D.onchain || {}).rrisk; if (!x || !el) return;
     var f = function (v) { return fmt.n(v * 1000, v < 0.01 ? 2 : 1) + '‰'; };
     oxPane(el, { rows: x.rows, label: _T('儲備風險（對數刻度）', 'Reserve risk (log scale)'), aria: _T('BTC 價格與儲備風險', 'BTC price and reserve risk'), tf: LOG10, ticks: [0.001, 0.002, 0.005, 0.01, 0.02, 0.05], fmt: f, y0: 0.0006, y1: 0.06,
-      zones: [{ y0: 0.0006, y1: x.lo, col: 'var(--s3)', op: 0.16 }, { y0: x.hi, y1: 0.06, col: 'var(--warn)', op: 0.08 }],
-      lines: [{ i: 2, col: 'var(--s1)', w: 1.8, name: _T('儲備風險', 'Reserve risk'), tfmt: f }],
+      vbands: (x.eps || []).map(function (e) { return { x0: dnOf(e.start), x1: dnOf(e.end) + 3, col: 'var(--s3)', op: 0.18 }; }),
+      lines: [{ i: 3, col: 'var(--s3)', w: 1, dash: '4 3', glow: false, name: _T('近 4 年最低 10%', '4y bottom 10%'), tfmt: f }, { i: 4, col: 'var(--warn)', w: 1, dash: '4 3', glow: false, name: _T('近 4 年最高 10%', '4y top 10%'), tfmt: f }, { i: 2, col: 'var(--s1)', w: 1.8, name: _T('儲備風險', 'Reserve risk'), tfmt: f }],
       now: { i: 2, col: 'var(--s1)', lab: _T('現在 ', 'Now ') + f(x.value) } });
   }
 
   (function () {   /* 新圖的「怎麼讀這張圖」 */
     var hh = function (a, b, cz, ce, dz, de) { return [[a, b], [cz, ce], [dz, de]]; }, o = function (k) { return (D.onchain || {})[k] || {}; };
     Object.assign(RD, {
-      'ssr': { h: hh('金線是全網賣方風險比，橘是短期持有者、紫是長期持有者（對數刻度）。青綠底是 2012 年起最低 10%，淡紅底是最高 10%。', 'Gold is the network sell-side risk ratio, orange short-term holders, purple long-term holders (log scale). Teal shading is the bottom 10% since 2012, pale red the top 10%.',
+      'ssr': { h: hh('金線是全網賣方風險比，橘是短期持有者、紫是長期持有者（對數刻度）。青綠虛線是全網近 4 年最低 10% 的門檻（逐日變動），青綠底是落在低檔區的期間。', 'Gold is the network sell-side risk ratio, orange short-term holders, purple long-term holders (log scale). The teal dashed line is the rolling 4-year bottom-10% threshold; teal shading marks time in the low zone.',
           '很低＝賣的人少、賣價接近成本，市場在找新的平衡，常在盤整末端與底部區；很高＝大量獲利了結或恐慌認賠。長期持有者那條衝高，多半是老手在頂部出貨。', 'Very low = few sellers selling near cost, the market looking for a new balance, often late in consolidations and near bottoms; very high = heavy profit-taking or panic selling. A spike in the long-term holder line usually means seasoned holders distributing near a top.',
           '頂部的高點一輪比一輪低，固定門檻會失準，看的是在自己歷史裡的相對位置；逐筆 UTXO、不是實體調整。', 'Top readings fall each cycle, so fixed lines go stale — read the position against its own history; per UTXO, not entity-adjusted.'),
-        now: function () { var x = o('ssr'); return x.all == null ? '' : _T('全網 ' + fmt.n(x.all * 100, 2) + '%（第 ' + fmt.n(x.pct, 0) + ' 百分位）。', 'Network ' + fmt.n(x.all * 100, 2) + '% (' + fmt.n(x.pct, 0) + 'th percentile).'); } },
+        now: function () { var x = o('ssr'); return x.all == null ? '' : _T('全網 ' + fmt.n(x.all * 100, 2) + '%（近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位）。', 'Network ' + fmt.n(x.all * 100, 2) + '% (' + fmt.n(x.pct4, 0) + 'th percentile of 4 years).'); } },
       'agepl': { h: hh('上格價格；下格是 30 天實現獲利（或虧損）裡，各持有時間組佔多少（加起來 100%）：越上面越新的幣（紅、琥珀），越下面越老的幣（藍）。', 'Top: price. Bottom: each holding-time group\'s share of 30-day realized profit (or loss), summing to 100% — younger coins on top (red, amber), older below (blue).',
           '獲利了結裡老幣（藍）變多＝長期持有者在賣，常在高點；認賠裡 6 個月以上的變多＝去年高價買進的人也撐不住了。', 'More old coins (blue) in profit-taking = long-term holders selling, typical near highs; more 6m+ coins in loss-taking = last year\'s high-price buyers giving up.',
           '交易所內部搬幣會被算成賣出，單日的大搬家會讓某一組突然變大。', 'Internal exchange moves count as sales, so one big transfer can make a group jump.'),
@@ -3700,7 +3703,7 @@
       'dorm': { h: hh('紫是 7 天 Dormancy、橘是 30 天平均（對數刻度），膠囊是週期頂部附近的最高值。', 'Purple is 7-day dormancy, orange the 30-day average (log scale); capsules mark the highs near cycle tops.',
           '數字高＝賣出的幣放得很久，老幣在動；長時間偏低＝賣的都是新幣、老幣很安靜，常在底部區。', 'High = coins spent had been held a long time, old coins moving; low for a long stretch = only young coins selling, old coins quiet, often near bottoms.',
           '交易所或託管機構整理老錢包時會一次搬很多老幣，造成單週尖峰；看 30 天平均比較穩。', 'When exchanges or custodians reorganize old wallets, many old coins move at once and spike a week; the 30-day average is steadier.'),
-        now: function () { var x = o('dorm'); return x.dorm30 == null ? '' : _T('30 天平均 ' + fmt.n(x.dorm30, 1) + ' 天（第 ' + fmt.n(x.a30_pct, 0) + ' 百分位）；Liveliness 90 天 ' + (x.live90 >= 0 ? '+' : '') + fmt.n(x.live90, 2) + '‰。', '30-day average ' + fmt.n(x.dorm30, 1) + ' days (' + fmt.n(x.a30_pct, 0) + 'th percentile); liveliness 90d ' + (x.live90 >= 0 ? '+' : '') + fmt.n(x.live90, 2) + '‰.'); } },
+        now: function () { var x = o('dorm'); return x.dorm30 == null ? '' : _T('30 天平均 ' + fmt.n(x.dorm30, 1) + ' 天（近 4 年第 ' + fmt.n(x.a30_pct4, 0) + ' 百分位）；Liveliness 90 天 ' + (x.live90 >= 0 ? '+' : '') + fmt.n(x.live90, 2) + '‰。', '30-day average ' + fmt.n(x.dorm30, 1) + ' days (' + fmt.n(x.a30_pct4, 0) + 'th percentile of 4 years); liveliness 90d ' + (x.live90 >= 0 ? '+' : '') + fmt.n(x.live90, 2) + '‰.'); } },
       'hnupl': { h: hh('紫是長期持有者 NUPL、橘是短期持有者 NUPL；底色是長期持有者的五個階段（藍＝投降，往上依序到紅＝狂熱）。膠囊是歷次頂部、底部的讀數。', 'Purple is long-term holder NUPL, orange short-term holder NUPL; the shading marks the five long-term holder stages (blue = capitulation up to red = euphoria). Capsules show readings at past tops and bottoms.',
           '長期持有者進到信念、狂熱（0.5 以上）是週期後段；跌回希望或投降是熊市。短期持有者在 0 附近上下，代表新進場的人在成本附近拉鋸。', 'Long-term holders in belief or euphoria (above 0.5) is late cycle; falling back to hope or capitulation is a bear market. Short-term holders hovering around 0 means recent buyers are fighting at cost.',
           '頂部讀數一輪比一輪低、這一輪底部長期持有者沒有跌到虧損，階段門檻是常見分法、不是這一輪的定律。', 'Top readings fall each cycle and this cycle\'s long-term holders never went underwater at the bottom; the stage lines are a convention, not a law for this cycle.'),
@@ -3709,10 +3712,10 @@
           '高於 1＝活躍投資人整體獲利，越高越接近過熱；低於 1＝活躍投資人整體虧損，熊市大多待在這裡。頂部一輪比一輪低、底部一輪比一輪高。', 'Above 1 = active investors in profit, higher means closer to overheating; below 1 = active investors at a loss, where bear markets mostly sit. Tops fall and bottoms rise each cycle.',
           '真實市場均價是推算的活躍資本成本（Cointime 模型），和一般的實現價格不同。', 'The true market mean is a modelled cost of active capital (Cointime), different from the ordinary realized price.'),
         now: function () { var x = o('aviv'); return x.value == null ? '' : _T('AVIV ' + fmt.n(x.value, 3) + '（' + (x.below ? '低於 1，連 ' : '高於 1，連 ') + x.run + ' 天）。', 'AVIV ' + fmt.n(x.value, 3) + ' (' + (x.below ? 'below' : 'above') + ' 1 for ' + x.run + ' days).'); } },
-      'rrisk': { h: hh('儲備風險（對數刻度，千分之）；青綠底是 2012 年起最低 10%，淡紅底是最高 10%。', 'Reserve risk (log scale, per mille); teal shading is the bottom 10% since 2012, pale red the top 10%.',
+      'rrisk': { h: hh('儲備風險（對數刻度，千分之）；青綠虛線是近 4 年最低 10% 的門檻（逐日變動）、紅虛線是最高 10%，青綠底是落在低檔區的期間。', 'Reserve risk (log scale, per mille); the teal dashed line is the rolling 4-year bottom-10% threshold, the red one the top 10%; teal shading marks time in the low zone.',
           '低＝價格相對長期持有者的信心便宜，過去都在熊市底部附近；高＝價格跑在信心前面，頂部區。', 'Low = price is cheap relative to long-term holder conviction, historically near bear-market bottoms; high = price running ahead of conviction, the top zone.',
-          '低檔區可以待很久，是「風險報酬好」，不是時間點；頂部的高點一輪比一輪低。', 'The low zone can last a long time — it marks good risk/reward, not timing; top readings fall each cycle.'),
-        now: function () { var x = o('rrisk'); return x.value == null ? '' : _T(fmt.n(x.value * 1000, 2) + '‰（第 ' + fmt.n(x.pct, 0) + ' 百分位）' + (x.run ? '，在低檔區。' : '。'), fmt.n(x.value * 1000, 2) + '‰ (' + fmt.n(x.pct, 0) + 'th percentile)' + (x.run ? ', in the low zone.' : '.')); } }
+          '頂部一輪比一輪低、整條線被壓扁，所以用近 4 年比，不用全部歷史；2018 年底的熊市底部也只到近 4 年第 26 百分位，單看這一項會漏掉底部。', 'Tops fall each cycle and flatten the series, so it is compared with the last 4 years, not all history; the late-2018 bottom only reached the 26th percentile, so this gauge alone can miss a bottom.'),
+        now: function () { var x = o('rrisk'); return x.value == null ? '' : _T(fmt.n(x.value * 1000, 2) + '‰（近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位）' + (x.run ? '，在低檔區。' : '。'), fmt.n(x.value * 1000, 2) + '‰ (' + fmt.n(x.pct4, 0) + 'th percentile of 4 years)' + (x.run ? ', in the low zone.' : '.')); } }
     });
   })();
 
