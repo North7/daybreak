@@ -429,7 +429,7 @@ except Exception as e: errors.append(f'bitstamp {e}')
 # ---------- G. 2026-09-25 新增：頂部／底部雷達（使用者要求加重頂部鏈上指標） ----------
 # G1. CoinMetrics community（免金鑰、自 2010 年、每日）：MVRV 比值、實現價、週期衰減校正、價格新高 vs MVRV 背離、交易所供給
 try:
-    cmj = get('https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?assets=btc&metrics=PriceUSD,CapMVRVCur,CapMrktCurUSD,SplyCur,SplyExNtv,IssTotUSD&frequency=1d&start_time=2010-07-18&page_size=10000')['data']
+    cmj = get('https://community-api.coinmetrics.io/v4/timeseries/asset-metrics?assets=btc&metrics=PriceUSD,CapMVRVCur,CapMrktCurUSD,SplyCur,SplyExNtv,IssTotUSD,FlowInExNtv,FlowOutExNtv&frequency=1d&start_time=2010-07-18&page_size=10000')['data']
     cm = [(x['time'][:10], float(x['PriceUSD']), float(x['CapMVRVCur']) if x.get('CapMVRVCur') else None, float(x['CapMrktCurUSD']), float(x['SplyCur']),
            float(x['SplyExNtv']) if x.get('SplyExNtv') else None) for x in cmj if x.get('PriceUSD') and x.get('CapMrktCurUSD') and x.get('SplyCur') and x['time'][:10] <= LAST]   # 2026-09-26 修正：CoinMetrics 最新一天常只有 PriceUSD、其餘 null，須一併排除
     mv = [(d_, pr, m_, mc, sp) for d_, pr, m_, mc, sp, _ in cm if m_]
@@ -910,6 +910,18 @@ try:
     try: R['svd'] = opt_flow.svd_viz(_okc, globals().get('PXC') or {}, LAST)
     except Exception as e: errors.append(f'svd {e}')
 except Exception as e: errors.append(f'opt_flow {e}')
+
+# G4i. 2026-11-06 指標擴充（見 cq_extra.py；CoinMetrics／The Block／Upbit／OKX 免費，不佔 bitcoin-data 額度）：交易所淨流量、現貨 vs 永續需求、
+#   ETF 持有者成本、一年累計淨實現損益（顆）、韓國溢價、每輪資金效率。各項獨立，失敗只影響該項
+try:
+    import cq_extra
+    _md4 = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json'))); _pxc4 = globals().get('PXC') or {}
+    for _k, _fn in (('exflow', lambda: cq_extra.exflow_viz(cmj, _pxc4, LAST)), ('dmd', lambda: cq_extra.demand_viz(R.get('ad'), (globals().get('_okc') or {}).get('perp'), _pxc4, LAST)),
+                    ('etfcost', lambda: cq_extra.etf_cost_viz(_pxc4, LAST)), ('npl365', lambda: cq_extra.npl365_viz(_nd, LAST, _md4['cycle_bottoms'], _md4['cycle_tops'])),
+                    ('kp', lambda: cq_extra.kp_viz(_pxc4, LAST)), ('capeff', lambda: cq_extra.capeff_viz(mv, LAST, _md4['cycle_tops'], _md4['cycle_bottoms']))):
+        try: R[_k] = _fn()
+        except Exception as e: errors.append(f'cq_extra {_k} {e}')
+except Exception as e: errors.append(f'cq_extra {e}')
 
 # ---------- G5. 2026-10-02 使用者要求：掛單簿深度（Coinbase／Kraken／Bitstamp 三家合計，舊口徑保留供序列比較；Binance 現貨改由 G5b 經 data-api.binance.vision 取得，Binance 期貨 451、Bybit 403 不可用）。只作讀值，不連動任何規則 ----------
 try:
