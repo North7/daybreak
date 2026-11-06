@@ -141,7 +141,7 @@ def _means(s):
         if k == 'fg_zone': return FG_MEANS.get(s['id'].split(':')[-1])
     if k and k.startswith('cluster-'): return CLUSTER_MEANS
     m = OTHER_MEANS.get(k)
-    if isinstance(m, dict): return m.get(d) or m.get('up')
+    if isinstance(m, dict) and 'zh' not in m: return m.get(d) or m.get('up')   # 依方向分的說明；單一說明本身也是 {zh, en}
     return m
 
 
