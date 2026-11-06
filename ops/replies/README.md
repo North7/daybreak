@@ -53,7 +53,7 @@ X 的「原創內容獎勵」（2026-09-07 起取代創作者分潤，見 [`../R
 
 ## 固定名單（watchlist.json）
 
-2026-11-04 建立，目前 36 個帳號（11-06 從 Grok 名單加 AYBTC6；同一天加了 Grok 推薦的 4 個、你指定的 PiusSprenger；11-05 加了你指定的英文鏈上帳號：cryptoquant_com、AxelAdlerJr、CryptoVizArt、willywoo、lookonchain、whale_alert、caprioleio、rektcapital；glassnodealerts 2023/10 起停更，沒收）：Murphy 和中文鏈上博主為主，加上幾個英文 ETF、鏈上帳號和研究機構。`scan.py` 讀的是 api.fxtwitter.com 的個人頁貼文（第三方、公開、不需登入），只有原創和引用，看不到他們回覆別人的貼文。
+2026-11-04 建立，目前 37 個帳號（11-06 從 Grok 名單加 AYBTC6、Dragonhau66；同一天加了 Grok 推薦的 4 個、你指定的 PiusSprenger；11-05 加了你指定的英文鏈上帳號：cryptoquant_com、AxelAdlerJr、CryptoVizArt、willywoo、lookonchain、whale_alert、caprioleio、rektcapital；glassnodealerts 2023/10 起停更，沒收）：Murphy 和中文鏈上博主為主，加上幾個英文 ETF、鏈上帳號和研究機構。`scan.py` 讀的是 api.fxtwitter.com 的個人頁貼文（第三方、公開、不需登入），只有原創和引用，看不到他們回覆別人的貼文。
 
 - **每天順手核對 Grok 名單**（2026-11-06 使用者要求）：寫回覆時，Grok 表格和「新博主」裡的帳號用 fxtwitter 看近 20 則：瀏覽中位數（至少幾百）、比特幣貼文比例、是不是新聞整理號或導流號。適合的直接加進 `watchlist.json`，沒加的在 `_about` 記一句原因，回報時告訴使用者。
 - **加帳號**：Grok 回報的新博主、或回覆後有互動的帳號（回覆、回追），連續一週常發比特幣數據的，加進 `accounts`：`handle`、`name`、`lang`（zh／en）、`type`（blogger／research）、`note`。加之前用 `https://api.fxtwitter.com/<handle>` 確認帳號讀得到、粉絲 2,000 以上。
