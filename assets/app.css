@@ -835,3 +835,11 @@ p.note.clamp:not(.open) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-b
 .lights.pb { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
 .lights.pb .light + .light { border-left: 0; padding-left: 0; }
 .lights.pb .light { border-bottom: 1px solid var(--line); padding-right: 14px; }
+/* 2026-11-06 使用者：「淺色背景下這種發光感看起來很油，不高級」「有點髒」→ 日刊（淺色）不發光，夜刊保留 */
+:root:not([data-theme="dark"]) .chart path.ln { filter: none; }
+/* 2026-11-06「相對未實現獲利：地板」的說明（底層邏輯、白話、35% 地板、怎麼用） */
+.ox-xs { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px 28px; margin: 18px 0 4px; padding-top: 16px; border-top: 1px solid var(--line); }
+.ox-x h3 { margin: 0 0 6px; font-size: 14px; font-weight: 900; color: var(--ink); }
+.ox-x p, .ox-x li { margin: 0 0 8px; font-size: 14px; line-height: 1.75; color: var(--ink-2); }
+.ox-x ol { margin: 0; padding-left: 1.3em; }
+.ox-x .ox-f { font-family: var(--f-mono); font-size: 13px; color: var(--ink); background: color-mix(in srgb, var(--s1) 8%, transparent); border-left: 3px solid var(--s1); padding: 8px 10px; }

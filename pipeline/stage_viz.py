@@ -418,7 +418,7 @@ def ad_viz(ser, last, step=3):
 
 
 # 2026-11-05 使用者要求（補充指標 PDF：LTH／STH Supply Ratio）：長短期持有者供給比＝長期持有者供給 ÷ 短期持有者供給（Bitview lth_supply／sth_supply）。
-#   上升＝籌碼沉澱（也包括幣放滿 155 天自動轉成長期），下降＝短期籌碼增加（老手分發或新買家進場）。和「長期持有者 30 日淨部位」同一件事的比例版，
+#   上升＝籌碼沉澱（也包括幣放滿 155 天自動轉成長期），下降＝短期籌碼增加（長期持有者分發或短期持有者進場）。和「長期持有者 30 日淨部位」同一件事的比例版，
 #   只放進「價格 × 長期持有者動向」的判讀，不另開圖。只作讀值
 LS_FROM = '2015-01-01'
 
@@ -589,7 +589,7 @@ def age_cost_viz(bv, px, last, step=4):
                 note='Bitview：6–12 個月＝6–9、9–12 個月兩段的實現市值合計 ÷ 供給合計；12–18 個月＝age_1y_to_18m_realized_price；3–6 個月＝3–4、4–5、5–6 個月三段合計；只作讀值')
 
 
-# 2026-11-05 使用者要求（X 帳號掃描：CryptoQuant 的 Trader Realized Price、新買家成本）：1 週–1 個月持幣成本（Bitview age_1w_to_1m_realized_price）＝最近一個月進場、
+# 2026-11-05 使用者要求（X 帳號掃描：CryptoQuant 的 Trader Realized Price、短期持有者成本）：1 週–1 個月持幣成本（Bitview age_1w_to_1m_realized_price）＝最近一個月進場、
 #   還沒動的人的平均買價。列出和收盤的距離、30 天變化、這次在線上／線下連續幾天、和短期持有者成本的距離。只作讀值
 def _c1m_view(c1, P, D, d1, sth):
     DD = [d for d in D if d in c1 and P(d)]

@@ -88,7 +88,7 @@ def quant_viz(bv, px, last, bottoms=(), step=4):
 
 
 # ---------- 短期持有者虧損比例（＝100 − 短期持有者獲利比例）的歷次 ----------
-# 高於 50%＝一半以上的新買家在虧損。歷次升到 60% 以上的時間點與之後的漲跌（隔 60 天以上算新的一次）。只作讀值
+# 高於 50%＝一半以上的短期持有者在虧損。歷次升到 60% 以上的時間點與之後的漲跌（隔 60 天以上算新的一次）。只作讀值
 SL_FROM = '2015-01-01'
 
 
@@ -120,7 +120,7 @@ def sthl_viz(bv, px, last):
 RUP_FLOOR, RUP_FROM = 35.0, '2012-01-01'
 
 
-def rup_viz(bv, px, last, step=4):
+def rup_viz(bv, px, last, tops=(), step=4):
     P = _P(bv, px); r = bv.get('rup') or {}
     D = [d for d in sorted(r) if RUP_FROM <= d <= last and P(d)]
     if len(D) < 1500: return None
@@ -135,6 +135,8 @@ def rup_viz(bv, px, last, step=4):
     for e in eps:
         e['min'] = round(e['min'], 1); e['price'] = round(P(e['start'])); e['low_price'] = round(P(e['min_date']))
         e['r180'], e['r365'] = _fwd(D, ix, P, e['start'], 180), _fwd(D, ix, P, e['start'], 365)
+        w = [d for d in D if 0 <= dn(d) - dn(e['start']) <= 180]   # 進入地板之後 180 天內，價格還再跌多少
+        e['dd180'] = round((min(P(d) for d in w) / P(e['start']) - 1) * 100, 1) if w and dn(D[-1]) - dn(e['start']) >= 30 else None
         e['open'] = dn(d1) - dn(e['end']) <= 60 and r[d1] <= RUP_FLOOR
     back = lambda n: max((d for d in D if dn(d) <= dn(d1) - n), default=None); d30 = back(30)
     y = [d for d in D if dn(d) > dn(d1) - 365]; lo = min(y, key=r.get)
@@ -142,7 +144,14 @@ def rup_viz(bv, px, last, step=4):
     for i in range(0, len(D), step):   # 每段取最低，地板不會被抽樣抽掉
         blk = D[i:i + step]; m = min(blk, key=r.get); rows.append([dn(m), round(P(m)), round(r[m], 2)])
     if rows[-1][0] != dn(d1): rows.append([dn(d1), round(P(d1)), round(r[d1], 2)])
+    tv = []   # 各輪週期頂部前後 45 天內的最高值（頂部的讀數一輪比一輪低）
+    for t in tops:
+        td = t[0] if isinstance(t, (list, tuple)) else t; w = [d for d in D if abs(dn(d) - dn(td)) <= 45]
+        if w: m = max(w, key=r.get); tv.append(dict(top=td, date=m, value=round(r[m], 1)))
+    yr_lo = [dict(year=y, value=round(min(r[d] for d in D if d.startswith(str(y))), 1)) for y in range(int(D[0][:4]), int(d1[:4]) + 1) if any(d.startswith(str(y)) for d in D)]
     return dict(date=d1, value=round(r[d1], 1), d30=round(r[d30], 1) if d30 else None, floor=RUP_FLOOR, gap=round(r[d1] - RUP_FLOOR, 1),
+                med=round(st.median(r[d] for d in D), 1), share_below=round(sum(r[d] <= RUP_FLOOR for d in D) / len(D) * 100, 1), tops=tv,
+                yr_lo=yr_lo, other_lo=min((y for y in yr_lo if y['value'] > RUP_FLOOR), key=lambda y: y['value'], default=None),
                 lo1y=dict(date=lo, value=round(r[lo], 1)), eps=eps, rows=rows, since=RUP_FROM, src='Bitview',
                 note='相對未實現獲利＝全體未實現獲利 ÷ 市值（Bitview，逐筆 UTXO）；地板 35% 是本站依 2012 年起的歷史設定；只作讀值')
 
@@ -157,6 +166,25 @@ RL_W, RL_DD, RL_LOOK, RL_GAP, RL_FROM = 7, 0.06, 30, 75, '2013-01-01'
 def _supply(bv, d):
     a, b = (bv.get('lths') or {}).get(d), (bv.get('sths') or {}).get(d)
     return a + b if a and b else None
+
+
+def _chain(D, P, rel, L, since, W=3, k=1.3, tol=0.02):
+    pk = []
+    for i, d in enumerate(D):
+        if d < since or i < 30 or rel[d] <= 0: continue
+        if rel[d] < k * st.median(rel[D[j]] for j in range(i - 30, i)): continue
+        if rel[d] < max(rel[D[j]] for j in range(max(0, i - W), min(len(D), i + W + 1))): continue
+        pk.append((i, d))
+    links, step = [], 0
+    for (ia, a), (ib, b) in zip(pk, pk[1:]):
+        pa, pb, ra, rb = P(a), P(b), rel[a], rel[b]
+        if pb > pa * (1 + tol): kind, step = 'reset', 0
+        elif rb < ra * 0.9: step += 1; kind = 'div'
+        elif rb > ra * 1.1: kind = 'break' if step else 'cap'; step = 0
+        else: kind = 'flat'
+        links.append(dict(a=a, b=b, kind=kind, step=step if kind == 'div' else 0, pa=round(pa), pb=round(pb), ua=round(L[a] / 1e6), ub=round(L[b] / 1e6),
+                          ra=round(ra, 2), rb=round(rb, 2), conf=ib + W < len(D)))
+    return [d for _, d in pk], links
 
 
 def rloss_viz(bv, px, last, transfers=(), days=420, show=150):
@@ -193,10 +221,18 @@ def rloss_viz(bv, px, last, transfers=(), days=420, show=150):
         peaks.append(dict(date=d, bp=round(rel[d], 2), usd_m=round(L[d] / 1e6), price=round(P(d))))
     rows = [[dn(d), round(P(d)), round(L[d] / 1e6), round(rel[d], 2), 1 if d in skip else 0] for d in E[-show:]]   # 圖只畫近 150 天（峰值看得清楚）
     cur = next((p for p in reversed(pairs) if dn(d1) - dn(p['date']) <= 30), None)
+    # 認賠峰值鏈（圖上的背離輔助線）：近 show 天全部畫出；2013 年起回測「背離連到第 2 次以上」之後的漲跌、以及 30 天內被打破的比例
+    _, ch = _chain(D, P, rel, L, RL_FROM)
+    d2 = [c for c in ch if c['kind'] == 'div' and c['step'] >= 2]
+    brk = lambda c: any(x['kind'] == 'break' and c['b'] < x['b'] and dn(x['b']) - dn(c['b']) <= 30 for x in ch)
+    chain_back = dict(n=len(d2), r30=_stat([_fwd(D, ix, P, c['b'], 30) for c in d2]), r90=_stat([_fwd(D, ix, P, c['b'], 90) for c in d2]),
+                      broken30=sum(brk(c) for c in d2 if dn(d1) - dn(c['b']) >= 30), done=sum(1 for c in d2 if dn(d1) - dn(c['b']) >= 30),
+                      n1=sum(c['kind'] == 'div' for c in ch), nbreak=sum(c['kind'] == 'break' for c in ch))
+    E2 = E[-show:]; chain = [c for c in ch if c['a'] >= E2[0]]
     return dict(date=d1, usd_m=round(L[d1] / 1e6), bp=round(rel[d1], 2), usd7_m=round(sum(L[D[k]] for k in range(len(D) - 7, len(D))) / 1e6),
                 lows=[x for x in lows if dn(d1) - dn(x['date']) <= days], pairs=pairs[-12:], cur=cur, back=back,
                 base30=_base(D, ix, P, 30, RL_FROM), base90=_base(D, ix, P, 90, RL_FROM), n_div=sum(p['kind'] == 'div' for p in pairs), n_cap=sum(p['kind'] == 'cap' for p in pairs),
-                peaks=peaks[-8:], skip=sorted(skip), rows=rows, src='Bitview',
+                peaks=peaks[-8:], chain=chain, chain_back=chain_back, skip=sorted(skip), rows=rows, src='Bitview',
                 note='全網每日實現虧損（Bitview，美元，逐筆 UTXO、不是實體調整）÷ 市值；擺動低點＝前後 7 天最低且比之前 30 天最高跌 ≥ 6%；搬家日不算；只作讀值')
 
 
@@ -251,7 +287,7 @@ def _divs(D, ix, P, z, W, gap, since):
             if hi and pb > pa and zb < za: kind = 'top'
             elif not hi and pb < pa and zb > za: kind = 'bot'
             else: continue
-            d = D[b]; out.append(dict(kind=kind, prev=D[a], date=d, price=round(pb), za=round(za, 2), zb=round(zb, 2), r30=_fwd(D, ix, P, d, 30), r90=_fwd(D, ix, P, d, 90), dd60=_dd(D, ix, P, d, 60)))
+            d = D[b]; out.append(dict(kind=kind, prev=D[a], date=d, price=round(pb), prev_price=round(pa), za=round(za, 2), zb=round(zb, 2), r30=_fwd(D, ix, P, d, 30), r90=_fwd(D, ix, P, d, 90), dd60=_dd(D, ix, P, d, 60)))
     return sorted(out, key=lambda x: x['date'])
 
 
@@ -293,7 +329,7 @@ def grad_viz(bv, px, last, step=3):
     z30, z120 = _grad(D, P, RP, 30), _grad(D, P, RP, 120)
     dv30, dv120 = _divs(D, ix, P, z30, 10, 150, GR_FROM), _divs(D, ix, P, z120, 20, 240, GR_FROM)
     rows = thin([[dn(d), round(P(d)), round(z30[d], 2) if d in z30 else None, round(z120[d], 2) if d in z120 else None] for d in D if d >= '2017-01-01'], step)
-    return dict(date=d1, z30=round(z30[d1], 2), z120=round(z120[d1], 2), div30=dv30[-6:], div120=dv120[-6:], back30=_divstat(dv30), back120=_divstat(dv120),
+    return dict(date=d1, z30=round(z30[d1], 2), z120=round(z120[d1], 2), div30=dv30[-12:], div120=[x for x in dv120 if x['date'] >= '2017-01-01'], back30=_divstat(dv30), back120=_divstat(dv120),
                 base30=_base(D, ix, P, 30, GR_FROM), base90=_base(D, ix, P, 90, GR_FROM), rows=rows, src='Bitview',
                 note='（價格 N 天對數漲跌 − 實現價格 N 天對數漲跌）÷ 自己過去 4 年的標準差；N＝30／120；背離＝價格擺動新高／新低而梯度沒有；只作讀值')
 
@@ -319,7 +355,7 @@ def mom_viz(bv, px, last, step=3):
         pk = max(D[k:], key=m.get); hump = dict(start=D[k], peak=pk, peak_v=round(m[pk]))
     rows = thin([[dn(d), round(P(d)), round(m[d], 1)] for d in D if d >= '2017-01-01'], step)
     dd = [x['dd60'] for x in dv if x['dd60'] is not None]
-    return dict(date=d1, value=round(m[d1], 1), hump=hump, divs=dv[-6:], n=len(dv), dd60_med=round(st.median(dd), 1) if dd else None,
+    return dict(date=d1, value=round(m[d1], 1), hump=hump, divs=[x for x in dv if x['date'] >= '2017-01-01'], n=len(dv), dd60_med=round(st.median(dd), 1) if dd else None,
                 dd60_q=[round(sorted(dd)[len(dd) // 4], 1), round(sorted(dd)[len(dd) * 3 // 4], 1)] if len(dd) >= 4 else None,
                 r30=_stat([x['r30'] for x in dv]), base_dd60=(lambda v: round(st.median(v), 1) if v else None)([x for d in D if d >= MO_FROM for x in [_dd(D, ix, P, d, 60)] if x is not None]),
                 base30=_base(D, ix, P, 30, MO_FROM), rows=rows, src='Bitview',
