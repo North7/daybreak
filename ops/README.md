@@ -133,7 +133,7 @@ python make_short_017.py ../.. ~/fonts out/daybreak-017-short.mp4 --audio out/01
 
 **清理**：不再每天整份換新。Claude 寫新的長貼文之前，先問使用者哪幾則已經發了（或看 `ops/log/` 的成效紀錄），把已處理、而且處理日已經過去的那幾則從 `data/longposts.json` 刪掉，`data/longposts/` 的圖一起刪；沒處理的留著。快訊 `data/flash.json`、`data/flash/` 照舊，過期就刪。
 
-- **寫法**（細節在 `brand/voice.md`）：像 Murphy 日常長貼文的深度和長度（約 600–1,000 字），一個核心指標＋1–2 個佐證；標題句 → 帶日期的數字 → 「何謂…」白話 → 歷史規律 → 現在 → 誰在買、誰在賣（只從大週期講）→ 我的判斷（有信心）→ 什麼情況會改看法 → 之後會再追。引用的極值用每日資料核對（`pipeline/coc_cache/bitview.json` 等），不要用 latest.json 裡抽樣過的 rows。
+- **寫法**（細節在 `brand/voice.md`）：像 Murphy 日常長貼文的深度和長度（約 600–1,000 字），一個核心指標＋1–2 個佐證；標題句 → 帶日期的數字 → 「何謂…」白話 → 歷史規律 → 現在 → 誰在買、誰在賣（只從大週期講）→ 我的判斷（有信心）→ 什麼情況下結論不成立（不要寫「什麼情況會讓我改看法」這種固定句） → 之後會再追。引用的極值用每日資料核對（`pipeline/coc_cache/bitview.json` 等），不要用 latest.json 裡抽樣過的 rows。
 - **配圖**（在倉庫根目錄）：
   1. `python3 ops/post/site_shot.py <jobs.json> <資料夾>`：jobs 寫 `"theme": "dark"`、每張 `"clean": 1`，截網站原圖（上格價格、下格指標）。
   2. `python3 ops/post/annotate.py <spec.json> <資料夾> <輸出> <字型>`：文中提到、圖上找得到的數字都標上去。
