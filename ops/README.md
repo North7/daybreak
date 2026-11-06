@@ -147,4 +147,4 @@ python make_short_017.py ../.. ~/fonts out/daybreak-017-short.mp4 --audio out/01
   1. `python3 ops/post/site_shot.py <jobs.json> <資料夾>`：jobs 寫 `"theme": "dark"`、每張 `"clean": 1`，截網站原圖（上格價格、下格指標）。
   2. `python3 ops/post/annotate.py <spec.json> <資料夾> <輸出> <字型>`：文中提到、圖上找得到的數字都標上去。
   3. `python3 ops/post/longpost_img.py data/longposts/<id>.png <字型> <圖1> <圖2> ...`：疊成一張，標「圖1、圖2…」。X 多圖格子會把橫圖裁掉，所以一則只放這一張。
-- `data/longposts.json`：`{"items": [{"id", "time"（建議發文時間，UTC）, "title", "note", "zh", "en"（可省）, "images": ["data/longposts/<id>.png"]}]}`
+- `data/longposts.json`：`{"items": [{"id", "time"（建議發文時間，UTC）, "title", "note", "zh", "en"（可省）, "images": ["data/longposts/<id>.png"], "charts": ["onchain/urpd", ...]}]}`。`charts` 是這則用到的網站面板（`#page/key`，2026-11-06 起），每日推薦圖表會避開最近 7 天長貼文用過的面板
