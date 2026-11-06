@@ -38,6 +38,21 @@ def _zone_eps(s, D, ix, P, cond, gap=30):
     return eps
 
 
+ROLL = 1460   # 近 4 年
+
+
+def _roll(s, D, q=None):
+    """近 4 年滾動百分位（每天和自己之前 4 年比，含當天、沒有前視）；q 給定時改回傳近 4 年的第 q 百分位數值（門檻線）"""
+    import bisect
+    out, win = {}, []
+    for j, d in enumerate(D):
+        bisect.insort(win, s[d])
+        if j >= ROLL: win.pop(bisect.bisect_left(win, s[D[j - ROLL]]))
+        if j < 365: continue
+        out[d] = win[min(len(win) - 1, int(len(win) * q))] if q is not None else round(bisect.bisect_left(win, s[d]) / len(win) * 100, 1)
+    return out
+
+
 def _prep(bv, px, last, keys):
     P = _P(bv, px); S = [bv.get(k) or {} for k in keys]
     D = [d for d in sorted(S[0]) if FROM <= d <= last and P(d) and all(d in s for s in S)]
@@ -52,19 +67,21 @@ def ssr_viz(bv, px, last, tops=(), bottoms=(), step=4):
     P, (a, s_, l_), D, ix = _prep(bv, px, last, ['ssr', 'ssr_s', 'ssr_l'])
     if len(D) < 1500: return None
     H = sorted(a[d] for d in D); lo, hi = H[int(len(H) * 0.10)], H[int(len(H) * 0.90)]
-    d1 = D[-1]; eps = _zone_eps(a, D, ix, P, lambda v: v <= lo)
+    p4, l4, h4 = _roll(a, D), _roll(a, D, 0.10), _roll(a, D, 0.90)
+    R4 = [d for d in D if d in p4]; rx = {d: i for i, d in enumerate(R4)}
+    d1 = D[-1]; eps = _zone_eps(p4, R4, rx, P, lambda v: v <= 10)
     run = 0
-    for d in reversed(D):
-        if a[d] <= lo: run += 1
+    for d in reversed(R4):
+        if p4[d] <= 10: run += 1
         else: break
     tp, bt = _cyc(a, D, tops, bottoms)
-    rows = thin([[dn(d), round(P(d)), a[d], s_[d], l_[d]] for d in D], step)
-    if rows[-1][0] != dn(d1): rows.append([dn(d1), round(P(d1)), a[d1], s_[d1], l_[d1]])
+    rows = thin([[dn(d), round(P(d)), a[d], s_[d], l_[d], l4.get(d), h4.get(d)] for d in D], step)
+    if rows[-1][0] != dn(d1): rows.append([dn(d1), round(P(d1)), a[d1], s_[d1], l_[d1], l4.get(d1), h4.get(d1)])
     back = lambda n: max((d for d in D if dn(d) <= dn(d1) - n), default=None); d30 = back(30)
     return dict(date=d1, all=a[d1], sth=s_[d1], lth=l_[d1], all30=a[d30] if d30 else None, pct=_pct(a, D, a[d1]), pct_s=_pct(s_, D, s_[d1]), pct_l=_pct(l_, D, l_[d1]),
-                lo=round(lo, 6), hi=round(hi, 6), run=run, eps=eps[-10:], n_eps=len(eps), r90=_stat([e['r90'] for e in eps]), r365=_stat([e['r365'] for e in eps]),
+                pct4=p4.get(d1), lo4=l4.get(d1), n_recent=sum(1 for e in eps if e['start'] >= '2022-01-01'), lo=round(lo, 6), hi=round(hi, 6), run=run, eps=eps[-10:], n_eps=len(eps), r90=_stat([e['r90'] for e in eps]), r365=_stat([e['r365'] for e in eps]),
                 base90=_base(D, ix, P, 90, FROM), base365=_base(D, ix, P, 365, FROM), tops=tp, bottoms=bt, rows=rows, src='Bitview',
-                note='7 天實現獲利＋虧損 ÷ 實現市值（Bitview，逐筆 UTXO）；低檔區＝2012 年起全網最低 10%；只作讀值')
+                note='7 天實現獲利＋虧損 ÷ 實現市值（Bitview，逐筆 UTXO）；低檔區＝全網近 4 年滾動百分位 ≤ 10（頂部一輪比一輪低）；只作讀值')
 
 
 # ---------- 長短期持有者 NUPL ----------
@@ -110,17 +127,22 @@ def rr_viz(bv, px, last, tops=(), bottoms=(), step=4):
     P, (r,), D, ix = _prep(bv, px, last, ['rr'])
     if len(D) < 1500: return None
     H = sorted(r[d] for d in D); lo, hi = H[int(len(H) * 0.10)], H[int(len(H) * 0.90)]
-    d1 = D[-1]; eps = _zone_eps(r, D, ix, P, lambda v: v <= lo)
+    p4, l4, h4 = _roll(r, D), _roll(r, D, 0.10), _roll(r, D, 0.90)
+    R4 = [d for d in D if d in p4]; rx = {d: i for i, d in enumerate(R4)}
+    d1 = D[-1]; eps = _zone_eps(p4, R4, rx, P, lambda v: v <= 10)
     run = 0
-    for d in reversed(D):
-        if r[d] <= lo: run += 1
+    for d in reversed(R4):
+        if p4[d] <= 10: run += 1
         else: break
     tp, bt = _cyc(r, D, tops, bottoms, 5)
-    rows = thin([[dn(d), round(P(d)), r[d]] for d in D], step)
-    if rows[-1][0] != dn(d1): rows.append([dn(d1), round(P(d1)), r[d1]])
-    return dict(date=d1, value=r[d1], pct=_pct(r, D, r[d1]), lo=lo, hi=hi, run=run, eps=eps[-10:], n_eps=len(eps), r365=_stat([e['r365'] for e in eps]), r90=_stat([e['r90'] for e in eps]),
+    bp4 = [dict(date=b['date'], pct4=p4.get(min(R4, key=lambda d: abs(dn(d) - dn(b['date']))))) for b in bt]   # 各輪底部在當時近 4 年的百分位
+    tp, bt = _cyc(r, D, tops, bottoms, 5)
+    rows = thin([[dn(d), round(P(d)), r[d], l4.get(d), h4.get(d)] for d in D], step)
+    if rows[-1][0] != dn(d1): rows.append([dn(d1), round(P(d1)), r[d1], l4.get(d1), h4.get(d1)])
+    return dict(date=d1, value=r[d1], pct=_pct(r, D, r[d1]), pct4=p4.get(d1), lo=lo, hi=hi, lo4=l4.get(d1), bp4=bp4, run=run, eps=eps[-10:], n_eps=len(eps),
+                n_recent=sum(1 for e in eps if e['start'] >= '2022-01-01'), r365=_stat([e['r365'] for e in eps]), r90=_stat([e['r90'] for e in eps]),
                 base365=_base(D, ix, P, 365, FROM), base90=_base(D, ix, P, 90, FROM), tops=tp, bottoms=bt, rows=rows, src='Bitview',
-                note='價格 ÷ 長期持有者的信心（Bitview reserve_risk）；低檔區／高檔區＝2012 年起最低／最高 10%；只作讀值')
+                note='價格 ÷ 長期持有者的信心（Bitview reserve_risk）；低檔區＝近 4 年滾動百分位 ≤ 10（頂部一輪比一輪低，全部歷史的百分位會偏向近年）；只作讀值')
 
 
 # ---------- AVIV ----------
@@ -137,7 +159,7 @@ def aviv_viz(bv, px, last, tops=(), bottoms=(), step=4):
     rows = thin([[dn(d), round(P(d)), v[d]] for d in D], step)
     if rows[-1][0] != dn(d1): rows.append([dn(d1), round(P(d1)), v[d1]])
     tmm = (bv.get('tmm') or {}).get(d1)
-    return dict(date=d1, value=v[d1], pct=_pct(v, D, v[d1]), run=run, below=v[d1] < 1, tmm=tmm, eps=[e for e in below if e['days'] >= 10][-10:],
+    return dict(date=d1, value=v[d1], pct=_pct(v, D, v[d1]), pct4=_roll(v, D).get(d1), run=run, below=v[d1] < 1, tmm=tmm, eps=[e for e in below if e['days'] >= 10][-10:],
                 r365=_stat([e['r365'] for e in below if e['days'] >= 10]), base365=_base(D, ix, P, 365, FROM), tops=tp, bottoms=bt, rows=rows, src='Bitview',
                 note='價格 ÷ 真實市場均價（Bitview aviv，Cointime）；低於 1＝活躍投資人整體虧損；只作讀值')
 
@@ -184,6 +206,6 @@ def dorm_viz(bv, px, last, tops=(), bottoms=(), step=4):
         up_from = D[j]
     rows = thin([[dn(d), round(P(d)), round(dm[d], 1), round(a30[d], 1), lv[d]] for d in D], step)
     if rows[-1][0] != dn(d1): rows.append([dn(d1), round(P(d1)), round(dm[d1], 1), round(a30[d1], 1), lv[d1]])
-    return dict(date=d1, dorm=round(dm[d1], 1), dorm30=round(a30[d1], 1), dorm_pct=_pct(dm, D, dm[d1]), a30_pct=_pct(a30, D, a30[d1]), live=lv[d1], live90=lv90,
+    return dict(date=d1, dorm=round(dm[d1], 1), dorm30=round(a30[d1], 1), dorm_pct=_pct(dm, D, dm[d1]), a30_pct=_pct(a30, D, a30[d1]), a30_pct4=_roll(a30, D).get(d1), live=lv[d1], live90=lv90,
                 live_since=up_from, live_pct=_pct(lv, D, lv[d1]), tops=tp, bottoms=bt, rows=rows, src='Bitview',
                 note='Dormancy＝7 天內賣出的幣平均放了幾天；Liveliness＝全部持有時間裡已花掉的比例（Bitview，Cointime）；只作讀值')
