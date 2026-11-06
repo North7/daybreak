@@ -11,14 +11,16 @@ Fn = SC.fonts(fonts); RED, INK, INK3, LINE = '#FF3B1F', '#F2F0EA', '#9C978E', '#
 ims = [Image.open(p).convert('RGB') for p in panels]
 bg = ims[0].getpixel((ims[0].width // 2, 30))
 P, TAG, GAP, TOP, FOOT = 72, 60, 64, 56, 140
+if len(ims) == 1: TAG = -14   # 2026-11-06：只有一張圖（短貼文）就不標「圖1」
 W = max(i.width for i in ims) + 2 * P
 H = TOP + sum(TAG + 14 + i.height for i in ims) + GAP * (len(ims) - 1) + 40 + FOOT
 img = Image.new('RGB', (W, H), bg); d = ImageDraw.Draw(img)
 y = TOP; tf = Fn['cjk'](34, 900)
 for n, im in enumerate(ims, 1):
-    t = f'圖{n}'; tw = d.textlength(t, font=tf)
-    d.rounded_rectangle([P, y, P + tw + 40, y + TAG], radius=TAG / 2, fill=RED)
-    d.text((P + 20 + tw / 2, y + TAG / 2), t, font=tf, fill='#FFFFFF', anchor='mm')
+    if len(ims) > 1:
+        t = f'圖{n}'; tw = d.textlength(t, font=tf)
+        d.rounded_rectangle([P, y, P + tw + 40, y + TAG], radius=TAG / 2, fill=RED)
+        d.text((P + 20 + tw / 2, y + TAG / 2), t, font=tf, fill='#FFFFFF', anchor='mm')
     y += TAG + 14; img.paste(im, (P, y)); y += im.height + GAP
 fy = H - 70; d.line([P, fy - 52, W - P, fy - 52], fill=LINE, width=2)
 d.arc([P, fy - 26, P + 52, fy + 26], 180, 360, fill=RED, width=8); d.line([P - 8, fy, P + 60, fy], fill=INK, width=8)
