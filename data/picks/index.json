@@ -3,31 +3,14 @@
  "captions": true,
  "picks": [
   {
-   "id": "cost",
-   "chart": "data/picks/cost.png",
-   "chart_en": "data/picks/cost-en.png",
+   "id": "deriv/gex",
+   "chart": "data/picks/deriv-gex.png",
+   "chart_en": "data/picks/deriv-gex-en.png",
    "name": {
-    "zh": "短期持有者成本與真實市場均價",
-    "en": "STH cost basis and true market mean"
-   }
-  },
-  {
-   "id": "cohort",
-   "chart": "data/picks/cohort.png",
-   "chart_en": "data/picks/cohort-en.png",
-   "name": {
-    "zh": "長短期持有者籌碼分布",
-    "en": "Where short- and long-term holders sit"
-   }
-  },
-  {
-   "id": "cbp",
-   "chart": "data/picks/cbp.png",
-   "chart_en": "data/picks/cbp-en.png",
-   "name": {
-    "zh": "Coinbase 溢價",
-    "en": "Coinbase premium"
-   }
+    "zh": "選擇權 Gamma 曝險（推算）",
+    "en": "Options gamma exposure (estimate)"
+   },
+   "link": "https://north7.github.io/daybreak/#deriv/gex"
   }
  ]
 }

@@ -6,7 +6,7 @@
 <meta name="robots" content="noindex">
 <title>Daybreak X Post</title>
 <!-- 發文小幫手（2026-10-13 建於根目錄 post.html，2026-11-04 移到 ops/post/）：讀 ../../data/x_post.json，中英文貼文一鍵複製、一鍵開 X 發文視窗、下載當日分享圖
-     2026-11-04：加「今日推薦圖表」：讀 ../../data/picks.json（每日任務寫的解說）與 ../../data/picks/index.json（Actions 畫了哪些圖），每張圖都能分享、存圖、複製解說
+     2026-11-04：加「今日推薦圖表」（2026-11-06 第二版：一天一張網站原圖＋問句標題，見 ops/picks/README.md）：讀 ../../data/picks.json（每日任務寫的解說）與 ../../data/picks/index.json（Actions 畫了哪些圖），每張圖都能分享、存圖、複製解說
      2026-11-04：加「快訊」：讀 ../../data/flash.json（盤中事件的中英文貼文；2026-11-05 起只顯示台北時間今天的，過期的直接從資料刪掉），配圖在 ../../data/flash/
      2026-11-05：依發文類型分區（快訊、日報貼文、長貼文、推薦圖表，上方有跳轉標籤，回覆另一頁）
      2026-11-05：加「長貼文」：讀 ../../data/longposts.json（每日圖表長貼文，Premium 長文、不是 X Article；沒處理的一直顯示，「標記已處理」只記在這台裝置、隔天不再顯示；舊則由 Claude 寫新長貼文時清掉），配圖在 ../../data/longposts/，一則可多張 -->
@@ -275,8 +275,10 @@ h3 small { color:var(--ink3); font-weight:500; }
     var LB = { zh: ['中文', '分享（含圖）', '存到相簿', '複製解說', '下載圖片'], en: ['English', 'Share (with image)', 'Save to Photos', 'Copy caption', 'Download image'] };
     el.innerHTML = list.map(function (q, n) {
       var nm = names[q.id] || {};
-      return '<section><h2>' + (n + 1) + '. ' + esc(nm.zh || q.id) + ' <small>' + esc(nm.en || '') + '</small></h2>' +
-        (q.why ? '<p class="why">' + esc(q.why) + '</p>' : '') +
+      // 2026-11-06 第二版：一天一張網站原圖，標題是問句（q_zh）；附網站面板連結
+      var lk = (ix && ix.picks || []).filter(function (x) { return x.id === q.id; })[0] || {};
+      return '<section><h2>' + (n + 1) + '. ' + esc(q.q_zh || nm.zh || q.id) + ' <small>' + esc(q.q_zh ? (nm.zh || '') : (nm.en || '')) + '</small></h2>' +
+        (q.why ? '<p class="why">' + esc(q.why) + (lk.link ? ' · <a href="' + esc(lk.link) + '" target="_blank" rel="noopener">網站這張圖</a>' : '') + '</p>' : '') +
         ['zh', 'en'].map(function (lang) {
           var k = 'pick:' + q.id + ':' + lang, t = (withText && q[lang]) || '', w = weight(t), B = LB[lang];
           var im = img(lang === 'zh' ? (q.chart || 'data/picks/' + q.id + '.png') : (q.chart_en || 'data/picks/' + q.id + '-en.png'));

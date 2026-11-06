@@ -41,16 +41,22 @@
    - 數字一律取自 brief 與當期 notes，不新增查不到出處的數字；市場階段天數＝bar_date 減 `cycle.stage.since` 加 1；ETF 那一行＝`flows.etf` 最後 7 個非暫定日合計，括號寫最後一個非暫定日（英文 `・ETF 7 trading days to Oct 9: −$558M`），與分享圖一致；不寫「近 7 日」，因為 The Block 常晚一到兩個交易日，頭條若寫更新的暫定值，讀者會以為兩個數字矛盾。
    - 執行 `python3 pipeline/x_len.py`，兩則都要 ≤ 280（X 的算法：中文字算 2、網址算 23）；超過就先縮短第二句，開頭那句盡量不動。
    - 結尾帶 2–3 個 hashtag 關鍵詞（2026-11-04 使用者要求，讓貼文搜得到）：中文固定 `#比特幣 #BTC`、英文固定 `#Bitcoin #BTC`，再加 1 個當天主題（中文例如 `#ETF`、`#鏈上數據`、`#資金費率`；英文例如 `#ETF`、`#onchain`、`#funding`）。hashtag 算進 280 字。不喊單、不寫價格目標或「該買／該賣」；出場框架只用百分比；隱私鐵則同樣適用。
-9a. 今日推薦圖表（2026-11-04 起；給發文小幫手的「今日推薦圖表」，規劃見 `ops/picks/README.md`）：寫完 notes 之後執行 `python3 pipeline/picks.py plan`，它依當期 findings 的 `chart` 與 `signals` 分數列出候選圖（`candidates`，預設前 3 張是 `pick`），每張附相關異動的 `title`／`fig`／`ctx` 與圖上底部三格的數字（`stats`）。挑 1–3 張（通常就用 `pick`；同一件事只留一張），寫 `data/picks.json`：
+9a. 今日推薦圖表（2026-11-06 改第二版：**一天一張網站原圖，回答一個讀者會問的問題**；規劃見 `ops/picks/README.md`）：寫完 notes 之後執行 `python3 pipeline/picks.py plan`。它列出網站上可以推的面板（`candidates`：今天有異動的排前面，附異動的白話含意 `means` 與過去同樣情況 `hist`，以及該面板在 `latest.json` 的讀值 `data`，新指標多半帶回測），`recent` 是最近 7 天推過或長貼文用過的面板（不能挑），`skip` 是帶出場框架線或本身是推估的面板（不推）。
+   - **先想讀者今天在問什麼，再挑最能回答的那一張**（不限 `suggest`）。例如大跌隔天：「還會不會跌」「怎麼一直在 76K 打轉」「以前這樣之後怎麼走」。不要挑和日報頭條講同一件事的圖；同一個面板 7 天內不重複。
+   - 寫 `data/picks.json`（只放 1 張）：
    ```json
    {"date": "<bar_date>", "edition": <同 notes>, "picks": [
-     {"id": "cohort", "chart": "data/picks/cohort.png", "chart_en": "data/picks/cohort-en.png",
-      "why": "為什麼推這張（給自己看，一句）", "zh": "中文解說", "en": "English caption"}]}
+     {"id": "deriv/gex", "chart": "data/picks/deriv-gex.png", "chart_en": "data/picks/deriv-gex-en.png",
+      "why": "為什麼挑這張（給自己看，一句）",
+      "q_zh": "圖上的問句標題", "q_en": "Question title on the image",
+      "zh": "中文解說", "en": "English caption"}]}
    ```
-   - `id` 用 plan 給的 id；`chart`／`chart_en` 固定是 `data/picks/<id>.png`、`data/picks/<id>-en.png`。圖由 GitHub Actions 在你推送後自動畫（`share.yml` 跑 `pipeline/picks.py render`），你不用畫。可選 `title_zh`／`title_en` 改圖上的大標題（預設用該圖最高分異動的標題）；要改的話同樣只放資訊、數字照抄。
-   - 解說：每張圖中英文各一則，1–3 句，說這張圖今天看到什麼。**數字只引用、不改**：一律取自 plan 的 `signals`（fig、ctx）與 `stats`，或當期 notes 的 findings；不換算、不四捨五入成別的值（中文用「萬顆／億美元」、英文用「K／M／B」照 plan 的寫法）。
-   - **只講市場資訊**：不寫出場框架、觸發條數、價格階梯、MVRV 0.75 線、200 日均線避險、「今天不動」這類動作結論，也不喊單、不寫價格目標或「該買／該賣」。不加網址（圖本身帶網站網址）；結尾帶 2–3 個 hashtag，規則同上面的 X 貼文草稿。英文版不能有中文字。
-   - 執行 `python3 pipeline/picks.py check`：檢查日期、張數、id、每則 ≤ 280（X 算法）、沒有框架或買賣字眼、解說裡每個數字都查得到出處（plan 資料或當期 notes）。有任何一項沒過就改到通過；真的過不了就這天不寫 picks.json（Actions 會自動挑圖，只是沒有解說），不要硬改數字。
+   - `id` 是 plan 裡的面板 id（網站連結 `#page/key`）；`chart`／`chart_en` 固定是 `data/picks/<id 的 / 換成 ->.png`、`-en.png`。圖由 GitHub Actions 在你推送後自動截網站深色原圖、加上問句標題（`share.yml` 跑 `pipeline/picks.py render`），你不用畫。
+   - 問句標題 `q_zh`／`q_en`：一句讀者會問的話（例如「為什麼比特幣老在 76K 附近打轉？」），不用「震驚」「必看」這類字，數字照抄。
+   - 解說：先寫那句問題，再寫兩三句：**現在的讀值 → 過去同樣情況之後怎樣（勝率照實寫，例如「16 次裡 11 次」；沒有回測就不硬湊）→ 這代表什麼**。每個術語講後果（不要只寫「正 Gamma」，要寫「漲了賣、跌了買，價格容易被吸住」）；推算或單一來源的數字要寫「推算」「只有 OKX」。持有者用語照寫作規則（只用短期持有者／長期持有者）。
+   - **數字只引用、不改**：一律取自 plan 的 `data`、`signals` 或當期 notes；不換算單位（例如 15.7 百萬美元就寫 `$15.7M`，不要改成 1,570 萬）。
+   - **只講市場資訊**：不寫出場框架、觸發條數、價格階梯、MVRV 0.75 線、200 日均線避險、「今天不動」這類動作結論，也不喊單、不寫價格目標或「該買／該賣」；回調壓力清單、背離這類讀值也不能寫成買點。不加網址（圖本身帶網站網址）；結尾帶 2–3 個 hashtag，規則同上面的 X 貼文草稿。英文版不能有中文字。
+   - 執行 `python3 pipeline/picks.py check`：檢查日期、只有 1 張、面板存在且不在 `recent`／`skip`、標題與解說都有、每則 ≤ 280（X 算法）、沒有框架或買賣字眼、沒有 AI 腔或不用的詞（同 `ops/replies/check.py`）、每個數字都查得到出處。有任何一項沒過就改到通過；真的過不了就這天不寫 picks.json（Actions 會自動挑一張畫，只是沒有解說），不要硬改數字。
 10. 提交訊息 `notes: <bar_date>`（notes.json、notes.en.json、x_post.json、picks.json 一起），推送到 main。
 11. 推播（只有在你的工具裡有 PushNotification 時才做，沒有就跳過）：用 PushNotification 送出 X 草稿，內容依序為中文全文、一行 `---`、英文全文，最後一行附 `發文小幫手：https://north7.github.io/daybreak/ops/post/`（可一鍵複製、開 X 發文視窗、存圖）；不要加其他說明。
 
