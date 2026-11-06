@@ -8,6 +8,46 @@
    "mode": "reply",
    "kind": "followup",
    "angle": "接話",
+   "lang": "zh",
+   "n": 19,
+   "status": "send",
+   "url": "https://x.com/EthShuttle/status/2118644531143053400",
+   "id": "2118644531143053400",
+   "author": "EthShuttle",
+   "name": "0xBsc",
+   "followers": 821,
+   "posted": "2026-11-06T09:59:53Z",
+   "summary": "回我們附長期持有者圖的那則：大家都在懷疑的時候通常還不是頂，真正的頂往往是所有人都說「這次不一樣」的時候",
+   "reply": "認同\n拿最久的那批人也還沒賣到頂部那種量，30 天淨減持 12.9 萬顆，去年頂部那陣子是 31.8 萬",
+   "sources": "onchain top_radar（11/04）：長期持有者 30 日淨部位 −129,390；2025 頂部附近 −317,525（bitcoin-data）",
+   "note": "別人回了我們，2 分鐘前。接他「頂」的話題，補一個跟頂部比的數字。圖上 11/03 是 −166,633，11/04 已經縮到 −12.9 萬，用最新的。",
+   "order": 1
+  },
+  {
+   "style": "真人版",
+   "mode": "reply",
+   "kind": "followup",
+   "angle": "接話",
+   "lang": "zh",
+   "n": 20,
+   "status": "send",
+   "url": "https://x.com/Murphychen888/status/2118585939174064397",
+   "id": "2118585939174064397",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82200,
+   "posted": "2026-11-06T06:07:03Z",
+   "summary": "Murphy 回我們訂閱區的提問：這裡沒有區分群體，是整體實現虧損；要區分的話還有更細的數據",
+   "reply": "了解，謝謝回覆\n\n另外想請教，BRS 大概是用哪幾類數據組出來的？不用公式，想知道它主要在量什麼，跟我自己看的數據對照比較好懂",
+   "sources": "（無數字）",
+   "note": "Murphy 回了我們（訂閱區）。順勢問 BRS：在他已經回過的串裡接著問，比另開一則自然。不想問 BRS 的話，只留第一行。",
+   "order": 2
+  },
+  {
+   "style": "真人版",
+   "mode": "reply",
+   "kind": "followup",
+   "angle": "接話",
    "n": 16,
    "status": "send",
    "url": "https://x.com/IndigoJones2020/status/2118580833804304802",
@@ -20,7 +60,7 @@
    "reply": "Pretty much, I use it as a rough window. Then I check where price sits against cost-basis lines. Short-term holder cost is around 76K right now, and yesterday's close landed right on it",
    "sources": "onchain（11/05）：短期持有者成本 75,989，收盤 75,980",
    "note": "別人回了我們，4 分鐘前，接話。同意他的說法，補一條我們實際在看的線。",
-   "order": 1,
+   "order": 3,
    "followers": 418
   },
   {
@@ -40,7 +80,7 @@
    "reply": "破的是 200 日指數均線，那條在 7.65 萬\n簡單的 200 日均線還在 7.32 萬，離收盤還有快 4%",
    "sources": "market（11/05）：收盤 75,980；EMA200 76,511、SMA200 73,192",
    "note": "他回了我們早上的回覆。他說的 200 日線是哪一條要分清楚，補兩條的位置，只講價位。",
-   "order": 2,
+   "order": 4,
    "followers": 8477
   },
   {
@@ -60,12 +100,12 @@
    "reply": "哈哈 今晚還有非農，這種盤最磨人",
    "sources": "（無數字）",
    "note": "他回了我們，輕鬆接一句就好。paulxue 那則「倒車技術了得」按讚就好，不用回。",
-   "order": 3,
+   "order": 5,
    "followers": 9443
   },
   {
    "n": 14,
-   "order": 4,
+   "order": 6,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2118564003064828232",
    "id": "2118564003064828232",
@@ -84,7 +124,7 @@
   },
   {
    "n": 1,
-   "order": 5,
+   "order": 7,
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2118511138812137595",
    "id": "2118511138812137595",
@@ -103,7 +143,7 @@
   },
   {
    "n": 2,
-   "order": 6,
+   "order": 8,
    "status": "send",
    "url": "https://x.com/serlo123/status/2118487626911285543",
    "id": "2118487626911285543",
@@ -122,7 +162,7 @@
   },
   {
    "n": 3,
-   "order": 7,
+   "order": 9,
    "status": "send",
    "url": "https://x.com/mks1231237549/status/2118511412473635016",
    "id": "2118511412473635016",
@@ -141,7 +181,7 @@
   },
   {
    "n": 4,
-   "order": 8,
+   "order": 10,
    "status": "optional",
    "url": "https://x.com/joke_henry/status/2118475265609511148",
    "id": "2118475265609511148",
@@ -160,7 +200,7 @@
   },
   {
    "n": 5,
-   "order": 9,
+   "order": 11,
    "status": "send",
    "url": "https://x.com/AYBTC6/status/2118510181353214182",
    "id": "2118510181353214182",
@@ -179,7 +219,7 @@
   },
   {
    "n": 6,
-   "order": 10,
+   "order": 12,
    "status": "send",
    "url": "https://x.com/ANCrypto_/status/2118510461494939914",
    "id": "2118510461494939914",
@@ -198,7 +238,7 @@
   },
   {
    "n": 11,
-   "order": 11,
+   "order": 13,
    "status": "send",
    "url": "https://x.com/hiply0625/status/2118510015552393693",
    "id": "2118510015552393693",
@@ -217,7 +257,7 @@
   },
   {
    "n": 12,
-   "order": 12,
+   "order": 14,
    "status": "send",
    "url": "https://x.com/flyiiawei/status/2118510333577031762",
    "id": "2118510333577031762",
@@ -236,7 +276,7 @@
   },
   {
    "n": 13,
-   "order": 13,
+   "order": 15,
    "status": "send",
    "url": "https://x.com/FringeBtc/status/2118510930900168981",
    "id": "2118510930900168981",
@@ -255,7 +295,7 @@
   },
   {
    "n": 7,
-   "order": 14,
+   "order": 16,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2118367430938607981",
    "id": "2118367430938607981",
@@ -282,7 +322,7 @@
   },
   {
    "n": 8,
-   "order": 15,
+   "order": 17,
    "status": "send",
    "url": "https://x.com/CryptoPainter/status/2118398979981611147",
    "id": "2118398979981611147",
@@ -309,7 +349,7 @@
   },
   {
    "n": 9,
-   "order": 16,
+   "order": 18,
    "status": "send",
    "url": "https://x.com/KobeissiLetter/status/2118495095901315560",
    "id": "2118495095901315560",
@@ -329,7 +369,7 @@
   },
   {
    "n": 10,
-   "order": 17,
+   "order": 19,
    "status": "send",
    "url": "https://x.com/gaah_im/status/2118493757750255822",
    "id": "2118493757750255822",
@@ -356,7 +396,7 @@
   },
   {
    "n": 15,
-   "order": 18,
+   "order": 20,
    "status": "optional",
    "url": "https://x.com/Murphychen888/status/2118372958259528125",
    "id": "2118372958259528125",
