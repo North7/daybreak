@@ -129,7 +129,9 @@ python make_short_017.py ../.. ~/fonts out/daybreak-017-short.mp4 --audio out/01
 
 ## 長貼文（2026-11-05 起）
 
-每天 1–2 則，X Premium 長貼文（不是 X 長文 Article）。發文小幫手的「長貼文」一區只顯示台北時間今天的；**每天整份換新**：`data/longposts.json` 只留當天的 items，`data/longposts/` 刪掉前一天的圖（快訊 `data/flash.json`、`data/flash/` 也一樣，過期就刪）。
+每天 1–2 則，X Premium 長貼文（不是 X 長文 Article）。發文小幫手的「長貼文」一區**沒處理的一直顯示**（2026-11-05 使用者要求），依建議時間排；發完按「標記已處理」（只記在那台裝置），當天收起來，隔天起不再顯示。
+
+**清理**：不再每天整份換新。Claude 寫新的長貼文之前，先問使用者哪幾則已經發了（或看 `ops/log/` 的成效紀錄），把已處理、而且處理日已經過去的那幾則從 `data/longposts.json` 刪掉，`data/longposts/` 的圖一起刪；沒處理的留著。快訊 `data/flash.json`、`data/flash/` 照舊，過期就刪。
 
 - **寫法**（細節在 `brand/voice.md`）：像 Murphy 日常長貼文的深度和長度（約 600–1,000 字），一個核心指標＋1–2 個佐證；標題句 → 帶日期的數字 → 「何謂…」白話 → 歷史規律 → 現在 → 誰在買、誰在賣（只從大週期講）→ 我的判斷（有信心）→ 什麼情況會改看法 → 之後會再追。引用的極值用每日資料核對（`pipeline/coc_cache/bitview.json` 等），不要用 latest.json 裡抽樣過的 rows。
 - **配圖**（在倉庫根目錄）：

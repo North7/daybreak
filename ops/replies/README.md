@@ -39,7 +39,7 @@ X 的「原創內容獎勵」（2026-09-07 起取代創作者分潤，見 [`../R
 1. **讀原文**：`python3 ops/replies/fetch.py <scan.csv、Grok 的 CSV 或網址>`。Grok 的摘要、語言、粉絲數常常錯，一律以原文為準。原文不是中文或英文、粉絲不到 2,000、或內容是標題黨、喊單、操作建議的，標成跳過並寫原因。
    讀原文時順手看：有沒有網站還沒有、值得加的比特幣指標或圖（例如別人常用的鏈上指標、好懂的呈現方式）。有就記到 [`../../docs/indicator-ideas.md`](../../docs/indicator-ideas.md)（先確認網站有沒有；同一個指標又出現就加次數），回報時一起告訴使用者。
 2. **讀當天的數據**：`data/notes.json`（英文 `data/notes.en.json`）的 headline、findings、news、modules，數字細節查 `data/latest.json`、`data/etf.json` 等。只引用數據裡有的數字，不改數字、不自己推算新數字。`notes.json` 的日期不是當期時，先跟使用者確認。短期持有者成本和真實市場均價 2026-11-04 起用 Bitview（`chips.flow.sth_vs_tmm`，當天、和 `cost` 圖一致）；`onchain.metrics.sth-realized-price` 是 bitcoin-data（晚約 7 天、真實市場均價偏高約 1.5%），兩家不要混用。
-3. **寫 `data/replies.json`**（格式見下），需要配圖的加 `image`。寫之前讀 [`../brand/voice.md`](../brand/voice.md)，特別是最後的「使用者改稿紀錄」。
+3. **寫 `data/replies.json`**（格式見下）。**只有圖本身就是重點時才配圖**（2026-11-05 使用者要求：每則都配品牌圖卡，看起來像自動產生的內容）：一眼看圖就懂你在講什麼（例如這輪和前幾輪的跌幅差一大截）才加 `image`；只是一兩個數字、一句話講得完的，不配。寫之前讀 [`../brand/voice.md`](../brand/voice.md)，特別是最後的「使用者改稿紀錄」。
 4. **出圖**：`python3 ops/replies/cards.py --fonts <字型資料夾>`（需要 `pipeline/picks.py` 與 Pillow；字型同 `share_card.py`）。打開每張圖看一遍。
    **優先用網站原圖**（2026-11-05 使用者要求）：`image` 寫 `{"site": {"page": "onchain", "sel": "#c-sthband"}, "title": "…"}`，再跑 `python3 ops/replies/site_cards.py --fonts <字型資料夾>`，用本機 Chrome 截網站那張圖（深色、語言跟回覆一樣），加大標題和頁尾。`cards.py` 會跳過帶 `site` 的。各圖在哪一頁：onchain（`c-sthband`、`c-lthloss`、`c-cohort`、`c-sopr`、`c-sthpnl`、`c-sec`、`c-rpl`、`c-ad`、`c-npl`）、cycle（`c-agecost`、`c-regime`；佐證圖 `c-ev-tmm` 等要加 `"box": ".evc", "pre": "document.querySelector('.ev-open').click(); true"`）、flows（`c-etf`、`c-pr-us`、`c-stab`）、deriv（`c-liq`、`c-oi`）。網站上沒有的才用 `cards.py` 或不配圖。Hyperliquid 大戶 2026-11-05 起在 deriv 的清算熱力圖（`c-liq`）：掃帳戶淨值前 2,000 名（`deriv.hl_whales`），之前前 300 名的數字不要再用；同一價位聚到 5 個帳戶以上才有白條，沒有白條時讀值照實寫。
    2026-11-05 晚上網站新增／改動：market `c-levels`（成本線與均線）多了活躍投資人成本（`85,113`，今年 308 天只有 35 天收在上方）；cycle 新增 `c-cyccmp`（和前幾輪比：頂部之後，這輪 −36%、前幾輪同一天 −72%～−81%）；`c-agecost` 預設改成「1 週–1 個月」（新買家成本），要截 6–12 vs 12–18 或 3–6 個月，必須加 `"pre": "document.querySelector('#ac-segs button[data-a=\"612\"]').click(); true"`（3–6 個月用 `"36"`）。1 週–1 個月這條和價格貼在一起、全歷史看不出東西，只引用數字（新買家成本 81,762、平均虧 1.6%），不截圖。7 個面板最後一列「我們的看法」（傾向、理由、會改變看法的條件）預設跟著解讀文字一起藏掉；回覆的觀點可以參考它，但不要照抄成「轉偏多／轉偏空」這類動作結論。
@@ -84,7 +84,8 @@ X 的「原創內容獎勵」（2026-09-07 起取代創作者分潤，見 [`../R
   - 數字少一點：通常一兩個就夠，可以取整數，完整數字放 `sources`。不要一開口就塞滿數字。
   - 開頭不固定：有時先講結論（「8 萬好收，8.4 萬才難。」），有時接住對方的話，有時一句感受（「插針那下真的嚇人」）。同一天不要每則都同一個結構。
   - **反問只在合適的時候用**：對方是在討論、會回的人，或貼文本身在問，問題才自然；不要為了互動硬加，不問買賣。
-  - 每則標 `style: "口語版"`，和之前的「人味版」比較成效。
+  - **不要 AI 腔**（2026-11-05 使用者：X 大幅降低 AI 文章的權重）：寫之前讀 [`../brand/voice.md`](../brand/voice.md) 的「真人說話，不要 AI 腔」。重點：少用「不是 X，是 Y」、金句開頭、冒號揭曉；數字取整；一則只做一件事；長短打散，大約三分之一一行就好；句尾不加句號。`check.py` 會擋明顯的 AI 用語，並對整批回覆印出提醒（對比句、小數、長度、問句收尾、開頭重複）。
+  - 每則標 `style`：11/06 起用 `"真人版"`，和之前的「口語版」「人味版」比較成效。
 - **先回應對方，再給數字**：第一句接住對方的話，例如引用他的原話（「『方向沒來，槓桿先死』這句很到位」）、表示同感（「Been watching the same thing」）、或回應他的問題（「77,000 還是 76,300 我不敢猜，但……」）。不要用「補一個數字：」「Daily data agrees:」「Our estimate lines up:」這種報告式開頭。
 - **用第一人稱「我」**：「我這邊看到」「我一直在追」「I track」。不要寫「本站」。
 - **像聊天**：句子長短交錯，少用分號和括號堆疊；英文可以用縮寫（I've、isn't、there's）。
@@ -95,6 +96,8 @@ X 的「原創內容獎勵」（2026-09-07 起取代創作者分潤，見 [`../R
 |---|---|
 | 補一個籌碼數字：76–78K 這層短期籌碼 11/03 一天由 59.4 萬增到 72.9 萬顆（CheckOnChain） | 77,000 還是 76,300 我不敢猜，但有個數字蠻有意思：76–78K 這一層的短期籌碼，11/03 一天就多了 13.5 萬顆 |
 | Daily data agrees: Coinbase premium 7-day avg hit −0.19% on Nov 3 | Been watching the same thing. The 7-day average just hit −0.19%, the lowest I've had since January. |
+| 同意，賣得少不等於有人買。Coinbase 溢價每日值從 −0.271% 收到 −0.094%，但一天都還沒翻正。翻正那天我才會改口。（AI 腔：對比句＋兩個小數＋工整收尾） | 同意 Coinbase 溢價這幾天是有收窄啦 但到現在一天都還沒翻正過 翻正那天我再改口 |
+| Tired sellers, no buyers. That's the whole story right now. My seller exhaustion read is near bear lows too (10.8th pct since 2011), but… （AI 腔：金句開頭＋總結句＋精確百分位） | Mine's sitting near bear lows too, bottom 10% or so since 2011. Demand is what bugs me though, still negative on both the 30d and 1y |
 
 **依建議角度寫**
 
