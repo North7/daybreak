@@ -118,6 +118,10 @@ def tone_notes(items):
     q = share(lambda t: QEND.search(t))
     if q > 0.3: out.append(f'問句收尾 {q:.0%}：只在真的想知道時問')
     if share(lambda t: re.search(r'[。.]\s*$', t)) > 0.5: out.append('超過一半句尾有句號：手機上打字通常不加')
+    for it in items:   # 2026-11-06：長貼文那套逐句提醒，回覆和引用也跑
+        if it.get('status') == 'skip': continue
+        for k in ('reply', 'quote'):
+            if it.get(k): out += sentence_notes(f'#{it["n"]} {"回覆" if k == "reply" else "引用"}', it[k])
     im = sum(1 for it in R if it.get('image')) / n
     if im > 0.5: out.append(f'配圖 {im:.0%}：只有圖本身就是重點時才配')
     heads = {}

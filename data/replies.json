@@ -16,7 +16,7 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "「回馬槍」：昨天剛從 365 日均線爬上 8 萬，今天又被砸回 7.61 萬，365 日均線約 76,646 又被踩在腳下；看 7.56 萬撐不撐、能不能站回 7.7 萬",
-   "reply": "哈哈這倒車技術我服了 收盤剛好卡在 350 日均線上面一點，365 日那條得先拿回來",
+   "reply": "哈哈這倒車技術我服了 收盤剛好卡在 350 日均線上，365 日那條得先拿回來",
    "sources": "market（11/05）：收盤 75,980；350 日均線 75,801、365 日均線 76,711（統一收盤，和他的 76,646 口徑略不同）",
    "note": "前天互動過的帳號，剛發（0.3 小時）。他語氣輕鬆，回覆也輕鬆，一個數字補他沒提的 350 日均線。",
    "style": "真人版",
@@ -35,7 +35,7 @@
    "lang": "zh",
    "angle": "交叉驗證",
    "summary": "QQQ 跌 6.9%、BTC 被帶崩，刺穿 75.6K 到短期持有者成本附近；AHR999 0.4258；與其恐慌不如適當貪婪",
-   "reply": "收盤離短期成本只差 9 塊 新手也還沒開始認賠，這位置我沒那麼慌\n\n這幾條線疊在一起的事我剛寫了一篇 👉 https://x.com/songpu717/status/2118517928496902606",
+   "reply": "收盤離短期成本只差 9 塊 短期持有者也還沒開始認賠，這位置我沒那麼慌\n\n這幾條線疊在一起的事我剛寫了一篇 👉 https://x.com/songpu717/status/2118517928496902606",
    "sources": "onchain（Bitview、CheckOnChain 11/05）：收盤 75,980、短期持有者成本 75,989；STH-SOPR 1.0015",
    "note": "互動最多的帳號之一，發文 2 小時、15 則回覆。偏多，順著他「不用恐慌」，不接「分批買」。 附自己的長文〈73K 守不守得住〉（2026-11-06 使用者同意）：主題正好接得上。",
    "style": "真人版",
@@ -54,7 +54,7 @@
    "lang": "zh",
    "angle": "補數據",
    "summary": "跌 5.3% 但多空比 1.39 → 2.92，帳戶層面還在加多（連大戶也是）；槓桿多頭堆在 76K–80K，繼續跌就是下一輪燃料",
-   "reply": "加多這點我也看到了 跌成這樣資金費率還有 7% 多，多單一邊被清一邊還在付錢 我推算的多單清算帶就在 74K 到 75K 這段，離收盤才 2%\n\n下面為什麼 73K 是分水嶺，我寫了一篇比較完整的 👉 https://x.com/songpu717/status/2118517928496902606",
+   "reply": "加多這點我也看到了 跌成這樣資金費率還有 7% 多，多單一邊被清一邊還在付錢 我推算的多單清算帶就在 74K 到 75K，離收盤才 2%，跌到那裡又會強平一批\n\n下面為什麼 73K 是分水嶺，我寫了一篇比較完整的 👉 https://x.com/songpu717/status/2118517928496902606",
    "sources": "deriv（11/05）：加權資金費率 8.68% → 7.57%（年化）；推算多單清算帶 73,800–75,100（−2.1%），只有 OKX",
    "note": "前天在我們貼文底下留言 3 則的帳號，剛發。順著他「槓桿多頭是燃料」，補資金費率和清算帶。 附自己的長文〈73K 守不守得住〉（2026-11-06 使用者同意）：主題正好接得上。",
    "style": "真人版",
@@ -135,7 +135,7 @@
    "note": "發文已 10 小時、5 萬瀏覽、57 則回覆，回覆排不上去，所以只引用。順著他「鏈上沒異常」。配短期持有者實現盈虧圖：看得到虧損柱還沒衝上去。",
    "style": "真人版",
    "mode": "quote",
-   "quote": "Murphy 說這波是美股帶下來的，鏈上沒看到異常，我這邊也一樣\n\n短期持有者 11/05 認賠 3,834 顆，比一週前多了七成，但還沒到 5,000 顆，SOPR 也還在 1 上面\n\n新手是怕了，還沒到逃的程度\n\n#比特幣 #BTC #鏈上數據",
+   "quote": "Murphy 說這波是美股帶下來的，鏈上沒看到異常，我這邊也一樣\n\n最近 155 天進場的短期持有者，11/05 認賠 3,834 顆，比一週前多了七成，但還沒到 5,000 顆。整體賣出的價格也還在他們的成本上面\n\n這群人是怕了，還沒到逃的程度\n\n#比特幣 #BTC #鏈上數據",
    "image": {
     "site": {
      "page": "onchain",
@@ -209,7 +209,7 @@
    "note": "固定名單，發文 1.5 小時。偏多，順著他「這裡是地板」：不同模型的線都擠在 76K。配成本線與均線圖：線擠在一起是重點。",
    "style": "真人版",
    "mode": "quote",
-   "quote": "gaah_im has the cycle channel fair value near 75.5K. On my chart a whole cluster sits right there: STH cost basis 75,989, 350-day MA 75,801, and yesterday's close at 75,980\n\nA lot of different models pointing at the same floor\n\n#Bitcoin #BTC #onchain",
+   "quote": "gaah_im has the cycle channel fair value near 75.5K. On my chart the STH cost basis (75,989) and the 350-day MA (75,801) both sit right there, and yesterday closed at 75,980\n\nA lot of different models pointing at the same floor\n\n#Bitcoin #BTC #onchain",
    "image": {
     "site": {
      "page": "market",
