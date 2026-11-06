@@ -229,10 +229,17 @@ def rloss_viz(bv, px, last, transfers=(), days=420, show=150):
                       broken30=sum(brk(c) for c in d2 if dn(d1) - dn(c['b']) >= 30), done=sum(1 for c in d2 if dn(d1) - dn(c['b']) >= 30),
                       n1=sum(c['kind'] == 'div' for c in ch), nbreak=sum(c['kind'] == 'break' for c in ch))
     E2 = E[-show:]; chain = [c for c in ch if c['a'] >= E2[0]]
+    # 2026-11-06 使用者：「只有短期的？沒有長期的圖？」→ 全部歷史：每日實現虧損 ÷ 市值（萬分之，跨年份才能比），每 4 天取最大（尖峰不會被抽樣抽掉）；
+    #   輔助線只畫回測用的兩種：二次以上背離、背離被打破
+    H = [d for d in D if d >= RL_FROM]; hist = []
+    for i in range(0, len(H), 4):
+        blk = H[i:i + 4]; m = max(blk, key=rel.get); hist.append([dn(m), round(P(m)), round(rel[m], 2)])
+    if hist[-1][0] != dn(d1): hist.append([dn(d1), round(P(d1)), round(rel[d1], 2)])
+    hlinks = [c for c in ch if (c['kind'] == 'div' and c['step'] >= 2) or c['kind'] == 'break']
     return dict(date=d1, usd_m=round(L[d1] / 1e6), bp=round(rel[d1], 2), usd7_m=round(sum(L[D[k]] for k in range(len(D) - 7, len(D))) / 1e6),
                 lows=[x for x in lows if dn(d1) - dn(x['date']) <= days], pairs=pairs[-12:], cur=cur, back=back,
                 base30=_base(D, ix, P, 30, RL_FROM), base90=_base(D, ix, P, 90, RL_FROM), n_div=sum(p['kind'] == 'div' for p in pairs), n_cap=sum(p['kind'] == 'cap' for p in pairs),
-                peaks=peaks[-8:], chain=chain, chain_back=chain_back, skip=sorted(skip), rows=rows, src='Bitview',
+                peaks=peaks[-8:], chain=chain, chain_back=chain_back, hist=hist, hlinks=hlinks, skip=sorted(skip), rows=rows, src='Bitview',
                 note='全網每日實現虧損（Bitview，美元，逐筆 UTXO、不是實體調整）÷ 市值；擺動低點＝前後 7 天最低且比之前 30 天最高跌 ≥ 6%；搬家日不算；只作讀值')
 
 

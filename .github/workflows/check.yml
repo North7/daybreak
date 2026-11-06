@@ -13,7 +13,7 @@ jobs:
   check:
     # 2026-10-21：ubuntu-latest 已是 26.04，Playwright 1.56.1 不支援（裝不了 chromium），固定在 24.04
     runs-on: ubuntu-24.04
-    timeout-minutes: 10
+    timeout-minutes: 15   # 2026-11-06：新圖變多，安裝 Playwright 慢的時候冒煙測試會超過 10 分鐘被取消（#53 連兩次）
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
