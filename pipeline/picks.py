@@ -663,6 +663,8 @@ def check2(L, pk):
                 miss = sorted(NUMS(x) - src)
                 if miss: errs.append(f'{i}.{tag}: 這些數字在 plan 的資料與當期 notes 裡找不到：{", ".join(miss)}')
             if lang == 'en' and re.search(r'[一-鿿]', q + t): errs.append(f'{i}.en: 有中文字')
+            if lang == 'zh' and '選擇權' in t and t.find('選擇權') != t.find('選擇權（期權）'):   # 2026-11-06 使用者：第一次出現寫「選擇權（期權）」
+                errs.append(f'{i}.zh: 選擇權第一次出現要寫「選擇權（期權）」（幣圈中文多半說期權）')
     return errs
 
 
