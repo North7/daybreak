@@ -16,7 +16,7 @@ HASH = re.compile(r'(^|\s)#[^\s#]+')   # hashtag：原創貼文（引用、快�
 # 太機械的寫法（README「要有人味」）：報告式開頭、自稱本站
 ROBOT = re.compile(r'^(補一個|補一組|補兩個|Daily data|Our .{0,40}estimate|Data shows)|本站', re.I)
 # AI 腔（2026-11-05 研究後訂，見 ops/brand/voice.md「真人說話，不要 AI 腔」）：一出現就擋
-AI_WORDS = re.compile(r'值得注意的是|值得一提|整體而言|總的來說|總而言之|綜上|首先[，,].{0,40}其次|不僅僅?是|而且老實說|說到底|這就是全部|'
+AI_WORDS = re.compile(r'值得注意的是|值得一提|整體而言|總的來說|總而言之|綜上|我的(看法|判斷|結論)是|所以我的判斷|首先[，,].{0,40}其次|不僅僅?是|而且老實說|說到底|這就是全部|'
                       r'\b(delve|crucial|pivotal|underscores?|testament|tapestry|showcases?|Additionally|Moreover|Furthermore|'
                       r"Here's the thing|That's the whole story|Fun (fact|detail)|No fluff|Let that sink in)\b|——|—", re.I)
 # 只提醒、不擋：一天裡出現太多次才是問題
@@ -43,8 +43,8 @@ def check():
             if not it.get('note'): err.append(f'{tag} 跳過要寫原因（note）')
             continue
         if it.get('lang') not in ('zh', 'en'): err.append(f'{tag} 原文是 {it.get("lang")}：只回中文和英文貼文，請改成 skip')
-        if not t: err.append(f'{tag} 沒有回覆內容')
-        err += text_errors(tag + ' 回覆', t, it.get('lang'))
+        if not t and not (it.get('mode') == 'quote' and it.get('quote')): err.append(f'{tag} 沒有回覆內容')   # 只引用不回覆的可以留空（2026-11-06）
+        if t: err += text_errors(tag + ' 回覆', t, it.get('lang'))
         if HASH.search(t): err.append(f'{tag} 回覆不加 hashtag（引用文和快訊才加）')
         q = it.get('quote')
         if q:
