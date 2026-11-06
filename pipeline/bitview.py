@@ -18,6 +18,9 @@ URPD = 'https://bitview.space/api/urpd/{}/{}?agg=lin1000'
 PAGE = 'https://bitview.space'
 CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'coc_cache', 'bitview.json')   # 放在 coc_cache：每日工作流程會一起提交
 START = 730   # day1 的第 0 筆是 2009-01-01，第 730 筆是 2011-01-01
+AGE_G = [('under_1h', '1h_to_1d', '1d_to_1w', '1w_to_1m'), ('1m_to_2m', '2m_to_3m', '3m_to_4m', '4m_to_5m', '5m_to_6m'), ('6m_to_9m', '9m_to_1y'),
+         ('1y_to_18m', '18m_to_2y'), ('2y_to_3y', '3y_to_4y', '4y_to_5y'), ('5y_to_6y', '6y_to_7y', '7y_to_8y', '8y_to_10y', '10y_to_12y', '12y_to_15y', 'over_15y')]   # 依持有時間的 6 組：1 個月內、1–6 個月、6–12 個月、1–2 年、2–5 年、5 年以上
+NEG = {'lnupl', 'snupl'}   # 可以是負值的欄位（其他欄位負值視為缺值）
 _band = lambda bands: ([f'age_{b}_realized_cap' for b in bands], [f'age_{b}_supply' for b in bands])
 # 快取每列：[日期] + COLS；每欄是 (Bitview 序列, 小數位數) 或 (實現市值序列, 供給序列) 合併算出的成本
 COLS = [('px', 'price_close', 2), ('sth', 'sth_realized_price', 2), ('tmm', 'true_market_mean', 2),
@@ -38,7 +41,12 @@ COLS = [('px', 'price_close', 2), ('sth', 'sth_realized_price', 2), ('tmm', 'tru
         ('q45', 'cost_basis_by_coin_p45', 2), ('q50', 'cost_basis_by_coin_median', 2), ('q55', 'cost_basis_by_coin_p55', 2), ('q60', 'cost_basis_by_coin_p60', 2),
         ('q65', 'cost_basis_by_coin_p65', 2), ('q75', 'cost_basis_by_coin_p75', 2), ('q85', 'cost_basis_by_coin_p85', 2), ('q95', 'cost_basis_by_coin_p95', 2),
         ('psip', 'supply_in_profit_share', 2), ('rup', ('share', ['unrealized_profit'], 'market_cap'), 2),
-        ('rloss', 'realized_loss_sum_24h', 0), ('cdd', 'coindays_destroyed_sum_24h', 0), ('sopr', 'sopr_24h', 4)]   # 2026-11-05：活躍投資人成本（Cointime Active Price）、1 週–1 個月持幣成本（levels_viz／age_cost_viz）   # 2026-11-05：長期持有者已實現虧損（美元／日，stage_viz.lthrl_viz）   # 2026-11-05：短期持有者 SOPR（每日），給本站自製的短期壓力分數（stage_viz.stress_viz）   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
+        ('rloss', 'realized_loss_sum_24h', 0), ('cdd', 'coindays_destroyed_sum_24h', 0), ('sopr', 'sopr_24h', 4),
+        # 2026-11-06 使用者要求（Bitview 推薦的都做）：賣方風險比（全網／短期／長期，7 日）、長短期持有者 NUPL（可為負，見 NEG）、儲備風險、AVIV（價格 ÷ 真實市場均價）、
+        #   Dormancy（7 日，賣出的幣平均放了幾天）、Liveliness；依持有時間的每日實現獲利／虧損（22 個年齡帶併成 6 組再存，快取不存原始帶）
+        ('ssr', 'sell_side_risk_ratio_1w', 6), ('ssr_s', 'sth_sell_side_risk_ratio_1w', 6), ('ssr_l', 'lth_sell_side_risk_ratio_1w', 6),
+        ('lnupl', 'lth_nupl', 4), ('snupl', 'sth_nupl', 4), ('rr', 'reserve_risk', 7), ('aviv', 'aviv', 4), ('dorm', 'dormancy_1w', 3), ('live', 'liveliness', 5)] + \
+       [(f'a{k}{i + 1}', ('sum', [f'age_{b}_realized_{m}_sum_24h' for b in bands]), 0) for k, m in (('p', 'profit'), ('l', 'loss')) for i, bands in enumerate(AGE_G)]   # 2026-11-05：活躍投資人成本（Cointime Active Price）、1 週–1 個月持幣成本（levels_viz／age_cost_viz）   # 2026-11-05：長期持有者已實現虧損（美元／日，stage_viz.lthrl_viz）   # 2026-11-05：短期持有者 SOPR（每日），給本站自製的短期壓力分數（stage_viz.stress_viz）   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
 KEYS = [k for k, _, _ in COLS]
 COC_TMM = 'https://charts-cdn.checkonchain.com/btconchain/cointime/cointime_pricing_all_1/cointime_pricing_all_1_light.html'
 
@@ -54,15 +62,15 @@ def _get(name):
     return j['start'], j['data']
 
 
-def _r(v, nd):
-    if v is None or v != v or v < 0 or (nd == 2 and v == 0): return None
+def _r(v, nd, neg=False):
+    if v is None or v != v or (v < 0 and not neg) or (nd == 2 and v == 0): return None
     if nd == 2: return round(v) if v >= 1000 else round(v, 2)
     return round(v, nd) if nd else round(v)
 
 
 def fetch(today=None):
     today = today or dt.datetime.now(dt.timezone.utc).date().isoformat()
-    _ns = lambda src: [src] if isinstance(src, str) else (src[1] + [src[2]] if src[0] == 'share' else src[0] + src[1])
+    _ns = lambda src: [src] if isinstance(src, str) else (src[1] + [src[2]] if src[0] == 'share' else src[1] if src[0] == 'sum' else src[0] + src[1])
     names = ['date'] + [n for _, src, _ in COLS for n in _ns(src)]
     S = {n: _get(n) for n in dict.fromkeys(names)}
     if len({s for s, _ in S.values()}) != 1:
@@ -76,9 +84,11 @@ def fetch(today=None):
             if isinstance(src, str): v = g[src][i]
             elif src[0] == 'share':
                 den = g[src[2]][i] or 0; v = sum(g[c][i] or 0 for c in src[1]) / den * 100 if den > 0 else None
+            elif src[0] == 'sum':
+                xs = [g[c][i] for c in src[1]]; v = sum(x or 0 for x in xs) if any(x is not None for x in xs) else None
             else:
                 sup = sum(g[s][i] or 0 for s in src[1]); v = sum(g[c][i] or 0 for c in src[0]) / sup if sup > 1 else None
-            row.append(_r(v, nd))
+            row.append(_r(v, nd, k in NEG))
         rows.append(row)
     if len(rows) < 5000 or not rows[-1][2] or not rows[-1][3]: raise RuntimeError(f'Bitview 只有 {len(rows)} 天或最新一天缺值，格式可能改了')
     return rows
