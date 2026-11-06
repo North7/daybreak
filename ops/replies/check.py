@@ -135,7 +135,7 @@ def tone_notes(items):
         for k in ('reply', 'quote'):
             if it.get(k): out += sentence_notes(f'#{it["n"]} {"回覆" if k == "reply" else "引用"}', it[k])
     known = known_accounts()   # 2026-11-06：熟帳號三成、新帳號七成（接續對話不算）
-    rp = [it for it in R if it.get('kind') != 'followup' and it.get('mode') != 'quote']
+    rp = [it for it in R if it.get('kind') != 'followup' and it.get('mode') != 'quote' and it.get('status') == 'send']   # 可選的不算
     kn = [it['author'] for it in rp if it.get('author', '').lower() in known]
     if rp and len(kn) / len(rp) > 0.4: out.append(f'熟帳號 {len(kn)}/{len(rp)} 則（{", ".join(kn)}）：一天 2–3 則就好，其餘回新帳號')
     im = sum(1 for it in R if it.get('image')) / n
