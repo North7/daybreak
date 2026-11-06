@@ -206,7 +206,7 @@ pipeline/bd_cache/       前一晚抓的鏈上指標快取
 pipeline/check_i18n.py   檢查 app.js 每個 _t() 都有英文
 pipeline/stamp_assets.py 更新 index.html 的 ?v= 版本號
 pipeline/share_card.py   每日分享圖 data/share.png、data/share-en.png（X 貼文附圖）
-pipeline/picks.py        今日推薦圖表：挑 1–3 張圖、畫成 4:5 社群圖 data/picks/、檢查 data/picks.json 的解說（見 ops/picks/README.md）
+pipeline/picks.py        今日推薦圖表：一天一張網站面板（截深色原圖＋問句標題）到 data/picks/、檢查 data/picks.json 的解說（見 ops/picks/README.md）
 post.html                轉址到 ops/post/（舊網址相容）
 ops/                     運營：發文小幫手 post/、每日推薦圖表 picks/、短影片 video/（見 ops/README.md）
 ops/post/index.html      X 發文小幫手（讀 data/x_post.json：手機用分享選單把圖文一起送進 X、存圖到相簿、開 X App 發文視窗、複製文字；下方「今日推薦圖表」讀 data/picks.json）
@@ -246,7 +246,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 
 - 每天 08:15 的日報任務寫完後，另寫 `data/x_post.json`（中英各一則 X 貼文草稿）並推播到手機，複製貼上即可發。
 - 日報推送後，`share.yml` 自動產生號外風格的分享圖：`data/share.png`（中文）、`data/share-en.png`（英文）。
-- 今日推薦圖表：日報任務另寫 `data/picks.json`（1–3 張圖，各一則中英文解說，只講市場資訊），`share.yml` 用 `pipeline/picks.py` 畫成 1080×1350 的圖放在 `data/picks/`，發文小幫手下方可分享、存圖、複製解說。
+- 今日推薦圖表：日報任務另寫 `data/picks.json`（2026-11-06 起一天 1 張網站面板，附問句標題與中英文解說：現在的讀值、過去同樣情況之後怎樣、代表什麼；只講市場資訊），`share.yml` 用 `pipeline/picks.py` 截網站深色原圖、加上標題放在 `data/picks/`，發文小幫手下方可分享、存圖、複製解說。最近 7 天推過的面板不重複（`data/picks/history.json`）。
 - 網站側欄與頁尾有追蹤 [@songpu717](https://x.com/songpu717) 的連結；貼文連結帶 `?utm_source=x`。
 - 訪客統計用 GoatCounter（不用 cookie、不收個資），站點代號 `daybreak`，只在正式網址計數。
 - 發文小幫手 [`ops/post/`](https://north7.github.io/daybreak/ops/post/)：一鍵複製中英文貼文、開好 X 發文視窗、存分享圖。
@@ -520,7 +520,7 @@ Pull requests run **Site checks** (`.github/workflows/check.yml`): syntax, Engli
 
 - After the 08:15 daily task finishes the notes, it writes `data/x_post.json` (one X post draft in Chinese, one in English) and sends it to the phone as a push notification, ready to copy and post.
 - Once the notes are pushed, `share.yml` draws Extra-style share cards: `data/share.png` (Chinese) and `data/share-en.png` (English).
-- Today's picks: the daily task also writes `data/picks.json` (1–3 charts, each with a Chinese and an English caption, market information only); `share.yml` runs `pipeline/picks.py` to draw them as 1080×1350 images in `data/picks/`, shown at the bottom of the posting helper with share, save and copy-caption buttons.
+- Today's pick: the daily task also writes `data/picks.json` (since 2026-11-06 one site panel a day, with a question as the title and a Chinese and an English caption: the reading, what happened after similar readings, what it means; market information only); `share.yml` runs `pipeline/picks.py` to screenshot the site's dark chart, add the title and save it in `data/picks/`, shown at the bottom of the posting helper with share, save and copy-caption buttons. A panel is not picked again within 7 days (`data/picks/history.json`).
 - The sidebar and footer link to [@songpu717](https://x.com/songpu717); post links carry `?utm_source=x`.
 - Visitor stats use GoatCounter (no cookies, no personal data), site code `daybreak`, counted on the live URL only.
 - [`ops/post/`](https://north7.github.io/daybreak/ops/post/) is the posting helper: copy either draft with one tap, open X's composer pre-filled, save the share card.

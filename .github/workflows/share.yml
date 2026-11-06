@@ -41,8 +41,12 @@ jobs:
         run: |
           pip install -q pillow
           python3 pipeline/share_card.py --fonts ~/fonts
-      - name: Draw picks (today's recommended charts)
-        # 推薦圖表失敗不影響分享圖照常提交
+      - name: CJK fonts for Chrome (picks screenshots)
+        # 2026-11-06 推薦圖表第二版截網站原圖（ubuntu 內建 google-chrome）；網站內文的中文字靠系統字型，沒裝會變方塊
+        continue-on-error: true
+        run: sudo apt-get install -y -qq fonts-noto-cjk >/dev/null
+      - name: Draw picks (today's recommended chart)
+        # 推薦圖表失敗不影響分享圖照常提交；截不到網站原圖時 picks.py 會改畫舊版簡化圖（有對應的才畫）
         continue-on-error: true
         run: python3 pipeline/picks.py render --fonts ~/fonts
       - name: Commit

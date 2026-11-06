@@ -487,7 +487,7 @@ def render(L, fonts_dir):
     else:
         c = candidates(L, notes, notes_en)[:MAX_PICKS]; items = [(x['id'], {}) for x in c]
         print('picks.json 不存在或不是當期，自動挑：', [i for i, _ in items])
-    od = P('data', 'picks'); os.makedirs(od, exist_ok=True); keep = {'index.json'}; done = []
+    od = P('data', 'picks'); os.makedirs(od, exist_ok=True); keep = {'index.json', 'history.json'}; done = []
     cand = {x['id']: x for x in candidates(L, notes, notes_en)}
     for cid, tt in items:
         sp = spec(L, cid)
@@ -502,12 +502,258 @@ def render(L, fonts_dir):
         if fn not in keep: os.remove(os.path.join(od, fn)); print('removed', fn)
 
 
+
+# ======================================================================================
+# 第二版（2026-11-06 使用者：「每日推薦圖表沒什麼意義」）：一天一張、網站原圖、回答一個問題
+#   原因：舊版三天都推同三張（短期持有者成本、籌碼、Coinbase 溢價），解說只是把數字念一遍，圖是重畫的簡化版，和日報講同一件事。
+#   新版：① 每天只推 1 張，從網站的面板裡挑（PANELS），截網站深色原圖（ops/post/site_shot.py clean 模式），上方加一句問句標題；
+#        ② 最近 7 天推過的不再推（data/picks/history.json），長貼文用過的也避開（data/longposts.json 的 charts 欄，可選）；
+#        ③ 帶出場框架線、或本身是預測的面板不推（SKIP_PANELS）；
+#        ④ 解說三件事：現在的讀值、過去同樣情況之後怎樣（勝率照實寫）、這代表什麼。不寫買賣點、目標價。
+#   plan 列出候選面板：今天有異動的排前面（附異動的白話含意與歷史對照），其餘面板也列出來，讓每日任務依「讀者今天在問什麼」挑。
+#   舊版的 CHARTS／card() 留著：長文配圖（ops/articles/charts.py）還在用；截圖失敗時也拿來當備案。
+# ======================================================================================
+PICKS_V2 = 1
+RECENT_DAYS = 7
+# 網站面板：連結 key（#page/key）→ 名稱、截圖用的圖 id、讀值在 latest.json 的位置、對應的異動 chart id、截圖失敗時的舊版圖
+PANELS = {
+    'cycle/rup':      dict(zh='相對未實現獲利：地板', en='Relative unrealized profit: the floor', sel='#c-rup', data=['onchain.rup']),
+    'cycle/cyccmp':   dict(zh='和前幾輪比：頂部之後', en='Versus past cycles: after the top', sel='#c-cyccmp', data=['cycle.cycle_cmp']),
+    'cycle/pl':       dict(zh='冪律：價格 ÷ 合理價', en='Power law: price ÷ fair value', sel='#c-pl', data=['cycle.powerlaw']),
+    'cycle/regime':   dict(zh='週線多空分數', en='Weekly regime score', sel='#c-regime', data=['cycle.regime']),
+    'onchain/quant':  dict(zh='供給分位成本線', en='Supply quantile cost lines', sel='#c-quant', data=['onchain.quant']),
+    'onchain/urpd':   dict(zh='籌碼分布（URPD）', en='Supply distribution (URPD)', sel='#c-urpd', html=1, data=['chips.viz']),
+    'onchain/sthband': dict(zh='短期持有者成本帶', en='Short-term holder cost bands', sel='#c-sthband', data=['onchain.sth_bands', 'cycle.levels'], sig=['cost', 'ev-sth'], old='cost'),
+    'onchain/agecost': dict(zh='依持有時間的持幣成本', en='Cost basis by holding age', sel='#c-agecost', data=['cycle.age_cost']),
+    'onchain/sopr':   dict(zh='短期持有者認賠賣壓（STH-SOPR）', en='Short-term holder SOPR', sel='#c-sopr', data=['chips.viz'], sig=['sopr'], old='sopr'),
+    'onchain/sthpnl': dict(zh='短期持有者實現獲利與虧損', en='Short-term holder realized profit and loss', sel='#c-sthpnl', data=['onchain.sth_pnl'], sig=['sthpnl'], old='sthpnl'),
+    'onchain/npl':    dict(zh='每日淨實現損益', en='Daily net realized profit/loss', sel='#c-npl', data=['onchain.npl'], sig=['npl'], old='npl'),
+    'onchain/rpl':    dict(zh='實現獲利 ÷ 實現虧損', en='Realized profit ÷ realized loss', sel='#c-rpl', data=['onchain.rpl']),
+    'onchain/rloss':  dict(zh='實現虧損：峰值背離', en='Realized loss: peak divergence', sel='#c-rloss', data=['onchain.rloss']),
+    'onchain/sec':    dict(zh='賣方衰竭常數', en='Seller exhaustion constant', sel='#c-sec', data=['onchain.sec']),
+    'onchain/mom':    dict(zh='鏈上勢能', en='On-chain momentum', sel='#c-mom', data=['onchain.mom']),
+    'onchain/cohort': dict(zh='長短期持有者籌碼', en='Short- and long-term holder supply', sel='#c-cohort', html=1, data=['chips.cohort'], sig=['cohort'], old='cohort'),
+    'onchain/lthc':   dict(zh='價格 × 長期持有者動向', en='Price × long-term holder flows', sel='#c-lthc', data=['onchain.lth_color']),
+    'onchain/lsrchg': dict(zh='長短期持有者供給比：30 日變化', en='LTH/STH supply ratio: 30-day change', sel='#c-lsrchg', data=['onchain.lsrchg']),
+    'onchain/lthloss': dict(zh='長期持有者虧損比例', en='Long-term holders in loss', sel='#c-lthloss', data=['onchain.lthloss', 'onchain.lthrl']),
+    'onchain/ad':     dict(zh='表觀需求', en='Apparent demand', sel='#c-ad', data=['onchain.ad']),
+    'onchain/capflow': dict(zh='循環資金流：投機 vs 長線', en='Capital rotation: speculative vs long-term', sel='#c-capflow', data=['onchain.capflow']),
+    'onchain/grad':   dict(zh='資金與價格增量梯度', en='Capital vs price gradient', sel='#c-grad', data=['onchain.grad']),
+    'onchain/whale':  dict(zh='鯨魚與大戶動向', en='Whales and large holders', sel='#c-whale', data=['onchain.whales']),
+    'market/cd':      dict(zh='近 20 天 K 線', en='Last 20 daily candles', sel='#c-cd', data=['price.bar']),
+    'market/long':    dict(zh='價格長期走勢', en='Long-term price', sel='#c-long', data=['cycle.tops', 'cycle.bottoms']),
+    'market/levels':  dict(zh='成本線與均線', en='Cost lines and moving averages', sel='#c-levels', data=['cycle.levels'], sig=['cost', 'ov-px'], old='cost'),
+    'flows/etf':      dict(zh='現貨 ETF 每日淨流量', en='Spot ETF daily net flows', sel='#c-etf', data=['flows.etf'], sig=['etf'], old='etf'),
+    'flows/stab':     dict(zh='穩定幣總供給', en='Stablecoin supply', sel='#c-stab', data=['flows.stables'], sig=['stab'], old='stab'),
+    'flows/pr-us':    dict(zh='三地溢價：買盤從哪裡來', en='Premiums: where the bid comes from', sel='#c-pr-us', data=['flows.premium3', 'flows.cb_premium'], sig=['pr-us', 'cbp'], old='cbp'),
+    'flows/stkrel':   dict(zh='BTC 對美股', en='BTC vs US stocks', sel='#c-stkrel', data=['flows.btc_vs_stocks']),
+    'flows/rcliq':    dict(zh='資金流入：實現市值 30 日變化', en='Capital inflow: realized cap 30-day change', sel='#c-rcliq', data=['flows.rc_liq'], sig=['rcliq'], old='rcliq'),
+    'deriv/vol':      dict(zh='隱含波動 vs 實際波動', en='Implied vs realized volatility', sel='#c-vol', data=['deriv.dvol', 'deriv.samesource'], sig=['vol'], old='vol'),
+    'deriv/basis':    dict(zh='期貨基差曲線', en='Futures basis curve', sel='#c-basis', data=['deriv.deriv']),
+    'deriv/liq':      dict(zh='清算熱力圖（推算）', en='Liquidation heatmap (estimate)', sel='#c-liq', data=['deriv.liq_heat']),
+    'deriv/conc':     dict(zh='籌碼結構與集中度', en='Supply structure and concentration', sel='#c-conc', data=['chips.conc_stats', 'chips.stress']),
+    'deriv/strike':   dict(zh='主要到期的履約價分布', en='Strikes at the main expiry', sel='#c-strike', data=['deriv.viz']),
+    'deriv/gex':      dict(zh='選擇權 Gamma 曝險（推算）', en='Options gamma exposure (estimate)', sel='#c-gex', data=['deriv.gex']),
+    'deriv/prem':     dict(zh='選擇權買方權利金差', en='Options buyer premium spread', sel='#c-prem', data=['deriv.prem']),
+    'deriv/svd':      dict(zh='現貨主動買賣差（OKX）', en='Spot taker delta (OKX)', sel='#c-svd', data=['deriv.svd']),
+}
+# 不推的面板與原因（2026-11-06 依 voice.md：有出場框架線的圖不用）
+SKIP_PANELS = {
+    'cycle/p20': 'MVRV ÷ 前一輪高點：出場框架 0.75 線的來源',
+    'onchain/profit': '短期持有者獲利比例：圖上有 97.5% 賣出線',
+    'cycle/path': '長期路徑：四種走法是推估，不是資訊',
+    'deriv/book': '掛單簿：只是快照，隔天就不一樣',
+    'deriv/oi': '各到期未平倉：單看沒有故事，併在履約價分布裡講',
+}
+SIG_TO_PANEL = {}
+for _k, _p in PANELS.items():
+    SIG_TO_PANEL.setdefault(_k.split('/')[1], _k)
+    for _c in _p.get('sig', []): SIG_TO_PANEL.setdefault(_c, _k)
+slug = lambda pid: pid.replace('/', '-')
+
+
+def _compact(o, depth=0):
+    """latest.json 的一段讀值，去掉長序列，只留每日任務寫解說要用的數字與回測。"""
+    if isinstance(o, dict):
+        return {k: _compact(v, depth + 1) for k, v in o.items() if k not in ('rows', 'hours', 'series', 'heat', 'hr', 'grid', 'cells', 'z', 'hist_rows', 'px')}
+    if isinstance(o, list):
+        if len(o) > 6: return [_compact(x, depth + 1) for x in o[-4:]] + [f'…共 {len(o)} 筆，只列最後 4 筆']
+        return [_compact(x, depth + 1) for x in o]
+    return o
+
+
+def recent_used(bar, days=RECENT_DAYS):
+    """最近 days 天推過（history.json）或長貼文標了用過（longposts.json 的 charts）的面板 → {id: 日期}。"""
+    out = {}
+    try: d0 = dt.date.fromisoformat(bar) - dt.timedelta(days=days)
+    except Exception: return out
+    for h in (load('picks/history.json') or {}).get('items', []):
+        if h.get('date', '') > d0.isoformat() and h.get('date', '') < bar: out.setdefault(h['id'], h['date'])
+    lp = load('longposts.json') or {}
+    for it in (lp.get('items') if isinstance(lp, dict) else lp) or []:
+        for c in it.get('charts') or []:
+            if (it.get('time') or '')[:10] > d0.isoformat(): out.setdefault(c, (it.get('time') or '')[:10])
+    return out
+
+
+def candidates2(L, notes=None):
+    """候選面板：今天有異動的排前面（依分數），其餘照目錄順序。每張附異動（含白話含意、過去同樣情況）與 latest.json 的讀值。"""
+    bar = g(L, 'meta.bar_date'); used = recent_used(bar)
+    sig = [s for s in (g(L, 'signals.items') or []) + (g(L, 'signals.more') or []) if isinstance(s, dict)]
+    by = {}
+    for s in sorted(sig, key=lambda s: -(s.get('score') or 0)):
+        if s.get('page') == 'exit' or s.get('key') in SKIP_KEY: continue
+        k = SIG_TO_PANEL.get(s.get('chart') or '')
+        if k: by.setdefault(k, []).append(s)
+    fchart = {}
+    if notes and notes.get('date') == bar:
+        for f in notes.get('findings') or []:
+            k = SIG_TO_PANEL.get(f.get('chart') or '')
+            if k: fchart.setdefault(k, f.get('title'))
+    order = sorted(PANELS, key=lambda k: (-(by[k][0].get('score') or 0) if k in by else (0 if k in fchart else 1), list(PANELS).index(k)))
+    out = []
+    for k in order:
+        p = PANELS[k]
+        out.append(dict(id=k, name=T(p['zh'], p['en']), link=f'https://north7.github.io/daybreak/#{k}',
+                        used=used.get(k), finding=fchart.get(k),
+                        signals=[dict(title=s.get('title'), fig=s.get('fig'), means=s.get('means'), hist=s.get('hist'), score=s.get('score')) for s in by.get(k, [])[:3]],
+                        data={path: _compact(g(L, path)) for path in p.get('data', []) if g(L, path) is not None}))
+    return out
+
+
+def plan2(L):
+    notes = load('notes.json'); c = candidates2(L, notes)
+    ok = [x for x in c if not x['used']]
+    return dict(date=g(L, 'meta.bar_date'), notes_date=(notes or {}).get('date'),
+                suggest=ok[0]['id'] if ok else None,
+                recent={x['id']: x['used'] for x in c if x['used']}, skip=SKIP_PANELS,
+                note=('每日任務：挑 1 張（不限 suggest），先想「讀者今天在問什麼」，再挑最能回答的面板；recent 裡的（最近 7 天用過）不能挑。'
+                      '寫 data/picks.json：q_zh／q_en 是圖上的問句標題，zh／en 是解說：現在的讀值、過去同樣情況之後怎樣（勝率照實寫）、這代表什麼。'
+                      '數字只能用這裡 data／signals 或當期 notes 有的；不寫出場框架、買賣點、目標價。'),
+                candidates=c)
+
+
+def check2(L, pk):
+    from x_len import weight
+    bar = g(L, 'meta.bar_date'); errs = []
+    if pk.get('date') != bar: errs.append(f'date {pk.get("date")} ≠ bar_date {bar}')
+    ps = pk.get('picks') or []
+    if len(ps) != 1: errs.append(f'picks 一天 1 張，現在 {len(ps)} 張')
+    try:
+        sys.path.insert(0, P('ops', 'replies')); from check import AI_WORDS   # 回覆用的 AI 腔清單，推薦圖表也照用
+    except Exception: AI_WORDS = None
+    cand = {c['id']: c for c in candidates2(L, load('notes.json'))}
+    src = NUMS(json.dumps([cand, load('notes.json'), load('notes.en.json')], ensure_ascii=False))
+    for p in ps:
+        i = p.get('id')
+        if i in SKIP_PANELS: errs.append(f'{i}: 不推（{SKIP_PANELS[i]}）'); continue
+        if i not in PANELS: errs.append(f'{i}: 不是網站面板（看 plan 的 candidates）'); continue
+        if cand[i]['used']: errs.append(f'{i}: {cand[i]["used"]} 已經用過，最近 {RECENT_DAYS} 天不重複')
+        for k, want in (('chart', f'data/picks/{slug(i)}.png'), ('chart_en', f'data/picks/{slug(i)}-en.png')):
+            if p.get(k) != want: errs.append(f'{i}: {k} 應為 {want}')
+        for lang in ('zh', 'en'):
+            q, t = p.get('q_' + lang) or '', p.get(lang) or ''
+            if not q: errs.append(f'{i}.q_{lang}: 圖上的問句標題空白')
+            if not t: errs.append(f'{i}.{lang}: 解說空白'); continue
+            if q and weight(q) > (56 if lang == 'zh' else 70): errs.append(f'{i}.q_{lang}: 標題太長（{weight(q)}），圖上放不下')
+            if weight(t) > 280: errs.append(f'{i}.{lang}: {weight(t)}/280 超過')
+            for x, tag in ((q, 'q_' + lang), (t, lang)):
+                if BAN.search(x): errs.append(f'{i}.{tag}: 提到出場框架或買賣（{BAN.search(x).group(0)}）')
+                if AI_WORDS and AI_WORDS.search(x): errs.append(f'{i}.{tag}: AI 腔或不用的詞（{AI_WORDS.search(x).group(0)}，見 ops/brand/voice.md）')
+                miss = sorted(NUMS(x) - src)
+                if miss: errs.append(f'{i}.{tag}: 這些數字在 plan 的資料與當期 notes 裡找不到：{", ".join(miss)}')
+            if lang == 'en' and re.search(r'[一-鿿]', q + t): errs.append(f'{i}.en: 有中文字')
+    return errs
+
+
+def shoot(items, lang, out_dir):
+    """用 ops/post/site_shot.py 截網站面板（深色、clean）。回傳 {out: 路徑}；Chrome 不在或失敗就回空。"""
+    import subprocess, tempfile
+    jobs = dict(lang=lang, theme='dark', width=1440, items=[dict(page=k.split('/')[0], sel=PANELS[k]['sel'], out=o, clean=1, **({'html': 1} if PANELS[k].get('html') else {})) for k, o in items])
+    jf = os.path.join(tempfile.mkdtemp(prefix='picks-'), 'jobs.json'); json.dump(jobs, open(jf, 'w'))
+    try: subprocess.run([sys.executable, P('ops', 'post', 'site_shot.py'), jf, out_dir], check=True, timeout=240)
+    except Exception as e: print('截圖失敗', repr(e), file=sys.stderr); return {}
+    return {o: os.path.join(out_dir, o + '.png') for _, o in items if os.path.exists(os.path.join(out_dir, o + '.png'))}
+
+
+def card2(L, notes, shot, q, lang, Fn, out):
+    """深色卡：今日圖表標籤與期數 → 問句標題 → 網站原圖 → 頁尾。寬度跟截圖一樣（2 倍畫，存成一半）。"""
+    from PIL import Image, ImageDraw
+    import share_card as SC
+    BG, INK_, INK3_, LINE_ = (12, 12, 13), '#F2F0EA', '#9C978E', '#3A3936'
+    im = Image.open(shot).convert('RGB'); Pd = 72; Wc = im.width + 2 * Pd
+    tf = Fn['cjk'](36, 900) if lang == 'zh' else Fn['mono'](34, 800)
+    tag = '今日圖表' if lang == 'zh' else 'CHART OF THE DAY'
+    bd = dt.date.fromisoformat(g(L, 'meta.bar_date')); ed = (notes or {}).get('edition', 0) if (notes or {}).get('date') == g(L, 'meta.bar_date') else 0
+    meta = (f'DAYBREAK No.{ed:03d}   ' if ed else 'DAYBREAK   ') + (f'{bd:%Y.%m.%d}（{WD["zh"][bd.weekday()]}）收盤版' if lang == 'zh' else f'{WD["en"][bd.weekday()]} {bd:%b %d, %Y} close')
+    for size in range(96, 56, -4):   # 問句標題：自動縮字，最多 2 行
+        hf = Fn['head'](size) if lang == 'zh' else Fn['num'](int(size * 1.1)); lines = SC.wrap(q, hf, Wc - 2 * Pd)
+        if len(lines) <= 2: break
+    lh = int(size * 1.3); top = 56; ty = top + 64 + 44; H = ty + lh * len(lines) + 48 + im.height + 40 + 140
+    img = Image.new('RGB', (Wc, H), BG); d = ImageDraw.Draw(img)
+    tw = d.textlength(tag, font=tf); d.rounded_rectangle([Pd, top, Pd + tw + 44, top + 64], radius=32, fill=RED)
+    d.text((Pd + 22 + tw / 2, top + 32), tag, font=tf, fill='#FFFFFF', anchor='mm')
+    d.text((Pd + tw + 72, top + 32), meta, font=Fn['cjk'](32, 500) if lang == 'zh' else Fn['mono'](30, 500), fill=INK3_, anchor='lm')
+    y = ty
+    for ln in lines:
+        x = Pd
+        for a, red in ln: d.text((x, y), a, font=hf, fill=RED if red else INK_); x += hf.getlength(a)
+        y += lh
+    y += 48; img.paste(im, (Pd, y))
+    fy = H - 70; d.line([Pd, fy - 52, Wc - Pd, fy - 52], fill=LINE_, width=2)
+    d.arc([Pd, fy - 26, Pd + 52, fy + 26], 180, 360, fill=RED, width=8); d.line([Pd - 8, fy, Pd + 60, fy], fill=INK_, width=8)
+    d.text((Pd + 84, fy), '破曉 DAYBREAK' if lang == 'zh' else 'DAYBREAK', font=Fn['cjk'](38, 900) if lang == 'zh' else Fn['mono'](38, 800), fill=INK_, anchor='lm')
+    d.text((Wc - Pd, fy), 'north7.github.io/daybreak   ·   X @songpu717', font=Fn['mono'](34), fill=INK3_, anchor='rm')
+    img.resize((Wc // 2, H // 2), Image.LANCZOS).save(out, optimize=True)
+    print('wrote', os.path.relpath(out, ROOT), (Wc // 2, H // 2))
+
+
+def render2(L, fonts_dir):
+    import share_card as SC, tempfile
+    Fn = SC.fonts(fonts_dir); bar = g(L, 'meta.bar_date')
+    notes, notes_en, pk = load('notes.json'), load('notes.en.json'), load('picks.json')
+    cur = bool(pk and pk.get('date') == bar and pk.get('picks'))
+    if cur and pk['picks'][0].get('id') in PANELS:
+        p = pk['picks'][0]; pid = p['id']; q = {'zh': p.get('q_zh'), 'en': p.get('q_en')}
+        print('picks.json', bar, pid)
+    else:
+        c = [x for x in candidates2(L, notes) if not x['used']]
+        if not c: print('沒有候選面板'); return
+        pid = c[0]['id']; q = {}; cur = False
+        print('picks.json 不存在或不是當期，自動挑：', pid)
+    od = P('data', 'picks'); os.makedirs(od, exist_ok=True); tmp = tempfile.mkdtemp(prefix='picks-shot-')
+    keep = {'index.json', 'history.json'}; s = slug(pid); name = T(PANELS[pid]['zh'], PANELS[pid]['en'])
+    for lang, fn in (('zh', f'{s}.png'), ('en', f'{s}-en.png')):
+        shots = shoot([(pid, s + '-' + lang)], lang, tmp)
+        if shots:
+            card2(L, notes if lang == 'zh' else notes_en, shots[s + '-' + lang], q.get(lang) or name[lang], lang, Fn, os.path.join(od, fn)); keep.add(fn)
+        elif PANELS[pid].get('old') and spec(L, PANELS[pid]['old']):   # 備案：截不到網站原圖，改畫舊版的簡化圖
+            print('改用舊版圖', PANELS[pid]['old'])
+            card(L, notes if lang == 'zh' else notes_en, spec(L, PANELS[pid]['old']), q.get(lang) or name[lang], lang, Fn, os.path.join(od, fn)); keep.add(fn)
+        else: print('這張畫不出來', pid, lang)
+    done = [dict(id=pid, chart=f'data/picks/{s}.png', chart_en=f'data/picks/{s}-en.png', name=name, link=f'https://north7.github.io/daybreak/#{pid}')] if f'{s}.png' in keep else []
+    json.dump(dict(date=bar, captions=cur, picks=done), open(os.path.join(od, 'index.json'), 'w'), ensure_ascii=False, indent=1)
+    if done:   # 記下這天推了哪張，之後 7 天不重複（只留 60 天）
+        h = load('picks/history.json') or {'items': []}
+        h['items'] = [x for x in h['items'] if (x.get('date'), x.get('id')) != (bar, pid)] + [dict(date=bar, id=pid)]   # 當天的紀錄不擋當天（recent_used 只看 bar 之前）
+        h['items'] = sorted(h['items'], key=lambda x: x['date'])[-60:]
+        json.dump(h, open(os.path.join(od, 'history.json'), 'w'), ensure_ascii=False, indent=1)
+    for fn in os.listdir(od):
+        if fn not in keep: os.remove(os.path.join(od, fn)); print('removed', fn)
+
 if __name__ == '__main__':
-    ap = argparse.ArgumentParser(); ap.add_argument('cmd', choices=['plan', 'render', 'check']); ap.add_argument('--fonts')
+    ap = argparse.ArgumentParser(); ap.add_argument('cmd', choices=['plan', 'render', 'check', 'plan-v1', 'render-v1']); ap.add_argument('--fonts')
     a = ap.parse_args(); L = json.load(open(P('data', 'latest.json')))
-    if a.cmd == 'plan': print(json.dumps(plan(L), ensure_ascii=False, indent=1))
+    if a.cmd == 'plan': print(json.dumps(plan2(L), ensure_ascii=False, indent=1))
+    elif a.cmd == 'plan-v1': print(json.dumps(plan(L), ensure_ascii=False, indent=1))
     elif a.cmd == 'check':
-        e = check(L); print('\n'.join(e) if e else 'picks.json OK'); sys.exit(1 if e else 0)
+        pk = load('picks.json')
+        if not pk: e = ['data/picks.json 不存在或不是合法 JSON']
+        elif all((x.get('id') or '') in PANELS or (x.get('id') or '') in SKIP_PANELS or '/' in (x.get('id') or '') for x in pk.get('picks') or [{}]): e = check2(L, pk)
+        else: e = check(L)   # 舊格式（id 是 cost、cohort 這類）照舊檢查
+        print('\n'.join(e) if e else 'picks.json OK'); sys.exit(1 if e else 0)
     else:
         if not a.fonts: ap.error('render 需要 --fonts')
-        render(L, a.fonts)
+        pk = load('picks.json')
+        if a.cmd == 'render-v1' or (pk and pk.get('date') == g(L, 'meta.bar_date') and pk.get('picks') and '/' not in (pk['picks'][0].get('id') or '')): render(L, a.fonts)
+        else: render2(L, a.fonts)

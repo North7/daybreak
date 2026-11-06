@@ -8,7 +8,11 @@ jobs.json: {"lang": "zh"|"en", "theme": "dark"|"light", "width": 1440,
 """
 import base64, json, os, socket, struct, subprocess, sys, time, urllib.request
 
-CHROME = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+import shutil
+# 2026-11-06：GitHub Actions（ubuntu）也要能截圖（每日推薦圖表改用網站原圖）：先看環境變數 CHROME，再找 Mac 的 Chrome，再找 Linux 的 google-chrome／chromium
+CHROME = os.environ.get('CHROME') or next((c for c in ('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',) if os.path.exists(c)), None) \
+    or shutil.which('google-chrome') or shutil.which('google-chrome-stable') or shutil.which('chromium') or shutil.which('chromium-browser') \
+    or '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 PORT = 9333
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # 倉庫根目錄（本機的網站檔案）
 SITE = 'http://127.0.0.1:8790/'
@@ -89,7 +93,7 @@ def main():
     jobs = json.load(open(sys.argv[1])); out = sys.argv[2]; os.makedirs(out, exist_ok=True)
     import tempfile; prof = tempfile.mkdtemp(prefix='daybreak-chrome-')   # 暫存的 Chrome 設定檔，不寫進倉庫
     W = jobs.get('width', 1440)
-    p = subprocess.Popen([CHROME, '--headless=new', f'--remote-debugging-port={PORT}', f'--user-data-dir={prof}', '--hide-scrollbars',
+    p = subprocess.Popen([CHROME, '--headless=new', f'--remote-debugging-port={PORT}', f'--user-data-dir={prof}', '--hide-scrollbars'] + (['--no-sandbox'] if sys.platform.startswith('linux') else []) + [
                           '--no-first-run', '--no-default-browser-check', f'--window-size={W},1000', 'about:blank'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:

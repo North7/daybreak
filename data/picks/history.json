@@ -1,0 +1,57 @@
+{
+ "note": "每日推薦圖表推過哪些面板（pipeline/picks.py render 自動記）；plan／check 用來避開最近 7 天推過的。2026-11-03～05 是舊版推的三張，換成對應的面板記進來。",
+ "items": [
+  {
+   "date": "2026-11-03",
+   "id": "market/levels"
+  },
+  {
+   "date": "2026-11-03",
+   "id": "onchain/sthband"
+  },
+  {
+   "date": "2026-11-03",
+   "id": "onchain/cohort"
+  },
+  {
+   "date": "2026-11-03",
+   "id": "flows/pr-us"
+  },
+  {
+   "date": "2026-11-04",
+   "id": "market/levels"
+  },
+  {
+   "date": "2026-11-04",
+   "id": "onchain/sthband"
+  },
+  {
+   "date": "2026-11-04",
+   "id": "onchain/cohort"
+  },
+  {
+   "date": "2026-11-04",
+   "id": "flows/pr-us"
+  },
+  {
+   "date": "2026-11-05",
+   "id": "deriv/gex"
+  },
+  {
+   "date": "2026-11-05",
+   "id": "market/levels"
+  },
+  {
+   "date": "2026-11-05",
+   "id": "onchain/sthband"
+  },
+  {
+   "date": "2026-11-05",
+   "id": "onchain/cohort"
+  },
+  {
+   "date": "2026-11-05",
+   "id": "flows/pr-us"
+  }
+ ]
+}
