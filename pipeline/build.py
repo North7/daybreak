@@ -115,6 +115,15 @@ try:
     out['signals'] = signals.build(out, _base, json.load(open(_nf)) if os.path.exists(_nf) else None)
 except Exception as e:
     print('signals failed', e); out['meta']['errors'] = out['meta']['errors'] + [f'signals {e}']
+# 2026-11-06 使用者要求（「不然有一段時間就會出現數字和判讀對不上的情況」）：整期一起換。新的一天的資料寫進來之前，
+#   把上一份存成 latest.prev.json；網站發現判讀還是上一期時，先顯示上一份數字配上一期判讀，判讀寫好再整期換新（見 app.js 的 HELD）。
+#   同一天重建不覆蓋（prev 一直是前一天那份）
+try:
+    _lf = P('data', 'latest.json')
+    if os.path.exists(_lf) and json.load(open(_lf))['meta']['bar_date'] != td['bar_date']:
+        import shutil; shutil.copyfile(_lf, P('data', 'latest.prev.json'))
+except Exception as e:
+    print('latest.prev failed', e)
 json.dump(out, open(P('data', 'latest.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
 print('built data/latest.json', td['bar_date'], os.path.getsize(P('data', 'latest.json')), 'bytes')
 

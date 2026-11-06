@@ -8,7 +8,7 @@
 - 十個版面：頭版、消息、週期、鏈上、價格、資金、衍生品、出場框架、往期、方法。中英雙語（`_t`／`_T`）、日刊／夜刊兩種主題。
 - 每天的流程：
   1. **資料**：`.github/workflows/daily.yml`，每天 UTC 00:05（台北 08:05）起跑；GitHub 自己的排程常延遲，由 cron-job.org 準時呼叫（見 `docs/CRON_JOB.md`）。跑 `pipeline/collect.py` → `pipeline/build.py` → 寫 `data/latest.json`，並提交 `data/`、`pipeline/coc_cache/` 等快取。
-  2. **文字日報**：另一個排程（UTC 00:30，台北 08:30）照 `docs/CLAUDE_DAILY.md` 寫 `notes.json`、`notes.en.json`、`x_post.json`。
+  2. **文字日報**：另一個排程（UTC 00:15，台北 08:15；2026-11-06 起，原本 00:30）照 `docs/CLAUDE_DAILY.md` 寫 `notes.json`、`notes.en.json`、`x_post.json`。
 - 主要檔案：
   - `pipeline/collect.py`：所有 API 抓取與計算（區塊用 `# G4d.`、`# G9b.` 這類標籤分段）。
   - `pipeline/build.py`：整理成網站用的 `data/latest.json`；`pipeline/brief.py`：給日報的精簡版。

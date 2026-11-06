@@ -103,7 +103,7 @@ def main():
         ws.call('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': jobs.get('theme', 'light')}])
         ws.call("Page.navigate", url=SITE); wait(ws, "location.href.indexOf(\"8790\") > 0 && document.readyState === \"complete\"")
         print('at', ws.js('location.href + " " + document.readyState + " " + document.title'))
-        ws.js(f"localStorage.setItem('daybreak.lang', '{jobs['lang']}'); localStorage.setItem('daybreak.theme', '{jobs.get('theme', 'light')}'); true")
+        ws.js(f"localStorage.setItem('daybreak.lang', '{jobs['lang']}'); localStorage.setItem('daybreak.theme', '{jobs.get('theme', 'light')}'); localStorage.setItem('daybreak.nohold', '1'); true")   # nohold：判讀撰寫中也截最新數字（2026-11-06）
         cur = None
         for it in jobs['items']:
             if it['page'] != cur:

@@ -1,7 +1,7 @@
 /* 破曉 Daybreak — 前端（無外部套件）。讀 data/latest.json（每日資料管線）與 data/notes.json（每日結論）。 */
 (window.DAYBREAK_BOOT || Promise.resolve()).then(function () {
   'use strict';
-  var D = null, N = null, H = [], ZH_ONLY = false;
+  var D = null, N = null, H = [], ZH_ONLY = false, HELD = null;   // HELD：新數字已到、判讀還沒寫好，暫時整期顯示上一份（2026-11-06）
   /* 語言（2026-10-12）：index.html 的開機腳本先決定語言（使用者選過→沿用；沒選過→依 IP 國家，華語地區用中文；查不到看瀏覽器語言），
      英文時載入 assets/i18n-en.js（中文原句 → 英文）。_t：字典翻譯，缺字回傳中文；_T：直接給兩種語言；tx：資料欄位的 *_en 版本 */
   var LANG = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh', EN = window.DAYBREAK_EN || {};
@@ -276,6 +276,7 @@
   function readBar(key, bare) {
     var m = N && N.modules && N.modules[key]; if (!m) return '';
     if (ZH_ONLY) return '<div class="read' + (bare ? ' bare' : '') + '" data-k="' + key + '">' + (bare ? '' : '<span class="tag">TODAY’S READ</span>') + '<div><p class="note">The written commentary for this edition is available in Chinese only. All numbers and the readings under them are in English.</p></div></div>';
+    if (N.stale && !bare) return '<div class="read old" data-k="' + key + '"><span class="tag">' + _T('上一期判讀', 'Previous read') + '<b>' + fmt.md(N.date) + '</b></span><div><p>' + esc(m.lead) + '</p><ul>' + (m.points || []).map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul></div></div>';   // 2026-11-06：判讀還是上一期（任務晚了或失敗）
     return '<div class="read' + (bare ? ' bare' : '') + '" data-k="' + key + '">' + (bare ? '' : _t('<span class="tag">今日判讀<small>TODAY’S READ</small></span>')) + '<div><p>' + esc(m.lead) + '</p><ul>' + (m.points || []).map(function (p) { return '<li>' + esc(p) + '</li>'; }).join('') + '</ul></div></div>';
   }
   function kpi(k, v, n, bar, cls) { return '<div class="kpi"><span class="k">' + k + '</span><span class="v' + (cls ? ' ' + cls : '') + '">' + v + '</span>' + (n ? '<span class="n">' + n + '</span>' : '') + (bar != null ? '<span class="bar"><i style="width:' + Math.max(2, Math.min(100, bar)).toFixed(1) + '%"></i></span>' : '') + '</div>'; }
@@ -3315,7 +3316,7 @@
     var ml = $('#m-lang'); if (ml) { ml.textContent = LANG === 'en' ? '中文' : 'EN'; ml.addEventListener('click', function () { pickLang(LANG === 'en' ? 'zh' : 'en'); }); }
     staticText();
     var pad = function (x) { return ('0' + x).slice(-2); };
-    function tick() { var t = new Date(); var nx = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate(), 0, 30)); if (nx <= t) nx = new Date(+nx + 864e5); var d = Math.floor((nx - t) / 1000); $('#nxt').textContent = 'T−' + pad(Math.floor(d / 3600)) + ':' + pad(Math.floor(d % 3600 / 60)) + ':' + pad(d % 60); }
+    function tick() { var t = new Date(); var nx = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate(), 0, 15));   /* 2026-11-06 日報任務改 UTC 00:15 開始 */ if (nx <= t) nx = new Date(+nx + 864e5); var d = Math.floor((nx - t) / 1000); $('#nxt').textContent = 'T−' + pad(Math.floor(d / 3600)) + ':' + pad(Math.floor(d % 3600 / 60)) + ':' + pad(d % 60); }
     tick(); setInterval(tick, 1000);
     var fs = $('#fs'); fs.addEventListener('click', function () { var d = document; try { if (d.fullscreenElement) d.exitFullscreen(); else d.documentElement.requestFullscreen().catch(function () {}); } catch (e) {} });
     var c = D.price.bar;
@@ -3332,10 +3333,45 @@
   function catT(c) { return LANG === 'en' && CAT_EN[c] || c; }
   function load(u) { return fetch(u, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); }
   // 英文版讀 data/notes.en.json（每日任務與中文同時寫）；沒有或日期比中文舊時，退回中文並標示
+  /* 2026-11-06 使用者要求：整期一起換。新數字（latest.json）比判讀（notes.json）新、而且數字產出不到 3 小時：
+     先讀 latest.prev.json（上一份數字，和判讀同一天），整期顯示上一期，頂端說明新數字已到、判讀撰寫中，可以點「先看新數字」。
+     判讀寫好後每 2 分鐘檢查一次，出現「新一期已出」。超過 3 小時判讀還沒好（任務失敗）就直接顯示新數字，每段判讀標「上一期」 */
+  var HOLD_H = 3, SEE_NEW = 'daybreak.seenew';
+  function ss(k, v) { try { if (v === undefined) return sessionStorage.getItem(k); sessionStorage.setItem(k, v); } catch (e) { return null; } }
+  function holdPrev(d, nn) {
+    var noHold = false; try { noHold = localStorage.getItem('daybreak.nohold') === '1'; } catch (e) {}   // 截圖工具（ops/post/site_shot.py、ops/replies/site_cards.py）一律看最新數字
+    if (noHold || !d || !nn || nn.date >= d.meta.bar_date || ss(SEE_NEW) === d.meta.bar_date) return Promise.resolve(null);
+    var age = (Date.now() - Date.parse(d.meta.generated_utc || '')) / 36e5;
+    if (!(age >= 0 && age < HOLD_H)) return Promise.resolve(null);
+    return load('data/latest.prev.json').then(function (p) { return p && p.meta && p.meta.bar_date === nn.date ? p : null; }).catch(function () { return null; });
+  }
+  function heldBar() {
+    var stale = !HELD && N && N.stale;
+    if (!HELD && !stale) return '';
+    var nd = HELD ? HELD.date : D.meta.bar_date, od = N.date;
+    return '<div class="held" id="held" role="status"><span class="chip flare"><i></i>' + (HELD ? _T('判讀撰寫中', 'Commentary in progress') : _T('判讀還沒更新', 'Commentary not updated')) + '</span><span>' +
+      (HELD ? _T(fmt.md(nd) + ' 收盤的新數字已經到了，判讀還在寫（通常 15 分鐘內完成）。為了數字和判讀對得上，現在整期顯示 ' + fmt.md(od) + ' 這一期。', 'The ' + fmt.md(nd) + ' close is in, but the commentary is still being written (usually within 15 minutes). So numbers and commentary match, the whole ' + fmt.md(od) + ' edition is shown for now.')
+        : _T('數字是 ' + fmt.md(nd) + ' 收盤，判讀還是 ' + fmt.md(od) + ' 那一期；標「上一期」的文字請對照當天的數字看。', 'Numbers are from the ' + fmt.md(nd) + ' close, but the commentary is still the ' + fmt.md(od) + ' edition; text marked “previous edition” refers to that day.')) +
+      '</span>' + (HELD ? '<button type="button" id="see-new">' + _T('先看新數字', 'Show new numbers') + '</button>' : '') + '</div>';
+  }
+  function watchNotes() {   // 判讀寫好就提示換成新一期
+    var t = setInterval(function () {
+      load('data/notes.json').then(function (n) {
+        if (!n || n.date !== HELD.date) return; clearInterval(t);
+        var h = $('#held'); if (h) h.innerHTML = '<span class="chip up"><i></i>' + _T('新一期已出', 'New edition is out') + '</span><span>' + _T(fmt.md(HELD.date) + ' 的判讀寫好了。', 'The ' + fmt.md(HELD.date) + ' commentary is ready.') + '</span><button type="button" id="see-new">' + _T('更新', 'Refresh') + '</button>';
+      }).catch(function () {});
+    }, 120000);
+  }
+  document.addEventListener('click', function (e) { if (e.target && e.target.id === 'see-new') { if (HELD) ss(SEE_NEW, HELD.date); location.reload(); } });
   Promise.all([load('data/latest.json'), load('data/notes.json').catch(function () { return null; }), LANG === 'en' ? load('data/notes.en.json').catch(function () { return null; }) : null]).then(function (a) {
+    var nz = a[1], ne = a[2], nn = LANG === 'en' && ne && (!nz || ne.date >= nz.date) ? ne : nz;
+    return holdPrev(a[0], nn).then(function (p) { if (p) { HELD = { date: a[0].meta.bar_date }; a[0] = p; } return a; });
+  }).then(function (a) {
     var nz = a[1], ne = a[2], nn = LANG === 'en' && ne && (!nz || ne.date >= nz.date) ? ne : nz;
     ZH_ONLY = LANG === 'en' && !!nn && nn === nz;
     D = a[0]; N = nn && nn.date === D.meta.bar_date ? nn : (nn ? Object.assign({}, nn, { stale: true }) : null);
+    var hb = heldBar(); if (hb) $('#view').insertAdjacentHTML('beforebegin', hb);
+    if (HELD) watchNotes();
     shell();
     renderAll();
     var start = location.hash.slice(1);
