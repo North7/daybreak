@@ -67,6 +67,14 @@ BASE=https://north7.github.io/daybreak/ node tests/smoke.js   # 上線後再跑�
 3. **點子清單「待評估」**：Ahr999、DeFi 借貸流動性、ETF 發行商鏈上轉帳、Active Realized Price、BTC 主導率。之前看過，優先度都偏低。
 4. **選做**：個別圖表再加大字讀數卡、峰值標籤（規則見 `docs/chart-style.md`）。
 
+## 5b. 2026-11-06 指標擴充（`oc_extra.py`、`opt_flow.py`）
+
+- 參考資料是付費內容，**只存在本機** `.claude/research/subs/`（git 不追蹤）：`index.json`、`catalogue_group1-4.md`（逐張圖的說明）、`img/`。公開 repo、網站、PR、commit 都不能出現參考資料的原文、原圖或出處的人名。
+- 網站上只放用本站資料重做的版本：鏈上版（回調壓力清單、供給分位成本線、實現虧損峰值背離、鏈上勢能、長短期供給比 30 日變化、資金與價格增量梯度；籌碼分布加雙錨與缺口；短期持有者獲利比例加虧損比例的歷次）、週期版（相對未實現獲利的地板）、衍生品版（Gamma 曝險推算、買方權利金差、OKX 現貨主動買賣差）。每項都附回測，沒有優勢的照寫（例如回調壓力清單、短期持有者虧損 > 60%）。
+- 做不到：BRS、BSS（Glassnode 付費 ML 模型）；交易所流量依轉帳金額分層、實體調整的指標（要付費的實體標籤）；他的 TradingView 付費腳本。
+- `coc_cache/deribit_flow.json`：Deribit 選擇權逐筆成交的每日權利金與每個未到期合約的主動方向淨量（Gamma 曝險的做市商方向靠它）。第一次在本機回補了一年（約 4,400 頁、45 分鐘）；每日管線只補前一天（約 12 頁）。**快取不見時每日管線只補 3 天**，Gamma 曝險的覆蓋率會很低，要在本機重跑 `python3 -c "import opt_flow as F; F.update_trades(backfill_days=366, max_pages=7000)"`（在 pipeline/ 底下）再提交。
+- `coc_cache/okx_taker.json`：OKX 日線（UTC+8 日界）會一直累積，API 本身只給 180 天。
+
 ## 6. 容易踩的坑
 
 - **集中度在 11/05 換算法**：Bitview 的值比舊的 CheckOnChain 算法高約 1–3 個百分點（11/04：18.25% 對 15.29%，舊值留在 `pct_checkonchain`）。跨 11/05 比較時不要把差距當成市場變化。

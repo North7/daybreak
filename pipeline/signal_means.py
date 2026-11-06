@@ -122,6 +122,13 @@ OTHER_MEANS = {
     'vol-squeeze': T('隱含與實際波動同時在低檔：市場很平靜，這種壓縮之後常有一段大波動，但方向不定。', 'Implied and realized volatility are both low: the market is very calm, and such compression is often followed by a big move in either direction.'),
     'etf-price-div': {'up': T('ETF 大量流入、價格卻在跌：機構在買，但其他地方（例如長期持有者或衍生品）的賣壓更大。', 'Large ETF inflows while price falls: institutions are buying, but selling elsewhere (long-term holders, derivatives) is heavier.'),
                       'down': T('ETF 大量流出、價格卻在漲：這段上漲不是 ETF 推動的，可能來自衍生品或其他市場的買盤。', 'Large ETF outflows while price rises: the rally is not ETF-driven and may come from derivatives or other venues.')},
+    # 2026-11-06 指標擴充（oc_extra.py）
+    'rloss-div': T('價格比前一個低點更低，但當時賣在虧損的金額小了兩成以上：願意認賠的人變少，恐慌在退。2013 年起 18 次，30 天後 14 次上漲；但 2022/05 之後還跌了 26%。', 'Price made a lower low but the loss realized at that low was 20%+ smaller: fewer holders are willing to sell at a loss and fear is fading. 18 cases since 2013, 14 higher 30 days later; but May 2022 fell another 26%.'),
+    'rloss-cap': T('價格更低、認賠也更大：恐慌性賣出正在放大（投降）。歷來投降常出現在下跌的後段，但不一定是最後一次。', 'Lower price with bigger loss-taking: panic selling is growing (capitulation). It often comes late in a decline, but not necessarily for the last time.'),
+    'grad-div': {'up': T('價格創擺動新低、資金與價格梯度卻沒有：資金撤出的速度比價格下跌慢，大級別上是築底的形態。', 'Price made a lower swing low but the capital-price gauge did not: capital is leaving more slowly than price is falling, a basing pattern on the long frame.'),
+                 'down': T('價格創擺動新高、梯度卻沒有：價格靠情緒推升、新資金沒有跟上，之後常先回調。', 'Price made a higher swing high but the gauge did not: the rise runs on sentiment while new capital lags, and a pullback often comes first.')},
+    'mom-div': T('價格創擺動新高、獲利了結的力道（SOPR × 銷毀幣天數）卻比前一次弱：推升的力量在衰減。2015 年起之後 60 天內最大跌幅中位數約 −21%（任一天約 −9%）。', 'Price made a higher swing high while profit-taking momentum (SOPR × coin days destroyed) was weaker than before: the push is fading. Since 2015 the median max drawdown within 60 days afterwards is about −21% (about −9% for any day).'),
+    'rup-floor': T('全體未實現獲利佔市值的比例跌到 35% 以下：2012 年起只有週期底部附近出現過（2015、2018–19、2020/03、2022、2026/06）。', 'Total unrealized profit fell below 35% of market cap: since 2012 this has only happened near cycle bottoms (2015, 2018–19, March 2020, 2022, June 2026).'),
     'stage': T('市場階段由寫死的規則判定（P23）；階段改變代表規則條件翻過去了，原因可以看週期版的市場階段與佐證燈號。', 'The market stage is set by fixed rules (P23); a change means a rule condition flipped. The Cycle page\'s market stage and supporting lights show why.'),
 }
 FG_MEANS = {'xfear': T('恐懼貪婪指數進入極度恐懼：市場情緒最差，歷來常接近短線低點，但不代表會馬上反彈。', 'Fear & Greed entered extreme fear: sentiment is at its worst, often near short-term lows, though a bounce is not guaranteed to follow quickly.'),
@@ -172,6 +179,11 @@ def _rule(s, ext, jmp, cmb, near, near_exit, four_year):
              'squeeze': T('單日漲 1% 以上，加權資金費率卻小於 0。', 'A daily gain of 1% or more with weighted funding below 0.'),
              'leverage-chase': T('單日漲 1.5% 以上，加權資金費率 20%（年化）以上。', 'A daily gain of 1.5% or more with weighted funding at 20% (annualized) or higher.'),
              'vol-squeeze': T('DVOL 在近一年第 20 百分位以下，RV30 也在近半年第 20 百分位以下。', 'DVOL at or below its 20th 1-year percentile and RV30 at or below its 20th 6-month percentile.'),
+             'rloss-div': T('價格擺動低點（前後 7 天最低、比之前 30 天最高跌 6% 以上）比 75 天內前一個更低，當時的認賠峰值小 20% 以上。', 'A swing low (lowest close within 7 days either side, 6%+ below the prior 30-day high) below the previous one within 75 days, with a loss peak 20%+ smaller.'),
+             'rloss-cap': T('價格擺動低點比 75 天內前一個更低，當時的認賠峰值大 25% 以上。', 'A swing low below the previous one within 75 days, with a loss peak 25%+ larger.'),
+             'grad-div': T('價格擺動高點（低點）比前一個更高（更低），資金與價格梯度的對應峰（谷）卻沒有；確認後 7 天內列出。', 'A swing high (low) above (below) the previous one while the capital-price gauge\'s matching peak (trough) is not; listed for 7 days after confirmation.'),
+             'mom-div': T('價格擺動高點比 180 天內前一個更高，鏈上勢能的正值峰值卻較低；確認後 7 天內列出。', 'A swing high above the previous one within 180 days with a lower positive momentum peak; listed for 7 days after confirmation.'),
+             'rup-floor': T('相對未實現獲利（未實現獲利 ÷ 市值）≤ 35%。', 'Relative unrealized profit (unrealized profit ÷ market cap) at or below 35%.'),
              'etf-price-div': T('近 5 個完整交易日 ETF 合計流入 5 億美元以上、價格卻跌 3% 以上（或反過來）。', 'Over the last 5 complete trading days, ETF flows of $500M or more in one direction while price moved 3% or more the other way.')}
         if k in R: return R[k]
         if k and k.startswith('cluster-'): return T(f'同一類有 3 項以上同時異動（這次 {len(s.get("members") or [])} 項）。', f'Three or more signals of the same kind at once ({len(s.get("members") or [])} this time).')

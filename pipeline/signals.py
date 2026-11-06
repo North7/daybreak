@@ -420,6 +420,34 @@ def _combos(L, sig, px):
             out.append(dict(id='combo:etf-price-div', kind='combo', key='etf-price-div', dir='up' if tot > 0 else 'down', theme='flows', page='flows', chart='etf', score=4,
                             title=T('ETF 資金和價格背離', 'ETF flows diverging from price'),
                             fig=T(f'近 5 個完整交易日 ETF {F(tot, "musd", "zh")}，同期價格 {F(pc, "spct", "zh")}（{e[0]["d"][5:]}–{e[-1]["d"][5:]}）', f'ETF {F(tot, "musd", "en")} over the last 5 complete days, price {F(pc, "spct", "en")} ({e[0]["d"][5:]}–{e[-1]["d"][5:]})')))
+    # 2026-11-06 使用者要求（指標擴充，oc_extra.py 已算好）：實現虧損峰值背離、資金與價格梯度背離、鏈上勢能頂背離、相對未實現獲利跌破地板。
+    #   背離要等擺動點前後幾天才確認，所以確認後 7 天內都列出
+    bd = dn(g(L, 'meta.bar_date')); fm = lambda v: f'{v:,.0f}'
+    rl = g(L, 'onchain.rloss.cur')
+    if rl and rl.get('kind') in ('div', 'cap') and bd - dn(rl['date']) <= 14:
+        dv_ = rl['kind'] == 'div'
+        out.append(dict(id='combo:rloss-' + rl['kind'], kind='combo', key='rloss-' + rl['kind'], dir='up' if dv_ else 'down', theme='holders', page='onchain', chart='rloss', score=3.5,
+                        title=T('實現虧損峰值背離：價格更低、認賠變少', 'Realized-loss divergence: lower price, smaller loss') if dv_ else T('認賠放大：價格更低、認賠更多', 'Loss-taking grows: lower price, bigger loss'),
+                        fig=T(f'{rl["prev"][5:]} {fm(rl["prev_price"])} → {rl["date"][5:]} {fm(rl["price"])}；認賠峰值 {rl["prev_bp"]} → {rl["bp"]} bp（市值的萬分之）', f'{rl["prev"][5:]} {fm(rl["prev_price"])} → {rl["date"][5:]} {fm(rl["price"])}; loss peak {rl["prev_bp"]} → {rl["bp"]} bp of market cap'),
+                        caveat=T('不是實體調整；樣本 2013 年起約 20 次', 'not entity-adjusted; about 20 cases since 2013')))
+    for nn, path, w in (('120', 'onchain.grad.div120', 27), ('30', 'onchain.grad.div30', 17)):
+        x = (g(L, path) or [])[-1:]
+        if x and bd - dn(x[0]['date']) <= w:
+            x = x[0]; top = x['kind'] == 'top'
+            out.append(dict(id=f'combo:grad-div{nn}', kind='combo', key='grad-div', dir='down' if top else 'up', theme='flows', page='onchain', chart='grad', score=3,
+                            title=T(f'資金與價格梯度（{nn} 日）' + ('頂背離' if top else '底背離'), f'Capital vs price gauge ({nn}d) ' + ('bearish' if top else 'bullish') + ' divergence'),
+                            fig=T(f'{x["prev"][5:]} → {x["date"][5:]}：價格' + ('新高' if top else '新低') + f'，梯度 {x["za"]} → {x["zb"]}', f'{x["prev"][5:]} → {x["date"][5:]}: price at a new ' + ('high' if top else 'low') + f', gauge {x["za"]} → {x["zb"]}')))
+    x = (g(L, 'onchain.mom.divs') or [])[-1:]
+    if x and bd - dn(x[0]['date']) <= 17:
+        x = x[0]
+        out.append(dict(id='combo:mom-div', kind='combo', key='mom-div', dir='down', theme='holders', page='onchain', chart='mom', score=3,
+                        title=T('鏈上勢能頂背離：價格新高、獲利了結的力道變弱', 'On-chain momentum bearish divergence'),
+                        fig=T(f'{x["prev"][5:]} → {x["date"][5:]}：價格新高，勢能峰值 {x["za"]:.0f} → {x["zb"]:.0f}', f'{x["prev"][5:]} → {x["date"][5:]}: higher price, momentum peak {x["za"]:.0f} → {x["zb"]:.0f}')))
+    r = g(L, 'onchain.rup')
+    if r and r.get('value') is not None and r['value'] <= r['floor']:
+        out.append(dict(id='combo:rup-floor', kind='combo', key='rup-floor', dir='up', theme='cycle', page='cycle', chart='rup', score=4,
+                        title=T('相對未實現獲利跌到地板', 'Relative unrealized profit at the floor'),
+                        fig=T(f'{r["value"]}%（地板 {r["floor"]}%）', f'{r["value"]}% (floor {r["floor"]}%)')))
     return out
 
 
