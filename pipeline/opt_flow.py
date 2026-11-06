@@ -152,6 +152,16 @@ def okx_update(now=None):
         _get('https://www.okx.com/api/v5/market/history-candles?instId=BTC-USDT&bar=1H&limit=100&after=' + str(int(now.timestamp() * 1000) - 100 * 3600 * 1000))['data']
     kc = {int(x[0]): float(x[4]) for x in k}
     c['hours'] = sorted([[int(ts) // 3600000, round(float(buy) - float(sell), 1), kc.get(int(ts) + 3600000) or kc.get(int(ts))] for ts, sell, buy in h])
+    try:   # 2026-11-06 指標擴充：OKX 合約主動買／賣量（美元，每頁 72 天、API 最多回 180 天；快取逐日累積，第一次補 3 頁）
+        pp, end = c.setdefault('perp', {}), None; c.pop('perp_err', None)
+        for _ in range(1 if len(pp) > 60 else 3):
+            p = _get('https://www.okx.com/api/v5/rubik/stat/taker-volume?ccy=BTC&instType=CONTRACTS&period=1D' + (f'&end={end}' if end else ''))['data']
+            if not p or (end and int(p[-1][0]) >= end): break
+            for ts, sell, buy in p:
+                pp[(dt.datetime.fromtimestamp(int(ts) / 1000, dt.timezone.utc) + dt.timedelta(hours=8)).date().isoformat()] = [round(float(buy)), round(float(sell))]
+            end = int(p[-1][0])
+        c['perp'] = dict(sorted(pp.items())[-1500:])
+    except Exception as e: c['perp_err'] = str(e)[:200]
     c['days'] = dict(sorted(c['days'].items())[-800:]); c['fetched_utc'] = now.isoformat(timespec='seconds')
     os.makedirs(os.path.dirname(OK_CACHE), exist_ok=True)
     json.dump(c, open(OK_CACHE, 'w'), separators=(',', ':'))

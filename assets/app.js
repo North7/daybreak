@@ -1661,7 +1661,7 @@
       panel('span-5', _t('頂部三指標'), fmt.md(D.cycle.p6_date) + _t(' · 四年百分位'), '<p class="say">' + esc((p6Read() || [''])[0]) + '</p><div class="meters">' + meter('MVRV Z', _t('<0 底 · >3.5 頂'), p6.mvrv_z, fmt.n(p6.mvrv_z, 0), _t('百分位'), [80]) + meter('NUPL', _t('淨未實現損益'), p6.nupl, fmt.n(p6.nupl, 0), _t('百分位'), [80]) + meter('Puell', _t('礦工收入倍數'), p6.puell, fmt.n(p6.puell, 0), _t('百分位'), [80]) + _t('</div><p class="note">任兩項到 80 標為頂部區；只作讀值，不連動賣出。舊的 85／90 加速規則已取消：過去四輪都在週期中段就先到。</p>') + p6Raw(), '', 'p6') +
       avPanel() + rrPanel() + radarPanel() + ocPanel(true) +
       grpH('cy-hist', '和歷史與模型比', 'Against history and models') +
-      ccPanel() +
+      ccPanel() + cePanel() +
       panel('span-7', _t('冪律：價格 ÷ 合理價'), _t('每天只用當天以前資料擬合'), _t('<p class="say">現在 <b>') + fmt.n(pl.ratio, 2) + _t(' 倍</b>（合理價 ') + fmt.usd(pl.fair) + _T('，', ', ') + plGap(pl.ratio) + _t('）。頂部倍數每輪縮小，照這個速度，下一輪頂部約在合理價的 ') + fmt.n((pl.next_top_ratio || [])[0], 2) + '–' + fmt.n((pl.next_top_ratio || [])[1], 2) + _t(' 倍。') + esc((plRead() || [''])[0]) + esc(plChanSay()) + '</p><div id="pl-lg">' + plLegend(plChan() ? 'chan' : 'ratio') + '</div><div class="chart" id="c-pl"></div>', (plChan() ? '<div class="seg" id="pl-mode"><button aria-pressed="true" data-m="chan">' + _T('通道位置', 'Channel') + '</button><button aria-pressed="false" data-m="ratio">' + _T('倍數', 'Multiple') + '</button></div>' : '') + _t('<div class="seg" id="pl-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="2020">2020 起</button></div>')) +
       panel('span-5', _t('Tidemark 綜合訊號'), _t('第三方模型 · ') + fmt.md(tm.price_date) + _t(' 資料'), '<p class="say">' + esc((tmRead() || [''])[0]) + '</p><div class="meters">' + meter(_t('頂部訊號'), _t('≥50 窗口 · ≥70 警戒'), (tm.top || {}).signal || 0, fmt.n((tm.top || {}).signal, 1), (tm.top || {}).level || '—', [50, 70]) + meter(_t('熱度'), _t('五類加權'), (tm.top || {}).heat || 0, fmt.n((tm.top || {}).heat, 1), (tm.top || {}).zone || '', [40, 65]) + meter(_t('底部訊號'), _t('≥50 底部區'), (tm.bottom || {}).signal || 0, fmt.n((tm.bottom || {}).signal, 1), (tm.bottom || {}).level || '—', [50, 70]) + meter(_t('冷度'), _t('估值・礦工・價格結構'), (tm.bottom || {}).cold || 0, fmt.n((tm.bottom || {}).cold, 1), '', []) + '</div>' +
         '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:62%"><col style="width:38%"></colgroup><tbody>' + (tm.cats || []).map(function (x) { return '<tr><td>' + esc(_T(x[0], TM_CAT_EN[x[0]] || x[0])) + (x[2] === 'partial' ? _t('＊') : '') + '</td><td><div class="pct"><i><b class="' + ((x[1] || 0) >= 80 ? 'hot' : '') + '" style="width:' + (x[1] || 0) + '%"></b></i><span class="num">' + (x[1] == null ? '—' : fmt.n(x[1], 0)) + '</span></div></td></tr>'; }).join('') + '</tbody></table></div><p class="note">' + esc(tmVerdict(tm.cycle_test)) + '</p>', '', 'tm') +
@@ -2029,11 +2029,12 @@
     var last = full[full.length - 1] || {}, s7 = full.slice(-7).reduce(function (a, r) { return a + r.musd; }, 0), p7 = full.slice(-14, -7).reduce(function (a, r) { return a + r.musd; }, 0);
     var nq = fr.NASDAQCOM || {}, dx = fr.DTWEXBGS || {}, tn = fr.DGS10 || {}, rr = D.flows.dfii10 || {}, rc = D.flows.rc_liq || {};
     return readBar('flows') + '<div class="kpis">' + kpi(_t('最近完整日 ETF'), (last.musd >= 0 ? '+' : '') + fmt.n(last.musd, 1) + 'M', fmt.md(last.d) + _t(' · 美元')) + kpi(_t('近 7 個完整日'), (s7 >= 0 ? '+' : '') + fmt.n(s7, 0) + 'M', _t('前 7 日 ') + (p7 >= 0 ? '+' : '') + fmt.n(p7, 0) + 'M') + kpi(_t('BTC–那斯達克 30 日相關'), fmt.n(nq.corr30, 2), fmt.md(nq.last_date) + _t(' · 高於 0.5 代表同漲同跌'), (nq.corr30 + 1) * 50) + kpi(_t('BTC–美元 30 日相關'), fmt.n(dx.corr30, 2), _t('FRED 廣義美元指數'), (dx.corr30 + 1) * 50) + kpi(_t('10 年期實質利率'), fmt.n(rr.value, 2) + '%', _t('20 日 ') + (rr.chg_20obs_bp >= 0 ? '+' : '') + rr.chg_20obs_bp + _t('bp · 名目 ') + fmt.n(tn.last, 2) + '%') + (D.flows.stables ? kpi(_T('穩定幣供給', 'Stablecoin supply'), '$' + fmt.n(D.flows.stables.usd_b, 0) + 'B', _T('30 日 ', '30-day ') + fmt.pct(D.flows.stables.chg30_pct, 2)) : '') + (D.flows.cb_premium ? kpi(_T('Coinbase 溢價', 'Coinbase premium'), fmt.pct(D.flows.cb_premium.avg7, 3), _T('7 日平均 · 30 日 ', '7-day avg · 30-day ') + fmt.pct(D.flows.cb_premium.avg30, 3)) : '') + (rc.chg30_pct != null ? kpi(_t('實現市值 30 日'), fmt.pct(rc.chg30_pct, 2), (rc.zero_now ? _t('≤0 已 ') : _t('>0 已 ')) + rc.state_run_days + _t(' 天 · 90 日 ') + fmt.pct(rc.chg90_pct, 2)) : '') + '</div><div class="grid">' + interpPanel(flInterp(last, s7, p7).concat(flInterp2(s7))) +
-      panel(D.flows.stables ? 'span-6' : 'span-12', _t('現貨 ETF 每日淨流量'), _t('The Block（與 Farside 同口徑）· 百萬美元 · 淡色＝暫定或尚未完整'), '<div class="chart" id="c-etf"></div>') + flowCharts() + premPanel() + stkPanel() + rcPanel(rc) + '</div>';
+      panel(D.flows.stables ? 'span-6' : 'span-12', _t('現貨 ETF 每日淨流量'), _t('The Block（與 Farside 同口徑）· 百萬美元 · 淡色＝暫定或尚未完整'), '<div class="chart" id="c-etf"></div>') + flowCharts() + etfcPanel() + exfPanel() + premPanel() + kpPanel() + stkPanel() + rcPanel(rc) + '</div>';
   };
   V.flows.after = function () {
     safe(drawStk);
     drawFlowCharts(); drawPrem();
+    mount($('#c-etfcost'), drawEtfc); mount($('#c-exflow'), drawExf); mount($('#c-kp'), drawKp);   // 2026-11-06 指標擴充
     var etf = D.flows.etf || [];
     var rc = D.flows.rc_liq || {};
     mount($('#c-rcliq'), function (el) { var r = rc.rows || [], x0 = r.length ? r[0][0] : 0; lineChart(el, { h: 220, series: [{ name: _t('30 日變化'), data: r, color: 'var(--s4)' }], vbands: (rc.episodes || []).filter(function (e) { return dnOf(e.end) >= x0; }).map(function (e) { return { x0: Math.max(x0, dnOf(e.start)), x1: dnOf(e.end) + 1, color: 'var(--down-dim)' }; }), refs: [{ y: 0, color: 'var(--ink-3)', label: _t('0＝流入停滯'), below: true }], yFmt: function (x) { return x + '%'; }, tipFmt: function (x) { return fmt.pct(x, 2); }, aria: _t('實現市值 30 日變化') }); });
@@ -2933,9 +2934,9 @@
   function oxPane(el, o) {
     var R_ = o.rows; if (!R_ || R_.length < 2) { el.innerHTML = '<p class="note">' + _T('本日未取得資料。', 'No data today.') + '</p>'; return; }
     if (o.rng && el._rng == null) el._rng = o.rng;   // 預設時間範圍（天）；使用者點了別的就照點的
-    var tf = o.tf || function (v) { return v; }, vals = [];
-    (o.lines || []).forEach(function (l) { R_.forEach(function (r) { if (r[l.i] != null) vals.push(tf(r[l.i])); }); });
-    if (o.bars) R_.forEach(function (r) { if (r[o.bars.i] != null) vals.push(tf(r[o.bars.i])); });
+    var tf = o.tf || function (v) { return v; }, vals = [], VR = o.fit && el._rng ? R_.filter(function (r) { return r[0] >= R_[R_.length - 1][0] - el._rng; }) : R_;   // fit：縱軸只看目前選的時間範圍（2026-11-06）
+    (o.lines || []).forEach(function (l) { VR.forEach(function (r) { if (r[l.i] != null) vals.push(tf(r[l.i])); }); });
+    if (o.bars) VR.forEach(function (r) { if (r[o.bars.i] != null) vals.push(tf(r[o.bars.i])); });
     (o.refs || []).forEach(function (f) { vals.push(tf(f.y)); });
     var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
     if (o.zero) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
@@ -2969,6 +2970,7 @@
           if (l.split) s += '<path class="ln" d="' + d + '" stroke="' + l.split[0] + '" stroke-width="' + (l.w || 1.6) + '" clip-path="url(#' + uid + 'cu)"/><path class="ln" d="' + d + '" stroke="' + l.split[1] + '" stroke-width="' + (l.w || 1.6) + '" clip-path="url(#' + uid + 'cd)"/>';
           else s += '<path class="ln" d="' + d + '" stroke="' + l.col + '" stroke-width="' + (l.w || 1.8) + '"' + (l.op ? ' stroke-opacity="' + l.op + '"' : '') + (l.dash ? ' stroke-dasharray="' + l.dash + '"' : '') + '/>';
         });
+        (o.plines || []).forEach(function (l) { var d = oxSeg(R_, l.i, C.X, C.Yp); if (d) s += '<path class="ln" d="' + d + '" stroke="' + l.col + '" stroke-width="' + (l.w || 1.6) + '"' + (l.dash ? ' stroke-dasharray="' + l.dash + '"' : '') + '/>'; });
         return s + (o.body ? o.body(C) : '');
       },
       over: function (C) {
@@ -2986,7 +2988,8 @@
       },
       tip: function (p, C) {
         var dots = '', rows = '';
-        (o.lines || []).forEach(function (l) { if (p[l.i] == null) return; var c = l.split ? (p[l.i] >= 0 ? l.split[0] : l.split[1]) : l.col; dots += dot1(C.X(p[0]), C.Ys(p[l.i]), c); rows += tipRow1(c, nm(l), l.tfmt ? l.tfmt(p[l.i]) : fmt.n(p[l.i], 2)); });
+        (o.lines || []).forEach(function (l) { if (p[l.i] == null) return; var c = l.split ? (p[l.i] >= 0 ? l.split[0] : l.split[1]) : l.col; dots += dot1(C.X(p[0]), C.Ys(p[l.i]), c); rows += tipRow1(c, nm(l), l.tfmt ? l.tfmt(p[l.i], p) : fmt.n(p[l.i], 2)); });
+        (o.plines || []).forEach(function (l) { if (p[l.i] == null) return; dots += dot1(C.X(p[0]), C.Yp(p[l.i]), l.col); rows += tipRow1(l.col, nm(l), l.tfmt ? l.tfmt(p[l.i], p) : fmt.usd(p[l.i])); });   // 2026-11-06 上格（價格格）的線
         if (o.bars && p[o.bars.i] != null) { var v = p[o.bars.i], c2 = o.bars.col ? o.bars.col(p) : (v >= 0 ? o.bars.pos : o.bars.neg); rows += tipRow1(c2, o.bars.name, o.bars.tfmt ? o.bars.tfmt(v, p) : fmt.n(v, 1)); }
         return { dots: dots, rows: rows + (o.tipExtra ? o.tipExtra(p) : '') };
       } });
@@ -3719,6 +3722,257 @@
     });
   })();
 
+  /* 2026-11-06 指標擴充（六項，資料見 pipeline/cq_extra.py）：交易所淨流量、現貨 vs 永續需求、ETF 持有者成本、一年累計淨實現損益（顆）、韓國溢價、每輪資金效率。
+     都附歷史對照或回測，只作讀值、不是買賣訊號 */
+  function cqBtc(v) { return v == null ? '—' : (v > 0 ? '+' : '') + fmt.n(v, 0); }
+  function cqKb(v) {   // 千顆 → 中文「萬」、英文 K／M
+    if (v == null) return '—'; var g = v > 0 ? '+' : v < 0 ? '-' : '', a = Math.abs(v);
+    return g + _T(fmt.n(a / 10, a >= 1000 ? 0 : 1) + ' 萬', a >= 1000 ? fmt.n(a / 1000, 2) + 'M' : fmt.n(a, 0) + 'K');
+  }
+  function cqKt(v) { if (!v) return '0'; return _T(fmt.n(v / 10, 0) + '萬', Math.abs(v) >= 1000 ? fmt.n(v / 1000, v % 1000 ? 1 : 0) + 'M' : fmt.n(v, 0) + 'K'); }   // 刻度用（千顆）
+  function cqB(v) {   // 十億美元
+    if (v == null) return '—'; var g = v > 0 ? '+' : v < 0 ? '-' : '', a = Math.abs(v);
+    return g + (a >= 1000 ? '$' + fmt.n(a / 1000, 2) + 'T' : a >= 1 ? '$' + fmt.n(a, a >= 100 ? 0 : a >= 10 ? 1 : 2) + 'B' : '$' + fmt.n(a * 1000, 0) + 'M');
+  }
+  function cqCmp(s, b) { if (!s || !s.n || !b || s.med == null) return ''; var d = s.med - b.med; return d > 3 ? _T('比同期任一天好', 'better than an average day') : d < -3 ? _T('比同期任一天差', 'worse than an average day') : _T('和同期任一天差不多', 'about the same as an average day'); }
+
+  /* ① 交易所淨流量 */
+  function exfSay() {
+    var x = (D.flows || {}).exflow; if (!x) return [];
+    var it = [], lo = (x.out_last || [])[(x.out_last || []).length - 1];
+    it.push([_T('30 天淨流量', '30-day netflow'), cqBtc(x.s30) + _T(' 顆', ' BTC'),
+      _T((x.out ? '幣在離開交易所' : '幣在流向交易所') + '：30 天合計 ' + cqBtc(x.s30) + ' 顆，已連續 ' + x.run + ' 天' + (x.out ? '淨流出' : '淨流入') + '，近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位' + (x.s30_30 != null ? '（30 天前 ' + cqBtc(x.s30_30) + ' 顆）' : '') + '。',
+        (x.out ? 'Coins are leaving exchanges' : 'Coins are flowing to exchanges') + ': ' + cqBtc(x.s30) + ' BTC over 30 days, net ' + (x.out ? 'outflow' : 'inflow') + ' for ' + x.run + ' days running, ' + fmt.n(x.pct4, 0) + 'th percentile of 4 years' + (x.s30_30 != null ? ' (' + cqBtc(x.s30_30) + ' BTC 30 days ago)' : '') + '.'), 'neu']);
+    it.push([_T('強流出之後', 'After strong outflows'), x.n_out + _T(' 段', ' stretches'),
+      _T('30 天合計落到近 4 年最低 10%（強流出）共 ' + x.n_out + ' 段，進入後 90 天：', 'The 30-day sum fell into the 4-year bottom 10% (strong outflow) ' + x.n_out + ' times; 90 days later: ') + oxStat(x.out_r90, x.base90) + _T('，' + cqCmp(x.out_r90, x.base90) + '。', ', ' + cqCmp(x.out_r90, x.base90) + '.') +
+      (lo ? _T('最近一段 ' + ymdS(lo.start) + ' 起（' + fmt.usd(lo.price) + '）' + (lo.r90 != null ? '，90 天後 ' + fmt.pct(lo.r90, 1) : '，還不到 90 天') + '。', ' Latest from ' + ymdS(lo.start) + ' (' + fmt.usd(lo.price) + ')' + (lo.r90 != null ? ', ' + fmt.pct(lo.r90, 1) + ' 90 days later' : ', under 90 days ago') + '.') : ''), 'neu']);
+    it.push([_T('強流入之後', 'After strong inflows'), x.n_in + _T(' 段', ' stretches'),
+      _T('落到近 4 年最高 10%（強流入）共 ' + x.n_in + ' 段，進入後 90 天：', 'The 4-year top 10% (strong inflow) ' + x.n_in + ' times; 90 days later: ') + oxStat(x.in_r90, x.base90) + _T('，' + cqCmp(x.in_r90, x.base90) + '。流量本身分不出方向，要和價格、其他賣壓一起看。', ', ' + cqCmp(x.in_r90, x.base90) + '. Flows alone do not tell direction; read them with price and other selling gauges.'), 'neu']);
+    return it;
+  }
+  function exfPanel() {
+    var x = (D.flows || {}).exflow; if (!x || !x.rows) return '';
+    return panel('span-12', _T('交易所淨流量', 'Exchange netflow'), 'CoinMetrics · ' + fmt.md(x.date),
+      '<div class="cf-hero">' + oxCard(x.out ? 'var(--up)' : 'var(--down)', _T('30 天合計', '30-day sum'), cqBtc(x.s30), _T('顆；近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位', 'BTC; ' + fmt.n(x.pct4, 0) + 'th percentile of 4 years')) +
+        oxCard(x.net <= 0 ? 'var(--up)' : 'var(--down)', _T('最新一天', 'Latest day'), cqBtc(x.net), _T('顆 · ' + fmt.md(x.date), 'BTC · ' + fmt.md(x.date))) + '</div>' +
+      interpHtml(exfSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('30 天淨流出', '30-day net outflow'), 'var(--up)'], [_T('30 天淨流入', '30-day net inflow'), 'var(--down)'], [_T('強流出（近 4 年最低 10%）', 'Strong outflow (4-year bottom 10%)'), 'var(--up)', 'box'], [_T('強流入（近 4 年最高 10%）', 'Strong inflow (4-year top 10%)'), 'var(--down)', 'box']]) +
+      '<div class="chart cf-chart" id="c-exflow"></div><p class="note">' + _T('流入交易所的幣 − 流出的幣（顆），30 天合計。交易所地址由 CoinMetrics 歸屬，會事後修正，新交易所或新錢包加入時整條線會跳。流入不一定是要賣（交易所整理錢包、託管機構搬幣也算），流出也不一定是買。只作讀值。',
+        'Coins flowing into exchanges − coins flowing out (BTC), summed over 30 days. Exchange addresses are attributed by CoinMetrics and revised later; the line jumps when new exchanges or wallets are added. Inflows are not always selling (exchange wallet reshuffles and custodian moves count), and outflows are not always buying. Reading only.') + '</p>', '', 'exflow');
+  }
+  function drawExf(el) {
+    var x = (D.flows || {}).exflow; if (!x || !el) return;
+    var f = function (v) { return cqBtc(v) + _T(' 顆', ' BTC'); }, kf = function (v) { return (v > 0 ? '+' : '') + fmt.k(v); };
+    var vb = function (L, col) { return (L || []).map(function (e) { return { x0: dnOf(e.start), x1: dnOf(e.end) + 2, col: col, op: 0.14 }; }); };
+    oxPane(el, { rows: x.rows, rng: 1095, fit: true, zero: true, fmt: kf, label: _T('交易所淨流量（30 天合計，顆）', 'Exchange netflow (30-day sum, BTC)'), aria: _T('BTC 價格與交易所淨流量', 'BTC price and exchange netflow'),
+      vbands: vb(x.out_eps, 'var(--up)').concat(vb(x.in_eps, 'var(--down)')),
+      lines: [{ i: 3, split: ['var(--down)', 'var(--up)'], w: 1.6, name: _T('30 天合計', '30-day sum'), tfmt: f }],
+      tipExtra: function (p) { return tipRow1('var(--ink-3)', _T('當天', 'That day'), f(p[2])); },
+      now: { i: 3, col: x.out ? 'var(--up)' : 'var(--down)', lab: _T('現在 ', 'Now ') + kf(x.s30) } });
+  }
+
+  /* ② 現貨 vs 永續需求 */
+  var DMD_K = { pp: ['pos', '現貨與永續一起買', 'Spot and perps both buying', '兩邊都有新買盤。', 'Both sides are adding.'],
+    pn: ['pos', '現貨在買、槓桿在退', 'Spot buying, leverage stepping back', '現貨在接、槓桿在退，比較扎實的上漲常是這樣。', 'Spot absorbing while leverage steps back — the sturdier kind of rally usually looks like this.'],
+    np: ['warn', '槓桿在撐、現貨沒跟', 'Leverage carrying it, spot not following', '買盤靠槓桿、現貨沒有接，比較容易回吐。', 'Buying comes from leverage without spot behind it, which gives back more easily.'],
+    nn: ['neg', '現貨與永續都在減', 'Spot and perps both pulling back', '現貨與槓桿兩邊都沒有新買盤。', 'Neither spot nor leverage is adding.'] };
+  function dmdSay() {
+    var x = (D.onchain || {}).dmd; if (!x) return [];
+    var it = [], k = (x.spot_pos ? 'p' : 'n') + (x.perp_pos == null ? '' : x.perp_pos ? 'p' : 'n'), K = DMD_K[k], lf = (x.flips || [])[(x.flips || []).length - 1];
+    if (!K) it.push([_T('現在', 'Now'), cqBtc(x.spot) + _T(' 顆', ' BTC'), _T('現貨需求（表觀需求 30 天）' + cqBtc(x.spot) + ' 顆；今天沒有永續的資料。', 'Spot demand (30-day apparent demand) ' + cqBtc(x.spot) + ' BTC; no perpetual data today.'), x.spot_pos ? 'pos' : 'neg']);
+    if (K) it.push([_T('現在', 'Now'), _T(K[1], K[2]), _T('現貨需求（表觀需求 30 天）' + cqBtc(x.spot) + ' 顆；OKX 永續 30 天主動買 − 主動賣 ' + cqB(x.perp / 1000) + '。' + K[3], 'Spot demand (30-day apparent demand) ' + cqBtc(x.spot) + ' BTC; OKX perps 30-day taker buy − sell ' + cqB(x.perp / 1000) + '. ' + K[4]), K[0]]);
+    if (x.r60 && x.r60.n) it.push([_T('現貨需求轉正之後', 'After spot demand turns positive'), x.r60.n + _T(' 次', ' times'),
+      _T('2020 起，現貨需求 30 天合計由負轉正（相隔 60 天以上才算新的一次）' + x.r60.n + ' 次，之後 60 天 ' + x.r60.up + ' 次上漲、中位數 ' + fmt.pct(x.r60.med, 1) + '（同期任一天 ' + x.base60.up + '% 上漲、中位數 ' + fmt.pct(x.base60.med, 1) + '）。',
+        'Since 2020 the 30-day spot demand turned from negative to positive ' + x.r60.n + ' times (60+ days apart); 60 days later ' + x.r60.up + ' rose, median ' + fmt.pct(x.r60.med, 1) + ' (any day: ' + x.base60.up + '% rose, median ' + fmt.pct(x.base60.med, 1) + ').') +
+      (lf ? _T('最近一次 ' + ymdS(lf.date) + '（' + fmt.usd(lf.price) + '）' + (lf.r60 != null ? '，60 天後 ' + fmt.pct(lf.r60, 1) : '，還不到 60 天') + '。', ' Latest ' + ymdS(lf.date) + ' (' + fmt.usd(lf.price) + ')' + (lf.r60 != null ? ', ' + fmt.pct(lf.r60, 1) + ' 60 days later' : ', under 60 days ago') + '.') : ''), 'neu']);
+    return it;
+  }
+  function dmdPanel() {
+    var x = (D.onchain || {}).dmd; if (!x || !x.rows) return '';
+    return panel('span-12', _T('現貨 vs 永續需求', 'Spot vs perpetual demand'), _T('表觀需求 · OKX · ' + fmt.md(x.date), 'Apparent demand · OKX · ' + fmt.md(x.date)),
+      '<div class="cf-hero">' + oxCard(x.spot_pos ? 'var(--up)' : 'var(--down)', _T('現貨需求 30 天', 'Spot demand, 30 days'), cqBtc(x.spot), _T('顆（表觀需求）', 'BTC (apparent demand)')) +
+        (x.perp != null ? oxCard(x.perp_pos ? 'var(--up)' : 'var(--down)', _T('永續淨主動買 30 天', 'Perp net taker buying, 30 days'), cqB(x.perp / 1000), _T('OKX 合約', 'OKX contracts')) : '') + '</div>' +
+      interpHtml(dmdSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('現貨（表觀需求 30 天）', 'Spot (30-day apparent demand)'), 'var(--s3)'], [_T('永續（OKX 30 天主動買 − 賣）', 'Perps (OKX 30-day taker buy − sell)'), 'var(--s2)'], [_T('現貨轉正，膠囊是之後 60 天漲跌', 'Spot turns positive; capsules show the next 60 days'), 'var(--s3)', 'box']]) +
+      '<div class="chart cf-chart" id="c-dmd"></div><p class="note">' + _T('現貨＝表觀需求（30 天新挖出的幣 − 1 年以上沒動過的供給的變化，顆）；永續＝OKX 合約 30 天主動買進 − 主動賣出（美元，日界 UTC+8）。兩者單位不同，圖上各除以自己近一年絕對值的最大值（−1 到 1），只比方向與相對強弱；提示框是原始數字。永續只有 OKX 一家，資料從 ' + ymdS(x.perp_since || '') + ' 起（公開 API 最多回 180 天，之後逐日累積）。只作讀值。',
+        'Spot = apparent demand (coins mined in 30 days − the change in supply unmoved for 1y+, BTC); perps = OKX contracts 30-day taker buys − taker sells (USD, UTC+8 days). The units differ, so each is divided by its own largest absolute value over the past year (−1 to 1) to compare direction and relative strength; the tooltip shows raw numbers. Perps are OKX only, from ' + ymdS(x.perp_since || '') + ' (the public API returns 180 days at most; it accumulates daily from here). Reading only.') + '</p>', '', 'dmd');
+  }
+  function drawDmd(el) {
+    var x = (D.onchain || {}).dmd; if (!x || !el) return;
+    oxPane(el, { rows: x.rows, rng: 365, fit: true, zero: true, fmt: function (v) { return fmt.n(v, 1); }, label: _T('需求（各除以近一年最大值）', 'Demand (each ÷ its 1-year max)'), aria: _T('BTC 價格、現貨需求與永續需求', 'BTC price, spot demand and perpetual demand'),
+      lines: [{ i: 3, col: 'var(--s2)', w: 1.5, name: _T('永續 30 天', 'Perps, 30 days'), tfmt: function (v, p) { return p && p[5] != null ? cqB(p[5] / 1000) : fmt.n(v, 2); } },
+        { i: 2, col: 'var(--s3)', w: 1.9, name: _T('現貨 30 天', 'Spot, 30 days'), tfmt: function (v, p) { return p && p[4] != null ? cqBtc(p[4]) + _T(' 顆', ' BTC') : fmt.n(v, 2); } }],
+      marks: (x.flips || []).map(function (f) { return { x: dnOf(f.date), y: 0, t: f.r60 == null ? _T('轉正', 'turns +') : _T('60 天 ', '60d ') + fmt.pct(f.r60, 0), col: 'var(--s3)', up: true }; }),
+      now: { i: 2, col: 'var(--s3)', lab: '' } });
+  }
+
+  /* ③ ETF 持有者成本 */
+  function etfcSay() {
+    var x = (D.flows || {}).etfcost; if (!x) return [];
+    var it = [], f30 = x.flow30 / 1000;
+    it.push([_T('現價 vs 成本', 'Price vs cost'), fmt.pct(x.gap_now, 1),
+      _T('最新收盤 ' + fmt.usd(x.px_now) + '（' + fmt.md(x.px_date) + '）' + (x.below ? '低於' : '高於') + ' ETF 持有者平均成本 ' + fmt.usd(x.cost) + '（' + fmt.md(x.date) + '）' + fmt.pct(x.gap_now, 1) + '：平均來說 ETF 買家帳面' + (x.below ? '虧損。' : '獲利。'),
+        'The latest close ' + fmt.usd(x.px_now) + ' (' + fmt.md(x.px_date) + ') is ' + fmt.pct(x.gap_now, 1) + ' ' + (x.below ? 'below' : 'above') + ' the average ETF holder cost of ' + fmt.usd(x.cost) + ' (' + fmt.md(x.date) + '): on average ETF buyers are ' + (x.below ? 'underwater.' : 'in profit.')), x.below ? 'warn' : 'neu']);
+    it.push([_T('上市以來', 'Since launch'), x.days_below + ' / ' + x.n_days + _T(' 天', ' days'),
+      _T(ymdS(x.since).slice(0, 7) + ' 上市以來，價格在成本下方 ' + x.days_below + ' 天（共 ' + x.n_days + ' 天），最深 ' + fmt.pct(x.min_gap, 1) + '（' + ymdS(x.min_date) + '）；穿越成本線 ' + x.n_cross + ' 次。',
+        'Since launch in ' + ymdS(x.since).slice(0, 7) + ', price spent ' + x.days_below + ' of ' + x.n_days + ' days below cost, deepest ' + fmt.pct(x.min_gap, 1) + ' (' + ymdS(x.min_date) + '); it crossed the cost line ' + x.n_cross + ' times.'), 'neu']);
+    it.push([_T('近 30 天流量', 'Flows, last 30 days'), cqB(f30),
+      _T('不含 GBTC 淨' + (f30 >= 0 ? '流入 ' : '流出 ') + cqB(Math.abs(f30)).replace('+', '') + '（含 GBTC ' + cqB(x.flow30_all / 1000) + '）' + (x.below ? (f30 < 0 ? '；價格在成本之下還在流出，帳面虧損的人在退場。' : '；價格在成本之下仍有流入，有人在成本下方加碼。') : '。'),
+        'Net ' + (f30 >= 0 ? 'inflow ' : 'outflow ') + cqB(Math.abs(f30)).replace('+', '') + ' excluding GBTC (' + cqB(x.flow30_all / 1000) + ' including it)' + (x.below ? (f30 < 0 ? '; still leaving below cost — underwater holders are exiting.' : '; still arriving below cost — some are adding under water.') : '.')), f30 >= 0 ? 'pos' : 'neg']);
+    return it;
+  }
+  function etfcPanel() {
+    var x = (D.flows || {}).etfcost; if (!x || !x.rows) return '';
+    return panel('span-12', _T('ETF 持有者成本', 'ETF holder cost basis'), _T('The Block · 不含 GBTC · ' + fmt.md(x.date), 'The Block · ex-GBTC · ' + fmt.md(x.date)),
+      '<div class="cf-hero">' + oxCard('var(--s1)', _T('平均成本', 'Average cost'), fmt.usd(x.cost), _T('推算持有 ' + fmt.n(x.held / 1e4, 1) + ' 萬顆', 'about ' + fmt.n(x.held / 1e3, 0) + 'K BTC held')) +
+        oxCard(x.below ? 'var(--down)' : 'var(--up)', _T('現價相對成本', 'Price vs cost'), fmt.pct(x.gap_now, 1), _T('收盤 ' + fmt.usd(x.px_now), 'close ' + fmt.usd(x.px_now))) + '</div>' +
+      interpHtml(etfcSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('ETF 持有者成本', 'ETF holder cost'), 'var(--s1)'], [_T('價格高於成本', 'Price above cost'), 'var(--up)'], [_T('價格低於成本', 'Price below cost'), 'var(--down)']]) +
+      '<div class="chart cf-chart" id="c-etfcost"></div><p class="note">' + _T('推算：每檔現貨 ETF 每天的淨流量 ÷ 當天收盤＝買進（或賣出）的顆數，用平均成本法累計（流出時依當時的平均成本移出）。不含 GBTC：它在轉成 ETF 前就持有約 62 萬顆，成本不是靠流量買出來的。實際買進價在當天高低之間，和託管地址收到幣的時間也不一定同一天，所以和看鏈上地址的做法會有差距。只作讀值。',
+        'Estimated: each spot ETF\'s daily net flow ÷ that day\'s close = coins bought (or sold), accumulated at average cost (outflows remove coins at the running average). GBTC is excluded: it held about 620K BTC before converting, so its cost was not built from flows. Actual fills land anywhere in the day\'s range and custody wallets may receive coins on another day, so on-chain methods give a different number. Reading only.') + '</p>', '', 'etfcost');
+  }
+  function drawEtfc(el) {
+    var x = (D.flows || {}).etfcost; if (!x || !el) return;
+    oxPane(el, { rows: x.rows, zero: true, fmt: function (v) { return fmt.pct(v, 0); }, label: _T('價格相對 ETF 成本（%）', 'Price vs ETF cost (%)'), aria: _T('BTC 價格與 ETF 持有者成本', 'BTC price and ETF holder cost'),
+      plines: [{ i: 2, col: 'var(--s1)', w: 1.8, name: _T('ETF 持有者成本', 'ETF holder cost') }],
+      lines: [{ i: 4, split: ['var(--up)', 'var(--down)'], w: 1.6, name: _T('相對成本', 'Vs cost'), tfmt: function (v) { return fmt.pct(v, 1); } }],
+      tipExtra: function (p) { return tipRow1('var(--ink-3)', _T('推算持有', 'Estimated holdings'), _T(fmt.n(p[3] / 10, 1) + ' 萬顆', fmt.n(p[3], 0) + 'K BTC')); },
+      now: { i: 4, col: x.gap >= 0 ? 'var(--up)' : 'var(--down)', lab: '' } });
+  }
+
+  /* ④ 一年累計淨實現損益（顆） */
+  function n365Say() {
+    var x = (D.onchain || {}).npl365; if (!x) return [];
+    var it = [], bt = x.bottoms || [], cur = bt[bt.length - 1], past = bt.slice(0, -1), tp = x.tops || [];
+    var yr = function (b) { return b.date.slice(0, 4) + ' ' + cqKb(b.value); };
+    it.push([_T('近一年合計', 'Past-year total'), cqKb(x.value) + _T('顆', ' BTC'),
+      _T('近 365 天的淨實現損益換成顆數合計 ' + cqKb(x.value) + ' 顆' + (x.value < 0 && x.neg_since ? '（' + ymdS(x.neg_since) + ' 起轉負）' : '') + '，30 天前 ' + cqKb(x.v30) + ' 顆：' + (x.value < 0 ? (x.value < x.v30 ? '一年來整體在認賠賣出，而且還在加深。' : '一年來整體在認賠賣出，但在收斂。') : '一年來整體是獲利了結。'),
+        'Net realized profit/loss over the past 365 days, converted to coins: ' + cqKb(x.value) + ' BTC' + (x.value < 0 && x.neg_since ? ' (negative since ' + ymdS(x.neg_since) + ')' : '') + ', vs ' + cqKb(x.v30) + ' 30 days ago: ' + (x.value < 0 ? (x.value < x.v30 ? 'the market has been selling at a loss over the year, and it is deepening.' : 'the market has been selling at a loss over the year, but it is easing.') : 'the market has been taking profit over the year.')), x.value < 0 ? 'warn' : 'neu']);
+    if (cur && past.length) {
+      var pv = past[past.length - 1];
+      it.push([_T('和熊市底部比', 'Against bear-market bottoms'), cqKb(cur.value),
+        _T('前幾輪熊市最深：' + past.map(yr).join('、') + ' 顆；這一輪到目前最深 ' + cqKb(cur.value) + ' 顆（' + ymdS(cur.date) + '），約上一輪的 ' + fmt.n(cur.value / pv.value * 100, 0) + '%。兩種可能：持有結構改變（ETF、長期持有者沒有跟著賣）讓認賠變少，或認賠還沒走完；單看這一項分不出來。',
+          'Deepest in past bear markets: ' + past.map(yr).join(', ') + ' BTC; this cycle so far ' + cqKb(cur.value) + ' BTC (' + ymdS(cur.date) + '), about ' + fmt.n(cur.value / pv.value * 100, 0) + '% of the last one. Either the holder base changed (ETFs, long-term holders not selling) so less loss gets realized, or the loss-taking is not finished; this gauge alone cannot tell.'), 'neu']);
+    }
+    if (tp.length) {
+      var lowest = tp.every(function (t) { return tp[tp.length - 1].value <= t.value; });
+      it.push([_T('頂部前後', 'Around tops'), cqKb(tp[tp.length - 1].value),
+        _T('頂部前後半年的最高：' + tp.map(yr).join('、') + ' 顆' + (lowest ? '；最近一輪是歷來最少的一次。' : '。'), 'Highest within six months of each top: ' + tp.map(yr).join(', ') + ' BTC' + (lowest ? '; the latest cycle was the smallest yet.' : '.')), 'neu']);
+    }
+    return it;
+  }
+  function n365Panel() {
+    var x = (D.onchain || {}).npl365; if (!x || !x.rows) return '';
+    return panel('span-12', _T('一年累計淨實現損益（顆）', 'One-year net realized P/L (BTC)'), 'CoinMetrics · ' + fmt.md(x.date),
+      '<div class="cf-hero">' + oxCard(x.value < 0 ? 'var(--down)' : 'var(--up)', _T('近 365 天', 'Last 365 days'), cqKb(x.value), _T('顆', 'BTC'), _T(oxArrow(x.value / 10, x.v30 / 10, ' 萬', 1), oxArrow(x.value, x.v30, 'K', 0))) + '</div>' +
+      interpHtml(n365Say()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('一年累計：獲利了結', 'One-year sum: profit-taking'), 'var(--up)'], [_T('一年累計：認賠', 'One-year sum: loss-taking'), 'var(--down)']]) +
+      '<div class="chart cf-chart" id="c-npl365"></div><p class="note">' + _T('每天的淨實現損益（實現市值的變化減新發行，美元）除以當天價格換成顆數，再加總 365 天。換成顆數之後，不同價格時代的認賠可以直接比；負得越深＝一年內有越多幣在賠錢賣。資料 CoinMetrics，逐筆 UTXO、不是實體調整。只作讀值。',
+        'Each day\'s net realized profit/loss (change in realized cap minus new issuance, USD) divided by that day\'s price to get coins, summed over 365 days. In coins, loss-taking from different price eras compares directly; deeper negative = more coins sold at a loss within the year. Data: CoinMetrics, per UTXO, not entity-adjusted. Reading only.') + '</p>', '', 'npl365');
+  }
+  function drawN365(el) {
+    var x = (D.onchain || {}).npl365; if (!x || !el) return;
+    var mk = (x.bottoms || []).map(function (b) { return { x: dnOf(b.date), y: b.value, t: b.date.slice(0, 4) + ' ' + cqKb(b.value), col: 'var(--down)', up: false }; })
+      .concat((x.tops || []).map(function (t) { return { x: dnOf(t.date), y: t.value, t: t.date.slice(0, 4) + ' ' + cqKb(t.value), col: 'var(--up)', up: true }; }));
+    oxPane(el, { rows: x.rows, zero: true, fmt: cqKt, label: _T('一年累計淨實現損益（顆）', 'One-year net realized P/L (BTC)'), aria: _T('BTC 價格與一年累計淨實現損益', 'BTC price and one-year net realized profit/loss'),
+      lines: [{ i: 2, split: ['var(--up)', 'var(--down)'], w: 1.6, area: false, name: _T('一年累計', 'One-year sum'), tfmt: function (v) { return cqKb(v) + _T('顆', ' BTC'); } }],
+      marks: mk, now: { i: 2, col: x.value < 0 ? 'var(--down)' : 'var(--up)', lab: '' } });
+  }
+
+  /* ⑤ 韓國溢價 */
+  function kpSay() {
+    var x = (D.flows || {}).kp; if (!x) return [];
+    var it = [], a = x.a7, lv = a >= 5 ? 'hot' : a <= -1 ? 'cold' : 'mid', hl = (x.hot || [])[(x.hot || []).length - 1];
+    var LV = { hot: ['韓國散戶在追價，偏熱。', 'Korean retail is chasing — running hot.'], cold: ['折價，韓國買盤冷。', 'A discount — Korean demand is cold.'], mid: ['在常態範圍內，韓國散戶沒有明顯追價。', 'Within the normal range; no obvious chasing by Korean retail.'] };
+    it.push([_T('7 日平均', '7-day average'), fmt.pct(a, 2),
+      _T('Upbit 的韓元價格換成美元後' + (a >= 0 ? '貴 ' : '便宜 ') + fmt.n(Math.abs(a), 2) + '%（最新一天 ' + fmt.pct(x.value, 2) + '、30 日 ' + fmt.pct(x.a30, 2) + '，近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位；全期中位數 ' + fmt.pct(x.med, 2) + '）：' + LV[lv][0],
+        'Upbit\'s KRW price converted to USD is ' + fmt.n(Math.abs(a), 2) + '% ' + (a >= 0 ? 'higher' : 'lower') + ' (latest day ' + fmt.pct(x.value, 2) + ', 30-day ' + fmt.pct(x.a30, 2) + ', ' + fmt.n(x.pct4, 0) + 'th percentile of 4 years; all-time median ' + fmt.pct(x.med, 2) + '): ' + LV[lv][1]), lv === 'hot' ? 'warn' : 'neu']);
+    if (x.hot90 && x.hot90.n) it.push([_T('衝上 5% 之後', 'After spikes above 5%'), x.hot90.n + _T(' 次', ' times'),
+      _T('7 日平均衝上 5%（相隔 30 天以上算新的一次）之後 90 天：', 'After the 7-day average rose above 5% (30+ days apart), 90 days later: ') + oxStat(x.hot90, x.base90) + _T('，' + cqCmp(x.hot90, x.base90) + '。', ', ' + cqCmp(x.hot90, x.base90) + '.') +
+      (hl ? _T('最近一次 ' + ymdS(hl.start) + '（' + fmt.usd(hl.price) + '）' + (hl.r90 != null ? '，90 天後 ' + fmt.pct(hl.r90, 1) : '') + '。', ' Latest ' + ymdS(hl.start) + ' (' + fmt.usd(hl.price) + ')' + (hl.r90 != null ? ', ' + fmt.pct(hl.r90, 1) + ' 90 days later' : '') + '.') : ''), 'neu']);
+    var ys = (x.years || []).filter(function (y) { return y.max >= 5; });
+    if (ys.length) it.push([_T('歷年高點', 'Yearly highs'), fmt.pct(ys[ys.length - 1].max, 1),
+      _T('7 日平均到 5% 以上的年份：' + ys.map(function (y) { return ymdS(y.max_date).slice(0, 7) + ' ' + fmt.pct(y.max, 1); }).join('、') + '。', 'Years when the 7-day average topped 5%: ' + ys.map(function (y) { return ymdS(y.max_date).slice(0, 7) + ' ' + fmt.pct(y.max, 1); }).join(', ') + '.'), 'neu']);
+    return it;
+  }
+  function kpPanel() {
+    var x = (D.flows || {}).kp; if (!x || !x.rows) return '';
+    return panel('span-12', _T('韓國溢價', 'Korea premium'), 'Upbit · ' + fmt.md(x.date),
+      '<div class="cf-hero">' + oxCard(x.a7 >= 5 ? 'var(--s2)' : 'var(--s3)', _T('7 日平均', '7-day average'), fmt.pct(x.a7, 2), _T('近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位', fmt.n(x.pct4, 0) + 'th percentile of 4 years')) + oxCard('var(--ink-3)', _T('最新一天', 'Latest day'), fmt.pct(x.value, 2), fmt.md(x.date)) + '</div>' +
+      interpHtml(kpSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('7 日平均：溢價', '7-day average: premium'), 'var(--s2)'], [_T('7 日平均：折價', '7-day average: discount'), 'var(--s3)'], [_T('每日', 'Daily'), 'var(--ink-3)'], [_T('5%：偏熱', '5%: running hot'), 'var(--s2)', 'dash']]) +
+      '<div class="chart cf-chart" id="c-kp"></div><p class="note">' + _T('Upbit KRW-BTC 日收盤（UTC）÷（美元收盤 × 美元兌韓元）− 1；匯率用歐洲央行參考匯率，週末沿用前一個工作日。韓國有資本管制，套利不容易，所以溢價可以長期存在；只看 Upbit 一家。縱軸是壓縮刻度（2018 年初曾到 50%）。只作讀值。',
+        'Upbit KRW-BTC daily close (UTC) ÷ (USD close × USD/KRW) − 1, using ECB reference rates (weekends carry the previous business day). Capital controls make arbitrage hard, so a premium can persist; Upbit only. The vertical axis is compressed (it reached 50% in early 2018). Reading only.') + '</p>', '', 'kp');
+  }
+  var KPT = function (v) { return v >= 0 ? Math.log10(1 + v) : -Math.log10(1 - v); };
+  function drawKp(el) {
+    var x = (D.flows || {}).kp; if (!x || !el) return;
+    var f = function (v) { return fmt.pct(v, 2); };
+    oxPane(el, { rows: x.rows, rng: 1095, fit: true, tf: KPT, ticks: [-5, -2, 0, 2, 5, 10, 20, 50], fmt: function (v) { return fmt.pct(v, 0); }, label: _T('韓國溢價（%，壓縮刻度）', 'Korea premium (%, compressed scale)'), aria: _T('BTC 價格與韓國溢價', 'BTC price and Korea premium'),
+      refs: [{ y: 5, col: 'var(--s2)' }],
+      lines: [{ i: 2, col: 'var(--ink-3)', w: 1, op: 0.45, name: _T('每日', 'Daily'), tfmt: f }, { i: 3, split: ['var(--s2)', 'var(--s3)'], w: 1.8, name: _T('7 日平均', '7-day average'), tfmt: f }],
+      now: { i: 3, col: x.a7 >= 0 ? 'var(--s2)' : 'var(--s3)', lab: _T('現在 ', 'Now ') + fmt.pct(x.a7, 1) } });
+  }
+
+  /* ⑥ 每輪資金效率（表格，沒有走勢圖） */
+  function ceSay() {
+    var x = (D.onchain || {}).capeff; if (!x || !x.cycles || !x.cycles.length) return [];
+    var cy = x.cycles, c = x.cur, it = [], sep = _T(' → ', ' → ');
+    var upA = cy.every(function (r, i) { return !i || r.add_b > cy[i - 1].add_b; }), dnM = cy.every(function (r, i) { return !i || r.mult < cy[i - 1].mult; });
+    var mf = function (m) { return fmt.n(m, m < 10 ? 1 : 0) + '×'; };
+    it.push([_T('一輪比一輪', 'Cycle by cycle'), mf(cy[cy.length - 1].mult),
+      _T('每輪從熊市底部到頂部，流入的資金：' + cy.map(function (r) { return cqB(r.add_b).replace('+', ''); }).join(sep) + '；價格倍數：' + cy.map(function (r) { return mf(r.mult); }).join(sep) + '。' + (upA && dnM ? '流入一輪比一輪多、漲幅一輪比一輪小：市場越大，同樣的漲幅要越多錢。' : ''),
+        'From each bear-market bottom to the top, money in: ' + cy.map(function (r) { return cqB(r.add_b).replace('+', ''); }).join(sep) + '; price multiple: ' + cy.map(function (r) { return mf(r.mult); }).join(sep) + '. ' + (upA && dnM ? 'More money each cycle, smaller gains each cycle: the bigger the market, the more money the same gain takes.' : '')), 'neu']);
+    if (c) {
+      var sm = cy.filter(function (r) { return r.same; }), more = sm.length && sm.every(function (r) { return c.add_b > r.same.add_b; }), less = sm.length && sm.every(function (r) { return c.mult < r.same.mult; });
+      it.push([_T('這一輪到現在', 'This cycle so far'), cqB(c.add_b) + ' · ' + fmt.n(c.mult, 2) + '×',
+        _T('從 ' + ymdS(c.bottom) + ' 的底部起 ' + c.days + ' 天：流入 ' + cqB(c.add_b) + '、價格 ' + fmt.n(c.mult, 2) + ' 倍。前幾輪走到同一天：' + sm.map(function (r) { return r.bottom.slice(0, 4) + ' 那輪流入 ' + cqB(r.same.add_b) + '、' + fmt.n(r.same.mult, 2) + ' 倍'; }).join('；') + '。' + (more && less ? '這一輪同期流入比較多、漲得卻比較少。' : ''),
+          c.days + ' days from the ' + ymdS(c.bottom) + ' bottom: ' + cqB(c.add_b) + ' in, price ' + fmt.n(c.mult, 2) + '×. Past cycles on the same day: ' + sm.map(function (r) { return 'the ' + r.bottom.slice(0, 4) + ' cycle ' + cqB(r.same.add_b) + ', ' + fmt.n(r.same.mult, 2) + '×'; }).join('; ') + '.' + (more && less ? ' More money in than past cycles at this point, yet a smaller gain.' : '')), 'neu']);
+    }
+    it.push([_T('每 1 美元帶動市值', 'Market cap per $1 in'), '$' + fmt.n(cy[cy.length - 1].lev, 1),
+      _T('到頂部時，每流入 1 美元，市值增加 ' + cy.map(function (r) { return '$' + fmt.n(r.lev, 1); }).join(sep) + '。這一輪剛起步、流入的錢還少，這個比值要到週期後段才有比較的意義。', 'By the top, each $1 of inflow added ' + cy.map(function (r) { return '$' + fmt.n(r.lev, 1); }).join(sep) + ' of market cap. This cycle is young and inflows are small, so the ratio only means something later in the cycle.'), 'neu']);
+    return it;
+  }
+  function ceHtml(x) {
+    var cy = x.cycles || [], c = x.cur, all = cy.concat(c ? [c] : []);
+    var ma = Math.log10(1 + Math.max.apply(null, all.map(function (r) { return Math.max(0, r.add_b); }))), mm = Math.log10(Math.max.apply(null, all.map(function (r) { return r.mult; })));
+    var bar = function (w, col, lab) { return '<div class="ce-bar"><span class="tr"><i style="width:' + Math.max(1.5, Math.min(100, w * 100)).toFixed(1) + '%;background:' + col + '"></i></span><span class="num">' + lab + '</span></div>'; };
+    var row = function (r, now) { return '<tr' + (now ? ' class="ce-now"' : '') + '><td><b>' + oxYm(r.bottom) + ' → ' + (now ? _T('現在', 'now') : oxYm(r.top)) + '</b><div class="note">' + fmt.n(r.days, 0) + _T(' 天', ' days') + '</div></td><td>' + bar(Math.log10(1 + Math.max(0, r.add_b)) / ma, 'var(--s3)', cqB(r.add_b).replace('+', '')) + '</td><td>' + bar(Math.log10(Math.max(1, r.mult)) / mm, 'var(--s4)', fmt.n(r.mult, r.mult < 10 ? 2 : 0) + '×') + '</td><td class="num">' + (now || r.lev == null ? '—' : '$' + fmt.n(r.lev, 1)) + '</td></tr>'; };
+    return '<div class="tbl-wrap"><table class="tbl ce-tbl"><colgroup><col style="width:22%"><col style="width:31%"><col style="width:31%"><col style="width:16%"></colgroup><thead><tr><th>' + _T('底部 → 頂部', 'Bottom → top') + '</th><th>' + _T('流入資金（實現市值增加）', 'Money in (realized cap added)') + '</th><th>' + _T('價格倍數', 'Price multiple') + '</th><th class="num">' + _T('每 1 美元帶動市值', 'Market cap per $1 in') + '</th></tr></thead><tbody>' +
+      cy.map(function (r) { return row(r); }).join('') + (c ? row(c, true) : '') + '</tbody></table></div>';
+  }
+  function cePanel() {
+    var x = (D.onchain || {}).capeff; if (!x || !x.cycles || !x.cycles.length) return '';
+    return panel('span-12', _T('每輪資金效率', 'Capital efficiency by cycle'), 'CoinMetrics · ' + fmt.md(x.date),
+      interpHtml(ceSay()) + '<div id="c-capeff">' + ceHtml(x) + '</div><p class="note">' + _T('實現市值＝每顆幣以最後一次移動時的價格計價的總和，它的增加就是真正流進來的資金（市值 ÷ MVRV，CoinMetrics）。每一輪從熊市底部算到週期頂部；長條是對數長度。「每 1 美元帶動市值」＝市值增加 ÷ 實現市值增加。底部與頂部日期沿用本站週期模型。只作讀值。',
+        'Realized cap = every coin valued at the price it last moved; its increase is the money that actually came in (market cap ÷ MVRV, CoinMetrics). Each cycle runs from the bear-market bottom to the cycle top; bar lengths are logarithmic. "Market cap per $1 in" = market cap added ÷ realized cap added. Bottom and top dates follow this site\'s cycle model. Reading only.') + '</p>', '', 'capeff');
+  }
+
+  (function () {   /* 六項新圖的「怎麼讀這張圖」 */
+    var hh = function (a, b, cz, ce, dz, de) { return [[a, b], [cz, ce], [dz, de]]; }, fl = function (k) { return (D.flows || {})[k] || {}; }, oc = function (k) { return (D.onchain || {})[k] || {}; };
+    Object.assign(RD, {
+      'exflow': { h: hh('下格是交易所淨流量的 30 天合計：綠＝淨流出（幣離開交易所）、紅＝淨流入。綠底是強流出（近 4 年最低 10%），紅底是強流入（最高 10%）。', 'Bottom: 30-day exchange netflow, green = net outflow (coins leaving exchanges), red = net inflow. Green shading marks strong outflows (4-year bottom 10%), red shading strong inflows (top 10%).',
+          '長時間淨流出＝買了提走、放進冷錢包的人多，可賣的籌碼變少；大量淨流入＝有人把幣送上交易所，可能準備賣。但回測看，單靠流量的方向分不出之後漲跌。', 'Sustained outflows = more coins being withdrawn to cold storage, less supply on hand to sell; big inflows = coins sent to exchanges, possibly to sell. Backtests show flow direction alone does not separate what comes next.',
+          '交易所地址是推算的、會事後修正；ETF 託管、交易所內部整理錢包都會造成大筆流動，單日尖峰常不是買賣。', 'Exchange addresses are estimated and revised; ETF custody and exchange wallet reshuffles cause big moves, so one-day spikes are often not trades.'),
+        now: function () { var x = fl('exflow'); return x.s30 == null ? '' : _T('30 天合計 ' + cqBtc(x.s30) + ' 顆（近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位）。', '30-day sum ' + cqBtc(x.s30) + ' BTC (' + fmt.n(x.pct4, 0) + 'th percentile of 4 years).'); } },
+      'dmd': { h: hh('下格兩條線：青綠是現貨需求（表觀需求 30 天）、橘是永續需求（OKX 合約 30 天主動買 − 賣），各自除以近一年最大值，0 以上＝在買、以下＝在減。膠囊是現貨需求轉正的日子與之後 60 天的漲跌。', 'Two lines below: teal is spot demand (30-day apparent demand), orange perpetual demand (OKX contracts 30-day taker buy − sell), each divided by its own 1-year max; above 0 = buying, below = pulling back. Capsules mark days spot demand turned positive and the next 60 days.',
+          '兩條一起在 0 以上最扎實；現貨在 0 以上、永續在 0 以下，是現貨在接、槓桿在退；永續在上、現貨在下，是槓桿推的行情，比較容易回吐。', 'Both above 0 is the sturdiest; spot above and perps below means spot absorbing while leverage retreats; perps above with spot below is a leverage-driven move that gives back more easily.',
+          '現貨是推算的鏈上需求（逐筆 UTXO），永續只有 OKX 一家、而且只有半年多的資料，比較的是方向，不是誰大誰小。', 'Spot is an estimated on-chain demand (per UTXO) and perps are OKX only with about half a year of data; compare direction, not size.'),
+        now: function () { var x = oc('dmd'); return x.spot == null ? '' : _T('現貨 ' + cqBtc(x.spot) + ' 顆、永續 ' + cqB((x.perp || 0) / 1000) + '。', 'Spot ' + cqBtc(x.spot) + ' BTC, perps ' + cqB((x.perp || 0) / 1000) + '.'); } },
+      'etfcost': { h: hh('上格紫線是 ETF 持有者的平均成本（推算，不含 GBTC）；下格是價格相對這條成本的百分比，綠＝價格在成本之上、紅＝之下。', 'Top: the purple line is the estimated average ETF holder cost (ex-GBTC). Bottom: price versus that cost in percent, green = above cost, red = below.',
+          '價格跌破成本＝ETF 買家平均帳面虧損，這時候還在流出代表有人認賠離場；能在成本附近止跌、流量轉正，代表這群買家守得住。', 'Price below cost = ETF buyers are underwater on average; continued outflows then mean some are cutting losses. Holding near cost with flows turning positive means this group is holding the line.',
+          '成本是用每天流量和收盤推算的，不是實際成交價；GBTC 不算在內，ETF 只是現貨需求的一部分。', 'The cost is estimated from daily flows and closes, not actual fills; GBTC is excluded, and ETFs are only part of spot demand.'),
+        now: function () { var x = fl('etfcost'); return x.cost == null ? '' : _T('成本 ' + fmt.usd(x.cost) + '，現價' + fmt.pct(x.gap_now, 1) + '。', 'Cost ' + fmt.usd(x.cost) + ', price ' + fmt.pct(x.gap_now, 1) + '.'); } },
+      'npl365': { h: hh('下格是近 365 天淨實現損益的合計，換成顆數：綠＝一年內整體獲利了結、紅＝整體認賠。膠囊是歷次頂部前後的最高與熊市底部前後的最深。', 'Bottom: the past 365 days of net realized profit/loss in coins, green = net profit-taking over the year, red = net loss-taking. Capsules mark the highs around tops and the lows around bear-market bottoms.',
+          '過去熊市底部都出現在這條線很深的負值附近：一年裡大量的幣被賠錢賣出、籌碼換到新買家手上。翻回正值，通常代表最難熬的認賠期結束。', 'Past bear-market bottoms came near deep negative readings: a year of heavy loss-selling that moved coins to new hands. Turning back positive usually marks the end of the hardest loss-taking.',
+          '這一輪的負值比前幾輪淺很多，可能是持有結構改變，也可能是還沒走完；以顆計可跨時代比，但交易所整理錢包也會被算成實現損益。', 'This cycle\'s reading is far shallower than past ones — a changed holder base, or not finished yet. Counting in coins compares across eras, but exchange wallet reshuffles also register as realized P/L.'),
+        now: function () { var x = oc('npl365'); return x.value == null ? '' : _T('近一年 ' + cqKb(x.value) + ' 顆。', 'Past year ' + cqKb(x.value) + ' BTC.'); } },
+      'kp': { h: hh('下格是韓國溢價：粗線是 7 日平均（橘＝溢價、青綠＝折價），細灰線是每日；橘虛線是 5%。縱軸壓縮過，小數值看得清楚、大數值不會頂出去。', 'Bottom: the Korea premium; the thick line is the 7-day average (orange = premium, teal = discount), the thin grey line daily; the orange dashed line is 5%. The axis is compressed so small values stay legible and big spikes stay in frame.',
+          '溢價衝高＝韓國散戶搶著買、願意付更多韓元，過去常在局部高點附近；折價＝韓國買盤冷，常在恐慌或熊市。', 'A spiking premium = Korean retail scrambling to buy and paying up in won, historically near local highs; a discount = cold Korean demand, often in panics or bear markets.',
+          '只看 Upbit 一家；韓國有資本管制，溢價會長期存在，1–2% 的常態溢價不代表過熱。', 'Upbit only; capital controls let a premium persist, so a steady 1–2% does not mean overheating.'),
+        now: function () { var x = fl('kp'); return x.a7 == null ? '' : _T('7 日平均 ' + fmt.pct(x.a7, 2) + '。', '7-day average ' + fmt.pct(x.a7, 2) + '.'); } },
+      'capeff': { h: hh('每一列是一輪週期，從熊市底部到頂部：青綠是流進來的資金（實現市值增加）、金色是價格倍數，長條用對數長度；最後一列是這一輪到現在。', 'Each row is one cycle from bear-market bottom to top: teal is the money that came in (realized cap added), gold the price multiple, with logarithmic bar lengths; the last row is this cycle so far.',
+          '比特幣越大，推動同樣的漲幅要越多錢：流入一輪比一輪多，倍數一輪比一輪小。拿這一輪和前幾輪同一天比，可以看資金進來的速度與價格的反應。', 'The bigger bitcoin gets, the more money the same gain needs: inflows grow each cycle while multiples shrink. Comparing this cycle with past ones on the same day shows how fast money arrives and how price responds.',
+          '底部與頂部日期沿用本站的週期模型；實現市值逐筆 UTXO 計算，交易所整理錢包、遺失的幣都會影響，看的是數量級。', 'Bottom and top dates follow this site\'s cycle model; realized cap is per UTXO and affected by exchange reshuffles and lost coins, so read it for orders of magnitude.'),
+        now: function () { var c = oc('capeff').cur; return !c ? '' : _T('這一輪 ' + c.days + ' 天：流入 ' + cqB(c.add_b) + '、' + fmt.n(c.mult, 2) + ' 倍。', 'This cycle, ' + c.days + ' days: ' + cqB(c.add_b) + ' in, ' + fmt.n(c.mult, 2) + '×.'); } }
+    });
+  })();
+
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};
     var rows = [
@@ -3734,16 +3988,16 @@
       panel('span-7', _t('短期持有者獲利比例'), _t('2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%', interpHtml(sthlSay()) + '<div class="chart" id="c-profit"></div><p class="note">' + _T('短期持有者成本與真實市場均價的走勢在週期版「市場階段」的佐證圖 ', 'Short-term holder cost vs the true market mean is charted with the market-stage evidence on the Cycle page ') + jumpA('cycle', 'ev-tmm', _T('看圖 →', 'See chart →')) + '</p>') +
       sbPanel() + acPanel() +
       grpH('oc-pnl', '獲利了結與認賠', 'Profit-taking and loss-selling', _T('賣出的人是賺是賠、賣了多少', 'Whether sellers take profit or loss, and how much')) +
-      soprPanel() + sthPnlPanel() + nplPanel() + rplPanel() + rlPanel() + ssrPanel() + secPanel() + moPanel() +
+      soprPanel() + sthPnlPanel() + nplPanel() + n365Panel() + rplPanel() + rlPanel() + ssrPanel() + secPanel() + moPanel() +
       grpH('oc-lth', '長期持有者', 'Long-term holders', _T('長期持有者在加碼、出貨還是認賠', 'Are long-term holders adding, distributing or selling at a loss')) +
       cohortPanel() + lthColorPanel() + lcPanel() + agePanel() + dmPanel() + lthLossPanel() +
       grpH('oc-demand', '需求與資金', 'Demand and money', _T('新的需求接不接得住供給', 'Is new demand absorbing supply')) +
-      adPanel() + cfPanel() + grPanel() + whalePanel() +
+      adPanel() + dmdPanel() + cfPanel() + grPanel() + whalePanel() +
       grpH('oc-all', '指標總表', 'All metrics') + panel('span-12', _t('鏈上指標'), _T('STH-SOPR：CheckOnChain · 長短期成本、aSOPR、LTH-SOPR：Bitview · 其他：bitcoin-data', 'STH-SOPR: CheckOnChain · holder costs, aSOPR, LTH-SOPR: Bitview · others: bitcoin-data'), t + '<p class="note">' + _T('MVRV Z、NUPL、Puell 在週期版「頂部三指標」', 'MVRV Z, NUPL and Puell are on the Cycle page under the top-3 indicators ') + jumpA('cycle', 'p6', '→') + '</p>') + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
     mount($('#c-agecost'), drawAgeCost); var acs = $('#ac-segs'); if (acs) acs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-a') === acMode) return; acMode = b.getAttribute('data-a'); acs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); $('#ac-say').innerHTML = interpHtml(acSayNow()); $('#ac-lg').innerHTML = acLegend(); drawAgeCost($('#c-agecost')); });   // 2026-11-06 持幣成本從週期版搬來
-    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-lthrl'), drawLthRl); mount($('#c-sthband'), drawSthBand); mount($('#c-capflow'), drawCapflow); mount($('#c-quant'), drawQuant); mount($('#c-rloss'), drawRl); mount($('#c-lsrchg'), drawLc); mount($('#c-grad'), drawGr); mount($('#c-mom'), drawMo); mount($('#c-ssr'), drawSsr); mount($('#c-agepl'), drawAge); mount($('#c-dorm'), drawDorm); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd);   /* 2026-11-06 指標擴充的 mount 接在前面；註解只能放行尾（之前插在行中把後面三張圖註解掉了） */
+    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-lthrl'), drawLthRl); mount($('#c-sthband'), drawSthBand); mount($('#c-capflow'), drawCapflow); mount($('#c-quant'), drawQuant); mount($('#c-rloss'), drawRl); mount($('#c-lsrchg'), drawLc); mount($('#c-grad'), drawGr); mount($('#c-mom'), drawMo); mount($('#c-ssr'), drawSsr); mount($('#c-agepl'), drawAge); mount($('#c-dorm'), drawDorm); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-ad'), drawAd); mount($('#c-npl365'), drawN365); mount($('#c-dmd'), drawDmd);   /* 2026-11-06 指標擴充的 mount 接在前面；註解只能放行尾（之前插在行中把後面三張圖註解掉了） */
     var ags = $('#ag-seg'); if (ags) ags.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-m') === agMode) return; agMode = b.getAttribute('data-m'); ags.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); drawAge($('#c-agepl')); });   /* 2026-11-06 實現獲利／虧損切換 */
     var rs = $('#rl-seg'); if (rs) rs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-m') === rlMode) return; rlMode = b.getAttribute('data-m'); rs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); drawRl($('#c-rloss')); });   /* 2026-11-06 實現虧損 近 150 天／全部歷史 */
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });

@@ -843,3 +843,12 @@ p.note.clamp:not(.open) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-b
 .ox-x p, .ox-x li { margin: 0 0 8px; font-size: 14px; line-height: 1.75; color: var(--ink-2); }
 .ox-x ol { margin: 0; padding-left: 1.3em; }
 .ox-x .ox-f { font-family: var(--f-mono); font-size: 13px; color: var(--ink); background: color-mix(in srgb, var(--s1) 8%, transparent); border-left: 3px solid var(--s1); padding: 8px 10px; }
+
+/* 2026-11-06 每輪資金效率（表格裡的對數長條） */
+.ce-tbl td { vertical-align: middle; }
+.ce-bar { display: flex; align-items: center; gap: 8px; }
+.ce-bar .tr { flex: 1 1 auto; height: 10px; background: var(--deck-3); border-radius: 2px; overflow: hidden; }
+.ce-bar .tr i { display: block; height: 100%; border-radius: 2px; }
+.ce-bar .num { flex: 0 0 auto; min-width: 58px; text-align: right; font-size: 13px; }
+.ce-tbl tr.ce-now td { background: color-mix(in srgb, var(--s3) 8%, transparent); }
+@media (max-width: 560px) { .ce-bar .num { min-width: 46px; font-size: 12px; } }
