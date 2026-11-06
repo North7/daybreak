@@ -32,7 +32,13 @@ COLS = [('px', 'price_close', 2), ('sth', 'sth_realized_price', 2), ('tmm', 'tru
         ('cf12', ('share', ['age_1y_to_18m_realized_cap', 'age_18m_to_2y_realized_cap'], 'realized_cap'), 2),
         ('ssopr', 'sth_sopr_24h', 4),
         ('lthrl', 'lth_realized_loss_sum_24h', 0),
-        ('act', 'active_price', 2), ('c1m', 'age_1w_to_1m_realized_price', 2)]   # 2026-11-05：活躍投資人成本（Cointime Active Price）、1 週–1 個月持幣成本（levels_viz／age_cost_viz）   # 2026-11-05：長期持有者已實現虧損（美元／日，stage_viz.lthrl_viz）   # 2026-11-05：短期持有者 SOPR（每日），給本站自製的短期壓力分數（stage_viz.stress_viz）   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
+        ('act', 'active_price', 2), ('c1m', 'age_1w_to_1m_realized_price', 2),
+        # 2026-11-06 使用者要求（指標擴充，見 oc_extra.py）：供給分位成本線（全體供給依最後一次移動價格排序的第 q 百分位）、
+        #   全體獲利供給 %、相對未實現獲利（未實現獲利 ÷ 市值 %）、全網每日實現虧損（美元）、每日銷毀幣天數、全網 SOPR
+        ('q45', 'cost_basis_by_coin_p45', 2), ('q50', 'cost_basis_by_coin_median', 2), ('q55', 'cost_basis_by_coin_p55', 2), ('q60', 'cost_basis_by_coin_p60', 2),
+        ('q65', 'cost_basis_by_coin_p65', 2), ('q75', 'cost_basis_by_coin_p75', 2), ('q85', 'cost_basis_by_coin_p85', 2), ('q95', 'cost_basis_by_coin_p95', 2),
+        ('psip', 'supply_in_profit_share', 2), ('rup', ('share', ['unrealized_profit'], 'market_cap'), 2),
+        ('rloss', 'realized_loss_sum_24h', 0), ('cdd', 'coindays_destroyed_sum_24h', 0), ('sopr', 'sopr_24h', 4)]   # 2026-11-05：活躍投資人成本（Cointime Active Price）、1 週–1 個月持幣成本（levels_viz／age_cost_viz）   # 2026-11-05：長期持有者已實現虧損（美元／日，stage_viz.lthrl_viz）   # 2026-11-05：短期持有者 SOPR（每日），給本站自製的短期壓力分數（stage_viz.stress_viz）   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
 KEYS = [k for k, _, _ in COLS]
 COC_TMM = 'https://charts-cdn.checkonchain.com/btconchain/cointime/cointime_pricing_all_1/cointime_pricing_all_1_light.html'
 

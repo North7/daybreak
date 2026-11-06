@@ -831,3 +831,7 @@ p.note.clamp:not(.open) { display: -webkit-box; -webkit-line-clamp: 2; -webkit-b
 .read.old .tag b { display: block; font-family: var(--f-mono); font-weight: 500; }
 .read.old p { color: var(--ink-2); }
 @media (max-width: 860px) { .held { margin: 14px 16px -6px; } }
+/* 2026-11-06 回調壓力清單：燈號會換行，改用上下分隔線 */
+.lights.pb { grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); }
+.lights.pb .light + .light { border-left: 0; padding-left: 0; }
+.lights.pb .light { border-bottom: 1px solid var(--line); padding-right: 14px; }

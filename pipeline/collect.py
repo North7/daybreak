@@ -872,6 +872,36 @@ try:
     R['cohort'] = cohort_urpd.daily(MFS.get('urpd_raw'), _hw, _px, c, SER.get('sth-realized-price'), _coh, bitview.urpd_rows if BV else None)   # 2026-11-04：30 天前也用 Bitview 實際分布
 except Exception as e: errors.append(f'cohort {e}'); R['cohort'] = None
 
+# G4h. 2026-11-06 使用者要求（指標擴充，見 oc_extra.py、opt_flow.py；Bitview／Deribit／OKX 免費，不佔 bitcoin-data 額度）：
+#   第一、二批鏈上：供給分位成本線、短期持有者虧損比例的歷次、相對未實現獲利的地板、實現虧損峰值背離、長短期供給比 30 日變化、
+#   資金與價格增量梯度、鏈上勢能、回調壓力清單。第三批衍生品：Gamma 曝險（推算做市商部位）、選擇權買方權利金差、OKX 現貨主動買賣差。各項獨立，失敗只影響該項
+if BV:
+    try:
+        import oc_extra
+        _md2 = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json')))
+        _pxc, _trf = globals().get('PXC') or {}, (R.get('cohort') or {}).get('transfers') or []
+        for _k, _fn in (('quant', lambda: oc_extra.quant_viz(BV, _pxc, LAST, _md2['cycle_bottoms'])), ('sthl', lambda: oc_extra.sthl_viz(BV, _pxc, LAST)),
+                        ('rup', lambda: oc_extra.rup_viz(BV, _pxc, LAST)), ('rloss', lambda: oc_extra.rloss_viz(BV, _pxc, LAST, _trf)),
+                        ('lsrchg', lambda: oc_extra.lsrchg_viz(BV, _pxc, LAST, _md2['cycle_bottoms'], _md2['cycle_tops'])),
+                        ('grad', lambda: oc_extra.grad_viz(BV, _pxc, LAST)), ('mom', lambda: oc_extra.mom_viz(BV, _pxc, LAST)),
+                        ('pullback', lambda: oc_extra.pullback_viz(BV, _pxc, LAST, R.get('sec'), R.get('rloss')))):
+            try: R[_k] = _fn()
+            except Exception as e: errors.append(f'oc_extra {_k} {e}')
+    except Exception as e: errors.append(f'oc_extra {e}')
+try:
+    import opt_flow
+    try: _dfc = opt_flow.update_trades(now, backfill_days=3, max_pages=300)   # 快取不見時只補 3 天（完整回補一年要在本機跑）
+    except Exception as e: _dfc = opt_flow._load(opt_flow.DF_CACHE, {}); errors.append(f'deribit 逐筆成交 {e}')
+    try: R['gex'] = opt_flow.gex_viz(opt['result'], _dfc.get('net') or {}, now, ((R.get('murphy_viz') or {}).get('urpd') or {}).get('band'))
+    except Exception as e: errors.append(f'gex {e}')
+    try: R['prem'] = opt_flow.prem_viz(_dfc, globals().get('PXC') or {}, LAST)
+    except Exception as e: errors.append(f'prem {e}')
+    try: _okc = opt_flow.okx_update(now)
+    except Exception as e: _okc = opt_flow._load(opt_flow.OK_CACHE, {}); errors.append(f'okx 主動買賣 {e}')
+    try: R['svd'] = opt_flow.svd_viz(_okc, globals().get('PXC') or {}, LAST)
+    except Exception as e: errors.append(f'svd {e}')
+except Exception as e: errors.append(f'opt_flow {e}')
+
 # ---------- G5. 2026-10-02 使用者要求：掛單簿深度（Coinbase／Kraken／Bitstamp 三家合計，舊口徑保留供序列比較；Binance 現貨改由 G5b 經 data-api.binance.vision 取得，Binance 期貨 451、Bybit 403 不可用）。只作讀值，不連動任何規則 ----------
 try:
     OBS = {'coinbase': 'https://api.exchange.coinbase.com/products/BTC-USD/book?level=2',
