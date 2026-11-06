@@ -111,7 +111,7 @@ cron-job.org ──(repository_dispatch)──▶ GitHub Actions
                             → 提交到 main ─▶ GitHub Pages
    14:00 UTC  etf.yml       → 補抓 ETF 流量
 
-Claude 排程任務（00:30 UTC）→ brief.py 精簡摘要 + 查新聞與研報
+Claude 排程任務（00:15 UTC）→ brief.py 精簡摘要 + 查新聞與研報
                             → data/notes.json、data/notes.en.json → 提交到 main
 瀏覽器 → index.html + assets/app.js 讀 latest.json 與 notes（英文版讀 notes.en.json）
 ```
@@ -120,7 +120,7 @@ Claude 排程任務（00:30 UTC）→ brief.py 精簡摘要 + 查新聞與研報
 |---|---|---|---|---|
 | 22:40（前一天） | 06:40 | cron-job.org → Actions | 抓 8 個鏈上指標進 `pipeline/bd_cache/` | 0 |
 | 00:06 | 08:06 | cron-job.org → Actions | 抓所有資料、算指標、更新 `data/latest.json`、封存前一期、提交 | 0 |
-| 00:30 | 08:30 | Claude 排程任務 | 讀摘要、查證新聞與研報，寫頭條、各版判讀與英文版，提交 | 少量 |
+| 00:15 | 08:15 | Claude 排程任務 | 讀摘要、查證新聞與研報，寫頭條、各版判讀與英文版，提交 | 少量 |
 | 14:00 | 22:00 | Actions | 補抓 ETF 流量（The Block 晚約一個交易日公布） | 0 |
 
 GitHub 自己的定時排程在這個倉庫每天晚 5–7 小時，所以改由 cron-job.org 準時觸發（設定見 [docs/CRON_JOB.md](docs/CRON_JOB.md)）；原本的 `schedule` 與 Claude 推送 `.github/run-daily` 觸發都保留當備援，同一天重複觸發會自動略過。`notes.json` 的日期若和資料日不同，網站仍顯示上一期的判讀並標示，數字永遠是最新的。
@@ -139,7 +139,7 @@ GitHub 自己的定時排程在這個倉庫每天晚 5–7 小時，所以改由
 3. **Settings → Actions → General → Workflow permissions** 選「Read and write permissions」。
 4. Actions 頁面手動執行一次「Daily data」，確認 `data/latest.json` 有更新。
 5. 依 [docs/CRON_JOB.md](docs/CRON_JOB.md) 建 GitHub token，在 cron-job.org 建兩個工作（daily-data 00:06、prefetch 22:40，UTC）。
-6. 在 Claude Code 建每日排程任務（UTC 00:30），指示內容見 [docs/CLAUDE_DAILY.md](docs/CLAUDE_DAILY.md)。
+6. 在 Claude Code 建每日排程任務（UTC 00:15），指示內容見 [docs/CLAUDE_DAILY.md](docs/CLAUDE_DAILY.md)。
 
 ## 本機開發
 
@@ -242,7 +242,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 
 ## X 推廣
 
-- 每天 08:30 的日報任務寫完後，另寫 `data/x_post.json`（中英各一則 X 貼文草稿）並推播到手機，複製貼上即可發。
+- 每天 08:15 的日報任務寫完後，另寫 `data/x_post.json`（中英各一則 X 貼文草稿）並推播到手機，複製貼上即可發。
 - 日報推送後，`share.yml` 自動產生號外風格的分享圖：`data/share.png`（中文）、`data/share-en.png`（英文）。
 - 今日推薦圖表：日報任務另寫 `data/picks.json`（1–3 張圖，各一則中英文解說，只講市場資訊），`share.yml` 用 `pipeline/picks.py` 畫成 1080×1350 的圖放在 `data/picks/`，發文小幫手下方可分享、存圖、複製解說。
 - 網站側欄與頁尾有追蹤 [@songpu717](https://x.com/songpu717) 的連結；貼文連結帶 `?utm_source=x`。
@@ -274,6 +274,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 週期版分三組：現在的階段 → 離頂部多近 → 和歷史與模型比。資金版的 ETF 流量和穩定幣在桌面並排。
   - 圖表面板裡，圖後面的表格（歷次紀錄、情境表）收成「展開表格」；長的說明只露前兩行，點「展開說明」看全文。頭版、消息、出場、往期、方法版不動。
   - 「異動」說明（使用者：「圖上有異動字樣的，不知道在哪裡可以看怎樣的異動、異動哪裡了、說明什麼、意味著什麼」）：圖上的「異動」改成可以點開，依序寫哪種異動（觸發的規則與門檻）、什麼時候（從哪天開始、第幾天、圖上橘色直線就是那天）、背景與拆解、代表什麼（這類異動一般的含意，只寫一般含意、不寫預測）、過去同樣情況之後 30 天價格（次數、中位數、和同期任一天比，附樣本數）。頭版「自動偵測的異動」每則直接顯示一般含意，其餘收在「規則、數字與過去同樣情況」。含意由 `pipeline/signal_means.py` 產生（26 個序列 × 上下、14 種翻轉、價位、連續與組合），翻轉類（SOPR 穿越 1、價格穿越 200 日均線／短期持有者成本／真實市場均價、資金流入、Coinbase 溢價、IV−RV）也補上歷史對照；11/04 的資料一次性補值。
+  - 數字和判讀整期一起換（使用者：「不然有一段時間就會出現數字和判讀對不上的情況」）：日報任務從台北 08:30 提前到 08:15（資料約 08:10 更新完）；資料管線寫新數字前把上一份存成 `data/latest.prev.json`，網站發現判讀還是上一期、而且新數字產出不到 3 小時，就整期顯示上一份數字配上一期判讀，頂端說明「新數字已到、判讀撰寫中」，可點「先看新數字」；判讀寫好後提示「新一期已出」。超過 3 小時判讀還沒好就顯示新數字，各版判讀標「上一期判讀 MM/DD」。日報任務第一步加：今天這一期已經寫好就停止，不重寫。
   - 結果（桌面、中文）：週期版 7,927 → 6,730px；鏈上版多了搬來的持幣成本仍從 17,268 → 16,575px。只改版面與順序，資料、管線、看法判斷都沒動。
   - 版面順序改成頭版、消息、**週期**、**鏈上**、價格、資金、衍生品、出場框架、往期、方法（使用者要求週期放在鏈上前面；鍵盤 3＝週期、4＝鏈上）。
 - **2026-11-04** 整體審查：頭版、訊號總表、結構與圖表
@@ -431,7 +432,7 @@ cron-job.org ──(repository_dispatch)──▶ GitHub Actions
                             → commit to main ─▶ GitHub Pages
    14:00 UTC  etf.yml       → ETF flow catch-up
 
-Scheduled Claude task (00:30 UTC) → brief.py summary + news and research checks
+Scheduled Claude task (00:15 UTC) → brief.py summary + news and research checks
                                   → data/notes.json, data/notes.en.json → commit to main
 Browser → index.html + assets/app.js read latest.json and notes (English reads notes.en.json)
 ```
@@ -440,7 +441,7 @@ Browser → index.html + assets/app.js read latest.json and notes (English reads
 |---|---|---|---|---|
 | 22:40 (day before) | 06:40 | cron-job.org → Actions | Fetch 8 on-chain series into `pipeline/bd_cache/` | 0 |
 | 00:06 | 08:06 | cron-job.org → Actions | Fetch everything, compute, update `data/latest.json`, archive the previous edition, commit | 0 |
-| 00:30 | 08:30 | Claude task | Read the summary, verify news and research, write the headline, section reads and the English edition, commit | Few |
+| 00:15 | 08:15 | Claude task | Read the summary, verify news and research, write the headline, section reads and the English edition, commit | Few |
 | 14:00 | 22:00 | Actions | ETF flow catch-up (The Block publishes about one trading day late) | 0 |
 
 GitHub's own cron runs 5–7 hours late on this repository, so cron-job.org triggers the workflows on time (setup in [docs/CRON_JOB.md](docs/CRON_JOB.md)). The original `schedule` and the Claude task's push to `.github/run-daily` remain as fallbacks; duplicate triggers on the same day exit early. If `notes.json` is older than the data, the site shows the previous edition's commentary with a label, while every number is current.
@@ -459,7 +460,7 @@ GitHub's own cron runs 5–7 hours late on this repository, so cron-job.org trig
 3. **Settings → Actions → General → Workflow permissions**: "Read and write permissions".
 4. Run "Daily data" once from the Actions tab and check that `data/latest.json` updates.
 5. Follow [docs/CRON_JOB.md](docs/CRON_JOB.md) (in Chinese): create a GitHub token and two cron-job.org jobs (daily-data 00:06, prefetch 22:40, UTC).
-6. Create the scheduled Claude Code task (00:30 UTC) with the instructions in [docs/CLAUDE_DAILY.md](docs/CLAUDE_DAILY.md).
+6. Create the scheduled Claude Code task (00:15 UTC) with the instructions in [docs/CLAUDE_DAILY.md](docs/CLAUDE_DAILY.md).
 
 ### Local development
 
@@ -508,7 +509,7 @@ Pull requests run **Site checks** (`.github/workflows/check.yml`): syntax, Engli
 
 ### Promotion on X
 
-- After the 08:30 daily task finishes the notes, it writes `data/x_post.json` (one X post draft in Chinese, one in English) and sends it to the phone as a push notification, ready to copy and post.
+- After the 08:15 daily task finishes the notes, it writes `data/x_post.json` (one X post draft in Chinese, one in English) and sends it to the phone as a push notification, ready to copy and post.
 - Once the notes are pushed, `share.yml` draws Extra-style share cards: `data/share.png` (Chinese) and `data/share-en.png` (English).
 - Today's picks: the daily task also writes `data/picks.json` (1–3 charts, each with a Chinese and an English caption, market information only); `share.yml` runs `pipeline/picks.py` to draw them as 1080×1350 images in `data/picks/`, shown at the bottom of the posting helper with share, save and copy-caption buttons.
 - The sidebar and footer link to [@songpu717](https://x.com/songpu717); post links carry `?utm_source=x`.
@@ -540,6 +541,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Cycle is split into three groups: where we are → how close to a top → against history and models. ETF flows and stablecoins sit side by side on Flows.
   - Page order is now Front page, News, **Cycle**, **On-chain**, Price, Flows, Derivatives, Exit plan, Archive, Method (keys 3 = Cycle, 4 = On-chain).
   - Chart “Signal” flags now open into a full note: which rule fired (with its threshold), when it started and which day it is (the orange line on the chart marks that day), context and breakdown, what this kind of signal usually means (general meaning only, no forecast), and what price did over the next 30 days in past cases (count, median and a same-period baseline, with sample size). The front-page signal list shows the meaning directly with the rest folded. Text comes from `pipeline/signal_means.py`; flips now get past cases too.
+  - Numbers and commentary now switch together: the daily writing task starts at 08:15 Taipei instead of 08:30, and the pipeline keeps the previous numbers as `data/latest.prev.json`. While today's commentary is still being written (and the new numbers are under 3 hours old), the site shows the whole previous edition with a note that new numbers are in, plus a “Show new numbers” button; it then offers “New edition is out”. After 3 hours without new commentary, new numbers show and each section's commentary is marked “Previous read”.
   - In chart panels, tables after the chart (past episodes, scenarios) fold under “Show table”, and long notes show two lines until “More” is clicked. Layout and order only; data, pipeline and views are unchanged.
 - **2026-11-05** Exit plan v3; cost-band lines; indicator additions
   - Seven panels gain “Our read”, the site's own view built from the data (lean, reasons, and what would change it), drawing on how analysts read these measures (true market mean as the bull/bear line, short-term holder cost as support in uptrends, a veteran-to-new-buyer handover before new highs, loss-selling bursts at local lows). On 11/04: range between 77.6K and 85.1K, new buyers under water, weak demand, handover under way, no big capitulation this cycle (leaning to the low being in), not a classic deep bear.

@@ -42,7 +42,7 @@ def shoot(items, lang, tmp):
         ws.call('Emulation.setDeviceMetricsOverride', width=W, height=1000, deviceScaleFactor=2, mobile=False)
         ws.call('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': 'dark'}])
         ws.call('Page.navigate', url=SS.SITE); SS.wait(ws, 'document.readyState === "complete"')
-        ws.js(f"localStorage.setItem('daybreak.lang', '{lang}'); localStorage.setItem('daybreak.theme', 'dark'); true")
+        ws.js(f"localStorage.setItem('daybreak.lang', '{lang}'); localStorage.setItem('daybreak.theme', 'dark'); localStorage.setItem('daybreak.nohold', '1'); true")   # nohold：判讀撰寫中也截最新數字（2026-11-06）
         for n, st in items:   # 每張重新載入，前一張的 pre／clean 不會留下來
             ws.js('window.__old = 1; true')
             ws.call('Page.navigate', url=SS.SITE + '?v=' + str(int(time.time() * 1000)) + '#' + st['page'])
