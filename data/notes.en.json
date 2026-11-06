@@ -1,187 +1,621 @@
 {
-  "date": "2026-11-04",
-  "written_utc": "2026-11-05T00:38:21Z",
-  "edition": 30,
-  "stance": {"label": "Early bull phase of the cycle · hold", "tone": "neutral", "short": "Bull day 27, no action"},
-  "headline": "Democrats sweep Congress, oil −9%: $396M of BTC liquidations, mostly shorts, lift price above the true market mean; spot still at a discount.",
-  "summary": "A short squeeze pushed price back above the true market mean of 77,627, and the short-term holders who bought at 76K are now in profit; STH-SOPR is back at 1.0021. Spot did not do the lifting: the Coinbase premium 7-day average is still −0.187%, ETFs lost a provisional $115.6M on Nov 3, and stablecoins are −2.15% over 7 days. Watch whether closes hold above 77,000 and whether US spot demand returns.",
-  "watch": [
-    {"label": "200-day MA", "value": 73181, "note": "5 straight closes below it trigger the 20% hedge; now 9.0% below the close (5.4% last issue); run 0 days"},
-    {"label": "MVRV 0.75 line", "value": 112397, "note": "First on-chain sell trigger; ratio 0.5182, run 0 days, 39.7% away (CoinMetrics, Nov 3)"},
-    {"label": "First exit step", "value": 125000, "note": "A close at or above it sells 12.5%; 55.4% away"}
-  ],
-  "modules": {
-    "overview": {
-      "lead": "Once the election result landed, a short squeeze lifted price back above the true market mean and the new 76K layer flipped from loss to profit; but US spot, ETFs and stablecoins are all still pulling back, so this was leverage changing sides, not demand returning.",
-      "points": [
-        "Today's finding: the 80,441 close is back above the true market mean of 77,627 (Bitview, Nov 4); STH-SOPR went 0.9954 → 1.0021 and the share of STH supply in profit rose from 30.25% on Nov 2 to 62.89%.",
-        "Derivatives did the pushing: CoinGlass shows $396M of BTC liquidations in 24 hours, 75.9% of them shorts (crypto.news, Nov 4); the Coinbase premium was −0.094% on the day and −0.187% on a 7-day average.",
-        "ETFs: provisional −$115.6M on Nov 3 (third outflow day); stablecoins $295.1B, −2.15% over 7 days; the exchange-supply supporting light turned off, now 3/6.",
-        "Bull day 27; no exit-framework trigger, and the gap to the 200-day MA widened to 9.0%."
-      ]
-    },
-    "cycle": {
-      "lead": "Bull day 27, supporting lights down from 4/6 to 3/6: the 90-day change in exchange supply is back to 0, so that light went out; price reclaimed the mean, but the STH-cost-above-true-market-mean light is still 2.15% short.",
-      "points": [
-        "56 straight closes above a rising 200-day MA (73,181; 71,581 thirty days ago); bull stage since 2026-10-09.",
-        "Lit (3): MVRV vs its 1-year mean (1.438 > 1.411), realized cap +0.59% over 30 days, close above the STH cost basis of 75,961 (Bitview, Nov 4). Unlit: 12-month momentum −27.1%, exchange supply 90-day 0.0%, STH cost basis 2.15% below the true market mean.",
-        "At the last 30 days' pace the STH cost basis crosses above the true market mean around 2026-12-02; with price unchanged the 12-month momentum light flips around 2027-02-01; both are linear extrapolation / flat-price assumptions, not forecasts.",
-        "Weekly regime score 1.03 → 0.82 (Nov 3; bullish for 6 weeks since Sep 22), below 1 in absolute terms and prone to flipping; Tidemark (Nov 4, price date Nov 3) top 0, bottom 25.6."
-      ]
-    },
-    "market": {
-      "lead": "A high-volume green candle closed near the day's high, back in the middle of the 77–83K volume cluster; the first hurdles above are the 50-day MA and the top of the value area.",
-      "points": [
-        "Nov 4 +4.02%, range 75,625–81,180 (7.18%), close at 86.7% of the range; volume 2.13× the 20-day average and 1.93× the prior day.",
-        "The close just cleared the 20-day MA at 80,206; above are the POC at 80,750, the 50-day MA at 81,993 (+1.9%) and the value-area top at 82,750; below are the true market mean at 77,627 (−3.5%) and the STH cost basis at 75,961 (−5.6%).",
-        "Current leg (since Jun 30): 127 days, +37.4%, −7.1% from the Sep 21 high of 86,594; leg-end line 73,605 (−8.5%).",
-        "RV7 50.0% vs RV30 32.3% (ratio 1.55): realized volatility this week is well above the monthly average."
-      ]
-    },
-    "deriv": {
-      "lead": "This was a short squeeze: liquidations were mostly shorts and funding actually cooled; large Hyperliquid accounts are still twice as short as long, and the nearest estimated short liquidation band sits 2.5% above.",
-      "points": [
-        "Link to today's finding: weighted funding 10.7% → 8.68% (OKX 8.19%, Hyperliquid 10.95%, Deribit 0). Price rose 4% while longs paid less, so the lift came from shorts closing, not new longs chasing.",
-        "Top 300 Hyperliquid accounts by equity: 22 accounts short 7,891 BTC, 16 long 3,646 BTC (00:06 UTC); big accounts may be market makers or hedgers. Estimated short liquidation bands at 82,000–83,000 (+2.5%) and 84,900–86,000 (+6.2%), long band at 73,800–75,600 (−7.2%); within ±5% of the close, 5,542 BTC above vs 776 BTC below (estimated, OKX only).",
-        "DVOL 39.73 → 38.06 (1-year percentile 27.7), 6.0 points above RV30; 30-day 25Δ risk reversal −3.51 → −2.88, so the premium for downside protection eased again.",
-        "Order book (00:06 UTC, Hyperliquid perp) is thick on both sides at 80,000: $233M bid, $204M ask, with $129M asked at 81,000; the Nov 6 weekly expiry holds 9.9% of OI with max pain at 79,000 and calls clustered at 82,000 and 85,000."
-      ]
-    },
-    "flows": {
-      "lead": "Price came back, the dollars did not: ETFs have three straight outflow days, Coinbase still trades at a discount and stablecoins shrank $12.2B in 30 days; only the Asian OTC USDT discount narrowed.",
-      "points": [
-        "Link to today's finding: Coinbase premium −0.151% → −0.094% daily, 7-day average −0.190% → −0.187%, still in the lowest zone of the series since 2026-01 (n=299); OKX OTC USDT/CNY discount 1.137% → 0.838% (3 days of history).",
-        "ETFs: provisional −$115.6M on Nov 3 (Farside and SoSoValue agree); 7 trading days to Nov 2 (The Block) −$739M; the latest complete day lags bar_date by two trading days.",
-        "Stablecoins $295.1B, −2.15% over 7 days and −$12.2B over 30 days; realized cap +0.59% over 30 days (Nov 3), positive for 73 days but still slowing.",
-        "Fear & Greed 26 → 34 (fear); 10-year yield 4.95%, real yield 2.65% (FRED, Nov 3); BTC–Nasdaq 30-day correlation 0.63."
-      ]
-    },
-    "onchain": {
-      "lead": "Short-term buyers moved from selling at a loss back to a small profit, but sellers network-wide are still net realizing losses; LTHs' 30-day net reduction widened to 167K BTC, and 84K is where both cohorts' supply is thickest overhead.",
-      "points": [
-        "Link to today's finding: STH realized profit 3,863 vs loss 3,334 BTC (CheckOnChain, Nov 4; ratio 1.16, 2.47 a week ago). STH-SOPR is back at 1 because price moved above the 76K buyers' cost, not because profit-taking picked up.",
-        "Network-wide realized profit ÷ loss 7-day average 0.807 (1.148 on Nov 4), 90-day average 2.351; net realized P/L −$393M on Nov 3, −$2.01B over 7 days vs +$3.27B the prior 7.",
-        "LTH 30-day net position −149,737 → −166,633 BTC (bitcoin-data, Nov 3); this net reduction has run 92 days since Aug 4 while price rose 20.7%: veterans are selling into the rebound, so there is supply overhead.",
-        "Apparent demand −156,497 BTC over 30 days, below its own 30-day average of −64,340; supply unmoved for 1+ year rose 170K BTC in 30 days, partly last year's buying turning one year old. Seller exhaustion constant 0.2051 (percentile 10.8 since 2011); top three indicators (Nov 3) MVRV Z 36.5, NUPL 32.7, Puell 43.6."
-      ]
-    },
-    "exit": {
-      "lead": "No part of the exit framework has fired; the rally widened the gap to the 200-day MA from 5.4% to 9.0%.",
-      "points": [
-        "200-day MA 73,181 is 9.0% below the close; 0 straight closes below it; 5 straight closes below start the 20% hedge.",
-        "MVRV ÷ prior-cycle peak 0.5182; the 0.75 line is 112,397 (+39.7%) and the 0.80 line 119,891 (+49.0%), both with runs of 0.",
-        "First exit step 125,000 is 55.4% away; the highest top indicator is 43.6, far from the top zone at 80."
-      ]
-    }
+ "date": "2026-11-05",
+ "written_utc": "2026-11-06T00:31:28Z",
+ "edition": 31,
+ "stance": {
+  "label": "Early bull phase of the cycle · hold",
+  "tone": "neutral",
+  "short": "Bull day 28, no action"
+ },
+ "headline": "Nasdaq −5.5% drags BTC back to the 75,989 short-term holder cost basis; 70% of short-term coins are now at a loss.",
+ "summary": "A tech-led stock rout cut BTC 5.55% in a day, back to the short-term holder cost basis, with only 27.4% of short-term coins still in profit. STH-SOPR is still 1.0015: newer buyers have not started selling at a loss, so the latent supply has not been released. Watch bids at 74,000–75,000, the Coinbase premium and tonight's payrolls.",
+ "watch": [
+  {
+   "label": "200-day MA",
+   "value": 73192,
+   "note": "5 straight closes below it trigger the 20% hedge; 3.7% below the close (9.0% last issue), now inside the 5% near zone; run 0 days"
   },
-  "news": [
-    {"time": "2026-11-04", "cat": "宏觀", "impact": "bull", "weight": 3, "title": "Democrats win both the House and Senate and Trump says he accepts the result; the Dow +1,569 points (+3.03%), S&P 500 +1.58%, Nasdaq +1.44%, the Dow's best day since April 2025", "source": "CNBC, 2026-11-04", "url": "https://www.cnbc.com/2026/11/03/stock-market-today-live-updates.html", "read": "The risk of a contested result is gone and risk assets rallied together; BTC rose 4.02% the same day, with a 0.63 30-day correlation to the Nasdaq. A change in Congress is a headwind for crypto legislation timing (see the CLARITY item), but the market traded the macro first. Better macro mood helps flows, but ETFs and the Coinbase premium have not followed yet; it does not change the cycle call.", "module": "flows"},
-    {"time": "2026-11-04", "cat": "地緣", "impact": "bull", "weight": 2, "title": "Oil slumps after VP Vance blames the Iran war for the election losses: Brent −9%+ to $93.91, WTI nearly −9% to $87.59; the dollar index −0.55% to 101.32, its lowest since Oct 1", "source": "Bitcoin Magazine, 2026-11-04", "url": "https://bitcoinmagazine.com/markets/bitcoin-price-holds-near-80000-short", "read": "Cheaper oil eases inflation and rate-hike pressure and the dollar weakened, a tailwind for BTC; our 10-year yield of 4.95% and real yield of 2.65% (FRED, Nov 3) do not yet reflect the day. Renewed US–Iran tension could reverse the oil move. Macro backdrop; it does not directly change the cycle call.", "module": "flows"},
-    {"time": "2026-11-04", "cat": "衍生品", "impact": "bull", "weight": 3, "title": "BTC reclaims 80,000; CoinGlass shows $396M of BTC liquidations in 24 hours, 75.9% shorts, and $378M of shorts liquidated market-wide in one hour", "source": "crypto.news, 2026-11-04", "url": "https://crypto.news/bitcoin-80k-378m-short-liquidations-etf-outflows/", "read": "The key item this issue: shorts closing drove the rally (see 2026-11-04-2). Our weighted funding fell from 10.7% to 8.68%, so new longs were not chasing; an estimated short liquidation band remains at 82,000–83,000 (+2.5%, estimated, OKX only). A squeeze is one-off fuel and needs spot to follow; it does not change the cycle call.", "module": "deriv"},
-    {"time": "2026-11-03", "cat": "資金", "impact": "bear", "weight": 2, "title": "US spot BTC ETFs saw −$115.6M on Nov 3, a third straight outflow day; IBIT −$95.0M, GBTC −$52.6M, BITB +$21.9M", "source": "TokenPost (SoSoValue data), 2026-11-04", "url": "https://www.tokenpost.com/news/investing/48350", "read": "The outflow was about 70% smaller than the prior day, but the direction held: roughly $1.16B over three days. We added Nov 3 as a provisional value from Farside and SoSoValue; The Block's figure will overwrite it. The Coinbase premium 7-day average of −0.187% says US spot is still selling. Flows are soft; it does not change the cycle call.", "module": "flows"},
-    {"time": "2026-11-04", "cat": "監管", "impact": "neutral", "weight": 2, "title": "The CLARITY market-structure bill is stalled; Democratic lawmakers are reportedly weighing changes to expand SEC authority, strengthen investor protection and restrict officials' crypto activity (unverified)", "source": "The Motley Fool, 2026-11-04", "url": "https://www.fool.com/coverage/stock-market-today/2026/11/04/crypto-market-today-nov-4-bitcoin-stages-sharp-recovery-as-wall-street-rallies-and-regulatory-hopes-return/", "read": "Single source and early-stage talks. The new Congress widens the uncertainty on the bill's version and timing, which matters for the industry's long-run framework, not this week's flows; we have no data series to check it against. It does not change the cycle call.", "module": "flows"},
-    {"time": "2026-11-04", "cat": "鏈上", "impact": "neutral", "weight": 2, "title": "Glassnode: STH supply in profit fell from 97.5%+ in early October to about 38%; 73–76K is where the STH cost basis, 200-day MA and long liquidations meet; after the past three midterms BTC fell another 15–50% within 2–10 weeks", "source": "Glassnode The Week On-chain, 2026-11-04", "url": "https://research.glassnode.com/the-week-onchain-week-44-2026/", "read": "Its data runs to Nov 4 11:00 UTC, before the rally; our Bitview share of STH supply in profit closed the day at 62.89%, back above half. The midterm history is only 3 cases, background only; its 73–76K band matches our STH cost basis of 75,961 and 200-day MA of 73,181. It does not change the cycle call.", "module": "onchain"},
-    {"time": "2026-11-04", "cat": "產業", "impact": "neutral", "weight": 1, "title": "American Bitcoin posts Q3 net income of about $126M on revenue of $63.4M; BTC reserve about 8,427 at Sep 30 (8,002 at Jun 30)", "source": "PR Newswire, 2026-11-04", "url": "https://prnewswire.com/news-releases/american-bitcoin-reports-third-quarter-2026-results-302929390.html", "read": "Miners are still accumulating rather than selling; our 7-day hashrate is 1,028 EH/s, −4.28% on the week, and the Nov 13 difficulty adjustment is estimated at −2.26%, with no sign of forced miner selling. Industry reference; it does not change the cycle call.", "module": "onchain"}
-  ],
-  "events": [
-    {"date": "2026-11-05", "label": "Strategy CFO steps down"},
-    {"date": "2026-11-06", "label": "US October payrolls (Taipei 21:30 / 13:30 UTC); Deribit weekly expiry (Taipei 16:00 / 08:00 UTC), 9.9% of total OI, max pain 79,000"},
-    {"date": "2026-11-10", "label": "US October CPI (BLS, Taipei 21:30 / 13:30 UTC)"},
-    {"date": "2026-11-11", "label": "MSCI publishes the list of affected non-operating companies"},
-    {"date": "2026-11-12", "label": "European Banking Authority begins direct supervision of USDC"},
-    {"date": "2026-11-13", "label": "Difficulty adjustment (estimated −2.26%)"},
-    {"date": "2026-11-22", "label": "Apparent demand: one-year echo of last year's suspected Nov 22–23 wallet move"},
-    {"date": "2026-11-25", "label": "US Q3 GDP second estimate (BEA)"},
-    {"date": "2026-11-27", "label": "Deribit monthly options expiry (Taipei 16:00 / 08:00 UTC), 18.4% of total OI, max pain 80,000"},
-    {"date": "2026-11-30", "label": "Monthly long-term path review; MSCI non-operating company rule takes effect after the November index review close"},
-    {"date": "2026-12-01", "label": "Moscow Exchange plans to open BTC spot trading; Sberbank opens crypto trading to all clients (expected)"},
-    {"date": "2026-12-04", "label": "US November payrolls (first Friday by convention, pending official schedule)"},
-    {"date": "2026-12-09", "label": "FOMC rate decision (Dec 8–9; Taipei Dec 10 03:00 / Dec 9 19:00 UTC)"},
-    {"date": "2026-12-10", "label": "US November CPI (conventional date, pending official schedule)"},
-    {"date": "2026-12-19", "label": "Tidemark cycle-low verification date (58,525 must hold)"},
-    {"date": "2026-12-25", "label": "Deribit quarterly options expiry (Taipei 16:00 / 08:00 UTC), 41.2% of total OI, max pain 75,000"},
-    {"date": "2026-12-31", "label": "Monthly long-term path review"}
-  ],
-  "actions": [
-    {"kind": "do", "head": "Under the framework no step has fired today; no action.", "text": "The nearest action points are the 200-day MA at 73,181 below (−9.0%) and the MVRV 0.75 line at 112,397 above (+39.7%)."},
-    {"kind": "dont", "head": "Don't read this big green candle as spot buyers coming back.", "text": "Liquidations were mostly shorts and funding fell to 8.68%; at the same time the Coinbase premium 7-day average is −0.187% and ETFs lost a provisional $115.6M on Nov 3."},
-    {"kind": "watch", "head": "Levels: above, the 50-day MA at 81,993, the estimated short liquidation band at 82,000–83,000 (+2.5%) and the thick 84–86K supply; below, the true market mean at 77,627 (−3.5%) and the STH cost basis at 75,961 (−5.6%).", "text": "Liquidation bands are estimates from OKX only; a close back below 77,000 would mean the squeeze gains were given back."},
-    {"kind": "watch", "head": "Nov 6 payrolls (Taipei 21:30 / 13:30 UTC) and the weekly expiry (Taipei 16:00 / 08:00 UTC, max pain 79,000); Nov 10 CPI (Taipei 21:30 / 13:30 UTC).", "text": "Also watch the final Nov 3 ETF figure and whether the Coinbase premium gets back above −0.05%."},
-    {"kind": "flip", "head": "5 straight closes below 73,181 → framework hedge cuts 20%.", "text": "Now −9.0% away, run 0 days; the leg-end line 73,605 (−8.5%) sits above the MA; reverting from bull to bear needs 30 straight closes below a falling 200-day MA."}
-  ],
-  "changes": [
-    {"dir": "up", "title": "Big green candle reclaims the true market mean", "fig": "Close 77,332 → 80,441 (+4.02%); volume vs 20-day average 1.13× → 2.13×", "say": "Closed at 86.7% of the day's range on heavy volume; but short covering did the pushing (see 2026-11-04-2), and the 82,750 value-area top is not cleared yet."},
-    {"dir": "down", "title": "Funding cooled", "fig": "Weighted funding 10.7% → 8.68%", "say": "Price jumped while longs paid less, so leveraged longs did not add; perp crowding eased a little."},
-    {"dir": "down", "title": "Exchange-supply supporting light off, 4/6 → 3/6", "fig": "Exchange supply 90-day −0.76% → 0.0% (CoinMetrics, Nov 3)", "say": "Post-Binance withdrawals were offset by other deposits, so the 90-day change is no longer negative; lights only grade evidence, and the bull call still rests on the 200-day MA."},
-    {"dir": "down", "title": "LTH 30-day net reduction widened again", "fig": "−149,737 → −166,633 BTC (bitcoin-data, Nov 2 → Nov 3)", "say": "The −150K confirmation line of 2026-10-31-3 is crossed; still shallower than this stretch's low of −265K."},
-    {"dir": "up", "title": "Sentiment up from deep fear", "fig": "Fear & Greed 26 → 34", "say": "Still in fear, versus 51 a week ago; sentiment is following price and is not a signal on its own."}
-  ],
-  "findings": [
+  {
+   "label": "MVRV 0.75 line",
+   "value": 112457,
+   "note": "First on-chain sell trigger; ratio 0.5368, run 0 days, 48.0% away (CoinMetrics, Nov 4)"
+  },
+  {
+   "label": "Exit step 1",
+   "value": 125000,
+   "note": "Sell 12.5% on a close at or above it; 64.5% away"
+  }
+ ],
+ "modules": {
+  "overview": {
+   "lead": "The post-election squeeze gains were gone in a day: a tech-stock rout dragged BTC back to the short-term holder cost basis and put 70% of short-term coins at a loss, but there is no wave of loss-taking yet; the 200-day MA is now within 5%.",
+   "points": [
+    "Today's finding: the 75,980 close sits right on the STH cost basis of 75,989 (Bitview, Nov 5); STH supply in profit fell from 41.6% to 27.4%, a 30-day low, while STH-SOPR stays above 1 at 1.0015.",
+    "Stocks did the pushing: Nasdaq −5.5%, Nasdaq 100 −6.4%; CoinGlass logged over $1B of 24-hour liquidations, mostly longs (CoinDesk, Nov 5).",
+    "Spot did not step in: Coinbase premium −0.156% daily, −0.170% 7-day average; ETFs took a provisional +$74.6M on Nov 4, ending three outflow days, but the 7 trading days to Nov 3 are still −$717M.",
+    "Bull day 28; the 200-day MA at 73,192 is 3.7% below the close; no exit-framework trigger."
+   ]
+  },
+  "cycle": {
+   "lead": "Bull day 28, supporting lights down from 3/6 to 2/6: the close fell below the STH cost basis and that light went out; the 200-day MA is still rising and the stage is unchanged, but the gap is down to 3.7%.",
+   "points": [
+    "57 straight closes above a rising 200-day MA (73,192; 71,657 thirty days ago); bull stage since 2026-10-09.",
+    "Lit (2): MVRV vs its 1-year mean (1.49 > 1.41), realized cap +0.55% over 30 days. Unlit: 12-month momentum −20.6%, exchange supply 90-day +1.53%, close below the STH cost basis, STH cost basis 2.1% below the true market mean.",
+    "At the last 30 days' pace the STH cost basis crosses above the true market mean around 2026-12-05; with price unchanged the 12-month momentum light flips around 2027-01-31; both are linear extrapolation / flat-price assumptions, not forecasts.",
+    "Versus past cycles: day 395 after the top, this cycle is −39.1% from its top; the previous three were at −74.5% to −81.8% on the same day. Only three cycles of sample."
+   ]
+  },
+  "market": {
+   "lead": "A high-volume red candle closed near the day's low, erased all of Nov 4's gain and dropped price out of the bottom of the 76.5–82K value area.",
+   "points": [
+    "Nov 5 −5.55%, range 75,100–80,828 (7.12%), closing at 15.4% of the range; volume 2.25× the 20-day average.",
+    "The close is below the 365-day MA (76,711) and the true market mean (77,618), right around the 350-day MA (75,801); below sit the 200-day MA at 73,192 (−3.7%) and the swing end line at 73,605 (−3.1%).",
+    "This swing (since Jun 30): up 128 days, +29.8%, −12.3% from the Sep 21 high of 86,594.",
+    "RV7 57.2% vs RV30 37.6% (ratio 1.52): weekly volatility has clearly expanded."
+   ]
+  },
+  "deriv": {
+   "lead": "A batch of longs was flushed, but leverage is not clean: funding is still positive, DVOL jumped, downside protection got pricier, and the estimated long-liquidation band sits 2% below the close.",
+   "points": [
+    "Link to today's finding: weighted funding 8.68% → 7.57% (OKX 3.04%, Hyperliquid 10.95%, Deribit 9.91%), so longs are still paying after the drop; Hyperliquid top 2,000 accounts: 115 short 12,797 BTC, 116 long 8,285 BTC (00:06 UTC).",
+    "DVOL 38.06 → 42.27 (1-year percentile 54.8); 30-day 25Δ risk reversal −2.88 → −5.57, puts clearly richer.",
+    "Estimated long-liquidation bands at 73,800–75,100 (−2.1%) and 72,300–73,700 (−4.0%); within 5% of the close, 7,601 BTC below vs 1,590 above (estimate, OKX only). A drop into those bands would trigger forced selling at market, which can speed a decline.",
+    "Order book (00:06 UTC): 75,000 bids of $187M, the thickest round number across 13 venues; 76,000 asks of $235M (both Hyperliquid perps). The Nov 6 weekly expiry is 9.9% of OI with max pain 79,000; the Nov 13 expiry has 4,204 BTC of puts at 74,000."
+   ]
+  },
+  "flows": {
+   "lead": "ETFs returned to a small inflow, but US spot and stablecoins are still leaving; the Asian OTC USDT discount closing to zero is the only line that improved.",
+   "points": [
+    "ETF Nov 4 provisional +$74.6M (Farside and SoSoValue agree; FBTC +$237M, IBIT −$201M); 7 trading days to Nov 3 (The Block) −$717M; the latest complete day lags bar_date by two trading days.",
+    "Coinbase premium daily −0.094% → −0.156%, 7-day average −0.170%, 30-day average −0.137%, the lowest since 2022 (n=1,500); OKX OTC USDT/CNY discount 0.838% → 0.0% (snapshot).",
+    "Stablecoins $294.6B, −1.84% over 7 days and −$13.2B over 30 days; realized cap +0.55% over 30 days (Nov 4), positive for 74 days but still slowing.",
+    "10-year yield 4.90%, real yield 2.64% (FRED, Nov 4); BTC's 30-day correlation with the Nasdaq is 0.645."
+   ]
+  },
+  "onchain": {
+   "lead": "Price is back at the newer buyers' cost: on paper 70% of short-term coins are underwater, but actual loss-taking has not picked up; LTH net selling narrowed, and apparent demand weakened.",
+   "points": [
+    "Link to today's finding: STH realized profit 4,279 vs loss 3,834 BTC (CheckOnChain, Nov 5; ratio 1.12, 2.13 a week ago); losses are up 69% in a week but still below 5,000 BTC.",
+    "Network-wide daily realized profit ÷ loss 7-day average 0.837, 90-day average 2.355; at the 7-day pace the 90-day average would cross below 1 around 2027-01-14 (projection; in 2019/12 it fell back for 37 days after 7 months above 1).",
+    "LTH 30-day net position −166,633 → −129,390 BTC (bitcoin-data, Nov 4), net selling for 93 days since Aug 4; LTH/STH supply ratio 4.29, 4.64 thirty days ago.",
+    "Apparent demand −219,369 BTC over 30 days, below its own 30-day average of −70,815: demand weakened; coins unmoved for a year rose 233K over 30 days, partly last year's buying turning one year old."
+   ]
+  },
+  "exit": {
+   "lead": "No exit-framework rule has fired; a 5.55% drop shrank the gap to the 200-day MA from 9.0% to 3.7%, inside the near zone.",
+   "points": [
+    "200-day MA 73,192 is 3.7% below the close; run below it 0 days; the 20% hedge starts after 5 straight closes below it.",
+    "MVRV ÷ prior-cycle peak 0.5368; the 0.75 line at 112,457 (+48.0%) and 0.80 line at 119,954 (+57.9%), both runs at 0.",
+    "Exit step 1 at 125,000 is 64.5% away; the highest top-trio reading is 50.3 (Puell, Nov 4), far from the 80 top zone."
+   ]
+  }
+ },
+ "news": [
+  {
+   "time": "2026-11-05",
+   "cat": "宏觀",
+   "impact": "bear",
+   "weight": 3,
+   "url": "https://www.coindesk.com/business/2026/11/05/live-updates-bitcoin-steady-around-usd80-000-as-markets-rally-after-democratic-sweep",
+   "module": "flows",
+   "title": "The AI selloff widened: Nasdaq −5.5%, S&P 500 −4.3%, Nasdaq 100 −6.4% (worst since March 2020), Philadelphia semiconductor index −12%; VIX up to 28",
+   "source": "CoinDesk, 2026-11-05",
+   "read": "The most important item today: BTC fell 5.55% the same day, in line with the Nasdaq, with a 0.645 30-day correlation. The selling came from collapsing risk appetite in stocks, not crypto-specific news; a −0.156% Coinbase premium and still-positive funding show nobody stepped in to buy spot. A macro shock moves the short-term position, not the cycle call; watch whether the 200-day MA at 73,192 holds."
+  },
+  {
+   "time": "2026-11-05",
+   "cat": "衍生品",
+   "impact": "bear",
+   "weight": 3,
+   "url": "https://bitbo.io/news/bitcoin-falls-below-76k/",
+   "module": "deriv",
+   "title": "CoinGlass: over $1B of crypto derivatives liquidated in 24 hours, mostly longs, the largest since Oct 28–29; BTC futures OI fell below $26B, the lowest since mid-September (Coinalyze)",
+   "source": "CoinDesk, 2026-11-05",
+   "read": "Shorts were flushed the day before and longs this day, so both sides of the two-day leverage swing got washed. Our weighted funding only eased from 8.68% to 7.57% and is still positive; the estimated long-liquidation band at 73,800–75,100 is 2.1% below the close (estimate, OKX only). CoinGlass figures and our estimate use different bases and are not compared. It does not change the cycle call."
+  },
+  {
+   "time": "2026-11-04",
+   "cat": "資金",
+   "impact": "bull",
+   "weight": 2,
+   "url": "https://www.tokenpost.com/news/investing/49056",
+   "module": "flows",
+   "title": "US spot BTC ETFs took in $74.57M on Nov 4, ending three outflow days; FBTC +$237M, IBIT −$201M (the only outflow), total assets $102.26B",
+   "source": "TokenPost (SoSoValue data), 2026-11-05",
+   "read": "The inflow came on the post-election rally day, was small, and BlackRock was still selling. We added a Nov 4 provisional value from two sources, Farside (+$74.6M) and SoSoValue; the 7 trading days to Nov 3 are still −$717M and the Coinbase premium 7-day average of −0.170% has not improved. Flows stopped bleeding but have not turned; it does not change the cycle call."
+  },
+  {
+   "time": "2026-11-05",
+   "cat": "宏觀",
+   "impact": "neutral",
+   "weight": 2,
+   "url": "https://www.coindesk.com/business/2026/11/05/live-updates-bitcoin-steady-around-usd80-000-as-markets-rally-after-democratic-sweep",
+   "module": "flows",
+   "title": "CME FedWatch: 69% odds of a 25bp December hike (95% in late September); the 10-year Treasury yield fell about 7bp to 4.82%, the 2-year to 4.47%; the Bank of England hiked 25bp to 4%",
+   "source": "CoinDesk, 2026-11-05",
+   "read": "Cooling hike odds and falling yields would normally help BTC, but this day risk-off beat rates and money went to Treasuries and gold. Our 10-year 4.90% and real yield 2.64% are FRED figures for Nov 4 and do not reflect this day yet. Tonight's payrolls are the next variable. It does not change the cycle call."
+  },
+  {
+   "time": "2026-11-05",
+   "cat": "產業",
+   "impact": "bear",
+   "weight": 2,
+   "url": "https://www.coindesk.com/business/2026/11/05/live-updates-bitcoin-steady-around-usd80-000-as-markets-rally-after-democratic-sweep",
+   "module": "onchain",
+   "title": "Crypto stocks slid together: Coinbase −7.8%, Strategy −8.3%, Robinhood and Circle −10% each; miners pivoting to AI data centers IREN −14.3%, Cipher −14.4%, CleanSpark −13.3% (intraday)",
+   "source": "CoinDesk, 2026-11-05",
+   "read": "Miners now trade with AI stocks, and a falling share price does not mean they must sell coins; our 7-day hashrate is 1,038 EH/s (−2.34% on the week) and the Nov 13 difficulty adjustment is estimated at −2.91%, with no sign of forced miner selling. Crypto stocks fell more than BTC, a risk-appetite story; it does not change the cycle call."
+  },
+  {
+   "time": "2026-11-05",
+   "cat": "鏈上",
+   "impact": "neutral",
+   "weight": 1,
+   "url": "https://bitbo.io/news/bitcoin-falls-below-76k/",
+   "module": "onchain",
+   "title": "BTC fell below 76,000 as US stocks lost about $2.3T intraday; a CryptoQuant gauge of BTC's link to the S&P 500 turned positive for the first time in data back to 2015; Glassnode support at 73,000–76,000",
+   "source": "Bitbo, 2026-11-05",
+   "read": "A single-source report on an indicator we cannot check against raw data; its support band matches our STH cost basis of 75,989 and 200-day MA of 73,192, and price is now at the top of that band. The tighter BTC is tied to stocks, the more the next stock move matters. It does not change the cycle call."
+  }
+ ],
+ "events": [
+  {
+   "date": "2026-11-06",
+   "label": "US October payrolls (Taipei 21:30 / 13:30 UTC); Deribit weekly expiry (Taipei 16:00 / 08:00 UTC), 9.9% of total OI, max pain 79,000"
+  },
+  {
+   "date": "2026-11-10",
+   "label": "US October CPI (BLS, Taipei 21:30 / 13:30 UTC)"
+  },
+  {
+   "date": "2026-11-11",
+   "label": "MSCI publishes the list of affected non-operating companies"
+  },
+  {
+   "date": "2026-11-12",
+   "label": "European Banking Authority begins direct supervision of USDC"
+  },
+  {
+   "date": "2026-11-13",
+   "label": "Difficulty adjustment (estimated −2.91%); Deribit weekly expiry (4,204 BTC of puts at 74,000)"
+  },
+  {
+   "date": "2026-11-22",
+   "label": "Apparent demand: one-year echo of last year's suspected Nov 22–23 wallet move"
+  },
+  {
+   "date": "2026-11-25",
+   "label": "US Q3 GDP second estimate (BEA)"
+  },
+  {
+   "date": "2026-11-27",
+   "label": "Deribit monthly options expiry (Taipei 16:00 / 08:00 UTC), 19.3% of total OI, max pain 80,000"
+  },
+  {
+   "date": "2026-11-30",
+   "label": "Monthly long-term path review; MSCI non-operating company rule takes effect after the November index review close"
+  },
+  {
+   "date": "2026-12-01",
+   "label": "Moscow Exchange plans to open BTC spot trading; Sberbank opens crypto trading to all clients (expected)"
+  },
+  {
+   "date": "2026-12-04",
+   "label": "US November payrolls (first Friday by convention, pending official schedule)"
+  },
+  {
+   "date": "2026-12-09",
+   "label": "FOMC rate decision (Dec 8–9; Taipei Dec 10 03:00 / Dec 9 19:00 UTC)"
+  },
+  {
+   "date": "2026-12-10",
+   "label": "US November CPI (conventional date, pending official schedule)"
+  },
+  {
+   "date": "2026-12-19",
+   "label": "Tidemark cycle-low verification date (58,525 must hold)"
+  },
+  {
+   "date": "2026-12-25",
+   "label": "Deribit quarterly options expiry (Taipei 16:00 / 08:00 UTC), 39.7% of total OI, max pain 75,000"
+  },
+  {
+   "date": "2026-12-31",
+   "label": "Monthly long-term path review"
+  }
+ ],
+ "actions": [
+  {
+   "kind": "do",
+   "head": "No framework step fired today; no action.",
+   "text": "Nearest action point below: the 200-day MA at 73,192 (−3.7%); above: the MVRV 0.75 line at 112,457 (+48.0%)."
+  },
+  {
+   "kind": "dont",
+   "head": "Don't hedge early because of one big red candle.",
+   "text": "The hedge needs 5 straight closes below the 200-day MA; the run is 0 days and price is still 3.7% above it; a single close below would not count either."
+  },
+  {
+   "kind": "watch",
+   "head": "Tonight's payrolls (Taipei 21:30 / 13:30 UTC) and the weekly expiry (Taipei 16:00 / 08:00 UTC, max pain 79,000); Nov 10 CPI (Taipei 21:30 / 13:30 UTC).",
+   "text": "Stocks were the source of this drop and payrolls will set the Nasdaq's next move first; BTC's 30-day correlation with the Nasdaq is 0.645."
+  },
+  {
+   "kind": "watch",
+   "head": "Levels: the 75,000 bid wall, estimated long-liquidation band 73,800–75,100 (−2.1%) and the 200-day MA at 73,192 below; the true market mean at 77,618 (+2.2%) above.",
+   "text": "The liquidation band is an estimate from OKX only; also watch whether STH-SOPR drops below 0.99, which would mean newer buyers are selling at a loss."
+  },
+  {
+   "kind": "flip",
+   "head": "5 straight closes below 73,192 → framework hedge, cut 20%.",
+   "text": "Now −3.7% away, run 0 days; the swing end line at 73,605 (−3.1%) sits above the MA; a return to bear needs 30 straight closes below a falling 200-day MA."
+  }
+ ],
+ "changes": [
+  {
+   "dir": "down",
+   "title": "A red candle gave back the post-election gain",
+   "fig": "Close 80,441 → 75,980 (−5.55%); volume 2.13 → 2.25× the 20-day average",
+   "say": "Closed at 15.4% of the day's range, below where the Nov 4 rally started, and below the true market mean (77,618) and the 365-day MA (76,711)."
+  },
+  {
+   "dir": "up",
+   "title": "Implied volatility jumped and puts got pricier",
+   "fig": "DVOL 38.06 → 42.27; 25Δ risk reversal −2.88 → −5.57",
+   "say": "The market is paying up for downside insurance; DVOL above 42 confirms 2026-10-28-2 (volatility expands once price leaves the 80K area)."
+  },
+  {
+   "dir": "down",
+   "title": "Supporting light 'STH cost basis' went out, 3/6 → 2/6",
+   "fig": "Close 80,441 → 75,980; STH cost basis 75,989 (Bitview)",
+   "say": "Lights only show the strength of evidence; the bull stage still rests on the 200-day MA. This light also went out on May 17 this cycle, followed by −15.2% over 30 days (n=4)."
+  },
+  {
+   "dir": "up",
+   "title": "LTH 30-day net selling narrowed",
+   "fig": "−166,633 → −129,390 BTC (bitcoin-data, Nov 3 → Nov 4)",
+   "say": "Narrowed by 37K BTC in a day, partly coins aging past 155 days into long-term status; still the same net-selling run since Aug 4."
+  },
+  {
+   "dir": "up",
+   "title": "Asian OTC USDT discount closed",
+   "fig": "OKX USDT/CNY premium −0.838% → 0.0%",
+   "say": "The Asian discount is gone, but there are only 4 days of records and it is a snapshot; the US Coinbase premium deepened instead."
+  }
+ ],
+ "findings": [
+  {
+   "id": "2026-11-05-1",
+   "title": "70% of short-term coins are at a loss, but newer buyers have not sold at a loss yet",
+   "module": "onchain",
+   "chart": "cohort",
+   "signals": [
+    "cross:above_sth_cost:off",
+    "level:sth-cost",
+    "level:sth-cluster",
+    "cross:above_tmm:off",
+    "combo:cluster:holders"
+   ],
+   "confidence": "medium",
+   "lean": "bear",
+   "lean_why": "Most newer buyers are underwater and their break-even or stop-loss selling has not been released; supply is thin from 74K down to 66K, so price can move fast if 74K gives way.",
+   "what": "Question: how much latent selling sits below now that price is back at newer buyers' cost? Price fell back to the STH cost basis in one day, putting 70% of short-term coins at a loss on paper, yet those actually selling are still mostly in small profit. Close 75,980 vs STH cost basis 75,989; supply in profit 41.6% → 27.4%; STH-SOPR 1.0015 (Bitview, CheckOnChain, Nov 5).",
+   "why": "Participants (CheckOnChain actual coin age, Nov 5): short-term holders hold 3.728M BTC at an average cost of 75,344; the thickest buckets are 76K (625K), 80K (614K) and 78K (508K), and the close sits right at the bottom of the thickest one. Thirty days ago (Bitview actual, Oct 4) it was 3.509M at 73,784. Estimated (Oct 4 → Nov 4) new coins concentrated at 80K (561K) and 76K (469K). Cost map: the true market mean at 77,618 is 2.2% above; the thickest LTH supply above the close is 84K (800K BTC). Behavior: STH realized loss 3,834 BTC, +69% in a week, but realized profit of 4,279 still exceeds it (ratio 1.12); STH-SOPR has not fallen below 1, and the last loss-taking low was 0.9918 on Oct 30. Network net realized P/L was +$561M on Nov 4 and −$1.674B over 7 days (CoinMetrics). Contradiction: illiquid supply +1.49% over 7 days (1-year percentile 99.2, Nov 4); coins are moving into dormant wallets, which does not look like panic.",
+   "alt": "STH-SOPR is daily and about a day late; concentrated selling on the afternoon of Nov 5 may be averaged out by profit-taking earlier that day, so tomorrow's print is more complete. The estimated part (30-day new coins) differs from actual STH totals by 4.4%, with 8.2% misplaced; it is per-UTXO, so exchange wallet consolidation counts as turnover. Bitview and CheckOnChain STH cost differ by about $650, and the 'break' is only $9, so price is effectively on the line.",
+   "history": "Price crossing below the STH cost basis happened 4 times since 2025-06 (2025-08-30, 09-25, 10-11, 2026-05-17), followed by +3.4%, +2.2%, −6.8% and −15.2% over 30 days, median −2.3% (baseline −0.5%); n=4, too small, background only. Crossing below the true market mean: also 4 times, median −6.5%.",
+   "so": "Logic chain: those who bought at 76–80K last week are back at cost as a group, so the view that the 76K handover was done (2026-11-04-1) is refuted; but they have not sold at a loss yet, so the real selling is still ahead. Scenario (conditional, CheckOnChain Nov 5): at a 74,000 close 2.588M BTC of short-term coins would be at a loss; at 66,000 that only rises to 2.679M, so supply in between is thin; it jumps to 3.082M at 64,000. In other words, if 74K gives way there is no thick cost zone below until 66K. The market stage and exit framework are unchanged.",
+   "next": "By Nov 12: STH-SOPR below 0.99 means newer buyers are selling at a loss and latent supply has turned into real selling — confirms; a close back above 78,000 (above the thickest pile) refutes.",
+   "check": [
     {
-      "id": "2026-11-04-1",
-      "title": "New 76K holders now in profit; loss selling is over, 84K is the supply overhead",
-      "module": "onchain",
-      "chart": "cohort",
-      "signals": ["cross:sopr_ge1:on", "cross:above_tmm:on", "combo:cluster:holders"],
-      "confidence": "medium",
-      "lean": "bull",
-      "lean_why": "Top-buyer supply has changed hands to new holders at 76K who now sit above cost, so loss selling from below has paused for now; the breakeven and LTH supply at 84K has not been absorbed.",
-      "what": "Question: with price back above the mean, will last week's 76K buyers hold, or sell to break even? The 80,441 close is back above the true market mean of 77,627, STH-SOPR went 0.9954 → 1.0021, and the share of STH supply in profit rose from 30.25% to 62.89% (Bitview, CheckOnChain, Nov 4).",
-      "why": "Participants: CheckOnChain (actual coin age, Nov 4) shows 3.713M STH BTC with an average cost of 75,292, thickest at 76K (651K) and 80K (570K); 30 days earlier (Bitview actual, Oct 4) it was 3.509M at 73,784, so STH supply grew by about 200K BTC in a month and its cost rose by 1,500. Estimated (Oct 4 → Nov 3), new supply concentrated at 76K (564K) and 80K (441K), and the most-moved STH supply sat at 84K (272K). Cost map: the close is about 6% above the 76K layer, so that layer flipped to profit; overhead, LTH supply is thickest at 84K (801K BTC) and URPD 84–86K is the thickest bucket above the close (1.082M BTC, Nov 3). Behavior check: SOPR is back at 1, but STH realized profit 3,863 vs loss 3,334 BTC (ratio 1.16, 2.47 a week ago), so profit-taking has not picked up; network-wide realized profit ÷ loss 7-day average 0.807 is still below 1. Contradiction: LTH 30-day net position −166,633 BTC (bitcoin-data, Nov 3) keeps widening, so supply overhead remains.",
-      "alt": "SOPR above 1 is a single day, driven by a price jump; STH-SOPR is daily and about 1 day late, so intraday loss selling can be averaged away. The estimated parts (30-day additions and spending) differ from actual STH totals by 3.2%, with 8.3% misplaced across buckets; per-UTXO data may count some post-Binance wallet moves as new 76K supply. LTH net change also includes coins automatically aging past 155 days, and it is not entity-adjusted.",
-      "history": "After each of this cycle's three prior STH-SOPR loss lows (Aug 1 0.9936, Aug 14 0.9946, Oct 30 0.9918) SOPR returned above 1; our STH/LTH supply split only exists since 2026-10-27, so there are no comparable samples, and there are no history stats for crossing the true market mean; background only.",
-      "so": "Logic chain: top-buyer short-term supply already sold at a loss into 76K (2026-11-03-1 confirmed), and the new holders now sit above cost, so loss selling from below has paused; the LTH supply and breakeven selling at 84K is still there, so a move higher meets supply first. Scenario (conditional, CheckOnChain Nov 4): at a close of 80,000 about 1.367M STH BTC are underwater; at 76,000 it jumps to 2.525M, so if the 76K layer fails again the underwater group nearly doubles at once. Market stage and exit framework did not move.",
-      "next": "By Nov 11: STH realized profit ÷ loss above 1.5 means the new holders start taking profit and the supply overhead gets tested, confirming; a close back below 77,000 (under the mean again) refutes.",
-      "check": [
-        {"path": "onchain.sth_pnl.ratio", "op": ">", "value": 1.5, "by": "2026-11-11", "means": "confirm", "label": "STH realized profit ÷ loss above 1.5"},
-        {"path": "price.bar.c", "op": "<", "value": 77000, "by": "2026-11-11", "means": "refute", "label": "Close back below 77,000"}
-      ]
+     "path": "onchain.metrics.sth-sopr.value",
+     "op": "<",
+     "value": 0.99,
+     "by": "2026-11-12",
+     "means": "confirm",
+     "label": "STH-SOPR falls below 0.99 (newer buyers start selling at a loss)"
     },
     {
-      "id": "2026-11-04-2",
-      "title": "The post-election rally was short covering; US spot is still selling",
-      "module": "deriv",
-      "chart": "cbp",
-      "signals": ["extreme:cbp:lo", "jump:stables:down"],
-      "confidence": "medium",
-      "lean": "bear",
-      "lean_why": "A squeeze is one-off fuel that runs out once shorts are closed; the spot discount and ETF outflows did not improve, so the rally lacks a buyer that can carry it.",
-      "what": "On a 4.02% up day, the positions liquidated were mostly shorts, and US spot did not step in: CoinGlass shows $396M of BTC liquidations in 24 hours, 75.9% shorts, while the Coinbase premium 7-day average stayed at −0.187% (crypto.news and our data, Nov 4).",
-      "why": "Who pushed: on the derivatives side, weighted funding went 10.7% → 8.68%; price jumped while longs paid less, which points to shorts buying back rather than new longs chasing. Top 300 Hyperliquid accounts are short 7,891 BTC vs long 3,646 BTC (Nov 5 00:06 UTC), so shorts have not fully left. On the spot side, the Coinbase premium was −0.094% on the day (still negative) and the 7-day average is at percentile 0.7 of the series since 2026-01 (n=299); ETFs lost a provisional $115.6M on Nov 3, about −$1.16B over three days; stablecoins −2.15% over 7 days and −$12.2B over 30 (DefiLlama, Nov 4). Only Asia improved: the OKX OTC USDT discount narrowed from 1.137% to 0.838%. Cross-check: Glassnode (Nov 4, before the rally) also wrote that new demand from outside crypto is still missing.",
-      "alt": "Macro rallied at the same time (Dow +3.03%, oil −9%), so some buying may have come via CME or offshore spot that the Coinbase-vs-Binance premium cannot see; Nov 3 ETF data is provisional and Nov 4 is not out, so ETF flows on the post-election day are unknown. CoinGlass liquidations and our estimated liquidation bands use different methods and are not compared. Large Hyperliquid accounts may be market makers or hedgers.",
-      "history": "The previous 2 times the Coinbase premium 7-day average hit a 1-year low (2026-06-02, 06-28), price moved −7.8% and +7.3% over the next 30 days; after the previous 4 sharp 7-day stablecoin drops, the 30-day median was −8.0% (baseline −0.0%), n=4; too few samples, background only.",
-      "so": "What changed is position: price is back above the mean and a batch of shorts was cleared. What did not change is who is buying: US spot, ETFs and stablecoins are all still pulling back, so the rally's staying power needs spot confirmation. Conditional: a move to 82,000–83,000 would trigger another batch of estimated short liquidations (estimated, OKX only); forced short closes are market buys and could speed a rise, but that is still leverage fuel. Market stage and exit framework did not move.",
-      "next": "By Nov 11: a Coinbase premium 7-day average back above −0.05% means US spot has returned, refuting; a close back below 78,000 means the squeeze gains were given back, confirming.",
-      "check": [
-        {"path": "flows.cb_premium.avg7", "op": ">", "value": -0.05, "by": "2026-11-11", "means": "refute", "label": "Coinbase premium 7-day avg back above −0.05%"},
-        {"path": "price.bar.c", "op": "<", "value": 78000, "by": "2026-11-11", "means": "confirm", "label": "Close back below 78,000"}
-      ]
+     "path": "price.bar.c",
+     "op": ">",
+     "value": 78000,
+     "by": "2026-11-12",
+     "means": "refute",
+     "label": "Close back above 78,000"
     }
-  ],
-  "followups": [
-    {"id": "2026-11-03-1", "title": "Top short-term holders sold at a loss into 76K; the thickest layer gained 135K BTC in a day", "since": "2026-11-03", "status": "confirmed", "say": "STH-SOPR 0.9954 → 1.0021, back above 1, so the 76K buyers are now in profit (see 2026-11-04-1); the 80,441 close is well clear of 75,000."},
-    {"id": "2026-11-03-2", "title": "US and Asian spot both at a discount; only leverage is holding 77K", "since": "2026-11-03", "status": "open", "say": "Coinbase premium 7-day average −0.187%, not back above −0.05%; stablecoins $295.1B, not yet below $293B; deadline Nov 10."},
-    {"id": "2026-11-02-1", "title": "Price fell into the thickest new 76K supply, with thin supply down to 66K", "since": "2026-11-02", "status": "refuted", "say": "The 80,441 close reclaimed 78,000, back above the top of the thickest layer, so the refute condition is met; the 76K layer was absorbed, not broken."},
-    {"id": "2026-11-02-2", "title": "Sellers have turned to net losses; profit-taking has ebbed", "since": "2026-11-02", "status": "open", "say": "Daily realized profit ÷ loss 7-day average 0.807, far from the 1.2 refute line; STH realized loss 3,334 BTC, short of the 5,000 confirm line; deadline Nov 9."},
-    {"id": "2026-11-02-3", "title": "The illiquid-supply jump is mostly Binance withdrawals, not new buying", "since": "2026-11-02", "status": "open", "say": "Coinbase premium 7-day average −0.187%, not below the −0.2% confirm line; stablecoins 7-day −2.15%, still negative; deadline Nov 9."},
-    {"id": "2026-11-01-1", "title": "New 76K supply underneath, underwater 80–82K supply overhead; price stuck at the mean", "since": "2026-11-01", "status": "open", "say": "The 80,441 close moved into the 80–82K layer but did not clear 82,000 or break 75,000; deadline Nov 9."},
-    {"id": "2026-10-31-1", "title": "New buyers' loss selling slows; price holds above the STH cost basis", "since": "2026-10-31", "status": "confirmed", "say": "STH-SOPR 1.0021 is back above 1 and no close broke 75,000; confirmed."},
-    {"id": "2026-10-31-2", "title": "ETFs, stablecoins and the premium weaken together: dollars are leaving", "since": "2026-10-31", "status": "confirmed", "say": "Stablecoins $296.0B → $295.1B, below the $296B confirm line; 7-day −2.15% still negative; confirmed."},
-    {"id": "2026-10-31-3", "title": "LTH net selling narrowed 70% in three days, but actual coin age does not confirm it", "since": "2026-10-31", "status": "confirmed", "say": "bitcoin-data net position −166,633 BTC (Nov 3) crossed the −150K confirm line; CheckOnChain LTH supply 16.392M BTC did not rise to 16.5M; confirmed."},
-    {"id": "2026-10-30-1", "title": "New buyers turn to selling at a loss; the 75–76K STH cost basis is the last line", "since": "2026-10-30", "status": "open", "say": "STH-SOPR 1.0021 has not reached the 1.005 refute line; realized loss 3,334 BTC is short of the 5,000 confirm line; deadline Nov 6."},
-    {"id": "2026-10-30-2", "title": "Longs re-levered a day after the flush while the spot discount deepened", "since": "2026-10-30", "status": "open", "say": "Weighted funding 10.7% → 8.68%, lower but still far from the 3% refute line; premium 7-day average −0.187%; deadline Nov 6."},
-    {"id": "2026-10-29-1", "title": "Below the mean, new 80–82K supply goes underwater; 76K is next", "since": "2026-10-29", "status": "refuted", "say": "The 80,441 close reclaimed the true market mean (Bitview 77,627) and the then-refute line of 78,391; refuted. STH-SOPR 1.0021 did not break 0.99."},
-    {"id": "2026-10-29-2", "title": "Leverage flushed, yet US spot is selling: premium at a series low", "since": "2026-10-29", "status": "open", "say": "Coinbase premium 7-day average −0.190% → −0.187%, slightly narrower; neither below −0.2% nor back above −0.05%; deadline Nov 5."},
-    {"id": "2026-10-28-1", "title": "New buyers defend cost and return to profit; 84K LTH supply is the hurdle above", "since": "2026-10-28", "status": "open", "say": "The 80,441 close is still below 86,000; LTH 30-day net position −166,633 BTC, far from the −250K confirm line; deadline Nov 6."},
-    {"id": "2026-10-28-2", "title": "Volatility and supply compress together; leaving the 80K area may amplify moves", "since": "2026-10-28", "status": "open", "say": "The day's range was 7.18% and RV7 rose to 50.0%, but DVOL 39.73 → 38.06 did not break 42; ±5% supply concentration 15.29% (URPD, Nov 3); deadline Nov 6."}
-  ],
-  "research": {
-    "summary": "Glassnode's new Nov 4 issue (written before the rally) calls 73–76K the key support band and says outside demand is still missing, consistent with our \"price came back, dollars did not\" (2026-11-04-2); K33's latest is still Nov 2, and we found no new weekly from The Block Research or Coinbase Institutional in the last 7 days.",
-    "items": [
-      {"source": "Glassnode", "title": "The Week On-chain: Idling at Support", "date": "2026-11-04", "url": "https://research.glassnode.com/the-week-onchain-week-44-2026/", "access": "full", "points": "BTC about −10% from the September high, retesting the August breakout; STH supply in profit fell from ≥97.5% to about 38%; true market mean 77.7K, STH cost basis 75.7K, 200-day MA inside the 73–76K band, long liquidation risk at 73–76K and 60–63K, shorts clustered near 87K; Nov 27 and Dec 25 expiries hold $5.7B and $12.5B of OI with max pain at 80K and 76K; ETFs nearly −$1B over two weeks; after the past three midterms BTC fell another 15–50% within 2–10 weeks. Conclusion: holding 73–76K is a healthy reset within the August uptrend; a break below 73K points to a longer consolidation.", "meaning": "Data predates the Nov 4 rally; its support band matches our STH cost basis of 75,961 and 200-day MA of 73,181. Our Dec 25 max pain is 75,000 (Deribit), a different basis from its 76K. The midterm history is only 3 cases, so we do not use it for the call."},
-      {"source": "K33", "title": "Another resilience test: The Midterms are here", "date": "2026-11-02", "url": "https://k33.com/research/articles/another-resilience-test-the-midterms-are-here", "access": "title_only", "points": "Public preview: ETP weekly net outflow 10,971 BTC, 30-day −21,060 BTC; CME OI at a three-year low while perp leverage rose; braced for big post-election moves.", "meaning": "Preview only, not used for the call; the 'big move' came on Nov 4 as a squeeze (7.18% daily range)."},
-      {"source": "Glassnode", "title": "BTC Market Pulse: Week 45", "date": "2026-11-02", "url": "https://research.glassnode.com/btc-market-pulse-week-45-2026/", "access": "full", "points": "Perp CVD −$382M → −$565M, long funding payments $2.2M → $3.1M, futures OI $37.4B; realized profit ÷ loss turned negative, supply in profit 63.6%; conclusion: perp sellers drove the drop, leverage not flushed, shift to defense.", "meaning": "The unflushed leverage released on Nov 4 as a short squeeze; our funding fell from 10.7% to 8.68%."},
-      {"source": "Glassnode", "title": "Strategy Watch #9", "date": "2026-10-30", "url": "https://research.glassnode.com/strategy-watch-09-2026/", "access": "full", "points": "September institutional flows: BTC 30-day net inflow peaked near $13.5B on Sep 22, then faded; US spot ETFs +$2.65B in September; corporate treasuries back to buying.", "meaning": "A look back at September; in early November the institutional line is still weak, with three straight ETF outflow days."}
-    ]
+   ]
+  },
+  {
+   "id": "2026-11-05-2",
+   "title": "BTC fell with stocks; longs were flushed but funding is still positive",
+   "module": "deriv",
+   "chart": "cbp",
+   "signals": [
+    "extreme:cbp:lo",
+    "jump:stables:down"
+   ],
+   "confidence": "medium",
+   "lean": "bear",
+   "lean_why": "The drop came from stocks, nobody stepped in on spot, and leveraged longs have not fully cleared; there is an estimated long-liquidation band below.",
+   "what": "Stocks dragged this drop and no buyers inside crypto stepped in: the Nasdaq fell 5.5% the same day BTC fell 5.55%; CoinGlass logged over $1B of liquidations, mostly longs, yet weighted funding is still 7.57% (CoinDesk, this site, Nov 5).",
+   "why": "Who pushed: on the macro side, Nasdaq 100 −6.4%, semiconductors −12%, VIX to 28; BTC's 30-day correlation with the Nasdaq is 0.645 (FRED, Nov 4). Derivatives: funding 8.68% → 7.57%, only slightly lower, with Hyperliquid still at 10.95%; DVOL 38.06 → 42.27 and 25Δ risk reversal −2.88 → −5.57, so more people bought protection, but perp longs did not exit in size. Spot: Coinbase premium −0.156% daily, −0.170% 7-day average, and the 30-day average of −0.137% is the lowest since 2022 (n=1,500); stablecoins −1.84% over 7 days and −$13.2B over 30 days (DefiLlama, Nov 5). The only good news is Asia: the OKX OTC USDT discount closed to zero (snapshot), plus a provisional +$74.6M ETF inflow on Nov 4. Cross-check: CoinDesk reported BTC futures OI below $26B the same day, the lowest since mid-September (Coinalyze), so leverage did shrink; with our funding still positive, the picture is fewer positions, but those left still lean long.",
+   "alt": "The Coinbase premium only compares Coinbase with Binance and misses CME and ETFs; the Nov 5 ETF flow is not out yet, so flows on the drop day are unknown. Funding covers Deribit, OKX and Hyperliquid; Binance and Bybit are unreadable. Large Hyperliquid accounts may be market makers or hedges. CoinGlass and Coinalyze figures use a different basis from our estimated liquidation bands and are not compared.",
+   "history": "The prior 6 times the Coinbase premium 7-day average hit the bottom 2% of its year (since 2022-10), the median 30-day return was +8.5% (baseline +2.2%); the prior 4 sharp 7-day stablecoin drops had a median of −5.5% (baseline +1.2%); the two point in opposite directions and n is only 6 and 4, background only.",
+   "so": "What changed is position: price went from above the mean back to the STH cost basis and the post-election squeeze is fully given back. What did not change is the nature of the buyers: US spot and stablecoins are still leaving, so support now rests on on-chain cost and resting bids ($187M at 75,000), not new money. Conditional: a drop to 73,800–75,100 would trigger a batch of estimated long liquidations (estimate, OKX only), forced selling at market that can speed a decline. The market stage and exit framework are unchanged.",
+   "next": "By Nov 12: a close below 73,800, meaning leveraged longs are forced out and the decline extends — confirms; the Coinbase premium 7-day average back above −0.05%, meaning US spot is buying — refutes.",
+   "check": [
+    {
+     "path": "price.bar.c",
+     "op": "<",
+     "value": 73800,
+     "by": "2026-11-12",
+     "means": "confirm",
+     "label": "Close below 73,800, into the estimated long-liquidation band"
+    },
+    {
+     "path": "flows.cb_premium.avg7",
+     "op": ">",
+     "value": -0.05,
+     "by": "2026-11-12",
+     "means": "refute",
+     "label": "Coinbase premium 7-day average back above −0.05%"
+    }
+   ]
   }
+ ],
+ "followups": [
+  {
+   "id": "2026-11-04-1",
+   "title": "New 76K coins turned profitable; loss-driven handover done, 84K is overhead supply",
+   "since": "2026-11-04",
+   "status": "refuted",
+   "say": "The 75,980 close fell back below 77,000 — refuted; the 76K layer of new coins was back at cost within a day, and the STH realized profit ÷ loss ratio is 1.12, short of 1.5 (see 2026-11-05-1)."
+  },
+  {
+   "id": "2026-11-04-2",
+   "title": "The post-election rally was short covering; US spot is still selling",
+   "since": "2026-11-04",
+   "status": "confirmed",
+   "say": "The 75,980 close fell back below 78,000 and the squeeze gain was gone in a day; the Coinbase premium 7-day average of −0.170% did not get back above −0.05% — confirmed."
+  },
+  {
+   "id": "2026-11-03-2",
+   "title": "US and Asian spot both at a discount; only leverage holds 77K",
+   "since": "2026-11-03",
+   "status": "open",
+   "say": "Coinbase premium 7-day average −0.170%, not back above −0.05%; stablecoins $294.6B, not yet below $293B; the Asian USDT discount has closed; deadline Nov 10.",
+   "check": [
+    {
+     "path": "flows.cb_premium.avg7",
+     "op": ">",
+     "value": -0.05,
+     "by": "2026-11-10",
+     "means": "refute",
+     "label": "Coinbase premium 7-day average back above −0.05%"
+    },
+    {
+     "path": "flows.stables.usd_b",
+     "op": "<",
+     "value": 293,
+     "by": "2026-11-10",
+     "means": "confirm",
+     "label": "Stablecoin supply below $293B"
+    }
+   ]
+  },
+  {
+   "id": "2026-11-02-2",
+   "title": "Sellers as a whole turned to losses; profit-taking has ebbed",
+   "since": "2026-11-02",
+   "status": "open",
+   "say": "Daily profit ÷ loss 7-day average 0.837, far from the 1.2 refute line; STH realized loss 3,834 BTC, short of the 5,000 confirm line; deadline Nov 9.",
+   "check": [
+    {
+     "path": "onchain.rpl.last7",
+     "op": ">",
+     "value": 1.2,
+     "by": "2026-11-09",
+     "means": "refute",
+     "label": "Daily profit ÷ loss 7-day average back above 1.2"
+    },
+    {
+     "path": "onchain.sth_pnl.loss",
+     "op": ">",
+     "value": 5000,
+     "by": "2026-11-09",
+     "means": "confirm",
+     "label": "STH realized loss above 5,000 BTC"
+    }
+   ]
+  },
+  {
+   "id": "2026-11-02-3",
+   "title": "The illiquid-supply surge is mostly Binance withdrawals, not new buying",
+   "since": "2026-11-02",
+   "status": "open",
+   "say": "Coinbase premium 7-day average −0.170%, not below the −0.2% confirm line; stablecoin 7-day change −1.84%, still negative; deadline Nov 9.",
+   "check": [
+    {
+     "path": "flows.cb_premium.avg7",
+     "op": "<",
+     "value": -0.2,
+     "by": "2026-11-09",
+     "means": "confirm",
+     "label": "Coinbase premium 7-day average below −0.2%"
+    },
+    {
+     "path": "flows.stables.chg7_pct",
+     "op": ">",
+     "value": 0,
+     "by": "2026-11-09",
+     "means": "refute",
+     "label": "Stablecoin 7-day change back above zero"
+    }
+   ]
+  },
+  {
+   "id": "2026-11-01-1",
+   "title": "New 76K coins below, underwater 80–82K coins above, price stuck at the mean",
+   "since": "2026-11-01",
+   "status": "open",
+   "say": "The 75,980 close is back at the bottom of the 76K layer but has not broken 75,000 or reclaimed 82,000; deadline Nov 9.",
+   "check": [
+    {
+     "path": "price.bar.c",
+     "op": ">",
+     "value": 82000,
+     "by": "2026-11-09",
+     "means": "refute",
+     "label": "Close above 82,000"
+    },
+    {
+     "path": "price.bar.c",
+     "op": "<",
+     "value": 75000,
+     "by": "2026-11-09",
+     "means": "refute",
+     "label": "Close below 75,000"
+    }
+   ]
+  },
+  {
+   "id": "2026-10-30-1",
+   "title": "New buyers turned to selling at a loss; the 75–76K STH cost is the last line",
+   "since": "2026-10-30",
+   "status": "open",
+   "say": "Price is right back at 75–76K; STH-SOPR 1.0015 has not reached the 1.005 refute line and realized loss of 3,834 BTC is short of the 5,000 confirm line; deadline Nov 6.",
+   "check": [
+    {
+     "path": "onchain.sth_pnl.loss",
+     "op": ">",
+     "value": 5000,
+     "by": "2026-11-06",
+     "means": "confirm",
+     "label": "STH realized loss above 5,000 BTC"
+    },
+    {
+     "path": "onchain.metrics.sth-sopr.value",
+     "op": ">",
+     "value": 1.005,
+     "by": "2026-11-06",
+     "means": "refute",
+     "label": "STH-SOPR back above 1.005"
+    }
+   ]
+  },
+  {
+   "id": "2026-10-30-2",
+   "title": "Longs rebuilt a day after the flush while the spot discount deepened",
+   "since": "2026-10-30",
+   "status": "open",
+   "say": "Weighted funding 8.68% → 7.57%, still far from the 3% refute line after the drop; premium 7-day average −0.170%; deadline Nov 6.",
+   "check": [
+    {
+     "path": "deriv.funding_multi.weighted_now",
+     "op": "<",
+     "value": 3,
+     "by": "2026-11-06",
+     "means": "refute",
+     "label": "Weighted funding below 3%"
+    }
+   ]
+  },
+  {
+   "id": "2026-10-29-2",
+   "title": "Leverage flushed while US spot sold: premium at a record low for this site",
+   "since": "2026-10-29",
+   "status": "open",
+   "say": "Today is the deadline: the Coinbase premium 7-day average of −0.170% neither broke −0.2% nor got back above −0.05%; it expires next issue if still unmet.",
+   "check": [
+    {
+     "path": "flows.cb_premium.avg7",
+     "op": ">",
+     "value": -0.05,
+     "by": "2026-11-05",
+     "means": "refute",
+     "label": "Coinbase premium 7-day average back above −0.05%"
+    },
+    {
+     "path": "flows.cb_premium.avg7",
+     "op": "<",
+     "value": -0.2,
+     "by": "2026-11-05",
+     "means": "confirm",
+     "label": "Coinbase premium 7-day average below −0.2%"
+    }
+   ]
+  },
+  {
+   "id": "2026-10-28-1",
+   "title": "New buyers held their cost and returned to profit; 84K LTH supply is the ceiling",
+   "since": "2026-10-28",
+   "status": "open",
+   "say": "The 75,980 close is far below 86,000; LTH 30-day net position −129,390 BTC narrowed, moving further from the −250K confirm line; deadline Nov 6.",
+   "check": [
+    {
+     "path": "price.bar.c",
+     "op": ">",
+     "value": 86000,
+     "by": "2026-11-06",
+     "means": "refute",
+     "label": "Close above 86,000"
+    },
+    {
+     "path": "onchain.top_radar.lth-net-position-change-30d-btc.value",
+     "op": "<",
+     "value": -250000,
+     "by": "2026-11-06",
+     "means": "confirm",
+     "label": "LTH 30-day net reduction widens past 250K BTC"
+    }
+   ]
+  },
+  {
+   "id": "2026-10-28-2",
+   "title": "Volatility and supply compressed together; leaving 80K may bring bigger swings",
+   "since": "2026-10-28",
+   "status": "confirmed",
+   "say": "DVOL 38.06 → 42.27, above 42 — confirmed; over the two days price left the 80K area, daily ranges were 7.18% and 7.12% and RV7 rose to 57.2%."
+  }
+ ],
+ "research": {
+  "summary": "No new issues in the last 7 days: Glassnode's latest is still the Nov 4 Week On-chain (no new issue), and its 73–76K support band was tested today; K33's latest is still Nov 2, and no new weekly from The Block Research or Coinbase Institutional was found in the last 7 days.",
+  "items": [
+   {
+    "source": "Glassnode",
+    "title": "The Week On-chain: Idling at Support",
+    "date": "2026-11-04",
+    "url": "https://research.glassnode.com/the-week-onchain-week-44-2026/",
+    "access": "full",
+    "points": "BTC about −10% from the September high, retesting the August breakout; STH supply in profit fell from ≥97.5% to about 38%; true market mean 77.7K, STH cost basis 75.7K, 200-day MA inside the 73–76K band, long liquidation risk at 73–76K and 60–63K; after the past three midterms BTC fell another 15–50% within 2–10 weeks. Conclusion: holding 73–76K is a healthy reset within the August uptrend; a break below 73K points to a longer consolidation.",
+    "meaning": "The Nov 5 close of 75,980 is now at the top of its 73–76K band, where our STH cost basis (75,989) and 200-day MA (73,192) also sit; its 'break below 73K' nearly coincides with our hedge line at 73,192. The midterm history is only 3 cases, so we do not use it for the call."
+   },
+   {
+    "source": "K33",
+    "title": "Another resilience test: The Midterms are here",
+    "date": "2026-11-02",
+    "url": "https://k33.com/research/articles/another-resilience-test-the-midterms-are-here",
+    "access": "title_only",
+    "points": "Public preview: ETP weekly net outflow 10,971 BTC, 30-day −21,060 BTC; CME OI at a three-year low while perp leverage rose; braced for big post-election moves.",
+    "meaning": "Preview only, not used for the call; both post-election days had intraday ranges above 7%, one up and one down."
+   },
+   {
+    "source": "Glassnode",
+    "title": "BTC Market Pulse: Week 45",
+    "date": "2026-11-02",
+    "url": "https://research.glassnode.com/btc-market-pulse-week-45-2026/",
+    "access": "full",
+    "points": "Perp CVD −$382M → −$565M, long funding payments $2.2M → $3.1M, futures OI $37.4B; realized profit ÷ loss turned negative, supply in profit 63.6%; conclusion: perp sellers drove the drop, leverage not flushed, shift to defense.",
+    "meaning": "'Leverage not flushed' still holds on Nov 5: after the drop our weighted funding is still 7.57%."
+   },
+   {
+    "source": "Glassnode",
+    "title": "Strategy Watch #9",
+    "date": "2026-10-30",
+    "url": "https://research.glassnode.com/strategy-watch-09-2026/",
+    "access": "full",
+    "points": "September institutional flows: BTC 30-day net inflow peaked near $13.5B on Sep 22, then faded; US spot ETFs +$2.65B in September; corporate treasuries back to buying.",
+    "meaning": "A look back at September; in early November the institutional line is still weak: ETFs −$717M over 7 trading days to Nov 3."
+   }
+  ]
+ }
 }

@@ -300,6 +300,12 @@
    "d": "2026-11-03",
    "musd": -115.6,
    "partial": false
+  },
+  {
+   "d": "2026-11-04",
+   "musd": 74.6,
+   "partial": true,
+   "src": "暫定：Farside +74.6（blockchain.news 轉述）；SoSoValue +74.57（TokenPost、Cryptopolitan）"
   }
  ],
  "source": "The Block",

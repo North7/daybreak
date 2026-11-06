@@ -1,30 +1,30 @@
 {
-  "date": "2026-11-04",
-  "edition": 30,
+  "date": "2026-11-05",
+  "edition": 31,
   "picks": [
     {
       "id": "cost",
       "chart": "data/picks/cost.png",
       "chart_en": "data/picks/cost-en.png",
-      "why": "異動：價格站上真實市場均價（cross:above_tmm:on），今日發現 2026-11-04-1 的起點",
-      "zh": "收盤由 $77,332 跳到 $80,441，站回真實市場均價 $77,627 之上；下方的短期持有者成本在 $75,961。上週在這兩條線之間接手的人，現在都在獲利。\n#比特幣 #BTC #鏈上數據",
-      "en": "The close jumped from $77,332 to $80,441, back above the true market mean at $77,627; the STH cost basis sits below at $75,961. Those who bought between the two lines last week are now in profit.\n#Bitcoin #BTC #onchain"
+      "why": "異動：價格跌破短期持有者成本與真實市場均價，今日發現 2026-11-05-1 的起點",
+      "zh": "收盤由 $80,441 跌到 $75,980，跌破真實市場均價 $77,618，也貼著短期持有者成本 $75,989。短期持有者只剩 27.4% 在獲利，一週前是 41.6%。\n#比特幣 #BTC #鏈上數據",
+      "en": "The close fell from $80,441 to $75,980, below the true market mean at $77,618 and right on the STH cost basis at $75,989. Only 27.4% of short-term holder supply is in profit, down from 41.6% a week ago.\n#Bitcoin #BTC #onchain"
     },
     {
       "id": "cohort",
       "chart": "data/picks/cohort.png",
       "chart_en": "data/picks/cohort-en.png",
-      "why": "今日發現 2026-11-04-1：76K 新籌碼轉為獲利，84K 是上方供給",
-      "zh": "短期持有者 371.3 萬顆、平均成本 $75,292，最厚一格在 76–78K（65.1 萬顆，CheckOnChain，11/04）。收盤在這一格上方，這批籌碼由虧轉盈；收盤上方最厚的長期持有者籌碼在 84K。\n#比特幣 #BTC #鏈上數據",
-      "en": "Short-term holders hold 3.71M BTC at an average cost of $75,292, thickest at 76–78K (651K BTC, CheckOnChain, Nov 4). The close is above that bucket, so it flipped from loss to profit; the thickest LTH supply above the close sits at 84K.\n#Bitcoin #BTC #onchain"
+      "why": "今日發現 2026-11-05-1：七成短線籌碼落入虧損，下方 74K 到 66K 籌碼薄",
+      "zh": "短期持有者 372.8 萬顆、平均成本 $75,344，最厚一格在 76–78K（62.5 萬顆，CheckOnChain，11/05）。收盤 $75,980 落在這一格下緣，上週接手的這批籌碼回到成本附近。\n#比特幣 #BTC #鏈上數據",
+      "en": "Short-term holders hold 3.73M BTC at an average cost of $75,344, thickest at 76–78K (625K BTC, CheckOnChain, Nov 5). The $75,980 close sits at the bottom of that bucket, so last week's buyers are back near cost.\n#Bitcoin #BTC #onchain"
     },
     {
       "id": "cbp",
       "chart": "data/picks/cbp.png",
       "chart_en": "data/picks/cbp-en.png",
-      "why": "今日發現 2026-11-04-2：大漲那天美元現貨仍在折價",
-      "zh": "價格一天漲 4%，Coinbase 溢價還是負的：最新一天 −0.094%、7 日平均 −0.187%、30 日平均 −0.132%。美國現貨價格仍低於幣安，推上去的不是美元買盤。\n#比特幣 #BTC #資金流",
-      "en": "Price rose 4% in a day, yet the Coinbase premium stayed negative: −0.094% on the latest day, −0.187% on a 7-day average, −0.132% over 30 days. US spot still trades below Binance; dollar buyers did not drive this.\n#Bitcoin #BTC #flows"
+      "why": "今日發現 2026-11-05-2：大跌那天美元現貨仍在折價",
+      "zh": "BTC 一天跌 5.55%，Coinbase 溢價仍是負的：最新一天 −0.156%、7 日平均 −0.170%、30 日平均 −0.137%。美國現貨價格低於幣安，下跌時沒有美元買盤接手。\n#比特幣 #BTC #資金流",
+      "en": "BTC fell 5.55% in a day and the Coinbase premium stayed negative: −0.156% on the latest day, −0.170% on a 7-day average, −0.137% over 30 days. US spot trades below Binance; no dollar buyers stepped in on the drop.\n#Bitcoin #BTC #flows"
     }
   ]
 }
