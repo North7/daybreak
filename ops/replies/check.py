@@ -32,7 +32,7 @@ SHELL = re.compile(r'對於[^，。]{1,15}(來說|而言)|就[^，。]{1,10}而�
 def sentence_notes(tag, t):
     """單篇文字的逐句提醒（長貼文、快訊、回覆共用）：頓號罗列、前置定語、話題殼／句首路標、相鄰三句同款開頭。"""
     out = [f'{tag} 頓號罗列：「{m.group(0).strip()[:40]}」' for m in LIST3.finditer(t)]
-    out += [f'{tag} 前置定語太長：「{m.group(0)[:40]}」' for m in PREMOD.finditer(t)]
+    out += [f'{tag} 前置定語太長：「{m.group(0)[:40]}」' for m in PREMOD.finditer(t) if '是' not in m.group(0)]   # 「……是……的底」是謂語，不是前置定語
     out += [f'{tag} 話題殼／句首路標：「{m.group(0).strip()[:30]}」' for m in SHELL.finditer(t)]
     s = [x.strip() for x in re.split(r'[。！？\n]', t) if len(x.strip()) >= 6]
     for i in range(len(s) - 2):
