@@ -4,6 +4,25 @@
  "edition": 31,
  "items": [
   {
+   "n": 29,
+   "status": "send",
+   "style": "真人版",
+   "mode": "reply",
+   "url": "https://x.com/lookonchain/status/2118701284069089744",
+   "id": "2118701284069089744",
+   "author": "lookonchain",
+   "name": "Lookonchain",
+   "followers": 710996,
+   "posted": "2026-11-06T13:45:24Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "沉寂一年多的巨鯨今天繼續買，合計買進 3,009 顆 BTC（2.28 億美元）",
+   "reply": "Nice to see, though long-term holders as a group are still net sellers, about 129K BTC over the last 30 days",
+   "sources": "onchain top_radar（11/04）：長期持有者 30 日淨部位 −129,390（bitcoin-data）",
+   "note": "71 萬粉、3 萬瀏覽，發文快 1 小時，大帳號要趁早。一個巨鯨在買，補整體長期持有者還在淨賣。ETF 那則已經用引用，這則用回覆。",
+   "order": 1
+  },
+  {
    "style": "真人版",
    "status": "send",
    "n": 21,
@@ -20,7 +39,7 @@
    "sources": "deriv funding_multi（11/05）：未平倉加權年化 7.57%（Hyperliquid 10.95、Deribit 9.91、OKX 3.04）",
    "note": "新帳號，15.8 萬粉，剛發。只接他「晚進場的人在追多」這一句，補資金費率。不碰他的買點。原文說價格回到 80.2K 是舊的，不去糾正。",
    "mode": "reply",
-   "order": 1
+   "order": 2
   },
   {
    "style": "真人版",
@@ -39,7 +58,7 @@
    "sources": "market（11/05）：SMA200 73,192；現價 75,940（Binance 11/06 14:10 UTC）→ 高 3.8%",
    "note": "固定名單、沒回過，10 萬粉，剛發。他的 7% 可能是用別的價格或均線，我們只講自己算到的。",
    "mode": "reply",
-   "order": 2
+   "order": 3
   },
   {
    "style": "真人版",
@@ -59,7 +78,7 @@
    "note": "71 萬粉、2 萬多瀏覽，回覆會被淹沒，只引用。補兩件他沒講的：這週只有週三是流入、Coinbase 溢價整週是負的。不配圖：兩句話講得完（今天 c-pr-us 已經用過）。",
    "mode": "quote",
    "quote": "ETF 昨天又流出 3.67 億美元，最近 5 個交易日只有週三是流入的\n\nCoinbase 溢價也整週都是負的，美國現貨這邊的買盤一直沒回來\n\n#比特幣 #BTC #ETF",
-   "order": 3
+   "order": 4
   },
   {
    "n": 28,
@@ -78,7 +97,7 @@
    "reply": "Same on my end, ratio's around 0.98 with the mean near 77.6K. At the June 30 low it got down to 0.76",
    "sources": "onchain aviv（11/05，Bitview 新圖）：AVIV 0.977、真實市場均價 77,618；2026-06-30 底部 0.762",
    "note": "今天早上引用過他另一則，這則是新的、2 小時內。用網站新加的 AVIV 交叉驗證，再補一個 6 月底部的讀值。",
-   "order": 4
+   "order": 5
   },
   {
    "style": "真人版",
@@ -97,7 +116,7 @@
    "sources": "onchain（11/05）：短期持有者成本 75,989",
    "note": "新帳號，2.9 萬粉，剛發。他說 76K 是生死線，補這條線為什麼在這裡。不評論升息。",
    "mode": "reply",
-   "order": 5
+   "order": 6
   },
   {
    "style": "真人版",
@@ -116,7 +135,7 @@
    "sources": "onchain hnupl（11/05，Bitview 新圖）：短期持有者 NUPL −0.002（30 天前 0.13）；上次由負翻正 8/19（69,216）",
    "note": "固定名單、沒回過，中文。他說價格跟短期持有者成本纏在一起，用網站新加的長短期 NUPL 補一個剛發生的變化。不碰他「接近成本買入」那段。",
    "mode": "reply",
-   "order": 6
+   "order": 7
   },
   {
    "style": "真人版",
@@ -135,7 +154,7 @@
    "sources": "deriv liq_heat（11/05）：下方 72,300–73,700，3,122 BTC，距收盤 −4%",
    "note": "新帳號，2.9K 粉但瀏覽近千、1.7 小時前。補他的目標價附近有什麼。",
    "mode": "reply",
-   "order": 7
+   "order": 8
   },
   {
    "style": "真人版",
@@ -154,7 +173,7 @@
    "sources": "market（11/05）：SMA200 73,192",
    "note": "新帳號，3.2 萬粉，快 3 小時，選這則是因為瀏覽近千。一句話接他列的價位。",
    "mode": "reply",
-   "order": 8
+   "order": 9
   },
   {
    "style": "真人版",
@@ -174,7 +193,7 @@
    "reply": "認同\n拿最久的那批人也還沒賣到頂部那種量，30 天淨減持 12.9 萬顆，去年頂部那陣子是 31.8 萬",
    "sources": "onchain top_radar（11/04）：長期持有者 30 日淨部位 −129,390；2025 頂部附近 −317,525（bitcoin-data）",
    "note": "別人回了我們，2 分鐘前。接他「頂」的話題，補一個跟頂部比的數字。圖上 11/03 是 −166,633，11/04 已經縮到 −12.9 萬，用最新的。",
-   "order": 9
+   "order": 10
   },
   {
    "style": "真人版",
@@ -194,7 +213,7 @@
    "reply": "了解，謝謝回覆\n\n另外想請教，BRS 大概是用哪幾類數據組出來的？不用公式，想知道它主要在量什麼，跟我自己看的數據對照比較好懂",
    "sources": "（無數字）",
    "note": "Murphy 回了我們（訂閱區）。順勢問 BRS：在他已經回過的串裡接著問，比另開一則自然。不想問 BRS 的話，只留第一行。 還沒發的話，可以改用網站新圖的數據接他「還有更細的數據」：「了解，謝謝 我這邊用 Bitview 逐筆拆過，近 30 天的實現虧損有 37% 是持有 1 到 2 年的幣賣出來的」（agepl 11/05，逐筆 UTXO、不是實體口徑），BRS 等他回了再問。",
-   "order": 10
+   "order": 11
   },
   {
    "style": "真人版",
@@ -213,7 +232,7 @@
    "reply": "Pretty much, I use it as a rough window. Then I check where price sits against cost-basis lines. Short-term holder cost is around 76K right now, and yesterday's close landed right on it",
    "sources": "onchain（11/05）：短期持有者成本 75,989，收盤 75,980",
    "note": "別人回了我們，4 分鐘前，接話。同意他的說法，補一條我們實際在看的線。",
-   "order": 11,
+   "order": 12,
    "followers": 418
   },
   {
@@ -233,7 +252,7 @@
    "reply": "破的是 200 日指數均線，那條在 7.65 萬\n簡單的 200 日均線還在 7.32 萬，離收盤還有快 4%",
    "sources": "market（11/05）：收盤 75,980；EMA200 76,511、SMA200 73,192",
    "note": "他回了我們早上的回覆。他說的 200 日線是哪一條要分清楚，補兩條的位置，只講價位。",
-   "order": 12,
+   "order": 13,
    "followers": 8477
   },
   {
@@ -253,12 +272,12 @@
    "reply": "哈哈 今晚還有非農，這種盤最磨人",
    "sources": "（無數字）",
    "note": "他回了我們，輕鬆接一句就好。paulxue 那則「倒車技術了得」按讚就好，不用回。",
-   "order": 13,
+   "order": 14,
    "followers": 9443
   },
   {
    "n": 14,
-   "order": 14,
+   "order": 15,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2118564003064828232",
    "id": "2118564003064828232",
@@ -277,7 +296,7 @@
   },
   {
    "n": 1,
-   "order": 15,
+   "order": 16,
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2118511138812137595",
    "id": "2118511138812137595",
@@ -296,7 +315,7 @@
   },
   {
    "n": 2,
-   "order": 16,
+   "order": 17,
    "status": "send",
    "url": "https://x.com/serlo123/status/2118487626911285543",
    "id": "2118487626911285543",
@@ -315,7 +334,7 @@
   },
   {
    "n": 3,
-   "order": 17,
+   "order": 18,
    "status": "send",
    "url": "https://x.com/mks1231237549/status/2118511412473635016",
    "id": "2118511412473635016",
@@ -334,7 +353,7 @@
   },
   {
    "n": 4,
-   "order": 18,
+   "order": 19,
    "status": "optional",
    "url": "https://x.com/joke_henry/status/2118475265609511148",
    "id": "2118475265609511148",
@@ -353,7 +372,7 @@
   },
   {
    "n": 5,
-   "order": 19,
+   "order": 20,
    "status": "send",
    "url": "https://x.com/AYBTC6/status/2118510181353214182",
    "id": "2118510181353214182",
@@ -372,7 +391,7 @@
   },
   {
    "n": 6,
-   "order": 20,
+   "order": 21,
    "status": "send",
    "url": "https://x.com/ANCrypto_/status/2118510461494939914",
    "id": "2118510461494939914",
@@ -391,7 +410,7 @@
   },
   {
    "n": 11,
-   "order": 21,
+   "order": 22,
    "status": "send",
    "url": "https://x.com/hiply0625/status/2118510015552393693",
    "id": "2118510015552393693",
@@ -410,7 +429,7 @@
   },
   {
    "n": 12,
-   "order": 22,
+   "order": 23,
    "status": "send",
    "url": "https://x.com/flyiiawei/status/2118510333577031762",
    "id": "2118510333577031762",
@@ -429,7 +448,7 @@
   },
   {
    "n": 13,
-   "order": 23,
+   "order": 24,
    "status": "send",
    "url": "https://x.com/FringeBtc/status/2118510930900168981",
    "id": "2118510930900168981",
@@ -448,7 +467,7 @@
   },
   {
    "n": 7,
-   "order": 24,
+   "order": 25,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2118367430938607981",
    "id": "2118367430938607981",
@@ -475,7 +494,7 @@
   },
   {
    "n": 8,
-   "order": 25,
+   "order": 26,
    "status": "send",
    "url": "https://x.com/CryptoPainter/status/2118398979981611147",
    "id": "2118398979981611147",
@@ -502,7 +521,7 @@
   },
   {
    "n": 9,
-   "order": 26,
+   "order": 27,
    "status": "send",
    "url": "https://x.com/KobeissiLetter/status/2118495095901315560",
    "id": "2118495095901315560",
@@ -522,7 +541,7 @@
   },
   {
    "n": 10,
-   "order": 27,
+   "order": 28,
    "status": "send",
    "url": "https://x.com/gaah_im/status/2118493757750255822",
    "id": "2118493757750255822",
@@ -549,7 +568,7 @@
   },
   {
    "n": 15,
-   "order": 28,
+   "order": 29,
    "status": "optional",
    "url": "https://x.com/Murphychen888/status/2118372958259528125",
    "id": "2118372958259528125",
