@@ -76,6 +76,14 @@ BASE=https://north7.github.io/daybreak/ node tests/smoke.js   # 上線後再跑�
 - `coc_cache/okx_taker.json`：OKX 日線（UTC+8 日界）會一直累積，API 本身只給 180 天。
 - **Bitview 依賴變大**（2026-11-06）：鏈上與週期版約 20 張圖靠 Bitview（`bitview.py` 每天約 110 次請求、全表約 70 秒，含 `bv_extra.py` 六項）。Bitview 失敗時用 `coc_cache/bitview.json` 快取，超過 4 天就顯示「本日未取得」，會一次空掉很多張；若常失敗，考慮把部分序列改回 CheckOnChain 或分兩批抓。
 
+## 5c. 2026-11-06 指標擴充再六項（`cq_extra.py`）
+
+- 資料：CoinMetrics 社群版同一次請求加抓 `FlowInExNtv`／`FlowOutExNtv`；The Block 各檔 ETF 流量（`etf.py` 之外再抓一次同一份 JSON）；Upbit KRW-BTC 日線（每天約 16 次，200 天一頁回到 2017）；Frankfurter 歐洲央行匯率（失敗改 FRED `DEXKOUS`，本機常逾時）；OKX 合約主動買賣在 `opt_flow.okx_update` 同一次更新，存在 `okx_taker.json` 的 `perp`（API 只給 180 天，從 2026-05-11 起累積）。
+- ETF 持有者成本是推算（不含 GBTC、平均成本法、用收盤價），和看託管地址收幣時間的鏈上做法會有差距；引用時寫「推算」。ETF 流量晚一天公布，所以成本日期常比價格早一天（`date` 對 `px_date`）。
+- 交易所淨流量的回測和任一天差不多，不要寫成買賣訊號；韓國溢價衝上 5% 之後 90 天偏弱（4/10 次上漲），樣本只有 10 次。
+- 每輪資金效率的底部、頂部日期取自 `data/model.json`（`cycle_bottoms`／`cycle_tops`），模型改了表會跟著變；2011 那輪的底部是 2011-06 到 2012-06 的最低收盤。
+- `oxPane` 新選項：`plines`（畫在價格格的線，如 ETF 成本）、`fit`（縱軸只看目前選的時間範圍）、`tfmt(v, row)` 第二個參數是整列資料。
+
 ## 6. 容易踩的坑
 
 - **頂部一輪比一輪低的指標，不要用全部歷史的百分位或固定門檻**（2026-11-06 使用者：「看起來儲備風險的峰值在逐漸降低中」）：儲備風險、賣方風險比、AVIV、長期持有者 NUPL、相對未實現獲利、MVRV 都是這樣，全部歷史的最低 10% 會偏向近年（儲備風險 2018 年底的底部沒進去、回測 7 次有 4 次在 2022 年後）。`bv_extra._roll` 給近 4 年滾動百分位，低檔區用它判定；引用百分位時寫明是近 4 年還是全部歷史。
