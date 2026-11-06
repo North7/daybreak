@@ -4,8 +4,27 @@
  "edition": 31,
  "items": [
   {
-   "n": 1,
+   "n": 14,
    "order": 1,
+   "status": "send",
+   "url": "https://x.com/Murphychen888/status/2118564003064828232",
+   "id": "2118564003064828232",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82200,
+   "posted": "2026-11-06T04:39:54Z",
+   "lang": "zh",
+   "angle": "補數據",
+   "summary": "訂閱區：實體口徑 24 小時實現虧損峰值超過 11/3–11/4、略低於 10/30；PSIP 59%、STH-PSIL 64%（短期籌碼六成多在虧損）；他認為情緒已到極限承壓、超賣跡象明顯",
+   "reply": "64% 套著，壓力真的不小\n\n不過我看 11/05 的 STH-SOPR 還在 1 左右，昨天真的賣掉的短期籌碼，平均還是在成本附近出手\n\n想問一下，實體口徑那個虧損峰值，主要是短期持有者賣出來的嗎",
+   "sources": "onchain（11/05）：STH-SOPR 1.0015（CheckOnChain），7 日均 0.9973",
+   "note": "訂閱區貼文，只有訂閱者看得到，觸及小但 Murphy 本人正在底下回留言（10 分鐘前還在回）。他留言區的人都在問問題，結尾問他一句，回的機會大。補一個他沒提的：套的人多，實際賣的人平均還沒割在深套位置。",
+   "style": "真人版",
+   "mode": "reply"
+  },
+  {
+   "n": 1,
+   "order": 2,
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2118511138812137595",
    "id": "2118511138812137595",
@@ -24,7 +43,7 @@
   },
   {
    "n": 2,
-   "order": 2,
+   "order": 3,
    "status": "send",
    "url": "https://x.com/serlo123/status/2118487626911285543",
    "id": "2118487626911285543",
@@ -43,7 +62,7 @@
   },
   {
    "n": 3,
-   "order": 3,
+   "order": 4,
    "status": "send",
    "url": "https://x.com/mks1231237549/status/2118511412473635016",
    "id": "2118511412473635016",
@@ -62,7 +81,7 @@
   },
   {
    "n": 4,
-   "order": 4,
+   "order": 5,
    "status": "optional",
    "url": "https://x.com/joke_henry/status/2118475265609511148",
    "id": "2118475265609511148",
@@ -81,7 +100,7 @@
   },
   {
    "n": 5,
-   "order": 5,
+   "order": 6,
    "status": "send",
    "url": "https://x.com/AYBTC6/status/2118510181353214182",
    "id": "2118510181353214182",
@@ -100,7 +119,7 @@
   },
   {
    "n": 6,
-   "order": 6,
+   "order": 7,
    "status": "send",
    "url": "https://x.com/ANCrypto_/status/2118510461494939914",
    "id": "2118510461494939914",
@@ -119,7 +138,7 @@
   },
   {
    "n": 11,
-   "order": 7,
+   "order": 8,
    "status": "send",
    "url": "https://x.com/hiply0625/status/2118510015552393693",
    "id": "2118510015552393693",
@@ -138,7 +157,7 @@
   },
   {
    "n": 12,
-   "order": 8,
+   "order": 9,
    "status": "send",
    "url": "https://x.com/flyiiawei/status/2118510333577031762",
    "id": "2118510333577031762",
@@ -157,7 +176,7 @@
   },
   {
    "n": 13,
-   "order": 9,
+   "order": 10,
    "status": "send",
    "url": "https://x.com/FringeBtc/status/2118510930900168981",
    "id": "2118510930900168981",
@@ -274,6 +293,25 @@
     },
     "title": "STH cost 75,989, close 75,980: the lines bunch up at 76K"
    }
+  },
+  {
+   "n": 15,
+   "order": 15,
+   "status": "optional",
+   "url": "https://x.com/Murphychen888/status/2118372958259528125",
+   "id": "2118372958259528125",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82200,
+   "posted": "2026-11-05T16:00:45Z",
+   "lang": "zh",
+   "angle": "補數據",
+   "summary": "訂閱區：只要今晚不直接 V 反，明天的數據會非常有意思",
+   "reply": "結果真的沒 V\n\n我這邊 11/05 短期持有者認賠 3,834 顆，一週前才 2,268 顆，多了快七成",
+   "sources": "onchain sth_pnl（11/05 vs 10/29）：loss 3,834 vs 2,268，+69.1%（CheckOnChain，晚約 1 天）",
+   "note": "13 小時前的貼文，比較舊，選用。數字和 n7 引用他公開貼文的那則一樣，但訂閱區是另一批人；兩則都發的話，這則晚一點再發。",
+   "style": "真人版",
+   "mode": "reply"
   }
  ]
 }
