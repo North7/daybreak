@@ -520,6 +520,13 @@ PANELS = {
     'cycle/rup':      dict(zh='相對未實現獲利：地板', en='Relative unrealized profit: the floor', sel='#c-rup', data=['onchain.rup']),
     'cycle/cyccmp':   dict(zh='和前幾輪比：頂部之後', en='Versus past cycles: after the top', sel='#c-cyccmp', data=['cycle.cycle_cmp']),
     'cycle/pl':       dict(zh='冪律：價格 ÷ 合理價', en='Power law: price ÷ fair value', sel='#c-pl', data=['cycle.powerlaw']),
+    # 2026-11-06 PR #56 新增的 Bitview 六項（都沒有出場框架線；高檔區／低檔區是歷史百分位，NUPL 的分區是情緒階段，只是讀值）
+    'cycle/hnupl':    dict(zh='長短期持有者 NUPL', en='STH and LTH NUPL', sel='#c-hnupl', data=['onchain.hnupl']),
+    'cycle/aviv':     dict(zh='AVIV：價格 ÷ 真實市場均價', en='AVIV: price ÷ true market mean', sel='#c-aviv', data=['onchain.aviv']),
+    'cycle/rrisk':    dict(zh='儲備風險', en='Reserve risk', sel='#c-rrisk', data=['onchain.rrisk']),
+    'onchain/ssr':    dict(zh='賣方風險比', en='Sell-side risk ratio', sel='#c-ssr', data=['onchain.ssr']),
+    'onchain/agepl':  dict(zh='依持有時間的實現獲利／虧損', en='Realized profit/loss by holding age', sel='#c-agepl', data=['onchain.agepl']),
+    'onchain/dorm':   dict(zh='Dormancy 與 Liveliness', en='Dormancy and Liveliness', sel='#c-dorm', data=['onchain.dorm']),
     'cycle/regime':   dict(zh='週線多空分數', en='Weekly regime score', sel='#c-regime', data=['cycle.regime']),
     'onchain/quant':  dict(zh='供給分位成本線', en='Supply quantile cost lines', sel='#c-quant', data=['onchain.quant']),
     'onchain/urpd':   dict(zh='籌碼分布（URPD）', en='Supply distribution (URPD)', sel='#c-urpd', html=1, data=['chips.viz']),
