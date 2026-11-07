@@ -217,7 +217,7 @@ h3 small { color:var(--ink3); font-weight:500; }
   // ---------- 長貼文（2026-11-05）----------
   // data/longposts.json：{"items": [{"id", "time"（建議發文時間，UTC）, "title", "note", "zh", "en"（可省）, "images": ["data/longposts/<id>.png", ...]}]}
   // 2026-11-05 改：不只今天，沒處理的一直顯示；「標記已處理」記在這台裝置（localStorage daybreak.longdone：{id: 處理那天的台北日期}），
-  // 當天收起來排到最後，隔天起不再顯示。檔案裡的舊則由 Claude 寫新長貼文時清掉（見 ops/README.md「長貼文」）。X Premium 長貼文，不受 280 字限制（只顯示字數）
+  // 當天收起來排到最後，隔天起不再顯示。檔案裡的舊則由 Claude 寫新長貼文時清掉（寫法在運營私人倉庫的 ops/README.md「長貼文」）。X Premium 長貼文，不受 280 字限制（只顯示字數）
   var LDK = 'daybreak.longdone', ldone = function () { try { return JSON.parse(localStorage.getItem(LDK) || '{}'); } catch (e) { return {}; } };
   getJSON('data/longposts.json').then(function (F) {
     var D = ldone(), list = (F.items || []).filter(function (x) { return !D[x.id] || D[x.id] >= TODAY; });

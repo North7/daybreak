@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """成效紀錄（2026-11-04 建立）：每天發了什麼、對方有沒有回應、瀏覽多少，回頭看哪種內容有效。
-紀錄檔是 ops/log/<日期>.json（日期＝台北時間），格式見 ops/log/README.md。用法（在倉庫根目錄）：
+紀錄檔是私人倉庫 daybreak-ops-private 的 ops/log/<日期>.json（2026-11-08 起；日期＝台北時間），格式見同一處的 README.md。用法（在倉庫根目錄）：
 
   python3 ops/log/log.py update [日期]                     一次做完下面四件事（預設：今天）
   python3 ops/log/log.py sync [日期]                       從個人頁讀那天發的原創貼文，自動加進紀錄並分類
@@ -18,7 +18,9 @@ import glob, json, os, re, statistics, sys, time, urllib.parse, urllib.request
 from datetime import datetime, timedelta, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-DIR = os.path.join(ROOT, 'ops', 'log')
+sys.path.insert(0, os.path.join(ROOT, 'ops'))
+import opsprivate   # noqa: E402
+DIR = opsprivate.path('log')   # 2026-11-08 起紀錄檔在私人倉庫 daybreak-ops-private/ops/log/（README 也在那裡）
 HANDLE = 'songpu717'
 GOAL = 500                                   # 原創內容獎勵（2026-09-07 起取代創作者分潤）要的藍勾追蹤數
 GOAL_IMP = 500_000                           # 原創內容獎勵要的近 90 天藍勾首頁曝光（回覆不算）

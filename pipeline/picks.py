@@ -684,7 +684,7 @@ def check2(L, pk):
             if weight(t) > 280: errs.append(f'{i}.{lang}: {weight(t)}/280 超過')
             for x, tag in ((q, 'q_' + lang), (t, lang)):
                 if BAN.search(x): errs.append(f'{i}.{tag}: 提到出場框架或買賣（{BAN.search(x).group(0)}）')
-                if AI_WORDS and AI_WORDS.search(x): errs.append(f'{i}.{tag}: AI 腔或不用的詞（{AI_WORDS.search(x).group(0)}，見 ops/brand/voice.md）')
+                if AI_WORDS and AI_WORDS.search(x): errs.append(f'{i}.{tag}: AI 腔或不用的詞（{AI_WORDS.search(x).group(0)}，見運營 voice.md）')
                 miss = sorted(NUMS(x) - src)
                 if miss: errs.append(f'{i}.{tag}: 這些數字在 plan 的資料與當期 notes 裡找不到：{", ".join(miss)}')
             if lang == 'en' and re.search(r'[一-鿿]', q + t): errs.append(f'{i}.en: 有中文字')

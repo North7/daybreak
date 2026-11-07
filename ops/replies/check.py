@@ -6,6 +6,7 @@ import json, os, re, sys
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, 'pipeline'))
+sys.path.insert(0, os.path.join(ROOT, 'ops'))
 from x_len import weight   # noqa: E402
 
 CJK = re.compile(r'[㐀-鿿]')
@@ -153,11 +154,12 @@ def text_errors(tag, t, lang, lim=280):
 
 
 def known_accounts():
-    """ops/log/ 裡回覆過的對象（不含今天）＝熟帳號。"""
+    """ops/log/ 裡回覆過的對象（不含今天）＝熟帳號。ops/log/ 2026-11-08 起在私人倉庫。"""
     import glob
+    import opsprivate
     R = json.load(open(os.path.join(ROOT, 'data', 'replies.json'), encoding='utf-8'))
     out = set()
-    for f in glob.glob(os.path.join(ROOT, 'ops', 'log', '2*.json')):
+    for f in glob.glob(os.path.join(opsprivate.path('log'), '2*.json')):
         if os.path.basename(f)[:10] >= R.get('date', '9'): continue
         for p in json.load(open(f, encoding='utf-8')).get('posts', []):
             if p.get('kind') in ('reply', 'followup') and p.get('to'): out.add(p['to'].lower())

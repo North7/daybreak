@@ -9,12 +9,14 @@
   python3 ops/replies/scan.py --out <檔名.csv>  另存 CSV（fetch.py 可以直接讀）
 
 讀自 api.fxtwitter.com 的個人頁貼文（第三方、公開、不需登入）；只有原創貼文和引用，沒有他們回覆別人的貼文。
-已經在 data/replies.json、或 ops/log/ 裡回覆過的貼文會略過。"""
+已經在 data/replies.json、或 ops/log/（私人倉庫）裡回覆過的貼文會略過。watchlist.json 也在私人倉庫（2026-11-08 起）。"""
 import argparse, csv, glob, json, os, re, sys, time, urllib.request
 from datetime import datetime, timezone
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 HERE = os.path.dirname(os.path.abspath(__file__))
+sys.path.insert(0, os.path.join(ROOT, 'ops'))
+import opsprivate   # noqa: E402  watchlist.json、ops/log/ 2026-11-08 起在私人倉庫
 UA = {'User-Agent': 'daybreak-ops-scan'}
 
 BTC = re.compile(r'btc|bitcoin|比特币|比特幣|大饼|大餅', re.I)
@@ -50,7 +52,7 @@ def done_ids():
         ids |= {it['id'] for it in json.load(open(os.path.join(ROOT, 'data', 'replies.json'), encoding='utf-8'))['items']}
     except Exception:
         pass
-    for f in glob.glob(os.path.join(ROOT, 'ops', 'log', '20*.json')):
+    for f in glob.glob(os.path.join(opsprivate.path('log'), '20*.json')):
         ids |= {p.get('to_id') for p in json.load(open(f, encoding='utf-8')).get('posts', []) if p.get('to_id')}
     return ids
 
@@ -80,7 +82,7 @@ def main():
     ap.add_argument('--out')
     ap.add_argument('--top', type=int, default=15, help='最多列幾則（0＝不限）')
     o = ap.parse_args()
-    W = json.load(open(os.path.join(HERE, 'watchlist.json'), encoding='utf-8'))['accounts']
+    W = json.load(open(opsprivate.path('replies', 'watchlist.json'), encoding='utf-8'))['accounts']
     skip, now, rows, miss = done_ids(), time.time(), [], []
     for acc in W:
         try:

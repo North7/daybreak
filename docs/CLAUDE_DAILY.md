@@ -24,7 +24,7 @@
 7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。寫完後另寫英文版 `data/notes.en.json`（見「英文版」）。
 8. 驗證：執行 `python3 pipeline/notes_lint.py`，檢查格式、各項數量、頭條與摘要長度、制式提醒句次數、事件表必備項目、英文版沒有中文字；有任何一項沒過就改到通過才提交。再用 python 掃描兩個檔，確認沒有違反隱私鐵則的內容。
 9. X 貼文草稿（中英各一則）：寫 `data/x_post.json` = `{"date": bar_date, "edition", "zh", "en", "image_zh": "https://north7.github.io/daybreak/data/share.png", "image_en": "https://north7.github.io/daybreak/data/share-en.png", "link": "https://north7.github.io/daybreak/?utm_source=x"}`。分享圖由 GitHub Actions 在你推送後自動產生（`pipeline/share_card.py`，用 headline 與資料），你不用畫。
-   - 格式（2026-11-05 起：**數字開頭**，期數移到最後；之前用【破曉 No.xxx】開頭的公告式，10 月每則只有 22–44 瀏覽。前後成效記在 `ops/log/`，用法見 `ops/brand/references.md`）。中文：
+   - 格式（2026-11-05 起：**數字開頭**，期數移到最後；之前用【破曉 No.xxx】開頭的公告式，10 月每則只有 22–44 瀏覽。前後成效記在運營的成效紀錄，2026-11-08 起在私人倉庫 `daybreak-ops-private`）。中文：
      ```
      <開頭：今天最意外的一個數字，一句白話：誰、做了什麼、多少、跟什麼時候比>
      <第二句：這個數字代表什麼（今天最重要 finding 的結論）>
@@ -36,7 +36,7 @@
      #比特幣 #BTC #<主題>
      ```
      英文同結構，最後一行用 `Daybreak No.007 | Oct 12 👉 <網址>`（英文比較長，用 11/03 的資料試寫約 270/280）。範例（11/03 的資料）：「76–78K 這一層，11/03 一天多了 13.5 萬顆短線籌碼。／接手的是付 10.7% 資金費的槓桿，不是現貨。」
-   - 語氣照 `ops/brand/voice.md`（寫給拿現貨的中文持有者、一起看盤的同行、用詞中英固定）。
+   - 語氣照運營的 voice.md（2026-11-08 起在私人倉庫 `daybreak-ops-private/ops/brand/voice.md`，本機放在公開倉庫旁邊；讀不到就照這裡寫的規則）（寫給拿現貨的中文持有者、一起看盤的同行、用詞中英固定）。
    - 開頭怎麼寫：從 headline 和 findings 裡挑**最讓人意外的一個數字**（不是最重要的那一條），寫成看得懂的一句話；能加時間對比更好（「一天」「9/6 以來天天」「今年最低」）。不用【】、不用問句釣讀者、不堆 emoji、不寫「震驚」「重磅」這類字；數字規則和下面一樣，只能用 brief 與當期 notes 裡有的。
    - 數字一律取自 brief 與當期 notes，不新增查不到出處的數字；市場階段天數＝bar_date 減 `cycle.stage.since` 加 1；ETF 那一行＝`flows.etf` 最後 7 個非暫定日合計，括號寫最後一個非暫定日（英文 `・ETF 7 trading days to Oct 9: −$558M`），與分享圖一致；不寫「近 7 日」，因為 The Block 常晚一到兩個交易日，頭條若寫更新的暫定值，讀者會以為兩個數字矛盾。
    - 執行 `python3 pipeline/x_len.py`，兩則都要 ≤ 280（X 的算法：中文字算 2、網址算 23）；超過就先縮短第二句，開頭那句盡量不動。
