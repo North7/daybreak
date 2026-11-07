@@ -273,6 +273,10 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-07** 賣壓累積與動能品質（指標擴充，取代 11/05 的「短期壓力分數」）
+  - 衍生品版新增一張自製圖，只用每日收盤：「動能品質」（0–1）＝近 21 天日報酬的平均 ÷ 標準差 × √21，用常態分布換成 0–1；「賣壓累積」（0–100）＝動能低於 0.45 時每天往上加、高於時往下減，動能到 0.7 直接歸零。弱勢拖得越久累積越高，急跌一兩天不會馬上到 100。
+  - 「底部組合」＝賣壓 100 且動能低於 0.3（2012 年起約 20 次）：列出 30／90 天後漲跌（和任一天比）、等賣壓回到 0 再出場的勝率與中途再跌、分年代結果，以及熊市初期失靈的幾次。動能高不是頂部訊號（之後 90 天多半繼續漲），照實寫。
+  - 舊的四項短期持有者百分位版（籌碼面板下格與讀值）拿掉；`chips.stress` 換成新欄位（`stage_viz.stress_viz`）。一次性補值到 11/06。
 - **2026-11-06** 版面整理（使用者要求「整體整理一下目前的所有內容，優化版面，佈局」）
   - 「我們的看法」排到每張圖讀值的第一列，「會改變看法」的條件另起一行；細項讀值超過 3 列時，其餘收進「更多讀值」，圖往上移。
   - 頭版新增「我們的看法」總表：7 張圖的傾向與會改變看法的條件，從長線到短線排，點了跳到那張圖（看法本身仍在各面板，同一份判斷）。
@@ -551,6 +555,10 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-07** Selling pressure and momentum quality (indicator additions; replaces the 11/05 short-term stress score)
+  - A new chart on the Derivatives page, from daily closes only: momentum quality (0–1) is the mean ÷ standard deviation of the last 21 daily returns × √21, mapped through the normal distribution; selling pressure (0–100) adds up each day momentum is below 0.45, drains when it is above, and resets once momentum reaches 0.7. The longer weakness drags on, the higher it climbs; a one- or two-day drop does not send it to 100.
+  - The bottom combo (pressure 100 and momentum below 0.3, about 20 times since 2012) lists 30/90-day results against any day, the win rate and interim dips when exiting at a pressure reset, results by era, and the early-bear-market failures. High momentum is not a top signal (prices usually kept rising over the next 90 days), and the page says so.
+  - The old four-measure short-term holder version (lower chart and reading in the supply panel) is gone; `chips.stress` has new fields (`stage_viz.stress_viz`). One-off backfill to 11/06.
 - **2026-11-06** Layout clean-up
   - “Our read” now leads each chart's readings, with what would change it on its own line; when a panel has more than three detail readings, the rest fold under “More readings” so the chart moves up.
   - The front page gains an “Our read” table: the lean and what would change it for seven charts, long-term to short-term, each linking to its chart.

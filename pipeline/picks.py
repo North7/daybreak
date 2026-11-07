@@ -564,7 +564,8 @@ PANELS = {
     'deriv/vol':      dict(zh='隱含波動 vs 實際波動', en='Implied vs realized volatility', sel='#c-vol', data=['deriv.dvol', 'deriv.samesource'], sig=['vol'], old='vol'),
     'deriv/basis':    dict(zh='期貨基差曲線', en='Futures basis curve', sel='#c-basis', data=['deriv.deriv']),
     'deriv/liq':      dict(zh='清算熱力圖（推算）', en='Liquidation heatmap (estimate)', sel='#c-liq', data=['deriv.liq_heat']),
-    'deriv/conc':     dict(zh='籌碼結構與集中度', en='Supply structure and concentration', sel='#c-conc', data=['chips.conc_stats', 'chips.stress']),
+    'deriv/conc':     dict(zh='籌碼結構與集中度', en='Supply structure and concentration', sel='#c-conc', data=['chips.conc_stats']),
+    'deriv/sx':       dict(zh='賣壓累積與動能品質', en='Selling pressure and momentum quality', sel='#c-sx', data=['chips.stress']),   # 2026-11-07
     'deriv/strike':   dict(zh='主要到期的履約價分布', en='Strikes at the main expiry', sel='#c-strike', data=['deriv.viz']),
     'deriv/gex':      dict(zh='選擇權 Gamma 曝險（推算）', en='Options gamma exposure (estimate)', sel='#c-gex', data=['deriv.gex']),
     'deriv/prem':     dict(zh='選擇權買方權利金差', en='Options buyer premium spread', sel='#c-prem', data=['deriv.prem']),

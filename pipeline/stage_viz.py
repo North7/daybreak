@@ -686,53 +686,75 @@ def capflow_viz(bv, px, last, step=3):
                 rows=rows, note='Bitview：1 個月內＝<1h、1h–1d、1d–1w、1w–1m 四段實現市值合計；1–2 年＝1y–18m、18m–2y；÷ 全體實現市值；只作讀值')
 
 
-# 2026-11-05 使用者要求（籌碼結構＋BRS＋集中度）：BRS 是 Glassnode 付費專有指標、算法不公開，改做本站自製的「短期壓力分數」，只看相對高低、不當買賣訊號。
-#   四項（Bitview）：短期持有者獲利比例、價格 ÷ 短期持有者成本、短期持有者 SOPR（7 日平均）、距近 60 天高點的跌幅；
-#   每項和自己近 180 天比（百分位，無前視），四項平均後只取「比平常更差」的那一半：平均百分位 ≥ 50% 為 0，越往最差越接近 100（≤ 10% 為 100）。
-#   走勢和 BRS 的公開圖大致同向（2018 年 2、6、11–12 月與 2025/10–2026/02 都到 100；2026/10 下旬約 20–30，BRS 約 25），
-#   但照「到 100 買、回 0 賣」回測：2013–17 年 11/12 次獲利、2018–22 年只有 1/7、2023 年起 7/9 次，熊市裡沒有優勢，所以只作讀值。
-ST_W, ST_FROM = 180, '2018-01-01'
+# 2026-11-07 指標擴充（取代 2026-11-05 的四項短期持有者百分位版「短期壓力分數」）：本站自製的一對讀值，只用每日收盤。
+#   動能品質（0–1）：近 21 天日報酬的平均 ÷ 標準差 × √21（t 值），再用常態分布換成 0–1（Φ(0.7 × t)）。漲得又快又穩接近 1，跌得又快又穩接近 0。
+#   賣壓累積（0–100）：動能品質低於 0.45 時每天加 30 ×（0.45 − 動能），高於 0.45 時每天減 50 ×（動能 − 0.45），動能一到 0.7 以上直接歸零，夾在 0–100。
+#     弱勢拖得越久累積越高（急跌一兩天不會馬上到 100），一段又快又穩的上漲就清空；參數照這個行為挑選，三組相近參數的回測差不多。
+#   底部組合＝賣壓 100 且動能 < 0.3（和上一次相隔 60 天以上才算新的一次）。回測照實列出：30／90 天後漲跌、等賣壓回到 0 再出場的結果、分年代；
+#   強勢動能（賣壓 0 且動能 > 0.85）之後多半繼續漲，不是頂部訊號，也照實列出。只作讀值、不是買賣訊號。
+SX_N, SX_K, SX_TH, SX_UP, SX_DN, SX_RESET, SX_FROM, SX_GAP = 21, 0.7, 0.45, 30, 50, 0.7, '2012-06-01', 60
 
 
-def stress_viz(bv, px, last, step=1):
-    import bisect
-    sp, st_, so = bv.get('sthp') or {}, bv.get('sth') or {}, bv.get('ssopr') or {}
-    P = lambda d: px.get(d, bv['px'].get(d))
-    D = [d for d in sorted(set(sp) & set(st_) & set(so) & set(bv['px'])) if '2012-01-01' <= d <= last]
-    if len(D) < 800: return None
-    s7, dd = {}, {}
-    for i, d in enumerate(D):
-        w = [so[x] for x in D[max(0, i - 6): i + 1]]; s7[d] = sum(w) / len(w)
-        dd[d] = P(d) / max(P(x) for x in D[max(0, i - 59): i + 1]) - 1
-    comp = [sp, {d: P(d) / st_[d] for d in D}, s7, dd]
-
-    def pctl(ser):
-        out, win = {}, []
-        for i, d in enumerate(D):
-            bisect.insort(win, ser[d])
-            if i >= ST_W: win.pop(bisect.bisect_left(win, ser[D[i - ST_W]]))
-            if i >= ST_W: out[d] = bisect.bisect_left(win, ser[d]) / len(win)
+def stress_viz(bv, px, last, step=3, keep=1095):
+    P_ = lambda d: px.get(d) or (bv.get('px') or {}).get(d)
+    D = [d for d in sorted(set(px) | set(bv.get('px') or {})) if '2011-06-01' <= d <= last and P_(d)]
+    if len(D) < 1500: return None
+    P = [P_(d) for d in D]; n = len(D)
+    lr = [0.0] + [math.log(P[i] / P[i - 1]) for i in range(1, n)]
+    Phi = lambda x: 0.5 * (1 + math.erf(x / math.sqrt(2)))
+    S, R, r = [None] * n, [None] * n, 0.0
+    for i in range(SX_N, n):
+        w = lr[i - SX_N + 1: i + 1]; m = sum(w) / SX_N; sd = (sum((a - m) ** 2 for a in w) / (SX_N - 1)) ** 0.5
+        s = Phi(SX_K * m / sd * math.sqrt(SX_N)) if sd > 0 else 0.5
+        if s >= SX_RESET: r = 0.0
+        elif s < SX_TH: r = min(100.0, r + SX_UP * (SX_TH - s))
+        else: r = max(0.0, r - SX_DN * (s - SX_TH))
+        S[i], R[i] = s, r
+    i0 = next(i for i, d in enumerate(D) if d >= SX_FROM)
+    fwd = lambda i, h: (P[i + h] / P[i] - 1) * 100 if i + h < n else None
+    med = lambda v: round(sorted(v)[len(v) // 2], 1) if v else None
+    def stat(ix, h):
+        v = [x for x in (fwd(i, h) for i in ix) if x is not None]
+        return dict(n=len(v), up=sum(x > 0 for x in v), med=med(v))
+    def base(h):
+        v = [x for x in (fwd(i, h) for i in range(i0, n)) if x is not None]
+        return dict(up=round(sum(x > 0 for x in v) / len(v) * 100), med=med(v))
+    def eps(cond):
+        out, lastk = [], -10 ** 9
+        for i in range(i0, n):
+            if cond(i):
+                if i - lastk > SX_GAP: out.append(i)
+                lastk = i
         return out
-    Pc = [pctl(c) for c in comp]
-    sc = {d: round(max(0.0, min(1.0, (0.5 - sum(p[d] for p in Pc) / 4) / 0.4)) * 100) for d in D if all(d in p for p in Pc)}
-    S = sorted(sc); d1 = S[-1]
-    # 照 BRS 的用法回測（到 100、之後第一次回到 0），分三段照實列出
-    ev, armed, i = [], True, 0
-    while i < len(S):
-        d = S[i]
-        if armed and sc[d] >= 100:
-            k = next((m for m in range(i + 1, len(S)) if sc[S[m]] <= 0), None)
-            ev.append([d, round(P(d)), S[k] if k else None, round((P(S[k]) / P(d) - 1) * 100, 1) if k else None]); armed = False; i = k if k else len(S); continue
-        if not armed and sc[d] <= 0: armed = True
-        i += 1
+    bot = eps(lambda i: R[i] >= 99.5 and S[i] < 0.3)
+    ev = []
+    for i in bot:
+        j = next((k for k in range(i + 1, n) if R[k] == 0), None)
+        ev.append(dict(date=D[i], price=round(P[i]), f30=None if fwd(i, 30) is None else round(fwd(i, 30), 1), f90=None if fwd(i, 90) is None else round(fwd(i, 90), 1),
+                       exit=D[j] if j else None, ret=round((P[j] / P[i] - 1) * 100, 1) if j else None, days=(j - i) if j else None,
+                       dip=round((min(P[i:(j if j else n - 1) + 1]) / P[i] - 1) * 100, 1)))
+    done = [e for e in ev if e['ret'] is not None]
     era = []
-    for lo, hi in (('2013-01-01', '2017-12-31'), ('2018-01-01', '2022-12-31'), ('2023-01-01', last)):
-        x = [e for e in ev if lo <= e[0] <= hi and e[3] is not None]
-        era.append(dict(lo=lo[:4], hi=hi[:4], n=len(x), win=sum(e[3] > 0 for e in x), med=round(sorted(e[3] for e in x)[len(x) // 2], 1) if x else None))
-    rows = thin([[dn(d), sc[d]] for d in S if d >= ST_FROM], step)
-    run0 = next((k for k, d in enumerate(reversed(S)) if sc[d] > 0), len(S))   # 已經連續幾天是 0
-    return dict(date=d1, value=sc[d1], max30=max(sc[d] for d in S[-30:]), zero_run=run0, rows=rows, events=ev[-12:], era=era, w=ST_W,
-                note='本站自製（不是 Glassnode 的 BRS）：短期持有者獲利比例、價格 ÷ 短期持有者成本、短期持有者 SOPR 7 日平均、距近 60 天高點跌幅，各和近 180 天比的百分位平均，只取比平常差的一半映成 0–100；只作讀值、不是買賣訊號')
+    for lo, hi in (('2012', '2017'), ('2018', '2022'), ('2023', last[:4])):
+        x = [e for e in done if lo <= e['date'][:4] <= hi]
+        era.append(dict(lo=lo, hi=hi, n=len(x), win=sum(e['ret'] > 0 for e in x)))
+    top = eps(lambda i: R[i] == 0 and S[i] > 0.85)
+    k = n - 1; d1 = D[k]; rk = round(R[k])
+    z0 = next((j for j in range(k, i0, -1) if R[j - 1] == 0), None) if R[k] > 0 else None   # 這一段從 0 升上來的第一天
+    at100 = next((k - j for j in range(k, i0, -1) if R[j] < 99.5), 0) if R[k] >= 99.5 else 0
+    s2 = round(S[k], 2)   # 現況標籤用頁面上顯示的兩位小數判斷（0.296 顯示 0.30，就不說「已低於 0.3」）
+    near = R[k] >= 60 and (R[k] >= 99.5 or s2 < 0.3 or (R[k] >= 75 and s2 < 0.35))
+    state = 'bottom' if R[k] >= 99.5 and s2 < 0.3 else 'near' if near else 'build' if R[k] > 0 else 'strong' if s2 > 0.85 else 'calm'
+    cut = dn(d1) - keep
+    rows = [[dn(D[i]), round(P[i]), round(R[i]), round(S[i], 3)] for i in range(i0, n) if dn(D[i]) >= cut or (n - 1 - i) % step == 0]
+    b7 = D.index(d1) - 7
+    return dict(date=d1, price=round(P[k]), r=rk, s=round(S[k], 2), r7=round(R[b7]), s7=round(S[b7], 2), state=state,
+                rise_from=D[z0] if z0 else None, at100=at100, max30=round(max(R[k - 29: k + 1])),
+                ev=ev, f30=stat(bot, 30), f90=stat(bot, 90), base30=base(30), base90=base(90),
+                ex=dict(n=len(done), win=sum(e['ret'] > 0 for e in done), med=med([e['ret'] for e in done]), days=med([e['days'] for e in done]), dip=med([e['dip'] for e in done])),
+                era=era, top=dict(n=len(top), f90=stat(top, 90), last=D[top[-1]] if top else None), since=SX_FROM,
+                prm=dict(n=SX_N, k=SX_K, th=SX_TH, up=SX_UP, dn=SX_DN, reset=SX_RESET), rows=rows,
+                note='本站自製，只用每日收盤：動能品質＝Φ(0.7 × 近 21 天報酬 t 值)；賣壓累積＝動能低於 0.45 時累加、高於時遞減、到 0.7 歸零（0–100）；只作讀值、不是買賣訊號')
 
 
 # 2026-11-05 使用者要求（X 帳號掃描：頂部後 13 個月前幾輪跌 71–80%、這輪約 35%；回到前高花的時間比跌下去久）：各輪週期頂部之後，

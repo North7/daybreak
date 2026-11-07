@@ -846,7 +846,7 @@ for _k, _ser, _fn in (('sec', _sec, stage_viz.sec_viz), ('rpl', _rpl, stage_viz.
     except Exception as e: errors.append(f'checkonchain {_k} {e}')
 # G4f. 2026-11-04 使用者要求：短期持有者成本帶（Murphy 的 STH 成本基礎模型）、6–12／12–18 個月成本線（wander）。資料 Bitview（B9），價格用統一收盤 PXC
 if BV:
-    for _k, _fn in (('sth_bands', stage_viz.sth_bands_viz), ('age_cost', stage_viz.age_cost_viz), ('levels', stage_viz.levels_viz), ('capflow', stage_viz.capflow_viz), ('stress', stage_viz.stress_viz)):   # levels：2026-11-04 關鍵價位圖；stress：2026-11-05 短期壓力分數（本站自製，不是 BRS）
+    for _k, _fn in (('sth_bands', stage_viz.sth_bands_viz), ('age_cost', stage_viz.age_cost_viz), ('levels', stage_viz.levels_viz), ('capflow', stage_viz.capflow_viz), ('stress', stage_viz.stress_viz)):   # levels：2026-11-04 關鍵價位圖；stress：2026-11-07 起改成賣壓累積與動能品質（本站自製，只用每日收盤）
         try: R[_k] = _fn(BV, globals().get('PXC') or {}, LAST)
         except Exception as e: errors.append(f'bitview {_k} {e}')
     # 2026-11-05 使用者要求（補充指標 PDF）：長短期持有者供給比（lsr）、長期持有者已實現虧損（lthrl，要用 model.json 的週期頂部與底部）
