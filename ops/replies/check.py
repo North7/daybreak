@@ -91,7 +91,34 @@ def check():
         if it.get('mode') == 'quote' and not q: err.append(f'{tag} mode 是 quote 但沒有 quote 文字')
         if it.get('image') and not os.path.exists(os.path.join(ROOT, 'data', 'replies', f'{it["n"]}.png')):
             err.append(f'{tag} 有 image 但 data/replies/{it["n"]}.png 不存在（先跑 cards.py）')
+    err += repeat_errors(R.get('items', []))
     return err + check_flash()
+
+
+BIG = 250000   # 2026-11-07：X 對 25 萬粉以上帳號底下的回覆跑 AI 檢查（"llm slop" 標籤，14–30 天，對方收不到通知）
+
+
+def repeat_errors(items):
+    """同一天的回覆／引用不能一字不差重複自己的句子（X 的 copypasta／duplicate 標籤）；25 萬粉以上的回覆要使用者自己改寫。"""
+    err = []
+    for it in items:
+        if it.get('status') == 'skip': continue
+        if (it.get('followers') or 0) >= BIG and it.get('mode') != 'quote' and it.get('reply') and it.get('status') != 'optional':
+            err.append(f'#{it["n"]} @{it.get("author")} 有 {it["followers"]:,} 粉（25 萬以上）：回覆會被 X 跑 AI 檢查，改成 status "optional" 並在 note 請使用者用自己的話改寫，或改成引用（mode "quote"）')
+    K = 14; seen = {}; hit = {}
+    for it in sorted(items, key=lambda x: x.get('n') or 0):   # 編號小的先：重複算在後寫的那則
+        if it.get('status') == 'skip': continue
+        for k in ('reply', 'quote'):
+            t = re.sub(r'https?://\S+|@\w+|#\S+', '', it.get(k) or '')
+            t = re.sub(r'[\s，。、,.!?！？：:；;（）()「」"\'…—-]', '', t.lower())
+            for i in range(len(t) - K + 1):
+                g = t[i:i + K]
+                if g in seen and seen[g] != it['n']:
+                    if not it.get('repeat_ok'): hit.setdefault((seen[g], it['n']), g)   # repeat_ok：兩則都已經發出去了，改不了
+                else: seen.setdefault(g, it['n'])
+    for (a, b), g in hit.items():
+        err.append(f'#{a} 和 #{b} 有一樣的句子（「{g}…」）：數字可以一樣，說法要換（X 會把一字不差的重複標成 copypasta）')
+    return err
 
 
 def text_errors(tag, t, lang):
