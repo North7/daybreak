@@ -1,7 +1,7 @@
 """市場階段佐證燈號的走勢圖資料與第 6 盞燈（2026-10-14 使用者要求）。
 只作讀值、不參與 P23 判定；collect.py 在 G4c 呼叫，不另打 API（沿用 CoinMetrics 與 bitcoin-data 已抓的序列）。
 x 一律為 1970-01-01 起的天數（頁面 JS 轉回日期）；序列每 STEP 天取一點，最後一點一定保留。"""
-import bisect, datetime as dt, math
+import bisect, datetime as dt, math, statistics
 
 EP = dt.date(1970, 1, 1)
 YEARS, STEP, AHEAD, PROJ_MAX = 3, 3, 120, 365
@@ -786,3 +786,34 @@ def cycle_cmp_viz(px, tops, last):
                         back_day=back, back_after_low=back - lo[0] if back else None))
     return dict(date=last, day_now=n_now, cycles=out, days=CC_DAYS,
                 note='各輪週期頂部（model.json cycle_tops）之後每天收盤 ÷ 頂部收盤；at＝今天這個天數時的位置；low＝頂部後最低；back_day＝最低之後第一次收回頂部價的天數；只作讀值')
+
+
+# 2026-11-08 指標擴充：月度報酬熱力表。每格＝上個月最後一天收盤 → 這個月最後一天收盤（本月＝到最新收盤為止，月底前還會變）。
+#   2013 年起（更早的市場太小）；各月中位數、上漲次數不含本月。價格用統一收盤 PXC（Kraken 優先、更早 CoinMetrics）。只作讀值
+MON_FROM = 2013
+
+
+def monthly_viz(px, last, y0=MON_FROM):
+    D = sorted(d for d in px if d <= last and px[d])
+    if not D: return None
+    d1 = D[-1]; me = {}
+    for d in D: me[d[:7]] = (d, px[d])   # 每個月最後一個有收盤的日子
+    def prev(ym): y, m = int(ym[:4]), int(ym[5:]); return f'{y - (m == 1)}-{12 if m == 1 else m - 1:02d}'
+    def ret(ym): p = prev(ym); return round((me[ym][1] / me[p][1] - 1) * 100, 2) if ym in me and p in me else None
+    def yret(y):   # 全年＝前一年 12 月底 → 今年 12 月底（今年到最新收盤為止）
+        a, b = f'{y - 1}-12', f'{y}-12' if y < int(d1[:4]) else d1[:7]
+        return round((me[b][1] / me[a][1] - 1) * 100, 2) if a in me and b in me else None
+    cur, Y = d1[:7], list(range(y0, int(d1[:4]) + 1))
+    rows = [[y, [ret(f'{y}-{m:02d}') if f'{y}-{m:02d}' <= cur else None for m in range(1, 13)], yret(y)] for y in Y]
+    def stat(v):
+        v = [x for x in v if x is not None]
+        if not v: return None
+        s = sorted(v); return dict(n=len(v), up=sum(x > 0 for x in v), med=round(statistics.median(v), 2), best=round(s[-1], 2), worst=round(s[0], 2))
+    stats = [stat([ret(f'{y}-{m:02d}') for y in Y if f'{y}-{m:02d}' < cur]) for m in range(1, 13)]
+    m0 = int(cur[5:]); st0 = stats[m0 - 1] or {}
+    best = max(((y, ret(f'{y}-{m0:02d}')) for y in Y if f'{y}-{m0:02d}' < cur), key=lambda z: z[1] if z[1] is not None else -1e9, default=(None, None))
+    worst = min(((y, ret(f'{y}-{m0:02d}')) for y in Y if f'{y}-{m0:02d}' < cur), key=lambda z: z[1] if z[1] is not None else 1e9, default=(None, None))
+    return dict(date=d1, month=cur, mtd=ret(cur), ytd=yret(int(d1[:4])), base=round(me[prev(cur)][1]) if prev(cur) in me else None,
+                cur=dict(st0, m=m0, best_y=best[0], worst_y=worst[0]), rows=rows, stats=stats,
+                ystat=stat([r[2] for r in rows if r[0] < int(d1[:4])]), since=y0,
+                note='每格＝上個月最後一天收盤到這個月最後一天收盤的漲跌（本月到最新收盤為止）；2013 年起；中位數與上漲次數不含本月；只描述過去，不是預測')

@@ -897,12 +897,17 @@ if BV:
             try: R[_k] = _fn()
             except Exception as e: errors.append(f'bv_extra {_k} {e}')
     except Exception as e: errors.append(f'bv_extra {e}')
+# G4i. 2026-11-08 指標擴充：月度報酬熱力表（只用統一收盤 PXC，不打新的 API）
+try: R['monthly'] = stage_viz.monthly_viz(globals().get('PXC') or {}, LAST)
+except Exception as e: errors.append(f'monthly {e}')
 try:
     import opt_flow
     try: _dfc = opt_flow.update_trades(now, backfill_days=3, max_pages=300)   # 快取不見時只補 3 天（完整回補一年要在本機跑）
     except Exception as e: _dfc = opt_flow._load(opt_flow.DF_CACHE, {}); errors.append(f'deribit 逐筆成交 {e}')
     try: R['gex'] = opt_flow.gex_viz(opt['result'], _dfc.get('net') or {}, now, ((R.get('murphy_viz') or {}).get('urpd') or {}).get('band'))
     except Exception as e: errors.append(f'gex {e}')
+    try: R['ivterm'] = opt_flow.term_viz(opt['result'], now, LAST, globals().get('PXC') or {})   # 2026-11-08 隱含波動率期限結構（每天快照一次，快取 coc_cache/iv_term.json）
+    except Exception as e: errors.append(f'ivterm {e}')
     try: R['prem'] = opt_flow.prem_viz(_dfc, globals().get('PXC') or {}, LAST)
     except Exception as e: errors.append(f'prem {e}')
     try: _okc = opt_flow.okx_update(now)

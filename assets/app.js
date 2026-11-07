@@ -917,6 +917,116 @@
       now: { i: 2, col: 'var(--down)', lab: String(x.r) } });
   }
 
+  /* 2026-11-08 指標擴充：隱含波動率期限結構（Deribit 各到期日的 ATM 標記隱含波動）。Deribit 沒有免費的歷史曲線，每天收盤後快照一次，2026-11-07 起累積。只作讀值 */
+  var IVT_K = { inv: ['warn', '倒掛：近月較貴', 'Inverted: near term pricier', 'Inverted'], flat: ['neu', '大致持平', 'Roughly flat', 'Flat'], norm: ['neu', '正常：遠月較貴', 'Normal: longer dated pricier', 'Normal'] };   // 第 4 欄：英文狀態卡用的短字
+  function ivtX() { return (D.deriv || {}).ivterm || null; }
+  function ivtSg(v) { return v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + fmt.n(Math.abs(v), 1); }
+  function ivtDl(a, b) { if (a == null || b == null) return ''; var d = a - b; return '<em>' + (d >= 0 ? '▲ ' : '▼ ') + fmt.n(Math.abs(d), 1) + _T(' 點 / 7 天', ' pt / 7d') + '</em>'; }   // 波動高低沒有好壞，不上綠紅
+  function ivtSay() {
+    var x = ivtX(); if (!x || !x.t) return [];
+    var it = [], t = x.t, K = IVT_K[x.state] || IVT_K.flat, p = x.prev7, v = function (k) { return t[k] == null ? '—' : fmt.n(t[k], 1) + '%'; };
+    var shape = x.state === 'inv' ? _T('近月比遠月貴：市場覺得眼前幾天的風險比較大，常見於急跌、清算潮或大事件前後。', 'Near-dated options cost more than longer-dated ones: the market sees more risk in the next few days, as is common around sharp drops, liquidation waves or big events.')
+      : x.state === 'norm' ? _T('遠月比近月貴：時間越長、不確定越多，市場平靜時通常是這個形狀。', 'Longer-dated options cost more: more time means more uncertainty, the usual shape in calm markets.')
+      : _T('近月和遠月相差不到 1 點：市場對眼前幾天和幾個月後的波動看法差不多。', 'Near and far differ by less than a point: the market expects about the same volatility now as months out.');
+    it.push([_T('現在', 'Now'), ivtSg(x.slope), _T(K[1] + '。7 天 ' + v(7) + '、30 天 ' + v(30) + '、90 天 ' + v(90) + '、180 天 ' + v(180) + '，7 天減 90 天 ' + ivtSg(x.slope) + ' 點。', K[2] + '. 7 days ' + v(7) + ', 30 days ' + v(30) + ', 90 days ' + v(90) + ', 180 days ' + v(180) + '; 7 days minus 90 days is ' + ivtSg(x.slope) + ' points. ') + shape, K[0]]);
+    if (p && p.slope != null && p.t) {
+      var d7 = t[7] - p.t[7], d90 = t[90] - p.t[90], mv = function (d) { return _T((d >= 0 ? '升 ' : '降 ') + fmt.n(Math.abs(d), 1) + ' 點', (d >= 0 ? 'up ' : 'down ') + fmt.n(Math.abs(d), 1) + ' pt'); };
+      it.push([_T('和 7 天前比', 'Versus a week ago'), ivtSg(p.slope) + ' → ' + ivtSg(x.slope), _T(fmt.md(p.date) + ' 以來 7 天' + mv(d7) + '、90 天' + mv(d90) + '：' + (Math.abs(d7) > Math.abs(d90) + 1 ? '主要是近月在動。' : Math.abs(d90) > Math.abs(d7) + 1 ? '主要是遠月在動。' : '近月和遠月差不多一起動。'),
+        'Since ' + fmt.md(p.date) + ', 7 days is ' + mv(d7) + ' and 90 days ' + mv(d90) + ': ' + (Math.abs(d7) > Math.abs(d90) + 1 ? 'mostly the near end moving.' : Math.abs(d90) > Math.abs(d7) + 1 ? 'mostly the far end moving.' : 'near and far moving about together.')), 'neu']);
+    } else it.push([_T('歷史', 'History'), x.n + _T(' 天', x.n === 1 ? ' day' : ' days'),_T('Deribit 沒有免費的歷史曲線，本站每天收盤後存一條（目前 ' + x.n + ' 條）：滿 7 天後疊上 7 天前的曲線，滿 30 天後畫出斜率走勢。', 'Deribit offers no free history of the curve, so the site saves one after each daily close (' + x.n + ' so far): the curve from a week ago appears after 7 days, the slope history after 30.'), 'neu']);
+    return it;
+  }
+  function ivtPanel() {
+    var x = ivtX(); if (!x || !x.curve || !x.t) return '';
+    var t = x.t, p = x.prev7 || {}, pt = p.t || {}, K = IVT_K[x.state] || IVT_K.flat, nh = (x.rows || []).filter(function (r) { return r[2] != null; }).length;
+    var lg = [[_T('今天', 'Today'), 'var(--s4)']].concat(x.prev7 ? [[_T('7 天前', 'A week ago'), 'var(--ink-2)', 'dash']] : [], x.prev30 ? [[_T('30 天前', '30 days ago'), 'var(--ink-3)', 'dash']] : [], x.state === 'inv' ? [[_T('近月高於 90 天', 'Near term above 90 days'), 'var(--warn)', 'box']] : []);
+    return panel('span-12', _T('隱含波動率期限結構', 'Implied volatility term structure'), _T('Deribit 標記隱含波動 · 價平 · 快照 ' + x.ts + ' UTC', 'Deribit mark IV · at the money · snapshot ' + x.ts + ' UTC'),
+      '<div class="cf-hero">' + oxCard('var(--s4)', _T('近月 7 天', 'Near: 7 days'), fmt.n(t[7], 1) + '%', _T('30 天 ', '30 days ') + fmt.n(t[30], 1) + '%', ivtDl(t[7], pt[7])) +
+        oxCard('var(--s4)', _T('遠月 90 天', 'Far: 90 days'), fmt.n(t[90], 1) + '%', _T('180 天 ', '180 days ') + fmt.n(t[180], 1) + '%', ivtDl(t[90], pt[90])) +
+        oxCard(x.state === 'inv' ? 'var(--warn)' : 'var(--ink-2)', _T('7 天 − 90 天', '7d − 90d'), ivtSg(x.slope) + _T(' 點', ' pt'), _T(K[1], K[3]), ivtDl(x.slope, p.slope)) + '</div>' +
+      interpHtml(ivtSay()) + legend(lg) + '<div class="chart cf-chart" id="c-ivt"></div>' + (nh >= 30 ? '<div class="chart cf-chart" id="c-ivts"></div>' : '') +
+      '<p class="note">' + _T('每個到期日取遠期價兩側最近的價外選擇權，用 Deribit 的標記隱含波動內插出價平（ATM）的隱含波動；7／30／90／180 天是固定期限，用總變異數內插。排除 3 天內到期（週末和快到期時失真）。隱含波動是從選擇權價格反推的預期波動幅度，不分漲跌。Deribit 沒有免費的歷史曲線，本站從 2026/11/07 起每天存一條。只作讀值。',
+        'For each expiry, the at-the-money implied volatility is interpolated from Deribit mark IVs of the nearest out-of-the-money options on either side of the forward; 7/30/90/180 days are constant maturities interpolated in total variance. Expiries within 3 days are left out (weekends and the last days before expiry distort them). Implied volatility is the expected size of moves backed out of option prices, not their direction. Deribit offers no free history of the curve, so the site has saved one daily since 2026/11/07. Reading only.') + '</p>', '', 'ivt');
+  }
+  function drawIvt(el) {
+    var x = ivtX(); if (!x || !el) return;
+    var sq = Math.sqrt, ser = function (cv) { return (cv || []).map(function (q) { return [sq(q[0]), q[1]]; }); };   // 橫軸用天數的平方根：近月不擠在一起
+    var S = [{ name: _T('今天', 'Today'), data: ser(x.curve), color: 'var(--s4)', area: true, w: 2, end: false }];
+    if (x.prev7) S.push({ name: _T('7 天前', 'A week ago'), data: ser(x.prev7.curve), color: 'var(--ink-2)', dash: '5 4', w: 1.4, end: false });
+    if (x.prev30) S.push({ name: _T('30 天前', '30 days ago'), data: ser(x.prev30.curve), color: 'var(--ink-3)', dash: '2 3', w: 1.3, end: false });
+    var all = [], xm = 0; S.forEach(function (s) { s.data.forEach(function (q) { all.push(q[1]); xm = Math.max(xm, q[0]); }); });
+    var xt = [[7, _T('7 天', '7d')], [30, _T('30 天', '30d')], [90, _T('90 天', '90d')], [180, _T('180 天', '180d')], [365, _T('1 年', '1y')]].filter(function (q) { return sq(q[0]) <= xm; }).map(function (q) { return [sq(q[0]), q[1]]; });
+    var mk = [7, 90].filter(function (k) { return x.t[k] != null; }).map(function (k) { return { x: sq(k), y: x.t[k], label: _T(k + ' 天 ', k + 'd ') + fmt.n(x.t[k], 1) + '%', color: 'var(--s4)' }; });
+    var vb = [];
+    if (x.state === 'inv') { var hi = x.curve.filter(function (q) { return q[0] < 90 && q[1] > x.t[90]; }); if (hi.length) vb.push({ x0: sq(x.curve[0][0]), x1: sq(hi[hi.length - 1][0]), color: 'var(--warn-dim)' }); }
+    lineChart(el, { xType: 'num', h: el.clientWidth < 520 ? 220 : 270, series: S, xticks: xt, marks: mk, vbands: vb,
+      y0: Math.floor(Math.min.apply(null, all) - 4), y1: Math.ceil(Math.max.apply(null, all) + 2),   // 留一點空間，1–2 點的差別不要被放大成懸崖
+      xTipFmt: function (v) { return _T(Math.round(v * v) + ' 天後到期', Math.round(v * v) + ' days to expiry'); }, yFmt: function (v) { return v.toFixed(0) + '%'; }, tipFmt: function (v) { return v.toFixed(1) + '%'; },
+      aria: _T('各到期日的價平隱含波動', 'At-the-money implied volatility by expiry') });
+  }
+  function drawIvtS(el) {
+    var x = ivtX(); if (!x || !el) return;
+    var rows = x.rows.filter(function (r) { return r[2] != null; });
+    oxPane(el, { rows: rows, rng: 365, zero: true, fmt: function (v) { return fmt.n(v, 0); },
+      label: _T('7 天減 90 天（點）：正＝倒掛', '7 days minus 90 days (pt): positive = inverted'), aria: _T('BTC 價格與期限結構斜率', 'BTC price and term-structure slope'),
+      zones: [{ y0: 1, y1: 1e3, col: 'var(--warn)', op: 0.1 }],   // 倒掛區（≥ 1 點）淡底；日刊的 --warn 和 --s4 同色，所以線不分正負上色
+      lines: [{ i: 2, col: 'var(--s4)', area: true, w: 1.8, name: _T('7 天 − 90 天', '7d − 90d'), tfmt: function (v) { return ivtSg(v) + _T(' 點', ' pt'); } }],
+      now: { i: 2, col: 'var(--s4)', lab: ivtSg(x.slope) } });
+  }
+
+  /* 2026-11-08 指標擴充：月度報酬熱力表（2013 年起，每月最後一天收盤；本月到最新收盤為止）。只描述過去，不是預測 */
+  var MON_EN = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  function monX() { return (D.price || {}).monthly || null; }
+  function monSay() {
+    var x = monX(); if (!x || x.mtd == null) return [];
+    var c = x.cur || {}, m = c.m, it = [], y1 = +x.date.slice(0, 4) - 1;
+    it.push([_T('現在', 'Now'), fmt.pct(x.mtd, 1), _T(m + ' 月至今 ' + fmt.pct(x.mtd, 1) + '（從上月底收盤 ' + fmt.usd(x.base) + ' 到 ' + fmt.md(x.date) + '），今年至今 ' + fmt.pct(x.ytd, 1) + '。月底前還會變。',
+      MON_EN[m - 1] + ' so far ' + fmt.pct(x.mtd, 1) + ' (from the ' + fmt.usd(x.base) + ' close at last month-end to ' + fmt.md(x.date) + '), year to date ' + fmt.pct(x.ytd, 1) + '. It will change before the month ends.'), 'neu']);   // 月中的漲跌只是讀數，不標偏多偏空
+    if (c.n) it.push([_T('過去的 ' + m + ' 月', 'Past ' + MON_EN[m - 1] + 's'), c.up + '/' + c.n,
+      _T(x.since + '–' + y1 + ' 年的 ' + c.n + ' 次 ' + m + ' 月，上漲 ' + c.up + ' 次、中位數 ' + fmt.pct(c.med, 1) + '；最好 ' + c.best_y + ' 年 ' + fmt.pct(c.best, 0) + '，最差 ' + c.worst_y + ' 年 ' + fmt.pct(c.worst, 0) + '。只有 ' + c.n + ' 個樣本，只描述過去，不代表今年會照走。',
+        'Of ' + c.n + ' ' + MON_EN[m - 1] + 's from ' + x.since + ' to ' + y1 + ', ' + c.up + ' rose, median ' + fmt.pct(c.med, 1) + '; best ' + c.best_y + ' ' + fmt.pct(c.best, 0) + ', worst ' + c.worst_y + ' ' + fmt.pct(c.worst, 0) + '. Only ' + c.n + ' cases: this describes the past, not what this year will do.'), 'neu']);
+    return it;
+  }
+  function monPanel() {
+    var x = monX(); if (!x || !x.rows || x.mtd == null) return '';
+    var c = x.cur || {}, m = c.m;
+    return panel('span-12', _T('月度報酬熱力表', 'Monthly returns heatmap'), _T('每月最後一天收盤 · ' + x.since + ' 年起 · 到 ' + fmt.md(x.date), 'Month-end closes · since ' + x.since + ' · to ' + fmt.md(x.date)),
+      '<div class="cf-hero">' + oxCard(x.mtd >= 0 ? 'var(--up)' : 'var(--down)', _T(m + ' 月至今', MON_EN[m - 1] + ' so far'), fmt.pct(x.mtd, 1), _T('從上月底 ' + fmt.usd(x.base) + ' 算起', 'from ' + fmt.usd(x.base) + ' at last month-end')) +
+        oxCard('var(--ink-2)', _T('過去的 ' + m + ' 月', 'Past ' + MON_EN[m - 1] + 's'), c.up + ' / ' + c.n, _T('次上漲 · 中位數 ', 'rose · median ') + fmt.pct(c.med, 1)) +
+        oxCard(x.ytd >= 0 ? 'var(--up)' : 'var(--down)', _T('今年至今', 'Year to date'), fmt.pct(x.ytd, 1), _T(x.date.slice(0, 4) + ' 年', x.date.slice(0, 4))) + '</div>' +
+      interpHtml(monSay()) + '<div class="chart cf-chart" id="c-mon"></div><p class="note">' + _T('每格是上個月最後一天收盤到這個月最後一天收盤的漲跌（%，四捨五入到整數）；綠漲紅跌，顏色越深幅度越大（月份 ±30% 以上同色、全年 ±100% 以上同色）。框起來的是本月，到最新收盤為止。最下面兩列是各月的中位數和上漲比例，' + x.since + ' 年起、不含本月。窄螢幕只畫近 8 年、不畫全年欄（統計仍用全部年份）。每個月只有十幾個樣本，只作讀值，不是預測。',
+        'Each cell is the change from the last close of the previous month to the last close of the month (%, rounded); green up, red down, darker for bigger moves (months saturate at ±30%, years at ±100%). The outlined cell is this month, up to the latest close. The bottom two rows are each month’s median and share of up months since ' + x.since + ', excluding this month. Narrow screens show the last 8 years without the yearly column (the stats still use every year). Each month has only a dozen or so cases. Reading only, not a forecast.') + '</p>', '', 'mon');
+  }
+  function drawMon(el) {
+    var x = monX(); if (!x || !el) return;
+    var W = Math.max(280, el.clientWidth), sm = W < 520, rows = sm ? x.rows.slice(-8) : x.rows, yc = !sm, nc = 12 + (yc ? 1 : 0);
+    var lab = [_T(sm ? '中位' : '中位數', sm ? 'Med' : 'Median'), _T(sm ? '上漲' : '上漲比例', sm ? 'Up' : 'Up share')];
+    var mh = MON_EN.map(function (e, j) { return _T(sm ? String(j + 1) : (j + 1) + ' 月', e); });
+    var ML = Math.ceil(Math.max(lblW('2026'), lblW(lab[0]), lblW(lab[1]))) + 10, MR = 2, MT = 20, ch = sm ? 22 : 24, sep = 12, cw = (W - ML - MR) / nc;
+    var cy = +x.month.slice(0, 4), cm = +x.month.slice(5), ys = MT + rows.length * ch + sep, H = ys + 2 * ch + 4, fs = sm ? 10 : 11, s = '';
+    var sgn = function (v) { var r = Math.round(v); return (r > 0 ? '+' : r < 0 ? '−' : '') + fmt.n(Math.abs(r), 0); };
+    function cell(cx, y, v, sc, txt, ttl, now) {   // v：決定顏色的數字（正綠負紅），sc：滿色的幅度
+      var op = (0.08 + 0.5 * Math.min(1, Math.abs(v) / sc)).toFixed(2), w = cw - 2, h = ch - 2;
+      return '<g><title>' + esc(ttl) + '</title><rect x="' + (cx + 1).toFixed(1) + '" y="' + (y + 1) + '" width="' + w.toFixed(1) + '" height="' + h + '" rx="3" fill="' + (v >= 0 ? 'var(--up)' : 'var(--down)') + '" fill-opacity="' + op + '"/>' +
+        '<text x="' + (cx + cw / 2).toFixed(1) + '" y="' + (y + ch / 2 + fs * 0.36 + 1).toFixed(1) + '" text-anchor="middle" style="fill:var(--ink);font-size:' + fs + 'px;font-variant-numeric:tabular-nums">' + esc(txt) + '</text>' +
+        (now ? '<rect x="' + (cx + 1).toFixed(1) + '" y="' + (y + 1) + '" width="' + w.toFixed(1) + '" height="' + h + '" rx="3" fill="none" stroke="var(--ink)" stroke-width="1.6"/><circle class="cf-pulse" cx="' + (cx + cw - 5).toFixed(1) + '" cy="' + (y + 5) + '" r="2.6" fill="' + (v >= 0 ? 'var(--up)' : 'var(--down)') + '"/>' : '') + '</g>';
+    }
+    mh.forEach(function (t, j) { s += axText(ML + (j + 0.5) * cw, MT - 7, t, 'middle'); });
+    if (yc) s += axText(ML + 12.5 * cw, MT - 7, _T('全年', 'Year'), 'middle');
+    rows.forEach(function (r, i) {
+      var y = MT + i * ch; s += axText(ML - 8, y + ch / 2 + 4, String(r[0]), 'end');
+      r[1].forEach(function (v, j) { if (v == null) return; var now = r[0] === cy && j + 1 === cm; s += cell(ML + j * cw, y, v, 30, sgn(v), _T(r[0] + ' 年 ' + (j + 1) + ' 月' + (now ? '（至今）' : '') + '：', MON_EN[j] + ' ' + r[0] + (now ? ' (so far)' : '') + ': ') + fmt.pct(v, 1), now); });
+      if (yc && r[2] != null) s += cell(ML + 12 * cw, y, r[2], 100, sgn(r[2]), _T(r[0] + ' 年全年' + (r[0] === cy ? '（至今）' : '') + '：', r[0] + (r[0] === cy ? ' so far' : ' full year') + ': ') + fmt.pct(r[2], 1));
+    });
+    s += '<line class="gl" x1="' + ML + '" x2="' + (W - MR) + '" y1="' + (ys - sep / 2) + '" y2="' + (ys - sep / 2) + '"/>' + axText(ML - 8, ys + ch / 2 + 4, lab[0], 'end') + axText(ML - 8, ys + ch * 1.5 + 4, lab[1], 'end');
+    x.stats.concat(yc ? [x.ystat] : []).forEach(function (st, j) {
+      if (!st || !st.n) return; var nm = j < 12 ? _T((j + 1) + ' 月', MON_EN[j]) : _T('全年', 'Full year'), sh = st.up / st.n * 100;
+      s += cell(ML + j * cw, ys, st.med, j < 12 ? 30 : 100, sgn(st.med), _T(nm + '中位數 ' + fmt.pct(st.med, 1) + '（' + st.n + ' 次）', nm + ' median ' + fmt.pct(st.med, 1) + ' (' + st.n + ' cases)')) +
+        cell(ML + j * cw, ys + ch, sh - 50, 40, Math.round(sh) + '%', _T(nm + '上漲 ' + st.up + ' / ' + st.n + ' 次', nm + ' rose ' + st.up + ' of ' + st.n));
+    });
+    el.innerHTML = svgEl(W, H, s, _T('每月漲跌熱力表', 'Monthly returns heatmap'));
+  }
+
   /* 衍生品版 */
   function dvInterp() {
     var dv = D.deriv, d = dv.deriv || {}, r = dv.rr25 || {}, o = dv.options || {}, c = D.price.bar.c, it = [], dvol = dv.dvol || {}, x = (dv.samesource || {}).iv_minus_rv30;
@@ -1754,10 +1864,12 @@
       panel('span-4', _t('關鍵價位'), '', levelsSay(lv, c) + tbl) +
       lvPanel() +
       panel('span-6', _t('價格與均線'), '', maSay(ma, c) + mat) +
-      panel('span-6', _t('價格長期走勢'), _t('CoinMetrics · 對數刻度'), '<div class="chart" id="c-long"></div>', _t('<div class="seg" id="lg-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="4y">近 4 年</button></div>')) + '</div>';
+      panel('span-6', _t('價格長期走勢'), _t('CoinMetrics · 對數刻度'), '<div class="chart" id="c-long"></div>', _t('<div class="seg" id="lg-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="4y">近 4 年</button></div>')) +
+      monPanel() + '</div>';   // 2026-11-08 月度報酬熱力表
   };
   V.market.after = function () {
     mount($('#c-levels'), drawLevels);
+    mount($('#c-mon'), drawMon);   // 2026-11-08 月度報酬熱力表
     var p = D.price, H = p.history || [], rng = '4y';
     mount($('#c-cd'), function (el) { candleChart(el, p.rows20 || [], [{ v: p.ma.sma20, label: _t('20 日 ') + fmt.k(p.ma.sma20), color: 'var(--s2)' }, { v: (p.volprofile || {}).va_high_outer, label: _t('價值區上緣'), color: 'var(--flare)' }, { v: (p.volprofile || {}).poc, label: 'POC', color: 'var(--ink-3)' }]); });
     function drawLong(el) {
@@ -1892,6 +2004,7 @@
     return readBar('deriv') + '<div class="kpis">' + kpi('DVOL', fmt.n((dv.dvol || {}).value, 1), _t('一年第 ') + fmt.n((dv.dvol || {}).pct_1y, 0) + _t(' 百分位'), (dv.dvol || {}).pct_1y) + (concNow() ? kpi(_T('籌碼集中度 ±5%', 'Supply within ±5%'), fmt.n(concNow().pct, 1) + '%', _T('URPD ' + fmt.md(concNow().urpd_date) + ' · 只作讀值', 'URPD ' + fmt.md(concNow().urpd_date) + ' · reading only')) : '') + kpi(_t('IV − RV30（同源）'), fmt.n((dv.samesource || {}).iv_minus_rv30, 2), _t('負值＝隱含波動比實際便宜')) + kpi(_t('永續資金費率'), fmt.pct(fundNow(), 1), _T('年化 · 多家加權 · 基差中位 ', 'annualized · multi-venue weighted · basis ') + fmt.n(d.basis_median, 1) + '%') + kpi(_t('25Δ 風險逆轉'), fmt.n(r.rr, 2), r.expiry ? r.expiry + ' · ATM ' + fmt.n(r.atm_iv, 1) + '%' : _t('本日沒有可計算的合約')) + kpi(_t('選擇權未平倉'), fmt.n(o.total_oi) + _t(' 顆'), _t('最大到期 ') + (big.expiry || '—') + _t('（') + fmt.n(big.share, 0) + _t('%）')) + '</div><div class="grid">' + interpPanel(dvInterp()) +
       panel('span-8', _t('隱含波動 vs 實際波動'), _t('Deribit DVOL · Kraken RV30 · 近一年'), legend([['DVOL', 'var(--s4)'], ['RV30', 'var(--s1)']]) + '<div class="chart" id="c-vol"></div>') +
       panel('span-4', _t('期貨基差曲線'), _t('年化 % · 排除 7 天內到期'), basisSay(d.basis_curve) + _t('<div class="chart" id="c-basis"></div><p class="note">資金費率年化 ') + fmt.pct(fundNow(), 1) + _t('；永續 OI ') + fmt.usd(d.perp_oi_usd_m) + _t('M。</p><div class="src-link">外部：<a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">CoinGlass 爆倉熱力圖 ↗</a>（以 OI 與假設槓桿推估，非實際倉位）</div>')) +
+      ivtPanel() +   // 2026-11-08 隱含波動率期限結構
       liqPanel() +
       concPanel() + sxPanel() +
       panel('span-6', _t('各到期未平倉'), _t('買權 / 賣權（顆）'), legend([[_t('買權'), 'var(--s4)'], [_t('賣權'), 'var(--s3)']]) + '<div class="chart" id="c-oi"></div>') +
@@ -1904,6 +2017,7 @@
     var v = D.deriv.viz || {};
     mount($('#c-vol'), function (el) { var rows = (v.vol || {}).rows || []; lineChart(el, { series: [{ name: 'DVOL', data: rows.map(function (r) { return [r[0], r[1]]; }), color: 'var(--s4)' }, { name: 'RV30', data: rows.map(function (r) { return [r[0], r[2]]; }), color: 'var(--s1)' }], yFmt: function (x) { return x.toFixed(0); }, tipFmt: function (x) { return x.toFixed(1) + '%'; }, aria: _t('波動率') }); });
     mount($('#c-conc'), drawConc); mount($('#c-sx'), drawSx);   // 2026-11-07 賣壓累積與動能品質
+    mount($('#c-ivt'), drawIvt); mount($('#c-ivts'), drawIvtS);   // 2026-11-08 隱含波動率期限結構
     mount($('#c-basis'), function (el) { var cv = (v.basis || {}).curve || []; lineChart(el, { h: 200, xType: 'num', series: [{ name: _t('年化基差'), data: cv, color: 'var(--s4)', area: true }], xticks: cv.filter(function (p, i) { return i % 2 === 0; }).map(function (p) { return [p[0], Math.round(p[0]) + 'd']; }), xTipFmt: function (x) { return Math.round(x) + _t(' 天到期'); }, yFmt: function (x) { return x.toFixed(1) + '%'; }, tipFmt: function (x) { return x.toFixed(2) + '%'; }, y0: 0, aria: _t('基差曲線') }); });
     mount($('#c-oi'), function (el) {
       var ex = ((v.options || {}).expiries || []), W = Math.max(280, el.clientWidth), Ht = 230, ML = 8, MR = 52, MT = 10, MB = 26, pw = W - ML - MR, ph = Ht - MT - MB;
@@ -4014,6 +4128,16 @@
         now: function () { var c = oc('capeff').cur; return !c ? '' : _T('這一輪 ' + c.days + ' 天：流入 ' + cqB(c.add_b) + '、' + fmt.n(c.mult, 2) + ' 倍。', 'This cycle, ' + c.days + ' days: ' + cqB(c.add_b) + ' in, ' + fmt.n(c.mult, 2) + '×.'); } }
     });
   })();
+  Object.assign(RD, {   /* 2026-11-08 隱含波動率期限結構、月度報酬熱力表 */
+    'ivt': { h: [['每條線是一天收盤後的快照：橫軸是距離到期的天數（越往右越遠，刻度前密後疏），縱軸是那個到期日的價平隱含波動。金線是今天，虛線是 7 天前、點線是 30 天前（存夠天數才會出現）。', 'Each line is a snapshot after a daily close: across is days to expiry (further right is further out, spaced tighter at the far end), up is the at-the-money implied volatility for that expiry. Gold is today; dashed is a week ago and dotted 30 days ago (they appear once enough days are saved).'],
+        ['正常是往右上升（遠月較貴）。左端翹起、近月比遠月貴就是倒掛（淡色底），代表市場覺得眼前幾天的風險比較大，常見於急跌、清算潮或大事件前後。', 'Normally the line rises to the right (longer dated costs more). When the left end lifts above the far end it is inverted (shaded): the market sees more risk in the next few days, as is common around sharp drops, liquidation waves or big events.'],
+        ['隱含波動是從選擇權價格反推的預期波動幅度，不分漲跌。Deribit 沒有免費的歷史曲線，本站 2026/11/07 起每天存一條。只作讀值。', 'Implied volatility is the expected size of moves backed out of option prices, not their direction. Deribit offers no free history of the curve, so the site has saved one daily since 2026/11/07. Reading only.']],
+      now: function () { var x = ivtX(); return !x || !x.t ? '' : _T('7 天 ' + fmt.n(x.t[7], 1) + '%、90 天 ' + fmt.n(x.t[90], 1) + '%，相差 ' + ivtSg(x.slope) + ' 點（' + (IVT_K[x.state] || IVT_K.flat)[1] + '）。', '7 days ' + fmt.n(x.t[7], 1) + '%, 90 days ' + fmt.n(x.t[90], 1) + '%, a gap of ' + ivtSg(x.slope) + ' pt (' + (IVT_K[x.state] || IVT_K.flat)[3].toLowerCase() + ').'); } },
+    'mon': { h: [['每格是一個月的漲跌：上個月最後一天收盤到這個月最後一天收盤。綠漲紅跌，顏色越深幅度越大；框起來的是本月，到最新收盤為止。', 'Each cell is one month: from the last close of the previous month to the last close of this one. Green up, red down, darker for bigger moves; the outlined cell is this month, up to the latest close.'],
+        ['最下面兩列是各月的中位數和上漲比例（2013 年起、不含本月）。用中位數是因為 2013 年 3 月、11 月都漲超過一倍，會把平均拉得很高。', 'The bottom two rows are each month’s median and share of up months (since 2013, excluding this month). Medians, because March and November 2013 each more than doubled and would drag an average far up.'],
+        ['每個月只有十幾個樣本，季節性只描述過去，不代表今年會照走；拿來看「這個月目前算不算特別」比拿來預測合適。只作讀值。', 'Each month has only a dozen or so cases. Seasonality describes the past, not what this year will do; it is better for judging whether this month is unusual so far than for forecasting. Reading only.']],
+      now: function () { var x = monX(); if (!x || x.mtd == null) return ''; var c = x.cur || {}; return _T(c.m + ' 月至今 ' + fmt.pct(x.mtd, 1) + '；過去 ' + c.n + ' 次 ' + c.m + ' 月上漲 ' + c.up + ' 次、中位數 ' + fmt.pct(c.med, 1) + '。', MON_EN[c.m - 1] + ' so far ' + fmt.pct(x.mtd, 1) + '; of the past ' + c.n + ' ' + MON_EN[c.m - 1] + 's, ' + c.up + ' rose, median ' + fmt.pct(c.med, 1) + '.'); } }
+  });
   Object.assign(RD, {   /* 2026-11-07 賣壓累積與動能品質 */
     'sx': { h: [['下格紅線是賣壓累積（0–100），青綠線是動能品質（0–1，畫在同一高度，0.3 對到 30）。青綠底是「底部組合」出現到賣壓回到 0 的那一段，膠囊是組合出現後 90 天的漲跌。', 'Bottom: the red line is selling pressure (0–100), the teal line momentum quality (0–1, drawn on the same height, 0.3 at 30). Teal shading runs from each bottom combo to when pressure returns to 0; capsules show the next 90 days.'],
         ['動能品質看近 21 天漲跌是不是又快又穩；賣壓累積看弱勢拖了多久：急跌一兩天不會馬上到 100，要弱勢拖一段時間才會累積上去，一段又快又穩的上漲就清空。兩個一起到極端（賣壓 100、動能 < 0.3）時，過去常在一段下跌的後段，但短期常常還有一跌。', 'Momentum quality asks whether the last 21 days moved fast and steadily; selling pressure asks how long weakness has dragged on. A one- or two-day drop does not push it to 100 — weakness has to linger — and a fast, steady rally clears it. When both hit extremes (pressure 100, momentum < 0.3), it has tended to come late in a decline, though often with another leg down first.'],

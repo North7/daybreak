@@ -25,6 +25,7 @@
   --warn: #9C6A00;
   --up-dim: rgba(0, 128, 90, .1);
   --down-dim: rgba(215, 38, 28, .1);
+  --warn-dim: rgba(156, 106, 0, .12);   /* 2026-11-08 期限結構倒掛段的淡底 */
   --s1: #5B49D6; --s2: #C2531A; --s3: #008571; --s4: #9C6A00;
   --grid: rgba(10, 10, 10, .07);
   --lc-neg: #D7261C; --lc-mid: #7A766F; --lc-pos: #2340E0;   /* 2026-10-29 價格 × 長期持有者淨部位：紅＝淨減、灰＝持平、藍＝淨增（已用色盲檢查） */
@@ -50,7 +51,7 @@
   --ink: #F2F0EA; --ink-2: #B6B2AA; --ink-3: #7C7870;
   --red: #FF4A2E; --red-ink: #FF6A50; --flare-dim: rgba(255, 74, 46, .13);
   --orbit: #7A90FF; --orbit-dim: rgba(122, 144, 255, .12);
-  --up: #2FD08A; --down: #FF5A4E; --warn: #E8B54A; --up-dim: rgba(47, 208, 138, .12); --down-dim: rgba(255, 90, 78, .12);
+  --up: #2FD08A; --down: #FF5A4E; --warn: #E8B54A; --up-dim: rgba(47, 208, 138, .12); --down-dim: rgba(255, 90, 78, .12); --warn-dim: rgba(232, 181, 74, .13);
   --s1: #8573F2; --s2: #D9692F; --s3: #2A9F8E; --s4: #A88A30;
   --grid: rgba(242, 240, 234, .07);
   --lc-neg: #E8503F; --lc-mid: #A9A59D; --lc-pos: #6F86F5;

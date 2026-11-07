@@ -55,6 +55,8 @@ BASE=https://north7.github.io/daybreak/ node tests/smoke.js   # 上線後再跑�
 | 清算熱力圖加 Hyperliquid：掃前 2,000 名，同一個 1,000 美元價位 ≥ 5 帳戶且最大一個 ≤ 一半才在右緣畫白條（目前沒有聚集，所以沒畫） | 衍生品版 | `deriv.hl_whales.bands` |
 | 「籌碼結構與集中度」：上格價格＋右緣長短期持有者籌碼分布，中格集中度（改用 Bitview，2018 起）（11/05 的下格「短期壓力分數」已在 11/07 換成獨立的「賣壓累積與動能品質」，見 5d） | 衍生品版 | `chips.conc_hist`、`chips.conc_stats`；快取 `pipeline/coc_cache/conc.json` |
 | 修：圖例顏色對不上（RV30、籌碼集中度）、讀值太長壓到標籤、手機收起來的小圖只剩最後一點 | — | — |
+| 隱含波動率期限結構（2026-11-08，見 5e） | 衍生品版 | `deriv.ivterm`；快取 `pipeline/coc_cache/iv_term.json` |
+| 月度報酬熱力表（2026-11-08，見 5e） | 價格版 | `price.monthly` |
 
 ## 5. 待辦（照優先順序）
 
@@ -91,6 +93,14 @@ BASE=https://north7.github.io/daybreak/ node tests/smoke.js   # 上線後再跑�
 - 底部組合＝賣壓 100 且動能 < 0.3，和上一次相隔 60 天以上才算新的一次。回測二十幾次，換收盤價來源（CoinMetrics 對 Bitview）勝率就差 2 次左右；2018–22 與熊市初期多次失靈。引用時寫次數，不要寫成高確定性的買點。
 - 動能 > 0.85 且賣壓 0（「強勢動能」）之後 90 天多半繼續漲，不是頂部訊號。
 - 欄位：`r`、`s`、`r7`、`s7`、`state`（bottom／near／build／strong／calm）、`rise_from`、`at100`、`ev`（每次底部組合：30／90 天、出場日、報酬、中途最深）、`f30`／`f90`／`base30`／`base90`、`ex`、`era`、`top`、`rows`（[x, 價格, 賣壓, 動能]，近 3 年每天、更早每 3 天一點）。
+
+## 5e. 2026-11-08 隱含波動率期限結構、月度報酬熱力表（`opt_flow.term_viz`、`stage_viz.monthly_viz`）
+
+- 來源是 Grok 整理的「網站還沒有的圖」提案，挑了兩張資料現成的。其他提案的評估：兩年均線倍數「頂部在 5 倍線」不成立（2021/11 是 2.6 倍、2025/10 是 1.6 倍）；未平倉 ÷ 市值、各交易所主動買賣比要 Binance／Bybit 衍生品資料，GitHub 的美國機器通常連不到（可以試 data.binance.vision 的每日檔）；CFTC 槓桿基金部位（publicreporting.cftc.gov，CME 代碼 133741）免費、本機測過可用，還沒做。
+- 期限結構：Deribit 選擇權 book summary 的 `mark_iv` 與 `underlying_price`，每個到期日取遠期價兩側最近的價外履約價、依 ln(K/F) 內插出價平 IV；固定期限用總變異數內插、不外插（比最近到期還短時最多差一倍用最近那個）。排除 3 天內到期：週六快照時 2–3 天後到期的只有 32–35%，其他都在 37–40%。
+- Deribit 沒有免費的歷史曲線（`get_mark_price_history` 只有 DVOL 用的那幾個合約），所以每天快照一次存進 `pipeline/coc_cache/iv_term.json`（每天一行，留 500 天），鍵是 bar date、`ts` 是實際快照時間。第一條（11/06）是 11/07 16:32 UTC 補拍的。`prev7`／`prev30` 找差 2 天內的那一條；`rows` 滿 30 條才畫斜率走勢（`#c-ivts`）。逐筆成交（history API）的 IV 推算遠月樣本太少（2 小時內遠月只有個位數筆），沒有拿來回補。
+- 月度報酬：統一收盤 PXC（Kraken 優先、更早 CoinMetrics），2013 年起；`rows` 是 [年, 12 個月, 全年]，`stats` 是各月 n／up／med／best／worst（不含本月），`cur` 是本月的統計加最好、最差的年份。
+- 欄位：`deriv.ivterm` 的 `curve`（[到期天數, IV]）、`t`（7／30／90／180 天）、`slope`（7 天 − 90 天）、`state`（inv／flat／norm，±1 點）、`prev7`、`prev30`、`rows`（[x, 價格, 斜率, 7 天, 90 天]）、`n`、`since`；`price.monthly` 的 `mtd`、`ytd`、`base`（上月底收盤）、`cur`、`rows`、`stats`、`ystat`。
 
 ## 6. 容易踩的坑
 

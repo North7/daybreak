@@ -11,6 +11,7 @@ import datetime as dt, json, math, os, re, statistics as st, time, urllib.reques
 HERE = os.path.dirname(os.path.abspath(__file__))
 DF_CACHE = os.path.join(HERE, 'coc_cache', 'deribit_flow.json')
 OK_CACHE = os.path.join(HERE, 'coc_cache', 'okx_taker.json')
+IVT_CACHE = os.path.join(HERE, 'coc_cache', 'iv_term.json')   # 2026-11-08 隱含波動率期限結構：每天收盤後一條曲線
 HIST = 'https://history.deribit.com/api/v2/public/get_last_trades_by_currency_and_time?currency=BTC&kind=option&start_timestamp={}&end_timestamp={}&count=1000&sorting=asc'
 MON = {m: i + 1 for i, m in enumerate(['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'])}
 NAME = re.compile(r'BTC-(\d+)([A-Z]{3})(\d+)-(\d+)-([CP])')
@@ -184,3 +185,70 @@ def svd_viz(cache, px, last, days=365, hours=168):
     return dict(date=d1, delta=round(delta[d1], 1), sum7=round(sum(delta[d] for d in w7), 1), neg7=sum(delta[d] < 0 for d in w7), neg_run=neg_run,
                 h24=round(sum(x[1] for x in H[-24:]), 1) if H else None, hours=H, rows=rows, src='OKX',
                 note='OKX 現貨 BTC 主動買進量 − 主動賣出量（rubik 公開統計；日線是 UTC+8 的日界，價格用 UTC 收盤）；只有 OKX，不是全市場；只作讀值')
+
+
+# ---------- 2026-11-08 指標擴充：隱含波動率期限結構 ----------
+#   每個到期日的 ATM 隱含波動：Deribit 標記隱含波動（mark_iv），遠期價（underlying_price）兩側最近的價外履約價，依對數價內外程度內插。
+#   固定期限（7／30／90／180 天）用總變異數（σ²T）內插，不外插。排除 3 天內到期（週末和到期前幾天的 IV 失真，例如週六快照時 2–3 天後到期的只有 32–35%，其他都在 37–40%）。
+#   Deribit 沒有免費的歷史曲線，所以每天收盤後快照一次存進 coc_cache/iv_term.json，2026-11-07 起累積。
+IVT_TENORS = (7, 30, 90, 180)
+
+
+def term_curve(opt_result, now):
+    """回傳 [[到期天數, ATM IV %], ...]（由近到遠）"""
+    E = {}
+    for o in opt_result:
+        p = _parse(o['instrument_name']); iv = o.get('mark_iv'); F = o.get('underlying_price')
+        if not p or not iv or not F: continue
+        exp, K, cp = p; T = (exp - now).total_seconds() / 86400
+        if T < 3 or (cp == 'C') != (K >= F) and K != F: continue   # 只用價外：買權 K ≥ F、賣權 K ≤ F
+        e = E.setdefault(exp, [F, T, []]); e[2].append((math.log(K / F), iv))
+    out = []
+    for exp, (F, T, pts) in sorted(E.items()):
+        pts.sort(); lo = [q for q in pts if q[0] <= 0]; hi = [q for q in pts if q[0] >= 0]
+        if not lo or not hi or hi[0][0] - lo[-1][0] > 0.08: continue   # 遠期價兩側的履約價隔太遠就不算
+        a, b = lo[-1], hi[0]; w = 0 if b[0] == a[0] else -a[0] / (b[0] - a[0])
+        out.append([round(T, 1), round(a[1] + (b[1] - a[1]) * w, 2)])
+    return out
+
+
+def term_at(curve, d):
+    """固定期限 d 天的 IV：相鄰兩個到期的總變異數線性內插；比最近的到期還短時（最多差一倍）用最近的那個，比最遠的還長就不算"""
+    if not curve or d > curve[-1][0]: return None
+    if d <= curve[0][0]: return curve[0][1] if curve[0][0] <= 2 * d else None
+    for (t0, v0), (t1, v1) in zip(curve, curve[1:]):
+        if t0 <= d <= t1:
+            w0, w1 = (v0 / 100) ** 2 * t0, (v1 / 100) ** 2 * t1
+            return round(math.sqrt(max(w0 + (w1 - w0) * (d - t0) / (t1 - t0), 0) / d) * 100, 2)
+    return None
+
+
+def _term_state(sl):
+    return None if sl is None else 'inv' if sl >= 1 else 'norm' if sl <= -1 else 'flat'
+
+
+def term_viz(opt_result, now, last, px=None):
+    """今天的曲線、7／30 天前的曲線、固定期限與斜率（7 天 − 90 天）的歷史。斜率 ≥ 1 點＝倒掛（近月較貴）、≤ −1＝正常、之間＝持平。只作讀值"""
+    cv = term_curve(opt_result, now)
+    if len(cv) < 4: raise ValueError(f'到期日太少（{len(cv)}）')
+    c = _load(IVT_CACHE, {}); days = c.get('days') or {}
+    days[last] = dict(ts=now.strftime('%Y-%m-%d %H:%M'), c=cv)
+    days = {d: days[d] for d in sorted(days)[-500:]}
+    with open(IVT_CACHE, 'w') as f:
+        f.write('{"fetched_utc": "%s", "source": "Deribit get_book_summary_by_currency（mark_iv）", "cols": "到期天數, ATM IV %%", "days": {\n' % now.isoformat(timespec='seconds'))
+        f.write(',\n'.join(json.dumps(d) + ': ' + json.dumps(v, separators=(',', ':')) for d, v in days.items()) + '\n}}\n')
+    px = px or {}; D = sorted(days); d1 = D[-1]
+    def ten(d): return {k: term_at(days[d]['c'], k) for k in IVT_TENORS}
+    def slope(t): return round(t[7] - t[90], 2) if t[7] is not None and t[90] is not None else None
+    def back(n):   # n 天前那一條（差 2 天內）
+        z = [d for d in D[:-1] if abs(dn(d1) - n - dn(d)) <= 2]
+        if not z: return None
+        d = min(z, key=lambda d: abs(dn(d1) - n - dn(d))); t = ten(d)
+        return dict(date=d, ts=days[d]['ts'], curve=days[d]['c'], t=t, slope=slope(t))
+    T = ten(d1); sl = slope(T); rows = []
+    for d in D:
+        t = ten(d); rows.append([dn(d), round(px[d]) if px.get(d) else None, slope(t), t[7], t[90]])
+    hist = [r[2] for r in rows if r[2] is not None]
+    return dict(date=d1, ts=days[d1]['ts'], curve=cv, t=T, slope=sl, state=_term_state(sl), prev7=back(7), prev30=back(30),
+                n=len(D), since=D[0], n_inv=sum(v >= 1 for v in hist), rows=rows, src='Deribit',
+                note='每個到期日的 ATM 隱含波動（Deribit 標記隱含波動，遠期價兩側最近的價外履約價內插）；固定期限用總變異數內插；排除 3 天內到期；每天收盤後快照一次，2026-11-07 起累積；只作讀值')
