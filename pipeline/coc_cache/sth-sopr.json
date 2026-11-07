@@ -1,5 +1,4 @@
-{"fetched_utc": "2026-11-06T00:06:39+00:00", "source": "https://charts.checkonchain.com/btconchain/realised/sthsopr_indicator/sthsopr_indicator_light.html", "rows": [
-["2022-09-28", 0.99052],
+{"fetched_utc": "2026-11-07T00:06:44+00:00", "source": "https://charts.checkonchain.com/btconchain/realised/sthsopr_indicator/sthsopr_indicator_light.html", "rows": [
 ["2022-09-29", 0.99233],
 ["2022-09-30", 0.9928],
 ["2022-10-01", 0.99452],
@@ -1498,5 +1497,6 @@
 ["2026-11-02", 0.9977],
 ["2026-11-03", 0.99553],
 ["2026-11-04", 1.00204],
-["2026-11-05", 1.00153]
+["2026-11-05", 1.00142],
+["2026-11-06", 0.99161]
 ]}
