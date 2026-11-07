@@ -1,5 +1,5 @@
 {
- "_about": "固定名單：scan.py 每天直接讀這些帳號最近的貼文（不靠 Grok）。type：blogger（博主）／research（研究機構）。must：一律列出、排最上面。新增帳號照 README「固定名單」一節。2026-11-04 建立；Phyrex_Ni、woonomic 當天讀不到（改名或停用），先不列。2026-11-04 Grok 推薦 10 個，核對後加 4 個（0xGummyBear、KevinZbtc、BlockScholes、gaah_im）；沒加的：liusian123、PmgLiljayrock（比特幣數據少、瀏覽中位數不到 40）、Ye__Miao（2026 年新帳號，近 7 天 20 則只有 3 則講比特幣，瀏覽中位數 72，像新聞整理號）、cfsq143（交易計劃、喊多空，和 voice.md 反對喊單衝突）、Chille（價位交易，簡介導流 Telegram）、woonomic（讀不到）。 2026-11-06 Grok 名單核對：加 AYBTC6；沒加的：MicNguyenn105（近 21 則瀏覽中位數 19）、KobeissiLetter（近 13 則沒有比特幣，宏觀大帳號，當天有比特幣相關才當引用候選）、flyiiawei（幣安廣場推廣號）、hiply0625（瀏覽中位數 57）。 同日第二批：flyiiawei 再被推薦，仍不加（新聞整理＋幣安廣場推廣，貼文瀏覽常只有幾十到幾百）；hupzy_agent（10.6 萬粉、瀏覽中位數約 4,400）是 AI 交易 App 的官方帳號，發的是新聞整理，不加；CoinUpOfficials 是交易所，不加。",
+ "_about": "固定名單：scan.py 每天直接讀這些帳號最近的貼文（不靠 Grok）。type：blogger（博主）／research（研究機構）。must：一律列出、排最上面。新增帳號照 README「固定名單」一節。2026-11-04 建立；Phyrex_Ni、woonomic 當天讀不到（改名或停用），先不列。2026-11-04 Grok 推薦 10 個，核對後加 4 個（0xGummyBear、KevinZbtc、BlockScholes、gaah_im）；沒加的：liusian123、PmgLiljayrock（比特幣數據少、瀏覽中位數不到 40）、Ye__Miao（2026 年新帳號，近 7 天 20 則只有 3 則講比特幣，瀏覽中位數 72，像新聞整理號）、cfsq143（交易計劃、喊多空，和 voice.md 反對喊單衝突）、Chille（價位交易，簡介導流 Telegram）、woonomic（讀不到）。 2026-11-06 Grok 名單核對：加 AYBTC6；沒加的：MicNguyenn105（近 21 則瀏覽中位數 19）、KobeissiLetter（近 13 則沒有比特幣，宏觀大帳號，當天有比特幣相關才當引用候選）、flyiiawei（幣安廣場推廣號）、hiply0625（瀏覽中位數 57）。 同日第二批：flyiiawei 再被推薦，仍不加（新聞整理＋幣安廣場推廣，貼文瀏覽常只有幾十到幾百）；hupzy_agent（10.6 萬粉、瀏覽中位數約 4,400）是 AI 交易 App 的官方帳號，發的是新聞整理，不加；CoinUpOfficials 是交易所，不加。 同日晚上：加 Dragonhau66（只回他的 BTC 數據分析，不回政治文）；WiseAnalyze 不加（3.2 萬粉、瀏覽中位數約 1,200，但主要是價位交易、喊方向，簡介導流 Telegram，和 Chille 同理；貼文有一半是山寨幣和雜談），他的貼文仍可從 Grok 名單個別回。 2026-11-07 Grok 名單核對：Lisheng99668 不加（近 20 則瀏覽中位數 55，只有 8 則講比特幣，其餘是西湖、銀杏、假期這類衝粉內容；但他會回我們，接話照常）；817BIBI 不加（理財配置顧問，簡介推自己的佈局方案，近 20 則只有 4 則講比特幣，其餘是美股新聞和勵志語錄；比特幣內容是自己的減倉規則，屬出場框架，不跟）。",
  "accounts": [
   {
    "handle": "Murphychen888",
@@ -253,6 +253,13 @@
    "lang": "zh",
    "type": "blogger",
    "note": "2026-11-06 從 Grok 名單加入：6.5 萬粉藍勾，近 23 則瀏覽中位數約 1.5 萬，宏觀＋BTC 長文分析。比特幣貼文只佔約兩成（scan 會篩），結尾常帶買點、停損，回覆只接數據和觀點，不接買賣"
+  },
+  {
+   "handle": "Dragonhau66",
+   "name": "Dragonhau66",
+   "lang": "zh",
+   "type": "blogger",
+   "note": "2026-11-06 從 Grok 名單加入：2.9 萬粉藍勾，近 15 則瀏覽中位數約 700；每晚發三段「BTC 晚間行情分析」（量能、鏈上、結構），非農、宏觀也有數字。另外常發川普、美股的政治八卦和故事體，那些一律不回；他會喊方向和目標價，回覆只接數據，不接多空判斷"
   }
  ]
 }

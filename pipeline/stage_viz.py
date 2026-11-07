@@ -742,7 +742,9 @@ def stress_viz(bv, px, last, step=3, keep=1095):
     k = n - 1; d1 = D[k]; rk = round(R[k])
     z0 = next((j for j in range(k, i0, -1) if R[j - 1] == 0), None) if R[k] > 0 else None   # 這一段從 0 升上來的第一天
     at100 = next((k - j for j in range(k, i0, -1) if R[j] < 99.5), 0) if R[k] >= 99.5 else 0
-    state = 'bottom' if R[k] >= 99.5 and S[k] < 0.3 else 'near' if R[k] >= 60 and (S[k] < 0.3 or R[k] >= 99.5) else 'build' if R[k] > 0 else 'strong' if S[k] > 0.85 else 'calm'
+    s2 = round(S[k], 2)   # 現況標籤用頁面上顯示的兩位小數判斷（0.296 顯示 0.30，就不說「已低於 0.3」）
+    near = R[k] >= 60 and (R[k] >= 99.5 or s2 < 0.3 or (R[k] >= 75 and s2 < 0.35))
+    state = 'bottom' if R[k] >= 99.5 and s2 < 0.3 else 'near' if near else 'build' if R[k] > 0 else 'strong' if s2 > 0.85 else 'calm'
     cut = dn(d1) - keep
     rows = [[dn(D[i]), round(P[i]), round(R[i]), round(S[i], 3)] for i in range(i0, n) if dn(D[i]) >= cut or (n - 1 - i) % step == 0]
     b7 = D.index(d1) - 7

@@ -527,6 +527,12 @@ PANELS = {
     'onchain/ssr':    dict(zh='賣方風險比', en='Sell-side risk ratio', sel='#c-ssr', data=['onchain.ssr']),
     'onchain/agepl':  dict(zh='依持有時間的實現獲利／虧損', en='Realized profit/loss by holding age', sel='#c-agepl', data=['onchain.agepl']),
     'onchain/dorm':   dict(zh='Dormancy 與 Liveliness', en='Dormancy and Liveliness', sel='#c-dorm', data=['onchain.dorm']),
+    # 2026-11-06 PR #58 新增（韓國溢價的 5% 線是「偏熱」參考線，不是出場框架）
+    'onchain/npl365': dict(zh='一年累計淨實現損益（顆）', en='1-year net realized profit/loss (BTC)', sel='#c-npl365', data=['onchain.npl365']),
+    'onchain/dmd':    dict(zh='現貨 vs 永續需求', en='Spot vs perp demand', sel='#c-dmd', data=['onchain.dmd']),
+    'flows/etfcost':  dict(zh='ETF 持有者成本', en='ETF holder cost basis', sel='#c-etfcost', data=['flows.etfcost']),
+    'flows/exflow':   dict(zh='交易所淨流量', en='Exchange net flows', sel='#c-exflow', data=['flows.exflow']),
+    'flows/kp':       dict(zh='韓國溢價', en='Korea premium', sel='#c-kp', data=['flows.kp']),
     'cycle/regime':   dict(zh='週線多空分數', en='Weekly regime score', sel='#c-regime', data=['cycle.regime']),
     'onchain/quant':  dict(zh='供給分位成本線', en='Supply quantile cost lines', sel='#c-quant', data=['onchain.quant']),
     'onchain/urpd':   dict(zh='籌碼分布（URPD）', en='Supply distribution (URPD)', sel='#c-urpd', html=1, data=['chips.viz']),
@@ -571,6 +577,7 @@ SKIP_PANELS = {
     'onchain/profit': '短期持有者獲利比例：圖上有 97.5% 賣出線',
     'cycle/path': '長期路徑：四種走法是推估，不是資訊',
     'deriv/book': '掛單簿：只是快照，隔天就不一樣',
+    'cycle/capeff': '每輪資金效率：是表格，截圖只截到空白（要用的話另外截整個面板）',
     'deriv/oi': '各到期未平倉：單看沒有故事，併在履約價分布裡講',
 }
 SIG_TO_PANEL = {}
@@ -601,6 +608,9 @@ def recent_used(bar, days=RECENT_DAYS):
     for it in (lp.get('items') if isinstance(lp, dict) else lp) or []:
         for c in it.get('charts') or []:
             if (it.get('time') or '')[:10] > d0.isoformat(): out.setdefault(c, (it.get('time') or '')[:10])
+    for u in (lp.get('used') if isinstance(lp, dict) else None) or []:   # 已發、已從 items 刪掉的長貼文
+        if (u.get('date') or '') > d0.isoformat() and (u.get('date') or '') < bar:
+            for c in u.get('charts') or []: out.setdefault(c, u['date'])
     return out
 
 
