@@ -84,8 +84,9 @@ def check():
         if HASH.search(t): err.append(f'{tag} 回覆不加 hashtag（引用文和快訊才加）')
         q = it.get('quote')
         if q:
-            if weight(q) + 23 > 280: err.append(f'{tag} 引用文 {weight(q) + 23}/280（含原文網址 23），超過')
-            err += [e for e in text_errors(tag + ' 引用文', q, it.get('lang')) if '太機械' not in e]
+            lim = 25000 if it.get('long') else 280   # 2026-11-08：Premium 可以引用發長文（"long": true），X 先顯示前 280 字左右，重點放前面
+            if weight(q) + 23 > lim: err.append(f'{tag} 引用文 {weight(q) + 23}/{lim}（含原文網址 23），超過')
+            err += [e for e in text_errors(tag + ' 引用文', q, it.get('lang'), lim) if '太機械' not in e]
             if not HASH.search(q): err.append(f'{tag} 引用文結尾要帶 hashtag 關鍵詞（見 README「hashtag」）')
         if it.get('mode') not in (None, 'reply', 'quote'): err.append(f'{tag} mode 只能是 reply／quote')
         if it.get('mode') == 'quote' and not q: err.append(f'{tag} mode 是 quote 但沒有 quote 文字')
@@ -121,10 +122,10 @@ def repeat_errors(items):
     return err
 
 
-def text_errors(tag, t, lang):
+def text_errors(tag, t, lang, lim=280):
     """一段要發出去的文字：字數、語言、簡體字、框架用詞、機械開頭。"""
     err = []
-    if weight(t) > 280: err.append(f'{tag} {weight(t)}/280，超過')
+    if weight(t) > lim: err.append(f'{tag} {weight(t)}/{lim}，超過')
     if lang == 'en' and CJK.search(t): err.append(f'{tag}：英文的文字裡有中文')
     if lang == 'zh':
         if not CJK.search(t): err.append(f'{tag}：中文要用繁體中文')
