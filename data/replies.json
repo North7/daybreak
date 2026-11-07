@@ -4,11 +4,87 @@
  "edition": 32,
  "items": [
   {
+   "n": 39,
+   "author": "Zorakrypt",
+   "name": "Zorakrypt",
+   "followers": 19484,
+   "id": "2119077263828283724",
+   "posted": "2026-11-07T14:39:24Z",
+   "angle": "補數據",
+   "summary": "11/05 BTC ETF 流出 4.302 億、Nasdaq 跌 5.5%；ETF 讓比特幣價格越來越跟華爾街連動，問機構化是讓 BTC 更強還是更依賴金融體系",
+   "reply": "I see the macro link too. BTC's 30-day correlation with the Nasdaq is up to about 0.76. Nov 6 is the part that bugs me though. Nasdaq bounced almost 2% and BTC still closed a bit red, so lately it's taking the selling without the bounce",
+   "sources": "latest.json fred.NASDAQCOM.corr30 0.758（至 11/05）；notes.en 11/06 Nasdaq +1.9%、BTC 收 75,742（−0.31%）",
+   "note": "Grok inbox 2320 #1。原文長文、最後在問問題，回覆接它的華爾街連動論點，補 11/06 單邊連動的觀察。",
+   "style": "真人版",
+   "status": "send",
+   "mode": "reply",
+   "lang": "en",
+   "url": "https://x.com/Zorakrypt/status/2119077263828283724",
+   "order": 1
+  },
+  {
+   "n": 40,
+   "author": "DaPrieXt",
+   "name": "DaPrieXt",
+   "followers": 5234,
+   "id": "2119072308631421101",
+   "posted": "2026-11-07T14:19:43Z",
+   "angle": "補數據",
+   "summary": "引 Glassnode：下跌期間 BTC OI 增約 15 億美元、期貨 OI 約 374 億，週四清算逾 10 億後槓桿交易者還在加倉",
+   "reply": "OI going up doesn't say which side though. On Hyperliquid the top 2,000 accounts actually lean short right now, roughly 13K BTC short vs 9K long, so a chunk of that new OI could be shorts pressing",
+   "sources": "latest.json deriv.hl_whales（Hyperliquid 帳戶淨值前 2,000 名，11/07 00:06 UTC）：空 110 戶 13,232 BTC、多 127 戶 9,126 BTC",
+   "note": "Grok inbox 2320 #2。只有 Hyperliquid，不代表全市場；回覆寫了 On Hyperliquid。",
+   "style": "真人版",
+   "status": "send",
+   "mode": "reply",
+   "lang": "en",
+   "url": "https://x.com/DaPrieXt/status/2119072308631421101",
+   "order": 2
+  },
+  {
+   "n": 41,
+   "author": "Mohito234",
+   "name": "Mohito",
+   "followers": 5958,
+   "id": "2119000290003194267",
+   "posted": "2026-11-07T09:33:32Z",
+   "angle": "提出反例",
+   "summary": "BTC 約 75,750、STH 成本 75,774、LTH 成本 48,903；兩群 SOPR 都低於 1，可能是短期投降（資料到 10/30）",
+   "reply": "Nice map. On the capitulation part I'd hold off. Daily realized losses on Nov 6 were around a third of the June 30 low relative to market cap, so people are selling at a loss but nowhere near panic size yet",
+   "sources": "notes.en onchain：11/06 實現虧損 7.33 億美元＝市值 4.82 bp，6/30 低點 13.2 bp、2/5 47.2 bp（Bitview）",
+   "note": "Grok inbox 2320 #3。原文 6 小時內（快到上限），先回。原文資料到 10/30，我們補 11/06 的認賠規模。",
+   "style": "真人版",
+   "status": "send",
+   "mode": "reply",
+   "lang": "en",
+   "url": "https://x.com/Mohito234/status/2119000290003194267",
+   "order": 3
+  },
+  {
+   "n": 42,
+   "author": "Vindicatedchidi",
+   "name": "Vindicatedchidi",
+   "followers": 208626,
+   "id": "2119081821396754909",
+   "posted": "2026-11-07T14:57:31Z",
+   "angle": "補數據",
+   "summary": "BTC 跌破 50 週 EMA、清算逾 11 億、ETF 單日流出約 4.3 億；2019 年來 9 次跌破有 5 次 12 週後更高，要看到現貨買盤、ETF 和 OI 在反彈時的變化",
+   "reply": "Same, spot is what I'm waiting on too. One level I'd keep in mind for ETF flows on a bounce: the average ETF buyer's cost is around 80.4K on my estimate, about 4% above here. That's where a lot of them get back to even, so I'd watch the flows closely up there",
+   "sources": "notes.en flows：ETF 持有者推算成本 80,441（不含 GBTC，11/04），11/06 收盤低 4.2%",
+   "note": "Grok inbox 2320 #4。20 萬粉但主題分散，只回這則 BTC 分析；原文問「接近反彈還是更跌」，我們不猜方向，只給 ETF 成本價位。",
+   "style": "真人版",
+   "status": "send",
+   "mode": "reply",
+   "lang": "en",
+   "url": "https://x.com/Vindicatedchidi/status/2119081821396754909",
+   "order": 4
+  },
+  {
    "style": "真人版",
    "status": "send",
    "mode": "reply",
    "n": 32,
-   "order": 1,
+   "order": 5,
    "author": "BitcoinArchive",
    "name": "Bitcoin Archive",
    "followers": 1798586,
@@ -27,7 +103,7 @@
    "status": "send",
    "mode": "reply",
    "n": 33,
-   "order": 2,
+   "order": 6,
    "author": "XBTkaz",
    "name": "XBTkaz",
    "followers": 13807,
@@ -53,7 +129,7 @@
    "status": "send",
    "mode": "reply",
    "n": 34,
-   "order": 3,
+   "order": 7,
    "author": "TheVictorBuilds",
    "name": "TheVictorBuilds",
    "followers": 49212,
@@ -72,7 +148,7 @@
    "status": "send",
    "mode": "reply",
    "n": 35,
-   "order": 4,
+   "order": 8,
    "author": "BirdTechVision",
    "name": "BirdTechVision",
    "followers": 3836,
@@ -91,7 +167,7 @@
    "status": "send",
    "mode": "reply",
    "n": 36,
-   "order": 5,
+   "order": 9,
    "author": "Dragonhau66",
    "name": "Dragonhau66",
    "followers": 29527,
@@ -110,7 +186,7 @@
    "status": "send",
    "mode": "reply",
    "n": 37,
-   "order": 6,
+   "order": 10,
    "author": "yytttt_1982",
    "name": "yytttt_1982",
    "followers": 5403,
@@ -129,7 +205,7 @@
    "status": "send",
    "mode": "reply",
    "n": 29,
-   "order": 8,
+   "order": 12,
    "author": "Alvin0617",
    "name": "Alvin",
    "followers": 22199,
@@ -148,7 +224,7 @@
    "status": "send",
    "mode": "reply",
    "n": 30,
-   "order": 9,
+   "order": 13,
    "author": "CaffeSatoshi",
    "name": "CaffeSatoshi",
    "followers": 10703,
@@ -167,7 +243,7 @@
    "status": "send",
    "mode": "reply",
    "n": 31,
-   "order": 10,
+   "order": 14,
    "author": "zgjncw2024",
    "name": "zgjncw2024",
    "followers": 22458,
@@ -186,7 +262,7 @@
    "status": "send",
    "kind": "followup",
    "n": 28,
-   "order": 11,
+   "order": 15,
    "author": "JM93467993",
    "name": "JM",
    "followers": null,
@@ -209,7 +285,7 @@
    "mode": "reply",
    "angle": "回答提問",
    "n": 25,
-   "order": 12,
+   "order": 16,
    "author": "lyxc138766",
    "name": "lyxc138766",
    "followers": 4962,
@@ -229,7 +305,7 @@
    "mode": "reply",
    "angle": "閒聊",
    "n": 26,
-   "order": 13,
+   "order": 17,
    "author": "YoooJJ8cm",
    "name": "人类股市观察家",
    "followers": 4867,
@@ -249,7 +325,7 @@
    "mode": "reply",
    "angle": "接話補數據",
    "n": 27,
-   "order": 14,
+   "order": 18,
    "author": "paulxue1979",
    "name": "paulxue1979",
    "followers": 3907,
@@ -266,7 +342,7 @@
    "status": "send",
    "kind": "followup",
    "n": 24,
-   "order": 15,
+   "order": 19,
    "author": "JinDianZiAI",
    "name": "JinDianZiAI",
    "followers": 9000,
@@ -298,7 +374,7 @@
    "lang": "zh",
    "mode": "reply",
    "n": 22,
-   "order": 16,
+   "order": 20,
    "id": "2118910157552001040",
    "url": "https://x.com/JinDianZiAI/status/2118910157552001040",
    "posted": "2026-11-07T03:35:23Z",
@@ -318,7 +394,7 @@
    "lang": "zh",
    "mode": "reply",
    "n": 23,
-   "order": 17,
+   "order": 21,
    "id": "2118910327849107735",
    "url": "https://x.com/JinDianZiAI/status/2118910327849107735",
    "posted": "2026-11-07T03:36:04Z",
@@ -332,7 +408,7 @@
    "style": "真人版",
    "status": "send",
    "n": 21,
-   "order": 18,
+   "order": 22,
    "url": "https://x.com/Murphychen888/status/2118902544999338047",
    "id": "2118902544999338047",
    "author": "Murphychen888",
@@ -359,7 +435,7 @@
    "status": "send",
    "n": 18,
    "kind": "followup",
-   "order": 19,
+   "order": 23,
    "url": "https://x.com/YoooJJ8cm/status/2118900368495325441",
    "id": "2118900368495325441",
    "author": "YoooJJ8cm",
@@ -379,7 +455,7 @@
    "status": "send",
    "n": 19,
    "kind": "followup",
-   "order": 20,
+   "order": 24,
    "url": "https://x.com/joke_henry/status/2118893787154096497",
    "id": "2118893787154096497",
    "author": "joke_henry",
@@ -399,7 +475,7 @@
    "status": "send",
    "n": 20,
    "kind": "followup",
-   "order": 21,
+   "order": 25,
    "url": "https://x.com/JM93467993/status/2118892757527699684",
    "id": "2118892757527699684",
    "author": "JM93467993",
@@ -440,7 +516,7 @@
    "status": "send",
    "n": 17,
    "kind": "followup",
-   "order": 22,
+   "order": 26,
    "url": "https://x.com/JinDianZiAI/status/2118891141181608381",
    "id": "2118891141181608381",
    "author": "JinDianZiAI",
@@ -460,7 +536,7 @@
    "status": "send",
    "n": 8,
    "kind": "followup",
-   "order": 23,
+   "order": 27,
    "url": "https://x.com/Lisheng99668/status/2118867706837381318",
    "id": "2118867706837381318",
    "author": "Lisheng99668",
@@ -492,7 +568,7 @@
    "sources": "notes（11/06）：Coinbase 溢價 7 日均 −0.157%",
    "note": "新帳號，24 萬粉，Grok 表 23 第一名，剛發。回覆講 Coinbase 溢價，引用（下一則）講 ETF，數字錯開。",
    "mode": "reply",
-   "order": 24,
+   "order": 28,
    "image": {
     "site": {
      "page": "flows",
@@ -519,7 +595,7 @@
    "note": "引用發。不寫那斯達克漲幅：notes 寫 +1.9%、其他人寫 +1.09%，兩邊對不上。 不配圖：BTC 對美股那張只到 11/05，而且近兩個月 BTC 跌得比那斯達克少，跟引用的重點相反。",
    "mode": "quote",
    "quote": "Truecrypto 說那斯達克反彈，BTC 幾乎沒跟上\n\n我這邊也是：美股彈的那天 BTC 日線還是收跌\nETF 最近 5 個交易日有 4 天流出，持有者平均成本約 8 萬，價格還在下面\n\n#比特幣 #BTC",
-   "order": 25
+   "order": 29
   },
   {
    "style": "真人版",
@@ -538,7 +614,7 @@
    "sources": "notes news（11/06）：12 月升息 1 碼機率由約 70% 升到 79%（TokenPost）",
    "note": "新帳號，11 萬粉、2,600 瀏覽，剛發。",
    "mode": "reply",
-   "order": 26
+   "order": 30
   },
   {
    "style": "真人版",
@@ -557,7 +633,7 @@
    "sources": "deriv（11/06）：funding_multi weighted_now 8.59%",
    "note": "新帳號，10 萬粉、2,500 瀏覽，發文約 40 分鐘。",
    "mode": "reply",
-   "order": 27
+   "order": 31
   },
   {
    "style": "真人版",
@@ -576,7 +652,7 @@
    "sources": "notes（11/06）：穩定幣一週 −2.62%（DefiLlama）",
    "note": "新帳號，1.7 萬粉、13 則回覆，剛發。",
    "mode": "reply",
-   "order": 28,
+   "order": 32,
    "image": {
     "site": {
      "page": "flows",
@@ -602,7 +678,7 @@
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2",
    "note": "新帳號，6 千粉、380 瀏覽，一句話提問，短答。",
    "mode": "reply",
-   "order": 29,
+   "order": 33,
    "image": {
     "site": {
      "page": "flows",
@@ -628,7 +704,7 @@
    "sources": "deriv（11/06）：weighted_now 8.59%；etf.json 五個交易日四天流出",
    "note": "新帳號，4.8 千粉，回答他最後的提問。",
    "mode": "reply",
-   "order": 30
+   "order": 34
   },
   {
    "style": "真人版",
@@ -647,7 +723,7 @@
    "sources": "chips.flow.sth_vs_tmm（Bitview 11/06）：STH 成本 75,887、真實市場均價 77,575；notes：STH-SOPR 0.9916",
    "note": "新帳號，2 千粉、720 瀏覽，發文約 1 小時。他的價位跟我們只差一兩百，不另外報數字。",
    "mode": "reply",
-   "order": 31
+   "order": 35
   },
   {
    "style": "真人版",
@@ -666,7 +742,7 @@
    "sources": "notes（11/06）：STH-SOPR 1.0015 → 0.9916（CheckOnChain）",
    "note": "新帳號，1.9 萬粉、710 瀏覽；發文約 4 小時，先發這則。",
    "mode": "reply",
-   "order": 32,
+   "order": 36,
    "image": {
     "site": {
      "page": "onchain",
@@ -692,7 +768,7 @@
    "sources": "notes（11/06）：STH-SOPR 1.0015 → 0.9916、LTH-SOPR 0.9385（CheckOnChain、Bitview）",
    "note": "固定名單，1.3 萬粉，發文 2.5 小時、500 瀏覽。昨天回過他兩則，他沒回；這則數字直接對上他的「虧損區」。 不配圖：同一張圖今天已經給了另一則英文回覆（SOPR 給 Jethroe111、ETF 給 BTC_JEDI21）。",
    "mode": "reply",
-   "order": 33
+   "order": 37
   },
   {
    "style": "真人版",
@@ -711,7 +787,7 @@
    "sources": "market（11/06）：SMA350 75,775、收盤 75,742；chips.flow.sth_vs_tmm（Bitview 11/06）：STH 成本 75,887",
    "note": "熟帳號（回過、會按讚），發文約 1 小時、700 瀏覽。350 日≈50 週，我們只講自己算的數字。",
    "mode": "reply",
-   "order": 34,
+   "order": 38,
    "image": {
     "site": {
      "page": "market",
@@ -737,7 +813,7 @@
    "sources": "notes（11/06）：穩定幣一週 −2.62%（DefiLlama）、Coinbase 溢價 7 日均 −0.157%",
    "note": "新帳號，9 千粉，發文約 1 小時、13 則回覆。他已經講完 ETF，我們補另外兩條美元管道。",
    "mode": "reply",
-   "order": 35,
+   "order": 39,
    "image": {
     "site": {
      "page": "flows",
@@ -763,7 +839,7 @@
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2（暫定）",
    "note": "新帳號，3.8 千粉，發文約 1 小時、35 讚。他的 5.3 億是 BTC＋ETH，我們只講 BTC 那部分。 不配圖：同一張圖今天已經給了另一則英文回覆（SOPR 給 Jethroe111、ETF 給 BTC_JEDI21）。",
    "mode": "reply",
-   "order": 36
+   "order": 40
   },
   {
    "style": "真人版",
@@ -782,7 +858,7 @@
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2（暫定）；notes（11/06）：Coinbase 溢價 7 日均 −0.157%",
    "note": "Grok 表 22，5 千粉、剛發。原文最後一句「仓位先别乱动」是操作建議，我們只接 ETF 數字，不碰那句。",
    "mode": "reply",
-   "order": 37,
+   "order": 41,
    "image": {
     "site": {
      "page": "flows",
@@ -808,7 +884,7 @@
    "sources": "notes（11/06）：LTH-SOPR 0.9385（Bitview）",
    "note": "熟帳號（常回我們），剛發。熟帳號今天到這則是 2 則（paulxue1979、joke_henry），之後的留給新帳號。",
    "mode": "reply",
-   "order": 38
+   "order": 42
   }
  ]
 }
