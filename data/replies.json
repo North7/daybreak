@@ -40,7 +40,14 @@
    "sources": "notes（11/06）：Coinbase 溢價 7 日均 −0.157%",
    "note": "新帳號，24 萬粉，Grok 表 23 第一名，剛發。回覆講 Coinbase 溢價，引用（下一則）講 ETF，數字錯開。",
    "mode": "reply",
-   "order": 2
+   "order": 2,
+   "image": {
+    "site": {
+     "page": "flows",
+     "sel": "#c-pr-us"
+    },
+    "title": "Coinbase premium is back at the deep-discount line"
+   }
   },
   {
    "style": "真人版",
@@ -57,7 +64,7 @@
    "summary": "同上：那斯達克反彈 BTC 沒跟上",
    "reply": "",
    "sources": "etf.json：10/30–11/05 五個交易日四天流出；etfcost（11/04）80,441；market（11/06）收盤 75,742、−0.31%",
-   "note": "引用發。不寫那斯達克漲幅：notes 寫 +1.9%、其他人寫 +1.09%，兩邊對不上。",
+   "note": "引用發。不寫那斯達克漲幅：notes 寫 +1.9%、其他人寫 +1.09%，兩邊對不上。 不配圖：BTC 對美股那張只到 11/05，而且近兩個月 BTC 跌得比那斯達克少，跟引用的重點相反。",
    "mode": "quote",
    "quote": "Truecrypto 說那斯達克反彈，BTC 幾乎沒跟上\n\n我這邊也是：美股彈的那天 BTC 日線還是收跌\nETF 最近 5 個交易日有 4 天流出，持有者平均成本約 8 萬，價格還在下面\n\n#比特幣 #BTC",
    "order": 3
@@ -117,7 +124,14 @@
    "sources": "notes（11/06）：穩定幣一週 −2.62%（DefiLlama）",
    "note": "新帳號，1.7 萬粉、13 則回覆，剛發。",
    "mode": "reply",
-   "order": 6
+   "order": 6,
+   "image": {
+    "site": {
+     "page": "flows",
+     "sel": "#c-stab"
+    },
+    "title": "Stablecoins: biggest 7-day drop in a year"
+   }
   },
   {
    "style": "真人版",
@@ -136,7 +150,14 @@
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2",
    "note": "新帳號，6 千粉、380 瀏覽，一句話提問，短答。",
    "mode": "reply",
-   "order": 7
+   "order": 7,
+   "image": {
+    "site": {
+     "page": "flows",
+     "sel": "#c-etf"
+    },
+    "title": "US spot ETFs: 4 outflow days out of the last 5"
+   }
   },
   {
    "style": "真人版",
@@ -193,7 +214,14 @@
    "sources": "notes（11/06）：STH-SOPR 1.0015 → 0.9916（CheckOnChain）",
    "note": "新帳號，1.9 萬粉、710 瀏覽；發文約 4 小時，先發這則。",
    "mode": "reply",
-   "order": 10
+   "order": 10,
+   "image": {
+    "site": {
+     "page": "onchain",
+     "sel": "#c-sopr"
+    },
+    "title": "STH-SOPR slipped under 1 on Nov 6"
+   }
   },
   {
    "style": "真人版",
@@ -210,7 +238,7 @@
    "summary": "他的獲利能力指數 26 分，落在虧損區、接近投降區；指數由 7 個涵蓋各群鏈上持有者的成分組成",
    "reply": "Spent coins say the same. STH-SOPR slipped under 1 on Nov 6, around 0.99, and long-term holders were at about 0.94, so both groups are selling at a loss right now",
    "sources": "notes（11/06）：STH-SOPR 1.0015 → 0.9916、LTH-SOPR 0.9385（CheckOnChain、Bitview）",
-   "note": "固定名單，1.3 萬粉，發文 2.5 小時、500 瀏覽。昨天回過他兩則，他沒回；這則數字直接對上他的「虧損區」。",
+   "note": "固定名單，1.3 萬粉，發文 2.5 小時、500 瀏覽。昨天回過他兩則，他沒回；這則數字直接對上他的「虧損區」。 不配圖：同一張圖今天已經給了另一則英文回覆（SOPR 給 Jethroe111、ETF 給 BTC_JEDI21）。",
    "mode": "reply",
    "order": 11
   },
@@ -231,7 +259,14 @@
    "sources": "market（11/06）：SMA350 75,775、收盤 75,742；chips.flow.sth_vs_tmm（Bitview 11/06）：STH 成本 75,887",
    "note": "熟帳號（回過、會按讚），發文約 1 小時、700 瀏覽。350 日≈50 週，我們只講自己算的數字。",
    "mode": "reply",
-   "order": 12
+   "order": 12,
+   "image": {
+    "site": {
+     "page": "market",
+     "sel": "#c-levels"
+    },
+    "title": "均線和成本線，全擠到價格旁邊"
+   }
   },
   {
    "style": "真人版",
@@ -250,7 +285,14 @@
    "sources": "notes（11/06）：穩定幣一週 −2.62%（DefiLlama）、Coinbase 溢價 7 日均 −0.157%",
    "note": "新帳號，9 千粉，發文約 1 小時、13 則回覆。他已經講完 ETF，我們補另外兩條美元管道。",
    "mode": "reply",
-   "order": 13
+   "order": 13,
+   "image": {
+    "site": {
+     "page": "flows",
+     "sel": "#c-stab"
+    },
+    "title": "穩定幣一週少 2.6%，近一年最大的週跌幅"
+   }
   },
   {
    "style": "真人版",
@@ -267,7 +309,7 @@
    "summary": "那斯達克 +1.09%，BTC 跌破 75K，加密 ETF 流出 5.3 億；非農 +16.5 萬、12 月升息機率約 78%",
    "reply": "The BTC funds alone lost about $430M on Nov 5, and Nov 4 was the only inflow day out of the last five",
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2（暫定）",
-   "note": "新帳號，3.8 千粉，發文約 1 小時、35 讚。他的 5.3 億是 BTC＋ETH，我們只講 BTC 那部分。",
+   "note": "新帳號，3.8 千粉，發文約 1 小時、35 讚。他的 5.3 億是 BTC＋ETH，我們只講 BTC 那部分。 不配圖：同一張圖今天已經給了另一則英文回覆（SOPR 給 Jethroe111、ETF 給 BTC_JEDI21）。",
    "mode": "reply",
    "order": 14
   },
@@ -288,7 +330,14 @@
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2（暫定）；notes（11/06）：Coinbase 溢價 7 日均 −0.157%",
    "note": "Grok 表 22，5 千粉、剛發。原文最後一句「仓位先别乱动」是操作建議，我們只接 ETF 數字，不碰那句。",
    "mode": "reply",
-   "order": 15
+   "order": 15,
+   "image": {
+    "site": {
+     "page": "flows",
+     "sel": "#c-etf"
+    },
+    "title": "ETF 最近 5 個交易日，4 天流出"
+   }
   },
   {
    "style": "真人版",
