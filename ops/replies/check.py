@@ -96,6 +96,7 @@ def check():
     return err + check_flash()
 
 
+CERTAIN = re.compile(r'底(早就|已經|已)?(到了|出現|確認)|週期底已|見底了|第二波(真正)?開始|換手完成|該跌的(都)?跌完|熊市(已經)?結束|牛市(已經)?回來|bottom is (in|confirmed)|the bottom is in|bear market is over', re.I)
 BIG = 250000   # 2026-11-07：X 對 25 萬粉以上帳號底下的回覆跑 AI 檢查（"llm slop" 標籤，14–30 天，對方收不到通知）
 
 
@@ -106,6 +107,20 @@ def repeat_errors(items):
         if it.get('status') == 'skip': continue
         if (it.get('followers') or 0) >= BIG and it.get('mode') != 'quote' and it.get('reply') and it.get('status') != 'optional':
             err.append(f'#{it["n"]} @{it.get("author")} 有 {it["followers"]:,} 粉（25 萬以上）：回覆會被 X 跑 AI 檢查，改成 status "optional" 並在 note 請使用者用自己的話改寫，或改成引用（mode "quote"）')
+    # 2026-11-08（帳號分析）：①有外推線／推算日期的圖不配（佐證圖 c-ev-* 畫「近 30 日速度外推」和「外推交叉 12/02」，等於在推未來日期）；
+    # ②同一張圖、同一種語言一天只給一則（11/05 兩則 DVOL 回覆圖文幾乎一樣、隔 21 分鐘）；③太肯定的階段斷言要改成帶前提的說法
+    imgs = {}
+    for it in items:
+        if it.get('status') == 'skip' or not it.get('image'): continue
+        im = it['image']; key = ((im.get('site') or {}).get('sel') or im.get('chart'), 'zh' if it.get('lang') == 'zh' else 'en')
+        if str(key[0]).startswith('#c-ev-'): err.append(f'#{it["n"]} 配圖 {key[0]} 有外推線和推算日期，不配（只放已經發生的走勢）')
+        if key in imgs: err.append(f'#{it["n"]} 和 #{imgs[key]} 用同一張圖（{key[0]}，{key[1]}）：同一張圖同一種語言一天只給一則')
+        else: imgs[key] = it['n']
+    for it in items:
+        if it.get('status') == 'skip': continue
+        for k in ('reply', 'quote'):
+            m = CERTAIN.search(it.get(k) or '')
+            if m: err.append(f'#{it["n"]} {"回覆" if k == "reply" else "引用"}「{m.group(0)}」太肯定：改成帶前提的說法（例如「如果 6/30 是這輪的底…」「照過去三輪的時間…」）')
     K = 14; seen = {}; hit = {}
     for it in sorted(items, key=lambda x: x.get('n') or 0):   # 編號小的先：重複算在後寫的那則
         if it.get('status') == 'skip': continue

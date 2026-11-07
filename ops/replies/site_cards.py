@@ -27,9 +27,10 @@ CLEAN = '''(function(p, keep){
   return true;})'''
 
 
-def shoot(items, lang, tmp):
-    """items: [(n, site)]，回傳 {n: PNG bytes}（2 倍解析度）。"""
-    srv = SS.serve(); prof = tempfile.mkdtemp(prefix='daybreak-chrome-'); W = 1440; got = {}
+def shoot(items, lang, tmp, mobile=True):
+    """items: [(n, site)]，回傳 {n: PNG bytes}。mobile（2026-11-08 預設）：用手機寬度 430、3 倍解析度截網站的手機版圖，
+    字和圖例相對變大，X 在手機上看得清楚；--desktop 回到 1440 寬、2 倍。"""
+    srv = SS.serve(); prof = tempfile.mkdtemp(prefix='daybreak-chrome-'); W = 430 if mobile else 1440; DPR = 3 if mobile else 2; got = {}
     p = subprocess.Popen([SS.CHROME, '--headless=new', f'--remote-debugging-port={SS.PORT}', f'--user-data-dir={prof}', '--hide-scrollbars',
                           '--no-first-run', '--no-default-browser-check', f'--window-size={W},1000', 'about:blank'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -39,7 +40,7 @@ def shoot(items, lang, tmp):
             except Exception: time.sleep(0.2)
         ws = SS.WS(next(t for t in tg if t['type'] == 'page')['webSocketDebuggerUrl'])
         ws.call('Page.enable'); ws.call('Runtime.enable')
-        ws.call('Emulation.setDeviceMetricsOverride', width=W, height=1000, deviceScaleFactor=2, mobile=False)
+        ws.call('Emulation.setDeviceMetricsOverride', width=W, height=1000 if not mobile else 932, deviceScaleFactor=DPR, mobile=mobile)
         ws.call('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': 'dark'}])
         ws.call('Page.navigate', url=SS.SITE); SS.wait(ws, 'document.readyState === "complete"')
         ws.js(f"localStorage.setItem('daybreak.lang', '{lang}'); localStorage.setItem('daybreak.theme', 'dark'); localStorage.setItem('daybreak.nohold', '1'); true")   # nohold：判讀撰寫中也截最新數字（2026-11-06）
@@ -66,11 +67,11 @@ def shoot(items, lang, tmp):
     return got
 
 
-def compose(png, title, lang, Fn, out):
-    """上：大標題；中：網站截圖；下：破曉頁尾。輸出寬 1600。"""
+def compose(png, title, lang, Fn, out, mobile=True):
+    """上：大標題；中：網站截圖；下：破曉頁尾。手機版輸出寬 1080（直式），桌面版 1600。"""
     RED, INK, INK3, LINE = '#FF3B1F', '#F2F0EA', '#9C978E', '#3A3936'
     im = Image.open(io.BytesIO(png)).convert('RGB'); bg = im.getpixel((im.width // 2, 8))
-    P = 72; W = max(im.width + 2 * P, 2200); tf = Fn['cjk'](64, 900)   # 窄面板（半寬圖）也撐到 2200，標題和頁尾才放得下；圖置中
+    P = 72; W = (im.width + 2 * P) if mobile else max(im.width + 2 * P, 2200); tf = Fn['cjk'](64 if not mobile else 66, 900)   # 窄面板（半寬圖）也撐到 2200，標題和頁尾才放得下；圖置中
     d0 = ImageDraw.Draw(Image.new('RGB', (10, 10)))
     import re
     lines, cur = [], ''   # 標題太長就斷行：中文逐字、英數整詞
@@ -85,13 +86,14 @@ def compose(png, title, lang, Fn, out):
     fy = img.height - 70; d.line([P, fy - 52, W - P, fy - 52], fill=LINE, width=2)
     d.arc([P, fy - 26, P + 52, fy + 26], 180, 360, fill=RED, width=8); d.line([P - 8, fy, P + 60, fy], fill=INK, width=8)
     d.text((P + 84, fy), '破曉 DAYBREAK' if lang == 'zh' else 'DAYBREAK', font=Fn['cjk'](38, 900), fill=INK, anchor='lm')
-    d.text((W - P, fy), 'north7.github.io/daybreak   ·   X @songpu717', font=Fn['mono'](34), fill=INK3, anchor='rm')
-    w = 1600; img = img.resize((w, round(img.height * w / img.width)), Image.LANCZOS)
+    d.text((W - P, fy), 'north7.github.io/daybreak · X @songpu717' if mobile else 'north7.github.io/daybreak   ·   X @songpu717', font=Fn['mono'](30 if mobile else 34), fill=INK3, anchor='rm')
+    w = 1080 if mobile else 1600; img = img.resize((w, round(img.height * w / img.width)), Image.LANCZOS)
     img.save(out, optimize=True); print('wrote', out, img.size)
 
 
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--fonts', required=True); ap.add_argument('--only', default='')
+    ap.add_argument('--desktop', action='store_true', help='用桌面寬度截（2026-11-08 前的做法）'); ap.add_argument('--out', default=OUT, help='輸出資料夾（試圖用）')
     a = ap.parse_args()
     import share_card as SC
     Fn = SC.fonts(a.fonts); only = {int(x) for x in a.only.split(',') if x}
@@ -104,8 +106,8 @@ def main():
         todo[lang].append((it['n'], im['site'])); meta[it['n']] = (im['title'], lang)
     for lang, items in todo.items():
         if not items: continue
-        for n, png in shoot(items, lang, None).items():
-            compose(png, meta[n][0], lang, Fn, os.path.join(OUT, f'{n}.png'))
+        for n, png in shoot(items, lang, None, mobile=not a.desktop).items():
+            compose(png, meta[n][0], lang, Fn, os.path.join(a.out, f'{n}.png'), mobile=not a.desktop)
 
 
 if __name__ == '__main__':
