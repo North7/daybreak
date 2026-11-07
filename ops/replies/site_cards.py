@@ -86,7 +86,7 @@ def compose(png, title, lang, Fn, out, mobile=True):
     fy = img.height - 70; d.line([P, fy - 52, W - P, fy - 52], fill=LINE, width=2)
     d.arc([P, fy - 26, P + 52, fy + 26], 180, 360, fill=RED, width=8); d.line([P - 8, fy, P + 60, fy], fill=INK, width=8)
     d.text((P + 84, fy), '破曉 DAYBREAK' if lang == 'zh' else 'DAYBREAK', font=Fn['cjk'](38, 900), fill=INK, anchor='lm')
-    d.text((W - P, fy), 'north7.github.io/daybreak · X @songpu717' if mobile else 'north7.github.io/daybreak   ·   X @songpu717', font=Fn['mono'](30 if mobile else 34), fill=INK3, anchor='rm')
+    d.text((W - P, fy), 'X @songpu717', font=Fn['mono'](30 if mobile else 34), fill=INK3, anchor='rm')
     w = 1080 if mobile else 1600; img = img.resize((w, round(img.height * w / img.width)), Image.LANCZOS)
     img.save(out, optimize=True); print('wrote', out, img.size)
 

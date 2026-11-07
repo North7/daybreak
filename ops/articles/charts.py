@@ -200,7 +200,7 @@ def cover(L, lang, Fn, out):
     fy = H2 - 90
     d.arc([M2, fy - 28, M2 + 56, fy + 28], 180, 360, fill=RED, width=8); d.line([M2 - 8, fy, M2 + 64, fy], fill=INK, width=8)
     d.text((M2 + 88, fy), '破曉 DAYBREAK' if lang == 'zh' else 'DAYBREAK', font=Fn['cjk'](42, 900) if lang == 'zh' else Fn['mono'](42, 800), fill=INK, anchor='lm')
-    d.text((W2 - M2, fy), 'north7.github.io/daybreak   ·   X @songpu717', font=Fn['mono'](40), fill=INK3, anchor='rm')
+    d.text((W2 - M2, fy), 'X @songpu717', font=Fn['mono'](40), fill=INK3, anchor='rm')
     img.resize((W2 // 2, H2 // 2), Image.LANCZOS).save(out, optimize=True); print('wrote', os.path.relpath(out, ROOT))
 
 

@@ -245,7 +245,7 @@ def s_outro(d, t):
     runs(d, W / 2, 1050, [('每天清晨的第一份比特幣簡報', cjk(46, 700), INK2)], ph(t, 0.7), anchor='ms')
     a = ph(t, 1.0)
     d.rectangle([M + 60, 1130, W - M - 60, 1230], fill=mix(RED, a))
-    runs(d, W / 2, 1197, [('north7.github.io/daybreak', mono(42, 700), '#FFFFFF')], a, bg=RED, anchor='ms')
+    runs(d, W / 2, 1197, [('X @songpu717', mono(42, 700), '#FFFFFF')], a, bg=RED, anchor='ms')
     runs(d, W / 2, 1300, [('完整解讀・中英雙語・每日更新', cjk(34, 500), INK3)], ph(t, 1.2), anchor='ms')
     runs(d, W / 2, 1460, [('資料整理，非投資建議', cjk(28, 500), INK3)], ph(t, 1.4), anchor='ms')
 
