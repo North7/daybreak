@@ -8,7 +8,7 @@
    "status": "send",
    "n": 8,
    "kind": "followup",
-   "order": 0,
+   "order": 1,
    "url": "https://x.com/Lisheng99668/status/2118862645822714254",
    "id": "2118862645822714254",
    "author": "Lisheng99668",
@@ -22,6 +22,159 @@
    "sources": "etf.json：11/04 +74.6；latest etfcost（11/04）：ETF 持有者平均成本 80,441（不含 GBTC，流量÷收盤推算）",
    "note": "Lisheng99668 回了我們那則 ETF 回覆（截圖，在我們回覆底下）。不猜會不會回來，只給一個已發生的流入日和成本位置。",
    "mode": "reply"
+  },
+  {
+   "style": "真人版",
+   "status": "send",
+   "n": 9,
+   "url": "https://x.com/Truecrypto/status/2118868437732663776",
+   "id": "2118868437732663776",
+   "author": "Truecrypto",
+   "name": "Truecrypto",
+   "followers": 243866,
+   "posted": "2026-11-07T00:49:36Z",
+   "lang": "en",
+   "angle": "交叉驗證",
+   "summary": "昨天美股跌 BTC 跟著跌，今天那斯達克反彈 BTC 幾乎沒跟；怪美股可以，但也要看到它沒跟著彈；相對強度還要多頭證明",
+   "reply": "Spot flow says the same. Coinbase premium is still negative on the 7-day average, so US buyers didn't come back with the Nasdaq bounce",
+   "sources": "notes（11/06）：Coinbase 溢價 7 日均 −0.157%",
+   "note": "新帳號，24 萬粉，Grok 表 23 第一名，剛發。回覆講 Coinbase 溢價，引用（下一則）講 ETF，數字錯開。",
+   "mode": "reply",
+   "order": 2
+  },
+  {
+   "style": "真人版",
+   "status": "send",
+   "n": 16,
+   "url": "https://x.com/Truecrypto/status/2118868437732663776",
+   "id": "2118868437732663776",
+   "author": "Truecrypto",
+   "name": "Truecrypto",
+   "followers": 243866,
+   "posted": "2026-11-07T00:49:36Z",
+   "lang": "zh",
+   "angle": "交叉驗證",
+   "summary": "同上：那斯達克反彈 BTC 沒跟上",
+   "reply": "",
+   "sources": "etf.json：10/30–11/05 五個交易日四天流出；etfcost（11/04）80,441；market（11/06）收盤 75,742、−0.31%",
+   "note": "引用發。不寫那斯達克漲幅：notes 寫 +1.9%、其他人寫 +1.09%，兩邊對不上。",
+   "mode": "quote",
+   "quote": "Truecrypto 說那斯達克反彈，BTC 幾乎沒跟上\n\n我這邊也是：美股彈的那天 BTC 日線還是收跌\nETF 最近 5 個交易日有 4 天流出，持有者平均成本約 8 萬，價格還在下面\n\n#比特幣 #BTC",
+   "order": 3
+  },
+  {
+   "style": "真人版",
+   "status": "send",
+   "n": 10,
+   "url": "https://x.com/KrownCryptoCave/status/2118865264116953426",
+   "id": "2118865264116953426",
+   "author": "KrownCryptoCave",
+   "name": "KrownCryptoCave",
+   "followers": 110210,
+   "posted": "2026-11-07T00:37:00Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "非農 16.5 萬 vs 預期 6.5 萬，Fitch 說推向 12 月升息；統計 27 次非農大超預期後 20 天 BTC 52% 上漲，不如預期也是 52%，非農從來不是訊號",
+   "reply": "December hike odds went from about 70% to 79% on the print in what I track. Agree the jobs number itself hasn't meant much for BTC",
+   "sources": "notes news（11/06）：12 月升息 1 碼機率由約 70% 升到 79%（TokenPost）",
+   "note": "新帳號，11 萬粉、2,600 瀏覽，剛發。",
+   "mode": "reply",
+   "order": 4
+  },
+  {
+   "style": "真人版",
+   "status": "send",
+   "n": 11,
+   "url": "https://x.com/seth_fin/status/2118861737038385201",
+   "id": "2118861737038385201",
+   "author": "seth_fin",
+   "name": "seth_fin",
+   "followers": 100744,
+   "posted": "2026-11-07T00:22:59Z",
+   "lang": "en",
+   "angle": "提出反例",
+   "summary": "BTC 未平倉在掉，交易員週末前多空都在平倉；伊朗空襲傳聞，週末可能有大插針",
+   "reply": "Funding didn't really follow though. OI-weighted across Deribit, OKX and Hyperliquid it's still above 8% annualized on my end",
+   "sources": "deriv（11/06）：funding_multi weighted_now 8.59%",
+   "note": "新帳號，10 萬粉、2,500 瀏覽，發文約 40 分鐘。",
+   "mode": "reply",
+   "order": 5
+  },
+  {
+   "style": "真人版",
+   "status": "send",
+   "n": 12,
+   "url": "https://x.com/0xkyliekim/status/2118866666323140620",
+   "id": "2118866666323140620",
+   "author": "0xkyliekim",
+   "name": "0xkyliekim",
+   "followers": 17374,
+   "posted": "2026-11-07T00:42:34Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "加密止血但危險沒走：BTC 75,874；清算放緩、資金費率正常化；更大的問題是現貨需求，ETF 週四流出 4.302 億；想看 ETF 停止流出",
+   "reply": "Stablecoins are down 2%+ this week too",
+   "sources": "notes（11/06）：穩定幣一週 −2.62%（DefiLlama）",
+   "note": "新帳號，1.7 萬粉、13 則回覆，剛發。",
+   "mode": "reply",
+   "order": 6
+  },
+  {
+   "style": "真人版",
+   "status": "send",
+   "n": 13,
+   "url": "https://x.com/BTC_JEDI21/status/2118858975332683824",
+   "id": "2118858975332683824",
+   "author": "BTC_JEDI21",
+   "name": "BTC_JEDI21",
+   "followers": 6168,
+   "posted": "2026-11-07T00:12:00Z",
+   "lang": "en",
+   "angle": "回答提問",
+   "summary": "今天到底有人在買 BTC 嗎？",
+   "reply": "Not US spot. ETFs bled 4 of last 5 days",
+   "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2",
+   "note": "新帳號，6 千粉、380 瀏覽，一句話提問，短答。",
+   "mode": "reply",
+   "order": 7
+  },
+  {
+   "style": "真人版",
+   "status": "send",
+   "n": 14,
+   "url": "https://x.com/YoooJJ8cm/status/2118859324131078469",
+   "id": "2118859324131078469",
+   "author": "YoooJJ8cm",
+   "name": "YoooJJ8cm",
+   "followers": 4852,
+   "posted": "2026-11-07T00:13:24Z",
+   "lang": "zh",
+   "angle": "回答提問",
+   "summary": "24 小時清算 10.5 億、88% 多單，是被自己擠的；盯 76K 收盤和跟那斯達克的背離；最後問錢是離開風險資產，還是只離開槓桿",
+   "reply": "我看比較像現貨的錢在走，槓桿反而還在\n三家加權的資金費率 11/06 還有 8% 多，ETF 最近 5 個交易日卻有 4 天流出",
+   "sources": "deriv（11/06）：weighted_now 8.59%；etf.json 五個交易日四天流出",
+   "note": "新帳號，4.8 千粉，回答他最後的提問。",
+   "mode": "reply",
+   "order": 8
+  },
+  {
+   "style": "真人版",
+   "status": "send",
+   "n": 15,
+   "url": "https://x.com/IgorTradesX/status/2118851396699369534",
+   "id": "2118851396699369534",
+   "author": "IgorTradesX",
+   "name": "IgorTradesX",
+   "followers": 2008,
+   "posted": "2026-11-06T23:41:53Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "從 9 月高點回落約 10%；短期持有者獲利比例 97.5% → 約 38%；真實市場均價 77.7K、STH 成本 75.7K；看 73–76K 這帶",
+   "reply": "Close to what I have. One thing I'd add, STH-SOPR dipped under 1 on Nov 6, so short-term holders are now realizing losses on the coins they move",
+   "sources": "chips.flow.sth_vs_tmm（Bitview 11/06）：STH 成本 75,887、真實市場均價 77,575；notes：STH-SOPR 0.9916",
+   "note": "新帳號，2 千粉、720 瀏覽，發文約 1 小時。他的價位跟我們只差一兩百，不另外報數字。",
+   "mode": "reply",
+   "order": 9
   },
   {
    "style": "真人版",
@@ -40,7 +193,7 @@
    "sources": "notes（11/06）：STH-SOPR 1.0015 → 0.9916（CheckOnChain）",
    "note": "新帳號，1.9 萬粉、710 瀏覽；發文約 4 小時，先發這則。",
    "mode": "reply",
-   "order": 1
+   "order": 10
   },
   {
    "style": "真人版",
@@ -59,7 +212,7 @@
    "sources": "notes（11/06）：STH-SOPR 1.0015 → 0.9916、LTH-SOPR 0.9385（CheckOnChain、Bitview）",
    "note": "固定名單，1.3 萬粉，發文 2.5 小時、500 瀏覽。昨天回過他兩則，他沒回；這則數字直接對上他的「虧損區」。",
    "mode": "reply",
-   "order": 2
+   "order": 11
   },
   {
    "style": "真人版",
@@ -78,7 +231,7 @@
    "sources": "market（11/06）：SMA350 75,775、收盤 75,742；chips.flow.sth_vs_tmm（Bitview 11/06）：STH 成本 75,887",
    "note": "熟帳號（回過、會按讚），發文約 1 小時、700 瀏覽。350 日≈50 週，我們只講自己算的數字。",
    "mode": "reply",
-   "order": 3
+   "order": 12
   },
   {
    "style": "真人版",
@@ -97,7 +250,7 @@
    "sources": "notes（11/06）：穩定幣一週 −2.62%（DefiLlama）、Coinbase 溢價 7 日均 −0.157%",
    "note": "新帳號，9 千粉，發文約 1 小時、13 則回覆。他已經講完 ETF，我們補另外兩條美元管道。",
    "mode": "reply",
-   "order": 4
+   "order": 13
   },
   {
    "style": "真人版",
@@ -116,7 +269,7 @@
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2（暫定）",
    "note": "新帳號，3.8 千粉，發文約 1 小時、35 讚。他的 5.3 億是 BTC＋ETH，我們只講 BTC 那部分。",
    "mode": "reply",
-   "order": 5
+   "order": 14
   },
   {
    "style": "真人版",
@@ -135,7 +288,7 @@
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2（暫定）；notes（11/06）：Coinbase 溢價 7 日均 −0.157%",
    "note": "Grok 表 22，5 千粉、剛發。原文最後一句「仓位先别乱动」是操作建議，我們只接 ETF 數字，不碰那句。",
    "mode": "reply",
-   "order": 6
+   "order": 15
   },
   {
    "style": "真人版",
@@ -154,7 +307,7 @@
    "sources": "notes（11/06）：LTH-SOPR 0.9385（Bitview）",
    "note": "熟帳號（常回我們），剛發。熟帳號今天到這則是 2 則（paulxue1979、joke_henry），之後的留給新帳號。",
    "mode": "reply",
-   "order": 7
+   "order": 16
   }
  ]
 }
