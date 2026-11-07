@@ -187,8 +187,8 @@ def tone_notes(items):
     if rp and len(kn) / len(rp) > 0.4: out.append(f'熟帳號 {len(kn)}/{len(rp)} 則（{", ".join(kn)}）：一天 2–3 則就好，其餘回新帳號')
     im = sum(1 for it in R if it.get('image')) / n
     if im > 0.5: out.append(f'配圖 {im:.0%}：只有圖本身就是重點時才配')
-    SITE = {'rpl': 'onchain #c-rpl', 'sec': 'onchain #c-sec', 'ad': 'onchain #c-ad', 'lthloss': 'onchain #c-lthloss', 'bands': 'onchain #c-sthband',
-            'sopr': 'onchain #c-sopr', 'agecost': 'cycle #c-agecost', 'etf': 'flows #c-etf', 'cbp': 'flows #c-pr-us', 'liq': 'deriv #c-liq'}   # 2026-11-07：網站有的圖優先用原圖
+    SITE = {'rpl': 'onchain #c-rpl', 'sec': 'onchain #c-sec', 'ad': 'flows #c-ad', 'lthloss': 'onchain #c-lthloss', 'bands': 'onchain #c-sthband',
+            'sopr': 'onchain #c-sopr', 'agecost': 'cycle #c-agecost', 'etf': 'flows #c-etf', 'cbp': 'flows #c-pr-us', 'liq': 'deriv #c-liq'}   # 2026-11-07：網站有的圖優先用原圖；2026-11-08 表觀需求搬到資金版（手機寬度截圖只畫目前那一版，版面要寫對）
     for it in R:
         c = (it.get('image') or {}).get('chart')
         if c in SITE: out.append(f'#{it["n"]} 配圖用 cards.py 的 {c}，網站有原圖（{SITE[c]}）：改成 site_cards.py')
