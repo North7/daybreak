@@ -6,9 +6,66 @@
   {
    "style": "真人版",
    "status": "send",
+   "mode": "reply",
+   "n": 29,
+   "order": 1,
+   "author": "Alvin0617",
+   "name": "Alvin",
+   "followers": 22199,
+   "lang": "zh",
+   "angle": "補數據",
+   "id": "2119028761467424921",
+   "url": "https://x.com/Alvin0617/status/2119028761467424921",
+   "posted": "2026-11-07T11:26:41Z",
+   "summary": "週報：若 BTC 在短期持有人成本 STH-RP（約 75,700）附近得到支撐，就沒理由預設更深回調；向上第一道關卡 82,000",
+   "reply": "我這邊 11/06 的短期持有者成本是 75.9K，收盤 75.7K 其實已經壓在下面一點\n\nSTH-SOPR 也是同一天跌破 1，短期持有者開始虧著賣",
+   "sources": "latest.json onchain.metrics：sth-realized-price 75,887（11/06，Bitview）；收盤 75,741.6；STH-SOPR 11/06 跌破 1",
+   "note": "Grok Bot 第一輪（inbox-2026-11-07-2255）。新帳號，2.2 萬粉藍勾，發文約 3.5 小時、8 則回覆。不說撐不撐得住，只報成本和收盤的相對位置。 試過配圖（c-sthband／c-whale）不配：成本帶是兩年圖，150 美元的差距看不出來；鯨魚圖畫 30 日變化，1k–10k 30 天只 +20 顆，跟『一週多 3 萬』打架。"
+  },
+  {
+   "style": "真人版",
+   "status": "send",
+   "mode": "reply",
+   "n": 30,
+   "order": 2,
+   "author": "CaffeSatoshi",
+   "name": "CaffeSatoshi",
+   "followers": 10703,
+   "lang": "en",
+   "angle": "提出反例",
+   "id": "2119051795716596101",
+   "url": "https://x.com/CaffeSatoshi/status/2119051795716596101",
+   "posted": "2026-11-07T12:58:12Z",
+   "summary": "ETF 11/2–11/6 淨流出 12.8 億；週收約 75,850（−3.2%）；交易所過去一週淨提出約 12,925 BTC，長期持有者把幣留在交易所外",
+   "reply": "Exchange balances look different on my end. The supply I track is up almost 2% over the 7 days to Nov 5, roughly 50K BTC moving onto exchanges. Sources disagree a lot on this one though",
+   "sources": "latest.json onchain.exchange（Bitview）：交易所供給 2,709,957 BTC、7 日 +1.86%（11/05）→ 約 +4.9 萬顆。ETF 本站只到 11/05（11/02–11/05 合計 −8.7 億），沒有 11/06，所以不碰他的 12.8 億",
+   "note": "Grok Bot 第一輪。新帳號，1.1 萬粉藍勾，發文約 2 小時。ETF 數字我們少一天對不上，改補交易所：方向跟他相反，最後一句承認各家估算差很多。"
+  },
+  {
+   "style": "真人版",
+   "status": "send",
+   "mode": "reply",
+   "n": 31,
+   "order": 3,
+   "author": "zgjncw2024",
+   "name": "zgjncw2024",
+   "followers": 22458,
+   "lang": "zh",
+   "angle": "補數據",
+   "id": "2119042239729115320",
+   "url": "https://x.com/zgjncw2024/status/2119042239729115320",
+   "posted": "2026-11-07T12:20:14Z",
+   "summary": "長期持有者整體仍穩定；一隻休眠超過一年的鯨魚 11/06 買入約 3,009 BTC 並從交易所提走；短期持有者獲利比例降到約 38%",
+   "reply": "1,000 到 1 萬顆的錢包這週也多了快 3 萬顆，跟你說的鯨魚對得上\n\n不過長期持有者 11/06 整體是虧著賣的，LTH-SOPR 掉到 1 以下",
+   "sources": "latest.json onchain.whales（Bitview，地址分層）：1k–10k 7 日 +29,696 BTC；metrics lth-sopr 0.9385（11/06）",
+   "note": "Grok Bot 第一輪。新帳號，2.2 萬粉藍勾（也發生活文）。補一個對得上的、一個跟「LTH 穩定」不同的。地址不等於實體，寫「錢包」。 試過配圖（c-sthband／c-whale）不配：成本帶是兩年圖，150 美元的差距看不出來；鯨魚圖畫 30 日變化，1k–10k 30 天只 +20 顆，跟『一週多 3 萬』打架。"
+  },
+  {
+   "style": "真人版",
+   "status": "send",
    "kind": "followup",
    "n": 28,
-   "order": 1,
+   "order": 4,
    "author": "JM93467993",
    "name": "JM",
    "followers": null,
@@ -31,7 +88,7 @@
    "mode": "reply",
    "angle": "回答提問",
    "n": 25,
-   "order": 2,
+   "order": 5,
    "author": "lyxc138766",
    "name": "lyxc138766",
    "followers": 4962,
@@ -51,7 +108,7 @@
    "mode": "reply",
    "angle": "閒聊",
    "n": 26,
-   "order": 3,
+   "order": 6,
    "author": "YoooJJ8cm",
    "name": "人类股市观察家",
    "followers": 4867,
@@ -71,7 +128,7 @@
    "mode": "reply",
    "angle": "接話補數據",
    "n": 27,
-   "order": 4,
+   "order": 7,
    "author": "paulxue1979",
    "name": "paulxue1979",
    "followers": 3907,
@@ -88,7 +145,7 @@
    "status": "send",
    "kind": "followup",
    "n": 24,
-   "order": 5,
+   "order": 8,
    "author": "JinDianZiAI",
    "name": "JinDianZiAI",
    "followers": 9000,
@@ -120,7 +177,7 @@
    "lang": "zh",
    "mode": "reply",
    "n": 22,
-   "order": 6,
+   "order": 9,
    "id": "2118910157552001040",
    "url": "https://x.com/JinDianZiAI/status/2118910157552001040",
    "posted": "2026-11-07T03:35:23Z",
@@ -140,7 +197,7 @@
    "lang": "zh",
    "mode": "reply",
    "n": 23,
-   "order": 7,
+   "order": 10,
    "id": "2118910327849107735",
    "url": "https://x.com/JinDianZiAI/status/2118910327849107735",
    "posted": "2026-11-07T03:36:04Z",
@@ -154,7 +211,7 @@
    "style": "真人版",
    "status": "send",
    "n": 21,
-   "order": 8,
+   "order": 11,
    "url": "https://x.com/Murphychen888/status/2118902544999338047",
    "id": "2118902544999338047",
    "author": "Murphychen888",
@@ -181,7 +238,7 @@
    "status": "send",
    "n": 18,
    "kind": "followup",
-   "order": 9,
+   "order": 12,
    "url": "https://x.com/YoooJJ8cm/status/2118900368495325441",
    "id": "2118900368495325441",
    "author": "YoooJJ8cm",
@@ -201,7 +258,7 @@
    "status": "send",
    "n": 19,
    "kind": "followup",
-   "order": 10,
+   "order": 13,
    "url": "https://x.com/joke_henry/status/2118893787154096497",
    "id": "2118893787154096497",
    "author": "joke_henry",
@@ -221,7 +278,7 @@
    "status": "send",
    "n": 20,
    "kind": "followup",
-   "order": 11,
+   "order": 14,
    "url": "https://x.com/JM93467993/status/2118892757527699684",
    "id": "2118892757527699684",
    "author": "JM93467993",
@@ -262,7 +319,7 @@
    "status": "send",
    "n": 17,
    "kind": "followup",
-   "order": 12,
+   "order": 15,
    "url": "https://x.com/JinDianZiAI/status/2118891141181608381",
    "id": "2118891141181608381",
    "author": "JinDianZiAI",
@@ -282,7 +339,7 @@
    "status": "send",
    "n": 8,
    "kind": "followup",
-   "order": 13,
+   "order": 16,
    "url": "https://x.com/Lisheng99668/status/2118867706837381318",
    "id": "2118867706837381318",
    "author": "Lisheng99668",
@@ -314,7 +371,7 @@
    "sources": "notes（11/06）：Coinbase 溢價 7 日均 −0.157%",
    "note": "新帳號，24 萬粉，Grok 表 23 第一名，剛發。回覆講 Coinbase 溢價，引用（下一則）講 ETF，數字錯開。",
    "mode": "reply",
-   "order": 14,
+   "order": 17,
    "image": {
     "site": {
      "page": "flows",
@@ -341,7 +398,7 @@
    "note": "引用發。不寫那斯達克漲幅：notes 寫 +1.9%、其他人寫 +1.09%，兩邊對不上。 不配圖：BTC 對美股那張只到 11/05，而且近兩個月 BTC 跌得比那斯達克少，跟引用的重點相反。",
    "mode": "quote",
    "quote": "Truecrypto 說那斯達克反彈，BTC 幾乎沒跟上\n\n我這邊也是：美股彈的那天 BTC 日線還是收跌\nETF 最近 5 個交易日有 4 天流出，持有者平均成本約 8 萬，價格還在下面\n\n#比特幣 #BTC",
-   "order": 15
+   "order": 18
   },
   {
    "style": "真人版",
@@ -360,7 +417,7 @@
    "sources": "notes news（11/06）：12 月升息 1 碼機率由約 70% 升到 79%（TokenPost）",
    "note": "新帳號，11 萬粉、2,600 瀏覽，剛發。",
    "mode": "reply",
-   "order": 16
+   "order": 19
   },
   {
    "style": "真人版",
@@ -379,7 +436,7 @@
    "sources": "deriv（11/06）：funding_multi weighted_now 8.59%",
    "note": "新帳號，10 萬粉、2,500 瀏覽，發文約 40 分鐘。",
    "mode": "reply",
-   "order": 17
+   "order": 20
   },
   {
    "style": "真人版",
@@ -398,7 +455,7 @@
    "sources": "notes（11/06）：穩定幣一週 −2.62%（DefiLlama）",
    "note": "新帳號，1.7 萬粉、13 則回覆，剛發。",
    "mode": "reply",
-   "order": 18,
+   "order": 21,
    "image": {
     "site": {
      "page": "flows",
@@ -424,7 +481,7 @@
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2",
    "note": "新帳號，6 千粉、380 瀏覽，一句話提問，短答。",
    "mode": "reply",
-   "order": 19,
+   "order": 22,
    "image": {
     "site": {
      "page": "flows",
@@ -450,7 +507,7 @@
    "sources": "deriv（11/06）：weighted_now 8.59%；etf.json 五個交易日四天流出",
    "note": "新帳號，4.8 千粉，回答他最後的提問。",
    "mode": "reply",
-   "order": 20
+   "order": 23
   },
   {
    "style": "真人版",
@@ -469,7 +526,7 @@
    "sources": "chips.flow.sth_vs_tmm（Bitview 11/06）：STH 成本 75,887、真實市場均價 77,575；notes：STH-SOPR 0.9916",
    "note": "新帳號，2 千粉、720 瀏覽，發文約 1 小時。他的價位跟我們只差一兩百，不另外報數字。",
    "mode": "reply",
-   "order": 21
+   "order": 24
   },
   {
    "style": "真人版",
@@ -488,7 +545,7 @@
    "sources": "notes（11/06）：STH-SOPR 1.0015 → 0.9916（CheckOnChain）",
    "note": "新帳號，1.9 萬粉、710 瀏覽；發文約 4 小時，先發這則。",
    "mode": "reply",
-   "order": 22,
+   "order": 25,
    "image": {
     "site": {
      "page": "onchain",
@@ -514,7 +571,7 @@
    "sources": "notes（11/06）：STH-SOPR 1.0015 → 0.9916、LTH-SOPR 0.9385（CheckOnChain、Bitview）",
    "note": "固定名單，1.3 萬粉，發文 2.5 小時、500 瀏覽。昨天回過他兩則，他沒回；這則數字直接對上他的「虧損區」。 不配圖：同一張圖今天已經給了另一則英文回覆（SOPR 給 Jethroe111、ETF 給 BTC_JEDI21）。",
    "mode": "reply",
-   "order": 23
+   "order": 26
   },
   {
    "style": "真人版",
@@ -533,7 +590,7 @@
    "sources": "market（11/06）：SMA350 75,775、收盤 75,742；chips.flow.sth_vs_tmm（Bitview 11/06）：STH 成本 75,887",
    "note": "熟帳號（回過、會按讚），發文約 1 小時、700 瀏覽。350 日≈50 週，我們只講自己算的數字。",
    "mode": "reply",
-   "order": 24,
+   "order": 27,
    "image": {
     "site": {
      "page": "market",
@@ -559,7 +616,7 @@
    "sources": "notes（11/06）：穩定幣一週 −2.62%（DefiLlama）、Coinbase 溢價 7 日均 −0.157%",
    "note": "新帳號，9 千粉，發文約 1 小時、13 則回覆。他已經講完 ETF，我們補另外兩條美元管道。",
    "mode": "reply",
-   "order": 25,
+   "order": 28,
    "image": {
     "site": {
      "page": "flows",
@@ -585,7 +642,7 @@
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2（暫定）",
    "note": "新帳號，3.8 千粉，發文約 1 小時、35 讚。他的 5.3 億是 BTC＋ETH，我們只講 BTC 那部分。 不配圖：同一張圖今天已經給了另一則英文回覆（SOPR 給 Jethroe111、ETF 給 BTC_JEDI21）。",
    "mode": "reply",
-   "order": 26
+   "order": 29
   },
   {
    "style": "真人版",
@@ -604,7 +661,7 @@
    "sources": "etf.json：10/30 −643.2、11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2（暫定）；notes（11/06）：Coinbase 溢價 7 日均 −0.157%",
    "note": "Grok 表 22，5 千粉、剛發。原文最後一句「仓位先别乱动」是操作建議，我們只接 ETF 數字，不碰那句。",
    "mode": "reply",
-   "order": 27,
+   "order": 30,
    "image": {
     "site": {
      "page": "flows",
@@ -630,7 +687,7 @@
    "sources": "notes（11/06）：LTH-SOPR 0.9385（Bitview）",
    "note": "熟帳號（常回我們），剛發。熟帳號今天到這則是 2 則（paulxue1979、joke_henry），之後的留給新帳號。",
    "mode": "reply",
-   "order": 28
+   "order": 31
   }
  ]
 }
