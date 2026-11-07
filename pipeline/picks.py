@@ -607,6 +607,9 @@ def recent_used(bar, days=RECENT_DAYS):
     for it in (lp.get('items') if isinstance(lp, dict) else lp) or []:
         for c in it.get('charts') or []:
             if (it.get('time') or '')[:10] > d0.isoformat(): out.setdefault(c, (it.get('time') or '')[:10])
+    for u in (lp.get('used') if isinstance(lp, dict) else None) or []:   # 已發、已從 items 刪掉的長貼文
+        if (u.get('date') or '') > d0.isoformat() and (u.get('date') or '') < bar:
+            for c in u.get('charts') or []: out.setdefault(c, u['date'])
     return out
 
 
