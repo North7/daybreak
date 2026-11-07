@@ -9,6 +9,8 @@ image 欄位：{"chart": "<picks.py 的圖表 id，例如 cbp、sopr、etf、coh
            或 {"chart": "bands", ...}：短期持有者成本帶（Bitview，近兩年，±1、±2 標準差）。
            或 {"chart": "agecost", ...}：6–12 與 12–18 個月持幣成本（Bitview，2023 年起，底部寫上次死叉／金叉）。
            或 {"chart": "rpl", ...}：實現獲利 ÷ 實現虧損 90 天平均（CheckOnChain，2018 年起，對數刻度，1＝獲利和虧損一樣多；2026-11-05 加）。
+           或 {"chart": "chg", "title": "...", "from": "2026-09-17", "marks": [{"d": "2026-10-02", "zh": "非農", "en": "NFP"}], "span": ["2026-10-07", "2026-10-08"]}：
+             每日漲跌幅柱狀圖（data/history/index.json，Kraken 日線），marks 標事件日、span 標一段連跌；適合對質「某天數據公布後跌了多少」（2026-11-07 加）。
            lthloss、bands、agecost 是 2026-11-04 網站新加的圖（資料在 latest.json 的 onchain.lthloss、onchain.sth_bands、cycle.age_cost）。
 需要 pipeline/picks.py（PR #19「每日推薦發文圖表」）與 Pillow；字型同 share_card.py。
 用法（在倉庫根目錄）：python3 ops/replies/cards.py --fonts <字型資料夾>
@@ -148,6 +150,67 @@ def c_rpl(L, end):
                        PK.S('最近 7 天每日比值', 'Daily ratio, last 7 days', f'{r["last7"]:.2f}')])
 
 
+def c_chg(L, end, im):
+    """每日漲跌幅（data/history/index.json）；marks 是事件日（虛線＋標籤），span 是一段連續下跌（括號＋合計）。"""
+    H = json.load(open(os.path.join(ROOT, 'data', 'history', 'index.json')))
+    H = [r for r in H if r['date'] >= im.get('from', '2026-09-17') and r.get('chg_pct') is not None]
+    by = {r['date']: r for r in H}
+    marks = [dict(m, x=PK.dn(m['d']), v=by[m['d']]['chg_pct']) for m in im.get('marks') or [] if m['d'] in by]
+    sp_ = im.get('span'); span = None
+    if sp_:
+        a = [r for r in H if r['date'] < sp_[0]][-1]['close']; b = by[sp_[1]]['close']
+        span = dict(x0=PK.dn(sp_[0]), x1=PK.dn(sp_[1]), v=(b / a - 1) * 100)
+    pct = lambda v: ('+' if v >= 0 else '−') + f'{abs(v):.1f}%'
+    st = [PK.S(f'{PK.md(m["d"], "zh")} {m["zh"]}當天', f'{m["en"]} day, {PK.md(m["d"], "en")}', pct(m['v'])) for m in marks]
+    if span: st.insert(1, PK.S(f'{PK.md(sp_[0], "zh")}–{PK.md(sp_[1], "zh")[-2:].lstrip("/")} 兩天', f'{PK.md(sp_[0], "en")}–{sp_[1][-2:].lstrip("0")}, two days', pct(span['v'])))
+    return dict(kind='chg', name=T('比特幣每日漲跌幅', 'Bitcoin daily change'),
+                sub=T('每日收盤對前一日（%）；虛線是事件日', 'Daily close vs prior close (%); dashed lines mark event days'),
+                rows=[(PK.dn(r['date']), r['chg_pct']) for r in H], marks=marks, span=span, pct=pct,
+                series=[dict(name=T('上漲', 'Up'), color=PK.UP), dict(name=T('下跌', 'Down'), color=PK.RED)],
+                src='Kraken', asof=H[-1]['date'], stats=st[:3])
+
+
+def draw_chg(d, box, sp, lang, Fn):
+    import datetime as dt
+    x0, y0, x1, y1 = box; px1 = x1 - 150; top = y0 + 110; pb = y1 - 70
+    rows = sp['rows']; xa, xb = rows[0][0] - 0.6, rows[-1][0] + 0.6
+    ys = [v for _, v in rows] + [0]; ya, yb = min(ys), max(ys); pad = (yb - ya) * 0.08; ya, yb = ya - pad, yb + pad
+    X = lambda x: x0 + (x - xa) / (xb - xa) * (px1 - x0)
+    Y = lambda v: pb - (v - ya) / (yb - ya) * (pb - top)
+    tf = Fn['mono'](34, 500); cj = lambda z, w: Fn['cjk'](z, w) if lang == 'zh' else Fn['mono'](int(z * 0.92), w)
+    for t in PK.nice(ya, yb):
+        d.line([x0, Y(t), px1, Y(t)], fill=PK.LINE, width=2)
+        d.text((px1 + 18, Y(t)), (f'{t:+.0f}%' if t else '0%').replace('-', '−'), font=tf, fill=PK.INK3, anchor='lm')
+    bw = (px1 - x0) / (xb - xa) * 0.7; mx = {m['x'] for m in sp['marks']}
+    sx = sp['span']
+    for x, v in rows:
+        c = PK.UP if v >= 0 else PK.RED
+        if not (x in mx or (sx and sx['x0'] <= x <= sx['x1'])): c = PK.tint(c, 0.45)
+        d.rectangle([X(x) - bw / 2, min(Y(v), Y(0)), X(x) + bw / 2, max(Y(v), Y(0))], fill=c)
+    d.line([x0, Y(0), px1, Y(0)], fill=PK.INK, width=3)
+    e = dt.date(1970, 1, 1)
+    for x, _ in rows:   # x 軸：每月 1 日和 15 日
+        dd = e + dt.timedelta(days=x)
+        if dd.day in (1, 15):
+            d.line([X(x), pb, X(x), pb + 14], fill=PK.INK3, width=2)
+            lab = f'{dd.month}/{dd.day}' if lang == 'zh' else f'{PK.MON[dd.month - 1]} {dd.day}'
+            d.text((X(x), pb + 24), lab, font=Fn['mono'](30, 500), fill=PK.INK3, anchor='mt')
+    d.line([x0, pb, px1, pb], fill=PK.INK3, width=2)
+    lf = cj(32, 900)
+    for m in sp['marks']:
+        vdash(d, X(m['x']), top - 10, pb, PK.INK, 3)
+        t = f'{PK.md(m["d"], "zh")} {m["zh"]} {sp["pct"](m["v"])}' if lang == 'zh' else f'{m["en"]} {PK.md(m["d"], "en")} {sp["pct"](m["v"])}'
+        bb = d.textbbox((X(m['x']), top - 18), t, font=lf, anchor='mb')
+        sh = max(0, bb[2] - px1) - min(0, bb[0] - x0)
+        d.rectangle([bb[0] - 8 - sh, bb[1] - 4, bb[2] + 8 - sh, bb[3] + 4], fill=PK.PAPER)
+        d.text((X(m['x']) - sh, top - 18), t, font=lf, fill=PK.INK, anchor='mb')
+    if sx:
+        lo = min(v for x, v in rows if sx['x0'] <= x <= sx['x1']); yy = Y(lo) + 26; a, b = X(sx['x0']) - bw, X(sx['x1']) + bw
+        d.line([a, yy, b, yy], fill=PK.RED, width=4); d.line([a, yy - 12, a, yy], fill=PK.RED, width=4); d.line([b, yy - 12, b, yy], fill=PK.RED, width=4)
+        t = (f'兩天 {sp["pct"](sx["v"])}' if lang == 'zh' else f'2 days {sp["pct"](sx["v"])}')
+        d.text(((a + b) / 2, yy + 12), t, font=lf, fill=PK.RED, anchor='mt')
+
+
 EXTRA = {'ad': c_ad, 'sec': c_sec, 'lthloss': c_lthloss, 'bands': c_bands, 'agecost': c_agecost, 'rpl': c_rpl}   # picks.py 沒有、回覆配圖另外加的圖表
 
 
@@ -191,7 +254,7 @@ def draw_liq(d, box, sp, lang, Fn):
 
 
 _line = PK.draw_line_chart
-PK.draw_line_chart = lambda d, box, sp, lang, Fn: (draw_liq if sp.get('kind') == 'liq' else _line)(d, box, sp, lang, Fn)
+PK.draw_line_chart = lambda d, box, sp, lang, Fn: (draw_liq if sp.get('kind') == 'liq' else draw_chg if sp.get('kind') == 'chg' else _line)(d, box, sp, lang, Fn)
 
 
 def build_spec(L, im):
@@ -199,6 +262,7 @@ def build_spec(L, im):
     end = PK.dn(g(L, 'meta.bar_date'))
     ml = im.get('marks_label')   # 例如 {"zh": "今天低點", "en": "Today's low"}；預設「原文價位」
     sp = (c_liq(L, im.get('marks'), (ml['zh'], ml['en']) if ml else None) if im['chart'] == 'liq'
+          else c_chg(L, end, im) if im['chart'] == 'chg'
           else EXTRA[im['chart']](L, end) if im['chart'] in EXTRA
           else PK.spec(L, im['chart']))
     if sp and im.get('stats'):

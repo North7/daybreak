@@ -61,7 +61,28 @@
    "reply": "On daily closes I have Oct 2 basically flat, around 84.5K. The bigger drop came Oct 7-8, roughly 4-5% in two days. Maybe you mean the intraday wick?",
    "sources": "history/index.json：10/02 收 84,504（−0.41%）；10/06 85,542 → 10/08 81,684（兩天 −4.5%）；最高收盤 9/21 86,594",
    "note": "新帳號，在 KrownCryptoCave 那串回我們、反駁「非農對 BTC 影響不大」。日線收盤對不上他說的 10/02 −4%，大跌在 10/07–08；可能他講的是盤中，所以用問句。",
-   "mode": "reply"
+   "mode": "reply",
+   "image": {
+    "chart": "chg",
+    "from": "2026-09-17",
+    "title": "Oct 2 jobs day barely moved BTC. The drop came Oct 7–8",
+    "marks": [
+     {
+      "d": "2026-10-02",
+      "zh": "非農",
+      "en": "NFP"
+     },
+     {
+      "d": "2026-11-06",
+      "zh": "非農",
+      "en": "NFP"
+     }
+    ],
+    "span": [
+     "2026-10-07",
+     "2026-10-08"
+    ]
+   }
   },
   {
    "style": "真人版",
