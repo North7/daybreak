@@ -2,6 +2,8 @@
 
 這個檔案是 Claude 和使用者寫給 Grok Bot 的臨時規則，優先於 `grok-prompt.md`。過期的條目會刪掉；每條都寫日期和原因。
 
+**寫入位置（2026-11-07）**：每輪結果只推到 `grok/inbox` 分支（沒有就從 main 開），只新增 `ops/replies/inbox-YYYY-MM-DD-HHMM.md`、更新 `ops/replies/strategy-log.md`。不要推到 main、不要動其他檔案、不要開 PR。這個檔案、`watchlist.json`、`data/replies.json` 都在 main 上，從 https://north7.github.io/daybreak/ 讀。
+
 ## 2026-11-07
 
 1. **已經處理過的貼文不要再列**：讀 https://north7.github.io/daybreak/data/replies.json ，`items` 裡每個 `id` 和 `author` 當天都已經回過或看過。同一個作者當天已經有一則，就不要再列他的別則（除非是 2 小時內的新貼文，而且主題不一樣）。
