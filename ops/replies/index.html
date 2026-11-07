@@ -100,14 +100,15 @@ details > summary { cursor:pointer; font-weight:700; color:var(--ink3); }
       var t = x.reply || '', w = weight(t), img = x.image ? ROOT + 'data/replies/' + x.n + '.png?t=' + Date.now() : '';
       var on = done.indexOf(x.id) >= 0, intent = 'https://x.com/intent/post?in_reply_to=' + x.id + '&text=' + encodeURIComponent(t);
       if (img) fetch(img).then(function (r) { return r.blob(); }).then(function (bl) { files[x.id] = new File([bl], 'daybreak-reply-' + R.date + '-' + x.n + '.png', { type: 'image/png' }); });
-      var b = '';
+      var b = '', ib = !img ? '' : MOBILE ? '<button class="save" data-id="' + x.id + '">存配圖</button>'   // 2026-11-08：只有引用文、沒有回覆的也要能存圖
+                                       : '<a href="' + img + '" download="daybreak-reply-' + R.date + '-' + x.n + '.png">下載配圖</a>';
       if (t) {
         if (MOBILE) {
-          if (img) b += '<button class="save" data-id="' + x.id + '">存配圖</button>';
+          b += ib;
           b += '<a class="go open" data-id="' + x.id + '" href="' + esc(x.url) + '">複製回覆並開原文</a>';
         } else {
           b += '<a class="go" href="' + esc(intent) + '" target="_blank" rel="noopener">在 X 回覆</a>';
-          if (img) b += '<a href="' + img + '" download="daybreak-reply-' + R.date + '-' + x.n + '.png">下載配圖</a>';
+          b += ib;
         }
         b += '<button class="copy" data-id="' + x.id + '">複製回覆</button>';
       }
@@ -119,6 +120,7 @@ details > summary { cursor:pointer; font-weight:700; color:var(--ink3); }
                       '<button class="copy" data-kind="quote" data-id="' + x.id + '">複製引用文</button>'
                     : '<a class="' + (x.mode === 'quote' ? 'go' : '') + '" href="' + esc('https://x.com/intent/post?text=' + encodeURIComponent(q) + '&url=' + encodeURIComponent(x.url)) + '" target="_blank" rel="noopener">引用發文</a>' +
                       '<button class="copy" data-kind="quote" data-id="' + x.id + '">複製引用文</button>';
+        if (!t) qb = (MOBILE ? ib : '') + qb + (MOBILE ? '' : ib);
       }
       if (x.status !== 'skip') b += '<button class="mark' + (on ? ' on' : '') + '" data-id="' + x.id + '">' + (on ? '✓ 已回覆' : '標記已回覆') + '</button>';
       return '<section class="card' + (on ? ' done' : '') + '" id="c' + x.id + '">' +
@@ -131,7 +133,7 @@ details > summary { cursor:pointer; font-weight:700; color:var(--ink3); }
         (t ? '<div class="lab">回覆 <small class="' + (w > 280 ? 'over' : '') + '">' + w + ' / 280</small></div><pre>' + esc(t) + '</pre>' : '') +
         (img ? '<img src="' + img + '" alt="回覆配圖" loading="lazy">' : '') +
         '<div class="btns">' + b + '</div>' +
-        (q ? '<div class="lab">引用發文 <small>算曝光 · ' + (weight(q) + 23) + ' / 280（含原文網址）</small></div><pre>' + esc(q) + '</pre><div class="btns">' + qb + '</div>' : '') +
+        (q ? '<div class="lab">引用發文 <small class="' + (weight(q) + 23 > (x.long ? 25000 : 280) ? 'over' : '') + '">算曝光 · ' + (weight(q) + 23) + (x.long ? ' / 25,000 長文（X 先顯示前 280 字左右）' : ' / 280（含原文網址）') + '</small></div><pre>' + esc(q) + '</pre><div class="btns">' + qb + '</div>' : '') +
         (x.sources ? '<p class="src">數字：' + esc(x.sources) + '</p>' : '') + (x.note ? '<p class="note">' + esc(x.note) + '</p>' : '') + '</section>';
     }
 
