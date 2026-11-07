@@ -516,6 +516,7 @@ def render(L, fonts_dir):
 PICKS_V2 = 1
 RECENT_DAYS = 7
 # 網站面板：連結 key（#page/key）→ 名稱、截圖用的圖 id、讀值在 latest.json 的位置、對應的異動 chart id、截圖失敗時的舊版圖
+#   2026-11-08 內容重組後有幾張圖換了版面（deriv/sx、deriv/conc → 價格／鏈上；onchain/ad、dmd、capflow、grad → 資金），鍵維持原樣：截圖是桌面寬度、每版都畫，選擇器照樣找得到，網站的跳轉也跟著圖走
 PANELS = {
     'cycle/rup':      dict(zh='相對未實現獲利：地板', en='Relative unrealized profit: the floor', sel='#c-rup', data=['onchain.rup']),
     'cycle/cyccmp':   dict(zh='和前幾輪比：頂部之後', en='Versus past cycles: after the top', sel='#c-cyccmp', data=['cycle.cycle_cmp']),

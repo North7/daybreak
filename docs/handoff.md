@@ -57,6 +57,7 @@ BASE=https://north7.github.io/daybreak/ node tests/smoke.js   # 上線後再跑�
 | 修：圖例顏色對不上（RV30、籌碼集中度）、讀值太長壓到標籤、手機收起來的小圖只剩最後一點 | — | — |
 | 隱含波動率期限結構（2026-11-08，見 5e） | 衍生品版 | `deriv.ivterm`；快取 `pipeline/coc_cache/iv_term.json` |
 | 月度報酬熱力表（2026-11-08，見 5e） | 價格版 | `price.monthly` |
+| 內容重組與導覽：三版新分組、四張需求圖與兩張價格類圖搬家、全站搜尋、側欄子目錄、手機目錄鈕（2026-11-08，見 5f） | 全站 | `grpH`、`buildFind`、`buildSubnav`、`grpSpy` |
 
 ## 5. 待辦（照優先順序）
 
@@ -101,6 +102,15 @@ BASE=https://north7.github.io/daybreak/ node tests/smoke.js   # 上線後再跑�
 - Deribit 沒有免費的歷史曲線（`get_mark_price_history` 只有 DVOL 用的那幾個合約），所以每天快照一次存進 `pipeline/coc_cache/iv_term.json`（每天一行，留 500 天），鍵是 bar date、`ts` 是實際快照時間。第一條（11/06）是 11/07 16:32 UTC 補拍的。`prev7`／`prev30` 找差 2 天內的那一條；`rows` 滿 30 條才畫斜率走勢（`#c-ivts`）。逐筆成交（history API）的 IV 推算遠月樣本太少（2 小時內遠月只有個位數筆），沒有拿來回補。
 - 月度報酬：統一收盤 PXC（Kraken 優先、更早 CoinMetrics），2013 年起；`rows` 是 [年, 12 個月, 全年]，`stats` 是各月 n／up／med／best／worst（不含本月），`cur` 是本月的統計加最好、最差的年份。
 - 欄位：`deriv.ivterm` 的 `curve`（[到期天數, IV]）、`t`（7／30／90／180 天）、`slope`（7 天 − 90 天）、`state`（inv／flat／norm，±1 點）、`prev7`、`prev30`、`rows`（[x, 價格, 斜率, 7 天, 90 天]）、`n`、`since`；`price.monthly` 的 `mtd`、`ytd`、`base`（上月底收盤）、`cur`、`rows`、`stats`、`ystat`。
+
+## 5f. 2026-11-08 內容重組與導覽（`grpH`、`buildFind`、`buildSubnav`、`grpSpy`）
+
+- 使用者要求「重新設計內容結構、分割、佈局，更易讀、易定位、易查找，交互更好」。全站約 95 個面板、70 多張圖，鏈上版一版就 29 個。
+- **分組**：價格（`mk-leg`／`mk-ma`／`mk-long`）、資金（`fl-etf`／`fl-buy`／`fl-dmd`／`fl-liq`）、衍生品（`dv-vol`／`dv-lev`／`dv-opt`／`dv-spot`）新增分組；鏈上改成 `oc-cost`／`oc-pnl`／`oc-sell`／`oc-lth`／`oc-all`。組標題用 `grpH(代號, 中文, 英文, 一句問題)`，圖數由 `grpCounts()` 在建目錄時補上。新圖放進最貼近的一組；一組太長（7 張以上）再拆。
+- **搬家**：`concPanel`（衍生品 → 鏈上成本與位置）、`sxPanel`（衍生品 → 價格這一段行情）、`adPanel`／`dmdPanel`／`cfPanel`／`grPanel`（鏈上 → 資金鏈上需求）。**搬面板一定連 `mount` 一起搬到新版面的 `.after()`**：手機只畫目前這一版，`mount` 留在舊版面的話，新版面的圖會是空的。`picks.py` 的鍵（`deriv/sx`、`onchain/ad` 等）沒改：截圖用桌面寬度、所有版面都畫，選擇器找得到；舊網址由 `jumpTo` 跟著圖走。
+- **搜尋**：`buildFind()` 從 DOM 建索引（版面、組、頭版大標、面板），別名在 `FKW`（[中文, 英文]，才過得了 `check_i18n.py`；不要放付費指標的名字），`TERMS` 的詞也併進去；面板的「現在」讀值用 `RD[圖].now()`。快捷鍵 ⌘K／Ctrl+K／「/」；結果用 `go('版面/代號')` 跳。
+- **定位**：`anchorEl` 也找 `#grp-代號` 與任何 id，所以 `#deriv/dv-opt` 這種組網址能用；組標題用 `toHead()` 對齊頂部列下緣。`grpSpy()` 在捲動時更新頂部小標、側欄子目錄的 `.on`、手機「目錄」鈕的文字。
+- **修**：`toTop()` 在 500ms 的最後一次回頂檢查會蓋掉 `jumpTo` 在 350ms 的捲動，手機上跳圖一直停在版面頂端；加 `jumping` 計數，跳轉期間不回頂。同一版裡跳不再先回版面頂端。`toTop` 解除捲動鎖除了 requestAnimationFrame 也加計時器（背景分頁不跑 rAF）。
 
 ## 6. 容易踩的坑
 
