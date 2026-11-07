@@ -282,6 +282,7 @@ def main(fonts_dir):
         im = it.get('image')
         if not im: continue
         if im.get('site'): keep.add(f'{it["n"]}.png'); continue   # 網站原圖由 site_cards.py 截
+        if im.get('custom'): keep.add(f'{it["n"]}.png'); continue   # 2026-11-08：自己畫好的圖（例如網站沒有的微策略成本線），直接放 data/replies/<n>.png，不重畫也不刪
         lang = 'zh' if it['lang'] == 'zh' else 'en'
         sp = build_spec(L, im)
         if not sp: print('skip', it['n'], im['chart'], '（沒有這張圖或資料不足）'); continue

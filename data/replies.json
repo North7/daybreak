@@ -6,6 +6,31 @@
   {
    "style": "真人版",
    "status": "send",
+   "n": 50,
+   "order": 0,
+   "url": "https://x.com/PeterSchiff/status/2118970789902868731",
+   "id": "2118970789902868731",
+   "author": "PeterSchiff",
+   "name": "Peter Schiff",
+   "followers": 1777075,
+   "posted": "2026-11-07T07:36:19Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "Schiff 置頂：Saylor 買了六年，現在剛好回到自己的成本價（約 75,500）；說黃金會讓他翻倍",
+   "reply": "",
+   "mode": "quote",
+   "quote": "Peter Schiff says Saylor is back at his cost basis. He is: $75,451, BTC near $75.7K\n\nBut cost basis isn't a forced-sale price. Strategy sold $432M of BTC in 2026 for dividends and buybacks, and bought $14.3B. Dividend reserve: ~$4.8B\n\n#Bitcoin #BTC #MSTR",
+   "sources": "微策略 849,327 顆、平均 75,451（CoinGecko，11/02 公布）；2026 賣幣 4.32 億、買進 143 億美元（Q3 季報，FinanceFeeds、24/7 Wall St.）；美元準備約 48 億（11 月初 Benzinga 等報導）；現價 75,674（Coinbase 11/08 凌晨）",
+   "note": "引用發（使用者 11/08 要求，配中文長貼文 2026-11-08-mstr 的英文版）。Schiff 177 萬粉，不在底下回覆（25 萬粉以上會跑 AI 檢查）。他 11/02 那則說現金只剩 1.33 億，那是買回優先股的錢，跟付股息的美元準備是兩筆；這則只講美元準備。發之前價格跌破 75,451 的話，第一句改成 BTC is now just below it。",
+   "image": {
+    "custom": true,
+    "chart": "costlines",
+    "title": "4 cost lines stacked near $75K"
+   }
+  },
+  {
+   "style": "真人版",
+   "status": "send",
    "kind": "followup",
    "n": 43,
    "order": 1,

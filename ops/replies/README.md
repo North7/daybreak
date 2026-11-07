@@ -152,3 +152,5 @@ X 的「原創內容獎勵」（2026-09-07 起取代創作者分潤，見 [`../R
 ```
 
 `image.chart` 可用 `pipeline/picks.py` 的圖表 id（`cbp`、`sopr`、`etf`、`cohort`、`cost`、`stab`、`npl`、`vol` 等），或 `cards.py` 另外加的：`liq`（推算清算價位分布，OKX）、`ad`（老幣淨增加）、`sec`（賣方衰竭常數）、`lthloss`（長期持有者虧損比例）、`bands`（短期持有者成本 ±1、±2 標準差帶）、`agecost`（6–12 與 12–18 個月持幣成本、死叉／金叉）。後三張是 2026-11-04 網站新加的圖。
+
+`image.custom: true`（2026-11-08 起）：網站沒有、自己畫好的圖（例如微策略成本線），直接存成 `data/replies/<n>.png`；`cards.py` 不重畫也不刪，`site_cards.py` 不截。
