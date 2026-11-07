@@ -62,12 +62,16 @@ def check():
     L = json.load(open(os.path.join(ROOT, 'data', 'latest.json'), encoding='utf-8'))
     err = [f'缺少 {k}' for k in ('date', 'data_date', 'edition', 'items') if k not in R]
     if R.get('data_date') != L['meta']['bar_date']: err.append(f'data_date {R.get("data_date")} 不是當期數據 {L["meta"]["bar_date"]}')
-    ns = set()
+    ns, ids = set(), {}
     for it in R.get('items', []):
         tag = f'#{it.get("n")}'
         err += [f'{tag} 缺少 {k}' for k in NEED if k not in it]
         if it.get('n') in ns: err.append(f'{tag} 編號重複')
         ns.add(it.get('n'))
+        # 小幫手用 id 記「已回覆」、也用 id 當回覆對象：接話（kind followup）要填對方那則留言的 id，不能沿用原文的（2026-11-07）
+        key = (str(it.get('id')), it.get('mode') == 'quote')
+        if key in ids: err.append(f'{tag} 和 #{ids[key]} 的 id 重複（接話要用對方留言的 id，回覆和引用同一則才可以共用）')
+        ids[key] = it.get('n')
         if it.get('status') not in ('send', 'optional', 'skip'): err.append(f'{tag} status 只能是 send／optional／skip')
         if str(it.get('id')) not in str(it.get('url')): err.append(f'{tag} id 和網址對不上')
         t = it.get('reply') or ''
