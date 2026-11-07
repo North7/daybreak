@@ -4,3 +4,10 @@ pipeline/raw_*.json
 .claude/
 pipeline/today.json
 ops/video/out/
+# 2026-11-08：運營策略文件搬到私人倉庫 North7/daybreak-ops-private，不要再放回公開倉庫
+ops/brand/*.md
+!ops/brand/README.md
+ops/log/*.json
+ops/replies/*.md
+!ops/replies/README.md
+ops/replies/watchlist.json
