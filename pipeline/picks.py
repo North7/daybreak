@@ -644,8 +644,12 @@ def candidates2(L, notes=None):
 def plan2(L):
     notes = load('notes.json'); c = candidates2(L, notes)
     ok = [x for x in c if not x['used']]
+    # 2026-11-08：運營那邊可以先寫好當天的方向（ops/picks/hint.json，bar＝要用的數據日期），只在日期對得上時出現
+    try: hint = json.load(open(P('ops', 'picks', 'hint.json')))
+    except Exception: hint = None
+    if not hint or hint.get('bar') != g(L, 'meta.bar_date'): hint = None
     return dict(date=g(L, 'meta.bar_date'), notes_date=(notes or {}).get('date'),
-                suggest=ok[0]['id'] if ok else None,
+                suggest=ok[0]['id'] if ok else None, hint=hint,
                 recent={x['id']: x['used'] for x in c if x['used']}, skip=SKIP_PANELS,
                 note=('每日任務：挑 1 張（不限 suggest），先想「讀者今天在問什麼」，再挑最能回答的面板；recent 裡的（最近 7 天用過）不能挑。'
                       '寫 data/picks.json：q_zh／q_en 是圖上的問句標題，zh／en 是解說：現在的讀值、過去同樣情況之後怎樣（勝率照實寫）、這代表什麼。'

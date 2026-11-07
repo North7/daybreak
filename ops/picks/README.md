@@ -64,3 +64,7 @@ python3 pipeline/picks.py render --fonts <字型資料夾>   # 截圖＋出圖�
 ```
 
 第一版的指令還留著：`plan-v1`、`render-v1`；舊格式的 picks.json（id 是 `cost`、`cohort` 這類）`check` 與 `render` 會照第一版處理。第一版的 `card()`、`spec()` 長文配圖（`ops/articles/charts.py`）還在用。
+
+## 前一晚先講好方向（2026-11-08 起）
+
+運營和使用者前一晚決定好隔天推哪張時，寫 `ops/picks/hint.json`：`bar`（要用的數據日期，台北隔天早上 08:15 的排程用的是前一天收盤）、`id`、`fallback`、`q_zh`／`q_en`、`angle`、`if`（什麼情況就不照用）、`post_at`。`picks.py plan` 只在 `bar` 對得上時輸出 `hint`，每日任務照它寫；過期的提示自動忽略，不用刪。
