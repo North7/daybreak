@@ -1,16 +1,16 @@
 {
- "date": "2026-11-05",
+ "date": "2026-11-06",
  "captions": true,
  "picks": [
   {
-   "id": "deriv/gex",
-   "chart": "data/picks/deriv-gex.png",
-   "chart_en": "data/picks/deriv-gex-en.png",
+   "id": "onchain/rloss",
+   "chart": "data/picks/onchain-rloss.png",
+   "chart_en": "data/picks/onchain-rloss-en.png",
    "name": {
-    "zh": "選擇權 Gamma 曝險（推算）",
-    "en": "Options gamma exposure (estimate)"
+    "zh": "實現虧損：峰值背離",
+    "en": "Realized loss: peak divergence"
    },
-   "link": "https://north7.github.io/daybreak/#deriv/gex"
+   "link": "https://north7.github.io/daybreak/#onchain/rloss"
   }
  ]
 }
