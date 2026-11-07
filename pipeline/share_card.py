@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """每日分享圖（2026-10-13 建立）：號外風格 16:9 圖卡，給 X 貼文附圖用。
 讀 data/latest.json 與 data/notes.json（英文版讀 data/notes.en.json），輸出 data/share.png、data/share-en.png。
-頭條取自當期日報；標題裡的數字標號外紅（規則與網站相同）；底部三格固定為市場階段、ETF 7 個完整交易日（標明截至哪天）、離出場第一階。
+頭條取自當期日報；標題裡的數字標號外紅（規則與網站相同）；底部三格固定為市場階段、ETF 7 個完整交易日（標明截至哪天）、短期持有者成本（STH 實現價格）與收盤在它上方或下方多少。
+2026-11-08：第三格原為「離出場第一階」，X 貼文只放資訊、不放出場框架，改成短期持有者成本；網站本身的出場框架不變。
 字型與網站相同（Noto Sans TC 900、Archivo 窄體、JetBrains Mono），由 --fonts 指定的資料夾讀取。
 用法（在倉庫根目錄）：python3 pipeline/share_card.py --fonts <字型資料夾>"""
 import json, os, re, sys, argparse, datetime as dt
@@ -13,9 +14,9 @@ W, H, M = 1200, 675, 64
 PAPER, INK, INK3, RED, LINE = '#EEECE6', '#0A0A0A', '#7A766F', '#FF3B1F', '#D2CEC4'
 NUM = re.compile(r'(\d{1,2}/\d{1,2}(?!\d)|[+\-−$]?\d[\d,.]*(?:\s?(?:%|億|萬|千|兆|倍|個基點|基點|bp|K|M|B)(?![A-Za-z]))?)')
 TXT = {
-    'zh': dict(tag='號外', stage='市場階段', etf='ETF 7 個交易日（至 {}）', exit='離出場第一階', day='第 {} 天', hit='已觸發',
+    'zh': dict(tag='號外', stage='市場階段', etf='ETF 7 個交易日（至 {}）', sth='短期持有者成本', above='收盤在上方', below='收盤在下方', day='第 {} 天',
                names={'熊市': '熊市', '轉換期': '熊牛轉換期', '牛市': '牛市'}, wd='一二三四五六日', close='收盤版'),
-    'en': dict(tag='EXTRA', stage='MARKET STAGE', etf='ETF · 7 DAYS TO {}', exit='TO FIRST EXIT STEP', day='day {}', hit='triggered',
+    'en': dict(tag='EXTRA', stage='MARKET STAGE', etf='ETF · 7 DAYS TO {}', sth='STH COST BASIS', above='CLOSE ABOVE', below='CLOSE BELOW', day='day {}',
                names={'熊市': 'Bear', '轉換期': 'Transition', '牛市': 'Bull'}, wd=['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'], close='close'),
 }
 
@@ -64,22 +65,30 @@ def card(lang, latest, notes, F, out):
             d.text((x, y), a, font=hf, fill=RED if red else INK); x += hf.getlength(a)
         y += lh
     # 底部三格
-    st = (latest.get('cycle') or {}).get('stage') or {}; ex = (latest.get('exit') or {}).get('status') or {}
+    st = (latest.get('cycle') or {}).get('stage') or {}
     days = (bd - dt.date.fromisoformat(st['since'])).days + 1 if st.get('since') else None
     stage = T['names'].get(st.get('stage'), '—') + (('・' if lang == 'zh' else ' · ') + T['day'].format(days) if days and st.get('stage') == '牛市' else '')
     rows = [r for r in (latest.get('flows') or {}).get('etf', []) if not r.get('partial')][-7:]
     s7 = sum(r['musd'] for r in rows) if rows else None
     etf = '—' if s7 is None else (f"{'+' if s7 >= 0 else '−'}{abs(s7) / 100:.2f} 億" if lang == 'zh' else f"{'+' if s7 >= 0 else '−'}${abs(s7):,.0f}M")
-    nxt = T['hit'] if ex.get('steps_hit') else ('—' if ex.get('next_step_dist_pct') is None else f"+{ex['next_step_dist_pct']:.0f}%")
+    # 短期持有者成本：數字放大，旁邊小字兩行寫收盤在它上方或下方多少（只是位置，不帶操作結論）
+    sth = (((latest.get('onchain') or {}).get('metrics') or {}).get('sth-realized-price') or {}).get('value')
+    close = ((latest.get('price') or {}).get('bar') or {}).get('c')
+    sth_v = '—' if not sth else f"{sth:,.0f}"
+    sth_side = None if not (sth and close) else (T['above'] if close >= sth else T['below'], f"{abs(close / sth - 1) * 100:.1f}%")
     top = 470; d.rectangle([M, top, W - M, top + 2], fill=INK); cw = (W - 2 * M) / 3
     # 2026-10-21：標上最後一個完整交易日。The Block 通常晚一到兩個交易日，頭條若寫更新的暫定值，「近 7 日」看起來會和頭條矛盾
     etf_k = T['etf'].format((f"{dt.date.fromisoformat(rows[-1]['d']):%-m/%-d}" if lang == 'zh' else f"{dt.date.fromisoformat(rows[-1]['d']):%b %-d}".upper()) if rows else '—')
-    for i, (k, v) in enumerate(((T['stage'], stage), (etf_k, etf), (T['exit'], nxt))):
+    for i, (k, v) in enumerate(((T['stage'], stage), (etf_k, etf), (T['sth'], sth_v))):
         x = M + i * cw + (0 if i == 0 else 24)
         if i: d.line([M + i * cw, top + 22, M + i * cw, top + 118], fill=LINE, width=1)
         d.text((x, top + 30), k, font=F['mono'](17) if lang == 'en' else F['cjk'](18, 500), fill=INK3)
         vf = F['cjk'](42, 900) if re.search(r'[一-鿿]', v) else F['num'](58)
         d.text((x, top + 62), v, font=vf, fill=RED if v.startswith('−') and i == 1 else INK)
+        if i == 2 and sth_side:
+            sx = x + d.textlength(v, font=vf) + 16; sf = F['mono'](16) if lang == 'en' else F['cjk'](18, 500)
+            d.text((sx, top + 70), sth_side[0], font=sf, fill=INK3)
+            d.text((sx, top + 93), sth_side[1], font=F['num'](30), fill=INK)
     # 頁尾：日出 logo、網址、X 帳號
     fy = H - 44; d.line([M, fy - 22, W - M, fy - 22], fill=LINE, width=1)
     d.arc([M, fy - 14, M + 28, fy + 14], 180, 360, fill=RED, width=4); d.line([M - 4, fy, M + 32, fy], fill=INK, width=4)
