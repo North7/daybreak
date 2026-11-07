@@ -273,6 +273,10 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-08** 隱含波動率期限結構、月度報酬熱力表（指標擴充）
+  - 衍生品版新增「隱含波動率期限結構」：Deribit 每個到期日的價平隱含波動（標記隱含波動，遠期價兩側最近的價外選擇權內插）連成一條線，固定期限 7／30／90／180 天用總變異數內插；7 天減 90 天 ≥ 1 點算倒掛、≤ −1 點算正常。排除 3 天內到期。Deribit 沒有免費的歷史曲線，每天收盤後快照一次存進 `pipeline/coc_cache/iv_term.json`（11/07 起），滿 7 天疊上 7 天前的曲線、滿 30 天畫出斜率走勢（`opt_flow.term_viz`，`deriv.ivterm`）。
+  - 價格版新增「月度報酬熱力表」：2013 年起每個月的漲跌（上月最後一天收盤 → 本月最後一天收盤，本月到最新收盤），最下面兩列是各月中位數與上漲比例（不含本月），桌面多一欄全年；手機只畫近 8 年。只用統一收盤，不打新的 API（`stage_viz.monthly_viz`，`price.monthly`）。
+  - 兩張都只作讀值；一次性補值到 11/06（期限結構的第一條曲線是 11/07 16:32 UTC 的快照）。
 - **2026-11-07** 賣壓累積與動能品質（指標擴充，取代 11/05 的「短期壓力分數」）
   - 衍生品版新增一張自製圖，只用每日收盤：「動能品質」（0–1）＝近 21 天日報酬的平均 ÷ 標準差 × √21，用常態分布換成 0–1；「賣壓累積」（0–100）＝動能低於 0.45 時每天往上加、高於時往下減，動能到 0.7 直接歸零。弱勢拖得越久累積越高，急跌一兩天不會馬上到 100。
   - 「底部組合」＝賣壓 100 且動能低於 0.3（2012 年起約 20 次）：列出 30／90 天後漲跌（和任一天比）、等賣壓回到 0 再出場的勝率與中途再跌、分年代結果，以及熊市初期失靈的幾次。動能高不是頂部訊號（之後 90 天多半繼續漲），照實寫。
@@ -555,6 +559,10 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-08** Implied volatility term structure and a monthly returns heatmap (indicator additions)
+  - Derivatives page: the at-the-money implied volatility of each Deribit expiry (mark IV, interpolated from the nearest out-of-the-money options either side of the forward) drawn as one curve, with 7/30/90/180-day constant maturities interpolated in total variance; 7 days minus 90 days ≥ 1 point counts as inverted, ≤ −1 as normal. Expiries within 3 days are left out. Deribit has no free history of the curve, so a snapshot is saved after each daily close to `pipeline/coc_cache/iv_term.json` (from 11/07); the curve from a week ago appears after 7 days and the slope history after 30 (`opt_flow.term_viz`, `deriv.ivterm`).
+  - Price page: every month's change since 2013 (last close of the previous month to the last close of the month; this month up to the latest close), with each month's median and share of up months (excluding this month) in the bottom two rows and a full-year column on desktop; phones show the last 8 years. Uses the unified closes only, no new API (`stage_viz.monthly_viz`, `price.monthly`).
+  - Both are readings only. One-off backfill to 11/06 (the first term-structure curve is a snapshot from 11/07 16:32 UTC).
 - **2026-11-07** Selling pressure and momentum quality (indicator additions; replaces the 11/05 short-term stress score)
   - A new chart on the Derivatives page, from daily closes only: momentum quality (0–1) is the mean ÷ standard deviation of the last 21 daily returns × √21, mapped through the normal distribution; selling pressure (0–100) adds up each day momentum is below 0.45, drains when it is above, and resets once momentum reaches 0.7. The longer weakness drags on, the higher it climbs; a one- or two-day drop does not send it to 100.
   - The bottom combo (pressure 100 and momentum below 0.3, about 20 times since 2012) lists 30/90-day results against any day, the win rate and interim dips when exiting at a pressure reset, results by era, and the early-bear-market failures. High momentum is not a top signal (prices usually kept rising over the next 90 days), and the page says so.

@@ -556,6 +556,7 @@ PANELS = {
     'market/cd':      dict(zh='近 20 天 K 線', en='Last 20 daily candles', sel='#c-cd', data=['price.bar']),
     'market/long':    dict(zh='價格長期走勢', en='Long-term price', sel='#c-long', data=['cycle.tops', 'cycle.bottoms']),
     'market/levels':  dict(zh='成本線與均線', en='Cost lines and moving averages', sel='#c-levels', data=['cycle.levels'], sig=['cost', 'ov-px'], old='cost'),
+    'market/mon':     dict(zh='月度報酬熱力表', en='Monthly returns heatmap', sel='#c-mon', data=['price.monthly']),   # 2026-11-08
     'flows/etf':      dict(zh='現貨 ETF 每日淨流量', en='Spot ETF daily net flows', sel='#c-etf', data=['flows.etf'], sig=['etf'], old='etf'),
     'flows/stab':     dict(zh='穩定幣總供給', en='Stablecoin supply', sel='#c-stab', data=['flows.stables'], sig=['stab'], old='stab'),
     'flows/pr-us':    dict(zh='三地溢價：買盤從哪裡來', en='Premiums: where the bid comes from', sel='#c-pr-us', data=['flows.premium3', 'flows.cb_premium'], sig=['pr-us', 'cbp'], old='cbp'),
@@ -566,6 +567,7 @@ PANELS = {
     'deriv/liq':      dict(zh='清算熱力圖（推算）', en='Liquidation heatmap (estimate)', sel='#c-liq', data=['deriv.liq_heat']),
     'deriv/conc':     dict(zh='籌碼結構與集中度', en='Supply structure and concentration', sel='#c-conc', data=['chips.conc_stats']),
     'deriv/sx':       dict(zh='賣壓累積與動能品質', en='Selling pressure and momentum quality', sel='#c-sx', data=['chips.stress']),   # 2026-11-07
+    'deriv/ivt':      dict(zh='隱含波動率期限結構', en='Implied volatility term structure', sel='#c-ivt', data=['deriv.ivterm']),   # 2026-11-08
     'deriv/strike':   dict(zh='主要到期的履約價分布', en='Strikes at the main expiry', sel='#c-strike', data=['deriv.viz']),
     'deriv/gex':      dict(zh='選擇權 Gamma 曝險（推算）', en='Options gamma exposure (estimate)', sel='#c-gex', data=['deriv.gex']),
     'deriv/prem':     dict(zh='選擇權買方權利金差', en='Options buyer premium spread', sel='#c-prem', data=['deriv.prem']),
