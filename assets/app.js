@@ -817,17 +817,12 @@
       _T('集中度在前 10%（≥ ' + fmt.n(cs.p90, 1) + '%）的日子，之後 30 天最大波動的中位數 ' + fmt.n(cs.hi_med30, 1) + '%、超過 15% 的佔 ' + cs.hi_gt15 + '%；其他日子 ' + fmt.n(cs.lo_med30, 1) + '%、' + cs.lo_gt15 + '%。方向不定：' + cs.since.slice(0, 4) + ' 年以來首次衝上前 10% 的 ' + hiN.length + ' 次，30 天後 ' + up + ' 次漲、' + (hiN.length - up) + ' 次跌' + (big.length ? '（例如 ' + big.map(ex).join('、') + '）' : '') + '。',
         'Days in the top 10% (≥ ' + fmt.n(cs.p90, 1) + '%) saw a median 30-day maximum move of ' + fmt.n(cs.hi_med30, 1) + '%, with ' + cs.hi_gt15 + '% above 15%; other days ' + fmt.n(cs.lo_med30, 1) + '% and ' + cs.lo_gt15 + '%. No direction: of ' + hiN.length + ' first entries into the top 10% since ' + cs.since.slice(0, 4) + ', ' + up + ' were higher 30 days later and ' + (hiN.length - up) + ' lower' + (big.length ? ' (e.g. ' + big.map(ex).join(', ') + ')' : '') + '.'), 'neu']);
     var cc = concCohortSay(); if (cc) it.push(cc);
-    var sx = (D.chips || {}).stress;   // 2026-11-05 使用者要求放進來看相對關係：本站自製的短期壓力分數（不是 BRS）
-    if (sx && sx.rows && sx.rows.length > 2) { var pv = sx.rows[sx.rows.length - 2][1], er = sx.era || [], et = function (e) { return e.lo + '–' + e.hi.slice(2) + _T(' 年 ' + e.n + ' 次 ' + e.win + ' 次獲利', ': ' + e.win + ' of ' + e.n); };
-      it.push([_T('短期壓力（自製）', 'Short-term stress (ours)'), sx.value + ' / 100', _T('現在 ' + sx.value + '（' + fmt.md(sx.date) + '，前一天 ' + pv + '；近 30 天最高 ' + sx.max30 + '）。四項短期持有者指標各和自己近 ' + sx.w + ' 天比，越接近 100＝短期壓力越接近半年來最差，0＝不比平常差。走勢和 Glassnode 的 BRS 公開圖大致同向，但不是 BRS（那是付費、算法不公開的）。照「到 100 買、回 0 賣」回測：' + er.map(et).join('、') + '；熊市裡沒有優勢，只看相對高低、不當買賣訊號。',
-        'Now ' + sx.value + ' (' + fmt.md(sx.date) + '; ' + pv + ' the day before; 30-day high ' + sx.max30 + '). Four short-term holder measures, each against its own last ' + sx.w + ' days; near 100 means stress near its worst in half a year, 0 means no worse than usual. It moves broadly with Glassnode\'s BRS charts but is not BRS (that one is paid and its method is not public). Buying at 100 and selling back at 0 would have won ' + er.map(et).join(', ') + '; no edge in bear markets, so read it for relative highs and lows, not as a trade signal.'), sx.value >= 75 ? 'warn' : 'neu']); }
     return it;
   }
   function concPanel() {
     var k = concNow(), cs = (D.chips || {}).conc_stats || {}; if (!k) return '';
     return panel('span-12', _T('籌碼結構與集中度', 'Supply structure and concentration'), _T('Bitview · ' + (cs.since || '').slice(0, 4) + ' 起 · 只作讀值', 'Bitview · since ' + (cs.since || '').slice(0, 4) + ' · reading only'),
-      interpHtml(concItems()) + legend([[_T('BTC 價格（上格）', 'BTC price (top)'), 'var(--ink-2)'], [_T('長期持有者籌碼', 'Long-term holder supply'), 'var(--s1)', 'box'], [_T('短期持有者籌碼', 'Short-term holder supply'), 'var(--s2)', 'box'], [_T('現價 ±5% 區間', '±5% of price'), 'var(--s3)', 'box'], [_T('集中度（下格）', 'Concentration (bottom)'), 'var(--s3)'], [_T('前 10% 高水位', 'Top-10% line'), 'var(--warn)', 'dash']]) + '<div class="chart" id="c-conc"></div>' +
-      (((D.chips || {}).stress || {}).rows ? '<div class="panel-h" style="margin-top:6px"><h3>' + _T('短期壓力分數（本站自製，0–100；時間範圍跟著上圖）', 'Short-term stress score (ours, 0–100; follows the range above)') + '</h3></div>' + legend([[_T('短期壓力', 'Short-term stress'), 'var(--s1)'], [_T('75 以上：壓力接近半年來最差', '75+: near the worst in half a year'), 'var(--down)', 'box']]) + '<div class="chart" id="c-stress"></div>' : ''));
+      interpHtml(concItems()) + legend([[_T('BTC 價格（上格）', 'BTC price (top)'), 'var(--ink-2)'], [_T('長期持有者籌碼', 'Long-term holder supply'), 'var(--s1)', 'box'], [_T('短期持有者籌碼', 'Short-term holder supply'), 'var(--s2)', 'box'], [_T('現價 ±5% 區間', '±5% of price'), 'var(--s3)', 'box'], [_T('集中度（下格）', 'Concentration (bottom)'), 'var(--s3)'], [_T('前 10% 高水位', 'Top-10% line'), 'var(--warn)', 'dash']]) + '<div class="chart" id="c-conc"></div>');
   }
   function drawConc(el) {
     var h = ((D.chips || {}).conc_hist || []).filter(function (r) { return r[1] && r[2] != null; }), cs = (D.chips || {}).conc_stats || {}, co = (D.chips || {}).cohort || {}, k = concNow(); if (h.length < 30 || !el) return;
@@ -860,12 +855,6 @@
         return s;
       },
       tip: function (p, C) { return { dots: '<circle cx="' + C.X(p[0]).toFixed(1) + '" cy="' + C.Ys(p[2]).toFixed(1) + '" r="3.5" fill="var(--s3)" stroke="var(--deck)" stroke-width="1.5"/>', rows: tipRow1('var(--s3)', _T('集中度', 'Concentration'), fmt.n(p[2], 2) + '%') + tipRow1('var(--ink-2)', _T('收盤', 'Close'), fmt.usd(p[1])) }; } });
-    var sx = (D.chips || {}).stress, se = $('#c-stress');
-    if (sx && sx.rows && se) {   // 時間範圍跟著上面的圖（手機只畫近 1 年）
-      var x1 = h[h.length - 1][0], x0 = el.clientWidth < 420 ? x1 - 365 : el._rng ? x1 - el._rng : h[0][0], sr = sx.rows.filter(function (r) { return r[0] >= x0; });
-      lineChart(se, { h: 150, noRange: true, x0: x0, x1: x1, y0: 0, y1: 100, series: [{ name: _T('短期壓力', 'Short-term stress'), data: sr, color: 'var(--s1)', w: 1.6, area: true }],
-        hbands: [{ y0: 75, y1: 100, color: 'var(--down-dim)' }], refs: [{ y: 25, color: 'var(--ink-3)' }], yFmt: function (v) { return v.toFixed(0); }, tipFmt: function (v) { return v.toFixed(0) + ' / 100'; }, aria: _T('短期壓力分數', 'Short-term stress score') });
-    }
   }
   function concSay(k, dvol) {
     var a = concAgo(7), h = (D.chips || {}).conc_hist || [];
@@ -873,6 +862,58 @@
     var lowIv = dvol && dvol.pct_1y != null && dvol.pct_1y < 30;
     return _T('現價 ±5%（' + fmt.k(k.lo) + '–' + fmt.k(k.hi) + '）內有 ' + fmt.n(k.btc / 1e4, 0) + ' 萬顆，佔流通 ' + fmt.n(k.pct, 1) + '%' + wk + '。籌碼越集中，價格離開這一帶時越容易引發一起停損或一起解套，波動容易放大；它不指方向。' + (lowIv ? '目前 DVOL 也在一年偏低處：籌碼擠在現價附近、選擇權又不貴。' : '') + '本站從 2026-10-01 才開始記錄（' + h.length + ' 天），還不足以判斷高低。',
       'Within ±5% of price (' + fmt.k(k.lo) + '–' + fmt.k(k.hi) + ') sit ' + (k.btc / 1e6).toFixed(2) + 'M BTC, ' + fmt.n(k.pct, 1) + '% of circulating supply' + wk + '. The more supply crowds here, the more likely a move out of this band sets off stop-losses or break-even selling together, so volatility tends to expand; it says nothing about direction.' + (lowIv ? ' DVOL is also low for the year: supply is crowded near price and options are cheap.' : '') + ' We have only tracked it since 2026-10-01 (' + h.length + ' days), too short to call it high or low.');
+  }
+
+  /* 2026-11-07 指標擴充：賣壓累積（0–100）與動能品質（0–1），本站自製、只用每日收盤（取代 11/05 的短期壓力分數）。只作讀值 */
+  var SX_K = { bottom: ['warn', '底部組合成立', 'Bottom combo on', 'Combo on'], near: ['warn', '接近底部組合', 'Near the bottom combo', 'Near combo'], build: ['neu', '賣壓累積中', 'Pressure building', 'Building'],
+    strong: ['neu', '強勢動能', 'Strong momentum', 'Strong'], calm: ['neu', '沒有累積', 'No build-up', 'Calm'] };   // 第 4 欄：英文狀態卡用的短字（大字放不下長句）
+  function sxX() { return (D.chips || {}).stress || null; }
+  function sxDl(a, b, dg, upBad) { if (a == null || b == null) return ''; var d = a - b; return '<em class="' + ((d >= 0) !== upBad ? 'up' : 'dn') + '">' + (d >= 0 ? '▲ ' : '▼ ') + fmt.n(Math.abs(d), dg) + _T(' / 7 天', ' / 7d') + '</em>'; }   // 賣壓上升是壞事，顏色和一般箭頭相反
+  function sxSay() {
+    var x = sxX(); if (!x || x.r == null) return [];
+    var it = [], K = SX_K[x.state] || SX_K.calm, sf = function (v) { return fmt.n(v, 2); }, now;
+    var rz = x.rise_from ? _T('，' + fmt.md(x.rise_from) + ' 起從 0 升上來', '; rising from 0 since ' + fmt.md(x.rise_from)) : '';
+    var head = _T('賣壓累積 ' + x.r + '（7 天前 ' + x.r7 + rz + '），動能品質 ' + sf(x.s) + '（7 天前 ' + sf(x.s7) + '）。', 'pressure ' + x.r + ' (' + x.r7 + ' a week ago' + rz + '), momentum quality ' + sf(x.s) + ' (' + sf(x.s7) + ' a week ago). ');
+    if (x.state === 'bottom') now = _T('兩個條件同時成立：賣壓到 100（已連 ' + (x.at100 + 1) + ' 天）、動能低於 0.3。弱勢已經拖了一段時間，而且還在跌得又快又穩，過去這種時候常在一段下跌的後段，但短期常常還有一跌。', 'Both conditions hold: pressure at 100 (' + (x.at100 + 1) + ' days) and momentum below 0.3. Weakness has dragged on and the drop is still fast and steady; in the past this often came late in a decline, though another leg down was common first.');
+    else if (x.state === 'near') now = x.s < 0.3 ? _T('動能已經低於 0.3，賣壓還差 ' + (100 - x.r) + ' 分到 100；再弱幾天，底部組合就成立。', 'Momentum is already below 0.3; pressure is ' + (100 - x.r) + ' points short of 100. A few more weak days would complete the bottom combo.') : _T('賣壓已經到 100，動能 ' + sf(x.s) + ' 還在 0.3 之上；跌勢要更快更穩，底部組合才成立。', 'Pressure is at 100 but momentum ' + sf(x.s) + ' is still above 0.3; the drop would need to get faster and steadier to complete the combo.');
+    else if (x.state === 'build') now = _T('動能一直在 0.45 以下，弱勢拖得越久分數越高；一段又快又穩的上漲（動能到 0.7）會直接歸零。', 'Momentum has stayed under 0.45, and the longer weakness drags on the higher it climbs; a fast, steady rally (momentum 0.7) resets it to zero.');
+    else if (x.state === 'strong') now = _T('賣壓 0、動能高於 0.85：近 21 天漲得又快又穩。', 'Pressure 0 and momentum above 0.85: the last 21 days rose fast and steadily.');
+    else now = _T('賣壓 0：最近沒有拖著的弱勢。', 'Pressure 0: no lingering weakness lately.');
+    it.push([_T('現在', 'Now'), x.r + ' · ' + sf(x.s), _T(K[1] + '：', K[2] + ': ') + head + now, K[0]]);
+    if (x.f90 && x.f90.n) it.push([_T('底部組合之後', 'After the bottom combo'), x.f90.up + '/' + x.f90.n,
+      _T(x.since.slice(0, 4) + ' 年起 ' + x.f90.n + ' 次（和上一次相隔 60 天以上才算新的一次）。30 天後：', 'Since ' + x.since.slice(0, 4) + ', ' + x.f90.n + ' times (60+ days apart). 30 days later: ') + oxStat(x.f30, x.base30) + _T('；90 天後：', '; 90 days later: ') + oxStat(x.f90, x.base90) + _T('。短期常常還有一跌，拉長到 3 個月才比平常好。', '. Another leg down was common in the short run; only over three months did it beat a random day.'), 'neu']);
+    var ex = x.ex || {}, bad = (x.ev || []).filter(function (e) { return e.ret != null; }).sort(function (a, b) { return a.ret - b.ret; }).slice(0, 4), op = (x.ev || []).filter(function (e) { return e.ret == null; })[0];
+    if (ex.n) it.push([_T('等賣壓歸零再出場', 'Exit when pressure resets'), ex.win + '/' + ex.n,
+      _T('底部組合出現時買進、賣壓回到 0 時賣出：' + ex.n + ' 次中 ' + ex.win + ' 次獲利，報酬中位數 ' + fmt.pct(ex.med, 1) + '、持有中位數 ' + ex.days + ' 天，中途最深再跌的中位數 ' + fmt.pct(ex.dip, 1) + '。分年代：' + (x.era || []).map(function (e) { return e.lo + '–' + e.hi.slice(2) + ' 年 ' + e.win + '/' + e.n; }).join('、') + '。虧最多的幾次多在熊市初期：' + bad.map(function (e) { return oxYm(e.date) + ' ' + fmt.pct(e.ret, 0); }).join('、') + '。' + (op ? '最近一次 ' + ymdS(op.date) + ' 還沒歸零。' : ''),
+        'Buy when the combo appears, sell when pressure returns to 0: ' + ex.win + ' of ' + ex.n + ' won, median ' + fmt.pct(ex.med, 1) + ' over a median ' + ex.days + ' days, with a median further dip of ' + fmt.pct(ex.dip, 1) + ' along the way. By era: ' + (x.era || []).map(function (e) { return e.lo + '–' + e.hi.slice(2) + ' ' + e.win + '/' + e.n; }).join(', ') + '. The worst ones mostly came early in bear markets: ' + bad.map(function (e) { return oxYm(e.date) + ' ' + fmt.pct(e.ret, 0); }).join(', ') + '.' + (op ? ' The latest, ' + ymdS(op.date) + ', has not reset yet.' : '')), 'neu']);
+    var tp = (x.top || {}).f90; if (tp && tp.n) it.push([_T('強勢動能不是頂部', 'Strong momentum is not a top'), tp.up + '/' + tp.n,
+      _T('賣壓 0 且動能高於 0.85（漲得又快又穩）的 ' + tp.n + ' 次，90 天後 ' + tp.up + ' 次上漲、中位數 ' + fmt.pct(tp.med, 1) + '：多半是行情延續；只有熊市裡的反彈才常在這時見局部高點。',
+        'Of ' + tp.n + ' times with pressure 0 and momentum above 0.85 (a fast, steady rise), ' + tp.up + ' were higher 90 days later, median ' + fmt.pct(tp.med, 1) + ': usually continuation; only bear-market rallies tended to peak here.'), 'neu']);
+    return it;
+  }
+  function sxPanel() {
+    var x = sxX(); if (!x || !x.rows || x.r == null) return '';
+    var K = SX_K[x.state] || SX_K.calm, sub = x.at100 ? _T('已連 ' + (x.at100 + 1) + ' 天在 100', (x.at100 + 1) + ' days at 100') : x.rise_from ? _T(fmt.md(x.rise_from) + ' 起從 0 升上來', 'up from 0 since ' + fmt.md(x.rise_from)) : _T('目前沒有累積', 'nothing built up');
+    return panel('span-12', _T('賣壓累積與動能品質', 'Selling pressure and momentum quality'), _T('本站自製 · 每日收盤 · ' + fmt.md(x.date), 'Ours · daily closes · ' + fmt.md(x.date)),
+      '<div class="cf-hero">' + oxCard('var(--down)', _T('賣壓累積', 'Selling pressure'), x.r + ' / 100', sub, sxDl(x.r, x.r7, 0, true)) +
+        oxCard('var(--s3)', _T('動能品質', 'Momentum quality'), fmt.n(x.s, 2), x.s < 0.3 ? _T('低於 0.3：跌得又快又穩', 'below 0.3: falling fast and steadily') : x.s > 0.85 ? _T('高於 0.85：漲得又快又穩', 'above 0.85: rising fast and steadily') : _T('0–1，0.5 是不漲不跌', '0–1; 0.5 is flat'), sxDl(x.s, x.s7, 2, false)) +
+        oxCard('var(--ink-2)', _T('狀態', 'State'), _T(K[1], K[3]), _T('底部組合：賣壓 100 且動能 < 0.3', 'Bottom combo: pressure 100 and momentum < 0.3')) + '</div>' +
+      interpHtml(sxSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('賣壓累積（0–100）', 'Selling pressure (0–100)'), 'var(--down)'], [_T('動能品質（0–1）', 'Momentum quality (0–1)'), 'var(--s3)'], [_T('動能 0.3 線', 'Momentum 0.3 line'), 'var(--s3)', 'dash'], [_T('底部組合到賣壓歸零', 'Bottom combo until pressure resets'), 'var(--s3)', 'box']]) +
+      '<div class="chart cf-chart" id="c-sx"></div><p class="note">' + _T('本站自製，只用每日收盤。動能品質＝近 21 天日報酬的平均 ÷ 標準差 × √21，用常態分布換成 0–1：漲得又快又穩接近 1、跌得又快又穩接近 0。賣壓累積＝動能低於 0.45 時每天往上加（離 0.45 越遠加越多）、高於 0.45 時往下減，動能一到 0.7 直接歸零，夾在 0–100。底部組合＝賣壓 100 且動能低於 0.3。回測只有二十幾次，換一個收盤價來源或參數稍微調一下，次數和勝率就會變幾次。只作讀值，不是買賣訊號。',
+        'Ours, from daily closes only. Momentum quality = mean ÷ standard deviation of the last 21 daily returns × √21, mapped to 0–1 with the normal distribution: near 1 for a fast, steady rise, near 0 for a fast, steady fall. Selling pressure adds up each day momentum sits below 0.45 (more the further below), drains when it is above, and resets to zero once momentum reaches 0.7, capped at 0–100. Bottom combo = pressure 100 and momentum below 0.3. The backtest has only twenty-odd cases; a different close source or a small parameter change shifts the counts by a few. Reading only, not a trade signal.') + '</p>', '', 'sx');
+  }
+  function drawSx(el) {
+    var x = sxX(); if (!x || !el) return;
+    var rows = x.rows.map(function (r) { return [r[0], r[1], r[2], r[3] == null ? null : r[3] * 100]; });
+    if (el.clientWidth < 420) rows = rows.filter(function (r) { return r[0] >= rows[rows.length - 1][0] - 365; });   // 手機沒有時間範圍按鈕，只畫近 1 年
+    oxPane(el, { rows: rows, rng: 365, y0: 0, y1: 100, ticks: [0, 25, 50, 75, 100], fmt: function (v) { return fmt.n(v, 0); },
+      label: _T('賣壓累積 0–100；動能品質 0–1 畫在同一高度（0.3 對到 30）', 'Pressure 0–100; momentum 0–1 on the same height (0.3 at 30)'), aria: _T('BTC 價格、賣壓累積與動能品質', 'BTC price, selling pressure and momentum quality'),
+      refs: [{ y: 30, col: 'var(--s3)', lab: _T('動能 0.3', 'momentum 0.3') }],
+      vbands: (x.ev || []).map(function (e) { return { x0: dnOf(e.date), x1: e.exit ? dnOf(e.exit) : rows[rows.length - 1][0], col: 'var(--s3)', op: 0.12 }; }),
+      lines: [{ i: 3, col: 'var(--s3)', w: 1.4, name: _T('動能品質', 'Momentum quality'), tfmt: function (v) { return fmt.n(v / 100, 2); } },
+        { i: 2, col: 'var(--down)', w: 1.9, name: _T('賣壓累積', 'Selling pressure'), tfmt: function (v) { return fmt.n(v, 0) + ' / 100'; } }],
+      marks: (x.ev || []).map(function (e) { return { x: dnOf(e.date), y: 100, t: e.f90 == null ? _T('底部組合', 'combo') : _T('90 天 ', '90d ') + fmt.pct(e.f90, 0), col: e.f90 == null ? 'var(--s3)' : e.f90 >= 0 ? 'var(--up)' : 'var(--down)', up: false }; }),
+      now: { i: 2, col: 'var(--down)', lab: String(x.r) } });
   }
 
   /* 衍生品版 */
@@ -1851,7 +1892,7 @@
       panel('span-8', _t('隱含波動 vs 實際波動'), _t('Deribit DVOL · Kraken RV30 · 近一年'), legend([['DVOL', 'var(--s4)'], ['RV30', 'var(--s1)']]) + '<div class="chart" id="c-vol"></div>') +
       panel('span-4', _t('期貨基差曲線'), _t('年化 % · 排除 7 天內到期'), basisSay(d.basis_curve) + _t('<div class="chart" id="c-basis"></div><p class="note">資金費率年化 ') + fmt.pct(fundNow(), 1) + _t('；永續 OI ') + fmt.usd(d.perp_oi_usd_m) + _t('M。</p><div class="src-link">外部：<a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">CoinGlass 爆倉熱力圖 ↗</a>（以 OI 與假設槓桿推估，非實際倉位）</div>')) +
       liqPanel() +
-      concPanel() +
+      concPanel() + sxPanel() +
       panel('span-6', _t('各到期未平倉'), _t('買權 / 賣權（顆）'), legend([[_t('買權'), 'var(--s4)'], [_t('賣權'), 'var(--s3)']]) + '<div class="chart" id="c-oi"></div>') +
       panel('span-6', _T('主要到期的履約價分布', 'Open interest by strike, main expiries'), skTotals(), '<div id="sk-say">' + strikeSay(skRow() || big) + '</div><div id="c-strike"></div>', skSegs()) + gxPanel() + prPanel() + svPanel() + bookCard() + '</div>';
   };
@@ -1861,7 +1902,7 @@
     var gs = $('#gx-seg'); if (gs) gs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-m') === gxMode) return; gxMode = b.getAttribute('data-m'); gs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); drawGex($('#c-gex')); });
     var v = D.deriv.viz || {};
     mount($('#c-vol'), function (el) { var rows = (v.vol || {}).rows || []; lineChart(el, { series: [{ name: 'DVOL', data: rows.map(function (r) { return [r[0], r[1]]; }), color: 'var(--s4)' }, { name: 'RV30', data: rows.map(function (r) { return [r[0], r[2]]; }), color: 'var(--s1)' }], yFmt: function (x) { return x.toFixed(0); }, tipFmt: function (x) { return x.toFixed(1) + '%'; }, aria: _t('波動率') }); });
-    mount($('#c-conc'), drawConc);
+    mount($('#c-conc'), drawConc); mount($('#c-sx'), drawSx);   // 2026-11-07 賣壓累積與動能品質
     mount($('#c-basis'), function (el) { var cv = (v.basis || {}).curve || []; lineChart(el, { h: 200, xType: 'num', series: [{ name: _t('年化基差'), data: cv, color: 'var(--s4)', area: true }], xticks: cv.filter(function (p, i) { return i % 2 === 0; }).map(function (p) { return [p[0], Math.round(p[0]) + 'd']; }), xTipFmt: function (x) { return Math.round(x) + _t(' 天到期'); }, yFmt: function (x) { return x.toFixed(1) + '%'; }, tipFmt: function (x) { return x.toFixed(2) + '%'; }, y0: 0, aria: _t('基差曲線') }); });
     mount($('#c-oi'), function (el) {
       var ex = ((v.options || {}).expiries || []), W = Math.max(280, el.clientWidth), Ht = 230, ML = 8, MR = 52, MT = 10, MB = 26, pw = W - ML - MR, ph = Ht - MT - MB;
@@ -3972,6 +4013,12 @@
         now: function () { var c = oc('capeff').cur; return !c ? '' : _T('這一輪 ' + c.days + ' 天：流入 ' + cqB(c.add_b) + '、' + fmt.n(c.mult, 2) + ' 倍。', 'This cycle, ' + c.days + ' days: ' + cqB(c.add_b) + ' in, ' + fmt.n(c.mult, 2) + '×.'); } }
     });
   })();
+  Object.assign(RD, {   /* 2026-11-07 賣壓累積與動能品質 */
+    'sx': { h: [['下格紅線是賣壓累積（0–100），青綠線是動能品質（0–1，畫在同一高度，0.3 對到 30）。青綠底是「底部組合」出現到賣壓回到 0 的那一段，膠囊是組合出現後 90 天的漲跌。', 'Bottom: the red line is selling pressure (0–100), the teal line momentum quality (0–1, drawn on the same height, 0.3 at 30). Teal shading runs from each bottom combo to when pressure returns to 0; capsules show the next 90 days.'],
+        ['動能品質看近 21 天漲跌是不是又快又穩；賣壓累積看弱勢拖了多久：急跌一兩天不會馬上到 100，要弱勢拖一段時間才會累積上去，一段又快又穩的上漲就清空。兩個一起到極端（賣壓 100、動能 < 0.3）時，過去常在一段下跌的後段，但短期常常還有一跌。', 'Momentum quality asks whether the last 21 days moved fast and steadily; selling pressure asks how long weakness has dragged on. A one- or two-day drop does not push it to 100 — weakness has to linger — and a fast, steady rally clears it. When both hit extremes (pressure 100, momentum < 0.3), it has tended to come late in a decline, though often with another leg down first.'],
+        ['只用價格，不看鏈上；回測二十幾次，熊市初期多次失靈。動能高不是頂部訊號：過去多半是行情延續。', 'Price only, no on-chain data; about twenty cases, and it failed repeatedly early in bear markets. High momentum is not a top signal: it usually meant continuation.']],
+      now: function () { var x = sxX(); return !x || x.r == null ? '' : _T('賣壓 ' + x.r + '、動能 ' + fmt.n(x.s, 2) + '。', 'Pressure ' + x.r + ', momentum ' + fmt.n(x.s, 2) + '.'); } }
+  });
 
   V.onchain = function () {
     var oc = D.onchain, m = oc.metrics || {}, tr = oc.top_radar || {}, ch = D.chips, fl = ch.flow || {}, u = ch.urpd || {}, mi = oc.mining || {}, ex = oc.exchange || {};

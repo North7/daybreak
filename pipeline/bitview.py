@@ -46,7 +46,7 @@ COLS = [('px', 'price_close', 2), ('sth', 'sth_realized_price', 2), ('tmm', 'tru
         #   Dormancy（7 日，賣出的幣平均放了幾天）、Liveliness；依持有時間的每日實現獲利／虧損（22 個年齡帶併成 6 組再存，快取不存原始帶）
         ('ssr', 'sell_side_risk_ratio_1w', 6), ('ssr_s', 'sth_sell_side_risk_ratio_1w', 6), ('ssr_l', 'lth_sell_side_risk_ratio_1w', 6),
         ('lnupl', 'lth_nupl', 4), ('snupl', 'sth_nupl', 4), ('rr', 'reserve_risk', 7), ('aviv', 'aviv', 4), ('dorm', 'dormancy_1w', 3), ('live', 'liveliness', 5)] + \
-       [(f'a{k}{i + 1}', ('sum', [f'age_{b}_realized_{m}_sum_24h' for b in bands]), 0) for k, m in (('p', 'profit'), ('l', 'loss')) for i, bands in enumerate(AGE_G)]   # 2026-11-05：活躍投資人成本（Cointime Active Price）、1 週–1 個月持幣成本（levels_viz／age_cost_viz）   # 2026-11-05：長期持有者已實現虧損（美元／日，stage_viz.lthrl_viz）   # 2026-11-05：短期持有者 SOPR（每日），給本站自製的短期壓力分數（stage_viz.stress_viz）   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
+       [(f'a{k}{i + 1}', ('sum', [f'age_{b}_realized_{m}_sum_24h' for b in bands]), 0) for k, m in (('p', 'profit'), ('l', 'loss')) for i, bands in enumerate(AGE_G)]   # 2026-11-05：活躍投資人成本（Cointime Active Price）、1 週–1 個月持幣成本（levels_viz／age_cost_viz）   # 2026-11-05：長期持有者已實現虧損（美元／日，stage_viz.lthrl_viz）   # 2026-11-05：短期持有者 SOPR（每日），原本給 11/05 的短期壓力分數；11/07 起改成只用收盤價，這欄留著不影響快取   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
 KEYS = [k for k, _, _ in COLS]
 COC_TMM = 'https://charts-cdn.checkonchain.com/btconchain/cointime/cointime_pricing_all_1/cointime_pricing_all_1_light.html'
 
