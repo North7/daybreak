@@ -733,18 +733,39 @@
   var DW_REP = [5, 30, 42, 66, 92];   // 各階段的代表熱度（卡片、表格色塊）
   function dwStgCol(k) { return dwCol(DW_REP[k] != null ? DW_REP[k] : 50); }
   function dwGs(v, sg) { var K = Math.ceil(sg * 3); return v.map(function (_, i) { var a = 0, w = 0; for (var k = -K; k <= K; k++) { var j = i + k; if (j < 0 || j >= v.length) continue; var q = Math.exp(-k * k / (2 * sg * sg)); a += v[j] * q; w += q; } return a / w; }); }
+  /* 2026-11-08 使用者：「這個圖要配合 K 線一起」「圖底色需要與網站一致，不需要額外底色」→ 上格月 K（Bitview 每日開高低收合成），下格網點熱度，共用時間軸；不畫自己的底色。
+     K 線顏色＝當月熱度色（和網點同一組色票，頂部紅紫、底部深青）；漲的月空心、跌的月實心（單色 K 線慣例）。頂部標籤拉細線指到那一輪最高的那根 K 線 */
   function drawDawn(el) {
     var x = (D.cycle || {}).dawn; if (!x || !el) return;
     var R_ = x.rows, n = R_.length, t0 = R_[0][0], t1 = R_[n - 1][0], hv = R_.map(function (r) { return r[1]; }), hS = dwGs(hv, 5), hC = dwGs(hv, 11);
-    var W = Math.max(300, el.clientWidth), sm = W < 520, H = sm ? 330 : 460, L = sm ? 10 : 18, pw = W - 2 * L;
-    var mid = sm ? 166 : 232, amp = sm ? 108 : 156, topY = sm ? 18 : 22, botY = H - (sm ? 34 : 40), yrY = H - 10;
+    var W = Math.max(300, el.clientWidth), sm = W < 520, L = sm ? 4 : 8, MR = sm ? 34 : 46, pw = W - L - MR;
+    var CK = x.candles || [], hasK = CK.length > 12;
+    var topY = 14, pT = 30, pH = hasK ? (sm ? 120 : 196) : 0, amp = sm ? 92 : 132, mid = (hasK ? pT + pH + (sm ? 16 : 22) : 26) + amp;
+    var botY = mid + amp + (sm ? 26 : 30), yrY = botY + (sm ? 22 : 26), H = yrY + 8;
     var step = Math.max(4, Math.min(6.4, W / 120)), vs = step * 0.88, rMax = step * 0.62, band = 3.5;
     var X = function (d) { return L + (d - t0) / (t1 - t0) * pw; }, Dx = function (xv) { return t0 + (xv - L) / pw * (t1 - t0); };
     var at = function (arr, d) { var f = Math.max(0, Math.min(n - 1, (d - t0) / 7)), i = Math.min(n - 2, Math.floor(f)); return arr[i] + (arr[i + 1] - arr[i]) * (f - i); };
     var A = function (d) { return (at(hS, d) - 50) / 50 * amp; };   // 正＝往上（熱）、負＝往下（冷）
     var seed = 11, rnd = function () { seed = (seed * 16807) % 2147483647; return seed / 2147483647; };
-    var s = '<rect x="0" y="0" width="' + W + '" height="' + H + '" rx="12" fill="' + (dwDark() ? '#10141B' : '#E6EBF1') + '"/>';
-    var kmax = Math.ceil((amp + 12) / vs), k, xv;
+    var s = '', k, xv, i;
+    // ── 上格：月 K（手機上每 2 個月併一根，不然太細）
+    var Yp = null, KK = [];
+    if (hasK) {
+      var g = sm ? 2 : 1;
+      for (i = 0; i < CK.length; i += g) { var grp = CK.slice(i, i + g); KK.push([grp[0][0], grp[0][1], Math.max.apply(null, grp.map(function (q) { return q[2]; })), Math.min.apply(null, grp.map(function (q) { return q[3]; })), grp[grp.length - 1][4], (grp[grp.length - 1][0] + 30 * g) ]); }
+      var lo = Math.log(Math.min.apply(null, KK.map(function (q) { return q[3]; }))), hi = Math.log(Math.max.apply(null, KK.map(function (q) { return q[2]; }))), pd = (hi - lo) * 0.04;
+      Yp = function (v) { return pT + (1 - (Math.log(v) - lo + pd) / (hi - lo + 2 * pd)) * pH; };
+      [1, 10, 100, 1e3, 1e4, 1e5].forEach(function (t) { var y = Yp(t); if (y < pT - 1 || y > pT + pH + 1) return; s += '<line x1="' + L + '" x2="' + (L + pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="var(--line)" stroke-width=".6" stroke-dasharray="1 3"/>' + axText(L + pw + 6, y + 3.5, t >= 1000 ? fmt.k(t) : '$' + t); });
+      var bwK = Math.max(1, (pw / KK.length) * 0.62);
+      KK.forEach(function (q) {
+        var d0 = q[0], d1 = Math.min(q[5], t1), cx = (X(d0) + X(d1)) / 2, c = dwCol(at(hC, Math.min(t1, Math.max(t0, (d0 + d1) / 2)))), up = q[4] >= q[1];
+        var yo = Yp(q[1]), yc = Yp(q[4]), yt = Math.min(yo, yc), bh = Math.max(0.8, Math.abs(yc - yo));
+        s += '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + Yp(q[2]).toFixed(1) + '" y2="' + Yp(q[3]).toFixed(1) + '" stroke="' + c + '" stroke-width="1"/>' +
+          '<rect x="' + (cx - bwK / 2).toFixed(1) + '" y="' + yt.toFixed(1) + '" width="' + bwK.toFixed(1) + '" height="' + bh.toFixed(1) + '"' + (up && bwK > 2.2 ? ' fill="var(--deck)" stroke="' + c + '" stroke-width="1"' : ' fill="' + c + '"') + '/>';
+      });
+    }
+    // ── 下格：網點熱度
+    var kmax = Math.ceil((amp + 12) / vs);
     for (k = 0; k <= kmax; k++) [1, -1].forEach(function (dir) {
       if (k === 0 && dir < 0) return;
       var y = mid - dir * k * vs, dist = k * vs;
@@ -755,23 +776,31 @@
         s += '<circle cx="' + xv.toFixed(1) + '" cy="' + y.toFixed(1) + '" r="' + r.toFixed(2) + '" fill="' + dwCol(at(hC, d)) + '"/>';
       }
     });
+    if (hasK) s += axText(L, mid - amp - 6, _T('週期熱度：往上熱、往下冷', 'Cycle heat: up hot, down cold'));
+    [[100, mid - amp], [50, mid], [0, mid + amp]].forEach(function (q) { s += axText(L + pw + 6, q[1] + 3.5, String(q[0])); });
+    // ── 頂：最上面的標籤拉細線到那一輪最高的 K 線（沒有 K 線時指到熱度山頂）；底：下方標籤往上指到谷底
     (x.marks || []).forEach(function (m) {
       var d = dnOf(m.date); if (d < t0 || d > t1) return;
-      var cx = X(d), tp = m.kind === 'top', a = A(d), lab = m.date.slice(0, 4) + (tp ? _T(' 頂', ' top') : _T(' 底', ' bottom')), an = cx > W - 34 ? 'end' : cx < 34 ? 'start' : 'middle';
-      if (tp) s += '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + (topY + 6) + '" y2="' + (mid - Math.max(band, a) - 9).toFixed(1) + '" stroke="var(--ink)" stroke-opacity=".75" stroke-width="1"/>' + axText(cx, topY, lab, an, 'ax dw-lab');
-      else s += '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + (mid + Math.max(band, -a) + 9).toFixed(1) + '" y2="' + (botY - 12) + '" stroke="var(--ink)" stroke-opacity=".75" stroke-width="1"/>' + axText(cx, botY, lab, an, 'ax dw-lab');
+      var tp = m.kind === 'top', a = A(d), lab = m.date.slice(0, 4) + (tp ? _T(' 頂', ' top') : _T(' 底', ' bottom')), cx = X(d), yEnd;
+      if (tp && hasK) { var best = KK.filter(function (q) { return Math.abs(q[0] - d) < 120; }).sort(function (p_, q) { return q[2] - p_[2]; })[0]; if (best) { cx = (X(best[0]) + X(Math.min(best[5], t1))) / 2; yEnd = Yp(best[2]) - 4; } }
+      if (yEnd == null) yEnd = tp ? mid - Math.max(band, a) - 9 : 0;
+      var an = cx > W - MR - 26 ? 'end' : cx < 30 ? 'start' : 'middle';
+      if (tp) s += '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + (topY + 5) + '" y2="' + Math.max(topY + 6, yEnd).toFixed(1) + '" stroke="var(--ink)" stroke-opacity=".7" stroke-width="1"/>' + axText(cx, topY, lab, an, 'ax dw-lab');
+      else s += '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + (mid + Math.max(band, -a) + 9).toFixed(1) + '" y2="' + (botY - 12) + '" stroke="var(--ink)" stroke-opacity=".7" stroke-width="1"/>' + axText(cx, botY, lab, an, 'ax dw-lab');
     });
-    for (var yy = new Date(t0 * 864e5).getUTCFullYear() + 1; yy <= new Date(t1 * 864e5).getUTCFullYear(); yy++) { if (yy % (sm ? 4 : 2)) continue; var yx = X(Date.UTC(yy, 0, 1) / 864e5); if (yx > L + 12 && yx < W - L - 12) s += axText(yx, yrY, String(yy), 'middle'); }
+    for (var yy = new Date(t0 * 864e5).getUTCFullYear() + 1; yy <= new Date(t1 * 864e5).getUTCFullYear(); yy++) { if (yy % (sm ? 4 : 2)) continue; var yx = X(Date.UTC(yy, 0, 1) / 864e5); if (yx > L + 12 && yx < L + pw - 12) s += axText(yx, yrY, String(yy), 'middle'); }
     var na = A(t1), ny = mid - (na >= 0 ? Math.max(band, na) + 8 : -(Math.max(band, -na) + 8));
     s += '<circle cx="' + (X(t1) - 1).toFixed(1) + '" cy="' + ny.toFixed(1) + '" r="3.2" fill="var(--ink)"/>';
-    s += '<line class="xh" x1="0" x2="0" y1="' + (topY + 6) + '" y2="' + (botY - 12) + '" visibility="hidden"/><rect class="hit" x="' + L + '" y="0" width="' + pw + '" height="' + H + '"/>';
-    el.innerHTML = svgEl(W, H, s, _T('晨昏指數：每週的週期熱度，熱往上、冷往下', 'Dawn–Dusk Index: weekly cycle heat, hot up and cold down'));
+    s += '<line class="xh" x1="0" x2="0" y1="' + (hasK ? pT : topY + 6) + '" y2="' + (botY - 12) + '" visibility="hidden"/><rect class="hit" x="' + L + '" y="0" width="' + pw + '" height="' + H + '"/>';
+    el.innerHTML = svgEl(W, H, s, _T('晨昏指數：上格 BTC 月 K，下格每週的週期熱度（熱往上、冷往下）', 'Dawn–Dusk Index: BTC monthly candles on top, weekly cycle heat below (hot up, cold down)'));
     var svg = el.querySelector('svg'), xh = svg.querySelector('.xh'), hit = svg.querySelector('.hit');
     function move(ev) {
-      var r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width, i = Math.max(0, Math.min(n - 1, Math.round((Dx(mx) - t0) / 7))), p = R_[i], cx = X(p[0]);
+      var r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width, i_ = Math.max(0, Math.min(n - 1, Math.round((Dx(mx) - t0) / 7))), p = R_[i_], cx = X(p[0]);
+      var kq = KK.filter(function (q) { return q[0] <= p[0] && p[0] < q[5]; })[0];
       xh.setAttribute('x1', cx); xh.setAttribute('x2', cx); xh.setAttribute('visibility', 'visible');
       showTip(ev.clientX, ev.clientY, '<div class="t">' + _T('週至 ', 'Week to ') + fmt.date(p[0]) + '</div>' + tipRow1(dwCol(p[1]), _T('熱度（' + dwName(p[3]) + '）', 'Heat (' + dwName(p[3]) + ')'), fmt.n(p[1], 0)) +
-        tipRow1('var(--ink-3)', _T('方向', 'Trend'), p[4] < 0 ? _T('空方', 'Bearish') : _T('多方', 'Bullish')) + tipRow1('var(--ink-2)', _T('BTC 價格', 'BTC price'), fmt.usd(p[2])));
+        tipRow1('var(--ink-3)', _T('方向', 'Trend'), p[4] < 0 ? _T('空方', 'Bearish') : _T('多方', 'Bullish')) + tipRow1('var(--ink-2)', _T('BTC 週收盤', 'BTC weekly close'), fmt.usd(p[2])) +
+        (kq ? tipRow1('var(--ink-3)', _T('當月 高／低', 'Month high / low'), fmt.usd(kq[2]) + ' / ' + fmt.usd(kq[3])) : ''));
     }
     hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
     hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); hideTip(); });

@@ -862,7 +862,9 @@ if BV:
     # 2026-11-08 使用者要求（「用現在所有數據做一個更準確的週期圖」，和週線多空分數並列）：晨昏指數，見 dawn.py。不另打 API
     try:
         import dawn
-        R['dawn'] = dawn.build(BV, cm, _rpl, LAST, globals().get('PXC') or {}, _md['cycle_tops'], _md['cycle_bottoms'])
+        try: _ohlc = dawn.fetch_ohlc()   # 2026-11-08 月 K 用（Bitview price_ohlc，多一次請求）；取不到就只畫熱度
+        except Exception as e: _ohlc = None; errors.append(f'dawn ohlc {e}')
+        R['dawn'] = dawn.build(BV, cm, _rpl, LAST, globals().get('PXC') or {}, _md['cycle_tops'], _md['cycle_bottoms'], _ohlc)
     except Exception as e: errors.append(f'dawn {e}')
 # 2026-11-05 使用者要求（X 帳號掃描）：和前幾輪比（頂部之後的天數 × 距頂部；只用統一收盤，不靠 Bitview）
 try:

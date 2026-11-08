@@ -67,7 +67,31 @@ def stage_of(h, reg):
     return 2 if h < MID else 3
 
 
-def build(bv, cm, rpl, last, px_show=None, tops=(), bottoms=()):
+def fetch_ohlc():
+    """2026-11-08 使用者要求「這個圖要配合 K 線一起」：Bitview 每日開高低收（price_ohlc，2011 起，免費、不用金鑰）→ {日期: [開, 高, 低, 收]}，只留已收完的日子"""
+    import bitview
+    st, data = bitview._get('price_ohlc')
+    d0, today = dt.date(2009, 1, 1), dt.datetime.now(dt.timezone.utc).date().isoformat()
+    out = {}
+    for i, v in enumerate(data):
+        d = (d0 + dt.timedelta(days=st + i)).isoformat()
+        if d < today and isinstance(v, list) and len(v) == 4 and all(v): out[d] = v
+    return out
+
+
+def candles(ohlc, last):
+    """每日開高低收 → 月 K [[月初天數, 開, 高, 低, 收]]（FROM 到 last；最後一個月到 last 為止）"""
+    M = {}
+    for d in sorted(ohlc):
+        if d < FROM or d > last: continue
+        o, h, l, c = ohlc[d]; k = d[:7]
+        if k not in M: M[k] = [o, h, l, c]
+        else: m = M[k]; m[1] = max(m[1], h); m[2] = min(m[2], l); m[3] = c
+    rd = lambda v: round(v) if v >= 100 else round(v, 2)
+    return [[dn(k + '-01')] + [rd(v) for v in M[k]] for k in sorted(M)]
+
+
+def build(bv, cm, rpl, last, px_show=None, tops=(), bottoms=(), ohlc=None):
     """bv：bitview.cols()；cm：CoinMetrics [(date, 價格, MVRV, 市值, 流通量, 交易所供給)]；rpl：CheckOnChain 實現獲利 ÷ 虧損 {date: 值 或 (值, 價格)}"""
     rows = [x for x in cm if x[0] <= last and x[1] and x[3]]
     D = [x[0] for x in rows]
@@ -131,4 +155,5 @@ def build(bv, cm, rpl, last, px_show=None, tops=(), bottoms=()):
                 trend_c=[dict(key=k, raw=round(raw[k][d1], 4) if d1 in raw[k] else None, z=round(Z[k][d1], 2) if d1 in Z[k] else None) for k in TK],
                 stats=stats, base=base, quint=quint, marks=marks, flips=flips[-8:], th=dict(hot=round(HOT * 100), cold=round(COLD * 100), mid=round(MID * 100)),
                 rows=[[dn(d), round(heat[d] * 100, 1), round(pxs[d]), ST[d], R[d]] for d in W],   # 第 5 欄＝方向（+1 多方、−1 空方；畫空方灰底用）
+                candles=candles(ohlc, last) if ohlc else None,   # 月 K（Bitview 每日開高低收）
                 note='熱度＝五項估值和過去 4 年比的百分位平均；方向＝四項趨勢，連續 4 週才翻；只用當天以前的資料；只作讀值')
