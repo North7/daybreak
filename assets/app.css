@@ -766,6 +766,8 @@ a.term:hover { color: var(--red-ink); text-decoration-color: currentColor; }
 /* 2026-11-05 週期階段五色（冷→熱）：極熊／底部區、熊／偏低、初牛／中段、牛／偏高、過熱／頂部區（週線多空分數、冪律通道位置共用）。
    深淺兩色底同一組，dataviz 驗色：色盲分辨全過；淺色底的淺藍、琥珀對比略低於 3:1，靠圖例與「目前階段」文字補 */
 :root { --stg0: #3C5CDD; --stg1: #2CA0CF; --stg2: #008149; --stg3: #C38700; --stg4: #CC2827; }
+/* 2026-11-08 晨昏指數網點圖：頂底標籤用主要墨色、粗一點 */
+.ax.dw-lab { fill: var(--ink); font-weight: 600; }
 /* 發光強度：淺色底發光太強會像模糊，所以淡一點 */
 :root { --glow-r: 1.6px; --glow-a: 40%; }
 :root[data-theme="dark"] { --glow-r: 2.5px; --glow-a: 65%; }
