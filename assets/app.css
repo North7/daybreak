@@ -53,7 +53,7 @@
   --red: #FF4A2E; --red-ink: #FF6A50; --flare-dim: rgba(255, 74, 46, .13);
   --orbit: #7A90FF; --orbit-dim: rgba(122, 144, 255, .12);
   --up: #2FD08A; --down: #FF4A2E; --down-ink: #FF4A2E; --warn: #E8B54A; --up-dim: rgba(47, 208, 138, .12); --down-dim: rgba(255, 74, 46, .13); --warn-dim: rgba(232, 181, 74, .13);
-  --s1: #8573F2; --s2: #D9692F; --s3: #2A9F8E; --s4: #A88A30;
+  --s1: #8573F2; --s2: #D9692F; --s3: #2A9F8E; --s4: #FFC43D;   /* 2026-11-09 使用者指定：深色主題的金／咖（資金與衍生品）改 #FFC43D，原 #A88A30 偏暗偏咖 */
   --grid: rgba(242, 240, 234, .07);
   --lc-neg: #E8503F; --lc-mid: #A9A59D; --lc-pos: #6F86F5;
   --tape-bg: #F2F0EA; --tape-ink: #0A0A0A; --tape-ink-2: #6B675F; --tape-line: #D2CEC4;
@@ -753,6 +753,7 @@ a.term:hover { color: var(--red-ink); text-decoration-color: currentColor; }
 .cf-card .d em.up { color: var(--up); } .cf-card .d em.dn { color: var(--down-ink); }
 .cf-card .s { font-size: 11.5px; color: var(--ink-3); }
 .cf-chart text.cf-pill { font-size: 10.5px; font-weight: 700; fill: #fff; }
+:root[data-theme="dark"] .cf-chart rect[fill="var(--s4)"] + text.cf-pill, :root[data-theme="dark"] .cf-chart rect[fill="var(--warn)"] + text.cf-pill { fill: #0A0A0A; }   /* 2026-11-09 深色底的亮黃膠囊白字看不清楚，改深色字 */
 .cf-chart text.cf-now { font-size: 12px; font-weight: 800; }
 @keyframes cfPulse { 0% { r: 5; opacity: .55; } 100% { r: 16; opacity: 0; } }
 .cf-chart .cf-pulse { animation: cfPulse 1.8s ease-out infinite; transform-box: fill-box; }
