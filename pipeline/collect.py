@@ -1327,6 +1327,7 @@ try:
                              note='mempool.space 近一年每日算力；30 日均 ÷ 60 日均；只作讀值')
 except Exception as e: errors.append(f'hash_ribbons {e}')
 # G9d. 多家永續資金費率：Deribit（已抓）、OKX、Hyperliquid 的現值與 7 日平均（年化 %），以未平倉美元加權
+#   2026-11-08 使用者要求：補上 Binance、Bybit（經 Coinalyze；原本從伺服器讀不到）
 try:
     fv = {}
     if R.get('deriv'): fv['Deribit'] = dict(now=R['deriv']['funding_ann'], avg7=None, oi=R['deriv']['perp_oi_usd_m'] * 1e6)
@@ -1345,10 +1346,25 @@ try:
         fv['Hyperliquid'] = dict(now=round(float(bc['funding']) * 24 * 365 * 100, 2), avg7=round(sum(float(x['fundingRate']) for x in hh9) / len(hh9) * 24 * 365 * 100, 2),
                                  oi=float(bc['openInterest']) * float(bc['markPx']))
     except Exception as e: errors.append(f'funding hyperliquid {e}')
+    try:   # Coinalyze 的值是「每次結算的 %」（和 OKX 官方對過一樣）；兩家 BTCUSDT 永續都是每 8 小時結算。沒有 key 就跳過
+        #   現值用上一個完整小時的收盤（≈ 剛結算的費率；每日 00:05 跑時即時預估才開始 5 分鐘、不穩），和 OKX 用最近一次結算一致；7 日均＝過去 7 天每小時收盤的平均
+        import coinalyze as _cz
+        if _cz.ok():
+            _S = {'Binance': 'BTCUSDT_PERP.A', 'Bybit': 'BTCUSDT.6'}
+            _oi = {x['symbol']: x['value'] for x in _cz.get('open-interest', n=len(_S), symbols=','.join(_S.values()), convert_to_usd='true') or []}
+            _t1 = int(now.timestamp()); _fh = _cz.hist('funding-rate-history', '1hour', _t1 - 7 * 86400, _t1, tuple(_S.values()))
+            for k_, s_ in _S.items():
+                h_ = _fh.get(s_) or {}
+                if h_ and _oi.get(s_):
+                    fv[k_] = dict(now=round(h_[max(h_)]['c'] * 3 * 365, 2), avg7=round(sum(r_['c'] for r_ in h_.values()) / len(h_) * 3 * 365, 2), oi=_oi[s_])
+    except Exception as e: errors.append(f'funding coinalyze {e}')
     w9 = sum(v_['oi'] for v_ in fv.values())
-    R['funding_multi'] = dict(venues={k_: dict(now=v_['now'], avg7=v_['avg7'], oi_usd_m=round(v_['oi'] / 1e6)) for k_, v_ in fv.items()},
+    _f3 = {k_: v_ for k_, v_ in fv.items() if k_ in ('Deribit', 'OKX', 'Hyperliquid')}; _w3 = sum(v_['oi'] for v_ in _f3.values())   # 原本三家的口徑（11/08 以前的 weighted_now 就是這個）
+    R['funding_multi'] = dict(venues={k_: dict(now=v_['now'], avg7=v_['avg7'], oi_usd_m=round(v_['oi'] / 1e6)) for k_, v_ in sorted(fv.items(), key=lambda kv: -kv[1]['oi'])},   # 依未平倉由大到小
                               weighted_now=round(sum(v_['now'] * v_['oi'] for v_ in fv.values()) / w9, 2) if w9 else None,
-                              note='年化 %；Deribit 為現值、OKX 每 8 小時、Hyperliquid 每小時結算；以未平倉美元加權；Binance、Bybit 讀不到')
+                              weighted3=round(sum(v_['now'] * v_['oi'] for v_ in _f3.values()) / _w3, 2) if _w3 else None,   # 2026-11-09 起 weighted_now 加了 Binance、Bybit；要和之前比用這個
+                              note='年化 %；Deribit 為現值；Binance、Bybit、OKX 每 8 小時、Hyperliquid 每小時結算；以未平倉美元加權；Binance、Bybit 經 Coinalyze' if 'Binance' in fv else
+                                   '年化 %；Deribit 為現值、OKX 每 8 小時、Hyperliquid 每小時結算；以未平倉美元加權；Binance、Bybit 這次取不到')
 except Exception as e: errors.append(f'funding_multi {e}')
 # G9e. 恐懼貪婪指數（alternative.me）
 try:
