@@ -1,16 +1,16 @@
 {
- "date": "2026-11-06",
+ "date": "2026-11-07",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/rloss",
-   "chart": "data/picks/onchain-rloss.png",
-   "chart_en": "data/picks/onchain-rloss-en.png",
+   "id": "onchain/sopr",
+   "chart": "data/picks/onchain-sopr.png",
+   "chart_en": "data/picks/onchain-sopr-en.png",
    "name": {
-    "zh": "實現虧損：峰值背離",
-    "en": "Realized loss: peak divergence"
+    "zh": "短期持有者認賠賣壓（STH-SOPR）",
+    "en": "Short-term holder SOPR"
    },
-   "link": "https://north7.github.io/daybreak/#onchain/rloss"
+   "link": "https://north7.github.io/daybreak/#onchain/sopr"
   }
  ]
 }
