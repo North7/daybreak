@@ -99,7 +99,7 @@
 | DefiLlama | 穩定幣總供給 | 每日 |
 | Coinbase、Binance | Coinbase 溢價（兩邊日線收盤價差） | 每日 |
 | alternative.me | 恐懼貪婪指數 | 每日 |
-| Tidemark（north7.github.io/tidemark） | 頂部／底部綜合訊號（第三方模型，只作讀值） | 每日 |
+| Tidemark（north7.github.io/tidemark） | 頂部／底部綜合訊號與 2011 起的歷史（第三方模型，只作讀值；歷史取自頁面內嵌資料） | 每日 |
 
 頁首「資料狀態」會列出每個來源的資料日期與落後天數；任何一個來源失敗只影響該項，頁面顯示「本日未取得」，不推估、不沿用舊數字。
 
@@ -277,6 +277,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-09** 週期版新增「Tidemark 歷史：頂部與底部訊號」（使用者要求借鑑 Tidemark 的歷史圖）：2011 起每週、近一年每日；可切換頂部視角（頂部訊號、熱度、時機，畫出歷次週期頂部）和底部視角（底部訊號、冷度，畫出歷次週期底部與本輪候選低點）；圖例可以點選開關每條線；滑過圖時上方一行顯示當天數字。借了互動，沒借極光底色、發光線和價格疊右軸（本站一張圖一個 y 軸）。Tidemark 沒有獨立的歷史檔，每天從它的頁面取內嵌資料，取不到沿用上一份；一次性補值到 11/07。只作讀值。
 - **2026-11-09** 圖表配色紅綠規則（使用者：「這種紅綠看起來更專業」，紅用品牌橘紅；「有功能性的彩色不能全部改雙色」）：有方向的圖一律綠＝正、品牌橘紅＝負，資金費率、鏈上勢能、韓國溢價從類型色改過來；全站跌色換成品牌橘紅（淺色底文字用深一階的 #D12C10 保持可讀）；分類、階段、熱力圖的顏色不動；拿掉每張圖頂端的漸層色條、圖底淡光暈和線條發光，圖底直接是網站底色。
 - **2026-11-08** 短期持有者供給 90 天變化（鏈上版「長期持有者與大戶」）：短期持有者供給和 90 天前的差，正＝舊幣在換手、負＝幣在沉澱；附每輪頂部附近的最大值，以及 2015 年起翻正翻負後 90 天的漲跌（和任一天差不多，不是訊號）。資料 Bitview。
 - **2026-11-08** 晨昏指數加上月 K（使用者：「這個圖要配合 K 線一起」「底色要和網站一致」）：上格是 BTC 月 K（Bitview 每日開高低收合成，2013 起），下格是網點熱度，共用時間軸；K 線顏色是當月熱度色、漲的月空心、跌的月實心；頂部標籤拉細線指到那一輪最高的 K 線；滑過去多看當月高低；拿掉圖自帶的底色，直接用網站底色。每日流程多一次 Bitview 請求（price_ohlc）。
@@ -462,7 +463,7 @@ All free public APIs; no keys required.
 | DefiLlama | Total stablecoin supply | Daily |
 | Coinbase, Binance | Coinbase premium (difference between their daily closes) | Daily |
 | alternative.me | Fear & Greed Index | Daily |
-| Tidemark (north7.github.io/tidemark) | Top/bottom composite signals (third-party model, reading only) | Daily |
+| Tidemark (north7.github.io/tidemark) | Top/bottom composite signals and their history since 2011 (third-party model, reading only; the history comes from data embedded in its page) | Daily |
 
 The "Data status" bar at the top lists every source's data date and lag. If a source fails, only that item shows "not available today" — nothing is estimated or carried over.
 
@@ -579,6 +580,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-09** New on the Cycle page: "Tidemark history: top and bottom signals" (the user asked to borrow Tidemark's history chart). Weekly since 2011 and daily for the past year; switch between a top view (top signal, heat, timing, with past cycle tops) and a bottom view (bottom signal, cold, with past cycle bottoms and this cycle's candidate low); click legend items to hide or show lines; hovering shows that day's numbers in a row above the chart. We took the interactions, not the aurora background, glowing lines or price on a second axis (one y-axis per chart here). Tidemark publishes no separate history file, so the pipeline reads the data embedded in its page each day and keeps the previous copy if that fails; backfilled once to 11/07. Reading only.
 - **2026-11-09** Red/green colour rule for charts (the user found red/green "more professional", with the brand orange-red as the red, and asked to keep colours that carry meaning): anything with a direction is green for positive and brand orange-red for negative, and funding rates, on-chain momentum and the Korea premium switch over from their type colours; the site-wide down colour becomes the brand orange-red (text on the light theme uses the darker #D12C10 to stay readable); category, stage and heat-map colours are unchanged; the gradient strip on top of each chart, the faint glow behind charts and the line glow are gone, so charts sit on the site's own background.
 - **2026-11-08** Short-term holder supply, 90-day change (On-chain page, "Long-term holders and whales"): short-term holder supply minus its level 90 days earlier; positive = old coins changing hands, negative = coins settling. Shows the largest reading around each top and 90-day returns after flips since 2015 (about the same as any day, not a signal). Data: Bitview.
 - **2026-11-08** Monthly candles added to the Dawn–Dusk Index (the user wanted it paired with candlesticks and on the site's own background): BTC monthly candles on top (built from Bitview daily OHLC, since 2013) and the halftone heat below on a shared time axis; candles take that month's heat colour, hollow for up months and filled for down months; top labels point to each cycle's highest candle; hover adds the month's high and low; the chart's own background is gone. The daily run makes one more Bitview request (price_ohlc).

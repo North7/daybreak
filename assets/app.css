@@ -892,3 +892,14 @@ html.fd-on { overflow: hidden; }
   .fd-fab span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 @media (prefers-reduced-motion: reduce) { .fd-fab { transition: none; } }
+/* 2026-11-09 Tidemark 歷史圖：頂部／底部視角切換、滑過時更新的讀數列、可點的圖例（開關每條線） */
+.tmh-top { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 18px; }
+.tmh-top .seg { margin-left: 0; }
+.tmh-read { margin: 0; display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: 12px; color: var(--ink-3); }
+.tmh-read b { color: var(--ink); font-weight: 600; }
+.tmh-read i { display: inline-block; width: 8px; height: 8px; margin-right: 5px; }
+.tmh-chip { display: inline-flex; align-items: center; gap: 7px; padding: 2px 10px; border: 1px solid var(--line); border-radius: 999px; background: transparent; font: inherit; font-size: 12px; cursor: pointer; transition: opacity .2s, border-color .2s; }
+.tmh-chip b { color: var(--ink-2); font-weight: 400; }
+.tmh-chip:hover { border-color: currentColor; }
+.tmh-chip[aria-pressed="false"] { opacity: .4; }
+.tmh-chip[aria-pressed="false"] b { text-decoration: line-through; }

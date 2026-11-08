@@ -537,6 +537,7 @@ PANELS = {
     'flows/kp':       dict(zh='韓國溢價', en='Korea premium', sel='#c-kp', data=['flows.kp']),
     'cycle/regime':   dict(zh='週線多空分數', en='Weekly regime score', sel='#c-regime', data=['cycle.regime']),
     'cycle/dawn':     dict(zh='晨昏指數', en='Dawn–Dusk Index', sel='#c-dawn', data=['cycle.dawn']),
+    'cycle/tmh':      dict(zh='Tidemark 歷史：頂部與底部訊號', en='Tidemark history: top and bottom signals', sel='#c-tmh', data=['cycle.tidemark.hist']),
     'onchain/quant':  dict(zh='供給分位成本線', en='Supply quantile cost lines', sel='#c-quant', data=['onchain.quant']),
     'onchain/urpd':   dict(zh='籌碼分布（URPD）', en='Supply distribution (URPD)', sel='#c-urpd', html=1, data=['chips.viz']),
     'onchain/sthband': dict(zh='短期持有者成本帶', en='Short-term holder cost bands', sel='#c-sthband', data=['onchain.sth_bands', 'cycle.levels'], sig=['cost', 'ev-sth'], old='cost'),
