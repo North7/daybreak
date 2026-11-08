@@ -1034,7 +1034,11 @@
     if (dvol.value != null) it.push(['DVOL', fmt.n(dvol.value, 1), _t('一年第 ') + fmt.n(dvol.pct_1y, 0) + _t(' 百分位：') + band(dvol.pct_1y, [20, 50, 80], [_t('在一年低檔，選擇權市場預期平靜，買保護很便宜；長時間低波動之後常接大波動，但不指方向。'), _t('偏低，市場預期平靜。'), _t('偏高，市場預期波動放大。'), _t('在一年高檔，市場緊張或有大事件，買保護很貴。')]), dvol.pct_1y >= 80 ? 'warn' : 'neu']);
     var k5 = concNow(); if (k5) it.push([_T('籌碼集中度 ±5%', 'Supply within ±5%'), fmt.n(k5.pct, 1) + '%', concSay(k5, dvol), 'neu']);
     if (x != null) it.push(['IV − RV30', fmt.n(x, 2), Math.abs(x) < 3 ? _t('隱含波動和實際波動相差不到 3 點：選擇權定價大致公允，沒有恐慌溢價。') : x < 0 ? _t('隱含波動比實際低 ') + fmt.n(-x, 1) + _t(' 點：選擇權相對便宜，市場可能低估了波動。') : _t('隱含波動比實際高 ') + fmt.n(x, 1) + _t(' 點：市場在為未來波動付溢價（避險需求或事件前）。'), 'neu']);
-    var fa = fundNow(); if (fa != null) it.push([_t('永續資金費率'), fmt.pct(fa, 1), fundVenues() + band(fa, [0, 10, 20, 40], [_t('低於 0：空頭付費給多頭，空單擁擠，容易出現軋空'), _t('0–10%：中性，多頭槓桿不擁擠'), _t('10–20%：偏熱，多頭願意付較高成本'), _t('20–40%：槓桿過熱，回檔時容易連環爆倉'), _t('40% 以上：極端過熱')]) + _t('；期貨基差中位 ') + fmt.n(d.basis_median, 1) + _t('%。'), fa < 0 ? 'pos' : fa < 10 ? 'neu' : fa < 20 ? 'warn' : 'neg']);
+    var fa = fundNow(); if (fa != null) { var fb = fundBase(), fx = fa - fb;   // 2026-11-08：跟中性值比，不用固定的 10%／20% 分界
+      it.push([_t('永續資金費率'), fmt.pct(fa, 1), fundVenues() + _T('中性約 ' + fmt.n(fb, 1) + '%（OKX、Hyperliquid 的費率固定含每 8 小時 0.01% 的利息，年化 10.95%，永續價格接近現貨時就停在這裡；Deribit 沒有這筆，中性是 0），現在' + (Math.abs(fx) < 0.05 ? '剛好在中性' : '比中性' + (fx > 0 ? '高 ' : '低 ') + fmt.n(Math.abs(fx), 1) + ' 個百分點') + '：',
+          'Neutral is about ' + fmt.n(fb, 1) + '% (OKX and Hyperliquid build in a fixed 0.01% per 8 hours, 10.95% a year, and sit there while perps trade near spot; Deribit has no such term, so its neutral is 0); now ' + (Math.abs(fx) < 0.05 ? 'right at neutral' : fmt.n(Math.abs(fx), 1) + ' pts ' + (fx > 0 ? 'above' : 'below') + ' neutral') + ': ') +
+        (fa < 0 ? _t('低於 0：空頭付費給多頭，空單擁擠，容易出現軋空') : band(fx, [-3, 3, 10, 30], [_T('永續比現貨便宜，槓桿偏空', 'perps trade under spot; leverage leans short'), _T('永續價格約等於現貨，槓桿沒有往哪一邊擠', 'perps trade about at spot; leverage is not crowding either side'), _T('多頭願意付溢價，偏熱', 'longs pay a premium; running warm'), _T('槓桿過熱，回檔時容易連環爆倉', 'leverage overheated; a pullback can cascade into liquidations'), _T('極端過熱', 'extremely overheated')])) +
+        _t('；期貨基差中位 ') + fmt.n(d.basis_median, 1) + _t('%。'), fa < 0 ? 'pos' : fx < 3 ? 'neu' : fx < 10 ? 'warn' : 'neg']); }
     if (r.rr != null) it.push([_t('25Δ 風險逆轉'), fmt.n(r.rr, 2), r.rr > 2 ? _t('買權比賣權貴 ') + fmt.n(r.rr, 1) + _t(' 點：選擇權市場偏向押漲。') : r.rr < -2 ? _t('賣權比買權貴 ') + fmt.n(-r.rr, 1) + _t(' 點：市場在買下跌保護，偏防守。') : _t('接近 0：押漲和押跌的需求大致平衡。'), r.rr > 2 ? 'pos' : r.rr < -2 ? 'neg' : 'neu']);
     else it.push([_t('25Δ 風險逆轉'), '—', _t('本日沒有符合條件（20–45 天到期）的合約可計算。'), 'neu']);
     if (big) it.push([_t('最大到期'), big.expiry, _t('佔全部未平倉 ') + fmt.n(big.share, 0) + _t('%，賣權／買權 ') + fmt.n(big.pc, 2) + (big.pc < 0.7 ? _t('（買權明顯較多，偏多佈局）') : big.pc > 1 ? _t('（賣權較多，偏避險）') : _t('（大致平衡）')) + _t('；Max Pain ') + fmt.k(big.maxpain) + _t('，') + (big.maxpain < c ? _t('低於收盤 ') : _t('高於收盤 ')) + fmt.n(Math.abs(big.maxpain / c - 1) * 100, 0) + _t('%。到期前價格有時被拉向 Max Pain，但這個效應的證據薄弱，只作參考。'), big.pc < 0.7 ? 'pos' : big.pc > 1 ? 'neg' : 'neu']);
@@ -1546,6 +1550,9 @@
 
   /* 多家永續資金費率（2026-10-12）：以未平倉加權；缺時退回 Deribit */
   function fundNow() { var fm = D.deriv.funding_multi || {}; return fm.weighted_now != null ? fm.weighted_now : (D.deriv.deriv || {}).funding_ann; }
+  /* 加權中性值（2026-11-08）：OKX、Hyperliquid 含固定利息年化 10.95%，Deribit 沒有＝0；舊資料沒有 weighted_base 時用未平倉自己算 */
+  function fundBase() { var fm = D.deriv.funding_multi || {}, v = fm.venues; if (fm.weighted_base != null) return fm.weighted_base; if (!v || fm.weighted_now == null) return 0;
+    var B = { OKX: 10.95, Hyperliquid: 10.95 }, w = 0, t = 0; Object.keys(v).forEach(function (k) { var o = v[k].oi_usd_m || 0; w += o; t += (v[k].base != null ? v[k].base : B[k] || 0) * o; }); return w ? t / w : 0; }
   function fundVenues() {
     var v = (D.deriv.funding_multi || {}).venues; if (!v) return _t('年化 ');
     return _T('以未平倉加權（', 'Open-interest weighted (') + Object.keys(v).map(function (k) { return k + ' ' + fmt.pct(v[k].now, 1) + (v[k].avg7 != null ? _T('，7 日均 ', ', 7d avg ') + fmt.pct(v[k].avg7, 1) : ''); }).join(_T('；', '; ')) + _T('）。年化 ', '). ');

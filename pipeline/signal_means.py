@@ -75,7 +75,7 @@ FLIP_MEANS = {
                        T('價格跌破短期持有者成本：短期持有者整體轉為虧損，容易出現回本或停損賣壓。', 'Price fell below the short-term holder cost: short-term holders are now at a loss as a group, inviting break-even and stop-loss selling.')),
     'above_tmm': (T('價格站上真實市場均價：活躍投資人整體回到獲利，這條線歷來是多空分界。', 'Price is above the true market mean: active investors are back in profit as a group; this line has long separated bull and bear phases.'),
                   T('價格跌破真實市場均價：活躍投資人整體轉為虧損，歷來是轉弱的訊號。', 'Price fell below the true market mean: active investors are at a loss as a group, historically a sign of weakening.')),
-    'funding_pos': (T('永續合約改由多方付費給空方：槓桿偏多，追價的人變多。', 'Perpetual longs now pay shorts: leverage leans long and more traders are chasing.'),
+    'funding_pos': (T('永續合約不再由空方付費：空單擁擠解除，回到中性附近（OKX、Hyperliquid 的中性是年化 10.95%，要明顯高過它才算多單擁擠）。', 'Shorts no longer pay longs: the short crowding has cleared and funding is back near neutral (OKX and Hyperliquid sit at 10.95% a year when neutral; only well above that means crowded longs).'),
                     T('永續合約改由空方付費給多方：槓桿偏空，若價格上漲容易出現軋空。', 'Perpetual shorts now pay longs: leverage leans short, so a rally can turn into a short squeeze.')),
     'iv_gt_rv': (T('選擇權定價的波動回到實際波動之上：市場重新為不確定付溢價，偏謹慎。', 'Implied volatility is back above realized: traders again pay a premium for uncertainty and lean cautious.'),
                  T('選擇權定價的波動低於實際波動：選擇權相對便宜，市場低估了目前的波動。', 'Implied volatility fell below realized: options are cheap relative to actual swings, so the market is underpricing current volatility.')),
