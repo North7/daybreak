@@ -191,7 +191,11 @@ def tone_notes(items):
     c = [it['n'] for it in R if CONTRAST.search(it['reply'])]
     if len(c) > max(2, n // 8): out.append(f'對比句（不是 X 是 Y／X 不等於 Y／not X）{len(c)} 則：{c}，一天一兩次就好')
     if share(lambda t: len(DECIMAL.findall(t)) >= 1) > 0.3: out.append(f'帶小數的回覆 {share(lambda t: DECIMAL.search(t)):.0%}，超過三成：能取整就取整')
-    if share(lambda t: len(t) <= 40) < 0.25: out.append(f'一行就好的短回覆（40 字內）只有 {share(lambda t: len(t) <= 40):.0%}，長短要打散，約三分之一')
+    # 2026-11-08 使用者：回覆要有深度、嚴謹、有態度、有觀點。「短回覆約三分之一」只看接話；回別人原創太短的另外列出來。
+    F = [it['reply'] for it in R if it.get('kind') == 'followup']
+    if len(F) >= 5 and sum(1 for t in F if len(t) <= 40) / len(F) < 0.25: out.append(f'接話裡一行就好的短回覆（40 字內）只有 {sum(1 for t in F if len(t) <= 40) / len(F):.0%}，閒聊可以更短')
+    thin = [it['n'] for it in R if it.get('kind') != 'followup' and it.get('mode') != 'quote' and len(it['reply'].strip().split('\n')) < 2]
+    if thin: out.append(f'回別人原創只有一行：{thin}，看看有沒有接到對方的核心論點、有沒有自己的判斷（voice.md「回覆要有深度、嚴謹、有態度、有觀點」）')
     q = share(lambda t: QEND.search(t))
     if q > 0.3: out.append(f'問句收尾 {q:.0%}：只在真的想知道時問')
     if share(lambda t: re.search(r'[。.]\s*$', t)) > 0.5: out.append('超過一半句尾有句號：手機上打字通常不加')
