@@ -8,6 +8,7 @@
 
 ```
 ops/
+  app/        破曉運營台（2026-11-08 起發文、回覆合成一個工具）：app.js、app.css、shell.html（兩頁的範本）；post/ 預設「今天發文」、replies/ 預設「回覆」
   post/       X 發文小幫手 index.html（https://north7.github.io/daybreak/ops/post/）、快訊與長貼文配圖、網站截圖
   replies/    回覆小幫手 index.html（https://north7.github.io/daybreak/ops/replies/）、讀貼文與配圖工具、check.py
   picks/      每日推薦圖表的說明（程式在 pipeline/picks.py，圖在 data/picks/）

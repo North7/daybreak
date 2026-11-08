@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>破曉運營台</title>
+<!-- 破曉運營台（2026-11-08 重做）：發文與回覆共用 ops/app/app.css、app.js。ops/post/ 預設打開「今天發文」，ops/replies/ 預設「回覆」；#today／#replies 可直接切。
+     這個檔案是兩頁的範本：改了要同步 ops/post/index.html 和 ops/replies/index.html（只差 body 的 data-tab）。 -->
+<link rel="stylesheet" href="../app/app.css">
+</head>
+<body data-tab="__TAB__">
+<header class="top"><div class="top-in">
+  <div class="brand"><h1>破曉運營台</h1><span class="meta" id="meta">讀取中…</span><button class="icon-btn" data-act="help" aria-label="怎麼用">?</button></div>
+  <nav class="tabs">
+    <button class="tab" data-act="tab" data-tab="today">今天發文<span class="badge zero" id="b-today">–</span></button>
+    <button class="tab" data-act="tab" data-tab="replies">回覆<span class="badge zero" id="b-replies">–</span></button>
+  </nav>
+</div></header>
+<main>
+  <section class="view" id="v-today"><p class="empty">讀取中…</p></section>
+  <section class="view" id="v-replies" hidden><p class="empty">讀取中…</p></section>
+</main>
+<dialog id="help">
+  <h2>怎麼用</h2>
+  <p>每張卡片點開就能用，按鈕都在同樣的位置：最上面的紅色按鈕是「發到 X」，下面是複製文字和存圖，最底下是「標記已發／已回」。標記之後卡片會收起來，自動打開下一則。</p>
+  <h3>今天發文</h3>
+  <ul>
+    <li>日報、推薦圖表、快訊、長貼文照建議時間排，到時間沒發的會顯示「該發了」。</li>
+    <li>手機：「發到 X」會叫出分享選單，選 X，圖和全文一起帶進發文框。文字同時已複製，沒帶進去就直接貼上。</li>
+    <li>電腦：「發到 X」打開 X 網頁版發文框並帶入文字；太長帶不進去的長文會先複製，打開後貼上。圖片按「複製圖片」再貼到發文框。</li>
+    <li>日報、快訊的網站連結不放正文，發完後在自己這則底下回覆那行連結。</li>
+    <li>長貼文沒發的會一直留著，標記已發之後隔天就不再顯示。</li>
+  </ul>
+  <h3>回覆</h3>
+  <ul>
+    <li>上方可以只看「接話」（別人在我們貼文底下留言）、「新貼文」或「建議引用」。</li>
+    <li>手機：「複製並打開 X」會複製文字並打開那則貼文，按回覆貼上；有配圖的先按「存圖」。引用：打開後按轉推 → 引用，再貼上。</li>
+    <li>電腦：「在 X 回覆」「引用發文」會開好發文視窗並帶入文字，配圖用「複製圖片」貼上。</li>
+    <li>引用算原創貼文、會計入首頁曝光；回覆不算。</li>
+  </ul>
+  <p>已發、已回只記在這台裝置。</p>
+  <form method="dialog"><button class="btn" style="width:100%;margin:6px 0 10px">知道了</button></form>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+<script src="../app/app.js"></script>
+</body>
+</html>
