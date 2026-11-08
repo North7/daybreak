@@ -204,7 +204,7 @@
     if (im && !FILES[k + '|reply']) prefetch(k + '|reply', [im], [nm]);
     var tags = (x.kind === 'followup' ? '<span class="tag follow">接話</span>' : '') + (x.mode === 'quote' ? '<span class="tag hot">建議引用</span>' : '') +
       (x.status === 'optional' ? '<span class="tag">可選</span>' : '') + '<span class="tag">' + esc(x.angle || '') + '</span>' + '<span class="tag blue" data-v="' + x.id + '" hidden>藍勾</span>';
-    var h = '<button class="card-h" data-act="toggle"><span class="who"><span class="ord">' + (skip ? '—' : i + 1) + '</span><span class="name">@' + esc(x.author) + '</span>' +
+    var h = '<button class="card-h" data-act="toggle"><span class="who"><span class="ord">' + x.n + '</span><span class="name">@' + esc(x.author) + '</span>' +
       '<span class="fans">' + fans(x.followers) + ' · ' + ago(x.posted) + '</span>' + tags + '<span class="line2">' + esc(x.summary || '') + '</span></span>' +
       (dn ? '<span class="state ok">已回</span>' : sk ? '<span class="state">不回</span>' : '') + '<span class="chev">›</span></button>';
     var b = '<div class="orig fold" id="o' + x.id + '">' + esc(x.summary) + '<span class="m">摘要（點開後讀原文）</span></div>' +
@@ -227,7 +227,7 @@
   }
   function renderReplies() {
     var el = document.getElementById('v-replies'); if (!R) return;
-    var items = R.items.slice().sort(function (a, b) { return a.order - b.order; });
+    var items = R.items.slice().sort(function (a, b) { return b.n - a.n; });   // 2026-11-08 使用者：照寫完的先後倒序，最新（n 最大）在最上面
     var act = items.filter(function (x) { return x.status !== 'skip'; }), skip = items.filter(function (x) { return x.status === 'skip'; });
     var todo = act.filter(function (x) { return !isDone(replyKey(x)) && !isSkip(replyKey(x)); }), done = act.filter(function (x) { return isDone(replyKey(x)); }), mine = act.filter(function (x) { return isSkip(replyKey(x)); });
     document.getElementById('b-replies').textContent = todo.length; document.getElementById('b-replies').classList.toggle('zero', !todo.length);
