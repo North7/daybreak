@@ -71,10 +71,15 @@ def main():
     except Exception:
         done = set()
 
-    out = []
+    out, gaps = [], []
     for p in ours:
         try: conv = fetch(f'https://api.fxtwitter.com/2/conversation/{p["id"]}')
-        except Exception as e: print('讀取失敗', p['id'], e, file=sys.stderr); continue
+        except Exception as e: print('讀取失敗', p['id'], e, file=sys.stderr); gaps.append((p, '讀取失敗')); continue
+        # 2026-11-08：conversation 有時少回留言（hzql7878 回我們給 Murphy 那則，貼文顯示 1 則留言、conversation 回 0 則，
+        # 翻 cursor 也是空的），這種只能在瀏覽器打開看。貼文顯示的留言數比讀到的多，就列出來。
+        got = len(conv.get('replies') or [])
+        if (p.get('replies') or 0) > got and (p.get('created_timestamp') or 0) >= r0 - 12 * 3600:
+            gaps.append((p, f'顯示 {p.get("replies")} 則留言、讀到 {got} 則'))
         for r in conv.get('replies') or []:
             au = r.get('author') or {}
             if au.get('screen_name', '').lower() == HANDLE.lower(): continue
@@ -107,6 +112,10 @@ def main():
         print(f'#{i} @{o["author"]}（{o["followers"] or 0:,} 粉{"，藍勾" if o["verified"] else ""}）{o["posted"]}  {tag}  {o["url"]}')
         print('   他：' + (o['text'] or '').replace('\n', ' ')[:200])
         print('   我們：' + (o['our_text'] or '').replace('\n', ' ')[:120])
+    if gaps:
+        print(f'\n⚠ 這 {len(gaps)} 則 fxtwitter 可能漏了留言，請在瀏覽器打開看底下有沒有還沒接的（或看 https://x.com/notifications/mentions）：')
+        for p, why in gaps:
+            print(f'   https://x.com/{HANDLE}/status/{p["id"]}  {why}  ' + (p.get('text') or '').replace('\n', ' ')[:60])
 
 
 if __name__ == '__main__':
