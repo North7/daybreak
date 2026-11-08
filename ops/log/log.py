@@ -255,15 +255,23 @@ def followers(date):
     cp = os.path.join(CACHE, f'followers-{HANDLE}.json')
     prev = json.load(open(cp)) if os.path.exists(cp) else None
     a = D.setdefault('account', {})
+    # 2026-11-08：同一天跑第二次時，原本會用「比上一次快照」的結果蓋掉當天的新增名單（25 人變 0）。
+    # 這天已經記過快照的話，新增的累加上去、名單合併。
+    again = bool(a.get('followers_at')) and 'new_list' in a
     a.update({'followers': total, 'followers_listed': len(users), 'verified_followers': nver, 'followers_at': now()})
     if prev:
         old = set(prev['ids'])
         fresh = [u for u in users if u['id'] not in old]
         gone = len(old - seen)
-        a['new_followers'] = len(fresh)
-        a['new_verified_followers'] = sum(ver(u) for u in fresh)
+        lst = [{'by': u['screen_name'], 'verified': ver(u), 'followers': u.get('followers')} for u in fresh]
+        if again:
+            have = {x['by'] for x in a.get('new_list') or []}
+            lst = (a.get('new_list') or []) + [x for x in lst if x['by'] not in have]
+            gone += a.get('unfollowed') or 0
+        a['new_followers'] = len(lst)
+        a['new_verified_followers'] = sum(1 for x in lst if x['verified'])
         a['unfollowed'] = gone
-        a['new_list'] = [{'by': u['screen_name'], 'verified': ver(u), 'followers': u.get('followers')} for u in fresh]
+        a['new_list'] = lst
         names = {u['screen_name'].lower() for u in fresh}
         for p in D['posts']:
             if p.get('to') and p['to'].lower() in names and p['kind'] in ('reply', 'quote', 'followup'):
