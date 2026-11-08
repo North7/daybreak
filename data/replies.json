@@ -6,10 +6,70 @@
     {
       "style": "真人版",
       "kind": "followup",
+      "status": "send",
+      "mode": "reply",
+      "n": 64,
+      "author": "lishu7843",
+      "name": "lishu7843",
+      "followers": 2471,
+      "lang": "zh",
+      "angle": "接續對話",
+      "id": "2119343880479154353",
+      "url": "https://x.com/lishu7843/status/2119343880479154353",
+      "posted": "2026-11-08T08:18:51Z",
+      "summary": "接著 ETF 那串：上週行情弱、資金出逃，散戶購買意願受消息影響，要謹慎",
+      "reply": "消息面這週也沒幫上忙，非農偏強之後，12 月升息的機率被推到 77%，一週前才 67%",
+      "sources": "同 n59：CME FedWatch 12 月升息機率 77%（一週前 67%）",
+      "note": "在我們原創底下（lishu 那串第 3 輪）。原本照「同串兩輪」標按讚；使用者 11/08 晚上指出自己原創底下的串要一直接，改成回。接他「散戶買意來自消息面」補宏觀數字。",
+      "order": 1
+    },
+    {
+      "style": "真人版",
+      "kind": "followup",
+      "mode": "reply",
+      "angle": "接續對話",
+      "status": "send",
+      "lang": "zh",
+      "n": 69,
+      "order": 2,
+      "author": "hppzyy",
+      "name": "hppzyy",
+      "followers": 1553,
+      "id": "2119346284956197098",
+      "url": "https://x.com/hppzyy/status/2119346284956197098",
+      "posted": "2026-11-08T08:28:24Z",
+      "summary": "回 lishu（在我們原創底下）：A 股寬基 ETF 指數單週跌超 2% 時份額多是逆勢淨增，ETF 申購反映散戶抄底意願、不是逃跑",
+      "reply": "A 股寬基我沒追，BTC 現貨 ETF 這週是反過來的，跌的那幾天份額在減，5 個交易日有 4 天淨流出，加起來快 13 億美元",
+      "sources": "data/etf.json：11/02 −398.6、11/03 −115.6、11/04 +74.6、11/05 −430.2、11/06 −411.9（暫定），合計 −1,282 百萬美元",
+      "note": "在我們原創底下；他講的是 A 股，我們只給 BTC ETF 這週的實際數字，不爭。他另一則（n65，CME 基差）回在我們那則底下。"
+    },
+    {
+      "style": "真人版",
+      "kind": "followup",
+      "mode": "reply",
+      "angle": "接續對話",
+      "status": "send",
+      "lang": "zh",
+      "n": 70,
+      "order": 3,
+      "author": "lishu7843",
+      "name": "lishu7843",
+      "followers": 2481,
+      "id": "2119348928286187684",
+      "url": "https://x.com/lishu7843/status/2119348928286187684",
+      "posted": "2026-11-08T08:38:54Z",
+      "summary": "問 hppzyy（在我們原創底下）：你的意思是散戶在接機構拋壓的貨？",
+      "reply": "散戶這週確實有在買，手上不到 10 顆的地址，7 天多了 8 千顆左右\n只是 ETF 同一週賣掉的大約 1.7 萬顆，接的量差不多一半",
+      "sources": "latest.json onchain.whales（Bitview，11/07）：<1 BTC 7 天 +2,037、1–10 BTC 7 天 +6,047；ETF 一週 −1,282 百萬美元 ÷ 約 75.5K ≈ 1.7 萬顆",
+      "note": "在我們原創底下，他問的是 hppzyy，但問題正好是我們有數據的；地址不等於人，回覆用「地址」措辭。"
+    },
+    {
+      "style": "真人版",
+      "kind": "followup",
       "mode": "reply",
       "angle": "接續對話",
       "n": 67,
-      "order": 1,
+      "order": 4,
       "status": "send",
       "author": "hzql7878",
       "name": "hzql7878",
@@ -22,6 +82,25 @@
       "reply": "11/07 那天只剩 3 億美元左右，這一週最多的一天是 11/03 的 9.6 億，還沒有哪天破 10 億",
       "sources": "latest.json onchain.rloss.rows：11/01–11/07 每日實現虧損 162、659、729、963、203、673、733、305（百萬美元），11/07 2.0 bp",
       "note": "mentions.py 漏抓（fxtwitter 這則的 conversation 回 0 則，但貼文顯示有 1 則留言）；9.6 千粉、有內容，照「補了數字就回」。順著他「看認賠會不會再放大」給這週每日規模，不預測。"
+    },
+    {
+      "style": "真人版",
+      "kind": "followup",
+      "status": "send",
+      "n": 62,
+      "author": "YoooJJ8cm",
+      "name": "YoooJJ8cm",
+      "followers": 4867,
+      "lang": "zh",
+      "angle": "接續對話",
+      "id": "2119328619566977311",
+      "url": "https://x.com/YoooJJ8cm/status/2119328619566977311",
+      "posted": "2026-11-08T07:18:12Z",
+      "summary": "蹲蹲黨握手，腿麻也得等",
+      "reply": "腿麻就起來走走，CPI 週二晚上才出，還要再蹲兩天",
+      "sources": "美國 10 月 CPI 11/10（週二）08:30 ET＝台北 21:30",
+      "note": "在我們原創底下，閒聊。原本照「同串兩輪」標按讚；使用者 11/08 晚上指出自己原創底下的串要一直接，改成回一句短的。",
+      "order": 4
     },
     {
       "style": "真人版",
@@ -41,7 +120,7 @@
       "reply": "Deribit 季度那邊年化也只剩 5% 多，套利空間確實薄了\n永續倒是還沒轉負，OKX 和 Hyperliquid 照持倉加權 11/07 還有快 10%",
       "sources": "latest.json deriv：Deribit 基差曲線 5.5%–6.2%、中位 5.58%；funding_multi OKX 10.01%、Hyperliquid 10.95%、加權 9.98%（年化，11/07）",
       "note": "原本自動任務標「按讚就好」（lishu 那串我們已回 2 輪）；但他是新加入的人、補了數字（CME 基差、永續轉負），照「對方補了數字就回」改成回。我們沒有 CME，用 Deribit 季度基差；永續費率跟他說的不一樣，只給數字不爭。",
-      "order": 2
+      "order": 5
     },
     {
       "style": "真人版",
@@ -49,7 +128,7 @@
       "mode": "reply",
       "angle": "接續對話",
       "n": 68,
-      "order": 3,
+      "order": 6,
       "status": "send",
       "author": "Kairo_trade",
       "name": "Kairo_trade",
@@ -81,7 +160,7 @@
       "reply": "",
       "sources": "",
       "note": "按讚就好：只回「是的」，沒有新內容可接",
-      "order": 5
+      "order": 8
     },
     {
       "style": "真人版",
@@ -101,27 +180,7 @@
       "reply": "",
       "sources": "",
       "note": "按讚就好：同一串已回 2 輪，他這則是附和總結、沒問問題",
-      "order": 6
-    },
-    {
-      "style": "真人版",
-      "kind": "followup",
-      "status": "skip",
-      "mode": "reply",
-      "n": 64,
-      "author": "lishu7843",
-      "name": "lishu7843",
-      "followers": 2471,
-      "lang": "zh",
-      "angle": "按讚就好",
-      "id": "2119343880479154353",
-      "url": "https://x.com/lishu7843/status/2119343880479154353",
-      "posted": "2026-11-08T08:18:51Z",
-      "summary": "接著 ETF 那串：上週行情弱、資金出逃，散戶購買意願受消息影響，要謹慎",
-      "reply": "",
-      "sources": "",
-      "note": "按讚就好：同一串已回 2 輪，他這則是同意加感想（謹慎），沒問問題",
-      "order": 7
+      "order": 9
     },
     {
       "style": "真人版",
@@ -141,7 +200,7 @@
       "reply": "大資金這週是往外走的\n\n美國現貨 ETF 一週淨流出快 13 億美元，6 月底那週以來最多，11/06 光 IBIT 一檔就賣了 4 億\n\n短期持有者認賠只是小水花，ETF 不回頭，價格很難自己站起來",
       "sources": "ETF 11/02–11/06 合計 −12.82 億美元、6/26 那週以來最多；11/06 IBIT −4.03 億 · notes.json 11/07（Farside／SoSoValue）",
       "note": "留在我們原創底下、有內容的留言，照規則回；接他「大資金」的說法補 ETF 數字，不配圖",
-      "order": 8
+      "order": 11
     },
     {
       "style": "真人版",
@@ -161,7 +220,7 @@
       "reply": "CPI 還沒出，12 月升息的機率已經被推到 77% 了，一週前才 67%\n\n數字要是再偏熱，美元資金更沒理由回來",
       "sources": "CME FedWatch 12 月升息 1 碼 76.8%（一週前 66.9%）· 24/7 Wall St. 2026-11-07（notes.json 11/07）；CPI 11/10 公布",
       "note": "第二輪，對方給了觀點沒問問題；補一個前一輪沒講的升息機率，下一輪起按讚就好",
-      "order": 9
+      "order": 12
     },
     {
       "style": "真人版",
@@ -181,7 +240,7 @@
       "reply": "Deribit's around 5% annualized, about half what the other two are paying\n\nIt's also the smallest book, under $700M OI, so weighting by open interest still lands near 10%",
       "sources": "Funding annualized Nov 7: Deribit 5.37%, OKX 10.01%, Hyperliquid 10.95%; OI Deribit $686M, OKX $2.61B, HL $3.15B; OI-weighted 9.98% · latest.json deriv.funding_multi",
       "note": "第二輪，對方補了資料來源（各交易所費率不同）；用我們的三家數字接他的觀察，下一輪起按讚就好",
-      "order": 10
+      "order": 13
     },
     {
       "style": "真人版",
@@ -200,26 +259,7 @@
       "reply": "",
       "sources": "",
       "note": "按讚就好：只是請我們追蹤，沒有內容；要不要回追請使用者自己看",
-      "order": 11
-    },
-    {
-      "style": "真人版",
-      "kind": "followup",
-      "status": "skip",
-      "n": 62,
-      "author": "YoooJJ8cm",
-      "name": "YoooJJ8cm",
-      "followers": 4867,
-      "lang": "zh",
-      "angle": "按讚就好",
-      "id": "2119328619566977311",
-      "url": "https://x.com/YoooJJ8cm/status/2119328619566977311",
-      "posted": "2026-11-08T07:18:12Z",
-      "summary": "蹲蹲黨握手，腿麻也得等",
-      "reply": "",
-      "sources": "",
-      "note": "按讚就好：同一串已回 4 輪，閒聊、沒問問題",
-      "order": 12
+      "order": 14
     },
     {
       "status": "send",
@@ -237,7 +277,7 @@
       "note": "★ Murphy 優先；順著他的多頭方向，用認賠規模補「谷值收窄」；認賠圖（c-rloss）看不出基點對比、近期還有一段背離被打破，跟回覆打架，不配圖",
       "style": "真人版",
       "n": 32,
-      "order": 13
+      "order": 16
     },
     {
       "status": "send",
@@ -262,7 +302,7 @@
         "title": "推算多單清算帶：73.8K–74.8K、72.2K–73.7K"
       },
       "n": 33,
-      "order": 14
+      "order": 17
     },
     {
       "status": "send",
@@ -280,7 +320,7 @@
       "note": "Grok inbox 1420 #3；不接時間預測",
       "style": "真人版",
       "n": 34,
-      "order": 15
+      "order": 18
     },
     {
       "status": "send",
@@ -298,7 +338,7 @@
       "note": "Grok inbox 1420 #6；作者常喊多空，只接數據",
       "style": "真人版",
       "n": 35,
-      "order": 16
+      "order": 19
     },
     {
       "status": "send",
@@ -316,7 +356,7 @@
       "note": "Grok inbox 1420 #7；小帳號，瀏覽約 120",
       "style": "真人版",
       "n": 36,
-      "order": 17
+      "order": 20
     },
     {
       "status": "send",
@@ -334,7 +374,7 @@
       "note": "Grok inbox 1420 表二 #1；ETF 成本中文圖今天已給 CryptoBlockABC，這則不配圖、改用回覆",
       "style": "真人版",
       "n": 37,
-      "order": 18
+      "order": 21
     },
     {
       "status": "send",
@@ -352,7 +392,7 @@
       "note": "固定名單 scan #2",
       "style": "真人版",
       "n": 38,
-      "order": 19
+      "order": 22
     },
     {
       "status": "send",
@@ -370,7 +410,7 @@
       "note": "固定名單 scan #4；熟帳號",
       "style": "真人版",
       "n": 39,
-      "order": 20
+      "order": 23
     },
     {
       "status": "optional",
@@ -388,7 +428,7 @@
       "note": "25 萬粉以上：請用自己的話改寫再發，或改成引用；固定名單 scan #9",
       "style": "真人版",
       "n": 40,
-      "order": 21
+      "order": 24
     },
     {
       "status": "send",
@@ -406,7 +446,7 @@
       "note": "Grok inbox 1408 #2",
       "style": "真人版",
       "n": 41,
-      "order": 22
+      "order": 25
     },
     {
       "status": "send",
@@ -424,7 +464,7 @@
       "note": "Grok inbox 1408 #1；留言區活躍",
       "style": "真人版",
       "n": 42,
-      "order": 23
+      "order": 26
     },
     {
       "status": "send",
@@ -442,7 +482,7 @@
       "note": "Grok inbox 1408 #4；部分是幣放滿 155 天自動轉成長期，沒寫進回覆",
       "style": "真人版",
       "n": 43,
-      "order": 24
+      "order": 27
     },
     {
       "status": "send",
@@ -460,7 +500,7 @@
       "note": "Grok inbox 1408 #5",
       "style": "真人版",
       "n": 44,
-      "order": 25
+      "order": 28
     },
     {
       "status": "send",
@@ -478,7 +518,7 @@
       "note": "Grok inbox 1420 #8",
       "style": "真人版",
       "n": 45,
-      "order": 26
+      "order": 29
     },
     {
       "status": "send",
@@ -496,7 +536,7 @@
       "note": "Grok inbox 1420 #9",
       "style": "真人版",
       "n": 46,
-      "order": 27
+      "order": 30
     },
     {
       "status": "send",
@@ -514,7 +554,7 @@
       "note": "Grok inbox 1420 #10",
       "style": "真人版",
       "n": 47,
-      "order": 28
+      "order": 31
     },
     {
       "status": "send",
@@ -532,7 +572,7 @@
       "note": "Grok inbox 1420 #12；小帳號",
       "style": "真人版",
       "n": 48,
-      "order": 29
+      "order": 32
     },
     {
       "status": "send",
@@ -550,7 +590,7 @@
       "note": "Grok inbox 1420 #13",
       "style": "真人版",
       "n": 49,
-      "order": 30
+      "order": 33
     },
     {
       "status": "send",
@@ -568,7 +608,7 @@
       "note": "Grok inbox 1420 #14；不接 160K 目標",
       "style": "真人版",
       "n": 50,
-      "order": 31
+      "order": 34
     },
     {
       "status": "send",
@@ -586,7 +626,7 @@
       "note": "Grok inbox 1420 #15；發文約 9.5 小時",
       "style": "真人版",
       "n": 51,
-      "order": 32
+      "order": 35
     },
     {
       "status": "send",
@@ -611,7 +651,7 @@
         "title": "~630K STH coins sit in the 76–78K bucket"
       },
       "n": 52,
-      "order": 33
+      "order": 36
     },
     {
       "status": "send",
@@ -629,7 +669,7 @@
       "note": "Grok inbox 1420 #17",
       "style": "真人版",
       "n": 53,
-      "order": 34
+      "order": 37
     },
     {
       "status": "send",
@@ -647,7 +687,7 @@
       "note": "Grok inbox 1408 #9；11 萬粉，未達 25 萬",
       "style": "真人版",
       "n": 54,
-      "order": 35
+      "order": 38
     },
     {
       "status": "send",
@@ -665,7 +705,7 @@
       "note": "Grok inbox 1408 #11；jfhksar88 同主題、瀏覽較少，略過",
       "style": "真人版",
       "n": 55,
-      "order": 36
+      "order": 39
     },
     {
       "status": "send",
@@ -683,7 +723,7 @@
       "note": "Grok inbox 1408 #8；帳號簡介有 Promos，但內容是純數據",
       "style": "真人版",
       "n": 56,
-      "order": 37
+      "order": 40
     },
     {
       "style": "真人版",
@@ -703,7 +743,7 @@
       "reply": "今年它買了 143 億美元的幣，賣掉的只有 4.32 億\n\n還能不能繼續買，明天週一那份公告就是第一個看得到的數字",
       "sources": "微策略 2026 年買進 143 億美元、賣出 4.32 億美元（Q3 季報，同 11/08 長文〈微策略跌回成本價，會被迫賣幣嗎？〉）；週一公布上週買賣",
       "note": "留在我們原創（微策略長文）底下、有內容的留言，照規則回；新帳號，藍勾。只接數據，不評論發債能力（我們沒有這方面的數字）。不配圖。",
-      "order": 38
+      "order": 41
     },
     {
       "style": "真人版",
@@ -723,7 +763,7 @@
       "reply": "9 次真的太少，硬講方向就是在騙自己了\n\n我比較想看的是它會不會連好幾天都待在 1 下面，那才代表短期持有者是真的撐不住",
       "sources": "STH-SOPR 0.9914、過去一年 9 次、30 天後中位數 −0.6%（CheckOnChain，picks.json 11/07 推薦圖表原文）",
       "note": "留在我們原創底下、有內容的留言，照規則回一句；熟帳號（11/04 回過），不配圖。",
-      "order": 39
+      "order": 42
     },
     {
       "style": "真人版",
@@ -743,7 +783,7 @@
       "reply": "今年 5/6 到 8/25 那次連負了 112 天才翻正，這次 63 天還不算最長",
       "sources": "Coinbase 溢價每日值（Coinbase BTC-USD ÷ Binance BTC-USDT − 1，latest.json flows.cb_premium.rows）：2026-05-06～08-25 連續 112 天為負，09-06～11-07 連續 63 天為負（2022-09 以來最長、第二長）",
       "note": "同一串第 2 輪，對方沒問問題但在討論，回一句補歷史天數；下一輪起按讚就好。",
-      "order": 40
+      "order": 43
     },
     {
       "style": "真人版",
@@ -763,7 +803,7 @@
       "reply": "",
       "sources": "",
       "note": "按讚就好：買賣操作觀點，沒有數據可接；同一人另一則已經回了（n=29）。",
-      "order": 41
+      "order": 44
     },
     {
       "style": "真人版",
@@ -771,7 +811,7 @@
       "status": "send",
       "mode": "reply",
       "n": 27,
-      "order": 42,
+      "order": 45,
       "author": "YoooJJ8cm",
       "name": "YoooJJ8cm",
       "followers": 4864,
@@ -791,7 +831,7 @@
       "status": "send",
       "mode": "reply",
       "n": 23,
-      "order": 43,
+      "order": 46,
       "author": "serlo123",
       "name": "wander",
       "followers": 8515,
@@ -811,7 +851,7 @@
       "status": "send",
       "mode": "reply",
       "n": 24,
-      "order": 44,
+      "order": 47,
       "author": "forintyang",
       "name": "forintyang",
       "followers": 2,
@@ -831,7 +871,7 @@
       "status": "send",
       "mode": "reply",
       "n": 25,
-      "order": 45,
+      "order": 48,
       "author": "lishu7843",
       "name": "lishu7843",
       "followers": 2461,
@@ -851,7 +891,7 @@
       "status": "send",
       "mode": "reply",
       "n": 26,
-      "order": 46,
+      "order": 49,
       "author": "0xkyliekim",
       "name": "Kylie Kim | 蓝鸟会🕊️",
       "followers": 17609,
@@ -871,7 +911,7 @@
       "status": "send",
       "mode": "reply",
       "n": 21,
-      "order": 47,
+      "order": 50,
       "author": "BirdTechVision",
       "name": "BirdTechVision",
       "followers": 3834,
@@ -890,7 +930,7 @@
       "status": "send",
       "mode": "reply",
       "n": 1,
-      "order": 48,
+      "order": 51,
       "author": "decodejar",
       "name": "Decode",
       "followers": 67876,
@@ -910,7 +950,7 @@
       "status": "send",
       "mode": "reply",
       "n": 22,
-      "order": 48,
+      "order": 51,
       "author": "paulxue1979",
       "name": "Paul Xue | BTC 链上数据研究",
       "followers": 3958,
@@ -929,7 +969,7 @@
       "status": "send",
       "mode": "reply",
       "n": 2,
-      "order": 49,
+      "order": 52,
       "author": "joao_wedson",
       "name": "Joao Wedson",
       "followers": 19616,
@@ -948,7 +988,7 @@
       "status": "send",
       "mode": "reply",
       "n": 3,
-      "order": 50,
+      "order": 53,
       "author": "0xkyliekim",
       "name": "Kylie Kim | 蓝鸟会🕊️",
       "followers": 17610,
@@ -967,7 +1007,7 @@
       "status": "send",
       "mode": "reply",
       "n": 4,
-      "order": 51,
+      "order": 54,
       "author": "mythsblack",
       "name": "三岁做多 | AI × Crypto",
       "followers": 11202,
@@ -993,7 +1033,7 @@
       "status": "send",
       "mode": "reply",
       "n": 5,
-      "order": 52,
+      "order": 55,
       "author": "serlo123",
       "name": "wander",
       "followers": 8509,
@@ -1012,7 +1052,7 @@
       "status": "send",
       "mode": "reply",
       "n": 6,
-      "order": 53,
+      "order": 56,
       "author": "paulxue1979",
       "name": "Paul Xue | BTC 链上数据研究",
       "followers": 3958,
@@ -1031,7 +1071,7 @@
       "status": "send",
       "mode": "reply",
       "n": 7,
-      "order": 54,
+      "order": 57,
       "author": "nangongyuan",
       "name": "南宫远",
       "followers": 46439,
@@ -1057,7 +1097,7 @@
       "status": "send",
       "mode": "reply",
       "n": 8,
-      "order": 55,
+      "order": 58,
       "author": "CryptoBlockABC",
       "name": "Crypto强哥",
       "followers": 6350,
@@ -1083,7 +1123,7 @@
       "status": "send",
       "mode": "reply",
       "n": 9,
-      "order": 56,
+      "order": 59,
       "author": "basedlayer",
       "name": "Fernando Nikolić 🇦🇷 🟠",
       "followers": 19332,
@@ -1102,7 +1142,7 @@
       "status": "send",
       "mode": "reply",
       "n": 10,
-      "order": 57,
+      "order": 60,
       "author": "Dragonhau66",
       "name": "小龙先生",
       "followers": 29575,
@@ -1121,7 +1161,7 @@
       "status": "skip",
       "mode": "reply",
       "n": 11,
-      "order": 58,
+      "order": 61,
       "author": "aystxdlzfhj",
       "name": "大道至简｜全球资产配置",
       "followers": 9244,
@@ -1140,7 +1180,7 @@
       "status": "skip",
       "mode": "reply",
       "n": 12,
-      "order": 59,
+      "order": 62,
       "author": "joke_henry",
       "name": "J•H ❤️小喜",
       "followers": 9578,
@@ -1159,7 +1199,7 @@
       "status": "skip",
       "mode": "reply",
       "n": 13,
-      "order": 60,
+      "order": 63,
       "author": "misterrcrypto",
       "name": "Mister Crypto",
       "followers": 135177,
@@ -1178,7 +1218,7 @@
       "status": "skip",
       "mode": "reply",
       "n": 14,
-      "order": 61,
+      "order": 64,
       "author": "gaah_im",
       "name": "G a a h",
       "followers": 13364,
@@ -1197,7 +1237,7 @@
       "status": "send",
       "mode": "reply",
       "n": 15,
-      "order": 62,
+      "order": 65,
       "author": "LP_NXT",
       "name": "LP",
       "followers": 18906,
@@ -1223,7 +1263,7 @@
       "status": "send",
       "mode": "reply",
       "n": 16,
-      "order": 63,
+      "order": 66,
       "author": "alphacue",
       "name": "币圈宅男",
       "followers": 6974,
@@ -1242,7 +1282,7 @@
       "status": "send",
       "mode": "reply",
       "n": 17,
-      "order": 64,
+      "order": 67,
       "author": "yonghao131419",
       "name": "猫哥1314",
       "followers": 8258,
@@ -1261,7 +1301,7 @@
       "status": "send",
       "mode": "reply",
       "n": 18,
-      "order": 65,
+      "order": 68,
       "author": "DrHashClub",
       "name": "Dr.Hash 赛博哈希",
       "followers": 23841,
@@ -1280,7 +1320,7 @@
       "status": "send",
       "mode": "reply",
       "n": 19,
-      "order": 66,
+      "order": 69,
       "author": "akafish00",
       "name": "Aka Fish | 鱼 🐟",
       "followers": 5627,
@@ -1299,7 +1339,7 @@
       "status": "skip",
       "mode": "reply",
       "n": 20,
-      "order": 67,
+      "order": 70,
       "author": "david_eng_mba",
       "name": "David",
       "followers": 26374,
@@ -1330,7 +1370,7 @@
       "style": "真人版",
       "kind": "followup",
       "n": 57,
-      "order": 68
+      "order": 71
     }
   ]
 }
