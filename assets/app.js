@@ -701,31 +701,79 @@
   function dwTable() {
     var x = D.cycle.dawn, c = function (o) { return o && o.n ? '<span style="color:var(--' + (o.med >= 0 ? 'up' : 'down') + ')">' + fmt.pct(o.med, 0) + '</span> <span class="note">' + o.up + '%</span>' : '—'; };
     return '<div class="tbl-wrap" style="margin-top:12px"><table class="tbl"><thead><tr><th>' + _T('階段', 'Stage') + '</th><th class="num">' + _T('週數', 'Weeks') + '</th><th class="num">' + _T('半年後（中位 · 上漲）', '6 months later (median · up)') + '</th><th class="num">' + _T('一年後（中位 · 上漲）', '1 year later (median · up)') + '</th></tr></thead><tbody>' +
-      (x.stats || []).slice().reverse().map(function (s) { return '<tr' + (s.stage === x.stage ? ' style="font-weight:700"' : '') + '><td><i style="display:inline-block;width:10px;height:10px;background:' + STG_C[s.stage] + ';margin-right:6px;border-radius:2px"></i>' + dwName(s.stage, true) + '</td><td class="num">' + s.weeks + '</td><td class="num">' + c(s.m6) + '</td><td class="num">' + c(s.y1) + '</td></tr>'; }).join('') +
+      (x.stats || []).slice().reverse().map(function (s) { return '<tr' + (s.stage === x.stage ? ' style="font-weight:700"' : '') + '><td><i style="display:inline-block;width:10px;height:10px;background:' + dwStgCol(s.stage) + ';margin-right:6px;border-radius:2px"></i>' + dwName(s.stage, true) + '</td><td class="num">' + s.weeks + '</td><td class="num">' + c(s.m6) + '</td><td class="num">' + c(s.y1) + '</td></tr>'; }).join('') +
       '<tr><td>' + _T('全部的週', 'All weeks') + '</td><td class="num">' + ((x.base || {}).n || '—') + '</td><td class="num">—</td><td class="num">' + c(x.base) + '</td></tr></tbody></table></div>';
   }
   function dwPanel() {
     var x = (D.cycle || {}).dawn; if (!x || !x.rows) return '';
     return panel('span-12', _T('晨昏指數', 'Dawn–Dusk Index'), _T('週期熱度 0–100 · 五項估值＋四項趨勢 · 2013 起 · 每週 · ' + fmt.md(x.date), 'Cycle heat 0–100 · five valuation + four trend inputs · since 2013 · weekly · ' + fmt.md(x.date)),
-      '<div class="cf-hero">' + oxCard(STG_C[x.stage], _T('週期熱度', 'Cycle heat'), fmt.n(x.heat, 0), _T('0 冷 · 100 熱；4 週前 ' + fmt.n(x.heat4, 0), '0 cold · 100 hot; ' + fmt.n(x.heat4, 0) + ' 4 weeks ago'), oxArrow(x.heat, x.heat4, _T(' 點', ' pts'), 0)) +
-      oxCard(STG_C[x.stage], _T('階段', 'Stage'), dwName(x.stage), _T((DW_STG[x.stage] || [])[2] + '；方向' + (x.regime > 0 ? '多方' : '空方'), (DW_STG[x.stage] || [])[3] + '; trend ' + (x.regime > 0 ? 'bullish' : 'bearish'))) + '</div>' +
-      interpHtml(dwSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)']].concat(DW_STG.map(function (n, i) { return [_T(n[0] + ' ' + n[2], n[1] + ' · ' + n[3]), STG_C[i], 'box']; }))) + '<div class="chart" id="c-dawn"></div>' + dwTable() +
+      '<div class="cf-hero">' + oxCard(dwRamp('--ink-3', 1.2)(x.heat), _T('週期熱度', 'Cycle heat'), fmt.n(x.heat, 0), _T('0 冷 · 100 熱；4 週前 ' + fmt.n(x.heat4, 0), '0 cold · 100 hot; ' + fmt.n(x.heat4, 0) + ' 4 weeks ago'), oxArrow(x.heat, x.heat4, _T(' 點', ' pts'), 0)) +
+      oxCard(dwStgCol(x.stage), _T('階段', 'Stage'), dwName(x.stage), _T((DW_STG[x.stage] || [])[2] + '；方向' + (x.regime > 0 ? '多方' : '空方'), (DW_STG[x.stage] || [])[3] + '; trend ' + (x.regime > 0 ? 'bullish' : 'bearish'))) + '</div>' +
+      interpHtml(dwSay()) + '<div class="legend" style="margin-top:10px"><span><b style="color:var(--ink-2);font-weight:400">' + _T('冷（底）', 'Cold (bottom)') + '</b><i class="liq-bar" style="background:linear-gradient(90deg,var(--stg0),var(--ink-3),var(--stg4))"></i><b style="color:var(--ink-2);font-weight:400">' + _T('熱（頂）', 'Hot (top)') + '</b></span><span><b style="color:var(--ink-2);font-weight:400">' + _T('價格線與熱度都按這個上色', 'price line and heat share this scale') + '</b></span><span><i class="box" style="background:var(--ink);opacity:.18"></i><b style="color:var(--ink-2);font-weight:400">' + _T('灰底：方向空方', 'Grey shading: bearish trend') + '</b></span><span style="color:var(--ink-3)"><i class="dash"></i><b style="color:var(--ink-2);font-weight:400">' + _T('虛線：歷次頂（紅）、底（藍）', 'Dashed: past tops (red) and bottoms (blue)') + '</b></span></div><div class="chart" id="c-dawn"></div>' + dwTable() +
       '<p class="note">' + _T('把一輪週期當成一天：深夜（底部區）→ 破曉（初升）→ 白晝（上升）→ 黃昏（過熱）→ 入夜（下跌）。熱度＝長期持有者 NUPL、未實現獲利 ÷ 市值、冪律殘差、儲備風險、MVRV-Z 五項，各自和過去 4 年比的百分位平均；方向＝價格 ÷ 200 日均線、價格 ÷ 短期持有者成本、aSOPR 30 日、實現獲利 ÷ 虧損 90 日四項，連續 4 週在另一邊才翻。階段：熱度 ≥ ' + x.th.hot + ' 黃昏、≤ ' + x.th.cold + ' 深夜；其餘空方是入夜，多方熱度 < ' + x.th.mid + ' 破曉、其餘白晝。每一週都只用當時已有的資料算（不偷看未來）。研究時和事後週期位置的等級相關 0.82（週線多空分數 0.49）。資料 Bitview、CoinMetrics、CheckOnChain。只有三輪多完整週期，表裡是歷史描述，不是買賣訊號。',
         'A cycle seen as a day: Deep night (bottom zone) → Daybreak (early rise) → Daylight (rising) → Dusk (overheated) → Nightfall (falling). Heat = the average percentile, against the past 4 years, of LTH NUPL, unrealized profit ÷ market cap, the power-law residual, reserve risk and MVRV-Z; trend = price ÷ 200-day MA, price ÷ STH cost basis, 30-day aSOPR and the 90-day realized profit ÷ loss, flipping after 4 straight weeks. Stages: heat ≥ ' + x.th.hot + ' Dusk, ≤ ' + x.th.cold + ' Deep night; otherwise bearish = Nightfall, bullish with heat < ' + x.th.mid + ' = Daybreak, else Daylight. Every week uses only data available then (no look-ahead). In research its rank correlation with the hindsight cycle position was 0.82 (weekly regime score: 0.49). Data: Bitview, CoinMetrics, CheckOnChain. Only three-plus full cycles; the table describes history and is not a trading signal.') + '</p>', '', 'dawn');
   }
+  /* 2026-11-08 使用者：「顏色看起來有點髒…底頂部還不如舊版的底部明顯，要更有視覺張力、更突出底和頂」→ 重新設計：
+     ・發散配色（dataviz 準則：兩個色相＋中間灰，不用彩虹）：冷藍 --stg0（底）↔ 灰 ↔ 熱紅 --stg4（頂），取代五色交錯
+     ・熱度以 50 為中線上下長：熱往上紅、冷往下藍，中段淡到接近底色，兩端自己跳出來
+     ・價格線也按熱度上色；空方期間上下兩格鋪淡灰底（方向）；歷次頂（紅）底（藍）畫貫穿兩格的細虛線並標年份 */
+  function dwCss(n, fb) { var v = ''; try { v = getComputedStyle(document.documentElement).getPropertyValue(n).trim(); } catch (e) { } return /^#[0-9a-f]{6}$/i.test(v) ? v : fb; }
+  function dwRgb(h) { return [1, 3, 5].map(function (i) { return parseInt(h.substr(i, 2), 16); }); }
+  /* 熱度 → 顏色：mid＝中間的灰（線用 --ink-3 看得見；面積用 --deck-3 接近底色）；k＞1 讓中段更淡、兩端更集中 */
+  function dwRamp(mid, k) {
+    var c = dwRgb(dwCss('--stg0', '#3C5CDD')), w = dwRgb(dwCss('--stg4', '#CC2827')), m = dwRgb(dwCss(mid, '#7A766F'));
+    return function (h) { var t = Math.max(0, Math.min(100, h)), b = t >= 50 ? w : c, f = Math.pow(Math.abs(t - 50) / 50, k || 1); return 'rgb(' + m.map(function (v, i) { return Math.round(v + (b[i] - v) * f); }).join(',') + ')'; };
+  }
+  var DW_REP = [5, null, 40, 65, 92];   // 各階段的代表熱度（表格色塊用）；入夜用灰（和空方灰底一致）
+  function dwStgCol(k) { return DW_REP[k] == null ? 'var(--ink-3)' : dwRamp('--ink-3', 1.2)(DW_REP[k]); }
   function drawDawn(el) {
     var x = (D.cycle || {}).dawn; if (!x || !el) return;
-    var R_ = x.rows, th = x.th;
-    twoPane(el, { rows: R_, pi: 2, hp: [110, 150], hs: [140, 180], label: _T('週期熱度（每週，0–100）', 'Cycle heat (weekly, 0–100)'), aria: _T('BTC 價格與晨昏指數', 'BTC price and the Dawn–Dusk Index'),
+    var R_ = x.rows, th = x.th, lc = dwRamp('--ink-3', 1.2), uid = 'dw' + Math.random().toString(36).slice(2, 7);
+    twoPane(el, { rows: R_, pi: 2, hp: [110, 150], hs: [160, 210], label: _T('週期熱度（每週）：往上熱、往下冷', 'Cycle heat (weekly): up = hot, down = cold'), aria: _T('BTC 價格與晨昏指數', 'BTC price and the Dawn–Dusk Index'),
       scale: function (C) { return function (v) { return C.ys0 + (1 - v / 100) * C.hs; }; },
       body: function (C) {
-        var s = '';
-        [0, th.cold, th.mid, th.hot, 100].forEach(function (g) { s += C.gl(C.Ys(g), String(g), g ? 'gl' : 'base'); });
-        var bw = Math.max(1, C.pw / C.rows.length * 0.8), z0 = C.Ys(0);
-        R_.forEach(function (r) { var cx = C.X(r[0]), yv = C.Ys(r[1]); s += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + yv.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, z0 - yv).toFixed(1) + '" fill="' + STG_C[r[3]] + '"/>'; });
+        var Y = C.Ys, y50 = Y(50), y0 = Y(0), y100 = Y(100), s = '', i, half = 3.5, top = C.MT;
+        var g = function (id, mid, op) {   // 依高度上色的漸層（userSpaceOnUse：y 越高越紅、越低越藍）
+          return '<linearGradient id="' + uid + id + '" gradientUnits="userSpaceOnUse" x1="0" x2="0" y1="' + y100.toFixed(1) + '" y2="' + y0.toFixed(1) + '">' +
+            [[0, '--stg4', op[0]], [(100 - th.hot) / 100, '--stg4', op[1]], [0.5, mid, op[2]], [(100 - th.cold) / 100, '--stg0', op[1]], [1, '--stg0', op[0]]].map(function (q) { return '<stop offset="' + q[0] + '" style="stop-color:var(' + q[1] + ');stop-opacity:' + q[2] + '"/>'; }).join('') + '</linearGradient>';
+        };
+        s += '<defs>' + g('f', '--deck-3', [0.95, 0.7, 0.15]) + g('l', '--ink-3', [1, 1, 0.9]) + '</defs>';
+        // 方向：空方期間上下兩格淡灰底
+        for (i = 0; i < R_.length; i++) {
+          if (R_[i][4] >= 0) continue;
+          var j = i; while (j + 1 < R_.length && (R_[j + 1][4] < 0 || (j + 2 < R_.length && R_[j + 2][4] < 0))) j++;   // 中間只隔一週多方的兩段空方併成一段，免得變細紋
+          var a = Math.max(C.ML, C.X(R_[i][0] - half)), b = Math.min(C.ML + C.pw, C.X(R_[j][0] + half));
+          if (b > a) s += '<rect x="' + a.toFixed(1) + '" y="' + top + '" width="' + (b - a).toFixed(1) + '" height="' + (C.yb - top).toFixed(1) + '" fill="var(--ink)" opacity=".04"/>';
+          i = j;
+        }
+        // 兩端的區帶與刻度
+        s += '<rect x="' + C.ML + '" y="' + y100.toFixed(1) + '" width="' + C.pw + '" height="' + (Y(th.hot) - y100).toFixed(1) + '" fill="var(--stg4)" opacity=".07"/>' +
+          '<rect x="' + C.ML + '" y="' + Y(th.cold).toFixed(1) + '" width="' + C.pw + '" height="' + (y0 - Y(th.cold)).toFixed(1) + '" fill="var(--stg0)" opacity=".07"/>';
+        [[100, '100'], [th.hot, _T(th.hot + ' 黃昏', th.hot + ' Dusk')], [50, '50'], [th.cold, _T(th.cold + ' 深夜', th.cold + ' Night')], [0, '0']].forEach(function (v) { s += C.gl(Y(v[0]), v[1], v[0] === 50 ? 'base' : 'gl'); });
+        // 歷次頂底：貫穿兩格的細虛線＋年份
+        (x.marks || []).forEach(function (m) {
+          var cx = C.X(dnOf(m.date)); if (cx < C.ML || cx > C.ML + C.pw) return;
+          var tp = m.kind === 'top', col = tp ? 'var(--stg4)' : 'var(--stg0)';
+          s += '<line x1="' + cx.toFixed(1) + '" x2="' + cx.toFixed(1) + '" y1="' + top + '" y2="' + C.yb.toFixed(1) + '" stroke="' + col + '" stroke-width="1" stroke-dasharray="3 3" opacity=".55"/>';
+          var rt = cx > C.ML + C.pw - 48;   // 太靠右就標在虛線左邊
+          if (!C.sm) s += axText(rt ? cx - 4 : cx + 4, tp ? y100 + 12 : y0 - 5, m.date.slice(0, 4) + (tp ? _T(' 頂', ' top') : _T(' 底', ' bottom')), rt ? 'end' : null);
+        });
+        // 熱度：以 50 為中線的面積＋線
+        var pts = R_.map(function (r) { return C.X(r[0]).toFixed(1) + ',' + Y(r[1]).toFixed(1); });
+        s += '<path d="M' + C.X(R_[0][0]).toFixed(1) + ',' + y50.toFixed(1) + 'L' + pts.join('L') + 'L' + C.X(R_[R_.length - 1][0]).toFixed(1) + ',' + y50.toFixed(1) + 'Z" fill="url(#' + uid + 'f)"/>' +
+          '<path d="M' + pts.join('L') + '" fill="none" stroke="url(#' + uid + 'l)" stroke-width="1.6" stroke-linejoin="round"/>';
         return s;
       },
-      tip: function (p) { return { t: _T('週至 ', 'Week to ') + fmt.date(p[0]), rows: tipRow1(STG_C[p[3]], _T('熱度（' + dwName(p[3]) + '）', 'Heat (' + dwName(p[3]) + ')'), fmt.n(p[1], 0)) }; } });
+      over: function (C) {
+        var s = '', i;
+        for (i = 1; i < R_.length; i++) {   // 價格線按熱度上色（蓋在灰色價格線上）
+          var a = R_[i - 1], b = R_[i];
+          s += '<line x1="' + C.X(a[0]).toFixed(1) + '" y1="' + C.Yp(a[2]).toFixed(1) + '" x2="' + C.X(b[0]).toFixed(1) + '" y2="' + C.Yp(b[2]).toFixed(1) + '" stroke="' + lc((a[1] + b[1]) / 2) + '" stroke-width="2.2" stroke-linecap="round"/>';
+        }
+        var z = R_[R_.length - 1];
+        return s + oxNow(C.X(z[0]), C.Ys(z[1]), lc(z[1]), _T('現在 ', 'Now ') + fmt.n(z[1], 0));
+      },
+      tip: function (p, C) { var c = lc(p[1]); return { t: _T('週至 ', 'Week to ') + fmt.date(p[0]), dots: dot1(C.X(p[0]), C.Ys(p[1]), c), rows: tipRow1(c, _T('熱度（' + dwName(p[3]) + '）', 'Heat (' + dwName(p[3]) + ')'), fmt.n(p[1], 0)) + tipRow1('var(--ink-3)', _T('方向', 'Trend'), p[4] < 0 ? _T('空方', 'Bearish') : _T('多方', 'Bullish')) }; } });
   }
   function boardHtml() {
     var cm = D.cycle.cm || {}, p6 = D.cycle.p6 || {}, tm = D.cycle.tidemark || {}, pl = D.cycle.powerlaw || {}, st = D.cycle.stage || {}, rg = D.cycle.regime || {}, dw = D.cycle.dawn || {}, ex = D.exit.status || {}, c = D.price.bar.c, tr = D.onchain.top_radar || {};
@@ -1332,7 +1380,7 @@
         now: function () { var pp = (D.flows.premium3 || {}).perp, fw = (D.deriv.funding_multi || {}).weighted_now; if (!pp) return '';
           return _T('7 日平均 ' + fmt.pct(pp.avg7, 3) + '，平常（30 日）' + fmt.pct(pp.avg30, 3) + '，在近 ' + pp.n + ' 天第 ' + fmt.n(pp.avg7_pct_own, 0) + ' 百分位' + (fw != null ? '；資金費率年化 ' + fmt.n(fw, 1) + '%' : '') + '。' + (pp.avg7_pct_own == null ? '' : pp.avg7_pct_own >= 70 ? '比平常貴，多單在付錢追價。' : pp.avg7_pct_own <= 30 ? '比平常便宜，槓桿偏空。' : '和平常差不多。'),
             '7-day average ' + fmt.pct(pp.avg7, 3) + ', usually (30-day) ' + fmt.pct(pp.avg30, 3) + ', ' + fmt.n(pp.avg7_pct_own, 0) + 'th percentile of ' + pp.n + ' days' + (fw != null ? '; funding ' + fmt.n(fw, 1) + '% a year' : '') + '. ' + (pp.avg7_pct_own == null ? '' : pp.avg7_pct_own >= 70 ? 'Richer than usual: longs pay up to chase.' : pp.avg7_pct_own <= 30 ? 'Cheaper than usual: leverage leans short.' : 'About usual.')); } },
-      'dawn': { h: h('上格是 BTC 價格；下格是每週的週期熱度（0–100），柱子按階段上色：深夜（藍，底部區）、入夜（淺藍，下跌）、破曉（綠，初升）、白晝（金，上升）、黃昏（紅，過熱）。橫線是 10、50、80 三個門檻。', 'Top: BTC price. Bottom: weekly cycle heat (0–100), bars coloured by stage: Deep night (blue, bottom zone), Nightfall (light blue, falling), Daybreak (green, early rise), Daylight (gold, rising), Dusk (red, overheated). Lines mark the 10, 50 and 80 thresholds.',
+      'dawn': { h: h('上格是 BTC 價格；下格是每週的週期熱度（0–100），以 50 為中線：越熱越往上、越紅（頂），越冷越往下、越藍（底），中間淡。價格線用同一個顏色。灰底是方向空方的期間，虛線是歷次頂（紅）和底（藍）。熱度 ≥ 80 黃昏、≤ 10 深夜。', 'Top: BTC price. Bottom: weekly cycle heat (0–100) around a midline at 50: hotter goes up and redder (tops), colder goes down and bluer (bottoms), the middle fades. The price line uses the same colours. Grey shading marks bearish-trend periods; dashed lines mark past tops (red) and bottoms (blue). Heat ≥ 80 is Dusk, ≤ 10 Deep night.',
           '熱度是估值，回答「離頂部、底部多遠」；方向是趨勢，回答「現在往哪走」。熱度低又翻多（破曉）歷史上之後一年最好；熱度高（黃昏）之後一年大約持平、下跌機率接近一半。', 'Heat is valuation, answering "how far from a top or bottom"; trend answers "which way now". Low heat with a bullish flip (Daybreak) has had the best year ahead; high heat (Dusk) has been roughly flat a year later, with close to even odds of a fall.',
           '近兩輪鏈上估值都比價格先見頂，黃昏常提早出現；只有三輪多完整週期，統計只是歷史描述，不是訊號。', 'In the last two cycles valuations peaked before price, so Dusk tends to come early; with only three-plus full cycles the stats describe history and are not a signal.'),
         now: function () { var x = (D.cycle || {}).dawn; return x ? _T('熱度 ' + fmt.n(x.heat, 0) + '，' + dwName(x.stage, true) + '，方向' + (x.regime > 0 ? '多方' : '空方') + '。', 'Heat ' + fmt.n(x.heat, 0) + ', ' + dwName(x.stage, true) + ', trend ' + (x.regime > 0 ? 'bullish' : 'bearish') + '.') : ''; } },
