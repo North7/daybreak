@@ -6,7 +6,7 @@
     {
       "style": "真人版",
       "kind": "followup",
-      "status": "send",
+      "status": "skip",
       "mode": "reply",
       "n": 87,
       "order": 1,
@@ -14,14 +14,14 @@
       "name": "forintyang",
       "followers": 2,
       "lang": "zh",
-      "angle": "接續對話",
+      "angle": "按讚就好",
       "id": "2119437566365798497",
       "url": "https://x.com/forintyang/status/2119437566365798497",
       "posted": "2026-11-08T14:31:07Z",
       "summary": "在我們原創（微策略）底下第 2 輪：73.2K 是市場還信不信 Strategy 能扛的問題",
-      "reply": "週三 MSCI 會公布非營運公司的受影響名單\nStrategy 在不在裡面，可能比價格走到 73.2K 更早給出答案",
+      "reply": "",
       "sources": "notes.json 11/11：MSCI 公布非營運公司受影響名單；11/30 規則於 11 月指數審核收盤後生效",
-      "note": "在我們原創底下（不設輪數上限），接他「市場信不信 Strategy」補下一個看得到的日期。對方只有 2 粉、像機器帳號，一句就好。"
+      "note": "按讚就好：使用者 11/08 22:40 決定不回。對方只有 2 粉、留言都是通用附和句，像機器帳號。"
     },
     {
       "n": 84,
