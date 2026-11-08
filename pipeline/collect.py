@@ -1179,6 +1179,12 @@ try:
         stale_sources=[k_ for k_, v_ in _src.items() if (v_ or {}).get('stale') or not (v_ or {}).get('available', True)],
         rules=dict(top=(_tm.get('rules') or {}).get('signal_level'), bottom=(_tm.get('rules') or {}).get('bottom_level')))
 except Exception as e: errors.append(f'tidemark {e}')
+# G7b. 2026-11-09 使用者要求（借鑑 Tidemark 的歷史圖）：頂部／底部訊號的歷史，從 Tidemark 頁面內嵌的資料取（見 tm_hist.py）；取不到沿用上一份
+if R.get('tidemark'):
+    try:
+        import tm_hist
+        R['tidemark']['hist'] = tm_hist.build(get, _tm)
+    except Exception as e: errors.append(f'tidemark hist {e}')
 
 # ---------- G8. 2026-10-06 使用者要求：冪律（Power Law）讀值。只用 CoinMetrics 價格（G1 已抓），無前視：每一天的合理價只用當天以前的資料擬合；只作讀值、不連動倉位 ----------
 try:

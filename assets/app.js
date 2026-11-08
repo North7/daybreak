@@ -98,7 +98,7 @@
   var RNG = [[365, '1 年', '1Y'], [1095, '3 年', '3Y'], [0, '全部', 'All']];
   function rangeOf(el, cfg, W) {
     if (cfg.xType === 'num' || cfg.noRange || W < 420 || (cfg.h && cfg.h < 190)) return null;   // 小圖（鏈上指標走勢的小格）不加，太擠
-    var host = el.closest('.evc, .panel'); if (host && [].some.call(host.querySelectorAll('.seg'), function (g) { return !g.classList.contains('rng'); })) return null;
+    var host = el.closest('.evc, .panel'); if (host && [].some.call(host.querySelectorAll('.seg'), function (g) { return !g.classList.contains('rng') && !g.classList.contains('tm-mode'); })) return null;
     var xs = []; cfg.series.forEach(function (s) { s.data.forEach(function (p) { if (p[1] != null) xs.push(p[0]); }); }); if (xs.length < 2) return null;
     var lo = Math.min.apply(null, xs), hi = Math.max.apply(null, xs), span = hi - lo; if (span < 700) return null;
     var opts = RNG.filter(function (o) { return !o[0] || o[0] < span * 0.8; }), sel = el._rng || 0;
@@ -1372,6 +1372,10 @@
       'liq': { h: h('每一格是某個小時、某個價位推算還沒被清算的槓桿倉位量，越亮越多；疊的是小時 K 線（「2 年」是每天一欄、日 K 線），虛線是最後收盤。收盤下方是多單的清算價、上方是空單的。', 'Each cell is the estimated leveraged position size still awaiting liquidation at that hour and price; brighter means more. Hourly candles on top (“2Y” uses one column and one candle per day), the dashed line is the last close. Long liquidation prices sit below the close, shorts above.',
           '亮帶＝槓桿倉位堆積的價位。價格走到那裡會觸發強制平倉：多單強平是市價賣、空單強平是市價買，常讓行情在那一段走得更快；價格走過之後那一帶會變暗（被清掉）。', 'Bright bands are where leverage is stacked. Price reaching them triggers forced closes: longs are market-sold, shorts market-bought, which often speeds up the move through that zone; once price passes, the band goes dark (cleared).',
           '推算：Coinalyze 彙整的多家交易所未平倉量（取不到時只有 OKX），槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；清算量多不代表價格會往那裡走。', 'An estimate: multi-exchange open interest compiled by Coinalyze (OKX only when unavailable), with an assumed leverage mix that moves the bands; a daily snapshot, not real time; more liquidations on one side does not mean price will go there.') },
+      'tmh': { h: h('上格 BTC 價格（對數）；下格是 Tidemark 的 0–100 訊號，2011 起每週、近一年每日。頂部視角：紅＝頂部訊號（粗線）、琥珀＝熱度、灰虛線＝時機，直虛線是歷次週期頂部；底部視角：綠＝底部訊號、藍＝冷度，直虛線是歷次週期底部、綠點線是本輪候選低點。點圖例可以開關每條線，滑過圖時上方那一行跟著顯示當天數字。', 'Price on top (log); below, Tidemark\'s 0–100 signals, weekly since 2011 and daily for the past year. Top view: red = top signal (thick), amber = heat, grey dashed = timing, with vertical dashes at past cycle tops. Bottom view: green = bottom signal, blue = cold, vertical dashes at past cycle bottoms and a green dotted line at this cycle\'s candidate low. Click a legend item to hide or show a line; hovering updates the readout row above.',
+          '頂部訊號 ≥50 進入窗口、≥70 警戒；底部訊號 ≥50 進入底部區。看過去幾次頂部、底部前後訊號升到多高、提前多久亮，再對照現在的位置。', 'A top signal of 50 or more opens the window and 70 is the alert; a bottom signal of 50 or more is the bottom zone. See how high the signals rose around past tops and bottoms, and how early, then compare with now.',
+          '第三方模型，規則與權重由 Tidemark 決定、可能改版；歷史是用目前的規則回算的，不是當時的即時讀數；部分指標 2012 年底以後才有，之前只有熱度。只作讀值。', 'A third-party model whose rules and weights Tidemark sets and may change; the history is back-calculated under today\'s rules, not live readings at the time; some inputs start in late 2012, before which only heat exists. Reading only.'),
+        now: function () { var x = ((D.cycle || {}).tidemark || {}).hist; if (!x) return ''; var p = x.rows[x.rows.length - 1]; return _T('頂部訊號 ' + fmt.n(p[2], 0) + '、熱度 ' + fmt.n(p[3], 0) + '；底部訊號 ' + fmt.n(p[5], 0) + '、冷度 ' + fmt.n(p[6], 0) + '（' + fmt.md(x.to) + '）。', 'Top signal ' + fmt.n(p[2], 0) + ', heat ' + fmt.n(p[3], 0) + '; bottom signal ' + fmt.n(p[5], 0) + ', cold ' + fmt.n(p[6], 0) + ' (' + fmt.md(x.to) + ').'); } },
       'fh': { h: h('上格價格；下格是多家永續以未平倉加權的資金費率，年化 % 的 7 日平均。綠＝正（多方付費給空方）、紅＝負（空方付費），虛線是 30%。', 'Price on top; below, the open-interest-weighted funding rate across perpetuals, 7-day average, annualized. Green = positive (longs pay shorts), red = negative (shorts pay); the dashed line is 30%.',
           '費率越高＝做多的人越願意付錢，槓桿多單越擁擠；轉負＝空方擁擠或多單已被洗掉。極端值比方向更有參考價值。', 'Higher funding = longs willing to pay more, leveraged longs more crowded; negative = shorts crowded or longs already flushed. Extremes say more than the direction.',
           '每日值是當天費率的（開＋高＋低＋收）÷ 4，和「永續資金費率」的即時快照不同；Hyperliquid 2024-10 起才有。統計只是歷史描述，不是訊號。', 'Daily values use (open + high + low + close) ÷ 4, so they differ from the live "Perpetual funding" snapshot; Hyperliquid joins in 2024-10. The stats describe history, not a signal.'),
@@ -1978,11 +1982,12 @@
       panel('span-7', _t('冪律：價格 ÷ 合理價'), _t('每天只用當天以前資料擬合'), _t('<p class="say">現在 <b>') + fmt.n(pl.ratio, 2) + _t(' 倍</b>（合理價 ') + fmt.usd(pl.fair) + _T('，', ', ') + plGap(pl.ratio) + _t('）。頂部倍數每輪縮小，照這個速度，下一輪頂部約在合理價的 ') + fmt.n((pl.next_top_ratio || [])[0], 2) + '–' + fmt.n((pl.next_top_ratio || [])[1], 2) + _t(' 倍。') + esc((plRead() || [''])[0]) + esc(plChanSay()) + '</p><div id="pl-lg">' + plLegend(plChan() ? 'chan' : 'ratio') + '</div><div class="chart" id="c-pl"></div>', (plChan() ? '<div class="seg" id="pl-mode"><button aria-pressed="true" data-m="chan">' + _T('通道位置', 'Channel') + '</button><button aria-pressed="false" data-m="ratio">' + _T('倍數', 'Multiple') + '</button></div>' : '') + _t('<div class="seg" id="pl-seg"><button aria-pressed="false" data-v="all">2012 起</button><button aria-pressed="true" data-v="2020">2020 起</button></div>')) +
       panel('span-5', _t('Tidemark 綜合訊號'), _t('第三方模型 · ') + fmt.md(tm.price_date) + _t(' 資料'), '<p class="say">' + esc((tmRead() || [''])[0]) + '</p><div class="meters">' + meter(_t('頂部訊號'), _t('≥50 窗口 · ≥70 警戒'), (tm.top || {}).signal || 0, fmt.n((tm.top || {}).signal, 1), (tm.top || {}).level || '—', [50, 70]) + meter(_t('熱度'), _t('五類加權'), (tm.top || {}).heat || 0, fmt.n((tm.top || {}).heat, 1), (tm.top || {}).zone || '', [40, 65]) + meter(_t('底部訊號'), _t('≥50 底部區'), (tm.bottom || {}).signal || 0, fmt.n((tm.bottom || {}).signal, 1), (tm.bottom || {}).level || '—', [50, 70]) + meter(_t('冷度'), _t('估值・礦工・價格結構'), (tm.bottom || {}).cold || 0, fmt.n((tm.bottom || {}).cold, 1), '', []) + '</div>' +
         '<div class="tbl-wrap"><table class="tbl"><colgroup><col style="width:62%"><col style="width:38%"></colgroup><tbody>' + (tm.cats || []).map(function (x) { return '<tr><td>' + esc(_T(x[0], TM_CAT_EN[x[0]] || x[0])) + (x[2] === 'partial' ? _t('＊') : '') + '</td><td><div class="pct"><i><b class="' + ((x[1] || 0) >= 80 ? 'hot' : '') + '" style="width:' + (x[1] || 0) + '%"></b></i><span class="num">' + (x[1] == null ? '—' : fmt.n(x[1], 0)) + '</span></div></td></tr>'; }).join('') + '</tbody></table></div><p class="note">' + esc(tmVerdict(tm.cycle_test)) + '</p>', '', 'tm') +
+      tmhPanel() +
       panel('span-12', _t('長期路徑：四種走法'), _t('每月底重估 · 下次 ') + M.next_review, legend([[_t('直接修復 ') + w['直接修復'] + '%', 'var(--s4)', 'dash'], [_t('淺回檔 ') + w['淺回檔'] + '%', 'var(--s1)', 'dash'], [_t('基準雙底 ') + w['基準雙底'] + '%', 'var(--s2)', 'dash'], [_t('延後新低 ') + w['延後新低'] + '%', 'var(--s3)', 'dash'], [_t('已實現'), 'var(--ink)'], [_t('頂部 80% 區間'), 'var(--flare)', 'box']]) + _t('<div class="chart" id="c-path"></div><p class="note">頂部模型：中位 ') + fmt.usd(M.top_model.median) + _t('，80% 區間 ') + fmt.k(M.top_model.p10) + '–' + fmt.k(M.top_model.p90) + _t('，時間 ') + esc(tx(M.top_model, 'timing')) + _t('。路徑是本站的預測，2028 年以後只供量級參考。</p>') + pathReviewHtml()) +
       '</div>';
   };
   V.cycle.after = function () {
-    safe(drawEv, function () { drawOc(true); }); mount($('#c-regime'), drawRegime); mount($('#c-dawn'), drawDawn); mount($('#c-rup'), drawRup); mount($('#c-hnupl'), drawLn); mount($('#c-aviv'), drawAv); mount($('#c-rrisk'), drawRr); mount($('#c-cyccmp'), drawCycCmp);
+    safe(drawEv, function () { drawOc(true); }); tmhBind(); mount($('#c-regime'), drawRegime); mount($('#c-dawn'), drawDawn); mount($('#c-rup'), drawRup); mount($('#c-hnupl'), drawLn); mount($('#c-aviv'), drawAv); mount($('#c-rrisk'), drawRr); mount($('#c-cyccmp'), drawCycCmp);
     var M = D.cycle.model, cols = { '直接修復': 'var(--s4)', '淺回檔': 'var(--s1)', '基準雙底': 'var(--s2)', '延後新低': 'var(--s3)' };
     var md = function (y, m) { return Math.round(Date.UTC(y, m - 1, 15) / 864e5); };
     var series = Object.keys(M.nodes).map(function (k) { return { name: _t(k), data: M.nodes[k].map(function (p) { return [md(p[0], p[1]), p[2]]; }), color: cols[k], dash: '5 5', w: 1.8, end: false, smooth: true }; });
@@ -2259,6 +2264,62 @@
       _T(x.venues.join('、') + ' 的 BTC 永續（Hyperliquid 2024-10 起才有）。每日值＝當天費率的（開＋高＋低＋收）÷ 4，換成年化後以未平倉加權。和上面「永續資金費率」的即時快照不同，這是每日平均，兩個數字會差一點。',
         'BTC perpetuals on ' + x.venues.join(', ') + ' (Hyperliquid only from 2024-10). Each day\'s value = (open + high + low + close) ÷ 4 of that day\'s rate, annualized and weighted by open interest. This is a daily average, not the live snapshot shown in "Perpetual funding" above, so the two differ a little.'), 'neu']);
     return it;
+  }
+  /* 2026-11-09 使用者要求「借鑑 Tidemark 的歷史圖」：Tidemark（第三方模型）頂部／底部訊號 2011 起的歷史（2025-11 起每日）。
+     借：頂部／底部兩個視角、可點的圖例（開關每條線）、滑過時更新的讀數列；不借：極光底色、發光線、價格疊在右軸（本站一張圖一個 y 軸）。
+     顏色照紅綠規則：頂部訊號紅、底部訊號綠；熱度琥珀、冷度藍、時機灰虛線。只作讀值 */
+  var TMH = {   // [欄位, rows 第幾欄, 顏色, 中文, 英文, 主線]
+    top: { lines: [['sig', 2, 'var(--down)', '頂部訊號', 'Top signal', 1], ['heat', 3, 'var(--warn)', '熱度', 'Heat', 0], ['tim', 4, 'var(--ink-3)', '時機', 'Timing', 0]],
+      refs: [[50, '50 窗口', '50 window'], [70, '70 警戒', '70 alert']], marks: 'tops', mk: ['歷次週期頂部', 'Past cycle tops'], tag: [' 頂', ' top'] },
+    bottom: { lines: [['bsig', 5, 'var(--up)', '底部訊號', 'Bottom signal', 1], ['cold', 6, 'var(--orbit)', '冷度', 'Cold', 0]],
+      refs: [[50, '50 底部區', '50 bottom zone']], marks: 'bottoms', mk: ['歷次週期底部', 'Past cycle bottoms'], tag: [' 底', ' bottom'] }
+  };
+  function tmhMode(el) { return (el && el._mode) || 'top'; }
+  function tmhPanel() {
+    var x = ((D.cycle || {}).tidemark || {}).hist; if (!x || !x.rows) return '';
+    var seg = '<div class="seg tm-mode" role="group" aria-label="' + _T('視角', 'View') + '"><button type="button" data-m="top" aria-pressed="true">' + _T('頂部視角', 'Top view') + '</button><button type="button" data-m="bottom" aria-pressed="false">' + _T('底部視角', 'Bottom view') + '</button></div>';
+    return panel('span-12', _T('Tidemark 歷史：頂部與底部訊號', 'Tidemark history: top and bottom signals'),
+      _T('第三方模型 · ' + x.from_.slice(0, 4) + ' 起每週、近一年每日 · ' + fmt.md(x.to) + (x.stale ? ' · 沿用上一份' : ''), 'third-party model · weekly since ' + x.from_.slice(0, 4) + ', daily for the past year · ' + fmt.md(x.to) + (x.stale ? ' · previous copy' : '')),
+      '<div class="tmh-top">' + seg + '<p class="tmh-read mono"></p></div><div class="legend tmh-chips"></div><div class="chart" id="c-tmh"></div>' +
+      '<p class="note">' + _T('Tidemark 是第三方公開模型（north7.github.io/tidemark），頂部訊號＝熱度（估值、資金、衍生品、情緒等五類加權）× 時機（離上一個低點與減半的天數）；底部訊號＝冷度（估值、礦工、價格結構）× 時機。歷史是 Tidemark 用目前的規則回算的，部分指標 2012 年底以後才有。本站只轉錄、不改數字；只作讀值，不連動倉位。',
+        'Tidemark is a public third-party model (north7.github.io/tidemark): top signal = heat (valuation, flows, derivatives, sentiment and more, weighted) × timing (days since the last low and the halving); bottom signal = cold (valuation, miners, price structure) × timing. The history is back-calculated by Tidemark under its current rules, and some inputs start only in late 2012. We copy the numbers without changing them; reading only, not tied to positions.') + '</p>', '', 'tmh');
+  }
+  function tmhRead(el, p) {
+    var x = D.cycle.tidemark.hist, R_ = x.rows, M = TMH[tmhMode(el)], pn = el.closest('.panel'), box = pn && pn.querySelector('.tmh-read'); if (!box) return;
+    if (!p) p = R_[R_.length - 1];
+    box.innerHTML = '<b>' + fmt.date(p[0]) + '</b><span>' + fmt.usd(p[1]) + '</span>' + M.lines.map(function (l) { return '<span><i style="background:' + l[2] + '"></i>' + _T(l[3], l[4]) + ' <b>' + (p[l[1]] == null ? '—' : fmt.n(p[l[1]], 0)) + '</b></span>'; }).join('');
+  }
+  function tmhChips(el) {
+    var x = D.cycle.tidemark.hist, m = tmhMode(el), M = TMH[m], hide = el._hide || {}, pn = el.closest('.panel'), box = pn && pn.querySelector('.tmh-chips'); if (!box) return;
+    var st = function (col, cls, t) { return '<span style="color:' + col + '"><i class="' + cls + '"></i><b style="color:var(--ink-2);font-weight:400">' + t + '</b></span>'; };
+    box.innerHTML = st('var(--ink-2)', '', _T('BTC 價格（上格）', 'BTC price (top pane)')) +
+      M.lines.map(function (l) { return '<button type="button" class="tmh-chip" data-k="' + l[0] + '" aria-pressed="' + !hide[l[0]] + '" style="color:' + l[2] + '"><i class="' + (l[0] === 'tim' ? 'dash' : '') + '"></i><b>' + _T(l[3], l[4]) + '</b></button>'; }).join('') +
+      st('var(--ink-3)', 'dash', _T(M.mk[0], M.mk[1])) + (m === 'bottom' && x.low && x.low.date ? st('var(--up)', 'dots', _T('本輪低點（待驗證）', 'This cycle\'s low (being tested)')) : '');
+  }
+  function drawTmh(el) {
+    var x = ((D.cycle || {}).tidemark || {}).hist; if (!x || !x.rows || !el) return;
+    var m = tmhMode(el), M = TMH[m], hide = el._hide || (el._hide = {}), main = M.lines[0], mk = x[M.marks] || [];
+    oxPane(el, { rows: x.rows, y0: 0, y1: 100, ticks: [0, 25, 50, 75, 100], fmt: function (t) { return String(t); },
+      label: _T('Tidemark ' + (m === 'top' ? '頂部' : '底部') + '視角（0–100）', 'Tidemark ' + m + ' view (0–100)'), aria: _T('BTC 價格與 Tidemark 頂部、底部訊號的歷史', 'BTC price and the history of Tidemark\'s top and bottom signals'),
+      refs: M.refs.map(function (r) { return { y: r[0], col: 'var(--ink-3)', lab: _T(r[1], r[2]) }; }),
+      lines: M.lines.filter(function (l) { return !hide[l[0]]; }).map(function (l) { return { i: l[1], col: l[2], w: l[5] ? 2.2 : 1.3, area: !!l[5], dash: l[0] === 'tim' ? '4 3' : null, name: _T(l[3], l[4]), tfmt: function (v) { return fmt.n(v, 1); } }; }),
+      over: function (C) {
+        var s = '', a = C.rows[0][0], b = C.rows[C.rows.length - 1][0];
+        var vl = function (d, col, dash, lab) { var cx = C.X(d).toFixed(1); var rt = +cx > C.ML + C.pw - 90; return '<line x1="' + cx + '" x2="' + cx + '" y1="' + C.MT + '" y2="' + C.yb + '" stroke="' + col + '" stroke-width="1" stroke-dasharray="' + dash + '"/>' + (lab && !C.sm ? axText(+cx + (rt ? -4 : 4), C.ys0 + 11, lab, rt ? 'end' : 'start') : ''); };
+        mk.forEach(function (t) { var d = dnOf(t); if (d >= a && d <= b) s += vl(d, 'var(--ink-3)', '3 3', t.slice(0, 4) + _T(M.tag[0], M.tag[1])); });
+        if (m === 'bottom' && x.low && x.low.date) { var d = dnOf(x.low.date); if (d >= a && d <= b) s += vl(d, 'var(--up)', '1 3', _T('本輪低點 ', 'Low ') + fmt.k(x.low.price)); }
+        return s;
+      },
+      now: hide[main[0]] ? null : { i: main[1], col: main[2], lab: '' },
+      tipExtra: function (p) { tmhRead(el, p); return ''; } });
+    var hit = el.querySelector('.hit'); if (hit) hit.addEventListener('pointerleave', function () { tmhRead(el); });
+    tmhRead(el); tmhChips(el);
+  }
+  function tmhBind() {
+    var el = $('#c-tmh'); if (!el) return; mount(el, drawTmh);
+    var pn = el.closest('.panel'), sg = pn.querySelector('.tm-mode'), ch = pn.querySelector('.tmh-chips');
+    sg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; el._mode = b.getAttribute('data-m'); [].forEach.call(sg.querySelectorAll('button'), function (q) { q.setAttribute('aria-pressed', q === b); }); el._draw(el); });
+    ch.addEventListener('click', function (e) { var b = e.target.closest('.tmh-chip'); if (!b) return; var k = b.getAttribute('data-k'); el._hide = el._hide || {}; el._hide[k] = !el._hide[k]; el._draw(el); });
   }
   /* 2026-11-09 紅綠規則（使用者）：有正負方向的圖一律綠＝正、品牌橘紅＝負；資金費率、鏈上勢能、韓國溢價從類型色改過來 */
   function fhPanel() {
@@ -4789,7 +4850,7 @@
   var FIND = [], fdAct = -1;
   var FKW = {   // 指標別名：圖代號 → [中文別名, 英文別名]（不顯示，中英都拿來搜）。產品內不寫任何付費指標的名字
     vol: ['隱含波動 實際波動', 'DVOL IV RV implied realized volatility'], basis: ['基差 期貨 資金費率', 'basis futures funding'], ivt: ['期限結構 倒掛', 'IV term structure backwardation contango'],
-    liq: ['清算 爆倉 槓桿 熱力圖', 'liquidation heatmap leverage'], lqv: ['每日 多空 清算量 爆倉 多單 空單', 'daily long short liquidations volume'], dawn: ['晨昏 週期 熱度 深夜 破曉 白晝 黃昏 入夜 階段', 'dawn dusk cycle heat stage night daybreak daylight'], fh: ['資金費率 歷史 年化 多方付費', 'funding rate history annualized'], oih: ['未平倉 合約 槓桿 OI', 'open interest OI leverage'], lsa: ['多空比 帳戶 散戶 情緒', 'long short ratio accounts retail sentiment'], tk: ['主動買 主動賣 現貨 永續 CVD Coinbase', 'taker buy sell spot perpetual CVD Coinbase'], gex: ['做市商', 'gamma GEX dealer'], prem: ['權利金 買權 賣權 期權', 'premium put call options'], svd: ['主動買 主動賣', 'taker CVD OKX'],
+    liq: ['清算 爆倉 槓桿 熱力圖', 'liquidation heatmap leverage'], lqv: ['每日 多空 清算量 爆倉 多單 空單', 'daily long short liquidations volume'], dawn: ['晨昏 週期 熱度 深夜 破曉 白晝 黃昏 入夜 階段', 'dawn dusk cycle heat stage night daybreak daylight'], fh: ['資金費率 歷史 年化 多方付費', 'funding rate history annualized'], tmh: ['Tidemark 歷史 頂部訊號 底部訊號 熱度 冷度 時機 潮汐', 'Tidemark history top signal bottom signal heat cold timing tide'], oih: ['未平倉 合約 槓桿 OI', 'open interest OI leverage'], lsa: ['多空比 帳戶 散戶 情緒', 'long short ratio accounts retail sentiment'], tk: ['主動買 主動賣 現貨 永續 CVD Coinbase', 'taker buy sell spot perpetual CVD Coinbase'], gex: ['做市商', 'gamma GEX dealer'], prem: ['權利金 買權 賣權 期權', 'premium put call options'], svd: ['主動買 主動賣', 'taker CVD OKX'],
     oi: ['未平倉 到期 期權', 'open interest expiry max pain'], strike: ['履約價 期權', 'strike open interest'], book: ['掛單 買牆 賣牆', 'order book walls'],
     etf: ['流入 流出 貝萊德', 'ETF IBIT inflow outflow'], etfcost: ['成本', 'ETF cost basis'], stab: ['穩定幣', 'stablecoin USDT USDC'], 'pr-us': ['溢價 三地', 'Coinbase premium Asia'],
     kp: ['韓國 泡菜', 'Kimchi Korea Upbit premium'], exflow: ['交易所 流入 流出', 'exchange netflow reserves'], stk: ['美股 那斯達克 黃金', 'Nasdaq S&P gold stocks'], rcliq: ['實現市值', 'realized cap'],
