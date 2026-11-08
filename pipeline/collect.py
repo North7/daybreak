@@ -1346,9 +1346,15 @@ try:
                                  oi=float(bc['openInterest']) * float(bc['markPx']))
     except Exception as e: errors.append(f'funding hyperliquid {e}')
     w9 = sum(v_['oi'] for v_ in fv.values())
-    R['funding_multi'] = dict(venues={k_: dict(now=v_['now'], avg7=v_['avg7'], oi_usd_m=round(v_['oi'] / 1e6)) for k_, v_ in fv.items()},
-                              weighted_now=round(sum(v_['now'] * v_['oi'] for v_ in fv.values()) / w9, 2) if w9 else None,
-                              note='年化 %；Deribit 為現值、OKX 每 8 小時、Hyperliquid 每小時結算；以未平倉美元加權；Binance、Bybit 讀不到')
+    # 2026-11-08：中性值。OKX、Hyperliquid 的費率公式裡固定含每 8 小時 0.01% 的利息（年化 10.95%），永續價格離現貨不遠時就停在這裡；
+    # Deribit 沒有利息項，中性是 0。加權值要跟加權中性比，10% 左右不代表多單擁擠。
+    base9 = {'OKX': 10.95, 'Hyperliquid': 10.95, 'Deribit': 0.0}
+    wn9 = round(sum(v_['now'] * v_['oi'] for v_ in fv.values()) / w9, 2) if w9 else None
+    wb9 = round(sum(base9.get(k_, 0.0) * v_['oi'] for k_, v_ in fv.items()) / w9, 2) if w9 else None
+    R['funding_multi'] = dict(venues={k_: dict(now=v_['now'], avg7=v_['avg7'], oi_usd_m=round(v_['oi'] / 1e6), base=base9.get(k_, 0.0)) for k_, v_ in fv.items()},
+                              weighted_now=wn9, weighted_base=wb9, excess=round(wn9 - wb9, 2) if wn9 is not None else None,
+                              note='年化 %；Deribit 為現值、OKX 每 8 小時、Hyperliquid 每小時結算；以未平倉美元加權；Binance、Bybit 讀不到。'
+                                   'base／weighted_base＝中性值（OKX、Hyperliquid 含固定利息每 8 小時 0.01%＝年化 10.95%，Deribit 沒有利息項＝0）；excess＝加權值減加權中性，看槓桿擁擠要看這個')
 except Exception as e: errors.append(f'funding_multi {e}')
 # G9e. 恐懼貪婪指數（alternative.me）
 try:
