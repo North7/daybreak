@@ -58,6 +58,7 @@ BASE=https://north7.github.io/daybreak/ node tests/smoke.js   # 上線後再跑�
 | 隱含波動率期限結構（2026-11-08，見 5e） | 衍生品版 | `deriv.ivterm`；快取 `pipeline/coc_cache/iv_term.json` |
 | 月度報酬熱力表（2026-11-08，見 5e） | 價格版 | `price.monthly` |
 | 內容重組與導覽：三版新分組、四張需求圖與兩張價格類圖搬家、全站搜尋、側欄子目錄、手機目錄鈕（2026-11-08，見 5f） | 全站 | `grpH`、`buildFind`、`buildSubnav`、`grpSpy` |
+| 短期持有者供給 90 天變化（2026-11-08） | 鏈上版「長期持有者與大戶」 | `onchain.sthd`（`stage_viz.sthd_viz`，Bitview `sths`；rows 第 3 欄千顆） |
 
 ## 5. 待辦（照優先順序）
 

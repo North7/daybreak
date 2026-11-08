@@ -856,6 +856,9 @@ if BV:
         _md = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json')))
         R['lthrl'] = stage_viz.lthrl_viz(BV, globals().get('PXC') or {}, LAST, _md['cycle_bottoms'], _md['cycle_tops'])
     except Exception as e: errors.append(f'bitview lthrl {e}')
+    # 2026-11-08 使用者要求：短期持有者供給 90 天變化（sthd）
+    try: R['sthd'] = stage_viz.sthd_viz(BV, globals().get('PXC') or {}, LAST, _md['cycle_tops'])
+    except Exception as e: errors.append(f'bitview sthd {e}')
 # 2026-11-05 使用者要求（X 帳號掃描）：和前幾輪比（頂部之後的天數 × 距頂部；只用統一收盤，不靠 Bitview）
 try:
     _tops = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json')))['cycle_tops']
