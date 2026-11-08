@@ -1,6 +1,7 @@
 """長貼文配圖：把幾張（已標註的）網站圖表截圖疊成一張直式圖，每張上方標紅色「圖1、圖2…」，對應內文；底部破曉頁尾。
 一則貼文用一張合成圖：X 的多圖格子會把橫式圖裁掉（2 張並排每格約 7:8），單張圖在時間軸上完整顯示。
-usage（倉庫根目錄）: python3 ops/post/longpost_img.py <輸出.png> <字型資料夾> <圖1.png> [<圖2.png> ...]"""
+usage（倉庫根目錄）: python3 ops/post/longpost_img.py <輸出.png> <字型資料夾> <圖1.png> [<圖2.png> ...]
+英文長貼文：前面加 LP_TAG='Chart ' 讓標籤變成「Chart 1」"""
 import os, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'pipeline'))
 from PIL import Image, ImageDraw
@@ -18,7 +19,7 @@ img = Image.new('RGB', (W, H), bg); d = ImageDraw.Draw(img)
 y = TOP; tf = Fn['cjk'](34, 900)
 for n, im in enumerate(ims, 1):
     if len(ims) > 1:
-        t = f'圖{n}'; tw = d.textlength(t, font=tf)
+        t = f"{os.environ.get('LP_TAG', '圖')}{n}"; tw = d.textlength(t, font=tf)   # 英文版：LP_TAG='Chart '
         d.rounded_rectangle([P, y, P + tw + 40, y + TAG], radius=TAG / 2, fill=RED)
         d.text((P + 20 + tw / 2, y + TAG / 2), t, font=tf, fill='#FFFFFF', anchor='mm')
     y += TAG + 14; img.paste(im, (P, y)); y += im.height + GAP

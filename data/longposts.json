@@ -95,6 +95,20 @@
     "flows/etf",
     "flows/stab"
    ]
+  },
+  {
+   "id": "2026-11-08-liq-en",
+   "time": "2026-11-08T13:30:00Z",
+   "title": "(EN) Most of the leverage is sitting just under $75K",
+   "note": "英文長文（11/08 晚上）：網站清算熱力圖 11/08 改成 Coinalyze 7 家交易所、新增「每日多空清算量」。數據：deriv.liq_heat（11/08 00:00 UTC 快照；下方 5% 內推算多單 52,291 顆、上方空單 17,180 顆；73,900–74,800 約 2.07 萬顆、71,200–73,800 約 3.93 萬顆；上方最近 82,000–82,900）；deriv.liq_vol（到 11/07；30 天多單 13.6 億、空單 6.31 億、占 68.3%、第 86 百分位；多單占比 ≥70% 的 7 次 90 天後 5 次較高、中位 +17.7%，基準 +8.6%；例外 2025-08-29 −15.7%、2025-10-31 −22.8%；10/30 又越過 70%）。立場：不太擔心 74K 那一帶，像清槓桿不像熊市開頭；錯的條件是跌穿 71–74K 後多單清算還連續幾週占多數。圖：Chart 1 deriv #c-liq、Chart 2 deriv #c-lqv（英文版網站截圖）。",
+   "en": "Most of the leverage is sitting just under $75K. I'm not too worried about it.\n\nEveryone is looking at the same bright band on the liquidation maps right now. It's real, and it's right below us.\n\nWe just rebuilt our map with open interest from 11 BTC perpetuals on 7 exchanges (Binance, Bybit, OKX, Hyperliquid and three more), instead of OKX alone. Within 5% of the Nov 7 close ($75.8K), about 52K BTC of long positions would get force-closed on the way down. The shorts sitting within 5% above add up to about 17K BTC. Three to one (Chart 1)\n\nThe nearest band is $73.9K to $74.8K, only 2% away, around 21K BTC. Right under it, $71.2K to $73.8K holds another 39K BTC. A long liquidation is a market sell, so if price slips into those bands the drop can run faster than the news behind it. Going up, there's nothing big until $82K. In the short run the risk is lopsided, and I'd rather say that plainly\n\nThe second chart is the part people skip. These are actual exchange liquidation records, not estimates. Over the last 30 days, 68% of everything liquidated was longs: $1.36B of longs against $631M of shorts. Since late 2022, the long share has only been this high about 14% of the time. A lot of the leverage has already been flushed out (Chart 2)\n\nSo what has a flush like this meant before? Since October 2022, the 30-day long share has crossed 70% seven times. Ninety days later BTC was higher in five of them, with a median of +18%. On a random day the median 90-day return in that period was +9%\n\nThe two misses were August and October 2025, both within two months of the cycle top, with the whole bear market still ahead. The wins include February and June 2026, in the middle of the drawdown\n\nWe crossed 70% again on October 30. This doesn't look like late 2025 to me. We're 13 months past the top, price is 39% below it, and longs have already taken the bigger hit this month. A dip into the $74K band would hurt late longs, but moves like that have more often cleared the deck than started a new leg down\n\nI'd change my mind if price cuts through the $71K to $74K bands and long liquidations keep dominating for weeks after. That would look more like a market feeding on its own forced selling than a flush\n\nTwo caveats. The heatmap is an estimate built from open interest and assumed leverage, not real positions. Exchange liquidation feeds also undercount, and Hyperliquid isn't in them. Seven cases is a small sample, so treat this as a lean, not a forecast\n\n#Bitcoin #BTC\n\n(Data: Coinalyze open interest and liquidations, heatmap snapshot Nov 8 00:00 UTC, daily liquidations through Nov 7)",
+   "images": [
+    "data/longposts/2026-11-08-liq-en.png"
+   ],
+   "charts": [
+    "deriv/liq",
+    "deriv/lqv"
+   ]
   }
  ],
  "used": [
