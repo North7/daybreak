@@ -1,16 +1,16 @@
 {
- "date": "2026-11-06",
- "edition": 32,
+ "date": "2026-11-07",
+ "edition": 33,
  "picks": [
   {
-   "id": "onchain/rloss",
-   "chart": "data/picks/onchain-rloss.png",
-   "chart_en": "data/picks/onchain-rloss-en.png",
-   "why": "STH-SOPR 跌破 1 後讀者會問「這是不是投降」；實現虧損的規模最能回答，7 天內沒推過，頭條講的是 SOPR 與 ETF",
-   "q_zh": "比特幣跌回 76K 以下，算是投降了嗎？",
-   "q_en": "Has BTC capitulated below 76K?",
-   "zh": "比特幣跌回 76K 以下，算是投降了嗎？\n\n還不算。11/06 全網實現虧損 7.33 億美元，約市值的 4.82 個基點；6/30 低點是 13.2，2/5 是 47.2。這次賠錢賣的量大約只有 6 月低點的三分之一，短期持有者才剛開始認賠（Bitview，逐筆 UTXO）\n\n#比特幣 #BTC #鏈上數據",
-   "en": "Has BTC capitulated below 76K?\n\nNot yet. Network realized loss on Nov 6 was $733M, about 4.82 bp of market cap. The Jun 30 low hit 13.2 and Feb 5 hit 47.2. Loss-selling is about a third of June's and has only just started (Bitview, per-UTXO).\n\n#Bitcoin #BTC #onchain"
+   "id": "onchain/sopr",
+   "chart": "data/picks/onchain-sopr.png",
+   "chart_en": "data/picks/onchain-sopr-en.png",
+   "why": "照運營 hint：接 12:30 長貼文的「跌回成本價會不會被迫賣」，換成短期持有者；STH-SOPR 0.9914 仍低於 1，hint 的條件成立；頭條講 ETF 與資金費率，不重複",
+   "q_zh": "短期持有者在賠錢賣，接下來會怎樣？",
+   "q_en": "Short-term holders are selling at a loss. What next?",
+   "zh": "短期持有者在賠錢賣，接下來會怎樣？\n\nSTH-SOPR 0.9914，連 2 天低於 1，短線的人整體在認賠（CheckOnChain）。過去一年跌破 1 有 9 次，30 天後中位 −0.6%，平常 +0.6%，方向不一。光看這個看不出方向。\n\n#比特幣 #BTC #鏈上數據",
+   "en": "Short-term holders are selling at a loss. What next?\n\nSTH-SOPR 0.9914, below 1 for 2 days (CheckOnChain). In the past year it fell below 1 nine times; median 30 days later −0.6% vs +0.6% normally. Mixed direction.\n\n#Bitcoin #BTC #onchain"
   }
  ]
 }

@@ -301,6 +301,13 @@
    "musd": -430.2,
    "partial": false
   }
+,
+  {
+   "d": "2026-11-06",
+   "musd": -411.9,
+   "partial": true,
+   "src": "暫定：Farside（crypto.news 轉述）−411.9；SoSoValue −411.92"
+  }
  ],
  "source": "The Block",
  "source_url": "https://www.theblock.co/data/etfs/bitcoin-etf/spot-bitcoin-etf-flows",
