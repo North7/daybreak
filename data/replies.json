@@ -6,7 +6,7 @@
   {
    "style": "真人版",
    "kind": "followup",
-   "status": "skip",
+   "status": "send",
    "mode": "reply",
    "n": 21,
    "order": 1,
@@ -14,14 +14,14 @@
    "name": "BirdTechVision",
    "followers": 3834,
    "lang": "zh",
-   "angle": "按讚就好",
+   "angle": "接續對話",
    "id": "2119236837713883557",
    "url": "https://x.com/BirdTechVision/status/2119236837713883557",
    "posted": "2026-11-08T01:13:30Z",
    "summary": "回我們 ETF 持有者成本那則：想賺到錢也不容易啊",
-   "reply": "",
-   "sources": "",
-   "note": "按讚就好：閒聊感嘆，沒有問題也沒有新數字"
+   "reply": "ETF 那批平均成本 79K 左右，到現在也還套著，這段時間大家都不好賺",
+   "sources": "latest.json flows.etfcost：推算 ETF 持有者平均成本 79,039（11/05），11/07 收盤低 4.2%",
+   "note": "原作者回了我們（我們回 1 輪），原本自動任務標「按讚就好」；作者本人接話會讓我們的回覆往前排，所以改成回一句，順便把昨天說的「8 萬左右」更新成 79K。"
   },
   {
    "style": "真人版",
@@ -430,6 +430,26 @@
    "reply": "",
    "sources": "",
    "note": "Grok 0905 #10。冪律模型我們沒有對應的數字，週期位置已經給了 LP_NXT（同主題不重複），跳過、按讚就好。"
+  },
+  {
+   "style": "真人版",
+   "kind": "followup",
+   "status": "send",
+   "mode": "reply",
+   "n": 22,
+   "order": 2,
+   "author": "paulxue1979",
+   "name": "Paul Xue | BTC 链上数据研究",
+   "followers": 3958,
+   "lang": "zh",
+   "angle": "接續對話",
+   "id": "2119240639389069757",
+   "url": "https://x.com/paulxue1979/status/2119240639389069757",
+   "posted": "2026-11-08T01:28:36Z",
+   "summary": "回我們 365 日均線那則：籌碼高度集中在機構和巨鯨手中，消息面一刺激就能上去",
+   "reply": "不太賣幣的錢包 30 天多了快 30 萬顆，籌碼往拿著不動的手裡集中，這點鏈上看得到",
+   "sources": "latest.json onchain.viz.illiquid-supply（bitcoin-data）：30 日 +297,605 顆（11/06），1,294 萬顆",
+   "note": "同串第 2 輪（之後他再回就按讚）。他偏多，順著他補「籌碼集中」的鏈上證據，不接「消息一刺激就上去」。"
   }
  ]
 }

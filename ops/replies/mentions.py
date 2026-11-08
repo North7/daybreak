@@ -50,15 +50,21 @@ def main():
     now = time.time(); t0 = now - a.since_hours * 3600; r0 = now - a.reply_hours * 3600
 
     ours, cur = [], None
-    for _ in range(8):   # 翻頁
+    # 2026-11-08：fxtwitter 每頁不是照時間排（第 2 頁還會有比第 1 頁最舊那則更新的），
+    # 原本「這頁最舊的早於 t0 就停」會漏掉後面頁的貼文（漏了 BirdTechVision 那則接話）。
+    # 改成整頁都早於 t0、連續兩頁才停，最多 12 頁，用 id 去重。
+    old_pages = 0
+    for _ in range(12):   # 翻頁
         q = 'with_replies=true' + (f'&cursor={urllib.parse.quote(cur)}' if cur else '')
         d = fetch(f'https://api.fxtwitter.com/2/profile/{HANDLE}/statuses?{q}')
         res = [t for t in d.get('results') or [] if (t.get('author') or {}).get('screen_name', '').lower() == HANDLE.lower()]
         ours += res
         for t in res: _cache[t['id']] = t
         cur = ((d.get('cursor') or {}).get('bottom'))
-        if not res or not cur or min(t.get('created_timestamp') or 0 for t in res) < t0: break
-    ours = [t for t in ours if (t.get('created_timestamp') or 0) >= t0]
+        if not res or not cur: break
+        old_pages = old_pages + 1 if max(t.get('created_timestamp') or 0 for t in res) < t0 else 0
+        if old_pages >= 2: break
+    ours = list({t['id']: t for t in ours if (t.get('created_timestamp') or 0) >= t0}.values())
     answered = {parent_of(t) for t in ours if parent_of(t)}
     try:
         done = {str(i.get('id')) for i in json.load(open(os.path.join(ROOT, 'data', 'replies.json'), encoding='utf-8')).get('items', [])}
