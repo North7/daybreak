@@ -87,7 +87,8 @@
 | CheckOnChain 公開圖表 | STH-SOPR、短期持有者實現獲利／虧損、長短期持有者的實際籌碼分布、賣方衰竭常數、全網實現獲利 ÷ 虧損、HODL Waves（表觀需求）、長期持有者虧損比例（晚約 1 天；`pipeline/coc.py` 每天讀一次，失敗時用 `pipeline/coc_cache/`） | 不佔 bitcoin-data 額度 |
 | Bitview（Bitcoin Research Kit 公開 API） | 長短期持有者成本、aSOPR、LTH SOPR、真實市場均價（佐證燈號、鏈上指標表）、短期持有者成本帶、3–6／6–12／12–18 個月持幣成本、依地址餘額分層的持幣量（鯨魚與大戶）、長短期持有者供給比、長期持有者已實現虧損、活躍投資人成本、1 週–1 個月持幣成本、長短期持有者籌碼「30 天前」的實際分布；供給分位成本線、全體獲利供給、相對未實現獲利、全網實現虧損、銷毀幣天數與 SOPR；賣方風險比、長短期持有者 NUPL、儲備風險、AVIV、Dormancy、Liveliness、依持有時間的實現獲利與虧損（2026-11-06 起）；真實市場均價每天和 CheckOnChain 對照 | 每日（晚 1 天，免費、不用金鑰） |
 | Deribit | DVOL、期貨基差、選擇權、永續資金費率；選擇權逐筆成交（history API，推算做市商部位與買方權利金；快取 `coc_cache/deribit_flow.json`，2026-11-06 起） | 每日 |
-| OKX、Hyperliquid | 資金費率（與 Deribit 以未平倉加權）；OKX 永續逐小時未平倉量與 K 線（清算熱力圖，推算）；OKX 場外 USDT/CNY 報價與永續對現貨日線（三地溢價）；OKX 現貨主動買／賣量（rubik，2026-11-06 起）；OKX 合約主動買／賣量（現貨 vs 永續需求，2026-11-06 起） | 每日 |
+| OKX、Hyperliquid | 資金費率（與 Deribit、Binance、Bybit 以未平倉加權）；OKX 永續逐小時未平倉量與 K 線（清算熱力圖的備援，Coinalyze 取不到時用）；OKX 場外 USDT/CNY 報價與永續對現貨日線（三地溢價）；OKX 現貨主動買／賣量（rubik，2026-11-06 起）；OKX 合約主動買／賣量（現貨 vs 永續需求，2026-11-06 起） | 每日 |
+| Coinalyze（免費 API，GitHub secret `COINALYZE_API_KEY`；https://coinalyze.net） | 多家交易所 BTC 永續的未平倉量與 K 線（清算熱力圖、2 年範圍）、實際清算量（每日多空清算量）、Binance 與 Bybit 的資金費率（2026-11-08 起） | 每日（約 60 次，每分鐘上限 40 次） |
 | 13 個交易所掛單簿 | Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Kraken Futures、OKX Swap、Hyperliquid | 每日快照 |
 | The Block | 現貨 ETF 每日淨流量（與 Farside 同口徑）；各檔流量推算 ETF 持有者成本（不含 GBTC，2026-11-06 起） | 每日 |
 | Upbit | KRW-BTC 日線（韓國溢價，2026-11-06 起） | 每日（約 16 次請求） |
@@ -275,6 +276,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
 - **2026-11-08** 短期持有者供給 90 天變化（鏈上版「長期持有者與大戶」）：短期持有者供給和 90 天前的差，正＝舊幣在換手、負＝幣在沉澱；附每輪頂部附近的最大值，以及 2015 年起翻正翻負後 90 天的漲跌（和任一天差不多，不是訊號）。資料 Bitview。
+- **2026-11-08** 永續資金費率補上 Binance、Bybit（經 Coinalyze；原本從伺服器讀不到）。加權平均現在含 Binance、Bybit、Hyperliquid、OKX、Deribit 五家，依未平倉由大到小列出；沒有 key 或取不到時維持原本三家。
 - **2026-11-08** 清算熱力圖改用多家交易所＋「2 年」範圍＋每日多空清算量（衍生品版「槓桿與清算」）：使用者申請了 Coinalyze 免費 API key（GitHub secret `COINALYZE_API_KEY`）。熱力圖的未平倉量從只有 OKX 改成 Binance、Bybit、OKX、Hyperliquid、HTX、Bitfinex、Deribit 共 11 個 BTC 永續合約（約是原本的 7 倍），各合約分開算增減；1 小時線約 84 天、4 小時線補到約 330 天前；取不到時退回 OKX。新增「2 年」切換：12 小時線算、每天一欄，另存 `data/liq_long.json`，點了才載入。新圖「每日多空清算量」：Coinalyze 的交易所實際清算紀錄（2022-10 起，主要交易所的紀錄從那時才有；美元），附 30 天多單占比與歷史分位、多單占比 ≥ 70% 之後 90 天的漲跌；Hyperliquid 沒有、Deribit 停在 2023-10、Binance 會少報，所以只比多空、不看總額（查過 Hyperliquid 官方統計只到 2026-04 且不分多空、Deribit 只能逐筆撈，都不併入）。
 - **2026-11-08** 內容重組與導覽（使用者要求「重新設計內容結構、分割、佈局，更易讀、易定位、易查找，交互更好」）
   - 價格、資金、衍生品三版也分組（之前只有週期、鏈上有），每組一句問題當副標、標出圖數；組也有網址（例如 `#deriv/dv-opt`）。
@@ -442,7 +444,8 @@ All free public APIs; no keys required.
 | bitcoin-data.com | Supply flows (STH/LTH ratio, STH in profit), URPD, coin-age bands (for the LTH / STH split), liquid supply, top radar; holder costs, aSOPR, LTH SOPR and true market mean moved to Bitview on 2026-11-04 | 10 requests a day (free tier allows 15) |
 | CheckOnChain public charts | STH-SOPR, short-term holder realized profit/loss, actual supply distribution by long- and short-term holders, seller exhaustion constant, network realized profit ÷ loss, HODL waves (apparent demand), LTH supply in loss (about 1 day late; `pipeline/coc.py` reads it once a day and falls back to `pipeline/coc_cache/`) | Doesn't use bitcoin-data quota |
 | Deribit | DVOL, futures basis, options, perp funding; option trades (history API, for the estimated dealer side and buyer premium; cached in `coc_cache/deribit_flow.json`, from 2026-11-06) | Daily |
-| OKX, Hyperliquid | Funding (OI-weighted with Deribit); OKX perpetuals' hourly open interest and candles (liquidation heatmap, estimate); OKX OTC USDT/CNY quotes and perp-vs-spot daily bars (three premiums); OKX spot taker buy/sell volume (rubik, from 2026-11-06) | Daily |
+| OKX, Hyperliquid | Funding (OI-weighted with Deribit, Binance and Bybit); OKX perpetuals' hourly open interest and candles (liquidation heatmap fallback when Coinalyze is unavailable); OKX OTC USDT/CNY quotes and perp-vs-spot daily bars (three premiums); OKX spot taker buy/sell volume (rubik, from 2026-11-06) | Daily |
+| Coinalyze (free API, GitHub secret `COINALYZE_API_KEY`; https://coinalyze.net) | Multi-exchange BTC perpetual open interest and candles (liquidation heatmap, 2-year view), actual liquidations (daily long/short liquidations), Binance and Bybit funding (since 2026-11-08) | Daily (~60 calls, 40 per minute max) |
 | 13 exchange order books | Coinbase, Bitstamp, Gemini, Bitfinex, Kraken, Binance, OKX, Gate, MEXC, Deribit, Kraken Futures, OKX Swap, Hyperliquid | Daily snapshot |
 | The Block | Spot ETF daily net flows (same basis as Farside) | Daily |
 | FRED | 10-yr nominal and real yields, dollar index, Nasdaq | Daily |
@@ -569,6 +572,7 @@ This repository is public and its history is permanent. The site holds only mark
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
 - **2026-11-08** Short-term holder supply, 90-day change (On-chain page, "Long-term holders and whales"): short-term holder supply minus its level 90 days earlier; positive = old coins changing hands, negative = coins settling. Shows the largest reading around each top and 90-day returns after flips since 2015 (about the same as any day, not a signal). Data: Bitview.
+- **2026-11-08** Perpetual funding now includes Binance and Bybit (via Coinalyze; they were unreachable from the site's servers). The weighted average covers Binance, Bybit, Hyperliquid, OKX and Deribit, listed by open interest; without the key it falls back to the original three.
 - **2026-11-08** Liquidation heatmap goes multi-exchange, gains a 2-year view, plus daily long/short liquidations (Derivatives page, "Leverage and liquidations"): with a free Coinalyze API key (GitHub secret `COINALYZE_API_KEY`), the heatmap's open interest now covers 11 BTC perpetuals on Binance, Bybit, OKX, Hyperliquid, HTX, Bitfinex and Deribit (about 7x the OKX-only figure), each contract's changes counted separately; hourly bars for ~84 days and 4-hour bars back ~330 days, falling back to OKX if Coinalyze is unavailable. A new "2Y" switch runs 12-hour bars with one column per day, stored in `data/liq_long.json` and loaded on demand. New chart "Daily long and short liquidations": exchange liquidation records via Coinalyze (since 2022-10, when the major exchanges' records begin; USD) with the 30-day long share and its percentile, and 90-day returns after the long share passed 70%. Hyperliquid has none, Deribit's stop in 2023-10 and Binance under-reports, so it compares longs with shorts rather than totals (Hyperliquid's official stats stop in 2026-04 with no long/short split and Deribit needs trade-by-trade scraping, so neither is merged).
 - **2026-11-08** Content restructure and navigation
   - The Price, Flows and Derivatives pages are now grouped too (before, only Cycle and On-chain were), each group with a one-line question and a chart count; groups have their own links (e.g. `#deriv/dv-opt`).
