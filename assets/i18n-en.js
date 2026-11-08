@@ -459,7 +459,7 @@ window.DAYBREAK_EN = {
   'Glassnode · The Block · K33 · Coinbase Institutional 等': "Glassnode · The Block · K33 · Coinbase Institutional and others",
   '<p class="err">今天還沒有整理好的消息。</p>': "<p class=\"err\">Today's news has not been compiled yet.</p>",
   '<div class="news-sum"><div><span class="note">偏多</span><b style="color:var(--up)">': "<div class=\"news-sum\"><div><span class=\"note\">Bullish</span><b style=\"color:var(--up)\">",
-  '</b></div><div><span class="note">偏空</span><b style="color:var(--down)">': "</b></div><div><span class=\"note\">Bearish</span><b style=\"color:var(--down)\">",
+  '</b></div><div><span class="note">偏空</span><b style="color:var(--down-ink)">': "</b></div><div><span class=\"note\">Bearish</span><b style=\"color:var(--down-ink)\">",
   '</b></div><div><span class="note">中性</span><b>': "</b></div><div><span class=\"note\">Neutral</span><b>",
   '<div class="filters" id="nf" role="group" aria-label="分類">': "<div class=\"filters\" id=\"nf\" role=\"group\" aria-label=\"Categories\">",
   '<div class="news-grid" id="ng"></div><p class="note">每則消息都查證過發布日期；「解讀」說明它對比特幣的意義，並對照本站的數據。消息只作參考，不改變任何出場規則。</p>': "<div class=\"news-grid\" id=\"ng\"></div><p class=\"note\">Every story's publication date has been verified; the “Read” explains what it means for Bitcoin and checks it against our data. News is for reference only and never changes an exit rule.</p>",

@@ -1798,7 +1798,7 @@
     if (!news.length) return _t('<p class="err">今天還沒有整理好的消息。</p>') + rs;
     var cats = ['*'].concat(news.map(function (n) { return n.cat; }).filter(function (c, i, a) { return a.indexOf(c) === i; }));
     var cnt = function (k) { return news.filter(function (n) { return n.impact === k; }).length; };
-    return _t('<div class="news-sum"><div><span class="note">偏多</span><b style="color:var(--up)">') + ('0' + cnt('bull')).slice(-2) + _t('</b></div><div><span class="note">偏空</span><b style="color:var(--down)">') + ('0' + cnt('bear')).slice(-2) + _t('</b></div><div><span class="note">中性</span><b>') + ('0' + cnt('neutral')).slice(-2) + '</b></div></div>' +
+    return _t('<div class="news-sum"><div><span class="note">偏多</span><b style="color:var(--up)">') + ('0' + cnt('bull')).slice(-2) + _t('</b></div><div><span class="note">偏空</span><b style="color:var(--down-ink)">') + ('0' + cnt('bear')).slice(-2) + _t('</b></div><div><span class="note">中性</span><b>') + ('0' + cnt('neutral')).slice(-2) + '</b></div></div>' +
       _t('<div class="filters" id="nf" role="group" aria-label="分類">') + cats.map(function (c, i) { return '<button type="button" aria-pressed="' + (i === 0) + '" data-c="' + esc(c) + '">' + esc(c === '*' ? _t('全部') : catT(c)) + '</button>'; }).join('') + '</div>' +
       _t('<div class="news-grid" id="ng"></div><p class="note">每則消息都查證過發布日期；「解讀」說明它對比特幣的意義，並對照本站的數據。消息只作參考，不改變任何出場規則。</p>') + rs;
   };
@@ -2053,7 +2053,7 @@
      畫布畫熱力（越亮＝推算的待清算量越多），SVG 疊 K 線與十字線。不是實際倉位，只作讀值 */
   var liqDays = 3, liqBytes = null, liqTop_ = null, liqL = null, liqLBytes = null, liqLTop = null, liqLErr = false;
   /* 熱力圖底色永遠是深色的 viridis（淺色主題也一樣），K 線與收盤線用深色主題的亮色才看得清楚，所以這三個色不跟主題變（2026-11-04 註明，刻意的） */
-  var LIQ_UP = '#2FD08A', LIQ_DN = '#FF5A4E', LIQ_INK = '#F2F0EA', LIQ_HL = '#FFFFFF';   // LIQ_HL：Hyperliquid 實際清算價的橫條（2026-11-05），白色和 viridis、K 線的紅綠都分得開
+  var LIQ_UP = '#2FD08A', LIQ_DN = '#FF4A2E', LIQ_INK = '#F2F0EA', LIQ_HL = '#FFFFFF';   // LIQ_HL：Hyperliquid 實際清算價的橫條（2026-11-05），白色和 viridis、K 線的紅綠都分得開
   /* 2026-11-04 自我檢查：色階上限用整份快照算一次（原本每次依畫面內的格子重算，切換 3／7 天同一格會變色，縮放視窗也重排序一次） */
   function liqTopOf(u) { var v = []; for (var i = 0; i < u.length; i++) if (u[i]) v.push(u[i]); v.sort(function (a, b) { return a - b; }); return v.length ? Math.max(1, v[Math.floor(v.length * 0.998)]) : 255; }
   function liqTop() { if (liqTop_ == null) liqTop_ = liqTopOf(liqBytes); return liqTop_; }
@@ -2260,12 +2260,13 @@
         'BTC perpetuals on ' + x.venues.join(', ') + ' (Hyperliquid only from 2024-10). Each day\'s value = (open + high + low + close) ÷ 4 of that day\'s rate, annualized and weighted by open interest. This is a daily average, not the live snapshot shown in "Perpetual funding" above, so the two differ a little.'), 'neu']);
     return it;
   }
+  /* 2026-11-09 紅綠規則（使用者）：有正負方向的圖一律綠＝正、品牌橘紅＝負；資金費率、鏈上勢能、韓國溢價從類型色改過來 */
   function fhPanel() {
     var x = (D.deriv || {}).fund_hist; if (!x || !x.rows) return '';
     return panel('span-12', _T('資金費率歷史', 'Funding rate history'), 'Coinalyze · ' + fmt.md(x.date),
-      '<div class="cf-hero">' + oxCard(x.value >= 0 ? 'var(--s2)' : 'var(--s3)', _T('7 日平均（年化）', '7-day average (annualized)'), fmt.pct(x.value, 1), _T(oxYm(x.from_) + ' 以來第 ' + x.pct + ' 百分位', ord(x.pct) + ' percentile since ' + oxYm(x.from_)), oxArrow(x.value, x.v30, _T(' 點', ' pts'))) +
+      '<div class="cf-hero">' + oxCard(x.value >= 0 ? 'var(--up)' : 'var(--down)', _T('7 日平均（年化）', '7-day average (annualized)'), fmt.pct(x.value, 1), _T(oxYm(x.from_) + ' 以來第 ' + x.pct + ' 百分位', ord(x.pct) + ' percentile since ' + oxYm(x.from_)), oxArrow(x.value, x.v30, _T(' 點', ' pts'))) +
       oxCard('var(--ink-3)', _T('最近一天', 'Latest day'), fmt.pct(x.day, 1), _T('當天平均', 'daily average')) + '</div>' +
-      interpHtml(fhSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('正：多方付費', 'Positive: longs pay'), 'var(--s2)'], [_T('負：空方付費', 'Negative: shorts pay'), 'var(--s3)'], [_T('虛線：' + (x.hot || {}).th + '%', 'Dashed: ' + (x.hot || {}).th + '%'), 'var(--warn)']]) +
+      interpHtml(fhSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('正：多方付費', 'Positive: longs pay'), 'var(--up)'], [_T('負：空方付費', 'Negative: shorts pay'), 'var(--down)'], [_T('虛線：' + (x.hot || {}).th + '%', 'Dashed: ' + (x.hot || {}).th + '%'), 'var(--warn)']]) +
       '<div class="chart cf-chart" id="c-fh"></div><p class="note">' + _T('資金費率是永續合約每 8 小時（Hyperliquid 每小時）多空之間互付的費用，正＝多方付給空方。這裡是多家以未平倉加權、換成年化的 7 日平均，每 2 天畫一點。只作讀值。',
         'Funding is what longs and shorts pay each other on perpetuals every 8 hours (hourly on Hyperliquid); positive = longs pay shorts. Shown as an open-interest-weighted, annualized 7-day average across venues, plotted every 2 days. Reading only.') + czSrc(x) + '</p>', '', 'fh');
   }
@@ -2274,8 +2275,8 @@
     oxPane(el, { rows: x.rows, rng: 365, fit: true, zero: true, fmt: function (t) { return fmt.n(t, 0) + '%'; },
       label: _T('資金費率 7 日平均（年化 %）', 'Funding, 7-day average (annualized %)'), aria: _T('BTC 價格與資金費率 7 日平均', 'BTC price and the 7-day average funding rate'),
       refs: [{ y: (x.hot || {}).th || 30, col: 'var(--warn)', lab: (x.hot || {}).th + '%' }],
-      lines: [{ i: 2, split: ['var(--s2)', 'var(--s3)'], w: 1.4, name: _T('7 日平均', '7-day average'), tfmt: function (v) { return fmt.pct(v, 1); } }],
-      now: { i: 2, col: x.value >= 0 ? 'var(--s2)' : 'var(--s3)', lab: '' } });
+      lines: [{ i: 2, split: ['var(--up)', 'var(--down)'], w: 1.4, name: _T('7 日平均', '7-day average'), tfmt: function (v) { return fmt.pct(v, 1); } }],
+      now: { i: 2, col: x.value >= 0 ? 'var(--up)' : 'var(--down)', lab: '' } });
   }
 
   /* ② 全市場未平倉量 */
@@ -2521,7 +2522,7 @@
         var s = '', z = C.Ys(0), yd = C.Ys(CB_DEEP), st = hi - lo > 0.6 ? 0.2 : 0.1;
         for (var g = Math.ceil(lo / st) * st; g <= hi + 1e-9; g += st) { if (Math.abs(g) < 1e-9) continue; var gy = C.Ys(g); s += C.gl(gy, Math.abs(gy - yd) < 11 ? null : pf(+g.toFixed(2))); }
         s += C.gl(z, '0', 'base');
-        s += '<rect x="' + C.ML + '" y="' + yd.toFixed(1) + '" width="' + C.pw + '" height="' + (C.yb - yd).toFixed(1) + '" fill="var(--down-dim)"/><line x1="' + C.ML + '" x2="' + (C.ML + C.pw) + '" y1="' + yd.toFixed(1) + '" y2="' + yd.toFixed(1) + '" stroke="var(--down)" stroke-dasharray="3 4" stroke-width="1"/>' + C.tx(C.ML + C.pw + 8, yd + 3.5, CB_DEEP + '%').replace('class="ax"', 'class="ax" fill="var(--down)"');
+        s += '<rect x="' + C.ML + '" y="' + yd.toFixed(1) + '" width="' + C.pw + '" height="' + (C.yb - yd).toFixed(1) + '" fill="var(--down-dim)"/><line x1="' + C.ML + '" x2="' + (C.ML + C.pw) + '" y1="' + yd.toFixed(1) + '" y2="' + yd.toFixed(1) + '" stroke="var(--down)" stroke-dasharray="3 4" stroke-width="1"/>' + C.tx(C.ML + C.pw + 8, yd + 3.5, CB_DEEP + '%').replace('class="ax"', 'class="ax" fill="var(--down-ink)"');
         var bw = Math.max(0.8, C.pw / C.rows.length * 0.7);
         C.rows.forEach(function (r) { var y = C.Ys(r[1]); s += '<rect x="' + (C.X(r[0]) - bw / 2).toFixed(1) + '" y="' + Math.min(y, z).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, Math.abs(y - z)).toFixed(1) + '" fill="var(--' + (r[1] >= 0 ? 'up' : 'down') + ')" opacity=".42"/>'; });
         var pts = C.rows.filter(function (r) { return a7[r[0]] != null; });
@@ -2878,7 +2879,7 @@
         var yt = C.Ys(x.th), s = '<rect x="' + C.ML + '" y="' + yt.toFixed(1) + '" width="' + C.pw + '" height="' + (C.yb - yt).toFixed(1) + '" fill="var(--down-dim)"/><line x1="' + C.ML + '" x2="' + (C.ML + C.pw) + '" y1="' + yt.toFixed(1) + '" y2="' + yt.toFixed(1) + '" stroke="var(--down)" stroke-dasharray="3 4" stroke-width="1"/>';
         // 2026-11-04：和門檻 0.13 的標籤距離不到 11px 的刻度只畫線不寫字（原本 0.1 和 0.13 疊在一起）
         [0.1, 0.2, 0.5, 1, 2].forEach(function (t) { if (L(t) < sl || L(t) > sh) return; var y = C.Ys(t); s += C.gl(y, Math.abs(y - yt) < 11 ? null : String(t)); });
-        s += C.tx(C.ML + C.pw + 8, yt + 3.5, String(x.th)).replace('class="ax"', 'class="ax" fill="var(--down)"');
+        s += C.tx(C.ML + C.pw + 8, yt + 3.5, String(x.th)).replace('class="ax"', 'class="ax" fill="var(--down-ink)"');
         s += '<path class="ln" d="M' + R_.map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(r[1]).toFixed(1); }).join('L') + '" stroke="var(--s1)" stroke-width="1.5"/>';
         return s;
       },
@@ -3885,7 +3886,7 @@
   function moPanel() {
     var x = (D.onchain || {}).mom; if (!x || !x.rows) return '';
     return panel('span-12', _T('鏈上勢能（SOPR × 銷毀幣天數）', 'On-chain momentum (SOPR × coin days destroyed)'), 'Bitview · ' + fmt.md(x.date),
-      interpHtml(moSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('獲利了結（正）', 'Profit-taking (positive)'), 'var(--s1)', 'box'], [_T('認賠（負）', 'Loss-taking (negative)'), 'var(--down)', 'box'], [_T('頂背離（虛線連兩個高點，2017 年起全部）', 'Bearish divergence (dashed, joining the two highs; all since 2017)'), 'var(--warn)']]) +
+      interpHtml(moSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('獲利了結（正）', 'Profit-taking (positive)'), 'var(--up)', 'box'], [_T('認賠（負）', 'Loss-taking (negative)'), 'var(--down)', 'box'], [_T('頂背離（虛線連兩個高點，2017 年起全部）', 'Bearish divergence (dashed, joining the two highs; all since 2017)'), 'var(--warn)']]) +
       '<div class="chart cf-chart" id="c-mom"></div><p class="note">' + _T('（全網 SOPR − 1）× 每日銷毀幣天數（千），14 日指數平均；刻度壓縮過（大的數字被縮小），看方向和峰值高低。頂背離＝價格擺動新高、正值峰值比前一次低。本站自己的組合，只作讀值。',
         '(Network SOPR − 1) × coin days destroyed per day (thousands), 14-day exponential average; the scale is compressed (large values shrunk) — read direction and relative peaks. Bearish divergence = price at a higher swing high with a lower positive peak. Our own construction; reading only.') + '</p>', '', 'mom');
   }
@@ -3893,10 +3894,10 @@
     var x = (D.onchain || {}).mom; if (!x || !el) return;
     oxPane(el, { rows: x.rows, label: _T('鏈上勢能（壓縮刻度）', 'On-chain momentum (compressed scale)'), aria: _T('BTC 價格與鏈上勢能', 'BTC price and on-chain momentum'), zero: true, tf: MO_T,
       ticks: [-1000, -100, 0, 100, 1000, 5000], fmt: function (t) { return Math.abs(t) >= 1000 ? (t / 1000) + 'K' : String(t); },
-      lines: [{ i: 2, split: ['var(--s1)', 'var(--down)'], w: 1.3, name: _T('鏈上勢能', 'Momentum'), tfmt: function (v) { return fmt.n(v, 0); } }],
+      lines: [{ i: 2, split: ['var(--up)', 'var(--down)'], w: 1.3, name: _T('鏈上勢能', 'Momentum'), tfmt: function (v) { return fmt.n(v, 0); } }],
       links: (x.divs || []).reduce(function (a, d) { return a.concat([{ x0: dnOf(d.prev), y0: d.prev_price, x1: dnOf(d.date), y1: d.price, col: 'var(--warn)', price: true, dash: '5 4' }, { x0: dnOf(d.prev), y0: d.za, x1: dnOf(d.date), y1: d.zb, col: 'var(--warn)', dash: '5 4', w: 1.8 }]); }, []),
       marks: (x.divs || []).slice(-3).map(function (d) { return { x: dnOf(d.date), y: d.zb, col: 'var(--warn)', t: _T('頂背離 ', 'Bear div ') + fmt.md(d.date) + (d.dd60 != null ? ' ' + fmt.pct(d.dd60, 0) : '') }; }),
-      now: { i: 2, col: x.value >= 0 ? 'var(--s1)' : 'var(--down)', lab: _T('現在 ', 'Now ') + fmt.n(x.value, 0) } });
+      now: { i: 2, col: x.value >= 0 ? 'var(--up)' : 'var(--down)', lab: _T('現在 ', 'Now ') + fmt.n(x.value, 0) } });
   }
 
   /* ⑧ 籌碼缺口與雙錨：現價 ±30% 內最大的兩個籌碼峰（雙錨）、中間籌碼很薄的價位（缺口，上次通過時沒有充分換手）、近 7 天換手最多的價位。讀值併進「籌碼分布」 */
@@ -4478,8 +4479,8 @@
   function kpPanel() {
     var x = (D.flows || {}).kp; if (!x || !x.rows) return '';
     return panel('span-12', _T('韓國溢價', 'Korea premium'), 'Upbit · ' + fmt.md(x.date),
-      '<div class="cf-hero">' + oxCard(x.a7 >= 5 ? 'var(--s2)' : 'var(--s3)', _T('7 日平均', '7-day average'), fmt.pct(x.a7, 2), _T('近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位', fmt.n(x.pct4, 0) + 'th percentile of 4 years')) + oxCard('var(--ink-3)', _T('最新一天', 'Latest day'), fmt.pct(x.value, 2), fmt.md(x.date)) + '</div>' +
-      interpHtml(kpSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('7 日平均：溢價', '7-day average: premium'), 'var(--s2)'], [_T('7 日平均：折價', '7-day average: discount'), 'var(--s3)'], [_T('每日', 'Daily'), 'var(--ink-3)'], [_T('5%：偏熱', '5%: running hot'), 'var(--s2)', 'dash']]) +
+      '<div class="cf-hero">' + oxCard(x.a7 >= 0 ? 'var(--up)' : 'var(--down)', _T('7 日平均', '7-day average'), fmt.pct(x.a7, 2), _T('近 4 年第 ' + fmt.n(x.pct4, 0) + ' 百分位', fmt.n(x.pct4, 0) + 'th percentile of 4 years')) + oxCard('var(--ink-3)', _T('最新一天', 'Latest day'), fmt.pct(x.value, 2), fmt.md(x.date)) + '</div>' +
+      interpHtml(kpSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('7 日平均：溢價', '7-day average: premium'), 'var(--up)'], [_T('7 日平均：折價', '7-day average: discount'), 'var(--down)'], [_T('每日', 'Daily'), 'var(--ink-3)'], [_T('5%：偏熱', '5%: running hot'), 'var(--warn)', 'dash']]) +
       '<div class="chart cf-chart" id="c-kp"></div><p class="note">' + _T('Upbit KRW-BTC 日收盤（UTC）÷（美元收盤 × 美元兌韓元）− 1；匯率用歐洲央行參考匯率，週末沿用前一個工作日。韓國有資本管制，套利不容易，所以溢價可以長期存在；只看 Upbit 一家。縱軸是壓縮刻度（2018 年初曾到 50%）。只作讀值。',
         'Upbit KRW-BTC daily close (UTC) ÷ (USD close × USD/KRW) − 1, using ECB reference rates (weekends carry the previous business day). Capital controls make arbitrage hard, so a premium can persist; Upbit only. The vertical axis is compressed (it reached 50% in early 2018). Reading only.') + '</p>', '', 'kp');
   }
@@ -4488,9 +4489,9 @@
     var x = (D.flows || {}).kp; if (!x || !el) return;
     var f = function (v) { return fmt.pct(v, 2); };
     oxPane(el, { rows: x.rows, rng: 1095, fit: true, tf: KPT, ticks: [-5, -2, 0, 2, 5, 10, 20, 50], fmt: function (v) { return fmt.pct(v, 0); }, label: _T('韓國溢價（%，壓縮刻度）', 'Korea premium (%, compressed scale)'), aria: _T('BTC 價格與韓國溢價', 'BTC price and Korea premium'),
-      refs: [{ y: 5, col: 'var(--s2)' }],
-      lines: [{ i: 2, col: 'var(--ink-3)', w: 1, op: 0.45, name: _T('每日', 'Daily'), tfmt: f }, { i: 3, split: ['var(--s2)', 'var(--s3)'], w: 1.8, name: _T('7 日平均', '7-day average'), tfmt: f }],
-      now: { i: 3, col: x.a7 >= 0 ? 'var(--s2)' : 'var(--s3)', lab: _T('現在 ', 'Now ') + fmt.pct(x.a7, 1) } });
+      refs: [{ y: 5, col: 'var(--warn)' }],
+      lines: [{ i: 2, col: 'var(--ink-3)', w: 1, op: 0.45, name: _T('每日', 'Daily'), tfmt: f }, { i: 3, split: ['var(--up)', 'var(--down)'], w: 1.8, name: _T('7 日平均', '7-day average'), tfmt: f }],
+      now: { i: 3, col: x.a7 >= 0 ? 'var(--up)' : 'var(--down)', lab: _T('現在 ', 'Now ') + fmt.pct(x.a7, 1) } });
   }
 
   /* ⑥ 每輪資金效率（表格，沒有走勢圖） */
@@ -4623,7 +4624,7 @@
     return panel('span-12', _T('掛單簿', 'Order book'), _T('13 個交易所 · ±15% · 快照 ', '13 exchanges · ±15% · snapshot ') + (o.ts || '').replace('T', ' ').slice(5, 16) + ' UTC',
       interpHtml(bkInterp(o)) + '<div class="grid" style="margin-top:8px">' +
       (o.wide ? '<div class="span-8"><div class="panel-h"><h2>' + _T('全景：每 1,000 美元一格', 'Full view: $1,000 buckets') + '</h2><span class="src">' + _T('7 個整本可得的場所 · ±15%', '7 venues with full books · ±15%') + '</span></div>' + legend([[_t('買單'), 'var(--up)'], [_t('賣單'), 'var(--down)']]) + '<div id="c-book"></div></div>' : '') +
-      '<div class="' + (o.wide ? 'span-4' : 'span-12') + '"><div class="panel-h"><h2 style="color:var(--down)">' + _T('上方賣牆', 'Ask walls above') + '</h2><span class="src">' + _T('賣單合計 ', 'total asks ') + '$' + fmt.n(t.wide_ask, 0) + 'M</span></div><div class="events">' + walls(w.ask, 'var(--down)') + '</div>' +
+      '<div class="' + (o.wide ? 'span-4' : 'span-12') + '"><div class="panel-h"><h2 style="color:var(--down-ink)">' + _T('上方賣牆', 'Ask walls above') + '</h2><span class="src">' + _T('賣單合計 ', 'total asks ') + '$' + fmt.n(t.wide_ask, 0) + 'M</span></div><div class="events">' + walls(w.ask, 'var(--down)') + '</div>' +
       '<div class="panel-h" style="margin-top:8px"><h2 style="color:var(--up)">' + _T('下方買牆', 'Bid walls below') + '</h2><span class="src">' + _T('買單合計 ', 'total bids ') + '$' + fmt.n(t.wide_bid, 0) + 'M</span></div><div class="events">' + walls(w.bid, 'var(--up)') + '</div>' +
       _t('<div class="panel-h" style="margin-top:8px"><h2>整數關卡</h2></div><div class="events">') + Object.keys(rd).sort().reverse().map(function (k) { var r = rd[k]; return '<div class="event"><span class="d">' + fmt.usd(+k) + '</span><span style="color:var(--ink-2)">' + (r.side === 'a' ? _t('賣') : _t('買')) + _t('方第 ') + r.rank + _t('／') + r.of + _t(' 名</span><span class="num">$') + fmt.n(r.musd, 1) + 'M</span></div>'; }).join('') + '</div></div></div>' +
       '<p class="note">' + _T('快照時間是 UTC ' + (o.ts || '').slice(11, 16) + '，讀的時候可能已過好幾個小時；掛單隨時可撤，假牆常見。Binance 期貨與 Bybit 讀不到，永續部分偏低估。', 'The snapshot was taken at ' + (o.ts || '').slice(11, 16) + ' UTC and may be hours old by the time you read it; orders can be pulled at any time and fake walls are common. Binance futures and Bybit are not readable, so perpetual depth is understated.') + '</p>');
