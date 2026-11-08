@@ -49,7 +49,7 @@
   // 2026-11-05：最新一點的心跳只在圖進到畫面時才跑（全站約 35 張圖同時跳會讓整頁一直重畫，手機捲動明顯變卡）
   var scT; window.addEventListener('scroll', function () { document.documentElement.classList.add('scrolling'); clearTimeout(scT); scT = setTimeout(function () { document.documentElement.classList.remove('scrolling'); }, 250); }, { passive: true });   // 捲動中先停心跳（發光線＋動畫一起重畫很貴），停下來再跳
   var pulseIO = 'IntersectionObserver' in window ? new IntersectionObserver(function (es) { es.forEach(function (e) { e.target.classList.toggle('inview', e.isIntersecting); }); }) : null;
-  function mount(el, draw) { if (!el) return; el._draw = function (e) { try { draw(e); } catch (er) { chartErr(e, er); } }; mounted.push(el); if (pulseIO && !el._io) { el._io = 1; pulseIO.observe(el); } el._draw(el); }
+  function mount(el, draw) { if (!el) return; el._draw = function (e) { try { draw(e); } catch (er) { chartErr(e, er); } try { lgAfter(e); } catch (er) {} }; mounted.push(el); if (pulseIO && !el._io) { el._io = 1; pulseIO.observe(el); } el._draw(el); }
   /* 不經 mount 的繪圖（自己找元素、綁按鈕）：個別包起來，出錯只記錄、不中斷同一版其他圖 */
   function safe() { for (var i = 0; i < arguments.length; i++) { try { arguments[i](); } catch (e) { console.error(e); } } }
   var ro = window.ResizeObserver ? new ResizeObserver(function (es) {
@@ -98,7 +98,7 @@
   var RNG = [[365, '1 年', '1Y'], [1095, '3 年', '3Y'], [0, '全部', 'All']];
   function rangeOf(el, cfg, W) {
     if (cfg.xType === 'num' || cfg.noRange || W < 420 || (cfg.h && cfg.h < 190)) return null;   // 小圖（鏈上指標走勢的小格）不加，太擠
-    var host = el.closest('.evc, .panel'); if (host && [].some.call(host.querySelectorAll('.seg'), function (g) { return !g.classList.contains('rng') && !g.classList.contains('tm-mode'); })) return null;
+    var host = el.closest('.evc, .panel'); if (host && [].some.call(host.querySelectorAll('.seg'), function (g) { return !g.classList.contains('rng') && !g.classList.contains('tm-mode') && !g.classList.contains('lg-view'); })) return null;
     var xs = []; cfg.series.forEach(function (s) { s.data.forEach(function (p) { if (p[1] != null) xs.push(p[0]); }); }); if (xs.length < 2) return null;
     var lo = Math.min.apply(null, xs), hi = Math.max.apply(null, xs), span = hi - lo; if (span < 700) return null;
     var opts = RNG.filter(function (o) { return !o[0] || o[0] < span * 0.8; }), sel = el._rng || 0;
@@ -281,6 +281,86 @@
   }
   function kpi(k, v, n, bar, cls) { return '<div class="kpi"><span class="k">' + k + '</span><span class="v' + (cls ? ' ' + cls : '') + '">' + v + '</span>' + (n ? '<span class="n">' + n + '</span>' : '') + (bar != null ? '<span class="bar"><i style="width:' + Math.max(2, Math.min(100, bar)).toFixed(1) + '%"></i></span>' : '') + '</div>'; }
   function legend(items) { return '<div class="legend">' + items.map(function (it) { return '<span style="color:' + it[1] + '"><i class="' + (it[2] || '') + '"></i><b style="color:var(--ink-2);font-weight:400">' + esc(it[0]) + '</b></span>'; }).join('') + '</div>'; }
+
+  /* 2026-11-09 使用者：「值得搬過來的那4個」（Tidemark 歷史圖的互動）搬到全站。圖例在圖前面的都會自動套：
+     ① 圖例可以點：依顏色對應到圖上的線、面積、柱與標記，點一下藏起來、再點一下回來（重畫後保留）；
+     ② 圖例旁顯示數字：沒滑過時是最新一天，滑過圖時是游標那一天（數字取自提示框，顏色對上的才顯示）；
+     ③ 圖例同時有「頂」和「底」的項目時，加「全部／頂部／底部」切換，一次藏起另一邊。
+     Tidemark 歷史圖有自己的圖例與讀數列，不套這一套 */
+  var lgSim = 0;
+  function lgCol(sp) { var m = /(?:^|;)\s*color:\s*([^;]+)/.exec(sp.getAttribute('style') || ''); return m ? m[1].trim() : null; }
+  function lgOf(el) { for (var n = el.previousElementSibling, k = 0; n && k < 4; n = n.previousElementSibling, k++) { if (n.classList.contains('chart')) return null; if (n.classList.contains('legend')) return n.classList.contains('tmh-chips') ? null : n; } return null; }
+  function lgItems(lg) { return [].filter.call(lg.children, function (n) { return n.tagName === 'SPAN' && !n.classList.contains('lg-d'); }); }
+  function lgNodes(svg, col) {
+    var ids = [].filter.call(svg.querySelectorAll('linearGradient'), function (g) { var st = g.querySelector('stop'); return st && st.getAttribute('stop-color') === col; }).map(function (g) { return g.id; });
+    var sel = '[stroke="' + col + '"], [fill="' + col + '"], [style*="fill:' + col + '"]' + ids.map(function (id) { return ', [fill="url(#' + id + ')"]'; }).join('');
+    return [].filter.call(svg.querySelectorAll(sel), function (n) { return !n.closest('defs') && !n.classList.contains('hit'); });
+  }
+  function lgApply(el) {
+    var svg = el.querySelector('svg'); if (!svg) return; var H = el._lgHide || {};
+    [].forEach.call(svg.querySelectorAll('.lg-off'), function (n) { n.classList.remove('lg-off'); });
+    Object.keys(H).forEach(function (c) { if (H[c]) lgNodes(svg, c).forEach(function (n) { n.classList.add('lg-off'); }); });
+  }
+  function lgSync(el, lg) { lgItems(lg).forEach(function (sp) { if (sp.classList.contains('lg-tg')) sp.setAttribute('aria-pressed', !el._lgHide[lgCol(sp)]); }); lgApply(el); }
+  function lgTip() {
+    var T = $('#tip'); if (!T || T.hidden) return null;
+    var t = T.querySelector('.t'), rows = [].map.call(T.querySelectorAll('.r'), function (r) { var i = r.querySelector('i'), b = r.querySelector('b'), n = r.querySelector('span'), m = /background:\s*([^;]+)/.exec((i && i.getAttribute('style')) || ''); return [m ? m[1].trim() : '', b ? b.textContent : '', n ? n.textContent.trim() : '']; });
+    return { t: t ? t.textContent : '', rows: rows };
+  }
+  function lgFill(lg, q) {
+    var hit = 0, used = {}, its = lgItems(lg), nm = function (x) { return String(x || '').replace(/[\s（）()：:]/g, '').toLowerCase(); };
+    its.forEach(function (sp) {
+      var c = lgCol(sp), em = sp.querySelector('.lg-v'), r = null;
+      if (q && c) {
+        var cand = q.rows.filter(function (x, k) { return x[0] === c && !used[k]; }), name = nm((sp.querySelector('b') || sp).textContent);
+        var same = its.filter(function (o) { return lgCol(o) === c; }).length, all = q.rows.filter(function (x) { return x[0] === c; }).length;
+        r = cand.filter(function (x) { var a = nm(x[2]); return a && (a === name || a.indexOf(name) === 0 || name.indexOf(a) === 0); })[0] || null;   // 先比名稱
+        if (!r && (same === 1 || all === same)) r = cand[0] || null;   // 同色只有一項，或同色的列數和圖例項數一樣（照順序一對一）
+        if (r) used[q.rows.indexOf(r)] = 1;
+      }
+      if (r && r[1]) { hit = 1; if (!em) { em = document.createElement('em'); em.className = 'lg-v'; sp.appendChild(em); } em.textContent = r[1]; } else if (em) em.textContent = '';
+    });
+    var d = lg.querySelector('.lg-d'); if (hit && !d) { d = document.createElement('span'); d.className = 'lg-d'; lg.insertBefore(d, lg.firstChild); }
+    if (d) d.textContent = hit ? q.t : '';
+  }
+  function lgLatest(el, lg) {   // 模擬游標放在圖的右緣外，取最後一筆（手機上一個像素可能涵蓋十幾天，放在右緣內會取到前一筆）
+    var hs = el.querySelectorAll('.hit'); if (!hs.length) return; var h = hs[hs.length - 1], r = h.getBoundingClientRect(), T = $('#tip');
+    if (!r.width || (T && !T.hidden)) return;
+    lgSim = 1;
+    try { h.dispatchEvent(new PointerEvent('pointermove', { clientX: hs.length > 1 ? r.left + r.width / 2 : r.right + 40, clientY: r.top + r.height / 2, bubbles: true })); el._lgLast = lgTip(); h.dispatchEvent(new PointerEvent('pointerleave')); } catch (e) {}
+    hideTip(); lgSim = 0;
+    if (el._lgLast) lgFill(lg, el._lgLast);
+  }
+  function lgView(el, lg) {
+    var its = lgItems(lg).filter(function (sp) { return sp.classList.contains('lg-tg'); }), tx = function (sp) { return sp.textContent; };
+    var TP = /頂部|頂背離|週期頂|歷次頂|cycle top|bearish div/i, BT = /底部|底背離|熊市底|歷次底|bottom|bullish div/i;
+    var top = its.filter(function (sp) { return TP.test(tx(sp)) && !BT.test(tx(sp)); }), bot = its.filter(function (sp) { return BT.test(tx(sp)) && !TP.test(tx(sp)); });
+    var sg = lg.querySelector('.lg-view'); if (!top.length || !bot.length) { if (sg) sg.remove(); return; } if (sg) return;
+    lg.insertAdjacentHTML('beforeend', '<div class="seg lg-view" role="group" aria-label="' + _T('看哪一邊', 'Which side') + '"><button type="button" data-v="all" aria-pressed="true">' + _T('全部', 'All') + '</button><button type="button" data-v="top" aria-pressed="false">' + _T('頂部', 'Tops') + '</button><button type="button" data-v="bot" aria-pressed="false">' + _T('底部', 'Bottoms') + '</button></div>');
+    sg = lg.querySelector('.lg-view');
+    sg.addEventListener('click', function (e) {
+      var b = e.target.closest('button'); if (!b) return; e.stopPropagation(); var v = b.getAttribute('data-v');
+      [].forEach.call(sg.querySelectorAll('button'), function (q) { q.setAttribute('aria-pressed', q === b); });
+      top.forEach(function (sp) { el._lgHide[lgCol(sp)] = v === 'bot'; }); bot.forEach(function (sp) { el._lgHide[lgCol(sp)] = v === 'top'; });
+      lgSync(el, lg);
+    });
+  }
+  function lgAfter(el) {
+    var lg = el && lgOf(el), svg = el && el.querySelector('svg'); if (!lg || !svg) return;
+    el._lgHide = el._lgHide || {};
+    lgItems(lg).forEach(function (sp) { var c = lgCol(sp), on = c && lgNodes(svg, c).length; sp.classList.toggle('lg-tg', !!on); if (on) { sp.setAttribute('role', 'button'); sp.tabIndex = 0; } });
+    if (!lg._lgEl) {
+      var tg = function (e) { var sp = e.target.closest('.lg-tg'); if (!sp || (e.type === 'keydown' && e.key !== 'Enter' && e.key !== ' ')) return; e.preventDefault(); var c = lgCol(sp), E = lg._lgEl; E._lgHide[c] = !E._lgHide[c]; lgSync(E, lg); };
+      lg.addEventListener('click', tg); lg.addEventListener('keydown', tg);
+    }
+    lg._lgEl = el;
+    lgView(el, lg); lgSync(el, lg); lgLatest(el, lg);
+  }
+  document.addEventListener('pointermove', function (e) { if (lgSim) return; var h = e.target.closest && e.target.closest('.chart .hit'); if (!h) return; var el = h.closest('.chart'), lg = el && lgOf(el); if (lg) lgFill(lg, lgTip()); });
+  document.addEventListener('pointerout', function (e) {
+    if (lgSim) return; var h = e.target.closest && e.target.closest('.chart .hit'); if (!h) return; var el = h.closest('.chart'); if (e.relatedTarget && el.contains(e.relatedTarget) && e.relatedTarget.closest('.hit')) return;
+    var lg = lgOf(el); if (!lg) return; if (el._lgLast) lgFill(lg, el._lgLast); else lgLatest(el, lg);
+  });
   function meter(lab, sub, pos, val, valSub, ticks) {
     return '<div class="meter"><span class="lab"><b>' + lab + '</b><span>' + sub + '</span></span><span class="track">' + (ticks || []).map(function (t) { return '<u style="left:' + t + '%"></u>'; }).join('') + '<em data-pos="' + Math.max(0, Math.min(100, pos)).toFixed(1) + '" style="left:0%"></em></span><span class="val">' + val + (valSub ? '<small>' + valSub + '</small>' : '') + '</span></div>';
   }

@@ -903,3 +903,14 @@ html.fd-on { overflow: hidden; }
 .tmh-chip:hover { border-color: currentColor; }
 .tmh-chip[aria-pressed="false"] { opacity: .4; }
 .tmh-chip[aria-pressed="false"] b { text-decoration: line-through; }
+/* 2026-11-09 全站圖例互動（借自 Tidemark 歷史圖）：點圖例開關那條線、圖例旁顯示最新／游標那天的數字、頂部／底部切換 */
+.legend .lg-tg { cursor: pointer; user-select: none; transition: opacity .2s; }
+.legend .lg-tg:hover b { color: var(--ink) !important; }
+.legend .lg-tg[aria-pressed="false"] { opacity: .35; }
+.legend .lg-tg[aria-pressed="false"] b { text-decoration: line-through; }
+.legend .lg-tg:focus-visible { outline: 1px solid currentColor; outline-offset: 3px; }
+.legend .lg-v { font-style: normal; font-family: var(--f-mono); font-size: 11.5px; font-weight: 600; color: var(--ink); }
+.legend .lg-d { font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-3); }
+.legend .lg-d:empty { display: none; }
+.legend .lg-view { margin-left: auto; }
+.chart .lg-off, .chart .lg-off + text.cf-pill { display: none; }
