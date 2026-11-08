@@ -60,7 +60,7 @@ BASE=https://north7.github.io/daybreak/ node tests/smoke.js   # 上線後再跑�
 | 內容重組與導覽：三版新分組、四張需求圖與兩張價格類圖搬家、全站搜尋、側欄子目錄、手機目錄鈕（2026-11-08，見 5f） | 全站 | `grpH`、`buildFind`、`buildSubnav`、`grpSpy` |
 | 短期持有者供給 90 天變化（2026-11-08） | 鏈上版「長期持有者與大戶」 | `onchain.sthd`（`stage_viz.sthd_viz`，Bitview `sths`；rows 第 3 欄千顆） |
 | 清算熱力圖改 Coinalyze 多家交易所（11 個合約，取不到退回 OKX）＋「2 年」範圍（2026-11-08） | 衍生品版「槓桿與清算」 | `deriv.liq_heat`（`model.src`＝Coinalyze／OKX；`long`＝2 年檔的時間）；`data/liq_long.json`（`liq_heat.build_long`，點了才載入） |
-| 晨昏指數（2026-11-08，和週線多空分數並列） | 週期版「現在的階段」、頭版「方向」 | `cycle.dawn`（`pipeline/dawn.py`；rows＝[天數, 熱度, 收盤, 階段 0–4]；stats＝各階段之後半年、一年；marks＝歷次頂底的熱度） |
+| 晨昏指數（2026-11-08，和週線多空分數並列） | 週期版「現在的階段」、頭版「方向」 | `cycle.dawn`（`pipeline/dawn.py`；rows＝[天數, 熱度, 收盤, 階段 0–4, 方向 ±1]；圖用發散配色 `dwRamp`（--stg0 ↔ 灰 ↔ --stg4），不用五個階段色；stats＝各階段之後半年、一年；marks＝歷次頂底的熱度） |
 | 資金費率歷史、全市場未平倉量、多空帳戶比（2026-11-08，Coinalyze 日線） | 衍生品版「槓桿與清算」 | `deriv.fund_hist`、`deriv.oi_hist`、`deriv.ls_acct`（`pipeline/cz_viz.py`；rows 每 2 天一點） |
 | 現貨與永續的主動買賣（多交易所，2026-11-08） | 衍生品版「現貨訂單流」 | `deriv.taker`（`cz_viz.taker`；Binance 現貨走 data-api.binance.vision；30 天加總，和中位數 `med` 比） |
 | 每日多空清算量（2026-11-08） | 衍生品版「槓桿與清算」 | `deriv.liq_vol`（`liq_heat.build_vol`；rows＝[天數, 收盤, 空單百萬美元, −多單百萬美元]；2022-10 起；Hyperliquid 沒有、Deribit 停在 2023-10，不計入） |

@@ -130,5 +130,5 @@ def build(bv, cm, rpl, last, px_show=None, tops=(), bottoms=()):
                 heat_c=[dict(key=k, raw=round(raw[k][d1], 4) if d1 in raw[k] else None, pct=round(P[k][d1] * 100) if d1 in P[k] else None) for k in HK],
                 trend_c=[dict(key=k, raw=round(raw[k][d1], 4) if d1 in raw[k] else None, z=round(Z[k][d1], 2) if d1 in Z[k] else None) for k in TK],
                 stats=stats, base=base, quint=quint, marks=marks, flips=flips[-8:], th=dict(hot=round(HOT * 100), cold=round(COLD * 100), mid=round(MID * 100)),
-                rows=[[dn(d), round(heat[d] * 100, 1), round(pxs[d]), ST[d]] for d in W],
+                rows=[[dn(d), round(heat[d] * 100, 1), round(pxs[d]), ST[d], R[d]] for d in W],   # 第 5 欄＝方向（+1 多方、−1 空方；畫空方灰底用）
                 note='熱度＝五項估值和過去 4 年比的百分位平均；方向＝四項趨勢，連續 4 週才翻；只用當天以前的資料；只作讀值')
