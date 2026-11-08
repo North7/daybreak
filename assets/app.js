@@ -798,23 +798,31 @@
      ・錯位網點：越靠中線越大（最深處重疊成色塊），越往外越小，輪廓外散開幾顆小點
      ・色票從參考圖的點心取色（深青 → 青 → 黃綠 → 芥末黃 → 琥珀 → 珊瑚 → 洋紅 → 紫）；形狀看 σ≈5 週平滑的熱度、顏色看 σ≈11 週（色區大片、慢慢過渡）
      ・圖自帶淺灰藍底（夜刊深藍黑）；頂從上方標籤往下指、底從下方往上指。樣稿與研究：本機 .claude/research/dawn/ */
-  var DW_VIV = [[0, '#0B7F90'], [16, '#13A0B4'], [30, '#47B8C8'], [42, '#94C11E'], [52, '#C9BC16'], [61, '#F2B02A'], [71, '#F5834A'], [81, '#EC5560'], [91, '#B8448F'], [100, '#7A55A3']];
-  function dwHex(h) { return [1, 3, 5].map(function (i) { return parseInt(h.substr(i, 2), 16); }); }
+  /* 2026-11-09 使用者：「晨昏指數顏色也統一一下」→ 改用全站的週期階段五色（--stg0 深藍 → --stg1 淺藍 → --stg2 綠 → --stg3 琥珀 → --stg4 品牌橘紅），
+     和週線多空分數同一套：熱度 0–100 照 DW_POS 的位置在五色之間漸變；五個階段各取一色（深夜 stg0、入夜 stg1、破曉 stg2、白晝 stg3、黃昏 stg4）。
+     原本的參考圖色票（深青→黃綠→琥珀→珊瑚→洋紅紫）不再使用 */
+  var DW_POS = [0, 20, 45, 70, 90], DW_C = {};
+  function dwHex(h) { h = String(h).trim(); var m = /^rgba?\((\d+),\s*(\d+),\s*(\d+)/.exec(h); return m ? [+m[1], +m[2], +m[3]] : [1, 3, 5].map(function (i) { return parseInt(h.substr(i, 2), 16); }); }
   function dwDark() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
-  function dwCol(v) {
-    v = Math.max(0, Math.min(100, v));
-    for (var i = 0; i < DW_VIV.length - 1; i++) if (v <= DW_VIV[i + 1][0]) {
-      var A = dwHex(DW_VIV[i][1]), B = dwHex(DW_VIV[i + 1][1]), f = (v - DW_VIV[i][0]) / (DW_VIV[i + 1][0] - DW_VIV[i][0] || 1), k = dwDark() ? 1.05 : 1;
-      return 'rgb(' + A.map(function (q, j) { return Math.min(255, Math.round((q + (B[j] - q) * f) * k)); }).join(',') + ')';
-    }
-    return DW_VIV[DW_VIV.length - 1][1];
+  function dwStops() {   // 從 CSS 讀當下主題的階段色（一個主題只讀一次）
+    var k = dwDark() ? 'd' : 'l'; if (DW_C[k]) return DW_C[k];
+    var cs = getComputedStyle(document.documentElement), c = DW_POS.map(function (_, i) { return cs.getPropertyValue('--stg' + i).trim(); });
+    if (c.some(function (x) { return !x; })) return [[0, '#3C5CDD'], [100, '#CC2827']];
+    return (DW_C[k] = DW_POS.map(function (p, i) { return [p, c[i]]; }).concat([[100, c[4]]]));
   }
-  function dwLegend() { return 'linear-gradient(90deg,' + DW_VIV.map(function (q) { return q[1] + ' ' + q[0] + '%'; }).join(',') + ')'; }
-  var DW_REP = [5, 30, 42, 66, 92];   // 各階段的代表熱度（卡片、表格色塊）
-  function dwStgCol(k) { return dwCol(DW_REP[k] != null ? DW_REP[k] : 50); }
+  function dwCol(v) {
+    var S = dwStops(); v = Math.max(0, Math.min(100, v));
+    for (var i = 0; i < S.length - 1; i++) if (v <= S[i + 1][0]) {
+      var A = dwHex(S[i][1]), B = dwHex(S[i + 1][1]), f = (v - S[i][0]) / (S[i + 1][0] - S[i][0] || 1);
+      return 'rgb(' + A.map(function (q, j) { return Math.round(q + (B[j] - q) * f); }).join(',') + ')';
+    }
+    return S[S.length - 1][1];
+  }
+  function dwLegend() { return 'linear-gradient(90deg,' + dwStops().map(function (q) { return q[1] + ' ' + q[0] + '%'; }).join(',') + ')'; }
+  function dwStgCol(k) { return 'var(--stg' + (k >= 0 && k <= 4 ? k : 2) + ')'; }
   function dwGs(v, sg) { var K = Math.ceil(sg * 3); return v.map(function (_, i) { var a = 0, w = 0; for (var k = -K; k <= K; k++) { var j = i + k; if (j < 0 || j >= v.length) continue; var q = Math.exp(-k * k / (2 * sg * sg)); a += v[j] * q; w += q; } return a / w; }); }
   /* 2026-11-08 使用者：「這個圖要配合 K 線一起」「圖底色需要與網站一致，不需要額外底色」→ 上格月 K（Bitview 每日開高低收合成），下格網點熱度，共用時間軸；不畫自己的底色。
-     K 線顏色＝當月熱度色（和網點同一組色票，頂部紅紫、底部深青）；漲的月空心、跌的月實心（單色 K 線慣例）。頂部標籤拉細線指到那一輪最高的那根 K 線 */
+     K 線顏色＝當月熱度色（和網點同一組色票：週期階段五色，頂部品牌橘紅、底部深藍）；漲的月空心、跌的月實心（單色 K 線慣例）。頂部標籤拉細線指到那一輪最高的那根 K 線 */
   function drawDawn(el) {
     var x = (D.cycle || {}).dawn; if (!x || !el) return;
     var R_ = x.rows, n = R_.length, t0 = R_[0][0], t1 = R_[n - 1][0], hv = R_.map(function (r) { return r[1]; }), hS = dwGs(hv, 5), hC = dwGs(hv, 11);
@@ -1494,7 +1502,7 @@
         now: function () { var pp = (D.flows.premium3 || {}).perp, fw = (D.deriv.funding_multi || {}).weighted_now; if (!pp) return '';
           return _T('7 日平均 ' + fmt.pct(pp.avg7, 3) + '，平常（30 日）' + fmt.pct(pp.avg30, 3) + '，在近 ' + pp.n + ' 天第 ' + fmt.n(pp.avg7_pct_own, 0) + ' 百分位' + (fw != null ? '；資金費率年化 ' + fmt.n(fw, 1) + '%' : '') + '。' + (pp.avg7_pct_own == null ? '' : pp.avg7_pct_own >= 70 ? '比平常貴，多單在付錢追價。' : pp.avg7_pct_own <= 30 ? '比平常便宜，槓桿偏空。' : '和平常差不多。'),
             '7-day average ' + fmt.pct(pp.avg7, 3) + ', usually (30-day) ' + fmt.pct(pp.avg30, 3) + ', ' + fmt.n(pp.avg7_pct_own, 0) + 'th percentile of ' + pp.n + ' days' + (fw != null ? '; funding ' + fmt.n(fw, 1) + '% a year' : '') + '. ' + (pp.avg7_pct_own == null ? '' : pp.avg7_pct_own >= 70 ? 'Richer than usual: longs pay up to chase.' : pp.avg7_pct_own <= 30 ? 'Cheaper than usual: leverage leans short.' : 'About usual.')); } },
-      'dawn': { h: h('每週的週期熱度（0–100），以 50 為中線：熱度高於 50 往上長成暖色的山（越接近頂越紅紫），低於 50 往下長成冷色的谷（越接近底越深青）。網點越靠中線越大越密。上方細線指的是歷次頂，下方指的是歷次底。熱度 ≥ 80 黃昏、≤ 10 深夜；滑過去看那一週的熱度、方向與價格。', 'Weekly cycle heat (0–100) around a midline at 50: above 50 it grows up into warm hills (redder and more violet near tops), below 50 down into cool valleys (deeper teal near bottoms). Dots get larger and denser toward the midline. Lines above point to past tops, lines below to past bottoms. Heat ≥ 80 is Dusk, ≤ 10 Deep night; hover for that week\'s heat, trend and price.',
+      'dawn': { h: h('每週的週期熱度（0–100），以 50 為中線：熱度高於 50 往上長成暖色的山（琥珀 → 越接近頂越紅），低於 50 往下長成冷色的谷（淺藍 → 越接近底越深藍）；顏色和週線多空分數的階段色同一套。網點越靠中線越大越密。上方細線指的是歷次頂，下方指的是歷次底。熱度 ≥ 80 黃昏、≤ 10 深夜；滑過去看那一週的熱度、方向與價格。', 'Weekly cycle heat (0–100) around a midline at 50: above 50 it grows up into warm hills (amber, turning red near tops), below 50 down into cool valleys (light blue, turning deep blue near bottoms); the colours are the same stage colours as the weekly regime score. Dots get larger and denser toward the midline. Lines above point to past tops, lines below to past bottoms. Heat ≥ 80 is Dusk, ≤ 10 Deep night; hover for that week\'s heat, trend and price.',
           '熱度是估值，回答「離頂部、底部多遠」；方向是趨勢，回答「現在往哪走」。熱度低又翻多（破曉）歷史上之後一年最好；熱度高（黃昏）之後一年大約持平、下跌機率接近一半。', 'Heat is valuation, answering "how far from a top or bottom"; trend answers "which way now". Low heat with a bullish flip (Daybreak) has had the best year ahead; high heat (Dusk) has been roughly flat a year later, with close to even odds of a fall.',
           '近兩輪鏈上估值都比價格先見頂，黃昏常提早出現；只有三輪多完整週期，統計只是歷史描述，不是訊號。', 'In the last two cycles valuations peaked before price, so Dusk tends to come early; with only three-plus full cycles the stats describe history and are not a signal.'),
         now: function () { var x = (D.cycle || {}).dawn; return x ? _T('熱度 ' + fmt.n(x.heat, 0) + '，' + dwName(x.stage, true) + '，方向' + (x.regime > 0 ? '多方' : '空方') + '。', 'Heat ' + fmt.n(x.heat, 0) + ', ' + dwName(x.stage, true) + ', trend ' + (x.regime > 0 ? 'bullish' : 'bearish') + '.') : ''; } },
