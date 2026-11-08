@@ -7,7 +7,8 @@
 <title>破曉運營台</title>
 <!-- 破曉運營台（2026-11-08 重做）：發文與回覆共用 ops/app/app.css、app.js。ops/post/ 預設打開「今天發文」，ops/replies/ 預設「回覆」；#today／#replies 可直接切。
      這個檔案是兩頁的範本：改了要同步 ops/post/index.html 和 ops/replies/index.html（只差 body 的 data-tab）。 -->
-<link rel="stylesheet" href="../app/app.css">
+<!-- GitHub Pages 會讓瀏覽器快取 10 分鐘（max-age=600）：CSS、JS 帶時間參數，每次都抓最新版（2026-11-08） -->
+<script>window.__DBV = Date.now(); document.write('<link rel="stylesheet" href="../app/app.css?v=' + window.__DBV + '">');</script>
 </head>
 <body data-tab="today">
 <header class="top"><div class="top-in">
@@ -44,6 +45,6 @@
   <form method="dialog"><button class="btn" style="width:100%;margin:6px 0 10px">知道了</button></form>
 </dialog>
 <div class="toast" id="toast" role="status"></div>
-<script src="../app/app.js"></script>
+<script>(function () { var s = document.createElement('script'); s.src = '../app/app.js?v=' + window.__DBV; document.body.appendChild(s); })();</script>
 </body>
 </html>
