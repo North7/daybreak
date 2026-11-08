@@ -277,6 +277,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-09** 晨昏指數改用全站的週期階段五色（使用者：「晨昏指數顏色也統一一下」）：深藍 → 淺藍 → 綠 → 琥珀 → 品牌橘紅，和週線多空分數同一套；五個階段各取一色（深夜、入夜、破曉、白晝、黃昏），網點與月 K 的顏色跟熱度在五色間漸變。原本參考圖的色票（深青 → 黃綠 → 琥珀 → 珊瑚 → 洋紅紫）不再使用。
 - **2026-11-09** 全站用色檢查（使用者：「再檢查一下其他圖」）：選擇權 Gamma 曝險的正／負改成綠／品牌橘紅，買權／賣權（各到期未平倉、履約價分布）改成綠／品牌橘紅；週期階段「過熱」的紅改品牌橘紅；圖說寫錯的顏色改正（儲備風險、依持有時間的持幣成本、實現虧損峰值背離、長短期持有者供給比、表觀需求）；修兩組同名函式互相覆蓋（「價格 × 長期持有者動向」與「長期持有者已實現虧損」11/06 起顯示成別張圖的解讀，頭版看法表也受影響）；docs/chart-style.md 加用色總表。
 - **2026-11-09** 「價格 × 長期持有者動向」的價格線改照紅綠規則（使用者：「用色和產品用色規則不一致」）：淨減品牌橘紅、持平灰、淨增綠（原本紅／灰／藍）；圖說一起改。
 - **2026-11-09** 深色主題的金／咖類型色（資金與衍生品 `--s4`）改成使用者指定的 #FFC43D（原 #A88A30 偏暗偏咖）；深色底上黃色膠囊標籤改深色字。
@@ -584,6 +585,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-09** The Dawn–Dusk Index now uses the site's cycle-stage colours (the user asked to unify it): deep blue → light blue → green → amber → brand orange-red, the same set as the weekly regime score; each of the five stages takes one colour, and the dots and monthly candles blend between them by heat. The earlier palette sampled from the reference image (deep teal → lime → amber → coral → magenta-violet) is retired.
 - **2026-11-09** Site-wide colour check (the user asked to check the other charts): options gamma exposure positive/negative and calls/puts (open interest by expiry, strike distribution) are now green/brand orange-red; the "overheated" cycle stage uses the brand orange-red; captions that named the wrong colours are corrected (reserve risk, holder cost by age, realized-loss peak divergence, LTH/STH supply ratio, apparent demand); two pairs of same-named functions were overriding each other, so "Price × long-term holder flow" and "LTH realized loss" had shown another chart's reading since 11/06 (the front-page views table too); docs/chart-style.md gains a colour table.
 - **2026-11-09** The price line in "Price × long-term holder flow" now follows the red/green rule (the user noticed it did not match): brand orange-red for net cuts, grey for flat, green for net adds (it was red/grey/blue); captions updated.
 - **2026-11-09** On the dark theme the gold type colour (flows and derivatives, `--s4`) becomes #FFC43D as the user specified (it was a dull, brownish #A88A30); yellow capsule labels on the dark theme now use dark text.
