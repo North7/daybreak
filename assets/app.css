@@ -29,7 +29,7 @@
   --warn-dim: rgba(156, 106, 0, .12);   /* 2026-11-08 期限結構倒掛段的淡底 */
   --s1: #5B49D6; --s2: #C2531A; --s3: #008571; --s4: #9C6A00;
   --grid: rgba(10, 10, 10, .07);
-  --lc-neg: #D7261C; --lc-mid: #7A766F; --lc-pos: #2340E0;   /* 2026-10-29 價格 × 長期持有者淨部位：紅＝淨減、灰＝持平、藍＝淨增（已用色盲檢查） */
+  --lc-neg: var(--down); --lc-mid: #7A766F; --lc-pos: var(--up);   /* 價格 × 長期持有者淨部位：品牌橘紅＝淨減、灰＝持平、綠＝淨增（2026-11-09 使用者：照紅綠規則，原本是紅／藍）；深淺主題跟著 --down／--up */
   --tape-bg: #0A0A0A; --tape-ink: #F2F0EA; --tape-ink-2: #8E8A82; --tape-line: #262626;
 
   /* 2026-10-12 字型瘦身：Noto Sans TC 只載 900（標題用）；內文中文改用系統字（蘋果 PingFang、Windows 正黑、Android 內建 Noto CJK），
@@ -55,7 +55,7 @@
   --up: #2FD08A; --down: #FF4A2E; --down-ink: #FF4A2E; --warn: #E8B54A; --up-dim: rgba(47, 208, 138, .12); --down-dim: rgba(255, 74, 46, .13); --warn-dim: rgba(232, 181, 74, .13);
   --s1: #8573F2; --s2: #D9692F; --s3: #2A9F8E; --s4: #FFC43D;   /* 2026-11-09 使用者指定：深色主題的金／咖（資金與衍生品）改 #FFC43D，原 #A88A30 偏暗偏咖 */
   --grid: rgba(242, 240, 234, .07);
-  --lc-neg: #E8503F; --lc-mid: #A9A59D; --lc-pos: #6F86F5;
+  --lc-mid: #A9A59D;
   --tape-bg: #F2F0EA; --tape-ink: #0A0A0A; --tape-ink-2: #6B675F; --tape-line: #D2CEC4;
 }
 
@@ -212,7 +212,7 @@ table.tbl { width: 100%; border-collapse: collapse; font-size: 13px; table-layou
 .chart svg { display: block; width: 100%; overflow: visible; }
 .chart .ax { font-family: var(--f-mono); font-size: 10px; fill: var(--ink-3); }
 .chart .ax.hi { fill: var(--ink); font-weight: 600; }   /* 2026-10-27 長短期持有者籌碼：現價那一格與標註 */
-/* 2026-10-29 價格線上色的 9 階（--lc0 最紅、--lc4 持平、--lc8 最藍）；不支援 color-mix 的瀏覽器只分三色 */
+/* 2026-10-29 價格線上色的 9 階（--lc0 最紅、--lc4 持平、--lc8 最綠）；不支援 color-mix 的瀏覽器只分三色 */
 :root { --lc0: var(--lc-neg); --lc1: var(--lc-neg); --lc2: var(--lc-neg); --lc3: var(--lc-neg); --lc4: var(--lc-mid); --lc5: var(--lc-pos); --lc6: var(--lc-pos); --lc7: var(--lc-pos); --lc8: var(--lc-pos); }
 @supports (color: color-mix(in oklab, red, blue)) {
   :root { --lc3: color-mix(in oklab, var(--lc-neg) 35%, var(--lc-mid)); --lc5: color-mix(in oklab, var(--lc-pos) 35%, var(--lc-mid)); --lc2: color-mix(in oklab, var(--lc-neg) 60%, var(--lc-mid)); --lc6: color-mix(in oklab, var(--lc-pos) 60%, var(--lc-mid)); --lc1: color-mix(in oklab, var(--lc-neg) 80%, var(--lc-mid)); --lc7: color-mix(in oklab, var(--lc-pos) 80%, var(--lc-mid)); }
@@ -763,7 +763,7 @@ a.term:hover { color: var(--red-ink); text-decoration-color: currentColor; }
    2026-11-09 使用者選紅綠規則 v2：拿掉圖表區頂端漸層色條、圖底淡光暈（「圖底色需要與網站一致」）和線條發光 */
 /* 2026-11-05 週期階段五色（冷→熱）：極熊／底部區、熊／偏低、初牛／中段、牛／偏高、過熱／頂部區（週線多空分數、冪律通道位置共用）。
    深淺兩色底同一組，dataviz 驗色：色盲分辨全過；淺色底的淺藍、琥珀對比略低於 3:1，靠圖例與「目前階段」文字補 */
-:root { --stg0: #3C5CDD; --stg1: #2CA0CF; --stg2: #008149; --stg3: #C38700; --stg4: #CC2827; }
+:root { --stg0: #3C5CDD; --stg1: #2CA0CF; --stg2: #008149; --stg3: #C38700; --stg4: var(--down); }   /* 2026-11-09 過熱的紅改品牌橘紅（使用者：紅一律用品牌橘紅），深淺主題跟著 --down */
 /* 2026-11-08 晨昏指數網點圖：頂底標籤用主要墨色、粗一點 */
 .ax.dw-lab { fill: var(--ink); font-weight: 600; }
 @keyframes nowBeat { 0%, 100% { transform: scale(1); } 45% { transform: scale(1.5); } }
