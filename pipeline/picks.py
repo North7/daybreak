@@ -530,6 +530,7 @@ PANELS = {
     'onchain/dorm':   dict(zh='Dormancy 與 Liveliness', en='Dormancy and Liveliness', sel='#c-dorm', data=['onchain.dorm']),
     # 2026-11-06 PR #58 新增（韓國溢價的 5% 線是「偏熱」參考線，不是出場框架）
     'onchain/npl365': dict(zh='一年累計淨實現損益（顆）', en='1-year net realized profit/loss (BTC)', sel='#c-npl365', data=['onchain.npl365']),
+    'onchain/sthd': dict(zh='短期持有者供給 90 天變化', en='Short-term holder supply, 90-day change', sel='#c-sthd', data=['onchain.sthd']),
     'onchain/dmd':    dict(zh='現貨 vs 永續需求', en='Spot vs perp demand', sel='#c-dmd', data=['onchain.dmd']),
     'flows/etfcost':  dict(zh='ETF 持有者成本', en='ETF holder cost basis', sel='#c-etfcost', data=['flows.etfcost']),
     'flows/exflow':   dict(zh='交易所淨流量', en='Exchange net flows', sel='#c-exflow', data=['flows.exflow']),

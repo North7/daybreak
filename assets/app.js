@@ -4048,6 +4048,42 @@
       marks: mk, now: { i: 2, col: x.value < 0 ? 'var(--down)' : 'var(--up)', lab: '' } });
   }
 
+  /* 短期持有者供給 90 天變化（2026-11-08 使用者要求，X 上 Alphractal 清算圖的下格）：Bitview sth_supply 今天 − 90 天前，顆。只作讀值 */
+  function sthdSay() {
+    var x = (D.onchain || {}).sthd; if (!x) return [];
+    var it = [], v = x.value / 1e3, pos = x.sign > 0, pk = x.peak, kb = function (n) { return cqKb(n / 1e3); };
+    it.push([_T('90 天變化', '90-day change'), kb(x.value) + _T(' 顆', ' BTC'),
+      _T('短期持有者供給 ' + cqKb(x.sth / 1e3).replace('+', '') + ' 顆，90 天前 ' + cqKb(x.sth90 / 1e3).replace('+', '') + ' 顆。' + ymdS(x.since) + ' 起' + (pos ? '轉正' : '轉負') + '，這一段' + (pos ? '最高' : '最低') + '是 ' + ymdS(pk.date) + ' 的 ' + kb(pk.value) + ' 顆' + (Math.abs(x.off_peak) >= 1e4 ? '，之後' + (pos ? '回落 ' : '回升 ') + cqKb(Math.abs(x.off_peak) / 1e3).replace('+', '') + ' 顆' : '') + '；30 天前是 ' + kb(x.v30) + ' 顆。',
+        'Short-term holder supply is ' + cqKb(x.sth / 1e3).replace('+', '') + ' BTC versus ' + cqKb(x.sth90 / 1e3).replace('+', '') + ' 90 days ago. ' + (pos ? 'Positive' : 'Negative') + ' since ' + ymdS(x.since) + '; this run\'s ' + (pos ? 'high' : 'low') + ' was ' + kb(pk.value) + ' on ' + ymdS(pk.date) + (Math.abs(x.off_peak) >= 1e4 ? ', ' + cqKb(Math.abs(x.off_peak) / 1e3).replace('+', '') + (pos ? ' lower' : ' higher') + ' since' : '') + '; 30 days ago it was ' + kb(x.v30) + '.'), 'neu']);
+    it.push([_T('怎麼讀', 'How to read it'), pos ? _T('舊幣在換手', 'Old coins changing hands') : _T('幣在沉澱', 'Coins settling'),
+      _T('正值＝90 天內被移動過、算成短期持有的幣，比放滿 155 天轉成長期的多：長期持有者在賣給新買家，交易所或託管搬幣也會算進來。負值＝幣放著不動、陸續轉成長期。量的是幣有沒有被移動，不直接等於短期持有者在買或在賣。',
+        'Positive = more coins were moved in the past 90 days (and so count as short-term) than aged past 155 days into long-term: long-term holders selling to new buyers, plus exchange or custody wallet moves. Negative = coins sitting still and aging into long-term. It measures whether coins move, not directly whether short-term holders are buying or selling.'), 'neu']);
+    if (x.tops && x.tops.length) it.push([_T('頂部附近的規模', 'Size around tops'), _T('上一輪 ', 'Last cycle ') + cqKb(x.tops[x.tops.length - 1].value / 1e3),
+      _T('每輪頂部前後半年內的最大值：' + x.tops.map(function (t) { return oxYm(t.date) + ' ' + kb(t.value) + ' 顆'; }).join('、') + '。現在 ' + kb(x.value) + ' 顆。2021 年那輪特別小，大量換手發生在頂部之前更早的 2020 年底到 2021 年初。',
+        'The largest reading within six months of each top: ' + x.tops.map(function (t) { return oxYm(t.date) + ' ' + kb(t.value); }).join(', ') + '. Now ' + kb(x.value) + '. The 2021 cycle is unusually small because its big turnover came earlier, in late 2020 to early 2021.'), 'neu']);
+    if (x.up && x.up.n) it.push([_T('轉正、轉負之後', 'After it flips'), x.up.up + '/' + x.up.n,
+      _T('2015 年起轉正 ' + x.up.n + ' 次，90 天後 ' + oxStat(x.up, x.base) + '；轉負 ' + x.down.n + ' 次，' + x.down.up + ' 次上漲、中位數 ' + fmt.pct(x.down.med, 1) + '。翻正翻負本身不是買賣訊號。',
+        'Since 2015 it turned positive ' + x.up.n + ' times; 90 days later ' + oxStat(x.up, x.base) + '. It turned negative ' + x.down.n + ' times; ' + x.down.up + ' rose, median ' + fmt.pct(x.down.med, 1) + '. A flip on its own is not a buy or sell signal.'), 'neu']);
+    return it;
+  }
+  function sthdPanel() {
+    var x = (D.onchain || {}).sthd; if (!x || !x.rows) return '';
+    var pos = x.sign > 0;
+    return panel('span-12', _T('短期持有者供給 90 天變化', 'Short-term holder supply, 90-day change'), 'Bitview · ' + fmt.md(x.date),
+      '<div class="cf-hero">' + oxCard(pos ? 'var(--s2)' : 'var(--s3)', _T('90 天變化', '90-day change'), cqKb(x.value / 1e3), _T('顆', 'BTC'), _T(oxArrow(x.value / 1e4, x.v30 / 1e4, ' 萬', 1), oxArrow(x.value / 1e3, x.v30 / 1e3, 'K', 0))) +
+      oxCard('var(--ink-3)', _T('短期持有者供給', 'Short-term holder supply'), cqKb(x.sth / 1e3).replace('+', ''), _T('持有未滿 155 天', 'held under 155 days')) + '</div>' +
+      interpHtml(sthdSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('增加：舊幣換手', 'Rising: old coins changing hands'), 'var(--s2)'], [_T('減少：幣在沉澱', 'Falling: coins settling'), 'var(--s3)']]) +
+      '<div class="chart cf-chart" id="c-sthd"></div><p class="note">' + _T('短期持有者＝持有未滿 155 天（以幣最後一次移動算，逐筆 UTXO、不是實體調整）。數值＝今天的短期持有者供給 − 90 天前，資料 Bitview，每 3 天畫一點。交易所、託管整理錢包也會讓幣「變年輕」，所以單日跳動不一定是買賣。只作讀值。',
+        'Short-term holders = coins held under 155 days (since their last move; per UTXO, not entity-adjusted). Value = today\'s short-term holder supply minus 90 days earlier, from Bitview, plotted every 3 days. Exchange and custody wallet reshuffles also make coins "younger", so a jump is not necessarily trading. Reading only.') + '</p>', '', 'sthd');
+  }
+  function drawSthd(el) {
+    var x = (D.onchain || {}).sthd; if (!x || !el) return;
+    var mk = (x.tops || []).map(function (t) { return { x: dnOf(t.date), y: t.value / 1e3, t: t.date.slice(0, 4) + ' ' + cqKb(t.value / 1e3), col: 'var(--s2)', up: true }; });
+    oxPane(el, { rows: x.rows, rng: 1095, fit: true, zero: true, fmt: cqKt, label: _T('短期持有者供給 90 天變化（顆）', 'STH supply 90-day change (BTC)'), aria: _T('BTC 價格與短期持有者供給 90 天變化', 'BTC price and the 90-day change in short-term holder supply'),
+      lines: [{ i: 2, split: ['var(--s2)', 'var(--s3)'], w: 1.5, name: _T('90 天變化', '90-day change'), tfmt: function (v) { return cqKb(v) + _T(' 顆', ' BTC'); } }],
+      marks: mk, now: { i: 2, col: x.sign > 0 ? 'var(--s2)' : 'var(--s3)', lab: '' } });
+  }
+
   /* ⑤ 韓國溢價 */
   function kpSay() {
     var x = (D.flows || {}).kp; if (!x) return [];
@@ -4135,6 +4171,10 @@
           '過去熊市底部都出現在這條線很深的負值附近：一年裡大量的幣被賠錢賣出、籌碼換到新買家手上。翻回正值，通常代表最難熬的認賠期結束。', 'Past bear-market bottoms came near deep negative readings: a year of heavy loss-selling that moved coins to new hands. Turning back positive usually marks the end of the hardest loss-taking.',
           '這一輪的負值比前幾輪淺很多，可能是持有結構改變，也可能是還沒走完；以顆計可跨時代比，但交易所整理錢包也會被算成實現損益。', 'This cycle\'s reading is far shallower than past ones — a changed holder base, or not finished yet. Counting in coins compares across eras, but exchange wallet reshuffles also register as realized P/L.'),
         now: function () { var x = oc('npl365'); return x.value == null ? '' : _T('近一年 ' + cqKb(x.value) + ' 顆。', 'Past year ' + cqKb(x.value) + ' BTC.'); } },
+      'sthd': { h: hh('下格是短期持有者供給和 90 天前的差，橘＝增加（90 天內被移動、變成短期持有的幣比轉成長期的多）、青綠＝減少（幣在沉澱）。膠囊是每輪頂部前後的最大值。', 'Bottom: short-term holder supply minus its level 90 days earlier; orange = rising (more coins moved into short-term hands than aged into long-term), teal = falling (coins settling). Capsules mark the largest reading around each top.',
+          '大幅為正＝大量舊幣換手，常見於牛市後段長期持有者分發、或恐慌時舊幣被賣出；轉負＝新買的幣放著不動，籌碼在沉澱。', 'Strongly positive = heavy turnover of old coins, typical of late-bull distribution by long-term holders or of old coins sold in a panic; turning negative = newly bought coins sitting still as supply settles.',
+          '量的是幣有沒有被移動，不是誰在買；交易所和託管整理錢包也會算進去。翻正翻負後 90 天的漲跌和任一天差不多，不是買賣訊號。', 'It counts coin movement, not who is buying; exchange and custody reshuffles are included. Returns 90 days after a flip look like any other day, so a flip is not a trading signal.'),
+        now: function () { var x = oc('sthd'); return x.value == null ? '' : _T('90 天 ' + cqKb(x.value / 1e3) + ' 顆。', '90-day ' + cqKb(x.value / 1e3) + ' BTC.'); } },
       'kp': { h: hh('下格是韓國溢價：粗線是 7 日平均（橘＝溢價、青綠＝折價），細灰線是每日；橘虛線是 5%。縱軸壓縮過，小數值看得清楚、大數值不會頂出去。', 'Bottom: the Korea premium; the thick line is the 7-day average (orange = premium, teal = discount), the thin grey line daily; the orange dashed line is 5%. The axis is compressed so small values stay legible and big spikes stay in frame.',
           '溢價衝高＝韓國散戶搶著買、願意付更多韓元，過去常在局部高點附近；折價＝韓國買盤冷，常在恐慌或熊市。', 'A spiking premium = Korean retail scrambling to buy and paying up in won, historically near local highs; a discount = cold Korean demand, often in panics or bear markets.',
           '只看 Upbit 一家；韓國有資本管制，溢價會長期存在，1–2% 的常態溢價不代表過熱。', 'Upbit only; capital controls let a premium persist, so a steady 1–2% does not mean overheating.'),
@@ -4181,13 +4221,13 @@
       grpH('oc-sell', '賣壓強弱與衰竭', 'Selling pressure and exhaustion', _T('賣壓在加大還是快耗盡', 'Is selling building up or running dry')) +
       rplPanel() + rlPanel() + ssrPanel() + secPanel() + moPanel() +
       grpH('oc-lth', '長期持有者與大戶', 'Long-term holders and whales', _T('長期持有者和大戶在加碼、出貨還是認賠', 'Are long-term holders and whales adding, distributing or selling at a loss')) +
-      cohortPanel() + lthColorPanel() + lcPanel() + agePanel() + dmPanel() + lthLossPanel() + whalePanel() +
+      cohortPanel() + lthColorPanel() + lcPanel() + sthdPanel() + agePanel() + dmPanel() + lthLossPanel() + whalePanel() +
       grpH('oc-all', '指標總表', 'All metrics') + panel('span-12', _t('鏈上指標'), _T('STH-SOPR：CheckOnChain · 長短期成本、aSOPR、LTH-SOPR：Bitview · 其他：bitcoin-data', 'STH-SOPR: CheckOnChain · holder costs, aSOPR, LTH-SOPR: Bitview · others: bitcoin-data'), t + '<p class="note">' + _T('MVRV Z、NUPL、Puell 在週期版「頂部三指標」', 'MVRV Z, NUPL and Puell are on the Cycle page under the top-3 indicators ') + jumpA('cycle', 'p6', '→') + '</p>') + ocPanel() + '</div>';
   };
   V.onchain.after = function () {
     mount($('#c-agecost'), drawAgeCost); var acs = $('#ac-segs'); if (acs) acs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-a') === acMode) return; acMode = b.getAttribute('data-a'); acs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); $('#ac-say').innerHTML = interpHtml(acSayNow()); $('#ac-lg').innerHTML = acLegend(); drawAgeCost($('#c-agecost')); });   // 2026-11-06 持幣成本從週期版搬來
     mount($('#c-conc'), drawConc);   // 2026-11-08 從衍生品版搬來
-    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-lthrl'), drawLthRl); mount($('#c-sthband'), drawSthBand); mount($('#c-quant'), drawQuant); mount($('#c-rloss'), drawRl); mount($('#c-lsrchg'), drawLc); mount($('#c-mom'), drawMo); mount($('#c-ssr'), drawSsr); mount($('#c-agepl'), drawAge); mount($('#c-dorm'), drawDorm); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-npl365'), drawN365);   /* 2026-11-06 指標擴充的 mount 接在前面；註解只能放行尾（之前插在行中把後面三張圖註解掉了） */
+    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-lthrl'), drawLthRl); mount($('#c-sthband'), drawSthBand); mount($('#c-quant'), drawQuant); mount($('#c-rloss'), drawRl); mount($('#c-lsrchg'), drawLc); mount($('#c-mom'), drawMo); mount($('#c-ssr'), drawSsr); mount($('#c-agepl'), drawAge); mount($('#c-dorm'), drawDorm); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-npl365'), drawN365); mount($('#c-sthd'), drawSthd);   /* 2026-11-06 指標擴充的 mount 接在前面；註解只能放行尾（之前插在行中把後面三張圖註解掉了） */
     var ags = $('#ag-seg'); if (ags) ags.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-m') === agMode) return; agMode = b.getAttribute('data-m'); ags.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); drawAge($('#c-agepl')); });   /* 2026-11-06 實現獲利／虧損切換 */
     var rs = $('#rl-seg'); if (rs) rs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-m') === rlMode) return; rlMode = b.getAttribute('data-m'); rs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); drawRl($('#c-rloss')); });   /* 2026-11-06 實現虧損 近 150 天／全部歷史 */
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
@@ -4382,7 +4422,7 @@
     mom: ['鏈上勢能 銷毀幣天數', 'momentum CDD coin days destroyed'], ssr: ['賣方風險', 'sell-side risk'], rloss: ['實現虧損', 'realized loss divergence'], rpl: ['實現獲利', 'profit loss ratio'],
     cohort: ['長期持有者 短期持有者 籌碼', 'LTH STH long-term short-term holder'], urpd: ['籌碼分布', 'URPD supply distribution'], conc: ['籌碼集中度', 'concentration supply'],
     sthband: ['成本帶', 'STH cost basis bands'], agecost: ['持幣成本', 'cost basis by age'], whale: ['鯨魚 大戶', 'whale'], dorm: ['老幣', 'dormancy liveliness'], lthloss: ['虧損', 'LTH supply in loss'],
-    lthc: ['長期持有者 淨部位', 'LTH net position'], sx: ['賣壓 動能', 'momentum selling pressure'], mon: ['月度 季節性 熱力表', 'monthly returns seasonality heatmap'], long: ['長期', 'long-term log price'],
+    lthc: ['長期持有者 淨部位', 'LTH net position'], sthd: ['短期持有者 供給 90 天 變化 STH 換手', 'STH short-term holder supply 90-day change delta'], sx: ['賣壓 動能', 'momentum selling pressure'], mon: ['月度 季節性 熱力表', 'monthly returns seasonality heatmap'], long: ['長期', 'long-term log price'],
     levels: ['成本線 均線', 'moving average cost basis MA'], cd: ['線 日線', 'candles daily K'], regime: ['多空', 'regime weekly'], pl: ['冪律', 'power law'], aviv: ['真實市場均價', 'AVIV true market mean'],
     rrisk: ['儲備風險', 'reserve risk'], tm: ['', 'Tidemark'], hnupl: ['', 'NUPL'], p20: ['前一輪高點', 'MVRV prior peak'], p6: ['頂部三指標', 'MVRV Z NUPL Puell top']
   };

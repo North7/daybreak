@@ -439,6 +439,48 @@ def lsr_viz(bv, last):
                 note='長期持有者供給 ÷ 短期持有者供給（Bitview，持有 155 天分界）；上升也包括幣放滿 155 天自動轉成長期；只作讀值')
 
 
+# 2026-11-08 使用者要求（X 上 Alphractal 的清算圖下格）：短期持有者供給 90 天變化（Bitview sth_supply，顆）。
+#   正＝90 天內被移動、變成「短期」的幣比放滿 155 天轉成長期的多（舊幣在換手），負＝幣在沉澱。轉正／轉負本身不是買賣訊號（2015 年起轉正後 90 天的漲跌和任一天差不多），只作讀值
+SD_FROM, SD_N = '2015-01-01', 90
+
+
+def sthd_viz(bv, px, last, tops=(), step=3):
+    ss = bv.get('sths') or {}
+    P = lambda d: px.get(d, (bv.get('px') or {}).get(d))
+    D = [d for d in sorted(ss) if d <= last and ss.get(d) and P(d)]
+    if len(D) < 1500: return None
+    v = {D[k]: ss[D[k]] - ss[D[k - SD_N]] for k in range(SD_N, len(D))}
+    K = [d for d in D if d in v]; d1 = K[-1]; ix = {d: i for i, d in enumerate(D)}
+    at = lambda n: next((d for d in reversed(K) if dn(d) <= dn(d1) - n), None)
+    flips = []   # 正負翻轉（30 天內又翻回來的不算新的一次，取最後一次）
+    for a, b in zip(K, K[1:]):
+        if (v[a] > 0) != (v[b] > 0) and b >= SD_FROM:
+            if flips and dn(b) - dn(flips[-1][0]) < 30: flips[-1] = (b, v[b] > 0)
+            else: flips.append((b, v[b] > 0))
+    run0 = flips[-1][0] if flips else K[0]
+    run = [d for d in K if d >= run0]; pk = max(run, key=lambda d: abs(v[d]))
+    def fwd(d, n=90):
+        i = ix[d] + n
+        return P(D[i]) / P(d) - 1 if i < len(D) else None
+    def stat(ds_):
+        r = [x for x in (fwd(d) for d in ds_) if x is not None]
+        return dict(n=len(r), up=sum(x > 0 for x in r), med=round(statistics.median(r) * 100, 1)) if r else dict(n=0)
+    base = [x for x in (fwd(d) for d in K if d >= SD_FROM) if x is not None]
+    tp = []
+    for t, _ in tops:   # 每輪頂部前後 180 天內的最大正值
+        w = [d for d in K if abs(dn(d) - dn(t)) <= 180]
+        if w: m = max(w, key=v.get); tp.append(dict(top=t, date=m, value=round(v[m])))
+    rows = [[dn(d), round(P(d)), round(v[d] / 1e3, 1)] for d in K if d >= SD_FROM][::-1][::step][::-1]
+    return dict(date=d1, value=round(v[d1]), sth=round(ss[d1]), sth90=round(ss[D[ix[d1] - SD_N]]),
+                v30=round(v[at(30)]) if at(30) else None, sign=1 if v[d1] > 0 else -1, since=run0,
+                peak=dict(date=pk, value=round(v[pk])), off_peak=round(v[d1] - v[pk]),
+                up=stat([d for d, s in flips if s]), down=stat([d for d, s in flips if not s]),
+                base=dict(up=round(sum(x > 0 for x in base) / len(base) * 100), med=round(statistics.median(base) * 100, 1)),
+                flips=[dict(date=d, pos=s, r90=None if fwd(d) is None else round(fwd(d) * 100, 1)) for d, s in flips[-8:]],
+                tops=tp, rows=rows, from_=SD_FROM, src='Bitview',
+                note='短期持有者供給（Bitview，持有未滿 155 天）今天 − 90 天前，顆；rows 第 3 欄千顆、每 3 天一筆；轉正／轉負後 90 天的漲跌和任一天比；只作讀值')
+
+
 # 2026-11-05 使用者要求（補充指標 PDF：已實現虧損）：長期持有者已實現虧損（Bitview lth_realized_loss_sum_24h，美元；不是 Glassnode 的實體調整版）。
 #   相對值＝7 日合計 ÷ 市值（價格 × 長短期持有者供給合計），跨年份才能比。擺動低點＝收盤是前後 30 天最低、且比之前 180 天最高跌 ≥ 20%；低點的值取前後 7 天內最大。
 #   2011 起驗證：「低點一次比一次低、虧損一次比一次小＝賣壓衰竭」不成立。2015、2018、2022 三次熊市（前一個頂部到底部後 45 天）都是底部那次低點虧損最大

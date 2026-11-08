@@ -273,6 +273,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-08** 短期持有者供給 90 天變化（鏈上版「長期持有者與大戶」）：短期持有者供給和 90 天前的差，正＝舊幣在換手、負＝幣在沉澱；附每輪頂部附近的最大值，以及 2015 年起翻正翻負後 90 天的漲跌（和任一天差不多，不是訊號）。資料 Bitview。
 - **2026-11-08** 內容重組與導覽（使用者要求「重新設計內容結構、分割、佈局，更易讀、易定位、易查找，交互更好」）
   - 價格、資金、衍生品三版也分組（之前只有週期、鏈上有），每組一句問題當副標、標出圖數；組也有網址（例如 `#deriv/dv-opt`）。
   - 放錯版面的圖搬家：籌碼結構與集中度（衍生品 → 鏈上「成本與位置」）、賣壓累積與動能品質（衍生品 → 價格「這一段行情」）、表觀需求等四張需求圖（鏈上 → 資金「鏈上需求」）。鏈上版原本 9 張的「獲利了結與認賠」拆成「賣出的人賺還是賠」和「賣壓強弱與衰竭」，鯨魚併進「長期持有者與大戶」。舊網址照樣能用（跳轉跟著圖走）。
@@ -565,6 +566,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-08** Short-term holder supply, 90-day change (On-chain page, "Long-term holders and whales"): short-term holder supply minus its level 90 days earlier; positive = old coins changing hands, negative = coins settling. Shows the largest reading around each top and 90-day returns after flips since 2015 (about the same as any day, not a signal). Data: Bitview.
 - **2026-11-08** Content restructure and navigation
   - The Price, Flows and Derivatives pages are now grouped too (before, only Cycle and On-chain were), each group with a one-line question and a chart count; groups have their own links (e.g. `#deriv/dv-opt`).
   - Charts in the wrong place moved: supply structure and concentration (Derivatives → On-chain, cost and position), selling pressure and momentum quality (Derivatives → Price, this leg), and the four demand charts (On-chain → Flows, on-chain demand). On-chain's nine-chart profit-taking group is split into "are sellers in profit or at a loss" and "selling pressure and exhaustion"; whales join "long-term holders and whales". Old links still work (jumps follow the chart).
