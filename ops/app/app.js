@@ -60,6 +60,16 @@
   try { SKIP = JSON.parse(localStorage.getItem(SK) || '{}'); } catch (e) {}
   function saveSkip() { try { localStorage.setItem(SK, JSON.stringify(SKIP)); } catch (e) {} }
   function isSkip(k) { return !!SKIP[k] && !isDone(k); }
+  // 2026-11-08 成效：一次連發 18 則的那批，每則瀏覽中位數只有 14（分開發的 20–47）。記下每則「已回」的時間，
+  // 一小時內回到 PACE 則就在上方提醒，建議下一批幾點再發。只記在這台裝置（daybreak.donetimes：{鍵: 毫秒}）。
+  var TK = 'daybreak.donetimes', DT = {}, PACE = 8;
+  try { DT = JSON.parse(localStorage.getItem(TK) || '{}'); } catch (e) {}
+  function paceNote() {
+    var now = Date.now(), ts = Object.keys(DT).filter(function (k) { return k.indexOf('reply:') === 0 && now - DT[k] < 3600e3; }).map(function (k) { return DT[k]; }).sort();
+    if (ts.length < PACE) return '';
+    var t = new Date(ts[ts.length - PACE] + 3600e3), hm = String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
+    return '<span class="warn">這一小時已回 ' + ts.length + ' 則，下一批建議 ' + hm + ' 之後再發</span>';
+  }
   function footHtml(k, reply) {
     var L = reply ? ['已回', '標記已回', '不回'] : ['已發', '標記已發', '不發'];
     if (POSTED[k]) return '<div class="foot"><span class="note">已記錄發出（' + md(POSTED[k]) + '）</span></div>';
@@ -237,7 +247,7 @@
     var idx = {}; act.forEach(function (x, i) { idx[x.id] = i; });
     var show = todo.filter(rfilter);
     el.innerHTML = '<div class="summary"><span>' + md(R.date) + ' 清單' + (R.date !== TODAY ? ' <span class="warn">（不是今天的）</span>' : '') + '</span><span>數據 No.' + String(R.edition || 0).padStart(3, '0') + '（' + md(R.data_date) + ' 收盤）</span>' +
-      '<span>待回 <b>' + todo.length + '</b></span><span>已回 <b>' + done.length + '</b></span>' + (mine.length ? '<span>不回 <b>' + mine.length + '</b></span>' : '') + '</div>' +
+      '<span>待回 <b>' + todo.length + '</b></span><span>已回 <b>' + done.length + '</b></span>' + (mine.length ? '<span>不回 <b>' + mine.length + '</b></span>' : '') + paceNote() + '</div>' +
       '<div class="filters">' + F.map(function (f) { return '<button class="fchip' + (RFILTER === f[0] ? ' on' : '') + '" data-act="filter" data-v="' + f[0] + '">' + f[1] + ' ' + cnt[f[0]] + '</button>'; }).join('') + '</div>' +
       (show.length ? show.map(function (x) { return replyCard(x, idx[x.id]); }).join('') : '<p class="empty">' + (todo.length ? '這一類沒有待回的' : '今天的都回完了') + '</p>') +
       (done.length ? '<details class="group"><summary>已回 ' + done.length + ' 則</summary>' + done.map(function (x) { return replyCard(x, idx[x.id]); }).join('') + '</details>' : '') +
@@ -285,6 +295,7 @@
     var k = card.dataset.key, S = which === 'skip' ? SKIP : DONE, other = which === 'skip' ? DONE : SKIP, on = !S[k];
     if (on) { S[k] = TODAY; delete other[k]; } else delete S[k];
     saveDone(); saveSkip();
+    if (which === 'done') { if (on) DT[k] = Date.now(); else delete DT[k]; Object.keys(DT).forEach(function (q) { if (Date.now() - DT[q] > 2 * 86400e3) delete DT[q]; }); try { localStorage.setItem(TK, JSON.stringify(DT)); } catch (e) {} }
     var reply = k.indexOf('reply:') === 0;
     if (reply) renderReplies(); else renderPosts();
     if (on) { toast((which === 'skip' ? (reply ? '已設為不回' : '已設為不發') : (reply ? '已回' : '已發')) + '，打開下一則'); openFirst(reply ? 'v-replies' : 'v-today'); }
