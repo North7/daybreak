@@ -12,7 +12,7 @@
 - 主要檔案：
   - `pipeline/collect.py`：所有 API 抓取與計算（區塊用 `# G4d.`、`# G9b.` 這類標籤分段）。
   - `pipeline/build.py`：整理成網站用的 `data/latest.json`；`pipeline/brief.py`：給日報的精簡版。
-  - `pipeline/bitview.py`（Bitview 鏈上資料＋快取）、`pipeline/stage_viz.py`（各圖的資料）、`pipeline/hl_whales.py`（Hyperliquid）、`pipeline/liq_heat.py`（清算熱力圖）。
+  - `pipeline/bitview.py`（Bitview 鏈上資料＋快取）、`pipeline/stage_viz.py`（各圖的資料）、`pipeline/hl_whales.py`（Hyperliquid）、`pipeline/liq_heat.py`（清算熱力圖、2 年範圍、每日多空清算量）、`pipeline/coinalyze.py`（Coinalyze 讀取；key 在 GitHub secret `COINALYZE_API_KEY`，本機 `~/.config/daybreak/coinalyze.key`）。
   - `assets/app.js`（全部頁面與圖，自己寫的 SVG 圖表：`lineChart`、`twoPane`、`panel`、`interpHtml`、`legend`）、`assets/app.css`。
   - 文件：`docs/CLAUDE_DAILY.md`（日報寫法與資料欄位）、`docs/chart-style.md`（圖表風格與配色）、`docs/indicator-ideas.md`（運營記的指標點子）、`README.md`（變更紀錄、資料來源）。
 
@@ -59,6 +59,8 @@ BASE=https://north7.github.io/daybreak/ node tests/smoke.js   # 上線後再跑�
 | 月度報酬熱力表（2026-11-08，見 5e） | 價格版 | `price.monthly` |
 | 內容重組與導覽：三版新分組、四張需求圖與兩張價格類圖搬家、全站搜尋、側欄子目錄、手機目錄鈕（2026-11-08，見 5f） | 全站 | `grpH`、`buildFind`、`buildSubnav`、`grpSpy` |
 | 短期持有者供給 90 天變化（2026-11-08） | 鏈上版「長期持有者與大戶」 | `onchain.sthd`（`stage_viz.sthd_viz`，Bitview `sths`；rows 第 3 欄千顆） |
+| 清算熱力圖改 Coinalyze 多家交易所（11 個合約，取不到退回 OKX）＋「2 年」範圍（2026-11-08） | 衍生品版「槓桿與清算」 | `deriv.liq_heat`（`model.src`＝Coinalyze／OKX；`long`＝2 年檔的時間）；`data/liq_long.json`（`liq_heat.build_long`，點了才載入） |
+| 每日多空清算量（2026-11-08） | 衍生品版「槓桿與清算」 | `deriv.liq_vol`（`liq_heat.build_vol`；rows＝[天數, 收盤, 空單百萬美元, −多單百萬美元]；2022-10 起；Hyperliquid 沒有、Deribit 停在 2023-10，不計入） |
 
 ## 5. 待辦（照優先順序）
 

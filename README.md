@@ -204,7 +204,8 @@ pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損、長�
 pipeline/bitview.py      Bitview（BRK 公開 API）：短期持有者成本、真實市場均價、6–12／12–18 個月持幣成本，快取 coc_cache/bitview.json；真實市場均價每天和 CheckOnChain 對照
 pipeline/hl_whales.py    Hyperliquid 帳戶淨值前 300 名的 BTC 部位彙總（不列個別帳戶，少於 2 個帳戶的組只給帳戶數）
 pipeline/cohort_urpd.py  長短期持有者籌碼：URPD × 幣齡分布 × 每日價格區間推算 LTH／STH 籌碼（collect.py 每天呼叫）
-pipeline/liq_heat.py     清算熱力圖：OKX 永續逐小時未平倉量＋假設槓桿推算各價位的待清算量（collect.py 每天呼叫）
+pipeline/liq_heat.py     清算熱力圖：多家交易所永續未平倉量（Coinalyze；取不到時用 OKX）＋假設槓桿推算各價位的待清算量；也做「2 年」範圍（data/liq_long.json）與每日多空清算量（collect.py 每天呼叫）
+pipeline/coinalyze.py    Coinalyze 讀取（key 在 GitHub secret COINALYZE_API_KEY；每分鐘 40 次上限、幣本位換算、交易所名稱）
 pipeline/cohort_cache/   每天的完整 URPD（63 格）與幣齡分布存檔（bitcoin-data 免費層的 URPD 歷史只到約 2026-08-10）
 pipeline/bd_cache/       前一晚抓的鏈上指標快取
 pipeline/check_i18n.py   檢查 app.js 每個 _t() 都有英文
@@ -274,6 +275,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
 - **2026-11-08** 短期持有者供給 90 天變化（鏈上版「長期持有者與大戶」）：短期持有者供給和 90 天前的差，正＝舊幣在換手、負＝幣在沉澱；附每輪頂部附近的最大值，以及 2015 年起翻正翻負後 90 天的漲跌（和任一天差不多，不是訊號）。資料 Bitview。
+- **2026-11-08** 清算熱力圖改用多家交易所＋「2 年」範圍＋每日多空清算量（衍生品版「槓桿與清算」）：使用者申請了 Coinalyze 免費 API key（GitHub secret `COINALYZE_API_KEY`）。熱力圖的未平倉量從只有 OKX 改成 Binance、Bybit、OKX、Hyperliquid、HTX、Bitfinex、Deribit 共 11 個 BTC 永續合約（約是原本的 7 倍），各合約分開算增減；1 小時線約 84 天、4 小時線補到約 330 天前；取不到時退回 OKX。新增「2 年」切換：12 小時線算、每天一欄，另存 `data/liq_long.json`，點了才載入。新圖「每日多空清算量」：Coinalyze 的交易所實際清算紀錄（2022-10 起，主要交易所的紀錄從那時才有；美元），附 30 天多單占比與歷史分位、多單占比 ≥ 70% 之後 90 天的漲跌；Hyperliquid 沒有、Deribit 停在 2023-10、Binance 會少報，所以只比多空、不看總額（查過 Hyperliquid 官方統計只到 2026-04 且不分多空、Deribit 只能逐筆撈，都不併入）。
 - **2026-11-08** 內容重組與導覽（使用者要求「重新設計內容結構、分割、佈局，更易讀、易定位、易查找，交互更好」）
   - 價格、資金、衍生品三版也分組（之前只有週期、鏈上有），每組一句問題當副標、標出圖數；組也有網址（例如 `#deriv/dv-opt`）。
   - 放錯版面的圖搬家：籌碼結構與集中度（衍生品 → 鏈上「成本與位置」）、賣壓累積與動能品質（衍生品 → 價格「這一段行情」）、表觀需求等四張需求圖（鏈上 → 資金「鏈上需求」）。鏈上版原本 9 張的「獲利了結與認賠」拆成「賣出的人賺還是賠」和「賣壓強弱與衰竭」，鯨魚併進「長期持有者與大戶」。舊網址照樣能用（跳轉跟著圖走）。
@@ -567,6 +569,7 @@ This repository is public and its history is permanent. The site holds only mark
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
 - **2026-11-08** Short-term holder supply, 90-day change (On-chain page, "Long-term holders and whales"): short-term holder supply minus its level 90 days earlier; positive = old coins changing hands, negative = coins settling. Shows the largest reading around each top and 90-day returns after flips since 2015 (about the same as any day, not a signal). Data: Bitview.
+- **2026-11-08** Liquidation heatmap goes multi-exchange, gains a 2-year view, plus daily long/short liquidations (Derivatives page, "Leverage and liquidations"): with a free Coinalyze API key (GitHub secret `COINALYZE_API_KEY`), the heatmap's open interest now covers 11 BTC perpetuals on Binance, Bybit, OKX, Hyperliquid, HTX, Bitfinex and Deribit (about 7x the OKX-only figure), each contract's changes counted separately; hourly bars for ~84 days and 4-hour bars back ~330 days, falling back to OKX if Coinalyze is unavailable. A new "2Y" switch runs 12-hour bars with one column per day, stored in `data/liq_long.json` and loaded on demand. New chart "Daily long and short liquidations": exchange liquidation records via Coinalyze (since 2022-10, when the major exchanges' records begin; USD) with the 30-day long share and its percentile, and 90-day returns after the long share passed 70%. Hyperliquid has none, Deribit's stop in 2023-10 and Binance under-reports, so it compares longs with shorts rather than totals (Hyperliquid's official stats stop in 2026-04 with no long/short split and Deribit needs trade-by-trade scraping, so neither is merged).
 - **2026-11-08** Content restructure and navigation
   - The Price, Flows and Derivatives pages are now grouped too (before, only Cycle and On-chain were), each group with a one-line question and a chart count; groups have their own links (e.g. `#deriv/dv-opt`).
   - Charts in the wrong place moved: supply structure and concentration (Derivatives → On-chain, cost and position), selling pressure and momentum quality (Derivatives → Price, this leg), and the four demand charts (On-chain → Flows, on-chain demand). On-chain's nine-chart profit-taking group is split into "are sellers in profit or at a loss" and "selling pressure and exhaustion"; whales join "long-term holders and whales". Old links still work (jumps follow the chart).

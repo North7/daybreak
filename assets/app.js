@@ -1234,9 +1234,13 @@
           '短期持有者堆在收盤上方＝那批人帳面虧損，價格回到成本時容易解套賣出；堆在下方＝跌回去之前他們還在獲利，是第一道承接。長期持有者的堆動得慢，變少的格子代表那個成本的長期持有者在賣。', 'Short-term holders piled above the close are underwater and tend to sell when price returns to their cost; piled below, they stay in profit until price falls back, the first layer of support. Long-term holder piles move slowly; a shrinking bucket means long-term holders with that cost are selling.',
           '「現在」是 CheckOnChain 依實際幣齡算的（取不到時退回推算）；「變化」是推算。都是逐筆 UTXO、不是實體調整，交易所整理錢包會被當成賣出再買進（單日大量又集中的搬家已放回原本的成本）；灰底區間外只有長期持有者。', '“Now” is CheckOnChain\'s actual coin-age data (falls back to the estimate if unavailable); “changes” are estimated. Both are per-UTXO, not entity-adjusted, so exchange wallet reshuffles look like selling and rebuying (large, concentrated one-day moves are put back at their original cost). Outside the shaded band there are only long-term holders.'),
         now: function () { var co = D.chips.cohort; if (!co) return ''; var ex = co.src === 'checkonchain'; return _T('短期持有者 ' + coins(co.tot.sth) + '、平均成本 ' + fmt.usd(co.tot.sth_cost) + '；長期持有者 ' + coins(co.tot.lth) + '（' + (ex ? 'CheckOnChain ' + ymd(co.now_date) + '，已扣搬家日' : 'URPD ' + ymd(co.date) + '，推算') + '）。', 'Short-term holders ' + coins(co.tot.sth) + ', average cost ' + fmt.usd(co.tot.sth_cost) + '; long-term holders ' + coins(co.tot.lth) + ' (' + (ex ? 'CheckOnChain ' + ymd(co.now_date) + ', transfer days removed' : 'URPD ' + ymd(co.date) + ', estimated') + ').'); } },
-      'liq': { h: h('每一格是某個小時、某個價位推算還沒被清算的槓桿倉位量，越亮越多；疊的是 OKX 小時 K 線，虛線是最後收盤。收盤下方是多單的清算價、上方是空單的。', 'Each cell is the estimated leveraged position size still awaiting liquidation at that hour and price; brighter means more. Hourly OKX candles on top, the dashed line is the last close. Long liquidation prices sit below the close, shorts above.',
+      'liq': { h: h('每一格是某個小時、某個價位推算還沒被清算的槓桿倉位量，越亮越多；疊的是小時 K 線（「2 年」是每天一欄、日 K 線），虛線是最後收盤。收盤下方是多單的清算價、上方是空單的。', 'Each cell is the estimated leveraged position size still awaiting liquidation at that hour and price; brighter means more. Hourly candles on top (“2Y” uses one column and one candle per day), the dashed line is the last close. Long liquidation prices sit below the close, shorts above.',
           '亮帶＝槓桿倉位堆積的價位。價格走到那裡會觸發強制平倉：多單強平是市價賣、空單強平是市價買，常讓行情在那一段走得更快；價格走過之後那一帶會變暗（被清掉）。', 'Bright bands are where leverage is stacked. Price reaching them triggers forced closes: longs are market-sold, shorts market-bought, which often speeds up the move through that zone; once price passes, the band goes dark (cleared).',
-          '推算：只有 OKX，槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；清算量多不代表價格會往那裡走。', 'An estimate: OKX only, with an assumed leverage mix that moves the bands; a daily snapshot, not real time; more liquidations on one side does not mean price will go there.') },
+          '推算：Coinalyze 彙整的多家交易所未平倉量（取不到時只有 OKX），槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；清算量多不代表價格會往那裡走。', 'An estimate: multi-exchange open interest compiled by Coinalyze (OKX only when unavailable), with an assumed leverage mix that moves the bands; a daily snapshot, not real time; more liquidations on one side does not mean price will go there.') },
+      'lqv': { h: h('每天實際被強制平倉的 BTC 永續：往上是空單、往下是多單（美元，平方根壓縮刻度），上格是價格。', 'BTC perpetual positions actually force-closed each day: shorts up, longs down (USD, square-root scale), price on top.',
+          '多單清算集中＝下跌時槓桿多單被迫賣出，常出現在急跌；空單清算集中＝上漲時被迫買回，常出現在軋空。看近 30 天哪一邊多，比單日更穩。', 'Clusters of long liquidations = leveraged longs forced to sell into a drop; short clusters = forced buying into a squeeze. The 30-day balance is steadier than any single day.',
+          '交易所公開的清算資料會少報（Binance 每秒只推一筆；Hyperliquid 沒有、Deribit 停在 2023 年），總額只是下限；比例比總額可靠。', 'Exchange liquidation feeds under-report (Binance one per second; nothing from Hyperliquid, Deribit stopped in 2023), so totals are a floor; the long/short balance is more reliable than the size.'),
+        now: function () { var x = (D.deriv || {}).liq_vol; return x ? _T('近 30 天多單占 ' + fmt.n(x.d30.share, 0) + '%（多單 ' + lqvM(x.d30.long) + '、空單 ' + lqvM(x.d30.short) + '）。', 'Past 30 days: longs ' + fmt.n(x.d30.share, 0) + '% (longs ' + lqvM(x.d30.long) + ', shorts ' + lqvM(x.d30.short) + ').') : ''; } },
       'pr-us': { h: h('上格是 BTC 價格；下格是 Coinbase 溢價：Coinbase BTC-USD 收盤比 Binance BTC-USDT 貴多少（%）。柱子是每日值（和 TradingView 的 CB-BN basis 同一種算法），金線是 7 日平均，紅虛線是 −0.15% 深度折價線，紅圈是歷次跌破、旁邊寫 30 天後漲跌；最右邊的空心點是打開網頁時的即時值。', 'Top: BTC price; bottom: the Coinbase premium, how much Coinbase BTC-USD closes above Binance BTC-USDT (%). Bars are daily values (the same calculation as TradingView\'s CB-BN basis), the gold line the 7-day average, the red dashed line the −0.15% deep-discount line; red rings mark past breaks with the 30-day change; the hollow dot at the right edge is the live value when the page opens.',
           '正＝美國現貨（機構、ETF 相關）買得比海外積極；長時間停在 0 以下＝美國買盤缺席。牛市主升段多半維持正值。', 'Positive means US spot buyers (institutions, ETF-related) are keener than offshore; staying below 0 for long means US demand is absent. Bull-market advances usually run positive.',
           '以 USDT 計價，USDT 偏離 1 美元時會有誤差；看方向和持續多久，不看單日。', 'Priced against USDT, so a USDT depeg distorts it; read the direction and how long it lasts, not single days.'),
@@ -1531,7 +1535,8 @@
      [_T('永續對現貨（OKX）', 'Perp vs spot (OKX)'), p3.perp, 1]
     ].forEach(function (x) { src.push([x[0], (x[1] || {}).date, x[2]]); });
     src.push([_T('場外 USDT 溢價（OKX）', 'OTC USDT premium (OKX)'), (p3.usdt || {}).ts, 1]);
-    src.push([_T('清算熱力圖（OKX 推算）', 'Liquidation heatmap (OKX estimate)'), (D.deriv.liq_heat || {}).asof, 1]);
+    src.push([_T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'), (D.deriv.liq_heat || {}).asof, 1]);
+    src.push([_T('每日多空清算量（Coinalyze）', 'Daily liquidations (Coinalyze)'), (D.deriv.liq_vol || {}).date, 2]);
     var rows = src.map(function (x) { var a = age(x[1]); return { name: x[0], date: x[1], age: a, bad: x[1] == null || a > x[2], max: x[2] }; });
     var errs = D.meta.errors || [], bad = rows.filter(function (r) { return r.bad; }), notesOld = N && N.stale;
     var n = bad.length + errs.length + (notesOld ? 1 : 0);
@@ -1887,21 +1892,31 @@
     $('#lg-seg').addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; rng = b.getAttribute('data-v'); this.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x === b); }); drawLong($('#c-long')); });
   };
 
-  /* 清算熱力圖（推算；2026-11-02 使用者要求，參考 CoinGlass 爆倉熱力圖）：OKX 永續逐小時未平倉量＋假設槓桿 5–100 倍，見 pipeline/liq_heat.py。
-     畫布畫熱力（越亮＝推算的待清算量越多），SVG 疊小時 K 線與十字線。不是實際倉位，只作讀值 */
-  var liqDays = 3, liqBytes = null, liqTop_ = null;
+  /* 清算熱力圖（推算；2026-11-02 使用者要求，參考 CoinGlass 爆倉熱力圖）：永續未平倉量＋假設槓桿 5–100 倍，見 pipeline/liq_heat.py。
+     2026-11-08 起用 Coinalyze 彙整的多家交易所（取不到時退回 OKX），並加「2 年」範圍（data/liq_long.json，點了才載入，每天一欄）。
+     畫布畫熱力（越亮＝推算的待清算量越多），SVG 疊 K 線與十字線。不是實際倉位，只作讀值 */
+  var liqDays = 3, liqBytes = null, liqTop_ = null, liqL = null, liqLBytes = null, liqLTop = null, liqLErr = false;
   /* 熱力圖底色永遠是深色的 viridis（淺色主題也一樣），K 線與收盤線用深色主題的亮色才看得清楚，所以這三個色不跟主題變（2026-11-04 註明，刻意的） */
   var LIQ_UP = '#2FD08A', LIQ_DN = '#FF5A4E', LIQ_INK = '#F2F0EA', LIQ_HL = '#FFFFFF';   // LIQ_HL：Hyperliquid 實際清算價的橫條（2026-11-05），白色和 viridis、K 線的紅綠都分得開
   /* 2026-11-04 自我檢查：色階上限用整份快照算一次（原本每次依畫面內的格子重算，切換 3／7 天同一格會變色，縮放視窗也重排序一次） */
-  function liqTop() { if (liqTop_ == null) { var v = []; for (var i = 0; i < liqBytes.length; i++) if (liqBytes[i]) v.push(liqBytes[i]); v.sort(function (a, b) { return a - b; }); liqTop_ = v.length ? Math.max(1, v[Math.floor(v.length * 0.998)]) : 255; } return liqTop_; }
+  function liqTopOf(u) { var v = []; for (var i = 0; i < u.length; i++) if (u[i]) v.push(u[i]); v.sort(function (a, b) { return a - b; }); return v.length ? Math.max(1, v[Math.floor(v.length * 0.998)]) : 255; }
+  function liqTop() { if (liqTop_ == null) liqTop_ = liqTopOf(liqBytes); return liqTop_; }
+  function liqB64(b64) { var b = atob(b64), u = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) u[i] = b.charCodeAt(i); return u; }
   /* 第 i 根 K 線的時間：管線有給 hr（距 t0 的小時數）就用它，漏掉的小時不會讓後面整段錯位 */
   function liqT(x, i) { return x.t0 + (x.hr ? x.hr[i] : i) * 36e5; }
   var VIR = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]];
   function liqCol(v) { v = Math.max(0, Math.min(1, v)); var s = v * 4, i = Math.min(3, Math.floor(s)), f = s - i; return VIR[i].map(function (a, k) { return Math.round(a + (VIR[i + 1][k] - a) * f); }); }
   function liqData() {
     var x = (D.deriv || {}).liq_heat; if (!x || !x.heat) return null;
-    if (!liqBytes) { var b = atob(x.heat); liqBytes = new Uint8Array(b.length); for (var i = 0; i < b.length; i++) liqBytes[i] = b.charCodeAt(i); }
+    if (!liqBytes) liqBytes = liqB64(x.heat);
     return x;
+  }
+  function liqCz() { var m = ((D.deriv || {}).liq_heat || {}).model || {}; return m.src === 'Coinalyze' ? m : null; }
+  /* 「2 年」：data/liq_long.json 點了才載入（約 200 KB），用 latest.json 記的時間避開舊快取 */
+  function liqLong(cb) {
+    var m = ((D.deriv || {}).liq_heat || {}).long; if (!m) return;
+    fetch('data/liq_long.json?v=' + encodeURIComponent(m.asof)).then(function (r) { if (!r.ok) throw 0; return r.json(); })
+      .then(function (j) { liqL = j; liqLBytes = liqB64(j.heat); liqLTop = liqTopOf(liqLBytes); cb(); }).catch(function () { liqLErr = true; cb(); });
   }
   function liqBand(b) { return fmt.k(b.lo) + '–' + fmt.k(b.hi); }
   function liqBtc(v) { return _T('約 ' + fmt.n(v) + ' 顆', '~' + fmt.n(v) + ' BTC'); }
@@ -1928,8 +1943,8 @@
     }
     var fr = x.far || {}, fb = fr.below, fa = fr.above, since = (x.model || {}).since;   // 2026-11-04：畫面（收盤 ±7%）外、±25% 內最亮的一塊
     if (fb || fa) it.push([_T('畫面外（±25% 內）', 'Off-screen (within ±25%)'), (fb ? fmt.k(fb.lo) + '–' + fmt.k(fb.hi) : '—') + ' / ' + (fa ? fmt.k(fa.lo) + '–' + fmt.k(fa.hi) : '—'),
-      _T((fb ? '下方 ' + fmt.k(fb.lo) + '–' + fmt.k(fb.hi) + ' 推算' + liqBtc(fb.btc) + '（低 ' + fmt.n(-fb.dist_pct, 1) + '%）' : '') + (fb && fa ? '；' : '') + (fa ? '上方 ' + fmt.k(fa.lo) + '–' + fmt.k(fa.hi) + ' 推算' + liqBtc(fa.btc) + '（高 ' + fmt.n(fa.dist_pct, 1) + '%）' : '') + '。' + (since ? '較早的部分用 4 小時線補到 ' + ymdD(since) + '，才看得到 8 月突破前後累積的槓桿。' : ''),
-        (fb ? 'Below ' + fmt.k(fb.lo) + '–' + fmt.k(fb.hi) + ': an estimated ' + liqBtc(fb.btc) + ' (' + fmt.n(-fb.dist_pct, 1) + '% down)' : '') + (fb && fa ? '; ' : '') + (fa ? 'above ' + fmt.k(fa.lo) + '–' + fmt.k(fa.hi) + ': an estimated ' + liqBtc(fa.btc) + ' (' + fmt.n(fa.dist_pct, 1) + '% up)' : '') + '.' + (since ? ' Older history is filled in with 4-hour bars back to ' + ymdD(since) + ', so leverage built around the August breakout is included.' : '')), 'neu']);
+      _T((fb ? '下方 ' + fmt.k(fb.lo) + '–' + fmt.k(fb.hi) + ' 推算' + liqBtc(fb.btc) + '（低 ' + fmt.n(-fb.dist_pct, 1) + '%）' : '') + (fb && fa ? '；' : '') + (fa ? '上方 ' + fmt.k(fa.lo) + '–' + fmt.k(fa.hi) + ' 推算' + liqBtc(fa.btc) + '（高 ' + fmt.n(fa.dist_pct, 1) + '%）' : '') + '。' + (since ? '較早的部分用 4 小時線補到 ' + ymdD(since) + '，算進更早累積、還沒被清掉的槓桿。' : ''),
+        (fb ? 'Below ' + fmt.k(fb.lo) + '–' + fmt.k(fb.hi) + ': an estimated ' + liqBtc(fb.btc) + ' (' + fmt.n(-fb.dist_pct, 1) + '% down)' : '') + (fb && fa ? '; ' : '') + (fa ? 'above ' + fmt.k(fa.lo) + '–' + fmt.k(fa.hi) + ': an estimated ' + liqBtc(fa.btc) + ' (' + fmt.n(fa.dist_pct, 1) + '% up)' : '') + '.' + (since ? ' Older history is filled in with 4-hour bars back to ' + ymdD(since) + ', so older leverage that has not been cleared is included.' : '')), 'neu']);
     var hw = D.deriv.hl_whales;   // 2026-11-04：Hyperliquid 大戶的 BTC 部位彙總（實際部位，不是推算；不列個別帳戶）
     if (hw && hw.long && hw.short) {
       var gq = function (g, L) { return g.btc != null ? _T((L ? '多單 ' : '空單 ') + fmt.n(g.btc) + ' 顆（' + g.n + ' 個帳戶）', (L ? 'longs ' : 'shorts ') + fmt.n(g.btc) + ' BTC (' + g.n + ' accounts)') : _T((L ? '多單 ' : '空單 ') + g.n + ' 個帳戶', (L ? 'longs ' : 'shorts ') + g.n + ' account' + (g.n === 1 ? '' : 's')); };
@@ -1943,32 +1958,52 @@
   }
   function hlBands() { var hb = (D.deriv.hl_whales || {}).bands; return hb && hb.rows ? hb : null; }
   function hlSide(hb, side) { var r = hb.rows.filter(function (b) { return b.side === side; }); return { n: r.reduce(function (a, b) { return a + b.n; }, 0), btc: r.reduce(function (a, b) { return a + b.btc; }, 0), cells: r.length, top: r.slice().sort(function (a, b) { return b.btc - a.btc; })[0] }; }
-  function liqSegs() { var b = function (d) { return '<button aria-pressed="' + (liqDays === d) + '" data-d="' + d + '">' + _T(d + ' 天', d + 'D') + '</button>'; }; return '<span class="seg">' + b(3) + b(7) + '</span>'; }
+  function liqSegs() { var b = function (d, l) { return '<button aria-pressed="' + (liqDays === d) + '" data-d="' + d + '">' + (l || _T(d + ' 天', d + 'D')) + '</button>'; }; return '<span class="seg">' + b(3) + b(7) + (((D.deriv || {}).liq_heat || {}).long ? b(730, _T('2 年', '2Y')) : '') + '</span>'; }
   function liqPanel() {
     var x = liqData(); if (!x) return '';
-    return panel('span-12', _T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'), _T('OKX 永續 · 快照 ' + liqHour(Date.parse(x.asof)) + ' UTC', 'OKX perpetuals · snapshot ' + liqHour(Date.parse(x.asof)) + ' UTC'),
+    var cz = liqCz(), snap = liqHour(Date.parse(x.asof));
+    return panel('span-12', _T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'), cz ? _T('Coinalyze · ' + cz.exch.length + ' 家交易所永續 · 快照 ' + snap + ' UTC', 'Coinalyze · perpetuals on ' + cz.exch.length + ' exchanges · snapshot ' + snap + ' UTC') : _T('OKX 永續 · 快照 ' + snap + ' UTC', 'OKX perpetuals · snapshot ' + snap + ' UTC'),
       interpHtml(liqSay()) + '<div class="legend" style="margin-top:10px"><span><b style="color:var(--ink-2);font-weight:400">' + _T('少', 'Less') + '</b><i class="liq-bar" style="background:linear-gradient(90deg,' + VIR.map(function (c) { return 'rgb(' + c.join(',') + ')'; }).join(',') + ')"></i><b style="color:var(--ink-2);font-weight:400">' + _T('多', 'More') + '</b></span><span><b style="color:var(--ink-2);font-weight:400">' + _T('推算的待清算量；收盤下方是多單、上方是空單', 'estimated BTC awaiting liquidation; longs below the close, shorts above') + '</b></span>' + (hlBands() && hlBands().rows.length ? '<span><i class="liq-hl"></i><b style="color:var(--ink-2);font-weight:400">' + _T('Hyperliquid 大戶實際清算價（右緣，越長越多）', 'Hyperliquid big accounts\' actual liquidation prices (right edge; longer = more)') + '</b></span>' : '') + '</div><div class="chart" id="c-liq"></div>' +
-      '<p class="note">' + _T('做法：OKX BTC 永續（USDT＋幣本位）每小時未平倉量增加當成新開倉，一多一空各記一份；槓桿假設 5–100 倍、進場價攤在那一小時的高低之間，算出清算價；價格走過就算清算掉，未平倉量減少時按比例減。只有 OKX（Binance、Bybit 從本站伺服器讀不到），槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；不是 CoinGlass 的數字。',
-        'Method: each hour\'s rise in OKX BTC perpetual open interest (USDT- and coin-margined) counts as new positions, one long and one short; leverage is assumed between 5x and 100x with entries spread across the hour\'s range, giving liquidation prices; levels are cleared once price trades through them, and scaled down when open interest falls. OKX only (Binance and Bybit can\'t be reached from the site\'s servers); the leverage mix is an assumption and moves the bands; a daily snapshot, not real time; not CoinGlass\'s numbers.') +
+      '<p class="note">' + (cz ? _T('做法：Coinalyze 彙整的 ' + cz.exch.join('、') + ' 共 ' + cz.n + ' 個 BTC 永續合約（USDT、USDC、幣本位；目前合計未平倉約 ' + fmt.n(cz.oi_btc) + ' 顆；Coinalyze 沒有 Bitget、Gate）。每根 K 線各合約的未平倉量增加當成新開倉、一多一空各記一份，減少的按比例減；槓桿假設 5–100 倍、進場價攤在那根 K 線的高低之間，算出清算價；價格走過就算清算掉。最近約 84 天用 1 小時線，更早用 4 小時線；「2 年」用 12 小時線、每天一欄。槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；不是 CoinGlass 的數字。',
+        'Method: ' + cz.n + ' BTC perpetual contracts on ' + cz.exch.join(', ') + ' as compiled by Coinalyze (USDT-, USDC- and coin-margined; about ' + fmt.n(cz.oi_btc) + ' BTC of open interest now; Coinalyze has no Bitget or Gate). Each bar\'s rise in a contract\'s open interest counts as new positions, one long and one short, and falls scale existing positions down; leverage is assumed between 5x and 100x with entries spread across the bar\'s range, giving liquidation prices; levels are cleared once price trades through them. Hourly bars for the last ~84 days, 4-hour bars before that; “2Y” uses 12-hour bars with one column per day. The leverage mix is an assumption and moves the bands; a daily snapshot, not real time; not CoinGlass\'s numbers.')
+        : _T('做法：OKX BTC 永續（USDT＋幣本位）每小時未平倉量增加當成新開倉，一多一空各記一份；槓桿假設 5–100 倍、進場價攤在那一小時的高低之間，算出清算價；價格走過就算清算掉，未平倉量減少時按比例減。這次多家交易所的資料（Coinalyze）取不到，暫時只有 OKX；槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；不是 CoinGlass 的數字。',
+        'Method: each hour\'s rise in OKX BTC perpetual open interest (USDT- and coin-margined) counts as new positions, one long and one short; leverage is assumed between 5x and 100x with entries spread across the hour\'s range, giving liquidation prices; levels are cleared once price trades through them, and scaled down when open interest falls. Multi-exchange data (Coinalyze) was unavailable this time, so OKX only; the leverage mix is an assumption and moves the bands; a daily snapshot, not real time; not CoinGlass\'s numbers.')) +
+      (cz ? ' <a href="https://coinalyze.net" target="_blank" rel="noopener">' + _T('資料：Coinalyze ↗', 'Data: Coinalyze ↗') + '</a>' : '') +
       ' <a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">' + _T('對照 CoinGlass ↗', 'Compare with CoinGlass ↗') + '</a></p>',
       '<span id="liq-segs" style="display:contents">' + liqSegs() + '</span>');
   }
   function drawLiq(el) {
     var x = liqData(); if (!x || !el) return;
-    var nb = x.nb, nh = Math.min(x.hours, liqDays * 24), h0 = x.hours - nh, K = x.candles.slice(h0), i, j;
+    if (liqDays > 7) {   // 「2 年」：第一次點才載入
+      if (!liqL && !liqLErr) { el.innerHTML = '<p class="note">' + _T('載入 2 年資料…', 'Loading 2 years of data…') + '</p>'; liqLong(function () { if (liqDays > 7) drawLiq(el); }); return; }
+      if (!liqL) { el.innerHTML = '<p class="note">' + _T('2 年資料載入失敗，請稍後再點一次。', 'Could not load the 2-year data; please try again later.') + '</p>'; return; }
+      return liqPaint(el, { x: liqL, u: liqLBytes, top: liqLTop, n0: 0, n: liqL.days, K: liqL.candles, t: function (i) { return liqL.t0 + liqL.dd[i] * 864e5; }, day: true });
+    }
+    var nh = Math.min(x.hours, liqDays * 24), h0 = x.hours - nh;
+    liqPaint(el, { x: x, u: liqBytes, top: liqTop(), n0: h0, n: nh, K: x.candles.slice(h0), t: function (i) { return liqT(x, h0 + i); } });
+  }
+  /* v：{x 資料, u 熱力位元組, top 色階上限, n0 從第幾欄, n 欄數, K K 線, t(i) 第 i 欄的時間, day 每欄一天（「2 年」）} */
+  function liqPaint(el, v) {
+    var x = v.x, nb = x.nb, nh = v.n, h0 = v.n0, K = v.K, U = v.u, DY = !!v.day, i, j;
     var plo = Math.min.apply(null, K.map(function (k) { return k[2]; })) * 0.95, phi = Math.max.apply(null, K.map(function (k) { return k[1]; })) * 1.05;
-    (x.below || []).slice(0, 1).forEach(function (b) { plo = Math.min(plo, b.lo - 500); }); (x.above || []).slice(0, 1).forEach(function (b) { phi = Math.max(phi, b.hi + 500); });   // 讀值提到的最亮帶一定在圖內
+    if (!DY) { (x.below || []).slice(0, 1).forEach(function (b) { plo = Math.min(plo, b.lo - 500); }); (x.above || []).slice(0, 1).forEach(function (b) { phi = Math.max(phi, b.hi + 500); }); }   // 讀值提到的最亮帶一定在圖內
     var b0 = Math.max(0, Math.floor((plo - x.lo) / x.step)), b1 = Math.min(nb, Math.ceil((phi - x.lo) / x.step)), rows = b1 - b0, pLo = x.lo + b0 * x.step, pHi = x.lo + b1 * x.step;
-    var top = liqTop(), gam = function (v) { return Math.pow(Math.min(1, v), 1.6); };   // 色階偏向突顯最亮的帶（越亮越多，不是等距）
+    var top = v.top, gam = function (v) { return Math.pow(Math.min(1, v), 1.6); };   // 色階偏向突顯最亮的帶（越亮越多，不是等距）
     var W = Math.max(280, el.clientWidth), Ht = W < 520 ? 300 : 420, ML = 8, MR = 58, MT = 8, MB = 24, pw = W - ML - MR, ph = Ht - MT - MB, dpr = window.devicePixelRatio || 1;
     var X = function (k) { return ML + (k + 0.5) * pw / nh; }, Y = function (p) { return MT + (1 - (p - pLo) / (pHi - pLo)) * ph; }, s = '';
     var st = niceStep(pHi - pLo, W < 520 ? 4 : 6);
     for (var p = Math.ceil(pLo / st) * st; p <= pHi; p += st) s += '<line x1="' + (ML + pw) + '" x2="' + (ML + pw + 4) + '" y1="' + Y(p).toFixed(1) + '" y2="' + Y(p).toFixed(1) + '" stroke="var(--ink-3)"/><text class="ax" x="' + (ML + pw + 8) + '" y="' + (Y(p) + 3.5).toFixed(1) + '">' + fmt.k(p) + '</text>';
-    for (i = 0; i < nh; i++) { var t = new Date(liqT(x, h0 + i)), lx = X(i); if (t.getUTCHours() === 0 && lx > ML + 16 && lx < ML + pw - 16) s += '<text class="ax" x="' + lx.toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + (t.getUTCMonth() + 1) + '/' + t.getUTCDate() + '</text>'; }
+    var MON = ['Jan', 'Apr', 'Jul', 'Oct'], pm = null;
+    for (i = 0; i < nh; i++) {
+      var t = new Date(v.t(i)), lx = X(i), lab = null;
+      if (!DY) { if (t.getUTCHours() === 0) lab = (t.getUTCMonth() + 1) + '/' + t.getUTCDate(); }
+      else { var mo = t.getUTCMonth(); if (pm != null && mo !== pm && mo % 3 === 0 && (W >= 520 || mo % 6 === 0)) lab = mo === 0 ? String(t.getUTCFullYear()) : _T((mo + 1) + '月', MON[mo / 3]); pm = mo; }   // 「2 年」：每季標一次（窄螢幕每半年）
+      if (lab && lx > ML + 16 && lx < ML + pw - 16) s += '<text class="ax" x="' + lx.toFixed(1) + '" y="' + (Ht - 6) + '" text-anchor="middle">' + lab + '</text>';
+    }
     var bw = Math.max(1, pw / nh * 0.6);
     K.forEach(function (k, i) { var c = k[3] >= k[0] ? LIQ_UP : LIQ_DN, cx = X(i); s += candleMark(cx, bw, Y(k[0]), Y(k[1]), Y(k[2]), Y(k[3]), c); });
     var lc = K[K.length - 1][3]; s += '<line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + Y(lc).toFixed(1) + '" y2="' + Y(lc).toFixed(1) + '" stroke="' + LIQ_INK + '" stroke-dasharray="2 4" stroke-width="1" opacity=".6"/>';
-    var hb = hlBands(), hg = [];   // Hyperliquid 實際清算價：右緣往左的橫條，長度按顆數（最長約畫面寬的 22%）
+    var hb = DY ? null : hlBands(), hg = [];   // Hyperliquid 實際清算價是今天的快照，只疊在 3／7 天   // Hyperliquid 實際清算價：右緣往左的橫條，長度按顆數（最長約畫面寬的 22%）
     var hlTip = function (mx, my) { var g = hg.filter(function (q) { return mx >= q.x0 - 2 && my >= q.yt && my <= q.yb; })[0]; if (!g) return ''; return '<div class="r"><i style="background:' + LIQ_HL + '"></i><span>' + _T('Hyperliquid 實際清算（快照）', 'Hyperliquid actual (snapshot)') + ' ' + fmt.k(g.b.lo) + '–' + fmt.k(g.b.hi) + '</span><b>' + _T(g.b.n + ' 個帳戶 · ' + fmt.n(g.b.btc) + ' 顆', g.b.n + ' accts · ' + fmt.n(g.b.btc) + ' BTC') + '</b></div>'; };
     if (hb && hb.rows.length) {
       var hm = Math.max.apply(null, hb.rows.map(function (b) { return b.btc; }));
@@ -1985,7 +2020,7 @@
     el.innerHTML = '<canvas width="' + Math.round(pw * dpr) + '" height="' + Math.round(ph * dpr) + '" style="position:absolute;left:' + (ML / W * 100).toFixed(3) + '%;top:' + (MT / Ht * 100).toFixed(3) + '%;width:' + (pw / W * 100).toFixed(3) + '%;height:' + (ph / Ht * 100).toFixed(3) + '%"></canvas>' + svgEl(W, Ht, s, _T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'));
     var svg = el.querySelector('svg'); svg.style.position = 'relative';
     var oc = document.createElement('canvas'); oc.width = nh; oc.height = rows; var ox = oc.getContext('2d'), im = ox.createImageData(nh, rows);
-    for (i = 0; i < nh; i++) for (j = 0; j < rows; j++) { var cc = liqCol(gam(liqBytes[(h0 + i) * nb + b0 + j] / top)), q = ((rows - 1 - j) * nh + i) * 4; im.data[q] = cc[0]; im.data[q + 1] = cc[1]; im.data[q + 2] = cc[2]; im.data[q + 3] = 255; }
+    for (i = 0; i < nh; i++) for (j = 0; j < rows; j++) { var cc = liqCol(gam(U[(h0 + i) * nb + b0 + j] / top)), q = ((rows - 1 - j) * nh + i) * 4; im.data[q] = cc[0]; im.data[q + 1] = cc[1]; im.data[q + 2] = cc[2]; im.data[q + 3] = 255; }
     ox.putImageData(im, 0, 0);
     var cv = el.querySelector('canvas').getContext('2d'); cv.imageSmoothingEnabled = false; cv.drawImage(oc, 0, 0, Math.round(pw * dpr), Math.round(ph * dpr));
     var xh = svg.querySelector('.xh'), yh = svg.querySelector('.yh'), hit = svg.querySelector('.hit');
@@ -1993,15 +2028,58 @@
       var r = svg.getBoundingClientRect(), mx = (ev.clientX - r.left) * W / r.width, my = (ev.clientY - r.top) * Ht / r.height;
       var i = Math.max(0, Math.min(nh - 1, Math.floor((mx - ML) / pw * nh))), j = Math.max(0, Math.min(rows - 1, Math.floor((1 - (my - MT) / ph) * rows))), k = K[i], lo = pLo + j * x.step;
       xh.setAttribute('x1', X(i)); xh.setAttribute('x2', X(i)); xh.setAttribute('visibility', 'visible'); yh.setAttribute('y1', my); yh.setAttribute('y2', my); yh.setAttribute('visibility', 'visible');
-      var v = liqBytes[(h0 + i) * nb + b0 + j] / 255 * x.cap, side = lo >= k[3] ? _T('空單', 'shorts') : _T('多單', 'longs');
-      showTip(ev.clientX, ev.clientY, '<div class="t">' + liqHour(liqT(x, h0 + i)) + ' UTC</div><div class="r"><i style="background:rgb(' + liqCol(gam(v / x.cap * 255 / top)).join(',') + ')"></i><span>' + fmt.usd(lo) + '–' + fmt.n(lo + x.step) + ' ' + side + '</span><b>' + (v >= 0.5 ? liqBtc(Math.round(v)) : '—') + '</b></div><div class="r"><i style="background:' + (k[3] >= k[0] ? LIQ_UP : LIQ_DN) + '"></i><span>' + _T('這小時收盤', 'Hour close') + '</span><b>' + fmt.usd(k[3]) + '</b></div>' + hlTip(mx, my));
+      var q = U[(h0 + i) * nb + b0 + j] / 255 * x.cap, side = lo >= k[3] ? _T('空單', 'shorts') : _T('多單', 'longs'), ti = v.t(i);
+      showTip(ev.clientX, ev.clientY, '<div class="t">' + (DY ? ymdS(new Date(ti).toISOString().slice(0, 10)) : liqHour(ti) + ' UTC') + '</div><div class="r"><i style="background:rgb(' + liqCol(gam(q / x.cap * 255 / top)).join(',') + ')"></i><span>' + fmt.usd(lo) + '–' + fmt.n(lo + x.step) + ' ' + side + '</span><b>' + (q >= 0.5 ? liqBtc(Math.round(q)) : '—') + '</b></div><div class="r"><i style="background:' + (k[3] >= k[0] ? LIQ_UP : LIQ_DN) + '"></i><span>' + (DY ? _T('當天收盤', 'Day close') : _T('這小時收盤', 'Hour close')) + '</span><b>' + fmt.usd(k[3]) + '</b></div>' + hlTip(mx, my));
     }
     hit.addEventListener('pointermove', move); hit.addEventListener('pointerdown', move);
     hit.addEventListener('pointerleave', function () { xh.setAttribute('visibility', 'hidden'); yh.setAttribute('visibility', 'hidden'); hideTip(); });
   }
   function liqAfter() {
     mount($('#c-liq'), drawLiq);
-    var sg = $('#liq-segs'); if (sg) sg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || +b.getAttribute('data-d') === liqDays) return; liqDays = +b.getAttribute('data-d'); sg.innerHTML = liqSegs(); drawLiq($('#c-liq')); });
+    mount($('#c-lqv'), drawLqv);   // 2026-11-08 每日多空清算量
+    var sg = $('#liq-segs'); if (sg) sg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || +b.getAttribute('data-d') === liqDays) return; liqDays = +b.getAttribute('data-d'); liqLErr = false; sg.innerHTML = liqSegs(); drawLiq($('#c-liq')); });
+  }
+
+  /* 每日多空清算量（2026-11-08 使用者要求，X 上清算圖的「30 天多單清算比較多」）：Coinalyze 彙整的交易所實際強制平倉紀錄（美元），不是推算。
+     交易所公開的清算資料會少報（Binance 每秒只推一筆），所以看多空比例、不看總額。見 pipeline/liq_heat.py build_vol */
+  function lqvM(v) { return v == null ? '—' : Math.abs(v) >= 1000 ? '$' + fmt.n(v / 1000, 2) + 'B' : '$' + fmt.n(v, 0) + 'M'; }
+  var LQ_T = function (v) { return (v >= 0 ? 1 : -1) * Math.sqrt(Math.abs(v)); };   // 平方根壓縮：大清算日不會把平常的日子壓扁
+  function lqvSay() {
+    var x = D.deriv.liq_vol, it = [], d30 = x.d30, hl = x.hi_long || {}, st = hl.st || {}, ev = (hl.ev || [])[(hl.ev || []).length - 1];
+    it.push([_T('近 30 天', 'Past 30 days'), _T('多單占 ', 'Longs ') + fmt.n(d30.share, 0) + '%',
+      _T('多單被清算 ' + lqvM(d30.long) + '、空單 ' + lqvM(d30.short) + '，多單占 ' + fmt.n(d30.share, 1) + '%，高於 ' + oxYm(x.from_) + ' 以來 ' + x.share_pct + '% 的 30 天期間。近 7 天多單占 ' + fmt.n(x.d7.share, 0) + '%、近 90 天 ' + fmt.n(x.d90.share, 0) + '%。多單被清算多＝下跌時被迫賣出的多；空單多＝上漲時被迫買回的多。',
+        'Longs liquidated ' + lqvM(d30.long) + ', shorts ' + lqvM(d30.short) + ': longs are ' + fmt.n(d30.share, 1) + '%, higher than ' + x.share_pct + '% of 30-day periods since ' + oxYm(x.from_) + '. Past 7 days ' + fmt.n(x.d7.share, 0) + '% longs, past 90 days ' + fmt.n(x.d90.share, 0) + '%. More long liquidations = more forced selling on the way down; more short liquidations = more forced buying on the way up.'), 'neu']);
+    it.push([_T('30 天總量', '30-day total'), lqvM(d30.long + d30.short),
+      _T('比 ' + oxYm(x.from_) + ' 以來 ' + x.tot30_pct + '% 的 30 天期間多。最近一天（' + ymdS(x.date) + '）多單 ' + lqvM(x.day.long) + '、空單 ' + lqvM(x.day.short) + '。',
+        'More than ' + x.tot30_pct + '% of 30-day periods since ' + oxYm(x.from_) + '. Latest day (' + ymdS(x.date) + '): longs ' + lqvM(x.day.long) + ', shorts ' + lqvM(x.day.short) + '.'), 'neu']);
+    if (st.n) it.push([_T('多單占比 ≥ ' + hl.th + '% 之後', 'After long share ≥ ' + hl.th + '%'), st.n + _T(' 次', ' times'),
+      _T('30 天多單占比升到 ' + hl.th + '% 以上（相隔 30 天以上算新的一次）之後 90 天：', 'After the 30-day long share rose to ' + hl.th + '%+ (30+ days apart), 90 days later: ') + oxStat(st, x.base) +
+      _T('。' + (ev ? '最近一次 ' + ymdS(ev.date) + '，90 天後 ' + fmt.pct(ev.r90, 1) + '。' : '') + (d30.share >= hl.th ? '現在就在這個區間。' : '現在 ' + fmt.n(d30.share, 0) + '%，還沒到。') + '資料只從 ' + oxYm(x.from_) + ' 開始、樣本少，不是買賣訊號。',
+        '.' + (ev ? ' Latest ' + ymdS(ev.date) + ', ' + fmt.pct(ev.r90, 1) + ' 90 days later.' : '') + (d30.share >= hl.th ? ' It is in that zone now.' : ' Now ' + fmt.n(d30.share, 0) + '%, not there yet.') + ' Data only since ' + oxYm(x.from_) + ' and few cases; not a trading signal.'), 'neu']);
+    it.push([_T('資料範圍', 'Coverage'), x.exch.length + _T(' 家交易所', ' exchanges'),
+      _T(x.exch.join('、') + ' 的 BTC 永續。' + (x.missing && x.missing.length ? x.missing.join('、') + ' 沒有近期的清算紀錄，不計入。' : '') + 'Hyperliquid 的清算量很大（大清算日可能比其他幾家加起來還多），但沒有公開、持續更新又分多空的資料；Binance 公開的清算資料每秒只推一筆，也少報很多。所以總額只是下限：適合比多空，不適合看總額。',
+        'BTC perpetuals on ' + x.exch.join(', ') + '.' + (x.missing && x.missing.length ? ' ' + x.missing.join(' and ') + ' have no recent liquidation records and are left out.' : '') + ' Hyperliquid liquidations are large (on big days possibly more than the others combined) but have no public, up-to-date long/short data, and Binance publishes at most one liquidation per second. Totals are a floor: compare longs with shorts, not the totals.'), 'neu']);
+    return it;
+  }
+  function lqvPanel() {
+    var x = (D.deriv || {}).liq_vol; if (!x || !x.rows) return '';
+    return panel('span-12', _T('每日多空清算量', 'Daily long and short liquidations'), 'Coinalyze · ' + fmt.md(x.date),
+      '<div class="cf-hero">' + oxCard('var(--down)', _T('30 天多單被清算', 'Longs liquidated, 30d'), lqvM(x.d30.long), _T('占 ' + fmt.n(x.d30.share, 0) + '%', fmt.n(x.d30.share, 0) + '% of the total')) +
+      oxCard('var(--up)', _T('30 天空單被清算', 'Shorts liquidated, 30d'), lqvM(x.d30.short), _T('占 ' + fmt.n(100 - x.d30.share, 0) + '%', fmt.n(100 - x.d30.share, 0) + '% of the total')) + '</div>' +
+      interpHtml(lqvSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('空單被清算（往上）', 'Shorts liquidated (up)'), 'var(--up)', 'box'], [_T('多單被清算（往下）', 'Longs liquidated (down)'), 'var(--down)', 'box']]) +
+      '<div class="chart cf-chart" id="c-lqv"></div><p class="note">' + _T('每天被強制平倉的 BTC 永續多單、空單（美元，UTC 日），Coinalyze 彙整的交易所實際清算紀錄，不是推算。刻度壓縮過（平方根），大清算日不會把平常的日子壓扁。膠囊是 ' + oxYm(x.from_) + ' 以來清算最多的幾天。只作讀值。',
+        'BTC perpetual longs and shorts force-closed each day (USD, UTC days), from exchange liquidation records compiled by Coinalyze; not an estimate. The scale is compressed (square root) so the biggest days do not flatten the rest. Capsules mark the largest days since ' + oxYm(x.from_) + '. Reading only.') +
+      ' <a href="' + (x.link || 'https://coinalyze.net') + '" target="_blank" rel="noopener">' + _T('資料：Coinalyze ↗', 'Data: Coinalyze ↗') + '</a></p>', '', 'lqv');
+  }
+  function drawLqv(el) {
+    var x = (D.deriv || {}).liq_vol; if (!x || !el) return;
+    var mk = (x.top || []).map(function (t) { var L = t.long >= t.short; return { x: dnOf(t.date), y: L ? -t.long : t.short, t: ymdS(t.date).slice(2) + ' ' + lqvM(L ? t.long : t.short), col: L ? 'var(--down)' : 'var(--up)', up: !L }; });
+    oxPane(el, { rows: x.rows, rng: 365, zero: true, tf: LQ_T,   // 不用 fit：手機不分範圍、畫全部，縱軸要包含全部（平方根刻度下差別很小）
+      ticks: [-1000, -300, -100, -20, 0, 20, 100, 300, 1000], fmt: function (t) { var a = Math.abs(t); return !t ? '0' : a >= 1000 ? '$' + a / 1000 + 'B' : '$' + a + 'M'; },
+      label: _T('每日清算量（美元，壓縮刻度）', 'Daily liquidations (USD, compressed scale)'), aria: _T('BTC 價格與每日多空清算量', 'BTC price and daily long and short liquidations'),
+      bars: [{ i: 2, pos: 'var(--up)', neg: 'var(--up)', op: 0.85, name: _T('空單被清算', 'Shorts liquidated'), tfmt: function (v) { return lqvM(v); } },
+        { i: 3, pos: 'var(--down)', neg: 'var(--down)', op: 0.85, name: _T('多單被清算', 'Longs liquidated'), tfmt: function (v) { return lqvM(-v); } }],
+      marks: mk });
   }
 
   V.deriv = function () {
@@ -2013,7 +2091,7 @@
       ivtPanel() +   // 2026-11-08 隱含波動率期限結構
       grpH('dv-lev', '槓桿與清算', 'Leverage and liquidations', _T('槓桿有多擠、哪裡會被清算', 'How crowded leverage is and where liquidations sit')) +
       panel('span-12', _t('期貨基差曲線'), _t('年化 % · 排除 7 天內到期'), basisSay(d.basis_curve) + _t('<div class="chart" id="c-basis"></div><p class="note">資金費率年化 ') + fmt.pct(fundNow(), 1) + _t('；永續 OI ') + fmt.usd(d.perp_oi_usd_m) + _t('M。</p><div class="src-link">外部：<a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">CoinGlass 爆倉熱力圖 ↗</a>（以 OI 與假設槓桿推估，非實際倉位）</div>')) +
-      liqPanel() +
+      liqPanel() + lqvPanel() +
       grpH('dv-opt', '選擇權部位', 'Options positioning', _T('未平倉堆在哪、做市商怎麼避險、錢押哪一邊', 'Where open interest sits, how dealers hedge, which side money pays for')) +
       panel('span-6', _t('各到期未平倉'), _t('買權 / 賣權（顆）'), legend([[_t('買權'), 'var(--s4)'], [_t('賣權'), 'var(--s3)']]) + '<div class="chart" id="c-oi"></div>') +
       panel('span-6', _T('主要到期的履約價分布', 'Open interest by strike, main expiries'), skTotals(), '<div id="sk-say">' + strikeSay(skRow() || big) + '</div><div id="c-strike"></div>', skSegs()) + gxPanel() + prPanel() +
@@ -3109,7 +3187,8 @@
     if (o.rng && el._rng == null) el._rng = o.rng;   // 預設時間範圍（天）；使用者點了別的就照點的
     var tf = o.tf || function (v) { return v; }, vals = [], VR = o.fit && el._rng ? R_.filter(function (r) { return r[0] >= R_[R_.length - 1][0] - el._rng; }) : R_;   // fit：縱軸只看目前選的時間範圍（2026-11-06）
     (o.lines || []).forEach(function (l) { VR.forEach(function (r) { if (r[l.i] != null) vals.push(tf(r[l.i])); }); });
-    if (o.bars) VR.forEach(function (r) { if (r[o.bars.i] != null) vals.push(tf(r[o.bars.i])); });
+    var BS = [].concat(o.bars || []);   // 2026-11-08：bars 可以是陣列（每日多空清算量：空單往上、多單往下）
+    BS.forEach(function (b) { VR.forEach(function (r) { if (r[b.i] != null) vals.push(tf(r[b.i])); }); });
     (o.refs || []).forEach(function (f) { vals.push(tf(f.y)); });
     var lo = Math.min.apply(null, vals), hi = Math.max.apply(null, vals);
     if (o.zero) { lo = Math.min(lo, 0); hi = Math.max(hi, 0); }
@@ -3128,10 +3207,10 @@
         (o.vbands || []).forEach(function (b) { var a = Math.max(C.ML, C.X(b.x0)), c = Math.min(C.ML + C.pw, C.X(b.x1)); if (c > a) s += '<rect x="' + a.toFixed(1) + '" y="' + C.MT + '" width="' + Math.max(1.5, c - a).toFixed(1) + '" height="' + (yb - C.MT) + '" fill="' + b.col + '" opacity="' + (b.op || 0.13) + '"/>'; });
         (o.ticks || oxTicks(lo, hi)).forEach(function (t) { var y = C.Ys(t); if (y < yt - 1 || y > yb + 1) return; s += C.gl(y, o.fmt ? o.fmt(t) : fmt.n(t, Math.abs(t) < 10 && t % 1 ? 1 : 0), t === 0 ? 'base' : 'gl'); });
         (o.refs || []).forEach(function (f) { var y = C.Ys(f.y); s += '<line x1="' + C.ML + '" x2="' + (C.ML + C.pw) + '" y1="' + y.toFixed(1) + '" y2="' + y.toFixed(1) + '" stroke="' + f.col + '" stroke-dasharray="4 3" stroke-width="1.2"/>' + (f.lab && !C.sm ? axText(C.ML + 4, y - 4, f.lab).replace('class="ax"', 'class="ax" style="fill:' + f.col + '"') : ''); });
-        if (o.bars) {
-          var b = o.bars, bw = Math.max(1, C.pw / R_.length * 0.72);
-          R_.forEach(function (r) { var v = r[b.i]; if (v == null) return; var y = C.Ys(v), col = b.col ? b.col(r) : (v >= 0 ? b.pos : b.neg); s += '<rect x="' + (C.X(r[0]) - bw / 2).toFixed(1) + '" y="' + Math.min(y, y0).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.6, Math.abs(y - y0)).toFixed(1) + '" fill="' + col + '"' + (b.op ? ' opacity="' + b.op + '"' : '') + '/>'; });
-        }
+        BS.forEach(function (b) {   // 柱寬按目前看得到的根數算（選 1 年時不會因為全部資料很長而變細），只畫看得到的
+          var bw = Math.max(1, C.pw / C.rows.length * 0.72);
+          C.rows.forEach(function (r) { var v = r[b.i]; if (v == null) return; var y = C.Ys(v), col = b.col ? b.col(r) : (v >= 0 ? b.pos : b.neg); s += '<rect x="' + (C.X(r[0]) - bw / 2).toFixed(1) + '" y="' + Math.min(y, y0).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.6, Math.abs(y - y0)).toFixed(1) + '" fill="' + col + '"' + (b.op ? ' opacity="' + b.op + '"' : '') + '/>'; });
+        });
         (o.lines || []).forEach(function (l, k) {
           var d = oxSeg(R_, l.i, C.X, C.Ys); if (!d) return;
           if (l.area || l.split) {
@@ -3163,7 +3242,7 @@
         var dots = '', rows = '';
         (o.lines || []).forEach(function (l) { if (p[l.i] == null) return; var c = l.split ? (p[l.i] >= 0 ? l.split[0] : l.split[1]) : l.col; dots += dot1(C.X(p[0]), C.Ys(p[l.i]), c); rows += tipRow1(c, nm(l), l.tfmt ? l.tfmt(p[l.i], p) : fmt.n(p[l.i], 2)); });
         (o.plines || []).forEach(function (l) { if (p[l.i] == null) return; dots += dot1(C.X(p[0]), C.Yp(p[l.i]), l.col); rows += tipRow1(l.col, nm(l), l.tfmt ? l.tfmt(p[l.i], p) : fmt.usd(p[l.i])); });   // 2026-11-06 上格（價格格）的線
-        if (o.bars && p[o.bars.i] != null) { var v = p[o.bars.i], c2 = o.bars.col ? o.bars.col(p) : (v >= 0 ? o.bars.pos : o.bars.neg); rows += tipRow1(c2, o.bars.name, o.bars.tfmt ? o.bars.tfmt(v, p) : fmt.n(v, 1)); }
+        BS.forEach(function (b) { if (p[b.i] == null) return; var v = p[b.i], c2 = b.col ? b.col(p) : (v >= 0 ? b.pos : b.neg); rows += tipRow1(c2, b.name, b.tfmt ? b.tfmt(v, p) : fmt.n(v, 1)); });
         return { dots: dots, rows: rows + (o.tipExtra ? o.tipExtra(p) : '') };
       } });
   }
@@ -4413,7 +4492,7 @@
   var FIND = [], fdAct = -1;
   var FKW = {   // 指標別名：圖代號 → [中文別名, 英文別名]（不顯示，中英都拿來搜）。產品內不寫任何付費指標的名字
     vol: ['隱含波動 實際波動', 'DVOL IV RV implied realized volatility'], basis: ['基差 期貨 資金費率', 'basis futures funding'], ivt: ['期限結構 倒掛', 'IV term structure backwardation contango'],
-    liq: ['清算 爆倉 槓桿', 'liquidation heatmap leverage'], gex: ['做市商', 'gamma GEX dealer'], prem: ['權利金 買權 賣權 期權', 'premium put call options'], svd: ['主動買 主動賣', 'taker CVD OKX'],
+    liq: ['清算 爆倉 槓桿 熱力圖', 'liquidation heatmap leverage'], lqv: ['每日 多空 清算量 爆倉 多單 空單', 'daily long short liquidations volume'], gex: ['做市商', 'gamma GEX dealer'], prem: ['權利金 買權 賣權 期權', 'premium put call options'], svd: ['主動買 主動賣', 'taker CVD OKX'],
     oi: ['未平倉 到期 期權', 'open interest expiry max pain'], strike: ['履約價 期權', 'strike open interest'], book: ['掛單 買牆 賣牆', 'order book walls'],
     etf: ['流入 流出 貝萊德', 'ETF IBIT inflow outflow'], etfcost: ['成本', 'ETF cost basis'], stab: ['穩定幣', 'stablecoin USDT USDC'], 'pr-us': ['溢價 三地', 'Coinbase premium Asia'],
     kp: ['韓國 泡菜', 'Kimchi Korea Upbit premium'], exflow: ['交易所 流入 流出', 'exchange netflow reserves'], stk: ['美股 那斯達克 黃金', 'Nasdaq S&P gold stocks'], rcliq: ['實現市值', 'realized cap'],

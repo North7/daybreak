@@ -66,11 +66,11 @@ onchain = {k: {kk: v.get(kk) for kk in ('date', 'value', 'pct_4y', 'ma7', 'chg30
 
 out = {
   'meta': {'bar_date': td['bar_date'], 'generated_utc': td.get('generated_utc'), 'errors': td.get('errors', []), 'bd_rotation': td.get('bd_rotation'),
-           'sources': ['Kraken', 'Deribit', 'CoinMetrics Community', 'bitcoin-data.com', 'CheckOnChain（STH-SOPR）', 'mempool.space', 'FRED', 'The Block（ETF）', 'Tidemark', 'DefiLlama（穩定幣）', 'Coinbase／Binance（溢價）', 'OKX／Hyperliquid（資金費率；OKX 未平倉量另供清算熱力圖）', 'alternative.me（恐懼貪婪）', '13 個交易所掛單簿']},
+           'sources': ['Kraken', 'Deribit', 'CoinMetrics Community', 'bitcoin-data.com', 'CheckOnChain（STH-SOPR）', 'mempool.space', 'FRED', 'The Block（ETF）', 'Tidemark', 'DefiLlama（穩定幣）', 'Coinbase／Binance（溢價）', 'OKX／Hyperliquid（資金費率）', 'Coinalyze（多家交易所未平倉量與清算量：清算熱力圖、每日多空清算量）', 'alternative.me（恐懼貪婪）', '13 個交易所掛單簿']},
   'price': {'bar': td['bar'], 'ma': ma, 'atr': td.get('atr'), 'vol': td.get('vol'), 'mayer': td.get('mayer'), 'pi_cycle': td.get('pi_cycle'),
             'range20_pos_pct': td.get('range20_pos_pct'), 'swing': td.get('swing'), 'volprofile': td.get('volprofile_v2'), 'rows20': td.get('chart_rows_20d'), 'history': hist,
             'monthly': td.get('monthly')},   # 2026-11-08 月度報酬熱力表
-  'deriv': {'dvol': td.get('dvol'), 'deriv': td.get('deriv'), 'rr25': td.get('rr25'), 'samesource': td.get('samesource'), 'funding_multi': td.get('funding_multi'), 'liq_heat': td.get('liq_heat'), 'hl_whales': td.get('hl_whales'), 'gex': td.get('gex'), 'prem': td.get('prem'), 'svd': td.get('svd'), 'ivterm': td.get('ivterm'),
+  'deriv': {'dvol': td.get('dvol'), 'deriv': td.get('deriv'), 'rr25': td.get('rr25'), 'samesource': td.get('samesource'), 'funding_multi': td.get('funding_multi'), 'liq_heat': td.get('liq_heat'), 'liq_vol': td.get('liq_vol'), 'hl_whales': td.get('hl_whales'), 'gex': td.get('gex'), 'prem': td.get('prem'), 'svd': td.get('svd'), 'ivterm': td.get('ivterm'),
             'options': {'total_oi': (td.get('options') or {}).get('total_oi'), 'expiries': [{k: e.get(k) for k in ('expiry', 'dte', 'oi', 'share', 'pc', 'maxpain', 'top_calls', 'top_puts')} for e in (td.get('options') or {}).get('expiries', [])]},
             'viz': {k: (td.get('ex_viz') or {}).get(k) for k in ('vol', 'basis', 'options')}},
   'flows': {'etf': etf['rows'], 'fred': td.get('fred'), 'btc_vs_stocks': td.get('btc_vs_stocks'), 'dfii10': (td.get('extra') or {}).get('dfii10'), 'rc_liq': td.get('rc_liquidity'),
@@ -106,6 +106,13 @@ if td.get('conc_long'): out['chips']['conc_hist'] = [[dn(r[0]), r[1], r[2]] for 
 if td.get('conc_stats'): out['chips']['conc_stats'] = td['conc_stats']
 if td.get('stress'): out['chips']['stress'] = td['stress']   # 2026-11-07 賣壓累積與動能品質（本站自製，取代 11/05 的短期壓力分數）
 if out['flows'].get('premium3') is not None: out['flows']['premium3']['usdt_hist'] = [[dn(x['date']), x['usdt_prem']] for x in idx if x.get('usdt_prem') is not None]
+# 2026-11-08 清算熱力圖的長期範圍（約 200 KB）另存 data/liq_long.json，網頁點「2 年」才載入；這次沒取到就沿用舊檔。latest.json 只記它的時間（網頁用來避開瀏覽器快取）
+try:
+    _ll = P('data', 'liq_long.json')
+    if td.get('liq_long'): json.dump(td['liq_long'], open(_ll, 'w'), separators=(',', ':'))
+    if os.path.exists(_ll) and out['deriv'].get('liq_heat'):
+        _lj = json.load(open(_ll)); out['deriv']['liq_heat']['long'] = {'asof': _lj['asof'], 'days': _lj['days']}
+except Exception as e: print('liq_long failed', e)
 # 2026-10-23 使用者要求：異動偵測（pipeline/signals.py）。和上一期比狀態翻轉（只存一小份上一期快照 signals.base，不存整份）；
 #   notes.json 此時還是上一期，用來檢查它寫下的追蹤條件。同一天重建時沿用第一次建置的上一期快照
 try:

@@ -1358,11 +1358,20 @@ try:
     R['fear_greed'] = dict(date=fg[-1][0], value=fvv[-1], label=fg[-1][2], d7=fvv[-8] if len(fvv) > 7 else None, avg30=round(sum(fvv[-30:]) / 30, 1),
                            pct_1y=_pctl(fvv[-365:], fvv[-1]), note='alternative.me；0 極度恐懼、100 極度貪婪；只作讀值')
 except Exception as e: errors.append(f'fear_greed {e}')
-# G9f. 2026-11-02 使用者要求：清算熱力圖（推算；OKX 逐小時未平倉量＋假設槓桿，見 liq_heat.py）。約 30 次 OKX 請求，不佔 bitcoin-data 額度
+# G9f. 2026-11-02 使用者要求：清算熱力圖（推算；未平倉量＋假設槓桿，見 liq_heat.py）。不佔 bitcoin-data 額度
+#   2026-11-08 起用 Coinalyze 多家交易所（約 50 次、受每分鐘 40 次限制要 1–2 分鐘）；沒有 key 或失敗時照舊用 OKX（約 30 次）
 try:
     import liq_heat
     R['liq_heat'] = liq_heat.build(get)
+    if liq_heat.cz.ok() and R['liq_heat']['model'].get('fallback'): errors.append(f"liq_heat Coinalyze 取不到，暫用 OKX：{R['liq_heat']['model']['fallback']}")
 except Exception as e: errors.append(f'liq_heat {e}')
+# G9f2. 2026-11-08 使用者要求：熱力圖的長期範圍（12 小時線約 2.7 年，另存 data/liq_long.json）與每日多空清算量（Coinalyze 實際清算紀錄）。沒有 key 就跳過
+try:
+    if liq_heat.cz.ok(): R['liq_long'] = liq_heat.build_long()
+except Exception as e: errors.append(f'liq_long {e}')
+try:
+    if liq_heat.cz.ok(): R['liq_vol'] = liq_heat.build_vol(last=LAST)
+except Exception as e: errors.append(f'liq_vol {e}')
 # G9g. 2026-11-04 使用者要求：Hyperliquid 大戶（帳戶淨值前 300 名）的 BTC 部位彙總（見 hl_whales.py；不列個別帳戶）。約 300 次 Hyperliquid 請求、2–3 分鐘
 try:
     import hl_whales
