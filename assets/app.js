@@ -671,8 +671,64 @@
         return '<div class="vw-r"><span class="k">' + esc(_T(v[2][0], v[2][1])) + '</span><span class="v">' + x[1] + '</span>' + tnHtml(x[3]) + jumpA(v[0], v[1], '→') +
           (x[6] ? '<p class="d"><b>' + _T('會改變看法', 'What would change it') + '</b>' + esc(x[6]) + '</p>' : '') + '</div>'; }).join('') + '</div>';
   }
+  /* 晨昏指數（2026-11-08 使用者要求「用現在所有數據做一個更準確的週期圖，新的我們自己取名」，和週線多空分數並列；見 pipeline/dawn.py）：
+     熱度 0–100＝五項估值和過去 4 年比的百分位平均；方向＝四項趨勢（連續 4 週才翻）；把一輪週期當成一天分五段。只用當天以前的資料，只作讀值 */
+  var DW_STG = [['深夜', 'Deep night', '底部區', 'bottom zone'], ['入夜', 'Nightfall', '下跌', 'falling'], ['破曉', 'Daybreak', '初升', 'early rise'], ['白晝', 'Daylight', '上升', 'rising'], ['黃昏', 'Dusk', '過熱', 'overheated']];
+  var DW_HL = { lnupl: ['長期持有者 NUPL', 'LTH NUPL'], rup: ['未實現獲利 ÷ 市值', 'Unrealized profit ÷ market cap'], pl: ['冪律殘差', 'Power-law residual'], rr: ['儲備風險', 'Reserve risk'], mvz: ['MVRV-Z', 'MVRV-Z'],
+    d200: ['價格 ÷ 200 日均線', 'Price ÷ 200-day MA'], sth: ['價格 ÷ 短期持有者成本', 'Price ÷ STH cost basis'], asopr: ['aSOPR 30 日', 'aSOPR, 30-day'], rpl: ['實現獲利 ÷ 虧損 90 日', 'Realized profit ÷ loss, 90-day'] };
+  function dwName(k, full) { var n = DW_STG[k] || ['—', '—', '', '']; return full ? _T(n[0] + '（' + n[2] + '）', n[1] + ' (' + n[3] + ')') : _T(n[0], n[1]); }
+  function dwTr(c) { if (c.raw == null) return '—'; return c.key === 'asopr' ? fmt.n(1 + c.raw, 3) : c.key === 'rpl' ? fmt.n(Math.pow(10, c.raw), 2) : fmt.pct(c.raw * 100, 1); }
+  function dwSay() {
+    var x = D.cycle.dawn, it = [], th = x.th, k = x.stage, s = (x.stats || [])[k] || {}, y1 = s.y1 || {}, b = x.base || {};
+    var why = k === 4 ? _T('熱度 ≥ ' + th.hot + '，估值和過去 4 年比已經很高。', 'Heat ≥ ' + th.hot + ': valuations are high against the past 4 years.')
+      : k === 0 ? _T('熱度 ≤ ' + th.cold + '，估值和過去 4 年比已經很低。', 'Heat ≤ ' + th.cold + ': valuations are low against the past 4 years.')
+      : k === 1 ? _T('熱度在 ' + th.cold + '–' + th.hot + ' 之間、方向空方。', 'Heat between ' + th.cold + ' and ' + th.hot + ' with a bearish trend.')
+      : _T('方向多方、熱度' + (k === 2 ? '低於 ' : '在 ') + th.mid + (k === 2 ? '' : '–' + th.hot) + '。', 'Bullish trend with heat ' + (k === 2 ? 'below ' + th.mid : 'between ' + th.mid + ' and ' + th.hot) + '.');
+    it.push([_T('現在', 'Now'), dwName(k), why + _T('這個階段已經 ' + x.stage_weeks + ' 週。', ' In this stage for ' + x.stage_weeks + ' weeks.') + (y1.n ? _T(oxYm('2013-01') + ' 以來' + dwName(k) + '共 ' + s.weeks + ' 週，之後一年中位數 ' + fmt.pct(y1.med, 0) + '、' + y1.up + '% 上漲（全部的週：' + fmt.pct(b.med, 0) + '、' + b.up + '%）。',
+      ' Since ' + oxYm('2013-01') + ', ' + s.weeks + ' weeks of ' + dwName(k) + ', with a median ' + fmt.pct(y1.med, 0) + ' and ' + y1.up + '% up a year later (all weeks: ' + fmt.pct(b.med, 0) + ', ' + b.up + '%).') : ''), k === 4 ? 'warn' : k === 2 || k === 0 ? 'pos' : 'neu']);
+    it.push([_T('熱度', 'Heat'), fmt.n(x.heat, 0) + ' / 100',
+      _T('4 週前 ' + fmt.n(x.heat4, 0) + '、13 週前 ' + fmt.n(x.heat13, 0) + '。五項估值各自和過去 4 年比的百分位：', '4 weeks ago ' + fmt.n(x.heat4, 0) + ', 13 weeks ago ' + fmt.n(x.heat13, 0) + '. Each valuation input\'s percentile against the past 4 years: ') +
+      x.heat_c.map(function (c) { return _T(DW_HL[c.key][0] + ' 第 ' + (c.pct == null ? '—' : c.pct), DW_HL[c.key][1] + ' ' + (c.pct == null ? '—' : ord(c.pct))); }).join(_T('、', ', ')) + _T('。0 是過去 4 年最便宜、100 是最貴。', '. 0 = cheapest of the past 4 years, 100 = most expensive.'), 'neu']);
+    it.push([_T('方向', 'Trend'), x.regime > 0 ? _T('多方', 'Bullish') : _T('空方', 'Bearish'),
+      x.trend_c.map(function (c) { return _T(DW_HL[c.key][0] + ' ' + dwTr(c), DW_HL[c.key][1] + ' ' + dwTr(c)); }).join(_T('、', ', ')) + _T('，合起來 ' + (x.trend >= 0 ? '+' : '') + fmt.n(x.trend, 2) + '；' + (x.since ? ymdS(x.since) + ' 翻' + (x.regime > 0 ? '多' : '空') + '，第 ' + (x.weeks + 1) + ' 週' : '') + '（連續 4 週在另一邊才算翻轉）。',
+        '; combined ' + (x.trend >= 0 ? '+' : '') + fmt.n(x.trend, 2) + (x.since ? '; turned ' + (x.regime > 0 ? 'bullish' : 'bearish') + ' on ' + ymdS(x.since) + ', week ' + (x.weeks + 1) : '') + ' (a flip needs 4 straight weeks on the other side).'), x.regime > 0 ? 'pos' : 'neu']);
+    var tp = (x.marks || []).filter(function (m) { return m.kind === 'top'; }), bt = (x.marks || []).filter(function (m) { return m.kind === 'bottom'; });
+    it.push([_T('歷次頂底', 'Past tops and bottoms'), _T('頂 ', 'Tops ') + tp.map(function (m) { return m.heat; }).join('/'),
+      _T('頂部前後 4 週內的最高熱度：' + tp.map(function (m) { return m.date.slice(0, 7).replace('-', '/') + ' ' + m.heat; }).join('、') + '；底部前後的最低熱度：' + bt.map(function (m) { return m.date.slice(0, 7).replace('-', '/') + ' ' + m.heat; }).join('、') + '。近兩輪鏈上估值都比價格先見頂，黃昏常提早出現（例如 2024/12、2025/07），價格最高那幾週反而只有 80 上下。',
+        'Highest heat within 4 weeks of each top: ' + tp.map(function (m) { return m.date.slice(0, 7).replace('-', '/') + ' ' + m.heat; }).join(', ') + '; lowest around each bottom: ' + bt.map(function (m) { return m.date.slice(0, 7).replace('-', '/') + ' ' + m.heat; }).join(', ') + '. In the last two cycles on-chain valuations peaked before price, so Dusk tends to come early (e.g. 2024/12, 2025/07) and the top weeks themselves sit around 80.'), 'neu']);
+    return it;
+  }
+  function dwTable() {
+    var x = D.cycle.dawn, c = function (o) { return o && o.n ? '<span style="color:var(--' + (o.med >= 0 ? 'up' : 'down') + ')">' + fmt.pct(o.med, 0) + '</span> <span class="note">' + o.up + '%</span>' : '—'; };
+    return '<div class="tbl-wrap" style="margin-top:12px"><table class="tbl"><thead><tr><th>' + _T('階段', 'Stage') + '</th><th class="num">' + _T('週數', 'Weeks') + '</th><th class="num">' + _T('半年後（中位 · 上漲）', '6 months later (median · up)') + '</th><th class="num">' + _T('一年後（中位 · 上漲）', '1 year later (median · up)') + '</th></tr></thead><tbody>' +
+      (x.stats || []).slice().reverse().map(function (s) { return '<tr' + (s.stage === x.stage ? ' style="font-weight:700"' : '') + '><td><i style="display:inline-block;width:10px;height:10px;background:' + STG_C[s.stage] + ';margin-right:6px;border-radius:2px"></i>' + dwName(s.stage, true) + '</td><td class="num">' + s.weeks + '</td><td class="num">' + c(s.m6) + '</td><td class="num">' + c(s.y1) + '</td></tr>'; }).join('') +
+      '<tr><td>' + _T('全部的週', 'All weeks') + '</td><td class="num">' + ((x.base || {}).n || '—') + '</td><td class="num">—</td><td class="num">' + c(x.base) + '</td></tr></tbody></table></div>';
+  }
+  function dwPanel() {
+    var x = (D.cycle || {}).dawn; if (!x || !x.rows) return '';
+    return panel('span-12', _T('晨昏指數', 'Dawn–Dusk Index'), _T('週期熱度 0–100 · 五項估值＋四項趨勢 · 2013 起 · 每週 · ' + fmt.md(x.date), 'Cycle heat 0–100 · five valuation + four trend inputs · since 2013 · weekly · ' + fmt.md(x.date)),
+      '<div class="cf-hero">' + oxCard(STG_C[x.stage], _T('週期熱度', 'Cycle heat'), fmt.n(x.heat, 0), _T('0 冷 · 100 熱；4 週前 ' + fmt.n(x.heat4, 0), '0 cold · 100 hot; ' + fmt.n(x.heat4, 0) + ' 4 weeks ago'), oxArrow(x.heat, x.heat4, _T(' 點', ' pts'), 0)) +
+      oxCard(STG_C[x.stage], _T('階段', 'Stage'), dwName(x.stage), _T((DW_STG[x.stage] || [])[2] + '；方向' + (x.regime > 0 ? '多方' : '空方'), (DW_STG[x.stage] || [])[3] + '; trend ' + (x.regime > 0 ? 'bullish' : 'bearish'))) + '</div>' +
+      interpHtml(dwSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)']].concat(DW_STG.map(function (n, i) { return [_T(n[0] + ' ' + n[2], n[1] + ' · ' + n[3]), STG_C[i], 'box']; }))) + '<div class="chart" id="c-dawn"></div>' + dwTable() +
+      '<p class="note">' + _T('把一輪週期當成一天：深夜（底部區）→ 破曉（初升）→ 白晝（上升）→ 黃昏（過熱）→ 入夜（下跌）。熱度＝長期持有者 NUPL、未實現獲利 ÷ 市值、冪律殘差、儲備風險、MVRV-Z 五項，各自和過去 4 年比的百分位平均；方向＝價格 ÷ 200 日均線、價格 ÷ 短期持有者成本、aSOPR 30 日、實現獲利 ÷ 虧損 90 日四項，連續 4 週在另一邊才翻。階段：熱度 ≥ ' + x.th.hot + ' 黃昏、≤ ' + x.th.cold + ' 深夜；其餘空方是入夜，多方熱度 < ' + x.th.mid + ' 破曉、其餘白晝。每一週都只用當時已有的資料算（不偷看未來）。研究時和事後週期位置的等級相關 0.82（週線多空分數 0.49）。資料 Bitview、CoinMetrics、CheckOnChain。只有三輪多完整週期，表裡是歷史描述，不是買賣訊號。',
+        'A cycle seen as a day: Deep night (bottom zone) → Daybreak (early rise) → Daylight (rising) → Dusk (overheated) → Nightfall (falling). Heat = the average percentile, against the past 4 years, of LTH NUPL, unrealized profit ÷ market cap, the power-law residual, reserve risk and MVRV-Z; trend = price ÷ 200-day MA, price ÷ STH cost basis, 30-day aSOPR and the 90-day realized profit ÷ loss, flipping after 4 straight weeks. Stages: heat ≥ ' + x.th.hot + ' Dusk, ≤ ' + x.th.cold + ' Deep night; otherwise bearish = Nightfall, bullish with heat < ' + x.th.mid + ' = Daybreak, else Daylight. Every week uses only data available then (no look-ahead). In research its rank correlation with the hindsight cycle position was 0.82 (weekly regime score: 0.49). Data: Bitview, CoinMetrics, CheckOnChain. Only three-plus full cycles; the table describes history and is not a trading signal.') + '</p>', '', 'dawn');
+  }
+  function drawDawn(el) {
+    var x = (D.cycle || {}).dawn; if (!x || !el) return;
+    var R_ = x.rows, th = x.th;
+    twoPane(el, { rows: R_, pi: 2, hp: [110, 150], hs: [140, 180], label: _T('週期熱度（每週，0–100）', 'Cycle heat (weekly, 0–100)'), aria: _T('BTC 價格與晨昏指數', 'BTC price and the Dawn–Dusk Index'),
+      scale: function (C) { return function (v) { return C.ys0 + (1 - v / 100) * C.hs; }; },
+      body: function (C) {
+        var s = '';
+        [0, th.cold, th.mid, th.hot, 100].forEach(function (g) { s += C.gl(C.Ys(g), String(g), g ? 'gl' : 'base'); });
+        var bw = Math.max(1, C.pw / C.rows.length * 0.8), z0 = C.Ys(0);
+        R_.forEach(function (r) { var cx = C.X(r[0]), yv = C.Ys(r[1]); s += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + yv.toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, z0 - yv).toFixed(1) + '" fill="' + STG_C[r[3]] + '"/>'; });
+        return s;
+      },
+      tip: function (p) { return { t: _T('週至 ', 'Week to ') + fmt.date(p[0]), rows: tipRow1(STG_C[p[3]], _T('熱度（' + dwName(p[3]) + '）', 'Heat (' + dwName(p[3]) + ')'), fmt.n(p[1], 0)) }; } });
+  }
   function boardHtml() {
-    var cm = D.cycle.cm || {}, p6 = D.cycle.p6 || {}, tm = D.cycle.tidemark || {}, pl = D.cycle.powerlaw || {}, st = D.cycle.stage || {}, rg = D.cycle.regime || {}, ex = D.exit.status || {}, c = D.price.bar.c, tr = D.onchain.top_radar || {};
+    var cm = D.cycle.cm || {}, p6 = D.cycle.p6 || {}, tm = D.cycle.tidemark || {}, pl = D.cycle.powerlaw || {}, st = D.cycle.stage || {}, rg = D.cycle.regime || {}, dw = D.cycle.dawn || {}, ex = D.exit.status || {}, c = D.price.bar.c, tr = D.onchain.top_radar || {};
     var sg = function (v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + fmt.n(Math.abs(v), 2); };
     var gauge = function (p, lab) { if (p == null || !isFinite(p)) return '<span class="gauge none"></span>'; var w = Math.max(0, Math.min(100, p)); return '<span class="gauge' + (p >= 100 ? ' hit' : p >= 85 ? ' near' : '') + '"><i style="width:' + w.toFixed(1) + '%"></i><b>' + (lab || fmt.n(p, 0) + '%') + '</b></span>'; };
     var row = function (o) { return '<div class="bd-r"><span class="k">' + o.k + (o.sub ? '<small>' + o.sub + '</small>' : '') + '</span><span class="v num">' + o.v + '</span>' + (o.viz || gauge(o.p, o.pl)) + tnHtml(o.r ? o.r[1] : 'neu') + jumpA(o.to[0], o.to[1], '→') + (o.r && o.r[0] ? '<p class="d">' + esc(o.r[0]) + '</p>' : '') + '</div>'; };
@@ -687,6 +743,7 @@
     var dirRows = [
       si < 0 ? null : { k: _T('市場階段', 'Market stage'), sub: 'P23', v: (STAGE[st.stage] || ['—'])[0], viz: stageViz, r: stageR, to: ['cycle', ''] },
       rv == null ? null : { k: _T('週線多空分數', 'Weekly regime score'), sub: _T('六項合成', 'six inputs'), v: sg(rv), viz: rgViz, r: rgR, to: ['cycle', 'regime'] },
+      dw.heat == null ? null : { k: _T('晨昏指數', 'Dawn–Dusk Index'), sub: _T('週期熱度', 'cycle heat'), v: fmt.n(dw.heat, 0) + ' · ' + dwName(dw.stage), p: dw.heat, pl: fmt.n(dw.heat, 0) + ' / 100', r: [_T(dwName(dw.stage, true) + '；4 週前 ' + fmt.n(dw.heat4, 0) + '、方向' + (dw.regime > 0 ? '多方' : '空方') + '。0 是過去 4 年估值最低、100 最高。', dwName(dw.stage, true) + '; ' + fmt.n(dw.heat4, 0) + ' 4 weeks ago, trend ' + (dw.regime > 0 ? 'bullish' : 'bearish') + '. 0 = cheapest valuations of the past 4 years, 100 = richest.'), dw.stage === 4 ? 'warn' : dw.stage === 2 || dw.stage === 0 ? 'pos' : 'neu'], to: ['cycle', 'dawn'] },
       fs.length ? { k: _T('今日發現', "Today's findings"), sub: _T('每日判讀', 'daily read'), v: _T('多 ' + cnt.bull + ' · 空 ' + cnt.bear, cnt.bull + ' bull · ' + cnt.bear + ' bear'), viz: '<span class="gauge none"></span>', r: [_T('今天 ' + fs.length + ' 則發現：偏多 ' + cnt.bull + '、偏空 ' + cnt.bear + '、中性 ' + cnt.neutral + '。描述一般含意，不是預測。', fs.length + ' findings today: ' + cnt.bull + ' bullish, ' + cnt.bear + ' bearish, ' + cnt.neutral + ' neutral. What they usually mean, not a forecast.'), cnt.bull > cnt.bear ? 'pos' : cnt.bear > cnt.bull ? 'neg' : 'neu'], to: ['overview', 'findings'] } : null
     ];
     // 離頂部多近
@@ -1275,6 +1332,10 @@
         now: function () { var pp = (D.flows.premium3 || {}).perp, fw = (D.deriv.funding_multi || {}).weighted_now; if (!pp) return '';
           return _T('7 日平均 ' + fmt.pct(pp.avg7, 3) + '，平常（30 日）' + fmt.pct(pp.avg30, 3) + '，在近 ' + pp.n + ' 天第 ' + fmt.n(pp.avg7_pct_own, 0) + ' 百分位' + (fw != null ? '；資金費率年化 ' + fmt.n(fw, 1) + '%' : '') + '。' + (pp.avg7_pct_own == null ? '' : pp.avg7_pct_own >= 70 ? '比平常貴，多單在付錢追價。' : pp.avg7_pct_own <= 30 ? '比平常便宜，槓桿偏空。' : '和平常差不多。'),
             '7-day average ' + fmt.pct(pp.avg7, 3) + ', usually (30-day) ' + fmt.pct(pp.avg30, 3) + ', ' + fmt.n(pp.avg7_pct_own, 0) + 'th percentile of ' + pp.n + ' days' + (fw != null ? '; funding ' + fmt.n(fw, 1) + '% a year' : '') + '. ' + (pp.avg7_pct_own == null ? '' : pp.avg7_pct_own >= 70 ? 'Richer than usual: longs pay up to chase.' : pp.avg7_pct_own <= 30 ? 'Cheaper than usual: leverage leans short.' : 'About usual.')); } },
+      'dawn': { h: h('上格是 BTC 價格；下格是每週的週期熱度（0–100），柱子按階段上色：深夜（藍，底部區）、入夜（淺藍，下跌）、破曉（綠，初升）、白晝（金，上升）、黃昏（紅，過熱）。橫線是 10、50、80 三個門檻。', 'Top: BTC price. Bottom: weekly cycle heat (0–100), bars coloured by stage: Deep night (blue, bottom zone), Nightfall (light blue, falling), Daybreak (green, early rise), Daylight (gold, rising), Dusk (red, overheated). Lines mark the 10, 50 and 80 thresholds.',
+          '熱度是估值，回答「離頂部、底部多遠」；方向是趨勢，回答「現在往哪走」。熱度低又翻多（破曉）歷史上之後一年最好；熱度高（黃昏）之後一年大約持平、下跌機率接近一半。', 'Heat is valuation, answering "how far from a top or bottom"; trend answers "which way now". Low heat with a bullish flip (Daybreak) has had the best year ahead; high heat (Dusk) has been roughly flat a year later, with close to even odds of a fall.',
+          '近兩輪鏈上估值都比價格先見頂，黃昏常提早出現；只有三輪多完整週期，統計只是歷史描述，不是訊號。', 'In the last two cycles valuations peaked before price, so Dusk tends to come early; with only three-plus full cycles the stats describe history and are not a signal.'),
+        now: function () { var x = (D.cycle || {}).dawn; return x ? _T('熱度 ' + fmt.n(x.heat, 0) + '，' + dwName(x.stage, true) + '，方向' + (x.regime > 0 ? '多方' : '空方') + '。', 'Heat ' + fmt.n(x.heat, 0) + ', ' + dwName(x.stage, true) + ', trend ' + (x.regime > 0 ? 'bullish' : 'bearish') + '.') : ''; } },
       'regime': { h: h('上格是 BTC 價格，下格是每週的多空分數（−6 到 +6），柱子按階段上色：≥ +4 過熱（紅）、熊市後轉正的頭 26 週初牛（綠）、其餘正值牛（琥珀）、負值熊（淺藍）、≤ −4 極熊（深藍）。', 'Top: BTC price; bottom: the weekly regime score (−6 to +6), bars coloured by stage: ≥ +4 overheated (red), the first 26 positive weeks after a real bear early bull (green), other positive bull (amber), negative bear (light blue), ≤ −4 extreme bear (deep blue).',
           '把六個看趨勢、估值、資金和獲利了結的訊號合成一個數字：正值對應牛市、負值對應熊市；柱子越長，六項越一致。分數在零軸附近（絕對值小於 1）代表訊號互相矛盾。', 'Six trend, valuation, capital-flow and profit-taking signals combined into one number: positive stretches match bull markets, negative ones bear markets; longer bars mean the six agree more. Near zero (under 1 in size) the signals conflict.',
           '是本站自己的合成方法，不是任何不公開指標的複製。翻轉要連續 4 週才算，所以會晚幾週；2014/6、2021/8 的翻多一年後價格反而較低。', 'Our own composite, not a copy of any unpublished indicator. A flip needs 4 straight weeks, so it lags; the bullish flips of Jun 2014 and Aug 2021 saw lower prices a year later.') },
@@ -1548,6 +1609,7 @@
      [_T('長期持有者已實現虧損（Bitview）', 'LTH realized loss (Bitview)'), D.onchain.lthrl, 2],
      [_T('價格 × 長期持有者（bitcoin-data）', 'Price × LTH (bitcoin-data)'), D.onchain.lth_color, 7],
      [_T('週線多空分數', 'Weekly bull/bear score'), D.cycle.regime, 8],
+     [_T('晨昏指數', 'Dawn–Dusk Index'), D.cycle.dawn, 8],
      [_T('永續對現貨（OKX）', 'Perp vs spot (OKX)'), p3.perp, 1]
     ].forEach(function (x) { src.push([x[0], (x[1] || {}).date, x[2]]); });
     src.push([_T('場外 USDT 溢價（OKX）', 'OTC USDT premium (OKX)'), (p3.usdt || {}).ts, 1]);
@@ -1828,7 +1890,7 @@
     return readBar('cycle') + '<div class="grid">' +
       grpH('cy-now', '現在的階段', 'Where we are') +
       panel('span-12', _t('市場階段：') + (STAGE[st.stage] || ['—'])[0], _t('P23 · 熊市 → 轉換期 → 牛市'), stageHtml()) +
-      regPanel() + rupPanel() + lnPanel() +
+      regPanel() + dwPanel() + rupPanel() + lnPanel() +   // 2026-11-08 晨昏指數和週線多空分數並列
       grpH('cy-top', '離頂部多近', 'How close to a top', _T('出場框架用到的鏈上指標', 'The on-chain gauges the exit plan uses')) +
       panel('span-7', _t('MVRV ÷ 前一輪高點'), _t('CoinMetrics · 2021 起'), _t('<p class="say">現在 <b>') + fmt.n(cm.mvrv_vs_prior, 3) + _t('</b>；連 5 天站上 0.75 是出場框架的第一個鏈上賣點。') + esc((p20Read() || [''])[0]) + '</p><div class="chart" id="c-p20"></div>') +
       panel('span-5', _t('頂部三指標'), fmt.md(D.cycle.p6_date) + _t(' · 四年百分位'), '<p class="say">' + esc((p6Read() || [''])[0]) + '</p><div class="meters">' + meter('MVRV Z', _t('<0 底 · >3.5 頂'), p6.mvrv_z, fmt.n(p6.mvrv_z, 0), _t('百分位'), [80]) + meter('NUPL', _t('淨未實現損益'), p6.nupl, fmt.n(p6.nupl, 0), _t('百分位'), [80]) + meter('Puell', _t('礦工收入倍數'), p6.puell, fmt.n(p6.puell, 0), _t('百分位'), [80]) + _t('</div><p class="note">任兩項到 80 標為頂部區；只作讀值，不連動賣出。舊的 85／90 加速規則已取消：過去四輪都在週期中段就先到。</p>') + p6Raw(), '', 'p6') +
@@ -1842,7 +1904,7 @@
       '</div>';
   };
   V.cycle.after = function () {
-    safe(drawEv, function () { drawOc(true); }); mount($('#c-regime'), drawRegime); mount($('#c-rup'), drawRup); mount($('#c-hnupl'), drawLn); mount($('#c-aviv'), drawAv); mount($('#c-rrisk'), drawRr); mount($('#c-cyccmp'), drawCycCmp);
+    safe(drawEv, function () { drawOc(true); }); mount($('#c-regime'), drawRegime); mount($('#c-dawn'), drawDawn); mount($('#c-rup'), drawRup); mount($('#c-hnupl'), drawLn); mount($('#c-aviv'), drawAv); mount($('#c-rrisk'), drawRr); mount($('#c-cyccmp'), drawCycCmp);
     var M = D.cycle.model, cols = { '直接修復': 'var(--s4)', '淺回檔': 'var(--s1)', '基準雙底': 'var(--s2)', '延後新低': 'var(--s3)' };
     var md = function (y, m) { return Math.round(Date.UTC(y, m - 1, 15) / 864e5); };
     var series = Object.keys(M.nodes).map(function (k) { return { name: _t(k), data: M.nodes[k].map(function (p) { return [md(p[0], p[1]), p[2]]; }), color: cols[k], dash: '5 5', w: 1.8, end: false, smooth: true }; });
@@ -4648,7 +4710,7 @@
   var FIND = [], fdAct = -1;
   var FKW = {   // 指標別名：圖代號 → [中文別名, 英文別名]（不顯示，中英都拿來搜）。產品內不寫任何付費指標的名字
     vol: ['隱含波動 實際波動', 'DVOL IV RV implied realized volatility'], basis: ['基差 期貨 資金費率', 'basis futures funding'], ivt: ['期限結構 倒掛', 'IV term structure backwardation contango'],
-    liq: ['清算 爆倉 槓桿 熱力圖', 'liquidation heatmap leverage'], lqv: ['每日 多空 清算量 爆倉 多單 空單', 'daily long short liquidations volume'], fh: ['資金費率 歷史 年化 多方付費', 'funding rate history annualized'], oih: ['未平倉 合約 槓桿 OI', 'open interest OI leverage'], lsa: ['多空比 帳戶 散戶 情緒', 'long short ratio accounts retail sentiment'], tk: ['主動買 主動賣 現貨 永續 CVD Coinbase', 'taker buy sell spot perpetual CVD Coinbase'], gex: ['做市商', 'gamma GEX dealer'], prem: ['權利金 買權 賣權 期權', 'premium put call options'], svd: ['主動買 主動賣', 'taker CVD OKX'],
+    liq: ['清算 爆倉 槓桿 熱力圖', 'liquidation heatmap leverage'], lqv: ['每日 多空 清算量 爆倉 多單 空單', 'daily long short liquidations volume'], dawn: ['晨昏 週期 熱度 深夜 破曉 白晝 黃昏 入夜 階段', 'dawn dusk cycle heat stage night daybreak daylight'], fh: ['資金費率 歷史 年化 多方付費', 'funding rate history annualized'], oih: ['未平倉 合約 槓桿 OI', 'open interest OI leverage'], lsa: ['多空比 帳戶 散戶 情緒', 'long short ratio accounts retail sentiment'], tk: ['主動買 主動賣 現貨 永續 CVD Coinbase', 'taker buy sell spot perpetual CVD Coinbase'], gex: ['做市商', 'gamma GEX dealer'], prem: ['權利金 買權 賣權 期權', 'premium put call options'], svd: ['主動買 主動賣', 'taker CVD OKX'],
     oi: ['未平倉 到期 期權', 'open interest expiry max pain'], strike: ['履約價 期權', 'strike open interest'], book: ['掛單 買牆 賣牆', 'order book walls'],
     etf: ['流入 流出 貝萊德', 'ETF IBIT inflow outflow'], etfcost: ['成本', 'ETF cost basis'], stab: ['穩定幣', 'stablecoin USDT USDC'], 'pr-us': ['溢價 三地', 'Coinbase premium Asia'],
     kp: ['韓國 泡菜', 'Kimchi Korea Upbit premium'], exflow: ['交易所 流入 流出', 'exchange netflow reserves'], stk: ['美股 那斯達克 黃金', 'Nasdaq S&P gold stocks'], rcliq: ['實現市值', 'realized cap'],
