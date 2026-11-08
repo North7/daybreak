@@ -138,6 +138,15 @@ def repeat_errors(items):
     return err
 
 
+# 2026-11-08 使用者：開頭常是「我和你差不多」「我這邊數據也是」，太機械、像 AI。第一句不要先附和／確認對方，直接講新東西。
+ECHO = re.compile(r'我這邊(也|的數據也|看到的也|算的也)?|跟你(的)?(說的|讀數|數字)?(差不多|一樣|對得上|接近)|讀數跟你|數據也(是|一樣)|我也(看到|是這樣|算到)|^(同意|沒錯|對[，,]|確實)|'
+                  r'\b(same|too|agreed?|either|as well|matches|lines? up|backs? (you|that|it) up)\b|^(yep|yeah|exactly|true|right)\b', re.I)
+
+
+def first_clause(t):
+    return re.split(r'[，。！？\n]|[,.!?](\s|$)', t.strip(), maxsplit=1)[0]
+
+
 def text_errors(tag, t, lang, lim=280):
     """一段要發出去的文字：字數、語言、簡體字、框架用詞、機械開頭。"""
     err = []
@@ -150,6 +159,8 @@ def text_errors(tag, t, lang, lim=280):
     if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
     if ROBOT.search(t): err.append(f'{tag} 太機械（「{ROBOT.search(t).group(0)}」）：先回應對方、用「我」，見 README「要有人味」')
     if AI_WORDS.search(t): err.append(f'{tag} AI 腔（「{AI_WORDS.search(t).group(0)}」）：見 voice.md「真人說話，不要 AI 腔」')
+    m = ECHO.search(first_clause(t))
+    if m: err.append(f'{tag} 開頭先附和（「{m.group(0)}」）：第一句直接講新東西，見 voice.md 2026-11-08')
     return err
 
 

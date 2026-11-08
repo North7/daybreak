@@ -18,7 +18,7 @@
    "url": "https://x.com/decodejar/status/2119214285159288880",
    "posted": "2026-11-07T23:43:53Z",
    "summary": "73–76K 是牛市支撐的延長測試，目前守住；情緒極度恐懼是對期中選舉反應過度；跌破看 67–69K，200 週線約 68K",
-   "reply": "That 73-76K zone stacks up on my chart too. The STH cost basis and the 350-day MA are both right around 76K, basically sitting on price, and the 200-day is lower near 73K and still rising. So it's less one support level than three lines inside the same band",
+   "reply": "The top of that zone is getting crowded. STH cost basis and the 350-day MA both sit around 76K, right on price, with the rising 200-day down near 73K",
    "sources": "latest.json chips.flow.sth_vs_tmm（Bitview 11/07）短期成本 75,867；price.ma.sma350 75,749、sma200 73,188（30 日前 71,798，上升中）；11/07 收盤 75,754",
    "note": "新帳號，6.8 萬粉、1.4 小時、3.6K 瀏覽。順著他的多頭方向補「這一帶有三條線」，不講跌破後怎樣。"
   },
@@ -37,7 +37,7 @@
    "url": "https://x.com/joao_wedson/status/2119181026417111222",
    "posted": "2026-11-07T21:31:43Z",
    "summary": "短期持有者比較不想囤現貨、偏好開槓桿多單；STH 供給 90 日變化轉弱，30 天多單清算較多",
-   "reply": "Funding says the same thing. OI-weighted funding went from under 9% to about 10% annualized this week, the same week spot ETFs had their worst outflow since June, around $1.3B out. Spot money leaving while longs keep paying up to stay in",
+   "reply": "OI-weighted funding went from under 9% to about 10% annualized this week, while spot ETFs bled about $1.3B, their worst week since June. Longs paying more to stay in as spot money walks",
    "sources": "notes.json 11/07 發現 1：加權資金費率 8.59% → 9.98%（OKX、Hyperliquid、Deribit，以未平倉加權）；ETF 11/02–11/06 −12.82 億美元（含 11/06 暫定，Farside／SoSoValue），6/26 那週以來最多",
    "note": "新帳號，1.9 萬粉、3.4K 瀏覽，他講的正好是今天的第一則發現。"
   },
@@ -56,7 +56,7 @@
    "url": "https://x.com/0xkyliekim/status/2119229981511565357",
    "posted": "2026-11-08T00:46:15Z",
    "summary": "週末止穩不是反轉；清算降到 5 千多萬、資金費小幅正；真正問題是現貨需求，ETF 一週 −12.8 億，週一比今天重要",
-   "reply": "Agree Monday matters more, and Tuesday's CPI lands right after. Dec hike odds already jumped to about 77% after the jobs print, from 67% a week earlier, so a hot CPI hits the same dollar side that's been pulling out of the ETFs",
+   "reply": "Tuesday's CPI lands right after that. Dec hike odds jumped to about 77% after the jobs print, from 67% a week earlier, so a hot print hits the same dollar flows that have been leaving the ETFs",
    "sources": "notes.json news：CME FedWatch 12 月升息 1 碼機率 76.8%（11/06，一週前 66.9%）；CPI 11/10 公布",
    "note": "11/07 回過她一次（熟帳號）；剛發 25 分鐘。"
   },
@@ -75,7 +75,7 @@
    "url": "https://x.com/mythsblack/status/2119231011384946983",
    "posted": "2026-11-08T00:50:21Z",
    "summary": "Coinbase BTC 連 63 天比境外便宜；ETF 一週 −12.8 億、貝萊德占 98%；ETF 流出、Coinbase 折價、恐懼 25 同時發生；問築底還是撤退",
-   "reply": "我這邊也是從 9/6 開始每天都是負溢價，到 11/07 剛好 63 天\n\n這三天每日值都卡在 −0.15% 左右，沒有往 0 收的樣子。我會等它真的翻正，才當成美國現貨回來了",
+   "reply": "63 天是從 9/6 開始算，中間一天都沒翻正過\n\n這三天每日值卡在 −0.15% 左右，也沒有往 0 收。哪天真的翻正，才比較像美國現貨回來",
    "sources": "latest.json flows.cb_premium（對幣安）：11/07 −0.15%、7 日均 −0.149%；11/05 −0.156%、11/06 −0.149%；2026-09-06 起連續 63 天為負",
    "note": "新帳號，1.1 萬粉，剛發 20 分鐘。他問「扣 1 扣 2」，我們不選邊，只給「翻正才算回來」的條件。",
    "image": {
@@ -101,7 +101,7 @@
    "url": "https://x.com/serlo123/status/2119232100436156676",
    "posted": "2026-11-08T00:54:40Z",
    "summary": "PSIP（盈利供應占比）本次回調最低約 58.3%、現在約 59%，和 2016、2023 牛市回調低點 57.7% 相近，還在牛市正常回調範圍",
-   "reply": "讀數跟你差不多，11/06 是 59.5%，不過一個月就掉了 10 個百分點，速度蠻快\n\n拿 2022 年 11 月之後來比，比現在低的日子只有一成多。位置確實偏低了，但離 50% 那條線還有快 10 個點",
+   "reply": "一個月掉了 10 個百分點，到 11/06 的 59.5%，這個速度比位置更讓人在意\n\n拿 2022 年 11 月之後來比，比現在低的日子只有一成多，但離 50% 那條線還有快 10 個點",
    "sources": "latest.json onchain.top_radar.supply-in-profit-pct（bitcoin-data）：59.51%（11/06）、30 日 −10.26 個百分點；2022-11 以來第 13.8 百分位、第 10 百分位 56.83%",
    "note": "熟帳號（wander），剛發 10 分鐘。順著他「還在牛市正常回調範圍」，補下降速度和本輪位置。"
   },
@@ -191,7 +191,7 @@
    "url": "https://x.com/basedlayer/status/2119209185405718613",
    "posted": "2026-11-07T23:23:37Z",
    "summary": "引用 Cointelegraph 恐懼貪婪指數掉到 25：他用 370 萬筆數據看情緒，認為這個指數是垃圾",
-   "reply": "The selling doesn't look like extreme fear either. Realized losses on Nov 7 were about 2 bps of market cap. The Feb 5 low this year hit 47. People are scared on the timeline, not dumping coins at a loss",
+   "reply": "Realized losses on Nov 7 were about 2 bps of market cap. The Feb 5 low this year hit 47. Lots of fear on the timeline, very little selling at a loss",
    "sources": "latest.json onchain.rloss（Bitview）：11/07 3.05 億美元＝2.0 bp；2026-02-05 低點 peak 47.24 bp",
    "note": "新帳號，1.9 萬粉。順著他「指數不準」補鏈上的另一面。"
   },
@@ -305,7 +305,7 @@
    "url": "https://x.com/LP_NXT/status/2119195416998588622",
    "posted": "2026-11-07T22:28:54Z",
    "summary": "和上一輪一樣，BTC 牛市初期遇到標普修正，過去這種時候 BTC 常形成重要低點；他認為是大趨勢裡的回檔，結尾說自己在買",
-   "reply": "The cycle numbers lean your way too. This is day 397 after the top and BTC is about 39% below it. The prior three cycles were 75-82% down at the same point. Only three samples, but this drawdown has been a lot shallower",
+   "reply": "Day 397 after the top and BTC is about 39% below it. By the same day the prior three cycles were 75-82% down. Only three samples, but that's a much shallower hole",
    "sources": "notes.json cycle：頂部後第 397 天，本輪距頂部 −39.3%，前三輪同一天 −74.6% 到 −81.5%（只有三輪樣本）",
    "note": "Grok 0905 #9，新帳號，1.9 萬粉、4.8K 瀏覽。順著他的多頭方向補週期位置，不接「I'm buying here」。",
    "image": {
