@@ -2,189 +2,47 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Daybreak X Replies</title>
-<!-- 回覆小幫手（2026-11-04）：讀 ../../data/replies.json（每天由 Claude 依 Grok 找到的貼文寫好回覆），
-     原文即時從 api.fxtwitter.com 讀；一鍵複製回覆並打開原文、存配圖、標記已回覆（只記在這台裝置）。規則見 ops/replies/README.md -->
-<style>
-:root { --paper:#F1F0EC; --card:#FFFFFF; --ink:#0A0A0A; --ink3:#7A766F; --line:#D2CEC4; --red:#FF3B1F; --soft:#F6F5F1; --ok:#00805A; }
-@media (prefers-color-scheme: dark) { :root { --paper:#121110; --card:#1C1B19; --ink:#EEECE6; --ink3:#9A958C; --line:#34312C; --soft:#252420; --ok:#3DBB8A; } }
-* { box-sizing:border-box; }
-body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.6 -apple-system, "PingFang TC", "Noto Sans TC", sans-serif; }
-main { max-width:720px; margin:0 auto; padding:20px 16px 48px; }
-header { border-top:6px solid var(--red); padding-top:14px; }
-h1 { font-size:22px; margin:0; display:flex; justify-content:space-between; align-items:baseline; gap:8px; }
-h1 a { font-size:14px; font-weight:600; color:var(--ink3); }
-.sub { color:var(--ink3); font-size:14px; margin:4px 0 0; }
-.sub .stale { color:var(--red); font-weight:700; }
-section.card { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin-top:18px; }
-section.card.done { opacity:.5; }
-.head { display:flex; flex-wrap:wrap; align-items:center; gap:6px 8px; font-size:14px; color:var(--ink3); }
-.head .ord { background:var(--red); color:#fff; font-weight:800; border-radius:6px; min-width:26px; text-align:center; padding:0 6px; }
-.done .head .ord { background:var(--ok); }
-.head a { color:var(--ink); font-weight:700; text-decoration:none; }
-.tag { border:1px solid var(--line); border-radius:999px; padding:0 8px; font-size:12px; }
-.tag.hot { border-color:var(--red); color:var(--red); }
-.tag.blue { border-color:#1D9BF0; color:#1D9BF0; }
-.orig { margin:12px 0 0; padding:10px 12px; background:var(--soft); border-left:3px solid var(--line); border-radius:4px; font-size:15px; white-space:pre-wrap; word-break:break-word; }
-.orig.clamp { max-height:10.5em; overflow:hidden; }
-.orig .meta { display:block; color:var(--ink3); font-size:12px; margin-top:6px; white-space:normal; }
-.more { font:inherit; font-size:13px; color:var(--ink3); background:none; border:0; padding:4px 0 0; cursor:pointer; text-decoration:underline; }
-.lab { margin:14px 0 4px; font-size:13px; font-weight:700; display:flex; justify-content:space-between; }
-.lab small { color:var(--ink3); font-weight:500; }
-.over { color:var(--red) !important; }
-pre { white-space:pre-wrap; word-break:break-word; font:inherit; margin:0; }
-img { width:100%; max-width:420px; border:1px solid var(--line); border-radius:6px; display:block; margin-top:12px; }
-.btns { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 4px; }
-.btns a, .btns button { font:inherit; font-size:15px; font-weight:700; padding:10px 14px; border-radius:8px; border:1.5px solid var(--ink);
-  background:transparent; color:var(--ink); text-decoration:none; cursor:pointer; }
-.btns .go { background:var(--red); border-color:var(--red); color:#fff; }
-.btns .mark.on { background:var(--ok); border-color:var(--ok); color:#fff; }
-.src, .note { font-size:13px; color:var(--ink3); margin:8px 0 0; }
-.note { color:var(--ink); }
-details { margin-top:24px; }
-details > summary { cursor:pointer; font-weight:700; color:var(--ink3); }
-.tip { color:var(--ink3); font-size:13px; margin:20px 0 0; }
-</style>
+<title>破曉運營台</title>
+<!-- 破曉運營台（2026-11-08 重做）：發文與回覆共用 ops/app/app.css、app.js。ops/post/ 預設打開「今天發文」，ops/replies/ 預設「回覆」；#today／#replies 可直接切。
+     這個檔案是兩頁的範本：改了要同步 ops/post/index.html 和 ops/replies/index.html（只差 body 的 data-tab）。 -->
+<link rel="stylesheet" href="../app/app.css">
 </head>
-<body>
+<body data-tab="replies">
+<header class="top"><div class="top-in">
+  <div class="brand"><h1>破曉運營台</h1><span class="meta" id="meta">讀取中…</span><button class="icon-btn" data-act="help" aria-label="怎麼用">?</button></div>
+  <nav class="tabs">
+    <button class="tab" data-act="tab" data-tab="today">今天發文<span class="badge zero" id="b-today">–</span></button>
+    <button class="tab" data-act="tab" data-tab="replies">回覆<span class="badge zero" id="b-replies">–</span></button>
+  </nav>
+</div></header>
 <main>
-  <header>
-    <h1>X 回覆小幫手 <a href="../post/">發文小幫手 →</a></h1>
-    <p class="sub" id="meta">讀取中…</p>
-  </header>
-  <div id="list"></div>
-  <details id="skipped" hidden><summary id="skipsum"></summary><div id="skiplist"></div></details>
-  <p class="tip">手機：有配圖的先按「存配圖」→ 選「儲存影像」；再按「複製回覆並開原文」，X App 打開那則貼文後按回覆、貼上文字、從相簿加圖。<br>
-  電腦：「在 X 回覆」會開好回覆視窗並帶入文字；配圖要先下載，再在視窗裡自己加。<br>
-  標「建議引用」的：用引用發文（手機：「複製引用文並開原文」→ 轉推 → 引用 → 貼上、加圖）。引用算原創貼文，會計入首頁曝光；回覆不算。<br>
-  回覆完按「標記已回覆」，只記在這台裝置。原文即時讀自 fxtwitter，讀不到時顯示摘要；「藍勾」也是即時讀的。</p>
+  <section class="view" id="v-today"><p class="empty">讀取中…</p></section>
+  <section class="view" id="v-replies" hidden><p class="empty">讀取中…</p></section>
 </main>
-<script>
-(function () {
-  var ROOT = '../../';   // 網站根目錄（本頁在 ops/replies/）
-  var URL_RE = /https?:\/\/\S+/g, MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  var LANG = { en: '英文', zh: '中文', ja: '日文', id: '印尼文', in: '印尼文', ko: '韓文' };
-  function weight(t) {   // 與 pipeline/x_len.py 相同：中日韓全形與 emoji 2、其他 1、網址 23
-    var n = (t.match(URL_RE) || []).length * 23; t = t.replace(URL_RE, '');
-    for (var ch of t) n += /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹏＀-｠￠-￦　-〿\u{1F300}-\u{1FAFF}\u{20000}-\u{3FFFD}]/u.test(ch) ? 2 : 1;
-    return n;
-  }
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function flash(b, msg) { var l = b.dataset.label || (b.dataset.label = b.textContent); b.textContent = msg; setTimeout(function () { b.textContent = l; }, 1500); }
-  function copy(t) { try { return navigator.clipboard.writeText(t); } catch (e) { return Promise.reject(e); } }
-  function fans(n) { return n >= 10000 ? (n / 10000).toFixed(1).replace(/\.0$/, '') + ' 萬粉' : Number(n).toLocaleString() + ' 粉'; }
-  function ago(iso) {
-    var m = (Date.now() - new Date(iso).getTime()) / 60000;
-    return m < 60 ? Math.max(1, Math.round(m)) + ' 分鐘前' : m < 2880 ? Math.round(m / 60) + ' 小時前' : Math.round(m / 1440) + ' 天前';
-  }
-  function num(n) { return n >= 10000 ? (n / 1000).toFixed(1).replace(/\.0$/, '') + 'K' : Number(n || 0).toLocaleString(); }
-  var store = { get: function (k) { try { return JSON.parse(localStorage.getItem(k) || '[]'); } catch (e) { return []; } },
-                set: function (k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} } };
-
-  fetch(ROOT + 'data/replies.json?t=' + Date.now()).then(function (r) { return r.json(); }).then(function (R) {
-    var KEY = 'daybreak-replied-' + R.date, done = store.get(KEY), files = {};
-    var items = R.items.slice().sort(function (a, b) { return a.order - b.order; });
-    var todo = items.filter(function (x) { return x.status !== 'skip'; }), skip = items.filter(function (x) { return x.status === 'skip'; });
-
-    function meta() {
-      var d = new Date(), today = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-      var n = todo.filter(function (x) { return done.indexOf(x.id) >= 0; }).length;
-      document.getElementById('meta').innerHTML = esc(R.date.slice(5).replace('-', '/')) + (R.date !== today ? ' <span class="stale">（不是今天的清單）</span>' : '') +
-        ' · 數據 No.' + String(R.edition || 0).padStart(3, '0') + '（' + esc(R.data_date.slice(5).replace('-', '/')) + ' 收盤）' +
-        ' · 待回 ' + (todo.length - n) + ' · 已回 ' + n + ' · 跳過 ' + skip.length;
-    }
-
-    function card(x, i) {
-      var t = x.reply || '', w = weight(t), img = x.image ? ROOT + 'data/replies/' + x.n + '.png?t=' + Date.now() : '';
-      var on = done.indexOf(x.id) >= 0, intent = 'https://x.com/intent/post?in_reply_to=' + x.id + '&text=' + encodeURIComponent(t);
-      if (img) fetch(img).then(function (r) { return r.blob(); }).then(function (bl) { files[x.id] = new File([bl], 'daybreak-reply-' + R.date + '-' + x.n + '.png', { type: 'image/png' }); });
-      var b = '', ib = !img ? '' : MOBILE ? '<button class="save" data-id="' + x.id + '">存配圖</button>'   // 2026-11-08：只有引用文、沒有回覆的也要能存圖
-                                       : '<a href="' + img + '" download="daybreak-reply-' + R.date + '-' + x.n + '.png">下載配圖</a>';
-      if (t) {
-        if (MOBILE) {
-          b += ib;
-          b += '<a class="go open" data-id="' + x.id + '" href="' + esc(x.url) + '">複製回覆並開原文</a>';
-        } else {
-          b += '<a class="go" href="' + esc(intent) + '" target="_blank" rel="noopener">在 X 回覆</a>';
-          b += ib;
-        }
-        b += '<button class="copy" data-id="' + x.id + '">複製回覆</button>';
-      }
-      if (!MOBILE || !t) b += '<a href="' + esc(x.url) + '" target="_blank" rel="noopener">開原文</a>';
-      // 引用發文：算原創貼文、會計入首頁曝光（回覆不算）；手機走 X 原生的「轉推 → 引用」，電腦用 intent 帶入原文網址
-      var q = x.quote || '', qb = '';
-      if (q) {
-        qb = MOBILE ? '<a class="' + (x.mode === 'quote' ? 'go ' : '') + 'open" data-kind="quote" data-id="' + x.id + '" href="' + esc(x.url) + '">複製引用文並開原文</a>' +
-                      '<button class="copy" data-kind="quote" data-id="' + x.id + '">複製引用文</button>'
-                    : '<a class="' + (x.mode === 'quote' ? 'go' : '') + '" href="' + esc('https://x.com/intent/post?text=' + encodeURIComponent(q) + '&url=' + encodeURIComponent(x.url)) + '" target="_blank" rel="noopener">引用發文</a>' +
-                      '<button class="copy" data-kind="quote" data-id="' + x.id + '">複製引用文</button>';
-        if (!t) qb = (MOBILE ? ib : '') + qb + (MOBILE ? '' : ib);
-      }
-      if (x.status !== 'skip') b += '<button class="mark' + (on ? ' on' : '') + '" data-id="' + x.id + '">' + (on ? '✓ 已回覆' : '標記已回覆') + '</button>';
-      return '<section class="card' + (on ? ' done' : '') + '" id="c' + x.id + '">' +
-        '<div class="head"><span class="ord">' + (x.status === 'skip' ? '—' : i + 1) + '</span>' +
-        '<a href="' + esc(x.url) + '" target="_blank" rel="noopener">@' + esc(x.author) + '</a><span>' + fans(x.followers) + ' · ' + ago(x.posted) + '</span>' +
-        '<span class="tag">' + (LANG[x.lang] || esc(x.lang)) + '</span><span class="tag">' + esc(x.angle) + '</span>' + (x.status === 'optional' ? '<span class="tag">可選</span>' : '') +
-        (x.mode === 'quote' ? '<span class="tag hot">建議引用</span>' : '') + '<span class="tag blue" id="v' + x.id + '" hidden>藍勾</span></div>' +
-        '<div class="orig clamp" id="o' + x.id + '">' + esc(x.summary) + '<span class="meta">Grok／Claude 摘要（原文讀取中…）</span></div>' +
-        '<button class="more" data-id="' + x.id + '" hidden>展開全文</button>' +
-        (t ? '<div class="lab">回覆 <small class="' + (w > 280 ? 'over' : '') + '">' + w + ' / 280</small></div><pre>' + esc(t) + '</pre>' : '') +
-        (img ? '<img src="' + img + '" alt="回覆配圖" loading="lazy">' : '') +
-        '<div class="btns">' + b + '</div>' +
-        (q ? '<div class="lab">引用發文 <small class="' + (weight(q) + 23 > (x.long ? 25000 : 280) ? 'over' : '') + '">算曝光 · ' + (weight(q) + 23) + (x.long ? ' / 25,000 長文（X 先顯示前 280 字左右）' : ' / 280（含原文網址）') + '</small></div><pre>' + esc(q) + '</pre><div class="btns">' + qb + '</div>' : '') +
-        (x.sources ? '<p class="src">數字：' + esc(x.sources) + '</p>' : '') + (x.note ? '<p class="note">' + esc(x.note) + '</p>' : '') + '</section>';
-    }
-
-    document.getElementById('list').innerHTML = todo.map(card).join('');
-    if (skip.length) {
-      document.getElementById('skipped').hidden = false;
-      document.getElementById('skipsum').textContent = '跳過的 ' + skip.length + ' 則（點開看原因）';
-      document.getElementById('skiplist').innerHTML = skip.map(card).join('');
-    }
-    meta();
-
-    items.forEach(function (x) {   // 原文：即時讀 fxtwitter（不需登入、允許跨網域）；讀不到就留摘要
-      fetch('https://api.fxtwitter.com/status/' + x.id).then(function (r) { return r.json(); }).then(function (j) {
-        var tw = j && j.tweet; if (!tw) throw 0;
-        var el = document.getElementById('o' + x.id);
-        if (tw.author && tw.author.verification && tw.author.verification.verified) document.getElementById('v' + x.id).hidden = false;
-        el.innerHTML = esc(tw.text) + '<span class="meta">原文 · ♥ ' + num(tw.likes) + ' · 回覆 ' + num(tw.replies) + ' · 轉推 ' + num(tw.retweets) +
-          (tw.views ? ' · 瀏覽 ' + num(tw.views) : '') + (tw.media && tw.media.all && tw.media.all.length ? ' · 附圖 ' + tw.media.all.length : '') + '</span>';
-        if (el.scrollHeight > el.clientHeight + 4) document.querySelector('.more[data-id="' + x.id + '"]').hidden = false;
-      }).catch(function () {
-        var m = document.querySelector('#o' + x.id + ' .meta'); if (m) m.textContent = 'Grok／Claude 摘要（原文讀取失敗，請點開原文看）';
-      });
-    });
-
-    var byId = {}; items.forEach(function (x) { byId[x.id] = x; });
-    document.addEventListener('click', function (e) {
-      var b = e.target.closest('button, a.open'); if (!b) return;
-      var x = byId[b.dataset.id]; if (!x) return;
-      var txt = b.dataset.kind === 'quote' ? x.quote : x.reply;
-      if (b.classList.contains('open')) { copy(txt).catch(function () {}); return; }   // 不擋預設動作：連結照常打開（手機會跳到 X App）
-      if (b.classList.contains('copy')) copy(txt).then(function () { flash(b, '✓ 已複製'); }, function () { flash(b, '✗'); });
-      if (b.classList.contains('more')) { document.getElementById('o' + x.id).classList.remove('clamp'); b.hidden = true; }
-      if (b.classList.contains('save')) {
-        var f = files[x.id];
-        if (!f || !navigator.canShare || !navigator.canShare({ files: [f] })) { flash(b, '圖還在載入…'); return; }
-        navigator.share({ files: [f] }).catch(function () {});
-      }
-      if (b.classList.contains('mark')) {
-        var k = done.indexOf(x.id); if (k >= 0) done.splice(k, 1); else done.push(x.id);
-        store.set(KEY, done); var on = k < 0;
-        b.classList.toggle('on', on); b.textContent = on ? '✓ 已回覆' : '標記已回覆';
-        document.getElementById('c' + x.id).classList.toggle('done', on); meta();
-      }
-    });
-    if (!navigator.share) document.querySelectorAll('.save').forEach(function (b) {   // 沒有分享選單的瀏覽器：改成下載
-      var x = byId[b.dataset.id], a = document.createElement('a');
-      a.href = ROOT + 'data/replies/' + x.n + '.png'; a.download = 'daybreak-reply-' + R.date + '-' + x.n + '.png'; a.textContent = '下載配圖';
-      b.replaceWith(a);
-    });
-  }).catch(function () { document.getElementById('meta').textContent = '讀取失敗：data/replies.json'; });
-})();
-</script>
+<dialog id="help">
+  <h2>怎麼用</h2>
+  <p>每張卡片點開就能用，按鈕都在同樣的位置：最上面的紅色按鈕是「發到 X」，下面是複製文字和存圖，最底下是「標記已發／已回」。標記之後卡片會收起來，自動打開下一則。</p>
+  <h3>今天發文</h3>
+  <ul>
+    <li>日報、推薦圖表、快訊、長貼文照建議時間排，到時間沒發的會顯示「該發了」。</li>
+    <li>手機：「發到 X」會叫出分享選單，選 X，圖和全文一起帶進發文框。文字同時已複製，沒帶進去就直接貼上。</li>
+    <li>電腦：「發到 X」打開 X 網頁版發文框並帶入文字；太長帶不進去的長文會先複製，打開後貼上。圖片按「複製圖片」再貼到發文框。</li>
+    <li>日報、快訊的網站連結不放正文，發完後在自己這則底下回覆那行連結。</li>
+    <li>長貼文沒發的會一直留著，標記已發之後隔天就不再顯示。</li>
+  </ul>
+  <h3>回覆</h3>
+  <ul>
+    <li>上方可以只看「接話」（別人在我們貼文底下留言）、「新貼文」或「建議引用」。</li>
+    <li>手機：「複製並打開 X」會複製文字並打開那則貼文，按回覆貼上；有配圖的先按「存圖」。引用：打開後按轉推 → 引用，再貼上。</li>
+    <li>電腦：「在 X 回覆」「引用發文」會開好發文視窗並帶入文字，配圖用「複製圖片」貼上。</li>
+    <li>引用算原創貼文、會計入首頁曝光；回覆不算。</li>
+  </ul>
+  <p>已發、已回只記在這台裝置。</p>
+  <form method="dialog"><button class="btn" style="width:100%;margin:6px 0 10px">知道了</button></form>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+<script src="../app/app.js"></script>
 </body>
 </html>

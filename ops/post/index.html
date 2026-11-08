@@ -2,301 +2,47 @@
 <html lang="zh-Hant">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="robots" content="noindex">
-<title>Daybreak X Post</title>
-<!-- 發文小幫手（2026-10-13 建於根目錄 post.html，2026-11-04 移到 ops/post/）：讀 ../../data/x_post.json，中英文貼文一鍵複製、一鍵開 X 發文視窗、下載當日分享圖
-     2026-11-04：加「今日推薦圖表」（2026-11-06 第二版：一天一張網站原圖＋問句標題，見 ops/picks/README.md）：讀 ../../data/picks.json（每日任務寫的解說）與 ../../data/picks/index.json（Actions 畫了哪些圖），每張圖都能分享、存圖、複製解說
-     2026-11-04：加「快訊」：讀 ../../data/flash.json（盤中事件的中英文貼文；2026-11-05 起只顯示台北時間今天的，過期的直接從資料刪掉），配圖在 ../../data/flash/
-     2026-11-05：依發文類型分區（快訊、日報貼文、長貼文、推薦圖表，上方有跳轉標籤，回覆另一頁）
-     2026-11-05：加「長貼文」：讀 ../../data/longposts.json（每日圖表長貼文，Premium 長文、不是 X Article；沒處理的一直顯示，「標記已處理」只記在這台裝置、隔天不再顯示；舊則由 Claude 寫新長貼文時清掉），配圖在 ../../data/longposts/，一則可多張 -->
-<style>
-:root { --paper:#F1F0EC; --card:#FFFFFF; --ink:#0A0A0A; --ink3:#7A766F; --line:#D2CEC4; --red:#FF3B1F; }
-@media (prefers-color-scheme: dark) { :root { --paper:#121110; --card:#1C1B19; --ink:#EEECE6; --ink3:#9A958C; --line:#34312C; } }
-* { box-sizing:border-box; }
-body { margin:0; background:var(--paper); color:var(--ink); font:16px/1.6 -apple-system, "PingFang TC", "Noto Sans TC", sans-serif; }
-main { max-width:720px; margin:0 auto; padding:20px 16px 48px; }
-header { border-top:6px solid var(--red); padding-top:14px; }
-h1 { font-size:22px; margin:0; }
-.sub { color:var(--ink3); font-size:14px; margin:4px 0 0; }
-section { background:var(--card); border:1px solid var(--line); border-radius:10px; padding:16px; margin-top:18px; }
-h2 { font-size:15px; margin:0 0 10px; display:flex; justify-content:space-between; gap:8px; }
-h2 small { color:var(--ink3); font-weight:500; }
-pre { white-space:pre-wrap; word-break:break-word; font:inherit; margin:0 0 14px; }
-img { width:100%; border:1px solid var(--line); border-radius:6px; display:block; }
-.btns { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0 4px; }
-.btns a, .btns button { font:inherit; font-size:15px; font-weight:700; padding:10px 14px; border-radius:8px; border:1.5px solid var(--ink);
-  background:transparent; color:var(--ink); text-decoration:none; cursor:pointer; }
-.btns .go { background:var(--red); border-color:var(--red); color:#fff; }
-.tip { color:var(--ink3); font-size:13px; margin:8px 0 0; }
-.over { color:var(--red); }
-h3 { font-size:14px; margin:14px 0 6px; display:flex; justify-content:space-between; gap:8px; }
-h3 small { color:var(--ink3); font-weight:500; }
-.why { color:var(--ink3); font-size:13px; margin:0 0 4px; }
-.picks-h { font-size:18px; margin:30px 0 0; padding-top:12px; border-top:3px solid var(--ink); }
-.flash-h { font-size:18px; margin:22px 0 0; color:var(--red); }
-.flash-h small { color:var(--ink3); font-weight:500; }
-#flash section { border-color:var(--red); }
-.long-h { font-size:18px; margin:22px 0 0; }
-#long-list section.done { opacity:.55; }
-#long-list section.done pre, #long-list section.done img, #long-list section.done h3, #long-list section.done .btns:not(.done-row) { display:none; }
-.done-row { margin:0 0 10px; }
-.done-row button.on { background:var(--ink); color:var(--card); }
-.long-h small { color:var(--ink3); font-weight:500; }
-#long section { border-color:var(--ink); border-width:1.5px; }
-#long pre { max-height:340px; overflow:auto; border-bottom:1px dashed var(--line); padding-bottom:10px; }
-#long pre.open { max-height:none; }
-#long img + img { margin-top:8px; }
-/* 2026-11-05：依發文類型分區 */
-.types { position:sticky; top:0; z-index:5; display:flex; flex-wrap:wrap; gap:6px; padding:10px 0; margin-top:10px; background:var(--paper); border-bottom:1px solid var(--line); }
-.types a { font-size:14px; font-weight:700; padding:6px 12px; border-radius:999px; border:1.5px solid var(--ink); color:var(--ink); text-decoration:none; }
-.types a.hot { background:var(--red); border-color:var(--red); color:#fff; }
-.grp { scroll-margin-top:64px; }
-.grp-h { font-size:18px; margin:28px 0 0; padding-top:12px; border-top:3px solid var(--ink); }
-.grp-h small { color:var(--ink3); font-weight:500; }
-.desc { color:var(--ink3); font-size:13px; margin:4px 0 0; }
-#flash .grp-h { color:var(--red); border-top-color:var(--red); }
-</style>
+<title>破曉運營台</title>
+<!-- 破曉運營台（2026-11-08 重做）：發文與回覆共用 ops/app/app.css、app.js。ops/post/ 預設打開「今天發文」，ops/replies/ 預設「回覆」；#today／#replies 可直接切。
+     這個檔案是兩頁的範本：改了要同步 ops/post/index.html 和 ops/replies/index.html（只差 body 的 data-tab）。 -->
+<link rel="stylesheet" href="../app/app.css">
 </head>
-<body>
-<main>
-  <header>
-    <h1>X 發文小幫手 · X post helper</h1>
-    <p class="sub" id="meta">讀取中… Loading…</p>
-  </header>
-  <nav class="types">
-    <a href="#flash" id="nav-flash" class="hot" hidden>快訊</a>
-    <a href="#t-daily">日報貼文</a>
-    <a href="#long" id="nav-long" hidden>長貼文</a>
-    <a href="#t-picks">推薦圖表</a>
-    <a href="../replies/">回覆 →</a>
+<body data-tab="today">
+<header class="top"><div class="top-in">
+  <div class="brand"><h1>破曉運營台</h1><span class="meta" id="meta">讀取中…</span><button class="icon-btn" data-act="help" aria-label="怎麼用">?</button></div>
+  <nav class="tabs">
+    <button class="tab" data-act="tab" data-tab="today">今天發文<span class="badge zero" id="b-today">–</span></button>
+    <button class="tab" data-act="tab" data-tab="replies">回覆<span class="badge zero" id="b-replies">–</span></button>
   </nav>
-  <div id="flash" class="grp" hidden><h2 class="grp-h">快訊 · Breaking <small id="flash-meta"></small></h2>
-    <p class="desc">盤中事件：新低／新高、ETF 數據、大爆倉。看到就發，中英各一則，單張圖。只顯示今天的。</p><div id="flash-list"></div></div>
-  <div id="t-daily" class="grp"><h2 class="grp-h">日報貼文 · Daily post <small>每天早上</small></h2>
-    <p class="desc">當日簡報的摘要加分享圖，中英各一則，280 字內。每天早上日報出來就發。網站連結不放正文（帶連結曝光少約四成）：發完後按「複製連結回覆」，貼在自己這則底下。</p><div id="posts"></div></div>
-  <div id="long" class="grp" hidden><h2 class="grp-h">長貼文 · Long posts <small id="long-meta"></small></h2>
-    <p class="desc">每天 1–2 則圖表長貼文（X Premium 長貼文，不是 Article）：一個核心指標講透，配網站原圖，文中數字標在圖上。照建議時間發。沒處理的會一直留著；發完按「標記已處理」，當天收起來，隔天就不再顯示（只記在這台裝置）。</p><div id="long-list"></div>
-    <p class="tip">長貼文（手機）：按「在 X 發文（圖＋全文）」→ 分享選單裡選 X，配圖和全文會一起帶進發文框。全文同時已複製：如果文字沒帶進去或被截斷，把發文框的字全選刪掉、直接貼上。<br>
-    電腦：按「在 X 發文」會打開 X 網頁版發文框；全文在約 730 字以內會直接帶入（同日報），更長的 X 網址收不下，會先複製全文、打開空白發文框，貼上即可 → 回來按「複製圖片」→ 在發文框再貼一次就加上圖了。文字框可以點一下展開。</p></div>
-  <div id="t-picks" class="grp"><h2 class="grp-h">推薦圖表 · Today's picks <small id="picks-meta"></small></h2>
-    <p class="desc">短圖說（280 字內）加一張圖。每天中午（12:00–13:00）挑一張發，當作早上日報和晚上長貼文之間的那則原創；也可以貼到 Threads 等其他平台。</p>
-    <div id="picks"><p class="sub">讀取中… Loading…</p></div></div>
-  <p class="tip">手機：按「分享到 X（含圖）」→ 在分享選單選 X，圖和文字一起帶進發文視窗；若 X 只帶了圖，文字已自動複製，在發文框貼上即可。「存到相簿」→ 選「儲存影像」。「在 X App 發文」直接打開 X App 的發文視窗（只有文字）。<br>
-  Phone: "Share to X (with image)" → pick X in the share sheet; the text is also copied, so paste it if X keeps only the image. "Save to Photos" → choose "Save Image". "Post in X app" opens the X app composer (text only).<br>
-  推薦圖表：每張圖中英文各一份，按鈕用法同上；「複製解說」只複製文字，可貼到 Threads 等其他平台。Picks: each chart has a Chinese and an English version; the buttons work the same way, and "Copy caption" copies just the text for Threads and other apps.</p>
+</div></header>
+<main>
+  <section class="view" id="v-today"><p class="empty">讀取中…</p></section>
+  <section class="view" id="v-replies" hidden><p class="empty">讀取中…</p></section>
 </main>
-<script>
-(function () {
-  var ROOT = '../../';   // 網站根目錄（本頁在 ops/post/）
-  var URL_RE = /https?:\/\/\S+/g, MOBILE = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent), T = Date.now();
-  var files = {}, texts = {};   // 鍵：en／zh（當日貼文）、pick:<id>:<語言>（推薦圖表）；先把圖抓好，分享時才能在同一次點擊內叫出 iOS 分享選單
-  function weight(t) {   // 與 pipeline/x_len.py 相同：中日韓全形與 emoji 2、其他 1、網址 23
-    var n = (t.match(URL_RE) || []).length * 23; t = t.replace(URL_RE, '');
-    for (var ch of t) n += /[ᄀ-ᅟ⺀-꓏가-힣豈-﫿︰-﹏＀-｠￠-￦　-〿\u{1F300}-\u{1FAFF}\u{20000}-\u{3FFFD}]/u.test(ch) ? 2 : 1;
-    return n;
-  }
-  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function flash(b, msg) { var l = b.dataset.label || (b.dataset.label = b.textContent); b.textContent = msg; setTimeout(function () { b.textContent = l; }, 1500); }
-  function copy(t) { try { return navigator.clipboard.writeText(t); } catch (e) { return Promise.reject(e); } }
-  function getJSON(u) { return fetch(ROOT + u + '?t=' + T).then(function (r) { if (!r.ok) throw r.status; return r.json(); }); }
-  function prefetch(k, img, name) { fetch(img).then(function (r) { return r.blob(); }).then(function (bl) { files[k] = new File([bl], name, { type: 'image/png' }); }); }
-  function prefetchAll(k, imgs, names) {   // 一則多張圖（長貼文）：全部抓好才放進 files[k]（陣列）
-    Promise.all(imgs.map(function (u, i) { return fetch(u).then(function (r) { return r.blob(); }).then(function (bl) { return new File([bl], names[i], { type: 'image/png' }); }); }))
-      .then(function (fs) { files[k] = fs; });
-  }
-  function bind(root) {
-    var list = function (f) { return f ? (Array.isArray(f) ? f : [f]) : null; };
-    var canShare = function (f) { return f && navigator.canShare && navigator.canShare({ files: f }); };
-    root.querySelectorAll('.share, .save').forEach(function (b) {
-      if (!navigator.share || !MOBILE) { b.hidden = true; return; }   // 電腦藏起來（Mac 的分享選單沒有 X、也沒有存相簿），改用下載／複製圖片
-      b.onclick = function () {
-        var k = b.dataset.k, f = list(files[k]), text = b.classList.contains('share') ? texts[k] : null;
-        if (!canShare(f)) { flash(b, '圖還在載入 · loading…'); return; }
-        if (text) copy(text).catch(function () {});
-        navigator.share(text ? { files: f, text: text } : { files: f }).catch(function () {});
-      };
-    });
-    root.querySelectorAll('.copyimg').forEach(function (b) {   // 電腦：圖片複製到剪貼簿，在 X 網頁版發文框直接貼上
-      if (MOBILE || !window.ClipboardItem || !navigator.clipboard || !navigator.clipboard.write) { b.hidden = true; return; }
-      b.onclick = function () {
-        var f = list(files[b.dataset.k]); if (!f) { flash(b, '圖還在載入…'); return; }
-        navigator.clipboard.write([new ClipboardItem({ 'image/png': f[+(b.dataset.i || 0)] })]).then(function () { flash(b, '✓ 已複製，貼到 X'); }, function () { flash(b, '✗'); });
-      };
-    });
-    root.querySelectorAll('pre.fold').forEach(function (p) { p.onclick = function () { p.classList.toggle('open'); }; });
-    root.querySelectorAll('.copy').forEach(function (b) {
-      b.onclick = function () { copy(texts[b.dataset.k] || '').then(function () { flash(b, '✓'); }, function () { flash(b, '✗'); }); };
-    });
-    // 長貼文「在 X 發文」（2026-11-05）：先複製全文。手機用分享選單把「配圖＋全文」一起送進 X（twitter://post?message= 實測只打開空白發文框，圖也帶不了）；
-    // 電腦開 X 網頁版發文框，貼上全文、拖入下載的圖
-    root.querySelectorAll('.xpost').forEach(function (b) {
-      b.onclick = function () {
-        var k = b.dataset.k, t = texts[k] || '', f = list(files[k]);
-        copy(t).catch(function () {});
-        if (MOBILE && navigator.share) {
-          var data = canShare(f) ? { files: f, text: t } : { text: t };
-          if (!canShare(f)) flash(b, '圖還在載入，先只帶文字…');
-          navigator.share(data).catch(function () {});
-          return;
-        }
-        // X 的 intent 網址上限約 5,000 字元（2026-11-05 實測：中文約 730 字以內 307 正常、超過回 500）。短的直接帶入全文（同日報）；太長只開發文框、貼上剛複製的全文
-        var u = 'https://x.com/intent/post?text=' + encodeURIComponent(t);
-        flash(b, u.length <= 4900 ? '✓' : (b.dataset.done || '✓'));
-        window.open(u.length <= 4900 ? u : 'https://x.com/compose/post', '_blank', 'noopener');
-      };
-    });
-  }
-  // 2026-11-06：正文帶連結的貼文曝光少約四成（ClimbX 統計 89 則，中位數 −41%），連結那一行拆出來，發完貼在自己貼文底下的第一則回覆
-  function splitLink(t) {
-    var keep = [], link = [];
-    t.split('\n').forEach(function (l) { (/https?:\/\/\S+/.test(l) ? link : keep).push(l); });
-    return [keep.join('\n').replace(/\n{3,}/g, '\n\n').trim(), link.join('\n').trim()];
-  }
-  function linkBox(k, link, zh) {
-    if (!link) return '';
-    texts[k + ':link'] = link;
-    return '<p class="why">' + (zh ? '發完後，在自己這則底下回覆這一行（連結放回覆，正文不放：帶連結的貼文曝光少約四成）' : 'After posting, reply to your own post with this line (links in the main post cut reach by ~40%)') + '</p>' +
-      '<pre>' + esc(link) + '</pre><div class="btns"><button class="copy" data-k="' + k + ':link">' + (zh ? '複製連結回覆' : 'Copy link reply') + '</button></div>';
-  }
-  function tpe(d) { return new Date(d).toLocaleDateString('sv-SE', { timeZone: 'Asia/Taipei' }); }   // 台北日期 YYYY-MM-DD
-  var TODAY = tpe(Date.now());
-  function img(path) { return ROOT + path.replace(/^https:\/\/north7\.github\.io\/daybreak\//, '') + '?t=' + T; }
-
-  // ---------- 當日貼文 ----------
-  getJSON('data/x_post.json').then(function (p) {
-    document.getElementById('meta').textContent = 'No.' + String(p.edition || 0).padStart(3, '0') + ' · ' + p.date;
-    var langs = [['en', 'English', p.image_en, ['Share to X (with image)', 'Save to Photos', 'Post in X app', 'Copy text', 'Download image']],
-                 ['zh', '中文', p.image_zh, ['分享到 X（含圖）', '存到相簿', '在 X App 發文', '複製文字', '下載圖片']]];
-    var el = document.getElementById('posts');
-    el.innerHTML = langs.map(function (L) {
-      var k = L[0], sp = splitLink(p[k] || ''), t = sp[0], w = weight(t), B = L[3], im = L[2] ? img(L[2]) : '';
-      texts[k] = t;
-      if (im) prefetch(k, im, 'daybreak-' + p.date + '-' + k + '.png');
-      // 手機用 X App 的網址協定直接開發文視窗（網頁版 intent 會落在未登入的內建瀏覽器）；電腦用網頁版
-      var xurl = MOBILE ? 'twitter://post?message=' + encodeURIComponent(t) : 'https://x.com/intent/post?text=' + encodeURIComponent(t);
-      return '<section><h2>' + L[1] + ' <small class="' + (w > 280 ? 'over' : '') + '">' + w + ' / 280</small></h2>' +
-        '<pre>' + esc(t) + '</pre>' + (im ? '<img src="' + im + '" alt="">' : '') + '<div class="btns">' +
-        (im ? '<button class="go share" data-k="' + k + '">' + B[0] + '</button>' + '<button class="save" data-k="' + k + '">' + B[1] + '</button>' : '') +
-        '<a href="' + xurl + '"' + (MOBILE ? '' : ' target="_blank" rel="noopener"') + '>' + (MOBILE ? B[2] : 'Post on X / 在 X 發文') + '</a>' +
-        '<button class="copy" data-k="' + k + '">' + B[3] + '</button>' +
-        (im && !MOBILE ? '<a href="' + im + '" download="daybreak-' + p.date + '-' + k + '.png">' + B[4] + '</a>' : '') + '</div>' + linkBox(k, sp[1], k === 'zh') + '</section>';
-    }).join('');
-    bind(el);
-  }).catch(function () { document.getElementById('meta').textContent = '讀取失敗 · Failed to load data/x_post.json'; });
-
-  // ---------- 快訊（2026-11-04）----------
-  // data/flash.json：盤中事件（新低／新高、ETF 數據、大爆倉）時 Claude 寫的中英文貼文，配圖在 data/flash/<id>-<語言>.png；只顯示台北時間今天的（2026-11-05 使用者：過期的刪掉、每天更新）
-  getJSON('data/flash.json').then(function (F) {
-    var list = (F.items || []).filter(function (x) { return tpe(x.time) === TODAY; });
-    if (!list.length) return;
-    list.sort(function (a, b) { return new Date(a.time) - new Date(b.time); });   // 依時間先後（後面的常是前一則的跟進）
-    var el = document.getElementById('flash-list'), LB = { zh: ['中文', '分享到 X（含圖）', '存到相簿', '在 X App 發文', '複製文字', '下載圖片'],
-                                                          en: ['English', 'Share to X (with image)', 'Save to Photos', 'Post in X app', 'Copy text', 'Download image'] };
-    document.getElementById('flash').hidden = false; document.getElementById('nav-flash').hidden = false;
-    document.getElementById('flash-meta').textContent = list.length + ' 則 · ' + TODAY;
-    el.innerHTML = list.map(function (x) {
-      var hm = new Date(x.time).toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
-      return '<section><h2>' + esc(x.title || '') + ' <small>' + hm + '</small></h2>' + (x.note ? '<p class="why">' + esc(x.note) + '</p>' : '') +
-        ['zh', 'en'].filter(function (lang) { return x[lang]; }).map(function (lang) {
-          var k = 'flash:' + x.id + ':' + lang, sp = splitLink(x[lang]), t = sp[0], w = weight(t), B = LB[lang];
-          var im = x.image ? img('data/flash/' + x.id + '-' + lang + '.png') : '', fn = 'daybreak-flash-' + x.id + '-' + lang + '.png';
-          texts[k] = t; if (im) prefetch(k, im, fn);
-          var xurl = MOBILE ? 'twitter://post?message=' + encodeURIComponent(t) : 'https://x.com/intent/post?text=' + encodeURIComponent(t);
-          return '<h3>' + B[0] + ' <small class="' + (w > 280 ? 'over' : '') + '">' + w + ' / 280</small></h3><pre>' + esc(t) + '</pre>' +
-            (im ? '<img src="' + im + '" alt="" loading="lazy">' : '') + '<div class="btns">' +
-            (im ? '<button class="go share" data-k="' + k + '">' + B[1] + '</button><button class="save" data-k="' + k + '">' + B[2] + '</button>' : '') +
-            '<a class="' + (im ? '' : 'go') + '" href="' + xurl + '"' + (MOBILE ? '' : ' target="_blank" rel="noopener"') + '>' + (MOBILE ? B[3] : 'Post on X / 在 X 發文') + '</a>' +
-            '<button class="copy" data-k="' + k + '">' + B[4] + '</button>' +
-            (im && !MOBILE ? '<a href="' + im + '" download="' + fn + '">' + B[5] + '</a>' : '') + '</div>' + linkBox(k, sp[1], lang === 'zh');
-        }).join('') + '</section>';
-    }).join('');
-    bind(el);
-  }).catch(function () {});
-
-  // ---------- 長貼文（2026-11-05）----------
-  // data/longposts.json：{"items": [{"id", "time"（建議發文時間，UTC）, "title", "note", "zh", "en"（可省）, "images": ["data/longposts/<id>.png", ...]}]}
-  // 2026-11-05 改：不只今天，沒處理的一直顯示；「標記已處理」記在這台裝置（localStorage daybreak.longdone：{id: 處理那天的台北日期}），
-  // 當天收起來排到最後，隔天起不再顯示。檔案裡的舊則由 Claude 寫新長貼文時清掉（寫法在運營私人倉庫的 ops/README.md「長貼文」）。X Premium 長貼文，不受 280 字限制（只顯示字數）
-  var LDK = 'daybreak.longdone', ldone = function () { try { return JSON.parse(localStorage.getItem(LDK) || '{}'); } catch (e) { return {}; } };
-  getJSON('data/longposts.json').then(function (F) {
-    var D = ldone(), list = (F.items || []).filter(function (x) { return !D[x.id] || D[x.id] >= TODAY; });
-    if (!list.length) return;
-    list.sort(function (a, b) { return (!!D[a.id] - !!D[b.id]) || (new Date(a.time) - new Date(b.time)); });
-    var el = document.getElementById('long-list'), LB = { zh: ['中文', '', '存到相簿', '只複製全文', '下載圖片', ' 字', MOBILE ? '在 X 發文（圖＋全文）' : '在 X 發文（先貼全文）', '全文太長帶不進去，已複製，打開 X 後貼上', '複製圖片'],
-                                                         en: ['English', '', 'Save to Photos', 'Copy text only', 'Download image', ' chars', MOBILE ? 'Post on X (images + text)' : 'Post on X (paste text)', 'Too long to prefill: text copied, paste it in X', 'Copy image'] };
-    document.getElementById('long').hidden = false; document.getElementById('nav-long').hidden = false;
-    var meta = function (D3) { var left = list.filter(function (x) { return !D3[x.id]; }).length;
-      document.getElementById('long-meta').textContent = left + ' 則未處理' + (list.length > left ? ' · ' + (list.length - left) + ' 則今天處理過' : ''); };
-    meta(D);
-    el.innerHTML = list.map(function (x) {
-      var hm = new Date(x.time).toLocaleString('zh-TW', { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit', hour12: false });
-      var ims = (x.images || []).map(function (p) { return img(p); });
-      var dn = !!D[x.id];
-      return '<section class="' + (dn ? 'done' : '') + '" data-id="' + esc(x.id) + '"><h2>' + esc(x.title || '') + ' <small>建議 ' + hm + '</small></h2>' +
-        '<div class="btns done-row"><button class="ldone' + (dn ? ' on' : '') + '" data-id="' + esc(x.id) + '">' + (dn ? '✓ 已處理（明天就不顯示）· 復原' : '標記已處理') + '</button></div>' +
-        (x.note && !dn ? '<p class="why">' + esc(x.note) + '</p>' : '') +
-        ['zh', 'en'].filter(function (lang) { return x[lang]; }).map(function (lang) {
-          var k = 'long:' + x.id + ':' + lang, t = x[lang], B = LB[lang];
-          var names = ims.map(function (_, i) { return 'daybreak-' + x.id + (ims.length > 1 ? '-' + (i + 1) : '') + (lang === 'en' ? '-en' : '') + '.png'; });
-          texts[k] = t; if (ims.length) prefetchAll(k, ims, names);
-          return '<h3>' + B[0] + ' <small>' + [...t].length + B[5] + '</small></h3><pre class="fold">' + esc(t) + '</pre>' +
-            ims.map(function (u) { return '<img src="' + u + '" alt="">'; }).join('') + '<div class="btns">' +
-            '<button class="go xpost" data-k="' + k + '" data-done="' + B[7] + '">' + B[6] + '</button>' +
-            '<button class="copy" data-k="' + k + '">' + B[3] + '</button>' +
-            (ims.length ? '<button class="save" data-k="' + k + '">' + B[2] + '</button>' : '') +
-            ims.map(function (_, i) { return '<button class="copyimg" data-k="' + k + '" data-i="' + i + '">' + B[8] + (ims.length > 1 ? ' ' + (i + 1) : '') + '</button>'; }).join('') +
-            (!MOBILE ? ims.map(function (u, i) { return '<a href="' + u + '" download="' + names[i] + '">' + B[4] + (ims.length > 1 ? ' ' + (i + 1) : '') + '</a>'; }).join('') : '') + '</div>';
-        }).join('') + '</section>';
-    }).join('');
-    bind(el);
-    el.querySelectorAll('.ldone').forEach(function (b) {
-      b.onclick = function () {
-        var D2 = ldone(), id = b.dataset.id, on = !D2[id];
-        if (on) D2[id] = TODAY; else delete D2[id];
-        try { localStorage.setItem(LDK, JSON.stringify(D2)); } catch (e) {}
-        var s = b.closest('section'); s.classList.toggle('done', on); b.classList.toggle('on', on);
-        b.textContent = on ? '✓ 已處理（明天就不顯示）· 復原' : '標記已處理';
-        var why = s.querySelector('.why'); if (why) why.hidden = on;
-        meta(D2);
-      };
-    });
-  }).catch(function () {});
-
-  // ---------- 今日推薦圖表 ----------
-  // picks.json（每日任務寫的解說）和 data/picks/index.json（Actions 實際畫的圖）同一天才顯示解說；不同天就只顯示畫好的圖
-  Promise.all([getJSON('data/picks.json').catch(function () { return null; }), getJSON('data/picks/index.json').catch(function () { return null; })]).then(function (r) {
-    var pj = r[0], ix = r[1], el = document.getElementById('picks');
-    var withText = pj && pj.picks && pj.picks.length && (!ix || ix.date === pj.date);
-    var list = withText ? pj.picks : (ix && ix.picks) || [], date = withText ? pj.date : ix && ix.date;
-    if (!list.length) { el.innerHTML = '<p class="sub">今天還沒有推薦圖表 · No picks yet today</p>'; return; }
-    var names = {}; ((ix && ix.picks) || []).forEach(function (x) { names[x.id] = x.name; });
-    document.getElementById('picks-meta').textContent = date + (withText ? '' : ' · 只有圖，還沒有解說 · images only');
-    // 2026-11-06 使用者：推薦圖表的按鈕要像長貼文一樣可以直接發（手機：分享選單把圖＋解說一起送進 X；電腦：開 X 發文框帶入解說、複製圖片貼上）
-    var LB = { zh: ['中文', MOBILE ? '在 X 發文（圖＋解說）' : '在 X 發文（帶入解說）', '存到相簿', '只複製解說', '下載圖片', '複製圖片'],
-               en: ['English', MOBILE ? 'Post on X (image + caption)' : 'Post on X (prefill caption)', 'Save to Photos', 'Copy caption only', 'Download image', 'Copy image'] };
-    el.innerHTML = list.map(function (q, n) {
-      var nm = names[q.id] || {};
-      // 2026-11-06 第二版：一天一張網站原圖，標題是問句（q_zh）；附網站面板連結
-      var lk = (ix && ix.picks || []).filter(function (x) { return x.id === q.id; })[0] || {};
-      return '<section><h2>' + (n + 1) + '. ' + esc(q.q_zh || nm.zh || q.id) + ' <small>' + esc(q.q_zh ? (nm.zh || '') : (nm.en || '')) + '</small></h2>' +
-        (q.why ? '<p class="why">' + esc(q.why) + (lk.link ? ' · <a href="' + esc(lk.link) + '" target="_blank" rel="noopener">網站這張圖</a>' : '') + '</p>' : '') +
-        ['zh', 'en'].map(function (lang) {
-          var k = 'pick:' + q.id + ':' + lang, t = (withText && q[lang]) || '', w = weight(t), B = LB[lang];
-          var im = img(lang === 'zh' ? (q.chart || 'data/picks/' + q.id + '.png') : (q.chart_en || 'data/picks/' + q.id + '-en.png'));
-          var fn = 'daybreak-' + date + '-' + q.id + (lang === 'en' ? '-en' : '') + '.png';
-          texts[k] = t; prefetch(k, im, fn);
-          return '<h3>' + B[0] + (t ? ' <small class="' + (w > 280 ? 'over' : '') + '">' + w + ' / 280</small>' : '') + '</h3>' +
-            (t ? '<pre>' + esc(t) + '</pre>' : '') + '<img src="' + im + '" alt="" loading="lazy">' + '<div class="btns">' +
-            (t ? '<button class="go xpost" data-k="' + k + '">' + B[1] + '</button><button class="copy" data-k="' + k + '">' + B[3] + '</button>' : '') +
-            '<button class="save" data-k="' + k + '">' + B[2] + '</button>' +
-            '<button class="copyimg" data-k="' + k + '">' + B[5] + '</button>' +
-            (!MOBILE ? '<a href="' + im + '" download="' + fn + '">' + B[4] + '</a>' : '') + '</div>';
-        }).join('') + '</section>';
-    }).join('');
-    bind(el);
-  });
-})();
-</script>
+<dialog id="help">
+  <h2>怎麼用</h2>
+  <p>每張卡片點開就能用，按鈕都在同樣的位置：最上面的紅色按鈕是「發到 X」，下面是複製文字和存圖，最底下是「標記已發／已回」。標記之後卡片會收起來，自動打開下一則。</p>
+  <h3>今天發文</h3>
+  <ul>
+    <li>日報、推薦圖表、快訊、長貼文照建議時間排，到時間沒發的會顯示「該發了」。</li>
+    <li>手機：「發到 X」會叫出分享選單，選 X，圖和全文一起帶進發文框。文字同時已複製，沒帶進去就直接貼上。</li>
+    <li>電腦：「發到 X」打開 X 網頁版發文框並帶入文字；太長帶不進去的長文會先複製，打開後貼上。圖片按「複製圖片」再貼到發文框。</li>
+    <li>日報、快訊的網站連結不放正文，發完後在自己這則底下回覆那行連結。</li>
+    <li>長貼文沒發的會一直留著，標記已發之後隔天就不再顯示。</li>
+  </ul>
+  <h3>回覆</h3>
+  <ul>
+    <li>上方可以只看「接話」（別人在我們貼文底下留言）、「新貼文」或「建議引用」。</li>
+    <li>手機：「複製並打開 X」會複製文字並打開那則貼文，按回覆貼上；有配圖的先按「存圖」。引用：打開後按轉推 → 引用，再貼上。</li>
+    <li>電腦：「在 X 回覆」「引用發文」會開好發文視窗並帶入文字，配圖用「複製圖片」貼上。</li>
+    <li>引用算原創貼文、會計入首頁曝光；回覆不算。</li>
+  </ul>
+  <p>已發、已回只記在這台裝置。</p>
+  <form method="dialog"><button class="btn" style="width:100%;margin:6px 0 10px">知道了</button></form>
+</dialog>
+<div class="toast" id="toast" role="status"></div>
+<script src="../app/app.js"></script>
 </body>
 </html>
