@@ -568,6 +568,10 @@ PANELS = {
     'deriv/basis':    dict(zh='期貨基差曲線', en='Futures basis curve', sel='#c-basis', data=['deriv.deriv']),
     'deriv/liq':      dict(zh='清算熱力圖（推算）', en='Liquidation heatmap (estimate)', sel='#c-liq', data=['deriv.liq_heat']),
     'deriv/lqv':      dict(zh='每日多空清算量', en='Daily long and short liquidations', sel='#c-lqv', data=['deriv.liq_vol']),
+    'deriv/fh':       dict(zh='資金費率歷史', en='Funding rate history', sel='#c-fh', data=['deriv.fund_hist']),
+    'deriv/oih':      dict(zh='全市場未平倉量', en='Total open interest', sel='#c-oih', data=['deriv.oi_hist']),
+    'deriv/lsa':      dict(zh='多空帳戶比', en='Long/short account ratio', sel='#c-lsa', data=['deriv.ls_acct']),
+    'deriv/tk':       dict(zh='現貨與永續的主動買賣（多交易所）', en='Spot vs perpetual taker flow (multi-exchange)', sel='#c-tk', data=['deriv.taker']),
     'deriv/conc':     dict(zh='籌碼結構與集中度', en='Supply structure and concentration', sel='#c-conc', data=['chips.conc_stats']),
     'deriv/sx':       dict(zh='賣壓累積與動能品質', en='Selling pressure and momentum quality', sel='#c-sx', data=['chips.stress']),   # 2026-11-07
     'deriv/ivt':      dict(zh='隱含波動率期限結構', en='Implied volatility term structure', sel='#c-ivt', data=['deriv.ivterm']),   # 2026-11-08

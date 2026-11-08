@@ -1237,6 +1237,22 @@
       'liq': { h: h('每一格是某個小時、某個價位推算還沒被清算的槓桿倉位量，越亮越多；疊的是小時 K 線（「2 年」是每天一欄、日 K 線），虛線是最後收盤。收盤下方是多單的清算價、上方是空單的。', 'Each cell is the estimated leveraged position size still awaiting liquidation at that hour and price; brighter means more. Hourly candles on top (“2Y” uses one column and one candle per day), the dashed line is the last close. Long liquidation prices sit below the close, shorts above.',
           '亮帶＝槓桿倉位堆積的價位。價格走到那裡會觸發強制平倉：多單強平是市價賣、空單強平是市價買，常讓行情在那一段走得更快；價格走過之後那一帶會變暗（被清掉）。', 'Bright bands are where leverage is stacked. Price reaching them triggers forced closes: longs are market-sold, shorts market-bought, which often speeds up the move through that zone; once price passes, the band goes dark (cleared).',
           '推算：Coinalyze 彙整的多家交易所未平倉量（取不到時只有 OKX），槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；清算量多不代表價格會往那裡走。', 'An estimate: multi-exchange open interest compiled by Coinalyze (OKX only when unavailable), with an assumed leverage mix that moves the bands; a daily snapshot, not real time; more liquidations on one side does not mean price will go there.') },
+      'fh': { h: h('上格價格；下格是多家永續以未平倉加權的資金費率，年化 % 的 7 日平均。橘＝正（多方付費給空方）、青綠＝負（空方付費），虛線是 30%。', 'Price on top; below, the open-interest-weighted funding rate across perpetuals, 7-day average, annualized. Orange = positive (longs pay shorts), teal = negative (shorts pay); the dashed line is 30%.',
+          '費率越高＝做多的人越願意付錢，槓桿多單越擁擠；轉負＝空方擁擠或多單已被洗掉。極端值比方向更有參考價值。', 'Higher funding = longs willing to pay more, leveraged longs more crowded; negative = shorts crowded or longs already flushed. Extremes say more than the direction.',
+          '每日值是當天費率的（開＋高＋低＋收）÷ 4，和「永續資金費率」的即時快照不同；Hyperliquid 2024-10 起才有。統計只是歷史描述，不是訊號。', 'Daily values use (open + high + low + close) ÷ 4, so they differ from the live "Perpetual funding" snapshot; Hyperliquid joins in 2024-10. The stats describe history, not a signal.'),
+        now: function () { var x = (D.deriv || {}).fund_hist; return x ? _T('7 日平均 ' + fmt.pct(x.value, 1) + '（' + oxYm(x.from_) + ' 以來第 ' + x.pct + ' 百分位）。', '7-day average ' + fmt.pct(x.value, 1) + ' (' + ord(x.pct) + ' percentile since ' + oxYm(x.from_) + ').') : ''; } },
+      'oih': { h: h('上格價格；下格是 11 個 BTC 永續合約的未平倉量合計（顆）。', 'Price on top; below, total open interest across 11 BTC perpetual contracts (BTC).',
+          '和價格一起看：價格跌、未平倉增＝逆勢開新倉，槓桿在堆；價格跌、未平倉減＝多單被清掉，槓桿在退。未平倉越高，之後清算時的波動通常越大。', 'Read it with price: price down with open interest up = new positions against the move, leverage building; price down with open interest down = longs cleared, leverage unwinding. Higher open interest usually means bigger swings when liquidations hit.',
+          '以顆計：價格漲時同樣的美元會變少顆。合約陸續上線，長期增加有一部分是新合約。', 'In BTC: the same dollars mean fewer coins when price rises. Contracts were added over time, so part of the long-run rise is new contracts.'),
+        now: function () { var x = (D.deriv || {}).oi_hist; return x ? _T('合計約 ' + fmt.n(x.btc) + ' 顆，30 天 ' + fmt.pct(x.chg30, 1) + '（同期價格 ' + fmt.pct(x.px30, 1) + '）。', 'About ' + fmt.n(x.btc) + ' BTC, ' + fmt.pct(x.chg30, 1) + ' over 30 days (price ' + fmt.pct(x.px30, 1) + ').') : ''; } },
+      'lsa': { h: h('上格價格；下格是 Binance、Bybit 的 BTCUSDT 永續上持多單的帳戶占比（%）。紅色帶是 Binance 歷史前 10%、綠色帶是後 10%。', 'Price on top; below, the share of accounts long on Binance and Bybit BTCUSDT perpetuals (%). The red band is Binance\'s top 10%, the green band its bottom 10%.',
+          '常被當反向指標：大部分帳戶都做多時，價格容易往下洗；多數帳戶做空時，容易往上軋。讀值裡的統計檢查這個說法在這段期間成不成立。', 'Often read as a contrarian gauge: when most accounts are long, price tends to flush them; when most are short, squeezes follow. The stats in the reading check how well that held in this period.',
+          '算帳戶數、不是部位大小，比較像散戶情緒；只有 Binance、Bybit。', 'It counts accounts, not size, so it is closer to retail sentiment; Binance and Bybit only.'),
+        now: function () { var x = (D.deriv || {}).ls_acct; return x ? _T('Binance ' + fmt.n(x.binance, 1) + '% 的帳戶做多（第 ' + x.pct + ' 百分位）、Bybit ' + fmt.n(x.bybit, 1) + '%。', 'Binance ' + fmt.n(x.binance, 1) + '% of accounts long (' + ord(x.pct) + ' percentile), Bybit ' + fmt.n(x.bybit, 1) + '%.') : ''; } },
+      'tk': { h: h('上格價格；下格是主動買 − 主動賣的 30 天加總（顆）：紫＝現貨（Binance、Coinbase、Bybit），橘＝永續（Binance、Bybit、OKX）。虛線是各自的中位數（常態）。', 'Price on top; below, the 30-day sum of taker buys − sells (BTC): purple = spot (Binance, Coinbase, Bybit), orange = perpetuals (Binance, Bybit, OKX). Dashed lines are each series\' median (typical level).',
+          '在常態線上方＝比平常多買、下方＝比平常多賣。現貨偏買、永續偏賣＝真錢在買、槓桿在空；反過來＝槓桿在推、現貨沒跟。', 'Above its typical line = more buying than usual, below = more selling. Spot buying while perps sell = real money buying and leverage shorting; the reverse = leverage pushing without spot.',
+          '只算吃單方向，不含掛單；永續的主動賣長期偏多，所以要和常態線比，不看正負。', 'Aggressor side only, no makers; perpetual taker selling runs high over time, so compare with the typical line, not zero.'),
+        now: function () { var x = (D.deriv || {}).taker; return x ? _T('30 天：現貨 ' + btcS(x.spot.d30) + ' 顆（常態 ' + btcS(x.spot.med) + '）、永續 ' + btcS(x.perp.d30) + ' 顆（常態 ' + btcS(x.perp.med) + '）。', '30 days: spot ' + btcS(x.spot.d30) + ' BTC (typical ' + btcS(x.spot.med) + '), perpetuals ' + btcS(x.perp.d30) + ' BTC (typical ' + btcS(x.perp.med) + ').') : ''; } },
       'lqv': { h: h('每天實際被強制平倉的 BTC 永續：往上是空單、往下是多單（美元，平方根壓縮刻度），上格是價格。', 'BTC perpetual positions actually force-closed each day: shorts up, longs down (USD, square-root scale), price on top.',
           '多單清算集中＝下跌時槓桿多單被迫賣出，常出現在急跌；空單清算集中＝上漲時被迫買回，常出現在軋空。看近 30 天哪一邊多，比單日更穩。', 'Clusters of long liquidations = leveraged longs forced to sell into a drop; short clusters = forced buying into a squeeze. The 30-day balance is steadier than any single day.',
           '交易所公開的清算資料會少報（Binance 每秒只推一筆；Hyperliquid 沒有、Deribit 停在 2023 年），總額只是下限；比例比總額可靠。', 'Exchange liquidation feeds under-report (Binance one per second; nothing from Hyperliquid, Deribit stopped in 2023), so totals are a floor; the long/short balance is more reliable than the size.'),
@@ -2037,6 +2053,7 @@
   function liqAfter() {
     mount($('#c-liq'), drawLiq);
     mount($('#c-lqv'), drawLqv);   // 2026-11-08 每日多空清算量
+    mount($('#c-fh'), drawFh); mount($('#c-oih'), drawOih); mount($('#c-lsa'), drawLsa); mount($('#c-tk'), drawTk);   // 2026-11-08 Coinalyze 日線四張圖
     var sg = $('#liq-segs'); if (sg) sg.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || +b.getAttribute('data-d') === liqDays) return; liqDays = +b.getAttribute('data-d'); liqLErr = false; sg.innerHTML = liqSegs(); drawLiq($('#c-liq')); });
   }
 
@@ -2082,6 +2099,144 @@
       marks: mk });
   }
 
+  /* 2026-11-08 使用者要求（「四項都做」）：Coinalyze 日線的四張圖，資料見 pipeline/cz_viz.py。統計只是歷史描述，不是買賣訊號 */
+  function czSrc(x) { return ' <a href="' + (x.link || 'https://coinalyze.net') + '" target="_blank" rel="noopener">' + _T('資料：Coinalyze ↗', 'Data: Coinalyze ↗') + '</a>'; }
+  function czEv(e) { return e ? _T('最近一次 ' + ymdS(e.date) + '（' + fmt.usd(e.price) + '）' + (e.r90 != null ? '，90 天後 ' + fmt.pct(e.r90, 1) : '，還不到 90 天') + '。', ' Latest ' + ymdS(e.date) + ' (' + fmt.usd(e.price) + ')' + (e.r90 != null ? ', ' + fmt.pct(e.r90, 1) + ' 90 days later.' : ', under 90 days ago.')) : ''; }
+  function czLast(g) { var e = (g || {}).ev || []; return e[e.length - 1]; }
+  function btcS(v) { return v == null ? '—' : (v > 0 ? '+' : '') + fmt.n(v, 0); }
+
+  /* ① 資金費率歷史 */
+  function fhSay() {
+    var x = D.deriv.fund_hist, it = [], ng = x.neg || {}, ht = x.hot || {};
+    it.push([_T('7 日平均', '7-day average'), fmt.pct(x.value, 1),
+      _T('多家永續以未平倉加權的資金費率，7 日平均年化 ' + fmt.pct(x.value, 1) + '（30 天前 ' + fmt.pct(x.v30, 1) + '），高於 ' + oxYm(x.from_) + ' 以來 ' + x.pct + '% 的日子；已連續 ' + x.run + ' 天' + (x.value >= 0 ? '為正（多方付費給空方）' : '為負（空方付費給多方）') + '。' + oxYm(x.from_) + ' 以來最高是 ' + ymdS(x.hi.date) + ' 的 ' + fmt.pct(x.hi.value, 0) + '。',
+        'Open-interest-weighted funding across perpetuals, 7-day average ' + fmt.pct(x.value, 1) + ' annualized (' + fmt.pct(x.v30, 1) + ' 30 days ago), higher than ' + x.pct + '% of days since ' + oxYm(x.from_) + '; ' + (x.value >= 0 ? 'positive (longs pay shorts)' : 'negative (shorts pay longs)') + ' for ' + x.run + ' days. The high since ' + oxYm(x.from_) + ' was ' + fmt.pct(x.hi.value, 0) + ' on ' + ymdS(x.hi.date) + '.'), x.value >= (ht.th || 30) ? 'warn' : 'neu']);
+    if (ng.st && ng.st.n) it.push([_T('轉負之後', 'After turning negative'), ng.st.n + _T(' 次', ' times'),
+      _T('7 日平均由正轉負（相隔 30 天以上算新的一次）之後 90 天：', 'After the 7-day average turned negative (30+ days apart), 90 days later: ') + oxStat(ng.st, x.base) + _T('。', '.') + czEv(czLast(ng)) + _T('空方付費代表槓桿偏空、多單已經被洗掉，過去多半出現在低點附近，但次數不多。', ' Shorts paying means leverage leans short and longs have been flushed; historically this came near lows, but the sample is small.'), 'neu']);
+    if (ht.st && ht.st.n) it.push([_T('升到 ' + ht.th + '% 以上之後', 'After rising above ' + ht.th + '%'), ht.st.n + _T(' 次', ' times'),
+      _T('7 日平均升到 ' + ht.th + '% 以上之後 90 天：', 'After the 7-day average rose above ' + ht.th + '%, 90 days later: ') + oxStat(ht.st, x.base) + _T('。', '.') + czEv(czLast(ht)) + _T('多方付很高的費用＝槓桿多單擁擠，之後常有一次清洗，但牛市裡也可能撐很久。', ' Longs paying a lot = crowded leveraged longs, often followed by a flush, though in bull markets it can last.'), 'neu']);
+    it.push([_T('怎麼算', 'Method'), x.venues.length + _T(' 家', ' venues'),
+      _T(x.venues.join('、') + ' 的 BTC 永續（Hyperliquid 2024-10 起才有）。每日值＝當天費率的（開＋高＋低＋收）÷ 4，換成年化後以未平倉加權。和上面「永續資金費率」的即時快照不同，這是每日平均，兩個數字會差一點。',
+        'BTC perpetuals on ' + x.venues.join(', ') + ' (Hyperliquid only from 2024-10). Each day\'s value = (open + high + low + close) ÷ 4 of that day\'s rate, annualized and weighted by open interest. This is a daily average, not the live snapshot shown in "Perpetual funding" above, so the two differ a little.'), 'neu']);
+    return it;
+  }
+  function fhPanel() {
+    var x = (D.deriv || {}).fund_hist; if (!x || !x.rows) return '';
+    return panel('span-12', _T('資金費率歷史', 'Funding rate history'), 'Coinalyze · ' + fmt.md(x.date),
+      '<div class="cf-hero">' + oxCard(x.value >= 0 ? 'var(--s2)' : 'var(--s3)', _T('7 日平均（年化）', '7-day average (annualized)'), fmt.pct(x.value, 1), _T(oxYm(x.from_) + ' 以來第 ' + x.pct + ' 百分位', ord(x.pct) + ' percentile since ' + oxYm(x.from_)), oxArrow(x.value, x.v30, _T(' 點', ' pts'))) +
+      oxCard('var(--ink-3)', _T('最近一天', 'Latest day'), fmt.pct(x.day, 1), _T('當天平均', 'daily average')) + '</div>' +
+      interpHtml(fhSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('正：多方付費', 'Positive: longs pay'), 'var(--s2)'], [_T('負：空方付費', 'Negative: shorts pay'), 'var(--s3)'], [_T('虛線：' + (x.hot || {}).th + '%', 'Dashed: ' + (x.hot || {}).th + '%'), 'var(--warn)']]) +
+      '<div class="chart cf-chart" id="c-fh"></div><p class="note">' + _T('資金費率是永續合約每 8 小時（Hyperliquid 每小時）多空之間互付的費用，正＝多方付給空方。這裡是多家以未平倉加權、換成年化的 7 日平均，每 2 天畫一點。只作讀值。',
+        'Funding is what longs and shorts pay each other on perpetuals every 8 hours (hourly on Hyperliquid); positive = longs pay shorts. Shown as an open-interest-weighted, annualized 7-day average across venues, plotted every 2 days. Reading only.') + czSrc(x) + '</p>', '', 'fh');
+  }
+  function drawFh(el) {
+    var x = (D.deriv || {}).fund_hist; if (!x || !el) return;
+    oxPane(el, { rows: x.rows, rng: 365, fit: true, zero: true, fmt: function (t) { return fmt.n(t, 0) + '%'; },
+      label: _T('資金費率 7 日平均（年化 %）', 'Funding, 7-day average (annualized %)'), aria: _T('BTC 價格與資金費率 7 日平均', 'BTC price and the 7-day average funding rate'),
+      refs: [{ y: (x.hot || {}).th || 30, col: 'var(--warn)', lab: (x.hot || {}).th + '%' }],
+      lines: [{ i: 2, split: ['var(--s2)', 'var(--s3)'], w: 1.4, name: _T('7 日平均', '7-day average'), tfmt: function (v) { return fmt.pct(v, 1); } }],
+      now: { i: 2, col: x.value >= 0 ? 'var(--s2)' : 'var(--s3)', lab: '' } });
+  }
+
+  /* ② 全市場未平倉量 */
+  function oihSay() {
+    var x = D.deriv.oi_hist, it = [], up = x.chg30 >= 0, pu = x.px30 >= 0;
+    it.push([_T('合計', 'Total'), cqKb(x.btc / 1e3).replace('+', '') + _T(' 顆', ' BTC'),
+      _T(x.n + ' 個 BTC 永續合約合計約 ' + fmt.n(x.btc) + ' 顆（約 ' + usdB(x.usd_b) + '），高於 ' + oxYm(x.from_) + ' 以來 ' + x.pct + '% 的日子；以顆計的最高是 ' + ymdS(x.hi.date) + ' 的 ' + fmt.n(x.hi.btc) + ' 顆。7 天 ' + fmt.pct(x.chg7, 1) + '、90 天 ' + fmt.pct(x.chg90, 1) + '。',
+        x.n + ' BTC perpetual contracts hold about ' + fmt.n(x.btc) + ' BTC (' + usdB(x.usd_b) + '), more than on ' + x.pct + '% of days since ' + oxYm(x.from_) + '; the high in BTC terms was ' + fmt.n(x.hi.btc) + ' on ' + ymdS(x.hi.date) + '. 7 days ' + fmt.pct(x.chg7, 1) + ', 90 days ' + fmt.pct(x.chg90, 1) + '.'), 'neu']);
+    var K = { 'dn-up': ['價格跌、未平倉增：逆勢開新倉（新空單或抄底的多單），槓桿在堆，之後容易有一邊被清算。', 'Price down, open interest up: new positions against the move (fresh shorts or dip-buying longs); leverage is building and one side tends to get liquidated later.'],
+      'up-up': ['價格漲、未平倉增：新資金用槓桿追，漲勢有一部分靠槓桿撐。', 'Price up, open interest up: new money chasing with leverage; part of the rally rests on leverage.'],
+      'dn-dn': ['價格跌、未平倉減：多單在平倉或被清算，槓桿在退。', 'Price down, open interest down: longs closing or being liquidated; leverage is unwinding.'],
+      'up-dn': ['價格漲、未平倉減：空單回補推動，槓桿在退。', 'Price up, open interest down: short covering drives it; leverage is unwinding.'] }[(pu ? 'up' : 'dn') + '-' + (up ? 'up' : 'dn')];
+    it.push([_T('30 天：價格 vs 未平倉', '30 days: price vs open interest'), fmt.pct(x.px30, 1) + ' / ' + fmt.pct(x.chg30, 1), _T('價格 ' + fmt.pct(x.px30, 1) + '、未平倉 ' + fmt.pct(x.chg30, 1) + '。' + K[0], 'Price ' + fmt.pct(x.px30, 1) + ', open interest ' + fmt.pct(x.chg30, 1) + '. ' + K[1]), !pu && up ? 'warn' : 'neu']);
+    it.push([_T('幣本位占比', 'Coin-margined share'), fmt.n(x.coin_share, 1) + '%',
+      _T('用 BTC 當保證金的幣本位合約占 ' + fmt.n(x.coin_share, 1) + '%（一年前 ' + fmt.n(x.coin_share_1y, 1) + '%）。幣本位多單在價格跌時保證金也一起縮水，比較容易連環清算；占比越低，這種放大效果越小。',
+        'Coin-margined contracts (BTC as collateral) are ' + fmt.n(x.coin_share, 1) + '% (' + fmt.n(x.coin_share_1y, 1) + '% a year ago). Their longs lose collateral value as price falls, which makes cascades likelier; a lower share means less of that amplification.'), 'neu']);
+    return it;
+  }
+  function oihPanel() {
+    var x = (D.deriv || {}).oi_hist; if (!x || !x.rows) return '';
+    return panel('span-12', _T('全市場未平倉量', 'Total open interest'), 'Coinalyze · ' + fmt.md(x.date),
+      '<div class="cf-hero">' + oxCard('var(--s4)', _T('永續未平倉合計', 'Perpetual open interest'), cqKb(x.btc / 1e3).replace('+', ''), _T('顆 · 約 ', 'BTC · about ') + usdB(x.usd_b), oxArrow(x.chg30, 0, '%')) +
+      oxCard(x.px30 >= 0 ? 'var(--up)' : 'var(--down)', _T('同期價格（30 天）', 'Price, same 30 days'), fmt.pct(x.px30, 1), _T('未平倉 30 天 ', 'open interest 30d ') + fmt.pct(x.chg30, 1)) + '</div>' +
+      interpHtml(oihSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('未平倉（顆）', 'Open interest (BTC)'), 'var(--s4)']]) +
+      '<div class="chart cf-chart" id="c-oih"></div><p class="note">' + _T('Coinalyze 彙整的 ' + x.exch.join('、') + ' 共 ' + x.n + ' 個 BTC 永續合約，每日收盤的未平倉量；幣本位合約以美元計，÷ 收盤價換成顆。以顆計，價格漲時同樣的美元會變少顆。合約陸續上線（Binance USDC 2024-01、Hyperliquid 2024），長期增加有一部分是新合約。每 2 天畫一點。只作讀值。',
+        'Daily closing open interest of ' + x.n + ' BTC perpetual contracts on ' + x.exch.join(', ') + ' as compiled by Coinalyze; coin-margined contracts are in USD and divided by the close. Measured in BTC, the same dollars mean fewer coins when price rises. Contracts were added over time (Binance USDC 2024-01, Hyperliquid 2024), so part of the long-run rise is new contracts. Plotted every 2 days. Reading only.') + czSrc(x) + '</p>', '', 'oih');
+  }
+  function drawOih(el) {
+    var x = (D.deriv || {}).oi_hist; if (!x || !el) return;
+    oxPane(el, { rows: x.rows, rng: 365, fit: true, fmt: cqKt, label: _T('永續未平倉（顆）', 'Perpetual open interest (BTC)'), aria: _T('BTC 價格與全市場未平倉量', 'BTC price and total open interest'),
+      lines: [{ i: 2, col: 'var(--s4)', area: true, w: 1.5, name: _T('未平倉', 'Open interest'), tfmt: function (v) { return cqKb(v).replace('+', '') + _T(' 顆', ' BTC'); } }],
+      now: { i: 2, col: 'var(--s4)', lab: '' } });
+  }
+
+  /* ③ 多空帳戶比 */
+  function lsaSay() {
+    var x = D.deriv.ls_acct, it = [], hi = x.hi || {}, lo = x.lo || {};
+    it.push([_T('現在', 'Now'), 'Binance ' + fmt.n(x.binance, 1) + '%',
+      _T('Binance 有 ' + fmt.n(x.binance, 1) + '% 的帳戶持多單（30 天前 ' + fmt.n(x.b30, 1) + '%），高於 ' + oxYm(x.from_) + ' 以來 ' + x.pct + '% 的日子（中位數 ' + fmt.n(x.med, 1) + '%）；Bybit ' + fmt.n(x.bybit, 1) + '%。',
+        fmt.n(x.binance, 1) + '% of Binance accounts are long (' + fmt.n(x.b30, 1) + '% 30 days ago), higher than on ' + x.pct + '% of days since ' + oxYm(x.from_) + ' (median ' + fmt.n(x.med, 1) + '%); Bybit ' + fmt.n(x.bybit, 1) + '%.'), x.binance >= x.p90 ? 'warn' : 'neu']);
+    if (hi.st && hi.st.n) it.push([_T('偏多帳戶 ≥ ' + fmt.n(x.p90, 1) + '% 之後', 'After long accounts ≥ ' + fmt.n(x.p90, 1) + '%'), hi.st.n + _T(' 次', ' times'),
+      _T('Binance 升到 ' + oxYm(x.from_) + ' 以來前 10%（' + fmt.n(x.p90, 1) + '%）之後 90 天：', 'After Binance rose into its top 10% since ' + oxYm(x.from_) + ' (' + fmt.n(x.p90, 1) + '%), 90 days later: ') + oxStat(hi.st, x.base) + _T('。', '.') + czEv(czLast(hi)), 'neu']);
+    if (lo.st && lo.st.n) it.push([_T('偏多帳戶 ≤ ' + fmt.n(x.p10, 1) + '% 之後', 'After long accounts ≤ ' + fmt.n(x.p10, 1) + '%'), lo.st.n + _T(' 次', ' times'),
+      _T('降到後 10%（' + fmt.n(x.p10, 1) + '%）之後 90 天：', 'After it fell into the bottom 10% (' + fmt.n(x.p10, 1) + '%), 90 days later: ') + oxStat(lo.st, x.base) + _T('。', '.') + czEv(czLast(lo)), 'neu']);
+    it.push([_T('怎麼看', 'How to read'), _T('帳戶數', 'Accounts'),
+      _T('算的是帳戶數，不是部位大小：一個大戶和一個小散戶都算一個，所以比較像散戶情緒。常被當反向指標（大家都做多時容易往下洗），上面的統計可以看這個說法在這段期間成不成立。只有 Binance、Bybit。',
+        'It counts accounts, not position size: a whale and a small trader count once each, so it reads more like retail sentiment. Often used as a contrarian gauge (when everyone is long, price tends to flush them); the stats above show how well that held in this period. Binance and Bybit only.'), 'neu']);
+    return it;
+  }
+  function lsaPanel() {
+    var x = (D.deriv || {}).ls_acct; if (!x || !x.rows) return '';
+    return panel('span-12', _T('多空帳戶比', 'Long/short account ratio'), 'Coinalyze · ' + fmt.md(x.date),
+      '<div class="cf-hero">' + oxCard('var(--s1)', _T('Binance 多單帳戶', 'Binance long accounts'), fmt.n(x.binance, 1) + '%', _T('30 天前 ' + fmt.n(x.b30, 1) + '%', fmt.n(x.b30, 1) + '% 30 days ago'), oxArrow(x.binance, x.b30, _T(' 點', ' pts'))) +
+      oxCard('var(--s4)', _T('Bybit 多單帳戶', 'Bybit long accounts'), x.bybit == null ? '—' : fmt.n(x.bybit, 1) + '%', _T('持多單的帳戶占比', 'share of accounts long')) + '</div>' +
+      interpHtml(lsaSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], ['Binance', 'var(--s1)'], ['Bybit', 'var(--s4)'], [_T('色帶：Binance 前 10%／後 10%', 'Bands: Binance top / bottom 10%'), 'var(--ink-3)', 'box']]) +
+      '<div class="chart cf-chart" id="c-lsa"></div><p class="note">' + _T('BTCUSDT 永續上持多單的帳戶占全部有部位帳戶的比例（%），Coinalyze 彙整，OKX 沒有。紅色帶是 Binance ' + oxYm(x.from_) + ' 以來的前 10%、綠色帶是後 10%。每 2 天畫一點。只作讀值。',
+        'Share of accounts holding longs among all accounts with a BTCUSDT perpetual position (%), compiled by Coinalyze; OKX is not available. The red band is Binance\'s top 10% since ' + oxYm(x.from_) + ', the green band its bottom 10%. Plotted every 2 days. Reading only.') + czSrc(x) + '</p>', '', 'lsa');
+  }
+  function drawLsa(el) {
+    var x = (D.deriv || {}).ls_acct; if (!x || !el) return;
+    oxPane(el, { rows: x.rows, rng: 365, fit: true, fmt: function (t) { return fmt.n(t, 0) + '%'; }, label: _T('持多單的帳戶占比（%）', 'Accounts long (%)'), aria: _T('BTC 價格與多空帳戶比', 'BTC price and the long/short account ratio'),
+      refs: [{ y: 50, col: 'var(--ink-3)', lab: '50%' }], zones: [{ y0: x.p90, y1: 100, col: 'var(--down)', op: 0.08 }, { y0: 0, y1: x.p10, col: 'var(--up)', op: 0.08 }],
+      lines: [{ i: 2, col: 'var(--s1)', w: 1.5, name: 'Binance', tfmt: function (v) { return fmt.n(v, 1) + '%'; } }, { i: 3, col: 'var(--s4)', w: 1.2, name: 'Bybit', tfmt: function (v) { return fmt.n(v, 1) + '%'; } }],
+      now: { i: 2, col: 'var(--s1)', lab: '' } });
+  }
+
+  /* ④ 多交易所主動買賣 */
+  function tkSay() {
+    var x = D.deriv.taker, it = [], S = x.spot, P = x.perp, C = x.cb;
+    var rel = function (g) { return g.d30 >= g.med ? _T('比常態多買', 'more buying than usual') : _T('比常態多賣', 'more selling than usual'); };
+    it.push([_T('現貨 30 天', 'Spot, 30 days'), btcS(S.d30),
+      _T(x.spot_venues.join('＋') + ' 現貨主動買 − 主動賣 ' + btcS(S.d30) + ' 顆（常態 ' + btcS(S.med) + '，' + oxYm(x.from_) + ' 以來第 ' + S.pct + ' 百分位）：' + rel(S) + '。近 7 天 ' + btcS(S.d7) + ' 顆。',
+        'Spot taker buys − sells on ' + x.spot_venues.join(' + ') + ': ' + btcS(S.d30) + ' BTC (typical ' + btcS(S.med) + ', ' + ord(S.pct) + ' percentile since ' + oxYm(x.from_) + '): ' + rel(S) + '. Past 7 days ' + btcS(S.d7) + ' BTC.'), 'neu']);
+    it.push([_T('永續 30 天', 'Perpetuals, 30 days'), btcS(P.d30),
+      _T(x.perp_venues.join('、') + ' USDT 永續 ' + btcS(P.d30) + ' 顆（常態 ' + btcS(P.med) + '，第 ' + P.pct + ' 百分位）：' + rel(P) + '。永續的主動賣長期就比主動買多，所以要和常態線比，不是看正負。',
+        x.perp_venues.join(', ') + ' USDT perpetuals: ' + btcS(P.d30) + ' BTC (typical ' + btcS(P.med) + ', ' + ord(P.pct) + ' percentile): ' + rel(P) + '. Perpetual taker selling runs above taker buying over time, so compare with the typical line, not with zero.'), 'neu']);
+    it.push([_T('Coinbase 現貨', 'Coinbase spot'), btcS(C.d30),
+      _T('美國現貨的代表：30 天 ' + btcS(C.d30) + ' 顆（常態 ' + btcS(C.med) + '，第 ' + C.pct + ' 百分位），近 7 天 ' + btcS(C.d7) + ' 顆。' + (C.pct <= 10 ? '賣得比平常重很多，和 Coinbase 溢價偏負是同一件事。' : C.pct >= 90 ? '買得比平常多很多，和 Coinbase 溢價偏正是同一件事。' : ''),
+        'The US spot proxy: ' + btcS(C.d30) + ' BTC over 30 days (typical ' + btcS(C.med) + ', ' + ord(C.pct) + ' percentile), ' + btcS(C.d7) + ' BTC in the past 7 days.' + (C.pct <= 10 ? ' Selling is much heavier than usual, the same story as a negative Coinbase premium.' : C.pct >= 90 ? ' Buying is much heavier than usual, the same story as a positive Coinbase premium.' : '')), C.pct <= 10 ? 'warn' : 'neu']);
+    var sR = S.d30 - S.med, pR = P.d30 - P.med;
+    it.push([_T('誰在推', 'Who is pushing'), sR >= 0 && pR < 0 ? _T('現貨', 'Spot') : pR >= 0 && sR < 0 ? _T('永續', 'Perps') : sR >= 0 ? _T('兩邊都買', 'Both buying') : _T('兩邊都賣', 'Both selling'),
+      _T('和各自的常態比：現貨' + (sR >= 0 ? '偏買' : '偏賣') + ' ' + fmt.n(Math.abs(sR), 0) + ' 顆、永續' + (pR >= 0 ? '偏買' : '偏賣') + ' ' + fmt.n(Math.abs(pR), 0) + ' 顆。現貨主導的走勢通常比永續（槓桿）主導的走得穩。',
+        'Against their typical levels: spot leans ' + (sR >= 0 ? 'buy' : 'sell') + ' by ' + fmt.n(Math.abs(sR), 0) + ' BTC, perpetuals lean ' + (pR >= 0 ? 'buy' : 'sell') + ' by ' + fmt.n(Math.abs(pR), 0) + ' BTC. Moves led by spot usually hold better than ones led by perpetuals (leverage).'), 'neu']);
+    return it;
+  }
+  function tkPanel() {
+    var x = (D.deriv || {}).taker; if (!x || !x.rows) return '';
+    return panel('span-12', _T('現貨與永續的主動買賣（多交易所）', 'Spot vs perpetual taker flow (multi-exchange)'), 'Coinalyze · Binance · ' + fmt.md(x.date),
+      '<div class="cf-hero">' + oxCard(x.spot.d30 >= x.spot.med ? 'var(--up)' : 'var(--down)', _T('現貨 30 天', 'Spot, 30 days'), btcS(x.spot.d30), _T('顆 · 常態 ' + btcS(x.spot.med), 'BTC · typical ' + btcS(x.spot.med))) +
+      oxCard(x.perp.d30 >= x.perp.med ? 'var(--up)' : 'var(--down)', _T('永續 30 天', 'Perpetuals, 30 days'), btcS(x.perp.d30), _T('顆 · 常態 ' + btcS(x.perp.med), 'BTC · typical ' + btcS(x.perp.med))) + '</div>' +
+      interpHtml(tkSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('現貨 30 天', 'Spot, 30 days'), 'var(--s1)'], [_T('永續 30 天', 'Perpetuals, 30 days'), 'var(--s2)'], [_T('虛線：各自的常態（中位數）', 'Dashed: each one\'s typical level (median)'), 'var(--ink-3)']]) +
+      '<div class="chart cf-chart" id="c-tk"></div><p class="note">' + _T('主動買 − 主動賣（吃單方向，不含掛單）的 30 天加總，單位顆。現貨：Binance BTCUSDT（Binance 公開資料）＋Coinbase＋Bybit；永續：Binance、Bybit、OKX 的 USDT 永續（Coinalyze；Binance 現貨和 OKX 現貨不在 Coinalyze 裡）。永續長期主動賣偏多，虛線是各自的中位數。每 2 天畫一點。只作讀值。',
+        '30-day sum of taker buys − taker sells (aggressor side, excluding makers), in BTC. Spot: Binance BTCUSDT (Binance public data) + Coinbase + Bybit; perpetuals: USDT perpetuals on Binance, Bybit and OKX (Coinalyze, which lacks Binance and OKX spot). Perpetual taker selling runs high over time; the dashed lines are each series\' median. Plotted every 2 days. Reading only.') + czSrc(x) + '</p>', '', 'tk');
+  }
+  function drawTk(el) {
+    var x = (D.deriv || {}).taker; if (!x || !el) return;
+    oxPane(el, { rows: x.rows, rng: 365, fit: true, zero: true, fmt: cqKt, label: _T('主動買 − 賣，30 天加總（顆）', 'Taker buy − sell, 30-day sum (BTC)'), aria: _T('BTC 價格與現貨、永續主動買賣', 'BTC price with spot and perpetual taker flow'),
+      refs: [{ y: x.spot.med / 1e3, col: 'var(--s1)' }, { y: x.perp.med / 1e3, col: 'var(--s2)' }],
+      lines: [{ i: 2, col: 'var(--s1)', w: 1.5, name: _T('現貨', 'Spot'), tfmt: function (v) { return btcS(v * 1e3) + _T(' 顆', ' BTC'); } }, { i: 3, col: 'var(--s2)', w: 1.5, name: _T('永續', 'Perpetuals'), tfmt: function (v) { return btcS(v * 1e3) + _T(' 顆', ' BTC'); } }] });
+  }
+
   V.deriv = function () {
     var dv = D.deriv, d = dv.deriv || {}, r = dv.rr25 || {}, o = dv.options || {};
     var big = (o.expiries || []).slice().sort(function (a, b) { return b.oi - a.oi; })[0] || {};
@@ -2091,12 +2246,12 @@
       ivtPanel() +   // 2026-11-08 隱含波動率期限結構
       grpH('dv-lev', '槓桿與清算', 'Leverage and liquidations', _T('槓桿有多擠、哪裡會被清算', 'How crowded leverage is and where liquidations sit')) +
       panel('span-12', _t('期貨基差曲線'), _t('年化 % · 排除 7 天內到期'), basisSay(d.basis_curve) + _t('<div class="chart" id="c-basis"></div><p class="note">資金費率年化 ') + fmt.pct(fundNow(), 1) + _t('；永續 OI ') + fmt.usd(d.perp_oi_usd_m) + _t('M。</p><div class="src-link">外部：<a href="https://www.coinglass.com/pro/futures/LiquidationHeatMap" target="_blank" rel="noopener">CoinGlass 爆倉熱力圖 ↗</a>（以 OI 與假設槓桿推估，非實際倉位）</div>')) +
-      liqPanel() + lqvPanel() +
+      fhPanel() + oihPanel() + lsaPanel() + liqPanel() + lqvPanel() +   // 2026-11-08 資金費率歷史、全市場未平倉、多空帳戶比（Coinalyze）
       grpH('dv-opt', '選擇權部位', 'Options positioning', _T('未平倉堆在哪、做市商怎麼避險、錢押哪一邊', 'Where open interest sits, how dealers hedge, which side money pays for')) +
       panel('span-6', _t('各到期未平倉'), _t('買權 / 賣權（顆）'), legend([[_t('買權'), 'var(--s4)'], [_t('賣權'), 'var(--s3)']]) + '<div class="chart" id="c-oi"></div>') +
       panel('span-6', _T('主要到期的履約價分布', 'Open interest by strike, main expiries'), skTotals(), '<div id="sk-say">' + strikeSay(skRow() || big) + '</div><div id="c-strike"></div>', skSegs()) + gxPanel() + prPanel() +
       grpH('dv-spot', '現貨訂單流', 'Spot order flow', _T('誰在主動買賣、掛單牆在哪', 'Who is hitting the market and where the walls are')) +
-      svPanel() + bookCard() + '</div>';   // 籌碼結構與集中度搬到鏈上版、賣壓累積與動能品質搬到價格版（2026-11-08）
+      svPanel() + tkPanel() + bookCard() + '</div>';   // 籌碼結構與集中度搬到鏈上版、賣壓累積與動能品質搬到價格版（2026-11-08）
   };
   V.deriv.after = function () {
     drawBook(); liqAfter();
@@ -3185,7 +3340,8 @@
   function oxPane(el, o) {
     var R_ = o.rows; if (!R_ || R_.length < 2) { el.innerHTML = '<p class="note">' + _T('本日未取得資料。', 'No data today.') + '</p>'; return; }
     if (o.rng && el._rng == null) el._rng = o.rng;   // 預設時間範圍（天）；使用者點了別的就照點的
-    var tf = o.tf || function (v) { return v; }, vals = [], VR = o.fit && el._rng ? R_.filter(function (r) { return r[0] >= R_[R_.length - 1][0] - el._rng; }) : R_;   // fit：縱軸只看目前選的時間範圍（2026-11-06）
+    var rg0 = o.fit ? rangeOf(el, { series: [{ data: R_.map(function (r) { return [r[0], 1]; }) }] }, Math.max(280, el.clientWidth)) : null;
+    var tf = o.tf || function (v) { return v; }, vals = [], VR = rg0 && rg0.x0 != null ? R_.filter(function (r) { return r[0] >= rg0.x0; }) : R_;   // fit：縱軸只看目前畫出來的範圍（2026-11-06；11-08 改成和 twoPane 同一個判斷：手機沒有範圍切換、畫全部時縱軸也看全部）
     (o.lines || []).forEach(function (l) { VR.forEach(function (r) { if (r[l.i] != null) vals.push(tf(r[l.i])); }); });
     var BS = [].concat(o.bars || []);   // 2026-11-08：bars 可以是陣列（每日多空清算量：空單往上、多單往下）
     BS.forEach(function (b) { VR.forEach(function (r) { if (r[b.i] != null) vals.push(tf(r[b.i])); }); });
@@ -3736,8 +3892,8 @@
     return panel('span-12', _T('現貨主動買賣差（OKX）', 'Spot taker buy − sell (OKX)'), 'OKX · ' + fmt.md(x.date),
       '<div class="cf-hero">' + oxCard(x.sum7 >= 0 ? 'var(--up)' : 'var(--down)', _T('7 天合計', '7-day total'), (x.sum7 >= 0 ? '+' : '') + fmt.n(x.sum7, 0), _T('顆 BTC；' + x.neg7 + ' / 7 天賣方主導', 'BTC; sellers led ' + x.neg7 + ' of 7 days')) + (x.h24 != null ? oxCard(x.h24 >= 0 ? 'var(--up)' : 'var(--down)', _T('近 24 小時', 'Last 24 hours'), (x.h24 >= 0 ? '+' : '') + fmt.n(x.h24, 0), _T('顆 BTC', 'BTC')) : '') + '</div>' +
       interpHtml(svSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('主動買多', 'Takers net buying'), 'var(--up)', 'box'], [_T('主動賣多', 'Takers net selling'), 'var(--down)', 'box']]) +
-      '<div class="chart cf-chart" id="c-svd"></div><div class="chart cf-chart" id="c-svdh"></div><p class="note">' + _T('OKX 現貨 BTC 的主動買進量 − 主動賣出量（rubik 公開統計）。日線是 UTC+8 的日界，上方價格用 UTC 收盤；小時圖是近 7 天。Binance 從本站伺服器連不到，所以只有 OKX。只作讀值。',
-        'OKX spot BTC taker buy volume − taker sell volume (rubik public stats). Daily bars use UTC+8 days while the price uses UTC closes; the hourly chart covers 7 days. Binance is unreachable from our server, so this is OKX only. Reading only.') + '</p>', '', 'svd');
+      '<div class="chart cf-chart" id="c-svd"></div><div class="chart cf-chart" id="c-svdh"></div><p class="note">' + _T('OKX 現貨 BTC 的主動買進量 − 主動賣出量（rubik 公開統計）。日線是 UTC+8 的日界，上方價格用 UTC 收盤；小時圖是近 7 天。這張只有 OKX 現貨（有逐小時），多家交易所的日線見下一張「現貨與永續的主動買賣」。只作讀值。',
+        'OKX spot BTC taker buy volume − taker sell volume (rubik public stats). Daily bars use UTC+8 days while the price uses UTC closes; the hourly chart covers 7 days. This one is OKX spot only (it has hourly data); the multi-exchange daily view is the next chart, "Spot vs perpetual taker flow". Reading only.') + '</p>', '', 'svd');
   }
   function drawSv(el) {
     var x = (D.deriv || {}).svd; if (!x || !el) return;
@@ -4492,7 +4648,7 @@
   var FIND = [], fdAct = -1;
   var FKW = {   // 指標別名：圖代號 → [中文別名, 英文別名]（不顯示，中英都拿來搜）。產品內不寫任何付費指標的名字
     vol: ['隱含波動 實際波動', 'DVOL IV RV implied realized volatility'], basis: ['基差 期貨 資金費率', 'basis futures funding'], ivt: ['期限結構 倒掛', 'IV term structure backwardation contango'],
-    liq: ['清算 爆倉 槓桿 熱力圖', 'liquidation heatmap leverage'], lqv: ['每日 多空 清算量 爆倉 多單 空單', 'daily long short liquidations volume'], gex: ['做市商', 'gamma GEX dealer'], prem: ['權利金 買權 賣權 期權', 'premium put call options'], svd: ['主動買 主動賣', 'taker CVD OKX'],
+    liq: ['清算 爆倉 槓桿 熱力圖', 'liquidation heatmap leverage'], lqv: ['每日 多空 清算量 爆倉 多單 空單', 'daily long short liquidations volume'], fh: ['資金費率 歷史 年化 多方付費', 'funding rate history annualized'], oih: ['未平倉 合約 槓桿 OI', 'open interest OI leverage'], lsa: ['多空比 帳戶 散戶 情緒', 'long short ratio accounts retail sentiment'], tk: ['主動買 主動賣 現貨 永續 CVD Coinbase', 'taker buy sell spot perpetual CVD Coinbase'], gex: ['做市商', 'gamma GEX dealer'], prem: ['權利金 買權 賣權 期權', 'premium put call options'], svd: ['主動買 主動賣', 'taker CVD OKX'],
     oi: ['未平倉 到期 期權', 'open interest expiry max pain'], strike: ['履約價 期權', 'strike open interest'], book: ['掛單 買牆 賣牆', 'order book walls'],
     etf: ['流入 流出 貝萊德', 'ETF IBIT inflow outflow'], etfcost: ['成本', 'ETF cost basis'], stab: ['穩定幣', 'stablecoin USDT USDC'], 'pr-us': ['溢價 三地', 'Coinbase premium Asia'],
     kp: ['韓國 泡菜', 'Kimchi Korea Upbit premium'], exflow: ['交易所 流入 流出', 'exchange netflow reserves'], stk: ['美股 那斯達克 黃金', 'Nasdaq S&P gold stocks'], rcliq: ['實現市值', 'realized cap'],

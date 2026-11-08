@@ -66,6 +66,18 @@ def hist(ep, iv, frm, to, syms=SYM, **q):
     return out
 
 
+DAY0 = 1546300800         # 2019-01-01：日線從這天開始要
+_memo = {}
+
+
+def daily(ep, syms, to=None, **q):
+    """日線（全部保留）：{合約: {t: 列}}，只到已收完的那天；同一次執行裡同樣的請求只抓一次（各圖共用價格、未平倉）"""
+    to = int(to or time.time()) // 86400 * 86400
+    k = (ep, tuple(syms), to, tuple(sorted(q.items())))
+    if k not in _memo: _memo[k] = hist(ep, 'daily', DAY0, to, tuple(syms), **q)
+    return _memo[k]
+
+
 def oi_btc(iv, frm, to):
     """各合約未平倉量（顆或美元，見 USD）與 Binance USDT 永續 K 線 {t: [o, h, l, c]}"""
     oi = {s: {t: r['c'] for t, r in h.items()} for s, h in hist('open-interest-history', iv, frm, to).items() if h}

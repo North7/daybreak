@@ -1388,6 +1388,15 @@ except Exception as e: errors.append(f'liq_long {e}')
 try:
     if liq_heat.cz.ok(): R['liq_vol'] = liq_heat.build_vol(last=LAST)
 except Exception as e: errors.append(f'liq_vol {e}')
+# G9f3. 2026-11-08 使用者要求（「四項都做」）：Coinalyze 日線的四張圖，見 cz_viz.py（資金費率歷史、多交易所主動買賣、全市場未平倉量、多空帳戶比）。
+#   約 25 次 Coinalyze＋4 次 Binance 公開資料；各圖共用同一份日線。沒有 key 就跳過
+try:
+    import coinalyze, cz_viz
+    if coinalyze.ok():
+        for k_, f_ in (('fund_hist', cz_viz.fund_hist), ('taker', cz_viz.taker), ('oi_hist', cz_viz.oi_hist), ('ls_acct', cz_viz.ls_acct)):
+            try: R[k_] = f_(LAST)
+            except Exception as e: errors.append(f'{k_} {e}')
+except Exception as e: errors.append(f'cz_viz {e}')
 # G9g. 2026-11-04 使用者要求：Hyperliquid 大戶（帳戶淨值前 300 名）的 BTC 部位彙總（見 hl_whales.py；不列個別帳戶）。約 300 次 Hyperliquid 請求、2–3 分鐘
 try:
     import hl_whales
