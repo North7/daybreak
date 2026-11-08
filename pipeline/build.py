@@ -70,7 +70,7 @@ out = {
   'price': {'bar': td['bar'], 'ma': ma, 'atr': td.get('atr'), 'vol': td.get('vol'), 'mayer': td.get('mayer'), 'pi_cycle': td.get('pi_cycle'),
             'range20_pos_pct': td.get('range20_pos_pct'), 'swing': td.get('swing'), 'volprofile': td.get('volprofile_v2'), 'rows20': td.get('chart_rows_20d'), 'history': hist,
             'monthly': td.get('monthly')},   # 2026-11-08 月度報酬熱力表
-  'deriv': {'dvol': td.get('dvol'), 'deriv': td.get('deriv'), 'rr25': td.get('rr25'), 'samesource': td.get('samesource'), 'funding_multi': td.get('funding_multi'), 'liq_heat': td.get('liq_heat'), 'liq_vol': td.get('liq_vol'), 'hl_whales': td.get('hl_whales'), 'gex': td.get('gex'), 'prem': td.get('prem'), 'svd': td.get('svd'), 'ivterm': td.get('ivterm'),
+  'deriv': {'dvol': td.get('dvol'), 'deriv': td.get('deriv'), 'rr25': td.get('rr25'), 'samesource': td.get('samesource'), 'funding_multi': td.get('funding_multi'), 'liq_heat': td.get('liq_heat'), 'liq_vol': td.get('liq_vol'), 'fund_hist': td.get('fund_hist'), 'taker': td.get('taker'), 'oi_hist': td.get('oi_hist'), 'ls_acct': td.get('ls_acct'), 'hl_whales': td.get('hl_whales'), 'gex': td.get('gex'), 'prem': td.get('prem'), 'svd': td.get('svd'), 'ivterm': td.get('ivterm'),
             'options': {'total_oi': (td.get('options') or {}).get('total_oi'), 'expiries': [{k: e.get(k) for k in ('expiry', 'dte', 'oi', 'share', 'pc', 'maxpain', 'top_calls', 'top_puts')} for e in (td.get('options') or {}).get('expiries', [])]},
             'viz': {k: (td.get('ex_viz') or {}).get(k) for k in ('vol', 'basis', 'options')}},
   'flows': {'etf': etf['rows'], 'fred': td.get('fred'), 'btc_vs_stocks': td.get('btc_vs_stocks'), 'dfii10': (td.get('extra') or {}).get('dfii10'), 'rc_liq': td.get('rc_liquidity'),
