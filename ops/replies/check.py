@@ -82,6 +82,7 @@ def check():
         if it.get('lang') not in ('zh', 'en'): err.append(f'{tag} 原文是 {it.get("lang")}：只回中文和英文貼文，請改成 skip')
         if not t and not (it.get('mode') == 'quote' and it.get('quote')): err.append(f'{tag} 沒有回覆內容')   # 只引用不回覆的可以留空（2026-11-06）
         if t: err += text_errors(tag + ' 回覆', t, it.get('lang'))
+        if t and ONE_LINE.search(t): err.append(f'{tag} 回覆一行裡有兩句（「{ONE_LINE.search(t).group(0)}」）：每句話換一行，見 voice.md 2026-11-08')
         if HASH.search(t): err.append(f'{tag} 回覆不加 hashtag（引用文和快訊才加）')
         q = it.get('quote')
         if q:
@@ -141,6 +142,10 @@ def repeat_errors(items):
 # 2026-11-08 使用者：開頭常是「我和你差不多」「我這邊數據也是」，太機械、像 AI。第一句不要先附和／確認對方，直接講新東西。
 ECHO = re.compile(r'我這邊(也|的數據也|看到的也|算的也)?|跟你(的)?(說的|讀數|數字)?(差不多|一樣|對得上|接近)|讀數跟你|數據也(是|一樣)|我也(看到|是這樣|算到)|^(同意|沒錯|對[，,]|確實)|'
                   r'\b(same|too|agreed?|either|as well|matches|lines? up|backs? (you|that|it) up)\b|^(yep|yeah|exactly|true|right)\b', re.I)
+
+
+# 2026-11-08 使用者：「以後回覆，每句話換一行」。句號／問號／驚嘆號後面還有字就是兩句擠一行；句尾不加「。」。
+ONE_LINE = re.compile(r'[。！？][^\n]|(?<!vs)(?<!e\.g)(?<!i\.e)(?<!U\.S)[.!?] +(?=[A-Z0-9$"“(])|。$', re.M)
 
 
 def first_clause(t):
