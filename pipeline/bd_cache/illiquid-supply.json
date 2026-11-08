@@ -1,5 +1,4 @@
-{"m": "illiquid-supply", "fetched_utc": "2026-11-07T22:40:32+00:00", "rows": [
-{"d":"2022-11-07","illiquidSupply":17000514.0847,"liquidSupply":2200485.9153},
+{"m": "illiquid-supply", "fetched_utc": "2026-11-08T22:40:32+00:00", "rows": [
 {"d":"2022-11-08","illiquidSupply":17019656.9532,"liquidSupply":2182343.0468},
 {"d":"2022-11-09","illiquidSupply":17007153.6161,"liquidSupply":2195746.3839},
 {"d":"2022-11-10","illiquidSupply":16999380.5544,"liquidSupply":2204419.4456},
@@ -1452,5 +1451,6 @@
 {"d":"2026-11-03","illiquidSupply":12864132.02831082,"liquidSupply":7231134.14246633},
 {"d":"2026-11-04","illiquidSupply":12892705.67044365,"liquidSupply":7196378.94753393},
 {"d":"2026-11-05","illiquidSupply":12917169.06154756,"liquidSupply":7176937.36357248},
-{"d":"2026-11-06","illiquidSupply":12939995.68995145,"liquidSupply":7139576.25937804}
+{"d":"2026-11-06","illiquidSupply":12939995.68995145,"liquidSupply":7139576.25937804},
+{"d":"2026-11-07","illiquidSupply":12967231.14674201,"liquidSupply":7135577.22368171}
 ]}
