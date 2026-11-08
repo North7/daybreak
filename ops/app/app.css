@@ -91,6 +91,9 @@ main { max-width:760px; margin:0 auto; padding:12px 16px 80px; }
 .foot { display:flex; justify-content:flex-end; margin-top:14px; padding-top:12px; border-top:1px solid var(--line); }
 .done-btn { font-size:15px; font-weight:800; padding:10px 16px; border-radius:9px; border:1.5px solid var(--ok); background:transparent; color:var(--ok); cursor:pointer; min-height:44px; }
 .done-btn.on { background:var(--ok); color:#fff; }
+.foot { gap:8px; }
+.skip-btn { font-size:15px; font-weight:700; padding:10px 16px; border-radius:9px; border:1.5px solid var(--line); background:transparent; color:var(--ink3); cursor:pointer; min-height:44px; margin-right:auto; }
+.skip-btn.on { border-color:var(--ink3); color:var(--ink); }
 .done-btn.nudge { animation:nudge 1.2s ease 2; }
 @keyframes nudge { 0%,100% { transform:none; } 30% { transform:scale(1.06); box-shadow:0 0 0 4px color-mix(in srgb, var(--ok) 25%, transparent); } }
 

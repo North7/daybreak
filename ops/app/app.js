@@ -55,6 +55,18 @@
   function saveDone() { try { localStorage.setItem(DK, JSON.stringify(DONE)); } catch (e) {} }
   var POSTED = {};   // 資料裡的 posted（台北日期）：Claude 記錄已發出的，每台裝置都算已發
   function isDone(k) { return !!DONE[k] || !!POSTED[k]; }
+  // 2026-11-08：「不發／不回」標記（這台裝置，daybreak.skip.v2：{鍵: 台北日期}）；和已發互斥
+  var SK = 'daybreak.skip.v2', SKIP = {};
+  try { SKIP = JSON.parse(localStorage.getItem(SK) || '{}'); } catch (e) {}
+  function saveSkip() { try { localStorage.setItem(SK, JSON.stringify(SKIP)); } catch (e) {} }
+  function isSkip(k) { return !!SKIP[k] && !isDone(k); }
+  function footHtml(k, reply) {
+    var L = reply ? ['已回', '標記已回', '不回'] : ['已發', '標記已發', '不發'];
+    if (POSTED[k]) return '<div class="foot"><span class="note">已記錄發出（' + md(POSTED[k]) + '）</span></div>';
+    if (isDone(k)) return '<div class="foot"><button class="done-btn on" data-act="done">✓ ' + L[0] + ' · 復原</button></div>';
+    if (isSkip(k)) return '<div class="foot"><button class="skip-btn on" data-act="skip">已設為' + L[2] + ' · 復原</button></div>';
+    return '<div class="foot"><button class="skip-btn" data-act="skip">' + L[2] + '</button><button class="done-btn" data-act="done">' + L[1] + '</button></div>';
+  }
 
   // ---------- 分頁 ----------
   var TAB = (location.hash || '').replace('#', '') || document.body.dataset.tab || 'today';
@@ -129,7 +141,7 @@
     });
     ((lp && lp.items) || []).forEach(function (x) {   // 長貼文：沒發的一直留著；之前就標記已發的不再顯示
       var k = 'long:' + x.id; if (x.posted) POSTED[k] = x.posted;
-      if ((DONE[k] || x.posted || '9') < TODAY) return;
+      if ((DONE[k] || x.posted || SKIP[k] || '9') < TODAY) return;
       var ims = (x.images || []).map(img), L = { key: k, type: 'long', when: new Date(x.time), title: x.title || '', note: x.note, langs: {} };
       ['zh', 'en'].forEach(function (lang) {
         if (!x[lang]) return;
@@ -142,8 +154,8 @@
   }
 
   function postCard(p) {
-    var dn = isDone(p.key), langs = Object.keys(p.langs), first = langs[0], now = Date.now();
-    var day = tpe(p.when), st = dn ? '<span class="state ok">已發</span>' : p.when.getTime() <= now ? '<span class="state due">該發了</span>' : '<span class="state">稍後</span>';
+    var dn = isDone(p.key), sk = isSkip(p.key), langs = Object.keys(p.langs), first = langs[0], now = Date.now();
+    var day = tpe(p.when), st = dn ? '<span class="state ok">已發</span>' : sk ? '<span class="state">不發</span>' : p.when.getTime() <= now ? '<span class="state due">該發了</span>' : '<span class="state">稍後</span>';
     var tl = day === TODAY ? hm(p.when) : (day < TODAY ? '之前 ' : '') + md(day) + ' ' + hm(p.when);
     var h = '<button class="card-h stack" data-act="toggle"><span class="row1"><span class="time">' + tl + '</span><span class="chip ' + TYPE[p.type][1] + '">' + TYPE[p.type][0] + '</span>' +
       '<span class="sp"></span>' + st + '<span class="chev">›</span></span><span class="title">' + esc(p.title) + (p.sub ? '<small>' + esc(p.sub) + '</small>' : '') + '</span></button>';
@@ -154,24 +166,27 @@
       var body = o.text ? countLine(o.text, o.lim, o.long) + textBlock(o.text, o.long) : '<p class="note">解說還沒寫好，先只有圖。</p>';
       return '<div class="lp" data-lang="' + l + '"' + (l === first ? '' : ' hidden') + '>' + body +
         (o.imgs.length ? '<div class="imgs">' + o.imgs.map(function (u) { return '<img src="' + u + '" alt="" loading="lazy">'; }).join('') + '</div>' : '') +
-        '<div class="acts"><button class="btn primary" data-act="post" data-k="' + k + '"' + (o.text ? '' : ' disabled') + '>發到 X</button>' +
+        '<div class="acts"><button class="btn primary" data-act="post" data-k="' + k + '"' + (o.text ? '' : ' disabled') + '>' + (MOBILE ? '分享到 X' : '發到 X') + '</button>' +
+        (o.text && MOBILE ? '<a class="btn" data-act="app" data-k="' + k + '" href="twitter://post?message=' + encodeURIComponent(o.text.length <= 1500 ? o.text : '') + '">打開 X App</a>' : '') +
         (o.text ? '<button class="btn" data-act="copy" data-k="' + k + '">複製文字</button>' : '') + imgActs(k, o.imgs, o.names) + '</div>' +
         (o.link ? (TEXT[k + ':link'] = o.link, '<div class="sub-box"><p>發完後，在自己這則底下回覆這行連結（正文帶連結曝光少約四成）</p><pre>' + esc(o.link) + '</pre><button class="btn ghost" data-act="copy" data-k="' + k + ':link">複製連結</button></div>') : '') +
         '</div>';
     }).join('');
-    b += '<div class="foot">' + (POSTED[p.key] ? '<span class="note">已記錄發出（' + md(POSTED[p.key]) + '）</span>' : '<button class="done-btn' + (dn ? ' on' : '') + '" data-act="done">' + (dn ? '✓ 已發 · 復原' : '標記已發') + '</button>') + '</div>';
-    return '<article class="card' + (dn ? ' done' : '') + '" data-key="' + esc(p.key) + '">' + h + '<div class="card-b">' + b + '</div></article>';
+    b += footHtml(p.key, false);
+    return '<article class="card' + (dn || sk ? ' done' : '') + '" data-key="' + esc(p.key) + '">' + h + '<div class="card-b">' + b + '</div></article>';
   }
 
   function renderPosts() {
     var el = document.getElementById('v-today');
-    var todo = POSTS.filter(function (p) { return !isDone(p.key); }).sort(function (a, b) { return a.when - b.when; });
-    var done = POSTS.filter(function (p) { return isDone(p.key); }).sort(function (a, b) { return a.when - b.when; });
+    var byT = function (a, b) { return a.when - b.when; };
+    var todo = POSTS.filter(function (p) { return !isDone(p.key) && !isSkip(p.key); }).sort(byT);
+    var done = POSTS.filter(function (p) { return isDone(p.key); }).sort(byT), skipped = POSTS.filter(function (p) { return isSkip(p.key); }).sort(byT);
     var due = todo.filter(function (p) { return p.when.getTime() <= Date.now(); }).length;
     document.getElementById('b-today').textContent = todo.length; document.getElementById('b-today').classList.toggle('zero', !todo.length);
-    el.innerHTML = '<div class="summary"><span>待發 <b>' + todo.length + '</b></span>' + (due ? '<span class="warn">該發了 ' + due + '</span>' : '') + '<span>已發 <b>' + done.length + '</b></span><span>' + md(TODAY) + ' 台北</span></div>' +
-      (todo.length ? todo.map(postCard).join('') : '<p class="empty">今天的都發完了</p>') +
-      (done.length ? '<div class="group-h">已完成</div>' + done.map(postCard).join('') : '');
+    el.innerHTML = '<div class="summary"><span>待發 <b>' + todo.length + '</b></span>' + (due ? '<span class="warn">該發了 ' + due + '</span>' : '') + '<span>已發 <b>' + done.length + '</b></span>' + (skipped.length ? '<span>不發 <b>' + skipped.length + '</b></span>' : '') + '<span>' + md(TODAY) + ' 台北</span></div>' +
+      (todo.length ? todo.map(postCard).join('') : '<p class="empty">今天的都處理完了</p>') +
+      (done.length ? '<div class="group-h">已完成</div>' + done.map(postCard).join('') : '') +
+      (skipped.length ? '<details class="group"><summary>不發 ' + skipped.length + ' 則</summary>' + skipped.map(postCard).join('') + '</details>' : '');
   }
 
   // ---------- 回覆 ----------
@@ -181,7 +196,7 @@
     return RFILTER === 'all' || (RFILTER === 'follow' && x.kind === 'followup') || (RFILTER === 'new' && x.kind !== 'followup') || (RFILTER === 'quote' && (x.mode === 'quote' || (x.quote && !x.reply)));
   }
   function replyCard(x, i) {
-    var k = replyKey(x), dn = isDone(k), skip = x.status === 'skip', t = x.reply || '', q = x.quote || '';
+    var k = replyKey(x), dn = isDone(k), sk = isSkip(k), skip = x.status === 'skip', t = x.reply || '', q = x.quote || '';
     var modes = []; if (t) modes.push('reply'); if (q) modes.push('quote');
     var first = x.mode === 'quote' && q ? 'quote' : modes[0];
     var im = x.image ? img('data/replies/' + x.n + '.png') : '', nm = 'daybreak-reply-' + R.date + '-' + x.n + '.png';
@@ -191,7 +206,7 @@
       (x.status === 'optional' ? '<span class="tag">可選</span>' : '') + '<span class="tag">' + esc(x.angle || '') + '</span>' + '<span class="tag blue" data-v="' + x.id + '" hidden>藍勾</span>';
     var h = '<button class="card-h" data-act="toggle"><span class="who"><span class="ord">' + (skip ? '—' : i + 1) + '</span><span class="name">@' + esc(x.author) + '</span>' +
       '<span class="fans">' + fans(x.followers) + ' · ' + ago(x.posted) + '</span>' + tags + '<span class="line2">' + esc(x.summary || '') + '</span></span>' +
-      (dn ? '<span class="state ok">已回</span>' : '') + '<span class="chev">›</span></button>';
+      (dn ? '<span class="state ok">已回</span>' : sk ? '<span class="state">不回</span>' : '') + '<span class="chev">›</span></button>';
     var b = '<div class="orig fold" id="o' + x.id + '">' + esc(x.summary) + '<span class="m">摘要（點開後讀原文）</span></div>' +
       '<button class="linkish" data-act="unfold-orig" hidden>展開原文</button> <a class="orig-link" href="' + esc(x.url) + '" target="_blank" rel="noopener">在 X 看原文 ↗</a>';
     if (skip) { b += noteBlock(x.note); return '<article class="card" data-key="' + k + '">' + h + '<div class="card-b">' + b + '</div></article>'; }
@@ -207,14 +222,14 @@
         '<div class="acts">' + prim + '<button class="btn" data-act="copy" data-k="' + kk + '">複製文字</button>' + imgActs(k + '|reply', im ? [im] : [], [nm]) + '</div></div>';
     }).join('');
     if (x.sources || x.note) b += '<details class="more"><summary>數字來源與備註</summary>' + (x.sources ? '<p>數字：' + esc(x.sources) + '</p>' : '') + (x.note ? '<p>' + esc(x.note) + '</p>' : '') + '</details>';
-    b += '<div class="foot"><button class="done-btn' + (dn ? ' on' : '') + '" data-act="done">' + (dn ? '✓ 已回 · 復原' : '標記已回') + '</button></div>';
-    return '<article class="card' + (dn ? ' done' : '') + '" data-key="' + k + '">' + h + '<div class="card-b">' + b + '</div></article>';
+    b += footHtml(k, true);
+    return '<article class="card' + (dn || sk ? ' done' : '') + '" data-key="' + k + '">' + h + '<div class="card-b">' + b + '</div></article>';
   }
   function renderReplies() {
     var el = document.getElementById('v-replies'); if (!R) return;
     var items = R.items.slice().sort(function (a, b) { return a.order - b.order; });
     var act = items.filter(function (x) { return x.status !== 'skip'; }), skip = items.filter(function (x) { return x.status === 'skip'; });
-    var todo = act.filter(function (x) { return !isDone(replyKey(x)); }), done = act.filter(function (x) { return isDone(replyKey(x)); });
+    var todo = act.filter(function (x) { return !isDone(replyKey(x)) && !isSkip(replyKey(x)); }), done = act.filter(function (x) { return isDone(replyKey(x)); }), mine = act.filter(function (x) { return isSkip(replyKey(x)); });
     document.getElementById('b-replies').textContent = todo.length; document.getElementById('b-replies').classList.toggle('zero', !todo.length);
     var cnt = { all: todo.length, follow: todo.filter(function (x) { return x.kind === 'followup'; }).length, new: todo.filter(function (x) { return x.kind !== 'followup'; }).length,
       quote: todo.filter(function (x) { return x.mode === 'quote' || (x.quote && !x.reply); }).length };
@@ -222,11 +237,12 @@
     var idx = {}; act.forEach(function (x, i) { idx[x.id] = i; });
     var show = todo.filter(rfilter);
     el.innerHTML = '<div class="summary"><span>' + md(R.date) + ' 清單' + (R.date !== TODAY ? ' <span class="warn">（不是今天的）</span>' : '') + '</span><span>數據 No.' + String(R.edition || 0).padStart(3, '0') + '（' + md(R.data_date) + ' 收盤）</span>' +
-      '<span>待回 <b>' + todo.length + '</b></span><span>已回 <b>' + done.length + '</b></span></div>' +
+      '<span>待回 <b>' + todo.length + '</b></span><span>已回 <b>' + done.length + '</b></span>' + (mine.length ? '<span>不回 <b>' + mine.length + '</b></span>' : '') + '</div>' +
       '<div class="filters">' + F.map(function (f) { return '<button class="fchip' + (RFILTER === f[0] ? ' on' : '') + '" data-act="filter" data-v="' + f[0] + '">' + f[1] + ' ' + cnt[f[0]] + '</button>'; }).join('') + '</div>' +
       (show.length ? show.map(function (x) { return replyCard(x, idx[x.id]); }).join('') : '<p class="empty">' + (todo.length ? '這一類沒有待回的' : '今天的都回完了') + '</p>') +
       (done.length ? '<details class="group"><summary>已回 ' + done.length + ' 則</summary>' + done.map(function (x) { return replyCard(x, idx[x.id]); }).join('') + '</details>' : '') +
-      (skip.length ? '<details class="group"><summary>跳過 ' + skip.length + ' 則（點開看原因）</summary>' + skip.map(function (x) { return replyCard(x, 0); }).join('') + '</details>' : '');
+      (mine.length ? '<details class="group"><summary>不回 ' + mine.length + ' 則</summary>' + mine.map(function (x) { return replyCard(x, idx[x.id]); }).join('') + '</details>' : '') +
+      (skip.length ? '<details class="group"><summary>Claude 建議跳過 ' + skip.length + ' 則（點開看原因）</summary>' + skip.map(function (x) { return replyCard(x, 0); }).join('') + '</details>' : '');
   }
   function loadOrig(x) {   // 原文：點開時才讀 fxtwitter，讀不到就留摘要
     if (RFETCHED[x.id]) return; RFETCHED[x.id] = 1;
@@ -257,6 +273,7 @@
     copy(t).catch(function () {});
     if (MOBILE && navigator.share) {
       if (f && !canF) toast('圖還在載入，先只帶文字');
+      toast('在選單裡選 X；文字已複製，沒帶進去就貼上');   // 2026-11-08：網頁沒辦法直接把圖送進 X App，只能透過分享選單
       navigator.share(canF ? { files: f, text: t } : { text: t }).catch(function () {});
       return;
     }
@@ -264,13 +281,13 @@
     window.open(fit ? u : 'https://x.com/compose/post', '_blank', 'noopener');
     toast(fit ? (f ? '文字已帶入；圖片按「複製圖片」再貼到發文框' : '已打開發文框') : '全文太長帶不進去，已複製，打開後直接貼上');
   }
-  function markDone(card) {
-    var k = card.dataset.key, on = !isDone(k);
-    if (on) DONE[k] = TODAY; else delete DONE[k];
-    saveDone();
+  function mark(card, which) {   // which：done（已發／已回）或 skip（不發／不回），兩者互斥
+    var k = card.dataset.key, S = which === 'skip' ? SKIP : DONE, other = which === 'skip' ? DONE : SKIP, on = !S[k];
+    if (on) { S[k] = TODAY; delete other[k]; } else delete S[k];
+    saveDone(); saveSkip();
     var reply = k.indexOf('reply:') === 0;
     if (reply) renderReplies(); else renderPosts();
-    if (on) { toast(reply ? '已回，打開下一則' : '已發，打開下一則'); openFirst(reply ? 'v-replies' : 'v-today'); }
+    if (on) { toast((which === 'skip' ? (reply ? '已設為不回' : '已設為不發') : (reply ? '已回' : '已發')) + '，打開下一則'); openFirst(reply ? 'v-replies' : 'v-today'); }
     else openCard(document.querySelector('.card[data-key="' + CSS.escape(k) + '"]'), true);
   }
 
@@ -293,6 +310,7 @@
     if (act === 'post') { postX(b.dataset.k, b); nudge(card); return; }
     if (act === 'open') { copy(TEXT[b.dataset.k] || '').catch(function () {}); nudge(card); return; }   // 不擋預設：連結照常打開（手機會跳到 X App）
     if (act === 'intent') { nudge(card); return; }
+    if (act === 'app') { copy(TEXT[b.dataset.k] || '').catch(function () {}); toast('文字已複製；配圖先按「存圖」，再從相簿加'); nudge(card); return; }   // 不擋預設：twitter:// 打開 X App 發文框
     if (act === 'save') {
       var f = FILES[b.dataset.k];
       if (!f || !navigator.canShare || !navigator.canShare({ files: f })) { toast('圖還在載入…'); return; }
@@ -303,7 +321,7 @@
       navigator.clipboard.write([new ClipboardItem({ 'image/png': fs[+(b.dataset.i || 0)] })]).then(function () { toast('圖片已複製，貼到 X 發文框'); }, function () { toast('複製失敗，改用下載'); });
       return;
     }
-    if (act === 'done') { markDone(card); return; }
+    if (act === 'done' || act === 'skip') { mark(card, act); return; }
   });
   function nudge(card) { var d = card && card.querySelector('.done-btn'); if (d && !d.classList.contains('on')) { d.classList.remove('nudge'); void d.offsetWidth; d.classList.add('nudge'); } }
 
