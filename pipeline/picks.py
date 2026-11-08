@@ -567,6 +567,7 @@ PANELS = {
     'deriv/vol':      dict(zh='隱含波動 vs 實際波動', en='Implied vs realized volatility', sel='#c-vol', data=['deriv.dvol', 'deriv.samesource'], sig=['vol'], old='vol'),
     'deriv/basis':    dict(zh='期貨基差曲線', en='Futures basis curve', sel='#c-basis', data=['deriv.deriv']),
     'deriv/liq':      dict(zh='清算熱力圖（推算）', en='Liquidation heatmap (estimate)', sel='#c-liq', data=['deriv.liq_heat']),
+    'deriv/lqv':      dict(zh='每日多空清算量', en='Daily long and short liquidations', sel='#c-lqv', data=['deriv.liq_vol']),
     'deriv/conc':     dict(zh='籌碼結構與集中度', en='Supply structure and concentration', sel='#c-conc', data=['chips.conc_stats']),
     'deriv/sx':       dict(zh='賣壓累積與動能品質', en='Selling pressure and momentum quality', sel='#c-sx', data=['chips.stress']),   # 2026-11-07
     'deriv/ivt':      dict(zh='隱含波動率期限結構', en='Implied volatility term structure', sel='#c-ivt', data=['deriv.ivterm']),   # 2026-11-08

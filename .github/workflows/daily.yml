@@ -51,6 +51,8 @@ jobs:
       - name: Collect market data
         if: steps.chk.outputs.skip != 'true'
         working-directory: pipeline
+        env:
+          COINALYZE_API_KEY: ${{ secrets.COINALYZE_API_KEY }}   # 2026-11-08 清算熱力圖多家交易所＋每日多空清算量；沒有也能跑（改用 OKX）
         run: |
           UP=$(python3 -c "import json;print(json.load(open('params.json'))['up'])")
           DOWN=$(python3 -c "import json;print(json.load(open('params.json'))['down'])")
