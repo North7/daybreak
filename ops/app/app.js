@@ -155,7 +155,10 @@
       var ims = (x.images || []).map(img), L = { key: k, type: 'long', when: new Date(x.time), title: x.title || '', note: x.note, langs: {} };
       ['zh', 'en'].forEach(function (lang) {
         if (!x[lang]) return;
-        L.langs[lang] = { text: x[lang], imgs: ims, names: ims.map(function (_, i) { return 'daybreak-' + x.id + (ims.length > 1 ? '-' + (i + 1) : '') + (lang === 'en' ? '-en' : '') + '.png'; }), lim: 25000, long: true };
+        // 2026-11-09 使用者：長文是直接貼成一則貼文，複製要帶標題。標題語言跟這一版相同、內文開頭又沒有標題時，加在最前面（英文長文的標題前綴「(EN) 」拿掉）
+        var tt = (x.title || '').replace(/^[(（]EN[)）]\s*/, '').trim(), body = x[lang];
+        if (tt && /[一-鿿]/.test(tt) === (lang === 'zh') && body.replace(/\s+/g, '').indexOf(tt.replace(/\s+/g, '').replace(/[。.]$/, '')) !== 0) body = tt + '\n\n' + body;
+        L.langs[lang] = { text: body, imgs: ims, names: ims.map(function (_, i) { return 'daybreak-' + x.id + (ims.length > 1 ? '-' + (i + 1) : '') + (lang === 'en' ? '-en' : '') + '.png'; }), lim: 25000, long: true };
       });
       out.push(L);
     });
