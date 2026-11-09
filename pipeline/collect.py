@@ -1279,7 +1279,7 @@ try:
     h30 = [(sc[j][1] / _sb(j, 30) - 1) * 100 for j in range(len(sc)) if dS[j] >= '2021-01-01' and _sb(j, 30)]
     R['stables'] = dict(date=dS[k9], usd_b=round(sc[k9][1] / 1e9, 1), chg7_pct=ch(7), chg30_pct=ch(30), chg90_pct=ch(90),
                         chg30_usd_b=round((sc[k9][1] - _sb(k9, 30)) / 1e9, 1) if _sb(k9, 30) else None, pct30=_pctl(h30, ch(30)), n30=len(h30),
-                        rows=[[_dn9(d_), round(v_ / 1e9, 1)] for d_, v_ in sc if d_ >= (dt.date.fromisoformat(LAST) - dt.timedelta(days=730)).isoformat()][::-3][::-1],
+                        rows=[[_dn9(d_), round(v_ / 1e9, 1)] for d_, v_ in sc if d_ >= '2020-01-01'][::-3][::-1],   # 2026-11-09 圖改成上格價格、下格 30 天增減：從近 2 年放寬到 2020 起（每 3 天一點）
                         note='DefiLlama 全部美元穩定幣流通量；只作讀值')
 except Exception as e: errors.append(f'stables {e}')
 # G9b. Coinbase 溢價：Coinbase BTC-USD 與 Binance BTC-USDT 每日收盤的價差（%）。正值＝美國買盤較強；USDT 偏離 1 美元時會有誤差
