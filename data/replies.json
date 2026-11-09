@@ -4,8 +4,28 @@
  "edition": 34,
  "items": [
   {
-   "n": 71,
+   "n": 74,
    "order": 1,
+   "status": "send",
+   "kind": "followup",
+   "mode": "reply",
+   "style": "真人版",
+   "author": "BlockScholes",
+   "name": "Block Scholes",
+   "followers": 2551,
+   "lang": "en",
+   "angle": "接話：CPI 後怎麼看",
+   "id": "2119771391302193480",
+   "url": "https://x.com/BlockScholes/status/2119771391302193480",
+   "posted": "2026-11-09T12:37:37Z",
+   "summary": "Block Scholes 回我們 n70：7 天和 30 天 ATM 波動背離代表市場把不確定性放在近月；30 天偏斜還溫和，要看週二 CPI 之後背離會不會持續",
+   "reply": "If it's only CPI, the 7-day should give back most of that ~3-point premium once the print is out\nStill inverted on Wednesday would mean the worry is about something else, and that's when I'd expect skew to start moving too",
+   "sources": "Deribit ATM 固定期限（網站 deriv ivterm 11/08 收盤快照）：7 天 42.06、30 天 39.06（差 3.0）、90 天 39.47、180 天 40.22，11/06 起倒掛；30 天 25 delta RR −3.72（rr25）；DVOL 40.99，近一年第 50 百分位。期限結構 11/07 才開始累積，沒有歷史可回測，這則只講事件溢價的機制",
+   "note": "接話（我們 n70 底下）。使用者 2026-11-09 要求回覆要有交易上的意義、不只列數據：這則講 CPI 之後怎麼讀——近月溢價吐回去＝只是事件；還倒掛＝擔心別的、偏斜可能跟著動。只講怎麼讀，不給交易建議。"
+  },
+  {
+   "n": 71,
+   "order": 2,
    "status": "send",
    "mode": "reply",
    "style": "真人版",
@@ -32,7 +52,7 @@
   },
   {
    "n": 72,
-   "order": 2,
+   "order": 3,
    "status": "send",
    "mode": "reply",
    "style": "真人版",
@@ -51,7 +71,7 @@
   },
   {
    "n": 73,
-   "order": 134,
+   "order": 135,
    "kind": "followup",
    "status": "skip",
    "mode": "reply",
@@ -71,7 +91,7 @@
   },
   {
    "n": 69,
-   "order": 3,
+   "order": 4,
    "status": "send",
    "mode": "reply",
    "style": "真人版",
@@ -97,7 +117,7 @@
   },
   {
    "n": 68,
-   "order": 4,
+   "order": 5,
    "status": "send",
    "mode": "reply",
    "style": "真人版",
@@ -116,7 +136,7 @@
   },
   {
    "n": 70,
-   "order": 5,
+   "order": 6,
    "status": "send",
    "mode": "reply",
    "style": "真人版",
@@ -138,7 +158,7 @@
    "status": "send",
    "mode": "reply",
    "n": 67,
-   "order": 6,
+   "order": 7,
    "author": "CryptoPainter",
    "name": "CryptoPainter",
    "followers": 82469,
@@ -165,7 +185,7 @@
    "mode": "reply",
    "status": "send",
    "n": 65,
-   "order": 7,
+   "order": 8,
    "author": "Tibetan_Diviner",
    "name": "Tibetan_Diviner",
    "followers": 591,
@@ -197,7 +217,7 @@
    "reply": "這點你說得對，2019 那次也站上了 200 日均線\n不過 2019 回頭看是牛市初期，底部在 2018/12 的 3 千出頭，2020/3 插到 3,800 也沒破\n所以站上均線本身分不出是反彈還是新一輪，要看之後低點有沒有墊高",
    "sources": "公開歷史價格：2018/12/15 低點約 3,120（Bitstamp）、2020/3/13 低點約 3,800；2019/4 站上 200 日均線",
    "note": "使用者轉來截圖。他第一輪反駁得對（2019 也站上 200 日均線），先承認，再講 2019 回頭看是新一輪的開始，判斷放最後：要看低點有沒有墊高。不放今天的數字。",
-   "order": 8
+   "order": 9
   },
   {
    "style": "真人版",
@@ -217,11 +237,11 @@
    "reply": "The leverage hasn't left evenly though\nBinance and OKX funding cooled to 2–4%, Hyperliquid's still near 11%",
    "sources": "deriv.funding_multi now：Binance 3.74%、OKX 2.30%、Hyperliquid 10.95%（年化）",
    "note": "使用者轉來截圖。他自己貼文底下第一輪，附和型留言，回一句短的補新東西：各交易所資金費率降溫不一樣。",
-   "order": 9
+   "order": 10
   },
   {
    "n": 61,
-   "order": 10,
+   "order": 11,
    "status": "optional",
    "url": "https://x.com/DaanCrypto/status/2119688266483957779",
    "id": "2119688266483957779",
@@ -261,11 +281,11 @@
    "reply": "換手是真的，但接走這批籌碼的看起來不是美國現貨\nCoinbase 已經連續 64 天折價，ETF 上週還流出 12.8 億\n所以 75–76K 這 31 萬顆比較像幣圈內部換手，你最後那句「成本遷移不等於新增買盤」我很同意",
    "sources": "flows.cb_premium（Coinbase／Binance）9/6 起連續 64 天為負、11/08 −0.13%；data/etf.json 11/02–11/06 合計 −1,281.7 百萬（11/06 暫定）",
    "note": "固定名單 scan，發文約 50 分鐘、1.2K 瀏覽。今天已回過他一則原創（n15）和一則接話（n31），這是第二則原創，放可選；熟帳號一天不要太多，覺得多就按讚。接他自己留的那句「成本遷移不等於新增買盤」，用 Coinbase 折價和 ETF 流出說接盤的不是美國現貨。",
-   "order": 11
+   "order": 12
   },
   {
    "n": 52,
-   "order": 12,
+   "order": 13,
    "status": "send",
    "mode": "quote",
    "style": "真人版",
@@ -292,7 +312,7 @@
   },
   {
    "n": 53,
-   "order": 13,
+   "order": 14,
    "status": "send",
    "mode": "reply",
    "style": "真人版",
@@ -318,7 +338,7 @@
   },
   {
    "n": 54,
-   "order": 14,
+   "order": 15,
    "status": "send",
    "mode": "reply",
    "style": "真人版",
@@ -337,7 +357,7 @@
   },
   {
    "n": 55,
-   "order": 15,
+   "order": 16,
    "status": "send",
    "mode": "reply",
    "style": "真人版",
@@ -356,7 +376,7 @@
   },
   {
    "n": 56,
-   "order": 16,
+   "order": 17,
    "status": "send",
    "mode": "reply",
    "style": "真人版",
@@ -375,7 +395,7 @@
   },
   {
    "n": 57,
-   "order": 17,
+   "order": 18,
    "status": "send",
    "mode": "reply",
    "style": "真人版",
@@ -394,7 +414,7 @@
   },
   {
    "n": 58,
-   "order": 117,
+   "order": 118,
    "status": "skip",
    "mode": "reply",
    "author": "TheMoneyApe",
@@ -435,7 +455,7 @@
     "title": "Realized loss this leg: 4.8 bp peak"
    },
    "style": "真人版",
-   "order": 18
+   "order": 19
   },
   {
    "mode": "quote",
@@ -462,7 +482,7 @@
     "title": "Est. ETF holder cost ~$79K, price 5% below"
    },
    "style": "真人版",
-   "order": 19
+   "order": 20
   },
   {
    "mode": "reply",
@@ -481,7 +501,7 @@
    "sources": "flows.fred NASDAQCOM corr30 0.751",
    "note": "Grok 1300 #1，12.5 萬粉、藍勾，發文約 1 小時 50 分（使用者發的時候會超過 2 小時，不做引用；BTC 對美股圖中文版今天給了 market_beggar）。順著他「別替他編故事」，不猜動機，只講兩個資產的連動。簡介有 TG，正文沒有導流。",
    "style": "真人版",
-   "order": 20
+   "order": 21
   },
   {
    "mode": "reply",
@@ -500,7 +520,7 @@
    "sources": "onchain.metrics sth-realized-price（Bitview）75,881；price.bar.c 74,737.9；onchain.rloss 11/06 4.82 bp、6/30 13.2 bp；deriv.funding_multi Binance 3.74%、OKX 2.30%（年化）",
    "note": "Grok 1300 #2，對話型（近 3 天回覆約 108）。接他的結論「趨勢沒了」，同意跌破成本、不同意趨勢已經結束，用認賠深度和資金費率說明。",
    "style": "真人版",
-   "order": 21
+   "order": 22
   },
   {
    "mode": "reply",
@@ -519,7 +539,7 @@
    "sources": "price.ma sma200 73,170.7；cycle.stage sma200_30d_ago 71,855.8；price.bar.l 73,444.3（Kraken 11/08 UTC）",
    "note": "Grok 1300 #6，3.6K 粉、藍勾，角度少見（NVDAX 週末先定價）。只核對 200 日均線、不接 100 日均線的壓力說法。Grok 推薦長期追。",
    "style": "真人版",
-   "order": 22
+   "order": 23
   },
   {
    "mode": "reply",
@@ -538,7 +558,7 @@
    "sources": "flows.fred NASDAQCOM corr30 0.751、DTWEXBGS corr30 −0.107",
    "note": "Grok 1300 #8，3.2K 粉、藍勾，剛發瀏覽很低（3），可以晚一點再回。金 vs BTC 分化今天還沒用過。",
    "style": "真人版",
-   "order": 23
+   "order": 24
   },
   {
    "mode": "reply",
@@ -557,7 +577,7 @@
    "sources": "",
    "note": "Grok 1300 #5。這則是心態／生活感想，不是在討論數據，照 11/09 規則只用人話接，不放數字、不接定投和加倉。互動不錯（7 讚 6 回覆）；覺得沒必要就按讚。",
    "style": "真人版",
-   "order": 24
+   "order": 25
   },
   {
    "mode": "reply",
@@ -576,7 +596,7 @@
    "sources": "",
    "note": "跳過：主體是十種山寨幣的「幸免」分析，結尾一長串山寨幣 hashtag，像導流。",
    "style": "真人版",
-   "order": 124
+   "order": 125
   },
   {
    "mode": "reply",
@@ -595,7 +615,7 @@
    "sources": "",
    "note": "跳過：瀏覽 66，核心是 AHR999 等指標加「分批定投」建議，我們能補的只是重複他的指標。",
    "style": "真人版",
-   "order": 125
+   "order": 126
   },
   {
    "mode": "reply",
@@ -614,7 +634,7 @@
    "sources": "",
    "note": "跳過：角度（200 日均線＋下方清算帶）今天已經給了 JoeConsorti（n11），他後半是 77.4K／70K 目標價。",
    "style": "真人版",
-   "order": 126
+   "order": 127
   },
   {
    "mode": "reply",
@@ -633,11 +653,11 @@
    "sources": "",
    "note": "跳過：近 3 天回覆約 323 則，像刷量帳號；內容是新聞彙整。",
    "style": "真人版",
-   "order": 127
+   "order": 128
   },
   {
    "n": 34,
-   "order": 25,
+   "order": 26,
    "kind": "followup",
    "status": "skip",
    "url": "https://x.com/joke_henry/status/2119638294493642938",
@@ -655,7 +675,7 @@
   },
   {
    "n": 35,
-   "order": 26,
+   "order": 27,
    "kind": "followup",
    "status": "skip",
    "url": "https://x.com/kaihsiang_chang/status/2119639052316242321",
@@ -673,7 +693,7 @@
   },
   {
    "n": 33,
-   "order": 27,
+   "order": 28,
    "kind": "followup",
    "status": "skip",
    "url": "https://x.com/Kev_Capital_TA/status/2119454115084324979",
@@ -694,7 +714,7 @@
    "status": "send",
    "mode": "reply",
    "n": 32,
-   "order": 28,
+   "order": 29,
    "author": "Murphychen888",
    "name": "Murphy",
    "followers": 82300,
@@ -739,7 +759,7 @@
     },
     "title": "崩盤那天溢價沒崩，但 9/4 之後沒翻正過"
    },
-   "order": 29
+   "order": 30
   },
   {
    "style": "真人版",
@@ -758,7 +778,7 @@
    "reply": "看完那張圖很難受，一個月省吃儉用的 7.5 萬 U，一根針就沒了\n螢幕上的數字太容易麻木，換成一桌菜才知道有多重",
    "sources": "",
    "note": "★ AYBTC6（watchlist，6.4 萬粉）。原文是爆倉故事加「永遠不要爆倉」的感想（配圖是別人在 SNDK 合約爆掉 7.5 萬 U、用剩下 20 U 吃一桌菜），不是在討論數據。使用者 11/09：這種文章不應該用數據回。改成用人話接一句同感，不放數字、不配圖、不給操作建議。",
-   "order": 30
+   "order": 31
   },
   {
    "style": "真人版",
@@ -777,7 +797,7 @@
    "reply": "72–74K 真的很空，CheckOnChain 的分布裡只有 15 萬顆左右，62–66K 有 144 萬顆\n不過 62–66K 有六成是短期持有者，也就是最近 155 天內才動過的幣，說是老籌碼不太準\n比較像 6 月低點那批人的成本\n薄的那段剛好也是推算多單清算帶 72.2–73.3K，真的掉進去大概不會慢慢磨",
    "sources": "chips.cohort（CheckOnChain，2K 一格，11/07）72–74K：STH 18,530＋LTH 129,727；62–66K：STH 478,035＋399,388、LTH 357,254＋207,796；deriv.liq_heat（11/09 00:00 推算）72.2–73.3K 18,110 顆",
    "note": "對話型（8.5 千粉，watchlist）。接他核心論點「62–65K 厚、72–74K 薄」：同意薄厚，但更正 62–66K 不是老籌碼（六成是短期持有者），再補清算帶和稀薄區重疊。數字是 CheckOnChain 的分布，跟他的 URPD 來源可能不同。",
-   "order": 31
+   "order": 32
   },
   {
    "style": "真人版",
@@ -797,7 +817,7 @@
    "reply": "The pain is there though, only about 26% of short-term holder supply is in profit, down from 42% a week ago\nThey're hurting, they just haven't started dumping",
    "sources": "chips.flow.sth_in_profit_pct（Bitview）11/08 26.24%、d7 41.92%、近 30 天最低",
    "note": "原作者本人接話（第一輪），照規則回一句短的，補一個上一則沒給的數字。",
-   "order": 32
+   "order": 33
   },
   {
    "style": "真人版",
@@ -817,7 +837,7 @@
    "reply": "明晚 21:30 的 CPI 就是個現成的測試\n市場預期 3.9%，前值 3.7%，美股怎麼反應，BTC 大概就跟著走",
    "sources": "notes news：11/10 美國 10 月 CPI（台北 21:30，預期年增約 3.9%、前值 3.7%，CoinCentral）",
    "note": "原作者本人接話（第一輪），雖然只說「沒錯」，照規則回一句短的，順著相關性補下一個日期。",
-   "order": 33
+   "order": 34
   },
   {
    "style": "真人版",
@@ -837,7 +857,7 @@
    "reply": "選擇權那邊反而沒怎麼慌，DVOL 41，差不多在一年的正中間\n週末那一下比較像永續自己炸掉，買保護的人沒跟著追",
    "sources": "deriv.dvol（Deribit，11/08）40.99、一年百分位 50.1",
    "note": "原作者本人接話（第一輪）。「多看少做」是操作語氣，不接，只補選擇權的情緒。",
-   "order": 34
+   "order": 35
   },
   {
    "style": "真人版",
@@ -857,14 +877,14 @@
    "reply": "互相啦，你那兩條也抓得準\n200 日均線跟 73.6K 擠在不到 500 美元裡，真走到那邊應該很熱鬧",
    "sources": "price.ma sma200 73,171；price.swing end_level 73,605（差 434）",
    "note": "原作者本人接話（第一輪），稱讚但照規則回一句短的。他 09:43 又發了一則 73K 硬仗的新貼文，主題同一條線、今天已回過他，沒另寫。",
-   "order": 35
+   "order": 36
   },
   {
    "style": "真人版",
    "status": "send",
    "mode": "reply",
    "n": 24,
-   "order": 36,
+   "order": 37,
    "author": "terryharmonic",
    "name": "加密老铁",
    "followers": 32180,
@@ -883,7 +903,7 @@
    "status": "send",
    "mode": "reply",
    "n": 22,
-   "order": 37,
+   "order": 38,
    "author": "Murphychen888",
    "name": "Murphy",
    "followers": 82300,
@@ -909,7 +929,7 @@
    "status": "send",
    "mode": "reply",
    "n": 23,
-   "order": 38,
+   "order": 39,
    "author": "market_beggar",
    "name": "貝格先生",
    "followers": 21541,
@@ -935,7 +955,7 @@
    "status": "send",
    "mode": "reply",
    "n": 16,
-   "order": 39,
+   "order": 40,
    "author": "WillsonMa1",
    "name": "WillsonMa1",
    "followers": 8530,
@@ -955,7 +975,7 @@
    "status": "send",
    "mode": "reply",
    "n": 17,
-   "order": 40,
+   "order": 41,
    "author": "DrHashClub",
    "name": "DrHashClub",
    "followers": 23823,
@@ -975,7 +995,7 @@
    "status": "send",
    "mode": "reply",
    "n": 18,
-   "order": 41,
+   "order": 42,
    "author": "joke_henry",
    "name": "joke_henry",
    "followers": 9699,
@@ -995,7 +1015,7 @@
    "status": "send",
    "mode": "reply",
    "n": 12,
-   "order": 42,
+   "order": 43,
    "author": "joke_henry",
    "name": "joke_henry",
    "followers": 9699,
@@ -1014,7 +1034,7 @@
    "status": "send",
    "mode": "reply",
    "n": 2,
-   "order": 43,
+   "order": 44,
    "author": "zfcbtc",
    "name": "zfcbtc",
    "followers": 30622,
@@ -1040,7 +1060,7 @@
    "status": "send",
    "mode": "reply",
    "n": 3,
-   "order": 44,
+   "order": 45,
    "author": "kaihsiang_chang",
    "name": "kaihsiang_chang",
    "followers": 7456,
@@ -1059,7 +1079,7 @@
    "status": "send",
    "mode": "reply",
    "n": 11,
-   "order": 45,
+   "order": 46,
    "author": "JoeConsorti",
    "name": "JoeConsorti",
    "followers": 63239,
@@ -1085,7 +1105,7 @@
    "status": "send",
    "mode": "reply",
    "n": 4,
-   "order": 46,
+   "order": 47,
    "author": "oceansbaby_",
    "name": "oceansbaby_",
    "followers": 9082,
@@ -1104,7 +1124,7 @@
    "status": "send",
    "mode": "reply",
    "n": 1,
-   "order": 47,
+   "order": 48,
    "author": "Jasonwang1211",
    "name": "Jasonwang1211",
    "followers": 22008,
@@ -1123,7 +1143,7 @@
    "status": "send",
    "mode": "reply",
    "n": 5,
-   "order": 48,
+   "order": 49,
    "author": "AyalinCreator",
    "name": "AyalinCreator",
    "followers": 10557,
@@ -1142,7 +1162,7 @@
    "status": "send",
    "mode": "reply",
    "n": 15,
-   "order": 49,
+   "order": 50,
    "author": "paulxue1979",
    "name": "paulxue1979",
    "followers": 3990,
@@ -1161,7 +1181,7 @@
    "status": "send",
    "mode": "reply",
    "n": 13,
-   "order": 50,
+   "order": 51,
    "author": "gaah_im",
    "name": "gaah_im",
    "followers": 13368,
@@ -1180,7 +1200,7 @@
    "status": "send",
    "mode": "reply",
    "n": 14,
-   "order": 51,
+   "order": 52,
    "author": "yytttt_1982",
    "name": "yytttt_1982",
    "followers": 5451,
@@ -1199,7 +1219,7 @@
    "status": "send",
    "mode": "reply",
    "n": 6,
-   "order": 52,
+   "order": 53,
    "author": "zacxbtc",
    "name": "zacxbtc",
    "followers": 9229,
@@ -1218,7 +1238,7 @@
    "status": "send",
    "mode": "reply",
    "n": 7,
-   "order": 53,
+   "order": 54,
    "author": "GMartin_0",
    "name": "GMartin_0",
    "followers": 3026,
@@ -1237,7 +1257,7 @@
    "status": "send",
    "mode": "reply",
    "n": 8,
-   "order": 54,
+   "order": 55,
    "author": "danyundercrypto",
    "name": "danyundercrypto",
    "followers": 4889,
@@ -1256,7 +1276,7 @@
    "status": "skip",
    "mode": "reply",
    "n": 19,
-   "order": 126,
+   "order": 127,
    "author": "hppzyy",
    "name": "hppzyy",
    "followers": 1549,
@@ -1276,7 +1296,7 @@
    "status": "skip",
    "mode": "reply",
    "n": 20,
-   "order": 127,
+   "order": 128,
    "author": "Dragonhau66",
    "name": "Dragonhau66",
    "followers": 29674,
@@ -1296,7 +1316,7 @@
    "status": "skip",
    "mode": "reply",
    "n": 21,
-   "order": 128,
+   "order": 129,
    "author": "Dragonhau66",
    "name": "Dragonhau66",
    "followers": 29674,
@@ -1316,7 +1336,7 @@
    "status": "skip",
    "mode": "reply",
    "n": 10,
-   "order": 129,
+   "order": 130,
    "author": "Dragonhau66",
    "name": "Dragonhau66",
    "followers": 29674,
@@ -1335,7 +1355,7 @@
    "status": "skip",
    "mode": "reply",
    "n": 9,
-   "order": 130,
+   "order": 131,
    "author": "triremetrading",
    "name": "triremetrading",
    "followers": 2133,
@@ -1351,7 +1371,7 @@
   },
   {
    "n": 62,
-   "order": 131,
+   "order": 132,
    "kind": "followup",
    "status": "skip",
    "url": "https://x.com/lishu7843/status/2119597219024400831",
@@ -1373,7 +1393,7 @@
    "mode": "reply",
    "status": "skip",
    "n": 66,
-   "order": 130,
+   "order": 131,
    "author": "big_hunter11",
    "name": "加密大猎手",
    "followers": 12016,
