@@ -5,6 +5,14 @@ usage（倉庫根目錄）: python3 ops/post/site_shot.py <jobs.json> <輸出資
 jobs.json: {"lang": "zh"|"en", "theme": "dark"|"light", "width": 1440,
             "items": [{"page": "onchain", "sel": "#c-lthloss", "out": "b1-lthloss-dark", "clean": 1, "pre": "<等動畫跑完的 js>"}]}
 輸出：<out>.png（2 倍解析度）與 <out>.json（圖上文字位置，CSS px）
+有任何一張沒截成（找不到圖、量到高度 0、位置一直在動）就印 ERROR、不寫那張的檔案，最後結束碼 1。
+
+2026-11-09 桌面寬度偶爾截錯位置或整片空白，查到兩個原因：
+  ① 網站桌面版延後畫圖（drawUpTo／drawAhead／drawIdle），其餘的版捲近或閒置時才補畫，版面會長高；
+  ② 原本用 captureBeyondViewport 截圖，Chrome 截圖時會把視窗暫時縮成 1×1 再還原——網站當成跨過 860px，
+     切到手機版（捲回頂端、只顯示一版、圖用窄寬度重畫）再切回來，截圖和版面重排在賽跑，所以截到別張、截到窄圖或空白。
+  改成：每張先捲到底等版面高度穩定（settle）→ 捲到目標、連量兩次位置一樣才截 → 只截畫面內（不用 captureBeyondViewport；
+  面板比視窗高就只加高視窗，寬度不變）→ 截完再量一次，位置變了就重截。畫面上壓到截圖範圍的固定／黏住的元素（手機頂欄、換頁掃描線）截圖時先藏起來。
 """
 import base64, json, os, socket, struct, subprocess, sys, time, urllib.request
 
@@ -80,6 +88,76 @@ def wait(ws, expr, t=30):
     return False
 
 
+def settle(ws, limit=10.0):
+    """捲到底讓延後畫的版都畫完（drawAhead 會把畫面三個高度內的版補畫），文件高度連兩次一樣（間隔 300ms）、字型載完才算穩定；最多等 limit 秒。"""
+    t0 = time.time(); last = None
+    while time.time() - t0 < limit:
+        h, fs = ws.js('window.scrollTo(0, document.documentElement.scrollHeight); [document.documentElement.scrollHeight, document.fonts ? document.fonts.status : "loaded"]')
+        if h == last and fs == 'loaded': return True
+        last = h; time.sleep(0.3)
+    return False
+
+
+def measure(ws, sel):
+    """面板與圖的位置（文件座標，CSS px），加上目前的捲動位置與視窗高度；gh：圖裡 svg／canvas 的最大高度"""
+    return ws.js(f'''(function(){{var c=document.querySelector({sel}); if(!c) return null; var p=c.closest("section.panel"); if(!p) return null;
+        var r=p.getBoundingClientRect(), cr=c.getBoundingClientRect(), sy=window.scrollY, sx=window.scrollX, gh=0;
+        c.querySelectorAll("svg,canvas").forEach(function(g){{gh=Math.max(gh, g.getBoundingClientRect().height);}});
+        return {{x:r.left+sx, y:r.top+sy, w:r.width, h:r.height, cy:cr.top+sy, ch:cr.height, cw:cr.width, gh:gh, sy:sy, vh:window.innerHeight}};}})()''')
+
+
+def same(a, b, keys=('x', 'y', 'w', 'h', 'cy', 'ch')):
+    return bool(a and b) and all(abs(a[k] - b[k]) < 0.5 for k in keys)
+
+
+def clip_of(box, crop):
+    """截圖範圍（文件座標）：預設整個面板；crop=chart 是面板頂到圖底（含標題列、解讀、圖例、圖）"""
+    h = box['cy'] + box['ch'] - box['y'] + 16 if crop == 'chart' else box['h']
+    return dict(x=box['x'], y=box['y'], width=box['w'], height=h, scale=1)
+
+
+# 截圖時藏起來：壓到截圖範圍、又不是面板本身或它外層的固定／黏住元素（手機頂欄、換頁掃描線、提示框…），截完還原
+HIDE_JS = '''(function(sel, x, y, w, h){var p=document.querySelector(sel).closest("section.panel"), sx=window.scrollX, sy=window.scrollY, n=0;
+    document.querySelectorAll("body *:not(svg *)").forEach(function(e){ if (e.contains(p) || p.contains(e)) return;
+      var ps=getComputedStyle(e).position; if (ps!=="fixed" && ps!=="sticky") return; var b=e.getBoundingClientRect();
+      if (b.width<=0 || b.height<=0 || b.right<=x-sx || b.left>=x-sx+w || b.bottom<=y-sy || b.top>=y-sy+h) return;
+      e.setAttribute("data-shot-vis", e.style.visibility); e.style.visibility="hidden"; n++; });
+    return n;})'''
+UNHIDE_JS = '''document.querySelectorAll("[data-shot-vis]").forEach(function(e){e.style.visibility=e.getAttribute("data-shot-vis"); e.removeAttribute("data-shot-vis");}); true'''
+# 圖上所有文字（刻度、標籤）的位置，相對截圖左上角、CSS px；給 annotate.py 換算座標用
+GEO_JS = '''(function(){var c=document.querySelector(%s), p=c.closest("section.panel"), pr=p.getBoundingClientRect();
+    return Array.from(c.querySelectorAll("svg text")).map(function(t){var b=t.getBoundingClientRect();
+      return {t:(t.textContent||"").trim(), x:b.left-pr.left+b.width/2, y:b.top-pr.top+b.height/2, l:b.left-pr.left, r:b.right-pr.left, anchor:t.getAttribute("text-anchor")||""};});})()'''
+
+
+def shoot(ws, it, sel, W, H, tries=6):
+    """捲到目標、連量兩次位置一樣、整個範圍在畫面內才截；截完再量一次，動了就重來。
+    回傳 (png, clip, geo)；截不成回傳 (None, 原因)"""
+    vh, why = H, '位置一直在動'
+    try:
+        for k in range(tries):
+            ws.js(f'document.querySelector({sel}).closest("section.panel").scrollIntoView({{block:"start"}}); true'); time.sleep(1.0 if k == 0 else 0.6)
+            a = measure(ws, sel); time.sleep(0.3); b = measure(ws, sel)
+            if not same(a, b): why = '位置一直在動'; continue
+            if b['w'] <= 0 or b['ch'] <= 0 or (not it.get('html') and b['gh'] <= 0):
+                why = f'圖的高度是 0（面板 {b["w"]:.0f}×{b["h"]:.0f}、圖 {b["cw"]:.0f}×{b["ch"]:.0f}、svg/canvas 高 {b["gh"]:.0f}）'; time.sleep(0.6); continue
+            c = clip_of(b, it.get('crop'))
+            if c['height'] > b['vh']:   # 面板比視窗高：只加高視窗（寬度不變，網站不會切成手機版），再量一次
+                vh = int(c['height']) + 40; why = '面板比視窗高'
+                ws.call('Emulation.setDeviceMetricsOverride', width=W, height=vh, deviceScaleFactor=2, mobile=False); time.sleep(0.5); continue
+            if c['y'] < b['sy'] - 0.5 or c['y'] + c['height'] > b['sy'] + b['vh'] + 0.5:   # 不在畫面內（例如 scroll-padding）：直接捲到範圍頂端再量
+                ws.js(f'window.scrollTo(0, {c["y"]}); true'); why = '捲不到截圖範圍'; time.sleep(0.6); continue
+            ws.js(f'{HIDE_JS}({sel}, {c["x"]}, {c["y"]}, {c["width"]}, {c["height"]})')
+            try: r = ws.call('Page.captureScreenshot', format='png', clip=c)
+            finally: ws.js(UNHIDE_JS)
+            d = measure(ws, sel)
+            if not same(b, d, ('x', 'y', 'w', 'h', 'cy', 'ch', 'sy')): why = '截圖時版面動了'; continue
+            return base64.b64decode(r['data']), c, ws.js(GEO_JS % sel)
+        return None, why
+    finally:
+        if vh != H: ws.call('Emulation.setDeviceMetricsOverride', width=W, height=H, deviceScaleFactor=2, mobile=False); time.sleep(0.3)
+
+
 def serve():
     import functools, http.server, threading
     h = functools.partial(http.server.SimpleHTTPRequestHandler, directory=REPO)
@@ -92,9 +170,9 @@ def main():
     srv = serve()
     jobs = json.load(open(sys.argv[1])); out = sys.argv[2]; os.makedirs(out, exist_ok=True)
     import tempfile; prof = tempfile.mkdtemp(prefix='daybreak-chrome-')   # 暫存的 Chrome 設定檔，不寫進倉庫
-    W = jobs.get('width', 1440)
+    W = jobs.get('width', 1440); H = 1000; fails = []
     p = subprocess.Popen([CHROME, '--headless=new', f'--remote-debugging-port={PORT}', f'--user-data-dir={prof}', '--hide-scrollbars'] + (['--no-sandbox'] if sys.platform.startswith('linux') else []) + [
-                          '--no-first-run', '--no-default-browser-check', f'--window-size={W},1000', 'about:blank'],
+                          '--no-first-run', '--no-default-browser-check', f'--window-size={W},{H}', 'about:blank'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         # 2026-11-09：GitHub Actions 上 Chrome 第一次啟動有時超過 10 秒，中文圖排第一個就截不到（tg 沒值）；等到 30 秒，等不到就講清楚
@@ -106,7 +184,7 @@ def main():
         page = next(t for t in tg if t['type'] == 'page')
         ws = WS(page['webSocketDebuggerUrl'])
         ws.call('Page.enable'); ws.call('Runtime.enable')
-        ws.call('Emulation.setDeviceMetricsOverride', width=W, height=1000, deviceScaleFactor=2, mobile=False)
+        ws.call('Emulation.setDeviceMetricsOverride', width=W, height=H, deviceScaleFactor=2, mobile=False)
         ws.call('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': jobs.get('theme', 'light')}])
         ws.call("Page.navigate", url=SITE); wait(ws, "location.href.indexOf(\"8790\") > 0 && document.readyState === \"complete\"")
         print('at', ws.js('location.href + " " + document.readyState + " " + document.title'))
@@ -120,7 +198,11 @@ def main():
             sel = json.dumps(it['sel'])
             need = '' if it.get('html') else ' && e.querySelector("svg,canvas")'   # html=1：用 div 畫的圖（例如籌碼分布 URPD）不等 svg
             ok = wait(ws, f'(function(){{var e=document.querySelector({sel}); return !!(e{need});}})()', 40)
-            if not ok: print('MISSING', it['sel']); continue
+            if not ok: print('ERROR MISSING', it['sel'], file=sys.stderr); fails.append(it['out']); continue
+            # 2026-11-09 手機版長頁收合（foldGroups）：目標在收起的組裡（面板 0×0）就按「展開這組其餘 N 張」，網站會依實際寬度重畫
+            if ws.js(f'''(function(){{var p=document.querySelector({sel}).closest(".panel.gmore"); if(!p) return false;
+                var b=document.querySelector('.gmore-btn[data-gm="'+p.getAttribute("data-gm")+'"]'); if(b) b.click(); return true;}})()'''): time.sleep(0.6)
+            if not settle(ws): print('注意：版面 10 秒內高度沒穩定，照樣往下（截圖前還會再確認位置）', it['sel'], file=sys.stderr)
             if it.get('pre'): ws.js(it['pre']); time.sleep(0.8)
             if it.get('dump'): print(ws.js(f'''(function(){{var p=document.querySelector({sel}).closest("section.panel"); return Array.from(p.children).map(function(c){{return c.tagName+"."+c.className+"#"+c.id+" | "+(c.textContent||"").slice(0,50).replace(/\\s+/g," ")+" | h="+Math.round(c.getBoundingClientRect().height);}}).join("\\n");}})()''')); continue
             if it.get('clean'):   # 發文用：只留標題列、圖例、圖；解讀、表格、說明、按鈕都藏起來
@@ -130,24 +212,17 @@ def main():
                     p.querySelectorAll(".panel-h a").forEach(function(a){{if(a.textContent.trim()==="#")a.style.visibility="hidden";}});
                     return true;}})()'''); time.sleep(0.6)
                 it['crop'] = 'chart'
-            ws.js(f'document.querySelector({sel}).closest("section.panel").scrollIntoView({{block:"start"}}); true'); time.sleep(1.2)
-            box = ws.js(f'''(function(){{var c=document.querySelector({sel}), p=c.closest("section.panel"), r=p.getBoundingClientRect(), cr=c.getBoundingClientRect();
-                var sy=window.scrollY, sx=window.scrollX;
-                return {{x:r.left+sx, y:r.top+sy, w:r.width, h:r.height, cy:cr.top+sy, ch:cr.height}};}})()''')
-            y, h = box['y'], box['h']
-            if it.get('crop') == 'chart':   # 面板頂到圖底（含標題列、解讀、圖例、圖）
-                h = box['cy'] + box['ch'] - box['y'] + 16
-            r = ws.call('Page.captureScreenshot', format='png', captureBeyondViewport=True,
-                        clip=dict(x=box['x'], y=y, width=box['w'], height=h, scale=1))
-            fn = os.path.join(out, it['out'] + '.png'); open(fn, 'wb').write(base64.b64decode(r['data']))
-            print('wrote', fn, round(box['w']), 'x', round(h))
-            # 圖上所有文字（刻度、標籤）的位置，相對截圖左上角、CSS px；給 annotate.py 換算座標用
-            geo = ws.js(f'''(function(){{var c=document.querySelector({sel}), p=c.closest("section.panel"), pr=p.getBoundingClientRect();
-                return Array.from(c.querySelectorAll("svg text")).map(function(t){{var b=t.getBoundingClientRect();
-                  return {{t:(t.textContent||"").trim(), x:b.left-pr.left+b.width/2, y:b.top-pr.top+b.height/2, l:b.left-pr.left, r:b.right-pr.left, anchor:t.getAttribute("text-anchor")||""}};}});}})()''')
+            png, *rest = shoot(ws, it, sel, W, H)
+            if png is None:   # 不輸出空白或截錯的圖
+                print('ERROR', it['out'], it['sel'], rest[0], file=sys.stderr); fails.append(it['out']); continue
+            clip, geo = rest
+            fn = os.path.join(out, it['out'] + '.png'); open(fn, 'wb').write(png)
+            print('wrote', fn, round(clip['width']), 'x', round(clip['height']))
             json.dump(dict(dpr=2, texts=geo), open(os.path.join(out, it['out'] + '.json'), 'w'), ensure_ascii=False)
+        if fails: print('ERROR 沒截成：', ', '.join(fails), file=sys.stderr)
     finally:
         p.terminate(); srv.shutdown()
+    if fails: sys.exit(1)
 
 
 if __name__ == '__main__':
