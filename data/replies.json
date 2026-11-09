@@ -18,7 +18,7 @@
    "url": "https://x.com/AxelAdlerJr/status/2119706444731720052",
    "posted": "2026-11-09T08:19:33Z",
    "summary": "Axel Adler：BTC 本週從 74K 開始，低於近一年中位數，籌碼獲利比例在降；Morning Brief 講這對週期的意義和本週要收復的價位",
-   "reply": "Almost all of the profitability drop is recent buyers\nLong-term holders in loss are at 35%, still short of where the last three cycle lows topped out\nLooks like a shakeout more than capitulation, as long as June 30 holds as the low",
+   "reply": "The profitability drop is almost all recent buyers\nLong-term holders in loss sit at 35%, the last three cycle lows all went past 45%\nThe level to get back is $75.9K, what recent buyers paid on average, and below it most of them are in the red",
    "sources": "onchain.lthloss（CheckOnChain 11/08）長期持有者虧損比例 34.6%；前三輪底部後高峰 53.0%（2015）、46.4%（2019）、44.7%（2022），6/30 當天 45.4%；chips.flow.sth_in_profit_pct 26.24%（Bitview 11/08）；短期持有者成本 75,881（Bitview 11/08）",
    "note": "固定名單 scan，2.9 萬粉、3.5K 瀏覽、38 讚，發文約 3 小時（台北 16:20 發），曝光型。接他「獲利比例在降」的核心：掉的幾乎都是短期持有者，長期持有者虧損比例離前三輪底部的高峰還遠，帶前提（如果 6/30 是底）說這是洗盤區；他問要收復的價位，給短期持有者成本。配長期持有者虧損比例圖英文版（今天英文沒用過這張）。今天沒有近一年中位數的數字（latest.json 還沒有 q365），所以沒接那一半。",
    "image": {
@@ -44,7 +44,7 @@
    "url": "https://x.com/0xGummyBear/status/2119721623569977436",
    "posted": "2026-11-09T09:19:52Z",
    "summary": "CVD 看到鯨魚三段減倉（9/23–24、10/06–08、10/29–11/08），主動買進消退；若收線跌破 STH-RP 怎麼辦；URPD 62–65K 有大量籌碼可當支撐；看明天 CPI",
-   "reply": "鯨魚退場這段，美國現貨那邊看得更清楚\nCoinbase 最近一週主動賣比主動買多了 4,600 顆，2021 年以來很少這麼弱\n62–65K 那層籌碼再厚，也得先有人把價格撐住，CPI 只是開關",
+   "reply": "你說的「主動買進消退」，Coinbase 那邊更明顯，最近一週主動賣比主動買多了 4,600 顆，2021 年以來很少這麼弱\n62–65K 那層籌碼厚是厚，要先有人把價格撐住才輪得到它\n明天 CPI 之前，大概沒人急著往上追",
    "sources": "deriv.taker.cb（Coinalyze＋Coinbase，11/08）：Coinbase 現貨主動買−主動賣 7 天 −4,577 顆，2021-08 起第 4 百分位（中位數 +1,923）；三家現貨 7 天 −2,325 顆；URPD（CheckOnChain 11/08）62–66K 短期持有者約 88 萬顆；短期持有者成本 75,881（Bitview 11/08）",
    "note": "固定名單 scan，對話型（4 千粉、587 瀏覽、8 則留言），發文約 2 小時（台北 17:20 發）。接他核心「鯨魚主動買進消退」：用 Coinbase 吃單方向交叉驗證（2021 年來最弱 4%），同意 62–65K 厚但把問題拉到「誰在撐成本線」。他後半的反手做空／分批加倉是操作，不接。62–66K 籌碼和 CryptoPainter（n67）角度錯開，不配圖。"
   },
@@ -63,7 +63,7 @@
    "url": "https://x.com/BlockScholes/status/2119752836061770229",
    "posted": "2026-11-09T11:23:53Z",
    "summary": "Block Scholes 隱含波動指數：BTC 30 天 42.9%（7 天 +2.7）；週四 7 天 ATM 從 33% 跳到 43%，7 天 25-delta skew 從 −0.5 擴到 −8.3、現在約 −6.2；ETF 週四週五流出 8.4 億",
-   "reply": "Fear is all in the front end\nDeribit 7-day ATM has sat above 30-day since Friday, and Tuesday's CPI is most of that\nThe downside bid hasn't spread past this week yet, 30-day skew is still mild",
+   "reply": "The fear is only in this week's expiries\nDeribit 7-day ATM has been above 30-day since Friday with CPI on Tuesday, and 30-day skew is still mild, so the downside bid hasn't spread out the curve yet",
    "sources": "deriv.ivterm（Deribit 11/08 收盤快照）7 天 ATM 42.06、30 天 39.06、90 天 39.47、180 天 40.22，倒掛自 11/06（第 3 天）；deriv.rr25 30 天 25-delta 風險逆轉 −3.72（put 42.19／call 38.47）；DVOL 40.99（11/08）；11/10 美國 10 月 CPI（notes.json news）",
    "note": "固定名單 scan（research 帳號，2.6 千粉），發文約 8 分鐘時寫的（台北 19:24 發），但他的貼文瀏覽通常很低（這則 55），排後面。接他「7 天 skew 擴大」：補期限結構倒掛只在前端、30 天風險逆轉還淺，判斷是 CPI 事件定價。不配圖（網站的期限結構圖今天沒有對應的手機截圖）。"
   },
@@ -82,7 +82,7 @@
    "url": "https://x.com/CryptoPainter/status/2119700523641155837",
    "posted": "2026-11-09T07:56:01Z",
    "summary": "現貨溢價沒再降，但週一小級別跌破左側區間低點；明早日線收不回去，8 月中以來的高低點墊高節奏就算結束。他不介意 BTC 去更低的位置震盪（像房子每天降價來推銷）",
-   "reply": "收不回去的話，下面沒什麼墊著\n短期持有者的籌碼大多在 74K 以上，72K 到 66K 那段幾乎是空的，槓桿也還沒洗乾淨",
+   "reply": "明早日線真收不回去，下面沒什麼墊著\n短期持有者的籌碼大多在 74K 以上，72K 到 66K 那段幾乎是空的，槓桿也還沒洗乾淨",
    "sources": "URPD 長短期持有者籌碼（CheckOnChain 11/08，網站 onchain #c-cohort）：短期持有者 76–78K 62 萬顆，72K–66K 每 2K 一格都不到幾萬顆，62–64K 又有一層；收盤 74,738；未平倉 2021 年以來第 98 百分位、強平 1.68 億後只少 0.5%（Coinalyze，notes.json 2026-11-08-1）",
    "note": "★ 1 小時內：CryptoPainter（watchlist，8.2 萬粉）發文約 35 分鐘時寫的（台北 15:56 發）。今天第二則回他：早上那則講 Coinbase 溢價，這則換角度接他的核心論點（日線收不回就算結構走壞），第一行直接給判斷：下面沒東西墊。他「越跌越舒服、想買便宜」是個人操作，不接。今天引用已 3 則，寫成回覆；曝光型，配籌碼分布圖（圖上看得到 74K 以上厚、72–66K 空）。",
    "image": {
