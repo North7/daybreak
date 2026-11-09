@@ -127,9 +127,15 @@ html.tt-vt::view-transition-old(root), html.tt-vt::view-transition-new(root) { a
 html.tt-vt::view-transition-group(root) { animation: none; }
 html.tt-vt::view-transition-group(tt-dusk), html.tt-vt::view-transition-new(tt-dusk) { animation: none; }
 .tt-dusk { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; z-index: 2147482999; pointer-events: none; view-transition-name: tt-dusk; }
-/* 2026-11-09 切換鈕光圈（app.js ttRing）：換刊時繞按鈕一圈的細光線，自成一層疊在光帶上面；日刊品牌橘紅、夜刊暖金，只有線、沒有光暈 */
-.tt-ring { position: fixed; z-index: 2147483000; pointer-events: none; overflow: visible; opacity: 0; fill: none; stroke: var(--red); stroke-width: 2; stroke-linecap: round; view-transition-name: tt-ring; }
-:root[data-theme="dark"] .tt-ring { stroke: var(--s4); }
+/* 2026-11-09 切換鈕光圈（app.js ttRing）：換刊時沿切換鈕邊框繞一圈的光，四層：光頭柔光 .bloom、沿線光暈 .glow、邊框上的亮線 .ln、光頭白芯 .core。
+   顏色取新的一刊（往日刊：日刊的品牌橘紅 #FF3B1F；往夜刊：夜刊的暖金 #FFC43D），寫死色值是因為建立時還沒換刊。換刊過渡中自成一層疊在光帶上面 */
+.tt-ring { position: fixed; z-index: 2147483000; pointer-events: none; overflow: visible; opacity: 0; fill: none; color: #FF3B1F; stroke: currentColor; stroke-linecap: round; }
+.tt-ring.to-dark { color: #FFC43D; }
+.tt-ring .bloom path { stroke-width: 9; }
+.tt-ring .glow path { stroke-width: 5; }
+.tt-ring .ln { stroke-width: 2; }
+.tt-ring .core { stroke: #FFF; stroke-width: 1; }
+html.tt-vt .tt-ring { view-transition-name: tt-ring; }
 html.tt-vt::view-transition-group(tt-ring), html.tt-vt::view-transition-new(tt-ring) { animation: none; }
 .tt-phase { position: fixed; z-index: 2147483001; pointer-events: none; opacity: 0; font-size: 11px; letter-spacing: .14em; text-align: center; color: var(--ink-2); font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .tt-settle, #m-theme.tt-settle { animation: none; } }

@@ -5395,24 +5395,40 @@
       st.forEach(function (s) { var d = r + s[0] * F; g.addColorStop(ttClamp((d - r0) / (r1 - r0)), 'rgba(' + s[1][0] + ',' + s[1][1] + ',' + s[1][2] + ',' + (s[1][3] * a).toFixed(3) + ')'); });
       c.fillStyle = g; c.fillRect(0, 0, W, H);
     }
-    // 2026-11-09 使用者：「按鈕一圈可以有動態光圈嗎」，選「只在切換時繞一圈」：切換鈕外圍 3px 一道細光線，跟著晨昏線推進 sp 繞一圈後淡出
-    // （拖曳時一起停住、退回時倒著走）；往夜刊順時針、往日刊逆時針，和滑塊同方向。顏色取新的一刊：日刊品牌橘紅、夜刊暖金。只有線、不加模糊光暈
-    var TT_RING = [[30, .16], [15, .42], [5, 1]];   // 光尾到光頭：長度（一圈＝100）、不透明度
+    // 2026-11-09 使用者：「按鈕一圈可以有動態光圈嗎」，選「只在切換時繞一圈」；之後：「可以直接在邊框上嗎？速度再慢一點，要有發光感」。
+    // 換刊時一道光沿著切換鈕的邊框繞一圈後淡出（約 1.9 秒，自己計時，換刊結束後繼續繞完）；往夜刊順時針、往日刊逆時針，和滑塊同方向；
+    // 顏色取新的一刊：日刊品牌橘紅、夜刊暖金。四層：光頭一團柔光、沿線模糊的光暈、邊框上的亮線、光頭的白芯。光暈只用在這顆鈕（使用者 11/09 指定要發光感，淺色主題其他地方仍不加光暈）。
+    // 退回原刊時 0.22 秒淡掉。換刊過渡中光線有自己的 view-transition-name，疊在光帶上面、不被圓形裁切遮住
+    var TT_RING = [[34, .2, .14], [16, .55, .4], [5, 1, .8]], TT_RING_MS = 1900, TT_RG = null;   // 光尾到光頭：長度（一圈＝100）、亮線不透明度、光暈不透明度
     function ttRing(src, b, to) {
-      var pd = 3, w = b.width + pd * 2, h = b.height + pd * 2, br = parseFloat(getComputedStyle(src).borderTopLeftRadius) || 0, r = br ? Math.max(0, Math.min(br + pd, h / 2, w / 2) - 1) : 0;
-      var x0 = 1, y0 = 1, x1 = w - 1, y1 = h - 1, A = function (x, y) { return r ? 'A' + r + ' ' + r + ' 0 0 1 ' + x + ' ' + y : 'L' + x + ' ' + y; };
+      var G = 12, w = b.width + G * 2, h = b.height + G * 2, br = parseFloat(getComputedStyle(src).borderTopLeftRadius) || 0, r = Math.max(0, Math.min(br, b.height / 2, b.width / 2) - 0.5);
+      var x0 = G + 0.5, y0 = G + 0.5, x1 = w - G - 0.5, y1 = h - G - 0.5, A = function (x, y) { return r ? 'A' + r + ' ' + r + ' 0 0 1 ' + x + ' ' + y : 'L' + x + ' ' + y; };
       var d = 'M' + w / 2 + ' ' + y0 + 'H' + (x1 - r) + A(x1, y0 + r) + 'V' + (y1 - r) + A(x1 - r, y1) + 'H' + (x0 + r) + A(x0, y1 - r) + 'V' + (y0 + r) + A(x0 + r, y0) + 'Z';
+      var P = function (cls, op) { return '<path class="' + cls + '" pathLength="100" d="' + d + '" opacity="' + op + '"/>'; };
       var el = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-      el.setAttribute('class', 'tt-ring'); el.setAttribute('aria-hidden', 'true'); el.setAttribute('width', w); el.setAttribute('height', h); el.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
-      el.style.left = (b.left - pd) + 'px'; el.style.top = (b.top - pd) + 'px';
-      el.innerHTML = '<g' + (to === 'light' ? ' transform="matrix(-1 0 0 1 ' + w + ' 0)"' : '') + '>' + TT_RING.map(function (x) { return '<path pathLength="100" d="' + d + '" opacity="' + x[1] + '"/>'; }).join('') + '</g>';
-      return { el: el, ps: [].slice.call(el.querySelectorAll('path')) };
+      el.setAttribute('class', 'tt-ring' + (to === 'dark' ? ' to-dark' : '')); el.setAttribute('aria-hidden', 'true'); el.setAttribute('width', w); el.setAttribute('height', h); el.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      el.style.left = (b.left - G) + 'px'; el.style.top = (b.top - G) + 'px';
+      el.innerHTML = '<defs><filter id="tt-ring-blur" filterUnits="userSpaceOnUse" x="0" y="0" width="' + w + '" height="' + h + '"><feGaussianBlur stdDeviation="3"/></filter><filter id="tt-ring-bloom" filterUnits="userSpaceOnUse" x="0" y="0" width="' + w + '" height="' + h + '"><feGaussianBlur stdDeviation="5"/></filter></defs><g' + (to === 'light' ? ' transform="matrix(-1 0 0 1 ' + w + ' 0)"' : '') + '>' +
+        '<g class="bloom" filter="url(#tt-ring-bloom)">' + P('', .55) + '</g><g class="glow" filter="url(#tt-ring-blur)">' + TT_RING.map(function (x) { return P('', x[2]); }).join('') + '</g>' + TT_RING.map(function (x) { return P('ln', x[1]); }).join('') + P('core', .9) + '</g>';
+      var ps = [].slice.call(el.querySelectorAll('path'));
+      return { el: el, bl: ps[0], gl: ps.slice(1, 4), ln: ps.slice(4, 7), core: ps[7] };
     }
-    function ttRingSet(V) {
-      var g = V.rg; if (!g) return;
-      var u = V.sp, hd = 108 * u, a = ttClamp(u / 0.04) * (1 - ttClamp((u - 0.78) / 0.2));
-      g.el.style.opacity = a.toFixed(3);
-      g.ps.forEach(function (p, i) { var L = Math.min(TT_RING[i][0], hd); p.setAttribute('stroke-dasharray', L.toFixed(2) + ' ' + (100 - L).toFixed(2)); p.setAttribute('stroke-dashoffset', (L - hd).toFixed(2)); });
+    function ttRingDash(p, L, hd) { p.setAttribute('stroke-dasharray', L.toFixed(2) + ' ' + (100 - L).toFixed(2)); p.setAttribute('stroke-dashoffset', (L - hd).toFixed(2)); }
+    function ttRingOff(now) { var g = TT_RG; if (!g) return; if (!now) { if (!g.cut) g.cut = performance.now(); return; } cancelAnimationFrame(g.raf); if (g.el.parentNode) g.el.parentNode.removeChild(g.el); TT_RG = null; }
+    function ttRingRun(g, V) {
+      TT_RG = g;
+      (function f(now) {
+        if (TT_RG !== g) return;
+        if (!g.t0) { if (!V.ready) { g.raf = requestAnimationFrame(f); return; } g.t0 = now; }
+        if (V.back && !g.cut) g.cut = now;
+        var u = Math.min(1, (now - g.t0) / TT_RING_MS), hd = 104 * (1 - Math.cos(Math.PI * u)) / 2, a = ttClamp(u / 0.06) * (1 - ttClamp((u - 0.8) / 0.2));
+        if (g.cut) a *= 1 - ttClamp((now - g.cut) / 220);
+        g.el.style.opacity = a.toFixed(3);
+        TT_RING.forEach(function (x, i) { var L = Math.min(x[0], hd); ttRingDash(g.gl[i], L, hd); ttRingDash(g.ln[i], L, hd); });
+        ttRingDash(g.core, Math.min(3, hd), hd); ttRingDash(g.bl, Math.min(9, hd), hd);
+        if (u >= 1 || (g.cut && now - g.cut >= 220)) return ttRingOff(true);
+        g.raf = requestAnimationFrame(f);
+      })(performance.now());
     }
     var TV = null;   // 進行中的換刊：sp＝晨昏線推進（0 原刊～1 新刊）、kp＝滑塊往新刊走了多少
     function ttGo(to) {
@@ -5421,7 +5437,7 @@
       var R = Math.max(Math.hypot(x, y), Math.hypot(W - x, y), Math.hypot(x, H - y), Math.hypot(W - x, H - y)), F = Math.max(70, Math.min(190, R * 0.12));
       var V = TV = { from: ttCur(), to: to, x: x, y: y, F: F, R: R + F * 1.6, sp: 0, kp: 0, tw: null, an: [], raf: 0, back: false };
       var cv = V.cv = document.createElement('canvas'); cv.className = 'tt-dusk'; cv.setAttribute('aria-hidden', 'true');
-      V.q = 0.5; cv.width = Math.ceil(W * V.q); cv.height = Math.ceil(H * V.q); V.cx = cv.getContext('2d'); V.rg = ttRing(src, b, to);
+      V.q = 0.5; cv.width = Math.ceil(W * V.q); cv.height = Math.ceil(H * V.q); V.cx = cv.getContext('2d'); ttRingOff(true); V.rg = ttRing(src, b, to);
       document.documentElement.classList.add('tt-vt'); ttPhase(V.from);
       V.vt = document.startViewTransition(function () { setTheme(to); document.body.appendChild(cv); document.body.appendChild(V.rg.el); V.rest = ttCharts(); });
       V.vt.ready.then(function () {
@@ -5438,15 +5454,16 @@
         var w = V.tw, p = 1;
         if (w) { if (!V.ready) w.t0 = now; p = Math.min(1, (now - w.t0) / w.ms); V.sp = w.a + (w.b - w.a) * w.ez(p); V.kp = w.ka + (w.kb - w.ka) * w.kz(p); if (w.b && V.sp > 0.995 && V.kp > 0.995) { V.sp = V.kp = p = 1; } }   // 光帶已出畫面就收尾，不空等緩出的尾巴
         if (V.ready) V.an.forEach(function (a) { a.currentTime = V.sp * 1000; });
-        ttBand(V); ttRingSet(V); ttKnob(to === 'dark' ? V.kp : 1 - V.kp, Math.sin(Math.PI * V.sp));
+        ttBand(V); ttKnob(to === 'dark' ? V.kp : 1 - V.kp, Math.sin(Math.PI * V.sp));
         if (w && p >= 1 && (V.sp <= 0 || V.sp >= 1)) return ttFinish(V);
         V.raf = requestAnimationFrame(f);
       })(performance.now());
+      ttRingRun(V.rg, V);
       return V;
     }
     function ttTw(V, b, ms, ez, kz) { V.back = !b; V.tw = { t0: performance.now(), ms: Math.max(1, ms), a: V.sp, b: b, ez: ez, ka: V.kp, kb: b, kz: kz || ez }; }
     function ttFinish(V) {
-      V.fin = true; cancelAnimationFrame(V.raf); V.cx.clearRect(0, 0, V.cv.width, V.cv.height); V.rg.el.style.opacity = 0;
+      V.fin = true; cancelAnimationFrame(V.raf); V.cx.clearRect(0, 0, V.cv.width, V.cv.height);
       function end() { if (V.ready) V.an.forEach(function (a) { a.finish(); }); else V.vt.skipTransition(); }
       if (!V.back) return end();
       setTheme(V.from); ttCharts();   // 退回原刊：即時畫面先換回來（這時被原刊快照蓋著看不到），隔兩格再結束過渡，不會閃
@@ -5457,7 +5474,7 @@
       var fin = V.back ? V.from : V.to;
       if (ttCur() !== fin) { setTheme(fin); ttCharts(); }
       if (V.cv.parentNode) V.cv.parentNode.removeChild(V.cv);
-      if (V.rg.el.parentNode) V.rg.el.parentNode.removeChild(V.rg.el);
+      if (TT_RG === V.rg) { if (!V.rg.t0) ttRingOff(true); else if (fin === V.from) ttRingOff(false); }
       document.documentElement.classList.remove('tt-vt');
       if (TV === V) TV = null;
       TTX.s = 1; tt.style.setProperty('--tt-s', 1); [tt, mt].forEach(function (el) { if (el) { el.style.removeProperty('--tt-sky'); el.style.removeProperty('--tt-glow'); } });
