@@ -41,6 +41,9 @@ SHELL = re.compile(r'對於[^，。]{1,15}(來說|而言)|就[^，。]{1,10}而�
 FOCUS = re.compile(r'(分辨的方法|要盯的|要看的|要注意的|真正的(問題|差別|重點)|的原因)是|What(\'s| is) (missing|different|new|changed|interesting) is|The (tell|catch|difference|problem|key|messy part|tricky part|short version) is', re.I)
 # 固定收尾段「這週看兩件事：」連續幾篇都有就是模板（voice.md 第二輪）
 CLOSER = re.compile(r'[這本]週[先]?看[兩三幾]件事|[Tt]wo things to watch|things to watch this week|What (I\'m|to) watch(ing)? this week')
+# 長貼文有沒有講「對交易來說這代表什麼」（voice.md「要有交易上的意義」2026-11-09）：歷史對照基準、什麼翻過去讀法就換、風險偏哪邊、交易心理。沒看到只提醒。
+TRADE = re.compile(r'隨便挑|任一天|隨機|跟.{0,6}天差不多|\d+ ?(次|段|回).{0,30}(之後|後).{0,30}(漲|跌|高|低)|站回|站穩|翻回|跌破|突破|翻過|翻負|讀法|分辨|反過來|改(變|看)(判斷|想法|看法)|改變.{0,4}判斷|不成立|就(是|代表|不是).{0,10}(底|頂|訊號|方向)|風險偏|比較擠|是空的|沒.{0,4}墊|雜訊|'
+                   r'random day|any (given|random) day|\d+ (times|cases|crossings)|out of \d+|would mean|tell (the two|them) apart|change my mind|lopsided|the (risk|downside|upside) is|is noise|reclaim|back above|breaks? (below|above)|below it|above it', re.I)
 
 
 def sentence_notes(tag, t):
@@ -73,6 +76,7 @@ def longpost_notes(tag, t, lang):
         ss = [x.strip() for x in re.split(r'[。！？.!?]', p) if x.strip()]
         if len(ss) >= 3 and len(ss[-1]) <= (10 if lang == 'zh' else 30): short += 1
     if short > 2: out.append(f'{tag} {short} 段都用一句短的收尾：一篇一兩處就好，其他段用數字或細節收')
+    if not TRADE.search(body): out.append(f'{tag} 沒看到「對交易來說這代表什麼」的句子：是不是訊號（跟隨便挑一天比，帶次數）、什麼價位／數字翻過去讀法就換、風險偏哪邊、哪種感覺是雜訊，挑一種寫（voice.md「要有交易上的意義」2026-11-09）')
     return out
 
 
