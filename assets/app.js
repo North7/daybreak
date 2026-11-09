@@ -1274,6 +1274,11 @@
     var fa = fundNow(); if (fa != null) it.push([_t('永續資金費率'), fmt.pct(fa, 1), fundVenues() + band(fa, [0, 10, 20, 40], [_t('低於 0：空頭付費給多頭，空單擁擠，容易出現軋空'), _t('0–10%：中性，多頭槓桿不擁擠'), _t('10–20%：偏熱，多頭願意付較高成本'), _t('20–40%：槓桿過熱，回檔時容易連環爆倉'), _t('40% 以上：極端過熱')]) + _t('；期貨基差中位 ') + fmt.n(d.basis_median, 1) + _t('%。'), fa < 0 ? 'pos' : fa < 10 ? 'neu' : fa < 20 ? 'warn' : 'neg']);
     if (r.rr != null) it.push([_t('25Δ 風險逆轉'), fmt.n(r.rr, 2), r.rr > 2 ? _t('買權比賣權貴 ') + fmt.n(r.rr, 1) + _t(' 點：選擇權市場偏向押漲。') : r.rr < -2 ? _t('賣權比買權貴 ') + fmt.n(-r.rr, 1) + _t(' 點：市場在買下跌保護，偏防守。') : _t('接近 0：押漲和押跌的需求大致平衡。'), r.rr > 2 ? 'pos' : r.rr < -2 ? 'neg' : 'neu']);
     else it.push([_t('25Δ 風險逆轉'), '—', _t('本日沒有符合條件（20–45 天到期）的合約可計算。'), 'neu']);
+    var pcr = (D.deriv || {}).pcr;   // 2026-11-09 看跌／看漲比：Deribit 沒有歷史，從 11/9 起每天累積（coc_cache/opt_daily.json）
+    if (pcr && pcr.oi_pcr != null) it.push([_T('看跌／看漲比', 'Put/call ratio'), fmt.n(pcr.oi_pcr, 2),
+      _T('Deribit 全部到期：看跌未平倉是看漲的 ' + fmt.n(pcr.oi_pcr, 2) + ' 倍（24 小時成交 ' + fmt.n(pcr.vol_pcr, 2) + ' 倍）。大於 1＝買看跌（避險或看空）的部位比看漲多；' + (pcr.oi_pcr >= 1 ? '現在偏防守。' : pcr.oi_pcr <= 0.6 ? '現在看漲部位明顯較多。' : '現在看漲部位較多，但不極端。') + (pcr.n < 60 ? '從 ' + ymdS(pcr.first) + ' 開始每天累積，滿幾個月後再畫歷史圖。' : ''),
+        'Deribit, all expiries: put open interest is ' + fmt.n(pcr.oi_pcr, 2) + '× call open interest (24h volume ' + fmt.n(pcr.vol_pcr, 2) + '×). Above 1 means more put (hedging or bearish) positions than calls; ' + (pcr.oi_pcr >= 1 ? 'positioning is defensive now.' : pcr.oi_pcr <= 0.6 ? 'calls clearly dominate now.' : 'calls lead, but not to an extreme.') + (pcr.n < 60 ? ' Collected daily since ' + ymdS(pcr.first) + '; a history chart will follow once a few months have built up.' : '')),
+      pcr.oi_pcr >= 1 ? 'warn' : 'neu']);
     if (big) it.push([_t('最大到期'), big.expiry, _t('佔全部未平倉 ') + fmt.n(big.share, 0) + _t('%，賣權／買權 ') + fmt.n(big.pc, 2) + (big.pc < 0.7 ? _t('（買權明顯較多，偏多佈局）') : big.pc > 1 ? _t('（賣權較多，偏避險）') : _t('（大致平衡）')) + _t('；Max Pain ') + fmt.k(big.maxpain) + _t('，') + (big.maxpain < c ? _t('低於收盤 ') : _t('高於收盤 ')) + fmt.n(Math.abs(big.maxpain / c - 1) * 100, 0) + _t('%。到期前價格有時被拉向 Max Pain，但這個效應的證據薄弱，只作參考。'), big.pc < 0.7 ? 'pos' : big.pc > 1 ? 'neg' : 'neu']);
     return it;
   }
@@ -1462,6 +1467,18 @@
         now: function () { var r = D.flows.rc_liq || {}, e = r.last_episode; return _T('30 日 ' + fmt.pct(r.chg30_pct, 2) + '，已連續 ' + r.state_run_days + ' 天' + (r.zero_now ? '≤ 0' : '為正') + (e ? '；上一次 ≤ 0 是 ' + ymd(e.start) + '–' + ymd(e.end) + '（' + e.days + ' 天）。' : '。'), '30-day ' + fmt.pct(r.chg30_pct, 2) + ', ' + r.state_run_days + ' days ' + (r.zero_now ? 'at or below zero' : 'positive') + (e ? '; the last stretch at or below zero was ' + ymd(e.start) + '–' + ymd(e.end) + ' (' + e.days + ' days).' : '.')); } },
       'stab': { h: h('全部美元穩定幣的流通量（十億美元）。', 'Total circulating USD stablecoins ($B).', '持續增加＝場內可用的購買力在增加，常是多頭的燃料；減少＝資金撤離。', 'Steady growth means more buying power on-chain, often fuel for rallies; shrinking means money leaving.', '很多穩定幣用在交易所與 DeFi 以外，不等於一定會買 BTC。', 'Much of it is used outside exchanges and DeFi; it won\'t necessarily buy BTC.'),
         now: function () { var s = D.flows.stables || {}; return _T(fmt.n(s.usd_b, 1) + 'B，30 日 ' + fmt.pct(s.chg30_pct, 2) + '（' + (s.chg30_usd_b >= 0 ? '+' : '−') + fmt.n(Math.abs(s.chg30_usd_b), 1) + 'B）、7 日 ' + fmt.pct(s.chg7_pct, 2) + '。', '$' + fmt.n(s.usd_b, 1) + 'B; 30 days ' + fmt.pct(s.chg30_pct, 2) + ' (' + (s.chg30_usd_b >= 0 ? '+' : '−') + '$' + fmt.n(Math.abs(s.chg30_usd_b), 1) + 'B), 7 days ' + fmt.pct(s.chg7_pct, 2) + '.'); } },
+      'fng': { h: h('上格 BTC 價格，下格 alternative.me 恐懼貪婪指數（0–100）；紅底是極度恐懼（≤ 20）、綠底是極度貪婪（≥ 80）。', 'Top: BTC price; bottom: the alternative.me Fear & Greed Index (0–100). The red band is extreme fear (≤ 20), the green band extreme greed (≥ 80).',
+          '情緒是反向參考：長時間極度貪婪常在過熱段，極度恐懼常在急跌中。2018 年以來第一次掉進極度恐懼之後的 30 天，多數還沒止跌。', 'Sentiment is a contrarian reference: long stretches of extreme greed tend to come in overheated phases, extreme fear in sharp sell-offs. Since 2018, the 30 days after first dropping into extreme fear mostly had not bottomed yet.',
+          '指數由波動、成交量、社群、市值占比、搜尋熱度等合成，權重由 alternative.me 決定、可能調整；它反映的是已經發生的價格與情緒，不是預測。', 'The index blends volatility, volume, social activity, dominance and search trends with weights set (and possibly changed) by alternative.me; it reflects price and mood that already happened, not a forecast.'),
+        now: function () { var x = D.flows.fng_hist || {}; return x.value == null ? '' : _T(x.value + '（' + fgLab(x.label) + '），一週前 ' + x.d7 + '、30 日平均 ' + fmt.n(x.avg30, 0) + '。', x.value + ' (' + fgLab(x.label) + '), ' + x.d7 + ' a week ago, 30-day average ' + fmt.n(x.avg30, 0) + '.'); } },
+      'wiki': { h: h('上格 BTC 價格，下格英文維基百科「Bitcoin」條目的 7 日平均瀏覽量 ÷ 自己過去一年的中位數（對數刻度）；紅底是暴增（≥ 2.5 倍）。', 'Top: BTC price; bottom: 7-day average views of the English Wikipedia "Bitcoin" article ÷ its own past-year median (log scale). The red band marks spikes (≥ 2.5×).',
+          '倍數突然衝高＝新手大量湧入在查資料，2017 年底、2020 年底到 2021 年都是；長時間在 1 倍附近或以下，代表散戶還沒回來。', 'A sudden jump means newcomers flooding in to look things up, as in late 2017 and late 2020 into 2021; hovering around 1× or below means retail has not come back.',
+          '只代表關注度，不分買賣：暴跌也會帶來暴增。只算英文版；中文圈、X、YouTube 的熱度看不到。', 'Attention only, not direction: crashes bring spikes too. English Wikipedia only; Chinese-language, X and YouTube attention are not captured.'),
+        now: function () { var x = D.flows.wiki || {}; return x.ratio == null ? '' : _T('×' + fmt.n(x.ratio, 2) + '（每天約 ' + fmt.n(x.v7) + ' 次，一年中位數 ' + fmt.n(x.med) + '）。', '×' + fmt.n(x.ratio, 2) + ' (about ' + fmt.n(x.v7) + ' a day; past-year median ' + fmt.n(x.med) + ').'); } },
+      'cot': { h: h('上格 BTC 價格，下格 CME 比特幣期貨的淨部位（多單 − 空單，換算成顆）：紫線是槓桿基金、綠線是資產管理機構。每週一點（週二持倉）。', 'Top: BTC price; bottom: net positions in CME bitcoin futures (longs − shorts, in BTC): purple is leveraged funds, green is asset managers. One point per week (Tuesday positions).',
+          '資產管理機構淨多增加，比較接近機構真的看多；槓桿基金淨空擴大多半是基差交易（ETF 買現貨、CME 放空），套利資金越多空單越大。兩條線一起往零靠近，常是套利價差變小、機構在 CME 的部位整體縮小。', 'A rising asset-manager net long is closer to genuine institutional bullishness; a widening leveraged-fund net short is mostly basis trading (long spot via ETFs, short CME), growing with arbitrage money. Both lines drifting toward zero often means the basis has narrowed and institutions hold less on CME overall.',
+          '只看 CME，不含幣安等加密交易所的期貨；持倉晚 3–10 天公布。', 'CME only, not crypto-exchange futures such as Binance; positions are published 3–10 days late.'),
+        now: function () { var x = D.flows.cot || {}; return x.lev == null ? '' : _T('槓桿基金 ' + fmt.n(x.lev) + ' 顆、資產管理機構 ' + fmt.n(x.am) + ' 顆（' + fmt.md(x.date) + ' 持倉）。', 'Leveraged funds ' + fmt.n(x.lev) + ' BTC, asset managers ' + fmt.n(x.am) + ' BTC (as of ' + fmt.md(x.date) + ').'); } },
       'conf': { h: h('上格：BTC 價格、短期持有者這 7 天賣出的幣的平均成本（紫）、還在持有的人的成本（橘）。下格：兩條成本線的差距 ÷ 收盤；綠＝≥ +0.05、紅＝≤ −0.05、黃底是轉換帶。', 'Top: BTC price, the average cost of coins short-term holders sold over 7 days (purple) and the cost of those still holding (orange). Bottom: the gap between the two ÷ close; green ≥ +0.05, red ≤ −0.05, the yellow band is the transition zone.',
           '綠色連續出現＝最近才進場的人沒急著賣、市場還接得住，常見於多頭主升段；紅色＝成本低的人也在賣，常見於急跌與熊市。由紅轉綠是信心回來的跡象，由綠轉黃常是動能變弱。', 'Sustained green means recent buyers are not rushing out and the market keeps absorbing supply, typical of the main leg of a bull run; red means even low-cost coins are selling, typical of crashes and bear markets. Red turning green signals returning confidence; green fading to yellow often means momentum is cooling.',
           '7 日平均、逐筆 UTXO、未做實體調整：交易所整理錢包或大額內部轉帳會讓單週跳一下。±0.05 是原作者自己說任意訂的轉換帶，不是精確門檻；轉負之後常是洗盤，不一定續跌。', '7-day average, UTXO-level, not entity-adjusted: exchange wallet shuffles or large internal transfers can make a single week jump. ±0.05 is a band the original author calls arbitrary, not a precise trigger; a turn negative is often a shake-out rather than a continued fall.'),
@@ -1798,7 +1815,13 @@
      [_T('價格 × 長期持有者（bitcoin-data）', 'Price × LTH (bitcoin-data)'), D.onchain.lth_color, 7],
      [_T('週線多空分數', 'Weekly bull/bear score'), D.cycle.regime, 8],
      [_T('晨昏指數', 'Dawn–Dusk Index'), D.cycle.dawn, 8],
-     [_T('永續對現貨（OKX）', 'Perp vs spot (OKX)'), p3.perp, 1]
+     [_T('永續對現貨（OKX）', 'Perp vs spot (OKX)'), p3.perp, 1],
+     // 2026-11-09 市場情緒：CFTC 是週二持倉、週五公布，最晚約晚 10 天；維基百科瀏覽量晚 1–2 天
+     [_T('對趨勢的信心（Bitview）', 'Confidence in the trend (Bitview)'), D.onchain.sthconf, 2],
+     [_T('恐懼貪婪（alternative.me）', 'Fear & Greed (alternative.me)'), D.flows.fng_hist, 1],
+     [_T('維基百科瀏覽量（Wikimedia）', 'Wikipedia page views (Wikimedia)'), D.flows.wiki, 3],
+     [_T('CME 持倉（CFTC）', 'CME positioning (CFTC)'), D.flows.cot, 11],
+     [_T('看跌／看漲比（Deribit）', 'Put/call ratio (Deribit)'), D.deriv.pcr, 1]
     ].forEach(function (x) { src.push([x[0], (x[1] || {}).date, x[2]]); });
     src.push([_T('場外 USDT 溢價（OKX）', 'OTC USDT premium (OKX)'), (p3.usdt || {}).ts, 1]);
     src.push([_T('清算熱力圖（推算）', 'Liquidation heatmap (estimate)'), (D.deriv.liq_heat || {}).asof, 1]);
@@ -2742,12 +2765,15 @@
       grpH('fl-dmd', '鏈上需求', 'On-chain demand', _T('新的需求接不接得住供給', 'Is new demand absorbing supply')) +   // 從鏈上版搬來
       adPanel() + dmdPanel() + cfPanel() + grPanel() +
       grpH('fl-liq', '流動性與宏觀', 'Liquidity and macro', _T('場外的錢、美股和利率怎麼走', 'Where outside money, stocks and rates are heading')) +
-      flowCharts() + rcPanel(rc) + stkPanel() + '</div>';
+      flowCharts() + rcPanel(rc) + stkPanel() +
+      grpH('fl-sent', '情緒與關注', 'Sentiment and attention', _T('整體市場、散戶和機構現在是什麼態度', 'How the market as a whole, retail and institutions feel right now')) +   // 2026-11-09 使用者要求（市場情緒）
+      fngPanel() + wikiPanel() + cotPanel() + '</div>';
   };
   V.flows.after = function () {
     safe(drawStk);
     drawFlowCharts(); drawPrem();
     mount($('#c-etfcost'), drawEtfc); mount($('#c-exflow'), drawExf); mount($('#c-kp'), drawKp);   // 2026-11-06 指標擴充
+    mount($('#c-fng'), drawFng); mount($('#c-wiki'), drawWiki); mount($('#c-cot'), drawCot);   // 2026-11-09 市場情緒
     mount($('#c-ad'), drawAd); mount($('#c-dmd'), drawDmd); mount($('#c-capflow'), drawCapflow); mount($('#c-grad'), drawGr);   // 2026-11-08 鏈上需求四張從鏈上版搬來
     var etf = D.flows.etf || [];
     var rc = D.flows.rc_liq || {};
@@ -3059,6 +3085,108 @@
       tip: function (p, C) { return { dots: dot1(C.X(p[0]), C.Ys(p[1]), 'var(--s1)'), rows: tipRow1('var(--s1)', _T('賣方衰竭常數', 'Seller exhaustion'), fmt.n(p[1], 3)) }; } });
   }
 
+
+  /* 市場情緒三張（2026-11-09 使用者要求，見 pipeline/sentiment.py）：恐懼貪婪指數全部歷史、散戶關注度（維基百科瀏覽量）、CME 機構持倉（CFTC）。
+     都附回測與樣本數；只作讀值、不是買賣訊號 */
+  function fgLab(l) { return l === 'Extreme Fear' ? _T('極度恐懼', l) : l === 'Fear' ? _T('恐懼', l) : l === 'Neutral' ? _T('中性', l) : l === 'Greed' ? _T('貪婪', l) : l === 'Extreme Greed' ? _T('極度貪婪', l) : l; }   // alternative.me 的分類
+  function epStat(a, b) { return a.n ? a.up + ' / ' + a.n + _T(' 次上漲、中位數 ', ' rose, median ') + fmt.pct(a.med, 1) + _T('（同期任一天 ' + b.up + '% 上漲、中位數 ' + fmt.pct(b.med, 1) + '）', ' (any day: ' + b.up + '% rose, median ' + fmt.pct(b.med, 1) + ')') : '—'; }
+  function fngSay() {
+    var x = D.flows.fng_hist, it = [];
+    it.push([_T('恐懼貪婪指數', 'Fear & Greed'), x.value + ' · ' + fgLab(x.label),
+      _T('一週前 ' + x.d7 + '、一個月前 ' + x.d30 + '，30 日平均 ' + fmt.n(x.avg30, 0) + '；落在 ' + ymdS(x.since_first) + ' 以來第 ' + fmt.n(x.pct, 0) + ' 百分位。極度恐懼（≤ ' + x.lo + '）的日子佔 ' + fmt.n(x.share_xf, 0) + '%、極度貪婪（≥ ' + x.hi + '）佔 ' + fmt.n(x.share_xg, 0) + '%。',
+        x.d7 + ' a week ago and ' + x.d30 + ' a month ago; 30-day average ' + fmt.n(x.avg30, 0) + '; ' + ord(x.pct) + ' percentile since ' + ymdS(x.since_first) + '. Extreme fear (≤ ' + x.lo + ') covered ' + fmt.n(x.share_xf, 0) + '% of days, extreme greed (≥ ' + x.hi + ') ' + fmt.n(x.share_xg, 0) + '%.'),
+      x.zone === 'xf' ? 'warn' : x.zone === 'xg' ? 'warn' : 'neu']);
+    if (x.fear.length) it.push([_T('過去極度恐懼之後', 'After past extreme fear'), x.f30.up + ' / ' + x.f30.n,
+      _T('跌到 ' + x.lo + ' 以下共 ' + x.fear.length + ' 段（隔 30 天以上算新的一段，最近 ' + ymdS(x.fear[x.fear.length - 1].date) + '）。30 天後：' + epStat(x.f30, x.base30) + '；90 天後：' + epStat(x.f90, x.base90) + '。極度恐懼常出現在急跌的開頭，第一次掉進去不一定是底；樣本少於 30，只當背景。',
+        'It fell to ' + x.lo + ' or below in ' + x.fear.length + ' separate stretches (30+ days apart; latest ' + ymdS(x.fear[x.fear.length - 1].date) + '). 30 days later: ' + epStat(x.f30, x.base30) + '; 90 days later: ' + epStat(x.f90, x.base90) + '. Extreme fear often arrives early in a sell-off, so the first dip into it is not necessarily the low; fewer than 30 cases, background only.'), 'neu']);
+    if (x.greed.length) it.push([_T('過去極度貪婪之後', 'After past extreme greed'), x.g30.up + ' / ' + x.g30.n,
+      _T('升到 ' + x.hi + ' 以上共 ' + x.greed.length + ' 段（最近 ' + ymdS(x.greed[x.greed.length - 1].date) + '）。30 天後：' + epStat(x.g30, x.base30) + '；90 天後：' + epStat(x.g90, x.base90) + '。樣本很少，只當背景。',
+        'It rose to ' + x.hi + ' or above in ' + x.greed.length + ' stretches (latest ' + ymdS(x.greed[x.greed.length - 1].date) + '). 30 days later: ' + epStat(x.g30, x.base30) + '; 90 days later: ' + epStat(x.g90, x.base90) + '. Very few cases, background only.'), 'neu']);
+    return it;
+  }
+  function fngPanel() {
+    var x = (D.flows || {}).fng_hist; if (!x || !x.rows) return '';
+    return panel('span-12', _T('恐懼貪婪指數', 'Fear & Greed Index'), 'alternative.me · ' + _T(x.since_first.slice(0, 4) + ' 起 · ', 'since ' + x.since_first.slice(0, 4) + ' · ') + fmt.md(x.date),
+      interpHtml(fngSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('恐懼貪婪指數', 'Fear & Greed'), 'var(--s4)'], [_T('極度恐懼（≤ ' + x.lo + '）', 'Extreme fear (≤ ' + x.lo + ')'), 'var(--down)', 'box'], [_T('極度貪婪（≥ ' + x.hi + '）', 'Extreme greed (≥ ' + x.hi + ')'), 'var(--up)', 'box']]) +
+      '<div class="chart" id="c-fng"></div><p class="note">' + _T('alternative.me 的恐懼貪婪指數（0 極度恐懼、100 極度貪婪），由波動、成交量、社群、市值占比、搜尋熱度等合成。情緒是反向參考：過去極度恐懼之後的 30 天，往往還沒止跌。只作讀值。', 'The alternative.me Fear & Greed Index (0 extreme fear, 100 extreme greed), built from volatility, volume, social activity, dominance and search trends. Sentiment is a contrarian reference: in the past, the 30 days after extreme fear often had not yet bottomed. A reading only.') + '</p>');
+  }
+  function drawFng(el) {
+    var x = (D.flows || {}).fng_hist; if (!x || !el) return;
+    twoPane(el, { rows: x.rows, pi: 1, hp: [110, 150], hs: [130, 170], label: _T('恐懼貪婪指數', 'Fear & Greed'), aria: _T('BTC 價格與恐懼貪婪指數', 'BTC price and the Fear & Greed Index'),
+      scale: function (C) { return function (v) { return C.ys0 + (1 - v / 100) * C.hs; }; },
+      body: function (C) {
+        var s = '', yl = C.Ys(x.lo), yh = C.Ys(x.hi);
+        s += '<rect x="' + C.ML + '" y="' + yl.toFixed(1) + '" width="' + C.pw + '" height="' + (C.yb - yl).toFixed(1) + '" fill="var(--down-dim)"/><rect x="' + C.ML + '" y="' + C.ys0.toFixed(1) + '" width="' + C.pw + '" height="' + (yh - C.ys0).toFixed(1) + '" fill="var(--up-dim)"/>';
+        [0, x.lo, 50, x.hi, 100].forEach(function (g) { s += C.gl(C.Ys(g), String(g), g === 50 ? 'base' : 'gl'); });
+        return s + '<path class="ln" d="M' + C.rows.map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(r[2]).toFixed(1); }).join('L') + '" stroke="var(--s4)" stroke-width="1.3" fill="none"/>';
+      },
+      over: function (C) { var z = C.rows[C.rows.length - 1]; return dot1(C.X(z[0]), C.Ys(z[2]), 'var(--s4)'); },
+      tip: function (p, C) { return { dots: dot1(C.X(p[0]), C.Ys(p[2]), 'var(--s4)'), rows: tipRow1('var(--s4)', _T('恐懼貪婪指數', 'Fear & Greed'), String(p[2])) }; } });
+  }
+  function wikiSay() {
+    var x = D.flows.wiki, it = [], pk = x.peak;
+    it.push([_T('散戶關注度（7 日平均）', 'Retail attention (7-day avg)'), '×' + fmt.n(x.ratio, 2),
+      _T('英文維基百科「Bitcoin」條目每天約 ' + fmt.n(x.v7) + ' 次瀏覽，是過去一年中位數（' + fmt.n(x.med) + '）的 ' + fmt.n(x.ratio, 2) + ' 倍；一個月前 ' + fmt.n(x.r30, 2) + ' 倍。絕對量落在 2016 年以來第 ' + fmt.n(x.pct, 0) + ' 百分位，只有 ' + ymdS(pk.date) + ' 高峰（每天 ' + fmt.n(pk.v7) + ' 次）的 ' + fmt.n(x.v7 / pk.v7 * 100, 1) + '%。',
+        'The English Wikipedia "Bitcoin" article gets about ' + fmt.n(x.v7) + ' views a day, ' + fmt.n(x.ratio, 2) + '× its past-year median (' + fmt.n(x.med) + '); ' + fmt.n(x.r30, 2) + '× a month ago. In absolute terms that is the ' + ord(x.pct) + ' percentile since 2016, only ' + fmt.n(x.v7 / pk.v7 * 100, 1) + '% of the ' + ymdS(pk.date) + ' peak (' + fmt.n(pk.v7) + ' a day).'),
+      x.ratio >= x.spike ? 'warn' : 'neu']);
+    if (x.spikes.length) it.push([_T('過去暴增之後', 'After past spikes'), x.s30.up + ' / ' + x.s30.n,
+      _T('7 日平均到過去一年中位數的 ' + x.spike + ' 倍以上共 ' + x.spikes.length + ' 次（' + x.spikes.map(function (e) { return ymdS(e.date).slice(0, 7) + ' 最高 ×' + fmt.n(e.peak, 1); }).join('、') + '）。30 天後：' + epStat(x.s30, x.base30) + '；90 天後：' + epStat(x.s90, x.base90) + '。新手湧入時暴增，頂部和急跌都會；只有 ' + x.spikes.length + ' 次，只當背景。',
+        'The 7-day average reached ' + x.spike + '× its past-year median ' + x.spikes.length + ' times (' + x.spikes.map(function (e) { return ymdS(e.date).slice(0, 7) + ' peak ×' + fmt.n(e.peak, 1); }).join(', ') + '). 30 days later: ' + epStat(x.s30, x.base30) + '; 90 days later: ' + epStat(x.s90, x.base90) + '. It spikes when newcomers pour in, at tops and in crashes alike; only ' + x.spikes.length + ' cases, background only.'), 'neu']);
+    return it;
+  }
+  function wikiPanel() {
+    var x = (D.flows || {}).wiki; if (!x || !x.rows) return '';
+    return panel('span-12', _T('散戶關注度：維基百科瀏覽量', 'Retail attention: Wikipedia page views'), _T('Wikimedia · 英文版 · ' + fmt.md(x.date), 'Wikimedia · English · ' + fmt.md(x.date)),
+      interpHtml(wikiSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('7 日平均 ÷ 過去一年中位數', '7-day avg ÷ past-year median'), 'var(--s1)'], [_T('暴增（≥ ' + x.spike + ' 倍）', 'Spike (≥ ' + x.spike + '×)'), 'var(--down)', 'box']]) +
+      '<div class="chart" id="c-wiki"></div><p class="note">' + _T('英文維基百科「Bitcoin」條目每天的瀏覽量（只算真人、不含爬蟲），7 日平均除以自己過去一年的中位數，看關注度是不是突然升溫。大量新手湧入時會暴增（2017 年底、2021 年都是），但只代表有人在查，不分買賣。只作讀值。', 'Daily views of the English Wikipedia "Bitcoin" article (people only, no crawlers), as a 7-day average divided by its own past-year median, to see whether attention is suddenly heating up. It spikes when newcomers flood in (late 2017, 2021), but it only shows people looking things up, not whether they buy or sell. A reading only.') + '</p>');
+  }
+  function drawWiki(el) {
+    var x = (D.flows || {}).wiki; if (!x || !el) return;
+    var L = Math.log10;
+    twoPane(el, { rows: x.rows, pi: 1, hp: [110, 150], hs: [130, 170], label: _T('7 日平均 ÷ 過去一年中位數（對數刻度）', '7-day avg ÷ past-year median (log scale)'), aria: _T('BTC 價格與維基百科瀏覽量', 'BTC price and Wikipedia page views'),
+      scale: function (C) { var v = C.rows.map(function (r) { return r[3]; }), lo = L(Math.min(0.5, Math.min.apply(null, v)) * 0.9), hi = L(Math.max(x.spike * 1.2, Math.max.apply(null, v)) * 1.1); return function (y) { return C.ys0 + (1 - (L(y) - lo) / (hi - lo)) * C.hs; }; },
+      body: function (C) {
+        var s = '', ys = C.Ys(x.spike);
+        s += '<rect x="' + C.ML + '" y="' + C.ys0.toFixed(1) + '" width="' + C.pw + '" height="' + (ys - C.ys0).toFixed(1) + '" fill="var(--down-dim)"/>';
+        [0.5, 1, 2, x.spike, 5].forEach(function (g) { var y = C.Ys(g); if (y < C.ys0 - 1 || y > C.yb + 1) return; s += C.gl(y, '×' + g, g === 1 ? 'base' : 'gl'); });
+        return s + '<path class="ln" d="M' + C.rows.map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(r[3]).toFixed(1); }).join('L') + '" stroke="var(--s1)" stroke-width="1.3" fill="none"/>';
+      },
+      over: function (C) { var z = C.rows[C.rows.length - 1]; return dot1(C.X(z[0]), C.Ys(z[3]), 'var(--s1)'); },
+      tip: function (p, C) { return { dots: dot1(C.X(p[0]), C.Ys(p[3]), 'var(--s1)'), rows: tipRow1('var(--s1)', _T('倍數', 'Multiple'), '×' + fmt.n(p[3], 2)) + tipRow1('var(--ink-3)', _T('每日瀏覽（7 日平均）', 'Daily views (7-day avg)'), fmt.n(p[2])) }; } });
+  }
+  function cotSay() {
+    var x = D.flows.cot, it = [], k = function (v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + fmt.n(Math.abs(v)) + _T(' 顆', ' BTC'); };
+    it.push([_T('槓桿基金淨部位', 'Leveraged funds, net'), k(x.lev),
+      _T((x.lev < 0 ? '淨空 ' : '淨多 ') + fmt.n(Math.abs(x.lev)) + ' 顆（' + fmt.md(x.date) + ' 持倉），4 週前比 ' + k(x.lev4) + '；空單佔全部未平倉 ' + fmt.n(x.lev_short_share, 0) + '%。槓桿基金的空單多半是基差交易（買現貨或 ETF、放空期貨賺價差），淨空擴大常代表套利資金進場，不等於看空；淨空縮小則可能是套利資金撤出。2018 年以來最空是 ' + ymdS(x.lev_min.date) + '（' + k(x.lev_min.v) + '）。',
+        (x.lev < 0 ? 'Net short ' : 'Net long ') + fmt.n(Math.abs(x.lev)) + ' BTC (positions as of ' + fmt.md(x.date) + '), ' + k(x.lev4) + ' versus four weeks earlier; their shorts are ' + fmt.n(x.lev_short_share, 0) + '% of all open interest. Much of the leveraged-fund short is basis trading (long spot or ETFs, short futures for the spread), so a bigger net short often means arbitrage money coming in rather than a bearish bet, and a smaller one may mean it is leaving. The most short since 2018 was ' + ymdS(x.lev_min.date) + ' (' + k(x.lev_min.v) + ').'), 'neu']);
+    it.push([_T('資產管理機構淨部位', 'Asset managers, net'), k(x.am),
+      _T((x.am >= 0 ? '淨多 ' : '淨空 ') + fmt.n(Math.abs(x.am)) + ' 顆，4 週前比 ' + k(x.am4) + '；2018 年以來第 ' + fmt.n(x.am_pct, 0) + ' 百分位，最多是 ' + ymdS(x.am_max.date) + '（' + k(x.am_max.v) + '）。資產管理機構（基金、退休金、ETF 發行商）較少做套利，淨多比較接近真的看多。',
+        (x.am >= 0 ? 'Net long ' : 'Net short ') + fmt.n(Math.abs(x.am)) + ' BTC, ' + k(x.am4) + ' versus four weeks earlier; ' + ord(x.am_pct) + ' percentile since 2018, peaking on ' + ymdS(x.am_max.date) + ' (' + k(x.am_max.v) + '). Asset managers (funds, pensions, ETF issuers) do less arbitrage, so their net long is closer to a genuine bullish position.'), 'neu']);   // 淨多但 4 週減少時掛「偏空」容易誤會，增減交給文字
+    it.push([_T('CME 未平倉', 'CME open interest'), fmt.n(x.oi) + _T(' 顆', ' BTC'),
+      _T('一年前比 ' + fmt.pct(x.oi52, 0) + '。未平倉縮小代表機構在 CME 的部位整體變少（套利價差變小時常見）。', fmt.pct(x.oi52, 0) + ' versus a year ago. Shrinking open interest means institutions hold less on CME overall (common when the basis narrows).'), 'neu']);
+    return it;
+  }
+  function cotPanel() {
+    var x = (D.flows || {}).cot; if (!x || !x.rows) return '';
+    return panel('span-12', _T('CME 機構持倉', 'CME institutional positioning'), _T('CFTC · 每週 · ' + fmt.md(x.date) + ' 持倉', 'CFTC · weekly · positions as of ' + fmt.md(x.date)),
+      interpHtml(cotSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('槓桿基金淨部位', 'Leveraged funds, net'), 'var(--s1)'], [_T('資產管理機構淨部位', 'Asset managers, net'), 'var(--s3)']]) +
+      '<div class="chart" id="c-cot"></div><p class="note">' + _T('CFTC 每週的金融期貨交易者持倉報告（Traders in Financial Futures），CME 比特幣期貨（每口 5 顆）。淨部位＝多單 − 空單，換算成顆。週二的持倉、週五公布，所以最新一筆通常晚 3–10 天。槓桿基金的空單很大一部分是基差交易，不能直接當成看空。只作讀值。', 'CFTC\'s weekly Traders in Financial Futures report for CME bitcoin futures (5 BTC per contract). Net position = longs − shorts, in BTC. Positions are as of Tuesday and published on Friday, so the latest point is usually 3–10 days old. Much of the leveraged-fund short is basis trading and should not be read as bearish on its own. A reading only.') + '</p>');
+  }
+  function drawCot(el) {
+    var x = (D.flows || {}).cot; if (!x || !el) return;
+    var R0 = x.rows.filter(function (r) { return r[1]; });
+    twoPane(el, { rows: R0, pi: 1, hp: [110, 150], hs: [140, 180], label: _T('淨部位（顆）', 'Net position (BTC)'), aria: _T('BTC 價格與 CME 機構淨部位', 'BTC price and CME institutional net positions'),
+      scale: function (C) { var v = []; C.rows.forEach(function (r) { v.push(r[2], r[3]); }); var lo = Math.min(0, Math.min.apply(null, v)), hi = Math.max(0, Math.max.apply(null, v)), pd = (hi - lo) * 0.08 || 1; lo -= pd; hi += pd; C.cLo = lo; C.cHi = hi; return function (y) { return C.ys0 + (1 - (y - lo) / (hi - lo)) * C.hs; }; },
+      body: function (C) {
+        var s = '', st = niceStep(C.cHi - C.cLo, C.sm ? 3 : 4);
+        for (var g = Math.ceil(C.cLo / st) * st; g <= C.cHi + 1e-9; g += st) s += C.gl(C.Ys(g), (g > 0 ? '+' : '') + fmt.k(g), Math.abs(g) < 1e-9 ? 'base' : 'gl');
+        var ln = function (k, c) { return '<path class="ln" d="M' + C.rows.map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(r[k]).toFixed(1); }).join('L') + '" stroke="' + c + '" stroke-width="1.5" fill="none"/>'; };
+        return s + ln(2, 'var(--s1)') + ln(3, 'var(--s3)');
+      },
+      over: function (C) { var z = C.rows[C.rows.length - 1]; return dot1(C.X(z[0]), C.Ys(z[2]), 'var(--s1)') + dot1(C.X(z[0]), C.Ys(z[3]), 'var(--s3)'); },
+      tip: function (p, C) { return { t: _T('週二 ', 'Tuesday ') + fmt.date(p[0]), dots: dot1(C.X(p[0]), C.Ys(p[2]), 'var(--s1)') + dot1(C.X(p[0]), C.Ys(p[3]), 'var(--s3)'),
+        rows: tipRow1('var(--s1)', _T('槓桿基金', 'Leveraged funds'), (p[2] > 0 ? '+' : '') + fmt.n(p[2])) + tipRow1('var(--s3)', _T('資產管理機構', 'Asset managers'), (p[3] > 0 ? '+' : '') + fmt.n(p[3])) + tipRow1('var(--ink-3)', _T('未平倉', 'Open interest'), fmt.n(p[4])) }; } });
+  }
 
   /* 對趨勢的信心（2026-11-09 使用者要求；做法參考 Glassnode 週報 2023 第 38 週，資料 Bitview，見 pipeline/bv_extra.conf_viz）：
      （短期持有者賣出的幣的 7 日平均成本 − 短期持有者成本）÷ 收盤。≥ +0.05 綠（賣的人成本比持有者高：新買家在高位也願意接、願意抱）、
@@ -5017,6 +5145,7 @@
      ③ 頂部列小標跟著捲動顯示目前的組名（手機也是）。④ 組標題加圖數；組也有網址（#版面/組代號）。 */
   var FIND = [], fdAct = -1;
   var FKW = {   // 指標別名：圖代號 → [中文別名, 英文別名]（不顯示，中英都拿來搜）。產品內不寫任何付費指標的名字
+    fng: ['恐懼 貪婪 情緒 恐慌', 'fear greed sentiment index'], wiki: ['散戶 關注 熱度 維基 搜尋 瀏覽', 'retail attention wikipedia page views interest'], cot: ['CME 機構 期貨 持倉 CFTC 槓桿基金 資產管理 基差', 'CME institutional futures positioning CFTC COT leveraged funds asset managers basis'],
     conf: ['信心 趨勢 情緒 賣出成本 持有成本 短期持有者 新買家', 'confidence trend sentiment spent cost basis holders spenders short-term new investors'],
     vol: ['隱含波動 實際波動', 'DVOL IV RV implied realized volatility'], basis: ['基差 期貨 資金費率', 'basis futures funding'], ivt: ['期限結構 倒掛', 'IV term structure backwardation contango'],
     liq: ['清算 爆倉 槓桿 熱力圖', 'liquidation heatmap leverage'], lqv: ['每日 多空 清算量 爆倉 多單 空單', 'daily long short liquidations volume'], dawn: ['晨昏 週期 熱度 深夜 破曉 白晝 黃昏 入夜 階段', 'dawn dusk cycle heat stage night daybreak daylight'], fh: ['資金費率 歷史 年化 多方付費', 'funding rate history annualized'], tmh: ['Tidemark 歷史 頂部訊號 底部訊號 熱度 冷度 時機 潮汐', 'Tidemark history top signal bottom signal heat cold timing tide'], oih: ['未平倉 合約 槓桿 OI', 'open interest OI leverage'], lsa: ['多空比 帳戶 散戶 情緒', 'long short ratio accounts retail sentiment'], tk: ['主動買 主動賣 現貨 永續 CVD Coinbase', 'taker buy sell spot perpetual CVD Coinbase'], gex: ['做市商', 'gamma GEX dealer'], prem: ['權利金 買權 賣權 期權', 'premium put call options'], svd: ['主動買 主動賣', 'taker CVD OKX'],
