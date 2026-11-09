@@ -1395,6 +1395,17 @@ try:
     R['fear_greed'] = dict(date=fg[-1][0], value=fvv[-1], label=fg[-1][2], d7=fvv[-8] if len(fvv) > 7 else None, avg30=round(sum(fvv[-30:]) / 30, 1),
                            pct_1y=_pctl(fvv[-365:], fvv[-1]), note='alternative.me；0 極度恐懼、100 極度貪婪；只作讀值')
 except Exception as e: errors.append(f'fear_greed {e}')
+# G9e2. 2026-11-09 使用者要求（市場情緒，見 sentiment.py；全部免費、不佔 bitcoin-data 額度）：恐懼貪婪全部歷史、散戶關注度（維基百科瀏覽量）、
+#   CME 機構持倉（CFTC 每週），以及開始累積選擇權看跌／看漲比（coc_cache/opt_daily.json）。各項獨立，失敗只影響該項
+try:
+    import sentiment
+    _pxs = globals().get('PXC') or {}
+    for _k, _fn in (('fng_hist', lambda: sentiment.fng_viz(_pxs, LAST)), ('wiki', lambda: sentiment.wiki_viz(_pxs, LAST)), ('cot', lambda: sentiment.cot_viz(_pxs, LAST))):
+        try: R[_k] = _fn()
+        except Exception as e: errors.append(f'sentiment {_k} {e}')
+    try: R['pcr'] = sentiment.pcr_update(opt['result'], LAST, R.get('rr25'))
+    except Exception as e: errors.append(f'pcr {e}')
+except Exception as e: errors.append(f'sentiment {e}')
 # G9f. 2026-11-02 使用者要求：清算熱力圖（推算；未平倉量＋假設槓桿，見 liq_heat.py）。不佔 bitcoin-data 額度
 #   2026-11-08 起用 Coinalyze 多家交易所（約 50 次、受每分鐘 40 次限制要 1–2 分鐘）；沒有 key 或失敗時照舊用 OKX（約 30 次）
 try:
