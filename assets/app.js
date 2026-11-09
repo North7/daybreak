@@ -5395,6 +5395,25 @@
       st.forEach(function (s) { var d = r + s[0] * F; g.addColorStop(ttClamp((d - r0) / (r1 - r0)), 'rgba(' + s[1][0] + ',' + s[1][1] + ',' + s[1][2] + ',' + (s[1][3] * a).toFixed(3) + ')'); });
       c.fillStyle = g; c.fillRect(0, 0, W, H);
     }
+    // 2026-11-09 使用者：「按鈕一圈可以有動態光圈嗎」，選「只在切換時繞一圈」：切換鈕外圍 3px 一道細光線，跟著晨昏線推進 sp 繞一圈後淡出
+    // （拖曳時一起停住、退回時倒著走）；往夜刊順時針、往日刊逆時針，和滑塊同方向。顏色取新的一刊：日刊品牌橘紅、夜刊暖金。只有線、不加模糊光暈
+    var TT_RING = [[30, .16], [15, .42], [5, 1]];   // 光尾到光頭：長度（一圈＝100）、不透明度
+    function ttRing(src, b, to) {
+      var pd = 3, w = b.width + pd * 2, h = b.height + pd * 2, br = parseFloat(getComputedStyle(src).borderTopLeftRadius) || 0, r = br ? Math.max(0, Math.min(br + pd, h / 2, w / 2) - 1) : 0;
+      var x0 = 1, y0 = 1, x1 = w - 1, y1 = h - 1, A = function (x, y) { return r ? 'A' + r + ' ' + r + ' 0 0 1 ' + x + ' ' + y : 'L' + x + ' ' + y; };
+      var d = 'M' + w / 2 + ' ' + y0 + 'H' + (x1 - r) + A(x1, y0 + r) + 'V' + (y1 - r) + A(x1 - r, y1) + 'H' + (x0 + r) + A(x0, y1 - r) + 'V' + (y0 + r) + A(x0 + r, y0) + 'Z';
+      var el = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+      el.setAttribute('class', 'tt-ring'); el.setAttribute('aria-hidden', 'true'); el.setAttribute('width', w); el.setAttribute('height', h); el.setAttribute('viewBox', '0 0 ' + w + ' ' + h);
+      el.style.left = (b.left - pd) + 'px'; el.style.top = (b.top - pd) + 'px';
+      el.innerHTML = '<g' + (to === 'light' ? ' transform="matrix(-1 0 0 1 ' + w + ' 0)"' : '') + '>' + TT_RING.map(function (x) { return '<path pathLength="100" d="' + d + '" opacity="' + x[1] + '"/>'; }).join('') + '</g>';
+      return { el: el, ps: [].slice.call(el.querySelectorAll('path')) };
+    }
+    function ttRingSet(V) {
+      var g = V.rg; if (!g) return;
+      var u = V.sp, hd = 108 * u, a = ttClamp(u / 0.04) * (1 - ttClamp((u - 0.78) / 0.2));
+      g.el.style.opacity = a.toFixed(3);
+      g.ps.forEach(function (p, i) { var L = Math.min(TT_RING[i][0], hd); p.setAttribute('stroke-dasharray', L.toFixed(2) + ' ' + (100 - L).toFixed(2)); p.setAttribute('stroke-dashoffset', (L - hd).toFixed(2)); });
+    }
     var TV = null;   // 進行中的換刊：sp＝晨昏線推進（0 原刊～1 新刊）、kp＝滑塊往新刊走了多少
     function ttGo(to) {
       if (TV) return TV;
@@ -5402,9 +5421,9 @@
       var R = Math.max(Math.hypot(x, y), Math.hypot(W - x, y), Math.hypot(x, H - y), Math.hypot(W - x, H - y)), F = Math.max(70, Math.min(190, R * 0.12));
       var V = TV = { from: ttCur(), to: to, x: x, y: y, F: F, R: R + F * 1.6, sp: 0, kp: 0, tw: null, an: [], raf: 0, back: false };
       var cv = V.cv = document.createElement('canvas'); cv.className = 'tt-dusk'; cv.setAttribute('aria-hidden', 'true');
-      V.q = 0.5; cv.width = Math.ceil(W * V.q); cv.height = Math.ceil(H * V.q); V.cx = cv.getContext('2d');
+      V.q = 0.5; cv.width = Math.ceil(W * V.q); cv.height = Math.ceil(H * V.q); V.cx = cv.getContext('2d'); V.rg = ttRing(src, b, to);
       document.documentElement.classList.add('tt-vt'); ttPhase(V.from);
-      V.vt = document.startViewTransition(function () { setTheme(to); document.body.appendChild(cv); V.rest = ttCharts(); });
+      V.vt = document.startViewTransition(function () { setTheme(to); document.body.appendChild(cv); document.body.appendChild(V.rg.el); V.rest = ttCharts(); });
       V.vt.ready.then(function () {
         var root = document.documentElement, at = ' at ' + x.toFixed(1) + 'px ' + y.toFixed(1) + 'px)', o = { duration: 1000, easing: 'linear', fill: 'both' };
         function an(k, pe) { var a = root.animate(k, Object.assign({ pseudoElement: pe }, o)); a.pause(); a.currentTime = V.sp * 1000; V.an.push(a); }
@@ -5419,7 +5438,7 @@
         var w = V.tw, p = 1;
         if (w) { if (!V.ready) w.t0 = now; p = Math.min(1, (now - w.t0) / w.ms); V.sp = w.a + (w.b - w.a) * w.ez(p); V.kp = w.ka + (w.kb - w.ka) * w.kz(p); if (w.b && V.sp > 0.995 && V.kp > 0.995) { V.sp = V.kp = p = 1; } }   // 光帶已出畫面就收尾，不空等緩出的尾巴
         if (V.ready) V.an.forEach(function (a) { a.currentTime = V.sp * 1000; });
-        ttBand(V); ttKnob(to === 'dark' ? V.kp : 1 - V.kp, Math.sin(Math.PI * V.sp));
+        ttBand(V); ttRingSet(V); ttKnob(to === 'dark' ? V.kp : 1 - V.kp, Math.sin(Math.PI * V.sp));
         if (w && p >= 1 && (V.sp <= 0 || V.sp >= 1)) return ttFinish(V);
         V.raf = requestAnimationFrame(f);
       })(performance.now());
@@ -5427,7 +5446,7 @@
     }
     function ttTw(V, b, ms, ez, kz) { V.back = !b; V.tw = { t0: performance.now(), ms: Math.max(1, ms), a: V.sp, b: b, ez: ez, ka: V.kp, kb: b, kz: kz || ez }; }
     function ttFinish(V) {
-      V.fin = true; cancelAnimationFrame(V.raf); V.cx.clearRect(0, 0, V.cv.width, V.cv.height);
+      V.fin = true; cancelAnimationFrame(V.raf); V.cx.clearRect(0, 0, V.cv.width, V.cv.height); V.rg.el.style.opacity = 0;
       function end() { if (V.ready) V.an.forEach(function (a) { a.finish(); }); else V.vt.skipTransition(); }
       if (!V.back) return end();
       setTheme(V.from); ttCharts();   // 退回原刊：即時畫面先換回來（這時被原刊快照蓋著看不到），隔兩格再結束過渡，不會閃
@@ -5438,6 +5457,7 @@
       var fin = V.back ? V.from : V.to;
       if (ttCur() !== fin) { setTheme(fin); ttCharts(); }
       if (V.cv.parentNode) V.cv.parentNode.removeChild(V.cv);
+      if (V.rg.el.parentNode) V.rg.el.parentNode.removeChild(V.rg.el);
       document.documentElement.classList.remove('tt-vt');
       if (TV === V) TV = null;
       TTX.s = 1; tt.style.setProperty('--tt-s', 1); [tt, mt].forEach(function (el) { if (el) { el.style.removeProperty('--tt-sky'); el.style.removeProperty('--tt-glow'); } });
