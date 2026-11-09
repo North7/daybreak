@@ -100,6 +100,31 @@ button { font: inherit; color: inherit; }
 .theme-toggle button[aria-pressed="true"] { color: var(--void); }
 .theme-toggle::before { content: ""; position: absolute; top: 0; bottom: 0; left: 0; width: 50%; background: var(--ink); transition: transform .4s var(--snap); }
 :root[data-theme="dark"] .theme-toggle:not(.lang-toggle)::before { transform: translateX(100%); }   /* 2026-11-05 修正：夜刊時只移日刊／夜刊的底色；語言切換的底色只看語言（見 .lang-toggle），原本中文版切到夜刊時底色跑到 EN、「中文」字看不見 */
+/* 2026-11-09 換刊改成地平線日月圖示＋中間狀態（app.js ttIcons／ttApply）：滑塊 .tt-knob 跟著 --tt-k（0 日刊～1 夜刊）走、
+   移動快時依 --tt-s 橫向拉長（圖示反向縮回不變形），落定時 .tt-settle 回彈；按鈕裡 .tt-sky 的天色和 --tt-glow 同步；太陽用品牌橘紅（同標誌） */
+.tt-ico { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; overflow: visible; display: block; }
+.tt-ico.live .sun { stroke: var(--red); }
+#theme.tt-icons { height: 32px; overflow: hidden; cursor: grab; user-select: none; -webkit-user-select: none; }
+#theme.tt-icons::before { display: none; }
+#theme.tt-icons button { display: grid; place-items: center; padding: 0; color: var(--ink-3); z-index: 1; }
+#theme.tt-icons button[aria-pressed="true"] { color: var(--ink-3); }
+#theme .tt-knob { position: absolute; top: 0; bottom: 0; left: 0; width: 50%; z-index: 2; pointer-events: none; display: grid; place-items: center; background: var(--ink); color: var(--void);
+  transform: translateX(calc(var(--tt-k, 0) * 100%)) scaleX(var(--tt-s, 1)); }
+#theme .tt-knob .tt-ico { transform: scaleX(calc(1 / var(--tt-s, 1))); }
+#theme.tt-press .tt-knob { scale: .96 .9; transition: scale .12s; }
+#theme .tt-sky { position: absolute; inset: 0; z-index: 0; pointer-events: none; background: linear-gradient(to top, var(--tt-sky, transparent), transparent 90%); opacity: var(--tt-glow, 0); }
+.tt-settle { animation: tt-settle .42s cubic-bezier(.25, 1.7, .45, 1); }
+@keyframes tt-settle { 0% { scale: 1.14 .84; } 100% { scale: 1 1; } }
+#m-theme { position: relative; overflow: hidden; }
+#m-theme .tt-ico { width: 18px; height: 18px; position: relative; z-index: 1; }
+#m-theme::before { content: ""; position: absolute; inset: 0; background: linear-gradient(to top, var(--tt-sky, transparent), transparent 95%); opacity: var(--tt-glow, 0); }
+#m-theme:active { scale: .9; }
+#m-theme.tt-settle { animation: tt-pop .46s cubic-bezier(.25, 1.7, .45, 1); }
+@keyframes tt-pop { 0% { scale: .86; } 100% { scale: 1; } }
+/* 中間狀態的濾層：換刊點前「相乘」把日刊調暗偏暖，換刊點後「濾色」把夜刊調亮偏靛藍；只在過渡中出現 */
+.tt-veil { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; display: none; mix-blend-mode: multiply; background: #fff; }
+.tt-phase { position: fixed; z-index: 2147483001; pointer-events: none; opacity: 0; font-size: 11px; letter-spacing: .14em; text-align: center; color: var(--ink-2); font-weight: 700; }
+@media (prefers-reduced-motion: reduce) { .tt-settle, #m-theme.tt-settle { animation: none; } }
 
 .stage { min-width: 0; display: flex; flex-direction: column; position: relative; }
 .top { position: sticky; top: 0; z-index: 5; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; padding: 12px var(--gut); border-bottom: 1px solid var(--line); background: color-mix(in srgb, var(--void) 88%, transparent); backdrop-filter: blur(10px); }
