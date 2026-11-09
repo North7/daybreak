@@ -5025,7 +5025,7 @@
     var q = $('#fd-q'); q.value = ''; fdRender(); setTimeout(function () { q.focus(); }, 30);
   }
   function fdClose() { var fd = $('#fd'); if (!fd || fd.hidden) return; fd.hidden = true; document.documentElement.classList.remove('fd-on'); if (fdBack && fdBack.focus) try { fdBack.focus({ preventScroll: true }); } catch (e) {} }
-  function fdGo(to) { fdClose(); if (to) go(to); }
+  function fdGo(to) { fdClose(); if (to) userNav(to, function () { go(to); }); }
   function findShell() {
     var MAG = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></svg>', mac = /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent);
     document.body.insertAdjacentHTML('beforeend', '<div class="fd" id="fd" hidden><div class="fd-bg" data-x="1"></div><div class="fd-box" role="dialog" aria-modal="true" aria-label="' + _T('搜尋圖表與指標', 'Search charts and indicators') + '">' +
@@ -5061,7 +5061,7 @@
       if (gs.length < 2 || !b) return;
       b.insertAdjacentHTML('afterend', '<div class="nav-sub' + (page === cur ? ' open' : '') + '" data-r="' + page + '">' + [].map.call(gs, function (g) { return '<a href="#' + page + '/' + g.id.slice(4) + '" data-g="' + g.id + '">' + esc(fdTxt(g.querySelector('h2'))) + '</a>'; }).join('') + '</div>');
     });
-    nav.addEventListener('click', function (e) { var a = e.target.closest('.nav-sub a'); if (!a) return; e.preventDefault(); var el = document.getElementById(a.getAttribute('data-g')); if (el) toHead(el); });
+    nav.addEventListener('click', function (e) { var a = e.target.closest('.nav-sub a'); if (!a) return; e.preventDefault(); var el = document.getElementById(a.getAttribute('data-g')); if (el) userNav(a.getAttribute('href').slice(1), function () { toHead(el); }); });
   }
   function toHead(el, smooth) {   // 標題對齊頂部列下緣（scrollIntoView 不管黏住的頂部列）
     var far = Math.abs(el.getBoundingClientRect().top) > innerHeight * 2;
@@ -5169,7 +5169,7 @@
     else if (nb && nv.scrollHeight > nv.clientHeight + 1) nv.scrollTop = Math.max(0, nb.offsetTop - nv.offsetTop - 60);   // 2026-11-08 桌面視窗矮、子目錄展開時，側欄導航捲到目前版面
     $('#crumb-k').textContent = r[2]; $('#crumb-t').textContent = r[1];
     document.title = (id === 'overview' ? _t('破曉 Daybreak') : r[1] + _t('｜破曉 Daybreak'));
-    if (location.hash.slice(1) !== id) { try { history.replaceState(null, '', '#' + id); } catch (e) {} }
+    if (location.hash.slice(1) !== id) { try { history.replaceState(history.state, '', '#' + id); } catch (e) {} }   // 捲動換版只改網址，保留這一筆記住的位置
     if (!seen[id]) { seen[id] = 1; decodeNums($('#pg-' + id)); }
     grpLast = null; grpSpy();   // 2026-11-08 側欄子目錄與頂部小標跟著換版
   }
@@ -5198,6 +5198,18 @@
   function anchorEl(ch) { return ch ? $('#c-' + ch) || $('#pn-' + ch) || $('#grp-' + ch) || document.getElementById(ch) : null; }   // 2026-11-08 加組（#版面/組代號）與頭版大標
   /* 展開收起的區塊：收起時畫的圖寬度是 0（先畫成 280px），展開後直接重畫，不靠 ResizeObserver（有些瀏覽器在背景分頁不觸發） */
   function unfold(box) { if (!box) return; box.classList.remove('fold'); box.querySelectorAll('[id^="c-"]').forEach(function (e) { if (e._draw) { e._w = e.clientWidth; e._draw(e); } }); }
+  /* 返回鍵（2026-11-09 整體審查）：原本換版一律 replaceState，手機按返回直接離開網站、跳到別版的圖之後也回不去。
+     使用者主動換位置（導覽、數字鍵、左右滑、看圖連結、搜尋、子目錄、版內目錄、頁內 # 連結）時，先把目前的版面與捲動位置
+     記在這一筆紀錄（mark），再新增一筆（userNav）；捲動造成的自動換版仍只改網址。按返回時回到記住的版面與位置 */
+  var popAt = 0;
+  function mark() { try { history.replaceState({ y: Math.round(window.scrollY), p: cur }, '', location.href); } catch (e) {} }
+  function userNav(hash, fn) { mark(); try { history.pushState(null, '', '#' + hash); } catch (e) {} fn(); }
+  function restore(s) {
+    popAt = Date.now(); hideTip();
+    if (s.p && s.p !== cur) { if (MQ.matches) activate(s.p); }
+    var put = function () { window.scrollTo(0, s.y); if (!MQ.matches) spy(); };
+    put(); [60, 300].forEach(function (t) { setTimeout(put, t); });   // 圖畫完版面會長高一點，再對一次
+  }
   function jumpTo(page, ch) {
     if (ALIAS[ch]) { page = ALIAS[ch][0]; ch = ALIAS[ch][1]; }
     var at = anchorEl(ch), pg = at && at.closest('.pg'); if (pg) page = pg.getAttribute('data-r');   // 圖搬過版面時跟著圖走（例如 oc-puell-multiple 現在在週期版）
@@ -5236,23 +5248,25 @@
   function shell() {
     try { findShell(); } catch (e) { console.error(e); }   // 2026-11-08 全站搜尋
     $('#nav').innerHTML = ROUTES.map(function (r, i) { return '<button type="button" data-r="' + r[0] + '"><span class="i">' + ('0' + (i + 1)).slice(-2) + '</span><span>' + r[1] + '</span></button>'; }).join('');
-    $('#nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) go(b.getAttribute('data-r')); });
-    document.addEventListener('keydown', function (e) { if ((e.target.closest && e.target.closest('input,textarea')) || e.metaKey || e.ctrlKey || e.altKey) return; var n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROUTES.length) go(ROUTES[n - 1][0]); });
+    $('#nav').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) { var r = b.getAttribute('data-r'); userNav(r, function () { go(r); }); } });
+    document.addEventListener('keydown', function (e) { if ((e.target.closest && e.target.closest('input,textarea')) || e.metaKey || e.ctrlKey || e.altKey) return; var n = e.key === '0' ? 10 : +e.key; if (n >= 1 && n <= ROUTES.length) { var r = ROUTES[n - 1][0]; userNav(r, function () { go(r); }); } });
     // 跨過 860px（旋轉、縮放視窗）時切換顯示方式，停在同一版
     var onMode = function () { if (MQ.matches) window.scrollTo(0, 0); else { drawAllPages(); go(cur); } };   // 換成桌面版：沒畫過的版一次補齊
     if (MQ.addEventListener) MQ.addEventListener('change', onMode); else if (MQ.addListener) MQ.addListener(onMode);
-    window.addEventListener('hashchange', function () { var h = location.hash.slice(1); if (h !== cur) go(h); });
+    window.addEventListener('popstate', function (e) { var st = e.state; if (st && st.y != null) restore(st); });
+    window.addEventListener('hashchange', function () { if (Date.now() - popAt < 400) return; var h = location.hash.slice(1); if (h !== cur) go(h); });   // 返回時已由 popstate 處理就略過
+    document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="#"]'); if (a && !e.defaultPrevented) mark(); }, true);   // 頁內一般 # 連結：瀏覽器自己新增紀錄，先記住現在的位置
     // 2026-10-23：「看圖 →」連結：換到那一版後捲到那張圖並閃一下
     document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.ev-open, .oc-more'); if (b) unfold(b.closest('.fold')); });
     document.addEventListener('click', function (e) {
-      var t = e.target.closest && e.target.closest('.toc a'); if (t) { e.preventDefault(); var pn = document.getElementById(t.getAttribute('data-pn')); if (pn) { var far = Math.abs(pn.getBoundingClientRect().top) > innerHeight * 2; window.scrollTo({ top: pn.getBoundingClientRect().top + scrollY - stickyH() - GAP, behavior: reduced || far ? 'auto' : 'smooth' }); } return; }
+      var t = e.target.closest && e.target.closest('.toc a'); if (t) { e.preventDefault(); var pn = document.getElementById(t.getAttribute('data-pn')); if (pn) { mark(); try { history.pushState(null, '', t.getAttribute('href')); } catch (er) {} var far = Math.abs(pn.getBoundingClientRect().top) > innerHeight * 2; window.scrollTo({ top: pn.getBoundingClientRect().top + scrollY - stickyH() - GAP, behavior: reduced || far ? 'auto' : 'smooth' }); } return; }
       var cp = e.target.closest && e.target.closest('.cp-link'); if (cp) { copyText(location.origin + location.pathname + '#' + cp.getAttribute('data-u')).then(function () { cp.textContent = _T('已複製', 'Copied'); cp.classList.add('ok'); setTimeout(function () { cp.textContent = '#'; cp.classList.remove('ok'); }, 1500); }); }
     });
     document.addEventListener('pointerover', function (e) { var a = e.target.closest && e.target.closest('a.term'); if (a && e.pointerType !== 'touch') showTip(e.clientX, e.clientY, '<div class="t">' + esc(a.textContent) + '</div><div class="term-def">' + esc(a.getAttribute('data-def')) + '</div>'); });
     document.addEventListener('pointerout', function (e) { if (e.target.closest && e.target.closest('a.term')) hideTip(); });
     document.addEventListener('click', function (e) {
       var a = e.target.closest && e.target.closest('a.jump'); if (!a) return; var ch = a.getAttribute('data-chart'); if (!ch) return;
-      e.preventDefault(); jumpTo(a.getAttribute('href').slice(1), ch);
+      e.preventDefault(); var pg = a.getAttribute('href').slice(1); userNav(pg + '/' + ch, function () { jumpTo(pg, ch); });
     });
     // 桌面換頁頓點：滾輪捲過版面開頭時，先停在「該版標題貼齊頂部列」的位置，頓 HOLD 毫秒（期間的滾輪與慣性吃掉），之後照常捲動
     var hold = 0, HOLD = 260;
@@ -5287,7 +5301,7 @@
       var p = e.changedTouches[0], dx = p.clientX - sw.x, dy = p.clientY - sw.y, dt = Date.now() - sw.t; sw = null;
       if (Math.abs(dx) < 50 || Math.abs(dx) < Math.abs(dy) * 1.2 || dt > 1000) return;
       var i = ROUTES.map(function (r) { return r[0]; }).indexOf(cur) + (dx < 0 ? 1 : -1);
-      if (i >= 0 && i < ROUTES.length) go(ROUTES[i][0]);
+      if (i >= 0 && i < ROUTES.length) { var r = ROUTES[i][0]; userNav(r, function () { go(r); }); }
     }, { passive: true });
     // 日刊／夜刊：桌面在側欄、行動版在頂部列右上；語言：選了就記住（daybreak.lang），重新載入套用
     var tt = $('#theme'), mt = $('#m-theme');   // 2026-11-09 日月圖示改由 ttIconSvg 產生（地平線日月，隨中間狀態變形）
