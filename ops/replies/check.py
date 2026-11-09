@@ -206,6 +206,10 @@ def tone_notes(items):
     if len(F) >= 5 and sum(1 for t in F if len(t) <= 40) / len(F) < 0.25: out.append(f'接話裡一行就好的短回覆（40 字內）只有 {sum(1 for t in F if len(t) <= 40) / len(F):.0%}，閒聊可以更短')
     thin = [it['n'] for it in R if it.get('kind') != 'followup' and it.get('mode') != 'quote' and len(it['reply'].strip().split('\n')) < 2]
     if thin: out.append(f'回別人原創只有一行：{thin}，看看有沒有接到對方的核心論點、有沒有自己的判斷（voice.md「回覆要有深度、嚴謹、有態度、有觀點」）')
+    # 2026-11-09 使用者：「回覆更是這樣，多說觀點和結論，數據少量支持就行，不然很像數據機器人」。日期（11/06、2025/10）、年份、網址、「200 日均線」「30 天」這種名稱不算數字。
+    NUM = re.compile(r'(?<![\d/.])(?!(?:19|20)\d\d(?![\d,]))\d[\d,]*(?:\.\d+)?(?![\d/])(?!-day|-week| ?(?:日|週)均線| ?天)')   # 年份、200 日均線、30 天這種名稱不算
+    many = [it['n'] for it in R if len(NUM.findall(re.sub(r'https?://\S+', '', it['reply']))) > 3]
+    if many: out.append(f'數字超過 3 個：{many}，第一行先講判斷，數字留一兩個撐它就好（voice.md「觀點為主、數據為輔」）')
     q = share(lambda t: QEND.search(t))
     if q > 0.3: out.append(f'問句收尾 {q:.0%}：只在真的想知道時問')
     if share(lambda t: re.search(r'[。.]\s*$', t)) > 0.5: out.append('超過一半句尾有句號：手機上打字通常不加')

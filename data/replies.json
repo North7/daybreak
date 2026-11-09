@@ -297,9 +297,9 @@
    "url": "https://x.com/Murphychen888/status/2119620221141168199",
    "posted": "2026-11-09T02:36:00Z",
    "summary": "訂閱區：11/27 月度交割約 7.2 萬顆（賣權 32,735、買權 39,304，名義 55 億美元）；價格跌到所有痛點線下方，綜合痛點 78K；Glassnode Gamma 顯示 73–75K 幾乎全是被賣出的賣權、正 Gamma，75K 支撐是真的，但有效跌破後支撐變壓力；11/27 那週站上或跌破 73–75K 決定 12 月走勢",
-   "reply": "75K 我用 Deribit 推算也是正 Gamma，約 +520 萬美元，75K 賣權 3,168 顆是近價最大一檔\n但緊貼著的 74K 反過來，是整張表最大的負 Gamma，約 −2,530 萬\n所以這個支撐很窄，跌破 75K 不是慢慢變壓力，到 74K 做市商就換成跟著賣\n我這只算 Deribit、是推算，口徑跟 Glassnode 不一樣",
+   "reply": "75K 這個支撐是真的，但很窄\n緊貼著的 74K 是整張表最大的負 Gamma，跌破 75K 之後做市商會從托盤變成跟著賣\n所以不會是慢慢變壓力，比較像一口氣滑下去（只算 Deribit，推算）",
    "sources": "deriv.gex（推算，只有 Deribit，11/09 00:06 UTC，主到期 11/27 占 59%）75,000 +5.2 百萬、74,000 −25.3 百萬（neg 第一）；deriv.options 11/27 到期 oi 72,822、top_puts 75,000 3,168 顆",
-   "note": "使用者指定（訂閱區貼文，fxtwitter 讀不到，連結使用者給的；發文時間照截圖 10:36）。Murphy 今天第二則（第一則 n22 恐慌篇）。同意他 75K 支撐，補他沒講的：74K 是最大負 Gamma，支撐很窄。訂閱者限定貼文，回覆可能只有訂閱者看得到。配網站 Gamma 圖。",
+   "note": "使用者指定（訂閱區貼文，fxtwitter 讀不到，連結使用者給的；發文時間照截圖 10:36）。Murphy 今天第二則（第一則 n22 恐慌篇）。同意他 75K 支撐，補他沒講的：74K 是最大負 Gamma，支撐很窄。訂閱者限定貼文，回覆可能只有訂閱者看得到。配網站 Gamma 圖。 11/09 下午照「觀點為主、數據為輔」改寫：第一行先講判斷，數字最多一兩個。",
    "image": {
     "site": {
      "page": "deriv",
@@ -578,9 +578,9 @@
    "url": "https://x.com/joke_henry/status/2119454090082337224",
    "posted": "2026-11-08T15:36:47Z",
    "summary": "回我們（他 Mr. 1,000 那則底下）：有的大佬在修整倉位",
-   "reply": "修倉位說得通\n那 6 千顆均價 75,980，今天清晨最低到 73.4K，帳面先虧 3% 多\n他這週還加不加，大概就看得出是在修還是在扛",
+   "reply": "修倉位說得通，只是這筆現在也套著\n均價 75,980，清晨那一下帳面就虧了 3% 多\n這週他還加不加，大概就知道是在修還是在扛",
    "sources": "均價 75,980 是他原文的數字；price.bar 11/08 低點 73,444（−3.3%）",
-   "note": "他自己貼文底下第一輪，一句短的；用他原文的均價算一個帳面數字，不重複我們上一則的地址分層。",
+   "note": "他自己貼文底下第一輪，一句短的；用他原文的均價算一個帳面數字，不重複我們上一則的地址分層。 11/09 下午照「觀點為主、數據為輔」改寫：第一行先講判斷，數字最多一兩個。",
    "kind": "followup"
   },
   {
@@ -802,9 +802,9 @@
    "url": "https://x.com/zacxbtc/status/2119568256201867651",
    "posted": "2026-11-08T23:10:26Z",
    "summary": "BTC 將收第 5 根週線黑 K；2017 年以來 5 週以上連跌 3 次（2018/11、2022/3–5、2026/1–3）",
-   "reply": "Different this time: price is still above a rising 200-day ($73,171), 2018 and 2022 were deep in bear territory\nMy bottom-combo flag also fired yesterday, 21 cases since 2012\n30d later it's a coin flip, but the 90d median is +15% vs +10% for any day\nHistory, not a forecast",
+   "reply": "I don't think 2018 or 2022 is the right comparison\nThose streaks happened deep under the 200-day\nThis one is still above a rising 200-day, around $73K\nFive red weeks inside an uptrend looks more like a long shakeout to me",
    "sources": "price.ma sma200 73,170.7；chips.stress（本站）state bottom、f30 n21 up11 med 0.3、f90 n21 up13 med 14.7、base90 med 9.9",
-   "note": "Grok 0855 #6，新帳號，9 千粉。他自己說前幾次都在偏空環境，我們補「這次在上升的 200 日均線上」和底部組合歷史；註明樣本小、不是預測。"
+   "note": "Grok 0855 #6，新帳號，9 千粉。他自己說前幾次都在偏空環境，我們補「這次在上升的 200 日均線上」和底部組合歷史；註明樣本小、不是預測。 11/09 下午照「觀點為主、數據為輔」改寫：第一行先講判斷，數字最多一兩個。"
   },
   {
    "style": "真人版",
