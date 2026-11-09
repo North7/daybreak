@@ -24,15 +24,21 @@ def fit(pairs):
 
 
 def num(t):
-    m = re.fullmatch(r'\$?([\d.]+)(K|%)?', t.replace(',', ''))
+    t = t.replace(',', '').replace('−', '-'); sg = -1 if t.startswith('-') else 1   # 2026-11-09：刻度有正負號（-20%、+40%）也要認得
+    m = re.fullmatch(r'\$?([\d.]+)(K|%)?', t.lstrip('+-'))
     if not m: return None
-    try: return float(m.group(1)) * (1000 if m.group(2) == 'K' else 1)
+    try: return sg * float(m.group(1)) * (1000 if m.group(2) == 'K' else 1)
     except ValueError: return None
 
 
 for name, s in json.load(open(spec, encoding='utf-8')).items():
     g = json.load(open(os.path.join(rawdir, name + '.json'))); K = g['dpr']; T = g['texts']
-    X = fit([(dt.date(int(t['t']), 1, 1).toordinal(), t['x']) for t in T if re.fullmatch(r'20\d\d', t['t'])])
+    # 2026-11-09：x 軸標籤除了「2026」也可能是「25/7」（2025 年 7 月 1 日）；只有一個年份標籤時單靠年份算不出比例
+    def _xd(t):
+        if re.fullmatch(r'20\d\d', t): return dt.date(int(t), 1, 1)
+        m = re.fullmatch(r'(\d\d)/(\d{1,2})', t)
+        return dt.date(2000 + int(m.group(1)), int(m.group(2)), 1) if m else None
+    X = fit([(_xd(t['t']).toordinal(), t['x']) for t in T if t.get('anchor') == 'middle' and _xd(t['t'])])
     axes = s.get('axes') or {'pct': {'kind': 'lin', 'unit': '%', 'yrange': [0, 1e9]}}
     Y = {}
     for an, ax in axes.items():
