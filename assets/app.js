@@ -5363,13 +5363,18 @@
       ttPh.style.left = (mob ? r.left - 40 : r.left) + 'px'; ttPh.style.top = (mob ? r.bottom + 6 : r.top - 22) + 'px'; ttPh.style.width = (mob ? r.width + 80 : r.width) + 'px';
       ttPh.textContent = TTX.from === 'dark' ? (LANG === 'en' ? 'Daybreak' : '破曉') : (LANG === 'en' ? 'Dusk' : '黃昏');
     }
-    var ttVeil = null;
+    var ttVeil = null, ttFog = null;
     function ttApply(t) {
-      var past = t >= TK.x, now = performance.now();
-      if (past !== (ttCur() === 'dark')) setTheme(past ? 'dark' : 'light');
-      if (!ttVeil) { ttVeil = document.createElement('div'); ttVeil.className = 'tt-veil'; ttVeil.setAttribute('aria-hidden', 'true'); document.body.appendChild(ttVeil); }
-      var tg = ttFromLab(ttSurf(TK.v, t)), c = [0, 1, 2].map(function (i) { return past ? Math.max(0, Math.round((tg[i] - TK.vb[i]) / (255 - TK.vb[i]) * 255)) : Math.min(255, Math.round(tg[i] / TK.va[i] * 255)); });
-      ttVeil.style.mixBlendMode = past ? 'screen' : 'multiply'; ttVeil.style.backgroundColor = 'rgb(' + c.join(',') + ')'; ttVeil.style.display = 'block';
+      var now = performance.now(), cur = ttCur() === 'dark';
+      // 換刊點（底色亮度過中點）前後各 9% 蓋一層和當下底色同色的「暮色」：內容先淡進底色、換刊、再從底色淡出成另一版。
+      // 換刊（含整頁重算約 60 毫秒）發生在內容完全淡掉的那一瞬，所以文字由黑轉白、滑塊由黑轉淺都是連續的，不會跳。
+      // 換刊點兩側留 0.4% 的緩衝，拖曳停在換刊點上不會來回切換
+      if (!cur && t > TK.x + 0.004) { setTheme('dark'); cur = true; } else if (cur && t < TK.x - 0.004) { setTheme('light'); cur = false; }
+      if (!ttVeil) { ttVeil = document.createElement('div'); ttVeil.className = 'tt-veil'; ttVeil.setAttribute('aria-hidden', 'true'); document.body.appendChild(ttVeil); ttFog = document.createElement('div'); ttFog.className = 'tt-fog'; ttFog.setAttribute('aria-hidden', 'true'); document.body.appendChild(ttFog); }
+      var tg = ttFromLab(ttSurf(TK.v, t)), c = [0, 1, 2].map(function (i) { return cur ? Math.max(0, Math.round((tg[i] - TK.vb[i]) / (255 - TK.vb[i]) * 255)) : Math.min(255, Math.round(tg[i] / TK.va[i] * 255)); });
+      ttVeil.style.mixBlendMode = cur ? 'screen' : 'multiply'; ttVeil.style.backgroundColor = 'rgb(' + c.join(',') + ')'; ttVeil.style.display = 'block';
+      var fa = ttClamp(1 - Math.abs(t - TK.x) / 0.09); fa = fa * fa * (3 - 2 * fa);
+      ttFog.style.backgroundColor = 'rgb(' + tg[0] + ',' + tg[1] + ',' + tg[2] + ')'; ttFog.style.opacity = fa.toFixed(3); ttFog.style.display = fa > 0 ? 'block' : 'none';
       // 滑塊：位置跟 t；移動越快拉得越長（最多 1.3 倍），慢下來就收回
       var vel = Math.abs(t - TTX.lt) / Math.max(8, now - TTX.ln) * 1000, tgt = 1 + Math.min(0.3, vel * 0.16);
       TTX.s = TTX.s + (tgt - TTX.s) * 0.35; TTX.lt = t; TTX.ln = now; TTX.t = t;
@@ -5382,20 +5387,34 @@
     function ttSettle(el) { if (!el) return; el.classList.remove('tt-settle'); void el.offsetWidth; el.classList.add('tt-settle'); }
     function ttCommit(v) {
       cancelAnimationFrame(TTX.raf); var root = document.documentElement, changed = v !== TTX.from;
-      if (ttVeil) ttVeil.style.display = 'none'; [tt, mt].forEach(function (el) { if (el) { el.style.removeProperty('--tt-sky'); el.style.removeProperty('--tt-glow'); } });
+      if (ttVeil) { ttVeil.style.display = 'none'; ttFog.style.display = 'none'; } [tt, mt].forEach(function (el) { if (el) { el.style.removeProperty('--tt-sky'); el.style.removeProperty('--tt-glow'); } });
       tt.classList.remove('tt-live'); tt.style.setProperty('--tt-s', 1); if (mt) mt.classList.remove('tt-live'); if (ttPh) ttPh.style.opacity = 0;
       TTX.on = false; setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {}
       ttSettle(tt.querySelector('.tt-knob')); ttSettle(mt && mt.offsetParent ? mt : null);
-      if (changed) mounted.forEach(function (el) { el._draw && el._draw(el); });
+      if (changed) setTimeout(ttRedraw, 30);
     }
-    function ttTween(to, ms) {
-      cancelAnimationFrame(TTX.raf); var from = TTX.t, t0 = performance.now();
-      (function f(now) { var p = Math.min(1, (now - t0) / ms); ttApply(from + (to - from) * ttEase(p)); if (p < 1) TTX.raf = requestAnimationFrame(f); else ttCommit(to ? 'dark' : 'light'); })(t0);
+    // 換刊後重畫圖表（程式算色的圖要跟著換）：一次重畫全部 87 張要 0.5 秒以上，過渡收尾會卡住；
+    // 改成先畫畫面上看得到的，其餘每格最多畫 8 毫秒、分批在背景補完。再換一次刊就重新排隊
+    var ttRq = 0;
+    function ttRedraw() {
+      var id = ++ttRq, vis = [], rest = [], H = innerHeight;
+      mounted.forEach(function (el) { if (!el._draw || !el.isConnected) return; var r = el.getBoundingClientRect(); (r.width && r.bottom > -300 && r.top < H + 300 ? vis : rest).push(el); });
+      vis.forEach(function (el) { el._draw(el); });
+      (function step() { if (id !== ttRq) return; var t0 = performance.now(); while (rest.length && performance.now() - t0 < 8) { var el = rest.shift(); el._draw(el); } if (rest.length) setTimeout(step, 16); })();
+    }
+    // 點一下的速度曲線：頭尾慢、中段（換刊點）也放慢，讓黃昏多停一下、暮色淡進淡出約 0.3 秒（一般的緩入緩出在中段最快，換刊那一下會像「刷」過去）
+    // 速度 ∝ (1−b)·sin²(2πp) + b·sin²(πp)，b＝0.35：中段速度約為平均的 0.7 倍
+    function ttDusk(p) { var b = 0.35; return (1 - b) * (p - Math.sin(4 * Math.PI * p) / (4 * Math.PI)) + b * (p - Math.sin(2 * Math.PI * p) / (2 * Math.PI)); }
+    function ttOut(p) { return 1 - (1 - p) * (1 - p); }
+    function ttTween(to, ms, ez) {
+      cancelAnimationFrame(TTX.raf); var from = TTX.t, t0 = performance.now(); ez = ez || ttEase;
+      (function f(now) { var p = Math.min(1, (now - t0) / ms); ttApply(from + (to - from) * ez(p)); if (p < 1) TTX.raf = requestAnimationFrame(f); else ttCommit(to ? 'dark' : 'light'); })(t0);
     }
     function pickTheme(v) {
       if (!TTX.on && v === ttCur()) return;
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {} mounted.forEach(function (el) { el._draw && el._draw(el); }); return; }
-      ttBegin(); ttTween(v === 'dark' ? 1 : 0, 1100 * Math.abs((v === 'dark' ? 1 : 0) - TTX.t));
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {} ttRedraw(); return; }
+      ttBegin(); var d = Math.abs((v === 'dark' ? 1 : 0) - TTX.t);   // 先 ttBegin 才有正確的起點 t（剛載入時 TTX.t 還不是當下主題）
+      ttTween(v === 'dark' ? 1 : 0, Math.max(1, 1300 * d), d > 0.6 ? ttDusk : ttEase);
     }
     var ttDrag = null, ttSkip = false;
     tt.style.touchAction = 'none';
@@ -5405,7 +5424,7 @@
       if (!ttDrag.on) { if (Math.abs(dx) < 4) return; ttDrag.on = true; try { tt.setPointerCapture(ttDrag.id); } catch (er) {} cancelAnimationFrame(TTX.raf); ttBegin(); ttDrag.t0 = TTX.t; }
       ttApply(ttClamp(ttDrag.t0 + dx / (ttDrag.w / 2)));
     });
-    function ttEnd() { tt.classList.remove('tt-press'); var d = ttDrag; ttDrag = null; if (!d || !d.on) return; ttSkip = true; setTimeout(function () { ttSkip = false; }, 0); var to = TTX.t >= 0.5 ? 1 : 0; if (matchMedia('(prefers-reduced-motion: reduce)').matches) ttCommit(to ? 'dark' : 'light'); else ttTween(to, 160 + 520 * Math.abs(to - TTX.t)); }
+    function ttEnd() { tt.classList.remove('tt-press'); var d = ttDrag; ttDrag = null; if (!d || !d.on) return; ttSkip = true; setTimeout(function () { ttSkip = false; }, 0); var to = TTX.t >= 0.5 ? 1 : 0; if (matchMedia('(prefers-reduced-motion: reduce)').matches) ttCommit(to ? 'dark' : 'light'); else ttTween(to, 160 + 520 * Math.abs(to - TTX.t), ttOut); }
     tt.addEventListener('pointerup', ttEnd); tt.addEventListener('pointercancel', ttEnd);
     tt.addEventListener('click', function (e) { if (ttSkip) return; var b = e.target.closest('button'); if (b) pickTheme(b.getAttribute('data-t')); });
     if (mt) mt.addEventListener('click', function () { pickTheme(mt.getAttribute('data-v') === 'dark' ? 'light' : 'dark'); });

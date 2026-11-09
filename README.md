@@ -277,6 +277,10 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-09** 日刊／夜刊中間狀態去掉跳動感（使用者：「中間還是會有一個突然的跳動感」「中間態」）：
+  - 換刊點前後各 9% 蓋一層和當下底色同色的暮色，內容先淡進底色、換刊、再淡出成另一版；文字由黑轉白、滑塊由黑轉淺都變成連續的，換刊時整頁重算的那一下也藏在暮色最濃的時候。拖曳停在換刊點上不會來回切換。
+  - 點一下的速度曲線改成頭尾慢、中段也放慢（原本中段最快），黃昏多停一下，暮色淡進淡出約 0.3 秒；整段約 1.3 秒。
+  - 換刊後的圖表重畫改成先畫畫面上看得到的，其餘分批在背景補完；原本一次重畫 87 張圖要 0.5 秒以上，過渡收尾會卡住。
 - **2026-11-09** 日刊／夜刊切換改成有中間狀態的「黃昏」過渡（使用者看了一支深淺色切換的範例影片：「重點是會有中間狀態效果」「用黃昏色調」「按鈕可以用 icon 代替，改變的時候 icon 以動畫同步改變」「按鈕本身也需要配合動效」）：
   - 桌面側欄的切換鈕可以拖曳，停在任何位置看中間狀態，放開後吸到較近的一端；點一下（含手機右上角的日月鈕）播完整段過渡，約 1.1 秒。
   - 中間狀態：前半段整頁變暗、偏暖琥珀（傍晚），底色亮度過中點時換成夜刊，後半段偏靛藍（入夜）；反方向是「破曉」。做法是蓋一層混色濾層（換刊點前相乘、之後濾色），每格只改一個顏色，程式畫的圖也一起變。兩端和原本的日刊、夜刊完全一樣。
@@ -590,6 +594,10 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-09** The in-between day/night state no longer jumps in the middle (the user still felt a sudden jump there):
+  - Around the switch point a dusk layer the colour of the current background fades the content into the background, switches edition, then fades the other edition back in, so text going black to white and the knob going dark to light are continuous; the page restyle at the switch hides at the densest moment. Holding a drag on the switch point no longer flips back and forth.
+  - A click now slows down through the middle instead of being fastest there, so dusk lingers and the fade takes about 0.3 s; the whole change is about 1.3 s.
+  - After the switch, charts on screen are redrawn first and the rest in small batches in the background; redrawing all 87 charts at once took over half a second and stalled the end of the change.
 - **2026-11-09** The day/night edition switch now passes through an in-between "dusk" state (the user shared a light/dark toggle demo video and asked for its in-between states, the dusk tint, icon buttons that animate in step, and a button that moves with it):
   - On desktop the switch in the sidebar can be dragged and held anywhere in between; letting go snaps to the nearer end. A click (including the sun/moon button on phones) plays the whole change in about 1.1 s.
   - In between, the page dims and warms (amber, early evening), switches to the night edition once the background passes mid-brightness, then cools to indigo; the other way round is "daybreak". It is one blend layer over the page (multiply before the switch point, screen after), so only one colour changes per frame and script-drawn charts change with it. Both ends are exactly the existing day and night editions.
