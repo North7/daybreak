@@ -2,7 +2,8 @@
 """檢查當期 data/notes.json／notes.en.json 是否符合 docs/CLAUDE_DAILY.md 的格式與長度規則（2026-10-21 建立）。
 2026-10-21 自我檢查發現：事件表連 7 期缺 CPI、摘要寫到 4–6 句、頭條 76–107 字、制式提醒句每期約 20 次，都是規則有寫但沒人檢查。
 用法（在倉庫根目錄）：python3 pipeline/notes_lint.py   # 有問題會列出並以非零結束
-2026-10-23：加查 findings／followups（發現與追蹤），上一期從 data/archive/ 讀"""
+2026-10-23：加查 findings／followups（發現與追蹤），上一期從 data/archive/ 讀
+2026-11-09：加查「說重點」的固定說法與中文常用名（使用者要日報照運營長文的寫法；詞表取自 daybreak-ops/ops/replies/check.py 的 AI_WORDS、EN_NAMES）"""
 import json, os, re, sys, datetime as dt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -13,6 +14,12 @@ BOILER_MAX = 4
 F_KEYS = ('id', 'title', 'module', 'signals', 'confidence', 'lean', 'lean_why', 'what', 'why', 'alt', 'history', 'so', 'next', 'check')   # 2026-10-23 發現與追蹤
 F_TITLE_ZH, F_TITLE_EN = 30, 90
 STATUS = ('open', 'confirmed', 'refuted', 'expired')
+# 2026-11-09 說重點：結論講成市場的事實、兩種走法直接講，不寫「看錯／照舊走／找不到誰／看了一圈」（見 docs/CLAUDE_DAILY.md 寫作規則）
+VAGUE = re.compile(r'看錯|照舊走|照舊在走|不一定照舊|找不到誰|找不到有誰|看了一圈|我找不到|我沒找到|could be wrong|I\'m wrong|I was wrong|nobody I can find|I can\'t find any', re.I)
+EN_NAMES = {'比特幣': 'BTC', '以太坊': 'ETH', '以太幣': 'ETH', '那斯達克': 'Nasdaq', '納斯達克': 'Nasdaq', '標普': 'S&P 500', '輝達': 'Nvidia', '英偉達': 'Nvidia',
+            '微策略': 'Strategy', '幣安': 'Binance', '貝萊德': 'BlackRock', '富達': 'Fidelity', '灰度': 'Grayscale'}   # 中文版有英文常用名的直接用英文（hashtag 不算）
+EN_NAME = re.compile(r'(?<!#)(' + '|'.join(EN_NAMES) + ')')
+SKIP = ('.url', '.source', '.cat', '.time')   # 新聞的網址、來源名、分類、時間不檢查
 EVENTS = {'CPI': 'CPI', 'FOMC': 'FOMC', '非農': '非農', '難度調整': '難度', 'Deribit 到期': 'Deribit', '月底路徑重估': '路徑'}
 
 
@@ -111,6 +118,18 @@ def lint(n, en, bar_date):
     miss = [k for k, kw in EVENTS.items() if kw not in lab]
     if miss: bad.append(f'events 缺：{"、".join(miss)}（未來 60 天內每一類都會發生；官方未公布就寫慣例日期並標「待官方排程確認」）')
     if ed and max(ed) < (dt.date.fromisoformat(bar_date) + dt.timedelta(days=45)).isoformat(): bad.append(f'events 只排到 {max(ed)}，應滾動到 60 天後')
+    for doc, tag in ((n, ''), (en, '英文版')):
+        if doc is None: continue
+        hit = {}
+        for p, t in texts(doc):
+            if p.endswith(SKIP): continue
+            for m in VAGUE.finditer(t): hit.setdefault(m.group(0), []).append(p)
+        for w, ps in hit.items(): bad.append(f'{tag}有「{w}」（{"、".join(sorted(set(ps))[:3])}）：說重點，結論講成市場的事實、兩種走法直接講，見寫作規則')
+    names = {}
+    for p, t in texts(n):
+        if not p.endswith(SKIP):
+            for w in EN_NAME.findall(t): names.setdefault(w, set()).add(p)
+    if names: bad.append('中文版的常用名要用英文：' + '、'.join(f'{w}→{EN_NAMES[w]}（{"、".join(sorted(ps)[:2])}）' for w, ps in names.items()))
     if en is None: bad.append('缺 notes.en.json'); return bad
     if (en.get('date'), en.get('edition')) != (n.get('date'), n.get('edition')): bad.append('英文版 date／edition 和中文版不同')
     if len(en.get('headline', '')) > HEAD_EN: bad.append(f"英文頭條 {len(en.get('headline', ''))} 字元，上限 {HEAD_EN}")
