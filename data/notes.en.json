@@ -7,86 +7,86 @@
   "tone": "neutral",
   "short": "Bull day 31, no action"
  },
- "headline": "Sunday's flush liquidated $168M of longs, yet open interest sits at the 98th percentile since 2021. The leverage never left.",
- "summary": "Sunday's drop flushed a batch of longs, but open interest of 339K BTC barely moved: price is down 9.4% in 30 days while leverage is up a tenth. Short-term holders, Strategy and ETF holders all sit underwater with costs at 75–79K, and our bottom combo has fired, but on-chain loss-taking is under 40% of the June low. Watch Nov 10 CPI, the 200-day average at 73,171 and the leg-end line at 73,605.",
+ "headline": "The leverage is still there: Sunday liquidated $168M of longs, and open interest fell just 0.5%.",
+ "summary": "Sunday's drop didn't flush the leverage, so another leg into 72–73K would trigger more liquidations. The three biggest buyer groups all have costs at 75–79K and are underwater, so rebounds there will meet break-even selling. Price-based selling is maxed out but on-chain loss-taking is still shallow, so sellers haven't capitulated; this week it's Nov 10 CPI and the 200-day average at 73,171.",
  "watch": [
   {
    "label": "200-day average",
    "value": 73171,
-   "note": "5 straight closes below starts the 20% hedge; 2.1% below the close, inside the 5% near zone, 0 days so far"
+   "note": "5 straight closes below starts the 20% hedge; 2% below the close, 0 days so far"
   },
   {
    "label": "MVRV 0.75 line",
    "value": 112328,
-   "note": "First on-chain sell trigger; ratio 0.5056, 0 days, 50.3% away (CoinMetrics Nov 7)"
+   "note": "First on-chain sell trigger; 50% away (CoinMetrics Nov 7)"
   },
   {
    "label": "First exit step",
    "value": 125000,
-   "note": "A close there sells 12.5%; 67.3% away"
+   "note": "A close there sells 12.5%; 67% away"
   }
  ],
  "modules": {
   "overview": {
-   "lead": "The weekend drop pushed price under the cost basis of the three biggest buyer groups and flushed some longs, but leverage as a whole did not retreat; price-based weakness is maxed out, yet on-chain capitulation has not shown up.",
+   "lead": "Cost overhead and leverage underneath: the three biggest buyer groups are underwater, leverage hasn't cleared, and sellers still haven't capitulated.",
    "points": [
-    "Today's finding: Nov 8 long liquidations $168M vs shorts $8.3M; open interest 339,077 BTC, +10.6% in 30 days (Coinalyze).",
-    "Cost map: short-term holder cost 75,881, Strategy 75,451, estimated ETF holder cost 79,039; the 74,738 close is below all three.",
-    "Selling pressure at 100, momentum quality 0.25: the bottom combo has fired; the latest realized-loss peak is only 4.82 bp of market cap (Bitview).",
-    "Bull day 31; the 200-day average at 73,171 is 2.1% below, no exit rule fired; CPI Nov 10, Nvidia earnings Nov 17."
+    "Leverage didn't clear: Sunday liquidated $168M of longs, and open interest fell just 0.5%.",
+    "The costs sit overhead: short-term holders, Strategy and ETF holders stack at 75–79K, against a 74,738 close.",
+    "Price-based selling is maxed out, but on-chain loss-taking is under 40% of the June low. That isn't capitulation yet.",
+    "No exit rule moves, with the 200-day average 2% below; this week it's Nov 10 CPI and Nvidia earnings on Nov 17."
    ]
   },
   "cycle": {
-   "lead": "Bull day 31 and the 200-day average that defines it is still rising; supporting lights stay at 1/6, the weekly regime score of 0.23 is still early bull, and the Dawn index is in Daybreak with heat 36.6: both weak, neither flipped.",
+   "lead": "The bull call holds, but every cycle gauge is weak: the 200-day average is still rising, and the weekly regime score and the Dawn index are soft but haven't turned down.",
    "points": [
-    "60 straight closes above the rising 200-day average (73,171, 71,856 thirty days ago); bull stage since 2026-10-09.",
-    "Lit: realized cap 30-day +0.35%. Unlit: 12-month momentum −26.8%, MVRV 1.404 just under its 1-year mean 1.407, exchange supply 90-day +1.24%, close below short-term holder cost, short-term cost 2.17% below the true market mean.",
-    "Weekly regime score 0.93 → 0.23 (Nov 7), week 7 since the Sep 19 flip; Dawn heat 36.6 (valuation low versus the past 4 years) with trend still up, week 9 of Daybreak. The score tracks trend, heat tracks valuation; neither has turned bearish.",
-    "Extrapolating the last 30 days linearly, short-term cost crosses above the true market mean around Dec 13; a linear extrapolation, not a forecast. Tidemark's cycle-low test date is Dec 19 (no break of 58,525)."
+    "Bull day 31: 60 straight closes above the 200-day average, which is still rising.",
+    "Only 1 of 6 supporting lights is on, realized cap still growing; momentum, MVRV and exchange supply are all off.",
+    "The weekly regime score fell from 0.93 to 0.23, still early bull; the Dawn index is in Daybreak with heat 37. One reads trend, the other valuation, and neither has turned down.",
+    "At the last 30 days' pace, short-term holder cost crosses the True Market Mean around Dec 13; that's a straight-line extrapolation, not a forecast."
    ]
   },
   "market": {
-   "lead": "Sunday fell 1.34% on a 3.5% daily range, the fifth straight weekly loss; price is now under the 350-day average and short-term holder cost, about 2% above both the 200-day average and the leg-end line.",
+   "lead": "Price is now below the 350-day average and short-term holder cost, and only about 2% above both the 200-day average and the leg-end line.",
    "points": [
-    "Link to today's finding: selling pressure 100, momentum quality 0.30 → 0.25, bottom combo fired; see finding two.",
-    "Nov 8 range 73,444–76,096, volume 0.67× the 20-day average; RV7 56.1% vs RV30 36.1%, short-term volatility clearly up.",
-    "This leg (since Jun 30) is 131 days and +27.7%, −13.7% from the Sep 21 high of 86,594; the leg-end line at 73,605 is 1.5% below, and a close under it starts a new down leg.",
-    "November so far −3.49%, year to date −14.59%; 8 of the past 13 Novembers rose, a description of history only."
+    "Selling pressure is full and momentum quality fell to 0.25, so the bottom combo fired (see the second finding).",
+    "Sunday's drop had volume behind it: two-thirds of normal, on a 3.5% daily range.",
+    "The leg-end line at 73,605 is just 1.5% below; a close under it starts a new down leg.",
+    "Five straight red weeks, and 14% off the September high."
    ]
   },
   "deriv": {
-   "lead": "After the liquidations longs pay less but hold just as much: funding fell, open interest stayed high, below 74,000 is estimated negative gamma, and the near end of the implied-vol curve has inverted.",
+   "lead": "After the liquidations longs pay less but hold just as much; below 74,000 dealers sell into the drop, so a fall can speed up.",
    "points": [
-    "Link to today's finding: funding on the old three-venue basis 9.98% → 6.45%, five-venue weighted 6.23% (Binance 3.74%, OKX 2.30%, Hyperliquid 10.95%); open interest +10.6% in 30 days.",
-    "Estimated dealers sell rallies and buy dips at 75,000 (+$5.2M) and flip at 74,000 (−$25.3M), selling into a break (estimate, Deribit only); estimated long-liquidation bands 72,200–73,300 (−2.8%) and 70,000–72,100 (−5.0%).",
-    "Implied vol 7-day 42.1%, 90-day 39.5%: the curve has inverted by 2.6 points, so the market sees more near-term risk; DVOL 40.99, 30-day 25-delta risk reversal −3.72.",
-    "Order book (00:07 UTC): 74,000 bids $195M and asks $162M, 73,000 bids $106M, all Hyperliquid perps; the Nov 13 weekly expiry has max pain at 78,000 and 4,192 BTC of 74,000 puts."
+    "Funding fell from 10% to 6%, so the rush into longs has cooled, yet open interest is still up a tenth in 30 days.",
+    "Dealers are estimated to sell below 74,000 (Deribit only); the estimated long-liquidation band is 72–73K, about 3% below.",
+    "Near-dated implied vol is now above longer-dated, so the market sees more risk right ahead.",
+    "$195M of bids sit at 74,000, all on Hyperliquid perps."
    ]
   },
   "flows": {
-   "lead": "The dollar pipes have not come back: ETFs lost about $1.28B in a week and their average buyer is 5.4% underwater, stablecoins shrank another 1.7% in a week, and Coinbase still trades at a discount.",
+   "lead": "US money hasn't come back: ETFs lost about $1.28B in a week and their average buyer is 5% underwater.",
    "points": [
-    "ETF 7 trading days to Nov 5 (The Block): −$1.359B; Nov 6 provisional −$412M (Farside and SoSoValue agree); the latest complete day trails bar_date by three days, with a weekend in between.",
-    "Estimated ETF holder cost 79,039 (ex-GBTC), close 5.4% below it; stablecoins $293.3B, −$13.4B in 30 days; realized cap 30-day +0.35% (Nov 7), still positive.",
-    "Coinbase premium −0.13% daily, −0.145% 7-day average; OKX OTC USDT/CNY −0.30% (snapshot); Korea premium 0.90%, 7-day average 0.68%.",
-    "10-year yield 4.84%, real yield 2.60% (FRED Nov 5); BTC–Nasdaq 30-day correlation 0.751; Fear & Greed 25 → 28."
+    "ETF 7 trading days to Nov 5: −$1.36B (The Block); Nov 6 adds a provisional −$412M.",
+    "Stablecoins waiting to be deployed shrank by $13.4B in 30 days.",
+    "Coinbase still trades at a discount (7-day average −0.15%), so US buyers aren't back.",
+    "BTC's 30-day correlation with the Nasdaq is 0.75; AI stocks and rate expectations are this week's main outside risk."
    ]
   },
   "onchain": {
-   "lead": "More holders are underwater on paper while realized loss-taking shrinks: over 70% of short-term holders are at a loss, yet realized losses eased; long-term holder net selling narrowed again, though the part that sells is selling at a loss.",
+   "lead": "More holders are at a loss, fewer are selling at one: over 70% of short-term holders are underwater, yet realized losses are falling.",
    "points": [
-    "Link to today's finding: 73.8% of short-term holders at a loss, 26.2% in profit (Bitview); realized loss 3,875 BTC, realized profit 3,071 BTC (CheckOnChain Nov 8).",
-    "Long-term holder 30-day net position −102,380 → −75,898 BTC (bitcoin-data Nov 7), net selling for 96 days since Aug 4; LTH-SOPR 0.9701 → 0.9393 (Bitview).",
-    "Network daily profit/loss ratio 0.349 on Nov 8, 7-day average 0.661, 90-day average 2.34; if the daily ratio stays at 0.661 the 90-day average drops below 1 around 2027-01-05 (projection); in 2019/12 it fell back below 1 for 37 days seven months after recovering.",
-    "Apparent demand 30-day −276,713 BTC, below its 30-day mean of −96,162: demand weakening; coins unmoved for over a year rose 290K in 30 days, partly coins that changed hands a year ago turning one year old."
+    "74% of short-term holders are at a loss, yet their realized losses fell to 3,875 BTC (CheckOnChain Nov 8).",
+    "Long-term holder net selling narrowed from 102K to 76K BTC over 30 days, so old coins aren't driving this sell-off; those who do sell are selling at a loss.",
+    "Demand is weakening: apparent demand is −277K BTC over 30 days, below its own 30-day average.",
+    "Sellers as a whole are taking losses: network profit÷loss 7-day average is 0.66."
    ]
   },
   "exit": {
-   "lead": "No exit rule has fired; the 200-day average is 2.1% below, closer than yesterday, 0 days below.",
+   "lead": "No exit rule has fired; the nearest is the 200-day average, 2% below.",
    "points": [
-    "200-day average 73,171 is 2.1% below the close, 0 days below; 5 straight closes below start the 20% hedge.",
-    "MVRV ÷ prior-cycle peak 0.5056; the 0.75 line at 112,328 (+50.3%), the 0.80 line at 119,817 (+60.3%), 0 days on both.",
-    "First exit step 125,000 is 67.3% away; top three indicators MVRV Z 33.5, NUPL 28.4, Puell 38.4 (Nov 7)."
+    "200-day average 73,171: 5 straight closes below starts the 20% hedge; 0 days so far.",
+    "MVRV 0.75 line 112,328, 50% away.",
+    "First exit step 125,000, 67% away."
    ]
   }
  },
@@ -99,7 +99,7 @@
    "title": "BTC broke below 74,000 on Sunday evening; over $700M of crypto longs were liquidated in 20 minutes",
    "source": "TokenPost, 2026-11-08",
    "url": "https://www.tokenpost.com/news/investing/51872",
-   "read": "Our Coinalyze record across five exchanges shows $168M of long and $8.3M of short liquidations for Nov 8, 93% longs; the $700M covers all of crypto on a different basis, so we do not compare them. After the flush open interest of 339,077 BTC was only 0.5% lower, so leverage was not really cleared (finding one); no effect on the market stage.",
+   "read": "Leverage didn't really clear: across our five venues, Nov 8 long liquidations were $168M, and open interest fell just 0.5% afterward (see finding one). The $700M figure covers all of crypto and isn't comparable. No change to the market phase.",
    "module": "deriv"
   },
   {
@@ -110,7 +110,7 @@
    "title": "BTC fell below Strategy's average cost of $75,451; unrealized loss about $500M",
    "source": "TechFlow, 2026-11-08",
    "url": "https://www.techflowpost.com/en-US/newsletter/143600",
-   "read": "Strategy's cost sits with our short-term holder cost of 75,881 (Bitview) and the estimated ETF holder cost of 79,039 (close 5.4% below) in the 75–79K zone, so the largest buyer groups are underwater at once; a paper loss is not a sale, and Strategy has announced none. Part of the cost map, no effect on the cycle call.",
+   "read": "The biggest buyer groups are underwater together: Strategy, short-term holders and ETF holders all have costs at 75–79K. A paper loss doesn't mean selling, and Strategy hasn't announced any; no change to the cycle view.",
    "module": "flows"
   },
   {
@@ -121,7 +121,7 @@
    "title": "Spot ETFs lost about $1.28B over Nov 2–6; with a weekly open of 78,232, BTC faced a fifth straight red week",
    "source": "CryptoTicker (Farside data), 2026-11-08",
    "url": "https://cryptoticker.io/en/bitcoin-price-fifth-losing-week-weekly-close/",
-   "read": "The Nov 8 close of 74,738 is below the weekly open, so the fifth losing week is in. Our ETF 7 trading days to Nov 5 (The Block): −$1.359B, Nov 6 provisional −$412M; no new flows until US markets open Monday. Flows lean bearish, but the stage is set by the 200-day average, still 2.1% below.",
+   "read": "The flow picture is bearish: the fifth straight red week is in, and ETFs lost $1.36B over 7 trading days to Nov 5 (The Block). The market phase rests on the 200-day average, which is still 2% below.",
    "module": "flows"
   },
   {
@@ -132,7 +132,7 @@
    "title": "Nvidia's board opened an independent probe into CEO Jensen Huang over a possible foreign intelligence effort; the company says he stays, earnings Nov 17",
    "source": "CNBC, 2026-11-08",
    "url": "https://www.cnbc.com/2026/11/08/nvidia-jensen-huang-investigation-china-spy.html",
-   "read": "BTC's 30-day correlation with the Nasdaq is 0.751 (FRED, Nov 6) and AI stocks are at the core of this equity sell-off; if US stocks fall again Monday, BTC likely moves the same way. An outside risk event; on-chain and cycle readings are unchanged.",
+   "read": "AI stocks are at the core of this stock sell-off, and BTC's 30-day correlation with the Nasdaq is 0.75; if stocks fall again Monday, BTC likely follows. It's an outside risk and doesn't change the on-chain or cycle readings.",
    "module": "flows"
   },
   {
@@ -143,7 +143,7 @@
    "title": "Week ahead: US October CPI on Nov 10 (about 3.9% y/y expected, 3.7% prior), CoreWeave earnings the same day, PPI on Nov 13",
    "source": "CoinCentral, 2026-11-08",
    "url": "https://coincentral.com/the-week-ahead-cpi-coreweave-earnings-and-fed-speeches-in-focus",
-   "read": "December hike odds were already 76.8% last week (CME FedWatch, Nov 6); 10-year yield 4.84%, real yield 2.60% (FRED Nov 5); a hot CPI would push rate expectations higher. CoreWeave is the bellwether for AI credit stress and moves equities too. Event risk, not a cycle signal.",
+   "read": "A hot CPI would push rate-hike expectations higher; December hike odds already reached 77% (CME FedWatch, Nov 6). CoreWeave's earnings also move AI stocks. Both are event risks, not cycle calls.",
    "module": "flows"
   },
   {
@@ -154,7 +154,7 @@
    "title": "Brent fell over 16% on the week to settle at $98.32 on Nov 6, WTI $90.83; Iran sent a nuclear proposal to the US via Qatar while tanker attacks in Hormuz continue",
    "source": "CNBC, 2026-11-06",
    "url": "https://www.cnbc.com/2026/11/06/oil-price-today-brent-wti.html",
-   "read": "Cheaper oil eases inflation pressure and helps rate expectations, but BTC did not benefit this week: ETFs saw outflows and stablecoins fell 1.72% in 7 days. Geopolitical risk remains and oil can rebound; no effect on the cycle call.",
+   "read": "Cheaper oil helps inflation and rate expectations, but BTC didn't benefit this week: ETFs kept selling and stablecoins fell 1.7% in a week. No change to the cycle view.",
    "module": "flows"
   }
  ],
@@ -239,72 +239,72 @@
  "actions": [
   {
    "kind": "do",
-   "head": "No framework step fired today: no action.",
-   "text": "Nearest action points: the 200-day average at 73,171 below (−2.1%); the MVRV 0.75 line at 112,328 above (+50.3%)."
+   "head": "No rule fired today; no action.",
+   "text": "The nearest action point is the 200-day average at 73,171, 2% below."
   },
   {
    "kind": "dont",
-   "head": "Don't treat the bottom combo as a buy signal.",
-   "text": "Across 21 past cases the 30-day median was only +0.3%, worse than normal, with a median 9.3% dip during the combo; this time on-chain loss-taking is also shallow."
+   "head": "The bottom combo is not a buy signal.",
+   "text": "In the past 21 cases price first fell a median 9% while it lasted, and a month later did worse than usual; loss-taking is shallow this time too."
   },
   {
    "kind": "watch",
-   "head": "Nov 10 CPI (08:30 ET, about 3.9% y/y expected) and CoreWeave earnings; Nov 13 PPI and weekly expiry; Nov 17 Nvidia earnings.",
-   "text": "BTC–Nasdaq 30-day correlation is 0.751; AI stocks and rate expectations are this week's main outside risks."
+   "head": "Two things this week: Nov 10 CPI (8:30 a.m. ET) and Nvidia earnings on Nov 17.",
+   "text": "BTC is moving closely with the Nasdaq; if stocks fall again, BTC likely follows."
   },
   {
    "kind": "watch",
-   "head": "Levels: above, Strategy cost 75,451, short-term holder cost 75,881, true market mean 77,563; below, the leg-end line 73,605, the 200-day average 73,171, estimated long-liquidation band 72,200–73,300.",
-   "text": "Liquidation bands are estimates (Coinalyze, seven exchanges); also watch whether open interest actually falls as price drops."
+   "head": "Above, 75.5–77.6K holds the three buyer groups' costs; below, 72.2–73.6K holds the leg-end line, the 200-day average and the long-liquidation band.",
+   "text": "On a drop, watch whether open interest actually falls: if it does, leverage is leaving; if not, liquidations can amplify the move."
   },
   {
    "kind": "flip",
-   "head": "5 straight closes below 73,171 → framework hedge cuts 20%.",
-   "text": "Currently −2.1% away, 0 days; reverting from bull to bear needs 30 straight closes below a falling 200-day average."
+   "head": "5 straight closes below 73,171 → the framework hedges 20%.",
+   "text": "2% away, 0 days so far; turning back to bear needs 30 straight closes below a falling 200-day average."
   }
  ],
  "changes": [
   {
    "dir": "up",
-   "title": "Long-term holder 30-day net selling narrowed sharply",
-   "fig": "−102,380 → −75,898 BTC (bitcoin-data Nov 6 → Nov 7)",
-   "say": "About 26K narrower in a day, partly coins aging past 155 days into the long-term group; still the same net-selling run since Aug 4, but old coins are not the main source of this selling."
+   "title": "Long-term holder net selling narrowed sharply",
+   "fig": "30-day net position −102K → −76K BTC",
+   "say": "Old coins aren't driving this sell-off; part of it is coins aging past 155 days into the long-term group."
   },
   {
    "dir": "up",
-   "title": "Implied-vol curve went from flat to inverted",
-   "fig": "7-day minus 90-day 0.2 → 2.6 points; 7-day 39.2% → 42.1%",
-   "say": "Near-term protection got pricier after the weekend drop; the market sees more near-term risk. Volatility only, not direction."
+   "title": "The implied-vol curve inverted",
+   "fig": "7-day above 90-day by 2.6 points",
+   "say": "After the weekend drop near-term protection got pricier, so the market sees more risk right ahead; this is about volatility, not direction."
   },
   {
    "dir": "up",
-   "title": "Volume back to two-thirds of the 20-day average",
-   "fig": "Volume vs 20-day 0.35 → 0.67; daily range 0.9% → 3.5%",
-   "say": "Sunday's drop came on real volume, not a thin weekend drift; dollar flows show up when ETFs and US stocks open Monday."
+   "title": "Volume back to two-thirds of normal",
+   "fig": "Volume vs 20-day average 0.35 → 0.67",
+   "say": "Sunday's drop had volume behind it; it wasn't a thin weekend drift."
   },
   {
    "dir": "up",
-   "title": "Sentiment back from extreme fear to fear",
-   "fig": "Fear & Greed 25 → 28; 30-day mean 48.6",
-   "say": "Price fell again while sentiment ticked up; sentiment on its own is not a buy or sell signal."
+   "title": "Sentiment moved from extreme fear to fear",
+   "fig": "Fear & Greed 25 → 28",
+   "say": "Price fell again while sentiment ticked up; the two are out of step."
   }
  ],
  "findings": [
   {
    "id": "2026-11-08-1",
-   "title": "$168M of longs liquidated, open interest still at the 98th percentile",
+   "title": "Leverage didn't clear: $168M liquidated, OI still at the 98th percentile",
    "module": "deriv",
    "chart": "oih",
    "signals": [],
    "confidence": "medium",
    "lean": "bear",
-   "lean_why": "Price is down 9.4% in 30 days while leverage grew by a tenth and accounts lean long; another drop would force market-sold liquidations that amplify it.",
-   "what": "Sunday's drop cleared a batch of longs, but leverage as a whole did not retreat: price fell 9.4% in 30 days while total perp open interest rose 10.6%, at the 98th percentile since 2021 (Coinalyze, Nov 8).",
-   "why": "Basis: no signal captured this; taken from deriv.liq_vol, oi_hist, ls_acct and funding_multi in the brief. Liquidations: Nov 8 longs $168M, shorts $8.3M, 93% longs; 7-day longs $491M (Coinalyze five venues, actual records, under-reported). Open interest: 339,077 BTC vs 340,639 the day before, only 0.5% lower after the flush, +2.1% over 7 days. Cross-check: Binance long-account share 75.5% (96th percentile), Bybit 70.6%; funding on the old three-venue basis 9.98% → 6.45%, OKX now 2.30%, so longs pay much less and the rush to go long has cooled, but the positions remain. Contradiction: Hyperliquid's top 2,000 accounts hold 14,082 BTC short vs 9,439 BTC long, so big accounts lean short and the long build is in smaller accounts.",
-   "alt": "Part of the open-interest rise may be basis trades (long spot, short perp) or hedging shorts, not all longs; the long-account share counts accounts, not position size. Coinalyze's Binance liquidation feed pushes one record per second, so totals run low: good for long vs short, not for size. Big Hyperliquid accounts may be market makers or hedgers. Funding became a five-venue weighted figure on Nov 9; comparisons with yesterday use the three-venue basis.",
-   "history": "High long-account share (≥ 90th percentile) occurred 27 times: 90 days later price was higher 11 times, median −4.5%, versus 53% and +2.0% normally (Coinalyze, since 2021); most recently Oct 31 at 74.0%. Contracts were added over time, so part of the long-term open-interest rise is new contracts; discount the percentile.",
-   "so": "What changed is the cost of leverage: funding fell about 3.5 points in a day, the long rush cooled. What did not change is the positions: open interest barely fell after the flush, and the estimated long-liquidation bands at 72,200–73,300 (−2.8%, about 18.1K BTC) and 70,000–72,100 (−5.0%) remain (estimate, Coinalyze seven exchanges). Conditional: a move into those bands would trigger forced long selling at market, which can accelerate a drop. Market stage and exit framework unchanged.",
-   "next": "By Nov 15: open interest at or below 322,000 BTC (about −5%) would show leverage really retreating, refuting this; 7-day long liquidations above $800M would show leverage being flushed by force rather than cut voluntarily, confirming it.",
+   "lean_why": "Price is down 9% in 30 days while leverage is up a tenth; on another leg down, liquidations are market sells and would amplify the fall.",
+   "what": "Sunday's drop flushed only a small part of the longs, and leverage overall is still high: after $168M of long liquidations, open interest fell just 0.5% and sits at the 98th percentile since 2021 (Coinalyze, Nov 8).",
+   "why": "Longs pay less but haven't left. Funding fell about 3.5 points in a day, so the rush into longs has cooled; but open interest is up a tenth in 30 days while price fell 9%. 76% of Binance accounts are long, also near the top. The exception: Hyperliquid's top 2,000 accounts lean short, so the long pile-up is in small and mid-sized accounts.",
+   "alt": "Not all of the open-interest growth is longs; some may be basis trades (long spot, short perps) or hedges. The long-account share counts accounts, not position size. Binance pushes only one liquidation record per second, so totals run low; good for comparing longs vs shorts, not for totals.",
+   "history": "When the long-account share gets this crowded, what follows has been weaker than usual. Since 2021 there were 27 cases, with a median of −4.5% 90 days later against +2% normally (Coinalyze).",
+   "so": "What changed is the cost: longs pay less funding and the rush has cooled. What didn't change is the position: the estimated long-liquidation bands at 72–73K and 70–72K are still there (Coinalyze, seven venues), and a drop into them would trigger market selling that can speed the fall. No change to the market phase or the exit framework.",
+   "next": "Two paths by Nov 15: open interest falls below 322,000 BTC (about −5%), meaning leverage left on its own and a drop is less likely to be amplified, which refutes this; 7-day long liquidations top $800M, meaning leverage was flushed by liquidations and the fall was amplified, which confirms it.",
    "check": [
     {
      "path": "deriv.oi_hist.btc",
@@ -332,13 +332,13 @@
    "signals": [],
    "confidence": "low",
    "lean": "neutral",
-   "lean_why": "Past bottom combos did better than normal over 90 days but worse over 30, and loss-taking this time is shallow, so sellers have not truly capitulated; the two sides offset.",
-   "what": "Our in-house selling pressure stayed at 100 and momentum quality fell to 0.25, so the bottom combo fired (Daybreak, daily closes only, Nov 8). But on-chain loss-taking is shallow: the latest realized-loss peak is only 4.82 bp of market cap, against 13.2 at the Jun 30 low (Bitview).",
-   "why": "Basis: no signal captured this; taken from chips.stress and onchain.rloss in the brief. Momentum quality 0.30 → 0.25 as the 21-day return t-stat weakened again; the fifth losing week. Cross-check: 73.8% of short-term holders at a loss, 26.2% in profit, a 30-day low (Bitview); STH-SOPR 0.9931, third day below 1 (CheckOnChain); short-term holder realized loss 4,177 → 3,875 BTC, profit 3,071 BTC (CheckOnChain Nov 8). Contradiction: more holders are underwater on paper while realized loss-taking shrinks; the Nov 6 realized-loss peak of 4.82 bp is a little below the Sep 15 peak of 5.41, flagged flat, not a divergence. The other side: LTH-SOPR 0.9701 → 0.9393, so long-term holders who sell are also selling at a loss (Bitview), and 35.6% of 30-day realized losses came from 1–2 year holders.",
-   "alt": "Selling pressure uses closes only, so a slow grind lower also fills it; 0.25 versus 0.3 is not a meaningful difference. Realized loss and SOPR are per-UTXO, not entity-adjusted, so exchange wallet reshuffles get mixed in; in the ETF era much turnover happens in the stock market off-chain, so on-chain loss-taking may simply run shallower.",
-   "history": "Since 2012 the bottom combo has fired 21 times: 30 days later up 11 times, median +0.3% (normal 57%, +3.2%); 90 days up 13 times, median +14.7% (normal 60%, +9.9%); by the end of the combo 13 gains, median +4.2%, average 40 days, with a median 9.3% dip along the way. By era: 2012–2017 3 of 6, 2018–2022 6 of 9, 2023–2026 4 of 6; after 2022/04 price fell another 51.5%, and both 2014 cases fell over 40% more.",
-   "so": "Logic chain: price-based weakness has maxed out (A happened), so the bottom combo fired; but on-chain there is no June-style concentrated capitulation (B has not happened), so we cannot say sellers have given up. This is not a buy signal: past 30-day results were worse than normal, with a median 9.3% dip during the combo. Market stage and exit framework unchanged.",
-   "next": "By Nov 15: short-term holder realized loss above 5,000 BTC, or STH-SOPR below 0.985, would show loss-taking widening, refuting \"shallow loss-taking\".",
+   "lean_why": "Past bottom combos did better than usual over three months but worse within one; loss-taking is shallow this time, so it cuts both ways.",
+   "what": "Price-based selling is maxed out, but sellers haven't capitulated: our selling pressure is at 100 and momentum quality at 0.25, so the bottom combo fired; yet the latest realized-loss peak is only 4.8 basis points of market cap, against 13.2 at the June 30 low (Bitview).",
+   "why": "More holders are at a loss on paper, fewer are actually selling at one. 74% of short-term holders are underwater, the most in 30 days, yet their realized losses fell from 4,177 to 3,875 BTC (CheckOnChain, Nov 8). On the other side, long-term holders who do sell are taking losses too, with LTH-SOPR at 0.94 (Bitview).",
+   "alt": "Selling pressure uses only closing prices, so a slow grind lower can also max it out. In the ETF era much of the turnover happens in stock markets, off-chain, so on-chain loss-taking may run shallow even when sellers have given up.",
+   "history": "After a bottom combo, price has usually fallen further before working its way out. Since 2012 there were 21 cases: a median 9% drop while the combo lasted, then a median +15% three months later, better than the usual +10%.",
+   "so": "This is not a buy signal: price-based weakness is maxed out, but there's been no June-style burst of loss-taking, and past real lows usually came after one. No change to the market phase or the exit framework.",
+   "next": "Two paths by Nov 15: short-term holder realized losses top 5,000 BTC, or STH-SOPR falls below 0.985, meaning loss-taking is growing and sellers are starting to capitulate, which refutes 'shallow loss-taking'; if neither happens, loss-taking stays shallow and the combo takes longer to count.",
    "check": [
     {
      "path": "onchain.sth_pnl.loss",
@@ -370,13 +370,13 @@
    ],
    "confidence": "medium",
    "lean": "bear",
-   "lean_why": "Short-term holders, Strategy and ETF holders all have their cost above price, so rallies there meet break-even selling; below, supply is thin down to 64K with no thick bid.",
-   "what": "Question: ahead of Monday's open, where is break-even supply above and support below? The answer is that cost sits overhead: short-term holder cost 75,881, Strategy's average 75,451 and the estimated ETF holder cost 79,039 are all above the 74,738 close (Bitview, TechFlow, The Block estimate, Nov 5–8).",
-   "why": "Participants and cost map (CheckOnChain actual coin age, Nov 8): short-term holders 3.720M BTC at an average 75,219; the three thickest bands are 76K (624K), 80K (531K) and 62K (478K); long-term holder cost 48,833 (Bitview), still deep in profit. The true market mean at 77,563 is 3.8% above. Two points in time: 30 days ago short-term holders held 3.616M BTC at 74,205 (Bitview actual); now about 100K more, with cost about 1,000 higher; new unmoved coins concentrate at 76K and 80K (estimate; total off by 0.4%, 8.0% misplaced). Behavior: long-term holder 30-day net position −102,380 → −75,898 BTC (bitcoin-data Nov 7), net selling narrowing; LTH-SOPR 0.9393, so long-term sellers are also at a loss; ETFs lost about $1.28B in a week, the highest-cost group trimming.",
-   "alt": "ETF holder cost is our estimate from flows ÷ close, ex-GBTC; Strategy's cost is a company-reported figure, and paper losses are not sales. CheckOnChain and Bitview are per-UTXO, not entity-adjusted, so exchange wallet moves count as turnover; URPD lags 1–2 days. Long-term net position changes also include coins aging past 155 days.",
-   "history": "Price near the thickest short-term pile (±3%) for 4 days and near short-term holder cost for 4 days (signals); day 398 after the cycle top, where the prior three cycles sat 74.7%–81.6% below their tops versus −40.1% now; only three cycles of sample.",
-   "so": "Logic chain: all three main buyer groups are underwater (A happened), so a bounce into 75.5–79K meets break-even supply first; long-term holder net selling is narrowing (B did not worsen), so old coins are not the main sellers. Scenario (conditional, CheckOnChain Nov 8): at a 70,000 close 2.660M short-term holder BTC would be at a loss, at 66,000 only 2.709M, jumping to 3.109M only at 64,000; long-term holder coins at a loss rise from 5.706M at 74,000 to 6.793M at 66,000. With no thick cost zone between 74K and 66K, price tends to move fast through thin supply. Market stage and exit framework unchanged.",
-   "next": "By Nov 15: a close back above 76,000, above both short-term holder and Strategy cost, refutes this; a close below 72,200 (under the 200-day average and the estimated liquidation band) confirms the overhead cost has turned into resistance.",
+   "lean_why": "All three main buyer groups have costs overhead, so rebounds there meet break-even selling; below, coin supply is thin down to 64K, with no thick support on the way.",
+   "what": "Break-even sellers above, no thick support below: short-term holder cost 75,881, Strategy 75,451 and estimated ETF holder cost 79,039 all sit above the 74,738 close (Bitview, TechFlow, The Block estimate, Nov 5–8).",
+   "why": "The costs are all overhead. Short-term holders hold 3.72M BTC at an average cost of 75,219, thickest at 76K and 80K (CheckOnChain, Nov 8); the True Market Mean at 77,563 is also 4% above. Long-term holders' cost is 48,833, deep in profit, and their net selling is narrowing, so they aren't the main sellers.",
+   "alt": "ETF holder cost is our estimate from flows and excludes GBTC; Strategy's cost is the company's own figure, and a paper loss doesn't mean it will sell. On-chain costs are per-UTXO, so exchange wallet reshuffles count as turnover.",
+   "history": "This cycle's drawdown is far shallower than the last three: 398 days after the top it's down 40%, while the past three cycles were down 75–82% at the same point (only three cycles of data). Price has hugged short-term holder cost for 4 days.",
+   "so": "Rebounds into 75.5–79K meet break-even selling first. Below, there's no thick cost zone from 74K to 66K: at a 66,000 close, short-term holders at a loss would be only about 50K BTC more than at 70,000, jumping to 3.11M only at 64,000 (CheckOnChain, Nov 8). Price tends to move fast where coin supply is thin. No change to the market phase or the exit framework.",
+   "next": "Two paths by Nov 15: a close back above 76,000, over short-term holder and Strategy cost, refutes this; a close below 72,200, under the 200-day average and the liquidation band, confirms the costs overhead have turned into resistance.",
    "check": [
     {
      "path": "price.bar.c",
@@ -403,70 +403,70 @@
    "title": "ETFs lose $1.28B in a week while perp longs pay up to nearly 10% funding",
    "since": "2026-11-07",
    "status": "open",
-   "say": "Funding is now a five-venue weighted 6.23% (6.45% on the old three-venue basis, 9.98% yesterday), further from the 12% confirm line; Coinbase premium 7-day average −0.145%, still below the −0.05% refute line; deadline Nov 14."
+   "say": "Not confirmed: funding fell from 10% to 6%, further from the 12% confirm line; Coinbase still trades at a discount, so not refuted either. Deadline Nov 14."
   },
   {
    "id": "2026-11-07-2",
    "title": "76K coins three days underwater: loss-selling not growing, buyers not back",
    "since": "2026-11-07",
    "status": "open",
-   "say": "Short-term holder realized loss 3,875 BTC, further from the 5,000 refute line; close 74,738, further from 77,600; neither side refuted; deadline Nov 14."
+   "say": "Neither side refuted: loss-taking of 3,875 BTC is further from 5,000, and the 74,738 close is further from 77,600. Deadline Nov 14."
   },
   {
    "id": "2026-11-07-3",
    "title": "Selling pressure maxed out; a bit less momentum away from the bottom combo",
    "since": "2026-11-07",
    "status": "confirmed",
-   "say": "Confirmed: momentum quality 0.30 → 0.25, below 0.3 with selling pressure at 100: the bottom combo fired (see 2026-11-08-2)."
+   "say": "Confirmed: momentum quality fell to 0.25 and the bottom combo fired (see 2026-11-08-2)."
   },
   {
    "id": "2026-11-06-1",
    "title": "Short-term holders start selling at a loss, and 1–2-year holders join in",
    "since": "2026-11-06",
    "status": "open",
-   "say": "Short-term holder realized loss 3,875 BTC, not yet at the 5,000 confirm line; close 74,738 did not regain 78,000; deadline Nov 13."
+   "say": "Not confirmed: short-term holder loss-taking of 3,875 BTC is short of 5,000, and the close hasn't reclaimed 78,000. Deadline Nov 13."
   },
   {
    "id": "2026-11-06-2",
    "title": "ETFs, stablecoins and the Coinbase premium: all three dollar channels draining",
    "since": "2026-11-06",
    "status": "open",
-   "say": "Stablecoins $293.3B, $3.3B above the $290B confirm line; Coinbase premium 7-day average −0.145%; deadline Nov 13."
+   "say": "Close to confirmed: stablecoins at $293.3B, just $3.3B above the $290B confirm line. Deadline Nov 13."
   },
   {
    "id": "2026-11-05-1",
    "title": "70% of short-term coins are at a loss, but short-term holders have not sold at a loss yet",
    "since": "2026-11-05",
    "status": "open",
-   "say": "STH-SOPR 0.9931, still above the 0.99 confirm line; close 74,738 did not regain 78,000; deadline Nov 12."
+   "say": "Not confirmed: STH-SOPR at 0.9931 is still above the 0.99 confirm line. Deadline Nov 12."
   },
   {
    "id": "2026-11-05-2",
    "title": "BTC fell with stocks; longs were flushed but funding is still positive",
    "since": "2026-11-05",
    "status": "open",
-   "say": "Close 74,738 still above 73,800, though the intraday low of 73,444 dipped into it; Coinbase premium 7-day average −0.145%; deadline Nov 12."
+   "say": "Still tracking: the 74,738 close holds above 73,800, but the intraday low already dipped into it. Deadline Nov 12."
   },
   {
    "id": "2026-11-02-2",
    "title": "Sellers as a whole turned to losses; profit-taking has ebbed",
    "since": "2026-11-02",
    "status": "open",
-   "say": "Daily profit/loss 7-day average 0.661, further from the 1.2 refute line; short-term holder realized loss 3,875 BTC, not yet at the 5,000 confirm line; deadline Nov 9."
+   "say": "Not confirmed: short-term holder loss-taking of 3,875 BTC is short of 5,000; sellers as a whole are still taking losses. Deadline Nov 9."
   },
   {
    "id": "2026-11-02-3",
    "title": "The illiquid-supply surge is mostly Binance withdrawals, not new buying",
    "since": "2026-11-02",
    "status": "open",
-   "say": "Coinbase premium 7-day average −0.145%, not below the −0.2% confirm line; stablecoin 7-day change −1.72%, still negative; deadline Nov 9."
+   "say": "Not confirmed: Coinbase's 7-day average discount of −0.145% hasn't broken −0.2%; stablecoins are still shrinking. Deadline Nov 9."
   },
   {
    "id": "2026-11-01-1",
    "title": "New 76K coins below, underwater 80–82K coins above, price stuck at the mean",
    "since": "2026-11-01",
    "status": "refuted",
-   "say": "Refuted: the 74,738 close broke below 75,000; the 76K layer of new coins did not hold and price fell under it (see 2026-11-08-3)."
+   "say": "Refuted: the 74,738 close broke 75,000, and the 76K layer of new coins didn't hold (see 2026-11-08-3)."
   }
  ],
  "research": {
