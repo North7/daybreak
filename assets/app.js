@@ -1010,6 +1010,7 @@
     if (a.atr14) it.push(['ATR14', fmt.usd(a.atr14), _t('一天的正常波動約 ±') + fmt.usd(a.atr14) + _t('（') + fmt.n(a.atr14 / c * 100, 1) + _t('%）：這個範圍內的漲跌屬日常雜訊；掛單或停損的距離小於它，很容易被正常波動掃到。'), 'neu']);
     if (v.rv30 != null) it.push([_t('實際波動 RV30'), fmt.n(v.rv30, 1) + '%', band(v.rv30, [30, 50, 70], [_t('年化 30% 以下，低波動'), _t('年化 30–50%，一般水準'), _t('年化 50–70%，偏高'), _t('年化 70% 以上，劇烈')]) + rvYear(v) + (v.rv7_rv30 < 0.75 ? _t('；近 7 天明顯比近 30 天平靜（RV7 只有 RV30 的 ') + fmt.n(v.rv7_rv30 * 100, 0) + _t('%），價格在收斂盤整，之後常出現方向性突破。') : v.rv7_rv30 > 1.3 ? _t('；近 7 天波動明顯放大（RV7 是 RV30 的 ') + fmt.n(v.rv7_rv30, 2) + _t(' 倍）。') : _t('。')), 'neu']);
     if (my != null) it.push([_t('Mayer 倍數'), fmt.n(my, 2), band(my, [0.8, 1, 1.5, 2.4], [_t('0.8 以下：歷史便宜區'), _t('0.8–1：價格低於 200 日均線，偏弱但不算便宜'), _t('1–1.5：價格高於 200 日均線、還沒過熱'), _t('1.5–2.4：偏熱'), _t('2.4 以上：歷史過熱區')]) + _t('。'), my < 0.8 ? 'pos' : my >= 2.4 ? 'neg' : my >= 1.5 ? 'warn' : 'neu']);
+    var w5 = w50Row(); if (w5) it.push(w5);
     var qy = p.q365;   // 2026-11-09 使用者要求（365 日分位帶）：收盤在近 365 天收盤裡的位置；只用價格，和 Mayer 倍數是同一件事
     if (qy && qy.pct != null) it.push([_T('近一年位置', '1-year position'), _T('第 ' + fmt.n(qy.pct, 0) + ' 百分位', ord(qy.pct) + ' pct'),
       (c < qy.q10 ? _T('過去一年最弱的一成：收盤跌破 10% 線 ' + fmt.k(qy.q10) + '。前三輪的週期低點都落在這種期間，但每段持續 3–7 個月。', 'Weakest tenth of the past year: the close is below the 10% line at ' + fmt.k(qy.q10) + '. The past three cycle lows all came inside such stretches, each lasting 3–7 months.')
@@ -1020,6 +1021,29 @@
       c < qy.q10 ? 'neg' : c > qy.q90 ? 'pos' : 'neu']);
     if (pi != null) it.push(['Pi Cycle', fmt.n(pi, 2), pi >= 1 ? _t('已到 1：歷史頂部訊號觸發。') : pi >= 0.9 ? _t('接近 1，頂部訊號逼近。') : _t('只有 ') + fmt.n(pi, 2) + _t('，離觸發（1）很遠，沒有頂部跡象。'), pi >= 1 ? 'neg' : pi >= 0.9 ? 'warn' : 'neu']);
     return it;
+  }
+  /* 2026-11-09 使用者要求（國外 X 多用 50 週均線看牛熊，本站用 200 日）：50 週均線的週收盤讀值。週收盤＝週日的日收盤；
+     列出最近一根週 K 在上／下、連幾週、和 200 日均線是否同調，以及 2013 年起每次週收盤跌破後多久收回。只作讀值 */
+  function w50Row() {
+    var w = ((D.cycle || {}).levels || {}).w50; if (!w) return null;
+    var B = (w.breaks || []).filter(function (b) { return b.weeks != null; }), q = function (f) { return B.filter(f); };
+    var fast = q(function (b) { return b.weeks <= 2; }), mid = q(function (b) { return b.weeks > 2 && b.weeks < 26; }), slow = q(function (b) { return b.weeks >= 26; });
+    var rng = function (A) { var v = A.map(function (b) { return b.weeks; }), lo = Math.min.apply(null, v), hi = Math.max.apply(null, v); return lo === hi ? '' + lo : lo + '–' + hi; };
+    var yrs = slow.map(function (b) { return b.date.slice(0, 4); }), y0 = (w.since || '').slice(0, 4), cr = w.cross, fresh = cr && cr.date === w.date, ab = w.above, a2 = w.above200, L = w.live;
+    var t = _T(fmt.md(w.date) + ' 週收盤 ' + fmt.usd(w.close) + (ab ? '，高於' : '，低於') + ' 50 週均線 ' + fmt.usd(w.ma) + '（' + fmt.pct(w.dist_pct, 1) + '）',
+      'The ' + fmt.md(w.date) + ' weekly close of ' + fmt.usd(w.close) + ' is ' + fmt.n(Math.abs(w.dist_pct), 1) + '% ' + (ab ? 'above' : 'below') + ' the 50-week MA at ' + fmt.usd(w.ma));
+    t += fresh ? _T('，是連 ' + cr.prev_run + ' 週在' + (ab ? '下方之後第一次收回上方。' : '上方之後第一次收在下方。'), ', the first close ' + (ab ? 'back above' : 'below') + ' it after ' + cr.prev_run + ' weeks ' + (ab ? 'below.' : 'above.'))
+      : _T('，已連 ' + w.run + ' 週在' + (ab ? '上方' : '下方') + (cr ? '（' + ymdD(cr.date) + (cr.up ? ' 站回）' : ' 跌破）') : '') + '。', ', ' + w.run + ' weeks ' + (ab ? 'above' : 'below') + ' in a row' + (cr ? ' (' + (cr.up ? 'reclaimed ' : 'lost ') + ymdD(cr.date) + ')' : '') + '.');
+    if (a2 != null && w.sma200) t += a2 !== ab
+      ? _T('但收盤仍在 200 日均線 ' + fmt.usd(w.sma200) + (a2 ? ' 之上' : ' 之下') + '，兩條線目前不同調：50 週偏' + (ab ? '多' : '空') + '、200 日偏' + (a2 ? '多。' : '空。'),
+        ' Yet the close is still ' + (a2 ? 'above' : 'below') + ' the 200-day MA at ' + fmt.usd(w.sma200) + ', so the two lines disagree: the 50-week reads ' + (ab ? 'bullish' : 'bearish') + ', the 200-day ' + (a2 ? 'bullish.' : 'bearish.'))
+      : _T('收盤也在 200 日均線 ' + fmt.usd(w.sma200) + (a2 ? ' 之上' : ' 之下') + '，兩條線同調。', ' The close is also ' + (a2 ? 'above' : 'below') + ' the 200-day MA at ' + fmt.usd(w.sma200) + '; the two lines agree.');
+    if (B.length) t += _T(y0 + ' 年起週收盤跌破 ' + B.length + ' 次：' + [fast.length ? fast.length + ' 次兩週內就收回' : '', mid.length ? mid.length + ' 次 ' + rng(mid) + ' 週後收回' : '', slow.length ? slow.length + ' 次在下方待了 ' + rng(slow) + ' 週（' + yrs.join('、') + ' 年，都是熊市）' : ''].filter(Boolean).join('，') + '。',
+      ' Since ' + y0 + ' the weekly close has broken below it ' + B.length + ' times: ' + [fast.length ? fast.length + ' reclaimed it within two weeks' : '', mid.length ? mid.length + ' after ' + rng(mid) + ' weeks' : '', slow.length ? slow.length + ' stayed below for ' + rng(slow) + ' weeks (' + yrs.join(', ') + ', all bear markets)' : ''].filter(Boolean).join(', ') + '.');
+    if (L) t += _T('本週還沒收，用 ' + fmt.md(L.date) + ' 收盤 ' + fmt.usd(L.price) + ' 代入，在 50 週均線 ' + fmt.usd(L.ma) + (L.above ? ' 之上' : ' 之下') + '（' + fmt.pct(L.dist_pct, 1) + '）。',
+      ' This week has not closed; with the ' + fmt.md(L.date) + ' close of ' + fmt.usd(L.price) + ' it sits ' + fmt.n(Math.abs(L.dist_pct), 1) + '% ' + (L.above ? 'above' : 'below') + ' the 50-week MA at ' + fmt.usd(L.ma) + '.');
+    t += _T('看的是週日的收盤，週中跌破不算。', ' Only the Sunday close counts; breaks during the week do not.');
+    return [_T('50 週均線', '50-week MA'), _T('週收盤 ', 'Weekly ') + fmt.pct(w.dist_pct, 1), t, ab ? 'pos' : w.run >= 2 ? 'neg' : 'warn'];
   }
   function levelsSay(lv, c) {
     var up = lv.filter(function (x) { return x[0] > c; }).pop(), dn = lv.filter(function (x) { return x[0] <= c; })[0];
@@ -3667,10 +3691,10 @@
 
   /* 成本線與均線（2026-11-04 使用者要求，Glassnode 週報〈Retesting the Breakout〉）：價格和 200／365 日、50 週均線、短期持有者成本、
      真實市場均價、實現價、長期持有者成本放在同一張圖；均線用統一收盤，成本線用 Bitview。只作讀值 */
-  var LV_NAME = { sma200: ['200 日均線', '200-day MA'], sma365: ['365 日均線', '365-day MA'], sma350: ['50 週均線', '50-week MA'], sth: ['短期持有者成本', 'STH cost basis'], tmm: ['真實市場均價', 'True market mean'], rp: ['實現價', 'Realized price'], lth: ['長期持有者成本', 'LTH cost basis'], act: ['活躍投資人成本', 'Active investor price'] };
-  var LV_COL = { sma200: ['var(--s1)', ''], sma365: ['var(--s4)', ''], sma350: ['var(--ink-2)', '5 4'], sth: ['var(--s2)', ''], tmm: ['var(--s3)', ''], rp: ['var(--ink-3)', '5 4'], lth: ['var(--ink-3)', '2 3'], act: ['var(--s2)', '5 4'] };   // 2026-11-05 活躍投資人成本：成本類用橙色，虛線和短期持有者成本區分
-  var LV_IDX = { sma200: 2, sma365: 3, sma350: 4, sth: 5, tmm: 6, rp: 7, lth: 8, act: 9 };
-  function lvName(k) { return _T(LV_NAME[k][0], LV_NAME[k][1]); }
+  var LV_NAME = { sma200: ['200 日均線', '200-day MA'], sma365: ['365 日均線', '365-day MA'], w50: ['50 週均線', '50-week MA'], sth: ['短期持有者成本', 'STH cost basis'], tmm: ['真實市場均價', 'True market mean'], rp: ['實現價', 'Realized price'], lth: ['長期持有者成本', 'LTH cost basis'], act: ['活躍投資人成本', 'Active investor price'] };
+  var LV_COL = { sma200: ['var(--s1)', ''], sma365: ['var(--s4)', ''], w50: ['var(--ink-2)', '5 4'], sth: ['var(--s2)', ''], tmm: ['var(--s3)', ''], rp: ['var(--ink-3)', '5 4'], lth: ['var(--ink-3)', '2 3'], act: ['var(--s2)', '5 4'] };   // 2026-11-05 活躍投資人成本：成本類用橙色，虛線和短期持有者成本區分
+  var LV_IDX = { sma200: 2, sma365: 3, w50: 4, sth: 5, tmm: 6, rp: 7, lth: 8, act: 9 };
+  function lvName(k) { var n = LV_NAME[k] || LV_NAME[{ sma350: 'w50' }[k]]; return n ? _T(n[0], n[1]) : k; }   // 2026-11-09 前的資料（上一份數字）叫 sma350
   function lvSay() {
     var x = D.cycle.levels, it = [], up = x.levels.filter(function (l) { return l.value > x.price; }), dn = x.levels.filter(function (l) { return l.value <= x.price; }), nr = x.near;
     var li = function (L) { return L.map(function (l) { return lvName(l.key) + ' ' + fmt.usd(l.value) + '（' + fmt.pct(l.dist_pct, 1) + '）'; }).join(_T('、', ', ')); };
@@ -3703,8 +3727,8 @@
     var x = (D.cycle || {}).levels; if (!x || !x.rows) return '';
     return panel('span-12', _T('成本線與均線', 'Cost bases and moving averages'), _T('均線：統一收盤 · 成本線：Bitview · ' + fmt.md(x.date), 'MAs: standard close · cost bases: Bitview · ' + fmt.md(x.date)),
       interpHtml(lvSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink)']].concat(Object.keys(LV_NAME).map(function (k) { return [lvName(k), LV_COL[k][0], LV_COL[k][1] ? 'dash' : '']; }))) + '<div class="chart" id="c-levels"></div>' +
-      '<p class="note">' + _T('均線用本站統一收盤（50 週均線＝350 日均線）；短期持有者成本（持有不到 155 天的幣的平均買價）、真實市場均價（排除長期不動的幣後活躍投資人的平均成本）、實現價（全體持有者的平均成本）、長期持有者成本、活躍投資人成本（Cointime 的 Active Price：依幣的活躍程度加權，長期不動的幣幾乎不算）都來自 Bitview。',
-        'Moving averages use the site\'s standard close (50-week = 350-day); the short-term holder cost basis (average purchase price of coins held under 155 days), true market mean (average cost of active investors, excluding long-dormant coins), realized price (average cost of all holders), long-term holder cost basis and active investor price (Cointime Active Price: weighted by how active coins are, so dormant coins barely count) come from Bitview.') + '</p>');
+      '<p class="note">' + _T('均線用本站統一收盤；50 週均線照週線圖的算法：週日的收盤是週收盤，最近 49 根週 K 的收盤加上當天收盤再平均，週日那天就是正式的週線值。短期持有者成本（持有不到 155 天的幣的平均買價）、真實市場均價（排除長期不動的幣後活躍投資人的平均成本）、實現價（全體持有者的平均成本）、長期持有者成本、活躍投資人成本（Cointime 的 Active Price：依幣的活躍程度加權，長期不動的幣幾乎不算）都來自 Bitview。',
+        'Moving averages use the site\'s standard close; the 50-week MA follows the weekly chart: Sunday\'s close is the weekly close, and each day averages the last 49 weekly closes with that day\'s close, so on Sundays it is the official weekly value. The short-term holder cost basis (average purchase price of coins held under 155 days), true market mean (average cost of active investors, excluding long-dormant coins), realized price (average cost of all holders), long-term holder cost basis and active investor price (Cointime Active Price: weighted by how active coins are, so dormant coins barely count) come from Bitview.') + '</p>');
   }
   function drawLevels(el) {
     var x = (D.cycle || {}).levels; if (!x || !el) return;
