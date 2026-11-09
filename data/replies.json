@@ -18,7 +18,7 @@
    "url": "https://x.com/AxelAdlerJr/status/2119706444731720052",
    "posted": "2026-11-09T08:19:33Z",
    "summary": "Axel Adler：BTC 本週從 74K 開始，低於近一年中位數，籌碼獲利比例在降；Morning Brief 講這對週期的意義和本週要收復的價位",
-   "reply": "The profitability drop is almost all recent buyers\nLong-term holders in loss are at 35%, the last three cycle lows peaked near 45–53%, and June 30 was already there\nIf June 30 was the low, this is a shakeout, and the first level to win back is recent buyers' cost at $75.9K",
+   "reply": "Almost all of the profitability drop is recent buyers\nLong-term holders in loss are at 35%, still short of where the last three cycle lows topped out\nLooks like a shakeout more than capitulation, as long as June 30 holds as the low",
    "sources": "onchain.lthloss（CheckOnChain 11/08）長期持有者虧損比例 34.6%；前三輪底部後高峰 53.0%（2015）、46.4%（2019）、44.7%（2022），6/30 當天 45.4%；chips.flow.sth_in_profit_pct 26.24%（Bitview 11/08）；短期持有者成本 75,881（Bitview 11/08）",
    "note": "固定名單 scan，2.9 萬粉、3.5K 瀏覽、38 讚，發文約 3 小時（台北 16:20 發），曝光型。接他「獲利比例在降」的核心：掉的幾乎都是短期持有者，長期持有者虧損比例離前三輪底部的高峰還遠，帶前提（如果 6/30 是底）說這是洗盤區；他問要收復的價位，給短期持有者成本。配長期持有者虧損比例圖英文版（今天英文沒用過這張）。今天沒有近一年中位數的數字（latest.json 還沒有 q365），所以沒接那一半。",
    "image": {
@@ -44,7 +44,7 @@
    "url": "https://x.com/0xGummyBear/status/2119721623569977436",
    "posted": "2026-11-09T09:19:52Z",
    "summary": "CVD 看到鯨魚三段減倉（9/23–24、10/06–08、10/29–11/08），主動買進消退；若收線跌破 STH-RP 怎麼辦；URPD 62–65K 有大量籌碼可當支撐；看明天 CPI",
-   "reply": "鯨魚退場這段，美國現貨那邊看得更清楚\nCoinbase 近 7 天主動賣比主動買多了 4,600 顆，排在 2021 年以來最弱的 4%\n所以 62 到 65K 那層厚歸厚，眼前的問題是誰來把價格撐在成本線上\n買盤回不回來，看 Coinbase 這個數字什麼時候翻正，CPI 只是開關",
+   "reply": "鯨魚退場這段，美國現貨那邊看得更清楚\nCoinbase 最近一週主動賣比主動買多了 4,600 顆，2021 年以來很少這麼弱\n62–65K 那層籌碼再厚，也得先有人把價格撐住，CPI 只是開關",
    "sources": "deriv.taker.cb（Coinalyze＋Coinbase，11/08）：Coinbase 現貨主動買−主動賣 7 天 −4,577 顆，2021-08 起第 4 百分位（中位數 +1,923）；三家現貨 7 天 −2,325 顆；URPD（CheckOnChain 11/08）62–66K 短期持有者約 88 萬顆；短期持有者成本 75,881（Bitview 11/08）",
    "note": "固定名單 scan，對話型（4 千粉、587 瀏覽、8 則留言），發文約 2 小時（台北 17:20 發）。接他核心「鯨魚主動買進消退」：用 Coinbase 吃單方向交叉驗證（2021 年來最弱 4%），同意 62–65K 厚但把問題拉到「誰在撐成本線」。他後半的反手做空／分批加倉是操作，不接。62–66K 籌碼和 CryptoPainter（n67）角度錯開，不配圖。"
   },
@@ -63,7 +63,7 @@
    "url": "https://x.com/BlockScholes/status/2119752836061770229",
    "posted": "2026-11-09T11:23:53Z",
    "summary": "Block Scholes 隱含波動指數：BTC 30 天 42.9%（7 天 +2.7）；週四 7 天 ATM 從 33% 跳到 43%，7 天 25-delta skew 從 −0.5 擴到 −8.3、現在約 −6.2；ETF 週四週五流出 8.4 億",
-   "reply": "The fear is sitting in the front end only\nDeribit 7-day ATM has sat above 30-day since Friday, 42 vs 39, with 90-day and 180-day near 40\nTuesday's CPI is doing most of that\nThe 30-day risk reversal is still only around −3.7, so the downside bid hasn't moved down the curve yet",
+   "reply": "Fear is all in the front end\nDeribit 7-day ATM has sat above 30-day since Friday, and Tuesday's CPI is most of that\nThe downside bid hasn't spread past this week yet, 30-day skew is still mild",
    "sources": "deriv.ivterm（Deribit 11/08 收盤快照）7 天 ATM 42.06、30 天 39.06、90 天 39.47、180 天 40.22，倒掛自 11/06（第 3 天）；deriv.rr25 30 天 25-delta 風險逆轉 −3.72（put 42.19／call 38.47）；DVOL 40.99（11/08）；11/10 美國 10 月 CPI（notes.json news）",
    "note": "固定名單 scan（research 帳號，2.6 千粉），發文約 8 分鐘時寫的（台北 19:24 發），但他的貼文瀏覽通常很低（這則 55），排後面。接他「7 天 skew 擴大」：補期限結構倒掛只在前端、30 天風險逆轉還淺，判斷是 CPI 事件定價。不配圖（網站的期限結構圖今天沒有對應的手機截圖）。"
   },
@@ -82,7 +82,7 @@
    "url": "https://x.com/CryptoPainter/status/2119700523641155837",
    "posted": "2026-11-09T07:56:01Z",
    "summary": "現貨溢價沒再降，但週一小級別跌破左側區間低點；明早日線收不回去，8 月中以來的高低點墊高節奏就算結束。他不介意 BTC 去更低的位置震盪（像房子每天降價來推銷）",
-   "reply": "真收不回去，下面其實沒什麼東西墊著\n短期持有者的籌碼大多在 74K 以上，72K 到 66K 那段幾乎是空的\n槓桿也還沒洗乾淨，再破一段會被強平放大",
+   "reply": "收不回去的話，下面沒什麼墊著\n短期持有者的籌碼大多在 74K 以上，72K 到 66K 那段幾乎是空的，槓桿也還沒洗乾淨",
    "sources": "URPD 長短期持有者籌碼（CheckOnChain 11/08，網站 onchain #c-cohort）：短期持有者 76–78K 62 萬顆，72K–66K 每 2K 一格都不到幾萬顆，62–64K 又有一層；收盤 74,738；未平倉 2021 年以來第 98 百分位、強平 1.68 億後只少 0.5%（Coinalyze，notes.json 2026-11-08-1）",
    "note": "★ 1 小時內：CryptoPainter（watchlist，8.2 萬粉）發文約 35 分鐘時寫的（台北 15:56 發）。今天第二則回他：早上那則講 Coinbase 溢價，這則換角度接他的核心論點（日線收不回就算結構走壞），第一行直接給判斷：下面沒東西墊。他「越跌越舒服、想買便宜」是個人操作，不接。今天引用已 3 則，寫成回覆；曝光型，配籌碼分布圖（圖上看得到 74K 以上厚、72–66K 空）。",
    "image": {
@@ -109,7 +109,7 @@
    "url": "https://x.com/Tibetan_Diviner/status/2119708357129023821",
    "posted": "2026-11-09T08:27:09Z",
    "summary": "回我們在 DaanCrypto 底下那則（n61）：插針大小和之後還剩多少槓桿是兩個不同的問題",
-   "reply": "Leverage left over is what decides this week\nOpen interest only slipped about 0.5% after that flush, so most of those longs are still on",
+   "reply": "Most of those longs are still on, open interest only slipped about 0.5% after the flush",
    "sources": "11/08 強平 1.68 億美元後，BTC 永續未平倉只少 0.5%（Coinalyze，notes.en.json 2026-11-08-1）",
    "note": "在 DaanCrypto 貼文底下，他第一輪接話（591 粉、藍勾）。順著他分的兩個問題，補「之後剩多少槓桿」那一半的數字，一句判斷。前提是 n61（Daan 那則）有發出去；沒發的話這則跳過。"
   },
@@ -638,7 +638,7 @@
    "url": "https://x.com/Murphychen888/status/2119620221141168199",
    "posted": "2026-11-09T02:36:00Z",
    "summary": "訂閱區：11/27 月度交割約 7.2 萬顆（賣權 32,735、買權 39,304，名義 55 億美元）；價格跌到所有痛點線下方，綜合痛點 78K；Glassnode Gamma 顯示 73–75K 幾乎全是被賣出的賣權、正 Gamma，75K 支撐是真的，但有效跌破後支撐變壓力；11/27 那週站上或跌破 73–75K 決定 12 月走勢",
-   "reply": "75K 這個支撐是真的，但很窄\n緊貼著的 74K 是整張表最大的負 Gamma，跌破 75K 之後做市商會從托盤變成跟著賣\n所以不會是慢慢變壓力，比較像一口氣滑下去（只算 Deribit，推算）",
+   "reply": "75K 一破，應該不是慢慢變壓力，是一口氣滑下去\n緊貼著的 74K 是整張 Deribit 表最大的負 Gamma，跌破之後做市商會從托盤變成跟著賣（推算）",
    "sources": "deriv.gex（推算，只有 Deribit，11/09 00:06 UTC，主到期 11/27 占 59%）75,000 +5.2 百萬、74,000 −25.3 百萬（neg 第一）；deriv.options 11/27 到期 oi 72,822、top_puts 75,000 3,168 顆",
    "note": "使用者指定（訂閱區貼文，fxtwitter 讀不到，連結使用者給的；發文時間照截圖 10:36）。Murphy 今天第二則（第一則 n22 恐慌篇）。同意他 75K 支撐，補他沒講的：74K 是最大負 Gamma，支撐很窄。訂閱者限定貼文，回覆可能只有訂閱者看得到。配網站 Gamma 圖。 11/09 下午照「觀點為主、數據為輔」改寫：第一行先講判斷，數字最多一兩個。",
    "image": {
@@ -689,7 +689,7 @@
    "url": "https://x.com/AYBTC6/status/2119607949027123456",
    "posted": "2026-11-09T01:48:10Z",
    "summary": "幾萬 U 現實生活可以買車了，永遠不要爆倉",
-   "reply": "看完那張圖真的很難受，一個月省吃儉用的 7.5 萬 U，一根針就沒了\n螢幕上的數字太容易麻木，換成一桌菜才知道有多重",
+   "reply": "看完那張圖很難受，一個月省吃儉用的 7.5 萬 U，一根針就沒了\n螢幕上的數字太容易麻木，換成一桌菜才知道有多重",
    "sources": "",
    "note": "★ AYBTC6（watchlist，6.4 萬粉）。原文是爆倉故事加「永遠不要爆倉」的感想（配圖是別人在 SNDK 合約爆掉 7.5 萬 U、用剩下 20 U 吃一桌菜），不是在討論數據。使用者 11/09：這種文章不應該用數據回。改成用人話接一句同感，不放數字、不配圖、不給操作建議。",
    "order": 28
@@ -1143,7 +1143,7 @@
    "url": "https://x.com/zacxbtc/status/2119568256201867651",
    "posted": "2026-11-08T23:10:26Z",
    "summary": "BTC 將收第 5 根週線黑 K；2017 年以來 5 週以上連跌 3 次（2018/11、2022/3–5、2026/1–3）",
-   "reply": "I don't think 2018 or 2022 is the right comparison\nThose streaks happened deep under the 200-day\nThis one is still above a rising 200-day, around $73K\nFive red weeks inside an uptrend looks more like a long shakeout to me",
+   "reply": "Five red weeks above a rising 200-day reads more like a long shakeout than 2018 or 2022\nBoth of those streaks ran deep under the average",
    "sources": "price.ma sma200 73,170.7；chips.stress（本站）state bottom、f30 n21 up11 med 0.3、f90 n21 up13 med 14.7、base90 med 9.9",
    "note": "Grok 0855 #6，新帳號，9 千粉。他自己說前幾次都在偏空環境，我們補「這次在上升的 200 日均線上」和底部組合歷史；註明樣本小、不是預測。 11/09 下午照「觀點為主、數據為輔」改寫：第一行先講判斷，數字最多一兩個。"
   },
