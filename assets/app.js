@@ -1,4 +1,4 @@
-/* 破曉 Daybreak — 前端（無外部套件）。讀 data/latest.json（每日資料管線）與 data/notes.json（每日結論）。 */
+/* 破曉 Daybreak — 前端（無外部套件）。讀 data/site.json（每日資料管線；和 latest.json 內容相同、較小，見 unpack()）與 data/notes.json（每日結論）。 */
 (window.DAYBREAK_BOOT || Promise.resolve()).then(function () {
   'use strict';
   var D = null, N = null, H = [], ZH_ONLY = false, HELD = null;   // HELD：新數字已到、判讀還沒寫好，暫時整期顯示上一份（2026-11-06）
@@ -5695,6 +5695,19 @@
   var CAT_EN = { '宏觀': 'Macro', '資金': 'Flows', '衍生品': 'Derivatives', '鏈上': 'On-chain', '監管': 'Regulation', '產業': 'Industry', '機構': 'Institutions', '地緣': 'Geopolitics' };
   function catT(c) { return LANG === 'en' && CAT_EN[c] || c; }
   function load(u) { return fetch(u, { cache: 'no-cache' }).then(function (r) { if (!r.ok) throw new Error(u + ' ' + r.status); return r.json(); }); }
+  /* 2026-11-09 載入速度：網站讀 data/site.json（內容和 latest.json 相同，數字表改成按欄存放，gzip 約小 30%；見 pipeline/site_data.py）。
+     下載後還原成原本的 [[日, 值…], …]，其他程式不用改。還原規則和 site_data.py 的 unpack() 相同（改一邊要改另一邊）。
+     site.json 讀不到或格式不對就退回 latest.json */
+  function unpack(o) {
+    if (Array.isArray(o)) { for (var i = 0; i < o.length; i++) o[i] = unpack(o[i]); return o; }
+    if (o && typeof o === 'object') {
+      var r = o['$r'];
+      if (r && o.c) { var n = o.c[0].length, out = new Array(n), x = r[0]; for (var j = 0; j < n; j++) { if (j) x += r.length > 1 ? r[1] : o.dx[j - 1]; var row = [x]; for (var k = 0; k < o.c.length; k++) row.push(o.c[k][j]); out[j] = row; } return out; }
+      for (var key in o) if (Object.prototype.hasOwnProperty.call(o, key)) o[key] = unpack(o[key]);
+    }
+    return o;
+  }
+  function loadData(site, full) { return load(site).then(function (d) { d = unpack(d); if (!d || !d.meta || !d.meta.bar_date) throw new Error(site); return d; }).catch(function () { return load(full); }); }
   // 英文版讀 data/notes.en.json（每日任務與中文同時寫）；沒有或日期比中文舊時，退回中文並標示
   /* 2026-11-06 使用者要求：整期一起換。新數字（latest.json）比判讀（notes.json）新、而且數字產出不到 3 小時：
      先讀 latest.prev.json（上一份數字，和判讀同一天），整期顯示上一期，頂端說明新數字已到、判讀撰寫中，可以點「先看新數字」。
@@ -5706,7 +5719,7 @@
     if (noHold || !d || !nn || nn.date >= d.meta.bar_date || ss(SEE_NEW) === d.meta.bar_date) return Promise.resolve(null);
     var age = (Date.now() - Date.parse(d.meta.generated_utc || '')) / 36e5;
     if (!(age >= 0 && age < HOLD_H)) return Promise.resolve(null);
-    return load('data/latest.prev.json').then(function (p) { return p && p.meta && p.meta.bar_date === nn.date ? p : null; }).catch(function () { return null; });
+    return loadData('data/site.prev.json', 'data/latest.prev.json').then(function (p) { return p && p.meta && p.meta.bar_date === nn.date ? p : null; }).catch(function () { return null; });
   }
   function heldBar() {
     var stale = !HELD && N && N.stale;
@@ -5726,7 +5739,7 @@
     }, 120000);
   }
   document.addEventListener('click', function (e) { if (e.target && e.target.id === 'see-new') { if (HELD) ss(SEE_NEW, HELD.date); location.reload(); } });
-  Promise.all([load('data/latest.json'), load('data/notes.json').catch(function () { return null; }), LANG === 'en' ? load('data/notes.en.json').catch(function () { return null; }) : null]).then(function (a) {
+  Promise.all([loadData('data/site.json', 'data/latest.json'), load('data/notes.json').catch(function () { return null; }), LANG === 'en' ? load('data/notes.en.json').catch(function () { return null; }) : null]).then(function (a) {
     var nz = a[1], ne = a[2], nn = LANG === 'en' && ne && (!nz || ne.date >= nz.date) ? ne : nz;
     return holdPrev(a[0], nn).then(function (p) { if (p) { HELD = { date: a[0].meta.bar_date }; a[0] = p; } return a; });
   }).then(function (a) {
