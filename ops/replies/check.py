@@ -29,7 +29,7 @@ AI_WORDS = re.compile(r'我很同意|這句我同意|這點我同意|我是佩�
                       # 2026-11-09 第二輪（voice.md「去 AI 味第二輪」）：泛指來源、過度禮貌、固定收尾、淺層分析尾句、書面填充詞、英文套話
                       r"Lots of people|Many people|Some say|A lot of people (are )?(saying|think)|The reality is|Let's be (clear|honest)|To be clear|At the end of the day|bottom line|In other words|Think of it (as|this way)|key takeaway|game.?changers?|not a forecast|"
                       r"Great (point|post|thread|analysis|chart|call)|Well said|Spot on|Nice (breakdown|work|chart|call)|Thanks for sharing|Love this)\b|"
-                      r'很多人說|不少人說|大家都說|某種程度|一定程度上|本質上|換句話說|不難發現|毋庸置疑|顯而易見|凸顯了?|彰顯|體現了|只能當個?參考|說得好|好文|感謝分享|謝謝分享|受教了|學到了|——|—', re.I)
+                      r'很多人說|不少人說|大家都說|某種程度|一定程度上|本質上|換句話說|不難發現|毋庸置疑|顯而易見|凸顯了?|彰顯|體現了|只能當個?參考|說得好|好文|感謝分享|謝謝分享|受教了|學到了|兩堆|分堆|幾堆|那堆|這堆|第[一二三]堆|——|—', re.I)   # 2026-11-09 使用者：「分成兩堆，沒人會用堆來形容」→ 分類寫「兩種走法」；「一堆多單」這種量詞不擋
 # 只提醒、不擋：一天裡出現太多次才是問題
 CONTRAST = re.compile(r'不是[^，。？\n]{1,24}[，,、 ]?(而)?是|不等於|\bnot (just |only )?an? [^,.]{1,30}, (but )?|, not an? |isn\'t [^,.]{1,30}[,.] it\'s|rather than', re.I)
 DECIMAL = re.compile(r'\d\.\d')
