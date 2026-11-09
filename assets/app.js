@@ -43,6 +43,7 @@
 
   /* ---------------- Chart kit ---------------- */
   var mounted = [];
+  var langInHook = null;   // 2026-11-09 換語言轉場的進場（shell() 裡定義，資料畫好後呼叫）
   /* 2026-11-04 自我檢查：一張圖出錯只影響自己——原本同一版的圖依序畫，前面一張丟錯，後面全部空白。
      出錯的那一張顯示說明（class 帶 err，冒煙測試會抓到），其他照畫 */
   function chartErr(el, e) { console.error(e); if (el) el.innerHTML = '<p class="err chart-err">' + _T('這張圖今天畫不出來（資料格式異常），其他圖不受影響。', 'This chart could not be drawn today (unexpected data); other charts are unaffected.') + '</p>'; }
@@ -5429,7 +5430,75 @@
     tt.addEventListener('click', function (e) { if (ttSkip) return; var b = e.target.closest('button'); if (b) pickTheme(b.getAttribute('data-t')); });
     if (mt) mt.addEventListener('click', function () { pickTheme(mt.getAttribute('data-v') === 'dark' ? 'light' : 'dark'); });
     try { setTheme(localStorage.getItem('daybreak.theme') === 'dark' ? 'dark' : 'light'); } catch (e) { setTheme('light'); }
-    function pickLang(l) { if (l === LANG) return; try { localStorage.setItem('daybreak.lang', l); } catch (er) {} location.reload(); }
+    // 2026-11-09 換語言的轉場（使用者：「語言切換可以做類似的概念嗎」，延續日刊／夜刊的中間狀態）。
+    // 語言要重新載入整頁，中英文不會同時存在，所以中間態用「轉譯中」的亂碼：
+    // 離開：滑塊跟著走（拉長、到位），畫面上看得到的字逐漸亂碼，同底色的暮色淡入，約 0.52 秒後重新載入；
+    // 進入：開機就先蓋著暮色（index.html 開機腳本），新語言畫好、字型載入後，暮色淡出、字從亂碼解碼成新語言，捲動位置接回原處。
+    // 亂碼只換同類字（中文換中文、英文換英文、數字換數字），版面寬度不跳；別的程式改過的字（例如數字解碼、倒數）就不再碰
+    var LFX = { busy: false }, LFX_POOL = { c: '\u6bd4\u7279\u5e63\u50f9\u683c\u9031\u671f\u93c8\u4e0a\u8cc7\u91d1\u884d\u751f\u54c1\u51fa\u5834\u6846\u67b6\u5f80\u671f\u65b9\u6cd5\u5e02\u5834\u591a\u7a7a\u9802\u5e95\u71b1\u5ea6\u6210\u672c\u7372\u5229\u7c4c\u78bc\u4f9b\u7d66\u77ed\u9577\u6301\u6709\u8005\u6d41\u5165\u6de8\u8b8a\u5316\u7387\u6307\u6578\u8a0a\u865f\u98a8\u96aa\u6ce2\u52d5\u672a\u5be6\u73fe\u9078\u64c7\u6b0a\u5230\u671f\u5c65\u7d04\u4eca\u5929\u65b0\u4e00\u671f\u5224\u8b80\u7d50\u8ad6', l: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', d: '0123456789' };
+    function lfxKind(ch) { var c = ch.charCodeAt(0); if (c >= 0x3400 && c <= 0x9FFF) return 'c'; if (/[A-Za-z]/.test(ch)) return 'l'; if (/[0-9]/.test(ch)) return 'd'; return ''; }
+    function lfxRand(k) { var p = LFX_POOL[k]; return p.charAt((Math.random() * p.length) | 0); }
+    function lfxNodes(max) {
+      var out = [], H = innerHeight, W = innerWidth, w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null), n, rg = document.createRange();
+      while ((n = w.nextNode()) && out.length < max) {
+        var s = n.nodeValue; if (!s || !/\S/.test(s)) continue;
+        var p = n.parentElement; if (!p || /^(SCRIPT|STYLE|NOSCRIPT|TITLE|OPTION)$/.test(p.tagName) || p.closest('#lang, #m-lang, .clock, .lfx-skip')) continue;
+        rg.selectNodeContents(n); var r = rg.getBoundingClientRect(); if (!r.width || r.bottom < 0 || r.top > H || r.right < 0 || r.left > W) continue;
+        var a = Array.from(s); out.push({ n: n, s: s, a: a, k: a.map(lfxKind), last: s });
+      }
+      return out;
+    }
+    function lfxPaint(items, scr) {   // scr(it, i) → 這個字現在要不要亂碼
+      items.forEach(function (it) {
+        if (it.gone || it.n.nodeValue !== it.last) { it.gone = true; return; }
+        var o = ''; for (var i = 0; i < it.a.length; i++) o += it.k[i] && scr(it, i) ? lfxRand(it.k[i]) : it.a[i];
+        it.n.nodeValue = o; it.last = o;
+      });
+    }
+    function lfxLabel(from, to, p) {   // 按鈕上的字：前段亂碼、後段收斂成新字
+      var a = Array.from(p < .5 ? from : to); return a.map(function (ch, i) { var k = lfxKind(ch); return k && Math.random() > Math.max(0, (p - .35) / .5) ? lfxRand(k) : ch; }).join('');
+    }
+    function pickLang(l) {
+      if (l === LANG || LFX.busy) return;
+      try { localStorage.setItem('daybreak.lang', l); } catch (er) {}
+      var save = function () { try { sessionStorage.setItem('daybreak.lfx', JSON.stringify({ t: Date.now(), y: window.scrollY })); } catch (e) {} };
+      if (reduced) { location.reload(); return; }
+      LFX.busy = true;
+      var lg = $('#lang'), ml = $('#m-lang'), mlFrom = ml ? ml.textContent : '', mlTo = l === 'en' ? '中文' : 'EN';
+      if (lg) { lg.classList.add('lfx-go'); lg.classList.toggle('to-zh', l === 'zh'); setTimeout(function () { lg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-l') === l); }); }, 240); }
+      var items = lfxNodes(800), fog = document.createElement('div'); fog.className = 'lfx-fog'; fog.style.background = getComputedStyle(document.documentElement).getPropertyValue('--void'); document.body.appendChild(fog);
+      var t0 = performance.now(), D = 520, fr = 0;
+      requestAnimationFrame(function () { fog.classList.add('on'); });
+      (function f(now) {
+        var p = Math.min(1, (now - t0) / D), q = Math.min(.92, p * p * 1.1);
+        if (fr++ % 2 === 0) lfxPaint(items, function () { return Math.random() < q; });   // 每兩格換一次，亂碼不會閃得太躁
+        if (ml) ml.textContent = lfxLabel(mlFrom, mlTo, p);
+        if (p < 1) requestAnimationFrame(f); else { save(); location.reload(); }
+      })(t0);
+    }
+    langInHook = langIn;
+    function langIn() {
+      var d = document.documentElement; if (!d.classList.contains('lfx-in')) return;
+      var fx = null; try { fx = JSON.parse(sessionStorage.getItem('daybreak.lfx') || 'null'); sessionStorage.removeItem('daybreak.lfx'); } catch (e) {}
+      var done = false, lift = function () { d.classList.add('lfx-lift'); setTimeout(function () { d.classList.remove('lfx-in', 'lfx-lift'); }, 700); };
+      var run = function () {
+        if (done) return; done = true;
+        if (fx && fx.y) window.scrollTo(0, fx.y);
+        var items = lfxNodes(800), t0 = performance.now(), D = 820;
+        items.forEach(function (it) { var L = Math.max(1, it.a.length); it.r = it.a.map(function (_, i) { return 0.12 + 0.35 * (i / L) + Math.random() * 0.5; }); });   // 每個字各自在 0.12～0.97 之間解開，大致由左到右
+        lfxPaint(items, function () { return true; });
+        [$('#lang'), $('#m-lang')].forEach(function (el) { if (el) { el.classList.remove('lfx-land'); void el.offsetWidth; el.classList.add('lfx-land'); } });
+        requestAnimationFrame(lift);
+        var fr = 0;
+        (function f(now) {
+          var p = Math.min(1, (now - t0) / D);
+          if (fr++ % 2 === 0 || p >= 1) lfxPaint(items, function (it, i) { return p < it.r[i]; });
+          if (p < 1) requestAnimationFrame(f);
+        })(t0);
+      };
+      (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { requestAnimationFrame(function () { requestAnimationFrame(run); }); });
+      setTimeout(function () { if (!done) { done = true; lift(); } }, 3500);   // 保險：字型一直沒載完也不要一直蓋著
+    }
     $('#lang').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-l') === LANG); });
     $('#lang').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) pickLang(b.getAttribute('data-l')); });
     var ml = $('#m-lang'); if (ml) { ml.textContent = LANG === 'en' ? '中文' : 'EN'; ml.addEventListener('click', function () { pickLang(LANG === 'en' ? 'zh' : 'en'); }); }
@@ -5498,5 +5567,6 @@
       go(start);   // 字型載入後版面會變高，載完再對齊一次（使用者已自行捲動就不動）
       var y0 = window.scrollY; if (document.fonts) document.fonts.ready.then(function () { if (Math.abs(window.scrollY - y0) < 2) go(start); });
     } else { window.scrollTo(0, 0); activate(ROUTES[0][0]); }
+    if (langInHook) langInHook();
   }).catch(function (e) { $('#view').innerHTML = _t('<p class="err">資料載入失敗：') + esc(e.message) + _t('。請稍後重新整理。</p>'); });
 });

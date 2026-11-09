@@ -32,6 +32,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@900&display=swap">
 <script>
+/* 2026-11-09 換語言的轉場：上一頁剛按了語言切換（8 秒內）→ 開機就先蓋一層同底色的暮色，等新語言畫好再解碼淡出（app.js langIn），不會閃白 */
+try { (function () { var fx = JSON.parse(sessionStorage.getItem('daybreak.lfx') || 'null'), d = document.documentElement; if (fx && Date.now() - fx.t < 8000) { d.classList.add('lfx-in'); d.style.setProperty('--lfx-bg', localStorage.getItem('daybreak.theme') === 'dark' ? '#0C0C0D' : '#EEECE6'); } })(); } catch (e) {}
+</script>
+<script>
 /* 開機：先決定語言再啟動 app.js（2026-10-12）。使用者在頁面上選過語言 → 一律沿用（daybreak.lang）；
    沒選過 → 依 IP 國家：台灣、香港、澳門、中國大陸、新加坡用中文，其他用英文（查詢結果快取 7 天）；IP 查不到 → 看瀏覽器語言。 */
 window.DAYBREAK_BOOT = (function () {
@@ -39,7 +43,7 @@ window.DAYBREAK_BOOT = (function () {
   function go(l) {
     window.DAYBREAK_LANG = l; document.documentElement.lang = l === 'en' ? 'en' : 'zh-Hant';
     if (l !== 'en') return Promise.resolve();
-    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=d3e4087721'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
+    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=eb64641567'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
   }
   var pick = ls('daybreak.lang'); if (pick === 'zh' || pick === 'en') return go(pick);
   var byCC = function (cc) { return ZH.indexOf(String(cc).toUpperCase()) >= 0 ? 'zh' : 'en'; };
@@ -54,7 +58,7 @@ window.DAYBREAK_BOOT = (function () {
   });
 })();
 </script>
-<link rel="stylesheet" href="assets/app.css?v=d3e4087721">
+<link rel="stylesheet" href="assets/app.css?v=eb64641567">
 </head>
 <body>
 <div class="app">
@@ -82,7 +86,7 @@ window.DAYBREAK_BOOT = (function () {
 </div>
 <div id="tip" class="tip" role="tooltip" hidden></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
-<script src="assets/app.js?v=d3e4087721"></script>
+<script src="assets/app.js?v=eb64641567"></script>
 <script>
 /* 訪客統計 GoatCounter（不用 cookie、不收個資）：站點代號 daybreak（2026-10-13 註冊）；只在正式網址計數 */
 (function () { var code = 'daybreak'; if (!code || location.hostname !== 'north7.github.io') return;
