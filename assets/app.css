@@ -970,3 +970,20 @@ html.fd-on { overflow: hidden; }
 .legend .lg-d:empty { display: none; }
 .legend .lg-view { margin-left: auto; }
 .chart .lg-off, .chart .lg-off + text.cf-pill { display: none; }
+
+/* 2026-11-09 觸控螢幕放大點擊區：手機上 648 個可點的元素有 638 個寬或高小於 44px（圖例 19px、展開列 19px、
+   「#」複製連結 21×21、箭頭連結最小 11×13）。只在 pointer: coarse 生效、桌面不變；用看不見的 ::after 往外擴，
+   外觀與版面高度都不變（原本已用 ::after 的 .filters 改用 ::before）。版內目錄標籤有 overflow: hidden（省略號）會裁掉
+   擴大區，改成加上下內距（手機上只有一排）。 */
+@media (pointer: coarse) {
+  .jump, a.term, .note a, .src-link a, .news-card .go, .cp-link, .seg button, .tmh-chip, .legend .lg-tg, .m-prefs button, .brand, .nav button, summary, .note-tg { position: relative; }
+  .jump::after, a.term::after, .note a::after, .src-link a::after, .news-card .go::after { content: ""; position: absolute; inset: -12px -6px; }
+  .cp-link::after { content: ""; position: absolute; inset: -12px -10px; }
+  .seg button::after, .tmh-chip::after, .m-prefs button::after, .nav button::after { content: ""; position: absolute; inset: -8px 0; }
+  .brand::after { content: ""; position: absolute; inset: -10px; }
+  .filters button::before { content: ""; position: absolute; inset: -8px -4px; }
+  .legend { row-gap: 12px; }
+  .legend .lg-tg::after { content: ""; position: absolute; inset: -6px -6px; }   /* 上下兩排剛好不重疊，點不到別排的開關 */
+  summary::after, .note-tg::after { content: ""; position: absolute; left: 0; right: 0; top: -12px; bottom: -12px; }
+  .toc a { padding-top: 8px; padding-bottom: 8px; }
+}
