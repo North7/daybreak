@@ -121,10 +121,12 @@ button { font: inherit; color: inherit; }
 #m-theme:active { scale: .9; }
 #m-theme.tt-settle { animation: tt-pop .46s cubic-bezier(.25, 1.7, .45, 1); }
 @keyframes tt-pop { 0% { scale: .86; } 100% { scale: 1; } }
-/* 中間狀態的濾層：換刊點前「相乘」把日刊調暗偏暖，換刊點後「濾色」把夜刊調亮偏靛藍；只在過渡中出現 */
-.tt-veil { position: fixed; inset: 0; z-index: 2147482998; pointer-events: none; display: none; mix-blend-mode: multiply; background: #fff; }
-/* 換刊點前後的暮色：和當下底色同色，內容淡進淡出，換刊那一瞬看不到跳動（app.js ttApply） */
-.tt-fog { position: fixed; inset: 0; z-index: 2147482999; pointer-events: none; display: none; opacity: 0; }
+/* 晨昏線（app.js ttGo）：換刊用 View Transition，新的一刊（即時畫面）用圓形裁切從切換鈕往外漫開，舊的一刊是靜態快照；
+   兩者的動畫都由 app.js 逐格設定（可拖曳停住），這裡先關掉瀏覽器預設的淡入淡出。光帶畫布 .tt-dusk 自成一層疊在最上面 */
+html.tt-vt::view-transition-old(root), html.tt-vt::view-transition-new(root) { animation: none; mix-blend-mode: normal; }
+html.tt-vt::view-transition-group(root) { animation: none; }
+html.tt-vt::view-transition-group(tt-dusk), html.tt-vt::view-transition-new(tt-dusk) { animation: none; }
+.tt-dusk { position: fixed; left: 0; top: 0; width: 100vw; height: 100vh; z-index: 2147482999; pointer-events: none; view-transition-name: tt-dusk; }
 .tt-phase { position: fixed; z-index: 2147483001; pointer-events: none; opacity: 0; font-size: 11px; letter-spacing: .14em; text-align: center; color: var(--ink-2); font-weight: 700; }
 @media (prefers-reduced-motion: reduce) { .tt-settle, #m-theme.tt-settle { animation: none; } }
 
