@@ -10,7 +10,7 @@ spec: {"<raw name>": {"axes": {"<axis>": {"kind": "lin"|"log", "unit": "%"|"", "
 """
 import datetime as dt, json, math, os, re, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'pipeline'))
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageColor
 import share_card as SC
 
 spec, rawdir, outdir, fonts = sys.argv[1:5]
@@ -69,7 +69,9 @@ for name, s in json.load(open(spec, encoding='utf-8')).items():
         cx = min(max(x, bx0), bx0 + pw); cy = by0 + ph if y > by0 + ph else by0 if y < by0 else ly
         if abs(cy - y) > 4 or abs(cx - x) > 4: d.line([cx, cy, x, y], fill=col, width=3)
         d.rounded_rectangle([bx0, by0, bx0 + pw, by0 + ph], radius=ph / 2, fill=col)
-        d.text((bx0 + pw / 2, ly), m['label'], font=lf, fill='#FFFFFF', anchor='mm')
+        # 2026-11-09 使用者：黃底白字看不清楚 → 淺色底自動用深色字（相對亮度 > 0.4 算淺）
+        rgb = ImageColor.getrgb(col); lum = (0.2126 * rgb[0] + 0.7152 * rgb[1] + 0.0722 * rgb[2]) / 255
+        d.text((bx0 + pw / 2, ly), m['label'], font=lf, fill='#141414' if lum > 0.4 else '#FFFFFF', anchor='mm')
         if m.get('dot', True):
             r = 9; d.ellipse([x - r, y - r, x + r, y + r], fill=col, outline='#FFFFFF', width=3)
     im.save(os.path.join(outdir, name + '.png')); print('annotated', name, len(s['marks']))
