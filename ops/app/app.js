@@ -2,7 +2,8 @@
    今天發文：日報（data/x_post.json）、推薦圖表（data/picks.json＋data/picks/index.json）、快訊（data/flash.json）、長貼文（data/longposts.json），照建議時間排。
    回覆：data/replies.json；原文點開時才即時讀 api.fxtwitter.com。
    卡片：標頭（時間／類型／標題／狀態）→ 點開：說明 → 中文／English 或 回覆／引用 切換 → 文字＋字數 → 配圖 → 動作（主要「發到 X」，其次複製文字、存圖）→ 標記已發。
-   已發／已回只記在這台裝置（localStorage daybreak.done.v2：{鍵: 台北日期}；讀得到舊的 daybreak.longdone、daybreak-replied-<日期>）。
+   已發／已回：手動標記記在這台裝置（localStorage daybreak.done.v2：{鍵: 台北日期}；讀得到舊的 daybreak.longdone、daybreak-replied-<日期>）；
+   2026-11-09 起另外直接讀 X 上 @songpu717 最近 36 小時的貼文（fxtwitter），對得上的卡片自動算已發／已回，電腦和手機都一樣、不用重標。
    標記完成後自動收起、打開下一則。資料格式沒變，排程任務不用改。 */
 (function () {
   'use strict';
@@ -54,7 +55,9 @@
   } catch (e) {}
   function saveDone() { try { localStorage.setItem(DK, JSON.stringify(DONE)); } catch (e) {} }
   var POSTED = {};   // 資料裡的 posted（台北日期）：Claude 記錄已發出的，每台裝置都算已發
-  function isDone(k) { return !!DONE[k] || !!POSTED[k]; }
+  // 2026-11-09 使用者：電腦標過的，手機出門看又要全部重標。改成直接讀 X 上我們實際發了什麼（見下面「X 上已發」），ONX：{鍵: 發出時間毫秒}
+  var ONX = {};
+  function isDone(k) { return !!DONE[k] || !!POSTED[k] || !!ONX[k]; }
   // 2026-11-08：「不發／不回」標記（這台裝置，daybreak.skip.v2：{鍵: 台北日期}）；和已發互斥
   var SK = 'daybreak.skip.v2', SKIP = {};
   try { SKIP = JSON.parse(localStorage.getItem(SK) || '{}'); } catch (e) {}
@@ -65,7 +68,8 @@
   var TK = 'daybreak.donetimes', DT = {}, PACE = 8;
   try { DT = JSON.parse(localStorage.getItem(TK) || '{}'); } catch (e) {}
   function paceNote() {
-    var now = Date.now(), ts = Object.keys(DT).filter(function (k) { return k.indexOf('reply:') === 0 && now - DT[k] < 3600e3; }).map(function (k) { return DT[k]; }).sort();
+    var now = Date.now(), all = {}; Object.keys(DT).forEach(function (k) { all[k] = DT[k]; }); Object.keys(ONX).forEach(function (k) { all[k] = ONX[k]; });   // X 上的實際發出時間優先
+    var ts = Object.keys(all).filter(function (k) { return k.indexOf('reply:') === 0 && now - all[k] < 3600e3; }).map(function (k) { return all[k]; }).sort(function (a, b) { return a - b; });
     if (ts.length < PACE) return '';
     var t = new Date(ts[ts.length - PACE] + 3600e3), hm = String(t.getHours()).padStart(2, '0') + ':' + String(t.getMinutes()).padStart(2, '0');
     return '<span class="warn">這一小時已回 ' + ts.length + ' 則，下一批建議 ' + hm + ' 之後再發</span>';
@@ -73,6 +77,7 @@
   function footHtml(k, reply) {
     var L = reply ? ['已回', '標記已回', '不回'] : ['已發', '標記已發', '不發'];
     if (POSTED[k]) return '<div class="foot"><span class="note">已記錄發出（' + md(POSTED[k]) + '）</span></div>';
+    if (ONX[k] && !DONE[k]) return '<div class="foot"><span class="note">X 上已' + (reply ? '回' : '發') + '（' + hm(ONX[k]) + '，自動對到的）</span></div>';
     if (isDone(k)) return '<div class="foot"><button class="done-btn on" data-act="done">✓ ' + L[0] + ' · 復原</button></div>';
     if (isSkip(k)) return '<div class="foot"><button class="skip-btn on" data-act="skip">已設為' + L[2] + ' · 復原</button></div>';
     return '<div class="foot"><button class="skip-btn" data-act="skip">' + L[2] + '</button><button class="done-btn" data-act="done">' + L[1] + '</button></div>';
@@ -196,7 +201,7 @@
     var done = POSTS.filter(function (p) { return isDone(p.key); }).sort(byT), skipped = POSTS.filter(function (p) { return isSkip(p.key); }).sort(byT);
     var due = todo.filter(function (p) { return p.when.getTime() <= Date.now(); }).length;
     document.getElementById('b-today').textContent = todo.length; document.getElementById('b-today').classList.toggle('zero', !todo.length);
-    el.innerHTML = '<div class="summary"><span>待發 <b>' + todo.length + '</b></span>' + (due ? '<span class="warn">該發了 ' + due + '</span>' : '') + '<span>已發 <b>' + done.length + '</b></span>' + (skipped.length ? '<span>不發 <b>' + skipped.length + '</b></span>' : '') + '<span>' + md(TODAY) + ' 台北</span></div>' +
+    el.innerHTML = '<div class="summary"><span>待發 <b>' + todo.length + '</b></span>' + (due ? '<span class="warn">該發了 ' + due + '</span>' : '') + '<span>已發 <b>' + done.length + '</b></span>' + (skipped.length ? '<span>不發 <b>' + skipped.length + '</b></span>' : '') + '<span>' + md(TODAY) + ' 台北</span>' + syncNote() + '</div>' +
       (todo.length ? todo.map(postCard).join('') : '<p class="empty">今天的都處理完了</p>') +
       (done.length ? '<div class="group-h">已完成</div>' + done.map(postCard).join('') : '') +
       (skipped.length ? '<details class="group"><summary>不發 ' + skipped.length + ' 則</summary>' + skipped.map(postCard).join('') + '</details>' : '');
@@ -250,7 +255,7 @@
     var idx = {}; act.forEach(function (x, i) { idx[x.id] = i; });
     var show = todo.filter(rfilter);
     el.innerHTML = '<div class="summary"><span>' + md(R.date) + ' 清單' + (R.date !== TODAY ? ' <span class="warn">（不是今天的）</span>' : '') + '</span><span>數據 No.' + String(R.edition || 0).padStart(3, '0') + '（' + md(R.data_date) + ' 收盤）</span>' +
-      '<span>待回 <b>' + todo.length + '</b></span><span>已回 <b>' + done.length + '</b></span>' + (mine.length ? '<span>不回 <b>' + mine.length + '</b></span>' : '') + paceNote() + '</div>' +
+      '<span>待回 <b>' + todo.length + '</b></span><span>已回 <b>' + done.length + '</b></span>' + (mine.length ? '<span>不回 <b>' + mine.length + '</b></span>' : '') + syncNote() + paceNote() + '</div>' +
       '<div class="filters">' + F.map(function (f) { return '<button class="fchip' + (RFILTER === f[0] ? ' on' : '') + '" data-act="filter" data-v="' + f[0] + '">' + f[1] + ' ' + cnt[f[0]] + '</button>'; }).join('') + '</div>' +
       (show.length ? show.map(function (x) { return replyCard(x, idx[x.id]); }).join('') : '<p class="empty">' + (todo.length ? '這一類沒有待回的' : '今天的都回完了') + '</p>') +
       (done.length ? '<details class="group"><summary>已回 ' + done.length + ' 則</summary>' + done.map(function (x) { return replyCard(x, idx[x.id]); }).join('') + '</details>' : '') +
@@ -339,15 +344,72 @@
   });
   function nudge(card) { var d = card && card.querySelector('.done-btn'); if (d && !d.classList.contains('on')) { d.classList.remove('nudge'); void d.offsetWidth; d.classList.add('nudge'); } }
 
+  // ---------- X 上已發（每台裝置都一樣） ----------
+  // 讀 @songpu717 最近 36 小時的貼文和回覆：回覆對「回的是哪一則」（引用對「引用了哪一則」），發文對開頭 30 字。
+  // fxtwitter 每頁不照時間排（見 ops/replies/mentions.py），連續兩頁都比 36 小時舊才停，最多 10 頁。
+  var SYNC = { st: '', at: 0, busy: false };
+  function syncNote() {
+    if (SYNC.st === 'busy' && !SYNC.at) return '<span class="dim">X 同步中…</span>';
+    if (SYNC.st === 'fail') return '<span class="warn">X 同步失敗，先用手動標記</span>';
+    return SYNC.at ? '<span class="dim">X 已同步 ' + hm(SYNC.at) + '</span>' : '';
+  }
+  function norm(t) { return String(t || '').replace(URL_RE, '').replace(/^(\s*@\w+)+\s*/, '').replace(/[\s#＃]+/g, '').slice(0, 30); }
+  function syncX() {
+    if (SYNC.busy) return; SYNC.busy = true; SYNC.st = 'busy';
+    var t0 = Date.now() - 36 * 3600e3, rep = {}, quo = {}, txt = [], seen = {}, old = 0, n = 0;
+    function page(cur) {
+      return fetch('https://api.fxtwitter.com/2/profile/songpu717/statuses?with_replies=true' + (cur ? '&cursor=' + encodeURIComponent(cur) : '')).then(function (r) { if (!r.ok) throw r.status; return r.json(); }).then(function (d) {
+        var res = (d.results || []).filter(function (t) { return t.author && String(t.author.screen_name).toLowerCase() === 'songpu717'; }), newest = 0;
+        res.forEach(function (t) {
+          var ts = (t.created_timestamp || 0) * 1000; newest = Math.max(newest, ts);
+          if (ts < t0 || seen[t.id]) return; seen[t.id] = 1;
+          var to = t.replying_to && (t.replying_to.status || t.replying_to_status) || t.replying_to_status;
+          if (to) rep[to] = ts;
+          if (t.quote && t.quote.id) quo[t.quote.id] = ts;
+          var s = norm(t.text); if (s.length >= 8) txt.push([s, ts]);
+        });
+        old = res.length && newest < t0 ? old + 1 : 0; n++;
+        var next = d.cursor && d.cursor.bottom;
+        if (res.length && next && old < 2 && n < 10) return page(next);
+      });
+    }
+    page(null).then(function () {
+      var hit = 0;
+      function byText(t) {
+        var s = norm(t); if (s.length < 8) return 0;
+        for (var i = 0; i < txt.length; i++) { var a = txt[i][0], m = Math.min(a.length, s.length); if (m >= 8 && a.slice(0, m) === s.slice(0, m)) return txt[i][1]; }
+        return 0;
+      }
+      function set(k, ts) { if (ts && !ONX[k]) { ONX[k] = ts; hit++; } }
+      ((R && R.items) || []).forEach(function (x) {
+        if (x.status === 'skip') return;
+        set(replyKey(x), rep[x.id] || (x.quote ? quo[x.id] : 0) || byText(x.reply) || byText(x.quote));
+      });
+      POSTS.forEach(function (p) { Object.keys(p.langs).forEach(function (l) { set(p.key, byText(p.langs[l].text)); }); });
+      SYNC.st = 'ok'; SYNC.at = Date.now();
+      rerender();
+    }).catch(function () { SYNC.st = 'fail'; rerender(); }).then(function () { SYNC.busy = false; });
+  }
+  function rerender() {   // 重畫但保留正在看的那張卡；它剛好變成已發／已回，就打開下一則
+    var open = Array.prototype.map.call(document.querySelectorAll('.card.open'), function (c) { return c.dataset.key; });
+    renderPosts(); renderReplies();
+    var still = 0;
+    open.forEach(function (k) { var c = document.querySelector('.card[data-key="' + CSS.escape(k) + '"]'); if (c && !c.classList.contains('done')) { openCard(c, true); still++; } });
+    if (open.length && !still) openFirst(TAB === 'replies' ? 'v-replies' : 'v-today');
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && Date.now() - SYNC.at > 60e3) syncX(); });   // 從 X App 切回來就再對一次
+  setInterval(function () { if (!document.hidden) syncX(); }, 5 * 60e3);
+
   // ---------- 啟動 ----------
   setTab(TAB);
   window.addEventListener('hashchange', function () { var h = location.hash.replace('#', ''); if (h && h !== TAB) setTab(h); });
   var soft = function (p) { return p.catch(function () { return null; }); };
-  Promise.all([soft(getJSON('data/x_post.json')), soft(getJSON('data/flash.json')), soft(getJSON('data/longposts.json')), soft(getJSON('data/picks.json')), soft(getJSON('data/picks/index.json'))]).then(function (r) {
+  var loadP = Promise.all([soft(getJSON('data/x_post.json')), soft(getJSON('data/flash.json')), soft(getJSON('data/longposts.json')), soft(getJSON('data/picks.json')), soft(getJSON('data/picks/index.json'))]).then(function (r) {
     if (r[0]) document.getElementById('meta').textContent = 'No.' + String(r[0].edition || 0).padStart(3, '0') + ' · ' + md(r[0].date) + ' 收盤';
     POSTS = buildPosts(r[0], r[1], r[2], r[3], r[4]);
     renderPosts(); openFirst('v-today');
   });
-  getJSON('data/replies.json').then(function (j) { R = j; renderReplies(); openFirst('v-replies'); })
+  var loadR = getJSON('data/replies.json').then(function (j) { R = j; renderReplies(); openFirst('v-replies'); })
     .catch(function () { document.getElementById('v-replies').innerHTML = '<p class="empty">讀取失敗：data/replies.json</p>'; });
+  Promise.all([loadP, loadR]).then(syncX);
 })();
