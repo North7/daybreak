@@ -910,7 +910,8 @@ if BV:
         _md3 = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json'))); _T3, _B3 = _md3['cycle_tops'], _md3['cycle_bottoms']
         for _k, _fn in (('ssr', lambda: bv_extra.ssr_viz(BV, _pxc, LAST, _T3, _B3)), ('hnupl', lambda: bv_extra.nupl_viz(BV, _pxc, LAST, _T3, _B3)),
                         ('rrisk', lambda: bv_extra.rr_viz(BV, _pxc, LAST, _T3, _B3)), ('aviv', lambda: bv_extra.aviv_viz(BV, _pxc, LAST, _T3, _B3)),
-                        ('agepl', lambda: bv_extra.age_viz(BV, _pxc, LAST)), ('dorm', lambda: bv_extra.dorm_viz(BV, _pxc, LAST, _T3, _B3))):
+                        ('agepl', lambda: bv_extra.age_viz(BV, _pxc, LAST)), ('dorm', lambda: bv_extra.dorm_viz(BV, _pxc, LAST, _T3, _B3)),
+                        ('sthconf', lambda: bv_extra.conf_viz(BV, _pxc, LAST))):   # 2026-11-09 對趨勢的信心（短期持有者賣出 vs 持有成本）
             try: R[_k] = _fn()
             except Exception as e: errors.append(f'bv_extra {_k} {e}')
     except Exception as e: errors.append(f'bv_extra {e}')
