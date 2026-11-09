@@ -121,7 +121,7 @@ def check():
             continue
         if it.get('lang') not in ('zh', 'en'): err.append(f'{tag} 原文是 {it.get("lang")}：只回中文和英文貼文，請改成 skip')
         if not t and not (it.get('mode') == 'quote' and it.get('quote')): err.append(f'{tag} 沒有回覆內容')   # 只引用不回覆的可以留空（2026-11-06）
-        if t: err += [e for e in text_errors(tag + ' 回覆', t, it.get('lang')) if not (it.get('posted') and '英文常用名' in e)]   # 已發出的不用改（2026-11-09 用詞規則之前發的）
+        if t: err += [e for e in text_errors(tag + ' 回覆', t, it.get('lang')) if not (it.get('posted') and ('英文常用名' in e or 'AI 腔' in e))]   # 已發出的不用改（規則是發出之後才加的，2026-11-09）
         if t and ONE_LINE.search(t): err.append(f'{tag} 回覆一行裡有兩句（「{ONE_LINE.search(t).group(0)}」）：每句話換一行，見 voice.md 2026-11-08')
         if HASH.search(t): err.append(f'{tag} 回覆不加 hashtag（引用文和快訊才加）')
         q = it.get('quote')
