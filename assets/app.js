@@ -5281,21 +5281,140 @@
       if (i >= 0 && i < ROUTES.length) go(ROUTES[i][0]);
     }, { passive: true });
     // 日刊／夜刊：桌面在側欄、行動版在頂部列右上；語言：選了就記住（daybreak.lang），重新載入套用
-    var tt = $('#theme'), mt = $('#m-theme'), SUN = '<svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>', MOON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></svg>';
+    var tt = $('#theme'), mt = $('#m-theme');   // 2026-11-09 日月圖示改由 ttIconSvg 產生（地平線日月，隨中間狀態變形）
     function setTheme(v) {
       if (v === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); else document.documentElement.removeAttribute('data-theme');
       tt.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-t') === v); });
-      if (mt) { mt.innerHTML = v === 'dark' ? MOON : SUN; mt.setAttribute('data-v', v); }
+      if (mt) mt.setAttribute('data-v', v);
+      tt.style.setProperty('--tt-k', v === 'dark' ? 1 : 0); if (!TTX.on) ttIcoAll(v === 'dark' ? 1 : 0);
     }
-    function pickTheme(v) { setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {} mounted.forEach(function (el) { el._draw && el._draw(el); }); }
-    tt.addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) pickTheme(b.getAttribute('data-t')); });
+    // 2026-11-09 換刊的中間狀態（使用者看了一支深淺色切換的範例影片：「重點是會有中間狀態效果」「用黃昏色調」「按鈕用 icon、動畫同步改變」「按鈕本身也需要配合動效」）
+    // t：0＝日刊、1＝夜刊。桌面拖曳側欄切換鈕可停在任何位置看中間狀態，放開吸到較近的一端；點一下（含手機日月鈕）播完整段過渡（約 1.1 秒）。
+    // 頁面：蓋一層混色濾層（見 ttTable 下方說明），前半段偏暖琥珀（傍晚）、後半段偏靛藍（入夜），底色亮度過中點時整頁換成夜刊（日刊）。
+    // 圖示：地平線上的太陽（同品牌標誌）隨 t 落下、光芒淡出，45% 起月亮升起。按鈕：滑塊跟著 t 走、移動快時拉長、落定回彈，按鈕裡的天色同步由琥珀→品牌橘紅→靛藍。
+    // 兩端完全等於原本的日刊與夜刊（淺色底色不變）；中間狀態只在拖曳或過渡中出現。系統設了「減少動態效果」就照舊瞬間切換。
+    var TTX = { t: 0, raf: 0, on: false, s: 1, lt: 0, ln: 0 };
+    var ttCtx = document.createElement('canvas').getContext('2d');
+    function ttRgb(c) { ttCtx.fillStyle = '#000'; ttCtx.fillStyle = c; var s = ttCtx.fillStyle, m; if (s[0] === '#') return [parseInt(s.slice(1, 3), 16), parseInt(s.slice(3, 5), 16), parseInt(s.slice(5, 7), 16), 1]; m = s.match(/[\d.]+/g).map(Number); return [m[0], m[1], m[2], m.length > 3 ? m[3] : 1]; }
+    function ttLin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
+    function ttDelin(c) { c = c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055; return Math.round(Math.max(0, Math.min(1, c)) * 255); }
+    function ttLab(q) { var r = ttLin(q[0]), g = ttLin(q[1]), b = ttLin(q[2]), l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b), m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b), s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b); return [0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s, 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s, q[3]]; }
+    function ttFromLab(L) { var l = L[0] + 0.3963377774 * L[1] + 0.2158037573 * L[2], m = L[0] - 0.1055613458 * L[1] - 0.0638541728 * L[2], s = L[0] - 0.0894841775 * L[1] - 1.2914855480 * L[2]; l = l * l * l; m = m * m * m; s = s * s * s; return [ttDelin(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s), ttDelin(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s), ttDelin(-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s), L[3]]; }
+    function ttMix(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t]; }
+    function ttLum(q) { return 0.2126 * ttLin(q[0]) + 0.7152 * ttLin(q[1]) + 0.0722 * ttLin(q[2]); }
+    function ttBump(t, c, h) { var d = (t - c) / h; return Math.max(0, 1 - d * d); }
+    function ttClamp(x) { return Math.max(0, Math.min(1, x)); }
+    function ttEase(p) { return p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
+    var AMB = ttLab([242, 160, 61, 1]), IND = ttLab([43, 47, 122, 1]), SUNSET = ttLab([255, 74, 46, 1]), NIGHTB = ttLab([88, 98, 214, 1]);
+    var TK = null;
+    function ttSurf(k, t) { var c = ttMix(k.a, k.b, t); if (!k.surf) return c; var wa = 0.2 * ttBump(t, .25, .25), wi = 0.26 * ttBump(t, .75, .25); if (wa) c = ttMix(c, [AMB[0], AMB[1], AMB[2], c[3]], wa); if (wi) c = ttMix(c, [IND[0], IND[1], IND[2], c[3]], wi); return c; }
+    // 中間狀態不逐一改全站顏色變數（桌面一格要 50 毫秒以上），改蓋一層混色濾層：
+    // 換刊點前頁面維持日刊，濾層用「相乘」把整頁調暗並染上暖色（像天色變暗）；換刊點後頁面換成夜刊，濾層用「濾色」把整頁調亮並染上靛藍。
+    // 濾層顏色由目標底色反推，所以底色正好走在插值路徑上；文字、圖表（含程式畫的）都跟著同一層光線變，每格只改一個顏色
+    function ttTable() {
+      if (TK) return TK;
+      var root = document.documentElement, wasDark = root.getAttribute('data-theme') === 'dark', a, b;
+      root.removeAttribute('data-theme'); a = getComputedStyle(root).getPropertyValue('--void').trim();
+      root.setAttribute('data-theme', 'dark'); b = getComputedStyle(root).getPropertyValue('--void').trim();
+      if (!wasDark) root.removeAttribute('data-theme');
+      var v = { a: ttLab(ttRgb(a)), b: ttLab(ttRgb(b)), surf: true }, lo = 0, hi = 1;
+      for (var i = 0; i < 24; i++) { var mid = (lo + hi) / 2; if (ttLum(ttFromLab(ttSurf(v, mid))) > 0.18) lo = mid; else hi = mid; }
+      TK = { v: v, va: ttRgb(a), vb: ttRgb(b), x: (lo + hi) / 2 };
+      return TK;
+    }
+    function ttStr(q) { return 'rgba(' + q[0] + ',' + q[1] + ',' + q[2] + ',' + (+q[3].toFixed(3)) + ')'; }
+    function ttCur() { return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
+    // 圖示：24×24，地平線 y=19；太陽圓心 (12,11) 往下落到看不見，月亮從地平線下升到 (12,11)
+    var ttN = 0;
+    function ttIconSvg(live) {
+      var id = 'ttc' + (++ttN);
+      return '<svg class="tt-ico' + (live ? ' live' : '') + '" viewBox="0 0 24 24" aria-hidden="true"><defs><clipPath id="' + id + '"><rect x="-4" y="-6" width="32" height="23.9"/></clipPath></defs>' +
+        '<g clip-path="url(#' + id + ')"><g class="sun"><circle cx="12" cy="11" r="4"/><g class="rays"><path d="M12 2.6v2M12 17.4v2M3.6 11h2M18.4 11h2M6.1 5.1l1.4 1.4M16.5 15.5l1.4 1.4M6.1 16.9l1.4-1.4M16.5 6.5l1.4-1.4"/></g></g>' +
+        '<g class="moon"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z" vector-effect="non-scaling-stroke"/></g></g><path class="hz" d="M2.5 19h19"/></svg>';
+    }
+    function ttIco(svg, t) {
+      // 太陽 0–45% 沉到地平線下（約 30% 時剩半圓，就是品牌標誌的樣子），光芒在前 24% 收起並轉動；月亮 45% 起快速冒出、到 100% 升到原位
+      var e = ttEase(ttClamp(t / 0.45)), k = 1 - ttEase(ttClamp(t / 0.24)), p = ttClamp((t - 0.45) / 0.55), em = 1 - (1 - p) * (1 - p);
+      svg.querySelector('.sun').setAttribute('transform', 'translate(0 ' + (13 * e).toFixed(2) + ')');
+      var ry = svg.querySelector('.rays'); ry.setAttribute('transform', 'translate(12 11) rotate(' + (60 * t).toFixed(1) + ') scale(' + (0.62 + 0.38 * k).toFixed(3) + ') translate(-12 -11)'); ry.setAttribute('opacity', k.toFixed(3));   // 光芒往圓邊收、同時淡出，不會縮進圓裡
+      svg.querySelector('.moon').setAttribute('transform', 'translate(12.6 ' + (t < 0.45 ? 30 : 23.5 - 12.5 * em).toFixed(2) + ') rotate(' + (-30 * (1 - em)).toFixed(1) + ') scale(.6) translate(-12 -12)');
+    }
+    function ttIcoAll(t) { document.querySelectorAll('.tt-ico.live').forEach(function (s) { ttIco(s, t); }); }
+    function ttIcons() {
+      var bs = tt.querySelectorAll('button');
+      bs.forEach(function (b, i) { var lab = b.textContent.trim(); if (lab) { b.setAttribute('aria-label', lab); b.setAttribute('title', lab); } b.innerHTML = ttIconSvg(false); ttIco(b.firstChild, i); });
+      if (!tt.querySelector('.tt-knob')) { var sky = document.createElement('span'); sky.className = 'tt-sky'; sky.setAttribute('aria-hidden', 'true'); tt.insertBefore(sky, tt.firstChild); var kn = document.createElement('span'); kn.className = 'tt-knob'; kn.setAttribute('aria-hidden', 'true'); kn.innerHTML = ttIconSvg(true); tt.appendChild(kn); }
+      if (mt) mt.innerHTML = ttIconSvg(true);
+      tt.classList.add('tt-icons');
+      ttIcoAll(ttCur() === 'dark' ? 1 : 0);
+    }
+    // 按鈕裡的天色：傍晚琥珀 → 日落品牌橘紅 → 入夜靛藍，強度在中段最高
+    function ttSky(t) {
+      var c = t < .3 ? AMB : t < .5 ? ttMix(AMB, SUNSET, (t - .3) / .2) : t < .72 ? ttMix(SUNSET, NIGHTB, (t - .5) / .22) : NIGHTB;
+      return [ttFromLab(c), Math.sin(Math.PI * t)];
+    }
+    var ttPh = null;
+    function ttBegin() {
+      ttTable();
+      if (!TTX.on) { TTX.on = true; TTX.from = ttCur(); TTX.t = TTX.from === 'dark' ? 1 : 0; TTX.lt = TTX.t; TTX.ln = performance.now(); TTX.s = 1; }
+      tt.classList.add('tt-live'); if (mt) mt.classList.add('tt-live');
+      if (!ttPh) { ttPh = document.createElement('div'); ttPh.className = 'tt-phase'; document.body.appendChild(ttPh); }
+      var src = (mt && mt.offsetParent) ? mt : tt, r = src.getBoundingClientRect(), mob = src === mt;
+      ttPh.style.left = (mob ? r.left - 40 : r.left) + 'px'; ttPh.style.top = (mob ? r.bottom + 6 : r.top - 22) + 'px'; ttPh.style.width = (mob ? r.width + 80 : r.width) + 'px';
+      ttPh.textContent = TTX.from === 'dark' ? (LANG === 'en' ? 'Daybreak' : '破曉') : (LANG === 'en' ? 'Dusk' : '黃昏');
+    }
+    var ttVeil = null;
+    function ttApply(t) {
+      var past = t >= TK.x, now = performance.now();
+      if (past !== (ttCur() === 'dark')) setTheme(past ? 'dark' : 'light');
+      if (!ttVeil) { ttVeil = document.createElement('div'); ttVeil.className = 'tt-veil'; ttVeil.setAttribute('aria-hidden', 'true'); document.body.appendChild(ttVeil); }
+      var tg = ttFromLab(ttSurf(TK.v, t)), c = [0, 1, 2].map(function (i) { return past ? Math.max(0, Math.round((tg[i] - TK.vb[i]) / (255 - TK.vb[i]) * 255)) : Math.min(255, Math.round(tg[i] / TK.va[i] * 255)); });
+      ttVeil.style.mixBlendMode = past ? 'screen' : 'multiply'; ttVeil.style.backgroundColor = 'rgb(' + c.join(',') + ')'; ttVeil.style.display = 'block';
+      // 滑塊：位置跟 t；移動越快拉得越長（最多 1.3 倍），慢下來就收回
+      var vel = Math.abs(t - TTX.lt) / Math.max(8, now - TTX.ln) * 1000, tgt = 1 + Math.min(0.3, vel * 0.16);
+      TTX.s = TTX.s + (tgt - TTX.s) * 0.35; TTX.lt = t; TTX.ln = now; TTX.t = t;
+      tt.style.setProperty('--tt-k', t); tt.style.setProperty('--tt-s', TTX.s.toFixed(3));
+      var sk = ttSky(t), skc = ttStr([sk[0][0], sk[0][1], sk[0][2], 1]);
+      [tt, mt].forEach(function (el) { if (el) { el.style.setProperty('--tt-sky', skc); el.style.setProperty('--tt-glow', sk[1].toFixed(3)); } });
+      ttIcoAll(t);
+      ttPh.style.opacity = Math.min(1, Math.sin(Math.PI * t) * 3);
+    }
+    function ttSettle(el) { if (!el) return; el.classList.remove('tt-settle'); void el.offsetWidth; el.classList.add('tt-settle'); }
+    function ttCommit(v) {
+      cancelAnimationFrame(TTX.raf); var root = document.documentElement, changed = v !== TTX.from;
+      if (ttVeil) ttVeil.style.display = 'none'; [tt, mt].forEach(function (el) { if (el) { el.style.removeProperty('--tt-sky'); el.style.removeProperty('--tt-glow'); } });
+      tt.classList.remove('tt-live'); tt.style.setProperty('--tt-s', 1); if (mt) mt.classList.remove('tt-live'); if (ttPh) ttPh.style.opacity = 0;
+      TTX.on = false; setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {}
+      ttSettle(tt.querySelector('.tt-knob')); ttSettle(mt && mt.offsetParent ? mt : null);
+      if (changed) mounted.forEach(function (el) { el._draw && el._draw(el); });
+    }
+    function ttTween(to, ms) {
+      cancelAnimationFrame(TTX.raf); var from = TTX.t, t0 = performance.now();
+      (function f(now) { var p = Math.min(1, (now - t0) / ms); ttApply(from + (to - from) * ttEase(p)); if (p < 1) TTX.raf = requestAnimationFrame(f); else ttCommit(to ? 'dark' : 'light'); })(t0);
+    }
+    function pickTheme(v) {
+      if (!TTX.on && v === ttCur()) return;
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {} mounted.forEach(function (el) { el._draw && el._draw(el); }); return; }
+      ttBegin(); ttTween(v === 'dark' ? 1 : 0, 1100 * Math.abs((v === 'dark' ? 1 : 0) - TTX.t));
+    }
+    var ttDrag = null, ttSkip = false;
+    tt.style.touchAction = 'none';
+    tt.addEventListener('pointerdown', function (e) { if (e.button) return; ttDrag = { x: e.clientX, w: tt.offsetWidth, id: e.pointerId, on: false }; tt.classList.add('tt-press'); });
+    tt.addEventListener('pointermove', function (e) {
+      if (!ttDrag) return; var dx = e.clientX - ttDrag.x;
+      if (!ttDrag.on) { if (Math.abs(dx) < 4) return; ttDrag.on = true; try { tt.setPointerCapture(ttDrag.id); } catch (er) {} cancelAnimationFrame(TTX.raf); ttBegin(); ttDrag.t0 = TTX.t; }
+      ttApply(ttClamp(ttDrag.t0 + dx / (ttDrag.w / 2)));
+    });
+    function ttEnd() { tt.classList.remove('tt-press'); var d = ttDrag; ttDrag = null; if (!d || !d.on) return; ttSkip = true; setTimeout(function () { ttSkip = false; }, 0); var to = TTX.t >= 0.5 ? 1 : 0; if (matchMedia('(prefers-reduced-motion: reduce)').matches) ttCommit(to ? 'dark' : 'light'); else ttTween(to, 160 + 520 * Math.abs(to - TTX.t)); }
+    tt.addEventListener('pointerup', ttEnd); tt.addEventListener('pointercancel', ttEnd);
+    tt.addEventListener('click', function (e) { if (ttSkip) return; var b = e.target.closest('button'); if (b) pickTheme(b.getAttribute('data-t')); });
     if (mt) mt.addEventListener('click', function () { pickTheme(mt.getAttribute('data-v') === 'dark' ? 'light' : 'dark'); });
     try { setTheme(localStorage.getItem('daybreak.theme') === 'dark' ? 'dark' : 'light'); } catch (e) { setTheme('light'); }
     function pickLang(l) { if (l === LANG) return; try { localStorage.setItem('daybreak.lang', l); } catch (er) {} location.reload(); }
     $('#lang').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-l') === LANG); });
     $('#lang').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) pickLang(b.getAttribute('data-l')); });
     var ml = $('#m-lang'); if (ml) { ml.textContent = LANG === 'en' ? '中文' : 'EN'; ml.addEventListener('click', function () { pickLang(LANG === 'en' ? 'zh' : 'en'); }); }
-    staticText();
+    staticText(); ttIcons();
     var pad = function (x) { return ('0' + x).slice(-2); };
     function tick() { var t = new Date(); var nx = new Date(Date.UTC(t.getUTCFullYear(), t.getUTCMonth(), t.getUTCDate(), 0, 15));   /* 2026-11-06 日報任務改 UTC 00:15 開始 */ if (nx <= t) nx = new Date(+nx + 864e5); var d = Math.floor((nx - t) / 1000); $('#nxt').textContent = 'T−' + pad(Math.floor(d / 3600)) + ':' + pad(Math.floor(d % 3600 / 60)) + ':' + pad(d % 60); }
     tick(); setInterval(tick, 1000);
