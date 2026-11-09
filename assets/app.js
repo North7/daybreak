@@ -5171,7 +5171,7 @@
       panel('span-12', _t('短期持有者獲利比例'), _t('2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%', interpHtml(sthlSay()) + '<div class="chart" id="c-profit"></div><p class="note">' + _T('短期持有者成本與真實市場均價的走勢在週期版「市場階段」的佐證圖 ', 'Short-term holder cost vs the true market mean is charted with the market-stage evidence on the Cycle page ') + jumpA('cycle', 'ev-tmm', _T('看圖 →', 'See chart →')) + '</p>') +
       sbPanel() + acPanel() + concPanel() +   // 2026-11-08 內容重組：籌碼集中度從衍生品版搬來；需求四張搬到資金版
       grpH('oc-pnl', '賣出的人賺還是賠', 'Are sellers in profit or at a loss', _T('短期持有者和全市場賣出時是獲利還是認賠', 'Whether short-term holders, and the market as a whole, sell at a profit or a loss')) +
-      soprPanel() + confPanel() + sthPnlPanel() + nplPanel() + n365Panel() +
+      soprPanel() + sthPnlPanel() + confPanel() + nplPanel() + n365Panel() +   // 2026-11-09 修：兩張半寬（span-6）要相鄰，整列寬的信心圖放在它們後面（#98 插在中間，兩張各自佔一列、右邊空白）
       grpH('oc-sell', '賣壓強弱與衰竭', 'Selling pressure and exhaustion', _T('賣壓在加大還是快耗盡', 'Is selling building up or running dry')) +
       rplPanel() + rlPanel() + ssrPanel() + secPanel() + moPanel() +
       grpH('oc-lth', '長期持有者與大戶', 'Long-term holders and whales', _T('長期持有者和大戶在加碼、出貨還是認賠', 'Are long-term holders and whales adding, distributing or selling at a loss')) +
