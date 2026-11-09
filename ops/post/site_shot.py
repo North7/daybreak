@@ -97,9 +97,12 @@ def main():
                           '--no-first-run', '--no-default-browser-check', f'--window-size={W},1000', 'about:blank'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
-        for _ in range(50):
+        # 2026-11-09：GitHub Actions 上 Chrome 第一次啟動有時超過 10 秒，中文圖排第一個就截不到（tg 沒值）；等到 30 秒，等不到就講清楚
+        tg = None
+        for _ in range(150):
             try: tg = json.load(urllib.request.urlopen(f'http://127.0.0.1:{PORT}/json')); break
             except Exception: time.sleep(0.2)
+        if tg is None: raise RuntimeError(f'Chrome 30 秒內沒開好 remote debugging（port {PORT}）')
         page = next(t for t in tg if t['type'] == 'page')
         ws = WS(page['webSocketDebuggerUrl'])
         ws.call('Page.enable'); ws.call('Runtime.enable')
