@@ -124,6 +124,32 @@
     "market/levels",
     "onchain/urpd"
    ]
+  },
+  {
+   "id": "2026-11-10-cycle",
+   "time": "2026-11-10T04:00:00Z",
+   "title": "熊市的底都在頂部後一年左右，這輪剛滿 13 個月，底到了沒？",
+   "note": "11/09 深夜跟使用者講好的 11/10 問題型專題。中文 12:00、英文 20:00（CPI 台北 21:30 公布，避開）。核心：前三輪底在頂部後第 364–406 天（cycle.cycle_cmp low.day），今天第 400 天；同一天前三輪 −75～−82%、這輪 −40%（at.pct，11/08）；6/30 第 267 天 −53%。長期持有者虧損比例（onchain.lthloss rows）見底那天：2015/01/14 51.3、2018/12/16 45.0、2022/11/21 43.9、2026/06/30 45.4；現在 34.6；61K＝lthloss.cohort.break_price。見底後回頂部價 771／716／481 天（back_after_low）。發之前：如果 11/09 收盤讓長期持有者虧損比例或 −40% 變了，改數字；11/16 是第 406 天。圖1 網站 #c-cyccmp 加標註（scratchpad cyc/mark_cyccmp.py），圖2 自畫（cyc/pain.py），都沒進 git。",
+   "zh": "熊市的底都在頂部後一年左右，這輪剛滿 13 個月，底到了沒？\n\n前三輪熊市的底，都落在頂部後第 364 到 406 天之間。今天是這輪頂部後第 400 天。照時間表，底應該就在這幾天，但我覺得這輪的底八成已經在 6/30 了，只是來得早、跌得淺。時間對不上，痛的程度對上了\n\n時間是最對不上的地方。走到同一天，前三輪都比頂部低了 75–82%，這輪只低 40%（圖1）。6/30 那個低點在第 267 天，從頂部跌了 53%，前三輪見底時都跌掉 77–85%。真要照「頂部後一年見底」走，價格得在下週一、也就是第 406 天以前跌破 6/30 的 58.5K，從 74.7K 算還要再跌兩成多\n\n痛的程度倒是對上了。長期持有者就是拿了 155 天以上的人，前三輪見底那天，他們有 44–51% 帳面在虧，6/30 那天是 45%（圖2）。拿最久、最不容易被洗出去的人，那天的痛跟前幾輪熊底差不多，該認賠的那一波已經來過。現在這個比例回到 35%\n\n而且跌幅本來就一輪比一輪淺，這輪少跌一截不奇怪\n\n「頂部後一年見底」只有 3 次，不能拿來當訊號。過了第 406 天沒破新低，也不代表接下來就會漲，前三輪見底之後，都又磨了一年半到兩年多才回到頂部價。自己能核對的是長期持有者的虧損比例：又往 45% 走（照現在的籌碼，大概是價格到 61K），就是 6/30 那一跌還不夠，底會落在更晚、更深的地方，比較像前三輪；停在 35% 上下，6/30 是底的說法就站得住\n\n#比特幣 #BTC\n\n（數據：每日收盤 Bitview，到 11/08；頂部 2013/12/04、2017/12/16、2021/11/08、2025/10/06，見底 2015/01/14、2018/12/15、2022/11/09（價格）；長期持有者虧損比例 CheckOnChain（持有 ≥155 天），2022 年那輪用 11/21，到 11/08；61K 由 CheckOnChain 長期持有者籌碼分布推算；見底後回到頂部價：771、716、481 天）",
+   "images": [
+    "data/longposts/2026-11-10-cycle.png"
+   ],
+   "charts": [
+    "cycle/cyccmp"
+   ]
+  },
+  {
+   "id": "2026-11-10-cycle-en",
+   "time": "2026-11-10T12:00:00Z",
+   "title": "Every bear market bottomed about a year after the top. We're 13 months in. Is the bottom in?",
+   "note": "英文版，同 2026-11-10-cycle。",
+   "en": "Every bear market bottomed about a year after the top. We're 13 months in. Is the bottom in?\n\nThe last three bear markets bottomed between day 364 and day 406 after the cycle top. Today is day 400 of this one. By the calendar the bottom should be right about now, but I think it most likely already came on June 30, just earlier and shallower than before. The timing doesn't match. The pain does\n\nTiming is where this cycle breaks the pattern. On the same day after the top, the last three cycles were 75–82% below their peaks. This one is 40% below (Chart 1). The June 30 low came on day 267 at −53%, while the last three bottoms took 77–85% off the top. For the \"bottom a year after the top\" template to hold, price would have to break June 30's $58.5K before day 406, which is next Monday, another 20%+ drop from $74.7K\n\nThe pain matches. On each of the last three bottom days, 44–51% of long-term holders (coins held 155+ days) were underwater. On June 30 it was 45% (Chart 2). The most patient holders, the hardest to shake out, hit the same level of pain as at past bear-market bottoms, so the capitulation wave has already happened once. Today that share is back to 35%\n\nAnd each cycle's drawdown has been shallower than the last, so a smaller one this time isn't strange\n\nThree cases of \"bottom a year after the top\" is not a signal. Getting past day 406 without a new low doesn't mean price goes up from here either: after each of the last three bottoms, it still took a year and a half to two years to get back to the old top. The thing you can check yourself is the long-term holder loss share. If it climbs back toward 45%, which is about $61K with today's supply, June 30 wasn't enough and the bottom is later and deeper, like the last three cycles. If it holds around 35%, the June 30 bottom case stands\n\n#Bitcoin #BTC\n\n(Data: daily closes Bitview, through Nov 8; tops Dec 4, 2013, Dec 16, 2017, Nov 8, 2021, Oct 6, 2025; price lows Jan 14, 2015, Dec 15, 2018, Nov 9, 2022; long-term holders in loss CheckOnChain (held 155+ days), Nov 21, 2022 used for that cycle, through Nov 8; $61K from CheckOnChain long-term holder cost distribution; days from low back to the old top: 771, 716, 481)",
+   "images": [
+    "data/longposts/2026-11-10-cycle-en.png"
+   ],
+   "charts": [
+    "cycle/cyccmp"
+   ]
   }
  ],
  "used": [
