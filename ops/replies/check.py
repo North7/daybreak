@@ -3,6 +3,8 @@
 X 字數 280 以內、不談出場框架、配圖檔存在、數據日期是當期。有錯就以非零結束。
 用法（在倉庫根目錄）：python3 ops/replies/check.py"""
 import json, os, re, sys
+from collections import Counter
+from statistics import mean, pstdev
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, 'pipeline'))
@@ -22,7 +24,11 @@ ROBOT = re.compile(r'^(補一個|補一組|補兩個|Daily data|Our .{0,40}estim
 # 2026-11-09 使用者：「不能說看錯，另外什麼是照舊走，舊是怎麼走的，不照舊會怎麼走，直接說出來」。
 AI_WORDS = re.compile(r'看錯|照舊走|照舊在走|could be wrong|I\'m wrong|I was wrong|找不到誰|找不到有誰|看了一圈|我找不到|我沒找到|nobody I can find|I can\'t find any|我這邊|我们这边|我們這邊|我算(的|在|出來|到)|算出來是|新手|老手|新買家|老買家|短線的人|值得注意的是|值得一提|整體而言|總的來說|總而言之|綜上|我的(看法|判斷|結論)是|所以我的判斷|什麼情況會讓我改看法|會讓我改看法|我會說(是|它)|(不會|會)叫它|再說它|(得|要)先看到|我會把[^，。\n]{1,20}看成|先講清楚|什麼情況代表我看錯|最後提醒一下|說白了|說穿了|先說結論|結論先講|首先[，,].{0,40}其次|不僅僅?是|而且老實說|說到底|這就是全部|'
                       r'\b(delve|crucial|pivotal|underscores?|testament|tapestry|showcases?|Additionally|Moreover|Furthermore|'
-                      r"on (my|our) end|on my side|by my (math|count|numbers)|Here's the thing|That's the whole story|Fun (fact|detail)|No fluff|Let that sink in)\b|——|—", re.I)
+                      r"on (my|our) end|on my side|by my (math|count|numbers|estimate)|my estimate (puts|is|has)|Here's the thing|That's the whole story|Fun (fact|detail)|No fluff|Let that sink in|"
+                      # 2026-11-09 第二輪（voice.md「去 AI 味第二輪」）：泛指來源、過度禮貌、固定收尾、淺層分析尾句、書面填充詞、英文套話
+                      r"Lots of people|Many people|Some say|A lot of people (are )?(saying|think)|The reality is|Let's be (clear|honest)|To be clear|At the end of the day|bottom line|In other words|Think of it (as|this way)|key takeaway|game.?changers?|not a forecast|"
+                      r"Great (point|post|thread|analysis|chart|call)|Well said|Spot on|Nice (breakdown|work|chart|call)|Thanks for sharing|Love this)\b|"
+                      r'很多人說|不少人說|大家都說|某種程度|一定程度上|本質上|換句話說|不難發現|毋庸置疑|顯而易見|凸顯了?|彰顯|體現了|只能當個?參考|說得好|好文|感謝分享|謝謝分享|受教了|學到了|——|—', re.I)
 # 只提醒、不擋：一天裡出現太多次才是問題
 CONTRAST = re.compile(r'不是[^，。？\n]{1,24}[，,、 ]?(而)?是|不等於|\bnot (just |only )?an? [^,.]{1,30}, (but )?|, not an? |isn\'t [^,.]{1,30}[,.] it\'s|rather than', re.I)
 DECIMAL = re.compile(r'\d\.\d')
@@ -31,6 +37,10 @@ QEND = re.compile(r'[？?]\s*$')
 LIST3 = re.compile(r'[^，。！？；：\n]*、[^，。！？；：\n]*、[^，。！？；：\n]*')        # 一個分句裡兩個以上頓號
 PREMOD = re.compile(r'[^，。！？；：\n、]{16,}的[^，。！？；：\n、的]{1,6}(?=[，。！？；\n]|$)|的[^，。！？；：\n]{0,8}的[^，。！？；：\n]{0,8}的')  # 過長前置定語／連著三個「的」
 SHELL = re.compile(r'對於[^，。]{1,15}(來說|而言)|就[^，。]{1,10}而言|當[^，。]{2,20}時，|(^|\n)(然而|因此|此外)，')
+# 2026-11-09 第二輪：焦點後置／假分裂句（Claude 指紋，lieflat +0.47）：新資訊吊到句尾。直接講後面那件事，一篇最多一次
+FOCUS = re.compile(r'(分辨的方法|要盯的|要看的|要注意的|真正的(問題|差別|重點)|的原因)是|What(\'s| is) (missing|different|new|changed|interesting) is|The (tell|catch|difference|problem|key|messy part|tricky part|short version) is', re.I)
+# 固定收尾段「這週看兩件事：」連續幾篇都有就是模板（voice.md 第二輪）
+CLOSER = re.compile(r'[這本]週[先]?看[兩三幾]件事|[Tt]wo things to watch|things to watch this week|What (I\'m|to) watch(ing)? this week')
 
 
 def sentence_notes(tag, t):
@@ -38,18 +48,41 @@ def sentence_notes(tag, t):
     out = [f'{tag} 頓號罗列：「{m.group(0).strip()[:40]}」' for m in LIST3.finditer(t)]
     out += [f'{tag} 前置定語太長：「{m.group(0)[:40]}」' for m in PREMOD.finditer(t) if '是' not in m.group(0)]   # 「……是……的底」是謂語，不是前置定語
     out += [f'{tag} 話題殼／句首路標：「{m.group(0).strip()[:30]}」' for m in SHELL.finditer(t)]
+    out += [f'{tag} 焦點後置（「{m.group(0)}」）：直接講後面那件事（voice.md 2026-11-09 第二輪）' for m in FOCUS.finditer(t)]
     s = [x.strip() for x in re.split(r'[。！？\n]', t) if len(x.strip()) >= 6]
     for i in range(len(s) - 2):
         if s[i][:2] == s[i + 1][:2] == s[i + 2][:2]: out.append(f'{tag} 連三句同款開頭：「{s[i][:12]}…」')
     return out
 
 
+def longpost_notes(tag, t, lang):
+    """單篇長貼文的結構提醒（不擋，voice.md「去 AI 味第二輪」2026-11-09）：小標數、段落長度都一樣、對比句、每段短句收尾。
+    lieflat 配對實測：人寫的長文一篇 0–1 個小標（AI 1.26 個／千字）、段落長度 CV 人類 0.83（AI 0.31）、「不是 A 而是 B」人類 0.22 次／千字（AI 0.94）。"""
+    body = re.sub(r'（數據：[^）]*）|\(Data:[^)]*\)|#\S+|https?://\S+', '', t)
+    paras = [p.strip() for p in body.split('\n') if p.strip()][1:]   # 第一行是標題
+    heads = [p for p in paras if len(p) <= (22 if lang == 'zh' else 60) and not re.search(r'[。）)!?.]$|\d[KkMm%]?$', p)]
+    out = []
+    if len(heads) > 3: out.append(f'{tag} 小標 {len(heads)} 個（{"／".join(h[:10] for h in heads[:4])}…）：人寫的長文一篇 0–1 個，最多留 3 個，其餘併進段落第一句')
+    pl = [len(p) for p in paras if p not in heads]
+    if len(pl) >= 4 and pstdev(pl) / mean(pl) < 0.3: out.append(f'{tag} 段落長度都差不多（{min(pl)}–{max(pl)} 字）：併一段長的、留一段短的，不要為了參差硬拆')
+    c = len(CONTRAST.findall(body))
+    if c > 1: out.append(f'{tag} 對比句（不是 X 是 Y／not X）{c} 處：一篇最多 1 處')
+    short = 0
+    for p in paras:
+        if p in heads: continue
+        ss = [x.strip() for x in re.split(r'[。！？.!?]', p) if x.strip()]
+        if len(ss) >= 3 and len(ss[-1]) <= (10 if lang == 'zh' else 30): short += 1
+    if short > 2: out.append(f'{tag} {short} 段都用一句短的收尾：一篇一兩處就好，其他段用數字或細節收')
+    return out
+
+
 def check_longposts():
-    """data/longposts.json（長貼文）：AI 用語、簡體、框架用詞直接擋；逐句提醒另外印。"""
+    """data/longposts.json（長貼文）：AI 用語、簡體、框架用詞直接擋；逐句、結構提醒另外印。"""
     p = os.path.join(ROOT, 'data', 'longposts.json')
     if not os.path.exists(p): return [], []
     err, notes = [], []
-    for it in json.load(open(p, encoding='utf-8')).get('items', []):
+    items = json.load(open(p, encoding='utf-8')).get('items', [])
+    for it in items:
         for lang in ('zh', 'en'):
             t = it.get(lang)
             if not t: continue
@@ -59,6 +92,9 @@ def check_longposts():
             if lang == 'zh' and set(t) & SIMP: err.append(f'{tag} 有簡體字：{"".join(sorted(set(t) & SIMP))}')
             if lang == 'zh' and not it.get('posted') and EN_NAME.search(t): err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(sorted(set(EN_NAME.findall(t)))) + '（voice.md 用詞，2026-11-09）')
             notes += sentence_notes(tag, t)
+            notes += longpost_notes(tag, t, lang)
+    closers = [it.get('id') for it in items if CLOSER.search((it.get('zh') or '') + (it.get('en') or ''))]
+    if len(closers) >= 2: notes.append(f'長貼文 {len(closers)} 篇都用「這週看幾件事」收尾：{closers}，連著幾篇就是模板，併進結論段或換個寫法')
     return err, notes
 
 
@@ -85,7 +121,7 @@ def check():
             continue
         if it.get('lang') not in ('zh', 'en'): err.append(f'{tag} 原文是 {it.get("lang")}：只回中文和英文貼文，請改成 skip')
         if not t and not (it.get('mode') == 'quote' and it.get('quote')): err.append(f'{tag} 沒有回覆內容')   # 只引用不回覆的可以留空（2026-11-06）
-        if t: err += [e for e in text_errors(tag + ' 回覆', t, it.get('lang')) if not (it.get('posted') and '英文常用名' in e)]   # 已發出的不用改（2026-11-09 用詞規則之前發的）
+        if t: err += [e for e in text_errors(tag + ' 回覆', t, it.get('lang')) if not (it.get('posted') and ('英文常用名' in e or 'AI 腔' in e))]   # 已發出的不用改（規則是發出之後才加的，2026-11-09）
         if t and ONE_LINE.search(t): err.append(f'{tag} 回覆一行裡有兩句（「{ONE_LINE.search(t).group(0)}」）：每句話換一行，見 voice.md 2026-11-08')
         if HASH.search(t): err.append(f'{tag} 回覆不加 hashtag（引用文和快訊才加）')
         q = it.get('quote')
@@ -215,6 +251,22 @@ def tone_notes(items):
     q = share(lambda t: QEND.search(t))
     if q > 0.3: out.append(f'問句收尾 {q:.0%}：只在真的想知道時問')
     if share(lambda t: re.search(r'[。.]\s*$', t)) > 0.5: out.append('超過一半句尾有句號：手機上打字通常不加')
+    # 2026-11-09 第二輪（voice.md「去 AI 味第二輪」）：11/08 禁掉附和開頭之後，第一行長出「X 是真的，但」這種讓步開頭（當天 26%）；第三行「所以」收結論（26%）；口頭禪；長度、行數太整齊
+    CONCEDE = re.compile(r'是真的|沒錯|說得對|說得通|對得上|這點你|is real|isn\'t the only|isn\'t wrong|fair,? but|^(True|Fair)\b|\bthough$', re.I)
+    cc = [it['n'] for it in R if CONCEDE.search(it['reply'].strip().split('\n')[0])]
+    if len(cc) > max(2, n // 6): out.append(f'第一行讓步開頭（是真的，但／沒錯／說得對／isn\'t the only／though）{len(cc)} 則：{cc}，一天兩三則就好，直接講不同意的點或新東西')
+    so = [it['n'] for it in R if re.search(r'(^|\n)(所以|So\b)', it['reply'])]
+    if len(so) > max(3, n // 5): out.append(f'有一行用「所以／So」開頭 {len(so)} 則：{so}，結論已經在第一行，最後一行放細節或留白')
+    PET = {'比較像': 2, '真的': 3, '其實': 3, '我覺得': 3, 'to me': 2, 'though': 2, "I don't think": 2}
+    pets = []
+    for w, m in PET.items():
+        k = sum(1 for it in R if re.search((r'\b' if w[0].isascii() else '') + re.escape(w) + (r'\b' if w[-1].isascii() else ''), it['reply']))
+        if k > m: pets.append(f'{w} {k} 則')
+    if pets: out.append('口頭禪：' + '、'.join(pets) + '，換著講（就是／八成／應該是／看起來像／my guess is／probably）')
+    Z = [len(re.sub(r'\s', '', it['reply'])) for it in R if it.get('lang') == 'zh']
+    if len(Z) >= 8 and pstdev(Z) / mean(Z) < 0.35: out.append(f'中文回覆長度太整齊（{min(Z)}–{max(Z)} 字，CV {pstdev(Z) / mean(Z):.2f}）：要有一行的、也有五行的')
+    ln = Counter(len(it['reply'].strip().split('\n')) for it in R if it.get('kind') != 'followup')
+    if ln and ln.most_common(1)[0][1] / sum(ln.values()) > 0.5: out.append(f'回原創的回覆 {ln.most_common(1)[0][1]}/{sum(ln.values())} 則都是 {ln.most_common(1)[0][0]} 行：行數要亂')
     for it in items:   # 2026-11-06：長貼文那套逐句提醒，回覆和引用也跑
         if it.get('status') == 'skip': continue
         for k in ('reply', 'quote'):
