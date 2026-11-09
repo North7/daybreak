@@ -673,8 +673,8 @@ def check2(L, pk):
     ps = pk.get('picks') or []
     if len(ps) != 1: errs.append(f'picks 一天 1 張，現在 {len(ps)} 張')
     try:
-        sys.path.insert(0, P('ops', 'replies')); from check import AI_WORDS   # 回覆用的 AI 腔清單，推薦圖表也照用
-    except Exception: AI_WORDS = None
+        sys.path.insert(0, P('ops', 'replies')); from check import AI_WORDS, EN_NAME, EN_NAMES   # 回覆用的 AI 腔清單，推薦圖表也照用；EN_NAME：比特幣→BTC 這類（2026-11-09）
+    except Exception: AI_WORDS = EN_NAME = None
     cand = {c['id']: c for c in candidates2(L, load('notes.json'))}
     src = NUMS(json.dumps([cand, load('notes.json'), load('notes.en.json')], ensure_ascii=False))
     for p in ps:
@@ -693,6 +693,7 @@ def check2(L, pk):
             for x, tag in ((q, 'q_' + lang), (t, lang)):
                 if BAN.search(x): errs.append(f'{i}.{tag}: 提到出場框架或買賣（{BAN.search(x).group(0)}）')
                 if AI_WORDS and AI_WORDS.search(x): errs.append(f'{i}.{tag}: AI 腔或不用的詞（{AI_WORDS.search(x).group(0)}，見運營 voice.md）')
+                if EN_NAME and lang == 'zh' and EN_NAME.search(x): errs.append(f'{i}.{tag}: 有英文常用名的詞要用英文（{EN_NAME.search(x).group(0)}→{EN_NAMES[EN_NAME.search(x).group(0)]}，見運營 voice.md 用詞）')
                 miss = sorted(NUMS(x) - src)
                 if miss: errs.append(f'{i}.{tag}: 這些數字在 plan 的資料與當期 notes 裡找不到：{", ".join(miss)}')
             if lang == 'en' and re.search(r'[一-鿿]', q + t): errs.append(f'{i}.en: 有中文字')
