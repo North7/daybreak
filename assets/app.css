@@ -162,12 +162,14 @@ html.tt-vt::view-transition-group(tt-ring), html.tt-vt::view-transition-new(tt-r
 
 main#view { padding: 32px var(--gut) 64px; display: grid; gap: 28px; outline: none; }
 /* 換版：內容由模糊顯影 */
-.view-enter > * { animation: materialize .7s var(--ease) both; }
+.view-enter > * { animation: rise-in .6s var(--ease) both; }   /* 2026-11-09：整版只淡入上移；模糊效果改只用在第一屏的號外區（版面最高約 24,000px，整版做 blur 在手機上很吃 GPU） */
+.view-enter .front { animation: materialize .7s var(--ease) both; }
 .view-enter > *:nth-child(2) { animation-delay: .07s; }
 .view-enter > *:nth-child(3) { animation-delay: .14s; }
 .view-enter > *:nth-child(4) { animation-delay: .21s; }
 .view-enter > *:nth-child(n+5) { animation-delay: .28s; }
 @keyframes materialize { from { opacity: 0; transform: translateY(16px); filter: blur(8px); } to { opacity: 1; transform: none; filter: none; } }
+@keyframes rise-in { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: none; } }
 /* 換版：一道紅色掃描線橫越舞台 */
 /* 換頁掃描線：方向跟著換頁方向。行動版（導航橫排）左右掃；桌面（導航直排）上下掃——往下一版由下往上、往上一版由上往下 */
 .wipe { --span-x: calc(100vw - var(--rail)); position: fixed; top: 0; bottom: 0; left: var(--rail); width: 2px; z-index: 80; pointer-events: none; background: var(--red); box-shadow: 0 0 24px 4px color-mix(in srgb, var(--red) 45%, transparent); opacity: 0; }
@@ -589,7 +591,7 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 /* 2026-11-09 換語言的轉場（app.js pickLang／langIn）：離開時滑塊拉長到位、字亂碼，存下畫面快照；進入時開機就擺出快照（iframe）持續亂碼，沒有快照才用暮色；畫好後換成新頁面解碼，滑塊與手機按鈕回彈 */
 .lfx-ghost { position: fixed; top: 0; bottom: 0; left: 0; z-index: 2147483001; pointer-events: none; }   /* 上一頁的畫面快照（index.html 放在 shadow DOM 裡），新語言畫好就拿掉；用 top／bottom 撐滿實際可見高度（iPhone 的 100vh 比可見範圍高） */
 /* 從換語言進來時，頁面的進場動畫（內容浮現、標題顯影、價格線描繪、長條長出）直接到位：快照一拿掉就是完整版面，接著解碼，不會有一瞬空白（langIn 4 秒後拿掉這個 class，那時進場動畫都已結束，不會重播） */
-html.lfx-came .view-enter > *, html.lfx-came .news-grid .news-card, html.lfx-came .reveal, html.lfx-came .mega .big, html.lfx-came .mega .spark svg, html.lfx-came .mega .spark .dot,
+html.lfx-came .view-enter > *, html.lfx-came .view-enter .front, html.lfx-came .news-grid .news-card, html.lfx-came .reveal, html.lfx-came .mega .big, html.lfx-came .mega .spark svg, html.lfx-came .mega .spark .dot,
 html.lfx-came .chart .draw, html.lfx-came .kpi .bar i, html.lfx-came .pct i b, html.lfx-came .ladder .row .b i, html.lfx-came .brand svg path:first-child { animation-duration: 0s !important; animation-delay: 0s !important; }
 html.lfx-in::after { content: ""; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; background: var(--lfx-bg, var(--void)); opacity: 1; transition: opacity .5s cubic-bezier(.25, 0, .25, 1); }
 html.lfx-in.lfx-lift::after { opacity: 0; }
