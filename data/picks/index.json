@@ -1,16 +1,16 @@
 {
- "date": "2026-11-07",
+ "date": "2026-11-08",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/sopr",
-   "chart": "data/picks/onchain-sopr.png",
-   "chart_en": "data/picks/onchain-sopr-en.png",
+   "id": "cycle/cyccmp",
+   "chart": "data/picks/cycle-cyccmp.png",
+   "chart_en": "data/picks/cycle-cyccmp-en.png",
    "name": {
-    "zh": "短期持有者認賠賣壓（STH-SOPR）",
-    "en": "Short-term holder SOPR"
+    "zh": "和前幾輪比：頂部之後",
+    "en": "Versus past cycles: after the top"
    },
-   "link": "https://north7.github.io/daybreak/#onchain/sopr"
+   "link": "https://north7.github.io/daybreak/#cycle/cyccmp"
   }
  ]
 }
