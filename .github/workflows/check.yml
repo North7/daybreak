@@ -30,6 +30,8 @@ jobs:
           python3 -c "import json,glob;[json.load(open(f)) for f in glob.glob('data/*.json')+['manifest.webmanifest']]"
       - name: English dictionary covers every string
         run: python3 pipeline/check_i18n.py
+      - name: Site data matches latest.json
+        run: python3 pipeline/site_data.py --check
       - name: Asset versions are stamped
         run: |
           cp index.html /tmp/index.before && python3 pipeline/stamp_assets.py && diff -q /tmp/index.before index.html || (echo "index.html 的 ?v= 版本號沒更新：請執行 python3 pipeline/stamp_assets.py 後再提交" && exit 1)

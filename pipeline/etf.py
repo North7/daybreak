@@ -48,4 +48,8 @@ if __name__ == '__main__':
     if os.path.exists(lf):
         lat = json.load(open(lf)); lat.setdefault('flows', {})['etf'] = rows
         json.dump(lat, open(lf, 'w'), ensure_ascii=False, separators=(',', ':'))
+        try:   # 2026-11-09 網站讀的 data/site.json 跟著更新（pipeline/site_data.py）
+            import site_data; site_data.write(lf, P('data', 'site.json'))
+        except Exception as e:
+            print('site_data failed', e)
     print(f'ETF 已更新：{nf} 檔，最新完整日 {last_tb}，共 {len(rows)} 筆；最近：', [(r["d"], r["musd"]) for r in rows[-4:]])

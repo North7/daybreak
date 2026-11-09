@@ -134,6 +134,11 @@ except Exception as e:
     print('latest.prev failed', e)
 json.dump(out, open(P('data', 'latest.json'), 'w'), ensure_ascii=False, separators=(',', ':'))
 print('built data/latest.json', td['bar_date'], os.path.getsize(P('data', 'latest.json')), 'bytes')
+# 2026-11-09 網站改讀 data/site.json：內容相同、數字表改成按欄存放（gzip 約小 30%），見 pipeline/site_data.py；latest.json 不動
+try:
+    import site_data; site_data.write_all()
+except Exception as e:
+    print('site_data failed', e)
 
 # 給下一次 collect.py 用的最小前一日狀態（URPD 週變化、ATR 回測）；只含市場資料
 row = {'bar_date': td['bar_date'], 'c': c, 'atr14': (td.get('atr') or {}).get('atr14'), 'atr7': (td.get('atr') or {}).get('atr7'),

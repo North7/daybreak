@@ -13,7 +13,7 @@
   2. **文字日報**：另一個排程（UTC 00:15，台北 08:15；2026-11-06 起，原本 00:30）照 `docs/CLAUDE_DAILY.md` 寫 `notes.json`、`notes.en.json`、`x_post.json`。
 - 主要檔案：
   - `pipeline/collect.py`：所有 API 抓取與計算（區塊用 `# G4d.`、`# G9b.` 這類標籤分段）。
-  - `pipeline/build.py`：整理成網站用的 `data/latest.json`；`pipeline/brief.py`：給日報的精簡版。
+  - `pipeline/build.py`：整理成完整資料 `data/latest.json`，再由 `pipeline/site_data.py` 產生網站實際讀的 `data/site.json`（內容相同、數字表按欄存放，gzip 約小 30%）；`pipeline/brief.py`：給日報的精簡版。
   - `pipeline/bitview.py`（Bitview 鏈上資料＋快取）、`pipeline/stage_viz.py`（各圖的資料）、`pipeline/hl_whales.py`（Hyperliquid）、`pipeline/liq_heat.py`（清算熱力圖、2 年範圍、每日多空清算量）、`pipeline/coinalyze.py`（Coinalyze 讀取；key 在 GitHub secret `COINALYZE_API_KEY`，本機 `~/.config/daybreak/coinalyze.key`）。
   - `assets/app.js`（全部頁面與圖，自己寫的 SVG 圖表：`lineChart`、`twoPane`、`panel`、`interpHtml`、`legend`）、`assets/app.css`。
   - 文件：`docs/CLAUDE_DAILY.md`（日報寫法與資料欄位）、`docs/chart-style.md`（圖表風格與配色）、`docs/indicator-ideas.md`（運營記的指標點子）、`README.md`（變更紀錄、資料來源）。
@@ -27,7 +27,7 @@
 - **配色**（`docs/chart-style.md`）：主色按指標類型——成本與價位＝橙 `--s2`、獲利與情緒＝紫 `--s1`、籌碼與供給＝青綠 `--s3`、資金與衍生品＝金 `--s4`；有方向的（正負、多空、流入流出）一律綠＝正、品牌橘紅＝負，文字用 `--down-ink`（2026-11-09 紅綠規則 v2）；分類、週期階段 `--stg0`–`--stg4`、熱力圖的多色保留；不發光、不加圖底光暈和頂端漸層色條。圖例顏色要和線一致（今天抓到兩處不一致才修）。
 - **每個指標只有一個家**：改既有面板，不重複做一張。
 - **版面**（2026-11-06 整理）：鏈上版分四組、週期版分三組，用 `grpH()` 加組名（版內目錄自動分組）；新面板放進對的組。圖表面板裡，細項讀值超過 3 列會自動收進「更多讀值」、圖後面的表格自動收成「展開表格」、長說明只露兩行（`interpHtml`、`tidyPanel`），不用手動收。
-- **省 bitcoin-data 免費額度**（每天約 10 次）：不要為了測試重跑整條管線；新欄位用一次性補值寫進 `data/latest.json`，隔天自動更新再正式算。
+- **省 bitcoin-data 免費額度**（每天約 10 次）：不要為了測試重跑整條管線；新欄位用一次性補值寫進 `data/latest.json`，隔天自動更新再正式算。**改完 `latest.json` 一定要再跑 `python3 pipeline/site_data.py`**：網站讀的是 `data/site.json`，不重產網站還是舊資料（PR 檢查 `site_data.py --check` 會擋）。
 - **流程**：改完 → 檢查 → 開 PR → 等「Site checks」通過 → 用完整 head SHA 合併 → 等 Pages 部署 → 到線上再檢查一次。使用者說「上線／推上去」就是這整套。
 - 提交訊息結尾兩行（照 session 給的格式）；不要在提交、PR 裡寫模型名稱。
 

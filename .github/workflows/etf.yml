@@ -24,7 +24,7 @@ jobs:
         run: |
           git config user.name "apogee-bot"
           git config user.email "apogee-bot@users.noreply.github.com"
-          git add data/etf.json data/latest.json
+          git add data/etf.json data/latest.json data/site.json
           git diff --cached --quiet && echo "no changes" && exit 0
           git commit -m "etf: $(python3 -c "import json;print(json.load(open('data/etf.json')).get('last_complete'))")"
           git pull --rebase --autostash
