@@ -7,6 +7,7 @@
 - 比特幣每日簡報網站：<https://north7.github.io/daybreak/>（GitHub Pages，repo `North7/daybreak`，分支 `main`）。
 - 十個版面：頭版、消息、週期、鏈上、價格、資金、衍生品、出場框架、往期、方法。中英雙語（`_t`／`_T`）、日刊／夜刊兩種主題。
   - 日刊／夜刊切換（2026-11-09）：有中間狀態的黃昏過渡＋地平線日月圖示，程式在 `assets/app.js` 的 `ttApply`／`ttIco`／`ttCommit`。中間狀態是一層混色濾層（`.tt-veil`），不要改回逐一改全站顏色變數（桌面一格要 50 毫秒以上）；兩端必須等於原本的日刊、夜刊（淺色底色不能變）。換刊點前後有一層同底色的暮色（`.tt-fog`）讓內容淡進淡出，避免跳動；換刊後重畫圖表走 `ttRedraw`（先畫看得到的、其餘分批），不要改回一次重畫全部。
+  - 換語言（2026-11-09）：`pickLang` 先讓看得到的字亂碼、蓋暮色，存 `sessionStorage` 的 `daybreak.lfx`（時間、捲動位置）再重新載入；`index.html` 開機腳本看到 8 秒內的旗標就先加 `html.lfx-in`（暮色），資料畫好後 `langIn` 解碼、淡出、接回捲動位置。亂碼只改文字節點、只換同類字；別的程式改過的節點（數字解碼、倒數）就不再碰。
 - 每天的流程：
   1. **資料**：`.github/workflows/daily.yml`，每天 UTC 00:05（台北 08:05）起跑；GitHub 自己的排程常延遲，由 cron-job.org 準時呼叫（見 `docs/CRON_JOB.md`）。跑 `pipeline/collect.py` → `pipeline/build.py` → 寫 `data/latest.json`，並提交 `data/`、`pipeline/coc_cache/` 等快取。
   2. **文字日報**：另一個排程（UTC 00:15，台北 08:15；2026-11-06 起，原本 00:30）照 `docs/CLAUDE_DAILY.md` 寫 `notes.json`、`notes.en.json`、`x_post.json`。

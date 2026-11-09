@@ -277,6 +277,10 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-09** 換語言加上「轉譯中」的轉場（使用者：「語言切換可以做類似的概念嗎」，延續日刊／夜刊的中間狀態）：
+  - 語言要重新載入整頁，中英文不會同時存在，所以中間態改用亂碼：按下後畫面上看得到的字逐漸亂碼（中文換中文、英文換英文、數字換數字，版面不跳），同底色的暮色淡入後重新載入。
+  - 新語言一開始就蓋著暮色（開機腳本先加，不閃白），畫好、字型載入後暮色淡出，字從亂碼解碼成新語言；捲動位置接回原處（原本會跳回頁首）。
+  - 按鈕：桌面滑塊滑過去時拉長、到位後回彈；手機按鈕的字先亂碼再收斂成新字，按下縮一下、載入後彈回。減少動態效果時照舊直接重新載入。
 - **2026-11-09** 日刊／夜刊中間狀態去掉跳動感（使用者：「中間還是會有一個突然的跳動感」「中間態」）：
   - 換刊點前後各 9% 蓋一層和當下底色同色的暮色，內容先淡進底色、換刊、再淡出成另一版；文字由黑轉白、滑塊由黑轉淺都變成連續的，換刊時整頁重算的那一下也藏在暮色最濃的時候。拖曳停在換刊點上不會來回切換。
   - 點一下的速度曲線改成頭尾慢、中段也放慢（原本中段最快），黃昏多停一下，暮色淡進淡出約 0.3 秒；整段約 1.3 秒。
@@ -594,6 +598,10 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-09** Switching language now plays a "translating" transition (the user asked for the same idea as the day/night switch):
+  - Language needs a full reload, so the two languages are never on the page together; the in-between state is a scramble instead: the visible text scrambles (Chinese to Chinese, Latin to Latin, digits to digits, so the layout does not shift) while a dusk layer the colour of the background fades in, then the page reloads.
+  - The new page starts under the dusk layer (added by the boot script, so there is no white flash); once it is drawn and the fonts are in, the layer fades out and the text decodes into the new language, and the scroll position is restored (it used to jump back to the top).
+  - The buttons: on desktop the knob stretches across and bounces when it lands; on phones the label scrambles into the new one, dips when pressed and pops after loading. With "reduce motion" on, it reloads straight away as before.
 - **2026-11-09** The in-between day/night state no longer jumps in the middle (the user still felt a sudden jump there):
   - Around the switch point a dusk layer the colour of the current background fades the content into the background, switches edition, then fades the other edition back in, so text going black to white and the knob going dark to light are continuous; the page restyle at the switch hides at the densest moment. Holding a drag on the switch point no longer flips back and forth.
   - A click now slows down through the middle instead of being fastest there, so dusk lingers and the fade takes about 0.3 s; the whole change is about 1.3 s.
