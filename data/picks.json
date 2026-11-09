@@ -1,16 +1,16 @@
 {
- "date": "2026-11-07",
- "edition": 33,
+ "date": "2026-11-08",
+ "edition": 34,
  "picks": [
   {
-   "id": "onchain/sopr",
-   "chart": "data/picks/onchain-sopr.png",
-   "chart_en": "data/picks/onchain-sopr-en.png",
-   "why": "照運營 hint：接 12:30 長貼文的「跌回成本價會不會被迫賣」，換成短期持有者；STH-SOPR 0.9914 仍低於 1，hint 的條件成立；頭條講 ETF 與資金費率，不重複",
-   "q_zh": "短期持有者在賠錢賣，接下來會怎樣？",
-   "q_en": "Short-term holders are selling at a loss. What next?",
-   "zh": "短期持有者在賠錢賣，接下來會怎樣？\n\n最近 155 天進場的短期持有者，這兩天賣出的價格整體低於買價，是在認賠（STH-SOPR 0.9914，CheckOnChain）。\n\n過去一年有 9 次這樣，30 天後中位數 −0.6%，平常是 +0.6%。單看這個看不出方向，只看得出有一批短期持有者在賣。\n\n#比特幣 #BTC #鏈上數據",
-   "en": "Short-term holders are selling at a loss. What next?\n\nBuyers from the last 155 days are selling below cost overall (STH-SOPR 0.9914, CheckOnChain).\n\nPast year: 9 times. Median 30 days later −0.6%, vs +0.6% normally. On its own it doesn't point either way.\n\n#Bitcoin #BTC #onchain"
+   "id": "cycle/cyccmp",
+   "chart": "data/picks/cycle-cyccmp.png",
+   "chart_en": "data/picks/cycle-cyccmp-en.png",
+   "why": "週線連跌第 5 週、跌破 Strategy 成本，讀者會問「這是不是又一輪大熊市」；頭條講槓桿，這張講位置，不重複；7 天內沒推過",
+   "q_zh": "連跌 5 週，這輪下跌跟前幾輪比算深嗎？",
+   "q_en": "Five red weeks. How deep is this drawdown versus past cycles?",
+   "zh": "連跌 5 週，這輪下跌跟前幾輪比算深嗎？\n\n週期頂部後第 398 天，比特幣在頂部下方 40.1%；前三輪同一天在 74.7%–81.6%。\n\n前三輪最低跌了 76.7%–84.5%，這輪到目前最低是 −53.1%。只有三輪樣本，看不出時間表。\n\n#比特幣 #BTC #週期",
+   "en": "Five red weeks. How deep is this drawdown versus past cycles?\n\nDay 398 after the top: BTC is 40.1% below it. Past three cycles, same day: 74.7%–81.6% below.\n\nTheir lows: −76.7% to −84.5%. This cycle so far: −53.1%. Three cycles say nothing about timing.\n\n#Bitcoin #BTC #cycles"
   }
  ]
 }
