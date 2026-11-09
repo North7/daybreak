@@ -4897,10 +4897,12 @@
       return '<section class="pg" id="pg-' + r[0] + '" data-r="' + r[0] + '" aria-label="' + r[1] + '">' + mh + body + '</section>';
     }).join('');
     // 2026-11-04 自我檢查：手機一次只顯示一版，其他版是 display:none——原本載入時 9 版約 50 張圖全畫（寬度 0 先畫成 280px，切過去再重畫一次）。
-    //   改成手機只畫目前這一版，切換時才畫，閒置時順手畫左右兩版；桌面是一整頁往下捲，版面高度要先定，維持一次畫完
+    //   改成手機只畫目前這一版，切換時才畫，閒置時順手畫左右兩版。
+    // 2026-11-09 桌面也延後畫：量到產生 10 版 HTML 共約 80ms，把 10 版的圖畫完約 2 秒（鏈上約 630ms），開頁卡住的是畫圖。
+    //   改成開頁只畫到網址指定的那一版（含它上面的版，位置才不會跑）；其餘見 drawUpTo／drawAhead／drawIdle
     try { buildToc(); } catch (e) { console.error(e); }
     try { grpCounts(); buildSubnav(); buildFind(); } catch (e) { console.error(e); }   // 2026-11-08 組圖數、側欄子目錄、搜尋索引
-    if (!MQ.matches) drawAllPages();
+    if (!MQ.matches) { var h0 = location.hash.slice(1).split('/')[0]; drawUpTo(/^[\w-]+$/.test(h0) && $('#pg-' + h0) ? h0 : ROUTES[0][0]); setTimeout(drawIdle, 1500); }
     void v.offsetWidth; v.classList.add('view-enter');
   }
   /* 2026-11-04 整體審查：長版面加版內目錄（5 個區塊以上的版面，頂端一排可點的區塊名）；每張有圖的區塊標題列加「複製連結」。
@@ -5153,6 +5155,20 @@
     mounted.forEach(observe); settleMeters(sec);
   }
   function drawAllPages() { ROUTES.forEach(function (r) { drawPage(r[0]); }); }
+  /* 桌面延後畫圖（2026-11-09）：版面是一整頁往下疊，某一版的圖還沒畫時比較矮。為了不讓畫面跳：
+     - 要跳到某一版（導覽、連結、返回、開頁網址）之前，先把它和上面所有版畫好（drawUpTo），再算位置；
+     - 往下捲到離還沒畫的版不到三個畫面高時，先把它畫好（drawAhead）——長高的部分都在畫面下方；
+     - 開頁 1.5 秒後，在瀏覽器閒置時由上往下一版一版補畫（drawIdle）。所以畫面上方的版一定已經畫好 */
+  function drawUpTo(id) { if (id === 'book') id = 'deriv'; var ids = ids0(), k = ids.indexOf(id); for (var i = 0; i <= k; i++) drawPage(ids[i]); }
+  function drawAhead() {
+    if (MQ.matches) return; var lim = window.scrollY + window.innerHeight * 3;
+    document.querySelectorAll('#view .pg').forEach(function (sec) { var id = sec.getAttribute('data-r'); if (!drawn[id] && docTop(sec) < lim) drawUpTo(id); });
+  }
+  function drawIdle() {
+    if (MQ.matches) return; var next = ids0().filter(function (i) { return !drawn[i]; })[0]; if (!next) return;
+    var idle = window.requestIdleCallback || function (f) { return setTimeout(f, 400); };
+    idle(function () { if (!MQ.matches) { drawPage(next); drawIdle(); } }, { timeout: 4000 });
+  }
   function drawNear(id) {   // 閒置時先畫左右兩版，滑過去不用等
     var ids = ids0(), k = ids.indexOf(id), idle = window.requestIdleCallback || function (f) { return setTimeout(f, 200); };
     [ids[k + 1], ids[k - 1]].forEach(function (n) { if (n && !drawn[n]) idle(function () { drawPage(n); }); });
@@ -5212,6 +5228,7 @@
   function restore(s) {
     popAt = Date.now(); hideTip();
     if (s.p && s.p !== cur) { if (MQ.matches) activate(s.p); }
+    if (!MQ.matches) drawUpTo(s.p && $('#pg-' + s.p) ? s.p : cur);   // 桌面延後畫圖：重新整理後再按返回，要回去的版可能還沒畫
     var put = function () { window.scrollTo(0, s.y); if (!MQ.matches) spy(); };
     put(); [60, 300].forEach(function (t) { setTimeout(put, t); });   // 圖畫完版面會長高一點，再對一次
   }
@@ -5231,6 +5248,7 @@
     if (id === 'book') id = 'deriv';   // 2026-10-12 掛單簿版面併入衍生品版，舊連結導過去
     var sec = $('#pg-' + id); if (!sec) return;
     if (MQ.matches) { activate(id); toTop(); return; }
+    drawUpTo(id);   // 桌面：先畫好目標版與上面的版，算出來的位置才準
     window.scrollTo(0, id === ROUTES[0][0] ? 0 : docTop(sec) - stickyH() - GAP);
     spy();
   }
@@ -5289,7 +5307,7 @@
       }
     }, { passive: false });
     var ticking = false;
-    window.addEventListener('scroll', function () { if (ticking) return; ticking = true; requestAnimationFrame(function () { ticking = false; spy(); grpSpy(); var fab = $('#fd-fab'); if (fab) fab.classList.toggle('show', MQ.matches && window.scrollY > window.innerHeight * 1.2); }); }, { passive: true });
+    window.addEventListener('scroll', function () { if (ticking) return; ticking = true; requestAnimationFrame(function () { ticking = false; drawAhead(); spy(); grpSpy(); var fab = $('#fd-fab'); if (fab) fab.classList.toggle('show', MQ.matches && window.scrollY > window.innerHeight * 1.2); }); }, { passive: true });
     // 行動版：在內容區左右滑動切換到相鄰版面。圖表、表格、滑桿等本身要橫向操作的區域，以及螢幕邊緣（瀏覽器返回手勢）不觸發
     var sw = null, view = $('#view');
     view.addEventListener('touchstart', function (e) {
