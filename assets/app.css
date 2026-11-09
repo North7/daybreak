@@ -12,7 +12,7 @@
   --line-2: #0A0A0A;
   --ink: #0A0A0A;
   --ink-2: #3D3C39;
-  --ink-3: #7A766F;
+  --ink-3: #6B675F;   /* 2026-11-09 原 #7A766F 對底色只有 3.96:1（小字建議 4.5:1），加深到 4.94:1 */
   --red: #FF3B1F;
   --red-ink: #D12C10;
   --flare: var(--red-ink);
@@ -49,7 +49,7 @@
 :root[data-theme="dark"] {
   color-scheme: dark;
   --void: #0C0C0D; --deck: #131315; --deck-2: #1A1A1D; --deck-3: #26262B; --line: #2A2A2F; --line-2: #F2F0EA;
-  --ink: #F2F0EA; --ink-2: #B6B2AA; --ink-3: #7C7870;
+  --ink: #F2F0EA; --ink-2: #B6B2AA; --ink-3: #8A867E;   /* 2026-11-09 原 #7C7870 對 #131315 只有 4.22:1，提亮到 5.12:1 */
   --red: #FF4A2E; --red-ink: #FF6A50; --flare-dim: rgba(255, 74, 46, .13);
   --orbit: #7A90FF; --orbit-dim: rgba(122, 144, 255, .12);
   --up: #2FD08A; --down: #FF4A2E; --down-ink: #FF4A2E; --warn: #E8B54A; --up-dim: rgba(47, 208, 138, .12); --down-dim: rgba(255, 74, 46, .13); --warn-dim: rgba(232, 181, 74, .13);
