@@ -280,6 +280,15 @@ def tone_notes(items):
     rp = [it for it in R if it.get('kind') != 'followup' and it.get('mode') != 'quote' and it.get('status') == 'send']   # 可選的不算
     kn = [it['author'] for it in rp if it.get('author', '').lower() in known]
     if rp and len(kn) / len(rp) > 0.4: out.append(f'熟帳號 {len(kn)}/{len(rp)} 則（{", ".join(kn)}）：一天 2–3 則就好，其餘回新帳號')
+    # 2026-11-09 晚上使用者同意（當天成效：3 萬粉以上互動率 0.07%、1k–3 萬粉 2.83%；69 則裡 39 則零互動）：一天 35–40 則、曝光型 1–2 則且配圖、引用最多 2 則
+    live = [it for it in items if it.get('status') != 'skip']
+    big = [it for it in live if it.get('kind') != 'followup' and it.get('mode') != 'quote' and (it.get('followers') or 0) >= 30000]
+    if len(big) > 2: out.append(f'3 萬粉以上的回覆 {len(big)} 則（{", ".join("#" + str(it["n"]) for it in big)}）：一天 1–2 則就好，其餘回 1k–3 萬粉的博主')
+    noimg = [it['n'] for it in big if not it.get('image')]
+    if noimg: out.append(f'3 萬粉以上的回覆沒配圖：{noimg}，曝光型一律配網站圖（真的沒有就在 note 寫原因）')
+    qn = [it['n'] for it in live if it.get('mode') == 'quote']
+    if len(qn) > 2: out.append(f'引用 {len(qn)} 則：{qn}，一天最多 2 則')
+    if len(live) > 40: out.append(f'今天已經 {len(live)} 則（不含按讚就好的）：一天 35–40 則，之後只做接話')
     im = sum(1 for it in R if it.get('image')) / n
     if im > 0.5: out.append(f'配圖 {im:.0%}：只有圖本身就是重點時才配')
     SITE = {'rpl': 'onchain #c-rpl', 'sec': 'onchain #c-sec', 'ad': 'flows #c-ad', 'lthloss': 'onchain #c-lthloss', 'bands': 'onchain #c-sthband',

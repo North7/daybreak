@@ -66,7 +66,7 @@
   function isSkip(k) { return !!SKIP[k] && !isDone(k); }
   // 2026-11-08 成效：一次連發 18 則的那批，每則瀏覽中位數只有 14（分開發的 20–47）。記下每則「已回」的時間，
   // 一小時內回到 PACE 則就在上方提醒，建議下一批幾點再發。只記在這台裝置（daybreak.donetimes：{鍵: 毫秒}）。
-  var TK = 'daybreak.donetimes', DT = {}, PACE = 8;
+  var TK = 'daybreak.donetimes', DT = {}, PACE = 5;   // 2026-11-09 晚上：8 → 5（一天 35–40 則、間隔拉開）
   try { DT = JSON.parse(localStorage.getItem(TK) || '{}'); } catch (e) {}
   function paceNote() {
     var now = Date.now(), all = {}; Object.keys(DT).forEach(function (k) { all[k] = DT[k]; }); Object.keys(ONX).forEach(function (k) { all[k] = ONX[k]; });   // X 上的實際發出時間優先
