@@ -277,6 +277,10 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-09** 換語言的轉場改成全程不空白、一直在跳字（使用者：「中間空白的時間太長，能不能直接亂碼到另一個語言」「會在亂碼狀態停留卡住的感覺，需要一直動態變」）：
+  - 按下時存一份「看得到的畫面」快照（畫面外只留空殼和高度，約 10 KB），新頁面一開頭就用 iframe 擺出這份快照，不再蓋暮色；新語言畫好後直接換成新頁面（也是亂碼）再解碼。
+  - 快照的亂碼不靠程式計時：先做 6 份各自亂碼的快照疊起來，用 CSS 每 60 毫秒輪流顯示，新頁面載入、畫圖佔住主執行緒時也照樣在變。
+  - 從換語言進來時，頁面的進場動畫（內容浮現、標題顯影、價格線描繪）直接到位，快照一拿掉就是完整版面。離開時的亂碼縮短為 0.3 秒。
 - **2026-11-09** 換語言加上「轉譯中」的轉場（使用者：「語言切換可以做類似的概念嗎」，延續日刊／夜刊的中間狀態）：
   - 語言要重新載入整頁，中英文不會同時存在，所以中間態改用亂碼：按下後畫面上看得到的字逐漸亂碼（中文換中文、英文換英文、數字換數字，版面不跳），同底色的暮色淡入後重新載入。
   - 新語言一開始就蓋著暮色（開機腳本先加，不閃白），畫好、字型載入後暮色淡出，字從亂碼解碼成新語言；捲動位置接回原處（原本會跳回頁首）。
@@ -598,6 +602,10 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-09** The language transition never goes blank and keeps moving (the user found the blank wait too long and the scramble looked stuck):
+  - On click a snapshot of what is on screen is saved (off-screen parts kept only as empty boxes with their height, about 10 KB); the new page shows it in an iframe from its very first frame instead of a dusk layer, then swaps to the new page (also scrambled) and decodes.
+  - The snapshot's scramble does not rely on script timers: six differently scrambled copies are stacked and shown in turn every 60 ms with CSS, so it keeps changing while the new page is busy loading and drawing.
+  - Arriving from a language switch, the page's intro animations (fade-in, headline reveal, price line drawing) jump to their end so the full layout is there the moment the snapshot goes. The scramble before leaving is now 0.3 s.
 - **2026-11-09** Switching language now plays a "translating" transition (the user asked for the same idea as the day/night switch):
   - Language needs a full reload, so the two languages are never on the page together; the in-between state is a scramble instead: the visible text scrambles (Chinese to Chinese, Latin to Latin, digits to digits, so the layout does not shift) while a dusk layer the colour of the background fades in, then the page reloads.
   - The new page starts under the dusk layer (added by the boot script, so there is no white flash); once it is drawn and the fonts are in, the layer fades out and the text decodes into the new language, and the scroll position is restored (it used to jump back to the top).
