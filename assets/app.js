@@ -1462,6 +1462,10 @@
         now: function () { var r = D.flows.rc_liq || {}, e = r.last_episode; return _T('30 日 ' + fmt.pct(r.chg30_pct, 2) + '，已連續 ' + r.state_run_days + ' 天' + (r.zero_now ? '≤ 0' : '為正') + (e ? '；上一次 ≤ 0 是 ' + ymd(e.start) + '–' + ymd(e.end) + '（' + e.days + ' 天）。' : '。'), '30-day ' + fmt.pct(r.chg30_pct, 2) + ', ' + r.state_run_days + ' days ' + (r.zero_now ? 'at or below zero' : 'positive') + (e ? '; the last stretch at or below zero was ' + ymd(e.start) + '–' + ymd(e.end) + ' (' + e.days + ' days).' : '.')); } },
       'stab': { h: h('全部美元穩定幣的流通量（十億美元）。', 'Total circulating USD stablecoins ($B).', '持續增加＝場內可用的購買力在增加，常是多頭的燃料；減少＝資金撤離。', 'Steady growth means more buying power on-chain, often fuel for rallies; shrinking means money leaving.', '很多穩定幣用在交易所與 DeFi 以外，不等於一定會買 BTC。', 'Much of it is used outside exchanges and DeFi; it won\'t necessarily buy BTC.'),
         now: function () { var s = D.flows.stables || {}; return _T(fmt.n(s.usd_b, 1) + 'B，30 日 ' + fmt.pct(s.chg30_pct, 2) + '（' + (s.chg30_usd_b >= 0 ? '+' : '−') + fmt.n(Math.abs(s.chg30_usd_b), 1) + 'B）、7 日 ' + fmt.pct(s.chg7_pct, 2) + '。', '$' + fmt.n(s.usd_b, 1) + 'B; 30 days ' + fmt.pct(s.chg30_pct, 2) + ' (' + (s.chg30_usd_b >= 0 ? '+' : '−') + '$' + fmt.n(Math.abs(s.chg30_usd_b), 1) + 'B), 7 days ' + fmt.pct(s.chg7_pct, 2) + '.'); } },
+      'conf': { h: h('上格：BTC 價格、短期持有者這 7 天賣出的幣的平均成本（紫）、還在持有的人的成本（橘）。下格：兩條成本線的差距 ÷ 收盤；綠＝≥ +0.05、紅＝≤ −0.05、黃底是轉換帶。', 'Top: BTC price, the average cost of coins short-term holders sold over 7 days (purple) and the cost of those still holding (orange). Bottom: the gap between the two ÷ close; green ≥ +0.05, red ≤ −0.05, the yellow band is the transition zone.',
+          '綠色連續出現＝最近才進場的人沒急著賣、市場還接得住，常見於多頭主升段；紅色＝成本低的人也在賣，常見於急跌與熊市。由紅轉綠是信心回來的跡象，由綠轉黃常是動能變弱。', 'Sustained green means recent buyers are not rushing out and the market keeps absorbing supply, typical of the main leg of a bull run; red means even low-cost coins are selling, typical of crashes and bear markets. Red turning green signals returning confidence; green fading to yellow often means momentum is cooling.',
+          '7 日平均、逐筆 UTXO、未做實體調整：交易所整理錢包或大額內部轉帳會讓單週跳一下。±0.05 是原作者自己說任意訂的轉換帶，不是精確門檻；轉負之後常是洗盤，不一定續跌。', '7-day average, UTXO-level, not entity-adjusted: exchange wallet shuffles or large internal transfers can make a single week jump. ±0.05 is a band the original author calls arbitrary, not a precise trigger; a turn negative is often a shake-out rather than a continued fall.'),
+        now: function () { var x = D.onchain.sthconf || {}; return x.value == null ? '' : _T((x.value > 0 ? '+' : '') + fmt.n(x.value, 3) + '（' + confWord(x.band) + '，' + ymd(x.since) + ' 起）；賣出成本 ' + fmt.usd(x.spend) + '、持有成本 ' + fmt.usd(x.hold) + '。', (x.value > 0 ? '+' : '') + fmt.n(x.value, 3) + ' (' + confWord(x.band) + ' since ' + ymd(x.since) + '); sellers\' cost ' + fmt.usd(x.spend) + ', holders\' cost ' + fmt.usd(x.hold) + '.'); } },
       'profit': { h: h('短期持有者中處於獲利的比例。', 'Share of short-term holder supply in profit.', '長時間 > 90%＝過熱、容易回檔；跌到 50% 以下＝短期持有者普遍套牢，回調中常接近階段低點。', 'Long stretches above 90% mean overheating and pullback risk; below 50% means most short-term holders are underwater, often near a local low in a correction.', '同一個數字在牛市回調和熊市裡意義不同。', 'The same reading means different things in a bull correction and a bear market.'),
         now: function () { var p = (D.chips.flow || {}).sth_in_profit_pct || {}; return _T(fmt.n(p.value, 1) + '%（7 天前 ' + fmt.n(p.d7, 1) + '%），30 日最低 ' + fmt.n(p.min30, 1) + '%（' + ymd(p.min30_date) + '）。', fmt.n(p.value, 1) + '% (' + fmt.n(p.d7, 1) + '% a week ago); 30-day low ' + fmt.n(p.min30, 1) + '% (' + ymd(p.min30_date) + ').'); } },
       'urpd': { h: h('每 2,000 美元一格：有多少顆 BTC 最後一次移動是在這個價位；橘格是現價，淡框是 7 天前。', '$2,000 buckets: how many BTC last moved at each price; the orange bucket is the current price, faint outlines are 7 days ago.', '籌碼厚的價位常成支撐或壓力（買在那裡的人會防守或解套賣出）；籌碼薄的區間價格走得快。', 'Thick buckets often act as support or resistance (holders defend or sell to break even); price moves fast through thin zones.', '交易所內部轉帳也會重設成本。', 'Exchange-internal transfers also reset the cost basis.') },
@@ -3055,6 +3059,62 @@
       tip: function (p, C) { return { dots: dot1(C.X(p[0]), C.Ys(p[1]), 'var(--s1)'), rows: tipRow1('var(--s1)', _T('賣方衰竭常數', 'Seller exhaustion'), fmt.n(p[1], 3)) }; } });
   }
 
+
+  /* 對趨勢的信心（2026-11-09 使用者要求；做法參考 Glassnode 週報 2023 第 38 週，資料 Bitview，見 pipeline/bv_extra.conf_viz）：
+     （短期持有者賣出的幣的 7 日平均成本 − 短期持有者成本）÷ 收盤。≥ +0.05 綠（賣的人成本比持有者高：新買家在高位也願意接、願意抱）、
+     ≤ −0.05 紅（成本低的人也在賣：認賠、恐慌），中間是轉換期。上格價格加兩條成本線，下格指標。只作讀值；產品內不寫付費指標的名字 */
+  function confWord(b) { return b === 'pos' ? _T('偏有信心', 'confident') : b === 'neg' ? _T('信心不足', 'lacking confidence') : _T('轉換期', 'in transition'); }
+  function confSay() {
+    var x = D.onchain.sthconf, it = [], sg = function (v) { return (v > 0 ? '+' : v < 0 ? '−' : '') + fmt.n(Math.abs(v), 3); }, ymd = ymdS;
+    var gap = fmt.pct((x.spend / x.hold - 1) * 100, 1);
+    it.push([_T('對趨勢的信心', 'Confidence in the trend'), sg(x.value),
+      _T(confWord(x.band) + '（' + ymd(x.since) + ' 起，第 ' + x.days + ' 天）；一週前 ' + sg(x.d7) + '。短期持有者這 7 天賣出的幣平均成本 ' + fmt.usd(x.spend) + '，比還在持有的人的成本 ' + fmt.usd(x.hold) + ' ' + (x.spend >= x.hold ? '高 ' : '低 ') + gap.replace(/^[+-]/, '') + '。±' + x.nb + ' 之間是轉換期，方向還不明確。',
+        'Currently ' + confWord(x.band) + ' (since ' + ymd(x.since) + ', day ' + x.days + '); ' + sg(x.d7) + ' a week ago. Coins short-term holders sold over 7 days cost ' + fmt.usd(x.spend) + ' on average, ' + gap.replace(/^[+-]/, '') + (x.spend >= x.hold ? ' above' : ' below') + ' the ' + fmt.usd(x.hold) + ' cost of those still holding. Between ±' + x.nb + ' is a transition zone with no clear direction.'),
+      x.band === 'pos' ? 'pos' : x.band === 'neg' ? 'neg' : 'neu']);
+    var st = function (a, b) { return a.n ? a.up + ' / ' + a.n + _T(' 次上漲、中位數 ', ' rose, median ') + fmt.pct(a.med, 1) + _T('（同期任一天 ' + b.up + '% 上漲、中位數 ' + fmt.pct(b.med, 1) + '）', ' (any day: ' + b.up + '% rose, median ' + fmt.pct(b.med, 1) + ')') : '—'; };
+    if (x.ups && x.ups.length) it.push([_T('過去轉正之後', 'After past turns positive'), x.up90.up + ' / ' + x.up90.n,
+      _T('由 −' + x.nb + ' 以下轉到 +' + x.nb + ' 以上共 ' + x.ups.length + ' 次（最近 ' + ymd(x.ups[x.ups.length - 1].date) + '）。30 天後：' + st(x.up30, x.base30) + '；90 天後：' + st(x.up90, x.base90) + '。樣本少於 30，只當背景。',
+        'It went from below −' + x.nb + ' to above +' + x.nb + ' ' + x.ups.length + ' times (latest ' + ymd(x.ups[x.ups.length - 1].date) + '). 30 days later: ' + st(x.up30, x.base30) + '; 90 days later: ' + st(x.up90, x.base90) + '. Fewer than 30 cases, so background only.'), 'neu']);
+    if (x.downs && x.downs.length) it.push([_T('過去轉負之後', 'After past turns negative'), x.dn90.up + ' / ' + x.dn90.n,
+      _T('由 +' + x.nb + ' 以上轉到 −' + x.nb + ' 以下共 ' + x.downs.length + ' 次（最近 ' + ymd(x.downs[x.downs.length - 1].date) + '）。30 天後：' + st(x.dn30, x.base30) + '；90 天後：' + st(x.dn90, x.base90) + '。轉負之後不一定續跌，常是大跌後的洗盤。',
+        'It went from above +' + x.nb + ' to below −' + x.nb + ' ' + x.downs.length + ' times (latest ' + ymd(x.downs[x.downs.length - 1].date) + '). 30 days later: ' + st(x.dn30, x.base30) + '; 90 days later: ' + st(x.dn90, x.base90) + '. A turn negative does not reliably mean further falls; it often marks a shake-out after a drop.'), 'neu']);
+    return it;
+  }
+  function confPanel() {
+    var x = (D.onchain || {}).sthconf; if (!x || !x.rows) return '';
+    return panel('span-12', _T('對趨勢的信心（短期持有者）', 'Confidence in the trend (short-term holders)'), _T('Bitview · 7 日平均 · ' + fmt.md(x.date), 'Bitview · 7-day average · ' + fmt.md(x.date)),
+      interpHtml(confSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('賣出的人的成本', 'Cost of coins sold'), 'var(--s1)'], [_T('還在持有的人的成本', 'Cost of coins still held'), 'var(--s2)'],
+        [_T('偏有信心（≥ +' + x.nb + '）', 'Confident (≥ +' + x.nb + ')'), 'var(--up)', 'box'], [_T('信心不足（≤ −' + x.nb + '）', 'Lacking confidence (≤ −' + x.nb + ')'), 'var(--down)', 'box'], [_T('轉換期', 'Transition'), 'var(--warn)', 'box']]) +
+      '<div class="chart" id="c-conf"></div><p class="note">' + _T('對趨勢的信心＝（短期持有者這 7 天賣出的幣的平均成本 − 短期持有者成本）÷ 收盤。賣的人成本比還在持有的人高，代表最近才在高位買進的人沒有急著賣、賣出的多是成本更高的籌碼，市場還願意接；反過來，成本低的人也開始賣，就是認賠或恐慌。做法參考 Glassnode 週報（2023 年第 38 週，±0.05 的轉換帶沿用原文、原文也說是任意訂的），資料取自 Bitview（逐筆 UTXO、晚 1 天、未做實體調整）。只作讀值，不是買賣訊號。',
+        'Confidence in the trend = (average cost of coins short-term holders sold over 7 days − short-term holder cost) ÷ close. When sellers\' cost is above holders\', recent high buyers are not rushing out and the market is still absorbing supply; when low-cost coins start selling too, it is loss-taking or panic. Method after Glassnode\'s weekly report (2023 week 38; the ±0.05 transition band is from the original, which calls it arbitrary); data from Bitview (UTXO-level, one day behind, not entity-adjusted). A reading, not a trade signal.') + '</p>');
+  }
+  function drawConf(el) {
+    var x = (D.onchain || {}).sthconf; if (!x || !el) return;
+    var nb = x.nb, col = function (v) { return v >= nb ? 'var(--up)' : v <= -nb ? 'var(--down)' : 'var(--warn)'; };
+    twoPane(el, { rows: x.rows, pi: 1, hp: [120, 160], hs: [130, 170], label: _T('對趨勢的信心（7 日）', 'Confidence in the trend (7-day)'), aria: _T('BTC 價格、短期持有者賣出與持有成本、對趨勢的信心', 'BTC price, cost of coins short-term holders sold and held, and confidence in the trend'),
+      scale: function (C) {
+        var v = C.rows.map(function (r) { return r[4]; }), lo = Math.min(-0.15, Math.min.apply(null, v)), hi = Math.max(0.15, Math.max.apply(null, v)), pd = (hi - lo) * 0.06; lo -= pd; hi += pd;
+        C.cLo = lo; C.cHi = hi; return function (y) { return C.ys0 + (1 - (y - lo) / (hi - lo)) * C.hs; };
+      },
+      body: function (C) {
+        var s = '', st = niceStep(C.cHi - C.cLo, C.sm ? 3 : 4), z0 = C.Ys(0);
+        for (var g = Math.ceil(C.cLo / st) * st; g <= C.cHi + 1e-9; g += st) { var gv = +g.toFixed(6); s += C.gl(C.Ys(gv), (gv > 0 ? '+' : '') + fmt.n(gv, 2), gv ? 'gl' : 'base'); }
+        var ya = C.Ys(nb), yb = C.Ys(-nb); s += '<rect x="' + C.ML + '" y="' + ya.toFixed(1) + '" width="' + C.pw + '" height="' + (yb - ya).toFixed(1) + '" fill="var(--warn-dim)"/>';
+        var R_ = C.rows, bw = Math.max(1, C.pw / R_.length + 0.4);
+        R_.forEach(function (r) { var cx = C.X(r[0]), yv = C.Ys(r[4]); s += '<rect x="' + (cx - bw / 2).toFixed(1) + '" y="' + Math.min(z0, yv).toFixed(1) + '" width="' + bw.toFixed(1) + '" height="' + Math.max(0.5, Math.abs(yv - z0)).toFixed(1) + '" fill="' + col(r[4]) + '"/>'; });
+        return s;
+      },
+      over: function (C) {   // 上格兩條成本線（價格的對數刻度）
+        var ln = function (k, c) { return '<path class="ln" d="M' + C.rows.filter(function (r) { return r[k] > 0; }).map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Yp(r[k]).toFixed(1); }).join('L') + '" stroke="' + c + '" stroke-width="1.4" fill="none"/>'; };
+        var z = C.rows[C.rows.length - 1];
+        return ln(2, 'var(--s1)') + ln(3, 'var(--s2)') + dot1(C.X(z[0]), C.Ys(z[4]), col(z[4]));
+      },
+      tip: function (p, C) {
+        return { dots: dot1(C.X(p[0]), C.Ys(p[4]), col(p[4])) + dot1(C.X(p[0]), C.Yp(p[2]), 'var(--s1)') + dot1(C.X(p[0]), C.Yp(p[3]), 'var(--s2)'),
+          rows: tipRow1(col(p[4]), _T('對趨勢的信心', 'Confidence'), (p[4] > 0 ? '+' : '') + fmt.n(p[4], 3)) +   // 狀態看顏色（圖例旁也會顯示這個數字，不再重複寫「轉換期」）
+            tipRow1('var(--s1)', _T('賣出的人的成本', 'Cost of coins sold'), fmt.usd(p[2])) + tipRow1('var(--s2)', _T('還在持有的人的成本', 'Cost of coins still held'), fmt.usd(p[3])) };
+      } });
+  }
 
   /* 實現獲利 ÷ 實現虧損（90 天平均；2026-11-02 使用者要求，Realized P/L 比率；資料取自 CheckOnChain）：
      1 以上綠、以下紅。上下兩格共用時間軸，不疊成雙 y 軸。只作讀值 */
@@ -4759,7 +4819,7 @@
       panel('span-7', _t('短期持有者獲利比例'), _t('2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%', interpHtml(sthlSay()) + '<div class="chart" id="c-profit"></div><p class="note">' + _T('短期持有者成本與真實市場均價的走勢在週期版「市場階段」的佐證圖 ', 'Short-term holder cost vs the true market mean is charted with the market-stage evidence on the Cycle page ') + jumpA('cycle', 'ev-tmm', _T('看圖 →', 'See chart →')) + '</p>') +
       sbPanel() + acPanel() + concPanel() +   // 2026-11-08 內容重組：籌碼集中度從衍生品版搬來；需求四張搬到資金版
       grpH('oc-pnl', '賣出的人賺還是賠', 'Are sellers in profit or at a loss', _T('短期持有者和全市場賣出時是獲利還是認賠', 'Whether short-term holders, and the market as a whole, sell at a profit or a loss')) +
-      soprPanel() + sthPnlPanel() + nplPanel() + n365Panel() +
+      soprPanel() + confPanel() + sthPnlPanel() + nplPanel() + n365Panel() +
       grpH('oc-sell', '賣壓強弱與衰竭', 'Selling pressure and exhaustion', _T('賣壓在加大還是快耗盡', 'Is selling building up or running dry')) +
       rplPanel() + rlPanel() + ssrPanel() + secPanel() + moPanel() +
       grpH('oc-lth', '長期持有者與大戶', 'Long-term holders and whales', _T('長期持有者和大戶在加碼、出貨還是認賠', 'Are long-term holders and whales adding, distributing or selling at a loss')) +
@@ -4769,7 +4829,7 @@
   V.onchain.after = function () {
     mount($('#c-agecost'), drawAgeCost); var acs = $('#ac-segs'); if (acs) acs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-a') === acMode) return; acMode = b.getAttribute('data-a'); acs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); $('#ac-say').innerHTML = interpHtml(acSayNow()); $('#ac-lg').innerHTML = acLegend(); drawAgeCost($('#c-agecost')); });   // 2026-11-06 持幣成本從週期版搬來
     mount($('#c-conc'), drawConc);   // 2026-11-08 從衍生品版搬來
-    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-lthrl'), drawLthRl); mount($('#c-sthband'), drawSthBand); mount($('#c-quant'), drawQuant); mount($('#c-rloss'), drawRl); mount($('#c-lsrchg'), drawLc); mount($('#c-mom'), drawMo); mount($('#c-ssr'), drawSsr); mount($('#c-agepl'), drawAge); mount($('#c-dorm'), drawDorm); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-npl365'), drawN365); mount($('#c-sthd'), drawSthd);   /* 2026-11-06 指標擴充的 mount 接在前面；註解只能放行尾（之前插在行中把後面三張圖註解掉了） */
+    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); mount($('#c-conf'), drawConf); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-lthrl'), drawLthRl); mount($('#c-sthband'), drawSthBand); mount($('#c-quant'), drawQuant); mount($('#c-rloss'), drawRl); mount($('#c-lsrchg'), drawLc); mount($('#c-mom'), drawMo); mount($('#c-ssr'), drawSsr); mount($('#c-agepl'), drawAge); mount($('#c-dorm'), drawDorm); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-npl365'), drawN365); mount($('#c-sthd'), drawSthd);   /* 2026-11-06 指標擴充的 mount 接在前面；註解只能放行尾（之前插在行中把後面三張圖註解掉了） */
     var ags = $('#ag-seg'); if (ags) ags.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-m') === agMode) return; agMode = b.getAttribute('data-m'); ags.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); drawAge($('#c-agepl')); });   /* 2026-11-06 實現獲利／虧損切換 */
     var rs = $('#rl-seg'); if (rs) rs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-m') === rlMode) return; rlMode = b.getAttribute('data-m'); rs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); drawRl($('#c-rloss')); });   /* 2026-11-06 實現虧損 近 150 天／全部歷史 */
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
@@ -4957,6 +5017,7 @@
      ③ 頂部列小標跟著捲動顯示目前的組名（手機也是）。④ 組標題加圖數；組也有網址（#版面/組代號）。 */
   var FIND = [], fdAct = -1;
   var FKW = {   // 指標別名：圖代號 → [中文別名, 英文別名]（不顯示，中英都拿來搜）。產品內不寫任何付費指標的名字
+    conf: ['信心 趨勢 情緒 賣出成本 持有成本 短期持有者 新買家', 'confidence trend sentiment spent cost basis holders spenders short-term new investors'],
     vol: ['隱含波動 實際波動', 'DVOL IV RV implied realized volatility'], basis: ['基差 期貨 資金費率', 'basis futures funding'], ivt: ['期限結構 倒掛', 'IV term structure backwardation contango'],
     liq: ['清算 爆倉 槓桿 熱力圖', 'liquidation heatmap leverage'], lqv: ['每日 多空 清算量 爆倉 多單 空單', 'daily long short liquidations volume'], dawn: ['晨昏 週期 熱度 深夜 破曉 白晝 黃昏 入夜 階段', 'dawn dusk cycle heat stage night daybreak daylight'], fh: ['資金費率 歷史 年化 多方付費', 'funding rate history annualized'], tmh: ['Tidemark 歷史 頂部訊號 底部訊號 熱度 冷度 時機 潮汐', 'Tidemark history top signal bottom signal heat cold timing tide'], oih: ['未平倉 合約 槓桿 OI', 'open interest OI leverage'], lsa: ['多空比 帳戶 散戶 情緒', 'long short ratio accounts retail sentiment'], tk: ['主動買 主動賣 現貨 永續 CVD Coinbase', 'taker buy sell spot perpetual CVD Coinbase'], gex: ['做市商', 'gamma GEX dealer'], prem: ['權利金 買權 賣權 期權', 'premium put call options'], svd: ['主動買 主動賣', 'taker CVD OKX'],
     oi: ['未平倉 到期 期權', 'open interest expiry max pain'], strike: ['履約價 期權', 'strike open interest'], book: ['掛單 買牆 賣牆', 'order book walls'],

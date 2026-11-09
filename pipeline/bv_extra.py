@@ -209,3 +209,48 @@ def dorm_viz(bv, px, last, tops=(), bottoms=(), step=4):
     return dict(date=d1, dorm=round(dm[d1], 1), dorm30=round(a30[d1], 1), dorm_pct=_pct(dm, D, dm[d1]), a30_pct=_pct(a30, D, a30[d1]), a30_pct4=_roll(a30, D).get(d1), live=lv[d1], live90=lv90,
                 live_since=up_from, live_pct=_pct(lv, D, lv[d1]), tops=tp, bottoms=bt, rows=rows, src='Bitview',
                 note='Dormancy＝7 天內賣出的幣平均放了幾天；Liveliness＝全部持有時間裡已花掉的比例（Bitview，Cointime）；只作讀值')
+
+
+# ---------- 對趨勢的信心（短期持有者：賣出的人 vs 還在持有的人） ----------
+# 2026-11-09 使用者要求（Glassnode 的 Investor Confidence in Trend，WoC 2023 第 38 週）：
+#   信心＝（短期持有者「賣出的幣」的平均成本 − 短期持有者成本）÷ 收盤。賣出成本＝7 天賣出的幣的成本合計 ÷ 7 天賣出量（按量加權）。
+#   > +0.05 正（賣的人成本比持有者高：新買家在高位也願意接、願意抱）；< −0.05 負（成本低的人也在賣：認賠、恐慌）；
+#   ±0.05 之間是轉換期（Glassnode 原文：「中性帶 ±0.05 是任意訂的」）。只作讀值、不是買賣訊號。
+#   轉正＝由 ≤ −0.05 之後第一次到 ≥ +0.05；轉負反之。附之後 30／90 天漲跌與同期任一天對照（樣本少時只當背景）
+CF_NB = 0.05
+
+
+def conf_viz(bv, px, last, step=3):
+    P, (vd, vol, sth), D, ix = _prep(bv, px, last, ['stvd', 'stvol', 'sth'])
+    D = [d for d in D if vol[d] and vol[d] > 0 and vd[d] and sth[d]]
+    if len(D) < 1500: return None
+    ix = {d: i for i, d in enumerate(D)}
+    sp, cf, raw = {}, {}, {}
+    for j, d in enumerate(D):
+        w = [x for x in D[max(0, j - 6):j + 1] if dn(d) - dn(x) <= 6]   # 7 個日曆天內（缺日不跨過去）
+        a, b = sum(vd[x] for x in w), sum(vol[x] for x in w)
+        sp[d] = a / b; cf[d] = (sp[d] - sth[d]) / P(d); raw[d] = (vd[d] / vol[d] - sth[d]) / P(d)
+    band = lambda v: 'pos' if v >= CF_NB else 'neg' if v <= -CF_NB else 'mid'
+    d1 = D[-1]; b1 = band(cf[d1]); since = d1
+    for d in reversed(D):
+        if band(cf[d]) != b1: break
+        since = d
+    ups, downs, last_side = [], [], None
+    for d in D:
+        v = cf[d]
+        if v >= CF_NB:
+            if last_side == 'neg': ups.append(dict(date=d, price=round(P(d)), r30=_fwd(D, ix, P, d, 30), r90=_fwd(D, ix, P, d, 90)))
+            last_side = 'pos'
+        elif v <= -CF_NB:
+            if last_side == 'pos': downs.append(dict(date=d, price=round(P(d)), r30=_fwd(D, ix, P, d, 30), r90=_fwd(D, ix, P, d, 90)))
+            last_side = 'neg'
+    back = max((d for d in D if dn(d) <= dn(d1) - 7), default=None)
+    rows = thin([[dn(d), round(P(d)), round(sp[d]), round(sth[d]), round(cf[d], 4)] for d in D], step)
+    if rows[-1][0] != dn(d1): rows.append([dn(d1), round(P(d1)), round(sp[d1]), round(sth[d1]), round(cf[d1], 4)])
+    lo = min(D, key=lambda d: cf[d]); hi = max(D, key=lambda d: cf[d])
+    return dict(date=d1, value=round(cf[d1], 4), raw=round(raw[d1], 4), d7=round(cf[back], 4) if back else None, spend=round(sp[d1]), hold=round(sth[d1]), price=round(P(d1)),
+                band=b1, since=since, days=(dn(d1) - dn(since)) + 1, pct=_pct(cf, D, cf[d1]), nb=CF_NB, last_side=last_side,
+                low=dict(date=lo, value=round(cf[lo], 3)), high=dict(date=hi, value=round(cf[hi], 3)),
+                ups=ups, downs=downs, up30=_stat([e['r30'] for e in ups]), up90=_stat([e['r90'] for e in ups]), dn30=_stat([e['r30'] for e in downs]), dn90=_stat([e['r90'] for e in downs]),
+                base30=_base(D, ix, P, 30, D[0]), base90=_base(D, ix, P, 90, D[0]), rows=rows, src='Bitview',
+                note='（短期持有者賣出的幣的 7 日平均成本 − 短期持有者成本）÷ 收盤；±0.05 為轉換期。做法參考 Glassnode 週報（2023 第 38 週），資料 Bitview；只作讀值')
