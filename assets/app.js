@@ -5287,42 +5287,30 @@
       if (v === 'dark') document.documentElement.setAttribute('data-theme', 'dark'); else document.documentElement.removeAttribute('data-theme');
       tt.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-t') === v); });
       if (mt) mt.setAttribute('data-v', v);
-      tt.style.setProperty('--tt-k', v === 'dark' ? 1 : 0); if (!TTX.on) ttIcoAll(v === 'dark' ? 1 : 0);
+      if (!TV) { tt.style.setProperty('--tt-k', v === 'dark' ? 1 : 0); ttIcoAll(v === 'dark' ? 1 : 0); }   // 換刊過渡中滑塊和圖示由 ttGo 的逐格迴圈帶
     }
     // 2026-11-09 換刊的中間狀態（使用者看了一支深淺色切換的範例影片：「重點是會有中間狀態效果」「用黃昏色調」「按鈕用 icon、動畫同步改變」「按鈕本身也需要配合動效」）
-    // t：0＝日刊、1＝夜刊。桌面拖曳側欄切換鈕可停在任何位置看中間狀態，放開吸到較近的一端；點一下（含手機日月鈕）播完整段過渡（約 1.1 秒）。
-    // 頁面：蓋一層混色濾層（見 ttTable 下方說明），前半段偏暖琥珀（傍晚）、後半段偏靛藍（入夜），底色亮度過中點時整頁換成夜刊（日刊）。
-    // 圖示：地平線上的太陽（同品牌標誌）隨 t 落下、光芒淡出，45% 起月亮升起。按鈕：滑塊跟著 t 走、移動快時拉長、落定回彈，按鈕裡的天色同步由琥珀→品牌橘紅→靛藍。
-    // 兩端完全等於原本的日刊與夜刊（淺色底色不變）；中間狀態只在拖曳或過渡中出現。系統設了「減少動態效果」就照舊瞬間切換。
-    var TTX = { t: 0, raf: 0, on: false, s: 1, lt: 0, ln: 0 };
-    var ttCtx = document.createElement('canvas').getContext('2d');
-    function ttRgb(c) { ttCtx.fillStyle = '#000'; ttCtx.fillStyle = c; var s = ttCtx.fillStyle, m; if (s[0] === '#') return [parseInt(s.slice(1, 3), 16), parseInt(s.slice(3, 5), 16), parseInt(s.slice(5, 7), 16), 1]; m = s.match(/[\d.]+/g).map(Number); return [m[0], m[1], m[2], m.length > 3 ? m[3] : 1]; }
+    // 同日第三版（使用者看了第二支範例：「還是沒有很絲滑」「整體的氛圍感還不夠」）：原本整頁一起變暗、中段蓋一層灰霧再換刊，中間會變成一片灰；
+    // 改成「晨昏線」：新的一刊從切換鈕那裡像天色一樣往外漫開，交界是一圈暮色光帶（入夜：外側琥珀夕照→品牌橘紅→內側靛藍；破曉反過來，外側紫→玫瑰→內側金），
+    // 還沒漫到的舊版面跟著慢慢偏暖變暗（夕照）或微微轉亮（黎明前），剛破曉的日刊先帶一點金色再褪回原色。
+    // 用瀏覽器的 View Transition：舊版面是一張靜態快照、新版面是即時畫面；換刊（整頁重算約 60 毫秒）在動畫開始前做完，
+    // 過程中只動快照的圓形裁切、濾鏡和一張半解析度的光帶畫布，不重算整頁，所以中途不會卡一下。
+    // 桌面拖曳側欄切換鈕可停在任何位置看晨昏線，放開吸到較近的一端；點一下（含手機日月鈕）播完整段（約 1 秒）。滑塊、日月圖示、按鈕天色照舊跟著走。
+    // 兩端完全等於原本的日刊與夜刊（淺色底色不變）；系統設了「減少動態效果」或瀏覽器不支援 View Transition 就照舊瞬間切換。
+    var TTX = { t: 0, s: 1, lt: 0, ln: 0 };
     function ttLin(c) { c /= 255; return c <= 0.04045 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4); }
     function ttDelin(c) { c = c <= 0.0031308 ? 12.92 * c : 1.055 * Math.pow(c, 1 / 2.4) - 0.055; return Math.round(Math.max(0, Math.min(1, c)) * 255); }
     function ttLab(q) { var r = ttLin(q[0]), g = ttLin(q[1]), b = ttLin(q[2]), l = Math.cbrt(0.4122214708 * r + 0.5363325363 * g + 0.0514459929 * b), m = Math.cbrt(0.2119034982 * r + 0.6806995451 * g + 0.1073969566 * b), s = Math.cbrt(0.0883024619 * r + 0.2817188376 * g + 0.6299787005 * b); return [0.2104542553 * l + 0.7936177850 * m - 0.0040720468 * s, 1.9779984951 * l - 2.4285922050 * m + 0.4505937099 * s, 0.0259040371 * l + 0.7827717662 * m - 0.8086757660 * s, q[3]]; }
     function ttFromLab(L) { var l = L[0] + 0.3963377774 * L[1] + 0.2158037573 * L[2], m = L[0] - 0.1055613458 * L[1] - 0.0638541728 * L[2], s = L[0] - 0.0894841775 * L[1] - 1.2914855480 * L[2]; l = l * l * l; m = m * m * m; s = s * s * s; return [ttDelin(4.0767416621 * l - 3.3077115913 * m + 0.2309699292 * s), ttDelin(-1.2684380046 * l + 2.6097574011 * m - 0.3413193965 * s), ttDelin(-0.0041960863 * l - 0.7034186147 * m + 1.7076147010 * s), L[3]]; }
     function ttMix(a, b, t) { return [a[0] + (b[0] - a[0]) * t, a[1] + (b[1] - a[1]) * t, a[2] + (b[2] - a[2]) * t, a[3] + (b[3] - a[3]) * t]; }
-    function ttLum(q) { return 0.2126 * ttLin(q[0]) + 0.7152 * ttLin(q[1]) + 0.0722 * ttLin(q[2]); }
-    function ttBump(t, c, h) { var d = (t - c) / h; return Math.max(0, 1 - d * d); }
     function ttClamp(x) { return Math.max(0, Math.min(1, x)); }
     function ttEase(p) { return p < .5 ? 2 * p * p : 1 - Math.pow(-2 * p + 2, 2) / 2; }
-    var AMB = ttLab([242, 160, 61, 1]), IND = ttLab([43, 47, 122, 1]), SUNSET = ttLab([255, 74, 46, 1]), NIGHTB = ttLab([88, 98, 214, 1]);
-    var TK = null;
-    function ttSurf(k, t) { var c = ttMix(k.a, k.b, t); if (!k.surf) return c; var wa = 0.2 * ttBump(t, .25, .25), wi = 0.26 * ttBump(t, .75, .25); if (wa) c = ttMix(c, [AMB[0], AMB[1], AMB[2], c[3]], wa); if (wi) c = ttMix(c, [IND[0], IND[1], IND[2], c[3]], wi); return c; }
-    // 中間狀態不逐一改全站顏色變數（桌面一格要 50 毫秒以上），改蓋一層混色濾層：
-    // 換刊點前頁面維持日刊，濾層用「相乘」把整頁調暗並染上暖色（像天色變暗）；換刊點後頁面換成夜刊，濾層用「濾色」把整頁調亮並染上靛藍。
-    // 濾層顏色由目標底色反推，所以底色正好走在插值路徑上；文字、圖表（含程式畫的）都跟著同一層光線變，每格只改一個顏色
-    function ttTable() {
-      if (TK) return TK;
-      var root = document.documentElement, wasDark = root.getAttribute('data-theme') === 'dark', a, b;
-      root.removeAttribute('data-theme'); a = getComputedStyle(root).getPropertyValue('--void').trim();
-      root.setAttribute('data-theme', 'dark'); b = getComputedStyle(root).getPropertyValue('--void').trim();
-      if (!wasDark) root.removeAttribute('data-theme');
-      var v = { a: ttLab(ttRgb(a)), b: ttLab(ttRgb(b)), surf: true }, lo = 0, hi = 1;
-      for (var i = 0; i < 24; i++) { var mid = (lo + hi) / 2; if (ttLum(ttFromLab(ttSurf(v, mid))) > 0.18) lo = mid; else hi = mid; }
-      TK = { v: v, va: ttRgb(a), vb: ttRgb(b), x: (lo + hi) / 2 };
-      return TK;
+    function ttOut(p) { return 1 - (1 - p) * (1 - p); }
+    function ttBez(x1, y1, x2, y2) {   // CSS cubic-bezier()，給晨昏線推進用
+      return function (x) { if (x <= 0) return 0; if (x >= 1) return 1; var lo = 0, hi = 1, t = x; for (var i = 0; i < 22; i++) { t = (lo + hi) / 2; if (3 * x1 * t * (1 - t) * (1 - t) + 3 * x2 * t * t * (1 - t) + t * t * t < x) lo = t; else hi = t; } return 3 * y1 * t * (1 - t) * (1 - t) + 3 * y2 * t * t * (1 - t) + t * t * t; };
     }
+    var ttSweep = ttBez(.5, .08, .5, 1);   // 晨昏線推進：起步輕、中段勻速掃過版面、尾端光帶出畫面時放慢
+    var AMB = ttLab([242, 160, 61, 1]), SUNSET = ttLab([255, 74, 46, 1]), NIGHTB = ttLab([88, 98, 214, 1]);
     function ttStr(q) { return 'rgba(' + q[0] + ',' + q[1] + ',' + q[2] + ',' + (+q[3].toFixed(3)) + ')'; }
     function ttCur() { return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light'; }
     // 圖示：24×24，地平線 y=19；太陽圓心 (12,11) 往下落到看不見，月亮從地平線下升到 (12,11)
@@ -5355,77 +5343,126 @@
       return [ttFromLab(c), Math.sin(Math.PI * t)];
     }
     var ttPh = null;
-    function ttBegin() {
-      ttTable();
-      if (!TTX.on) { TTX.on = true; TTX.from = ttCur(); TTX.t = TTX.from === 'dark' ? 1 : 0; TTX.lt = TTX.t; TTX.ln = performance.now(); TTX.s = 1; }
-      tt.classList.add('tt-live'); if (mt) mt.classList.add('tt-live');
+    function ttPhase(from) {   // 切換鈕旁的小字「黃昏／破曉」
       if (!ttPh) { ttPh = document.createElement('div'); ttPh.className = 'tt-phase'; document.body.appendChild(ttPh); }
       var src = (mt && mt.offsetParent) ? mt : tt, r = src.getBoundingClientRect(), mob = src === mt;
       ttPh.style.left = (mob ? r.left - 40 : r.left) + 'px'; ttPh.style.top = (mob ? r.bottom + 6 : r.top - 22) + 'px'; ttPh.style.width = (mob ? r.width + 80 : r.width) + 'px';
-      ttPh.textContent = TTX.from === 'dark' ? (LANG === 'en' ? 'Daybreak' : '破曉') : (LANG === 'en' ? 'Dusk' : '黃昏');
+      ttPh.textContent = from === 'dark' ? (LANG === 'en' ? 'Daybreak' : '破曉') : (LANG === 'en' ? 'Dusk' : '黃昏');
     }
-    var ttVeil = null, ttFog = null;
-    function ttApply(t) {
-      var now = performance.now(), cur = ttCur() === 'dark';
-      // 換刊點（底色亮度過中點）前後各 9% 蓋一層和當下底色同色的「暮色」：內容先淡進底色、換刊、再從底色淡出成另一版。
-      // 換刊（含整頁重算約 60 毫秒）發生在內容完全淡掉的那一瞬，所以文字由黑轉白、滑塊由黑轉淺都是連續的，不會跳。
-      // 換刊點兩側留 0.4% 的緩衝，拖曳停在換刊點上不會來回切換
-      if (!cur && t > TK.x + 0.004) { setTheme('dark'); cur = true; } else if (cur && t < TK.x - 0.004) { setTheme('light'); cur = false; }
-      if (!ttVeil) { ttVeil = document.createElement('div'); ttVeil.className = 'tt-veil'; ttVeil.setAttribute('aria-hidden', 'true'); document.body.appendChild(ttVeil); ttFog = document.createElement('div'); ttFog.className = 'tt-fog'; ttFog.setAttribute('aria-hidden', 'true'); document.body.appendChild(ttFog); }
-      var tg = ttFromLab(ttSurf(TK.v, t)), c = [0, 1, 2].map(function (i) { return cur ? Math.max(0, Math.round((tg[i] - TK.vb[i]) / (255 - TK.vb[i]) * 255)) : Math.min(255, Math.round(tg[i] / TK.va[i] * 255)); });
-      ttVeil.style.mixBlendMode = cur ? 'screen' : 'multiply'; ttVeil.style.backgroundColor = 'rgb(' + c.join(',') + ')'; ttVeil.style.display = 'block';
-      var fa = ttClamp(1 - Math.abs(t - TK.x) / 0.09); fa = fa * fa * (3 - 2 * fa);
-      ttFog.style.backgroundColor = 'rgb(' + tg[0] + ',' + tg[1] + ',' + tg[2] + ')'; ttFog.style.opacity = fa.toFixed(3); ttFog.style.display = fa > 0 ? 'block' : 'none';
-      // 滑塊：位置跟 t；移動越快拉得越長（最多 1.3 倍），慢下來就收回
-      var vel = Math.abs(t - TTX.lt) / Math.max(8, now - TTX.ln) * 1000, tgt = 1 + Math.min(0.3, vel * 0.16);
+    // 滑塊、圖示、按鈕天色跟著 t（0 日刊～1 夜刊）；滑塊移動越快拉得越長（最多 1.3 倍），慢下來就收回
+    function ttKnob(t, ph) {
+      var now = performance.now(), vel = Math.abs(t - TTX.lt) / Math.max(8, now - TTX.ln) * 1000, tgt = 1 + Math.min(0.3, vel * 0.16);
       TTX.s = TTX.s + (tgt - TTX.s) * 0.35; TTX.lt = t; TTX.ln = now; TTX.t = t;
       tt.style.setProperty('--tt-k', t); tt.style.setProperty('--tt-s', TTX.s.toFixed(3));
       var sk = ttSky(t), skc = ttStr([sk[0][0], sk[0][1], sk[0][2], 1]);
       [tt, mt].forEach(function (el) { if (el) { el.style.setProperty('--tt-sky', skc); el.style.setProperty('--tt-glow', sk[1].toFixed(3)); } });
       ttIcoAll(t);
-      ttPh.style.opacity = Math.min(1, Math.sin(Math.PI * t) * 3);
+      if (ttPh) ttPh.style.opacity = Math.min(1, ph * 3);
     }
     function ttSettle(el) { if (!el) return; el.classList.remove('tt-settle'); void el.offsetWidth; el.classList.add('tt-settle'); }
-    function ttCommit(v) {
-      cancelAnimationFrame(TTX.raf); var root = document.documentElement, changed = v !== TTX.from;
-      if (ttVeil) { ttVeil.style.display = 'none'; ttFog.style.display = 'none'; } [tt, mt].forEach(function (el) { if (el) { el.style.removeProperty('--tt-sky'); el.style.removeProperty('--tt-glow'); } });
-      tt.classList.remove('tt-live'); tt.style.setProperty('--tt-s', 1); if (mt) mt.classList.remove('tt-live'); if (ttPh) ttPh.style.opacity = 0;
-      TTX.on = false; setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {}
-      ttSettle(tt.querySelector('.tt-knob')); ttSettle(mt && mt.offsetParent ? mt : null);
-      if (changed) setTimeout(ttRedraw, 30);
-    }
-    // 換刊後重畫圖表（程式算色的圖要跟著換）：一次重畫全部 87 張要 0.5 秒以上，過渡收尾會卡住；
-    // 改成先畫畫面上看得到的，其餘每格最多畫 8 毫秒、分批在背景補完。再換一次刊就重新排隊
+    // 換刊後重畫圖表（程式算色的圖要跟著換）：一次重畫全部 87 張要 0.5 秒以上；
+    // 先同步畫畫面上看得到的（在過渡開始前、被快照蓋著時畫），其餘等過渡結束後每格最多畫 8 毫秒分批補完。再換一次刊就重新排隊
     var ttRq = 0;
-    function ttRedraw() {
-      var id = ++ttRq, vis = [], rest = [], H = innerHeight;
+    function ttCharts() {
+      var vis = [], rest = [], H = innerHeight;
       mounted.forEach(function (el) { if (!el._draw || !el.isConnected) return; var r = el.getBoundingClientRect(); (r.width && r.bottom > -300 && r.top < H + 300 ? vis : rest).push(el); });
       vis.forEach(function (el) { el._draw(el); });
-      (function step() { if (id !== ttRq) return; var t0 = performance.now(); while (rest.length && performance.now() - t0 < 8) { var el = rest.shift(); el._draw(el); } if (rest.length) setTimeout(step, 16); })();
+      return rest;
     }
-    // 點一下的速度曲線：頭尾慢、中段（換刊點）也放慢，讓黃昏多停一下、暮色淡進淡出約 0.3 秒（一般的緩入緩出在中段最快，換刊那一下會像「刷」過去）
-    // 速度 ∝ (1−b)·sin²(2πp) + b·sin²(πp)，b＝0.35：中段速度約為平均的 0.7 倍
-    function ttDusk(p) { var b = 0.35; return (1 - b) * (p - Math.sin(4 * Math.PI * p) / (4 * Math.PI)) + b * (p - Math.sin(2 * Math.PI * p) / (2 * Math.PI)); }
-    function ttOut(p) { return 1 - (1 - p) * (1 - p); }
-    function ttTween(to, ms, ez) {
-      cancelAnimationFrame(TTX.raf); var from = TTX.t, t0 = performance.now(); ez = ez || ttEase;
-      (function f(now) { var p = Math.min(1, (now - t0) / ms); ttApply(from + (to - from) * ez(p)); if (p < 1) TTX.raf = requestAnimationFrame(f); else ttCommit(to ? 'dark' : 'light'); })(t0);
+    function ttDrawRest(rest) {
+      var id = ++ttRq;
+      (function step() { if (id !== ttRq) return; var t0 = performance.now(); while (rest.length && performance.now() - t0 < 8) { var el = rest.shift(); if (el.isConnected) el._draw(el); } if (rest.length) setTimeout(step, 16); })();
     }
+    function ttRedraw() { ttDrawRest(ttCharts()); }
+    // 晨昏線光帶：以切換鈕為圓心、半徑 r 的一圈漸層（半解析度畫布）；stops 是相對交界的距離（光帶寬 F 的倍數）和顏色
+    var TT_BAND = {
+      dark: [[-1.5, [70, 58, 170, 0]], [-0.75, [72, 60, 176, .30]], [-0.22, [205, 58, 96, .30]], [0.12, [255, 104, 46, .36]], [0.7, [255, 166, 68, .2]], [2.6, [255, 190, 110, 0]]],
+      light: [[-1.5, [255, 200, 120, 0]], [-0.75, [255, 186, 96, .30]], [-0.22, [255, 116, 88, .30]], [0.12, [214, 78, 150, .28]], [0.7, [104, 84, 214, .24]], [2.6, [70, 60, 180, 0]]]
+    };
+    function ttBand(V) {
+      var c = V.cx, q = V.q, W = V.cv.width, H = V.cv.height, x = V.x * q, y = V.y * q, r = V.R * V.sp * q, F = V.F * q, st = TT_BAND[V.to];
+      c.clearRect(0, 0, W, H);
+      var a = ttClamp(V.sp / 0.05); if (!a || V.sp >= 1) return;
+      var r0 = Math.max(0, r + st[0][0] * F), r1 = r + st[st.length - 1][0] * F, g = c.createRadialGradient(x, y, r0, x, y, r1);
+      st.forEach(function (s) { var d = r + s[0] * F; g.addColorStop(ttClamp((d - r0) / (r1 - r0)), 'rgba(' + s[1][0] + ',' + s[1][1] + ',' + s[1][2] + ',' + (s[1][3] * a).toFixed(3) + ')'); });
+      c.fillStyle = g; c.fillRect(0, 0, W, H);
+    }
+    var TV = null;   // 進行中的換刊：sp＝晨昏線推進（0 原刊～1 新刊）、kp＝滑塊往新刊走了多少
+    function ttGo(to) {
+      if (TV) return TV;
+      var src = (mt && mt.offsetParent) ? mt : tt, b = src.getBoundingClientRect(), x = b.left + b.width / 2, y = b.top + b.height / 2, W = innerWidth, H = innerHeight;
+      var R = Math.max(Math.hypot(x, y), Math.hypot(W - x, y), Math.hypot(x, H - y), Math.hypot(W - x, H - y)), F = Math.max(70, Math.min(190, R * 0.12));
+      var V = TV = { from: ttCur(), to: to, x: x, y: y, F: F, R: R + F * 1.6, sp: 0, kp: 0, tw: null, an: [], raf: 0, back: false };
+      var cv = V.cv = document.createElement('canvas'); cv.className = 'tt-dusk'; cv.setAttribute('aria-hidden', 'true');
+      V.q = 0.5; cv.width = Math.ceil(W * V.q); cv.height = Math.ceil(H * V.q); V.cx = cv.getContext('2d');
+      document.documentElement.classList.add('tt-vt'); ttPhase(V.from);
+      V.vt = document.startViewTransition(function () { setTheme(to); document.body.appendChild(cv); V.rest = ttCharts(); });
+      V.vt.ready.then(function () {
+        var root = document.documentElement, at = ' at ' + x.toFixed(1) + 'px ' + y.toFixed(1) + 'px)', o = { duration: 1000, easing: 'linear', fill: 'both' };
+        function an(k, pe) { var a = root.animate(k, Object.assign({ pseudoElement: pe }, o)); a.pause(); a.currentTime = V.sp * 1000; V.an.push(a); }
+        an({ clipPath: ['circle(0px' + at, 'circle(' + V.R.toFixed(1) + 'px' + at] }, '::view-transition-new(root)');
+        if (to === 'dark') an({ filter: ['none', 'sepia(.32) saturate(1.3) brightness(.86)'] }, '::view-transition-old(root)');   // 夕照：還沒入夜的日刊偏暖變暗
+        else { an({ filter: ['none', 'brightness(1.6) saturate(1.3)'] }, '::view-transition-old(root)'); an({ filter: ['sepia(.4) saturate(1.25) brightness(.95)', 'sepia(.14) saturate(1.08) brightness(.99)', 'none'] }, '::view-transition-new(root)'); }   // 破曉：夜刊微亮、日刊先帶金色
+        V.ready = true;
+      }, function () {});
+      V.vt.finished.then(function () { ttDone(V); }, function () { ttDone(V); });
+      (function f(now) {
+        if (V.done || V.fin) return;
+        var w = V.tw, p = 1;
+        if (w) { if (!V.ready) w.t0 = now; p = Math.min(1, (now - w.t0) / w.ms); V.sp = w.a + (w.b - w.a) * w.ez(p); V.kp = w.ka + (w.kb - w.ka) * w.kz(p); if (w.b && V.sp > 0.995 && V.kp > 0.995) { V.sp = V.kp = p = 1; } }   // 光帶已出畫面就收尾，不空等緩出的尾巴
+        if (V.ready) V.an.forEach(function (a) { a.currentTime = V.sp * 1000; });
+        ttBand(V); ttKnob(to === 'dark' ? V.kp : 1 - V.kp, Math.sin(Math.PI * V.sp));
+        if (w && p >= 1 && (V.sp <= 0 || V.sp >= 1)) return ttFinish(V);
+        V.raf = requestAnimationFrame(f);
+      })(performance.now());
+      return V;
+    }
+    function ttTw(V, b, ms, ez, kz) { V.back = !b; V.tw = { t0: performance.now(), ms: Math.max(1, ms), a: V.sp, b: b, ez: ez, ka: V.kp, kb: b, kz: kz || ez }; }
+    function ttFinish(V) {
+      V.fin = true; cancelAnimationFrame(V.raf); V.cx.clearRect(0, 0, V.cv.width, V.cv.height);
+      function end() { if (V.ready) V.an.forEach(function (a) { a.finish(); }); else V.vt.skipTransition(); }
+      if (!V.back) return end();
+      setTheme(V.from); ttCharts();   // 退回原刊：即時畫面先換回來（這時被原刊快照蓋著看不到），隔兩格再結束過渡，不會閃
+      requestAnimationFrame(function () { requestAnimationFrame(end); });
+    }
+    function ttDone(V) {
+      if (V.done) return; V.done = true; V.fin = true; cancelAnimationFrame(V.raf);
+      var fin = V.back ? V.from : V.to;
+      if (ttCur() !== fin) { setTheme(fin); ttCharts(); }
+      if (V.cv.parentNode) V.cv.parentNode.removeChild(V.cv);
+      document.documentElement.classList.remove('tt-vt');
+      if (TV === V) TV = null;
+      TTX.s = 1; tt.style.setProperty('--tt-s', 1); [tt, mt].forEach(function (el) { if (el) { el.style.removeProperty('--tt-sky'); el.style.removeProperty('--tt-glow'); } });
+      if (ttPh) ttPh.style.opacity = 0;
+      setTheme(fin);
+      if (fin !== V.from) { try { localStorage.setItem('daybreak.theme', fin); } catch (er) {} ttSettle(tt.querySelector('.tt-knob')); ttSettle(mt && mt.offsetParent ? mt : null); ttDrawRest(V.rest || []); }
+    }
+    function ttKz(p) { return ttEase(Math.min(1, p / 0.55)); }   // 點一下：滑塊在前半段就到位，晨昏線繼續往外漫
     function pickTheme(v) {
-      if (!TTX.on && v === ttCur()) return;
-      if (matchMedia('(prefers-reduced-motion: reduce)').matches) { setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {} ttRedraw(); return; }
-      ttBegin(); var d = Math.abs((v === 'dark' ? 1 : 0) - TTX.t);   // 先 ttBegin 才有正確的起點 t（剛載入時 TTX.t 還不是當下主題）
-      ttTween(v === 'dark' ? 1 : 0, Math.max(1, 1300 * d), d > 0.6 ? ttDusk : ttEase);
+      if (TV) { if (!TV.fin) { var b = v === TV.to ? 1 : 0; ttTw(TV, b, 1150 * Math.abs(b - TV.sp) + 120, ttEase, ttEase); } return; }
+      if (v === ttCur()) return;
+      if (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches) { setTheme(v); try { localStorage.setItem('daybreak.theme', v); } catch (er) {} ttRedraw(); return; }
+      ttTw(ttGo(v), 1, 1000, ttSweep, ttKz);
     }
     var ttDrag = null, ttSkip = false;
     tt.style.touchAction = 'none';
     tt.addEventListener('pointerdown', function (e) { if (e.button) return; ttDrag = { x: e.clientX, w: tt.offsetWidth, id: e.pointerId, on: false }; tt.classList.add('tt-press'); });
     tt.addEventListener('pointermove', function (e) {
       if (!ttDrag) return; var dx = e.clientX - ttDrag.x;
-      if (!ttDrag.on) { if (Math.abs(dx) < 4) return; ttDrag.on = true; try { tt.setPointerCapture(ttDrag.id); } catch (er) {} cancelAnimationFrame(TTX.raf); ttBegin(); ttDrag.t0 = TTX.t; }
-      ttApply(ttClamp(ttDrag.t0 + dx / (ttDrag.w / 2)));
+      if (!ttDrag.on) {
+        if (Math.abs(dx) < 4) return;
+        if (!TV && (!document.startViewTransition || matchMedia('(prefers-reduced-motion: reduce)').matches)) { ttDrag = null; tt.classList.remove('tt-press'); return; }
+        if (TV && TV.fin) return;
+        ttDrag.on = true; try { tt.setPointerCapture(ttDrag.id); } catch (er) {}
+        var V = TV || ttGo(ttCur() === 'dark' ? 'light' : 'dark'); V.tw = null; ttDrag.t0 = TTX.t;
+      }
+      if (!TV || TV.fin) return;
+      var t = ttClamp(ttDrag.t0 + dx / (ttDrag.w / 2)), p = TV.to === 'dark' ? t : 1 - t; TV.tw = null; TV.sp = TV.kp = p;
     });
-    function ttEnd() { tt.classList.remove('tt-press'); var d = ttDrag; ttDrag = null; if (!d || !d.on) return; ttSkip = true; setTimeout(function () { ttSkip = false; }, 0); var to = TTX.t >= 0.5 ? 1 : 0; if (matchMedia('(prefers-reduced-motion: reduce)').matches) ttCommit(to ? 'dark' : 'light'); else ttTween(to, 160 + 520 * Math.abs(to - TTX.t), ttOut); }
+    function ttEnd() {
+      tt.classList.remove('tt-press'); var d = ttDrag; ttDrag = null; if (!d || !d.on) return; ttSkip = true; setTimeout(function () { ttSkip = false; }, 0);
+      if (!TV || TV.fin) return; var b = TV.sp >= 0.5 ? 1 : 0; ttTw(TV, b, 160 + 620 * Math.abs(b - TV.sp), ttOut);
+    }
     tt.addEventListener('pointerup', ttEnd); tt.addEventListener('pointercancel', ttEnd);
     tt.addEventListener('click', function (e) { if (ttSkip) return; var b = e.target.closest('button'); if (b) pickTheme(b.getAttribute('data-t')); });
     if (mt) mt.addEventListener('click', function () { pickTheme(mt.getAttribute('data-v') === 'dark' ? 'light' : 'dark'); });

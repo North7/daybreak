@@ -6,7 +6,7 @@
 
 - 比特幣每日簡報網站：<https://north7.github.io/daybreak/>（GitHub Pages，repo `North7/daybreak`，分支 `main`）。
 - 十個版面：頭版、消息、週期、鏈上、價格、資金、衍生品、出場框架、往期、方法。中英雙語（`_t`／`_T`）、日刊／夜刊兩種主題。
-  - 日刊／夜刊切換（2026-11-09）：有中間狀態的黃昏過渡＋地平線日月圖示，程式在 `assets/app.js` 的 `ttApply`／`ttIco`／`ttCommit`。中間狀態是一層混色濾層（`.tt-veil`），不要改回逐一改全站顏色變數（桌面一格要 50 毫秒以上）；兩端必須等於原本的日刊、夜刊（淺色底色不能變）。換刊點前後有一層同底色的暮色（`.tt-fog`）讓內容淡進淡出，避免跳動；換刊後重畫圖表走 `ttRedraw`（先畫看得到的、其餘分批），不要改回一次重畫全部。
+  - 日刊／夜刊切換（2026-11-09）：「晨昏線」——新的一刊從切換鈕往外漫開，交界一圈暮色光帶，地平線日月圖示跟著變，程式在 `assets/app.js` 的 `ttGo`／`ttBand`／`ttKnob`／`ttDone`。用瀏覽器的 View Transition：舊版面是靜態快照、新版面是即時畫面，換刊（整頁重算）在動畫開始前做完，動畫只動 `::view-transition-new(root)` 的圓形裁切、`::view-transition-old(root)` 的濾鏡和光帶畫布 `.tt-dusk`（自己的 view-transition-name，所以疊在最上層），這些動畫一律暫停、由程式逐格設 currentTime（所以能拖曳停住）。不要改回逐一改全站顏色變數或整頁濾層＋換刊點暮色（11/09 前兩版，中間會一片灰、換刊點卡一格）；兩端必須等於原本的日刊、夜刊（淺色底色不能變）。拖回原處取消時先把即時畫面換回原刊、隔兩格再結束過渡，避免閃。換刊後的圖表重畫：看得到的在快照底下同步畫，其餘等過渡結束再分批（`ttCharts`／`ttDrawRest`），不要改回一次重畫全部。
   - 換語言（2026-11-09）：`pickLang` 先存「看得到的畫面」快照（`lfxSnap`）和捲動位置到 `sessionStorage` 的 `daybreak.lfx`，字亂碼 0.3 秒後重新載入；`index.html` 的 body 開頭腳本用 iframe（`.lfx-ghost`）擺出 6 份亂碼快照、CSS 輪播（不靠 JS，主執行緒忙也會動），資料畫好後 `langIn` 拿掉快照、把新頁面的字從亂碼解碼、接回捲動位置。`html.lfx-came` 讓進場動畫直接到位，4 秒後拿掉。快照放 iframe 是為了不被 `#view .pg` 之類的全頁查詢抓到（會重複算進搜尋與目錄）。
 - 每天的流程：
   1. **資料**：`.github/workflows/daily.yml`，每天 UTC 00:05（台北 08:05）起跑；GitHub 自己的排程常延遲，由 cron-job.org 準時呼叫（見 `docs/CRON_JOB.md`）。跑 `pipeline/collect.py` → `pipeline/build.py` → 寫 `data/latest.json`，並提交 `data/`、`pipeline/coc_cache/` 等快取。

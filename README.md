@@ -277,6 +277,11 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-09** 日刊／夜刊切換改成「晨昏線」（使用者看了第二支範例影片：「還是沒有很絲滑」「整體的氛圍感還不夠」）：
+  - 原本整頁一起變暗、中段蓋一層灰霧再換刊，中間會變成一片灰；改成新的一刊從切換鈕那裡往外漫開，交界是一圈暮色光帶（入夜：外側琥珀夕照 → 品牌橘紅 → 內側靛藍；破曉反過來：外側紫 → 玫瑰 → 內側金）。
+  - 還沒漫到的日刊跟著慢慢偏暖變暗（夕照）、夜刊微微轉亮（黎明前）；剛破曉的日刊先帶一點金色再褪回原色。兩端和原本的日刊、夜刊完全一樣，淺色底色不變。
+  - 改用瀏覽器的 View Transition：換刊（整頁重算）在動畫開始前做完，動畫過程只動快照的圓形裁切、濾鏡和一張光帶畫布。實測點下後約 0.1 秒開始，之後整段不掉格；原本換刊點會卡一格，剛載入後第一次切換會卡三次。
+  - 滑塊、日月圖示、按鈕天色、拖曳停在任何位置都保留；放開吸到較近的一端，拖回原處取消不會閃。點一下約 1 秒。瀏覽器不支援或設了「減少動態效果」就瞬間切換。
 - **2026-11-09** 換語言的轉場改成全程不空白、一直在跳字（使用者：「中間空白的時間太長，能不能直接亂碼到另一個語言」「會在亂碼狀態停留卡住的感覺，需要一直動態變」）：
   - 按下時存一份「看得到的畫面」快照（畫面外只留空殼和高度，約 10 KB），新頁面一開頭就用 iframe 擺出這份快照，不再蓋暮色；新語言畫好後直接換成新頁面（也是亂碼）再解碼。
   - 快照的亂碼不靠程式計時：先做 6 份各自亂碼的快照疊起來，用 CSS 每 60 毫秒輪流顯示，新頁面載入、畫圖佔住主執行緒時也照樣在變。
@@ -602,6 +607,11 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-09** The day/night switch becomes a moving "terminator line" (the user watched a second demo video and found ours not smooth enough and lacking atmosphere):
+  - Before, the whole page dimmed together and a grey fog covered the middle of the change, so mid-way everything turned flat grey. Now the new edition spreads outward from the switch, with a band of twilight at the edge (to night: amber sunset outside → brand orange-red → indigo inside; to day the reverse: violet outside → rose → gold inside).
+  - The part not yet reached slowly warms and darkens (evening light) on the day edition, or lifts slightly (before dawn) on the night edition; the day edition arrives with a touch of gold that fades back. Both ends are exactly the original editions; the light background is unchanged.
+  - Built on the browser's View Transition: the edition switch (a full-page restyle) happens before the animation starts, and the animation only moves the snapshot's circular clip, its filter and one light-band canvas. Measured: motion starts about 0.1 s after the click and then never drops a frame; before, the switch point dropped a frame and the first switch after loading stuttered three times.
+  - The knob, the sun/moon icon, the button sky and dragging to hold any point all stay; release snaps to the nearer end, and dragging back cancels without a flash. A click takes about 1 s. Browsers without View Transition, or with "reduce motion" on, switch instantly.
 - **2026-11-09** The language transition never goes blank and keeps moving (the user found the blank wait too long and the scramble looked stuck):
   - On click a snapshot of what is on screen is saved (off-screen parts kept only as empty boxes with their height, about 10 KB); the new page shows it in an iframe from its very first frame instead of a dusk layer, then swaps to the new page (also scrambled) and decodes.
   - The snapshot's scramble does not rely on script timers: six differently scrambled copies are stacked and shown in turn every 60 ms with CSS, so it keeps changing while the new page is busy loading and drawing.
