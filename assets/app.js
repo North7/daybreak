@@ -4902,6 +4902,7 @@
     //   改成開頁只畫到網址指定的那一版（含它上面的版，位置才不會跑）；其餘見 drawUpTo／drawAhead／drawIdle
     try { buildToc(); } catch (e) { console.error(e); }
     try { grpCounts(); buildSubnav(); buildFind(); } catch (e) { console.error(e); }   // 2026-11-08 組圖數、側欄子目錄、搜尋索引
+    try { foldGroups(); } catch (e) { console.error(e); }   // 2026-11-09 手機版長頁收合
     if (!MQ.matches) { var h0 = location.hash.slice(1).split('/')[0]; drawUpTo(/^[\w-]+$/.test(h0) && $('#pg-' + h0) ? h0 : ROUTES[0][0]); setTimeout(drawIdle, 1500); }
     void v.offsetWidth; v.classList.add('view-enter');
   }
@@ -5219,6 +5220,33 @@
   function anchorEl(ch) { return ch ? $('#c-' + ch) || $('#pn-' + ch) || $('#grp-' + ch) || document.getElementById(ch) : null; }   // 2026-11-08 加組（#版面/組代號）與頭版大標
   /* 展開收起的區塊：收起時畫的圖寬度是 0（先畫成 280px），展開後直接重畫，不靠 ResizeObserver（有些瀏覽器在背景分頁不觸發） */
   function unfold(box) { if (!box) return; box.classList.remove('fold'); box.querySelectorAll('[id^="c-"]').forEach(function (e) { if (e._draw) { e._w = e.clientWidth; e._draw(e); } }); }
+  /* 手機版長頁收合（2026-11-09 整體審查）：手機上鏈上版約 38 屏、週期與衍生品約 22 屏。4 張以上的組只露前 2 張（各組的排序本來就是
+     重要的在前），其餘收在「展開這組其餘 N 張」後面，按鈕上列出收起來的圖名。只在手機生效（CSS），桌面不變；搜尋、目錄、
+     連結、返回鍵要去的圖被收起時先展開那一組。展開過的組記在這次瀏覽（sessionStorage），換語言或重新整理後仍展開，接回的位置才準 */
+  var GOPEN = (function () { try { return JSON.parse(sessionStorage.getItem('daybreak.gopen') || '[]'); } catch (e) { return []; } })();
+  function foldGroups() {
+    document.querySelectorAll('#view .pg > .grid').forEach(function (grid) {
+      var gid = null, list = [];
+      var flush = function () {
+        if (gid && list.length >= 4 && GOPEN.indexOf(gid) < 0) {
+          var more = list.slice(2), names = more.map(function (p) { return fdTxt(p.querySelector(':scope > .panel-h h2')); }).filter(Boolean);
+          more.forEach(function (p) { p.classList.add('gmore'); p.setAttribute('data-gm', gid); });
+          list[1].insertAdjacentHTML('afterend', '<button type="button" class="gmore-btn" data-gm="' + gid + '"><b>' + _T('展開這組其餘 ' + more.length + ' 張', 'Show ' + more.length + ' more in this group') + '</b><span>' + esc(names.slice(0, 4).join(_T('、', ', ')) + (names.length > 4 ? _T('…', '…') : '')) + '</span></button>');
+        }
+        list = [];
+      };
+      [].forEach.call(grid.children, function (k) { if (k.classList.contains('grp-h')) { flush(); gid = k.id; } else if (k.classList.contains('panel')) list.push(k); });
+      flush();
+    });
+  }
+  function openGroup(gid) {
+    var ps = document.querySelectorAll('.panel.gmore[data-gm="' + gid + '"]'); if (!ps.length) return;
+    ps.forEach(function (p) { p.classList.remove('gmore'); });
+    var b = document.querySelector('.gmore-btn[data-gm="' + gid + '"]'); if (b) b.remove();
+    if (GOPEN.indexOf(gid) < 0) { GOPEN.push(gid); try { sessionStorage.setItem('daybreak.gopen', JSON.stringify(GOPEN)); } catch (e) {} }
+    ps.forEach(function (p) { p.querySelectorAll('[id^="c-"]').forEach(function (e) { if (e._draw) { e._w = e.clientWidth; e._draw(e); } }); });   // 收起時畫成 280px，展開後依實際寬度重畫
+  }
+  function openFor(el) { var p = el && el.closest && el.closest('.panel.gmore'); if (p) openGroup(p.getAttribute('data-gm')); }
   /* 返回鍵（2026-11-09 整體審查）：原本換版一律 replaceState，手機按返回直接離開網站、跳到別版的圖之後也回不去。
      使用者主動換位置（導覽、數字鍵、左右滑、看圖連結、搜尋、子目錄、版內目錄、頁內 # 連結）時，先把目前的版面與捲動位置
      記在這一筆紀錄（mark），再新增一筆（userNav）；捲動造成的自動換版仍只改網址。按返回時回到記住的版面與位置 */
@@ -5234,7 +5262,7 @@
   }
   function jumpTo(page, ch) {
     if (ALIAS[ch]) { page = ALIAS[ch][0]; ch = ALIAS[ch][1]; }
-    var at = anchorEl(ch), pg = at && at.closest('.pg'); if (pg) page = pg.getAttribute('data-r');   // 圖搬過版面時跟著圖走（例如 oc-puell-multiple 現在在週期版）
+    var at = anchorEl(ch), pg = at && at.closest('.pg'); if (pg) page = pg.getAttribute('data-r'); openFor(at);   // 圖搬過版面時跟著圖走（例如 oc-puell-multiple 現在在週期版）
     var same = page === cur && !!ch;   // 同一版裡跳：不先回到版面頂端再捲下去
     if (!same) go(page);
     if (!ch) return;
@@ -5280,9 +5308,9 @@
     window.addEventListener('hashchange', function () { if (Date.now() - popAt < 400) return; var h = location.hash.slice(1); if (h !== cur) go(h); });   // 返回時已由 popstate 處理就略過
     document.addEventListener('click', function (e) { var a = e.target.closest && e.target.closest('a[href^="#"]'); if (a && !e.defaultPrevented) mark(); }, true);   // 頁內一般 # 連結：瀏覽器自己新增紀錄，先記住現在的位置
     // 2026-10-23：「看圖 →」連結：換到那一版後捲到那張圖並閃一下
-    document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.ev-open, .oc-more'); if (b) unfold(b.closest('.fold')); });
+    document.addEventListener('click', function (e) { var b = e.target.closest && e.target.closest('.ev-open, .oc-more'); if (b) unfold(b.closest('.fold')); var gb = e.target.closest && e.target.closest('.gmore-btn'); if (gb) openGroup(gb.getAttribute('data-gm')); });
     document.addEventListener('click', function (e) {
-      var t = e.target.closest && e.target.closest('.toc a'); if (t) { e.preventDefault(); var pn = document.getElementById(t.getAttribute('data-pn')); if (pn) { mark(); try { history.pushState(null, '', t.getAttribute('href')); } catch (er) {} var far = Math.abs(pn.getBoundingClientRect().top) > innerHeight * 2; window.scrollTo({ top: pn.getBoundingClientRect().top + scrollY - stickyH() - GAP, behavior: reduced || far ? 'auto' : 'smooth' }); } return; }
+      var t = e.target.closest && e.target.closest('.toc a'); if (t) { e.preventDefault(); var pn = document.getElementById(t.getAttribute('data-pn')); if (pn) { openFor(pn); mark(); try { history.pushState(null, '', t.getAttribute('href')); } catch (er) {} var far = Math.abs(pn.getBoundingClientRect().top) > innerHeight * 2; window.scrollTo({ top: pn.getBoundingClientRect().top + scrollY - stickyH() - GAP, behavior: reduced || far ? 'auto' : 'smooth' }); } return; }
       var cp = e.target.closest && e.target.closest('.cp-link'); if (cp) { copyText(location.origin + location.pathname + '#' + cp.getAttribute('data-u')).then(function () { cp.textContent = _T('已複製', 'Copied'); cp.classList.add('ok'); setTimeout(function () { cp.textContent = '#'; cp.classList.remove('ok'); }, 1500); }); }
     });
     document.addEventListener('pointerover', function (e) { var a = e.target.closest && e.target.closest('a.term'); if (a && e.pointerType !== 'touch') showTip(e.clientX, e.clientY, '<div class="t">' + esc(a.textContent) + '</div><div class="term-def">' + esc(a.getAttribute('data-def')) + '</div>'); });
