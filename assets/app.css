@@ -574,12 +574,14 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 
 /* 語言切換與行動版偏好（2026-10-12）：桌面在側欄底部；行動版側欄底部隱藏，改放在頂部列右上 */
 :root[lang="en"] .lang-toggle::before { transform: translateX(100%); }
-/* 2026-11-09 換語言的轉場（app.js pickLang／langIn）：離開時滑塊拉長到位、暮色淡入；進入時開機就蓋著暮色（index.html），畫好後淡出，滑塊與手機按鈕回彈 */
-.lfx-fog { position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; opacity: 0; transition: opacity .36s cubic-bezier(.5, 0, .75, 0) .16s; }
-.lfx-fog.on { opacity: 1; }
+/* 2026-11-09 換語言的轉場（app.js pickLang／langIn）：離開時滑塊拉長到位、字亂碼，存下畫面快照；進入時開機就擺出快照（iframe）持續亂碼，沒有快照才用暮色；畫好後換成新頁面解碼，滑塊與手機按鈕回彈 */
+.lfx-ghost { position: fixed; top: 0; left: 0; height: 100vh; border: 0; z-index: 2147483001; pointer-events: none; background: transparent; }   /* 上一頁的畫面快照（index.html），新語言畫好就拿掉 */
+/* 從換語言進來時，頁面的進場動畫（內容浮現、標題顯影、價格線描繪、長條長出）直接到位：快照一拿掉就是完整版面，接著解碼，不會有一瞬空白（langIn 4 秒後拿掉這個 class，那時進場動畫都已結束，不會重播） */
+html.lfx-came .view-enter > *, html.lfx-came .news-grid .news-card, html.lfx-came .reveal, html.lfx-came .mega .big, html.lfx-came .mega .spark svg, html.lfx-came .mega .spark .dot,
+html.lfx-came .chart .draw, html.lfx-came .kpi .bar i, html.lfx-came .pct i b, html.lfx-came .ladder .row .b i, html.lfx-came .brand svg path:first-child { animation-duration: 0s !important; animation-delay: 0s !important; }
 html.lfx-in::after { content: ""; position: fixed; inset: 0; z-index: 2147483000; pointer-events: none; background: var(--lfx-bg, var(--void)); opacity: 1; transition: opacity .5s cubic-bezier(.25, 0, .25, 1); }
 html.lfx-in.lfx-lift::after { opacity: 0; }
-#lang.lfx-go::before { animation: lfx-to-en .5s cubic-bezier(.3, 1.25, .5, 1) forwards; }
+#lang.lfx-go::before { animation: lfx-to-en .3s cubic-bezier(.3, 1.25, .5, 1) forwards; }
 #lang.lfx-go.to-zh::before { animation-name: lfx-to-zh; }
 @keyframes lfx-to-en { 0% { transform: translateX(0); } 50% { transform: translateX(50%) scaleX(1.35); } 100% { transform: translateX(100%); } }
 @keyframes lfx-to-zh { 0% { transform: translateX(100%); } 50% { transform: translateX(50%) scaleX(1.35); } 100% { transform: translateX(0); } }

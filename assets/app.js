@@ -5458,19 +5458,43 @@
     function lfxLabel(from, to, p) {   // 按鈕上的字：前段亂碼、後段收斂成新字
       var a = Array.from(p < .5 ? from : to); return a.map(function (ch, i) { var k = lfxKind(ch); return k && Math.random() > Math.max(0, (p - .35) / .5) ? lfxRand(k) : ch; }).join('');
     }
+    // 2026-11-09 使用者：「中間空白的時間太長，能不能沒有空白時間，直接亂碼到另一個語言」→ 不再用暮色蓋住重新載入：
+    // 按下時先存一份「看得到的畫面」快照（畫面外的區塊只留空殼和高度，畫布轉成圖），新頁面一開頭就用 iframe 擺出這份快照、字持續亂碼（index.html），
+    // 新語言畫好後直接換成新頁面（也是亂碼）再解碼，整段畫面一直都是跳動的字，沒有空白。iframe 和頁面隔開，不會被搜尋索引、目錄等全頁查詢抓到
+    function lfxSnap(l) {
+      var app = $('.app'); if (!app) return '';
+      var H = innerHeight, c = app.cloneNode(true);
+      (function walk(o, k) {
+        var oc = o.children, kc = k.children;
+        for (var i = oc.length - 1; i >= 0; i--) {
+          var oe = oc[i], ke = kc[i]; if (!ke) continue;
+          var tag = oe.tagName.toUpperCase();
+          if (tag === 'SCRIPT' || tag === 'NOSCRIPT' || tag === 'TEMPLATE') { ke.remove(); continue; }
+          var cs = getComputedStyle(oe); if (cs.display === 'none') { ke.remove(); continue; }
+          var r = oe.getBoundingClientRect();
+          if (cs.position !== 'fixed' && cs.position !== 'sticky' && (r.bottom < -80 || r.top > H + 80)) { ke.innerHTML = ''; ke.style.cssText += ';height:' + r.height + 'px;min-height:0;max-height:none;box-sizing:border-box;overflow:hidden'; continue; }
+          if (tag === 'CANVAS') { try { var im = document.createElement('img'); im.src = oe.toDataURL('image/jpeg', 0.7); im.className = oe.className; im.style.cssText = 'display:block;width:' + r.width + 'px;height:' + r.height + 'px'; ke.replaceWith(im); } catch (e) {} continue; }
+          if (tag !== 'SVG') walk(oe, ke);
+        }
+      })(app, c);
+      c.querySelectorAll('#lang button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-l') === l); });
+      var ml = c.querySelector('#m-lang'); if (ml) ml.textContent = l === 'en' ? '中文' : 'EN';
+      return c.outerHTML;
+    }
     function pickLang(l) {
       if (l === LANG || LFX.busy) return;
       try { localStorage.setItem('daybreak.lang', l); } catch (er) {}
-      var save = function () { try { sessionStorage.setItem('daybreak.lfx', JSON.stringify({ t: Date.now(), y: window.scrollY })); } catch (e) {} };
       if (reduced) { location.reload(); return; }
       LFX.busy = true;
+      var lk = function (sel) { var e = document.querySelector(sel); return e ? e.href : ''; };
+      var fx = { t: Date.now(), y: window.scrollY, w: document.documentElement.clientWidth, lang: l, theme: document.documentElement.getAttribute('data-theme') || '', bc: document.body.className, css: lk('link[rel=stylesheet][href*="app.css"]'), fonts: lk('link[rel=stylesheet][href*="fonts.googleapis"]') };
+      var h = ''; try { h = lfxSnap(l); } catch (e) {}
+      var save = function () { try { sessionStorage.setItem('daybreak.lfx', JSON.stringify(Object.assign({ h: h.length < 2.5e6 ? h : '' }, fx))); } catch (e) { try { sessionStorage.setItem('daybreak.lfx', JSON.stringify(fx)); } catch (e2) {} } };
       var lg = $('#lang'), ml = $('#m-lang'), mlFrom = ml ? ml.textContent : '', mlTo = l === 'en' ? '中文' : 'EN';
-      if (lg) { lg.classList.add('lfx-go'); lg.classList.toggle('to-zh', l === 'zh'); setTimeout(function () { lg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-l') === l); }); }, 240); }
-      var items = lfxNodes(800), fog = document.createElement('div'); fog.className = 'lfx-fog'; fog.style.background = getComputedStyle(document.documentElement).getPropertyValue('--void'); document.body.appendChild(fog);
-      var t0 = performance.now(), D = 520, fr = 0;
-      requestAnimationFrame(function () { fog.classList.add('on'); });
+      if (lg) { lg.classList.add('lfx-go'); lg.classList.toggle('to-zh', l === 'zh'); setTimeout(function () { lg.querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-l') === l); }); }, 150); }
+      var items = lfxNodes(800), t0 = performance.now(), D = 300, fr = 0;
       (function f(now) {
-        var p = Math.min(1, (now - t0) / D), q = Math.min(.92, p * p * 1.1);
+        var p = Math.min(1, (now - t0) / D), q = Math.min(.85, p * 1.2);
         if (fr++ % 2 === 0) lfxPaint(items, function () { return Math.random() < q; });   // 每兩格換一次，亂碼不會閃得太躁
         if (ml) ml.textContent = lfxLabel(mlFrom, mlTo, p);
         if (p < 1) requestAnimationFrame(f); else { save(); location.reload(); }
@@ -5478,7 +5502,8 @@
     }
     langInHook = langIn;
     function langIn() {
-      var d = document.documentElement; if (!d.classList.contains('lfx-in')) return;
+      var d = document.documentElement, g = window.DAYBREAK_LFX_GHOST; if (!d.classList.contains('lfx-in') && !g) return;
+      var unghost = function () { if (g) { g.remove(); g = window.DAYBREAK_LFX_GHOST = null; d.classList.remove('lfx-in', 'lfx-lift'); return true; } return false; };
       var fx = null; try { fx = JSON.parse(sessionStorage.getItem('daybreak.lfx') || 'null'); sessionStorage.removeItem('daybreak.lfx'); } catch (e) {}
       var done = false, lift = function () { d.classList.add('lfx-lift'); setTimeout(function () { d.classList.remove('lfx-in', 'lfx-lift'); }, 700); };
       var run = function () {
@@ -5488,7 +5513,8 @@
         items.forEach(function (it) { var L = Math.max(1, it.a.length); it.r = it.a.map(function (_, i) { return 0.12 + 0.35 * (i / L) + Math.random() * 0.5; }); });   // 每個字各自在 0.12～0.97 之間解開，大致由左到右
         lfxPaint(items, function () { return true; });
         [$('#lang'), $('#m-lang')].forEach(function (el) { if (el) { el.classList.remove('lfx-land'); void el.offsetWidth; el.classList.add('lfx-land'); } });
-        requestAnimationFrame(lift);
+        if (!unghost()) requestAnimationFrame(lift);
+        setTimeout(function () { d.classList.remove('lfx-came'); }, 4000);   // 有快照：同一格拿掉快照、換成已經亂碼的新頁面，直接接著解碼；沒有快照才用暮色淡出
         var fr = 0;
         (function f(now) {
           var p = Math.min(1, (now - t0) / D);
@@ -5497,7 +5523,7 @@
         })(t0);
       };
       (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { requestAnimationFrame(function () { requestAnimationFrame(run); }); });
-      setTimeout(function () { if (!done) { done = true; lift(); } }, 3500);   // 保險：字型一直沒載完也不要一直蓋著
+      setTimeout(function () { if (!done) { done = true; if (!unghost()) lift(); setTimeout(function () { d.classList.remove('lfx-came'); }, 4000); } }, 3500);   // 保險：字型一直沒載完也不要一直蓋著
     }
     $('#lang').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-l') === LANG); });
     $('#lang').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) pickLang(b.getAttribute('data-l')); });
