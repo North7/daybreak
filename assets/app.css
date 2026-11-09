@@ -1003,8 +1003,9 @@ html.fd-on { overflow: hidden; }
 }
 
 /* 2026-11-09 籌碼分布直條圖（參考運營配圖）：膠囊深色字、收盤線標籤 */
-.urpd-c text.up-pill { font-size: 12px; font-weight: 800; fill: #141414; }
-.urpd-c text.up-px { font-size: 12px; font-weight: 800; fill: var(--ink); }
-.urpd-c rect.ub { transition: opacity .15s; }
-.urpd-c rect.ub:hover { opacity: .8; }
-@media (max-width: 519px) { .urpd-c text.up-pill { font-size: 11px; } }
+.hl-c text.up-pill { font-size: 12px; font-weight: 800; fill: #141414; }
+.hl-c text.up-px { font-size: 12px; font-weight: 800; fill: var(--ink); }
+.hl-c rect.ub { transition: opacity .15s; }
+.hl-c rect.ub:hover { opacity: .8; }
+@media (max-width: 519px) { .hl-c text.up-pill { font-size: 11px; } }
+:root:not([data-theme="dark"]) .hl-c text.up-pill.on-up { fill: #fff; }   /* 淺色主題的深綠膠囊用白字（深字對比不足） */
