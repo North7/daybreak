@@ -1,5 +1,16 @@
 {
  "date": "2026-11-08",
  "captions": true,
- "picks": []
+ "picks": [
+  {
+   "id": "deriv/lsa",
+   "chart": "data/picks/deriv-lsa.png",
+   "chart_en": "data/picks/deriv-lsa-en.png",
+   "name": {
+    "zh": "多空帳戶比",
+    "en": "Long/short account ratio"
+   },
+   "link": "https://north7.github.io/daybreak/#deriv/lsa"
+  }
+ ]
 }
