@@ -1005,6 +1005,14 @@
     if (a.atr14) it.push(['ATR14', fmt.usd(a.atr14), _t('一天的正常波動約 ±') + fmt.usd(a.atr14) + _t('（') + fmt.n(a.atr14 / c * 100, 1) + _t('%）：這個範圍內的漲跌屬日常雜訊；掛單或停損的距離小於它，很容易被正常波動掃到。'), 'neu']);
     if (v.rv30 != null) it.push([_t('實際波動 RV30'), fmt.n(v.rv30, 1) + '%', band(v.rv30, [30, 50, 70], [_t('年化 30% 以下，低波動'), _t('年化 30–50%，一般水準'), _t('年化 50–70%，偏高'), _t('年化 70% 以上，劇烈')]) + rvYear(v) + (v.rv7_rv30 < 0.75 ? _t('；近 7 天明顯比近 30 天平靜（RV7 只有 RV30 的 ') + fmt.n(v.rv7_rv30 * 100, 0) + _t('%），價格在收斂盤整，之後常出現方向性突破。') : v.rv7_rv30 > 1.3 ? _t('；近 7 天波動明顯放大（RV7 是 RV30 的 ') + fmt.n(v.rv7_rv30, 2) + _t(' 倍）。') : _t('。')), 'neu']);
     if (my != null) it.push([_t('Mayer 倍數'), fmt.n(my, 2), band(my, [0.8, 1, 1.5, 2.4], [_t('0.8 以下：歷史便宜區'), _t('0.8–1：價格低於 200 日均線，偏弱但不算便宜'), _t('1–1.5：價格高於 200 日均線、還沒過熱'), _t('1.5–2.4：偏熱'), _t('2.4 以上：歷史過熱區')]) + _t('。'), my < 0.8 ? 'pos' : my >= 2.4 ? 'neg' : my >= 1.5 ? 'warn' : 'neu']);
+    var qy = p.q365;   // 2026-11-09 使用者要求（365 日分位帶）：收盤在近 365 天收盤裡的位置；只用價格，和 Mayer 倍數是同一件事
+    if (qy && qy.pct != null) it.push([_T('近一年位置', '1-year position'), _T('第 ' + fmt.n(qy.pct, 0) + ' 百分位', ord(qy.pct) + ' pct'),
+      (c < qy.q10 ? _T('過去一年最弱的一成：收盤跌破 10% 線 ' + fmt.k(qy.q10) + '。前三輪的週期低點都落在這種期間，但每段持續 3–7 個月。', 'Weakest tenth of the past year: the close is below the 10% line at ' + fmt.k(qy.q10) + '. The past three cycle lows all came inside such stretches, each lasting 3–7 months.')
+        : c < qy.q50 ? _T('偏弱的一半，不在極端：收盤低於過去一年中位數 ' + fmt.k(qy.q50) + '，10% 線在 ' + fmt.k(qy.q10) + '。', 'Weaker half, not extreme: the close is below the past year\'s median of ' + fmt.k(qy.q50) + '; the 10% line is at ' + fmt.k(qy.q10) + '.')
+        : c <= qy.q90 ? _T('偏強的一半，不在極端：收盤高於過去一年中位數 ' + fmt.k(qy.q50) + '，90% 線在 ' + fmt.k(qy.q90) + '。', 'Stronger half, not extreme: the close is above the past year\'s median of ' + fmt.k(qy.q50) + '; the 90% line is at ' + fmt.k(qy.q90) + '.')
+        : _T('過去一年最強的一成：收盤站上 90% 線 ' + fmt.k(qy.q90) + '，常見於上升段。', 'Strongest tenth of the past year: the close is above the 90% line at ' + fmt.k(qy.q90) + ', typical of an uptrend.'))
+      + _T('它只用價格算，和 Mayer 倍數是同一件事，不要算成兩個訊號。', ' Built from price alone, it says the same thing as the Mayer multiple; don\'t count them as two signals.'),
+      c < qy.q10 ? 'neg' : c > qy.q90 ? 'pos' : 'neu']);
     if (pi != null) it.push(['Pi Cycle', fmt.n(pi, 2), pi >= 1 ? _t('已到 1：歷史頂部訊號觸發。') : pi >= 0.9 ? _t('接近 1，頂部訊號逼近。') : _t('只有 ') + fmt.n(pi, 2) + _t('，離觸發（1）很遠，沒有頂部跡象。'), pi >= 1 ? 'neg' : pi >= 0.9 ? 'warn' : 'neu']);
     return it;
   }

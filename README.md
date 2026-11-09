@@ -277,6 +277,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-09** 價格版的解讀加一行「近一年位置」（使用者問一張 365 日價格分位帶的圖有沒有用，回答「加一行讀值」）：收盤在近 365 天收盤裡排第幾百分位，附中位數與 10%／90% 線，分「最弱的一成／偏弱的一半／偏強的一半／最強的一成」四段說明。用 Kraken 日線自己算，不耗 bitcoin-data 額度。用 2012 年起的週線驗證：和 Mayer 倍數的排名相關 0.89，落在最弱一成的 82 週全部在 200 日均線之下；前三輪的週期低點都落在最弱一成的期間裡，但每段持續 3–7 個月，第一次跌進去後一年內還再跌 35%–52%。所以只加一行讀值、不加新圖，並註明它和 Mayer 倍數是同一件事。
 - **2026-11-09** 再修 iPhone 換語言時畫面跳一下（使用者錄影：「還是這樣」）：逐格看到按下後舊畫面會往上縮一截、頂部列不見，停約 0.35 秒才換成快照和新頁面。
   - iPhone 的瀏覽器要等新頁面的主畫面有足夠的字才換掉舊畫面，快照原本放在 iframe 裡不算，所以一直顯示被往上推的舊畫面，等資料畫好才換。快照改放進主頁面的 shadow DOM，新頁面第一次繪製就是快照。
   - 快照裡直接含字的區塊鎖住原本的高度，英文字母只換成同寬度的字（窄換窄、寬換寬），亂碼後不會多折一行把版面推下去；快照換成新頁面時位置對得上。
@@ -611,6 +612,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-09** The price panel's readings add a "1-year position" line (the user asked whether a 365-day price quantile band chart was useful, then asked for one reading line): where the close ranks among the past 365 daily closes, with the median and the 10%/90% lines, read in four bands (weakest tenth, weaker half, stronger half, strongest tenth). Computed from Kraken daily closes, so it costs no bitcoin-data quota. Checked on weekly data since 2012: rank correlation 0.89 with the Mayer multiple, and all 82 weeks in the weakest tenth were below the 200-day average; the past three cycle lows all came inside weakest-tenth stretches, but each stretch lasted 3–7 months and price still fell another 35%–52% within a year of first entering one. So it is one reading line rather than a new chart, noting that it says the same thing as the Mayer multiple.
 - **2026-11-09** Fix the jump when switching language on iPhone, again (the user sent a recording showing it still happened): frame by frame, the old page slid up by a bar's height with its top missing and stayed for about 0.35 s before the snapshot and the new page appeared.
   - The iPhone browser keeps the old page until the new page's main frame has enough text, and the snapshot lived in an iframe, which does not count, so the shifted old page stayed until the data was drawn. The snapshot now lives in shadow DOM in the main page, so the new page's very first paint is the snapshot.
   - Text blocks in the snapshot keep their original height, and Latin letters are only swapped for letters of similar width (narrow for narrow, wide for wide), so scrambled text no longer wraps onto an extra line and pushes the layout down; the snapshot lines up with the new page when it is swapped.

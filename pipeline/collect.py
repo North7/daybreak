@@ -71,6 +71,13 @@ try:
     R['vol'].update(rv30_pct1y=round(sum(v_ < R['vol']['rv30'] for _, v_ in _rv1y) / len(_rv1y) * 100, 1), rv30_min1y=round(_mn[1], 1), rv30_min1y_date=_mn[0])
 except Exception as e: errors.append(f'rv30 一年分位 {e}')
 s200 = sma(200); R['mayer'] = dict(mayer=round(c / s200, 4), line_1_2=round(1.2 * s200, 1))
+# 2026-11-09 使用者要求（365 日分位帶）：收盤在近 365 根日線收盤裡的百分位，與 10／25／50／75／90% 分位線（線性內插，含當天）。只用價格，和 Mayer 倍數高度重疊，只作讀值
+try:
+    _y = sorted(C[-365:])
+    def _qy(f):
+        i_ = (len(_y) - 1) * f; lo_ = int(i_); hi_ = min(lo_ + 1, len(_y) - 1); return round(_y[lo_] + (_y[hi_] - _y[lo_]) * (i_ - lo_), 1)
+    R['q365'] = dict(n=len(_y), pct=round(sum(v_ < c for v_ in _y) / len(_y) * 100, 1), **{f'q{int(f * 100)}': _qy(f) for f in (0.1, 0.25, 0.5, 0.75, 0.9)})
+except Exception as e: errors.append(f'365 日分位 {e}')
 R['pi_cycle'] = round(sma(111) / (2 * sma(350)), 4)
 lo20, hi20 = min(C[-20:]), max(C[-20:])
 R['range20_pos_pct'] = round((c - lo20) / (hi20 - lo20) * 100, 1)
