@@ -3,14 +3,14 @@
  "edition": 34,
  "picks": [
   {
-   "id": "cycle/cyccmp",
-   "chart": "data/picks/cycle-cyccmp.png",
-   "chart_en": "data/picks/cycle-cyccmp-en.png",
-   "why": "週線連跌第 5 週、跌破 Strategy 成本，讀者會問「這是不是又一輪大熊市」；頭條講槓桿，這張講位置，不重複；7 天內沒推過",
-   "q_zh": "連跌 5 週，這輪下跌跟前幾輪比算深嗎？",
-   "q_en": "Five red weeks. How deep is this drawdown versus past cycles?",
-   "zh": "連跌 5 週，這輪下跌跟前幾輪比算深嗎？\n\n週期頂部後第 398 天，比特幣在頂部下方 40.1%；前三輪同一天在 74.7%–81.6%。\n\n前三輪最低跌了 76.7%–84.5%，這輪到目前最低是 −53.1%。只有三輪樣本，看不出時間表。\n\n#比特幣 #BTC #週期",
-   "en": "Five red weeks. How deep is this drawdown versus past cycles?\n\nDay 398 after the top: BTC is 40.1% below it. Past three cycles, same day: 74.7%–81.6% below.\n\nTheir lows: −76.7% to −84.5%. This cycle so far: −53.1%. Three cycles say nothing about timing.\n\n#Bitcoin #BTC #cycles"
+   "id": "deriv/lsa",
+   "chart": "data/picks/deriv-lsa.png",
+   "chart_en": "data/picks/deriv-lsa-en.png",
+   "why": "11/09 使用者換掉原本的 cycle/cyccmp（跟 09:00／12:00 的賣壓篇同一題：連跌 5 週、是不是熊市）。多空帳戶比到 2021 年以來第 96 百分位，是今天的極端值；日報講槓桿多不多，這張講誰在做多，晚上 ETF 篇講大帳戶空多於多，剛好接上。建議 15:00 發。",
+   "q_zh": "跌了 5 週，散戶還在做多？",
+   "q_en": "Five red weeks. Are most traders still long?",
+   "zh": "跌了 5 週，散戶還在做多？\n\n幣安 75.5% 的帳戶持有多單，Bybit 是 70.6%，30 天平均 65.2%，在 2021 年以來第 96 百分位。\n\n以前衝到這麼高的 27 次，90 天後只有 11 次比較高，中位數 −4.5%；隨便挑一天是 53% 會漲。\n\n這是帳戶數，不是部位大小：一面倒做多的是小帳戶。\n\n#比特幣 #BTC #槓桿",
+   "en": "Five red weeks. Are most traders still long?\n\n75.5% of Binance accounts hold BTC longs (Bybit 70.6%), the 96th percentile since 2021.\n\nThe 27 past readings this high: 11 were higher 90 days later, median −4.5%. Any random day: 53%.\n\nAccounts, not position size.\n\n#Bitcoin #BTC"
   }
  ]
 }
