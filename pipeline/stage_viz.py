@@ -668,9 +668,50 @@ def _c36_view(c3, P, D, d1):
 
 # 2026-11-04 使用者要求（Glassnode 週報〈Retesting the Breakout〉）：價格和下方各條成本線、均線放在同一張圖。
 #   均線用統一收盤（px：Kraken 優先、更早 CoinMetrics）；短期持有者成本、真實市場均價、實現價、長期持有者成本用 Bitview（同一家）。
-#   50 週均線＝350 日均線。只作讀值：列出價格上下各條線的位置與距離，不說「守住就延續」
+#   只作讀值：列出價格上下各條線的位置與距離，不說「守住就延續」
+#   2026-11-09 使用者要求（國外 X 多用 50 週均線看牛熊）：50 週均線改用週收盤算，和週線圖一樣——週日的日收盤＝週收盤，
+#   每天的值＝最近 49 根完成週 K 的收盤＋當天收盤，再平均（週日當天就是正式的週線值）；原本是 350 日均線。
+#   另加 w50：最近一根週 K 收在上／下、連幾週、上一次穿越、2013 年起每次週收盤跌破後幾週收回，和 200 日均線是否同調
 LV_FROM, LV_NEAR = '2025-06-01', 8
-LV_KEYS = ('sma200', 'sma365', 'sma350', 'sth', 'tmm', 'rp', 'lth', 'act')   # 2026-11-05 加 act：活躍投資人成本（Bitview active_price，Cointime）
+LV_KEYS = ('sma200', 'sma365', 'w50', 'sth', 'tmm', 'rp', 'lth', 'act')   # 2026-11-05 加 act：活躍投資人成本（Bitview active_price，Cointime）；2026-11-09 sma350 → w50
+W50_FROM = '2013-01-01'
+
+
+def _w50(D, P):
+    """每天的 50 週均線（週線算法）：最近 49 根完成週 K 的收盤＋當天收盤，平均。週日的收盤是週收盤。"""
+    out, wk = [None] * len(D), []
+    for i, d in enumerate(D):
+        if len(wk) >= 49: out[i] = (sum(wk[-49:]) + P[i]) / 50
+        if dt.date.fromisoformat(d).weekday() == 6: wk.append(P[i])
+    return out
+
+
+def _w50_read(D, P, W, sma200):
+    S = [i for i, d in enumerate(D) if W[i] and d >= W50_FROM and dt.date.fromisoformat(d).weekday() == 6]
+    if len(S) < 2: return None
+    up = [P[i] > W[i] for i in S]; j = len(S) - 1; i = S[j]
+    run = 1
+    while run <= j and up[j - run] == up[j]: run += 1
+    xs = [k for k in range(1, len(S)) if up[k] != up[k - 1]]
+    cross = None
+    if xs:
+        k = xs[-1]; pr = 1
+        while pr < k and up[k - 1 - pr] == up[k - 1]: pr += 1
+        cross = dict(date=D[S[k]], up=up[k], prev_run=pr)
+    brk = []
+    for k in xs:
+        if up[k]: continue
+        nx = next((m for m in xs if m > k), None)
+        brk.append(dict(date=D[S[k]], price=round(P[S[k]]), ma=round(W[S[k]]), weeks=nx - k if nx else None))
+    s2 = sma200(i)
+    out = dict(date=D[i], close=round(P[i]), ma=round(W[i]), dist_pct=round((P[i] / W[i] - 1) * 100, 1), above=up[j], run=run, cross=cross,
+               sma200=round(s2) if s2 else None, above200=P[i] > s2 if s2 else None, breaks=brk, since=W50_FROM)
+    n = len(D) - 1
+    if n != i and W[n]:   # 週中：本週還沒收，先用當天收盤代入
+        s2 = sma200(n)
+        out['live'] = dict(date=D[n], price=round(P[n]), ma=round(W[n]), dist_pct=round((P[n] / W[n] - 1) * 100, 1), above=P[n] > W[n],
+                           sma200=round(s2) if s2 else None, above200=P[n] > s2 if s2 else None)
+    return out
 
 
 def levels_viz(bv, px, last, step=2):
@@ -681,8 +722,9 @@ def levels_viz(bv, px, last, step=2):
     for v in P: cs.append(cs[-1] + v)
     sma = lambda i, w: (cs[i + 1] - cs[i + 1 - w]) / w if i >= w - 1 else None
     bvv = lambda k, d: (bv.get(k) or {}).get(d)
+    W = _w50(D, P)
     def row(i):
-        d = D[i]; vals = [sma(i, 200), sma(i, 365), sma(i, 350)] + [bvv(k, d) for k in ('sth', 'tmm', 'rp', 'lth', 'act')]
+        d = D[i]; vals = [sma(i, 200), sma(i, 365), W[i]] + [bvv(k, d) for k in ('sth', 'tmm', 'rp', 'lth', 'act')]
         return [dn(d), round(P[i])] + [round(v) if v else None for v in vals]
     rows = thin([row(i) for i in range(n) if D[i] >= LV_FROM], step)
     i = n - 1; c = P[i]; now = row(i)
@@ -696,7 +738,8 @@ def levels_viz(bv, px, last, step=2):
         act = dict(value=round(A[D[i]]), dist_pct=round((A[D[i]] / c - 1) * 100, 1), above=c > A[D[i]], ytd_days=len(YD), ytd_above=len(ab),
                    last_above=ab[-1] if ab else None, last_cross=dict(date=xs[-1], up=px[xs[-1]] > A[xs[-1]]) if xs else None)
     return dict(date=D[i], price=round(c), levels=levels, near=dict(pct=LV_NEAR, lo=min(x['value'] for x in near), hi=max(x['value'] for x in near), keys=[x['key'] for x in near]) if near else None,
-                act=act, rows=rows, note='價格、200／365／350 日均線（統一收盤）與 Bitview 的短期持有者成本、真實市場均價、實現價、長期持有者成本、活躍投資人成本（rows 第 10 欄）；50 週＝350 日；只作讀值')
+                act=act, w50=_w50_read(D, P, W, lambda k: sma(k, 200)), rows=rows,
+                note='價格、200／365 日均線、50 週均線（週收盤算法：最近 49 根週 K 收盤＋當天收盤）（統一收盤）與 Bitview 的短期持有者成本、真實市場均價、實現價、長期持有者成本、活躍投資人成本（rows 第 10 欄）；只作讀值')
 
 
 # 2026-11-05 使用者要求（Look Into Bitcoin〈Bitcoin Cycle Capital Flows〉）：實現市值加權的幣齡，1 個月內換手（投機、新錢）與 1–2 年沒動（長線、循環投資人）
