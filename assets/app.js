@@ -5560,7 +5560,7 @@
         })(t0);
       };
       (document.fonts ? document.fonts.ready : Promise.resolve()).then(function () { requestAnimationFrame(function () { requestAnimationFrame(run); }); });
-      setTimeout(function () { if (!done) { done = true; if (!unghost()) lift(); setTimeout(function () { d.classList.remove('lfx-came'); }, 4000); } }, 3500);   // 保險：字型一直沒載完也不要一直蓋著
+      setTimeout(function () { if (!done) { done = true; if (fx && fx.y) window.scrollTo(0, fx.y); if (!unghost()) lift(); setTimeout(function () { d.classList.remove('lfx-came'); }, 4000); } }, 3500);   // 保險：字型一直沒載完也不要一直蓋著（照樣接回捲動位置）
     }
     $('#lang').querySelectorAll('button').forEach(function (x) { x.setAttribute('aria-pressed', x.getAttribute('data-l') === LANG); });
     $('#lang').addEventListener('click', function (e) { var b = e.target.closest('button'); if (b) pickLang(b.getAttribute('data-l')); });
@@ -5626,10 +5626,17 @@
     shell();
     renderAll();
     var start = location.hash.slice(1);
+    // 2026-11-09 修：從換語言進來（開機腳本加了 lfx-came）時，捲動位置由 langIn 接回原處，這裡只切到那一版、不回頂也不對齊。
+    // 原本手機版換版會「回頂」（toTop 鎖住捲動、80／250／500 毫秒後再拉回頂端），和 langIn 接回的位置互相拉扯：
+    // 使用者看到畫面先停在原位、頂部列不見，接著又被拉回頂端、整頁跳一下
+    var came = document.documentElement.classList.contains('lfx-came');
     if (start && start !== 'overview' && (/^\w+\/[\w-]+$/.test(start) || (/^[\w-]+$/.test(start) && $('#pg-' + start)))) {
-      go(start);   // 字型載入後版面會變高，載完再對齊一次（使用者已自行捲動就不動）
-      var y0 = window.scrollY; if (document.fonts) document.fonts.ready.then(function () { if (Math.abs(window.scrollY - y0) < 2) go(start); });
-    } else { window.scrollTo(0, 0); activate(ROUTES[0][0]); }
+      if (came) { var pg0 = start.split('/')[0]; if ($('#pg-' + pg0)) activate(pg0); }
+      else {
+        go(start);   // 字型載入後版面會變高，載完再對齊一次（使用者已自行捲動就不動）
+        var y0 = window.scrollY; if (document.fonts) document.fonts.ready.then(function () { if (Math.abs(window.scrollY - y0) < 2) go(start); });
+      }
+    } else { if (!came) window.scrollTo(0, 0); activate(ROUTES[0][0]); }
     if (langInHook) langInHook();
   }).catch(function (e) { $('#view').innerHTML = _t('<p class="err">資料載入失敗：') + esc(e.message) + _t('。請稍後重新整理。</p>'); });
 });
