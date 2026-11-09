@@ -3,7 +3,8 @@
 2026-10-21 自我檢查發現：事件表連 7 期缺 CPI、摘要寫到 4–6 句、頭條 76–107 字、制式提醒句每期約 20 次，都是規則有寫但沒人檢查。
 用法（在倉庫根目錄）：python3 pipeline/notes_lint.py   # 有問題會列出並以非零結束
 2026-10-23：加查 findings／followups（發現與追蹤），上一期從 data/archive/ 讀
-2026-11-09：加查「說重點」的固定說法與中文常用名（使用者要日報照運營長文的寫法；詞表取自 daybreak-ops/ops/replies/check.py 的 AI_WORDS、EN_NAMES）"""
+2026-11-09：加查「說重點」的固定說法與中文常用名（使用者要日報照運營長文的寫法；詞表取自 daybreak-ops/ops/replies/check.py 的 AI_WORDS、EN_NAMES）
+2026-11-09：加查去 AI 味第二輪（運營 voice.md 同名一節；lieflat 人類 vs AI 配對實測、Wikipedia「Signs of AI writing」）：套話直接擋，句型與口頭禪只提醒（△，不影響結束碼）"""
 import json, os, re, sys, datetime as dt
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -20,6 +21,17 @@ EN_NAMES = {'比特幣': 'BTC', '以太坊': 'ETH', '以太幣': 'ETH', '那斯�
             '微策略': 'Strategy', '幣安': 'Binance', '貝萊德': 'BlackRock', '富達': 'Fidelity', '灰度': 'Grayscale'}   # 中文版有英文常用名的直接用英文（hashtag 不算）
 EN_NAME = re.compile(r'(?<!#)(' + '|'.join(EN_NAMES) + ')')
 SKIP = ('.url', '.source', '.cat', '.time')   # 新聞的網址、來源名、分類、時間不檢查
+# 2026-11-09 去 AI 味第二輪（見 docs/CLAUDE_DAILY.md「去 AI 味」），一出現就擋。新聞標題是轉述別家的標題，不算
+AIW = (('泛指來源：說是誰（「X 上這兩天好幾則」、資料商名），或刪掉直接講正確解讀；別人的說法用「」框起來',
+        re.compile(r"很多人說|不少人說|大家都說|(?<![沒没])有人說|市場普遍|普遍認為|不少人認為|很多人認為|\b(lots of people|(?<!how )many people|some (people )?say)\b", re.I)),
+       ('書面填充詞／淺層分析尾句：刪掉直接講；尾句寫具體後果，沒有後果就刪',
+        re.compile(r"某種程度|一定程度上|本質上|換句話說|不難發現|毋庸置疑|顯而易見|值得注意的是|凸顯|彰顯|體現了|反映了[^，。；]{0,16}的重要性|\b(the reality is|to be clear|let's be (clear|honest)|at the end of the day|bottom line|in other words|key takeaway|game.?changers?)\b", re.I)),
+       ('固定收尾句：樣本小、外推寫進引用數字的那一句（「2012 年以來才 3 次」「照近 30 天的速度直線外推」），不另起一句',
+        re.compile(r"只能當個?(參考|背景)|有變化再更新|\b(not a forecast|only as background|background only)\b", re.I)))
+# 只提醒：一則解讀（一版、一則 finding……）裡出現第二次才算
+FOCUS = re.compile(r"分辨的方法是|要盯的是|要看的是|要注意的是|關鍵在於|關鍵是|的原因是|真正的(問題|差別|重點)是|What(?:'s| is) (?:missing|different|new|changed|interesting) is|The (?:tell|catch|difference|problem|key|short version) is", re.I)
+CONTRAST = re.compile(r"不是[^，。？\n]{1,24}[，,、 ]?(而)?是|不等於|\bnot (just |only )?an? [^,.]{1,30}, (but )?|, not an? |isn't [^,.]{1,30}[,.] it's|rather than", re.I)
+PET = {'比較像': 2, '真的': 3, '其實': 3, '我覺得': 3, 'to me': 2, 'though': 2}   # 一天全部解讀加起來的上限
 EVENTS = {'CPI': 'CPI', 'FOMC': 'FOMC', '非農': '非農', '難度調整': '難度', 'Deribit 到期': 'Deribit', '月底路徑重估': '路徑'}
 
 
@@ -36,6 +48,68 @@ def _get(o, path):
         if not isinstance(o, dict) or k not in o: return None
         o = o[k]
     return o
+
+
+def units(doc):
+    """一則解讀＝一個單位：頭條＋摘要、各版（lead＋points）、各則 finding、各則 action／change／followup、新聞解讀。"""
+    yield '頭條摘要', [doc.get('headline', ''), doc.get('summary', '')]
+    for m, v in (doc.get('modules') or {}).items(): yield f'modules.{m}', [v.get('lead', '')] + list(v.get('points') or [])
+    for f in doc.get('findings') or []: yield f'finding {f.get("id")}', [f.get(k) for k in ('title', 'what', 'why', 'alt', 'history', 'so', 'next', 'lean_why') if isinstance(f.get(k), str)]
+    for i, a in enumerate(doc.get('actions') or []): yield f'actions[{i}]', [a.get('text', '')]; yield f'actions[{i}].head', [a.get('head', '')]
+    for i, c in enumerate(doc.get('changes') or []): yield f'changes[{i}]', [c.get('title', ''), c.get('say', '')]
+    for f in doc.get('followups') or []: yield f'followup {f.get("id")}', [f.get('say', '')]
+    for i, x in enumerate(doc.get('news') or []): yield f'news[{i}]', [x.get('read', '')]
+
+
+def _sents(t, zh):
+    return [x.strip() for x in (re.split(r'(?<=[。！？；])|\n', t) if zh else re.split(r'(?<=[.!?;])\s+|\n', t)) if x and x.strip()]
+
+
+def _tail(t):   # 收尾句比對用：去掉標點與空白
+    return re.sub(r'[\W_]', '', t)
+
+
+def lint_voice(doc, zh, prev=None):
+    """去 AI 味第二輪（2026-11-09）。回傳 (要修, 提醒)。不抓精確數字、序數、設問、「這意味著」、被動句、段首連接詞（實測不是 AI 味）。"""
+    bad, warn, tag = [], [], '' if zh else '英文版'
+    for why, rx in AIW:
+        hit = {}
+        for p, t in texts(doc):
+            if p.endswith(SKIP) or p.endswith('news.title'): continue
+            for m in rx.finditer(t): hit.setdefault(m.group(0), set()).add(p)
+        for w, ps in hit.items(): bad.append(f'{tag}有「{w}」（{"、".join(sorted(ps)[:3])}）：{why}')
+    U = list(units(doc)); allt = '\n'.join(t for _, ts in U for t in ts if t)
+    for lab, ts in U:
+        body = '\n'.join(t for t in ts if t)
+        f = [m.group(0) for m in FOCUS.finditer(body)]
+        if len(f) > 1: warn.append(f'{tag}{lab} 焦點後置 {len(f)} 處（{"／".join(f)}）：直接講後面那件事，一則最多一次')
+        c = len(CONTRAST.findall(body))
+        if c > 1: warn.append(f'{tag}{lab}「不是 X，是 Y」對比句 {c} 處：一則最多 1 處')
+    pets = []
+    for w, mx in PET.items():
+        if w[0].isascii() == zh: continue
+        k = len(re.findall(r'\bthough(?=[,.;!?]|$)' if w == 'though' else (r'\b' + re.escape(w) + r'\b' if w[0].isascii() else re.escape(w)), allt, re.I | re.M))
+        if k > mx: pets.append(f'{w} {k} 次（上限 {mx}）')
+    if pets: warn.append(f'{tag}口頭禪：' + '、'.join(pets) + '，判斷詞換著用（就是／八成／應該是／看起來像／多半；looks like／my guess is／probably）')
+    ss = [x for _, ts in U for t in ts if t for x in _sents(t, zh)]
+    so = sum(1 for x in ss if re.match(r'所以' if zh else r'So\b', x))
+    if so > 4: warn.append(f'{tag}「{"所以" if zh else "So"}」開頭的句子 {so} 句：一天最多三四次，結論已經在前面')
+    punch, tails = [], {}
+    for lab, ts in U:   # 新聞解讀照規則要寫影不影響週期、action 的 head 是狀態列，這兩種不算收尾句；用數字或細節收的也不算
+        if lab.startswith('news') or lab.endswith('.head'): continue
+        for t in ts:
+            s_ = _sents(t or '', zh)
+            if not s_ or re.search(r'\d', s_[-1]): continue
+            if len(s_) >= 2 and len(_tail(s_[-1]) if zh else s_[-1]) <= (8 if zh else 25): punch.append(f'{lab}「{s_[-1]}」')
+            if len(_tail(s_[-1])) >= 6: tails.setdefault(_tail(s_[-1]), []).append(lab)
+    if len(punch) > 2: warn.append(f'{tag}短句收尾 {len(punch)} 處（{"；".join(punch[:4])}）：一天一兩處就好，其他用數字或細節收')
+    rep = [f'「{k[:16]}」×{len(v)}' for k, v in tails.items() if len(v) >= 3]
+    if rep: warn.append(f'{tag}同一句收尾用了好幾次：{"、".join(rep)}：每則解讀都同一句型收尾就是模板')
+    if prev:
+        pt = {_tail(_sents(t, zh)[-1]) for lab, ts in units(prev) if not (lab.startswith('news') or lab.endswith('.head')) for t in ts if t and _sents(t, zh)}
+        same = sorted({k for k in tails if k in pt})
+        if same: warn.append(f'{tag}和上一期用同一句收尾：{"、".join("「" + k[:16] + "」" for k in same[:3])}：固定收尾句不要每天一樣')
+    return bad, warn
 
 
 def lint_findings(n, en, L, prev):
@@ -146,7 +220,14 @@ if __name__ == '__main__':
     L = json.load(open(D('latest.json')))
     bad = lint(n, en, L['meta']['bar_date'])
     arc = sorted(f for f in os.listdir(D('archive')) if re.fullmatch(r'\d{4}-\d{2}-\d{2}\.json', f) and f[:10] < n.get('date', '')) if os.path.isdir(D('archive')) else []
-    bad += lint_findings(n, en, L, json.load(open(os.path.join(D('archive'), arc[-1]))) if arc else None)
+    prev = json.load(open(os.path.join(D('archive'), arc[-1]))) if arc else None
+    bad += lint_findings(n, en, L, prev)
+    pen = os.path.join(D('archive'), arc[-1][:10] + '.en.json') if arc else ''
+    warn = []
+    for doc, zh, pv in ((n, True, prev), (en, False, json.load(open(pen)) if os.path.exists(pen) else None)):
+        if doc is None: continue
+        b, w = lint_voice(doc, zh, pv); bad += b; warn += w
     for b in bad: print('✗', b)
-    print(f"notes {n.get('date')} No.{n.get('edition')}：{'有 ' + str(len(bad)) + ' 項要修' if bad else '通過'}")
+    for w in warn: print('△', w)
+    print(f"notes {n.get('date')} No.{n.get('edition')}：{'有 ' + str(len(bad)) + ' 項要修' if bad else '通過'}" + (f'；{len(warn)} 項提醒（△，看過再決定要不要改）' if warn else ''))
     sys.exit(1 if bad else 0)
