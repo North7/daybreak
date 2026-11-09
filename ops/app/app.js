@@ -3,7 +3,8 @@
    回覆：data/replies.json；原文點開時才即時讀 api.fxtwitter.com。
    卡片：標頭（時間／類型／標題／狀態）→ 點開：說明 → 中文／English 或 回覆／引用 切換 → 文字＋字數 → 配圖 → 動作（主要「發到 X」，其次複製文字、存圖）→ 標記已發。
    已發／已回：手動標記記在這台裝置（localStorage daybreak.done.v2：{鍵: 台北日期}；讀得到舊的 daybreak.longdone、daybreak-replied-<日期>）；
-   2026-11-09 起另外直接讀 X 上 @songpu717 最近 36 小時的貼文（fxtwitter），對得上的卡片自動算已發／已回，電腦和手機都一樣、不用重標。
+   2026-11-09 起另外直接讀 X 上 @songpu717 最近 36 小時的貼文（fxtwitter），對得上的卡片自動算已發／已回，電腦和手機都一樣、不用重標；
+   讀到的存在這台裝置（daybreak.onx.v1），打開先用存的，背景只補讀上次之後的。
    標記完成後自動收起、打開下一則。資料格式沒變，排程任務不用改。 */
 (function () {
   'use strict';
@@ -347,18 +348,44 @@
   // ---------- X 上已發（每台裝置都一樣） ----------
   // 讀 @songpu717 最近 36 小時的貼文和回覆：回覆對「回的是哪一則」（引用對「引用了哪一則」），發文對開頭 30 字。
   // fxtwitter 每頁不照時間排（見 ops/replies/mentions.py），連續兩頁都比 36 小時舊才停，最多 10 頁。
-  var SYNC = { st: '', at: 0, busy: false };
-  function syncNote() {
+  // 2026-11-09 使用者：每次打開都要等它讀完才收起已發的。讀到的結果存在這台裝置（daybreak.onx.v1：{at, rep, quo, txt}，48 小時內的），
+  // 打開頁面先用存的對一次、馬上收起來；背景只往回讀到上次同步前 2 小時，有新的再併進去、重畫。
+  var XK = 'daybreak.onx.v1', XC = { at: 0, rep: {}, quo: {}, txt: [] };
+  try { var xc = JSON.parse(localStorage.getItem(XK) || 'null'); if (xc && xc.rep) XC = xc; } catch (e) {}
+  var SYNC = { st: XC.at ? 'ok' : '', at: XC.at || 0, busy: false };
+  function syncNote() { return '<span class="syncnote">' + syncText() + '</span>'; }
+  function syncText() {
     if (SYNC.st === 'busy' && !SYNC.at) return '<span class="dim">X 同步中…</span>';
     if (SYNC.st === 'fail') return '<span class="warn">X 同步失敗，先用手動標記</span>';
     return SYNC.at ? '<span class="dim">X 已同步 ' + hm(SYNC.at) + '</span>' : '';
   }
+  function renderSyncNote() { Array.prototype.forEach.call(document.querySelectorAll('.syncnote'), function (e) { e.innerHTML = syncText(); }); }
   function norm(t) { return String(t || '').replace(URL_RE, '').replace(/^(\s*@\w+)+\s*/, '').replace(/[\s#＃]+/g, '').slice(0, 30); }
+  function applyX() {   // 用 XC 對卡片：回覆對「回的是哪一則」（引用對「引用了哪一則」），發文對開頭 30 字
+    var hit = 0;
+    function byText(t) {
+      var s = norm(t); if (s.length < 8) return 0;
+      for (var i = 0; i < XC.txt.length; i++) { var a = XC.txt[i][0], m = Math.min(a.length, s.length); if (m >= 8 && a.slice(0, m) === s.slice(0, m)) return XC.txt[i][1]; }
+      return 0;
+    }
+    function set(k, ts) { if (ts && !ONX[k]) { ONX[k] = ts; hit++; } }
+    ((R && R.items) || []).forEach(function (x) {
+      if (x.status === 'skip') return;
+      set(replyKey(x), XC.rep[x.id] || (x.quote ? XC.quo[x.id] : 0) || byText(x.reply) || byText(x.quote));
+    });
+    (POSTS || []).forEach(function (p) { Object.keys(p.langs).forEach(function (l) { set(p.key, byText(p.langs[l].text)); }); });
+    return hit;
+  }
   function syncX() {
-    if (SYNC.busy) return; SYNC.busy = true; SYNC.st = 'busy';
-    var t0 = Date.now() - 36 * 3600e3, rep = {}, quo = {}, txt = [], seen = {}, old = 0, n = 0;
+    if (SYNC.busy) return; SYNC.busy = true; SYNC.st = SYNC.at ? 'ok' : 'busy';
+    var now = Date.now(), t0 = now - 36 * 3600e3, tStop = XC.at ? Math.max(t0, XC.at - 2 * 3600e3) : t0;
+    var rep = {}, quo = {}, txt = [], seen = {}, old = 0, n = 0;
     function page(cur) {
-      return fetch('https://api.fxtwitter.com/2/profile/songpu717/statuses?with_replies=true' + (cur ? '&cursor=' + encodeURIComponent(cur) : '')).then(function (r) { if (!r.ok) throw r.status; return r.json(); }).then(function (d) {
+      var u = 'https://api.fxtwitter.com/2/profile/songpu717/statuses?with_replies=true' + (cur ? '&cursor=' + encodeURIComponent(cur) : '');
+      function get(tries) {   // fxtwitter 偶爾回 404，隔一下再試，最多 3 次
+        return fetch(u).then(function (r) { if (!r.ok) throw r.status; return r.json(); }).catch(function (e) { if (tries <= 1) throw e; return new Promise(function (ok) { setTimeout(ok, 1500); }).then(function () { return get(tries - 1); }); });
+      }
+      return get(3).then(function (d) {
         var res = (d.results || []).filter(function (t) { return t.author && String(t.author.screen_name).toLowerCase() === 'songpu717'; }), newest = 0;
         res.forEach(function (t) {
           var ts = (t.created_timestamp || 0) * 1000; newest = Math.max(newest, ts);
@@ -368,26 +395,25 @@
           if (t.quote && t.quote.id) quo[t.quote.id] = ts;
           var s = norm(t.text); if (s.length >= 8) txt.push([s, ts]);
         });
-        old = res.length && newest < t0 ? old + 1 : 0; n++;
+        // fxtwitter 每頁不照時間排（見 ops/replies/mentions.py），連續兩頁都比 tStop 舊才停，最多 10 頁
+        old = res.length && newest < tStop ? old + 1 : 0; n++;
         var next = d.cursor && d.cursor.bottom;
         if (res.length && next && old < 2 && n < 10) return page(next);
       });
     }
     page(null).then(function () {
-      var hit = 0;
-      function byText(t) {
-        var s = norm(t); if (s.length < 8) return 0;
-        for (var i = 0; i < txt.length; i++) { var a = txt[i][0], m = Math.min(a.length, s.length); if (m >= 8 && a.slice(0, m) === s.slice(0, m)) return txt[i][1]; }
-        return 0;
-      }
-      function set(k, ts) { if (ts && !ONX[k]) { ONX[k] = ts; hit++; } }
-      ((R && R.items) || []).forEach(function (x) {
-        if (x.status === 'skip') return;
-        set(replyKey(x), rep[x.id] || (x.quote ? quo[x.id] : 0) || byText(x.reply) || byText(x.quote));
-      });
-      POSTS.forEach(function (p) { Object.keys(p.langs).forEach(function (l) { set(p.key, byText(p.langs[l].text)); }); });
-      SYNC.st = 'ok'; SYNC.at = Date.now();
-      rerender();
+      var keep = now - 48 * 3600e3;
+      Object.keys(rep).forEach(function (k) { XC.rep[k] = rep[k]; });
+      Object.keys(quo).forEach(function (k) { XC.quo[k] = quo[k]; });
+      var have = {}; XC.txt.forEach(function (a) { have[a[0]] = 1; });
+      txt.forEach(function (a) { if (!have[a[0]]) XC.txt.push(a); });
+      ['rep', 'quo'].forEach(function (m) { Object.keys(XC[m]).forEach(function (k) { if (XC[m][k] < keep) delete XC[m][k]; }); });
+      XC.txt = XC.txt.filter(function (a) { return a[1] >= keep; });
+      XC.at = now;
+      try { localStorage.setItem(XK, JSON.stringify(XC)); } catch (e) {}
+      var hit = applyX();
+      SYNC.st = 'ok'; SYNC.at = now;
+      if (hit) rerender(); else renderSyncNote();
     }).catch(function () { SYNC.st = 'fail'; rerender(); }).then(function () { SYNC.busy = false; });
   }
   function rerender() {   // 重畫但保留正在看的那張卡；它剛好變成已發／已回，就打開下一則
@@ -406,10 +432,10 @@
   var soft = function (p) { return p.catch(function () { return null; }); };
   var loadP = Promise.all([soft(getJSON('data/x_post.json')), soft(getJSON('data/flash.json')), soft(getJSON('data/longposts.json')), soft(getJSON('data/picks.json')), soft(getJSON('data/picks/index.json'))]).then(function (r) {
     if (r[0]) document.getElementById('meta').textContent = 'No.' + String(r[0].edition || 0).padStart(3, '0') + ' · ' + md(r[0].date) + ' 收盤';
-    POSTS = buildPosts(r[0], r[1], r[2], r[3], r[4]);
+    POSTS = buildPosts(r[0], r[1], r[2], r[3], r[4]); applyX();   // 先用存在這台裝置的 X 紀錄收起已發的
     renderPosts(); openFirst('v-today');
   });
-  var loadR = getJSON('data/replies.json').then(function (j) { R = j; renderReplies(); openFirst('v-replies'); })
+  var loadR = getJSON('data/replies.json').then(function (j) { R = j; applyX(); renderReplies(); openFirst('v-replies'); })
     .catch(function () { document.getElementById('v-replies').innerHTML = '<p class="empty">讀取失敗：data/replies.json</p>'; });
   Promise.all([loadP, loadR]).then(syncX);
 })();
