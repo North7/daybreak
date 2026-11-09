@@ -40,6 +40,11 @@
     tip.style.left = Math.max(8, left) + 'px'; tip.style.top = Math.max(8, top) + 'px';
   }
   function hideTip() { if (tip) tip.hidden = true; }
+  /* 2026-11-09：手機上點了圖、提示框出現後一捲動就卡在畫面上（只有離開圖表才收）。捲動、觸控被瀏覽器接手（pointercancel）、
+     點到圖表以外的地方時收起；桌面滑鼠移回圖上會再出現 */
+  window.addEventListener('scroll', function () { if (tip && !tip.hidden) hideTip(); }, { passive: true });
+  document.addEventListener('pointercancel', hideTip, true);
+  document.addEventListener('pointerdown', function (e) { if (e.pointerType !== 'mouse' && !(e.target.closest && e.target.closest('svg, canvas, a.term'))) hideTip(); }, true);
 
   /* ---------------- Chart kit ---------------- */
   var mounted = [];
