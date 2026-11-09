@@ -43,7 +43,7 @@ window.DAYBREAK_BOOT = (function () {
   function go(l) {
     window.DAYBREAK_LANG = l; document.documentElement.lang = l === 'en' ? 'en' : 'zh-Hant';
     if (l !== 'en') return Promise.resolve();
-    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=1fc105def7'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
+    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=a28ff56bb6'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
   }
   var pick = ls('daybreak.lang'); if (pick === 'zh' || pick === 'en') return go(pick);
   var byCC = function (cc) { return ZH.indexOf(String(cc).toUpperCase()) >= 0 ? 'zh' : 'en'; };
@@ -58,18 +58,36 @@ window.DAYBREAK_BOOT = (function () {
   });
 })();
 </script>
-<link rel="stylesheet" href="assets/app.css?v=1fc105def7">
+<link rel="stylesheet" href="assets/app.css?v=a28ff56bb6">
 </head>
 <body>
 <script>
-/* 2026-11-09 換語言不留空白：上一頁存的畫面快照（sessionStorage daybreak.lfx，app.js pickLang）→ 一開頭就用 iframe 擺出來，等新語言畫好由 app.js langIn 拿掉並接著解碼。
+/* 2026-11-09 換語言不留空白：上一頁存的畫面快照（sessionStorage daybreak.lfx，app.js pickLang）→ 一開頭就擺出來，等新語言畫好由 app.js langIn 拿掉並接著解碼。
    使用者：「會在亂碼狀態停留卡住的感覺，需要一直動態變」→ 亂碼不靠 JS 計時（新頁面載入、畫圖時主執行緒會被佔住，JS 動畫就停了）：
    先做 6 份各自亂碼的快照疊起來，用 CSS 每 60 毫秒輪流顯示一份（透明度動畫由合成器跑，主執行緒忙也照樣在變）。
-   iframe 和頁面隔開，app.js 的全頁查詢不會抓到快照裡的元素 */
+   同日再改（使用者 iPhone 錄影：換語言時舊畫面會往上縮一截、頂部列不見、停約 0.35 秒再跳回來）：快照原本放 iframe，
+   iPhone 的瀏覽器要等新頁面「主畫面」有足夠的字才肯換掉舊畫面，iframe 裡的字不算，所以一直顯示被往上推的舊畫面，等資料畫好才換。
+   改放進主頁面的 shadow DOM：字算在主畫面裡，新頁面第一次繪製就是快照；shadow DOM 和頁面隔開，app.js 的全頁查詢與 id 都不會抓到快照裡的元素。
+   樣式從已載入的 app.css 逐條抄進 shadow root，選擇器裡的 html／:root／body 換成快照的外框 .lfx-html／.lfx-body；捲動位置由快照外框自己捲（黏住的頂部列照樣黏住） */
 (function () { try {
   var fx = JSON.parse(sessionStorage.getItem('daybreak.lfx') || 'null'); if (!fx || !fx.h || Date.now() - fx.t > 8000) return;
-  var P = { c: '\u6bd4\u7279\u5e63\u50f9\u683c\u9031\u671f\u93c8\u4e0a\u8cc7\u91d1\u884d\u751f\u54c1\u51fa\u5834\u6846\u67b6\u5f80\u671f\u65b9\u6cd5\u5e02\u5834\u591a\u7a7a\u9802\u5e95\u71b1\u5ea6\u6210\u672c\u7372\u5229\u7c4c\u78bc\u4f9b\u7d66\u77ed\u9577\u6301\u6709\u8005\u6d41\u5165\u6de8\u8b8a\u5316\u7387\u6307\u6578\u8a0a\u865f\u98a8\u96aa\u6ce2\u52d5\u672a\u5be6\u73fe\u9078\u64c7\u6b0a\u5230\u671f\u5c65\u7d04\u4eca\u5929\u65b0\u4e00\u671f\u5224\u8b80\u7d50\u8ad6', l: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', d: '0123456789' }, K = 6;
-  var kind = function (ch) { var n = ch.charCodeAt(0); return n >= 13312 && n <= 40959 ? 'c' : /[A-Za-z]/.test(ch) ? 'l' : /[0-9]/.test(ch) ? 'd' : ''; };
+  var host = document.createElement('div'); if (!host.attachShadow) return;
+  var css = '', rw = function (s) { return s.replace(/(^|[\s,>+~(])(?::root|html)(?![\w-])/g, '$1.lfx-html').replace(/(^|[\s,>+~(])body(?![\w-])/g, '$1.lfx-body'); };
+  var dump = function (rules) {
+    var o = '';
+    for (var i = 0; i < rules.length; i++) {
+      var r = rules[i];
+      if (window.CSSStyleRule && r instanceof CSSStyleRule) o += rw(r.selectorText) + '{' + r.style.cssText + '}';
+      else if (window.CSSMediaRule && r instanceof CSSMediaRule) o += '@media ' + r.media.mediaText + '{' + dump(r.cssRules) + '}';
+      else if (window.CSSSupportsRule && r instanceof CSSSupportsRule) o += '@supports ' + r.conditionText + '{' + dump(r.cssRules) + '}';
+      else o += r.cssText;
+    }
+    return o;
+  };
+  for (var si = 0; si < document.styleSheets.length; si++) { var ss = document.styleSheets[si]; if (ss.href && ss.href.indexOf('assets/app.css?v=a28ff56bb6') >= 0) { try { css = dump(ss.cssRules); } catch (e) {} } }
+  if (!css) return;   // 讀不到樣式就不擺快照，照舊用暮色
+  var P = { c: '比特幣價格週期鏈上資金衍生品出場框架往期方法市場多空頂底熱度成本獲利籌碼供給短長持有者流入淨變化率指數訊號風險波動未實現選擇權到期履約今天新一期判讀結論', n: 'fijlrtI', w: 'mwMW', u: 'ABCDEFGHJKLNOPQRSTUVXYZ', l: 'abcdeghknopqsuvxyz', d: '0123456789' }, K = 6;   // 英文字母依寬度分組換字（同 app.js lfxKind）
+  var kind = function (ch) { var n = ch.charCodeAt(0); return n >= 13312 && n <= 40959 ? 'c' : /[0-9]/.test(ch) ? 'd' : !/[A-Za-z]/.test(ch) ? '' : /[fijlrtI]/.test(ch) ? 'n' : /[mwMW]/.test(ch) ? 'w' : ch < 'a' ? 'u' : 'l'; };
   var tpl = document.createElement('template'); tpl.innerHTML = fx.h;
   var frames = '';
   for (var f = 0; f < K; f++) {
@@ -78,14 +96,16 @@ window.DAYBREAK_BOOT = (function () {
     list.forEach(function (n) { var a = Array.from(n.nodeValue), o = ''; for (var i = 0; i < a.length; i++) { var k = kind(a[i]); o += k && Math.random() < .82 ? P[k].charAt((Math.random() * P[k].length) | 0) : a[i]; } n.nodeValue = o; });
     frames += box.outerHTML;
   }
-  var g = document.createElement('iframe'); g.className = 'lfx-ghost'; g.setAttribute('aria-hidden', 'true'); g.tabIndex = -1; g.style.width = (fx.w | 0) + 'px';
-  g.srcdoc = '<!doctype html><html class="lfx-came" lang="' + (fx.lang === 'en' ? 'en' : 'zh-Hant') + '"' + (fx.theme === 'dark' ? ' data-theme="dark"' : '') + '><head><meta charset="utf-8">' +
-    (fx.fonts ? '<link rel="stylesheet" href="' + fx.fonts + '">' : '') + '<link rel="stylesheet" href="' + fx.css + '">' +
-    '<style>html{scrollbar-width:none}html::-webkit-scrollbar{display:none}body{overflow:hidden;position:relative}' +
+  host.className = 'lfx-ghost'; host.setAttribute('aria-hidden', 'true'); host.style.width = (fx.w | 0) + 'px';
+  var sr = host.attachShadow({ mode: 'open' }), esc = function (x) { return String(x || '').replace(/[^\w -]/g, ''); };
+  sr.innerHTML = '<style>' + css +
+    '.lfx-sc{position:absolute;top:0;right:0;bottom:0;left:0;overflow:auto;scrollbar-width:none;background:var(--void)}.lfx-sc::-webkit-scrollbar{display:none}' +
+    '.lfx-html,.lfx-body{height:auto;min-height:100%}.lfx-body{position:relative;margin:0}' +
     '.lfx-f{position:absolute;top:0;left:0;width:100%;opacity:0;will-change:opacity;animation:lfxf ' + (K * 60) + 'ms steps(1,end) infinite}.lfx-f:first-child{position:relative}' +
-    '@keyframes lfxf{0%{opacity:1}' + (100 / K).toFixed(3) + '%{opacity:0}100%{opacity:0}}</style></head><body class="' + (fx.bc || '') + '">' + frames +
-    '<script>scrollTo(0,' + (fx.y | 0) + ')<\/script></body></html>';
-  document.documentElement.appendChild(g); window.DAYBREAK_LFX_GHOST = g;
+    '@keyframes lfxf{0%{opacity:1}' + (100 / K).toFixed(3) + '%{opacity:0}100%{opacity:0}}</style>' +
+    '<div class="lfx-sc"><div class="lfx-html lfx-came" lang="' + (fx.lang === 'en' ? 'en' : 'zh-Hant') + '"' + (fx.theme === 'dark' ? ' data-theme="dark"' : '') + '><div class="lfx-body ' + esc(fx.bc) + '">' + frames + '</div></div></div>';
+  document.documentElement.appendChild(host); sr.querySelector('.lfx-sc').scrollTop = fx.y | 0;
+  window.DAYBREAK_LFX_GHOST = host;
 } catch (e) {} })();
 </script>
 <div class="app">
@@ -113,7 +133,7 @@ window.DAYBREAK_BOOT = (function () {
 </div>
 <div id="tip" class="tip" role="tooltip" hidden></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
-<script src="assets/app.js?v=1fc105def7"></script>
+<script src="assets/app.js?v=a28ff56bb6"></script>
 <script>
 /* 訪客統計 GoatCounter（不用 cookie、不收個資）：站點代號 daybreak（2026-10-13 註冊）；只在正式網址計數 */
 (function () { var code = 'daybreak'; if (!code || location.hostname !== 'north7.github.io') return;
