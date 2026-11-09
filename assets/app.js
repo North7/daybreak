@@ -5472,8 +5472,9 @@
     // 離開：滑塊跟著走（拉長、到位），畫面上看得到的字逐漸亂碼，同底色的暮色淡入，約 0.52 秒後重新載入；
     // 進入：開機就先蓋著暮色（index.html 開機腳本），新語言畫好、字型載入後，暮色淡出、字從亂碼解碼成新語言，捲動位置接回原處。
     // 亂碼只換同類字（中文換中文、英文換英文、數字換數字），版面寬度不跳；別的程式改過的字（例如數字解碼、倒數）就不再碰
-    var LFX = { busy: false }, LFX_POOL = { c: '\u6bd4\u7279\u5e63\u50f9\u683c\u9031\u671f\u93c8\u4e0a\u8cc7\u91d1\u884d\u751f\u54c1\u51fa\u5834\u6846\u67b6\u5f80\u671f\u65b9\u6cd5\u5e02\u5834\u591a\u7a7a\u9802\u5e95\u71b1\u5ea6\u6210\u672c\u7372\u5229\u7c4c\u78bc\u4f9b\u7d66\u77ed\u9577\u6301\u6709\u8005\u6d41\u5165\u6de8\u8b8a\u5316\u7387\u6307\u6578\u8a0a\u865f\u98a8\u96aa\u6ce2\u52d5\u672a\u5be6\u73fe\u9078\u64c7\u6b0a\u5230\u671f\u5c65\u7d04\u4eca\u5929\u65b0\u4e00\u671f\u5224\u8b80\u7d50\u8ad6', l: 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz', d: '0123456789' };
-    function lfxKind(ch) { var c = ch.charCodeAt(0); if (c >= 0x3400 && c <= 0x9FFF) return 'c'; if (/[A-Za-z]/.test(ch)) return 'l'; if (/[0-9]/.test(ch)) return 'd'; return ''; }
+    var LFX = { busy: false }, LFX_POOL = { c: '\u6bd4\u7279\u5e63\u50f9\u683c\u9031\u671f\u93c8\u4e0a\u8cc7\u91d1\u884d\u751f\u54c1\u51fa\u5834\u6846\u67b6\u5f80\u671f\u65b9\u6cd5\u5e02\u5834\u591a\u7a7a\u9802\u5e95\u71b1\u5ea6\u6210\u672c\u7372\u5229\u7c4c\u78bc\u4f9b\u7d66\u77ed\u9577\u6301\u6709\u8005\u6d41\u5165\u6de8\u8b8a\u5316\u7387\u6307\u6578\u8a0a\u865f\u98a8\u96aa\u6ce2\u52d5\u672a\u5be6\u73fe\u9078\u64c7\u6b0a\u5230\u671f\u5c65\u7d04\u4eca\u5929\u65b0\u4e00\u671f\u5224\u8b80\u7d50\u8ad6', n: 'fijlrtI', w: 'mwMW', u: 'ABCDEFGHJKLNOPQRSTUVXYZ', l: 'abcdeghknopqsuvxyz', d: '0123456789' };
+    // 英文字母依寬度分組，只換成同一組的字（窄換窄、寬換寬）：亂碼時一行的寬度幾乎不變，段落不會多折一行把版面推下去（使用者 11/09 iPhone 錄影可以看到換語言時版面跳）
+    function lfxKind(ch) { var c = ch.charCodeAt(0); if (c >= 0x3400 && c <= 0x9FFF) return 'c'; if (/[0-9]/.test(ch)) return 'd'; if (!/[A-Za-z]/.test(ch)) return ''; return /[fijlrtI]/.test(ch) ? 'n' : /[mwMW]/.test(ch) ? 'w' : ch < 'a' ? 'u' : 'l'; }
     function lfxRand(k) { var p = LFX_POOL[k]; return p.charAt((Math.random() * p.length) | 0); }
     function lfxNodes(max) {
       var out = [], H = innerHeight, W = innerWidth, w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null), n, rg = document.createRange();
@@ -5496,8 +5497,8 @@
       var a = Array.from(p < .5 ? from : to); return a.map(function (ch, i) { var k = lfxKind(ch); return k && Math.random() > Math.max(0, (p - .35) / .5) ? lfxRand(k) : ch; }).join('');
     }
     // 2026-11-09 使用者：「中間空白的時間太長，能不能沒有空白時間，直接亂碼到另一個語言」→ 不再用暮色蓋住重新載入：
-    // 按下時先存一份「看得到的畫面」快照（畫面外的區塊只留空殼和高度，畫布轉成圖），新頁面一開頭就用 iframe 擺出這份快照、字持續亂碼（index.html），
-    // 新語言畫好後直接換成新頁面（也是亂碼）再解碼，整段畫面一直都是跳動的字，沒有空白。iframe 和頁面隔開，不會被搜尋索引、目錄等全頁查詢抓到
+    // 按下時先存一份「看得到的畫面」快照（畫面外的區塊只留空殼和高度，畫布轉成圖），新頁面一開頭就把這份快照擺在 shadow DOM 裡、字持續亂碼（index.html），
+    // 新語言畫好後直接換成新頁面（也是亂碼）再解碼，整段畫面一直都是跳動的字，沒有空白。shadow DOM 和頁面隔開，不會被搜尋索引、目錄等全頁查詢抓到
     function lfxSnap(l) {
       var app = $('.app'); if (!app) return '';
       var H = innerHeight, c = app.cloneNode(true);
@@ -5511,6 +5512,7 @@
           var r = oe.getBoundingClientRect();
           if (cs.position !== 'fixed' && cs.position !== 'sticky' && (r.bottom < -80 || r.top > H + 80)) { ke.innerHTML = ''; ke.style.cssText += ';height:' + r.height + 'px;min-height:0;max-height:none;box-sizing:border-box;overflow:hidden'; continue; }
           if (tag === 'CANVAS') { try { var im = document.createElement('img'); im.src = oe.toDataURL('image/jpeg', 0.7); im.className = oe.className; im.style.cssText = 'display:block;width:' + r.width + 'px;height:' + r.height + 'px'; ke.replaceWith(im); } catch (e) {} continue; }
+          if (/^(block|list-item|flex|grid|flow-root|table-cell)$/.test(cs.display) && r.height && Array.prototype.some.call(oe.childNodes, function (x) { return x.nodeType === 3 && /\S/.test(x.nodeValue); })) ke.style.cssText += ';height:' + r.height + 'px;min-height:0;max-height:none;box-sizing:border-box;overflow:hidden;overflow:clip';   // 直接含字的區塊鎖住高度：亂碼後折行不同也不會把下面推動（用 clip 不用 hidden：hidden 會讓彈性排版的項目可以縮到 0，頂部導航的字會被擠成一個字）
           if (tag !== 'SVG') walk(oe, ke);
         }
       })(app, c);

@@ -277,6 +277,9 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-09** 再修 iPhone 換語言時畫面跳一下（使用者錄影：「還是這樣」）：逐格看到按下後舊畫面會往上縮一截、頂部列不見，停約 0.35 秒才換成快照和新頁面。
+  - iPhone 的瀏覽器要等新頁面的主畫面有足夠的字才換掉舊畫面，快照原本放在 iframe 裡不算，所以一直顯示被往上推的舊畫面，等資料畫好才換。快照改放進主頁面的 shadow DOM，新頁面第一次繪製就是快照。
+  - 快照裡直接含字的區塊鎖住原本的高度，英文字母只換成同寬度的字（窄換窄、寬換寬），亂碼後不會多折一行把版面推下去；快照換成新頁面時位置對得上。
 - **2026-11-09** 修手機換語言時畫面跳一下（使用者：「頁面中間會出現沒有頂部部分的位置，然後又出現頂部，頁面就會跳一下」）：在某一版（例如價格）往下捲後換語言，新頁面會先接回原本的捲動位置，接著又被手機版「換版回頂」拉回頂端。從換語言進來時改成只切到那一版，捲動位置交給轉場接回，不再回頂。
 - **2026-11-09** 日刊／夜刊切換改成「晨昏線」（使用者看了第二支範例影片：「還是沒有很絲滑」「整體的氛圍感還不夠」）：
   - 原本整頁一起變暗、中段蓋一層灰霧再換刊，中間會變成一片灰；改成新的一刊從切換鈕那裡往外漫開，交界是一圈暮色光帶（入夜：外側琥珀夕照 → 品牌橘紅 → 內側靛藍；破曉反過來：外側紫 → 玫瑰 → 內側金）。
@@ -608,6 +611,9 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-09** Fix the jump when switching language on iPhone, again (the user sent a recording showing it still happened): frame by frame, the old page slid up by a bar's height with its top missing and stayed for about 0.35 s before the snapshot and the new page appeared.
+  - The iPhone browser keeps the old page until the new page's main frame has enough text, and the snapshot lived in an iframe, which does not count, so the shifted old page stayed until the data was drawn. The snapshot now lives in shadow DOM in the main page, so the new page's very first paint is the snapshot.
+  - Text blocks in the snapshot keep their original height, and Latin letters are only swapped for letters of similar width (narrow for narrow, wide for wide), so scrambled text no longer wraps onto an extra line and pushes the layout down; the snapshot lines up with the new page when it is swapped.
 - **2026-11-09** Fix the page jumping when switching language on phones (the user saw the page sit without its top, then the top reappear with a jump): after scrolling down a section (for example Price) and switching language, the new page restored the scroll position and was then pulled back to the top by the phone layout's "back to top on page change". Arriving from a language switch now only selects that section and leaves the scroll position to the transition.
 - **2026-11-09** The day/night switch becomes a moving "terminator line" (the user watched a second demo video and found ours not smooth enough and lacking atmosphere):
   - Before, the whole page dimmed together and a grey fog covered the middle of the change, so mid-way everything turned flat grey. Now the new edition spreads outward from the switch, with a band of twilight at the edge (to night: amber sunset outside → brand orange-red → indigo inside; to day the reverse: violet outside → rose → gold inside).
