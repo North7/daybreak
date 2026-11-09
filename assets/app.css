@@ -989,3 +989,13 @@ html.fd-on { overflow: hidden; }
   summary::after, .note-tg::after { content: ""; position: absolute; left: 0; right: 0; top: -12px; bottom: -12px; }
   .toc a { padding-top: 8px; padding-bottom: 8px; }
 }
+
+/* 2026-11-09 手機版長頁收合：4 張以上的組只露前 2 張（app.js foldGroups）；桌面不收 */
+.gmore-btn { display: none; }
+@media (max-width: 860px) {
+  .grid > .panel.gmore { display: none; }
+  .gmore-btn { display: grid; gap: 4px; grid-column: 1 / -1; width: 100%; padding: 14px 16px; text-align: left; border: 1px solid var(--line-2); background: transparent; color: var(--ink); font: inherit; cursor: pointer; }
+  .gmore-btn b { font-size: 14px; font-weight: 700; }
+  .gmore-btn b::after { content: " ↓"; color: var(--red-ink); }
+  .gmore-btn span { font-size: 12px; color: var(--ink-3); line-height: 1.6; }
+}
