@@ -1,7 +1,7 @@
 """回覆配圖：直接截網站原圖（2026-11-05 使用者要求「多用新圖、儘量用網站原圖」）。
 data/replies.json 裡 image 帶 "site" 的，用本機 Chrome 無頭模式開本機網站檔案，截那張圖的面板，
 上方加圖片大標題（image.title）、下方加破曉頁尾，存成 data/replies/<n>.png。沒有 site 的照舊由 cards.py 畫。
-依賴 ops/post/site_shot.py（WebSocket、本機伺服器）與 pipeline/share_card.py（字型）。
+依賴 ops/post/site_shot.py（開 Chrome、本機伺服器、截圖流程）與 pipeline/share_card.py（字型）。
 
 image 範例：
   {"site": {"page": "onchain", "sel": "#c-sthband"}, "title": "……"}
@@ -12,7 +12,7 @@ image 範例：
 語言跟回覆一樣（zh 回覆截中文版、en 截英文版），深色主題。
 usage（倉庫根目錄）: python3 ops/replies/site_cards.py --fonts <字型資料夾> [--only 3,7]
 """
-import argparse, base64, io, json, os, subprocess, sys, tempfile, time, urllib.request
+import argparse, io, json, os, sys, time
 
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, 'ops', 'post')); sys.path.insert(0, os.path.join(ROOT, 'pipeline'))
@@ -29,41 +29,26 @@ CLEAN = '''(function(p, keep){
 
 def shoot(items, lang, tmp, mobile=True):
     """items: [(n, site)]，回傳 {n: PNG bytes}。mobile（2026-11-08 預設）：用手機寬度 430、3 倍解析度截網站的手機版圖，
-    字和圖例相對變大，X 在手機上看得清楚；--desktop 回到 1440 寬、2 倍。"""
-    srv = SS.serve(); prof = tempfile.mkdtemp(prefix='daybreak-chrome-'); W = 430 if mobile else 1440; DPR = 3 if mobile else 2; got = {}
-    p = subprocess.Popen([SS.CHROME, '--headless=new', f'--remote-debugging-port={SS.PORT}', f'--user-data-dir={prof}', '--hide-scrollbars',
-                          '--no-first-run', '--no-default-browser-check', f'--window-size={W},1000', 'about:blank'],
-                         stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-    try:
-        for _ in range(50):
-            try: tg = json.load(urllib.request.urlopen(f'http://127.0.0.1:{SS.PORT}/json')); break
-            except Exception: time.sleep(0.2)
-        ws = SS.WS(next(t for t in tg if t['type'] == 'page')['webSocketDebuggerUrl'])
-        ws.call('Page.enable'); ws.call('Runtime.enable')
-        ws.call('Emulation.setDeviceMetricsOverride', width=W, height=1000 if not mobile else 932, deviceScaleFactor=DPR, mobile=mobile)
-        ws.call('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': 'dark'}])
-        ws.call('Page.navigate', url=SS.SITE); SS.wait(ws, 'document.readyState === "complete"')
-        ws.js(f"localStorage.setItem('daybreak.lang', '{lang}'); localStorage.setItem('daybreak.theme', 'dark'); localStorage.setItem('daybreak.nohold', '1'); true")   # nohold：判讀撰寫中也截最新數字（2026-11-06）
+    字和圖例相對變大，X 在手機上看得清楚；--desktop 回到 1440 寬、2 倍。
+    2026-11-10：開 Chrome、換頁、截圖改用 site_shot.py 的共用流程（browser／goto／ready／shoot）：不用 captureBeyondViewport
+    （桌面寬度會讓網站暫時切成手機版重排，截到別張或空白），先捲到底等版面穩定、連量兩次位置一樣才截、截完再確認。"""
+    W = 430 if mobile else 1440; DPR = 3 if mobile else 2; got = {}
+    with SS.browser(W, 932 if mobile else 1000, dpr=DPR, mobile=mobile, theme='dark', lang=lang) as (ws, view):
         for n, st in items:   # 每張重新載入，前一張的 pre／clean 不會留下來
-            ws.js('window.__old = 1; true')
-            ws.call('Page.navigate', url=SS.SITE + '?v=' + str(int(time.time() * 1000)) + '#' + st['page'])
-            SS.wait(ws, '!window.__old'); SS.wait(ws, 'document.readyState === "complete"'); time.sleep(1.0)
-            sel = json.dumps(st['sel']); box = json.dumps(st.get('box', 'section.panel'))
+            SS.goto(ws, st['page'])
+            sel = json.dumps(st['sel']); box = st.get('box', 'section.panel')
             if not SS.wait(ws, f'(function(){{var e=document.querySelector({sel}); return !!(e && (e.querySelector("svg,canvas") || e.children.length));}})()', 40):
                 print('MISSING', n, st['sel']); continue
+            SS.ready(ws, st['sel'])
             if st.get('pre'): ws.js(st['pre']); time.sleep(1.2)
-            ws.js(f'{CLEAN}(document.querySelector({sel}).closest({box}), {json.dumps(bool(st.get("keep_note")))})'); time.sleep(0.6)
-            ws.js(f'document.querySelector({sel}).closest({box}).scrollIntoView({{block:"start"}}); true'); time.sleep(1.2)
-            # 拿掉描線動畫：captureBeyondViewport 會暫時改視窗大小，.more 小圖的描線動畫會重播，只截到第 0 幀（2026-11-05「本地數據分析」查到）
+            ws.js(f'{CLEAN}(document.querySelector({sel}).closest({json.dumps(box)}), {json.dumps(bool(st.get("keep_note")))})'); time.sleep(0.6)
+            # 描線動畫（.chart .draw）直接跑完，不要截到畫到一半的線（2026-11-05「本地數據分析」查到 .more 小圖只截到第 0 幀）
             ws.js("document.querySelectorAll('.chart .draw').forEach(function(p){p.classList.remove('draw')}); document.getAnimations().forEach(function(a){try{a.finish();}catch(e){}}); true"); time.sleep(0.3)
-            r = ws.js(f'''(function(){{var c=document.querySelector({sel}), p=c.closest({box}), b=p.getBoundingClientRect(), cr=c.getBoundingClientRect();
-                return {{x:b.left+scrollX, y:b.top+scrollY, w:b.width, h:cr.bottom-b.top+16}};}})()''')
-            if r['h'] < 80: print('TOO SMALL', n, st['sel'], r); continue
-            shot = ws.call('Page.captureScreenshot', format='png', captureBeyondViewport=True,
-                           clip=dict(x=r['x'], y=r['y'], width=r['w'], height=r['h'], scale=1))
-            got[n] = base64.b64decode(shot['data']); print('shot', n, lang, st['page'], st['sel'], round(r['w']), 'x', round(r['h']))
-    finally:
-        p.terminate(); srv.shutdown()
+            png, *rest = SS.shoot(ws, st['sel'], view, crop='chart', box=box)
+            if png is None: print('ERROR', n, st['sel'], rest[0]); continue
+            c = rest[0]
+            if c['height'] < 80: print('TOO SMALL', n, st['sel'], c); continue
+            got[n] = png; print('shot', n, lang, st['page'], st['sel'], round(c['width']), 'x', round(c['height']))
     return got
 
 

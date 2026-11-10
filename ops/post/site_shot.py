@@ -14,7 +14,7 @@ jobs.json: {"lang": "zh"|"en", "theme": "dark"|"light", "width": 1440,
   改成：每張先捲到底等版面高度穩定（settle）→ 捲到目標、連量兩次位置一樣才截 → 只截畫面內（不用 captureBeyondViewport；
   面板比視窗高就只加高視窗，寬度不變）→ 截完再量一次，位置變了就重截。畫面上壓到截圖範圍的固定／黏住的元素（手機頂欄、換頁掃描線）截圖時先藏起來。
 """
-import base64, json, os, socket, struct, subprocess, sys, time, urllib.request
+import base64, contextlib, json, os, socket, struct, subprocess, sys, tempfile, time, urllib.request
 
 import shutil
 # 2026-11-06：GitHub Actions（ubuntu）也要能截圖（每日推薦圖表改用網站原圖）：先看環境變數 CHROME，再找 Mac 的 Chrome，再找 Linux 的 google-chrome／chromium
@@ -98,12 +98,12 @@ def settle(ws, limit=10.0):
     return False
 
 
-def measure(ws, sel):
-    """面板與圖的位置（文件座標，CSS px），加上目前的捲動位置與視窗高度；gh：圖裡 svg／canvas 的最大高度"""
-    return ws.js(f'''(function(){{var c=document.querySelector({sel}); if(!c) return null; var p=c.closest("section.panel"); if(!p) return null;
-        var r=p.getBoundingClientRect(), cr=c.getBoundingClientRect(), sy=window.scrollY, sx=window.scrollX, gh=0;
-        c.querySelectorAll("svg,canvas").forEach(function(g){{gh=Math.max(gh, g.getBoundingClientRect().height);}});
-        return {{x:r.left+sx, y:r.top+sy, w:r.width, h:r.height, cy:cr.top+sy, ch:cr.height, cw:cr.width, gh:gh, sy:sy, vh:window.innerHeight}};}})()''')
+def measure(ws, sel, box='section.panel'):
+    """外框（預設 section.panel）與圖的位置（文件座標，CSS px），加上目前的捲動位置與視窗高度；ng／gh：圖裡 svg／canvas 的個數與最大高度"""
+    return ws.js(f'''(function(){{var c=document.querySelector({json.dumps(sel)}); if(!c) return null; var p=c.closest({json.dumps(box)}); if(!p) return null;
+        var r=p.getBoundingClientRect(), cr=c.getBoundingClientRect(), sy=window.scrollY, sx=window.scrollX, gh=0, gs=c.querySelectorAll("svg,canvas");
+        gs.forEach(function(g){{gh=Math.max(gh, g.getBoundingClientRect().height);}});
+        return {{x:r.left+sx, y:r.top+sy, w:r.width, h:r.height, cy:cr.top+sy, ch:cr.height, cw:cr.width, ng:gs.length, gh:gh, sy:sy, vh:window.innerHeight}};}})()''')
 
 
 def same(a, b, keys=('x', 'y', 'w', 'h', 'cy', 'ch')):
@@ -111,13 +111,13 @@ def same(a, b, keys=('x', 'y', 'w', 'h', 'cy', 'ch')):
 
 
 def clip_of(box, crop):
-    """截圖範圍（文件座標）：預設整個面板；crop=chart 是面板頂到圖底（含標題列、解讀、圖例、圖）"""
+    """截圖範圍（文件座標）：預設整個外框；crop=chart 是外框頂到圖底（含標題列、解讀、圖例、圖）"""
     h = box['cy'] + box['ch'] - box['y'] + 16 if crop == 'chart' else box['h']
     return dict(x=box['x'], y=box['y'], width=box['w'], height=h, scale=1)
 
 
-# 截圖時藏起來：壓到截圖範圍、又不是面板本身或它外層的固定／黏住元素（手機頂欄、換頁掃描線、提示框…），截完還原
-HIDE_JS = '''(function(sel, x, y, w, h){var p=document.querySelector(sel).closest("section.panel"), sx=window.scrollX, sy=window.scrollY, n=0;
+# 截圖時藏起來：壓到截圖範圍、又不是外框本身或它外層的固定／黏住元素（手機頂欄、換頁掃描線、提示框…），截完還原
+HIDE_JS = '''(function(sel, box, x, y, w, h){var p=document.querySelector(sel).closest(box), sx=window.scrollX, sy=window.scrollY, n=0;
     document.querySelectorAll("body *:not(svg *)").forEach(function(e){ if (e.contains(p) || p.contains(e)) return;
       var ps=getComputedStyle(e).position; if (ps!=="fixed" && ps!=="sticky") return; var b=e.getBoundingClientRect();
       if (b.width<=0 || b.height<=0 || b.right<=x-sx || b.left>=x-sx+w || b.bottom<=y-sy || b.top>=y-sy+h) return;
@@ -125,37 +125,38 @@ HIDE_JS = '''(function(sel, x, y, w, h){var p=document.querySelector(sel).closes
     return n;})'''
 UNHIDE_JS = '''document.querySelectorAll("[data-shot-vis]").forEach(function(e){e.style.visibility=e.getAttribute("data-shot-vis"); e.removeAttribute("data-shot-vis");}); true'''
 # 圖上所有文字（刻度、標籤）的位置，相對截圖左上角、CSS px；給 annotate.py 換算座標用
-GEO_JS = '''(function(){var c=document.querySelector(%s), p=c.closest("section.panel"), pr=p.getBoundingClientRect();
+GEO_JS = '''(function(){var c=document.querySelector(%s), p=c.closest(%s), pr=p.getBoundingClientRect();
     return Array.from(c.querySelectorAll("svg text")).map(function(t){var b=t.getBoundingClientRect();
       return {t:(t.textContent||"").trim(), x:b.left-pr.left+b.width/2, y:b.top-pr.top+b.height/2, l:b.left-pr.left, r:b.right-pr.left, anchor:t.getAttribute("text-anchor")||""};});})()'''
 
 
-def shoot(ws, it, sel, W, H, tries=6):
+def shoot(ws, sel, view, crop=None, box='section.panel', tries=6):
     """捲到目標、連量兩次位置一樣、整個範圍在畫面內才截；截完再量一次，動了就重來。
+    sel：圖表容器；box：截圖外框（sel 往上找最近的）；view：browser() 給的視窗參數（加高視窗後用它還原）。
     回傳 (png, clip, geo)；截不成回傳 (None, 原因)"""
-    vh, why = H, '位置一直在動'
+    q, bq = json.dumps(sel), json.dumps(box); vh, why = view['height'], '位置一直在動'
     try:
         for k in range(tries):
-            ws.js(f'document.querySelector({sel}).closest("section.panel").scrollIntoView({{block:"start"}}); true'); time.sleep(1.0 if k == 0 else 0.6)
-            a = measure(ws, sel); time.sleep(0.3); b = measure(ws, sel)
+            ws.js(f'document.querySelector({q}).closest({bq}).scrollIntoView({{block:"start"}}); true'); time.sleep(1.0 if k == 0 else 0.6)
+            a = measure(ws, sel, box); time.sleep(0.3); b = measure(ws, sel, box)
             if not same(a, b): why = '位置一直在動'; continue
-            if b['w'] <= 0 or b['ch'] <= 0 or (not it.get('html') and b['gh'] <= 0):
-                why = f'圖的高度是 0（面板 {b["w"]:.0f}×{b["h"]:.0f}、圖 {b["cw"]:.0f}×{b["ch"]:.0f}、svg/canvas 高 {b["gh"]:.0f}）'; time.sleep(0.6); continue
-            c = clip_of(b, it.get('crop'))
-            if c['height'] > b['vh']:   # 面板比視窗高：只加高視窗（寬度不變，網站不會切成手機版），再量一次
-                vh = int(c['height']) + 40; why = '面板比視窗高'
-                ws.call('Emulation.setDeviceMetricsOverride', width=W, height=vh, deviceScaleFactor=2, mobile=False); time.sleep(0.5); continue
+            if b['w'] <= 0 or b['ch'] <= 0 or (b['ng'] and b['gh'] <= 0):
+                why = f'圖的高度是 0（外框 {b["w"]:.0f}×{b["h"]:.0f}、圖 {b["cw"]:.0f}×{b["ch"]:.0f}、svg/canvas 高 {b["gh"]:.0f}）'; time.sleep(0.6); continue
+            c = clip_of(b, crop)
+            if c['height'] > b['vh']:   # 外框比視窗高：只加高視窗（寬度不變，網站不會切成手機版），再量一次
+                vh = int(c['height']) + 40; why = '外框比視窗高'
+                ws.call('Emulation.setDeviceMetricsOverride', **dict(view, height=vh)); time.sleep(0.5); continue
             if c['y'] < b['sy'] - 0.5 or c['y'] + c['height'] > b['sy'] + b['vh'] + 0.5:   # 不在畫面內（例如 scroll-padding）：直接捲到範圍頂端再量
                 ws.js(f'window.scrollTo(0, {c["y"]}); true'); why = '捲不到截圖範圍'; time.sleep(0.6); continue
-            ws.js(f'{HIDE_JS}({sel}, {c["x"]}, {c["y"]}, {c["width"]}, {c["height"]})')
+            ws.js(f'{HIDE_JS}({q}, {bq}, {c["x"]}, {c["y"]}, {c["width"]}, {c["height"]})')
             try: r = ws.call('Page.captureScreenshot', format='png', clip=c)
             finally: ws.js(UNHIDE_JS)
-            d = measure(ws, sel)
+            d = measure(ws, sel, box)
             if not same(b, d, ('x', 'y', 'w', 'h', 'cy', 'ch', 'sy')): why = '截圖時版面動了'; continue
-            return base64.b64decode(r['data']), c, ws.js(GEO_JS % sel)
+            return base64.b64decode(r['data']), c, ws.js(GEO_JS % (q, bq))
         return None, why
     finally:
-        if vh != H: ws.call('Emulation.setDeviceMetricsOverride', width=W, height=H, deviceScaleFactor=2, mobile=False); time.sleep(0.3)
+        if vh != view['height']: ws.call('Emulation.setDeviceMetricsOverride', **view); time.sleep(0.3)
 
 
 def serve():
@@ -166,11 +167,11 @@ def serve():
     threading.Thread(target=srv.serve_forever, daemon=True).start(); return srv
 
 
-def main():
-    srv = serve()
-    jobs = json.load(open(sys.argv[1])); out = sys.argv[2]; os.makedirs(out, exist_ok=True)
-    import tempfile; prof = tempfile.mkdtemp(prefix='daybreak-chrome-')   # 暫存的 Chrome 設定檔，不寫進倉庫
-    W = jobs.get('width', 1440); H = 1000; fails = []
+@contextlib.contextmanager
+def browser(W, H=1000, dpr=2, mobile=False, theme='light', lang='zh'):
+    """開本機網站伺服器與無頭 Chrome，設好視窗、深淺色、語言；yield (ws, view)。
+    view 是 Emulation.setDeviceMetricsOverride 的參數，shoot() 加高視窗後用它還原。site_cards.py 也用這個（2026-11-10 抽出來共用）"""
+    srv = serve(); prof = tempfile.mkdtemp(prefix='daybreak-chrome-')   # 暫存的 Chrome 設定檔，不寫進倉庫
     p = subprocess.Popen([CHROME, '--headless=new', f'--remote-debugging-port={PORT}', f'--user-data-dir={prof}', '--hide-scrollbars'] + (['--no-sandbox'] if sys.platform.startswith('linux') else []) + [
                           '--no-first-run', '--no-default-browser-check', f'--window-size={W},{H}', 'about:blank'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
@@ -181,28 +182,48 @@ def main():
             try: tg = json.load(urllib.request.urlopen(f'http://127.0.0.1:{PORT}/json')); break
             except Exception: time.sleep(0.2)
         if tg is None: raise RuntimeError(f'Chrome 30 秒內沒開好 remote debugging（port {PORT}）')
-        page = next(t for t in tg if t['type'] == 'page')
-        ws = WS(page['webSocketDebuggerUrl'])
+        ws = WS(next(t for t in tg if t['type'] == 'page')['webSocketDebuggerUrl'])
         ws.call('Page.enable'); ws.call('Runtime.enable')
-        ws.call('Emulation.setDeviceMetricsOverride', width=W, height=H, deviceScaleFactor=2, mobile=False)
-        ws.call('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': jobs.get('theme', 'light')}])
-        ws.call("Page.navigate", url=SITE); wait(ws, "location.href.indexOf(\"8790\") > 0 && document.readyState === \"complete\"")
+        view = dict(width=W, height=H, deviceScaleFactor=dpr, mobile=mobile)
+        ws.call('Emulation.setDeviceMetricsOverride', **view)
+        ws.call('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': theme}])
+        ws.call('Page.navigate', url=SITE); wait(ws, LOADED)
         print('at', ws.js('location.href + " " + document.readyState + " " + document.title'))
-        ws.js(f"localStorage.setItem('daybreak.lang', '{jobs['lang']}'); localStorage.setItem('daybreak.theme', '{jobs.get('theme', 'light')}'); localStorage.setItem('daybreak.nohold', '1'); true")   # nohold：判讀撰寫中也截最新數字（2026-11-06）
+        ws.js(f"localStorage.setItem('daybreak.lang', '{lang}'); localStorage.setItem('daybreak.theme', '{theme}'); localStorage.setItem('daybreak.nohold', '1'); true")   # nohold：判讀撰寫中也截最新數字（2026-11-06）
+        yield ws, view
+    finally:
+        p.terminate(); srv.shutdown()
+
+
+LOADED = 'location.href.indexOf("8790") > 0 && document.readyState === "complete"'
+
+
+def goto(ws, page):
+    """整頁重新載入並跳到某一版（網址帶毫秒時間戳，一定重載，前一張的 pre／clean 不會留下來）"""
+    ws.js('window.__old = 1; true')
+    ws.call('Page.navigate', url=SITE + '?v=' + str(int(time.time() * 1000)) + '#' + page)
+    wait(ws, '!window.__old'); wait(ws, LOADED); time.sleep(1.0)
+
+
+def ready(ws, sel):
+    """截圖前準備：手機版收起的組先展開；捲到底等延後畫的版都畫好、版面穩定"""
+    # 2026-11-09 手機版長頁收合（foldGroups）：目標在收起的組裡（面板 0×0）就按「展開這組其餘 N 張」，網站會依實際寬度重畫
+    if ws.js(f'''(function(){{var p=document.querySelector({json.dumps(sel)}).closest(".panel.gmore"); if(!p) return false;
+        var b=document.querySelector('.gmore-btn[data-gm="'+p.getAttribute("data-gm")+'"]'); if(b) b.click(); return true;}})()'''): time.sleep(0.6)
+    if not settle(ws): print('注意：版面 10 秒內高度沒穩定，照樣往下（截圖前還會再確認位置）', sel, file=sys.stderr)
+
+
+def main():
+    jobs = json.load(open(sys.argv[1])); out = sys.argv[2]; os.makedirs(out, exist_ok=True); fails = []
+    with browser(jobs.get('width', 1440), theme=jobs.get('theme', 'light'), lang=jobs['lang']) as (ws, view):
         cur = None
         for it in jobs['items']:
-            if it['page'] != cur:
-                ws.js('window.__old = 1; true')
-                ws.call('Page.navigate', url=SITE + '?v=' + str(int(time.time())) + '#' + it['page']); cur = it['page']
-                wait(ws, '!window.__old'); wait(ws, "location.href.indexOf(\"8790\") > 0 && document.readyState === \"complete\""); time.sleep(1.0)
+            if it['page'] != cur: goto(ws, it['page']); cur = it['page']
             sel = json.dumps(it['sel'])
             need = '' if it.get('html') else ' && e.querySelector("svg,canvas")'   # html=1：用 div 畫的圖（例如籌碼分布 URPD）不等 svg
             ok = wait(ws, f'(function(){{var e=document.querySelector({sel}); return !!(e{need});}})()', 40)
             if not ok: print('ERROR MISSING', it['sel'], file=sys.stderr); fails.append(it['out']); continue
-            # 2026-11-09 手機版長頁收合（foldGroups）：目標在收起的組裡（面板 0×0）就按「展開這組其餘 N 張」，網站會依實際寬度重畫
-            if ws.js(f'''(function(){{var p=document.querySelector({sel}).closest(".panel.gmore"); if(!p) return false;
-                var b=document.querySelector('.gmore-btn[data-gm="'+p.getAttribute("data-gm")+'"]'); if(b) b.click(); return true;}})()'''): time.sleep(0.6)
-            if not settle(ws): print('注意：版面 10 秒內高度沒穩定，照樣往下（截圖前還會再確認位置）', it['sel'], file=sys.stderr)
+            ready(ws, it['sel'])
             if it.get('pre'): ws.js(it['pre']); time.sleep(0.8)
             if it.get('dump'): print(ws.js(f'''(function(){{var p=document.querySelector({sel}).closest("section.panel"); return Array.from(p.children).map(function(c){{return c.tagName+"."+c.className+"#"+c.id+" | "+(c.textContent||"").slice(0,50).replace(/\\s+/g," ")+" | h="+Math.round(c.getBoundingClientRect().height);}}).join("\\n");}})()''')); continue
             if it.get('clean'):   # 發文用：只留標題列、圖例、圖；解讀、表格、說明、按鈕都藏起來
@@ -212,7 +233,7 @@ def main():
                     p.querySelectorAll(".panel-h a").forEach(function(a){{if(a.textContent.trim()==="#")a.style.visibility="hidden";}});
                     return true;}})()'''); time.sleep(0.6)
                 it['crop'] = 'chart'
-            png, *rest = shoot(ws, it, sel, W, H)
+            png, *rest = shoot(ws, it['sel'], view, crop=it.get('crop'))
             if png is None:   # 不輸出空白或截錯的圖
                 print('ERROR', it['out'], it['sel'], rest[0], file=sys.stderr); fails.append(it['out']); continue
             clip, geo = rest
@@ -220,8 +241,6 @@ def main():
             print('wrote', fn, round(clip['width']), 'x', round(clip['height']))
             json.dump(dict(dpr=2, texts=geo), open(os.path.join(out, it['out'] + '.json'), 'w'), ensure_ascii=False)
         if fails: print('ERROR 沒截成：', ', '.join(fails), file=sys.stderr)
-    finally:
-        p.terminate(); srv.shutdown()
     if fails: sys.exit(1)
 
 
