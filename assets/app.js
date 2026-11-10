@@ -1727,6 +1727,80 @@
         yFmt: fmt.k, tipFmt: bt, aria: _T('短期持有者實現獲利與虧損', 'Short-term holder realized profit and loss') });
     });
   }
+  /* 短期持有者集中止盈與認賠（2026-11-11 使用者要求；本站自製，資料 Bitview）：持有未滿 6 個月的幣每天的實現獲利／虧損 ÷ 短期持有者實現市值，
+     5 日指數平均後和自己近 105 天比（z 分數）。止盈強度畫在上、認賠強度畫成負值在下，超過 2 的期間鋪底色。算法與回測見 stage_viz.sthsig_viz。只作讀值 */
+  var SG_K = { tp: ['warn', '集中止盈中', 'Profit-taking spike', 'Profit spike'], cap: ['warn', '集中認賠中', 'Capitulation spike', 'Loss spike'], both: ['warn', '止盈與認賠都集中', 'Both spiking', 'Both'], none: ['neu', '沒有訊號', 'No signal', 'Quiet'] };
+  function sgX() { return (D.onchain || {}).sthsig || null; }
+  function sgUsd(m) { return _T(fmt.n(m / 100, 1) + ' 億美元', '$' + fmt.n(m, 0) + 'M'); }
+  function sgD(d, x) { return d.slice(0, 4) === x.date.slice(0, 4) ? fmt.md(d) : ymdS(d); }
+  function sgLast(x, s, zh, en) {   // 最近一次：哪幾天、最高多少、多久前
+    var l = s.last; if (!l) return '';
+    var span = sgD(l.start, x) + (l.days > 1 ? '–' + fmt.md(l.end) : ''), pk = fmt.n(l.peak, 1);
+    return _T('最近一次' + zh + '是 ' + span + '（' + (l.days > 1 ? l.days + ' 天，' : '') + '最高 ' + pk + '）' + (s.on ? '，還在進行。' : '，' + s.ago + ' 天前結束。'),
+      'The latest ' + en + ' was ' + span + ' (' + (l.days > 1 ? l.days + ' days, ' : '') + 'peak ' + pk + ')' + (s.on ? ' and is still running. ' : ', ending ' + s.ago + (s.ago === 1 ? ' day ago. ' : ' days ago. ')));
+  }
+  function sgSay() {
+    var x = sgX(); if (!x || x.zp == null) return [];
+    var it = [], K = SG_K[x.state] || SG_K.none, tp = x.tp, cp = x.cap, B = x.base, th = x.prm.th, f1 = function (v) { return fmt.n(v, 1); }, yr = x.since.slice(0, 4);
+    var ma = x.sma200 ? _T('現在收盤在 200 日均線（' + fmt.usd(x.sma200) + '）' + (x.above200 ? '上方' : '下方') + '。', 'The close is now ' + (x.above200 ? 'above' : 'below') + ' the 200-day average (' + fmt.usd(x.sma200) + ').') : '';
+    var head = _T('止盈強度 ' + f1(x.zp) + '、認賠強度 ' + f1(x.zl) + '（7 天前 ' + f1(x.zp7) + '、' + f1(x.zl7) + '）；近 5 天平均每天實現獲利 ' + sgUsd(x.profit_usd_m) + '、實現虧損 ' + sgUsd(x.loss_usd_m) + '。',
+      'profit-taking ' + f1(x.zp) + ', capitulation ' + f1(x.zl) + ' (' + f1(x.zp7) + ' and ' + f1(x.zl7) + ' a week ago); over the last 5 days short-term holders realized about ' + sgUsd(x.profit_usd_m) + ' of profit and ' + sgUsd(x.loss_usd_m) + ' of loss a day. ');
+    var now;
+    if (x.state === 'cap' || x.state === 'both') now = _T('短期持有者賠錢賣出的量比近三個半月的平常多很多，已經第 ' + cp.days + ' 天。這代表有人在恐慌賣，但過去這不等於跌完了（看下面的回測）。', 'Short-term holders are selling at a loss far more than usual for the past three and a half months, day ' + cp.days + ' so far. That is panic selling, but in the past it did not mean the drop was over (see the backtest below). ') + (x.state === 'both' ? _T('同時止盈也集中：急漲急跌擠在同幾天。', 'Profit-taking is spiking too: a sharp rise and fall packed into the same few days.') : '');
+    else if (x.state === 'tp') now = _T('短期持有者賺錢賣出的量比近三個半月的平常多很多，已經第 ' + tp.days + ' 天。', 'Short-term holders are taking profit far more than usual for the past three and a half months, day ' + tp.days + ' so far. ') + ma + (x.above200 ? _T('過去在均線上方出現時，多半是行情延續。', ' Above the average this has mostly meant continuation.') : _T('過去在均線下方出現時，多半是反彈被拿來出貨。', ' Below the average this has mostly meant a rally being sold into.'));
+    else now = _T('兩條都在門檻 ' + th + ' 以下。', 'Both are below the threshold of ' + th + '. ') + sgLast(x, cp, '集中認賠', 'capitulation spike') + sgLast(x, tp, '集中止盈', 'profit-taking spike');
+    it.push([_T('現在', 'Now'), f1(x.zp) + ' · ' + f1(x.zl), _T(K[1] + '：', K[2] + ': ') + head + now, x.state === 'tp' && x.above200 ? 'neu' : K[0]]);
+    it.push([_T('怎麼讀', 'How to read it'), '> ' + th,
+      _T('兩條線各自和近 105 天的自己比。止盈強度高＝短期持有者賺錢賣得比平常多很多，出現在急漲之後；認賠強度高＝賠錢賣得比平常多很多，出現在急跌的時候（圖上畫成負值）。超過 ' + th + ' 才算「集中」，圖上鋪底色。比的是「和最近比多不多」，不是金額大小：平靜很久之後，一點賣出就會觸發；剛經歷過大跌，同樣的金額反而不會。',
+        'Each line is compared with its own last 105 days. A high profit-taking reading means short-term holders are selling at a gain far more than usual, which follows sharp rallies; a high capitulation reading means they are selling at a loss far more than usual, which comes with sharp drops (drawn as negative). Above ' + th + ' counts as a spike and is shaded. It measures "unusual versus recent", not size: after a long quiet stretch a little selling triggers it, while right after a big drop the same amount does not.'), 'neu']);
+    var wr = (cp.ev || []).filter(function (e) { return e.f30 != null && e.f30 <= -10; }).slice(-2);
+    if (cp.all && cp.all.f90.n) it.push([_T('集中認賠之後', 'After capitulation spikes'), cp.all.f90.up + '/' + cp.all.f90.n,
+      _T(yr + ' 年起 ' + cp.n + ' 次（相隔 ' + x.prm.gap + ' 天以上算新的一次）。30 天後：', 'Since ' + yr + ', ' + cp.n + ' times (' + x.prm.gap + '+ days apart). 30 days later: ') + oxStat(cp.all.f30, B.all.f30) + _T('；90 天後：', '; 90 days later: ') + oxStat(cp.all.f90, B.all.f90) +
+      _T('。和任一天進場沒有差別：集中認賠不是低風險的買點。在 200 日均線下方的 ' + cp.dn.f30.n + ' 次，30 天後只有 ' + cp.dn.f30.up + ' 次上漲。', '. No different from buying on any day: a capitulation spike is not a low-risk entry. Of the ' + cp.dn.f30.n + ' below the 200-day average, only ' + cp.dn.f30.up + ' were higher 30 days later.') +
+      (wr.length ? _T('最近的例子：' + wr.map(function (e) { return sgD(e.date, x) + ' 之後 30 天 ' + fmt.pct(e.f30, 0); }).join('、') + '。', ' Recent examples: ' + wr.map(function (e) { return sgD(e.date, x) + ', ' + fmt.pct(e.f30, 0) + ' over the next 30 days'; }).join('; ') + '.') : ''), 'neu']);
+    if (tp.all && tp.all.f90.n) it.push([_T('集中止盈之後', 'After profit-taking spikes'), tp.all.f90.up + '/' + tp.all.f90.n,
+      _T(yr + ' 年起 ' + tp.n + ' 次。90 天後：', 'Since ' + yr + ', ' + tp.n + ' times. 90 days later: ') + oxStat(tp.all.f90, B.all.f90) +
+      _T('。整體不是賣出訊號，要看位置：收盤在 200 日均線上方時 ', '. Not a sell signal overall; position matters. With the close above the 200-day average, ') + oxStat(tp.up.f90, B.up.f90) + _T('，多半是行情延續；在均線下方時 ', ', mostly continuation; below it, ') + oxStat(tp.dn.f90, B.dn.f90) +
+      _T('，是下跌趨勢裡的反彈被拿來出貨。', ', a rally in a downtrend being sold into. ') + ma, x.state === 'tp' && !x.above200 ? 'warn' : 'neu']);
+    var ls = function (s) { return (s.ev || []).map(function (e) { return sgD(e.date, x) + (e.f30 != null ? _T('（', ' (') + fmt.pct(e.f30, 0) + _T('）', ')') : ''); }).join(_T('、', ', ')); };
+    if ((tp.ev || []).length || (cp.ev || []).length) it.push([_T('近一年的訊號', 'Signals in the past year'), ((tp.ev || []).length + (cp.ev || []).length) + _T(' 次', ''),
+      _T('集中止盈：' + (ls(tp) || '沒有') + '。集中認賠：' + (ls(cp) || '沒有') + '。括號是之後 30 天的漲跌，還沒滿 30 天的不列。', 'Profit-taking spikes: ' + (ls(tp) || 'none') + '. Capitulation spikes: ' + (ls(cp) || 'none') + '. Brackets show the next 30 days; not listed until 30 days have passed.'), 'neu']);
+    return it;
+  }
+  function sgPanel() {
+    var x = sgX(); if (!x || !x.rows || x.zp == null) return '';
+    var K = SG_K[x.state] || SG_K.none, f1 = function (v) { return fmt.n(v, 1); }, wk = function (v) { return _T('7 天前 ' + f1(v), f1(v) + ' a week ago'); };
+    return panel('span-12', _T('短期持有者集中止盈與認賠', 'Short-term holder profit-taking and capitulation spikes'), _T('本站自製 · Bitview · ' + fmt.md(x.date), 'Ours · Bitview · ' + fmt.md(x.date)),
+      '<div class="cf-hero">' + oxCard('var(--up)', _T('止盈強度', 'Profit-taking'), f1(x.zp), wk(x.zp7), x.tp.on ? _T('高於 ' + x.prm.th + '：集中止盈', 'above ' + x.prm.th + ': spike') : '') +
+        oxCard('var(--down)', _T('認賠強度', 'Capitulation'), f1(x.zl), wk(x.zl7), x.cap.on ? _T('高於 ' + x.prm.th + '：集中認賠', 'above ' + x.prm.th + ': spike') : '') +
+        oxCard('var(--ink-2)', _T('狀態', 'State'), _T(K[1], K[3]), _T('超過 ' + x.prm.th + ' 才算集中', 'a spike means above ' + x.prm.th)) + '</div>' +
+      interpHtml(sgSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('止盈強度', 'Profit-taking'), 'var(--up)'], [_T('認賠強度（畫成負值）', 'Capitulation (drawn negative)'), 'var(--down)'], [_T('門檻 ±' + x.prm.th, 'Threshold ±' + x.prm.th), 'var(--ink-3)', 'dash'], [_T('集中止盈的期間', 'Profit-taking spike'), 'var(--up)', 'box'], [_T('集中認賠的期間', 'Capitulation spike'), 'var(--down)', 'box']]) +
+      '<div class="chart cf-chart" id="c-sthsig"></div><p class="note">' + _T('本站自製，資料 Bitview（逐筆 UTXO、不是實體調整）。取持有未滿 6 個月的幣每天賣出時實現的獲利與虧損（美元），各自除以短期持有者的實現市值（這群人的總成本），做 5 日指數平均，再算和自己近 105 天比的 z 分數：（今天 − 105 天平均）÷ 105 天標準差。年齡分組到 6 個月，比短期持有者的 155 天定義多出一小段。交易所、託管整理錢包也會被算成實現損益，單日尖峰不一定是買賣。參數是對照 2026 年的行情挑的，換成 90 或 120 天結論相同、個別日期會差幾天。只作讀值，不是買賣訊號。',
+        'Ours, from Bitview data (per UTXO, not entity-adjusted). It takes the profit and the loss realized each day on coins held under 6 months (USD), divides each by the short-term holder realized cap (that group\'s total cost), smooths with a 5-day exponential average, then scores it against its own last 105 days: (today − 105-day mean) ÷ 105-day standard deviation. The age bands run to 6 months, slightly past the 155-day short-term holder cut-off. Exchange and custody wallet reshuffles also register as realized profit or loss, so a one-day spike is not necessarily trading. The parameters were picked against 2026 price action; 90 or 120 days give the same conclusions with dates shifting by a few days. Reading only, not a trade signal.') + '</p>', '', 'sthsig');
+  }
+  function drawSg(el) {
+    var x = sgX(); if (!x || !el) return;
+    var rows = x.rows, z = rows[rows.length - 1];
+    if (el.clientWidth < 420) rows = rows.filter(function (r) { return r[0] >= z[0] - 365; });   // 手機沒有時間範圍按鈕，只畫近 1 年
+    var col = function (k) { return k ? 'var(--up)' : 'var(--down)'; }, f2 = function (v) { return fmt.n(Math.abs(v), 2); };
+    var rg = el._rng == null ? 365 : el._rng, vis = rg ? rows.filter(function (r) { return r[0] >= z[0] - rg; }) : rows, th = x.prm.th;   // 縱軸自己算：上下多留一點空間放膠囊
+    var hi = Math.max.apply(null, vis.map(function (r) { return r[2]; }).concat(th)), lo = Math.min.apply(null, vis.map(function (r) { return r[3]; }).concat(-th)), pad = (hi - lo) * 0.17;
+    var st = hi - lo > 16 ? 4 : 2, tk = []; for (var t = Math.ceil((lo - pad) / st) * st; t <= hi + pad; t += st) tk.push(t);   // 刻度每 2 一格，門檻 ±2 剛好有標
+    oxPane(el, { rows: rows, rng: 365, fit: true, y0: lo - pad, y1: hi + pad, ticks: tk, fmt: function (v) { return fmt.n(v, 0); },
+      label: _T('止盈強度（上）與認賠強度（下，畫成負值）', 'Profit-taking (up) and capitulation (down, drawn negative)'), aria: _T('BTC 價格與短期持有者的止盈強度、認賠強度', 'BTC price with short-term holder profit-taking and capitulation readings'),
+      refs: [{ y: x.prm.th, col: 'var(--ink-3)' }, { y: -x.prm.th, col: 'var(--ink-3)' }],
+      vbands: (x.runs || []).map(function (r) { return { x0: r[0] - 0.5, x1: r[1] + 0.5, col: col(r[2]), op: 0.16 }; }),
+      lines: [{ i: 2, col: 'var(--up)', w: 1.5, name: _T('止盈強度', 'Profit-taking'), tfmt: function (v) { return fmt.n(v, 2); } }, { i: 3, col: 'var(--down)', w: 1.5, name: _T('認賠強度', 'Capitulation'), tfmt: f2 }],
+      body: function (C) {   // 面積只塗各自那一側（止盈在 0 以上、認賠在 0 以下），兩條在 0 附近不會互相蓋住
+        var y0 = C.Ys(0), id = 'sg' + Math.random().toString(36).slice(2, 7), R_ = C.rows, s = '<defs><clipPath id="' + id + 'u"><rect x="0" y="' + C.ys0.toFixed(1) + '" width="' + C.W + '" height="' + Math.max(0, y0 - C.ys0).toFixed(1) + '"/></clipPath><clipPath id="' + id + 'd"><rect x="0" y="' + y0.toFixed(1) + '" width="' + C.W + '" height="' + Math.max(0, C.yb - y0).toFixed(1) + '"/></clipPath></defs>';
+        [[2, 'var(--up)', 'u'], [3, 'var(--down)', 'd']].forEach(function (a) {
+          s += '<path d="M' + C.X(R_[0][0]).toFixed(1) + ',' + y0.toFixed(1) + 'L' + R_.map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(r[a[0]]).toFixed(1); }).join('L') + 'L' + C.X(R_[R_.length - 1][0]).toFixed(1) + ',' + y0.toFixed(1) + 'Z" fill="' + a[1] + '" opacity=".24" clip-path="url(#' + id + a[2] + ')"/>';
+        });
+        return s;
+      },
+      marks: (x.runs || []).filter(function (r) { return r[4] >= 3; }).map(function (r) { return { x: r[3], y: r[2] ? r[4] : -r[4], t: _T(r[2] ? '止盈 ' : '認賠 ', r[2] ? 'Profit ' : 'Loss ') + fmt.n(r[4], 1), col: col(r[2]), up: !!r[2] }; }),
+      now: x.zl > x.zp ? { i: 3, col: 'var(--down)', lab: '' } : { i: 2, col: 'var(--up)', lab: '' } });
+  }
   /* 每日淨實現損益（2026-10-18）：仿 Glassnode「Net Realized Profit/Loss」——上層價格線＋氣泡（面積＝淨值大小，綠＝淨獲利、紅＝淨認賠，粗外圈＝之前一年的 ≤2／≥98 百分位），
      下層每日柱。另有「30 日累計」模式：30 日累計 ÷ 市值，紅線＝之前 4 年第 3 百分位（週期級別的認賠），紅圈＝首次跌破。
      資料為 CoinMetrics 實現市值日變化 − 新發行，只有淨值。只作讀值，不是買賣訊號 */
@@ -5129,6 +5203,10 @@
           '大幅為正＝大量舊幣換手，常見於牛市後段長期持有者分發、或恐慌時舊幣被賣出；轉負＝新買的幣放著不動，籌碼在沉澱。', 'Strongly positive = heavy turnover of old coins, typical of late-bull distribution by long-term holders or of old coins sold in a panic; turning negative = newly bought coins sitting still as supply settles.',
           '量的是幣有沒有被移動，不是誰在買；交易所和託管整理錢包也會算進去。翻正翻負後 90 天的漲跌和任一天差不多，不是買賣訊號。', 'It counts coin movement, not who is buying; exchange and custody reshuffles are included. Returns 90 days after a flip look like any other day, so a flip is not a trading signal.'),
         now: function () { var x = oc('sthd'); return x.value == null ? '' : _T('90 天 ' + cqKb(x.value / 1e3) + ' 顆。', '90-day ' + cqKb(x.value / 1e3) + ' BTC.'); } },
+      'sthsig': { h: hh('下格兩條線：綠是止盈強度（往上）、紅是認賠強度（畫成負值、往下），虛線是門檻 ±2；超過門檻的期間鋪綠底或紅底，膠囊是那一段的最高值。', 'Two lines below: green is the profit-taking reading (upward), red the capitulation reading (drawn negative, downward); the dashed lines are the ±2 threshold. Periods beyond it are shaded green or red, and capsules give each period\'s peak.',
+          '綠底＝短期持有者集中獲利了結：在 200 日均線上方多半是行情延續，在均線下方多半是反彈被拿來出貨。紅底＝集中認賠：有人恐慌賣，但之後的漲跌和任一天差不多，不代表跌完了。', 'Green shading = short-term holders taking profit in a burst: above the 200-day average it has mostly meant continuation, below it a rally being sold into. Red shading = a burst of loss selling: panic, but returns afterward look like any other day, so it does not mean the drop is over.',
+          '比的是和自己近 105 天比多不多，不是金額大小；逐筆 UTXO，交易所整理錢包也會造成單日尖峰。只是讀值，不是買賣訊號。', 'It measures how unusual today is against its own last 105 days, not size; per-UTXO data, so exchange wallet reshuffles can cause one-day spikes. A reading, not a trade signal.'),
+        now: function () { var x = oc('sthsig'); return x.zp == null ? '' : _T('止盈 ' + fmt.n(x.zp, 1) + '、認賠 ' + fmt.n(x.zl, 1) + '。', 'Profit-taking ' + fmt.n(x.zp, 1) + ', capitulation ' + fmt.n(x.zl, 1) + '.'); } },
       'kp': { h: hh('下格是韓國溢價：粗線是 7 日平均（綠＝溢價、紅＝折價），細灰線是每日；琥珀色虛線是 5%。縱軸壓縮過，小數值看得清楚、大數值不會頂出去。', 'Bottom: the Korea premium; the thick line is the 7-day average (green = premium, red = discount), the thin grey line daily; the amber dashed line is 5%. The axis is compressed so small values stay legible and big spikes stay in frame.',
           '溢價衝高＝韓國散戶搶著買、願意付更多韓元，過去常在局部高點附近；折價＝韓國買盤冷，常在恐慌或熊市。', 'A spiking premium = Korean retail scrambling to buy and paying up in won, historically near local highs; a discount = cold Korean demand, often in panics or bear markets.',
           '只看 Upbit 一家；韓國有資本管制，溢價會長期存在，1–2% 的常態溢價不代表過熱。', 'Upbit only; capital controls let a premium persist, so a steady 1–2% does not mean overheating.'),
@@ -5171,7 +5249,7 @@
       panel('span-12', _t('短期持有者獲利比例'), _t('2025 頂部 ') + fmt.n((ch.viz || {}).top_vals ? ch.viz.top_vals.profit : null, 1) + '%', interpHtml(sthlSay()) + '<div class="chart" id="c-profit"></div><p class="note">' + _T('短期持有者成本與真實市場均價的走勢在週期版「市場階段」的佐證圖 ', 'Short-term holder cost vs the true market mean is charted with the market-stage evidence on the Cycle page ') + jumpA('cycle', 'ev-tmm', _T('看圖 →', 'See chart →')) + '</p>') +
       sbPanel() + acPanel() + concPanel() +   // 2026-11-08 內容重組：籌碼集中度從衍生品版搬來；需求四張搬到資金版
       grpH('oc-pnl', '賣出的人賺還是賠', 'Are sellers in profit or at a loss', _T('短期持有者和全市場賣出時是獲利還是認賠', 'Whether short-term holders, and the market as a whole, sell at a profit or a loss')) +
-      soprPanel() + sthPnlPanel() + confPanel() + nplPanel() + n365Panel() +   // 2026-11-09 修：兩張半寬（span-6）要相鄰，整列寬的信心圖放在它們後面（#98 插在中間，兩張各自佔一列、右邊空白）
+      soprPanel() + sthPnlPanel() + sgPanel() + confPanel() + nplPanel() + n365Panel() +   // 2026-11-09 修：兩張半寬（span-6）要相鄰，整列寬的信心圖放在它們後面（#98 插在中間，兩張各自佔一列、右邊空白）
       grpH('oc-sell', '賣壓強弱與衰竭', 'Selling pressure and exhaustion', _T('賣壓在加大還是快耗盡', 'Is selling building up or running dry')) +
       rplPanel() + rlPanel() + ssrPanel() + secPanel() + moPanel() +
       grpH('oc-lth', '長期持有者與大戶', 'Long-term holders and whales', _T('長期持有者和大戶在加碼、出貨還是認賠', 'Are long-term holders and whales adding, distributing or selling at a loss')) +
@@ -5181,7 +5259,7 @@
   V.onchain.after = function () {
     mount($('#c-agecost'), drawAgeCost); var acs = $('#ac-segs'); if (acs) acs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-a') === acMode) return; acMode = b.getAttribute('data-a'); acs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); $('#ac-say').innerHTML = interpHtml(acSayNow()); $('#ac-lg').innerHTML = acLegend(); drawAgeCost($('#c-agecost')); });   // 2026-11-06 持幣成本從週期版搬來
     mount($('#c-conc'), drawConc);   // 2026-11-08 從衍生品版搬來
-    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); mount($('#c-conf'), drawConf); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-lthrl'), drawLthRl); mount($('#c-sthband'), drawSthBand); mount($('#c-quant'), drawQuant); mount($('#c-rloss'), drawRl); mount($('#c-lsrchg'), drawLc); mount($('#c-mom'), drawMo); mount($('#c-ssr'), drawSsr); mount($('#c-agepl'), drawAge); mount($('#c-dorm'), drawDorm); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-npl365'), drawN365); mount($('#c-sthd'), drawSthd);   /* 2026-11-06 指標擴充的 mount 接在前面；註解只能放行尾（之前插在行中把後面三張圖註解掉了） */
+    mount($('#c-whale'), drawWhale); safe(drawSopr, drawSthPnl, function () { drawOc(false); }); mount($('#c-npl'), drawNpl); mount($('#c-conf'), drawConf); safe(cohortAfter); mount($('#c-lthc'), drawLthColor); mount($('#c-lthloss'), drawLthLoss); mount($('#c-lthrl'), drawLthRl); mount($('#c-sthband'), drawSthBand); mount($('#c-quant'), drawQuant); mount($('#c-rloss'), drawRl); mount($('#c-lsrchg'), drawLc); mount($('#c-mom'), drawMo); mount($('#c-ssr'), drawSsr); mount($('#c-agepl'), drawAge); mount($('#c-dorm'), drawDorm); mount($('#c-sec'), drawSec); mount($('#c-rpl'), drawRpl); mount($('#c-npl365'), drawN365); mount($('#c-sthd'), drawSthd); mount($('#c-sthsig'), drawSg);   /* 2026-11-06 指標擴充的 mount 接在前面；註解只能放行尾（之前插在行中把後面三張圖註解掉了） */
     var ags = $('#ag-seg'); if (ags) ags.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-m') === agMode) return; agMode = b.getAttribute('data-m'); ags.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); drawAge($('#c-agepl')); });   /* 2026-11-06 實現獲利／虧損切換 */
     var rs = $('#rl-seg'); if (rs) rs.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b || b.getAttribute('data-m') === rlMode) return; rlMode = b.getAttribute('data-m'); rs.querySelectorAll('button').forEach(function (q) { q.setAttribute('aria-pressed', q === b); }); drawRl($('#c-rloss')); });   /* 2026-11-06 實現虧損 近 150 天／全部歷史 */
     var ns = $('#npl-segs'); if (ns) ns.addEventListener('click', function (e) { var b = e.target.closest('button'); if (!b) return; var m = b.getAttribute('data-m'); if (m) { if (m === nplMode) return; nplMode = m; nplRng = m === 'cum' ? 1460 : 180; } else nplRng = +b.getAttribute('data-v'); nplSync(); });
@@ -5373,7 +5451,7 @@
     etf: ['流入 流出 貝萊德', 'ETF IBIT inflow outflow'], etfcost: ['成本', 'ETF cost basis'], stab: ['穩定幣', 'stablecoin USDT USDC'], 'pr-us': ['溢價 三地', 'Coinbase premium Asia'],
     kp: ['韓國 泡菜', 'Kimchi Korea Upbit premium'], exflow: ['交易所 流入 流出', 'exchange netflow reserves'], stk: ['美股 那斯達克 黃金', 'Nasdaq S&P gold stocks'], rcliq: ['實現市值', 'realized cap'],
     ad: ['表觀需求', 'apparent demand'], dmd: ['現貨 永續 需求', 'spot perp demand'], capflow: ['投機 長線', 'rotation speculative'], grad: ['梯度', 'gradient'],
-    sopr: ['短期持有者', 'STH-SOPR SOPR short-term holder'], sthpnl: ['實現損益', 'realized profit loss STH'], npl: ['淨實現損益', 'net realized profit loss'], sec: ['賣方衰竭', 'seller exhaustion'],
+    sopr: ['短期持有者', 'STH-SOPR SOPR short-term holder'], sthpnl: ['實現損益', 'realized profit loss STH'], sthsig: ['短期持有者 集中 止盈 認賠 投降 訊號', 'STH short-term holder profit-taking capitulation spike signal z-score'], npl: ['淨實現損益', 'net realized profit loss'], sec: ['賣方衰竭', 'seller exhaustion'],
     mom: ['鏈上勢能 銷毀幣天數', 'momentum CDD coin days destroyed'], ssr: ['賣方風險', 'sell-side risk'], rloss: ['實現虧損', 'realized loss divergence'], rpl: ['實現獲利', 'profit loss ratio'],
     cohort: ['長期持有者 短期持有者 籌碼', 'LTH STH long-term short-term holder'], urpd: ['籌碼分布', 'URPD supply distribution'], conc: ['籌碼集中度', 'concentration supply'],
     sthband: ['成本帶', 'STH cost basis bands'], agecost: ['持幣成本', 'cost basis by age'], whale: ['鯨魚 大戶', 'whale'], dorm: ['老幣', 'dormancy liveliness'], lthloss: ['虧損', 'LTH supply in loss'],

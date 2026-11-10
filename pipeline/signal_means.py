@@ -89,6 +89,10 @@ FLIP_MEANS = {
                   T('實現市值 30 天變化轉負：資金淨流出，歷來多在熊市才出現。', 'The 30-day change in realized cap turned negative: net outflows, historically seen mostly in bear markets.')),
     'cbp_pos': (T('Coinbase 溢價轉正：美國買盤重新比海外積極。', 'The Coinbase premium turned positive: US buyers are again keener than offshore ones.'),
                 T('Coinbase 溢價轉負：美國買盤轉弱，海外相對積極。', 'The Coinbase premium turned negative: US demand has weakened relative to offshore.')),
+    'sth_tp': (T('短期持有者賺錢賣出的量比近 105 天的平常多很多。2012 年起，收盤在 200 日均線上方時多半是行情延續；在均線下方時多半是反彈被拿來出貨（90 天後 23 次只有 7 次上漲）。', 'Short-term holders are taking profit far more than usual for the past 105 days. Since 2012, with the close above the 200-day average this has mostly meant continuation; below it, mostly a rally being sold into (only 7 of 23 were higher 90 days later).'),
+               T('短期持有者的獲利了結回到平常水準：這一波集中止盈告一段落。', 'Short-term holder profit-taking is back to normal: this burst of profit-taking has passed.')),
+    'sth_cap': (T('短期持有者賠錢賣出的量比近 105 天的平常多很多：有人在恐慌賣。2012 年起這之後 30 天、90 天的漲跌和任一天差不多，不代表跌完了。', 'Short-term holders are selling at a loss far more than usual for the past 105 days: panic selling. Since 2012, returns 30 and 90 days later look like any other day, so it does not mean the drop is over.'),
+                T('短期持有者的認賠回到平常水準：這一波集中認賠告一段落（不代表價格已經止跌）。', 'Short-term holder loss selling is back to normal: this burst of capitulation has passed (which does not mean price has stopped falling).')),
     'hash_cap': (T('算力短期均線跌破長期均線（礦工投降）：礦工在關機、被迫賣幣，歷來出現在礦工壓力大的時候。', 'Short-term hashrate fell below the long-term average (miner capitulation): miners are shutting down and may be forced to sell, historically when miner stress is high.'),
                  T('礦工投降結束、算力回升：Hash Ribbons 的原始解讀把這看成礦工壓力解除、中長期轉強的訊號（本站只作讀值）。', 'Miner capitulation ended and hashrate is recovering: the original Hash Ribbons reading treats this as miner stress lifting and a medium-term turn up (shown as a reading only).')),
     'tm_top': (T('第三方 Tidemark 的頂部訊號到 50 以上：模型認為進入頂部觀察窗口（本站只作讀值）。', 'Third-party Tidemark\'s top signal is at 50 or above: the model sees a top-watch window (shown as a reading only).'),
@@ -200,6 +204,9 @@ def _flip_rows(L, k, g, _rows, _ma7, _ivrv):
     if k == 'rcliq_pos': return _rows(L, 'flows.rc_liq.rows', 1), 0.0
     if k == 'cbp_pos': return _ma7(_rows(L, 'flows.cb_premium.rows', 1)), 0.0
     if k == 'iv_gt_rv': return _ivrv(L), 0.0
+    if k in ('sth_tp', 'sth_cap'):   # rows＝[日, 收盤, 止盈強度, −認賠強度]；門檻 2
+        rows = [(r[0], r[2] if k == 'sth_tp' else -r[3]) for r in g(L, 'onchain.sthsig.rows') or [] if len(r) > 3 and r[2] is not None and r[3] is not None]
+        return rows, float(g(L, 'onchain.sthsig.prm.th') or 2)
     return None, None
 
 
@@ -213,7 +220,7 @@ def annotate(sig, L, px, S):
             if m: s['means'] = m
             r = _rule(s, S.EXT, S.JMP, S.CMB, S.NEAR, S.NEAR_EXIT, four)
             if r: s['rule'] = r
-            if s.get('kind') == 'cross' and not s.get('hist') and s.get('key') in ('sopr_ge1', 'above_sma200', 'above_sth_cost', 'above_tmm', 'rcliq_pos', 'cbp_pos', 'iv_gt_rv'):
+            if s.get('kind') == 'cross' and not s.get('hist') and s.get('key') in ('sopr_ge1', 'above_sma200', 'above_sth_cost', 'above_tmm', 'rcliq_pos', 'cbp_pos', 'iv_gt_rv', 'sth_tp', 'sth_cap'):
                 rows, th = _flip_rows(L, s['key'], S.g, S._rows, S._ma7, S._ivrv)
                 rows = sorted(rows or [])
                 if len(rows) > 30:

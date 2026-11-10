@@ -866,6 +866,9 @@ if BV:
     # 2026-11-08 使用者要求：短期持有者供給 90 天變化（sthd）
     try: R['sthd'] = stage_viz.sthd_viz(BV, globals().get('PXC') or {}, LAST, _md['cycle_tops'])
     except Exception as e: errors.append(f'bitview sthd {e}')
+    # 2026-11-11 使用者要求：短期持有者集中止盈／集中認賠（sthsig；本站自製，只用 Bitview 已抓的欄位，不另打 API）
+    try: R['sthsig'] = stage_viz.sthsig_viz(BV, globals().get('PXC') or {}, LAST)
+    except Exception as e: errors.append(f'bitview sthsig {e}')
     # 2026-11-08 使用者要求（「用現在所有數據做一個更準確的週期圖」，和週線多空分數並列）：晨昏指數，見 dawn.py。不另打 API
     try:
         import dawn
