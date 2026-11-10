@@ -1,16 +1,16 @@
 {
- "date": "2026-11-08",
+ "date": "2026-11-09",
  "captions": true,
  "picks": [
   {
-   "id": "deriv/lsa",
-   "chart": "data/picks/deriv-lsa.png",
-   "chart_en": "data/picks/deriv-lsa-en.png",
+   "id": "onchain/agepl",
+   "chart": "data/picks/onchain-agepl.png",
+   "chart_en": "data/picks/onchain-agepl-en.png",
    "name": {
-    "zh": "多空帳戶比",
-    "en": "Long/short account ratio"
+    "zh": "依持有時間的實現獲利／虧損",
+    "en": "Realized profit/loss by holding age"
    },
-   "link": "https://north7.github.io/daybreak/#deriv/lsa"
+   "link": "https://north7.github.io/daybreak/#onchain/agepl"
   }
  ]
 }
