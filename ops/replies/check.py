@@ -59,6 +59,13 @@ def sentence_notes(tag, t):
     return out
 
 
+# 2026-11-10 第三輪（voice.md「把人寫回來」）：兩輪去 AI 味之後文字太平。有沒有一處自己的反應、有沒有對著人講話，只提醒不擋。
+# 11/04–11/09：有情緒或語氣詞的回覆互動率 4.2%、對方回話 32%（沒有的 1.4%、17%）；數字開頭的回覆有互動的只有 29%（其他 45%）。
+EMO = re.compile(r"哈|欸|啊|吧|啦|蠻|老實講|說真的|沒想到|我以為|居然|竟然|難受|不舒服|還好|佩服|我服|誇張|又是|偏偏|結果呢|"
+                 r"honestly|\bhuh\b|ouch|\bfair\b|\bha\b|\bwild\b|didn't expect|surpris|not gonna", re.I)
+PERSON = re.compile(r"你|我|？|\byou\b|\bI\b|\bI'|\?", re.I)
+
+
 def longpost_notes(tag, t, lang):
     """單篇長貼文的結構提醒（不擋，voice.md「去 AI 味第二輪」2026-11-09）：小標數、段落長度都一樣、對比句、每段短句收尾。
     lieflat 配對實測：人寫的長文一篇 0–1 個小標（AI 1.26 個／千字）、段落長度 CV 人類 0.83（AI 0.31）、「不是 A 而是 B」人類 0.22 次／千字（AI 0.94）。"""
@@ -77,6 +84,9 @@ def longpost_notes(tag, t, lang):
         ss = [x.strip() for x in re.split(r'[。！？.!?]', p) if x.strip()]
         if len(ss) >= 3 and len(ss[-1]) <= (10 if lang == 'zh' else 30): short += 1
     if short > 2: out.append(f'{tag} {short} 段都用一句短的收尾：一篇一兩處就好，其他段用數字或細節收')
+    head = ''.join(paras)[:280]
+    if head and not PERSON.search(head): out.append(f'{tag} 前 280 字裡沒有人（沒有「你／我」、沒有問句）：X 只露出這一段，第一句用鉤子開，對著讀者或用自己的反應講（voice.md 第三輪）')
+    if not EMO.search(body): out.append(f'{tag} 全篇沒有一處自己的反應（意外、吐槽、不安、鬆口氣、自嘲）：挑一個具體事實掛上去，不演（voice.md 第三輪）')
     if not TRADE.search(body): out.append(f'{tag} 沒看到「對交易來說這代表什麼」的句子：是不是訊號（跟隨便挑一天比，帶次數）、什麼價位／數字翻過去讀法就換、風險偏哪邊、哪種感覺是雜訊，挑一種寫（voice.md「要有交易上的意義」2026-11-09）')
     return out
 
@@ -297,6 +307,15 @@ def tone_notes(items):
         c = (it.get('image') or {}).get('chart')
         if c in SITE: out.append(f'#{it["n"]} 配圖用 cards.py 的 {c}，網站有原圖（{SITE[c]}）：改成 site_cards.py')
     heads = {}
+    orig = [it for it in R if it.get('kind') != 'followup']   # 第三輪：回原創的回覆整批太平就提醒
+    if len(orig) >= 6:
+        emo = [it['n'] for it in orig if EMO.search(it['reply'])]
+        if len(emo) / len(orig) < 0.25: out.append(f'有自己反應的回覆 {len(emo)}/{len(orig)} 則：先有人的反應再講東西（撿對方的一個詞，意外、好笑、不同意），一則一種、不演（voice.md 第三輪）')
+        q = [it['n'] for it in orig if re.search(r'[？?]', re.sub(r'https?://\S+', '', it['reply']))]
+        if not q: out.append('整批回覆沒有一個問句：三四則一次，問一個只有對方答得出來的問題（口徑、他那筆單、接下來盯哪個數字）')
+        elif len(q) / len(orig) > 0.5: out.append(f'問句 {len(q)}/{len(orig)} 則，太多了：三四則一次就好，不想知道就不問')
+        num = [it['n'] for it in orig if re.match(r"\s*[\d$]", it['reply'])]
+        if len(num) > max(1, len(orig) // 5): out.append(f'數字開頭的回覆 {len(num)} 則：{num}，第一行先講反應或判斷（數字開頭實測偏弱）')
     for it in R: heads.setdefault(it['reply'][:3].lower(), []).append(it['n'])
     dup = {k: v for k, v in heads.items() if len(v) >= 3}
     if dup: out.append(f'開頭重複：{dup}')
