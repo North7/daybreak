@@ -16,6 +16,8 @@
 
 ---
 
+> **2026-11-11 首頁換成新版。** `index.html` 由 `pipeline/next/build.py` 產生（說明見 `pipeline/next/README.md`）；下面描述的是舊版，搬到 `classic.html` 後照常每天更新，舊網址會自動轉過去。運營截圖、推薦圖表仍截舊版的面板。
+
 ## 目錄
 
 - [網站內容](#網站內容)

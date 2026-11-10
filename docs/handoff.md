@@ -2,6 +2,8 @@
 
 給接手「破曉 Daybreak」網站／管線工作的 Claude session。最後更新：2026-11-05（原 session：claude.ai/code 的「數據分析方案」）。
 
+> **2026-11-11 首頁換成新版**（`pipeline/next/`，說明見 `pipeline/next/README.md`）。舊版首頁搬到 `classic.html`：以下內容講的都是舊版，檔案和流程不變，只是網址從 `index.html` 變成 `classic.html`；舊網址 `/#page/key` 會轉過去。改舊版後的檢查照舊，另外多一支 `node tests/smoke_next.js` 測新版。
+
 ## 1. 專案是什麼
 
 - 比特幣每日簡報網站：<https://north7.github.io/daybreak/>（GitHub Pages，repo `North7/daybreak`，分支 `main`）。

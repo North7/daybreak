@@ -63,12 +63,17 @@ jobs:
       - name: Build site data
         if: steps.chk.outputs.skip != 'true'
         run: python3 pipeline/build.py pipeline/today.json
+      - name: Build the new homepage (index.html + data/next.js)
+        # 2026-11-11 首頁換成新版：用剛更新的資料重建；白話讀值要用 Chrome 跑一次舊版 classic.html（ubuntu 內建 google-chrome）。失敗不擋資料提交
+        if: steps.chk.outputs.skip != 'true'
+        continue-on-error: true
+        run: python3 pipeline/next/build.py
       - name: Commit
         if: steps.chk.outputs.skip != 'true'
         run: |
           git config user.name "apogee-bot"
           git config user.email "apogee-bot@users.noreply.github.com"
-          git add data pipeline/state_min.json pipeline/coc_cache pipeline/cohort_cache
+          git add data pipeline/state_min.json pipeline/coc_cache pipeline/cohort_cache index.html pipeline/next/interp.zh.json pipeline/next/interp.en.json
           git diff --cached --quiet && echo "no changes" && exit 0
           git commit -m "data: $(python3 -c "import json;print(json.load(open('data/latest.json'))['meta']['bar_date'])")"
           git pull --rebase --autostash
