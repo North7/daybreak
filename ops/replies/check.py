@@ -314,6 +314,26 @@ def tone_notes(items):
         if len(cond) > max(1, len(O) // 5): out.append(f'最後一行是條件句（要是…就／等…才／…之前）{len(cond)} 則：{cond}，一天五分之一就好，講完事實就停（voice.md 第四輪）')
         qo = [it['n'] for it in O if re.match(r'\s*[「"“]', it['reply'])]
         if len(qo) > max(1, len(O) // 5): out.append(f'用「」撿對方原話開頭 {len(qo)} 則：{qo}，一天五分之一就好（voice.md 第四輪）')
+    # 2026-11-11 使用者：「絕對不能用模板」。每則算一個形狀（怎麼開、幾行、怎麼收），同一個形狀太多就是模板
+    def shape(t):
+        L = [x.strip() for x in t.strip().split('\n') if x.strip()]
+        f, l = L[0], L[-1]
+        op = ('引原話' if re.match(r'[「"“]', f) else '數字' if re.match(r'[\d$]', f) else '問句' if re.search(r'[？?]$', f)
+              else '反應' if re.match(r'(哈|欸|嗯|對|喔|啊|honestly|huh|ha\b|fair|ouch)', f, re.I)
+              else '表態' if re.search(r'我(先|倒|不同意|同意|沒想過|也有點|覺得更|看)|有意思|意外|先緩|先不說|倒不至於|is the part|bugs me|careful', f, re.I) else '直講')
+        cl = ('問句' if re.search(r'[？?]$', l) else '條件' if re.search(r'(要是|如果|等.{1,25}(才|再)|之前|\bif\b|\buntil\b|\bonce\b)', l, re.I)
+              else '短句' if len(L) > 1 and len(l) <= 14 else '事實')
+        return (op, '3+' if len(L) >= 3 else str(len(L)), cl)
+    if len(O) >= 6:
+        sh = Counter(shape(it['reply']) for it in O)
+        (k, c), = sh.most_common(1)
+        if c > max(2, len(O) // 4):
+            who = [it['n'] for it in O if shape(it['reply']) == k]
+            out.append(f'同一個形狀（{k[0]}開頭、{k[1]} 行、{k[2]}收尾）{c}/{len(O)} 則：{who}，這就是模板，改掉一半（voice.md「寫之前 60 秒」第 0 條）')
+        for name, i in (('開法', 0), ('收法', 2)):
+            cc = Counter(shape(it['reply'])[i] for it in O)
+            (v, m), = cc.most_common(1)
+            if v not in ('直講', '事實') and m / len(O) > 0.25: out.append(f'{name}「{v}」{m}/{len(O)} 則，超過四分之一：換別的（voice.md 第 0 條）')
     heads = {}
     orig = [it for it in R if it.get('kind') != 'followup']   # 第三輪：回原創的回覆整批太平就提醒
     if len(orig) >= 6:
