@@ -49,7 +49,7 @@
    "lead": "Monday's intraday low of 73,602 touched the swing end line at 73,605 almost exactly before the close recovered to 75,253; that line and the 200-day average sit within 3% below.",
    "points": [
     "The bounce had volume: 1.33x the 20-day average, closing at 87% of the day's range.",
-    "Selling pressure has been at 100 for 3 days with momentum quality 0.27, so the bottom combo is still on (in 21 past cases, price fell a median 9% more during the combo).",
+    "Selling pressure is 94 with momentum quality 0.27: close to the bottom combo but not on yet (recalculated after the Nov 11 method change; it had read 100 for 3 days).",
     "The close is at the 44th percentile of the past year's closes, with the 1-year median of 76,947 just 2% above."
    ]
   },
