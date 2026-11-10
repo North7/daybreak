@@ -773,11 +773,16 @@ def capflow_viz(bv, px, last, step=3):
 
 # 2026-11-07 指標擴充（取代 2026-11-05 的四項短期持有者百分位版「短期壓力分數」）：本站自製的一對讀值，只用每日收盤。
 #   動能品質（0–1）：近 21 天日報酬的平均 ÷ 標準差 × √21（t 值），再用常態分布換成 0–1（Φ(0.7 × t)）。漲得又快又穩接近 1，跌得又快又穩接近 0。
-#   賣壓累積（0–100）：動能品質低於 0.45 時每天加 30 ×（0.45 − 動能），高於 0.45 時每天減 50 ×（動能 − 0.45），動能一到 0.7 以上直接歸零，夾在 0–100。
-#     弱勢拖得越久累積越高（急跌一兩天不會馬上到 100），一段又快又穩的上漲就清空；參數照這個行為挑選，三組相近參數的回測差不多。
+#   賣壓累積（0–100）：用「短線動能」累加——日報酬的指數加權平均 ÷ 指數加權標準差 × √10（跨度 10 天，越近的日子權重越大），再用常態分布換成 0–1。
+#     短線動能低於 0.45 時每天加 20 ×（0.45 − 短線動能），高於 0.45 時每天減 20 ×（短線動能 − 0.45），夾在 0–100。沒有歸零規則。
+#     弱勢拖得越久累積越高（急跌一兩天不會馬上到 100），反彈當天就會回落，持續上漲才降回 0。
+#   2026-11-11 使用者決定：原本用 21 天動能累加（加 30、減 50、動能到 0.7 直接歸零），反彈時幾乎不回落，11/07 就到 100、比參考讀數早三天。
+#     對照一整年的逐日參考讀數重新校準：平均差距從約 24 點降到約 12 點、整年平均不偏高也不偏低。歷史讀數全部照新算法重算。
+#     底部組合的回測沒有因此變好（90 天後上漲比例和任一天進場差不多），換的理由只有貼近度；門檻或加減比例稍微動一點，整條線的高低會差很多，不要隨手調。
 #   底部組合＝賣壓 100 且動能 < 0.3（和上一次相隔 60 天以上才算新的一次）。回測照實列出：30／90 天後漲跌、等賣壓回到 0 再出場的結果、分年代；
 #   強勢動能（賣壓 0 且動能 > 0.85）之後多半繼續漲，不是頂部訊號，也照實列出。只作讀值、不是買賣訊號。
-SX_N, SX_K, SX_TH, SX_UP, SX_DN, SX_RESET, SX_FROM, SX_GAP = 21, 0.7, 0.45, 30, 50, 0.7, '2012-06-01', 60
+SX_N, SX_K, SX_FROM, SX_GAP = 21, 0.7, '2012-06-01', 60      # 動能品質：近 21 天的 t 值 × 0.7
+SX_RN, SX_RK, SX_TH, SX_UP, SX_DN = 10, 1.0, 0.45, 20, 20   # 賣壓累積：短線動能的跨度、係數；門檻、每天加、每天減
 
 
 def stress_viz(bv, px, last, step=3, keep=1095):
@@ -788,12 +793,15 @@ def stress_viz(bv, px, last, step=3, keep=1095):
     lr = [0.0] + [math.log(P[i] / P[i - 1]) for i in range(1, n)]
     Phi = lambda x: 0.5 * (1 + math.erf(x / math.sqrt(2)))
     S, R, r = [None] * n, [None] * n, 0.0
-    for i in range(SX_N, n):
+    al, em, ev2 = 2 / (SX_RN + 1), 0.0, 0.0   # 短線動能：日報酬與日報酬平方的指數加權平均
+    for i in range(1, n):
+        em += al * (lr[i] - em); ev2 += al * (lr[i] ** 2 - ev2)
+        if i < SX_N: continue
         w = lr[i - SX_N + 1: i + 1]; m = sum(w) / SX_N; sd = (sum((a - m) ** 2 for a in w) / (SX_N - 1)) ** 0.5
         s = Phi(SX_K * m / sd * math.sqrt(SX_N)) if sd > 0 else 0.5
-        if s >= SX_RESET: r = 0.0
-        elif s < SX_TH: r = min(100.0, r + SX_UP * (SX_TH - s))
-        else: r = max(0.0, r - SX_DN * (s - SX_TH))
+        if i > 3 * SX_RN:   # 前 30 天指數加權還沒穩定，不累加
+            f = Phi(SX_RK * em / max(1e-12, ev2 - em * em) ** 0.5 * math.sqrt(SX_RN))
+            r = min(100.0, r + SX_UP * (SX_TH - f)) if f < SX_TH else max(0.0, r - SX_DN * (f - SX_TH))
         S[i], R[i] = s, r
     i0 = next(i for i, d in enumerate(D) if d >= SX_FROM)
     fwd = lambda i, h: (P[i + h] / P[i] - 1) * 100 if i + h < n else None
@@ -838,8 +846,8 @@ def stress_viz(bv, px, last, step=3, keep=1095):
                 ev=ev, f30=stat(bot, 30), f90=stat(bot, 90), base30=base(30), base90=base(90),
                 ex=dict(n=len(done), win=sum(e['ret'] > 0 for e in done), med=med([e['ret'] for e in done]), days=med([e['days'] for e in done]), dip=med([e['dip'] for e in done])),
                 era=era, top=dict(n=len(top), f90=stat(top, 90), last=D[top[-1]] if top else None), since=SX_FROM,
-                prm=dict(n=SX_N, k=SX_K, th=SX_TH, up=SX_UP, dn=SX_DN, reset=SX_RESET), rows=rows,
-                note='本站自製，只用每日收盤：動能品質＝Φ(0.7 × 近 21 天報酬 t 值)；賣壓累積＝動能低於 0.45 時累加、高於時遞減、到 0.7 歸零（0–100）；只作讀值、不是買賣訊號')
+                prm=dict(n=SX_N, k=SX_K, rn=SX_RN, rk=SX_RK, th=SX_TH, up=SX_UP, dn=SX_DN), rows=rows,
+                note='本站自製，只用每日收盤：動能品質＝Φ(0.7 × 近 21 天報酬 t 值)；賣壓累積＝短線動能（跨度 10 天的指數加權）低於 0.45 時累加、高於時以同樣速度遞減（0–100）；2026-11-11 起改用短線動能，歷史讀數重算；只作讀值、不是買賣訊號')
 
 
 # 2026-11-05 使用者要求（X 帳號掃描：頂部後 13 個月前幾輪跌 71–80%、這輪約 35%；回到前高花的時間比跌下去久）：各輪週期頂部之後，
