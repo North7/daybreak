@@ -23,7 +23,7 @@ ROBOT = re.compile(r'^(補一個|補一組|補兩個|Daily data|Our .{0,40}estim
 # 2026-11-09 使用者：開頭「看了一圈，現在找不到誰在接」像是能力不夠找不到，誰還要往下看；要講的是「現在真的沒人接」。
 # 2026-11-09 使用者：「不能說看錯，另外什麼是照舊走，舊是怎麼走的，不照舊會怎麼走，直接說出來」。
 # 2026-11-09 使用者改稿：同意對方不用說出來、不幫對方核對數字（n60「我很同意」、n45「這句我同意」「跟你寫的 73,150 對得上」、n47「我是佩服的」都被刪）
-AI_WORDS = re.compile(r'我很同意|這句我同意|這點我同意|我是佩服|跟你寫的[^，。\n]{0,12}對得上|看錯|照舊走|照舊在走|could be wrong|I\'m wrong|I was wrong|找不到誰|找不到有誰|看了一圈|我找不到|我沒找到|nobody I can find|I can\'t find any|我這邊|我们这边|我們這邊|我算(的|在|出來|到)|算出來是|新手|老手|新買家|老買家|短線的人|值得注意的是|值得一提|整體而言|總的來說|總而言之|綜上|我的(看法|判斷|結論)是|所以我的判斷|什麼情況會讓我改看法|會讓我改看法|我會說(是|它)|(不會|會)叫它|再說它|(得|要)先看到|我會把[^，。\n]{1,20}看成|先講清楚|什麼情況代表我看錯|最後提醒一下|說白了|說穿了|先說結論|結論先講|首先[，,].{0,40}其次|不僅僅?是|而且老實說|說到底|這就是全部|'
+AI_WORDS = re.compile(r'潑.{0,2}冷水|這(兩|幾)個字就|打個?問號|味道就?不太?一樣|的燃料|蠻有意思|很有意思|先緩一下|我倒擔心|我很好奇|我很同意|這句我同意|這點我同意|我是佩服|跟你寫的[^，。\n]{0,12}對得上|看錯|照舊走|照舊在走|could be wrong|I\'m wrong|I was wrong|找不到誰|找不到有誰|看了一圈|我找不到|我沒找到|nobody I can find|I can\'t find any|我這邊|我们这边|我們這邊|我算(的|在|出來|到)|算出來是|新手|老手|新買家|老買家|短線的人|值得注意的是|值得一提|整體而言|總的來說|總而言之|綜上|我的(看法|判斷|結論)是|所以我的判斷|什麼情況會讓我改看法|會讓我改看法|我會說(是|它)|(不會|會)叫它|再說它|(得|要)先看到|我會把[^，。\n]{1,20}看成|先講清楚|什麼情況代表我看錯|最後提醒一下|說白了|說穿了|先說結論|結論先講|首先[，,].{0,40}其次|不僅僅?是|而且老實說|說到底|這就是全部|'
                       r'\b(delve|crucial|pivotal|underscores?|testament|tapestry|showcases?|Additionally|Moreover|Furthermore|'
                       r"on (my|our) end|on my side|by my (math|count|numbers|estimate)|my estimate (puts|is|has)|Here's the thing|That's the whole story|Fun (fact|detail)|No fluff|Let that sink in|"
                       # 2026-11-09 第二輪（voice.md「去 AI 味第二輪」）：泛指來源、過度禮貌、固定收尾、淺層分析尾句、書面填充詞、英文套話
@@ -136,6 +136,7 @@ def check():
             continue
         if it.get('lang') not in ('zh', 'en'): err.append(f'{tag} 原文是 {it.get("lang")}：只回中文和英文貼文，請改成 skip')
         if not t and not (it.get('mode') == 'quote' and it.get('quote')): err.append(f'{tag} 沒有回覆內容')   # 只引用不回覆的可以留空（2026-11-06）
+        if t and it.get('lang') == 'zh' and not it.get('posted') and '說明' in t: err.append(f'{tag} 回覆 AI 腔（「說明」）：回覆直接把意思講出來，「說明」是長文的動作（voice.md 第四輪，2026-11-11）')
         if t: err += [e for e in text_errors(tag + ' 回覆', t, it.get('lang')) if not (it.get('posted') and ('英文常用名' in e or 'AI 腔' in e))]   # 已發出的不用改（規則是發出之後才加的，2026-11-09）
         if t and ONE_LINE.search(t): err.append(f'{tag} 回覆一行裡有兩句（「{ONE_LINE.search(t).group(0)}」）：每句話換一行，見 voice.md 2026-11-08')
         if HASH.search(t): err.append(f'{tag} 回覆不加 hashtag（引用文和快訊才加）')
@@ -257,8 +258,6 @@ def tone_notes(items):
     # 2026-11-08 使用者：回覆要有深度、嚴謹、有態度、有觀點。「短回覆約三分之一」只看接話；回別人原創太短的另外列出來。
     F = [it['reply'] for it in R if it.get('kind') == 'followup']
     if len(F) >= 5 and sum(1 for t in F if len(t) <= 40) / len(F) < 0.25: out.append(f'接話裡一行就好的短回覆（40 字內）只有 {sum(1 for t in F if len(t) <= 40) / len(F):.0%}，閒聊可以更短')
-    thin = [it['n'] for it in R if it.get('kind') != 'followup' and it.get('mode') != 'quote' and len(it['reply'].strip().split('\n')) < 2]
-    if thin: out.append(f'回別人原創只有一行：{thin}，看看有沒有接到對方的核心論點、有沒有自己的判斷（voice.md「回覆要有深度、嚴謹、有態度、有觀點」）')
     # 2026-11-09 使用者：「回覆更是這樣，多說觀點和結論，數據少量支持就行，不然很像數據機器人」。日期（11/06、2025/10）、年份、網址、「200 日均線」「30 天」這種名稱不算數字。
     NUM = re.compile(r'(?<![\d/.])(?!(?:19|20)\d\d(?![\d,]))\d[\d,]*(?:\.\d+)?(?![\d/])(?!-day|-week| ?(?:日|週)均線| ?天)')   # 年份、200 日均線、30 天這種名稱不算
     many = [it['n'] for it in R if len(NUM.findall(re.sub(r'https?://\S+', '', it['reply']))) > 3]
@@ -306,11 +305,18 @@ def tone_notes(items):
     for it in R:
         c = (it.get('image') or {}).get('chart')
         if c in SITE: out.append(f'#{it["n"]} 配圖用 cards.py 的 {c}，網站有原圖（{SITE[c]}）：改成 site_cards.py')
+    # 2026-11-11 第四輪（有人留言「太AI了吧老哥」）：性格版長出新模板：每則都是 反應→數據→「說明」→條件句／造句收尾，三四行
+    O = [it for it in R if it.get('kind') != 'followup' and it.get('mode') != 'quote']
+    if len(O) >= 6:
+        long_ = [it['n'] for it in O if len(it['reply'].strip().split('\n')) >= 3]
+        if len(long_) / len(O) > 0.5: out.append(f'回原創的回覆 {len(long_)}/{len(O)} 則有三行以上：一半以上一兩行就夠，反應、數據、解讀、條件挑一兩樣（voice.md 第四輪）')
+        cond = [it['n'] for it in O if re.search(r'(要是|如果|等.{1,25}(才|再)|之前，|\bif\b|\buntil\b|\bonce\b)[^\n]*$', it['reply'].strip(), re.I)]
+        if len(cond) > max(1, len(O) // 5): out.append(f'最後一行是條件句（要是…就／等…才／…之前）{len(cond)} 則：{cond}，一天五分之一就好，講完事實就停（voice.md 第四輪）')
+        qo = [it['n'] for it in O if re.match(r'\s*[「"“]', it['reply'])]
+        if len(qo) > max(1, len(O) // 5): out.append(f'用「」撿對方原話開頭 {len(qo)} 則：{qo}，一天五分之一就好（voice.md 第四輪）')
     heads = {}
     orig = [it for it in R if it.get('kind') != 'followup']   # 第三輪：回原創的回覆整批太平就提醒
     if len(orig) >= 6:
-        emo = [it['n'] for it in orig if EMO.search(it['reply'])]
-        if len(emo) / len(orig) < 0.25: out.append(f'有自己反應的回覆 {len(emo)}/{len(orig)} 則：先有人的反應再講東西（撿對方的一個詞，意外、好笑、不同意），一則一種、不演（voice.md 第三輪）')
         q = [it['n'] for it in orig if re.search(r'[？?]', re.sub(r'https?://\S+', '', it['reply']))]
         if not q: out.append('整批回覆沒有一個問句：三四則一次，問一個只有對方答得出來的問題（口徑、他那筆單、接下來盯哪個數字）')
         elif len(q) / len(orig) > 0.5: out.append(f'問句 {len(q)}/{len(orig)} 則，太多了：三四則一次就好，不想知道就不問')
