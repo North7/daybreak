@@ -332,8 +332,8 @@ def tone_notes(items):
             out.append(f'同一個形狀（{k[0]}開頭、{k[1]} 行、{k[2]}收尾）{c}/{len(O)} 則：{who}，這就是模板，改掉一半（voice.md「寫之前 60 秒」第 0 條）')
         for name, i in (('開法', 0), ('收法', 2)):
             cc = Counter(shape(it['reply'])[i] for it in O)
-            (v, m), = cc.most_common(1)
-            if v not in ('直講', '事實') and m / len(O) > 0.25: out.append(f'{name}「{v}」{m}/{len(O)} 則，超過四分之一：換別的（voice.md 第 0 條）')
+            for v, m in cc.items():
+                if v not in ('直講', '事實') and m / len(O) > 0.25: out.append(f'{name}「{v}」{m}/{len(O)} 則，超過四分之一：換別的（voice.md 第 0 條）')
     heads = {}
     orig = [it for it in R if it.get('kind') != 'followup']   # 第三輪：回原創的回覆整批太平就提醒
     if len(orig) >= 6:
