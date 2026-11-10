@@ -2,22 +2,6 @@
  "updated": "2026-11-08T01:50:00Z",
  "items": [
   {
-   "id": "2026-11-08-panic",
-   "time": "2026-11-08T12:30:00Z",
-   "title": "恐慌了，但還不是投降：以前這種時候，後來怎麼走？",
-   "note": "已發出（11/08）。11/08 下午改寫（使用者：只讀數據不夠，要給觀點或歷史規律，讓讀者對交易有收穫）。新增：短期持有者虧損比例衝過 6 成的 16 次（onchain.sthl.eps，Bitview 2015 起，門檻 60%、間隔 60 天），按週期階段分：底部之後到下一個頂部 14 次（30 天後 12 次高、中位 +10.7%；90 天後 10 次高、中位 +18.2%），頂部之後 2 次（2018/1 −18%、2021/11 −29%，90 天）；基準 90 天中位 +9.4%（sthl.base90）。最像的 3 次 2015/8、2016/1、2023/5（當時長期持有者虧損比例 49%、29%、30%，onchain.lthloss.rows）。週期頂底取 cycle.tops／bottoms。62K 來自 lthloss.cohort.table（44.6%）。立場：以 6/30 是底為前提，偏向底部之後的洗盤；錯的條件是長期持有者虧損比例往 45% 走。原稿（排程任務寫的）：11/08 20:30 發；圖1 onchain #c-sthpnl、圖2 #c-npl、圖3 #c-lthloss，圖號沒變。",
-   "zh": "恐慌了，但還不是投降：以前這種時候，後來怎麼走？\n\n11/05 一天跌了 5.5%，從 80.4K 收到 76K。這幾天慌的是最近 155 天才買進的短期持有者，11/07 他們賠錢賣掉 4,177 顆，賺錢賣的只有 3,418 顆（圖1）。他們手上的幣，現在有 7 成在虧\n\n短期持有者的虧損比例衝過 6 成，2015 年以來有 16 次，11/05 這次最高到 72.6%。這 16 次要分開看，結果差很多\n\n14 次發生在週期底部之後、下一個頂部之前。30 天後有 12 次比較高，中位數 +11%；90 天後 10 次比較高，中位數 +18%。拿來對照，隨便哪一天買，90 天後的中位數是 +9%\n\n另外 2 次在週期頂部之後、熊市剛開始：2018 年 1 月和 2021 年 11 月。90 天後分別再跌 18% 和 29%\n\n所以要先判斷現在屬於哪一種。網站的週期模型把 6/30 的 58.5K 當成這輪的底，依據是長期持有者那天有 45% 的幣在虧，跟 2015、2019、2022 三輪熊底附近的 45% 到 53% 差不多（圖3）。照這個前提，現在是第一種，這次下跌我偏向看成底部之後的洗盤，不是新一輪熊市的開頭\n\n最像現在的是 2015/8、2016/1、2023/5 這三次：都在熊底之後半年到一年，長期持有者還有 3 到 5 成的幣在虧，短期持有者突然大量認賠。三次 30 天後都比較高，可是 2023 年那次 90 天後還是 −3%，之後又盤了幾個月才走出來。方向偏上，不代表馬上漲\n\n再看投降有沒有來。整個市場的淨認賠，11/05 一天 7.3 億美元，近 7 天約 14.6 億，6/2 一天就有 29 億（圖2）。長期持有者現在只有 34% 的幣在虧，離 45% 還遠。這次慌的是短期持有者，拿超過 155 天的人沒有跟著賣\n\n選擇權（期權）市場也是一樣，隱含波動率 DVOL 40，落在近一年的中間，2 月那次衝到快 60\n\n這個判斷錯的話，會先出現在圖3。長期持有者的虧損比例如果往 45% 走，6/30 就不是底，現在比較像 2018、2021 那兩次熊市初期的恐慌。照現在的籌碼推算，價格要跌到 62K 左右才會到那裡。圖2 的紅柱子如果長回 6 月那種長度，也是同一個意思\n\n以上都是過去的紀錄，16 次裡也有 4 次 30 天後比較低，樣本不算多\n\n#比特幣 #BTC\n\n（數據：短期持有者虧損比例 Bitview 2015 起，11/07；短期持有者實現損益、長期持有者虧損比例 CheckOnChain，11/07；淨實現損益 CoinMetrics，11/06；DVOL Deribit，11/07）",
-   "images": [
-    "data/longposts/2026-11-08-panic.png"
-   ],
-   "charts": [
-    "onchain/sthpnl",
-    "onchain/npl",
-    "onchain/lthloss"
-   ],
-   "posted": "2026-11-08"
-  },
-  {
    "id": "2026-11-08-pin",
    "time": "2026-11-08T12:00:00Z",
    "title": "置頂：週線多空分數",
@@ -28,20 +12,6 @@
    ],
    "charts": [
     "cycle/regime"
-   ],
-   "posted": "2026-11-08"
-  },
-  {
-   "id": "2026-11-08-mstr",
-   "time": "2026-11-08T04:30:00Z",
-   "title": "微策略跌回成本價，會被迫賣幣嗎？",
-   "note": "已發出（11/08）。Grok 11/08 凌晨：X 上升溫最快的話題是 Saylor 成本線（6 小時 303→567 則）。11/08 早上已用 11/07 收盤（75,754）重對：價格仍在 75,451 之上，開頭不用改；ETF 持有量更新為 112.7 萬顆、配圖重畫。圖1 自己畫（網站沒有微策略成本線），圖2 網站 ETF 持有者成本。順便更正 11/06 日報的 80,441。",
-   "zh": "微策略跌回成本價，會被迫賣幣嗎？\n\n這兩天討論最多的，是微策略（Strategy）的持幣成本。它手上有 849,327 顆比特幣，平均買價 75,451（11/02 公布）。比特幣現在在 75,700 附近，剛好回到它的成本（圖1）\n\n很多人擔心，價格再往下，最大的買家會不會被迫砍倉\n\n成本價不等於被迫賣出的價格。微策略今年確實賣過比特幣，合計 4.32 億美元，拿去付優先股股息和買回優先股。可是同一年它買進了 143 億美元，是賣出的 30 多倍。專門用來付股息和利息的美元準備還有大約 48 億美元，夠付三年左右。它賣幣是因為要付現金，跟價格跌到哪裡沒有直接關係\n\nPeter Schiff 說微策略的現金只剩 1.33 億美元，那是另一筆拿來買回優先股的錢，不是付股息的那筆\n\n另一群大買家是現貨 ETF。用每天的淨流入推算（不含 GBTC），平均成本是 79,039，現在帳面虧 4% 左右（圖2）。我 11/06 日報寫的 80,441 是 11/04 的收盤價，寫錯了，在這裡更正。網路上也有人寫 81,500、84,340，各家算法不一樣，數字會差好幾千\n\nETF 買家套牢也不是第一次。今年 6/30 他們平均虧到 26%，持有量從 115.1 萬顆減到 105.1 萬顆，少了 8.7%，之後兩個月又買回 4.3 萬顆。2 月那次虧到 22%，持有量只少了 0.8%。現在虧 4%，還持有 112.7 萬顆\n\n從今年的紀錄看，價格回到這兩群人的成本附近時，他們少賣，有時還加碼，沒有一起砍\n\n真的要擔心的情況有兩個。一是微策略賣幣的金額超過付股息需要的量，或是那 48 億美元的美元準備掉得很快。二是 ETF 的持有量掉得比 6 月那次還快，那次一個半月少了 10 萬顆\n\n微策略通常週一公布上週的買賣，明天那份是下一個看得到的數字\n\n#比特幣 #BTC #微策略 #ETF\n\n（數據：微策略持倉 CoinGecko、公司 11/02 公布，賣幣金額 Q3 季報，美元準備為 11 月初報導；ETF 成本與持有量 The Block 推算 11/05；成本線 Bitview 11/07）",
-   "images": [
-    "data/longposts/2026-11-08-mstr.png"
-   ],
-   "charts": [
-    "flows/etfcost"
    ],
    "posted": "2026-11-08"
   },
@@ -58,58 +28,6 @@
     "flows/etf",
     "flows/stab"
    ]
-  },
-  {
-   "id": "2026-11-09-funding-en",
-   "time": "2026-11-09T13:00:00Z",
-   "title": "(EN) ETFs sold 10K BTC in a week and $75K broke. So who's actually buying?",
-   "note": "備用（11/09 寫）：20:00 中文 ETF 篇的英文版，沒有排定，要發再挑時間。不是逐句翻譯：拿掉 11/07 回覆更正和恐慌篇的引用，改引 11/08 英文清算篇的 73.9K–74.8K 清算帶。數字同中文版（費率、Coinbase、那斯達克期貨為 11/09 03:30 UTC＝台北 11:30）；拖到晚上發要更新費率、Coinbase 價差和美股對比。圖1、圖3 網站英文截圖，圖2 自己畫（scratchpad en9/fund_en.py）。 11/09 14:30 照中文版一起改成結論先講＋三個理由，圖順序 ETF／穩定幣／資金費率。",
-   "en": "ETFs sold 10K BTC in a week and $75K broke. So who's actually buying?\n\nPeople are buying, but nobody's willing to chase. ETFs and long-term holders are selling, the buyers are mostly small holders and limit orders waiting lower, and longs aren't defending it either. $75K held over the weekend only because hardly anyone was trading, and it broke on the first headline. I'm cautious for the next few weeks\n\nSellers are in a hurry, buyers are waiting for a discount. US spot ETFs saw $1.28B in net outflows last week, about 10.7K BTC, the most since late June (Chart 1), and long-term holders' supply dropped by 76K BTC in 30 days. The buyers won't chase: on Binance, Coinbase and Bybit spot, aggressive sells beat aggressive buys by 2.3K BTC over 7 days, so sellers have to keep cutting price to get filled. Coinbase has traded below Binance for 64 days straight, and stablecoins waiting on exchanges shrank by $13.4B in 30 days, one of the fastest drops in 6 years (Chart 2)\n\nLongs aren't holding it up either. Several posts on X these past two days read funding near 10% as \"longs defending $75K\", and I wrote the same thing in a reply on Nov 7, so a correction: around 10% is just the default. When perps trade at spot, funding sits right there (Chart 3). When $75K broke, OKX funding fell from 10% to 2.3% overnight. Crowded longs make funding spike first and then collapse, and that didn't happen\n\nVolume is too thin to hold anything. Nov 7 volume was a third of normal, then Nvidia's board said it's investigating Jensen Huang and BTC fell from $75.6K to $73.5K in 15 minutes. It only bounced once US stock futures opened flat\n\nWhat happened after weeks like this? A 10K BTC week has usually been the start. It's happened just 3 times since the ETFs launched, each time the selling ran several more weeks and price was lower a month later; the selling ended on the worst week, 24K+ BTC out. This week looks like an early one\n\nAll 3 were in a bear market, though. If June 30 was this cycle's bottom, we're in a bull market now and this is its first 10K BTC week, so the selling could stop after a week or two instead of a month-long slide. To tell the two apart, watch long-term holders in loss: 35% now, and a move toward 45% (around $61K) would mean June 30 wasn't the bottom, the bear market isn't over, and the next few weeks look like those 3\n\nThis week I'm watching for ETF inflows or Coinbase back above Binance, either one means the selling has stopped. The next price level is the 200-day average at $73.2K\n\n#Bitcoin #BTC #ETF\n\n(Data: ETF flows The Block / Farside, Nov 6 provisional; LTH supply Bitview Nov 7; spot taker flow Binance, Coinbase, Bybit 7 days to Nov 8; OKX funding Nov 9; Coinbase spread Nov 9; stablecoins DefiLlama Nov 8; volume Kraken Nov 7; LTH in loss CheckOnChain Nov 8)",
-   "images": [
-    "data/longposts/2026-11-09-funding-en.png"
-   ],
-   "charts": [
-    "flows/etf",
-    "flows/stab"
-   ]
-  },
-  {
-   "id": "2026-11-08-liq-en",
-   "time": "2026-11-08T13:30:00Z",
-   "title": "(EN) Most of the leverage is sitting just under $75K",
-   "note": "英文長文（11/08 晚上）：網站清算熱力圖 11/08 改成 Coinalyze 7 家交易所、新增「每日多空清算量」。數據：deriv.liq_heat（11/08 00:00 UTC 快照；下方 5% 內推算多單 52,291 顆、上方空單 17,180 顆；73,900–74,800 約 2.07 萬顆、71,200–73,800 約 3.93 萬顆；上方最近 82,000–82,900）；deriv.liq_vol（到 11/07；30 天多單 13.6 億、空單 6.31 億、占 68.3%、第 86 百分位；多單占比 ≥70% 的 7 次 90 天後 5 次較高、中位 +17.7%，基準 +8.6%；例外 2025-08-29 −15.7%、2025-10-31 −22.8%；10/30 又越過 70%）。立場：不太擔心 74K 那一帶，像清槓桿不像熊市開頭；錯的條件是跌穿 71–74K 後多單清算還連續幾週占多數。圖：Chart 1 deriv #c-liq、Chart 2 deriv #c-lqv（英文版網站截圖）。",
-   "en": "Most of the leverage is sitting just under $75K. I'm not too worried about it.\n\nEveryone is looking at the same bright band on the liquidation maps right now. It's real, and it's right below us.\n\nWe just rebuilt our map with open interest from 11 BTC perpetuals on 7 exchanges (Binance, Bybit, OKX, Hyperliquid and three more), instead of OKX alone. Within 5% of the Nov 7 close ($75.8K), about 52K BTC of long positions would get force-closed on the way down. The shorts sitting within 5% above add up to about 17K BTC. Three to one (Chart 1)\n\nThe nearest band is $73.9K to $74.8K, only 2% away, around 21K BTC. Right under it, $71.2K to $73.8K holds another 39K BTC. A long liquidation is a market sell, so if price slips into those bands the drop can run faster than the news behind it. Going up, there's nothing big until $82K. In the short run the risk is lopsided, and I'd rather say that plainly\n\nThe second chart is the part people skip. These are actual exchange liquidation records, not estimates. Over the last 30 days, 68% of everything liquidated was longs: $1.36B of longs against $631M of shorts. Since late 2022, the long share has only been this high about 14% of the time. A lot of the leverage has already been flushed out (Chart 2)\n\nSo what has a flush like this meant before? Since October 2022, the 30-day long share has crossed 70% seven times. Ninety days later BTC was higher in five of them, with a median of +18%. On a random day the median 90-day return in that period was +9%\n\nThe two misses were August and October 2025, both within two months of the cycle top, with the whole bear market still ahead. The wins include February and June 2026, in the middle of the drawdown\n\nWe crossed 70% again on October 30. This doesn't look like late 2025 to me. We're 13 months past the top, price is 39% below it, and longs have already taken the bigger hit this month. A dip into the $74K band would hurt late longs, but moves like that have more often cleared the deck than started a new leg down\n\nI'd change my mind if price cuts through the $71K to $74K bands and long liquidations keep dominating for weeks after. That would look more like a market feeding on its own forced selling than a flush\n\nTwo caveats. The heatmap is an estimate built from open interest and assumed leverage, not real positions. Exchange liquidation feeds also undercount, and Hyperliquid isn't in them. Seven cases is a small sample, so treat this as a lean, not a forecast\n\n#Bitcoin #BTC\n\n(Data: Coinalyze open interest and liquidations, heatmap snapshot Nov 8 00:00 UTC, daily liquidations through Nov 7)",
-   "images": [
-    "data/longposts/2026-11-08-liq-en.png"
-   ],
-   "charts": [
-    "deriv/liq",
-    "deriv/lqv"
-   ]
-  },
-  {
-   "id": "2026-11-09-sx",
-   "time": "2026-11-09T04:00:00Z",
-   "title": "連跌 5 週、賣壓到頂，熊市又回來了嗎？",
-   "note": "11/09 早上 08:00 週線收盤後再發。合併「連跌 5 週」和「賣壓累積到 100」兩個題目（使用者決定合成一篇）。發之前確認兩件事：① 11/08 週線收在 77,666 以下（11/08 23:07 台北時 75,980）；如果收在上面，第一段和週線那兩段要改成「連跌 4 週後收紅」，先不要發。② 動能品質：寫的是「0.30 左右、卡在門檻上」，如果收盤後網站已經顯示「底部組合成立」，把那段改成「已經低於 0.3，組合成立」。數字來源：賣壓到 100 的 23 次用 Bitview 每日收盤重算（網站參數：21 天、0.7、0.45、30、50、0.7，間隔 60 天，2012-06 起）；週期頂底取 cycle.tops／bottoms，另加 2011 年頂底。底部之後 14 次：90 天 13 次高、中位 +27.9%，30 天 9 次高、中位 +3.1%（底部之後隨便一天 30 天中位 +7.2%、90 天 +25.2%），90 天內最深回撤中位 −5.5%；頂部之後 9 次：90 天 3 次高、中位 −23.9%。週線連跌 5 週以上 6 次（2012 起；200 日均線從 2012 年才算得出來）（2014/4、2014/10、2015/1、2015/8、2022/5、2026/3）全部在 200 日均線下方；上升均線上方連跌 4 週 4 次，90 天 +13.0/+23.4/+16.8/+8.3。網站的「底部組合」是 21 次（多一個動能 < 0.3 條件、混用價格來源），和這裡的 23 次不是同一個條件。圖1 market #c-sx；圖2 自製（scratchpad sx/hist.py）。立場和恐慌篇同一個前提（6/30 是底），錯的條件同樣是長期持有者虧損比例往 45%（約 62K）。 11/09 08:00 收盤後補（使用者：黃仁勳事件，原本的文章不取消、只增加）：收盤 74,851（Binance 日線，Bitview 還沒更新）；動能品質 0.252、200 日均線 73,127（Bitview 到 11/07 再加這根算）；底部組合成立，那段已改。加了凌晨 73.5K 那段和跌破 200 日均線的錯的條件。網站跑完後確認卡片上的組合狀態跟文章一致。 11/09 08:30 網站更新後再對一次（使用者：網站數據都更新了，調整所有文章）：收盤改成網站的 74,738、200 日均線 73,171；網站卡片「底部組合成立」、已連 3 天在 100，組合那段加網站 21 次的統計（chips.stress.f90 13/21、中位 +14.7%；ex.dip 中位 −9.3%、ex.days 40）；長期持有者虧損 34.6%、打破價 61,000（onchain.lthloss.cohort）。圖1 重截。 11/09 08:40 使用者決定跟輝達篇對調：改 12:00 發。",
-   "zh": "2012 年以來，比特幣只要還在往上走的 200 日均線上方，最多就連跌 4 週。這週是第 5 週\n\n週線從 10/04 的 86.2K 一路往下收，11/08 收在 74,738。我們網站上的「賣壓累積」這幾天也頂滿 100 了（圖1）\n\n這個指標是我們自己做的，只看每天收盤。它看的是弱勢磨了多久：近 21 天跌得越穩，分數加得越快；來一段又急又穩的上漲，就直接清零。這一輪是 10/12 從 0 開始爬，爬了快 4 週才滿。價格看起來只從 80K 掉到 75K，好像沒什麼，其實已經被磨了一個月\n\n賣壓頂到 100，2012 年以來有 23 次（隔 60 天以上才算新的一次）。重點是要分兩堆看（圖2）\n\n一堆在週期底部之後、下一個頂部之前，14 次。90 天後 13 次是漲的，中位數 +28%，只有 2019 年 10 月那次跌了 14%\n\n另一堆在頂部之後，9 次。90 天後只有 3 次是漲的，中位數 −24%\n\n週線連跌也是同一個樣子。2012 年以來連跌 5 週以上的 6 次，全都發生在價格跌破 200 日均線之後。均線還往上的時候，以前最多就連跌 4 週，一共 4 次：2014/3、2016/8、2020/7、2024/4，之後 90 天都是漲的，+8% 到 +23%\n\n11:30 是 75.1K，200 日均線在 73.2K，還在往上。這次真的沒有一模一樣的先例\n\n而且這條線今天凌晨差點就被碰到。輝達董事會宣布調查黃仁勳，比特幣跟著那斯達克合約 15 分鐘殺到 73.5K，離 200 日均線只差 300 多塊，美股期貨開盤後才拉回來。不過到 11:30，那斯達克期貨已經比週五收盤高 0.6%，比特幣還低 0.8%，美股彈回去了，比特幣沒有完全跟上。週一美股開盤如果再殺、收盤跌破 73.2K，開頭那個「均線上方最多連跌 4 週」的前提就沒了，會變成跟以前那 6 次一樣，是在均線下面連跌\n\n所以又回到那個老問題：我們現在在頂部之後，還是底部之後？\n\n頂部之後那 9 次裡，也有 3 次是在往上走的均線上方：2014/2、2018/1、2021/12。這 3 次 90 天後都更低，跌了 9% 到 29%。可是它們都發生在頂部之後一兩個月，熊市才剛開頭，均線根本還來不及彎下來\n\n現在呢？離 2025/10 的 124.8K 頂部已經 13 個月，價格從頂部跌了 39%。中間 6/30 還殺到過 58.5K，那天拿了超過 155 天的長期持有者，有 45% 的幣在虧，跟前三輪熊底差不多痛。網站的週期模型就把那天當成這輪的底\n\n如果這個前提成立，現在就是底部之後第一次比較大的回檔。這 5 週比較像牛市初期一次磨得比較久的洗盤，熊市沒有回來\n\n不過 90 天後偏漲，不代表這幾天就跌完了。底部之後那 14 次，30 天後只有 9 次是漲的，中位數 +3%，比底部之後隨便挑一天還差（+7%）。90 天內通常還會再往下探 5% 左右，2013/6 和 2020/3 那兩次更狠，先又跌了 35% 以上。賣壓滿了，只代表大家被磨很久了，底不一定已經出來\n\n還有一個要盯的是動能品質。11/08 收盤後掉到 0.25，低於網站「底部組合」的門檻 0.3，賣壓又已經連 3 天頂在 100，所以組合亮了（圖1 右上）。網站記錄的 21 次組合，90 天後 13 次是漲的，中位數 +15%。但從亮起到解除，中間通常還會再跌 9% 左右，要 40 天上下才走完\n\n接下來要盯的，跟昨天恐慌篇是同一個：長期持有者的虧損比例。現在 34.6%，如果往 45% 走（照現在的籌碼，大概是價格到 61K 左右），那就是我看錯了，6/30 不是底，這次比較像熊市剛開始的那 3 次\n\n這些都是過去的紀錄。23 次拆成兩堆，每堆都不多，參數動一下，次數也會差個幾次\n\n#比特幣 #BTC\n\n（數據：每日收盤 Bitview，週線以週日 UTC 收盤計，11/08；賣壓累積與動能品質為破曉自製，11/08；長期持有者虧損比例 CheckOnChain，11/08；11/09 盤中 Binance、Hyperliquid 5 分鐘線，現價與那斯達克期貨為 11/09 11:30）",
-   "images": [
-    "data/longposts/2026-11-09-sx.png"
-   ],
-   "charts": [
-    "deriv/sx"
-   ]
-  },
-  {
-   "id": "2026-11-09-nvda",
-   "time": "2026-11-09T01:00:00Z",
-   "title": "黃仁勳出事，比特幣又要陪美股一起跌嗎？",
-   "note": "11/09 臨時加的（使用者：黃仁勳事件，原本的長文不取消，另外加一篇）。建議 09:00 發（11/09 08:40 使用者決定跟賣壓篇對調，新聞熱點先發）；美股 22:30 才開，發之前看一下 Hyperliquid 輝達、那斯達克 100 合約（xyz:NVDA、xyz:XYZ100）有沒有大變，有的話圖3 那段改成最新的。相關係數：比特幣 Bitview UTC 收盤 vs 那斯達克綜合指數（Yahoo ^IXIC）紐約收盤，只取美股交易日，對數報酬 30 日滾動，2016 起；11/05 0.832、11/06 0.827，2022-05-12 0.830（前十名只有這兩段）；2026 平均 0.47，8/28 0.15。比特幣對輝達 30 日 0.63。10/06（那斯達克、輝達都是收盤新高）到 11/06：那斯達克 −10.9%、比特幣 −11.0%、輝達 −22.0%。9/25–11/06 共 30 個交易日：那斯達克漲 15 天平均 +0.76%（比特幣 +0.79%），跌 15 天 −1.38%（−1.44%）。那斯達克單日 ≤ −5%（2014 起，5 個交易日內算同一段）：2020-03-09（90 天 +24.3%，30 天內最低 −36.2%）、2020-06-11（+10.1%，−3.1%）、2025-04-03（+31.2%，−7.7%）屬週期底部之後；2022-09-13（−14.9%）在頂部之後。盤中：輝達合約 04:00 起 187.5 → 04:30 那根最低 180.15；那斯達克 100 合約 05:45 那根 26,710、06:45 最低 26,655，07:00 期貨開盤後 26,998；比特幣 05:40 收 75,607 → 05:55 那根最低 73,510，07:15 75.5K。圖1、圖2 自畫（scratchpad nv/charts.py），圖3 同快訊（nv/flash.py）。立場前提跟其他篇一樣（6/30 是底）。 11/09 08:30 補週線收盤 74,738（網站）。 11/09 08:45 圖3 和那句更新到 08:40（xyz:XYZ100 −0.77%、xyz:NVDA −3.78%、BTC −1.42%，都是對 03:00）。 11/09 08:52 使用者問「比特幣是不是比美股弱」→ 加一段：週五美股收盤（11/06 21:00 UTC）到 08:50，NQ=F 27,085.25 → 26,902.25（−0.68%），BTC Binance 75,698 → 75,143（−0.73%）；對 03:00，XYZ100 最深 −1.37%、BTC −3.2%。 11/09 08:55 價格和圖3 更新到 08:55（NQ=F 26,942.75、BTC 75,213、xyz:XYZ100 對 03:00 −0.23%、xyz:NVDA 181.25 −3.32%）。",
-   "zh": "比特幣跟那斯達克現在綁得跟 2022 年 5 月一樣緊。那個月 Luna 崩盤，比特幣從 3 萬 8 一路跌到 2 萬 9\n\n這裡看的是過去 30 個美股交易日，比特幣和那斯達克每天漲跌的相關係數。1 是完全同步，0 是各走各的。11/05 是 0.83，2016 年以來只有 2022 年 5 月到過這麼高（圖1）。今年平均才 0.47，8 月底還只有 0.15，兩個月就綁死了\n\n綁到什麼程度？10/06 那斯達克和輝達同一天創新高，到 11/06，那斯達克跌了 10.9%，比特幣跌了 11.0%，輝達跌了 22%（圖2）。連每天的漲跌幅都差不多：過去 30 個交易日，那斯達克漲的那 15 天平均 +0.76%，比特幣 +0.79%；跌的那 15 天，那斯達克平均 −1.38%，比特幣 −1.44%\n\n今天凌晨就是現場示範（圖3）。輝達董事會宣布要調查黃仁勳，紐時和 FT 報導美國情報單位懷疑一位跟他關係很近的商人是中國間諜，董事會說目前沒有理由認為機密外洩。美股週末不開，但 Hyperliquid 上追蹤美股的永續合約照樣在交易\n\n04:00 消息傳出，輝達合約不到 40 分鐘跌了快 4%，比特幣幾乎沒動。一直到 05:45 那斯達克 100 合約也往下走，比特幣才跟著 15 分鐘從 75.6K 殺到 73.5K。07:00 美股期貨開盤，那斯達克合約拉回平盤，比特幣也回到 75.5K，輝達合約還是低 3%。之後兩邊一起來回晃：那斯達克合約 08:30 又滑回 −0.8%，比特幣跟著掉回 74.8K，08:00 週線收在 74,738；到 08:55，那斯達克合約回到 −0.2%，比特幣也回到 75.2K，輝達合約還是低 3.3%\n\n你可能會覺得比特幣比美股弱：凌晨它最多跌了 3.2%，那斯達克合約只跌 1.4%。但從週五美股收盤算到 08:55，那斯達克期貨 −0.53%，比特幣 −0.64%，幾乎一樣。多跌的那段是比特幣自己的槓桿：73.9K 到 74.8K 擠了一堆多單，一碰到就連環強平，加上週末成交量小，跌幅被放大，不是買盤比美股差\n\n所以比特幣盯的不是輝達，是整個那斯達克。只是這兩週那斯達克的焦點剛好就是輝達：11/17 財報，11/18 黃仁勳到眾議院閉門說明\n\n那斯達克單日跌超過 5%，以前比特幣後來怎麼走？2014 年以來不算這次，有 4 段：2020/3、2020/6、2022/9、2025/4\n\n在週期底部之後的是 3 段，90 天後比特幣都比較高，+24%、+10%、+31%。但 30 天內都還有更低的點，2020/3 那次更是先再跌了 36%\n\n唯一在頂部之後的是 2022/9，90 天後低了 15%\n\n我看下來，比特幣這一個多月沒有比美股爛，它是被美股拖著走。週線連跌 5 週，跟那斯達克從高點跌了 11% 是同一件事，不是比特幣自己出了什麼問題\n\n所以接下來兩週，比特幣的方向盤大概在美股手上，輝達財報和國會那兩天會是最晃的時候。如果 6/30 真的是這輪的底，這次比較像前面底部之後那 3 段：短線還會被拖，拉長來看不是熊市回來\n\n接下來要看比特幣什麼時候跟美股「脫鉤」，又往哪邊脫。如果那斯達克站穩了，比特幣還繼續往下，那就不是被拖累，是比特幣自己的問題。反過來，如果美股再跌、比特幣開始不跟，綁著走的壓力就在鬆了\n\n30 天相關係數變得很快，8 月底到現在就從 0.15 跳到 0.83。那斯達克大跌的樣本也只有 4 段，只能當參考\n\n#比特幣 #BTC #輝達 #那斯達克\n\n（數據：比特幣每日收盤 Bitview（UTC），那斯達克綜合指數、輝達紐約收盤 Yahoo，兩邊收盤差約 3 小時，到 11/06；盤中走勢比特幣 Binance、美股合約 Hyperliquid，5 分鐘線，11/09 台北時間；那斯達克期貨 Yahoo；清算帶 Coinalyze 推算 11/08；週線收盤 11/08 UTC；輝達董事會聲明、CNBC 11/08）",
-   "images": [
-    "data/longposts/2026-11-09-nvda.png"
-   ],
-   "charts": []
   },
   {
    "id": "2026-11-09-w50-en",
@@ -150,6 +68,17 @@
    "charts": [
     "cycle/cyccmp"
    ]
+  },
+  {
+   "id": "2026-11-10-msci",
+   "time": "2026-11-10T11:30:00Z",
+   "title": "明天 MSCI 公布名單，Strategy 被踢出指數，BTC 會被賣嗎？",
+   "note": "11/10 加排的中文問題型長文，19:30 發（CPI 21:30、英文週期篇 20:00）。Grok 11/09 晚上：中文區 Strategy／MSCI 討論在升溫，11/11 MSCI 公布名單。8-K 數字逐項對過 SEC 原文（mstr-20261109.htm）。MSCI：The Block 10/15 說規則定案、11/11 公布可能受影響名單；Startup Fortune 10/16 說暫時維持現狀，兩邊矛盾，文中只寫「報導說法不一，明天名單出來才算數」。發之前：如果 MSCI 名單已經提前出來，開頭和第二段要改寫。前一週（10/26–11/1）買 811 顆是用現金，所以文中寫「這週」全靠賣股票。圖是自畫（scratchpad msci/proceeds.py，沒進 git）。",
+   "zh": "明天 MSCI 公布名單，Strategy 被踢出指數，BTC 會被賣嗎？\n\n明天 11/11，MSCI 要公布名單，列出可能被移出指數的「非營運公司」。Strategy 在今年 5 月的模擬名單上。這兩天中文區問最多的就是這句：被踢出去，會不會逼它賣 BTC？\n\n從規則看，不會直接逼。被踢出指數，跟著 MSCI 指數買的被動基金要賣的是 MSTR 的股票，不是 Strategy 手上的幣。Strategy 9 月的公開信也說，這對公司業務沒有實質影響。至於會不會真的被踢，報導說法不一，有的說規則已經定案，有的說暫時維持現狀，明天名單出來才算數\n\n麻煩在另一頭：它買幣的錢，這週全靠賣股票。昨晚的公告（11/2–11/8 那週），賣了約 205 萬股 MSTR，拿到 2.84 億美元，只有 29% 拿去買 BTC，買了 1,036 顆；三分之二拿去買回自家的優先股（圖1）。股價如果被被動基金的賣盤壓著，同樣賣一股換到的錢就少，能拿去買幣的就更少\n\n那會不會反過來賣幣？手上 850,364 顆，平均成本 75,456，昨天收盤 75.3K，價格就壓在它的成本上。可是付優先股股息的美元準備還有 47.7 億，這週只用掉 2,110 萬。說明它短期內沒有非賣幣不可的理由。它賣不賣，看的是付股息的現金夠不夠，不是價格跌到哪。所以「Strategy 被踢，BTC 就會被砸」這個說法，我個人覺得是把兩件事硬接在一起。被踢比較可能讓它少買，不太會讓它賣\n\n接下來可以自己核對兩件事。明天名單上有沒有 Strategy；下週一的公告，買幣的錢有多少、從哪來。真的出現賣幣，而且金額超過付股息要的量，那才是要擔心的\n\n#比特幣 #BTC #微策略 #MSTR\n\n（數據：Strategy 2026/11/09 向 SEC 提交的 8-K（11/2–11/8：賣出 MSTR 2,051,348 股、淨收入 2.838 億美元，買 BTC 8,190 萬、買回 STRC 1.883 億、留現金 1,360 萬；持有 850,364 顆、平均成本 75,456；美元準備 47.7 億、本週動用 2,110 萬付優先股股息）；MSCI 規則與 11/11 名單 The Block 10/15 報導，5 月模擬名單為 Strategy、Metaplanet、Yellow Cake；暫時維持現狀的說法見 Startup Fortune 10/16；收盤 Bitview 11/09）",
+   "images": [
+    "data/longposts/2026-11-10-msci.png"
+   ],
+   "charts": []
   }
  ],
  "used": [
@@ -194,6 +123,50 @@
    "charts": [
     "cycle/hnupl"
    ]
+  },
+  {
+   "id": "2026-11-08-panic",
+   "date": "2026-11-08",
+   "charts": [
+    "onchain/sthpnl",
+    "onchain/npl",
+    "onchain/lthloss"
+   ]
+  },
+  {
+   "id": "2026-11-08-mstr",
+   "date": "2026-11-08",
+   "charts": [
+    "flows/etfcost"
+   ]
+  },
+  {
+   "id": "2026-11-09-funding-en",
+   "date": "2026-11-09",
+   "charts": [
+    "flows/etf",
+    "flows/stab"
+   ]
+  },
+  {
+   "id": "2026-11-08-liq-en",
+   "date": "2026-11-08",
+   "charts": [
+    "deriv/liq",
+    "deriv/lqv"
+   ]
+  },
+  {
+   "id": "2026-11-09-sx",
+   "date": "2026-11-09",
+   "charts": [
+    "deriv/sx"
+   ]
+  },
+  {
+   "id": "2026-11-09-nvda",
+   "date": "2026-11-09",
+   "charts": []
   }
  ]
 }
