@@ -111,8 +111,8 @@ def same(a, b, keys=('x', 'y', 'w', 'h', 'cy', 'ch')):
 
 
 def clip_of(box, crop):
-    """截圖範圍（文件座標）：預設整個外框；crop=chart 是外框頂到圖底（含標題列、解讀、圖例、圖）"""
-    h = box['cy'] + box['ch'] - box['y'] + 16 if crop == 'chart' else box['h']
+    """截圖範圍（文件座標）：預設整個外框；crop=chart 是外框頂到圖底（含標題列、解讀、圖例、圖）；crop 給數字＝從外框頂往下截這麼高（next_shot.py 的放大檢視用）"""
+    h = box['cy'] + box['ch'] - box['y'] + 16 if crop == 'chart' else min(box['h'], crop) if isinstance(crop, (int, float)) else box['h']
     return dict(x=box['x'], y=box['y'], width=box['w'], height=h, scale=1)
 
 
