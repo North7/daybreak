@@ -28,4 +28,12 @@ python3 pipeline/next/build.py --no-interp # 只改版面時：沿用上一次�
 
 - 這裡的 `site_data.py` 和 `pipeline/site_data.py` 同名但無關；`build.py` 會先找這個資料夾裡的模組。
 - 數字格式只能用 `page.html` 裡 `FM` 有定義的（例如 `n1`、`n3`、`pct1`；沒有 `n2`），寫錯會整頁報錯。
-- 運營的截圖工具（`ops/post/site_shot.py`）、推薦圖表（`pipeline/picks.py`）截的是舊版 `classic.html` 的面板，不是這裡。
+- 每日推薦圖表（`pipeline/picks.py`）和回覆卡片用 `ops/post/site_shot.py` 截舊版 `classic.html` 的面板。長文配圖從 2026-11-11 起改用 `ops/post/next_shot.py` 截這裡的新版卡片。
+- `next_shot.py` 靠下面這些掛點找卡片。改名或拿掉的話，它會報 ERROR、結束碼 1：
+  - `data/next.js`：`site.chapters[].groups[].charts[]` 的 `k`、`id`、`zh`／`en`、`nofx`、`na`
+  - 分頁：`#oc-crumb button[data-ch="N"]`
+  - 卡片：`#oc-ol<組>_<序>`（組從 1、序從 0）、外框 `.fc`、標題 `h4`
+  - 放大檢視：卡片裡的 `[data-fx]`、`#oc-fx.on`、`#oc-olF`、`#oc-orF`、`.fx-x`
+  - 卡片內：`.ol-ctl button[data-rg|data-m|data-ly]`、`.ol-say`、`.sy-m`、`.ol-how`、`.fx-b`、`.ol-f`、`.ol-c`、`[id^="oc-pr"]`
+  - 關動畫靠 `prefers-reduced-motion: reduce` 那一段，語言靠 `localStorage` 的 `daybreak.lang`
+- 改了上面任何一項，先跑 `python3 ops/post/next_shot.py --list` 和一張實際截圖確認。
