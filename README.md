@@ -279,6 +279,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-11** 修：「上格價格、下格指標」的圖（共 42 張）下格縱軸刻度數字看不到。11/04 加時間範圍切換時，用來剪掉左緣多餘線段的裁切框把右邊留白一起剪掉了，刻度數字和門檻標籤都畫在那裡；改成只剪左邊。刻度出現後有三張圖的標籤會相疊，一併調整：維基百科關注度（×2 靠近門檻 ×2.5 時只留線）、Coinbase 溢價（離深度折價線標籤不到 14px 的刻度只留線）、每日多空清算量（手機不標 ±$20M）
 - **2026-11-11** 鏈上版「賣出的人賺還是賠」新增「短期持有者集中止盈與認賠」（使用者要求；本站自製，資料 Bitview）
   - 算法：持有未滿 6 個月的幣每天的實現獲利、實現虧損（美元）各自 ÷ 短期持有者實現市值，5 日指數平均，再算和自己近 105 天比的 z 分數。止盈強度畫在上、認賠強度畫成負值在下；超過 2 的期間鋪底色，峰值用膠囊標。`onchain.sthsig`（`stage_viz.sthsig_viz`），不另打 API。
   - 2012 年起回測（照實寫在面板上）：集中認賠 64 次，30 天後 33/63 次上漲、中位 +1.8%，90 天後 35/63、+10.6%，和任一天（57%、+3.0%；60%、+10.1%）沒有差別，不是低風險買點。集中止盈 57 次整體也不是賣出訊號（90 天後 34/54 上漲、+13.4%），要看位置：收盤在 200 日均線上方 27/31 次上漲（中位 +35%），在下方只有 7/23 次（中位 −8%）。
@@ -633,6 +634,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-11** Fix: the lower-pane axis numbers were invisible on every “price on top, indicator below” chart (42 charts). The clip added on Nov 4 with the time-range switch, meant to cut lines that run past the left edge, also cut the right margin where the axis numbers and threshold labels are drawn; it now clips the left side only. With the numbers back, three charts had labels touching and were adjusted: Wikipedia attention (×2 keeps its line but drops its label when it sits next to the ×2.5 threshold), Coinbase premium (ticks within 14px of the deep-discount label keep the line only) and daily liquidations (no ±$20M labels on phones)
 - **2026-11-11** New on the On-chain page under “Are sellers in profit or at a loss”: “Short-term holder profit-taking and capitulation spikes” (requested by the user; our own reading, Bitview data)
   - Method: the profit and the loss realized each day on coins held under 6 months (USD), each divided by the short-term holder realized cap, smoothed with a 5-day exponential average, then scored against its own last 105 days (z-score). Profit-taking is drawn upward, capitulation as negative; periods above 2 are shaded and peaks carry a capsule. `onchain.sthsig` (`stage_viz.sthsig_viz`), no extra API calls.
   - Backtest since 2012 (shown as is on the panel): 64 capitulation spikes; 30 days later 33 of 63 rose, median +1.8%; 90 days later 35 of 63, +10.6% — the same as any day (57%, +3.0%; 60%, +10.1%), so not a low-risk entry. 57 profit-taking spikes are not a sell signal overall either (34 of 54 higher after 90 days, +13.4%); position matters: with the close above the 200-day average 27 of 31 rose (median +35%), below it only 7 of 23 (median −8%).

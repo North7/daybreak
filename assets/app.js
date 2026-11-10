@@ -2099,7 +2099,7 @@
       if ((t === 2e3 || t === 5e3 || t === 2e4 || t === 5e4 || t === 2e5) && ph - pl > 2.2) return;   // 跨好幾個數量級時只標 10 的次方
       s += C.gl(Yp(t), t >= 1000 ? fmt.k(t) : '$' + t);
     });
-    var cid = 'cp' + Math.random().toString(36).slice(2, 8), clip = '<defs><clipPath id="' + cid + '"><rect x="' + ML + '" y="0" width="' + pw + '" height="' + Ht + '"/></clipPath></defs>';   // 選了 1 年／3 年時，下格用的是完整資料，超出左緣的部分剪掉
+    var cid = 'cp' + Math.random().toString(36).slice(2, 8), clip = '<defs><clipPath id="' + cid + '"><rect x="' + ML + '" y="0" width="' + (W - ML) + '" height="' + Ht + '"/></clipPath></defs>';   // 選了 1 年／3 年時，下格用的是完整資料，超出左緣的部分剪掉；只剪左邊，右邊留白要留著（下格的刻度數字、門檻標籤畫在那裡，2026-11-11 修）
     s += clip + '<g clip-path="url(#' + cid + ')">' + o.body(C) + '</g>';
     s += axText(ML, MT - 5, _T('BTC 價格（對數刻度）', 'BTC price (log scale)')) + axText(ML, ys0 - 9, o.label);
     var ya = new Date(x0 * 864e5).getUTCFullYear() + 1, yz = new Date(x1 * 864e5).getUTCFullYear(), every = Math.max(1, Math.ceil(46 * (yz - ya + 1) / pw));   // 年份標籤至少隔 46px
@@ -2514,7 +2514,8 @@
     var x = (D.deriv || {}).liq_vol; if (!x || !el) return;
     var mk = (x.top || []).map(function (t) { var L = t.long >= t.short; return { x: dnOf(t.date), y: L ? -t.long : t.short, t: ymdS(t.date).slice(2) + ' ' + lqvM(L ? t.long : t.short), col: L ? 'var(--down)' : 'var(--up)', up: !L }; });
     oxPane(el, { rows: x.rows, rng: 365, zero: true, tf: LQ_T,   // 不用 fit：手機不分範圍、畫全部，縱軸要包含全部（平方根刻度下差別很小）
-      ticks: [-1000, -300, -100, -20, 0, 20, 100, 300, 1000], fmt: function (t) { var a = Math.abs(t); return !t ? '0' : a >= 1000 ? '$' + a / 1000 + 'B' : '$' + a + 'M'; },
+      ticks: [-1000, -300, -100, -20, 0, 20, 100, 300, 1000].filter(function (t) { return Math.abs(t) !== 20 || el.clientWidth >= 520; }),   // 手機的下格比較矮，±$20M 的字會和 0 疊在一起
+      fmt: function (t) { var a = Math.abs(t); return !t ? '0' : a >= 1000 ? '$' + a / 1000 + 'B' : '$' + a + 'M'; },
       label: _T('每日清算量（美元，壓縮刻度）', 'Daily liquidations (USD, compressed scale)'), aria: _T('BTC 價格與每日多空清算量', 'BTC price and daily long and short liquidations'),
       bars: [{ i: 2, pos: 'var(--up)', neg: 'var(--up)', op: 0.85, name: _T('空單被清算', 'Shorts liquidated'), tfmt: function (v) { return lqvM(v); } },
         { i: 3, pos: 'var(--down)', neg: 'var(--down)', op: 0.85, name: _T('多單被清算', 'Longs liquidated'), tfmt: function (v) { return lqvM(-v); } }],
@@ -2874,7 +2875,7 @@
       scale: function (C) { return function (v) { return C.ys0 + (1 - (Math.max(lo, Math.min(hi, v)) - lo) / (hi - lo)) * C.hs; }; },
       body: function (C) {
         var s = '', z = C.Ys(0), yd = C.Ys(CB_DEEP), st = hi - lo > 0.6 ? 0.2 : 0.1;
-        for (var g = Math.ceil(lo / st) * st; g <= hi + 1e-9; g += st) { if (Math.abs(g) < 1e-9) continue; var gy = C.Ys(g); s += C.gl(gy, Math.abs(gy - yd) < 11 ? null : pf(+g.toFixed(2))); }
+        for (var g = Math.ceil(lo / st) * st; g <= hi + 1e-9; g += st) { if (Math.abs(g) < 1e-9) continue; var gy = C.Ys(g); s += C.gl(gy, Math.abs(gy - yd) < 14 ? null : pf(+g.toFixed(2))); }   // 離深度折價線標籤不到 14px 的刻度只留線（手機上 -0.20% 會貼著 -0.15%）
         s += C.gl(z, '0', 'base');
         s += '<rect x="' + C.ML + '" y="' + yd.toFixed(1) + '" width="' + C.pw + '" height="' + (C.yb - yd).toFixed(1) + '" fill="var(--down-dim)"/><line x1="' + C.ML + '" x2="' + (C.ML + C.pw) + '" y1="' + yd.toFixed(1) + '" y2="' + yd.toFixed(1) + '" stroke="var(--down)" stroke-dasharray="3 4" stroke-width="1"/>' + C.tx(C.ML + C.pw + 8, yd + 3.5, CB_DEEP + '%').replace('class="ax"', 'class="ax" fill="var(--down-ink)"');
         var bw = Math.max(0.8, C.pw / C.rows.length * 0.7);
@@ -3330,7 +3331,7 @@
       body: function (C) {
         var s = '', ys = C.Ys(x.spike);
         s += '<rect x="' + C.ML + '" y="' + C.ys0.toFixed(1) + '" width="' + C.pw + '" height="' + (ys - C.ys0).toFixed(1) + '" fill="var(--down-dim)"/>';
-        [0.5, 1, 2, x.spike, 5].forEach(function (g) { var y = C.Ys(g); if (y < C.ys0 - 1 || y > C.yb + 1) return; s += C.gl(y, '×' + g, g === 1 ? 'base' : 'gl'); });
+        [0.5, 1, 2, x.spike, 5].forEach(function (g) { var y = C.Ys(g); if (y < C.ys0 - 1 || y > C.yb + 1) return; s += C.gl(y, g !== x.spike && Math.abs(y - ys) < 11 ? null : '×' + g, g === 1 ? 'base' : 'gl'); });   // 離門檻標籤太近的刻度只留線、不寫字（×2 和 ×2.5 會疊）
         return s + '<path class="ln" d="M' + C.rows.map(function (r) { return C.X(r[0]).toFixed(1) + ',' + C.Ys(r[3]).toFixed(1); }).join('L') + '" stroke="var(--s1)" stroke-width="1.3" fill="none"/>';
       },
       over: function (C) { var z = C.rows[C.rows.length - 1]; return dot1(C.X(z[0]), C.Ys(z[3]), 'var(--s1)'); },

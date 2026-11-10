@@ -43,7 +43,7 @@ window.DAYBREAK_BOOT = (function () {
   function go(l) {
     window.DAYBREAK_LANG = l; document.documentElement.lang = l === 'en' ? 'en' : 'zh-Hant';
     if (l !== 'en') return Promise.resolve();
-    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=68216ad7ba'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
+    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=786118b632'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
   }
   var pick = ls('daybreak.lang'); if (pick === 'zh' || pick === 'en') return go(pick);
   var byCC = function (cc) { return ZH.indexOf(String(cc).toUpperCase()) >= 0 ? 'zh' : 'en'; };
@@ -58,7 +58,7 @@ window.DAYBREAK_BOOT = (function () {
   });
 })();
 </script>
-<link rel="stylesheet" href="assets/app.css?v=68216ad7ba">
+<link rel="stylesheet" href="assets/app.css?v=786118b632">
 </head>
 <body>
 <script>
@@ -84,7 +84,7 @@ window.DAYBREAK_BOOT = (function () {
     }
     return o;
   };
-  for (var si = 0; si < document.styleSheets.length; si++) { var ss = document.styleSheets[si]; if (ss.href && ss.href.indexOf('assets/app.css?v=68216ad7ba') >= 0) { try { css = dump(ss.cssRules); } catch (e) {} } }
+  for (var si = 0; si < document.styleSheets.length; si++) { var ss = document.styleSheets[si]; if (ss.href && ss.href.indexOf('assets/app.css?v=786118b632') >= 0) { try { css = dump(ss.cssRules); } catch (e) {} } }
   if (!css) return;   // 讀不到樣式就不擺快照，照舊用暮色
   var P = { c: '比特幣價格週期鏈上資金衍生品出場框架往期方法市場多空頂底熱度成本獲利籌碼供給短長持有者流入淨變化率指數訊號風險波動未實現選擇權到期履約今天新一期判讀結論', n: 'fijlrtI', w: 'mwMW', u: 'ABCDEFGHJKLNOPQRSTUVXYZ', l: 'abcdeghknopqsuvxyz', d: '0123456789' }, K = 6;   // 英文字母依寬度分組換字（同 app.js lfxKind）
   var kind = function (ch) { var n = ch.charCodeAt(0); return n >= 13312 && n <= 40959 ? 'c' : /[0-9]/.test(ch) ? 'd' : !/[A-Za-z]/.test(ch) ? '' : /[fijlrtI]/.test(ch) ? 'n' : /[mwMW]/.test(ch) ? 'w' : ch < 'a' ? 'u' : 'l'; };
@@ -133,7 +133,7 @@ window.DAYBREAK_BOOT = (function () {
 </div>
 <div id="tip" class="tip" role="tooltip" hidden></div>
 <div class="wipe" id="wipe" aria-hidden="true"></div>
-<script src="assets/app.js?v=68216ad7ba"></script>
+<script src="assets/app.js?v=786118b632"></script>
 <script>
 /* 訪客統計 GoatCounter（不用 cookie、不收個資）：站點代號 daybreak（2026-10-13 註冊）；只在正式網址計數 */
 (function () { var code = 'daybreak'; if (!code || location.hostname !== 'north7.github.io') return;
