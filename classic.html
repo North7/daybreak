@@ -1,0 +1,144 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>破曉 Daybreak</title>
+<meta name="description" content="破曉 Daybreak：每天清晨的第一份比特幣簡報。今日要聞與解讀、市場數據、週期位置與分批出場框架。">
+<!-- 連結預覽卡（X 等）預設英文（2026-10-13）；中文版圖卡 assets/og.png 保留 -->
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Daybreak 破曉">
+<meta property="og:locale" content="en_US">
+<meta property="og:locale:alternate" content="zh_TW">
+<meta property="og:title" content="Daybreak 破曉 · The first Bitcoin brief of the morning">
+<meta property="og:description" content="Daily at 08:30 Taipei: today's news and analysis, market data, cycle stage, ETF flows and a staged exit framework. In English and 中文.">
+<meta property="og:image" content="https://north7.github.io/daybreak/assets/og-en.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Daybreak 破曉 — the first Bitcoin brief of the morning">
+<meta property="og:url" content="https://north7.github.io/daybreak/">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:site" content="@songpu717">
+<meta name="twitter:title" content="Daybreak 破曉 · The first Bitcoin brief of the morning">
+<meta name="twitter:description" content="Daily at 08:30 Taipei: news, market data, cycle stage, ETF flows and a staged exit framework. English / 中文.">
+<meta name="twitter:image" content="https://north7.github.io/daybreak/assets/og-en.png">
+<meta name="theme-color" content="#F2F0EA" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0C0C0D" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<meta name="apple-mobile-web-app-title" content="破曉">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=JetBrains+Mono:wght@400;500;700&family=Noto+Sans+TC:wght@900&display=swap">
+<script>
+/* 2026-11-09 換語言的轉場：上一頁剛按了語言切換（8 秒內）→ 開機就先蓋一層同底色的暮色，等新語言畫好再解碼淡出（app.js langIn），不會閃白 */
+try { (function () { var fx = JSON.parse(sessionStorage.getItem('daybreak.lfx') || 'null'), d = document.documentElement; if (fx && Date.now() - fx.t < 8000) { d.classList.add('lfx-in', 'lfx-came'); d.style.setProperty('--lfx-bg', localStorage.getItem('daybreak.theme') === 'dark' ? '#0C0C0D' : '#EEECE6'); } })(); } catch (e) {}
+</script>
+<script>
+/* 開機：先決定語言再啟動 app.js（2026-10-12）。使用者在頁面上選過語言 → 一律沿用（daybreak.lang）；
+   沒選過 → 依 IP 國家：台灣、香港、澳門、中國大陸、新加坡用中文，其他用英文（查詢結果快取 7 天）；IP 查不到 → 看瀏覽器語言。 */
+window.DAYBREAK_BOOT = (function () {
+  var ZH = ['TW', 'HK', 'MO', 'CN', 'SG'], ls = function (k, v) { try { if (v === undefined) return localStorage.getItem(k); localStorage.setItem(k, v); } catch (e) { return null; } };
+  function go(l) {
+    window.DAYBREAK_LANG = l; document.documentElement.lang = l === 'en' ? 'en' : 'zh-Hant';
+    if (l !== 'en') return Promise.resolve();
+    return new Promise(function (ok) { var s = document.createElement('script'); s.src = 'assets/i18n-en.js?v=786118b632'; s.onload = s.onerror = function () { ok(); }; document.head.appendChild(s); });
+  }
+  var pick = ls('daybreak.lang'); if (pick === 'zh' || pick === 'en') return go(pick);
+  var byCC = function (cc) { return ZH.indexOf(String(cc).toUpperCase()) >= 0 ? 'zh' : 'en'; };
+  try { var g = JSON.parse(ls('daybreak.geo') || 'null'); if (g && g.cc && Date.now() - g.t < 7 * 864e5) return go(byCC(g.cc)); } catch (e) {}
+  var nav = /^zh/i.test(navigator.language || '') ? 'zh' : 'en';
+  var ask = function (u, f) { return fetch(u, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) { var c = f(j); if (!c) throw 0; return c; }); };
+  var cc = ask('https://api.country.is/', function (j) { return j.country; }).catch(function () { return ask('https://get.geojs.io/v1/ip/country.json', function (j) { return j.country; }); });
+  var late = new Promise(function (ok) { setTimeout(function () { ok(null); }, 1500); });
+  return Promise.race([cc.catch(function () { return null; }), late]).then(function (c) {
+    if (c) ls('daybreak.geo', JSON.stringify({ cc: c, t: Date.now() }));
+    return go(c ? byCC(c) : nav);
+  });
+})();
+</script>
+<link rel="stylesheet" href="assets/app.css?v=786118b632">
+</head>
+<body>
+<script>
+/* 2026-11-09 換語言不留空白：上一頁存的畫面快照（sessionStorage daybreak.lfx，app.js pickLang）→ 一開頭就擺出來，等新語言畫好由 app.js langIn 拿掉並接著解碼。
+   使用者：「會在亂碼狀態停留卡住的感覺，需要一直動態變」→ 亂碼不靠 JS 計時（新頁面載入、畫圖時主執行緒會被佔住，JS 動畫就停了）：
+   先做 6 份各自亂碼的快照疊起來，用 CSS 每 60 毫秒輪流顯示一份（透明度動畫由合成器跑，主執行緒忙也照樣在變）。
+   同日再改（使用者 iPhone 錄影：換語言時舊畫面會往上縮一截、頂部列不見、停約 0.35 秒再跳回來）：快照原本放 iframe，
+   iPhone 的瀏覽器要等新頁面「主畫面」有足夠的字才肯換掉舊畫面，iframe 裡的字不算，所以一直顯示被往上推的舊畫面，等資料畫好才換。
+   改放進主頁面的 shadow DOM：字算在主畫面裡，新頁面第一次繪製就是快照；shadow DOM 和頁面隔開，app.js 的全頁查詢與 id 都不會抓到快照裡的元素。
+   樣式從已載入的 app.css 逐條抄進 shadow root，選擇器裡的 html／:root／body 換成快照的外框 .lfx-html／.lfx-body；捲動位置由快照外框自己捲（黏住的頂部列照樣黏住） */
+(function () { try {
+  var fx = JSON.parse(sessionStorage.getItem('daybreak.lfx') || 'null'); if (!fx || !fx.h || Date.now() - fx.t > 8000) return;
+  var host = document.createElement('div'); if (!host.attachShadow) return;
+  var css = '', rw = function (s) { return s.replace(/(^|[\s,>+~(])(?::root|html)(?![\w-])/g, '$1.lfx-html').replace(/(^|[\s,>+~(])body(?![\w-])/g, '$1.lfx-body'); };
+  var dump = function (rules) {
+    var o = '';
+    for (var i = 0; i < rules.length; i++) {
+      var r = rules[i];
+      if (window.CSSStyleRule && r instanceof CSSStyleRule) o += rw(r.selectorText) + '{' + r.style.cssText + '}';
+      else if (window.CSSMediaRule && r instanceof CSSMediaRule) o += '@media ' + r.media.mediaText + '{' + dump(r.cssRules) + '}';
+      else if (window.CSSSupportsRule && r instanceof CSSSupportsRule) o += '@supports ' + r.conditionText + '{' + dump(r.cssRules) + '}';
+      else o += r.cssText;
+    }
+    return o;
+  };
+  for (var si = 0; si < document.styleSheets.length; si++) { var ss = document.styleSheets[si]; if (ss.href && ss.href.indexOf('assets/app.css?v=786118b632') >= 0) { try { css = dump(ss.cssRules); } catch (e) {} } }
+  if (!css) return;   // 讀不到樣式就不擺快照，照舊用暮色
+  var P = { c: '比特幣價格週期鏈上資金衍生品出場框架往期方法市場多空頂底熱度成本獲利籌碼供給短長持有者流入淨變化率指數訊號風險波動未實現選擇權到期履約今天新一期判讀結論', n: 'fijlrtI', w: 'mwMW', u: 'ABCDEFGHJKLNOPQRSTUVXYZ', l: 'abcdeghknopqsuvxyz', d: '0123456789' }, K = 6;   // 英文字母依寬度分組換字（同 app.js lfxKind）
+  var kind = function (ch) { var n = ch.charCodeAt(0); return n >= 13312 && n <= 40959 ? 'c' : /[0-9]/.test(ch) ? 'd' : !/[A-Za-z]/.test(ch) ? '' : /[fijlrtI]/.test(ch) ? 'n' : /[mwMW]/.test(ch) ? 'w' : ch < 'a' ? 'u' : 'l'; };
+  var tpl = document.createElement('template'); tpl.innerHTML = fx.h;
+  var frames = '';
+  for (var f = 0; f < K; f++) {
+    var box = document.createElement('div'); box.className = 'lfx-f'; box.style.animationDelay = (-f * 60) + 'ms'; box.appendChild(tpl.content.cloneNode(true));
+    var w = document.createTreeWalker(box, 4), n, list = []; while ((n = w.nextNode())) list.push(n);
+    list.forEach(function (n) { var a = Array.from(n.nodeValue), o = ''; for (var i = 0; i < a.length; i++) { var k = kind(a[i]); o += k && Math.random() < .82 ? P[k].charAt((Math.random() * P[k].length) | 0) : a[i]; } n.nodeValue = o; });
+    frames += box.outerHTML;
+  }
+  host.className = 'lfx-ghost'; host.setAttribute('aria-hidden', 'true'); host.style.width = (fx.w | 0) + 'px';
+  var sr = host.attachShadow({ mode: 'open' }), esc = function (x) { return String(x || '').replace(/[^\w -]/g, ''); };
+  sr.innerHTML = '<style>' + css +
+    '.lfx-sc{position:absolute;top:0;right:0;bottom:0;left:0;overflow:auto;scrollbar-width:none;background:var(--void)}.lfx-sc::-webkit-scrollbar{display:none}' +
+    '.lfx-html,.lfx-body{height:auto;min-height:100%}.lfx-body{position:relative;margin:0}' +
+    '.lfx-f{position:absolute;top:0;left:0;width:100%;opacity:0;will-change:opacity;animation:lfxf ' + (K * 60) + 'ms steps(1,end) infinite}.lfx-f:first-child{position:relative}' +
+    '@keyframes lfxf{0%{opacity:1}' + (100 / K).toFixed(3) + '%{opacity:0}100%{opacity:0}}</style>' +
+    '<div class="lfx-sc"><div class="lfx-html lfx-came" lang="' + (fx.lang === 'en' ? 'en' : 'zh-Hant') + '"' + (fx.theme === 'dark' ? ' data-theme="dark"' : '') + '><div class="lfx-body ' + esc(fx.bc) + '">' + frames + '</div></div></div>';
+  document.documentElement.appendChild(host); sr.querySelector('.lfx-sc').scrollTop = fx.y | 0;
+  window.DAYBREAK_LFX_GHOST = host;
+} catch (e) {} })();
+</script>
+<div class="app">
+  <aside class="rail">
+    <a class="brand" href="#overview" aria-label="破曉 Daybreak 頭版">
+      <svg viewBox="0 0 64 64" aria-hidden="true"><path d="M18 40a14 14 0 0 1 28 0" fill="none" stroke="var(--red)" stroke-width="5"/><path d="M6 40h52" stroke="var(--ink)" stroke-width="5"/></svg>
+      <span class="wordmark"><b>DAYBREAK</b><span>破曉</span></span>
+    </a>
+    <nav class="nav" id="nav" aria-label="模組"></nav>
+    <div class="rail-foot">
+      <div class="edition"><span class="k">本期</span><span class="v" id="ed-date">—</span><span class="live"><i></i><span id="ed-gen">每天台北 08:30 更新</span></span></div>
+      <a class="follow" id="follow-rail" href="https://x.com/songpu717" target="_blank" rel="noopener"><span class="k">追蹤</span><b>X @songpu717</b><span class="arr" aria-hidden="true">↗</span></a>
+      <div class="theme-toggle" id="theme" role="group" aria-label="版本"><button type="button" data-t="light" aria-pressed="true">日刊</button><button type="button" data-t="dark" aria-pressed="false">夜刊</button></div>
+      <div class="theme-toggle lang-toggle" id="lang" role="group" aria-label="語言 Language"><button type="button" data-l="zh" aria-pressed="true">中文</button><button type="button" data-l="en" aria-pressed="false">EN</button></div>
+    </div>
+  </aside>
+  <div class="stage">
+    <header class="top">
+      <div class="crumb"><small id="crumb-k">今天的結論</small><h1 id="crumb-t">總覽</h1></div><div class="m-prefs" id="m-prefs"><button type="button" id="m-theme" aria-label="切換日刊／夜刊"></button><button type="button" id="m-lang" aria-label="切換語言 Switch language"></button></div><div class="clock" aria-live="off">下一期 <b id="nxt">T−--:--:--</b></div>
+      <div class="ticker"><span class="chip flare" id="tk-stance"><i></i>—</span><span class="px" id="tk-px">—</span><span class="chip" id="tk-chg">—</span><span class="asof" id="tk-asof"></span><button type="button" class="fs-btn" id="fs" aria-label="全螢幕"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 9V4h5M20 9V4h-5M4 15v5h5M20 15v5h-5"/></svg>全螢幕</button></div>
+    </header>
+    <main id="view" tabindex="-1"><p class="err">載入中… Loading…</p></main>
+    <footer class="foot"><span>© 破曉 Daybreak</span><span>僅供研究參考，非投資建議</span><span class="hint-kb">按 1–9、0 切換版面，/ 搜尋</span><span class="hint-sw">左右滑動切換版面</span><a class="follow-foot" id="follow-foot" href="https://x.com/songpu717" target="_blank" rel="noopener">每天 08:30 更新・追蹤 <b>X @songpu717</b> ↗</a></footer>
+  </div>
+</div>
+<div id="tip" class="tip" role="tooltip" hidden></div>
+<div class="wipe" id="wipe" aria-hidden="true"></div>
+<script src="assets/app.js?v=786118b632"></script>
+<script>
+/* 訪客統計 GoatCounter（不用 cookie、不收個資）：站點代號 daybreak（2026-10-13 註冊）；只在正式網址計數 */
+(function () { var code = 'daybreak'; if (!code || location.hostname !== 'north7.github.io') return;
+  var s = document.createElement('script'); s.async = true; s.src = 'https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter', 'https://' + code + '.goatcounter.com/count'); document.head.appendChild(s); })();
+</script>
+</body>
+</html>

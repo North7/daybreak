@@ -23,7 +23,7 @@ CHROME = os.environ.get('CHROME') or next((c for c in ('/Applications/Google Chr
     or '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
 PORT = 9333
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # 倉庫根目錄（本機的網站檔案）
-SITE = 'http://127.0.0.1:8790/'
+SITE = 'http://127.0.0.1:8790/classic.html'   # 2026-11-11 首頁換成新版，舊版（截圖用的面板都在這裡）搬到 classic.html
 
 
 class WS:

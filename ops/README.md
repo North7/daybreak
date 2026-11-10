@@ -4,6 +4,8 @@
 
 > 這個資料夾在 GitHub Pages 上也會被公開，頁面都加了 `noindex`。運營的策略文件 2026-11-08 起搬到私人倉庫（不公開）。在本機跑的工具會自己找到它，找不到時會說怎麼設定。
 
+> **2026-11-11 網站首頁換成新版**：舊版搬到 `classic.html`。`ops/post/site_shot.py` 的 `SITE` 已改成 `classic.html`，所以截圖、推薦圖表、回覆卡片（`ops/replies/site_cards.py`）照舊截舊版的面板，面板代號不變；貼文裡的 `https://north7.github.io/daybreak/#page/key` 連結會自動轉到 `classic.html` 同一個位置。網站首頁 `https://north7.github.io/daybreak/` 現在是新版。
+
 ## 結構
 
 ```

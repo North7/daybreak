@@ -5,7 +5,7 @@ on:
   # 2026-11-04：同一個工作也畫「今日推薦圖表」（pipeline/picks.py → data/picks/），picks.json 單獨重推也會重畫
   push:
     branches: [main]
-    paths: ["data/notes.json", "data/notes.en.json", "data/picks.json"]
+    paths: ["data/notes.json", "data/notes.en.json", "data/picks.json", "pipeline/next/**"]
   workflow_dispatch: {}
 
 permissions:
@@ -18,7 +18,7 @@ concurrency:
 jobs:
   cards:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 15   # 2026-11-11 多了重建新版首頁（約 1 分鐘）
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -49,12 +49,17 @@ jobs:
         # 推薦圖表失敗不影響分享圖照常提交；截不到網站原圖時 picks.py 會改畫舊版簡化圖（有對應的才畫）
         continue-on-error: true
         run: python3 pipeline/picks.py render --fonts ~/fonts
+      - name: Rebuild the new homepage with today's notes
+        # 2026-11-11 首頁換成新版：頭條、各頁導言來自 notes，日報推送後要重建 data/next.js；失敗不擋分享圖提交
+        continue-on-error: true
+        run: python3 pipeline/next/build.py
       - name: Commit
         run: |
           git config user.name "apogee-bot"
           git config user.email "apogee-bot@users.noreply.github.com"
           git add data/share.png data/share-en.png 2>/dev/null || true
           git add -A data/picks 2>/dev/null || true
+          git add data/next.js index.html pipeline/next/interp.zh.json pipeline/next/interp.en.json 2>/dev/null || true
           git diff --cached --quiet && echo "no changes" && exit 0
           git commit -m "share: $(python3 -c "import json;print(json.load(open('data/notes.json'))['date'])")"
           git pull --rebase --autostash

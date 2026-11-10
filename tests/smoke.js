@@ -1,7 +1,7 @@
 /* 破曉網站冒煙測試（2026-10-12）：中文／英文 × 桌面／手機，每一版都要能渲染、不能有 JS 錯誤、不能有「模組載入失敗」、不能橫向捲動。
    用法：先在倉庫根目錄起靜態伺服器（python3 -m http.server 8765），再執行 node tests/smoke.js。PW 環境變數可指定 playwright 模組路徑。 */
 const { chromium } = require(process.env.PW || 'playwright');
-const BASE = process.env.BASE || 'http://localhost:8765/';
+const BASE = process.env.BASE || 'http://localhost:8765/classic.html';   // 2026-11-11 舊版搬到 classic.html；新版首頁另有 tests/smoke_next.js
 (async () => {
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {}); let fail = 0;
   for (const lang of ['zh', 'en']) for (const w of [1280, 390]) {

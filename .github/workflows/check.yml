@@ -6,7 +6,7 @@ on:
   pull_request:
   push:
     branches: [main]
-    paths: ["assets/**", "index.html", "post.html", "ops/**", "manifest.webmanifest", "pipeline/**.py", "tests/**", ".github/workflows/check.yml"]
+    paths: ["assets/**", "index.html", "classic.html", "post.html", "ops/**", "manifest.webmanifest", "pipeline/**.py", "tests/**", ".github/workflows/check.yml"]
   workflow_dispatch: {}
 
 jobs:
@@ -26,7 +26,9 @@ jobs:
         run: |
           node --check assets/app.js
           node --check assets/i18n-en.js
-          python3 -m py_compile pipeline/*.py
+          python3 -m py_compile pipeline/*.py pipeline/next/*.py
+          python3 -c "import re;s=open('index.html',encoding='utf-8').read();assert re.search(r'data/next.js\\?v=[0-9a-f]{10}',s),'index.html 沒有指到 data/next.js（請執行 python3 pipeline/next/build.py）'"
+          node --check data/next.js
           python3 -c "import json,glob;[json.load(open(f)) for f in glob.glob('data/*.json')+['manifest.webmanifest']]"
       - name: English dictionary covers every string
         run: python3 pipeline/check_i18n.py
@@ -34,7 +36,7 @@ jobs:
         run: python3 pipeline/site_data.py --check
       - name: Asset versions are stamped
         run: |
-          cp index.html /tmp/index.before && python3 pipeline/stamp_assets.py && diff -q /tmp/index.before index.html || (echo "index.html 的 ?v= 版本號沒更新：請執行 python3 pipeline/stamp_assets.py 後再提交" && exit 1)
+          cp classic.html /tmp/classic.before && python3 pipeline/stamp_assets.py && diff -q /tmp/classic.before classic.html || (echo "classic.html 的 ?v= 版本號沒更新：請執行 python3 pipeline/stamp_assets.py 後再提交" && exit 1)
       - name: Render every section (zh/en × desktop/mobile)
         run: |
           npm i --no-save playwright@1.56.1
@@ -42,3 +44,4 @@ jobs:
           python3 -m http.server 8765 >/dev/null 2>&1 &
           sleep 1
           node tests/smoke.js
+          node tests/smoke_next.js
