@@ -6,7 +6,7 @@
 <title>破曉 Daybreak</title>
 <script>
 /* 2026-11-11 首頁換成新版，舊版搬到 classic.html。舊版的網址（#onchain/sthsig 這種）照樣能開：帶著舊版的頁面代號進來就轉到 classic.html 同一個位置 */
-(function () { var h = location.hash; if (/^#(overview|news|cycle|onchain|market|flows|deriv|exit|archive|method|calc|pg-[\w-]+)(\/|$)/.test(h)) location.replace('classic.html' + location.search + h); })();
+(function () { var chk = function () { var h = location.hash; if (/^#(overview|news|cycle|onchain|market|flows|deriv|exit|archive|method|calc|pg-[\w-]+)(\/|$)/.test(h)) location.replace('classic.html' + location.search + h); }; chk(); window.addEventListener('hashchange', chk); })();   // 開著首頁時才貼上舊網址（只換 # 後面）也要轉
 /* 語言：使用者在任一版選過就沿用（daybreak.lang，和舊版共用）；沒選過看舊版查到的國家（快取 7 天），再沒有就看瀏覽器語言 */
 window.DAYBREAK_LANG = (function () { var ls = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, p = ls('daybreak.lang'); if (p === 'zh' || p === 'en') return p;
   try { var g = JSON.parse(ls('daybreak.geo') || 'null'); if (g && g.cc && Date.now() - g.t < 7 * 864e5) return ['TW', 'HK', 'MO', 'CN', 'SG'].indexOf(String(g.cc).toUpperCase()) >= 0 ? 'zh' : 'en'; } catch (e) {}

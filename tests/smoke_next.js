@@ -29,7 +29,7 @@ const ROOT = process.env.ROOT || 'http://localhost:8765/';
     errs.forEach(e => bad(`${lang} ${w}px JS 錯誤：${e}`));
     console.log(`${lang} ${w}px：${n} 頁、${cards} 張卡，錯誤 ${errs.length}`);
     if (lang === 'zh' && w === 1280) {
-      await p.goto(ROOT + '#onchain/sthsig');
+      await p.goto(ROOT + '?from=post#onchain/sthsig');   // 從貼文點進來是整頁載入（只換 # 的話是同一頁裡跳，另由 hashchange 處理）
       await p.waitForFunction(() => location.pathname.indexOf('classic.html') >= 0 && document.querySelector('#view .pg'), null, { timeout: 30000 }).catch(() => bad('舊網址 #onchain/sthsig 沒有轉到 classic.html'));
       console.log('舊網址轉到：' + await p.evaluate(() => location.pathname + location.hash));
     }
