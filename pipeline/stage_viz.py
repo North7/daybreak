@@ -850,6 +850,100 @@ def stress_viz(bv, px, last, step=3, keep=1095):
                 note='本站自製，只用每日收盤：動能品質＝Φ(0.7 × 近 21 天報酬 t 值)；賣壓累積＝短線動能（跨度 10 天的指數加權）低於 0.45 時累加、高於時以同樣速度遞減（0–100）；2026-11-11 起改用短線動能，歷史讀數重算；只作讀值、不是買賣訊號')
 
 
+
+# 2026-11-11 使用者要求：短期持有者集中止盈／集中認賠訊號（本站自製，Bitview 免費資料）。
+#   輸入：持有未滿 6 個月的幣每天的實現獲利、實現虧損（美元；Bitview 依持有時間分組，1 個月內＋1–6 個月兩組相加，比 155 天的短期持有者定義多出第 155–180 天的幣）
+#         ÷ 短期持有者實現市值（短期持有者成本 × 短期持有者供給）→ 每天賣出實現的獲利／虧損佔這群人總成本的比例，跨年份才能比。
+#   算法：5 日指數平均 → 和自己近 105 天比的 z 分數（今天 − 105 天平均）÷ 105 天標準差。止盈強度＝獲利那條的 z、認賠強度＝虧損那條的 z；圖上認賠畫成負值。
+#         強度 > 2＝集中止盈／集中認賠。相隔 14 天以上才算新的一次。
+#   2012 年起回測（2026-11-11）：集中認賠 64 次，30 天後 54% 上漲、中位 +1.7%，90 天後 56%、+10.6%，和任一天（57%、+3.0%；60%、+10.1%）沒有差別，不是低風險訊號。
+#     集中止盈 57 次，整體也不是壞事（90 天後 63% 上漲、+12.6%）；差別在位置：收盤在 200 日均線上方時 31 次裡 27 次 90 天後上漲（中位 +35%），
+#     在 200 日均線下方時 23 次只有 7 次上漲（中位 −8%，同條件任一天 48%、−1.9%）＝下跌趨勢裡的反彈被拿來出貨。視窗 90／120 天、平滑 3／7 天結論相同。只作讀值
+SS_EMA, SS_WIN, SS_TH, SS_GAP, SS_FROM = 5, 105, 2.0, 14, '2012-01-01'
+
+
+def sthsig_viz(bv, px, last, step=3, keep=1095):
+    G = lambda k: bv.get(k) or {}
+    P_ = lambda d: px.get(d) or G('px').get(d)
+    sth, sths = G('sth'), G('sths')
+    D = [d for d in sorted(sth) if '2011-06-01' <= d <= last and P_(d) and sths.get(d)]
+    if len(D) < 1500 or not G('ap1') or not G('al1'): return None
+    n = len(D); P = [P_(d) for d in D]; al = 2 / (SS_EMA + 1)
+    def ema(a, b, rel):   # 兩個年齡組相加；rel＝除以短期持有者實現市值（%），否則留美元
+        out, e = [None] * n, None
+        for i, d in enumerate(D):
+            x, y = G(a).get(d), G(b).get(d)
+            if x is not None or y is not None:
+                v = (x or 0) + (y or 0)
+                if rel: v = v / (sth[d] * sths[d]) * 100
+                e = v if e is None else e + al * (v - e)
+            out[i] = e
+        return out
+    def zs(x):
+        out = [None] * n
+        for i in range(n):
+            w = [v for v in x[max(0, i - SS_WIN + 1): i + 1] if v is not None]
+            if len(w) < SS_WIN * 0.8 or x[i] is None: continue
+            m = sum(w) / len(w); sd = (sum((v - m) ** 2 for v in w) / (len(w) - 1)) ** 0.5
+            out[i] = (x[i] - m) / sd if sd > 0 else 0.0
+        return out
+    ep, el = ema('ap1', 'ap2', True), ema('al1', 'al2', True)
+    up_, ul_ = ema('ap1', 'ap2', False), ema('al1', 'al2', False)
+    ZP, ZL = zs(ep), zs(el)
+    i0 = next(i for i, d in enumerate(D) if d >= SS_FROM and ZP[i] is not None and ZL[i] is not None)
+    k = n - 1; d1 = D[k]
+    if ZP[k] is None or ZL[k] is None: return None
+    ma = [None] * n; s = 0.0
+    for i in range(n):
+        s += P[i] - (P[i - 200] if i >= 200 else 0)
+        if i >= 199: ma[i] = s / 200
+    fwd = lambda i, h: (P[i + h] / P[i] - 1) * 100 if i + h < n else None
+    med = lambda v: round(sorted(v)[len(v) // 2], 1) if v else None
+    def stat(ix, h):
+        v = [x for x in (fwd(i, h) for i in ix) if x is not None]
+        return dict(n=len(v), up=sum(x > 0 for x in v), med=med(v))
+    def base(ix, h):
+        v = [x for x in (fwd(i, h) for i in ix) if x is not None]
+        return dict(up=round(sum(x > 0 for x in v) / len(v) * 100), med=med(v)) if v else None
+    R = range(i0, n)
+    reg = dict(all=lambda i: True, up=lambda i: ma[i] is not None and P[i] > ma[i], dn=lambda i: ma[i] is not None and P[i] <= ma[i])
+    BASE = {r: dict(f30=base([i for i in R if f(i)], 30), f90=base([i for i in R if f(i)], 90)) for r, f in reg.items()}
+    def side(Z):
+        on = lambda i: Z[i] is not None and Z[i] > SS_TH
+        eps, runs, lastk = [], [], -10 ** 9
+        for i in R:
+            if not on(i): continue
+            if i - lastk > SS_GAP: eps.append(i)
+            if runs and i - runs[-1][1] <= 2: runs[-1][1] = i   # 中間只斷一天的併成一段（畫底色帶用）
+            else: runs.append([i, i])
+            lastk = i
+        cur = next((k - j for j in range(k, i0 - 1, -1) if not on(j)), k - i0 + 1) if on(k) else 0   # 目前連續幾天在門檻上
+        rr = []
+        for a, b in runs:
+            pk = max(range(a, b + 1), key=lambda j: Z[j]); rr.append(dict(a=a, b=b, pk=pk))
+        lr = rr[-1] if rr else None
+        out = dict(on=on(k), days=cur, n=len(eps), ago=(k - lr['b']) if lr else None,
+                   last=dict(start=D[lr['a']], end=D[lr['b']], days=lr['b'] - lr['a'] + 1, peak=round(Z[lr['pk']], 1), peak_date=D[lr['pk']], price=round(P[lr['a']])) if lr else None,
+                   ev=[dict(date=D[i], price=round(P[i]), above200=bool(reg['up'](i)), f30=None if fwd(i, 30) is None else round(fwd(i, 30), 1), f90=None if fwd(i, 90) is None else round(fwd(i, 90), 1)) for i in eps if dn(D[i]) >= dn(d1) - 365])
+        for r, f in reg.items(): out[r] = dict(f30=stat([i for i in eps if f(i)], 30), f90=stat([i for i in eps if f(i)], 90))
+        return out, rr
+    tp, rtp = side(ZP); cp, rcp = side(ZL)
+    cut = dn(d1) - keep; rows = []; i = i0
+    while i < n:   # 近 keep 天每天一筆；更早每 step 天一筆，取這幾天裡兩條各自的最大值（尖峰不會被抽掉）
+        if dn(D[i]) >= cut: rows.append([dn(D[i]), round(P[i]), round(ZP[i], 2), round(-ZL[i], 2)]); i += 1; continue
+        j = min(i + step, n); j = next((q for q in range(i + 1, j) if dn(D[q]) >= cut), j)
+        rows.append([dn(D[j - 1]), round(P[j - 1]), round(max(ZP[i:j]), 2), round(-max(ZL[i:j]), 2)]); i = j
+    runs = [[dn(D[r['a']]), dn(D[r['b']]), kd, dn(D[r['pk']]), round(Z[r['pk']], 1)] for kd, rr, Z in ((1, rtp, ZP), (0, rcp, ZL)) for r in rr]
+    b7 = k - 7
+    return dict(date=d1, price=round(P[k]), zp=round(ZP[k], 2), zl=round(ZL[k], 2), zp7=round(ZP[b7], 2), zl7=round(ZL[b7], 2),
+                state='both' if tp['on'] and cp['on'] else 'tp' if tp['on'] else 'cap' if cp['on'] else 'none',
+                profit_usd_m=round(up_[k] / 1e6), loss_usd_m=round(ul_[k] / 1e6), profit_pct=round(ep[k], 3), loss_pct=round(el[k], 3),
+                above200=bool(reg['up'](k)), sma200=round(ma[k]) if ma[k] else None,
+                tp=tp, cap=cp, base=BASE, runs=sorted(runs), rows=rows, since=D[i0], src='Bitview',
+                prm=dict(ema=SS_EMA, win=SS_WIN, th=SS_TH, gap=SS_GAP),
+                note='本站自製（Bitview）：持有未滿 6 個月的幣每天的實現獲利／虧損 ÷ 短期持有者實現市值，5 日指數平均後和自己近 105 天比的 z 分數；zp＝止盈強度、zl＝認賠強度（正值，圖上畫成負的），> 2＝集中止盈／集中認賠；'
+                     'rows＝[日, 收盤, 止盈強度, −認賠強度]，近 3 年每天、更早每 3 天取最大；runs＝[起, 迄, 1 止盈／0 認賠, 峰值日, 峰值]；tp／cap 的 all／up／dn＝全部、收盤在 200 日均線上方、下方的訊號之後 30／90 天；只作讀值、不是買賣訊號')
+
 # 2026-11-05 使用者要求（X 帳號掃描：頂部後 13 個月前幾輪跌 71–80%、這輪約 35%；回到前高花的時間比跌下去久）：各輪週期頂部之後，
 #   每天收盤 ÷ 頂部收盤，畫在同一個「頂部後第幾天」的橫軸上。頂部用 model.json 的 cycle_tops（收盤價），價格用統一收盤。
 #   每輪列出：今天這個天數時的位置、最低點（第幾天、跌幅）、從底部到重新站上頂部價花幾天。只作讀值，不推論這輪會怎麼走

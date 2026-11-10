@@ -544,6 +544,7 @@ PANELS = {
     'onchain/agecost': dict(zh='依持有時間的持幣成本', en='Cost basis by holding age', sel='#c-agecost', data=['cycle.age_cost']),
     'onchain/sopr':   dict(zh='短期持有者認賠賣壓（STH-SOPR）', en='Short-term holder SOPR', sel='#c-sopr', data=['chips.viz'], sig=['sopr'], old='sopr'),
     'onchain/sthpnl': dict(zh='短期持有者實現獲利與虧損', en='Short-term holder realized profit and loss', sel='#c-sthpnl', data=['onchain.sth_pnl'], sig=['sthpnl'], old='sthpnl'),
+    'onchain/sthsig': dict(zh='短期持有者集中止盈與認賠', en='Short-term holder profit-taking and capitulation spikes', sel='#c-sthsig', data=['onchain.sthsig'], sig=['sthsig']),   # 2026-11-11
     'onchain/npl':    dict(zh='每日淨實現損益', en='Daily net realized profit/loss', sel='#c-npl', data=['onchain.npl'], sig=['npl'], old='npl'),
     'onchain/rpl':    dict(zh='實現獲利 ÷ 實現虧損', en='Realized profit ÷ realized loss', sel='#c-rpl', data=['onchain.rpl']),
     'onchain/rloss':  dict(zh='實現虧損：峰值背離', en='Realized loss: peak divergence', sel='#c-rloss', data=['onchain.rloss']),
