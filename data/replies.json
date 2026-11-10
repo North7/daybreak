@@ -4,8 +4,180 @@
  "edition": 35,
  "items": [
   {
+   "n": 18,
+   "status": "send",
+   "kind": "followup",
+   "mode": "reply",
+   "style": "性格版",
+   "author": "X_key_He",
+   "name": "X_key_He",
+   "followers": 2695,
+   "lang": "zh",
+   "angle": "接話：補反例",
+   "id": "2120031887238500706",
+   "url": "https://x.com/X_key_He/status/2120031887238500706",
+   "posted": "2026-11-10T05:52:44Z",
+   "summary": "（我們回 CryptoPainter 那則底下）Coinbase 淨賣、Binance 小幅淨買的分裂比總量更有信息量；機構在減、槓桿在接，這種結構最怕價格再跌一次",
+   "reply": "Binance 那筆淨買是現貨，槓桿這週沒在接\n永續這 7 天主動賣比主動買多了 1.6 萬顆，昨天才回頭\n再跌一次，怕的是昨天才追進來的永續多單，現貨掛低價等的人反而成交",
+   "sources": "主動買賣（deriv.taker，Coinalyze＋Binance，11/09）：永續（Binance、Bybit、OKX USDT 永續）7 日 −15,897 顆、11/09 單日 +4,625 顆；現貨（Binance＋Coinbase＋Bybit）7 日 +254 顆，其中 Coinbase −2,882 顆",
+   "note": "接話（CryptoPainter 貼文底下，新的人第一輪，他補了看法）。他把 Binance 的淨買讀成「槓桿在接」；那筆是現貨，永續這週是淨賣方。第一行直接講不同的地方，最後講再跌一次對兩種人不一樣。不配圖。",
+   "order": 1
+  },
+  {
+   "n": 19,
+   "status": "send",
+   "mode": "reply",
+   "style": "性格版",
+   "author": "bitzhiliao",
+   "name": "bitzhiliao",
+   "followers": 9565,
+   "lang": "zh",
+   "angle": "提出反例",
+   "id": "2119968701139296750",
+   "url": "https://x.com/bitzhiliao/status/2119968701139296750",
+   "posted": "2026-11-10T01:41:40Z",
+   "summary": "美股反彈 BTC 為什麼不跟：ETF 一週淨流出 12.8 億、Coinbase Premium 連 61 天為負、穩定幣一週少約 45 億、多單清算超過 10 億；「現貨沒人接，槓桿還在被動出清」；問：美股大漲都帶不動，還能指望什麼救場",
+   "reply": "「槓桿還在被動出清」這句我不同意，槓桿根本沒走\nBTC 未平倉這 30 天多了一成多，價格同期跌 9%，爆掉一批、又補進來一批\n一路跌一路有人加槓桿抄底，現貨那頭卻沒人追\n能救場的我看只有現貨買盤回頭，在那之前，這些沒清掉的多單是下一次急跌的燃料",
+   "sources": "BTC 未平倉（deriv.oi_hist，Coinalyze，11/09）：342,441 顆、30 日 +11.5%、7 日 +0.7%、2021 年來第 98 百分位；價格 30 日 −9.2%；Coinbase 現貨主動買賣 7 日 −2,882 顆（deriv.taker）",
+   "note": "Grok inbox 1400 #1（對話型，近 3 天回覆 74 則，會接話）。只接他最站不住的一句「槓桿被動出清」：未平倉 30 天反而多 11.5%。回答他文末的問題（現貨買盤回頭），風險偏哪邊也講了。他寫的「Coinbase Premium 連 61 天為負」照 11/10 更正不能當美國沒買盤，這則沒碰；他回話的話可以補 USDT 折價那段。發文已 5 小時，早點回。",
+   "order": 2
+  },
+  {
+   "n": 20,
+   "status": "send",
+   "mode": "reply",
+   "style": "性格版",
+   "author": "shu8126",
+   "name": "shu8126",
+   "followers": 12817,
+   "lang": "zh",
+   "angle": "補數據",
+   "id": "2120028679988187206",
+   "url": "https://x.com/shu8126/status/2120028679988187206",
+   "posted": "2026-11-10T05:40:00Z",
+   "summary": "鏈上數據：11/9 持有 100 顆以上 BTC 的錢包群賣出 1,398 顆（附圖）",
+   "reply": "100 顆以上這群，拆開看不是同一批人在動\n拉到 7 天，100–1,000 顆這層少了 2.6 萬顆，再大一級的反而在收，只看合計很容易把換手讀成出貨\n你這張有把交易所錢包剔掉嗎？",
+   "sources": "錢包分層（onchain.whales，Bitview，11/09）：100–1,000 顆 7 日 −26,587 顆；1,000–1 萬顆 7 日 +4,031、30 日 +26,522；≥1 萬顆 7 日 +22,189（多為交易所與託管）。地址不等於實體",
+   "note": "Grok inbox 1400 #4（新帳號，1.3 萬粉）。他只貼一天的合計；補「同一群裡方向是分開的」，講怎麼讀（換手還是出貨），最後問口徑。地址不等於實體，他問的話再補。對話型不配圖（分層圖是單色，README 說曝光低）。",
+   "order": 3
+  },
+  {
+   "n": 21,
+   "status": "send",
+   "mode": "reply",
+   "style": "性格版",
+   "author": "wepoets1107",
+   "name": "wepoets1107",
+   "followers": 4394,
+   "lang": "zh",
+   "angle": "交叉驗證",
+   "id": "2120031008842268884",
+   "url": "https://x.com/wepoets1107/status/2120031008842268884",
+   "posted": "2026-11-10T05:49:15Z",
+   "summary": "冰火島期權筆記：BTC 27NOV26 負 gamma 是正的 3.3 倍，75K 淨 −9.3%、72K −7.6%，正 gamma 要到 80K；偏斜約 −3.5%；VRP 約 −2.5%；74,000 跨式被買兩筆各 50 張",
+   "reply": "75K 這檔我們兩邊的符號是反的，蠻有意思\n你的表 75K 是重負，我那張圖用 Deribit 逐筆成交推做市商部位，75K 是最大的正 gamma，負的落在 74K\n偏偏這檔最要緊，正的話價格會被黏住，負的話一碰就放大\n你那邊是假設做市商賣 Call、買 Put 嗎？",
+   "sources": "Gamma（deriv.gex，Deribit 逐筆成交推算做市商部位，11/10 00:06 UTC，覆蓋未平倉 46%）：75K +6.8、74K −5.5、總和 −3.7（百萬美元／價格變動 1%）；30 天 25Δ 風險逆轉 −3.03（deriv.rr25）",
+   "note": "Grok inbox 1400 #10（新帳號，每天寫期權筆記，和我們 GEX 重疊高）。兩個模型在 75K 符號相反，不說誰對，講清楚兩種讀法差在哪，問他的假設。我們的推算只蓋 46% 未平倉，他追問就照實講。對話型不配圖（#c-gex 單色，曝光低）。",
+   "order": 4
+  },
+  {
+   "n": 22,
+   "status": "send",
+   "mode": "reply",
+   "style": "性格版",
+   "author": "Woo_Minkyu",
+   "name": "Woo_Minkyu",
+   "followers": 8819,
+   "lang": "en",
+   "angle": "交叉驗證",
+   "id": "2120006116969201857",
+   "url": "https://x.com/Woo_Minkyu/status/2120006116969201857",
+   "posted": "2026-11-10T04:10:20Z",
+   "summary": "11/9 淨買入：期貨 +4.06 億、現貨 +0.5 億；未平倉 +5 億（+2.0%）而價格只漲 0.7%；Coinbase 溢價仍為負（−0.145%）；反彈靠槓桿，不是真實需求",
+   "reply": "Careful with that -0.145%, I leaned on it too and had to walk it back today\nMost of it is USDT trading under a dollar, net of that Coinbase is ~1.5bp below Binance\nCoinbase taker flow is the cleaner US read, 2.9K BTC net sold in 7 days\nYour leverage point stands without it",
+   "sources": "Coinbase 溢價 11/09 −0.145%、30 日均 −0.145%（flows.cb_premium）；USDT 對美元 30 天平均 0.9987（Kraken），逐日扣掉後溢價約 −0.015%（11/10 查證，feedback 0856）；Coinbase 現貨主動買賣 7 日 −2,882 顆、2021-08 起第 5 百分位（deriv.taker）",
+   "note": "Grok inbox 1400 #3（熟帳號，11/09 回過；CryptoQuant 認證作者）。同意他「反彈靠槓桿」，但他拿 −0.145% 當證據，正是我們今天早上更正的那條：直接認自己也用過，給他能拿去用的（USDT 折價、Coinbase 主動買賣）。對話型不配圖。",
+   "order": 5
+  },
+  {
+   "n": 23,
+   "status": "send",
+   "mode": "reply",
+   "style": "性格版",
+   "author": "checkmatexxxxxx",
+   "name": "checkmatexxxxxx",
+   "followers": 1194,
+   "lang": "en",
+   "angle": "交叉驗證",
+   "id": "2120025075202273699",
+   "url": "https://x.com/checkmatexxxxxx/status/2120025075202273699",
+   "posted": "2026-11-10T05:25:40Z",
+   "summary": "引 CryptoFees／MoneyPrinter：手續費每天 235 萬美元、新發行 3,977 萬，手續費只占礦工收入約 5.6%；問減半繼續下去，手續費撐不撐得住網路安全",
+   "reply": "5.6% would be a good week, honestly\nFees were under 1% of miner revenue over the last 7 days on mempool.space\nAt that level the subsidy is the whole security budget, so your question is years from being tested\nAny idea what CryptoFees counts in that $2.35M?",
+   "sources": "手續費占礦工收入 0.93%（onchain.mining，mempool.space，11/03–11/09）；每天新挖約 454 顆",
+   "note": "Grok inbox 1400 #11（新帳號，1,194 粉，近 3 天回覆 12 則）。他引的 5.6% 和我們 0.93% 差很多，可能口徑不同（他的 235 萬美元也許含別的），所以用問的、不說他錯。給他一個能用的數字，再講這題離被檢驗還很遠。不配圖。",
+   "order": 6
+  },
+  {
+   "n": 24,
+   "status": "send",
+   "mode": "reply",
+   "style": "性格版",
+   "author": "TokenizedDollar",
+   "name": "TokenizedDollar",
+   "followers": 5779,
+   "lang": "en",
+   "angle": "提出反例",
+   "id": "2119974341853278301",
+   "url": "https://x.com/TokenizedDollar/status/2119974341853278301",
+   "posted": "2026-11-10T02:04:04Z",
+   "summary": "像 2022 年那種疲乏又出現了，大家對 ETH、BTC 厭倦、放棄；他的判斷：再一波大跌，約一個月內見熊市低點；「情緒不是見底的證據」；一月見",
+   "reply": "Tired, yes, but not 2022 tired yet\nAt the Nov 2022 low even LTHs were underwater on paper\nToday they still sit on paper gains near a third of their stack, only recent buyers just slipped into the red\nFatigue from going nowhere, the sell-at-any-price kind isn't in the data",
+   "sources": "長短期持有者 NUPL（onchain.hnupl，Bitview，11/09）：長期持有者 0.349、短期持有者 −0.012（11/05 翻負）；2022-11-21 低點長期持有者 −0.339、短期持有者 −0.289",
+   "note": "Grok inbox 1400 #5（對話型，近 3 天回覆 91 則）。他講的是交易心理（疲乏、放棄），所以回覆也談心理：現在的累和 2022 那種痛不是同一級，數字只用來說明兩群人各在哪個位置。不接他「再跌一波、一個月內見底」的時間點，也不接操作建議。ETH 為主的帳號；對話型不配圖。",
+   "order": 7
+  },
+  {
+   "n": 25,
+   "status": "send",
+   "mode": "reply",
+   "style": "性格版",
+   "author": "yyq_yyq_yyq",
+   "name": "yyq_yyq_yyq",
+   "followers": 4758,
+   "lang": "zh",
+   "angle": "補數據",
+   "id": "2119987423107317930",
+   "url": "https://x.com/yyq_yyq_yyq/status/2119987423107317930",
+   "posted": "2026-11-10T02:56:03Z",
+   "summary": "BlackRock 說大戶把自管 BTC 換成 IBIT（實物轉換）最熱，已經手 36 億美元；帳上算流入但沒有人多買一顆幣；IBIT 上週淨流出 12.1 億；「ETF 流入轉正但價格不動，先懷疑是換殼」；改看法條件：連續一週淨流入且站回 8 萬",
+   "reply": "「換殼」這個角度我沒想過，照這樣讀，ETF 流量往後得打折看\n要繞過它，可以看 Coinbase 現貨上誰在主動出手，這 7 天主動賣比主動買多了快 3 千顆，這條不管幣放在誰的保管箱\n它翻正之前，ETF 就算轉成流入我也先打個問號",
+   "sources": "Coinbase 現貨主動買賣（deriv.taker，Coinalyze，11/09）：7 日 −2,882 顆、2021-08 起第 5 百分位",
+   "note": "Grok inbox 1400 #6（新帳號，繁中，11/09 2104 輪列過沒用）。接他的核心論點（實物轉換讓 ETF 流量失真），給他一條不受換殼影響的線。不接他的「觀望偏空」和 8 萬的條件；他文末問「自己保管還是換 ETF」是個人問題，不答（不透露個人資訊）。瀏覽偏低（176），對話型不配圖。",
+   "order": 8
+  },
+  {
+   "n": 26,
+   "status": "send",
+   "mode": "reply",
+   "style": "性格版",
+   "author": "gaudy168",
+   "name": "gaudy168",
+   "followers": 1328,
+   "lang": "zh",
+   "angle": "補數據",
+   "id": "2119979407163240493",
+   "url": "https://x.com/gaudy168/status/2119979407163240493",
+   "posted": "2026-11-10T02:24:12Z",
+   "summary": "台美股盤勢長文：今晚 CPI，核心 ≤0.2% 升息機率才鬆動；費半 +6.85%、VIX 25.6→19.9；BTC 74,956 美股大漲沒跟；BTC DVOL 跌到 39.6，「市場對波動的定價偏自滿，方向可能就看今晚 CPI」",
+   "reply": "DVOL 在 CPI 當天掉回 40 以下，我也有點意外\n週日近月的隱含波動還比遠月貴 2 個多點，現在貼平，今晚要是又翻上去，就是有人被 CPI 嚇到了",
+   "sources": "隱含波動期限結構（deriv.ivterm，Deribit）：11/09 7 天 38.45、90 天 38.71（持平）；11/08 7 天 42.06、90 天 39.47（近月貴 2.59）；DVOL 39.87（11/09）",
+   "note": "Grok inbox 1400 #9（熟帳號，11/08 回過）。Grok 建議的 200 日均線和 Nasdaq 相關今天 paulxue1979、OKCX66 那兩則用過，改接他「定價偏自滿」那句：近月溢價消了。最後一行是今晚怎麼讀。瀏覽低（167），對話型不配圖。",
+   "order": 9
+  },
+  {
    "n": 17,
-   "order": 1,
+   "order": 10,
    "status": "send",
    "kind": "followup",
    "mode": "reply",
@@ -47,11 +219,11 @@
     "title": "美國現貨 ETF：7 個交易日淨流出 13.6 億美元"
    },
    "n": 16,
-   "order": 2
+   "order": 11
   },
   {
    "n": 15,
-   "order": 3,
+   "order": 12,
    "status": "send",
    "kind": "followup",
    "mode": "reply",
@@ -87,7 +259,7 @@
    "note": "接話（他更正我們 n75 的 Coinbase 溢價說法，查證後他是對的）。直接認、給自己查到的數字、講修正後這個數字說明什麼（有人打折換回美元＝錢在離開）。之後 Coinbase 溢價不能再當「美國買盤沒回來」用，見 feedback 11/10。",
    "kind": "followup",
    "n": 1,
-   "order": 4
+   "order": 13
   },
   {
    "status": "send",
@@ -107,7 +279,7 @@
    "note": "接話（我們原創底下，新追蹤的 1 萬粉藍勾）。順著他講是誰在賣、為什麼這種賣法值得注意，最後給量的對照。",
    "kind": "followup",
    "n": 2,
-   "order": 5
+   "order": 14
   },
   {
    "status": "send",
@@ -136,7 +308,7 @@
     "title": "Miner revenue vs its yearly average: 1.00 to 0.76 in a week"
    },
    "n": 3,
-   "order": 6
+   "order": 15
   },
   {
    "status": "send",
@@ -163,7 +335,7 @@
     "title": "7-day implied vol back level with 90-day"
    },
    "n": 4,
-   "order": 7
+   "order": 16
   },
   {
    "status": "send",
@@ -182,7 +354,7 @@
    "sources": "200 日均線（Kraken 每日收盤自算，和網站 73,155.5 一致）：11/05 73,191.5 見高，11/06 −0.5、11/07 −3.0、11/08 −17.3、11/09 −15.2；單日變化 ×200 ≈ 3,040，200 天前的收盤約 78.3K",
    "note": "固定名單（對話型，會回話）。他的擔心是對的而且比他說的更進一步：查了每日值，200 日均線已經連四天往下。先接他的梗，再給他沒有的數字和原因，最後一句是交易上的讀法（均線方向變了，回踩的意義不同）。昨天我們有幾則寫「200 日均線還在上升」，已過時。",
    "n": 5,
-   "order": 8
+   "order": 17
   },
   {
    "status": "send",
@@ -201,7 +373,7 @@
    "sources": "STH-NUPL −0.012（Bitview 11/09，11/05 跌破 0）；翻負 31 次、90 天後較高 19 次，任一天 60%（hnupl rows，11/09 算的）；長期持有者 11/09 賣出平均賠 18%（LTH-SOPR 0.82，Bitview）；短期持有者 STH-SOPR 0.992、認賠 4,007 顆（CheckOnChain）；長期持有者 7 天認賠 14.85 億美元，6/30 低點那時 36 億（lthrl）",
    "note": "Grok inbox 0856 #8。對話型（鏈上數據平台帳號）。直接回答他問的「蜻蜓點水還是掉頭」：這個訊號本身沒方向，要看有沒有開始認賠；帶一句自己的反應；問他們的口徑。",
    "n": 6,
-   "order": 9
+   "order": 18
   },
   {
    "status": "send",
@@ -220,7 +392,7 @@
    "sources": "長期持有者 11/09 賣出平均賠 18%（LTH-SOPR 0.82，Bitview）；短期持有者 STH-SOPR 0.992、認賠 4,007 顆（CheckOnChain）；長期持有者 7 天認賠 14.85 億美元，6/30 低點那時 36 億（lthrl）；主動買賣（deriv.taker 11/09）：三家現貨當天 +3,118 顆，Coinbase 7 天 −2,882 顆（2021 年來第 5 百分位）",
    "note": "Grok inbox 0856 #3（熟帳號）。不接他的價位。他講買的那邊，我們補賣的那邊是誰、什麼心理，交易上的讀法是這種換手還沒換完；最後問他的口徑。 沒配圖：網站那張時間拉到 2015 年，這幾天的變化在圖上看不出來。",
    "n": 7,
-   "order": 10
+   "order": 19
   },
   {
    "status": "send",
@@ -239,7 +411,7 @@
    "sources": "穩定幣流通量 2,930 億、30 天 −130 億美元（DefiLlama 11/09，30 日變化第 1.7 百分位）；Kraken USDT/USD 30 天平均 0.9987",
    "note": "固定名單（對話型，昨天回過我們）。他在問為什麼掉隊，給他一個他沒看的角度：幣圈自己的美元在流出（穩定幣縮、USDT 折價）。跟 OKCX66 那則同題，角度錯開。",
    "n": 8,
-   "order": 11
+   "order": 20
   },
   {
    "status": "send",
@@ -258,7 +430,7 @@
    "sources": "長期持有者 11/09 賣出平均賠 18%（LTH-SOPR 0.82，Bitview）；短期持有者 STH-SOPR 0.992、認賠 4,007 顆（CheckOnChain）；長期持有者 7 天認賠 14.85 億美元，6/30 低點那時 36 億（lthrl）；BTC 與 Nasdaq 30 日相關 0.751（FRED，到 11/06）；11/09 Nasdaq +2.74%、BTC +0.7%",
    "note": "Grok inbox 0856 #6。回答他文末的二選一：給第三個答案（長期持有者趁反彈認賠出場），講這說明什麼，最後是交易上的讀法（賣完之前跟漲會打折）。不接「7.5 萬是天花板」。",
    "n": 9,
-   "order": 12
+   "order": 21
   },
   {
    "status": "send",
@@ -277,7 +449,7 @@
    "sources": "全市場 BTC 未平倉 342,441 顆（Coinalyze 11/09，日 +1%，2021 年來第 98 百分位）；三家口徑資金費率 6.45% → 8.24%（funding_multi）",
    "note": "Grok inbox 0856 #5。對話型。撿他那句梗，講他說的「槓桿清掉」是 ETH、BTC 沒有，這說明多單是加回來不是離開，交易上的讀法是 CPI 對 BTC 更要緊。不接 71–72K。",
    "n": 10,
-   "order": 13
+   "order": 22
   },
   {
    "status": "send",
@@ -296,7 +468,7 @@
    "sources": "長期持有者 11/09 賣出平均賠 18%（LTH-SOPR 0.82，Bitview）；短期持有者 STH-SOPR 0.992、認賠 4,007 顆（CheckOnChain）；長期持有者 7 天認賠 14.85 億美元，6/30 低點那時 36 億（lthrl）；三家現貨主動買賣 11/09 +3,118 顆、Coinbase 7 天 −2,882 顆（deriv.taker）",
    "note": "Grok inbox 0856 #2。對話型。回答他的疑問（買盤回來為什麼價格不動）：有人在賣給這批買盤，是誰、什麼心理；最後問他的資料能不能分交易所。 沒配圖：網站那張時間拉到 2015 年，這幾天的變化在圖上看不出來。",
    "n": 11,
-   "order": 14
+   "order": 23
   },
   {
    "status": "send",
@@ -315,7 +487,7 @@
    "sources": "全市場 BTC 未平倉 30 天 +11.5%、7 天 +0.7%，價格 30 天 −9.2%（Coinalyze 七家，oi_hist 11/09）",
    "note": "Grok inbox 0856 #9。對話型。部分不同意：30 天看有人加，講這說明什麼（一路加、現在被套，跟單純抱著不一樣）；問他的口徑。不提 Coinbase 溢價（見 feedback 11/10）。",
    "n": 12,
-   "order": 15
+   "order": 24
   },
   {
    "status": "skip",
@@ -335,7 +507,7 @@
    "note": "按讚就好：他的串底下已經回了兩輪，這則是同意＋總結，沒有問問題。",
    "kind": "followup",
    "n": 13,
-   "order": 16
+   "order": 25
   },
   {
    "status": "skip",
@@ -355,7 +527,7 @@
    "note": "按讚就好：他的串底下已經回了兩輪，這則是同意＋補數字，沒有問問題。",
    "kind": "followup",
    "n": 14,
-   "order": 17
+   "order": 26
   }
  ]
 }
