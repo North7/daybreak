@@ -4,6 +4,36 @@
  "edition": 36,
  "items": [
   {
+   "n": 24,
+   "status": "send",
+   "kind": "",
+   "mode": "reply",
+   "quote": "",
+   "style": "口語版",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82328,
+   "lang": "zh",
+   "angle": "補程度＋還在加速",
+   "id": "2120363615975051615",
+   "url": "https://x.com/Murphychen888/status/2120363615975051615",
+   "posted": "2026-11-11T03:50:00Z",
+   "summary": "SVDD：Binance 現貨主動買賣 10/21 後背離、回到 0 軸上方；Coinbase 在 0 軸下繼續走低，美國機構在賣、Binance 在接，美國那邊佔優勢，要等藍線拐頭",
+   "reply": "Coinbase 那條重得很，排在 2021 年以來最低的 4%，而且最近 7 天賣了 3 千多顆，比前面還快",
+   "sources": "現貨與永續的主動買賣（deriv.taker，Coinalyze＋Binance，11/10）：Coinbase 30 天 −10,657 顆（常態 +1,915、2021-08 以來第 4 百分位）、7 天 −3,382；三家現貨合計 30 天 −3,660（第 81 百分位）→ Binance BTCUSDT＋Bybit ≈ +6,997；前 23 天 −7,275（每天約 316）、近 7 天 −3,382（每天約 483）",
+   "note": "使用者給的截圖，Murphy 公開貼文（發出 3 分鐘內）。他說要等藍線拐頭；我們補它弱到什麼程度（第 4 百分位）和最近一週還在加速。Binance＋Bybit 接了 7 千顆那個數字自動任務已經在 dizhu818 那則用了，這則不重複。8.2 萬粉，配 #c-tk 並保留解讀（Coinbase 那行在解讀裡）。",
+   "image": {
+    "site": {
+     "page": "deriv",
+     "sel": "#c-tk",
+     "keep_note": true,
+     "pre": "var p=document.querySelector('#c-tk').closest('section.panel'); var h=p.querySelector('.cf-hero'); if(h) h.style.display='none'; p.querySelectorAll('p.note').forEach(function(e){e.style.display='none'}); true"
+    },
+    "title": "Coinbase 現貨 30 天淨賣一萬多顆，2021 年來最低 4%"
+   },
+   "order": 1
+  },
+  {
    "n": 22,
    "status": "send",
    "kind": "followup",
@@ -22,7 +52,7 @@
    "reply": "撐住的主要是 Binance 跟 Bybit 那邊啦，Coinbase 這 30 天反而淨賣了 1 萬多顆",
    "sources": "latest.json deriv.taker（11/10）：現貨三家 30 天 −3,660 顆、Coinbase 30 天 −10,657 顆 → Binance＋Bybit 約 +7,000 顆",
    "note": "接話，他的原文底下第二輪，有內容。",
-   "order": 1
+   "order": 2
   },
   {
    "n": 23,
@@ -43,7 +73,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：他的週線貼文底下第三輪、沒問問題（別人貼文底下輪數上限）",
-   "order": 2
+   "order": 3
   },
   {
    "n": 21,
@@ -64,7 +94,7 @@
    "reply": "我自己做的賣壓累積今年也三次滿格，日子跟 BRS 差不到幾天\n滿格那天的價格一次比一次高，6 月那次也沒往回掉",
    "sources": "賣壓累積與動能品質（chips.stress，本站自製、只用每日收盤，照 Glassnode 那套復刻）：底部組合（賣壓 100＋動能品質 <0.3）2026-02-05 62,858、06-02 66,670、11-10 73,700（state bottom、r 100、s 0.20）；Murphy BRS=100：2/2 76K、6/1 71K、這次 73K",
    "note": "使用者指定，用我們的「賣壓累積與動能品質」回（使用者：幾乎照 Glassnode 那套指標復刻）。三次觸發日跟 BRS 差 0–3 天；他的價格 76K→71K→73K 中間有往下，我們的 63K→67K→74K 每次都墊高，用另一條數據支持他的「更高」。訂閱者限定貼文，回覆大概只有訂閱者看得到。配網站 #c-sx 原圖。 11/11 使用者決定：付費貼文底下不回（曝光小、像蹭流量），改可選；數據拿去寫原創。等他發公開版再回。",
-   "order": 3,
+   "order": 4,
    "image": {
     "site": {
      "page": "market",
@@ -93,7 +123,7 @@
    "reply": "還不算低啦，6 月底那次一度掉到 47% 上下",
    "sources": "獲利供給占比 · onchain.viz.supply-in-profit-pct：2026-06-30 46.89%、11/09 59.02%；onchain.quant.psip 57.88",
    "note": "接話，我們原創底下第三輪（不設上限），他補了數字：用今年 6/30 的低點當反例，一行。",
-   "order": 4
+   "order": 5
   },
   {
    "n": 14,
@@ -114,7 +144,7 @@
    "reply": "現貨在換手看得到，短期持有者那天賠著賣了 4,504 顆\n只是未平倉多出來那 2,700 顆是新加的槓桿，跌下去時它們還在",
    "sources": "notes onchain：短期持有者實現虧損 4,504 顆（CheckOnChain 11/10）；deriv：未平倉比前一天多約 2,700 顆",
    "note": "接話，我們原創底下。",
-   "order": 5
+   "order": 6
   },
   {
    "n": 15,
@@ -135,7 +165,7 @@
    "reply": "And it's still climbing, up about 1.4K in 30 days, so the line price has to win back keeps moving away",
    "sources": "latest.json chips.flow.sth_vs_tmm sth_cost_chg30 +1,404（Bitview）",
    "note": "接話，我們引用底下，1.1 萬粉。",
-   "order": 6
+   "order": 7
   },
   {
    "n": 16,
@@ -156,7 +186,7 @@
    "reply": "從 86.6K 下來快 15% 了，最難受的是中間沒給什麼喘氣的機會",
    "sources": "notes market：高點 86,594，現在回落 14.9%",
    "note": "接話，閒聊，一行。",
-   "order": 7
+   "order": 8
   },
   {
    "n": 17,
@@ -177,7 +207,7 @@
    "reply": "嗯，這 7 天換手最多的是 74K 到 76K，多了 30 萬顆",
    "sources": "網站籌碼分布 #c-urpd 說明：近 7 天換手最多 74K–76K +30.9 萬顆（11/09）",
    "note": "接話第二輪，一行補一個數字。",
-   "order": 8
+   "order": 9
   },
   {
    "n": 18,
@@ -198,7 +228,7 @@
    "reply": "哈 不然怎麼熬",
    "sources": "",
    "note": "我們原創底下的串不設上限，閒聊回一句短的。",
-   "order": 9
+   "order": 10
   },
   {
    "n": 19,
@@ -219,7 +249,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：表情符號",
-   "order": 10
+   "order": 11
   },
   {
    "status": "send",
@@ -246,7 +276,7 @@
     },
     "title": "Realized price 53.9K, short-term holder cost 75.7K, BTC 73.7K"
    },
-   "order": 11
+   "order": 12
   },
   {
    "status": "send",
@@ -273,7 +303,7 @@
     },
     "title": "Long liquidation band 71–72.6K, right under the 200-day"
    },
-   "order": 12
+   "order": 13
   },
   {
    "status": "send",
@@ -293,7 +323,7 @@
    "reply": "沒降，CPI 那天還多了 2,700 顆左右，在 2021 年來第 98 百分位\n那根針強平的大多是山寨",
    "sources": "data/notes.json modules.deriv：未平倉 345,129 顆、第 98 百分位；news：CPI 後強平大多在山寨幣；latest.json deriv.liq_vol day.long 86.8（百萬美元）",
    "note": "Grok 0845 #1，熟帳號（11/09 回過）。直接答他列的第二個信號，數字開頭；不接牛市回歸、不接條件。",
-   "order": 13
+   "order": 14
   },
   {
    "status": "send",
@@ -321,7 +351,7 @@
     },
     "title": "短期持有者剛從賺變成賠"
    },
-   "order": 14
+   "order": 15
   },
   {
    "status": "send",
@@ -341,7 +371,7 @@
    "reply": "Daily close still had OI up about 2.7K BTC on the day\nFunding on Binance, Bybit, OKX went from 8% to 10% too\nShorts covered the bounce, sure, but the longs who added on the way down mostly stayed",
    "sources": "data/notes.json modules.deriv：未平倉比前一天多約 2,700 顆、三家口徑資金費率 8.2%→10.0%",
    "note": "Grok 0845 #3，新帳號。他的 4,600 顆是反彈這一段，本站沒有分時未平倉，不引用他的數字；只補日線收盤的樣子。",
-   "order": 15
+   "order": 16
   },
   {
    "status": "send",
@@ -361,7 +391,7 @@
    "reply": "BTC longs barely got touched on CPI day, about $87M liquidated\nIs your 75.7% long-account figure Binance only?",
    "sources": "data/latest.json deriv.liq_vol day.long 86.8（百萬美元，Coinalyze）；notes deriv：未平倉 345,129 顆、2021 年來第 98 百分位；news：CPI 後強平大多在山寨幣；deriv.ls_acct binance 73.5、bybit 70.3",
    "note": "Grok 0845 #7，新帳號。只接他最後一段的幣圈部分，宏觀那些不碰。 他寫 75.7% 帳戶做多，本站 Binance 是 73.5%、Bybit 70.3%，問他口徑。",
-   "order": 16
+   "order": 17
   },
   {
    "status": "send",
@@ -381,7 +411,7 @@
    "reply": "哈 這段路上新上車的人倒是不多\n72K 到 66K 之間，短期持有者的籌碼很薄\n真走下去會很快，只是也沒有一大批新的人會被套在那",
    "sources": "data/notes.json findings 2026-11-10-2：72K 到 66K 之間短期持有者籌碼很薄（帳面虧損 269 萬→276 萬顆），下一層厚籌碼 62–66K（CheckOnChain，11/10）",
    "note": "固定名單，熟帳號。不接他的加倉；籌碼分布配圖。 原本配 #c-urpd，但那張是全部籌碼，64–72K 其實有 159 萬顆，跟「短期持有者籌碼薄」對不上，拿掉圖。",
-   "order": 17
+   "order": 18
   },
   {
    "status": "send",
@@ -401,7 +431,7 @@
    "reply": "It mostly shrinks the bid\nLast week Strategy raised $284M and less than 30% of that went into BTC",
    "sources": "Strategy 11/09 公告：上週籌資 2.84 億美元、買 1,036 顆（不到三成用來買幣，11/10 回覆 gaah_im、PepeUnbound 用過）",
    "note": "Grok 0845 #4，新帳號，今天名單公布。一行就好，不接 28 億。",
-   "order": 18
+   "order": 19
   },
   {
    "status": "send",
@@ -422,7 +452,7 @@
    "reply": "溢價那條要打點折扣，負的大半是 USDT 本身在折價，扣掉幾乎是 0\n主動流就乾淨多了，這週 Coinbase 還是淨賣 3,382 顆",
    "sources": "11/10 更正：USDT 對美元 30 天平均 0.9987，扣掉後 Coinbase 對 Binance 約 −1.5bp；latest.json deriv.taker cb d7 −3,382",
    "note": "接話（我們原創底下的串）。他拿溢價當證據，正好補上 11/10 的更正。",
-   "order": 19
+   "order": 20
   },
   {
    "status": "send",
@@ -443,7 +473,7 @@
    "reply": "Might not be\nLTHs stopped selling at a loss yesterday, LTH-SOPR is back at 1\nNewer buyers took over the loss-selling",
    "sources": "data/notes.json findings 2026-11-10-1：LTH-SOPR 從 0.82 回到 1.00，短期持有者進入集中認賠（Bitview 11/10）",
    "note": "接話，原作者回我們。",
-   "order": 20
+   "order": 21
   },
   {
    "status": "send",
@@ -464,7 +494,7 @@
    "reply": "週五 PPI 再來一次 😅",
    "sources": "data/notes.json modules.overview：週五 PPI",
    "note": "原作者本人回我們，回一句短的。",
-   "order": 21
+   "order": 22
   },
   {
    "status": "optional",
@@ -485,7 +515,7 @@
    "reply": "哈 寫太硬了\n費率後來真的沒降，三家從 8% 多升到 10%",
    "sources": "data/notes.json modules.deriv：三家口徑資金費率 8.2% → 10.0%",
    "note": "可選，要不要回你決定。他是在笑我們那則，回的話就承認一句、補上我們上一則說要等的那個數字（明天看費率）；不回就按讚或不理。id 待補：請從通知裡點他那則回覆。",
-   "order": 22
+   "order": 23
   },
   {
    "status": "skip",
@@ -506,7 +536,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：只回「是的」，話已經講完",
-   "order": 23
+   "order": 24
   }
  ]
 }
