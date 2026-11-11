@@ -1591,6 +1591,17 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
    7. 分享模式（?share、?share=45，可加 &k=圖代號）：字級 ×1.3、藏按鈕和導覽、加頁尾、固定 16:9 或 4:5、動畫全關。 */
 .ol-src { margin-left: auto; min-width: 0; max-width: 46%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 10.5px/1.3 var(--f-mono); letter-spacing: .02em; color: var(--k2); }
 .ol-src ~ .fx-b { margin-left: 10px; }
+/* ⑳ 中文版圖名附英文名（2026-11-11，使用者：「在中文指標後加英文，其他的指標也加英文」）。整套規則：
+   1. 只有中文版加；英文版圖名本來就是英文，不動。
+   2. 加在每張圖的圖名（卡片、放大檢視、分享用的圖是同一個標題）。英文放在標題列下面另起一行，佔整個卡片寬度，小一號、次要色；不跟中文擠同一行，也不塞在圖名那一欄裡（手機上那一欄被資料來源擠得很窄，會斷成好幾行）。
+   3. 英文就是這張圖在英文版的名字，不另外取。中英文一樣的（Pi Cycle、Hash Ribbons、Dormancy）不重複。英文尾巴的括號中文名已經有了（URPD）就拿掉。
+   4. 「今天」頁的文字卡片和出場頁的規則卡片不是指標，不加。段落標題、頁名、放大檢視右邊的清單、全站地圖的小格、內文句子都維持中文。
+   5. 標題列（中文名、資料來源、展開鈕）的排法不變；英文是同一個 .ol-t 裡排到第二列的元素。 */
+.ol-t.e2 { flex-wrap: wrap; row-gap: 3px; }
+.ol-t.e2 > h4.ol-n { flex: 1 1 0; }
+.ol-t.e2 > .ol-e { order: 9; flex: 0 0 100%; min-width: 0; font: 500 12px/1.35 "Inter Tight", sans-serif; letter-spacing: .01em; color: var(--k2); }
+.oc-fx .ol-t.e2 > .ol-e { font-size: 13.5px; }
+html.share .ol-t.e2 > .ol-e { font-size: 15px; }
 .ol-pair { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 12px; margin: 0; font: 500 var(--t-note)/1.5 "Inter Tight", "Noto Sans TC", sans-serif; color: var(--k2); }
 .ol-pair em { font: 600 10.5px/1.5 var(--f-mono); font-style: normal; letter-spacing: .06em; }
 .ol-pair b { margin-left: 5px; font-weight: 700; font-variant-numeric: tabular-nums; }
@@ -2532,6 +2543,8 @@ function initOC() {
   if (SHARE) { document.documentElement.classList.add('share'); document.documentElement.dataset.ratio = SHARE; }
   const reduce = !!SHARE || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches), esc = s => String(s).replace(/[<>&]/g, '');
   let lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh', th = 'd', ord = [0].concat(G.map((x, i) => i + 1)), lead = G.map(() => 0), rng = 1095, lay = 'sp', rgb = PBASE.d.rgb, REG = {}, W = 0, H = 0, UID = 0;
+  /* ⑳ 中文版圖名下面的英文名：沒有就回空字串 */
+  const enName = c => { if (lang !== 'zh' || !c || !c.en || c.en === c.zh || /^[qtx]_/.test(c.k || '')) return ''; const m = /^(.*\S)\s*\(([^()]+)\)$/.exec(c.en); return m && String(c.zh).indexOf('（' + m[2] + '）') >= 0 ? m[1] : c.en; };
   const tE = PX[PX.length - 1][0], T = (zh, en) => lang === 'en' ? (en != null ? en : zh) : zh, CV = n => !n ? 'var(--ink)' : /^[a-z0-9]+$/i.test(n) ? 'var(--' + n + ')' : n, F1 = v => (+v).toFixed(1);
   const FM = { pct1: v => sgn(v, 1) + '%', ps2: v => sgn(v, 2) + '%', p1: v => v.toFixed(1) + '%', p2: v => v.toFixed(2) + '%', p3: v => v.toFixed(3) + '%', x2: v => v.toFixed(2) + '×', n3: v => (v < 0 ? '−' : '') + Math.abs(v).toFixed(3), n1: v => v.toFixed(1), s1: v => sgn(v, 1),
     usd0: v => '$' + n0(v), n0: v => n0(v), s2: v => sgn(v, 2), n5: v => v.toFixed(5), txt: v => v, usdM: v => (v < 0 ? '−' : '') + '$' + n0(Math.abs(v)) + 'M', bp: v => v.toFixed(1) + ' bp', d1: v => v.toFixed(1) + T(' 天', ' d'), btc0: v => Math.abs(v) >= 1e4 ? (v < 0 ? '−' : '') + T(WAN(Math.abs(v)) + ' 萬顆', TRIM((Math.abs(v) / 1e3).toFixed(1)) + 'K BTC') : n0(v) + T(' 顆', ' BTC'), xpct: v => sgn((v - 1) * 100, 0) + '%',
@@ -2942,7 +2955,7 @@ function initOC() {
     const lyv = c._ly || 'sp', lyb = isT(c) && !s.one ? `<span class="md ly" role="group" aria-label="${T('價格和指標的排法', 'Price and indicator layout')}"><button type="button" data-ly="sp" data-key="${key}" aria-pressed="${lyv === 'sp'}"${ib('價格和指標分成上下兩格', 'Price and indicator in two panes')}>${IC('split')}</button><button type="button" data-ly="ov" data-key="${key}" aria-pressed="${lyv === 'ov'}"${ib('價格和指標疊在同一格', 'Price and indicator overlaid')}>${IC('over')}</button></span>` : '';
     let tcv = null; try { if (isT(c) && !c.na) tcv = CV(tone(s, hero(s))); } catch (e0) { tcv = null; } const tcol = ''; ol.dataset.kind = ''; const sayH = c.na ? '' : sayHtml(c), sigH = c.na ? '' : sigHtml(c), howH = howHtml(c);
     const hk = c.na ? '' : s.hz ? T(s.hz, s.he) : isT(c) && hero(s).zh && hero(s).zh !== c.zh ? T(hero(s).zh, hero(s).en) : '';
-    const src = c.src ? T(c.src, c.srce) : '', head = `<div class="ol-t"><h4 class="ol-n">${esc(T(c.zh, c.en))}</h4>${src ? `<span class="ol-src" title="${esc(src)}">${esc(src)}</span>` : ''}${c.go ? `<button type="button" class="fx-b go" data-chid="${c.go}"${ib('看這一頁', 'Open this page')}>${IC('go')}</button>` : flat && !c.na && !c.nofx ? `<button type="button" class="fx-b" data-fx="${key}"${ib('展開這張圖', 'Expand this chart')}>${IC('expand')}</button>` : ''}</div>${md || pg || rgb || lyb ? `<div class="ol-ctl">${md}${pg}${rgb}${lyb}${more}</div>` : ''}`, big = `${hk ? `<span class="ol-k">${esc(hk)}</span>` : ''}<div class="ol-big"${tcol}><span class="odo" id="oc-b${key}"></span><span class="ol-u" id="oc-u${key}"></span><small id="oc-d${key}"></small></div>${stat(s, c)}${pairHtml(s, c)}${sayH}${sxl(s, c)}`;
+    const src = c.src ? T(c.src, c.srce) : '', e2 = enName(c), head = `<div class="ol-t${e2 ? ' e2' : ''}"><h4 class="ol-n">${esc(T(c.zh, c.en))}</h4>${e2 ? `<span class="ol-e" lang="en">${esc(e2)}</span>` : ''}${src ? `<span class="ol-src" title="${esc(src)}">${esc(src)}</span>` : ''}${c.go ? `<button type="button" class="fx-b go" data-chid="${c.go}"${ib('看這一頁', 'Open this page')}>${IC('go')}</button>` : flat && !c.na && !c.nofx ? `<button type="button" class="fx-b" data-fx="${key}"${ib('展開這張圖', 'Expand this chart')}>${IC('expand')}</button>` : ''}</div>${md || pg || rgb || lyb ? `<div class="ol-ctl">${md}${pg}${rgb}${lyb}${more}</div>` : ''}`, big = `${hk ? `<span class="ol-k">${esc(hk)}</span>` : ''}<div class="ol-big"${tcol}><span class="odo" id="oc-b${key}"></span><span class="ol-u" id="oc-u${key}"></span><small id="oc-d${key}"></small></div>${stat(s, c)}${pairHtml(s, c)}${sayH}${sxl(s, c)}`;
     let L = null;
     if (c.na) ol.innerHTML = head + `<div class="ol-na"><b>${T('資料沒來', 'No data')}</b><p>${esc(T(c.na.zh, c.na.en))}</p></div>`;
     else if (c.sim) simCard(ol, c, key, head);
