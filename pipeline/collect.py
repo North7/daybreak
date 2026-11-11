@@ -673,6 +673,9 @@ if WHALES:
             rows_w.append(r_)
         R['whales'] = dict(date=WD[k3], cohorts=out, leg_start=leg0, rows=rows_w[::-2][::-1],
                            src='Bitview', note='Bitview 依地址餘額分層（2011 起；百分位用近 4 年）；地址不等於實體，≥10K 多為交易所與託管；只作讀值')
+        try:   # 2026-11-12 使用者要求：各層 7 日變化的熱力條（whale_strip.py）
+            import whale_strip; R['whales']['strip'] = whale_strip.build(BV, LAST)
+        except Exception as e: errors.append(f'whale_strip: {e}')
     except Exception as e: errors.append(f'whales: {e}')
 # G2. bitcoin-data 頂部雷達（放在既有 14 個端點之後；免費層文件寫每小時 10 次、每日 15 次，超額時只有這幾格記 null）
 RAD = {'lth-mvrv-zscore': 'lthMvrvZscore', 'supply-in-profit-pct': 'supplyInProfitPct',
