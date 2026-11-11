@@ -19,17 +19,17 @@
    "url": "https://x.com/Murphychen888/status/2120350554035794027",
    "posted": "2026-11-11T02:59:00Z",
    "summary": "訂閱者限定：BRS 再到 100，這次 BTC 73K，比 6 月那次 71K 高，2023 年 16K→19K→26K 也是越來越高，說明已走出熊底結構",
-   "reply": "墊高這件事，我自己算的短期持有者認賠強度也看得到，而且更明顯\n6 月認賠最重那天在 61K，這一波最重是 77K，高了兩成多",
-   "sources": "短期持有者集中認賠（onchain.sthsig，本站自製、Bitview）：2026 認賠段峰值 2/5 4.6（收盤 62,858）、6/5 4.7（61,038）、10/30 5.2（77,204），其餘 1/23 3.3、5/29 2.9、6/26 2.1、7/13 2.6、11/10 2.7；77.2/61.0=+26.5%",
-   "note": "使用者指定，用我們自己類似 BRS 的數據回。訂閱者限定貼文，回覆大概只有訂閱者看得到。他的「更高」是 71K→73K；我們的認賠強度三個峰值剛好對上他 2 月、6 月、這次三次，峰值那天的價格前兩次沒墊高、這次高兩成多，等於用另一條數據支持他的結論。配網站 #c-sthsig 原圖。",
+   "reply": "我自己做的賣壓累積今年也三次滿格，日子跟 BRS 差不到幾天\n滿格那天的價格一次比一次高，6 月那次也沒往回掉",
+   "sources": "賣壓累積與動能品質（chips.stress，本站自製、只用每日收盤，照 Glassnode 那套復刻）：底部組合（賣壓 100＋動能品質 <0.3）2026-02-05 62,858、06-02 66,670、11-10 73,700（state bottom、r 100、s 0.20）；Murphy BRS=100：2/2 76K、6/1 71K、這次 73K",
+   "note": "使用者指定，用我們的「賣壓累積與動能品質」回（使用者：幾乎照 Glassnode 那套指標復刻）。三次觸發日跟 BRS 差 0–3 天；他的價格 76K→71K→73K 中間有往下，我們的 63K→67K→74K 每次都墊高，用另一條數據支持他的「更高」。訂閱者限定貼文，回覆大概只有訂閱者看得到。配網站 #c-sx 原圖。",
    "order": 1,
    "image": {
     "site": {
-     "page": "onchain",
-     "sel": "#c-sthsig",
-     "pre": "var h=document.querySelector('#c-sthsig').closest('section.panel').querySelector('.cf-hero'); if(h) h.style.display='none'; true"
+     "page": "market",
+     "sel": "#c-sx",
+     "pre": "var h=document.querySelector('#c-sx').closest('section.panel').querySelector('.cf-hero'); if(h) h.style.display='none'; true"
     },
-    "title": "今年認賠最重的三天：2 月 63K、6 月 61K、10/30 77K"
+    "title": "賣壓三次滿格：63K → 67K → 74K"
    }
   },
   {
