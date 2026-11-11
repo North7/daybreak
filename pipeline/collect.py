@@ -340,13 +340,13 @@ try:
     if _chst != 'live': errors.append(f'checkonchain urpd-cohort 用快取：{_chst}')
 except Exception as e: errors.append(f'checkonchain urpd-cohort: {e}')
 _sec = _rpl = _hw1 = None   # B5–B7 只抓資料；圖表在 G1 CoinMetrics 之後用統一的價格算（見 G1b）
-# B5. 2026-11-02 使用者要求（Murphy〈卖方衰竭指数〉）：賣方衰竭常數（CheckOnChain，從 2010 起、晚約 1 天；見 coc.get_sec、stage_viz.sec_viz）
+# B5. 2026-11-02 使用者要求：賣方衰竭常數（CheckOnChain，從 2010 起、晚約 1 天；見 coc.get_sec、stage_viz.sec_viz）
 try:
     import coc, stage_viz
     _sec, _sest = coc.get_sec()
     if _sest != 'live': errors.append(f'checkonchain seller-exhaustion 用快取：{_sest}')
 except Exception as e: errors.append(f'checkonchain seller-exhaustion: {e}')
-# B6. 2026-11-02 使用者要求（貝格先生的 Realized P/L 比率）：全網實現獲利 ÷ 實現虧損（CheckOnChain；90 天平均，見 coc.get_rpl、stage_viz.rpl_viz）
+# B6. 2026-11-02 使用者要求（Glassnode 的 Realized P/L 比率）：全網實現獲利 ÷ 實現虧損（CheckOnChain；90 天平均，見 coc.get_rpl、stage_viz.rpl_viz）
 try:
     import coc, stage_viz
     _rpl, _rpst = coc.get_rpl()
@@ -680,7 +680,7 @@ for m, fld in RAD.items():
                                  p90_since_2022_11=round(sorted(cy)[int(len(cy) * 0.9)], 4), p10_since_2022_11=round(sorted(cy)[int(len(cy) * 0.1)], 4),
                                  extreme_near_2025_top=round((min if 'net-position' in m else max)(at_top), 4) if at_top else None)
     except Exception as e: errors.append(f'top_radar {m}: {e}')
-# G4. 2026-09-29 使用者要求：籌碼流向（Murphy 框架，只作讀值、不連動 P19／P20）。bitcoin-data 每日 +4 次；失敗記 null、不推估
+# G4. 2026-09-29 使用者要求：籌碼流向（只作讀值、不連動 P19／P20）。bitcoin-data 每日 +4 次；失敗記 null、不推估
 R['murphy_flow'] = {}; MFS = {}   # MFS：G4 抓到的完整序列，給 G4b 畫圖用（2026-10-02）
 def _bd_series(m, fld):
     js = bd(m)
@@ -695,7 +695,7 @@ try:
     mn = min(l90, key=lambda z: z[1])
     R['murphy_flow']['sth_lth_ratio'] = dict(date=d_, value=round(v, 4), d7=round(back(7), 4), d30=round(back(30), 4),
         pct_since_2022_11=round(sum(x < v for x in cy) / len(cy) * 100, 1), min90=round(mn[1], 4), min90_date=mn[0])
-except Exception as e: errors.append(f'murphy sth-lth-ratio: {e}'); R['murphy_flow']['sth_lth_ratio'] = None
+except Exception as e: errors.append(f'flow sth-lth-ratio: {e}'); R['murphy_flow']['sth_lth_ratio'] = None
 try:
     # 2026-11-04 使用者要求：改用 Bitview（2011 起、晚 1 天；圖可以畫到 2019），失敗時才即時向 bitcoin-data 要（已移出 CORE）
     if BV and BV.get('sthp'): ser = sorted(BV['sthp'].items()); MFS['percent-sth-in-profit'] = ser; _SIP_SRC = 'Bitview'
@@ -703,7 +703,7 @@ try:
     d_, v = ser[-1]
     l30 = [(t, x) for t, x in ser if t >= (dt.date.fromisoformat(d_) - dt.timedelta(days=30)).isoformat()]; mn = min(l30, key=lambda z: z[1])
     R['murphy_flow']['sth_in_profit_pct'] = dict(date=d_, value=round(v, 2), d7=round(ser[-8][1], 2), min30=round(mn[1], 2), min30_date=mn[0], source=_SIP_SRC)
-except Exception as e: errors.append(f'murphy percent-sth-in-profit: {e}'); R['murphy_flow']['sth_in_profit_pct'] = None
+except Exception as e: errors.append(f'flow percent-sth-in-profit: {e}'); R['murphy_flow']['sth_in_profit_pct'] = None
 try:
     if _CSRC == 'Bitview': tm, sth = _TM, _ST   # B9；bitcoin-data 的真實市場均價只在 Bitview 失敗時才抓（省每日額度）
     else: tm = {r_['d']: float(r_['trueMarketMean']) for r_ in bd_rotation.fetch('true-market-mean') if r_.get('trueMarketMean') not in (None, '')}; sth = SER.get('sth-realized-price', {}); _ST, _TM = sth, tm   # 已移出 CORE，退回時即時抓
@@ -718,7 +718,7 @@ try:
         sth_cost_chg30=round(sth[d_] - sth[p30]), tmm_chg30=round(tm[d_] - tm[p30]), last_cross_up=last_up, last_cross_down=last_dn,
         source=_CSRC, check=_BVCHK if _CSRC == 'Bitview' else None,
         note=(_CSRC + ' 自身兩條序列同日比較；') + ('2026-11-04 起由 bitcoin-data 改用 Bitview（bitcoin-data 版的交叉日是 2023-11-23 上穿、2026-04-26 下穿）' if _CSRC == 'Bitview' else '已知 2023-11-23 上穿、2026-04-27 下穿可驗算'))
-except Exception as e: errors.append(f'murphy true-market-mean: {e}'); R['murphy_flow']['sth_vs_tmm'] = None
+except Exception as e: errors.append(f'flow true-market-mean: {e}'); R['murphy_flow']['sth_vs_tmm'] = None
 try:
     js = bd('urpd'); MFS['urpd_raw'] = js   # 2026-10-27：原始 63 格留給 G4e 存檔
     try: json.dump(js, open('raw_urpd.json', 'w'))
@@ -732,7 +732,7 @@ try:
         below_cluster=dict(range=[below[0], below[1]], btc=round(below[2])) if below else None, above_cluster=dict(range=[above[0], above[1]], btc=round(above[2])) if above else None,
         btc_price_to_120k=round(sum(bs for lo_, hi_, bs, pc in B if lo_ >= cur[1] and hi_ <= 120000)), largest=dict(range=[big[0], big[1]], btc=round(big[2])),
         top_buckets=[[b[0], b[1], round(b[2])] for b in sorted(B, key=lambda b: -b[2])[:6]])
-except Exception as e: errors.append(f'murphy urpd: {e}')
+except Exception as e: errors.append(f'flow urpd: {e}')
 
 # G4b. 2026-10-02 使用者要求：籌碼流向圖表資料（只作讀值）。不另打 API：沿用 G4 已抓的序列（MFS）、主軌 SER['sth-realized-price'] 與 Kraken 日線 bars
 try:
@@ -776,13 +776,13 @@ try:
                 u_ = ((r_.get('murphy_flow') or {}).get('urpd') or {})
                 if u_.get('band') and u_.get('date') and u_['date'] <= want:
                     prev7 = dict(date=u_['date'], band=u_['band']); break
-        except Exception as e: errors.append(f'murphy_viz prev7 {e}')
+        except Exception as e: errors.append(f'flow_viz prev7 {e}')
         MV['urpd'] = dict(date=MFS['urpd_date'], width=2000, price=round(c), band=band, prev7=prev7)
         if R['murphy_flow'].get('urpd'): R['murphy_flow']['urpd']['band'] = [[int(b_[0]), round(b_[2])] for b_ in B_ if b_[0] >= 40000]   # 寫進 series 以累積週變化
     MV['note'] = '只作讀值；供給比、STH 獲利比例每 2 天取一點（2022-10 起，bitcoin-data 免費歷史起點）；成本圖近 2 年：價格 Kraken 收盤、STH 成本與 TMM 為 ' + _CSRC + '（2026-11-04 起 Bitview，晚 1 天）；URPD 2,000 美元一格'
     R['murphy_viz'] = MV
-except Exception as e: errors.append(f'murphy_viz {e}')
-# G4d. 2026-10-15 使用者要求：籌碼集中度（Murphy 的「現價 ±5% 內籌碼佔比」，只作讀值、不套他的 13%／15% 門檻）。
+except Exception as e: errors.append(f'flow_viz {e}')
+# G4d. 2026-10-15 使用者要求：籌碼集中度（「現價 ±5% 內籌碼佔比」，只作讀值、不套常見的 13%／15% 門檻）。
 #   不另打 API：G4 的 URPD（2,000 美元一格，格內視為均勻分布，按 ±5% 區間重疊比例計入）÷ CoinMetrics 流通量（G1）。
 #   分母不用 bitcoin-data 的 pctSupply（其合計約 21M，大於流通量）。價格用當天收盤；URPD 本身晚約 7–9 天。歷史由 build.py 存進 data/history/index.json
 try:
@@ -821,7 +821,7 @@ try:
                            hi_gt15=round(sum(x > 15 for x in _hi) / len(_hi) * 100) if _hi else None, lo_gt15=round(sum(x > 15 for x in _lo) / len(_lo) * 100) if _lo else None,
                            episodes=_ev, note='之後 30 天的最大單向變動（相對當天收盤，取漲或跌較大的一邊）；價格用 Bitview 收盤；只作讀值')
 except Exception as e: errors.append(f'conc bitview {e}')
-# G4c. 2026-10-14 使用者要求：佐證燈號第 6 盞（短期持有者成本 vs 真實市場均價，Murphy 的 STH-RP vs TMMP；只作佐證、不參與 P23 判定），
+# G4c. 2026-10-14 使用者要求：佐證燈號第 6 盞（短期持有者成本 vs 真實市場均價，STH-RP vs TMMP；只作佐證、不參與 P23 判定），
 #   與六盞燈的走勢圖資料（近 3 年、配價格線；只作讀值）。不另打 API：沿用 G1 的 CoinMetrics 與 G4 已抓的 bitcoin-data 序列。見 stage_viz.py
 try:
     import stage_viz
@@ -851,7 +851,7 @@ for _k, _ser, _fn in (('sec', _sec, stage_viz.sec_viz), ('rpl', _rpl, stage_viz.
     if not _ser: continue
     try: R[_k] = _fn(stage_viz.canon_px(_ser, globals().get('PXC') or {}), LAST)
     except Exception as e: errors.append(f'checkonchain {_k} {e}')
-# G4f. 2026-11-04 使用者要求：短期持有者成本帶（Murphy 的 STH 成本基礎模型）、6–12／12–18 個月成本線（wander）。資料 Bitview（B9），價格用統一收盤 PXC
+# G4f. 2026-11-04 使用者要求：短期持有者成本帶（STH 成本 ±1、±2 標準差）、6–12／12–18 個月成本線。資料 Bitview（B9），價格用統一收盤 PXC
 if BV:
     for _k, _fn in (('sth_bands', stage_viz.sth_bands_viz), ('age_cost', stage_viz.age_cost_viz), ('levels', stage_viz.levels_viz), ('capflow', stage_viz.capflow_viz), ('stress', stage_viz.stress_viz)):   # levels：2026-11-04 關鍵價位圖；stress：2026-11-07 起改成賣壓累積與動能品質（本站自製，只用每日收盤）
         try: R[_k] = _fn(BV, globals().get('PXC') or {}, LAST)
@@ -881,7 +881,7 @@ try:
     _tops = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json')))['cycle_tops']
     R['cycle_cmp'] = stage_viz.cycle_cmp_viz(globals().get('PXC') or {}, _tops, LAST)
 except Exception as e: errors.append(f'cycle_cmp {e}')
-# G4e. 2026-10-27 使用者要求：長期／短期持有者籌碼（LTH／STH URPD，Murphy 的拆法）。bitcoin-data 的 URPD 不分持有時間，
+# G4e. 2026-10-27 使用者要求：長期／短期持有者籌碼（LTH／STH URPD）。bitcoin-data 的 URPD 不分持有時間，
 #   用 G4 的 URPD × 前一晚 A 組快取的幣齡分布（hodl-waves-supply）× 每日價格區間（Kraken 日線、更早用 CoinMetrics）推算，見 cohort_urpd.py。
 #   推算、不是實體調整，只作讀值；每天的 URPD 與幣齡分布存進 cohort_cache/（bitcoin-data 免費層的 URPD 歷史只到約 2026-08-10）
 try:
