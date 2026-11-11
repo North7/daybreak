@@ -3409,7 +3409,7 @@ function initOC() {
   })();
   (function () { const box = $('#oc-fx'), os = box.querySelector('.os'); let st = null;
     box.addEventListener('pointerdown', e => { if (!fx || e.button || e.target.closest('button, a, summary, details, input, .ol-c, .or')) return; st = { x: e.clientX, y: e.clientY, t: performance.now(), dx: 0, dy: 0, sc: 1, on: false }; });
-    window.addEventListener('pointermove', e => { if (!st) return; st.dx = (e.clientX - st.x) * .85; st.dy = (e.clientY - st.y) * .85; const d = Math.hypot(st.dx, st.dy); if (!st.on && d < 9) return; st.on = true; const k = Math.min(1, d / 620); st.sc = 1 - k * .3; os.style.transform = `translate(${F1(st.dx)}px, ${F1(st.dy)}px) scale(${st.sc.toFixed(3)})`; os.style.borderRadius = F1(26 * Math.min(1, d / 110)) + 'px'; box.style.setProperty('--dim', (1 - k * .85).toFixed(2)); });
+    window.addEventListener('pointermove', e => { if (!st) return; st.dx = (e.clientX - st.x) * .85; st.dy = (e.clientY - st.y) * .85; const d = Math.hypot(st.dx, st.dy); if (!st.on && d < 9) return; if (!st.on && e.pointerType === 'touch' && Math.abs(st.dx) > Math.abs(st.dy) * 1.4) { st = null; return; }   /* ㉒ 5 */ st.on = true; const k = Math.min(1, d / 620); st.sc = 1 - k * .3; os.style.transform = `translate(${F1(st.dx)}px, ${F1(st.dy)}px) scale(${st.sc.toFixed(3)})`; os.style.borderRadius = F1(26 * Math.min(1, d / 110)) + 'px'; box.style.setProperty('--dim', (1 - k * .85).toFixed(2)); });
     const end = () => { if (!st) return; const s0 = st; st = null; if (!s0.on) return; box.dataset.drag = '1'; setTimeout(() => { delete box.dataset.drag; }, 80); const d = Math.hypot(s0.dx, s0.dy), v = d / Math.max(1, performance.now() - s0.t), far = d > 120 || v > .8, VW = window.innerWidth, VH = window.innerHeight;
       box.style.removeProperty('--dim'); os.style.borderRadius = '';
       if (far) { os.style.transform = ''; closeFx({ x: s0.dx + VW * (1 - s0.sc) / 2, y: s0.dy + VH * (1 - s0.sc) / 2, s: s0.sc }); }
@@ -3423,7 +3423,7 @@ function initOC() {
     if ((b = t.closest('.mp-t'))) { mapGo(+b.dataset.mi); return; }
     if (t.closest('#oc-map')) return;
     if ((b = t.closest('.os')) && stg.contains(b) && +b.dataset.k !== ci) { if (!(TBS.skip && performance.now() - TBS.skip < 450)) goCh(+b.dataset.k); return; }
-    if ((b = t.closest('[data-ch]'))) { const far = el.getBoundingClientRect().top < -40; goCh(+b.dataset.ch); if (far) el.scrollIntoView({ behavior: 'instant', block: 'start' }); spyK = -1; setTimeout(spy, 260); return; }
+    if ((b = t.closest('[data-ch]'))) { navCh(+b.dataset.ch); return; }
     if ((b = t.closest('[data-jump]'))) { let key = null; Object.keys(SEC).forEach(k => (SEC[k] || []).forEach(R1 => { if (R1.c.k === b.dataset.jump) key = R1.key; })); const tg = key ? $('#oc-ol' + key) : null; if (tg) { const cd = tg.closest('.fc'); cd.classList.add('in'); cd.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); cd.classList.remove('hit'); void cd.offsetWidth; cd.classList.add('hit'); setTimeout(() => cd.classList.remove('hit'), 2600); } return; }
     if ((b = t.closest('[data-chid]'))) { const ix = CH.findIndex(x => x.id === b.dataset.chid); if (ix >= 0 && !CH[ix].todo) { goCh(ix); hd.scrollIntoView({ behavior: 'instant', block: 'start' }); } return; }
     if ((b = t.closest('[data-src]'))) { toast(b.dataset.src); return; }   /* ㉑ 4：手機點來源圖示 */
@@ -3440,8 +3440,29 @@ function initOC() {
     if ((b = t.closest('[data-rg]'))) { const c = keyC(b.dataset.key); if (c) { c._rg = +b.dataset.rg; reOne(b.dataset.key); } return; }
     if ((b = t.closest('[data-pg][data-key]'))) { const c = keyC(b.dataset.key); if (c && c.dist && +b.dataset.pg !== pgOf(c)) { c._pg = +b.dataset.pg; reOne(b.dataset.key); } return; }
     if ((b = t.closest('[data-m]'))) { const c = keyC(b.dataset.key); if (c) { c._m = +b.dataset.m; reOne(b.dataset.key); } return; }
-    if ((b = t.closest('.or-r')) && fx) { if (+b.dataset.i !== fx.i) { const ol = $('#oc-olF'); ol.classList.add('sw'); fx.i = +b.dataset.i; Array.prototype.forEach.call(b.parentNode.children, (b2, i) => b2.setAttribute('aria-pressed', i === fx.i)); setTimeout(() => { renderLead('F'); ol.classList.remove('sw'); }, reduce ? 0 : 160); } return; }
+    if ((b = t.closest('.or-r')) && fx) { fxGo(+b.dataset.i); return; }
   });
+  /* 換頁（分頁、麵包屑、左右滑共用）：離頁首遠就回到頁首 */
+  const navCh = i => { if (i === ci || !CH[i] || CH[i].todo) return; const far = el.getBoundingClientRect().top < -40; goCh(i); if (far) el.scrollIntoView({ behavior: 'instant', block: 'start' }); spyK = -1; setTimeout(spy, 260); };
+  /* 放大檢視換到同一段的第 i 張（點下面的小圖、左右滑共用） */
+  const fxGo = i => { if (!fx || i === fx.i || !G[fx.k - 1].charts[i]) return; const ol = $('#oc-olF'), orx = $('#oc-orF') || document.querySelector('#oc-fx .or'); ol.classList.add('sw'); fx.i = i; if (orx) Array.prototype.forEach.call(orx.querySelectorAll('.or-r'), b2 => { const on = +b2.dataset.i === i; b2.setAttribute('aria-pressed', on); if (on && b2.scrollIntoView) b2.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }); setTimeout(() => { renderLead('F'); ol.classList.remove('sw'); }, reduce ? 0 : 160); };
+  /* ㉒ 手機左右滑（2026-11-11，使用者：「手機上左右滑能不能加功能」，兩個都做）。整套規則：
+     1. 只認觸控的單指橫滑：橫向至少 64px、橫向是直向的 2 倍以上、700 毫秒內放開。直向捲動、斜滑、慢慢拖都不算。
+     2. 頁面上：往左滑到下一頁、往右滑回上一頁，順序和底部分頁一樣；第一頁往右、最後一頁往左沒有動作（不繞回去）。換頁的動作和點分頁完全一樣（navCh）。
+     3. 放大檢視裡：往左滑看同一段的下一張、往右滑看上一張，到頭不繞回去。和點下面的小圖是同一個動作（fxGo）。
+     4. 不搶別人的手勢：手指落在圖上（.ol-c，左右滑是十字線）、放大檢視下面的小圖列、能左右捲的區塊（次導覽、表格）、滑桿和輸入框、
+        自己處理觸控的元件（touch-action 不是 auto 的，例如頂部的小卡片、日夜鍵）、找圖，都不觸發。螢幕左右邊緣 24px 內起手也不觸發（那是瀏覽器的上一頁）。
+     5. 放大檢視原本「拖著卡片甩出去就收回」的手勢：觸控時如果一開始就是橫向，讓給換圖，卡片不跟著動；直向拖照舊收回。
+     6. 沒有另外加提示或動畫：換頁用原本的淡入、底部分頁的橫條會滑過去；換圖用原本的淡入。 */
+  (function () {
+    let s0 = null;
+    const own = t => { for (let n = t; n && n !== el && n.nodeType === 1; n = n.parentNode) { if (n.matches('.ol-c, .or, .oc-map, input, textarea, select')) return false; const cs = getComputedStyle(n); if (cs.touchAction && cs.touchAction !== 'auto' && !n.matches('.oc-fx .os-h')) return false; if (n.scrollWidth > n.clientWidth + 4 && /auto|scroll/.test(cs.overflowX)) return false; } return true; };
+    el.addEventListener('touchstart', e => { s0 = null; if (e.touches.length !== 1) return; const t = e.touches[0]; if (t.clientX < 24 || t.clientX > window.innerWidth - 24 || !e.target.closest || !own(e.target)) return; s0 = { x: t.clientX, y: t.clientY, t: performance.now() }; }, { passive: true });
+    el.addEventListener('touchmove', e => { if (s0 && e.touches.length !== 1) s0 = null; }, { passive: true });
+    el.addEventListener('touchcancel', () => { s0 = null; }, { passive: true });
+    el.addEventListener('touchend', e => { const a = s0; s0 = null; if (!a || e.touches.length || !e.changedTouches[0]) return; const t = e.changedTouches[0], dx = t.clientX - a.x, dy = t.clientY - a.y; if (Math.abs(dx) < 64 || Math.abs(dx) < Math.abs(dy) * 2 || performance.now() - a.t > 700) return; const d = dx < 0 ? 1 : -1;
+      if (fx) { fxGo(fx.i + d); return; } if (!$('#oc-map').hidden) return; let j = ci + d; while (CH[j] && CH[j].todo) j += d; if (CH[j]) navCh(j); }, { passive: true });
+  })();
   el.addEventListener('keydown', e => { if (e.key === 'Escape' && fx) closeFx(); if (fx && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { const n = G[fx.k - 1].charts.length; fx.i = (fx.i + (e.key === 'ArrowRight' ? 1 : n - 1)) % n; renderLead('F'); e.preventDefault(); } if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('os') && stg.contains(e.target)) goCh(+e.target.dataset.k); });
   el.addEventListener('pointermove', e => {
     const fcx = e.target.closest ? e.target.closest('.fc') : null; if (fcx) { const bb = fcx.getBoundingClientRect(); fcx.style.setProperty('--mx', F1(e.clientX - bb.left) + 'px'); fcx.style.setProperty('--my', F1(e.clientY - bb.top) + 'px'); }
