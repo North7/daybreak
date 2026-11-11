@@ -1,14 +1,9 @@
 {
- "_about": "美國現貨 BTC ETF 每日淨流量（百萬美元，全部現貨 ETF 合計）。資料管線每天從 The Block 自動更新，與 Farside 同口徑；partial=true 表示當天尚未完整回報。",
+ "_about": "美國現貨 BTC ETF 每日淨流量（百萬美元，美國現貨 ETF 合計，不含香港）。資料管線每天從 CoinMarketCap 自動更新（2026-11-11 起；之前是 The Block，11/09 下架）；CoinMarketCap 沒有 MSBT，和 Farside 偶爾差幾百萬美元。partial=true 表示當天尚未完整回報。",
  "rows": [
   {
-   "d": "2026-08-14",
-   "musd": -56.2,
-   "partial": false
-  },
-  {
    "d": "2026-08-17",
-   "musd": 297.5,
+   "musd": 286.3,
    "partial": false
   },
   {
@@ -18,7 +13,7 @@
   },
   {
    "d": "2026-08-19",
-   "musd": 517.2,
+   "musd": 507.3,
    "partial": false
   },
   {
@@ -28,37 +23,37 @@
   },
   {
    "d": "2026-08-21",
-   "musd": 307.5,
+   "musd": 299.8,
    "partial": false
   },
   {
    "d": "2026-08-24",
-   "musd": 337.6,
+   "musd": 336.2,
    "partial": false
   },
   {
    "d": "2026-08-25",
-   "musd": 314.3,
+   "musd": 309.8,
    "partial": false
   },
   {
    "d": "2026-08-26",
-   "musd": 232.2,
+   "musd": 228.8,
    "partial": false
   },
   {
    "d": "2026-08-27",
-   "musd": 242.3,
+   "musd": 235.6,
    "partial": false
   },
   {
    "d": "2026-08-28",
-   "musd": -201.9,
+   "musd": -211.2,
    "partial": false
   },
   {
    "d": "2026-08-31",
-   "musd": 216.7,
+   "musd": 213.1,
    "partial": false
   },
   {
@@ -68,12 +63,12 @@
   },
   {
    "d": "2026-09-02",
-   "musd": 101.1,
+   "musd": 93.8,
    "partial": false
   },
   {
    "d": "2026-09-03",
-   "musd": 730.8,
+   "musd": 723.1,
    "partial": false
   },
   {
@@ -83,27 +78,27 @@
   },
   {
    "d": "2026-09-08",
-   "musd": -46.6,
+   "musd": -54.1,
    "partial": false
   },
   {
    "d": "2026-09-09",
-   "musd": -120.2,
+   "musd": -124.7,
    "partial": false
   },
   {
    "d": "2026-09-10",
-   "musd": -282.7,
+   "musd": -286.7,
    "partial": false
   },
   {
    "d": "2026-09-11",
-   "musd": -13.2,
+   "musd": -17.0,
    "partial": false
   },
   {
    "d": "2026-09-14",
-   "musd": 159.9,
+   "musd": 150.3,
    "partial": false
   },
   {
@@ -113,7 +108,7 @@
   },
   {
    "d": "2026-09-16",
-   "musd": -295.9,
+   "musd": -299.4,
    "partial": false
   },
   {
@@ -128,22 +123,22 @@
   },
   {
    "d": "2026-09-21",
-   "musd": 999.0,
+   "musd": 937.3,
    "partial": false
   },
   {
    "d": "2026-09-22",
-   "musd": 714.7,
+   "musd": 615.7,
    "partial": false
   },
   {
    "d": "2026-09-23",
-   "musd": 346.9,
+   "musd": 314.6,
    "partial": false
   },
   {
    "d": "2026-09-24",
-   "musd": 190.7,
+   "musd": 180.5,
    "partial": false
   },
   {
@@ -168,27 +163,27 @@
   },
   {
    "d": "2026-10-01",
-   "musd": 102.7,
+   "musd": 95.7,
    "partial": false
   },
   {
    "d": "2026-10-02",
-   "musd": 189.9,
+   "musd": 29.3,
    "partial": false
   },
   {
    "d": "2026-10-05",
-   "musd": -89.9,
+   "musd": -89.8,
    "partial": false
   },
   {
    "d": "2026-10-06",
-   "musd": 118.8,
+   "musd": 111.0,
    "partial": false
   },
   {
    "d": "2026-10-07",
-   "musd": -487.1,
+   "musd": -484.9,
    "partial": false
   },
   {
@@ -208,7 +203,7 @@
   },
   {
    "d": "2026-10-13",
-   "musd": 175.7,
+   "musd": 169.0,
    "partial": false
   },
   {
@@ -238,17 +233,17 @@
   },
   {
    "d": "2026-10-21",
-   "musd": 528.4,
+   "musd": 524.8,
    "partial": false
   },
   {
    "d": "2026-10-22",
-   "musd": -635.6,
+   "musd": -637.9,
    "partial": false
   },
   {
    "d": "2026-10-23",
-   "musd": -137.9,
+   "musd": -142.1,
    "partial": false
   },
   {
@@ -268,7 +263,7 @@
   },
   {
    "d": "2026-10-29",
-   "musd": 17.2,
+   "musd": 13.0,
    "partial": false
   },
   {
@@ -283,7 +278,7 @@
   },
   {
    "d": "2026-11-03",
-   "musd": -115.6,
+   "musd": -118.9,
    "partial": false
   },
   {
@@ -299,18 +294,16 @@
   {
    "d": "2026-11-06",
    "musd": -411.9,
-   "partial": true,
-   "src": "暫定：Farside（crypto.news 轉述）−411.9；SoSoValue −411.92"
+   "partial": false
   },
   {
    "d": "2026-11-09",
-   "musd": -201.0,
-   "partial": true,
-   "src": "暫定：Farside（CoinDesk 轉述）約 −201；SoSoValue −201.08"
+   "musd": -223.1,
+   "partial": false
   }
  ],
- "source": "The Block",
- "source_url": "https://www.theblock.co/data/etfs/bitcoin-etf/spot-bitcoin-etf-flows",
- "updated_utc": "2026-11-09T00:12:16+00:00",
- "last_complete": "2026-11-05"
+ "source": "CoinMarketCap",
+ "source_url": "https://coinmarketcap.com/etf/bitcoin/",
+ "updated_utc": "2026-11-11T00:43:16+00:00",
+ "last_complete": "2026-11-09"
 }
