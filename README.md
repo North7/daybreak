@@ -99,7 +99,7 @@
 | mempool.space | 算力、難度、礦工收入 | 每日 |
 | BitInfoCharts | 2026-10-21 起被 Cloudflare 擋下；2026-11-04 起鯨魚分層改用 Bitview | — |
 | DefiLlama | 穩定幣總供給 | 每日 |
-| Coinbase、Binance | Coinbase 溢價（兩邊日線收盤價差） | 每日 |
+| Coinbase、Binance | Coinbase 溢價（兩邊日線收盤價差；2026-11-12 起用 Coinbase 的 USDT-USD 日線扣掉 USDT 對美元的折溢價） | 每日 |
 | alternative.me | 恐懼貪婪指數 | 每日 |
 | Tidemark（tidemark.aronlab.dev） | 頂部／底部綜合訊號與 2011 起的歷史（第三方模型，只作讀值；歷史取自頁面內嵌資料） | 每日 |
 
@@ -282,6 +282,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-12** Coinbase 溢價扣掉 USDT 對美元的折溢價（使用者看了 Glassnode 週報的做法後要求）：原本是 Coinbase 美元價 ÷ Binance USDT 價 − 1，USDT 低於 1 美元時會把 USDT 自己的折價算進去。11/10 沒扣的 7 日平均是 −0.137%，其中約 −0.13% 是 USDT 折價，扣掉後只有 −0.007%（30 日平均 −0.015%，近四年第 1 百分位）。改成再乘上 Coinbase 的 USDT-USD 收盤（`pipeline/cb_premium.py`），四年歷史一起重算；取不到 USDT-USD 的日子退回原算法並標明。扣掉後兩地只差幾個基點，固定的 −0.15% 深度折價線不能再用（四年沒有一次跌破），改成 7 日平均近四年最低 5% 的線；跌破的次數很少、之後 30 天好壞都有，照實寫、不當訊號。「偏弱／偏強」改看 7 日平均的 10%、90%；翻正翻負的異動改看 30 日平均（7 日平均四年翻 109 次，太吵）。讀值多一列「USDT 對美元」，寫 USDT 現在折價多少、沒扣的數字會是多少。打開網頁時的即時值也一樣扣掉。新版首頁和舊版的圖、說明、推薦圖表一起改。
 - **2026-11-11** ETF 資料源換成 CoinMarketCap（使用者決定）：The Block 的 ETF 圖表 JSON 11/09 起下架（410／404），ETF 完整資料停在 11/05，ETF 持有者成本兩天沒算出來。新來源是 CoinMarketCap 網站自己用的逐檔資料（免金鑰，2024-01-11 上市起，`pipeline/etf_src.py`），只取美國現貨 ETF（它的合計含香港三檔）、丟掉還沒回報的全 0 空列；ETF 每日淨流量（`etf.py`）和 ETF 持有者成本（`cq_extra.py`）共用。和 The Block 過去 82 個交易日比：10/13–11/06 有 13/18 天完全一樣、其餘差 4 百萬美元以內；7–9 月常少 5–10 百萬、9/22 少 99 百萬。CoinMarketCap 沒有 MSBT（11/09 Farside −2.01 億，它是 −2.23 億）。ETF 持有者成本算到 11/05：78,981（原本 79,039）、持有 111.9 萬顆（原本 112.7 萬）。Farside、SoSoValue 擋自動抓取，Bitbo 的表和 Farside 差很多，都不用。
 - **2026-11-11** 修：「上格價格、下格指標」的圖（共 42 張）下格縱軸刻度數字看不到。11/04 加時間範圍切換時，用來剪掉左緣多餘線段的裁切框把右邊留白一起剪掉了，刻度數字和門檻標籤都畫在那裡；改成只剪左邊。刻度出現後有三張圖的標籤會相疊，一併調整：維基百科關注度（×2 靠近門檻 ×2.5 時只留線）、Coinbase 溢價（離深度折價線標籤不到 14px 的刻度只留線）、每日多空清算量（手機不標 ±$20M）
 - **2026-11-11** 鏈上版「賣出的人賺還是賠」新增「短期持有者集中止盈與認賠」（使用者要求；本站自製，資料 Bitview）
@@ -525,7 +526,7 @@ All free public APIs; no keys required.
 | mempool.space | Hashrate, difficulty, miner revenue | Daily |
 | BitInfoCharts | Blocked by Cloudflare since 2026-10-21; whale tiers come from Bitview since 2026-11-04 | — |
 | DefiLlama | Total stablecoin supply | Daily |
-| Coinbase, Binance | Coinbase premium (difference between their daily closes) | Daily |
+| Coinbase, Binance | Coinbase premium (difference between their daily closes; since 2026-11-12 net of the USDT discount, using Coinbase's USDT-USD daily closes) | Daily |
 | alternative.me | Fear & Greed Index | Daily |
 | Tidemark (tidemark.aronlab.dev) | Top/bottom composite signals and their history since 2011 (third-party model, reading only; the history comes from data embedded in its page) | Daily |
 
@@ -644,6 +645,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-12** The Coinbase premium is now net of the USDT discount (requested after reading how Glassnode's weekly report handles it). It used to be Coinbase's USD price ÷ Binance's USDT price − 1, which folds in USDT's own discount whenever USDT trades below $1. On Nov 10 the unadjusted 7-day average read −0.137%, of which about −0.13% was the USDT discount; net of it, −0.007% (30-day average −0.015%, the 1st percentile of four years). The Binance price is now multiplied by Coinbase's USDT-USD close (`pipeline/cb_premium.py`) and four years of history were recalculated; on days when USDT-USD is unavailable the old formula is used and labelled. What is left is a few basis points, so the fixed −0.15% deep-discount line no longer works (never crossed in four years); it is now the lowest 5% of the 7-day average over four years. Breaks are few and the 30 days after are mixed, stated as such and not treated as a signal. Weak or strong is judged by the 10th and 90th percentiles of the 7-day average; the sign-flip alert uses the 30-day average (the 7-day one flipped 109 times in four years). A new reading row, “USDT vs the dollar”, gives the current USDT discount and what the unadjusted number would be. The live value fetched in the browser is adjusted the same way. Charts, explanations and the daily pick on both the new and classic pages were updated.
 - **2026-11-11** ETF data moved to CoinMarketCap (user's call): The Block withdrew its ETF chart JSON on 11/09 (410/404), leaving complete ETF data stuck at 11/05 and the ETF holder cost basis missing for two days. The new source is the per-fund data CoinMarketCap's own site uses (no key, since the 2024-01-11 launch, `pipeline/etf_src.py`), keeping US spot ETFs only (its total includes three Hong Kong funds) and dropping all-zero rows that haven't been reported yet; daily ETF flows (`etf.py`) and the ETF holder cost basis (`cq_extra.py`) share it. Against The Block's last 82 trading days: 13 of 18 days from 10/13 to 11/06 match exactly and the rest are within $4M; July–September often runs $5–10M lower, and 9/22 is $99M lower. CoinMarketCap has no MSBT (11/09: Farside −$201M, CoinMarketCap −$223M). ETF holder cost to 11/05: 78,981 (was 79,039), 1.119M BTC held (was 1.127M). Farside and SoSoValue block automated access and Bitbo's table differs a lot from Farside, so none of them are used.
 - **2026-11-11** Fix: the lower-pane axis numbers were invisible on every “price on top, indicator below” chart (42 charts). The clip added on Nov 4 with the time-range switch, meant to cut lines that run past the left edge, also cut the right margin where the axis numbers and threshold labels are drawn; it now clips the left side only. With the numbers back, three charts had labels touching and were adjusted: Wikipedia attention (×2 keeps its line but drops its label when it sits next to the ×2.5 threshold), Coinbase premium (ticks within 14px of the deep-discount label keep the line only) and daily liquidations (no ±$20M labels on phones)
 - **2026-11-11** New on the On-chain page under “Are sellers in profit or at a loss”: “Short-term holder profit-taking and capitulation spikes” (requested by the user; our own reading, Bitview data)

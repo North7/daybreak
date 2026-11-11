@@ -81,7 +81,8 @@ def build(L, N, E, dn, X):
     def c_prus():   # 顏色：drawCbPrem（每日柱 ≥0 綠、<0 紅；7 日平均 s4→c5；深度折價線和它下面的底色 down→dn；歷次跌破的圓圈 down→dn）
         x = f.get('cb_premium'); rs = [r for r in (x or {}).get('rows') or [] if r[2] is not None]
         if len(rs) < 60: return NA('pr-us', '美國現貨：Coinbase 溢價', 'US spot: Coinbase premium', 'Coinbase 對 Binance 的每日價差（flows.cb_premium）', 'the daily Coinbase vs Binance spread (flows.cb_premium)')
-        DEEP, REARM = -0.15, -0.05; a7 = ma7([r[1] for r in rs])
+        ADJ = bool(x.get('adj')); DEEP, REARM = (x.get('deep'), x.get('rearm', 0.0)) if x.get('deep') is not None else (-0.15, -0.05); a7 = ma7([r[1] for r in rs])   # 2026-11-12：扣掉 USDT 後門檻由資料帶（cb_premium.py）
+        dtx = ('%.3f' % DEEP).replace('-', '−') + '%'
         def at(i, n):
             t = rs[i][0] + n
             for k in range(i, len(rs)):
@@ -92,15 +93,15 @@ def build(L, N, E, dn, X):
             if a is None: continue
             if armed and a < DEEP: ev.append((i, a, at(i, 30))); armed = False
             elif not armed and a > REARM: armed = True
-        vs_ = sorted(r[1] for r in rs if r[1] is not None); qv = lambda p_: vs_[int((len(vs_) - 1) * p_)]; ylo = min(-0.3, qv(.005) * 1.1); yhi = max(.2, qv(.995) * 1.1)
-        return dict(k='pr-us', zh='美國現貨：Coinbase 溢價', en='US spot: Coinbase premium', hz='7 日平均', he='7-day average', f='p3', rows=[[r[0], r[1], r[2], R(a7[i], 4), None if r[1] is None else max(ylo, min(yhi, r[1]))] for i, r in enumerate(rs)], p=2, hero=1, dom=[R(ylo, 3), R(yhi, 3)],
+        vs_ = sorted(r[1] for r in rs if r[1] is not None); qv = lambda p_: vs_[int((len(vs_) - 1) * p_)]; a7v = [a for a in a7 if a is not None]; ylo, yhi = (min(qv(.005), min(a7v)) * 1.12, max(qv(.995), max(a7v)) * 1.12) if ADJ else (min(-0.3, qv(.005) * 1.1), max(.2, qv(.995) * 1.1))
+        return dict(k='pr-us', zh='美國現貨：Coinbase 溢價', en='US spot: Coinbase premium', hz='7 日平均', he='7-day average', f='p3', rows=[[r[0], r[1], r[2], R(a7[i], 4), None if r[1] is None else max(ylo, min(yhi, r[1]))] for i, r in enumerate(rs)], p=2, hero=1, dom=[R(ylo, 4), R(yhi, 4)],
           ser=[ser(4, vc=1, zh='每日', en='Daily', t='bar', op=.42), ser(3, zh='7 日平均', en='7-day average', col='c5', w=1.8)],
-          refs=[dict(v=0, col='k2', solid=1), dict(v=DEEP, col='dn', zh='深度折價線 −0.15%', en='Deep-discount line −0.15%')],
+          refs=[dict(v=0, col='k2', solid=1), dict(v=DEEP, col='dn', zh='深度折價線 ' + dtx, en='Deep-discount line ' + dtx)],
           zones=[dict(lo=None, hi=DEEP, col='dn', zh='7 日平均在深度折價區', en='7-day average in the deep-discount zone', nz='深度折價線', ne='the deep-discount line')],
           marks=[dict(d=rs[i][0], v=R(a, 4), col='dn', up=0, zh=None if r30 is None else '30 天 ' + pc(r30), en=None if r30 is None else '30d ' + pc(r30)) for i, a, r30 in ev],
-          leg=[['dn', '7 日平均跌破 −0.15% 的那一天，和之後 30 天的漲跌', 'Days the 7-day average broke −0.15%, with the 30-day change after', 'ring']],
-          dz='Coinbase 的美元價格除以 Binance 的 USDT 價格再減 1，大於 0 代表美國買方比海外積極。柱子是每天的值，沙金色的線是 7 日平均。7 日平均跌破 −0.15% 算深度折價，圓圈是歷次跌破的那一天，旁邊是之後 30 天的漲跌。',
-          de='Coinbase\'s USD price divided by Binance\'s USDT price, minus 1; above 0 means US buyers are keener than offshore. Bars are daily values and the sand line is the 7-day average. A 7-day average below −0.15% counts as a deep discount; circles mark each break, labelled with the price change 30 days later.')
+          leg=[['dn', '7 日平均跌破 ' + dtx + ' 的那一天，和之後 30 天的漲跌', 'Days the 7-day average broke ' + dtx + ', with the 30-day change after', 'ring']],
+          dz=('Coinbase 的美元價格，除以 Binance 的 USDT 價格換回美元（乘上 USDT 對美元的價格）再減 1，大於 0 代表美國買方比海外積極。2026-11-12 起扣掉 USDT 對美元的折溢價：沒扣之前，USDT 低於 1 美元會讓折價看起來比實際深。扣掉後兩地只差幾個基點。柱子是每天的值，沙金色的線是 7 日平均。7 日平均跌破 ' + dtx + '（近四年最低 5% 的線）算深度折價，圓圈是歷次跌破的那一天，旁邊是之後 30 天的漲跌；次數很少、結果好壞都有，只作讀值。' if ADJ else 'Coinbase 的美元價格除以 Binance 的 USDT 價格再減 1，大於 0 代表美國買方比海外積極。今天取不到 USDT 對美元的價格，沒有扣掉 USDT 的折溢價。柱子是每天的值，沙金色的線是 7 日平均。7 日平均跌破 ' + dtx + ' 算深度折價，圓圈是歷次跌破的那一天，旁邊是之後 30 天的漲跌。'),
+          de=('Coinbase\'s USD price divided by Binance\'s USDT price converted to dollars (times the USDT price in USD), minus 1; above 0 means US buyers are keener than offshore. Since 2026-11-12 the USDT discount is netted out: before that, USDT trading below $1 made the discount look deeper than it was. What is left is a few basis points. Bars are daily values and the sand line is the 7-day average. A 7-day average below ' + dtx + ' (its lowest 5% in four years) counts as a deep discount; circles mark each break, labelled with the price change 30 days later. The cases are few and the results mixed; a reading only.' if ADJ else 'Coinbase\'s USD price divided by Binance\'s USDT price, minus 1; above 0 means US buyers are keener than offshore. The USDT price in dollars was not available today, so the USDT discount is not netted out. Bars are daily values and the sand line is the 7-day average. A 7-day average below ' + dtx + ' counts as a deep discount; circles mark each break, labelled with the price change 30 days later.'))
 
     def c_prasia():   # 顏色：drawPrem 的 one('c-pr-asia', …, 'var(--s4)')→c5、零軸 ink-3→k2；±0.3% 的持平帶取自 premSay 的門檻，現有網站圖上沒畫，區帶顏色依意義選
         h = [r for r in p3.get('usdt_hist') or [] if r[1] is not None]; u = p3.get('usdt') or {}
