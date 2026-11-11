@@ -176,7 +176,7 @@ def onchain_viz(SER, years=YEARS, step=STEP):
     return out
 
 
-# 2026-10-29 使用者要求（貝格先生轉的 Glassnode「吸籌趨勢評分」圖）：價格線依長期持有者 30 日淨部位上色。只作讀值。
+# 2026-10-29 使用者要求（Glassnode「吸籌趨勢評分」圖）：價格線依長期持有者 30 日淨部位上色。只作讀值。
 #   Glassnode 的評分要先把地址歸成實體、排除交易所與礦工（付費資料），做不出來；bitcoin-data 同名的 accumulation-trend-score
 #   與 LTH 30 日淨部位相關 0.97（同一個數字換算），所以直接用已抓的 lth-net-position-change-30d-btc，不另打 API。
 #   淨部位上升也包括幣放滿 155 天自動算成長期持有者，不等於有人買入。
@@ -213,8 +213,8 @@ def canon_px(ser, px):
     return {d: tuple(v[:-1]) + (px.get(d, v[-1]),) for d, v in ser.items()}
 
 
-# 2026-11-02 使用者要求（Murphy〈卖方衰竭指数〉）：賣方衰竭常數＝獲利供給比例 × 30 天價格波動（Checkmate 設計，資料取自 CheckOnChain，見 coc.get_sec）。
-#   CheckOnChain 的刻度和 Glassnode 版不同（Murphy 的 0.01 線不能套），極端區用本身的歷史分布：低於 0.13 約是 2011 年起最低 1% 的日子。只作讀值
+# 2026-11-02 使用者要求：賣方衰竭常數＝獲利供給比例 × 30 天價格波動（Checkmate 設計，資料取自 CheckOnChain，見 coc.get_sec）。
+#   CheckOnChain 的刻度和 Glassnode 版不同（常見的 0.01 線不能套），極端區用本身的歷史分布：低於 0.13 約是 2011 年起最低 1% 的日子。只作讀值
 SEC_TH, SEC_FROM, SEC_ROWS = 0.13, '2011-01-01', '2012-01-01'
 
 
@@ -251,7 +251,7 @@ def sec_viz(ser, last, th=SEC_TH, block=4):
                 note='CheckOnChain 賣方衰竭常數＝獲利供給比例 × 30 天價格波動；刻度和 Glassnode 版不同；極端區＝低於 0.13（本身歷史最低約 1%）；只作讀值')
 
 
-# 2026-11-02 使用者要求（貝格先生的 Realized P/L 比率圖）：全網實現獲利 ÷ 實現虧損，取 90 天平均（Glassnode 圖的做法），資料取自 CheckOnChain（coc.get_rpl）。
+# 2026-11-02 使用者要求（Glassnode 的 Realized P/L 比率圖）：全網實現獲利 ÷ 實現虧損，取 90 天平均（Glassnode 圖的做法），資料取自 CheckOnChain（coc.get_rpl）。
 #   低於 1＝認賠多於獲利（紅色）。歷史上大段紅色都在熊市；回到 1 以上之後多半到週期頂部都沒再跌破，但 2019/12–2020/1 例外。只作讀值
 RPL_N, RPL_FROM, RPL_MAJOR = 90, '2011-01-01', 60
 
@@ -573,9 +573,9 @@ def lthloss_viz(ser, last, bottoms, cohort=None, block=4):
     return out
 
 
-# 2026-11-04 使用者要求（Murphy〈短期持有者成本基礎模型〉，Glassnode 的 STH cost basis ±1/±2 標準差）：資料 Bitview（bitview.get）。
+# 2026-11-04 使用者要求（Glassnode 的 STH cost basis ±1/±2 標準差）：資料 Bitview（bitview.get）。
 #   帶＝短期持有者成本 ×（近 4 年〔1,460 天〕「價格 ÷ 短期持有者成本」的平均 ± k 個標準差）。帶的中心不是成本線，所以上下不對稱。
-#   驗算：2026-11-04 的 −1 標準差算出 68,991，Murphy 寫約 68,900。價格用網站統一收盤（px，沒有的日子用 Bitview 自帶的價格）。只作讀值
+#   驗算：2026-11-04 的 −1 標準差算出 68,991，公開的參考數字約 68,900。價格用網站統一收盤（px，沒有的日子用 Bitview 自帶的價格）。只作讀值
 #   2026-11-05 加 ±0.5 標準差兩條（bands 的鍵 '0.5'、'-0.5'）：離現價最近的上下兩條，前端畫成點線
 SB_W, SB_FROM = 1460, '2022-01-01'
 
@@ -604,7 +604,7 @@ def sth_bands_viz(bv, px, last, step=3):
                 note='短期持有者成本（Bitview）×（近 4 年價格 ÷ 成本的平均 ± k 個標準差）；Glassnode 的同類模型；只作讀值')
 
 
-# 2026-11-04 使用者要求（wander〈6M–12M 與 12M–18M 成本線〉，原圖用 Bitview／BRK）：兩個年齡層的平均買價（實現價格）。資料 Bitview（bitview.get）。
+# 2026-11-04 使用者要求（6M–12M 與 12M–18M 成本線，原圖用 Bitview／BRK）：兩個年齡層的平均買價（實現價格）。資料 Bitview（bitview.get）。
 #   6–12 個月線跌破 12–18 個月線（死叉）大致在熊底附近，重新上穿（金叉）在主升段前後；交叉日與間隔照實列出。只作讀值
 AC_FROM, AC_X = '2015-01-01', '2012-01-01'   # 圖從 2015 起（2014 年 12–18 個月線還在反映 2012–13 年的幣，會把刻度拉到 10 美元）
 

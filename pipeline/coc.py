@@ -133,8 +133,8 @@ def get_pnl():
         return {d: (p, l) for d, p, l in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
 
 
-# 2026-11-02 使用者要求（Murphy〈卖方衰竭指数〉）：賣方衰竭常數＝獲利供給比例 × 30 天價格波動（Checkmate 設計）。
-#   CheckOnChain 的圖從 2010 起、晚約 1 天；刻度和 Glassnode 版（Murphy 的 0.01 線）不同，頁面用自己的歷史分布畫極端區。
+# 2026-11-02 使用者要求：賣方衰竭常數＝獲利供給比例 × 30 天價格波動（Checkmate 設計）。
+#   CheckOnChain 的圖從 2010 起、晚約 1 天；刻度和 Glassnode 版（常見的 0.01 線）不同，頁面用自己的歷史分布畫極端區。
 #   快取存完整歷史（約 6,000 行），歷次跌破的統計要用到 2011 年起的資料
 SEC_URL = 'https://charts-cdn.checkonchain.com/btconchain/unrealised/seller_exhaustion_constant_supply/seller_exhaustion_constant_supply_light.html'
 SEC_PAGE = 'https://charts.checkonchain.com/btconchain/unrealised/seller_exhaustion_constant_supply/seller_exhaustion_constant_supply_light.html'
@@ -161,7 +161,7 @@ def get_sec():
         return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
 
 
-# 2026-11-02 使用者要求（貝格先生的 Realized Profit / Realized Loss 比率圖）：全網實現獲利 ÷ 實現虧損。
+# 2026-11-02 使用者要求（Glassnode 的 Realized Profit / Realized Loss 比率圖）：全網實現獲利 ÷ 實現虧損。
 #   原圖把每日比值取 log10 後拆成正、負兩條（＋ve／−ve），這裡合併再還原成比值；90 天平均在 stage_viz.rpl_viz 算
 RPL_URL = 'https://charts-cdn.checkonchain.com/btconchain/realised/realisedpnl_ratio_all/realisedpnl_ratio_all_light.html'
 RPL_PAGE = 'https://charts.checkonchain.com/btconchain/realised/realisedpnl_ratio_all/realisedpnl_ratio_all_light.html'
