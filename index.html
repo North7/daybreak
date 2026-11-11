@@ -2887,7 +2887,9 @@ function initOC() {
     const lo = Math.min.apply(null, a), hi = Math.max.apply(null, a), pc = Math.round(a.filter(x => x <= v).length / a.length * 100), p30 = atv(rows, col, z[0] - 30), d30 = p30 && typeof p30[col] === 'number' && p30[0] <= z[0] - 20 ? p30[col] : null, pos = hi > lo ? (v - lo) / (hi - lo) * 100 : 50;
     return `<p class="ol-sx">${d30 != null ? `<span>${T('30 天前', '30d ago')}<b>${esc(fm(f, d30))}</b><em>${v > d30 ? '↑' : v < d30 ? '↓' : '→'}</em></span>` : ''}<span>${T('一年區間', '1y range')}<b>${esc(fm(f, lo))}</b><i class="sx-b"><u style="left:${pos.toFixed(1)}%"></u></i><b>${esc(fm(f, hi))}</b></span><span>${T('一年百分位', '1y percentile')}<b>${pc}</b></span></p>`;
   }
-  const IO = 'IntersectionObserver' in window ? new IntersectionObserver(es => { const root = document.getElementById('oc'); if (root) root.classList.add('io'); es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); IO.unobserve(e.target); } }); }, { rootMargin: '0px 0px -6% 0px' }) : null;
+  /* 這一頁已經出現過（畫過）的卡片和段落標題（⑱）：重建時直接顯示，不再進場、不再畫。換頁時清掉 */
+  const SEEN = new Set(), seenK = x => x.classList.contains('fs-h') ? 'h:' + ((x.closest('.fs') || {}).id || '') : 'c:' + (x.dataset.k || '');
+  const IO = 'IntersectionObserver' in window ? new IntersectionObserver(es => { const root = document.getElementById('oc'); if (root) root.classList.add('io'); es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); SEEN.add(seenK(e.target)); IO.unobserve(e.target); } }); }, { rootMargin: '0px 0px -6% 0px' }) : null;
   /* 把一張卡片的內容排成固定的四層：圖名 → 數字＋結論 → 控制＋圖 → 補充 */
   function tidy(ol, sayH, sigH) {
     const q = sel => ol.querySelector(sel), t = q('.ol-t'); if (!t) return;
@@ -2933,7 +2935,7 @@ function initOC() {
   }
   /* 平鋪：一個小問題一段，裡面每張圖都完整畫出來 */
   function renderFlat(k) {
-    const g = G[k - 1]; $('#oc-g' + k).innerHTML = g.charts.map((c, i) => `<article class="fc${c.wide ? ' w' : ''}${c.go ? ' q' : ''}" data-k="${esc(c.k)}" style="--i:${i % 4}"><div class="ol" id="oc-ol${k}_${i}"></div></article>`).join(''); if (IO) $('#oc-g' + k).querySelectorAll('.fc').forEach(el => IO.observe(el));
+    const g = G[k - 1]; $('#oc-g' + k).innerHTML = g.charts.map((c, i) => `<article class="fc${c.wide ? ' w' : ''}${c.go ? ' q' : ''}" data-k="${esc(c.k)}" style="--i:${i % 4}"><div class="ol" id="oc-ol${k}_${i}"></div></article>`).join(''); if (IO) $('#oc-g' + k).querySelectorAll('.fc').forEach(el => { if (SEEN.has(seenK(el))) el.classList.add('in'); else IO.observe(el); });
     SEC[k] = g.charts.map((c, i) => { const R = fill($('#oc-ol' + k + '_' + i), c, k + '_' + i, true); cur1(R, null); pcur1(R, null); return R; });
   }
   function renderOv() {
@@ -3021,7 +3023,7 @@ function initOC() {
     setTimeout(() => { if (!e2.isConnected) return; e2.querySelectorAll('.dg').forEach(sp => sp.replaceWith(document.createTextNode(sp.textContent))); e2.normalize(); }, (dd || 0) + k * 42 + 1100); }
   if (!reduce && 'IntersectionObserver' in window) (function () {
     el.classList.add('mo'); const secs = $('#oc-secs'), bar = $('#oc-bar'), prog = $('#oc-prog'); let scanQ = 0;
-    const MIO = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; const t = e.target; MIO.unobserve(t); const run = () => { if (!t.isConnected) return; if (t.classList.contains('fs-h')) { t.classList.add('m-in'); agHead(t); } else { agent(t); rollDigits(t.querySelector('.ol-big'), 1000 + (parseFloat(t.style.getPropertyValue('--i')) || 0) * 110); } }, wait = bootEnd - performance.now(); if (wait > 0) setTimeout(run, wait); else run(); }), { rootMargin: '0px 0px -6% 0px' });
+    const MIO = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; const t = e.target; MIO.unobserve(t); const run = () => { if (!t.isConnected) return; SEEN.add(seenK(t)); if (t.classList.contains('fs-h')) { t.classList.add('m-in'); agHead(t); } else { agent(t); rollDigits(t.querySelector('.ol-big'), 1000 + (parseFloat(t.style.getPropertyValue('--i')) || 0) * 110); } }, wait = bootEnd - performance.now(); if (wait > 0) setTimeout(run, wait); else run(); }), { rootMargin: '0px 0px -6% 0px' });
     /* 五個 AI，各有分工和顏色 */
     const AG = { lay: ['排版 AI', 'Layout AI', 'var(--c3)'], txt: ['文案 AI', 'Copy AI', 'var(--c5)'], num: ['數據 AI', 'Data AI', 'var(--up)'], cht: ['圖表 AI', 'Chart AI', 'var(--c4)'], chk: ['校對 AI', 'Review AI', 'var(--ac)'] };
     const ARW = '<svg viewBox="0 0 16 16" width="17" height="17"><path d="M2 1.5v12l3.4-3.1 2.2 4.6 2-.9-2.2-4.5 4.6-.3z"/></svg>';
@@ -3097,7 +3099,7 @@ function initOC() {
         setTimeout(() => { if (mpk === tk) { mp.classList.remove('agm'); ts.forEach(x => x.style.removeProperty('--md')); } L.remove(); }, 2900); };
       new MutationObserver(() => { if (!mp.hidden) agMap(); else mpk++; }).observe(mp, { attributes: true, attributeFilter: ['hidden'] }); }
     if ('IntersectionObserver' in window) { const BIO = new IntersectionObserver(es => { if (es[0].isIntersecting) { BIO.disconnect(); boot(); } }, { rootMargin: '0px 0px -30% 0px' }); BIO.observe(hd); }
-    const scan = () => { scanQ = 0; $$('.fs-h:not([data-mo]), .fc:not([data-mo])', secs).forEach(x => { x.dataset.mo = '1'; MIO.observe(x); if (x.classList.contains('fc')) agMark(x); }); agDock(); };
+    const scan = () => { scanQ = 0; $$('.fs-h:not([data-mo]), .fc:not([data-mo])', secs).forEach(x => { x.dataset.mo = '1'; if (x.classList.contains('fc')) agMark(x); if (SEEN.has(seenK(x))) { x.classList.add(x.classList.contains('fs-h') ? 'm-in' : 'in'); return; } MIO.observe(x); }); agDock(); };   /* 畫過的不再畫（⑱） */
     new MutationObserver(() => { if (!scanQ) scanQ = requestAnimationFrame(scan); }).observe(secs, { childList: true, subtree: true }); scan();
     let pq = 0; const progF = () => { pq = 0; const r = el.getBoundingClientRect(); if (prog) prog.style.transform = 'scaleX(' + Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - innerHeight))).toFixed(4) + ')'; };
     window.addEventListener('scroll', () => { if (!pq) pq = requestAnimationFrame(progF); }, { passive: true }); progF();
@@ -3239,7 +3241,7 @@ function initOC() {
     else { if (from) os.style.opacity = '0'; else os.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.97)' }], { duration: 120, easing: 'ease-out', fill: 'forwards' }); run(); }
   }
   function closeFx(from) { const box = $('#oc-fx'), os = box.querySelector('.os'); if (!fx) { box.hidden = true; box.classList.remove('on'); return; } const key = fx.k + '_' + fx.i; fx = null; delete REG.F; fxAnim(false, key, () => { if (!fx) { box.hidden = true; os.getAnimations && os.getAnimations().forEach(a2 => a2.cancel()); os.style.opacity = ''; } }, from && typeof from.s === 'number' ? from : null); }
-  function goCh(i) {
+  function goCh(i) { SEEN.clear();
     if (i === ci || !CH[i] || CH[i].todo) return; const mf0 = agMorphHook ? agMorphHook(i) : null; const old = stg.querySelector('.os[data-k="' + ci + '"] .os-b'); if (old) old.remove(); closeFx();
     ci = i; O = CH[ci]; G = O.groups; REG = {}; ord = order(); place(); headBody(); renderBar(); renderOv(); poster(); hx(); place(); if (mf0) mf0();
     const sc = $('#oc-secs'); sc.classList.add('sw'); setTimeout(() => { renderSecs(); sc.classList.remove('sw'); }, reduce ? 0 : 170);
@@ -3374,8 +3376,8 @@ function initOC() {
   hd.addEventListener('pointermove', e => { const r = hd.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; tx = mx / r.width * 2 - 1; ty = my / r.height * 2 - 1; const f = stg.querySelector('.os.front'); if (f) { const fr = f.getBoundingClientRect(); f.style.setProperty('--lx', ((e.clientX - fr.left) / fr.width * 100).toFixed(1) + '%'); } });
   hd.addEventListener('pointerleave', () => { mx = my = -1e4; tx = ty = 0; });
   function layout() {
-    const r = hd.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); W = r.width || 1200; H = r.height || 760; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g = W < 600 ? 18 : 22; cols = Math.ceil(W / g); rows = Math.ceil(H / g); B = new Float32Array(cols * rows); R = new Float32Array(cols * rows); el.style.setProperty('--fy', (((r.top - el.getBoundingClientRect().top) % g + g) % g).toFixed(1) + 'px'); bsize(); renderAll(); R.set(B); field(0);
+    const r = hd.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1), wChg = Math.round(r.width || 1200) !== Math.round(W); W = r.width || 1200; H = r.height || 760;   /* 只有寬度變了才重建卡片（⑱）：手機捲動時網址列伸縮只改高度 */ cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    g = W < 600 ? 18 : 22; cols = Math.ceil(W / g); rows = Math.ceil(H / g); B = new Float32Array(cols * rows); R = new Float32Array(cols * rows); el.style.setProperty('--fy', (((r.top - el.getBoundingClientRect().top) % g + g) % g).toFixed(1) + 'px'); bsize(); if (wChg) renderAll(); R.set(B); field(0);
   }
   paint(); layout();
   if ('IntersectionObserver' in window) new IntersectionObserver(en => { vis = en[0].isIntersecting; wake(); }).observe($('#oc-hd'));
