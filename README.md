@@ -101,7 +101,7 @@
 | DefiLlama | 穩定幣總供給 | 每日 |
 | Coinbase、Binance | Coinbase 溢價（兩邊日線收盤價差） | 每日 |
 | alternative.me | 恐懼貪婪指數 | 每日 |
-| Tidemark（north7.github.io/tidemark） | 頂部／底部綜合訊號與 2011 起的歷史（第三方模型，只作讀值；歷史取自頁面內嵌資料） | 每日 |
+| Tidemark（tidemark.aronlab.dev） | 頂部／底部綜合訊號與 2011 起的歷史（第三方模型，只作讀值；歷史取自頁面內嵌資料） | 每日 |
 
 頁首「資料狀態」會列出每個來源的資料日期與落後天數；任何一個來源失敗只影響該項，頁面顯示「本日未取得」，不推估、不沿用舊數字。
 
@@ -527,7 +527,7 @@ All free public APIs; no keys required.
 | DefiLlama | Total stablecoin supply | Daily |
 | Coinbase, Binance | Coinbase premium (difference between their daily closes) | Daily |
 | alternative.me | Fear & Greed Index | Daily |
-| Tidemark (north7.github.io/tidemark) | Top/bottom composite signals and their history since 2011 (third-party model, reading only; the history comes from data embedded in its page) | Daily |
+| Tidemark (tidemark.aronlab.dev) | Top/bottom composite signals and their history since 2011 (third-party model, reading only; the history comes from data embedded in its page) | Daily |
 
 The "Data status" bar at the top lists every source's data date and lag. If a source fails, only that item shows "not available today" — nothing is estimated or carried over.
 

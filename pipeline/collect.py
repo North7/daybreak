@@ -1168,9 +1168,9 @@ try:
     R['ex_viz'] = EX
 except Exception as e: errors.append(f'ex_viz {e}')
 
-# ---------- G7. 2026-10-06 使用者要求：Tidemark 頂部／底部綜合訊號（第三方公開模型 north7.github.io/tidemark，只作讀值、不連動倉位、不進預測調整） ----------
+# ---------- G7. 2026-10-06 使用者要求：Tidemark 頂部／底部綜合訊號（第三方公開模型 tidemark.aronlab.dev，只作讀值、不連動倉位、不進預測調整） ----------
 try:
-    _tm = get('https://north7.github.io/tidemark/latest.json')
+    _tm = get('https://tidemark.aronlab.dev/latest.json')
     if not isinstance(_tm, dict) or 'top_signal' not in _tm: raise ValueError('回應不是預期的 JSON')
     _b = _tm.get('bottom') or {}; _ct = _b.get('cycle_test') or {}; _cl = _ct.get('current_low') or {}
     _tw = (_tm.get('timing') or {}); _wh = _tw.get('expected_window_by_halving') or {}; _wl = _tw.get('expected_window_by_low') or {}
