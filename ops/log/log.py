@@ -101,13 +101,19 @@ def replies_ref(to_id):
     return {}
 
 
+def media_kind(t):
+    """配圖種類：photo／gif／video（多種就用 + 連起來），沒有配圖是 None。2026-11-11 起要比靜態圖和動態圖的成效。"""
+    ks = sorted({x.get('type') for x in ((t.get('media') or {}).get('all') or []) if x.get('type')})
+    return '+'.join(ks) or None
+
+
 def entry(i, kind):
     t = get(i)
     q = t.get('quote') or {}
     to_id = t.get('replying_to_status') or q.get('id')
     p = {'id': i, 'kind': kind, 'at': t.get('created_at'), 'lang': lang(t),
          'to': t.get('replying_to') or (q.get('author') or {}).get('screen_name'), 'to_id': to_id,
-         'image': bool(t.get('media')), 'text': t.get('text', '')[:80].replace('\n', ' ')}
+         'image': bool(t.get('media')), 'media': media_kind(t), 'text': t.get('text', '')[:80].replace('\n', ' ')}
     if kind == 'daily':
         p['style'] = daily_style(t.get('text', ''))
     if to_id:
@@ -344,6 +350,11 @@ def summary():
         styles = sorted({p['style'] for p in kp})
         if len(styles) > 1:
             table(f'{KIND_ZH[k]}：依寫法', [(s, [p for p in kp if p['style'] == s]) for s in styles], k == 'reply')
+    og = [p for p in ps if p['kind'] != 'reply']
+    mk = lambda p: p.get('media') or ('photo' if p.get('image') else '沒配圖')   # 11/11 以前只記了有沒有圖，當成靜態圖
+    kinds = sorted({mk(p) for p in og})
+    if len(kinds) > 1:
+        table('原創：依配圖種類（photo 靜態圖、gif、video 影片）', [(k, [p for p in og if mk(p) == k]) for k in kinds])
     rs = [p for p in ps if p['kind'] == 'reply']
     if rs:
         table('回覆：依語言', [(l, [p for p in rs if p.get('lang') == l]) for l in ('zh', 'en')], True)

@@ -24,6 +24,9 @@
   function md(s) { return s ? s.slice(5).replace('-', '/') : ''; }
   function at(date, hhmm) { return new Date(date + 'T' + hhmm + ':00+08:00'); }
   var TODAY = tpe(Date.now());
+  function mime(u) { var e = (String(u).split('?')[0].match(/\.(\w+)$/) || [])[1]; return { mp4: 'video/mp4', gif: 'image/gif', jpg: 'image/jpeg', jpeg: 'image/jpeg' }[e] || 'image/png'; }   // 2026-11-11：長文配圖可以是 GIF／MP4
+  function ext(u) { return { 'video/mp4': '.mp4', 'image/gif': '.gif', 'image/jpeg': '.jpg' }[mime(u)] || '.png'; }
+  function media(u) { return mime(u) === 'video/mp4' ? '<video src="' + u + '" muted loop playsinline autoplay controls preload="metadata"></video>' : '<img src="' + u + '" alt="" loading="lazy">'; }
   function img(path) { return ROOT + String(path).replace(/^https:\/\/north7\.github\.io\/daybreak\//, '') + '?t=' + T; }
   function getJSON(u) { return fetch(ROOT + u + '?t=' + T).then(function (r) { if (!r.ok) throw r.status; return r.json(); }); }
   function copy(t) { try { return navigator.clipboard.writeText(t); } catch (e) { return Promise.reject(e); } }
@@ -39,7 +42,7 @@
   }
   function prefetch(k, urls, names) {   // 分享選單要在同一次點擊內叫出，圖要先抓好
     if (!urls.length) return;
-    Promise.all(urls.map(function (u, i) { return fetch(u).then(function (r) { return r.blob(); }).then(function (b) { return new File([b], names[i], { type: 'image/png' }); }); }))
+    Promise.all(urls.map(function (u, i) { return fetch(u).then(function (r) { return r.blob(); }).then(function (b) { return new File([b], names[i], { type: mime(u) }); }); }))
       .then(function (fs) { FILES[k] = fs; }).catch(function () {});
   }
 
@@ -105,7 +108,7 @@
     if (MOBILE) return '<button class="btn" data-act="save" data-k="' + k + '">存圖</button>';
     return imgs.map(function (u, i) {
       var n = imgs.length > 1 ? ' ' + (i + 1) : '';
-      return (window.ClipboardItem ? '<button class="btn" data-act="copyimg" data-k="' + k + '" data-i="' + i + '">複製圖片' + n + '</button>' : '') +
+      return (window.ClipboardItem && mime(u) === 'image/png' ? '<button class="btn" data-act="copyimg" data-k="' + k + '" data-i="' + i + '">複製圖片' + n + '</button>' : '') +
         '<a class="btn ghost" href="' + u + '" download="' + esc(names[i]) + '">下載' + n + '</a>';
     }).join('');
   }
@@ -164,7 +167,7 @@
         // 2026-11-09 使用者：長文是直接貼成一則貼文，複製要帶標題。標題語言跟這一版相同、內文開頭又沒有標題時，加在最前面（英文長文的標題前綴「(EN) 」拿掉）
         var tt = (x.title || '').replace(/^[(（]EN[)）]\s*/, '').trim(), body = x[lang];
         if (tt && /[一-鿿]/.test(tt) === (lang === 'zh') && body.replace(/\s+/g, '').indexOf(tt.replace(/\s+/g, '').replace(/[。.]$/, '')) !== 0) body = tt + '\n\n' + body;
-        L.langs[lang] = { text: body, imgs: ims, names: ims.map(function (_, i) { return 'daybreak-' + x.id + (ims.length > 1 ? '-' + (i + 1) : '') + (lang === 'en' ? '-en' : '') + '.png'; }), lim: 25000, long: true };
+        L.langs[lang] = { text: body, imgs: ims, names: ims.map(function (_, i) { return 'daybreak-' + x.id + (ims.length > 1 ? '-' + (i + 1) : '') + (lang === 'en' ? '-en' : '') + ext(ims[i]); }), lim: 25000, long: true };
       });
       out.push(L);
     });
@@ -184,7 +187,7 @@
       var o = p.langs[l], k = p.key + '|' + l;
       var body = o.text ? countLine(o.text, o.lim, o.long) + textBlock(o.text, o.long) : '<p class="note">解說還沒寫好，先只有圖。</p>';
       return '<div class="lp" data-lang="' + l + '"' + (l === first ? '' : ' hidden') + '>' + body +
-        (o.imgs.length ? '<div class="imgs">' + o.imgs.map(function (u) { return '<img src="' + u + '" alt="" loading="lazy">'; }).join('') + '</div>' : '') +
+        (o.imgs.length ? '<div class="imgs">' + o.imgs.map(media).join('') + '</div>' : '') +
         '<div class="acts"><button class="btn primary" data-act="post" data-k="' + k + '"' + (o.text ? '' : ' disabled') + '>' + (MOBILE ? '分享到 X' : '發到 X') + '</button>' +
         (o.text && MOBILE ? '<a class="btn" data-act="app" data-k="' + k + '" href="twitter://post?message=' + encodeURIComponent(o.text.length <= 1500 ? o.text : '') + '">打開 X App</a>' : '') +
         (o.text ? '<button class="btn" data-act="copy" data-k="' + k + '">複製文字</button>' : '') + imgActs(k, o.imgs, o.names) + '</div>' +

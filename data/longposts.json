@@ -25,20 +25,6 @@
    "charts": []
   },
   {
-   "id": "2026-11-11-lev-en",
-   "time": "2026-11-11T12:00:00Z",
-   "title": "Did the CPI drop flush out leverage?",
-   "note": "11/11 20:00 英文（英文區熱度：槓桿和清算）。11/10 數字：未平倉 345,100 顆（98 百分位，30 天 +13%、價格 −12%）、多單清算 8,700 萬（週日 1.68 億）、永續主動淨賣 9,700 顆、Binance 多單帳戶 73.5%、費率 7 日約 8%；推算多單清算區 71.0K–72.6K。歷史：30 天價格跌 8%＋、未平倉漲 8%＋的 11 次，牛市 4 次 30 天後全漲、頂部後 7 次全跌。圖1、圖2 是新版首頁卡片（ops/post/next_shot.py，英文），圖3 自畫（scratchpad lev/hist.py，沒進 git）。中文對照在回報裡。 2026-11-11 使用者：「長文不要再加一堆最後的數據部分」→ 正文拿掉腳註，原本的數據出處留在這裡：(Data: open interest Coinalyze, 11 BTC perpetual contracts on Binance, Bybit, OKX, Hyperliquid, HTX, Bitfinex, Deribit, in BTC, Nov 10; liquidations Coinalyze, Binance, Bybit, OKX, HTX, Bitfinex, Nov 8 longs $168M, Nov 10 longs $87M and shorts $14M; taker flow Binance, Bybit, OKX USDT perpetuals; long accounts Binance BTCUSDT perpetual; funding 7-day average weighted by open interest across Binance, Bybit, OKX, Hyperliquid; liquidation levels are estimates from open interest and assumed leverage, not actual positions; setup sampled every 2 days since 2021, 30 days later bull cases +1%, +19%, +3%, +15%, after-top cases −18%, −4%, −24%, −7%, −4%, −11%, −9%; cycle tops Nov 8, 2021 and Oct 6, 2025, lows Nov 9, 2022 and Jun 30, 2026 per Daybreak's cycle model) 圖1、圖2 改用新版首頁分享模式重截（頁尾帶資料來源和日期）。 11/11 精煉到約 240 字。",
-   "en": "Did the CPI drop flush out leverage?\n\nBTC broke its 200-day average on CPI day and only $87M of longs got liquidated (Chart 1). I didn't expect a break like that to leave this much leverage standing\n\nOpen interest rose instead of falling. 345.1K BTC, 98th percentile of the past year, up 13% in 30 days while price fell 12% (Chart 2). Perp takers net sold 9,700 BTC on the day, and selling into rising open interest usually means new shorts opening. The longs stayed: 73.5% of Binance accounts are long, and funding is still around 8% annualized\n\nBoth sides got bigger, and the closer pile is below. Estimated long liquidations cluster at $71.0K–72.6K, about 3% under Tuesday's close. The first big short cluster sits near $82K, 12% up\n\nIs it a signal? Since 2021, price fell 8%+ over 30 days while open interest rose 8%+ eleven times (Chart 3). All 4 inside bull markets were higher 30 days later. All 7 after a cycle top were lower. On its own it isn't a signal, it amplifies the phase you're in. Our cycle model has called this a bull since Oct 9 and I lean the same way, so I read it as a crowded pullback, on only four cases\n\nA real flush would take open interest back under 330K, bring a day of $300M+ long liquidations, and push funding to zero or below. None of that has happened yet\n\n#Bitcoin #BTC",
-   "images": [
-    "data/longposts/2026-11-11-lev-en.png"
-   ],
-   "charts": [
-    "deriv/oih",
-    "deriv/lqv"
-   ]
-  },
-  {
    "id": "2026-11-12-psy",
    "time": "2026-11-12T11:30:00Z",
    "title": "都說怕了，為什麼做多的人還在變多？",
@@ -63,7 +49,8 @@
     "data/longposts/2026-11-11-pool.png"
    ],
    "charts": [],
-   "quote": "https://x.com/BlockBeatsAsia/status/2110570379119038734"
+   "quote": "https://x.com/BlockBeatsAsia/status/2110570379119038734",
+   "posted": "2026-11-11"
   },
   {
    "id": "2026-11-11-sx",
@@ -79,6 +66,19 @@
     "sell/sthsig"
    ],
    "posted": "2026-11-11"
+  },
+  {
+   "id": "2026-11-13-novdec",
+   "time": "2026-11-13T04:00:00Z",
+   "title": "11 月開局就跌，過去的 11 月和 12 月怎麼走？",
+   "note": "11/11 使用者：「圖文推薦那篇想說是不是改天發，今天發了很多了」→ 11/10 的推薦圖表（market/mon）挪到這裡，暫定 11/13 12:00，日子可以改。第一句原本「11 月已經跌 4.83%」會過期，改成「11 月開局就跌」（11 月收漲之前都成立）。圖是 11/10 收盤的網站月度表（data/picks/market-mon.png 複製過來，圖上標了日期）；要新數字就叫長文 session 重截。11 月如果翻成上漲，這則整個要重寫。跌到 200 日均線邊上、11 月已經跌近 5%，讀者會問 11 月以前怎麼走；和頭條的 CPI、短期持有者認賠不重複。 11/11 使用者：「最後如果說不出什麼結論，感覺一篇文章白說」→ 解說改成條件化：8 次上漲的 11 月到 10 號都已經在漲；10 號還在跌的 3 次（2019、2022、2025）全部收跌（Bitview 每日價）。 11/11 使用者問「12 月感覺都是跌得多」→ 網站月度表：12 月 13 次 8 跌、中位 −3.2%（平均 +4%，漲的年份漲很多）；11 月收跌的 5 年（2018、2019、2021、2022、2025）12 月全跌，−3.2% 到 −18.8%，4 次在 −3% 到 −7%；11 月收漲的 8 年 12 月 6 漲。",
+   "zh": "11 月開局就跌，過去的 11 月和 12 月怎麼走？\n\n2013 年以來 8 次 11 月上漲，這 8 次到 10 號都已經在漲；開局就跌的 2019、2022、2025 全部收跌。12 月也跟著 11 月走，11 月收跌的 5 年，12 月全部再跌，多半跌 3% 到 7%；11 月收漲的 8 年，12 月有 6 次漲。\n\n#比特幣 #BTC #歷史數據",
+   "images": [
+    "data/longposts/2026-11-13-novdec.png"
+   ],
+   "charts": [
+    "market/mon"
+   ]
   }
  ],
  "used": [
@@ -214,6 +214,15 @@
    "charts": [
     "cycle/regime"
    ]
+  },
+  {
+   "id": "2026-11-11-lev-en",
+   "date": "2026-11-11",
+   "charts": [
+    "deriv/oih",
+    "deriv/lqv"
+   ],
+   "skipped": "11/11 使用者：「cpi 那個不打算發了」"
   }
  ]
 }
