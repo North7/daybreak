@@ -204,7 +204,8 @@ def _flip_rows(L, k, g, _rows, _ma7, _ivrv):
         rows = [(r[0], r[1] / r[col] - 1) for r in g(L, 'cycle.levels.rows') or [] if len(r) > col and r[1] and r[col]]
         return rows, 0.0
     if k == 'rcliq_pos': return _rows(L, 'flows.rc_liq.rows', 1), 0.0
-    if k == 'cbp_pos': return _ma7(_rows(L, 'flows.cb_premium.rows', 1)), 0.0
+    if k == 'cbp_pos':   # 2026-11-12：改看 30 日平均（signals.py）
+        r_ = _rows(L, 'flows.cb_premium.rows', 1); return [(r_[i][0], sum(v for _, v in r_[i - 29:i + 1]) / 30) for i in range(29, len(r_))], 0.0
     if k == 'iv_gt_rv': return _ivrv(L), 0.0
     if k in ('sth_tp', 'sth_cap'):   # rows＝[日, 收盤, 止盈強度, −認賠強度]；門檻 2
         rows = [(r[0], r[2] if k == 'sth_tp' else -r[3]) for r in g(L, 'onchain.sthsig.rows') or [] if len(r) > 3 and r[2] is not None and r[3] is not None]

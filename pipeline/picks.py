@@ -110,10 +110,10 @@ def c_cohort(L, end):
 def c_cbp(L, end):
     p = g(L, 'flows.cb_premium'); rows = [(r[0], r[1]) for r in p['rows']]
     ma = [(rows[i][0], sum(v for _, v in rows[i - 6:i + 1]) / 7) for i in range(6, len(rows))]
-    return dict(kind='line', name=T('Coinbase 溢價', 'Coinbase premium'), sub=T('Coinbase 美元報價相對 Binance 的價差（%）；細條是每日，線是 7 日平均',
-                                                                             'Coinbase BTC-USD vs Binance BTC-USDT (%); bars are daily, the line is the 7-day average'),
+    return dict(kind='line', name=T('Coinbase 溢價', 'Coinbase premium'), sub=T('Coinbase 美元報價相對 Binance 的價差（%，已扣掉 USDT 對美元的折溢價）；細條是每日，線是 7 日平均',
+                                                                             'Coinbase BTC-USD vs Binance BTC-USDT (%, net of the USDT discount); bars are daily, the line is the 7-day average'),
                 series=[dict(name=T('每日', 'Daily'), rows=rows, color=INK3, bars=True, faint=True), dict(name=T('7 日平均', '7-day average'), rows=ma, color=RED, width=7)],
-                refs=[dict(y=0)], yf=lambda v: f'{v:.2f}%', src='Coinbase · Binance', asof=p['date'],
+                refs=[dict(y=0)], yf=lambda v: f'{v:.3f}%', src='Coinbase · Binance', asof=p['date'],
                 stats=[S(f'今日（{md(p["date"], "zh")}）', f'Latest ({md(p["date"], "en")})', f'{p["pct"]:.3f}%'.replace('-', '−')),
                        S('7 日平均', '7-day average', f'{p["avg7"]:.3f}%'.replace('-', '−')), S('30 日平均', '30-day average', f'{p["avg30"]:.3f}%'.replace('-', '−'))])
 

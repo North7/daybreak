@@ -229,7 +229,7 @@ def states(L):
     so = g(L, 'chips.viz.sopr.value'); put('sopr_ge1', None if so is None else so >= 1)
     n7 = g(L, 'onchain.npl.sum7_usd_m'); put('npl7_pos', None if n7 is None else n7 > 0)
     rc = g(L, 'flows.rc_liq.chg30_pct'); put('rcliq_pos', None if rc is None else rc > 0)
-    cb = g(L, 'flows.cb_premium.avg7'); put('cbp_pos', None if cb is None else cb > 0)
+    cb = g(L, 'flows.cb_premium.avg30'); put('cbp_pos', None if cb is None else cb > 0)   # 2026-11-12：扣掉 USDT 後 7 日平均常在 0 上下跳（四年翻 109 次），翻轉改看 30 日平均（25 次）
     put('hash_cap', g(L, 'onchain.hash_ribbons.capitulation'))
     put('sth_tp', g(L, 'onchain.sthsig.tp.on')); put('sth_cap', g(L, 'onchain.sthsig.cap.on'))   # 2026-11-11 短期持有者集中止盈／集中認賠（stage_viz.sthsig_viz）
     fg = g(L, 'flows.fear_greed.value'); put('fg_zone', None if fg is None else 'xfear' if fg < 25 else 'xgreed' if fg > 75 else 'mid')
@@ -253,7 +253,7 @@ FLIP = {
     'sopr_ge1': ('holders', 'onchain', 'sopr', T('短期持有者 SOPR 回到 1 之上', 'STH-SOPR back above 1'), T('短期持有者 SOPR 跌破 1（轉為賠錢賣）', 'STH-SOPR fell below 1 (selling at a loss)')),
     'npl7_pos': ('holders', 'onchain', 'npl', T('近 7 日淨實現損益轉為淨獲利', '7-day net realized P/L turned to net profit'), T('近 7 日淨實現損益轉為淨認賠', '7-day net realized P/L turned to net loss')),
     'rcliq_pos': ('flows', 'flows', 'rcliq', T('實現市值 30 日變化轉正（資金回流）', 'Realized cap 30-day change turned positive'), T('實現市值 30 日變化轉負（資金流出）', 'Realized cap 30-day change turned negative')),
-    'cbp_pos': ('flows', 'flows', 'pr-us', T('Coinbase 溢價 7 日均轉正', 'Coinbase premium 7-day average turned positive'), T('Coinbase 溢價 7 日均轉負', 'Coinbase premium 7-day average turned negative')),
+    'cbp_pos': ('flows', 'flows', 'pr-us', T('Coinbase 溢價 30 日均轉正', 'Coinbase premium 30-day average turned positive'), T('Coinbase 溢價 30 日均轉負', 'Coinbase premium 30-day average turned negative')),
     'sth_tp': ('holders', 'onchain', 'sthsig', T('短期持有者集中止盈（止盈強度升破 2）', 'Short-term holder profit-taking spike (reading above 2)'), T('短期持有者集中止盈結束（止盈強度回到 2 以下）', 'Short-term holder profit-taking spike ended (reading back below 2)')),
     'sth_cap': ('holders', 'onchain', 'sthsig', T('短期持有者集中認賠（認賠強度升破 2）', 'Short-term holder capitulation spike (reading above 2)'), T('短期持有者集中認賠結束（認賠強度回到 2 以下）', 'Short-term holder capitulation spike ended (reading back below 2)')),
     'hash_cap': ('cycle', 'onchain', None, T('算力帶進入礦工投降', 'Hash Ribbons: miner capitulation started'), T('算力帶脫離礦工投降', 'Hash Ribbons: miner capitulation ended')),
@@ -293,7 +293,7 @@ def _flip_fig(k, L, prev):
     if ref: return T(f'收盤 {F(c0, "usd", "zh")} → {F(c, "usd", "zh")}，線在 {F(g(L, ref), "usd", "zh")}', f'close {F(c0, "usd", "en")} → {F(c, "usd", "en")}; line at {F(g(L, ref), "usd", "en")}')
     path = {'funding_pos': ('deriv.funding_multi.weighted_now', 'spct'), 'iv_gt_rv': ('deriv.samesource.iv_minus_rv30', 2), 'rr_pos': ('deriv.rr25.rr', 2),
             'sopr_ge1': ('chips.viz.sopr.value', 4), 'npl7_pos': ('onchain.npl.sum7_usd_m', 'musd'), 'rcliq_pos': ('flows.rc_liq.chg30_pct', 'spct'),
-            'cbp_pos': ('flows.cb_premium.avg7', 3), 'sth_tp': ('onchain.sthsig.zp', 2), 'sth_cap': ('onchain.sthsig.zl', 2), 'tm_top': ('cycle.tidemark.top.signal', 0), 'tm_bottom': ('cycle.tidemark.bottom.signal', 0)}.get(k)
+            'cbp_pos': ('flows.cb_premium.avg30', 3), 'sth_tp': ('onchain.sthsig.zp', 2), 'sth_cap': ('onchain.sthsig.zl', 2), 'tm_top': ('cycle.tidemark.top.signal', 0), 'tm_bottom': ('cycle.tidemark.bottom.signal', 0)}.get(k)
     if not path: return T('', '')
     a, b = g(prev, path[0]), g(L, path[0])
     return T(f'{F(a, path[1], "zh")} → {F(b, path[1], "zh")}', f'{F(a, path[1], "en")} → {F(b, path[1], "en")}')
@@ -488,7 +488,7 @@ def checks(L, notes):
 
 # ---------- 主程式 ----------
 SNAP = ('meta.bar_date', 'price.bar.c', 'price.ma.sma200', 'onchain.metrics.sth-realized-price.value', 'chips.flow.sth_vs_tmm.tmm', 'deriv.funding_multi.weighted_now',
-        'deriv.samesource.iv_minus_rv30', 'deriv.rr25.rr', 'chips.viz.sopr.value', 'onchain.npl.sum7_usd_m', 'flows.rc_liq.chg30_pct', 'flows.cb_premium.avg7',
+        'deriv.samesource.iv_minus_rv30', 'deriv.rr25.rr', 'chips.viz.sopr.value', 'onchain.npl.sum7_usd_m', 'flows.rc_liq.chg30_pct', 'flows.cb_premium.avg7', 'flows.cb_premium.avg30',
         'onchain.hash_ribbons.capitulation', 'flows.fear_greed.value', 'cycle.stage.stage', 'cycle.stage.evidence.items', 'cycle.tidemark.top.signal',
         'cycle.tidemark.bottom.signal', 'exit.status.p6', 'signals.active')
 
