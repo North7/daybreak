@@ -192,6 +192,8 @@ h3 { font-family: var(--f-head); font-weight: 900; font-size: 19px; line-height:
 /* gallery */
 .gal { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 .gal .stack { display: grid; gap: 16px; }
+.gal.even { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-top: 16px; }
+.vid video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; }
 
 /* metrics */
 .mt { width: 100%; border-collapse: collapse; font-size: 15px; }
@@ -250,13 +252,13 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
     <svg viewBox="0 0 30 14" aria-hidden="true"><path d="M7 11a8 8 0 0 1 16 0" fill="none" stroke="var(--red)" stroke-width="3"/><rect x="0" y="11" width="30" height="3" fill="var(--ink)"/></svg>
     DAYBREAK · CASE STUDY
   </div>
-  <span class="mono">Product management · 2026.09.22 – 2026.10.23 · <a href="../" hreflang="zh-Hant" lang="zh-Hant">中文</a></span>
+  <span class="mono">Product management · 2026.09.22 – 2026.11.11 · <a href="../" hreflang="zh-Hant" lang="zh-Hant">中文</a></span>
 </header>
 
 <section class="hero">
   <div class="kicker"><span class="tag">EXTRA</span><span class="mono">Solo product · zero to a daily edition</span></div>
   <h1 class="name">Daybreak<small>破曉</small></h1>
-  <p class="deck">Turning <span class="r">15</span> free data sources into a Bitcoin brief that ships every morning at <span class="r">08:30</span> and checks its own calls.</p>
+  <p class="deck">Turning <span class="r">18</span> free data sources into a Bitcoin brief that ships every morning at <span class="r">08:30</span> and checks its own calls.</p>
 
   <div class="facts">
     <div><span class="lbl">Role</span><p><strong>Product owner (solo project)</strong><br>Problem framing, rule design, data strategy, AI editorial workflow, quality bar</p></div>
@@ -266,18 +268,18 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
   </div>
 
   <figure>
-    <img class="shot" src="img/front.jpg" width="1400" height="933" alt="Daybreak desktop front page: a nine-section index on the left, an EXTRA headline about ETF outflows and a 334-day high in net realized profit, and the closing price 81,086 set very large.">
-    <figcaption>Front page, Oct 23 close edition (No. 018). The headline sums up the market; the closing price is the only heavy visual on the page.</figcaption>
+    <img class="shot" src="img/front.jpg" width="1400" height="933" alt="Daybreak home page on desktop: seven tabs across the top (Today, Cycle, Levels, Selling, Demand, Leverage, Exit); the centre card carries the day's headline about a hot CPI print, the closing price 73,700 set very large over a 20-day price line, and the distances to the 200-day average, the MVRV 0.75 line and the first exit step; six small cards around it preview the other pages.">
+    <figcaption>Home page, Nov 10 close edition (No. 036). Since Nov 11 the site opens on Today plus six questions. The headline and the closing price still lead; each of the six cards around them carries one number from the page behind it.</figcaption>
   </figure>
 </section>
 
 <div class="tape" role="list" aria-label="Project figures">
-  <div role="listitem"><b>18</b><span>daily editions in a row since Oct 6</span></div>
-  <div role="listitem"><b>15</b><span>public data sources, zero API keys</span></div>
+  <div role="listitem"><b>36</b><span>daily editions in a row since Oct 6</span></div>
+  <div role="listitem"><b>18</b><span>public data sources, one free API key, no paid data</span></div>
   <div role="listitem"><b>$0</b><span>data and hosting cost</span></div>
   <div role="listitem"><b>26</b><span>series scanned for anomalies every day</span></div>
-  <div role="listitem"><b>9</b><span>sections in two languages</span></div>
-  <div role="listitem"><b>155</b><span>commits in the first 16 days of the public repo</span></div>
+  <div role="listitem"><b>95</b><span>charts under six questions, in two languages</span></div>
+  <div role="listitem"><b>126</b><span>pull requests merged in five weeks of the public repo</span></div>
 </div>
 
 <section class="s" id="tldr">
@@ -285,8 +287,8 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
   <div class="main">
     <div class="cols">
       <div><span class="lbl">Problem</span><h3>Lots of data, few conclusions</h3><p>Long-term holders want to sell in stages before a cycle top. The on-chain, ETF and derivatives data they need is spread over a dozen sites, none of it says what a number means, and discipline fails exactly when it matters most.</p></div>
-      <div><span class="lbl">Approach</span><h3>Separate numbers, reading and rules</h3><p>Code produces the numbers, AI only explains them, and the exit rules are fixed and reviewed monthly. The brief ships automatically every day, and "Today's findings" points attention at what is unusual, then checks the next day whether the call held.</p></div>
-      <div><span class="lbl">Outcome</span><h3>Free to run, on time every day</h3><p>18 consecutive editions on free APIs only. The one manual step left each day is posting to X. Findings come with testable conditions; the first batch came back the next day as one confirmed and one still being watched.</p></div>
+      <div><span class="lbl">Approach</span><h3>Separate numbers, reading and rules</h3><p>Code produces the numbers, AI only explains them, and the exit rules are fixed and reviewed monthly. The brief ships automatically every day, and "Today's findings" points attention at what is unusual, then checks the next day whether the call held. Since Nov 11 the site is organised around six questions a holder asks, not around types of data.</p></div>
+      <div><span class="lbl">Outcome</span><h3>Free to run, on time every day</h3><p>36 consecutive editions, still at zero cost. The one manual step left each day is posting to X. Of 41 findings logged since Oct 23, 30 are resolved: 16 confirmed, 6 refuted and 8 expired without an answer.</p></div>
     </div>
   </div>
 </section>
@@ -304,7 +306,7 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
     <div class="quote"><span class="lbl">Job to be done</span>In a few minutes each morning, know where the market sits in the cycle, whether any exit rule fired today, and which prices and dates to watch next.</div>
     <div class="scope">
       <div><span class="lbl">In scope</span><ul class="yes"><li>A conclusion-first daily brief</li><li>Cycle position and distance to each exit rule</li><li>A plain-language reading for every number</li><li>Readable on phones, in Chinese and English</li></ul></div>
-      <div><span class="lbl">Deliberately out</span><ul class="no"><li>Short-term price calls or trade tips</li><li>Anyone's actual holdings or amounts</li><li>Order placement or account links</li><li>Data that needs keys or payment</li></ul></div>
+      <div><span class="lbl">Deliberately out</span><ul class="no"><li>Short-term price calls or trade tips</li><li>Anyone's actual holdings or amounts</li><li>Order placement or account links</li><li>Paid data (one free API key since Nov 8)</li></ul></div>
     </div>
   </div>
 </section>
@@ -314,15 +316,15 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
   <div class="main">
     <p class="prose">These five are written into the README and the daily task's rules. Every trade-off later on traces back to them.</p>
     <div class="prin">
-      <div><h3>Conclusion first, evidence second</h3><p>Each section opens with "Today's read": one sentence on what matters most there today. The numbers follow as evidence.</p></div>
+      <div><h3>Conclusion first, evidence second</h3><p>Every level answers before it shows. A page opens with the answer to its question, each group of charts has a one-line answer, and each chart card states its reading above the chart.</p></div>
       <div><h3>"Not available today" beats a guess</h3><p>A failed source affects only its own item, and the page says so. Yesterday's number is never carried forward. A status row shows how many days each source lags.</p></div>
       <div><h3>Never subtract across vendors</h3><p>CoinMetrics and bitcoin-data define MVRV differently. Mixing them produces conclusions that look precise and are wrong.</p></div>
       <div><h3>Every rate comes with its sample size</h3><p>Historical references always state the sample; under 30, no conclusion. Bitcoin has only 3 or 4 cycles, so every "diminishing returns" claim names its assumption.</p></div>
       <div><h3>Readings never move the rules</h3><p>Market stage, number readings, news and third-party models are context only. They cannot change the exit framework, whose parameters change only at the monthly review.</p></div>
     </div>
     <figure>
-      <img class="shot" src="img/cycle.jpg" width="1180" height="1000" alt="Cycle section: Today's read states the market stage is bull, day 15, with 44 straight closes above a rising 200-day average; below are the two stage conditions and the supporting signals count of 3 out of 6.">
-      <figcaption>The cycle section. Market stage is set by fixed rules (capitulation has occurred, then 30 closes above a rising 200-day average). The six supporting lights are shown but take no part in the call.</figcaption>
+      <img class="shot" src="img/cycle.jpg" width="1180" height="1000" alt="Cycle page: the answer line says bull day 33 with only one evidence light on; a large Dawn-Dusk heat reading of 21.5, a circular chart of the cycle with the current point in the Daybreak stage, and nine input bars on the right.">
+      <figcaption>The Cycle page, Nov 10 edition. The page answers its question first (where are we in the cycle), then shows the evidence. Market stage is still set by fixed rules; the Dawn–Dusk heat is a reading built from nine inputs and takes no part in any rule.</figcaption>
     </figure>
   </div>
 </section>
@@ -332,7 +334,7 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
   <div class="main">
     <p class="lead">The most important architectural decision: AI explains. It does not calculate, and it does not decide.</p>
     <div class="layers">
-      <div class="layer"><span class="who">Deterministic code</span><h3>Numbers</h3><p>A Python pipeline pulls 15 sources, computes indicators, detects anomalies and archives the previous edition. Same input, same output, every time.</p></div>
+      <div class="layer"><span class="who">Deterministic code</span><h3>Numbers</h3><p>A Python pipeline pulls 18 sources, computes indicators, detects anomalies and archives the previous edition. Same input, same output, every time.</p></div>
       <div class="layer hot"><span class="who">Scheduled Claude task</span><h3>Reading</h3><p>Reads a compact brief, verifies news and research, and writes the headline, section reads and findings in both languages. It changes no numbers and no site code.</p></div>
       <div class="layer"><span class="who">Fixed parameters</span><h3>Rules</h3><p>The exit framework: an 8-step price ladder, on-chain triggers, top acceleration, a 200-day average hedge and a time stop. Changed only at the monthly review.</p></div>
     </div>
@@ -340,10 +342,10 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
       <table>
         <thead><tr><th>Taipei time</th><th>Who</th><th>What</th></tr></thead>
         <tbody>
-          <tr><td>06:40</td><td><span class="chip">Actions</span></td><td>Prefetch 7 on-chain series, splitting the free tier's 15 daily requests into two batches.</td></tr>
+          <tr><td>06:40</td><td><span class="chip">Actions</span></td><td>Prefetch 8 on-chain series, splitting the free tier's 15 daily requests into two batches.</td></tr>
           <tr><td>08:06</td><td><span class="chip">Actions</span></td><td>Fetch everything, compute indicators, run anomaly detection, archive the previous edition, publish.</td></tr>
-          <tr><td>08:30</td><td><span class="chip ai">Claude</span></td><td>Read the brief, verify news and research, write both language editions and the findings; commit only after the format check and privacy scan pass.</td></tr>
-          <tr><td>08:3x</td><td><span class="chip">Actions</span></td><td>Render share images in both languages; push the X post drafts to my phone.</td></tr>
+          <tr><td>08:15</td><td><span class="chip ai">Claude</span></td><td>Read the brief, verify news and research, write both language editions and the findings; commit only after the format check and privacy scan pass. Until it lands, the site keeps showing the previous edition whole, so numbers and reading never disagree.</td></tr>
+          <tr><td>08:3x</td><td><span class="chip">Actions</span></td><td>Rebuild the home page with the day's headline, render share images in both languages, push the X post drafts to my phone.</td></tr>
           <tr><td>22:00</td><td><span class="chip">Actions</span></td><td>Backfill the previous trading day's ETF flows, which the source publishes about a day late.</td></tr>
         </tbody>
       </table>
@@ -368,7 +370,7 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
         <dl>
           <dt>Context</dt><dd>bitcoin-data's free tier allows 15 requests a day, its STH-SOPR ran about 7 days late, and Farside blocks automated requests behind Cloudflare.</dd>
           <dt class="k">Decision</dt><dd>Split requests into 7 the night before and 6 on the day. Read STH-SOPR from CheckOnChain's public chart instead. Switch ETF flows to The Block, adopted only after matching Farside day by day.</dd>
-          <dt>Trade-off</dt><dd>More caching and rotation logic. STH-SOPR latency dropped <strong>from about 7 days to about 1</strong>, and it freed quota, keeping usage at 13 requests a day.</dd>
+          <dt>Trade-off</dt><dd>More caching and rotation logic. STH-SOPR latency dropped <strong>from about 7 days to about 1</strong>, and it freed quota, keeping usage at 13 requests a day. <strong>Update, Nov 11:</strong> The Block took its ETF chart data offline on Nov 9 and the series froze at Nov 5; two days later the site moved to CoinMarketCap's per-fund flows.</dd>
         </dl>
       </article>
       <article>
@@ -376,7 +378,7 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
         <dl>
           <dt>Context</dt><dd>GitHub's built-in scheduler ran 5 to 7 hours late on this repo every day. The morning brief was becoming a lunch brief.</dd>
           <dt class="k">Decision</dt><dd>Trigger runs from cron-job.org instead. The original schedule stays as a backup, and duplicate runs on the same day skip themselves. When the AI task finds stale data, it triggers the pipeline itself and waits. On Oct 21 the "already fetched today" check moved from the UTC date to the start of the data cycle.</dd>
-          <dt>Trade-off</dt><dd>One more external service to maintain. In return the brief is back to a morning release, with no missed edition in 18 since launch.</dd>
+          <dt>Trade-off</dt><dd>One more external service to maintain. In return the brief is back to a morning release, with no missed edition in 36 since launch.</dd>
         </dl>
       </article>
       <article>
@@ -384,7 +386,7 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
         <dl>
           <dt>Context</dt><dd>BitInfoCharts, the source for the whale and large-holder tiers, started blocking automated requests.</dd>
           <dt class="k">Decision</dt><dd>Pause the panel. The pipeline does not error, and the site hides the panel, its status row and its source entry when there is no data. The code stays for a backfill once a replacement source is found.</dd>
-          <dt>Trade-off</dt><dd>One popular panel fewer, and the "never carry old numbers" principle intact.</dd>
+          <dt>Trade-off</dt><dd>One popular panel fewer, and the "never carry old numbers" principle intact. <strong>Update, Nov 4:</strong> the panel is back, rebuilt on Bitview's address-balance tiers.</dd>
         </dl>
       </article>
       <article>
@@ -411,7 +413,35 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
           <dt>Trade-off</dt><dd>One extra third-party lookup, and the AI writes a second edition every day. If the English file is missing, the site falls back to Chinese and says so.</dd>
         </dl>
       </article>
+      <article>
+        <div><span class="when">Nov 8</span><h3>One deliberate exception to “no API keys”</h3></div>
+        <dl>
+          <dt>Context</dt><dd>The liquidation map was estimated from a single exchange's open interest, which misreads a market spread across many venues. The only free multi-exchange source needs an API key.</dd>
+          <dt class="k">Decision</dt><dd>Accept one free key, stored as a repository secret, for open interest and liquidations across exchanges. The single-exchange estimate stays as the fallback when that source fails. The rule narrowed from “no keys” to “no paid data”.</dd>
+          <dt>Trade-off</dt><dd>Anyone forking the repo needs their own free key for that chart, or gets the fallback. In return the map covers <strong>seven exchanges</strong>, and the site gained daily long and short liquidation volumes and a funding rate weighted across five venues.</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">Nov 7 → Nov 11</span><h3>Building my own indicators, and publishing the backtests that undercut them</h3></div>
+        <dl>
+          <dt>Context</dt><dd>Two questions had no free indicator: where the cycle stands as one number, and how long selling pressure has been building. Indicators like these usually arrive with a flattering track record.</dd>
+          <dt class="k">Decision</dt><dd>Build them from data the site already has, and ship each with its backtest. The Dawn–Dusk Index treats a cycle as a day: heat from five valuation gauges ranked against the past four years, direction from four trend gauges. Over 666 weeks its heat tracked the cycle position known in hindsight with a rank correlation of 0.82, against 0.49 for the weekly score it sits beside. The Sell Pressure Index uses daily closes only, and its backtest says a reading of 100 is not enough: since 2012 price was higher a year after every such day when relative unrealized profit was at or below 37.5%, and after only 37% of them when it was above.</dd>
+          <dt>Trade-off</dt><dd>The indicators look less magical with about twenty cases and their failures printed beside them. Each is labelled <strong>a reading, not a signal</strong>, and none can move the exit rules.</dd>
+        </dl>
+      </article>
+      <article>
+        <div><span class="when">Nov 4 → Nov 11</span><h3>From ten sections by data type to six questions</h3></div>
+        <dl>
+          <dt>Context</dt><dd>By early November the site had about a hundred charts in ten sections named after types of data: on-chain, price, flows, derivatives. Finding a chart meant knowing the taxonomy, and a holder's real questions cut across it.</dd>
+          <dt class="k">Decision</dt><dd>Two rounds of tidying inside the old frame came first: one home per indicator (Nov 4), then groups and site-wide search (Nov 8). Then I rebuilt the home page around Today plus six questions: where are we in the cycle, what levels is price standing on, is the selling done, who is buying, how crowded is leverage, and what do I do. Every page answers first, every group of charts has a one-line answer, every chart card has the same four layers, and a find-a-chart map shows all 95 charts as searchable thumbnails. The old site stays at <span class="mono">classic.html</span> and old links redirect.</dd>
+          <dt>Trade-off</dt><dd>Two front ends for now: the new page still takes its plain-language readings from the old one. The process cost more than the code. The design went through 63 proposal versions, and fixing one comment at a time made the page worse until I wrote <strong>rules for the whole page first</strong> and redrew it in one pass.</dd>
+        </dl>
+      </article>
     </div>
+    <figure>
+      <img class="shot" src="img/map.jpg" width="1400" height="900" alt="The find-a-chart map: a search box at the top and a wall of small chart thumbnails grouped under Cycle, Levels and Selling, each with its name and current value.">
+      <figcaption>The find-a-chart map (the grid button, or press /). Every chart is a thumbnail of its real drawing with today's value; typing a name filters the wall and Enter jumps to the first match.</figcaption>
+    </figure>
   </div>
 </section>
 
@@ -421,6 +451,7 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
     <p class="lead">Two weeks in, the pattern was clear: readers can see the numbers themselves. What they can't see is what is unusual, why, and what to watch next.</p>
     <div class="prose">
       <p>The first 16 editions gave each section its own paragraph. The coverage was complete, but attention was spread evenly, and the one real anomaly could drown in nine sections. "Today's findings", launched Oct 23, starts from the anomalies, writes a judgment, and makes every judgment testable in the next edition.</p>
+      <p>Nineteen editions later the loop has a record. Of 41 findings, 30 are resolved: 16 confirmed, 6 refuted, 8 expired with no answer either way; 11 are still open. The count sits on a track-record page added Nov 4, which holds back any rate until 30 findings are resolved, the same sample rule the site applies to every backtest. Two fixes came from using it. Open follow-ups now collapse to one line, so a dozen “still watching” items stop burying new findings (Nov 4). And every anomaly tag on a chart opens to show its rule, when it started, what it usually means and what followed past cases (Nov 6).</p>
     </div>
     <div class="loop">
       <div><span class="step">STEP 1</span><b>Detect</b><p>Fixed rules over 26 series: 1-year 2% extremes, sharp 7-day moves, state flips, key levels within ±3%, streaks, cross-indicator combos.</p><span class="who">signals.py</span></div>
@@ -431,12 +462,12 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
     </div>
     <p class="loop-back">↺ Step 5 feeds step 1 of the next edition</p>
     <figure>
-      <img class="shot" src="img/findings.jpg" width="1180" height="800" alt="Today's findings block: leaning bearish overall, two findings each with a confidence label and a bearish tag; below, follow-ups on the previous findings, one watching and one confirmed.">
-      <figcaption>Findings in the Oct 23 edition. Of the previous two, one is confirmed (funding stayed above 5%) and one is still being watched. Each carries a bullish, bearish or neutral tag with its reason, rolled up into an overall lean at the top.</figcaption>
+      <img class="shot" src="img/findings.jpg" width="1180" height="1000" alt="Today page, news group: institutional research on the left; on the right two findings, both tagged leans down; below them earlier findings with their outcomes, two marked held and one still open.">
+      <figcaption>Findings in the Nov 10 edition, on the new Today page. Earlier findings are checked underneath: two held, one still open with its deadline.</figcaption>
     </figure>
     <div class="cols two">
       <div><span class="lbl">Design rule</span><h3>A forced finding is worse than none</h3><p>At most three, and zero is allowed. Several signals about one event merge into one finding. A multi-day anomaly is only written up again when something new happens; otherwise it goes to follow-ups.</p></div>
-      <div><span class="lbl">Why this design</span><h3>Make the AI's judgment scoreable</h3><p>Every finding states what would prove it wrong, and the system grades it automatically the next day. Over time that yields a confirmation rate, a direct measure of reading quality.</p></div>
+      <div><span class="lbl">Why this design</span><h3>Make the AI's judgment scoreable</h3><p>Every finding states what would prove it wrong, and the system grades it automatically the next day. With 30 resolved as of Nov 10, the site shows the split: 53% confirmed, 20% refuted, 27% expired.</p></div>
     </div>
   </div>
 </section>
@@ -455,6 +486,12 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
       <li><time>Oct 18</time><div><b>Net realized P/L and a backtest correction</b><p>Found hindsight bias, re-tested in real time, published the reversed conclusion.</p></div></li>
       <li><time>Oct 21</time><div><b>Reliability week</b><p>Prefetch timing fix, whale panel paused, daily task rules reorganized by section.</p></div></li>
       <li class="key"><time>Oct 23</time><div><b>Today's findings with follow-ups</b><p>From one paragraph per section to anomalies first, with judgments that can be tested.</p></div></li>
+      <li><time>Oct 27–29</time><div><b>Holder cohorts by price</b><p>Long- and short-term holder supply at each price level. After readers on X flagged a one-day jump that was an internal transfer, the model puts such coins back at their original cost and marks the day.</p></div></li>
+      <li><time>Nov 4</time><div><b>Whole-site review</b><p>Front page reordered to conclusion, actions, signal table. One home per indicator. A back-issues page with the findings track record. Whale tiers return on a new source.</p></div></li>
+      <li><time>Nov 6</time><div><b>Numbers and reading change together</b><p>The daily task moves to 08:15 and the site holds the previous edition whole until the new read lands. Anomaly tags explain themselves. Thirteen new indicators, each with a backtest.</p></div></li>
+      <li><time>Nov 7–8</time><div><b>Own indicators; derivatives across exchanges</b><p>The Sell Pressure Index and the Dawn–Dusk Index. Liquidation map, liquidation volumes and funding from several exchanges. Sections regrouped, site-wide search.</p></div></li>
+      <li><time>Nov 9</time><div><b>One colour rule; faster pages</b><p>Direction is green or brand red and nothing else; functional colours stay. Charts draw on demand and the data download shrank by about 30%.</p></div></li>
+      <li class="key"><time>Nov 11</time><div><b>New home page: Today plus six questions</b><p>The classic site stays online. Chart cards become shareable, with a link and a 16:9 image each. The ETF source is replaced after the old one went offline.</p></div></li>
     </ol>
   </div>
 </section>
@@ -463,16 +500,17 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
   <div class="side"><span class="en">Distribution</span><h2>Distribution and growth</h2></div>
   <div class="main">
     <p class="lead">The content is generated daily, so distribution had to be nearly free too: images render themselves, drafts write themselves, and I only press send.</p>
-    <div class="gal">
-      <div class="stack">
-        <figure><img class="shot" src="../img/share-en.jpg" width="1200" height="675" alt="English share image: red EXTRA tag, headline that ETFs took a provisional 525 million dollars yet a 2.6% Nasdaq drop pulled Bitcoin into risk-off selling, and three stats for market stage, 7-day ETF flow and distance to the first exit step."><figcaption>Share image, rendered by Actions after each edition is pushed.</figcaption></figure>
-        <figure><img class="shot" src="../img/og.jpg" width="1200" height="630" alt="Link preview card: DAYBREAK 破曉 wordmark with the line The first Bitcoin brief of the morning."><figcaption>Link preview card shown when the URL is posted on X; English by default.</figcaption></figure>
-      </div>
-      <figure><img class="shot" src="../img/short.jpg" width="720" height="1280" alt="Vertical short-video cover in Chinese: Bitcoin rose, but shorts pushed it; 188 million dollars of shorts liquidated in a day."><figcaption>Short-video cover (Chinese edition). Social content carries market information only, never the exit framework.</figcaption></figure>
+    <figure class="vid">
+      <video class="shot" controls preload="none" playsinline poster="../img/showcase.jpg" width="1920" height="1080" aria-label="Showcase video for the new Daybreak site, 78 seconds: AI cursors drawing the home page, the six questions with one line each, the Cycle page, the chart map, the Selling page, the day and night switch, and the phone layout."><source src="../img/showcase.mp4" type="video/mp4"></video>
+      <figcaption>Showcase video for the new site (78 seconds): AI cursors draw the page, six questions get one line each, every section answers before it shows charts, the chart map, swiping between questions on a phone. Social content carries market information only, never the exit framework.</figcaption>
+    </figure>
+    <div class="gal even">
+      <figure><img class="shot" src="../img/share-en.jpg" width="1200" height="675" alt="English share image: red EXTRA tag, No. 036, a headline that CPI ran hot and BTC fell to 0.8% above its 200-day average as short-term holders turned to heavy loss-taking, and three stats for market stage, 7-day ETF flow and short-term holder cost basis."><figcaption>Share image, rendered by Actions after each edition is pushed.</figcaption></figure>
+      <figure><img class="shot" src="../img/og.jpg" width="1200" height="630" alt="Link preview card: DAYBREAK 破曉 wordmark with the line The first Bitcoin brief of the morning."><figcaption>Link preview card shown when the URL is posted on X; English by default.</figcaption></figure>
     </div>
     <div class="cols">
       <div><span class="lbl">Automation</span><h3>A draft every day</h3><p>After the brief, the AI writes an X post in each language, <span class="mono">x_len.py</span> confirms both fit in 280 characters, and the drafts arrive as a phone notification. A posting helper copies the text, saves the image and opens the X composer.</p></div>
-      <div><span class="lbl">Boundary</span><h3>Information is public; strategy stays on site</h3><p>Shorts and posts leave out the exit framework, trigger counts and action calls like "no action today". Social brings people in; the framework is explained in full on the site.</p></div>
+      <div><span class="lbl">Boundary</span><h3>Information is public; strategy stays on site</h3><p>Shorts and posts leave out the exit framework, trigger counts and action calls like "no action today". Social brings people in; the framework is explained in full on the site. Since Nov 11 every chart card has a share link and a 16:9 image download, and the shared view hides the “our view” block for the same reason.</p></div>
       <div><span class="lbl">Measurement</span><h3>Analytics without personal data</h3><p>GoatCounter uses no cookies and counts only on the production URL. Links from X carry <span class="mono">utm_source=x</span>, so social traffic is separable.</p></div>
     </div>
   </div>
@@ -489,7 +527,10 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
           <tr><td>AI invents or misstates numbers</td><td>It reads the brief only and changes no numbers; a checker enforces format and counts, and nothing is committed until it passes.</td></tr>
           <tr><td>Readings mistaken for trade signals</td><td>Tags describe only what a number usually means for price; when the AI's read disagrees with the automatic reading, it must say why.</td></tr>
           <tr><td>Late or failed data</td><td>A status row lists each source's date and lag; failed items show "not available today".</td></tr>
-          <tr><td>A redesign breaks the site</td><td>Every PR checks syntax, the English dictionary and version stamps, and renders every section in both languages on desktop and mobile.</td></tr>
+          <tr><td>A redesign breaks the site</td><td>Every PR checks syntax, the English dictionary and version stamps, and renders every page in both languages on desktop and mobile.</td></tr>
+          <tr><td>A source goes offline or changes shape</td><td>Every source fails alone. The CheckOnChain cache is dropped after four days without an update, not carried. When the ETF source disappeared on Nov 9, it was replaced within two days.</td></tr>
+          <tr><td>One broken chart blanks a page</td><td>Each chart fails alone (since Nov 4). Before that, an error took out every chart after it on the page.</td></tr>
+          <tr><td>A home-made indicator gets oversold</td><td>Each ships with its backtest, sample size and known failures, and is labelled a reading only.</td></tr>
         </tbody>
       </table>
     </div>
@@ -499,23 +540,23 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
 <section class="s" id="next">
   <div class="side"><span class="en">Metrics &amp; next</span><h2>Success metrics and next steps</h2></div>
   <div class="main">
-    <p class="prose">The product has been live for about two weeks. Analytics are in place but the sample is still small, so here are the metrics I will use to judge it.</p>
+    <p class="prose">The product has been live for about five weeks. Traffic analytics are in place; below are the metrics I judge it by, with the ones I can already report. The three next steps in the first version of this page have shipped: back-issue pages and the findings scoreboard on Nov 4, and a replacement whale source the same day.</p>
     <div class="tblwrap">
       <table class="mt">
         <thead><tr><th>Metric</th><th>Definition</th><th>Status</th></tr></thead>
         <tbody>
           <tr><td>North star</td><td>Returning readers who open the brief each day</td><td>Instrumented, collecting</td></tr>
-          <tr><td>On-time rate</td><td>Share of days with data and reading updated by 08:30</td><td>18 consecutive editions</td></tr>
+          <tr><td>On-time rate</td><td>Share of days with data and reading updated by 08:30</td><td>36 consecutive editions</td></tr>
           <tr><td>Data completeness</td><td>Items marked "not available today" per edition</td><td>Shown daily in the status row</td></tr>
-          <tr><td>Reading quality</td><td>Confirmed versus refuted findings at expiry</td><td>Tracking since Oct 22; first batch 1 confirmed, 1 watching</td></tr>
+          <tr><td>Reading quality</td><td>Confirmed versus refuted findings at expiry</td><td>41 findings since Oct 23: 16 confirmed, 6 refuted, 8 expired, 11 open</td></tr>
           <tr><td>Distribution</td><td>Share of visits tagged utm_source=x</td><td>Instrumented, collecting</td></tr>
         </tbody>
       </table>
     </div>
     <div class="cols">
-      <div><span class="lbl">Next</span><h3>Back-issue pages</h3><p>Every edition already archives its headline, close, later move and whether watched levels were hit. On Oct 12 I chose to archive only, and design a browsable page once there is enough history.</p></div>
-      <div><span class="lbl">Next</span><h3>A public scoreboard for findings</h3><p>Put the confirmation rate on the site and let readers decide how much to trust the brief.</p></div>
-      <div><span class="lbl">Next</span><h3>A replacement whale source</h3><p>Find address-tier data that allows automated access, then bring back the paused panel.</p></div>
+      <div><span class="lbl">Next</span><h3>One front end, not two</h3><p>The new home page still borrows its plain-language readings from the classic site. Generating them directly would retire the old page and halve what each change has to touch.</p></div>
+      <div><span class="lbl">Next</span><h3>A hit rate by kind of finding</h3><p>Thirty resolved findings are enough for a first rate, not for a breakdown. As the sample grows, split it by kind of anomaly to see which ones the reads get right.</p></div>
+      <div><span class="lbl">Next</span><h3>Does the six-question layout work?</h3><p>Measure it: returning readers, which pages get opened after Today, and which charts people reach through the map.</p></div>
     </div>
   </div>
 </section>
@@ -524,15 +565,16 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
   <div class="side"><span class="en">Learnings</span><h2>What I learned</h2></div>
   <div class="main">
     <ul class="learn">
-      <li><h3>With AI in the product, the spec is the rules document</h3><p>The daily task's instructions run past 160 lines, covering format, counts, prohibitions and how each section should be written. When a quality problem shows up, I fix the rule and the checker, not that day's paragraph, so the same mistake does not come back.</p></li>
+      <li><h3>With AI in the product, the spec is the rules document</h3><p>The daily task's instructions run to about 250 lines, covering format, counts, prohibitions and how each section should be written. When a quality problem shows up, I fix the rule and the checker, not that day's paragraph, so the same mistake does not come back.</p></li>
       <li><h3>Trust is cumulative</h3><p>"Not available today", sample sizes, dashed projections, a public backtest correction: each one makes the product look less impressive on its own. Together they are why readers believe the rest of the numbers.</p></li>
       <li><h3>Ship daily first, get smart second</h3><p>Most of the first two weeks went into sources, schedules and quotas. Only once the brief was reliably on time and correct did a judgment-heavy feature like findings make sense.</p></li>
+      <li><h3>Write the rules for the whole page before moving a pixel</h3><p>The redesign stalled while I fixed it one comment at a time. It moved once the page had written rules: three levels, four layers per card, where colour is allowed, what may animate. The same lesson as the daily task, applied to design.</p></li>
     </ul>
   </div>
 </section>
 
 <footer>
-  <span>Screenshots from the Oct 23, 2026 close edition (No. 018). The live site is the source for all figures.</span>
+  <span>Screenshots from the Nov 10, 2026 close edition (No. 036). The live site is the source for all figures.</span>
   <span>Daybreak is for research and education only and is not investment advice.</span>
 </footer>
 
