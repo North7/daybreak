@@ -6,11 +6,11 @@
    "id": "market/mon",
    "chart": "data/picks/market-mon.png",
    "chart_en": "data/picks/market-mon-en.png",
-   "why": "跌到 200 日均線邊上、11 月已經跌近 5%，讀者會問 11 月以前怎麼走；和頭條的 CPI、短期持有者認賠不重複。 11/11 使用者：「最後如果說不出什麼結論，感覺一篇文章白說」→ 解說改成條件化：8 次上漲的 11 月到 10 號都已經在漲；10 號還在跌的 3 次（2019、2022、2025）全部收跌（Bitview 每日價）。",
+   "why": "跌到 200 日均線邊上、11 月已經跌近 5%，讀者會問 11 月以前怎麼走；和頭條的 CPI、短期持有者認賠不重複。 11/11 使用者：「最後如果說不出什麼結論，感覺一篇文章白說」→ 解說改成條件化：8 次上漲的 11 月到 10 號都已經在漲；10 號還在跌的 3 次（2019、2022、2025）全部收跌（Bitview 每日價）。 11/11 使用者問「12 月感覺都是跌得多」→ 網站月度表：12 月 13 次 8 跌、中位 −3.2%（平均 +4%，漲的年份漲很多）；11 月收跌的 5 年（2018、2019、2021、2022、2025）12 月全跌，−3.2% 到 −18.8%，4 次在 −3% 到 −7%；11 月收漲的 8 年 12 月 6 漲。",
    "q_zh": "11 月已經跌 4.83%，過去的 11 月怎麼走？",
    "q_en": "November is down 4.83% so far. How did past Novembers go?",
-   "zh": "11 月已經跌 4.83%，過去的 11 月怎麼走？\n2013 年以來 13 次 11 月有 8 次上漲，可是這 8 次到 10 號都已經在漲。開局就跌的只有 2019、2022、2025 三年，最後全部收跌，月底比 10 號又低了 3% 到 17%。樣本只有 3 次，但「11 月多半會漲」這句，套不到今年這種開局。\n#比特幣 #BTC #歷史數據",
-   "en": "November is down 4.83% so far. How did past Novembers go?\n8 of 13 since 2013 rose, all 8 already up by the 10th. The 3 that started down (2019, 2022, 2025) all closed lower. Small sample, but \"November usually rises\" hasn't fit a start like this.\n#Bitcoin #BTC #history"
+   "zh": "11 月已經跌 4.83%，過去的 11 月怎麼走？\n2013 年以來 8 次 11 月上漲，這 8 次到 10 號都已經在漲；開局就跌的 2019、2022、2025 全部收跌。12 月也跟著 11 月走，11 月收跌的 5 年，12 月全部再跌，多半跌 3% 到 7%；11 月收漲的 8 年，12 月有 6 次漲。\n#比特幣 #BTC #歷史數據",
+   "en": "November is down 4.83% so far. How did past Novembers go?\nAll 8 up Novembers since 2013 were already up by the 10th; the 3 that started down all closed lower. December follows: after all 5 down Novembers, December fell too, mostly 3–7%.\n#Bitcoin #BTC #history"
   }
  ]
 }
