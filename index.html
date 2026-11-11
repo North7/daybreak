@@ -1550,6 +1550,43 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 }
 @media (prefers-reduced-motion: reduce) { .oc.io .fc.in { animation: none !important; } .oc .ol-c::after { display: none !important; } .oc.io .fc:not(.in) { opacity: 1; } }
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+/* ⑮ 分享（2026-11-11，運營拿新版卡片去發文後的回饋）。整頁規則：
+   1. 坐標：縱軸 3–5 個整數刻度（對數軸 1、2、3、5 開頭），上格價格也有刻度；橫軸超過 760 天標年、60–760 天標月（一月寫年份）、更短標日期，最右「現在」。
+   2. 資料來源：每張卡片標題右邊一行（照舊版面板右上），分享頁尾再寫一次加日期。
+   3. 結論分兩塊：讀數（白話一句，不重講大數字）和我們的看法（立場、會改變看法）。立場只在網站上看，分享模式和運營截圖都藏。
+   4. 數字：一萬顆以上寫「萬顆」（英文 K），同一張卡片所有地方同一個寫法；比頂部寫 ±%，不寫倍數。
+   5. 數量型指標和價格的 30 天漲跌並排，方向相反標「背離」。
+   6. 不帶方向的分段（籌碼厚、薄）不用綠和紅，用琥珀和青，並在圖上直接標價位和顆數。
+   7. 分享模式（?share、?share=45，可加 &k=圖代號）：字級 ×1.3、藏按鈕和導覽、加頁尾、固定 16:9 或 4:5、動畫全關。 */
+.ol-src { margin-left: auto; min-width: 0; max-width: 46%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font: 500 10.5px/1.3 var(--f-mono); letter-spacing: .02em; color: var(--k2); }
+.ol-src ~ .fx-b { margin-left: 10px; }
+.ol-pair { display: flex; flex-wrap: wrap; align-items: baseline; gap: 3px 12px; margin: 0; font: 500 var(--t-note)/1.5 "Inter Tight", "Noto Sans TC", sans-serif; color: var(--k2); }
+.ol-pair em { font: 600 10.5px/1.5 var(--f-mono); font-style: normal; letter-spacing: .06em; }
+.ol-pair b { margin-left: 5px; font-weight: 700; font-variant-numeric: tabular-nums; }
+.ol-pair i { font-style: normal; font: 600 10.5px/1.4 var(--f-mono); letter-spacing: .06em; padding: 1px 6px; border-radius: 4px; color: var(--sheet); background: var(--c5); }
+.sy-read, .sy-view { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.sy-view { margin-top: 4px; padding-top: 10px; border-top: 1px dashed color-mix(in srgb, var(--ink) 18%, transparent); }
+.sy-view .sy-t { color: var(--vc, var(--k2)); }
+.ol-brand { display: none; }
+html.share *, html.share *::before, html.share *::after { animation: none !important; transition: none !important; }
+html.share .oc.io .fc:not(.in) { opacity: 1 !important; }
+html.share .ol-ctl, html.share .fx-b, html.share .ol-how, html.share .sy-m, html.share .sy-view, html.share .ol-pr, html.share .ol-sig, html.share .more { display: none !important; }
+html.share .sy-d { -webkit-line-clamp: unset; display: block; cursor: auto; }
+html.share .ol-c text { font-size: 13.6px !important; }
+html.share .ol-n { font-size: 1.3em; }
+html.share .ol-lg, html.share .ol-st, html.share .ol-sx, html.share .ol-pair, html.share .sy-d, html.share .sy-c, html.share .ol-k { font-size: 15px; }
+html.share .sy-h b { font-size: 1.15em; }
+html.share .sy-t, html.share .ol-pair em, html.share .ol-pair i { font-size: 12.5px; }
+html.share .ol-src { font-size: 12.5px; max-width: 60%; }
+html.share .ol-brand { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 0; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); font: 500 12.5px/1.4 var(--f-mono); color: var(--k2); }
+html.share .ol-brand b { font: 700 15px/1.3 "Inter Tight", "Noto Sans TC", sans-serif; color: var(--ink); letter-spacing: .02em; }
+html.share .oc-fx .os-h, html.share #oc-orF { display: none !important; }
+html.share .oc-fx::before { opacity: 1; background: var(--bg); }
+html.share .oc-fx .os { left: 50%; top: 50%; width: min(100vw, calc(100vh * 16 / 9)); height: min(100vh, calc(100vw * 9 / 16)); transform: translate(-50%, -50%); }
+html.share[data-ratio="45"] .oc-fx .os { width: min(100vw, calc(100vh * 4 / 5)); height: min(100vh, calc(100vw * 5 / 4)); }
+html.share .oc-fx .ol { height: 100%; max-height: 100%; overflow: hidden; }   /* 固定比例的框裡：圖吃掉剩下的高度，頁尾一定在框內 */
+html.share .oc-fx .ol .ol-c, html.share .oc-fx .ol[data-kind="t"] .ol-c { flex: 1 1 0; height: auto; min-height: 150px; }
+html.share .oc .shim, html.share .oc .pulse, html.share .oc-fx .shim, html.share .oc-fx .pulse { display: none !important; }
 </style>
 <style>
 /* 正式頁的基本設定（提案頁原本由外框提供）；底色由程式跟著日夜寫在 body 上 */
@@ -1578,7 +1615,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=2891ad5e23"></script>
+<script src="data/next.js?v=0875be7219"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -2454,13 +2491,31 @@ function initLive() {
 function initOC() {
   const sec = $('#oc-sec'), el = $('#oc'), stg = $('#oc-st'), cv = $('#oc-f'), ctx = cv.getContext('2d'), ST = D.site, PX = ST.px, KW = ST.kw, CH = ST.chapters;
   let ci = Math.max(0, CH.findIndex(c => c.id === 'today')), O = CH[ci], G = O.groups;
-  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches, esc = s => String(s).replace(/[<>&]/g, '');
+  /* 分享模式（⑮）：?share＝16:9、?share=45＝4:5，&k=圖代號 直接打開那張圖。動畫全關、字放大 */
+  const QS = new URLSearchParams(location.search), SHARE = QS.has('share') ? (QS.get('share') === '45' ? '45' : '169') : '', SHK = QS.get('k') || '', FSC = SHARE ? 1.3 : 1;
+  if (SHARE) { document.documentElement.classList.add('share'); document.documentElement.dataset.ratio = SHARE; }
+  const reduce = !!SHARE || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches), esc = s => String(s).replace(/[<>&]/g, '');
   let lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh', th = 'd', ord = [0].concat(G.map((x, i) => i + 1)), lead = G.map(() => 0), rng = 1095, lay = 'sp', rgb = PBASE.d.rgb, REG = {}, W = 0, H = 0, UID = 0;
   const tE = PX[PX.length - 1][0], T = (zh, en) => lang === 'en' ? (en != null ? en : zh) : zh, CV = n => !n ? 'var(--ink)' : /^[a-z0-9]+$/i.test(n) ? 'var(--' + n + ')' : n, F1 = v => (+v).toFixed(1);
   const FM = { pct1: v => sgn(v, 1) + '%', ps2: v => sgn(v, 2) + '%', p1: v => v.toFixed(1) + '%', p2: v => v.toFixed(2) + '%', p3: v => v.toFixed(3) + '%', x2: v => v.toFixed(2) + '×', n3: v => (v < 0 ? '−' : '') + Math.abs(v).toFixed(3), n1: v => v.toFixed(1), s1: v => sgn(v, 1),
-    usd0: v => '$' + n0(v), n0: v => n0(v), s2: v => sgn(v, 2), n5: v => v.toFixed(5), txt: v => v, usdM: v => (v < 0 ? '−' : '') + '$' + n0(Math.abs(v)) + 'M', bp: v => v.toFixed(1) + ' bp', d1: v => v.toFixed(1) + T(' 天', ' d'), btc0: v => n0(v) + T(' 顆', ' BTC'),
+    usd0: v => '$' + n0(v), n0: v => n0(v), s2: v => sgn(v, 2), n5: v => v.toFixed(5), txt: v => v, usdM: v => (v < 0 ? '−' : '') + '$' + n0(Math.abs(v)) + 'M', bp: v => v.toFixed(1) + ' bp', d1: v => v.toFixed(1) + T(' 天', ' d'), btc0: v => Math.abs(v) >= 1e4 ? (v < 0 ? '−' : '') + T(WAN(Math.abs(v)) + ' 萬顆', TRIM((Math.abs(v) / 1e3).toFixed(1)) + 'K BTC') : n0(v) + T(' 顆', ' BTC'), xpct: v => sgn((v - 1) * 100, 0) + '%',
     kbtc: v => T(sgn(v / 10, 1) + ' 萬顆', sgn(v, 0) + 'K BTC'), btc: v => T(sgn(v / 1e4, 1) + ' 萬顆', sgn(v / 1e3, 0) + 'K BTC') };
-  const fm = (f, v) => v == null ? '—' : FM[f || 'n1'](v), split = s => { const m = /^(.*\d[%×MK]?)\s+(\S.*)$/.exec(s); return m ? [m[1], m[2]] : [s, '']; };
+  const fm = (f, v) => v == null ? '—' : FM[f || 'n1'](v), TKL = (f, v) => split(fm(f, v))[0].replace(/(\.\d*?)0+(?=\D*$)/, '$1').replace(/\.(?=\D*$)/, ''), split = s => { const m = /^(.*\d[%×MK]?)\s+(\S.*)$/.exec(s); return m ? [m[1], m[2]] : [s, '']; };
+  function TRIM(t) { return t.indexOf('.') < 0 ? t : t.replace(/0+$/, '').replace(/\.$/, ''); }
+  function WAN(x) { const w = x / 1e4; return TRIM(w >= 10 ? w.toFixed(1) : w.toFixed(2)); }
+  /* 刻度（⑮）：縱軸取 3–5 個整數刻度，不再只標最高、最低；對數軸取 1、2、3、5 開頭的數；相鄰至少隔 20px（分享模式按字級放大） */
+  const NICE = (a, b, n) => { const sp = b - a; if (!(sp > 0)) return [a]; const raw = sp / n, mg = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mg, st = (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mg, out = []; for (let v = Math.ceil(a / st - 1e-9) * st; v <= b + st * 1e-6; v += st) out.push(+v.toPrecision(12)); return out; };
+  const TICKS = (lo, hi, tfn, Yf, gap) => { let c = []; const lg = (ms) => { for (let e = Math.floor(Math.log10(lo)) - 1; e <= Math.ceil(Math.log10(hi)); e++) ms.forEach(m => { const v = +(m * Math.pow(10, e)).toPrecision(6); if (v >= lo && v <= hi) c.push(v); }); };
+    if (tfn === 'log' && lo > 0 && hi / lo > 2.5) { lg([1, 2, 3, 5]); if (c.length < 3) { c = []; lg([1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8]); } } else c = NICE(lo, hi, 4);
+    const out = []; let ly = null; c.sort((p, q) => Yf(q) - Yf(p)).forEach(v => { const y = Yf(v); if (ly == null || Math.abs(ly - y) >= (gap || 20 * FSC)) { out.push(v); ly = y; } }); return out; };
+  const PXL = v => '$' + (v >= 1000 ? +(v / 1000).toPrecision(3) + 'K' : n0(v));
+  const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  /* 橫軸（⑮）：超過 760 天標年份；60–760 天標月份（一月寫年份）；更短標日期。最右邊固定寫「現在」 */
+  const xAxis = (X, t0, t1, pw, ya, yz, ty) => { let g = ''; const span = t1 - t0, d0 = dOf(t0), d1 = dOf(t1), tx = (x, t, a) => `<text x="${F1(x)}" y="${F1(ty)}" text-anchor="${a || 'middle'}">${t}</text>`, gl = x => `<line x1="${F1(x)}" x2="${F1(x)}" y1="${F1(ya)}" y2="${F1(yz)}" stroke="var(--ink)" stroke-opacity=".05"/>`, rE = pw - 36 * FSC;
+    if (span > 760) { const y0 = d0.getUTCFullYear() + 1, y9 = d1.getUTCFullYear(), st = Math.max(1, Math.ceil((y9 - y0 + 1) * 44 * FSC / pw)); for (let y = y0; y <= y9; y += st) { const x = X(Date.UTC(y, 0, 1) / 864e5); if (x < 16 || x > rE) continue; g += gl(x) + tx(x, y); } }
+    else if (span > 60) { const per = pw / (span / 30.44), st = [1, 2, 3, 6].find(k => per * k >= 38 * FSC) || 6; for (let i = 1; i < 40; i++) { const mm = d0.getUTCMonth() + i, y = d0.getUTCFullYear() + Math.floor(mm / 12), m = mm % 12, day = Date.UTC(y, m, 1) / 864e5; if (day > t1) break; if (m % st) continue; const x = X(day); if (x < 14 || x > rE) continue; g += gl(x) + tx(x, m === 0 ? String(y) : T((m + 1) + '月', MON[m])); } }
+    else { const st = span > 30 ? 7 : span > 12 ? 3 : 1; for (let d = t0 + st; d < t1; d += st) { const x = X(d), dd = dOf(d); if (x < 14 || x > rE) continue; g += gl(x) + tx(x, (dd.getUTCMonth() + 1) + '/' + dd.getUTCDate()); } }
+    return g + tx(pw, T('現在', 'now'), 'end'); };
   const SP = c => { if (!c.modes) return c; const m = c._m || 0; c._c = c._c || []; return c._c[m] || (c._c[m] = Object.assign({}, c, c.modes[m])); };
   const hero = s => s.ser[s.hero || 0];
   const bix = (rows, day) => { let lo = 0, hi = rows.length - 1; if (day == null || day >= rows[hi][0]) return hi; if (day <= rows[0][0]) return 0; while (hi - lo > 1) { const m = (lo + hi) >> 1; if (rows[m][0] <= day) lo = m; else hi = m; } return lo; };
@@ -2470,8 +2525,8 @@ function initOC() {
   const rgOpts = s => { const span = tE - s.rows[0][0]; return span <= 400 ? [] : RG.filter(r => r[0] === 0 || span > r[0] * 1.15); };
   const HG = [[0, 'c3'], [20, 'c4'], [45, 'up'], [70, 'c5'], [90, 'ac'], [100, 'ac']], heatCol = v => { v = Math.max(0, Math.min(100, v == null ? 50 : v)); for (let i = 0; i < HG.length - 1; i++) if (v <= HG[i + 1][0]) { const f = Math.round((v - HG[i][0]) / ((HG[i + 1][0] - HG[i][0]) || 1) * 10) * 10; return f <= 0 || HG[i][1] === HG[i + 1][1] ? `var(--${HG[i][1]})` : f >= 100 ? `var(--${HG[i + 1][1]})` : `color-mix(in srgb, var(--${HG[i + 1][1]}) ${f}%, var(--${HG[i][1]}))`; } return 'var(--ac)'; };
   /* 圖上的標注文字：一律是膠囊。solid＝實心（事件），否則細框（線的名字）。字寬用估的：中日韓字約一個字級寬，其他約 0.61 */
-  const tw = t => { let w = 0; for (const ch of String(t)) w += ch.charCodeAt(0) > 0x2E7F ? 10.9 : 6.45; return w; };
-  const PL = (x, y, t, cc, an, solid, lim) => { const w = tw(t) + 12; let x0 = an === 'middle' ? x - w / 2 : an === 'end' ? x - w : x; if (lim) x0 = Math.max(lim[0], Math.min(lim[1] - w, x0)); return `<g class="pl"><rect x="${F1(x0)}" y="${F1(y - 11.5)}" width="${F1(w)}" height="16" rx="8" fill="${solid ? cc : 'var(--sheet)'}"${solid ? '' : ` stroke="${cc}" stroke-opacity=".55"`}/><text x="${F1(x0 + 6)}" y="${F1(y)}" style="fill:${solid ? 'var(--sheet)' : cc};font-weight:${solid ? 600 : 500}">${esc(t)}</text></g>`; };
+  const tw = t => { let w = 0; for (const ch of String(t)) w += ch.charCodeAt(0) > 0x2E7F ? 10.9 : 6.45; return w * FSC; };
+  const PL = (x, y, t, cc, an, solid, lim) => { const w = tw(t) + 12 * FSC; let x0 = an === 'middle' ? x - w / 2 : an === 'end' ? x - w : x; if (lim) x0 = Math.max(lim[0], Math.min(lim[1] - w, x0)); return `<g class="pl"><rect x="${F1(x0)}" y="${F1(y - 11.5 * FSC)}" width="${F1(w)}" height="${F1(16 * FSC)}" rx="${F1(8 * FSC)}" fill="${solid ? cc : 'var(--sheet)'}"${solid ? '' : ` stroke="${cc}" stroke-opacity=".55"`}/><text x="${F1(x0 + 6 * FSC)}" y="${F1(y)}" style="fill:${solid ? 'var(--sheet)' : cc};font-weight:${solid ? 600 : 500}">${esc(t)}</text></g>`; };
   let MINI = 0;
   const ICP = { grid: 'M2.5 2.5h4v4h-4zM9.5 2.5h4v4h-4zM2.5 9.5h4v4h-4zM9.5 9.5h4v4h-4z', find: 'M7 12.3A5.3 5.3 0 1 0 7 1.7a5.3 5.3 0 0 0 0 10.6zM11 11l3.3 3.3', expand: 'M9.5 2.5h4v4M13.5 2.5L9 7M6.5 13.5h-4v-4M2.5 13.5L7 9', close: 'M3.5 3.5l9 9M12.5 3.5l-9 9', go: 'M3 8h10M9 4l4 4-4 4', back: 'M13 8H3M7 4L3 8l4 4', split: 'M2.5 2.5h11v4.5h-11zM2.5 9.5h11v4h-11z', over: 'M2.5 2.5h11v11h-11zM4 10.5l2.8-3 2.4 1.8L12 5.5M4 6.5l2.8 1.6 2.4-2.6L12 8.5', info: 'M8 14.2A6.2 6.2 0 1 0 8 1.8a6.2 6.2 0 0 0 0 12.4zM8 7.3v3.9M8 4.7v.3', chev: 'M4 6l4 4 4-4', chart: 'M2.5 2.5v11h11M4.8 10.5l2.7-3.4 2.3 1.9 3-4.2', text: 'M3 4.5h10M3 8h10M3 11.5h6' };
   const IC = n => `<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="${ICP[n]}"/></svg>`, ib = (zh, en) => { const t = T(zh, en); return ` aria-label="${t}" data-tip="${t}"`; };
@@ -2497,7 +2552,7 @@ function initOC() {
   }
 
   function leadChart(box, c, k, t0) {
-    const s = SP(c), MS = MINI || 1, w = (box.clientWidth || 520) * MS, h = (box.clientHeight || 260) * MS, MR = MINI ? 3 : 64, MB = MINI ? 3 : 18, pw = w - MR, one = !!s.one, ovl = !one && !MINI && (c._ly || lay) === 'ov', hp = one || MINI ? 0 : ovl ? h - MB : Math.round((h - MB) * (s.ph || .28)), y1 = one || MINI ? (MINI ? 3 : 6) : ovl ? Math.round((h - MB) * .36) : hp + 14, yb = h - MB, id = 'oc' + k + 'x' + (++UID);
+    const s = SP(c), MS = MINI || 1, w = (box.clientWidth || 520) * MS, h = (box.clientHeight || 260) * MS, MR = MINI ? 3 : Math.round(64 * FSC), MB = MINI ? 3 : Math.round(18 * FSC), pw = w - MR, one = !!s.one, ovl = !one && !MINI && (c._ly || lay) === 'ov', hp = one || MINI ? 0 : ovl ? h - MB : Math.round((h - MB) * (s.ph || .28)), y1 = one || MINI ? (MINI ? 3 : 6) : ovl ? Math.round((h - MB) * .36) : hp + 14, yb = h - MB, id = 'oc' + k + 'x' + (++UID);
     const X = d => (d - t0) / ((tE - t0) || 1) * pw, rows = s.rows.filter(r => r[0] >= t0), S = s.ser, hi0 = s.hero || 0;
     let defs = '', g = '', top = '';
     const dotp = col => { const pid = id + 'p' + col; if (defs.indexOf('"' + pid + '"') < 0) defs += `<pattern id="${pid}" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.4" fill="${CV(col)}"/></pattern>`; return `url(#${pid})`; };
@@ -2516,7 +2571,7 @@ function initOC() {
       if (hl) { let mx = pr[0], mn = pr[0]; pr.forEach(r => { if (r[1] > mx[1]) mx = r; if (r[1] < mn[1]) mn = r; }); [[mx, 1], [mn, 0]].forEach(a => { const x = X(a[0][0]), y = Yp(a[0][1]), side = a[1] ? y - 5 < 9 : y + 11 > hp - 1, an = side ? (x > pw / 2 ? 'end' : 'start') : x > pw - 40 ? 'end' : x < 40 ? 'start' : 'middle'; top += `<circle cx="${F1(x)}" cy="${F1(y)}" r="1.8" fill="var(--ink)" fill-opacity=".7"/>${PL(side ? x + (an === 'end' ? -7 : 7) : x, side ? y + (a[1] ? 10 : -2) : a[1] ? y - 7 : y + 17, '$' + n0(a[0][1]), 'var(--k2)', an, 0, [0, pw])}`; }); }
       const hq0 = S[hi0], ZS = s.zones || [], stc = !hq0 || hq0.hide ? null : hq0.cc != null && hq0.cols ? ((v, r) => hq0.cols[r[hq0.cc]] || null) : hq0.nb != null ? (v => v >= hq0.nb ? (hq0.hi || 'up') : v <= -hq0.nb ? (hq0.lo || 'dn') : null) : (hq0.t === 'sign' || hq0.t === 'split' || (hq0.t === 'bar' && !hq0.col)) ? (v => v >= (hq0.base || 0) ? (hq0.hi || 'up') : (hq0.lo || 'dn')) : ZS.length ? (v => { for (let zi = 0; zi < ZS.length; zi++) { const z = ZS[zi]; if ((z.lo == null || v >= z.lo) && (z.hi == null || v <= z.hi)) return z.col; } return null; }) : null;
       if (stc && s.p != null && !kw) { const P = {}; for (let j = 1; j < rows.length; j++) { const r0 = rows[j - 1], r1 = rows[j], v = r1[hq0.c]; if (v == null || !(r0[s.p] > 0) || !(r1[s.p] > 0)) continue; const key = stc(v, r1); if (!key) continue; P[key] = (P[key] || '') + `M${F1(X(r0[0]))},${F1(Yp(r0[s.p]))}L${F1(X(r1[0]))},${F1(Yp(r1[s.p]))}`; } Object.keys(P).forEach(key => { top += `<path d="${P[key]}" fill="none" stroke="${CV(key)}" stroke-width="1.9" stroke-opacity="1" stroke-linecap="round"/>`; }); }
-      if (ovl) top += `<text x="4" y="${F1(Yp(Math.pow(10, ph)) + 9)}" opacity=".8">$${n0(Math.pow(10, ph))}</text><text x="4" y="${F1(Yp(Math.pow(10, pl)) - 2)}" opacity=".8">$${n0(Math.pow(10, pl))}</text>`;
+      { const by = Yp(pr.length ? pr[pr.length - 1][1] : Math.pow(10, pl)) + 3.5; TICKS(Math.pow(10, pl), Math.pow(10, ph), 'log', Yp, 18 * FSC).forEach(v => { const y = Yp(v); if (y < 6 || y > (ovl ? yb - 4 : hp - 2)) return; top += `<line x1="0" x2="${pw}" y1="${F1(y)}" y2="${F1(y)}" stroke="var(--ink)" stroke-opacity=".05"/>`; if (ovl) top += `<text x="4" y="${F1(y - 3)}" opacity=".8">${PXL(v)}</text>`; else if (Math.abs(y + 3.5 - by) >= 12 * FSC) top += `<text x="${pw + 12}" y="${F1(y + 3.5)}" opacity=".7">${PXL(v)}</text>`; }); }   /* 價格刻度（⑮） */
       (s.top || []).forEach(q => { top += `<path d="${pth(rows, q.c, X, Yp)}" fill="none" stroke="${CV(q.col)}" stroke-width="1.6" stroke-linejoin="round"${q.dash ? ` stroke-dasharray="${q.dash}"` : ''}/>`; });
       if (s.bub && s.p != null) { const bv = rows.filter(r => r[s.bub.c] != null && r[s.p] > 0), mx = Math.max.apply(null, bv.map(r => Math.abs(r[s.bub.c])).concat([1e-9])), rmx = pw < 420 ? 11 : 18; bv.slice().sort((p1, p2) => Math.abs(p2[s.bub.c]) - Math.abs(p1[s.bub.c])).forEach(r => { const v = r[s.bub.c], rr = Math.max(1.5, Math.sqrt(Math.abs(v) / mx) * rmx), big = r[s.bub.rank] != null && (r[s.bub.rank] <= 2 || r[s.bub.rank] >= 98), cc = CV(v >= 0 ? 'up' : 'dn'); top += `<circle cx="${F1(X(r[0]))}" cy="${F1(Yp(r[s.p]))}" r="${F1(rr)}" fill="${cc}" fill-opacity=".26" stroke="${cc}" stroke-opacity="${big ? .95 : .4}" stroke-width="${big ? 1.8 : .8}"/>`; }); }
       btcY = Yp(pr.length ? pr[pr.length - 1][1] : Math.pow(10, pl)) + 3.5; top += `${ovl ? '' : `<line x1="0" x2="${pw}" y1="${hp + 6}" y2="${hp + 6}" stroke="var(--ink)" stroke-opacity=".08"/>`}`;
@@ -2533,9 +2588,10 @@ function initOC() {
     (s.bands || []).forEach(q => { if (q.col2) { const P = {}; for (let j = 1; j < rows.length; j++) { const r0 = rows[j - 1], r1 = rows[j]; if ([r0[q.a], r0[q.b], r1[q.a], r1[q.b]].some(v => v == null)) continue; const key = r1[q.a] >= r1[q.b] ? q.col : q.col2, xa = F1(X(r0[0])), xb = F1(X(r1[0])); P[key] = (P[key] || '') + `M${xa},${F1(Y(r0[q.a]))}L${xb},${F1(Y(r1[q.a]))}L${xb},${F1(Y(r1[q.b]))}L${xa},${F1(Y(r0[q.b]))}Z`; } Object.keys(P).forEach(key => { g += `<path d="${P[key]}" fill="${CV(key)}" fill-opacity="${Math.max(.3, q.op || .32)}"/>`; }); return; }
       let d1 = ''; const back = []; rows.forEach(r => { if (r[q.a] == null || r[q.b] == null) return; d1 += (d1 ? 'L' : 'M') + F1(X(r[0])) + ',' + F1(Y(r[q.a])); back.push(F1(X(r[0])) + ',' + F1(Y(r[q.b]))); }); if (d1) g += `<path d="${d1}L${back.reverse().join('L')}Z" fill="${CV(q.col)}" fill-opacity="${Math.max(.2, q.op || .22)}"/>`; });
     g += top;
-    (s.ax || [hi, lo]).forEach(v => { g += `<line x1="0" x2="${pw}" y1="${F1(Y(v))}" y2="${F1(Y(v))}" stroke="var(--ink)" stroke-opacity=".07"/><text x="${pw + 12}" y="${F1(Y(v) + 3.5)}">${split(fm(af, v))[0]}</text>`; });
-    (s.refs || []).forEach(r => { const y = Y(r.v); if (y < y1 - 1 || y > yb + 1) return; const cc = CV(r.col); g += `<line x1="0" x2="${pw}" y1="${F1(y)}" y2="${F1(y)}" stroke="${cc}" stroke-opacity="${r.solid ? .7 : .95}"${r.solid ? '' : ' stroke-dasharray="4 3"'}/>`; if (Math.abs(y - Y(hi)) > 11 && Math.abs(y - Y(lo)) > 11) g += `<text x="${pw + 12}" y="${F1(y + 3.5)}" style="fill:${cc}">${split(fm(af, r.v))[0]}</text>`; const lb = T(r.zh, r.en); if (lb) g += `${PL(3, y - 7, lb, cc, 'start', 0, [0, pw])}`; });
-    if (btcY != null) { const used = [Y(hi) + 3.5, Y(lo) + 3.5].concat((s.refs || []).map(r => Y(r.v) + 3.5)); let n = 0; while (ovl && used.some(u => Math.abs(u - btcY) < 11) && n++ < 6) btcY -= 11; g += `<text x="${pw + 12}" y="${F1(Math.max(9, btcY))}">BTC</text>`; }
+    const tfn = s.tf || (s.log || one ? 'log' : 'lin'), tkv = s.ax || TICKS(lo, hi, tfn, Y), ryv = (s.refs || []).map(r => Y(r.v)).filter(y => y >= y1 - 1 && y <= yb + 1);   /* 刻度（⑮）：參考線的數字優先，刻度讓開 */
+    tkv.forEach(v => { const y = Y(v); if (y < y1 - 1 || y > yb + 1) return; g += `<line x1="0" x2="${pw}" y1="${F1(y)}" y2="${F1(y)}" stroke="var(--ink)" stroke-opacity=".07"/>`; if (!ryv.some(ry => Math.abs(ry - y) < 11 * FSC)) g += `<text x="${pw + 12}" y="${F1(y + 3.5)}">${TKL(af, v)}</text>`; });
+    (s.refs || []).forEach(r => { const y = Y(r.v); if (y < y1 - 1 || y > yb + 1) return; const cc = CV(r.col); g += `<line x1="0" x2="${pw}" y1="${F1(y)}" y2="${F1(y)}" stroke="${cc}" stroke-opacity="${r.solid ? .7 : .95}"${r.solid ? '' : ' stroke-dasharray="4 3"'}/>`; g += `<text x="${pw + 12}" y="${F1(y + 3.5)}" style="fill:${cc}">${TKL(af, r.v)}</text>`; const lb = T(r.zh, r.en); if (lb) g += `${PL(3, y - 7, lb, cc, 'start', 0, [0, pw])}`; });
+    if (btcY != null) { const used = tkv.map(v => Y(v) + 3.5).concat((s.refs || []).map(r => Y(r.v) + 3.5)); let n = 0; while (ovl && used.some(u => Math.abs(u - btcY) < 11) && n++ < 6) btcY -= 11; g += `<text x="${pw + 12}" y="${F1(Math.max(9, btcY))}">BTC</text>`; }
     /* 數列 */
     const nvis = S.filter(q => !q.hide).length, ends = [], dots = [], tags = [], tg = (q, v) => split(fm(q.f || af, v))[0]; let shim = '';
     if (Yp) { dots.push({ p: 1, Y: Yp }); (s.top || []).forEach(q => dots.push({ c: q.c, Y: Yp, col: q.col })); }
@@ -2582,16 +2638,15 @@ function initOC() {
     const kept = []; (s.marks || []).filter(m => m.d >= t0 && m.d <= tE).sort((p, q) => q.d - p.d).forEach(m => { const onP = m.on === 'p', Ym = onP ? Yp : Y; if (!Ym) return; const x = X(m.d), y = Ym(m.v), cc = CV(m.col), lb = T(m.zh, m.en); g += `<circle cx="${F1(x)}" cy="${F1(y)}" r="3.6" fill="var(--sheet)" stroke="${cc}" stroke-width="1.5"/>`; if (!lb) return; const wd = tw(lb) + 18, side = m.up ? 1 : 0; if (kept.some(q => q[2] === side && Math.abs(q[0] - x) < (q[1] + wd) / 2)) return; kept.push([x, wd, side]); const tx = Math.max(wd / 2, Math.min(pw - wd / 2, x)), ty = m.up ? Math.max((onP ? 10 : y1 + 10), y - 9) : Math.min(yb - 3, y + 15); ltxt += `${PL(tx, ty, lb, cc, 'middle', 1, [0, pw])}`; });
     g += ltxt + ltx2; if (shim) g += `<path class="shim" pathLength="1000" d="${shim}"/>`;
     ends.forEach(e => { if (e[3]) g += `<circle class="pulse" style="stroke:${e[2]}" cx="${F1(e[0])}" cy="${F1(e[1])}" r="5"/>`; g += `<circle cx="${F1(e[0])}" cy="${F1(e[1])}" r="${e[3] ? 4 : 2.6}" fill="${e[2]}"/>`; if (e[4] != null) tags.push([e[1], e[4], e[2], e[3]]); });
-    { tags.sort((p1, p2) => p1[0] - p2[0]); let ly = -1e9; tags.forEach(t => { t[4] = Math.max(t[0], ly + 14, y1 + 8); ly = t[4]; }); let uy = yb - 7; for (let i = tags.length - 1; i >= 0; i--) { tags[i][4] = Math.min(tags[i][4], uy); uy = tags[i][4] - 14; }
-      tags.forEach(t => { if (t[4] < y1 + 2) return; g += t[3] ? `<rect x="${pw + 6}" y="${F1(t[4] - 7.5)}" width="${MR - 7}" height="15" rx="3" fill="${t[2]}"/><text x="${pw + 10}" y="${F1(t[4] + 3.6)}" style="fill:var(--sheet);font-weight:600">${esc(t[1])}</text>` : `<rect x="${pw + 6}" y="${F1(t[4] - 7)}" width="${MR - 7}" height="14" fill="var(--sheet)"/><text x="${pw + 10}" y="${F1(t[4] + 3.6)}" style="fill:${t[2]}">${esc(t[1])}</text>`; }); }
+    { const th = 14 * FSC; tags.sort((p1, p2) => p1[0] - p2[0]); let ly = -1e9; tags.forEach(t => { t[4] = Math.max(t[0], ly + th, y1 + 8); ly = t[4]; }); let uy = yb - 7; for (let i = tags.length - 1; i >= 0; i--) { tags[i][4] = Math.min(tags[i][4], uy); uy = tags[i][4] - th; }
+      tags.forEach(t => { if (t[4] < y1 + 2) return; g += t[3] ? `<rect x="${pw + 6}" y="${F1(t[4] - th / 2 - .5)}" width="${MR - 7}" height="${F1(th + 1)}" rx="3" fill="${t[2]}"/><text x="${pw + 10}" y="${F1(t[4] + 3.6 * FSC)}" style="fill:var(--sheet);font-weight:600">${esc(t[1])}</text>` : `<rect x="${pw + 6}" y="${F1(t[4] - th / 2)}" width="${MR - 7}" height="${F1(th)}" fill="var(--sheet)"/><text x="${pw + 10}" y="${F1(t[4] + 3.6 * FSC)}" style="fill:${t[2]}">${esc(t[1])}</text>`; }); }
     /* 時間軸、游標 */
-    const span = tE - t0; if (span > 500) { const y0 = dOf(t0).getUTCFullYear() + 1, yz = dOf(tE).getUTCFullYear(), st = yz - y0 > 8 ? 2 : 1; for (let y = y0; y <= yz; y += st) { const x = X(Date.UTC(y, 0, 1) / 864e5); if (x < 16 || x > pw - 30) continue; g += `<line x1="${F1(x)}" x2="${F1(x)}" y1="${y1}" y2="${yb}" stroke="var(--ink)" stroke-opacity=".05"/><text x="${F1(x)}" y="${h - 3}" text-anchor="middle">${y}</text>`; } } else g += `<text x="0" y="${h - 3}">${ymd(t0).slice(0, 7)}</text>`;
-    g += `<text x="${pw}" y="${h - 3}" text-anchor="end">${T('現在', 'now')}</text>`;
+    g += xAxis(X, t0, tE, pw, y1, yb, h - 3);
     g += `<g class="cx" visibility="hidden"><line y1="2" y2="${yb}" stroke="var(--ink)" stroke-opacity=".5"/>${dots.map(dd => `<circle r="${dd.p ? 3 : 3.4}" fill="${dd.p ? 'var(--ink)' : CV(dd.col)}" stroke="var(--sheet)" stroke-width="1.5"/>`).join('')}</g><rect class="hit" data-k="${k}" x="0" y="0" width="${pw}" height="${yb}" fill="transparent" style="cursor:crosshair;touch-action:pan-y"/>`;
     if (MINI) g = g.replace(/<g class="pl">[\s\S]*?<\/g>/g, '').replace(/<text[\s\S]*?<\/text>/g, '').replace(/<circle class="pulse"[^>]*\/>/g, '').replace(/<rect class="hit"[^>]*\/>/, '').replace(/<path class="shim"[^>]*\/>/, '');
     box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(T(c.zh, c.en))}"><defs>${defs}</defs>${g}</svg>`;
     const cx = box.querySelector('.cx'), ce = cx.querySelectorAll('circle'); dots.forEach((dd, i) => { dd.el = ce[i]; });
-    return { X, Y, Yp, cx, dots, t0 };
+    return { X, Y, Yp, cx, dots, t0, lo, hi, tfn, tk: tkv };
   }
   function legend(s, k) {
     const L = [], sw = (kind, c1, c2) => `<i class="${kind}" style="--c:${CV(c1)};--c2:${CV(c2 || c1)}"></i>`; let n = 0;
@@ -2641,10 +2696,10 @@ function initOC() {
   const dSay = (d, p) => { const r = dAt(d, p), u = dU[d.unit]; if (!r) return T('這個價位沒有資料', 'Nothing at this price'); const at = '$' + n0(r[0]) + (d.step ? '–' + n0(r[0] + d.step) : '') + T('：', ': ');
     return at + (d.kind === 'stack' ? T('短期 ', 'STH ') + u(r[1]) + T('、長期 ', ', LTH ') + u(r[2]) : d.kind === 'split' ? T(d.la[0], d.la[1]) + ' ' + u(r[2]) + T('、', ', ') + T(d.lb[0], d.lb[1]) + ' ' + u(r[1]) : d.kind === 'side' ? T(r[1] === 'b' ? '買單 ' : '賣單 ', r[1] === 'b' ? 'bids ' : 'asks ') + u(r[2]) : d.kind === 'pos' ? T(r[0] >= ST.close ? '空單清算，相對量 ' : '多單清算，相對量 ', r[0] >= ST.close ? 'short liquidations, relative ' : 'long liquidations, relative ') + u(r[1]) : u(r[1])); };
   function distChart(box, c, k) {
-    const d = c.dist, w = box.clientWidth || 520, h = box.clientHeight || 260, ML = 62, MR = 10, pw = w - ML - MR, px = ST.close, prg = pgOf(c), lo = px * PRG[prg][0], hi = px * PRG[prg][1], la = Math.log(lo), lb = Math.log(hi), Y = v => 14 + (1 - (Math.log(v) - la) / (lb - la)) * (h - 24), inv = y => Math.exp(la + (1 - (y - 14) / (h - 24)) * (lb - la));
+    const d = c.dist, w = box.clientWidth || 520, h = box.clientHeight || 260, ML = Math.round(62 * FSC), MR = 10, pw = w - ML - MR, px = ST.close, prg = pgOf(c), lo = px * PRG[prg][0], hi = px * PRG[prg][1], la = Math.log(lo), lb = Math.log(hi), Y = v => 14 + (1 - (Math.log(v) - la) / (lb - la)) * (h - 24), inv = y => Math.exp(la + (1 - (y - 14) / (h - 24)) * (lb - la));
     const R = d.rows.filter(r => d.step ? r[0] + d.step > lo && r[0] < hi : r[0] >= lo && r[0] <= hi), mid = d.kind === 'split' || d.kind === 'sign', x0 = mid ? ML + pw / 2 : ML, full = mid ? pw / 2 : pw, mx = Math.max.apply(null, R.map(r => dMag(d, r)).concat([1e-9]));
     const bar = (x, ya, yz, len, col, op) => `<rect x="${F1(x)}" y="${F1(ya + .5)}" width="${F1(Math.max(.6, len))}" height="${F1(Math.max(1.5, yz - ya - 1))}" fill="${CV(col)}" fill-opacity="${op}"/>`; let g = '';
-    const st = (hi - lo) / 5, unit = st > 20000 ? 10000 : st > 8000 ? 5000 : st > 3000 ? 2000 : 1000; let ly = 1e9; for (let v = Math.ceil(lo / unit) * unit; v <= hi; v += unit) { const y = Y(v); if (y < 12 || y > h - 4 || ly - y < 17) continue; ly = y; g += `<line x1="${ML}" x2="${w - MR}" y1="${F1(y)}" y2="${F1(y)}" stroke="var(--ink)" stroke-opacity=".06"/><text x="${ML - 8}" y="${F1(y + 3.5)}" text-anchor="end">$${n0(v)}</text>`; }
+    const unit = [1000, 2000, 2500, 5000, 10000, 20000, 25000, 50000, 100000].find(u => Y(hi - u) - Y(hi) >= 18 * FSC && (hi - lo) / u <= 10) || 100000; let ly = 1e9; for (let v = Math.ceil(lo / unit) * unit; v <= hi; v += unit) { const y = Y(v); if (y < 12 || y > h - 4 || ly - y < 12) continue;   /* 刻度間距固定（⑮）：用最上面（最擠）那一格決定一格多少錢，不再隔一個跳一個 */ ly = y; g += `<line x1="${ML}" x2="${w - MR}" y1="${F1(y)}" y2="${F1(y)}" stroke="var(--ink)" stroke-opacity=".06"/><text x="${ML - 8}" y="${F1(y + 3.5)}" text-anchor="end">$${n0(v)}</text>`; }
     if (d.zone && d.zone[1] > lo && d.zone[0] < hi) { const za = Y(Math.min(hi, d.zone[1])), zz = Y(Math.max(lo, d.zone[0])); g += `<rect x="${ML}" y="${F1(za)}" width="${pw}" height="${F1(zz - za)}" fill="var(--ink)" fill-opacity=".06"/>${PL(w - MR - 4, za + 15, T(d.zone[2], d.zone[3]), 'var(--k2)', 'end', 0)}`; }
     R.forEach(r => { const ya = d.step ? Y(Math.min(hi, r[0] + d.step)) : Y(r[0]) - 4, yz = d.step ? Y(Math.max(lo, r[0])) : Y(r[0]) + 4;
       if (d.kind === 'stack') { const l1 = r[2] / mx * full, l2 = r[1] / mx * full; g += bar(x0, ya, yz, l1, 'c3', .92) + bar(x0 + l1, ya, yz, l2, 'ac', 1); }
@@ -2653,6 +2708,7 @@ function initOC() {
       else if (d.kind === 'side') g += bar(x0, ya, yz, r[2] / mx * full, r[1] === 'b' ? 'up' : 'dn', .96);
       else if (d.kind === 'pos') g += bar(x0, ya, yz, r[1] / mx * full, r[0] >= px ? 'up' : 'dn', .96);
       else { const h1 = (d.hl || []).find(q => r[0] >= q[0] && r[0] < q[1]); g += bar(x0, ya, yz, r[1] / mx * full, h1 ? h1[2] : (d.base || 'k2'), h1 ? 1 : (d.base ? .88 : .6)); } });
+    (d.hl || []).forEach(q => { if (!q[3]) return; const a = Math.max(lo, q[0]), b = Math.min(hi, q[1]); if (b <= a) return; const ya = Y(b), yz = Y(a), ln = Math.max.apply(null, R.filter(r => r[0] >= q[0] && r[0] < q[1]).map(r => dMag(d, r) / mx * full).concat([0])); g += `<line x1="${F1(x0 + ln + 4)}" x2="${F1(x0 + ln + 4)}" y1="${F1(ya + 1)}" y2="${F1(yz - 1)}" stroke="${CV(q[2])}" stroke-width="1.5"/>${PL(x0 + ln + 12, (ya + yz) / 2 + 4 * FSC, T(q[3], q[4]), CV(q[2]), 'start', 0, [ML, w - MR])}`; });   /* 最厚、最薄兩段的標註（⑮） */
     if (mid) g += `<line x1="${F1(x0)}" x2="${F1(x0)}" y1="12" y2="${h - 4}" stroke="var(--ink)" stroke-opacity=".2"/>${PL(x0 - 7, 11.5, T(d.la[0], d.la[1]), CV(d.cl || 'dn'), 'end', 0)}${PL(x0 + 7, 11.5, T(d.lb[0], d.lb[1]), CV(d.cr || 'up'), 'start', 0)}`;
     const yc = Y(px); g += `<line x1="${ML}" x2="${w - MR}" y1="${F1(yc)}" y2="${F1(yc)}" stroke="var(--ac)" stroke-width="1.3"/><circle class="pulse" style="stroke:var(--ac)" cx="${ML}" cy="${F1(yc)}" r="5"/><circle cx="${ML}" cy="${F1(yc)}" r="3.6" fill="var(--ac)"/>${PL(w - MR, yc - 8, T('收盤', 'Close') + ' $' + n0(px), 'var(--ac)', 'end', 1)}`;
     g += `<g class="cx" visibility="hidden"><line x1="${ML}" x2="${w - MR}" stroke="var(--ink)" stroke-opacity=".6"/></g><rect class="hit" data-k="${k}" x="${ML}" y="0" width="${pw}" height="${h}" fill="transparent" style="cursor:crosshair;touch-action:pan-x"/>`;
@@ -2682,17 +2738,18 @@ function initOC() {
   const gridHtml = c => { const gd = c.grid, yrs = W < 700 ? gd.rows.slice(-8) : gd.rows, cell = v => v == null ? '<td></td>' : `<td style="background:color-mix(in srgb, var(--${v >= 0 ? 'up' : 'dn'}) ${Math.min(72, Math.abs(v) * 1.6 + 8).toFixed(0)}%, transparent)">${sgn(v, 0)}</td>`; const now = gd.month ? gd.month.split('-').map(Number) : null, shr = x => { if (!x || !x.n) return '<td></td>'; const pc = Math.round(x.up / x.n * 100); return `<td style="color:var(--${pc >= 50 ? 'up' : 'dn'})">${pc}%</td>`; }; return `<div class="mg"><table><thead><tr><th></th>${[1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12].map(m => `<th>${m}</th>`).join('')}<th>${T('全年', 'Year')}</th></tr></thead><tbody>${yrs.map(r => `<tr><th>${r[0]}</th>${r[1].map((v, mi) => now && r[0] === now[0] && mi === now[1] - 1 ? cell(v).replace('<td style="', '<td style="outline:1.5px solid var(--ink);outline-offset:-1.5px;') : cell(v)).join('')}${cell(r[2])}</tr>`).join('')}<tr><th>${T('中位', 'Med.')}</th>${gd.stats.map(x => cell(x.med)).join('')}${gd.ystat ? cell(gd.ystat.med) : '<td></td>'}</tr><tr><th>${T('上漲', 'Up')}</th>${gd.stats.map(shr).join('')}${shr(gd.ystat)}</tr></tbody></table></div>`; };
   /* 橫軸不是日期的線圖：前幾輪對齊在頂部那一天、長期路徑往未來畫。線的名字直接標在線尾 */
   function xyChart(box, c, key) {
-    const d = c.xy, w = box.clientWidth || 520, h = box.clientHeight || 260, ML = 6, MR = d.xk === 'ym' ? 132 : 84, MB = 18, pw = w - ML - MR, S = d.series, all = [].concat.apply([], S.map(q => q.rows)), xs = all.map(r => r[0]), ys = all.map(r => r[1]).concat(d.band ? [d.band[0], d.band[1]] : []).concat(d.ref ? [d.ref.v] : []).filter(v => v > 0);
+    const d = c.xy, w = box.clientWidth || 520, h = box.clientHeight || 260, ML = 6, MR = Math.round((d.xk === 'ym' ? 132 : d.xk === 'days' && d.vl && d.vl.length ? 104 : 84) * FSC), MB = Math.round(18 * FSC), pw = w - ML - MR, S = d.series, all = [].concat.apply([], S.map(q => q.rows)), xs = all.map(r => r[0]), ys = all.map(r => r[1]).concat(d.band ? [d.band[0], d.band[1]] : []).concat(d.ref ? [d.ref.v] : []).filter(v => v > 0);
     const x0 = Math.min.apply(null, xs), x1 = Math.max.apply(null, xs), tf = d.log ? Math.log10 : (v => v), a = tf(Math.min.apply(null, ys)), b = tf(Math.max.apply(null, ys)), pad = (b - a) * .06 || 1, X = v => ML + (v - x0) / ((x1 - x0) || 1) * pw, Y = v => h - MB - 4 - (tf(v) - a + pad) / (b - a + 2 * pad) * (h - MB - 14); let g = '';
     if (d.band) g += `<rect x="${ML}" y="${F1(Y(d.band[1]))}" width="${F1(pw)}" height="${F1(Y(d.band[0]) - Y(d.band[1]))}" fill="${CV(d.band[2])}" fill-opacity=".1"/>`;
     if (d.ref) g += `<line x1="${ML}" x2="${F1(ML + pw)}" y1="${F1(Y(d.ref.v))}" y2="${F1(Y(d.ref.v))}" stroke="${d.ref.col ? CV(d.ref.col) : 'var(--ink)'}" stroke-opacity="${d.ref.col ? .8 : .4}" stroke-dasharray="4 3"/><text x="${ML + 4}" y="${F1(Y(d.ref.v) - 5)}"${d.ref.col ? ` style="fill:${CV(d.ref.col)}"` : ''}>${esc(T(d.ref.zh, d.ref.en))}</text>`;
     (d.vl || []).forEach(q => { if (q.x < x0 || q.x > x1) return; const x = X(q.x), cc = CV(q.col || 'k2'); g += `<line x1="${F1(x)}" x2="${F1(x)}" y1="8" y2="${h - MB}" stroke="${cc}" stroke-opacity=".8" stroke-dasharray="4 3"/>${PL(x - 5, 20, T(q.zh, q.en), cc, 'end', 0)}`; });
     if (d.xk === 'ym') { for (let y = Math.ceil(x0); y <= x1; y++) { const x = X(y); g += `<line x1="${F1(x)}" x2="${F1(x)}" y1="8" y2="${h - MB}" stroke="var(--ink)" stroke-opacity=".06"/><text x="${F1(x)}" y="${h - 3}" text-anchor="middle">${y}</text>`; } }
     else { const sp = x1 - x0, stp = sp > 900 ? 300 : sp > 400 ? 200 : sp > 150 ? 60 : sp > 60 ? 30 : 10; for (let v = Math.ceil(x0 / stp) * stp; v <= x1; v += stp) { const x = X(v); g += `<line x1="${F1(x)}" x2="${F1(x)}" y1="8" y2="${h - MB}" stroke="var(--ink)" stroke-opacity=".06"/><text x="${F1(x)}" y="${h - 3}" text-anchor="${v ? 'middle' : 'start'}">${v || d.xk === 'dte' ? T(v + ' 天', v + 'd') : T('頂部', 'Top')}</text>`; } }
-    const yv = [Math.max.apply(null, ys), Math.min.apply(null, ys)]; g += `${d.ref && Math.abs(Y(d.ref.v) - Y(yv[0])) < 22 ? '' : `<text x="${ML + 4}" y="${F1(Y(yv[0]) + 11)}" opacity=".8">${fm(d.f, yv[0])}</text>`}<text x="${ML + 4}" y="${F1(Y(yv[1]) - 4)}" opacity=".8">${fm(d.f, yv[1])}</text>`;
-    const ends = []; S.forEach(q => { const cc = CV(q.col), z = q.rows[q.rows.length - 1]; g += `<path d="${PATH(q.rows.map(r => [X(r[0]), Y(r[1])]))}" fill="none" stroke="${cc}" stroke-opacity="${Math.max(.9, q.op || 1)}" stroke-width="${Math.max(1.6, q.w || 1.8)}" stroke-linejoin="round"${q.dash ? ` stroke-dasharray="${q.dash}"` : ''}/><circle cx="${F1(X(z[0]))}" cy="${F1(Y(z[1]))}" r="${q.w > 2 ? 3.6 : 2.4}" fill="${cc}"/>`; ends.push({ x: X(z[0]), y: Y(z[1]), ly: Y(z[1]), cc, t: T(q.zh, q.en) }); });
+    TICKS(Math.min.apply(null, ys), Math.max.apply(null, ys), d.log ? 'log' : 'lin', Y, 22 * FSC).forEach(v => { const y = Y(v); g += `<line x1="${ML}" x2="${F1(ML + pw)}" y1="${F1(y)}" y2="${F1(y)}" stroke="var(--ink)" stroke-opacity=".07"/>`; if (!(d.ref && Math.abs(Y(d.ref.v) - y) < 14 * FSC)) g += `<text x="${ML + 4}" y="${F1(y - 4)}" opacity=".8">${TKL(d.f, v)}</text>`; });   /* 刻度（⑮） */
+    const xn = d.xk === 'days' && d.vl && d.vl.length ? d.vl[0].x : null, atX = q => { let r = null; q.rows.forEach(r2 => { if (r2[0] <= xn) r = r2; }); return r && q.rows[q.rows.length - 1][0] >= xn - 3 ? ' ' + fm(d.f, r[1]) : ''; };   /* 線尾的名字後面加上「今天這一天」各輪的數值 */
+    const ends = []; S.forEach(q => { const cc = CV(q.col), z = q.rows[q.rows.length - 1]; g += `<path d="${PATH(q.rows.map(r => [X(r[0]), Y(r[1])]))}" fill="none" stroke="${cc}" stroke-opacity="${Math.max(.9, q.op || 1)}" stroke-width="${Math.max(1.6, q.w || 1.8)}" stroke-linejoin="round"${q.dash ? ` stroke-dasharray="${q.dash}"` : ''}/><circle cx="${F1(X(z[0]))}" cy="${F1(Y(z[1]))}" r="${q.w > 2 ? 3.6 : 2.4}" fill="${cc}"/>`; ends.push({ x: X(z[0]), y: Y(z[1]), ly: Y(z[1]), cc, t: T(q.zh, q.en) + (xn != null ? atX(q) : '') }); });
     (d.marks || []).forEach(m => { const cc = CV(m.col), x = X(m.x), y = Y(m.y); g += `<circle cx="${F1(x)}" cy="${F1(y)}" r="4" fill="var(--sheet)" stroke="${cc}" stroke-width="1.6"/>${PL(x, y - 10, T(m.zh, m.en), cc, 'middle', 1, [ML, ML + pw])}`; });
-    ends.sort((p1, p2) => p1.ly - p2.ly); for (let i = 1; i < ends.length; i++) if (ends[i].ly < ends[i - 1].ly + 18) ends[i].ly = ends[i - 1].ly + 18; ends.forEach(e => { g += `${PL(Math.min(w - MR + 8, e.x + 8), e.ly + 4, e.t, e.cc, 'start', 1)}`; });
+    ends.sort((p1, p2) => p1.ly - p2.ly); for (let i = 1; i < ends.length; i++) if (ends[i].ly < ends[i - 1].ly + 18 * FSC) ends[i].ly = ends[i - 1].ly + 18 * FSC; ends.forEach(e => { g += `${PL(Math.min(w - MR + 8, e.x + 8), e.ly + 4, e.t, e.cc, 'start', 1)}`; });
     g += `<g class="cx" visibility="hidden"><line y1="6" y2="${h - MB}" stroke="var(--ink)" stroke-opacity=".5"/></g><rect x="${ML}" y="0" width="${F1(pw)}" height="${h - MB}" fill="transparent" style="cursor:crosshair;touch-action:pan-y"/>`;
     box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(T(c.zh, c.en))}">${g}</svg>`; const cx = box.querySelector('.cx'), ln = cx.querySelector('line'), pr = $('#oc-pr' + key), hint = T('在圖上移動游標，這裡會列出每條線在那一點的數值。', 'Move across the chart to read every line at that point.'); pr.textContent = hint;
     box.onpointermove = e => { const bb = box.getBoundingClientRect(), xv = x0 + Math.max(0, Math.min(1, ((e.clientX - bb.left) / bb.width * w - ML) / pw)) * (x1 - x0), x = F1(X(xv)); cx.setAttribute('visibility', 'visible'); ln.setAttribute('x1', x); ln.setAttribute('x2', x); const lab = d.xk === 'ym' ? Math.floor(xv) + '/' + p2(Math.min(12, Math.floor((xv % 1) * 12) + 1)) : d.xk === 'dte' ? T('離到期 ' + Math.round(xv) + ' 天', Math.round(xv) + ' days to expiry') : T('頂部後第 ' + Math.round(xv) + ' 天', 'Day ' + Math.round(xv) + ' after the top'); pr.innerHTML = `<b>${lab}</b>` + S.map(q => { if (xv < q.rows[0][0] || xv > q.rows[q.rows.length - 1][0]) return ''; let r = q.rows[0]; for (let i = 0; i < q.rows.length; i++) { if (q.rows[i][0] <= xv) r = q.rows[i]; else break; } return `<i></i><span style="color:${CV(q.col)}">${esc(T(q.zh, q.en).split(' ')[0])}</span>&nbsp;${fm(d.f, r[1])}`; }).join(''); };
@@ -2749,12 +2806,25 @@ function initOC() {
   /* 一張圖的內容：名稱、大數字、說明、圖例、圖。平鋪的卡片和放大後的主圖都用這一個 */
   let fx = null, SEC = {};
   const TN = { up: ['偏多', 'Bullish', 'up'], down: ['偏空', 'Bearish', 'dn'], warn: ['留意', 'Watch', 'c5'], neu: ['中性', 'Neutral', 'k2'] }, L2 = (z, e) => T(z, e || z);
+  /* 卡片上的結論（⑮）：分成兩塊。讀數（.sy-read）＝資料在說什麼，標題用一句白話，不把大數字重講一遍；
+     我們的看法（.sy-view）＝立場和「會改變看法」，社群配圖會藏掉這一塊（分享模式也藏） */
   function sayHtml(c) {
-    const y = c.say; if (!y) return ''; const its = y.items || [], v = its.find(q => q.view) || its.find(q => q.tone !== 'neu') || its[0], one = L2(y.sz, y.se);
-    const row = q => { const t2 = TN[q.tone] || TN.neu; return `<div class="sy-r"><span class="sy-k">${esc(L2(q.kz, q.ke))}</span><b>${esc(L2(q.vz, q.ve))}</b>${q.tone !== 'neu' ? `<i style="color:var(--${t2[2]})">${T(t2[0], t2[1])}</i>` : ''}<p>${esc(L2(q.dz, q.de))}${q.cz ? ' ' + T('會改變看法：', 'What would change it: ') + esc(L2(q.cz, q.ce)) : ''}</p></div>`; };
-    if (!v) return one ? `<div class="ol-say" style="--sc:var(--k2)"><div class="sy-h"><span class="sy-t">${T('現在', 'Now')}</span></div><p class="sy-d">${esc(one)}</p></div>` : '';
-    const tn = TN[v.tone] || TN.neu, body = v.view || !one ? L2(v.dz, v.de) : one, rest = v.view || !one ? its.filter(q => q !== v) : its;
-    return `<div class="ol-say" style="--sc:var(--${tn[2]})"><div class="sy-h"><span class="sy-t">${v.view ? T('我們的看法', 'Our view') : T('結論', 'Read')} · ${T(tn[0], tn[1])}</span><b>${v.view ? esc(L2(v.vz, v.ve)) : esc(L2(v.kz, v.ke)) + T('：', ': ') + esc(L2(v.vz, v.ve))}</b></div><p class="sy-d">${esc(body)}</p>${v.view && v.cz ? `<p class="sy-c"><i>${T('會改變看法', 'What would change it')}</i>${esc(L2(v.cz, v.ce))}</p>` : ''}${rest.length ? `<details class="sy-m"><summary${ib('全部讀值', 'All readings')}>${IC('chev')}<span>${rest.length}</span></summary>${rest.map(row).join('')}</details>` : ''}</div>`;
+    const y = c.say; if (!y) return ''; const its = y.items || [], vw = its.find(q => q.view), rd = its.find(q => !q.view && q.tone !== 'neu') || its.find(q => !q.view), one = L2(y.sz, y.se);
+    const row = q => { const t2 = TN[q.tone] || TN.neu; return `<div class="sy-r${q.view ? ' view' : ''}"><span class="sy-k">${esc(L2(q.kz, q.ke))}</span><b>${esc(L2(q.vz, q.ve))}</b>${q.tone !== 'neu' ? `<i style="color:var(--${t2[2]})">${T(t2[0], t2[1])}</i>` : ''}<p>${esc(L2(q.dz, q.de))}${q.cz ? ' ' + T('會改變看法：', 'What would change it: ') + esc(L2(q.cz, q.ce)) : ''}</p></div>`; };
+    let read = '';
+    if (rd) { const t2 = TN[rd.tone] || TN.neu, hm = rd.hm && L2(rd.hm, rd.hme); read = `<div class="sy-read" style="--sc:var(--${t2[2]})"><div class="sy-h"><span class="sy-t">${T('讀數', 'Reading')}${hm ? ' · ' + esc(L2(rd.kz, rd.ke)) + ' ' + esc(L2(rd.vz, rd.ve)) : ''}</span><b>${esc(hm || L2(rd.kz, rd.ke) + T('：', ': ') + L2(rd.vz, rd.ve))}</b></div>${vw ? '' : `<p class="sy-d">${esc(one || L2(rd.dz, rd.de))}</p>`}</div>`; }
+    else if (one) read = `<div class="sy-read" style="--sc:var(--k2)"><div class="sy-h"><span class="sy-t">${T('讀數', 'Reading')}</span></div><p class="sy-d">${esc(one)}</p></div>`;
+    const view = vw ? (t2 => `<div class="sy-view" style="--vc:var(--${t2[2]})"><div class="sy-h"><span class="sy-t">${T('我們的看法', 'Our view')} · ${T(t2[0], t2[1])}</span><b>${esc(L2(vw.vz, vw.ve))}</b></div><p class="sy-d">${esc(L2(vw.dz, vw.de))}</p>${vw.cz ? `<p class="sy-c"><i>${T('會改變看法', 'What would change it')}</i>${esc(L2(vw.cz, vw.ce))}</p>` : ''}</div>`)(TN[vw.tone] || TN.neu) : '';
+    if (!read && !view) return ''; const rest = its.filter(q => q !== vw && q !== rd), sc = (TN[(rd || vw || {}).tone] || TN.neu)[2];
+    return `<div class="ol-say" style="--sc:var(--${sc})">${read}${view}${rest.length ? `<details class="sy-m"><summary${ib('全部讀值', 'All readings')}>${IC('chev')}<span>${rest.length}</span></summary>${rest.map(row).join('')}</details>` : ''}</div>`;
+  }
+  /* 兩個數字並排（⑮）：數量型的指標（顆、美元）和價格各自 30 天的漲跌，方向相反而且都超過 1% 標「背離」 */
+  const PAIRF = { btc0: 1, n0: 1, usd0: 1, usdM: 1 };
+  function pairHtml(s, c) {
+    if (!isT(c) || s.one) return ''; const q = hero(s), f = q.f || s.f; if (!PAIRF[f] || q.t === 'bar') return ''; const rows = s.rows, z = atv(rows, q.c, null); if (!z || !(z[q.c] > 0)) return ''; const a = atv(rows, q.c, z[0] - 30); if (!a || a[0] > z[0] - 20 || !(a[q.c] > 0)) return '';
+    const pz = pxAt(s, z[0]), pa = pxAt(s, z[0] - 30); if (!(pa > 0) || !(pz > 0)) return ''; const ci = (z[q.c] / a[q.c] - 1) * 100, cp = (pz / pa - 1) * 100, dv = Math.sign(ci) !== Math.sign(cp) && Math.abs(ci) > 1 && Math.abs(cp) > 1;
+    const b = (lb, v) => `<span>${esc(lb)}<b style="color:${CV(v >= 0 ? 'up' : 'dn')}">${sgn(v, 1)}%</b></span>`;
+    return `<p class="ol-pair"><em>${T('近 30 天', '30 days')}</em>${b(T(q.zh, q.en) || T(c.zh, c.en), ci)}${b(T('價格', 'Price'), cp)}${dv ? `<i>${T('背離', 'Diverging')}</i>` : ''}</p>`;
   }
   const sigHtml = c => { const g2 = c.sig || []; if (!g2.length) return ''; const one = q => `<div class="sg-i"><b>${esc(L2(q.tz, q.te))}</b><span class="sg-f">${esc(L2(q.fz, q.fe))}</span>${q.mz ? `<p>${esc(L2(q.mz, q.me))}</p>` : ''}${q.rz ? `<p class="sg-r">${T('怎麼判定：', 'How it is flagged: ')}${esc(L2(q.rz, q.re))}</p>` : ''}</div>`; return `<details class="ol-sig"><summary><span class="sg-c"><i></i>${T('異動', 'Signal')}</span><b>${esc(L2(g2[0].tz, g2[0].te))}</b>${g2.length > 1 ? `<span class="sg-n">${T('另有 ' + (g2.length - 1) + ' 則', '+' + (g2.length - 1) + ' more')}</span>` : ''}</summary>${g2.map(one).join('')}</details>`; };
   const howHtml = c => { const y = c.say || {}, hs = T(y.hz || [], y.he && y.he.length ? y.he : (y.hz || [])), dz = T(c.dz, c.de); return dz || hs.length ? `<details class="ol-how"><summary${ib('怎麼讀這張圖', 'How to read this chart')}>${IC('info')}</summary>${dz ? `<p>${esc(dz)}</p>` : ''}${hs.map(h2 => `<p>${esc(h2)}</p>`).join('')}</details>` : ''; };
@@ -2783,8 +2853,8 @@ function initOC() {
     const q = sel => ol.querySelector(sel), t = q('.ol-t'); if (!t) return;
     if (sigH) t.insertAdjacentHTML('afterend', sigH);
     const ctl = q('.ol-ctl'), lb = q('.ol-b'); if (ctl && lb) lb.insertBefore(ctl, lb.firstChild);
-    const k = q('.ol-k'), big = q('.ol-big'), st = q('.ol-st'), say = q('.ol-say'), hl = document.createElement('div'), anchor = k || big || st; hl.className = 'ol-hl';
-    if (anchor) { anchor.parentNode.insertBefore(hl, anchor); const num = document.createElement('div'); num.className = 'ol-num'; [k, big, st].forEach(e2 => { if (e2) num.appendChild(e2); }); hl.appendChild(num); }
+    const k = q('.ol-k'), big = q('.ol-big'), st = q('.ol-st'), pr = q('.ol-pair'), say = q('.ol-say'), hl = document.createElement('div'), anchor = k || big || st; hl.className = 'ol-hl';
+    if (anchor) { anchor.parentNode.insertBefore(hl, anchor); const num = document.createElement('div'); num.className = 'ol-num'; [k, big, st, pr].forEach(e2 => { if (e2) num.appendChild(e2); }); hl.appendChild(num); }
     else ((ctl && !lb ? ctl : null) || q('.ol-sig') || t).insertAdjacentElement('afterend', hl);
     if (say) hl.appendChild(say); else if (sayH) hl.insertAdjacentHTML('beforeend', sayH);
     if (!hl.children.length) hl.remove(); else if (hl.children.length === 1) hl.classList.add('solo');
@@ -2799,7 +2869,7 @@ function initOC() {
     const lyv = c._ly || 'sp', lyb = isT(c) && !s.one ? `<span class="md ly" role="group" aria-label="${T('價格和指標的排法', 'Price and indicator layout')}"><button type="button" data-ly="sp" data-key="${key}" aria-pressed="${lyv === 'sp'}"${ib('價格和指標分成上下兩格', 'Price and indicator in two panes')}>${IC('split')}</button><button type="button" data-ly="ov" data-key="${key}" aria-pressed="${lyv === 'ov'}"${ib('價格和指標疊在同一格', 'Price and indicator overlaid')}>${IC('over')}</button></span>` : '';
     let tcv = null; try { if (isT(c) && !c.na) tcv = CV(tone(s, hero(s))); } catch (e0) { tcv = null; } const tcol = ''; ol.dataset.kind = ''; const sayH = c.na ? '' : sayHtml(c), sigH = c.na ? '' : sigHtml(c), howH = howHtml(c);
     const hk = c.na ? '' : s.hz ? T(s.hz, s.he) : isT(c) && hero(s).zh && hero(s).zh !== c.zh ? T(hero(s).zh, hero(s).en) : '';
-    const head = `<div class="ol-t"><h4 class="ol-n">${esc(T(c.zh, c.en))}</h4>${c.go ? `<button type="button" class="fx-b go" data-chid="${c.go}"${ib('看這一頁', 'Open this page')}>${IC('go')}</button>` : flat && !c.na && !c.nofx ? `<button type="button" class="fx-b" data-fx="${key}"${ib('展開這張圖', 'Expand this chart')}>${IC('expand')}</button>` : ''}</div>${md || pg || rgb || lyb ? `<div class="ol-ctl">${md}${pg}${rgb}${lyb}${more}</div>` : ''}`, big = `${hk ? `<span class="ol-k">${esc(hk)}</span>` : ''}<div class="ol-big"${tcol}><span class="odo" id="oc-b${key}"></span><span class="ol-u" id="oc-u${key}"></span><small id="oc-d${key}"></small></div>${stat(s, c)}${sayH}${sxl(s, c)}`;
+    const src = c.src ? T(c.src, c.srce) : '', head = `<div class="ol-t"><h4 class="ol-n">${esc(T(c.zh, c.en))}</h4>${src ? `<span class="ol-src" title="${esc(src)}">${esc(src)}</span>` : ''}${c.go ? `<button type="button" class="fx-b go" data-chid="${c.go}"${ib('看這一頁', 'Open this page')}>${IC('go')}</button>` : flat && !c.na && !c.nofx ? `<button type="button" class="fx-b" data-fx="${key}"${ib('展開這張圖', 'Expand this chart')}>${IC('expand')}</button>` : ''}</div>${md || pg || rgb || lyb ? `<div class="ol-ctl">${md}${pg}${rgb}${lyb}${more}</div>` : ''}`, big = `${hk ? `<span class="ol-k">${esc(hk)}</span>` : ''}<div class="ol-big"${tcol}><span class="odo" id="oc-b${key}"></span><span class="ol-u" id="oc-u${key}"></span><small id="oc-d${key}"></small></div>${stat(s, c)}${pairHtml(s, c)}${sayH}${sxl(s, c)}`;
     let L = null;
     if (c.na) ol.innerHTML = head + `<div class="ol-na"><b>${T('資料沒來', 'No data')}</b><p>${esc(T(c.na.zh, c.na.en))}</p></div>`;
     else if (c.sim) simCard(ol, c, key, head);
@@ -2807,6 +2877,8 @@ function initOC() {
     else if (c.dist) { ol.innerHTML = head + big + `${howH}<div class="ol-lg">${c.dist.leg.map(q => `<span><i class="box" style="--c:${CV(q[0])};--c2:${CV(q[0])}"></i>${esc(T(q[1], q[2]))}</span>`).join('')}</div><p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c" id="oc-c${key}"></div>`; tidy(ol, sayH, sigH); L = distChart($('#oc-c' + key), c, key); const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); }
     else { ol.dataset.kind = 't'; ol.innerHTML = `<div class="ol-a">${head}${big}${howH}</div><div class="ol-b"><div class="ol-lg">${LG.map(e => e.html).join('')}</div><div class="ol-c" id="oc-c${key}"></div></div>`; tidy(ol, sayH, sigH); L = leadChart($('#oc-c' + key), c, key, t0); }
     { const art = ol.closest('.fc'); if (art) art.style.setProperty('--tc', tcv || 'var(--k2)'); }
+    if (!c.na && !c.go) ol.insertAdjacentHTML('beforeend', `<p class="ol-brand"><b>${T('破曉 Daybreak', 'Daybreak')}</b><span>north7.github.io/daybreak</span><span>${src ? esc(T('資料：', 'Data: ') + src) + ' · ' : ''}${T('截至 ', 'As of ')}${D.date.replace(/-/g, '/')}</span></p>`);   /* 分享模式才顯示（⑮） */
+    ol.dataset.ck = c.k;
     return { c, s, L, t0, key, lg: LG.filter(e => e.get).map(e => ({ el: document.getElementById(e.id), get: e.get })), items: [] };
   }
   /* 放大：一張主圖加同一段的佐證列 */
@@ -2820,7 +2892,7 @@ function initOC() {
   }
   /* 平鋪：一個小問題一段，裡面每張圖都完整畫出來 */
   function renderFlat(k) {
-    const g = G[k - 1]; $('#oc-g' + k).innerHTML = g.charts.map((c, i) => `<article class="fc${c.wide ? ' w' : ''}${c.go ? ' q' : ''}" style="--i:${i % 4}"><div class="ol" id="oc-ol${k}_${i}"></div></article>`).join(''); if (IO) $('#oc-g' + k).querySelectorAll('.fc').forEach(el => IO.observe(el));
+    const g = G[k - 1]; $('#oc-g' + k).innerHTML = g.charts.map((c, i) => `<article class="fc${c.wide ? ' w' : ''}${c.go ? ' q' : ''}" data-k="${esc(c.k)}" style="--i:${i % 4}"><div class="ol" id="oc-ol${k}_${i}"></div></article>`).join(''); if (IO) $('#oc-g' + k).querySelectorAll('.fc').forEach(el => IO.observe(el));
     SEC[k] = g.charts.map((c, i) => { const R = fill($('#oc-ol' + k + '_' + i), c, k + '_' + i, true); cur1(R, null); pcur1(R, null); return R; });
   }
   function renderOv() {
@@ -3264,6 +3336,16 @@ function initOC() {
   }
   paint(); layout();
   if ('IntersectionObserver' in window) new IntersectionObserver(en => { vis = en[0].isIntersecting; wake(); }).observe($('#oc-hd'));
+  /* window.daybreakXY(圖代號, 日期 'YYYY-MM-DD' 或日數, 數值, 'p'＝上格價格) → 視窗座標（CSS px）。放大檢視開著就用放大的那張。
+     也回傳這張圖的時間範圍、縱軸範圍和刻度，給 ops/post/annotate.py 換算（⑮） */
+  window.daybreakXY = (k, d, v, pane) => {
+    const R = REG.F && REG.F.c && REG.F.c.k === k && !$('#oc-fx').hidden ? REG.F : [].concat.apply([], Object.keys(SEC).map(j => SEC[j] || [])).find(r => r && r.c && r.c.k === k); if (!R || !R.L) return null;
+    const box = document.getElementById('oc-c' + R.key), sv = box && box.querySelector('svg'); if (!sv) return null; const vb = sv.viewBox.baseVal, bb = sv.getBoundingClientRect(), sx = bb.width / vb.width, sy = bb.height / vb.height, L = R.L, rect = { left: bb.left, top: bb.top, width: bb.width, height: bb.height };
+    if (L.dist) return { x: null, y: v != null || d != null ? bb.top + L.Y(v != null ? v : d) * sy : null, box: rect };
+    const day = d == null ? tE : typeof d === 'number' ? d : Date.parse(d) / 864e5, Yf = pane === 'p' ? L.Yp : L.Y;
+    return { x: bb.left + L.X(day) * sx, y: v == null || !Yf ? null : bb.top + Yf(v) * sy, box: rect, t0: ymd(L.t0), t1: ymd(tE), lo: L.lo, hi: L.hi, tf: L.tfn, ticks: L.tk };
+  };
+  if (SHARE && SHK) setTimeout(() => { for (let i = 0; i < CH.length; i++) { const gs = CH[i].groups || []; for (let j = 0; j < gs.length; j++) { const n = (gs[j].charts || []).findIndex(x => x.k === SHK); if (n < 0) continue; if (i !== ci) goCh(i); setTimeout(() => openFx((j + 1) + '_' + n), 60); return; } } }, 0);
   return layout;
 }
 
