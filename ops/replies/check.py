@@ -136,7 +136,7 @@ def check():
             continue
         if it.get('lang') not in ('zh', 'en'): err.append(f'{tag} 原文是 {it.get("lang")}：只回中文和英文貼文，請改成 skip')
         if not t and not (it.get('mode') == 'quote' and it.get('quote')): err.append(f'{tag} 沒有回覆內容')   # 只引用不回覆的可以留空（2026-11-06）
-        if t and it.get('lang') == 'zh' and not it.get('posted') and '說明' in t: err.append(f'{tag} 回覆 AI 腔（「說明」）：回覆直接把意思講出來，「說明」是長文的動作（voice.md 第四輪，2026-11-11）')
+        if t and it.get('lang') == 'zh' and not it.get('posted') and REPLY_ONLY.search(t): err.append(f'{tag} 回覆 AI 腔（「說明」）：回覆直接把意思講出來，「說明」是長文的動作（voice.md 第四輪，2026-11-11）')
         if t: err += [e for e in text_errors(tag + ' 回覆', t, it.get('lang')) if not (it.get('posted') and ('英文常用名' in e or 'AI 腔' in e))]   # 已發出的不用改（規則是發出之後才加的，2026-11-09）
         if t and ONE_LINE.search(t): err.append(f'{tag} 回覆一行裡有兩句（「{ONE_LINE.search(t).group(0)}」）：每句話換一行，見 voice.md 2026-11-08')
         if HASH.search(t): err.append(f'{tag} 回覆不加 hashtag（引用文和快訊才加）')
@@ -212,6 +212,9 @@ def first_clause(t):
 EN_NAMES = {'比特幣': 'BTC', '比特币': 'BTC', '以太坊': 'ETH', '以太幣': 'ETH', '那斯達克': 'Nasdaq', '納斯達克': 'Nasdaq', '標普': 'S&P 500',
             '輝達': 'Nvidia', '英偉達': 'Nvidia', '微策略': 'Strategy', '幣安': 'Binance', '貝萊德': 'BlackRock', '富達': 'Fidelity', '灰度': 'Grayscale'}
 EN_NAME = re.compile(r'(?<!#)(' + '|'.join(EN_NAMES) + ')')
+
+
+REPLY_ONLY = re.compile(r'說明')   # 回覆才擋（長文 Murphy 式可以用，一篇最多兩處），voice.md 第四輪 2026-11-11
 
 
 def text_errors(tag, t, lang, lim=280):
@@ -368,8 +371,62 @@ def check_flash():
     return err
 
 
+# 2026-11-11 使用者：「對於語言我們在不停的修正去 AI 味，不要再往回走」。
+# 倒退樣本：使用者退過、或規則定案時實際寫出來過的句子。每次執行先跑一遍，哪一句不再被抓到，就是有人把規則放寬了，直接報錯。
+# 擋的詞只能加不能刪；要刪先問使用者，並在 voice.md「不往回走」那張表和改稿紀錄寫清楚。新的退稿句子照樣加進來。
+REGRESS = [
+    ('zh', '你要看的兩點，費率那條我先潑個冷水'),            # 11/11 宣告式反應（n40 被留言「太AI了」）
+    ('zh', '要是又沒降，「清洗」這兩個字就得打問號'),        # 11/11 造句收尾
+    ('zh', '這些沒清掉的多單是下一次急跌的燃料'),
+    ('zh', '往回踩的均線再被踩，味道就不太一樣了'),
+    ('zh', '75K 這檔我們兩邊的符號是反的，蠻有意思'),
+    ('zh', '心碎先緩一下，砸盤的主力我看不是礦企'),
+    ('zh', '「被洗出去的倉位回不來」我倒擔心反過來'),
+    ('zh', '這句我同意，週末只有幣圈開著'),                  # 11/09 表態客套
+    ('zh', '你最後那句我很同意'),
+    ('zh', '這心態我是佩服的'),
+    ('zh', '200 日均線現在 73,171，跟你寫的 73,150 對得上'),  # 11/09 幫對方核對數字
+    ('zh', '我這邊也是，讀數跟你差不多'),                    # 11/08 附和開頭
+    ('zh', '我這邊算的成本在 75,881'),                       # 11/09 自稱數字來源
+    ('zh', '那什麼情況會讓我改看法？'),                      # 11/06 固定條件收尾
+    ('zh', '我會說是被套、不是淡定'),                        # 11/09 替判斷貼標籤
+    ('zh', '最後提醒一下，週五有數據'),
+    ('zh', '先說結論，還沒見底'),                            # 起手式
+    ('zh', '說白了就是沒人接'),
+    ('zh', '值得注意的是費率回來了'),                        # 11/05 書面路標
+    ('zh', '總的來說還在弱勢'),
+    ('zh', '很多人說資金費率快 10%'),                        # 11/09 泛指來源
+    ('zh', '說得好，費率確實回來了'),                        # 11/09 過度禮貌
+    ('zh', '只有 3 次，只能當參考'),                         # 11/09 固定收尾
+    ('zh', '這凸顯了現貨的重要性'),                          # 11/09 淺層分析尾句
+    ('en', '0.75 on my end'),
+    ('en', 'By my estimate the average is near 79K'),
+    ('en', 'Great point, funding is back'),
+    ('en', 'At the end of the day, nobody is buying'),
+    ('en', 'Lots of people read this as capitulation'),
+]
+REGRESS_REPLY = ['週日那次爆倉完，年化費率隔天不降反升，說明被清掉的位置馬上有人補回去']   # 11/11 回覆裡的「說明」
+# 11/10 的四段模板（宣告反應→數據→說明→條件句），整批放進 tone_notes 一定要被點名
+REGRESS_BATCH = ['你要看的兩點，費率那條我先潑個冷水\n週日那次爆倉完，費率隔天不降反升\n今晚的要等明天才看得到，要是又沒降就得打問號',
+                 '反常倒不至於，這一個月賣壓都是合約那頭打出來的\n永續 30 天主動賣比主動買多了 7.7 萬顆\n要講到底得等現貨從不動變成主動買',
+                 '「抵消」我覺得還差一點，上週有四天是淨流出\n賠 5% 的人沒在砸\n等 ETF 翻回淨流入，這種背離才會收掉',
+                 '心碎先緩一下，砸盤的主力我看不是礦企\n礦企一天才賣三百多顆\n算力一週退了 9%\n要是難度下調，這條賣壓才會收斂',
+                 '「槓桿還在被動出清」這句我不同意\n未平倉這 30 天多了一成多\n在那之前，這些多單是下一次急跌的燃料',
+                 '75K 這檔我們兩邊的符號是反的\n你的表 75K 是重負\n正的話價格會被黏住，要是負的就一碰就放大']
+
+
+def regress():
+    """去 AI 味不往回走：以前退過的句子和模板，現在的規則一定要還抓得到。"""
+    err = [f'去 AI 味規則倒退了：「{t}」現在不會被擋（voice.md「不往回走」，擋的詞只能加不能刪）' for l, t in REGRESS if not text_errors('x', t, l)]
+    err += [f'去 AI 味規則倒退了：回覆裡的「說明」不再被擋（「{t[:20]}…」）' for t in REGRESS_REPLY if not REPLY_ONLY.search(t)]
+    tn = '\n'.join(tone_notes([{'n': i + 1, 'reply': t, 'lang': 'zh', 'status': 'send'} for i, t in enumerate(REGRESS_BATCH)]))
+    for k in ('三行以上', '條件句'):
+        if k not in tn: err.append(f'去 AI 味規則倒退了：11/10 的四段模板整批不再被提醒「{k}」（voice.md「不往回走」）')
+    return err
+
+
 if __name__ == '__main__':
-    e = check()
+    e = regress() + check()
     print('\n'.join(e) if e else 'replies.json OK')
     tn = tone_notes(json.load(open(os.path.join(ROOT, 'data', 'replies.json'), encoding='utf-8')).get('items', []))
     if tn: print('AI 腔提醒（不擋，排在一起看）：\n- ' + '\n- '.join(tn))
