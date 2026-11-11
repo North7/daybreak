@@ -50,3 +50,5 @@ python3 pipeline/next/build.py --no-interp # 只改版面時：沿用上一次�
 - 把放大檢視固定成 16:9 或 4:5，關掉所有動畫
 
 規則寫在 `page.html` 樣式的 ⑮。
+
+訪客用的入口：每張圖的放大檢視右上有「複製連結」（複製上面這個分享網址）和「下載圖片」（在看不見的框裡開分享模式 1600×900，用 html-to-image 轉成 3200×1800 的 PNG；手機能用系統分享就跳分享）。程式在 `page.html` 的 `copyLink`、`savePng`。
