@@ -779,10 +779,22 @@ def capflow_viz(bv, px, last, step=3):
 #   2026-11-11 使用者決定：原本用 21 天動能累加（加 30、減 50、動能到 0.7 直接歸零），反彈時幾乎不回落，11/07 就到 100、比參考讀數早三天。
 #     對照一整年的逐日參考讀數重新校準：平均差距從約 24 點降到約 12 點、整年平均不偏高也不偏低。歷史讀數全部照新算法重算。
 #     底部組合的回測沒有因此變好（90 天後上漲比例和任一天進場差不多），換的理由只有貼近度；門檻或加減比例稍微動一點，整條線的高低會差很多，不要隨手調。
+#   2026-11-11 稍晚，使用者決定「上線平均版」：賣壓累積＝上面那條（慢線）和一條反應快的線各佔一半。
+#     快線：當天報酬 ÷ 近 30 天日報酬的標準差，取 5 天指數平均 u；u < 0 時每天加 12 × |u|^0.7，u > 0 時每天減 14 × u^0.7，夾在 0–100。
+#       大跌當天就會加很多（慢線一天最多加 9 分），行情很安靜時小跌也算數。
+#     為什麼不直接換成快線：對照三段共約 1,500 天的參考讀數，快線比較貼近（平均差距 13／14／11 分，慢線 21／20／12），
+#       但它在連跌的行情裡太早到 100：2012 年起和慢線同一波的 26 次裡，日期不同的 23 次有 20 次比較早，急跌時進場價高出 16–41%
+#       （2018-01、2018-03、2018-11、2020-03、2021-05、2026-02），之後 60 天最深中位 −16%（慢線 −11%）。慢線的優勢就是它慢。
+#       也試過快線到 100 之後等價格止跌再算（十種確認條件）、快慢各進一半，都救不了。
+#     取平均：到 100 要兩條都到，所以時間跟慢線走（26 次裡 21 次同一天、其餘差 1–3 天），進場結果不變；
+#       100 以下的讀數反應變快、比較貼近（平均差距 16／13／11 分）。快線佔 25%、50%、75% 時到 100 的次數和進場結果都一樣，取 50%。
+#       幾天內就反轉的低點還是到不了 100（2022-11 讀 83、2024-09 讀 87），那是慢線的代價，不要為了抓它們把快線的比重調到 100%。
+#     歷史讀數全部照平均版重算。兩條線都有路徑依賴，一定要從 2011 年一路算下來。
 #   底部組合＝賣壓 100 且動能 < 0.3（和上一次相隔 60 天以上才算新的一次）。回測照實列出：30／90 天後漲跌、等賣壓回到 0 再出場的結果、分年代；
 #   強勢動能（賣壓 0 且動能 > 0.85）之後多半繼續漲，不是頂部訊號，也照實列出。只作讀值、不是買賣訊號。
 SX_N, SX_K, SX_FROM, SX_GAP = 21, 0.7, '2012-06-01', 60      # 動能品質：近 21 天的 t 值 × 0.7
-SX_RN, SX_RK, SX_TH, SX_UP, SX_DN = 10, 1.0, 0.45, 20, 20   # 賣壓累積：短線動能的跨度、係數；門檻、每天加、每天減
+SX_RN, SX_RK, SX_TH, SX_UP, SX_DN = 10, 1.0, 0.45, 20, 20   # 賣壓累積的慢線：短線動能的跨度、係數；門檻、每天加、每天減
+SX_FN, SX_FM, SX_FUP, SX_FDN, SX_FP, SX_FW = 5, 30, 12, 14, 0.7, 0.5   # 賣壓累積的快線：平均天數、波動天數；每天加、每天減的係數、次方；快線佔的比重
 
 
 def stress_viz(bv, px, last, step=3, keep=1095):
@@ -794,15 +806,20 @@ def stress_viz(bv, px, last, step=3, keep=1095):
     Phi = lambda x: 0.5 * (1 + math.erf(x / math.sqrt(2)))
     S, R, r = [None] * n, [None] * n, 0.0
     al, em, ev2 = 2 / (SX_RN + 1), 0.0, 0.0   # 短線動能：日報酬與日報酬平方的指數加權平均
+    af, u, rf = 2 / (SX_FN + 1), 0.0, 0.0     # 快線：當天報酬 ÷ 近 30 天標準差的 5 天指數平均 u，和它累加出來的分數
     for i in range(1, n):
         em += al * (lr[i] - em); ev2 += al * (lr[i] ** 2 - ev2)
+        if i >= SX_FM + 2:
+            w = lr[i - SX_FM + 1: i + 1]; m = sum(w) / SX_FM; sd = (sum((a - m) ** 2 for a in w) / (SX_FM - 1)) ** 0.5
+            u += af * ((lr[i] / sd if sd > 0 else 0.0) - u)
+            rf = min(100.0, rf + SX_FUP * (-u) ** SX_FP) if u < 0 else max(0.0, rf - SX_FDN * u ** SX_FP)
         if i < SX_N: continue
         w = lr[i - SX_N + 1: i + 1]; m = sum(w) / SX_N; sd = (sum((a - m) ** 2 for a in w) / (SX_N - 1)) ** 0.5
         s = Phi(SX_K * m / sd * math.sqrt(SX_N)) if sd > 0 else 0.5
         if i > 3 * SX_RN:   # 前 30 天指數加權還沒穩定，不累加
             f = Phi(SX_RK * em / max(1e-12, ev2 - em * em) ** 0.5 * math.sqrt(SX_RN))
             r = min(100.0, r + SX_UP * (SX_TH - f)) if f < SX_TH else max(0.0, r - SX_DN * (f - SX_TH))
-        S[i], R[i] = s, r
+        S[i], R[i] = s, (1 - SX_FW) * r + SX_FW * rf
     i0 = next(i for i, d in enumerate(D) if d >= SX_FROM)
     fwd = lambda i, h: (P[i + h] / P[i] - 1) * 100 if i + h < n else None
     med = lambda v: round(sorted(v)[len(v) // 2], 1) if v else None
@@ -846,8 +863,8 @@ def stress_viz(bv, px, last, step=3, keep=1095):
                 ev=ev, f30=stat(bot, 30), f90=stat(bot, 90), base30=base(30), base90=base(90),
                 ex=dict(n=len(done), win=sum(e['ret'] > 0 for e in done), med=med([e['ret'] for e in done]), days=med([e['days'] for e in done]), dip=med([e['dip'] for e in done])),
                 era=era, top=dict(n=len(top), f90=stat(top, 90), last=D[top[-1]] if top else None), since=SX_FROM,
-                prm=dict(n=SX_N, k=SX_K, rn=SX_RN, rk=SX_RK, th=SX_TH, up=SX_UP, dn=SX_DN), rows=rows,
-                note='本站自製，只用每日收盤：動能品質＝Φ(0.7 × 近 21 天報酬 t 值)；賣壓累積＝短線動能（跨度 10 天的指數加權）低於 0.45 時累加、高於時以同樣速度遞減（0–100）；2026-11-11 起改用短線動能，歷史讀數重算；只作讀值、不是買賣訊號')
+                prm=dict(n=SX_N, k=SX_K, rn=SX_RN, rk=SX_RK, th=SX_TH, up=SX_UP, dn=SX_DN, fn=SX_FN, fm=SX_FM, fup=SX_FUP, fdn=SX_FDN, fp=SX_FP, fw=SX_FW), rows=rows,
+                note='本站自製，只用每日收盤：動能品質＝Φ(0.7 × 近 21 天報酬 t 值)；賣壓累積＝兩條線各佔一半（0–100）：慢線在短線動能（跨度 10 天的指數加權）低於 0.45 時累加、高於時以同樣速度遞減；快線用「當天報酬 ÷ 近 30 天波動」的 5 天平均加減，大跌當天就反應；到 100 要兩條都到；2026-11-11 起改成這個平均版，歷史讀數重算；只作讀值、不是買賣訊號')
 
 
 
