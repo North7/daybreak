@@ -1,16 +1,16 @@
 {
- "date": "2026-11-09",
+ "date": "2026-11-10",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/agepl",
-   "chart": "data/picks/onchain-agepl.png",
-   "chart_en": "data/picks/onchain-agepl-en.png",
+   "id": "market/mon",
+   "chart": "data/picks/market-mon.png",
+   "chart_en": "data/picks/market-mon-en.png",
    "name": {
-    "zh": "依持有時間的實現獲利／虧損",
-    "en": "Realized profit/loss by holding age"
+    "zh": "月度報酬熱力表",
+    "en": "Monthly returns heatmap"
    },
-   "link": "https://north7.github.io/daybreak/#onchain/agepl"
+   "link": "https://north7.github.io/daybreak/#market/mon"
   }
  ]
 }
