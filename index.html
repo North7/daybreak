@@ -3670,5 +3670,12 @@ function initPM() { return pmChart($('#pm-c'), $('#pm-r'), $('#pm-g')); }
 [initOC].forEach(f => { try { const r = f(); if (r) redraw.push(r); } catch (e) { console.error(f.name, e); } });
 let rz = 0; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => redraw.forEach(f => { try { f(); } catch (e) { console.error(e); } }), 150); });
 </script>
+<script>
+/* 訪客統計 GoatCounter（不用 cookie、不收個資）：站點代號 daybreak；只在正式網址計數。
+   2026-11-12：網站搬到 daybreak.aronlab.dev，搬家期間舊網址 north7.github.io 也一起算 */
+(function () { var code = 'daybreak', h = location.hostname; if (!code || (h !== 'daybreak.aronlab.dev' && h !== 'north7.github.io')) return;
+  var s = document.createElement('script'); s.async = true; s.src = 'https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter', 'https://' + code + '.goatcounter.com/count'); document.head.appendChild(s); })();
+</script>
 </body>
 </html>
