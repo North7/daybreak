@@ -451,6 +451,10 @@ def _combos(L, sig, px):
         out.append(dict(id='combo:rup-floor', kind='combo', key='rup-floor', dir='up', theme='cycle', page='cycle', chart='rup', score=4,
                         title=T('相對未實現獲利跌到地板', 'Relative unrealized profit at the floor'),
                         fig=T(f'{r["value"]}%（地板 {r["floor"]}%）', f'{r["value"]}% (floor {r["floor"]}%)')))
+    elif r and r.get('zone') == 'near' and r.get('near'):   # 2026-11-11：近地板區（地板以上、37.5% 以下）。90 天後和任一天差不多，所以方向是 flat
+        out.append(dict(id='combo:rup-near', kind='combo', key='rup-near', dir='flat', theme='cycle', page='cycle', chart='rup', score=3,
+                        title=T('相對未實現獲利在近地板區', 'Relative unrealized profit in the near-floor zone'),
+                        fig=T(f'{r["value"]}%（近地板區 {r["floor"]:g}–{r["near"]["hi"]:g}%，連 {r["near"]["run"]} 天）', f'{r["value"]}% (near-floor zone {r["floor"]:g}–{r["near"]["hi"]:g}%, {r["near"]["run"]} days running)')))
     return out
 
 

@@ -25,12 +25,14 @@ def build(L, N, E, dn):
       marks=[dict(d=dn(t['date']), v=t['value'], col='c5', up=1, zh=yr(t['date']) + ' ' + ('%.2f' % t['value']), en=yr(t['date']) + ' ' + ('%.2f' % t['value'])) for t in av['tops']] +
             [dict(d=dn(t['date']), v=t['value'], col='c4', up=0, zh=yr(t['date']) + ' ' + ('%.2f' % t['value']), en=yr(t['date']) + ' ' + ('%.2f' % t['value'])) for t in av['bottoms']],
       dz='真實市場均價是排除長期不動的幣之後，活躍投資人的平均成本。低於 1 是在成本下方。標記是歷次週期的高點和低點。', de='The true market mean is the average cost of active investors, excluding long-dormant coins. Below 1 means price is under it. Markers show past cycle highs and lows.')
-    ru = o['rup']; fl = ru['floor']
+    ru = o['rup']; fl = ru['floor']; nr = ru.get('near') or {}; nh = nr.get('hi')   # 2026-11-11 近地板區（地板以上、37.5% 以下），舊資料沒有這一欄
     c_rup = dict(k='rup', zh='相對未實現獲利', en='Relative unrealized profit', f='p1', rows=ru['rows'], p=1, ser=[ser(2, zh='相對未實現獲利', en='Relative unrealized profit', col='c3', fill=1, w=1.8)],
-      zones=[dict(lo=None, hi=fl, col='c4', zh='在地板區', en='In the floor zone', nz='地板區', ne='the floor zone')], refs=[dict(v=fl, col='c4', zh='地板 %g%%' % fl, en='Floor %g%%' % fl)], leg=[['c4', '地板區（≤ %g%%）' % fl, 'Floor zone (≤ %g%%)' % fl, 'box']],
-      spans=[dict(a=dn(e['start']), b=dn(e['end']), col='c4', op=.16) for e in ru['eps']],
+      zones=[dict(lo=None, hi=fl, col='c4', zh='在地板區', en='In the floor zone', nz='地板區', ne='the floor zone')] + ([dict(lo=fl, hi=nh, col='c5', op=.13, zh='在近地板區', en='In the near-floor zone', nz='近地板區', ne='the near-floor zone')] if nh else []),
+      refs=[dict(v=fl, col='c4', zh='地板 %g%%' % fl, en='Floor %g%%' % fl)], leg=[['c4', '地板區（≤ %g%%）' % fl, 'Floor zone (≤ %g%%)' % fl, 'box']] + ([['c5', '近地板區（%g–%g%%）' % (fl, nh), 'Near-floor zone (%g–%g%%)' % (fl, nh), 'box']] if nh else []),
+      spans=[dict(a=dn(e['start']), b=dn(e['end']), col='c5', op=.16) for e in nr.get('eps') or []] + [dict(a=dn(e['start']), b=dn(e['end']), col='c4', op=.16) for e in ru['eps']],
       marks=[dict(d=dn(e['min_date']), v=e['min'], col='c4', up=0, zh='%s %.1f%%' % (yr(e['min_date']), e['min']), en='%s %.1f%%' % (yr(e['min_date']), e['min'])) for e in ru['eps']],
-      dz='全體持有者帳面上的獲利，佔市值的比例。青色區塊是歷次跌進地板區的期間。', de='Paper profit of all holders as a share of market cap. Cyan bands mark past stays in the floor zone.')
+      dz='全體持有者帳面上的獲利，佔市值的比例。青色區塊是歷次跌進地板區的期間' + ('，淺黃區塊是近地板區（%g–%g%%）：過去只在熊市後段到復甦初期出現。' % (fl, nh) if nh else '。'),
+      de='Paper profit of all holders as a share of market cap. Cyan bands mark past stays in the floor zone' + ('; pale-yellow bands mark the near-floor zone (%g–%g%%), seen only from late bear markets to early recoveries.' % (fl, nh) if nh else '.'))
     cs = ch['conc_stats']; co = ch['cohort']; pr = co['price']
     c_conc = dict(k='conc', zh='籌碼集中度', en='Supply concentration', f='p1', rng=365, rows=[[r[0], r[1], R(r[2], 2)] for r in ch['conc_hist']], p=1, ph=.46, hero=0,
       ser=[ser(2, zh='集中度', en='Concentration', col='c4', fill=1, w=1.6)], refs=[dict(v=cs['p90'], col='c5', zh='前 10%%（%.1f%%）' % cs['p90'], en='top 10%% (%.1f%%)' % cs['p90'])],

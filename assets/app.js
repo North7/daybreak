@@ -4228,6 +4228,13 @@
     it.push([_T('歷次地板區', 'Past floor episodes'), E.length + _T(' 段', ''),
       _T(E.map(function (e) { return ymdS(e.start) + '–' + ymdS(e.end) + '（' + e.days + ' 天，最低 ' + fmt.n(e.min, 1) + '%' + (e.r365 != null ? '，一年後 ' + fmt.pct(e.r365, 0) : '') + '）'; }).join('、') + '。在地板的天數一輪比一輪短，本輪只有 ' + (E.length ? E[E.length - 1].days : 0) + ' 天：波動被壓縮後，跌到地板的機會變小。',
         E.map(function (e) { return ymdS(e.start) + '–' + ymdS(e.end) + ' (' + e.days + ' days, low ' + fmt.n(e.min, 1) + '%' + (e.r365 != null ? ', 1y later ' + fmt.pct(e.r365, 0) : '') + ')'; }).join('; ') + '. Each cycle spends fewer days on the floor — this one only ' + (E.length ? E[E.length - 1].days : 0) + ' — as volatility compresses.'), 'neu']);
+    var n = x.near;   /* 2026-11-11 近地板區（地板以上、37.5% 以下）：一年後都比當天高，但 90 天後和任一天差不多、進來之後常常還再跌 */
+    if (n && n.s90 && n.s365) {
+      var dd = (n.waves || []).filter(function (w) { return w.dd180 != null; }).map(function (w) { return w.start.slice(0, 4) + ' ' + oxP0(w.dd180); }).join(_T('、', ', '));
+      it.push([_T('近地板區', 'Near-floor zone'), x.zone === 'near' ? _T('連 ' + n.run + ' 天', n.run + ' days') : x.zone === 'floor' ? _T('已在地板', 'On the floor') : _T('不在', 'Outside'),
+        _T(x.floor + '–' + n.hi + '% 是近地板區：2012 年起 ' + n.days + ' 天（' + fmt.n(n.share, 1) + '%）落在這裡，全在熊市後段到復甦初期。走完一年的 ' + n.s365.n + ' 天，一年後 ' + n.s365.up + '% 比當天高（中位數 ' + fmt.pct(n.s365.med, 0) + '；任一天 ' + n.b365.up + '%、' + fmt.pct(n.b365.med, 0) + '）。但 90 天後上漲的只有 ' + n.s90.up + '%（任一天 ' + n.b90.up + '%），每一波第一次掉進來之後 180 天內還再跌過：' + dd + '。',
+          x.floor + '–' + n.hi + '% is the near-floor zone: ' + n.days + ' days since 2012 (' + fmt.n(n.share, 1) + '%), all from late bear markets to early recoveries. Of the ' + n.s365.n + ' days with a full year since, ' + n.s365.up + '% were higher a year later (median ' + fmt.pct(n.s365.med, 0) + '; any day ' + n.b365.up + '%, ' + fmt.pct(n.b365.med, 0) + '). But only ' + n.s90.up + '% were higher after 90 days (any day ' + n.b90.up + '%), and after each first entry price fell further within 180 days: ' + dd + '.'), 'neu']);
+    }
     return it;
   }
   /* 2026-11-06 使用者要求：「相對未實現獲利：地板」要寫出底層邏輯、白話反映什麼、35% 地板的意思、怎麼用。數字都由資料產生（oc_extra.rup_viz） */
@@ -4240,6 +4247,7 @@
     var dd = E.filter(function (e) { return e.dd180 != null; }).map(function (e) { return e.start.slice(0, 4) + ' ' + oxP0(e.dd180); }).join(_T('、', ', '));
     var yr = E.filter(function (e) { return e.r365 != null; }), yrUp = yr.filter(function (e) { return e.r365 > 0; }).length, r1 = yr.map(function (e) { return e.r365; });
     var isLow = bt && z.min_date === bt[0], lo = x.other_lo || {};
+    var N = x.near, NW = ((N || {}).waves || []).filter(function (w) { return w.dd180 != null; }), nd = NW.map(function (w) { return w.start.slice(0, 4) + ' ' + oxP0(w.dd180); }).join(_T('、', ', '));
     return '<div class="ox-xs">' +
       sec(_T('底層邏輯', 'How it is calculated'),
         p(_T('每一顆比特幣都記得自己最後一次移動時的價格，可以當成持有人的成本。現價高於成本的幣，差額就是帳面獲利；還沒賣，所以叫「未實現」。把所有幣的帳面獲利加起來，再除以市值（現價 × 流通量），就是相對未實現獲利。',
@@ -4259,6 +4267,11 @@
           'Since 2012 only ' + fmt.n(x.share_below, 1) + '% of days were at or below ' + x.floor + '%, all near cycle bottoms: ' + eps + '. In other years the low only reached ' + fmt.n(lo.value, 1) + '% (' + lo.year + '). Below 35%, paper profit has been squeezed down to the old coins alone — historically only at cycle bottoms.')) +
         (z.start ? p(_T('本輪 ' + ymdS(z.start) + '–' + ymdS(z.end) + ' 共 ' + z.days + ' 天在地板以下，最低 ' + fmt.n(z.min, 1) + '% 在 ' + ymdS(z.min_date) + '（收盤 ' + fmt.usd(z.low_price) + (isLow ? '，正是本輪的最低價' : '') + '）。35% 是本站看 2012 年以來的歷史畫的線，不是理論上的常數。',
           'This cycle spent ' + z.days + ' days below the floor between ' + ymdS(z.start) + ' and ' + ymdS(z.end) + ', with the low of ' + fmt.n(z.min, 1) + '% on ' + ymdS(z.min_date) + ' (close ' + fmt.usd(z.low_price) + (isLow ? ', the cycle\'s lowest price' : '') + '). The 35% line is drawn from history since 2012, not a theoretical constant.')) : '')) +
+      (N && N.s90 && N.s365 ? sec(_T(x.floor + '–' + N.hi + '%：近地板區', 'The near-floor zone: ' + x.floor + '–' + N.hi + '%'),
+        p(_T('還沒到地板，但已經很近。2012 年起有 ' + N.days + ' 天（' + fmt.n(N.share, 1) + '%）落在這一區，全都在熊市後段到復甦初期；' + (N.other_lo ? '其他年份的最低點都在這之上（最低 ' + fmt.n(N.other_lo.value, 1) + '%，' + N.other_lo.year + ' 年）。' : '') + (x.zone === 'near' ? '現在 ' + fmt.n(x.value, 1) + '%，已經連 ' + N.run + ' 天在這一區。' : x.zone === 'floor' ? '現在在地板以下。' : '現在 ' + fmt.n(x.value, 1) + '%，不在這一區。'),
+          'Not at the floor yet, but close. ' + N.days + ' days since 2012 (' + fmt.n(N.share, 1) + '%) fell in this zone, all from late bear markets to early recoveries; ' + (N.other_lo ? 'in every other year the low stayed above it (lowest ' + fmt.n(N.other_lo.value, 1) + '% in ' + N.other_lo.year + '). ' : '') + (x.zone === 'near' ? 'Now ' + fmt.n(x.value, 1) + '%, in the zone for ' + N.run + ' days running.' : x.zone === 'floor' ? 'Now below the floor.' : 'Now ' + fmt.n(x.value, 1) + '%, outside the zone.'))) +
+        p(_T('回測要分長短看。長的：這一區的日子裡走完一年的 ' + N.s365.n + ' 天，一年後 ' + N.s365.up + '% 比當天高，中位數 ' + fmt.pct(N.s365.med, 0) + '（任一天 ' + N.b365.up + '%、' + fmt.pct(N.b365.med, 0) + '）。短的：90 天後上漲的比例 ' + N.s90.up + '%，和任一天的 ' + N.b90.up + '% 差不多；每一波第一次掉進來之後，180 天內價格還再跌過（' + nd + '）。所以它說的是「離底部區不遠」，不是「不會再跌」。過去只有 ' + NW.length + ' 波，樣本很少；37.5% 也是本站看歷史畫的線。',
+          'Read the backtest on two horizons. Long: of the ' + N.s365.n + ' zone days with a full year since, ' + N.s365.up + '% were higher a year later, median ' + fmt.pct(N.s365.med, 0) + ' (any day: ' + N.b365.up + '%, ' + fmt.pct(N.b365.med, 0) + '). Short: ' + N.s90.up + '% were higher after 90 days, about the same as the ' + N.b90.up + '% for any day; and after each first entry price fell further within 180 days (' + nd + '). So it says "not far from a bottom zone", not "no more downside". Only ' + NW.length + ' past waves — a small sample — and 37.5% is also a line we drew from history.'))) : '') +
       sec(_T('怎麼用', 'How to use it'),
         '<ol>' +
         '<li>' + esc(_T('看離地板多遠：越近，越接近過去週期底部的狀態；回到中位數 ' + fmt.n(x.med, 0) + '% 以上，代表已經離開底部區。現在 ' + fmt.n(x.value, 1) + '%，離地板 ' + fmt.n(x.gap, 1) + ' 個百分點。',
@@ -4313,16 +4326,16 @@
   function rupPanel() {
     var x = (D.onchain || {}).rup; if (!x || !x.rows) return '';
     return panel('span-12', _T('相對未實現獲利：地板', 'Relative unrealized profit: the floor'), 'Bitview · ' + fmt.md(x.date),
-      '<div class="cf-hero">' + oxCard('var(--s1)', _T('相對未實現獲利', 'Relative unrealized profit'), fmt.n(x.value, 1) + '%', _T('地板 ' + x.floor + '%（過去只在週期底部附近跌破）', 'Floor ' + x.floor + '% (broken only near past cycle bottoms)'), oxArrow(x.value, x.d30, _T(' 個百分點 / 30 天', ' pts / 30d'))) + oxCard('var(--s3)', _T('一年最低', 'One-year low'), fmt.n(x.lo1y.value, 1) + '%', ymdS(x.lo1y.date) + (x.lo1y.value <= x.floor ? _T('，在地板以下', ', below the floor') : '')) + '</div>' +
-      interpHtml(rupSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('相對未實現獲利', 'Relative unrealized profit'), 'var(--s1)'], [_T('地板區（≤ 35%）', 'Floor zone (≤ 35%)'), 'var(--s3)', 'box']]) +
+      '<div class="cf-hero">' + oxCard('var(--s1)', _T('相對未實現獲利', 'Relative unrealized profit'), fmt.n(x.value, 1) + '%', x.zone === 'near' && x.near ? _T('在近地板區（' + x.floor + '–' + x.near.hi + '%），連 ' + x.near.run + ' 天', 'In the near-floor zone (' + x.floor + '–' + x.near.hi + '%), ' + x.near.run + ' days running') : _T('地板 ' + x.floor + '%（過去只在週期底部附近跌破）', 'Floor ' + x.floor + '% (broken only near past cycle bottoms)'), oxArrow(x.value, x.d30, _T(' 個百分點 / 30 天', ' pts / 30d'))) + oxCard('var(--s3)', _T('一年最低', 'One-year low'), fmt.n(x.lo1y.value, 1) + '%', ymdS(x.lo1y.date) + (x.lo1y.value <= x.floor ? _T('，在地板以下', ', below the floor') : '')) + '</div>' +
+      interpHtml(rupSay()) + legend([[_T('BTC 價格', 'BTC price'), 'var(--ink-2)'], [_T('相對未實現獲利', 'Relative unrealized profit'), 'var(--s1)'], [_T('地板區（≤ 35%）', 'Floor zone (≤ 35%)'), 'var(--s3)', 'box']].concat(x.near ? [[_T('近地板區（' + x.floor + '–' + x.near.hi + '%）', 'Near-floor zone (' + x.floor + '–' + x.near.hi + '%)'), 'var(--s4)', 'box']] : [])) +
       '<div class="chart cf-chart" id="c-rup"></div>' + rupExplain(), '', 'rup');
   }
   function drawRup(el) {
     var x = (D.onchain || {}).rup; if (!x || !el) return;
     oxPane(el, { rows: x.rows, label: _T('相對未實現獲利（%）', 'Relative unrealized profit (%)'), aria: _T('BTC 價格與相對未實現獲利', 'BTC price and relative unrealized profit'),
       lines: [{ i: 2, col: 'var(--s1)', area: true, w: 1.8, name: _T('相對未實現獲利', 'Relative unrealized profit'), tfmt: function (v) { return fmt.n(v, 1) + '%'; } }],
-      zones: [{ y0: 0, y1: x.floor, col: 'var(--s3)', op: 0.16 }], refs: [{ y: x.floor, col: 'var(--s3)', lab: _T('地板 ', 'Floor ') + x.floor + '%' }], fmt: function (t) { return t + '%'; },
-      vbands: (x.eps || []).map(function (e) { return { x0: dnOf(e.start), x1: dnOf(e.end), col: 'var(--s3)', op: 0.18 }; }),
+      zones: [{ y0: 0, y1: x.floor, col: 'var(--s3)', op: 0.16 }].concat(x.near ? [{ y0: x.floor, y1: x.near.hi, col: 'var(--s4)', op: 0.13 }] : []), refs: [{ y: x.floor, col: 'var(--s3)', lab: _T('地板 ', 'Floor ') + x.floor + '%' }], fmt: function (t) { return t + '%'; },
+      vbands: ((x.near || {}).eps || []).map(function (e) { return { x0: dnOf(e.start), x1: dnOf(e.end), col: 'var(--s4)', op: 0.15 }; }).concat((x.eps || []).map(function (e) { return { x0: dnOf(e.start), x1: dnOf(e.end), col: 'var(--s3)', op: 0.18 }; })),
       marks: (x.eps || []).map(function (e) { return { x: dnOf(e.min_date), y: e.min, col: 'var(--s3)', t: e.min_date.slice(0, 4) + ' ' + fmt.n(e.min, 1) + '%', up: false }; }),
       now: { i: 2, col: 'var(--s1)', lab: _T('現在 ', 'Now ') + fmt.n(x.value, 1) + '%' } });
   }

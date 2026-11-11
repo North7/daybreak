@@ -5,7 +5,7 @@
        全網實現虧損峰值背離（rloss_viz）、長短期持有者供給比的 30 日變化（lsrchg_viz）。
 第二批：資金與價格增量梯度（grad_viz）、鏈上勢能（mom_viz）、回調壓力清單（pullback_viz）。
 bv＝bitview.cols(rows)：{欄位: {日期: 值}}；px＝統一收盤（PXC），缺日用 Bitview 自己的收盤。x 一律為 1970-01-01 起的天數。"""
-import math, statistics as st
+import bisect, math, statistics as st
 from stage_viz import dn, ds, thin
 
 QK = [('q45', 45), ('q50', 50), ('q55', 55), ('q60', 60), ('q65', 65), ('q75', 75), ('q85', 85), ('q95', 95)]
@@ -118,6 +118,10 @@ def sthl_viz(bv, px, last):
 # RUP＝全體未實現獲利 ÷ 市值（%）。2012 年起只有週期底部附近會掉到 35% 以下（2015、2018–19、2020/03、2022/11–2023/01、2026/06–08），
 #   一般年份的最低點都在 36% 以上。地板＝35%（門檻寫死、不回頭調）。只作讀值
 RUP_FLOOR, RUP_FROM = 35.0, '2012-01-01'
+# 近地板區（2026-11-11 使用者要求）：35%–37.5%。2012 年起牛市年份的最低點都在 37.5% 以上（2013 45%、2017 46%、2021 51%、2024 47%、2025 42%），
+#   掉進這一區的都是熊市後段到復甦初期（2014 年底–2016、2018–20、2022–23、2026）。門檻寫死、不回頭調。
+#   回測（寫進 near）：這一區的日子一年後都比當天高，但 90 天後和任一天差不多，而且第一次掉進來之後常常還再跌一段。只作讀值
+RUP_NEAR = 37.5
 
 
 def rup_viz(bv, px, last, tops=(), step=4):
@@ -149,11 +153,45 @@ def rup_viz(bv, px, last, tops=(), step=4):
         td = t[0] if isinstance(t, (list, tuple)) else t; w = [d for d in D if abs(dn(d) - dn(td)) <= 45]
         if w: m = max(w, key=r.get); tv.append(dict(top=td, date=m, value=round(r[m], 1)))
     yr_lo = [dict(year=y, value=round(min(r[d] for d in D if d.startswith(str(y))), 1)) for y in range(int(D[0][:4]), int(d1[:4]) + 1) if any(d.startswith(str(y)) for d in D)]
+    # 近地板區（地板以上、RUP_NEAR 以下）
+    N = [dn(d) for d in D]
+    def fw(i, n):   # 第 i 天之後 n 天的漲跌 %
+        j = bisect.bisect_left(N, N[i] + n)
+        return (P(D[j]) / P(D[i]) - 1) * 100 if j < len(D) and N[j] - N[i] - n <= 3 else None
+    def fst(I, n):
+        v = [x for x in (fw(i, n) for i in I) if x is not None]
+        return dict(n=len(v), up=round(sum(x > 0 for x in v) / len(v) * 100), med=round(st.median(v), 1)) if v else None
+    inf = lambda d: any(e['start'] <= d <= e['end'] for e in eps)
+    neps = []   # 畫圖用：近地板區的期間（不含已經畫成地板區的期間）
+    for d in D:
+        if r[d] > RUP_NEAR or inf(d): continue
+        if neps and dn(d) - dn(neps[-1]['end']) <= 14 and not any(neps[-1]['end'] < e['start'] and e['end'] < d for e in eps): neps[-1]['end'] = d
+        else: neps.append(dict(start=d, end=d))
+    waves = []   # 每一波：掉到 RUP_NEAR 以下（中間回到上面不超過 60 天算同一波）
+    for i, d in enumerate(D):
+        if r[d] > RUP_NEAR: continue
+        if waves and dn(d) - dn(waves[-1]['end']) <= 60: waves[-1]['end'] = d
+        else: waves.append(dict(start=d, end=d, i=i))
+    for w in waves:
+        i = w.pop('i'); nx = [P(D[k]) for k in range(i, len(D)) if N[k] - N[i] <= 180]
+        w['price'] = round(P(w['start'])); w['floor'] = any(w['start'] <= e['start'] <= w['end'] for e in eps)
+        w['dd180'] = round((min(nx) / P(w['start']) - 1) * 100, 1) if N[-1] - N[i] >= 30 else None
+        f = fw(i, 365); w['r365'] = round(f, 1) if f is not None else None
+        w['open'] = dn(d1) - dn(w['end']) <= 60
+    NI = [i for i, d in enumerate(D) if RUP_FLOOR < r[d] <= RUP_NEAR]; AI = range(len(D))
+    run = 0
+    for d in reversed(D):
+        if r[d] <= RUP_NEAR: run += 1
+        else: break
+    ylo = [y for y in yr_lo if y['value'] > RUP_NEAR]
+    near = dict(hi=RUP_NEAR, days=len(NI), share=round(len(NI) / len(D) * 100, 1), run=run, eps=neps, waves=waves,
+                s90=fst(NI, 90), s365=fst(NI, 365), b90=fst(AI, 90), b365=fst(AI, 365), other_lo=min(ylo, key=lambda y: y['value']) if ylo else None)
     return dict(date=d1, value=round(r[d1], 1), d30=round(r[d30], 1) if d30 else None, floor=RUP_FLOOR, gap=round(r[d1] - RUP_FLOOR, 1),
+                zone='floor' if r[d1] <= RUP_FLOOR else 'near' if r[d1] <= RUP_NEAR else None, near=near,
                 med=round(st.median(r[d] for d in D), 1), share_below=round(sum(r[d] <= RUP_FLOOR for d in D) / len(D) * 100, 1), tops=tv,
                 yr_lo=yr_lo, other_lo=min((y for y in yr_lo if y['value'] > RUP_FLOOR), key=lambda y: y['value'], default=None),
                 lo1y=dict(date=lo, value=round(r[lo], 1)), eps=eps, rows=rows, since=RUP_FROM, src='Bitview',
-                note='相對未實現獲利＝全體未實現獲利 ÷ 市值（Bitview，逐筆 UTXO）；地板 35% 是本站依 2012 年起的歷史設定；只作讀值')
+                note='相對未實現獲利＝全體未實現獲利 ÷ 市值（Bitview，逐筆 UTXO）；地板 35% 與近地板區 37.5% 是本站依 2012 年起的歷史設定；只作讀值')
 
 
 # ---------- 全網實現虧損：峰值背離 ----------

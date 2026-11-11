@@ -133,6 +133,7 @@ OTHER_MEANS = {
                  'down': T('價格創擺動新高、梯度卻沒有：價格靠情緒推升、新資金沒有跟上，之後常先回調。', 'Price made a higher swing high but the gauge did not: the rise runs on sentiment while new capital lags, and a pullback often comes first.')},
     'mom-div': T('價格創擺動新高、獲利了結的力道（SOPR × 銷毀幣天數）卻比前一次弱：推升的力量在衰減。2015 年起之後 60 天內最大跌幅中位數約 −21%（任一天約 −9%）。', 'Price made a higher swing high while profit-taking momentum (SOPR × coin days destroyed) was weaker than before: the push is fading. Since 2015 the median max drawdown within 60 days afterwards is about −21% (about −9% for any day).'),
     'rup-floor': T('全體未實現獲利佔市值的比例跌到 35% 以下：2012 年起只有週期底部附近出現過（2015、2018–19、2020/03、2022、2026/06）。', 'Total unrealized profit fell below 35% of market cap: since 2012 this has only happened near cycle bottoms (2015, 2018–19, March 2020, 2022, June 2026).'),
+    'rup-near': T('全體未實現獲利佔市值的比例掉到 35–37.5%：2012 年起只在熊市後段到復甦初期出現，這一區的日子一年後都比當天高；但 90 天後和任一天差不多，而且過去第一次掉進來之後，180 天內多半還再跌一段（最多跌過 47%）。', 'Total unrealized profit fell to 35–37.5% of market cap: since 2012 only seen from late bear markets to early recoveries, and every such day was higher a year later; but 90 days later it is no better than any day, and after past first entries price usually fell further within 180 days (by as much as 47%).'),
     'stage': T('市場階段由寫死的規則判定（P23）；階段改變代表規則條件翻過去了，原因可以看週期版的市場階段與佐證燈號。', 'The market stage is set by fixed rules (P23); a change means a rule condition flipped. The Cycle page\'s market stage and supporting lights show why.'),
 }
 FG_MEANS = {'xfear': T('恐懼貪婪指數進入極度恐懼：市場情緒最差，歷來常接近短線低點，但不代表會馬上反彈。', 'Fear & Greed entered extreme fear: sentiment is at its worst, often near short-term lows, though a bounce is not guaranteed to follow quickly.'),
@@ -188,6 +189,7 @@ def _rule(s, ext, jmp, cmb, near, near_exit, four_year):
              'grad-div': T('價格擺動高點（低點）比前一個更高（更低），資金與價格梯度的對應峰（谷）卻沒有；確認後 7 天內列出。', 'A swing high (low) above (below) the previous one while the capital-price gauge\'s matching peak (trough) is not; listed for 7 days after confirmation.'),
              'mom-div': T('價格擺動高點比 180 天內前一個更高，鏈上勢能的正值峰值卻較低；確認後 7 天內列出。', 'A swing high above the previous one within 180 days with a lower positive momentum peak; listed for 7 days after confirmation.'),
              'rup-floor': T('相對未實現獲利（未實現獲利 ÷ 市值）≤ 35%。', 'Relative unrealized profit (unrealized profit ÷ market cap) at or below 35%.'),
+             'rup-near': T('相對未實現獲利（未實現獲利 ÷ 市值）在 35% 以上、37.5% 以下。', 'Relative unrealized profit (unrealized profit ÷ market cap) above 35% and at or below 37.5%.'),
              'etf-price-div': T('近 5 個完整交易日 ETF 合計流入 5 億美元以上、價格卻跌 3% 以上（或反過來）。', 'Over the last 5 complete trading days, ETF flows of $500M or more in one direction while price moved 3% or more the other way.')}
         if k in R: return R[k]
         if k and k.startswith('cluster-'): return T(f'同一類有 3 項以上同時異動（這次 {len(s.get("members") or [])} 項）。', f'Three or more signals of the same kind at once ({len(s.get("members") or [])} this time).')
