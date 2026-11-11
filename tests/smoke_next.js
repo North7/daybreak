@@ -1,6 +1,6 @@
 /* 新版首頁冒煙測試（2026-11-11，首頁 index.html 換成新版；舊版的測試是 tests/smoke.js，跑 classic.html）。
    中文／英文 × 桌面／手機：首頁要載得出來、七頁都切得過去而且每頁有卡片、不能有 JS 錯誤、不能橫向捲動；
-   另外檢查舊網址（#onchain/sthsig 這種）會轉到 classic.html。
+   另外檢查舊網址（#onchain/sthsig 這種）會轉到 classic.html，以及分享模式（?share&k=oih）。
    用法：先在倉庫根目錄起靜態伺服器（python3 -m http.server 8765），再執行 node tests/smoke_next.js。 */
 const { chromium } = require(process.env.PW || 'playwright');
 const ROOT = process.env.ROOT || 'http://localhost:8765/';
@@ -32,6 +32,17 @@ const ROOT = process.env.ROOT || 'http://localhost:8765/';
       await p.goto(ROOT + '?from=post#onchain/sthsig');   // 從貼文點進來是整頁載入（只換 # 的話是同一頁裡跳，另由 hashchange 處理）
       await p.waitForFunction(() => location.pathname.indexOf('classic.html') >= 0 && document.querySelector('#view .pg'), null, { timeout: 30000 }).catch(() => bad('舊網址 #onchain/sthsig 沒有轉到 classic.html'));
       console.log('舊網址轉到：' + await p.evaluate(() => location.pathname + location.hash));
+      // 分享模式（2026-11-11）：?share&k=圖代號 直接打開那張圖，頁尾要看得到，座標函式要能用
+      const e0 = errs.length;
+      await p.goto(ROOT + '?share&k=oih');
+      await p.waitForFunction(() => !document.getElementById('oc-fx').hidden && document.querySelector('#oc-olF .ol-c svg'), null, { timeout: 30000 }).catch(() => bad('分享模式沒有打開 oih'));
+      const sh = await p.evaluate(() => { const b = document.querySelector('#oc-olF .ol-brand'), r = b && b.getBoundingClientRect(), xy = window.daybreakXY && window.daybreakXY('oih'); return { brand: !!(r && r.height > 0 && r.bottom <= innerHeight + 1), xy: !!(xy && xy.x > 0 && xy.ticks && xy.ticks.length >= 3), view: !!document.querySelector('#oc-olF .sy-view:not([hidden])') && getComputedStyle(document.querySelector('#oc-olF .sy-view') || document.body).display !== 'none' }; });
+      if (!sh.brand) bad('分享模式：頁尾（網站名、資料來源、日期）不在畫面內');
+      if (!sh.xy) bad('分享模式：daybreakXY 沒有回傳座標或刻度');
+      if (sh.view) bad('分享模式：「我們的看法」沒有藏起來');
+      if (await p.$$eval('.fc[data-k]', a => a.length) === 0 && await p.$$eval('#oc-olF[data-ck="oih"]', a => a.length) === 0) bad('卡片上沒有圖代號');
+      errs.slice(e0).forEach(e => bad(`分享模式 JS 錯誤：${e}`));
+      console.log('分享模式：' + JSON.stringify(sh));
     }
     await ctx.close();
   }

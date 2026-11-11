@@ -36,4 +36,17 @@ python3 pipeline/next/build.py --no-interp # 只改版面時：沿用上一次�
   - 放大檢視：卡片裡的 `[data-fx]`、`#oc-fx.on`、`#oc-olF`、`#oc-orF`、`.fx-x`
   - 卡片內：`.ol-ctl button[data-rg|data-m|data-ly]`、`.ol-say`、`.sy-m`、`.ol-how`、`.fx-b`、`.ol-f`、`.ol-c`、`[id^="oc-pr"]`
   - 關動畫靠 `prefers-reduced-motion: reduce` 那一段，語言靠 `localStorage` 的 `daybreak.lang`
+  - 2026-11-11 起另有：卡片外框 `.fc[data-k="圖代號"]`、卡片內容 `.ol[data-ck="圖代號"]`（放大檢視的 `#oc-olF` 也有），可以直接用圖代號找，不必比對標題
+  - 結論分兩塊：`.sy-read`（讀數）和 `.sy-view`（我們的看法、會改變看法）；社群配圖只要藏 `.sy-view`
+  - `window.daybreakXY(圖代號, 日期, 數值, 'p')`：回傳那個日期、數值在視窗裡的座標（CSS px），另附這張圖的時間範圍、縱軸範圍和刻度；`'p'` 是上格的價格
 - 改了上面任何一項，先跑 `python3 ops/post/next_shot.py --list` 和一張實際截圖確認。
+
+## 分享模式
+
+網址加 `?share`（16:9）或 `?share=45`（4:5），再加 `&k=圖代號` 就直接打開那張圖的放大檢視，例如 `index.html?share&k=oih`。分享模式會：
+- 字級放大 1.3 倍，圖上的刻度、標註一起放大
+- 藏掉按鈕、放大檢視上面的導覽列、下面那排同段的圖、「我們的看法」
+- 每張卡片底下加一行：網站名、網址、資料來源、資料日期
+- 把放大檢視固定成 16:9 或 4:5，關掉所有動畫
+
+規則寫在 `page.html` 樣式的 ⑮。

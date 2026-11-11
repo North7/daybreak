@@ -41,10 +41,17 @@ def build(L, N, E, dn):
         if thick[0] <= c < thick[1]:
             x, y = below(thick[0]), above(thick[1]); thin = (x if x[2] <= y[2] else y) if x and y else (x or y)
         else: thin = below(cur) if thick[0] > c else above(cur + W)
-        return [[thick[0], thick[1], 'ac']] + ([[thin[0], thin[1], 'up']] if thin else [])
+        def lab(a, b, t, zh, en):   # 圖上標註：價位範圍、顆數、是什麼（2026-11-11 照舊版加回來）
+            r = '%g–%gK' % (a / 1000, b / 1000); w = t / 1e4
+            return [a, b, zh and None, '%s · %s 萬顆 · %s' % (r, ('%.0f' % w) if w >= 100 else ('%.1f' % w), zh), '%s · %sK BTC · %s' % (r, format(round(t / 1e3), ','), en)]
+        out = [lab(thick[0], thick[1], thick[2], '附近最厚的一團', 'thickest cluster nearby')]
+        if thin: out.append(lab(thin[0], thin[1], thin[2], '另一側的薄區', 'thin zone on the other side'))
+        out[0][2] = 'c4'
+        if len(out) > 1: out[1][2] = 'c5'
+        return out
     hl = pick(uv['band'], uv['width'], uv.get('price') or close)
     X['urpd'] = dict(k='urpd', zh='籌碼分布（URPD）', en='Supply distribution (URPD)', hz='現價這一格佔流通量', he='Share of supply in the current bucket',
-      dist=dict(kind='one', step=uv['width'], rows=uv['band'], hl=hl, base='color-mix(in srgb, var(--c3) 45%, var(--k2))', unit='btc', leg=[['ac', '現價附近最厚的一段', 'Thickest stretch near price'], ['up', '另一側最薄的一段', 'Thinnest stretch on the other side'], ['color-mix(in srgb, var(--c3) 45%, var(--k2))', '其餘（每 $2,000 一格）', 'The rest ($2,000 buckets)']]),
+      dist=dict(kind='one', step=uv['width'], rows=uv['band'], hl=hl, base='color-mix(in srgb, var(--c3) 45%, var(--k2))', unit='btc', leg=[['c4', '現價附近最厚的一段', 'Thickest stretch near price'], ['c5', '另一側最薄的一段', 'Thinnest stretch on the other side'], ['color-mix(in srgb, var(--c3) 45%, var(--k2))', '其餘（每 $2,000 一格）', 'The rest ($2,000 buckets)']]),
       hs=dict(v=u['cur_pct'], f='p2'), dz='每一格是最後一次在那個價位移動的幣。厚的地方是很多人的成本，價格到那裡容易停；薄的地方沒什麼人的成本，價格容易快速穿過。', de='Each bucket holds the coins that last moved at that price. Thick zones are where many holders\' costs sit and price tends to stall; thin zones have few and price tends to move through quickly.')
     X['cohort'] = dict(k='cohort', zh='長短期持有者籌碼', en='Long- vs short-term holder supply', hz='短期持有者平均成本', he='STH average cost',
       dist=dict(kind='split', cl='ac', cr='c3', la=['短期持有者', 'Short-term'], lb=['長期持有者', 'Long-term'], zone=([co['window']['lo'], co['window']['hi'], '近 155 天的價格範圍', 'Price range of the last 155 days'] if co.get('window') else None), step=co['width'], rows=[[r[0], round(r[2]), round(r[1])] for r in co['rows']], unit='btc', leg=[['c3', '長期持有者（155 天以上）', 'Long-term holders (155d+)'], ['ac', '短期持有者', 'Short-term holders']]),

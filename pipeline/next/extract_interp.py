@@ -21,7 +21,7 @@ try:
     ws.js('window.scrollTo(0, document.documentElement.scrollHeight); 1'); time.sleep(2.5)
     out = ws.js("""JSON.stringify(Array.prototype.map.call(document.querySelectorAll('section.panel'), function (p) {
       var tx = function (e) { return e ? e.textContent.replace(/\\s+/g, ' ').trim() : ''; }, pg = p.closest('[id^=pg-]');
-      return { page: pg ? pg.id.slice(3) : '', id: p.id || '', title: tx(p.querySelector('.panel-h h2')), charts: Array.prototype.map.call(p.querySelectorAll('[id^=c-]'), function (c) { return c.id.slice(2); }),
+      return { page: pg ? pg.id.slice(3) : '', id: p.id || '', title: tx(p.querySelector('.panel-h h2')), src: tx(p.querySelector('.panel-h .src')), charts: Array.prototype.map.call(p.querySelectorAll('[id^=c-]'), function (c) { return c.id.slice(2); }),
         items: Array.prototype.map.call(p.querySelectorAll('.interp .it'), function (it) { var tn = it.querySelector('.tn'); var cg = it.querySelector('.chg'), cb = cg ? cg.querySelector('b') : null, chg = cg ? tx(cg).slice(cb ? tx(cb).length : 0).trim() : '', dd = tx(it.querySelector('.d')); if (cg) dd = dd.slice(0, dd.length - tx(cg).length).trim(); return { k: tx(it.querySelector('.k')), v: tx(it.querySelector('.v')), tone: tn ? (tn.className.replace('tn', '').trim() || 'neu') : 'neu', d: dd, chg: chg, view: it.classList.contains('view') ? 1 : 0, more: it.closest('.rd-more') ? 1 : 0 }; }),
         flags: Array.prototype.map.call(p.querySelectorAll('.sig-flag summary b'), tx),
         kids: Array.prototype.map.call(p.children, function (c) { return c.tagName.toLowerCase() + '.' + String(c.className).split(' ').slice(0, 2).join('.') + ':' + tx(c).length; }),
