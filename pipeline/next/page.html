@@ -2804,40 +2804,75 @@ function initOC() {
   }
   /* 清算熱力圖（⑰，2026-11-11 使用者選「熱力圖加右側橫條」）：照業界（CoinGlass 一類）的畫法。橫軸最近 7 天、每小時一欄，縱軸價格；
      越亮＝推算的待清算量越多（viridis，不帶多空方向的顏色），疊每小時 K 線和收盤線。右邊窄欄是現在這一刻各價位的量（原本的橫條），
-     最亮的上下兩段直接標價位和顆數。色階上限用整份快照算一次，偏向突顯最亮的帶（照舊版）。游標和同一段的分布圖共用「某個價位」 */
+     最亮的上下兩段直接標價位和顆數。色階上限用整份快照算一次，偏向突顯最亮的帶（照舊版）。游標和同一段的分布圖共用「某個價位」
+     右邊那一欄（㉑，2026-11-11 使用者：照業界影片右側的畫法，原本一整片連在一起、低的地方是暗紫色，在深色底上像黑色的缺口）：
+       1 橫條一根一根分開：每根至少 3px 高（太密就把相鄰幾格合成一根），中間留 1px。
+       2 顏色照量（和熱力圖同一個色階），但從藍色起跳（色階的 24% 處），最小的也看得到；長度是量 ÷ 這一欄最大的量。
+       3 兩條累計線：從收盤往上把空單一格一格加起來（--up），從收盤往下把多單加起來（--dn），兩條共用同一個橫向比例，所以哪邊堆得多一眼看得出來。
+          線下墊一條底色的邊，壓在橫條上也看得清楚。累計到圖頂、圖底的總量寫在圖例，游標那一行寫「從收盤到這裡累計」。
+       4 欄寬是圖寬的 17%（64–200px）；三條直的虛線是 25／50／75% 的刻度。
+     縮小版（找圖地圖、同段小圖列、頂部小卡）用同一張熱力圖加右邊的橫條和累計線（lqSpark），圖改了縮小版要跟著改 */
   const VIR = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]], virC = v => { v = Math.max(0, Math.min(1, v)); const s2 = v * 4, i = Math.min(3, Math.floor(s2)), f = s2 - i; return VIR[i].map((a, j) => Math.round(a + (VIR[i + 1][j] - a) * f)); }, LQB = new WeakMap();
-  function liqHeat(box, c, k) {
-    const x = c.dist.heat, w = box.clientWidth || 620, h = box.clientHeight || 320, nb = x.nb, nh = x.n, K = x.candles, gam = v => Math.pow(Math.min(1, v), 1.6);
-    let U = LQB.get(x); if (!U) { const b = atob(x.heat); U = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) U[i] = b.charCodeAt(i); LQB.set(x, U); }
-    const MR = Math.round(56 * FSC), MB = Math.round(18 * FSC), SW = Math.round(Math.max(48, Math.min(150, w * .13))), hw = w - MR - SW - 6, sx0 = hw + 6, ph = h - MB;
+  const lqGam = v => Math.pow(Math.min(1, v), 1.6), LQG = new WeakMap();
+  const lqU = x => { let U = LQB.get(x); if (!U) { const b = atob(x.heat); U = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) U[i] = b.charCodeAt(i); LQB.set(x, U); } return U; };
+  /* 取景的價格範圍、收盤在哪一格、從收盤往上（空單）和往下（多單）的累計顆數 */
+  function lqGeo(x) {
+    let G = LQG.get(x); if (G) return G; const U = lqU(x), nb = x.nb, K = x.candles, last = (x.n - 1) * nb, BT = v => v / 255 * x.cap;
     let plo = Math.min.apply(null, K.map(q => q[2])) * .97, phi = Math.max.apply(null, K.map(q => q[1])) * 1.03; (x.bands || []).forEach(b => { plo = Math.min(plo, b.lo - 400); phi = Math.max(phi, b.hi + 400); });
-    const b0 = Math.max(0, Math.floor((plo - x.lo) / x.step)), b1 = Math.min(nb, Math.ceil((phi - x.lo) / x.step)), rows = b1 - b0, pLo = x.lo + b0 * x.step, pHi = x.lo + b1 * x.step;
+    const b0 = Math.max(0, Math.floor((plo - x.lo) / x.step)), b1 = Math.min(nb, Math.ceil((phi - x.lo) / x.step)), jc = Math.max(b0, Math.min(b1, Math.floor((x.close - x.lo) / x.step)));
+    const cS = [], cL = []; let a = 0; for (let j = jc; j < b1; j++) { a += BT(U[last + j]); cS.push(a); } const totS = a; a = 0; for (let j = jc - 1; j >= b0; j--) { a += BT(U[last + j]); cL.push(a); }
+    G = { b0, b1, rows: b1 - b0, jc, pLo: x.lo + b0 * x.step, pHi: x.lo + b1 * x.step, cS, cL, totS, totL: a, last }; LQG.set(x, G); return G;
+  }
+  /* 熱力圖的點陣圖（每小時一欄 × 每個價位一列），主圖和縮小版共用 */
+  function lqImg(x) {
+    const G = lqGeo(x); if (G.url) return G.url; const U = lqU(x), nh = x.n, nb = x.nb, rows = G.rows, oc = document.createElement('canvas'); oc.width = nh; oc.height = rows; const ox = oc.getContext('2d'), im = ox.createImageData(nh, rows);
+    for (let i = 0; i < nh; i++) for (let j = 0; j < rows; j++) { const cc = virC(lqGam(U[i * nb + G.b0 + j] / x.top)), q = ((rows - 1 - j) * nh + i) * 4; im.data[q] = cc[0]; im.data[q + 1] = cc[1]; im.data[q + 2] = cc[2]; im.data[q + 3] = 255; }
+    ox.putImageData(im, 0, 0); return (G.url = oc.toDataURL());
+  }
+  /* 右邊那一欄（㉑）：分開的橫條加兩條累計線。主圖和縮小版共用，min 是每根橫條最少幾 px 高 */
+  function lqSide(x, sx0, SW, ph, min, lw) {
+    const G = lqGeo(x), U = lqU(x), rows = G.rows, rh = ph / rows, grp = Math.max(1, Math.ceil(min / rh)), gap = min >= 3 ? 1 : .4, B = []; let mx = 1, g = '';
+    for (let j = 0; j < rows; j += grp) { let v = 0, n = 0; for (let q = j; q < Math.min(rows, j + grp); q++) { v += U[G.last + G.b0 + q]; n++; } B.push([j, n, v]); mx = Math.max(mx, v); }
+    B.forEach(q => { if (!q[2]) return; const cc = virC(.24 + .76 * lqGam(q[2] / q[1] / x.top)), hh = q[1] * rh; g += `<rect x="${F1(sx0)}" y="${F1(ph - (q[0] + q[1]) * rh + gap / 2)}" width="${F1(Math.max(1.2, q[2] / mx * (SW - 2)))}" height="${F1(Math.max(.8, hh - gap))}" fill="rgb(${cc.join(',')})"/>`; });
+    const cmx = Math.max(G.totS, G.totL, 1), CX = v => F1(sx0 + v / cmx * (SW - 2)), Yb = j => F1(ph - (j - G.b0) * rh), yc = Yb(G.jc);
+    const pS = `M${F1(sx0)},${yc}` + G.cS.map((v, i) => `L${CX(v)},${Yb(G.jc + i + 1)}`).join(''), pL = `M${F1(sx0)},${yc}` + G.cL.map((v, i) => `L${CX(v)},${Yb(G.jc - i - 1)}`).join('');
+    return g + `<g fill="none" stroke-linejoin="round" stroke-linecap="round"><path d="${pS}${pL}" stroke="var(--bg)" stroke-opacity=".8" stroke-width="${lw + 2}"/><path d="${pS}" stroke="var(--up)" stroke-width="${lw}"/><path d="${pL}" stroke="var(--dn)" stroke-width="${lw}"/></g>`;
+  }
+  function liqHeat(box, c, k) {
+    const x = c.dist.heat, w = box.clientWidth || 620, h = box.clientHeight || 320, nb = x.nb, nh = x.n, K = x.candles, U = lqU(x), GE = lqGeo(x);
+    const MR = Math.round(56 * FSC), MB = Math.round(18 * FSC), SW = Math.round(Math.max(64, Math.min(200, w * .17))), hw = w - MR - SW - 6, sx0 = hw + 6, ph = h - MB;
+    const b0 = GE.b0, b1 = GE.b1, rows = GE.rows, pLo = GE.pLo, pHi = GE.pHi;
     const Y = p => (1 - (p - pLo) / (pHi - pLo)) * ph, inv = y => pLo + (1 - y / ph) * (pHi - pLo), t0 = x.t0 / 864e5, t1 = t0 + nh / 24, X = d => (d - t0) / (t1 - t0) * hw, last = (nh - 1) * nb;
-    const oc = document.createElement('canvas'); oc.width = nh; oc.height = rows; const ox = oc.getContext('2d'), im = ox.createImageData(nh, rows);
-    for (let i = 0; i < nh; i++) for (let j = 0; j < rows; j++) { const cc = virC(gam(U[i * nb + b0 + j] / x.top)), q = ((rows - 1 - j) * nh + i) * 4; im.data[q] = cc[0]; im.data[q + 1] = cc[1]; im.data[q + 2] = cc[2]; im.data[q + 3] = 255; }
-    ox.putImageData(im, 0, 0);
-    let g = `<image href="${oc.toDataURL()}" x="0" y="0" width="${F1(hw)}" height="${F1(ph)}" preserveAspectRatio="none" style="image-rendering:pixelated"/>`;
+    let g = `<image href="${lqImg(x)}" x="0" y="0" width="${F1(hw)}" height="${F1(ph)}" preserveAspectRatio="none" style="image-rendering:pixelated"/>`;
     g += xAxis(X, t0, t1, hw, 0, ph, h - 3).replace(/stroke-opacity="\.05"/g, 'stroke-opacity=".18" stroke-dasharray="2 3"');
     /* 每小時 K 線：加一圈深色邊，亮帶上也看得清楚 */
     const bw = Math.max(1, hw / nh * .62); let bu = '', bd = '', wu = '', wd = '';
     K.forEach((q, i) => { const cx = (i + .5) / nh * hw, o = Y(q[0]), cl = Y(q[3]), body = `M${F1(cx - bw / 2)},${F1(Math.min(o, cl))}h${F1(bw)}v${F1(Math.max(.8, Math.abs(cl - o)))}h${F1(-bw)}Z`, wk = `M${F1(cx)},${F1(Y(q[1]))}V${F1(Y(q[2]))}`; if (q[3] >= q[0]) { bu += body; wu += wk; } else { bd += body; wd += wk; } });
     g += `<g stroke-linejoin="round"><path d="${wu}${wd}" stroke="#0C0C0D" stroke-opacity=".7" stroke-width="2.6" fill="none"/><path d="${bu}${bd}" fill="none" stroke="#0C0C0D" stroke-opacity=".7" stroke-width="1.6"/><path d="${wu}" stroke="var(--up)" stroke-width=".9" fill="none"/><path d="${bu}" fill="var(--up)"/><path d="${wd}" stroke="var(--dn)" stroke-width=".9" fill="none"/><path d="${bd}" fill="var(--dn)"/></g>`;
-    /* 右邊窄欄：現在這一刻各價位的量 */
-    let mx = 1; for (let j = 0; j < rows; j++) mx = Math.max(mx, U[last + b0 + j]); const rh = ph / rows;
+    /* 右邊那一欄（㉑）：現在這一刻各價位的量，加從收盤往上、往下的累計線 */
     g += `<rect x="${F1(sx0)}" y="0" width="${SW}" height="${F1(ph)}" fill="var(--ink)" fill-opacity=".035"/>`;
-    for (let j = 0; j < rows; j++) { const v = U[last + b0 + j]; if (!v) continue; const cc = virC(gam(v / x.top)), y = ph - (j + 1) * rh; g += `<rect x="${F1(sx0)}" y="${F1(y)}" width="${F1(Math.max(.8, v / mx * (SW - 2)))}" height="${F1(Math.max(.6, rh - .15))}" fill="rgb(${cc.join(',')})"/>`; }
+    [.25, .5, .75].forEach(q => { g += `<line x1="${F1(sx0 + q * (SW - 2))}" x2="${F1(sx0 + q * (SW - 2))}" y1="0" y2="${F1(ph)}" stroke="var(--ink)" stroke-opacity=".16" stroke-dasharray="2 3"/>`; });
+    g += lqSide(x, sx0, SW, ph, 3, 1.6);
     /* 價格刻度、收盤線 */
     TICKS(pLo, pHi, 'lin', Y, 22 * FSC, Math.max(4, Math.round(ph / (34 * FSC)))).forEach(p => { const y = Y(p); if (y < 6 || y > ph - 4) return; g += `<line x1="${F1(sx0 + SW)}" x2="${F1(sx0 + SW + 4)}" y1="${F1(y)}" y2="${F1(y)}" stroke="var(--ink)" stroke-opacity=".35"/><text x="${F1(sx0 + SW + 8)}" y="${F1(y + 3.5)}">${PXL(p)}</text>`; });
     const yc = Y(x.close); g += `<line x1="0" x2="${F1(sx0 + SW)}" y1="${F1(yc)}" y2="${F1(yc)}" stroke="#F2F0EA" stroke-width="1" stroke-dasharray="3 3" stroke-opacity=".85"/>${PL(hw - 6, yc - 8 * FSC, T('收盤', 'Close') + ' $' + n0(x.close), 'var(--ink)', 'end', 1, [0, hw])}`;
     /* 最亮的上下兩段：窄欄旁邊一條白線框出範圍，熱力圖右側標價位和顆數 */
     (x.bands || []).forEach(b => { if (b.hi <= pLo || b.lo >= pHi) return; const ya = Y(Math.min(pHi, b.hi)), yz = Y(Math.max(pLo, b.lo)), lb = T((b.side === 'long' ? '多單 ' : '空單 '), (b.side === 'long' ? 'Longs ' : 'Shorts ')) + PXL(b.lo).slice(1).replace('K', '') + '–' + PXL(b.hi).slice(1) + ' · ' + fm('btc0', b.btc);
-      g += `<line x1="${F1(sx0 - 3)}" x2="${F1(sx0 - 3)}" y1="${F1(ya)}" y2="${F1(yz)}" stroke="#F2F0EA" stroke-width="2"/>${PL(sx0 - 9, (ya + yz) / 2 + 4 * FSC, lb, '#F2F0EA', 'end', 0, [0, hw])}`; });
+      g += `<line x1="${F1(sx0 - 3)}" x2="${F1(sx0 - 3)}" y1="${F1(ya)}" y2="${F1(yz)}" stroke="var(--ink)" stroke-width="2"/>${PL(sx0 - 9, (ya + yz) / 2 + 4 * FSC, lb, '#F2F0EA', 'end', 0, [0, hw]).replace('fill="var(--sheet)"', 'fill="#0C0C0D"')}`; });   /* 標籤壓在熱力圖上，深淺主題都用深底淺字（淺色主題原本是淺底淺字，看不到） */
     g += `<g class="cx" visibility="hidden"><line x1="0" x2="${F1(sx0 + SW)}" stroke="#FFFFFF" stroke-opacity=".85"/></g><rect class="hit" data-k="${k}" x="0" y="0" width="${F1(sx0 + SW)}" height="${F1(ph)}" fill="transparent" style="cursor:crosshair;touch-action:pan-x"/>`;
     box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(T(c.zh, c.en))}">${g}</svg>`; const cx = box.querySelector('.cx');
-    const say = p => { const j = Math.floor((p - x.lo) / x.step); if (j < 0 || j >= nb) return ''; const v = U[last + j] / 255 * x.cap; return (p >= x.close ? T('空單', 'Shorts') : T('多單', 'Longs')) + T('，這 $' + x.step + ' 推算約 ', ': ~') + (v >= .5 ? fm('btc0', Math.round(v)) : T('0 顆', '0 BTC')) + T('', ' in this $' + x.step + ' bucket'); };
+    const say = p => { const j = Math.floor((p - x.lo) / x.step); if (j < 0 || j >= nb) return ''; const v = U[last + j] / 255 * x.cap, up = j >= GE.jc, cu = j < b0 || j >= b1 ? null : up ? GE.cS[j - GE.jc] : GE.cL[GE.jc - 1 - j]; return (up ? T('空單', 'Shorts') : T('多單', 'Longs')) + T('，這 $' + x.step + ' 推算約 ', ': ~') + (v >= .5 ? fm('btc0', Math.round(v)) : T('0 顆', '0 BTC')) + T('', ' in this $' + x.step + ' bucket') + (cu == null ? '' : T('；從收盤到這裡累計約 ', '; ~') + fm('btc0', Math.round(cu)) + T('', ' from the close to here')); };
     return { dist: 1, Y, inv, h: ph, cx, ln: cx.querySelector('line'), say };
   }
+  /* 清算熱力圖的縮小版（㉑）：同一張熱力圖、收盤線、右邊的橫條和累計線；游標是橫的一條（某個價位） */
+  function lqSpark(box, c) {
+    const w = box.clientWidth || 0, h = box.clientHeight || 0; if (w < 12 || h < 8) { box.innerHTML = ''; return null; }
+    const x = c.dist.heat, G = lqGeo(x), SW = Math.round(Math.max(14, w * .2)), hw = w - SW - 2, Y = p => (1 - (p - G.pLo) / (G.pHi - G.pLo)) * h, yc = F1(Y(x.close));
+    box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" aria-hidden="true"><image href="${lqImg(x)}" x="0" y="0" width="${F1(hw)}" height="${h}" preserveAspectRatio="none"/>${lqSide(x, hw + 2, SW, h, 2, 1.1)}<line x1="0" x2="${w}" y1="${yc}" y2="${yc}" stroke="#F2F0EA" stroke-width="1" stroke-dasharray="3 3" stroke-opacity=".85"/><line class="pl" visibility="hidden" x1="0" x2="${w}" stroke="#FFFFFF" stroke-opacity=".85"/></svg>`;
+    return { Y, ln: box.querySelector('.pl') };
+  }
   function dspark(box, c) {
+    if (c.dist.heat) return lqSpark(box, c);
     const w = box.clientWidth || 0, h = box.clientHeight || 0; if (w < 12 || h < 8) { box.innerHTML = ''; return null; }
     const d = c.dist, px = ST.close, lo = px * PRG[1][0], hi = px * PRG[1][1], la = Math.log(lo), lb = Math.log(hi), X = v => 2 + (Math.log(v) - la) / (lb - la) * (w - 4), R = d.rows.filter(r => r[0] >= lo && r[0] <= hi), mx = Math.max.apply(null, R.map(r => dMag(d, r)).concat([1e-9])); let g = '';
     R.forEach(r => { const xa = X(r[0]), xb = d.step ? X(Math.min(hi, r[0] + d.step)) : xa + 3.2, hh = dMag(d, r) / mx * (h - 4), col = d.kind === 'sign' ? (r[1] >= 0 ? 'up' : 'dn') : d.kind === 'side' ? (r[1] === 'b' ? 'up' : 'dn') : d.kind === 'pos' ? (r[0] >= px ? 'up' : 'dn') : d.kind === 'split' ? (r[1] >= r[2] ? (d.cr || 'up') : (d.cl || 'dn')) : ((d.hl || []).find(q2 => r[0] >= q2[0] && r[0] < q2[1]) || [0, 0, 'ink'])[2]; g += `<rect x="${F1(xa + .4)}" y="${F1(h - 2 - hh)}" width="${F1(Math.max(1, xb - xa - .8))}" height="${F1(Math.max(.6, hh))}" fill="${CV(col)}" fill-opacity="${col === 'ink' ? .45 : .7}"/>`; });
@@ -2998,7 +3033,7 @@ function initOC() {
     if (c.na) ol.innerHTML = head + `<div class="ol-na"><b>${ICS('nodata')}${T('資料沒來', 'No data')}</b><p>${esc(T(c.na.zh, c.na.en))}</p></div>`;
     else if (c.sim) simCard(ol, c, key, head);
     else if (c.list || c.grid || c.xy) { ol.innerHTML = head + (c.hs ? big : c.hz ? `<span class="ol-k">${esc(T(c.hz, c.he))}</span>` : '') + `${howH}` + (c.list ? listHtml(c) : c.grid ? gridHtml(c) : `<p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c" id="oc-c${key}"></div>`); tidy(ol, sayH, sigH); if (c.xy) xyChart($('#oc-c' + key), c, key); if (c.hs) { const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); } }
-    else if (c.dist) { const hlg = c.dist.heat ? `<span>${T('少', 'Less')}<i class="vir"></i>${T('多', 'More')}</span><span>${T('推算的待清算量：收盤下方是多單、上方是空單', 'Estimated BTC awaiting liquidation: longs below the close, shorts above')}</span><span><i class="box" style="--c:var(--up);--c2:var(--dn)"></i>${T('每小時 K 線', 'Hourly candles')}</span><span><i class="box" style="--c:var(--ink);--c2:var(--ink)"></i>${T('右邊窄欄：現在各價位的量', 'Right strip: amount at each price now')}</span>` : c.dist.leg.map(q => `<span><i class="box" style="--c:${CV(q[0])};--c2:${CV(q[0])}"></i>${esc(T(q[1], q[2]))}</span>`).join('');
+    else if (c.dist) { const hlg = c.dist.heat ? `<span>${T('少', 'Less')}<i class="vir"></i>${T('多', 'More')}</span><span>${T('推算的待清算量：收盤下方是多單、上方是空單', 'Estimated BTC awaiting liquidation: longs below the close, shorts above')}</span><span><i class="box" style="--c:var(--up);--c2:var(--dn)"></i>${T('每小時 K 線', 'Hourly candles')}</span><span>${T('右欄：現在各價位的量', 'Right panel: amount at each price now')}</span>${(G9 => `<span><i style="--c:var(--up);--c2:var(--up)"></i>${T('空單累計（收盤往上到 ', 'Shorts, cumulative (close up to ') + PXL(G9.pHi) + T('）', ') ') + fm('btc0', Math.round(G9.totS))}</span><span><i style="--c:var(--dn);--c2:var(--dn)"></i>${T('多單累計（收盤往下到 ', 'Longs, cumulative (close down to ') + PXL(G9.pLo) + T('）', ') ') + fm('btc0', Math.round(G9.totL))}</span>`)(lqGeo(c.dist.heat))}` : c.dist.leg.map(q => `<span><i class="box" style="--c:${CV(q[0])};--c2:${CV(q[0])}"></i>${esc(T(q[1], q[2]))}</span>`).join('');
       ol.innerHTML = head + big + `${howH}<div class="ol-lg">${hlg}</div><p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c${c.dist.heat ? ' lqh' : ''}" id="oc-c${key}"></div>`; tidy(ol, sayH, sigH); L = c.dist.heat ? liqHeat($('#oc-c' + key), c, key) : distChart($('#oc-c' + key), c, key); const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); }
     else { ol.dataset.kind = 't'; ol.innerHTML = `<div class="ol-a">${head}${big}${howH}</div><div class="ol-b"><div class="ol-lg">${LG.map(e => e.html).join('')}</div><div class="ol-c" id="oc-c${key}"></div></div>`; tidy(ol, sayH, sigH); L = leadChart($('#oc-c' + key), c, key, t0); }
     { const art = ol.closest('.fc'); if (art) art.style.setProperty('--tc', tcv || 'var(--k2)'); }
@@ -3085,7 +3120,7 @@ function initOC() {
   }
   function pcursor(k, p) {
     const R = REG[k]; if (!R) return; pcur1(R, p); const live = p == null;
-    R.items.forEach(it => { if (it.c.dist && it.sp) { it.sp.ln.setAttribute('visibility', live ? 'hidden' : 'visible'); if (!live) { const x = F1(it.sp.X(p)); it.sp.ln.setAttribute('x1', x); it.sp.ln.setAttribute('x2', x); } } });
+    R.items.forEach(it => { if (it.c.dist && it.sp) { it.sp.ln.setAttribute('visibility', live ? 'hidden' : 'visible'); if (!live) { if (it.sp.Y) { const y = F1(it.sp.Y(p)); it.sp.ln.setAttribute('y1', y); it.sp.ln.setAttribute('y2', y); } else { const x = F1(it.sp.X(p)); it.sp.ln.setAttribute('x1', x); it.sp.ln.setAttribute('x2', x); } } } });
   }
   const curS = (k, day) => (SEC[k] || []).forEach(R => cur1(R, day)), pcurS = (k, p) => (SEC[k] || []).forEach(R => pcur1(R, p));
 
