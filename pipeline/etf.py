@@ -1,36 +1,22 @@
 #!/usr/bin/env python3
 """美國現貨 BTC ETF 每日淨流量（2026-10-08 建立）。
-Farside 用 Cloudflare 擋所有自動抓取（雲端與本機都回 403），改用 The Block 的圖表 JSON：
-各檔 ETF 逐日淨流量，2026-09-14～10-05 逐日與 Farside 合計比對，差距 ≤ 0.1 百萬美元。
-The Block 只公布已完整的交易日（約晚一到兩天）；它還沒有的日子保留原本的列（partial=true，例如每日任務依兩個獨立來源寫入的暫定值，附 src），之後由 The Block 的完整數字覆寫。
+2026-10-08 起用 The Block 的圖表 JSON（Farside 用 Cloudflare 擋所有自動抓取，雲端與本機都回 403）；2026-11-09 起 The Block 下架（410／404），
+2026-11-11 改用 CoinMarketCap 的逐檔資料（見 etf_src.py：只取美國現貨 ETF，沒有 MSBT，和 The Block／Farside 大多一樣、偶爾差幾百萬美元）。
+CoinMarketCap 還沒有的日子保留原本的列（partial=true，例如每日任務依兩個獨立來源寫入的暫定值，附 src），之後由它的數字覆寫。
 用法（在倉庫根目錄）：python3 pipeline/etf.py   # 更新 data/etf.json，並同步 data/latest.json 的 flows.etf
 失敗時不改任何檔案、照常結束，網站沿用既有數字並以資料日期標示。"""
-import json, os, sys, urllib.request, datetime as dt
+import json, os, sys, datetime as dt
+import etf_src
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 P = lambda *a: os.path.join(ROOT, *a)
-# 2026-10-09：舊網址 /api/charts/... 開始回 410 Gone，網站改走 /api/tbco/...（外面多包一層 data）；新網址失敗才試舊的
-URLS = ['https://www.theblock.co/api/tbco/charts/chart/etfs/bitcoin-etf/spot-bitcoin-etf-flows',
-        'https://www.theblock.co/api/charts/chart/etfs/bitcoin-etf/spot-bitcoin-etf-flows']
 KEEP = 60
+ABOUT = '美國現貨 BTC ETF 每日淨流量（百萬美元，美國現貨 ETF 合計，不含香港）。資料管線每天從 CoinMarketCap 自動更新（2026-11-11 起；之前是 The Block，11/09 下架）；CoinMarketCap 沒有 MSBT，和 Farside 偶爾差幾百萬美元。partial=true 表示當天尚未完整回報。'
+
 
 def fetch():
-    err = None
-    for url in URLS:
-        try:
-            req = urllib.request.Request(url, headers={'User-Agent': 'Mozilla/5.0 (daybreak data pipeline)', 'Accept': 'application/json'})
-            with urllib.request.urlopen(req, timeout=40) as r: js = json.load(r)
-            series = (js.get('data') or js)['chart']['jsonFile']['Series']; break
-        except Exception as e: err = f'{url}: {e}'
-    else: raise RuntimeError(err)
-    tot, n = {}, {}
-    for fund in series.values():
-        for p in fund['Data']:
-            if p.get('Result') is None: continue
-            d = dt.datetime.fromtimestamp(p['Timestamp'], dt.timezone.utc).date().isoformat()
-            tot[d] = tot.get(d, 0) + p['Result'] / 1e6; n[d] = n.get(d, 0) + 1
-    if not tot: raise RuntimeError('The Block 回傳沒有資料')
-    return {d: round(v, 1) for d, v in tot.items()}, len(series)
+    F, funds = etf_src.fetch()
+    return {d: round(sum(v.values()) / 1e6, 1) for d, v in F.items()}, len(funds)
 
 if __name__ == '__main__':
     f = P('data', 'etf.json'); etf = json.load(open(f))
@@ -39,9 +25,8 @@ if __name__ == '__main__':
     last_tb = max(tb)
     rows = {r['d']: r for r in etf['rows']}
     for d, v in tb.items(): rows[d] = {'d': d, 'musd': v, 'partial': False}
-    rows = [r for d, r in sorted(rows.items()) if r['d'] in tb or r['d'] > last_tb][-KEEP:]   # The Block 已涵蓋的日子一律用它的完整數字
-    etf.update(_about='美國現貨 BTC ETF 每日淨流量（百萬美元，全部現貨 ETF 合計）。資料管線每天從 The Block 自動更新，與 Farside 同口徑；partial=true 表示當天尚未完整回報。',
-               source='The Block', source_url='https://www.theblock.co/data/etfs/bitcoin-etf/spot-bitcoin-etf-flows',
+    rows = [r for d, r in sorted(rows.items()) if r['d'] in tb or r['d'] > last_tb][-KEEP:]   # 來源已涵蓋的日子一律用它的數字
+    etf.update(_about=ABOUT, source=etf_src.SOURCE, source_url=etf_src.SOURCE_URL,
                updated_utc=dt.datetime.now(dt.timezone.utc).isoformat(timespec='seconds'), last_complete=last_tb, rows=rows)
     json.dump(etf, open(f, 'w'), ensure_ascii=False, indent=1)
     lf = P('data', 'latest.json')

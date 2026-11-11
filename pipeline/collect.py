@@ -937,7 +937,7 @@ try:
     except Exception as e: errors.append(f'svd {e}')
 except Exception as e: errors.append(f'opt_flow {e}')
 
-# G4i. 2026-11-06 指標擴充（見 cq_extra.py；CoinMetrics／The Block／Upbit／OKX 免費，不佔 bitcoin-data 額度）：交易所淨流量、現貨 vs 永續需求、
+# G4i. 2026-11-06 指標擴充（見 cq_extra.py；CoinMetrics／CoinMarketCap（2026-11-11 前是 The Block）／Upbit／OKX 免費，不佔 bitcoin-data 額度）：交易所淨流量、現貨 vs 永續需求、
 #   ETF 持有者成本、一年累計淨實現損益（顆）、韓國溢價、每輪資金效率。各項獨立，失敗只影響該項
 try:
     import cq_extra

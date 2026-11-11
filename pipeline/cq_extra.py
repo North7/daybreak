@@ -1,7 +1,7 @@
 """2026-11-06 指標擴充（使用者：「6 個都做」）。全部用免費資料，不佔 bitcoin-data 額度：
 ① 交易所淨流量（CoinMetrics 社群版 FlowInExNtv／FlowOutExNtv）
 ② 現貨 vs 永續需求（現貨＝表觀需求 ad；永續＝OKX 合約主動買 − 主動賣，rubik，快取 coc_cache/okx_taker.json 的 perp）
-③ ETF 持有者成本（The Block 各檔 ETF 逐日淨流量 ÷ 當天收盤，平均成本法；不含 GBTC：它在轉換前就持有約 62 萬顆，成本不是流量買出來的）
+③ ETF 持有者成本（各檔 ETF 逐日淨流量 ÷ 當天收盤；2026-11-11 起資料來自 CoinMarketCap，見 etf_src.py，之前是 The Block，平均成本法；不含 GBTC：它在轉換前就持有約 62 萬顆，成本不是流量買出來的）
 ④ 一年累計淨實現損益（顆）（CoinMetrics：實現市值當日變化 − 新發行，同 collect.py G1e，÷ 當天價格）
 ⑤ 韓國溢價（Upbit KRW-BTC ÷（美元收盤 × 美元兌韓元）− 1；匯率用歐洲央行參考匯率 Frankfurter，失敗退回 FRED DEXKOUS）
 ⑥ 每輪資金效率（CoinMetrics 實現市值：每輪從底部到頂部流入多少資金、價格漲幾倍）
@@ -91,26 +91,16 @@ def demand_viz(ad, perp, px, last):
 
 
 # ---------- ③ ETF 持有者成本 ----------
-TB = ['https://www.theblock.co/api/tbco/charts/chart/etfs/bitcoin-etf/spot-bitcoin-etf-flows', 'https://www.theblock.co/api/charts/chart/etfs/bitcoin-etf/spot-bitcoin-etf-flows']
-
-
-def _tb_series():
-    err = None
-    for u in TB:
-        try: js = _get(u); return (js.get('data') or js)['chart']['jsonFile']['Series']
-        except Exception as e: err = e
-    raise RuntimeError(f'The Block：{err}')
+# 2026-11-11 The Block 下架（410／404），逐檔流量改由 etf_src.py 從 CoinMarketCap 抓（和 etf.py 共用）
 
 
 def etf_cost_viz(px, last, step=1):
-    P = _pxf(px); S = _tb_series(); tot, alltot = {}, {}
-    for k, f in S.items():
-        for p in f['Data']:
-            if p.get('Result') is None: continue
-            d = dt.datetime.fromtimestamp(p['Timestamp'], dt.timezone.utc).date().isoformat()
-            if d > last: continue
-            alltot[d] = alltot.get(d, 0) + p['Result']
-            if 'GBTC' not in k.upper(): tot[d] = tot.get(d, 0) + p['Result']
+    import etf_src
+    P = _pxf(px); F, S = etf_src.fetch(); tot, alltot = {}, {}
+    for d, f in F.items():
+        if d > last: continue
+        alltot[d] = sum(f.values())
+        tot[d] = sum(v for k, v in f.items() if 'GBTC' not in k.upper())
     cu = cb = 0; C = {}
     for d in sorted(tot):   # 平均成本法：流入以當天收盤買進；流出依當時平均成本移出
         p = P(d)
@@ -132,7 +122,7 @@ def etf_cost_viz(px, last, step=1):
     rows = thin([[dn(d), round(P(d)), round(C[d][0]), round(C[d][1] / 1e3, 1), round(gp[d], 1)] for d in D], step)
     dl = max((d for d in px if d <= last), default=d1); pl = P(dl) or p1   # ETF 流量晚一天公布：成本用最後一天，價格用最新收盤
     return dict(date=d1, cost=round(c1), held=round(h1), price=round(p1), gap=round((p1 / c1 - 1) * 100, 1), px_date=dl, px_now=round(pl), gap_now=round((pl / c1 - 1) * 100, 1), below=pl < c1, run=below if p1 < c1 else 0,
-                last_cross=crosses[-1] if crosses else None, n_cross=len(crosses), days_below=sum(gp[d] < 0 for d in D), n_days=len(D), since=D[0], min_gap=round(gp[dmin], 1), min_date=dmin, flow30=round(s30(tot)), flow30_all=round(s30(alltot)), funds=len(S), rows=rows, src='The Block',
+                last_cross=crosses[-1] if crosses else None, n_cross=len(crosses), days_below=sum(gp[d] < 0 for d in D), n_days=len(D), since=D[0], min_gap=round(gp[dmin], 1), min_date=dmin, flow30=round(s30(tot)), flow30_all=round(s30(alltot)), funds=len(S), rows=rows, src=etf_src.SOURCE,
                 note='不含 GBTC 的現貨 ETF：每天淨流量 ÷ 當天收盤＝買進（或賣出）的顆數，平均成本法；GBTC 轉換前就持有約 62 萬顆，成本不是流量買出來的，所以不算；推算、只作讀值')
 
 

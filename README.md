@@ -92,7 +92,7 @@
 | OKX、Hyperliquid | 資金費率（與 Deribit、Binance、Bybit 以未平倉加權）；OKX 永續逐小時未平倉量與 K 線（清算熱力圖的備援，Coinalyze 取不到時用）；OKX 場外 USDT/CNY 報價與永續對現貨日線（三地溢價）；OKX 現貨主動買／賣量（rubik，2026-11-06 起）；OKX 合約主動買／賣量（現貨 vs 永續需求，2026-11-06 起） | 每日 |
 | Coinalyze（免費 API，GitHub secret `COINALYZE_API_KEY`；https://coinalyze.net） | 多家交易所 BTC 永續的未平倉量與 K 線（清算熱力圖、2 年範圍）、實際清算量（每日多空清算量）、Binance 與 Bybit 的資金費率（2026-11-08 起） | 每日（約 60 次，每分鐘上限 40 次） |
 | 13 個交易所掛單簿 | Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Kraken Futures、OKX Swap、Hyperliquid | 每日快照 |
-| The Block | 現貨 ETF 每日淨流量（與 Farside 同口徑）；各檔流量推算 ETF 持有者成本（不含 GBTC，2026-11-06 起） | 每日 |
+| CoinMarketCap（2026-11-11 起；之前是 The Block，11/09 下架） | 美國現貨 ETF 每日淨流量（逐檔，不含香港；沒有 MSBT，和 Farside 偶爾差幾百萬美元）；各檔流量推算 ETF 持有者成本（不含 GBTC，2026-11-06 起） | 每日 |
 | Upbit | KRW-BTC 日線（韓國溢價，2026-11-06 起） | 每日（約 16 次請求） |
 | Frankfurter（歐洲央行參考匯率） | 美元兌韓元（韓國溢價；失敗時改用 FRED） | 每日 |
 | FRED | 10 年期殖利率與實質利率、美元指數、那斯達克 | 每日 |
@@ -126,7 +126,7 @@ Claude 排程任務（00:15 UTC）→ brief.py 精簡摘要 + 查新聞與研報
 | 22:40（前一天） | 06:40 | cron-job.org → Actions | 抓 8 個鏈上指標進 `pipeline/bd_cache/` | 0 |
 | 00:06 | 08:06 | cron-job.org → Actions | 抓所有資料、算指標、更新 `data/latest.json`、封存前一期、提交 | 0 |
 | 00:15 | 08:15 | Claude 排程任務 | 讀摘要、查證新聞與研報，寫頭條、各版判讀與英文版，提交 | 少量 |
-| 14:00 | 22:00 | Actions | 補抓 ETF 流量（The Block 晚約一個交易日公布） | 0 |
+| 14:00 | 22:00 | Actions | 補抓 ETF 流量（來源晚約一個交易日才有前一天） | 0 |
 
 GitHub 自己的定時排程在這個倉庫每天晚 5–7 小時，所以改由 cron-job.org 準時觸發（設定見 [docs/CRON_JOB.md](docs/CRON_JOB.md)）；原本的 `schedule` 與 Claude 推送 `.github/run-daily` 觸發都保留當備援，同一天重複觸發會自動略過。`notes.json` 的日期若和資料日不同，網站仍顯示上一期的判讀並標示，數字永遠是最新的。
 
@@ -203,7 +203,8 @@ pipeline/oc_extra.py     2026-11-06 鏈上新指標：供給分位成本線、�
 pipeline/bv_extra.py     2026-11-06 Bitview 再六項：賣方風險比、長短期持有者 NUPL、儲備風險、AVIV、依持有時間的實現損益（22 個年齡帶併成 6 組）、Dormancy 與 Liveliness（每項附歷次頂底與回測）
 pipeline/cq_extra.py     2026-11-06 指標擴充再六項：交易所淨流量、現貨 vs 永續需求、ETF 持有者成本、一年累計淨實現損益（顆）、韓國溢價、每輪資金效率（CoinMetrics／The Block／Upbit／OKX；每項附回測或歷史對照）
 pipeline/opt_flow.py     2026-11-06 衍生品新指標：Deribit 逐筆成交（快取 coc_cache/deribit_flow.json）推算 Gamma 曝險與買方權利金差、OKX 現貨主動買賣差（快取 coc_cache/okx_taker.json）
-pipeline/etf.py          從 The Block 更新 ETF 每日淨流量
+pipeline/etf.py          更新 ETF 每日淨流量（資料來自 etf_src.py）
+pipeline/etf_src.py      2026-11-11 美國現貨 ETF 逐檔每日淨流量（CoinMarketCap；etf.py 與 ETF 持有者成本共用）
 pipeline/bd_rotation.py  bitcoin-data 請求分配：每日即時 6 個 + 前一晚 7 個
 pipeline/coc.py          STH-SOPR、短期持有者實現獲利／虧損、長短期持有者籌碼、賣方衰竭常數、全網實現獲利 ÷ 虧損、1 年以上未動供給、長期持有者虧損比例：讀 CheckOnChain 公開圖表（晚約 1 天）
 pipeline/bitview.py      Bitview（BRK 公開 API）：短期持有者成本、真實市場均價、6–12／12–18 個月持幣成本，快取 coc_cache/bitview.json；真實市場均價每天和 CheckOnChain 對照
@@ -247,7 +248,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 ## 已知限制
 
 - **bitcoin-data.com** 免費層每小時 10 次、每日 15 次；目前每天用 14 次（STH-SOPR 改由 CheckOnChain 提供；2026-10-27 加幣齡分布）。部分序列（例如持有者成本）本身就晚 5–6 天，頁首「資料狀態」會標出落後天數。
-- **ETF**：Farside 用 Cloudflare 擋自動抓取，改用 The Block 的圖表 JSON（逐日與 Farside 比對一致）；The Block 只公布已完整的交易日，約晚一天。
+- **ETF**：Farside 用 Cloudflare 擋自動抓取，2026-10-08 起用 The Block 的圖表 JSON，11/09 下架後改用 CoinMarketCap 的逐檔資料（11/11 起）。CoinMarketCap 沒有 MSBT，10/13–11/06 有 13/18 天和 The Block 完全一樣、其餘差 4 百萬美元以內，7–9 月常少 5–10 百萬；前一個交易日的數字約晚一天才有。
 - **掛單簿**是資料管線執行當下的快照；Binance 期貨與 Bybit 讀不到，永續部分偏低估；掛單隨時可撤。
 - **鯨魚分層**：地址不等於實體，≥10K BTC 的地址多為交易所冷錢包與 ETF 託管，錢包整理會讓幣在分層之間移動；若 BitInfoCharts 改版或擋 GitHub Actions，該區塊顯示「本日未取得」。
 - **Coinbase 溢價**以 Binance 的 USDT 報價比較，USDT 偏離 1 美元時會有誤差。
@@ -281,6 +282,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-11** ETF 資料源換成 CoinMarketCap（使用者決定）：The Block 的 ETF 圖表 JSON 11/09 起下架（410／404），ETF 完整資料停在 11/05，ETF 持有者成本兩天沒算出來。新來源是 CoinMarketCap 網站自己用的逐檔資料（免金鑰，2024-01-11 上市起，`pipeline/etf_src.py`），只取美國現貨 ETF（它的合計含香港三檔）、丟掉還沒回報的全 0 空列；ETF 每日淨流量（`etf.py`）和 ETF 持有者成本（`cq_extra.py`）共用。和 The Block 過去 82 個交易日比：10/13–11/06 有 13/18 天完全一樣、其餘差 4 百萬美元以內；7–9 月常少 5–10 百萬、9/22 少 99 百萬。CoinMarketCap 沒有 MSBT（11/09 Farside −2.01 億，它是 −2.23 億）。ETF 持有者成本算到 11/05：78,981（原本 79,039）、持有 111.9 萬顆（原本 112.7 萬）。Farside、SoSoValue 擋自動抓取，Bitbo 的表和 Farside 差很多，都不用。
 - **2026-11-11** 修：「上格價格、下格指標」的圖（共 42 張）下格縱軸刻度數字看不到。11/04 加時間範圍切換時，用來剪掉左緣多餘線段的裁切框把右邊留白一起剪掉了，刻度數字和門檻標籤都畫在那裡；改成只剪左邊。刻度出現後有三張圖的標籤會相疊，一併調整：維基百科關注度（×2 靠近門檻 ×2.5 時只留線）、Coinbase 溢價（離深度折價線標籤不到 14px 的刻度只留線）、每日多空清算量（手機不標 ±$20M）
 - **2026-11-11** 鏈上版「賣出的人賺還是賠」新增「短期持有者集中止盈與認賠」（使用者要求；本站自製，資料 Bitview）
   - 算法：持有未滿 6 個月的幣每天的實現獲利、實現虧損（美元）各自 ÷ 短期持有者實現市值，5 日指數平均，再算和自己近 105 天比的 z 分數。止盈強度畫在上、認賠強度畫成負值在下；超過 2 的期間鋪底色，峰值用膠囊標。`onchain.sthsig`（`stage_viz.sthsig_viz`），不另打 API。
@@ -512,7 +514,7 @@ All free public APIs; no keys required.
 | OKX, Hyperliquid | Funding (OI-weighted with Deribit, Binance and Bybit); OKX perpetuals' hourly open interest and candles (liquidation heatmap fallback when Coinalyze is unavailable); OKX OTC USDT/CNY quotes and perp-vs-spot daily bars (three premiums); OKX spot taker buy/sell volume (rubik, from 2026-11-06) | Daily |
 | Coinalyze (free API, GitHub secret `COINALYZE_API_KEY`; https://coinalyze.net) | Multi-exchange BTC perpetual open interest and candles (liquidation heatmap, 2-year view), actual liquidations (daily long/short liquidations), Binance and Bybit funding (since 2026-11-08) | Daily (~60 calls, 40 per minute max) |
 | 13 exchange order books | Coinbase, Bitstamp, Gemini, Bitfinex, Kraken, Binance, OKX, Gate, MEXC, Deribit, Kraken Futures, OKX Swap, Hyperliquid | Daily snapshot |
-| The Block | Spot ETF daily net flows (same basis as Farside) | Daily |
+| CoinMarketCap (from 2026-11-11; The Block before, withdrawn 11/09) | US spot ETF daily net flows by fund (Hong Kong excluded; no MSBT, so it can differ from Farside by a few million dollars); per-fund flows drive the ETF holder cost basis (ex-GBTC) | Daily |
 | FRED | 10-yr nominal and real yields, dollar index, Nasdaq | Daily |
 | mempool.space | Hashrate, difficulty, miner revenue | Daily |
 | BitInfoCharts | Blocked by Cloudflare since 2026-10-21; whale tiers come from Bitview since 2026-11-04 | — |
@@ -544,7 +546,7 @@ Browser → index.html + assets/app.js read latest.json and notes (English reads
 | 22:40 (day before) | 06:40 | cron-job.org → Actions | Fetch 8 on-chain series into `pipeline/bd_cache/` | 0 |
 | 00:06 | 08:06 | cron-job.org → Actions | Fetch everything, compute, update `data/latest.json`, archive the previous edition, commit | 0 |
 | 00:15 | 08:15 | Claude task | Read the summary, verify news and research, write the headline, section reads and the English edition, commit | Few |
-| 14:00 | 22:00 | Actions | ETF flow catch-up (The Block publishes about one trading day late) | 0 |
+| 14:00 | 22:00 | Actions | ETF flow catch-up (the source adds the previous trading day about a day late) | 0 |
 
 GitHub's own cron runs 5–7 hours late on this repository, so cron-job.org triggers the workflows on time (setup in [docs/CRON_JOB.md](docs/CRON_JOB.md)). The original `schedule` and the Claude task's push to `.github/run-daily` remain as fallbacks; duplicate triggers on the same day exit early. If `notes.json` is older than the data, the site shows the previous edition's commentary with a label, while every number is current.
 
@@ -602,7 +604,7 @@ Pull requests run **Site checks** (`.github/workflows/check.yml`): syntax, Engli
 ### Known limits
 
 - **bitcoin-data.com** free tier: 10 requests per hour, 15 per day; we use 14 (STH-SOPR now comes from CheckOnChain; coin-age bands added 2026-10-27). Some series (e.g. holder cost basis) are themselves 5–6 days behind; the data-status bar shows the lag.
-- **ETF flows**: Farside blocks automated access behind Cloudflare, so we use The Block's chart JSON (matches Farside day by day); The Block only publishes complete trading days, about one day late.
+- **ETF flows**: Farside blocks automated access behind Cloudflare. From 2026-10-08 we used The Block's chart JSON; after The Block withdrew it on 11/09 we moved to CoinMarketCap's per-fund data (from 11/11). CoinMarketCap has no MSBT: from 10/13 to 11/06, 13 of 18 days match The Block exactly and the rest are within $4M, while July–September often runs $5–10M lower. The previous trading day arrives about a day late.
 - **Order book** is a snapshot at pipeline run time; Binance futures and Bybit are not readable, so perpetual depth is understated; orders can be pulled at any time.
 - **Whale tiers**: one address is not one entity; ≥10K BTC addresses are mostly exchange cold wallets and ETF custodians, and wallet reshuffles move coins between tiers. If BitInfoCharts changes its page or blocks GitHub Actions, the panel shows "not available today".
 - **Coinbase premium** is measured against Binance's USDT price; USDT deviating from $1 adds noise.
@@ -636,6 +638,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-11** ETF data moved to CoinMarketCap (user's call): The Block withdrew its ETF chart JSON on 11/09 (410/404), leaving complete ETF data stuck at 11/05 and the ETF holder cost basis missing for two days. The new source is the per-fund data CoinMarketCap's own site uses (no key, since the 2024-01-11 launch, `pipeline/etf_src.py`), keeping US spot ETFs only (its total includes three Hong Kong funds) and dropping all-zero rows that haven't been reported yet; daily ETF flows (`etf.py`) and the ETF holder cost basis (`cq_extra.py`) share it. Against The Block's last 82 trading days: 13 of 18 days from 10/13 to 11/06 match exactly and the rest are within $4M; July–September often runs $5–10M lower, and 9/22 is $99M lower. CoinMarketCap has no MSBT (11/09: Farside −$201M, CoinMarketCap −$223M). ETF holder cost to 11/05: 78,981 (was 79,039), 1.119M BTC held (was 1.127M). Farside and SoSoValue block automated access and Bitbo's table differs a lot from Farside, so none of them are used.
 - **2026-11-11** Fix: the lower-pane axis numbers were invisible on every “price on top, indicator below” chart (42 charts). The clip added on Nov 4 with the time-range switch, meant to cut lines that run past the left edge, also cut the right margin where the axis numbers and threshold labels are drawn; it now clips the left side only. With the numbers back, three charts had labels touching and were adjusted: Wikipedia attention (×2 keeps its line but drops its label when it sits next to the ×2.5 threshold), Coinbase premium (ticks within 14px of the deep-discount label keep the line only) and daily liquidations (no ±$20M labels on phones)
 - **2026-11-11** New on the On-chain page under “Are sellers in profit or at a loss”: “Short-term holder profit-taking and capitulation spikes” (requested by the user; our own reading, Bitview data)
   - Method: the profit and the loss realized each day on coins held under 6 months (USD), each divided by the short-term holder realized cap, smoothed with a 5-day exponential average, then scored against its own last 105 days (z-score). Profit-taking is drawn upward, capitulation as negative; periods above 2 are shaded and peaks carry a capsule. `onchain.sthsig` (`stage_viz.sthsig_viz`), no extra API calls.

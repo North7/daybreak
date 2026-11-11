@@ -20,7 +20,7 @@
 3. 讀上一期 `data/notes.json`（用來比較變化、延續期數）。
 3a. **找發現（今天最重要的一步，2026-10-23 起）**：brief 最前面的 `signals` 是資料管線依寫死規則偵測出的異動（`pipeline/signals.py`），`signals.checks` 是上一期 findings／followups 寫下的追蹤條件今天成不成立。先讀完這兩塊，再讀其他數字；依下面「發現與追蹤」的規則寫 `findings` 與 `followups`，頭條、摘要、各版判讀都從這裡出發。
 3b. **結構分析（2026-10-27 起）**：每週一，或 `signals` 出現 `level:sth-cluster`、價格穿越短期持有者成本／真實市場均價時，依下面「結構分析」的八步，至少寫一則從行情問題出發的 finding（不是從異動出發）。其他天有值得回答的問題也可以寫。
-4. ETF 暫定值（你唯一可以改資料檔的情況）：ETF 由資料管線每天從 The Block 自動更新（`pipeline/etf.py`，與 Farside 同口徑；Farside 擋自動抓取，不要再去讀它），**除了這個例外，你不改 `data/etf.json`**。比最新完整日更新的交易日，如果查到**兩個獨立來源**（例如 Farside 經媒體轉述、SoSoValue）的合計淨流量差距在 2% 以內，可以在 `data/etf.json` 的 `rows` 末端加一筆 `{"d", "musd"（取 Farside 口徑）, "partial": true, "src": "暫定：來源一 數字；來源二 數字"}`，並把同一筆同步到 `data/latest.json` 的 `flows.etf`；只有一個來源或差距超過 2% 就不加。The Block 公布後資料管線會自動覆寫。
+4. ETF 暫定值（你唯一可以改資料檔的情況）：ETF 由資料管線每天從 CoinMarketCap 自動更新（`pipeline/etf.py`／`etf_src.py`，2026-11-11 起；之前是 The Block，11/09 下架。CoinMarketCap 沒有 MSBT，和 Farside 偶爾差幾百萬美元；Farside 擋自動抓取，不要再去讀它），**除了這個例外，你不改 `data/etf.json`**。比最新完整日更新的交易日，如果查到**兩個獨立來源**（例如 Farside 經媒體轉述、SoSoValue）的合計淨流量差距在 2% 以內，可以在 `data/etf.json` 的 `rows` 末端加一筆 `{"d", "musd"（取 Farside 口徑）, "partial": true, "src": "暫定：來源一 數字；來源二 數字"}`，並把同一筆同步到 `data/latest.json` 的 `flows.etf`，再執行 `python3 pipeline/site_data.py` 重新產生 `data/site.json`（網站讀這份；沒重新產生的話網站檢查會失敗，11/10 那期就漏了，2026-11-11 補）；只有一個來源或差距超過 2% 就不加。CoinMarketCap 有了那一天之後資料管線會自動覆寫。
 5. 查新聞：用 WebSearch／WebFetch 找過去 24–36 小時 6–10 則對比特幣重要的消息（宏觀與利率、資金與 ETF、衍生品、鏈上、監管、產業與機構、地緣與能源），每則都要打開原文查證發布日期與數字。來源與寫法見「新聞」。
 6. 查研報：先用 WebFetch 打開 Glassnode 研報列表 https://research.glassnode.com （The Week On-chain 約每週二／三、Market Pulse 每週日、Macro Special 不定期），找出最近 7 天的每一期並打開原文讀重點；再查 The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。每一期的 `date` 寫原文發布日、`url` 寫原文網址。確認列表上真的沒有新一期，才沿用最近一期並在 `research.summary` 寫明「無新一期」。
 7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。寫完後另寫英文版 `data/notes.en.json`（見「英文版」）。
@@ -210,7 +210,7 @@
 - 月度報酬（`price.monthly`，2026-11-08 起）：`mtd` 本月至今、`ytd` 今年至今、`cur` 是本月在 2013 年起的歷史（`n`、`up`、`med`、最好最差的年份）。只能寫成「過去 13 次 11 月上漲 8 次」這類歷史描述，不要寫成「11 月通常會漲」或任何預測；月初幾天的 `mtd` 意義不大，少用。
 
 **flows（資金）**
-- ETF：從 brief 的 `flows.etf` 讀數字；The Block 只公布已完整的交易日，最新完整日通常比 bar_date 晚一到兩個交易日，寫的時候標明日期。若最新完整日比 bar_date 落後超過 2 個交易日，在 flows 寫明「ETF 資料延遲」。暫定值的規則見步驟 4。
+- ETF：從 brief 的 `flows.etf` 讀數字；來源通常晚一個交易日才有前一天的數字（每日 00:05 那次常常還沒有，台北 22:00 那次會補上），最新完整日通常比 bar_date 晚一到兩個交易日，寫的時候標明日期。若最新完整日比 bar_date 落後超過 2 個交易日，在 flows 寫明「ETF 資料延遲」。暫定值的規則見步驟 4。
 - 實現市值 30 日變化（brief 的 `flows.rc_liq`）：只當資金背景寫進 flows 判讀（例：「實現市值 30 日 +1.3%，資金仍在流入」）；轉為 ≤0 或由 ≤0 轉正時在 changes 記一筆。不得寫成加倉或賣出訊號，也不連動市場階段與出場框架（歷史上 2018、2021-06、2022-01 的歸零之後仍大跌，見資金版說明）。
 - 可引用穩定幣供給（`flows.stables`）、Coinbase 溢價（`flows.cb_premium`）、恐懼貪婪（`flows.fear_greed`）。Coinbase 溢價（2026-11-05 起）：`pct` 是每日值（和 TradingView 的 CB-BN basis 同一種算法），`avg7` 是 7 日平均；兩個都寫，7 日平均會落後幾天。`rows` 約 4 年、第三欄是 Coinbase 收盤。過去「7 日平均跌破 −0.15%」只有 4 次（2022/11、2024/12、2026/06、2026/10），前 3 次 30 天後都上漲，但樣本只有 3 次；「收斂回 0 以上」本身沒有額外資訊（5 次 3 次上漲，和隨便一天差不多），不要寫成看多訊號。網站上的「即時」值是讀者打開網頁時瀏覽器自己抓的，日報不引用。
 
