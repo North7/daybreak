@@ -1584,6 +1584,8 @@ html.share .oc-fx .os-h, html.share #oc-orF { display: none !important; }
 html.share .oc-fx::before { opacity: 1; background: var(--bg); }
 html.share .oc-fx .os { left: 50%; top: 50%; width: min(100vw, calc(100vh * 16 / 9)); height: min(100vh, calc(100vw * 9 / 16)); transform: translate(-50%, -50%); }
 html.share[data-ratio="45"] .oc-fx .os { width: min(100vw, calc(100vh * 4 / 5)); height: min(100vh, calc(100vw * 5 / 4)); }
+.ol-lg i.vir { display: inline-block; width: 64px; height: 8px; margin: 0 6px; border-radius: 2px; vertical-align: middle; background: linear-gradient(90deg, rgb(68, 1, 84), rgb(59, 82, 139), rgb(33, 145, 140), rgb(94, 201, 98), rgb(253, 231, 37)); }
+.ol-c.lqh { min-height: 340px; }
 .oc-toast { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); z-index: 300; transform: translate(-50%, 10px); max-width: calc(100vw - 32px); padding: 10px 18px; border-radius: 999px; background: #EDEDE8; color: #0E0E10; font: 600 13.5px/1.35 "Inter Tight", "Noto Sans TC", sans-serif; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; overflow-wrap: anywhere; }
 .oc-toast.on { opacity: 1; transform: translate(-50%, 0); }
 .oc-fx .fx-x.busy { opacity: .45; pointer-events: none; }
@@ -2508,8 +2510,8 @@ function initOC() {
   function WAN(x) { const w = x / 1e4; return TRIM(w >= 10 ? w.toFixed(1) : w.toFixed(2)); }
   /* 刻度（⑮）：縱軸取 3–5 個整數刻度，不再只標最高、最低；對數軸取 1、2、3、5 開頭的數；相鄰至少隔 20px（分享模式按字級放大） */
   const NICE = (a, b, n) => { const sp = b - a; if (!(sp > 0)) return [a]; const raw = sp / n, mg = Math.pow(10, Math.floor(Math.log10(raw))), f = raw / mg, st = (f < 1.5 ? 1 : f < 3 ? 2 : f < 7 ? 5 : 10) * mg, out = []; for (let v = Math.ceil(a / st - 1e-9) * st; v <= b + st * 1e-6; v += st) out.push(+v.toPrecision(12)); return out; };
-  const TICKS = (lo, hi, tfn, Yf, gap) => { let c = []; const lg = (ms) => { for (let e = Math.floor(Math.log10(lo)) - 1; e <= Math.ceil(Math.log10(hi)); e++) ms.forEach(m => { const v = +(m * Math.pow(10, e)).toPrecision(6); if (v >= lo && v <= hi) c.push(v); }); };
-    if (tfn === 'log' && lo > 0 && hi / lo > 2.5) { lg([1, 2, 3, 5]); if (c.length < 3) { c = []; lg([1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8]); } } else c = NICE(lo, hi, 4);
+  const TICKS = (lo, hi, tfn, Yf, gap, nn) => { let c = []; const lg = (ms) => { for (let e = Math.floor(Math.log10(lo)) - 1; e <= Math.ceil(Math.log10(hi)); e++) ms.forEach(m => { const v = +(m * Math.pow(10, e)).toPrecision(6); if (v >= lo && v <= hi) c.push(v); }); };
+    if (tfn === 'log' && lo > 0 && hi / lo > 2.5) { lg([1, 2, 3, 5]); if (c.length < 3) { c = []; lg([1, 1.5, 2, 2.5, 3, 4, 5, 6, 7, 8]); } } else c = NICE(lo, hi, nn || 4);
     const out = []; let ly = null; c.sort((p, q) => Yf(q) - Yf(p)).forEach(v => { const y = Yf(v); if (ly == null || Math.abs(ly - y) >= (gap || 20 * FSC)) { out.push(v); ly = y; } }); return out; };
   const PXL = v => '$' + (v >= 1000 ? +(v / 1000).toPrecision(3) + 'K' : n0(v));
   const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
@@ -2517,7 +2519,7 @@ function initOC() {
   const xAxis = (X, t0, t1, pw, ya, yz, ty) => { let g = ''; const span = t1 - t0, d0 = dOf(t0), d1 = dOf(t1), tx = (x, t, a) => `<text x="${F1(x)}" y="${F1(ty)}" text-anchor="${a || 'middle'}">${t}</text>`, gl = x => `<line x1="${F1(x)}" x2="${F1(x)}" y1="${F1(ya)}" y2="${F1(yz)}" stroke="var(--ink)" stroke-opacity=".05"/>`, rE = pw - 36 * FSC;
     if (span > 760) { const y0 = d0.getUTCFullYear() + 1, y9 = d1.getUTCFullYear(), st = Math.max(1, Math.ceil((y9 - y0 + 1) * 44 * FSC / pw)); for (let y = y0; y <= y9; y += st) { const x = X(Date.UTC(y, 0, 1) / 864e5); if (x < 16 || x > rE) continue; g += gl(x) + tx(x, y); } }
     else if (span > 60) { const per = pw / (span / 30.44), st = [1, 2, 3, 6].find(k => per * k >= 38 * FSC) || 6; for (let i = 1; i < 40; i++) { const mm = d0.getUTCMonth() + i, y = d0.getUTCFullYear() + Math.floor(mm / 12), m = mm % 12, day = Date.UTC(y, m, 1) / 864e5; if (day > t1) break; if (m % st) continue; const x = X(day); if (x < 14 || x > rE) continue; g += gl(x) + tx(x, m === 0 ? String(y) : T((m + 1) + '月', MON[m])); } }
-    else { const st = span > 30 ? 7 : span > 12 ? 3 : 1; for (let d = t0 + st; d < t1; d += st) { const x = X(d), dd = dOf(d); if (x < 14 || x > rE) continue; g += gl(x) + tx(x, (dd.getUTCMonth() + 1) + '/' + dd.getUTCDate()); } }
+    else { const st = span > 30 ? 7 : span > 12 ? 3 : 1; for (let d = Math.floor(t0) + st; d < t1; d += st) { const x = X(d), dd = dOf(d); if (x < 14 || x > rE) continue; g += gl(x) + tx(x, (dd.getUTCMonth() + 1) + '/' + dd.getUTCDate()); } }
     return g + tx(pw, T('現在', 'now'), 'end'); };
   const SP = c => { if (!c.modes) return c; const m = c._m || 0; c._c = c._c || []; return c._c[m] || (c._c[m] = Object.assign({}, c, c.modes[m])); };
   const hero = s => s.ser[s.hero || 0];
@@ -2664,7 +2666,7 @@ function initOC() {
   /* 表頭右邊的切換：時間型的圖是「分／疊＋範圍」，分布型的圖是價格範圍「近／中／全」 */
   function rgHtml(c) {
     const s = isT(c) ? SP(c) : c, b = (attr, v, on, zh, en) => `<button type="button" ${attr}="${v}" aria-pressed="${on}">${T(zh, en)}</button>`;
-    if (c.na) return ''; if (c.dist) return PRG.map((r, i) => b('data-pg', i, i === pgOf(c), r[2], r[3])).join('');
+    if (c.na) return ''; if (c.dist && c.dist.heat) return ''; if (c.dist) return PRG.map((r, i) => b('data-pg', i, i === pgOf(c), r[2], r[3])).join('');
     return (s.one ? '' : b('data-ly', 'sp', lay === 'sp', '分', 'Split') + b('data-ly', 'ov', lay === 'ov', '疊', 'Overlay') + '<i></i>') + RG.map(r => b('data-rg', r[0], r[0] === rng, r[1], r[2])).join('');
   }
   /* 沒有時間軸的圖的縮小版：清單畫成一排橫條，月度表畫成色塊，非日期軸的線圖畫線 */
@@ -2717,6 +2719,41 @@ function initOC() {
     g += `<g class="cx" visibility="hidden"><line x1="${ML}" x2="${w - MR}" stroke="var(--ink)" stroke-opacity=".6"/></g><rect class="hit" data-k="${k}" x="${ML}" y="0" width="${pw}" height="${h}" fill="transparent" style="cursor:crosshair;touch-action:pan-x"/>`;
     box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(T(c.zh, c.en))}">${g}</svg>`; const cx = box.querySelector('.cx');
     return { dist: 1, Y, inv, h, cx, ln: cx.querySelector('line'), say: p => dSay(d, p) };
+  }
+  /* 清算熱力圖（⑰，2026-11-11 使用者選「熱力圖加右側橫條」）：照業界（CoinGlass 一類）的畫法。橫軸最近 7 天、每小時一欄，縱軸價格；
+     越亮＝推算的待清算量越多（viridis，不帶多空方向的顏色），疊每小時 K 線和收盤線。右邊窄欄是現在這一刻各價位的量（原本的橫條），
+     最亮的上下兩段直接標價位和顆數。色階上限用整份快照算一次，偏向突顯最亮的帶（照舊版）。游標和同一段的分布圖共用「某個價位」 */
+  const VIR = [[68, 1, 84], [59, 82, 139], [33, 145, 140], [94, 201, 98], [253, 231, 37]], virC = v => { v = Math.max(0, Math.min(1, v)); const s2 = v * 4, i = Math.min(3, Math.floor(s2)), f = s2 - i; return VIR[i].map((a, j) => Math.round(a + (VIR[i + 1][j] - a) * f)); }, LQB = new WeakMap();
+  function liqHeat(box, c, k) {
+    const x = c.dist.heat, w = box.clientWidth || 620, h = box.clientHeight || 320, nb = x.nb, nh = x.n, K = x.candles, gam = v => Math.pow(Math.min(1, v), 1.6);
+    let U = LQB.get(x); if (!U) { const b = atob(x.heat); U = new Uint8Array(b.length); for (let i = 0; i < b.length; i++) U[i] = b.charCodeAt(i); LQB.set(x, U); }
+    const MR = Math.round(56 * FSC), MB = Math.round(18 * FSC), SW = Math.round(Math.max(48, Math.min(150, w * .13))), hw = w - MR - SW - 6, sx0 = hw + 6, ph = h - MB;
+    let plo = Math.min.apply(null, K.map(q => q[2])) * .97, phi = Math.max.apply(null, K.map(q => q[1])) * 1.03; (x.bands || []).forEach(b => { plo = Math.min(plo, b.lo - 400); phi = Math.max(phi, b.hi + 400); });
+    const b0 = Math.max(0, Math.floor((plo - x.lo) / x.step)), b1 = Math.min(nb, Math.ceil((phi - x.lo) / x.step)), rows = b1 - b0, pLo = x.lo + b0 * x.step, pHi = x.lo + b1 * x.step;
+    const Y = p => (1 - (p - pLo) / (pHi - pLo)) * ph, inv = y => pLo + (1 - y / ph) * (pHi - pLo), t0 = x.t0 / 864e5, t1 = t0 + nh / 24, X = d => (d - t0) / (t1 - t0) * hw, last = (nh - 1) * nb;
+    const oc = document.createElement('canvas'); oc.width = nh; oc.height = rows; const ox = oc.getContext('2d'), im = ox.createImageData(nh, rows);
+    for (let i = 0; i < nh; i++) for (let j = 0; j < rows; j++) { const cc = virC(gam(U[i * nb + b0 + j] / x.top)), q = ((rows - 1 - j) * nh + i) * 4; im.data[q] = cc[0]; im.data[q + 1] = cc[1]; im.data[q + 2] = cc[2]; im.data[q + 3] = 255; }
+    ox.putImageData(im, 0, 0);
+    let g = `<image href="${oc.toDataURL()}" x="0" y="0" width="${F1(hw)}" height="${F1(ph)}" preserveAspectRatio="none" style="image-rendering:pixelated"/>`;
+    g += xAxis(X, t0, t1, hw, 0, ph, h - 3).replace(/stroke-opacity="\.05"/g, 'stroke-opacity=".18" stroke-dasharray="2 3"');
+    /* 每小時 K 線：加一圈深色邊，亮帶上也看得清楚 */
+    const bw = Math.max(1, hw / nh * .62); let bu = '', bd = '', wu = '', wd = '';
+    K.forEach((q, i) => { const cx = (i + .5) / nh * hw, o = Y(q[0]), cl = Y(q[3]), body = `M${F1(cx - bw / 2)},${F1(Math.min(o, cl))}h${F1(bw)}v${F1(Math.max(.8, Math.abs(cl - o)))}h${F1(-bw)}Z`, wk = `M${F1(cx)},${F1(Y(q[1]))}V${F1(Y(q[2]))}`; if (q[3] >= q[0]) { bu += body; wu += wk; } else { bd += body; wd += wk; } });
+    g += `<g stroke-linejoin="round"><path d="${wu}${wd}" stroke="#0C0C0D" stroke-opacity=".7" stroke-width="2.6" fill="none"/><path d="${bu}${bd}" fill="none" stroke="#0C0C0D" stroke-opacity=".7" stroke-width="1.6"/><path d="${wu}" stroke="var(--up)" stroke-width=".9" fill="none"/><path d="${bu}" fill="var(--up)"/><path d="${wd}" stroke="var(--dn)" stroke-width=".9" fill="none"/><path d="${bd}" fill="var(--dn)"/></g>`;
+    /* 右邊窄欄：現在這一刻各價位的量 */
+    let mx = 1; for (let j = 0; j < rows; j++) mx = Math.max(mx, U[last + b0 + j]); const rh = ph / rows;
+    g += `<rect x="${F1(sx0)}" y="0" width="${SW}" height="${F1(ph)}" fill="var(--ink)" fill-opacity=".035"/>`;
+    for (let j = 0; j < rows; j++) { const v = U[last + b0 + j]; if (!v) continue; const cc = virC(gam(v / x.top)), y = ph - (j + 1) * rh; g += `<rect x="${F1(sx0)}" y="${F1(y)}" width="${F1(Math.max(.8, v / mx * (SW - 2)))}" height="${F1(Math.max(.6, rh - .15))}" fill="rgb(${cc.join(',')})"/>`; }
+    /* 價格刻度、收盤線 */
+    TICKS(pLo, pHi, 'lin', Y, 22 * FSC, Math.max(4, Math.round(ph / (34 * FSC)))).forEach(p => { const y = Y(p); if (y < 6 || y > ph - 4) return; g += `<line x1="${F1(sx0 + SW)}" x2="${F1(sx0 + SW + 4)}" y1="${F1(y)}" y2="${F1(y)}" stroke="var(--ink)" stroke-opacity=".35"/><text x="${F1(sx0 + SW + 8)}" y="${F1(y + 3.5)}">${PXL(p)}</text>`; });
+    const yc = Y(x.close); g += `<line x1="0" x2="${F1(sx0 + SW)}" y1="${F1(yc)}" y2="${F1(yc)}" stroke="#F2F0EA" stroke-width="1" stroke-dasharray="3 3" stroke-opacity=".85"/>${PL(hw - 6, yc - 8 * FSC, T('收盤', 'Close') + ' $' + n0(x.close), 'var(--ink)', 'end', 1, [0, hw])}`;
+    /* 最亮的上下兩段：窄欄旁邊一條白線框出範圍，熱力圖右側標價位和顆數 */
+    (x.bands || []).forEach(b => { if (b.hi <= pLo || b.lo >= pHi) return; const ya = Y(Math.min(pHi, b.hi)), yz = Y(Math.max(pLo, b.lo)), lb = T((b.side === 'long' ? '多單 ' : '空單 '), (b.side === 'long' ? 'Longs ' : 'Shorts ')) + PXL(b.lo).slice(1).replace('K', '') + '–' + PXL(b.hi).slice(1) + ' · ' + fm('btc0', b.btc);
+      g += `<line x1="${F1(sx0 - 3)}" x2="${F1(sx0 - 3)}" y1="${F1(ya)}" y2="${F1(yz)}" stroke="#F2F0EA" stroke-width="2"/>${PL(sx0 - 9, (ya + yz) / 2 + 4 * FSC, lb, '#F2F0EA', 'end', 0, [0, hw])}`; });
+    g += `<g class="cx" visibility="hidden"><line x1="0" x2="${F1(sx0 + SW)}" stroke="#FFFFFF" stroke-opacity=".85"/></g><rect class="hit" data-k="${k}" x="0" y="0" width="${F1(sx0 + SW)}" height="${F1(ph)}" fill="transparent" style="cursor:crosshair;touch-action:pan-x"/>`;
+    box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(T(c.zh, c.en))}">${g}</svg>`; const cx = box.querySelector('.cx');
+    const say = p => { const j = Math.floor((p - x.lo) / x.step); if (j < 0 || j >= nb) return ''; const v = U[last + j] / 255 * x.cap; return (p >= x.close ? T('空單', 'Shorts') : T('多單', 'Longs')) + T('，這 $' + x.step + ' 推算約 ', ': ~') + (v >= .5 ? fm('btc0', Math.round(v)) : T('0 顆', '0 BTC')) + T('', ' in this $' + x.step + ' bucket'); };
+    return { dist: 1, Y, inv, h: ph, cx, ln: cx.querySelector('line'), say };
   }
   function dspark(box, c) {
     const w = box.clientWidth || 0, h = box.clientHeight || 0; if (w < 12 || h < 8) { box.innerHTML = ''; return null; }
@@ -2866,7 +2903,7 @@ function initOC() {
   function fill(ol, c, key, flat) {
     const s = isT(c) ? SP(c) : c, t0 = isT(c) ? T0(s, c) : tE - 365, LG = isT(c) ? legend(s, key) : [];
     const md = c.modes ? `<span class="md" role="group">${c.modes.map((m, i) => `<button type="button" data-m="${i}" data-key="${key}" aria-pressed="${i === (c._m || 0)}">${esc(T(m.mz, m.me))}</button>`).join('')}</span>` : '';
-    const pg = c.dist ? `<span class="md" role="group" aria-label="${T('價格範圍', 'Price range')}">${PRG.map((r, i) => `<button type="button" data-pg="${i}" data-key="${key}" aria-pressed="${i === pgOf(c)}">${T(r[2], r[3])}</button>`).join('')}</span>` : '';
+    const pg = c.dist && !c.dist.heat ? `<span class="md" role="group" aria-label="${T('價格範圍', 'Price range')}">${PRG.map((r, i) => `<button type="button" data-pg="${i}" data-key="${key}" aria-pressed="${i === pgOf(c)}">${T(r[2], r[3])}</button>`).join('')}</span>` : '';
     const ro = isT(c) ? rgOpts(s) : [], rv = rgOf(c), re = ro.some(r => r[0] === rv) ? rv : 0, rgb = ro.length ? `<span class="md" role="group" aria-label="${T('時間範圍', 'Time range')}">${ro.map(r => `<button type="button" data-rg="${r[0]}" data-key="${key}" aria-pressed="${r[0] === re}">${T(r[1], r[2])}</button>`).join('')}</span>` : '';
     const hid = isT(c) && rv ? ['marks', 'links', 'spans', 'vl'].reduce((n, kk) => n + (s[kk] || []).filter(m => (m.b != null ? m.b : m.d) < t0).length, 0) : 0, more = hid ? `<button type="button" class="more" data-rg="0" data-key="${key}">${T('更早還有 ' + hid + ' 個標注', hid + ' earlier annotations')} →</button>` : '';
     const lyv = c._ly || 'sp', lyb = isT(c) && !s.one ? `<span class="md ly" role="group" aria-label="${T('價格和指標的排法', 'Price and indicator layout')}"><button type="button" data-ly="sp" data-key="${key}" aria-pressed="${lyv === 'sp'}"${ib('價格和指標分成上下兩格', 'Price and indicator in two panes')}>${IC('split')}</button><button type="button" data-ly="ov" data-key="${key}" aria-pressed="${lyv === 'ov'}"${ib('價格和指標疊在同一格', 'Price and indicator overlaid')}>${IC('over')}</button></span>` : '';
@@ -2877,7 +2914,8 @@ function initOC() {
     if (c.na) ol.innerHTML = head + `<div class="ol-na"><b>${T('資料沒來', 'No data')}</b><p>${esc(T(c.na.zh, c.na.en))}</p></div>`;
     else if (c.sim) simCard(ol, c, key, head);
     else if (c.list || c.grid || c.xy) { ol.innerHTML = head + (c.hs ? big : c.hz ? `<span class="ol-k">${esc(T(c.hz, c.he))}</span>` : '') + `${howH}` + (c.list ? listHtml(c) : c.grid ? gridHtml(c) : `<p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c" id="oc-c${key}"></div>`); tidy(ol, sayH, sigH); if (c.xy) xyChart($('#oc-c' + key), c, key); if (c.hs) { const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); } }
-    else if (c.dist) { ol.innerHTML = head + big + `${howH}<div class="ol-lg">${c.dist.leg.map(q => `<span><i class="box" style="--c:${CV(q[0])};--c2:${CV(q[0])}"></i>${esc(T(q[1], q[2]))}</span>`).join('')}</div><p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c" id="oc-c${key}"></div>`; tidy(ol, sayH, sigH); L = distChart($('#oc-c' + key), c, key); const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); }
+    else if (c.dist) { const hlg = c.dist.heat ? `<span>${T('少', 'Less')}<i class="vir"></i>${T('多', 'More')}</span><span>${T('推算的待清算量：收盤下方是多單、上方是空單', 'Estimated BTC awaiting liquidation: longs below the close, shorts above')}</span><span><i class="box" style="--c:var(--up);--c2:var(--dn)"></i>${T('每小時 K 線', 'Hourly candles')}</span><span><i class="box" style="--c:var(--ink);--c2:var(--ink)"></i>${T('右邊窄欄：現在各價位的量', 'Right strip: amount at each price now')}</span>` : c.dist.leg.map(q => `<span><i class="box" style="--c:${CV(q[0])};--c2:${CV(q[0])}"></i>${esc(T(q[1], q[2]))}</span>`).join('');
+      ol.innerHTML = head + big + `${howH}<div class="ol-lg">${hlg}</div><p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c${c.dist.heat ? ' lqh' : ''}" id="oc-c${key}"></div>`; tidy(ol, sayH, sigH); L = c.dist.heat ? liqHeat($('#oc-c' + key), c, key) : distChart($('#oc-c' + key), c, key); const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); }
     else { ol.dataset.kind = 't'; ol.innerHTML = `<div class="ol-a">${head}${big}${howH}</div><div class="ol-b"><div class="ol-lg">${LG.map(e => e.html).join('')}</div><div class="ol-c" id="oc-c${key}"></div></div>`; tidy(ol, sayH, sigH); L = leadChart($('#oc-c' + key), c, key, t0); }
     { const art = ol.closest('.fc'); if (art) art.style.setProperty('--tc', tcv || 'var(--k2)'); }
     if (!c.na && !c.go) ol.insertAdjacentHTML('beforeend', `<p class="ol-brand"><b>${T('破曉 Daybreak', 'Daybreak')}</b><span>north7.github.io/daybreak</span><span>${src ? esc(T('資料：', 'Data: ') + src) + ' · ' : ''}${T('截至 ', 'As of ')}${D.date.replace(/-/g, '/')}</span></p>`);   /* 分享模式才顯示（⑮） */
