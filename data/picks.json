@@ -1,16 +1,16 @@
 {
- "date": "2026-11-09",
- "edition": 35,
+ "date": "2026-11-10",
+ "edition": 36,
  "picks": [
   {
-   "id": "onchain/agepl",
-   "chart": "data/picks/onchain-agepl.png",
-   "chart_en": "data/picks/onchain-agepl-en.png",
-   "why": "照運營 hint（onchain/agepl，這個月賠錢賣的是誰）；讀值和 hint 一致（不到 1 個月 49%、1–2 年 36%、獲利 1–6 個月 45%），讀法成立。和今天頭條同一題，但 hint 優先、圖是彩色分層堆疊，最近 7 天沒推過。截圖預設是「實現獲利」，要截「實現虧損」那一頁。",
-   "q_zh": "這個月賠錢賣的是誰？",
-   "q_en": "Who has been selling at a loss this month?",
-   "zh": "這個月賠錢賣的是誰？\n\n30 天的實現虧損，49% 來自持有不到 1 個月的幣，36% 來自持有 1–2 年、2025 年頂部附近買的人；30 天前這組是 29%。\n\n剛進場的賠錢走多半是雜訊；1–2 年那組佔比往上，是高位買家撐不住。\n\n#比特幣 #BTC #鏈上數據",
-   "en": "Who has been selling at a loss this month?\n\n49% of 30-day realized losses came from coins held under a month, 36% from coins held 1–2 years (up from 29%).\n\nNew buyers selling at a loss is noise; the 1–2 year group rising means top buyers are giving up.\n\n#Bitcoin #BTC #onchain"
+   "id": "market/mon",
+   "chart": "data/picks/market-mon.png",
+   "chart_en": "data/picks/market-mon-en.png",
+   "why": "跌到 200 日均線邊上、11 月已經跌近 5%，讀者會問 11 月以前怎麼走；和頭條的 CPI、短期持有者認賠不重複。",
+   "q_zh": "11 月已經跌 4.83%，過去的 11 月怎麼走？",
+   "q_en": "November is down 4.83% so far. How did past Novembers go?",
+   "zh": "11 月已經跌 4.83%，過去的 11 月怎麼走？\n今年至今 −15.77%。2013 年以來 13 次 11 月有 8 次上漲、中位 +8.88%，但差距很大：最好 2013 年 +450.61%，最差 2018 年 −36.99%。月還沒過半，歷史只說 11 月漲多跌少，說不了這個月。\n#比特幣 #BTC #歷史數據",
+   "en": "November is down 4.83% so far. How did past Novembers go?\nYear to date: −15.77%. Since 2013, 8 of 13 Novembers rose, median +8.88%, with a huge spread: +450.61% in 2013, −36.99% in 2018. Mid-month, history only says Novembers rise more often.\n#Bitcoin #BTC #history"
   }
  ]
 }
