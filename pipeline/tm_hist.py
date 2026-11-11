@@ -1,6 +1,6 @@
 """Tidemark 頂部／底部訊號的歷史（2026-11-09 使用者要求「借鑑 Tidemark 的歷史圖」）。
 
-Tidemark（north7.github.io/tidemark，第三方公開模型）沒有獨立的歷史檔，歷史只內嵌在頁面裡（`D = {...}`，
+Tidemark（tidemark.aronlab.dev，第三方公開模型）沒有獨立的歷史檔，歷史只內嵌在頁面裡（`D = {...}`，
 2011 起每週、近一年每日）。這裡每天抓一次頁面、取出需要的欄位；抓不到或格式變了就沿用上一份 data/latest.json 的
 cycle.tidemark.hist，標 stale，不讓流程失敗。只作讀值、不連動倉位、不進預測調整。
 
@@ -8,7 +8,7 @@ cycle.tidemark.hist，標 stale，不讓流程失敗。只作讀值、不連動�
 """
 import datetime as dt, json, os, re
 
-URL = 'https://north7.github.io/tidemark/'
+URL = 'https://tidemark.aronlab.dev/'
 KEYS = ['p', 'sig', 'heat', 'tim', 'bsig', 'cold']
 E0 = dt.date(1970, 1, 1)
 

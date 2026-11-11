@@ -716,7 +716,7 @@ window.DAYBREAK_EN = {
   'CoinMarketCap（美國現貨 ETF，沒有 MSBT）': "CoinMarketCap (US spot ETFs, no MSBT)",
   'Coinbase、Bitstamp、Gemini、Bitfinex、Kraken、Binance、OKX、Gate、MEXC、Deribit、Hyperliquid': "Coinbase, Bitstamp, Gemini, Bitfinex, Kraken, Binance, OKX, Gate, MEXC, Deribit, Hyperliquid",
   '綜合訊號': "Composite signal",
-  'Tidemark（north7.github.io）': "Tidemark (north7.github.io)",
+  'Tidemark（aronlab.dev）': "Tidemark (aronlab.dev)",
   '</div><p class="note">資料日 ': "</div><p class=\"note\">Data date ",
   ' · 管線產出 ': " · pipeline ran ",
   ' UTC · 結論 ': " UTC · commentary ",
