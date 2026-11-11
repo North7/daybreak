@@ -10,7 +10,8 @@
    "images": [
     "data/longposts/2026-11-11-cpi.png"
    ],
-   "charts": []
+   "charts": [],
+   "posted": "2026-11-11"
   },
   {
    "id": "2026-11-11-pullback",
@@ -49,7 +50,8 @@
    "charts": [
     "deriv/lsa",
     "market/fng"
-   ]
+   ],
+   "posted": "2026-11-11"
   }
  ],
  "used": [
