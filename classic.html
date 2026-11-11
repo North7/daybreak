@@ -135,8 +135,9 @@ window.DAYBREAK_BOOT = (function () {
 <div class="wipe" id="wipe" aria-hidden="true"></div>
 <script src="assets/app.js?v=b1a8ca9b0e"></script>
 <script>
-/* 訪客統計 GoatCounter（不用 cookie、不收個資）：站點代號 daybreak（2026-10-13 註冊）；只在正式網址計數 */
-(function () { var code = 'daybreak'; if (!code || location.hostname !== 'aronlab.dev') return;
+/* 訪客統計 GoatCounter（不用 cookie、不收個資）：站點代號 daybreak（2026-10-13 註冊）；只在正式網址計數。
+   2026-11-12：網站搬到 daybreak.aronlab.dev，搬家期間舊網址 north7.github.io 也一起算 */
+(function () { var code = 'daybreak', h = location.hostname; if (!code || (h !== 'daybreak.aronlab.dev' && h !== 'north7.github.io')) return;
   var s = document.createElement('script'); s.async = true; s.src = 'https://gc.zgo.at/count.js';
   s.setAttribute('data-goatcounter', 'https://' + code + '.goatcounter.com/count'); document.head.appendChild(s); })();
 </script>
