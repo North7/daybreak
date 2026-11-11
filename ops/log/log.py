@@ -268,24 +268,34 @@ def followers(date):
     if prev:
         old = set(prev['ids'])
         fresh = [u for u in users if u['id'] not in old]
-        gone = len(old - seen)
+        # 2026-11-11 使用者問「今天誰取關了我」：以前只記人數，名單一覆蓋就查不到是誰。快照改成存 id→帳號，取關的人記名字。
+        names_prev = prev.get('names') or {}
+        gone_ids = old - seen
+        gone_list = [{'by': names_prev.get(i, f'id:{i}'), 'verified': (prev.get('verified') or {}).get(i), 'at': now()} for i in sorted(gone_ids)]
+        gone = len(gone_ids)
         lst = [{'by': u['screen_name'], 'verified': ver(u), 'followers': u.get('followers')} for u in fresh]
         if again:
             have = {x['by'] for x in a.get('new_list') or []}
             lst = (a.get('new_list') or []) + [x for x in lst if x['by'] not in have]
             gone += a.get('unfollowed') or 0
+            gone_list = (a.get('unfollowed_list') or []) + gone_list
         a['new_followers'] = len(lst)
         a['new_verified_followers'] = sum(1 for x in lst if x['verified'])
         a['unfollowed'] = gone
+        a['unfollowed_list'] = gone_list
         a['new_list'] = lst
         names = {u['screen_name'].lower() for u in fresh}
         for p in D['posts']:
             if p.get('to') and p['to'].lower() in names and p['kind'] in ('reply', 'quote', 'followup'):
                 p.setdefault('back', {})['followed'] = True
-        print(f'比上次（{prev["at"]}）多了 {len(fresh)} 人（藍勾 {a["new_verified_followers"]}），少了 {gone} 人')
+        print(f'比上次（{prev["at"]}）多了 {len(fresh)} 人（藍勾 {a["new_verified_followers"]}），少了 {len(gone_ids)} 人'
+              + (('：' + '、'.join('@' + x['by'] if not x['by'].startswith('id:') else x['by'] for x in gone_list[-len(gone_ids):])) if gone_ids else ''))
+        if gone_ids and len(users) < (total or 0):
+            print(f'  名單只讀到 {len(users)}／{total} 人，少掉的人裡可能有幾位只是這次沒讀到，不一定是取關')
     else:
         print('第一次快照，下次才比得出新增的是誰')
-    json.dump({'at': now(), 'ids': [u['id'] for u in users]}, open(cp, 'w'))
+    json.dump({'at': now(), 'ids': [u['id'] for u in users], 'names': {u['id']: u['screen_name'] for u in users},
+               'verified': {u['id']: ver(u) for u in users}}, open(cp, 'w'))
     save(D)
     print(f'追蹤 {total}（名單讀到 {len(users)}），藍勾 {nver}，離 {GOAL} 還差 {GOAL - nver}')
 
