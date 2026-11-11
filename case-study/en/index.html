@@ -192,6 +192,8 @@ h3 { font-family: var(--f-head); font-weight: 900; font-size: 19px; line-height:
 /* gallery */
 .gal { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 .gal .stack { display: grid; gap: 16px; }
+.gal.even { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-top: 16px; }
+.vid video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; }
 
 /* metrics */
 .mt { width: 100%; border-collapse: collapse; font-size: 15px; }
@@ -498,12 +500,13 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
   <div class="side"><span class="en">Distribution</span><h2>Distribution and growth</h2></div>
   <div class="main">
     <p class="lead">The content is generated daily, so distribution had to be nearly free too: images render themselves, drafts write themselves, and I only press send.</p>
-    <div class="gal">
-      <div class="stack">
-        <figure><img class="shot" src="../img/share-en.jpg" width="1200" height="675" alt="English share image: red EXTRA tag, No. 036, a headline that CPI ran hot and BTC fell to 0.8% above its 200-day average as short-term holders turned to heavy loss-taking, and three stats for market stage, 7-day ETF flow and short-term holder cost basis."><figcaption>Share image, rendered by Actions after each edition is pushed.</figcaption></figure>
-        <figure><img class="shot" src="../img/og.jpg" width="1200" height="630" alt="Link preview card: DAYBREAK 破曉 wordmark with the line The first Bitcoin brief of the morning."><figcaption>Link preview card shown when the URL is posted on X; English by default.</figcaption></figure>
-      </div>
-      <figure><img class="shot" src="../img/short.jpg" width="720" height="1280" alt="Vertical short-video cover in Chinese: Bitcoin rose, but shorts pushed it; 188 million dollars of shorts liquidated in a day."><figcaption>Short-video cover (Chinese edition). Social content carries market information only, never the exit framework.</figcaption></figure>
+    <figure class="vid">
+      <video class="shot" controls preload="none" playsinline poster="../img/showcase.jpg" width="1920" height="1080" aria-label="Showcase video for the new Daybreak site, 78 seconds: AI cursors drawing the home page, the six questions with one line each, the Cycle page, the chart map, the Selling page, the day and night switch, and the phone layout."><source src="../img/showcase.mp4" type="video/mp4"></video>
+      <figcaption>Showcase video for the new site (78 seconds): AI cursors draw the page, six questions get one line each, every section answers before it shows charts, the chart map, swiping between questions on a phone. Social content carries market information only, never the exit framework.</figcaption>
+    </figure>
+    <div class="gal even">
+      <figure><img class="shot" src="../img/share-en.jpg" width="1200" height="675" alt="English share image: red EXTRA tag, No. 036, a headline that CPI ran hot and BTC fell to 0.8% above its 200-day average as short-term holders turned to heavy loss-taking, and three stats for market stage, 7-day ETF flow and short-term holder cost basis."><figcaption>Share image, rendered by Actions after each edition is pushed.</figcaption></figure>
+      <figure><img class="shot" src="../img/og.jpg" width="1200" height="630" alt="Link preview card: DAYBREAK 破曉 wordmark with the line The first Bitcoin brief of the morning."><figcaption>Link preview card shown when the URL is posted on X; English by default.</figcaption></figure>
     </div>
     <div class="cols">
       <div><span class="lbl">Automation</span><h3>A draft every day</h3><p>After the brief, the AI writes an X post in each language, <span class="mono">x_len.py</span> confirms both fit in 280 characters, and the drafts arrive as a phone notification. A posting helper copies the text, saves the image and opens the X composer.</p></div>

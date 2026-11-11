@@ -192,6 +192,8 @@ h3 { font-family: var(--f-head); font-weight: 900; font-size: 19px; line-height:
 /* gallery */
 .gal { display: grid; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); gap: 16px; align-items: start; }
 .gal .stack { display: grid; gap: 16px; }
+.gal.even { grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); margin-top: 16px; }
+.vid video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; }
 
 /* metrics */
 .mt { width: 100%; border-collapse: collapse; font-size: 15px; }
@@ -505,12 +507,13 @@ footer { margin-top: 80px; border-top: 6px solid var(--ink); padding-top: 16px; 
   <div class="side"><span class="en">Distribution</span><h2>分發與成長</h2></div>
   <div class="main">
     <p class="lead">內容每天自動產生，分發也要接近零成本：圖自動畫，文案自動寫，人只按發送。</p>
-    <div class="gal">
-      <div class="stack">
-        <figure><img class="shot" src="img/share-en.jpg" width="1200" height="675" alt="英文版分享圖：紅色 EXTRA 標籤、第 36 期，標題寫 CPI 高於預期、BTC 跌到 200 日均線上方 0.8%、短期持有者轉為大量認賠，下方三個數字是市場階段、ETF 7 日流量與短期持有者成本。"><figcaption>每期推送後由 Actions 自動產生的分享圖（英文版）。</figcaption></figure>
-        <figure><img class="shot" src="img/og.jpg" width="1200" height="630" alt="連結預覽卡：DAYBREAK 破曉字標，副標 The first Bitcoin brief of the morning。"><figcaption>網址貼到 X 時的預覽卡，預設英文。</figcaption></figure>
-      </div>
-      <figure><img class="shot" src="img/short.jpg" width="720" height="1280" alt="直式短影片封面：比特幣漲了，推它的卻是空頭；空單一天被清算 1.88 億美元。"><figcaption>短影片封面。社群內容只放市場資訊，不放出場框架。</figcaption></figure>
+    <figure class="vid">
+      <video class="shot" controls preload="none" playsinline poster="img/showcase.jpg" width="1920" height="1080" aria-label="新版 Daybreak 網站的展示影片，78 秒：AI 游標把首頁畫出來、六個問題各一句、週期頁、找圖地圖、賣壓頁、日夜切換、手機版。"><source src="img/showcase.mp4" type="video/mp4"></video>
+      <figcaption>新版網站的展示影片（78 秒）：AI 游標把頁面畫出來、六個問題各一句、每一段先回答再給圖、找圖地圖、手機左右滑。社群內容只放市場資訊，不放出場框架。</figcaption>
+    </figure>
+    <div class="gal even">
+      <figure><img class="shot" src="img/share-en.jpg" width="1200" height="675" alt="英文版分享圖：紅色 EXTRA 標籤、第 36 期，標題寫 CPI 高於預期、BTC 跌到 200 日均線上方 0.8%、短期持有者轉為大量認賠，下方三個數字是市場階段、ETF 7 日流量與短期持有者成本。"><figcaption>每期推送後由 Actions 自動產生的分享圖（英文版）。</figcaption></figure>
+      <figure><img class="shot" src="img/og.jpg" width="1200" height="630" alt="連結預覽卡：DAYBREAK 破曉字標，副標 The first Bitcoin brief of the morning。"><figcaption>網址貼到 X 時的預覽卡，預設英文。</figcaption></figure>
     </div>
     <div class="cols">
       <div><span class="lbl">自動化</span><h3>每天一份草稿</h3><p>AI 寫完日報後另寫中英文 X 貼文，用 <span class="mono">x_len.py</span> 確認在 280 字內，推播到手機。發文小幫手一鍵複製、存圖、開 X 發文視窗。</p></div>
