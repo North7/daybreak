@@ -67,6 +67,16 @@ def wan(t):
     return re.sub(r'([−+\-]?)(\d{1,3}(?:,\d{3})+)\s?顆', f, t or '')
 LAB = re.compile(r'^(圖上|怎麼看|小心)')
 
+
+def own(items, sz='', se=''):
+    """新版首頁自己才有的圖（舊版沒有對應的面板）直接帶讀值。items＝[(標題中, 標題英, 數值中, 數值英, 語氣 up／down／warn／neu, 說明中, 說明英)]。
+    attach() 遇到已經有 say 的圖會沿用（setdefault），不會蓋掉。"""
+    out = []
+    for kz, ke, vz, ve, tone, dz, de in items:
+        hm, hme = heads(wan(dz), de)
+        out.append(dict(kz=kz, ke=ke, vz=wan(vz), ve=ve, tone=tone if tone in ('up', 'down', 'warn') else 'neu', dz=wan(dz), de=de, cz='', ce='', view=0, hm=hm, hme=hme))
+    return dict(items=out, sz=wan(sz), se=se, hz=[], he=[])
+
 def attach(chapters, L):
     try:
         Z = json.load(open(os.path.join(HERE, 'interp.zh.json'), encoding='utf-8')); E = json.load(open(os.path.join(HERE, 'interp.en.json'), encoding='utf-8'))
