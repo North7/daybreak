@@ -313,6 +313,29 @@ def build(L, N, E, dn, X):
           dz='依錢包的花費習慣分類。非流動性供給是長期不動的錢包持有的幣，增加代表囤幣、浮動籌碼變少；高流動性供給是常在交易的錢包持有的幣，增加代表可交易的籌碼變多。分類是估算的，會事後修正。',
           de='Coins classified by how their wallets spend. Illiquid supply sits in wallets that rarely spend; a rise means hoarding and less float. Highly liquid supply sits in wallets that trade often; a rise means more tradable float. The classification is an estimate and is revised later.')
 
+    def c_whstrip():   # 2026-11-12 新圖（舊版沒有）：各層地址 7 日持幣變化的熱力條。只有方向色：增加綠、減少紅，深淺是幅度
+        from say_data import own
+        st = wh.get('strip')
+        if not st or not st.get('tiers') or len(st.get('days') or []) < 60: return NA('whstrip', '各層地址 7 日持幣變化', '7-day balance change by wallet tier', '各層地址的 7 日變化（onchain.whales.strip）', 'the 7-day change by wallet tier (onchain.whales.strip)')
+        NM = {'ge10k': ('≥10K BTC', '≥10K BTC'), '1k_10k': ('1K–10K BTC', '1K–10K BTC'), '100_1k': ('100–1K BTC', '100–1K BTC'), '10_100': ('10–100 BTC', '10–100 BTC'), '1_10': ('1–10 BTC', '1–10 BTC'), 'lt1': ('小於 1 BTC', 'Below 1 BTC')}
+        rows = [dict(zh=NM[t['key']][0], en=NM[t['key']][1], s=t['s'], p=t['p'], now=t['now']) for t in st['tiers'] if t['key'] in NM]
+        up = [t for t in st['tiers'] if (t['now'] or 0) > 0]; dnn = [t for t in st['tiers'] if (t['now'] or 0) < 0]
+        nz = lambda L_, i: '、'.join(NM[t['key']][i] for t in L_) if i == 0 else ', '.join(NM[t['key']][i] for t in L_)
+        p2 = lambda v: mi('%+.2f%%' % v)
+        now_z = '這 7 天持幣增加的有 %d 層%s，減少的有 %d 層%s（到 %s）。' % (len(up), '（' + nz(up, 0) + '）' if up else '', len(dnn), '（' + nz(dnn, 0) + '）' if dnn else '', md(st['date']))
+        now_e = '%d tiers added over the last 7 days%s and %d reduced%s (through %s). ' % (len(up), ' (' + nz(up, 1) + ')' if up else '', len(dnn), ' (' + nz(dnn, 1) + ')' if dnn else '', md(st['date']))
+        big = [t for t in st['tiers'] if t['key'] in ('100_1k', '1k_10k')]
+        big_z = '；'.join('%s %s，已經連續 %d 天%s' % (NM[t['key']][0], p2(t['now']), t['run'], '增加' if t['up'] else '減少') for t in big if t['now'] is not None and t['run'])
+        big_e = '; '.join('%s %s, %d days of %s running' % (NM[t['key']][1], p2(t['now']), t['run'], 'adding' if t['up'] else 'reducing') for t in big if t['now'] is not None and t['run'])
+        cav_z = '這是依地址餘額分層的增減，不是做過實體歸併的吸籌評分：交易所、託管整理錢包會讓幣在層之間移動，≥10K 那一層多半是交易所。看連續幾天的顏色，不看單日。'
+        cav_e = 'These are changes in balances grouped by address size, not an entity-adjusted accumulation score: exchanges and custodians reshuffling wallets move coins between tiers, and the ≥10K tier is mostly exchanges. Read runs of colour, not single days.'
+        items = [('現在', 'Now', '%d 增 %d 減' % (len(up), len(dnn)), '%d up, %d down' % (len(up), len(dnn)), 'neu', now_z, now_e)]
+        if big_z: items.append(('大戶兩層', 'The two large tiers', p2(big[0]['now']) if big and big[0]['now'] is not None else '', p2(big[0]['now']) if big and big[0]['now'] is not None else '', 'neu', big_z + '。' + cav_z, big_e + '. ' + cav_e))
+        return dict(k='whstrip', zh='各層地址 7 日持幣變化', en='7-day balance change by wallet tier', hz='這 7 天持幣增加的層數', he='Tiers that added over 7 days', hs=dict(v='%d / %d 層' % (len(up), len(rows)), ve='%d of %d' % (len(up), len(rows)), f='txt'),
+          strip=dict(days=st['days'], px=st['px'], rows=rows), src='Bitview · ' + md(st['date']), srce='Bitview · ' + md(st['date']), say=own(items, now_z, now_e),
+          dz='每一層地址（依餘額大小分）一條色帶，每一格是那一天往回 7 天的持幣量變化：綠是增加、紅是減少，越深代表幅度越大（和這一層自己近 4 年的 7 日變化比，到第 90 百分位就是最深）。最上面是 BTC 價格，右邊是最新的 7 日變化。' + cav_z + '只作讀值。',
+          de='One band per address tier (grouped by balance). Each cell is the change in that tier\'s holdings over the 7 days to that date: green for an increase, red for a decrease, darker for a bigger move (against the tier\'s own 7-day changes over four years; the 90th percentile is the darkest). BTC price runs along the top and the latest 7-day change is on the right. ' + cav_e + ' A reading only.')
+
     # ════ 5. 主動買賣 ════
     def c_svd():   # 顏色：drawSv、drawSvH（主動買多綠、主動賣多紅的柱）
         x = dv.get('svd'); rs = [r for r in (x or {}).get('rows') or [] if r[1]]
@@ -430,7 +453,7 @@ def build(L, N, E, dn, X):
         grp('各地買盤', 'Regional demand', '美國、亞洲、韓國哪邊在買，幣往交易所進還是出', 'Which region is buying, and whether coins are moving onto or off exchanges', [c_prus(), c_prasia(), c_prperp(), c_kp(), c_exflow(), c_exch()]),
         grp('鏈上需求', 'On-chain demand', '新的需求接不接得住供給，新的錢有沒有進來', 'Is new demand absorbing supply, and is new money arriving', [c_ad(), c_dmd(), c_capflow(), c_grad(), c_rcliq(), c_stab()]),
         grp('大戶與長期持有者', 'Whales and long-term holders', '大戶和長期持有者在加碼、出貨還是不動', 'Are whales and long-term holders adding, distributing or sitting still',
-            [c_whale(), c_whalet(), reuse('lthnet', '長期持有者 30 日淨部位變化', 'LTH 30-day net position change'), reuse('lsrchg', '長短期供給比 30 日變化', 'LTH/STH supply ratio, 30-day change'),
+            [c_whale(), c_whalet(), c_whstrip(), reuse('lthnet', '長期持有者 30 日淨部位變化', 'LTH 30-day net position change'), reuse('lsrchg', '長短期供給比 30 日變化', 'LTH/STH supply ratio, 30-day change'),
              reuse('sthd', '短期持有者供給 90 天變化', 'STH supply, 90-day change'), reuse('dorm', 'Dormancy', 'Dormancy'), c_supliq()]),
         grp('主動買賣', 'Taker flow', '誰在用市價主動買、誰在主動賣', 'Who is hitting the market to buy, and who to sell', [c_svd(), c_tk()]),
         grp('大環境', 'Macro', '美股、黃金、利率和美元怎麼走', 'What stocks, gold, rates and the dollar are doing', [c_stk(), c_r2y(), c_macro()]),
