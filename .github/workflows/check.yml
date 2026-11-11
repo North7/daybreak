@@ -40,7 +40,9 @@ jobs:
       - name: Render every section (zh/en × desktop/mobile)
         run: |
           npm i --no-save playwright@1.56.1
-          npx playwright install --with-deps chromium
+          # 2026-11-11：執行機有時連不到 Ubuntu 套件站（apt 解析失敗），--with-deps 會整個失敗。
+          # 失敗時改成只裝瀏覽器本身（執行機已經有 Chrome 需要的系統套件）；瀏覽器開不起來的話，下面的渲染測試一樣會失敗。
+          npx playwright install --with-deps chromium || npx playwright install chromium
           python3 -m http.server 8765 >/dev/null 2>&1 &
           sleep 1
           node tests/smoke.js
