@@ -50,7 +50,7 @@ CLEAN_JS = '''(function(sel, nosay){var r=document.querySelector(sel);
     if (nosay) r.querySelectorAll(".ol-say").forEach(function(e){e.style.display="none";});
     r.querySelectorAll('[id^="oc-pr"]').forEach(function(e){ if (/移動游標|Move across/.test(e.textContent)) e.style.display="none"; });   // 「在圖上移動游標…」的操作提示
     r.querySelectorAll(".ol-f").forEach(function(e){ if (!Array.prototype.some.call(e.children, function(c){return c.style.display!=="none" && c.getBoundingClientRect().height>0;})) e.style.display="none"; });   // 頁尾只剩說明鈕就整排收掉
-    var f=document.querySelector("#oc-fx"); if (f && f.contains(r)) { f.querySelectorAll(".fx-x").forEach(function(e){e.style.visibility="hidden";}); }
+    var f=document.querySelector("#oc-fx"); if (f && f.contains(r)) { f.querySelectorAll(".fx-x").forEach(function(e){e.style.visibility="hidden";}); f.querySelectorAll(".os-h").forEach(function(e){e.style.display="none";}); }   // 放大檢視最上面那行網站導覽（01 / 04 槓桿…）對發文沒用，2026-11-11 藏掉
     return true;})'''
 
 
