@@ -797,6 +797,12 @@ SX_RN, SX_RK, SX_TH, SX_UP, SX_DN = 10, 1.0, 0.45, 20, 20   # 賣壓累積的慢
 SX_FN, SX_FM, SX_FUP, SX_FDN, SX_FP, SX_FW = 5, 30, 12, 14, 0.7, 0.5   # 賣壓累積的快線：平均天數、波動天數；每天加、每天減的係數、次方；快線佔的比重
 
 
+# 2026-11-11 使用者要求（和相對未實現獲利合併回測）：賣壓累積到 100 時，看當天的相對未實現獲利（未實現獲利 ÷ 市值，Bitview）在不在 37.5% 以下
+#   （＝oc_extra.RUP_NEAR，近地板區的上緣）。2012 年起賣壓在 100 的日子：37.5% 以下的一年後全部上漲，37.5% 以上的一年後多半更低
+#   （熊市前半段也常到 100）。結果寫在 rupf：by_day 是「賣壓在 100 的每一天」，by_ev 是「每一次底部組合」。門檻寫死，只作讀值
+SX_RUP = 37.5
+
+
 def stress_viz(bv, px, last, step=3, keep=1095):
     P_ = lambda d: px.get(d) or (bv.get('px') or {}).get(d)
     D = [d for d in sorted(set(px) | set(bv.get('px') or {})) if '2011-06-01' <= d <= last and P_(d)]
@@ -844,6 +850,19 @@ def stress_viz(bv, px, last, step=3, keep=1095):
                        exit=D[j] if j else None, ret=round((P[j] / P[i] - 1) * 100, 1) if j else None, days=(j - i) if j else None,
                        dip=round((min(P[i:(j if j else n - 1) + 1]) / P[i] - 1) * 100, 1)))
     done = [e for e in ev if e['ret'] is not None]
+    RU = bv.get('rup') or {}; rupf = None
+    if len(RU) > 1500:
+        for e in ev: e['rup'] = RU.get(e['date'])
+        def dstat(ix, h):
+            v = [x for x in (fwd(i, h) for i in ix) if x is not None]
+            return dict(n=len(v), up=round(sum(x > 0 for x in v) / len(v) * 100), med=med(v)) if v else None
+        def grp(lo):
+            ix = [i for i in range(i0, n) if R[i] >= 99.5 and RU.get(D[i]) is not None and (RU[D[i]] <= SX_RUP) == lo]
+            E = [e for e in ev if e.get('rup') is not None and (e['rup'] <= SX_RUP) == lo]; Ed = [e for e in E if e['ret'] is not None]
+            return dict(days=len(ix), d90=dstat(ix, 90), d365=dstat(ix, 365), n=len(E), f90=stat([D.index(e['date']) for e in E], 90),
+                        ex=dict(n=len(Ed), win=sum(e['ret'] > 0 for e in Ed), med=med([e['ret'] for e in Ed]), dip=med([e['dip'] for e in Ed])))
+        rupf = dict(th=SX_RUP, lo=grp(True), hi=grp(False), base90=base(90), base365=base(365),
+                    value=RU.get(D[n - 1]), now=None if R[n - 1] < 99.5 or RU.get(D[n - 1]) is None else 'lo' if RU[D[n - 1]] <= SX_RUP else 'hi')
     era = []
     for lo, hi in (('2012', '2017'), ('2018', '2022'), ('2023', last[:4])):
         x = [e for e in done if lo <= e['date'][:4] <= hi]
@@ -862,7 +881,7 @@ def stress_viz(bv, px, last, step=3, keep=1095):
                 rise_from=D[z0] if z0 else None, at100=at100, max30=round(max(R[k - 29: k + 1])),
                 ev=ev, f30=stat(bot, 30), f90=stat(bot, 90), base30=base(30), base90=base(90),
                 ex=dict(n=len(done), win=sum(e['ret'] > 0 for e in done), med=med([e['ret'] for e in done]), days=med([e['days'] for e in done]), dip=med([e['dip'] for e in done])),
-                era=era, top=dict(n=len(top), f90=stat(top, 90), last=D[top[-1]] if top else None), since=SX_FROM,
+                era=era, top=dict(n=len(top), f90=stat(top, 90), last=D[top[-1]] if top else None), since=SX_FROM, rupf=rupf,
                 prm=dict(n=SX_N, k=SX_K, rn=SX_RN, rk=SX_RK, th=SX_TH, up=SX_UP, dn=SX_DN, fn=SX_FN, fm=SX_FM, fup=SX_FUP, fdn=SX_FDN, fp=SX_FP, fw=SX_FW), rows=rows,
                 note='本站自製，只用每日收盤：動能品質＝Φ(0.7 × 近 21 天報酬 t 值)；賣壓累積＝兩條線各佔一半（0–100）：慢線在短線動能（跨度 10 天的指數加權）低於 0.45 時累加、高於時以同樣速度遞減；快線用「當天報酬 ÷ 近 30 天波動」的 5 天平均加減，大跌當天就反應；到 100 要兩條都到；2026-11-11 起改成這個平均版，歷史讀數重算；只作讀值、不是買賣訊號')
 
