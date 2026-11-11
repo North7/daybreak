@@ -14,7 +14,7 @@ import datetime as dt, json, os, statistics as st, subprocess
 from stage_viz import dn, thin
 from oc_extra import _fwd, _base, _stat
 
-UA = 'Daybreak/1.0 (https://north7.github.io/daybreak)'   # Wikimedia 要求說明用途的 User-Agent（不放個人資料）
+UA = 'Daybreak/1.0 (https://daybreak.aronlab.dev)'   # Wikimedia 要求說明用途的 User-Agent（不放個人資料）
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)))
 OPT_DAILY = os.path.join(ROOT, 'coc_cache', 'opt_daily.json')
 

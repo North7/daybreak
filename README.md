@@ -5,7 +5,7 @@
 
 **每天清晨的第一份比特幣簡報。** 今日要聞與解讀、市場數據、週期位置，以及「週期頂部分批出場」的框架與距離。
 
-網站：<https://north7.github.io/daybreak/>（中文／英文；日刊／夜刊；可加到手機主畫面）
+網站：<https://daybreak.aronlab.dev/>（中文／英文；日刊／夜刊；可加到手機主畫面）
 
 ![Daybreak 破曉](assets/og-en.png)
 
@@ -262,7 +262,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 - 今日推薦圖表：日報任務另寫 `data/picks.json`（2026-11-06 起一天 1 張網站面板，附問句標題與中英文解說：現在的讀值、過去同樣情況之後怎樣、代表什麼；只講市場資訊），`share.yml` 用 `pipeline/picks.py` 截網站深色原圖、加上標題放在 `data/picks/`，發文小幫手下方可分享、存圖、複製解說。最近 7 天推過的面板不重複（`data/picks/history.json`）。
 - 網站側欄與頁尾有追蹤 [@songpu717](https://x.com/songpu717) 的連結；貼文連結帶 `?utm_source=x`。
 - 訪客統計用 GoatCounter（不用 cookie、不收個資），站點代號 `daybreak`，只在正式網址計數。
-- 發文小幫手 [`ops/post/`](https://north7.github.io/daybreak/ops/post/)：一鍵複製中英文貼文、開好 X 發文視窗、存分享圖。
+- 發文小幫手 [`ops/post/`](https://daybreak.aronlab.dev/ops/post/)：一鍵複製中英文貼文、開好 X 發文視窗、存分享圖。
 - 網址貼到 X 時自動顯示的連結預覽卡預設英文（`assets/og-en.png`，由 `pipeline/og_card.py` 產生）；中文版是 `assets/og.png`。
 
 ## 隱私
@@ -463,7 +463,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 
 **The first Bitcoin brief of the morning.** The day's news with analysis, market and on-chain data, where we are in the cycle, and how far price is from each rule of a staged exit plan for a cycle top.
 
-Site: <https://north7.github.io/daybreak/> (Chinese / English; light / dark; installable on the phone home screen)
+Site: <https://daybreak.aronlab.dev/> (Chinese / English; light / dark; installable on the phone home screen)
 
 ### What's on the site
 
@@ -624,7 +624,7 @@ Pull requests run **Site checks** (`.github/workflows/check.yml`): syntax, Engli
 - Today's pick: the daily task also writes `data/picks.json` (since 2026-11-06 one site panel a day, with a question as the title and a Chinese and an English caption: the reading, what happened after similar readings, what it means; market information only); `share.yml` runs `pipeline/picks.py` to screenshot the site's dark chart, add the title and save it in `data/picks/`, shown at the bottom of the posting helper with share, save and copy-caption buttons. A panel is not picked again within 7 days (`data/picks/history.json`).
 - The sidebar and footer link to [@songpu717](https://x.com/songpu717); post links carry `?utm_source=x`.
 - Visitor stats use GoatCounter (no cookies, no personal data), site code `daybreak`, counted on the live URL only.
-- [`ops/post/`](https://north7.github.io/daybreak/ops/post/) is the posting helper: copy either draft with one tap, open X's composer pre-filled, save the share card.
+- [`ops/post/`](https://daybreak.aronlab.dev/ops/post/) is the posting helper: copy either draft with one tap, open X's composer pre-filled, save the share card.
 - The link preview X shows for the site URL defaults to English (`assets/og-en.png`, drawn by `pipeline/og_card.py`); the Chinese card is `assets/og.png`.
 
 ### Privacy

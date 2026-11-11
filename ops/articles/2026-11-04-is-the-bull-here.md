@@ -129,7 +129,7 @@
 
 你覺得這輪比較像 2015 年那樣慢慢磨上去，還是 2019 年那種假突破？很想聽聽你看到的。
 
-這篇只整理數據，不是買賣建議。每天的數字我都放在破曉 Daybreak：https://north7.github.io/daybreak/
+這篇只整理數據，不是買賣建議。每天的數字我都放在破曉 Daybreak：https://daybreak.aronlab.dev/
 
 #比特幣 #BTC #牛市
 
@@ -312,7 +312,7 @@ The doubt makes sense to me. Instead of arguing about whether the bull is here, 
 
 Does this cycle look more like 2015's slow grind or 2019's false breakout to you? Curious what you're seeing.
 
-This is a data roundup, not trading advice. I post the numbers daily at Daybreak: https://north7.github.io/daybreak/
+This is a data roundup, not trading advice. I post the numbers daily at Daybreak: https://daybreak.aronlab.dev/
 
 #Bitcoin #BTC #BullMarket
 

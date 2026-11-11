@@ -17,7 +17,7 @@
 |---|---|---|---|
 | 08:15 | Claude 每日任務（`docs/CLAUDE_DAILY.md` 步驟 9a） | `python3 pipeline/picks.py plan` 看候選面板 → 想讀者今天在問什麼 → 挑 1 張、寫問句標題與解說 → `python3 pipeline/picks.py check` | `data/picks.json` |
 | 推送後 | GitHub Actions `share.yml` | `python3 pipeline/picks.py render --fonts ~/fonts`：用 `ops/post/site_shot.py` 截網站深色原圖（clean 模式），上方加今日圖表標籤、期數和問句標題 | `data/picks/<id>.png`、`<id>-en.png`、`index.json`、`history.json` |
-| 你 | 手機開發文小幫手 | 分享（圖＋解說）、存圖、複製解說；「網站這張圖」連到網站面板 | <https://north7.github.io/daybreak/ops/post/> |
+| 你 | 手機開發文小幫手 | 分享（圖＋解說）、存圖、複製解說；「網站這張圖」連到網站面板 | <https://daybreak.aronlab.dev/ops/post/> |
 
 - **候選面板**：`pipeline/picks.py` 的 `PANELS`（網站面板 id `#page/key`、截圖用的圖、讀值在 `latest.json` 的位置）。今天有異動的排前面，每張附異動的白話含意（`means`）、過去同樣情況（`hist`）和面板的讀值（`data`，新指標多半帶回測）。
 - **不重複**：最近 7 天推過的面板（`data/picks/history.json`，render 自動記）和長貼文用過的面板（`data/longposts.json` 每則的 `charts` 欄，寫長貼文時順手填）都不能挑。

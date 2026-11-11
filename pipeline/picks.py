@@ -644,7 +644,7 @@ def candidates2(L, notes=None):
     out = []
     for k in order:
         p = PANELS[k]
-        out.append(dict(id=k, name=T(p['zh'], p['en']), link=f'https://north7.github.io/daybreak/#{k}',
+        out.append(dict(id=k, name=T(p['zh'], p['en']), link=f'https://daybreak.aronlab.dev/#{k}',
                         used=used.get(k), finding=fchart.get(k),
                         signals=[dict(title=s.get('title'), fig=s.get('fig'), means=s.get('means'), hist=s.get('hist'), score=s.get('score')) for s in by.get(k, [])[:3]],
                         data={path: _compact(g(L, path)) for path in p.get('data', []) if g(L, path) is not None}))
@@ -768,7 +768,7 @@ def render2(L, fonts_dir):
             print('改用舊版圖', PANELS[pid]['old'])
             card(L, notes if lang == 'zh' else notes_en, spec(L, PANELS[pid]['old']), q.get(lang) or name[lang], lang, Fn, os.path.join(od, fn)); keep.add(fn)
         else: print('這張畫不出來', pid, lang)
-    done = [dict(id=pid, chart=f'data/picks/{s}.png', chart_en=f'data/picks/{s}-en.png', name=name, link=f'https://north7.github.io/daybreak/#{pid}')] if f'{s}.png' in keep else []
+    done = [dict(id=pid, chart=f'data/picks/{s}.png', chart_en=f'data/picks/{s}-en.png', name=name, link=f'https://daybreak.aronlab.dev/#{pid}')] if f'{s}.png' in keep else []
     json.dump(dict(date=bar, captions=cur, picks=done), open(os.path.join(od, 'index.json'), 'w'), ensure_ascii=False, indent=1)
     if done:   # 記下這天推了哪張，之後 7 天不重複（只留 60 天）
         h = load('picks/history.json') or {'items': []}

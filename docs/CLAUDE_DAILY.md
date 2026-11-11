@@ -25,7 +25,7 @@
 6. 查研報：先用 WebFetch 打開 Glassnode 研報列表 https://research.glassnode.com （The Week On-chain 約每週二／三、Market Pulse 每週日、Macro Special 不定期），找出最近 7 天的每一期並打開原文讀重點；再查 The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。每一期的 `date` 寫原文發布日、`url` 寫原文網址。確認列表上真的沒有新一期，才沿用最近一期並在 `research.summary` 寫明「無新一期」。
 7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。寫完後另寫英文版 `data/notes.en.json`（見「英文版」）。
 8. 驗證：執行 `python3 pipeline/notes_lint.py`，檢查格式、各項數量、頭條與摘要長度、制式提醒句次數、事件表必備項目、英文版沒有中文字、「說重點」擋掉的固定說法與中文常用名、「去 AI 味」擋掉的泛指來源／填充詞／固定收尾句（2026-11-09）；有任何一項 ✗ 沒過就改到通過才提交。△ 是提醒（焦點後置、對比句、口頭禪、「所以」開頭、短句收尾、同一句收尾），不影響結束碼，看過再決定改不改。再用 python 掃描兩個檔，確認沒有違反隱私鐵則的內容。
-9. X 貼文草稿（中英各一則）：寫 `data/x_post.json` = `{"date": bar_date, "edition", "zh", "en", "image_zh": "https://north7.github.io/daybreak/data/share.png", "image_en": "https://north7.github.io/daybreak/data/share-en.png", "link": "https://north7.github.io/daybreak/?utm_source=x"}`。分享圖由 GitHub Actions 在你推送後自動產生（`pipeline/share_card.py`，用 headline 與資料），你不用畫。
+9. X 貼文草稿（中英各一則）：寫 `data/x_post.json` = `{"date": bar_date, "edition", "zh", "en", "image_zh": "https://daybreak.aronlab.dev/data/share.png", "image_en": "https://daybreak.aronlab.dev/data/share-en.png", "link": "https://daybreak.aronlab.dev/?utm_source=x"}`。分享圖由 GitHub Actions 在你推送後自動產生（`pipeline/share_card.py`，用 headline 與資料），你不用畫。
    - 格式（2026-11-05 起：**數字開頭**，期數移到最後；之前用【破曉 No.xxx】開頭的公告式，10 月每則只有 22–44 瀏覽。前後成效記在運營的成效紀錄，2026-11-08 起在私人倉庫 `daybreak-ops-private`）。中文：
      ```
      <開頭：今天最意外的一個數字，一句白話：誰、做了什麼、多少、跟什麼時候比>
@@ -34,7 +34,7 @@
      ・市場階段：牛市（第 4 天）
      ・ETF 7 個交易日（至 10/09）：−5.58 億美元
 
-     破曉 No.007｜10/12 完整解讀 👉 https://north7.github.io/daybreak/?utm_source=x
+     破曉 No.007｜10/12 完整解讀 👉 https://daybreak.aronlab.dev/?utm_source=x
      #比特幣 #BTC #<主題>
      ```
      英文同結構，最後一行用 `Daybreak No.007 | Oct 12 👉 <網址>`（英文比較長，用 11/03 的資料試寫約 270/280）。範例（11/03 的資料）：「76–78K 這一層，11/03 一天多了 13.5 萬顆短線籌碼。／接手的是付 10.7% 資金費的槓桿，不是現貨。」
@@ -61,7 +61,7 @@
    - **只講市場資訊**：不寫出場框架、觸發條數、價格階梯、MVRV 0.75 線、200 日均線避險、「今天不動」這類動作結論，也不喊單、不寫價格目標或「該買／該賣」；回調壓力清單、背離這類讀值也不能寫成買點。不加網址（圖本身帶網站網址）；結尾帶 2–3 個 hashtag，規則同上面的 X 貼文草稿。英文版不能有中文字。
    - 執行 `python3 pipeline/picks.py check`：檢查日期、只有 1 張、面板存在且不在 `recent`／`skip`、標題與解說都有、每則 ≤ 280（X 算法）、沒有框架或買賣字眼、沒有 AI 腔或不用的詞（同 `ops/replies/check.py`）、每個數字都查得到出處。有任何一項沒過就改到通過；真的過不了就這天不寫 picks.json（Actions 會自動挑一張畫，只是沒有解說），不要硬改數字。
 10. 提交訊息 `notes: <bar_date>`（notes.json、notes.en.json、x_post.json、picks.json 一起），推送到 main。
-11. 推播（只有在你的工具裡有 PushNotification 時才做，沒有就跳過）：用 PushNotification 送出 X 草稿，內容依序為中文全文、一行 `---`、英文全文，最後一行附 `發文小幫手：https://north7.github.io/daybreak/ops/post/`（可一鍵複製、開 X 發文視窗、存圖）；不要加其他說明。
+11. 推播（只有在你的工具裡有 PushNotification 時才做，沒有就跳過）：用 PushNotification 送出 X 草稿，內容依序為中文全文、一行 `---`、英文全文，最後一行附 `發文小幫手：https://daybreak.aronlab.dev/ops/post/`（可一鍵複製、開 X 發文視窗、存圖）；不要加其他說明。
 
 ### notes.json 格式
 ```json

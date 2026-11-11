@@ -21,16 +21,16 @@ document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant'
 <meta property="og:locale:alternate" content="zh_TW">
 <meta property="og:title" content="Daybreak 破曉 · The first Bitcoin brief of the morning">
 <meta property="og:description" content="Daily at 08:30 Taipei: today's news and analysis, market data, cycle stage, ETF flows and a staged exit framework. In English and 中文.">
-<meta property="og:image" content="https://north7.github.io/daybreak/assets/og-en.png">
+<meta property="og:image" content="https://daybreak.aronlab.dev/assets/og-en.png">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Daybreak 破曉 — the first Bitcoin brief of the morning">
-<meta property="og:url" content="https://north7.github.io/daybreak/">
+<meta property="og:url" content="https://daybreak.aronlab.dev/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@songpu717">
 <meta name="twitter:title" content="Daybreak 破曉 · The first Bitcoin brief of the morning">
 <meta name="twitter:description" content="Daily at 08:30 Taipei: news, market data, cycle stage, ETF flows and a staged exit framework. English / 中文.">
-<meta name="twitter:image" content="https://north7.github.io/daybreak/assets/og-en.png">
+<meta name="twitter:image" content="https://daybreak.aronlab.dev/assets/og-en.png">
 <meta name="theme-color" content="#F2F0EA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0C0C0D" media="(prefers-color-scheme: dark)">
 <link rel="manifest" href="manifest.webmanifest">
@@ -3037,7 +3037,7 @@ function initOC() {
       ol.innerHTML = head + big + `${howH}<div class="ol-lg">${hlg}</div><p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c${c.dist.heat ? ' lqh' : ''}" id="oc-c${key}"></div>`; tidy(ol, sayH, sigH); L = c.dist.heat ? liqHeat($('#oc-c' + key), c, key) : distChart($('#oc-c' + key), c, key); const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); }
     else { ol.dataset.kind = 't'; ol.innerHTML = `<div class="ol-a">${head}${big}${howH}</div><div class="ol-b"><div class="ol-lg">${LG.map(e => e.html).join('')}</div><div class="ol-c" id="oc-c${key}"></div></div>`; tidy(ol, sayH, sigH); L = leadChart($('#oc-c' + key), c, key, t0); }
     { const art = ol.closest('.fc'); if (art) art.style.setProperty('--tc', tcv || 'var(--k2)'); }
-    if (!c.na && !c.go) ol.insertAdjacentHTML('beforeend', `<p class="ol-brand"><b>${T('破曉 Daybreak', 'Daybreak')}</b><span>north7.github.io/daybreak</span><span>${src ? esc(T('資料：', 'Data: ') + src) + ' · ' : ''}${T('截至 ', 'As of ')}${D.date.replace(/-/g, '/')}</span></p>`);   /* 分享模式才顯示（⑮） */
+    if (!c.na && !c.go) ol.insertAdjacentHTML('beforeend', `<p class="ol-brand"><b>${T('破曉 Daybreak', 'Daybreak')}</b><span>daybreak.aronlab.dev</span><span>${src ? esc(T('資料：', 'Data: ') + src) + ' · ' : ''}${T('截至 ', 'As of ')}${D.date.replace(/-/g, '/')}</span></p>`);   /* 分享模式才顯示（⑮） */
     ol.dataset.ck = c.k;
     return { c, s, L, t0, key, lg: LG.filter(e => e.get).map(e => ({ el: document.getElementById(e.id), get: e.get })), items: [] };
   }
