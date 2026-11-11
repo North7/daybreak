@@ -1246,7 +1246,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .oc-fx .os-h .sub { font-size: var(--t-body); }
 .oc-fx .fx-x { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; padding: 0; margin-left: 8px; border-radius: 50%; background: none; border-color: color-mix(in srgb, var(--ink) 24%, transparent); }
 .oc-fx .fx-x:hover { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
-.oc-fx #oc-fxm { margin-left: auto; }
+.oc-fx #oc-fxl { margin-left: auto; }
 .oc-fx .og { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 12px; }
 .oc-fx .ol { gap: 14px; overflow-y: auto; scrollbar-width: none; }
 .oc-fx .ol[data-kind="t"] { height: auto; max-height: 100%; }
@@ -1584,6 +1584,9 @@ html.share .oc-fx .os-h, html.share #oc-orF { display: none !important; }
 html.share .oc-fx::before { opacity: 1; background: var(--bg); }
 html.share .oc-fx .os { left: 50%; top: 50%; width: min(100vw, calc(100vh * 16 / 9)); height: min(100vh, calc(100vw * 9 / 16)); transform: translate(-50%, -50%); }
 html.share[data-ratio="45"] .oc-fx .os { width: min(100vw, calc(100vh * 4 / 5)); height: min(100vh, calc(100vw * 5 / 4)); }
+.oc-toast { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); z-index: 300; transform: translate(-50%, 10px); max-width: calc(100vw - 32px); padding: 10px 18px; border-radius: 999px; background: #EDEDE8; color: #0E0E10; font: 600 13.5px/1.35 "Inter Tight", "Noto Sans TC", sans-serif; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; overflow-wrap: anywhere; }
+.oc-toast.on { opacity: 1; transform: translate(-50%, 0); }
+.oc-fx .fx-x.busy { opacity: .45; pointer-events: none; }
 html.share .oc-fx .ol { height: 100%; max-height: 100%; overflow: hidden; }   /* 固定比例的框裡：圖吃掉剩下的高度，頁尾一定在框內 */
 html.share .oc-fx .ol .ol-c, html.share .oc-fx .ol[data-kind="t"] .ol-c { flex: 1 1 0; height: auto; min-height: 150px; }
 html.share .oc .shim, html.share .oc .pulse, html.share .oc-fx .shim, html.share .oc-fx .pulse { display: none !important; }
@@ -1612,7 +1615,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-ft"><span id="oc-ft1"></span><span id="oc-ft2"></span></div>
     <div class="oc-map" id="oc-map" hidden><div class="mp-in"><div class="mp-h"><h3 id="oc-mapt"></h3><label class="mp-q"><span id="oc-mapi"></span><input id="oc-mapq" type="search" autocomplete="off" spellcheck="false"></label><span class="mp-n" id="oc-mapn"></span><button type="button" class="fx-x" id="oc-mapx" data-mapx="1"></button></div><div class="mp-b" id="oc-mapg"></div></div></div>
     <nav class="oc-tab" id="oc-tab" aria-label="今天和六個問題"></nav>
-    <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
+    <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
 <script src="data/next.js?v=__V__"></script>
@@ -2528,7 +2531,7 @@ function initOC() {
   const tw = t => { let w = 0; for (const ch of String(t)) w += ch.charCodeAt(0) > 0x2E7F ? 10.9 : 6.45; return w * FSC; };
   const PL = (x, y, t, cc, an, solid, lim) => { const w = tw(t) + 12 * FSC; let x0 = an === 'middle' ? x - w / 2 : an === 'end' ? x - w : x; if (lim) x0 = Math.max(lim[0], Math.min(lim[1] - w, x0)); return `<g class="pl"><rect x="${F1(x0)}" y="${F1(y - 11.5 * FSC)}" width="${F1(w)}" height="${F1(16 * FSC)}" rx="${F1(8 * FSC)}" fill="${solid ? cc : 'var(--sheet)'}"${solid ? '' : ` stroke="${cc}" stroke-opacity=".55"`}/><text x="${F1(x0 + 6 * FSC)}" y="${F1(y)}" style="fill:${solid ? 'var(--sheet)' : cc};font-weight:${solid ? 600 : 500}">${esc(t)}</text></g>`; };
   let MINI = 0;
-  const ICP = { grid: 'M2.5 2.5h4v4h-4zM9.5 2.5h4v4h-4zM2.5 9.5h4v4h-4zM9.5 9.5h4v4h-4z', find: 'M7 12.3A5.3 5.3 0 1 0 7 1.7a5.3 5.3 0 0 0 0 10.6zM11 11l3.3 3.3', expand: 'M9.5 2.5h4v4M13.5 2.5L9 7M6.5 13.5h-4v-4M2.5 13.5L7 9', close: 'M3.5 3.5l9 9M12.5 3.5l-9 9', go: 'M3 8h10M9 4l4 4-4 4', back: 'M13 8H3M7 4L3 8l4 4', split: 'M2.5 2.5h11v4.5h-11zM2.5 9.5h11v4h-11z', over: 'M2.5 2.5h11v11h-11zM4 10.5l2.8-3 2.4 1.8L12 5.5M4 6.5l2.8 1.6 2.4-2.6L12 8.5', info: 'M8 14.2A6.2 6.2 0 1 0 8 1.8a6.2 6.2 0 0 0 0 12.4zM8 7.3v3.9M8 4.7v.3', chev: 'M4 6l4 4 4-4', chart: 'M2.5 2.5v11h11M4.8 10.5l2.7-3.4 2.3 1.9 3-4.2', text: 'M3 4.5h10M3 8h10M3 11.5h6' };
+  const ICP = { grid: 'M2.5 2.5h4v4h-4zM9.5 2.5h4v4h-4zM2.5 9.5h4v4h-4zM9.5 9.5h4v4h-4z', find: 'M7 12.3A5.3 5.3 0 1 0 7 1.7a5.3 5.3 0 0 0 0 10.6zM11 11l3.3 3.3', expand: 'M9.5 2.5h4v4M13.5 2.5L9 7M6.5 13.5h-4v-4M2.5 13.5L7 9', close: 'M3.5 3.5l9 9M12.5 3.5l-9 9', go: 'M3 8h10M9 4l4 4-4 4', back: 'M13 8H3M7 4L3 8l4 4', split: 'M2.5 2.5h11v4.5h-11zM2.5 9.5h11v4h-11z', over: 'M2.5 2.5h11v11h-11zM4 10.5l2.8-3 2.4 1.8L12 5.5M4 6.5l2.8 1.6 2.4-2.6L12 8.5', info: 'M8 14.2A6.2 6.2 0 1 0 8 1.8a6.2 6.2 0 0 0 0 12.4zM8 7.3v3.9M8 4.7v.3', chev: 'M4 6l4 4 4-4', chart: 'M2.5 2.5v11h11M4.8 10.5l2.7-3.4 2.3 1.9 3-4.2', link: 'M6.6 9.4l2.8-2.8M7.2 4.6l1.1-1.1a2.6 2.6 0 0 1 3.7 3.7l-1.1 1.1M8.8 11.4l-1.1 1.1a2.6 2.6 0 0 1-3.7-3.7l1.1-1.1', down: 'M8 2.5v8M4.6 7.2L8 10.6l3.4-3.4M3 13.5h10', text: 'M3 4.5h10M3 8h10M3 11.5h6' };
   const IC = n => `<svg class="ic" viewBox="0 0 16 16" aria-hidden="true"><path d="${ICP[n]}"/></svg>`, ib = (zh, en) => { const t = T(zh, en); return ` aria-label="${t}" data-tip="${t}"`; };
   const SPR = (k, c) => { const out = []; let x = 0, v = 0; const dt = 1 / 60; for (let i = 0; i < 200; i++) { const a = -k * (x - 1) - c * v; v += a * dt; x += v * dt; out.push(x); if (i > 10 && Math.abs(x - 1) < .0015 && Math.abs(v) < .02) break; } out.push(1); return out; };
   const two = q => q.t === 'sign' || q.t === 'split' || (q.t === 'bar' && !q.col && q.nb == null && q.cc == null);
@@ -3173,7 +3176,7 @@ function initOC() {
     ord = order(); headBody(); renderBar(); renderOv(); poster(); hx(); keep(renderSecs); place(); renderCmp(); if (fx) openFx(fx.k + '_' + fx.i);
   }
   function openFx(key) { const p = String(key).split('_'); fx = { k: +p[0], i: +p[1] }; const x = G[fx.k - 1]; $('#oc-fxk').textContent = p2(fx.k) + ' / ' + p2(G.length); $('#oc-fxt').textContent = T(x.zh, x.en); $('#oc-fxq').textContent = T(x.sz, x.se); $('#oc-fxc').innerHTML = ctl(); fxBtns(); $('#oc-fx').hidden = false; renderLead('F'); fxAnim(true, key); if (agFxHook) agFxHook(key); }
-  const fxBtns = () => { const mx = $('#oc-fx').classList.contains('max'), a = $('#oc-fxm'), b = $('#oc-fxx'), ta = mx ? T('顯示數字和結論', 'Show figures and read') : T('只看圖', 'Chart only'), tb = T('收回', 'Close'); a.innerHTML = IC(mx ? 'text' : 'chart'); a.setAttribute('aria-label', ta); a.dataset.tip = ta; b.innerHTML = IC('close'); b.setAttribute('aria-label', tb); b.dataset.tip = tb; };
+  const fxBtns = () => { [['#oc-fxl', 'link', T('複製這張圖的連結', 'Copy a link to this chart')], ['#oc-fxd', 'down', T('下載這張圖（16:9 圖片）', 'Download this chart (16:9 image)')]].forEach(q => { const e2 = $(q[0]); if (!e2) return; e2.innerHTML = IC(q[1]); e2.setAttribute('aria-label', q[2]); e2.dataset.tip = q[2]; }); const mx = $('#oc-fx').classList.contains('max'), a = $('#oc-fxm'), b = $('#oc-fxx'), ta = mx ? T('顯示數字和結論', 'Show figures and read') : T('只看圖', 'Chart only'), tb = T('收回', 'Close'); a.innerHTML = IC(mx ? 'text' : 'chart'); a.setAttribute('aria-label', ta); a.dataset.tip = ta; b.innerHTML = IC('close'); b.setAttribute('aria-label', tb); b.dataset.tip = tb; };
   function fxAnim(open, key, done, from) {
     const box = $('#oc-fx'), os = box.querySelector('.os'), a = key ? document.getElementById('oc-ol' + key) : null, f = a ? a.closest('.fc') : null, r = f ? f.getBoundingClientRect() : null, VW = window.innerWidth, VH = window.innerHeight, tk = box._tk = (box._tk || 0) + 1;
     let gh = box.querySelector('.fx-gh'); if (!gh) { gh = document.createElement('div'); gh.className = 'fx-gh'; box.insertBefore(gh, os); }
@@ -3310,6 +3313,8 @@ function initOC() {
     if ((b = t.closest('.sy-d'))) { b.closest('.ol-say').classList.toggle('open'); return; }
     if (fx && t.closest('#oc-fx') && !$('#oc-fx').dataset.drag && !t.closest('button, a, summary, details, input, .ol-c, .or')) { closeFx(); return; }
     if (!fx && (b = t.closest('.fc')) && !t.closest('button, a, summary, details, input')) { const q1 = b.querySelector('[data-chid]'), f1 = b.querySelector('[data-fx]'); if (q1) { q1.click(); return; } if (f1) { openFx(f1.dataset.fx); return; } }
+    if (t.closest('[data-fxl]') && fx) { copyLink(G[fx.k - 1].charts[fx.i].k); return; }
+    if (t.closest('[data-fxd]') && fx) { const c0 = G[fx.k - 1].charts[fx.i]; savePng(c0.k, T(c0.zh, c0.en)); return; }
     if (t.closest('[data-fxm]')) { const f = $('#oc-fx'); f.classList.toggle('max'); fxBtns(); renderLead('F'); return; }
     if (t.closest('[data-x]') || t.id === 'oc-fx') { closeFx(); return; }
     if ((b = t.closest('[data-go]'))) { goSec(+b.dataset.go); return; }
@@ -3338,6 +3343,43 @@ function initOC() {
   if ('IntersectionObserver' in window) new IntersectionObserver(en => { vis = en[0].isIntersecting; wake(); }).observe($('#oc-hd'));
   /* window.daybreakXY(圖代號, 日期 'YYYY-MM-DD' 或日數, 數值, 'p'＝上格價格) → 視窗座標（CSS px）。放大檢視開著就用放大的那張。
      也回傳這張圖的時間範圍、縱軸範圍和刻度，給 ops/post/annotate.py 換算（⑮） */
+  /* 分享按鈕（⑯）：放大檢視右上「複製連結」「下載圖片」。連結就是分享模式的網址（?share&k=圖代號）；
+     圖片是在看不見的框裡（1600×900）開分享模式，用 html-to-image 轉成 2 倍解析度的 PNG。
+     只嵌入這張圖用到的西文字型；中文字型有上百個檔，用使用者系統的中文字。手機能用系統分享就跳分享（可以存相簿、貼到 X），不能就下載 */
+  const shareURL = k => location.origin + location.pathname + '?share&k=' + encodeURIComponent(k);
+  let toastT = 0; const toast = msg => { let e = document.getElementById('oc-toast'); if (!e) { e = document.createElement('div'); e.id = 'oc-toast'; e.className = 'oc-toast'; e.setAttribute('role', 'status'); document.body.appendChild(e); } e.textContent = msg; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 2400); };
+  async function copyLink(k) {
+    const u = shareURL(k), done = () => toast(T('已複製這張圖的連結', 'Link to this chart copied'));
+    try { await navigator.clipboard.writeText(u); done(); return; } catch (e0) {}
+    const i = document.createElement('textarea'); i.value = u; i.setAttribute('readonly', ''); i.style.cssText = 'position:fixed;left:-9999px;top:0'; document.body.appendChild(i); i.select(); let ok = false; try { ok = document.execCommand('copy'); } catch (e1) {} i.remove(); if (ok) done(); else toast(u);
+  }
+  const H2I = 'https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.js';
+  const addJs = (doc, src) => new Promise((ok, no) => { const sc = doc.createElement('script'); sc.src = src; sc.onload = ok; sc.onerror = no; doc.head.appendChild(sc); });
+  async function fontCSS(w, root) {
+    const used = new Set(); root.querySelectorAll('*').forEach(e2 => { const f = w.getComputedStyle(e2).fontFamily.split(',')[0].replace(/["']/g, '').trim(); if (f) used.add(f); });
+    const ln = w.document.querySelector('link[href*="fonts.googleapis.com/css2"]'); if (!ln) return '';
+    const css = await (await fetch(ln.href)).text(), blocks = css.split('@font-face').slice(1).map(b => '@font-face' + b.slice(0, b.indexOf('}') + 1));
+    const keep = blocks.filter(b => { const fam = (/font-family:\s*'([^']+)'/.exec(b) || [])[1]; return fam && used.has(fam) && fam !== 'Noto Sans TC' && /U\+0000-00FF/.test(b); });
+    const out = await Promise.all(keep.map(async b => { const u = (/url\(([^)]+)\)/.exec(b) || [])[1]; if (!u) return ''; const bl = await (await fetch(u)).blob(), du = await new Promise(r => { const fr = new FileReader(); fr.onload = () => r(fr.result); fr.readAsDataURL(bl); }); return b.replace(u, du); }));
+    return out.join('\n');
+  }
+  let dlBusy = false;
+  async function savePng(k, name) {
+    if (dlBusy) return; dlBusy = true; const btn = $('#oc-fxd'); if (btn) btn.classList.add('busy'); toast(T('正在產生圖片…', 'Making the image…'));
+    const f = document.createElement('iframe'); f.setAttribute('aria-hidden', 'true'); f.tabIndex = -1; f.style.cssText = 'position:fixed;left:-20000px;top:0;width:1600px;height:900px;border:0'; f.src = shareURL(k); document.body.appendChild(f);
+    try {
+      await new Promise((ok, no) => { const t0 = Date.now(), tick = () => { try { const d = f.contentDocument, x = d && d.getElementById('oc-fx'); if (x && !x.hidden && d.querySelector('#oc-olF .ol-c svg')) return ok(); } catch (e0) {} if (Date.now() - t0 > 25000) return no(new Error('timeout')); setTimeout(tick, 200); }; tick(); });
+      const w = f.contentWindow, d = f.contentDocument; try { await d.fonts.ready; } catch (e0) {} await new Promise(r => setTimeout(r, 400));
+      if (!w.htmlToImage) await addJs(d, H2I);
+      const node = d.querySelector('#oc-fx .os'), fe = await fontCSS(w, node).catch(() => ''), opt = { pixelRatio: 2, backgroundColor: w.getComputedStyle(node).backgroundColor || '#060607', fontEmbedCSS: fe, width: node.offsetWidth, height: node.offsetHeight };
+      await w.htmlToImage.toPng(node, opt);   // 第一次轉常常少東西（字型、圖還沒進快取），轉兩次
+      const url = await w.htmlToImage.toPng(node, opt), fn = 'daybreak-' + k + '-' + D.date + '.png', blob = await (await fetch(url)).blob();
+      const file = typeof File === 'function' ? new File([blob], fn, { type: 'image/png' }) : null; let shared = false;
+      if (file && navigator.canShare && matchMedia('(pointer: coarse)').matches && navigator.canShare({ files: [file] })) { try { await navigator.share({ files: [file], title: name }); shared = true; } catch (e0) { shared = e0 && e0.name === 'AbortError'; } }
+      if (!shared) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = fn; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000); toast(T('已下載圖片', 'Image downloaded')); }
+    } catch (e0) { toast(T('圖片沒做成，請再試一次', 'Could not make the image — please try again')); }
+    finally { f.remove(); dlBusy = false; if (btn) btn.classList.remove('busy'); }
+  }
   window.daybreakXY = (k, d, v, pane) => {
     const R = REG.F && REG.F.c && REG.F.c.k === k && !$('#oc-fx').hidden ? REG.F : [].concat.apply([], Object.keys(SEC).map(j => SEC[j] || [])).find(r => r && r.c && r.c.k === k); if (!R || !R.L) return null;
     const box = document.getElementById('oc-c' + R.key), sv = box && box.querySelector('svg'); if (!sv) return null; const vb = sv.viewBox.baseVal, bb = sv.getBoundingClientRect(), sx = bb.width / vb.width, sy = bb.height / vb.height, L = R.L, rect = { left: bb.left, top: bb.top, width: bb.width, height: bb.height };
