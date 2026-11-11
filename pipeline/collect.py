@@ -417,6 +417,13 @@ for sid in ('NASDAQCOM', 'DTWEXBGS', 'DGS10'):
         R.setdefault('fred', {})[sid] = out
     except Exception as e: errors.append(f'fred {sid} {e}')
 
+# 2026-11-12 使用者要求（Glassnode 週報的做法）：2 年期美債殖利率減聯準會目標利率上限（rates2y.py；財政部與紐約聯準銀行的官方資料，不用 FRED）
+try:
+    import rates2y as _r2y
+    _y2, _ff = _r2y.fetch(get, LAST); R['rates2y'] = _r2y.build(_y2, _ff, LAST)
+    if R['rates2y'] is None: errors.append('rates2y 資料不足或太舊')
+except Exception as e: errors.append(f'rates2y {e}')
+
 # ---------- Bitstamp 四年百分位（Mayer / Pi Cycle） ----------
 try:
     bsd = {}

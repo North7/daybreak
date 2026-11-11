@@ -238,6 +238,45 @@ def build(L, N, E, dn, X):
           dz='全部美元穩定幣流通量的 30 天增減。穩定幣是加密市場裡等著進場的美元：增加代表場外的錢變多，減少代表在萎縮。圓圈是每一段連續增加或減少期間的最大值。',
           de='The 30-day change in all US-dollar stablecoins in circulation. Stablecoins are the dollars waiting on the sidelines of crypto: a rise means more of them, a fall means they are shrinking. Circles mark the extreme of each run of growth or contraction.')
 
+    def c_etf20():   # 2026-11-12 新圖（舊版沒有）：近 20 個交易日合計淨流量。顏色照全站規則：流入綠、流出紅；流出段落線和它下面的底色用紅
+        from say_data import own
+        x = f.get('etf20')
+        if not has(x, 'rows', 60): return NA('etf20', '現貨 ETF 近 20 個交易日合計', 'Spot ETF 20-session net flow', 'ETF 近 20 個交易日合計（flows.etf20）', 'the 20-session ETF flow sum (flows.etf20)')
+        pxm = {r[0]: r[2] for r in (f.get('cb_premium') or {}).get('rows') or [] if len(r) > 2 and r[2]}
+        rows = [[r[0], r[1], pxm.get(r[0])] for r in x['rows']]; th = x['th']; v = x['sum']; d1 = x['date']
+        bn = ben = lambda m: ('−' if m < 0 else '+' if m > 0 else '') + '$' + format(abs(int(round(m))), ',') + 'M'   # 和卡片上的大數字同一個寫法（百萬美元）
+        ymz = lambda s: '%s/%s' % (s[:4], s[5:7])
+        past = [q for q in x['stretches'] if not q.get('open') and q['n'] >= 3]; cur = next((q for q in x['stretches'] if q.get('open')), None)
+        aft = []   # 每一段結束後 30 天的漲跌（結束＝合計回到門檻以上的前一個交易日）
+        ds = sorted(pxm)
+        for q in past:
+            b = dn(q['b']); p0 = pxm.get(b); p1 = next((pxm[d] for d in ds if d >= b + 30), None)
+            aft.append(None if not p0 or not p1 or ds[-1] < b + 30 else (p1 / p0 - 1) * 100)
+        ok = [a for a in aft if a is not None]
+        lst_z = '、'.join('%s 最深 %s' % (ymz(q['min_d']), bn(q['min'])) for q in past); lst_e = ', '.join('%s to %s' % (ymz(q['min_d']), ben(q['min'])) for q in past)
+        now_z = '近 20 個交易日合計淨%s %s（到 %s）。' % ('流入' if v >= 0 else '流出', bn(abs(v))[1:], md(d1))
+        now_e = 'Net %s of %s over the last 20 sessions (through %s). ' % ('inflow' if v >= 0 else 'outflow', ben(abs(v))[1:], md(d1))
+        if cur: now_z += '%s 起低於 %s，算進入一段流出，到今天第 %d 個交易日。' % (md(cur['a']), bn(th), cur['n']); now_e += 'It fell below %s on %s, which starts an outflow stretch; this is session %d.' % (ben(th), md(cur['a']), cur['n'])
+        else: now_z += '高於流出段落線 %s，不在流出段落裡。' % bn(th); now_e += 'Above the outflow-stretch line of %s; not in a stretch.' % ben(th)
+        items = [('現在', 'Now', bn(v), ben(v), 'down' if cur else 'up' if v > 0 else 'neu', now_z, now_e)]
+        if past:
+            pz = '上市以來合計低於 %s 的流出有 %d 段（只有一兩天的不算）：%s。' % (bn(th), len(past), lst_z) + ('這一段目前 %s，比它們都淺。' % bn(cur['min']) if cur and cur['min'] > max(q['min'] for q in past) else '')
+            pe = 'Since launch the sum has run below %s in %d stretches (ignoring one- or two-day dips): %s. ' % (ben(th), len(past), lst_e) + ('This one is at %s so far, shallower than all of them. ' % ben(cur['min']) if cur and cur['min'] > max(q['min'] for q in past) else '')
+            if ok:
+                pz += '每一段結束後 30 天的漲跌：%s，好壞都有；只有 %d 段，不能當訊號。' % ('、'.join(pc(a) for a in ok), len(ok))
+                pe += 'The 30 days after each ended: %s, a mixed record; only %d cases, so not a signal.' % (', '.join(pc(a) for a in ok), len(ok))
+            items.append(('和過去的流出比', 'Against past outflows', '%d 段' % len(past), '%d stretches' % len(past), 'neu', pz, pe))
+        thz = '流出段落線 ' + bn(th); the = 'Outflow-stretch line ' + ben(th)
+        return dict(k='etf20', zh='現貨 ETF 近 20 個交易日合計', en='Spot ETF 20-session net flow', hz='近 20 個交易日合計淨流量', he='Net flow over the last 20 sessions', f='usdM', rows=rows, p=2, hero=0, rng=1095,
+          ser=[ser(1, zh='近 20 個交易日合計', en='20-session net flow', t='sign', base=0, w=1.5)],
+          refs=[dict(v=0, col='k2', solid=1), dict(v=th, col='dn', zh=thz, en=the)],
+          zones=[dict(lo=None, hi=th, col='dn', zh='在流出段落裡', en='In an outflow stretch', nz='流出段落線', ne='the outflow-stretch line')],
+          marks=[dict(d=dn(q['min_d']), v=q['min'], col='dn', up=0, zh='%s %s' % (ymz(q['min_d']), bn(q['min'])), en='%s %s' % (ymz(q['min_d']), ben(q['min']))) for q in past],
+          leg=[['up', '合計淨流入', 'Net inflow', 'box'], ['dn', '合計淨流出', 'Net outflow', 'box'], ['dn', '圓圈：每一段流出最深的那一天', 'Circles: the deepest day of each outflow stretch', 'ring']],
+          src='CoinMarketCap · ' + md(d1), srce='CoinMarketCap · ' + md(d1), say=own(items, now_z, now_e),
+          dz='美國現貨 ETF 每個交易日的淨流量，往回加 20 個交易日（大約一個月）。單日的流量很跳，加起來才看得出這一段是在進還是在出。合計低於 %s 算一段流出；圓圈是過去每一段最深的那一天。資料從 2024 年 1 月 ETF 上市起，來源是 CoinMarketCap 的逐檔數字（只算美國現貨 ETF）。流出段落只有幾段，只作讀值。' % bn(th),
+          de='Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below %s counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap\'s per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only.' % ben(th))
+
     # ════ 4. 大戶與長期持有者 ════
     wh = o.get('whales') or {}
     COH = {'lt1': ('散戶 <1 BTC', 'Shrimp <1 BTC'), '1_10': ('1–10 BTC', 'Crabs 1–10 BTC'), '10_100': ('10–100 BTC', 'Fish 10–100 BTC'), '100_1k': ('鯊魚 100–1K', 'Sharks 100–1K'), '1k_10k': ('鯨魚 1K–10K', 'Whales 1K–10K'), 'ge10k': ('≥10K', '≥10K')}
@@ -318,6 +357,42 @@ def build(L, N, E, dn, X):
           dz='第一頁是近兩個月 BTC、S&P 500、那斯達克和黃金各自的漲跌。第二頁是近 90 個美股交易日裡，BTC 當天漲幅大於 S&P 500 的比例，高於 50% 代表 BTC 贏的天數比較多。黃金用一枚代表一盎司黃金的代幣代替。',
           de='The first view shows how BTC, the S&P 500, the Nasdaq and gold have each moved over the last two months. The second is the share of the last 90 US sessions in which BTC rose more than the S&P 500; above 50% means BTC won on more days. Gold is proxied by a token backed by one ounce of gold.')
 
+    def c_r2y():   # 2026-11-12 新圖（舊版沒有）：2 年期殖利率減聯準會目標利率。差距為正＝債市押加息（對風險資產是逆風）用紅，為負＝押降息用綠
+        from say_data import own
+        x = f.get('rates2y')
+        if not has(x, 'rows', 250): return NA('r2y', '2 年期殖利率減聯準會利率', '2-year yield minus the Fed rate', '2 年期殖利率與聯準會目標利率（flows.rates2y）', 'the 2-year yield and Fed target rate (flows.rates2y)')
+        pxm = {r[0]: r[2] for r in (f.get('cb_premium') or {}).get('rows') or [] if len(r) > 2 and r[2]}
+        wk = sorted((r[0], r[2]) for r in ((cy.get('dawn') or {}).get('rows') or []) if len(r) > 2 and r[2]); wi = 0   # Coinbase 日線只到 2022/10，更早用晨昏指數那份每週價格補
+        last_px = None; rows = []
+        for r in x['rows']:   # 殖利率只有交易日；價格用當天的 Coinbase 收盤
+            while wi < len(wk) and wk[wi][0] <= r[0]:
+                if r[0] not in pxm and (not pxm or r[0] < min(pxm)): last_px = wk[wi][1]
+                wi += 1
+            last_px = pxm.get(r[0], last_px); rows.append([r[0], r[1], r[2], r[3], last_px])
+        g = x['gap']; mx, mn = x['max'], x['min']; pp = lambda v: mi('%+.2f' % v)
+        bpz = lambda v: '%d 個基點' % round(abs(v) * 100); bpe = lambda v: '%d basis points' % round(abs(v) * 100)
+        now_z = '2 年期殖利率 %.2f%%，聯準會目標利率上限 %.2f%%，%s %s（到 %s）。' % (x['y2'], x['ff'], '高出' if g > 0 else '低了', bpz(g), md(x['date']))
+        now_e = 'The 2-year yield is %.2f%% against a Fed target ceiling of %.2f%%, %s %s (through %s). ' % (x['y2'], x['ff'], bpe(g), 'above' if g > 0 else 'below', md(x['date']))
+        now_z += ('債市在押接下來會再加息。' if g > .1 else '債市在押接下來會降息。' if g < -.1 else '債市認為利率大致不動。')
+        now_e += ('The bond market is pricing further hikes.' if g > .1 else 'The bond market is pricing cuts.' if g < -.1 else 'The bond market expects rates to hold.')
+        if x.get('gap20') is not None:
+            ch = g - x['gap20']
+            now_z += '和 20 個交易日前比%s。' % ('幾乎沒變' if abs(ch) < .05 else ('多了 ' if ch > 0 else '少了 ') + bpz(ch)); now_e += ' Versus 20 sessions ago: %s.' % ('little changed' if abs(ch) < .05 else bpe(ch) + (' wider' if ch > 0 else ' narrower'))
+        cmp_z = '%s 起最高是 %s 的 %s、最低是 %s 的 %s（押降息最深的時候）。' % (ymd(x['since'])[:7], ymd(mx['d'])[:7], pp(mx['v']), ymd(mn['d'])[:7], pp(mn['v']))
+        cmp_e = 'Since %s the high was %s in %s and the low %s in %s (when cut bets ran deepest). ' % (x['since'][:7], pp(mx['v']), mx['d'][:7], pp(mn['v']), mn['d'][:7])
+        if g > 0 and mx['v'] > 0: cmp_z += '現在大約是 %s 那次的 %d%%。' % (ymd(mx['d'])[:4], round(g / mx['v'] * 100)); cmp_e += 'Today is about %d%% of the %s peak.' % (round(g / mx['v'] * 100), mx['d'][:4])
+        cmp_z += '利率預期往上對不生息的資產是逆風，但這只是背景，和 BTC 的漲跌沒有固定關係。'; cmp_e += ' Rising rate expectations are a headwind for assets that pay no income, but this is background; it has no fixed relationship with BTC moves.'
+        items = [('現在', 'Now', pp(g) + ' 個百分點', pp(g) + ' pp', 'down' if g > .1 else 'up' if g < -.1 else 'neu', now_z, now_e),
+                 ('和 2022 年比', 'Against 2022', pp(mx['v']), pp(mx['v']), 'neu', cmp_z, cmp_e)]
+        return dict(k='r2y', zh='2 年期殖利率減聯準會利率', en='2-year yield minus the Fed rate', hz='差距（百分點）', he='Gap (percentage points)', f='ps2', rows=rows, p=4, hero=0, rng=0,
+          ser=[ser(3, zh='2 年期殖利率 − 目標利率上限', en='2-year yield − target ceiling', t='sign', base=0, hi='dn', lo='up', w=1.6), ser(1, hide=1, zh='2 年期殖利率', en='2-year yield', f='p2'), ser(2, hide=1, zh='聯準會目標利率上限', en='Fed target ceiling', f='p2')],
+          refs=[dict(v=0, col='k2', solid=1)],
+          marks=[dict(d=dn(mx['d']), v=mx['v'], col='dn', up=1, zh='%s %s' % (ymd(mx['d'])[:7], pp(mx['v'])), en='%s %s' % (mx['d'][:7], pp(mx['v']))), dict(d=dn(mn['d']), v=mn['v'], col='up', up=0, zh='%s %s' % (ymd(mn['d'])[:7], pp(mn['v'])), en='%s %s' % (mn['d'][:7], pp(mn['v'])))],
+          leg=[['dn', '高於目標利率：債市押加息', 'Above the target: bonds price hikes', 'box'], ['up', '低於目標利率：債市押降息', 'Below the target: bonds price cuts', 'box']],
+          src='美國財政部 · 紐約聯準銀行 · ' + md(x['date']), srce='US Treasury · New York Fed · ' + md(x['date']), say=own(items, now_z, now_e),
+          dz='2 年期美債殖利率反映市場認為未來兩年聯準會的利率平均會在哪裡。它減掉現在的目標利率上限：高於 0（紅）代表債市在押加息，低於 0（綠）代表在押降息。上格是 BTC 價格。資料是美國財政部每日公布的殖利率和紐約聯準銀行公布的目標區間，%s 起。只作背景讀值。' % ymd(x['since'])[:7],
+          de='The 2-year Treasury yield reflects where the market expects the Fed\'s rate to average over the next two years. Here it is shown minus the current target ceiling: above 0 (red) means bonds price hikes, below 0 (green) means they price cuts. The top pane is the BTC price. Data: the Treasury\'s daily yield and the target range published by the New York Fed, from %s. A background reading only.' % x['since'][:7])
+
     def c_macro():   # 現有網站只有讀數（V.flows 的 kpi 和 flInterp），沒有走勢圖，所以是清單卡；語氣色照 flInterp：warn→c5、neg→dn、pos→up、其餘灰
         fr = f.get('fred') or {}; nq = fr.get('NASDAQCOM') or {}; dx = fr.get('DTWEXBGS') or {}; tn = fr.get('DGS10') or {}; rr = f.get('dfii10') or {}; rows = []
         if nq.get('corr30') is not None:
@@ -351,12 +426,12 @@ def build(L, N, E, dn, X):
         return dict(zh=zh, en=en, sz=sz, se=se, charts=charts)
 
     return [
-        grp('機構', 'Institutions', 'ETF 和 CME 的機構資金是進還是出', 'Is institutional money in ETFs and on CME coming in or going out', [c_etf(), c_cot()]),
+        grp('機構', 'Institutions', 'ETF 和 CME 的機構資金是進還是出', 'Is institutional money in ETFs and on CME coming in or going out', [c_etf(), c_etf20(), c_cot()]),
         grp('各地買盤', 'Regional demand', '美國、亞洲、韓國哪邊在買，幣往交易所進還是出', 'Which region is buying, and whether coins are moving onto or off exchanges', [c_prus(), c_prasia(), c_prperp(), c_kp(), c_exflow(), c_exch()]),
         grp('鏈上需求', 'On-chain demand', '新的需求接不接得住供給，新的錢有沒有進來', 'Is new demand absorbing supply, and is new money arriving', [c_ad(), c_dmd(), c_capflow(), c_grad(), c_rcliq(), c_stab()]),
         grp('大戶與長期持有者', 'Whales and long-term holders', '大戶和長期持有者在加碼、出貨還是不動', 'Are whales and long-term holders adding, distributing or sitting still',
             [c_whale(), c_whalet(), reuse('lthnet', '長期持有者 30 日淨部位變化', 'LTH 30-day net position change'), reuse('lsrchg', '長短期供給比 30 日變化', 'LTH/STH supply ratio, 30-day change'),
              reuse('sthd', '短期持有者供給 90 天變化', 'STH supply, 90-day change'), reuse('dorm', 'Dormancy', 'Dormancy'), c_supliq()]),
         grp('主動買賣', 'Taker flow', '誰在用市價主動買、誰在主動賣', 'Who is hitting the market to buy, and who to sell', [c_svd(), c_tk()]),
-        grp('大環境', 'Macro', '美股、黃金、利率和美元怎麼走', 'What stocks, gold, rates and the dollar are doing', [c_stk(), c_macro()]),
+        grp('大環境', 'Macro', '美股、黃金、利率和美元怎麼走', 'What stocks, gold, rates and the dollar are doing', [c_stk(), c_r2y(), c_macro()]),
     ]
