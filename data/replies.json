@@ -873,6 +873,54 @@
     "custom": true,
     "title": "跌破一半、收回之後，回調都回到多低"
    }
+  },
+  {
+   "n": 40,
+   "status": "send",
+   "kind": "new",
+   "mode": "quote",
+   "quote": "Daan's flagging the OI ramp under Tuesday's low\nIn coins it was already stretched, up ~10% in a month while price fell ~10%\nPrice is now 72.8K, sitting on the first big block of long liquidations on my map\n#Bitcoin #BTC",
+   "style": "口語版",
+   "author": "DaanCrypto",
+   "name": "DaanCrypto",
+   "followers": 414522,
+   "lang": "en",
+   "angle": "他說賣方在週二低點下加未平倉；幣本位未平倉本來就高，價格現在壓在多單清算帶上",
+   "id": "2120850502745543138",
+   "url": "https://x.com/DaanCrypto/status/2120850502745543138",
+   "posted": "2026-11-12T12:05:38Z",
+   "summary": "BTC 未平倉大增，賣方想在週二低點下方逼出擠壓；週末前會很波動",
+   "reply": "",
+   "sources": "latest.json deriv.oi_hist（Coinalyze 七家，2026-11-11）：338,130 顆，chg30 +9.6%、px30 −9.6%；Coinbase 現價 72,801（12:42 UTC）；deriv.liq_heat below 71,000–72,700 約 27,437 顆（11/12 00:00 快照，推算）",
+   "image": {
+    "site": {
+     "page": "deriv",
+     "sel": "#c-oih"
+    },
+    "title": "Perp OI in coins: +10% in a month, price −10%"
+   },
+   "note": "★ 41 萬粉、讀到時發文 37 分鐘，今天第二則引用（上限 2）。英文清算熱力圖今天用過，改配未平倉歷史圖。不接「會很波動」的方向。",
+   "order": 40
+  },
+  {
+   "n": 41,
+   "status": "send",
+   "kind": "new",
+   "mode": "reply",
+   "style": "口語版",
+   "author": "0xGummyBear",
+   "name": "0xGummyBear",
+   "followers": 4152,
+   "lang": "zh",
+   "angle": "他講交易所穩定幣儲備少；另一面是 USDT 自己在打折，USDC 沒有",
+   "id": "2120820397113581715",
+   "url": "https://x.com/0xGummyBear/status/2120820397113581715",
+   "posted": "2026-11-12T10:06:00Z",
+   "summary": "流動性角度：交易所穩定幣儲備 10/25–11/10 十五天少 11.49%，機構託管流入交易所創高；兩者都到 2024 年以來底部區，認為悲觀情緒到谷底",
+   "reply": "除了交易所裡的穩定幣變少，USDT 自己也在打折，11 月平均 0.9987，是有資料以來最低的一個月，USDC 倒是幾乎沒折",
+   "sources": "site-new.md usdt-usd（Coinbase USDT-USD）：11 月平均 0.9987，有資料以來最低的月；flows.usdc disc7 −0.026%（Bitstamp）",
+   "note": "scan 固定名單 #6，新帳號。只補一件事，不接「谷底」的判斷。不寫「脫鉤」，幅度千分之一。",
+   "order": 41
   }
  ]
 }
