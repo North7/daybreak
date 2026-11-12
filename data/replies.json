@@ -638,6 +638,27 @@
    "sources": "",
    "note": "誇獎，按讚就好。",
    "order": 28
+  },
+  {
+   "n": 29,
+   "status": "send",
+   "kind": "followup",
+   "mode": "reply",
+   "quote": "",
+   "style": "口語版",
+   "author": "wananuu1314",
+   "name": "BrinvelCC",
+   "followers": 495,
+   "lang": "zh",
+   "angle": "他回答我們問 Murphy 的問題：缺口要靠停留換手補，插針 V 返補不了；11/10 那根針剛好是例子",
+   "id": "2120753135153217994",
+   "url": "https://x.com/wananuu1314/status/2120753135153217994",
+   "posted": "2026-11-12T05:38:43Z",
+   "summary": "回我們 #24（Murphy 串底下）：缺口是拉太快、停留短、換手少；所以回補不能是插針 V 返，要在下面停一段時間讓籌碼換手。不知道對不對",
+   "reply": "11/10 晚上那根就是，針到 72.7K 把清算帶吃掉一截，一兩個小時就彈回去\n後面貼著上面磨了一天多，Murphy 圖 3 裡 75K 以下那格才一天多五萬六",
+   "sources": "latest.json deriv.liq_heat candles：2026-11-10 16:00 UTC 低點 72,691，17:00 收 73,253，之後到 11/12 00:00 最低 73,184；Murphy 10:00 帖圖 3：70–75K 11/10 +56.2 千枚",
+   "note": "Murphy 的訂閱者，第一輪接他、他問「不知道對不對」。在 Murphy 串底下，但這是跟他的第一輪。只給例子，不說「對」開頭。",
+   "order": 29
   }
  ]
 }
