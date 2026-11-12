@@ -1,16 +1,16 @@
 {
- "date": "2026-11-10",
- "edition": 36,
+ "date": "2026-11-11",
+ "edition": 37,
  "picks": [
   {
-   "id": "market/mon",
-   "chart": "data/picks/market-mon.png",
-   "chart_en": "data/picks/market-mon-en.png",
-   "why": "跌到 200 日均線邊上、11 月已經跌近 5%，讀者會問 11 月以前怎麼走；和頭條的 CPI、短期持有者認賠不重複。 11/11 使用者：「最後如果說不出什麼結論，感覺一篇文章白說」→ 解說改成條件化：8 次上漲的 11 月到 10 號都已經在漲；10 號還在跌的 3 次（2019、2022、2025）全部收跌（Bitview 每日價）。 11/11 使用者問「12 月感覺都是跌得多」→ 網站月度表：12 月 13 次 8 跌、中位 −3.2%（平均 +4%，漲的年份漲很多）；11 月收跌的 5 年（2018、2019、2021、2022、2025）12 月全跌，−3.2% 到 −18.8%，4 次在 −3% 到 −7%；11 月收漲的 8 年 12 月 6 漲。",
-   "q_zh": "11 月已經跌 4.83%，過去的 11 月怎麼走？",
-   "q_en": "November is down 4.83% so far. How did past Novembers go?",
-   "zh": "11 月已經跌 4.83%，過去的 11 月怎麼走？\n2013 年以來 8 次 11 月上漲，這 8 次到 10 號都已經在漲；開局就跌的 2019、2022、2025 全部收跌。12 月也跟著 11 月走，11 月收跌的 5 年，12 月全部再跌，多半跌 3% 到 7%；11 月收漲的 8 年，12 月有 6 次漲。\n#比特幣 #BTC #歷史數據",
-   "en": "November is down 4.83% so far. How did past Novembers go?\nAll 8 up Novembers since 2013 were already up by the 10th; the 3 that started down all closed lower. December follows: after all 5 down Novembers, December fell too, mostly 3–7%.\n#Bitcoin #BTC #history"
+   "id": "onchain/quant",
+   "chart": "data/picks/onchain-quant.png",
+   "chart_en": "data/picks/onchain-quant-en.png",
+   "why": "價格貼著 200 日均線、讀者在問再跌會怎樣；這張用供給分位回答「跌到哪裡一半的幣變虧損」，和頭條的穩定幣、費率不重複。",
+   "q_zh": "BTC 跌到哪裡，一半的幣會變成虧損？",
+   "q_en": "How far would BTC have to fall for half of all coins to be at a loss?",
+   "zh": "到哪裡會有一半的幣變虧損？現在 58.1% 的供給在獲利；跌到 69,280 剩 55%，跌到 64,410 剩一半。前三輪熊市底部都跌破一半，這輪 6/30 是 45.9%；11/10 這次回調最低 57.9%，比 1 月的 51.8% 淺。#比特幣 #BTC #鏈上數據",
+   "en": "Where would half of BTC be at a loss? 58.1% of supply is in profit now; at 69,280 that drops to 55%, at 64,410 to half. Every past bear bottom went below half (45.9% on Jun 30 this cycle); the Nov 10 dip bottomed at 57.9%, shallower than January's 51.8%. #Bitcoin #BTC #onchain"
   }
  ]
 }
