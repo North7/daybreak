@@ -9,12 +9,13 @@ MAP = {'regime': ['regime'], 'dawn': ['dawn'], 'rup': ['rup'], 'hnupl': ['hnupl'
        'cd': ['k20'], 'sx': ['sx'], 'levels': ['levels'], 'long': ['long'], 'mon': ['mon'], 'market-2': ['legs'],
        'etf': ['etf'], 'pr-us': ['pr-us', 'pr-asia', 'pr-perp'], 'kp': ['kp'], 'exflow': ['exflow'], 'ad': ['ad'], 'dmd': ['dmd'], 'capflow': ['capflow'], 'grad': ['grad'], 'stab': ['stab'], 'rcliq': ['rcliq'], 'stkrel': ['stk'], 'fng': ['fng'], 'wiki': ['wiki'], 'cot': ['cot'],
        'vol': ['vol'], 'ivt': ['ivt'], 'basis': ['basis'], 'fh': ['fh'], 'oih': ['oih'], 'lsa': ['lsa'], 'liq': ['liq'], 'lqv': ['lqv'], 'oi': ['oi'], 'strike': ['strike'], 'gex': ['gex'], 'prem': ['prem'], 'svd': ['svd'], 'tk': ['tk'], 'book': ['book']}
-# 一個面板對到好幾張圖時，哪幾列讀值給哪一張（沒列的給第一張）
-SPLIT = {'pr-us': {2: 'pr-asia', 3: 'pr-perp'}, 'lthloss': {4: 'lthrl', 5: 'lthrl', 6: 'lthrl'}}
+# 一個面板對到好幾張圖時，哪幾列讀值給哪一張（沒列的給第一張）。鍵是第幾列，或那一列標題的開頭（面板加減列時用標題比較不會對錯）
+SPLIT = {'pr-us': {'亞洲': 'pr-asia', '槓桿': 'pr-perp'}, 'lthloss': {4: 'lthrl', 5: 'lthrl', 6: 'lthrl'}}
 # 「這些數字代表什麼」那幾個總表面板：第幾列給哪幾張圖
 IDX = {'onchain-1': {2: ['exch'], 3: ['miners'], 4: ['miners', 'hashr'], 5: ['miners']}, 'market-1': {6: ['pi']},
        'flows-1': {0: ['etf'], 1: ['etf'], 7: ['etf'], 2: ['macro'], 3: ['macro'], 4: ['macro'], 5: ['rcliq'], 6: ['stab']},
        'deriv-1': {0: ['vol'], 2: ['vol'], 4: ['pcr'], 5: ['pcr'], 6: ['oi']}, 'exit-1': {1: ['p20'], 2: ['p6']}}
+ONE = {'pr-us'}   # 這幾個面板的「現在…」那一句只講第一張圖，不分給同面板的其他圖（亞洲、槓桿各有自己的讀值）
 SRCP = {'p6': ['p6', 'p6v'], 'radar': ['radar', 'radarv']}
 SIG = {'oc-puell-multiple': 'p6v', 'cost': 'levels', 'ov-px': 'levels', 'stab': 'stab', 'cohort': 'cohort'}
 TONE = {'up': 'up', 'down': 'down', 'warn': 'warn'}
@@ -112,7 +113,7 @@ def attach(chapters, L):
             if z.get('src') and k in X and not X[k].get('src'): X[k]['src'], X[k]['srce'] = z['src'], e.get('src') or z['src']
         sp = SPLIT.get(pid, {})
         for i, it in enumerate(z['items']):
-            y = say(sp.get(i, keys[0]))
+            y = say(sp[i] if i in sp else next((v_ for k_, v_ in sp.items() if isinstance(k_, str) and it['k'].startswith(k_)), keys[0]))
             if y is not None: y['items'].append(item(it, e['items'][i] if i < len(e['items']) else it))
         for k in keys:
             y = say(k)
@@ -121,7 +122,7 @@ def attach(chapters, L):
             # 「怎麼讀這張圖」前面如果有一句「現在…」，那是當下的讀數，拿來當一句話
             if rz and not rz[0].startswith('#') and len(rz) > 1:
                 nz = re.sub(r'^現在', '', rz[0]).strip(); ne = re.sub(r'^Now', '', re_[0]).strip() if re_ else nz
-                if not y['sz']: y['sz'], y['se'] = nz, ne
+                if not y['sz'] and (k == keys[0] or pid not in ONE): y['sz'], y['se'] = nz, ne
                 rz, re_ = rz[1:], re_[1:]
             if z.get('says') and k == keys[0]: y['sz'], y['se'] = z['says'][0], (e.get('says') or z['says'])[0]
             y['sz'] = wan(y['sz'])
