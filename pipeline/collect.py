@@ -1452,9 +1452,10 @@ except Exception as e: errors.append(f'cz_viz {e}')
 #   任何一項失敗都只記在 errors，不影響其他項
 _pxc6 = globals().get('PXC') or {b_['d']: b_['c'] for b_ in bars}
 def _six():
-    import stable_px, treasury, polymkt, cvd_size
+    import stable_px, treasury, polymkt, cvd_size, bfx_margin
     return (('usdc', lambda: stable_px.usdc(get, _pxc6, LAST)), ('treasury', lambda: treasury.build(get, _pxc6.get(LAST) or c, LAST)), ('fed_mkt', lambda: polymkt.fed(get, LAST)),
-            ('cvd_size', lambda: cvd_size.build(cvd_size.update(LAST), _pxc6, LAST)))
+            ('cvd_size', lambda: cvd_size.build(cvd_size.update(LAST), _pxc6, LAST)),
+            ('bfx_margin', lambda: bfx_margin.build(bfx_margin.daily(LAST), _pxc6, LAST)))   # Bitfinex 保證金多單：兩次請求約 30 秒，被限流就用昨天的
 try:
     for k_, f_ in _six():
         try:

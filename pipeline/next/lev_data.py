@@ -266,8 +266,34 @@ def build(L, N, E, dn, X):
           de='Across the same %d venues and the same set of perpetual contracts: ETH open interest divided by BTC plus ETH open interest, all in dollars. A rising share means new leverage is leaning towards ETH, which usually goes with more appetite for risk; a falling share means leverage is retreating from ETH relative to BTC. Price alone moves the share: if ETH rises more than BTC the share goes up even with no new positions. Contracts were listed over time; data starts in %s. A reading only.' % (len(x.get('exch') or []), x['since'][:7]))
     else:
         na('oieth', '槓桿在 ETH 還是 BTC', 'Leverage: ETH or BTC', 'deriv.oi_eth', 'Coinalyze', '這張圖畫 ETH 佔 BTC＋ETH 永續未平倉的比例。', 'This chart shows ETH as a share of BTC plus ETH perpetual open interest.')
+    x = d.get('bfx_margin')
+    if has(x):   # 顏色：多單一條線 c5（暖色），下面淡出的面積；空單太小不畫，數字在游標讀值裡
+        c30, p30 = x['chg30'], x['px30']; u_, d_, b_ = x.get('up10') or {}, x.get('dn10') or {}, x.get('base') or {}
+        pat = {(True, False): ('價格跌、多單增加：有人借錢逢低買', 'Price down with longs up: someone is borrowing to buy the dip'), (False, True): ('價格漲、多單減少：之前借錢買的人在獲利了結', 'Price up with longs down: earlier margin buyers are taking profit'),
+               (True, True): ('價格漲、多單也增加：借錢追價', 'Price up with longs up: margin buyers are chasing'), (False, False): ('價格跌、多單也減少：在認賠或被迫平倉', 'Price down with longs down: positions are being cut or liquidated')}[(c30 >= 0, p30 >= 0)]
+        if abs(c30) < 1: pat = ('多單幾乎沒動：借錢買的部位沒有跟著價格加碼，也沒有撤', 'Longs barely moved: margin buyers have neither added nor pulled back')
+        elif abs(c30) < 5:   # 不到 5% 只講方向，不硬套「逢低買」「獲利了結」這類說法（多單 30 天的變動常常超過 10%）
+            pat = ('價格%s、多單小幅%s：幅度還小，看不出借錢買的人是在加碼還是在撤' % ('漲' if p30 >= 0 else '跌', '增加' if c30 >= 0 else '減少'),
+                   'Price %s with longs slightly %s: too small a move to say whether margin buyers are adding or pulling back' % ('up' if p30 >= 0 else 'down', 'up' if c30 >= 0 else 'down'))
+        it = [('現在', 'Now', '%s 顆' % n0(x['long']), '%s BTC' % n0(x['long']), 'neu',
+               '多單 %s 顆，30 天 %s%%，同期價格 %s%%。%s。空單只有 %s 顆，所以這裡看的是多單自己的增減，不是多空比。多單現在比 %s 以來 %d%% 的日子高。' % (n0(x['long']), sg(c30), sg(p30), pat[0], n0(x['short']), ym(x['since']), x['pct']),
+               'Longs are %s BTC, %s%% over 30 days while price moved %s%%. %s. Shorts are only %s BTC, so this is about the change in longs, not a long/short ratio. Longs are higher than on %d%% of days since %s.' % (n0(x['long']), sg(c30), sg(p30), pat[1], n0(x['short']), x['pct'], x['since'][:7]))]
+        if u_.get('n') and d_.get('n') and b_.get('up') is not None:
+            flat = abs(u_['up'] - b_['up']) < 8 and abs(d_['up'] - b_['up']) < 8
+            it.append(('過去的統計', 'Track record', '%d%% / %d%%' % (u_['up'], d_['up']), '%d%% / %d%%' % (u_['up'], d_['up']), 'neu',
+              '多單 30 天增加超過 10%% 的日子有 %d 天，之後 30 天價格較高的佔 %d%%（中位數 %s%%）；減少超過 10%% 的有 %d 天，佔 %d%%（%s%%）；隨便一天是 %d%%（%s%%）。' % (u_['n'], u_['up'], sg(u_['med']), d_['n'], d_['up'], sg(d_['med']), b_['up'], sg(b_['med']))
+                + ('和隨便一天差不多，不能當訊號。' if flat else '有差別，但這些日子是連在一起的幾段行情，實際上只有少數幾次，不能當訊號。') + '只作讀值。',
+              'Longs rose more than 10%% in 30 days on %d days; price was higher 30 days later on %d%% of them (median %s%%). They fell more than 10%% on %d days: %d%% (%s%%). Any day: %d%% (%s%%). ' % (u_['n'], u_['up'], sg(u_['med']), d_['n'], d_['up'], sg(d_['med']), b_['up'], sg(b_['med']))
+                + ('About the same as any day, so not a signal. ' if flat else 'There is a difference, but those days cluster into a handful of episodes, so not a signal. ') + 'A reading only.'))
+        X['bfx'] = dict(k='bfx', zh='Bitfinex 保證金多單', en='Bitfinex margin longs', hz='借錢買 BTC 的部位', he='BTC bought on margin', f='btc0', rows=x['rows'], p=1, src='Bitfinex · %s' % x['date'][5:].replace('-', '/'), srce='Bitfinex · %s' % x['date'][5:].replace('-', '/'),
+          ser=[ser(2, zh='多單', en='Longs', col='c5', w=1.8), ser(3, zh='空單', en='Shorts', hide=1), ser(4, zh='多單 30 日增減', en='Longs, 30-day change', hide=1, f='pct1')],
+          say=own(it, '多單 30 天 %s%%，價格 %s%%' % (sg(c30), sg(p30)), 'Longs %s%% in 30 days, price %s%%' % (sg(c30), sg(p30))),
+          dz='Bitfinex 上借美元買 BTC 的保證金多單總量（顆），每天取 UTC 最後一筆。這家交易所的保證金多單長期由少數大戶持有，常被拿來看「大戶有沒有借錢買」：價格跌的時候多單增加，是有人逢低加碼；價格漲的時候多單減少，是在獲利了結。空單一直很小，不看多空比。只有一家交易所，而且多單增減也可能是在做套利或避險的另一隻腳，所以只作讀值。資料從 %s 開始。' % ym(x['since']),
+          de='Total margin longs in BTC/USD on Bitfinex (BTC bought with borrowed dollars), taken as the last reading of each UTC day. These longs have long been held by a small number of large accounts, so they are watched for whether big players are borrowing to buy: longs rising while price falls means dip buying; longs falling while price rises means profit-taking. Shorts are always small, so the long/short ratio is not used. One exchange only, and a change in longs can be one leg of an arbitrage or hedge, so a reading only. Data starts in %s.' % x['since'][:7])
+    else:
+        na('bfx', 'Bitfinex 保證金多單', 'Bitfinex margin longs', 'deriv.bfx_margin', 'Bitfinex', '這張圖畫 Bitfinex 上借錢買 BTC 的保證金多單總量。', 'This chart shows total BTC margin longs on Bitfinex.')
     grp = lambda zh, en, sz, se, keys: dict(zh=zh, en=en, sz=sz, se=se, charts=[X[k_] for k_ in keys if k_ in X])
-    return [grp('槓桿', 'Leverage', '做多的槓桿擠不擠，最近是誰在被清算', 'How crowded leveraged longs are, and who has been getting liquidated', ['fh', 'basis', 'oih', 'oieth', 'lsa', 'lqv']),
+    return [grp('槓桿', 'Leverage', '做多的槓桿擠不擠，最近是誰在被清算', 'How crowded leveraged longs are, and who has been getting liquidated', ['fh', 'basis', 'oih', 'oieth', 'lsa', 'bfx', 'lqv']),
             grp('波動', 'Volatility', '選擇權市場預期接下來會動多大', 'How big a move the options market is pricing', ['vol', 'ivt']),
             grp('選擇權', 'Options', '未平倉堆在哪個到期日，錢押在哪一邊', 'Which expiries hold the open interest, and which side money is paying for', ['oi', 'prem', 'pcr']),
             grp('情緒', 'Sentiment', '大家是害怕還是貪心，新手有沒有湧進來', 'Whether the crowd is fearful or greedy, and whether newcomers are pouring in', ['fng', 'wiki'])]
