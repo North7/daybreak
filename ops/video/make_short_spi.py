@@ -77,18 +77,56 @@ def headline(d, t, y, text, start=0.12, size=84, color=INK):
 
 # ---------- scenes（t 是場景內秒數，以 base 長度設計） ----------
 def s_hook(d, t, img):
+    """開頭先把圖放出來：近一年價格＋SPI，標出今年三次滿格和現在的位置（YouTube 的人沒看過 X 上的圖）。"""
     kicker(d, t, 240, 'Daybreak 自製指標')
-    for i, line in enumerate(['賣壓滿格，', '是壞消息嗎？']):
-        a = ph(t, 0.0 + i * 0.18, 0.4); runs(d, M, 440 + i * 140 + (1 - a) * 40, [(line, cjk(118, 900), INK)], a)
-    a = ph(t, 0.5, 0.4); v = 100 * ease((t - 0.5) / 1.3)
-    runs(d, M - 8, 930 + (1 - a) * 40, [(f'{v:.0f}', num(330), RED)], a)
-    runs(d, M + num(330).getlength('100') + 24, 930, [('/ 100', num(90, 700), INK3)], a)
-    # 滿格的刻度條
-    y = 990; d.rounded_rectangle([M, y, RIGHT, y + 26], 13, fill=mix(LINE, a))
-    if v > 1: d.rounded_rectangle([M, y, M + (RIGHT - M) * v / 100, y + 26], 13, fill=rgb(RED))
-    a = ph(t, 2.0)
-    runs(d, M, 1110, [('SPI (Sell Pressure Index)', mono(36, 700), INK)], a)
-    runs(d, M, 1180, [('11/10 收盤到 100，今年第 3 次', cjk(44, 700), INK2)], a)
+    a = ph(t, 0.0, 0.4); runs(d, M, 400 + (1 - a) * 30, [('賣壓滿格，是壞消息嗎？', cjk(84, 900), INK)], a)
+    runs(d, M, 470, [('賣壓累積 SPI（0–100），2026 年到現在', cjk(34, 600), INK3)], ph(t, 0.3))
+    rows = [r for r in ROWS if r[0] >= s2d('2026-01-01')]   # 只畫今年，跟「今年第 3 次」對得上
+    x0, x1 = M, RIGHT - 10
+    py0, py1, sy0, sy1 = 540, 820, 900, 1210
+    lo, hi = min(r[1] for r in rows) * 0.96, max(r[1] for r in rows) * 1.03
+    px = lambda n: x0 + (n - rows[0][0]) / (rows[-1][0] - rows[0][0]) * (x1 - x0)
+    pp = lambda v: py1 - (v - lo) / (hi - lo) * (py1 - py0)
+    ps = lambda v: sy1 - v / 100 * (sy1 - sy0)
+    ga = ph(t, 0.4)
+    for v in (0, 50, 100):
+        y = ps(v); d.line([(x0, y), (x1, y)], fill=mix(LINE, ga), width=2)
+        d.text((x1 + 8, y), str(v), font=mono(24), fill=mix(INK3, ga), anchor='lm')
+    for k in range(0, int(x1 - x0), 22):
+        d.line([(x0 + k, ps(100)), (x0 + k + 11, ps(100))], fill=mix(RED, ga * 0.8), width=3)
+    for p_, lab in ((70000, '70K'), (90000, '90K'), (110000, '110K')):
+        if lo < p_ < hi: d.text((x1 + 8, pp(p_)), lab, font=mono(22), fill=mix(INK3, ga), anchor='lm'); d.line([(x0, pp(p_)), (x1, pp(p_))], fill=mix(LINE, ga * 0.6), width=1)
+    d.text((x0, py0 - 14), 'BTC 收盤', font=cjk(26, 700), fill=mix(INK3, ga), anchor='ls')
+    d.text((x1 + 8, sy0 - 40), 'SPI', font=mono(24, 700), fill=mix(INK3, ga), anchor='lm')
+    for mo in (1, 4, 7, 10):   # 月份
+        d.text((px(s2d(f'2026-{mo:02d}-01')), sy1 + 30), f'{mo} 月', font=cjk(24, 600), fill=mix(INK3, ga), anchor='mm')
+    k = ease((t - 0.6) / 2.4); n = max(2, int(len(rows) * k))
+    S2 = 2; lay = Image.new('RGBA', (W * S2, H * S2), (0, 0, 0, 0)); g = ImageDraw.Draw(lay)
+    g.line([(px(r[0]) * S2, pp(r[1]) * S2) for r in rows[:n]], fill=rgb(INK) + (255,), width=5, joint='curve')
+    poly = [(px(rows[0][0]) * S2, sy1 * S2)] + [(px(r[0]) * S2, ps(r[2]) * S2) for r in rows[:n]] + [(px(rows[n - 1][0]) * S2, sy1 * S2)]
+    g.polygon(poly, fill=rgb(RED) + (235,))
+    img.alpha_composite(lay.resize((W, H), Image.LANCZOS))
+    # 近一年的滿格日
+    full = [e for e in S['ev'] if s2d(e['date']) >= rows[0][0]]
+    for i, e in enumerate(full):
+        nn = s2d(e['date']); cur = e['ret'] is None
+        ka = ph(t, 0.6 + 2.4 * (nn - rows[0][0]) / (rows[-1][0] - rows[0][0]), 0.3)
+        if ka <= 0: continue
+        x, y = px(nn), ps(100)
+        col = CY if cur else INK
+        d.ellipse([x - 10, y - 10, x + 10, y + 10], fill=mix(col, ka), outline=rgb(BG), width=3)
+        d.ellipse([x - 7, pp(e['price']) - 7, x + 7, pp(e['price']) + 7], fill=mix(col, ka))
+        dt = D.date.fromisoformat(e['date'])
+        if not cur: d.text((x, y - 26), f'{dt.month}/{dt.day}', font=mono(24, 700), fill=mix(INK2, ka), anchor='ms')
+    a = ph(t, 3.2, 0.4)
+    if a > 0:
+        x, y = px(s2d(CUR['date'])), ps(100)
+        pul = 1 + 0.3 * math.sin(t * 6)
+        d.ellipse([x - 20 * pul, y - 20 * pul, x + 20 * pul, y + 20 * pul], outline=mix(CY, a), width=3)
+        d.rounded_rectangle([x - 300, y - 120, x - 30, y - 40], 14, fill=mix(CY, a))
+        d.text((x - 165, y - 80), '現在：滿格 100', font=cjk(34, 900), fill=mix('#0A0A0A', a, CY), anchor='mm')
+    a = ph(t, 4.0)
+    runs(d, M, 1300, [('11/10 收盤到 100，今年第 3 次；11/11 還在 100', cjk(36, 700), INK2)], a)
 
 
 def gauge(d, y, frac, col, a):
@@ -274,7 +312,7 @@ def caption(d, T):
             d.text((W / 2, CAP_Y), text, font=f, fill=mix('#FFFFFF', k), anchor='ms'); return
 
 def scene_img(i, t):
-    t *= BASE[i] / DURS[i]
+    if i: t *= BASE[i] / DURS[i]   # 開頭不放慢：圖要在 3 秒內畫完、標出現在的位置，之後停著讓旁白講
     img = Image.new('RGBA', (W, H), rgb(BG) + (255,)); FNS[i](ImageDraw.Draw(img), t, img); return img
 
 def frame(T):
@@ -304,5 +342,5 @@ if __name__ == '__main__':
         p.stdin.write(frame(f / FPS).tobytes())
         if f % 300 == 0: print(f'{f}/{n}', flush=True)
     p.stdin.close(); p.wait()
-    frame(3.2).save(OUT.replace('.mp4', '-cover.png'))
+    frame(DURS[0] - 0.6).save(OUT.replace('.mp4', '-cover.png'))
     print('done', OUT, f'{TOTAL:.1f}s')
