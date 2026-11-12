@@ -4,6 +4,31 @@
  "edition": 37,
  "items": [
   {
+   "n": 14,
+   "status": "send",
+   "kind": "new",
+   "mode": "reply",
+   "quote": "",
+   "style": "口語版",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82329,
+   "lang": "zh",
+   "angle": "他說浮虧比例從 33% 升到 67%、逼不出更大出清就接近尾聲；補歷史：浮虧比例以前多半衝得更高",
+   "id": "2120698098989351325",
+   "url": "https://x.com/Murphychen888/status/2120698098989351325",
+   "posted": "2026-11-12T02:00:02Z",
+   "summary": "10/28 以來 STH 成本分布逐日對比：外部供給 11 月初停了、高位割肉放慢、低成本籌碼勻速減少；77K 抄底盤 23.5 萬顆九成沒動是最大變數；浮虧佔比 33%→67%",
+   "reply": "老實講，72% 放在這個指標的歷史裡還不算多痛\n過去 11 段有 7 段最後衝過 84%\nBitview 是逐筆算的，跟實體口徑會差幾個點",
+   "sources": "latest.json onchain.sthl（Bitview，2026-11-11）：value 72.1，這段 peak 73.8（11/08）；eps 2018 年以來 11 段，peak ≥84 的 7 段（2018-03 85、2019-10 99.5、2021-06 99、2022-01 99.2、2024-06 88、2025-02 84.4、2025-10 88.4），沒到的 4 段 60.1、60.5、78.6、62.9",
+   "image": {
+    "custom": true,
+    "title": "短期持有者浮虧比例，每一段最後到過多高"
+   },
+   "note": "曝光型：8.2 萬粉、10:00 發、10:2x 寫好，1 小時內配自畫圖。他是實體口徑 67%，我們是 Bitview 逐筆 UTXO 72%，口徑不同寫清楚。不開頭附和、不接他「接近尾聲」的判斷，只補歷史全樣本（含 4 段沒到 84% 的）。",
+   "order": 1
+  },
+  {
    "n": 1,
    "status": "send",
    "kind": "new",
@@ -29,7 +54,7 @@
     "title": "Nearest long cluster: 71.0K–72.7K"
    },
    "note": "Grok 0905 #10。互動這批最高（22 讚 8 回覆），配清算熱力圖。推算帶不是實際倉位。不接 69–70K 的價位推論。",
-   "order": 1
+   "order": 2
   },
   {
    "n": 2,
@@ -50,7 +75,7 @@
    "reply": "Meanwhile the coin side has been leaking on its own, US spot ETFs pulled $1.87B over the last 20 trading days",
    "sources": "latest.json flows.etf20：至 2026-11-10 近 20 個交易日 −1,874 百萬美元（CoinMarketCap）",
    "note": "Grok 0905 #5。2.9 萬粉對話型，不配圖。不接 STRC、front-running 那段。",
-   "order": 2
+   "order": 3
   },
   {
    "n": 3,
@@ -71,7 +96,7 @@
    "reply": "Deribit looks a lot calmer, DVOL's around 39, below about two-thirds of the past year\nIs that 31% off the Christmas expiry?",
    "sources": "latest.json deriv.dvol：2026-11-11 38.92，近一年第 35.9 百分位（Deribit）",
    "note": "Grok 0905 #2，新博主（前 BlackRock VP）。只補一件事：Deribit 那邊沒在恐慌。Derive 數字是原文。",
-   "order": 3
+   "order": 4
   },
   {
    "n": 4,
@@ -92,7 +117,7 @@
    "reply": "In coins it's even more stretched\n338K BTC of perp OI, higher than 97% of days since 2021",
    "sources": "latest.json deriv.oi_hist：2026-11-11 338,130 顆，pct 97（2021 年起，Coinalyze 七家）",
    "note": "scan 固定名單 #4。只補槓桿水位，不接「會軋空」的方向判斷。",
-   "order": 4
+   "order": 5
   },
   {
    "n": 5,
@@ -113,7 +138,7 @@
    "reply": "Coinbase answers that one\nTakers there sold about 4,900 BTC more than they bought this week\nStocks got their US buyers back, BTC hasn't yet",
    "sources": "latest.json deriv.taker.cb：7 日 −4,887 顆（Coinbase 主動買減主動賣），近一年第 4 百分位",
    "note": "Grok 0905 #8。他文末問「why can't crypto?」，直接回這個。不用 Coinbase 溢價講美國買盤（rules-override），用主動買賣。",
-   "order": 5
+   "order": 6
   },
   {
    "n": 6,
@@ -141,7 +166,7 @@
     "title": "短期持有者成本 75,616，收盤在下面"
    },
    "note": "Grok 0905 #4，新博主。被動賣的是 MSTR 股票不是 BTC，這則不碰。配成本線與均線圖。",
-   "order": 6
+   "order": 7
   },
   {
    "n": 7,
@@ -162,7 +187,7 @@
    "reply": "方向剛好反過來欸，Bitview 這週 100 到 1000 顆那層是少了 2.5 萬顆左右\n在加的是再上面那層",
    "sources": "latest.json onchain.whales（Bitview，2026-11-11）：100_1k chg7 −24,857 顆、1k_10k chg7 +8,638 顆；地址不等於實體",
    "note": "Grok 0905 #1。只補一個反例，不接 ETF、穩定幣（他已經寫了）。",
-   "order": 7
+   "order": 8
   },
   {
    "n": 8,
@@ -183,7 +208,7 @@
    "reply": "這是美元計價吧？\n換成幣算，七家交易所合起來這週反而是增加的，價格跌掉的那段被算成去槓桿了",
    "sources": "latest.json deriv.oi_hist：chg7 +2.4%（338,130 顆，Coinalyze 七家幣本位）",
    "note": "Grok 0905 #7。只接數據段，不接操作框架。他的是 Binance 單所，我們是七家，第二句寫清楚。",
-   "order": 8
+   "order": 9
   },
   {
    "n": 9,
@@ -204,7 +229,7 @@
    "reply": "說真的，那條 200 日線自己也開始往下彎了\n11/05 見頂之後一路小降到 73,118",
    "sources": "latest.json price.ma.sma200 73,118（11/11）；rules-override：11/05 見高後走平轉下（11/10 73,137 → 11/11 73,118）",
    "note": "scan 固定名單 #10（熟帳號，2,679 瀏覽那則）。昨天回他用「哈」開頭，這次不用。一行。",
-   "order": 9
+   "order": 10
   },
   {
    "n": 10,
@@ -225,7 +250,7 @@
    "reply": "穩定幣那條也在縮，一個月少了 145 億美元",
    "sources": "latest.json flows.stables：30 天 −14.5 B（−4.77%，DefiLlama，2026-11-11）",
    "note": "Grok 0905 #9。一行，只補一個數字，不推論價格。",
-   "order": 10
+   "order": 11
   },
   {
    "n": 11,
@@ -245,7 +270,7 @@
    "summary": "第三輪：他預期 1 月財報季附近可能有黑天鵝，熊市撐不到明年底",
    "reply": "",
    "note": "按讚就好：他自己貼文底下第三輪、沒問問題，講的是自己的看法（別人貼文底下輪數上限）",
-   "order": 11
+   "order": 12
   },
   {
    "n": 12,
@@ -266,7 +291,7 @@
    "reply": "Couple of months if price just sits here, mid-January-ish\nSlide to 70K and it's more like the week before Christmas",
    "sources": "CoinMetrics 日收盤到 2026-11-10（50 日 81,375、200 日 73,132，和 latest.json price.ma 對得上）。假設之後每天收在 73,700：第 64 天 50 日跌破 200 日（約 2027-01-13）；每天收 70,000：第 38 天（約 12/18）；78,000：第 104 天",
    "note": "接話，#41 的第二輪（同串最多兩輪，這輪之後不再接）。只回他問的時間，不講死叉之後怎麼走（挑例子會跟 #48 自打嘴巴）。",
-   "order": 12
+   "order": 13
   },
   {
    "n": 13,
@@ -287,7 +312,7 @@
    "reply": "0.82 倍反而像打八折在賣 BTC\n吃虧的是 Strategy 自己，這個價位賣股換幣是越換越少",
    "sources": "longposts 2026-11-12-msci note：市值 519 億 ÷ 持幣價值 630 億＝0.82 倍",
    "note": "接話，我們原創（MSCI 長文）底下，不設輪數上限。不爭「最貴」那句，換個角度補：折價對買股的人是便宜、對 Strategy 增發是虧。",
-   "order": 13
+   "order": 14
   }
  ]
 }
