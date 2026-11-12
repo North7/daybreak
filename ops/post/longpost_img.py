@@ -25,6 +25,6 @@ for n, im in enumerate(ims, 1):
     y += TAG + 14; img.paste(im, (P, y)); y += im.height + GAP
 fy = H - 70; d.line([P, fy - 52, W - P, fy - 52], fill=LINE, width=2)
 d.arc([P, fy - 26, P + 52, fy + 26], 180, 360, fill=RED, width=8); d.line([P - 8, fy, P + 60, fy], fill=INK, width=8)
-d.text((P + 84, fy), '破曉 DAYBREAK', font=Fn['cjk'](38, 900), fill=INK, anchor='lm')
+d.text((P + 84, fy), 'DAYBREAK', font=Fn['cjk'](38, 900), fill=INK, anchor='lm')
 d.text((W - P, fy), 'X @songpu717', font=Fn['mono'](34), fill=INK3, anchor='rm')
 img.resize((W // 2, H // 2), Image.LANCZOS).save(out, optimize=True); print('wrote', out, (W // 2, H // 2), round(W / H, 2))

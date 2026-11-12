@@ -14,6 +14,8 @@ from x_len import weight   # noqa: E402
 CJK = re.compile(r'[㐀-鿿]')
 SIMP = set('这们说为来对时国会个过还没发么从动场实现价币机构资线买卖盘关头应该开间觉进处净链亿万点涨')
 BAN = re.compile(r'出場|階梯|避險|賣出線|減碼|分批賣|exit (plan|ladder|framework)|sell (signal|trigger)|take profit', re.I)
+# 2026-11-12 使用者：品牌名中英文都只寫 Daybreak，中文也不寫「破曉」（譯名保留，但對外儘量用英文）。hashtag、網址不受影響（不會出現這兩字）
+BRAND = re.compile(r'破曉')
 NEED = ('n', 'order', 'status', 'url', 'id', 'author', 'followers', 'posted', 'lang', 'angle', 'summary', 'reply')
 HASH = re.compile(r'(^|\s)#[^\s#]+')   # hashtag：原創貼文（引用、快訊）要帶，回覆不帶
 # 太機械的寫法（README「要有人味」）：報告式開頭、自稱本站
@@ -106,6 +108,7 @@ def check_longposts():
             tag = f'長貼文 {it.get("id")} {lang}'
             if AI_WORDS.search(t): err.append(f'{tag} AI 腔（「{AI_WORDS.search(t).group(0)}」）')
             if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
+            if not it.get('posted') and BRAND.search(t + (it.get('title') or '')): err.append(f'{tag} 品牌名寫 Daybreak，不寫「破曉」（2026-11-12 使用者）')
             if lang == 'zh' and set(t) & SIMP: err.append(f'{tag} 有簡體字：{"".join(sorted(set(t) & SIMP))}')
             if lang == 'zh' and not it.get('posted') and EN_NAME.search(t): err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(sorted(set(EN_NAME.findall(t)))) + '（voice.md 用詞，2026-11-09）')
             notes += sentence_notes(tag, t)
@@ -231,6 +234,7 @@ def text_errors(tag, t, lang, lim=280):
     if lang == 'zh' and EN_NAME.search(t):
         w = sorted(set(EN_NAME.findall(t))); err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(f'{x}→{EN_NAMES[x]}' for x in w) + '（voice.md 用詞，2026-11-09）')
     if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
+    if BRAND.search(t): err.append(f'{tag} 品牌名寫 Daybreak，不寫「破曉」（2026-11-12 使用者）')
     if ROBOT.search(t): err.append(f'{tag} 太機械（「{ROBOT.search(t).group(0)}」）：先回應對方、用「我」，見 README「要有人味」')
     if AI_WORDS.search(t): err.append(f'{tag} AI 腔（「{AI_WORDS.search(t).group(0)}」）：見 voice.md「真人說話，不要 AI 腔」')
     m = ECHO.search(first_clause(t))
