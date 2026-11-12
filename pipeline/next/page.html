@@ -825,12 +825,6 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .scene.oc { height: auto; overflow: visible; }
 .oc-bar { position: sticky; top: 0; z-index: 60; display: flex; flex-direction: column; gap: 4px; padding: 10px clamp(16px, 2.4vw, 34px) 0; background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid color-mix(in srgb, var(--ink) 9%, transparent); transition: background-color .5s; }
 .oc-bar .oc-top { position: static; }
-.oc-b2 { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-width: 0; }
-.oc-sn { display: flex; gap: 2px; min-width: 0; overflow-x: auto; scrollbar-width: none; }
-.oc-sn button { font: 500 12.5px/1 "Inter Tight", "Noto Sans TC", sans-serif; color: var(--k2); background: none; border: 0; border-bottom: 2px solid transparent; padding: 9px 10px 8px; cursor: pointer; white-space: nowrap; transition: color .2s; }
-.oc-sn button i { font: 500 10px var(--f-mono); font-style: normal; opacity: .6; margin-right: 6px; }
-.oc-sn button:hover { color: var(--ink); }
-.oc-b2 .rg { margin-left: 0; flex: none; }
 .oc-hd { position: relative; height: clamp(660px, 62vw, 880px); overflow: clip; }
 .oc-hd .os { left: 7%; top: 15%; width: 86%; height: 82%; }
 .oc-hd .os:not(.front) { cursor: pointer; }
@@ -865,8 +859,6 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
   .oc-bar .oc-top { align-items: flex-start; }
   .oc-l { flex-direction: column; align-items: flex-start; gap: 4px; flex: 1; }
   .oc-ch { position: relative; inset: auto; max-width: 100%; overflow-x: auto; scrollbar-width: none; margin-left: -10px; }   /* inset: auto 不能省：上面那個 860px 區塊留了 top: 40px，而 .oc-ch 後來變成 position: relative，701–860px 時整排會往下掉 40px、壓在第二層上面（2026-11-12 修） */
-  .oc-b2 { flex-direction: column; align-items: stretch; gap: 0; }
-  .oc-b2 .rg { align-self: flex-end; padding-bottom: 6px; }
   .oc-hd { height: 700px; } .oc-hd .os { left: 4%; width: 92%; top: 46px; height: 636px; }
   .fg { grid-template-columns: minmax(0, 1fr); } .fs-h { flex-wrap: wrap; row-gap: 2px; } .fs-h h3 { font-size: 20px; } .fs-h .sub { flex-basis: 100%; order: 3; }
   .fc { padding: 14px 14px 10px; } .fc .ol-c { height: 250px; }
@@ -882,7 +874,7 @@ h4.ol-n { margin: 0; font: 600 max(16px, 1.55cqw)/1.3 "Inter Tight", "Noto Sans 
 .fc .ol-k { font-size: 11px; }
 .fc .ol-lg { font-size: 12px; }
 .ol-lg span { white-space: normal; max-width: 100%; min-width: 0; } .ol-lg b { white-space: nowrap; }
-@media (max-width: 860px) { .oc-b2 { flex-direction: row; align-items: center; } .oc-b2 .rg { align-self: center; padding-bottom: 0; } .fc h4.ol-n { font-size: 16.5px; } }
+@media (max-width: 860px) { .fc h4.ol-n { font-size: 16.5px; } }
 .ol-st { display: flex; flex-wrap: wrap; align-items: center; gap: 3px 14px; font-size: max(12.5px, 1.2cqw); line-height: 1.5; color: var(--k2); }
 .ol-st i { flex: none; width: 7px; height: 7px; border-radius: 50%; margin-right: -6px; }
 .ol-st b { font-weight: 600; color: var(--ink); }
@@ -1015,8 +1007,8 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .oc-tip.on { opacity: 1; transform: none; }
 
 /* ══ 導覽 ══ */
-.oc-ch, .oc-sn { position: relative; }
-.oc-ch button[aria-current="true"], .oc-sn button[aria-current="true"] { color: var(--ink); border-bottom-color: transparent; }
+.oc-ch { position: relative; }
+.oc-ch button[aria-current="true"] { color: var(--ink); border-bottom-color: transparent; }
 .oc-tab { display: none; }
 @media (min-width: 701px) {
   .oc-bar { padding-top: 12px; gap: 2px; }
@@ -1025,9 +1017,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
   .oc-ch { min-width: 0; overflow-x: auto; scrollbar-width: none; }
   .oc-ch button { font-size: 17px; font-weight: 500; letter-spacing: .04em; padding: 13px 18px 12px; border-bottom-width: 2px; }
   .oc-ch button[aria-current="true"] { font-weight: 600; }
-  .oc-ch button:hover:not(:disabled), .oc-sn button:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); }
-  .oc-sn button { font-size: 14.5px; padding: 12px 14px 11px; }
-  .oc-sn button i { font-size: 11px; }
+  .oc-ch button:hover:not(:disabled) { background: color-mix(in srgb, var(--ink) 6%, transparent); }
 }
 @media (min-width: 701px) and (max-width: 1180px) { .oc-top .live { display: none; } .oc-ch button { padding-inline: 13px; font-size: 16px; } }
 /* 每頁最後：上一頁／下一頁 */
@@ -1423,11 +1413,10 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
   /* 載入：第一次看到這一區時，從頂部列開始一樣一樣擺上去；下面的卡片等頂部畫完（程式會延後） */
   .oc.ag-boot { --bt: .72s; }
   .oc.ag-boot .oc-logo { animation: m-rise-s .5s cubic-bezier(.16, 1, .3, 1) .05s backwards; }
-  .oc.ag-boot .oc-ch button, .oc.ag-boot .oc-sn button { animation: m-rise-s .45s cubic-bezier(.16, 1, .3, 1) backwards; animation-delay: calc(.2s + var(--bn, 0) * 55ms); }
-  .oc.ag-boot .oc-sn button { animation-delay: calc(.5s + var(--bn, 0) * 45ms); }
-  .oc-ch button:nth-child(2), .oc-sn button:nth-child(2) { --bn: 1; } .oc-ch button:nth-child(3), .oc-sn button:nth-child(3) { --bn: 2; } .oc-ch button:nth-child(4), .oc-sn button:nth-child(4) { --bn: 3; } .oc-ch button:nth-child(5), .oc-sn button:nth-child(5) { --bn: 4; } .oc-ch button:nth-child(6), .oc-sn button:nth-child(6) { --bn: 5; } .oc-ch button:nth-child(n+7), .oc-sn button:nth-child(n+7) { --bn: 6; }
+  .oc.ag-boot .oc-ch button { animation: m-rise-s .45s cubic-bezier(.16, 1, .3, 1) backwards; animation-delay: calc(.2s + var(--bn, 0) * 55ms); }
+  .oc-ch button:nth-child(2) { --bn: 1; } .oc-ch button:nth-child(3) { --bn: 2; } .oc-ch button:nth-child(4) { --bn: 3; } .oc-ch button:nth-child(5) { --bn: 4; } .oc-ch button:nth-child(6) { --bn: 5; } .oc-ch button:nth-child(n+7) { --bn: 6; }
   .oc.ag-boot .oc-top .r > * { animation: m-rise-s .45s cubic-bezier(.16, 1, .3, 1) backwards; } .oc.ag-boot .oc-top .r > :nth-child(1) { animation-delay: .5s; } .oc.ag-boot .oc-top .r > :nth-child(2) { animation-delay: .58s; } .oc.ag-boot .oc-top .r > :nth-child(3) { animation-delay: .66s; } .oc.ag-boot .oc-top .r > :nth-child(n+4) { animation-delay: .74s; }
-  .oc.ag-boot .oc-ch > svg.lq, .oc.ag-boot .oc-sn > svg.lq { animation: m-fade .4s .7s backwards; }
+  .oc.ag-boot .oc-ch > svg.lq { animation: m-fade .4s .7s backwards; }
   .oc.ag-boot .oc-hd .os.front { animation: m-fade .35s .6s backwards; }
   .oc.ag-boot .oc-hd .os.front .br-h, .oc.ag-boot .oc-hd .os.front .pp-h { animation: m-rise .85s var(--spring) calc(var(--bt) + .15s) backwards, ag-type .7s steps(20, end) calc(var(--bt) + .2s) backwards; }
   .oc.ag-boot .oc-hd.tb .os:not(.front) { animation: m-float 8s ease-in-out infinite, ag-drop .7s var(--spring) backwards; animation-delay: var(--dl, 0s), calc(1.05s + var(--so, 0) * 110ms); }
@@ -1559,7 +1548,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 @keyframes hitp { 0%, 100% { box-shadow: 0 0 0 0 transparent; border-color: var(--rule); } 50% { box-shadow: 0 0 0 3px var(--ink); border-color: var(--ink); } }
 .fc.hit { animation: hitp 1.1s ease-in-out 2; }
 /* ㉘ 液態分頁（2026-11-12，使用者給了一段液態分頁列的錄影：「這種物理特性可以做嗎」→ 試作三種手感，選「彈跳」，並要電腦上也有）。
-   兩層導航都是同一種線：第一層「今天和六個問題」（手機底部分頁列 .oc-tab、電腦頂部 .oc-ch）鼓得高，第二層的段落導航（.oc-sn）微微鼓起（第 7 點）。
+   用在第一層「今天和六個問題」（手機底部分頁列 .oc-tab、電腦頂部 .oc-ch）。第二層的段落導航後來搬到側邊（㉚），用的是同一個 LQ 的直向版。
    1 形狀：一條線上鼓起一個包，包的頂用 --ac 描邊、兩腳淡出（就是 logo 裡地平線上的太陽）；線本身是 --ink 13% 的細線。沒有光暈、沒有漸層底、沒有毛玻璃以外的東西。
      手機：線就是分頁列的上緣（取代原本的 border-top 和橘色短橫線），包是分頁列自己的底色鼓出去（實色 --bg，不透明：後面的圖和字不能從包裡透出來），高 13px、寬不超過一格（最多 62px），選中的圖示坐在包裡。
      電腦：線在七個字的正下方（取代原本的橘色底線），包高 8px、寬約字寬的八成（40–72px），描邊 3px，只有線、不填色。
@@ -1568,12 +1557,10 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
    3 浪經過的東西會被頂起來：手機是每個圖示（包高的 0.92 倍），電腦是每個字（0.4 倍）。只動 transform。
    4 電腦上滑鼠停在別的分頁：那個分頁下面的線微微鼓起 3px（灰線，不上色），移開就平回去。手機點下去在圖示上有一圈 --ink 的細圈擴散（0.5 秒）。
    5 prefers-reduced-motion 和分享模式：鼓包直接出現在新位置，不流動、沒有細圈、沒有滑鼠鼓起。換語言或改視窗寬度（格子寬度變了）也直接到位。
-   7 第二層（.oc-sn，2026-11-12 使用者：「一級菜單是弧形彈性，二級是直的，放在一起總感覺有點違和，有沒有可以融合的方式」→ 做了平線、3px、5px 三種高度，選 3px「微微鼓起」）。
-     同一個 LQ、同一組彈簧、同樣兩腳淡出的橘色描邊（2.2px），只是包高 3px、寬約字寬的八成（34–60px）、字被頂 0.4 倍。它沒有自己的灰線，直接坐在導覽列的下邊框上；沒有滑鼠鼓起。
-     捲動頁面換段落時也是流過去；換頁（整組項目換掉）、換語言、改寬度直接到位。原本橫跨整顆按鈕的直底線和滑鼠引出來的那一小段都拿掉了。
+   7 第二層的經過（2026-11-12 同一天）：先是頂部第二排的直底線，使用者覺得「一級菜單是弧形彈性，二級是直的，放在一起總感覺有點違和」，三種高度裡選了 3px「微微鼓起」；接著使用者提出把它搬到側邊，於是頂部第二排整個拿掉，見 ㉚。留下的原則：上下兩層是同一種語言，用大小分主次，次要的那層安靜一點。
    6 分頁列上方要留 16px 給鼓包和回彈：手機右下的狀態膠囊因此從分頁列上方 12px 改成 24px。 */
 /* ㉙ 頂部那一帶的橘線（2026-11-12，使用者：「二級菜單下面的線太粗了，很突兀」「這邊會堆疊很多線」：5px 的二級底線、橘色的閱讀進度線、段落標題上 5px 的短橫線三條疊在一起）。
-   黏在上面的導覽列附近，橘色的線只有兩個工作：第一層的鼓包（㉘）和第二層選中項目下面那一小段（原本是 2px 直線，後來改成同一種線、微微鼓起，見 ㉘-7）。其他的線不搶：
+   黏在上面的導覽列附近，橘色的線只有一個工作：第一層的鼓包（㉘）。（當時還有第二層選中項目下面那一小段；第二層後來搬到側邊，見 ㉚。）其他的線不搶：
    1 閱讀進度線：--ink 42% 的 1px，疊在導覽列的下邊框上，不用橘色。
    2 段落標題左上的短橫線：5px 改 2px，和右邊那條灰線同一高度，讀成同一條分隔線的開頭。
    3 點二級選單捲到段落時，標題停在導覽列下方 28px，不貼著導覽列：.fs 的 scroll-margin-top = --barh + 28px，--barh 是程式量到的導覽列高度（各寬度不一樣高，原本寫死 104／150px，平板貼太近、手機離 62px 還會標錯一段）；判斷「現在在哪一段」的界線跟著放寬到 48px。
@@ -1585,9 +1572,45 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
 .lq-c { fill: none; stroke-width: 2.2; stroke-linecap: round; }
 .oc-ch > svg.lq { top: 0; } .oc-ch .lq-f { display: none; } .oc-ch .lq-c { stroke-width: 3; }
 .oc-ch button > span { display: inline-block; will-change: transform; }
-.oc-sn > svg.lq { top: 0; } .oc-sn .lq-f, .oc-sn .lq-e { display: none; } .oc-sn .lq-c { stroke-width: 2.2; }
-.oc-sn button > span { display: inline-block; will-change: transform; }
 @keyframes lq-ring { from { opacity: .5; transform: scale(1); } to { opacity: 0; transform: scale(4.6); } }
+/* ㉚ 側邊段落導航（2026-11-12，使用者：「二級菜單是負責上下方向的菜單，是不是可以放在側邊，這樣上面不會兩層菜單」，並給了一張參考圖：貼著螢幕邊緣長出來的黑色面板，上下兩端用內凹的圓角接回邊緣，裡面一格一個圓環；接著：「電腦端的是不是放在左邊，手機端不知道怎麼處理」）。
+   參考圖好在三點：面板是從邊緣「長出來」的（和 ㉘ 的鼓包同一種液態語言）；每一格是圓環，導航順便是進度；上下排列對應上下捲動。照這三點用 Daybreak 自己的顏色做，不照抄黑底彩虹。
+   1 取代頂部的第二排：導覽列只剩一排（原本的第二排 .oc-b2、.oc-sn 已移除）。電腦上第一層的鼓包直接坐在導覽列的下邊框上，不再自己畫一條灰線。
+   2 位置：貼左緣（段落標題的「02 / 04」也在左邊，編號對得上；右邊留給捲軸和右下的狀態膠囊）。首屏還佔著大半個畫面時收在畫面外，捲過去才從左緣滑出來（首屏兩邊有小卡，首屏自己也列了各段）。
+   3 面板：--sheet 實色、1px 細邊（--ink 13%），外側兩個角 18px 圓角，上下兩端各一個 16px 的內凹圓角接回螢幕邊緣。沒有陰影、沒有光暈。
+   4 每一格：一個圓環，裡面是兩位數的段落編號；最上面那格是這一頁的圖示，按了回到頂部。圓環的弧是「這一段讀到哪」：讀完的是一整圈中性色（--ink 40%），正在讀的那段是 --ac，還沒到的只有底圈（--ink 14%）。
+   5 現在在哪一段：面板的外緣在那一格往外鼓 6px（LQ 的直向版，同一組彈簧），鼓包的頂描 --ac、兩腳淡出，圓環跟著被頂出去一點。捲動換段時鼓包沿著外緣流過去。
+   6 電腦（701px 以上）：寬 46px、垂直置中、所有段落都列出來，內容區左邊多留 40px 給它。滑鼠移到某一格或鍵盤聚焦，旁邊跳出那一段的名稱（--ink 底、--sheet 字，和 .oc-tip 同款）；平常不顯示字。
+   7 手機（700px 以下）：平常只露出一格（現在這一段的圓環），寬 34px，在畫面高度 64% 的地方，剛好落在頁面邊距和卡片內距裡，不蓋到圖。點一下展開成清單，每格圓環旁邊直接寫段落名稱；點其中一段就捲過去並收起來，點面板以外的地方也收起來。收合時不鼓包（它自己就是標記）。
+   8 prefers-reduced-motion：面板直接出現、鼓包直接到位。分享模式不顯示。 */
+.oc-side { display: flex; flex-direction: column; position: fixed; left: 0; top: 50%; z-index: 58; width: 46px; padding: 18px 0; box-sizing: border-box; translate: 0 -50%; transform: translateX(calc(-100% - 16px)); visibility: hidden; transition: transform .7s var(--spring), visibility 0s .7s; }
+.oc-side.on { transform: none; visibility: visible; transition: transform .7s var(--spring); }
+.oc-side > svg.lq { left: -40px; top: -16px; transform: scaleX(-1); }
+.oc-side .lq-f { fill: var(--sheet); }
+.oc-side .lq-c { stroke-width: 2.5; }
+.oc-side button { appearance: none; position: relative; z-index: 1; display: grid; place-items: center; width: 46px; height: 40px; padding: 0; border: 0; background: none; color: var(--k2); cursor: pointer; }
+.oc-side button > b { position: relative; flex: none; display: grid; place-items: center; width: 28px; height: 28px; font: 500 10px/1 var(--f-mono); letter-spacing: 0; will-change: transform; }
+.oc-side button > b > svg.rg { position: absolute; inset: 0; width: 100%; height: 100%; rotate: -90deg; fill: none; stroke-width: 2; }
+.oc-side .rg .tr { stroke: color-mix(in srgb, var(--ink) 14%, transparent); }
+.oc-side .rg .pg { stroke: color-mix(in srgb, var(--ink) 40%, transparent); stroke-linecap: round; stroke-dasharray: calc(var(--p, 0) * 75.4px) 75.4px; }
+.oc-side button > b > .ic { width: 13px; height: 13px; }
+.oc-side button:hover, .oc-side button[aria-current="true"] { color: var(--ink); }
+.oc-side button[aria-current="true"] .pg { stroke: var(--ac); } .oc-side button[data-p="0.000"] .pg { opacity: 0; }
+.oc-side button:focus-visible { outline: 0; } .oc-side button:focus-visible > b { outline: 1px solid var(--ink); outline-offset: 3px; border-radius: 50%; }
+.oc-side button > i { position: absolute; left: calc(100% + 12px); top: 50%; translate: -6px -50%; padding: 6px 10px; border-radius: 8px; background: var(--ink); color: var(--sheet); font: 500 12px/1.25 "Inter Tight", "Noto Sans TC", sans-serif; font-style: normal; letter-spacing: .02em; white-space: nowrap; pointer-events: none; opacity: 0; transition: opacity .16s, translate .16s; }
+@media (min-width: 701px) {
+  .oc-secs { padding-left: calc(clamp(16px, 2.4vw, 34px) + 40px); }
+  .oc-side button:hover > i, .oc-side button:focus-visible > i { opacity: 1; translate: 0 -50%; }
+}
+@media (max-width: 700px) {
+  .oc-side { top: 64%; width: 34px; padding: 10px 0; }
+  .oc-side button { width: 34px; } .oc-side button > b { width: 24px; height: 24px; font-size: 9px; }
+  .oc-side:not(.open) button:not([aria-current="true"]), .oc-side:not(.open) button > i { display: none; }
+  .oc-side.open { width: auto; max-width: 78vw; padding: 14px 0; z-index: 62; }
+  .oc-side.open button { display: flex; align-items: center; justify-content: flex-start; gap: 10px; width: 100%; padding: 0 20px 0 5px; }
+  .oc-side.open button > i { position: static; translate: none; opacity: 1; padding: 0; background: none; color: inherit; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; transition: none; }
+  .oc-side.open button[aria-current="true"] > i { font-weight: 600; }
+}
 /* ══ 手機 ══ */
 @media (max-width: 700px) {
   .oc-bar .oc-ch { display: none; }
@@ -1599,10 +1622,6 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
   .oc-tab.en button { font-size: 11px; letter-spacing: -.01em; }
   .oc-tab button[aria-current="true"] { color: var(--ink); font-weight: 600; }
   .oc-tab button:disabled { opacity: .34; }
-  .oc-sn { padding-right: 26px; }
-  .oc-sn button { font-size: 14.5px; padding: 13px 12px 11px; }
-  .oc-b2 { position: relative; }
-  .oc-b2::after { content: ""; position: absolute; right: 0; top: 0; bottom: 1px; width: 30px; background: linear-gradient(90deg, transparent, var(--bg)); pointer-events: none; }
   .oc-hd .os:not(.front) { pointer-events: none; cursor: default; }
   .oc-secs { gap: 56px; }
   .ib { width: 32px; height: 32px; }
@@ -1725,13 +1744,14 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
           <button type="button" class="ib" id="oc-mapb"></button>
           <button type="button" class="dn" id="oc-th" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="日夜（可以拖曳，停在中間是黃昏或清晨）"><canvas class="dn-b" width="120" height="48" aria-hidden="true"></canvas><span class="dn-k"><canvas width="84" height="84"></canvas></span></button>
           <span class="tgl" id="oc-lg" role="group" aria-label="語言"><button type="button" data-l="zh">中</button><button type="button" data-l="en">EN</button></span></span></div>
-      <div class="oc-b2"><nav class="oc-sn" id="oc-rail" aria-label="這一頁的小問題"></nav><span class="rg" id="oc-ctl" role="group" aria-label="畫法和時間範圍"></span></div>
+      <span class="rg" id="oc-ctl" role="group" aria-label="畫法和時間範圍" hidden></span>
     </div>
     <div class="oc-hd" id="oc-hd"><canvas class="oc-f" id="oc-f" aria-hidden="true"></canvas><div class="oc-st" id="oc-st"></div></div>
     <div class="oc-secs" id="oc-secs"></div>
     <div class="oc-ft"><span id="oc-ft1"></span><span id="oc-ft2"></span></div>
     <div class="oc-map" id="oc-map" hidden><div class="mp-in"><div class="mp-h"><h3 id="oc-mapt"></h3><label class="mp-q"><span id="oc-mapi"></span><input id="oc-mapq" type="search" autocomplete="off" spellcheck="false"></label><span class="mp-n" id="oc-mapn"></span><button type="button" class="fx-x" id="oc-mapx" data-mapx="1"></button></div><div class="mp-b" id="oc-mapg"></div></div></div>
     <nav class="oc-tab" id="oc-tab" aria-label="今天和六個問題"></nav>
+    <nav class="oc-side" id="oc-side" aria-label="這一頁的小問題"></nav>
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
@@ -3371,6 +3391,7 @@ function initOC() {
   const RG = [[365, '1 年', '1Y'], [1095, '3 年', '3Y'], [0, '全部', 'All']];
   const ctl = () => { const b = (attr, v, on, zh, en) => `<button type="button" ${attr}="${v}" aria-pressed="${on}">${T(zh, en)}</button>`; return ''; };
   /* ㉘ 液態分頁（程式）。每個導航一份狀態：前緣 L、頂點 P、後緣 R、高度 h 四條彈簧，外加電腦上滑鼠引出來的小鼓起 s。renderBar 每次重畫都會把按鈕和 SVG 換掉，狀態留在這裡，所以動到一半重畫也接得上 */
+  const SIDE = { el: () => $('#oc-side'), phone: () => matchMedia('(max-width: 700px)').matches, open: () => SIDE.el().classList.contains('open'), set: v => { const e = SIDE.el(); if (e.classList.contains('open') === !!v) return; e.classList.toggle('open', !!v); LQ.sync(true); } };   /* ㉚-7 手機：收合／展開 */
   const LQ = (() => {
     const K = { lead: [320, 21], peak: [190, 15], trail: [120, 12], h: [430, 10] }, NS = []; let raf = 0, last = 0;
     const svg = id => `<svg class="lq" aria-hidden="true" focusable="false"><defs><linearGradient id="lqg-${id}" gradientUnits="userSpaceOnUse" x1="0" x2="1" y1="0" y2="0"><stop offset="0" style="stop-color:var(--ac)" stop-opacity="0"/><stop offset=".22" style="stop-color:var(--ac)"/><stop offset=".78" style="stop-color:var(--ac)"/><stop offset="1" style="stop-color:var(--ac)" stop-opacity="0"/></linearGradient></defs><path class="lq-f"/><path class="lq-e"/><path class="lq-c" stroke="url(#lqg-${id})"/></svg>`;
@@ -3380,14 +3401,24 @@ function initOC() {
     const tgt = q => { const c = q.cx[q.cur], w = q.o.w(q.bw[q.cur]); return { L: c - w / 2, P: c, R: c + w / 2, w }; };
     function measure(q) {
       const nav = q.nav, bs = nav ? [...nav.querySelectorAll('button')] : [], sv = nav && nav.querySelector('svg.lq'); if (!sv || !bs.length || !nav.offsetWidth) return false;
-      q.bs = bs; q.mv = bs.map(q.o.lift); q.cx = bs.map(b => b.offsetLeft + b.offsetWidth / 2); q.bw = bs.map(b => b.offsetWidth); q.W = Math.max(nav.scrollWidth, nav.clientWidth);
-      q.pf = sv.querySelector('.lq-f'); q.pe = sv.querySelector('.lq-e'); q.pc = sv.querySelector('.lq-c'); q.gr = sv.querySelector('linearGradient'); q.Y = q.o.top ? 22 : nav.offsetHeight - (q.o.dy || 1.5); q.lt = [];
+      q.bs = bs; q.mv = bs.map(q.o.lift); q.lt = []; q.pf = sv.querySelector('.lq-f'); q.pe = sv.querySelector('.lq-e'); q.pc = sv.querySelector('.lq-c'); q.gr = sv.querySelector('linearGradient');
+      if (q.o.vert) { q.cx = bs.map(b => b.offsetTop + b.offsetHeight / 2); q.bw = bs.map(b => b.offsetHeight); q.W = nav.offsetHeight; q.PW = nav.offsetWidth; const w = 12 + q.PW + 40, h = q.W + 32; sv.setAttribute('width', w); sv.setAttribute('height', h); sv.setAttribute('viewBox', '0 0 ' + w + ' ' + h); return true; }   /* ㉚ 直向：軸是上下，包往左鼓 */
+      q.cx = bs.map(b => b.offsetLeft + b.offsetWidth / 2); q.bw = bs.map(b => b.offsetWidth); q.W = Math.max(nav.scrollWidth, nav.clientWidth);
+      q.Y = q.o.top ? 22 : nav.offsetHeight - (q.o.dy || 1.5);
       const hh = q.o.top ? 23 : nav.offsetHeight; sv.setAttribute('width', q.W); sv.setAttribute('height', hh); sv.setAttribute('viewBox', '0 0 ' + q.W + ' ' + hh); return true; }
+    function drawV(q) {   /* ㉚ 面板外框：右緣 → 內凹圓角 → 上邊 → 左上圓角 → 左緣（帶鼓包）→ 左下圓角 → 下邊 → 內凹圓角 → 右緣 */
+      const X0 = 12, XR = X0 + q.PW, R = 16, r = 18, H = q.W, a = Math.max(r, q.L.x), b = Math.min(H - r, q.R.x); let e = `M${XR} 0A${R} ${R} 0 0 1 ${XR - R} ${R}L${X0 + r} ${R}A${r} ${r} 0 0 0 ${X0} ${R + r}`, c = '';
+      const flat = q.o.flat && q.o.flat(); if (b > a && !flat) for (let y = a; ; y = Math.min(b, y + 2)) { const p = (X0 - bump(q, y)).toFixed(2) + ' ' + (R + y).toFixed(1); e += 'L' + p; c += (c ? 'L' : 'M') + p; if (y >= b) break; }
+      e += `L${X0} ${R + H - r}A${r} ${r} 0 0 0 ${X0 + r} ${R + H}L${XR - R} ${R + H}A${R} ${R} 0 0 1 ${XR} ${H + 2 * R}`;
+      q.pe.setAttribute('d', e); q.pf.setAttribute('d', e + `h40V0Z`); q.pc.setAttribute('d', c || 'M0 0'); q.gr.setAttribute('x1', 0); q.gr.setAttribute('x2', 0); q.gr.setAttribute('y1', (R + q.L.x).toFixed(1)); q.gr.setAttribute('y2', (R + q.R.x).toFixed(1));
+      q.pc.style.opacity = Math.max(.5, Math.min(1, q.h.x / (q.o.H * .7))).toFixed(2);
+      for (let i = 0; i < q.mv.length; i++) { const el = q.mv[i]; if (!el) continue; const t = flat ? '0.00' : (bump(q, q.cx[i]) * q.o.k).toFixed(2); if (q.lt[i] !== t) { q.lt[i] = t; el.style.transform = +t ? 'translateX(' + t + 'px)' : ''; } } }
     function draw(q) {
+      if (q.o.vert) return drawV(q);
       const L = q.L.x, R = q.R.x, W = q.W, Y = q.Y, ye = q.o.top ? Y - .5 : Y, sw = q.s.h >= .05; let a = Math.max(0, L), b = Math.min(W, R); if (sw) { a = Math.max(0, Math.min(a, q.s.x - 26)); b = Math.min(W, Math.max(b, q.s.x + 26)); }
-      let e = 'M0 ' + ye, f = 'M' + a.toFixed(1) + ' ' + Y, c = '';
-      for (let x = a; ; x = Math.min(b, x + 2)) { const m = bump(q, x), y = ye - m - (sw ? swell(q, x) : 0), xs = x.toFixed(1); e += 'L' + xs + ' ' + y.toFixed(2); f += 'L' + xs + ' ' + (Y - m).toFixed(2); if (x >= L && x <= R) c += (c ? 'L' : 'M') + xs + ' ' + y.toFixed(2); if (x >= b) break; }
-      q.pe.setAttribute('d', e + 'L' + W + ' ' + ye); if (q.o.top) q.pf.setAttribute('d', f + 'L' + b.toFixed(1) + ' ' + Y + 'Z'); q.pc.setAttribute('d', c || 'M0 0'); q.gr.setAttribute('x1', L.toFixed(1)); q.gr.setAttribute('x2', R.toFixed(1));
+      let e = q.o.seg ? '' : 'M0 ' + ye, f = 'M' + a.toFixed(1) + ' ' + Y, c = '';
+      for (let x = a; ; x = Math.min(b, x + 2)) { const m = bump(q, x), y = ye - m - (sw ? swell(q, x) : 0), xs = x.toFixed(1); e += (e ? 'L' : 'M') + xs + ' ' + y.toFixed(2); f += 'L' + xs + ' ' + (Y - m).toFixed(2); if (x >= L && x <= R) c += (c ? 'L' : 'M') + xs + ' ' + y.toFixed(2); if (x >= b) break; }
+      q.pe.setAttribute('d', q.o.seg ? e : e + 'L' + W + ' ' + ye); if (q.o.top) q.pf.setAttribute('d', f + 'L' + b.toFixed(1) + ' ' + Y + 'Z'); q.pc.setAttribute('d', c || 'M0 0'); q.gr.setAttribute('x1', L.toFixed(1)); q.gr.setAttribute('x2', R.toFixed(1));
       q.pc.style.opacity = Math.max(.5, Math.min(1, q.h.x / (q.o.H * .7))).toFixed(2);
       for (let i = 0; i < q.mv.length; i++) { const el = q.mv[i]; if (!el) continue; const t = (bump(q, q.cx[i]) * q.o.k).toFixed(2); if (q.lt[i] !== t) { q.lt[i] = t; el.style.transform = +t ? 'translateY(-' + t + 'px)' : ''; } } }
     function snap(q) { const t = tgt(q); q.L.x = t.L; q.P.x = t.P; q.R.x = t.R; q.h.x = q.o.H; q.L.v = q.P.v = q.R.v = q.h.v = 0; q.s.h = q.s.hv = q.s.v = 0; q.s.x = t.P; draw(q); }
@@ -3414,14 +3445,16 @@ function initOC() {
       if (!nav) return; const q = { nav, id, o, L: { x: 0, v: 0 }, P: { x: 0, v: 0 }, R: { x: 0, v: 0 }, h: { x: o.H, v: 0 }, s: { x: 0, v: 0, h: 0, hv: 0 }, dir: 1, cur: -1, hov: -1, sig: '', ok: false, live: false }; NS.push(q);
       if (o.sw && !reduce) { nav.addEventListener('pointermove', e => { if (e.pointerType && e.pointerType !== 'mouse') return; const b = e.target.closest ? e.target.closest('button') : null, i = b && !b.disabled && q.bs ? q.bs.indexOf(b) : -1; if (i !== q.hov) { q.hov = i; if (q.ok) kick(q); } }); nav.addEventListener('pointerleave', () => { if (q.hov >= 0) { q.hov = -1; if (q.ok) kick(q); } }); } }
     add($('#oc-tab'), 't', { top: 1, H: 13, k: .92, sw: 0, w: b => Math.min(b * .96, 62), lift: b => b.querySelector('.ic') });
-    add($('#oc-crumb'), 'c', { top: 0, H: 8, k: .4, sw: 3, w: b => Math.max(40, Math.min(72, b * .78)), lift: b => b.querySelector('span') });
-    add($('#oc-rail'), 's', { top: 0, H: 3, k: .4, sw: 0, dy: 1.1, sig: () => ci, w: b => Math.max(34, Math.min(60, (b - 28) * .8)), lift: b => b.querySelector('span') });   /* 第二層（㉘-7）：換頁時整組項目換掉，直接到位（sig） */
+    add($('#oc-crumb'), 'c', { top: 0, seg: 1, dy: .5, H: 8, k: .4, sw: 3, w: b => Math.max(40, Math.min(72, b * .78)), lift: b => b.querySelector('span') });
+    add($('#oc-side'), 'v', { vert: 1, H: 6, k: .55, sw: 0, sig: () => ci, w: () => 36, lift: b => b.querySelector('b'), flat: () => SIDE.phone() && !SIDE.open() });   /* ㉚ 側邊段落導航 */
     let rz = 0; window.addEventListener('resize', () => { if (!rz) rz = requestAnimationFrame(() => { rz = 0; sync(true); }); }); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => sync(true));
     return { svg, sync, state: NS, moving: () => !!raf };
   })();
   function renderBar() {
     $('#oc-crumb').innerHTML = CH.map((c, i) => `<button type="button" data-ch="${i}" aria-current="${i === ci}"${c.todo ? ' disabled' : ''}><span>${esc(T(c.zh, c.en))}</span></button>`).join('') + LQ.svg('c'); const tb = $('#oc-tab'); tb.innerHTML = CH.map((c, i) => `<button type="button" data-ch="${i}" aria-current="${i === ci}"${c.todo ? ' disabled' : ''}>${CHI(c.id) ? IC(c.id) : ''}<span>${esc(T(c.zh, c.en))}</span></button>`).join('') + LQ.svg('t'); tb.classList.toggle('en', lang === 'en'); { const mb = $('#oc-mapb'), tt = T('找圖（也可以按 / ）', 'Find a chart (or press / )'); mb.innerHTML = IC('grid'); mb.dataset.tip = tt; mb.setAttribute('aria-label', tt); } { const av2 = CH.map((c, i) => i).filter(i => !CH[i].todo); tb.style.setProperty('--n', av2.length); LQ.sync(); }
-    $('#oc-rail').innerHTML = `<button type="button" data-go="0"><span>${T('總覽', 'Overview')}</span></button>` + G.map((x, j) => `<button type="button" data-go="${j + 1}"><span><i>${p2(j + 1)}</i>${esc(T(x.zh, x.en))}</span></button>`).join('') + LQ.svg('s'); LQ.sync(); $('#oc-ctl').innerHTML = ctl();
+    { const ring = '<svg class="rg" viewBox="0 0 28 28" aria-hidden="true"><circle class="tr" cx="14" cy="14" r="12"/><circle class="pg" cx="14" cy="14" r="12"/></svg>', sb = (j, nm, inner) => `<button type="button" data-go="${j}" aria-label="${esc(nm)}"><b>${ring}${inner}</b><i>${esc(nm)}</i></button>`;
+      $('#oc-side').innerHTML = (SHARE ? '' : LQ.svg('v') + sb(0, T('回到這一頁的開頭', 'Back to the top of this page'), CHI(O.id) ? IC(O.id) : '·') + G.map((x, j) => sb(j + 1, T(x.zh, x.en), p2(j + 1))).join('')); }
+    LQ.sync(); $('#oc-ctl').innerHTML = ctl();
   }
   function headBody() { const f = stg.querySelector('.os[data-k="' + ci + '"] .os-in'); if (f) f.insertAdjacentHTML('beforeend', `<div class="os-b"><div class="${O.brief ? 'ov br' : O.map || O.dial || O.flow || O.crowd ? 'ov mp' : 'ov gn'}"><div class="ov-l" id="oc-ol0"></div><div class="ov-m" id="oc-or0"></div></div></div>`); }
   function renderSecs() {
@@ -3432,7 +3465,10 @@ function initOC() {
   }
   /* 小問題那一列：標出目前讀到哪一段，並把它捲進看得到的範圍 */
   { const br = $('#oc-bar'), sb = () => document.documentElement.style.setProperty('--barh', br.offsetHeight + 'px'); if (br) { sb(); if ('ResizeObserver' in window) new ResizeObserver(sb).observe(br); else window.addEventListener('resize', sb); } }   /* ㉙-3：導覽列多高由程式量（電腦 99、平板三排 146、手機 88），不寫死 */
-  let spyK = -1; function spy() { const rail = $('#oc-rail'); if (!rail) return; const lim = $('#oc-bar').getBoundingClientRect().bottom + 48; let k = 0; G.forEach((x, j) => { const e2 = $('#oc-s' + (j + 1)); if (e2 && e2.getBoundingClientRect().top <= lim) k = j + 1; }); const bs = rail.querySelectorAll('button'); if (k === spyK && bs[k] && bs[k].getAttribute('aria-current') === 'true') return; spyK = k; bs.forEach((b2, i) => b2.setAttribute('aria-current', i === k)); const cur = bs[k]; LQ.sync(); if (cur && rail.scrollWidth > rail.clientWidth + 1) rail.scrollLeft = Math.max(0, cur.offsetLeft + cur.offsetWidth / 2 - rail.clientWidth / 2); }   /* ㉙-4：放不下才捲，而且把選中的放中間，左右都看得到還有別的 */
+  let spyK = -1; function spy() { const sd = $('#oc-side'); if (!sd) return; const lim = $('#oc-bar').getBoundingClientRect().bottom + 48; let k = 0; G.forEach((x, j) => { const e2 = $('#oc-s' + (j + 1)); if (e2 && e2.getBoundingClientRect().top <= lim) k = j + 1; }); const ss = sd.querySelectorAll('button'); if (!ss.length) return;
+    { const hb = hd.getBoundingClientRect(), on = hb.bottom < innerHeight * .55; if (!on) SIDE.set(0); sd.classList.toggle('on', on); ss.forEach((b2, i) => { let p = i < k ? 1 : 0; if (i === k) { const e2 = k ? $('#oc-s' + k) : hd, r2 = e2.getBoundingClientRect(); p = Math.max(.04, Math.min(1, ((k ? lim : 0) - r2.top) / Math.max(1, r2.height))); } const v = p.toFixed(3); if (b2.dataset.p !== v) { b2.dataset.p = v; b2.style.setProperty('--p', v); } }); }   /* ㉚-4：圓環＝這一段讀到哪；㉚-2：首屏還佔著大半個畫面時收起來 */
+    if (k === spyK && ss[k] && ss[k].getAttribute('aria-current') === 'true') return; spyK = k; ss.forEach((b2, i) => b2.setAttribute('aria-current', i === k)); LQ.sync(); }
+  document.addEventListener('pointerdown', e => { if (SIDE.open() && !(e.target.closest && e.target.closest('#oc-side'))) SIDE.set(0); });
   let spyT = 0; window.addEventListener('scroll', () => { if (spyT) return; spyT = setTimeout(() => { spyT = 0; spy(); }, 90); }, { passive: true });
   /* 頭部那句話裡的關鍵數字用主題色（整頁只有這裡和異動的小點用橘紅） */
   const hx = () => Array.prototype.slice.call(stg.querySelectorAll('.ov-lead, .br-h')).forEach(e2 => { e2.innerHTML = esc(e2.textContent).replace(/([+\-−]?[$]?\d[\d,.]*\s?(?:%|億|萬|兆|[KMB](?![A-Za-z])))/g, '<b class="hx">$1</b>'); });
@@ -3596,6 +3632,7 @@ function initOC() {
     if (t.closest('[data-fxd]') && fx) { const c0 = G[fx.k - 1].charts[fx.i]; savePng(c0.k, T(c0.zh, c0.en)); return; }
     if (t.closest('[data-fxm]')) { const f = $('#oc-fx'); f.classList.toggle('max'); fxBtns(); renderLead('F'); return; }
     if (t.closest('[data-x]') || t.id === 'oc-fx') { closeFx(); return; }
+    if ((b = t.closest('#oc-side button')) && SIDE.phone()) { if (!SIDE.open()) { SIDE.set(1); return; } SIDE.set(0); }
     if ((b = t.closest('[data-go]'))) { goSec(+b.dataset.go); return; }
     if ((b = t.closest('[data-fx]'))) { openFx(b.dataset.fx); return; }
     if ((b = t.closest('[data-ly]'))) { const c = keyC(b.dataset.key); if (c && (c._ly || 'sp') !== b.dataset.ly) { c._ly = b.dataset.ly; reOne(b.dataset.key); } return; }
