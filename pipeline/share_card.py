@@ -100,7 +100,7 @@ def card(lang, latest, notes, F, out):
     # 頁尾：日出 logo、網址、X 帳號
     fy = H - 44; d.line([M, fy - 22, W - M, fy - 22], fill=LINE, width=1)
     d.arc([M, fy - 14, M + 28, fy + 14], 180, 360, fill=RED, width=4); d.line([M - 4, fy, M + 32, fy], fill=INK, width=4)
-    d.text((M + 44, fy), '破曉 DAYBREAK' if lang == 'zh' else 'DAYBREAK', font=F['cjk'](20, 900) if lang == 'zh' else F['mono'](20, 800), fill=INK, anchor='lm')
+    d.text((M + 44, fy), 'DAYBREAK', font=F['cjk'](20, 900) if lang == 'zh' else F['mono'](20, 800), fill=INK, anchor='lm')
     d.text((W - M, fy), 'X @songpu717', font=F['mono'](19), fill=INK3, anchor='rm')
     img.save(out, optimize=True)
     print('wrote', out, 'headline lines', len(lines), 'size', size)

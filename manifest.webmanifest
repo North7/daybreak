@@ -1,6 +1,6 @@
 {
-  "name": "破曉 Daybreak",
-  "short_name": "破曉",
+  "name": "Daybreak",
+  "short_name": "Daybreak",
   "description": "每天清晨的第一份比特幣簡報 · The first Bitcoin brief of the morning",
   "start_url": "./",
   "scope": "./",

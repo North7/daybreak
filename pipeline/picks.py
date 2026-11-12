@@ -471,7 +471,7 @@ def card(L, notes, sp, title, lang, Fn, out, tag=None):
     # 頁尾（同分享圖）
     fy = H - 88; d.line([M, fy - 44, W - M, fy - 44], fill=LINE, width=2)
     d.arc([M, fy - 28, M + 56, fy + 28], 180, 360, fill=RED, width=8); d.line([M - 8, fy, M + 64, fy], fill=INK, width=8)
-    d.text((M + 88, fy), '破曉 DAYBREAK' if lang == 'zh' else 'DAYBREAK', font=Fn['cjk'](40, 900) if lang == 'zh' else Fn['mono'](40, 800), fill=INK, anchor='lm')
+    d.text((M + 88, fy), 'DAYBREAK', font=Fn['cjk'](40, 900) if lang == 'zh' else Fn['mono'](40, 800), fill=INK, anchor='lm')
     d.text((W - M, fy), 'X @songpu717', font=Fn['mono'](38), fill=INK3, anchor='rm')
     img.resize((W // K, H // K), Image.LANCZOS).save(out, optimize=True)
     print('wrote', os.path.relpath(out, ROOT), 'title lines', len(lines), 'size', size)
@@ -739,7 +739,7 @@ def card2(L, notes, shot, q, lang, Fn, out):
     y += 48; img.paste(im, (Pd, y))
     fy = H - 70; d.line([Pd, fy - 52, Wc - Pd, fy - 52], fill=LINE_, width=2)
     d.arc([Pd, fy - 26, Pd + 52, fy + 26], 180, 360, fill=RED, width=8); d.line([Pd - 8, fy, Pd + 60, fy], fill=INK_, width=8)
-    d.text((Pd + 84, fy), '破曉 DAYBREAK' if lang == 'zh' else 'DAYBREAK', font=Fn['cjk'](38, 900) if lang == 'zh' else Fn['mono'](38, 800), fill=INK_, anchor='lm')
+    d.text((Pd + 84, fy), 'DAYBREAK', font=Fn['cjk'](38, 900) if lang == 'zh' else Fn['mono'](38, 800), fill=INK_, anchor='lm')
     d.text((Wc - Pd, fy), 'X @songpu717', font=Fn['mono'](34), fill=INK3_, anchor='rm')
     img.resize((Wc // 2, H // 2), Image.LANCZOS).save(out, optimize=True)
     print('wrote', os.path.relpath(out, ROOT), (Wc // 2, H // 2))
