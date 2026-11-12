@@ -864,7 +864,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 @media (max-width: 860px) {
   .oc-bar .oc-top { align-items: flex-start; }
   .oc-l { flex-direction: column; align-items: flex-start; gap: 4px; flex: 1; }
-  .oc-ch { position: static; max-width: 100%; overflow-x: auto; scrollbar-width: none; margin-left: -10px; }
+  .oc-ch { position: relative; inset: auto; max-width: 100%; overflow-x: auto; scrollbar-width: none; margin-left: -10px; }   /* inset: auto 不能省：上面那個 860px 區塊留了 top: 40px，而 .oc-ch 後來變成 position: relative，701–860px 時整排會往下掉 40px、壓在第二層上面（2026-11-12 修） */
   .oc-b2 { flex-direction: column; align-items: stretch; gap: 0; }
   .oc-b2 .rg { align-self: flex-end; padding-bottom: 6px; }
   .oc-hd { height: 700px; } .oc-hd .os { left: 4%; width: 92%; top: 46px; height: 636px; }
@@ -1016,7 +1016,6 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 
 /* ══ 導覽 ══ */
 .oc-ch, .oc-sn { position: relative; }
-.oc-sn::after { content: ""; position: absolute; left: 0; bottom: 0; height: 2px; border-radius: 1px; width: var(--w, 0px); transform: translateX(var(--x, 0px)); background: var(--ac); transition: transform .75s var(--spring), width .5s var(--spring); pointer-events: none; }
 .oc-ch button[aria-current="true"], .oc-sn button[aria-current="true"] { color: var(--ink); border-bottom-color: transparent; }
 .oc-tab { display: none; }
 @media (min-width: 701px) {
@@ -1428,7 +1427,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
   .oc.ag-boot .oc-sn button { animation-delay: calc(.5s + var(--bn, 0) * 45ms); }
   .oc-ch button:nth-child(2), .oc-sn button:nth-child(2) { --bn: 1; } .oc-ch button:nth-child(3), .oc-sn button:nth-child(3) { --bn: 2; } .oc-ch button:nth-child(4), .oc-sn button:nth-child(4) { --bn: 3; } .oc-ch button:nth-child(5), .oc-sn button:nth-child(5) { --bn: 4; } .oc-ch button:nth-child(6), .oc-sn button:nth-child(6) { --bn: 5; } .oc-ch button:nth-child(n+7), .oc-sn button:nth-child(n+7) { --bn: 6; }
   .oc.ag-boot .oc-top .r > * { animation: m-rise-s .45s cubic-bezier(.16, 1, .3, 1) backwards; } .oc.ag-boot .oc-top .r > :nth-child(1) { animation-delay: .5s; } .oc.ag-boot .oc-top .r > :nth-child(2) { animation-delay: .58s; } .oc.ag-boot .oc-top .r > :nth-child(3) { animation-delay: .66s; } .oc.ag-boot .oc-top .r > :nth-child(n+4) { animation-delay: .74s; }
-  .oc.ag-boot .oc-ch > svg.lq, .oc.ag-boot .oc-sn::after { animation: m-fade .4s .7s backwards; }
+  .oc.ag-boot .oc-ch > svg.lq, .oc.ag-boot .oc-sn > svg.lq { animation: m-fade .4s .7s backwards; }
   .oc.ag-boot .oc-hd .os.front { animation: m-fade .35s .6s backwards; }
   .oc.ag-boot .oc-hd .os.front .br-h, .oc.ag-boot .oc-hd .os.front .pp-h { animation: m-rise .85s var(--spring) calc(var(--bt) + .15s) backwards, ag-type .7s steps(20, end) calc(var(--bt) + .2s) backwards; }
   .oc.ag-boot .oc-hd.tb .os:not(.front) { animation: m-float 8s ease-in-out infinite, ag-drop .7s var(--spring) backwards; animation-delay: var(--dl, 0s), calc(1.05s + var(--so, 0) * 110ms); }
@@ -1436,9 +1435,6 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
   /* 按鈕：按下先縮、放開彈回；導航項目被選到時彈一下 */
   .oc button { transition: scale .5s var(--spring); }
   .oc button:active { scale: .94; transition-duration: .09s; }
-  /* 移動：導航底線由程式用兩條彈簧推（--ix 位置、--is 長度） */
-  /* 第二層（段落導航）的底線：一層 2px 的橫條裡畫兩段（主體＋游標引出來的那一小段），都是 2px；不過濾鏡（㉙：2px 的線過「模糊再切邊」會消失，5px 又太粗）。--nw 是按鈕排到哪裡，不是 scrollWidth（㉙） */
-  .oc.mo .oc-sn::after { left: 0; bottom: 0; width: var(--nw, 100%); height: 2px; border-radius: 0; transform: none; transition: none; background: linear-gradient(var(--ac), var(--ac)) var(--ix, 0px) 100% / calc(var(--is, 0) * 100px) 2px no-repeat, linear-gradient(var(--ac), var(--ac)) var(--dx, 0px) 100% / var(--dw, 0px) var(--dh, 0px) no-repeat; }
   /* 靜止：頂部小卡慢慢漂，同時帶著游標視差（--pax／--pay 由程式寫在每張小卡上）；拿起來時陰影變深 */
   .oc-hd.tb .os:not(.front) { animation: m-float 8s ease-in-out infinite; animation-delay: var(--dl, 0s); }
   .oc-hd.tb .os.drag, .oc-hd.tb .os:not(.front):hover { animation-play-state: paused; }
@@ -1563,7 +1559,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 @keyframes hitp { 0%, 100% { box-shadow: 0 0 0 0 transparent; border-color: var(--rule); } 50% { box-shadow: 0 0 0 3px var(--ink); border-color: var(--ink); } }
 .fc.hit { animation: hitp 1.1s ease-in-out 2; }
 /* ㉘ 液態分頁（2026-11-12，使用者給了一段液態分頁列的錄影：「這種物理特性可以做嗎」→ 試作三種手感，選「彈跳」，並要電腦上也有）。
-   只用在「今天和六個問題」這一層（手機底部分頁列 .oc-tab、電腦頂部 .oc-ch）；第二層的段落導航（.oc-sn）是 2px 的細底線（㉙），一頁只有一個鼓包。
+   兩層導航都是同一種線：第一層「今天和六個問題」（手機底部分頁列 .oc-tab、電腦頂部 .oc-ch）鼓得高，第二層的段落導航（.oc-sn）微微鼓起（第 7 點）。
    1 形狀：一條線上鼓起一個包，包的頂用 --ac 描邊、兩腳淡出（就是 logo 裡地平線上的太陽）；線本身是 --ink 13% 的細線。沒有光暈、沒有漸層底、沒有毛玻璃以外的東西。
      手機：線就是分頁列的上緣（取代原本的 border-top 和橘色短橫線），包是分頁列自己的底色鼓出去（實色 --bg，不透明：後面的圖和字不能從包裡透出來），高 13px、寬不超過一格（最多 62px），選中的圖示坐在包裡。
      電腦：線在七個字的正下方（取代原本的橘色底線），包高 8px、寬約字寬的八成（40–72px），描邊 3px，只有線、不填色。
@@ -1572,13 +1568,16 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
    3 浪經過的東西會被頂起來：手機是每個圖示（包高的 0.92 倍），電腦是每個字（0.4 倍）。只動 transform。
    4 電腦上滑鼠停在別的分頁：那個分頁下面的線微微鼓起 3px（灰線，不上色），移開就平回去。手機點下去在圖示上有一圈 --ink 的細圈擴散（0.5 秒）。
    5 prefers-reduced-motion 和分享模式：鼓包直接出現在新位置，不流動、沒有細圈、沒有滑鼠鼓起。換語言或改視窗寬度（格子寬度變了）也直接到位。
+   7 第二層（.oc-sn，2026-11-12 使用者：「一級菜單是弧形彈性，二級是直的，放在一起總感覺有點違和，有沒有可以融合的方式」→ 做了平線、3px、5px 三種高度，選 3px「微微鼓起」）。
+     同一個 LQ、同一組彈簧、同樣兩腳淡出的橘色描邊（2.2px），只是包高 3px、寬約字寬的八成（34–60px）、字被頂 0.4 倍。它沒有自己的灰線，直接坐在導覽列的下邊框上；沒有滑鼠鼓起。
+     捲動頁面換段落時也是流過去；換頁（整組項目換掉）、換語言、改寬度直接到位。原本橫跨整顆按鈕的直底線和滑鼠引出來的那一小段都拿掉了。
    6 分頁列上方要留 16px 給鼓包和回彈：手機右下的狀態膠囊因此從分頁列上方 12px 改成 24px。 */
 /* ㉙ 頂部那一帶的橘線（2026-11-12，使用者：「二級菜單下面的線太粗了，很突兀」「這邊會堆疊很多線」：5px 的二級底線、橘色的閱讀進度線、段落標題上 5px 的短橫線三條疊在一起）。
-   黏在上面的導覽列附近，橘色的線只有兩個工作：第一層的鼓包（㉘）和第二層選中項目下面的 2px 細線。其他的線不搶：
+   黏在上面的導覽列附近，橘色的線只有兩個工作：第一層的鼓包（㉘）和第二層選中項目下面那一小段（原本是 2px 直線，後來改成同一種線、微微鼓起，見 ㉘-7）。其他的線不搶：
    1 閱讀進度線：--ink 42% 的 1px，疊在導覽列的下邊框上，不用橘色。
    2 段落標題左上的短橫線：5px 改 2px，和右邊那條灰線同一高度，讀成同一條分隔線的開頭。
    3 點二級選單捲到段落時，標題停在導覽列下方 28px，不貼著導覽列：.fs 的 scroll-margin-top = --barh + 28px，--barh 是程式量到的導覽列高度（各寬度不一樣高，原本寫死 104／150px，平板貼太近、手機離 62px 還會標錯一段）；判斷「現在在哪一段」的界線跟著放寬到 48px。
-   4 二級選單只有內容真的放不下才左右捲（手機常見），捲的時候把選中的項目放中間，不是靠左貼齊。底線層的寬度（--nw）用最後一顆按鈕的右緣算，不能用 scrollWidth：底線層自己會把 scrollWidth 撐住，從項目多的頁面換到項目少的頁面後縮不回來，選單就會被誤判成要捲、往左跑出畫面。
+   4 二級選單只有內容真的放不下才左右捲（手機常見），捲的時候把選中的項目放中間，不是靠左貼齊。（底線層和 --nw 在 ㉘-7 之後已經不存在，下面這段留作教訓。）底線層的寬度（--nw）用最後一顆按鈕的右緣算，不能用 scrollWidth：底線層自己會把 scrollWidth 撐住，從項目多的頁面換到項目少的頁面後縮不回來，選單就會被誤判成要捲、往左跑出畫面。
    全站不再有 5px 的橘色粗線。 */
 svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer-events: none; }
 .lq-f { fill: var(--bg); }
@@ -1586,6 +1585,8 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
 .lq-c { fill: none; stroke-width: 2.2; stroke-linecap: round; }
 .oc-ch > svg.lq { top: 0; } .oc-ch .lq-f { display: none; } .oc-ch .lq-c { stroke-width: 3; }
 .oc-ch button > span { display: inline-block; will-change: transform; }
+.oc-sn > svg.lq { top: 0; } .oc-sn .lq-f, .oc-sn .lq-e { display: none; } .oc-sn .lq-c { stroke-width: 2.2; }
+.oc-sn button > span { display: inline-block; will-change: transform; }
 @keyframes lq-ring { from { opacity: .5; transform: scale(1); } to { opacity: 0; transform: scale(4.6); } }
 /* ══ 手機 ══ */
 @media (max-width: 700px) {
@@ -3302,24 +3303,12 @@ function initOC() {
     new MutationObserver(() => { if (!scanQ) scanQ = requestAnimationFrame(scan); }).observe(secs, { childList: true, subtree: true }); scan();
     let pq = 0; const progF = () => { pq = 0; const r = el.getBoundingClientRect(); if (prog) prog.style.transform = 'scaleX(' + Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - innerHeight))).toFixed(4) + ')'; };
     window.addEventListener('scroll', () => { if (!pq) pq = requestAnimationFrame(progF); }, { passive: true }); progF();
-    /* 導航：底線左右兩端各一條彈簧；磁吸的項目各有自己的彈簧 */
-    const navs = [null, $('#oc-rail')], ind = navs.map(() => ({ l: 0, r: 0, vl: 0, vr: 0, init: false, ox: '', os: '' })), act = new Map(); let bpx = -1e4, bpy = -1e4, hovB = null, hovN = -1;
-    bar.addEventListener('pointermove', e => { if (e.pointerType && e.pointerType !== 'mouse') return; bpx = e.clientX; bpy = e.clientY; const b = e.target.closest ? e.target.closest('.oc-sn button') : null; hovB = b && b.getAttribute('aria-current') !== 'true' ? b : null; hovN = hovB ? navs.indexOf(hovB.parentNode) : -1; });
-    bar.addEventListener('pointerleave', () => { bpx = bpy = -1e4; hovB = null; hovN = -1; });
+    /* 導航：兩層的線都由 LQ 畫（㉘）；這裡只剩磁吸，每個項目各有自己的彈簧 */
+    const act = new Map(); let bpx = -1e4, bpy = -1e4;
+    bar.addEventListener('pointermove', e => { if (e.pointerType && e.pointerType !== 'mouse') return; bpx = e.clientX; bpy = e.clientY; });
+    bar.addEventListener('pointerleave', () => { bpx = bpy = -1e4; });
     let last = performance.now(), ppx = 1e9, ppy = 1e9;
     function loop(now) { requestAnimationFrame(loop); const dt = Math.min(.034, (now - last) / 1000); last = now; if (dock && dock.hidden === bvis) dock.hidden = !bvis; if (!bvis || document.hidden) return;
-      navs.forEach((nv, i) => { if (!nv || !nv.offsetWidth) return; const x = parseFloat(nv.style.getPropertyValue('--x')) || 0, w = parseFloat(nv.style.getPropertyValue('--w')) || 0; let tl = x, tr = x + w;
-        if (hovN === i && hovB && hovB.isConnected) { const hl = hovB.offsetLeft, hr = hl + hovB.offsetWidth; if (hl >= tr) tr += Math.min(14, (hr - tr) * .2); else if (hr <= tl) tl -= Math.min(14, (tl - hl) * .2); }
-        const q = ind[i]; if (!q.init) { if (!w) return; q.l = tl; q.r = tr; q.init = true; }
-        const right = (tl + tr) / 2 > (q.l + q.r) / 2; q.vl += (-(right ? 150 : 430) * (q.l - tl) - (right ? 21 : 27) * q.vl) * dt; q.l += q.vl * dt; q.vr += (-(right ? 430 : 150) * (q.r - tr) - (right ? 27 : 21) * q.vr) * dt; q.r += q.vr * dt;
-        const sx = q.l.toFixed(1) + 'px', ss = (Math.max(6, q.r - q.l) / 100).toFixed(3); if (sx !== q.ox) { q.ox = sx; nv.style.setProperty('--ix', sx); } if (ss !== q.os) { q.os = ss; nv.style.setProperty('--is', ss); }
-        /* 那一滴：有游標在別的項目上時，從主體靠近的那一端鼓出來、流到項目正下方；游標走了就流回主體、縮掉 */
-        const hv = hovN === i && hovB && hovB.isConnected, mc = (q.l + q.r) / 2; if (q.dx == null) { q.dx = mc; q.dv = 0; q.ds = 0; }
-        let tdx = mc, tds = 0; if (hv) { tdx = hovB.offsetLeft + hovB.offsetWidth / 2; tds = 1; if (q.ds < .04) { q.dx = tdx > mc ? q.r - 4 : q.l + 4; q.dv = 0; } }
-        q.dv += (-190 * (q.dx - tdx) - 17 * q.dv) * dt; q.dx += q.dv * dt; q.ds += (tds - q.ds) * Math.min(1, dt * (hv ? 9 : 6));
-        const dw = q.ds * (hv ? Math.min(34, hovB.offsetWidth * .42) : 22) + Math.min(18, Math.abs(q.dv) * .03) * q.ds, ds = (q.dx - dw / 2).toFixed(1) + 'px ' + dw.toFixed(1) + 'px ' + (q.ds * 2).toFixed(1) + 'px';
-        if (ds !== q.od) { q.od = ds; nv.style.setProperty('--dx', (q.dx - dw / 2).toFixed(1) + 'px'); nv.style.setProperty('--dw', dw.toFixed(1) + 'px'); nv.style.setProperty('--dh', (q.ds * 2).toFixed(1) + 'px'); }
-        const lb = nv.lastElementChild, nw = lb ? lb.offsetLeft + lb.offsetWidth : 0; if (nw !== q.nw) { q.nw = nw; nv.style.setProperty('--nw', nw + 'px'); } });
       if (bpx > -1e3) $$('.ib', bar).forEach(b => { if (!act.has(b)) act.set(b, { x: 0, y: 0, vx: 0, vy: 0, tx: 0, ty: 0 }); });
       act.forEach((m, b) => { if (!b.isConnected) { act.delete(b); return; } m.tx = m.ty = 0;
         if (bpx > -1e3) { const r = b.getBoundingClientRect(), cx = r.left + r.width / 2 - m.x, cy = r.top + r.height / 2 - m.y, dx = bpx - cx, dy = bpy - cy, d = Math.hypot(dx, dy), R = 86; if (d < R) { const pull = (1 - d / R) * (1 - d / R), mxp = b.classList.contains('ib') ? 8 : 5.5; m.tx = Math.max(-mxp, Math.min(mxp, dx * pull * .4)); m.ty = Math.max(-mxp * .7, Math.min(mxp * .7, dy * pull * .4)); } }
@@ -3392,7 +3381,7 @@ function initOC() {
     function measure(q) {
       const nav = q.nav, bs = nav ? [...nav.querySelectorAll('button')] : [], sv = nav && nav.querySelector('svg.lq'); if (!sv || !bs.length || !nav.offsetWidth) return false;
       q.bs = bs; q.mv = bs.map(q.o.lift); q.cx = bs.map(b => b.offsetLeft + b.offsetWidth / 2); q.bw = bs.map(b => b.offsetWidth); q.W = Math.max(nav.scrollWidth, nav.clientWidth);
-      q.pf = sv.querySelector('.lq-f'); q.pe = sv.querySelector('.lq-e'); q.pc = sv.querySelector('.lq-c'); q.gr = sv.querySelector('linearGradient'); q.Y = q.o.top ? 22 : nav.offsetHeight - 1.5; q.lt = [];
+      q.pf = sv.querySelector('.lq-f'); q.pe = sv.querySelector('.lq-e'); q.pc = sv.querySelector('.lq-c'); q.gr = sv.querySelector('linearGradient'); q.Y = q.o.top ? 22 : nav.offsetHeight - (q.o.dy || 1.5); q.lt = [];
       const hh = q.o.top ? 23 : nav.offsetHeight; sv.setAttribute('width', q.W); sv.setAttribute('height', hh); sv.setAttribute('viewBox', '0 0 ' + q.W + ' ' + hh); return true; }
     function draw(q) {
       const L = q.L.x, R = q.R.x, W = q.W, Y = q.Y, ye = q.o.top ? Y - .5 : Y, sw = q.s.h >= .05; let a = Math.max(0, L), b = Math.min(W, R); if (sw) { a = Math.max(0, Math.min(a, q.s.x - 26)); b = Math.min(W, Math.max(b, q.s.x + 26)); }
@@ -3417,7 +3406,7 @@ function initOC() {
     const kick = q => { q.live = true; if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } };
     function sync(hard) {
       NS.forEach(q => { const was = q.ok; q.ok = measure(q); if (!q.ok) { q.live = false; return; }
-        const i = Math.max(0, q.bs.findIndex(b => b.getAttribute('aria-current') === 'true')), sig = lang + '|' + q.bs.length, same = sig === q.sig; q.sig = sig;
+        const i = Math.max(0, q.bs.findIndex(b => b.getAttribute('aria-current') === 'true')), sig = lang + '|' + q.bs.length + (q.o.sig ? '|' + q.o.sig() : ''), same = sig === q.sig; q.sig = sig;
         if (!was || hard || reduce || !same || q.cur < 0) { q.cur = i; q.live = false; snap(q); return; }
         if (i !== q.cur) { q.dir = q.cx[i] >= q.P.x ? 1 : -1; q.cur = i; q.h.v -= 55 * q.o.H / 13; q.bs[i].classList.add('lq-tap'); kick(q); }     /* 先往下沉一下 */
         draw(q); }); }
@@ -3426,12 +3415,13 @@ function initOC() {
       if (o.sw && !reduce) { nav.addEventListener('pointermove', e => { if (e.pointerType && e.pointerType !== 'mouse') return; const b = e.target.closest ? e.target.closest('button') : null, i = b && !b.disabled && q.bs ? q.bs.indexOf(b) : -1; if (i !== q.hov) { q.hov = i; if (q.ok) kick(q); } }); nav.addEventListener('pointerleave', () => { if (q.hov >= 0) { q.hov = -1; if (q.ok) kick(q); } }); } }
     add($('#oc-tab'), 't', { top: 1, H: 13, k: .92, sw: 0, w: b => Math.min(b * .96, 62), lift: b => b.querySelector('.ic') });
     add($('#oc-crumb'), 'c', { top: 0, H: 8, k: .4, sw: 3, w: b => Math.max(40, Math.min(72, b * .78)), lift: b => b.querySelector('span') });
+    add($('#oc-rail'), 's', { top: 0, H: 3, k: .4, sw: 0, dy: 1.1, sig: () => ci, w: b => Math.max(34, Math.min(60, (b - 28) * .8)), lift: b => b.querySelector('span') });   /* 第二層（㉘-7）：換頁時整組項目換掉，直接到位（sig） */
     let rz = 0; window.addEventListener('resize', () => { if (!rz) rz = requestAnimationFrame(() => { rz = 0; sync(true); }); }); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => sync(true));
     return { svg, sync, state: NS, moving: () => !!raf };
   })();
   function renderBar() {
     $('#oc-crumb').innerHTML = CH.map((c, i) => `<button type="button" data-ch="${i}" aria-current="${i === ci}"${c.todo ? ' disabled' : ''}><span>${esc(T(c.zh, c.en))}</span></button>`).join('') + LQ.svg('c'); const tb = $('#oc-tab'); tb.innerHTML = CH.map((c, i) => `<button type="button" data-ch="${i}" aria-current="${i === ci}"${c.todo ? ' disabled' : ''}>${CHI(c.id) ? IC(c.id) : ''}<span>${esc(T(c.zh, c.en))}</span></button>`).join('') + LQ.svg('t'); tb.classList.toggle('en', lang === 'en'); { const mb = $('#oc-mapb'), tt = T('找圖（也可以按 / ）', 'Find a chart (or press / )'); mb.innerHTML = IC('grid'); mb.dataset.tip = tt; mb.setAttribute('aria-label', tt); } { const av2 = CH.map((c, i) => i).filter(i => !CH[i].todo); tb.style.setProperty('--n', av2.length); LQ.sync(); }
-    $('#oc-rail').innerHTML = `<button type="button" data-go="0">${T('總覽', 'Overview')}</button>` + G.map((x, j) => `<button type="button" data-go="${j + 1}"><i>${p2(j + 1)}</i>${esc(T(x.zh, x.en))}</button>`).join(''); $('#oc-ctl').innerHTML = ctl();
+    $('#oc-rail').innerHTML = `<button type="button" data-go="0"><span>${T('總覽', 'Overview')}</span></button>` + G.map((x, j) => `<button type="button" data-go="${j + 1}"><span><i>${p2(j + 1)}</i>${esc(T(x.zh, x.en))}</span></button>`).join('') + LQ.svg('s'); LQ.sync(); $('#oc-ctl').innerHTML = ctl();
   }
   function headBody() { const f = stg.querySelector('.os[data-k="' + ci + '"] .os-in'); if (f) f.insertAdjacentHTML('beforeend', `<div class="os-b"><div class="${O.brief ? 'ov br' : O.map || O.dial || O.flow || O.crowd ? 'ov mp' : 'ov gn'}"><div class="ov-l" id="oc-ol0"></div><div class="ov-m" id="oc-or0"></div></div></div>`); }
   function renderSecs() {
@@ -3442,7 +3432,7 @@ function initOC() {
   }
   /* 小問題那一列：標出目前讀到哪一段，並把它捲進看得到的範圍 */
   { const br = $('#oc-bar'), sb = () => document.documentElement.style.setProperty('--barh', br.offsetHeight + 'px'); if (br) { sb(); if ('ResizeObserver' in window) new ResizeObserver(sb).observe(br); else window.addEventListener('resize', sb); } }   /* ㉙-3：導覽列多高由程式量（電腦 99、平板三排 146、手機 88），不寫死 */
-  let spyK = -1; function spy() { const rail = $('#oc-rail'); if (!rail) return; const lim = $('#oc-bar').getBoundingClientRect().bottom + 48; let k = 0; G.forEach((x, j) => { const e2 = $('#oc-s' + (j + 1)); if (e2 && e2.getBoundingClientRect().top <= lim) k = j + 1; }); const bs = rail.querySelectorAll('button'); if (k === spyK && bs[k] && bs[k].getAttribute('aria-current') === 'true') return; spyK = k; bs.forEach((b2, i) => b2.setAttribute('aria-current', i === k)); const cur = bs[k]; if (cur) { rail.style.setProperty('--x', cur.offsetLeft + 'px'); rail.style.setProperty('--w', cur.offsetWidth + 'px'); } if (cur && rail.scrollWidth > rail.clientWidth + 1) rail.scrollLeft = Math.max(0, cur.offsetLeft + cur.offsetWidth / 2 - rail.clientWidth / 2); }   /* ㉙-4：放不下才捲，而且把選中的放中間，左右都看得到還有別的 */
+  let spyK = -1; function spy() { const rail = $('#oc-rail'); if (!rail) return; const lim = $('#oc-bar').getBoundingClientRect().bottom + 48; let k = 0; G.forEach((x, j) => { const e2 = $('#oc-s' + (j + 1)); if (e2 && e2.getBoundingClientRect().top <= lim) k = j + 1; }); const bs = rail.querySelectorAll('button'); if (k === spyK && bs[k] && bs[k].getAttribute('aria-current') === 'true') return; spyK = k; bs.forEach((b2, i) => b2.setAttribute('aria-current', i === k)); const cur = bs[k]; LQ.sync(); if (cur && rail.scrollWidth > rail.clientWidth + 1) rail.scrollLeft = Math.max(0, cur.offsetLeft + cur.offsetWidth / 2 - rail.clientWidth / 2); }   /* ㉙-4：放不下才捲，而且把選中的放中間，左右都看得到還有別的 */
   let spyT = 0; window.addEventListener('scroll', () => { if (spyT) return; spyT = setTimeout(() => { spyT = 0; spy(); }, 90); }, { passive: true });
   /* 頭部那句話裡的關鍵數字用主題色（整頁只有這裡和異動的小點用橘紅） */
   const hx = () => Array.prototype.slice.call(stg.querySelectorAll('.ov-lead, .br-h')).forEach(e2 => { e2.innerHTML = esc(e2.textContent).replace(/([+\-−]?[$]?\d[\d,.]*\s?(?:%|億|萬|兆|[KMB](?![A-Za-z])))/g, '<b class="hx">$1</b>'); });
