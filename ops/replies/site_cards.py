@@ -1,6 +1,6 @@
 """回覆配圖：直接截網站原圖（2026-11-05 使用者要求「多用新圖、儘量用網站原圖」）。
 data/replies.json 裡 image 帶 "site" 的，用本機 Chrome 無頭模式開本機網站檔案，截那張圖的面板，
-上方加圖片大標題（image.title）、下方加破曉頁尾，存成 data/replies/<n>.png。沒有 site 的照舊由 cards.py 畫。
+上方加圖片大標題（image.title）、下方加 Daybreak 頁尾，存成 data/replies/<n>.png。沒有 site 的照舊由 cards.py 畫。
 依賴 ops/post/site_shot.py（開 Chrome、本機伺服器、截圖流程）與 pipeline/share_card.py（字型）。
 
 image 範例：
@@ -53,7 +53,7 @@ def shoot(items, lang, tmp, mobile=True):
 
 
 def compose(png, title, lang, Fn, out, mobile=True):
-    """上：大標題；中：網站截圖；下：破曉頁尾。手機版輸出寬 1080（直式），桌面版 1600。"""
+    """上：大標題；中：網站截圖；下：Daybreak 頁尾。手機版輸出寬 1080（直式），桌面版 1600。"""
     RED, INK, INK3, LINE = '#FF3B1F', '#F2F0EA', '#9C978E', '#3A3936'
     im = Image.open(io.BytesIO(png)).convert('RGB'); bg = im.getpixel((im.width // 2, 8))
     P = 72; W = (im.width + 2 * P) if mobile else max(im.width + 2 * P, 2200); tf = Fn['cjk'](64 if not mobile else 66, 900)   # 窄面板（半寬圖）也撐到 2200，標題和頁尾才放得下；圖置中
@@ -70,7 +70,7 @@ def compose(png, title, lang, Fn, out, mobile=True):
     img.paste(im, ((W - im.width) // 2, TOP))
     fy = img.height - 70; d.line([P, fy - 52, W - P, fy - 52], fill=LINE, width=2)
     d.arc([P, fy - 26, P + 52, fy + 26], 180, 360, fill=RED, width=8); d.line([P - 8, fy, P + 60, fy], fill=INK, width=8)
-    d.text((P + 84, fy), '破曉 DAYBREAK' if lang == 'zh' else 'DAYBREAK', font=Fn['cjk'](38, 900), fill=INK, anchor='lm')
+    d.text((P + 84, fy), 'DAYBREAK', font=Fn['cjk'](38, 900), fill=INK, anchor='lm')   # 2026-11-12 使用者：中文也不寫「破曉」
     d.text((W - P, fy), 'X @songpu717', font=Fn['mono'](30 if mobile else 34), fill=INK3, anchor='rm')
     w = 1080 if mobile else 1600; img = img.resize((w, round(img.height * w / img.width)), Image.LANCZOS)
     img.save(out, optimize=True); print('wrote', out, img.size)
