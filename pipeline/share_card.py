@@ -11,7 +11,9 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 P = lambda *a: os.path.join(ROOT, *a)
 W, H, M = 1200, 675, 64
-PAPER, INK, INK3, RED, LINE = '#EEECE6', '#0A0A0A', '#7A766F', '#FF3B1F', '#D2CEC4'
+# 2026-11-12：改成深色，配色取自新版網站（pipeline/next/page.html 的 --bg／--ink／--ink3／--brand），底紋同網站的網點
+PAPER, INK, INK3, RED, LINE = '#0A0A0B', '#EFECE5', '#7E7A72', '#FF4A2E', '#2C2C31'
+DOT, DOT_STEP = '#1D1D20', 22   # 網點：約等於網站 ink 12% 疊在底色上
 NUM = re.compile(r'(\d{1,2}/\d{1,2}(?!\d)|[+\-−$]?\d[\d,.]*(?:\s?(?:%|億|萬|千|兆|倍|個基點|基點|bp|K|M|B)(?![A-Za-z]))?)')
 TXT = {
     'zh': dict(tag='號外', stage='市場階段', etf='ETF 7 個交易日（至 {}）', sth='短期持有者成本', above='收盤在上方', below='收盤在下方', day='第 {} 天',
@@ -47,6 +49,8 @@ def wrap(text, font, width):
 
 def card(lang, latest, notes, F, out):
     T = TXT[lang]; img = Image.new('RGB', (W, H), PAPER); d = ImageDraw.Draw(img)
+    for gy in range(DOT_STEP // 2, H, DOT_STEP):   # 網點底紋
+        for gx in range(DOT_STEP // 2, W, DOT_STEP): d.ellipse([gx - 1, gy - 1, gx + 1, gy + 1], fill=DOT)
     d.rectangle([M, 52, W - M, 58], fill=INK)   # 號外粗頂線
     tag = F['cjk'](26, 900) if lang == 'zh' else F['mono'](22, 800)
     tw = d.textlength(T['tag'], font=tag); d.rectangle([M, 76, M + tw + 28, 116], fill=RED); d.text((M + 14, 96), T['tag'], font=tag, fill='#FFFFFF', anchor='lm')
