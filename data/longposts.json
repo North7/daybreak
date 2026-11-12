@@ -84,7 +84,7 @@
    "id": "2026-11-13-showcase",
    "time": "2026-11-13T12:00:00Z",
    "title": "每天早上，先花一分鐘看 BTC 走到哪",
-   "note": "【影片自己上傳】網站改版展示影片（日報短影片 session 做的）。檔案在電腦 daybreak-ops/ops/video/out/daybreak-showcase-v4.mp4（1920×1080、78 秒、47 MB；手機用 -small 版 24 MB。2026-11-12 重新輸出：片頭字幕「破曉」改成 Daybreak、片尾網址改 daybreak.aronlab.dev；v3、v2 別用），沒進 git，所以這張卡沒有配圖：用電腦發就直接上傳，用手機發先 AirDrop 過去。發完在自己第一則留言貼：daybreak.aronlab.dev 資訊分享，非投資建議。時間暫定，使用者決定（11/11 使用者：「可以，先排進佇列」）。寫法：網站說「六個問題」，第六個是出場，所以只列五個、不寫數字；影片裡是 11/10 收盤的數字，正文不引用，哪天發都不會過期。 2026-11-12 使用者：不要寫得像改版說明，只寫有感覺的標語加引流，內容靠影片 → 改成短版。",
+   "note": "【影片自己上傳】網站改版展示影片（日報短影片 session 做的）。檔案在電腦 daybreak-ops/ops/video/out/daybreak-showcase-v4.mp4（1920×1080、78 秒、47 MB；手機用 -small 版 21 MB。2026-11-12 重新輸出：片頭字幕「破曉」改成 Daybreak、片尾網址改 daybreak.aronlab.dev；v3、v2 別用），沒進 git，所以這張卡沒有配圖：用電腦發就直接上傳，用手機發先 AirDrop 過去。發完在自己第一則留言貼：daybreak.aronlab.dev 資訊分享，非投資建議。時間暫定，使用者決定（11/11 使用者：「可以，先排進佇列」）。寫法：網站說「六個問題」，第六個是出場，所以只列五個、不寫數字；影片裡是 11/10 收盤的數字，正文不引用，哪天發都不會過期。 2026-11-12 使用者：不要寫得像改版說明，只寫有感覺的標語加引流，內容靠影片 → 改成短版。",
    "zh": "每天早上，先花一分鐘看 BTC 走到哪\n\nDaybreak 重做了。不用再翻十幾頁、自己拼答案，打開就是今天\n\n78 秒，你自己看。免費，網址在留言\n\n#比特幣 #BTC",
    "images": [],
    "charts": []
@@ -93,7 +93,7 @@
    "id": "2026-11-13-showcase-en",
    "time": "2026-11-13T12:30:00Z",
    "title": "One minute every morning to see where BTC stands",
-   "note": "【影片自己上傳】網站改版展示影片（日報短影片 session 做的）。檔案在電腦 daybreak-ops/ops/video/out/daybreak-showcase-v4.mp4（1920×1080、78 秒、47 MB；手機用 -small 版 24 MB。2026-11-12 重新輸出：片頭字幕「破曉」改成 Daybreak、片尾網址改 daybreak.aronlab.dev；v3、v2 別用），沒進 git，所以這張卡沒有配圖：用電腦發就直接上傳，用手機發先 AirDrop 過去。發完在自己第一則留言貼：daybreak.aronlab.dev 資訊分享，非投資建議。時間暫定，使用者決定（11/11 使用者：「可以，先排進佇列」）。寫法：網站說「六個問題」，第六個是出場，所以只列五個、不寫數字；影片裡是 11/10 收盤的數字，正文不引用，哪天發都不會過期。 2026-11-12 改短版（同中文）。",
+   "note": "【影片自己上傳】網站改版展示影片（日報短影片 session 做的）。檔案在電腦 daybreak-ops/ops/video/out/daybreak-showcase-v4.mp4（1920×1080、78 秒、47 MB；手機用 -small 版 21 MB。2026-11-12 重新輸出：片頭字幕「破曉」改成 Daybreak、片尾網址改 daybreak.aronlab.dev；v3、v2 別用），沒進 git，所以這張卡沒有配圖：用電腦發就直接上傳，用手機發先 AirDrop 過去。發完在自己第一則留言貼：daybreak.aronlab.dev 資訊分享，非投資建議。時間暫定，使用者決定（11/11 使用者：「可以，先排進佇列」）。寫法：網站說「六個問題」，第六個是出場，所以只列五個、不寫數字；影片裡是 11/10 收盤的數字，正文不引用，哪天發都不會過期。 2026-11-12 改短版（同中文）。",
    "en": "One minute every morning to see where BTC stands\n\nDaybreak, rebuilt. No more digging through tabs to piece it together yourself. Open it and today is right there\n\n78 seconds, see for yourself. Free, link in the reply\n\n#Bitcoin #BTC",
    "images": [],
    "charts": []
