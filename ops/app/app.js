@@ -27,7 +27,7 @@
   function mime(u) { var e = (String(u).split('?')[0].match(/\.(\w+)$/) || [])[1]; return { mp4: 'video/mp4', gif: 'image/gif', jpg: 'image/jpeg', jpeg: 'image/jpeg' }[e] || 'image/png'; }   // 2026-11-11：長文配圖可以是 GIF／MP4
   function ext(u) { return { 'video/mp4': '.mp4', 'image/gif': '.gif', 'image/jpeg': '.jpg' }[mime(u)] || '.png'; }
   function media(u) { return mime(u) === 'video/mp4' ? '<video src="' + u + '" muted loop playsinline autoplay controls preload="metadata"></video>' : '<img src="' + u + '" alt="" loading="lazy">'; }
-  function img(path) { return ROOT + String(path).replace(/^https:\/\/north7\.github\.io\/daybreak\//, '') + '?t=' + T; }
+  function img(path) { return ROOT + String(path).replace(/^https:\/\/(north7\.github\.io\/daybreak|daybreak\.aronlab\.dev)\//, '')   /* 2026-11-12：網站搬到 daybreak.aronlab.dev，新舊網址都轉成站內路徑 */ + '?t=' + T; }
   function getJSON(u) { return fetch(ROOT + u + '?t=' + T).then(function (r) { if (!r.ok) throw r.status; return r.json(); }); }
   function copy(t) { try { return navigator.clipboard.writeText(t); } catch (e) { return Promise.reject(e); } }
   var toastT;
