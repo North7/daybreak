@@ -66,7 +66,8 @@ def build(L, N, E, dn):
       leg=[['up', '偏有信心（≥ +%g）' % nb, 'Confident (≥ +%g)' % nb, 'box'], ['dn', '信心不足（≤ −%g）' % nb, 'Lacking confidence (≤ −%g)' % nb, 'box'], ['c5', '轉換期', 'Transition', 'box']],
       dz='短期持有者這 7 天賣出的幣的成本，和他們整體成本的差，除以收盤。上格兩條線就是這兩個成本。', de='Cost of the coins short-term holders sold in 7 days, minus their overall cost, divided by the close. The two lines in the top pane are those two costs.')
     npl = o['npl']; c30 = npl['cum30']
-    c_npl = dict(k='npl', zh='淨實現損益', en='Net realized P&L', f='usdM', dz='全網每天實現的獲利減掉虧損。上格價格線上的圓圈大小是當天的金額。可以切換成 30 日累計。', de='Network-wide profit realized each day minus losses. Bubbles on the price line are sized by that day\'s amount. Switch to the 30-day total for the longer view.',
+    c_npl = dict(k='npl', zh='淨實現損益', en='Net realized P&L', f='usdM', wide=1,   # 整排寬（2026-11-12 使用者：「這個圖需要比較寬的空間顯示」）：上格價格線上有圓圈、下格是每日柱子，半寬時 180 天擠在一起
+       dz='全網每天實現的獲利減掉虧損。上格價格線上的圓圈大小是當天的金額。可以切換成 30 日累計。', de='Network-wide profit realized each day minus losses. Bubbles on the price line are sized by that day\'s amount. Switch to the 30-day total for the longer view.',
       modes=[dict(mz='每日', me='Daily', rng=180, rows=npl['rows'], p=1, sym=1, bub=dict(c=2, rank=3), ser=[ser(2, zh='每日淨實現損益', en='Daily net realized P&L', t='bar')],
                   leg=[['up', '淨獲利', 'Net profit', 'box'], ['dn', '淨認賠', 'Net loss', 'box']]),
              dict(mz='30 日累計', me='30-day total', rng=1460, rows=[list(r_) + [None if r_[3] is None else round(-4 * r_[3], 3)] for r_ in c30['rows']], p=1, hero=2, f='ps2',
