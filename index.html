@@ -1707,7 +1707,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=f3247c6c10"></script>
+<script src="data/next.js?v=a59c7264fb"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -2801,10 +2801,10 @@ function initOC() {
   const mkItem = (x, val, box, t0) => ({ c: x, val, sp: isT(x) ? mini(box, x) : x.dist ? dspark(box, x) : x.list ? lspark(box, x) : x.grid ? gspark(box, x) : x.xy ? xspark(box, x) : x.strip ? sspark(box, x) : (box.innerHTML = '', null) });
   /* 分布型：某一刻各個價位上有多少。橫條掛在直的價格軸上，游標是「價格」而不是「時間」 */
   const dMag = (d, r) => d.kind === 'stack' ? r[1] + r[2] : d.kind === 'split' ? Math.max(r[1], r[2]) : d.kind === 'side' ? r[2] : Math.abs(r[1]);
-  const dU = { btc: v => T(n0(v / 1e4) + ' 萬顆', n0(v / 1e3) + 'K BTC'), btc1: v => n0(v) + T(' 顆', ' BTC'), n: v => n0(v), m: v => sgn(v, 1) + T(' 百萬美元／1%', ' $M per 1%'), usdm: v => '$' + n0(v) + 'M', rel: v => n0(v) };
+  const dU = { btc: v => T(n0(v / 1e4) + ' 萬顆', n0(v / 1e3) + 'K BTC'), btc1: v => n0(v) + T(' 顆', ' BTC'), n: v => n0(v), m: v => sgn(v, 1) + T(' 百萬美元／1%', ' $M per 1%'), usdm: v => '$' + n0(v) + 'M', rel: v => n0(v), dbtc: v => (v > 0 ? '+' : v < 0 ? '−' : '') + n0(Math.abs(v)) + T(' 顆', ' BTC') };   /* dbtc：增減。籌碼搬家（㉗，2026-11-12）：URPD 今天減 7 天前，沿用 kind='sign' 的左右橫條（變厚 up 往右、變薄 dn 往左，顏色是方向），灰底是這 7 天的價格範圍；游標讀值多帶「現在幾顆」（dist.now）。縮小版沿用 dspark */
   const dAt = (d, p) => d.step ? d.rows.find(r => p >= r[0] && p < r[0] + d.step) : d.rows.map(r => [Math.abs(r[0] - p), r]).sort((a, b) => a[0] - b[0]).filter(x => x[0] < p * .012).map(x => x[1])[0];
   const dSay = (d, p) => { const r = dAt(d, p), u = dU[d.unit]; if (!r) return T('這個價位沒有資料', 'Nothing at this price'); const at = '$' + n0(r[0]) + (d.step ? '–' + n0(r[0] + d.step) : '') + T('：', ': ');
-    return at + (d.kind === 'stack' ? T('短期 ', 'STH ') + u(r[1]) + T('、長期 ', ', LTH ') + u(r[2]) : d.kind === 'split' ? T(d.la[0], d.la[1]) + ' ' + u(r[2]) + T('、', ', ') + T(d.lb[0], d.lb[1]) + ' ' + u(r[1]) : d.kind === 'side' ? T(r[1] === 'b' ? '買單 ' : '賣單 ', r[1] === 'b' ? 'bids ' : 'asks ') + u(r[2]) : d.kind === 'pos' ? T(r[0] >= ST.close ? '空單清算，相對量 ' : '多單清算，相對量 ', r[0] >= ST.close ? 'short liquidations, relative ' : 'long liquidations, relative ') + u(r[1]) : u(r[1])); };
+    return at + (d.kind === 'stack' ? T('短期 ', 'STH ') + u(r[1]) + T('、長期 ', ', LTH ') + u(r[2]) : d.kind === 'split' ? T(d.la[0], d.la[1]) + ' ' + u(r[2]) + T('、', ', ') + T(d.lb[0], d.lb[1]) + ' ' + u(r[1]) : d.kind === 'side' ? T(r[1] === 'b' ? '買單 ' : '賣單 ', r[1] === 'b' ? 'bids ' : 'asks ') + u(r[2]) : d.kind === 'pos' ? T(r[0] >= ST.close ? '空單清算，相對量 ' : '多單清算，相對量 ', r[0] >= ST.close ? 'short liquidations, relative ' : 'long liquidations, relative ') + u(r[1]) : u(r[1]) + (d.now && r[2] != null ? T('，現在 ', ', now ') + n0(r[2]) + T(' 顆', ' BTC') : '')); };
   function distChart(box, c, k) {
     const d = c.dist, w = box.clientWidth || 520, h = box.clientHeight || 260, ML = Math.round(62 * FSC), MR = 10, pw = w - ML - MR, px = ST.close, prg = pgOf(c), lo = px * PRG[prg][0], hi = px * PRG[prg][1], la = Math.log(lo), lb = Math.log(hi), Y = v => 14 + (1 - (Math.log(v) - la) / (lb - la)) * (h - 24), inv = y => Math.exp(la + (1 - (y - 14) / (h - 24)) * (lb - la));
     const R = d.rows.filter(r => d.step ? r[0] + d.step > lo && r[0] < hi : r[0] >= lo && r[0] <= hi), mid = d.kind === 'split' || d.kind === 'sign', x0 = mid ? ML + pw / 2 : ML, full = mid ? pw / 2 : pw, mx = Math.max.apply(null, R.map(r => dMag(d, r)).concat([1e-9]));
