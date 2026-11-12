@@ -78,7 +78,7 @@ def build(L, N, E, dn, X):
     # ════ 2. 各地買盤 ════
     p3 = f.get('premium3') or {}
 
-    def c_prus():   # 顏色：drawCbPrem（每日柱 ≥0 綠、<0 紅；7 日平均 s4→c5；深度折價線和它下面的底色 down→dn；歷次跌破的圓圈 down→dn）
+    def c_prus():   # 「只看扣掉後」的顏色：drawCbPrem（每日柱 ≥0 綠、<0 紅；7 日平均 s4→c5；深度折價線和它下面的底色 down→dn；歷次跌破的圓圈 down→dn）
         x = f.get('cb_premium'); rs = [r for r in (x or {}).get('rows') or [] if r[2] is not None]
         if len(rs) < 60: return NA('pr-us', '美國現貨：Coinbase 溢價', 'US spot: Coinbase premium', 'Coinbase 對 Binance 的每日價差（flows.cb_premium）', 'the daily Coinbase vs Binance spread (flows.cb_premium)')
         ADJ = bool(x.get('adj')); DEEP, REARM = (x.get('deep'), x.get('rearm', 0.0)) if x.get('deep') is not None else (-0.15, -0.05); a7 = ma7([r[1] for r in rs])   # 2026-11-12：扣掉 USDT 後門檻由資料帶（cb_premium.py）
@@ -94,7 +94,7 @@ def build(L, N, E, dn, X):
             if armed and a < DEEP: ev.append((i, a, at(i, 30))); armed = False
             elif not armed and a > REARM: armed = True
         vs_ = sorted(r[1] for r in rs if r[1] is not None); qv = lambda p_: vs_[int((len(vs_) - 1) * p_)]; a7v = [a for a in a7 if a is not None]; ylo, yhi = (min(qv(.005), min(a7v)) * 1.12, max(qv(.995), max(a7v)) * 1.12) if ADJ else (min(-0.3, qv(.005) * 1.1), max(.2, qv(.995) * 1.1))
-        return dict(k='pr-us', zh='美國現貨：Coinbase 溢價', en='US spot: Coinbase premium', hz='7 日平均', he='7-day average', f='p3', rows=[[r[0], r[1], r[2], R(a7[i], 4), None if r[1] is None else max(ylo, min(yhi, r[1]))] for i, r in enumerate(rs)], p=2, hero=1, dom=[R(ylo, 4), R(yhi, 4)],
+        card = dict(k='pr-us', zh='美國現貨：Coinbase 溢價', en='US spot: Coinbase premium', hz='7 日平均', he='7-day average', f='p3', rows=[[r[0], r[1], r[2], R(a7[i], 4), None if r[1] is None else max(ylo, min(yhi, r[1]))] for i, r in enumerate(rs)], p=2, hero=1, dom=[R(ylo, 4), R(yhi, 4)],
           ser=[ser(4, vc=1, zh='每日', en='Daily', t='bar', op=.42), ser(3, zh='7 日平均', en='7-day average', col='c5', w=1.8)],
           refs=[dict(v=0, col='k2', solid=1), dict(v=DEEP, col='dn', zh='深度折價線 ' + dtx, en='Deep-discount line ' + dtx)],
           zones=[dict(lo=None, hi=DEEP, col='dn', zh='7 日平均在深度折價區', en='7-day average in the deep-discount zone', nz='深度折價線', ne='the deep-discount line')],
@@ -102,6 +102,71 @@ def build(L, N, E, dn, X):
           leg=[['dn', '7 日平均跌破 ' + dtx + ' 的那一天，和之後 30 天的漲跌', 'Days the 7-day average broke ' + dtx + ', with the 30-day change after', 'ring']],
           dz=('Coinbase 的美元價格，除以 Binance 的 USDT 價格換回美元（乘上 USDT 對美元的價格）再減 1，大於 0 代表美國買方比海外積極。2026-11-12 起扣掉 USDT 對美元的折溢價：沒扣之前，USDT 低於 1 美元會讓折價看起來比實際深。扣掉後兩地只差幾個基點。柱子是每天的值，沙金色的線是 7 日平均。7 日平均跌破 ' + dtx + '（近四年最低 5% 的線）算深度折價，圓圈是歷次跌破的那一天，旁邊是之後 30 天的漲跌；次數很少、結果好壞都有，只作讀值。' if ADJ else 'Coinbase 的美元價格除以 Binance 的 USDT 價格再減 1，大於 0 代表美國買方比海外積極。今天取不到 USDT 對美元的價格，沒有扣掉 USDT 的折溢價。柱子是每天的值，沙金色的線是 7 日平均。7 日平均跌破 ' + dtx + ' 算深度折價，圓圈是歷次跌破的那一天，旁邊是之後 30 天的漲跌。'),
           de=('Coinbase\'s USD price divided by Binance\'s USDT price converted to dollars (times the USDT price in USD), minus 1; above 0 means US buyers are keener than offshore. Since 2026-11-12 the USDT discount is netted out: before that, USDT trading below $1 made the discount look deeper than it was. What is left is a few basis points. Bars are daily values and the sand line is the 7-day average. A 7-day average below ' + dtx + ' (its lowest 5% in four years) counts as a deep discount; circles mark each break, labelled with the price change 30 days later. The cases are few and the results mixed; a reading only.' if ADJ else 'Coinbase\'s USD price divided by Binance\'s USDT price, minus 1; above 0 means US buyers are keener than offshore. The USDT price in dollars was not available today, so the USDT discount is not netted out. Bars are daily values and the sand line is the 7-day average. A 7-day average below ' + dtx + ' counts as a deep discount; circles mark each break, labelled with the price change 30 days later.'))
+
+        ng = x.get('neg') if ADJ else None
+        if not ng: return card
+        # ── 拆開看（2026-11-12，㉕）：一般看到的溢價＝USDT 對美元的折溢價＋扣掉後剩下的兩地價差。三條都是 7 日平均 ──
+        # 顏色：USDT 那一塊 c3（面積，從 0 畫起）、一般看到的 ink 細線、扣掉後 c5（和「只看扣掉後」的 7 日平均同色）；連負的段落 k2 灰底
+        r7 = ma7([r[3] for r in rs]); u7 = ma7([(r[4] - 1) * 100 for r in rs])
+        rows0 = [[r[0], R(r7[i], 4), r[2], R(u7[i], 4), R(a7[i], 4)] for i, r in enumerate(rs) if a7[i] is not None]
+        net = {k_: card.pop(k_) for k_ in ('hz', 'he', 'f', 'rows', 'p', 'hero', 'dom', 'ser', 'refs', 'zones', 'marks', 'leg')}
+        dec = dict(mz='拆開看', me='Breakdown', hz='扣掉 USDT 後的 7 日平均', he='7-day average net of USDT', f='p3', rows=rows0, p=2, hero=2,
+          ser=[ser(3, zh='USDT 對美元', en='USDT vs the dollar', t='sign', hi='c3', lo='c3', w=1.1),
+               ser(1, zh='一般看到的溢價（沒扣 USDT）', en='Premium as usually shown (USDT not netted)', col='ink', w=1.2, op=.85),
+               ser(4, zh='扣掉 USDT 之後', en='Net of USDT', col='c5', w=1.9)],
+          refs=[dict(v=0, col='k2', solid=1)], zones=[], marks=[],
+          spans=[dict(a=s_['a'], b=s_['b'], col='k2', op=.16, zh='%d 天' % s_['n'], en='%dd' % s_['n']) for s_ in ng['list']],
+          spk=[dict(c=3, col='c3', fill=1), dict(c=1, col='ink')],
+          leg=[['k2', '沒扣 USDT 的每日溢價連續 %d 天以上是負的（數字是天數）' % ng['min'], 'Unadjusted daily premium negative for %d+ days in a row (label = days)' % ng['min'], 'box']])
+        card['modes'] = [dec, dict(mz='只看扣掉後', me='Net only', **net)]
+        card['dz'] = ('Coinbase 的美元價格比 Binance 的 USDT 價格貴多少，大於 0 代表美國買方比海外積極。一般的圖直接拿兩個價格相除，前提是 1 USDT 等於 1 美元；USDT 不到 1 美元時那個數字會跟著變負，和美國買不買沒有關係。'
+          '「拆開看」把它分成兩塊：藍紫色的面積是 USDT 在 Coinbase 上比 1 美元高或低多少，沙金色的線是扣掉這一塊之後剩下的兩地價差，細線是一般看到的溢價，三條都是 7 日平均。灰底是沒扣的每日溢價連續 %d 天以上為負的期間，上面的數字是天數。'
+          'USDT 折價代表有人把穩定幣換回美元；扣掉之後剩下的那條，才是美國和海外誰買得比較急。'
+          '「只看扣掉後」把剩下那條放大：柱子是每天的值，7 日平均跌破 %s（近四年最低 5%% 的線）算深度折價，圓圈是歷次跌破的那一天，旁邊是之後 30 天的漲跌；次數很少、結果好壞都有，只作讀值。' % (ng['min'], dtx))
+        card['de'] = ('How much more Coinbase\'s USD price costs than Binance\'s USDT price; above 0 means US buyers are keener than offshore. Most charts divide one price by the other, which assumes 1 USDT is worth $1; when USDT trades below $1 that number turns negative for a reason that has nothing to do with US demand. '
+          'The Breakdown view splits it in two: the blue-violet area is how far USDT sits above or below $1 on Coinbase, the sand line is the spread that is left once that is netted out, and the thin line is the premium as usually shown; all three are 7-day averages. Grey bands mark periods when the unadjusted daily premium stayed negative for %d days or more, labelled with the number of days. '
+          'A USDT discount means holders are swapping stablecoins back into dollars; the line that is left is the part that compares US buyers with offshore. '
+          'The Net only view zooms in on that line: bars are daily values, and a 7-day average below %s (its lowest 5%% in four years) counts as a deep discount; circles mark each break, labelled with the price change 30 days later. The cases are few and the results mixed; a reading only.' % (ng['min'], dtx))
+        return card
+
+    def c_prneg():   # 2026-11-12 新圖（舊版沒有）：歷次連負，每一段拆成 USDT 和扣掉後剩下的。顏色：USDT 那一段 c3（和「拆開看」的面積同色）、扣完還剩的負值 dn
+        from say_data import own
+        x = f.get('cb_premium') or {}; ng = x.get('neg') or {}; lst = ng.get('list') or []
+        if not lst: return NA('pr-neg', 'Coinbase 溢價連負：扣掉 USDT 還剩多少', 'Coinbase premium negative runs: what is left net of USDT', '歷次連負的拆解（flows.cb_premium.neg）', 'the breakdown of past negative runs (flows.cb_premium.neg)')
+        MIN, TH = ng['min'], ng['th']; cur = ng.get('cur'); live = bool(cur and cur['n'] >= MIN)
+        thx = mi('%g%%' % TH); p3 = lambda v: mi('%+.3f%%' % v); kf = lambda v: ('%.1fK' % (v / 1000)) if v < 20000 else ('%dK' % round(v / 1000))
+        dz_ = lambda s_: day(s_['a']).strftime('%Y/%m/%d') + '–' + day(s_['b']).strftime('%m/%d' if day(s_['a']).year == day(s_['b']).year else '%Y/%m/%d')
+        de_ = lambda s_: day(s_['a']).isoformat() + ' to ' + (day(s_['b']).strftime('%m-%d') if day(s_['a']).year == day(s_['b']).year else day(s_['b']).isoformat())
+        mx = max(abs(s_['raw']) for s_ in lst) or 1
+        def one(s_):
+            tot = abs(s_['raw']) / mx * 100; sh = 1.0 if s_['adj'] >= 0 or not s_['raw'] else max(0.0, min(1.0, s_['usdt'] / s_['raw']))
+            return row(dz_(s_) + ' · %d 天' % s_['n'] + ('（進行中）' if s_['open'] else ''), de_(s_) + ' · %d days' % s_['n'] + (' (ongoing)' if s_['open'] else ''), p3(s_['adj']), ve=p3(s_['adj']),
+                       col='dn' if s_['adj'] <= TH else None, seg=[[round(tot * sh, 1), 'c3']] + ([[round(tot * (1 - sh), 1), 'dn']] if sh < 1 else []),
+                       nz='沒扣 %s，其中 USDT %s；價格 %s → %s' % (p3(s_['raw']), p3(s_['usdt']), kf(s_['p0']), kf(s_['p1'])), ne='Unadjusted %s, of which USDT %s; price %s → %s' % (p3(s_['raw']), p3(s_['usdt']), kf(s_['p0']), kf(s_['p1'])))
+        done = [s_ for s_ in lst if not s_['open']]; deep = [s_ for s_ in done if s_['adj'] <= TH]; since = day(ng['since'])
+        it = []
+        if cur:
+            it.append(('這一次', 'This run', '%d 天' % cur['n'], '%d days' % cur['n'], 'neu',
+              '沒扣 USDT 的每日溢價從 %s 起天天是負的，到 %s 連續 %d 天%s。這段平均 %s，其中 %s 是 USDT 低於 1 美元，扣掉後剩 %s。' % (md(day(cur['a']).isoformat()), md(day(cur['b']).isoformat()), cur['n'],
+                ('，是 %s 有資料以來第 %d 長（最長 %d 天）' % (since.strftime('%Y/%m'), ng['rank'], ng['longest'])) if live and ng.get('rank') else '', p3(cur['raw']), p3(cur['usdt']), p3(cur['adj'])),
+              'The unadjusted daily premium has been negative every day from %s to %s, %d days in a row%s. It averaged %s over the run, of which %s is USDT trading below $1; net of that, %s is left.' % (day(cur['a']).isoformat(), day(cur['b']).isoformat(), cur['n'],
+                (', the %s longest since the data starts in %s (longest: %d days)' % ({1: '', 2: 'second', 3: 'third'}.get(ng['rank'], '%dth' % ng['rank']), since.strftime('%Y-%m'), ng['longest'])).replace('the  longest', 'the longest') if live and ng.get('rank') else '', p3(cur['raw']), p3(cur['usdt']), p3(cur['adj']))))
+        if done:
+            fr = ng.get('flat_rng'); dsp = ng.get('deep_span')
+            it.append(('已經結束的 %d 次' % len(done), 'The %d runs that have ended' % len(done), '%d / %d' % (ng['flat'], ng['deep']), '%d / %d' % (ng['flat'], ng['deep']), 'neu',
+              '%s 以來連負 %d 天以上、已經結束的有 %d 次。' % (since.strftime('%Y/%m'), MIN, len(done)) + ('%d 次扣掉 USDT 後平均在 %s 到 %s 之間，幾乎是 0。' % (ng['flat'], p3(fr[0]), p3(fr[1])) if fr else '')
+                + ('%d 次扣完還低於 %s，都落在 %s 到 %s，那段期間價格從 %s 到 %s。' % (ng['deep'], thx, ym(dsp[0]), ym(dsp[1]), kf(deep[0]['p0']), kf(deep[-1]['p1'])) if deep else '') + '次數不多，只作讀值。',
+              'Since %s, %d runs of %d or more negative days have ended. ' % (since.strftime('%Y-%m'), len(done), MIN) + ('In %d of them the average net of USDT was between %s and %s, close to zero. ' % (ng['flat'], p3(fr[0]), p3(fr[1])) if fr else '')
+                + ('In %d it stayed below %s; all of those fall between %s and %s, when price went from %s to %s. ' % (ng['deep'], thx, day(dsp[0]).strftime('%Y-%m'), day(dsp[1]).strftime('%Y-%m'), kf(deep[0]['p0']), kf(deep[-1]['p1'])) if deep else '') + 'Few cases; a reading only.'))
+        it.append(('扣掉後，最近 20 天', 'Net of USDT, last 20 days', '%d / 20' % ng['n20'], '%d / 20' % ng['n20'], 'neu',
+          '扣掉 USDT 之後的每日溢價，最近 20 天有 %d 天小於 0。' % ng['n20'] + ('負的日子佔多數：剩下那一塊最近也偏負。' if ng['n20'] >= 14 else '正負差不多。' if ng['n20'] >= 7 else '多數日子在 0 以上。'),
+          'Net of USDT, the daily premium was below 0 on %d of the last 20 days. ' % ng['n20'] + ('Mostly negative: the part that is left has been leaning negative too.' if ng['n20'] >= 14 else 'About even.' if ng['n20'] >= 7 else 'Mostly above 0.')))
+        hd = dict(hz='沒扣 USDT 的每日溢價已經連續為負', he='Days in a row the unadjusted daily premium has been negative', hs=dict(v='%d 天' % cur['n'], ve='%d days' % cur['n'], f='txt')) if live else \
+             dict(hz='%s 以來連負 %d 天以上' % (since.strftime('%Y/%m'), MIN), he='Runs of %d+ negative days since %s' % (MIN, since.strftime('%Y-%m')), hs=dict(v='%d 次' % len(lst), ve='%d runs' % len(lst), f='txt'))
+        return dict(k='pr-neg', zh='Coinbase 溢價連負：扣掉 USDT 還剩多少', en='Coinbase premium negative runs: what is left net of USDT', list=dict(rows=[one(s_) for s_ in reversed(lst)]),
+          say=own(it, ('連負 %d 天，平均 %s 裡有 %s 是 USDT 低於 1 美元' % (cur['n'], p3(cur['raw']), p3(cur['usdt']))) if live else '', ('Negative for %d days; of the %s average, %s is USDT trading below $1' % (cur['n'], p3(cur['raw']), p3(cur['usdt']))) if live else ''),
+          dz='每一列是一段「沒扣 USDT 的每日溢價連續 %d 天以上小於 0」的期間，最新的在最上面。長條的長度是這段期間沒扣的平均溢價，越長越負：藍紫色是 USDT 低於 1 美元造成的部分，紅色是扣掉之後還剩的負值，沒有紅色代表扣完是 0 或正的。右邊的數字是扣掉 USDT 之後的平均，低於 %s 標紅。下面一行是沒扣的平均、其中 USDT 那一塊，和期間價格從多少到多少。資料從 %s 開始。次數不多，只作讀值。' % (MIN, thx, since.strftime('%Y/%m')),
+          de='Each row is a period when the unadjusted daily premium stayed below 0 for %d days or more, newest first. Bar length is the average unadjusted premium over the period (longer = more negative): the blue-violet part is what USDT trading below $1 accounts for, the red part is the negative that remains after netting it out, and no red means the remainder was zero or positive. The number on the right is the average net of USDT, in red when below %s. The line underneath gives the unadjusted average, the USDT part, and where price started and ended. Data starts in %s. Few cases; a reading only.' % (MIN, thx, since.strftime('%Y-%m')), **hd)
 
     def c_prasia():   # 顏色：drawPrem 的 one('c-pr-asia', …, 'var(--s4)')→c5、零軸 ink-3→k2；±0.3% 的持平帶取自 premSay 的門檻，現有網站圖上沒畫，區帶顏色依意義選
         h = [r for r in p3.get('usdt_hist') or [] if r[1] is not None]; u = p3.get('usdt') or {}
@@ -450,7 +515,7 @@ def build(L, N, E, dn, X):
 
     return [
         grp('機構', 'Institutions', 'ETF 和 CME 的機構資金是進還是出', 'Is institutional money in ETFs and on CME coming in or going out', [c_etf(), c_etf20(), c_cot()]),
-        grp('各地買盤', 'Regional demand', '美國、亞洲、韓國哪邊在買，幣往交易所進還是出', 'Which region is buying, and whether coins are moving onto or off exchanges', [c_prus(), c_prasia(), c_prperp(), c_kp(), c_exflow(), c_exch()]),
+        grp('各地買盤', 'Regional demand', '美國、亞洲、韓國哪邊在買，幣往交易所進還是出', 'Which region is buying, and whether coins are moving onto or off exchanges', [c_prus(), c_prneg(), c_prasia(), c_prperp(), c_kp(), c_exflow(), c_exch()]),
         grp('鏈上需求', 'On-chain demand', '新的需求接不接得住供給，新的錢有沒有進來', 'Is new demand absorbing supply, and is new money arriving', [c_ad(), c_dmd(), c_capflow(), c_grad(), c_rcliq(), c_stab()]),
         grp('大戶與長期持有者', 'Whales and long-term holders', '大戶和長期持有者在加碼、出貨還是不動', 'Are whales and long-term holders adding, distributing or sitting still',
             [c_whale(), c_whalet(), c_whstrip(), reuse('lthnet', '長期持有者 30 日淨部位變化', 'LTH 30-day net position change'), reuse('lsrchg', '長短期供給比 30 日變化', 'LTH/STH supply ratio, 30-day change'),
