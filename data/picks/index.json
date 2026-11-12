@@ -1,16 +1,16 @@
 {
- "date": "2026-11-10",
+ "date": "2026-11-11",
  "captions": true,
  "picks": [
   {
-   "id": "market/mon",
-   "chart": "data/picks/market-mon.png",
-   "chart_en": "data/picks/market-mon-en.png",
+   "id": "onchain/quant",
+   "chart": "data/picks/onchain-quant.png",
+   "chart_en": "data/picks/onchain-quant-en.png",
    "name": {
-    "zh": "月度報酬熱力表",
-    "en": "Monthly returns heatmap"
+    "zh": "供給分位成本線",
+    "en": "Supply quantile cost lines"
    },
-   "link": "https://daybreak.aronlab.dev/#market/mon"
+   "link": "https://daybreak.aronlab.dev/#onchain/quant"
   }
  ]
 }

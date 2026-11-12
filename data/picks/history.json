@@ -76,6 +76,10 @@
   {
    "date": "2026-11-10",
    "id": "market/mon"
+  },
+  {
+   "date": "2026-11-11",
+   "id": "onchain/quant"
   }
  ]
 }
