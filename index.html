@@ -1582,8 +1582,10 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
    5 現在在哪一段：面板的外緣在那一格往外鼓 6px（LQ 的直向版，同一組彈簧），鼓包的頂描 --ac、兩腳淡出，圓環跟著被頂出去一點。捲動換段時鼓包沿著外緣流過去。
    6 電腦（701px 以上）：寬 46px、垂直置中、所有段落都列出來，內容區左邊多留 40px 給它。滑鼠移到某一格或鍵盤聚焦，旁邊跳出那一段的名稱（--ink 底、--sheet 字，和 .oc-tip 同款）；平常不顯示字。
    7 手機（700px 以下）：貼右緣（2026-11-12 上線當天，使用者：「手機側邊欄是不是放在右側好一點，右手拇指可以滑動，放左邊不好點」；原本在左緣）。平常只露出一格（現在這一段的圓環），寬 30px，在畫面高度 64% 的地方，剛好落在頁面邊距（16px）和卡片內距（14px）裡，不蓋到圖右邊的數字。展開的清單圓環靠右、名稱在左。點一下展開成清單，每格圓環旁邊直接寫段落名稱；點其中一段就捲過去並收起來，點面板以外的地方也收起來。收合時不鼓包（它自己就是標記）。
-   8 prefers-reduced-motion：面板直接出現、鼓包直接到位。分享模式不顯示。 */
-.oc-side { display: flex; flex-direction: column; position: fixed; left: 0; top: 50%; z-index: 58; width: 46px; padding: 18px 0; box-sizing: border-box; translate: 0 -50%; transform: translateX(calc(-100% - 16px)); visibility: hidden; transition: transform .7s var(--spring), visibility 0s .7s; }
+   8 prefers-reduced-motion：面板直接出現、鼓包直接到位。分享模式不顯示。
+   9 手機可以按住滑（2026-11-12，使用者提到「右手拇指可以滑動」，問了要不要加，回答「加」）：手指按在那顆圓環上往上或往下滑，清單就地展開（現在那一格留在手指底下），滑到哪一段那一段就亮、鼓包跟過去，放開就捲到那一段並收起來。點一下再點段落的做法照舊。
+     不管是點還是滑，選了之後標記直接停在目的地那一段，捲過去的途中不會被拉回原本那一段再流過去（SIDE.lock，最多 1.8 秒）；電腦上點面板也一樣。 */
+.oc-side { display: flex; flex-direction: column; position: fixed; left: 0; top: 50%; z-index: 58; width: 46px; padding: 18px 0; box-sizing: border-box; translate: 0 calc(-50% + var(--dy, 0px)); transform: translateX(calc(-100% - 16px)); visibility: hidden; transition: transform .7s var(--spring), visibility 0s .7s; }
 .oc-side.on { transform: none; visibility: visible; transition: transform .7s var(--spring); }
 .oc-side > svg.lq { left: -40px; top: -16px; transform: scaleX(-1); }
 .oc-side .lq-f { fill: var(--sheet); }
@@ -1604,6 +1606,7 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
 }
 @media (max-width: 700px) {
   .oc-side { left: auto; right: 0; top: 64%; width: 30px; padding: 10px 0; transform: translateX(calc(100% + 16px)); }   /* 手機在右緣（㉚-7）：SVG 不鏡射、清單的圓環靠右 */
+  .oc-side { touch-action: none; -webkit-user-select: none; user-select: none; }   /* ㉚-9：手指在面板上滑是選段落，不是捲頁面 */
   .oc-side > svg.lq { left: -12px; transform: none; }
   .oc-side button { width: 30px; } .oc-side button > b { width: 24px; height: 24px; font-size: 9px; }
   .oc-side:not(.open) button:not([aria-current="true"]), .oc-side:not(.open) button > i { display: none; }
@@ -3393,7 +3396,13 @@ function initOC() {
   const RG = [[365, '1 年', '1Y'], [1095, '3 年', '3Y'], [0, '全部', 'All']];
   const ctl = () => { const b = (attr, v, on, zh, en) => `<button type="button" ${attr}="${v}" aria-pressed="${on}">${T(zh, en)}</button>`; return ''; };
   /* ㉘ 液態分頁（程式）。每個導航一份狀態：前緣 L、頂點 P、後緣 R、高度 h 四條彈簧，外加電腦上滑鼠引出來的小鼓起 s。renderBar 每次重畫都會把按鈕和 SVG 換掉，狀態留在這裡，所以動到一半重畫也接得上 */
-  const SIDE = { el: () => $('#oc-side'), phone: () => matchMedia('(max-width: 700px)').matches, open: () => SIDE.el().classList.contains('open'), set: v => { const e = SIDE.el(); if (e.classList.contains('open') === !!v) return; e.classList.toggle('open', !!v); LQ.sync(true); } };   /* ㉚-7 手機：收合／展開 */
+  const SIDE = { el: () => $('#oc-side'), phone: () => matchMedia('(max-width: 700px)').matches, open: () => SIDE.el().classList.contains('open'), scrub: false, lock: null, noClick: 0,
+    set: v => { const e = SIDE.el(); if (e.classList.contains('open') === !!v) return; const mid = b => { const r = b.getBoundingClientRect(); return r.top + r.height / 2; }, c0 = e.querySelector('[aria-current="true"]'), y0 = v && c0 ? mid(c0) : null;
+      e.classList.toggle('open', !!v); e.style.setProperty('--dy', '0px');
+      if (y0 != null) { const pr = e.getBoundingClientRect(), lo = $('#oc-bar').getBoundingClientRect().bottom + 24 - pr.top, hi = innerHeight - 96 - pr.bottom; e.style.setProperty('--dy', Math.max(lo, Math.min(hi, y0 - mid(c0))).toFixed(1) + 'px'); }   /* 展開時現在那一格留在手指底下（上下不超出導覽列和分頁列） */
+      LQ.sync(true); },
+    mark: i => { SIDE.el().querySelectorAll('button').forEach((b, j) => b.setAttribute('aria-current', j === i)); LQ.sync(); },
+    go: i => { SIDE.mark(i); SIDE.lock = { k: i, t: performance.now() + 1800 }; goSec(i); } };   /* ㉚-7 手機：收合／展開；㉚-9 滑動選段。lock：跳過去的途中不讓捲動偵測把標記拉回原本那一段 */
   const LQ = (() => {
     const K = { lead: [320, 21], peak: [190, 15], trail: [120, 12], h: [430, 10] }, NS = []; let raf = 0, last = 0;
     const svg = id => `<svg class="lq" aria-hidden="true" focusable="false"><defs><linearGradient id="lqg-${id}" gradientUnits="userSpaceOnUse" x1="0" x2="1" y1="0" y2="0"><stop offset="0" style="stop-color:var(--ac)" stop-opacity="0"/><stop offset=".22" style="stop-color:var(--ac)"/><stop offset=".78" style="stop-color:var(--ac)"/><stop offset="1" style="stop-color:var(--ac)" stop-opacity="0"/></linearGradient></defs><path class="lq-f"/><path class="lq-e"/><path class="lq-c" stroke="url(#lqg-${id})"/></svg>`;
@@ -3469,8 +3478,16 @@ function initOC() {
   { const br = $('#oc-bar'), sb = () => document.documentElement.style.setProperty('--barh', br.offsetHeight + 'px'); if (br) { sb(); if ('ResizeObserver' in window) new ResizeObserver(sb).observe(br); else window.addEventListener('resize', sb); } }   /* ㉙-3：導覽列多高由程式量（電腦 99、平板三排 146、手機 88），不寫死 */
   let spyK = -1; function spy() { const sd = $('#oc-side'); if (!sd) return; const lim = $('#oc-bar').getBoundingClientRect().bottom + 48; let k = 0; G.forEach((x, j) => { const e2 = $('#oc-s' + (j + 1)); if (e2 && e2.getBoundingClientRect().top <= lim) k = j + 1; }); const ss = sd.querySelectorAll('button'); if (!ss.length) return;
     { const hb = hd.getBoundingClientRect(), on = hb.bottom < innerHeight * .55; if (!on) SIDE.set(0); sd.classList.toggle('on', on); ss.forEach((b2, i) => { let p = i < k ? 1 : 0; if (i === k) { const e2 = k ? $('#oc-s' + k) : hd, r2 = e2.getBoundingClientRect(); p = Math.max(.04, Math.min(1, ((k ? lim : 0) - r2.top) / Math.max(1, r2.height))); } const v = p.toFixed(3); if (b2.dataset.p !== v) { b2.dataset.p = v; b2.style.setProperty('--p', v); } }); }   /* ㉚-4：圓環＝這一段讀到哪；㉚-2：首屏還佔著大半個畫面時收起來 */
+    if (SIDE.scrub) return; if (SIDE.lock) { if (k === SIDE.lock.k || performance.now() > SIDE.lock.t) SIDE.lock = null; else return; }
     if (k === spyK && ss[k] && ss[k].getAttribute('aria-current') === 'true') return; spyK = k; ss.forEach((b2, i) => b2.setAttribute('aria-current', i === k)); LQ.sync(); }
-  document.addEventListener('pointerdown', e => { if (SIDE.open() && !(e.target.closest && e.target.closest('#oc-side'))) SIDE.set(0); });
+  document.addEventListener('pointerdown', e => { if (SIDE.open() && !SIDE.scrub && !(e.target.closest && e.target.closest('#oc-side'))) SIDE.set(0); });
+  /* ㉚-9 手機：按住面板上下滑＝選段落。動超過 8px 才算滑（不然是點）；收合時一滑就展開，現在那一格留在手指底下；手指滑到哪一格，那一格就亮起來、鼓包跟過去；放開才捲過去並收起來。滑出去被系統取消就回到原本那一段 */
+  { const sd = $('#oc-side'); let dg = null;
+    const at = y => { let best = -1, bd = 1e9; sd.querySelectorAll('button').forEach((b, i) => { const r = b.getBoundingClientRect(); if (!r.height) return; const d = Math.abs(y - (r.top + r.height / 2)); if (d < bd) { bd = d; best = i; } }); return best; };
+    const end = e => { if (!dg || e.pointerId !== dg.id) return; const d = dg; dg = null; if (!d.moved) return; SIDE.scrub = false; SIDE.noClick = performance.now() + 450; SIDE.set(0); if (e.type === 'pointerup' && d.pick >= 0) SIDE.go(d.pick); else { spyK = -1; spy(); } };
+    sd.addEventListener('pointerdown', e => { if (!SIDE.phone() || !sd.classList.contains('on') || (e.pointerType === 'mouse' && e.button)) return; dg = { id: e.pointerId, y0: e.clientY, moved: false, pick: -1 }; });
+    sd.addEventListener('pointermove', e => { if (!dg || e.pointerId !== dg.id) return; if (!dg.moved) { if (Math.abs(e.clientY - dg.y0) < 8) return; dg.moved = true; SIDE.scrub = true; try { sd.setPointerCapture(e.pointerId); } catch (e2) {} SIDE.set(1); } const i = at(e.clientY); if (i >= 0 && i !== dg.pick) { dg.pick = i; SIDE.mark(i); } });
+    sd.addEventListener('pointerup', end); sd.addEventListener('pointercancel', end); }
   let spyT = 0; window.addEventListener('scroll', () => { if (spyT) return; spyT = setTimeout(() => { spyT = 0; spy(); }, 90); }, { passive: true });
   /* 頭部那句話裡的關鍵數字用主題色（整頁只有這裡和異動的小點用橘紅） */
   const hx = () => Array.prototype.slice.call(stg.querySelectorAll('.ov-lead, .br-h')).forEach(e2 => { e2.innerHTML = esc(e2.textContent).replace(/([+\-−]?[$]?\d[\d,.]*\s?(?:%|億|萬|兆|[KMB](?![A-Za-z])))/g, '<b class="hx">$1</b>'); });
@@ -3634,7 +3651,7 @@ function initOC() {
     if (t.closest('[data-fxd]') && fx) { const c0 = G[fx.k - 1].charts[fx.i]; savePng(c0.k, T(c0.zh, c0.en)); return; }
     if (t.closest('[data-fxm]')) { const f = $('#oc-fx'); f.classList.toggle('max'); fxBtns(); renderLead('F'); return; }
     if (t.closest('[data-x]') || t.id === 'oc-fx') { closeFx(); return; }
-    if ((b = t.closest('#oc-side button')) && SIDE.phone()) { if (!SIDE.open()) { SIDE.set(1); return; } SIDE.set(0); }
+    if (t.closest('#oc-side')) { if (performance.now() < SIDE.noClick || !(b = t.closest('#oc-side button'))) return; if (SIDE.phone()) { if (!SIDE.open()) { SIDE.set(1); return; } SIDE.set(0); } SIDE.go(+b.dataset.go); return; }
     if ((b = t.closest('[data-go]'))) { goSec(+b.dataset.go); return; }
     if ((b = t.closest('[data-fx]'))) { openFx(b.dataset.fx); return; }
     if ((b = t.closest('[data-ly]'))) { const c = keyC(b.dataset.key); if (c && (c._ly || 'sp') !== b.dataset.ly) { c._ly = b.dataset.ly; reOne(b.dataset.key); } return; }
