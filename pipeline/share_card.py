@@ -11,9 +11,10 @@ from PIL import Image, ImageDraw, ImageFont
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 P = lambda *a: os.path.join(ROOT, *a)
 W, H, M = 1200, 675, 64
-# 2026-11-12：改成深色，配色取自新版網站（pipeline/next/page.html 的 --bg／--ink／--ink3／--brand），底紋同網站的網點
-PAPER, INK, INK3, RED, LINE = '#0A0A0B', '#EFECE5', '#7E7A72', '#FF4A2E', '#2C2C31'
-DOT, DOT_STEP = '#1D1D20', 22   # 網點：約等於網站 ink 12% 疊在底色上
+# 2026-11-12：改成深色。純黑太刺眼，改用「破曉漸層」：上方深藍灰往下轉暖（從夜到天亮），文字略帶暖米色、紅色稍柔；
+# 底紋同網站的網點。PAPER 是漸層上端，PAPER_BOTTOM 是下端
+PAPER, PAPER_BOTTOM, INK, INK3, RED, LINE = '#15171F', '#2B1F22', '#ECE8E0', '#8E8C92', '#FF6A45', '#33343E'
+DOT, DOT_STEP = '#22242D', 22
 NUM = re.compile(r'(\d{1,2}/\d{1,2}(?!\d)|[+\-−$]?\d[\d,.]*(?:\s?(?:%|億|萬|千|兆|倍|個基點|基點|bp|K|M|B)(?![A-Za-z]))?)')
 TXT = {
     'zh': dict(tag='號外', stage='市場階段', etf='ETF 7 個交易日（至 {}）', sth='短期持有者成本', above='收盤在上方', below='收盤在下方', day='第 {} 天',
@@ -49,6 +50,9 @@ def wrap(text, font, width):
 
 def card(lang, latest, notes, F, out):
     T = TXT[lang]; img = Image.new('RGB', (W, H), PAPER); d = ImageDraw.Draw(img)
+    t, b = (tuple(int(c[i:i + 2], 16) for i in (1, 3, 5)) for c in (PAPER, PAPER_BOTTOM))
+    for y in range(H):   # 破曉漸層：由上往下
+        f = y / (H - 1); d.line([(0, y), (W, y)], fill=tuple(round(t[j] + (b[j] - t[j]) * f) for j in range(3)))
     for gy in range(DOT_STEP // 2, H, DOT_STEP):   # 網點底紋
         for gx in range(DOT_STEP // 2, W, DOT_STEP): d.ellipse([gx - 1, gy - 1, gx + 1, gy + 1], fill=DOT)
     d.rectangle([M, 52, W - M, 58], fill=INK)   # 號外粗頂線
