@@ -196,7 +196,7 @@ def build(L, N, E, dn, X):
             it.append(('穩定幣供給', 'Stablecoin supply', pc(sp, 1) if sp is not None else '—', pc(sp, 1) if sp is not None else '—', 'neu',
               '全部美元穩定幣的流通量 30 天%s %.0f 億美元。' % ('少了' if sb < 0 else '多了', abs(sb) * 10) + ('USDT 折價加上供給在縮，兩個方向一致，比較像是有人把穩定幣換回美元。' if sb < 0 and u['disc7'] < 0 else 'USDT 溢價加上供給在增，兩個方向一致，比較像是有人把美元換成穩定幣。' if sb > 0 and u['disc7'] > 0 else '價格和供給方向不一致，單看一邊不夠。'),
               'The supply of all dollar stablecoins %s by $%.1fB over 30 days. ' % ('fell' if sb < 0 else 'rose', abs(sb)) + ('A USDT discount and shrinking supply point the same way: holders look to be swapping stablecoins back into dollars.' if sb < 0 and u['disc7'] < 0 else 'A USDT premium and growing supply point the same way: dollars look to be moving into stablecoins.' if sb > 0 and u['disc7'] > 0 else 'Price and supply point different ways; one alone is not enough.')))
-        return dict(k='usdt-usd', zh='USDT 對美元', en='USDT vs the dollar', hz='比 1 美元高或低多少（7 日平均）', he='Distance from $1 (7-day average)', f='p3', rows=rows, p=2, hero=1,
+        card = dict(k='usdt-usd', zh='USDT 對美元', en='USDT vs the dollar', hz='比 1 美元高或低多少（7 日平均）', he='Distance from $1 (7-day average)', f='p3', rows=rows, p=2, hero=1,
           ser=[ser(1, zh='每日', en='Daily', hide=1), ser(3, zh='7 日平均', en='7-day average', t='sign', hi='c3', lo='c3', w=1.8)],   # 每日值太抖，圖上只畫 7 日平均，每日的數字留在游標讀值裡
           refs=[dict(v=0, col='k2', solid=1), dict(v=DEEP, col='dn', zh='深度折價線 ' + dtx, en='Deep-discount line ' + dtx)],
           marks=[dict(d=e['d'], v=e['min'], col='dn', up=0, zh=None if e.get('r30') is None else '30 天 ' + pc(e['r30']), en=None if e.get('r30') is None else '30d ' + pc(e['r30'])) for e in ep],
@@ -204,6 +204,95 @@ def build(L, N, E, dn, X):
           say=own(it, 'USDT 比 1 美元%s %.2f%%（7 日平均）' % ('低' if u['disc7'] < 0 else '高', abs(u['disc7'])), 'USDT is %.2f%% %s $1 (7-day average)' % (abs(u['disc7']), 'below' if u['disc7'] < 0 else 'above')),
           dz='USDT 在 Coinbase 上對美元的價格減 1。低於 0（折價）是賣 USDT 換美元的人比較多，通常代表有人把穩定幣換回美元；高於 0（溢價）是搶著換進 USDT 的人比較多。藍紫色的面積是 7 日平均，和 Coinbase 溢價「拆開看」裡 USDT 那一塊是同一條。虛線是近四年 7 日平均最低 5%% 的位置（%s），圓圈是歷次跌破後最深的那一天，旁邊是跌破那天起 30 天的漲跌。這是 Coinbase 一個交易所的價格，別的地方會有小差異；和「亞洲：場外 USDT 溢價」不一樣，那張是 USDT 對人民幣。2023/03 的大幅溢價是 USDC 脫鉤時資金湧進 USDT。只作讀值。' % dtx,
           de='The price of USDT in dollars on Coinbase, minus 1. Below 0 (a discount) means more people are selling USDT for dollars, which usually means stablecoins are being cashed out; above 0 (a premium) means more people are rushing into USDT. The blue-violet area is the 7-day average, the same line as the USDT part of the Coinbase premium Breakdown. The dashed line marks the lowest 5%% of the 7-day average in four years (%s); circles mark the deepest day of each break, labelled with the price change over the 30 days from the break. This is the price on one exchange, Coinbase, and others differ slightly; it is not the same as the Asia OTC USDT premium, which is USDT against the yuan. The large premium in March 2023 was money moving into USDT while USDC lost its peg. A reading only.' % dtx)
+
+        # ── USDC（2026-11-12）：同一張卡片上切換，畫法和 USDT 一樣；顏色用 c4，和 USDT 的 c3 分開 ──
+        uc = f.get('usdc') or {}; rc = [r for r in uc.get('rows') or [] if r[1] is not None]
+        if len(rc) < 60 or uc.get('deep') is None: return card
+        dc = [(r[1] - 1) * 100 for r in rc]; ac = ma7(dc); dtc = mi('%.3f%%' % uc['deep']); epc = uc.get('ep') or []
+        one = {k_: card.pop(k_) for k_ in ('hz', 'he', 'f', 'rows', 'p', 'hero', 'ser', 'refs', 'marks', 'leg')}
+        two = dict(hz='USDC 比 1 美元高或低多少（7 日平均）', he='USDC: distance from $1 (7-day average)', f='p3', rows=[[r[0], R(dc[i], 3), r[2], R(ac[i], 4)] for i, r in enumerate(rc) if ac[i] is not None], p=2, hero=1,
+          ser=[ser(1, zh='每日', en='Daily', hide=1), ser(3, zh='7 日平均', en='7-day average', t='sign', hi='c4', lo='c4', w=1.8)],
+          refs=[dict(v=0, col='k2', solid=1), dict(v=uc['deep'], col='dn', zh='深度折價線 ' + dtc, en='Deep-discount line ' + dtc)],
+          marks=[dict(d=e['d'], v=e['min'], col='dn', up=0, zh=None if e.get('r30') is None else '30 天 ' + pc(e['r30']), en=None if e.get('r30') is None else '30d ' + pc(e['r30'])) for e in epc], leg=one['leg'])
+        one['hz'], one['he'] = 'USDT 比 1 美元高或低多少（7 日平均）', 'USDT: distance from $1 (7-day average)'
+        card['modes'] = [dict(mz='USDT', me='USDT', **one), dict(mz='USDC', me='USDC', **two)]
+        card['zh'], card['en'] = 'USDT、USDC 對美元', 'USDT and USDC vs the dollar'
+        gap = uc['disc7'] - u['disc7']
+        card['say']['items'].append(own([('USDC', 'USDC', '%.4f 美元' % uc['px'], '$%.4f' % uc['px'], 'neu',
+          'USDC 在 Bitstamp 收 %.4f 美元，7 日平均 %s，比 USDT 的 %s %s。' % (uc['px'], p3(uc['disc7']), p3(u['disc7']), '貼近 1 美元' if abs(uc['disc7']) < abs(u['disc7']) else '離 1 美元更遠')
+            + ('兩種穩定幣都低於 1 美元，但 USDT 低得多：壓力主要在 USDT，不是所有穩定幣一起被拋。' if uc['disc7'] < 0 and u['disc7'] < 0 and gap > 0.03 else '兩種穩定幣的折溢價差不多。' if abs(gap) <= 0.03 else '')
+            + 'USDC 可以直接向發行商 1:1 兌回美元，平常波動比 USDT 小很多，所以它的深度折價線（%s）也淺得多。' % dtc,
+          'USDC closed at $%.4f on Bitstamp; its 7-day average is %s, %s than USDT at %s. ' % (uc['px'], p3(uc['disc7']), 'closer to $1' if abs(uc['disc7']) < abs(u['disc7']) else 'further from $1', p3(u['disc7']))
+            + ('Both trade below $1, but USDT by much more: the pressure is mostly on USDT, not on stablecoins across the board. ' if uc['disc7'] < 0 and u['disc7'] < 0 and gap > 0.03 else 'The two are about equally far from $1. ' if abs(gap) <= 0.03 else '')
+            + 'USDC can be redeemed 1:1 with its issuer, so it normally moves far less than USDT and its deep-discount line (%s) is much shallower.' % dtc)])['items'][0])
+        card['dz'] = card['dz'].replace('USDT 在 Coinbase 上對美元的價格減 1。', '穩定幣對美元的價格減 1，可以切換 USDT（Coinbase 的價格）和 USDC（Bitstamp 的價格；Coinbase 上 USDC 和美元是 1:1 互換，沒有成交價）。') + ' USDC 那一頁的面積是青色，畫法相同。'
+        card['de'] = card['de'].replace('The price of USDT in dollars on Coinbase, minus 1.', 'The price of a stablecoin in dollars, minus 1. Switch between USDT (Coinbase price) and USDC (Bitstamp price; on Coinbase USDC converts 1:1 with dollars, so there is no traded price).') + ' The USDC view uses a cyan area and the same layout.'
+        return card
+
+    def c_treasury():   # 2026-11-12 新圖（舊版沒有）：上市公司持幣。清單，長條＝佔上市公司合計的比例（ink）
+        from say_data import own
+        t = f.get('treasury') or {}; m = t.get('mstr') or {}
+        if not t.get('top') or not m.get('cost'): return NA('treasury', '上市公司持幣', 'Public-company holdings', 'CoinGecko 的上市公司持幣（flows.treasury）', 'CoinGecko\'s public-company treasury data (flows.treasury)')
+        n0 = lambda v: format(int(round(v)), ','); usd = lambda v: '$' + n0(v); tot = t['total'] or 1; under = m['pnl_pct'] < 0
+        rows = [row(('%s（%s）' % (c_['name'], c_['sym'])) if c_.get('sym') else c_['name'], ('%s (%s)' % (c_['name'], c_['sym'])) if c_.get('sym') else c_['name'], n0(c_['btc']) + ' 顆', ve=n0(c_['btc']) + ' BTC', bar=c_['btc'] / tot * 100, bc='ink',
+                    nz=('平均成本 %s' % usd(c_['cost'])) if c_.get('cost') else '成本沒有公開', ne=('Average cost %s' % usd(c_['cost'])) if c_.get('cost') else 'Cost not disclosed') for c_ in t['top']]
+        it = [('Strategy 的成本', 'Strategy\'s cost', usd(m['cost']), usd(m['cost']), 'neu',
+               'Strategy 持有 %s 顆（全部供給的 %.1f%%），買進總成本 %.1f 億美元，平均每顆 %s。收盤比它的平均成本%s %.1f%%，整體帳面%s。它買幣的錢主要來自發股票和公司債，不是拿幣去抵押借的，所以跌破成本不等於會被迫賣；市場把這條線當參考價位，是因為跌破之後它再募資買幣會比較難。' % (n0(m['btc']), m.get('pct_supply') or 0, m['entry_usd_b'] * 10, usd(m['cost']), '低' if under else '高', abs(m['pnl_pct']), '虧損' if under else '獲利'),
+               'Strategy holds %s BTC (%.1f%% of supply) bought for $%.1fB, an average of %s a coin. The close is %.1f%% %s that average, so the position as a whole is %s. Its purchases are funded mainly by equity and corporate debt, not by borrowing against the coins, so trading below cost does not mean forced selling; the line is watched because raising money to buy more gets harder below it.' % (n0(m['btc']), m.get('pct_supply') or 0, m['entry_usd_b'], usd(m['cost']), abs(m['pnl_pct']), 'below' if under else 'above', 'at a loss' if under else 'in profit')),
+              ('上市公司合計', 'All public companies', n0(t['total']) + ' 顆', n0(t['total']) + ' BTC', 'neu',
+               '%d 家上市公司合計持有 %s 顆，Strategy 一家佔 %.0f%%。' % (t['n'], n0(t['total']), m['share']), '%d public companies hold %s BTC in total; Strategy alone is %.0f%% of that.' % (t['n'], n0(t['total']), m['share']))]
+        return dict(k='treasury', zh='上市公司持幣', en='Public-company holdings', hz='Strategy 的平均買進成本', he='Strategy\'s average purchase cost', hs=dict(v=m['cost'], f='usd0'), list=dict(rows=rows),
+          say=own(it, '收盤比 Strategy 的平均成本%s %.1f%%' % ('低' if under else '高', abs(m['pnl_pct'])), 'The close is %.1f%% %s Strategy\'s average cost' % (abs(m['pnl_pct']), 'below' if under else 'above')),
+          dz='持有比特幣最多的幾家上市公司。長條是這家佔所有上市公司持幣的比例，下面一行是它的平均買進成本（買進總成本除以持幣量；有的公司沒有公開）。Strategy 的平均成本也畫在「價位」頁的成本線那張圖上。來源只有現在的數字，沒有歷史。只作讀值。',
+          de='The public companies that hold the most bitcoin. The bar is each company\'s share of all public-company holdings; the line underneath is its average purchase cost (total cost divided by coins held; some companies do not disclose it). Strategy\'s average cost is also drawn on the cost-basis chart on the Levels page. The source gives current figures only, no history. A reading only.')
+
+    def c_fed():   # 2026-11-12 新圖（舊版沒有）：預測市場對聯準會下次決議的機率。顏色：升息 c5（暖）、降息 c4（冷）、不變 k2
+        from say_data import own
+        x = f.get('fed_mkt') or {}; rows = x.get('rows') or []
+        if len(rows) < 5 or not x.get('opts'): return NA('fedmkt', '預測市場：聯準會下次決議', 'Prediction market: next Fed decision', 'Polymarket 的聯準會決議市場（flows.fed_mkt）', 'Polymarket\'s Fed decision market (flows.fed_mkt)')
+        KZ = dict(up='升息', flat='不變', down='降息'); KE = dict(up='a hike', flat='no change', down='a cut'); lead = x['lead']; mo = x.get('month')
+        OZ = {'50+ bps decrease': '降 2 碼以上', '25 bps decrease': '降 1 碼', 'No change': '不變', '25 bps increase': '升 1 碼', '50+ bps increase': '升 2 碼以上'}
+        d7 = None if x.get('lead_7d') is None else x['lead_p'] - x['lead_7d']
+        it = [('現在', 'Now', '%s %.0f%%' % (KZ[lead], x['lead_p']), '%s %.0f%%' % (KE[lead].capitalize(), x['lead_p']), 'neu',
+               '%s聯準會（%s 公布）最可能的結果是%s，市場給 %.0f%% 的機率' % (('%d 月' % mo) if mo else '下一次', md(x['end']), KZ[lead], x['lead_p']) + ('；7 天前是 %.0f%%' % x['lead_7d'] if d7 is not None else '') + '。升息 %.0f%%、不變 %.0f%%、降息 %.0f%%。' % (x['up'], x['flat'], x['down']),
+               'For the %sFed meeting (decision due %s) the most likely outcome is %s, priced at %.0f%%' % ((dt.date(2000, mo, 1).strftime('%B') + ' ') if mo else 'next ', x['end'], KE[lead], x['lead_p']) + ('; it was %.0f%% a week ago' % x['lead_7d'] if d7 is not None else '') + '. A hike %.0f%%, no change %.0f%%, a cut %.0f%%.' % (x['up'], x['flat'], x['down'])),
+              ('各個結果', 'Each outcome', '%d 種' % len(x['opts']), '%d outcomes' % len(x['opts']), 'neu',
+               '、'.join('%s %.1f%%' % (OZ.get(o['label'], o['label']), o['p']) for o in x['opts']) + '。這個市場累計成交 %.0f 萬美元。這是用真錢下注得出的機率，不是官方數字，也會錯。' % (x['vol_m'] * 100),
+               ', '.join('%s %.1f%%' % (o['label'], o['p']) for o in x['opts']) + '. $%.1fM has traded in this market. These are probabilities implied by real-money bets, not official figures, and they can be wrong.' % x['vol_m'])]
+        return dict(k='fedmkt', zh='預測市場：聯準會下次決議', en='Prediction market: next Fed decision', hz='%s的機率（%s）' % (KZ[lead], ('%d 月會議' % mo) if mo else '下次會議'), he='Probability of %s (%s)' % (KE[lead], (dt.date(2000, mo, 1).strftime('%B') + ' meeting') if mo else 'next meeting'),
+          f='p1', rows=rows, hero={'up': 0, 'flat': 1, 'down': 2}[lead], dom=[0, 100],
+          ser=[ser(1, zh='升息', en='Hike', col='c5', w=1.9), ser(2, zh='不變', en='No change', col='k2', w=1.4), ser(3, zh='降息', en='Cut', col='c4', w=1.9)],
+          say=own(it, '市場給%s %.0f%% 的機率' % (KZ[lead], x['lead_p']), 'The market prices %s at %.0f%%' % (KE[lead], x['lead_p'])),
+          dz='Polymarket 上「聯準會下一次會議會怎麼決定」的市場。每個結果的價格就是市場認為它發生的機率，這裡併成升息、不變、降息三條線。同一張圖只看同一次會議：會開完之後換成下一次，線會重新開始。利率的預期變了，風險資產通常會跟著動，所以放在大環境。只作讀值。',
+          de='The Polymarket market on what the Fed will decide at its next meeting. The price of each outcome is the probability the market gives it; here they are grouped into three lines: a hike, no change, a cut. One chart covers one meeting: after the decision it switches to the next meeting and the lines start again. Risk assets usually move when rate expectations shift, which is why this sits under Macro. A reading only.')
+
+    def c_cvd():   # 2026-11-12 新圖（舊版沒有）：依成交單大小分的累計買賣差。顏色：大單 c5（暖）、中單 c3、小單 c4（冷）
+        from say_data import own
+        x = f.get('cvd_size') or {}; rows = x.get('rows') or []
+        if len(rows) < 60: return NA('cvdsz', '依成交單大小分的買賣差', 'Buy/sell imbalance by trade size', 'Binance 逐筆成交依金額分級的資料（flows.cvd_size）', 'Binance trades bucketed by size (flows.cvd_size)')
+        um = lambda v: mi(('%+.2fB' % (v / 1000)) if abs(v) >= 1000 else ('%+.0fM' % v)).replace('+', '+$').replace('−', '−$'); d30 = x['d30']; sh = x.get('share30') or [0, 0, 0]
+        NZ = ('小單', '中單', '大單'); NE = ('small', 'mid-size', 'large'); buy = [i for i in range(3) if d30[i] > 0]; sell = [i for i in range(3) if d30[i] < 0]
+        who = (('、'.join(NZ[i] for i in buy) + '在買') if buy else '') + ('，' if buy and sell else '') + (('、'.join(NZ[i] for i in sell) + '在賣') if sell else '')
+        whoe = ((' and '.join(NE[i] for i in buy) + ' trades net buying') if buy else '') + ('; ' if buy and sell else '') + ((' and '.join(NE[i] for i in sell) + ' trades net selling') if sell else '')
+        it = [('近 30 天', 'Last 30 days', um(d30[2]), um(d30[2]), 'neu',
+               '%s。主動買減主動賣：小單（不到 1 萬美元）%s、中單（1 萬–10 萬）%s、大單（10 萬以上）%s。' % (who, um(d30[0]), um(d30[1]), um(d30[2])) + ('同期價格 %s。' % pc(x['px30'], 1) if x.get('px30') is not None else ''),
+               '%s. Taker buys minus taker sells: small trades (under $10K) %s, mid-size ($10K–100K) %s, large ($100K and up) %s.' % (whoe[:1].upper() + whoe[1:], um(d30[0]), um(d30[1]), um(d30[2])) + (' Price over the same period: %s.' % pc(x['px30'], 1) if x.get('px30') is not None else '')),
+              ('近 7 天', 'Last 7 days', um(x['d7'][2]), um(x['d7'][2]), 'neu',
+               '小單 %s、中單 %s、大單 %s。' % tuple(um(v) for v in x['d7']), 'Small %s, mid-size %s, large %s.' % tuple(um(v) for v in x['d7'])),
+              ('成交額佔比', 'Share of volume', '%.0f%%' % sh[2], '%.0f%%' % sh[2], 'neu',
+               '近 30 天的成交額裡，小單佔 %.0f%%、中單 %.0f%%、大單 %.0f%%。' % tuple(sh) + '大單的數字偏低：一張大的市價單吃掉好幾個價位，在這份資料裡會被拆成好幾筆比較小的。',
+               'Of the last 30 days\' volume, small trades are %.0f%%, mid-size %.0f%% and large %.0f%%. ' % tuple(sh) + 'The large bucket is understated: a big market order that sweeps several price levels shows up here as several smaller trades.')]
+        def reb(nd):   # 從視窗第一天重新從 0 累計：整段歷史的累計值很大，直接畫的話近期的起伏會被壓平
+            w = rows[-nd:] if nd else rows; out = []; cum = [0.0, 0.0, 0.0]
+            for r_ in w:
+                cum = [cum[i] + r_[5 + i] for i in range(3)]; out.append([r_[0], r_[1]] + [round(v, 1) for v in cum])
+            return out
+        SER = [ser(2, zh='小單（不到 1 萬美元）', en='Small (under $10K)', col='c4', w=1.5), ser(3, zh='中單（1 萬–10 萬）', en='Mid-size ($10K–100K)', col='c3', w=1.5), ser(4, zh='大單（10 萬以上）', en='Large ($100K+)', col='c5', w=2)]
+        md_ = lambda mz, me, nd: dict(mz=mz, me=me, rng=nd, rows=reb(nd), p=1, hero=2, f='usdM', ser=SER, refs=[dict(v=0, col='k2', solid=1)], hz='大單的累計買賣差（%s）' % mz, he='Cumulative imbalance, large trades (%s)' % me.lower())
+        return dict(k='cvdsz', zh='依成交單大小分的買賣差', en='Buy/sell imbalance by trade size', modes=[md_('近 90 天', 'Last 90 days', 90), md_('近 1 年', 'Last year', 365), md_('全部', 'All', 0)],
+          say=own(it, '近 30 天%s' % who, whoe[:1].upper() + whoe[1:] + ' over 30 days'),
+          dz='Binance BTCUSDT 現貨的每一筆成交，依金額分成小單、中單、大單，各自把「主動買進減主動賣出」從圖上第一天開始累加（百萬美元；可以切換近 90 天、近 1 年、全部，資料從 %s 開始）。線往上是這一級的單子淨買進，往下是淨賣出。常見的讀法：價格漲的時候如果只有小單在買、大單在賣，漲勢比較虛；大單由賣轉買，才比較像有份量的資金進場。限制有三個：只有 Binance 一家的現貨；一張大的市價單吃掉好幾個價位會被拆成好幾筆，大單會被低估；大戶也可以故意把單拆小。前一天的資料隔天才有，這張圖可能比別張晚一天。只作讀值。' % ymd(x['since']),
+          de='Every trade in Binance BTCUSDT spot, split by dollar size into small, mid-size and large; for each group, taker buys minus taker sells are added up from the first day shown (in $ millions; switch between the last 90 days, the last year and everything, with data from %s). A rising line means that size of trade is net buying; a falling line, net selling. A common reading: a rally with only small trades buying while large trades sell is fragile; large trades turning from selling to buying looks more like serious money arriving. Three limits: Binance spot only; a big market order that sweeps several price levels is recorded as several smaller trades, so large trades are understated; and big players can split orders on purpose. The previous day\'s data arrives a day later, so this chart can lag the others by a day. A reading only.' % x['since'])
 
     def c_prasia():   # 顏色：drawPrem 的 one('c-pr-asia', …, 'var(--s4)')→c5、零軸 ink-3→k2；±0.3% 的持平帶取自 premSay 的門檻，現有網站圖上沒畫，區帶顏色依意義選
         h = [r for r in p3.get('usdt_hist') or [] if r[1] is not None]; u = p3.get('usdt') or {}
@@ -551,12 +640,12 @@ def build(L, N, E, dn, X):
         return dict(zh=zh, en=en, sz=sz, se=se, charts=charts)
 
     return [
-        grp('機構', 'Institutions', 'ETF 和 CME 的機構資金是進還是出', 'Is institutional money in ETFs and on CME coming in or going out', [c_etf(), c_etf20(), c_cot()]),
+        grp('機構', 'Institutions', 'ETF 和 CME 的機構資金是進還是出', 'Is institutional money in ETFs and on CME coming in or going out', [c_etf(), c_etf20(), c_treasury(), c_cot()]),
         grp('各地買盤', 'Regional demand', '美國、亞洲、韓國哪邊在買，幣往交易所進還是出', 'Which region is buying, and whether coins are moving onto or off exchanges', [c_prus(), c_prneg(), c_usdt(), c_prasia(), c_prperp(), c_kp(), c_exflow(), c_exch()]),
         grp('鏈上需求', 'On-chain demand', '新的需求接不接得住供給，新的錢有沒有進來', 'Is new demand absorbing supply, and is new money arriving', [c_ad(), c_dmd(), c_capflow(), c_grad(), c_rcliq(), c_stab()]),
         grp('大戶與長期持有者', 'Whales and long-term holders', '大戶和長期持有者在加碼、出貨還是不動', 'Are whales and long-term holders adding, distributing or sitting still',
             [c_whale(), c_whalet(), c_whstrip(), reuse('lthnet', '長期持有者 30 日淨部位變化', 'LTH 30-day net position change'), reuse('lsrchg', '長短期供給比 30 日變化', 'LTH/STH supply ratio, 30-day change'),
              reuse('sthd', '短期持有者供給 90 天變化', 'STH supply, 90-day change'), reuse('dorm', 'Dormancy', 'Dormancy'), c_supliq()]),
-        grp('主動買賣', 'Taker flow', '誰在用市價主動買、誰在主動賣', 'Who is hitting the market to buy, and who to sell', [c_svd(), c_tk()]),
-        grp('大環境', 'Macro', '美股、黃金、利率和美元怎麼走', 'What stocks, gold, rates and the dollar are doing', [c_stk(), c_r2y(), c_macro()]),
+        grp('主動買賣', 'Taker flow', '誰在用市價主動買、誰在主動賣', 'Who is hitting the market to buy, and who to sell', [c_svd(), c_cvd(), c_tk()]),
+        grp('大環境', 'Macro', '美股、黃金、利率和美元怎麼走', 'What stocks, gold, rates and the dollar are doing', [c_stk(), c_r2y(), c_fed(), c_macro()]),
     ]

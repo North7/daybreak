@@ -1442,10 +1442,26 @@ except Exception as e: errors.append(f'liq_vol {e}')
 try:
     import coinalyze, cz_viz
     if coinalyze.ok():
-        for k_, f_ in (('fund_hist', cz_viz.fund_hist), ('taker', cz_viz.taker), ('oi_hist', cz_viz.oi_hist), ('ls_acct', cz_viz.ls_acct)):
+        for k_, f_ in (('fund_hist', cz_viz.fund_hist), ('taker', cz_viz.taker), ('oi_hist', cz_viz.oi_hist), ('ls_acct', cz_viz.ls_acct), ('oi_eth', cz_viz.oi_eth)):   # oi_eth：2026-11-12，多 2 次 Coinalyze
             try: R[k_] = f_(LAST)
             except Exception as e: errors.append(f'{k_} {e}')
 except Exception as e: errors.append(f'cz_viz {e}')
+# G9f4. 2026-11-12 使用者要求（看了一個鏈上數據平台的圖表目錄後挑的，全部用免費公開資料）：
+#   USDC 對美元（Bitstamp，2 次）、上市公司持幣和 Strategy 平均成本（CoinGecko，1 次）、聯準會下次決議的預測市場機率（Polymarket，約 6 次）、
+#   依成交單大小分的買賣差（Binance 公開逐筆檔，平常下載 1–2 個檔；歷史存在 data/cvd_size.json）。
+#   任何一項失敗都只記在 errors，不影響其他項
+_pxc6 = globals().get('PXC') or {b_['d']: b_['c'] for b_ in bars}
+def _six():
+    import stable_px, treasury, polymkt, cvd_size
+    return (('usdc', lambda: stable_px.usdc(get, _pxc6, LAST)), ('treasury', lambda: treasury.build(get, _pxc6.get(LAST) or c, LAST)), ('fed_mkt', lambda: polymkt.fed(get, LAST)),
+            ('cvd_size', lambda: cvd_size.build(cvd_size.update(LAST), _pxc6, LAST)))
+try:
+    for k_, f_ in _six():
+        try:
+            R[k_] = f_()
+            if R[k_] is None: errors.append(f'{k_} 資料不足')
+        except Exception as e: errors.append(f'{k_} {e}')
+except Exception as e: errors.append(f'six {e}')
 # G9g. 2026-11-04 使用者要求：Hyperliquid 大戶（帳戶淨值前 300 名）的 BTC 部位彙總（見 hl_whales.py；不列個別帳戶）。約 300 次 Hyperliquid 請求、2–3 分鐘
 try:
     import hl_whales

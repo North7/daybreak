@@ -247,8 +247,27 @@ def build(L, N, E, dn, X):
     else:
         na('wiki', '散戶關注度：維基百科瀏覽量', 'Retail attention: Wikipedia page views', 'flows.wiki', 'Wikimedia', '這張圖畫維基百科「Bitcoin」條目的 7 日平均瀏覽量，除以過去一年的中位數。', 'This chart shows the 7-day average views of the Wikipedia "Bitcoin" article divided by its past-year median.')
 
+    # ══ 2026-11-12 新圖（舊版沒有）：槓桿在 ETH 還是 BTC ══
+    from say_data import own
+    mi_ = lambda s_: s_.replace('-', '−'); ymd_ = lambda s_: s_.replace('-', '/')
+    x = d.get('oi_eth')
+    if has(x):   # 顏色：一條線 c4（冷色），下面淡出的面積
+        c30 = x['chg30']; verdict = ('ETH 這邊的槓桿相對在退。', 'Leverage is retreating from ETH relative to BTC.') if c30 <= -2 else ('新開的槓桿比較多押在 ETH。', 'New leverage is leaning towards ETH.') if c30 >= 2 else ('兩邊差不多，沒有明顯移動。', 'No clear rotation either way.')
+        X['oieth'] = dict(k='oieth', zh='槓桿在 ETH 還是 BTC', en='Leverage: ETH or BTC', hz='ETH 佔 BTC＋ETH 永續未平倉', he='ETH share of BTC + ETH perpetual open interest', f='p1', rows=x['rows'], p=1,
+          ser=[ser(2, zh='ETH 佔比', en='ETH share', col='c4', w=1.8), ser(3, zh='BTC 未平倉（十億美元）', en='BTC open interest ($B)', hide=1, f='n1'), ser(4, zh='ETH 未平倉（十億美元）', en='ETH open interest ($B)', hide=1, f='n1')],
+          say=own([('現在', 'Now', '%.1f%%' % x['share'], '%.1f%%' % x['share'], 'neu',
+                    'ETH 永續未平倉 %.1f 億美元、BTC %.1f 億美元，ETH 佔兩者合計的 %.1f%%，%s 以來比 %d%% 的日子高。30 天%s %.1f 個百分點：ETH 未平倉 %s%%、BTC %s%%。%s' % (x['eth_usd_b'] * 10, x['btc_usd_b'] * 10, x['share'], ym(x['since']), x['pct'], '上升' if c30 >= 0 else '下降', abs(c30), sg(x['eth30']), sg(x['btc30']), verdict[0]),
+                    'ETH perpetual open interest is $%.1fB against $%.1fB for BTC, so ETH is %.1f%% of the two combined, higher than on %d%% of days since %s. Over 30 days the share %s %.1f points: ETH open interest %s%%, BTC %s%%. %s' % (x['eth_usd_b'], x['btc_usd_b'], x['share'], x['pct'], x['since'][:7], 'rose' if c30 >= 0 else 'fell', abs(c30), sg(x['eth30']), sg(x['btc30']), verdict[1])),
+                   ('區間', 'Range', '%.1f%%–%.1f%%' % (x['lo']['share'], x['hi']['share']), '%.1f%%–%.1f%%' % (x['lo']['share'], x['hi']['share']), 'neu',
+                    '%s 以來最高 %.1f%%（%s），最低 %.1f%%（%s）。' % (ym(x['since']), x['hi']['share'], ymd_(x['hi']['date']), x['lo']['share'], ymd_(x['lo']['date'])),
+                    'Since %s the high is %.1f%% (%s) and the low %.1f%% (%s).' % (x['since'][:7], x['hi']['share'], x['hi']['date'], x['lo']['share'], x['lo']['date']))],
+                  'ETH 佔 %.1f%%，30 天%s %.1f 個百分點' % (x['share'], '升' if c30 >= 0 else '降', abs(c30)), 'ETH is %.1f%% of the two, %s %.1f points in 30 days' % (x['share'], 'up' if c30 >= 0 else 'down', abs(c30))),
+          dz='同樣 %d 家交易所、同樣那幾個永續合約，ETH 的未平倉除以 BTC 加 ETH 的未平倉（都換成美元）。比例上升代表新開的槓桿比較多押在 ETH，通常是市場願意冒更多風險；下降代表 ETH 這邊的槓桿相對在退。要注意價格本身會改變比例：ETH 漲得比 BTC 多，就算沒有人加倉，比例也會上升。合約陸續上線，資料從 %s 開始。只作讀值。' % (len(x.get('exch') or []), ym(x['since'])),
+          de='Across the same %d venues and the same set of perpetual contracts: ETH open interest divided by BTC plus ETH open interest, all in dollars. A rising share means new leverage is leaning towards ETH, which usually goes with more appetite for risk; a falling share means leverage is retreating from ETH relative to BTC. Price alone moves the share: if ETH rises more than BTC the share goes up even with no new positions. Contracts were listed over time; data starts in %s. A reading only.' % (len(x.get('exch') or []), x['since'][:7]))
+    else:
+        na('oieth', '槓桿在 ETH 還是 BTC', 'Leverage: ETH or BTC', 'deriv.oi_eth', 'Coinalyze', '這張圖畫 ETH 佔 BTC＋ETH 永續未平倉的比例。', 'This chart shows ETH as a share of BTC plus ETH perpetual open interest.')
     grp = lambda zh, en, sz, se, keys: dict(zh=zh, en=en, sz=sz, se=se, charts=[X[k_] for k_ in keys if k_ in X])
-    return [grp('槓桿', 'Leverage', '做多的槓桿擠不擠，最近是誰在被清算', 'How crowded leveraged longs are, and who has been getting liquidated', ['fh', 'basis', 'oih', 'lsa', 'lqv']),
+    return [grp('槓桿', 'Leverage', '做多的槓桿擠不擠，最近是誰在被清算', 'How crowded leveraged longs are, and who has been getting liquidated', ['fh', 'basis', 'oih', 'oieth', 'lsa', 'lqv']),
             grp('波動', 'Volatility', '選擇權市場預期接下來會動多大', 'How big a move the options market is pricing', ['vol', 'ivt']),
             grp('選擇權', 'Options', '未平倉堆在哪個到期日，錢押在哪一邊', 'Which expiries hold the open interest, and which side money is paying for', ['oi', 'prem', 'pcr']),
             grp('情緒', 'Sentiment', '大家是害怕還是貪心，新手有沒有湧進來', 'Whether the crowd is fearful or greedy, and whether newcomers are pouring in', ['fng', 'wiki'])]
