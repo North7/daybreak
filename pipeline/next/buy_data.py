@@ -106,25 +106,27 @@ def build(L, N, E, dn, X):
         ng = x.get('neg') if ADJ else None
         if not ng: return card
         # ── 拆開看（2026-11-12，㉕）：一般看到的溢價＝USDT 對美元的折溢價＋扣掉後剩下的兩地價差。三條都是 7 日平均 ──
-        # 顏色：USDT 那一塊 c3（面積，從 0 畫起）、一般看到的 ink 細線、扣掉後 c5（和「只看扣掉後」的 7 日平均同色）；連負的段落 k2 灰底
+        # 顏色（2026-11-12 使用者說比運營的圖難看之後重配）：一般看到的 c5（暖色，貼著面積的邊）、USDT 那一塊 c3（面積，從 0 畫起）、扣掉後 c4（冷色，和另外兩個分開）；連負的段落 k2 淡灰底。預設看 1 年
         r7 = ma7([r[3] for r in rs]); u7 = ma7([(r[4] - 1) * 100 for r in rs])
         rows0 = [[r[0], R(r7[i], 4), r[2], R(u7[i], 4), R(a7[i], 4)] for i, r in enumerate(rs) if a7[i] is not None]
         net = {k_: card.pop(k_) for k_ in ('hz', 'he', 'f', 'rows', 'p', 'hero', 'dom', 'ser', 'refs', 'zones', 'marks', 'leg')}
-        dec = dict(mz='拆開看', me='Breakdown', hz='扣掉 USDT 後的 7 日平均', he='7-day average net of USDT', f='p3', rows=rows0, p=2, hero=2,
+        for q_ in net['ser']:   # 兩個檢視裡「扣掉後的 7 日平均」同一個顏色（c4）；舊版 drawCbPrem 是 s4→c5，這裡為了和「拆開看」一致改掉
+            if q_.get('col') == 'c5': q_['col'] = 'c4'
+        dec = dict(mz='拆開看', me='Breakdown', hz='扣掉 USDT 後的 7 日平均', he='7-day average net of USDT', f='p3', rows=rows0, p=2, hero=2, rng=365,
           ser=[ser(3, zh='USDT 對美元', en='USDT vs the dollar', t='sign', hi='c3', lo='c3', w=1.1),
-               ser(1, zh='一般看到的溢價（沒扣 USDT）', en='Premium as usually shown (USDT not netted)', col='ink', w=1.2, op=.85),
-               ser(4, zh='扣掉 USDT 之後', en='Net of USDT', col='c5', w=1.9)],
+               ser(1, zh='一般看到的溢價（沒扣 USDT）', en='Premium as usually shown (USDT not netted)', col='c5', w=1.6),
+               ser(4, zh='扣掉 USDT 之後', en='Net of USDT', col='c4', w=2)],
           refs=[dict(v=0, col='k2', solid=1)], zones=[], marks=[],
-          spans=[dict(a=s_['a'], b=s_['b'], col='k2', op=.16, zh='%d 天' % s_['n'], en='%dd' % s_['n']) for s_ in ng['list']],
-          spk=[dict(c=3, col='c3', fill=1), dict(c=1, col='ink')],
-          leg=[['k2', '沒扣 USDT 的每日溢價連續 %d 天以上是負的（數字是天數）' % ng['min'], 'Unadjusted daily premium negative for %d+ days in a row (label = days)' % ng['min'], 'box']])
+          spans=[dict(a=s_['a'], b=s_['b'], col='k2', soft=1, zh='連負 %d 天' % s_['n'], en='%d days' % s_['n']) for s_ in ng['list']],
+          spk=[dict(c=3, col='c3', fill=1), dict(c=1, col='c5')],
+          leg=[['k2', '沒扣 USDT 的每日溢價連續 %d 天以上是負的' % ng['min'], 'Unadjusted daily premium negative for %d+ days in a row' % ng['min'], 'box']])
         card['modes'] = [dec, dict(mz='只看扣掉後', me='Net only', **net)]
         card['dz'] = ('Coinbase 的美元價格比 Binance 的 USDT 價格貴多少，大於 0 代表美國買方比海外積極。一般的圖直接拿兩個價格相除，前提是 1 USDT 等於 1 美元；USDT 不到 1 美元時那個數字會跟著變負，和美國買不買沒有關係。'
-          '「拆開看」把它分成兩塊：藍紫色的面積是 USDT 在 Coinbase 上比 1 美元高或低多少，沙金色的線是扣掉這一塊之後剩下的兩地價差，細線是一般看到的溢價，三條都是 7 日平均。灰底是沒扣的每日溢價連續 %d 天以上為負的期間，上面的數字是天數。'
+          '「拆開看」把它分成兩塊：藍紫色的面積是 USDT 在 Coinbase 上比 1 美元高或低多少，青色的線是扣掉這一塊之後剩下的兩地價差，沙金色的線是一般看到的溢價，三條都是 7 日平均。灰底是沒扣的每日溢價連續 %d 天以上為負的期間。'
           'USDT 折價代表有人把穩定幣換回美元；扣掉之後剩下的那條，才是美國和海外誰買得比較急。'
           '「只看扣掉後」把剩下那條放大：柱子是每天的值，7 日平均跌破 %s（近四年最低 5%% 的線）算深度折價，圓圈是歷次跌破的那一天，旁邊是之後 30 天的漲跌；次數很少、結果好壞都有，只作讀值。' % (ng['min'], dtx))
         card['de'] = ('How much more Coinbase\'s USD price costs than Binance\'s USDT price; above 0 means US buyers are keener than offshore. Most charts divide one price by the other, which assumes 1 USDT is worth $1; when USDT trades below $1 that number turns negative for a reason that has nothing to do with US demand. '
-          'The Breakdown view splits it in two: the blue-violet area is how far USDT sits above or below $1 on Coinbase, the sand line is the spread that is left once that is netted out, and the thin line is the premium as usually shown; all three are 7-day averages. Grey bands mark periods when the unadjusted daily premium stayed negative for %d days or more, labelled with the number of days. '
+          'The Breakdown view splits it in two: the blue-violet area is how far USDT sits above or below $1 on Coinbase, the cyan line is the spread that is left once that is netted out, and the sand line is the premium as usually shown; all three are 7-day averages. Grey bands mark periods when the unadjusted daily premium stayed negative for %d days or more. '
           'A USDT discount means holders are swapping stablecoins back into dollars; the line that is left is the part that compares US buyers with offshore. '
           'The Net only view zooms in on that line: bars are daily values, and a 7-day average below %s (its lowest 5%% in four years) counts as a deep discount; circles mark each break, labelled with the price change 30 days later. The cases are few and the results mixed; a reading only.' % (ng['min'], dtx))
         return card
