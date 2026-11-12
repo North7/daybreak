@@ -1,7 +1,10 @@
 """破曉 No.015 短影片的配音與配樂。
 配音：edge-tts 的台灣神經語音（預設曉臻 zh-TW-HsiaoChenNeural）逐場景合成；配樂：numpy 自己合成（沒有版權問題）。
 輸出 timing.json（每場景秒數，給 make_short.py）與 mix.wav（配音＋配樂，配音時配樂自動壓低）。
-用法：python make_audio.py <工作資料夾> [語音名稱] [旁白 JSON]"""
+用法：python make_audio.py <工作資料夾> [語音名稱] [旁白 JSON]
+Gemini 配音：TTS_ENGINE=gemini、語音名稱給 Gemini 的聲音（例如 Charon），金鑰讀 ~/.gemini_key（GEMINI_API_KEY=…，不進 git）。
+  整份稿子一次送（免費方案一個模型一天 10 次），照停頓切回每場景；同一份稿子、聲音、模型會用工作資料夾裡的快取，不再叫 API。
+  TTS_MODEL 換模型（預設 gemini-3.8-flash-tts），TTS_TEMPO 調速（例如 1.08，不變音高）。"""
 import json, os, subprocess, sys, wave
 import numpy as np
 
@@ -36,8 +39,76 @@ def tts(i, text):
     return x[max(0, nz[0] - 200): nz[-1] + 2000]
 
 
+ENGINE = os.environ.get('TTS_ENGINE', 'edge')
+NOTES = ("### DIRECTOR'S NOTES\n"
+         "Style: Taiwanese Mandarin, a friend who follows markets chatting casually, curious, natural, not a news anchor.\n"
+         "Pace: lively, slightly fast, a clear pause between paragraphs.\n"
+         "Pronounce SPI as the letters S-P-I; say Daybreak and BTC in English.\n"
+         "Only read the transcript below.\n\n### TRANSCRIPT\n")
+
+
+def gemini_all(lines):
+    """整份稿子一次合成，回傳每段的波形（SR）。"""
+    import base64, hashlib, re, time, urllib.error, urllib.request, imageio_ffmpeg
+    model = os.environ.get('TTS_MODEL', 'gemini-3.8-flash-tts')
+    prompt = NOTES + '\n\n'.join(lines)
+    raw = os.path.join(OUT, 'gemini_' + hashlib.sha1(f'{model}|{VOICE}|{prompt}'.encode()).hexdigest()[:10] + '.wav')
+    if not os.path.exists(raw):
+        key = [l.split('=', 1)[1].strip() for l in open(os.path.expanduser('~/.gemini_key')) if l.startswith('GEMINI_API_KEY=')][0]
+        body = {'contents': [{'parts': [{'text': prompt}]}],
+                'generationConfig': {'responseModalities': ['AUDIO'],
+                                     'speechConfig': {'voiceConfig': {'prebuiltVoiceConfig': {'voiceName': VOICE}}}}}
+        req = urllib.request.Request(f'https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent',
+                                     data=json.dumps(body).encode(), headers={'Content-Type': 'application/json', 'x-goog-api-key': key})
+        for _ in range(6):
+            try:
+                r = json.load(urllib.request.urlopen(req, timeout=300)); break
+            except urllib.error.HTTPError as e:
+                m = e.read().decode()
+                if e.code == 429 and 'PerMinute' in m:
+                    time.sleep(float((re.search(r'retry in ([\d.]+)s', m) or [0, 30])[1]) + 2); continue
+                sys.exit(f'Gemini {e.code}: ' + (re.search(r'"message": "([^"]*)', m) or [0, m[:300]])[1])
+        d = r['candidates'][0]['content']['parts'][0]['inlineData']
+        pcm = base64.b64decode(d['data'])
+        if pcm[:4] == b'RIFF': open(raw, 'wb').write(pcm)
+        else:   # 舊模型回傳裸 PCM（audio/L16;rate=24000）
+            with wave.open(raw, 'wb') as w:
+                w.setnchannels(1); w.setsampwidth(2); w.setframerate(int((re.search(r'rate=(\d+)', d.get('mimeType', '')) or [0, 24000])[1])); w.writeframes(pcm)
+    p = raw[:-4] + '_sr.wav'
+    tempo = os.environ.get('TTS_TEMPO')
+    subprocess.run([imageio_ffmpeg.get_ffmpeg_exe(), '-y', '-loglevel', 'error', '-i', raw, '-ac', '1', '-ar', str(SR),
+                    *(['-af', f'atempo={tempo}'] if tempo else []), p], check=True)
+    with wave.open(p) as w:
+        x = np.frombuffer(w.readframes(w.getnframes()), np.int16).astype(np.float32) / 32768
+    # 10ms 一格的音量，找出停頓；用每段字數推估的位置挑最合理的 N-1 個停頓當切點
+    hop = SR // 100; rms = np.sqrt(np.convolve(x ** 2, np.ones(hop) / hop, 'same')[::hop])
+    on = rms > max(0.006, rms.max() * 0.03); idx = np.flatnonzero(on); a0, a1 = idx[0], idx[-1]
+    gaps, k = [], a0
+    while k < a1:
+        if not on[k]:
+            j = k
+            while j < a1 and not on[j]: j += 1
+            if j - k >= 15: gaps.append((k, j))
+            k = j
+        k += 1
+    n = len(lines); cum = np.cumsum([len(l) for l in lines])[:-1] / sum(len(l) for l in lines)
+    exp = a0 + cum * (a1 - a0)
+    score = lambda g, b: (g[1] - g[0]) / 100 - 0.15 * abs((g[0] + g[1]) / 2 - exp[b]) / 100
+    best = {}
+    for b in range(n - 1):   # DP：第 b 個切點用第 c 個停頓
+        for c, g in enumerate(gaps):
+            prev = max((best[(b - 1, d)] for d in range(c) if (b - 1, d) in best), default=None, key=lambda v: v[0]) if b else (0, [])
+            if prev is not None: best[(b, c)] = (prev[0] + score(g, b), prev[1] + [c])
+    cuts = [gaps[c] for c in max((v for (b, _), v in best.items() if b == n - 2), key=lambda v: v[0])[1]]
+    edges = [a0] + [v for g in cuts for v in g] + [a1 + 1]
+    segs = [x[max(0, s * hop - 200): e * hop + 2000] for s, e in zip(edges[::2], edges[1::2])]
+    for l, sg, g in zip(lines, segs, cuts + [None]):
+        print(f'{len(sg) / SR:5.2f}s {len(l) / (len(sg) / SR):4.1f} 字/秒  停頓 {"" if g is None else (g[1] - g[0]) / 100:<5} {l[:14]}')
+    return segs
+
+
 # ---------- 配音與場景時間 ----------
-vo = [tts(i, s) for i, s in enumerate(LINES)]
+vo = gemini_all(LINES) if ENGINE == 'gemini' else [tts(i, s) for i, s in enumerate(LINES)]
 durs = [round(max(b, LEAD + len(v) / SR + TAIL), 2) for b, v in zip(BASE, vo)]
 starts = np.concatenate([[0], np.cumsum(durs)[:-1]])
 TOTAL = float(sum(durs)); N = int(TOTAL * SR) + SR
