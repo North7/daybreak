@@ -1576,12 +1576,12 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
 /* ㉚ 側邊段落導航（2026-11-12，使用者：「二級菜單是負責上下方向的菜單，是不是可以放在側邊，這樣上面不會兩層菜單」，並給了一張參考圖：貼著螢幕邊緣長出來的黑色面板，上下兩端用內凹的圓角接回邊緣，裡面一格一個圓環；接著：「電腦端的是不是放在左邊，手機端不知道怎麼處理」）。
    參考圖好在三點：面板是從邊緣「長出來」的（和 ㉘ 的鼓包同一種液態語言）；每一格是圓環，導航順便是進度；上下排列對應上下捲動。照這三點用 Daybreak 自己的顏色做，不照抄黑底彩虹。
    1 取代頂部的第二排：導覽列只剩一排（原本的第二排 .oc-b2、.oc-sn 已移除）。電腦上第一層的鼓包直接坐在導覽列的下邊框上，不再自己畫一條灰線。
-   2 位置：貼左緣（段落標題的「02 / 04」也在左邊，編號對得上；右邊留給捲軸和右下的狀態膠囊）。首屏還佔著大半個畫面時收在畫面外，捲過去才從左緣滑出來（首屏兩邊有小卡，首屏自己也列了各段）。
+   2 位置：電腦貼左緣（段落標題的「02 / 04」也在左邊，編號對得上；右邊留給捲軸和右下的狀態膠囊）；手機貼右緣（第 7 點）。首屏還佔著大半個畫面時收在畫面外，捲過去才從左緣滑出來（首屏兩邊有小卡，首屏自己也列了各段）。
    3 面板：--sheet 實色、1px 細邊（--ink 13%），外側兩個角 18px 圓角，上下兩端各一個 16px 的內凹圓角接回螢幕邊緣。沒有陰影、沒有光暈。
    4 每一格：一個圓環，裡面是兩位數的段落編號；最上面那格是這一頁的圖示，按了回到頂部。圓環的弧是「這一段讀到哪」：讀完的是一整圈中性色（--ink 40%），正在讀的那段是 --ac，還沒到的只有底圈（--ink 14%）。
    5 現在在哪一段：面板的外緣在那一格往外鼓 6px（LQ 的直向版，同一組彈簧），鼓包的頂描 --ac、兩腳淡出，圓環跟著被頂出去一點。捲動換段時鼓包沿著外緣流過去。
    6 電腦（701px 以上）：寬 46px、垂直置中、所有段落都列出來，內容區左邊多留 40px 給它。滑鼠移到某一格或鍵盤聚焦，旁邊跳出那一段的名稱（--ink 底、--sheet 字，和 .oc-tip 同款）；平常不顯示字。
-   7 手機（700px 以下）：平常只露出一格（現在這一段的圓環），寬 34px，在畫面高度 64% 的地方，剛好落在頁面邊距和卡片內距裡，不蓋到圖。點一下展開成清單，每格圓環旁邊直接寫段落名稱；點其中一段就捲過去並收起來，點面板以外的地方也收起來。收合時不鼓包（它自己就是標記）。
+   7 手機（700px 以下）：貼右緣（2026-11-12 上線當天，使用者：「手機側邊欄是不是放在右側好一點，右手拇指可以滑動，放左邊不好點」；原本在左緣）。平常只露出一格（現在這一段的圓環），寬 30px，在畫面高度 64% 的地方，剛好落在頁面邊距（16px）和卡片內距（14px）裡，不蓋到圖右邊的數字。展開的清單圓環靠右、名稱在左。點一下展開成清單，每格圓環旁邊直接寫段落名稱；點其中一段就捲過去並收起來，點面板以外的地方也收起來。收合時不鼓包（它自己就是標記）。
    8 prefers-reduced-motion：面板直接出現、鼓包直接到位。分享模式不顯示。 */
 .oc-side { display: flex; flex-direction: column; position: fixed; left: 0; top: 50%; z-index: 58; width: 46px; padding: 18px 0; box-sizing: border-box; translate: 0 -50%; transform: translateX(calc(-100% - 16px)); visibility: hidden; transition: transform .7s var(--spring), visibility 0s .7s; }
 .oc-side.on { transform: none; visibility: visible; transition: transform .7s var(--spring); }
@@ -1603,11 +1603,12 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
   .oc-side button:hover > i, .oc-side button:focus-visible > i { opacity: 1; translate: 0 -50%; }
 }
 @media (max-width: 700px) {
-  .oc-side { top: 64%; width: 34px; padding: 10px 0; }
-  .oc-side button { width: 34px; } .oc-side button > b { width: 24px; height: 24px; font-size: 9px; }
+  .oc-side { left: auto; right: 0; top: 64%; width: 30px; padding: 10px 0; transform: translateX(calc(100% + 16px)); }   /* 手機在右緣（㉚-7）：SVG 不鏡射、清單的圓環靠右 */
+  .oc-side > svg.lq { left: -12px; transform: none; }
+  .oc-side button { width: 30px; } .oc-side button > b { width: 24px; height: 24px; font-size: 9px; }
   .oc-side:not(.open) button:not([aria-current="true"]), .oc-side:not(.open) button > i { display: none; }
   .oc-side.open { width: auto; max-width: 78vw; padding: 14px 0; z-index: 62; }
-  .oc-side.open button { display: flex; align-items: center; justify-content: flex-start; gap: 10px; width: 100%; padding: 0 20px 0 5px; }
+  .oc-side.open button { display: flex; flex-direction: row-reverse; align-items: center; justify-content: flex-start; gap: 10px; width: 100%; padding: 0 5px 0 20px; }
   .oc-side.open button > i { position: static; translate: none; opacity: 1; padding: 0; background: none; color: inherit; font-size: 14.5px; overflow: hidden; text-overflow: ellipsis; transition: none; }
   .oc-side.open button[aria-current="true"] > i { font-weight: 600; }
 }
@@ -1615,6 +1616,7 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
 @media (max-width: 700px) {
   .oc-bar .oc-ch { display: none; }
   .oc-tab { display: grid; grid-template-columns: repeat(var(--n, 7), minmax(0, 1fr)); position: sticky; bottom: 0; z-index: 61; padding: 0 4px env(safe-area-inset-bottom, 0px); background: color-mix(in srgb, var(--bg) 90%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .oc-bar { padding-bottom: 9px; }   /* ㉚：第二排拿掉後，手機頂部只剩 logo 和按鈕那一排，底下要留 9px，按鈕才不會貼著導覽列的下緣（2026-11-12 使用者：「手機頂部按鈕下緣都貼著頂部的下緣了，完全沒有間隙」）。電腦不用：第一層的鼓包要坐在下邊框上 */
   .oc-tab > svg.lq { top: -22px; }
   .oc-tab button::after { content: ""; position: absolute; left: 50%; top: 20px; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; border: 1px solid var(--ink); opacity: 0; pointer-events: none; }
   .oc-tab button.lq-tap::after { animation: lq-ring .5s ease-out; }
@@ -3412,7 +3414,7 @@ function initOC() {
       e += `L${X0} ${R + H - r}A${r} ${r} 0 0 0 ${X0 + r} ${R + H}L${XR - R} ${R + H}A${R} ${R} 0 0 1 ${XR} ${H + 2 * R}`;
       q.pe.setAttribute('d', e); q.pf.setAttribute('d', e + `h40V0Z`); q.pc.setAttribute('d', c || 'M0 0'); q.gr.setAttribute('x1', 0); q.gr.setAttribute('x2', 0); q.gr.setAttribute('y1', (R + q.L.x).toFixed(1)); q.gr.setAttribute('y2', (R + q.R.x).toFixed(1));
       q.pc.style.opacity = Math.max(.5, Math.min(1, q.h.x / (q.o.H * .7))).toFixed(2);
-      for (let i = 0; i < q.mv.length; i++) { const el = q.mv[i]; if (!el) continue; const t = flat ? '0.00' : (bump(q, q.cx[i]) * q.o.k).toFixed(2); if (q.lt[i] !== t) { q.lt[i] = t; el.style.transform = +t ? 'translateX(' + t + 'px)' : ''; } } }
+      for (let i = 0; i < q.mv.length; i++) { const el = q.mv[i]; if (!el) continue; const t = flat ? '0.00' : (bump(q, q.cx[i]) * q.o.k).toFixed(2); if (q.lt[i] !== t) { q.lt[i] = t; el.style.transform = +t ? 'translateX(' + (q.o.neg && q.o.neg() ? '-' : '') + t + 'px)' : ''; } } }
     function draw(q) {
       if (q.o.vert) return drawV(q);
       const L = q.L.x, R = q.R.x, W = q.W, Y = q.Y, ye = q.o.top ? Y - .5 : Y, sw = q.s.h >= .05; let a = Math.max(0, L), b = Math.min(W, R); if (sw) { a = Math.max(0, Math.min(a, q.s.x - 26)); b = Math.min(W, Math.max(b, q.s.x + 26)); }
@@ -3446,7 +3448,7 @@ function initOC() {
       if (o.sw && !reduce) { nav.addEventListener('pointermove', e => { if (e.pointerType && e.pointerType !== 'mouse') return; const b = e.target.closest ? e.target.closest('button') : null, i = b && !b.disabled && q.bs ? q.bs.indexOf(b) : -1; if (i !== q.hov) { q.hov = i; if (q.ok) kick(q); } }); nav.addEventListener('pointerleave', () => { if (q.hov >= 0) { q.hov = -1; if (q.ok) kick(q); } }); } }
     add($('#oc-tab'), 't', { top: 1, H: 13, k: .92, sw: 0, w: b => Math.min(b * .96, 62), lift: b => b.querySelector('.ic') });
     add($('#oc-crumb'), 'c', { top: 0, seg: 1, dy: .5, H: 8, k: .4, sw: 3, w: b => Math.max(40, Math.min(72, b * .78)), lift: b => b.querySelector('span') });
-    add($('#oc-side'), 'v', { vert: 1, H: 6, k: .55, sw: 0, sig: () => ci, w: () => 36, lift: b => b.querySelector('b'), flat: () => SIDE.phone() && !SIDE.open() });   /* ㉚ 側邊段落導航 */
+    add($('#oc-side'), 'v', { vert: 1, H: 6, k: .55, sw: 0, sig: () => ci, w: () => 36, lift: b => b.querySelector('b'), flat: () => SIDE.phone() && !SIDE.open(), neg: () => SIDE.phone() });   /* ㉚ 側邊段落導航 */
     let rz = 0; window.addEventListener('resize', () => { if (!rz) rz = requestAnimationFrame(() => { rz = 0; sync(true); }); }); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => sync(true));
     return { svg, sync, state: NS, moving: () => !!raf };
   })();
