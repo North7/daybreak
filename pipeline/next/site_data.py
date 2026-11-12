@@ -8,7 +8,9 @@ def build(L, N, E, dn):
     usd = lambda v: '$' + format(int(round(v)), ',')
     # ── 價位 › 成本線 ──
     lv = L['cycle']['levels']
+    _ms = ((L.get('flows') or {}).get('treasury') or {}).get('mstr') or {}   # 2026-11-12：Strategy 的平均買進成本，只有現值，畫成一條水平線
     X['levels'] = dict(k='levels', zh='成本線與均線', en='Cost bases and moving averages', hz='收盤', he='Close', one=1, tf='lin', f='usd0', rows=lv['rows'],
+      refs=[dict(v=_ms['cost'], col='c5', zh='Strategy 平均成本 ' + usd(_ms['cost']), en='Strategy average cost ' + usd(_ms['cost']))] if _ms.get('cost') else [],
       ser=[ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.6), ser(2, zh='200 日均線', en='200-day MA', col='c3', w=1.2), ser(3, zh='365 日均線', en='365-day MA', col='c5', w=1.2), ser(4, zh='50 週均線', en='50-week MA', col='ink', dash='5 4', w=1, op=.6),
            ser(5, zh='短期持有者成本', en='STH cost', col='ac', w=1.6), ser(9, zh='活躍投資人成本', en='Active investor price', col='ac', dash='5 4', w=1.3), ser(6, zh='真實市場均價', en='True market mean', col='c4', w=1.8),
            ser(7, zh='實現價', en='Realized price', col='k2', dash='5 4', w=1.1), ser(8, zh='長期持有者成本', en='LTH cost', col='k2', dash='2 3', w=1.1)],   # 照現有網站：成本類用橘色，活躍投資人用虛線和短期持有者區分

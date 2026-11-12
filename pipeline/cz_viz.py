@@ -182,3 +182,29 @@ def ls_acct(last, to=None):
                 med=round(sv[len(sv) // 2], 1), hi=dict(ev=hi[-6:], st=_stat(hi)), lo=dict(ev=lo[-6:], st=_stat(lo)), base=_base(D, px, LS_FROM),
                 rows=rows, from_=LS_FROM, src='Coinalyze', link=cz.LINK,
                 note='持多單的帳戶占比（帳戶數，不是部位大小）；Binance、Bybit 的 BTCUSDT 永續；只作讀值')
+
+
+ESYM = tuple(s_.replace('BTC', 'ETH') for s_ in cz.SYM)   # 同樣 11 個合約的 ETH 版
+
+
+def oi_eth(last, to=None):
+    """槓桿在 ETH 還是 BTC（2026-11-12 使用者要求）：同樣 7 家交易所、11 個永續合約，ETH 和 BTC 各自的未平倉合計（都換成美元），
+    以及 ETH 占兩者合計的比例。比例上升＝新開的槓桿比較多押在 ETH 上，通常是市場願意冒更多風險；下降＝槓桿退回 BTC。
+    換成美元的日線只從 2022-09 開始。價格漲跌本身會改變比例（ETH 漲得比 BTC 多，比例就會上升），所以要和 ETH/BTC 匯率一起看。只作讀值。"""
+    B = cz.daily('open-interest-history', cz.SYM, to, convert_to_usd='true'); E = cz.daily('open-interest-history', ESYM, to, convert_to_usd='true'); px = _px(to)
+    tb, te = {}, {}
+    for O, T in ((B, tb), (E, te)):
+        for s_, h in O.items():
+            for t, r in (h or {}).items(): T[ymd(t)] = T.get(ymd(t), 0) + (r['c'] or 0)
+    D = [d for d in sorted(tb) if d <= last and d in te and d in px and tb[d] > 0 and te[d] > 0]
+    if len(D) < 120: raise RuntimeError(f'ETH／BTC 未平倉日線太少（{len(D)} 天）')
+    sh = [te[d] / (tb[d] + te[d]) * 100 for d in D]; n = len(D)
+    ago = lambda v, k: v[-1 - k] if n > k else None
+    pc = lambda T, k: round((T[D[-1]] / T[D[-1 - k]] - 1) * 100, 1) if n > k else None
+    hi = max(range(n), key=lambda i: sh[i]); lo = min(range(n), key=lambda i: sh[i])
+    return dict(date=D[-1], share=round(sh[-1], 1), chg7=round(sh[-1] - ago(sh, 7), 1), chg30=round(sh[-1] - ago(sh, 30), 1), chg90=round(sh[-1] - ago(sh, 90), 1) if n > 90 else None,
+                pct=_pct(sh, sh[-1]), btc_usd_b=round(tb[D[-1]] / 1e9, 1), eth_usd_b=round(te[D[-1]] / 1e9, 1), btc30=pc(tb, 30), eth30=pc(te, 30),
+                hi=dict(date=D[hi], share=round(sh[hi], 1)), lo=dict(date=D[lo], share=round(sh[lo], 1)), since=D[0], n=n,
+                rows=[[dn(d), round(px[d]), round(sh[i], 2), round(tb[d] / 1e9, 2), round(te[d] / 1e9, 2)] for i, d in enumerate(D)][::-1][::2][::-1],
+                src='Coinalyze', link=cz.LINK, exch=cz.exch([s_ for s_, h in E.items() if h]),
+                note='ETH 永續未平倉 ÷（BTC＋ETH 永續未平倉），都換成美元；7 家交易所各 11 個合約；合約陸續上線；只作讀值')
