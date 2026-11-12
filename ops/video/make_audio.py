@@ -8,7 +8,7 @@ import numpy as np
 OUT = sys.argv[1]
 SR = 44100
 VOICE = sys.argv[2] if len(sys.argv) > 2 else 'zh-TW-HsiaoChenNeural'
-RATE = '+8%'
+RATE = os.environ.get('TTS_RATE', '+8%')   # 語速；SPI 那支用 +20%
 BASE = [4.4, 5.6, 5.4, 5.2, 5.8, 4.4, 3.6]   # 原本的場景長度（沒有配音時）
 LEAD, TAIL = 0.25, 0.55                      # 每場景配音前留白／後留白
 LINES = [
