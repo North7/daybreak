@@ -1016,7 +1016,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 
 /* ══ 導覽 ══ */
 .oc-ch, .oc-sn { position: relative; }
-.oc-ch::after, .oc-sn::after { content: ""; position: absolute; left: 0; bottom: 0; height: 2.5px; border-radius: 2px; width: var(--w, 0px); transform: translateX(var(--x, 0px)); background: var(--ac); transition: transform .75s var(--spring), width .5s var(--spring); pointer-events: none; }
+.oc-sn::after { content: ""; position: absolute; left: 0; bottom: 0; height: 2.5px; border-radius: 2px; width: var(--w, 0px); transform: translateX(var(--x, 0px)); background: var(--ac); transition: transform .75s var(--spring), width .5s var(--spring); pointer-events: none; }
 .oc-ch button[aria-current="true"], .oc-sn button[aria-current="true"] { color: var(--ink); border-bottom-color: transparent; }
 .oc-tab { display: none; }
 @media (min-width: 701px) {
@@ -1357,7 +1357,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
        正在畫的時候（程式 agBusy）小點依序在 30%–90% 之間慢慢亮暗，1.8 秒一輪，不閃。畫完 2.4 秒後收起：
          有訊號：只剩小點和數字，滑鼠移上去或鍵盤聚焦才展開那句字，點一下捲到下一張訊號卡（校對 AI 在那張卡上框一下）；
          沒有訊號：整顆淡出（0.8 秒），不能點也就不留著。下一次有東西要畫（換頁）再出現。
-       手機（≤700px）：右邊 12px、底部分頁列（56px）上方 12px（加安全區），22px 高，只有小點，有訊號時加數字，從不顯示字；收起、淡出規則同桌機。
+       手機（≤700px）：右邊 12px、底部分頁列（56px）上方 24px（加安全區；㉘ 之後留位置給鼓包），22px 高，只有小點，有訊號時加數字，從不顯示字；收起、淡出規則同桌機。
        底色 --sheet 90%、1px 細框（--ink 10%），沒有陰影。頂部那一區不在畫面上時照舊藏起。
      7 圖釘和訊號卡：留言圖釘 22px 圓形、--sheet 底、1px 細框、勾勾用次要色；訊號卡的圖釘勾勾用 --ac，淡入，不再一直脈動。
        訊號卡原本繞著邊轉的光改成靜止的 1px 框（--ac 45%）。數字改稿的刪除線用 --k2 1.5px，不用綠。
@@ -1428,7 +1428,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
   .oc.ag-boot .oc-sn button { animation-delay: calc(.5s + var(--bn, 0) * 45ms); }
   .oc-ch button:nth-child(2), .oc-sn button:nth-child(2) { --bn: 1; } .oc-ch button:nth-child(3), .oc-sn button:nth-child(3) { --bn: 2; } .oc-ch button:nth-child(4), .oc-sn button:nth-child(4) { --bn: 3; } .oc-ch button:nth-child(5), .oc-sn button:nth-child(5) { --bn: 4; } .oc-ch button:nth-child(6), .oc-sn button:nth-child(6) { --bn: 5; } .oc-ch button:nth-child(n+7), .oc-sn button:nth-child(n+7) { --bn: 6; }
   .oc.ag-boot .oc-top .r > * { animation: m-rise-s .45s cubic-bezier(.16, 1, .3, 1) backwards; } .oc.ag-boot .oc-top .r > :nth-child(1) { animation-delay: .5s; } .oc.ag-boot .oc-top .r > :nth-child(2) { animation-delay: .58s; } .oc.ag-boot .oc-top .r > :nth-child(3) { animation-delay: .66s; } .oc.ag-boot .oc-top .r > :nth-child(n+4) { animation-delay: .74s; }
-  .oc.ag-boot .oc-ch::after, .oc.ag-boot .oc-sn::after { animation: m-fade .4s .7s backwards; }
+  .oc.ag-boot .oc-ch > svg.lq, .oc.ag-boot .oc-sn::after { animation: m-fade .4s .7s backwards; }
   .oc.ag-boot .oc-hd .os.front { animation: m-fade .35s .6s backwards; }
   .oc.ag-boot .oc-hd .os.front .br-h, .oc.ag-boot .oc-hd .os.front .pp-h { animation: m-rise .85s var(--spring) calc(var(--bt) + .15s) backwards, ag-type .7s steps(20, end) calc(var(--bt) + .2s) backwards; }
   .oc.ag-boot .oc-hd.tb .os:not(.front) { animation: m-float 8s ease-in-out infinite, ag-drop .7s var(--spring) backwards; animation-delay: var(--dl, 0s), calc(1.05s + var(--so, 0) * 110ms); }
@@ -1438,7 +1438,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
   .oc button:active { scale: .94; transition-duration: .09s; }
   /* 移動：導航底線由程式用兩條彈簧推（--ix 位置、--is 長度） */
   /* 底線是液體：一層橫條裡畫兩塊（主體＋游標引出來的那一滴），整層過「模糊再切邊」的濾鏡，兩塊靠近就會黏在一起。字不在這一層，所以不會糊也不會動 */
-  .oc.mo .oc-ch::after, .oc.mo .oc-sn::after { left: 0; bottom: -1px; width: var(--nw, 100%); height: 15px; border-radius: 0; transform: none; transition: none; background: linear-gradient(var(--ac), var(--ac)) var(--ix, 0px) 50% / calc(var(--is, 0) * 100px) 5px no-repeat, linear-gradient(var(--ac), var(--ac)) var(--dx, 0px) 50% / var(--dw, 0px) var(--dh, 0px) no-repeat; filter: url(#oc-goo); }
+  .oc.mo .oc-sn::after { left: 0; bottom: -1px; width: var(--nw, 100%); height: 15px; border-radius: 0; transform: none; transition: none; background: linear-gradient(var(--ac), var(--ac)) var(--ix, 0px) 50% / calc(var(--is, 0) * 100px) 5px no-repeat, linear-gradient(var(--ac), var(--ac)) var(--dx, 0px) 50% / var(--dw, 0px) var(--dh, 0px) no-repeat; filter: url(#oc-goo); }
   /* 靜止：頂部小卡慢慢漂，同時帶著游標視差（--pax／--pay 由程式寫在每張小卡上）；拿起來時陰影變深 */
   .oc-hd.tb .os:not(.front) { animation: m-float 8s ease-in-out infinite; animation-delay: var(--dl, 0s); }
   .oc-hd.tb .os.drag, .oc-hd.tb .os:not(.front):hover { animation-play-state: paused; }
@@ -1464,7 +1464,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .ag-dock.rest b { max-width: 0; margin-left: 0; opacity: 0; }
 .ag-dock.rest:hover b, .ag-dock.rest:focus-visible b { max-width: 260px; margin-left: 8px; opacity: 1; }
 .ag-dock.rest.none { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .8s, visibility 0s .8s; }
-@media (max-width: 700px) { .ag-dock { right: 12px; bottom: calc(68px + env(safe-area-inset-bottom, 0px)); height: 22px; padding: 0 8px; } .ag-dock b { display: none; } .ag-dock:not(.x) u, .ag-dock.rest:hover u, .ag-dock.rest:focus-visible u { display: inline; margin-left: 6px; } }
+@media (max-width: 700px) { .ag-dock { right: 12px; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); height: 22px; padding: 0 8px; } .ag-dock b { display: none; } .ag-dock:not(.x) u, .ag-dock.rest:hover u, .ag-dock.rest:focus-visible u { display: inline; margin-left: 6px; } }
 .oc-snp { position: fixed; z-index: 95; pointer-events: none; transform: translate(-50%, -100%); font: 700 11px/1 "Inter Tight", "Noto Sans TC", sans-serif; padding: 5px 9px; border-radius: 999px; background: var(--ink); color: var(--bg); white-space: nowrap; }
 .oc-term { position: fixed; inset: 0; z-index: 96; pointer-events: none; -webkit-backdrop-filter: invert(1) hue-rotate(180deg); backdrop-filter: invert(1) hue-rotate(180deg); clip-path: inset(0 calc(100% - var(--tx, 0px)) 0 0); }
 .oc-term.r { clip-path: inset(0 0 0 var(--tx, 0px)); }
@@ -1562,11 +1562,31 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 /* 從地圖跳過去的那張圖：邊框閃兩下 */
 @keyframes hitp { 0%, 100% { box-shadow: 0 0 0 0 transparent; border-color: var(--rule); } 50% { box-shadow: 0 0 0 3px var(--ink); border-color: var(--ink); } }
 .fc.hit { animation: hitp 1.1s ease-in-out 2; }
+/* ㉘ 液態分頁（2026-11-12，使用者給了一段液態分頁列的錄影：「這種物理特性可以做嗎」→ 試作三種手感，選「彈跳」，並要電腦上也有）。
+   只用在「今天和六個問題」這一層（手機底部分頁列 .oc-tab、電腦頂部 .oc-ch）；第二層的段落導航（.oc-sn）維持原本的液態底線，一頁只有一個鼓包。
+   1 形狀：一條線上鼓起一個包，包的頂用 --ac 描邊、兩腳淡出（就是 logo 裡地平線上的太陽）；線本身是 --ink 13% 的細線。沒有光暈、沒有漸層底、沒有毛玻璃以外的東西。
+     手機：線就是分頁列的上緣（取代原本的 border-top 和橘色短橫線），包是分頁列自己的底色鼓出去（實色 --bg，不透明：後面的圖和字不能從包裡透出來），高 13px、寬不超過一格（最多 62px），選中的圖示坐在包裡。
+     電腦：線在七個字的正下方（取代原本的橘色底線），包高 8px、寬約字寬的八成（40–72px），描邊 3px，只有線、不填色。
+   2 物理（程式 LQ）：包的前緣、頂點、後緣各一條彈簧，前緣最緊、後緣最鬆，所以換頁時會被拉長；高度另一條彈簧，目標是「原寬 ÷ 現在的寬」的 0.9 次方（夾在 0.3–1.15），拉得越長越扁，到位後回彈會過頭再收；回彈時最窄只到原寬的一半。
+     點下去那一刻高度先往下沉一下。不是預錄動畫：連續點幾個分頁會從當下的形狀接著流。彈簧常數是使用者選的「彈跳」那一組，要改手感只改 LQ 裡的 K。
+   3 浪經過的東西會被頂起來：手機是每個圖示（包高的 0.92 倍），電腦是每個字（0.4 倍）。只動 transform。
+   4 電腦上滑鼠停在別的分頁：那個分頁下面的線微微鼓起 3px（灰線，不上色），移開就平回去。手機點下去在圖示上有一圈 --ink 的細圈擴散（0.5 秒）。
+   5 prefers-reduced-motion 和分享模式：鼓包直接出現在新位置，不流動、沒有細圈、沒有滑鼠鼓起。換語言或改視窗寬度（格子寬度變了）也直接到位。
+   6 分頁列上方要留 16px 給鼓包和回彈：手機右下的狀態膠囊因此從分頁列上方 12px 改成 24px。 */
+svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer-events: none; }
+.lq-f { fill: var(--bg); }
+.lq-e { fill: none; stroke: color-mix(in srgb, var(--ink) 13%, transparent); stroke-width: 1; }
+.lq-c { fill: none; stroke-width: 2.2; stroke-linecap: round; }
+.oc-ch > svg.lq { top: 0; } .oc-ch .lq-f { display: none; } .oc-ch .lq-c { stroke-width: 3; }
+.oc-ch button > span { display: inline-block; will-change: transform; }
+@keyframes lq-ring { from { opacity: .5; transform: scale(1); } to { opacity: 0; transform: scale(4.6); } }
 /* ══ 手機 ══ */
 @media (max-width: 700px) {
   .oc-bar .oc-ch { display: none; }
-  .oc-tab { display: grid; grid-template-columns: repeat(var(--n, 7), minmax(0, 1fr)); position: sticky; bottom: 0; z-index: 61; padding: 0 4px env(safe-area-inset-bottom, 0px); background: color-mix(in srgb, var(--bg) 90%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border-top: 1px solid color-mix(in srgb, var(--ink) 13%, transparent); }
-  .oc-tab::after { content: ""; position: absolute; top: -1px; height: 2.5px; border-radius: 0 0 2px 2px; background: var(--ac); left: calc(4px + (100% - 8px) / var(--n, 7) * (var(--i, 0) + .2)); width: calc((100% - 8px) / var(--n, 7) * .6); transition: left .75s var(--spring); pointer-events: none; }
+  .oc-tab { display: grid; grid-template-columns: repeat(var(--n, 7), minmax(0, 1fr)); position: sticky; bottom: 0; z-index: 61; padding: 0 4px env(safe-area-inset-bottom, 0px); background: color-mix(in srgb, var(--bg) 90%, transparent); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); }
+  .oc-tab > svg.lq { top: -22px; }
+  .oc-tab button::after { content: ""; position: absolute; left: 50%; top: 20px; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%; border: 1px solid var(--ink); opacity: 0; pointer-events: none; }
+  .oc-tab button.lq-tap::after { animation: lq-ring .5s ease-out; }
   .oc-tab button { appearance: none; position: relative; height: 56px; padding: 0; border: 0; background: none; color: var(--k2); font: 500 15px/1 "Inter Tight", "Noto Sans TC", sans-serif; cursor: pointer; }
   .oc-tab.en button { font-size: 11px; letter-spacing: -.01em; }
   .oc-tab button[aria-current="true"] { color: var(--ink); font-weight: 600; }
@@ -1598,7 +1618,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
   .oc-fx .or-v { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .oc.io .fc.in { animation: none !important; } .oc .ol-c::after { display: none !important; } .oc.io .fc:not(.in) { opacity: 1; } }
-@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } .oc-tab button.lq-tap::after { animation: none; } }
 /* ⑮ 分享（2026-11-11，運營拿新版卡片去發文後的回饋）。整頁規則：
    1. 坐標：縱軸 3–5 個整數刻度（對數軸 1、2、3、5 開頭），上格價格也有刻度；橫軸超過 760 天標年、60–760 天標月（一月寫年份）、更短標日期，最右「現在」。
    2. 資料來源：每張卡片標題右邊一行（照舊版面板右上），分享頁尾再寫一次加日期。
@@ -1630,7 +1650,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .src-b { display: none; }
 @media (max-width: 700px) {
   .oc-tab button { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 5px; font-size: 11.5px; }
-  .oc-tab button .ic { width: 19px; height: 19px; }
+  .oc-tab button .ic { width: 19px; height: 19px; will-change: transform; }
   .oc-tab.en button { font-size: 10px; }
   html:not(.share) .ol-t > .ol-src { display: none; }
   html:not(.share) .src-b { display: inline-flex; align-items: center; justify-content: center; flex: none; margin-left: auto; width: 32px; height: 32px; padding: 0; border: 0; border-radius: 50%; background: none; color: var(--k2); cursor: pointer; position: relative; z-index: 3; }
@@ -3276,8 +3296,8 @@ function initOC() {
     let pq = 0; const progF = () => { pq = 0; const r = el.getBoundingClientRect(); if (prog) prog.style.transform = 'scaleX(' + Math.max(0, Math.min(1, -r.top / Math.max(1, r.height - innerHeight))).toFixed(4) + ')'; };
     window.addEventListener('scroll', () => { if (!pq) pq = requestAnimationFrame(progF); }, { passive: true }); progF();
     /* 導航：底線左右兩端各一條彈簧；磁吸的項目各有自己的彈簧 */
-    const navs = [$('#oc-crumb'), $('#oc-rail')], ind = navs.map(() => ({ l: 0, r: 0, vl: 0, vr: 0, init: false, ox: '', os: '' })), act = new Map(); let bpx = -1e4, bpy = -1e4, hovB = null, hovN = -1;
-    bar.addEventListener('pointermove', e => { if (e.pointerType && e.pointerType !== 'mouse') return; bpx = e.clientX; bpy = e.clientY; const b = e.target.closest ? e.target.closest('.oc-ch button, .oc-sn button') : null; hovB = b && b.getAttribute('aria-current') !== 'true' ? b : null; hovN = hovB ? navs.indexOf(hovB.parentNode) : -1; });
+    const navs = [null, $('#oc-rail')], ind = navs.map(() => ({ l: 0, r: 0, vl: 0, vr: 0, init: false, ox: '', os: '' })), act = new Map(); let bpx = -1e4, bpy = -1e4, hovB = null, hovN = -1;
+    bar.addEventListener('pointermove', e => { if (e.pointerType && e.pointerType !== 'mouse') return; bpx = e.clientX; bpy = e.clientY; const b = e.target.closest ? e.target.closest('.oc-sn button') : null; hovB = b && b.getAttribute('aria-current') !== 'true' ? b : null; hovN = hovB ? navs.indexOf(hovB.parentNode) : -1; });
     bar.addEventListener('pointerleave', () => { bpx = bpy = -1e4; hovB = null; hovN = -1; });
     let last = performance.now(), ppx = 1e9, ppy = 1e9;
     function loop(now) { requestAnimationFrame(loop); const dt = Math.min(.034, (now - last) / 1000); last = now; if (dock && dock.hidden === bvis) dock.hidden = !bvis; if (!bvis || document.hidden) return;
@@ -3354,8 +3374,56 @@ function initOC() {
   }
   const RG = [[365, '1 年', '1Y'], [1095, '3 年', '3Y'], [0, '全部', 'All']];
   const ctl = () => { const b = (attr, v, on, zh, en) => `<button type="button" ${attr}="${v}" aria-pressed="${on}">${T(zh, en)}</button>`; return ''; };
+  /* ㉘ 液態分頁（程式）。每個導航一份狀態：前緣 L、頂點 P、後緣 R、高度 h 四條彈簧，外加電腦上滑鼠引出來的小鼓起 s。renderBar 每次重畫都會把按鈕和 SVG 換掉，狀態留在這裡，所以動到一半重畫也接得上 */
+  const LQ = (() => {
+    const K = { lead: [320, 21], peak: [190, 15], trail: [120, 12], h: [430, 10] }, NS = []; let raf = 0, last = 0;
+    const svg = id => `<svg class="lq" aria-hidden="true" focusable="false"><defs><linearGradient id="lqg-${id}" gradientUnits="userSpaceOnUse" x1="0" x2="1" y1="0" y2="0"><stop offset="0" style="stop-color:var(--ac)" stop-opacity="0"/><stop offset=".22" style="stop-color:var(--ac)"/><stop offset=".78" style="stop-color:var(--ac)"/><stop offset="1" style="stop-color:var(--ac)" stop-opacity="0"/></linearGradient></defs><path class="lq-f"/><path class="lq-e"/><path class="lq-c" stroke="url(#lqg-${id})"/></svg>`;
+    const sp = (a, to, kc, dt) => { a.v += (kc[0] * (to - a.x) - kc[1] * a.v) * dt; a.x += a.v * dt; }, ss = t => t * t * (3 - 2 * t);
+    const bump = (q, x) => { const L = q.L.x, P = q.P.x, R = q.R.x; if (x <= L || x >= R || q.h.x <= 0) return 0; return q.h.x * ss(x < P ? (x - L) / (P - L) : (R - x) / (R - P)); };
+    const swell = (q, x) => { if (q.s.h < .05) return 0; const d = Math.abs(x - q.s.x); return d >= 26 ? 0 : q.s.h * ss(1 - d / 26); };
+    const tgt = q => { const c = q.cx[q.cur], w = q.o.w(q.bw[q.cur]); return { L: c - w / 2, P: c, R: c + w / 2, w }; };
+    function measure(q) {
+      const nav = q.nav, bs = nav ? [...nav.querySelectorAll('button')] : [], sv = nav && nav.querySelector('svg.lq'); if (!sv || !bs.length || !nav.offsetWidth) return false;
+      q.bs = bs; q.mv = bs.map(q.o.lift); q.cx = bs.map(b => b.offsetLeft + b.offsetWidth / 2); q.bw = bs.map(b => b.offsetWidth); q.W = Math.max(nav.scrollWidth, nav.clientWidth);
+      q.pf = sv.querySelector('.lq-f'); q.pe = sv.querySelector('.lq-e'); q.pc = sv.querySelector('.lq-c'); q.gr = sv.querySelector('linearGradient'); q.Y = q.o.top ? 22 : nav.offsetHeight - 1.5; q.lt = [];
+      const hh = q.o.top ? 23 : nav.offsetHeight; sv.setAttribute('width', q.W); sv.setAttribute('height', hh); sv.setAttribute('viewBox', '0 0 ' + q.W + ' ' + hh); return true; }
+    function draw(q) {
+      const L = q.L.x, R = q.R.x, W = q.W, Y = q.Y, ye = q.o.top ? Y - .5 : Y, sw = q.s.h >= .05; let a = Math.max(0, L), b = Math.min(W, R); if (sw) { a = Math.max(0, Math.min(a, q.s.x - 26)); b = Math.min(W, Math.max(b, q.s.x + 26)); }
+      let e = 'M0 ' + ye, f = 'M' + a.toFixed(1) + ' ' + Y, c = '';
+      for (let x = a; ; x = Math.min(b, x + 2)) { const m = bump(q, x), y = ye - m - (sw ? swell(q, x) : 0), xs = x.toFixed(1); e += 'L' + xs + ' ' + y.toFixed(2); f += 'L' + xs + ' ' + (Y - m).toFixed(2); if (x >= L && x <= R) c += (c ? 'L' : 'M') + xs + ' ' + y.toFixed(2); if (x >= b) break; }
+      q.pe.setAttribute('d', e + 'L' + W + ' ' + ye); if (q.o.top) q.pf.setAttribute('d', f + 'L' + b.toFixed(1) + ' ' + Y + 'Z'); q.pc.setAttribute('d', c || 'M0 0'); q.gr.setAttribute('x1', L.toFixed(1)); q.gr.setAttribute('x2', R.toFixed(1));
+      q.pc.style.opacity = Math.max(.5, Math.min(1, q.h.x / (q.o.H * .7))).toFixed(2);
+      for (let i = 0; i < q.mv.length; i++) { const el = q.mv[i]; if (!el) continue; const t = (bump(q, q.cx[i]) * q.o.k).toFixed(2); if (q.lt[i] !== t) { q.lt[i] = t; el.style.transform = +t ? 'translateY(-' + t + 'px)' : ''; } } }
+    function snap(q) { const t = tgt(q); q.L.x = t.L; q.P.x = t.P; q.R.x = t.R; q.h.x = q.o.H; q.L.v = q.P.v = q.R.v = q.h.v = 0; q.s.h = q.s.hv = q.s.v = 0; q.s.x = t.P; draw(q); }
+    function step(q, dt) {
+      const t = tgt(q); sp(q.L, t.L, q.dir > 0 ? K.trail : K.lead, dt); sp(q.R, t.R, q.dir > 0 ? K.lead : K.trail, dt); sp(q.P, t.P, K.peak, dt);
+      { const mw = t.w * .52; if (q.R.x - q.L.x < mw) { const m = (q.R.x + q.L.x) / 2; q.L.x = m - mw / 2; q.R.x = m + mw / 2; if (q.L.v > 0) q.L.v *= .5; if (q.R.v < 0) q.R.v *= .5; } }   /* 回彈時最窄只到原寬的一半，不會縮成尖刺 */
+      q.P.x = Math.max(q.L.x + 5, Math.min(q.R.x - 5, q.P.x));
+      sp(q.h, q.o.H * Math.max(.3, Math.min(1.15, Math.pow(t.w / (q.R.x - q.L.x), .9))), K.h, dt); if (q.h.x < 0) { q.h.x = 0; q.h.v = 0; }   /* 拉長就變扁 */
+      const hv = q.hov >= 0 && q.hov !== q.cur && q.hov < q.cx.length; if (hv) { const tx = q.cx[q.hov]; if (q.s.h < .1) { q.s.x = tx; q.s.v = 0; } sp(q.s, tx, [190, 17], dt); }
+      q.s.hv += (300 * ((hv ? q.o.sw : 0) - q.s.h) - 24 * q.s.hv) * dt; q.s.h = Math.max(0, q.s.h + q.s.hv * dt);
+      return Math.abs(q.L.x - t.L) + Math.abs(q.R.x - t.R) + Math.abs(q.P.x - t.P) + Math.abs(q.h.x - q.o.H) + (hv ? Math.abs(q.s.h - q.o.sw) + Math.abs(q.s.x - q.cx[q.hov]) : q.s.h) < .12 && Math.abs(q.L.v) + Math.abs(q.R.v) + Math.abs(q.P.v) + Math.abs(q.h.v) + Math.abs(q.s.hv) + (hv ? Math.abs(q.s.v) : 0) < .6; }
+    function tick(now) {
+      const dt = Math.min(.034, (now - last) / 1000), n = Math.max(1, Math.ceil(dt / .004)); last = now; let busy = false;
+      NS.forEach(q => { if (!q.ok || !q.live) return; let z = false; for (let i = 0; i < n; i++) z = step(q, dt / n); if (z) { q.live = false; if (q.hov >= 0 && q.hov !== q.cur) draw(q); else snap(q); } else { busy = true; draw(q); } });
+      raf = busy ? requestAnimationFrame(tick) : 0; }
+    const kick = q => { q.live = true; if (!raf) { last = performance.now(); raf = requestAnimationFrame(tick); } };
+    function sync(hard) {
+      NS.forEach(q => { const was = q.ok; q.ok = measure(q); if (!q.ok) { q.live = false; return; }
+        const i = Math.max(0, q.bs.findIndex(b => b.getAttribute('aria-current') === 'true')), sig = lang + '|' + q.bs.length, same = sig === q.sig; q.sig = sig;
+        if (!was || hard || reduce || !same || q.cur < 0) { q.cur = i; q.live = false; snap(q); return; }
+        if (i !== q.cur) { q.dir = q.cx[i] >= q.P.x ? 1 : -1; q.cur = i; q.h.v -= 55 * q.o.H / 13; q.bs[i].classList.add('lq-tap'); kick(q); }     /* 先往下沉一下 */
+        draw(q); }); }
+    function add(nav, id, o) {
+      if (!nav) return; const q = { nav, id, o, L: { x: 0, v: 0 }, P: { x: 0, v: 0 }, R: { x: 0, v: 0 }, h: { x: o.H, v: 0 }, s: { x: 0, v: 0, h: 0, hv: 0 }, dir: 1, cur: -1, hov: -1, sig: '', ok: false, live: false }; NS.push(q);
+      if (o.sw && !reduce) { nav.addEventListener('pointermove', e => { if (e.pointerType && e.pointerType !== 'mouse') return; const b = e.target.closest ? e.target.closest('button') : null, i = b && !b.disabled && q.bs ? q.bs.indexOf(b) : -1; if (i !== q.hov) { q.hov = i; if (q.ok) kick(q); } }); nav.addEventListener('pointerleave', () => { if (q.hov >= 0) { q.hov = -1; if (q.ok) kick(q); } }); } }
+    add($('#oc-tab'), 't', { top: 1, H: 13, k: .92, sw: 0, w: b => Math.min(b * .96, 62), lift: b => b.querySelector('.ic') });
+    add($('#oc-crumb'), 'c', { top: 0, H: 8, k: .4, sw: 3, w: b => Math.max(40, Math.min(72, b * .78)), lift: b => b.querySelector('span') });
+    let rz = 0; window.addEventListener('resize', () => { if (!rz) rz = requestAnimationFrame(() => { rz = 0; sync(true); }); }); if (document.fonts && document.fonts.ready) document.fonts.ready.then(() => sync(true));
+    return { svg, sync, state: NS, moving: () => !!raf };
+  })();
   function renderBar() {
-    $('#oc-crumb').innerHTML = CH.map((c, i) => `<button type="button" data-ch="${i}" aria-current="${i === ci}"${c.todo ? ' disabled' : ''}>${esc(T(c.zh, c.en))}</button>`).join(''); const tb = $('#oc-tab'); tb.innerHTML = CH.map((c, i) => `<button type="button" data-ch="${i}" aria-current="${i === ci}"${c.todo ? ' disabled' : ''}>${CHI(c.id) ? IC(c.id) : ''}<span>${esc(T(c.zh, c.en))}</span></button>`).join(''); tb.classList.toggle('en', lang === 'en'); { const mb = $('#oc-mapb'), tt = T('找圖（也可以按 / ）', 'Find a chart (or press / )'); mb.innerHTML = IC('grid'); mb.dataset.tip = tt; mb.setAttribute('aria-label', tt); } { const av2 = CH.map((c, i) => i).filter(i => !CH[i].todo); tb.style.setProperty('--n', av2.length); tb.style.setProperty('--i', Math.max(0, av2.indexOf(ci))); const cr = $('#oc-crumb'), cb = cr.querySelector('[aria-current="true"]'); if (cb) { cr.style.setProperty('--x', cb.offsetLeft + 'px'); cr.style.setProperty('--w', cb.offsetWidth + 'px'); } }
+    $('#oc-crumb').innerHTML = CH.map((c, i) => `<button type="button" data-ch="${i}" aria-current="${i === ci}"${c.todo ? ' disabled' : ''}><span>${esc(T(c.zh, c.en))}</span></button>`).join('') + LQ.svg('c'); const tb = $('#oc-tab'); tb.innerHTML = CH.map((c, i) => `<button type="button" data-ch="${i}" aria-current="${i === ci}"${c.todo ? ' disabled' : ''}>${CHI(c.id) ? IC(c.id) : ''}<span>${esc(T(c.zh, c.en))}</span></button>`).join('') + LQ.svg('t'); tb.classList.toggle('en', lang === 'en'); { const mb = $('#oc-mapb'), tt = T('找圖（也可以按 / ）', 'Find a chart (or press / )'); mb.innerHTML = IC('grid'); mb.dataset.tip = tt; mb.setAttribute('aria-label', tt); } { const av2 = CH.map((c, i) => i).filter(i => !CH[i].todo); tb.style.setProperty('--n', av2.length); LQ.sync(); }
     $('#oc-rail').innerHTML = `<button type="button" data-go="0">${T('總覽', 'Overview')}</button>` + G.map((x, j) => `<button type="button" data-go="${j + 1}"><i>${p2(j + 1)}</i>${esc(T(x.zh, x.en))}</button>`).join(''); $('#oc-ctl').innerHTML = ctl();
   }
   function headBody() { const f = stg.querySelector('.os[data-k="' + ci + '"] .os-in'); if (f) f.insertAdjacentHTML('beforeend', `<div class="os-b"><div class="${O.brief ? 'ov br' : O.map || O.dial || O.flow || O.crowd ? 'ov mp' : 'ov gn'}"><div class="ov-l" id="oc-ol0"></div><div class="ov-m" id="oc-or0"></div></div></div>`); }
