@@ -55,6 +55,40 @@ def build(L, N, E, dn):
     X['urpd'] = dict(k='urpd', zh='籌碼分布（URPD）', en='Supply distribution (URPD)', hz='現價這一格佔流通量', he='Share of supply in the current bucket',
       dist=dict(kind='one', step=uv['width'], rows=uv['band'], hl=hl, base='color-mix(in srgb, var(--c3) 45%, var(--k2))', unit='btc', leg=[['c4', '現價附近最厚的一段', 'Thickest stretch near price'], ['c5', '另一側最薄的一段', 'Thinnest stretch on the other side'], ['color-mix(in srgb, var(--c3) 45%, var(--k2))', '其餘（每 $2,000 一格）', 'The rest ($2,000 buckets)']]),
       hs=dict(v=u['cur_pct'], f='p2'), dz='每一格是最後一次在那個價位移動的幣。厚的地方是很多人的成本，價格到那裡容易停；薄的地方沒什麼人的成本，價格容易快速穿過。', de='Each bucket holds the coins that last moved at that price. Thick zones are where many holders\' costs sit and price tends to stall; thin zones have few and price tends to move through quickly.')
+    uc = (L.get('chips') or {}).get('urpd_chg')
+    if uc and uc.get('rows'):   # 籌碼搬家（2026-11-12 使用者要求）：近 7 天哪些價位變厚、變薄；顏色是方向（變厚 up、變薄 dn）
+        from say_data import own
+        wz = lambda v: ('%.1f' % (v / 1e4)) if abs(v) < 995000 else ('%.0f' % (v / 1e4)); ke = lambda v: format(round(v / 1e3), ',')
+        bk = lambda p: '$%s–%s' % (format(p, ','), format(p + uc['width'], ',')); md = lambda s: '%d/%d' % (int(s[5:7]), int(s[8:10]))
+        up, dn_ = uc.get('up') or [], uc.get('dn') or []
+        lz = '、'.join('%s +%s 萬顆' % (bk(p), wz(v)) for p, v in up); le = ', '.join('%s +%sK' % (bk(p), ke(v)) for p, v in up)
+        dz_ = '、'.join('%s −%s 萬顆' % (bk(p), wz(-v)) for p, v in dn_); de_ = ', '.join('%s −%sK' % (bk(p), ke(-v)) for p, v in dn_)
+        lo_, ga_, mi_, out_ = uc['loss'], uc['gain'], uc['mid'], uc['moved_out']
+        rt = lambda a, b: ('約 %.1f 倍' % (a / b), 'about %.1f times as many' % (a / b)) if b > 0 else ('另一邊幾乎沒有', 'almost none on the other side')
+        cz, ce = (('賠錢移動的幣比賺錢移動的多（只算分得出來的部分，%s）' % rt(lo_, ga_)[0], 'More coins moved at a loss than at a profit (counting only those that can be told apart, %s)' % rt(lo_, ga_)[1]) if lo_ > ga_ * 1.3 else
+                  ('賺錢移動的幣比賠錢移動的多（只算分得出來的部分，%s）' % rt(ga_, lo_)[0], 'More coins moved at a profit than at a loss (counting only those that can be told apart, %s)' % rt(ga_, lo_)[1]) if ga_ > lo_ * 1.3 else
+                  ('賠錢移動和賺錢移動的幣差不多（只算分得出來的部分）', 'Coins moved at a loss and at a profit in similar amounts (counting only those that can be told apart)'))
+        it = [('這些幣原本的成本', 'Where they came from', '%s 萬 / %s 萬' % (wz(lo_), wz(ga_)), '%sK / %sK' % (ke(lo_), ke(ga_)), 'neu',
+               '%s。這 %d 天各價位淨減少的幣合計 %s 萬顆（同一格有進有出會互相抵掉，實際移動的更多）。其中 %s 萬顆原本的成本高於這幾天的最高價 $%s，移動的時候是賠的；%s 萬顆低於最低價 $%s，移動的時候是賺的；其餘 %s 萬顆的成本就在這幾天的價格範圍內，分不出來。變薄最多的三格：%s。'
+               % (cz, uc['days'], wz(out_), wz(lo_), format(uc['hi'], ','), wz(ga_), format(uc['lo'], ','), wz(mi_), dz_),
+               '%s. Over these %d days the buckets that thinned lost a net %sK BTC (moves in and out of the same bucket cancel, so more actually moved). %sK had a cost above the period high of $%s, so they moved at a loss; %sK were below the low of $%s, so they moved at a profit; the remaining %sK sat inside the period range and cannot be told apart. The three buckets that thinned most: %s.'
+               % (ce, uc['days'], ke(out_), ke(lo_), format(uc['hi'], ','), ke(ga_), format(uc['lo'], ','), ke(mi_), de_)),
+              ('變厚最多', 'Thickened most', '+%s 萬顆' % wz(up[0][1]) if up else '—', '+%sK BTC' % ke(up[0][1]) if up else '—', 'neu',
+               '%s 到 %s 這 %d 天，變厚最多的三格：%s。幣最後一次在鏈上移動的價位，就是它在這張圖上的位置；一格變厚，代表有幣在這個價位換了手或換了地址。' % (md(uc['prev']), md(uc['date']), uc['days'], lz),
+               'From %s to %s (%d days), the three buckets that thickened most: %s. A coin sits at the price where it last moved on-chain; a bucket thickens when coins change hands or addresses at that price.' % (uc['prev'], uc['date'], uc['days'], le))]
+        if uc.get('thin') and uc.get('thick'):
+            tn, tk = uc['thin'], uc['thick']
+            it.append(('現價附近最薄', 'Thinnest near price', '%gK' % (tn['p'] / 1000), '%gK' % (tn['p'] / 1000), 'neu',
+               '收盤上下 5%% 內最薄的一格是 %s，只有 %s 萬顆；最厚的是 %s，%s 萬顆。薄的地方沒什麼人的成本，價格經過時比較少人防守或解套。這只說明那裡的籌碼少，不代表價格會去那裡。' % (bk(tn['p']), wz(tn['btc']), bk(tk['p']), wz(tk['btc'])),
+               'Within 5%% of the close the thinnest bucket is %s with only %sK BTC; the thickest is %s with %sK. Few holders have their cost in a thin bucket, so fewer defend it or sell at break-even there. It only says supply is light there, not that price will go there.' % (bk(tn['p']), ke(tn['btc']), bk(tk['p']), ke(tk['btc']))))
+        X['urpdchg'] = dict(k='urpdchg', zh='籌碼搬家：近 7 天哪裡變厚、哪裡變薄', en='Supply on the move: 7-day change by price', hz='近 7 天換了價位的幣（淨額）', he='Coins that changed price in 7 days (net)',
+          hs=dict(v='%s 萬顆' % wz(out_), ve='%sK BTC' % ke(out_), f='txt'), src='Bitview · ' + md(uc['date']), srce='Bitview · ' + md(uc['date']),
+          dist=dict(kind='sign', pg=0, step=uc['width'], rows=uc['rows'], unit='dbtc', now=1, la=['變薄', 'Thinner'], lb=['變厚', 'Thicker'],
+                    zone=[uc['lo'], uc['hi'], '這 7 天的價格範圍', 'Price range of these 7 days'],
+                    leg=[['up', '變厚：有幣在這個價位移動進來', 'Thicker: coins moved in at this price'], ['dn', '變薄：原本在這個價位的幣移走了', 'Thinner: coins that sat at this price moved away']]),
+          say=own(it, '%s 萬顆換了價位：賠錢移動 %s 萬、賺錢移動 %s 萬' % (wz(out_), wz(lo_), wz(ga_)), '%sK BTC changed price: %sK at a loss, %sK at a profit' % (ke(out_), ke(lo_), ke(ga_))),
+          dz='籌碼分布（URPD）今天減 7 天前，每 $1,000 一格。往右的綠色是變厚，往左的紅色是變薄；灰底是這 7 天的價格範圍。幣一移動，原本的那一格變薄、移動當時價位的那一格變厚，所以變厚的格子都在灰底裡。看變薄的格子在哪，就知道這些幣原本的成本：在灰底上方的，是比現在貴的時候買的，移動時是賠的；在灰底下方的，移動時是賺的。鏈上移動不一定是買賣，交易所整理錢包、換地址也算；資料是逐筆 UTXO，沒有做實體歸併，和「籌碼分布」那張每 $2,000 一格的來源不同，數字會有小差異。只作讀值。',
+          de='Today\'s supply distribution (URPD) minus the one from 7 days ago, in $1,000 buckets. Green bars to the right thickened, red bars to the left thinned; the grey band is the price range of these 7 days. When a coin moves, its old bucket thins and the bucket at the price of the move thickens, so the thickening sits inside the grey band. Where the thinning sits tells you what those coins cost: above the band they were bought higher and moved at a loss; below it they moved at a profit. On-chain moves are not all sales: exchange wallet reshuffles and address changes count too. The data is per UTXO with no entity adjustment and comes from a different source than the $2,000-bucket distribution chart, so figures differ slightly. A reading only.')
     X['cohort'] = dict(k='cohort', zh='長短期持有者籌碼', en='Long- vs short-term holder supply', hz='短期持有者平均成本', he='STH average cost',
       dist=dict(kind='split', cl='ac', cr='c3', la=['短期持有者', 'Short-term'], lb=['長期持有者', 'Long-term'], zone=([co['window']['lo'], co['window']['hi'], '近 155 天的價格範圍', 'Price range of the last 155 days'] if co.get('window') else None), step=co['width'], rows=[[r[0], round(r[2]), round(r[1])] for r in co['rows']], unit='btc', leg=[['c3', '長期持有者（155 天以上）', 'Long-term holders (155d+)'], ['ac', '短期持有者', 'Short-term holders']]),
       hs=dict(v=co['tot']['sth_cost'], f='usd0'), dz='同一張籌碼分布，依持有時間分成兩群，背對背放：左邊是短期持有者，右邊是長期持有者。短期持有者的幣在現價上方，是套牢的賣壓；在現價下方，是第一層支撐。', de='The same distribution split by holding time, back to back: short-term holders on the left, long-term on the right. Short-term holder coins above price are underwater sellers; below price they form the first support.')
@@ -139,7 +173,7 @@ def build(L, N, E, dn):
       chap('cycle', '週期', 'Cycle', '現在在週期的哪裡', 'Where we are in the cycle', mod='cycle', dial=CYD, groups=CYG),
       chap('lv', '價位', 'Levels', '價格站在哪些成本和關卡上', 'Which cost bases and levels price is standing on', mod='market', map=1, groups=[
         grp('成本線', 'Cost lines', '各群人的成本和均線在哪裡', 'Where each group\'s cost and the moving averages sit', ['levels', 'sthgap', 'quant', 'etfcost']),
-        grp('籌碼在哪', 'Where supply sits', '哪些價位的籌碼厚、哪些薄', 'Which prices hold thick supply and which thin', ['urpd', 'cohort', 'conc']),
+        grp('籌碼在哪', 'Where supply sits', '哪些價位的籌碼厚、哪些薄', 'Which prices hold thick supply and which thin', ['urpd', 'urpdchg', 'cohort', 'conc']),
         grp('短線的牆', 'Near-term walls', '選擇權、清算和掛單堆在哪裡', 'Where options, liquidations and resting orders pile up', ['strike', 'gex', 'liq', 'book']),
         grp('這一段行情', 'This leg', '現在這一段走了多遠、到哪裡算結束', 'How far this leg has run and where it ends', ['legs', 'k20'])]),
       chap('sell', '賣壓', 'Selling', '賣壓出清了沒', 'Has the selling been worked through', mod='onchain', groups=SLG, hl=(X.get('pullback') or {}).get('list', {}).get('rows'), hlz='回調壓力清單', hle='Pullback pressure checklist'),
