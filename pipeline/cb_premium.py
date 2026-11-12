@@ -6,6 +6,7 @@
 現在：Coinbase BTC-USD ÷（Binance BTC-USDT × Coinbase USDT-USD）− 1，三個都用每日 UTC 收盤。
 扣掉之後兩地價差只有幾個基點（近四年 7 日平均的 5%–95% 大約在 −0.012%～+0.015%），所以門檻改用自己的歷史分位，不再用固定的 −0.15%。
 沒扣的數字（raw）和 USDT 對美元（usdt）都留著：USDT 折價本身代表有人把穩定幣換回美元。
+usdt（2026-11-12 加統計）：USDT 對美元自己的深度折價線、歷次跌破的段落、這個月的平均（見 usdt_stats），新版首頁有單獨一張圖。
 neg（2026-11-12）：沒扣的溢價「連續為負」的段落，每一段拆成 USDT 折價和扣掉後剩下的兩塊（見 streaks）。
 USDT-USD 取不到時退回沒扣的算法（adj=False），門檻用舊的。只作讀值。"""
 import datetime as dt
@@ -54,6 +55,38 @@ def streaks(rows, min_n=19, th=-0.01):
                 deep_span=[min(x['a'] for x in deep), max(x['b'] for x in deep)] if deep else None)
 
 
+def usdt_stats(rows):
+    """USDT 對美元（Coinbase USDT-USD 每日收盤 − 1）自己的統計（2026-11-12，使用者要求 USDT 單獨一張圖）。rows＝build() 的 rows。
+    deep／hi＝7 日平均近四年第 5／95 百分位；ep＝7 日平均跌破 deep 的段落（回到第 25 百分位以上才算結束），
+    每段記開始、結束、最深的值和日期、開始那天的收盤、開始後 30 天的漲跌（r30，還沒滿 30 天是 None）；
+    base＝隨便一天 30 天後價格較高的比例；mon＝這個月到目前的平均價格和它在所有月份裡排第幾低。只作讀值。"""
+    rs = [r for r in rows if r[4] is not None and r[2] is not None]
+    if len(rs) < 60: return {}
+    n = len(rs); d = [(r[4] - 1) * 100 for r in rs]; a7 = _ma(d, 7); deep, hi, re_ = _q(a7, .05), _q(a7, .95), _q(a7, .25)
+    def at(i, k):
+        t = rs[i][0] + k
+        for j in range(i, n):
+            if rs[j][0] >= t: return (rs[j][2] / rs[i][2] - 1) * 100
+        return None
+    ep = []; on = None
+    for i, v in enumerate(a7):
+        if v is None: continue
+        if v < deep:
+            if on is None: on = [i, i, v, i]
+            on[1] = i
+            if v < on[2]: on[2], on[3] = v, i
+        elif on is not None and v > re_: ep.append(on + [False]); on = None
+    if on is not None: ep.append(on + [True])
+    b30 = [x for x in (at(i, 30) for i in range(n)) if x is not None]
+    mon = {}
+    for r in rs: mon.setdefault((_EP + dt.timedelta(r[0])).isoformat()[:7], []).append(r[4])
+    avg = sorted((sum(v) / len(v), k) for k, v in mon.items()); cur = (_EP + dt.timedelta(rs[-1][0])).isoformat()[:7]
+    rank = 1 + [k for _, k in avg].index(cur); oth = [(a, k) for a, k in avg if k != cur]
+    return dict(deep=round(deep, 4), hi=round(hi, 4), rearm=round(re_, 4), base=round(sum(x > 0 for x in b30) / len(b30) * 100, 1) if b30 else None,
+                ep=[dict(a=rs[e[0]][0], b=rs[e[1]][0], min=round(e[2], 3), d=rs[e[3]][0], p0=rs[e[0]][2], r30=None if at(e[0], 30) is None else round(at(e[0], 30), 1), open=e[4]) for e in ep],
+                mon=dict(ym=cur, avg=round(sum(mon[cur]) / len(mon[cur]), 5), n=len(mon[cur]), rank=rank, months=len(avg), low=dict(ym=oth[0][1], avg=round(oth[0][0], 5)) if oth else None))
+
+
 def build(cb, bn, usdt, last):
     """cb／bn／usdt＝{日期: 收盤}（Coinbase BTC-USD、Binance BTC-USDT、Coinbase USDT-USD）；last＝資料日。回傳 flows.cb_premium。"""
     days = sorted(d for d in set(cb) & set(bn) if d <= last)
@@ -71,7 +104,7 @@ def build(cb, bn, usdt, last):
         out.update(deep=round(_q(a7, .05), 4), rearm=0.0, band=[round(_q(a7, .10), 4), round(_q(a7, .90), 4)],
                    usdt=dict(px=round(usdt[days[-1]], 5), disc=round(ud[-1], 3), disc7=round(u7[-1], 3), disc30=round(u30[-1], 3), disc7_pct_own=_pctl(u7, u7[-1])),
                    note='Coinbase BTC-USD ÷（Binance BTC-USDT × Coinbase USDT-USD）每日收盤 − 1，已扣掉 USDT 對美元的折溢價；只作讀值')
-        out['neg'] = streaks(out['rows'])
+        out['neg'] = streaks(out['rows']); out['usdt'].update(usdt_stats(out['rows']))
     else:
         out.update(deep=-0.15, rearm=-0.05, band=[-0.02, 0.02], usdt=None,
                    note='Coinbase BTC-USD ÷ Binance BTC-USDT 每日收盤 − 1（今天取不到 USDT-USD，沒有扣掉 USDT 的折溢價）；只作讀值')

@@ -170,6 +170,41 @@ def build(L, N, E, dn, X):
           dz='每一列是一段「沒扣 USDT 的每日溢價連續 %d 天以上小於 0」的期間，最新的在最上面。長條的長度是這段期間沒扣的平均溢價，越長越負：藍紫色是 USDT 低於 1 美元造成的部分，紅色是扣掉之後還剩的負值，沒有紅色代表扣完是 0 或正的。右邊的數字是扣掉 USDT 之後的平均，低於 %s 標紅。下面一行是沒扣的平均、其中 USDT 那一塊，和期間價格從多少到多少。資料從 %s 開始。次數不多，只作讀值。' % (MIN, thx, since.strftime('%Y/%m')),
           de='Each row is a period when the unadjusted daily premium stayed below 0 for %d days or more, newest first. Bar length is the average unadjusted premium over the period (longer = more negative): the blue-violet part is what USDT trading below $1 accounts for, the red part is the negative that remains after netting it out, and no red means the remainder was zero or positive. The number on the right is the average net of USDT, in red when below %s. The line underneath gives the unadjusted average, the USDT part, and where price started and ended. Data starts in %s. Few cases; a reading only.' % (MIN, thx, since.strftime('%Y-%m')), **hd)
 
+    def c_usdt():   # 2026-11-12 新圖（舊版沒有）：USDT 對美元。顏色：7 日平均 c3 面積（和 Coinbase 溢價「拆開看」裡 USDT 那一塊同一個顏色）、每日 k2 細線、深度折價線和歷次跌破的圓圈 dn
+        from say_data import own
+        x = f.get('cb_premium') or {}; u = x.get('usdt') or {}; rs = [r for r in x.get('rows') or [] if r[4] is not None and r[2] is not None]
+        if len(rs) < 60 or u.get('deep') is None: return NA('usdt-usd', 'USDT 對美元', 'USDT vs the dollar', 'Coinbase 上 USDT 對美元的每日價格（flows.cb_premium.usdt）', 'the daily USDT price in dollars on Coinbase (flows.cb_premium.usdt)')
+        d = [(r[4] - 1) * 100 for r in rs]; a7 = ma7(d); DEEP = u['deep']; p3 = lambda v: mi('%+.3f%%' % v); dtx = mi('%.3f%%' % DEEP)
+        rows = [[r[0], R(d[i], 3), r[2], R(a7[i], 4)] for i, r in enumerate(rs) if a7[i] is not None]
+        ep = u.get('ep') or []; done = [e for e in ep if e.get('r30') is not None]; cur = next((e for e in ep if e.get('open')), None); up = sum(e['r30'] > 0 for e in done)
+        mon = u.get('mon') or {}; since = day(rs[0][0]); st = f.get('stables') or {}
+        it = [('現在', 'Now', '%.4f 美元' % u['px'], '$%.4f' % u['px'], 'neu',
+               'USDT 在 Coinbase 收 %.4f 美元，比 1 美元%s %.3f%%；7 日平均 %s%s。' % (u['px'], '低' if u['disc'] < 0 else '高', abs(u['disc']), p3(u['disc7']), ('，%s 以來只有 %.0f%% 的日子比這低' % (since.strftime('%Y/%m'), u['disc7_pct_own'])) if u.get('disc7_pct_own') is not None and u['disc7_pct_own'] <= 50 else ''),
+               'USDT closed at $%.4f on Coinbase, %.3f%% %s $1; the 7-day average is %s%s.' % (u['px'], abs(u['disc']), 'below' if u['disc'] < 0 else 'above', p3(u['disc7']), ('; only %.0f%% of days since %s were lower' % (u['disc7_pct_own'], since.strftime('%Y-%m'))) if u.get('disc7_pct_own') is not None and u['disc7_pct_own'] <= 50 else ''))]
+        if mon.get('avg'):
+            mz = '%d 月' % int(mon['ym'][5:]); rk = mon['rank']; low = mon.get('low') or {}
+            it.append(('這個月', 'This month', '%.4f' % mon['avg'], '%.4f' % mon['avg'], 'neu',
+              '%s到目前 %d 天，平均 %.4f 美元，' % (mz, mon['n'], mon['avg']) + ('是 %s 有資料以來最低的一個月' % since.strftime('%Y/%m') if rk == 1 else '在 %d 個月裡排第 %d 低' % (mon['months'], rk)) + ('（之前最低是 %s 的 %.4f）' % (low['ym'].replace('-', '/'), low['avg']) if rk == 1 and low else '') + '。這個月還沒過完，數字會變。',
+              '%d days into %s the average is $%.4f, ' % (mon['n'], mon['ym'], mon['avg']) + ('the lowest month since the data starts in %s' % since.strftime('%Y-%m') if rk == 1 else 'ranked %d lowest of %d months' % (rk, mon['months'])) + (' (the previous low was $%.4f in %s)' % (low['avg'], low['ym']) if rk == 1 and low else '') + '. The month is not over, so this will move.'))
+        if ep:
+            rr = '、'.join('%s %s' % (ym(e['a']), pc(e['r30'])) for e in done); rre = ', '.join('%s %s' % (day(e['a']).strftime('%Y-%m'), pc(e['r30'])) for e in done)
+            it.append(('過去的深度折價', 'Past deep discounts', '%d / %d' % (up, len(done)), '%d / %d' % (up, len(done)), 'neu',
+              '7 日平均跌破 %s（近四年最低 5%% 的線）共 %d 次' % (dtx, len(ep)) + ('，這一次從 %s 開始，還沒結束' % md(day(cur['a']).isoformat()) if cur else '') + '。之前 %d 次，跌破那天起 30 天價格 %d 次較高（%s）' % (len(done), up, rr) + ('，和隨便一天（%.0f%%）差不多' % u['base'] if u.get('base') is not None else '') + '。結果好壞都有，只作讀值。',
+              'The 7-day average has fallen below %s (its lowest 5%% in four years) %d times' % (dtx, len(ep)) + ('; the current one began on %s and has not ended' % day(cur['a']).isoformat() if cur else '') + '. After the earlier %d, price was higher 30 days after the break %d times (%s)' % (len(done), up, rre) + (', about the same as any day (%.0f%%)' % u['base'] if u.get('base') is not None else '') + '. Mixed results; a reading only.'))
+        if st.get('chg30_usd_b') is not None:
+            sb = st['chg30_usd_b']; sp = st.get('chg30_pct')
+            it.append(('穩定幣供給', 'Stablecoin supply', pc(sp, 1) if sp is not None else '—', pc(sp, 1) if sp is not None else '—', 'neu',
+              '全部美元穩定幣的流通量 30 天%s %.0f 億美元。' % ('少了' if sb < 0 else '多了', abs(sb) * 10) + ('USDT 折價加上供給在縮，兩個方向一致，比較像是有人把穩定幣換回美元。' if sb < 0 and u['disc7'] < 0 else 'USDT 溢價加上供給在增，兩個方向一致，比較像是有人把美元換成穩定幣。' if sb > 0 and u['disc7'] > 0 else '價格和供給方向不一致，單看一邊不夠。'),
+              'The supply of all dollar stablecoins %s by $%.1fB over 30 days. ' % ('fell' if sb < 0 else 'rose', abs(sb)) + ('A USDT discount and shrinking supply point the same way: holders look to be swapping stablecoins back into dollars.' if sb < 0 and u['disc7'] < 0 else 'A USDT premium and growing supply point the same way: dollars look to be moving into stablecoins.' if sb > 0 and u['disc7'] > 0 else 'Price and supply point different ways; one alone is not enough.')))
+        return dict(k='usdt-usd', zh='USDT 對美元', en='USDT vs the dollar', hz='比 1 美元高或低多少（7 日平均）', he='Distance from $1 (7-day average)', f='p3', rows=rows, p=2, hero=1,
+          ser=[ser(1, zh='每日', en='Daily', hide=1), ser(3, zh='7 日平均', en='7-day average', t='sign', hi='c3', lo='c3', w=1.8)],   # 每日值太抖，圖上只畫 7 日平均，每日的數字留在游標讀值裡
+          refs=[dict(v=0, col='k2', solid=1), dict(v=DEEP, col='dn', zh='深度折價線 ' + dtx, en='Deep-discount line ' + dtx)],
+          marks=[dict(d=e['d'], v=e['min'], col='dn', up=0, zh=None if e.get('r30') is None else '30 天 ' + pc(e['r30']), en=None if e.get('r30') is None else '30d ' + pc(e['r30'])) for e in ep],
+          leg=[['dn', '歷次跌破深度折價線後最深的那一天，數字是跌破那天起 30 天的漲跌', 'Deepest day of each break below the line; the label is the price change over the 30 days from the break', 'ring']],
+          say=own(it, 'USDT 比 1 美元%s %.2f%%（7 日平均）' % ('低' if u['disc7'] < 0 else '高', abs(u['disc7'])), 'USDT is %.2f%% %s $1 (7-day average)' % (abs(u['disc7']), 'below' if u['disc7'] < 0 else 'above')),
+          dz='USDT 在 Coinbase 上對美元的價格減 1。低於 0（折價）是賣 USDT 換美元的人比較多，通常代表有人把穩定幣換回美元；高於 0（溢價）是搶著換進 USDT 的人比較多。藍紫色的面積是 7 日平均，和 Coinbase 溢價「拆開看」裡 USDT 那一塊是同一條。虛線是近四年 7 日平均最低 5%% 的位置（%s），圓圈是歷次跌破後最深的那一天，旁邊是跌破那天起 30 天的漲跌。這是 Coinbase 一個交易所的價格，別的地方會有小差異；和「亞洲：場外 USDT 溢價」不一樣，那張是 USDT 對人民幣。2023/03 的大幅溢價是 USDC 脫鉤時資金湧進 USDT。只作讀值。' % dtx,
+          de='The price of USDT in dollars on Coinbase, minus 1. Below 0 (a discount) means more people are selling USDT for dollars, which usually means stablecoins are being cashed out; above 0 (a premium) means more people are rushing into USDT. The blue-violet area is the 7-day average, the same line as the USDT part of the Coinbase premium Breakdown. The dashed line marks the lowest 5%% of the 7-day average in four years (%s); circles mark the deepest day of each break, labelled with the price change over the 30 days from the break. This is the price on one exchange, Coinbase, and others differ slightly; it is not the same as the Asia OTC USDT premium, which is USDT against the yuan. The large premium in March 2023 was money moving into USDT while USDC lost its peg. A reading only.' % dtx)
+
     def c_prasia():   # 顏色：drawPrem 的 one('c-pr-asia', …, 'var(--s4)')→c5、零軸 ink-3→k2；±0.3% 的持平帶取自 premSay 的門檻，現有網站圖上沒畫，區帶顏色依意義選
         h = [r for r in p3.get('usdt_hist') or [] if r[1] is not None]; u = p3.get('usdt') or {}
         if len(h) < 2: return NA('pr-asia', '亞洲：場外 USDT 溢價', 'Asia: OTC USDT premium', 'OKX 場外 USDT 報價的每日快照（flows.premium3.usdt_hist，至少要兩天）', 'the daily OKX OTC USDT snapshot (flows.premium3.usdt_hist; it needs at least two days)')
@@ -517,7 +552,7 @@ def build(L, N, E, dn, X):
 
     return [
         grp('機構', 'Institutions', 'ETF 和 CME 的機構資金是進還是出', 'Is institutional money in ETFs and on CME coming in or going out', [c_etf(), c_etf20(), c_cot()]),
-        grp('各地買盤', 'Regional demand', '美國、亞洲、韓國哪邊在買，幣往交易所進還是出', 'Which region is buying, and whether coins are moving onto or off exchanges', [c_prus(), c_prneg(), c_prasia(), c_prperp(), c_kp(), c_exflow(), c_exch()]),
+        grp('各地買盤', 'Regional demand', '美國、亞洲、韓國哪邊在買，幣往交易所進還是出', 'Which region is buying, and whether coins are moving onto or off exchanges', [c_prus(), c_prneg(), c_usdt(), c_prasia(), c_prperp(), c_kp(), c_exflow(), c_exch()]),
         grp('鏈上需求', 'On-chain demand', '新的需求接不接得住供給，新的錢有沒有進來', 'Is new demand absorbing supply, and is new money arriving', [c_ad(), c_dmd(), c_capflow(), c_grad(), c_rcliq(), c_stab()]),
         grp('大戶與長期持有者', 'Whales and long-term holders', '大戶和長期持有者在加碼、出貨還是不動', 'Are whales and long-term holders adding, distributing or sitting still',
             [c_whale(), c_whalet(), c_whstrip(), reuse('lthnet', '長期持有者 30 日淨部位變化', 'LTH 30-day net position change'), reuse('lsrchg', '長短期供給比 30 日變化', 'LTH/STH supply ratio, 30-day change'),
