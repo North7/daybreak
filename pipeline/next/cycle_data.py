@@ -183,6 +183,23 @@ def build(L, N, E, dn, X):
     X['cyccmp'] = dict(k='cyccmp', zh='和前幾輪比：頂部之後', en='Versus past cycles: after the top', hz='現在比這一輪頂部', he='Now, versus this cycle\'s top', hs=dict(v=(cc['cycles'][-1]['rows'][-1][1] - 1) * 100, f='pct1'),
       xy=dict(xk='days', log=1, f='xpct', series=[dict(zh=yr(c['top']) + (' 這一輪' if c['now'] else ''), en=yr(c['top']) + (' (now)' if c['now'] else ''), col=CCOL[(i + 4 - NC) % 4], w=2.4 if c['now'] else 1.4, op=1 if c['now'] else .8, rows=c['rows']) for i, c in enumerate(cc['cycles'])], ref=dict(v=1, col='k2', zh='頂部收盤', en='Top close'), vl=[dict(x=cc['day_now'], col='k2', zh='今天', en='Today')]),
       dz='把每一輪的頂部對齊在第 0 天，看頂部之後每天的收盤比頂部高或低多少（−50%% 是跌掉一半）。橘色是這一輪，現在是頂部後第 %d 天。' % cc['day_now'], de='Each cycle aligned at its top on day 0, showing how far every later close sits above or below that top (−50%% means half gone). Orange is this cycle, now %d days past its top.' % cc['day_now'])
+    ddv = o.get('dd')   # 2026-11-13 離高點的回撤（oc_extra.dd_viz）：兩個視角，週期的頂底沿用全站同一套
+    if ddv:
+        dc, da = ddv['cyc'], ddv['ath']; ps = dc['past']; ymz = lambda s_: s_[:7].replace('-', '/'); sl = lambda s_: s_.replace('-', '/'); mn = lambda v: ('%.0f%%' % v).replace('-', '−'); mn1 = lambda v: ('%.1f%%' % v).replace('-', '−')
+        DST = [['在高點', 'At the high'], ['在高點下方', 'Below the high']]
+        dmk = [dict(d=dn(x['d']), v=x['v'], col='dn', up=0, zh='%s %s' % (ymz(x['d']), mn(x['v'])), en='%s %s' % (x['d'][:7], mn(x['v']))) for x in ps['deep']]
+        amk = [dict(d=dn(x['d']), v=x['v'], col='dn' if x['d'] == dc['bottom'] else 'c3', up=0, zh='%s 底 %s' % (yr(x['d']), mn(x['v'])), en='%s low %s' % (yr(x['d']), mn(x['v']))) for x in da['bottoms']]
+        X['dd'] = dict(k='dd', zh='離高點的回撤', en='Drawdown from the high',
+          modes=[dict(mz='這一輪低點以來', me='Since the cycle low', hz='離這一輪的高點', he="From this cycle's high", f='pct1', rows=[[r[0], r[1], r[2]] for r in ddv['rows']], p=2, npc=1,
+                      ser=[ser(1, zh='離這一輪高點', en="From the cycle's high", t='sign', base=0, st=DST, w=1.5)], refs=[dict(v=ps['med'], col='k2')],
+                      marks=dmk, leg=[['k2', '前四輪的中位數 %s' % mn1(ps['med']), 'Median of the past four, %s' % mn1(ps['med']), 'dash'], ['dn', '每一輪最深的一次', 'Deepest pullback of each cycle', 'ring']]),
+                 dict(mz='歷史高點', me='All-time high', hz='離歷史高點', he='From the all-time high', f='pct1', rng=0, rows=[[r[0], r[3], r[2]] for r in ddv['rows']], p=2, npc=1,
+                      ser=[ser(1, zh='離歷史高點', en='From the all-time high', t='split', base=0, st=DST, w=1.5)], refs=[dict(v=0, col='k2', solid=1)],
+                      marks=amk, leg=[['c3', '週期底部', 'Cycle bottoms', 'ring'], ['dn', '這一輪目前的低點', "This cycle's low so far", 'ring']])],
+          dz='收盤比高點低多少，兩個視角。「這一輪低點以來」：每一輪從底部起算，和這段期間的最高收盤比，只畫底部到頂部；這一輪從 %s 的低點（$%s）起算，高點是 %s 的 $%s，如果之後跌破那個低點，這一段就要重算。前四輪從底到頂的日子裡，一半比 %s 淺，%d%% 比現在深。「歷史高點」：和歷史最高收盤（%s 的 $%s）比，圓圈是每一輪的底部。只作讀值。'
+             % (sl(dc['bottom']), format(dc['bottom_px'], ','), sl(dc['high']), format(dc['high_px'], ','), mn1(ps['med']), ps['deeper'], sl(da['high']), format(da['high_px'], ',')),
+          de='How far the close sits below the high, in two views. "Since the cycle low": each cycle is measured from its bottom against the highest close since then, drawn from bottom to top only. This cycle starts at the %s low ($%s) and its high is $%s on %s; if that low breaks, this stretch has to be redrawn. Across the past four cycles, half of all bottom-to-top days were shallower than %s and %d%% were deeper than now. "All-time high": measured against the highest close on record ($%s on %s); circles mark each cycle bottom. A reading only.'
+             % (dc['bottom'], format(dc['bottom_px'], ','), format(dc['high_px'], ','), dc['high'], mn1(ps['med']), ps['deeper'], format(da['high_px'], ','), da['high']))
     ce = o['capeff']; cema = max(math.log10(1 + max(0, c_['add_b'])) for c_ in ce['cycles'] + [ce['cur']]) or 1; cemm = max(math.log10(max(1, c_['mult'])) for c_ in ce['cycles'] + [ce['cur']]) or 1
     X['capeff'] = dict(k='capeff', zh='每輪資金效率', en='Capital efficiency by cycle', hz='這一輪到現在的價格倍數', he='This cycle\'s price multiple so far', hs=dict(v=ce['cur']['mult'], f='x2'),
       list=dict(rows=[row('%s → %s' % (yr(c['bottom']), yr(c['top'])) if not now_ else '%s → 現在' % yr(c['bottom']), '%s → %s' % (yr(c['bottom']), yr(c['top'])) if not now_ else '%s → now' % yr(c['bottom']), ('%.0f×' % c['mult']) if c['mult'] >= 20 else ('%.1f×' % c['mult']) if c['mult'] >= 10 else ('%.2f×' % c['mult']),
@@ -207,7 +224,7 @@ def build(L, N, E, dn, X):
          grp('估值冷熱', 'Valuation heat', '和過去比，現在算貴還是便宜', 'Rich or cheap against history', ['hnupl', 'rup', 'aviv', 'rrisk', 'pl', 'p6', 'p6v']),
          grp('頂部訊號', 'Top signals', '離頂部有多近', 'How close to a top', ['p20', 'radar', 'radarv', 'pi', 'tm', 'tmh']),
          grp('底部訊號', 'Bottom signals', '過去的底部長什麼樣，現在像不像', 'What past bottoms looked like, and whether this resembles one', ['lthloss', 'npl365', 'agecost', 'hashr']),
-         grp('和歷史比', 'Against history', '和前幾輪、和模型比', 'Against past cycles and models', ['cyccmp', 'capeff', 'path', 'long', 'mon'])]
+         grp('和歷史比', 'Against history', '和前幾輪、和模型比', 'Against past cycles and models', ['cyccmp', 'dd', 'capeff', 'path', 'long', 'mon'])]
     s1 = dw['stats'][k] if k < len(dw['stats']) else {}
     hvs = [dn(h) for h in cy['halvings']] + [dn(cy['next_halving_est'])]
     dial = dict(stage=k, heat=dw['heat'], weeks=dw['stage_weeks'], stages=[[s[0], s[1], s[2], s[3], s[4]] for s in SG], comp=comp, y1=(s1.get('y1') or {}), nweeks=s1.get('weeks'), th=th, hv=hvs,

@@ -913,6 +913,7 @@ if BV:
         for _k, _fn in (('quant', lambda: oc_extra.quant_viz(BV, _pxc, LAST, _md2['cycle_bottoms'])), ('sthl', lambda: oc_extra.sthl_viz(BV, _pxc, LAST)),
                         ('rup', lambda: oc_extra.rup_viz(BV, _pxc, LAST, _md2['cycle_tops'])), ('rloss', lambda: oc_extra.rloss_viz(BV, _pxc, LAST, _trf)),
                         ('lsrchg', lambda: oc_extra.lsrchg_viz(BV, _pxc, LAST, _md2['cycle_bottoms'], _md2['cycle_tops'])),
+                        ('dd', lambda: oc_extra.dd_viz(BV, _pxc, LAST, _md2['cycle_bottoms'], _md2['cycle_tops'])),   # 2026-11-13 離高點的回撤
                         ('grad', lambda: oc_extra.grad_viz(BV, _pxc, LAST)), ('mom', lambda: oc_extra.mom_viz(BV, _pxc, LAST)),
                         ('pullback', lambda: oc_extra.pullback_viz(BV, _pxc, LAST, R.get('sec'), R.get('rloss')))):
             try: R[_k] = _fn()

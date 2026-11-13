@@ -309,6 +309,53 @@ def lsrchg_viz(bv, px, last, bottoms=(), tops=(), step=3):
                 note='長期持有者供給 ÷ 短期持有者供給（Bitview，155 天分界）的 30 日變化 %；只作讀值')
 
 
+# ---------- 離高點的回撤（2026-11-13 使用者要求） ----------
+DD_FIRST = '2011-11-18'   # 2011–13 那一輪的底部收盤（model.json 的 cycle_bottoms 從 2015 起，這一輪的起點補在這裡）
+
+
+def dd_viz(bv, px, last, bottoms=(), tops=(), step=3, keep=1100):
+    """兩種回撤，都用收盤：
+    cyc＝每一輪從底部起算，收盤比「底部以來的最高收盤」低多少 %，只算底部到頂部（最後一輪到現在）；
+    ath＝收盤比歷史最高收盤低多少 %。
+    週期的頂、底沿用 model.json（和全站其他圖同一套）。最後一個底如果被跌破，cyc 的最後一段要重算，所以圖上寫明起點。只作讀值。"""
+    P = _P(bv, px); D = [d for d in sorted(bv.get('px') or {}) if d <= last and P(d)]
+    if len(D) < 1500: return None
+    T = [t[0] for t in tops]; B = [DD_FIRST] + [b[0] for b in bottoms]
+    segs = []   # (底, 頂或 None)
+    for b in B:
+        t = next((x for x in T if x > b), None)
+        if b >= D[0]: segs.append((b, t))
+    if not segs or segs[-1][1] is not None: return None   # 最後一個底之後已經有頂：沒有「這一輪」可畫
+    cyc, past, deep = {}, [], []
+    for b, t in segs:
+        m = 0; w = []
+        for d in D:
+            if d < b or (t and d > t): continue
+            m = max(m, P(d)); cyc[d] = (P(d) / m - 1) * 100; w.append(d)
+        if not w: continue
+        lo = min(w, key=lambda d: cyc[d])
+        if t: past += [cyc[d] for d in w]; deep.append(dict(d=lo, v=round(cyc[lo], 1), bottom=b, top=t))
+        else: cur = dict(bottom=b, bottom_px=round(P(b)), high=max(w, key=P), deep=dict(d=lo, v=round(cyc[lo], 1)))
+    ath, m = {}, 0
+    for d in D:
+        m = max(m, P(d)); ath[d] = (P(d) / m - 1) * 100
+    d1 = D[-1]; now = cyc[d1]; ps = sorted(past); q = lambda f: round(ps[int((len(ps) - 1) * f)], 1)
+    hi = cur['high']; ah = max(D, key=P)
+    rows = [[dn(d), None if d not in cyc else round(cyc[d], 2), round(P(d), 2 if P(d) < 100 else 0), round(ath[d], 2)] for d in D if d >= DD_FIRST]   # 從第一輪的底開始畫（更早的價格不到 1 美元，價格刻度會變成 $0）
+    cut = rows[-1][0] - keep; old = [r for r in rows if r[0] < cut]
+    def pick(g):   # 更早的每 step 天留一筆：留歷史高點回撤最深的那天，谷底不會被抽掉；這一組裡有週期內的值就帶著
+        r = list(min(g, key=lambda r: r[3])); c = [x[1] for x in g if x[1] is not None]
+        r[1] = min(c) if c and r[1] is not None else r[1]; return r
+    rows = [pick(old[i:i + step]) for i in range(0, len(old), step)] + [r for r in rows if r[0] >= cut]
+    return dict(date=d1, close=round(P(d1)),
+                cyc=dict(value=round(now, 1), high=hi, high_px=round(P(hi)), days=dn(d1) - dn(hi), bottom=cur['bottom'], bottom_px=cur['bottom_px'], deep=cur['deep'],
+                         past=dict(n=len(ps), cycles=len(deep), mean=round(sum(ps) / len(ps), 1), med=q(.5), p25=q(.25), deeper=round(sum(v < now for v in ps) / len(ps) * 100), deep=deep)),
+                ath=dict(value=round(ath[d1], 1), high=ah, high_px=round(P(ah)), days=dn(d1) - dn(ah),
+                         bottoms=[dict(d=b[0], v=round(ath[b[0]], 1)) for b in bottoms if b[0] in ath]),
+                rows=rows, src='Bitview',
+                note='收盤比高點低多少 %：cyc 是每一輪底部以來的最高收盤（只算底到頂），ath 是歷史最高收盤；週期頂底沿用 model.json；只作讀值')
+
+
 # ---------- 背離偵測（共用） ----------
 def _swings(D, P, W, hi):
     """價格擺動高（hi=True）／低點：前後 W 天的最高／最低；最後 W 天內的不確認"""
