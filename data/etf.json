@@ -2,11 +2,6 @@
  "_about": "美國現貨 BTC ETF 每日淨流量（百萬美元，美國現貨 ETF 合計，不含香港）。資料管線每天從 CoinMarketCap 自動更新（2026-11-11 起；之前是 The Block，11/09 下架）；CoinMarketCap 沒有 MSBT，和 Farside 偶爾差幾百萬美元。partial=true 表示當天尚未完整回報。",
  "rows": [
   {
-   "d": "2026-08-19",
-   "musd": 507.3,
-   "partial": false
-  },
-  {
    "d": "2026-08-20",
    "musd": 606.3,
    "partial": false
@@ -300,19 +295,24 @@
    "d": "2026-11-11",
    "musd": -308.8,
    "partial": false
+  },
+  {
+   "d": "2026-11-12",
+   "musd": -51.0,
+   "partial": false
   }
  ],
  "source": "CoinMarketCap",
  "source_url": "https://coinmarketcap.com/etf/bitcoin/",
- "updated_utc": "2026-11-13T00:26:06+00:00",
- "last_complete": "2026-11-11",
+ "updated_utc": "2026-11-13T20:43:12+00:00",
+ "last_complete": "2026-11-12",
  "roll20": {
-  "date": "2026-11-11",
+  "date": "2026-11-12",
   "n": 20,
   "th": -1500,
-  "sum": -1921,
-  "prev5": -813,
-  "pct_own": 13.6,
+  "sum": -1977,
+  "prev5": -999,
+  "pct_own": 13.5,
   "in_stretch": true,
   "stretches": [
    {
@@ -352,10 +352,10 @@
    },
    {
     "a": "2026-11-09",
-    "min": -1921,
-    "min_d": "2026-11-11",
-    "n": 3,
-    "b": "2026-11-11",
+    "min": -1977,
+    "min_d": "2026-11-12",
+    "n": 4,
+    "b": "2026-11-12",
     "open": true
    }
   ],
@@ -3120,6 +3120,10 @@
    [
     20768,
     -1921
+   ],
+   [
+    20769,
+    -1977
    ]
   ]
  }
