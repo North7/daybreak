@@ -1,16 +1,16 @@
 {
- "date": "2026-11-11",
+ "date": "2026-11-12",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/quant",
-   "chart": "data/picks/onchain-quant.png",
-   "chart_en": "data/picks/onchain-quant-en.png",
+   "id": "onchain/sthband",
+   "chart": "data/picks/onchain-sthband.png",
+   "chart_en": "data/picks/onchain-sthband-en.png",
    "name": {
-    "zh": "供給分位成本線",
-    "en": "Supply quantile cost lines"
+    "zh": "短期持有者成本帶",
+    "en": "Short-term holder cost bands"
    },
-   "link": "https://daybreak.aronlab.dev/#onchain/quant"
+   "link": "https://daybreak.aronlab.dev/#onchain/sthband"
   }
  ]
 }
