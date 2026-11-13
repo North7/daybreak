@@ -304,6 +304,10 @@ def tone_notes(items):
     if len(big) > 2: out.append(f'3 萬粉以上的回覆 {len(big)} 則（{", ".join("#" + str(it["n"]) for it in big)}）：一天 1–2 則就好，其餘回 1k–3 萬粉的博主')
     noimg = [it['n'] for it in big if not it.get('image')]
     if noimg: out.append(f'3 萬粉以上的回覆沒配圖：{noimg}，曝光型一律配網站圖（真的沒有就在 note 寫原因）')
+    # 2026-11-13 使用者同意：配圖門檻從 3 萬粉降到 1 萬粉（依據見私人倉庫 ops/replies/README.md）
+    mid = [it['n'] for it in live if it.get('kind') != 'followup' and it.get('mode') != 'quote' and 10000 <= (it.get('followers') or 0) < 30000
+           and not it.get('image') and '不配圖' not in (it.get('note') or '')]
+    if mid: out.append(f'1 萬–3 萬粉的回覆沒配圖：{mid}，能配就配（對不上就在 note 寫「不配圖：原因」）')
     qn = [it['n'] for it in live if it.get('mode') == 'quote']
     if len(qn) > 2: out.append(f'引用 {len(qn)} 則：{qn}，一天最多 2 則')
     if len(live) > 40: out.append(f'今天已經 {len(live)} 則（不含按讚就好的）：一天 35–40 則，之後只做接話')
