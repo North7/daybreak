@@ -381,6 +381,7 @@ input[type="range"]::-moz-range-thumb { width: 4px; height: 26px; background: va
 .dek { display: grid; gap: 12px; align-content: start; }
 .dek p { margin: 0; font-size: clamp(14px, 1.05vw, 16px); color: var(--ink-2); line-height: 1.8; max-width: 68ch; }
 .stamp { display: flex; gap: 8px; flex-wrap: wrap; }
+.stamp .chip { white-space: normal; }   /* 2026-11-13：立場標籤的字很長時（英文版）在手機上要能換行，不然會把整頁撐寬 */
 .watch { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; }
 .watch div { display: grid; gap: 3px; min-width: 0; align-content: start; padding: 0 14px; border-left: 1px solid var(--line); }
 .watch .k { font-size: 12px; color: var(--ink-3); }
