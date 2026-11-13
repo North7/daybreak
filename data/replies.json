@@ -4,8 +4,84 @@
  "edition": 38,
  "items": [
   {
+   "n": 35,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/Jasonz0830/status/2121087492107763918",
+   "id": "2121087492107763918",
+   "author": "Jasonz0830",
+   "name": "Jasonz0830",
+   "followers": 5893,
+   "posted": "2026-11-13T03:47:20Z",
+   "lang": "zh",
+   "angle": "接話",
+   "summary": "回我們 n6 的口徑提問：OI −6.2% 是用美元算的，而且是「有效 OI」，只算 10 萬以上帳戶、過濾刷量",
+   "reply": "那八成是大帳戶在減、小帳戶在加\n−6.2% 扣掉價格跌的 3.8%，換成顆數也還少 2.5% 左右",
+   "sources": "他的 −6.2%（美元、有效 OI）與 BTC −3.8%（他的日報）；(1−0.062)/(1−0.038)≈0.975；全市場永續未平倉 11/12 +3.8%（338,130 → 351,132 顆，Coinalyze）",
+   "note": "他貼文底下第 2 輪（作者本人回我們）。他連回兩則，接在後面那則（有效 OI），前一則「都是用美元算的」按讚。小帳戶在加是推論，用「八成」",
+   "style": "口語版",
+   "order": 1
+  },
+  {
+   "n": 36,
+   "status": "skip",
+   "kind": "followup",
+   "url": "https://x.com/Jasonz0830/status/2121087322720714877",
+   "id": "2121087322720714877",
+   "author": "Jasonz0830",
+   "name": "Jasonz0830",
+   "followers": 5893,
+   "posted": "2026-11-13T03:46:40Z",
+   "lang": "zh",
+   "angle": "按讚就好",
+   "summary": "「都是用美元算的」",
+   "reply": "",
+   "sources": "",
+   "note": "按讚就好：他緊接著補了一則有效 OI 的說明，接在那則（n35）",
+   "style": "口語版",
+   "order": 37
+  },
+  {
+   "n": 37,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/joke_henry/status/2121092565013561800",
+   "id": "2121092565013561800",
+   "author": "joke_henry",
+   "name": "joke_henry",
+   "followers": 9896,
+   "posted": "2026-11-13T04:07:30Z",
+   "lang": "zh",
+   "angle": "接話",
+   "summary": "回我們 n4「槓桿哪有塌」：老黃（輝達那天）的陰影還沒散",
+   "reply": "老黃那邊 Nasdaq 9 月中到現在才跌 3%，BTC 都跌 8% 了",
+   "sources": "9/12 起累計：Nasdaq −2.75%（FRED，到 11/11）、BTC −7.63%（到 11/12）；30 天相關性 0.695（data/latest.json flows.btc_vs_stocks、fred.NASDAQCOM）",
+   "note": "他貼文底下第 2 輪（作者本人回我們）。跟 n5 回 yytttt 的「幣圈自己的成分大」同一個看法，換一組數字",
+   "style": "口語版",
+   "order": 2
+  },
+  {
+   "n": 38,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/0xnathan_ai/status/2121084167622676563",
+   "id": "2121084167622676563",
+   "author": "0xnathan_ai",
+   "name": "0xnathan_ai",
+   "followers": 1193,
+   "posted": "2026-11-13T03:34:08Z",
+   "lang": "en",
+   "angle": "接話",
+   "summary": "在我們引用 Kyle 表觀需求那則底下：年齡分層解釋了表觀需求為什麼看起來那麼極端，但要叫它「信念」之前應該再配實現虧損和交易所流量",
+   "reply": "Exchange balances are up about 1.7% over 30 days, which cuts against the conviction read a little\nThe old-coin side took about $1.4B of losses last week, nowhere near past bear-bottom levels",
+   "sources": "交易所存量 30 天 +1.69%、7 天 +0.42%（11/11）；長期持有者已實現虧損 7 日合計 14.01 億美元、÷市值 0.098，2015 年來第 71 百分位，過去熊底最高 0.86（Bitview，11/12）",
+   "note": "原創底下接話。他的建議有道理，交易所存量在增加這點對「抱著不賣」不利，直接講",
+   "style": "口語版",
+   "order": 3
+  },
+  {
    "n": 34,
-   "order": 1,
+   "order": 4,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121084717860794394",
    "id": "2121084717860794394",
@@ -46,7 +122,7 @@
     "title": "Losses growing: $1.1B at a lower price"
    },
    "style": "口語版",
-   "order": 2
+   "order": 5
   },
   {
    "n": 27,
@@ -72,7 +148,7 @@
     "title": "短期持有者剛翻到虧損，長期持有者還在樂觀區"
    },
    "style": "口語版",
-   "order": 3
+   "order": 6
   },
   {
    "n": 28,
@@ -90,7 +166,7 @@
    "sources": "Deribit 基差曲線中位 5.7%（11/12）；資金費率年化 Binance 9.75%、OKX 10.95%、Hyperliquid 10.95%，加權 8.98%（11/12）",
    "note": "新帳號；他的曲線和本站對得上，不幫他核對，只補永續那邊",
    "style": "口語版",
-   "order": 4
+   "order": 7
   },
   {
    "n": 29,
@@ -108,7 +184,7 @@
    "sources": "全市場永續未平倉 351,132 顆，30 天 +14.8%、價格 −14.1%，2021 年來第 99 百分位（Coinalyze，11/12）",
    "note": "新帳號；只接他結論裡的「deleveraging」，升息和 ETF 不重複",
    "style": "口語版",
-   "order": 5
+   "order": 8
   },
   {
    "n": 31,
@@ -126,7 +202,7 @@
    "sources": "Deribit 11/13 08:00 UTC 週到期 33,367 顆；賣權未平倉最多 72K 1,785 顆、70K 1,687、68K 1,508（11/12）",
    "note": "新帳號；到期在台北 16:00，要在那之前發，過了就跳過",
    "style": "口語版",
-   "order": 6
+   "order": 9
   },
   {
    "n": 32,
@@ -144,7 +220,7 @@
    "sources": "DefiLlama 美元穩定幣 2,891 億，30 天 −149 億（−4.9%），30 日變化第 1.5 百分位（2,142 個觀察值，11/12）",
    "note": "新帳號，留言區活躍",
    "style": "口語版",
-   "order": 7
+   "order": 10
   },
   {
    "n": 33,
@@ -162,11 +238,11 @@
    "sources": "Bitview 地址分層 7 天變化：100–1K −29,868 顆（1K–10K +11,534，和他的說法同向，沒寫進回覆）（11/12）",
    "note": "固定名單；口徑不同，用問的不反駁",
    "style": "口語版",
-   "order": 8
+   "order": 11
   },
   {
    "n": 25,
-   "order": 9,
+   "order": 12,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/songpu717/status/2121075535443038321",
@@ -185,7 +261,7 @@
   },
   {
    "n": 24,
-   "order": 10,
+   "order": 13,
    "status": "send",
    "url": "https://x.com/ai_9684xtpa/status/2121061374713573727",
    "id": "2121061374713573727",
@@ -203,7 +279,7 @@
   },
   {
    "n": 23,
-   "order": 11,
+   "order": 14,
    "status": "send",
    "url": "https://x.com/Dragonhau66/status/2121065941421166610",
    "id": "2121065941421166610",
@@ -228,7 +304,7 @@
   },
   {
    "n": 21,
-   "order": 12,
+   "order": 15,
    "status": "send",
    "url": "https://x.com/market_beggar/status/2121057516457214363",
    "id": "2121057516457214363",
@@ -250,7 +326,7 @@
   },
   {
    "n": 22,
-   "order": 13,
+   "order": 16,
    "status": "skip",
    "url": "https://x.com/serlo123/status/2121056307721724290",
    "id": "2121056307721724290",
@@ -268,7 +344,7 @@
   },
   {
    "n": 3,
-   "order": 14,
+   "order": 17,
    "status": "optional",
    "url": "https://x.com/Kylechasse/status/2121044373055975428",
    "id": "2121044373055975428",
@@ -295,7 +371,7 @@
   },
   {
    "n": 1,
-   "order": 15,
+   "order": 18,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/serlo123/status/2121047906505638331",
@@ -314,7 +390,7 @@
   },
   {
    "n": 4,
-   "order": 16,
+   "order": 19,
    "status": "send",
    "url": "https://x.com/joke_henry/status/2121030206324654515",
    "id": "2121030206324654515",
@@ -332,7 +408,7 @@
   },
   {
    "n": 5,
-   "order": 17,
+   "order": 20,
    "status": "send",
    "url": "https://x.com/yytttt_1982/status/2121032401766003113",
    "id": "2121032401766003113",
@@ -350,7 +426,7 @@
   },
   {
    "n": 6,
-   "order": 18,
+   "order": 21,
    "status": "send",
    "url": "https://x.com/Jasonz0830/status/2121015030103814204",
    "id": "2121015030103814204",
@@ -368,7 +444,7 @@
   },
   {
    "n": 7,
-   "order": 19,
+   "order": 22,
    "status": "send",
    "url": "https://x.com/craigscoinpurse/status/2121011406434636282",
    "id": "2121011406434636282",
@@ -386,7 +462,7 @@
   },
   {
    "n": 8,
-   "order": 20,
+   "order": 23,
    "status": "send",
    "url": "https://x.com/FinFreedom414/status/2121036873610989761",
    "id": "2121036873610989761",
@@ -404,7 +480,7 @@
   },
   {
    "n": 9,
-   "order": 21,
+   "order": 24,
    "status": "send",
    "url": "https://x.com/crypto_div/status/2121008754527191325",
    "id": "2121008754527191325",
@@ -430,7 +506,7 @@
   },
   {
    "n": 10,
-   "order": 22,
+   "order": 25,
    "status": "send",
    "url": "https://x.com/BTC1412/status/2121031186080571641",
    "id": "2121031186080571641",
@@ -448,7 +524,7 @@
   },
   {
    "n": 2,
-   "order": 23,
+   "order": 26,
    "status": "skip",
    "kind": "followup",
    "url": "https://x.com/Kev_Capital_TA/status/2120879475520897246",
@@ -467,7 +543,7 @@
   },
   {
    "n": 11,
-   "order": 24,
+   "order": 27,
    "status": "skip",
    "url": "https://x.com/paulxue1979/status/2121043923628159251",
    "id": "2121043923628159251",
@@ -485,7 +561,7 @@
   },
   {
    "n": 12,
-   "order": 25,
+   "order": 28,
    "status": "skip",
    "url": "https://x.com/yonghao131419/status/2121024991160652234",
    "id": "2121024991160652234",
@@ -503,7 +579,7 @@
   },
   {
    "n": 13,
-   "order": 26,
+   "order": 29,
    "status": "skip",
    "url": "https://x.com/szjcapital/status/2121042508578988295",
    "id": "2121042508578988295",
@@ -521,7 +597,7 @@
   },
   {
    "n": 14,
-   "order": 27,
+   "order": 30,
    "status": "skip",
    "url": "https://x.com/DrHashClub/status/2121015841919729877",
    "id": "2121015841919729877",
@@ -539,7 +615,7 @@
   },
   {
    "n": 15,
-   "order": 28,
+   "order": 31,
    "status": "skip",
    "url": "https://x.com/Wallet_Journey/status/2121027763511665059",
    "id": "2121027763511665059",
@@ -557,7 +633,7 @@
   },
   {
    "n": 16,
-   "order": 29,
+   "order": 32,
    "status": "skip",
    "url": "https://x.com/mvanthof28/status/2121032545429291223",
    "id": "2121032545429291223",
@@ -575,7 +651,7 @@
   },
   {
    "n": 17,
-   "order": 30,
+   "order": 33,
    "status": "skip",
    "url": "https://x.com/lukasz_wydra/status/2120973358057857296",
    "id": "2120973358057857296",
@@ -593,7 +669,7 @@
   },
   {
    "n": 18,
-   "order": 31,
+   "order": 34,
    "status": "skip",
    "url": "https://x.com/TheVictorBuilds/status/2121038797186208094",
    "id": "2121038797186208094",
@@ -611,7 +687,7 @@
   },
   {
    "n": 19,
-   "order": 32,
+   "order": 35,
    "status": "skip",
    "url": "https://x.com/LygosFinance/status/2121043291362021690",
    "id": "2121043291362021690",
@@ -629,7 +705,7 @@
   },
   {
    "n": 20,
-   "order": 33,
+   "order": 36,
    "status": "skip",
    "url": "https://x.com/Dragonhau66/status/2120990471212154943",
    "id": "2120990471212154943",
