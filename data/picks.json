@@ -1,16 +1,16 @@
 {
- "date": "2026-11-11",
- "edition": 37,
+ "date": "2026-11-12",
+ "edition": 38,
  "picks": [
   {
-   "id": "onchain/quant",
-   "chart": "data/picks/onchain-quant.png",
-   "chart_en": "data/picks/onchain-quant-en.png",
-   "why": "價格貼著 200 日均線、讀者在問再跌會怎樣；這張用供給分位回答「跌到哪裡一半的幣變虧損」，和頭條的穩定幣、費率不重複。",
-   "q_zh": "BTC 跌到哪裡，一半的幣會變成虧損？",
-   "q_en": "How far would BTC have to fall for half of all coins to be at a loss?",
-   "zh": "到哪裡會有一半的幣變虧損？現在 58.1% 的供給在獲利；跌到 69,280 剩 55%，跌到 64,410 剩一半。前三輪熊市底部都跌破一半，這輪 6/30 是 45.9%；11/10 這次回調最低 57.9%，比 1 月的 51.8% 淺。#比特幣 #BTC #鏈上數據",
-   "en": "Where would half of BTC be at a loss? 58.1% of supply is in profit now; at 69,280 that drops to 55%, at 64,410 to half. Every past bear bottom went below half (45.9% on Jun 30 this cycle); the Nov 10 dip bottomed at 57.9%, shallower than January's 51.8%. #Bitcoin #BTC #onchain"
+   "id": "onchain/sthband",
+   "chart": "data/picks/onchain-sthband.png",
+   "chart_en": "data/picks/onchain-sthband-en.png",
+   "why": "跌破 200 日均線隔天，讀者在問「這算跌很深了嗎」；成本帶用短期持有者成本的歷史偏離回答，和頭條的槓桿不重複，7 天內沒推過。",
+   "q_zh": "跌破 200 日均線後，BTC 算跌得很深了嗎？",
+   "q_en": "After breaking the 200-day average, is BTC deeply oversold yet?",
+   "zh": "跌破 200 日均線後算跌很深了嗎？還沒到極端：收盤 71,371 在短期持有者成本 75,429 下方，但離 −1 標準差帶 68,697 還有一段。近 4 年只有 7.3% 的日子收在這條帶下方，上一次是 7/01；再下一條 −2 標準差在 58,859。#比特幣 #BTC #鏈上數據",
+   "en": "Is BTC deeply oversold after losing the 200-day average? Not yet: the 71,371 close is below short-term holder cost (75,429) but above the −1 SD band at 68,697. Only 7.3% of days in 4 years closed under it, last on Jul 1; −2 SD is 58,859. #Bitcoin #BTC #onchain"
   }
  ]
 }
