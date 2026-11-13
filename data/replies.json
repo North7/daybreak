@@ -4,8 +4,151 @@
  "edition": 38,
  "items": [
   {
+   "n": 26,
+   "status": "send",
+   "mode": "quote",
+   "url": "https://x.com/timevalueofbtc/status/2121073855875940775",
+   "id": "2121073855875940775",
+   "author": "timevalueofbtc",
+   "name": "timevalueofbtc",
+   "followers": 71317,
+   "posted": "2026-11-13T02:53:09Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "Binance 事件後一路難看、75K 沒守住，跌破 70K，「投降又來了」",
+   "reply": "",
+   "quote": "@timevalueofbtc is calling it capitulation again\nRealized losses hit about $1.1B yesterday, a bigger peak than Nov 3 at a lower price\nNewer holders sold 2.4x more at a loss than in profit\n#Bitcoin #BTC #onchain",
+   "sources": "全網實現虧損 11/12 10.87 億美元，11/3 峰值 9.63 億（Bitview，網站判讀「背離被打破（暫定）」）；短期持有者 11/12 認賠 5,874 顆、獲利 2,425 顆（CheckOnChain）",
+   "note": "引用（7 萬粉、藍勾），2 小時窗到台北 12:53；今天第 2 則引用（Kylechasse 那則是 optional，兩則都發就到上限）",
+   "image": {
+    "site": {
+     "page": "onchain",
+     "sel": "#c-rloss"
+    },
+    "title": "Losses growing: $1.1B at a lower price"
+   },
+   "style": "口語版",
+   "order": 1
+  },
+  {
+   "n": 27,
+   "status": "send",
+   "url": "https://x.com/BBJieRan/status/2121064791137829046",
+   "id": "2121064791137829046",
+   "author": "BBJieRan",
+   "name": "BBJieRan",
+   "followers": 9453,
+   "posted": "2026-11-13T02:17:08Z",
+   "lang": "zh",
+   "angle": "交易心理",
+   "summary": "碰到 70K，126K 跌到 58K 都沒慌的人這次大多怕了；他認為或是本輪最後一跌",
+   "reply": "套久了人會麻，剛從賺翻到賠那一下才慌\n短期持有者的帳面損益這個月才剛翻負\n6 月底 58K 那次比現在深四倍，群裡反而沒人叫\n長期持有者帳面還是賺的，慌的主要是這幾個月才進來的人",
+   "sources": "短期持有者 NUPL 11/12 −0.055（30 天前 +0.106），2026-06-30 −0.217；長期持有者 0.32（Bitview）",
+   "note": "新帳號；交易心理，配情緒圖 NUPL（中文今天第一次用這張）；不接「最後一跌」和抄底",
+   "image": {
+    "site": {
+     "page": "cycle",
+     "sel": "#c-hnupl",
+     "pre": "var p=document.querySelector('#pn-hnupl'), b=p&&document.querySelector('.gmore-btn[data-gm=\"'+p.getAttribute('data-gm')+'\"]'); if(b) b.click(); true"
+    },
+    "title": "短期持有者剛翻到虧損，長期持有者還在樂觀區"
+   },
+   "style": "口語版",
+   "order": 2
+  },
+  {
+   "n": 28,
+   "status": "send",
+   "url": "https://x.com/david_eng_mba/status/2121062762126397668",
+   "id": "2121062762126397668",
+   "author": "david_eng_mba",
+   "name": "david_eng_mba",
+   "followers": 26384,
+   "posted": "2026-11-13T02:09:04Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "Deribit 12 個到期日全部高於現貨、沒有逆價差；30 天基差 +6.12%、315 天 +5.69%",
+   "reply": "Longs went to the perps instead, Binance and OKX were charging 10–11% annualized yesterday, almost double your curve",
+   "sources": "Deribit 基差曲線中位 5.7%（11/12）；資金費率年化 Binance 9.75%、OKX 10.95%、Hyperliquid 10.95%，加權 8.98%（11/12）",
+   "note": "新帳號；他的曲線和本站對得上，不幫他核對，只補永續那邊",
+   "style": "口語版",
+   "order": 3
+  },
+  {
+   "n": 29,
+   "status": "send",
+   "url": "https://x.com/znghurn199623/status/2121065915148390896",
+   "id": "2121065915148390896",
+   "author": "znghurn199623",
+   "name": "znghurn199623",
+   "followers": 6533,
+   "posted": "2026-11-13T02:21:36Z",
+   "lang": "en",
+   "angle": "提出反例",
+   "summary": "跌破 71K；壓 BTC 的是資金變貴、ETF 買盤消失、穩定幣收縮；結論是緊縮下的去槓桿",
+   "reply": "The leverage hasn't left yet\nPerp open interest in BTC terms grew about 15% this past month while price fell\nStill near the highest since 2021",
+   "sources": "全市場永續未平倉 351,132 顆，30 天 +14.8%、價格 −14.1%，2021 年來第 99 百分位（Coinalyze，11/12）",
+   "note": "新帳號；只接他結論裡的「deleveraging」，升息和 ETF 不重複",
+   "style": "口語版",
+   "order": 4
+  },
+  {
+   "n": 31,
+   "status": "send",
+   "url": "https://x.com/TheBTCKnight/status/2121049861965701509",
+   "id": "2121049861965701509",
+   "author": "TheBTCKnight",
+   "name": "TheBTCKnight",
+   "followers": 5655,
+   "posted": "2026-11-13T01:17:48Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "BTC 跌破 71K，200 週均線在 68K 附近",
+   "reply": "Did you notice 68K is the third-biggest put strike on today's Deribit expiry, after 72K and 70K?",
+   "sources": "Deribit 11/13 08:00 UTC 週到期 33,367 顆；賣權未平倉最多 72K 1,785 顆、70K 1,687、68K 1,508（11/12）",
+   "note": "新帳號；到期在台北 16:00，要在那之前發，過了就跳過",
+   "style": "口語版",
+   "order": 5
+  },
+  {
+   "n": 32,
+   "status": "send",
+   "url": "https://x.com/thaianhoang/status/2121042090725646755",
+   "id": "2121042090725646755",
+   "author": "thaianhoang",
+   "name": "thaianhoang",
+   "followers": 10703,
+   "posted": "2026-11-13T00:46:56Z",
+   "lang": "en",
+   "angle": "補數據",
+   "summary": "每日簡報：BTC 71,351、恐懼貪婪 28、穩定幣市值 30 天 −4.84%；穩定幣減少本身不證明資金離場",
+   "reply": "Fast one\nBottom 2% of 30-day moves on DefiLlama since late 2020",
+   "sources": "DefiLlama 美元穩定幣 2,891 億，30 天 −149 億（−4.9%），30 日變化第 1.5 百分位（2,142 個觀察值，11/12）",
+   "note": "新帳號，留言區活躍",
+   "style": "口語版",
+   "order": 6
+  },
+  {
+   "n": 33,
+   "status": "send",
+   "url": "https://x.com/0xGummyBear/status/2121054315679007153",
+   "id": "2121054315679007153",
+   "author": "0xGummyBear",
+   "name": "0xGummyBear",
+   "followers": 4183,
+   "posted": "2026-11-13T01:35:30Z",
+   "lang": "zh",
+   "angle": "提問",
+   "summary": "Glassnode：過去一週 100–1,000 和 1,000–10,000 顆的錢包轉向買入，其他分發減弱",
+   "reply": "100–1K 對不起來，Bitview 這週少了快 3 萬顆\nGlassnode 用實體算的嗎",
+   "sources": "Bitview 地址分層 7 天變化：100–1K −29,868 顆（1K–10K +11,534，和他的說法同向，沒寫進回覆）（11/12）",
+   "note": "固定名單；口徑不同，用問的不反駁",
+   "style": "口語版",
+   "order": 7
+  },
+  {
    "n": 25,
-   "order": 1,
+   "order": 8,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/songpu717/status/2121075535443038321",
@@ -24,7 +167,7 @@
   },
   {
    "n": 24,
-   "order": 2,
+   "order": 9,
    "status": "send",
    "url": "https://x.com/ai_9684xtpa/status/2121061374713573727",
    "id": "2121061374713573727",
@@ -42,7 +185,7 @@
   },
   {
    "n": 23,
-   "order": 3,
+   "order": 10,
    "status": "send",
    "url": "https://x.com/Dragonhau66/status/2121065941421166610",
    "id": "2121065941421166610",
@@ -67,7 +210,7 @@
   },
   {
    "n": 21,
-   "order": 4,
+   "order": 11,
    "status": "send",
    "url": "https://x.com/market_beggar/status/2121057516457214363",
    "id": "2121057516457214363",
@@ -89,7 +232,7 @@
   },
   {
    "n": 22,
-   "order": 5,
+   "order": 12,
    "status": "skip",
    "url": "https://x.com/serlo123/status/2121056307721724290",
    "id": "2121056307721724290",
@@ -107,7 +250,7 @@
   },
   {
    "n": 3,
-   "order": 6,
+   "order": 13,
    "status": "optional",
    "url": "https://x.com/Kylechasse/status/2121044373055975428",
    "id": "2121044373055975428",
@@ -134,7 +277,7 @@
   },
   {
    "n": 1,
-   "order": 7,
+   "order": 14,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/serlo123/status/2121047906505638331",
@@ -153,7 +296,7 @@
   },
   {
    "n": 4,
-   "order": 8,
+   "order": 15,
    "status": "send",
    "url": "https://x.com/joke_henry/status/2121030206324654515",
    "id": "2121030206324654515",
@@ -171,7 +314,7 @@
   },
   {
    "n": 5,
-   "order": 9,
+   "order": 16,
    "status": "send",
    "url": "https://x.com/yytttt_1982/status/2121032401766003113",
    "id": "2121032401766003113",
@@ -189,7 +332,7 @@
   },
   {
    "n": 6,
-   "order": 10,
+   "order": 17,
    "status": "send",
    "url": "https://x.com/Jasonz0830/status/2121015030103814204",
    "id": "2121015030103814204",
@@ -207,7 +350,7 @@
   },
   {
    "n": 7,
-   "order": 11,
+   "order": 18,
    "status": "send",
    "url": "https://x.com/craigscoinpurse/status/2121011406434636282",
    "id": "2121011406434636282",
@@ -225,7 +368,7 @@
   },
   {
    "n": 8,
-   "order": 12,
+   "order": 19,
    "status": "send",
    "url": "https://x.com/FinFreedom414/status/2121036873610989761",
    "id": "2121036873610989761",
@@ -243,7 +386,7 @@
   },
   {
    "n": 9,
-   "order": 13,
+   "order": 20,
    "status": "send",
    "url": "https://x.com/crypto_div/status/2121008754527191325",
    "id": "2121008754527191325",
@@ -269,7 +412,7 @@
   },
   {
    "n": 10,
-   "order": 14,
+   "order": 21,
    "status": "send",
    "url": "https://x.com/BTC1412/status/2121031186080571641",
    "id": "2121031186080571641",
@@ -287,7 +430,7 @@
   },
   {
    "n": 2,
-   "order": 104,
+   "order": 22,
    "status": "skip",
    "kind": "followup",
    "url": "https://x.com/Kev_Capital_TA/status/2120879475520897246",
@@ -306,7 +449,7 @@
   },
   {
    "n": 11,
-   "order": 105,
+   "order": 23,
    "status": "skip",
    "url": "https://x.com/paulxue1979/status/2121043923628159251",
    "id": "2121043923628159251",
@@ -324,7 +467,7 @@
   },
   {
    "n": 12,
-   "order": 106,
+   "order": 24,
    "status": "skip",
    "url": "https://x.com/yonghao131419/status/2121024991160652234",
    "id": "2121024991160652234",
@@ -342,7 +485,7 @@
   },
   {
    "n": 13,
-   "order": 107,
+   "order": 25,
    "status": "skip",
    "url": "https://x.com/szjcapital/status/2121042508578988295",
    "id": "2121042508578988295",
@@ -360,7 +503,7 @@
   },
   {
    "n": 14,
-   "order": 108,
+   "order": 26,
    "status": "skip",
    "url": "https://x.com/DrHashClub/status/2121015841919729877",
    "id": "2121015841919729877",
@@ -378,7 +521,7 @@
   },
   {
    "n": 15,
-   "order": 109,
+   "order": 27,
    "status": "skip",
    "url": "https://x.com/Wallet_Journey/status/2121027763511665059",
    "id": "2121027763511665059",
@@ -396,7 +539,7 @@
   },
   {
    "n": 16,
-   "order": 110,
+   "order": 28,
    "status": "skip",
    "url": "https://x.com/mvanthof28/status/2121032545429291223",
    "id": "2121032545429291223",
@@ -414,7 +557,7 @@
   },
   {
    "n": 17,
-   "order": 111,
+   "order": 29,
    "status": "skip",
    "url": "https://x.com/lukasz_wydra/status/2120973358057857296",
    "id": "2120973358057857296",
@@ -432,7 +575,7 @@
   },
   {
    "n": 18,
-   "order": 112,
+   "order": 30,
    "status": "skip",
    "url": "https://x.com/TheVictorBuilds/status/2121038797186208094",
    "id": "2121038797186208094",
@@ -450,7 +593,7 @@
   },
   {
    "n": 19,
-   "order": 113,
+   "order": 31,
    "status": "skip",
    "url": "https://x.com/LygosFinance/status/2121043291362021690",
    "id": "2121043291362021690",
@@ -468,7 +611,7 @@
   },
   {
    "n": 20,
-   "order": 114,
+   "order": 32,
    "status": "skip",
    "url": "https://x.com/Dragonhau66/status/2120990471212154943",
    "id": "2120990471212154943",
