@@ -4,6 +4,31 @@
  "edition": 39,
  "items": [
   {
+   "n": 12,
+   "order": 1,
+   "status": "send",
+   "url": "https://x.com/Murphychen888/status/2121435345497821569",
+   "id": "2121435345497821569",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82347,
+   "posted": "2026-11-14T02:49:35Z",
+   "lang": "zh",
+   "angle": "提問：62–64K 那段 STH 盈利盤多半是 7 月前後買的，12 月起陸續滿 155 天轉成 LTH；到時盈利盤變小，分不分得出是賣掉還是長大",
+   "summary": "昨天大跌 STH 行為：73–86K 的 148 萬顆套牢盤只淨減 3.4 萬（2.3%），沒恐慌割肉；68K 一檔新增 4.22 萬；62–64K 有 48 萬顆，是 STH 唯一成規模的盈利區，離現價約 4,000 美元，跌進去 STH 盈利盤歸零",
+   "reply": "62–64K 那段多半是 7 月前後買的\n12 月開始陸續滿 155 天，會整批從短期搬去長期持有者\n到時盈利盤看起來變小，有多少是賣掉、有多少只是長大了？",
+   "image": {
+    "site": {
+     "page": "onchain",
+     "sel": "#c-urpd"
+    },
+    "title": "現價下方最大的一堆在 62–64K：72.7 萬顆"
+   },
+   "sources": "Binance 日線收盤在 62–64K 的日子：6/04–8/16 共 34 天，7 月 15 天、8 月 10 天、6 月 9 天；+155 天＝11/06–1/18。網站 URPD（Bitview，全部持有者、2,000 美元一格，11/12）62–64K 72.7 萬顆，他的 STH 實體口徑是 48 萬，差的約 25 萬已經是長期持有者",
+   "note": "★ 1 小時內（截止 11:49）。提問（大帳號提問實驗），配 URPD 圖。順著他的數據問口徑和時間，不唱反調；他的「一旦跌進去情緒壓力上台階」不接",
+   "style": "口語版"
+  },
+  {
    "n": 10,
    "status": "send",
    "kind": "followup",
@@ -19,7 +44,7 @@
    "reply": "恐懼到這麼低，價格常常還會再磨一陣，2018 年以來剛進極度恐懼的 16 次，30 天後比較高的只有 4 次\n雙底要等第二次跌下來恐懼沒跟著創新低才像",
    "sources": "alternative.me 恐懼貪婪指數，2018-02 以來進入極度恐懼（≤20，隔 30 天以上算新的一段）16 次，30 天後價格較高 4 次、中位數 −6.1%（data/latest.json flows.fng_hist.f30）；11/13 讀值 20",
    "note": "我們原創底下的串，不設輪數上限；1 萬粉以下不配圖",
-   "order": 1,
+   "order": 2,
    "style": "口語版"
   },
   {
@@ -38,7 +63,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：別人的貼文底下已回 2 輪，第三輪是閒聊、沒問問題",
-   "order": 2,
+   "order": 3,
    "style": "口語版"
   },
   {
@@ -65,7 +90,7 @@
     },
     "title": "Perp OI in BTC: 338.6K, up 7% in 30 days as price fell 16%"
    },
-   "order": 3,
+   "order": 4,
    "style": "口語版"
   },
   {
@@ -83,7 +108,7 @@
    "reply": "長期持有者 7 天認賠 15 億美元，6/30 那次是 36 億\n老手還沒跟著割啦",
    "sources": "長期持有者 7 日已實現虧損 15 億美元、6/30 低點 36 億（notes 2026-11-13-2，CheckOnChain）",
    "note": "固定名單、熟帳號（昨天接過話）；1 萬粉以下不配圖",
-   "order": 4,
+   "order": 5,
    "style": "口語版"
   },
   {
@@ -101,7 +126,7 @@
    "reply": "時間上已經跟 6 月那段差不多長，53 天，只是這次跌得淺一點",
    "sources": "這段 9/21 86,594 → 11/13 68,236，−21.2%、53 天；5/10–6/30 那段 −28.8%、51 天（price.swing，收盤 15% 反轉算一段）",
    "note": "固定名單、熟帳號；不接三重底和價位，只給時間和幅度；同一作者另一則 MSTU 加倉是交易日記，不回",
-   "order": 5,
+   "order": 6,
    "style": "口語版"
   },
   {
@@ -126,7 +151,7 @@
     },
     "title": "Realized loss on Nov 13: 11 bp of market cap, 2x the Sept low"
    },
-   "order": 6,
+   "order": 7,
    "style": "口語版"
   },
   {
@@ -144,7 +169,7 @@
    "reply": "Not much open air under 67.5K, about 10K BTC of estimated long liquidations sit right below it",
    "sources": "推算清算帶 11/14 01:00 UTC：66,400–67,400 約 10,495 顆、63,800–66,300 約 20,403 顆（Coinalyze 7 家交易所未平倉＋假設槓桿，不是實際倉位）",
    "note": "Grok inbox 0905 #13；熟帳號；1 萬粉以上配圖；c-liq 截圖上 67.5K 以下只是中等藍綠、看不出「堆」，跟回覆打架，不配圖：拿掉",
-   "order": 7,
+   "order": 8,
    "style": "口語版"
   },
   {
@@ -162,7 +187,7 @@
    "reply": "BTC's been the weak one for two months\nDown 11% since Sept 13, the Nasdaq only 3%",
    "sources": "9/13 起漲跌：BTC −11.15%、Nasdaq −3.13%、S&P 500 −0.77%（flows.btc_vs_stocks.rel，至 11/13）",
    "note": "Grok inbox 0905 #11；新帳號，1 萬粉以上配圖；不配圖：c-stkrel 手機版截圖高度 0（展開也截不到），這輪不配",
-   "order": 8,
+   "order": 9,
    "style": "口語版"
   },
   {
@@ -181,7 +206,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：他的貼文底下第 3 輪、沒問問題，一句同意",
-   "order": 9,
+   "order": 10,
    "style": "口語版"
   }
  ]
