@@ -255,6 +255,16 @@ def known_accounts():
     return out
 
 
+def no_quota_accounts():
+    """私人 watchlist 標 no_quota 的帳號：不佔「3 萬粉以上一天 1–2 則」額度（2026-11-14 起）。讀不到就當沒有。"""
+    try:
+        import opsprivate
+        W = json.load(open(opsprivate.path('replies', 'watchlist.json'), encoding='utf-8'))
+        return {a['handle'].lower() for a in W.get('accounts', []) if a.get('no_quota')}
+    except Exception:
+        return set()
+
+
 def tone_notes(items):
     """整批回覆的 AI 腔提醒（不擋）：單則看不出來，排在一起才看得出是同一個模板。"""
     R = [it for it in items if it.get('status') != 'skip' and it.get('reply')]
@@ -300,7 +310,9 @@ def tone_notes(items):
     if rp and len(kn) / len(rp) > 0.4: out.append(f'熟帳號 {len(kn)}/{len(rp)} 則（{", ".join(kn)}）：一天 2–3 則就好，其餘回新帳號')
     # 2026-11-09 晚上使用者同意（當天成效：3 萬粉以上互動率 0.07%、1k–3 萬粉 2.83%；69 則裡 39 則零互動）：一天 35–40 則、曝光型 1–2 則且配圖、引用最多 2 則
     live = [it for it in items if it.get('status') != 'skip']
-    big = [it for it in live if it.get('kind') != 'followup' and it.get('mode') != 'quote' and (it.get('followers') or 0) >= 30000]
+    free = no_quota_accounts()
+    big = [it for it in live if it.get('kind') != 'followup' and it.get('mode') != 'quote' and (it.get('followers') or 0) >= 30000
+           and (it.get('author') or '').lower() not in free]
     if len(big) > 2: out.append(f'3 萬粉以上的回覆 {len(big)} 則（{", ".join("#" + str(it["n"]) for it in big)}）：一天 1–2 則就好，其餘回 1k–3 萬粉的博主')
     noimg = [it['n'] for it in big if not it.get('image')]
     if noimg: out.append(f'3 萬粉以上的回覆沒配圖：{noimg}，曝光型一律配網站圖（真的沒有就在 note 寫原因）')
