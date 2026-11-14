@@ -321,6 +321,10 @@ def tone_notes(items):
     mid = [it['n'] for it in live if it.get('kind') != 'followup' and it.get('mode') != 'quote' and 10000 <= (it.get('followers') or 0) < 30000
            and not it.get('image') and '不配圖' not in (it.get('note') or '')]
     if mid: out.append(f'1 萬–3 萬粉的回覆沒配圖：{mid}，能配就配（對不上就在 note 寫「不配圖：原因」）')
+    # 2026-11-15 使用者同意：回覆以中文為主，英文三成以內（依據見私人倉庫 ops/replies/README.md）
+    rr = [it for it in live if it.get('kind') != 'followup' and it.get('mode') != 'quote']
+    en = [it['n'] for it in rr if it.get('lang') == 'en']
+    if len(rr) >= 5 and len(en) / len(rr) > 0.3: out.append(f'英文回覆 {len(en)}/{len(rr)} 則，超過三成：英文只回 2 小時內、網站有圖能回應的，其餘改找中文')
     qn = [it['n'] for it in live if it.get('mode') == 'quote']
     if len(qn) > 2: out.append(f'引用 {len(qn)} 則：{qn}，一天最多 2 則')
     if len(live) > 40: out.append(f'今天已經 {len(live)} 則（不含按讚就好的）：一天 35–40 則，之後只做接話')
