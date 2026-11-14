@@ -4,6 +4,44 @@
  "edition": 39,
  "items": [
   {
+   "n": 10,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/serlo123/status/2121416667343573020",
+   "id": "2121416667343573020",
+   "author": "serlo123",
+   "name": "serlo123",
+   "followers": 8975,
+   "posted": "2026-11-14T01:35:22Z",
+   "lang": "zh",
+   "angle": "接話：恐懼指數和雙底",
+   "summary": "他在我們原創底下說恐懼指數掉到 13，在這裡形成雙底也很好",
+   "reply": "恐懼到這麼低，價格常常還會再磨一陣，2018 年以來剛進極度恐懼的 16 次，30 天後比較高的只有 4 次\n雙底要等第二次跌下來恐懼沒跟著創新低才像",
+   "sources": "alternative.me 恐懼貪婪指數，2018-02 以來進入極度恐懼（≤20，隔 30 天以上算新的一段）16 次，30 天後價格較高 4 次、中位數 −6.1%（data/latest.json flows.fng_hist.f30）；11/13 讀值 20",
+   "note": "我們原創底下的串，不設輪數上限；1 萬粉以下不配圖",
+   "order": 1,
+   "style": "口語版"
+  },
+  {
+   "n": 11,
+   "status": "skip",
+   "kind": "followup",
+   "url": "https://x.com/TheBTCKnight/status/2121255594954809426",
+   "id": "2121255594954809426",
+   "author": "TheBTCKnight",
+   "name": "TheBTCKnight",
+   "followers": 5666,
+   "posted": "2026-11-13T14:55:19Z",
+   "lang": "en",
+   "angle": "按讚就好",
+   "summary": "Things change so fast",
+   "reply": "",
+   "sources": "",
+   "note": "按讚就好：別人的貼文底下已回 2 輪，第三輪是閒聊、沒問問題",
+   "order": 2,
+   "style": "口語版"
+  },
+  {
    "n": 1,
    "status": "send",
    "mode": "quote",
@@ -27,7 +65,7 @@
     },
     "title": "Perp OI in BTC: 338.6K, up 7% in 30 days as price fell 16%"
    },
-   "order": 1,
+   "order": 3,
    "style": "口語版"
   },
   {
@@ -45,7 +83,7 @@
    "reply": "長期持有者 7 天認賠 15 億美元，6/30 那次是 36 億\n老手還沒跟著割啦",
    "sources": "長期持有者 7 日已實現虧損 15 億美元、6/30 低點 36 億（notes 2026-11-13-2，CheckOnChain）",
    "note": "固定名單、熟帳號（昨天接過話）；1 萬粉以下不配圖",
-   "order": 2,
+   "order": 4,
    "style": "口語版"
   },
   {
@@ -63,7 +101,7 @@
    "reply": "時間上已經跟 6 月那段差不多長，53 天，只是這次跌得淺一點",
    "sources": "這段 9/21 86,594 → 11/13 68,236，−21.2%、53 天；5/10–6/30 那段 −28.8%、51 天（price.swing，收盤 15% 反轉算一段）",
    "note": "固定名單、熟帳號；不接三重底和價位，只給時間和幅度；同一作者另一則 MSTU 加倉是交易日記，不回",
-   "order": 3,
+   "order": 5,
    "style": "口語版"
   },
   {
@@ -88,7 +126,7 @@
     },
     "title": "Realized loss on Nov 13: 11 bp of market cap, 2x the Sept low"
    },
-   "order": 4,
+   "order": 6,
    "style": "口語版"
   },
   {
@@ -106,7 +144,7 @@
    "reply": "Not much open air under 67.5K, about 10K BTC of estimated long liquidations sit right below it",
    "sources": "推算清算帶 11/14 01:00 UTC：66,400–67,400 約 10,495 顆、63,800–66,300 約 20,403 顆（Coinalyze 7 家交易所未平倉＋假設槓桿，不是實際倉位）",
    "note": "Grok inbox 0905 #13；熟帳號；1 萬粉以上配圖；c-liq 截圖上 67.5K 以下只是中等藍綠、看不出「堆」，跟回覆打架，不配圖：拿掉",
-   "order": 5,
+   "order": 7,
    "style": "口語版"
   },
   {
@@ -124,7 +162,7 @@
    "reply": "BTC's been the weak one for two months\nDown 11% since Sept 13, the Nasdaq only 3%",
    "sources": "9/13 起漲跌：BTC −11.15%、Nasdaq −3.13%、S&P 500 −0.77%（flows.btc_vs_stocks.rel，至 11/13）",
    "note": "Grok inbox 0905 #11；新帳號，1 萬粉以上配圖；不配圖：c-stkrel 手機版截圖高度 0（展開也截不到），這輪不配",
-   "order": 6,
+   "order": 8,
    "style": "口語版"
   },
   {
@@ -143,7 +181,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：他的貼文底下第 3 輪、沒問問題，一句同意",
-   "order": 7,
+   "order": 9,
    "style": "口語版"
   }
  ]
