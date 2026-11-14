@@ -1,16 +1,16 @@
 {
- "date": "2026-11-12",
+ "date": "2026-11-13",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/sthband",
-   "chart": "data/picks/onchain-sthband.png",
-   "chart_en": "data/picks/onchain-sthband-en.png",
+   "id": "onchain/rloss",
+   "chart": "data/picks/onchain-rloss.png",
+   "chart_en": "data/picks/onchain-rloss-en.png",
    "name": {
-    "zh": "短期持有者成本帶",
-    "en": "Short-term holder cost bands"
+    "zh": "實現虧損：峰值背離",
+    "en": "Realized loss: peak divergence"
    },
-   "link": "https://daybreak.aronlab.dev/#onchain/sthband"
+   "link": "https://daybreak.aronlab.dev/#onchain/rloss"
   }
  ]
 }
