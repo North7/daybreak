@@ -141,11 +141,92 @@ FG_MEANS = {'xfear': T('恐懼貪婪指數進入極度恐懼：市場情緒最�
             'mid': T('恐懼貪婪指數回到一般區間：情緒從極端回到中性。', 'Fear & Greed is back in the middle range: sentiment has returned from an extreme.')}
 LIGHT_MEANS = (T('這盞佐證燈亮起：這項條件支持目前的市場階段。佐證燈只顯示，不參與階段判定。', 'This supporting light turned on: the condition now supports the current market stage. Supporting lights are shown only and do not decide the stage.'),
                T('這盞佐證燈熄滅：這項條件不再支持目前的市場階段。佐證燈只顯示，不參與階段判定。', 'This supporting light turned off: the condition no longer supports the current market stage. Supporting lights are shown only and do not decide the stage.'))
+# ---------- 7 日急升／急降的說明（2026-11-14 使用者：Coinbase 負溢價收窄卻寫「比 Binance 貴很多、美國買盤特別積極」）----------
+# 急變是「這一週變化很大」，不是「水準偏高／偏低」。上面 SERIES_MEANS 寫的是水準，急變直接套會說反（還是負的卻寫成很貴）。
+# 這裡依方向寫變化本身；數值會正負翻轉（或以 1 為界）的指標，再看現在落在哪一邊，講清楚「改善了多少、還在哪裡」。
+# 沒列在這裡的（price、stables、非流動／高流動供給、sth-lth）原本的說明就是在講變化，照用 SERIES_MEANS。
+def _sided(up, v, zero, a, b, c, d):
+    """a：急升且在 zero 之上；b：急升但仍在 zero 之下（或等於）；c：急降但仍在 zero 之上；d：急降且在 zero 之下（或等於）"""
+    if v is None: return a if up else d
+    return (a if v > zero else b) if up else (c if v > zero else d)
+
+
+def _sopr(who, whoe):
+    return lambda up, v: _sided(up, v, 1,
+        T(f'{who}賣出時的盈虧一週內明顯好轉，而且回到賺錢賣：認賠潮在退。', f'{whoe} selling P/L improved sharply this week and is back to selling at a profit: the loss-taking wave is fading.'),
+        T(f'{who}賣出時的盈虧一週內明顯好轉，但還在賠錢賣：認賠在減少，還沒結束。', f'{whoe} selling P/L improved sharply this week but they are still selling at a loss: loss-taking is easing, not over.'),
+        T(f'{who}賣出時的獲利一週內明顯變薄，但還在賺錢賣：獲利空間在縮小。', f'{whoe} selling profit thinned sharply this week, though they still sell at a gain: the profit cushion is shrinking.'),
+        T(f'{who}一週內從賺錢賣轉成（或更深地）賠錢賣：認賠在加速。', f'{whoe} went from selling at a gain to selling at a loss (or deeper) within a week: loss-taking is accelerating.'))
+
+
+def _mvrv(name, namee):
+    return lambda up, v: _sided(up, v, 0,
+        T(f'{name}一週內明顯上升：持有者的帳面獲利在快速增加。', f'{namee} rose sharply this week: holders\' paper profits are growing fast.'),
+        T(f'{name}一週內明顯回升，但還在負值：帳面虧損在縮小，整體還是賠的。', f'{namee} rebounded sharply this week but is still negative: paper losses are shrinking, holders are still under water overall.'),
+        T(f'{name}一週內明顯下降，但還是正的：帳面獲利在快速縮水。', f'{namee} fell sharply this week but is still positive: paper profits are shrinking fast.'),
+        T(f'{name}一週內明顯下降、已經是負值：整體轉成帳面虧損。', f'{namee} fell sharply this week and is negative: holders are under water overall.'))
+
+
+def _two(a, b): return lambda up, v: a if up else b
+
+
+JUMP_MEANS = {
+    'cbp': lambda up, v: _sided(up, v, 0,
+        T('Coinbase 溢價一週內明顯走高、而且是正的：美國現貨買盤相對積極。', 'The Coinbase premium rose sharply this week and is positive: US spot buyers are relatively keen.'),
+        T('Coinbase 的負溢價一週內快速收窄：美國這邊的相對賣壓在減輕，但 Coinbase 還是比 Binance 便宜，談不上買盤積極。', 'The Coinbase discount narrowed sharply this week: relative US selling is easing, but Coinbase still trades below Binance, so this is not strong US buying.'),
+        T('Coinbase 溢價一週內明顯縮小，但還是比 Binance 貴：美國買盤在降溫。', 'The Coinbase premium shrank sharply this week but Coinbase still trades above Binance: US buying is cooling.'),
+        T('Coinbase 溢價一週內明顯走低、在負值：美國現貨的相對賣壓變重。', 'The Coinbase premium fell sharply this week and is negative: relative US spot selling is getting heavier.')),
+    'ivrv': lambda up, v: _sided(up, v, 0,
+        T('選擇權定價的波動相對實際波動一週內拉高：市場願意為不確定多付溢價，偏向避險。', 'Implied volatility rose sharply versus realized this week: traders pay more for uncertainty and lean defensive.'),
+        T('選擇權定價的波動相對實際波動一週內回升，但還低於實際波動：市場還沒有為風險多付錢。', 'Implied volatility rose sharply versus realized this week but is still below it: traders are not yet paying up for risk.'),
+        T('選擇權定價的波動相對實際波動一週內回落，但還高於實際波動：避險需求在降溫。', 'Implied volatility fell sharply versus realized this week but is still above it: demand for protection is cooling.'),
+        T('選擇權定價的波動一週內掉到實際波動以下：市場對風險變得放心，甚至可能低估。', 'Implied volatility fell below realized this week: traders are relaxed about risk, perhaps underpricing it.')),
+    'rcliq': lambda up, v: _sided(up, v, 0,
+        T('實現市值的 30 日增速一週內明顯加快：新資金流進的速度變快。', 'Realized cap\'s 30-day growth sped up sharply this week: new money is flowing in faster.'),
+        T('實現市值的 30 日變化一週內明顯回升，但還是負的：資金流出在減緩。', 'Realized cap\'s 30-day change rebounded sharply this week but is still negative: outflows are slowing.'),
+        T('實現市值的 30 日增速一週內明顯放慢，但還是正的：新資金流入在變少。', 'Realized cap\'s 30-day growth slowed sharply this week but is still positive: inflows are thinning.'),
+        T('實現市值的 30 日變化一週內掉到負值（或更負）：資金在流出。', 'Realized cap\'s 30-day change turned (or went further) negative this week: money is leaving.')),
+    'oc-lth-net-position-change-30d-btc': lambda up, v: _sided(up, v, 0,
+        T('長期持有者 30 日淨部位一週內明顯增加、而且是淨買：長期持有者在累積。', 'The LTH 30-day net position rose sharply this week and is net positive: long-term holders are accumulating.'),
+        T('長期持有者 30 日淨部位一週內明顯回升，但還是淨減少：長期持有者的賣出在放緩。', 'The LTH 30-day net position rebounded sharply this week but is still net negative: long-term holder selling is slowing.'),
+        T('長期持有者 30 日淨部位一週內明顯減少，但還是淨增加：累積在放緩。', 'The LTH 30-day net position fell sharply this week but is still net positive: accumulation is slowing.'),
+        T('長期持有者 30 日淨部位一週內明顯減少、而且是淨賣：長期持有者在派發。', 'The LTH 30-day net position fell sharply this week and is net negative: long-term holders are distributing.')),
+    'sth-sopr': _sopr('短期持有者', 'Short-term holders\''),
+    'oc-asopr': _sopr('全網', 'The market\'s'),
+    'oc-lth-sopr': _sopr('長期持有者', 'Long-term holders\''),
+    'sth-plr': lambda up, v: _sided(up, v, 1,
+        T('短期持有者獲利 ÷ 虧損一週內明顯升高，獲利已經大於虧損：賠錢賣的比重在降。', 'STH profit ÷ loss rose sharply this week and profit now exceeds loss: the share of loss-selling is falling.'),
+        T('短期持有者獲利 ÷ 虧損一週內明顯升高，但虧損還是大於獲利：認賠在減少，還沒結束。', 'STH profit ÷ loss rose sharply this week but losses still exceed profits: loss-taking is easing, not over.'),
+        T('短期持有者獲利 ÷ 虧損一週內明顯降低，但獲利還是大於虧損：賠錢賣的比重在升。', 'STH profit ÷ loss fell sharply this week but profits still exceed losses: the share of loss-selling is rising.'),
+        T('短期持有者獲利 ÷ 虧損一週內明顯降低，虧損已經大於獲利：認賠在擴大。', 'STH profit ÷ loss fell sharply this week and losses now exceed profits: loss-taking is spreading.')),
+    'oc-mvrv-zscore': _mvrv('MVRV Z', 'MVRV Z'),
+    'oc-lth-mvrv-zscore': _mvrv('長期持有者 MVRV Z', 'LTH MVRV Z'),
+    'oc-nupl': _mvrv('NUPL（未實現淨損益）', 'NUPL'),
+    'sth-in-profit': _two(T('短期持有者獲利的比例一週內明顯回升：價格回到不少近期買家的成本之上。', 'The share of STH supply in profit rose sharply this week: price is back above many recent buyers\' cost.'),
+                          T('短期持有者獲利的比例一週內掉很多：價格跌破不少近期買家的成本，套牢的人快速增加。', 'The share of STH supply in profit fell sharply this week: price dropped below many recent buyers\' cost and the trapped crowd is growing fast.')),
+    'oc-supply-in-profit-pct': _two(T('全體獲利供給的比例一週內明顯回升：價格回到不少持有者的成本之上。', 'Supply in profit rose sharply this week: price is back above many holders\' cost.'),
+                                    T('全體獲利供給的比例一週內掉很多：價格跌破不少持有者的成本。', 'Supply in profit fell sharply this week: price dropped below many holders\' cost.')),
+    'dvol': _two(T('選擇權一週內變貴很多：市場突然願意多付錢買保險，常出現在急跌或大事件前後。', 'Options got much more expensive this week: traders suddenly pay up for protection, typical around sharp drops or major events.'),
+                 T('選擇權一週內便宜很多：緊張情緒退得快，市場預期接下來比較平靜。', 'Options got much cheaper this week: nerves faded fast and traders expect calmer days.')),
+    'rv30': _two(T('過去 30 天的實際波動一週內明顯放大：價格開始大幅擺動。', 'Realized 30-day volatility jumped this week: price has started swinging hard.'),
+                 T('過去 30 天的實際波動一週內明顯縮小：價格從大幅擺動回到比較平靜。', 'Realized 30-day volatility dropped this week: price is calming down after big swings.')),
+    'p20': _two(T('MVRV 相對前一輪高點一週內明顯上升：估值往前一輪頂部的位置靠近。', 'MVRV relative to the prior cycle peak rose sharply this week: valuation is moving toward last cycle\'s top.'),
+                T('MVRV 相對前一輪高點一週內明顯下降：估值離前一輪頂部更遠。', 'MVRV relative to the prior cycle peak fell sharply this week: valuation is moving away from last cycle\'s top.')),
+    'sth-profit': _two(T('短期持有者實現的獲利一週內大增：短期持有者在逢高獲利了結，短線賣壓變大。', 'STH realized profit jumped this week: short-term holders are taking profit into strength, adding short-term supply.'),
+                       T('短期持有者實現的獲利一週內大減：賺錢可賣的人變少，或大家不急著賣。', 'STH realized profit dropped sharply this week: fewer have gains to sell, or nobody is in a hurry.')),
+    'sth-loss': _two(T('短期持有者實現的虧損一週內大增：短期持有者集中認賠，常出現在急跌的恐慌段；認賠集中釋放後，賣壓常會減輕。', 'STH realized loss jumped this week: short-term holders are capitulating, typical of panic drops; selling often eases after such a flush.'),
+                     T('短期持有者實現的虧損一週內大減：賠錢賣的人變少，認賠潮在退。', 'STH realized loss dropped sharply this week: fewer are selling at a loss, the capitulation wave is fading.')),
+    'oc-puell-multiple': _two(T('礦工收入相對一年平均一週內明顯升高：礦工的日子變好過。', 'Miner revenue versus its 1-year average rose sharply this week: miners are doing better.'),
+                              T('礦工收入相對一年平均一週內明顯降低：礦工的收入變差。', 'Miner revenue versus its 1-year average fell sharply this week: miners are earning less.')),
+}
+
+
 CLUSTER_MEANS = T('同一類的好幾項同時異動：單一指標可能是雜訊，同類多項一起動比較值得注意；各項的意思看各自的說明。', 'Several signals of the same kind fired together: one indicator alone can be noise, several moving at once deserve more attention; see each one for its meaning.')
 
 
 def _means(s):
     k, d, kind = s.get('key'), s.get('dir'), s.get('kind')
+    if kind == 'jump' and k in JUMP_MEANS: return JUMP_MEANS[k](d == 'up', s.get('value'))   # 急變講變化，不套水準的說明
     if kind in ('extreme', 'jump') and k in SERIES_MEANS: return SERIES_MEANS[k][0 if d == 'up' else 1]
     if kind == 'cross':
         if k in FLIP_MEANS: return FLIP_MEANS[k][0 if d == 'up' else 1]
