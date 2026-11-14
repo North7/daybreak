@@ -420,14 +420,18 @@ def build(L, N, E, dn, X):
         x = f.get('stables'); m = {r[0]: r[1] for r in (x or {}).get('rows') or []}; rows = []
         for d, v in sorted(m.items()):   # 照現有網站：30 天前那一筆（前後差兩天內都算）
             b = next((m[d - k] for k in (30, 31, 29, 32, 28) if m.get(d - k)), None)
-            if b: rows.append([d, round((v / b - 1) * 100, 2)])
+            if b: rows.append([d, round((v / b - 1) * 100, 2), round(v - b, 1)])   # 第 2 欄：30 天增減的金額（十億美元），給「金額」視角
         if len(rows) < 2: return NA('stab', '穩定幣總供給', 'Total stablecoin supply', '穩定幣流通量（flows.stables）', 'the stablecoin supply series (flows.stables)')
         tot = x.get('usd_b')
-        return dict(k='stab', zh='穩定幣總供給', en='Total stablecoin supply', hz='30 天增減' + ('（總量 %s 億美元）' % format(int(round(tot * 10)), ',') if tot else ''), he='30-day change' + (' (total $%.0fB)' % tot if tot else ''),
-          f='ps2', rows=thin(rows, 1), ser=[ser(1, zh='30 天增減', en='30-day change', t='sign', base=0, w=1.5)], marks=runmarks(rows, 1, 60, 2, lambda r: ym(r[0]) + ' ' + pc(r[1], 1)),
-          leg=[['up', '增加：場外美元變多', 'Rising: more dollars on the sidelines', 'box'], ['dn', '減少：場外美元萎縮', 'Falling: sidelined dollars shrinking', 'box']],
-          dz='全部美元穩定幣流通量的 30 天增減。穩定幣是加密市場裡等著進場的美元：增加代表場外的錢變多，減少代表在萎縮。圓圈是每一段連續增加或減少期間的最大值。',
-          de='The 30-day change in all US-dollar stablecoins in circulation. Stablecoins are the dollars waiting on the sidelines of crypto: a rise means more of them, a fall means they are shrinking. Circles mark the extreme of each run of growth or contraction.')
+        hz_ = '30 天增減' + ('（總量 %s 億美元）' % format(int(round(tot * 10)), ',') if tot else ''); he_ = '30-day change' + (' (total $%.0fB)' % tot if tot else '')
+        umk = runmarks(rows, 2, 60, 5, lambda r: '')   # 金額視角的圓圈：同樣是每一段連續增加或減少的最大值，至少 50 億美元才標
+        for q in umk: q['zh'] = ym(q['d']) + ' ' + mi('%+.0f' % (q['v'] * 10)) + ' 億'; q['en'] = ym(q['d']) + ' ' + mi('%+.1f' % q['v']).replace('+', '+$').replace('−', '−$') + 'B'
+        LG = [['up', '增加：場外美元變多', 'Rising: more dollars on the sidelines', 'box'], ['dn', '減少：場外美元萎縮', 'Falling: sidelined dollars shrinking', 'box']]
+        return dict(k='stab', zh='穩定幣總供給', en='Total stablecoin supply',
+          modes=[dict(mz='百分比', me='Percent', hz=hz_, he=he_, f='ps2', rows=thin([r[:2] for r in rows], 1), ser=[ser(1, zh='30 天增減', en='30-day change', t='sign', base=0, w=1.5)], marks=runmarks(rows, 1, 60, 2, lambda r: ym(r[0]) + ' ' + pc(r[1], 1)), leg=LG),
+                 dict(mz='金額', me='Dollars', hz=hz_, he=he_, f='usdB', rows=thin([[r[0], r[2]] for r in rows], 1), ser=[ser(1, zh='30 天增減', en='30-day change', t='sign', base=0, w=1.5)], marks=umk, leg=LG)],
+          dz='全部美元穩定幣流通量的 30 天增減，可以切換看百分比或金額。穩定幣是加密市場裡等著進場的美元：增加代表場外的錢變多，減少代表在萎縮。圓圈是每一段連續增加或減少期間的最大值。總量一直在變大，同樣的金額在幾年前佔的比例高得多，所以跨年比較看百分比，講當下少了多少錢看金額。',
+          de='The 30-day change in all US-dollar stablecoins in circulation, as a percentage or in dollars. Stablecoins are the dollars waiting on the sidelines of crypto: a rise means more of them, a fall means they are shrinking. Circles mark the extreme of each run of growth or contraction. Total supply keeps growing, so the same dollar amount was a much bigger share a few years ago: compare across years in percent, and use dollars for how much has left right now.')
 
     def c_etf20():   # 2026-11-12 新圖（舊版沒有）：近 20 個交易日合計淨流量。顏色照全站規則：流入綠、流出紅；流出段落線和它下面的底色用紅
         from say_data import own
