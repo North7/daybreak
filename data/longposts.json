@@ -132,17 +132,6 @@
    "posted": "2026-11-12"
   },
   {
-   "id": "2026-11-12-cbp-en",
-   "time": "2026-11-12T06:00:00Z",
-   "title": "The Coinbase premium has been negative for 66 days. Over 90% of that is USDT trading below a dollar",
-   "note": "2026-11-12-cbp 的英文版（不是直譯）。Coinbase premium 在英文圈討論最多，CryptoQuant 那張圖沒扣 USDT。",
-   "en": "The Coinbase premium has been negative for 66 days. Over 90% of that is USDT trading below a dollar\n\nYou've probably seen the chart. Negative every day since Sep 6, 66 days through Nov 10, the second-longest streak since 2022, and almost everyone reads it as Americans selling. But the premium is measured against Binance's BTC/USDT, which quietly assumes one USDT is one dollar. I took USDT's own price out and redid it. Over the 66 days the premium averaged −0.087%, and −0.080% of that came from USDT trading under $1. What's left on the US side is −0.007% (Chart 1)\n\nHardly anyone checks USDT's own price. It has been under a dollar for most of these two months. November so far averages 0.9987 on Coinbase, the weakest month since 2022, lower even than the month FTX collapsed, which I didn't expect. On a normal day the premium moves about 0.035% (median). USDT is off by 0.12% right now, more than the premium on 90% of days, so that alone is enough to flip the whole line negative\n\nThe same was true before. Going back to 2022 there were 10 streaks longer than 19 days, and in 6 of them the premium was basically zero once USDT was removed. The other 4 stayed clearly negative, and all of them landed between Oct 2025 and Apr 2026, while BTC fell from 108K to 63K (Chart 2). Those were the times US buyers really were more eager to sell than everyone else\n\nSo on its own, the length of the streak isn't a signal that anyone is dumping BTC. USDT under a dollar means more people are swapping stablecoins back into dollars than the other way round, and dollar stablecoin supply is down $14.1B in 30 days. That's money leaving crypto, not one group in particular selling BTC\n\nNow the catch: what's left over has started to slide too. 18 of the 20 days since Oct 22 were negative, down to −0.11% on Oct 30, the deepest in two months. It's starting to look like those 4 streaks, just shallower\n\nTwo things to watch. If the USDT-adjusted premium stays negative on most days, that would mean the US selling is real and looks like last winter. If it goes back to hovering around zero, the streak can run as long as it likes, it's mostly stablecoin outflow. And USDT getting back to $1 with supply no longer shrinking would be the first sign the money is coming back\n\n#Bitcoin #BTC #Coinbase",
-   "images": [
-    "data/longposts/2026-11-12-cbp-en.png"
-   ],
-   "charts": []
-  },
-  {
    "id": "2026-11-12-msci",
    "time": "2026-11-12T04:00:00Z",
    "title": "Strategy 早把 BTC 改叫「營運部門」，MSCI 為什麼還是把它踢了？",
