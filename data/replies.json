@@ -4,8 +4,185 @@
  "edition": 39,
  "items": [
   {
+   "n": 29,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/Murphychen888/status/2121484047629332627",
+   "id": "2121484047629332627",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82366,
+   "posted": "2026-11-14T06:03:06Z",
+   "lang": "zh",
+   "angle": "補數據＋提問",
+   "style": "口語版",
+   "summary": "Murphy 接我們 #23（現貨主動賣集中在 Coinbase）：對，美國區是當下空方的主要主導力量",
+   "reply": "ETF 也站同一邊，20 天淨流出快 20 億美元\n你講的美國區，ETF 贖回也算進去了嗎？",
+   "sources": "美國現貨 BTC ETF 近 20 個交易日淨流出 −19.77 億美元（截至 11/12）· data/latest.json flows.etf20",
+   "note": "Murphy 在他 12:50 帖（訂閱區）底下回我們 #23 的第 1 輪，mentions.py 沒抓到（fxtwitter 讀不到訂閱區留言），21:30 從通知頁補看到。原作者接話一定回；他同意美國區是空方主力，補 ETF 那一半、問他的口徑。接話不配圖。訂閱區帖，如果發不出去就按讚",
+   "order": 1
+  },
+  {
+   "n": 30,
+   "status": "send",
+   "url": "https://x.com/present5599/status/2121563795554218057",
+   "id": "2121563795554218057",
+   "author": "present5599",
+   "name": "present5599",
+   "followers": 7428,
+   "posted": "2026-11-14T11:20:00Z",
+   "lang": "zh",
+   "angle": "換一個比較對象",
+   "style": "口語版",
+   "summary": "Strategy 85 萬顆、均價 75,456，浮虧約 68.5 億；「全球最大的比特幣信仰者也可能是最貴的套牢戶」",
+   "reply": "最貴的套牢戶輪不到塞勒啦，ETF 平均成本快 7.9 萬，比他還高三千多",
+   "sources": "Strategy 平均成本 75,455（CoinGecko，11/13，flows.treasury.mstr）；美國現貨 ETF 推算平均成本 78,980（11/12，flows.etfcost）",
+   "note": "Grok inbox 2105 表一 #5。段子帖但帶數字，接他的「最貴套牢戶」換成 ETF；1 萬粉以下不配圖",
+   "order": 2
+  },
+  {
+   "n": 31,
+   "status": "send",
+   "url": "https://x.com/btc_vee/status/2121556486241554640",
+   "id": "2121556486241554640",
+   "author": "btc_vee",
+   "name": "btc_vee",
+   "followers": 7380,
+   "posted": "2026-11-14T10:50:57Z",
+   "lang": "zh",
+   "angle": "補日期",
+   "style": "口語版",
+   "summary": "歷史數據顯示比特幣的週期性底部往往出現在美國期中選舉之後",
+   "reply": "這輪到現在最低的 6/30 在選前四個月\n前三輪的底都在選後兩個多月內",
+   "sources": "週期底部（收盤）2015-01-14、2018-12-15、2022-11-21，分別在期中選舉後 71、39、13 天；本輪頂部後最低 2026-06-30 58,525，期中選舉 2026-11-03（cycle.bottoms）",
+   "note": "Grok inbox 2105 表一 #7。只列日期、不推這次底部時間、不談政治；1 萬粉以下不配圖，歷史只留「選後兩個多月內」一句、不列年份",
+   "order": 3
+  },
+  {
+   "n": 32,
+   "status": "send",
+   "url": "https://x.com/0x0Frank/status/2121563997996814743",
+   "id": "2121563997996814743",
+   "author": "0x0Frank",
+   "name": "0x0Frank",
+   "followers": 10528,
+   "posted": "2026-11-14T11:20:48Z",
+   "lang": "zh",
+   "angle": "補成本線",
+   "style": "口語版",
+   "summary": "四年均價 65,788；Strategy 成本 75,456；9 神指標進歷史低估區；MVRV-Z 在低估區但今年沒跌破 0",
+   "reply": "下一條大成本線是實現價格，5.4 萬左右，還在下面兩成，四年均價那條差不多已經踩到",
+   "sources": "11/13 收盤 68,236；實現價格 53,774（距現價 −21.2%，CoinMetrics，cycle.levels）",
+   "note": "Grok inbox 2105 表一 #3。1 萬粉以上配網站成本線圖；只列位置，不寫低估就會反彈",
+   "image": {
+    "site": {
+     "page": "market",
+     "sel": "#c-levels"
+    },
+    "title": "11/13 收盤 68,236：實現價格 53,774 在下面兩成"
+   },
+   "order": 4
+  },
+  {
+   "n": 33,
+   "status": "send",
+   "url": "https://x.com/0xphilo/status/2121587227553927220",
+   "id": "2121587227553927220",
+   "author": "0xphilo",
+   "name": "0xphilo",
+   "followers": 26913,
+   "posted": "2026-11-14T12:53:06Z",
+   "lang": "zh",
+   "angle": "補規模",
+   "style": "口語版",
+   "summary": "引用別人「Strategy 2027、2028 年債務到期、85 萬顆賣出擊碎市場」，問 @grok 是不是真的",
+   "reply": "美國全部現貨 ETF 加起來才 110 萬顆，85 萬真倒出來是夠嚇人，礦工要挖五年多",
+   "sources": "Strategy 持 850,363 顆（CoinGecko，11/13，flows.treasury）；美國現貨 ETF 合計 1,104,395 顆（11/12，flows.etfcost.held）；11/07–11/13 每天新挖約 454 顆（onchain.mining.btc_day），850,363÷454≈1,873 天",
+   "note": "Grok inbox 2105 表一 #1。我們沒有它的債務資料，不判斷會不會賣，只給規模。1 萬粉以上但網站沒有上市公司持幣圖，不硬配。不配圖：網站沒有上市公司持幣圖",
+   "order": 5
+  },
+  {
+   "n": 34,
+   "status": "send",
+   "url": "https://x.com/tboydsto/status/2121585209963393072",
+   "id": "2121585209963393072",
+   "author": "tboydsto",
+   "name": "tboydsto",
+   "followers": 9490,
+   "posted": "2026-11-14T12:45:05Z",
+   "lang": "en",
+   "angle": "交叉驗證",
+   "style": "口語版",
+   "summary": "Bayesian test of power law vs random walk: price grows ~age^5.7, odds favor power law; ~68K is about half the trend",
+   "reply": "Walk-forward fit with no look-ahead still lands right by your 5.7\nJune 30 bottomed at 0.44x fair, a bit under where it sits now",
+   "sources": "冪律 11/12 斜率 5.634、合理價 145,751、比值 0.489；2026-06-30 底部比值 0.44（cycle.powerlaw，每天只用當天以前的價格擬合）",
+   "note": "Grok inbox 2105 表一 #2。1 萬粉以下不配圖；不重複 n15 的「通道 5%」",
+   "order": 6
+  },
+  {
+   "n": 35,
+   "status": "send",
+   "url": "https://x.com/filippoweb3/status/2121572430615634260",
+   "id": "2121572430615634260",
+   "author": "filippoweb3",
+   "name": "filippoweb3",
+   "followers": 8569,
+   "posted": "2026-11-14T11:54:19Z",
+   "lang": "en",
+   "angle": "問口徑",
+   "style": "口語版",
+   "summary": "\"Unless this time is different, BTC realized price is roughly 52k\"",
+   "reply": "Which feed has 52K?\nCoinMetrics had 53.8K on Nov 13",
+   "sources": "實現價格 53,774（11/13，CoinMetrics，cycle.levels）",
+   "note": "Grok inbox 2105 表一 #4。1 萬粉以下不配圖",
+   "order": 7
+  },
+  {
+   "n": 36,
+   "status": "send",
+   "url": "https://x.com/fitzyOG/status/2121528930494521669",
+   "id": "2121528930494521669",
+   "author": "fitzyOG",
+   "name": "fitzyOG",
+   "followers": 8963,
+   "posted": "2026-11-14T09:01:27Z",
+   "lang": "en",
+   "angle": "補數據",
+   "style": "口語版",
+   "summary": "Difficulty dropping 9% is no victory: same pie split among less hashpower; grow the pie",
+   "reply": "And the pie is nearly all subsidy, fees were under 1% of miner revenue this week\n7-day hashrate fell 10% on the week\nAre the public miners already selling more of what they mine?",
+   "sources": "手續費佔礦工收入 0.97%；7 日平均算力 929.9 EH/s 對前一週 1,036.5（−10.3%），11/07–11/13（onchain.mining）",
+   "note": "Grok inbox 2105 表一 #8。1 萬粉以下不配圖；不提 hash ribbons",
+   "order": 8
+  },
+  {
+   "n": 37,
+   "status": "send",
+   "url": "https://x.com/bykaranteli/status/2121540192238538804",
+   "id": "2121540192238538804",
+   "author": "bykaranteli",
+   "name": "bykaranteli",
+   "followers": 10048,
+   "posted": "2026-11-14T09:46:12Z",
+   "lang": "en",
+   "angle": "補口徑",
+   "style": "口語版",
+   "summary": "Week in data: $3.2B forced liquidations as BTC fell 11.8%, longs $2.6B, Nov 13 alone $1.13B",
+   "reply": "On the venues we track, BTC alone was about $400M of Nov 13\nShorts barely $32M, almost all one way",
+   "sources": "BTC 永續 11/13 多單強平 3.717 億、空單 0.323 億美元（Coinalyze 多家交易所，不含 Hyperliquid、Deribit，deriv.liq_vol）",
+   "note": "Grok inbox 2105 表一 #9。他的是全幣種；1 萬粉以上配強平量圖（英文版今天還沒用過 #c-lqv）",
+   "image": {
+    "site": {
+     "page": "deriv",
+     "sel": "#c-lqv"
+    },
+    "title": "Nov 13: $372M of BTC longs liquidated, $32M shorts"
+   },
+   "order": 9
+  },
+  {
    "n": 28,
-   "order": 1,
+   "order": 10,
    "status": "send",
    "url": "https://x.com/Dragonhau66/status/2121569422934528394",
    "id": "2121569422934528394",
@@ -30,7 +207,7 @@
   },
   {
    "n": 27,
-   "order": 2,
+   "order": 11,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/Murphychen888/status/2121553828587999551",
@@ -63,12 +240,12 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：買賣觀點（「已經是很好的買點」），沒問問題；接下去只能談買點，不接",
-   "order": 3,
+   "order": 12,
    "style": "口語版"
   },
   {
    "n": 25,
-   "order": 4,
+   "order": 13,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121492427085361450",
    "id": "2121492427085361450",
@@ -86,7 +263,7 @@
   },
   {
    "n": 24,
-   "order": 5,
+   "order": 14,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121482995265880316",
    "id": "2121482995265880316",
@@ -111,7 +288,7 @@
   },
   {
    "n": 23,
-   "order": 6,
+   "order": 15,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121465753132314907",
    "id": "2121465753132314907",
@@ -156,7 +333,7 @@
     "title": "Day 403 after the top: this cycle 55% of peak, past three 18–26%"
    },
    "n": 13,
-   "order": 7,
+   "order": 16,
    "style": "口語版"
   },
   {
@@ -183,7 +360,7 @@
     "title": "Binance accounts: 76% long on Nov 13, 97th percentile"
    },
    "n": 14,
-   "order": 8,
+   "order": 17,
    "style": "口語版"
   },
   {
@@ -208,7 +385,7 @@
     "title": "Power law: under 0.5x fair value, 5% up the channel"
    },
    "n": 15,
-   "order": 9,
+   "order": 18,
    "style": "口語版"
   },
   {
@@ -226,7 +403,7 @@
    "sources": "200 日均線 11/13 73,036、收盤 68,236（−6.6%）（cycle.levels）",
    "note": "Grok inbox 1105 表一 #6。不寫週線多空分數（11/12 −0.03 貼近零線，可能被修正翻面）",
    "n": 18,
-   "order": 10,
+   "order": 19,
    "style": "口語版",
    "image": null
   },
@@ -245,7 +422,7 @@
    "sources": "現貨 ETF 20 個交易日合計 11/12 約 −19.8 億美元，這段 11/09 起第 4 天；過去：2025-03 −47 億（20 天）、2025-11 −47 億（27 天）、2026-06 −56 億（40 天）（flows.etf20，CoinMarketCap）",
    "note": "Grok inbox 1105 表一 #7。不寫會不會到那裡",
    "n": 19,
-   "order": 11,
+   "order": 20,
    "style": "口語版",
    "image": null
   },
@@ -264,7 +441,7 @@
    "sources": "難度預估 −8.82%（11/14 調整）；損益兩平 25J＠0.07 美元 85,953、20J＠0.06 美元 58,940（onchain.mining）",
    "note": "Grok inbox 1105 表一 #11。今天有難度長文，回覆只講舊機",
    "n": 20,
-   "order": 12,
+   "order": 21,
    "style": "口語版",
    "image": null
   },
@@ -283,7 +460,7 @@
    "sources": "短期持有者成本帶 11/13：−1 標準差 68,416、收盤 68,236；近 4 年 7.4% 的日子收在 −1 以下（onchain.sth_bands，Bitview）",
    "note": "Grok inbox 1105 表一 #12。本站沒有期中選舉統計，只給位置、不推漲跌",
    "n": 21,
-   "order": 13,
+   "order": 22,
    "style": "口語版",
    "image": null
   },
@@ -302,13 +479,13 @@
    "sources": "Strategy 持 850,363 顆、平均成本 75,455，11/13 收盤 68,236 在成本下方 9.6%（flows.treasury，CoinGecko）；可轉債和優先股沒有價格觸發的強平條款",
    "note": "Grok inbox 1105 表一 #14。財經資料平台，瀏覽 364",
    "n": 22,
-   "order": 14,
+   "order": 23,
    "style": "口語版",
    "image": null
   },
   {
    "n": 12,
-   "order": 15,
+   "order": 24,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121435345497821569",
    "id": "2121435345497821569",
@@ -347,7 +524,7 @@
    "reply": "恐懼到這麼低，價格常常還會再磨一陣，2018 年以來剛進極度恐懼的 16 次，30 天後比較高的只有 4 次\n雙底要等第二次跌下來恐懼沒跟著創新低才像",
    "sources": "alternative.me 恐懼貪婪指數，2018-02 以來進入極度恐懼（≤20，隔 30 天以上算新的一段）16 次，30 天後價格較高 4 次、中位數 −6.1%（data/latest.json flows.fng_hist.f30）；11/13 讀值 20",
    "note": "我們原創底下的串，不設輪數上限；1 萬粉以下不配圖",
-   "order": 16,
+   "order": 25,
    "style": "口語版"
   },
   {
@@ -366,7 +543,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：別人的貼文底下已回 2 輪，第三輪是閒聊、沒問問題",
-   "order": 17,
+   "order": 26,
    "style": "口語版"
   },
   {
@@ -393,7 +570,7 @@
     },
     "title": "Perp OI in BTC: 338.6K, up 7% in 30 days as price fell 16%"
    },
-   "order": 18,
+   "order": 27,
    "style": "口語版"
   },
   {
@@ -411,7 +588,7 @@
    "reply": "長期持有者 7 天認賠 15 億美元，6/30 那次是 36 億\n老手還沒跟著割啦",
    "sources": "長期持有者 7 日已實現虧損 15 億美元、6/30 低點 36 億（notes 2026-11-13-2，CheckOnChain）",
    "note": "固定名單、熟帳號（昨天接過話）；1 萬粉以下不配圖",
-   "order": 19,
+   "order": 28,
    "style": "口語版"
   },
   {
@@ -429,7 +606,7 @@
    "reply": "時間上已經跟 6 月那段差不多長，53 天，只是這次跌得淺一點",
    "sources": "這段 9/21 86,594 → 11/13 68,236，−21.2%、53 天；5/10–6/30 那段 −28.8%、51 天（price.swing，收盤 15% 反轉算一段）",
    "note": "固定名單、熟帳號；不接三重底和價位，只給時間和幅度；同一作者另一則 MSTU 加倉是交易日記，不回",
-   "order": 20,
+   "order": 29,
    "style": "口語版"
   },
   {
@@ -454,7 +631,7 @@
     },
     "title": "Realized loss on Nov 13: 11 bp of market cap, 2x the Sept low"
    },
-   "order": 21,
+   "order": 30,
    "style": "口語版"
   },
   {
@@ -472,7 +649,7 @@
    "reply": "Not much open air under 67.5K, about 10K BTC of estimated long liquidations sit right below it",
    "sources": "推算清算帶 11/14 01:00 UTC：66,400–67,400 約 10,495 顆、63,800–66,300 約 20,403 顆（Coinalyze 7 家交易所未平倉＋假設槓桿，不是實際倉位）",
    "note": "Grok inbox 0905 #13；熟帳號；1 萬粉以上配圖；c-liq 截圖上 67.5K 以下只是中等藍綠、看不出「堆」，跟回覆打架，不配圖：拿掉",
-   "order": 22,
+   "order": 31,
    "style": "口語版"
   },
   {
@@ -490,7 +667,7 @@
    "reply": "BTC's been the weak one for two months\nDown 11% since Sept 13, the Nasdaq only 3%",
    "sources": "9/13 起漲跌：BTC −11.15%、Nasdaq −3.13%、S&P 500 −0.77%（flows.btc_vs_stocks.rel，至 11/13）",
    "note": "Grok inbox 0905 #11；新帳號，1 萬粉以上配圖；不配圖：c-stkrel 手機版截圖高度 0（展開也截不到），這輪不配",
-   "order": 23,
+   "order": 32,
    "style": "口語版"
   },
   {
@@ -509,7 +686,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：他的貼文底下第 3 輪、沒問問題，一句同意",
-   "order": 24,
+   "order": 33,
    "style": "口語版"
   }
  ]
