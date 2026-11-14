@@ -15,7 +15,7 @@
 這是公開倉庫，提交歷史永久可查。任何檔案都不得出現任何人的實際持倉數量、以顆數表示的個人買賣數量、資金或生活開支金額。出場框架一律以百分比表示（每階 12.5%、避險 20%）。市場數據（ETF 流量、選擇權未平倉、URPD 籌碼、掛單簿金額）不受此限。
 
 ### 步驟
-1. 拉最新的 main。確認 `data/latest.json` 的 `meta.bar_date` 等於今天 UTC 日期的前一天。不是的話（GitHub 定時排程常延遲數小時）：執行 `date -u +%FT%TZ > .github/run-daily`，提交（訊息 `ci: trigger daily data`）並推送到 main，這會立刻觸發資料管線（約 2–3 分鐘）；之後每 3 分鐘拉一次，最多等 20 分鐘。仍不是就停止，不寫 notes，回報「資料管線今天沒有更新」。。另外，`data/notes.json` 的 `date` 已經等於 `meta.bar_date`（今天這一期已經寫好，例如手動提前跑過）就停止，回報「今天已完成」，不要重寫。網站在判讀還沒寫好前會整期顯示上一份數字（`data/latest.prev.json`），判讀一提交就整期換新，所以盡快提交
+1. 拉最新的 main。確認 `data/latest.json` 的 `meta.bar_date` 等於今天 UTC 日期的前一天。不是的話（GitHub 定時排程常延遲數小時）：執行 `date -u +%FT%TZ > .github/run-daily`，提交（訊息 `ci: trigger daily data`）並推送到 main，這會立刻觸發資料管線（平常約 10 分鐘）；之後每 3 分鐘拉一次。**卡住或失敗就自動重跑**（2026-11-14 使用者：「以後卡太久超出合理時間就自動重跑」）：用 GitHub 的 actions 工具看這次 Daily data 的 run，只要（a）它的 Collect market data 等步驟出現 cancelled／failure，或 run 已結束但 `bar_date` 沒變，或（b）run 已經跑超過 15 分鐘還沒結束（正常約 10 分鐘），就再寫一次 `date -u +%FT%TZ > .github/run-daily`、提交（`ci: trigger daily data (retry N)`）並推送，觸發一次新的 run；卡住的舊 run 不用管（2026-11-14 它在 GitHub 上一直顯示 in_progress、取消會回 500，但不會擋住新的 run）。最多重跑 2 次，總共最多等 50 分鐘。仍不是就停止，不寫 notes，回報「資料管線今天沒有更新」，並寫出每次 run 的編號和卡在哪一步。另外，`data/notes.json` 的 `date` 已經等於 `meta.bar_date`（今天這一期已經寫好，例如手動提前跑過）就停止，回報「今天已完成」，不要重寫。網站在判讀還沒寫好前會整期顯示上一份數字（`data/latest.prev.json`），判讀一提交就整期換新，所以盡快提交
 2. 執行 `python3 pipeline/brief.py` 讀精簡摘要（約 20KB）。**不要讀整份 latest.json**；需要某個欄位就用 python 取。各欄位怎麼寫，見下面「各版判讀」。
 3. 讀上一期 `data/notes.json`（用來比較變化、延續期數）。
 3a. **找發現（今天最重要的一步，2026-10-23 起）**：brief 最前面的 `signals` 是資料管線依寫死規則偵測出的異動（`pipeline/signals.py`），`signals.checks` 是上一期 findings／followups 寫下的追蹤條件今天成不成立。先讀完這兩塊，再讀其他數字；依下面「發現與追蹤」的規則寫 `findings` 與 `followups`，頭條、摘要、各版判讀都從這裡出發。
