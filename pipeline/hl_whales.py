@@ -9,13 +9,14 @@
   ① 至少 BAND_MIN 個帳戶；② 最大一個帳戶佔該格顆數不超過 BAND_TOP（避免一格其實就是一個人）。
 不符合的格子不畫，只併進 hidden（不畫的部分按多空各給一個合計，同樣要 ≥ BAND_MIN 個帳戶且最大一個不超過一半才給顆數）。這是實際清算價，不是推算。
 限制：只有 Hyperliquid；大帳戶可能是做市或避險（空單多不一定代表看空）；排行榜每天更新一次；清算價會隨保證金和價格變動。"""
-import json, subprocess, time
+import json, os, subprocess, time
 from concurrent.futures import ThreadPoolExecutor
 
 LB = 'https://stats-data.hyperliquid.xyz/Mainnet/leaderboard'
 INFO = 'https://api.hyperliquid.xyz/info'
 TOP, MIN_N, NEAR = 2000, 2, 0.10
 BAND_W, BAND_PCT, BAND_MIN, BAND_TOP = 1000, 0.25, 5, 0.5
+HIST = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'coc_cache', 'hl_whales_hist.json')   # 每日快照的歷史（2026-11-14 起；放在 coc_cache，每日工作流程會一起提交）
 WORKERS = 3   # Hyperliquid info 每分鐘 1200 權重、clearinghouseState 每次 2 → 最多每秒 10 次；3 條連線約每秒 7 次
 
 
@@ -90,3 +91,21 @@ def build(close, asof):
                 bands=dict(w=BAND_W, pct=round(BAND_PCT * 100), min_n=BAND_MIN, max_share=BAND_TOP, rows=bands, hidden=hidden),
                 note=f'Hyperliquid 帳戶淨值前 {TOP} 名的 BTC 永續部位彙總；不列個別帳戶，少於 {MIN_N} 個帳戶的組只給帳戶數；'
                      f'熱力圖上的 Hyperliquid 清算價每格 {BAND_W} 美元、至少 {BAND_MIN} 個帳戶且最大一個不超過一半才畫；只有 Hyperliquid、大帳戶可能是做市或避險；只作讀值')
+
+
+def hist_load():
+    try: return json.load(open(HIST, encoding='utf-8')).get('rows') or []
+    except Exception: return []
+
+
+def hist_update(snap, bar_date, close):
+    """把今天的彙總接到歷史後面，回傳全部的列：[收盤日, 收盤, 多單顆數, 空單顆數, 多單帳戶數, 空單帳戶數]。
+    Hyperliquid 查不到帳戶過去的部位，歷史只能每天存一筆；2026-11-04～13 這十筆是從每天提交的 data/latest.json 還原的。
+    只收掃滿 TOP 名、多空都有顆數的快照（掃的名數不同，數字不能比）；同一個收盤日重跑就覆寫。只有合計，沒有個別帳戶。"""
+    rows = hist_load(); L, S = snap.get('long') or {}, snap.get('short') or {}
+    if snap.get('scanned', 0) >= TOP * 0.8 and L.get('btc') is not None and S.get('btc') is not None:
+        rows = [r for r in rows if r[0] != bar_date] + [[bar_date, round(close), L['btc'], S['btc'], L['n'], S['n']]]
+        rows.sort(key=lambda r: r[0])
+        os.makedirs(os.path.dirname(HIST), exist_ok=True)
+        json.dump(dict(note='Hyperliquid 帳戶淨值前 %d 名的 BTC 永續部位，每日一筆合計：收盤日、收盤、多單顆數、空單顆數、多單帳戶數、空單帳戶數' % TOP, rows=rows), open(HIST, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+    return rows

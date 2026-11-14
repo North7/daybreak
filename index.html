@@ -1760,7 +1760,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=805ed2f837"></script>
+<script src="data/next.js?v=dc6a6f3e03"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -2645,7 +2645,7 @@ function initOC() {
   const enName = c => { if (lang !== 'zh' || !c || !c.en || c.en === c.zh || /^[qtx]_/.test(c.k || '')) return ''; const m = /^(.*\S)\s*\(([^()]+)\)$/.exec(c.en); return m && String(c.zh).indexOf('（' + m[2] + '）') >= 0 ? m[1] : c.en; };
   const tE = PX[PX.length - 1][0], T = (zh, en) => lang === 'en' ? (en != null ? en : zh) : zh, CV = n => !n ? 'var(--ink)' : /^[a-z0-9]+$/i.test(n) ? 'var(--' + n + ')' : n, F1 = v => (+v).toFixed(1);
   const FM = { pct1: v => sgn(v, 1) + '%', ps2: v => sgn(v, 2) + '%', p1: v => v.toFixed(1) + '%', p2: v => v.toFixed(2) + '%', p3: v => v.toFixed(3) + '%', x2: v => v.toFixed(2) + '×', n3: v => (v < 0 ? '−' : '') + Math.abs(v).toFixed(3), n1: v => v.toFixed(1), s1: v => sgn(v, 1),
-    usd0: v => '$' + n0(v), n0: v => n0(v), s2: v => sgn(v, 2), n5: v => v.toFixed(5), txt: v => v, usdM: v => (v < 0 ? '−' : '') + '$' + n0(Math.abs(v)) + 'M', usdB: v => T(sgn(v * 10, 0) + ' 億美元', (v > 0 ? '+' : v < 0 ? '−' : '') + '$' + Math.abs(v).toFixed(1) + 'B'), bp: v => v.toFixed(1) + ' bp', d1: v => v.toFixed(1) + T(' 天', ' d'), btc0: v => Math.abs(v) >= 1e4 ? (v < 0 ? '−' : '') + T(WAN(Math.abs(v)) + ' 萬顆', TRIM((Math.abs(v) / 1e3).toFixed(1)) + 'K BTC') : n0(v) + T(' 顆', ' BTC'), xpct: v => sgn((v - 1) * 100, 0) + '%',
+    usd0: v => '$' + n0(v), n0: v => n0(v), s2: v => sgn(v, 2), n5: v => v.toFixed(5), txt: v => v, usdM: v => (v < 0 ? '−' : '') + '$' + n0(Math.abs(v)) + 'M', sbtc: v => (v > 0 ? '+' : v < 0 ? '−' : '') + n0(Math.abs(v)) + T(' 顆', ' BTC'), cbtc: v => n0(v) + T(' 顆', ' BTC'), usdB: v => T(sgn(v * 10, 0) + ' 億美元', (v > 0 ? '+' : v < 0 ? '−' : '') + '$' + Math.abs(v).toFixed(1) + 'B'), bp: v => v.toFixed(1) + ' bp', d1: v => v.toFixed(1) + T(' 天', ' d'), btc0: v => Math.abs(v) >= 1e4 ? (v < 0 ? '−' : '') + T(WAN(Math.abs(v)) + ' 萬顆', TRIM((Math.abs(v) / 1e3).toFixed(1)) + 'K BTC') : n0(v) + T(' 顆', ' BTC'), xpct: v => sgn((v - 1) * 100, 0) + '%',
     kbtc: v => T(sgn(v / 10, 1) + ' 萬顆', sgn(v, 0) + 'K BTC'), btc: v => T(sgn(v / 1e4, 1) + ' 萬顆', sgn(v / 1e3, 0) + 'K BTC') };
   const fm = (f, v) => v == null ? '—' : FM[f || 'n1'](v), TKL = (f, v) => split(fm(f, v))[0].replace(/(\.\d*?)0+(?=\D*$)/, '$1').replace(/\.(?=\D*$)/, ''), split = s => { const m = /^(.*\d[%×MK]?)\s+(\S.*)$/.exec(s); return m ? [m[1], m[2]] : [s, '']; };
   function TRIM(t) { return t.indexOf('.') < 0 ? t : t.replace(/0+$/, '').replace(/\.$/, ''); }
@@ -2657,11 +2657,11 @@ function initOC() {
     const out = []; let ly = null; c.sort((p, q) => Yf(q) - Yf(p)).forEach(v => { const y = Yf(v); if (ly == null || Math.abs(ly - y) >= (gap || 20 * FSC)) { out.push(v); ly = y; } }); return out; };
   const PXL = v => '$' + (v >= 1000 ? +(v / 1000).toPrecision(3) + 'K' : n0(v));
   const MON = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  /* 橫軸（⑮）：超過 760 天標年份；60–760 天標月份（一月寫年份）；更短標日期。最右邊固定寫「現在」 */
+  /* 橫軸（⑮）：超過 760 天標年份；60–760 天標月份（一月寫年份）；更短標日期（兩個標籤至少隔 44px，窄螢幕會跳著標）。最右邊固定寫「現在」 */
   const xAxis = (X, t0, t1, pw, ya, yz, ty) => { let g = ''; const span = t1 - t0, d0 = dOf(t0), d1 = dOf(t1), tx = (x, t, a) => `<text x="${F1(x)}" y="${F1(ty)}" text-anchor="${a || 'middle'}">${t}</text>`, gl = x => `<line x1="${F1(x)}" x2="${F1(x)}" y1="${F1(ya)}" y2="${F1(yz)}" stroke="var(--ink)" stroke-opacity=".05"/>`, rE = pw - 36 * FSC;
     if (span > 760) { const y0 = d0.getUTCFullYear() + 1, y9 = d1.getUTCFullYear(), st = Math.max(1, Math.ceil((y9 - y0 + 1) * 44 * FSC / pw)); for (let y = y0; y <= y9; y += st) { const x = X(Date.UTC(y, 0, 1) / 864e5); if (x < 16 || x > rE) continue; g += gl(x) + tx(x, y); } }
     else if (span > 60) { const per = pw / (span / 30.44), st = [1, 2, 3, 6].find(k => per * k >= 38 * FSC) || 6; for (let i = 1; i < 40; i++) { const mm = d0.getUTCMonth() + i, y = d0.getUTCFullYear() + Math.floor(mm / 12), m = mm % 12, day = Date.UTC(y, m, 1) / 864e5; if (day > t1) break; if (m % st) continue; const x = X(day); if (x < 14 || x > rE) continue; g += gl(x) + tx(x, m === 0 ? String(y) : T((m + 1) + '月', MON[m])); } }
-    else { const st = span > 30 ? 7 : span > 12 ? 3 : 1; for (let d = Math.floor(t0) + st; d < t1; d += st) { const x = X(d), dd = dOf(d); if (x < 14 || x > rE) continue; g += gl(x) + tx(x, (dd.getUTCMonth() + 1) + '/' + dd.getUTCDate()); } }
+    else { const st = Math.max(span > 30 ? 7 : span > 12 ? 3 : 1, Math.ceil(44 * FSC / (pw / (span || 1)))); for (let d = Math.floor(t0) + st; d < t1; d += st) { const x = X(d), dd = dOf(d); if (x < 14 || x > rE) continue; g += gl(x) + tx(x, (dd.getUTCMonth() + 1) + '/' + dd.getUTCDate()); } }
     return g + tx(pw, T('現在', 'now'), 'end'); };
   const SP = c => { if (!c.modes) return c; const m = c._m || 0; c._c = c._c || []; return c._c[m] || (c._c[m] = Object.assign({}, c, c.modes[m])); };
   const hero = s => s.ser[s.hero || 0];
