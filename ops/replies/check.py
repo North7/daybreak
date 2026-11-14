@@ -256,7 +256,7 @@ def known_accounts():
 
 
 def no_quota_accounts():
-    """私人 watchlist 標 no_quota 的帳號：不佔「3 萬粉以上一天 1–2 則」額度（2026-11-14 起）。讀不到就當沒有。"""
+    """私人 watchlist 標 no_quota 的帳號：不佔「3 萬粉以上一天 1–2 則」額度，也不算進熟帳號比例（2026-11-14 起）。讀不到就當沒有。"""
     try:
         import opsprivate
         W = json.load(open(opsprivate.path('replies', 'watchlist.json'), encoding='utf-8'))
@@ -306,6 +306,7 @@ def tone_notes(items):
             if it.get(k): out += sentence_notes(f'#{it["n"]} {"回覆" if k == "reply" else "引用"}', it[k])
     known = known_accounts()   # 2026-11-06：熟帳號三成、新帳號七成（接續對話不算）
     rp = [it for it in R if it.get('kind') != 'followup' and it.get('mode') != 'quote' and it.get('status') == 'send']   # 可選的不算
+    known -= no_quota_accounts()   # 2026-11-14 使用者：no_quota 的帳號也不算熟帳號比例
     kn = [it['author'] for it in rp if it.get('author', '').lower() in known]
     if rp and len(kn) / len(rp) > 0.4: out.append(f'熟帳號 {len(kn)}/{len(rp)} 則（{", ".join(kn)}）：一天 2–3 則就好，其餘回新帳號')
     # 2026-11-09 晚上使用者同意（當天成效：3 萬粉以上互動率 0.07%、1k–3 萬粉 2.83%；69 則裡 39 則零互動）：一天 35–40 則、曝光型 1–2 則且配圖、引用最多 2 則
