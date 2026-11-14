@@ -293,7 +293,23 @@ def build(L, N, E, dn, X):
     else:
         na('bfx', 'Bitfinex 保證金多單', 'Bitfinex margin longs', 'deriv.bfx_margin', 'Bitfinex', '這張圖畫 Bitfinex 上借錢買 BTC 的保證金多單總量。', 'This chart shows total BTC margin longs on Bitfinex.')
     grp = lambda zh, en, sz, se, keys: dict(zh=zh, en=en, sz=sz, se=se, charts=[X[k_] for k_ in keys if k_ in X])
-    return [grp('槓桿', 'Leverage', '做多的槓桿擠不擠，最近是誰在被清算', 'How crowded leveraged longs are, and who has been getting liquidated', ['fh', 'basis', 'oih', 'oieth', 'lsa', 'bfx', 'lqv']),
+    # ── Hyperliquid 大戶部位（deriv.hl_whales；2026-11-14 使用者要求）：每天一筆的合計，歷史從 2026-11-04 起，Hyperliquid 查不到更早的 ──
+    hw = d.get('hl_whales') or {}; hh = [r for r in hw.get('hist') or [] if r[2] is not None and r[3] is not None]
+    if len(hh) >= 2:
+        z = hh[-1]; a0 = hh[0]; net = z[2] - z[3]; md_ = lambda s_: s_[5:].replace('-', '/'); cm = lambda v: format(int(abs(v)), ','); days_ = dn(z[0]) - dn(a0[0])
+        rows = [[dn(r[0]), r[1], r[2] - r[3], r[2], r[3]] for r in hh]; top_ = hw.get('scanned') or 2000; fl_ = hw.get('floor_usd_m')
+        fz = '（淨值約 %s 萬美元以上）' % format(int(round(fl_ * 100)), ',') if fl_ else ''; fe = ' (about $%.1fM in equity and up)' % fl_ if fl_ else ''
+        NST = [['淨多', 'Net long'], ['淨空', 'Net short']]
+        X['hlw'] = dict(k='hlw', zh='Hyperliquid 大戶部位', en='Hyperliquid big accounts', rng=0, src='Hyperliquid · %s' % md_(z[0]), srce='Hyperliquid · %s' % md_(z[0]),
+          modes=[dict(mz='淨部位', me='Net', hz='多單減空單', he='Longs minus shorts', f='sbtc', rows=rows, p=1, npc=1, ser=[ser(2, zh='淨部位', en='Net position', t='split', base=0, st=NST, w=1.8)], refs=[dict(v=0, col='k2', solid=1, zh='0：多空一樣多', en='0: longs equal shorts')]),   # 只畫線不填色：長期淨空，填色會變成一整塊紅
+                 dict(mz='多單和空單', me='Longs and shorts', hz='多單合計', he='Total longs', f='cbtc', rows=rows, p=1, npc=1, hero=1, ser=[ser(4, zh='空單', en='Shorts', col='dn', w=1.8), ser(3, zh='多單', en='Longs', col='up', w=1.8)])],
+          dz='Hyperliquid 帳戶淨值前 %s 名%s的 BTC 永續部位，每天收盤後掃一次、只記合計。%s：多單 %s 顆（%d 個帳戶）、空單 %s 顆（%d 個帳戶）。這些是實際部位，不是推算。大帳戶裡有做市和對沖的（現貨買、永續空），長期偏空是常態，所以看的是變化，不是水位。歷史從 %s 開始、目前只有 %d 天，Hyperliquid 查不到更早的部位；別家用不同方式定義「鯨魚」，數字不會一樣。只有這一家交易所，只作讀值。'
+             % (format(top_, ','), fz, md_(z[0]), cm(z[2]), z[4], cm(z[3]), z[5], a0[0].replace('-', '/'), days_ + 1),
+          de='BTC perpetual positions of the top %s Hyperliquid accounts by equity%s, scanned once after each daily close and stored as totals only. %s: longs %s BTC (%d accounts), shorts %s BTC (%d accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts %s and covers only %d days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. One exchange only. A reading only.'
+             % (format(top_, ','), fe, z[0], cm(z[2]), z[4], cm(z[3]), z[5], a0[0], days_ + 1))
+    else:
+        na('hlw', 'Hyperliquid 大戶部位', 'Hyperliquid big accounts', 'deriv.hl_whales', 'Hyperliquid', '這張圖畫 Hyperliquid 帳戶淨值前 2,000 名的 BTC 永續多單、空單和淨部位。', 'This chart shows BTC perpetual longs, shorts and the net position of the top 2,000 Hyperliquid accounts by equity.')
+    return [grp('槓桿', 'Leverage', '做多的槓桿擠不擠，最近是誰在被清算', 'How crowded leveraged longs are, and who has been getting liquidated', ['fh', 'basis', 'oih', 'oieth', 'lsa', 'bfx', 'hlw', 'lqv']),
             grp('波動', 'Volatility', '選擇權市場預期接下來會動多大', 'How big a move the options market is pricing', ['vol', 'ivt']),
             grp('選擇權', 'Options', '未平倉堆在哪個到期日，錢押在哪一邊', 'Which expiries hold the open interest, and which side money is paying for', ['oi', 'prem', 'pcr']),
             grp('情緒', 'Sentiment', '大家是害怕還是貪心，新手有沒有湧進來', 'Whether the crowd is fearful or greedy, and whether newcomers are pouring in', ['fng', 'wiki'])]

@@ -1469,7 +1469,11 @@ except Exception as e: errors.append(f'six {e}')
 try:
     import hl_whales
     R['hl_whales'] = hl_whales.build(c, now.isoformat(timespec='minutes'))
-except Exception as e: errors.append(f'hl_whales {e}')
+    R['hl_whales']['hist'] = hl_whales.hist_update(R['hl_whales'], LAST, c)   # 2026-11-14 每日一筆的歷史（新版首頁「Hyperliquid 大戶部位」）
+except Exception as e:
+    errors.append(f'hl_whales {e}')
+    try: R['hl_whales'] = dict(hist=hl_whales.hist_load(), stale=True)   # 今天沒掃成：圖照舊畫到上一筆，不當成今天的讀數
+    except Exception: pass
 # G9h. 2026-11-04 使用者要求（Glassnode 週報）：BTC 對 S&P 500 近 90 個交易日的勝率（BTC 當天漲幅大於標普的比例）與每日平均超額報酬；
 #   以及近兩個月和 S&P 500、那斯達克、黃金（Kraken 的 PAXG 代替金價）的相對表現。BTC 用 UTC 日收盤、美股用紐約收盤，兩者差約 3 小時。只作讀值
 try:
