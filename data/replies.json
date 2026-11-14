@@ -4,8 +4,180 @@
  "edition": 39,
  "items": [
   {
-   "n": 12,
+   "status": "send",
+   "url": "https://x.com/QuintenFrancois/status/2121436645409047037",
+   "id": "2121436645409047037",
+   "author": "QuintenFrancois",
+   "name": "Quinten | 048.eth",
+   "followers": 205332,
+   "posted": "2026-11-14T02:54:45Z",
+   "lang": "en",
+   "angle": "補口徑：從頂部對齊",
+   "summary": "一張圖對照 2026 熊市和 2023 那段走勢（引用 FrankAFetter「又在走上一輪牛市的分形」）",
+   "reply": "Lined up from each top instead, BTC is still at 55% of the peak\nThe last three cycles were down to 18–26% by the same day",
+   "sources": "週期對照 11/13：2025-10-06 頂部後第 403 天，收盤是頂部的 54.7%；2013 頂 24.3%、2017 頂 18.2%、2021 頂 25.7%（cycle.cycle_cmp）",
+   "note": "★ 1 小時內（發文 10:54，截止 11:54）；今天 3 萬粉以上第 2 則；Grok inbox 1105 表一 #1。他比的是另一段的形狀，我們從頂部對齊，口徑寫在第一句；不寫之後怎麼走",
+   "image": {
+    "site": {
+     "page": "cycle",
+     "sel": "#c-cyccmp"
+    },
+    "title": "Day 403 after the top: this cycle 55% of peak, past three 18–26%"
+   },
+   "n": 13,
    "order": 1,
+   "style": "口語版"
+  },
+  {
+   "status": "send",
+   "mode": "quote",
+   "url": "https://x.com/thinkingcrypto/status/2121432325531840676",
+   "id": "2121432325531840676",
+   "author": "thinkingcrypto",
+   "name": "Tony Edward (Thinking Crypto Podcast)",
+   "followers": 142413,
+   "posted": "2026-11-14T02:37:35Z",
+   "lang": "en",
+   "angle": "補數據：多單才是擠的那邊",
+   "summary": "極度恐懼、RSI 超賣、空單堆到新高、坐在 200 週均線上，「你知道接下來會怎樣」",
+   "reply": "",
+   "quote": "@thinkingcrypto says shorts are piling up to new highs\nBinance accounts lean hard the other way, 76% long, near the top of the past year. Longs also took 89% of this week's liquidations\n#Bitcoin #BTC #crypto",
+   "sources": "Binance 持多帳戶 11/13 76.1%、過去一年第 97 百分位（deriv.ls_acct）；7 天強平多單 7.93 億、空單 1.01 億美元，多單 88.7%（deriv.liq_vol，Coinalyze）",
+   "note": "★ 引用（14.2 萬粉），2 小時窗到台北 12:37；今天第 2 則引用；Grok inbox 1105 表二 #1。只講帳戶比和強平，不說他錯；資金費率轉負那段不寫（可能是新開空單，兩種讀法塞不進一則）",
+   "image": {
+    "site": {
+     "page": "deriv",
+     "sel": "#c-lsa"
+    },
+    "title": "Binance accounts: 76% long on Nov 13, 97th percentile"
+   },
+   "n": 14,
+   "order": 2,
+   "style": "口語版"
+  },
+  {
+   "status": "send",
+   "url": "https://x.com/BitcoinPowerLaw/status/2121424082747167179",
+   "id": "2121424082747167179",
+   "author": "BitcoinPowerLaw",
+   "name": "Bitcoin Power Law",
+   "followers": 16064,
+   "posted": "2026-11-14T02:04:50Z",
+   "lang": "en",
+   "angle": "交叉驗證＋問口徑",
+   "summary": "價格在冪律通道 Q1，68,302 在區間最底部 1%",
+   "reply": "Our fit has it under 0.5x fair value and 5% up the channel, right at the top of where past cycle lows landed\nWhat's the 1% measured against, the whole channel since 2010?",
+   "sources": "冪律 11/12 合理價 145,751、價格／合理價 0.49、通道位置 5%（底部區）；歷次底部倍數 0.24–0.48（cycle.powerlaw，每天只用當天以前的價格擬合）；11/13 收盤 68,236 約 0.47",
+   "note": "Grok inbox 1105 表一 #3。1 萬粉以上配圖；兩邊擬合不同，用問句問他的口徑",
+   "image": {
+    "site": {
+     "page": "cycle",
+     "sel": "#c-pl"
+    },
+    "title": "Power law: under 0.5x fair value, 5% up the channel"
+   },
+   "n": 15,
+   "order": 3,
+   "style": "口語版"
+  },
+  {
+   "status": "send",
+   "url": "https://x.com/charles12388/status/2121411990379995529",
+   "id": "2121411990379995529",
+   "author": "charles12388",
+   "name": "charles12388",
+   "followers": 8391,
+   "posted": "2026-11-14T01:16:47Z",
+   "lang": "zh",
+   "angle": "補數據：200 日均線",
+   "summary": "「技術性熊市正式官宣」：從 9 月底 83,387 跌超過 20%、比去年 10 月高點跌 45%",
+   "reply": "200 日均線也丟了啦，73K 現在壓在頭上\n收盤低它快 7%",
+   "sources": "200 日均線 11/13 73,036、收盤 68,236（−6.6%）（cycle.levels）",
+   "note": "Grok inbox 1105 表一 #6。不寫週線多空分數（11/12 −0.03 貼近零線，可能被修正翻面）",
+   "n": 18,
+   "order": 4,
+   "style": "口語版",
+   "image": null
+  },
+  {
+   "status": "send",
+   "url": "https://x.com/JoeBitcoin_/status/2121402805588033549",
+   "id": "2121402805588033549",
+   "author": "JoeBitcoin_",
+   "name": "Joe",
+   "followers": 4270,
+   "posted": "2026-11-14T00:40:17Z",
+   "lang": "en",
+   "angle": "補一層：ETF 流出段落",
+   "summary": "每日收盤報告：跌破 200 週線、收 68,237、ETF 連 6 天流出、11 月約 −21.6 億",
+   "reply": "Four days in, about -$2B on the 20-day sum\nThe long runs went past -$4.7B, this one's barely started",
+   "sources": "現貨 ETF 20 個交易日合計 11/12 約 −19.8 億美元，這段 11/09 起第 4 天；過去：2025-03 −47 億（20 天）、2025-11 −47 億（27 天）、2026-06 −56 億（40 天）（flows.etf20，CoinMarketCap）",
+   "note": "Grok inbox 1105 表一 #7。不寫會不會到那裡",
+   "n": 19,
+   "order": 5,
+   "style": "口語版",
+   "image": null
+  },
+  {
+   "status": "send",
+   "url": "https://x.com/ScottAWolfe/status/2121402574268166227",
+   "id": "2121402574268166227",
+   "author": "ScottAWolfe",
+   "name": "Scott Wolfe",
+   "followers": 9495,
+   "posted": "2026-11-14T00:39:22Z",
+   "lang": "en",
+   "angle": "補數據：舊機損益兩平",
+   "summary": "難度即將大幅下調，對礦工是喘息、有利短期穩定",
+   "reply": "A 25 J/TH machine on 7¢ power still needs about 86K, it's mostly the newer rigs getting the relief",
+   "sources": "難度預估 −8.82%（11/14 調整）；損益兩平 25J＠0.07 美元 85,953、20J＠0.06 美元 58,940（onchain.mining）",
+   "note": "Grok inbox 1105 表一 #11。今天有難度長文，回覆只講舊機",
+   "n": 20,
+   "order": 6,
+   "style": "口語版",
+   "image": null
+  },
+  {
+   "status": "send",
+   "url": "https://x.com/SelectedInvests/status/2121433113792282625",
+   "id": "2121433113792282625",
+   "author": "SelectedInvests",
+   "name": "Selected Investments",
+   "followers": 4883,
+   "posted": "2026-11-14T02:40:43Z",
+   "lang": "en",
+   "angle": "回答提問：換成位置",
+   "summary": "期中選舉後 10 天 BTC 跌約 13%；過去 3 次平均回撤 38.4%、12 個月後平均 +53.8%，「這次不一樣嗎？」",
+   "reply": "Different spot at least\nFriday closed below the short-term holder cost −1 SD band\nOnly 7% of days in four years closed down there",
+   "sources": "短期持有者成本帶 11/13：−1 標準差 68,416、收盤 68,236；近 4 年 7.4% 的日子收在 −1 以下（onchain.sth_bands，Bitview）",
+   "note": "Grok inbox 1105 表一 #12。本站沒有期中選舉統計，只給位置、不推漲跌",
+   "n": 21,
+   "order": 7,
+   "style": "口語版",
+   "image": null
+  },
+  {
+   "status": "send",
+   "url": "https://x.com/Financhle/status/2121430927557759042",
+   "id": "2121430927557759042",
+   "author": "Financhle",
+   "name": "Financhle",
+   "followers": 3664,
+   "posted": "2026-11-14T02:32:02Z",
+   "lang": "en",
+   "angle": "補一層：帳面虧損不會被強平",
+   "summary": "Strategy 在 67,000 時 BTC 持倉帳面虧超過 70 億美元，連兩天各少 30 億以上",
+   "reply": "No margin call on that number\nTheir converts and preferreds don't liquidate on price\nAverage cost 75,455",
+   "sources": "Strategy 持 850,363 顆、平均成本 75,455，11/13 收盤 68,236 在成本下方 9.6%（flows.treasury，CoinGecko）；可轉債和優先股沒有價格觸發的強平條款",
+   "note": "Grok inbox 1105 表一 #14。財經資料平台，瀏覽 364",
+   "n": 22,
+   "order": 8,
+   "style": "口語版",
+   "image": null
+  },
+  {
+   "n": 12,
+   "order": 9,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121435345497821569",
    "id": "2121435345497821569",
@@ -44,7 +216,7 @@
    "reply": "恐懼到這麼低，價格常常還會再磨一陣，2018 年以來剛進極度恐懼的 16 次，30 天後比較高的只有 4 次\n雙底要等第二次跌下來恐懼沒跟著創新低才像",
    "sources": "alternative.me 恐懼貪婪指數，2018-02 以來進入極度恐懼（≤20，隔 30 天以上算新的一段）16 次，30 天後價格較高 4 次、中位數 −6.1%（data/latest.json flows.fng_hist.f30）；11/13 讀值 20",
    "note": "我們原創底下的串，不設輪數上限；1 萬粉以下不配圖",
-   "order": 2,
+   "order": 10,
    "style": "口語版"
   },
   {
@@ -63,7 +235,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：別人的貼文底下已回 2 輪，第三輪是閒聊、沒問問題",
-   "order": 3,
+   "order": 11,
    "style": "口語版"
   },
   {
@@ -90,7 +262,7 @@
     },
     "title": "Perp OI in BTC: 338.6K, up 7% in 30 days as price fell 16%"
    },
-   "order": 4,
+   "order": 12,
    "style": "口語版"
   },
   {
@@ -108,7 +280,7 @@
    "reply": "長期持有者 7 天認賠 15 億美元，6/30 那次是 36 億\n老手還沒跟著割啦",
    "sources": "長期持有者 7 日已實現虧損 15 億美元、6/30 低點 36 億（notes 2026-11-13-2，CheckOnChain）",
    "note": "固定名單、熟帳號（昨天接過話）；1 萬粉以下不配圖",
-   "order": 5,
+   "order": 13,
    "style": "口語版"
   },
   {
@@ -126,7 +298,7 @@
    "reply": "時間上已經跟 6 月那段差不多長，53 天，只是這次跌得淺一點",
    "sources": "這段 9/21 86,594 → 11/13 68,236，−21.2%、53 天；5/10–6/30 那段 −28.8%、51 天（price.swing，收盤 15% 反轉算一段）",
    "note": "固定名單、熟帳號；不接三重底和價位，只給時間和幅度；同一作者另一則 MSTU 加倉是交易日記，不回",
-   "order": 6,
+   "order": 14,
    "style": "口語版"
   },
   {
@@ -151,7 +323,7 @@
     },
     "title": "Realized loss on Nov 13: 11 bp of market cap, 2x the Sept low"
    },
-   "order": 7,
+   "order": 15,
    "style": "口語版"
   },
   {
@@ -169,7 +341,7 @@
    "reply": "Not much open air under 67.5K, about 10K BTC of estimated long liquidations sit right below it",
    "sources": "推算清算帶 11/14 01:00 UTC：66,400–67,400 約 10,495 顆、63,800–66,300 約 20,403 顆（Coinalyze 7 家交易所未平倉＋假設槓桿，不是實際倉位）",
    "note": "Grok inbox 0905 #13；熟帳號；1 萬粉以上配圖；c-liq 截圖上 67.5K 以下只是中等藍綠、看不出「堆」，跟回覆打架，不配圖：拿掉",
-   "order": 8,
+   "order": 16,
    "style": "口語版"
   },
   {
@@ -187,7 +359,7 @@
    "reply": "BTC's been the weak one for two months\nDown 11% since Sept 13, the Nasdaq only 3%",
    "sources": "9/13 起漲跌：BTC −11.15%、Nasdaq −3.13%、S&P 500 −0.77%（flows.btc_vs_stocks.rel，至 11/13）",
    "note": "Grok inbox 0905 #11；新帳號，1 萬粉以上配圖；不配圖：c-stkrel 手機版截圖高度 0（展開也截不到），這輪不配",
-   "order": 9,
+   "order": 17,
    "style": "口語版"
   },
   {
@@ -206,7 +378,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：他的貼文底下第 3 輪、沒問問題，一句同意",
-   "order": 10,
+   "order": 18,
    "style": "口語版"
   }
  ]
