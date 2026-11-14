@@ -4,6 +4,31 @@
  "edition": 39,
  "items": [
   {
+   "n": 23,
+   "order": 1,
+   "status": "send",
+   "url": "https://x.com/Murphychen888/status/2121465753132314907",
+   "id": "2121465753132314907",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82347,
+   "posted": "2026-11-14T04:50:25Z",
+   "lang": "zh",
+   "angle": "提問：他說持倉升＋費率正＋價格跌＝現貨（含 ETF）主動賣；拆開看現貨主動賣集中在 Coinbase，Binance、Bybit 現貨偏買；問他看現貨賣壓衰減盯哪一條",
+   "summary": "幣本位永續未平倉 10 月初 41 萬→48.9 萬→46.8 萬，估算槓桿率 0.273 連升一個半月，費率幾乎沒翻負；Hyperliquid 聰明錢 10 月底起淨空；持倉升、費率正、價格跌＝現貨（含 ETF）主動賣；67K 附近堆著下跌途中開的槓桿多單",
+   "reply": "現貨主動賣拆開看，重的是 Coinbase：30 天淨賣 1.4 萬顆，2021 年以來最重的 1%\nBinance、Bybit 的現貨反而偏買，三家合起來比常態還少賣\n你看現貨賣壓衰減，會先盯 ETF 流量，還是 Coinbase 這條？",
+   "image": {
+    "site": {
+     "page": "flows",
+     "sel": "#c-pr-us"
+    },
+    "title": "Coinbase 溢價最新一小時 −0.040%，深度折價線是 −0.012%"
+   },
+   "sources": "網站 deriv.taker（11/13）：Coinbase 現貨 30 天 −14,174 顆，2021-08 以來第 1 百分位，7 天 −6,196；Binance＋Coinbase＋Bybit 現貨 30 天 −6,870（常態 −24,363，第 78 百分位），所以 Binance＋Bybit 30 天約 +7,300；永續 30 天 −121,549（常態 −59,036）。ETF 11/12 −5,100 萬美元（前幾天 −1.2 億到 −4.3 億）；配圖 Coinbase 溢價（flows.cb_premium）：30 天平均 −0.0156%，2022-10 以來第 1 百分位；圖上即時值 −0.040%（11/14 13:10 截圖時）",
+   "note": "★ 1 小時內（截止 13:50）。使用者點名要回（今天 3 萬粉以上第 5 則）。提問，配 Coinbase 溢價圖（主動買賣圖的解讀寫「現貨偏買、永續偏賣」，跟他的結論反向，而且太長，不用）。順著他的結論補「現貨是哪一家在賣」，不唱反調；永續主動賣比常態重這點不寫（跟他現貨主導的說法不同向）；「多看少動」不接",
+   "style": "口語版"
+  },
+  {
    "status": "send",
    "url": "https://x.com/QuintenFrancois/status/2121436645409047037",
    "id": "2121436645409047037",
@@ -25,7 +50,7 @@
     "title": "Day 403 after the top: this cycle 55% of peak, past three 18–26%"
    },
    "n": 13,
-   "order": 1,
+   "order": 2,
    "style": "口語版"
   },
   {
@@ -52,7 +77,7 @@
     "title": "Binance accounts: 76% long on Nov 13, 97th percentile"
    },
    "n": 14,
-   "order": 2,
+   "order": 3,
    "style": "口語版"
   },
   {
@@ -77,7 +102,7 @@
     "title": "Power law: under 0.5x fair value, 5% up the channel"
    },
    "n": 15,
-   "order": 3,
+   "order": 4,
    "style": "口語版"
   },
   {
@@ -95,7 +120,7 @@
    "sources": "200 日均線 11/13 73,036、收盤 68,236（−6.6%）（cycle.levels）",
    "note": "Grok inbox 1105 表一 #6。不寫週線多空分數（11/12 −0.03 貼近零線，可能被修正翻面）",
    "n": 18,
-   "order": 4,
+   "order": 5,
    "style": "口語版",
    "image": null
   },
@@ -114,7 +139,7 @@
    "sources": "現貨 ETF 20 個交易日合計 11/12 約 −19.8 億美元，這段 11/09 起第 4 天；過去：2025-03 −47 億（20 天）、2025-11 −47 億（27 天）、2026-06 −56 億（40 天）（flows.etf20，CoinMarketCap）",
    "note": "Grok inbox 1105 表一 #7。不寫會不會到那裡",
    "n": 19,
-   "order": 5,
+   "order": 6,
    "style": "口語版",
    "image": null
   },
@@ -133,7 +158,7 @@
    "sources": "難度預估 −8.82%（11/14 調整）；損益兩平 25J＠0.07 美元 85,953、20J＠0.06 美元 58,940（onchain.mining）",
    "note": "Grok inbox 1105 表一 #11。今天有難度長文，回覆只講舊機",
    "n": 20,
-   "order": 6,
+   "order": 7,
    "style": "口語版",
    "image": null
   },
@@ -152,7 +177,7 @@
    "sources": "短期持有者成本帶 11/13：−1 標準差 68,416、收盤 68,236；近 4 年 7.4% 的日子收在 −1 以下（onchain.sth_bands，Bitview）",
    "note": "Grok inbox 1105 表一 #12。本站沒有期中選舉統計，只給位置、不推漲跌",
    "n": 21,
-   "order": 7,
+   "order": 8,
    "style": "口語版",
    "image": null
   },
@@ -171,13 +196,13 @@
    "sources": "Strategy 持 850,363 顆、平均成本 75,455，11/13 收盤 68,236 在成本下方 9.6%（flows.treasury，CoinGecko）；可轉債和優先股沒有價格觸發的強平條款",
    "note": "Grok inbox 1105 表一 #14。財經資料平台，瀏覽 364",
    "n": 22,
-   "order": 8,
+   "order": 9,
    "style": "口語版",
    "image": null
   },
   {
    "n": 12,
-   "order": 9,
+   "order": 10,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121435345497821569",
    "id": "2121435345497821569",
@@ -216,7 +241,7 @@
    "reply": "恐懼到這麼低，價格常常還會再磨一陣，2018 年以來剛進極度恐懼的 16 次，30 天後比較高的只有 4 次\n雙底要等第二次跌下來恐懼沒跟著創新低才像",
    "sources": "alternative.me 恐懼貪婪指數，2018-02 以來進入極度恐懼（≤20，隔 30 天以上算新的一段）16 次，30 天後價格較高 4 次、中位數 −6.1%（data/latest.json flows.fng_hist.f30）；11/13 讀值 20",
    "note": "我們原創底下的串，不設輪數上限；1 萬粉以下不配圖",
-   "order": 10,
+   "order": 11,
    "style": "口語版"
   },
   {
@@ -235,7 +260,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：別人的貼文底下已回 2 輪，第三輪是閒聊、沒問問題",
-   "order": 11,
+   "order": 12,
    "style": "口語版"
   },
   {
@@ -262,7 +287,7 @@
     },
     "title": "Perp OI in BTC: 338.6K, up 7% in 30 days as price fell 16%"
    },
-   "order": 12,
+   "order": 13,
    "style": "口語版"
   },
   {
@@ -280,7 +305,7 @@
    "reply": "長期持有者 7 天認賠 15 億美元，6/30 那次是 36 億\n老手還沒跟著割啦",
    "sources": "長期持有者 7 日已實現虧損 15 億美元、6/30 低點 36 億（notes 2026-11-13-2，CheckOnChain）",
    "note": "固定名單、熟帳號（昨天接過話）；1 萬粉以下不配圖",
-   "order": 13,
+   "order": 14,
    "style": "口語版"
   },
   {
@@ -298,7 +323,7 @@
    "reply": "時間上已經跟 6 月那段差不多長，53 天，只是這次跌得淺一點",
    "sources": "這段 9/21 86,594 → 11/13 68,236，−21.2%、53 天；5/10–6/30 那段 −28.8%、51 天（price.swing，收盤 15% 反轉算一段）",
    "note": "固定名單、熟帳號；不接三重底和價位，只給時間和幅度；同一作者另一則 MSTU 加倉是交易日記，不回",
-   "order": 14,
+   "order": 15,
    "style": "口語版"
   },
   {
@@ -323,7 +348,7 @@
     },
     "title": "Realized loss on Nov 13: 11 bp of market cap, 2x the Sept low"
    },
-   "order": 15,
+   "order": 16,
    "style": "口語版"
   },
   {
@@ -341,7 +366,7 @@
    "reply": "Not much open air under 67.5K, about 10K BTC of estimated long liquidations sit right below it",
    "sources": "推算清算帶 11/14 01:00 UTC：66,400–67,400 約 10,495 顆、63,800–66,300 約 20,403 顆（Coinalyze 7 家交易所未平倉＋假設槓桿，不是實際倉位）",
    "note": "Grok inbox 0905 #13；熟帳號；1 萬粉以上配圖；c-liq 截圖上 67.5K 以下只是中等藍綠、看不出「堆」，跟回覆打架，不配圖：拿掉",
-   "order": 16,
+   "order": 17,
    "style": "口語版"
   },
   {
@@ -359,7 +384,7 @@
    "reply": "BTC's been the weak one for two months\nDown 11% since Sept 13, the Nasdaq only 3%",
    "sources": "9/13 起漲跌：BTC −11.15%、Nasdaq −3.13%、S&P 500 −0.77%（flows.btc_vs_stocks.rel，至 11/13）",
    "note": "Grok inbox 0905 #11；新帳號，1 萬粉以上配圖；不配圖：c-stkrel 手機版截圖高度 0（展開也截不到），這輪不配",
-   "order": 17,
+   "order": 18,
    "style": "口語版"
   },
   {
@@ -378,7 +403,7 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：他的貼文底下第 3 輪、沒問問題，一句同意",
-   "order": 18,
+   "order": 19,
    "style": "口語版"
   }
  ]
