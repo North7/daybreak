@@ -182,9 +182,16 @@ def age_viz(bv, px, last, days=1095, step=2):
     d1 = D[-1]; z = out[-1]; z30 = next((r for r in reversed(out) if r[0] <= dn(d1) - 30), None)
     rows = thin(out, step)
     if rows[-1][0] != z[0]: rows.append(z)
+    # 2026-11-13 使用者要求：老幣每日金額。持有 5 年以上、2 年以上的幣每天實現多少獲利（百萬美元），不做 30 天合計，看得到哪一天突然賣很多。
+    #   這是幣齡，不是錢包大小；逐筆 UTXO，交易所或託管換錢包也會算進來。老幣幾乎沒有虧損可實現，所以只放獲利。
+    dm = lambda j, gs: round(sum(PP[g][D[j]] or 0 for g in gs) / 1e6, 1)
+    orow = [[dn(D[j]), round(P(D[j])), dm(j, (5,)), dm(j, (4, 5))] for j in range(max(0, len(D) - days), len(D))]
+    oy = orow[-365:]; omed = lambda c: round(sorted(r[c] for r in oy)[len(oy) // 2], 1)
+    old = dict(rows=orow, y5=orow[-1][2], y2=orow[-1][3], med5=omed(2), med2=omed(3), top5=[[r[0], r[2]] for r in sorted(oy, key=lambda r: -r[2])[:5]], m30=(lambda r: [r[0], r[2]])(max(orow[-30:], key=lambda r: r[2])),
+               note='持有 5 年以上、2 年以上的幣每天實現的獲利（百萬美元；Bitview，逐筆 UTXO）；中位數和前五大是近 365 天，m30 是近 30 天最大的一天；只作讀值')
     lth = lambda sh: round(sum(sh[2:]), 1)   # 6 個月以上（約等於長期持有者）
     return dict(date=d1, groups=AGE_LAB, prof=z[2], loss=z[3], prof_m=z[4], loss_m=z[5], prof30=z30[2] if z30 else None, loss30=z30[3] if z30 else None,
-                lth_prof=lth(z[2]), lth_loss=lth(z[3]), lth_prof30=lth(z30[2]) if z30 else None, rows=rows, src='Bitview',
+                lth_prof=lth(z[2]), lth_loss=lth(z[3]), lth_prof30=lth(z30[2]) if z30 else None, rows=rows, old=old, src='Bitview',
                 note='30 天合計：各持有時間組實現的獲利、虧損各佔多少（Bitview，逐筆 UTXO、不是實體調整）；只作讀值')
 
 
