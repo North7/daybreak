@@ -1,16 +1,16 @@
 {
- "date": "2026-11-12",
- "edition": 38,
+ "date": "2026-11-13",
+ "edition": 39,
  "picks": [
   {
-   "id": "onchain/sthband",
-   "chart": "data/picks/onchain-sthband.png",
-   "chart_en": "data/picks/onchain-sthband-en.png",
-   "why": "跌破 200 日均線隔天，讀者在問「這算跌很深了嗎」；成本帶用短期持有者成本的歷史偏離回答，和頭條的槓桿不重複，7 天內沒推過。",
-   "q_zh": "跌破 200 日均線後，BTC 算跌得很深了嗎？",
-   "q_en": "After breaking the 200-day average, is BTC deeply oversold yet?",
-   "zh": "跌破 200 日均線後算跌很深了嗎？還沒到極端：收盤 71,371 在短期持有者成本 75,429 下方，但離 −1 標準差帶 68,697 還有一段。近 4 年只有 7.3% 的日子收在這條帶下方，上一次是 7/01；再下一條 −2 標準差在 58,859。#比特幣 #BTC #鏈上數據",
-   "en": "Is BTC deeply oversold after losing the 200-day average? Not yet: the 71,371 close is below short-term holder cost (75,429) but above the −1 SD band at 68,697. Only 7.3% of days in 4 years closed under it, last on Jul 1; −2 SD is 58,859. #Bitcoin #BTC #onchain"
+   "id": "onchain/rloss",
+   "chart": "data/picks/onchain-rloss.png",
+   "chart_en": "data/picks/onchain-rloss-en.png",
+   "why": "大跌第二天讀者想知道這是不是投降；頭條講槓桿和穩定幣，這張回答現貨持有者在做什麼。",
+   "q_zh": "價格更低、賠錢賣的人更多，這是投降了嗎？",
+   "q_en": "Lower price, bigger losses: is this capitulation?",
+   "zh": "價格更低、賠錢賣的人更多，這是投降了嗎？\n全網認賠峰值 11.13 個基點，9/15 那次低點只有 5.41；價格從 75,585 跌到 68,236，賠錢賣反而翻倍。\n2013 年起同樣的組合 58 次，30 天後 44 次比較高、中位數 +6.9%，任一天是 +2.9%。投降常出現在下跌後段，但不一定是最後一次。\n#比特幣 #BTC #鏈上數據",
+   "en": "Lower price, bigger losses: is this capitulation?\nThe loss peak is 11.13bp vs 5.41bp at the Sep 15 low, at a lower price.\nSince 2013: 58 times, higher 30 days later 44 times, median +6.9% (any day +2.9%). Often late in a decline, not always the last.\n#Bitcoin #BTC #onchain"
   }
  ]
 }
