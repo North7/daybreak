@@ -112,11 +112,19 @@ def build(L, N, E, dn, X):
             return dict(mz=mz, me=me, hz=hz, he=he, rows=rows, notag=1,
                         ser=[ser(9 + g, vc=2 + g, zh='持有 ' + AGE_NM[g][0], en='Held ' + AGE_NM[g][1], col=AGE_COL[g], w=1, op=.9) for g in range(6)] + [ser(8, hide=1, zh='6 個月以上合計', en='6+ months, total')],
                         bands=[dict(a=9 + g, b=(10 + g) if g < 5 else 15, col=AGE_COL[g], op=.62) for g in range(6)])
+        def old_mode():   # 2026-11-13 老幣每日金額：2 年以上一根柱子，5 年以上疊在前面（同一個 0 起點，看起來就是堆疊）
+            od = x.get('old')
+            if not od or not od.get('rows'): return []
+            md_ = lambda n: '%d/%02d' % ((lambda t: (t.month, t.day))(__import__('datetime').date(1970, 1, 1) + __import__('datetime').timedelta(n)))
+            return [dict(mz='老幣每日金額', me='Old coins, daily', hz='持有 5 年以上，當天實現獲利', he='Coins held 5+ years, profit realized that day', f='usdM', dom=None, tf='sqrt', hero=1, rng=365, rows=od['rows'], notag=0,   # 開根號刻度：偶爾有一天幾十億（多半是託管換錢包），線性刻度會把其他日子壓成一條線
+                         ser=[ser(3, zh='持有 2 年以上', en='Held 2+ years', t='bar', base=0, col=AGE_COL[4]), ser(2, zh='其中 5 年以上', en='Of which 5+ years', t='bar', base=0, col=AGE_COL[5])],
+                         marks=[dict(d=t[0], v=t[1], col='c3', up=1, zh='%s $%s' % (md_(t[0]), format(int(round(t[1])), ',')) + 'M', en='%s $%s' % (md_(t[0]), format(int(round(t[1])), ',')) + 'M') for t in (od.get('top5') or []) + ([od['m30']] if od.get('m30') and od['m30'][0] not in [q[0] for q in od.get('top5') or []] else [])],
+                         leg=[['c3', '5 年以上：近一年最大的五天和近 30 天最大的一天', '5+ years: five largest days of the past year and the largest of the past 30 days', 'ring']])]
         return dict(k='agepl', zh='依持有時間的實現獲利／虧損', en='Realized profit and loss by holding time', f='p1', p=1, dom=[0, 100], hero=6,
-          dz='每天賣出的幣依持有多久分成六組，色塊是各組在 30 天合計裡的佔比，疊起來是 100%，最老的在最下面；可以切換看實現獲利或實現虧損。大數字是持有 6 個月以上四組的合計：它在實現虧損裡升高，代表放了半年以上的人也開始認賠。資料是逐筆計算，交易所內部搬幣也會被算成一筆賣出。',
-          de='Coins sold each day are grouped by holding time; each layer is that group\'s share of the 30-day total, stacked to 100% with the oldest at the bottom. Switch between realized profit and realized loss. The headline figure is the four groups held 6+ months combined: when it rises in realized loss, holders of more than half a year are selling at a loss too. The data is per transaction output, so an exchange moving coins internally counts as a sale.',
+          dz='每天賣出的幣依持有多久分成六組，色塊是各組在 30 天合計裡的佔比，疊起來是 100%，最老的在最下面；可以切換看實現獲利或實現虧損。大數字是持有 6 個月以上四組的合計：它在實現虧損裡升高，代表放了半年以上的人也開始認賠。資料是逐筆計算，交易所內部搬幣也會被算成一筆賣出。「老幣每日金額」是另一種看法：不做 30 天合計，直接看持有 2 年以上的幣每天實現多少獲利（百萬美元），前面深色的是其中 5 年以上的，圓圈是近一年最大的五天和近 30 天最大的一天。偶爾有一天幾十億，多半是搬錢包不是賣出（2024/05/28 的 96 億對得上 Mt. Gox 搬幣那天），所以縱軸用開根號刻度。這是依幣齡分，不是依錢包大小，分不出是不是大戶；只作讀值。',
+          de='Coins sold each day are grouped by holding time; each layer is that group\'s share of the 30-day total, stacked to 100% with the oldest at the bottom. Switch between realized profit and realized loss. The headline figure is the four groups held 6+ months combined: when it rises in realized loss, holders of more than half a year are selling at a loss too. The data is per transaction output, so an exchange moving coins internally counts as a sale. "Old coins, daily" is a different cut: no 30-day sum, just how much profit coins held 2+ years realized each day (in $ millions), with the 5+ year part in front in the darker colour and rings on the five largest days of the past year and the largest of the past 30 days. An occasional day of several billion is usually a wallet move, not a sale (the $9.6B on 2024-05-28 matches the day Mt. Gox moved its coins), which is why the axis uses a square-root scale. It sorts by coin age, not wallet size, so it cannot tell whether the seller is a whale. A reading only.',
           modes=[mode(2, '實現獲利', 'Realized profit', '6 個月以上佔實現獲利', '6+ months\' share of realized profit', 50, '獲利了結有一半以上來自持有 6 個月以上的人', 'Over half of profit-taking comes from coins held 6+ months'),
-                 mode(3, '實現虧損', 'Realized loss', '6 個月以上佔實現虧損', '6+ months\' share of realized loss', 40, '持有 6 個月以上的人也在認賠（佔四成以上）', 'Holders of 6+ months are selling at a loss too (40% or more)')])
+                 mode(3, '實現虧損', 'Realized loss', '6 個月以上佔實現虧損', '6+ months\' share of realized loss', 40, '持有 6 個月以上的人也在認賠（佔四成以上）', 'Holders of 6+ months are selling at a loss too (40% or more)')] + old_mode())
 
     # ── 4. SOPR 三個視角（onchain.viz）：照 drawOc，線 c3、參考線 dn ──
     def soprf():
