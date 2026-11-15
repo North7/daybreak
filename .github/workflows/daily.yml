@@ -68,6 +68,11 @@ jobs:
         if: steps.chk.outputs.skip != 'true'
         continue-on-error: true
         run: python3 pipeline/next/build.py
+      - name: Prune ops images older than 3 days
+        # 2026-11-15 使用者：三天前的配圖都不需要存（見 pipeline/prune_images.py）。失敗不擋資料提交
+        if: steps.chk.outputs.skip != 'true'
+        continue-on-error: true
+        run: python3 pipeline/prune_images.py
       - name: Commit
         if: steps.chk.outputs.skip != 'true'
         run: |
