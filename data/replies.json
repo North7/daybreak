@@ -86,6 +86,25 @@
    "note": "我們原創（引用 mignoletkr）底下，他用中文問數據真假，用中文回"
   },
   {
+   "n": 15,
+   "order": 5,
+   "kind": "followup",
+   "status": "send",
+   "url": "https://x.com/lidmhun171644/status/2121766348993020058",
+   "id": "2121766348993020058",
+   "author": "lidmhun171644",
+   "name": "Greece giggle",
+   "followers": 60,
+   "posted": "2026-11-15T00:44:52Z",
+   "lang": "zh",
+   "angle": "補數據",
+   "style": "口語版",
+   "summary": "在我們 11/15 日報貼文底下：感覺是人禍啊",
+   "reply": "利率那邊也在推啦，10 年期美債收在 5.15%，12 月升息一碼已經被完全定價",
+   "sources": "10 年期美債殖利率收 5.15%、美元 19 個月高點、12 月升息 1 碼完全定價（Bitcoin Magazine，2026-11-14，notes.json news）",
+   "note": "我們原創（11/15 日報）底下，不設輪數上限；mentions.py 沒抓到，在 X 通知頁補看到的"
+  },
+  {
    "n": 1,
    "status": "send",
    "url": "https://x.com/lil_disruptor/status/2121771027646521559",
@@ -108,7 +127,7 @@
     },
     "title": "Each leg down cleared the longs stacked under price"
    },
-   "order": 5
+   "order": 6
   },
   {
    "n": 2,
@@ -135,7 +154,7 @@
     },
     "title": "30 days of taker flow: perps −140K BTC, spot just −9.8K"
    },
-   "order": 6
+   "order": 7
   },
   {
    "n": 3,
@@ -160,7 +179,7 @@
     },
     "title": "Day 404 after the top: this cycle ~51% of peak, past three 18–26%"
    },
-   "order": 7
+   "order": 8
   },
   {
    "n": 4,
@@ -185,7 +204,7 @@
     },
     "title": "30 天主動賣：永續 14 萬顆，現貨不到 1 萬顆"
    },
-   "order": 8
+   "order": 9
   },
   {
    "n": 5,
@@ -210,7 +229,7 @@
     },
     "title": "11/13 一天認賠 15.3 億美元，6/30 那次是 15.5 億"
    },
-   "order": 9
+   "order": 10
   },
   {
    "n": 6,
@@ -235,7 +254,7 @@
     },
     "title": "短期持有者成本 74,946，收盤 64,115 在下面一成半"
    },
-   "order": 10
+   "order": 11
   },
   {
    "n": 7,
@@ -253,7 +272,7 @@
    "reply": "說撤退還早\n全部現貨 ETF 近 20 天流出 21 億美元\n6 月那波最深是 56 億",
    "sources": "美國現貨 BTC ETF 20 日淨流量 11/13 −20.80 億美元（這段流出第 5 天）；之前幾段最深 2026-06-09 −56.38 億、2026-02-13 −38.85 億、2025-03 −47.13 億（CoinMarketCap，flows.etf20）",
    "note": "Grok inbox 0905 表一 #6。ETF 每日流量圖看不到 6 月那波的 20 日累計，對不上，不配圖",
-   "order": 11
+   "order": 12
   },
   {
    "n": 8,
@@ -271,7 +290,7 @@
    "reply": "掉的大多是價格\nOI 換成顆數算，全市場這週才少半個百分點\n槓桿根本沒退",
    "sources": "永續未平倉 11/14 338,809 顆、7 天 −0.5%、30 天 +7.7%（同期價格 −22%），2021 年以來第 97 百分位（Coinalyze 7 家交易所，deriv.oi_hist）",
    "note": "Grok inbox 0905 表一 #5（熟帳號）。1 萬粉以下不配圖",
-   "order": 12
+   "order": 13
   },
   {
    "n": 9,
@@ -296,7 +315,7 @@
     },
     "title": "100–1,000 顆這層：30 天少的 3 萬顆，幾乎全在這一週"
    },
-   "order": 13
+   "order": 14
   },
   {
    "n": 10,
@@ -314,7 +333,7 @@
    "reply": "未實現獲利那條更極端，跌破市值 35% 了，差在以前到這裡整體是賠的，這次加總還在賺",
    "sources": "相對未實現獲利 11/14 34.1%、地板 35%（Bitview，onchain.rup）；「以前到這裡整體在賠、這次還在賺」同 11/15 RUP 長文",
    "note": "固定名單 4c（熟帳號，發文 0.3 小時）。1 萬粉以下不配圖；不碰他自己講的成本",
-   "order": 14
+   "order": 15
   }
  ]
 }
