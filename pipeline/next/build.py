@@ -2,7 +2,9 @@
 """新版首頁（2026-11-11 起取代舊版，舊版搬到 classic.html）的建置：
 1. 先用無頭 Chrome 跑舊版 classic.html，抽出每個面板的白話讀值（extract_interp.py → interp.zh.json／interp.en.json；失敗就沿用上一次的檔案）。
 2. 從 data/latest.json、data/notes*.json 組出每一頁、每張圖要用的資料（site_data.py 和各頁的 *_data.py）。
-3. 寫 data/next.js（window.DAYBREAK_NEXT＝整包資料），並把 page.html 寫成倉庫根目錄的 index.html（只換資料檔的版本號）。
+3. 寫 data/next.js（window.DAYBREAK_NEXT），並把 page.html 寫成倉庫根目錄的 index.html（只換資料檔的版本號）。
+   2026-11-15 瘦身：卡片多的頁（週期、價位、賣壓、買盤、槓桿）的卡片另外寫成 data/next-<頁>.js，點到那一頁才載（頁面閒下來時也會先在背景載）。
+   data/next.js 裡這幾頁只留每張卡的代號、名稱這些小欄位（ops/post/next_shot.py 的目錄照樣讀得到），和每頁的主圖（桌機分頁卡片上的小圖要用）。
 用法：python3 pipeline/next/build.py [--no-interp]
 每日資料流程（daily.yml）和日報推送後（share.yml）都會跑一次。"""
 import json, os, sys, datetime as dt, bisect
@@ -91,8 +93,21 @@ D = dict(
 )
 print('urpd thick', thick, 'thin', thin, '| w50', {k: v for k, v in D['w50'].items() if k != 'live'}, D['w50']['live'])
 print('stage', D['stage'], '| stab', D['stabNow'], '| etf5', D['etf5'], '| now', D['now'], '| dawn', D['dawn'])
+LZ_MIN = 20000   # 卡片資料超過這個大小（位元組）的頁才拆出去
+STUB = ('k', 'zh', 'en', 'nofx', 'na', 'go', 'sim', 'wide')   # 留在 next.js 的欄位：next_shot 的目錄、頁面切換前用不到其他欄位
+keep = set()
+for ch in D['site']['chapters']:
+    gs = ch.get('groups') or []; gj = json.dumps(gs, ensure_ascii=False, separators=(',', ':'))
+    if ch['id'] == 'today' or ch.get('todo') or len(gj) < LZ_MIN: continue
+    h = ch.get('hero') or [0, 0]; fn = 'next-%s.js' % ch['id']; keep.add(fn)
+    open(os.path.join(REPO, 'data', fn), 'w', encoding='utf-8').write('(window.DAYBREAK_CH=window.DAYBREAK_CH||{})[%s]=%s;\n' % (json.dumps(ch['id']), gj))
+    ch['lz'] = hashlib.sha1(gj.encode('utf-8')).hexdigest()[:10]
+    ch['groups'] = [dict({k: v for k, v in g.items() if k != 'charts'}, charts=[c if (gi, ci_) == tuple(h) else dict({k: c[k] for k in STUB if k in c}, stub=1) for ci_, c in enumerate(g['charts'])]) for gi, g in enumerate(gs)]
+for fn in os.listdir(os.path.join(REPO, 'data')):   # 頁改名或不再拆出去時，舊檔一起清掉
+    if fn.startswith('next-') and fn.endswith('.js') and fn not in keep: os.remove(os.path.join(REPO, 'data', fn))
 js = json.dumps(D, ensure_ascii=False, separators=(',', ':'))
 open(os.path.join(REPO, 'data', 'next.js'), 'w', encoding='utf-8').write('window.DAYBREAK_NEXT=' + js + ';\n')
+print('split:', ', '.join('%s %d KB' % (f, os.path.getsize(os.path.join(REPO, 'data', f)) // 1024) for f in sorted(keep)))
 ver = hashlib.sha1(js.encode('utf-8')).hexdigest()[:10]
 page = open(os.path.join(HERE, 'page.html'), encoding='utf-8').read(); assert page.count('data/next.js?v=__V__') == 1
 open(os.path.join(REPO, 'index.html'), 'w', encoding='utf-8').write(page.replace('data/next.js?v=__V__', 'data/next.js?v=' + ver))
