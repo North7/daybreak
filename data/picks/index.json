@@ -1,16 +1,16 @@
 {
- "date": "2026-11-13",
+ "date": "2026-11-14",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/rloss",
-   "chart": "data/picks/onchain-rloss.png",
-   "chart_en": "data/picks/onchain-rloss-en.png",
+   "id": "flows/rcliq",
+   "chart": "data/picks/flows-rcliq.png",
+   "chart_en": "data/picks/flows-rcliq-en.png",
    "name": {
-    "zh": "實現虧損：峰值背離",
-    "en": "Realized loss: peak divergence"
+    "zh": "資金流入：實現市值 30 日變化",
+    "en": "Capital inflow: realized cap 30-day change"
    },
-   "link": "https://daybreak.aronlab.dev/#onchain/rloss"
+   "link": "https://daybreak.aronlab.dev/#flows/rcliq"
   }
  ]
 }
