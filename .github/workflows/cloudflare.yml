@@ -2,6 +2,7 @@ name: Deploy to Cloudflare Pages
 
 # 2026-11-11：網站開始同時部署到 Cloudflare Pages（之後綁 daybreak.aronlab.dev）。
 # 搬家期間 GitHub Pages（north7.github.io/daybreak）照常運作，兩邊同時上線，確認沒問題才切換。
+# 2026-11-16 使用者決定提前收掉並行：GitHub Pages 的來源改成 pages-redirect 分支，只剩一頁轉址，舊網址都帶到 daybreak.aronlab.dev 的同一個位置。
 #
 # 觸發：
 #   - push 到 main（PR 合併、日報等用個人帳號推上來的提交）
