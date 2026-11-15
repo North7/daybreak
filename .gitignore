@@ -4,6 +4,8 @@ pipeline/raw_*.json
 .claude/
 pipeline/today.json
 ops/video/out/
+# 2026-11-15：案例頁的影片放在 GitHub Release「media」，部署時才下載（.github/workflows/cloudflare.yml）
+case-study/img/showcase.mp4
 # 2026-11-08：運營策略文件搬到私人倉庫 North7/daybreak-ops-private，不要再放回公開倉庫
 ops/brand/*.md
 !ops/brand/README.md
