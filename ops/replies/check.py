@@ -174,8 +174,13 @@ def repeat_errors(items):
     # 2026-11-08（帳號分析）：①有外推線／推算日期的圖不配（佐證圖 c-ev-* 畫「近 30 日速度外推」和「外推交叉 12/02」，等於在推未來日期）；
     # ②同一張圖、同一種語言一天只給一則（11/05 兩則 DVOL 回覆圖文幾乎一樣、隔 21 分鐘）；③太肯定的階段斷言要改成帶前提的說法
     imgs = {}
+    free = no_quota_accounts()   # 2026-11-15 使用者：no_quota 的帳號（Murphy）不受「同一張圖一天一次」限制，也不佔別人的那一次
     for it in items:
         if it.get('status') == 'skip' or not it.get('image'): continue
+        if (it.get('author') or '').lower() in free:
+            im = it['image']; sel = (im.get('site') or {}).get('sel') or im.get('chart')
+            if str(sel).startswith('#c-ev-'): err.append(f'#{it["n"]} 配圖 {sel} 有外推線和推算日期，不配（只放已經發生的走勢）')
+            continue
         im = it['image']; key = ((im.get('site') or {}).get('sel') or im.get('chart'), 'zh' if it.get('lang') == 'zh' else 'en')
         if str(key[0]).startswith('#c-ev-'): err.append(f'#{it["n"]} 配圖 {key[0]} 有外推線和推算日期，不配（只放已經發生的走勢）')
         if key in imgs: err.append(f'#{it["n"]} 和 #{imgs[key]} 用同一張圖（{key[0]}，{key[1]}）：同一張圖同一種語言一天只給一則')
@@ -257,7 +262,7 @@ def known_accounts():
 
 
 def no_quota_accounts():
-    """私人 watchlist 標 no_quota 的帳號：不佔「3 萬粉以上一天 1–2 則」額度，也不算進熟帳號比例（2026-11-14 起）。讀不到就當沒有。"""
+    """私人 watchlist 標 no_quota 的帳號：不佔「3 萬粉以上一天 1–2 則」額度，也不算進熟帳號比例（2026-11-14 起）；同一張圖一天一次也不算他（2026-11-15）。讀不到就當沒有。"""
     try:
         import opsprivate
         W = json.load(open(opsprivate.path('replies', 'watchlist.json'), encoding='utf-8'))
