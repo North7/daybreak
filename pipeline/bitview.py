@@ -47,7 +47,9 @@ COLS = [('px', 'price_close', 2), ('sth', 'sth_realized_price', 2), ('tmm', 'tru
         ('ssr', 'sell_side_risk_ratio_1w', 6), ('ssr_s', 'sth_sell_side_risk_ratio_1w', 6), ('ssr_l', 'lth_sell_side_risk_ratio_1w', 6),
         ('lnupl', 'lth_nupl', 4), ('snupl', 'sth_nupl', 4), ('rr', 'reserve_risk', 7), ('aviv', 'aviv', 4), ('dorm', 'dormancy_1w', 3), ('live', 'liveliness', 5),
         # 2026-11-09 使用者要求（對趨勢的信心，見 bv_extra.conf_viz）：短期持有者每天賣出的幣的成本合計（美元）與賣出量（BTC），存原始合計，7 日平均時按賣出量加權
-        ('stvd', 'sth_value_destroyed_sum_24h', 0), ('stvol', 'sth_transfer_volume_sum_24h', 0)] + \
+        ('stvd', 'sth_value_destroyed_sum_24h', 0), ('stvol', 'sth_transfer_volume_sum_24h', 0),
+        # 2026-11-15 使用者要求（離成本線和均線多遠，見 oc_extra.avg_viz）：Cointime 價格、全網每日鏈上轉帳的金額（美元）與顆數（算 90／365 天鏈上均價）
+        ('ctp', 'cointime_price', 2), ('tvu', 'transfer_volume_sum_24h_usd', 0), ('tvb', 'transfer_volume_sum_24h', 0)] + \
        [(f'a{k}{i + 1}', ('sum', [f'age_{b}_realized_{m}_sum_24h' for b in bands]), 0) for k, m in (('p', 'profit'), ('l', 'loss')) for i, bands in enumerate(AGE_G)]   # 2026-11-05：活躍投資人成本（Cointime Active Price）、1 週–1 個月持幣成本（levels_viz／age_cost_viz）   # 2026-11-05：長期持有者已實現虧損（美元／日，stage_viz.lthrl_viz）   # 2026-11-05：短期持有者 SOPR（每日），原本給 11/05 的短期壓力分數；11/07 起改成只用收盤價，這欄留著不影響快取   # 2026-11-04：短期持有者獲利比例（%）、全體實現價（關鍵價位圖）
 KEYS = [k for k, _, _ in COLS]
 COC_TMM = 'https://charts-cdn.checkonchain.com/btconchain/cointime/cointime_pricing_all_1/cointime_pricing_all_1_light.html'
