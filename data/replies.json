@@ -4,8 +4,27 @@
  "edition": 40,
  "items": [
   {
-   "n": 47,
+   "n": 48,
    "order": 1,
+   "status": "send",
+   "url": "https://x.com/0xGummyBear/status/2121960282117525909",
+   "id": "2121960282117525909",
+   "author": "0xGummyBear",
+   "name": "加密貝兒",
+   "followers": 4099,
+   "posted": "2026-11-15T13:35:00Z",
+   "lang": "zh",
+   "angle": "補她點名的變數：穩定幣和 ETF 跟 2023 年 5 月不一樣",
+   "style": "口語版",
+   "summary": "JTDayBTC（長期動能 75%＋短期反轉 25%）一年後從極端紅區回到中性；類比 2023 年 5 月 32K→24K 的回踩；最後說宏觀、AI Capex、ETF、穩定幣淨數據才是最重要的變數",
+   "reply": "你最後點的兩個變數，剛好跟 2023 年 5 月不太一樣\n那時穩定幣 30 天大概只縮 1%，現在縮了 5.4%，2020 年以來比這更快的只有 UST 崩掉那兩個月\nETF 倒沒那麼糟，20 天流出 21 億美元，只有前兩次大流出的一半左右",
+   "sources": "穩定幣（DefiLlama 全部美元穩定幣，site flows.stables，11/14）：2,870 億，30 天 −5.41%（−163 億）；2023-05-01／05-16 30 天 −0.99%；2020 起 30 天 ≤−5% 只有 2022-05、2022-06（UST）和 2026-11。ETF（data/etf.json roll20，到 11/13）：20 天合計 −20.8 億美元；前兩段連續流出谷底 2025-03-11 −47.1 億、2025-11-25 −47.1 億",
+   "image": null,
+   "note": "使用者 21:4x 指定回。她 4,099 粉、1 萬以下不配圖；常來留言（4 則）。發文 21:35，1 小時內。今天非接話已過 40，使用者點名照回。不唱反調：只補她自己點名的兩個變數，ETF 那行給反向的一面"
+  },
+  {
+   "n": 47,
+   "order": 2,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121911671656718558",
    "id": "2121911671656718558",
@@ -30,7 +49,7 @@
   },
   {
    "n": 45,
-   "order": 2,
+   "order": 3,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/fresh1142362193/status/2121910464007561495",
@@ -49,7 +68,7 @@
   },
   {
    "n": 46,
-   "order": 3,
+   "order": 4,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/JinDianZiAI/status/2121902964772339835",
@@ -68,7 +87,7 @@
   },
   {
    "n": 43,
-   "order": 4,
+   "order": 5,
    "kind": "followup",
    "status": "skip",
    "url": "https://x.com/zhenli3367/status/2121896587010126058",
@@ -85,7 +104,7 @@
   },
   {
    "n": 44,
-   "order": 5,
+   "order": 6,
    "kind": "followup",
    "status": "skip",
    "url": "https://x.com/lidmhun171644/status/2121892453691036000",
@@ -102,7 +121,7 @@
   },
   {
    "n": 42,
-   "order": 6,
+   "order": 7,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/lidmhun171644/status/2121887806700261744",
@@ -121,7 +140,7 @@
   },
   {
    "n": 41,
-   "order": 7,
+   "order": 8,
    "status": "send",
    "url": "https://x.com/BruceBlue/status/2121783060236771815",
    "id": "2121783060236771815",
@@ -139,7 +158,7 @@
   },
   {
    "n": 39,
-   "order": 8,
+   "order": 9,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121861509190123990",
    "id": "2121861509190123990",
@@ -157,7 +176,7 @@
   },
   {
    "n": 40,
-   "order": 9,
+   "order": 10,
    "status": "send",
    "url": "https://x.com/AxelAdlerJr/status/2121864320963219924",
    "id": "2121864320963219924",
@@ -196,7 +215,7 @@
    "reply": "賣盤還沒打乾淨\nOKX 費率是翻負了，Hyperliquid 卻升到年化 11%，比這 7 天平均還高",
    "sources": "資金費率年化 11/15 00:17 UTC 快照：OKX −4.15%（7 日均 5.19%）、Hyperliquid 10.95%（7 日均 8.55%）（deriv.funding_multi）",
    "note": "固定名單 4c（3 萬粉以下、0.7 小時）。1 萬粉以下不配圖；只讀費率，不判斷底部",
-   "order": 10
+   "order": 11
   },
   {
    "n": 29,
@@ -223,7 +242,7 @@
     },
     "title": "Coinbase premium, USDT-adjusted: 30-day avg −0.01%"
    },
-   "order": 11
+   "order": 12
   },
   {
    "n": 30,
@@ -241,7 +260,7 @@
    "reply": "早上那一針剛好戳到下面最厚的一層籌碼\n最後一次在 62–64K 換手的幣有 72 萬多顆，跌穿就是這批人一起轉賠",
    "sources": "URPD 11/13：62–64K 725,667 顆、68–70K 557,017 顆（Bitview，chips.urpd）",
    "note": "Grok inbox 1305 表一 #1（新博主）。1 萬粉以下不配圖；只讀值，不判斷守不守得住",
-   "order": 12
+   "order": 13
   },
   {
    "n": 31,
@@ -259,7 +278,7 @@
    "reply": "上市公司手上的幣，Strategy 一家就佔六成五，它卡住，公司買幣這條線差不多就一起停了",
    "sources": "上市公司持幣 11/14：181 家合計 1,301,532 顆，Strategy 850,363 顆、佔 65.3%（CoinGecko，flows.treasury）",
    "note": "Grok inbox 1305 表一 #2。1 萬粉以下不配圖；不判斷融資撐多久",
-   "order": 13
+   "order": 14
   },
   {
    "n": 32,
@@ -277,7 +296,7 @@
    "reply": "比虧幅的話 Metaplanet 更慘啦，成本 88K 多，11/14 收盤低快 28%，Strategy 才 15%",
    "sources": "Metaplanet 44,000 顆、平均成本 88,551、Strategy 75,455；11/14 收盤 64,115（CoinGecko，flows.treasury）",
    "note": "Grok inbox 1305 表一 #3。1 萬粉以下不配圖；不接「會不會到 4 開頭」",
-   "order": 14
+   "order": 15
   },
   {
    "n": 33,
@@ -295,7 +314,7 @@
    "reply": "他不是一個人在空，Hyperliquid 淨值前 2,000 名加起來空一萬一千多顆、多不到八千\n他這筆大概佔空方兩成\n之前那幾次，他是消息出來後多久平的？",
    "sources": "Hyperliquid 淨值前 2,000 名 BTC 永續 11/15 00:17 UTC：空 124 戶 11,554 顆、多 121 戶 7,906 顆；離強平 10% 內多單 10 戶 2,311 顆（deriv.hl_whales）",
    "note": "Grok inbox 1305 表一 #5（熟帳號）。1 萬粉以下不配圖；佔兩成的前提是他在前 2,000 名內（1.5 億美元部位，八成在）",
-   "order": 15
+   "order": 16
   },
   {
    "n": 34,
@@ -314,7 +333,7 @@
    "reply": "磨八成跑不掉\n這種轉負 2014 年以來 22 次，一半拖超過一個半月，今年後面兩次都快三個月",
    "sources": "已實現市值 30 天轉負 2014 年以來 22 段（不含這次），天數中位數 47；2026-01-23～05-01 99 天、05-28～08-22 87 天（CoinMetrics community，flows.rc_liq）",
    "note": "接話：他問了問題（別人貼文底下第三輪，有問就回）",
-   "order": 16
+   "order": 17
   },
   {
    "n": 35,
@@ -333,7 +352,7 @@
    "reply": "前面還有 61K 這關，價格到那裡，拿一年以上的人就有四成五在賠",
    "sources": "長期持有者虧損比例 11/14 收盤 42.3%，61K 約 45.4%、60K 46.3%（onchain.lthloss.cohort）",
    "note": "接話：原作者回我們，第一輪回一句",
-   "order": 17
+   "order": 18
   },
   {
    "n": 36,
@@ -352,7 +371,7 @@
    "reply": "接的都是小的，1 到 100 顆的地址 30 天才多一萬六，補中型那層倒出來的一半多一點",
    "sources": "地址分層 30 天 11/14：1–10 顆 +10,319、10–100 顆 +5,810、100–1k 顆 −29,808（Bitview，onchain.whales；地址不等於實體）",
    "note": "接話：原作者回我們，回一句短的",
-   "order": 18
+   "order": 19
   },
   {
    "n": 37,
@@ -371,11 +390,11 @@
    "reply": "",
    "sources": "",
    "note": "按讚就好：只回一個 ok",
-   "order": 19
+   "order": 20
   },
   {
    "n": 28,
-   "order": 20,
+   "order": 21,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121828808449831261",
    "id": "2121828808449831261",
@@ -394,7 +413,7 @@
   },
   {
    "n": 27,
-   "order": 21,
+   "order": 22,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/serlo123/status/2121820669440872635",
@@ -413,7 +432,7 @@
   },
   {
    "n": 26,
-   "order": 22,
+   "order": 23,
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2121802244698095741",
    "id": "2121802244698095741",
@@ -446,7 +465,7 @@
    "reply": "難怪那麼準，三條擠在一起\n短期成本這 30 天還往上墊了 500，價格在跌，它反而在升",
    "sources": "短期持有者成本 74,946、30 天 +501（chips.flow.sth_vs_tmm，11/14）",
    "note": "他的貼文底下第 2 輪（回答我們的問題），可以接；接話不配圖",
-   "order": 23
+   "order": 24
   },
   {
    "n": 18,
@@ -465,7 +484,7 @@
    "reply": "那麼遠 Daybreak 的熱力圖算不到，只到 58.8K\n現在 64K 開多要爆在 49K，槓桿只有四倍上下，真有也是很耐跌的單",
    "sources": "清算熱力圖範圍 58,800 起（deriv.liq_heat.lo，11/15 00:00）；多單強平價 ≈ 開倉價 ×(1−1/槓桿)，64,115→49,000 約 4.2 倍（未計維持保證金）",
    "note": "我們原創（61K 長文）底下，不設輪數上限",
-   "order": 24
+   "order": 25
   },
   {
    "n": 19,
@@ -490,7 +509,7 @@
     },
     "title": "資金費率：11/14 還是正的，年化 3.5%"
    },
-   "order": 25
+   "order": 26
   },
   {
    "n": 20,
@@ -515,7 +534,7 @@
     },
     "title": "ETF 推算成本 78,980，收盤低 18.8%"
    },
-   "order": 26
+   "order": 27
   },
   {
    "n": 21,
@@ -540,7 +559,7 @@
     },
     "title": "30 天清算 77.5% 是多單"
    },
-   "order": 27
+   "order": 28
   },
   {
    "n": 22,
@@ -558,7 +577,7 @@
    "reply": "永續和現貨差了五倍，11/14 一天永續淨主動賣兩萬六千多顆，現貨才五千\n你列的那幾筆巨鯨都是 ETH，BTC 這邊有看到誰在接嗎？",
    "sources": "主動買賣 11/14 單日：永續 −26,647 顆、現貨三家 −5,138 顆（deriv.taker，Coinalyze＋Binance）",
    "note": "固定名單 4c（熟帳號）。同帳號兩則只回這則；主動買賣圖中文今天已給 #4，不配圖",
-   "order": 28
+   "order": 29
   },
   {
    "n": 23,
@@ -576,7 +595,7 @@
    "reply": "要說誰在砸現貨，30 天主動賣最重的是 Coinbase，淨賣 1.6 萬顆，2021 年有紀錄以來最多\nBinance 加 Bybit 同期反而淨買 6 千多",
    "sources": "現貨主動買賣 30 天：Coinbase −16,242 顆（2021-08 起最低，百分位 0）、三家合計 −9,775 → Binance＋Bybit 約 +6,467（deriv.taker，11/14）",
    "note": "Grok inbox 1105 表一 #5。1 萬粉以下不配圖",
-   "order": 29
+   "order": 30
   },
   {
    "n": 24,
@@ -594,7 +613,7 @@
    "reply": "不只槓桿\n穩定幣 30 天也少了 163 億美元\n快六年來縮得比這快的日子不到 2%",
    "sources": "美元穩定幣流通量 11/14 2,870 億、30 天 −5.39%（−163 億），2,144 天裡第 1.4 百分位（flows.stables，DefiLlama）",
    "note": "Grok inbox 1105 表一 #4。1 萬粉以下不配圖",
-   "order": 30
+   "order": 31
   },
   {
    "n": 25,
@@ -612,11 +631,11 @@
    "reply": "連 USDT 自己都在折價，7 天平均對美元低 0.11%，2022 年 10 月以來不到一成的時候比現在更低",
    "sources": "USDT 對美元 7 天平均折價 −0.11%，自己歷史第 6.5 百分位（flows.cb_premium.usdt，2022-10 起）",
    "note": "Grok inbox 1105 表一 #3（新博主，繁中）。他已經列了穩定幣 142 億，改給 USDT 折價；1 萬粉以下不配圖",
-   "order": 31
+   "order": 32
   },
   {
    "n": 16,
-   "order": 32,
+   "order": 33,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121798710627905658",
    "id": "2121798710627905658",
@@ -641,7 +660,7 @@
   },
   {
    "n": 11,
-   "order": 33,
+   "order": 34,
    "status": "send",
    "url": "https://x.com/Dragonhau66/status/2121782598401712499",
    "id": "2121782598401712499",
@@ -666,7 +685,7 @@
   },
   {
    "n": 12,
-   "order": 34,
+   "order": 35,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/serlo123/status/2121788364294950912",
@@ -685,7 +704,7 @@
   },
   {
    "n": 13,
-   "order": 35,
+   "order": 36,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/serlo123/status/2121789538368704983",
@@ -704,7 +723,7 @@
   },
   {
    "n": 14,
-   "order": 36,
+   "order": 37,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/serlo123/status/2121790942193873032",
@@ -723,7 +742,7 @@
   },
   {
    "n": 15,
-   "order": 37,
+   "order": 38,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/lidmhun171644/status/2121766348993020058",
@@ -763,7 +782,7 @@
     },
     "title": "Each leg down cleared the longs stacked under price"
    },
-   "order": 38
+   "order": 39
   },
   {
    "n": 2,
@@ -790,7 +809,7 @@
     },
     "title": "30 days of taker flow: perps −140K BTC, spot just −9.8K"
    },
-   "order": 39
+   "order": 40
   },
   {
    "n": 3,
@@ -815,7 +834,7 @@
     },
     "title": "Day 404 after the top: this cycle ~51% of peak, past three 18–26%"
    },
-   "order": 40
+   "order": 41
   },
   {
    "n": 4,
@@ -840,7 +859,7 @@
     },
     "title": "30 天主動賣：永續 14 萬顆，現貨不到 1 萬顆"
    },
-   "order": 41
+   "order": 42
   },
   {
    "n": 5,
@@ -865,7 +884,7 @@
     },
     "title": "11/13 一天認賠 15.3 億美元，6/30 那次是 15.5 億"
    },
-   "order": 42
+   "order": 43
   },
   {
    "n": 6,
@@ -890,7 +909,7 @@
     },
     "title": "短期持有者成本 74,946，收盤 64,115 在下面一成半"
    },
-   "order": 43
+   "order": 44
   },
   {
    "n": 7,
@@ -908,7 +927,7 @@
    "reply": "說撤退還早\n全部現貨 ETF 近 20 天流出 21 億美元\n6 月那波最深是 56 億",
    "sources": "美國現貨 BTC ETF 20 日淨流量 11/13 −20.80 億美元（這段流出第 5 天）；之前幾段最深 2026-06-09 −56.38 億、2026-02-13 −38.85 億、2025-03 −47.13 億（CoinMarketCap，flows.etf20）",
    "note": "Grok inbox 0905 表一 #6。ETF 每日流量圖看不到 6 月那波的 20 日累計，對不上，不配圖",
-   "order": 44
+   "order": 45
   },
   {
    "n": 8,
@@ -926,7 +945,7 @@
    "reply": "掉的大多是價格\nOI 換成顆數算，全市場這週才少半個百分點\n槓桿根本沒退",
    "sources": "永續未平倉 11/14 338,809 顆、7 天 −0.5%、30 天 +7.7%（同期價格 −22%），2021 年以來第 97 百分位（Coinalyze 7 家交易所，deriv.oi_hist）",
    "note": "Grok inbox 0905 表一 #5（熟帳號）。1 萬粉以下不配圖",
-   "order": 45
+   "order": 46
   },
   {
    "n": 9,
@@ -951,7 +970,7 @@
     },
     "title": "100–1,000 顆這層：30 天少的 3 萬顆，幾乎全在這一週"
    },
-   "order": 46
+   "order": 47
   },
   {
    "n": 10,
@@ -969,7 +988,7 @@
    "reply": "未實現獲利那條更極端，跌破市值 35% 了，差在以前到這裡整體是賠的，這次加總還在賺",
    "sources": "相對未實現獲利 11/14 34.1%、地板 35%（Bitview，onchain.rup）；「以前到這裡整體在賠、這次還在賺」同 11/15 RUP 長文",
    "note": "固定名單 4c（熟帳號，發文 0.3 小時）。1 萬粉以下不配圖；不碰他自己講的成本",
-   "order": 47
+   "order": 48
   }
  ]
 }
