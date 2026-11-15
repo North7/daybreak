@@ -184,7 +184,8 @@
    "charts": [
     "lv/urpdchg",
     "lv/urpd"
-   ]
+   ],
+   "posted": "2026-11-14"
   },
   {
    "id": "2026-11-14-miners",
@@ -198,7 +199,8 @@
    "charts": [
     "sell/miners",
     "cycle/hashr"
-   ]
+   ],
+   "posted": "2026-11-14"
   },
   {
    "id": "2026-11-15-rup",
@@ -211,7 +213,8 @@
    ],
    "charts": [
     "cycle/rup"
-   ]
+   ],
+   "posted": "2026-11-15"
   },
   {
    "id": "2026-11-15-five",
@@ -224,7 +227,8 @@
    ],
    "charts": [
     "cycle/agecost"
-   ]
+   ],
+   "posted": "2026-11-15"
   },
   {
    "id": "2026-11-16-lth61",
@@ -237,7 +241,8 @@
    ],
    "charts": [
     "cycle/lthloss"
-   ]
+   ],
+   "posted": "2026-11-15"
   }
  ],
  "used": [
