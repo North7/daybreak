@@ -313,6 +313,93 @@ def lsrchg_viz(bv, px, last, bottoms=(), tops=(), step=3):
 DD_FIRST = '2011-11-18'   # 2011–13 那一輪的底部收盤（model.json 的 cycle_bottoms 從 2015 起，這一輪的起點補在這裡）
 
 
+# ---------- 離成本線和均線多遠（2026-11-15 使用者要求） ----------
+# 價格和九條線各比一次：log(價格 ÷ 線) 在「到當天為止的全部歷史」裡排第幾 %（不偷看未來），九個取平均。
+#   慢的六條：冪律（只用當天以前的資料擬合，每 30 天重擬）、Cointime 價格、真實市場均價、實現價、365 天鏈上均價、200 週均線；
+#   快的三條：短期持有者成本、90 天鏈上均價、200 日均線。鏈上均價＝這段期間全網鏈上轉帳的金額 ÷ 顆數。
+# 研究（2013 起，到 2026-11-14）：和晨昏指數熱度的相關 0.89（724 週），大方向相同；差別是這裡只用價格和成本線、而且拿全部歷史排名。
+#   每一輪波動都比上一輪小，所以近年的低點比較難排到最前面：前三輪熊市最低 0.0／3.4／4.1，這一輪到目前最低 11.5。
+#   第一次跌到 10 以下 4 次（2014-09、2018-11、2020-03、2022-06），一年後 −41%／+81%／+931%／+15%，之後一年內最深還再跌 10%–56%：是便宜區，不是底。只作讀值。
+AVG_FROM = '2013-01-01'
+AVG_L = [('pl', 's'), ('ctp', 's'), ('tmm', 's'), ('rp', 's'), ('v365', 's'), ('w200', 's'), ('sth', 'f'), ('v90', 'f'), ('d200', 'f')]
+
+
+def avg_viz(bv, px, last, tops=(), step=3, keep=1100):
+    P = _P(bv, px); D = [d for d in sorted(bv.get('px') or {}) if d <= last and P(d)]
+    if len(D) < 3000 or not all(bv.get(k) for k in ('ctp', 'tvu', 'tvb', 'sth', 'tmm', 'rp')): return None
+    N = len(D); p = [P(d) for d in D]; g = lambda k: [bv[k].get(d) for d in D]
+    def sma(n):
+        out, s = [None] * N, 0.0
+        for i in range(N):
+            s += p[i]
+            if i >= n: s -= p[i - n]
+            if i >= n - 1: out[i] = s / n
+        return out
+    tu, tb = g('tvu'), g('tvb')
+    def vwap(n):
+        out, su, sb = [None] * N, 0.0, 0.0
+        for i in range(N):
+            su += tu[i] or 0; sb += tb[i] or 0
+            if i >= n: su -= tu[i - n] or 0; sb -= tb[i - n] or 0
+            if i >= n - 1 and sb > 0: out[i] = su / sb
+        return out
+    pl = [None] * N; sx = sy = sxx = sxy = 0.0; fit = None
+    for i, d in enumerate(D):
+        x = math.log(dn(d) - dn('2009-01-03')); y = math.log(p[i]); sx += x; sy += y; sxx += x * x; sxy += x * y; n = i + 1
+        if d >= '2012-01-01' and (fit is None or i % 30 == 0):
+            b = (sxy - sx * sy / n) / (sxx - sx * sx / n); fit = (sy / n - b * sx / n, b)
+        if fit: pl[i] = math.exp(fit[0] + fit[1] * x)
+    M = dict(pl=pl, ctp=g('ctp'), tmm=g('tmm'), rp=g('rp'), v365=vwap(365), w200=sma(1400), sth=g('sth'), v90=vwap(90), d200=sma(200))
+    def rank(m):   # 每天：log(價格 ÷ 線) 在到當天為止的歷史裡的百分位 0–100（滿 365 天才開始）
+        out, h = [None] * N, []
+        for i in range(N):
+            if not m[i] or m[i] <= 0: continue
+            r = math.log(p[i] / m[i]); bisect.insort(h, r)
+            if len(h) >= 365: out[i] = (bisect.bisect_left(h, r) + bisect.bisect_right(h, r)) / 2 / len(h) * 100
+        return out
+    Q = {k: rank(M[k]) for k, _ in AVG_L}
+    def mean(keys, need):
+        out = [None] * N
+        for i in range(N):
+            v = [Q[k][i] for k in keys if Q[k][i] is not None]
+            if len(v) >= need: out[i] = sum(v) / len(v)
+        return out
+    SL = [k for k, q in AVG_L if q == 's']; FA = [k for k, q in AVG_L if q == 'f']
+    ix, sl, fa = mean(SL + FA, 6), mean(SL, 4), mean(FA, 2)
+    i0 = next(i for i, d in enumerate(D) if d >= AVG_FROM and ix[i] is not None); e = N - 1
+    if ix[e] is None or sl[e] is None or fa[e] is None: return None
+    f365 = lambda i: (p[i + 365] / p[i] - 1) * 100 if i + 365 < N else None
+    dd365 = lambda i: (min(p[i:i + 366]) / p[i] - 1) * 100 if i + 365 < N else None
+    # 每一輪熊市的最低讀值：相鄰兩個週期頂之間（最後一段到現在）
+    T = [t[0] for t in tops if t[0] >= D[i0]]; lows = []
+    for j, t in enumerate(T):
+        a = D.index(t) if t in D else None; b = (D.index(T[j + 1]) if T[j + 1] in D else None) if j + 1 < len(T) else e
+        if a is None or b is None: continue
+        k = min((i for i in range(a, b + 1) if ix[i] is not None), key=lambda i: ix[i])
+        lows.append(dict(d=D[k], v=round(ix[k], 1), px=round(p[k]), cur=j + 1 == len(T)))
+    first = [i for i in range(i0, N) if ix[i] is not None and D[i] < (T[0] if T else D[i0])]
+    if first:
+        k = min(first, key=lambda i: ix[i])
+        if ix[k] <= 20: lows.insert(0, dict(d=D[k], v=round(ix[k], 1), px=round(p[k]), cur=False))
+    # 第一次跌到 10 以下（相隔 90 天）之後一年
+    ev, lastj = [], -999
+    for i in range(i0, N):
+        if ix[i] is not None and ix[i] <= 10:
+            if i - lastj > 90: ev.append(dict(d=D[i], v=round(ix[i], 1), px=round(p[i]), f365=None if f365(i) is None else round(f365(i), 1), dd365=None if dd365(i) is None else round(dd365(i), 1)))
+            lastj = i
+    def bk(lo, hi):
+        v = [f365(i) for i in range(i0, N) if ix[i] is not None and lo <= ix[i] < hi and f365(i) is not None]
+        return dict(n=len(v), up=round(sum(x > 0 for x in v) / len(v) * 100), med=round(st.median(v))) if v else None
+    comps = [dict(key=k, grp=q, line=round(M[k][e]), pct=round(Q[k][e], 1), dist=round((p[e] / M[k][e] - 1) * 100, 1)) for k, q in AVG_L if Q[k][e] is not None and M[k][e]]
+    r1 = lambda v: None if v is None else round(v, 1)
+    rows = [[dn(D[i]), r1(ix[i]), round(p[i], 2 if p[i] < 100 else 0), r1(sl[i]), r1(fa[i])] for i in range(i0, N)]
+    cut = rows[-1][0] - keep; old = [r for r in rows if r[0] < cut]
+    rows = [min(old[i:i + step], key=lambda r: r[1]) for i in range(0, len(old), step)] + [r for r in rows if r[0] >= cut]   # 更早的每 step 天留讀值最低的那天，谷底不會被抽掉
+    return dict(date=D[e], close=round(p[e]), value=r1(ix[e]), slow=r1(sl[e]), fast=r1(fa[e]), prev7=r1(ix[e - 7]), comps=comps, lows=lows, ev10=ev,
+                bk=dict(lo=bk(0, 15), mid=bk(15, 20), all=bk(0, 101)), rows=rows, src='Bitview',
+                note='價格和九條成本線、均線的距離，各自在到當天為止的全部歷史裡的百分位，取平均（慢六條、快三條）；不偷看未來；每輪波動變小，近年的低點較難排到最前面；只作讀值')
+
+
 def dd_viz(bv, px, last, bottoms=(), tops=(), step=3, keep=1100):
     """兩種回撤，都用收盤：
     cyc＝每一輪從底部起算，收盤比「底部以來的最高收盤」低多少 %，只算底部到頂部（最後一輪到現在）；
