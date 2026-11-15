@@ -4,8 +4,33 @@
  "edition": 40,
  "items": [
   {
-   "n": 11,
+   "n": 16,
    "order": 1,
+   "status": "send",
+   "url": "https://x.com/Murphychen888/status/2121798710627905658",
+   "id": "2121798710627905658",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82366,
+   "posted": "2026-11-15T02:53:00Z",
+   "lang": "zh",
+   "angle": "提問",
+   "style": "口語版",
+   "summary": "短期持有者成本 ±標準差通道：−2 STD 紅線在 58,400、是短期最極端偏離位；熊市下跌後再回踩紅線只有 312 一次",
+   "reply": "Daybreak 上同一張圖對了一下，−2 標準差算出來 58.5K，跟你的紅線幾乎疊在一起\n近四年收在 −1 標準差下面的日子不到一成，這幾天就在裡面\n想請教：312 那次踩到紅線之後，在線下待了幾天才收回來？",
+   "sources": "短期持有者成本帶 11/14：−2σ 58,492（圖例 58,488）、收盤 z −1.42、近 4 年收在 −1σ 下的日子 7.5%、最近一次 11/14（Bitview，onchain.sth_bands）",
+   "note": "Murphy 不佔額度（no_quota）。1 小時內（發文 10:53）。回 Murphy 順序：自己 11/13 的推薦圖表用過同一張圖，但數字停在 71K、說「還沒到極端」，已過時，改附網站圖（使用者要用跟他同一張圖，讓讀者看到 Daybreak 上也有）。用問句不唱反調。Murphy 不受同圖一天一次等限制（使用者 11/15）",
+   "image": {
+    "site": {
+     "page": "onchain",
+     "sel": "#c-sthband"
+    },
+    "title": "同一條紅線：−2 標準差在 58.5K"
+   }
+  },
+  {
+   "n": 11,
+   "order": 2,
    "status": "send",
    "url": "https://x.com/Dragonhau66/status/2121782598401712499",
    "id": "2121782598401712499",
@@ -30,7 +55,7 @@
   },
   {
    "n": 12,
-   "order": 2,
+   "order": 3,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/serlo123/status/2121788364294950912",
@@ -49,7 +74,7 @@
   },
   {
    "n": 13,
-   "order": 3,
+   "order": 4,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/serlo123/status/2121789538368704983",
@@ -68,7 +93,7 @@
   },
   {
    "n": 14,
-   "order": 4,
+   "order": 5,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/serlo123/status/2121790942193873032",
@@ -87,7 +112,7 @@
   },
   {
    "n": 15,
-   "order": 5,
+   "order": 6,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/lidmhun171644/status/2121766348993020058",
@@ -127,7 +152,7 @@
     },
     "title": "Each leg down cleared the longs stacked under price"
    },
-   "order": 6
+   "order": 7
   },
   {
    "n": 2,
@@ -154,7 +179,7 @@
     },
     "title": "30 days of taker flow: perps −140K BTC, spot just −9.8K"
    },
-   "order": 7
+   "order": 8
   },
   {
    "n": 3,
@@ -179,7 +204,7 @@
     },
     "title": "Day 404 after the top: this cycle ~51% of peak, past three 18–26%"
    },
-   "order": 8
+   "order": 9
   },
   {
    "n": 4,
@@ -204,7 +229,7 @@
     },
     "title": "30 天主動賣：永續 14 萬顆，現貨不到 1 萬顆"
    },
-   "order": 9
+   "order": 10
   },
   {
    "n": 5,
@@ -229,7 +254,7 @@
     },
     "title": "11/13 一天認賠 15.3 億美元，6/30 那次是 15.5 億"
    },
-   "order": 10
+   "order": 11
   },
   {
    "n": 6,
@@ -254,7 +279,7 @@
     },
     "title": "短期持有者成本 74,946，收盤 64,115 在下面一成半"
    },
-   "order": 11
+   "order": 12
   },
   {
    "n": 7,
@@ -272,7 +297,7 @@
    "reply": "說撤退還早\n全部現貨 ETF 近 20 天流出 21 億美元\n6 月那波最深是 56 億",
    "sources": "美國現貨 BTC ETF 20 日淨流量 11/13 −20.80 億美元（這段流出第 5 天）；之前幾段最深 2026-06-09 −56.38 億、2026-02-13 −38.85 億、2025-03 −47.13 億（CoinMarketCap，flows.etf20）",
    "note": "Grok inbox 0905 表一 #6。ETF 每日流量圖看不到 6 月那波的 20 日累計，對不上，不配圖",
-   "order": 12
+   "order": 13
   },
   {
    "n": 8,
@@ -290,7 +315,7 @@
    "reply": "掉的大多是價格\nOI 換成顆數算，全市場這週才少半個百分點\n槓桿根本沒退",
    "sources": "永續未平倉 11/14 338,809 顆、7 天 −0.5%、30 天 +7.7%（同期價格 −22%），2021 年以來第 97 百分位（Coinalyze 7 家交易所，deriv.oi_hist）",
    "note": "Grok inbox 0905 表一 #5（熟帳號）。1 萬粉以下不配圖",
-   "order": 13
+   "order": 14
   },
   {
    "n": 9,
@@ -315,7 +340,7 @@
     },
     "title": "100–1,000 顆這層：30 天少的 3 萬顆，幾乎全在這一週"
    },
-   "order": 14
+   "order": 15
   },
   {
    "n": 10,
@@ -333,7 +358,7 @@
    "reply": "未實現獲利那條更極端，跌破市值 35% 了，差在以前到這裡整體是賠的，這次加總還在賺",
    "sources": "相對未實現獲利 11/14 34.1%、地板 35%（Bitview，onchain.rup）；「以前到這裡整體在賠、這次還在賺」同 11/15 RUP 長文",
    "note": "固定名單 4c（熟帳號，發文 0.3 小時）。1 萬粉以下不配圖；不碰他自己講的成本",
-   "order": 15
+   "order": 16
   }
  ]
 }
