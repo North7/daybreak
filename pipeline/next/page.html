@@ -1348,6 +1348,14 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
          沒有訊號：整顆淡出（0.8 秒），不能點也就不留著。下一次有東西要畫（換頁）再出現。
        手機（≤700px）：右邊 12px、底部分頁列（56px）上方 24px（加安全區；㉘ 之後留位置給鼓包），22px 高，只有小點，有訊號時加數字，從不顯示字；收起、淡出規則同桌機。
        底色 --sheet 90%、1px 細框（--ink 10%），沒有陰影。頂部那一區不在畫面上時照舊藏起。
+       有訊號時換一個樣子（.has；2026-11-15 使用者：「右下角這個訊號提示需要明顯一點，可以加入更明顯的動效，或其他設計」）。
+         原本灰色小點加灰色小字，看起來像狀態列，不像「這裡有東西、可以點」。有訊號時整顆改成：
+         強調色訊號點（8px，往外擴散兩圈 1px 的細環，2.4 秒一輪；是環不是光暈）＋強調色底的數字（深色字）＋一行主要色的字＋往下的小箭頭。
+         桌機 34px 高、手機 30px 高（手機不顯示字）；底色 --sheet 不透明（壓在圖上時字才讀得到），邊框 --ac 55%，和訊號卡的框同一個顏色。
+         五個代理小點只留給「沒有訊號」的狀態；有訊號時不再顯示，免得和訊號點搶。
+         動效：這一頁第一次出現時用彈簧從下面彈上來（.pop，0.75 秒）；之後每 7 秒輕輕跳一下、共三次就停，不會一直動；按下去縮到 94%。
+         點過之後數字改成「第幾張／共幾張」（1/3），字改成「下一張訊號」；換頁重算。
+         收起規則照舊（畫完 2.4 秒後桌機收掉那行字，滑鼠移上去再展開），但訊號點、數字、箭頭一直在。換頁後新彈出來時，就算沒有東西在畫，也先展開 5 秒讓人讀到那行字再收。系統開了「減少動態」時，整套繪製效果連同這顆提示本來就不出現，這次沒有改。
      7 圖釘和訊號卡：留言圖釘 22px 圓形、--sheet 底、1px 細框、勾勾用次要色；訊號卡的圖釘勾勾用 --ac，淡入，不再一直脈動。
        訊號卡原本繞著邊轉的光改成靜止的 1px 框（--ac 45%）。數字改稿的刪除線用 --k2 1.5px，不用綠。
      8 prefers-reduced-motion 和分享模式（?share）：整段繪製程式不跑（⑭、⑮），沒有游標、沒有膠囊、訊號卡只有靜止細框。
@@ -1450,6 +1458,17 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .ag-dock.rest:hover b, .ag-dock.rest:focus-visible b { max-width: 260px; margin-left: 8px; opacity: 1; }
 .ag-dock.rest.none { opacity: 0; visibility: hidden; pointer-events: none; transition: opacity .8s, visibility 0s .8s; }
 @media (max-width: 700px) { .ag-dock { right: 12px; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); height: 22px; padding: 0 8px; } .ag-dock b { display: none; } .ag-dock:not(.x) u, .ag-dock.rest:hover u, .ag-dock.rest:focus-visible u { display: inline; margin-left: 6px; } }
+/* 有訊號（⑲ 6 .has）：訊號點＋數字色塊＋字＋箭頭。要放在上面那條手機規則之後，才蓋得過 u 的顯示規則 */
+.ag-dock.has { height: 34px; padding: 0 11px; background: var(--sheet); border-color: color-mix(in srgb, var(--ac) 55%, transparent); color: var(--ink); font-size: 12px; font-weight: 600; transition: opacity .3s, visibility 0s, scale .18s; }
+.ag-dock.has:active { scale: .94; }
+.ag-sig { position: relative; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ac); }
+.ag-sig i, .ag-sig::after { content: ""; position: absolute; inset: -1px; border-radius: 50%; border: 1px solid var(--ac); opacity: 0; }
+.ag-dock.has u, .ag-dock.has.rest:hover u, .ag-dock.has.rest:focus-visible u { display: inline-flex; align-items: center; justify-content: center; min-width: 20px; height: 20px; box-sizing: border-box; padding: 0 6px; margin-left: 9px; border-radius: 999px; background: var(--ac); color: var(--sheet); font: 700 12px/1 var(--f-mono); }
+.ag-dock.has b { margin-left: 8px; }
+.ag-dock.has.rest b { margin-left: 0; } .ag-dock.has.rest:hover b, .ag-dock.has.rest:focus-visible b { margin-left: 8px; }
+.ag-go { flex: none; width: 12px; height: 12px; margin-left: 6px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; opacity: .75; transition: translate .25s var(--spring); }
+.ag-dock.has:hover .ag-go { translate: 0 2px; }
+@media (max-width: 700px) { .ag-dock.has { height: 30px; padding: 0 9px 0 10px; } .ag-dock.has u, .ag-dock.has.rest:hover u, .ag-dock.has.rest:focus-visible u { min-width: 18px; height: 18px; margin-left: 8px; font-size: 11px; } .ag-go { margin-left: 5px; } }
 .oc-snp { position: fixed; z-index: 95; pointer-events: none; transform: translate(-50%, -100%); font: 700 11px/1 "Inter Tight", "Noto Sans TC", sans-serif; padding: 5px 9px; border-radius: 999px; background: var(--ink); color: var(--bg); white-space: nowrap; }
 .oc-term { position: fixed; inset: 0; z-index: 96; pointer-events: none; -webkit-backdrop-filter: invert(1) hue-rotate(180deg); backdrop-filter: invert(1) hue-rotate(180deg); clip-path: inset(0 calc(100% - var(--tx, 0px)) 0 0); }
 .oc-term.r { clip-path: inset(0 0 0 var(--tx, 0px)); }
@@ -1458,6 +1477,11 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .oc-hd .os.os-gh { animation: none !important; translate: none; rotate: none; pointer-events: none; z-index: 40 !important; }
 @media (prefers-reduced-motion: no-preference) {
   .ag-pin { animation: m-fade .5s ease-out var(--dly, 0ms) backwards; }
+  .ag-dock.has.pop { animation: ag-pop .75s var(--spring) backwards, ag-hop 7s 2.4s 3; }
+  @keyframes ag-pop { from { opacity: 0; transform: translate3d(0, 16px, 0) scale(.7); } }
+  @keyframes ag-hop { 0%, 13%, 100% { transform: none; } 3% { transform: translate3d(0, -7px, 0); } 6.5% { transform: translate3d(0, 1.5px, 0); } 9.5% { transform: translate3d(0, -1.5px, 0); } }
+  .ag-sig i { animation: ag-ping 2.4s cubic-bezier(.2, .6, .3, 1) infinite; } .ag-sig::after { animation: ag-ping 2.4s cubic-bezier(.2, .6, .3, 1) 1.2s infinite; }
+  @keyframes ag-ping { 0% { transform: scale(1); opacity: .8; } 70%, 100% { transform: scale(2.8); opacity: 0; } }
   .ag-dock.busy .ag-dt i { animation: ag-dt 1.8s ease-in-out infinite; } .ag-dt i:nth-child(2) { animation-delay: .18s; } .ag-dt i:nth-child(3) { animation-delay: .36s; } .ag-dt i:nth-child(4) { animation-delay: .54s; } .ag-dt i:nth-child(5) { animation-delay: .72s; }
   @keyframes ag-dt { 0%, 100% { opacity: .3; } 40% { opacity: .9; } }
   .ag-note { animation: m-rise-s .3s cubic-bezier(.16, 1, .3, 1); }
@@ -3296,10 +3320,10 @@ function initOC() {
       const t = b.closest('.fc'), c = t ? cOf(t) : null; if (!c) return; const sg = c.sig && c.sig[0] ? T(c.sig[0].tz, c.sig[0].te) : '', say = c.say ? T(c.say.sz, c.say.se) : ''; b.setAttribute('aria-expanded', 'true'); b.insertAdjacentHTML('afterend', '<div class="ag-note" role="note"><b>' + esc(T(AG.chk[0], AG.chk[1])) + '</b>' + (sg ? '<i>' + esc(sg) + '</i>' : '') + esc(say) + '</div>'); }, true);
     /* 2 狀態膠囊（⑲ 6）：畫的時候五個小點依序亮暗；畫完 2.4 秒收起成小點（有訊號留數字，點一下到下一張訊號卡），沒有訊號就淡出 */
     const dock = document.createElement('button'); dock.type = 'button'; dock.className = 'ag-dock'; dock.hidden = true; let dkN = -1, dkT = 0, dkU = 0;
-    function agDock() { const n = $$('.fc.sg', secs).length; if (!dock.firstChild || +dock.dataset.n !== n || dock.dataset.l !== lang) { dock.dataset.n = n; dock.dataset.l = lang; const tx = n ? T('這一頁今天 ' + n + ' 張有訊號', n + ' signal' + (n > 1 ? 's' : '') + ' on this page') : T('這一頁今天沒有訊號', 'No signals on this page'); dock.setAttribute('aria-label', tx + (n ? T('，點一下到下一張', ' — go to the next one') : '')); dock.innerHTML = '<span class="ag-dt" aria-hidden="true">' + Object.keys(AG).map(k => '<i style="--agc:' + AG[k][2] + '"></i>').join('') + '</span>' + (n ? '<u aria-hidden="true">' + n + '</u>' : '') + '<b aria-hidden="true">' + esc(tx) + '</b>'; } dock.classList.toggle('none', !n); }
+    function agDock() { const n = $$('.fc.sg', secs).length, pg = String(ci); if (!dock.firstChild || +dock.dataset.n !== n || dock.dataset.l !== lang || dock.dataset.p !== pg) { const fresh = +dock.dataset.n !== n || dock.dataset.p !== pg; if (fresh) dkN = -1; dock.dataset.n = n; dock.dataset.l = lang; dock.dataset.p = pg; const tx = n ? T('這一頁今天 ' + n + ' 張有訊號', n + ' signal' + (n > 1 ? 's' : '') + ' on this page') : T('這一頁今天沒有訊號', 'No signals on this page'); dock.setAttribute('aria-label', tx + (n ? T('，點一下到下一張', ' — go to the next one') : '')); dock.innerHTML = n ? '<span class="ag-sig" aria-hidden="true"><i></i></span><u aria-hidden="true">' + (dkN >= 0 ? (dkN + 1) + '/' + n : n) + '</u><b aria-hidden="true">' + esc(dkN >= 0 ? T('下一張訊號', 'Next signal') : T('張圖今天有訊號', n > 1 ? 'signals today' : 'signal today')) + '</b><svg class="ag-go" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg>' : '<span class="ag-dt" aria-hidden="true">' + Object.keys(AG).map(k => '<i style="--agc:' + AG[k][2] + '"></i>').join('') + '</span><b aria-hidden="true">' + esc(tx) + '</b>'; if (n && fresh) { dock.classList.remove('pop'); void dock.offsetWidth; dock.classList.add('pop'); if (performance.now() >= dkU) { dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => dock.classList.add('rest'), 5200); } } } dock.classList.toggle('none', !n); dock.classList.toggle('has', !!n); }   /* 有訊號時的樣子和動效見 ⑲ 6 */
     function agBusy(ms) { const now = performance.now(); dkU = Math.max(dkU, now + ms); dock.classList.add('busy'); dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => { dock.classList.remove('busy'); dock.classList.add('rest'); }, dkU - now + 2400); }
     el.appendChild(dock); agDock(); agBusy(600);
-    dock.addEventListener('click', () => { const cs = $$('.fc.sg', secs); if (!cs.length) return; dkN = (dkN + 1) % cs.length; const t = cs[dkN], who = 'chk'; t.scrollIntoView({ block: 'center', behavior: 'smooth' });
+    dock.addEventListener('click', () => { const cs = $$('.fc.sg', secs); if (!cs.length) return; dkN = (dkN + 1) % cs.length; const t = cs[dkN], who = 'chk'; t.scrollIntoView({ block: 'center', behavior: 'smooth' }); { const u = dock.querySelector('u'), b = dock.querySelector('b'); if (u) u.textContent = (dkN + 1) + '/' + cs.length; if (b) b.textContent = T('下一張訊號', 'Next signal'); dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => dock.classList.add('rest'), 3200); }
       setTimeout(() => { const fg = t.parentNode; if (!fg || !t.isConnected) return; const w = t.offsetWidth, h = t.offsetHeight, L = agL(fg, t.offsetLeft, t.offsetTop, w, h); L.innerHTML = agBox(w, h, 0, AG[who][2]) + agCur(who, w * .5, h * .42, w * .5, h * .42, 1500, 0, { sx: w, sy: h + 80 }); setTimeout(() => L.remove(), 2700); }, 520); });
     /* 4 數字改稿：主數字變了，舊的劃掉往上飄，數據 AI 過來點一下 */
     agReHook = (ol, key, old) => { const nb = $('#oc-b' + key), t = ol.closest('.fc'); if (!nb || !t || !old || nb.textContent === old) return; const big = nb.closest('.ol-big') || nb, r = relTo(big, t); if (!r) return; const L = agL(t, 0, 0, t.offsetWidth, t.offsetHeight), cs = getComputedStyle(big); L.innerHTML = '<s class="ag-old" style="left:' + F1(r.x) + 'px;top:' + F1(r.y) + 'px;font:' + cs.font.replace(/"/g, "'") + ';letter-spacing:' + cs.letterSpacing + '">' + esc(old) + '</s>' + agCur('num', r.x + Math.min(r.w, 150), r.y + r.h * .7, r.x + Math.min(r.w, 150), r.y + r.h * .7, 900, 0, { sx: r.x + 260, sy: r.y + 120 }); setTimeout(() => L.remove(), 1300); };
