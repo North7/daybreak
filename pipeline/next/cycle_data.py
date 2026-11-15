@@ -116,6 +116,35 @@ def build(L, N, E, dn, X):
         X['avgdc'] = dict(k='avgdc', zh='九條線各自排第幾', en='Where price ranks against each line', hz='平均', he='Average', hs=dict(v=av['value'], f='n1'), list=dict(rows=[arow(c_) for c_ in av['comps']]),
           dz='每一條線：價格離它的距離在全部歷史裡排第幾 %（0 是歷史上最低的位置，100 是最高），九個的平均就是「離成本線和均線多遠」的讀值。小字是這條線現在的價位，和價格比它高或低多少。鏈上均價是這段期間全網鏈上轉帳的金額除以顆數。',
           de='For each line: where today\'s distance between price and the line ranks in all history (0 is the lowest ever, 100 the highest). The average of the nine is the reading of "Distance from cost bases and averages". The small print gives the line\'s current level and how far price is above or below it. The on-chain average price is the dollar value of all on-chain transfers in the period divided by the coins moved.')
+        from say_data import own   # 2026-11-15 這兩張是新版自己的圖，舊版沒有讀值可以接，直接寫
+        zs = lambda t: (' ' if t[:1].isascii() else '') + t + (' ' if t[-1:].isascii() else '')   # 中文句子裡夾英文、數字開頭的名稱，前後留空格
+        v0, v7 = av['value'], av.get('prev7'); evy = [e_ for e_ in ev if e_['f365'] is not None]; worst = min(evy, key=lambda e_: e_['dd365']) if evy else None
+        X['avgd']['say'] = own([
+            ('現在', 'Now', an1(v0), an1(v0), 'up' if v0 <= 15 else 'warn' if v0 >= 85 else 'neu',
+             '價格離九條成本線和均線的距離，平均排在全部歷史的第 %s 百分位：越低代表價格比這些線低得越少見。' % an1(v0),
+             "Price's distance from nine cost bases and averages ranks, on average, at percentile %s of all history: the lower, the rarer it is for price to sit this far below them." % an1(v0)),
+            ('一週前', 'A week ago', an1(v7) if v7 is not None else '—', an1(v7) if v7 is not None else '—', 'neu',
+             '一週前是 %s，這一週%s了 %s。' % (an1(v7), '降' if v0 < v7 else '升', an1(abs(v0 - v7))) if v7 is not None else '沒有一週前的讀值。',
+             'It was %s a week ago, %s %s this week.' % (an1(v7), 'down' if v0 < v7 else 'up', an1(abs(v0 - v7))) if v7 is not None else 'No reading from a week ago.'),
+            ('這一輪最低', "This cycle's low", an1(cur['v']) if cur else '—', an1(cur['v']) if cur else '—', 'neu',
+             '這一輪到目前最低 %s（%s）；前幾輪熊市最低是 %s。每一輪波動都比上一輪小，近年的低點比較難排到最前面。' % (an1(cur['v']), aym(cur['d']), '、'.join(an1(x['v']) for x in past)) if cur else '這一輪還沒有低點。',
+             'The lowest so far in this cycle is %s (%s); earlier bear markets bottomed at %s. Each cycle swings less than the one before, so recent lows rarely reach the very bottom of the ranking.' % (an1(cur['v']), cur['d'][:7], ', '.join(an1(x['v']) for x in past)) if cur else 'No low yet in this cycle.'),
+            ('跌破 10 之後一年', 'A year after first breaking 10', '%d 次中 %d 次上漲' % (len(evy), eup), 'Up %d of %d times' % (eup, len(evy)), 'neu',
+             '第一次跌到 10 以下共 %d 次，一年後 %d 次上漲；但 %s 那次之後一年內還再跌 %s。它標的是便宜區，不是底。' % (len(evy), eup, aym(worst['d']), apc(worst['dd365'])) if worst else '還沒有跌到 10 以下的紀錄。',
+             'It first fell below 10 %d times and price was higher a year later %d times, but after the %s case it fell another %s within the year. It marks a cheap zone, not a bottom.' % (len(evy), eup, worst['d'][:7], apc(worst['dd365'])) if worst else 'No break below 10 on record.')],
+          '九條線的平均百分位 %s，一週前 %s' % (an1(v0), an1(v7) if v7 is not None else '—'), 'Average percentile of the nine lines: %s, from %s a week ago' % (an1(v0), an1(v7) if v7 is not None else '—'))
+        cs_ = sorted(av['comps'], key=lambda c_: c_['pct']); lo_, hi_ = cs_[0], cs_[-1]; n10 = sum(1 for c_ in cs_ if c_['pct'] < 10)
+        cline = lambda c_, en=False: (('price %s %s' % (apc(c_['dist']), 'below' if c_['dist'] < 0 else 'above')) if en else ('價格比它%s %s' % ('低' if c_['dist'] < 0 else '高', apc(c_['dist']))))
+        X['avgdc']['say'] = own([
+            ('最低的一條', 'Lowest line', '%s %d' % (AVN[lo_['key']][0], round(lo_['pct'])), '%s %d' % (AVN[lo_['key']][1], round(lo_['pct'])), 'neu',
+             '價格離%s的距離，排在全部歷史的第 %d 百分位，%s。' % (zs(AVN[lo_['key']][0]), round(lo_['pct']), cline(lo_)),
+             "Price's distance from the %s ranks at percentile %d of all history, with %s." % (AVN[lo_['key']][1], round(lo_['pct']), cline(lo_, True))),
+            ('最高的一條', 'Highest line', '%s %d' % (AVN[hi_['key']][0], round(hi_['pct'])), '%s %d' % (AVN[hi_['key']][1], round(hi_['pct'])), 'neu',
+             '九條裡排名最高的是%s，第 %d 百分位，%s。' % (zs(AVN[hi_['key']][0]), round(hi_['pct']), cline(hi_)),
+             'The highest of the nine is the %s, at percentile %d, with %s.' % (AVN[hi_['key']][1], round(hi_['pct']), cline(hi_, True))),
+            ('低於 10 的', 'Below 10', '%d 條' % n10, '%d of 9' % n10, 'neu',
+             '九條線裡有 %d 條排在歷史最低的一成。' % n10, '%d of the nine lines rank in the bottom tenth of history.' % n10)],
+          '最低的是%s（第 %d 百分位）' % (zs(AVN[lo_['key']][0]).rstrip(), round(lo_['pct'])), 'Lowest is the %s (percentile %d)' % (AVN[lo_['key']][1], round(lo_['pct'])))
     rr = o['rrisk']
     X['rrisk'] = dict(k='rrisk', zh='儲備風險', en='Reserve risk', f='n5', rows=rr['rows'], p=1, log=1, hero=2,
       ser=[ser(3, zh='近 4 年最低 10%', en='4-year bottom 10%', col='c4', dash='4 3', w=1), ser(4, zh='近 4 年最高 10%', en='4-year top 10%', col='c5', dash='4 3', w=1), ser(2, zh='儲備風險', en='Reserve risk', col='c3', w=1.8)],
@@ -175,6 +204,13 @@ def build(L, N, E, dn, X):
       dz='三個在 2025 年頂部附近出現極值的指標。橫條是 2022 年 11 月以來的百分位。', de='Three measures that hit extremes near the 2025 top. Bars show the percentile since November 2022.')
     X['radarv'] = dict(k='radarv', zh='頂部雷達的走勢', en='Top radar over time', dz='近一年的原始數值。紅色虛線是 2025 年頂部附近的極值。', de='Raw values over the past year. The red dashed line is the extreme reached near the 2025 top.',
       modes=[vmode(k2, RN[k2][0], RN[k2][1], RN[k2][2], '2025 頂部附近的極值', 'Extreme near the 2025 top', 'c3' if k2 == 'lth-mvrv-zscore' else 'c4') for k2 in tr])
+    from say_data import own   # 2026-11-15 頂部雷達：舊版面板只有資料來源、沒有讀值，直接寫
+    zs = lambda t: (' ' if t[:1].isascii() else '') + t + (' ' if t[-1:].isascii() else '')
+    rmx = max(tr.items(), key=lambda kv: kv[1]['pct_since_2022_11'])
+    X['radar']['say'] = own([(RN[k2][0], RN[k2][1], fx(RN[k2][2], x['value']), fx(RN[k2][2], x['value']).replace(' 萬顆', '0K BTC'), 'warn' if x['pct_since_2022_11'] >= 90 else 'neu',
+                              '%s在 2022 年 11 月以來的第 %d 百分位；2025 年頂部附近的極值是 %s。' % (zs(RN[k2][0]).lstrip(), round(x['pct_since_2022_11']), fx(RN[k2][2], x['extreme_near_2025_top'])),
+                              '%s is at percentile %d since November 2022; its extreme near the 2025 top was %s.' % (RN[k2][1], round(x['pct_since_2022_11']), fx(RN[k2][2], x['extreme_near_2025_top']).replace(' 萬顆', '0K BTC'))) for k2, x in tr.items()],
+                            '三項裡最高的是%s，第 %d 百分位' % (zs(RN[rmx[0]][0]).rstrip(), round(rmx[1]['pct_since_2022_11'])), 'Highest of the three: %s, percentile %d' % (RN[rmx[0]][1], round(rmx[1]['pct_since_2022_11'])))
     pi = p['pi_cycle']
     X['pi'] = dict(k='pi', zh='Pi Cycle', en='Pi Cycle', hz='111 日均線 ÷（350 日均線 × 2）', he='111-day MA ÷ (350-day MA × 2)', hs=dict(v=pi, f='n3'),
       list=dict(rows=[row('現在的比值', 'Ratio now', pi, f='n3', bar=pi * 100, mk=100, bc='ac', col='dn' if pi >= 1 else 'c5' if pi >= .9 else None, nz='到 1 就是過去幾輪頂部出現的訊號', ne='A reading of 1 has marked past cycle tops')]),
@@ -228,6 +264,18 @@ def build(L, N, E, dn, X):
              % (sl(dc['bottom']), format(dc['bottom_px'], ','), sl(dc['high']), format(dc['high_px'], ','), mn1(ps['med']), ps['deeper'], sl(da['high']), format(da['high_px'], ',')),
           de='How far the close sits below the high, in two views. "Since the cycle low": each cycle is measured from its bottom against the highest close since then, drawn from bottom to top only. This cycle starts at the %s low ($%s) and its high is $%s on %s; if that low breaks, this stretch has to be redrawn. Across the past four cycles, half of all bottom-to-top days were shallower than %s and %d%% were deeper than now. "All-time high": measured against the highest close on record ($%s on %s); circles mark each cycle bottom. A reading only.'
              % (dc['bottom'], format(dc['bottom_px'], ','), format(dc['high_px'], ','), dc['high'], mn1(ps['med']), ps['deeper'], format(da['high_px'], ','), da['high']))
+        from say_data import own   # 2026-11-15 新版自己的圖，直接寫讀值
+        X['dd']['say'] = own([
+            ('離這一輪高點', "From this cycle's high", mn1(dc['value']), mn1(dc['value']), 'warn' if dc['value'] <= ps['p25'] else 'neu',
+             '收盤比這一輪的高點（%s 的 $%s）低 %s。前四輪從底到頂的日子裡，只有 %d%% 比現在深。' % (sl(dc['high']), format(dc['high_px'], ','), mn1(abs(dc['value'])), ps['deeper']),
+             "The close is %s below this cycle's high ($%s on %s). Across the past four cycles, only %d%% of bottom-to-top days were deeper than now." % (mn1(abs(dc['value'])), format(dc['high_px'], ','), dc['high'], ps['deeper'])),
+            ('前四輪的中位數', 'Median of the past four', mn1(ps['med']), mn1(ps['med']), 'neu',
+             '前四輪從底部到頂部的日子，一半的時候回撤比 %s 淺；最淺的四分之三在 %s 以內。' % (mn1(abs(ps['med'])), mn1(abs(ps['p25']))),
+             'On half of all bottom-to-top days in the past four cycles the pullback was shallower than %s; three quarters stayed within %s.' % (mn1(abs(ps['med'])), mn1(abs(ps['p25'])))),
+            ('離歷史高點', 'From the all-time high', mn1(da['value']), mn1(da['value']), 'neu',
+             '收盤比歷史最高收盤（%s 的 $%s）低 %s，已經 %d 天。' % (sl(da['high']), format(da['high_px'], ','), mn1(abs(da['value'])), da['days']),
+             'The close is %s below the record close ($%s on %s), %d days on.' % (mn1(abs(da['value'])), format(da['high_px'], ','), da['high'], da['days']))],
+          '離這一輪高點 %s，前四輪只有 %d%% 的日子比現在深' % (mn1(dc['value']), ps['deeper']), "%s from this cycle's high; only %d%% of past bottom-to-top days were deeper" % (mn1(dc['value']), ps['deeper']))
     ce = o['capeff']; cema = max(math.log10(1 + max(0, c_['add_b'])) for c_ in ce['cycles'] + [ce['cur']]) or 1; cemm = max(math.log10(max(1, c_['mult'])) for c_ in ce['cycles'] + [ce['cur']]) or 1
     X['capeff'] = dict(k='capeff', zh='每輪資金效率', en='Capital efficiency by cycle', hz='這一輪到現在的價格倍數', he='This cycle\'s price multiple so far', hs=dict(v=ce['cur']['mult'], f='x2'),
       list=dict(rows=[row('%s → %s' % (yr(c['bottom']), yr(c['top'])) if not now_ else '%s → 現在' % yr(c['bottom']), '%s → %s' % (yr(c['bottom']), yr(c['top'])) if not now_ else '%s → now' % yr(c['bottom']), ('%.0f×' % c['mult']) if c['mult'] >= 20 else ('%.1f×' % c['mult']) if c['mult'] >= 10 else ('%.2f×' % c['mult']),

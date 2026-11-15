@@ -135,7 +135,7 @@ def attach(chapters, L):
         g = lambda f: ((s_.get(f) or {}).get('zh') or '', (s_.get(f) or {}).get('en') or '')
         c.setdefault('sig', []).append(dict(tz=g('title')[0], te=g('title')[1], fz=g('fig')[0], fe=g('fig')[1], mz=g('means')[0], me=g('means')[1], rz=g('rule')[0], re=g('rule')[1], new=1 if s_.get('new') else 0)); n += 1
     # 組成／走勢這類附屬的圖沒有自己的面板，沿用主圖的結論
-    for k_, src_ in (('regc', 'regime'), ('dawnc', 'dawn'), ('p6v', 'p6'), ('tm', 'tmh'), ('soprf', 'sopr')):
+    for k_, src_ in (('regc', 'regime'), ('dawnc', 'dawn'), ('p6v', 'p6'), ('radarv', 'radar'), ('tm', 'tmh'), ('soprf', 'sopr')):
         a_, b_ = X.get(k_), X.get(src_)
         if a_ is not None and b_ is not None and b_.get('src') and not a_.get('src'): a_['src'], a_['srce'] = b_['src'], b_['srce']
         if a_ is not None and b_ is not None and b_.get('say') and not (a_.get('say') and (a_['say']['items'] or a_['say']['sz'])):
