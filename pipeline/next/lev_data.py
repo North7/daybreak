@@ -300,7 +300,20 @@ def build(L, N, E, dn, X):
         rows = [[dn(r[0]), r[1], r[2] - r[3], r[2], r[3]] for r in hh]; top_ = hw.get('scanned') or 2000; fl_ = hw.get('floor_usd_m')
         fz = '（淨值約 %s 萬美元以上）' % format(int(round(fl_ * 100)), ',') if fl_ else ''; fe = ' (about $%.1fM in equity and up)' % fl_ if fl_ else ''
         NST = [['淨多', 'Net long'], ['淨空', 'Net short']]
-        X['hlw'] = dict(k='hlw', zh='Hyperliquid 大戶部位', en='Hyperliquid big accounts', rng=0, src='Hyperliquid · %s' % md_(z[0]), srce='Hyperliquid · %s' % md_(z[0]),
+        from say_data import own   # 2026-11-15 新版自己的圖，直接寫讀值
+        y_ = hh[-2]; dn_ = net - (y_[2] - y_[3]); dl_, ds_ = z[2] - y_[2], z[3] - y_[3]; d0_ = net - (a0[2] - a0[3])
+        sgc = lambda v: ('+' if v >= 0 else '−') + cm(v); side = lambda v, en=False: (('Net long ' if v > 0 else 'Net short ') if en else ('淨多 ' if v > 0 else '淨空 ')) + cm(v)
+        hsay = own([
+            ('淨部位', 'Net', side(net) + ' 顆', side(net, True) + ' BTC', 'neu',
+             '多單 %s 顆（%d 個帳戶）、空單 %s 顆（%d 個帳戶）。大帳戶裡有做市和對沖的，長期淨空是常態，看變化不看水位。' % (cm(z[2]), z[4], cm(z[3]), z[5]),
+             'Longs %s BTC (%d accounts), shorts %s BTC (%d accounts). Big accounts include market makers and hedgers, so a standing net short is normal: read the change, not the level.' % (cm(z[2]), z[4], cm(z[3]), z[5])),
+            ('比前一天', 'Versus the day before', sgc(dn_) + ' 顆', sgc(dn_) + ' BTC', 'neu',
+             '和 %s 比，多單%s %s 顆、空單%s %s 顆。' % (md_(y_[0]), '增加' if dl_ >= 0 else '減少', cm(dl_), '增加' if ds_ >= 0 else '減少', cm(ds_)),
+             'Since %s, longs %s %s BTC and shorts %s %s BTC.' % (y_[0], 'rose' if dl_ >= 0 else 'fell', cm(dl_), 'rose' if ds_ >= 0 else 'fell', cm(ds_))),
+            ('從 %s 起' % md_(a0[0]), 'Since %s' % a0[0], sgc(d0_) + ' 顆', sgc(d0_) + ' BTC', 'neu',
+             '歷史從 %s 開始，只有 %d 天；淨部位這段期間變化 %s 顆。' % (md_(a0[0]), days_ + 1, sgc(d0_)), 'History starts %s and covers %d days; the net position changed by %s BTC over that span.' % (a0[0], days_ + 1, sgc(d0_)))],
+          '%s 顆，比前一天%s %s 顆' % (side(net), '多' if dn_ >= 0 else '少', cm(dn_)), '%s BTC, %s %s BTC from the day before' % (side(net, True), 'up' if dn_ >= 0 else 'down', cm(dn_)))
+        X['hlw'] = dict(k='hlw', zh='Hyperliquid 大戶部位', en='Hyperliquid big accounts', rng=0, say=hsay, src='Hyperliquid · %s' % md_(z[0]), srce='Hyperliquid · %s' % md_(z[0]),
           modes=[dict(mz='淨部位', me='Net', hz='多單減空單', he='Longs minus shorts', f='sbtc', rows=rows, p=1, npc=1, ser=[ser(2, zh='淨部位', en='Net position', t='split', base=0, st=NST, w=1.8)], refs=[dict(v=0, col='k2', solid=1, zh='0：多空一樣多', en='0: longs equal shorts')]),   # 只畫線不填色：長期淨空，填色會變成一整塊紅
                  dict(mz='多單和空單', me='Longs and shorts', hz='多單合計', he='Total longs', f='cbtc', rows=rows, p=1, npc=1, hero=1, ser=[ser(4, zh='空單', en='Shorts', col='dn', w=1.8), ser(3, zh='多單', en='Longs', col='up', w=1.8)])],
           dz='Hyperliquid 帳戶淨值前 %s 名%s的 BTC 永續部位，每天收盤後掃一次、只記合計。%s：多單 %s 顆（%d 個帳戶）、空單 %s 顆（%d 個帳戶）。這些是實際部位，不是推算。大帳戶裡有做市和對沖的（現貨買、永續空），長期偏空是常態，所以看的是變化，不是水位。歷史從 %s 開始、目前只有 %d 天，Hyperliquid 查不到更早的部位；別家用不同方式定義「鯨魚」，數字不會一樣。只有這一家交易所，只作讀值。'

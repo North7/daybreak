@@ -24,6 +24,19 @@ def build(L, N, E, dn):
                                ser=[ser(1, zh='短期震盪', en='Short-term swing', col='c5', w=1.5)],
                                refs=[dict(v=0, col='k2', solid=1), dict(v=1, col='k2'), dict(v=-1, col='k2')], marks=smk,
                                leg=[['k2', '+1 短期過熱、−1 短期超賣', '+1 short-term overheated, −1 short-term oversold', 'dash'], ['up', '牛市段的超賣（最深那天）', 'Oversold in a bull phase (deepest day)', 'ring'], ['dn', '熊市段的超賣', 'Oversold in a bear phase', 'ring']])]
+        from say_data import own   # 2026-11-15 切到「短期震盪」時，右邊的讀數換成這個檢視自己的（成本帶的讀數是和 4 年比，不適用）
+        sv, lo_ = so['value'], so['now']['lo']; brk = sv <= -1
+        c_sth['modes'][1]['say'] = own([
+            ('短期震盪', 'Short-term swing', sgn(sv), sgn(sv), 'warn' if brk else 'neu',
+             '價格 ÷ 短期持有者成本，和最近 %d 天比偏離 %s 個「%d 倍標準差」。%s，對應價位約 $%s。' % (so['window'], sgn(sv), so['k'], '已經跌破 −1（短期超賣）' if brk else ('還沒跌破 −1' if sv < 0 else '在零上方'), format(lo_, ',')),
+             'Price ÷ STH cost sits %s "%d standard deviations" from its %d-day average. %s; −1 corresponds to about $%s.' % (sgn(sv), so['k'], so['window'], 'It has broken below −1 (short-term oversold)' if brk else ('It has not broken −1' if sv < 0 else 'It is above zero'), format(lo_, ','))),
+            ('現在是', 'Phase now', '牛市段' if so['bull'] else '熊市段', 'Bull phase' if so['bull'] else 'Bear phase', 'neu',
+             '照網站的週期頂底，現在算%s。這個分法是事後才確定的：最近的%s被突破就要改。' % ('牛市段' if so['bull'] else '熊市段', '低點' if so['bull'] else '高點'),
+             "By the site's cycle tops and bottoms this is a %s phase. That split is only settled afterwards: if the latest %s breaks, it changes." % ('bull' if so['bull'] else 'bear', 'low' if so['bull'] else 'high')),
+            ('跌破 −1 之後 30 天', '30 days after breaking −1', '牛 %d/%d、熊 %d/%d 上漲' % (sbu['up'], sbu['n'], sbe['up'], sbe['n']), 'Up %d/%d bull, %d/%d bear' % (sbu['up'], sbu['n'], sbe['up'], sbe['n']), 'neu',
+             '牛市段中位數 %s%%，熊市段中位數 %s%%、之後 30 天內中位數再跌 %s%%。合起來和任何一天差不多。' % (sgn(sbu['med'], 1), sgn(sbe['med'], 1), '%.1f' % abs(sbe['dd'])),
+             'Median %s%% in bull phases; %s%% in bear phases, with a median further fall of %s%% within those 30 days. Taken together, about the same as any day.' % (sgn(sbu['med'], 1), sgn(sbe['med'], 1), '%.1f' % abs(sbe['dd'])))],
+          '短期震盪 %s，%s（約 $%s）' % (sgn(sv), '已跌破 −1' if brk else '還沒跌破 −1', format(lo_, ',')), 'Short-term swing %s, %s (about $%s)' % (sgn(sv), 'below −1' if brk else 'not yet below −1', format(lo_, ',')))
         c_sth['dz'] += ('「短期震盪」把同一個比值（價格 ÷ 成本）改成和最近 %d 天比：偏離平均幾個「%d 倍標準差」，跌破 −1 是短期超賣，升破 +1 是短期過熱；看的是最近跌得急不急，成本帶看的是四年裡的位置。'
                         '2013 年以來第一次跌破 −1 共 %d 次：牛市段 %d 次，30 天後 %d 次上漲、中位數 %s%%；熊市段 %d 次，30 天後 %d 次上漲、中位數 %s%%，之後 30 天內中位數再跌 %s%%。'
                         '合起來 %d%% 上漲，和任何一天（%d%%）差不多。牛熊用事後才知道的週期頂底來分。只作讀值。'

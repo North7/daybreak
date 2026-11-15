@@ -504,7 +504,16 @@ def build(L, N, E, dn, X):
         vz = o.get('viz') or {}; MD = [('illiquid-supply', '非流動性供給', 'Illiquid supply'), ('highly-liquid-supply', '高流動性供給', 'Highly liquid supply')]
         modes = [dict(mz=zh, me=en, rows=vz[k]['rows'], hz=zh + '（顆）', he=en + ' (BTC)', ser=[ser(1, zh=zh, en=en, col='c4', w=1.7)]) for k, zh, en in MD if has(vz.get(k))]
         if not modes: return NA('supliq', '流動性供給', 'Supply by liquidity', '非流動性和高流動性供給（onchain.viz）', 'illiquid and highly liquid supply (onchain.viz)')
-        return dict(k='supliq', zh='流動性供給', en='Supply by liquidity', f='btc0', modes=modes,
+        from say_data import own   # 2026-11-15 舊版這兩張是單獨的面板，沒有接到讀值；直接寫 30 天變化
+        def sl30(k, zh, en):
+            r = vz[k]['rows']; z = r[-1]; a = next((x for x in reversed(r) if x[0] <= z[0] - 30), r[0]); d = z[1] - a[1]
+            wz = lambda v: ('%.0f' % (v / 1e4)) if abs(v) >= 1e5 else ('%.1f' % (v / 1e4)); sg_ = lambda v: ('+' if v >= 0 else '−') + wz(abs(v))
+            return (zh, en, '%s 萬顆' % wz(z[1]), '%.2fM BTC' % (z[1] / 1e6), 'neu', '30 天%s %s 萬顆（%s%.1f%%）。' % ('增加' if d >= 0 else '減少', wz(abs(d)), '+' if d >= 0 else '−', abs(d) / a[1] * 100),
+                    '%s %sK BTC over 30 days (%s%.1f%%).' % ('Up' if d >= 0 else 'Down', format(int(round(abs(d) / 1e3)), ','), '+' if d >= 0 else '−', abs(d) / a[1] * 100)), d
+        its = [sl30(k, zh, en) for k, zh, en in MD if has(vz.get(k))]; dd_ = {it[0][0]: it[1] for it in its}
+        sq = ('非流動性供給 30 天%s、高流動性供給%s' % ('增加' if dd_.get('非流動性供給', 0) >= 0 else '減少', '增加' if dd_.get('高流動性供給', 0) >= 0 else '減少'),
+              'Illiquid supply %s over 30 days, highly liquid supply %s' % ('up' if dd_.get('非流動性供給', 0) >= 0 else 'down', 'up' if dd_.get('高流動性供給', 0) >= 0 else 'down')) if len(dd_) == 2 else ('', '')
+        return dict(k='supliq', zh='流動性供給', en='Supply by liquidity', f='btc0', modes=modes, say=own([it[0] for it in its], sq[0], sq[1]),
           dz='依錢包的花費習慣分類。非流動性供給是長期不動的錢包持有的幣，增加代表囤幣、浮動籌碼變少；高流動性供給是常在交易的錢包持有的幣，增加代表可交易的籌碼變多。分類是估算的，會事後修正。',
           de='Coins classified by how their wallets spend. Illiquid supply sits in wallets that rarely spend; a rise means hoarding and less float. Highly liquid supply sits in wallets that trade often; a rise means more tradable float. The classification is an estimate and is revised later.')
 
