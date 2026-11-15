@@ -39,7 +39,7 @@ document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant'
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Bodoni+Moda:opsz,wght@6..96,500..900&family=Chakra+Petch:wght@400;500;600&family=Archivo:wdth,wght@62..125,400..900&family=Inter+Tight:wght@200;300;400;500;600;700;800&family=Sora:wght@200;300;400;500;600&family=Space+Grotesk:wght@300;400;500&family=Unbounded:wght@400;700;800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter+Tight:wght@200;300;400;500;600;700;800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
 <style>
 /* 版面：單欄長頁。頁面本身安靜，三個可操作的原型各佔一個全寬畫框，個性留給原型。只做深色（Daybreak 發文與夜刊的那一面）。 */
 :root {
@@ -1674,6 +1674,7 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
   .oc-fx .or-v { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .oc.io .fc.in { animation: none !important; } .oc .ol-c::after { display: none !important; } .oc.io .fc:not(.in) { opacity: 1; } }
+.oc.lzw #oc-secs, .oc.lzw .oc-hd { opacity: .55; transition: opacity .25s .15s; } .oc.lzw { cursor: progress; }   /* 2026-11-15：那一頁的卡片還在載 */
 @media (prefers-reduced-motion: reduce) { * { transition: none !important; } .oc-tab button.lq-tap::after { animation: none; } }
 /* ⑮ 分享（2026-11-11，運營拿新版卡片去發文後的回饋）。整頁規則：
    1. 坐標：縱軸 3–5 個整數刻度（對數軸 1、2、3、5 開頭），上格價格也有刻度；橫軸超過 760 天標年、60–760 天標月（一月寫年份）、更短標日期，最右「現在」。
@@ -3529,7 +3530,7 @@ function initOC() {
   /* 頭部那句話裡的關鍵數字用主題色（整頁只有這裡和異動的小點用橘紅） */
   const hx = () => Array.prototype.slice.call(stg.querySelectorAll('.ov-lead, .br-h')).forEach(e2 => { e2.innerHTML = esc(e2.textContent).replace(/([+\-−]?[$]?\d[\d,.]*\s?(?:%|億|萬|兆|[KMB](?![A-Za-z])))/g, '<b class="hx">$1</b>'); });
   /* 一頁的代表圖和代表數字（給退到後面的卡片當預覽） */
-  const hc = ch => { const h = ch.hero || [0, 0], g0 = ch.groups[h[0]], c0 = g0 ? g0.charts[h[1]] : null; if (c0 && (isT(c0) || c0.dist)) return c0; return [].concat.apply([], ch.groups.map(g1 => g1.charts)).find(x => isT(x)) || null; };
+  const hc = ch => { const h = ch.hero || [0, 0], g0 = ch.groups[h[0]], c0 = g0 ? g0.charts[h[1]] : null; if (c0 && !c0.stub && (isT(c0) || c0.dist)) return c0; return [].concat.apply([], ch.groups.map(g1 => g1.charts)).find(x => !x.stub && isT(x)) || null; };
   const hv = ch => { if (ch.id === 'today') return [T('收盤', 'Close'), '$' + n0(ST.close)]; const h = ch.hero || [0, 0], g0 = ch.groups[h[0]], c0 = (g0 ? g0.charts[h[1]] : null) || hc(ch); if (!c0) return ['', '']; try { if (isT(c0)) { const s0 = SP(c0), q0 = hero(s0); return [T(s0.hz || q0.zh || c0.zh, s0.he || q0.en || c0.en), fm(q0.f || s0.f, atv(s0.rows, q0.c, null)[q0.c])]; } return [T(c0.hz || c0.zh, c0.he || c0.en), c0.hs ? sval(c0) : '']; } catch (e0) { return ['', '']; } };
   const pvDraw = () => { if (window.innerWidth < 1240) return; $$('.os', stg).forEach(p1 => { if (p1.classList.contains('front')) return; const bx = p1.querySelector('.pw-c'); if (!bx || bx.dataset.ok) return; const c1 = hc(CH[+p1.dataset.k]); if (!c1) { p1.classList.add('nochart'); return; } if (isT(c1)) mini(bx, c1, 3.6); else if (c1.dist) dspark(bx, c1); bx.dataset.ok = '1'; if (!bx.firstChild) p1.classList.add('nochart'); }); };
   /* 今天頁的大數字：把卡片剩下的高度用掉（寬度不超過 74%） */
@@ -3571,12 +3572,19 @@ function initOC() {
     else { if (from) os.style.opacity = '0'; else os.animate([{ opacity: 1, transform: 'scale(1)' }, { opacity: 0, transform: 'scale(.97)' }], { duration: 120, easing: 'ease-out', fill: 'forwards' }); run(); }
   }
   function closeFx(from) { const box = $('#oc-fx'), os = box.querySelector('.os'); if (!fx) { box.hidden = true; box.classList.remove('on'); return; } const key = fx.k + '_' + fx.i; fx = null; delete REG.F; fxAnim(false, key, () => { if (!fx) { box.hidden = true; os.getAnimations && os.getAnimations().forEach(a2 => a2.cancel()); os.style.opacity = ''; } }, from && typeof from.s === 'number' ? from : null); }
-  function goCh(i) { SEEN.clear();
+  /* 2026-11-15 瘦身：卡片多的頁另外放在 data/next-<頁>.js（build.py），點到才載；首頁閒下來後在背景依序先載（省流量模式不先載） */
+  const LZ = {}; let lzWant = -1;
+  const loadCh = i => { const c = CH[i]; if (!c || !c.lz) return Promise.resolve(); if (LZ[c.id]) return LZ[c.id];
+    return (LZ[c.id] = new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'data/next-' + c.id + '.js?v=' + c.lz; s.async = true;
+      s.onload = () => { const g = (window.DAYBREAK_CH || {})[c.id]; if (g) { c.groups = g; delete c.lz; ok(); } else { delete LZ[c.id]; no(new Error('no data ' + c.id)); } };
+      s.onerror = () => { delete LZ[c.id]; s.remove(); no(new Error('load ' + c.id)); }; document.head.appendChild(s); })); };
+  const loadAll = () => Promise.all(CH.map((c, i) => loadCh(i)));
+  function goCh(i) { if (i !== ci && CH[i] && !CH[i].todo && CH[i].lz) { lzWant = i; el.classList.add('lzw'); loadCh(i).then(() => { el.classList.remove('lzw'); if (lzWant === i) goCh(i); }, () => el.classList.remove('lzw')); return; } lzWant = i; SEEN.clear();
     if (i === ci || !CH[i] || CH[i].todo) return; const mf0 = agMorphHook ? agMorphHook(i) : null; const old = stg.querySelector('.os[data-k="' + ci + '"] .os-b'); if (old) old.remove(); closeFx();
     ci = i; O = CH[ci]; G = O.groups; REG = {}; ord = order(); place(); headBody(); renderBar(); renderOv(); poster(); hx(); place(); if (mf0) mf0();
     const sc = $('#oc-secs'); sc.classList.add('sw'); setTimeout(() => { renderSecs(); sc.classList.remove('sw'); }, reduce ? 0 : 170);
   }
-  function renderCmp() { const a = $('#oc-cmp1'), b = $('#oc-cmp2'), cy = [].concat.apply([], CH.map(x => [].concat.apply([], x.groups.map(q => q.charts)))).find(x => x.k === 'aviv'); if (!a || !b || !cy) return; const c = cy, keep = lay, t0 = T0(SP(c), c); lay = 'sp'; leadChart(a, c, 91, t0); lay = 'ov'; leadChart(b, c, 92, t0); lay = keep; $('#oc-cmpn').textContent = T(c.zh, c.en); }
+  function renderCmp() { const a = $('#oc-cmp1'), b = $('#oc-cmp2'), cy = [].concat.apply([], CH.map(x => [].concat.apply([], x.groups.map(q => q.charts)))).find(x => x.k === 'aviv' && !x.stub); if (!a || !b || !cy) return; const c = cy, keep = lay, t0 = T0(SP(c), c); lay = 'sp'; leadChart(a, c, 91, t0); lay = 'ov'; leadChart(b, c, 92, t0); lay = keep; $('#oc-cmpn').textContent = T(c.zh, c.en); }
   var tv = null;   /* 日夜鍵的位置：0＝深夜，1＝白天，中間是黃昏／清晨；null＝還沒拖過，照 th */
   function mixHex(a, b, t) { const pa = parseInt(a.slice(1), 16), pb = parseInt(b.slice(1), 16), f = sh => Math.round(((pa >> sh) & 255) + (((pb >> sh) & 255) - ((pa >> sh) & 255)) * t); return '#' + ((1 << 24) | (f(16) << 16) | (f(8) << 8) | f(0)).toString(16).slice(1); }
   function paint() {
@@ -3639,7 +3647,7 @@ function initOC() {
   function mapDraw() { const list = MAP.filter(it => it.el && !it.el.hidden && !it.ok); let i = 0; const step = () => { if ($('#oc-map').hidden) return; for (let n = 0; n < 7 && i < list.length; n++, i++) { const it = list[i], bx = it.el.querySelector('.mp-s'), c = it.c; if (it.ok || !document.contains(bx)) continue; try { if (isT(c)) mini(bx, c, 2.4); else if (c.dist) dspark(bx, c); else if (c.list) lspark(bx, c); else if (c.grid) gspark(bx, c); else if (c.xy) xspark(bx, c); else if (c.strip) sspark(bx, c); } catch (e0) {} it.ok = 1; } if (i < list.length) requestAnimationFrame(step); }; requestAnimationFrame(step); }
   function mapFilter() { const q = ($('#oc-mapq').value || '').trim().toLowerCase(); let n = 0; MAP.forEach(it => { const hit = !q || it.key.indexOf(q) >= 0; it.el.hidden = !hit; if (hit) n++; }); $$('.mp-sec', $('#oc-mapg')).forEach(sec => { sec.hidden = !sec.querySelector('.mp-t:not([hidden])'); }); $('#oc-mapn').textContent = q ? T(n + ' 張符合', n + ' match' + (n === 1 ? '' : 'es')) : T('共 ' + MAP.length + ' 張圖', MAP.length + ' charts'); const em = $('#oc-mape'); if (em) em.hidden = n > 0; mapDraw(); }
   function openMap() {
-    const m = $('#oc-map'); if (!m.hidden) return; MAP = [];
+    const m = $('#oc-map'); if (!m.hidden) return; if (CH.some(c => c.lz)) { el.classList.add('lzw'); loadAll().then(() => { el.classList.remove('lzw'); openMap(); }, () => el.classList.remove('lzw')); return; } MAP = [];
     $('#oc-mapt').textContent = T('找圖', 'Find a chart'); $('#oc-mapi').innerHTML = IC('find'); const inp = $('#oc-mapq'); inp.value = ''; inp.placeholder = T('輸入圖名，例如「溢價」「SOPR」', 'Type a name, e.g. “premium”, “SOPR”'); inp.setAttribute('aria-label', T('搜尋圖名', 'Search chart names'));
     { const xb = $('#oc-mapx'), tc = T('關閉（Esc）', 'Close (Esc)'); xb.innerHTML = IC('close'); xb.dataset.tip = tc; xb.setAttribute('aria-label', tc); }
     let html = ''; CH.forEach((ch, c2) => { if (ch.todo || ch.id === 'today') return; let tiles = ''; ch.groups.forEach((g, gi) => g.charts.forEach((c, i) => { if (c.na || c.sim || c.go) return; const idx = MAP.length; MAP.push({ c, ci: c2, gi, i, key: (c.zh + ' ' + (c.en || '') + ' ' + g.zh + ' ' + (g.en || '') + ' ' + ch.zh + ' ' + (ch.en || '')).toLowerCase() }); tiles += `<button type="button" class="mp-t" data-mi="${idx}"><span class="mp-s"></span><span class="mp-nm">${esc(T(c.zh, c.en))}</span><span class="mp-v">${esc(mapVal(c))}</span></button>`; }));
@@ -3782,7 +3790,8 @@ function initOC() {
     const day = d == null ? tE : typeof d === 'number' ? d : Date.parse(d) / 864e5, Yf = pane === 'p' ? L.Yp : L.Y;
     return { x: bb.left + L.X(day) * sx, y: v == null || !Yf ? null : bb.top + Yf(v) * sy, box: rect, t0: ymd(L.t0), t1: ymd(tE), lo: L.lo, hi: L.hi, tf: L.tfn, ticks: L.tk };
   };
-  if (SHARE && SHK) setTimeout(() => { for (let i = 0; i < CH.length; i++) { const gs = CH[i].groups || []; for (let j = 0; j < gs.length; j++) { const n = (gs[j].charts || []).findIndex(x => x.k === SHK); if (n < 0) continue; if (i !== ci) goCh(i); setTimeout(() => openFx((j + 1) + '_' + n), 60); return; } } }, 0);
+  if (!SHARE) addEventListener('load', () => setTimeout(() => { const cn = navigator.connection; if (cn && cn.saveData) return; let q = Promise.resolve(); CH.forEach((c, i) => { if (c.lz) q = q.then(() => loadCh(i)).catch(() => {}); }); }, 1800), { once: true });
+  if (SHARE && SHK) loadAll().then(() => { for (let i = 0; i < CH.length; i++) { const gs = CH[i].groups || []; for (let j = 0; j < gs.length; j++) { const n = (gs[j].charts || []).findIndex(x => x.k === SHK); if (n < 0) continue; if (i !== ci) goCh(i); setTimeout(() => openFx((j + 1) + '_' + n), 60); return; } } });
   return layout;
 }
 
