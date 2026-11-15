@@ -1,16 +1,16 @@
 {
- "date": "2026-11-13",
- "edition": 39,
+ "date": "2026-11-14",
+ "edition": 40,
  "picks": [
   {
-   "id": "onchain/rloss",
-   "chart": "data/picks/onchain-rloss.png",
-   "chart_en": "data/picks/onchain-rloss-en.png",
-   "why": "大跌第二天讀者想知道這是不是投降；頭條講槓桿和穩定幣，這張回答現貨持有者在做什麼。",
-   "q_zh": "價格更低、賠錢賣的人更多，這是投降了嗎？",
-   "q_en": "Lower price, bigger losses: is this capitulation?",
-   "zh": "價格更低、賠錢賣的人更多，這是投降了嗎？\n全網認賠峰值 11.13 個基點，9/15 那次低點只有 5.41；價格從 75,585 跌到 68,236，賠錢賣反而翻倍。\n2013 年起同樣的組合 58 次，30 天後 44 次比較高、中位數 +6.9%，任一天是 +2.9%。投降常出現在下跌後段，但不一定是最後一次。\n#比特幣 #BTC #鏈上數據",
-   "en": "Lower price, bigger losses: is this capitulation?\nThe loss peak is 11.13bp vs 5.41bp at the Sep 15 low, at a lower price.\nSince 2013: 58 times, higher 30 days later 44 times, median +6.9% (any day +2.9%). Often late in a decline, not always the last.\n#Bitcoin #BTC #onchain"
+   "id": "flows/rcliq",
+   "chart": "data/picks/flows-rcliq.png",
+   "chart_en": "data/picks/flows-rcliq-en.png",
+   "why": "大跌第三天讀者在問錢是不是真的走了；頭條講估值地板和期權，這張回答資金背景，今天剛翻轉。",
+   "q_zh": "資金開始從 BTC 撤出了嗎？",
+   "q_en": "Is money starting to leave BTC?",
+   "zh": "資金開始從 BTC 撤出了嗎？\n實現市值 30 日變化從 +0.03% 轉成 −0.09%（11/13）：賠錢賣掉的幣，比新進來的資金多。\n2019 年起轉負 13 次，之後 30 天中位數 −2.6%，任一天是 +1.8%；轉負多半在熊市出現，但 2023 年那次之後半年漲了 146%。\n#比特幣 #BTC #鏈上數據",
+   "en": "Is money starting to leave BTC?\nRealized cap's 30-day change went from +0.03% to −0.09% (Nov 13): coins sold at a loss now outweigh new money.\nSince 2019 it turned negative 13 times; median 30 days later −2.6% vs +1.8% for any day.\n#Bitcoin #BTC #onchain"
   }
  ]
 }
