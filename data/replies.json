@@ -4,6 +4,88 @@
  "edition": 40,
  "items": [
   {
+   "n": 11,
+   "order": 1,
+   "status": "send",
+   "url": "https://x.com/Dragonhau66/status/2121782598401712499",
+   "id": "2121782598401712499",
+   "author": "Dragonhau66",
+   "name": "Dragonhau66",
+   "followers": 31170,
+   "posted": "2026-11-15T01:49:26Z",
+   "lang": "zh",
+   "angle": "提出反例",
+   "style": "口語版",
+   "summary": "週末暴跌是 200 日均線跌破觸發程序化連環清算，24 小時爆倉 19.45 億、多單占 93%",
+   "reply": "200 日線週四就收破了，週末這段八成是撞進收盤下面那條多單清算帶\n推算堆了 1.2 萬多顆，今天早上整段踩穿",
+   "sources": "收在 200 日均線下第 3 天（11/14 收盤，notes.json headline）；推算多單清算帶 61.4K–63.2K 約 12,505 顆、距 11/15 00:00 收盤 64,130 下方 2.9%（Coinalyze 多家交易所未平倉推算，deriv.liq_heat.below）",
+   "note": "★ 1 小時內（發文 09:49，截止 10:49）。今天 3 萬粉以上第 2 則，額度用滿。熟帳號。清算圖是 11/15 00:00 的快照，價格線在 64,130，清算帶就在正下方",
+   "image": {
+    "site": {
+     "page": "deriv",
+     "sel": "#c-liq"
+    },
+    "title": "每跌一段，就清掉下面一層多單"
+   }
+  },
+  {
+   "n": 12,
+   "order": 2,
+   "kind": "followup",
+   "status": "send",
+   "url": "https://x.com/serlo123/status/2121788364294950912",
+   "id": "2121788364294950912",
+   "author": "serlo123",
+   "name": "serlo123",
+   "followers": 9113,
+   "posted": "2026-11-15T02:12:21Z",
+   "lang": "zh",
+   "angle": "補數據",
+   "style": "口語版",
+   "summary": "原作者回我們：如果破 58K，那（6 月底）就不是熊底，等等看",
+   "reply": "長期持有者這週認賠 15.9 億，6/30 那次 36 億",
+   "sources": "長期持有者 7 日已實現虧損 15.9 億美元、6/30 低點 36 億（notes.json 2026-11-14-1）",
+   "note": "原作者本人接話（我們回在他的貼文底下第 1 輪），回一句短的"
+  },
+  {
+   "n": 13,
+   "order": 3,
+   "kind": "followup",
+   "status": "send",
+   "url": "https://x.com/serlo123/status/2121789538368704983",
+   "id": "2121789538368704983",
+   "author": "serlo123",
+   "name": "serlo123",
+   "followers": 9113,
+   "posted": "2026-11-15T02:17:01Z",
+   "lang": "zh",
+   "angle": "補數據",
+   "style": "口語版",
+   "summary": "在我們 61K 長文底下：破 61K 估計要去試 58K",
+   "reply": "61K 下面反而沒多少多單好清了",
+   "sources": "61K 以下推算多單清算帶最大一段 59.6K–60.2K 約 2,989 顆，61.4K–63.2K 那段約 12,505 顆（Coinalyze 多家交易所未平倉推算，11/15 00:00，deriv.liq_heat.below）",
+   "note": "我們原創（61K 長文）底下，不設輪數上限"
+  },
+  {
+   "n": 14,
+   "order": 4,
+   "kind": "followup",
+   "status": "send",
+   "url": "https://x.com/serlo123/status/2121790942193873032",
+   "id": "2121790942193873032",
+   "author": "serlo123",
+   "name": "serlo123",
+   "followers": 9113,
+   "posted": "2026-11-15T02:22:36Z",
+   "lang": "zh",
+   "angle": "回答提問",
+   "style": "口語版",
+   "summary": "在我們引用 mignoletkr 那則底下：不知道數據真不真，如果是合約還好；沒黑天鵝但砸盤堪比 312",
+   "reply": "是 Coinalyze 彙整幾家大交易所的主動成交，合約那邊沒錯，這週被強平的快九成是多單\n期權那邊倒還沒慌到極端，DVOL 47，過去一年只排七成多",
+   "sources": "主動成交：Coinalyze（deriv.taker）；7 天強平多單占 89.6%（Coinalyze，deriv.liq_vol.d7.share）；DVOL 47.29、過去一年第 73.4 百分位（Deribit，11/14，deriv.dvol）",
+   "note": "我們原創（引用 mignoletkr）底下，他用中文問數據真假，用中文回"
+  },
+  {
    "n": 1,
    "status": "send",
    "url": "https://x.com/lil_disruptor/status/2121771027646521559",
@@ -26,7 +108,7 @@
     },
     "title": "Each leg down cleared the longs stacked under price"
    },
-   "order": 1
+   "order": 5
   },
   {
    "n": 2,
@@ -53,7 +135,7 @@
     },
     "title": "30 days of taker flow: perps −140K BTC, spot just −9.8K"
    },
-   "order": 2
+   "order": 6
   },
   {
    "n": 3,
@@ -78,7 +160,7 @@
     },
     "title": "Day 404 after the top: this cycle ~51% of peak, past three 18–26%"
    },
-   "order": 3
+   "order": 7
   },
   {
    "n": 4,
@@ -103,7 +185,7 @@
     },
     "title": "30 天主動賣：永續 14 萬顆，現貨不到 1 萬顆"
    },
-   "order": 4
+   "order": 8
   },
   {
    "n": 5,
@@ -128,7 +210,7 @@
     },
     "title": "11/13 一天認賠 15.3 億美元，6/30 那次是 15.5 億"
    },
-   "order": 5
+   "order": 9
   },
   {
    "n": 6,
@@ -153,7 +235,7 @@
     },
     "title": "短期持有者成本 74,946，收盤 64,115 在下面一成半"
    },
-   "order": 6
+   "order": 10
   },
   {
    "n": 7,
@@ -171,7 +253,7 @@
    "reply": "說撤退還早\n全部現貨 ETF 近 20 天流出 21 億美元\n6 月那波最深是 56 億",
    "sources": "美國現貨 BTC ETF 20 日淨流量 11/13 −20.80 億美元（這段流出第 5 天）；之前幾段最深 2026-06-09 −56.38 億、2026-02-13 −38.85 億、2025-03 −47.13 億（CoinMarketCap，flows.etf20）",
    "note": "Grok inbox 0905 表一 #6。ETF 每日流量圖看不到 6 月那波的 20 日累計，對不上，不配圖",
-   "order": 7
+   "order": 11
   },
   {
    "n": 8,
@@ -189,7 +271,7 @@
    "reply": "掉的大多是價格\nOI 換成顆數算，全市場這週才少半個百分點\n槓桿根本沒退",
    "sources": "永續未平倉 11/14 338,809 顆、7 天 −0.5%、30 天 +7.7%（同期價格 −22%），2021 年以來第 97 百分位（Coinalyze 7 家交易所，deriv.oi_hist）",
    "note": "Grok inbox 0905 表一 #5（熟帳號）。1 萬粉以下不配圖",
-   "order": 8
+   "order": 12
   },
   {
    "n": 9,
@@ -214,7 +296,7 @@
     },
     "title": "100–1,000 顆這層：30 天少的 3 萬顆，幾乎全在這一週"
    },
-   "order": 9
+   "order": 13
   },
   {
    "n": 10,
@@ -232,7 +314,7 @@
    "reply": "未實現獲利那條更極端，跌破市值 35% 了，差在以前到這裡整體是賠的，這次加總還在賺",
    "sources": "相對未實現獲利 11/14 34.1%、地板 35%（Bitview，onchain.rup）；「以前到這裡整體在賠、這次還在賺」同 11/15 RUP 長文",
    "note": "固定名單 4c（熟帳號，發文 0.3 小時）。1 萬粉以下不配圖；不碰他自己講的成本",
-   "order": 10
+   "order": 14
   }
  ]
 }
