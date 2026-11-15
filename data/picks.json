@@ -9,8 +9,8 @@
    "why": "大跌第三天讀者在問錢是不是真的走了；頭條講估值地板和期權，這張回答資金背景，今天剛翻轉。",
    "q_zh": "資金開始從 BTC 撤出了嗎？",
    "q_en": "Is money starting to leave BTC?",
-   "zh": "資金開始從 BTC 撤出了嗎？\n實現市值 30 日變化從 +0.03% 轉成 −0.09%（11/13）：賠錢賣掉的幣，比新進來的資金多。\n2019 年起轉負 13 次，之後 30 天中位數 −2.6%，任一天是 +1.8%；轉負多半在熊市出現，但 2023 年那次之後半年漲了 146%。\n#比特幣 #BTC #鏈上數據",
-   "en": "Is money starting to leave BTC?\nRealized cap's 30-day change went from +0.03% to −0.09% (Nov 13): coins sold at a loss now outweigh new money.\nSince 2019 it turned negative 13 times; median 30 days later −2.6% vs +1.8% for any day.\n#Bitcoin #BTC #onchain"
+   "zh": "資金開始從 BTC 撤出了嗎？\n開始了，而且是賠錢在賣：實現市值 30 日變化從 +0.03% 轉成 −0.09%（11/13），賠錢賣掉的幣比新進來的資金多。\n2019 年起轉負 13 次，之後 30 天中位數 −2.6%，任一天是 +1.8%，短期多半還有壓力；等它轉回正，才算錢回來。\n#比特幣 #BTC #鏈上數據",
+   "en": "Is money starting to leave BTC?\nYes, at a loss: realized cap's 30-day change went from +0.03% to −0.09% (Nov 13).\nSince 2019 it turned negative 13 times; median 30 days later −2.6% vs +1.8% for any day. Pressure likely lasts until it turns positive.\n#Bitcoin #BTC #onchain"
   }
  ]
 }
