@@ -13,7 +13,7 @@ try:
         except Exception: time.sleep(0.2)
     ws = S.WS(next(t for t in tg if t['type'] == 'page')['webSocketDebuggerUrl']); ws.call('Page.enable'); ws.call('Runtime.enable')
     ws.call('Emulation.setDeviceMetricsOverride', width=1500, height=1000, deviceScaleFactor=1, mobile=False)
-    ws.call('Page.addScriptToEvaluateOnNewDocument', source="try{localStorage.setItem('daybreak.lang','%s')}catch(e){}" % ('en' if en else 'zh'))
+    ws.call('Page.addScriptToEvaluateOnNewDocument', source="try{localStorage.setItem('daybreak.lang','%s');localStorage.setItem('daybreak.nohold','1')}catch(e){}" % ('en' if en else 'zh'))   # 2026-11-15 修：資料先到、判讀（notes.json）還沒寫好時，舊版會整期顯示上一期（app.js holdPrev），抽出來的讀值就停在前一天，和新首頁的數字對不上；跟截圖工具一樣一律看最新數字
     ws.call('Page.navigate', url='http://127.0.0.1:8790/classic.html'); S.wait(ws, 'document.readyState === "complete"'); time.sleep(4)
     ids = json.loads(ws.js('JSON.stringify(Array.prototype.map.call(document.querySelectorAll("[id^=pg-]"), function(e){return e.id.slice(3)}))'))
     for i in ids:
