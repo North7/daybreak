@@ -109,6 +109,7 @@ def check_longposts():
             if AI_WORDS.search(t): err.append(f'{tag} AI 腔（「{AI_WORDS.search(t).group(0)}」）')
             if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
             if not it.get('posted') and BRAND.search(t + (it.get('title') or '')): err.append(f'{tag} 品牌名寫 Daybreak，不寫「破曉」（2026-11-12 使用者）')
+            if lang == 'zh' and not it.get('posted') and '網站' in t + (it.get('title') or ''): err.append(f'{tag} 「網站」改寫「Daybreak 上」（2026-11-15 使用者：文章裡的「網站裡」都改為「Daybreak 上」）')
             if lang == 'zh' and set(t) & SIMP: err.append(f'{tag} 有簡體字：{"".join(sorted(set(t) & SIMP))}')
             if lang == 'zh' and not it.get('posted') and EN_NAME.search(t): err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(sorted(set(EN_NAME.findall(t)))) + '（voice.md 用詞，2026-11-09）')
             notes += sentence_notes(tag, t)
