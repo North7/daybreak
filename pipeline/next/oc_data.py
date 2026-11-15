@@ -15,6 +15,23 @@ def build(L, N, E, dn):
            ser(6, zh='−0.5 標準差', en='−0.5σ', col='c4', dash='2 3', w=.9), ser(7, zh='−1 標準差', en='−1σ', col='c4', w=1.1), ser(8, zh='−2 標準差', en='−2σ', col='dn', dash='5 4', w=1.1), ser(2, zh='短期持有者成本', en='STH cost', col='ac', w=2),
            ser(9, hide=1, f='pct1')],
       dz='短期持有者是持有不到 155 天的幣。橘線是他們的平均成本，上下六條線是成本乘上近 4 年「價格 ÷ 成本」的平均加減幾個標準差。', de='Short-term holders are coins held under 155 days. The orange line is their average cost; the six lines around it are that cost times the 4-year mean of price ÷ cost, plus or minus standard deviations.')
+    so = o.get('sthosc')   # 2026-11-15 短期震盪（oc_extra.sthosc_viz）：同一個比值改成和最近 140 天比，放在成本帶卡片的第二個檢視
+    if so:
+        sgn = lambda v, nd=2: (('%+.' + str(nd) + 'f') % v).replace('-', '−'); sym = lambda d_: d_[:7].replace('-', '/'); S_ = so['stats']; sa, sbu, sbe = S_['all'], S_['bull'], S_['bear']
+        smk = [dict(d=dn(x['d']), v=x['v'], col='up' if x['bull'] else 'dn', up=0, zh='%s %s' % (sym(x['d']), sgn(x['v'])), en='%s %s' % (x['d'][:7], sgn(x['v']))) for x in so['lows']]
+        c_sth['modes'] = [dict(mz='成本帶', me='Cost bands'),
+                          dict(mz='短期震盪', me='Short-term swing', hz='短期震盪 · 和最近 %d 天比' % so['window'], he='Short-term swing · against the last %d days' % so['window'], one=0, f='s2', rows=so['rows'], p=2, hero=0, rng=1095,
+                               ser=[ser(1, zh='短期震盪', en='Short-term swing', col='c5', w=1.5)],
+                               refs=[dict(v=0, col='k2', solid=1), dict(v=1, col='k2'), dict(v=-1, col='k2')], marks=smk,
+                               leg=[['k2', '+1 短期過熱、−1 短期超賣', '+1 short-term overheated, −1 short-term oversold', 'dash'], ['up', '牛市段的超賣（最深那天）', 'Oversold in a bull phase (deepest day)', 'ring'], ['dn', '熊市段的超賣', 'Oversold in a bear phase', 'ring']])]
+        c_sth['dz'] += ('「短期震盪」把同一個比值（價格 ÷ 成本）改成和最近 %d 天比：偏離平均幾個「%d 倍標準差」，跌破 −1 是短期超賣，升破 +1 是短期過熱；看的是最近跌得急不急，成本帶看的是四年裡的位置。'
+                        '2013 年以來第一次跌破 −1 共 %d 次：牛市段 %d 次，30 天後 %d 次上漲、中位數 %s%%；熊市段 %d 次，30 天後 %d 次上漲、中位數 %s%%，之後 30 天內中位數再跌 %s%%。'
+                        '合起來 %d%% 上漲，和任何一天（%d%%）差不多。牛熊用事後才知道的週期頂底來分。只作讀值。'
+                        % (so['window'], so['k'], sa['n'], sbu['n'], sbu['up'], sgn(sbu['med'], 1), sbe['n'], sbe['up'], sgn(sbe['med'], 1), ('%.1f' % abs(sbe['dd'])), round(sa['up'] / (sa['n'] or 1) * 100), S_['base']['up']))
+        c_sth['de'] += (' "Short-term swing" takes the same ratio (price ÷ cost) against its last %d days: how many "%d standard deviations" it sits from the average. Below −1 is short-term oversold, above +1 short-term overheated; it shows how sharp the recent move was, while the bands show the position within four years. '
+                        'Since 2013 it first fell below −1 %d times: %d in bull phases, with price higher 30 days later %d times and a median of %s%%; %d in bear phases, higher %d times with a median of %s%%, and a median further fall of %s%% within those 30 days. '
+                        'Taken together price was higher %d%% of the time, about the same as any day (%d%%). Bull and bear are split by cycle tops and bottoms, which are only known afterwards. A reading only.'
+                        % (so['window'], so['k'], sa['n'], sbu['n'], sbu['up'], sgn(sbu['med'], 1), sbe['n'], sbe['up'], sgn(sbe['med'], 1), ('%.1f' % abs(sbe['dd'])), round(sa['up'] / (sa['n'] or 1) * 100), S_['base']['up']))
     c_profit = dict(k='profit', zh='短期持有者獲利比例', en='Short-term holders in profit', f='p1', rows=ch['viz']['profit'], kw=1, ph=.4, dom=[0, 100],
       ser=[ser(1, zh='獲利比例', en='In profit', col='c4', fill=1)], refs=[dict(v=50, col='k2'), dict(v=97.5, col='dn', zh='97.5% 賣出線', en='97.5% sell line')], zones=[dict(lo=97.5, hi=100, col='dn', zh='高於 97.5% 賣出線', en='Above the 97.5% sell line', nz='97.5% 賣出線', ne='the 97.5% sell line')],
       leg=[['up', '週 K 收漲', 'Weekly candle up', 'box'], ['dn', '週 K 收跌', 'Weekly candle down', 'box']],

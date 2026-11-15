@@ -313,6 +313,59 @@ def lsrchg_viz(bv, px, last, bottoms=(), tops=(), step=3):
 DD_FIRST = '2011-11-18'   # 2011–13 那一輪的底部收盤（model.json 的 cycle_bottoms 從 2015 起，這一輪的起點補在這裡）
 
 
+# ---------- 短期持有者成本帶的短期震盪（2026-11-15 使用者要求） ----------
+# 同一個比值（價格 ÷ 短期持有者成本），改成和最近 SO_W 天比：(比值 − 平均) ÷ (SO_K × 標準差)。−1 以下是短期超賣，+1 以上是短期過熱。
+#   成本帶（stage_viz.sth_bands_viz）用近 4 年，是慢的版本；這裡是快的版本，看最近跌得急不急。
+# 參數：外面同類圖沒有公開參數，拿圖上九個高低點比對，約 140 天、2 個標準差最合（平均誤差 0.07）。
+# 回測（2013 起，到 2026-11-14，第一次跌破 −1、相隔 30 天，共 19 次，網站統一收盤）：全部合起來 30 天後 63% 上漲、中位數 +2.4%，和任何一天（56%、+2.7%）沒有差別；
+#   牛市段（週期底到頂）12 次，10 次上漲、中位數 +12.2%；熊市段 7 次，2 次上漲、中位數 −5.1%，之後 30 天內中位數再跌 15%。
+#   牛熊用 model.json 的週期頂底來分，是事後才知道的。只作讀值。
+SO_W, SO_K, SO_FROM = 140, 2, '2013-01-01'
+
+
+def sthosc_viz(bv, px, last, bottoms=(), tops=(), step=3, keep=1100):
+    P = _P(bv, px); sth = bv.get('sth') or {}; D = [d for d in sorted(sth) if d <= last and P(d) and sth[d]]
+    if len(D) < 3000: return None
+    N = len(D); p = [P(d) for d in D]; m = [p[i] / sth[D[i]] for i in range(N)]
+    o, mu, sd = [None] * N, [None] * N, [None] * N; s1 = s2 = 0.0
+    for i in range(N):
+        s1 += m[i]; s2 += m[i] * m[i]
+        if i >= SO_W: s1 -= m[i - SO_W]; s2 -= m[i - SO_W] ** 2
+        if i >= SO_W - 1:
+            mu[i] = s1 / SO_W; sd[i] = math.sqrt(max(0.0, s2 / SO_W - mu[i] * mu[i]))
+            if sd[i] > 0: o[i] = (m[i] - mu[i]) / (SO_K * sd[i])
+    i0 = next(i for i, d in enumerate(D) if d >= SO_FROM and o[i] is not None); e = N - 1
+    if o[e] is None: return None
+    B = [b[0] for b in bottoms]; T = [t[0] for t in tops]
+    bull = lambda d: max([b for b in B if b <= d] or ['']) > max([t for t in T if t <= d] or [''])   # 最近一個錨點是底：牛市段
+    fw = lambda i, n: (p[i + n] / p[i] - 1) * 100 if i + n < N else None
+    dd = lambda i, n: (min(p[i:i + n + 1]) / p[i] - 1) * 100 if i + n < N else None
+    r1 = lambda v: None if v is None else round(v, 1)
+    ev, eps, lastj = [], [], -999   # ev＝第一次跌破 −1（相隔 30 天）；eps＝每一段超賣裡最深的那天（給圖上的圓圈）
+    for i in range(i0, N):
+        if o[i] is not None and o[i] <= -1:
+            if i - lastj > 30:
+                ev.append(dict(d=D[i], v=round(o[i], 2), px=round(p[i]), bull=bull(D[i]), f30=r1(fw(i, 30)), f90=r1(fw(i, 90)), dd30=r1(dd(i, 30)))); eps.append([i])
+            else: eps[-1].append(i)
+            lastj = i
+    lows = [dict(d=D[k], v=round(o[k], 2), bull=bull(D[k])) for k in (min(c, key=lambda i: o[i]) for c in eps)]
+    def summ(sel):
+        f = [x['f30'] for x in ev if sel(x) and x['f30'] is not None]; g = [x['dd30'] for x in ev if sel(x) and x['dd30'] is not None]
+        return dict(n=len(f), up=sum(v > 0 for v in f), med=round(st.median(f), 1), dd=round(st.median(g), 1)) if f else dict(n=0, up=0, med=None, dd=None)
+    base = [fw(i, 30) for i in range(i0, N) if fw(i, 30) is not None]
+    rows = [[dn(D[i]), round(o[i], 3), round(p[i], 2 if p[i] < 100 else 0)] for i in range(i0, N) if o[i] is not None]
+    cut = rows[-1][0] - keep; old = [r for r in rows if r[0] < cut]
+    rows = [max(old[i:i + step], key=lambda r: abs(r[1])) for i in range(0, len(old), step)] + [r for r in rows if r[0] >= cut]   # 更早的每 step 天留離零最遠的那天，尖峰不會被抽掉
+    S = sth[D[e]]; below = [i for i in range(i0, N) if o[i] is not None and o[i] <= -1]
+    return dict(date=D[e], close=round(p[e]), value=round(o[e], 2), prev7=round(o[e - 7], 2), window=SO_W, k=SO_K, bull=bull(D[e]),
+                now=dict(sth=round(S), mid=round(S * mu[e]), lo=round(S * (mu[e] - SO_K * sd[e])), hi=round(S * (mu[e] + SO_K * sd[e]))),
+                last_below=D[below[-1]] if below else None, below_pct=round(len(below) / (N - i0) * 100, 1), lows=lows, ev=ev,
+                stats=dict(all=summ(lambda x: True), bull=summ(lambda x: x['bull']), bear=summ(lambda x: not x['bull']),
+                           base=dict(up=round(sum(v > 0 for v in base) / len(base) * 100), med=round(st.median(base), 1))),
+                rows=rows, src='Bitview',
+                note='（價格 ÷ 短期持有者成本 − 近 %d 天平均）÷（%d × 標準差）；−1 以下短期超賣、+1 以上短期過熱；牛熊用事後才知道的週期頂底來分；只作讀值' % (SO_W, SO_K))
+
+
 # ---------- 離成本線和均線多遠（2026-11-15 使用者要求） ----------
 # 價格和九條線各比一次：log(價格 ÷ 線) 在「到當天為止的全部歷史」裡排第幾 %（不偷看未來），九個取平均。
 #   慢的六條：冪律（只用當天以前的資料擬合，每 30 天重擬）、Cointime 價格、真實市場均價、實現價、365 天鏈上均價、200 週均線；
