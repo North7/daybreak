@@ -4,6 +4,43 @@
  "edition": 40,
  "items": [
   {
+   "n": 27,
+   "order": 1,
+   "kind": "followup",
+   "status": "send",
+   "url": "https://x.com/serlo123/status/2121820669440872635",
+   "id": "2121820669440872635",
+   "author": "serlo123",
+   "name": "serlo123",
+   "followers": 9122,
+   "posted": "2026-11-15T04:20:43Z",
+   "lang": "zh",
+   "angle": "接話",
+   "style": "口語版",
+   "summary": "在我們 RUP 長文底下留言：有彈藥的可以買點",
+   "reply": "現在還是賠錢賣的多，已實現市值 30 天剛轉負，8 月以來第一次",
+   "sources": "已實現市值 30 天變化 −0.09%（11/13，CoinMetrics community，由市值 ÷ MVRV 推得），上一段轉負 2026-05-28 到 08-22 · data/latest.json flows.rc_liq",
+   "note": "接話：他講買點，不接操作，只補一個資金面的讀數"
+  },
+  {
+   "n": 26,
+   "order": 2,
+   "status": "send",
+   "url": "https://x.com/paulxue1979/status/2121802244698095741",
+   "id": "2121802244698095741",
+   "author": "paulxue1979",
+   "name": "Paul Xue",
+   "followers": 4184,
+   "posted": "2026-11-15T03:07:30Z",
+   "lang": "zh",
+   "angle": "補數據",
+   "style": "口語版",
+   "summary": "62K 長下影線拉回 65K，問 Grok 是二次探底築底（①）還是超跌反彈後破底去 58K（②）",
+   "reply": "①②都不選啦，倒是跌下來亞洲散戶反而在搶\n韓國 Upbit 溢價 11/14 收在三個多百分點，30 天平均才 1%，OKX 場外 USDT 今早也溢價一個半百分點，前兩週一直是折價",
+   "sources": "Upbit 溢價 3.65%（11/14 UTC 收盤，30 天平均 1.08%）· OKX 場外 USDT/CNY 溢價 +1.53%（11/15 00:17 UTC 快照，11/01–11/13 介於 −1.1% 到 0%）· data/latest.json flows.kp、flows.premium3",
+   "note": "固定名單熟帳號（4c），4 千粉不配圖。兩個溢價都是插針（11/15 約 02:00 UTC）之前的讀數，所以寫「跌下來這兩天」不寫接針；不選邊、不給底部價位"
+  },
+  {
    "n": 17,
    "kind": "followup",
    "status": "send",
@@ -20,7 +57,7 @@
    "reply": "難怪那麼準，三條擠在一起\n短期成本這 30 天還往上墊了 500，價格在跌，它反而在升",
    "sources": "短期持有者成本 74,946、30 天 +501（chips.flow.sth_vs_tmm，11/14）",
    "note": "他的貼文底下第 2 輪（回答我們的問題），可以接；接話不配圖",
-   "order": 1
+   "order": 3
   },
   {
    "n": 18,
@@ -39,7 +76,7 @@
    "reply": "那麼遠 Daybreak 的熱力圖算不到，只到 58.8K\n現在 64K 開多要爆在 49K，槓桿只有四倍上下，真有也是很耐跌的單",
    "sources": "清算熱力圖範圍 58,800 起（deriv.liq_heat.lo，11/15 00:00）；多單強平價 ≈ 開倉價 ×(1−1/槓桿)，64,115→49,000 約 4.2 倍（未計維持保證金）",
    "note": "我們原創（61K 長文）底下，不設輪數上限",
-   "order": 2
+   "order": 4
   },
   {
    "n": 19,
@@ -64,7 +101,7 @@
     },
     "title": "資金費率：11/14 還是正的，年化 3.5%"
    },
-   "order": 3
+   "order": 5
   },
   {
    "n": 20,
@@ -89,7 +126,7 @@
     },
     "title": "ETF 推算成本 78,980，收盤低 18.8%"
    },
-   "order": 4
+   "order": 6
   },
   {
    "n": 21,
@@ -114,7 +151,7 @@
     },
     "title": "30 天清算 77.5% 是多單"
    },
-   "order": 5
+   "order": 7
   },
   {
    "n": 22,
@@ -132,7 +169,7 @@
    "reply": "永續和現貨差了五倍，11/14 一天永續淨主動賣兩萬六千多顆，現貨才五千\n你列的那幾筆巨鯨都是 ETH，BTC 這邊有看到誰在接嗎？",
    "sources": "主動買賣 11/14 單日：永續 −26,647 顆、現貨三家 −5,138 顆（deriv.taker，Coinalyze＋Binance）",
    "note": "固定名單 4c（熟帳號）。同帳號兩則只回這則；主動買賣圖中文今天已給 #4，不配圖",
-   "order": 6
+   "order": 8
   },
   {
    "n": 23,
@@ -150,7 +187,7 @@
    "reply": "要說誰在砸現貨，30 天主動賣最重的是 Coinbase，淨賣 1.6 萬顆，2021 年有紀錄以來最多\nBinance 加 Bybit 同期反而淨買 6 千多",
    "sources": "現貨主動買賣 30 天：Coinbase −16,242 顆（2021-08 起最低，百分位 0）、三家合計 −9,775 → Binance＋Bybit 約 +6,467（deriv.taker，11/14）",
    "note": "Grok inbox 1105 表一 #5。1 萬粉以下不配圖",
-   "order": 7
+   "order": 9
   },
   {
    "n": 24,
@@ -168,7 +205,7 @@
    "reply": "不只槓桿\n穩定幣 30 天也少了 163 億美元\n快六年來縮得比這快的日子不到 2%",
    "sources": "美元穩定幣流通量 11/14 2,870 億、30 天 −5.39%（−163 億），2,144 天裡第 1.4 百分位（flows.stables，DefiLlama）",
    "note": "Grok inbox 1105 表一 #4。1 萬粉以下不配圖",
-   "order": 8
+   "order": 10
   },
   {
    "n": 25,
@@ -186,11 +223,11 @@
    "reply": "連 USDT 自己都在折價，7 天平均對美元低 0.11%，2022 年 10 月以來不到一成的時候比現在更低",
    "sources": "USDT 對美元 7 天平均折價 −0.11%，自己歷史第 6.5 百分位（flows.cb_premium.usdt，2022-10 起）",
    "note": "Grok inbox 1105 表一 #3（新博主，繁中）。他已經列了穩定幣 142 億，改給 USDT 折價；1 萬粉以下不配圖",
-   "order": 9
+   "order": 11
   },
   {
    "n": 16,
-   "order": 10,
+   "order": 12,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2121798710627905658",
    "id": "2121798710627905658",
@@ -215,7 +252,7 @@
   },
   {
    "n": 11,
-   "order": 11,
+   "order": 13,
    "status": "send",
    "url": "https://x.com/Dragonhau66/status/2121782598401712499",
    "id": "2121782598401712499",
@@ -240,7 +277,7 @@
   },
   {
    "n": 12,
-   "order": 12,
+   "order": 14,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/serlo123/status/2121788364294950912",
@@ -259,7 +296,7 @@
   },
   {
    "n": 13,
-   "order": 13,
+   "order": 15,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/serlo123/status/2121789538368704983",
@@ -278,7 +315,7 @@
   },
   {
    "n": 14,
-   "order": 14,
+   "order": 16,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/serlo123/status/2121790942193873032",
@@ -297,7 +334,7 @@
   },
   {
    "n": 15,
-   "order": 15,
+   "order": 17,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/lidmhun171644/status/2121766348993020058",
@@ -337,7 +374,7 @@
     },
     "title": "Each leg down cleared the longs stacked under price"
    },
-   "order": 16
+   "order": 18
   },
   {
    "n": 2,
@@ -364,7 +401,7 @@
     },
     "title": "30 days of taker flow: perps −140K BTC, spot just −9.8K"
    },
-   "order": 17
+   "order": 19
   },
   {
    "n": 3,
@@ -389,7 +426,7 @@
     },
     "title": "Day 404 after the top: this cycle ~51% of peak, past three 18–26%"
    },
-   "order": 18
+   "order": 20
   },
   {
    "n": 4,
@@ -414,7 +451,7 @@
     },
     "title": "30 天主動賣：永續 14 萬顆，現貨不到 1 萬顆"
    },
-   "order": 19
+   "order": 21
   },
   {
    "n": 5,
@@ -439,7 +476,7 @@
     },
     "title": "11/13 一天認賠 15.3 億美元，6/30 那次是 15.5 億"
    },
-   "order": 20
+   "order": 22
   },
   {
    "n": 6,
@@ -464,7 +501,7 @@
     },
     "title": "短期持有者成本 74,946，收盤 64,115 在下面一成半"
    },
-   "order": 21
+   "order": 23
   },
   {
    "n": 7,
@@ -482,7 +519,7 @@
    "reply": "說撤退還早\n全部現貨 ETF 近 20 天流出 21 億美元\n6 月那波最深是 56 億",
    "sources": "美國現貨 BTC ETF 20 日淨流量 11/13 −20.80 億美元（這段流出第 5 天）；之前幾段最深 2026-06-09 −56.38 億、2026-02-13 −38.85 億、2025-03 −47.13 億（CoinMarketCap，flows.etf20）",
    "note": "Grok inbox 0905 表一 #6。ETF 每日流量圖看不到 6 月那波的 20 日累計，對不上，不配圖",
-   "order": 22
+   "order": 24
   },
   {
    "n": 8,
@@ -500,7 +537,7 @@
    "reply": "掉的大多是價格\nOI 換成顆數算，全市場這週才少半個百分點\n槓桿根本沒退",
    "sources": "永續未平倉 11/14 338,809 顆、7 天 −0.5%、30 天 +7.7%（同期價格 −22%），2021 年以來第 97 百分位（Coinalyze 7 家交易所，deriv.oi_hist）",
    "note": "Grok inbox 0905 表一 #5（熟帳號）。1 萬粉以下不配圖",
-   "order": 23
+   "order": 25
   },
   {
    "n": 9,
@@ -525,7 +562,7 @@
     },
     "title": "100–1,000 顆這層：30 天少的 3 萬顆，幾乎全在這一週"
    },
-   "order": 24
+   "order": 26
   },
   {
    "n": 10,
@@ -543,7 +580,7 @@
    "reply": "未實現獲利那條更極端，跌破市值 35% 了，差在以前到這裡整體是賠的，這次加總還在賺",
    "sources": "相對未實現獲利 11/14 34.1%、地板 35%（Bitview，onchain.rup）；「以前到這裡整體在賠、這次還在賺」同 11/15 RUP 長文",
    "note": "固定名單 4c（熟帳號，發文 0.3 小時）。1 萬粉以下不配圖；不碰他自己講的成本",
-   "order": 25
+   "order": 27
   }
  ]
 }
