@@ -4,8 +4,143 @@
  "edition": 41,
  "items": [
   {
+   "n": 11,
+   "status": "optional",
+   "mode": "quote",
+   "url": "https://x.com/WuBlockchain/status/2122154229662183593",
+   "id": "2122154229662183593",
+   "author": "WuBlockchain",
+   "name": "Wu Blockchain",
+   "followers": 559348,
+   "posted": "2026-11-16T02:26:10Z",
+   "lang": "en",
+   "angle": "他講帳面虧損、交易所沒恐慌；補：虧損已經在實現",
+   "style": "口語版",
+   "summary": "CryptoQuant Darkfost：155 天內大量累積的短期持有者巨鯨未實現虧損近 80 億美元、新高；交易所流入沒有恐慌，Binance 月均流入 1,200→2,100 顆",
+   "quote": "Wu Blockchain: STH whales sit on ~$8B of unrealized losses, no panic on exchanges\nA lot of it is already being booked though, $7.2B realized in 7 days, $1.4B on Sunday\n77% of short-term supply is underwater\n#Bitcoin #BTC",
+   "reply": "",
+   "sources": "實現虧損（onchain.rloss，11/15）：當天 1,445M 美元、7 天 7,164M。短期持有者虧損比例（onchain.sthl，Bitview，11/15）77.2%",
+   "image": {
+    "site": {
+     "page": "onchain",
+     "sel": "#c-rloss"
+    },
+    "title": "Realized losses: $7.2B in 7 days, $1.4B on Sunday"
+   },
+   "note": "★ 引用（55.9 萬粉，25 萬粉以上只能引用、optional：請用自己的話改寫）；今天第 2 則引用；2 小時窗到台北 12:26；Grok inbox 1105 表二 #1（中文版 wublockchain12 那則講 ETF，二選一選這則）",
+   "order": 1
+  },
+  {
+   "n": 12,
+   "status": "send",
+   "url": "https://x.com/TradoorDub/status/2122147698828870075",
+   "id": "2122147698828870075",
+   "author": "TradoorDub",
+   "name": "TradoorDub",
+   "followers": 13536,
+   "posted": "2026-11-16T02:00:13Z",
+   "lang": "en",
+   "angle": "他講 62–68K 的帶子；補：帶子下面很空",
+   "style": "口語版",
+   "summary": "約 185 萬顆成本在 62K–68K，其中約 88.2 萬是短期持有者（佔全部 STH 23%），價格在中間 65K",
+   "reply": "Below the band it thins out fast, STH hold ~1M BTC at 62–66K and only ~130K at 58–62K",
+   "sources": "籌碼分布（chips.cohort，checkonchain，11/14 快照、2K 一格）：短期持有者 62K 格 458,163、64K 格 539,318（合計約 99.7 萬）；58K 格 63,654、60K 格 63,830（合計約 12.7 萬）",
+   "image": {
+    "site": {
+     "page": "onchain",
+     "sel": "#c-cohort"
+    },
+    "title": "STH coins: ~1M BTC at 62–66K, ~130K at 58–62K"
+   },
+   "note": "英文、發文 02:00 UTC，2 小時窗到台北 12:00（趕時間）；1.35 萬粉配圖；Grok inbox 1105 表一 #9；新帳號",
+   "order": 2
+  },
+  {
+   "n": 13,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/CyberMonk0x/status/2122162454763655257",
+   "id": "2122162454763655257",
+   "author": "CyberMonk0x",
+   "name": "CyberMonk0x",
+   "followers": 7727,
+   "posted": "2026-11-16T02:58:51Z",
+   "lang": "zh",
+   "angle": "接話：他說這次環境不一樣，用反彈幅度補證據",
+   "style": "口語版",
+   "summary": "回我們（他自己的貼文底下第 2 輪）：前三次收回去不代表這次也會，六連陰配更大跌幅，環境和之前的試探不一樣",
+   "reply": "這次連像樣的反彈都沒有，43 天最大一次才 4.7%，前三次連跌 6 週中間都彈過 5% 以上",
+   "sources": "長文 2026-11-16-w6 note：10/4 週收後 43 天最大反彈 11/2→11/4 76,735→80,374（4.7%）；2014 11.3%、2022 5.4%、2026/1–3 10.8%",
+   "image": null,
+   "note": "接話（原作者本人回我們，第 2 輪）。他反駁我們上一則；這點他說得通，用內容順著補，不爭輸贏",
+   "order": 3
+  },
+  {
+   "n": 14,
+   "status": "send",
+   "url": "https://x.com/ljsdwz/status/2122163957477883965",
+   "id": "2122163957477883965",
+   "author": "ljsdwz",
+   "name": "ljsdwz",
+   "followers": 22792,
+   "posted": "2026-11-16T03:04:50Z",
+   "lang": "zh",
+   "angle": "把 Strategy 帳面虧損算準，再指出賣的人在 ETF",
+   "style": "口語版",
+   "summary": "微策略 850,364 顆、成本約 7.5 萬，浮虧超過 60 億；「微策略都不慌，你們怕什麼」",
+   "reply": "哪只 60 億，照 11/15 收盤快 86 億了，不慌的是它一家，ETF 已經連 7 個交易日在流出",
+   "sources": "上市公司持幣（flows.treasury，CoinGecko，11/15）：Strategy 850,363 顆、成本 75,455；(75,455−65,315)×850,363≈86.2 億。ETF 日流量（flows.etf）11/5–11/13 連 7 個交易日淨流出",
+   "image": null,
+   "note": "不配圖：網站沒有 Strategy 的圖，ETF 圖跟這則重點對不上。Grok inbox 1105 表一 #1，新帳號、2.3 萬粉、發文 40 分鐘",
+   "order": 4
+  },
+  {
+   "n": 15,
+   "status": "send",
+   "url": "https://x.com/ViewMing82/status/2122111790658322930",
+   "id": "2122111790658322930",
+   "author": "ViewMing82",
+   "name": "ViewMing82",
+   "followers": 21796,
+   "posted": "2026-11-15T23:37:32Z",
+   "lang": "zh",
+   "angle": "升息押得比他寫的更滿；英偉達財報對 BTC 比較直接",
+   "style": "口語版",
+   "summary": "早間速覽：利率高位是主導；10 年期 5.14%、12 月升息定價 89%；列沃什講話、零售銷售、英偉達財報的多空情境",
+   "reply": "你列的幾件事裡，英偉達那天對 BTC 應該最直接，這 30 天跟 Nasdaq 相關快 0.7\n升息那條 Polymarket 押到 96% 了，你的 89% 是看 FedWatch 嗎？",
+   "sources": "Polymarket（flows.fed_mkt，11/15）：升息合計 96.3%，7 天前 77.0%。BTC 與 Nasdaq 30 日相關（flows.fred.NASDAQCOM.corr30，到 11/13）0.671",
+   "image": {
+    "site": {
+     "page": "flows",
+     "sel": "#c-stkrel"
+    },
+    "title": "BTC 和美股：30 天相關 0.67"
+   },
+   "note": "Grok inbox 1105 表一 #5，新帳號、2.2 萬粉；1 萬粉以上配圖",
+   "order": 5
+  },
+  {
+   "n": 16,
+   "status": "send",
+   "url": "https://x.com/guzibiji/status/2122091373180715357",
+   "id": "2122091373180715357",
+   "author": "guzibiji",
+   "name": "guzibiji",
+   "followers": 8717,
+   "posted": "2026-11-15T22:16:24Z",
+   "lang": "zh",
+   "angle": "爆了那麼多多單，做多的帳戶還是很多",
+   "style": "口語版",
+   "summary": "周末探到 62,006、三個月最低，11/4 還在 81,000；ETF 7 天流出 19.1 億；24 小時爆倉 19.6 億、BTC 多單 6 億；今天先看 ETF",
+   "reply": "爆了 6 億多單，做多的人好像沒怎麼少\nBinance 做多的帳戶還是七成五，比過去 96% 的日子都高\n費率倒是轉負了",
+   "sources": "多空帳戶（deriv.ls_acct，11/15）：Binance 75.5%，百分位 96。資金費率（deriv.funding_multi）：Binance −0.27%、Bybit −1.36%、OKX −1.43%，Hyperliquid +10.95%（年化）",
+   "image": null,
+   "note": "Grok inbox 1105 表一 #8，新帳號、8.7 千粉不配圖。6 億是他的數字",
+   "order": 6
+  },
+  {
    "n": 9,
-   "order": 1,
+   "order": 7,
    "status": "send",
    "url": "https://x.com/Dragonhau66/status/2122146052132471145",
    "id": "2122146052132471145",
@@ -30,7 +165,7 @@
   },
   {
    "n": 10,
-   "order": 2,
+   "order": 8,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/serlo123/status/2122145716114214929",
@@ -50,7 +185,7 @@
   },
   {
    "n": 8,
-   "order": 3,
+   "order": 9,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2122150320704987612",
    "id": "2122150320704987612",
@@ -75,7 +210,7 @@
   },
   {
    "n": 2,
-   "order": 4,
+   "order": 10,
    "status": "send",
    "url": "https://x.com/LabSpeculation/status/2122137716238500327",
    "id": "2122137716238500327",
@@ -94,7 +229,7 @@
   },
   {
    "n": 3,
-   "order": 5,
+   "order": 11,
    "status": "send",
    "url": "https://x.com/lanhubiji/status/2122134092783435895",
    "id": "2122134092783435895",
@@ -121,7 +256,7 @@
   },
   {
    "n": 6,
-   "order": 6,
+   "order": 12,
    "status": "send",
    "url": "https://x.com/Sarmad_Crypto/status/2122132723586437165",
    "id": "2122132723586437165",
@@ -140,7 +275,7 @@
   },
   {
    "n": 5,
-   "order": 7,
+   "order": 13,
    "status": "send",
    "url": "https://x.com/CyberMonk0x/status/2122134562235183416",
    "id": "2122134562235183416",
@@ -159,7 +294,7 @@
   },
   {
    "n": 4,
-   "order": 8,
+   "order": 14,
    "status": "send",
    "url": "https://x.com/fannaoxiaoyang/status/2122123637209936231",
    "id": "2122123637209936231",
@@ -178,7 +313,7 @@
   },
   {
    "n": 7,
-   "order": 9,
+   "order": 15,
    "status": "send",
    "url": "https://x.com/CryptoBlockABC/status/2122109838457024897",
    "id": "2122109838457024897",
@@ -197,7 +332,7 @@
   },
   {
    "n": 1,
-   "order": 10,
+   "order": 16,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/0xGummyBear/status/2121997333546365049",
