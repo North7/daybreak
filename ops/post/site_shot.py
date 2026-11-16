@@ -14,7 +14,7 @@ jobs.json: {"lang": "zh"|"en", "theme": "dark"|"light", "width": 1440,
   改成：每張先捲到底等版面高度穩定（settle）→ 捲到目標、連量兩次位置一樣才截 → 只截畫面內（不用 captureBeyondViewport；
   面板比視窗高就只加高視窗，寬度不變）→ 截完再量一次，位置變了就重截。畫面上壓到截圖範圍的固定／黏住的元素（手機頂欄、換頁掃描線）截圖時先藏起來。
 """
-import base64, contextlib, json, os, socket, struct, subprocess, sys, tempfile, time, urllib.request
+import base64, contextlib, json, os, socket, struct, subprocess, sys, tempfile, time, urllib.request, re
 
 import shutil
 # 2026-11-06：GitHub Actions（ubuntu）也要能截圖（每日推薦圖表改用網站原圖）：先看環境變數 CHROME，再找 Mac 的 Chrome，再找 Linux 的 google-chrome／chromium
@@ -163,7 +163,13 @@ def serve():
     import functools, http.server, threading
     h = functools.partial(http.server.SimpleHTTPRequestHandler, directory=REPO)
     h.func.log_message = lambda *a: None
-    srv = http.server.ThreadingHTTPServer(('127.0.0.1', 8790), h)
+    # 2026-11-16：8790 被別的專案佔著時改用系統給的空 port，SITE 和 LOADED 跟著換（next_shot.py 讀 S.SITE、S.LOADED，所以要在 serve() 之後才用）
+    global SITE, LOADED
+    try: srv = http.server.ThreadingHTTPServer(('127.0.0.1', 8790), h)
+    except OSError: srv = http.server.ThreadingHTTPServer(('127.0.0.1', 0), h)
+    port = srv.server_address[1]
+    SITE = re.sub(r'127\.0\.0\.1:\d+', f'127.0.0.1:{port}', SITE)
+    LOADED = f'location.port === "{port}" && document.readyState === "complete"'
     threading.Thread(target=srv.serve_forever, daemon=True).start(); return srv
 
 
@@ -195,7 +201,7 @@ def browser(W, H=1000, dpr=2, mobile=False, theme='light', lang='zh'):
         p.terminate(); srv.shutdown()
 
 
-LOADED = 'location.href.indexOf("8790") > 0 && document.readyState === "complete"'
+LOADED = 'location.port === "8790" && document.readyState === "complete"'   # serve() 換 port 時會改寫
 
 
 def goto(ws, page):

@@ -11,6 +11,8 @@ jobs.json: {"lang": "zh"|"en", "width": 1440, "height": 1000,
   clean  1＝藏掉按鈕（放大、區間、版面切換、說明）和「我們的看法」（.sy-view），發文用；share 模式網站自己就會藏
   nosay  1＝連讀數（.sy-read）也藏，整塊結論都不留（正文自己講的時候用）
   rg     區間：365＝1 年、1095＝3 年、0＝全部；m＝第幾個模式（卡片上的切換鈕，從 0 起）；ly＝sp 上下兩格／ov 疊在一格
+  d3     立體檢視（只有 view=share／share45，圖：urpd、strike、ivt）：{"d3v": "ob", "yaw": -29, "pit": 32, "ex": 1, "wk": "2025-02-16", "sel": "96000,2025-02-16"}，
+         每個鍵都可省；空 dict {} 就是預設的立體斜看。要錄成影片用 ops/post/d3_video.py
 輸出：<out>.png（2 倍解析度）與 <out>.json（圖上文字位置，CSS px，給 annotate.py）
 只有深色（新版預設深夜，沒有存主題）。動畫用 prefers-reduced-motion 關掉（進場動畫、數字翻牌、五個 AI 游標都不會出現）。
 出場框架的卡片（出場分頁全部、今天分頁的「行動與要盯的價位」「出場」）不截：社群內容不放出場框架。
@@ -59,18 +61,28 @@ CLEAN_JS = '''(function(sel, nosay){var r=document.querySelector(sel);
     return true;})'''
 
 
+def d3_query(it):
+    """立體檢視（2026-11-16，North7/daybreak#175，urpd／strike／ivt）：it['d3'] 是 dict，有就加 m=d3 和鏡頭參數。
+    d3v＝flat｜ob｜top；yaw、pit 度（斜看預設 yaw=-29、pit=32）；ex 攤開 0–1（0＝平面）；wk＝哪一週／哪個到期日；sel＝"價位,週"（urpd）或 "履約價,到期日"。
+    網址的 m 是「第幾個檢視」（d3 或 1），攤開程度在網址叫 ex。帶了鏡頭參數就停在那裡，不會自己站起來"""
+    d = it.get('d3')
+    if d is None: return ''
+    from urllib.parse import quote
+    return '&m=d3' + ''.join(f'&{key}={quote(str(d[key]), safe=",")}' for key in ('d3v', 'yaw', 'pit', 'ex', 'wk', 'sel') if d.get(key) is not None)
+
+
 def shoot_share(ws, view, k, it):
     """分享模式：視窗設成 16:9（1600×900）或 4:5（1080×1350），開 index.html?share&k=…，整個畫面就是那張圖。回傳 (png, 尺寸說明) 或 (None, 原因)"""
     r45 = it.get('view') == 'share45'; W, H = (1080, 1350) if r45 else (1600, 900)
     ws.call('Emulation.setDeviceMetricsOverride', width=W, height=H, deviceScaleFactor=2, mobile=False)
     try:
         ws.js('window.__old = 1; true')
-        ws.call('Page.navigate', url=f'{SITE}?{"share=45" if r45 else "share"}&k={k}&v={int(time.time() * 1000)}')
+        ws.call('Page.navigate', url=f'{S.SITE}?{"share=45" if r45 else "share"}&k={k}{d3_query(it)}&v={int(time.time() * 1000)}')
         S.wait(ws, '!window.__old'); S.wait(ws, S.LOADED)
         q = json.dumps(f'#oc-fx.on #oc-olF[data-ck="{k}"]')
         if not S.wait(ws, f'!!document.querySelector({q})', 30): return None, '分享模式沒打開這張圖（網址參數或 data-ck 掛點變了？）'
         for attr in ('m', 'rg', 'ly'):   # 分享模式按鈕是藏起來的，用程式按一樣有效
-            if attr in it:
+            if attr in it and not (attr == 'm' and 'd3' in it):   # 立體檢視已經從網址打開，再按模式鈕會切回去
                 hit = ws.js(f'(function(){{var b=document.querySelector({q}).querySelector(\'.ol-ctl button[data-{attr}="{it[attr]}"]\'); if(!b) return false; b.click(); return true;}})()')
                 if not hit: print(f'注意：{k} 沒有 {attr}={it[attr]} 這個按鈕，略過', file=sys.stderr)
                 time.sleep(0.8)
@@ -78,6 +90,7 @@ def shoot_share(ws, view, k, it):
         if it.get('nosay'): ws.js(f'document.querySelectorAll({q} + " .ol-say").forEach(function(e){{e.style.display="none";}}); true')
         if it.get('pre'): ws.js(it['pre'])
         if not S.wait(ws, f'(function(){{var e=document.querySelector({q}); return !!(e && e.querySelector("svg,canvas,.rl") && (!document.fonts || document.fonts.status==="loaded"));}})()', 20): return None, '分享模式的圖沒畫出來'
+        if 'd3' in it and not S.wait(ws, '!!(window.__d3 && window.__d3.ready)', 20): return None, '立體檢視沒畫出來（__d3.ready 一直是 false）'
         time.sleep(1.2)
         r = ws.call('Page.captureScreenshot', format='png')
         return base64.b64decode(r['data']), f'{W} x {H}（分享模式 {"4:5" if r45 else "16:9"}）'
