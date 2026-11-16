@@ -856,7 +856,7 @@
    "angle": "接話第二則（接在我們 #29 底下）：改好了、附新圖、謝謝、用了 64 條序列",
    "style": "口語版",
    "summary": "接在我們回 Bitview 的 #29 底下（他還沒回 #29）：籌碼拆分「現在」已換成 Bitview 上線，讓他看到真的照他說的改了",
-   "reply": "Done, the live split runs on Bitview now, CheckOnChain only as fallback\nWe pull 64 Bitview series across Daybreak, cost bands, URPD, whale tiers, SOPR and more\nThanks for keeping all of it open\nhttps://daybreak.aronlab.dev/?k=cohort&lang=en",
+   "reply": "Done, the live split runs on Bitview now, CheckOnChain only as fallback\nWe pull 64 Bitview series across Daybreak, thanks for keeping all of it open\nPing us when the urpd diff lands and we'll swap the estimate out\nhttps://daybreak.aronlab.dev/?k=cohort&lang=en",
    "sources": "data/latest.json chips.cohort（11/15）：src=bitview、cmp.src=bitview（2026-10-16）、meta.errors 空；STH 3,784,884 顆、平均成本 73,978；最厚一格 62K 521,183 顆。Bitview 序列數：daybreak pipeline/bitview.py COLS 64 條，另有 URPD、籌碼集中度。網站改動 North7/daybreak#172–#174",
    "image": {
     "site": {
