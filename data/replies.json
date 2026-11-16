@@ -4,6 +4,157 @@
  "edition": 41,
  "items": [
   {
+   "n": 25,
+   "url": "https://x.com/Dmitriysz/status/2122186070607429779",
+   "id": "2122186070607429779",
+   "author": "Dmitriysz",
+   "name": "Dmitriysz",
+   "followers": 19787,
+   "posted": "2026-11-16T04:32:42Z",
+   "lang": "en",
+   "angle": "補數據：費率只在三家大交易所剛翻負，Hyperliquid 還是正的、做多帳戶沒少",
+   "style": "口語版",
+   "summary": "7 月礦工串的後續：BTC 週末碰 62K、上週跌 15%。升息機率 88%、黃仁勳辭職、ETF 上週流出 10.7 億連 7 天、24 小時清算 12 億多為多單、「資金費率 11/14 翻負，5 月以來第一次」",
+   "reply": "Funding only flipped on Binance, Bybit and OKX, and barely\nHyperliquid is still paying about +11% annualized\n3 out of 4 Binance accounts are still long",
+   "sources": "各交易所資金費率（deriv.funding_multi，11/16，年化）：Binance −0.27%、Bybit −1.36%、OKX −1.43%、Hyperliquid +10.95%，未平倉加權 +0.96%。持多單帳戶占比（deriv.ls_acct，Coinalyze，11/15）：Binance 75.5%，2021 年以來第 96 百分位（帳戶數，不是部位大小）",
+   "image": {
+    "site": {
+     "page": "deriv",
+     "sel": "#c-lsa"
+    },
+    "title": "Binance accounts holding longs: 75%"
+   },
+   "note": "英文、發文 2 小時窗到台北 14:32，過了就不用發。1.98 萬粉、6 千瀏覽，新帳號。Grok inbox 1305 表一 #8。只接他第 4 點（費率翻負），做多帳戶是帳戶數、不是部位大小",
+   "order": 1,
+   "status": "send"
+  },
+  {
+   "n": 19,
+   "url": "https://x.com/maobidao/status/2122193082183749725",
+   "id": "2122193082183749725",
+   "author": "maobidao",
+   "name": "猫笔刀",
+   "followers": 541,
+   "posted": "2026-11-16T05:00:33Z",
+   "lang": "zh",
+   "angle": "補數據：極度恐懼之後一個月的歷史分布",
+   "style": "口語版",
+   "summary": "加密日報：BTC 64,995，ETF 一週被贖 10.65 億；恐懼貪婪 10、七天一路往下；他的看法是 AI 熱錢被抽走連帶淹過來，現在不接，等 ETF 單週回正",
+   "reply": "恐懼貪婪掉到 20 以下，2018 年到現在有 16 段，一個月後價格更高的才 4 段\n平常隨便挑一天都有五成多",
+   "sources": "恐懼貪婪歷史（flows.fng_hist，alternative.me，11/15）：讀值 10；≤20、隔 30 天算新一段，2018-02 起 16 段有結果，30 天後上漲 4 段、中位數 −6.1%；任一天 30 天後上漲 54%",
+   "image": null,
+   "note": "不配圖：541 粉，c-fng 圖上看不出 16 段各自的結果（11/15 試過）。Grok inbox 1305 表一 #1，新帳號。順著他「現在不接、等錢回來」的方向，只給分布、不寫接下來怎麼走",
+   "order": 2,
+   "status": "send"
+  },
+  {
+   "n": 20,
+   "url": "https://x.com/jkcming/status/2122186146235236594",
+   "id": "2122186146235236594",
+   "author": "jkcming",
+   "name": "jkcming",
+   "followers": 16236,
+   "posted": "2026-11-16T04:33:00Z",
+   "lang": "zh",
+   "angle": "補數據：他的 4.8–5.7 萬區間裡有全網平均成本，這輪還沒跌進去過",
+   "style": "口語版",
+   "summary": "拿幣安被盜比門頭溝，照 30–40% 歷史跌幅推 BTC 可能到 4.8–5.7 萬；問槓桿多頭撐不撐得住、會不會重演當年的崩盤",
+   "reply": "你推的那個區間裡面有全網的平均成本，5.4 萬\n這輪還沒跌進去過，6 月最低那天也還高出一成",
+   "sources": "成本線（cycle.levels，Bitview，11/15）：實現價格 53,685，收盤 65,315 高出 17.8%；頂部（2025-10-06）以來收盤離實現價格最近是 2026-06-30，仍高 10.3%",
+   "image": {
+    "site": {
+     "page": "market",
+     "sel": "#c-levels"
+    },
+    "title": "全網平均成本 5.4 萬，這輪還沒跌破過"
+   },
+   "note": "1.6 萬粉配圖。Grok inbox 1305 表一 #2，新帳號。不接他的目標價和門頭溝類比，只講那個區間裡有什麼；瀏覽偏低，可以排後",
+   "order": 3,
+   "status": "send"
+  },
+  {
+   "n": 21,
+   "url": "https://x.com/JinseFinance/status/2122164785022484922",
+   "id": "2122164785022484922",
+   "author": "JinseFinance",
+   "name": "金色财经",
+   "followers": 22898,
+   "posted": "2026-11-16T03:08:07Z",
+   "lang": "zh",
+   "angle": "補數據：ETF 持有者整體的浮虧",
+   "style": "口語版",
+   "summary": "金色財經：IBIT 連續 11 個交易日淨流出約 21–23.5 億，年內仍淨流入 24.5 億；現貨 ETF 整體年內淨流出 14.2 億",
+   "reply": "透過 ETF 買的人平均成本推算在 7.9 萬，照昨天收盤整體已經賠 17% 了",
+   "sources": "ETF 持有者推算成本（flows.etfcost，CoinMarketCap 流量、不含 GBTC，11/13）：78,980，11/15 收盤 65,315 低 17.3%，6/30 最深 −26.4%",
+   "image": {
+    "site": {
+     "page": "flows",
+     "sel": "#c-etfcost"
+    },
+    "title": "ETF 持有者推算成本 7.9 萬，收盤低 17%"
+   },
+   "note": "2.3 萬粉媒體帳號，配圖。Grok inbox 1305 表一 #3，新帳號。成本是流量推算、不含 GBTC；週一 ETF 數字今晚才有",
+   "order": 4,
+   "status": "send"
+  },
+  {
+   "n": 24,
+   "url": "https://x.com/oldmoney_sats/status/2122153722231037963",
+   "id": "2122153722231037963",
+   "author": "oldmoney_sats",
+   "name": "oldmoney_sats",
+   "followers": 6658,
+   "posted": "2026-11-16T02:24:09Z",
+   "lang": "zh",
+   "angle": "補數據：生產成本是一個範圍，看機型和電價",
+   "style": "口語版",
+   "summary": "週六從 6.8 萬急跌到 6.2 萬、打在清算密集區；恐懼貪婪 10、日線 RSI 約 19；「生產成本約 61,200，接近成本區歷史回報豐厚」",
+   "reply": "生產成本要看哪種機器\n新機配便宜電打平在 5.7 萬，舊一點的要 8.3 萬\n6.1 萬算中間那檔，舊機器現在是賠著挖",
+   "sources": "礦工打平價（onchain.mining.breakeven，11/15）：20 J/TH、電費 0.06 美元約 56,968；25 J/TH、0.07 美元約 83,079；收盤 65,315",
+   "image": null,
+   "note": "不配圖：6.7 千粉。Grok inbox 1305 表一 #7，新帳號。只補成本的範圍，他「長期配置機會」那段不接",
+   "order": 5,
+   "status": "send"
+  },
+  {
+   "n": 23,
+   "url": "https://x.com/ghyy316386/status/2122158404101681231",
+   "id": "2122158404101681231",
+   "author": "ghyy316386",
+   "name": "ghyy316386",
+   "followers": 2622,
+   "posted": "2026-11-16T02:42:45Z",
+   "lang": "zh",
+   "angle": "補數據：被劫持的算力放回全網的比例",
+   "style": "口語版",
+   "summary": "約 13 EH/s、6.4 萬台礦機被劫持轉向 OCEAN，攻擊者在 975995 號區塊拿到 0.0809 BTC；協議沒被攻破，出問題的是礦場設備管理",
+   "reply": "被劫持的 13 EH/s 放回全網還不到 2%，這週全網少掉的是 120 EH/s",
+   "sources": "算力（onchain.mining，mempool.space，11/9–11/15）：7 日均 893.7 EH/s，前一週 1,013.5，−11.8%（少 119.8 EH/s）；13÷894≈1.5%。劫持細節是他貼的新聞，我們沒有核對",
+   "image": null,
+   "note": "不配圖：2.6 千粉。Grok inbox 1305 表一 #6，新帳號。劫持細節是他貼的新聞，我們只把 13 EH/s 放回全網比",
+   "order": 6,
+   "status": "send"
+  },
+  {
+   "n": 22,
+   "url": "https://x.com/CryptoJoanna203/status/2122159391675961701",
+   "id": "2122159391675961701",
+   "author": "CryptoJoanna203",
+   "name": "CryptoJoanna203",
+   "followers": 866,
+   "posted": "2026-11-16T02:46:41Z",
+   "lang": "zh",
+   "angle": "補數據：穩定幣上次縮這麼快是什麼時候、差多少",
+   "style": "口語版",
+   "summary": "BTC 走勢預判日報：約 64,800、11 天跌 23%、跌破 200 週均線；ETF 連 7 日流出、「穩定幣供給以 2022 年 6 月以來最快速度收縮」；支撐 59.5–62.6K",
+   "reply": "上次縮這麼快是 UST 崩掉那陣子\n那時一個月少 15%，這次 5%，大概 160 億美元",
+   "sources": "穩定幣流通量（flows.stables，DefiLlama，11/15）：2,871 億美元，30 天 −5.27%（−160 億）；30 天變化比這次更低的上一次是 2022-05-13 到 06-09，最深 −15.2%",
+   "image": null,
+   "note": "不配圖：866 粉。Grok inbox 1305 表一 #5，新帳號。他的機率三分法和價位不接",
+   "order": 7,
+   "status": "send"
+  },
+  {
    "n": 17,
    "status": "send",
    "kind": "followup",
@@ -21,7 +172,7 @@
    "sources": "籌碼拆分（notes 2026-11-15-1，CheckOnChain 依幣齡，11/15）：短期持有者 379 萬顆，收盤 64K 時 320 萬顆在水下，到 58K 多 59 萬顆；長期持有者 64K 時 695 萬顆在水下、58K 時 772 萬顆，多 77 萬顆",
    "image": null,
    "note": "接話：別人貼文底下、原作者本人第一次回我們，回一句短的補一個數字。他寫 88% 在水下，Daybreak 上是 77%（Bitview，65.3K 收盤），口徑不同，沒去對他的數字",
-   "order": 1
+   "order": 8
   },
   {
    "n": 11,
@@ -48,7 +199,7 @@
     "title": "Realized losses: $7.2B in 7 days, $1.4B on Sunday"
    },
    "note": "★ 引用（55.9 萬粉，25 萬粉以上只能引用、optional：請用自己的話改寫）；今天第 2 則引用；2 小時窗到台北 12:26；Grok inbox 1105 表二 #1（中文版 wublockchain12 那則講 ETF，二選一選這則）",
-   "order": 2
+   "order": 9
   },
   {
    "n": 12,
@@ -73,7 +224,7 @@
     "title": "STH coins: ~1M BTC at 62–66K, ~130K at 58–62K"
    },
    "note": "英文、發文 02:00 UTC，2 小時窗到台北 12:00（趕時間）；1.35 萬粉配圖；Grok inbox 1105 表一 #9；新帳號",
-   "order": 3
+   "order": 10
   },
   {
    "n": 13,
@@ -93,7 +244,7 @@
    "sources": "長文 2026-11-16-w6 note：10/4 週收後 43 天最大反彈 11/2→11/4 76,735→80,374（4.7%）；2014 11.3%、2022 5.4%、2026/1–3 10.8%",
    "image": null,
    "note": "接話（原作者本人回我們，第 2 輪）。他反駁我們上一則；這點他說得通，用內容順著補，不爭輸贏",
-   "order": 4
+   "order": 11
   },
   {
    "n": 14,
@@ -112,7 +263,7 @@
    "sources": "上市公司持幣（flows.treasury，CoinGecko，11/15）：Strategy 850,363 顆、成本 75,455；(75,455−65,315)×850,363≈86.2 億。ETF 日流量（flows.etf）11/5–11/13 連 7 個交易日淨流出",
    "image": null,
    "note": "不配圖：網站沒有 Strategy 的圖，ETF 圖跟這則重點對不上。Grok inbox 1105 表一 #1，新帳號、2.3 萬粉、發文 40 分鐘",
-   "order": 5
+   "order": 12
   },
   {
    "n": 15,
@@ -137,7 +288,7 @@
     "title": "BTC 和美股：30 天相關 0.67"
    },
    "note": "Grok inbox 1105 表一 #5，新帳號、2.2 萬粉；1 萬粉以上配圖",
-   "order": 6
+   "order": 13
   },
   {
    "n": 16,
@@ -156,11 +307,11 @@
    "sources": "多空帳戶（deriv.ls_acct，11/15）：Binance 75.5%，百分位 96。資金費率（deriv.funding_multi）：Binance −0.27%、Bybit −1.36%、OKX −1.43%，Hyperliquid +10.95%（年化）",
    "image": null,
    "note": "Grok inbox 1105 表一 #8，新帳號、8.7 千粉不配圖。6 億是他的數字",
-   "order": 7
+   "order": 14
   },
   {
    "n": 9,
-   "order": 8,
+   "order": 15,
    "status": "send",
    "url": "https://x.com/Dragonhau66/status/2122146052132471145",
    "id": "2122146052132471145",
@@ -185,7 +336,7 @@
   },
   {
    "n": 10,
-   "order": 9,
+   "order": 16,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/serlo123/status/2122145716114214929",
@@ -205,7 +356,7 @@
   },
   {
    "n": 8,
-   "order": 10,
+   "order": 17,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2122150320704987612",
    "id": "2122150320704987612",
@@ -230,7 +381,7 @@
   },
   {
    "n": 2,
-   "order": 11,
+   "order": 18,
    "status": "send",
    "url": "https://x.com/LabSpeculation/status/2122137716238500327",
    "id": "2122137716238500327",
@@ -249,7 +400,7 @@
   },
   {
    "n": 3,
-   "order": 12,
+   "order": 19,
    "status": "send",
    "url": "https://x.com/lanhubiji/status/2122134092783435895",
    "id": "2122134092783435895",
@@ -276,7 +427,7 @@
   },
   {
    "n": 6,
-   "order": 13,
+   "order": 20,
    "status": "send",
    "url": "https://x.com/Sarmad_Crypto/status/2122132723586437165",
    "id": "2122132723586437165",
@@ -295,7 +446,7 @@
   },
   {
    "n": 5,
-   "order": 14,
+   "order": 21,
    "status": "send",
    "url": "https://x.com/CyberMonk0x/status/2122134562235183416",
    "id": "2122134562235183416",
@@ -314,7 +465,7 @@
   },
   {
    "n": 4,
-   "order": 15,
+   "order": 22,
    "status": "send",
    "url": "https://x.com/fannaoxiaoyang/status/2122123637209936231",
    "id": "2122123637209936231",
@@ -333,7 +484,7 @@
   },
   {
    "n": 7,
-   "order": 16,
+   "order": 23,
    "status": "send",
    "url": "https://x.com/CryptoBlockABC/status/2122109838457024897",
    "id": "2122109838457024897",
@@ -352,7 +503,7 @@
   },
   {
    "n": 1,
-   "order": 17,
+   "order": 24,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/0xGummyBear/status/2121997333546365049",
@@ -387,7 +538,7 @@
    "sources": "",
    "image": null,
    "note": "按讚就好：他的貼文底下已經回過 2 輪，這則是重述我們的數字、沒問問題",
-   "order": 18
+   "order": 25
   }
  ]
 }
