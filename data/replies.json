@@ -4,6 +4,26 @@
  "edition": 41,
  "items": [
   {
+   "n": 17,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/TradoorDub/status/2122183488556388714",
+   "id": "2122183488556388714",
+   "author": "TradoorDub",
+   "name": "TradoorDub",
+   "followers": 13535,
+   "posted": "2026-11-16T04:22:26Z",
+   "lang": "en",
+   "angle": "接話（原作者回我們）：往下多出來的水下籌碼，長期持有者比短期多",
+   "style": "口語版",
+   "summary": "原作者回我們 n12：沒錯，大多數短期持有者是在這幾個月區間的上半段、或追 80K 突破時買的，所以約 88% 的短期籌碼在水下",
+   "reply": "Not many left to push under now, from 64K down to 58K long-term holders add more underwater coins than STH do, about 770K",
+   "sources": "籌碼拆分（notes 2026-11-15-1，CheckOnChain 依幣齡，11/15）：短期持有者 379 萬顆，收盤 64K 時 320 萬顆在水下，到 58K 多 59 萬顆；長期持有者 64K 時 695 萬顆在水下、58K 時 772 萬顆，多 77 萬顆",
+   "image": null,
+   "note": "接話：別人貼文底下、原作者本人第一次回我們，回一句短的補一個數字。他寫 88% 在水下，Daybreak 上是 77%（Bitview，65.3K 收盤），口徑不同，沒去對他的數字",
+   "order": 1
+  },
+  {
    "n": 11,
    "status": "optional",
    "mode": "quote",
@@ -28,7 +48,7 @@
     "title": "Realized losses: $7.2B in 7 days, $1.4B on Sunday"
    },
    "note": "★ 引用（55.9 萬粉，25 萬粉以上只能引用、optional：請用自己的話改寫）；今天第 2 則引用；2 小時窗到台北 12:26；Grok inbox 1105 表二 #1（中文版 wublockchain12 那則講 ETF，二選一選這則）",
-   "order": 1
+   "order": 2
   },
   {
    "n": 12,
@@ -53,7 +73,7 @@
     "title": "STH coins: ~1M BTC at 62–66K, ~130K at 58–62K"
    },
    "note": "英文、發文 02:00 UTC，2 小時窗到台北 12:00（趕時間）；1.35 萬粉配圖；Grok inbox 1105 表一 #9；新帳號",
-   "order": 2
+   "order": 3
   },
   {
    "n": 13,
@@ -73,7 +93,7 @@
    "sources": "長文 2026-11-16-w6 note：10/4 週收後 43 天最大反彈 11/2→11/4 76,735→80,374（4.7%）；2014 11.3%、2022 5.4%、2026/1–3 10.8%",
    "image": null,
    "note": "接話（原作者本人回我們，第 2 輪）。他反駁我們上一則；這點他說得通，用內容順著補，不爭輸贏",
-   "order": 3
+   "order": 4
   },
   {
    "n": 14,
@@ -92,7 +112,7 @@
    "sources": "上市公司持幣（flows.treasury，CoinGecko，11/15）：Strategy 850,363 顆、成本 75,455；(75,455−65,315)×850,363≈86.2 億。ETF 日流量（flows.etf）11/5–11/13 連 7 個交易日淨流出",
    "image": null,
    "note": "不配圖：網站沒有 Strategy 的圖，ETF 圖跟這則重點對不上。Grok inbox 1105 表一 #1，新帳號、2.3 萬粉、發文 40 分鐘",
-   "order": 4
+   "order": 5
   },
   {
    "n": 15,
@@ -117,7 +137,7 @@
     "title": "BTC 和美股：30 天相關 0.67"
    },
    "note": "Grok inbox 1105 表一 #5，新帳號、2.2 萬粉；1 萬粉以上配圖",
-   "order": 5
+   "order": 6
   },
   {
    "n": 16,
@@ -136,11 +156,11 @@
    "sources": "多空帳戶（deriv.ls_acct，11/15）：Binance 75.5%，百分位 96。資金費率（deriv.funding_multi）：Binance −0.27%、Bybit −1.36%、OKX −1.43%，Hyperliquid +10.95%（年化）",
    "image": null,
    "note": "Grok inbox 1105 表一 #8，新帳號、8.7 千粉不配圖。6 億是他的數字",
-   "order": 6
+   "order": 7
   },
   {
    "n": 9,
-   "order": 7,
+   "order": 8,
    "status": "send",
    "url": "https://x.com/Dragonhau66/status/2122146052132471145",
    "id": "2122146052132471145",
@@ -165,7 +185,7 @@
   },
   {
    "n": 10,
-   "order": 8,
+   "order": 9,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/serlo123/status/2122145716114214929",
@@ -185,7 +205,7 @@
   },
   {
    "n": 8,
-   "order": 9,
+   "order": 10,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2122150320704987612",
    "id": "2122150320704987612",
@@ -210,7 +230,7 @@
   },
   {
    "n": 2,
-   "order": 10,
+   "order": 11,
    "status": "send",
    "url": "https://x.com/LabSpeculation/status/2122137716238500327",
    "id": "2122137716238500327",
@@ -229,7 +249,7 @@
   },
   {
    "n": 3,
-   "order": 11,
+   "order": 12,
    "status": "send",
    "url": "https://x.com/lanhubiji/status/2122134092783435895",
    "id": "2122134092783435895",
@@ -256,7 +276,7 @@
   },
   {
    "n": 6,
-   "order": 12,
+   "order": 13,
    "status": "send",
    "url": "https://x.com/Sarmad_Crypto/status/2122132723586437165",
    "id": "2122132723586437165",
@@ -275,7 +295,7 @@
   },
   {
    "n": 5,
-   "order": 13,
+   "order": 14,
    "status": "send",
    "url": "https://x.com/CyberMonk0x/status/2122134562235183416",
    "id": "2122134562235183416",
@@ -294,7 +314,7 @@
   },
   {
    "n": 4,
-   "order": 14,
+   "order": 15,
    "status": "send",
    "url": "https://x.com/fannaoxiaoyang/status/2122123637209936231",
    "id": "2122123637209936231",
@@ -313,7 +333,7 @@
   },
   {
    "n": 7,
-   "order": 15,
+   "order": 16,
    "status": "send",
    "url": "https://x.com/CryptoBlockABC/status/2122109838457024897",
    "id": "2122109838457024897",
@@ -332,7 +352,7 @@
   },
   {
    "n": 1,
-   "order": 16,
+   "order": 17,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/0xGummyBear/status/2121997333546365049",
@@ -348,6 +368,26 @@
    "reply": "USDT 自己都在折價了，這個月平均 0.9988，50 個月來最低",
    "sources": "USDT 對美元 11 月平均 0.99881（15 天），50 個月裡排第 1 低，前一個低點是 10 月 0.99899（Coinbase USDT-USD，flows.cb_premium.usdt.mon，11/15）",
    "note": "原作者本人回我們（她的貼文底下、第 1 輪），回一句短的、順手補一個數字"
+  },
+  {
+   "n": 18,
+   "status": "skip",
+   "kind": "followup",
+   "url": "https://x.com/CyberMonk0x/status/2122182987131551880",
+   "id": "2122182987131551880",
+   "author": "CyberMonk0x",
+   "name": "CyberMonk0x",
+   "followers": 7730,
+   "posted": "2026-11-16T04:20:27Z",
+   "lang": "zh",
+   "angle": "按讚就好",
+   "style": "口語版",
+   "summary": "回我們 n13：這次反彈確實比前幾次弱很多，最大才 4.7%，加上跌幅更大還收在 200 週均線下面，買盤猶豫更明顯",
+   "reply": "",
+   "sources": "",
+   "image": null,
+   "note": "按讚就好：他的貼文底下已經回過 2 輪，這則是重述我們的數字、沒問問題",
+   "order": 18
   }
  ]
 }
