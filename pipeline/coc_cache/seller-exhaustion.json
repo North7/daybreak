@@ -1,4 +1,4 @@
-{"fetched_utc": "2026-11-15T00:17:43+00:00", "source": "https://charts.checkonchain.com/btconchain/unrealised/seller_exhaustion_constant_supply/seller_exhaustion_constant_supply_light.html", "rows": [
+{"fetched_utc": "2026-11-16T00:17:12+00:00", "source": "https://charts.checkonchain.com/btconchain/unrealised/seller_exhaustion_constant_supply/seller_exhaustion_constant_supply_light.html", "rows": [
 ["2010-09-15", 1.04811, 0.06],
 ["2010-09-16", 0.90783, 0.06],
 ["2010-09-17", 0.90882, 0.06],
@@ -5891,5 +5891,6 @@
 ["2026-11-11", 0.20364, 73728.05],
 ["2026-11-12", 0.20494, 71520.27],
 ["2026-11-13", 0.21046, 68263.74],
-["2026-11-14", 0.21914, 64321.91]
+["2026-11-14", 0.22054, 63769.24],
+["2026-11-15", 0.23756, 65299.3]
 ]}
