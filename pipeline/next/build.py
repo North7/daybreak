@@ -82,19 +82,15 @@ D = dict(
     site=SITE, pm=pm_data.build(L), bvn=BVN,
     date=L['meta']['bar_date'], issue=N.get('edition'), price=round(c), chg=L['price']['bar']['chg_pct'],
     headline=N['headline'], summary=N['summary'], stance=N.get('stance'), leads={k: m.get('lead') for k, m in N['modules'].items()},
-    wk=wk, marks=[dict(d=dn(m['date']), kind=m['kind'], heat=m['heat']) for m in dw['marks']], th=dw['th'],
     dawn=dict(heat=dw['heat'], stage=dw['stage'], weeks=dw['stage_weeks'], heat4=dw['heat4']),
-    urpd=dict(price=round(c), date=u['date'], w=W, band=band, thick=thick, thin=thin),
-    lv=lvrows, w50=dict(date=w50['date'], close=w50['close'], ma=w50['ma'], dist=w50['dist_pct'], above=w50['above'], prev_run=(w50.get('cross') or {}).get('prev_run'), live=w50.get('live'),
+    _w50=dict(date=w50['date'], close=w50['close'], ma=w50['ma'], dist=w50['dist_pct'], above=w50['above'], prev_run=(w50.get('cross') or {}).get('prev_run'), live=w50.get('live'),
                         n=len(brk), fast=sum(1 for b in brk if b['weeks'] <= 2), slow=[b['weeks'] for b in brk if b['weeks'] >= 26], slow_y=[b['date'][:4] for b in brk if b['weeks'] >= 26]),
     stage=dict(name=stg['stage'], since=stg['since'], run=stg['above_rising_run'], sma200=round(stg['sma200'])),
-    stab=[r for r in stab if r[0] >= dn(L['meta']['bar_date']) - 1100], stabNow=dict(usd=sc['usd_b'], p30=sc['chg30_pct'], d30=sc['chg30_usd_b'], pct=sc['pct30']),
-    etf=etf, etf5=round(sum(e['musd'] for e in full[-5:])),
-    d30=d30,
+    stabNow=dict(usd=sc['usd_b'], p30=sc['chg30_pct'], d30=sc['chg30_usd_b'], pct=sc['pct30']), etf5=round(sum(e['musd'] for e in full[-5:])),
     now=dict(sthProfit=fl['sth_in_profit_pct']['value'], fund=L['deriv']['fund_hist']['value'], dvol=L['deriv']['dvol']['value'], fng=L['flows']['fng_hist']['value'],
              mvrvPrior=L['cycle']['cm']['mvrv_vs_prior'], k075=L['cycle']['cm']['k075_price'], ladder1=L['exit']['framework']['ladder'][0]),
 )
-print('urpd thick', thick, 'thin', thin, '| w50', {k: v for k, v in D['w50'].items() if k != 'live'}, D['w50']['live'])
+print('urpd thick', thick, 'thin', thin, '| w50', {k: v for k, v in D['_w50'].items() if k != 'live'}, D['_w50']['live']); D.pop('_w50')   # 2026-11-16 頁面不再讀 wk、lv、stab、etf、urpd、d30、w50、marks、th（只有設計提案的程式在讀，已刪）；日誌照舊印
 print('stage', D['stage'], '| stab', D['stabNow'], '| etf5', D['etf5'], '| now', D['now'], '| dawn', D['dawn'])
 LZ_MIN = 20000   # 卡片資料超過這個大小（位元組）的頁才拆出去
 STUB = ('k', 'zh', 'en', 'nofx', 'na', 'go', 'sim', 'wide')   # 留在 next.js 的欄位：next_shot 的目錄、頁面切換前用不到其他欄位
