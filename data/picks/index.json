@@ -1,16 +1,16 @@
 {
- "date": "2026-11-14",
+ "date": "2026-11-15",
  "captions": true,
  "picks": [
   {
-   "id": "flows/rcliq",
-   "chart": "data/picks/flows-rcliq.png",
-   "chart_en": "data/picks/flows-rcliq-en.png",
+   "id": "cycle/dawn",
+   "chart": "data/picks/cycle-dawn.png",
+   "chart_en": "data/picks/cycle-dawn-en.png",
    "name": {
-    "zh": "資金流入：實現市值 30 日變化",
-    "en": "Capital inflow: realized cap 30-day change"
+    "zh": "晨昏指數",
+    "en": "Dawn–Dusk Index"
    },
-   "link": "https://daybreak.aronlab.dev/#flows/rcliq"
+   "link": "https://daybreak.aronlab.dev/#cycle/dawn"
   }
  ]
 }
