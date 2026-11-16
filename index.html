@@ -1760,6 +1760,12 @@ html.share[data-ratio="45"] .oc-fx .os { width: min(100vw, calc(100vh * 4 / 5));
 .ol-c.lqh { min-height: 340px; }
 .oc-toast { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); z-index: 300; transform: translate(-50%, 10px); max-width: calc(100vw - 32px); padding: 10px 18px; border-radius: 999px; background: #EDEDE8; color: #0E0E10; font: 600 13.5px/1.35 "Inter Tight", "Noto Sans TC", sans-serif; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; overflow-wrap: anywhere; }
 .oc-toast.on { opacity: 1; transform: translate(-50%, 0); }
+.oc-toast.on a { color: inherit; text-decoration: underline; text-underline-offset: 2px; pointer-events: auto; }
+/* ㉜ 來源連結和頁尾的資料來源 */
+.src-a { color: inherit; text-decoration: underline; text-decoration-color: color-mix(in srgb, currentColor 40%, transparent); text-underline-offset: 2px; cursor: pointer; } .src-a:hover { color: var(--ink); text-decoration-color: currentColor; }
+.oc-srcs { padding: 6px clamp(16px, 2.4vw, 34px) 34px; max-width: 1040px; font-size: 13px; line-height: 1.75; color: var(--k2); } .oc-srcs h3 { margin: 0 0 8px; font: 500 11px var(--f-mono); letter-spacing: .2em; color: var(--k2); } .oc-srcs p { margin: 0 0 6px; } .oc-srcs b { color: var(--ink); font-weight: 600; }
+html.share .oc-srcs { display: none; }
+@media (max-width: 760px) { .oc-srcs { padding-right: 48px; padding-bottom: 64px; } }   /* 手機：右邊讓開側邊的段落圓環，下面讓開右下角的訊號提示 */
 .oc-fx .fx-x.busy { opacity: .45; pointer-events: none; }
 html.share .oc-fx .ol { height: 100%; max-height: 100%; overflow: hidden; }   /* 固定比例的框裡：圖吃掉剩下的高度，頁尾一定在框內 */
 html.share .oc-fx .ol .ol-c, html.share .oc-fx .ol[data-kind="t"] .ol-c { flex: 1 1 0; height: auto; min-height: 150px; }
@@ -1787,13 +1793,14 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-hd" id="oc-hd"><canvas class="oc-f" id="oc-f" aria-hidden="true"></canvas><div class="oc-st" id="oc-st"></div></div>
     <div class="oc-secs" id="oc-secs"></div>
     <div class="oc-ft"><span id="oc-ft1"></span><span id="oc-ft2"></span></div>
+    <div class="oc-srcs" id="oc-srcs"></div>
     <div class="oc-map" id="oc-map" hidden><div class="mp-in"><div class="mp-h"><h3 id="oc-mapt"></h3><label class="mp-q"><span id="oc-mapi"></span><input id="oc-mapq" type="search" autocomplete="off" spellcheck="false"></label><span class="mp-n" id="oc-mapn"></span><button type="button" class="fx-x" id="oc-mapx" data-mapx="1"></button></div><div class="mp-b" id="oc-mapg"></div></div></div>
     <nav class="oc-tab" id="oc-tab" aria-label="今天和六個問題"></nav>
     <nav class="oc-side" id="oc-side" aria-label="這一頁的小問題"></nav>
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=d73944574f"></script>
+<script src="data/next.js?v=08c91b28ef"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -2673,6 +2680,13 @@ function initOC() {
   const QS = new URLSearchParams(location.search), SHARE = QS.has('share') ? (QS.get('share') === '45' ? '45' : '169') : '', SHK = QS.get('k') || '', FSC = SHARE ? 1.3 : 1;
   if (SHARE) { document.documentElement.classList.add('share'); document.documentElement.dataset.ratio = SHARE; }
   const reduce = !!SHARE || (window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches), esc = s => String(s).replace(/[<>&]/g, '');
+  /* ㉜ 資料來源（2026-11-16，使用者：「從運營角度好好利用這次回覆，產品那邊都可以配合」「先做bitview」）：圖名旁邊寫 Bitview 的地方是連結（另開分頁）；頁尾有一段「資料來源」，
+     Bitview 排第一，寫每天抓幾條序列（build.py 直接數）、它是開源的和授權（它自己網站上寫的：程式 MIT、資料 CC BY 4.0，資料要標示來源）。不寫個人帳號。其他來源只列名字和連結。 */
+  const SRCL = [['Bitview', 'https://bitview.space']], srcA = (n, u) => '<a class="src-a" href="' + u + '" target="_blank" rel="noopener">' + n + '</a>', srcLink = h => SRCL.reduce((s, q) => s.split(q[0]).join(srcA(q[0], q[1])), h);
+  const SRCS = [['CheckOnChain', 'https://charts.checkonchain.com'], ['CoinMetrics', 'https://coinmetrics.io'], ['bitcoin-data.com', 'https://bitcoin-data.com'], ['mempool.space', 'https://mempool.space'], ['Deribit', 'https://www.deribit.com'], ['Kraken', 'https://www.kraken.com'], ['OKX', 'https://www.okx.com'], ['Coinbase', 'https://www.coinbase.com'], ['Binance', 'https://www.binance.com'], ['Bitfinex', 'https://www.bitfinex.com'], ['Bitstamp', 'https://www.bitstamp.net'], ['Upbit', 'https://upbit.com'], ['Hyperliquid', 'https://hyperliquid.xyz'], ['Coinalyze', 'https://coinalyze.net'], ['DefiLlama', 'https://defillama.com'], ['CFTC', 'https://www.cftc.gov'], ['FRED', 'https://fred.stlouisfed.org'], ['New York Fed', 'https://www.newyorkfed.org'], ['U.S. Treasury', 'https://home.treasury.gov'], ['Polymarket', 'https://polymarket.com'], ['CoinGecko', 'https://www.coingecko.com'], ['alternative.me', 'https://alternative.me'], ['Wikimedia', 'https://wikimedia.org']];
+  const srcsHtml = () => { const bv = srcA('Bitview', 'https://bitview.space'), brk = srcA('Bitcoin Research Kit', 'https://bitview.space/brk/'), n = D.bvn ? '<b>' + D.bvn + '</b>' : '';
+    return '<h3>' + T('資料來源', 'Data sources') + '</h3><p>' + T(bv + '：鏈上資料的主要來源。Daybreak 每天從它抓 ' + n + ' 條序列，再加上籌碼分布（全部、短期、長期持有者）和籌碼集中度。Bitview 是開源的（' + brk + '，程式 MIT、資料 CC BY 4.0），由 OpenSats 支持。',
+      bv + ': the main source for on-chain data. Daybreak pulls ' + n + ' series from it every day, plus supply distributions (all, short-term and long-term holders) and supply concentration. Bitview is open source (' + brk + '; code MIT, data CC BY 4.0) and supported by OpenSats.') + '</p><p>' + T('其他：', 'Also: ') + SRCS.map(q => srcA(q[0], q[1])).join(' · ') + '</p><p>' + T('每張圖用的來源寫在圖名旁邊。只作讀值，不是投資建議。', 'Each chart names its source next to its title. For reading only, not investment advice.') + '</p>'; };
   let lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh', th = 'd', ord = [0].concat(G.map((x, i) => i + 1)), lead = G.map(() => 0), rng = 1095, lay = 'sp', rgb = PBASE.d.rgb, REG = {}, W = 0, H = 0, UID = 0;
   /* ⑳ 中文版圖名下面的英文名：沒有就回空字串 */
   const enName = c => { if (lang !== 'zh' || !c || !c.en || c.en === c.zh || /^[qtx]_/.test(c.k || '')) return ''; const m = /^(.*\S)\s*\(([^()]+)\)$/.exec(c.en); return m && String(c.zh).indexOf('（' + m[2] + '）') >= 0 ? m[1] : c.en; };
@@ -3440,9 +3454,9 @@ function initOC() {
     const lyv = c._ly || 'sp', lyb = isT(c) && !s.one ? `<span class="md ly" role="group" aria-label="${T('價格和指標的排法', 'Price and indicator layout')}"><button type="button" data-ly="sp" data-key="${key}" aria-pressed="${lyv === 'sp'}"${ib('價格和指標分成上下兩格', 'Price and indicator in two panes')}>${IC('split')}</button><button type="button" data-ly="ov" data-key="${key}" aria-pressed="${lyv === 'ov'}"${ib('價格和指標疊在同一格', 'Price and indicator overlaid')}>${IC('over')}</button></span>` : '';
     let tcv = null; try { if (isT(c) && !c.na) tcv = CV(tone(s, hero(s))); } catch (e0) { tcv = null; } const tcol = ''; ol.dataset.kind = ''; const sayH = c.na ? '' : sayHtml(s), sigH = c.na ? '' : sigHtml(c), howH = howHtml(c);
     const hk = c.na ? '' : s.hz ? T(s.hz, s.he) : isT(c) && hero(s).zh && hero(s).zh !== c.zh ? T(hero(s).zh, hero(s).en) : '';
-    const src = c.src ? T(c.src, c.srce) : '', e2 = enName(c), chi = /^q_/.test(c.k || '') ? CHI(c.k.slice(2)) : '', head = `<div class="ol-t${e2 ? ' e2' : ''}">${chi ? ICS(chi, 'ch') : ''}<h4 class="ol-n">${esc(T(c.zh, c.en))}</h4>${e2 ? `<span class="ol-e" lang="en">${esc(e2)}</span>` : ''}${src ? `<span class="ol-src" title="${esc(src)}">${esc(src)}</span><button type="button" class="src-b" data-src="${esc(T('資料來源：', 'Source: ') + src)}" aria-label="${esc(T('資料來源：', 'Source: ') + src)}">${IC('src')}</button>` : ''}${c.go ? `<button type="button" class="fx-b go" data-chid="${c.go}"${ib('看這一頁', 'Open this page')}>${IC('go')}</button>` : flat && !c.na && !c.nofx ? `<button type="button" class="fx-b" data-fx="${key}"${ib('展開這張圖', 'Expand this chart')}>${IC('expand')}</button>` : ''}</div>${md || d3b || pg || lqb || rgb || lyb ? `<div class="ol-ctl">${md}${d3b}${pg}${lqb}${rgb}${lyb}${more}</div>` : ''}`, big = `${hk ? `<span class="ol-k">${esc(hk)}</span>` : ''}<div class="ol-big"${tcol}><span class="odo" id="oc-b${key}"></span><span class="ol-u" id="oc-u${key}"></span><small id="oc-d${key}"></small></div>${stat(s, c)}${pairHtml(s, c)}${sayH}${sxl(s, c)}`;
+    const src = c.src ? T(c.src, c.srce) : '', e2 = enName(c), chi = /^q_/.test(c.k || '') ? CHI(c.k.slice(2)) : '', head = `<div class="ol-t${e2 ? ' e2' : ''}">${chi ? ICS(chi, 'ch') : ''}<h4 class="ol-n">${esc(T(c.zh, c.en))}</h4>${e2 ? `<span class="ol-e" lang="en">${esc(e2)}</span>` : ''}${src ? `<span class="ol-src" title="${esc(src)}">${srcLink(esc(src))}</span><button type="button" class="src-b" data-src="${esc(T('資料來源：', 'Source: ') + src)}" aria-label="${esc(T('資料來源：', 'Source: ') + src)}">${IC('src')}</button>` : ''}${c.go ? `<button type="button" class="fx-b go" data-chid="${c.go}"${ib('看這一頁', 'Open this page')}>${IC('go')}</button>` : flat && !c.na && !c.nofx ? `<button type="button" class="fx-b" data-fx="${key}"${ib('展開這張圖', 'Expand this chart')}>${IC('expand')}</button>` : ''}</div>${md || d3b || pg || lqb || rgb || lyb ? `<div class="ol-ctl">${md}${d3b}${pg}${lqb}${rgb}${lyb}${more}</div>` : ''}`, big = `${hk ? `<span class="ol-k">${esc(hk)}</span>` : ''}<div class="ol-big"${tcol}><span class="odo" id="oc-b${key}"></span><span class="ol-u" id="oc-u${key}"></span><small id="oc-d${key}"></small></div>${stat(s, c)}${pairHtml(s, c)}${sayH}${sxl(s, c)}`;
     const d3lg = d3on ? D3.legend(c).map(q => '<span><i class="box" style="--c:' + CV(q[0]) + ';--c2:' + CV(q[0]) + '"></i>' + esc(T(q[1], q[2])) + '</span>').join('') : '';
-    const d3Put = () => { D3.mount($('#oc-c' + key), c, key); const sc9 = ol.querySelector('.d3-sc'); if (sc9 && c.d3.srcz) sc9.insertAdjacentHTML('afterend', '<p class="d3-n">' + esc(T(c.d3.srcz, c.d3.srce)) + '</p>'); };   /* ㉛ 立體檢視：原本的數字、說明、圖例都還在，只換圖的那一格 */
+    const d3Put = () => { D3.mount($('#oc-c' + key), c, key); const sc9 = ol.querySelector('.d3-sc'); if (sc9 && c.d3.srcz) sc9.insertAdjacentHTML('afterend', '<p class="d3-n">' + srcLink(esc(T(c.d3.srcz, c.d3.srce))) + '</p>'); };   /* ㉛ 立體檢視：原本的數字、說明、圖例都還在，只換圖的那一格 */
     let L = null;
     if (c.na) ol.innerHTML = head + `<div class="ol-na"><b>${ICS('nodata')}${T('資料沒來', 'No data')}</b><p>${esc(T(c.na.zh, c.na.en))}</p></div>`;
     else if (c.sim) simCard(ol, c, key, head);
@@ -3825,7 +3839,7 @@ function initOC() {
   function fitNum() { if (O.brief) return; const big = document.querySelector('#oc-ol0 .ol-big'); if (!big) return; big.style.fontSize = ''; const cur = parseFloat(getComputedStyle(big).fontSize); if (cur > 0 && big.scrollWidth > big.clientWidth + 1) big.style.fontSize = F1(cur * big.clientWidth / big.scrollWidth * .97) + 'px'; }
   function renderAll() {
     $('#oc-date').textContent = D.date.replace(/-/g, '.') + T(' 收盤', ' close');
-    $('#oc-ft1').textContent = T('在任何一張圖上移動游標，同一段的圖會一起跟著。每張圖右上角可以放大。', 'Move across any chart and the others in the same section follow. Each chart can be expanded from its top-right corner.'); $('#oc-ft2').textContent = 'Bitview · CheckOnChain · CoinMetrics · Deribit';
+    $('#oc-ft1').textContent = T('在任何一張圖上移動游標，同一段的圖會一起跟著。每張圖右上角可以放大。', 'Move across any chart and the others in the same section follow. Each chart can be expanded from its top-right corner.'); $('#oc-ft2').textContent = ''; $('#oc-srcs').innerHTML = srcsHtml();
     stg.innerHTML = CH.map((c, i) => c.todo ? '' : `<article class="os" data-k="${i}" tabindex="0" style="--dl:${(-i * 1.7).toFixed(1)}s"><div class="os-in"><div class="os-h"><span class="k">${p2(i)}</span><h3>${esc(T(c.zh, c.en))}</h3><span class="sub">${esc(T(c.qz, c.qe))}</span></div><div class="os-pw"><span class="pw-k">${esc(hv(c)[0])}</span><div class="pw-n">${esc(hv(c)[1])}</div><p class="pw-l">${esc(T(c.lead_zh, c.lead_en) || T(c.qz, c.qe))}</p><div class="pw-c"></div></div></div></article>`).join('');
     ord = order(); headBody(); renderBar(); renderOv(); poster(); hx(); keep(renderSecs); place(); renderCmp(); if (fx) openFx(fx.k + '_' + fx.i);
   }
@@ -3971,7 +3985,7 @@ function initOC() {
     if ((b = t.closest('[data-ch]'))) { navCh(+b.dataset.ch); return; }
     if ((b = t.closest('[data-jump]'))) { let key = null; Object.keys(SEC).forEach(k => (SEC[k] || []).forEach(R1 => { if (R1.c.k === b.dataset.jump) key = R1.key; })); const tg = key ? $('#oc-ol' + key) : null; if (tg) { const cd = tg.closest('.fc'); cd.classList.add('in'); cd.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); cd.classList.remove('hit'); void cd.offsetWidth; cd.classList.add('hit'); setTimeout(() => cd.classList.remove('hit'), 2600); } return; }
     if ((b = t.closest('[data-chid]'))) { const ix = CH.findIndex(x => x.id === b.dataset.chid); if (ix >= 0 && !CH[ix].todo) { goCh(ix); hd.scrollIntoView({ behavior: 'instant', block: 'start' }); } return; }
-    if ((b = t.closest('[data-src]'))) { toast(b.dataset.src); return; }   /* ㉑ 4：手機點來源圖示 */
+    if ((b = t.closest('[data-src]'))) { toast(b.dataset.src, 1); return; }   /* ㉑ 4：手機點來源圖示 */
     if ((b = t.closest('.sy-d'))) { b.closest('.ol-say').classList.toggle('open'); return; }
     if (fx && t.closest('#oc-fx') && !$('#oc-fx').dataset.drag && !t.closest('button, a, summary, details, input, .ol-c, .or')) { closeFx(); return; }
     if (!fx && (b = t.closest('.fc')) && !t.closest('button, a, summary, details, input, .ol-c.d3, .d3-sc')) {   /* ㉛ 立體圖上的點和拖是選柱子、轉角度，不是展開卡片 */ const q1 = b.querySelector('[data-chid]'), f1 = b.querySelector('[data-fx]'); if (q1) { q1.click(); return; } if (f1) { openFx(f1.dataset.fx); return; } }
@@ -4034,7 +4048,7 @@ function initOC() {
      圖片是在看不見的框裡（1600×900）開分享模式，用 html-to-image 轉成 2 倍解析度的 PNG。
      只嵌入這張圖用到的西文字型；中文字型有上百個檔，用使用者系統的中文字。手機能用系統分享就跳分享（可以存相簿、貼到 X），不能就下載 */
   const shareURL = k => location.origin + location.pathname + '?share&k=' + encodeURIComponent(k);
-  let toastT = 0; const toast = msg => { let e = document.getElementById('oc-toast'); if (!e) { e = document.createElement('div'); e.id = 'oc-toast'; e.className = 'oc-toast'; e.setAttribute('role', 'status'); document.body.appendChild(e); } e.textContent = msg; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), 2400); };
+  let toastT = 0; const toast = (msg, links) => { let e = document.getElementById('oc-toast'); if (!e) { e = document.createElement('div'); e.id = 'oc-toast'; e.className = 'oc-toast'; e.setAttribute('role', 'status'); document.body.appendChild(e); } if (links) e.innerHTML = srcLink(esc(msg)); else e.textContent = msg; e.classList.add('on'); clearTimeout(toastT); toastT = setTimeout(() => e.classList.remove('on'), links ? 4200 : 2400); };   /* links＝來源提示：Bitview 可以點（㉜），多留一下 */
   async function copyLink(k) {
     const u = shareURL(k), done = () => toast(T('已複製這張圖的連結', 'Link to this chart copied'));
     try { await navigator.clipboard.writeText(u); done(); return; } catch (e0) {}
