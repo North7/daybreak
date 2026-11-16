@@ -705,7 +705,7 @@
   {
    "n": 34,
    "order": 34,
-   "status": "skip",
+   "status": "send",
    "kind": "followup",
    "url": "https://x.com/songpu717/status/2122239375040032811",
    "id": "2122239375040032811",
@@ -717,7 +717,7 @@
    "angle": "接話第二則（接在我們 #29 底下）：改好了、附新圖、謝謝、用了 64 條序列",
    "style": "口語版",
    "summary": "接在我們回 Bitview 的 #29 底下（他還沒回 #29）：籌碼拆分「現在」已換成 Bitview 上線，讓他看到真的照他說的改了",
-   "reply": "Done, the live split runs on Bitview now, CheckOnChain only as fallback\nWe pull 64 Bitview series across Daybreak, cost bands, URPD, whale tiers, SOPR and more\nThanks for keeping all of it open",
+   "reply": "Done, the live split runs on Bitview now, CheckOnChain only as fallback\nWe pull 64 Bitview series across Daybreak, cost bands, URPD, whale tiers, SOPR and more\nThanks for keeping all of it open\nhttps://daybreak.aronlab.dev/?k=cohort&lang=en",
    "sources": "data/latest.json chips.cohort（11/15）：src=bitview、cmp.src=bitview（2026-10-16）、meta.errors 空；STH 3,784,884 顆、平均成本 73,978；最厚一格 62K 521,183 顆。Bitview 序列數：daybreak pipeline/bitview.py COLS 64 條，另有 URPD、籌碼集中度。網站改動 North7/daybreak#172–#174",
    "image": {
     "site": {
@@ -726,7 +726,7 @@
     },
     "title": "Live split now on Bitview: STH hold 3.78M BTC, thickest pile at 62–64K"
    },
-   "note": "接話第二則，Bitview 官方（見記憶 bitview-relationship）。不到 1 萬粉但配圖：圖就是在給他看改好了。最後一行的網址等網站給直接連到那張卡的英文網址再補（使用者 11/16 同意只有這則放網址）。先標 skip 不讓小幫手顯示，補完網址改 send"
+   "note": "接話第二則，Bitview 官方（見記憶 bitview-relationship）。不到 1 萬粉但配圖：圖就是在給他看改好了。最後一行網址直接打開那張卡的英文放大檢視（North7/daybreak#175，線上驗過）；使用者 11/16 同意只有這則放網址"
   }
  ]
 }
