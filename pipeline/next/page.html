@@ -1758,6 +1758,14 @@ html.share .oc-fx .os-h, html.share #oc-orF { display: none !important; }
 html.share .oc-fx::before { opacity: 1; background: var(--bg); }
 html.share .oc-fx .os { left: 50%; top: 50%; width: min(100vw, calc(100vh * 16 / 9)); height: min(100vh, calc(100vw * 9 / 16)); transform: translate(-50%, -50%); }
 html.share[data-ratio="45"] .oc-fx .os { width: min(100vw, calc(100vh * 4 / 5)); height: min(100vh, calc(100vw * 5 / 4)); }
+html.share, html.share body { overflow: hidden; }   /* 2026-11-16 運營：分享模式右邊一直有一條捲軸，截圖會拍進去。整個畫面就是那張圖，不需要捲 */
+/* ㉛-10 分享 16:9 的立體圖（運營：只佔畫面中間三分之一寬、上下留很多空）：字放左欄，圖放右欄、吃滿整個高度。4:5 本來就飽滿，照舊上下排 */
+html.share:not([data-ratio="45"]) .oc-fx .ol[data-d3="1"] { display: grid; grid-template-columns: minmax(0, 31%) minmax(0, 1fr); grid-template-rows: repeat(8, auto) 1fr auto; column-gap: 30px; align-content: stretch; }
+html.share:not([data-ratio="45"]) .oc-fx .ol[data-d3="1"] > * { grid-column: 1; min-width: 0; }
+html.share:not([data-ratio="45"]) .oc-fx .ol[data-d3="1"] > .ol-c { grid-column: 2; grid-row: 1 / 10; height: auto; min-height: 0; }
+html.share:not([data-ratio="45"]) .oc-fx .ol[data-d3="1"] > .ol-brand { grid-column: 1 / -1; grid-row: 10; }
+html.share:not([data-ratio="45"]) .oc-fx .ol[data-d3="1"] .ol-lg { flex-direction: column; align-items: flex-start; gap: 5px; margin: 10px 0 6px; }
+html.share:not([data-ratio="45"]) .oc-fx .ol[data-d3="1"] .ol-lg span { white-space: normal; }
 .ol-lg i.vir { display: inline-block; width: 64px; height: 8px; margin: 0 6px; border-radius: 2px; vertical-align: middle; background: linear-gradient(90deg, rgb(68, 1, 84), rgb(59, 82, 139), rgb(33, 145, 140), rgb(94, 201, 98), rgb(253, 231, 37)); }
 .ol-c.lqh { min-height: 340px; }
 .oc-toast { position: fixed; left: 50%; bottom: calc(28px + env(safe-area-inset-bottom, 0px)); z-index: 300; transform: translate(-50%, 10px); max-width: calc(100vw - 32px); padding: 10px 18px; border-radius: 999px; background: #EDEDE8; color: #0E0E10; font: 600 13.5px/1.35 "Inter Tight", "Noto Sans TC", sans-serif; box-shadow: 0 10px 30px rgba(0, 0, 0, .35); opacity: 0; pointer-events: none; transition: opacity .2s, transform .2s; overflow-wrap: anywhere; }
@@ -3503,7 +3511,7 @@ function initOC() {
     else { ol.dataset.kind = 't'; ol.innerHTML = `<div class="ol-a">${head}${big}${howH}</div><div class="ol-b"><div class="ol-lg">${LG.map(e => e.html).join('')}</div><div class="ol-c" id="oc-c${key}"></div></div>`; tidy(ol, sayH, sigH); L = leadChart($('#oc-c' + key), c, key, t0); }
     { const art = ol.closest('.fc'); if (art) art.style.setProperty('--tc', tcv || 'var(--k2)'); }
     if (!c.na && !c.go) ol.insertAdjacentHTML('beforeend', `<p class="ol-brand"><b>Daybreak</b><span>daybreak.aronlab.dev</span><span>${src ? esc(T('資料：', 'Data: ') + src) + ' · ' : ''}${T('截至 ', 'As of ')}${D.date.replace(/-/g, '/')}</span></p>`);   /* 分享模式才顯示（⑮） */
-    ol.dataset.ck = c.k;
+    ol.dataset.ck = c.k; if (d3on) ol.dataset.d3 = '1'; else delete ol.dataset.d3;
     return { c, s, L, t0, key, lg: LG.filter(e => e.get).map(e => ({ el: document.getElementById(e.id), get: e.get })), items: [] };
   }
   /* 放大：一張主圖加同一段的佐證列 */
