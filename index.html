@@ -1793,7 +1793,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=a20acc82f2"></script>
+<script src="data/next.js?v=53d9db0fc2"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -2906,7 +2906,10 @@ function initOC() {
      6 點選：每一格畫的時候把多邊形和它代表的（價位, 週）記下來，指標落在哪個多邊形就是哪一根（後畫的在上面，所以從後往前找）。電腦是滑鼠移上去，手機是點一下、再點同一根收起來。
        提示框寫：價位範圍、幣數和佔全部的比例、哪一週和當時的價格、成本在價格上方還是下方。選到的那一根用白框（外面墊一圈底色），立體時再把它沿著時間的頂線描出來。
      7 切一刀：圖下面的滑桿選平面圖看的是哪一週；立體時把那一週的輪廓描出來。
-     8 資料是 Bitview 每週一筆（pipeline/urpd_terr.py），和「分布」那張（CheckOnChain）來源不同，圖下面寫明。不用任何外部函式庫，canvas 2D 自己投影；一格約 9,400 個四邊形。 */
+     8 資料是 Bitview 每週一筆（pipeline/urpd_terr.py），和「分布」那張（CheckOnChain）來源不同，圖下面寫明。不用任何外部函式庫，canvas 2D 自己投影；一格約 9,400 個四邊形。
+     9 選擇權（同一天，使用者：「做選擇權」）：「履約價分布」多一個「全部到期」（kind＝opt）：平面是一個到期日（預設是原圖的那個主要到期日），賣權在下、買權疊在上；立體是每個到期日一排，最近到期的在最前面；
+       地板上的虛線連起各到期日的最大痛點，青色線是現價。「隱含波動率期限結構」多一個「曲面」（kind＝iv）：平面是一個到期日的微笑曲線，立體是曲面（左右是偏斜、前後是期限結構），
+       顏色用全站的熱度色階，白線是平值，也就是原本那張圖的那條線。滑桿選的是到期日。資料是 collect.py 本來就在抓的 Deribit 整張表（pipeline/opt_grid.py），不多發請求。 */
   const D3 = (function () {
     const TAU = Math.PI * 2, reg = {};
     const hex = h => { h = h.trim(); if (h.length === 4) h = '#' + h[1] + h[1] + h[2] + h[2] + h[3] + h[3]; return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); };
@@ -3055,14 +3058,107 @@ function initOC() {
       rng.addEventListener('input', () => { cut = c._d3c = +rng.value; show(); S.dirty(); }); show();
       return S;
     }
-    const KIND = { terr };
+    /* 曲面（波動率）：每一格是相鄰四個點圍成的四邊形，顏色照高度，兩個方向都畫格線才看得出彎度 */
+    function field(S, F, alpha) {
+      const c = S.ctx, nx = F.nx, ny = F.ny, A = S.A, X = i => -1 + 2 * i / (nx - 1), Y = j => -A + 2 * A * j / (ny - 1), zs = F.zs, o = order(S), flat = S.pit > 1.3;
+      const Pt = new Array(nx * ny), Z = new Float32Array(nx * ny), OK = new Uint8Array(nx * ny);
+      for (let j = 0; j < ny; j++) for (let i = 0; i < nx; i++) { const v = F.z(i, j), q = j * nx + i; OK[q] = v != null; Z[q] = (v || 0) * zs; Pt[q] = S.proj(X(i), Y(j), Z[q]); }
+      F._P = Pt; F._OK = OK; if (alpha <= .01) return;
+      const dx = 2 / (nx - 1), dy = 2 * A / (ny - 1); c.save(); c.globalAlpha = alpha;
+      each2(o, seq(nx - 1, o.xa), seq(ny - 1, o.ya), (i, j) => { const a = j * nx + i, b = a + 1, d = a + nx, e = d + 1; if (!(OK[a] && OK[b] && OK[d] && OK[e])) return;
+        const t = (Z[a] + Z[b] + Z[d] + Z[e]) / 4 / zs, nxv = -((Z[b] + Z[e]) - (Z[a] + Z[d])) / 2 / dx, nyv = -((Z[d] + Z[e]) - (Z[a] + Z[b])) / 2 / dy, lam = Math.max(0, (nxv * LIGHT[0] + nyv * LIGHT[1] + LIGHT[2]) / Math.hypot(nxv, nyv, 1));
+        const pts = [Pt[a], Pt[b], Pt[e], Pt[d]]; quad(c, pts, F.ramp(t).map(v => Math.min(255, v * (flat ? 1 : (P.dark ? .72 + .4 * lam : .84 + .22 * lam))))); S.hit(pts, [i, j]);
+        if (!flat) { line(c, [Pt[d], Pt[e]], rgb(P.bg, .28), .6); line(c, [Pt[b], Pt[e]], rgb(P.bg, .28), .6); } });
+      c.restore();
+    }
+    const HEAT = { d: ['#4F6BEA', '#2CA0CF', '#19A56B', '#D69A1E', '#FF4A2E'].map(hex), l: ['#3C5CDD', '#1E86B5', '#008149', '#B37A00', '#E0401F'].map(hex) };          /* 和全站的熱度色階（PRAMP）同一組 */
+    const heat = t => { const R = HEAT[P.dark ? 'd' : 'l'], q = cl(t) * 4, a = Math.min(3, Math.floor(q)); return mix(R[a], R[a + 1], q - a); };
+    /* 圖下面的滑桿：選平面圖看的是哪一個到期日 */
+    function slider(box, zh, en, max, val, text, on) {
+      const ol = box.closest('.ol'), old = ol && ol.querySelector('.d3-sc'); if (old) old.remove();
+      const sc = document.createElement('label'); sc.className = 'd3-sc'; sc.innerHTML = '<span>' + T(zh, en) + '</span><input type="range" min="0" max="' + max + '" step="1" value="' + val + '" aria-label="' + T(zh, en) + '"><output></output>';
+      box.insertAdjacentElement('afterend', sc); const rng = sc.querySelector('input'), out = sc.querySelector('output'); out.textContent = text(val);
+      rng.addEventListener('input', () => { const v = +rng.value; out.textContent = text(v); on(v); });
+    }
+    const oi = v => lang === 'en' ? n0(v) + ' BTC' : (v >= 1e4 ? (v / 1e4).toFixed(1) + ' 萬顆' : n0(v) + ' 顆');
+
+    /* ── 選擇權未平倉：履約價 × 到期日（c.d3.kind＝'opt'）。平面是一個到期日的履約價分布（賣權在下、買權疊在上），立體是每個到期日排成一排，最近到期的在最前面 ── */
+    function optOI(box, c, key) {
+      const Q = c.d3, E = Q.exps, ny = E.length, nk = Q.nk, A = .82, ZS = .62;
+      const XK = k => -1 + 2 * (k - Q.k0) / (nk * Q.kw), Yr = r => A - 2 * A * r / (ny - 1);
+      const mxo = Math.max.apply(null, E.map(e => Math.max.apply(null, e.c.map((v, i) => v + e.p[i])))) || 1;
+      let big = null; E.forEach((e, r) => { if (e.top[1] >= Q.k0 && e.top[1] < Q.k0 + nk * Q.kw && (!big || e.top[0] > big.v)) big = { r, v: e.top[0], k: e.top[1], cp: e.top[2] }; });
+      let rs = E.findIndex(e => e.d === (c._d3c || Q.sel)); if (rs < 0) rs = E.indexOf(E.reduce((a, e) => (e.tc + e.tp > a.tc + a.tp ? e : a)));
+      const info = id => { const e = E[id[1]], lo = Q.k0 + id[0] * Q.kw; return '<b>' + md(e.d) + T(' 到期 · ', ' expiry · ') + usd(lo) + '–' + usd(lo + Q.kw) + '</b><span>' + T('買權 ', 'Calls ') + oi(e.c[id[0]]) + '</span><span>' + T('賣權 ', 'Puts ') + oi(e.p[id[0]]) + '</span><span>' + T('這個到期日最大痛點 ', 'Max pain for this expiry ') + usd(e.pain) + '</span>'; };
+      const stepK = [10000, 20000].find(u => nk * Q.kw / u <= 7) || 20000, xt = []; for (let k = Math.ceil(Q.k0 / stepK) * stepK; k <= Q.k0 + nk * Q.kw; k += stepK) xt.push([XK(k), kk(k)]);
+      const stepV = [500, 1000, 2000, 3000, 5000, 10000].find(u => mxo / u <= 4) || 10000, vo = []; for (let v = 0; v <= mxo; v += stepV) vo.push([v / mxo * ZS, v ? n0(v) : '0']);
+      const S = Scene(box, c, key, ZS, function (S) {
+        const cx = S.ctx, small = S.W < 520, top = S.pit > 1.3, m = S.m, aF = cl(m * 2.4), a2 = cl(1 - m * 2.6), ys = Yr(rs), o = order(S), yE = o.cy >= 0 ? A : -A, h = S.hov;
+        const yt = E.map((e, r) => [Yr(r), md(e.d), r === rs]);
+        floor(S, xt, yt, aF); vaxis(S, ys, vo, a2);
+        if (aF > .01) { cx.save(); cx.globalAlpha = aF; line(cx, [S.proj(XK(Q.spot), -A, 0), S.proj(XK(Q.spot), A, 0)], rgb(P.c4, .9), 1.2); cx.restore(); }          /* 現價：立體時是地板上一條線，平面時是一條直的虛線 */
+        if (a2 > .02) { cx.save(); cx.globalAlpha = a2; line(cx, [S.proj(XK(Q.spot), ys, 0), S.proj(XK(Q.spot), ys, ZS * .96)], rgb(P.c4, .9), 1.2, [4, 4]); cx.restore(); }
+        const pain = E.map((e, r) => S.proj(XK(e.pain), Yr(r), 0)); if (aF > .01) { cx.save(); cx.globalAlpha = aF; line(cx, pain, rgb(P.ink, .7), 1, [3, 3]); cx.restore(); }
+        const hw = 2 / nk * .36, hd = 2 * A / (ny - 1) * .3, sx = o.xa ? 1 : -1, sy_ = o.ya ? 1 : -1; let topP = null, hovBox = null;
+        const col3 = (x, y, z0, z1, col, id) => { const Pj = (a, b, z) => S.proj(x + a * hw, y + b * hd, z), f = (pts, sh) => { quad(cx, pts, col.map(v => Math.min(255, v * sh))); S.hit(pts, id); };
+          if (!top) { if (m > .02) f([Pj(sx, -1, z0), Pj(sx, 1, z0), Pj(sx, 1, z1), Pj(sx, -1, z1)], P.dark ? .5 : .72); f([Pj(-1, sy_, z0), Pj(1, sy_, z0), Pj(1, sy_, z1), Pj(-1, sy_, z1)], lerp(1, P.dark ? .74 : .86, m)); }
+          if (S.pit > .03) f([Pj(-1, -1, z1), Pj(1, -1, z1), Pj(1, 1, z1), Pj(-1, 1, z1)], 1); };
+        each2(o, seq(nk, o.xa), seq(ny, !o.ya), (i, r) => { const a = r === rs ? 1 : aF; if (a <= .01) return; const e = E[r], p = e.p[i], q = e.c[i]; if (p + q < mxo * .004) return; const x = XK(Q.k0 + (i + .5) * Q.kw), y = Yr(r), zp = p / mxo * ZS, zc = (p + q) / mxo * ZS, id = [i, r];
+          cx.globalAlpha = a; if (p > 0) col3(x, y, 0, zp, P.dn, id); if (q > 0) col3(x, y, zp, zc, P.up, id); cx.globalAlpha = 1;
+          if (h && h[0] === i && h[1] === r) { const Pj = (a, b, z) => S.proj(x + a * hw, y + b * hd, z); hovBox = top ? [Pj(-1, -1, zc), Pj(1, -1, zc), Pj(1, 1, zc), Pj(-1, 1, zc)] : [Pj(-1, sy_, 0), Pj(1, sy_, 0), Pj(1, sy_, zc), Pj(-1, sy_, zc)]; }
+          if (big && r === big.r && Q.k0 + i * Q.kw <= big.k && big.k < Q.k0 + (i + 1) * Q.kw) topP = S.proj(x, y, zc); });
+        E.forEach((e, r) => { const a = r === rs ? 1 : aF; if (a <= .01) return; const pp = pain[r]; cx.save(); cx.globalAlpha = a; cx.beginPath(); cx.arc(pp[0], pp[1], r === rs ? 3 : 2.2, 0, TAU); cx.fillStyle = rgb(P.ink); cx.fill(); cx.restore(); });
+        ticks(S, xt, yt, aF);
+        const pp = pain[rs]; label(S, T('最大痛點 ', 'Max pain ') + kk(E[rs].pain), pp[0], pp[1] + (small ? 26 : 27), { px: small ? 9.5 : 10.5, col: rgb(P.ink), a: a2 });
+        if (hovBox) ring(S, hovBox);
+        else if (topP && !top && (m > .5 || rs === big.r)) note(S, topP, md(E[big.r].d) + ' ' + kk(big.k) + (big.cp === 'P' ? T(' 賣權 ', ' put ') : T(' 買權 ', ' call ')) + oi(big.v), { up: small ? 18 : 24, dx: small ? 10 : 40, a: rs === big.r ? 1 : aF });
+        const sp = S.proj(XK(Q.spot), yE, 0), st = S.proj(XK(Q.spot), ys, ZS * .96); label(S, T('現價 ', 'Spot ') + usd(Q.spot), lerp(sp[0], st[0], a2), lerp(sp[1] + (small ? 36 : 30), st[1] - 10, a2), { px: small ? 9.5 : 10.5, col: rgb(P.c4) });
+      }, info);
+      slider(box, '到期日', 'Expiry', ny - 1, rs, r => md(E[r].d) + T(' 到期 · ', ' · ') + oi(E[r].tc + E[r].tp), r => { rs = r; c._d3c = E[r].d; S.dirty(); });
+      return S;
+    }
+
+    /* ── 隱含波動率曲面（c.d3.kind＝'iv'）。平面是一個到期日的微笑曲線，立體是所有到期日排成曲面：左右是偏斜，前後是期限結構；白線是平值（就是原本那張圖的那條線） ── */
+    function optIV(box, c, key) {
+      const Q = c.d3, EI = Q.exps, ni = EI.length, IX = Q.ivx, A = .82, ZS = .62;
+      const XI = k => -1 + 2 * (k - IX.k0) / (IX.n * IX.kw), Yi = r => A - 2 * A * r / (ni - 1);
+      const ivs = [].concat.apply([], EI.map(e => e.iv.filter(v => v != null))), ivLo = Math.floor(Math.min.apply(null, ivs) / 5) * 5, ivHi = Math.max(ivLo + 10, Math.ceil(Math.max.apply(null, ivs) / 5) * 5), ZI = v => (v - ivLo) / (ivHi - ivLo) * ZS;
+      let rs = EI.findIndex(e => e.d === c._d3c); if (rs < 0) rs = EI.indexOf(EI.reduce((a, e) => (e.tc + e.tp > a.tc + a.tp ? e : a)));
+      const info = id => { const e = EI[ni - 1 - id[1]], k = IX.k0 + id[0] * IX.kw, v = e.iv[id[0]]; return '<b>' + md(e.d) + T(' 到期 · ', ' expiry · ') + usd(k) + '</b><span>' + T('隱含波動率 ', 'Implied volatility ') + (v == null ? T('沒有報價', 'no quote') : v + '%') + '</span><span>' + T('這個到期日平值 ', 'At the money for this expiry ') + e.atm + '%</span>'; };
+      const F = { nx: IX.n + 1, ny: ni, zs: ZS, z: (i, j) => { const v = EI[ni - 1 - j].iv[i]; return v == null ? null : cl((v - ivLo) / (ivHi - ivLo)); }, ramp: heat };
+      const xt = []; for (let k = Math.ceil(IX.k0 / 10000) * 10000; k <= IX.k0 + IX.n * IX.kw; k += 10000) xt.push([XI(k), kk(k)]);
+      const stepV = (ivHi - ivLo) > 40 ? 20 : 10, vi = []; for (let v = ivLo; v <= ivHi; v += stepV) vi.push([ZI(v), v + '%']);
+      const S = Scene(box, c, key, ZS, function (S) {
+        const cx = S.ctx, small = S.W < 520, top = S.pit > 1.3, m = S.m, aF = cl(m * 2.4), a2 = cl(1 - m * 2.6), ys = Yi(rs), o = order(S), yE = o.cy >= 0 ? A : -A, h = S.hov;
+        const yt = EI.map((e, r) => [Yi(r), md(e.d), r === rs]);
+        floor(S, xt, yt, aF); vaxis(S, ys, vi, a2);
+        if (aF > .01) { cx.save(); cx.globalAlpha = aF; line(cx, [S.proj(XI(Q.spot), -A, 0), S.proj(XI(Q.spot), A, 0)], rgb(P.c4, .9), 1.2); cx.restore(); }
+        if (a2 > .02) { cx.save(); cx.globalAlpha = a2; line(cx, [S.proj(XI(Q.spot), ys, 0), S.proj(XI(Q.spot), ys, ZS * .96)], rgb(P.c4, .9), 1.2, [4, 4]); cx.restore(); }
+        field(S, F, aF);
+        const jr = ni - 1 - rs, pr = []; for (let i = 0; i <= IX.n; i++) if (F._OK[jr * F.nx + i]) pr.push(F._P[jr * F.nx + i]); if (pr.length > 1) line(cx, pr, rgb(P.ink), 1.7);          /* 選到的到期日：平面時就是那條微笑曲線 */
+        if (m < .3) for (let i = 0; i < IX.n; i++) { if (!F._OK[jr * F.nx + i] || !F._OK[jr * F.nx + i + 1]) continue; S.hit([F._P[jr * F.nx + i], F._P[jr * F.nx + i + 1], S.proj(-1 + 2 * (i + 1) / IX.n, ys, 0), S.proj(-1 + 2 * i / IX.n, ys, 0)], [i, jr]); }          /* 平面時曲線下面整條直帶都可以點 */
+        const atm = EI.map((e, r) => { const f = (e.f - IX.k0) / IX.kw, i = cl(Math.floor(f), 0, IX.n - 1), u = cl(f - i), a = e.iv[i], b = e.iv[i + 1], v = a == null || b == null ? e.atm : a + (b - a) * u; return S.proj(XI(cl(e.f, IX.k0, IX.k0 + IX.n * IX.kw)), Yi(r), ZI(v) + .01); });
+        if (aF > .01) { cx.save(); cx.globalAlpha = aF; line(cx, atm, rgb(P.ink), 1.4); cx.restore(); }
+        ticks(S, xt, yt, aF);
+        const e0 = EI[rs];
+        if (h) { const p = F._P[h[1] * F.nx + h[0]]; cx.beginPath(); cx.arc(p[0], p[1], 5.6, 0, TAU); cx.fillStyle = rgb(P.bg); cx.fill(); cx.beginPath(); cx.arc(p[0], p[1], 3.6, 0, TAU); cx.fillStyle = rgb(P.ink); cx.fill(); }
+        else { note(S, atm[rs], md(e0.d) + T(' 平值 ', ' ATM ') + e0.atm + '%', { up: small ? 30 : 40, dx: 44 });
+          if (!top && e0.iv[0] != null && e0.iv[IX.n] != null) { const pl = S.proj(-1, Yi(rs), ZI(e0.iv[0])), q = S.proj(1, Yi(rs), ZI(e0.iv[IX.n])); label(S, T('賣權端 ', 'Put wing ') + e0.iv[0] + '%', pl[0] + 34 * o.cy, pl[1] - 12, { px: small ? 9.5 : 10.5, col: rgb(P.ink) }); label(S, T('買權端 ', 'Call wing ') + e0.iv[IX.n] + '%', q[0] - 30 * o.cy, q[1] - 12, { px: small ? 9.5 : 10.5, col: rgb(P.ink) }); } }
+        const sp = S.proj(XI(Q.spot), yE, 0), st = S.proj(XI(Q.spot), ys, ZS * .96); label(S, T('現價 ', 'Spot ') + usd(Q.spot), lerp(sp[0], st[0], a2), lerp(sp[1] + (small ? 36 : 30), st[1] - 10, a2), { px: small ? 9.5 : 10.5, col: rgb(P.c4) });
+      }, info);
+      slider(box, '到期日', 'Expiry', ni - 1, rs, r => md(EI[r].d) + T(' 到期 · 平值 ', ' · ATM ') + EI[r].atm + '%', r => { rs = r; c._d3c = EI[r].d; S.dirty(); });
+      return S;
+    }
+    const KIND = { terr, opt: optOI, iv: optIV };
     window.DAYBREAK_D3 = reg;          /* 檢查用（tests、主控台）：每張立體圖的場景 */
     return {
       mount(box, c, key) { if (reg[key]) reg[key].kill(); readPal(); return (reg[key] = KIND[c.d3.kind](box, c, key)); },
       go(key, v) { const s = reg[key]; if (s) s.go(v); },
       repaint() { readPal(); Object.keys(reg).forEach(k => { if (reg[k].cv.isConnected) reg[k].dirty(); else { reg[k].kill(); delete reg[k]; } }); },          /* 換頁之後不在畫面上的場景順手清掉 */
       views: () => [['flat', '平面', 'Flat'], ['ob', '立體', '3D'], ['top', '俯瞰', 'Top']],
-      legend: c => c.d3.kind === 'terr' ? [['dn', '成本在當週價格上方（套牢）', 'Cost above that week\'s price (underwater)'], ['up', '成本在當週價格下方', 'Cost below that week\'s price']] : [],
+      legend: c => c.d3.kind === 'terr' ? [['dn', '成本在當週價格上方（套牢）', 'Cost above that week\'s price (underwater)'], ['up', '成本在當週價格下方', 'Cost below that week\'s price']]
+        : c.d3.kind === 'opt' ? [['ink', '各到期日的最大痛點', 'Max pain by expiry'], ['c4', '現價', 'Spot']]
+        : c.d3.kind === 'iv' ? [['#D69A1E', '越高越暖＝隱含波動率越高', 'Warmer = higher implied volatility'], ['ink', '粗線：平值、選到的到期日', 'Bold lines: at the money, selected expiry'], ['c4', '現價', 'Spot']] : [],
       reg
     };
   })();
@@ -3345,13 +3441,15 @@ function initOC() {
     let tcv = null; try { if (isT(c) && !c.na) tcv = CV(tone(s, hero(s))); } catch (e0) { tcv = null; } const tcol = ''; ol.dataset.kind = ''; const sayH = c.na ? '' : sayHtml(s), sigH = c.na ? '' : sigHtml(c), howH = howHtml(c);
     const hk = c.na ? '' : s.hz ? T(s.hz, s.he) : isT(c) && hero(s).zh && hero(s).zh !== c.zh ? T(hero(s).zh, hero(s).en) : '';
     const src = c.src ? T(c.src, c.srce) : '', e2 = enName(c), chi = /^q_/.test(c.k || '') ? CHI(c.k.slice(2)) : '', head = `<div class="ol-t${e2 ? ' e2' : ''}">${chi ? ICS(chi, 'ch') : ''}<h4 class="ol-n">${esc(T(c.zh, c.en))}</h4>${e2 ? `<span class="ol-e" lang="en">${esc(e2)}</span>` : ''}${src ? `<span class="ol-src" title="${esc(src)}">${esc(src)}</span><button type="button" class="src-b" data-src="${esc(T('資料來源：', 'Source: ') + src)}" aria-label="${esc(T('資料來源：', 'Source: ') + src)}">${IC('src')}</button>` : ''}${c.go ? `<button type="button" class="fx-b go" data-chid="${c.go}"${ib('看這一頁', 'Open this page')}>${IC('go')}</button>` : flat && !c.na && !c.nofx ? `<button type="button" class="fx-b" data-fx="${key}"${ib('展開這張圖', 'Expand this chart')}>${IC('expand')}</button>` : ''}</div>${md || d3b || pg || lqb || rgb || lyb ? `<div class="ol-ctl">${md}${d3b}${pg}${lqb}${rgb}${lyb}${more}</div>` : ''}`, big = `${hk ? `<span class="ol-k">${esc(hk)}</span>` : ''}<div class="ol-big"${tcol}><span class="odo" id="oc-b${key}"></span><span class="ol-u" id="oc-u${key}"></span><small id="oc-d${key}"></small></div>${stat(s, c)}${pairHtml(s, c)}${sayH}${sxl(s, c)}`;
+    const d3lg = d3on ? D3.legend(c).map(q => '<span><i class="box" style="--c:' + CV(q[0]) + ';--c2:' + CV(q[0]) + '"></i>' + esc(T(q[1], q[2])) + '</span>').join('') : '';
+    const d3Put = () => { D3.mount($('#oc-c' + key), c, key); const sc9 = ol.querySelector('.d3-sc'); if (sc9 && c.d3.srcz) sc9.insertAdjacentHTML('afterend', '<p class="d3-n">' + esc(T(c.d3.srcz, c.d3.srce)) + '</p>'); };   /* ㉛ 立體檢視：原本的數字、說明、圖例都還在，只換圖的那一格 */
     let L = null;
     if (c.na) ol.innerHTML = head + `<div class="ol-na"><b>${ICS('nodata')}${T('資料沒來', 'No data')}</b><p>${esc(T(c.na.zh, c.na.en))}</p></div>`;
     else if (c.sim) simCard(ol, c, key, head);
-    else if (c.list || c.grid || c.xy || c.strip) { ol.innerHTML = head + (c.hs ? big : c.hz ? `<span class="ol-k">${esc(T(c.hz, c.he))}</span>` : '') + `${howH}` + (c.list ? listHtml(c) : c.grid ? gridHtml(c) : c.strip ? stripHtml(c) : `<p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c" id="oc-c${key}"></div>`); tidy(ol, sayH, sigH); if (c.xy) xyChart($('#oc-c' + key), c, key); if (c.hs) { const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); } }
+    else if (c.list || c.grid || c.xy || c.strip) { ol.innerHTML = head + (c.hs ? big : c.hz ? `<span class="ol-k">${esc(T(c.hz, c.he))}</span>` : '') + `${howH}` + (c.list ? listHtml(c) : c.grid ? gridHtml(c) : c.strip ? stripHtml(c) : `${d3on ? `<div class="ol-lg">${d3lg}</div>` : ''}<p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c${d3on ? ' d3' : ''}" id="oc-c${key}"></div>`); tidy(ol, sayH, sigH); if (c.xy && d3on) d3Put(); else if (c.xy) xyChart($('#oc-c' + key), c, key); if (c.hs) { const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); } }
     else if (c.dist) { const hlg = c.dist.heat ? `<span>${T('少', 'Less')}<i class="vir"></i>${T('多', 'More')}</span><span>${T('推算的待清算量：收盤下方是多單、上方是空單', 'Estimated BTC awaiting liquidation: longs below the close, shorts above')}</span><span><i class="box" style="--c:var(--up);--c2:var(--dn)"></i>${c._lq && c._lqx ? T('每日 K 線', 'Daily candles') : T('每小時 K 線', 'Hourly candles')}</span><span>${T('右欄：現在各價位的量', 'Right panel: amount at each price now')}</span>${(G9 => `<span><i style="--c:var(--up);--c2:var(--up)"></i>${T('空單累計（收盤往上到 ', 'Shorts, cumulative (close up to ') + PXL(G9.pHi) + T('）', ') ') + fm('btc0', Math.round(G9.totS))}</span><span><i style="--c:var(--dn);--c2:var(--dn)"></i>${T('多單累計（收盤往下到 ', 'Longs, cumulative (close down to ') + PXL(G9.pLo) + T('）', ') ') + fm('btc0', Math.round(G9.totL))}</span>`)(lqGeo(c._lq && c._lqx ? c._lqx : c.dist.heat))}` : c.dist.leg.concat(d3on ? D3.legend(c) : []).map(q => `<span><i class="box" style="--c:${CV(q[0])};--c2:${CV(q[0])}"></i>${esc(T(q[1], q[2]))}</span>`).join('');
       ol.innerHTML = head + big + `${howH}<div class="ol-lg">${hlg}</div><p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c${c.dist.heat ? ' lqh' : ''}${d3on ? ' d3' : ''}" id="oc-c${key}"></div>`; tidy(ol, sayH, sigH);
-      if (d3on) { D3.mount($('#oc-c' + key), c, key); const sc9 = ol.querySelector('.d3-sc'); if (sc9 && c.d3.srcz) sc9.insertAdjacentHTML('afterend', `<p class="d3-n">${esc(T(c.d3.srcz, c.d3.srce))}</p>`); }   /* ㉛ 立體檢視：原本的數字、說明、圖例都還在，只換圖的那一格 */
+      if (d3on) d3Put();
       else L = c.dist.heat ? liqHeat($('#oc-c' + key), c, key) : distChart($('#oc-c' + key), c, key); const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); }
     else { ol.dataset.kind = 't'; ol.innerHTML = `<div class="ol-a">${head}${big}${howH}</div><div class="ol-b"><div class="ol-lg">${LG.map(e => e.html).join('')}</div><div class="ol-c" id="oc-c${key}"></div></div>`; tidy(ol, sayH, sigH); L = leadChart($('#oc-c' + key), c, key, t0); }
     { const art = ol.closest('.fc'); if (art) art.style.setProperty('--tc', tcv || 'var(--k2)'); }
@@ -3876,7 +3974,7 @@ function initOC() {
     if ((b = t.closest('[data-src]'))) { toast(b.dataset.src); return; }   /* ㉑ 4：手機點來源圖示 */
     if ((b = t.closest('.sy-d'))) { b.closest('.ol-say').classList.toggle('open'); return; }
     if (fx && t.closest('#oc-fx') && !$('#oc-fx').dataset.drag && !t.closest('button, a, summary, details, input, .ol-c, .or')) { closeFx(); return; }
-    if (!fx && (b = t.closest('.fc')) && !t.closest('button, a, summary, details, input')) { const q1 = b.querySelector('[data-chid]'), f1 = b.querySelector('[data-fx]'); if (q1) { q1.click(); return; } if (f1) { openFx(f1.dataset.fx); return; } }
+    if (!fx && (b = t.closest('.fc')) && !t.closest('button, a, summary, details, input, .ol-c.d3, .d3-sc')) {   /* ㉛ 立體圖上的點和拖是選柱子、轉角度，不是展開卡片 */ const q1 = b.querySelector('[data-chid]'), f1 = b.querySelector('[data-fx]'); if (q1) { q1.click(); return; } if (f1) { openFx(f1.dataset.fx); return; } }
     if (t.closest('[data-fxl]') && fx) { copyLink(G[fx.k - 1].charts[fx.i].k); return; }
     if (t.closest('[data-fxd]') && fx) { const c0 = G[fx.k - 1].charts[fx.i]; savePng(c0.k, T(c0.zh, c0.en)); return; }
     if (t.closest('[data-fxm]')) { const f = $('#oc-fx'); f.classList.toggle('max'); fxBtns(); renderLead('F'); return; }

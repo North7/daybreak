@@ -102,6 +102,12 @@ def build(L, N, E, dn):
     X['strike'] = dict(k='strike', zh='履約價分布', en='Open interest by strike', hz='最大痛點（%s 到期）' % op['strikes']['expiry'][5:].replace('-', '/'), he='Max pain (%s expiry)' % op['strikes']['expiry'][5:].replace('-', '/'),
       dist=dict(kind='split', rows=op['strikes']['rows'], unit='n', la=['賣權', 'Puts'], lb=['買權', 'Calls'], leg=[['dn', '賣權未平倉', 'Put open interest'], ['up', '買權未平倉', 'Call open interest']]),
       hs=dict(v=op['strikes']['maxpain'], f='usd0'), dz='主要到期日在各個履約價的未平倉量，左邊是賣權、右邊是買權。量大的履約價在到期前常常變成關卡。', de='Open interest by strike for the main expiry: puts on the left, calls on the right. Strikes with large open interest often act as levels into expiry.')
+    og = (L['deriv'].get('options') or {}).get('grid')
+    if og and len(og.get('exps') or []) >= 3:   # 立體檢視（2026-11-16，規則見 page.html ㉛）：同一張卡多一個檢視，原本的圖是第一個、打開時還是它
+        X['strike']['modes'] = [dict(mz='單一到期', me='One expiry'), dict(mz='全部到期', me='All expiries')]
+        X['strike']['d3'] = dict(kind='opt', spot=og['spot'], k0=og['k0'], kw=og['kw'], nk=og['nk'], sel=op['strikes']['expiry'], exps=[{k: e[k] for k in ('d', 'dte', 'c', 'p', 'tc', 'tp', 'pain', 'top')} for e in og['exps']],
+                                 srcz='「全部到期」把未平倉 2,000 顆以上的到期日排成一排，每 $2,000 一格，只畫 $%dk 到 $%dk；平面是其中一個到期日，賣權在下、買權疊在上。' % (og['k0'] // 1000, (og['k0'] + og['nk'] * og['kw']) // 1000),
+                                 srce='"All expiries" lines up every expiry with at least 2,000 BTC of open interest, in $2,000 buckets from $%dk to $%dk; the flat view is one expiry, puts at the bottom and calls stacked on top.' % (og['k0'] // 1000, (og['k0'] + og['nk'] * og['kw']) // 1000))
     gn = [r for r in g['rows'] if abs(r[0] / float(g.get('spot') or close) - 1) <= .10]; gk = ([max(gn, key=lambda r: r[2])[0]] if gn and max(r[2] for r in gn) > 0 else []) + ([min(gn, key=lambda r: r[2])[0]] if gn and min(r[2] for r in gn) < 0 else [])   # 照現有網站：現價 ±10% 內最大的正 Gamma 和最大的負 Gamma 用全色，其餘暗掉
     X['gex'] = dict(k='gex', zh='Gamma 曝險（推算）', en='Gamma exposure (estimated)', hz='全部合計，百萬美元／1%', he='Total, $M per 1% move',
       dist=dict(kind='sign', pg=0, rows=[[r[0], r[2]] for r in g['rows']], keys=gk, unit='m', la=['為負：放大波動', 'Negative: amplifies'], lb=['為正：定住價格', 'Positive: pins'], leg=[['up', 'Gamma 為正（定住價格）', 'Positive gamma (pins price)'], ['dn', 'Gamma 為負（放大波動）', 'Negative gamma (amplifies moves)'], ['k2', '亮的兩條：現價 ±10% 內最大的正、負 Gamma', 'Bright bars: largest positive and negative gamma within ±10%']]),
