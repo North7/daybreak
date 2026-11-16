@@ -95,6 +95,9 @@ def shoot_share(ws, view, k, it):
         if 'd3' in it and not S.wait(ws, '!!(window.__d3 && window.__d3.ready)', 20): return None, '立體檢視沒畫出來（__d3.ready 一直是 false）'
         time.sleep(1.2)
         r = ws.call('Page.captureScreenshot', format='png')
+        # 2026-11-16：截完再核對一次還停在這張圖（網址的 k 和放大檢視的 data-ck 都要對）。頁面中途被換掉就不交出這張，免得把別張圖或首頁當成配圖
+        same = ws.js(f'(function(){{var m=location.search.match(/[?&]k=([^&]+)/); return !!(m && decodeURIComponent(m[1])==={json.dumps(k)} && document.querySelector({q}));}})()')
+        if not same: return None, '截圖當下頁面已經不是這張圖（被別的程式切走？），這張不算'
         return base64.b64decode(r['data']), f'{W} x {H}（分享模式 {"4:5" if r45 else "16:9"}）'
     finally:
         ws.call('Emulation.setDeviceMetricsOverride', **view); time.sleep(0.3)
