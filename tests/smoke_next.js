@@ -20,7 +20,7 @@ const ROOT = process.env.ROOT || 'http://localhost:8765/';
     const nav = w >= 701 ? '#oc-crumb' : '#oc-tab', n = await p.$$eval(nav + ' [data-ch]', s => s.length); let cards = 0;
     for (let i = 0; i < n; i++) {
       await p.evaluate(([s, k]) => document.querySelector(s + ' [data-ch="' + k + '"]').click(), [nav, i]); await p.waitForTimeout(900);
-      const st = await p.evaluate(() => ({ front: (document.querySelector('#oc-st .os.front') || {}).dataset?.k, fc: document.querySelectorAll('#oc-secs .fc').length, sw: document.documentElement.scrollWidth }));
+      const st = await p.evaluate(() => ({ front: (document.querySelector('#oc-st .os.front') || {}).dataset?.k, fc: document.querySelectorAll('#oc-secs .fc, #oc-secs .fr').length,   /* ㉞ 手機上收成清單列的圖也算 */ sw: document.documentElement.scrollWidth }));
       if (String(st.front) !== String(i)) bad(`${lang} ${w}px 第 ${i} 頁：前面那張是 ${st.front}`);
       if (!st.fc) bad(`${lang} ${w}px 第 ${i} 頁：沒有卡片`);
       if (st.sw > w + 1) bad(`${lang} ${w}px 第 ${i} 頁：橫向溢出 ${st.sw}px`);
