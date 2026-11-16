@@ -1,0 +1,874 @@
+{
+"dawn": {
+"hz": [
+"圖上：每週的週期熱度（0–100），以 50 為中線：熱度高於 50 往上長成暖色的山（琥珀 → 越接近頂越紅），低於 50 往下長成冷色的谷（淺藍 → 越接近底越深藍）；顏色和週線多空分數的階段色同一套。網點越靠中線越大越密。上方細線指的是歷次頂，下方指的是歷次底。熱度 ≥ 80 黃昏、≤ 10 深夜；滑過去看那一週的熱度、方向與價格。",
+"怎麼看：熱度是估值，回答「離頂部、底部多遠」；方向是趨勢，回答「現在往哪走」。熱度低又翻多（破曉）歷史上之後一年最好；熱度高（黃昏）之後一年大約持平、下跌機率接近一半。",
+"小心：近兩輪鏈上估值都比價格先見頂，黃昏常提早出現；只有三輪多完整週期，統計只是歷史描述，不是訊號。"
+],
+"he": [
+"WhatWeekly cycle heat (0–100) around a midline at 50: above 50 it grows up into warm hills (amber, turning red near tops), below 50 down into cool valleys (light blue, turning deep blue near bottoms); the colours are the same stage colours as the weekly regime score. Dots get larger and denser toward the midline. Lines above point to past tops, lines below to past bottoms. Heat ≥ 80 is Dusk, ≤ 10 Deep night; hover for that week's heat, trend and price.",
+"ReadingHeat is valuation, answering \"how far from a top or bottom\"; trend answers \"which way now\". Low heat with a bullish flip (Daybreak) has had the best year ahead; high heat (Dusk) has been roughly flat a year later, with close to even odds of a fall.",
+"CaveatIn the last two cycles valuations peaked before price, so Dusk tends to come early; with only three-plus full cycles the stats describe history and are not a signal."
+]
+},
+"levels": {
+"hz": [
+"圖上：BTC 價格和七條線：200 日、365 日、50 週均線，短期持有者成本、真實市場均價、實現價、長期持有者成本。",
+"怎麼看：價格在線上＝這批買家或這段趨勢整體獲利；好幾條線擠在一起的價位，常被當成支撐或壓力來看。價格跌破一條線，代表那一批人轉為虧損。",
+"小心：線會隨時間移動；「支撐」是常見的讀法，不保證守得住。均線和成本線來自不同資料（統一收盤與 Bitview）。"
+],
+"he": [
+"WhatBTC price and seven lines: the 200-day, 365-day and 50-week averages, the short-term holder cost basis, true market mean, realized price and long-term holder cost basis.",
+"ReadingPrice above a line means that group of buyers, or that trend, is in profit; where several lines bunch up is often read as support or resistance. A break below a line means that group turns to a loss.",
+"CaveatThe lines move over time; “support” is a common reading, not a guarantee. Moving averages and cost bases come from different data (standard close and Bitview)."
+]
+},
+"etf": {
+"hz": [
+"圖上：美國現貨 BTC ETF 每日淨流量（百萬美元）；淡色是暫定或未完整。最近這段同方向的日子和更早 60 天內最大的一天用全色並標出金額，其餘暗掉。",
+"怎麼看：看連續方向與 5–7 日合計，比單日重要；連續流入代表傳統資金在買。",
+"小心：資料（CoinMarketCap，2026-11-11 起）晚 1–2 個交易日，沒有 MSBT；單日大筆常是個別基金調倉。"
+],
+"he": [
+"WhatDaily net flows into US spot BTC ETFs ($M); faded bars are provisional or incomplete. The latest run of same-direction days and the biggest earlier day in the 60 are drawn in full colour with their amounts; the rest is dimmed.",
+"ReadingStreaks and 5–7 day totals matter more than single days; sustained inflows mean traditional money is buying.",
+"CaveatData (CoinMarketCap, from 2026-11-11) lags 1–2 trading days and has no MSBT; single big days are often one fund rebalancing."
+]
+},
+"fh": {
+"hz": [
+"圖上：上格價格；下格是多家永續以未平倉加權的資金費率，年化 % 的 7 日平均。綠＝正（多方付費給空方）、紅＝負（空方付費），虛線是 30%。",
+"怎麼看：費率越高＝做多的人越願意付錢，槓桿多單越擁擠；轉負＝空方擁擠或多單已被洗掉。極端值比方向更有參考價值。",
+"小心：每日值是當天費率的（開＋高＋低＋收）÷ 4，和「永續資金費率」的即時快照不同；Hyperliquid 2024-10 起才有。統計只是歷史描述，不是訊號。"
+],
+"he": [
+"WhatPrice on top; below, the open-interest-weighted funding rate across perpetuals, 7-day average, annualized. Green = positive (longs pay shorts), red = negative (shorts pay); the dashed line is 30%.",
+"ReadingHigher funding = longs willing to pay more, leveraged longs more crowded; negative = shorts crowded or longs already flushed. Extremes say more than the direction.",
+"CaveatDaily values use (open + high + low + close) ÷ 4, so they differ from the live \"Perpetual funding\" snapshot; Hyperliquid joins in 2024-10. The stats describe history, not a signal."
+]
+},
+"basis": {
+"hz": [
+"圖上：橫軸是到期天數，縱軸是期貨相對現貨的年化溢價。",
+"怎麼看：正常是遠月高於近月；整體 >10% 代表槓桿多頭擁擠，接近 0 或近月高於遠月（倒掛）代表恐慌或去槓桿。",
+"小心：7 天內到期的合約雜訊大，已排除。"
+],
+"he": [
+"WhatX axis: days to expiry; Y axis: annualized futures premium over spot.",
+"ReadingNormally longer expiries pay more; above 10% means crowded leveraged longs, near zero or inverted means fear or deleveraging.",
+"CaveatContracts within 7 days of expiry are noisy and excluded."
+]
+},
+"oih": {
+"hz": [
+"圖上：上格價格；下格是 11 個 BTC 永續合約的未平倉量合計（顆）。",
+"怎麼看：和價格一起看：價格跌、未平倉增＝逆勢開新倉，槓桿在堆；價格跌、未平倉減＝多單被清掉，槓桿在退。未平倉越高，之後清算時的波動通常越大。",
+"小心：以顆計：價格漲時同樣的美元會變少顆。合約陸續上線，長期增加有一部分是新合約。"
+],
+"he": [
+"WhatPrice on top; below, total open interest across 11 BTC perpetual contracts (BTC).",
+"ReadingRead it with price: price down with open interest up = new positions against the move, leverage building; price down with open interest down = longs cleared, leverage unwinding. Higher open interest usually means bigger swings when liquidations hit.",
+"CaveatIn BTC: the same dollars mean fewer coins when price rises. Contracts were added over time, so part of the long-run rise is new contracts."
+]
+},
+"lsa": {
+"hz": [
+"圖上：上格價格；下格是 Binance、Bybit 的 BTCUSDT 永續上持多單的帳戶占比（%）。紅色帶是 Binance 歷史前 10%、綠色帶是後 10%。",
+"怎麼看：常被當反向指標：大部分帳戶都做多時，價格容易往下洗；多數帳戶做空時，容易往上軋。讀值裡的統計檢查這個說法在這段期間成不成立。",
+"小心：算帳戶數、不是部位大小，比較像散戶情緒；只有 Binance、Bybit。"
+],
+"he": [
+"WhatPrice on top; below, the share of accounts long on Binance and Bybit BTCUSDT perpetuals (%). The red band is Binance's top 10%, the green band its bottom 10%.",
+"ReadingOften read as a contrarian gauge: when most accounts are long, price tends to flush them; when most are short, squeezes follow. The stats in the reading check how well that held in this period.",
+"CaveatIt counts accounts, not size, so it is closer to retail sentiment; Binance and Bybit only."
+]
+},
+"lqv": {
+"hz": [
+"圖上：每天實際被強制平倉的 BTC 永續：往上是空單、往下是多單（美元，平方根壓縮刻度），上格是價格。",
+"怎麼看：多單清算集中＝下跌時槓桿多單被迫賣出，常出現在急跌；空單清算集中＝上漲時被迫買回，常出現在軋空。看近 30 天哪一邊多，比單日更穩。",
+"小心：交易所公開的清算資料會少報（Binance 每秒只推一筆；Hyperliquid 沒有、Deribit 停在 2023 年），總額只是下限；比例比總額可靠。"
+],
+"he": [
+"WhatBTC perpetual positions actually force-closed each day: shorts up, longs down (USD, square-root scale), price on top.",
+"ReadingClusters of long liquidations = leveraged longs forced to sell into a drop; short clusters = forced buying into a squeeze. The 30-day balance is steadier than any single day.",
+"CaveatExchange liquidation feeds under-report (Binance one per second; nothing from Hyperliquid, Deribit stopped in 2023), so totals are a floor; the long/short balance is more reliable than the size."
+]
+},
+"vol": {
+"hz": [
+"圖上：上格是 BTC 價格；下格 DVOL＝Deribit 選擇權隱含的未來 30 天年化波動，RV30＝過去 30 天實際波動，兩條線之間綠＝隱含比實際高、紅＝實際比隱含高。",
+"怎麼看：DVOL 高於 RV30＝市場花錢買保護、預期波動變大；兩者都在低檔＝波動壓縮，常在大行情之前。",
+"小心：波動率不告訴你方向。"
+],
+"he": [
+"WhatTop: BTC price. Bottom: DVOL = implied 30-day annualized volatility from Deribit options; RV30 = realized volatility over the past 30 days; the gap is green when implied is higher and red when realized is higher.",
+"ReadingDVOL above RV30 means traders pay up for protection and expect bigger moves; both low means compressed volatility, which often precedes a big move.",
+"CaveatVolatility says nothing about direction."
+]
+},
+"ivt": {
+"hz": [
+"圖上：每條線是一天收盤後的快照：橫軸是距離到期的天數（越往右越遠，刻度前密後疏），縱軸是那個到期日的價平隱含波動。金線是今天，虛線是 7 天前、點線是 30 天前（存夠天數才會出現）。",
+"怎麼看：正常是往右上升（遠月較貴）。左端翹起、近月比遠月貴就是倒掛（淡色底），代表市場覺得眼前幾天的風險比較大，常見於急跌、清算潮或大事件前後。",
+"小心：隱含波動是從選擇權價格反推的預期波動幅度，不分漲跌。Deribit 沒有免費的歷史曲線，本站 2026/11/07 起每天存一條。只作讀值。"
+],
+"he": [
+"WhatEach line is a snapshot after a daily close: across is days to expiry (further right is further out, spaced tighter at the far end), up is the at-the-money implied volatility for that expiry. Gold is today; dashed is a week ago and dotted 30 days ago (they appear once enough days are saved).",
+"ReadingNormally the line rises to the right (longer dated costs more). When the left end lifts above the far end it is inverted (shaded): the market sees more risk in the next few days, as is common around sharp drops, liquidation waves or big events.",
+"CaveatImplied volatility is the expected size of moves backed out of option prices, not their direction. Deribit offers no free history of the curve, so the site has saved one daily since 2026/11/07. Reading only."
+]
+},
+"oi": {
+"hz": [
+"圖上：每個到期日的買權與賣權未平倉（顆）。",
+"怎麼看：未平倉最大的到期日接近時，價格常被吸向最大痛點；賣權多於買權（P/C > 1）＝避險需求高。",
+"小心：「最大痛點磁吸」只在大到期前幾天、價格本來就靠近時才明顯。"
+],
+"he": [
+"WhatCall and put open interest by expiry (BTC).",
+"ReadingAs the largest expiry nears, price often gravitates to max pain; more puts than calls (P/C > 1) means heavy hedging.",
+"CaveatThe max-pain pull only shows in the last few days before a big expiry, and only when price is already near."
+]
+},
+"prem": {
+"hz": [
+"圖上：每天主動買進買權付的權利金 − 主動買進賣權付的權利金：綠＝買權多，紅＝賣權多；金線是 7 日平均。",
+"怎麼看：長時間為正＝錢在押上漲；轉負＝搶買下跌保護，恐慌時常見，事後看常在相對低點附近（只代表過去）。",
+"小心：資料只有一年；只算主動買方；只有 Deribit。"
+],
+"he": [
+"WhatPremium paid by takers buying calls minus puts each day: green = calls lead, red = puts lead; the gold line is the 7-day average.",
+"ReadingPersistently positive means money is betting on upside; turning negative means a rush for downside protection, common in fear and often near relative lows in hindsight (past only).",
+"CaveatOnly a year of data; aggressive buyers only; Deribit only."
+]
+},
+"fng": {
+"hz": [
+"圖上：上格 BTC 價格，下格 alternative.me 恐懼貪婪指數（0–100）；紅底是極度恐懼（≤ 20）、綠底是極度貪婪（≥ 80）。",
+"怎麼看：情緒是反向參考：長時間極度貪婪常在過熱段，極度恐懼常在急跌中。2018 年以來第一次掉進極度恐懼之後的 30 天，多數還沒止跌。",
+"小心：指數由波動、成交量、社群、市值占比、搜尋熱度等合成，權重由 alternative.me 決定、可能調整；它反映的是已經發生的價格與情緒，不是預測。"
+],
+"he": [
+"WhatTop: BTC price; bottom: the alternative.me Fear & Greed Index (0–100). The red band is extreme fear (≤ 20), the green band extreme greed (≥ 80).",
+"ReadingSentiment is a contrarian reference: long stretches of extreme greed tend to come in overheated phases, extreme fear in sharp sell-offs. Since 2018, the 30 days after first dropping into extreme fear mostly had not bottomed yet.",
+"CaveatThe index blends volatility, volume, social activity, dominance and search trends with weights set (and possibly changed) by alternative.me; it reflects price and mood that already happened, not a forecast."
+]
+},
+"wiki": {
+"hz": [
+"圖上：上格 BTC 價格，下格英文維基百科「Bitcoin」條目的 7 日平均瀏覽量 ÷ 自己過去一年的中位數（對數刻度）；紅底是暴增（≥ 2.5 倍）。",
+"怎麼看：倍數突然衝高＝新手大量湧入在查資料，2017 年底、2020 年底到 2021 年都是；長時間在 1 倍附近或以下，代表散戶還沒回來。",
+"小心：只代表關注度，不分買賣：暴跌也會帶來暴增。只算英文版；中文圈、X、YouTube 的熱度看不到。"
+],
+"he": [
+"WhatTop: BTC price; bottom: 7-day average views of the English Wikipedia \"Bitcoin\" article ÷ its own past-year median (log scale). The red band marks spikes (≥ 2.5×).",
+"ReadingA sudden jump means newcomers flooding in to look things up, as in late 2017 and late 2020 into 2021; hovering around 1× or below means retail has not come back.",
+"CaveatAttention only, not direction: crashes bring spikes too. English Wikipedia only; Chinese-language, X and YouTube attention are not captured."
+]
+},
+"sx": {
+"hz": [
+"圖上：下格紅線是賣壓累積（0–100），青綠線是動能品質（0–1，畫在同一高度，0.3 對到 30）。青綠底是「底部組合」出現到賣壓回到 0 的那一段，膠囊是組合出現後 90 天的漲跌。",
+"怎麼看：動能品質看近 21 天漲跌是不是又快又穩；賣壓累積看弱勢拖了多久：急跌一兩天不會馬上到 100，要弱勢拖一段時間才會累積上去，一段又快又穩的上漲就清空。兩個一起到極端（賣壓 100、動能 < 0.3）時，過去常在一段下跌的後段，但短期常常還有一跌。",
+"小心：只用價格，不看鏈上；回測二十幾次，熊市初期多次失靈。動能高不是頂部訊號：過去多半是行情延續。"
+],
+"he": [
+"WhatBottom: the red line is the Sell Pressure Index (0–100), the teal line momentum quality (0–1, drawn on the same height, 0.3 at 30). Teal shading runs from each bottom combo to when pressure returns to 0; capsules show the next 90 days.",
+"ReadingMomentum quality asks whether the last 21 days moved fast and steadily; the Sell Pressure Index asks how long weakness has dragged on. A one- or two-day drop does not push it to 100 — weakness has to linger — and a fast, steady rally clears it. When both hit extremes (pressure 100, momentum < 0.3), it has tended to come late in a decline, though often with another leg down first.",
+"CaveatPrice only, no on-chain data; about twenty cases, and it failed repeatedly early in bear markets. High momentum is not a top signal: it usually meant continuation."
+]
+},
+"profit": {
+"hz": [
+"圖上：短期持有者中處於獲利的比例。",
+"怎麼看：長時間 > 90%＝過熱、容易回檔；跌到 50% 以下＝短期持有者普遍套牢，回調中常接近階段低點。",
+"小心：同一個數字在牛市回調和熊市裡意義不同。"
+],
+"he": [
+"WhatShare of short-term holder supply in profit.",
+"ReadingLong stretches above 90% mean overheating and pullback risk; below 50% means most short-term holders are underwater, often near a local low in a correction.",
+"CaveatThe same reading means different things in a bull correction and a bear market."
+]
+},
+"sopr": {
+"hz": [
+"圖上：STH-SOPR＝短期持有者當天賣出的幣「賣價 ÷ 買價」；灰線是價格，標記是每一次認賠的最低點。",
+"怎麼看：低於 1＝短期持有者賠錢賣（停損或恐慌）。價格回到前一次認賠的低點附近，SOPR 卻沒跌得更深＝願意認賠的人變少、賣壓遞減，常是階段性止跌的特徵；跌得更深＝賣壓加重。",
+"小心：日線（CheckOnChain，晚約 1 天）：盤中的集中認賠會被同一天其他人的獲利賣出平均掉，單日下殺不一定跌破 1；隔幾天內的兩次下殺可能算成同一次。只是讀值，不是買點。"
+],
+"he": [
+"WhatSTH-SOPR = sale price ÷ purchase price for coins short-term holders sold that day; the grey line is price, markers are the low of each loss-selling episode.",
+"ReadingBelow 1 means short-term holders are selling at a loss. When price revisits a previous loss-selling low but SOPR doesn't dip as deep, fewer holders are willing to sell at a loss — a common sign of a local bottom forming; a deeper dip means selling is getting heavier.",
+"CaveatDaily data (CheckOnChain, about 1 day late): intraday loss bursts get averaged out by the same day's profit-taking, so a sharp drop may not push it below 1, and two drops a few days apart may merge into one episode. A reading, not a buy signal."
+]
+},
+"pnlr": {
+"hz": [
+"圖上：短期持有者當天賣出時實現的獲利與虧損（顆，已平滑），分開兩條；灰線是價格。",
+"怎麼看：STH-SOPR 只是兩者合起來的比例，這張圖看是哪一邊在動：獲利線上升＝獲利了結變多，虧損線下降＝認賠變少；虧損線衝高＝集中認賠。",
+"小心：數值是 CheckOnChain 平滑過的，單日大額轉帳也會被算進去，要看幾天才算數。只是讀值，不是買點。"
+],
+"he": [
+"WhatProfit and loss short-term holders realized on coins sold (BTC, smoothed), as two separate lines; the grey line is price.",
+"ReadingSTH-SOPR only shows the two combined as a ratio; this chart shows which side moved: profit rising means more profit taking, loss falling means less loss selling, a loss spike means capitulation.",
+"CaveatValues are smoothed by CheckOnChain and a single large transfer can show up as a spike; wait a few days before reading much into it. A reading, not a buy signal."
+]
+},
+"sthsig": {
+"hz": [
+"圖上：下格兩條線：綠是止盈強度（往上）、紅是認賠強度（畫成負值、往下），虛線是門檻 ±2；超過門檻的期間鋪綠底或紅底，膠囊是那一段的最高值。",
+"怎麼看：綠底＝短期持有者集中獲利了結：在 200 日均線上方多半是行情延續，在均線下方多半是反彈被拿來出貨。紅底＝集中認賠：有人恐慌賣，但之後的漲跌和任一天差不多，不代表跌完了。",
+"小心：比的是和自己近 105 天比多不多，不是金額大小；逐筆 UTXO，交易所整理錢包也會造成單日尖峰。只是讀值，不是買賣訊號。"
+],
+"he": [
+"WhatTwo lines below: green is the profit-taking reading (upward), red the capitulation reading (drawn negative, downward); the dashed lines are the ±2 threshold. Periods beyond it are shaded green or red, and capsules give each period's peak.",
+"ReadingGreen shading = short-term holders taking profit in a burst: above the 200-day average it has mostly meant continuation, below it a rally being sold into. Red shading = a burst of loss selling: panic, but returns afterward look like any other day, so it does not mean the drop is over.",
+"CaveatIt measures how unusual today is against its own last 105 days, not size; per-UTXO data, so exchange wallet reshuffles can cause one-day spikes. A reading, not a trade signal."
+]
+},
+"conf": {
+"hz": [
+"圖上：上格：BTC 價格、短期持有者這 7 天賣出的幣的平均成本（紫）、還在持有的人的成本（橘）。下格：兩條成本線的差距 ÷ 收盤；綠＝≥ +0.05、紅＝≤ −0.05、黃底是轉換帶。",
+"怎麼看：綠色連續出現＝最近才進場的人沒急著賣、市場還接得住，常見於多頭主升段；紅色＝成本低的人也在賣，常見於急跌與熊市。由紅轉綠是信心回來的跡象，由綠轉黃常是動能變弱。",
+"小心：7 日平均、逐筆 UTXO、未做實體調整：交易所整理錢包或大額內部轉帳會讓單週跳一下。±0.05 是原作者自己說任意訂的轉換帶，不是精確門檻；轉負之後常是洗盤，不一定續跌。"
+],
+"he": [
+"WhatTop: BTC price, the average cost of coins short-term holders sold over 7 days (purple) and the cost of those still holding (orange). Bottom: the gap between the two ÷ close; green ≥ +0.05, red ≤ −0.05, the yellow band is the transition zone.",
+"ReadingSustained green means recent buyers are not rushing out and the market keeps absorbing supply, typical of the main leg of a bull run; red means even low-cost coins are selling, typical of crashes and bear markets. Red turning green signals returning confidence; green fading to yellow often means momentum is cooling.",
+"Caveat7-day average, UTXO-level, not entity-adjusted: exchange wallet shuffles or large internal transfers can make a single week jump. ±0.05 is a band the original author calls arbitrary, not a precise trigger; a turn negative is often a shake-out rather than a continued fall."
+]
+},
+"npl": {
+"hz": [
+"圖上：上層：BTC 價格與每天的淨實現損益氣泡（綠＝當天整體獲利賣出、紅＝認賠賣出，越大金額越大，粗外圈＝在之前一年最極端的 2%）；下層：同一數字的每日柱。切到「30 日累計」看週期級別：下層是 30 日累計佔市值的比例，紅線是之前 4 年最大 30 日淨獲利的 1/4（取負），橘圈是首次跌破。",
+"怎麼看：大綠泡集中在急漲與高點那幾天＝獲利了結；綠泡變小＝想在現價賣的人變少。回檔時出現大紅泡＝認賠出清，但不代表已經見底。",
+"小心：只有淨值（獲利減認賠），看不到兩邊各有多少；交易所內部轉帳也會實現損益。2015 起只用當天已知資料回測：認賠高峰之後的表現和平常差不多，不是買點；獲利高峰之後反而多半續漲（一輪比一輪弱），不是賣點。30 日累計首次跌破紅線（2015 起）：2015/01、2018/11、2020/03、2022/05、2022/11、2026/02、2026/06；2023 年以前的 5 次有 4 次 1 年後上漲（2022/05 那次 −7%），而且 2018/11、2022/05 之後還再跌 26%、46%。2026-11-04 起才改成這條線，是看過這一輪結果才定的，樣本只有 3–4 輪；舊規則（4 年第 3 百分位）沒有 2026 兩次，2022 年那次是 6/16。2028 年 3 月以後 2024/3 的獲利高點移出 4 年視窗，紅線會變淺到約 −1%。ETF 時代這個訊號可能變鈍：ETF 持有人在股市互相買賣不會移動鏈上的幣，只有淨贖回才會；這一輪最深的認賠只有同輪最大獲利的 3–4 成，前兩輪約 7 成。"
+],
+"he": [
+"WhatTop: BTC price with a bubble for each day's net realized profit/loss (green = net profit selling, red = net loss selling, bigger = larger, thick ring = most extreme 2% of the prior year); bottom: the same numbers as daily bars. Switch to “30-day total” for the cycle view: the bottom pane is the 30-day total as % of market cap, the red line minus a quarter of the prior 4 years' largest 30-day net profit, and orange rings the first breaches.",
+"ReadingBig green bubbles cluster on rallies and highs: profit taking; shrinking green bubbles mean fewer holders want to sell at this price. Big red bubbles on pullbacks are loss capitulation, which does not mean the low is in.",
+"CaveatNet only (profit minus loss), so the two sides are not visible separately; exchange-internal transfers also realize P/L. In tests since 2015 using only data known on the day, loss spikes were followed by ordinary returns (not a buy signal), and profit spikes were more often followed by further gains, weaker each cycle (not a sell signal). First breaches of the 30-day red line since 2015: 2015/01, 2018/11, 2020/03, 2022/05, 2022/11, 2026/02, 2026/06; 4 of the 5 before 2023 were higher a year later (2022/05 was −7%), and after 2018/11 and 2022/05 price still fell another 26% and 46%. The line was changed on 2026-11-04 after seeing this cycle, with only 3–4 cycles of history; the old rule (4-year 3rd percentile) missed both 2026 breaches and triggered 2022 on 6/16. After March 2028 the 2024/3 profit peak leaves the 4-year window and the line will rise to about −1%. The signal may be blunter in the ETF era: ETF shares changing hands on the stock market do not move coins on-chain, only net redemptions do; this cycle's deepest loss was only 30–40% of its largest profit, versus about 70% in the previous two."
+]
+},
+"agepl": {
+"hz": [
+"圖上：上格價格；下格是 30 天實現獲利（或虧損）裡，各持有時間組佔多少（加起來 100%）：越上面越新的幣（紅、琥珀），越下面越老的幣（藍）。",
+"怎麼看：獲利了結裡老幣（藍）變多＝長期持有者在賣，常在高點；認賠裡 6 個月以上的變多＝去年高價買進的人也撐不住了。",
+"小心：交易所內部搬幣會被算成賣出，單日的大搬家會讓某一組突然變大。"
+],
+"he": [
+"WhatTop: price. Bottom: each holding-time group's share of 30-day realized profit (or loss), summing to 100% — younger coins on top (red, amber), older below (blue).",
+"ReadingMore old coins (blue) in profit-taking = long-term holders selling, typical near highs; more 6m+ coins in loss-taking = last year's high-price buyers giving up.",
+"CaveatInternal exchange moves count as sales, so one big transfer can make a group jump."
+]
+},
+"rpl": {
+"hz": [
+"圖上：上格是 BTC 價格，下格是全網實現獲利 ÷ 實現虧損的 90 天平均（都是對數刻度）；1 以上綠、以下紅，紅底是低於 1 的期間。",
+"怎麼看：低於 1＝賣出的人整體在認賠，大段紅色都出現在熊市；回到 1 以上代表賣出的人又開始賺錢。歷史上大段紅色結束後，多半到週期頂部都沒再跌回 1 以下。",
+"小心：不是保證：2019/5 回到 1 以上後，2019/12–2020/1 又跌回 37 天。90 天平均反應慢，要搭配最近 7 天的每日比值看。"
+],
+"he": [
+"WhatTop: BTC price; bottom: network-wide realized profit ÷ realized loss, 90-day average (both log scale). Green above 1, red below; red bands mark the stretches below 1.",
+"ReadingBelow 1 means sellers as a whole are realizing losses; long red stretches all came in bear markets. Moving back above 1 means sellers are taking profits again; historically, after a long red stretch it mostly stayed above 1 until the cycle top.",
+"CaveatNot a guarantee: after returning above 1 in May 2019 it fell back below for 37 days in Dec 2019–Jan 2020. The 90-day average is slow; read it with the last 7 daily values."
+]
+},
+"rloss": {
+"hz": [
+"圖上：上格是價格：青綠圈是擺動低點，虛線連前後兩個低點（青綠＝背離、紅＝背離被打破、琥珀＝認賠放大）。下格是每天賣在虧損的總金額（百萬美元），灰柱是搬家日。",
+"怎麼看：價格破底、認賠卻變少＝願意賠錢賣的人變少，恐慌在退；價格破底、認賠更大＝恐慌在放大。",
+"小心：不是實體調整；擺動低點要等前後 7 天才確認，所以最近一週的判定是暫定的。"
+],
+"he": [
+"WhatTop: price — teal circles are swing lows, dashed lines join consecutive lows (teal = divergence, red = divergence broken, amber = loss grows). Bottom: total loss realized each day ($M); grey bars are internal-transfer days.",
+"ReadingA lower low with less loss-taking means fewer holders willing to sell at a loss — fear is fading; a lower low with more loss-taking means panic is growing.",
+"CaveatNot entity-adjusted; a swing low is confirmed only after 7 days, so the latest week is provisional."
+]
+},
+"ssr": {
+"hz": [
+"圖上：金線是全網賣方風險比，橘是短期持有者、紫是長期持有者（對數刻度）。青綠虛線是全網近 4 年最低 10% 的門檻（逐日變動），青綠底是落在低檔區的期間。",
+"怎麼看：很低＝賣的人少、賣價接近成本，市場在找新的平衡，常在盤整末端與底部區；很高＝大量獲利了結或恐慌認賠。長期持有者那條衝高，多半是老手在頂部出貨。",
+"小心：頂部的高點一輪比一輪低，固定門檻會失準，看的是在自己歷史裡的相對位置；逐筆 UTXO、不是實體調整。"
+],
+"he": [
+"WhatGold is the network sell-side risk ratio, orange short-term holders, purple long-term holders (log scale). The teal dashed line is the rolling 4-year bottom-10% threshold; teal shading marks time in the low zone.",
+"ReadingVery low = few sellers selling near cost, the market looking for a new balance, often late in consolidations and near bottoms; very high = heavy profit-taking or panic selling. A spike in the long-term holder line usually means seasoned holders distributing near a top.",
+"CaveatTop readings fall each cycle, so fixed lines go stale — read the position against its own history; per UTXO, not entity-adjusted."
+]
+},
+"sec": {
+"hz": [
+"圖上：上格是 BTC 價格，下格是賣方衰竭常數（都是對數刻度）；紅底是極端區（低於 0.13），紅圈是每次跌破後 90 天內的最低點。",
+"怎麼看：常數很低＝價格很平靜、同時很多人在虧損，想賣的人大多已經賣了，過去多出現在熊市底部或大跌後的整理期。跌破之後再出現、但沒有更低的低點，有人當成第二個訊號點。",
+"小心：不是精準的底：2018/11 跌破後價格又先跌了 50%；也不只出現在週期底部（2023/8 在牛市中段）。刻度和 Glassnode 版不同，0.01 的門檻不能套。"
+],
+"he": [
+"WhatTop: BTC price; bottom: the seller exhaustion constant (both log scale). The red band is the extreme zone (below 0.13); red circles mark the lowest point within 90 days of each break.",
+"ReadingA very low reading means calm prices while many holders are underwater, so most would-be sellers have sold; historically it shows up near bear-market bottoms or in post-crash consolidations. A later low that does not undercut the first is read by some as a second signal.",
+"CaveatNot a precise bottom: after the Nov 2018 break price fell another 50% first; nor only at cycle bottoms (Aug 2023 was mid-bull). The scale differs from Glassnode's, so the 0.01 line does not apply."
+]
+},
+"mom": {
+"hz": [
+"圖上：（SOPR − 1）× 每日銷毀幣天數的 14 日平均：綠（正）＝獲利了結的力道，紅（負）＝認賠。刻度壓縮過（大的數字被縮小）。膠囊是頂背離與之後 60 天內的最大跌幅。",
+"怎麼看：價格新高、綠色峰值卻變低＝推升的力量在衰減；2015 年起之後 60 天內最大跌幅中位數約 −21%，任一天約 −9%。",
+"小心：老錢包或交易所整理一次搬動大量老幣，單日銷毀幣天數會暴增，峰值要看整體形態，不看單日。"
+],
+"he": [
+"What14-day average of (SOPR − 1) × coin days destroyed: green (positive) = profit-taking force, red (negative) = loss-taking. The scale is compressed. Capsules mark bearish divergences and the max drawdown over the next 60 days.",
+"ReadingA higher price with a lower green peak means the push is fading; since 2015 the median max drawdown within 60 days afterwards is about −21% versus about −9% for any day.",
+"CaveatWhen old wallets or exchanges move large blocks of old coins, a single day's coin days destroyed spikes; read the overall shape, not one day."
+]
+},
+"lthrl": {
+"hz": [
+"圖上：上格是 BTC 價格，下格是長期持有者（持有 ≥155 天）帳面虧損的比例；紅圈是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這輪高點。",
+"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高，回升（價格回調）時常是牛初的加碼段。跌破虛線那一天，等於這個規律被打破。",
+"小心：不只受價格影響：最近高價買進的短期持有者滿 155 天後會被算成長期持有者，價格不漲也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
+],
+"he": [
+"WhatTop: BTC price; bottom: the share of long-term holder (155+ days) supply at a loss. Red circles mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak.",
+"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high, and its rebounds (price pullbacks) were often early-bull buying windows. A move above the dashed line would break that pattern.",
+"CaveatNot price alone: recent high-priced buyers become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
+]
+},
+"sthgap": {
+"hz": [
+"圖上：BTC 價格、短期持有者成本（橘）和上下各兩條標準差帶（對數刻度）。",
+"怎麼看：價格在 +1 標準差以上＝短期持有者獲利豐厚，過去常在這附近遇到賣壓（例如 2023 年 1–9 月：碰到 +1 標準差後，回踩到成本線或 −1 標準差）；跌到 −1 標準差以下＝短期持有者普遍套牢，多半是急跌後的恐慌區。",
+"小心：帶寬用近 4 年的價格起伏算，會隨時間改變；碰到帶不代表一定反轉。只有一家資料（Bitview），和 Glassnode 原版的數字會有小差距。"
+],
+"he": [
+"WhatBTC price, short-term holder cost (orange) and two standard-deviation bands on each side (log scale).",
+"ReadingAbove +1σ short-term holders sit on big gains and selling has often shown up nearby (e.g. Jan–Sep 2023: each touch of +1σ was followed by a pullback to the cost line or −1σ); below −1σ short-term holders are broadly under water, usually after a sharp drop.",
+"CaveatThe band width comes from the last 4 years of price swings and changes over time; touching a band does not mean a reversal. One data source (Bitview), so small differences from Glassnode's original are expected."
+]
+},
+"quant": {
+"hz": [
+"圖上：黑線是價格，彩色線是 0.45–0.85 分位成本線（對數刻度）：全部的幣依最後一次移動的價格排隊，第 q% 那顆的價格。青綠帶是 0.55–0.65，琥珀帶是 0.75–0.85；右側是每條線現在的數值。",
+"怎麼看：價格剛好在某條 q 線上＝約 q% 的幣在獲利。上方的線是套牢者回本想賣的地方（壓力），下方的線是很多人的成本（承接）。站上 0.75 之後常要一段時間消化，2023 年在線下壓了半年。",
+"小心：逐筆 UTXO、不是實體調整，交易所內部搬幣會讓線跳一下；線每天隨換手移動，不是固定價位。"
+],
+"he": [
+"WhatBlack is price; coloured lines are the 0.45–0.85 cost quantiles (log scale): line up every coin by the price it last moved at and take the coin at q%. The teal band spans 0.55–0.65, the amber band 0.75–0.85; current values sit on the right.",
+"ReadingPrice on a q line means about q% of coins are in profit. Lines above mark where trapped holders break even and may sell (resistance); lines below are where many paid (support). Clearing the 0.75 line usually takes time — in 2023 it capped price for half a year.",
+"CaveatPer-UTXO and not entity-adjusted, so internal exchange moves make the lines jump; they shift daily with turnover and are not fixed levels."
+]
+},
+"urpd": {
+"hz": [
+"圖上：每 2,000 美元一格：有多少顆 BTC 最後一次移動是在這個價位。橘色是收盤附近最厚的一團（連續 5 格），綠色是收盤另一側最薄的一段（連續 4 格），直線是收盤，其餘暗掉；滑過柱子看 7 天前。",
+"怎麼看：籌碼厚的價位常成支撐或壓力（買在那裡的人會防守或解套賣出）；籌碼薄的區間價格走得快。",
+"小心：交易所內部轉帳也會重設成本。"
+],
+"he": [
+"What$2,000 buckets: how many BTC last moved at each price. Orange is the thickest cluster near the close (5 buckets in a row), green the thinnest stretch on the other side (4 in a row), the vertical line is the close, and the rest is dimmed; hover a bar for 7 days ago.",
+"ReadingThick buckets often act as support or resistance (holders defend or sell to break even); price moves fast through thin zones.",
+"CaveatExchange-internal transfers also reset the cost basis."
+]
+},
+"cohort": {
+"hz": [
+"圖上：每 2,000 美元一格：左邊是持有不到 155 天的短期持有者（STH），右邊是長期持有者（LTH），橫線是收盤；灰底是過去 155 天價格走過的區間。切到「STH 變化／LTH 變化」看和約 30 天前比：灰條是當時，彩條是現在。",
+"怎麼看：短期持有者堆在收盤上方＝那批人帳面虧損，價格回到成本時容易解套賣出；堆在下方＝跌回去之前他們還在獲利，是第一道承接。長期持有者的堆動得慢，變少的格子代表那個成本的長期持有者在賣。",
+"小心：「現在」是 Bitview 依實際幣齡算的（取不到時退回 CheckOnChain，再不行才用推算）；「變化」是推算。都是逐筆 UTXO、不是實體調整，交易所整理錢包會被當成賣出再買進（單日大量又集中的搬家已放回原本的成本）；灰底區間外只有長期持有者。"
+],
+"he": [
+"What$2,000 buckets: short-term holders (held under 155 days) on the left, long-term holders on the right, the line is the close; the shaded band is the range price covered in the past 155 days. Switch to “STH change / LTH change” to compare with about 30 days ago: grey is then, colour is now.",
+"ReadingShort-term holders piled above the close are underwater and tend to sell when price returns to their cost; piled below, they stay in profit until price falls back, the first layer of support. Long-term holder piles move slowly; a shrinking bucket means long-term holders with that cost are selling.",
+"Caveat“Now” is Bitview's actual coin-age data (falls back to CheckOnChain, then to the estimate, if unavailable); “changes” are estimated. Both are per-UTXO, not entity-adjusted, so exchange wallet reshuffles look like selling and rebuying (large, concentrated one-day moves are put back at their original cost). Outside the shaded band there are only long-term holders."
+]
+},
+"conc": {
+"hz": [
+"圖上：上格是 BTC 價格，右緣是當天的籌碼分布（每 2,000 美元一格，紫＝長期持有者、橙＝短期持有者，越長越多），青綠色帶是現價 ±5%。下格是集中度：最後一次移動在當天收盤 ±5% 內的幣佔全部供給的比例（Bitview，2018 起），黃虛線以上是歷史前 10%，黃圈是每次首次衝上前 10%。",
+"怎麼看：比例上升＝越多人的成本擠在現價附近；價格離開這一帶時，買在這裡的人容易一起停損或一起解套，波動常放大。",
+"小心：只說波動可能變大，不說方向。URPD 以 2,000 美元一格估算、晚約 1 天；本站從 2026-10-01 才有紀錄，樣本太短，不設門檻。"
+],
+"he": [
+"WhatTop: BTC price, with the day's supply distribution on the right edge ($2,000 buckets; purple long-term holders, orange short-term holders; longer = more) and the ±5% band in teal. Bottom: concentration, the share of supply last moved within ±5% of that day's close (Bitview, since 2018); above the yellow dashed line is the historical top 10%, yellow rings mark each first entry.",
+"ReadingA rising share means more holders' cost basis is crowded near price; when price leaves the band they tend to cut or sell at break-even together, and volatility often expands.",
+"CaveatIt flags bigger moves, not direction. URPD uses $2,000 buckets and lags about a day; our record starts 2026-10-01, too short to set any threshold."
+]
+},
+"strike": {
+"hz": [
+"圖上：最大一次到期的每個履約價上，買權與賣權未平倉。",
+"怎麼看：買權堆積的價位常成上方壓力或目標，賣權堆積是下方保護；最大痛點＝到期時讓買方損失最大的價位。",
+"小心：未平倉看不出是買方還是賣方的部位。"
+],
+"he": [
+"WhatCall and put open interest at each strike for the largest expiry.",
+"ReadingCall clusters often act as resistance or targets, put clusters as downside protection; max pain is where option buyers lose the most at expiry.",
+"CaveatOpen interest doesn't tell you who is long or short."
+]
+},
+"gex": {
+"hz": [
+"圖上：每個履約價的 Gamma 曝險（百萬美元／價格變動 1%）：綠＝正（做市商逆勢對沖，吸住價格），紅＝負（順勢對沖，放大波動）。下方灰柱是籌碼分布，直線是現價。現價 ±10% 內最大的負 Gamma 和最大的正 Gamma 用全色並標出金額，其餘暗掉（切換主要到期／全部到期會重算）。",
+"怎麼看：現價附近正 Gamma 多＝價格容易被釘住；跌破正 Gamma 區、進入負 Gamma 區，波動容易放大；正 Gamma 剛好落在籌碼峰上＝衍生品和鏈上的支撐（或壓力）在同一個價位。",
+"小心：做市商的方向是用逐筆成交推算的，正負號可能和付費資料不同；到期日一過，那部分就消失。"
+],
+"he": [
+"WhatGamma exposure per strike ($M per 1% move): green = positive (dealers hedge against the move, pinning price), red = negative (they hedge with it, amplifying moves). Grey bars below are the supply distribution; the vertical line is spot. The biggest negative and the biggest positive gamma within ±10% of spot are drawn in full colour with their amounts; the rest is dimmed (recomputed when you switch between the main expiry and all expiries).",
+"ReadingLots of positive gamma near spot pins price; breaking out of a positive zone into a negative one lets volatility grow; positive gamma on a supply cluster means derivatives and on-chain support (or resistance) coincide.",
+"CaveatThe dealer side is inferred from trades, so signs may differ from paid data; each expiry's part disappears once it settles."
+]
+},
+"liq": {
+"hz": [
+"圖上：每一格是某個小時、某個價位推算還沒被清算的槓桿倉位量，越亮越多；疊的是小時 K 線（「2 年」是每天一欄、日 K 線），虛線是最後收盤。收盤下方是多單的清算價、上方是空單的。",
+"怎麼看：亮帶＝槓桿倉位堆積的價位。價格走到那裡會觸發強制平倉：多單強平是市價賣、空單強平是市價買，常讓行情在那一段走得更快；價格走過之後那一帶會變暗（被清掉）。",
+"小心：推算：Coinalyze 彙整的多家交易所未平倉量（取不到時只有 OKX），槓桿分布是假設，亮帶位置會隨假設移動；每天快照一次，不是即時；清算量多不代表價格會往那裡走。"
+],
+"he": [
+"WhatEach cell is the estimated leveraged position size still awaiting liquidation at that hour and price; brighter means more. Hourly candles on top (“2Y” uses one column and one candle per day), the dashed line is the last close. Long liquidation prices sit below the close, shorts above.",
+"ReadingBright bands are where leverage is stacked. Price reaching them triggers forced closes: longs are market-sold, shorts market-bought, which often speeds up the move through that zone; once price passes, the band goes dark (cleared).",
+"CaveatAn estimate: multi-exchange open interest compiled by Coinalyze (OKX only when unavailable), with an assumed leverage mix that moves the bands; a daily snapshot, not real time; more liquidations on one side does not mean price will go there."
+]
+},
+"k20": {
+"hz": [
+"圖上：近 20 天日 K；橫線是 20 日均線、價值區上緣、POC（成交最密集的價位）。",
+"怎麼看：價格在價值區內＝區間整理；突破上緣並站穩＝轉強；POC 常是磁吸點與支撐壓力。",
+"小心：價值區由日線估算，不是逐筆成交。"
+],
+"he": [
+"WhatDaily candles for 20 days; lines mark the 20-day average, the value-area top and the POC (busiest price).",
+"ReadingInside the value area means range trading; a hold above its top means strength; the POC often acts as a magnet and as support or resistance.",
+"CaveatThe value area is estimated from daily bars, not tick data."
+]
+},
+"regime": {
+"hz": [
+"圖上：上格是 BTC 價格，下格是每週的多空分數（−6 到 +6），柱子按階段上色：≥ +4 過熱（紅）、熊市後轉正的頭 26 週初牛（綠）、其餘正值牛（琥珀）、負值熊（淺藍）、≤ −4 極熊（深藍）。",
+"怎麼看：把六個看趨勢、估值、資金和獲利了結的訊號合成一個數字：正值對應牛市、負值對應熊市；柱子越長，六項越一致。分數在零軸附近（絕對值小於 1）代表訊號互相矛盾。",
+"小心：是本站自己的合成方法，不是任何不公開指標的複製。翻轉要連續 4 週才算，所以會晚幾週；2014/6、2021/8 的翻多一年後價格反而較低。"
+],
+"he": [
+"WhatTop: BTC price; bottom: the weekly regime score (−6 to +6), bars coloured by stage: ≥ +4 overheated (red), the first 26 positive weeks after a real bear early bull (green), other positive bull (amber), negative bear (light blue), ≤ −4 extreme bear (deep blue).",
+"ReadingSix trend, valuation, capital-flow and profit-taking signals combined into one number: positive stretches match bull markets, negative ones bear markets; longer bars mean the six agree more. Near zero (under 1 in size) the signals conflict.",
+"CaveatOur own composite, not a copy of any unpublished indicator. A flip needs 4 straight weeks, so it lags; the bullish flips of Jun 2014 and Aug 2021 saw lower prices a year later."
+]
+},
+"hnupl": {
+"hz": [
+"圖上：紫是長期持有者 NUPL、橘是短期持有者 NUPL；底色是長期持有者的五個階段（藍＝投降，往上依序到紅＝狂熱）。膠囊是歷次頂部、底部的讀數。",
+"怎麼看：長期持有者進到信念、狂熱（0.5 以上）是週期後段；跌回希望或投降是熊市。短期持有者在 0 附近上下，代表新進場的人在成本附近拉鋸。",
+"小心：頂部讀數一輪比一輪低、這一輪底部長期持有者沒有跌到虧損，階段門檻是常見分法、不是這一輪的定律。"
+],
+"he": [
+"WhatPurple is long-term holder NUPL, orange short-term holder NUPL; the shading marks the five long-term holder stages (blue = capitulation up to red = euphoria). Capsules show readings at past tops and bottoms.",
+"ReadingLong-term holders in belief or euphoria (above 0.5) is late cycle; falling back to hope or capitulation is a bear market. Short-term holders hovering around 0 means recent buyers are fighting at cost.",
+"CaveatTop readings fall each cycle and this cycle's long-term holders never went underwater at the bottom; the stage lines are a convention, not a law for this cycle."
+]
+},
+"aviv": {
+"hz": [
+"圖上：AVIV＝價格 ÷ 真實市場均價（對數刻度）；青綠底是 1 以下，膠囊是歷次頂部與底部。",
+"怎麼看：高於 1＝活躍投資人整體獲利，越高越接近過熱；低於 1＝活躍投資人整體虧損，熊市大多待在這裡。頂部一輪比一輪低、底部一輪比一輪高。",
+"小心：真實市場均價是推算的活躍資本成本（Cointime 模型），和一般的實現價格不同。"
+],
+"he": [
+"WhatAVIV = price ÷ the true market mean (log scale); teal shading is below 1, capsules the past tops and bottoms.",
+"ReadingAbove 1 = active investors in profit, higher means closer to overheating; below 1 = active investors at a loss, where bear markets mostly sit. Tops fall and bottoms rise each cycle.",
+"CaveatThe true market mean is a modelled cost of active capital (Cointime), different from the ordinary realized price."
+]
+},
+"rrisk": {
+"hz": [
+"圖上：儲備風險（對數刻度，千分之）；青綠虛線是近 4 年最低 10% 的門檻（逐日變動）、琥珀色虛線是最高 10%，青綠底是落在低檔區的期間。",
+"怎麼看：低＝價格相對長期持有者的信心便宜，過去都在熊市底部附近；高＝價格跑在信心前面，頂部區。",
+"小心：頂部一輪比一輪低、整條線被壓扁，所以用近 4 年比，不用全部歷史；2018 年底的熊市底部也只到近 4 年第 26 百分位，單看這一項會漏掉底部。"
+],
+"he": [
+"WhatReserve risk (log scale, per mille); the teal dashed line is the rolling 4-year bottom-10% threshold, the amber one the top 10%; teal shading marks time in the low zone.",
+"ReadingLow = price is cheap relative to long-term holder conviction, historically near bear-market bottoms; high = price running ahead of conviction, the top zone.",
+"CaveatTops fall each cycle and flatten the series, so it is compared with the last 4 years, not all history; the late-2018 bottom only reached the 26th percentile, so this gauge alone can miss a bottom."
+]
+},
+"pl": {
+"hz": [
+"圖上：上格是 BTC 價格和冪律合理價（灰虛線），通道模式另畫出頂部線（紅虛線）和底部線（藍虛線）。下格兩種看法。通道位置：0%＝歷次底部的連線、100%＝歷次頂部的連線（頂部一輪比一輪低，上緣逐輪下降），線的顏色按位置分五段：底部區 < 15%、偏低、中段、偏高、頂部區 ≥ 75%。倍數：價格除以冪律合理價（對數刻度），藍帶是歷史底部區，紅點頂、藍點底。",
+"怎麼看：通道位置把「每輪頂部越來越低」算進去：歷次頂部都在 75% 以上、底部都在 15% 以下。倍數越高越貴。",
+"小心：冪律每天只用當天以前的資料擬合；但通道的上下緣是用全部 4 個頂／底擬合的，歷史段是事後畫的，樣本也只有 4 輪。只作讀值。"
+],
+"he": [
+"WhatTop: BTC price and the power-law fair value (grey dashes); the channel view also draws the top line (red dashes) and bottom line (blue dashes). Bottom, two views. Channel: 0% is the line through past bottoms, 100% the line through past tops (falling each cycle); the line is coloured in five stages: bottom zone < 15%, low, middle, high, top zone ≥ 75%. Multiple: price divided by the power-law fair value (log scale); the blue band is the historical bottom zone, red dots tops, blue dots bottoms.",
+"ReadingThe channel builds in the shrinking tops: every past top sat above 75% and every bottom below 15%. Higher multiples mean more expensive.",
+"CaveatThe power law uses only data up to each day, but the channel edges are fitted through all four tops and bottoms, so the history is drawn after the fact, from only four cycles. Read-only."
+]
+},
+"p20": {
+"hz": [
+"圖上：上格是 BTC 價格；下格是 MVRV 除以前一輪週期高點（只用當時已知的資料），紅線 0.75／0.80 是出場框架的鏈上賣點，0.75 以上淡紅底。",
+"怎麼看：比值越高越接近上一輪的狂熱程度；連 5 天站上 0.75 啟動第一個鏈上賣出。",
+"小心：每輪頂部的 MVRV 越來越低，所以用相對前一輪的比例。"
+],
+"he": [
+"WhatTop: BTC price. Bottom: MVRV divided by the previous cycle's peak (using only data known at the time); red lines at 0.75/0.80 are the exit framework's on-chain sell points, shaded above 0.75.",
+"ReadingThe higher the ratio, the closer to last cycle's euphoria; 5 straight days above 0.75 trigger the first on-chain sale.",
+"CaveatMVRV peaks lower each cycle, hence the ratio to the previous peak."
+]
+},
+"tmh": {
+"hz": [
+"圖上：上格 BTC 價格（對數）；下格是 Tidemark 的 0–100 訊號，2011 起每週、近一年每日。頂部視角：紅＝頂部訊號（粗線）、琥珀＝熱度、灰虛線＝時機，直虛線是歷次週期頂部；底部視角：綠＝底部訊號、藍＝冷度，直虛線是歷次週期底部、綠點線是本輪候選低點。點圖例可以開關每條線，滑過圖時上方那一行跟著顯示當天數字。",
+"怎麼看：頂部訊號 ≥50 進入窗口、≥70 警戒；底部訊號 ≥50 進入底部區。看過去幾次頂部、底部前後訊號升到多高、提前多久亮，再對照現在的位置。",
+"小心：第三方模型，規則與權重由 Tidemark 決定、可能改版；歷史是用目前的規則回算的，不是當時的即時讀數；部分指標 2012 年底以後才有，之前只有熱度。只作讀值。"
+],
+"he": [
+"WhatPrice on top (log); below, Tidemark's 0–100 signals, weekly since 2011 and daily for the past year. Top view: red = top signal (thick), amber = heat, grey dashed = timing, with vertical dashes at past cycle tops. Bottom view: green = bottom signal, blue = cold, vertical dashes at past cycle bottoms and a green dotted line at this cycle's candidate low. Click a legend item to hide or show a line; hovering updates the readout row above.",
+"ReadingA top signal of 50 or more opens the window and 70 is the alert; a bottom signal of 50 or more is the bottom zone. See how high the signals rose around past tops and bottoms, and how early, then compare with now.",
+"CaveatA third-party model whose rules and weights Tidemark sets and may change; the history is back-calculated under today's rules, not live readings at the time; some inputs start in late 2012, before which only heat exists. Reading only."
+]
+},
+"lthloss": {
+"hz": [
+"圖上：上格是 BTC 價格，下格是長期持有者（持有 ≥155 天）帳面虧損的比例；紅圈是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這輪高點。",
+"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高，回升（價格回調）時常是牛初的加碼段。跌破虛線那一天，等於這個規律被打破。",
+"小心：不只受價格影響：最近高價買進的短期持有者滿 155 天後會被算成長期持有者，價格不漲也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
+],
+"he": [
+"WhatTop: BTC price; bottom: the share of long-term holder (155+ days) supply at a loss. Red circles mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak.",
+"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high, and its rebounds (price pullbacks) were often early-bull buying windows. A move above the dashed line would break that pattern.",
+"CaveatNot price alone: recent high-priced buyers become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
+]
+},
+"npl365": {
+"hz": [
+"圖上：下格是近 365 天淨實現損益的合計，換成顆數：綠＝一年內整體獲利了結、紅＝整體認賠。膠囊是歷次頂部前後的最高與熊市底部前後的最深。",
+"怎麼看：過去熊市底部都出現在這條線很深的負值附近：一年裡大量的幣被賠錢賣出、籌碼換到新買家手上。翻回正值，通常代表最難熬的認賠期結束。",
+"小心：這一輪的負值比前幾輪淺很多，可能是持有結構改變，也可能是還沒走完；以顆計可跨時代比，但交易所整理錢包也會被算成實現損益。"
+],
+"he": [
+"WhatBottom: the past 365 days of net realized profit/loss in coins, green = net profit-taking over the year, red = net loss-taking. Capsules mark the highs around tops and the lows around bear-market bottoms.",
+"ReadingPast bear-market bottoms came near deep negative readings: a year of heavy loss-selling that moved coins to new hands. Turning back positive usually marks the end of the hardest loss-taking.",
+"CaveatThis cycle's reading is far shallower than past ones — a changed holder base, or not finished yet. Counting in coins compares across eras, but exchange wallet reshuffles also register as realized P/L."
+]
+},
+"agecost": {
+"hz": [
+"圖上：可以切換兩種看法（對數刻度）：3–6 個月持幣成本（橘）配價格，綠點是熊市後第一次站回、灰點是其他站回；6–12 個月（橘）與 12–18 個月（紫）持幣成本，紅點死叉、綠點金叉。",
+"怎麼看：6–12 個月線跌破 12–18 個月線＝近一年買的人比更早一批便宜，過去大致在熊底附近；重新升過＝新進場的成本拉高，過去在主升段前後。從死叉到金叉：2019 約 11 個月、2023 約 12 個月。",
+"小心：兩條線比價格落後半年以上，交叉時價格往往已經走了一段；樣本只有 3–4 輪，2020 年有一次疫情後的短暫交叉。"
+],
+"he": [
+"WhatTwo views (log scale): the 3–6 month holder cost (orange) with price, green dots marking the first cross back above after a bear market and grey dots other crosses; and the cost of coins aged 6–12 months (orange) and 12–18 months (purple), red dots death crosses, green dots golden crosses.",
+"ReadingThe 6–12 month line dropping below the 12–18 month line means last year's buyers paid less than the earlier group, historically near bear-market bottoms; crossing back above means new money is paying up, historically around the main bull leg. Death to golden took about 11 months in 2019 and 12 in 2023.",
+"CaveatBoth lines lag price by six months or more, so price has usually moved a lot by the cross; only 3–4 cycles, plus a brief post-pandemic cross in 2020."
+]
+},
+"capeff": {
+"hz": [
+"圖上：每一列是一輪週期，從熊市底部到頂部：青綠是流進來的資金（實現市值增加）、金色是價格倍數，長條用對數長度；最後一列是這一輪到現在。",
+"怎麼看：比特幣越大，推動同樣的漲幅要越多錢：流入一輪比一輪多，倍數一輪比一輪小。拿這一輪和前幾輪同一天比，可以看資金進來的速度與價格的反應。",
+"小心：底部與頂部日期沿用本站的週期模型；實現市值逐筆 UTXO 計算，交易所整理錢包、遺失的幣都會影響，看的是數量級。"
+],
+"he": [
+"WhatEach row is one cycle from bear-market bottom to top: teal is the money that came in (realized cap added), gold the price multiple, with logarithmic bar lengths; the last row is this cycle so far.",
+"ReadingThe bigger bitcoin gets, the more money the same gain needs: inflows grow each cycle while multiples shrink. Comparing this cycle with past ones on the same day shows how fast money arrives and how price responds.",
+"CaveatBottom and top dates follow this site's cycle model; realized cap is per UTXO and affected by exchange reshuffles and lost coins, so read it for orders of magnitude."
+]
+},
+"path": {
+"hz": [
+"圖上：四種長期走法（虛線，本站的預測）與已實現價格（實線）；橘色帶是頂部模型的 80% 區間。",
+"怎麼看：看實線貼近哪一條。每月底自動重估：起點換成月底收盤，權重依收盤離各路徑多遠做貝氏更新；收盤連 10 天超出四條路徑上下 12% 才重畫形狀。",
+"小心：2028 年以後只供量級參考。"
+],
+"he": [
+"WhatFour long-term paths (dashed, our forecasts) and the realized price (solid); the orange band is the top model's 80% range.",
+"ReadingSee which path the solid line is tracking. Re-estimated automatically each month end: the start moves to the month-end close and weights get a Bayesian update from how far the close is from each path; shapes are re-drawn only after 10 straight closes more than 12% outside all four.",
+"CaveatBeyond 2028, treat it as order-of-magnitude only."
+]
+},
+"long": {
+"hz": [
+"圖上：全部歷史收盤（對數刻度）；橘點是週期頂、藍點是週期底，虛直線是減半日。",
+"怎麼看：對數刻度下同樣高度＝同樣的漲跌比例；過去幾輪頂部大約在減半後 12–18 個月，底部約在頂部後一年。",
+"小心：只有 3–4 輪樣本，時間規律不保證重演。"
+],
+"he": [
+"WhatAll closes on a log scale; orange dots are cycle tops, blue dots cycle bottoms, dashed verticals the halvings.",
+"ReadingOn a log scale equal heights are equal percentage moves; past tops came roughly 12–18 months after a halving, and bottoms about a year after the top.",
+"CaveatOnly 3–4 cycles of history; the timing pattern may not repeat."
+]
+},
+"mon": {
+"hz": [
+"圖上：每格是一個月的漲跌：上個月最後一天收盤到這個月最後一天收盤。綠漲紅跌，顏色越深幅度越大；框起來的是本月，到最新收盤為止。",
+"怎麼看：最下面兩列是各月的中位數和上漲比例（2013 年起、不含本月）。用中位數是因為 2013 年 3 月、11 月都漲超過一倍，會把平均拉得很高。",
+"小心：每個月只有十幾個樣本，季節性只描述過去，不代表今年會照走；拿來看「這個月目前算不算特別」比拿來預測合適。只作讀值。"
+],
+"he": [
+"WhatEach cell is one month: from the last close of the previous month to the last close of this one. Green up, red down, darker for bigger moves; the outlined cell is this month, up to the latest close.",
+"ReadingThe bottom two rows are each month’s median and share of up months (since 2013, excluding this month). Medians, because March and November 2013 each more than doubled and would drag an average far up.",
+"CaveatEach month has only a dozen or so cases. Seasonality describes the past, not what this year will do; it is better for judging whether this month is unusual so far than for forecasting. Reading only."
+]
+},
+"cot": {
+"hz": [
+"圖上：上格 BTC 價格，下格 CME 比特幣期貨的淨部位（多單 − 空單，換算成顆）：紫線是槓桿基金、綠線是資產管理機構。每週一點（週二持倉）。",
+"怎麼看：資產管理機構淨多增加，比較接近機構真的看多；槓桿基金淨空擴大多半是基差交易（ETF 買現貨、CME 放空），套利資金越多空單越大。兩條線一起往零靠近，常是套利價差變小、機構在 CME 的部位整體縮小。",
+"小心：只看 CME，不含幣安等加密交易所的期貨；持倉晚 3–10 天公布。"
+],
+"he": [
+"WhatTop: BTC price; bottom: net positions in CME bitcoin futures (longs − shorts, in BTC): purple is leveraged funds, green is asset managers. One point per week (Tuesday positions).",
+"ReadingA rising asset-manager net long is closer to genuine institutional bullishness; a widening leveraged-fund net short is mostly basis trading (long spot via ETFs, short CME), growing with arbitrage money. Both lines drifting toward zero often means the basis has narrowed and institutions hold less on CME overall.",
+"CaveatCME only, not crypto-exchange futures such as Binance; positions are published 3–10 days late."
+]
+},
+"pr-us": {
+"hz": [
+"圖上：上格是 BTC 價格；下格是 Coinbase 溢價：Coinbase BTC-USD 收盤比 Binance BTC-USDT 貴多少（%）。柱子是每日值（和 TradingView 的 CB-BN basis 同一種算法），金線是 7 日平均，紅虛線是 −0.15% 深度折價線，紅圈是歷次跌破、旁邊寫 30 天後漲跌；最右邊的空心點是打開網頁時的即時值。",
+"怎麼看：正＝美國現貨（機構、ETF 相關）買得比海外積極；長時間停在 0 以下＝美國買盤缺席。牛市主升段多半維持正值。",
+"小心：2026-11-12 起扣掉 USDT 對美元的折溢價（Binance 以 USDT 計價）；扣掉後兩地只差幾個基點，看方向和持續多久，不看單日。"
+],
+"he": [
+"WhatTop: BTC price; bottom: the Coinbase premium, how much Coinbase BTC-USD closes above Binance BTC-USDT (%). Bars are daily values (the same calculation as TradingView's CB-BN basis), the gold line the 7-day average, the red dashed line the −0.15% deep-discount line; red rings mark past breaks with the 30-day change; the hollow dot at the right edge is the live value when the page opens.",
+"ReadingPositive means US spot buyers (institutions, ETF-related) are keener than offshore; staying below 0 for long means US demand is absent. Bull-market advances usually run positive.",
+"CaveatNet of the USDT discount since 2026-11-12 (Binance quotes in USDT); what is left is a few basis points, so read the direction and how long it lasts, not single days."
+]
+},
+"pr-asia": {
+"hz": [
+"圖上：上格是 BTC 價格；下格是 Coinbase 溢價：Coinbase BTC-USD 收盤比 Binance BTC-USDT 貴多少（%）。柱子是每日值（和 TradingView 的 CB-BN basis 同一種算法），金線是 7 日平均，紅虛線是 −0.15% 深度折價線，紅圈是歷次跌破、旁邊寫 30 天後漲跌；最右邊的空心點是打開網頁時的即時值。",
+"怎麼看：正＝美國現貨（機構、ETF 相關）買得比海外積極；長時間停在 0 以下＝美國買盤缺席。牛市主升段多半維持正值。",
+"小心：2026-11-12 起扣掉 USDT 對美元的折溢價（Binance 以 USDT 計價）；扣掉後兩地只差幾個基點，看方向和持續多久，不看單日。"
+],
+"he": [
+"WhatTop: BTC price; bottom: the Coinbase premium, how much Coinbase BTC-USD closes above Binance BTC-USDT (%). Bars are daily values (the same calculation as TradingView's CB-BN basis), the gold line the 7-day average, the red dashed line the −0.15% deep-discount line; red rings mark past breaks with the 30-day change; the hollow dot at the right edge is the live value when the page opens.",
+"ReadingPositive means US spot buyers (institutions, ETF-related) are keener than offshore; staying below 0 for long means US demand is absent. Bull-market advances usually run positive.",
+"CaveatNet of the USDT discount since 2026-11-12 (Binance quotes in USDT); what is left is a few basis points, so read the direction and how long it lasts, not single days."
+]
+},
+"pr-perp": {
+"hz": [
+"圖上：上格是 BTC 價格；下格是 Coinbase 溢價：Coinbase BTC-USD 收盤比 Binance BTC-USDT 貴多少（%）。柱子是每日值（和 TradingView 的 CB-BN basis 同一種算法），金線是 7 日平均，紅虛線是 −0.15% 深度折價線，紅圈是歷次跌破、旁邊寫 30 天後漲跌；最右邊的空心點是打開網頁時的即時值。",
+"怎麼看：正＝美國現貨（機構、ETF 相關）買得比海外積極；長時間停在 0 以下＝美國買盤缺席。牛市主升段多半維持正值。",
+"小心：2026-11-12 起扣掉 USDT 對美元的折溢價（Binance 以 USDT 計價）；扣掉後兩地只差幾個基點，看方向和持續多久，不看單日。"
+],
+"he": [
+"WhatTop: BTC price; bottom: the Coinbase premium, how much Coinbase BTC-USD closes above Binance BTC-USDT (%). Bars are daily values (the same calculation as TradingView's CB-BN basis), the gold line the 7-day average, the red dashed line the −0.15% deep-discount line; red rings mark past breaks with the 30-day change; the hollow dot at the right edge is the live value when the page opens.",
+"ReadingPositive means US spot buyers (institutions, ETF-related) are keener than offshore; staying below 0 for long means US demand is absent. Bull-market advances usually run positive.",
+"CaveatNet of the USDT discount since 2026-11-12 (Binance quotes in USDT); what is left is a few basis points, so read the direction and how long it lasts, not single days."
+]
+},
+"kp": {
+"hz": [
+"圖上：下格是韓國溢價：粗線是 7 日平均（綠＝溢價、紅＝折價），細灰線是每日；琥珀色虛線是 5%。縱軸壓縮過，小數值看得清楚、大數值不會頂出去。",
+"怎麼看：溢價衝高＝韓國散戶搶著買、願意付更多韓元，過去常在局部高點附近；折價＝韓國買盤冷，常在恐慌或熊市。",
+"小心：只看 Upbit 一家；韓國有資本管制，溢價會長期存在，1–2% 的常態溢價不代表過熱。"
+],
+"he": [
+"WhatBottom: the Korea premium; the thick line is the 7-day average (green = premium, red = discount), the thin grey line daily; the amber dashed line is 5%. The axis is compressed so small values stay legible and big spikes stay in frame.",
+"ReadingA spiking premium = Korean retail scrambling to buy and paying up in won, historically near local highs; a discount = cold Korean demand, often in panics or bear markets.",
+"CaveatUpbit only; capital controls let a premium persist, so a steady 1–2% does not mean overheating."
+]
+},
+"exflow": {
+"hz": [
+"圖上：下格是交易所淨流量的 30 天合計：綠＝淨流出（幣離開交易所）、紅＝淨流入。綠底是強流出（近 4 年最低 10%），紅底是強流入（最高 10%）。",
+"怎麼看：長時間淨流出＝買了提走、放進冷錢包的人多，可賣的籌碼變少；大量淨流入＝有人把幣送上交易所，可能準備賣。但回測看，單靠流量的方向分不出之後漲跌。",
+"小心：交易所地址是推算的、會事後修正；ETF 託管、交易所內部整理錢包都會造成大筆流動，單日尖峰常不是買賣。"
+],
+"he": [
+"WhatBottom: 30-day exchange netflow, green = net outflow (coins leaving exchanges), red = net inflow. Green shading marks strong outflows (4-year bottom 10%), red shading strong inflows (top 10%).",
+"ReadingSustained outflows = more coins being withdrawn to cold storage, less supply on hand to sell; big inflows = coins sent to exchanges, possibly to sell. Backtests show flow direction alone does not separate what comes next.",
+"CaveatExchange addresses are estimated and revised; ETF custody and exchange wallet reshuffles cause big moves, so one-day spikes are often not trades."
+]
+},
+"ad": {
+"hz": [
+"圖上：上格是 BTC 價格，下格是 30 天的表觀需求（顆）：綠＝正、紅＝負，虛線是它的 30 日平均，琥珀色點虛線是疑似搬家日。",
+"怎麼看：正＝舊幣醒來被市場接走，需求夠；負＝滿一年沒動的幣增加得比新挖出的快，換手少、需求偏弱。跌到自己的 30 日平均之下＝需求在轉弱；大段紅色常出現在下跌或盤整期。",
+"小心：會受一年前換手量影響（那批幣滿一年時把它拉低）；交易所整理錢包會造成尖峰，一年後還有回音。逐筆計算、不是實體調整，和 CryptoQuant 的數值不完全相同。"
+],
+"he": [
+"WhatTop: BTC price; bottom: 30-day apparent demand (BTC), green positive and red negative, the dashed line its 30-day average, amber markers likely transfer days.",
+"ReadingPositive means old coins wake and get absorbed: enough demand. Negative means coins reaching one year unmoved outpace issuance: little turnover, soft demand. Dropping below its own 30-day average means demand is weakening; long red stretches tend to come with declines or chop.",
+"CaveatIt echoes turnover from a year earlier (those coins drag it down when they turn one); exchange wallet reshuffles cause spikes with an echo a year later. Per-UTXO, not entity-adjusted, so it differs somewhat from CryptoQuant's numbers."
+]
+},
+"dmd": {
+"hz": [
+"圖上：下格兩條線：青綠是現貨需求（表觀需求 30 天）、橘是永續需求（OKX 合約 30 天主動買 − 賣），各自除以近一年最大值，0 以上＝在買、以下＝在減。膠囊是現貨需求轉正的日子與之後 60 天的漲跌。",
+"怎麼看：兩條一起在 0 以上最扎實；現貨在 0 以上、永續在 0 以下，是現貨在接、槓桿在退；永續在上、現貨在下，是槓桿推的行情，比較容易回吐。",
+"小心：現貨是推算的鏈上需求（逐筆 UTXO），永續只有 OKX 一家、而且只有半年多的資料，比較的是方向，不是誰大誰小。"
+],
+"he": [
+"WhatTwo lines below: teal is spot demand (30-day apparent demand), orange perpetual demand (OKX contracts 30-day taker buy − sell), each divided by its own 1-year max; above 0 = buying, below = pulling back. Capsules mark days spot demand turned positive and the next 60 days.",
+"ReadingBoth above 0 is the sturdiest; spot above and perps below means spot absorbing while leverage retreats; perps above with spot below is a leverage-driven move that gives back more easily.",
+"CaveatSpot is an estimated on-chain demand (per UTXO) and perps are OKX only with about half a year of data; compare direction, not size."
+]
+},
+"capflow": {
+"hz": [
+"圖上：上格是 BTC 價格；下格是全體實現市值裡，最近一個月換手的幣（橘）和一到兩年沒動的幣（紫）各佔多少；黃底是週期頂部、青綠底是熊市底部。",
+"怎麼看：橘色衝高＝大量新錢在高價追進，過去兩輪頂部都超過 50%；紫色升高＝一年前進場的人沒賣，熊底附近最大。兩塊一起看：橘低、紫升代表籌碼在沉澱。",
+"小心：按實現市值加權，高價買進的幣權重大；紫色升高部分是時間推移（高價的幣滿一年），不全是信心。逐筆 UTXO，交易所整理錢包會讓幣齡歸零。"
+],
+"he": [
+"WhatTop: BTC price. Bottom: the share of realized cap held in coins moved within the last month (orange) and coins unmoved for one to two years (violet); amber bands mark cycle tops, teal bands bear-market bottoms.",
+"ReadingA surge in orange means lots of new money chasing at high prices — above 50% at the last two tops; a rising violet share means last year's buyers have not sold, largest near bottoms. Read together: low orange and rising violet mean supply is settling.",
+"CaveatWeighted by realized cap, so coins bought high weigh more; part of the violet rise is just time passing (high-priced coins turning one). Per-UTXO: exchange wallet reshuffles reset coin age."
+]
+},
+"grad": {
+"hz": [
+"圖上：金色是 120 日（大級別），淡橘是 30 日（小級別）。0 以上＝價格漲得比資金流入快；0 以下＝價格跌得比資金撤出快。膠囊是 120 日的背離。",
+"怎麼看：價格新低而梯度沒有新低（底背離）＝資金撤得比價格跌得慢，大級別在築底；價格新高而梯度沒有新高（頂背離）＝靠情緒推升、新資金沒跟上，之後常先回調。",
+"小心：本站自己的算法；30 日容易被消息打破；背離要等擺動點確認（30 日約 10 天、120 日約 20 天）。"
+],
+"he": [
+"WhatGold is the 120-day gauge (long frame), pale orange the 30-day (short frame). Above 0 = price rising faster than money flows in; below 0 = price falling faster than money leaves. Capsules mark 120-day divergences.",
+"ReadingA lower price low without a lower gauge low (bullish divergence) means money leaves more slowly than price falls — a long-frame base; a higher price high without a higher gauge high (bearish) means the rise runs on sentiment, and a pullback often comes first.",
+"CaveatOur own construction; the 30-day frame is easily broken by news; divergences confirm only after the swing (about 10 days for 30-day, 20 for 120-day)."
+]
+},
+"rcliq": {
+"hz": [
+"圖上：上格是 BTC 價格；下格是實現市值（每顆幣以最後一次移動的價格計的總成本）30 日變化，> 0 綠、≤ 0 紅；淡紅底是 ≤ 0 的期間，上下兩格都標出來。",
+"怎麼看：> 0 代表新資金用更高的價格進場；跌到 0 以下＝資金流入停滯，多出現在熊市或深度回調。",
+"小心：不是買賣訊號：2018、2021-06、2022-01 歸零之後仍大跌。"
+],
+"he": [
+"WhatTop: BTC price. Bottom: the 30-day change in realized cap (every coin valued at the price it last moved), green above zero and red at or below; pale red spans mark the periods at or below zero across both panes.",
+"ReadingAbove zero means new money is coming in at higher prices; below zero means inflows have stalled, typical of bear markets or deep corrections.",
+"CaveatNot a trade signal: price kept falling after the 2018, 2021-06 and 2022-01 zero crossings."
+]
+},
+"stab": {
+"hz": [
+"圖上：上格是 BTC 價格；下格是全部美元穩定幣流通量的 30 天增減（%），增加綠、減少紅；總量在上方數字卡。",
+"怎麼看：持續增加＝場內可用的購買力在增加，常是多頭的燃料；減少＝資金撤離。",
+"小心：很多穩定幣用在交易所與 DeFi 以外，不等於一定會買 BTC。"
+],
+"he": [
+"WhatTop: BTC price. Bottom: the 30-day change (%) in total circulating USD stablecoins, green when rising and red when falling; the total is in the card above.",
+"ReadingSteady growth means more buying power on-chain, often fuel for rallies; shrinking means money leaving.",
+"CaveatMuch of it is used outside exchanges and DeFi; it won't necessarily buy BTC."
+]
+},
+"whale": {
+"hz": [
+"圖上：依地址餘額分層的 30 日淨變化（顆）。",
+"怎麼看：鯊魚（100–1K）與鯨魚（1K–10K）同向增加＝大戶在累積；≥ 10K 多是交易所與託管，不算大戶買賣。",
+"小心：一個地址不等於一個人，錢包整理會讓幣在分層之間移動。"
+],
+"he": [
+"What30-day net change by address-balance tier (BTC).",
+"ReadingSharks (100–1K) and whales (1K–10K) rising together means big holders are accumulating; ≥10K is mostly exchanges and custodians.",
+"CaveatOne address is not one person; wallet reshuffles move coins between tiers."
+]
+},
+"whalet": {
+"hz": [
+"圖上：依地址餘額分層的 30 日淨變化（顆）。",
+"怎麼看：鯊魚（100–1K）與鯨魚（1K–10K）同向增加＝大戶在累積；≥ 10K 多是交易所與託管，不算大戶買賣。",
+"小心：一個地址不等於一個人，錢包整理會讓幣在分層之間移動。"
+],
+"he": [
+"What30-day net change by address-balance tier (BTC).",
+"ReadingSharks (100–1K) and whales (1K–10K) rising together means big holders are accumulating; ≥10K is mostly exchanges and custodians.",
+"CaveatOne address is not one person; wallet reshuffles move coins between tiers."
+]
+},
+"lthnet": {
+"hz": [
+"圖上：BTC 價格（對數刻度），線的顏色是長期持有者（持有 ≥155 天）過去 30 天的淨增減：紅＝淨減、灰＝持平、綠＝淨增，±40 萬顆最深。",
+"怎麼看：高價區出現紅色＝長期持有者趁高出貨（2024/3、2024 年底、2025/9–11 都是）；下跌後轉綠＝長期持有者不賣、籌碼沉澱。價格在漲、線卻是紅的，代表上漲一路有人供貨。",
+"小心：綠色不等於有人在買：幣放滿 155 天就自動算成長期持有者。這是依幣齡分組，不排除交易所；Glassnode 的吸籌趨勢評分以實體計，是不同指標。"
+],
+"he": [
+"WhatBTC price on a log scale, coloured by long-term holders' (held 155+ days) net change over 30 days: red = net cut, grey = flat, green = net add, deepest at ±400K BTC.",
+"ReadingRed at high prices means long-term holders selling into strength (as in Mar 2024, late 2024 and Sep–Nov 2025); turning green after a drop means long-term holders are holding and supply is settling. Price rising on a red line means the rally is being met with supply.",
+"CaveatGreen is not buying: coins become long-term automatically at 155 days. Grouped by coin age with exchanges included; Glassnode's Accumulation Trend Score is entity-based and a different metric."
+]
+},
+"lsrchg": {
+"hz": [
+"圖上：長期持有者供給 ÷ 短期持有者供給的 30 日變化：橘（負）＝長期持有者的幣流向短期持有者，青綠（正）＝籌碼沉澱。淡黃底是各輪週期頂部之前那一年（主升段），淡藍底是各輪熊市底部之後那一年（過渡期）；上方讀值的比例就是這兩種區間裡為負的天數。",
+"怎麼看：主升段大多為負：長期持有者在賣、新需求接得住；過渡期負值多＝需求強，接近一半一半時價格走得較平。",
+"小心：幣放滿 155 天會自動從短期轉成長期，沒有人交易時比值也會慢慢上升。"
+],
+"he": [
+"What30-day change of long- ÷ short-term holder supply: orange (negative) = long-term holder coins passing to short-term holders, teal (positive) = supply settling. Pale amber shading is the year before each cycle top (the main up-leg), pale blue the year after each bear-market bottom (the transition); the shares in the readings above count negative days inside these windows.",
+"ReadingMain up-legs are mostly negative — long-term holders sell and new demand absorbs it; many negative days in a transition mean strong demand, an even split goes with flatter prices.",
+"CaveatCoins turn long-term automatically at 155 days, so the ratio drifts up even with no trading."
+]
+},
+"sthd": {
+"hz": [
+"圖上：下格是短期持有者供給和 90 天前的差，橘＝增加（90 天內被移動、變成短期持有的幣比轉成長期的多）、青綠＝減少（幣在沉澱）。膠囊是每輪頂部前後的最大值。",
+"怎麼看：大幅為正＝大量舊幣換手，常見於牛市後段長期持有者分發、或恐慌時舊幣被賣出；轉負＝新買的幣放著不動，籌碼在沉澱。",
+"小心：量的是幣有沒有被移動，不是誰在買；交易所和託管整理錢包也會算進去。翻正翻負後 90 天的漲跌和任一天差不多，不是買賣訊號。"
+],
+"he": [
+"WhatBottom: short-term holder supply minus its level 90 days earlier; orange = rising (more coins moved into short-term hands than aged into long-term), teal = falling (coins settling). Capsules mark the largest reading around each top.",
+"ReadingStrongly positive = heavy turnover of old coins, typical of late-bull distribution by long-term holders or of old coins sold in a panic; turning negative = newly bought coins sitting still as supply settles.",
+"CaveatIt counts coin movement, not who is buying; exchange and custody reshuffles are included. Returns 90 days after a flip look like any other day, so a flip is not a trading signal."
+]
+},
+"dorm": {
+"hz": [
+"圖上：紫是 7 天 Dormancy、橘是 30 天平均（對數刻度），膠囊是週期頂部附近的最高值。",
+"怎麼看：數字高＝賣出的幣放得很久，老幣在動；長時間偏低＝賣的都是新幣、老幣很安靜，常在底部區。",
+"小心：交易所或託管機構整理老錢包時會一次搬很多老幣，造成單週尖峰；看 30 天平均比較穩。"
+],
+"he": [
+"WhatPurple is 7-day dormancy, orange the 30-day average (log scale); capsules mark the highs near cycle tops.",
+"ReadingHigh = coins spent had been held a long time, old coins moving; low for a long stretch = only young coins selling, old coins quiet, often near bottoms.",
+"CaveatWhen exchanges or custodians reorganize old wallets, many old coins move at once and spike a week; the 30-day average is steadier."
+]
+},
+"svd": {
+"hz": [
+"圖上：上圖：OKX 現貨每天主動買 − 主動賣（顆），綠＝買方主動、紅＝賣方主動。下圖：近 7 天每小時。",
+"怎麼看：下跌時紅柱縮小、轉綠＝殺跌的人變少、有人主動接；只在跌時放量賣、反彈時沒有主動買＝買方多半是被動掛單。",
+"小心：只有 OKX 一家；日線是 UTC+8 的日界。"
+],
+"he": [
+"WhatTop chart: OKX spot taker buy − taker sell per day (BTC), green = buyers aggressive, red = sellers aggressive. Bottom chart: hourly for the last 7 days.",
+"ReadingIn a drop, red bars shrinking and turning green means fewer sellers dumping and someone buying actively; heavy selling on drops with no active buying on bounces means buyers are mostly passive bids.",
+"CaveatOKX only; daily bars use UTC+8 days."
+]
+},
+"tk": {
+"hz": [
+"圖上：上格價格；下格是主動買 − 主動賣的 30 天加總（顆）：紫＝現貨（Binance、Coinbase、Bybit），橘＝永續（Binance、Bybit、OKX）。虛線是各自的中位數（常態）。",
+"怎麼看：在常態線上方＝比平常多買、下方＝比平常多賣。現貨偏買、永續偏賣＝真錢在買、槓桿在空；反過來＝槓桿在推、現貨沒跟。",
+"小心：只算吃單方向，不含掛單；永續的主動賣長期偏多，所以要和常態線比，不看正負。"
+],
+"he": [
+"WhatPrice on top; below, the 30-day sum of taker buys − sells (BTC): purple = spot (Binance, Coinbase, Bybit), orange = perpetuals (Binance, Bybit, OKX). Dashed lines are each series' median (typical level).",
+"ReadingAbove its typical line = more buying than usual, below = more selling. Spot buying while perps sell = real money buying and leverage shorting; the reverse = leverage pushing without spot.",
+"CaveatAggressor side only, no makers; perpetual taker selling runs high over time, so compare with the typical line, not zero."
+]
+},
+"stk": {
+"hz": [
+"圖上：BTC、S&P 500、那斯達克、黃金（PAXG）近兩個月的漲跌，起點都是 0。",
+"怎麼看：看 BTC 在回檔中是不是比傳統資產跌得更多；跌得差不多代表只是跟著大盤走。",
+"小心：起點不同，結論會不同；只看兩個月。",
+"現在49%，每日平均超額 0.11 個百分點（11/13）。",
+"圖上：近 90 個美股交易日裡，BTC 當天漲幅大於 S&P 500 的比例（灰線 50%）。",
+"怎麼看：高於 50% 且維持住＝BTC 相對股市轉強；長期低於 50% 代表一直落後。",
+"小心：只看贏的次數、不看贏多少（另看每日平均超額）；BTC 和美股收盤時間差約 3 小時。"
+],
+"he": [
+"WhatChange over two months for BTC, the S&P 500, the Nasdaq and gold (PAXG), all starting at 0.",
+"ReadingShows whether BTC fell more than traditional assets in the pullback; falling about the same means it simply moved with the market.",
+"CaveatA different start date gives a different picture; two months only.",
+"Now49%, average daily excess 0.11 points (11/13).",
+"WhatShare of the last 90 US sessions in which BTC rose more than the S&P 500 (grey line: 50%).",
+"ReadingHolding above 50% means BTC is gaining strength against stocks; staying below means it keeps lagging.",
+"CaveatIt counts wins, not their size (see the average daily excess); BTC and US closes are about 3 hours apart."
+]
+}
+}
