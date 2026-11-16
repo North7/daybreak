@@ -10,6 +10,7 @@
 
 AGE_COL = ['ac', 'c5', 'up', 'c4', 'color-mix(in srgb, var(--c4) 45%, var(--c3))', 'c3']   # 2–5 年在現有網站是另一個藍青色，這裡用青和藍紫的中間色分開
 AGE_NM = [('1 個月內', '< 1 month'), ('1–6 個月', '1–6 months'), ('6–12 個月', '6–12 months'), ('1–2 年', '1–2 years'), ('2–5 年', '2–5 years'), ('5 年以上', '5+ years')]
+def _ord(n): n = int(round(n)); return '%d%s' % (n, 'th' if 10 < n % 100 < 14 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th'))
 PB_LAB = dict(sth=('① 價格回到短期持有者成本', '① Price back at short-term holder cost'), psip=('② 獲利供給 ≤ 65%', '② Supply in profit ≤ 65%'), sthl=('③ 短期持有者虧損 ≥ 50%', '③ Short-term holders in loss ≥ 50%'),
               sec=('④ 賣方衰竭進極端區', '④ Seller exhaustion in the extreme zone'), rloss=('⑤ 實現虧損峰值背離', '⑤ Realized-loss peak divergence'))
 RL_KIND = dict(div=('背離', 'divergence'), cap=('投降', 'capitulation'), flat=('差不多', 'similar'))
@@ -220,12 +221,12 @@ def build(L, N, E, dn, X):
         X['oldc']['say'] = own([
             ('1 年以上', 'Over 1 year', n0(y1['a30']) + ' 顆／日', n0(y1['a30']) + ' BTC/day', 'warn' if y1['pct'] >= 85 else 'neu',
              '放了 1 年以上的幣，近 30 天平均每天移動 %s 顆，在 %d 年以來的 %d 分位（中位數 %s 顆）；30 天前是 %s 顆。' % (n0(y1['a30']), yr0, y1['pct'], n0(y1['med']), n0(y1['a30_prev'])),
-             'Coins held over 1 year moved %s BTC a day on average over the last 30 days, the %dth percentile since %d (median %s); it was %s thirty days ago.' % (n0(y1['a30']), y1['pct'], yr0, n0(y1['med']), n0(y1['a30_prev']))),
+             'Coins held over 1 year moved %s BTC a day on average over the last 30 days, the %s percentile since %d (median %s); it was %s thirty days ago.' % (n0(y1['a30']), _ord(y1['pct']), yr0, n0(y1['med']), n0(y1['a30_prev']))),
             ('5 年以上', 'Over 5 years', n0(y5['a30']) + ' 顆／日', n0(y5['a30']) + ' BTC/day', 'warn' if y5['pct'] >= 85 else 'neu',
              '放了 5 年以上的幣，近 30 天平均每天移動 %s 顆，在 %d 年以來的 %d 分位（中位數 %s 顆）；30 天前是 %s 顆。歷史最高是 %s 的 %s 顆。' % (n0(y5['a30']), yr0, y5['pct'], n0(y5['med']), n0(y5['a30_prev']), y5['max_d'][:7].replace('-', '/'), n0(y5['max'])),
-             'Coins held over 5 years moved %s BTC a day on average over the last 30 days, the %dth percentile since %d (median %s); it was %s thirty days ago. The record is %s a day in %s.' % (n0(y5['a30']), y5['pct'], yr0, n0(y5['med']), n0(y5['a30_prev']), n0(y5['max']), y5['max_d'][:7]))],
+             'Coins held over 5 years moved %s BTC a day on average over the last 30 days, the %s percentile since %d (median %s); it was %s thirty days ago. The record is %s a day in %s.' % (n0(y5['a30']), _ord(y5['pct']), yr0, n0(y5['med']), n0(y5['a30_prev']), n0(y5['max']), y5['max_d'][:7]))],
             '1 年以上的老幣每天移動 %s 顆（%d 分位），5 年以上的 %s 顆（%d 分位）。' % (n0(y1['a30']), y1['pct'], n0(y5['a30']), y5['pct']),
-            'Coins over 1 year old are moving at %s BTC a day (%dth percentile), coins over 5 years at %s (%dth percentile).' % (n0(y1['a30']), y1['pct'], n0(y5['a30']), y5['pct']))
+            'Coins over 1 year old are moving at %s BTC a day (%s percentile), coins over 5 years at %s (%s percentile).' % (n0(y1['a30']), _ord(y1['pct']), n0(y5['a30']), _ord(y5['pct'])))
     def old(k):   # 沿用的圖；萬一沒有，出一張「沒有資料」，不要整張消失
         return X[k] if X.get(k) else nodata(k, REUSE[k][0], REUSE[k][1], '今天沒有這張圖的資料。', 'No data for this chart today.')
     grp = lambda id_, zh, en, sz, se, keys: dict(id=id_, zh=zh, en=en, sz=sz, se=se, charts=[old(k) if k in REUSE else X[k] for k in keys])
