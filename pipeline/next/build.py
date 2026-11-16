@@ -74,12 +74,27 @@ import site_data
 SITE = site_data.build(L, N, E_, dn)
 import say_data
 print('say', say_data.attach(SITE['chapters'], L))
+# 2026-11-16 舊版（classic.html）對外下線：舊網址 #頁/代號 的「代號」是舊版的面板（pn-…）或圖（c-…），對到新版的圖代號，頁面讀到就轉過去（page.html ㉝）
+def _old_map():
+    have = {c['k'] for ch in SITE['chapters'] for g in ch.get('groups') or [] for c in g.get('charts') or []}
+    Z = json.load(open(os.path.join(HERE, 'interp.zh.json'), encoding='utf-8')); out = {}
+    for pn in Z:
+        pid = pn['id'][3:] if pn['id'].startswith('pn-') else pn['id']; ks = [k for k in say_data.MAP.get(pid, []) if k in have]
+        if not ks: continue
+        for a in [pid] + list(pn.get('charts') or []): out.setdefault(a, ks[0])
+    for a, k in {'cbp': 'pr-us', 'cost': 'levels', 'oc-sth-sopr': 'sopr', 'oc-puell-multiple': 'p6v', 'stkrel': 'stk', 'sthband': 'sthgap', 'lthc': 'lthnet', 'cd': 'k20', 'ev-tmm': 'levels', 'ov-px': 'levels',
+                 'cycle-11': 'p6v', 'oc-mvrv-zscore': 'p6v', 'oc-nupl': 'p6v', 'oc-lth-mvrv-zscore': 'p6v', 'oc-supply-in-profit-pct': 'p6v', 'oc-lth-net-position-change-30d-btc': 'lthnet',
+                 'oc-asopr': 'soprf', 'oc-lth-sopr': 'soprf', 'oc-illiquid-supply': 'supliq', 'oc-highly-liquid-supply': 'supliq', 'flows-1': 'etf', 'deriv-1': 'vol', 'sim': 'x_sim', 'exit-1': 'x_now'}.items():   # 舊版的別名、改了名的、舊版的小圖併進新版某張圖的
+        if k in have: out[a] = k
+    for k in have: out.setdefault(k, k)   # 舊版和新版同名的
+    return out
+OLD = _old_map(); print('old links', len(OLD))
 import pm_data
 try:   # 2026-11-16 頁尾「資料來源」要寫每天從 Bitview 抓幾條序列：直接數 bitview.COLS，不寫死
     sys.path.insert(1, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')); import bitview as _bv; BVN = len(_bv.COLS)
 except Exception as e: print('bitview count failed', e); BVN = None
 D = dict(
-    site=SITE, pm=pm_data.build(L), bvn=BVN,
+    site=SITE, pm=pm_data.build(L), bvn=BVN, old=OLD,
     date=L['meta']['bar_date'], issue=N.get('edition'), price=round(c), chg=L['price']['bar']['chg_pct'],
     headline=N['headline'], summary=N['summary'], stance=N.get('stance'), leads={k: m.get('lead') for k, m in N['modules'].items()},
     dawn=dict(heat=dw['heat'], stage=dw['stage'], weeks=dw['stage_weeks'], heat4=dw['heat4']),

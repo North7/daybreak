@@ -5,8 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Daybreak</title>
 <script>
-/* 2026-11-11 首頁換成新版，舊版搬到 classic.html。舊版的網址（#onchain/sthsig 這種）照樣能開：帶著舊版的頁面代號進來就轉到 classic.html 同一個位置 */
-(function () { var chk = function () { var h = location.hash; if (/^#(overview|news|cycle|onchain|market|flows|deriv|exit|archive|method|calc|pg-[\w-]+)(\/|$)/.test(h)) location.replace('classic.html' + location.search + h); }; chk(); window.addEventListener('hashchange', chk); })();   // 開著首頁時才貼上舊網址（只換 # 後面）也要轉
+/* 2026-11-16 舊版（classic.html）對外下線：舊網址（#onchain/sthsig 這種）由主程式轉到新版對應的圖，見 ㉝ */
 /* 語言：使用者在任一版選過就沿用（daybreak.lang，和舊版共用）；沒選過看舊版查到的國家（快取 7 天），再沒有就看瀏覽器語言 */
 window.DAYBREAK_LANG = (function () { var q = /[?&]lang=(zh|en)(&|$)/.exec(location.search); if (q) return q[1];   /* 2026-11-16：網址帶 ?lang=en／zh 就用那個語言（只管這一次，不改記住的選擇）；給別人連結時用 */
   var ls = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, p = ls('daybreak.lang'); if (p === 'zh' || p === 'en') return p;
@@ -1435,7 +1434,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=eba01e920d"></script>
+<script src="data/next.js?v=f5ce0ebbf8"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -3025,6 +3024,13 @@ function initOC() {
   if (!SHARE) addEventListener('load', () => setTimeout(() => { const cn = navigator.connection; if (cn && cn.saveData) return; if (LITE) { nbr(ci); return; } let q = Promise.resolve(); CH.forEach((c, i) => { if (c.lz) q = q.then(() => loadCh(i)).catch(() => {}); }); }, 1800), { once: true });
   if (!SHARE) document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('#oc-tab [data-ch], #oc-crumb [data-ch]'); if (b && CH[+b.dataset.ch] && CH[+b.dataset.ch].lz) loadCh(+b.dataset.ch).catch(() => {}); }, { passive: true, capture: true });
   /* 2026-11-16 直接打開某張圖的網址（運營回覆別人時附連結用）：?k=<代號> 會切到那一頁、打開那張圖的放大檢視；可以加 &lang=en、&m=<第幾個檢視> */
+  /* ㉝ 舊版網址（2026-11-16 舊版對外下線）：#頁 或 #頁/代號。代號對得到新版的圖（D.old，build.py 從舊版面板和讀數對照表產生）就換成 ?k=那張圖 重新開；
+     只有頁、或代號對不到，就切到對應的那一頁（頭版、消息、往期、方法 → 今天；鏈上 → 賣壓；價格 → 價位；資金 → 買盤；衍生品 → 槓桿）。網址上的 #… 拿掉，其他參數（lang 等）保留 */
+  const oldLink = () => { const m = /^#(overview|news|cycle|onchain|market|flows|deriv|exit|archive|method|calc|book|pg-[\w-]+)(?:\/([\w-]+))?/.exec(location.hash); if (!m || SHARE) return false;
+    const OP = { overview: 'today', news: 'today', cycle: 'cycle', onchain: 'sell', market: 'lv', flows: 'buy', deriv: 'lev', book: 'lev', exit: 'exit' }, pg = m[1].replace(/^pg-/, ''), k = m[2] && (D.old || {})[m[2]], q = new URLSearchParams(location.search);
+    if (k) { q.set('k', k); location.replace(location.pathname + '?' + q.toString()); return true; }
+    try { history.replaceState(null, '', location.pathname + location.search); } catch (e) {} const j = CH.findIndex(c => c.id === (OP[pg] || 'today')); if (j >= 0 && j !== ci) goCh(j); return true; };
+  if (!SHARE) { if (/^#/.test(location.hash)) addEventListener('load', oldLink, { once: true }); addEventListener('hashchange', oldLink); }
   if (!SHARE && SHK) addEventListener('load', () => { for (let i = 0; i < CH.length; i++) { const gs = CH[i].groups || []; for (let j = 0; j < gs.length; j++) { const n = (gs[j].charts || []).findIndex(x => x.k === SHK); if (n < 0) continue;
       loadCh(i).then(() => { const c9 = CH[i].groups[j].charts[n], mq = QS.get('m'); if (mq != null && mq !== '' && c9.modes) { const mi = mq === 'd3' ? (c9.d3 ? 1 : 0) : +mq; if (mi >= 0 && mi < c9.modes.length) c9._m = mi; }
         if (i !== ci) goCh(i); setTimeout(() => { if (!c9.na && !c9.nofx && !c9.go) openFx((j + 1) + '_' + n); else { const a = document.querySelector('article[data-k="' + SHK + '"]'); if (a) a.scrollIntoView({ block: 'center' }); } }, 260); }, () => {}); return; } } }, { once: true });
