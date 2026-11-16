@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """長期／短期持有者籌碼分布（LTH-URPD／STH-URPD）推算。2026-10-27 使用者要求（把籌碼拆成長期和短期持有者的做法）。
+2026-11-16：「現在」那一張改用 Bitview（bitview.urpd_rows，和「30 天前」同一個來源、同一種分格），CheckOnChain 留作 Bitview 抓不到時的備援。
 2026-10-28：「現在」那一張改用 CheckOnChain 依實際幣齡算的分布（coc.get_cohort，同樣套用搬家修正）；推算只留給「和約 30 天前比」，
 並和實際分布對照（vs）。CheckOnChain 只有當下的快照，從 2026-10-28 起每天存進 cohort_cache/coc_cohort.json。
 
@@ -50,7 +51,7 @@ def archive(urpd_rows, hw_rows, exact=None):
     """把當天的 URPD（63 格）、hodl-waves-supply 與 CheckOnChain 的長短期持有者分布併進 cohort_cache/；回傳 (U, HW)"""
     os.makedirs(CACHE, exist_ok=True)
     U, HW = _load('urpd.json'), _load('hodl_waves.json')
-    if exact and exact.get('date') and exact.get('rows'):   # 2026-10-28 起每天存，存滿 30 天後「變化」也可以改用實際分布
+    if exact and exact.get('src') != 'bitview' and exact.get('date') and exact.get('rows'):   # 只存 CheckOnChain 的（它只有當下的快照；Bitview 任何一天都查得到，不用存）。2026-10-28 起每天存，存滿 30 天後「變化」也可以改用實際分布
         X = _load('coc_cohort.json'); X[exact['date']] = [[int(p), round(a), round(b)] for p, a, b in exact['rows']]; _save(os.path.join(CACHE, 'coc_cohort.json'), X)
     if urpd_rows:
         U[urpd_rows[0]['theDate']] = [[int(r['priceLower']), round(float(r['btcSupply']), 1)] for r in urpd_rows]
@@ -196,7 +197,7 @@ def summarize(res, px, close, bd_sth_cost=None, moves=(), raw=None, exact=None, 
     vec = lambda rr, i: np.bincount([int(x[0]) // W for x in rr], [x[i] for x in rr], NB)
     if exact and exact.get('rows'):
         se, le = vec(exact['rows'], 1), vec(exact['rows'], 2)
-        now = dict(sth=np.maximum(se + r['adj'][0], 0), lth=np.maximum(le + r['adj'][1], 0)); src, now_date = 'checkonchain', exact.get('date')
+        now = dict(sth=np.maximum(se + r['adj'][0], 0), lth=np.maximum(le + r['adj'][1], 0)); src, now_date = exact.get('src') or 'checkonchain', exact.get('date')   # 'bitview'（2026-11-16 起）或 'checkonchain'（備援）
     else:
         now = dict(sth=r['sth'], lth=r['lth']); src, now_date = 'model', d
     # 過去 155 天價格走過的區間：區間外只有 LTH，不靠模型
@@ -206,7 +207,7 @@ def summarize(res, px, close, bd_sth_cost=None, moves=(), raw=None, exact=None, 
     out = dict(date=d, src=src, now_date=now_date, price=round(close), width=W, rows=rows(now), below_lth=round(float(now['lth'][:ROW0].sum())), tot=st_(now),
                model_rows=rows(r), model_tot=dict(sth=round(float(r['sth'].sum())), lth=round(float(r['lth'].sum())), sth_cost=round(r['sth_cost']), lth_cost=round(r['lth_cost'])),
                window=dict(lo=round(lo155), hi=round(hi155)), resid=round(r['resid'], 5), snapshots=len(ds))
-    if src == 'checkonchain':   # 推算 vs 實際：STH 總量差距、各格分錯的比例（同樣都套了搬家修正）
+    if src != 'model':   # 推算 vs 實際：STH 總量差距、各格分錯的比例（同樣都套了搬家修正）
         diff = np.abs(r['sth'] - now['sth']).sum() / 2
         out['vs'] = dict(date=now_date, sth_model=round(float(r['sth'].sum())), sth_exact=round(float(now['sth'].sum())),
                          sth_diff_pct=round(float((r['sth'].sum() / now['sth'].sum() - 1) * 100), 1), misplaced_pct=round(float(diff / now['sth'].sum() * 100), 1))
@@ -222,7 +223,7 @@ def summarize(res, px, close, bd_sth_cost=None, moves=(), raw=None, exact=None, 
         aged = vb[old_sth & (tb <= T - LTH_DAYS)].sum()
         hi_since = max(h for x, (_, h) in px.items() if a['T'] < _i(x) <= T); lo_since = min(l_ for x, (l_, _) in px.items() if a['T'] < _i(x) <= T)
         out['cmp'] = dict(date=c0[-1], rows=rows(a), tot=dict(sth=round(float(a['sth'].sum())), lth=round(float(a['lth'].sum())), sth_cost=round(a['sth_cost'])), src='model')
-        if exact_at and src == 'checkonchain':
+        if exact_at and src != 'model':
             try:
                 ex0 = exact_at(c0[-1]); s0, l0 = vec(ex0['rows'], 1), vec(ex0['rows'], 2)
                 e0 = dict(sth=np.maximum(s0 + a['adj'][0], 0), lth=np.maximum(l0 + a['adj'][1], 0))
@@ -248,14 +249,14 @@ def summarize(res, px, close, bd_sth_cost=None, moves=(), raw=None, exact=None, 
     mv = [m_ for m_ in moves if T - _i(m_['date']) <= 90]
     if mv:
         out['transfers'] = mv
-        if src == 'checkonchain': out['raw'] = dict(sth=round(float(se.sum())), rows=rows(dict(sth=se, lth=le)))   # 「現在」不修正的原樣
+        if src != 'model': out['raw'] = dict(sth=round(float(se.sum())), rows=rows(dict(sth=se, lth=le)))   # 「現在」不修正的原樣
         elif raw and d in raw: out['raw'] = dict(sth=round(float(raw[d]['sth'].sum())), sth_cost=round(raw[d]['sth_cost']), rows=rows(raw[d]))
-    out['note'] = ('現在：CheckOnChain 依實際幣齡（Bitcoin Research Kit）' if src == 'checkonchain' else '現在：推算') + ('；30 天前：Bitview 實際幣齡（同一套 Bitcoin Research Kit）' if (out.get('cmp') or {}).get('src') == 'bitview' else '') + '；誰賣了／誰轉成長期（flow）：推算（IPF：bitcoin-data URPD × 幣齡分布 × 每日價格區間）；逐筆 UTXO、搬家日已修正；只作讀值'
+    out['note'] = ('現在：Bitview 依實際幣齡（Bitcoin Research Kit）' if src == 'bitview' else '現在：CheckOnChain 依實際幣齡（Bitcoin Research Kit；Bitview 抓不到時的備援）' if src == 'checkonchain' else '現在：推算') + ('；30 天前：Bitview 實際幣齡（同一套 Bitcoin Research Kit' + ('，和現在同一個來源' if src == 'bitview' else '') + '）' if (out.get('cmp') or {}).get('src') == 'bitview' else '') + '；誰賣了／誰轉成長期（flow）：推算（IPF：bitcoin-data URPD × 幣齡分布 × 每日價格區間）；逐筆 UTXO、搬家日已修正；只作讀值'
     return out
 
 
 def daily(urpd_rows, hw_rows, px, close, bd_sth_cost=None, exact=None, exact_at=None):
-    """collect.py 每天呼叫：存檔 → 跑鏈 → 讀值。exact＝coc.get_cohort() 的結果（失敗時 None，「現在」退回推算）"""
+    """collect.py 每天呼叫：存檔 → 跑鏈 → 讀值。exact＝bitview.urpd_rows(最後一根日線) 加上 src='bitview'，抓不到時是 coc.get_cohort() 的結果，兩個都沒有是 None（「現在」退回推算）"""
     U, HW = archive(urpd_rows, hw_rows, exact)
     mv = transfers(U, px)
     res = run(U, HW, px, mv); raw = run(U, HW, px) if mv else None

@@ -902,7 +902,11 @@ try:
     try: _hw = bd('hodl-waves-supply')
     except Exception as e: _hw = []; errors.append(f'cohort hodl-waves-supply: {e}')
     _px = {x[0]: (x[1], x[1]) for x in cm}; _px.update({b_['d']: (b_['l'], b_['h']) for b_ in bars})
-    R['cohort'] = cohort_urpd.daily(MFS.get('urpd_raw'), _hw, _px, c, SER.get('sth-realized-price'), _coh, bitview.urpd_rows if BV else None)   # 2026-11-04：30 天前也用 Bitview 實際分布
+    _cohn = _coh   # 2026-11-16（使用者同意；Bitview 官方問為什麼現在和 30 天前用不同來源）：「現在」也改用 Bitview，和「30 天前」同一個來源、同一種分格；抓不到才退回 CheckOnChain（B4）
+    if BV:
+        try: _cohn = dict(bitview.urpd_rows(LAST), src='bitview')
+        except Exception as e: errors.append(f'bitview urpd-cohort {e}（「現在」退回 CheckOnChain）')
+    R['cohort'] = cohort_urpd.daily(MFS.get('urpd_raw'), _hw, _px, c, SER.get('sth-realized-price'), _cohn, bitview.urpd_rows if BV else None)   # 2026-11-04：30 天前也用 Bitview 實際分布
 except Exception as e: errors.append(f'cohort {e}'); R['cohort'] = None
 
 # G4h. 2026-11-06 使用者要求（指標擴充，見 oc_extra.py、opt_flow.py；Bitview／Deribit／OKX 免費，不佔 bitcoin-data 額度）：

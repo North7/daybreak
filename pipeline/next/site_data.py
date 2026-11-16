@@ -97,6 +97,8 @@ def build(L, N, E, dn):
     X['cohort'] = dict(k='cohort', zh='長短期持有者籌碼', en='Long- vs short-term holder supply', hz='短期持有者平均成本', he='STH average cost',
       dist=dict(kind='split', cl='ac', cr='c3', la=['短期持有者', 'Short-term'], lb=['長期持有者', 'Long-term'], zone=([co['window']['lo'], co['window']['hi'], '近 155 天的價格範圍', 'Price range of the last 155 days'] if co.get('window') else None), step=co['width'], rows=[[r[0], round(r[2]), round(r[1])] for r in co['rows']], unit='btc', leg=[['c3', '長期持有者（155 天以上）', 'Long-term holders (155d+)'], ['ac', '短期持有者', 'Short-term holders']]),
       hs=dict(v=co['tot']['sth_cost'], f='usd0'), dz='同一張籌碼分布，依持有時間分成兩群，背對背放：左邊是短期持有者，右邊是長期持有者。短期持有者的幣在現價上方，是套牢的賣壓；在現價下方，是第一層支撐。', de='The same distribution split by holding time, back to back: short-term holders on the left, long-term on the right. Short-term holder coins above price are underwater sellers; below price they form the first support.')
+    _cs = co.get('src'); _cn = 'Bitview' if _cs == 'bitview' else 'CheckOnChain' if _cs == 'checkonchain' else None   # 2026-11-16：「現在」那張的來源寫在卡片上（Bitview；抓不到時是 CheckOnChain，再不行是推算）
+    X['cohort']['src'] = (_cn or '推算') + ' · ' + md(co.get('now_date') or co['date']); X['cohort']['srce'] = (_cn or 'Estimate') + ' · ' + md(co.get('now_date') or co['date'])
     # ── 價位 › 短線的牆 ──
     op = L['deriv']['viz']['options']; g = L['deriv']['gex']; lh = L['deriv']['liq_heat']; ob = L['orderbook']
     X['strike'] = dict(k='strike', zh='履約價分布', en='Open interest by strike', hz='最大痛點（%s 到期）' % op['strikes']['expiry'][5:].replace('-', '/'), he='Max pain (%s expiry)' % op['strikes']['expiry'][5:].replace('-', '/'),
