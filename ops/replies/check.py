@@ -175,15 +175,25 @@ def repeat_errors(items):
     # 2026-11-08（帳號分析）：①有外推線／推算日期的圖不配（佐證圖 c-ev-* 畫「近 30 日速度外推」和「外推交叉 12/02」，等於在推未來日期）；
     # ②同一張圖、同一種語言一天只給一則（11/05 兩則 DVOL 回覆圖文幾乎一樣、隔 21 分鐘）；③太肯定的階段斷言要改成帶前提的說法
     imgs = {}
+    try:
+        _t = open(os.path.join(ROOT, 'data', 'next.js'), encoding='utf-8').read(); OLD = json.loads(_t[_t.index('{'):_t.rindex('}') + 1]).get('old') or {}
+    except Exception: OLD = {}
+    def chart_key(im):
+        """同一張圖不管用新寫法（site.k）還是舊寫法（site.sel）都算同一張：舊代號用 data/next.js 的 old 對照表換成新版代號（2026-11-16 改截新版）"""
+        st = im.get('site') or {}
+        if st.get('k') or im.get('k'): return st.get('k') or im.get('k')
+        if st.get('sel'): return OLD.get(st['sel'].replace('#c-', '')) or st['sel']
+        return im.get('chart')
     free = no_quota_accounts()   # 2026-11-15 使用者：no_quota 的帳號（Murphy）不受「同一張圖一天一次」限制，也不佔別人的那一次
     for it in items:
         if it.get('status') == 'skip' or not it.get('image'): continue
         if (it.get('author') or '').lower() in free:
-            im = it['image']; sel = (im.get('site') or {}).get('sel') or im.get('chart')
+            im = it['image']; sel = (im.get('site') or {}).get('sel') or im.get('chart')   # 外推圖只有舊版寫法才指得到
             if str(sel).startswith('#c-ev-'): err.append(f'#{it["n"]} 配圖 {sel} 有外推線和推算日期，不配（只放已經發生的走勢）')
             continue
-        im = it['image']; key = ((im.get('site') or {}).get('sel') or im.get('chart'), 'zh' if it.get('lang') == 'zh' else 'en')
-        if str(key[0]).startswith('#c-ev-'): err.append(f'#{it["n"]} 配圖 {key[0]} 有外推線和推算日期，不配（只放已經發生的走勢）')
+        im = it['image']; key = (chart_key(im), 'zh' if it.get('lang') == 'zh' else 'en'); raw = (im.get('site') or {}).get('sel') or im.get('chart')
+        if str(raw).startswith('#c-ev-'): err.append(f'#{it["n"]} 配圖 {raw} 有外推線和推算日期，不配（只放已經發生的走勢）')
+        if key[0] is None: continue   # 自己畫的圖（custom、沒寫代號）沒辦法比
         if key in imgs: err.append(f'#{it["n"]} 和 #{imgs[key]} 用同一張圖（{key[0]}，{key[1]}）：同一張圖同一種語言一天只給一則')
         else: imgs[key] = it['n']
     for it in items:

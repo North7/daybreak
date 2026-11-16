@@ -75,7 +75,7 @@ def d3_query(it):
 
 def shoot_share(ws, view, k, it):
     """分享模式：視窗設成 16:9（1600×900）或 4:5（1080×1350），開 index.html?share&k=…，整個畫面就是那張圖。回傳 (png, 尺寸說明) 或 (None, 原因)"""
-    r45 = it.get('view') == 'share45'; W, H = (1080, 1350) if r45 else (1600, 900)
+    r45 = it.get('view') == 'share45'; W, H = (1080, int(it.get('h') or 1350)) if r45 else (1600, 900)   # h：4:5 模式的視窗高度（site_cards.py 要在上面加標題，留出那一段）
     ws.call('Emulation.setDeviceMetricsOverride', width=W, height=H, deviceScaleFactor=2, mobile=False)
     try:
         ws.js('window.__old = 1; true')

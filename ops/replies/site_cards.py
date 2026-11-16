@@ -10,6 +10,14 @@ image 範例：
   box：要截的外框（sel 往上找最近的這個選擇器，預設 section.panel）；pre：截圖前要跑的 JS（例如展開收合區）；
   keep_note：true 時保留面板裡的解讀文字（預設藏掉解讀、表格、說明、按鈕，只留標題列、圖例、圖）。
 語言跟回覆一樣（zh 回覆截中文版、en 截英文版），深色主題。
+
+2026-11-16 起改截新版首頁（舊版 classic.html 已不部署，North7/daybreak#182）：
+  {"site": {"k": "sthgap"}, "title": "……"}                 新寫法：k 是新版圖代號（python3 ops/post/next_shot.py --list 查）
+  {"site": {"k": "profit", "m": 1, "rg": 365}, "title": "…"}  m＝第幾個檢視、rg＝區間（365／1095／0），同 next_shot.py
+  舊寫法（page＋sel）照樣能用：sel 會用 data/next.js 的 old 對照表自動換成新版代號（#c-sthband → sthgap）。
+  對不到新版的（例如 #c-etfcost）、或帶了 pre／box 的（舊版才有的收合區），還是截舊版，並印「仍截舊版」；舊版從倉庫拿掉之前要把這些換掉。
+  新版用網站的分享模式 4:5 截（next_shot.py 的 share45），上面加大標題，整張剛好 1080×1350；頁尾是網站自己的（Daybreak、網址、資料來源、日期）。
+  --classic：全部照舊截舊版（新版有問題時退回用）。
 usage（倉庫根目錄）: python3 ops/replies/site_cards.py --fonts <字型資料夾> [--only 3,7]
 """
 import argparse, io, json, os, sys, time
@@ -17,6 +25,7 @@ import argparse, io, json, os, sys, time
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, os.path.join(ROOT, 'ops', 'post')); sys.path.insert(0, os.path.join(ROOT, 'pipeline'))
 import site_shot as SS
+import next_shot as NS
 from PIL import Image, ImageDraw
 
 OUT = os.path.join(ROOT, 'data', 'replies')
@@ -52,6 +61,76 @@ def shoot(items, lang, tmp, mobile=True):
     return got
 
 
+def old_map():
+    """舊版面板代號 → 新版圖代號（data/next.js 的 old 欄位，網站每天重建）"""
+    try:
+        t = open(os.path.join(ROOT, 'data', 'next.js'), encoding='utf-8').read()
+        return json.loads(t[t.index('{'):t.rindex('}') + 1]).get('old') or {}
+    except Exception as e:
+        print('注意：讀不到 data/next.js 的 old 對照表，全部照舊截舊版', e); return {}
+
+
+def resolve(st, old=None):
+    """image.site → 新版圖代號；回 None 表示只能截舊版（對不到新版，或用了舊版才有的 pre／box）"""
+    if st.get('k'): return st['k']
+    if st.get('pre') or st.get('box'): return None
+    return (old_map() if old is None else old).get(str(st.get('sel', '')).replace('#c-', ''))
+
+
+TITLE_PX, TITLE_LH, TITLE_TOP, TITLE_GAP, PAD = 100, 132, 64, 40, 44   # 2 倍解析度下的標題字級、行高、上下留白、左右邊距（對齊分享圖自己的邊距）
+
+
+def title_layout(title, Fn, W=2160):
+    """標題怎麼排：回傳 (每行文字, 字型, 標題那一段的高度, 左邊距)，都是 2 倍解析度的像素。
+    分享圖在比 1350 矮的視窗裡會維持 4:5、左右留邊置中，所以標題的左邊距要跟著圖的內容對齊；邊距變大可能多折一行，算兩三輪到穩定。"""
+    import re
+    tf = Fn['cjk'](TITLE_PX, 900); d0 = ImageDraw.Draw(Image.new('RGB', (10, 10))); pad = PAD
+    for _ in range(4):
+        lines, cur = [], ''   # 標題太長就斷行：中文逐字、英數整詞
+        for tok in re.findall(r'[A-Za-z0-9$.,%:+\-−–’\']+\s*|\s+|.', title):
+            if cur and d0.textlength(cur + tok.rstrip(), font=tf) > W - 2 * pad: lines.append(cur.rstrip()); cur = tok.lstrip()
+            else: cur += tok
+        lines.append(cur.rstrip()); band = TITLE_TOP + TITLE_LH * len(lines) + TITLE_GAP
+        sc = (2700 - band) / 2700; p2 = round(W * (1 - sc) / 2 + PAD * sc)
+        if p2 == pad: break
+        pad = p2
+    return lines, tf, band, pad
+
+
+def shoot_next(items, lang, Fn):
+    """items: [(n, k, site, title)]，回傳 {n: PNG bytes}。新版首頁的分享模式 4:5；視窗高度先扣掉標題那一段，加上標題後整張是 1080×1350。"""
+    cat = NS.catalog(); got = {}; classic = SS.SITE
+    SS.SITE = NS.SITE
+    try:
+        with SS.browser(1440, H=1000, theme='dark', lang=lang) as (ws, view):
+            ws.call('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': 'dark'}, {'name': 'prefers-reduced-motion', 'value': 'reduce'}])
+            for n, k, st, title in items:
+                c = cat.get(k)
+                why = ('data/next.js 裡沒有這個代號（next_shot.py --list 可查）' if not c else '出場框架的卡片不截' if NS.BLOCK(c['ch_id'], k)
+                       else '這張卡片目前沒有資料' if c['na'] else '這張卡片不能放大' if not c['fx'] else '')
+                if why: print('ERROR', n, k, why); continue
+                band = title_layout(title, Fn)[2]
+                it = dict(view='share45', h=1350 - round(band / 2), **{a: st[a] for a in ('m', 'rg', 'ly', 'd3') if a in st})
+                png, why = NS.shoot_share(ws, view, k, it)
+                if png is None: print('ERROR', n, k, why); continue
+                got[n] = png; print('shot', n, lang, k, why)
+    finally:
+        SS.SITE = classic
+    return got
+
+
+def compose_next(png, title, Fn, out):
+    """上：紅色短線＋大標題；下：網站分享圖（已經有 Daybreak、網址、資料來源的頁尾）。輸出 1080 寬。"""
+    RED, INK = '#FF3B1F', '#F2F0EA'
+    im = Image.open(io.BytesIO(png)).convert('RGB'); bg = im.getpixel((8, 8)); lines, tf, band, pad = title_layout(title, Fn, im.width)
+    img = Image.new('RGB', (im.width, band + im.height), bg); d = ImageDraw.Draw(img)
+    d.rectangle([pad, 36, pad + 110, 46], fill=RED)
+    for i, t in enumerate(lines): d.text((pad, TITLE_TOP + i * TITLE_LH + TITLE_LH / 2), t, font=tf, fill=INK, anchor='lm')
+    img.paste(im, (0, band))
+    img = img.resize((1080, round(img.height * 1080 / img.width)), Image.LANCZOS)
+    img.save(out, optimize=True); print('wrote', out, img.size)
+
+
 def compose(png, title, lang, Fn, out, mobile=True):
     """上：大標題；中：網站截圖；下：Daybreak 頁尾。手機版輸出寬 1080（直式），桌面版 1600。"""
     RED, INK, INK3, LINE = '#FF3B1F', '#F2F0EA', '#9C978E', '#3A3936'
@@ -79,20 +158,32 @@ def compose(png, title, lang, Fn, out, mobile=True):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--fonts', required=True); ap.add_argument('--only', default='')
     ap.add_argument('--desktop', action='store_true', help='用桌面寬度截（2026-11-08 前的做法）'); ap.add_argument('--out', default=OUT, help='輸出資料夾（試圖用）')
+    ap.add_argument('--classic', action='store_true', help='全部照舊截舊版 classic.html（新版有問題時退回用）')
     a = ap.parse_args()
     import share_card as SC
     Fn = SC.fonts(a.fonts); only = {int(x) for x in a.only.split(',') if x}
     rp = json.load(open(os.path.join(ROOT, 'data', 'replies.json'))); os.makedirs(OUT, exist_ok=True)
-    todo = {'zh': [], 'en': []}; meta = {}
+    todo = {'zh': [], 'en': []}; new = {'zh': [], 'en': []}; meta = {}; old = {} if a.classic else old_map(); want = set()
     for it in rp['items']:
         im = it.get('image') or {}
         if not im.get('site') or (only and it['n'] not in only): continue
-        lang = 'zh' if it['lang'] == 'zh' else 'en'
-        todo[lang].append((it['n'], im['site'])); meta[it['n']] = (im['title'], lang)
+        lang = 'zh' if it['lang'] == 'zh' else 'en'; st = im['site']; k = None if a.classic else resolve(st, old); want.add(it['n'])
+        if k: new[lang].append((it['n'], k, st, im['title']))
+        else:
+            if not a.classic: print('仍截舊版', it['n'], st.get('sel'), '（新版沒有對應的圖，或用了 pre／box）')
+            if not st.get('sel'): print('ERROR', it['n'], 'site 只有 k、沒有 sel，不能截舊版'); continue
+            todo[lang].append((it['n'], st))
+        meta[it['n']] = (im['title'], lang)
+    done = set()
+    for lang, items in new.items():
+        if not items: continue
+        for n, png in shoot_next(items, lang, Fn).items():
+            compose_next(png, meta[n][0], Fn, os.path.join(a.out, f'{n}.png')); done.add(n)
     for lang, items in todo.items():
         if not items: continue
         for n, png in shoot(items, lang, None, mobile=not a.desktop).items():
-            compose(png, meta[n][0], lang, Fn, os.path.join(a.out, f'{n}.png'), mobile=not a.desktop)
+            compose(png, meta[n][0], lang, Fn, os.path.join(a.out, f'{n}.png'), mobile=not a.desktop); done.add(n)
+    if want - done: print('ERROR 沒截成：', ', '.join(f'#{n}' for n in sorted(want - done))); sys.exit(1)
 
 
 if __name__ == '__main__':
