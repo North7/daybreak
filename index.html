@@ -8,7 +8,8 @@
 /* 2026-11-11 首頁換成新版，舊版搬到 classic.html。舊版的網址（#onchain/sthsig 這種）照樣能開：帶著舊版的頁面代號進來就轉到 classic.html 同一個位置 */
 (function () { var chk = function () { var h = location.hash; if (/^#(overview|news|cycle|onchain|market|flows|deriv|exit|archive|method|calc|pg-[\w-]+)(\/|$)/.test(h)) location.replace('classic.html' + location.search + h); }; chk(); window.addEventListener('hashchange', chk); })();   // 開著首頁時才貼上舊網址（只換 # 後面）也要轉
 /* 語言：使用者在任一版選過就沿用（daybreak.lang，和舊版共用）；沒選過看舊版查到的國家（快取 7 天），再沒有就看瀏覽器語言 */
-window.DAYBREAK_LANG = (function () { var ls = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, p = ls('daybreak.lang'); if (p === 'zh' || p === 'en') return p;
+window.DAYBREAK_LANG = (function () { var q = /[?&]lang=(zh|en)(&|$)/.exec(location.search); if (q) return q[1];   /* 2026-11-16：網址帶 ?lang=en／zh 就用那個語言（只管這一次，不改記住的選擇）；給別人連結時用 */
+  var ls = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, p = ls('daybreak.lang'); if (p === 'zh' || p === 'en') return p;
   try { var g = JSON.parse(ls('daybreak.geo') || 'null'); if (g && g.cc && Date.now() - g.t < 7 * 864e5) return ['TW', 'HK', 'MO', 'CN', 'SG'].indexOf(String(g.cc).toUpperCase()) >= 0 ? 'zh' : 'en'; } catch (e) {}
   return /^zh/i.test(navigator.language || '') ? 'zh' : 'en'; })();
 document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant';
@@ -852,6 +853,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .d3-tip { position: absolute; z-index: 3; pointer-events: none; display: flex; flex-direction: column; gap: 1px; padding: 7px 10px; background: color-mix(in srgb, var(--bg) 92%, transparent); border: 1px solid color-mix(in srgb, var(--ink) 24%, transparent); border-radius: 6px; font: 500 11px/1.5 var(--f-mono); color: var(--k2); white-space: nowrap; }
 .d3-tip b { color: var(--ink); font-weight: 500; font-size: 12px; }
 .d3-sc { display: flex; align-items: center; gap: 10px; font: 500 10.5px var(--f-mono); color: var(--k2); margin-top: 8px; } .d3-sc input { flex: 1; min-width: 0; accent-color: var(--ac); } .d3-sc output { color: var(--ink); min-width: 13ch; text-align: right; white-space: nowrap; }
+html.share .d3-hint, html.share .d3-sc input, html.share .d3-sc span { display: none; } html.share .d3-sc output { text-align: left; min-width: 0; font-size: 12.5px; } html.share .d3-n { font-size: 12.5px; }
 .d3-n { margin: 6px 0 0; font-size: max(11px, 1cqw); line-height: 1.5; color: var(--k2); }
 .fc .ol-na { min-height: 240px; }
 .ol-t .md + .md { margin-left: 4px; }
@@ -1800,7 +1802,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=f6e85ec902"></script>
+<script src="data/next.js?v=0d3dcf42b0"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -2924,7 +2926,11 @@ function initOC() {
      8 資料是 Bitview 每週一筆（pipeline/urpd_terr.py），和「分布」那張（CheckOnChain）來源不同，圖下面寫明。不用任何外部函式庫，canvas 2D 自己投影；一格約 9,400 個四邊形。
      9 選擇權（同一天，使用者：「做選擇權」）：「履約價分布」多一個「全部到期」（kind＝opt）：平面是一個到期日（預設是原圖的那個主要到期日），賣權在下、買權疊在上；立體是每個到期日一排，最近到期的在最前面；
        地板上的虛線連起各到期日的最大痛點，青色線是現價。「隱含波動率期限結構」多一個「曲面」（kind＝iv）：平面是一個到期日的微笑曲線，立體是曲面（左右是偏斜、前後是期限結構），
-       顏色用全站的熱度色階，白線是平值，也就是原本那張圖的那條線。滑桿選的是到期日。資料是 collect.py 本來就在抓的 Deribit 整張表（pipeline/opt_grid.py），不多發請求。 */
+       顏色用全站的熱度色階，白線是平值，也就是原本那張圖的那條線。滑桿選的是到期日。資料是 collect.py 本來就在抓的 Deribit 整張表（pipeline/opt_grid.py），不多發請求。
+     10 分享模式和錄影（同一天，運營「長文」轉達、使用者同意）：網址 ?share&k=<代號>&m=d3 直接開立體檢視（m 也可以是第幾個檢視）；
+       再加 d3v＝flat／ob／top、yaw、pit（度）、ex（攤開 0–1）、wk（哪一週／哪個到期日）、sel（價位,週 或 履約價,到期日）就停在那個角度、框住那一根並顯示提示框，不會自己站起來也不會滑動。
+       逐格錄影用 window.__d3.set({...})（同樣的欄位，m 是攤開的程度），設完當下就畫好；window.__d3.ready 和 canvas 的 data-ready 表示這一格畫完了。
+       分享模式藏掉滑桿和右上角的提示字，留下圖例、哪一週、資料來源那一行。 */
   const D3 = (function () {
     const TAU = Math.PI * 2, reg = {};
     const hex = h => { h = h.trim(); if (h.length === 4) h = '#' + h[1] + h[1] + h[2] + h[2] + h[3] + h[3]; return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); };
@@ -2950,7 +2956,7 @@ function initOC() {
     function Scene(box, c, key, zref, draw, info) {
       const cv = document.createElement('canvas'), tip = document.createElement('div'), hint = document.createElement('span'), ctx = cv.getContext('2d'); tip.className = 'd3-tip'; tip.hidden = true; hint.className = 'd3-hint';
       cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', T(c.zh, c.en)); box.innerHTML = ''; box.appendChild(cv); box.appendChild(hint); box.appendChild(tip);
-      let W = 0, H = 0, raf = 0, need = true, last = 0, spring = false, cur = 'flat', sc2 = 1, sc3 = 1, hits = [], dead = false, ro = null, io = null;
+      let W = 0, H = 0, raf = 0, need = true, last = 0, spring = false, cur = 'flat', sc2 = 1, sc3 = 1, hits = [], dead = false, ro = null, io = null, manual = false;
       const V = [0, 0, 0], TG = [0, 0, 0], VEL = [0, 0, 0], grp = () => { const ol = box.closest('.ol'); return ol ? ol.querySelectorAll('[data-d3v]') : []; };
       const S = { ctx, cv, A: .82, hov: null, get W() { return W; }, get H() { return H; }, get yaw() { return V[0]; }, get pit() { return V[1]; }, get m() { return cl(V[2]); },
         proj(x, y, z) { const m = Math.max(0, V[2]), mm = cl(m), cy = Math.cos(V[0]), sy = Math.sin(V[0]), ce = Math.cos(V[1]), se = Math.sin(V[1]); y *= m; z *= S.zk;
@@ -2963,18 +2969,29 @@ function initOC() {
         kill() { dead = true; if (raf) cancelAnimationFrame(raf); if (ro) ro.disconnect(); if (io) io.disconnect(); } };
       const mark = () => { grp().forEach(b => b.setAttribute('aria-pressed', b.dataset.d3v === cur)); hint.textContent = cur === 'flat' ? T('拖一下就站起來', 'Drag to stand it up') : T('拖曳可以轉一整圈', 'Drag to spin all the way round'); };
       function size() { const r = box.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1); if (r.width < 20 || r.height < 20) return; W = r.width; H = r.height; cv.width = Math.round(W * d); cv.height = Math.round(H * d); ctx.setTransform(d, 0, 0, d, 0, 0);
-        sc3 = Math.min(W / (W < 520 ? 3.15 : 3.0), H / 1.92); sc2 = (W - (W < 520 ? 70 : 120)) / 2; S.z2 = .62 * H / sc2 / zref; S.dirty(); }
+        sc3 = Math.min(W / (W < 520 ? 3.15 : 3.0), H / 2.12);          /* 高度留多一點：轉到背面時靠近鏡頭的那個角比較低，不能被切掉 */ sc2 = (W - (W < 520 ? 70 : 120)) / 2; S.z2 = .62 * H / sc2 / zref; S.dirty(); }
       function frame() { const mm = cl(V[2]), e = mm * mm * (3 - 2 * mm); S.sc = lerp(sc2, sc3, e); S.zk = lerp(S.z2, 1, e); S.cx = W / 2 + lerp(W < 520 ? 18 : 24, 0, e);
         S.cy = lerp(H * .84, H * .5 + sc3 * (.17 * Math.cos(V[1]) + .2 * Math.max(0, 1 - V[1] / .4)), e); }
       function tick(t) { raf = 0; if (dead) return; const dt = Math.min(.033, last ? (t - last) / 1000 : .016); last = t;
         if (spring) { const K = 95, C = 14; let rest = true; for (let i = 0; i < 3; i++) { VEL[i] += (K * (TG[i] - V[i]) - C * VEL[i]) * dt; V[i] += VEL[i] * dt; if (Math.abs(TG[i] - V[i]) > .0008 || Math.abs(VEL[i]) > .004) rest = false; }
           V[1] = cl(V[1], 0, 1.54); V[2] = cl(V[2], 0, 1.06); if (rest) { for (let i = 0; i < 3; i++) { V[i] = TG[i]; VEL[i] = 0; } spring = false; } need = true; }
-        if (need && W) { need = false; frame(); ctx.clearRect(0, 0, W, H); hits = []; const t0 = performance.now(); draw(S); S.ms = performance.now() - t0; }
+        if (need && W) render();
         if (spring) raf = requestAnimationFrame(tick); else last = 0; }
+      /* 畫一格：畫完才把 ready 設成真（運營逐格截圖要等這個）；釘住的柱子（S.pin）每一格都把提示框放回它頭上 */
+      function render() { need = false; if (!W) return; frame(); ctx.clearRect(0, 0, W, H); hits = []; S.pinXY = null; const t0 = performance.now(); draw(S); S.ms = performance.now() - t0;
+        if (S.pin && S.hov) { tip.innerHTML = info(S.hov); tip.hidden = false; const q = S.pinXY || [W / 2, H / 2], tw = tip.offsetWidth, th = tip.offsetHeight; tip.style.left = cl(q[0] - tw / 2, 2, Math.max(2, W - tw - 2)) + 'px'; tip.style.top = (q[1] - th - 16 < 2 ? q[1] + 20 : q[1] - th - 16) + 'px'; }
+        S.ready = true; cv.dataset.ready = '1'; }
+      /* 逐格設定（㉛-10）：角度用度數，m 是攤開的程度 0–1；不走彈簧，設完當下就畫好。wk＝切哪一刀，sel＝選哪一根（各種圖自己解讀） */
+      S.set = o => { o = o || {}; manual = true; c._d3i = 1; spring = false; VEL[0] = VEL[1] = VEL[2] = 0;
+        if (o.view && PRE[o.view]) { for (let i = 0; i < 3; i++) V[i] = TG[i] = PRE[o.view][i]; cur = c._d3v = o.view; }
+        if (o.yaw != null && isFinite(o.yaw)) { V[0] = TG[0] = o.yaw * Math.PI / 180; cur = ''; } if (o.pit != null && isFinite(o.pit)) { V[1] = TG[1] = cl(o.pit * Math.PI / 180, 0, 1.54); cur = ''; } if (o.m != null && isFinite(o.m)) { V[2] = TG[2] = cl(+o.m); cur = ''; }
+        if (o.wk != null && o.wk !== '' && S.setCut) S.setCut(o.wk);
+        if ('sel' in o) { S.hov = o.sel && S.toId ? S.toId(o.sel) : null; S.pin = !!S.hov; if (!S.hov) tip.hidden = true; }
+        mark(); render(); return S; };
       const inside = (Q, x, y) => { let k = false; for (let i = 0, j = Q.length - 1; i < Q.length; j = i++) { const a = Q[i], b = Q[j]; if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) k = !k; } return k; };
       const pick = (x, y) => { for (let k = hits.length - 2; k >= 0; k -= 2) if (inside(hits[k], x, y)) return hits[k + 1]; return null; };
       const same = (a, b) => a === b || (a && b && a.join() === b.join());
-      function setHov(id, x, y) { if (!id && !S.hov) return; const ch = !same(id, S.hov); S.hov = id; if (!id) tip.hidden = true; else { if (ch) tip.innerHTML = info(id); tip.hidden = false; const tw = tip.offsetWidth, th = tip.offsetHeight; tip.style.left = cl(x - tw / 2, 2, Math.max(2, W - tw - 2)) + 'px'; tip.style.top = (y - th - 16 < 2 ? y + 20 : y - th - 16) + 'px'; } if (ch) S.dirty(); }
+      function setHov(id, x, y) { S.pin = false; if (!id && !S.hov) return; const ch = !same(id, S.hov); S.hov = id; if (!id) tip.hidden = true; else { if (ch) tip.innerHTML = info(id); tip.hidden = false; const tw = tip.offsetWidth, th = tip.offsetHeight; tip.style.left = cl(x - tw / 2, 2, Math.max(2, W - tw - 2)) + 'px'; tip.style.top = (y - th - 16 < 2 ? y + 20 : y - th - 16) + 'px'; } if (ch) S.dirty(); }
       S.pickAt = (x, y) => { const id = pick(x, y); setHov(id, x, y); return id; };
       const loc = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
       let drag = null, lastMove = null;
@@ -2992,7 +3009,7 @@ function initOC() {
       if (window.ResizeObserver) { ro = new ResizeObserver(size); ro.observe(box); }
       size(); S.go(c._d3v || 'flat', 1);
       if (!c._d3v || c._d3v === 'flat') { if (reduce) { if (!c._d3i) { c._d3i = 1; S.go('ob', 1); } }          /* 第一次看到：先停在平面圖，再自己站起來一次 */
-        else if (!c._d3i && window.IntersectionObserver) { io = new IntersectionObserver(en => { if (en[0].isIntersecting) { io.disconnect(); io = null; c._d3i = 1; setTimeout(() => { if (!dead && cur === 'flat' && !S.hov) S.go('ob'); }, 900); } }, { threshold: .5 }); io.observe(cv); } }
+        else if (!c._d3i && window.IntersectionObserver) { io = new IntersectionObserver(en => { if (en[0].isIntersecting) { io.disconnect(); io = null; c._d3i = 1; setTimeout(() => { if (!dead && !manual && cur === 'flat' && !S.hov) S.go('ob'); }, 900); } }, { threshold: .5 }); io.observe(cv); } }
       return S;
     }
     function floor(S, xt, yt, a) {
@@ -3058,7 +3075,7 @@ function initOC() {
           const y0 = (small ? 22 : 7) + n * 16; cx.fillStyle = rgb(col); cx.fillRect(1, y0 - 2, 8, 3); label(S, T(q[3], q[4]), 15, y0, { px: small ? 10 : 11, al: 'left', col: rgb(P.ink), halo: false }); });          /* 字固定在左上角，前面一小段同色的線對到柱子底下那一條 */
         if (h) {
           if (m > .3) { const pr = []; for (let j = 0; j < ny; j++) pr.push(mid(j, h[0])); line(cx, pr, rgb(P.bg, .9), 3.2); line(cx, pr, rgb(P.ink), 1.4); }
-          ring(S, top ? [TL[h[1]][h[0]], TR[h[1]][h[0]], TR[Math.max(0, h[1] - 1)][h[0]], TL[Math.max(0, h[1] - 1)][h[0]]] : face(h[0], h[1]));
+          ring(S, top ? [TL[h[1]][h[0]], TR[h[1]][h[0]], TR[Math.max(0, h[1] - 1)][h[0]], TL[Math.max(0, h[1] - 1)][h[0]]] : face(h[0], h[1])); S.pinXY = mid(h[1], h[0]);
         } else {
           if (!top && !HL.length) { const it = iTopOf(cut); note(S, mid(cut, it), T('最厚 ', 'Thickest ') + bt(GG[cut][it] * 100), { up: small ? 20 : 26, dx: 26 }); }
           if (eat && cut === last && !top) note(S, mid(eat.j, eat.i), T(Q.dates[eat.j].slice(2, 7).replace('-', '/') + ' 的牆 ' + bt(eat.v * 100) + '，現在剩 ' + bt(GG[last][eat.i] * 100), Q.dates[eat.j].slice(0, 7) + ' wall ' + bt(eat.v * 100) + ', now ' + bt(GG[last][eat.i] * 100)), { up: small ? 24 : 34, dx: small ? 0 : -30, a: cl((m - .6) * 3) * cl((S.pit - .25) * 6) });
@@ -3071,6 +3088,9 @@ function initOC() {
       const sc = document.createElement('label'); sc.className = 'd3-sc'; sc.innerHTML = '<span>' + T('切一刀', 'Slice') + '</span><input type="range" min="0" max="' + last + '" step="1" value="' + cut + '" aria-label="' + T('選一週', 'Pick a week') + '"><output></output>';
       box.insertAdjacentElement('afterend', sc); const rng = sc.querySelector('input'), out = sc.querySelector('output'), show = () => { out.textContent = wk(cut) + ' · ' + usd(Q.px[cut]); };
       rng.addEventListener('input', () => { cut = c._d3c = +rng.value; show(); S.dirty(); }); show();
+      const wkOf = w => { if (w == null || w === '') return last; if (/^\d+$/.test(String(w)) && +w < ny) return +w; let b = 0; for (let q = 0; q < ny; q++) if (Q.dates[q] <= String(w)) b = q; return b; };          /* 週：第幾格，或日期（取不晚於它的那一週） */
+      S.setCut = w => { cut = c._d3c = wkOf(w); rng.value = cut; show(); };
+      S.toId = a => [cl(Math.floor((+a[0] - Q.p0) / Q.w), 0, nx - 1), wkOf(a[1])];          /* sel＝[價位, 週] */
       return S;
     }
     /* 曲面（波動率）：每一格是相鄰四個點圍成的四邊形，顏色照高度，兩個方向都畫格線才看得出彎度 */
@@ -3094,6 +3114,7 @@ function initOC() {
       const sc = document.createElement('label'); sc.className = 'd3-sc'; sc.innerHTML = '<span>' + T(zh, en) + '</span><input type="range" min="0" max="' + max + '" step="1" value="' + val + '" aria-label="' + T(zh, en) + '"><output></output>';
       box.insertAdjacentElement('afterend', sc); const rng = sc.querySelector('input'), out = sc.querySelector('output'); out.textContent = text(val);
       rng.addEventListener('input', () => { const v = +rng.value; out.textContent = text(v); on(v); });
+      return { set(v) { rng.value = v; out.textContent = text(v); } };
     }
     const oi = v => lang === 'en' ? n0(v) + ' BTC' : (v >= 1e4 ? (v / 1e4).toFixed(1) + ' 萬顆' : n0(v) + ' 顆');
 
@@ -3125,11 +3146,14 @@ function initOC() {
         E.forEach((e, r) => { const a = r === rs ? 1 : aF; if (a <= .01) return; const pp = pain[r]; cx.save(); cx.globalAlpha = a; cx.beginPath(); cx.arc(pp[0], pp[1], r === rs ? 3 : 2.2, 0, TAU); cx.fillStyle = rgb(P.ink); cx.fill(); cx.restore(); });
         ticks(S, xt, yt, aF);
         const pp = pain[rs]; label(S, T('最大痛點 ', 'Max pain ') + kk(E[rs].pain), pp[0], pp[1] + (small ? 26 : 27), { px: small ? 9.5 : 10.5, col: rgb(P.ink), a: a2 });
-        if (hovBox) ring(S, hovBox);
+        if (hovBox) { ring(S, hovBox); S.pinXY = top ? hovBox[0] : [(hovBox[2][0] + hovBox[3][0]) / 2, Math.min(hovBox[2][1], hovBox[3][1])]; }
         else if (topP && !top && (m > .5 || rs === big.r)) note(S, topP, md(E[big.r].d) + ' ' + kk(big.k) + (big.cp === 'P' ? T(' 賣權 ', ' put ') : T(' 買權 ', ' call ')) + oi(big.v), { up: small ? 18 : 24, dx: small ? 10 : 40, a: rs === big.r ? 1 : aF });
         const sp = S.proj(XK(Q.spot), yE, 0), st = S.proj(XK(Q.spot), ys, ZS * .96); label(S, T('現價 ', 'Spot ') + usd(Q.spot), lerp(sp[0], st[0], a2), lerp(sp[1] + (small ? 36 : 30), st[1] - 10, a2), { px: small ? 9.5 : 10.5, col: rgb(P.c4) });
       }, info);
-      slider(box, '到期日', 'Expiry', ny - 1, rs, r => md(E[r].d) + T(' 到期 · ', ' · ') + oi(E[r].tc + E[r].tp), r => { rs = r; c._d3c = E[r].d; S.dirty(); });
+      const sl = slider(box, '到期日', 'Expiry', ny - 1, rs, r => md(E[r].d) + T(' 到期 · ', ' · ') + oi(E[r].tc + E[r].tp), r => { rs = r; c._d3c = E[r].d; S.dirty(); });
+      const exOf = w => { if (/^\d+$/.test(String(w)) && +w < ny) return +w; const r = E.findIndex(e => e.d === String(w)); return r < 0 ? rs : r; };          /* 到期日：第幾排，或日期 */
+      S.setCut = w => { rs = exOf(w); c._d3c = E[rs].d; sl.set(rs); };
+      S.toId = a => [cl(Math.floor((+a[0] - Q.k0) / Q.kw), 0, nk - 1), exOf(a[1])];          /* sel＝[履約價, 到期日] */
       return S;
     }
 
@@ -3156,18 +3180,28 @@ function initOC() {
         if (aF > .01) { cx.save(); cx.globalAlpha = aF; line(cx, atm, rgb(P.ink), 1.4); cx.restore(); }
         ticks(S, xt, yt, aF);
         const e0 = EI[rs];
-        if (h) { const p = F._P[h[1] * F.nx + h[0]]; cx.beginPath(); cx.arc(p[0], p[1], 5.6, 0, TAU); cx.fillStyle = rgb(P.bg); cx.fill(); cx.beginPath(); cx.arc(p[0], p[1], 3.6, 0, TAU); cx.fillStyle = rgb(P.ink); cx.fill(); }
+        if (h) { const p = F._P[h[1] * F.nx + h[0]]; S.pinXY = p; cx.beginPath(); cx.arc(p[0], p[1], 5.6, 0, TAU); cx.fillStyle = rgb(P.bg); cx.fill(); cx.beginPath(); cx.arc(p[0], p[1], 3.6, 0, TAU); cx.fillStyle = rgb(P.ink); cx.fill(); }
         else { note(S, atm[rs], md(e0.d) + T(' 平值 ', ' ATM ') + e0.atm + '%', { up: small ? 30 : 40, dx: 44 });
           if (!top && e0.iv[0] != null && e0.iv[IX.n] != null) { const pl = S.proj(-1, Yi(rs), ZI(e0.iv[0])), q = S.proj(1, Yi(rs), ZI(e0.iv[IX.n])); label(S, T('賣權端 ', 'Put wing ') + e0.iv[0] + '%', pl[0] + 34 * o.cy, pl[1] - 12, { px: small ? 9.5 : 10.5, col: rgb(P.ink) }); label(S, T('買權端 ', 'Call wing ') + e0.iv[IX.n] + '%', q[0] - 30 * o.cy, q[1] - 12, { px: small ? 9.5 : 10.5, col: rgb(P.ink) }); } }
         const sp = S.proj(XI(Q.spot), yE, 0), st = S.proj(XI(Q.spot), ys, ZS * .96); label(S, T('現價 ', 'Spot ') + usd(Q.spot), lerp(sp[0], st[0], a2), lerp(sp[1] + (small ? 36 : 30), st[1] - 10, a2), { px: small ? 9.5 : 10.5, col: rgb(P.c4) });
       }, info);
-      slider(box, '到期日', 'Expiry', ni - 1, rs, r => md(EI[r].d) + T(' 到期 · 平值 ', ' · ATM ') + EI[r].atm + '%', r => { rs = r; c._d3c = EI[r].d; S.dirty(); });
+      const sl = slider(box, '到期日', 'Expiry', ni - 1, rs, r => md(EI[r].d) + T(' 到期 · 平值 ', ' · ATM ') + EI[r].atm + '%', r => { rs = r; c._d3c = EI[r].d; S.dirty(); });
+      const exOf = w => { if (/^\d+$/.test(String(w)) && +w < ni) return +w; const r = EI.findIndex(e => e.d === String(w)); return r < 0 ? rs : r; };
+      S.setCut = w => { rs = exOf(w); c._d3c = EI[rs].d; sl.set(rs); };
+      S.toId = a => [cl(Math.round((+a[0] - IX.k0) / IX.kw), 0, IX.n), ni - 1 - exOf(a[1])];          /* sel＝[履約價, 到期日] */
       return S;
     }
     const KIND = { terr, opt: optOI, iv: optIV };
     window.DAYBREAK_D3 = reg;          /* 檢查用（tests、主控台）：每張立體圖的場景 */
+    /* ㉛-10 逐格控制（運營錄影、截圖用）：__d3.set({view, yaw, pit, m, wk, sel}) 設完當下就畫好，回傳有沒有設到；__d3.ready＝這一格畫完了沒。作用在放大檢視（分享模式）的那張，沒有就是畫面上第一張 */
+    const live = () => { const k = Object.keys(reg).filter(q => reg[q].cv.isConnected); return k.length ? reg[k.indexOf('F') >= 0 ? 'F' : k[0]] : null; };
+    window.__d3 = { set(o) { const sc = live(); if (!sc) return false; sc.set(o); return true; }, get ready() { const sc = live(); return !!(sc && sc.ready); }, get scene() { return live(); } };
     return {
-      mount(box, c, key) { if (reg[key]) reg[key].kill(); readPal(); return (reg[key] = KIND[c.d3.kind](box, c, key)); },
+      mount(box, c, key) { if (reg[key]) reg[key].kill(); readPal(); const sc = reg[key] = KIND[c.d3.kind](box, c, key);
+        if (QS.get('k') === c.k) { const o = {}, num = n => QS.has(n) && QS.get(n) !== '' && isFinite(+QS.get(n)) ? +QS.get(n) : null;          /* ㉛-10 網址參數（只對 k 指定的那張圖）：d3v＝flat／ob／top，yaw、pit（度），ex（0–1），wk（週或到期日），sel（價位,週 或 履約價,到期日） */
+          if (QS.get('d3v')) o.view = QS.get('d3v'); o.yaw = num('yaw'); o.pit = num('pit'); o.m = num('ex'); if (QS.get('wk')) o.wk = QS.get('wk'); if (QS.get('sel')) o.sel = QS.get('sel').split(',');
+          if (o.view || o.yaw != null || o.pit != null || o.m != null || o.wk || o.sel) sc.set(o); }
+        return sc; },
       go(key, v) { const s = reg[key]; if (s) s.go(v); },
       repaint() { readPal(); Object.keys(reg).forEach(k => { if (reg[k].cv.isConnected) reg[k].dirty(); else { reg[k].kill(); delete reg[k]; } }); },          /* 換頁之後不在畫面上的場景順手清掉 */
       views: () => [['flat', '平面', 'Flat'], ['ob', '立體', '3D'], ['top', '俯瞰', 'Top']],
@@ -4090,7 +4124,12 @@ function initOC() {
     return { x: bb.left + L.X(day) * sx, y: v == null || !Yf ? null : bb.top + Yf(v) * sy, box: rect, t0: ymd(L.t0), t1: ymd(tE), lo: L.lo, hi: L.hi, tf: L.tfn, ticks: L.tk };
   };
   if (!SHARE) addEventListener('load', () => setTimeout(() => { const cn = navigator.connection; if (cn && cn.saveData) return; let q = Promise.resolve(); CH.forEach((c, i) => { if (c.lz) q = q.then(() => loadCh(i)).catch(() => {}); }); }, 1800), { once: true });
-  if (SHARE && SHK) loadAll().then(() => { for (let i = 0; i < CH.length; i++) { const gs = CH[i].groups || []; for (let j = 0; j < gs.length; j++) { const n = (gs[j].charts || []).findIndex(x => x.k === SHK); if (n < 0) continue; if (i !== ci) goCh(i); setTimeout(() => openFx((j + 1) + '_' + n), 60); return; } } });
+  /* 2026-11-16 直接打開某張圖的網址（運營回覆別人時附連結用）：?k=<代號> 會切到那一頁、打開那張圖的放大檢視；可以加 &lang=en、&m=<第幾個檢視> */
+  if (!SHARE && SHK) addEventListener('load', () => { for (let i = 0; i < CH.length; i++) { const gs = CH[i].groups || []; for (let j = 0; j < gs.length; j++) { const n = (gs[j].charts || []).findIndex(x => x.k === SHK); if (n < 0) continue;
+      loadCh(i).then(() => { const c9 = CH[i].groups[j].charts[n], mq = QS.get('m'); if (mq != null && mq !== '' && c9.modes) { const mi = mq === 'd3' ? (c9.d3 ? 1 : 0) : +mq; if (mi >= 0 && mi < c9.modes.length) c9._m = mi; }
+        if (i !== ci) goCh(i); setTimeout(() => { if (!c9.na && !c9.nofx && !c9.go) openFx((j + 1) + '_' + n); else { const a = document.querySelector('article[data-k="' + SHK + '"]'); if (a) a.scrollIntoView({ block: 'center' }); } }, 260); }, () => {}); return; } } }, { once: true });
+  if (SHARE && SHK) loadAll().then(() => { for (let i = 0; i < CH.length; i++) { const gs = CH[i].groups || []; for (let j = 0; j < gs.length; j++) { const n = (gs[j].charts || []).findIndex(x => x.k === SHK); if (n < 0) continue; { const c9 = gs[j].charts[n], mq = QS.get('m'); if (mq != null && mq !== '' && c9.modes) { const mi = mq === 'd3' ? (c9.d3 ? 1 : 0) : +mq; if (mi >= 0 && mi < c9.modes.length) c9._m = mi; } }   /* ㉛-10：m＝第幾個檢視，d3＝立體那一個 */
+      if (i !== ci) goCh(i); setTimeout(() => openFx((j + 1) + '_' + n), 60); return; } } });
   return layout;
 }
 
