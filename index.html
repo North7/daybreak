@@ -40,7 +40,7 @@ document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant'
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter+Tight:wght@200;300;400;500;600;700;800&family=Geist:wght@300;400;500;600;700&family=Geist+Mono:wght@400;500;600&family=Noto+Sans+TC:wght@400;500;700;900&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter+Tight:wght@200..800&family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&family=Noto+Sans+TC:wght@400..900&display=swap">
 <style>
 /* 版面：單欄長頁。頁面本身安靜，三個可操作的原型各佔一個全寬畫框，個性留給原型。只做深色（Daybreak 發文與夜刊的那一面）。 */
 :root {
@@ -56,7 +56,7 @@ document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant'
 }
 * { box-sizing: border-box; }
 body { background: var(--bg); color: var(--ink); font: 15px/1.75 var(--f-sans); -webkit-font-smoothing: antialiased; }
-.wrap { max-width: 1180px; margin: 0 auto; padding-block: 56px 96px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); display: flex; flex-direction: column; gap: 72px; }
+
 .mono { font-family: var(--f-mono); font-size: 11.5px; letter-spacing: .06em; color: var(--ink3); text-transform: uppercase; }
 h1, h2, h3, p { margin: 0; }
 h1 { font: 700 clamp(30px, 4.6vw, 46px)/1.25 var(--f-serif); letter-spacing: .01em; text-wrap: balance; }
@@ -77,16 +77,7 @@ h3 { font: 700 15px/1.5 var(--f-sans); }
 .list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
 .list li { padding: 12px 0; border-top: 1px solid var(--line); color: var(--ink2); }
 .list li b { color: var(--ink); font-weight: 600; }
-.mech { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; border-top: 1px solid var(--line2); }
-.mech div { padding: 18px 20px 4px 0; display: flex; flex-direction: column; gap: 6px; }
-.mech div + div { padding-left: 20px; border-left: 1px solid var(--line); }
-.mech p { color: var(--ink2); font-size: 14px; }
-.mech .mono { color: var(--hlA); }
 
-/* 方向的標頭與畫框 */
-.dir-h { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 20px; row-gap: 10px; align-items: baseline; }
-.dir-h .lt { font: 500 13px/1 var(--f-mono); color: var(--brand); letter-spacing: .08em; }
-.dir-h p { grid-column: 2; color: var(--ink2); max-width: 46em; }
 .try { grid-column: 2; font-size: 13.5px; color: var(--ink); display: flex; gap: 10px; align-items: baseline; }
 .try i { font: 500 11px/1 var(--f-mono); font-style: normal; color: var(--bg); background: var(--ink); padding: 4px 7px; border-radius: 3px; letter-spacing: .04em; flex: none; }
 .frame { border: 1px solid var(--line2); border-radius: 14px; overflow: hidden; background: var(--panel); }
@@ -99,7 +90,7 @@ h3 { font: 700 15px/1.5 var(--f-sans); }
 .cht text { font-family: var(--f-mono); }
 .cht .ax { font-size: 10.5px; fill: var(--ink3); paint-order: stroke; stroke: var(--panel); stroke-width: 3px; }
 .cht .lab { font: 600 11.5px var(--f-sans); fill: var(--ink); }
-.cht .pilltx { font: 700 11.5px var(--f-sans); fill: #141414; }
+
 .cht .gl { stroke: var(--line); stroke-width: 1; }
 .cht .base { stroke: var(--line2); stroke-width: 1; }
 .cht [data-k] { transition: opacity .18s; }
@@ -111,429 +102,121 @@ h3 { font: 700 15px/1.5 var(--f-sans); }
 
 /* ── A 晨報 ── */
 .pa { padding: 26px 28px 22px; display: flex; flex-direction: column; gap: 22px; background: #0C0C0D; }
-.pa-top { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; border-bottom: 1px solid var(--line2); padding-bottom: 12px; }
-.pa-top .r { display: flex; gap: 14px; align-items: baseline; }
-.pa-top .px { font: 600 15px var(--f-mono); color: var(--ink); letter-spacing: 0; }
-.pa-top .chip { font: 500 11px var(--f-mono); color: var(--bg); background: var(--brand); padding: 3px 8px; border-radius: 2px; letter-spacing: .04em; }
-.pa-main { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 6fr); gap: 36px; align-items: start; }
-.pa-hl { font: 900 clamp(22px, 2.5vw, 30px)/1.35 var(--f-serif); text-wrap: balance; margin-bottom: 8px; }
-.pa-sum { color: var(--ink2); font-size: 14px; margin-bottom: 18px; }
-.pa-cl { display: block; width: 100%; text-align: left; background: none; border: 0; border-top: 1px solid var(--line); padding: 14px 0 14px 34px; position: relative; color: inherit; font: inherit; cursor: pointer; opacity: .42; transition: opacity .2s; }
-.pa-cl:hover { opacity: .75; }
-.pa-cl.on { opacity: 1; cursor: default; }
-.pa-cl .n { position: absolute; left: 0; top: 17px; font: 500 12px var(--f-mono); color: var(--ink3); }
-.pa-cl.on .n { color: var(--brand); }
-.pa-cl .h { display: block; margin: 0 0 4px; font: 600 17px/1.5 var(--f-serif); }
-.pa-cl .p { font-size: 14px; color: var(--ink2); display: none; }
-.pa-cl.on .p { display: block; }
-.pa-cl:focus-visible { outline: 1px solid var(--ink2); outline-offset: 2px; }
-.pa-stage { border: 1px solid var(--line); border-radius: 8px; padding: 16px 16px 10px; background: var(--panel); display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.pa-stage .cap { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
-.pa-foot { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; border-top: 1px solid var(--line); padding-top: 12px; }
-#pa-ch { min-height: 250px; }
 
 /* ── B 週期儀 ── */
 .pb { background: #08090D; display: flex; flex-direction: column; }
-.pb-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; padding: 16px 22px; border-bottom: 1px solid var(--line); }
-.pb-top .btns { display: flex; gap: 8px; }
+
 .pb button.b { font: 500 12px var(--f-mono); color: var(--ink); background: transparent; border: 1px solid var(--line2); border-radius: 999px; padding: 7px 14px; cursor: pointer; letter-spacing: .02em; }
 .pb button.b:hover { border-color: var(--ink2); }
 .pb button.b:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
-.pb-main { display: grid; grid-template-columns: minmax(0, 11fr) minmax(0, 8fr); }
-.pb-dial { position: relative; padding: 8px; background: radial-gradient(circle at var(--sx, 30%) var(--sy, 60%), color-mix(in srgb, var(--sc, #19A56B) 20%, transparent) 0, transparent 48%); transition: background .4s; }
-.pb-dial svg { display: block; width: 100%; height: auto; max-height: 600px; margin: 0 auto; }
-.pb-dial text { font-family: var(--f-sans); }
-.pb-dial .stl { font: 600 14px var(--f-sans); letter-spacing: .12em; }
-.pb-dial .yr { font: 500 9px var(--f-mono); fill: var(--ink3); paint-order: stroke; stroke: #08090D; stroke-width: 4px; }
-.pb-dial .c-stage { font: 700 30px var(--f-sans); letter-spacing: .08em; }
-.pb-dial .c-px { font: 600 40px var(--f-sans); fill: var(--ink); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-.pb-dial .c-sm { font: 500 11px var(--f-mono); fill: var(--ink2); letter-spacing: .04em; }
-.pb-dial .sp { transition: opacity .12s; }
-.pb-dial .sp.fut { opacity: .07; }
-.pb-side { border-left: 1px solid var(--line); display: flex; flex-direction: column; }
-.pb-row { flex: 1; display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: center; column-gap: 14px; padding: 12px 22px; border-bottom: 1px solid var(--line); min-height: 70px; }
-.pb-row:last-child { border-bottom: 0; }
-.pb-row .nm { font-size: 12.5px; color: var(--ink2); }
-.pb-row .v { font: 600 21px/1.2 var(--f-sans); font-variant-numeric: tabular-nums; letter-spacing: -.01em; display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
-.pb-row .w { font: 500 12px var(--f-sans); letter-spacing: 0; }
-.pb-row svg { display: block; }
-.pb-scrub { border-top: 1px solid var(--line); padding: 30px 22px 30px; position: relative; }
-.pb-track { position: relative; height: 56px; cursor: ew-resize; touch-action: none; outline: none; border-radius: 3px; }
-.pb-track canvas { display: block; width: 100%; height: 100%; border-radius: 3px; }
-.pb-track:focus-visible { box-shadow: 0 0 0 1px var(--ink); }
-.pb-thumb { position: absolute; top: -8px; bottom: -8px; width: 2px; margin-left: -1px; background: var(--ink); pointer-events: none; }
-.pb-thumb span { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); white-space: nowrap; font: 500 11px var(--f-mono); color: var(--ink); padding-bottom: 3px; }
-.pb-yrs { position: relative; height: 14px; margin-top: 6px; }
-.pb-yrs span { position: absolute; transform: translateX(-50%); font: 500 10px var(--f-mono); color: var(--ink3); }
-.pb-note { padding: 0 22px 18px; font-size: 12.5px; color: var(--ink3); }
 
 /* ── C 問答 ── */
 .pc { background: #0B0B0C; padding: 26px 28px 30px; display: flex; flex-direction: column; gap: 18px; }
-.pc-in { max-width: 820px; width: 100%; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
-.pc-ask { display: flex; gap: 10px; border-bottom: 1px solid var(--line2); padding-bottom: 10px; }
-.pc-ask input { flex: 1; min-width: 0; background: transparent; border: 0; outline: none; color: var(--ink); font: 500 clamp(17px, 2.2vw, 22px)/1.4 var(--f-sans); padding: 6px 0; }
-.pc-ask input::placeholder { color: var(--ink3); }
-.pc-ask:focus-within { border-color: var(--ink); }
-.pc-ask button { font: 500 12px var(--f-mono); background: var(--ink); color: var(--bg); border: 0; border-radius: 999px; padding: 0 16px; cursor: pointer; flex: none; }
-.pc-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.pc-chip { font: 500 13px var(--f-sans); color: var(--ink2); background: transparent; border: 1px solid var(--line2); border-radius: 999px; padding: 6px 13px; cursor: pointer; }
-.pc-chip:hover, .pc-chip.on { color: var(--ink); border-color: var(--ink2); }
-.pc-chip:focus-visible, .pc-ask button:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
-.pc-old { display: flex; gap: 12px; align-items: baseline; padding: 9px 0; border-top: 1px solid var(--line); cursor: pointer; background: none; border-left: 0; border-right: 0; border-bottom: 0; width: 100%; text-align: left; color: inherit; font: inherit; }
-.pc-old .q { color: var(--ink2); font-size: 13.5px; flex: none; }
-.pc-old .a { color: var(--ink3); font-size: 13px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; min-width: 0; }
-.pc-card { border-top: 1px solid var(--line2); padding-top: 16px; display: flex; flex-direction: column; gap: 14px; }
-.pc-q { font: 500 12px var(--f-mono); color: var(--ink3); letter-spacing: .04em; }
-.pc-a { font-size: clamp(16px, 1.75vw, 19px); line-height: 1.85; color: var(--ink); }
-.pc-a .snt { transition: opacity .35s; }
-.pc-card.typing .snt { opacity: 0; }
-.pc-card.typing .snt.in { opacity: 1; }
-.pc-ev { display: grid; gap: 14px; transition: opacity .4s; }
-.pc-ev.two { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-.pc-card.typing .pc-ev { opacity: 0; }
-.pc-ev figure { margin: 0; border: 1px solid var(--line); border-radius: 8px; padding: 14px 14px 8px; background: var(--panel); min-width: 0; display: flex; flex-direction: column; gap: 8px; }
-.pc-next { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
 
-/* 比較 */
-.tbl { overflow-x: auto; }
 table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 14px; }
 th, td { text-align: left; vertical-align: top; padding: 12px 16px 12px 0; border-top: 1px solid var(--line); color: var(--ink2); }
 thead th { font: 500 11.5px var(--f-mono); letter-spacing: .06em; color: var(--ink3); border-top: 1px solid var(--line2); }
 tbody th { color: var(--ink); font-weight: 600; white-space: nowrap; }
-.rec { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 40px; }
+
 ol.steps { margin: 0; padding: 0; list-style: none; counter-reset: s; display: flex; flex-direction: column; }
 ol.steps li { counter-increment: s; padding: 12px 0 12px 34px; border-top: 1px solid var(--line); position: relative; color: var(--ink2); }
 ol.steps li::before { content: counter(s); position: absolute; left: 0; top: 13px; font: 500 12px var(--f-mono); color: var(--brand); }
 ol.steps li b { color: var(--ink); font-weight: 600; }
-.foot { color: var(--ink3); font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 16px; }
 
 @media (max-width: 860px) {
-  .wrap { gap: 56px; padding-block: 36px 72px; }
+  
   .stats, .mech { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .stats div:nth-child(3), .mech div:nth-child(3) { padding-left: 0; border-left: 0; }
   .stats div:nth-child(n+3), .mech div:nth-child(n+3) { border-top: 1px solid var(--line); }
   .two, .rec, .fit, .pa-main, .pb-main { grid-template-columns: minmax(0, 1fr); gap: 24px; }
-  .pb-main { gap: 0; }
-  .pb-side { border-left: 0; border-top: 1px solid var(--line); }
+
   .pa, .pc { padding: 18px 16px 20px; }
-  .dir-h { grid-template-columns: minmax(0, 1fr); } .dir-h p, .try { grid-column: 1; }
-  .pc-ev.two { grid-template-columns: minmax(0, 1fr); }
-  .pb-dial .stl { font-size: 20px; } .pb-dial .yr { display: none; } .pb-dial .c-sm { font-size: 17px; } .pb-dial .c-px { font-size: 44px; }
-  .pb-top, .pb-scrub { padding-left: 16px; padding-right: 16px; } .pb-row { padding: 10px 16px; } .pb-note { padding: 0 16px 16px; }
+   .dir-h p, .try { grid-column: 1; }
+
 }
-/* ── 第二輪：三種視覺語言（全寬場景，同一個首頁第一屏做三次） ── */
-.wrap-top { padding-bottom: 0; }
+
 .vd { display: flex; flex-direction: column; gap: 22px; padding-top: 76px; }
-.vin { max-width: 1180px; width: 100%; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+
 .scene { position: relative; width: 100%; overflow: hidden; border-block: 1px solid var(--line2); }
-.after4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 28px; }
-.after4 div { border-top: 1px solid var(--line); padding-top: 12px; color: var(--ink2); font-size: 14px; }
-.after4 b { display: block; color: var(--ink); font: 500 11.5px/1.6 var(--f-mono); letter-spacing: .06em; margin-bottom: 2px; }
+
 .done { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); border-top: 1px solid var(--line2); }
 .done div { padding: 16px 20px 0 0; color: var(--ink2); font-size: 14px; }
 .done div + div { padding-left: 20px; border-left: 1px solid var(--line); }
 .done b { display: block; color: var(--ink); font-weight: 600; margin-bottom: 2px; }
-.sep { border: 0; border-top: 1px solid var(--line2); margin: 0; }
 
 /* 1 網點 */
 .n1 { background: #070707; padding: 22px clamp(16px, 4vw, 56px) 26px; display: flex; flex-direction: column; gap: 14px; }
-.n1-top { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
-.n1-hl { font: 900 clamp(20px, 2.6vw, 34px)/1.3 "Noto Sans TC", sans-serif; max-width: 24em; text-wrap: balance; }
-.n1-hl em, .n2-hl em { font-style: normal; }
-.n1-hl em { color: var(--brand); }
-.n1-box { position: relative; height: clamp(180px, 31vw, 420px); touch-action: pan-y; cursor: crosshair; }
-.n1-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.n1-read { display: flex; gap: 18px; align-items: baseline; flex-wrap: wrap; border-top: 1px solid var(--line2); padding-top: 10px; font: 500 13px var(--f-mono); color: var(--ink); }
-.n1-read .hint { margin-left: auto; color: var(--ink3); font-size: 11.5px; letter-spacing: .04em; }
-.n1-figs { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-.n1-fig { padding: 6px 18px 0 0; min-width: 0; }
-.n1-fig + .n1-fig { padding-left: 18px; border-left: 1px solid var(--line); }
-.n1-fig b { display: block; font: 900 clamp(30px, 4.4vw, 58px)/1.05 Archivo, "Arial Narrow", sans-serif; font-stretch: 62%; }
-.n1-fig span { font-size: 12.5px; color: var(--ink2); }
 
 /* 2 晨線 */
 .n2 { height: clamp(500px, 54vw, 720px); user-select: none; -webkit-user-select: none; --x: 78%; --s: 60px; }
-.n2-l { position: absolute; inset: 0; padding: 22px clamp(16px, 4vw, 56px) 104px; display: flex; flex-direction: column; background: var(--b); color: var(--k); }
-.n2-l.night { --b: #0C0C0D; --k: #F2F0EA; --k2: #A9A59C; --k3: #77736B; --ln: #2A2A2F; --r: #FF4A2E; }
-.n2-l.day { --b: #EEECE6; --k: #0E0E0F; --k2: #55514A; --k3: #8B867C; --ln: #CFCBC1; --r: #FF3B1F; clip-path: polygon(calc(var(--x) + var(--s)) 0, 100% 0, 100% 100%, calc(var(--x) - var(--s)) 100%); }
-.n2-top { display: flex; gap: 20px; justify-content: space-between; flex-wrap: wrap; font: 500 11.5px var(--f-mono); letter-spacing: .06em; color: var(--k3); border-bottom: 1px solid var(--ln); padding-bottom: 12px; }
-.n2-hl { font: 900 clamp(20px, 2.7vw, 36px)/1.35 var(--f-serif); max-width: 15em; margin-top: 22px; text-wrap: balance; transition: opacity .3s; }
-.n2-hl em { color: var(--r); }
-.n2-px { margin-top: auto; text-align: right; font: 900 clamp(76px, 17vw, 250px)/.9 "Bodoni Moda", "Noto Sans TC", sans-serif; letter-spacing: -.02em; font-variant-numeric: lining-nums; white-space: nowrap; }
-.n2-px small { font-size: .34em; vertical-align: 1em; font-weight: 500; margin-right: .1em; color: var(--k2); }
-.n2-meta { display: flex; justify-content: flex-end; gap: 18px; align-items: baseline; flex-wrap: wrap; margin-top: 16px; font: 500 12px var(--f-mono); color: var(--k2); }
-.n2-meta b { font: 900 22px var(--f-serif); color: var(--k); letter-spacing: .12em; }
-.n2-ov { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; }
-.n2-ov .hit { pointer-events: stroke; cursor: ew-resize; touch-action: none; }
-.n2-ov .hd { pointer-events: all; cursor: ew-resize; touch-action: none; }
-.n2-lab { position: absolute; top: 0; left: 0; white-space: nowrap; font: 600 12px var(--f-sans); color: #141414; background: var(--brand); padding: 4px 10px; border-radius: 999px; pointer-events: none; }
-.n2-scrub { position: absolute; left: clamp(16px, 4vw, 56px); right: clamp(16px, 4vw, 56px); bottom: 20px; height: 62px; mix-blend-mode: difference; color: #fff; cursor: ew-resize; touch-action: none; outline: none; }
-.n2-scrub svg { display: block; width: 100%; height: 40px; }
-.n2-scrub .yrs { position: relative; height: 14px; margin-top: 6px; }
-.n2-scrub .yrs span { position: absolute; transform: translateX(-50%); font: 500 10px var(--f-mono); }
-.n2-scrub:focus-visible { box-shadow: 0 0 0 1px #fff; }
-.n2-th { position: absolute; bottom: 36px; height: 52px; width: 2px; margin-left: -1px; background: var(--brand); pointer-events: none; }
-.n2-th span { position: absolute; bottom: 100%; left: 50%; transform: translateX(-50%); white-space: nowrap; font: 500 10.5px var(--f-mono); color: var(--brand); padding-bottom: 2px; }
 
 /* 3 儀表 */
 .n3 { background: #090A0C; padding: 18px clamp(16px, 3vw, 40px) 22px; --hair: #1F2227; }
-.n3-bar { display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; padding-bottom: 12px; }
-.n3-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 10px; }
-.n3-m { position: relative; border: 1px solid var(--hair); padding: 14px 16px; min-width: 0; background: #0B0C0F; text-align: left; color: inherit; font: inherit; }
-.n3-m::before, .n3-m::after { content: ""; position: absolute; width: 9px; height: 9px; border: 1px solid var(--ink3); pointer-events: none; transition: border-color .2s; }
-.n3-m::before { left: -1px; top: -1px; border-right: 0; border-bottom: 0; }
-.n3-m::after { right: -1px; bottom: -1px; border-left: 0; border-top: 0; }
-.n3-main { grid-column: 1 / span 8; padding: 12px 8px 4px 12px; outline: none; }
-.n3-main:focus-visible { border-color: var(--ink3); }
-.n3-read { grid-column: 9 / span 4; display: flex; flex-direction: column; gap: 12px; }
-.n3-s { grid-column: span 2; cursor: pointer; display: flex; flex-direction: column; gap: 5px; }
-.n3-s:hover { border-color: var(--line2); }
-.n3-s:focus-visible { outline: 1px solid var(--ink2); outline-offset: 2px; }
-.n3-s.on::before, .n3-s.on::after { border-color: var(--brand); }
-.n3-s.on .lb { color: var(--ink); }
+
 .n3 .lb { font: 500 10.5px var(--f-mono); letter-spacing: .08em; color: var(--ink3); text-transform: uppercase; }
-.n3-px { font: 300 clamp(44px, 6vw, 82px)/1 var(--f-sans); letter-spacing: -.03em; font-variant-numeric: tabular-nums; }
-.n3-st { display: flex; gap: 12px; align-items: baseline; flex-wrap: wrap; }
-.n3-st b { font: 600 20px var(--f-sans); letter-spacing: .1em; }
-.n3-st span { font: 500 12px var(--f-mono); color: var(--ink2); }
-.n3-hl { margin-top: auto; border-top: 1px solid var(--hair); padding-top: 12px; font-size: 13.5px; color: var(--ink2); }
-.n3-s .val { font: 400 26px/1.1 var(--f-sans); font-variant-numeric: tabular-nums; letter-spacing: -.02em; }
-.n3-s .wd { font-size: 12px; min-height: 1.5em; }
-.n3-s svg { display: block; margin-top: 2px; }
+
 .odo { display: inline-flex; align-items: flex-end; line-height: 1; }
 .odo .od { display: inline-block; height: 1em; line-height: 1; overflow: hidden; }
 .odo .odc { display: block; transition: transform .28s cubic-bezier(.2, .8, .2, 1); }
 .odo .odc i { display: block; height: 1em; line-height: 1; font-style: normal; }
 .odo .oc { line-height: 1; }
-#n3-ch svg { display: block; }
-#n3-ch text { font-family: var(--f-mono); font-size: 10.5px; fill: var(--ink3); }
 
 @media (max-width: 860px) {
   .vd { padding-top: 56px; }
   .after4, .done { grid-template-columns: minmax(0, 1fr); gap: 0; }
-  .after4 div { margin-top: 14px; }
+  
   .done div, .done div + div { padding: 14px 0 0; border-left: 0; }
-  .n1-figs { grid-template-columns: minmax(0, 1fr); gap: 10px; } .n1-fig + .n1-fig { padding-left: 0; border-left: 0; }
-  .n1-read .hint { margin-left: 0; }
-  .n2-top .nav, .n1-nav { display: none; }
-  .n2-meta { justify-content: flex-start; }
-  .n3-main, .n3-read { grid-column: 1 / -1; }
-  .n3-s { grid-column: span 6; }
+
 }
 
 /* ── 第三輪：五套全新的 VI。同一塊內容、同一組資料，換五種視覺。線、柱、刻度一律是向量，讀值精確 ── */
 .vi { padding: 20px clamp(16px, 3.2vw, 44px) 26px; background: var(--v-bg); color: var(--v-ink); font-family: var(--v-f); position: relative; --v-r: 0px; --v-gap: 12px; --v-cr: 999px; }
-.vi-top { display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap; padding-bottom: 18px; position: relative; }
-.vi-wm { font: var(--v-wm); letter-spacing: var(--v-wms, .24em); }
-.vi-nav { display: flex; gap: 20px; font-size: 12.5px; color: var(--v-ink2); }
-.vi-nav b { color: var(--v-ink); font-weight: 500; }
-.vi-stt { font: 500 11px var(--f-mono); color: var(--v-ink2); letter-spacing: .06em; }
-.vi-stt i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--v-up); margin-right: 6px; vertical-align: 1px; }
-.vi-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: var(--v-gap); position: relative; }
-.vi-hero { grid-column: 1 / span 5; grid-row: 1 / span 2; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
-.vi-card, .vi-stat { background: var(--v-panel); border: var(--v-bd); border-radius: var(--v-r); min-width: 0; position: relative; }
-.vi-card { padding: 16px 18px 12px; }
-.vi-c1 { grid-column: 6 / span 7; } .vi-c2 { grid-column: 6 / span 4; } .vi-spec { grid-column: 10 / span 3; }
-.vi-lb { font: 500 11px var(--f-mono); letter-spacing: .08em; color: var(--v-ink2); text-transform: uppercase; }
-.vi-num { font: var(--v-num); line-height: 1; letter-spacing: var(--v-nls, -.02em); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.vi-sub { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: 13px; color: var(--v-ink2); }
-.vi-chg { color: var(--v-up); font: 600 15px var(--f-mono); }
-.vi-chip { padding: 3px 11px; border-radius: var(--v-cr); background: var(--v-chipbg); color: var(--v-chipfg); font-weight: 600; font-size: 12.5px; letter-spacing: .08em; }
-.vi-lead { font-size: 14px; color: var(--v-ink2); max-width: 30em; }
-.vi-cl { list-style: none; margin: 4px 0 0; padding: 0; counter-reset: c; border-top: 1px solid var(--v-line); }
-.vi-cl li { counter-increment: c; display: flex; gap: 14px; align-items: baseline; padding: 10px 0; border-bottom: 1px solid var(--v-line); font-size: 14.5px; font-weight: 500; }
-.vi-cl li::before { content: "0" counter(c); font: 500 11px var(--f-mono); color: var(--v-acc); }
-.vi-stats { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: var(--v-gap); margin-top: auto; }
-.vi-stat { padding: 12px 14px; }
-.vi-stat b { display: block; font: var(--v-sn); font-variant-numeric: tabular-nums; }
-.vi-stat span { font-size: 12px; color: var(--v-ink2); }
-.vi-chh { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; align-items: baseline; margin-bottom: 6px; }
-.vi-ro { font: 500 11.5px var(--f-mono); color: var(--v-ink2); }
-.vi-ro b { color: var(--v-ink); font-weight: 500; }
+
 .vi svg { display: block; overflow: visible; }
 .vi svg text { font-family: var(--f-mono); font-size: 10.5px; fill: var(--v-ink2); }
 .vi svg text.el { font-family: var(--v-f); font-size: 11.5px; font-weight: 600; }
-.vi-sw { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px; margin: 10px 0 14px; }
-.vi-sw i { display: block; aspect-ratio: 1; border-radius: var(--v-sr, 4px); border: 1px solid var(--v-line); }
-.vi-ty { font: var(--v-sn); }
-.vi-ty small { display: block; font: 500 11px var(--f-mono); color: var(--v-ink2); margin-top: 4px; letter-spacing: 0; }
-.vi-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
-.vi-chips span { font-size: 12px; padding: 3px 10px; border-radius: var(--v-cr); border: 1px solid currentColor; }
-.vi-dot { position: relative; height: clamp(96px, 13.5vw, 172px); cursor: crosshair; touch-action: pan-y; }
-.vi-dot canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
-
-/* 1 點陣：顯示牆。黑、白色光點、萊姆綠 */
-.vi1 { --v-bg: #050505; --v-panel: #0A0A0A; --v-bd: 1px solid #1D1D1D; --v-line: #2A2A2A; --v-grid: #3A3A3A; --v-ink: #F2F2EE; --v-ink2: #8C8C87; --v-acc: #C6FF3D; --v-up: #C6FF3D; --v-down: #FF4D4D; --c-px: #F2F2EE; --c-a: #C6FF3D; --c-b: #8C8C87; --hlA: #F2F2EE; --hlB: #C6FF3D; --v-dim: #2C2C2C;
-  --v-f: "Geist", "Noto Sans TC", sans-serif; --v-sn: 500 24px/1.2 "Geist Mono", monospace; --v-wm: 600 13px "Geist Mono", monospace; --v-chipbg: #C6FF3D; --v-chipfg: #050505; --v-cr: 2px; --v-sr: 50%;
-  background-image: radial-gradient(#171717 1px, transparent 1.3px); background-size: 10px 10px; }
-/* 2 光譜：深色玻璃，五個階段色連成一道光 */
-.vi2 { --v-bg: #05060A; --v-panel: rgba(255, 255, 255, .035); --v-bd: 1px solid rgba(255, 255, 255, .09); --v-line: rgba(255, 255, 255, .12); --v-grid: rgba(255, 255, 255, .07); --v-ink: #F4F6FF; --v-ink2: #8E93A8; --v-acc: #38D6E8; --v-up: #3BE39A; --v-down: #FF5C7A; --c-px: #38D6E8; --c-a: #F4F6FF; --c-b: #8E93A8; --hlA: #F7C948; --hlB: #3BE39A; --v-dim: rgba(255, 255, 255, .13);
-  --v-f: "Sora", "Noto Sans TC", sans-serif; --v-num: 200 clamp(60px, 8.6vw, 124px) "Sora", sans-serif; --v-nls: -.045em; --v-sn: 300 26px/1.2 "Sora", sans-serif; --v-wm: 600 13px "Sora", sans-serif; --v-wms: .34em; --v-r: 18px; --v-chipbg: rgba(59, 227, 154, .15); --v-chipfg: #3BE39A; --v-sr: 8px;
-  --sp: linear-gradient(90deg, #5B7CFF, #38D6E8 30%, #3BE39A 55%, #F7C948 80%, #FF5C7A); }
-.vi2::before { content: ""; position: absolute; inset: 0 0 auto; height: 220px; pointer-events: none; background: radial-gradient(46% 150px at 22% 0, rgba(91, 124, 255, .2), transparent 70%), radial-gradient(40% 120px at 74% 0, rgba(59, 227, 154, .11), transparent 70%); }
-.vi2 .vi-num { background: var(--sp); -webkit-background-clip: text; background-clip: text; color: transparent; padding-right: .06em; width: fit-content; }
-.vi2 .vi-wm { background: var(--sp); -webkit-background-clip: text; background-clip: text; color: transparent; }
-/* 3 航電：抬頭顯示器。單色冰藍，琥珀色警示 */
-.vi3 { --v-bg: #02060A; --v-panel: rgba(138, 243, 255, .025); --v-bd: 1px solid rgba(138, 243, 255, .26); --v-line: rgba(138, 243, 255, .3); --v-grid: rgba(138, 243, 255, .13); --v-ink: #D8FBFF; --v-ink2: #5E8F99; --v-acc: #8AF3FF; --v-up: #5CFFB1; --v-down: #FF5470; --c-px: #8AF3FF; --c-a: #FFB020; --c-b: #5E8F99; --hlA: #FFB020; --hlB: #5CFFB1; --v-dim: rgba(138, 243, 255, .22);
-  --v-f: "Chakra Petch", "Noto Sans TC", sans-serif; --v-num: 600 clamp(60px, 8.8vw, 122px) "Chakra Petch", sans-serif; --v-nls: .01em; --v-sn: 500 26px/1.2 "Chakra Petch", sans-serif; --v-wm: 600 14px "Chakra Petch", sans-serif; --v-wms: .4em; --v-chipbg: transparent; --v-chipfg: #8AF3FF; --v-cr: 0px; --v-sr: 0px;
-  background-image: linear-gradient(rgba(138, 243, 255, .045) 1px, transparent 1px), linear-gradient(90deg, rgba(138, 243, 255, .045) 1px, transparent 1px); background-size: 32px 32px; }
-.vi3 .vi-num { color: var(--v-acc); text-shadow: 0 0 22px rgba(138, 243, 255, .32); }
-.vi3 .vi-chip { border: 1px solid var(--v-acc); }
-.vi3 .vi-card::before, .vi3 .vi-card::after, .vi3 .vi-stat::before, .vi3 .vi-stat::after { content: ""; position: absolute; width: 10px; height: 10px; border: 2px solid var(--v-acc); pointer-events: none; }
-.vi3 .vi-card::before, .vi3 .vi-stat::before { left: -1px; top: -1px; border-right: 0; border-bottom: 0; }
-.vi3 .vi-card::after, .vi3 .vi-stat::after { right: -1px; bottom: -1px; border-left: 0; border-top: 0; }
-/* 4 無塵室：明亮、極細的字、大圓角 */
-.vi4 { --v-bg: #ECEFF3; --v-panel: #FFFFFF; --v-bd: 1px solid #E0E4EA; --v-line: #D5DAE1; --v-grid: #E7EAEF; --v-ink: #0A0C10; --v-ink2: #6A7280; --v-acc: #2F54FF; --v-up: #00A870; --v-down: #F0364A; --c-px: #0A0C10; --c-a: #2F54FF; --c-b: #9CA4B0; --hlA: #2F54FF; --hlB: #00A870; --v-dim: #DCE0E6;
-  --v-f: "Inter Tight", "Noto Sans TC", sans-serif; --v-num: 200 clamp(66px, 9.6vw, 138px) "Inter Tight", sans-serif; --v-nls: -.05em; --v-sn: 300 28px/1.2 "Inter Tight", sans-serif; --v-wm: 600 13px "Inter Tight", sans-serif; --v-wms: .3em; --v-r: 22px; --v-chipbg: #0A0C10; --v-chipfg: #FFFFFF; --v-sr: 50%; }
-/* 5 霓虹：深藍底，青、桃紅、萊姆三個螢光色 */
-.vi5 { --v-bg: #060A1C; --v-panel: #0B1130; --v-bd: 1px solid rgba(0, 229, 255, .2); --v-line: rgba(0, 229, 255, .28); --v-grid: rgba(133, 144, 184, .16); --v-ink: #EAF0FF; --v-ink2: #8590B8; --v-acc: #00E5FF; --v-up: #D7FF3E; --v-down: #FF2E88; --c-px: #00E5FF; --c-a: #FF2E88; --c-b: #D7FF3E; --hlA: #FF2E88; --hlB: #D7FF3E; --v-dim: rgba(133, 144, 184, .28);
-  --v-f: "Geist", "Noto Sans TC", sans-serif; --v-num: 800 clamp(46px, 6.9vw, 100px) "Unbounded", sans-serif; --v-nls: -.035em; --v-sn: 700 21px/1.25 "Unbounded", sans-serif; --v-wm: 800 13px "Unbounded", sans-serif; --v-wms: .14em; --v-r: 6px; --v-chipbg: #D7FF3E; --v-chipfg: #060A1C; --v-cr: 4px; --v-sr: 4px; }
-.vi5 .vi-num::after { content: ""; display: block; width: 1.9em; height: .075em; margin-top: .14em; background: linear-gradient(90deg, #00E5FF, #FF2E88); }
-
-.vsum { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--line2); }
-.vsum a { display: flex; flex-direction: column; gap: 4px; padding: 14px 16px 0 0; color: var(--ink2); font-size: 13.5px; text-decoration: none; }
-.vsum a + a { padding-left: 16px; border-left: 1px solid var(--line); }
-.vsum b { color: var(--ink); font: 900 18px/1.4 var(--f-serif); }
-.vsum a:hover b { color: var(--brand); }
-.vsum a:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
 
 @media (max-width: 860px) {
-  .vi-hero, .vi-c1, .vi-c2, .vi-spec { grid-column: 1 / -1; grid-row: auto; }
-  .vi-nav { display: none; }
-  .vi-stats { grid-template-columns: minmax(0, 1fr); }
-  .vsum { grid-template-columns: minmax(0, 1fr); }
-  .vsum a, .vsum a + a { padding: 12px 0 0; border-left: 0; }
-}
 
-/* ── 第四輪：四個整站概念。每個都是「結構＋互動＋視覺」一起換，不是同一個版面換皮 ── */
-.pr4 { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line2); }
-.pr4 div { padding: 16px 18px 0 0; color: var(--ink2); font-size: 14px; }
-.pr4 div + div { padding-left: 18px; border-left: 1px solid var(--line); }
-.pr4 b { display: block; color: var(--ink); font: 900 17px/1.5 var(--f-serif); margin-bottom: 2px; }
-.hbtn { font: 500 12px var(--f-mono); letter-spacing: .04em; color: inherit; background: transparent; border: 1px solid currentColor; border-radius: 999px; padding: 7px 14px; cursor: pointer; opacity: .8; }
-.hbtn:hover { opacity: 1; } .hbtn:focus-visible { outline: 1px solid currentColor; outline-offset: 2px; }
+}
 
 /* 1 牆 */
 .h1 { background: #040404; color: #F2F2EE; }
-.h1-box { position: relative; height: clamp(520px, 46vw, 640px); cursor: pointer; touch-action: pan-y; }
-.h1-box canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.h1-lab span { position: absolute; font: 500 11px var(--f-mono); letter-spacing: .1em; color: #8C8C87; pointer-events: none; transition: color .2s; }
-.h1-lab span.on { color: #C6FF3D; }
-.h1-ov { position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; transition: opacity .5s .25s; pointer-events: none; }
-.h1.focus .h1-ov { opacity: 1; pointer-events: auto; }
-.h1-ov text { font: 500 11px var(--f-mono); fill: #8C8C87; }
-.h1-top { position: absolute; left: clamp(14px, 2vw, 28px); right: clamp(14px, 2vw, 28px); top: 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; pointer-events: none; z-index: 2; }
-.h1-top .hbtn { pointer-events: auto; visibility: hidden; }
-.h1.focus .h1-top .hbtn { visibility: visible; }
-.h1-ro { font: 500 12px var(--f-mono); color: #F2F2EE; }
 
 /* 2 單幀 */
 .h2 { background: #0C0C0C; color: #EDEDEA; --a: #E8E4DA; transition: height .6s cubic-bezier(.2, .8, .2, 1); font-family: "Inter Tight", "Noto Sans TC", sans-serif; }
-.h2-pl { position: absolute; left: 0; top: 0; transform-origin: 0 0; transition: transform .65s cubic-bezier(.2, .8, .2, 1), opacity .45s; background: #0C0C0C; overflow: hidden; }
-.h2.sheet .h2-pl { cursor: pointer; outline: 1px solid #262626; }
-.h2.sheet .h2-pl:hover { outline-color: #EDEDEA; }
-.h2-k { position: absolute; left: 64px; top: 52px; font: 500 15px var(--f-mono); letter-spacing: .12em; color: #8A8A86; }
-.h2-big { position: absolute; left: 58px; top: 96px; font-weight: 200; font-size: 208px; line-height: 1; letter-spacing: -.055em; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.h2-big small { font-size: .24em; font-weight: 400; letter-spacing: 0; color: #8A8A86; margin-left: .3em; }
-.h2-s { position: absolute; right: 64px; top: 58px; width: 330px; font-size: 21px; line-height: 1.65; font-weight: 400; color: #C9C8C3; text-wrap: pretty; }
-.h2-ch { position: absolute; left: 64px; right: 64px; bottom: 84px; height: 232px; }
-.h2-ch svg { display: block; overflow: visible; }
-.h2-ch text { font: 500 13px var(--f-mono); fill: #8A8A86; }
-.h2-n { display: none; position: absolute; right: 64px; bottom: 34px; font: 500 14px var(--f-mono); letter-spacing: .1em; color: #6A6A66; }
-.h2-pl.pt .h2-k { left: 34px; top: 36px; } .h2-pl.pt .h2-big { left: 30px; top: 78px; font-size: 128px; } .h2-pl.pt .h2-s { left: 34px; right: 34px; top: 250px; width: auto; font-size: 22px; } .h2-pl.pt .h2-ch { left: 34px; right: 34px; bottom: 84px; height: 240px; } .h2-pl.pt .h2-n { right: 34px; }
-.h2-ui { position: absolute; left: clamp(14px, 2.4vw, 34px); right: clamp(14px, 2.4vw, 34px); bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; z-index: 5; pointer-events: none; }
-.h2-ui > * { pointer-events: auto; }
-.h2-ui .nav { display: flex; gap: 8px; }
-.h2.sheet .h2-ui .nav { visibility: hidden; }
-.h2-ix { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 5px; z-index: 5; }
-.h2-ix button { width: 18px; height: 10px; padding: 0; border: 0; background: none; cursor: pointer; position: relative; }
-.h2-ix button::after { content: ""; position: absolute; right: 0; top: 4px; height: 1.5px; width: 8px; background: #5A5A56; transition: width .2s, background .2s; }
-.h2-ix button.on::after { width: 18px; background: #EDEDEA; }
-.h2.sheet .h2-ix { visibility: hidden; }
 
 /* 3 地層 */
 .h3 { background: #08080A; color: #F1EFEA; padding: 18px clamp(16px, 3vw, 40px) 20px; display: flex; flex-direction: column; gap: 12px; height: clamp(560px, 58vw, 760px); font-family: "Inter Tight", "Noto Sans TC", sans-serif; }
-.h3-top { display: flex; justify-content: space-between; align-items: baseline; gap: 14px; flex-wrap: wrap; }
-.h3-top h3 { font: 300 clamp(22px, 2.6vw, 32px)/1.2 "Inter Tight", "Noto Sans TC", sans-serif; letter-spacing: -.01em; }
-.h3-st { flex: 1; display: flex; flex-direction: column; gap: 2px; min-height: 0; }
-.h3-b { flex: var(--g, 1) 1 0; min-height: 18px; background: var(--c, #232326); transition: flex-grow .55s cubic-bezier(.2, .8, .2, 1), background-color .55s; position: relative; overflow: hidden; border: 0; padding: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; display: block; width: 100%; }
-.h3-b .rw { position: absolute; left: 16px; right: 16px; top: 50%; transform: translateY(-50%); display: flex; justify-content: space-between; gap: 12px; align-items: baseline; font-size: 13.5px; opacity: .78; transition: opacity .2s, top .4s, transform .4s; white-space: nowrap; }
-.h3-b:hover .rw, .h3-b.open .rw, .h3-b:focus-visible .rw { opacity: 1; }
-.h3-b .rw b { font: 500 13px var(--f-mono); }
-.h3-b .rw i { font-style: normal; font: 500 11px var(--f-mono); opacity: .7; margin-left: 10px; }
-.h3-b.open .rw { top: 20px; transform: none; }
-.h3-b .cht3 { position: absolute; left: 16px; right: 16px; top: 46px; bottom: 12px; opacity: 0; transition: opacity .35s .15s; pointer-events: none; }
-.h3-b.open .cht3 { opacity: 1; }
-.h3-b .cht3 text { font: 500 11px var(--f-mono); fill: rgba(241, 239, 234, .7); }
-.h3-b:focus-visible { outline: 1px solid #F1EFEA; outline-offset: -1px; }
-.h3-tr { position: relative; height: 34px; cursor: ew-resize; touch-action: none; outline: none; border-top: 1px solid #2A2A2E; }
-.h3-tr span { position: absolute; top: 14px; transform: translateX(-50%); font: 500 10px var(--f-mono); color: #77736B; }
-.h3-tr i { position: absolute; top: 0; height: 9px; width: 1px; background: #3A3A3F; }
-.h3-th { position: absolute; top: -5px; height: 18px; width: 2px; margin-left: -1px; background: #F1EFEA; pointer-events: none; }
-.h3-tr:focus-visible { box-shadow: 0 0 0 1px #F1EFEA; }
 
 /* 4 空間 */
 .h4 { background: #E7E8EA; color: #0D0E10; height: clamp(520px, 56vw, 760px); font-family: "Inter Tight", "Noto Sans TC", sans-serif; }
-.h4-st { position: absolute; inset: 0; perspective: 1500px; perspective-origin: 50% 0%; }
-.h4-p { position: absolute; left: 22%; top: 25%; width: 56%; aspect-ratio: 16 / 10; background: #FBFBFA; border-radius: 14px; box-shadow: 0 40px 80px -30px rgba(13, 14, 16, .35), 0 0 0 1px rgba(13, 14, 16, .06); padding: clamp(14px, 2.2vw, 30px); display: flex; flex-direction: column; gap: 8px; cursor: pointer; transition: transform .7s cubic-bezier(.2, .8, .2, 1), opacity .5s, filter .5s, left .7s cubic-bezier(.2, .8, .2, 1), top .7s cubic-bezier(.2, .8, .2, 1), width .7s cubic-bezier(.2, .8, .2, 1), border-radius .7s; transform-style: preserve-3d; border: 0; color: inherit; font: inherit; text-align: left; overflow: hidden; }
-.h4-p .k { font: 500 clamp(10px, 1vw, 12px) var(--f-mono); letter-spacing: .12em; color: #6C7078; }
-.h4-p .big { font-weight: 200; font-size: clamp(34px, 6.2vw, 96px); line-height: 1; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
-.h4-p .s { font-size: clamp(12px, 1.25vw, 16px); color: #4A4E55; max-width: 30em; line-height: 1.6; }
-.h4-p .c { flex: 1; min-height: 0; margin-top: auto; }
-.h4-p .c svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.h4-p .c text { font: 500 11px var(--f-mono); fill: #6C7078; }
-.h4-p:focus-visible { outline: 2px solid #0D0E10; outline-offset: 3px; }
-.h4.full .h4-p.front { left: 0; top: 0; width: 100%; border-radius: 0; cursor: default; }
-.h4-ui { position: absolute; left: clamp(14px, 2.4vw, 34px); right: clamp(14px, 2.4vw, 34px); bottom: 14px; display: flex; justify-content: space-between; align-items: center; z-index: 30; pointer-events: none; }
-.h4-ui > * { pointer-events: auto; }
-.h4-ui .nav { display: flex; gap: 8px; }
-.h4-ui .mono { color: #6C7078; }
 
 @media (max-width: 860px) {
-  .pr4 { grid-template-columns: minmax(0, 1fr); }
-  .pr4 div, .pr4 div + div { padding: 12px 0 0; border-left: 0; }
-  .h4-p { left: 7%; width: 86%; top: 36%; }
-  .h3-b .rw i { display: none; }
+
 }
 
 /* ── 整合方案（第六輪）：空間排列三種、配色五套各有深淺。所有顏色走 .lvw 上的變數，切換時整個原型和圖表樣張一起換 ── */
 .lvw { --bg: #060607; --sheet: #0E0E10; --ink: #EDEDE8; --k2: #8F8F8A; --ac: #C6FF3D; --up: #C6FF3D; --dn: #FF5A4D; --c3: #8C9BFF; --c4: #FFB454; --c5: #5CE1E6; --shim: #FFFFFF; --shadow: #000; }
-.lv-sw { display: flex; flex-wrap: wrap; gap: 10px 22px; align-items: center; padding-bottom: 14px; }
-.lv-sw .grp { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
-.lv-sw .grp > .mono { margin-right: 4px; }
-.pchip { font: 500 13px var(--f-sans); color: var(--ink2, #B4B0A7); background: transparent; border: 1px solid #36363D; border-radius: 999px; padding: 6px 12px 6px 9px; cursor: pointer; display: inline-flex; align-items: center; gap: 7px; }
-.pchip i { width: 11px; height: 11px; border-radius: 50%; display: inline-block; }
-.pchip[aria-pressed="true"] { color: #0A0A0B; background: #EFECE5; border-color: #EFECE5; }
-.pchip:focus-visible { outline: 1px solid #EFECE5; outline-offset: 2px; }
-.pnote { color: #B4B0A7; font-size: 13.5px; padding-bottom: 12px; min-height: 2.6em; }
+
 .lv { background: var(--bg); color: var(--ink); height: clamp(640px, 62vw, 880px); font-family: "Inter Tight", "Noto Sans TC", sans-serif; transition: background-color .5s, color .5s; }
-.lv-f { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.lv-top { position: absolute; left: clamp(16px, 2.6vw, 36px); right: clamp(16px, 2.6vw, 36px); top: 16px; display: flex; justify-content: space-between; align-items: center; gap: 12px; z-index: 40; font: 500 11.5px var(--f-mono); letter-spacing: .1em; color: var(--k2); pointer-events: none; }
-.lv-top b { color: var(--ink); font-weight: 500; letter-spacing: .3em; }
-.lv-top b::before { content: ""; display: inline-block; width: 9px; height: 9px; background: var(--ac); margin-right: 10px; vertical-align: -1px; }
+
 .sh.front::before { background: linear-gradient(90deg, transparent, var(--ac), transparent); left: 22%; right: 22%; }
-.lv-top .live i { display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: var(--up); margin-right: 8px; vertical-align: 1px; animation: lvbeat 3s ease-in-out infinite; }
-.lv-st { position: absolute; inset: 0; perspective: 1500px; perspective-origin: 50% 40%; }
+
 .sh { position: absolute; left: 25%; top: 21%; width: 50%; aspect-ratio: 16 / 9.8; container-type: inline-size; background: var(--sheet); border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 16px; box-shadow: 0 60px 100px -50px var(--shadow); cursor: pointer; overflow: hidden; outline: none;
   transition: transform .9s cubic-bezier(.2, .8, .2, 1), opacity .6s, left .9s cubic-bezier(.2, .8, .2, 1), top .9s cubic-bezier(.2, .8, .2, 1), width .9s cubic-bezier(.2, .8, .2, 1), height .9s cubic-bezier(.2, .8, .2, 1), border-radius .9s, filter .6s, background-color .5s; }
 .lv.stack .sh { left: 19%; top: 27%; width: 62%; aspect-ratio: 16 / 9.6; }
 .sh::before { content: ""; position: absolute; left: 10%; right: 10%; top: 0; height: 1px; background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--ink) 55%, transparent), transparent); z-index: 2; }
 .sh:focus-visible { border-color: color-mix(in srgb, var(--ink) 60%, transparent); }
 .lv.flat .sh.front { left: 0; top: 0; width: 100%; height: 100%; aspect-ratio: auto; border-radius: 0; cursor: default; border-color: transparent; }
-.sh-in { position: absolute; inset: 0; padding: 3.2cqw 3.6cqw 2.4cqw; display: flex; flex-direction: column; gap: 1.6cqw; animation: lvdrift 9s ease-in-out infinite; animation-delay: var(--dl, 0s); }
-.lv.flat .sh-in { animation: none; padding-top: max(52px, 4.4cqw); padding-bottom: 66px; }
-.sh-h { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font: 500 max(10px, 1.25cqw) var(--f-mono); letter-spacing: .12em; color: var(--k2); white-space: nowrap; }
-.sh-h .v { color: var(--ink); letter-spacing: 0; }
-.sh-b { flex: 1; min-height: 0; display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); grid-template-rows: minmax(0, 1fr) auto; gap: 2cqw 4cqw; }
-.sh-l { display: flex; flex-direction: column; gap: 1.5cqw; min-width: 0; }
+
 .sh .big { font-family: var(--fn, inherit); font-weight: var(--fw, 400); font-stretch: var(--fst, 100%); font-size: 10.4cqw; line-height: 1; letter-spacing: var(--fls, -.05em); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.sh-h .v { font-family: var(--fn, inherit); font-stretch: var(--fst, 100%); font-weight: 500; }
+
 .sh .s { font-size: max(12px, 1.5cqw); line-height: 1.65; color: color-mix(in srgb, var(--ink) 68%, var(--sheet)); max-width: 26em; }
 .sh .ro { margin-top: auto; font: 500 max(10px, 1.15cqw) var(--f-mono); color: var(--k2); }
-.sh-m { min-width: 0; min-height: 0; position: relative; }
+
 .sh-m svg, .ms svg { display: block; width: 100%; height: 100%; overflow: visible; }
-.sh-m text { font: 500 10.5px var(--f-mono); fill: var(--k2); }
-.sh-x { grid-column: 1 / -1; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.6cqw; border-top: 1px solid color-mix(in srgb, var(--ink) 9%, transparent); padding-top: 1.4cqw; }
+
 .mini { background: none; border: 0; color: inherit; font: inherit; text-align: left; cursor: pointer; display: grid; grid-template-columns: auto minmax(0, 1fr); grid-template-rows: auto auto; column-gap: 1.8cqw; align-items: center; padding: .7cqw; border-radius: 8px; min-width: 0; transition: background .2s; }
 .mini:hover { background: color-mix(in srgb, var(--ink) 6%, transparent); }
 .mini:focus-visible { outline: 1px solid color-mix(in srgb, var(--ink) 60%, transparent); }
@@ -542,53 +225,32 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .ms { grid-row: 1 / span 2; grid-column: 2; height: max(30px, 4.6cqw); min-width: 0; }
 .lv .shim { fill: none; stroke: var(--shim); stroke-width: 2; stroke-linecap: round; stroke-dasharray: 55 945; stroke-dashoffset: 1000; animation: lvshim 6.5s linear infinite; }
 .lv .pulse { fill: none; stroke: var(--ac); stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: lvpulse 3s ease-out infinite; }
-.lv-ui { position: absolute; left: clamp(16px, 2.6vw, 36px); right: clamp(16px, 2.6vw, 36px); bottom: 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; z-index: 40; pointer-events: none; }
-.lv-ui > * { pointer-events: auto; }
-.lv-ui .nav { display: flex; gap: 8px; align-items: center; }
-.lv-ui .mono { color: var(--k2); margin-left: 8px; }
+
 @keyframes lvshim { to { stroke-dashoffset: 0; } }
 @keyframes lvpulse { 0% { transform: scale(.6); opacity: .9; } 100% { transform: scale(3.6); opacity: 0; } }
 @keyframes lvdrift { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-.6cqw); } }
 @keyframes lvbeat { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.7); } }
 @container (max-width: 520px) {
-  .sh-b { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr) auto; gap: 10px; }
+  
   .sh .big { font-size: 15cqw; } .sh .s { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; } .sh .ro { margin-top: 0; }
-  .ms { display: none; } .mini { grid-template-columns: minmax(0, 1fr); } .sh-in { padding: 16px 16px 14px; gap: 10px; }
+  .ms { display: none; } .mini { grid-template-columns: minmax(0, 1fr); } 
 }
-/* 字與數字樣張 */
-.ty3 { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-.ty3 button { background: var(--sheet); color: var(--ink); border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 14px; padding: 14px 18px 16px; text-align: left; cursor: pointer; min-width: 0; display: flex; flex-direction: column; gap: 6px; font: inherit; overflow: hidden; }
-.ty3 button[aria-pressed="true"] { border-color: var(--ac); }
-.ty3 button:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
-.ty3 .t { font: 500 11px var(--f-mono); letter-spacing: .1em; color: var(--k2); }
-.ty3 .n { font-family: var(--fn); font-stretch: var(--fst, 100%); font-size: clamp(38px, 5.4vw, 78px); line-height: 1; letter-spacing: var(--fls, -.05em); font-variant-numeric: tabular-nums; white-space: nowrap; }
-.ty3 .m { font-family: var(--fn); font-stretch: var(--fst, 100%); font-size: clamp(14px, 1.5vw, 19px); color: color-mix(in srgb, var(--ink) 75%, var(--sheet)); font-variant-numeric: tabular-nums; white-space: nowrap; }
-@media (max-width: 860px) { .ty3 { grid-template-columns: minmax(0, 1fr); } }
+
+@media (max-width: 860px) {  }
 /* 圖表用色樣張 */
 .cs { background: var(--bg); color: var(--ink); padding: 22px clamp(16px, 2.6vw, 36px) 26px; border-bottom: 1px solid #36363D; font-family: "Inter Tight", "Noto Sans TC", sans-serif; transition: background-color .5s, color .5s; display: flex; flex-direction: column; gap: 18px; }
-.cs-g { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-.cs-c { background: var(--sheet); border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 14px; padding: 14px 16px 12px; min-width: 0; display: flex; flex-direction: column; gap: 8px; transition: background-color .5s; }
-.cs-c .t { font: 500 11px var(--f-mono); letter-spacing: .1em; color: var(--k2); }
-.cs-c svg { display: block; overflow: visible; }
-.cs-c text { font: 500 10.5px var(--f-mono); fill: var(--k2); }
-.cs-c text.el { font: 600 11px "Inter Tight", "Noto Sans TC", sans-serif; }
-.cs-sw { display: flex; flex-wrap: wrap; gap: 8px 18px; }
-.cs-sw span { display: inline-flex; align-items: center; gap: 7px; font: 500 11.5px var(--f-mono); color: var(--k2); }
-.cs-sw i { width: 18px; height: 18px; border-radius: 5px; border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); display: inline-block; }
-.stg5 { display: flex; flex-wrap: wrap; gap: 6px 12px; font-size: 12px; color: var(--k2); }
-.stg5 span { display: inline-flex; align-items: center; gap: 5px; }
-.stg5 i { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+
 .mv5 { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); border-top: 1px solid var(--line2); }
 .mv5 div { padding: 16px 16px 0 0; color: var(--ink2); font-size: 13.5px; }
 .mv5 div + div { padding-left: 16px; border-left: 1px solid var(--line); }
 .mv5 b { display: block; color: var(--ink); font-weight: 600; font-size: 14.5px; margin-bottom: 2px; }
-@media (max-width: 1000px) { .cs-g { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1000px) {  }
 @media (max-width: 860px) {
   .sh, .lv.stack .sh { left: 6%; width: 88%; top: 28%; aspect-ratio: 4 / 4.4; }
   .lv { height: 740px; }
-  .lv-ui .mono { display: none; }
+  
   .mv5 { grid-template-columns: minmax(0, 1fr); } .mv5 div, .mv5 div + div { padding: 12px 0 0; border-left: 0; }
-  .cs-g { grid-template-columns: minmax(0, 1fr); }
+  
 }
 @media (prefers-reduced-motion: reduce) { .lv .shim { display: none; } .lv .pulse, .sh-in, .lv-top .live i { animation: none; } }
 
@@ -606,12 +268,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .tgl::before { content: ""; position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 999px; background: var(--ink); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
 .tgl.b::before { transform: translateX(100%); }
 .tgl button:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
-.oc-rail { position: absolute; left: clamp(16px, 2.4vw, 34px); top: 16%; width: 11.5%; min-width: 96px; display: flex; flex-direction: column; gap: 2px; z-index: 35; }
-.oc-rail button { text-align: left; background: none; border: 0; color: var(--k2); font: 500 13px/1.4 "Inter Tight", "Noto Sans TC", sans-serif; padding: 8px 0 8px 14px; cursor: pointer; border-left: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); transition: color .25s, border-color .25s; }
-.oc-rail button i { display: block; font: 500 10px var(--f-mono); font-style: normal; letter-spacing: .1em; opacity: .7; }
-.oc-rail button:hover { color: var(--ink); }
-.oc-rail button[aria-current="true"] { color: var(--ink); border-left: 2px solid var(--ac); padding-left: 13px; }
-.oc-rail button:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
+
 .oc-st { position: absolute; inset: 0; perspective: 1600px; perspective-origin: 60% 0%; }
 .os { position: absolute; left: 16%; top: 20%; width: 81.5%; height: 70%; container-type: inline-size; background: var(--sheet); border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 16px; box-shadow: 0 60px 100px -50px var(--shadow); overflow: hidden; outline: none;
   transition: transform .9s cubic-bezier(.2, .8, .2, 1), opacity .6s, filter .6s, background-color .5s; }
@@ -651,9 +308,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .ov { height: 100%; display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 6fr); gap: 3.6cqw; }
 .ov-l { display: flex; flex-direction: column; gap: 1.1cqw; min-width: 0; }
 .ov-lead { font: 500 max(15px, 1.95cqw)/1.5 "Inter Tight", "Noto Sans TC", sans-serif; text-wrap: balance; max-width: 22em; }
-.ov-pt { list-style: none; margin: auto 0 0; padding: 0; border-top: 1px solid color-mix(in srgb, var(--ink) 9%, transparent); }
-.ov-pt li { padding: .75cqw 0; border-bottom: 1px solid color-mix(in srgb, var(--ink) 9%, transparent); font-size: max(11.5px, 1.1cqw); line-height: 1.6; color: color-mix(in srgb, var(--ink) 72%, var(--sheet)); }
-.ov-g { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(2, minmax(0, 1fr)); gap: 1.2cqw; min-height: 0; }
+
 .ov-c { border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 12px; background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; padding: 1.3cqw 1.5cqw 1.1cqw; display: flex; flex-direction: column; gap: .5cqw; min-width: 0; min-height: 0; transition: border-color .25s, background .25s; }
 .ov-c:hover { border-color: color-mix(in srgb, var(--ink) 34%, transparent); background: color-mix(in srgb, var(--ink) 3%, transparent); }
 .ov-c:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
@@ -709,17 +364,14 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 }
 @media (max-width: 860px) {
   .oc { height: 860px; }
-  .oc-rail { position: absolute; left: 0; right: 0; top: 50px; width: auto; flex-direction: row; overflow-x: auto; padding: 0 16px; gap: 14px; scrollbar-width: none; }
-  .oc-rail button { border-left: 0; border-bottom: 1px solid transparent; padding: 6px 0; white-space: nowrap; flex: none; }
-  .oc-rail button i { display: none; }
-  .oc-rail button[aria-current="true"] { border-left: 0; padding-left: 0; border-bottom: 2px solid var(--ac); }
+
   .os { left: 4%; width: 92%; top: 172px; height: 650px; }
   .oc-ft { display: none; }
   .oc-top .live { display: none; }
   .oc-top .r { flex-wrap: nowrap; gap: 8px; flex: none; }
   .oc-top > span:first-child { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-width: 0; }
   .oc-top b { letter-spacing: .18em; }
-  .oc-rail { top: 58px; }
+  
   .os { top: 142px; height: 680px; }
 }
 @media (max-width: 699px) {
@@ -730,25 +382,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 /* ══ 第八輪：搬家圖、價位地圖、九種圖 ══ */
 .r8 { --sheet: #0E0E10; --k2: #8F8F8A; --ac: #FF4F1F; }
 .r8 .mv { display: flex; flex-direction: column; gap: 14px; white-space: normal; font: inherit; color: inherit; letter-spacing: normal; }
-.mv-f { display: flex; flex-wrap: wrap; gap: 6px; }
-.mv-f button { display: inline-flex; align-items: center; gap: 7px; font: 500 12.5px/1 "Inter Tight", "Noto Sans TC", sans-serif; color: var(--ink2); background: none; border: 1px solid var(--line2); border-radius: 999px; padding: 7px 12px; cursor: pointer; transition: color .2s, border-color .2s, background-color .2s; }
-.mv-f button i { width: 8px; height: 8px; border-radius: 50%; background: var(--o); }
-.mv-f button em { font: 500 10.5px var(--f-mono); font-style: normal; opacity: .7; }
-.mv-f button:hover { color: var(--ink); }
-.mv-f button[aria-pressed="true"] { color: var(--ink); border-color: var(--o); background: color-mix(in srgb, var(--o) 12%, transparent); }
-.mv-sum { font-size: 13.5px; color: var(--ink2); min-height: 1.6em; }
-.mv-g { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; align-items: start; }
-.mv-c { border: 1px solid var(--line2); border-radius: 14px; background: var(--sheet); padding: 16px 16px 12px; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.mv-k { font: 500 10.5px var(--f-mono); letter-spacing: .1em; color: var(--ink2); }
-.mv-c h3 { font: 600 22px/1.2 "Inter Tight", "Noto Sans TC", sans-serif; margin: 0; }
-.mv-c .q { font-size: 13px; color: var(--ink2); }
-.mv-c .hd { font: 500 11px var(--f-mono); color: var(--ac); letter-spacing: .04em; margin-bottom: 4px; }
-.mv-s { border-top: 1px solid var(--line); padding: 8px 0 2px; }
-.mv-s b { display: block; font: 500 11px/1.5 "Inter Tight", "Noto Sans TC", sans-serif; color: var(--ink2); margin-bottom: 4px; }
-.mv-s span { display: flex; align-items: baseline; gap: 6px; font-size: 12.5px; line-height: 1.55; transition: opacity .25s; }
-.mv-s span i { flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--o); transform: translateY(-1px); }
-.mv.f .mv-s span:not(.on) { opacity: .16; }
-.mv-n { font: 500 10.5px var(--f-mono); color: var(--ink2); padding-top: 4px; }
+
 .pm { border: 1px solid var(--line2); border-radius: 16px; background: var(--sheet); padding: 16px 18px 14px; display: flex; flex-direction: column; gap: 10px; }
 .pm-top { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 30px; }
 .pm-r { font-size: 13px; color: var(--ink2); display: flex; flex-wrap: wrap; gap: 2px 0; align-items: center; }
@@ -766,11 +400,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .pm-c .pm-l .p { font: 500 10px var(--f-mono); }
 .pm-c .pm-c { font: 500 11.5px "Inter Tight", "Noto Sans TC", sans-serif; fill: #FF4F1F; height: auto; }
 .pm-c .pulse { fill: none; stroke-width: 1.5; transform-box: fill-box; transform-origin: center; animation: lvpulse 2.6s ease-out infinite; }
-.pm-lg { display: flex; flex-wrap: wrap; gap: 4px 16px; font-size: 12px; color: var(--ink2); border-top: 1px solid var(--line); padding-top: 10px; }
-.pm-lg span { display: inline-flex; align-items: center; gap: 6px; }
-.pm-lg .sp { flex-basis: 100%; height: 0; }
-.pm-lg i { width: 13px; height: 2px; background: var(--c); border-radius: 1px; }
-.pm-lg i.b { width: 9px; height: 9px; border-radius: 2px; opacity: .8; }
+
 .ty { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
 .ty article { border: 1px solid var(--line2); border-radius: 14px; background: var(--sheet); padding: 16px 18px; display: flex; flex-direction: column; gap: 7px; }
 .ty article > span { font: 500 10.5px var(--f-mono); color: var(--ac); letter-spacing: .1em; }
@@ -779,7 +409,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .ty p:first-of-type { color: var(--ink); }
 .ty p b { font: 500 11px var(--f-mono); color: var(--ink); letter-spacing: .06em; margin-right: 8px; }
 .ty .ex { font-size: 12.5px; border-top: 1px solid var(--line); padding-top: 8px; margin-top: 2px; }
-@media (max-width: 1000px) { .mv-g { grid-template-columns: repeat(2, minmax(0, 1fr)); } .ty { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (max-width: 1000px) {  .ty { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
 @media (max-width: 600px) { .mv-g, .ty { grid-template-columns: minmax(0, 1fr); } .pm { padding: 12px 10px; } .pm-c { height: 560px; } .pm-top { flex-direction: column-reverse; align-items: flex-start; } }
 /* ══ 第九輪：整站骨架（六個問題的切換）、分布型主圖、資料沒來的卡 ══ */
 .r8 { --up: #C6FF3D; --dn: #FF4F1F; --c3: #8C9BFF; --c4: #5CE1E6; --c5: #E8D9A0; }
@@ -816,13 +446,10 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 @container (max-width: 560px) { .ov.mp { grid-template-columns: minmax(0, 1fr); grid-template-rows: auto minmax(0, 1fr); } .ov.mp .ov-ls, .ov.mp .ov-lead { display: none; } .ol-pr { display: none; } }
 @media (max-width: 860px) {
   .oc-l { gap: 0; } .oc-ch { position: absolute; left: 0; right: 0; top: 40px; overflow-x: auto; scrollbar-width: none; }
-  .oc-rail { top: 84px; } .os { top: 168px; height: 664px; }
+   .os { top: 168px; height: 664px; }
 }
-.oc.cmp { height: auto; background: none; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; }
-.cmp figure { margin: 0; border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); border-radius: 14px; background: var(--sheet); padding: 16px 18px 12px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
-.cmp figcaption { font-size: 13.5px; color: var(--k2); } .cmp figcaption b { color: var(--ink); font-weight: 600; margin-right: 10px; font-size: 15px; }
-.cmp .ol-c { height: 320px; flex: none; }
-@media (max-width: 760px) { .oc.cmp { grid-template-columns: minmax(0, 1fr); } .cmp .ol-c { height: 260px; } }
+
+@media (max-width: 760px) {   }
 /* ══ 第十輪：平鋪。頭部一張卡，下面每個小問題一段，所有圖完整畫出 ══ */
 .scene.oc { height: auto; overflow: visible; }
 .oc-bar { position: sticky; top: 0; z-index: 60; display: flex; flex-direction: column; gap: 4px; padding: 10px clamp(16px, 2.4vw, 34px) 0; background: color-mix(in srgb, var(--bg) 88%, transparent); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); border-bottom: 1px solid color-mix(in srgb, var(--ink) 9%, transparent); transition: background-color .5s; }
@@ -944,14 +571,11 @@ h4.ol-n { margin: 0; font: 600 max(16px, 1.55cqw)/1.3 "Inter Tight", "Noto Sans 
 .fc .rl-d { line-height: 1.6; }
 .ov.br { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: 4cqw; align-items: center; }
 .ov.br .ov-l { gap: 1.6cqw; justify-content: center; }
-.br-k { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 14px; font: 500 max(11px, 1cqw) var(--f-mono); letter-spacing: .08em; color: var(--k2); }
-.br-k i { font: 500 max(11px, 1cqw) "Inter Tight", "Noto Sans TC", sans-serif; font-style: normal; letter-spacing: 0; border: 1px solid; border-radius: 999px; padding: 3px 10px; }
+
 .br-h { margin: 0; font: 600 max(22px, 3.5cqw)/1.28 "Inter Tight", "Noto Sans TC", sans-serif; letter-spacing: -.005em; text-wrap: balance; color: var(--ink); }
 .br-s { font-size: max(14px, 1.55cqw); line-height: 1.75; color: color-mix(in srgb, var(--ink) 74%, var(--sheet)); max-width: 36em; }
-.br-r { display: flex; flex-direction: column; gap: .8cqw; min-width: 0; }
-.br-r .ol-big { font-size: 5.4cqw; } .br-r .ol-u { font-size: .34em; }
-.br-r .rl-r { padding: 7px 0; } .br-r .rl-n { font-size: max(13px, 1.2cqw); } .br-r .rl-v { font-size: max(14px, 1.35cqw); } .br-r .rl-d { font-size: max(11.5px, 1.02cqw); }
-@container (max-width: 560px) { .ov.br { grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start; } .br-h { font-size: 22px; } .br-s { font-size: 13.5px; line-height: 1.65; } .br-r .ol-big { font-size: 9cqw; } .br-r .rl-d { display: none; } }
+
+@container (max-width: 560px) { .ov.br { grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: start; } .br-h { font-size: 22px; } .br-s { font-size: 13.5px; line-height: 1.65; }   }
 /* ══ 第十三輪：出場。跑道和模擬器 ══ */
 .sm-r { width: 100%; margin: 4px 0 0; accent-color: var(--ac); cursor: pointer; }
 .ov-m > .dl-r { height: 100%; }
@@ -1811,111 +1435,22 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=589e710a43"></script>
+<script src="data/next.js?v=e60a80ae9a"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const dOf = n => new Date(n * 864e5), p2 = v => String(v).padStart(2, '0');
 const ymd = n => { const d = dOf(n); return d.getUTCFullYear() + '/' + p2(d.getUTCMonth() + 1) + '/' + p2(d.getUTCDate()); };
 const n0 = v => Math.round(v).toLocaleString('en-US');
-const k1 = v => (v / 1000).toFixed(1).replace(/\.0$/, '') + 'K';
 const sgn = (v, d = 1) => (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(d);
-const wan = v => Math.round(v / 1e4) + ' 萬';
 const dn = s => Math.round(Date.UTC(+s.slice(0, 4), +s.slice(5, 7) - 1, +s.slice(8, 10)) / 864e5);
-const mdS = s => (+s.slice(5, 7)) + '/' + (+s.slice(8, 10));
 const tk = (t, c, txt) => `<span class="tk" data-t="${t}" data-c="${c}" tabindex="0">${txt}</span>`;
-const TX = (x, y, t, a = 'start', c = 'ax', st = '') => `<text class="${c}" x="${x.toFixed(1)}" y="${y.toFixed(1)}" text-anchor="${a}"${st ? ` style="${st}"` : ''}>${t}</text>`;
-const SV = (W, H, s, label) => `<svg class="cht" viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="${label}">${s}</svg>`;
 const PATH = pts => 'M' + pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join('L');
 const tw = (t, fs = 11.5) => { let w = 0; for (const ch of t) w += ch.charCodeAt(0) > 0x2e80 ? fs : fs * .6; return w; };
-function pill(cx, y, t, col, k, L, R, yTo) {
-  const w = tw(t) + 20, h = 22, bx = Math.max(L + w / 2, Math.min(R - w / 2, cx));
-  return `<g data-k="${k}"><line x1="${cx.toFixed(1)}" x2="${cx.toFixed(1)}" y1="${y + h / 2}" y2="${yTo.toFixed(1)}" stroke="${col}" stroke-width="1.3"/><rect x="${(bx - w / 2).toFixed(1)}" y="${y - h / 2}" width="${w.toFixed(1)}" height="${h}" rx="${h / 2}" fill="${col}"/>${TX(bx, y + 4, t, 'middle', 'pilltx')}</g>`;
-}
-const DUP = 'color-mix(in srgb, var(--up) 30%, var(--panel))', DDN = 'color-mix(in srgb, var(--down) 30%, var(--panel))';
-const STG = [['深夜', 'var(--s0)', '#4F6BEA'], ['入夜', 'var(--s1)', '#2CA0CF'], ['破曉', 'var(--s2)', '#19A56B'], ['白晝', 'var(--s3)', '#D69A1E'], ['黃昏', 'var(--s4)', '#FF4A2E']];
 const HEAT = [[0, [79, 107, 234]], [25, [44, 160, 207]], [50, [25, 165, 107]], [75, [214, 154, 30]], [100, [255, 74, 46]]];
 function heatCol(h) { h = Math.max(0, Math.min(100, h)); for (let i = 1; i < HEAT.length; i++) if (h <= HEAT[i][0]) { const a = HEAT[i - 1], b = HEAT[i], f = (h - a[0]) / (b[0] - a[0]); return 'rgb(' + a[1].map((v, j) => Math.round(v + (b[1][j] - v) * f)).join(',') + ')'; } return 'rgb(255,74,46)'; }
-const yearTicks = (x0, x1, X, y, every = 1, L = 0, R = 1e9) => { let s = ''; for (let yr = dOf(x0).getUTCFullYear() + 1; yr <= dOf(x1).getUTCFullYear(); yr++) { if (yr % every) continue; const x = X(Date.UTC(yr, 0, 1) / 864e5); if (x > L + 14 && x < R - 14) s += TX(x, y, String(yr), 'middle'); } return s; };
 
 /* ── 圖 ── */
-function urpdChart(el) {
-  const U = D.urpd, W = el.clientWidth || 620, sm = W < 520, H = sm ? 270 : 340, ML = 4, MR = 40, MT = 82, MB = 24, pw = W - ML - MR, ph = H - MT - MB;
-  const lo = U.price * (sm ? .8 : .68), hi = U.price * (sm ? 1.3 : 1.66), B = U.band.filter(b => b[0] + U.w > lo && b[0] < hi), n = B.length, bw = pw / n;
-  const mx = Math.max(...B.map(b => b[1])) * 1.04, X = p => ML + (p - B[0][0]) / U.w * bw, Y = v => MT + (1 - v / mx) * ph, inR = (p, r) => p >= r[0] && p < r[1];
-  let s = '';
-  for (const t of [25e4, 5e5, 75e4, 1e6]) { if (t > mx) break; s += `<line class="gl" x1="${ML}" x2="${ML + pw}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"/>` + TX(ML + pw + 6, Y(t) + 3.5, (t / 1e4) + '萬'); }
-  s += `<line class="base" x1="${ML}" x2="${ML + pw}" y1="${Y(0)}" y2="${Y(0)}"/>`;
-  B.forEach((b, i) => {
-    const k = inR(b[0], U.thick) ? 'thick' : inR(b[0], U.thin) ? 'thin' : 'rest', col = k === 'thick' ? 'var(--hlA)' : k === 'thin' ? 'var(--hlB)' : 'var(--dim)';
-    s += `<rect data-k="${k}" x="${(ML + i * bw + bw * .14).toFixed(1)}" y="${Y(b[1]).toFixed(1)}" width="${(bw * .72).toFixed(1)}" height="${Math.max(1, Y(0) - Y(b[1])).toFixed(1)}" rx="2.5" fill="${col}"/>`;
-    if (b[0] % (sm ? 20000 : 10000) === 0 && i > 0) s += TX(ML + i * bw, H - 7, (b[0] / 1000) + 'K', 'middle');
-  });
-  const px = X(U.price), pk = r => Math.max(...B.filter(b => inR(b[0], r)).map(b => b[1])), rg = r => (r[0] / 1000) + '–' + (r[1] / 1000) + 'K';
-  s += `<g data-k="px"><line x1="${px.toFixed(1)}" x2="${px.toFixed(1)}" y1="4" y2="${Y(0)}" stroke="var(--ink)" stroke-width="1.5"/>${TX(px - 7, 14, '收盤 ' + k1(U.price), 'end', 'lab')}</g>`;
-  s += pill(X((U.thick[0] + U.thick[1]) / 2), 36, rg(U.thick) + '：' + wan(U.thick[2]) + '顆' + (sm ? '' : '，附近最厚的一團'), 'var(--hlA)', 'thick', ML, ML + pw, Y(pk(U.thick)) - 4);
-  s += pill(X((U.thin[0] + U.thin[1]) / 2), 62, rg(U.thin) + '：' + (sm ? '' : '只有 ') + wan(U.thin[2]) + '顆' + (sm ? '' : '，下面的薄區'), 'var(--hlB)', 'thin', ML, ML + pw, Y(pk(U.thin)) - 4);
-  el.innerHTML = SV(W, H, s, '籌碼分布：每 2,000 美元一格的 BTC 數量');
-}
-const LV = [[1, 'px', '收盤', 'var(--ink)', 1.7, ''], [3, 'w50', '50 週均線', 'var(--hlA)', 1.6, ''], [2, 'ma200', '200 日均線', 'var(--s1)', 1.6, ''], [4, 'sth', '短期持有者成本', 'var(--hlB)', 1.3, '4 3'], [5, 'tmm', '真實市場均價', 'var(--ink2)', 1.2, '2 3']];
-function levelsChart(el, show) {
-  const R = D.lv, W = el.clientWidth || 620, sm = W < 520, H = sm ? 260 : 340, ML = 4, MR = sm ? 108 : 142, MT = 12, MB = 24, pw = W - ML - MR, ph = H - MT - MB;
-  const use = LV.filter(c => show.includes(c[1])), x0 = R[0][0], x1 = R[R.length - 1][0];
-  let lo = Infinity, hi = -Infinity; R.forEach(r => use.forEach(c => { const v = r[c[0]]; if (v != null) { lo = Math.min(lo, v); hi = Math.max(hi, v); } }));
-  const pad = (hi - lo) * .06; lo -= pad; hi += pad;
-  const X = t => ML + (t - x0) / (x1 - x0) * pw, Y = v => MT + (1 - (v - lo) / (hi - lo)) * ph;
-  let s = '';
-  for (let t = Math.ceil(lo / 2e4) * 2e4; t <= hi; t += 2e4) s += `<line class="gl" x1="${ML}" x2="${ML + pw}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"/>` + TX(ML + 2, Y(t) - 4, (t / 1000) + 'K');
-  for (let d = dOf(x0), y = d.getUTCFullYear(), m = d.getUTCMonth() + 1; ; m++) { if (m > 12) { m = 1; y++; } const t = Date.UTC(y, m - 1, 1) / 864e5; if (t > x1) break; if (t > x0 && (m - 1) % 3 === 0) { const x = X(t); if (x > ML + 18 && x < ML + pw - 18) s += TX(x, H - 7, m === 1 ? String(y) : (y % 100) + '/' + m, 'middle'); } }
-  const ends = [];
-  use.slice().reverse().forEach(c => {
-    const pts = R.filter(r => r[c[0]] != null).map(r => [X(r[0]), Y(r[c[0]])]), last = R[R.length - 1][c[0]];
-    s += `<path data-k="${c[1]}" d="${PATH(pts)}" fill="none" stroke="${c[3]}" stroke-width="${c[4]}" stroke-linejoin="round"${c[5] ? ` stroke-dasharray="${c[5]}"` : ''}/>`;
-    if (c[1] === 'px') s += `<circle data-k="px" cx="${X(x1).toFixed(1)}" cy="${Y(last).toFixed(1)}" r="3.5" fill="var(--ink)" stroke="var(--panel)" stroke-width="2"/>`;
-    ends.push({ y: Y(last), t: c[2] + ' ' + n0(last), col: c[3], k: c[1] });
-  });
-  ends.sort((a, b) => a.y - b.y); for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 15) ends[i].y = ends[i - 1].y + 15;
-  ends.forEach(e => { s += `<g data-k="${e.k}">${TX(ML + pw + 8, e.y + 4, e.t, 'start', 'lab', 'fill:' + e.col + (sm ? ';font-size:10.5px' : ''))}</g>`; });
-  el.innerHTML = SV(W, H, s, '收盤價與均線、成本線');
-}
-function stabChart(el) {
-  const R = D.stab, W = el.clientWidth || 620, sm = W < 520, H = sm ? 250 : 320, ML = 4, MR = 44, MT = 40, MB = 24, pw = W - ML - MR, ph = H - MT - MB;
-  const vs = R.map(r => r[1]), lo0 = Math.min(0, ...vs), hi0 = Math.max(...vs), pad = (hi0 - lo0) * .08, lo = lo0 - pad, hi = hi0 + pad, x0 = R[0][0], x1 = R[R.length - 1][0];
-  const X = t => ML + (t - x0) / (x1 - x0) * pw, Y = v => MT + (1 - (v - lo) / (hi - lo)) * ph, y0 = Y(0), id = 'c' + Math.random().toString(36).slice(2, 7);
-  const pts = R.map(r => [X(r[0]), Y(r[1])]), line = PATH(pts), area = line + `L${X(x1).toFixed(1)},${y0.toFixed(1)}L${X(x0).toFixed(1)},${y0.toFixed(1)}Z`;
-  let s = `<defs><clipPath id="${id}u"><rect x="0" y="0" width="${W}" height="${y0.toFixed(1)}"/></clipPath><clipPath id="${id}d"><rect x="0" y="${y0.toFixed(1)}" width="${W}" height="${(H - y0).toFixed(1)}"/></clipPath></defs>`;
-  for (let t = Math.ceil(lo / 4) * 4; t <= hi; t += 4) s += `<line class="${t ? 'gl' : 'base'}" x1="${ML}" x2="${ML + pw}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"/>` + TX(ML + pw + 6, Y(t) + 3.5, (t > 0 ? '+' : '') + t + '%');
-  s += yearTicks(x0, x1, X, H - 7, 1, ML, ML + pw);
-  s += `<path d="${area}" fill="var(--up)" opacity=".2" clip-path="url(#${id}u)"/><path d="${area}" fill="var(--down)" opacity=".26" clip-path="url(#${id}d)"/>`;
-  s += `<path d="${line}" fill="none" stroke="var(--up)" stroke-width="1.6" clip-path="url(#${id}u)"/><path d="${line}" fill="none" stroke="var(--down)" stroke-width="1.6" clip-path="url(#${id}d)"/>`;
-  const pk = R.reduce((a, r) => r[1] > a[1] ? r : a), z = R[R.length - 1], pd = dOf(pk[0]);
-  s += `<g data-k="peak"><circle cx="${X(pk[0]).toFixed(1)}" cy="${Y(pk[1]).toFixed(1)}" r="3.5" fill="var(--up)"/></g>` + pill(X(pk[0]), 16, pd.getUTCFullYear() + '/' + p2(pd.getUTCMonth() + 1) + ' ' + sgn(pk[1], 1) + '%', 'var(--up)', 'peak', ML, ML + pw, Y(pk[1]) - 5);
-  s += `<g data-k="now"><circle cx="${X(z[0]).toFixed(1)}" cy="${Y(z[1]).toFixed(1)}" r="4.5" fill="${z[1] >= 0 ? 'var(--up)' : 'var(--down)'}" stroke="var(--panel)" stroke-width="2"/>${TX(X(z[0]) - 9, Y(z[1]) + (z[1] < 0 ? 15 : -8), '現在 ' + sgn(D.stabNow.p30, 2) + '%', 'end', 'lab', 'fill:' + (z[1] >= 0 ? 'var(--up)' : 'var(--down)'))}</g>`;
-  el.innerHTML = SV(W, H, s, '穩定幣總供給 30 天增減');
-  return pk;
-}
-function etfChart(el) {
-  const E = D.etf, W = el.clientWidth || 420, H = 250, ML = 4, MR = 48, MT = 40, MB = 24, pw = W - ML - MR, ph = H - MT - MB, n = E.length, bw = pw / n;
-  const vs = E.map(e => e[1]), mx = Math.max(...vs.map(Math.abs)) * 1.08, Y = v => MT + (1 - (v + mx) / (2 * mx)) * ph, y0 = Y(0);
-  const full = E.map((e, i) => e[2] ? -1 : i).filter(i => i >= 0), last5 = new Set(full.slice(-5));
-  let s = '';
-  for (const t of [-500, 0, 500]) s += `<line class="${t ? 'gl' : 'base'}" x1="${ML}" x2="${ML + pw}" y1="${Y(t).toFixed(1)}" y2="${Y(t).toFixed(1)}"/>` + TX(ML + pw + 6, Y(t) + 3.5, (t > 0 ? '+' : '') + t + 'M');
-  E.forEach((e, i) => { const on = last5.has(i), up = e[1] >= 0, y = Y(e[1]); s += `<rect data-k="${on ? 'etf5' : 'rest'}" x="${(ML + i * bw + bw * .16).toFixed(1)}" y="${Math.min(y, y0).toFixed(1)}" width="${(bw * .68).toFixed(1)}" height="${Math.max(1, Math.abs(y - y0)).toFixed(1)}" rx="1.5" fill="${on ? (up ? 'var(--up)' : 'var(--down)') : (up ? DUP : DDN)}"/>`; if (i % 12 === 0) s += TX(ML + i * bw + bw / 2, H - 7, mdS(e[0]), 'middle'); });
-  const f5 = [...last5], cx = ML + (f5[0] + f5[f5.length - 1] + 1) / 2 * bw;
-  s += pill(cx, 16, '近 5 個完整日 ' + (D.etf5 >= 0 ? '+' : '−') + '$' + n0(Math.abs(D.etf5)) + 'M', D.etf5 >= 0 ? 'var(--up)' : 'var(--down)', 'etf5', ML, ML + pw, D.etf5 >= 0 ? Y(Math.max(...f5.map(i => E[i][1]))) - 4 : y0 - 4);
-  el.innerHTML = SV(W, H, s, '現貨 ETF 每日淨流量');
-}
-function heatChart(el) {
-  const w = D.wk, W = el.clientWidth || 620, sm = W < 520, H = sm ? 260 : 330, ML = 4, MR = 62, MT = 30, MB = 40, pw = W - ML - MR, ph = H - MT - MB, n = w.n;
-  const X = i => ML + i / (n - 1) * pw, Y = v => MT + (1 - v / 100) * ph, id = 'g' + Math.random().toString(36).slice(2, 7), xd = d => X((d - w.t0) / 7);
-  let s = `<defs><linearGradient id="${id}" gradientUnits="userSpaceOnUse" x1="0" y1="${Y(100)}" x2="0" y2="${Y(0)}"><stop offset="0" stop-color="var(--s4)"/><stop offset=".25" stop-color="var(--s3)"/><stop offset=".5" stop-color="var(--s2)"/><stop offset=".75" stop-color="var(--s1)"/><stop offset="1" stop-color="var(--s0)"/></linearGradient></defs>`;
-  [[D.th.hot, '黃昏 ≥ ' + D.th.hot, 'var(--s4)'], [D.th.cold, '深夜 ≤ ' + D.th.cold, 'var(--s0)']].forEach(b => { s += `<line x1="${ML}" x2="${ML + pw}" y1="${Y(b[0])}" y2="${Y(b[0])}" stroke="${b[2]}" stroke-width="1" stroke-dasharray="3 4" opacity=".7"/>` + TX(ML + pw + 6, Y(b[0]) + 3.5, b[1], 'start', 'ax', 'fill:' + b[2]); });
-  s += `<line class="base" x1="${ML}" x2="${ML + pw}" y1="${Y(0)}" y2="${Y(0)}"/>` + yearTicks(w.t0, w.t0 + (n - 1) * 7, t => xd(t), H - 7, sm ? 4 : 2, ML, ML + pw);
-  s += `<path d="${PATH(w.heat.map((h, i) => [X(i), Y(h)]))}" fill="none" stroke="url(#${id})" stroke-width="1.7" stroke-linejoin="round"/>`;
-  D.marks.forEach(m => { const top = m.kind === 'top', x = xd(m.d), y = Y(m.heat), col = top ? 'var(--s4)' : 'var(--s0)'; s += `<g data-k="${top ? 'tops' : 'bots'}"><circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="4" fill="var(--panel)" stroke="${col}" stroke-width="2"/>${TX(x, top ? y - 9 : y + 16, dOf(m.d).getUTCFullYear() + (top ? ' 頂 ' : ' 底 ') + Math.round(m.heat), 'middle', 'lab', 'fill:' + col)}</g>`; });
-  const h = w.heat[n - 1]; s += `<g data-k="now"><circle cx="${X(n - 1).toFixed(1)}" cy="${Y(h).toFixed(1)}" r="4.5" fill="${heatCol(h)}" stroke="var(--panel)" stroke-width="2"/>${TX(X(n - 1) + 8, Y(h) + 4, '現在 ' + Math.round(h), 'start', 'lab')}</g>`;
-  el.innerHTML = SV(W, H, s, '週期熱度 2013 年至今');
-}
 
 /* 文圖連動：指到文字裡的數字，同一區塊的圖上對應的地方亮起、其餘暗掉；指圖也會回頭標出文字 */
 function link(scope) {
@@ -1931,248 +1466,17 @@ function link(scope) {
 }
 
 /* ── A 晨報 ── */
-function initA() {
-  const U = D.urpd, W5 = D.w50, S = D.stabNow, rg = r => (r[0] / 1000) + '–' + (r[1] / 1000) + 'K';
-  $('#pa-no').textContent = String(D.issue).padStart(3, '0'); $('#pa-date').textContent = D.date.replace(/-/g, '.'); $('#pa-stance').textContent = D.stance.label; $('#pa-px').textContent = '$' + n0(D.price);
-  $('#pa-hl').textContent = D.headline; $('#pa-sum').textContent = D.leads.overview;
-  const live = W5.live;
-  const C = [
-    { h: '上面壓著一團籌碼，下面是薄區', cap: '籌碼分布　每 2,000 美元一格　Bitview', draw: el => urpdChart(el),
-      p: `收盤 ${tk('px', 'i', '$' + n0(U.price))} 正上方，${tk('thick', 'a', rg(U.thick) + ' 堆了 ' + wan(U.thick[2]) + '顆')}，是附近最厚的一團，買在那裡的人多半在等回本。下方 ${tk('thin', 'b', rg(U.thin) + ' 只有 ' + wan(U.thin[2]) + '顆')}，跌進去會走得快。` },
-    { h: '階段還是牛市，但 50 週均線剛被跌破一次', cap: '收盤與兩條均線　2025/06 起', draw: el => levelsChart(el, ['px', 'w50', 'ma200']),
-      p: `${tk('ma200', 'c', '200 日均線 ' + n0(D.stage.sma200))} 還在上升，收盤已連 ${D.stage.run} 天站在上面，階段判定不變。${tk('w50', 'a', '50 週均線')}在 ${mdS(W5.date)} 的週收盤被跌破，是連 ${W5.prev_run} 週在上方後第一次` + (live ? `；${tk('px', 'i', mdS(live.date) + ' 收盤')}${live.above ? '又回到線上' : '仍在線下'} ${Math.abs(live.dist_pct).toFixed(1)}%。` : '。') + `2013 年起這樣跌破 ${W5.n} 次：${W5.fast} 次兩週內收回，${W5.slow.length} 次變成 ${Math.min(...W5.slow)}–${Math.max(...W5.slow)} 週的熊市。` },
-    { h: '場外的錢沒有回來', cap: '穩定幣總供給 30 天增減　DefiLlama', draw: el => { const pk = stabChart(el); const t = $('#pa-claims [data-t="peak"]'); if (t && pk) { const d = dOf(pk[0]); t.textContent = d.getUTCFullYear() + ' 年 ' + (d.getUTCMonth() + 1) + ' 月的 ' + sgn(pk[1], 1) + '%'; } },
-      p: `穩定幣總供給 30 天${tk('now', 'd', '少了 ' + Math.round(Math.abs(S.d30) * 10) + ' 億美元（' + sgn(S.p30, 2) + '%）')}，在 2021 年以來的第 ${Math.round(S.pct)} 百分位。上一次錢大量進來是 ${tk('peak', 'u', '…')}。現貨 ETF 近 5 個完整交易日合計${D.etf5 < 0 ? '流出' : '流入'} ${(Math.abs(D.etf5) / 100).toFixed(1)} 億美元。` },
-  ];
-  const box = $('#pa-claims'), ch = $('#pa-ch'); let cur = 0;
-  box.innerHTML = C.map((c, i) => `<button class="pa-cl" type="button" data-i="${i}"><span class="n">${i + 1}</span><span class="h">${c.h}</span><span class="p">${c.p}</span></button>`).join('');
-  const show = i => { cur = i; $$('.pa-cl', box).forEach((b, j) => { b.classList.toggle('on', j === i); b.setAttribute('aria-pressed', j === i); }); $('#pa-cap').textContent = C[i].cap; $('#pa-k').textContent = i + 1; C[i].draw(ch); };
-  box.addEventListener('click', e => { const b = e.target.closest('.pa-cl'); if (b && +b.dataset.i !== cur) show(+b.dataset.i); });
-  C[2].draw(ch); show(0); link($('#pa'));
-  return () => C[cur].draw(ch);
-}
 
 /* ── B 週期儀 ── */
-function initB() {
-  const w = D.wk, n = w.n, svg = $('#pb-svg'), cx = 280, cy = 280, r0 = 114, r1 = 216;
-  // 畫線用的熱度：同一段方向內取前後各 4 週的平均，線才不會一週一週抖；讀數仍用當週的值
-  const hs = w.heat.map((h, i) => { let a = 0, c = 0; for (let k = i - 4; k <= i + 4; k++) if (k >= 0 && k < n && w.dir[k] === w.dir[i]) { a += w.heat[k]; c++; } return a / c; });
-  const SEG = [[0, 10, 3, 5], [10, 50, 5, 10], [50, 80, 10, 16], [80, 100, 16, 18]];
-  const tOf = (h, dir) => { if (dir > 0) { for (const g of SEG) if (h <= g[1]) return g[2] + (h - g[0]) / (g[1] - g[0]) * (g[3] - g[2]); return 18; } if (h >= 80) return 18 + (100 - h) / 20 * 1.5; if (h >= 10) return 19.5 + (80 - h) / 70 * 4.5; return 24 + (10 - h) / 10 * 3; };
-  const ang = t => Math.PI / 2 + t / 24 * 2 * Math.PI, pt = (t, r) => [cx + r * Math.cos(ang(t)), cy + r * Math.sin(ang(t))];
-  const rOf = i => r0 + i / (n - 1) * (r1 - r0), P = []; for (let i = 0; i < n; i++) P.push(pt(tOf(hs[i], w.dir[i]), rOf(i)));
-  const stageOf = i => w.stg[i], dayOf = i => w.t0 + i * 7;
-  const arc = (t0, t1, r) => { const a = pt(t0, r), b = pt(t1, r); return `M${a[0].toFixed(1)},${a[1].toFixed(1)}A${r},${r} 0 ${t1 - t0 > 12 ? 1 : 0} 1 ${b[0].toFixed(1)},${b[1].toFixed(1)}`; };
-  let s = '';
-  s += `<line x1="18" x2="542" y1="${cy}" y2="${cy}" stroke="var(--line2)" stroke-width="1" stroke-dasharray="2 5"/>`;
-  [[0, 5, 0], [5, 10, 2], [10, 16, 3], [16, 19.5, 4], [19.5, 24, 1]].forEach(a => { const m = (a[0] + a[1]) / 2, lp = pt(m, 256); s += `<path d="${arc(a[0] + .12, a[1] - .12, 234)}" fill="none" stroke="${STG[a[2]][1]}" stroke-width="4" stroke-linecap="round"/><text class="stl" x="${lp[0].toFixed(1)}" y="${(lp[1] + 5).toFixed(1)}" text-anchor="middle" fill="${STG[a[2]][1]}">${STG[a[2]][0]}</text>`; });
-  for (let yr = 2014; yr <= 2026; yr += 4) { const i = (Date.UTC(yr, 0, 1) / 864e5 - w.t0) / 7; if (i < 0 || i > n - 1) continue; const r = rOf(i); s += `<circle cx="${cx}" cy="${cy}" r="${r.toFixed(1)}" fill="none" stroke="var(--line)" stroke-width="1"/><text class="yr" x="${cx}" y="${(cy - r + 3).toFixed(1)}" text-anchor="middle">${yr}</text>`; }
-  s += '<g id="pb-sp">';
-  for (let i = 1; i < n; i++) { const a = P[i - 1], b = P[i], flip = w.dir[i] !== w.dir[i - 1]; s += `<line class="sp" x1="${a[0].toFixed(1)}" y1="${a[1].toFixed(1)}" x2="${b[0].toFixed(1)}" y2="${b[1].toFixed(1)}" ` + (flip ? 'stroke="none"' : `stroke="${heatCol(hs[i])}" stroke-width="2.6" stroke-linecap="round"`) + '/>'; }
-  s += '</g><circle id="pb-halo" r="13" fill="none" stroke-width="1.5" stroke-opacity=".55"/><circle id="pb-sun" r="6.5" stroke="#08090D" stroke-width="2.5"/>';
-  s += `<text id="pb-cs" class="c-stage" x="${cx}" y="${cy - 26}" text-anchor="middle"></text><text id="pb-cp" class="c-px" x="${cx}" y="${cy + 20}" text-anchor="middle"></text><text id="pb-ch" class="c-sm" x="${cx}" y="${cy + 44}" text-anchor="middle"></text>`;
-  svg.innerHTML = s;
-  const sp = $$('#pb-sp .sp', svg), sun = $('#pb-sun'), halo = $('#pb-halo'), dial = $('#pb-dial');
-
-  const ROWS = [
-    ['週期熱度', i => w.heat[i], v => Math.round(v) + '<small style="font-size:.6em;color:var(--ink3);font-weight:500"> / 100</small>', (v, i) => [STG[stageOf(i)][0], STG[stageOf(i)][1]], w.heat],
-    ['鏈上　短期持有者未實現損益', i => w.nupl[i], v => sgn(v * 100, 1) + '%', v => v > .02 ? ['整體獲利', 'var(--up)'] : v < -.02 ? ['整體虧損', 'var(--down)'] : ['打平附近', 'var(--ink2)'], w.nupl],
-    ['情緒　恐懼貪婪指數', i => w.fng[i], v => String(Math.round(v)), v => v <= 20 ? ['極度恐懼', 'var(--down)'] : v <= 40 ? ['恐懼', 'var(--down)'] : v < 60 ? ['中性', 'var(--ink2)'] : v < 80 ? ['貪婪', 'var(--up)'] : ['極度貪婪', 'var(--up)'], w.fng],
-    ['資金　穩定幣供給 30 天', i => w.stab[i], v => sgn(v, 2) + '%', v => v > .5 ? ['在流入', 'var(--up)'] : v < -.5 ? ['在流出', 'var(--down)'] : ['持平', 'var(--ink2)'], w.stab],
-    ['衍生品　資金費率（年化）', i => w.fund[i], v => sgn(v, 1) + '%', v => v >= 30 ? ['多單擁擠', 'var(--s3)'] : v < 0 ? ['空方付費', 'var(--s1)'] : ['平穩', 'var(--ink2)'], w.fund],
-    ['價格　÷ 40 週均線', i => w.mayer[i], v => v.toFixed(2) + '×', v => v >= 1 ? ['線上', 'var(--up)'] : ['線下', 'var(--down)'], w.mayer],
-  ];
-  const side = $('#pb-side'); side.innerHTML = ROWS.map((r, k) => `<div class="pb-row"><div><div class="nm">${r[0]}</div><div class="v" id="pb-v${k}"></div></div><div id="pb-s${k}"></div></div>`).join('');
-  const spark = (arr, i, col) => { const a = []; for (let k = Math.max(0, i - 51); k <= i; k++) if (arr[k] != null) a.push([k, arr[k]]); if (a.length < 2) return '<svg width="104" height="30"></svg>'; const vs = a.map(p => p[1]), lo = Math.min(...vs), hi = Math.max(...vs), X = k => 3 + (k - (i - 51)) / 51 * 96, Y = v => 4 + (1 - (v - lo) / ((hi - lo) || 1)) * 22, z = a[a.length - 1]; return `<svg width="104" height="30" viewBox="0 0 104 30" aria-hidden="true"><path d="${PATH(a.map(p => [X(p[0]), Y(p[1])]))}" fill="none" stroke="var(--ink3)" stroke-width="1.3"/><circle cx="${X(z[0]).toFixed(1)}" cy="${Y(z[1]).toFixed(1)}" r="2.8" fill="${col}"/></svg>`; };
-
-  const track = $('#pb-track'), cv = $('#pb-strip'), thumb = $('#pb-thumb'), ctx = cv.getContext('2d'), lp = w.px.map(Math.log10), lpLo = Math.min(...lp), lpHi = Math.max(...lp);
-  let cw = 0, chh = 0;
-  const size = () => { const r = track.getBoundingClientRect(), dpr = window.devicePixelRatio || 1; cw = Math.max(200, r.width || 900); chh = r.height || 56; cv.width = Math.round(cw * dpr); cv.height = Math.round(chh * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0); };
-  const strip = i => {
-    ctx.clearRect(0, 0, cw, chh); const bw = cw / n;
-    for (let k = 0; k < n; k++) { ctx.globalAlpha = k <= i ? 1 : .22; ctx.fillStyle = heatCol(w.heat[k]); ctx.fillRect(k * bw, 0, bw + .6, chh); }
-    ctx.globalAlpha = 1; ctx.beginPath(); for (let k = 0; k < n; k++) { const x = (k + .5) * bw, y = 5 + (1 - (lp[k] - lpLo) / (lpHi - lpLo)) * (chh - 10); k ? ctx.lineTo(x, y) : ctx.moveTo(x, y); } ctx.strokeStyle = 'rgba(10,10,11,.55)'; ctx.lineWidth = 3; ctx.stroke(); ctx.strokeStyle = '#EFECE5'; ctx.lineWidth = 1.2; ctx.stroke();
-  };
-  $('#pb-yrs').innerHTML = (() => { let h = ''; for (let yr = 2014; yr <= 2026; yr += 2) { const i = (Date.UTC(yr, 0, 1) / 864e5 - w.t0) / 7; h += `<span style="left:${(i / (n - 1) * 100).toFixed(2)}%">${yr}</span>`; } return h; })();
-
-  let cur = -1;
-  const set = i => {
-    i = Math.max(0, Math.min(n - 1, i)); if (i === cur) return;
-    const a = Math.min(cur, i), b = Math.max(cur, i); for (let k = Math.max(1, a + 1); k <= Math.min(n - 1, b); k++) sp[k - 1].classList.toggle('fut', k > i);
-    if (cur < 0) for (let k = 1; k < n; k++) sp[k - 1].classList.toggle('fut', k > i);
-    cur = i; const st = STG[stageOf(i)], p = P[i];
-    sun.setAttribute('cx', p[0].toFixed(1)); sun.setAttribute('cy', p[1].toFixed(1)); sun.setAttribute('fill', st[2]); halo.setAttribute('cx', p[0].toFixed(1)); halo.setAttribute('cy', p[1].toFixed(1)); halo.setAttribute('stroke', st[2]);
-    dial.style.setProperty('--sx', (p[0] / 560 * 100).toFixed(1) + '%'); dial.style.setProperty('--sy', (p[1] / 560 * 100).toFixed(1) + '%'); dial.style.setProperty('--sc', st[2]);
-    const cs = $('#pb-cs'); cs.textContent = st[0]; cs.setAttribute('fill', st[2]);
-    $('#pb-cp').textContent = '$' + (w.px[i] >= 1000 ? n0(w.px[i]) : w.px[i]); $('#pb-ch').textContent = '熱度 ' + Math.round(w.heat[i]) + '　方向 ' + (w.dir[i] > 0 ? '多' : '空');
-    const ds = ymd(dayOf(i)); $('#pb-date').textContent = i === n - 1 ? ds + '（最新一週）' : ds; const tl = $('#pb-tl'), pc = i / (n - 1) * 100; tl.textContent = ds; tl.style.transform = 'translateX(' + (pc < 5 ? '-8px' : pc > 95 ? 'calc(-100% + 8px)' : '-50%') + ')';
-    thumb.style.left = (i / (n - 1) * 100).toFixed(3) + '%'; track.setAttribute('aria-valuenow', i); track.setAttribute('aria-valuemax', n - 1); track.setAttribute('aria-valuetext', ds + ' ' + st[0]);
-    ROWS.forEach((r, k) => { const v = r[1](i), el = $('#pb-v' + k); if (v == null) { el.innerHTML = '<span style="color:var(--ink3)">—</span><span class="w" style="color:var(--ink3)">這一年還沒有資料</span>'; $('#pb-s' + k).innerHTML = '<svg width="104" height="30"></svg>'; return; } const wd = r[3](v, i); el.innerHTML = `<span>${r[2](v)}</span><span class="w" style="color:${wd[1]}">${wd[0]}</span>`; $('#pb-s' + k).innerHTML = spark(r[4], i, wd[1]); });
-    strip(i);
-  };
-  const fromX = x => { const r = track.getBoundingClientRect(); return Math.round((x - r.left) / r.width * (n - 1)); };
-  let drag = false, playing = false, raf = 0; const btn = $('#pb-play');
-  const stop = () => { playing = false; cancelAnimationFrame(raf); btn.textContent = '▶ 播放 13 年'; };
-  track.addEventListener('pointerdown', e => { stop(); drag = true; try { track.setPointerCapture(e.pointerId); } catch (er) {} set(fromX(e.clientX)); });
-  track.addEventListener('pointermove', e => { if (drag) set(fromX(e.clientX)); });
-  ['pointerup', 'pointercancel'].forEach(t => track.addEventListener(t, () => { drag = false; }));
-  track.addEventListener('keydown', e => { const m = { ArrowLeft: -1, ArrowRight: 1, PageDown: -13, PageUp: 13 }[e.key]; if (m) { stop(); set(cur + (e.shiftKey ? m * 13 : m)); e.preventDefault(); } else if (e.key === 'Home') { stop(); set(0); e.preventDefault(); } else if (e.key === 'End') { stop(); set(n - 1); e.preventDefault(); } });
-  btn.addEventListener('click', () => { if (playing) return stop(); playing = true; btn.textContent = '❚❚ 暫停'; const i0 = cur >= n - 1 ? 0 : cur, t0 = performance.now(), dur = (n - 1 - i0) / (n - 1) * 18000; const step = t => { const f = Math.min(1, (t - t0) / dur); set(Math.round(i0 + f * (n - 1 - i0))); if (f < 1 && playing) raf = requestAnimationFrame(step); else stop(); }; raf = requestAnimationFrame(step); });
-  $('#pb-now').addEventListener('click', () => { stop(); set(n - 1); });
-  size(); set(n - 1);
-  return () => { size(); strip(cur); };
-}
 
 /* ── C 問答 ── */
-function initC() {
-  const U = D.urpd, W5 = D.w50, S = D.stabNow, rg = r => (r[0] / 1000) + '–' + (r[1] / 1000) + 'K', live = W5.live;
-  const tops = D.marks.filter(m => m.kind === 'top').map(m => Math.round(m.heat)).join('、'), botMax = Math.max(...D.marks.filter(m => m.kind === 'bottom').map(m => Math.round(m.heat)));
-  const QA = {
-    bull: { q: '現在是牛還是熊？', kw: /牛|熊|階段|趨勢|均線|多頭|空頭/, next: ['press', 'top'],
-      a: [`階段判定還是牛市，從 ${mdS(D.stage.since)} 算起，收盤已連 ${D.stage.run} 天站在上升的${tk('ma200', 'c', '200 日均線 ' + n0(D.stage.sma200))}之上。`,
-          `但${tk('w50', 'a', '50 週均線')}在 ${mdS(W5.date)} 的週收盤被跌破，是連 ${W5.prev_run} 週在上方後第一次` + (live ? `；${tk('px', 'i', mdS(live.date) + ' 收盤 $' + n0(live.price))}${live.above ? '又回到線上' : '仍在線下'} ${Math.abs(live.dist_pct).toFixed(1)}%。` : '。'),
-          `2013 年起週收盤這樣跌破 ${W5.n} 次：${W5.fast} 次兩週內收回，${W5.slow.length} 次變成 ${Math.min(...W5.slow)}–${Math.max(...W5.slow)} 週的熊市。兩條線現在很近，這個週日的收盤最要緊。`],
-      ev: [['收盤與兩條均線　2025/06 起', el => levelsChart(el, ['px', 'w50', 'ma200'])]] },
-    press: { q: '上面的賣壓有多重？', kw: /賣壓|籌碼|壓力|支撐|成本|套牢|回本/, next: ['money', 'bull'],
-      a: [`很重。收盤 ${tk('px', 'i', '$' + n0(U.price))} 正上方，${tk('thick', 'a', rg(U.thick) + ' 堆了 ' + wan(U.thick[2]) + '顆')}，是附近最厚的一團。`,
-          `買在那裡的人現在都小虧，價格一回去就有人想回本賣出。`,
-          `下方 ${tk('thin', 'b', rg(U.thin) + ' 只有 ' + wan(U.thin[2]) + '顆')}，是薄區，跌進去沒有多少人在那裡的成本可以接，容易走得快。`],
-      ev: [['籌碼分布　每 2,000 美元一格　Bitview', el => urpdChart(el)]] },
-    money: { q: '場外的錢有沒有進來？', kw: /錢|資金|etf|穩定幣|流入|流出|買盤|機構/i, next: ['top', 'press'],
-      a: [`沒有。穩定幣總供給 30 天${tk('now', 'd', '少了 ' + Math.round(Math.abs(S.d30) * 10) + ' 億美元（' + sgn(S.p30, 2) + '%）')}，在 2021 年以來的第 ${Math.round(S.pct)} 百分位。`,
-          `現貨 ETF ${tk('etf5', D.etf5 < 0 ? 'd' : 'u', '近 5 個完整交易日合計' + (D.etf5 < 0 ? '流出 ' : '流入 ') + (Math.abs(D.etf5) / 100).toFixed(1) + ' 億美元')}。`,
-          `兩個管道都在往外走。穩定幣不一定都拿來買 BTC，但場外可用的美元確實在變少。`],
-      ev: [['穩定幣總供給 30 天增減　DefiLlama', el => stabChart(el)], ['現貨 ETF 每日淨流量　近 60 天', el => etfChart(el)]] },
-    top: { q: '離頂部還多遠？', kw: /頂|過熱|高點|週期|晨昏|泡沫|出場|賣點/, next: ['bull', 'money'],
-      a: [`還很遠。${tk('now', 'i', '週期熱度 ' + Math.round(D.dawn.heat))}（0 最冷、100 最熱），階段是${STG[D.dawn.stage][0]}。`,
-          `${tk('tops', 'd', '前四次頂部的熱度是 ' + tops)}；${tk('bots', 'c', '四次底部都不超過 ' + botMax)}。`,
-          `出場框架的第一個鏈上賣點是 MVRV 回到前一輪高點的 0.75 倍，現在是 ${D.now.mvrvPrior.toFixed(2)}，換算約 $${n0(D.now.k075)}。`],
-      ev: [['週期熱度　2013 年起每週', el => heatChart(el)]] },
-  };
-  const chips = $('#pc-chips'), thread = $('#pc-thread'), inp = $('#pc-q'); let cur = null, timers = [];
-  chips.innerHTML = Object.keys(QA).map(k => `<button class="pc-chip" type="button" data-k="${k}">${QA[k].q}</button>`).join('');
-  const reduced = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const drawEv = () => { if (!cur || !QA[cur]) return; QA[cur].ev.forEach((e, i) => { const el = $('#pc-e' + i); if (el) e[1](el); }); };
-  const ask = (k, anim) => {
-    timers.forEach(clearTimeout); timers = [];
-    const prev = cur && QA[cur] ? `<button class="pc-old" type="button" data-k="${cur}"><span class="q">${QA[cur].q}</span><span class="a">${QA[cur].a[0].replace(/<[^>]+>/g, '')}</span></button>` : '';
-    const olds = $$('.pc-old', thread).filter(o => o.dataset.k !== k && o.dataset.k !== cur).map(o => o.outerHTML).slice(-2).join('');
-    cur = k; $$('.pc-chip', chips).forEach(c => c.classList.toggle('on', c.dataset.k === k));
-    const Q = QA[k];
-    if (!Q) { thread.innerHTML = olds + prev + `<div class="pc-card"><span class="pc-q">你問：${k.replace(/[<>&]/g, '')}</span><p class="pc-a">原型只預先寫好上面四類問題。正式版每天由 AI 先寫好約 30 題；要能自由提問，需要加一個很小的後端。</p></div>`; return; }
-    thread.innerHTML = olds + (cur !== null ? prev : '') + `<div class="pc-card lk${anim ? ' typing' : ''}" id="pc-card"><span class="pc-q">你問：${Q.q}</span><p class="pc-a">${Q.a.map(t => `<span class="snt">${t}</span>`).join('')}</p><div class="pc-ev${Q.ev.length > 1 ? ' two' : ''}">${Q.ev.map((e, i) => `<figure><span class="mono">${e[0]}</span><div id="pc-e${i}"></div></figure>`).join('')}</div><div class="pc-next"><span class="mono">接著問</span>${Q.next.map(x => `<button class="pc-chip" type="button" data-k="${x}">${QA[x].q}</button>`).join('')}</div></div>`;
-    const card = $('#pc-card'); drawEv(); link(card);
-    if (anim) { $$('.snt', card).forEach((sn, i) => timers.push(setTimeout(() => sn.classList.add('in'), 180 + i * 420))); timers.push(setTimeout(() => card.classList.remove('typing'), 180 + Q.a.length * 420 + 150)); }
-  };
-  $('#pc').addEventListener('click', e => { const b = e.target.closest('[data-k].pc-chip,[data-k].pc-old'); if (b && b.dataset.k !== cur) ask(b.dataset.k, !reduced); });
-  $('#pc-form').addEventListener('submit', e => { e.preventDefault(); const v = inp.value.trim(); if (!v) return; const hit = Object.keys(QA).find(k => QA[k].kw.test(v)); ask(hit || v, !reduced); inp.value = ''; });
-  $('#pc-date').textContent = mdS(D.date);
-  ask('bull', false);
-  return drawEv;
-}
 
 /* ══ 第二輪：三種視覺語言 ══ */
-const hlHtml = s => s.replace(/[<>&]/g, '').replace(/(\d[\d.,]*\s?(?:%|億|萬|K)?)/g, '<em>$1</em>');
 const p3 = v => String(v).padStart(3, '0');
-const pxS = v => v >= 1000 ? n0(v) : String(v);
 
 /* 1 網點：canvas 點陣。每個點的大小＝數字的字形遮罩，或它在 30 天走勢線下方多深 */
-function initN1() {
-  const box = $('#n1-box'), cv = $('#n1-cv'), ctx = cv.getContext('2d'), P = D.d30, n = P.length;
-  const off = document.createElement('canvas'), octx = off.getContext('2d', { willReadFrequently: true });
-  const lo = Math.min(...P.map(p => p[1])), hi = Math.max(...P.map(p => p[1])), COL = ['#33333A', 'rgba(255,74,46,.6)', '#EFECE5', '#FF4A2E'];
-  let W = 0, H = 0, g = 11, cols = 0, rows = 0, ox = 0, oy = 0, R = null, T = null, K = null, YL = null, cur = n - 1, mx = -1e4, my = -1e4, raf = 0, inside = false;
-  $('#n1-no').textContent = p3(D.issue); $('#n1-d').textContent = D.date.replace(/-/g, '.'); $('#n1-hl').innerHTML = hlHtml(D.headline);
-  const d200 = (D.price / D.stage.sma200 - 1) * 100;
-  $('#n1-figs').innerHTML = [[sgn(d200, 1) + '%', '收盤離 200 日均線 $' + n0(D.stage.sma200)], [D.now.sthProfit.toFixed(1) + '%', '短期持有者還在獲利的比例'], [String(Math.round(D.dawn.heat)), '週期熱度（0–100），階段是' + STG[D.dawn.stage][0]]].map(f => `<div class="n1-fig"><b>${f[0]}</b><span>${f[1]}</span></div>`).join('');
-  function target(k) {
-    const str = n0(P[k][1]), font = s => `900 ${s}px Archivo, "Arial Narrow", sans-serif`;
-    octx.clearRect(0, 0, cols, rows); octx.fillStyle = '#fff'; octx.textAlign = 'center'; octx.textBaseline = 'alphabetic';
-    let fs = rows * 1.16; octx.font = font(fs); try { octx.fontStretch = 'extra-condensed'; } catch (e) {}
-    const w = octx.measureText(str).width; if (w > cols * .97) { fs *= cols * .97 / w; octx.font = font(fs); }
-    octx.fillText(str, cols / 2, rows / 2 + fs * .365);
-    const m = octx.getImageData(0, 0, cols, rows).data, c0 = k / (n - 1) * (cols - 1), half = Math.max(1, cols / (n - 1) / 2);
-    for (let r = 0; r < rows; r++) for (let c = 0; c < cols; c++) {
-      const j = r * cols + c, a = m[j * 4 + 3] / 255, d = (r - YL[c]) / rows, day = inside && Math.abs(c - c0) <= half;
-      if (a > .28) { T[j] = .2 + a * .32; K[j] = 2; }
-      else if (d >= 0) { T[j] = Math.max(.07, .44 - d * 1.2) * (day ? 1.2 : 1); K[j] = day ? 3 : 1; }
-      else { T[j] = day ? .11 : .055; K[j] = 0; }
-    }
-  }
-  function frame() {
-    let moving = false; const s2 = 2 * 64 * 64;
-    for (let j = 0; j < R.length; j++) {
-      let t = T[j];
-      if (inside) { const c = j % cols, r = (j - c) / cols, dx = ox + (c + .5) * g - mx, dy = oy + (r + .5) * g - my, dd = dx * dx + dy * dy; if (dd < s2 * 5) t *= 1 + (K[j] === 2 ? .3 : 1.2) * Math.exp(-dd / s2); }
-      if (t > .62) t = .62; const d = t - R[j]; if (Math.abs(d) > .004) { R[j] += d * .24; moving = true; } else R[j] = t;
-    }
-    ctx.clearRect(0, 0, W, H);
-    for (let k = 0; k < 4; k++) { ctx.beginPath(); for (let j = 0; j < R.length; j++) { if (K[j] !== k) continue; const c = j % cols, r = (j - c) / cols, x = ox + (c + .5) * g, y = oy + (r + .5) * g, rad = R[j] * g; ctx.moveTo(x + rad, y); ctx.arc(x, y, rad, 0, 6.2832); } ctx.fillStyle = COL[k]; ctx.fill(); }
-    raf = moving ? requestAnimationFrame(frame) : 0;
-  }
-  function read(k) {
-    const last = k === n - 1; $('#n1-date').textContent = ymd(P[k][0]) + ' 收盤　$' + n0(P[k][1]);
-    const v = last ? D.chg : (P[k][1] / P[n - 1][1] - 1) * 100, el = $('#n1-chg'); el.textContent = (last ? '日漲跌 ' : '比最新一天 ') + sgn(v, last ? 2 : 1) + '%'; el.style.color = v >= 0 ? 'var(--up)' : 'var(--down)';
-  }
-  function setNum(k, instant) { cur = k; target(k); read(k); if (instant) { R.set(T); if (raf) { cancelAnimationFrame(raf); raf = 0; } frame(); } else if (!raf) raf = requestAnimationFrame(frame); }
-  function layout() {
-    const r = box.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); W = Math.max(280, r.width || 1100); H = r.height || 380;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g = W < 560 ? 6 : W < 980 ? 9 : 11; cols = Math.floor(W / g); rows = Math.floor(H / g); ox = (W - cols * g) / 2; oy = (H - rows * g) / 2; off.width = cols; off.height = rows;
-    R = new Float32Array(cols * rows); T = new Float32Array(cols * rows); K = new Uint8Array(cols * rows); YL = new Float32Array(cols);
-    for (let c = 0; c < cols; c++) { const x = c / (cols - 1) * (n - 1), i = Math.min(n - 2, Math.floor(x)), v = P[i][1] + (P[i + 1][1] - P[i][1]) * (x - i); YL[c] = rows * (.1 + (1 - (v - lo) / (hi - lo)) * .6); }
-    setNum(cur, true);
-  }
-  box.addEventListener('pointermove', e => { const r = box.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; inside = true; setNum(Math.max(0, Math.min(n - 1, Math.round(mx / W * (n - 1))))); });
-  box.addEventListener('pointerleave', () => { inside = false; mx = my = -1e4; setNum(n - 1); });
-  layout(); if (document.fonts && document.fonts.load) document.fonts.load('900 80px Archivo').then(() => setNum(cur, !inside)).catch(() => {});
-  return layout;
-}
 
 /* 2 晨線：夜、日兩層疊在一起，日那一層用斜線裁掉；線停在 1 − 熱度 的位置，拖動放開後彈回 */
-function initN2() {
-  const el = $('#n2'), w = D.wk, n = w.n, ln = $('#n2-ln'), hit = $('#n2-hit'), hd = $('#n2-hd'), lab = $('#n2-lab'), scr = $('#n2-scrub'), th = $('#n2-th');
-  const body = `<div class="n2-top"><span>DAYBREAK 破曉</span><span>No.${p3(D.issue)}　${D.date.replace(/-/g, '.')} 收盤版</span><span class="nav">頭版　消息　週期　鏈上　價格　資金　衍生品</span></div><div class="n2-hl">${hlHtml(D.headline)}</div><div class="n2-px"><small>$</small><span class="v"></span></div><div class="n2-meta"><b class="st"></b><span class="ht"></span><span class="dt"></span></div>`;
-  $('#n2-night').innerHTML = body; $('#n2-day').innerHTML = body; $('#v2-heat').textContent = Math.round(D.dawn.heat);
-  let W = 0, H = 0, S = 0, x = 0, x0 = 0, v = 0, i = n - 1, drag = false, raf = 0;
-  const rest = k => W * (1 - Math.max(5, Math.min(95, w.heat[k])) / 100);
-  const put = () => {
-    el.style.setProperty('--x', x.toFixed(1) + 'px'); const hy = H * .34, hx = x + S * (1 - 2 * hy / H);
-    ln.setAttribute('x1', x + S); ln.setAttribute('y1', 0); ln.setAttribute('x2', x - S); ln.setAttribute('y2', H); ['x1', 'y1', 'x2', 'y2'].forEach(a => hit.setAttribute(a, ln.getAttribute(a)));
-    hd.setAttribute('transform', `translate(${hx.toFixed(1)},${hy.toFixed(1)})`);
-    const dayPct = Math.round(Math.max(0, Math.min(1, 1 - x / W)) * 100);
-    lab.textContent = drag ? '夜 ' + (100 - dayPct) + '%　日 ' + dayPct + '%' : '晨線　熱度 ' + Math.round(w.heat[i]);
-    const left = hx > 190; lab.style.transform = `translate(${(left ? hx - 28 : hx + 28).toFixed(1)}px, ${hy.toFixed(1)}px) translate(${left ? '-100%' : '0'}, -50%)`;
-  };
-  const go = () => { if (drag) { raf = 0; return; } v = v * .74 + (x0 - x) * .085; x += v; if (Math.abs(x0 - x) < .4 && Math.abs(v) < .4) { x = x0; v = 0; put(); raf = 0; return; } put(); raf = requestAnimationFrame(go); };
-  const kick = () => { if (!raf) raf = requestAnimationFrame(go); };
-  const set = (k, instant) => {
-    i = Math.max(0, Math.min(n - 1, k)); const st = STG[w.stg[i]], ds = ymd(w.t0 + i * 7);
-    $$('.v', el).forEach(e => { e.textContent = pxS(w.px[i]); }); $$('.st', el).forEach(e => { e.textContent = st[0]; }); $$('.ht', el).forEach(e => { e.textContent = '週期熱度 ' + Math.round(w.heat[i]) + ' / 100　方向' + (w.dir[i] > 0 ? '多' : '空'); }); $$('.dt', el).forEach(e => { e.textContent = ds + ' 當週'; }); $$('.n2-hl', el).forEach(e => { e.style.opacity = i === n - 1 ? 1 : .2; });
-    const sr = scr.getBoundingClientRect(), er = el.getBoundingClientRect(), pc = i / (n - 1); th.style.left = (sr.left - er.left + pc * sr.width).toFixed(1) + 'px';
-    const tl = $('#n2-tl'); tl.textContent = ds; tl.style.transform = 'translateX(' + (pc < .06 ? '-8px' : pc > .94 ? 'calc(-100% + 8px)' : '-50%') + ')';
-    scr.setAttribute('aria-valuenow', i); scr.setAttribute('aria-valuemax', n - 1); scr.setAttribute('aria-valuetext', ds + ' ' + st[0]);
-    x0 = rest(i); if (instant) { x = x0; v = 0; put(); } else { put(); kick(); }
-  };
-  const layout = () => {
-    const r = el.getBoundingClientRect(); W = r.width || 1200; H = r.height || 640; S = H * .1; el.style.setProperty('--s', S.toFixed(1) + 'px'); $('#n2-ov').setAttribute('viewBox', `0 0 ${W} ${H}`);
-    const sw = scr.getBoundingClientRect().width || W - 100, sv = $('#n2-sv'); sv.setAttribute('viewBox', `0 0 ${sw} 40`);
-    sv.innerHTML = `<path d="${PATH(w.heat.map((h, k) => [k / (n - 1) * sw, 37 - h / 100 * 34]))}" fill="none" stroke="#fff" stroke-width="1.2" vector-effect="non-scaling-stroke"/><line x1="0" x2="${sw}" y1="39.5" y2="39.5" stroke="#fff" stroke-width="1"/>`;
-    let h = ''; for (let yr = 2014; yr <= 2026; yr += 2) h += `<span style="left:${(((Date.UTC(yr, 0, 1) / 864e5 - w.t0) / 7) / (n - 1) * 100).toFixed(2)}%">${yr}</span>`; $('#n2-yrs').innerHTML = h;
-    set(i, true);
-  };
-  const dragTo = e => { const r = el.getBoundingClientRect(); x = Math.max(-S, Math.min(W + S, e.clientX - r.left)); put(); };
-  [hit, hd].forEach(t => t.addEventListener('pointerdown', e => { drag = true; try { t.setPointerCapture(e.pointerId); } catch (er) {} dragTo(e); e.preventDefault(); }));
-  [hit, hd].forEach(t => { t.addEventListener('pointermove', e => { if (drag) dragTo(e); }); ['pointerup', 'pointercancel'].forEach(ev => t.addEventListener(ev, () => { if (!drag) return; drag = false; v = 0; put(); kick(); })); });
-  const fromX = cx => { const r = scr.getBoundingClientRect(); return Math.round((cx - r.left) / r.width * (n - 1)); };
-  let sd = false;
-  scr.addEventListener('pointerdown', e => { sd = true; try { scr.setPointerCapture(e.pointerId); } catch (er) {} set(fromX(e.clientX)); });
-  scr.addEventListener('pointermove', e => { if (sd) set(fromX(e.clientX)); });
-  ['pointerup', 'pointercancel'].forEach(ev => scr.addEventListener(ev, () => { sd = false; }));
-  scr.addEventListener('keydown', e => { const m = { ArrowLeft: -1, ArrowRight: 1, PageDown: -13, PageUp: 13 }[e.key]; if (m) { set(i + (e.shiftKey ? m * 13 : m)); e.preventDefault(); } else if (e.key === 'Home') { set(0); e.preventDefault(); } else if (e.key === 'End') { set(n - 1); e.preventDefault(); } });
-  layout();
-  return layout;
-}
 
 /* 3 儀表：一條時間游標，所有讀數用里程表的方式滾到那一週；點一格讀數，它進到主圖下半格 */
 function odo(el, str) {
@@ -2180,355 +1484,25 @@ function odo(el, str) {
   if (a.length !== b.length || a.some((ch, j) => isD(ch) !== isD(b[j]))) { el.innerHTML = a.map(ch => isD(ch) ? `<span class="od"><span class="odc" style="transform:translateY(-${ch}em)"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span>` : `<span class="oc">${ch}</span>`).join(''); return; }
   a.forEach((ch, j) => { const c = el.children[j]; if (isD(ch)) c.firstChild.style.transform = `translateY(-${ch}em)`; else if (c.textContent !== ch) c.textContent = ch; });
 }
-function initN3() {
-  const w = D.wk, n = w.n, lp = w.px.map(Math.log10), ch = $('#n3-ch'), main = $('#n3-main');
-  const SER = [
-    { nm: '週期熱度', a: w.heat, f: v => String(Math.round(v)), wd: (v, i) => [STG[w.stg[i]][0], STG[w.stg[i]][2]] },
-    { nm: '短期持有者損益', a: w.nupl, f: v => sgn(v * 100, 1) + '%', wd: v => v > .02 ? ['整體獲利', 'var(--up)'] : v < -.02 ? ['整體虧損', 'var(--down)'] : ['打平附近', 'var(--ink2)'] },
-    { nm: '恐懼貪婪', a: w.fng, f: v => String(Math.round(v)), wd: v => v <= 20 ? ['極度恐懼', 'var(--down)'] : v <= 40 ? ['恐懼', 'var(--down)'] : v < 60 ? ['中性', 'var(--ink2)'] : v < 80 ? ['貪婪', 'var(--up)'] : ['極度貪婪', 'var(--up)'] },
-    { nm: '穩定幣 30 天', a: w.stab, f: v => sgn(v, 2) + '%', wd: v => v > .5 ? ['在流入', 'var(--up)'] : v < -.5 ? ['在流出', 'var(--down)'] : ['持平', 'var(--ink2)'] },
-    { nm: '資金費率 年化', a: w.fund, f: v => sgn(v, 1) + '%', wd: v => v >= 30 ? ['多單擁擠', 'var(--s3)'] : v < 0 ? ['空方付費', 'var(--s1)'] : ['平穩', 'var(--ink2)'] },
-    { nm: '價格 ÷ 40 週均線', a: w.mayer, f: v => v.toFixed(2) + '×', wd: v => v >= 1 ? ['線上', 'var(--up)'] : ['線下', 'var(--down)'] },
-  ];
-  $('#n3-no').textContent = p3(D.issue); $('#n3-hl').textContent = D.leads.overview;
-  $('#n3-mods').innerHTML = SER.map((s, k) => `<button class="n3-m n3-s" type="button" data-s="${k}"><span class="lb">${s.nm}</span><span class="val"><span class="odo" id="n3-v${k}"></span></span><span class="wd" id="n3-w${k}"></span><span id="n3-k${k}"></span></button>`).join('');
-  let W = 0, H = 0, pw = 0, y1 = 0, h1 = 0, y2 = 0, h2 = 0, sel = 0, cur = n - 1, Y2 = null, sp = [];
-  const ML = 6, MR = 50, X = i => ML + i / (n - 1) * pw, lo = Math.min(...lp), hi = Math.max(...lp), Yp = v => y1 + (1 - (v - lo) / (hi - lo)) * h1;
-  const segPath = (arr, xf, yf) => { let d = '', on = false; arr.forEach((v, k) => { if (v == null) { on = false; return; } d += (on ? 'L' : 'M') + xf(k).toFixed(1) + ',' + yf(v).toFixed(1); on = true; }); return d; };
-  function draw() {
-    W = ch.clientWidth || 760; const sm = W < 520; H = sm ? 300 : 404; pw = W - ML - MR; y1 = 28; h1 = (H - 28 - 24) * .6; y2 = y1 + h1 + 30; h2 = H - 24 - y2;
-    let s = '';
-    for (let yr = 2013; yr <= 2027; yr++) { const k = (Date.UTC(yr, 0, 1) / 864e5 - w.t0) / 7; if (k < 0 || k > n - 1) continue; const x = X(k).toFixed(1), big = yr % 2 === 0; s += `<line x1="${x}" x2="${x}" y1="${H - 22}" y2="${H - (big ? 14 : 18)}" stroke="var(--ink3)" stroke-width="1"/><line x1="${x}" x2="${x}" y1="18" y2="${big ? 10 : 14}" stroke="var(--ink3)" stroke-width="1"/>`; if (big && (!sm || yr % 4 === 2)) s += `<text x="${x}" y="${H - 3}" text-anchor="middle">${yr}</text>`; }
-    s += `<line x1="${ML}" x2="${ML + pw}" y1="18" y2="18" stroke="var(--hair)"/><line x1="${ML}" x2="${ML + pw}" y1="${H - 22}" y2="${H - 22}" stroke="var(--hair)"/>`;
-    [2, 3, 4, 5].forEach(e => { if (e < lo || e > hi) return; const y = Yp(e).toFixed(1); s += `<line x1="${ML}" x2="${ML + pw}" y1="${y}" y2="${y}" stroke="var(--hair)"/><text x="${ML + pw + 8}" y="${+y + 3.5}">$${e === 2 ? '100' : e === 3 ? '1K' : e === 4 ? '10K' : '100K'}</text>`; });
-    s += `<path d="${PATH(lp.map((v, k) => [X(k), Yp(v)]))}" fill="none" stroke="var(--ink)" stroke-width="1.3" stroke-linejoin="round"/>`;
-    const A = SER[sel].a, vs = A.filter(v => v != null), a0 = Math.min(...vs), a1 = Math.max(...vs), pad = (a1 - a0) * .08 || 1; Y2 = v => y2 + (1 - (v - (a0 - pad)) / (a1 - a0 + 2 * pad)) * h2;
-    s += `<line x1="${ML}" x2="${ML + pw}" y1="${(y2 - 12).toFixed(1)}" y2="${(y2 - 12).toFixed(1)}" stroke="var(--hair)"/><text x="${ML + 2}" y="${(y2 + 2).toFixed(1)}" style="fill:var(--ink2)">${SER[sel].nm}</text>`;
-    if (a0 < 0 && a1 > 0) s += `<line x1="${ML}" x2="${ML + pw}" y1="${Y2(0).toFixed(1)}" y2="${Y2(0).toFixed(1)}" stroke="var(--line2)" stroke-dasharray="2 4"/>`;
-    s += `<text x="${ML + pw + 8}" y="${(Y2(a1) + 3.5).toFixed(1)}">${SER[sel].f(a1)}</text><text x="${ML + pw + 8}" y="${(Y2(a0) + 3.5).toFixed(1)}">${SER[sel].f(a0)}</text>`;
-    s += `<path d="${segPath(A, X, Y2)}" fill="none" stroke="var(--ink2)" stroke-width="1.2" stroke-linejoin="round"/>`;
-    s += `<line id="n3-cx" y1="10" y2="${H - 22}" stroke="var(--brand)" stroke-width="1"/><circle id="n3-c1" r="3.5" fill="var(--brand)" stroke="#0B0C0F" stroke-width="1.5"/><circle id="n3-c2" r="3.5" fill="var(--brand)" stroke="#0B0C0F" stroke-width="1.5"/><g id="n3-tag"><rect y="0" width="74" height="15" rx="2" fill="var(--brand)"/><text id="n3-tt" x="37" y="11" text-anchor="middle" style="fill:#141414;font-weight:500"></text></g>`;
-    s += `<rect id="n3-hit" x="${ML}" y="0" width="${pw}" height="${H}" fill="transparent" style="cursor:crosshair;touch-action:pan-y"/>`;
-    ch.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="BTC 週線價格與${SER[sel].nm}">${s}</svg>`;
-    const hitr = $('#n3-hit'); hitr.addEventListener('pointermove', e => { const r = hitr.getBoundingClientRect(); set(Math.round((e.clientX - r.left) / r.width * (n - 1))); }); hitr.addEventListener('pointerleave', () => set(n - 1));
-    sp = SER.map((sr, k) => { const box = $('#n3-k' + k), bw = Math.max(80, (box.parentNode.clientWidth || 160) - 34), bh = 30, v2 = sr.a.filter(v => v != null), b0 = Math.min(...v2), b1 = Math.max(...v2), xf = q => 2 + q / (n - 1) * (bw - 4), yf = v => 3 + (1 - (v - b0) / ((b1 - b0) || 1)) * (bh - 6); box.innerHTML = `<svg width="${bw}" height="${bh}" viewBox="0 0 ${bw} ${bh}" aria-hidden="true"><path d="${segPath(sr.a, xf, yf)}" fill="none" stroke="var(--ink3)" stroke-width="1"/><line y1="0" y2="${bh}" stroke="var(--brand)" stroke-width="1"/><circle r="2.6" fill="var(--brand)"/></svg>`; return { xf, yf, ln: box.querySelector('line'), c: box.querySelector('circle') }; });
-    $$('.n3-s').forEach(b => { const on = +b.dataset.s === sel; b.classList.toggle('on', on); b.setAttribute('aria-pressed', on); });
-    const c = cur; cur = -1; set(c);
-  }
-  function set(i) {
-    i = Math.max(0, Math.min(n - 1, i)); if (i === cur) return; cur = i; const x = X(i), ds = ymd(w.t0 + i * 7), st = STG[w.stg[i]];
-    const cx = $('#n3-cx'); cx.setAttribute('x1', x.toFixed(1)); cx.setAttribute('x2', x.toFixed(1));
-    const c1 = $('#n3-c1'); c1.setAttribute('cx', x.toFixed(1)); c1.setAttribute('cy', Yp(lp[i]).toFixed(1));
-    const c2 = $('#n3-c2'), v2 = SER[sel].a[i]; c2.style.display = v2 == null ? 'none' : ''; if (v2 != null) { c2.setAttribute('cx', x.toFixed(1)); c2.setAttribute('cy', Y2(v2).toFixed(1)); }
-    $('#n3-tag').setAttribute('transform', `translate(${Math.max(ML, Math.min(ML + pw - 74, x - 37)).toFixed(1)},0)`); $('#n3-tt').textContent = ds;
-    $('#n3-date').textContent = i === n - 1 ? ds + ' 當週（最新）' : ds + ' 當週';
-    odo($('#n3-px'), '$' + pxS(w.px[i])); const sg = $('#n3-stg'); sg.textContent = st[0]; sg.style.color = st[2]; $('#n3-ht').textContent = '熱度 ' + Math.round(w.heat[i]) + ' / 100　方向' + (w.dir[i] > 0 ? '多' : '空');
-    SER.forEach((sr, k) => { const v = sr.a[i], ve = $('#n3-v' + k), we = $('#n3-w' + k), q = sp[k]; if (v == null) { odo(ve, '—'); we.textContent = '這一年還沒有資料'; we.style.color = 'var(--ink3)'; if (q) { q.c.style.display = 'none'; q.ln.setAttribute('x1', q.xf(i)); q.ln.setAttribute('x2', q.xf(i)); } return; } const wd = sr.wd(v, i); odo(ve, sr.f(v)); we.textContent = wd[0]; we.style.color = wd[1]; if (q) { q.c.style.display = ''; q.c.setAttribute('cx', q.xf(i).toFixed(1)); q.c.setAttribute('cy', q.yf(v).toFixed(1)); q.ln.setAttribute('x1', q.xf(i).toFixed(1)); q.ln.setAttribute('x2', q.xf(i).toFixed(1)); } });
-    main.setAttribute('aria-valuenow', i); main.setAttribute('aria-valuemax', n - 1); main.setAttribute('aria-valuetext', ds + ' ' + st[0]);
-  }
-  $('#n3-mods').addEventListener('click', e => { const b = e.target.closest('.n3-s'); if (!b || +b.dataset.s === sel) return; sel = +b.dataset.s; draw(); });
-  main.addEventListener('keydown', e => { const m = { ArrowLeft: -1, ArrowRight: 1, PageDown: -13, PageUp: 13 }[e.key]; if (m) { set(cur + (e.shiftKey ? m * 13 : m)); e.preventDefault(); } else if (e.key === 'Home') { set(0); e.preventDefault(); } else if (e.key === 'End') { set(n - 1); e.preventDefault(); } });
-  draw();
-  return draw;
-}
 
 const redraw = [];
 /* ══ 第三輪：五套 VI 樣板。同一塊內容、同一組資料 ══ */
-const VIS = [
-  { k: 1, nm: '點陣', en: 'DOT MATRIX', one: '一面顯示牆。黑底、白色光點，重點只用一個萊姆綠。', grid: 'dots', area: 'dots', marker: 'dot', w: 1.8, br: 1, font: 'Geist ＋ Geist Mono',
-    feel: '像機場和交易所的顯示牆，但更細、更安靜。大數字由光點組成，游標靠近會亮。', prec: '點只用在大數字、背景格點和線下的填色。線、柱、刻度都是向量，讀值和現在一樣準。', risk: '點用太多會吵。要守住「只有顯示用點、量測用線」這條規則。' },
-  { k: 2, nm: '光譜', en: 'SPECTRUM', one: '深色玻璃上的一道光。週期五個階段的顏色連成漸層，當成品牌色。', grid: 'lines', area: 'grad', marker: 'ring', w: 2, br: 6, grad: true, font: 'Sora',
-    feel: '輕、薄、透明。極細的大數字帶著光譜色，面板像浮在黑底上的玻璃。', prec: '主線有漸層顏色，但還是一條 2px 的實線。圖表區不放模糊，格線照舊。', risk: '漸層用多了會花。你之前否決過霧光漸層；這一版只讓大數字、主線和商標有光譜。' },
-  { k: 3, nm: '航電', en: 'AVIONICS', one: '戰機的抬頭顯示器。單色冰藍，琥珀色只留給警示。', grid: 'ticks', area: 'none', marker: 'ret', w: 1.5, br: 0, glow: 'rgba(138,243,255,.45)', font: 'Chakra Petch',
-    feel: '冷、準、有儀器感。每一格有角標，游標是十字準星，直接讀出座標。', prec: '五套裡最適合精確讀值：準星會同時標出日期和價格。', risk: '單色靠亮度分層次，紅綠的語意要另外保留。長時間看偏冷。' },
-  { k: 4, nm: '無塵室', en: 'CLEANROOM', one: '明亮、極細的字、很大的圓角。未來感來自乾淨，不靠發光。', grid: 'lines', area: 'grad', marker: 'dot', w: 1.8, br: 5, font: 'Inter Tight',
-    feel: '像實驗室或新一代硬體的介面。白底、黑線、一個電光藍。', prec: '黑線配白底，對比最高，小字也清楚。', risk: '白底和你發文用的深色圖不一致，晚上看比較亮。需要另外配一套深色。' },
-  { k: 5, nm: '霓虹', en: 'NEON', one: '深藍底，青、桃紅、萊姆三個螢光色。寬體字，很搶眼。', grid: 'lines', area: 'grad', marker: 'sq', w: 2, br: 2, glow: 'rgba(0,229,255,.6)', font: 'Unbounded ＋ Geist',
-    feel: '你之前拿來的那張賽博龐克參考圖的方向，做成完整的一套。', prec: '主線有一點光暈，寬度不變。三個螢光色各有固定用途：青是價格、萊姆是漲、桃紅是跌。', risk: '最搶眼，也最容易看膩。顏色一旦亂用就會髒。' },
-];
 
 /* 點陣大數字：字形當遮罩，亮的點是數字，暗的點是沒亮的燈；游標附近的暗點會亮成重點色 */
-function dotNum(box, str) {
-  const cv = box.querySelector('canvas'), ctx = cv.getContext('2d'), off = document.createElement('canvas'), o = off.getContext('2d', { willReadFrequently: true });
-  let W = 0, H = 0, g = 7, cols = 0, rows = 0, A = null, R = null, mx = -1e4, my = -1e4, raf = 0, inside = false;
-  function frame() {
-    let moving = false; const s2 = 2 * 46 * 46, n = R.length, lit = new Uint8Array(n);
-    for (let j = 0; j < n; j++) {
-      const on = A[j] > .25; let t = on ? .25 + A[j] * .23 : .1;
-      if (inside) { const c = j % cols, r = (j - c) / cols, dx = (c + .5) * g - mx, dy = (r + .5) * g - my, e = Math.exp(-(dx * dx + dy * dy) / s2); if (on) t *= 1 + .22 * e; else if (e > .12) { t = .1 + .3 * e; lit[j] = 1; } }
-      const d = t - R[j]; if (Math.abs(d) > .004) { R[j] += d * .25; moving = true; } else R[j] = t;
-    }
-    ctx.clearRect(0, 0, W, H);
-    [['#262626', j => A[j] <= .25 && !lit[j]], ['#C6FF3D', j => lit[j] === 1], ['#F2F2EE', j => A[j] > .25]].forEach(p => { ctx.beginPath(); for (let j = 0; j < n; j++) { if (!p[1](j)) continue; const c = j % cols, r = (j - c) / cols, x = (c + .5) * g, y = (r + .5) * g, rad = R[j] * g; ctx.moveTo(x + rad, y); ctx.arc(x, y, rad, 0, 6.2832); } ctx.fillStyle = p[0]; ctx.fill(); });
-    raf = moving ? requestAnimationFrame(frame) : 0;
-  }
-  function layout() {
-    const r = box.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); W = Math.max(200, r.width || 460); H = r.height || 150; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g = W < 380 ? 5 : W < 520 ? 6 : 7; cols = Math.floor(W / g); rows = Math.floor(H / g); off.width = cols; off.height = rows;
-    o.clearRect(0, 0, cols, rows); o.fillStyle = '#fff'; o.textBaseline = 'alphabetic'; let fs = rows * 1.2; const font = s => `700 ${s}px Geist, Arial, sans-serif`; o.font = font(fs); const w = o.measureText(str).width; if (w > cols * .99) { fs *= cols * .99 / w; o.font = font(fs); }
-    o.fillText(str, 0, rows / 2 + fs * .36); const m = o.getImageData(0, 0, cols, rows).data; A = new Float32Array(cols * rows); R = new Float32Array(cols * rows);
-    for (let j = 0; j < A.length; j++) { A[j] = m[j * 4 + 3] / 255; R[j] = A[j] > .25 ? .25 + A[j] * .23 : .1; }
-    if (raf) { cancelAnimationFrame(raf); raf = 0; } frame();
-  }
-  box.addEventListener('pointermove', e => { const r = box.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; inside = true; if (!raf) raf = requestAnimationFrame(frame); });
-  box.addEventListener('pointerleave', () => { inside = false; if (!raf) raf = requestAnimationFrame(frame); });
-  layout(); if (document.fonts && document.fonts.load) document.fonts.load('700 80px Geist').then(layout).catch(() => {});
-  return layout;
-}
 
-function viLine(el, ro, st) {
-  const R = D.lv, W = el.clientWidth || 600, sm = W < 520, H = sm ? 230 : 300, ML = 4, MR = sm ? 100 : 124, MT = 12, MB = 22, pw = W - ML - MR, ph = H - MT - MB, x0 = R[0][0], x1 = R[R.length - 1][0], id = 'v' + st.k + Math.random().toString(36).slice(2, 6);
-  let lo = 1e9, hi = -1e9; R.forEach(r => [1, 2, 3].forEach(c => { if (r[c] != null) { lo = Math.min(lo, r[c]); hi = Math.max(hi, r[c]); } })); const pad = (hi - lo) * .06; lo -= pad; hi += pad;
-  const X = t => ML + (t - x0) / (x1 - x0) * pw, Y = v => MT + (1 - (v - lo) / (hi - lo)) * ph;
-  let s = `<defs><linearGradient id="${id}g" x1="0" x2="1" y1="0" y2="0"><stop offset="0" stop-color="#5B7CFF"/><stop offset=".3" stop-color="#38D6E8"/><stop offset=".55" stop-color="#3BE39A"/><stop offset=".8" stop-color="#F7C948"/><stop offset="1" stop-color="#FF5C7A"/></linearGradient>`
-    + `<linearGradient id="${id}a" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="var(--c-px)" stop-opacity=".2"/><stop offset="1" stop-color="var(--c-px)" stop-opacity="0"/></linearGradient>`
-    + `<pattern id="${id}p" width="7" height="7" patternUnits="userSpaceOnUse"><circle cx="3.5" cy="3.5" r="1.3" fill="var(--c-px)"/></pattern><linearGradient id="${id}f" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".7"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><mask id="${id}m"><rect x="0" y="${MT}" width="${W}" height="${ph}" fill="url(#${id}f)"/></mask></defs>`;
-  for (let t = Math.ceil(lo / 2e4) * 2e4; t <= hi; t += 2e4) {
-    const y = Y(t).toFixed(1);
-    s += st.grid === 'dots' ? `<line x1="${ML}" x2="${ML + pw}" y1="${y}" y2="${y}" stroke="var(--v-grid)" stroke-width="1.8" stroke-linecap="round" stroke-dasharray="0.1 8"/>` : `<line x1="${ML}" x2="${ML + pw}" y1="${y}" y2="${y}" stroke="var(--v-grid)" stroke-width="1"/>`;
-    if (st.grid === 'ticks') s += `<line x1="${ML + pw - 8}" x2="${ML + pw}" y1="${y}" y2="${y}" stroke="var(--v-acc)" stroke-width="1.5"/>`;
-    s += `<text x="${ML + 2}" y="${+y - 4}">${t / 1000}K</text>`;
-  }
-  for (let d = dOf(x0), y = d.getUTCFullYear(), m = d.getUTCMonth() + 1; ; m++) { if (m > 12) { m = 1; y++; } const t = Date.UTC(y, m - 1, 1) / 864e5; if (t > x1) break; if (t <= x0) continue; const x = X(t); if (st.grid === 'ticks') s += `<line x1="${x.toFixed(1)}" x2="${x.toFixed(1)}" y1="${MT + ph}" y2="${MT + ph + ((m - 1) % 3 ? 3 : 6)}" stroke="var(--v-ink2)" stroke-width="1"/>`; if ((m - 1) % 3 === 0 && x > ML + 18 && x < ML + pw - 18) s += `<text x="${x.toFixed(1)}" y="${H - 5}" text-anchor="middle">${m === 1 ? y : (y % 100) + '/' + m}</text>`; }
-  const pts = R.map(r => [X(r[0]), Y(r[1])]), line = PATH(pts), area = line + `L${X(x1).toFixed(1)},${MT + ph}L${X(x0).toFixed(1)},${MT + ph}Z`;
-  if (st.area === 'dots') s += `<path d="${area}" fill="url(#${id}p)" mask="url(#${id}m)"/>`; else if (st.area === 'grad') s += `<path d="${area}" fill="url(#${id}a)"/>`;
-  s += `<path d="${PATH(R.filter(r => r[3] != null).map(r => [X(r[0]), Y(r[3])]))}" fill="none" stroke="var(--c-b)" stroke-width="1.2" stroke-dasharray="4 4"/><path d="${PATH(R.filter(r => r[2] != null).map(r => [X(r[0]), Y(r[2])]))}" fill="none" stroke="var(--c-a)" stroke-width="1.4"/>`;
-  s += `<path d="${line}" fill="none" stroke="${st.grad ? `url(#${id}g)` : 'var(--c-px)'}" stroke-width="${st.w}" stroke-linejoin="round"${st.glow ? ` style="filter:drop-shadow(0 0 5px ${st.glow})"` : ''}/>`;
-  const z = R[R.length - 1], ex = X(z[0]), ey = Y(z[1]), mk = (x, y) => st.marker === 'ring' ? `<circle cx="${x}" cy="${y}" r="4.5" fill="var(--v-bg)" stroke="var(--c-px)" stroke-width="2"/>` : st.marker === 'sq' ? `<rect x="${x - 3.5}" y="${y - 3.5}" width="7" height="7" fill="var(--c-px)"/>` : st.marker === 'ret' ? `<circle cx="${x}" cy="${y}" r="6" fill="none" stroke="var(--c-px)" stroke-width="1.2"/><circle cx="${x}" cy="${y}" r="1.6" fill="var(--c-px)"/>` : `<circle cx="${x}" cy="${y}" r="3.8" fill="var(--c-px)"/>`;
-  s += mk(ex.toFixed(1), ey.toFixed(1));
-  const ends = [[z[1], '收盤', 'var(--c-px)'], [z[3], '50 週', 'var(--c-b)'], [z[2], '200 日', 'var(--c-a)']].map(e => ({ y: Y(e[0]), t: e[1] + ' ' + n0(e[0]), c: e[2] })).sort((a, b) => a.y - b.y);
-  for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 15) ends[i].y = ends[i - 1].y + 15;
-  ends.forEach(e => { s += `<text class="el" x="${ML + pw + 10}" y="${(e.y + 4).toFixed(1)}" style="fill:${e.c === 'var(--c-px)' && st.grad ? 'var(--v-ink)' : e.c}">${e.t}</text>`; });
-  s += `<g class="vx" visibility="hidden"><line class="vv" y1="${MT}" y2="${MT + ph}" stroke="var(--v-ink2)" stroke-width="1"/>${st.marker === 'ret' ? `<line class="vh" x1="${ML}" x2="${ML + pw}" stroke="var(--v-ink2)" stroke-width="1"/><rect class="vb" x="${ML + pw + 2}" width="52" height="15" fill="var(--v-acc)"/><text class="vt" x="${ML + pw + 28}" text-anchor="middle" style="fill:#02060A;font-weight:500"></text>` : ''}<circle class="d1" r="3.6" fill="var(--c-px)" stroke="var(--v-bg)" stroke-width="1.5"/><circle class="d2" r="3" fill="var(--c-a)" stroke="var(--v-bg)" stroke-width="1.5"/><circle class="d3" r="3" fill="var(--c-b)" stroke="var(--v-bg)" stroke-width="1.5"/></g>`;
-  s += `<rect class="hit" x="${ML}" y="${MT}" width="${pw}" height="${ph}" fill="transparent" style="cursor:crosshair;touch-action:pan-y"/>`;
-  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="收盤價、200 日均線與 50 週均線">${s}</svg>`;
-  const vx = el.querySelector('.vx'), hit = el.querySelector('.hit'), q = c => el.querySelector(c);
-  const read = r => { ro.innerHTML = `${ymd(r[0])}　收盤 <b>${n0(r[1])}</b>　200 日 <b>${r[2] == null ? '—' : n0(r[2])}</b>　50 週 <b>${r[3] == null ? '—' : n0(r[3])}</b>`; };
-  hit.addEventListener('pointermove', e => {
-    const b = hit.getBoundingClientRect(), t = x0 + (e.clientX - b.left) / b.width * (x1 - x0), r = R.reduce((a, c) => Math.abs(c[0] - t) < Math.abs(a[0] - t) ? c : a), x = X(r[0]).toFixed(1);
-    vx.setAttribute('visibility', 'visible'); const vv = q('.vv'); vv.setAttribute('x1', x); vv.setAttribute('x2', x);
-    [['.d1', 1], ['.d2', 2], ['.d3', 3]].forEach(p => { const c = q(p[0]); if (r[p[1]] == null) { c.style.display = 'none'; return; } c.style.display = ''; c.setAttribute('cx', x); c.setAttribute('cy', Y(r[p[1]]).toFixed(1)); });
-    if (st.marker === 'ret') { const y = Y(r[1]); const vh = q('.vh'); vh.setAttribute('y1', y.toFixed(1)); vh.setAttribute('y2', y.toFixed(1)); q('.vb').setAttribute('y', (y - 7.5).toFixed(1)); const vt = q('.vt'); vt.setAttribute('y', (y + 3.5).toFixed(1)); vt.textContent = n0(r[1]); }
-    read(r);
-  });
-  hit.addEventListener('pointerleave', () => { vx.setAttribute('visibility', 'hidden'); read(z); });
-  read(z);
-}
 
-function viBars(el, st) {
-  const U = D.urpd, W = el.clientWidth || 340, H = 178, ML = 2, MR = 2, MT = 30, MB = 20, pw = W - ML - MR, ph = H - MT - MB, B = U.band.filter(b => b[0] >= U.price * .8 - U.w && b[0] < U.price * 1.3), n = B.length, bw = pw / n, mx = Math.max(...B.map(b => b[1])) * 1.04, id = 'b' + st.k + Math.random().toString(36).slice(2, 6);
-  const Y = v => MT + (1 - v / mx) * ph, inR = (p, r) => p >= r[0] && p < r[1], X = p => ML + (p - B[0][0]) / U.w * bw, rg = r => (r[0] / 1000) + '–' + (r[1] / 1000) + 'K';
-  let s = `<defs><pattern id="${id}" width="5" height="5" patternUnits="userSpaceOnUse"><circle cx="2.5" cy="2.5" r="1.2" fill="#5A5A5A"/></pattern></defs><line x1="${ML}" x2="${ML + pw}" y1="${Y(0)}" y2="${Y(0)}" stroke="var(--v-line)"/>`;
-  B.forEach((b, i) => { const k = inR(b[0], U.thick) ? 'var(--hlA)' : inR(b[0], U.thin) ? 'var(--hlB)' : st.area === 'dots' ? `url(#${id})` : 'var(--v-dim)'; s += `<rect x="${(ML + i * bw + bw * .15).toFixed(1)}" y="${Y(b[1]).toFixed(1)}" width="${(bw * .7).toFixed(1)}" height="${Math.max(1, Y(0) - Y(b[1])).toFixed(1)}" rx="${st.br}" fill="${k}"/>`; if (b[0] % 10000 === 0 && i > 0) s += `<text x="${(ML + i * bw).toFixed(1)}" y="${H - 5}" text-anchor="middle">${b[0] / 1000}K</text>`; });
-  const px = X(U.price).toFixed(1); s += `<line x1="${px}" x2="${px}" y1="${MT - 6}" y2="${Y(0)}" stroke="var(--v-ink)" stroke-width="1.4"/>`;
-  s += `<text class="el" x="${X((U.thick[0] + U.thick[1]) / 2).toFixed(1)}" y="12" text-anchor="middle" style="fill:var(--hlA)">${rg(U.thick)}　${wan(U.thick[2])}顆</text><text class="el" x="${Math.max(ML + 50, X((U.thin[0] + U.thin[1]) / 2)).toFixed(1)}" y="26" text-anchor="middle" style="fill:var(--hlB)">${rg(U.thin)}　${wan(U.thin[2])}顆</text>`;
-  el.innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="${W}" height="${H}" role="img" aria-label="籌碼分布">${s}</svg>`;
-}
 
-function initVI() {
-  const root = $('#vi-root'), d200 = (D.price / D.stage.sma200 - 1) * 100, stg = STG[D.dawn.stage][0];
-  $('#vsum').innerHTML = VIS.map(v => `<a href="#vi-${v.k}"><span class="mono">VI ${v.k}　${v.en}</span><b>${v.nm}</b><span>${v.one}</span></a>`).join('');
-  root.innerHTML = VIS.map(v => `<section class="vd" id="vi-${v.k}">
-    <div class="vin"><div class="dir-h"><span class="lt">VI ${v.k}</span><h2>${v.nm}</h2><p>${v.one}${v.feel}</p></div></div>
-    <div class="scene vi vi${v.k}">
-      <div class="vi-top"><span class="vi-wm">DAYBREAK</span><span class="vi-nav"><b>總覽</b><span>消息</span><span>週期</span><span>鏈上</span><span>資金</span><span>衍生品</span></span><span class="vi-stt"><i></i>${D.date.replace(/-/g, '.')} 收盤</span></div>
-      <div class="vi-grid">
-        <div class="vi-hero"><span class="vi-lb">BTC / USD　收盤</span>
-          ${v.k === 1 ? `<div class="vi-dot" id="vi-dot"><canvas role="img" aria-label="$${n0(D.price)}"></canvas></div>` : `<div class="vi-num">${n0(D.price)}</div>`}
-          <div class="vi-sub"><span class="vi-chg" style="color:var(${D.chg >= 0 ? '--v-up' : '--v-down'})">${sgn(D.chg, 2)}%</span><span class="vi-chip">${stg}</span><span>週期熱度 ${Math.round(D.dawn.heat)} / 100</span></div>
-          <p class="vi-lead">${D.leads.overview}</p>
-          <ol class="vi-cl"><li>上面壓著一團籌碼，下面是薄區</li><li>階段還是牛市，但 50 週均線剛被跌破一次</li><li>場外的錢沒有回來</li></ol>
-          <div class="vi-stats"><div class="vi-stat"><b>${sgn(d200, 1)}%</b><span>離 200 日均線</span></div><div class="vi-stat"><b>${D.now.sthProfit.toFixed(1)}%</b><span>短期持有者獲利</span></div><div class="vi-stat"><b>${D.now.fng}</b><span>恐懼貪婪指數</span></div></div>
-        </div>
-        <div class="vi-card vi-c1"><div class="vi-chh"><span class="vi-lb">價格與均線</span><span class="vi-ro" id="vi-ro${v.k}"></span></div><div id="vi-l${v.k}"></div></div>
-        <div class="vi-card vi-c2"><span class="vi-lb">籌碼分布　最厚與最薄</span><div id="vi-b${v.k}"></div></div>
-        <div class="vi-card vi-spec"><span class="vi-lb">色彩與字</span><div class="vi-sw"><i style="background:var(--v-bg)"></i><i style="background:var(--v-ink)"></i><i style="background:var(--v-acc)"></i><i style="background:var(--v-up)"></i><i style="background:var(--v-down)"></i><i style="background:var(--v-ink2)"></i></div><div class="vi-ty">破曉 0123<small>${v.font}</small></div><div class="vi-chips"><span style="color:var(--v-up)">偏多</span><span style="color:var(--v-down)">偏空</span><span style="color:var(--v-ink2)">中性</span></div></div>
-      </div>
-    </div>
-    <div class="vin"><div class="fit" style="grid-template-columns:repeat(2,minmax(0,1fr))"><div><b>圖表怎麼保持精確</b>${v.prec}</div><div><b>風險</b>${v.risk}</div></div></div>
-  </section>`).join('');
-  const dot = dotNum($('#vi-dot'), n0(D.price));
-  const draw = () => VIS.forEach(v => { viLine($('#vi-l' + v.k), $('#vi-ro' + v.k), v); viBars($('#vi-b' + v.k), v); });
-  draw();
-  return () => { dot(); draw(); };
-}
 
 /* ══ 第四輪：四個整站概念 ══ */
-const WK = D.wk, WN = WK.n;
-const SERIES6 = [
-  { key: 'overview', nm: '價格', a: WK.px.map(Math.log10), big: i => '$' + pxS(WK.px[i]), tick: v => '$' + n0(Math.pow(10, v)) },
-  { key: 'cycle', nm: '週期熱度', a: WK.heat, big: i => String(Math.round(WK.heat[i])), tick: v => String(Math.round(v)) },
-  { key: 'onchain', nm: '短期持有者損益', a: WK.nupl.map(v => v == null ? null : v * 100), big: i => sgn(WK.nupl[i] * 100, 1) + '%', tick: v => sgn(v, 1) + '%' },
-  { key: 'market', nm: '價格 ÷ 40 週均線', a: WK.mayer, big: i => WK.mayer[i].toFixed(2) + '×', tick: v => v.toFixed(2) + '×' },
-  { key: 'flows', nm: '穩定幣 30 天', a: WK.stab, big: i => sgn(WK.stab[i], 1) + '%', tick: v => sgn(v, 0) + '%' },
-  { key: 'deriv', nm: '資金費率', a: WK.fund, big: i => sgn(WK.fund[i], 1) + '%', tick: v => sgn(v, 0) + '%' },
-];
-const lastN = (a, N) => a.slice(Math.max(0, a.length - N));
 const mm = a => { const v = a.filter(x => x != null); return [Math.min(...v), Math.max(...v)]; };
 
 /* 1 牆：一整面點。總覽是六塊，點一塊，全部的點重新排成那一塊的全幅，同時浮出一條精確的線 */
-function initWall() {
-  const el = $('#h1'), box = $('#h1-box'), cv = $('#h1-cv'), ctx = cv.getContext('2d'), ov = $('#h1-ov'), lab = $('#h1-lab'), ro = $('#h1-ro'), N = 156;
-  const off = document.createElement('canvas'), o = off.getContext('2d', { willReadFrequently: true });
-  let W = 0, H = 0, g = 9, cols = 0, rows = 0, R = null, T = null, K = null, mode = -1, hover = -1, raf = 0, NC = 3, NR = 2;
-  const font = s => `700 ${s}px Geist, Arial, sans-serif`;
-  const fit = (str, maxW, fs) => { o.font = font(fs); const w = o.measureText(str).width; if (w > maxW) { fs *= maxW / w; o.font = font(fs); } return fs; };
-  const area = (a, x0, x1, y0, y1, alpha) => { const s = lastN(a, N), r = mm(s); o.globalAlpha = alpha; o.beginPath(); o.moveTo(x0, y1); s.forEach((v, k) => { o.lineTo(x0 + k / (s.length - 1) * (x1 - x0), y1 - 1 - (v - r[0]) / ((r[1] - r[0]) || 1) * (y1 - y0 - 1)); }); o.lineTo(x1, y1); o.closePath(); o.fill(); o.globalAlpha = 1; };
-  function raster() {
-    o.clearRect(0, 0, cols, rows); o.fillStyle = '#fff'; o.textBaseline = 'alphabetic'; K.fill(255);
-    if (mode < 0) {
-      const tw = cols / NC, th = rows / NR;
-      SERIES6.forEach((s, k) => { const x0 = (k % NC) * tw, y0 = Math.floor(k / NC) * th, str = s.big(WN - 1), fs = fit(str, tw - 8, th * .4); o.fillText(str, x0 + 3, y0 + th * .2 + fs * .78); area(s.a, x0 + 3, x0 + tw - 4, y0 + th * .6, y0 + th - 2, .5);
-        for (let r = Math.floor(y0); r < Math.min(rows, y0 + th); r++) for (let c = Math.floor(x0); c < Math.min(cols, x0 + tw); c++) K[r * cols + c] = k; });
-    } else { const s = SERIES6[mode], str = s.big(WN - 1), fs = fit(str, cols * .5, rows * .3); o.fillText(str, 3, rows * .12 + fs * .78); area(s.a, 0, cols, rows * .46, rows - 6, .42); }
-    const m = o.getImageData(0, 0, cols, rows).data; for (let j = 0; j < T.length; j++) { const a = m[j * 4 + 3] / 255; T[j] = a > .06 ? .13 + a * .35 : .065; }
-  }
-  function frame() {
-    let moving = false; for (let j = 0; j < R.length; j++) { const d = T[j] - R[j]; if (Math.abs(d) > .004) { R[j] += d * .2; moving = true; } else R[j] = T[j]; }
-    ctx.clearRect(0, 0, W, H);
-    [['#1E1E1E', j => T[j] < .1 && R[j] < .1], ['#EDEDE8', j => !(T[j] < .1 && R[j] < .1) && !(mode < 0 && K[j] === hover)], ['#C6FF3D', j => !(T[j] < .1 && R[j] < .1) && mode < 0 && K[j] === hover]].forEach(p => { ctx.beginPath(); for (let j = 0; j < R.length; j++) { if (!p[1](j)) continue; const c = j % cols, r = (j - c) / cols, x = (c + .5) * g, y = (r + .5) * g, rad = R[j] * g; ctx.moveTo(x + rad, y); ctx.arc(x, y, rad, 0, 6.2832); } ctx.fillStyle = p[0]; ctx.fill(); });
-    raf = moving ? requestAnimationFrame(frame) : 0;
-  }
-  const kick = () => { if (!raf) raf = requestAnimationFrame(frame); };
-  function labels() {
-    if (mode < 0) { lab.innerHTML = SERIES6.map((s, k) => `<span class="${k === hover ? 'on' : ''}" style="left:${((k % NC) / NC * 100 + 1).toFixed(1)}%;top:${(Math.floor(k / NC) * (100 / NR) + (NR > 2 ? 1.2 : 3)).toFixed(1)}%">${p2(k + 1)}　${s.nm}</span>`).join(''); ro.textContent = ''; }
-    else { lab.innerHTML = ''; }
-  }
-  function overlay() {
-    if (mode < 0) { ov.innerHTML = ''; return; }
-    const s = SERIES6[mode], a = lastN(s.a, N), r = mm(a), y0 = rows * .46 * g, y1 = (rows - 6) * g, X = k => k / (a.length - 1) * (cols * g), Y = v => y1 - g - (v - r[0]) / ((r[1] - r[0]) || 1) * (y1 - y0 - g), i0 = WN - a.length;
-    let h = `<path d="${PATH(a.map((v, k) => [X(k), Y(v)]))}" fill="none" stroke="#C6FF3D" stroke-width="1.6" stroke-linejoin="round"/>`;
-    [r[0], (r[0] + r[1]) / 2, r[1]].forEach(v => { h += `<line x1="0" x2="${W}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="#F2F2EE" stroke-opacity=".14"/><text x="${W - 10}" y="${(Y(v) - 6).toFixed(1)}" text-anchor="end">${s.tick(v)}</text>`; });
-    for (let yr = 2024; yr <= 2026; yr++) { const k = (Date.UTC(yr, 0, 1) / 864e5 - WK.t0) / 7 - i0; if (k > 4 && k < a.length - 4) h += `<text x="${X(k).toFixed(1)}" y="${H - 10}" text-anchor="middle">${yr}</text>`; }
-    h += `<line id="h1-cx" y1="${y0}" y2="${y1}" stroke="#F2F2EE" stroke-width="1" visibility="hidden"/><circle id="h1-cd" r="4.5" fill="#C6FF3D" stroke="#040404" stroke-width="2" cx="${X(a.length - 1).toFixed(1)}" cy="${Y(a[a.length - 1]).toFixed(1)}"/><rect id="h1-hit" x="0" y="${y0 - 30}" width="${W}" height="${y1 - y0 + 30}" fill="transparent" style="cursor:crosshair"/>`;
-    ov.setAttribute('viewBox', `0 0 ${W} ${H}`); ov.innerHTML = h;
-    const read = k => { ro.textContent = s.nm + '　' + ymd(WK.t0 + (i0 + k) * 7) + '　' + s.big(i0 + k); };
-    const hit = $('#h1-hit'), cx = $('#h1-cx'), cd = $('#h1-cd');
-    hit.addEventListener('pointermove', e => { const b = hit.getBoundingClientRect(), k = Math.max(0, Math.min(a.length - 1, Math.round((e.clientX - b.left) / b.width * (a.length - 1)))); cx.setAttribute('visibility', 'visible'); cx.setAttribute('x1', X(k)); cx.setAttribute('x2', X(k)); cd.setAttribute('cx', X(k)); cd.setAttribute('cy', Y(a[k])); read(k); });
-    hit.addEventListener('pointerleave', () => { cx.setAttribute('visibility', 'hidden'); cd.setAttribute('cx', X(a.length - 1)); cd.setAttribute('cy', Y(a[a.length - 1])); read(a.length - 1); });
-    read(a.length - 1);
-  }
-  function setMode(m, instant) { mode = m; hover = -1; el.classList.toggle('focus', m >= 0); raster(); labels(); overlay(); if (instant) { R.set(T); if (raf) { cancelAnimationFrame(raf); raf = 0; } frame(); } else kick(); }
-  function layout() {
-    const r = box.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); W = Math.max(280, r.width || 1200); H = r.height || 560; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g = W < 560 ? 6 : W < 1000 ? 8 : 9; NC = W < 560 ? 2 : 3; NR = 6 / NC; cols = Math.ceil(W / g); rows = Math.ceil(H / g); off.width = cols; off.height = rows; R = new Float32Array(cols * rows); T = new Float32Array(cols * rows); K = new Uint8Array(cols * rows); setMode(mode, true);
-  }
-  const tileAt = e => { const r = box.getBoundingClientRect(); return Math.min(NC - 1, Math.floor((e.clientX - r.left) / r.width * NC)) + NC * Math.min(NR - 1, Math.floor((e.clientY - r.top) / r.height * NR)); };
-  box.addEventListener('pointermove', e => { if (mode >= 0) return; const k = tileAt(e); if (k !== hover) { hover = k; labels(); kick(); if (!raf) frame(); } });
-  box.addEventListener('pointerleave', () => { if (mode < 0 && hover >= 0) { hover = -1; labels(); frame(); } });
-  box.addEventListener('click', e => { if (mode < 0) setMode(tileAt(e)); });
-  $('#h1-back').addEventListener('click', e => { e.stopPropagation(); setMode(-1); });
-  layout(); if (document.fonts && document.fonts.load) document.fonts.load('700 80px Geist').then(() => setMode(mode, true)).catch(() => {});
-  return layout;
-}
 
 /* 2 單幀：一次只看一幀。總覽是把全部的幀縮小排成一張表，點哪一幀就放大回去 */
-function initPlates() {
-  const el = $('#h2'), U = D.urpd, S = D.stabNow, w5 = D.w50, rg = r => (r[0] / 1000) + '–' + (r[1] / 1000) + 'K';
-  const ln = (a, o = {}) => (W, H) => { const v = a.filter(x => x != null), r = mm(v), X = k => k / (a.length - 1) * W, Y = q => H - 6 - (q - r[0]) / ((r[1] - r[0]) || 1) * (H - 16); let d = '', on = false; a.forEach((q, k) => { if (q == null) { on = false; return; } d += (on ? 'L' : 'M') + X(k).toFixed(1) + ',' + Y(q).toFixed(1); on = true; }); const z = a.length - 1;
-    return (o.zero && r[0] < 0 && r[1] > 0 ? `<line x1="0" x2="${W}" y1="${Y(0).toFixed(1)}" y2="${Y(0).toFixed(1)}" stroke="#3A3A38"/>` : '') + `<line x1="0" x2="${W}" y1="${H}" y2="${H}" stroke="#3A3A38"/><path d="${d}" fill="none" stroke="#EDEDEA" stroke-width="1.5" stroke-linejoin="round"/><circle cx="${X(z).toFixed(1)}" cy="${Y(a[z]).toFixed(1)}" r="6" fill="${o.col || '#C6FF3D'}"/><text x="0" y="${H + 22}">${o.from || ''}</text><text x="${W}" y="${H + 22}" text-anchor="end">${o.to || '現在'}</text>`; };
-  const bars = (vals, colOf) => (W, H) => { const mx = Math.max(...vals.map(Math.abs)), neg = vals.some(v => v < 0), y0 = neg ? H / 2 : H, sc = (neg ? H / 2 : H) - 4, bw = W / vals.length; return `<line x1="0" x2="${W}" y1="${y0}" y2="${y0}" stroke="#3A3A38"/>` + vals.map((v, k) => { const h = Math.max(1, Math.abs(v) / mx * sc); return `<rect x="${(k * bw + bw * .18).toFixed(1)}" y="${(v >= 0 ? y0 - h : y0).toFixed(1)}" width="${(bw * .64).toFixed(1)}" height="${h.toFixed(1)}" fill="${colOf(k, v)}"/>`; }).join(''); };
-  const UB = U.band.filter(b => b[0] >= U.price * .7 && b[0] < U.price * 1.6), inR = (p, r) => p >= r[0] && p < r[1], full = D.etf.filter(e => !e[2]), last5 = new Set(full.slice(-5).map(e => e[0]));
-  const d200 = (D.price / D.stage.sma200 - 1) * 100, tops = D.marks.filter(m => m.kind === 'top').map(m => Math.round(m.heat)).join('、');
-  const PL = [
-    ['價格', '$' + n0(D.price), '', D.headline, ln(lastN(WK.px.map(Math.log10), 156), { from: '三年前' })],
-    ['週期', String(Math.round(D.dawn.heat)), '/ 100', '週期熱度。階段是' + STG[D.dawn.stage][0] + '。前四次頂部的熱度是 ' + tops + '。', ln(WK.heat, { from: '2013', col: STG[D.dawn.stage][2] })],
-    ['籌碼', wan(U.thick[2]), '顆', '收盤正上方 ' + rg(U.thick) + ' 堆著的幣，是附近最厚的一團。下方 ' + rg(U.thin) + ' 只有 ' + wan(U.thin[2]) + '顆。', bars(UB.map(b => b[1]), k => inR(UB[k][0], U.thick) ? '#EDEDEA' : inR(UB[k][0], U.thin) ? '#C6FF3D' : '#3A3A38')],
-    ['均線', sgn(d200, 1) + '%', '', '收盤離 200 日均線的距離。50 週均線在 ' + mdS(w5.date) + ' 的週收盤被跌破一次，是連 ' + w5.prev_run + ' 週在上方後第一次。', ln(D.lv.map(r => r[1]), { from: '2025/06' })],
-    ['穩定幣', sgn(S.p30, 2) + '%', '', '穩定幣總供給 30 天的變化，在 2021 年以來的第 ' + Math.round(S.pct) + ' 百分位。場外的美元在變少。', ln(D.stab.map(r => r[1]), { zero: 1, from: '三年前', col: '#FF4D4D' })],
-    ['ETF', (D.etf5 < 0 ? '−' : '+') + '$' + (Math.abs(D.etf5) / 1000).toFixed(2) + 'B', '', '現貨 ETF 近 5 個完整交易日的淨流量。亮的五根就是這五天。', bars(D.etf.map(e => e[1]), k => last5.has(D.etf[k][0]) ? (D.etf[k][1] >= 0 ? '#C6FF3D' : '#FF4D4D') : '#3A3A38')],
-    ['情緒', String(D.now.fng), '', '恐懼貪婪指數。20 以下是極度恐懼，80 以上是極度貪婪。', ln(lastN(WK.fng, 156), { from: '三年前' })],
-    ['槓桿', sgn(D.now.fund, 1) + '%', '', '永續合約資金費率的 7 日平均，換成年化。正值是多方付費給空方。', ln(lastN(WK.fund, 156), { zero: 1, from: '三年前' })],
-    ['短期持有者', D.now.sthProfit.toFixed(1) + '%', '', '短期持有者裡還在獲利的比例。圖是他們整體的未實現損益。', ln(lastN(WK.nupl, 156), { zero: 1, from: '三年前', col: '#FF4D4D' })],
-    ['長期均線', WK.mayer[WN - 1].toFixed(2) + '×', '', '收盤除以 40 週均線。高於 1 是在線上。', ln(lastN(WK.mayer, 260), { from: '五年前' })],
-    ['十三年', '13', '年', '2013 年起每一週的收盤，對數刻度。', ln(WK.px.map(Math.log10), { from: '2013' })],
-    ['全部', '72', '幀', '全站 72 張圖都是這樣的一幀：一個數字、一句話、一張圖。沒有「版」，只有順序和這張總覽。', (W, H) => { let h = ''; for (let k = 0; k < 72; k++) h += `<rect x="${(k % 24) * (W / 24) + 3}" y="${Math.floor(k / 24) * (H / 3) + 6}" width="${W / 24 - 8}" height="${H / 3 - 14}" fill="${k < 12 ? '#EDEDEA' : '#2A2A28'}"/>`; return h; }],
-  ];
-  let W = 0, DW = 1200, DH = 680, pt = false, cur = 0, sheet = false;
-  const ix = $('#h2-ix'); ix.innerHTML = PL.map((p, k) => `<button type="button" data-i="${k}" aria-label="第 ${k + 1} 幀 ${p[0]}"></button>`).join('');
-  function build() {
-    $$('.h2-pl', el).forEach(e => e.remove());
-    const cw = DW - (pt ? 68 : 128), chh = pt ? 240 : 232;
-    PL.forEach((p, k) => { const d = document.createElement('div'); d.className = 'h2-pl' + (pt ? ' pt' : ''); d.dataset.i = k; d.style.width = DW + 'px'; d.style.height = DH + 'px';
-      d.innerHTML = `<span class="h2-k">${p2(k + 1)}　${p[0]}</span><div class="h2-big">${p[1]}${p[2] ? `<small>${p[2]}</small>` : ''}</div><p class="h2-s">${p[3].replace(/[<>&]/g, '')}</p><div class="h2-ch"><svg width="${cw}" height="${chh}" viewBox="0 0 ${cw} ${chh}" role="img" aria-label="${p[0]}">${p[4](cw, chh - 30)}</svg></div><span class="h2-n">${p2(k + 1)} / ${PL.length}</span>`;
-      el.insertBefore(d, el.firstChild); });
-  }
-  function place() {
-    const s0 = W / DW, colsN = pt ? 3 : 4, gap = pt ? 8 : 14, pad = pt ? 12 : 26, sg = (W - pad * 2 - gap * (colsN - 1)) / colsN / DW, rowsN = Math.ceil(PL.length / colsN);
-    el.style.height = (sheet ? pad * 2 + rowsN * DH * sg + (rowsN - 1) * gap + 54 : DH * s0) + 'px'; el.classList.toggle('sheet', sheet);
-    $$('.h2-pl', el).forEach(d => { const k = +d.dataset.i; if (sheet) { d.style.transform = `translate(${(pad + (k % colsN) * (DW * sg + gap)).toFixed(1)}px, ${(pad + Math.floor(k / colsN) * (DH * sg + gap)).toFixed(1)}px) scale(${sg.toFixed(4)})`; d.style.opacity = 1; d.style.pointerEvents = 'auto'; d.style.zIndex = 1; } else { const o = k - cur; d.style.transform = `translate(${(o * W * .22).toFixed(1)}px, 0) scale(${(o ? s0 * .94 : s0).toFixed(4)})`; d.style.opacity = o ? 0 : 1; d.style.pointerEvents = o ? 'none' : 'auto'; d.style.zIndex = o ? 0 : 2; } });
-    $$('button', ix).forEach((b, k) => b.classList.toggle('on', k === cur)); $('#h2-tg').textContent = sheet ? '回到單幀' : '總覽 ' + PL.length + ' 幀';
-  }
-  const go = k => { cur = (k + PL.length) % PL.length; place(); };
-  function layout() { W = el.getBoundingClientRect().width || 1200; const p = W < 640; if (p !== pt || !el.querySelector('.h2-pl')) { pt = p; DW = pt ? 560 : 1200; DH = pt ? 780 : 680; build(); } place(); }
-  el.addEventListener('click', e => { const d = e.target.closest('.h2-pl'); if (d && sheet) { cur = +d.dataset.i; sheet = false; place(); } });
-  ix.addEventListener('click', e => { const b = e.target.closest('button'); if (b) go(+b.dataset.i); });
-  $('#h2-prev').addEventListener('click', () => go(cur - 1)); $('#h2-next').addEventListener('click', () => go(cur + 1));
-  $('#h2-tg').addEventListener('click', () => { sheet = !sheet; place(); });
-  el.addEventListener('keydown', e => { if (e.key === 'ArrowRight') { go(cur + 1); e.preventDefault(); } else if (e.key === 'ArrowLeft') { go(cur - 1); e.preventDefault(); } else if (e.key === 'Escape' || e.key === 'o') { sheet = !sheet; place(); } });
-  layout();
-  return layout;
-}
 
 /* 3 地層：每一層是一個指標。越厚＝這個讀數在歷史上越反常；顏色＝偏低（藍）到偏高（紅）。每一週都是一幅不同的構圖 */
-function initStrata() {
-  const el = $('#h3'), st = $('#h3-st'), tr = $('#h3-tr'), th = $('#h3-th'), px = WK.px, lr = px.map((v, i) => i ? Math.log(v / px[i - 1]) : 0);
-  const mom = px.map((v, i) => i >= 12 ? (v / px[i - 12] - 1) * 100 : null); let run = 0; const dd = px.map(v => { run = Math.max(run, v); return (v / run - 1) * 100; });
-  const vol = px.map((v, i) => { if (i < 12) return null; const s = lr.slice(i - 11, i + 1), m = s.reduce((a, b) => a + b, 0) / 12; return Math.sqrt(s.reduce((a, b) => a + (b - m) * (b - m), 0) / 11 * 52) * 100; });
-  const B = [
-    ['價格動能', mom, v => sgn(v, 0) + '%', '12 週的漲跌'], ['離歷史高點', dd, v => sgn(v, 0) + '%', '收盤比歷史最高收盤低多少'], ['波動', vol, v => v.toFixed(0) + '%', '12 週的年化波動'],
-    ['週期熱度', WK.heat, v => String(Math.round(v)), '0 最冷、100 最熱'], ['短期持有者損益', WK.nupl.map(v => v == null ? null : v * 100), v => sgn(v, 1) + '%', '未實現損益佔市值'], ['恐懼貪婪', WK.fng, v => String(Math.round(v)), '0 恐懼、100 貪婪'],
-    ['穩定幣 30 天', WK.stab, v => sgn(v, 2) + '%', '總供給的變化'], ['資金費率', WK.fund, v => sgn(v, 1) + '%', '7 日平均，年化'], ['價格 ÷ 40 週均線', WK.mayer, v => v.toFixed(2) + '×', '高於 1 是在線上'],
-  ].map(b => ({ nm: b[0], a: b[1], f: b[2], d: b[3], sorted: b[1].filter(v => v != null).slice().sort((x, y) => x - y) }));
-  const pct = (b, v) => { let lo = 0, hi = b.sorted.length; while (lo < hi) { const m = (lo + hi) >> 1; if (b.sorted[m] <= v) lo = m + 1; else hi = m; } return lo / b.sorted.length; };
-  const STOPS = [[0, [47, 91, 255]], [.2, [28, 52, 138]], [.5, [26, 26, 31]], [.8, [140, 50, 24]], [1, [255, 90, 42]]];
-  const col = p => { for (let k = 1; k < STOPS.length; k++) if (p <= STOPS[k][0]) { const a = STOPS[k - 1], b = STOPS[k], f = (p - a[0]) / (b[0] - a[0]); return 'rgb(' + a[1].map((v, j) => Math.round(v + (b[1][j] - v) * f)).join(',') + ')'; } return 'rgb(229,83,42)'; };
-  st.innerHTML = B.map((b, k) => `<button class="h3-b" type="button" data-k="${k}" aria-expanded="false"><span class="rw"><span>${b.nm}<i>${b.d}</i></span><b></b></span><span class="cht3"></span></button>`).join('');
-  const els = $$('.h3-b', st); let i = WN - 1, open = -1;
-  let yh = ''; for (let yr = 2014; yr <= 2026; yr += 2) { const k = (Date.UTC(yr, 0, 1) / 864e5 - WK.t0) / 7 / (WN - 1) * 100; yh += `<i style="left:${k.toFixed(2)}%"></i><span style="left:${k.toFixed(2)}%">${yr}</span>`; } tr.insertAdjacentHTML('afterbegin', yh);
-  function chart(k) {
-    const b = B[k], box = els[k].querySelector('.cht3'), W = box.clientWidth || 800, H = box.clientHeight || 160, i0 = Math.max(0, i - 155), a = b.a.slice(i0, i + 1), v = a.filter(x => x != null); if (v.length < 2) { box.innerHTML = ''; return; }
-    const r = mm(a), X = q => q / (a.length - 1) * (W - 70), Y = q => H - 18 - (q - r[0]) / ((r[1] - r[0]) || 1) * (H - 30); let d = '', on = false; a.forEach((q, j) => { if (q == null) { on = false; return; } d += (on ? 'L' : 'M') + X(j).toFixed(1) + ',' + Y(q).toFixed(1); on = true; }); const z = a.length - 1;
-    box.innerHTML = `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" aria-hidden="true"><path d="${d}" fill="none" stroke="#F1EFEA" stroke-width="1.5" stroke-linejoin="round"/><circle cx="${X(z).toFixed(1)}" cy="${Y(a[z]).toFixed(1)}" r="4.5" fill="#F1EFEA"/><text x="${(X(z) + 10).toFixed(1)}" y="${(Y(a[z]) + 4).toFixed(1)}">${b.f(a[z])}</text><text x="0" y="${H - 2}">${ymd(WK.t0 + i0 * 7)}</text><text x="${(W - 70).toFixed(1)}" y="${H - 2}" text-anchor="end">${ymd(WK.t0 + i * 7)}</text></svg>`;
-  }
-  function set(k) {
-    i = Math.max(0, Math.min(WN - 1, k)); $('#h3-date').textContent = ymd(WK.t0 + i * 7) + ' 當週' + (i === WN - 1 ? '（最新）' : '');
-    B.forEach((b, j) => { const v = b.a[i], e = els[j], val = e.querySelector('b'); if (v == null) { e.style.setProperty('--g', j === open ? 7 : .3); e.style.setProperty('--c', '#141416'); val.textContent = '這一年還沒有資料'; return; } const p = pct(b, v); e.style.setProperty('--g', j === open ? 7 : (.55 + 2.4 * Math.abs(p - .5)).toFixed(3)); e.style.setProperty('--c', col(p)); val.textContent = b.f(v) + '　第 ' + Math.round(p * 100) + ' 百分位'; });
-    th.style.left = (i / (WN - 1) * 100).toFixed(3) + '%'; tr.setAttribute('aria-valuenow', i); tr.setAttribute('aria-valuemax', WN - 1); tr.setAttribute('aria-valuetext', ymd(WK.t0 + i * 7)); if (open >= 0) chart(open);
-  }
-  st.addEventListener('click', e => { const b = e.target.closest('.h3-b'); if (!b) return; const k = +b.dataset.k; open = open === k ? -1 : k; els.forEach((x, j) => { x.classList.toggle('open', j === open); x.setAttribute('aria-expanded', j === open); }); set(i); if (open >= 0) setTimeout(() => chart(open), 580); });
-  const fromX = cx => { const r = tr.getBoundingClientRect(); return Math.round((cx - r.left) / r.width * (WN - 1)); }; let drag = false;
-  tr.addEventListener('pointerdown', e => { drag = true; try { tr.setPointerCapture(e.pointerId); } catch (er) {} set(fromX(e.clientX)); });
-  tr.addEventListener('pointermove', e => { if (drag) set(fromX(e.clientX)); }); ['pointerup', 'pointercancel'].forEach(t => tr.addEventListener(t, () => { drag = false; }));
-  tr.addEventListener('keydown', e => { const m = { ArrowLeft: -1, ArrowRight: 1, PageDown: -13, PageUp: 13 }[e.key]; if (m) { set(i + (e.shiftKey ? m * 13 : m)); e.preventDefault(); } else if (e.key === 'Home') { set(0); e.preventDefault(); } else if (e.key === 'End') { set(WN - 1); e.preventDefault(); } });
-  $('#h3-now').addEventListener('click', () => set(WN - 1));
-  set(WN - 1);
-  return () => { if (open >= 0) chart(open); };
-}
 
 /* 4 空間：六個領域是空間裡的六片。點後面的，它走到最前面；點最前面的，它攤平成整頁 */
-function initDepth() {
-  const el = $('#h4'), stg = $('#h4-st'); let ord = SERIES6.map((s, k) => k), full = false;
-  stg.innerHTML = SERIES6.map((s, k) => `<button class="h4-p" type="button" data-k="${k}"><span class="k">${p2(k + 1)}　${s.nm}</span><span class="big">${s.big(WN - 1)}</span><span class="s">${(D.leads[s.key] || '').replace(/[<>&]/g, '')}</span><span class="c" id="h4-c${k}"></span></button>`).join('');
-  const P = $$('.h4-p', stg);
-  const chart = k => { const box = $('#h4-c' + k), W = box.clientWidth || 600, H = box.clientHeight || 160, s = SERIES6[k], a = lastN(s.a, 156), r = mm(a), X = q => q / (a.length - 1) * (W - 64), Y = v => H - 16 - (v - r[0]) / ((r[1] - r[0]) || 1) * (H - 26), z = a.length - 1;
-    box.innerHTML = `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-hidden="true"><line x1="0" x2="${W - 64}" y1="${H - 16}" y2="${H - 16}" stroke="#D5D7DB"/><path d="${PATH(a.map((v, j) => [X(j), Y(v)]))}" fill="none" stroke="#0D0E10" stroke-width="1.5" stroke-linejoin="round" vector-effect="non-scaling-stroke"/><circle cx="${X(z).toFixed(1)}" cy="${Y(a[z]).toFixed(1)}" r="4.5" fill="#2F54FF"/><text x="${(X(z) + 9).toFixed(1)}" y="${(Y(a[z]) + 4).toFixed(1)}">${s.tick(a[z])}</text><text x="0" y="${H - 2}">三年前</text></svg>`; };
-  function place() {
-    el.classList.toggle('full', full);
-    P.forEach((p, k) => { const d = ord.indexOf(k); p.classList.toggle('front', d === 0); p.style.zIndex = 20 - d;
-      if (full) { p.style.transform = d === 0 ? 'none' : `translate3d(0, ${-60 - d * 10}%, ${-300 - d * 200}px)`; p.style.opacity = d === 0 ? 1 : 0; p.style.filter = 'none'; p.style.pointerEvents = d === 0 ? 'auto' : 'none'; p.style.aspectRatio = d === 0 ? 'auto' : ''; p.style.height = d === 0 ? '100%' : ''; }
-      else { p.style.transform = `translate3d(0, ${(-d * 8).toFixed(1)}%, ${-d * 190}px)`; p.style.opacity = 1; p.style.filter = d ? `brightness(${(1 - d * .045).toFixed(3)})` : 'none'; p.style.pointerEvents = 'auto'; p.style.aspectRatio = ''; p.style.height = ''; }
-      p.setAttribute('aria-label', SERIES6[k].nm + (d === 0 ? (full ? '（整頁）' : '（最前面，再點一次攤平）') : '')); });
-    $('#h4-tg').textContent = full ? '回到空間' : '攤平最前面這一片'; $('#h4-hint').textContent = full ? SERIES6[ord[0]].nm : '點後面的任何一片，它會走到最前面';
-    setTimeout(() => P.forEach((p, k) => chart(k)), full ? 720 : 30);
-  }
-  const front = k => { const d = ord.indexOf(k); ord = ord.slice(d).concat(ord.slice(0, d)); };
-  stg.addEventListener('click', e => { const p = e.target.closest('.h4-p'); if (!p) return; const k = +p.dataset.k; if (full) return; if (ord[0] === k) full = true; else front(k); place(); });
-  $('#h4-tg').addEventListener('click', () => { full = !full; place(); });
-  $('#h4-next').addEventListener('click', () => { ord = ord.slice(1).concat(ord[0]); place(); }); $('#h4-prev').addEventListener('click', () => { ord = [ord[ord.length - 1]].concat(ord.slice(0, -1)); place(); });
-  place(); P.forEach((p, k) => chart(k));
-  return () => P.forEach((p, k) => chart(k));
-}
 
 /* ══ 整合方案（第六輪）：三種空間排列、五套配色（各有深淺）、圖表用色樣張 ══ */
 const PAL = {
@@ -2541,152 +1515,13 @@ const PAL = {
 };
 const PBASE = { d: { bg: '#060607', sheet: '#0E0E10', ink: '#EDEDE8', k2: '#8F8F8A', shadow: '#000', rgb: '237,237,232' }, l: { bg: '#EEECE6', sheet: '#F6F5F1', ink: '#0A0A0A', k2: '#6B675F', shadow: 'rgba(10,10,10,.22)', rgb: '10,10,10' } };
 const PRAMP = { d: ['#4F6BEA', '#2CA0CF', '#19A56B', '#D69A1E', '#FF4A2E'], l: ['#3C5CDD', '#1E86B5', '#008149', '#B37A00', '#E0401F'] };
-const hex3 = h => [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16));
-const rampAt = (R, p) => { p = Math.max(0, Math.min(1, p)) * 4; const i = Math.min(3, Math.floor(p)), a = hex3(R[i]), b = hex3(R[i + 1]); return 'rgb(' + a.map((v, j) => Math.round(v + (b[j] - v) * (p - i))).join(',') + ')'; };
 
-function initLive() {
-  const wrap = $('#live'), el = $('#lv'), stg = $('#lv-st'), cv = $('#lv-f'), ctx = cv.getContext('2d'), N = 156, i0 = WN - N, S6 = SERIES6;
-  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
-  let ord = S6.map((s, k) => k), flat = false, C = {}, W = 0, H = 0, lay = 'drift', pal = 'fuse', th = 'd', rgb = PBASE.d.rgb;
-  const win = k => lastN(S6[k].a, N), others = k => [1, 2, 3].map(d => (k + d) % 6);
-  stg.innerHTML = S6.map((s, k) => `<article class="sh" data-k="${k}" tabindex="0" style="--dl:${(-k * 1.4).toFixed(1)}s"><div class="sh-in">
-    <div class="sh-h"><span>${p2(k + 1)}　${s.nm}</span><span class="v">${s.big(WN - 1)}</span></div>
-    <div class="sh-b"><div class="sh-l"><div class="big"><span class="odo" id="lv-b${k}"></span></div><p class="s">${(D.leads[s.key] || '').replace(/[<>&]/g, '')}</p><span class="ro" id="lv-r${k}"></span></div>
-      <div class="sh-m" id="lv-m${k}"></div>
-      <div class="sh-x">${others(k).map(j => `<button class="mini" type="button" data-go="${j}" aria-label="看 ${S6[j].nm}"><span class="mk">${S6[j].nm}</span><span class="mv" id="lv-v${k}-${j}"></span><span class="ms" id="lv-s${k}-${j}"></span></button>`).join('')}</div>
-    </div></div></article>`).join('');
-  const SH = $$('.sh', stg);
-
-  function draw(k) {
-    const box = $('#lv-m' + k), w = box.clientWidth || 400, h = box.clientHeight || 220, a = win(k), r = mm(a), MR = 54, MB = 18, X = q => q / (N - 1) * (w - MR), Y = v => h - MB - 4 - (v - r[0]) / ((r[1] - r[0]) || 1) * (h - MB - 18), id = 'lv' + k, z = N - 1, s = S6[k];
-    const line = PATH(a.map((v, q) => [X(q), Y(v)])), area = line + `L${X(z).toFixed(1)},${h - MB}L0,${h - MB}Z`;
-    let g = `<defs><pattern id="${id}p" width="8" height="8" patternUnits="userSpaceOnUse"><circle cx="4" cy="4" r="1.25" fill="var(--ink)"/></pattern><linearGradient id="${id}g" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity=".6"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient><mask id="${id}k"><rect x="0" y="0" width="${w}" height="${h - MB}" fill="url(#${id}g)"/></mask></defs>`;
-    [r[0], (r[0] + r[1]) / 2, r[1]].forEach(v => { g += `<line x1="0" x2="${w - MR}" y1="${Y(v).toFixed(1)}" y2="${Y(v).toFixed(1)}" stroke="var(--ink)" stroke-opacity=".08"/><text x="${w - MR + 14}" y="${(Y(v) + 3.5).toFixed(1)}">${s.tick(v)}</text>`; });
-    g += `<path d="${area}" fill="url(#${id}p)" mask="url(#${id}k)"/><path d="${line}" fill="none" stroke="var(--ink)" stroke-opacity=".8" stroke-width="1.5" stroke-linejoin="round"/><path class="shim" pathLength="1000" d="${line}"/>`;
-    const dir = a[z] >= a[z - 1] ? 'var(--up)' : 'var(--dn)'; g += `<circle class="pulse" style="stroke:${dir}" cx="${X(z).toFixed(1)}" cy="${Y(a[z]).toFixed(1)}" r="5"/><circle cx="${X(z).toFixed(1)}" cy="${Y(a[z]).toFixed(1)}" r="4" fill="${dir}"/>`;
-    g += `<g class="cx" visibility="hidden"><line y1="6" y2="${h - MB}" stroke="var(--ink)" stroke-opacity=".5"/><circle r="4" fill="var(--ink)" stroke="var(--sheet)" stroke-width="2"/></g><text x="0" y="${h - 3}">三年前</text><text x="${w - MR}" y="${h - 3}" text-anchor="end">現在</text><rect class="hit" data-k="${k}" x="0" y="0" width="${w - MR}" height="${h - MB}" fill="transparent" style="cursor:crosshair;touch-action:pan-y"/>`;
-    box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${s.nm}近三年走勢">${g}</svg>`;
-    const minis = others(k).map(j => { const b = $('#lv-s' + k + '-' + j), bw = b.clientWidth || 0, bh = b.clientHeight || 36, a2 = win(j), r2 = mm(a2), x2 = q => 2 + q / (N - 1) * Math.max(10, bw - 6), y2 = v => bh - 4 - (v - r2[0]) / ((r2[1] - r2[0]) || 1) * (bh - 8);
-      if (bw > 10) b.innerHTML = `<svg viewBox="0 0 ${bw} ${bh}" preserveAspectRatio="none" aria-hidden="true"><path d="${PATH(a2.map((v, q) => [x2(q), y2(v)]))}" fill="none" stroke="var(--ink)" stroke-opacity=".55" stroke-width="1.2"/><circle r="2.8" fill="${a2[z] >= a2[z - 1] ? 'var(--up)' : 'var(--dn)'}" cx="${x2(z).toFixed(1)}" cy="${y2(a2[z]).toFixed(1)}"/></svg>`; else b.innerHTML = '';
-      return { j, a2, x2, y2, dot: b.querySelector('circle') }; });
-    C[k] = { X, Y, a, cx: box.querySelector('.cx'), minis }; cursor(k, z);
-  }
-  function cursor(k, q) {
-    const c = C[k]; if (!c) return; const last = q === N - 1, i = i0 + q, s = S6[k];
-    c.cx.setAttribute('visibility', last ? 'hidden' : 'visible'); c.cx.firstChild.setAttribute('x1', c.X(q)); c.cx.firstChild.setAttribute('x2', c.X(q)); c.cx.lastChild.setAttribute('cx', c.X(q)); c.cx.lastChild.setAttribute('cy', c.Y(c.a[q]));
-    odo($('#lv-b' + k), s.big(i)); $('#lv-r' + k).textContent = ymd(WK.t0 + i * 7) + ' 當週' + (last ? '　最新' : '');
-    c.minis.forEach(m => { $('#lv-v' + k + '-' + m.j).textContent = S6[m.j].big(i); if (m.dot) { m.dot.setAttribute('cx', m.x2(q).toFixed(1)); m.dot.setAttribute('cy', m.y2(m.a2[q]).toFixed(1)); } });
-  }
-
-  /* 背景點場 */
-  let g = 22, cols = 0, rows = 0, B = null, R = null, mx = -1e4, my = -1e4, raf = 0, vis = true, px = 0, py = 0, tx = 0, ty = 0;
-  function ghost() { const a = win(ord[0]), r = mm(a); for (let c = 0; c < cols; c++) { const x = c / (cols - 1) * (N - 1), q = Math.min(N - 2, Math.floor(x)), v = a[q] + (a[q + 1] - a[q]) * (x - q), yl = rows * (.2 + (1 - (v - r[0]) / ((r[1] - r[0]) || 1)) * .55); for (let rr = 0; rr < rows; rr++) { const d = (rr - yl) / rows; B[rr * cols + c] = d < 0 ? .8 : 1 + 2.1 * Math.max(0, 1 - d / .42); } } }
-  function field(t) {
-    ctx.clearRect(0, 0, W, H); const s2 = 2 * 110 * 110;
-    for (let pass = 0; pass < 2; pass++) { ctx.beginPath(); for (let j = 0; j < R.length; j++) { const big = B[j] > 1; if ((pass === 1) !== big) continue; R[j] += (B[j] - R[j]) * .06; const c = j % cols, r = (j - c) / cols, x = (c + .5) * g, y = (r + .5) * g; let rad = R[j] * (reduce ? 1 : 1 + .2 * Math.sin(t * .0008 + c * .33 + r * .21)); const dx = x - mx, dy = y - my, dd = dx * dx + dy * dy; if (dd < s2 * 4) rad += 1.7 * Math.exp(-dd / s2); ctx.moveTo(x + rad, y); ctx.arc(x, y, rad, 0, 6.2832); } ctx.fillStyle = 'rgba(' + rgb + (pass ? ',.26)' : ',.13)'); ctx.fill(); }
-  }
-  const ORG = { stack: [50, 0], arc: [50, 42], drift: [50, 40] };
-  function tick(t) {
-    raf = 0; if (!flat) { field(t); px += (tx - px) * .06; py += (ty - py) * .06; const o = ORG[lay]; stg.style.perspectiveOrigin = (o[0] + px * 8).toFixed(2) + '% ' + (o[1] + py * 10).toFixed(2) + '%'; }
-    if (vis && !reduce && !flat) raf = requestAnimationFrame(tick);
-  }
-  const wake = () => { if (!raf && vis && !reduce && !flat) raf = requestAnimationFrame(tick); };
-
-  /* 三種排列。散：每一片在不同的深度、位置和角度，像漂在房間裡；環：排成一道弧；疊：上一輪的直排 */
-  const SLOT = [[0, 0, 0, 0, 0], [58, -34, -300, -13, 2], [-60, -30, -420, 15, 2], [66, 40, -560, -17, -3], [-64, 44, -700, 14, -3], [6, -62, -900, 0, 4]];
-  function pose(d) {
-    if (lay === 'stack') return [`translate3d(0, ${(-d * 8).toFixed(1)}%, ${-d * 190}px)`, 1 - d * .09];
-    if (lay === 'arc') { const o = d <= 3 ? d : d - 6, th2 = o * 38, Rr = Math.max(420, W * .5); return [`translateZ(${-Rr}px) rotateY(${th2}deg) translateZ(${Rr}px)`, 1 - Math.abs(o) * .16, Math.abs(o) <= 1]; }
-    const s = W < 700 ? [[0, 0, 0, 0, 0], [30, -44, -320, -10, 2], [-30, -58, -460, 10, 2], [34, 50, -520, -12, -3], [-32, 62, -640, 10, -3], [0, -84, -820, 0, 4]][d] : SLOT[d];
-    return [`translate3d(${s[0]}%, ${s[1]}%, ${s[2]}px) rotateY(${s[3]}deg) rotateX(${s[4]}deg)`, 1 - d * .1];
-  }
-  function place(first) {
-    el.classList.toggle('flat', flat); el.classList.toggle('stack', lay === 'stack');
-    SH.forEach((p, k) => { const d = ord.indexOf(k), ps = pose(d); p.classList.toggle('front', d === 0); p.style.zIndex = 30 - d;
-      if (flat) { p.style.transform = d === 0 ? 'none' : ps[0] + ' scale(.9)'; p.style.opacity = d === 0 ? 1 : 0; p.style.pointerEvents = d === 0 ? 'auto' : 'none'; p.style.filter = 'none'; }
-      else { const show = ps[2] !== false; p.style.transform = ps[0]; p.style.opacity = show ? 1 : 0; p.style.pointerEvents = show ? 'auto' : 'none'; p.style.filter = d ? `brightness(${(th === 'l' ? 1 - (1 - Math.max(.45, ps[1])) * .3 : Math.max(.45, ps[1])).toFixed(2)})` : 'none'; }
-      p.setAttribute('aria-label', S6[k].nm + (d === 0 ? (flat ? '（整頁）' : '（最前面，按 Enter 展開）') : '（按 Enter 叫到前面）')); });
-    $('#lv-tg').textContent = flat ? '收回空間' : '展開最前面這一片'; $('#lv-hint').textContent = flat ? '下面三格是相關的維度，點了會換過去' : '點任何一片，它會飛到最前面';
-    ghost(); if (first) SH.forEach((p, k) => draw(k)); else setTimeout(() => draw(ord[0]), 920);
-    if (reduce || flat) field(0); wake();
-  }
-  const front = k => { const d = ord.indexOf(k); ord = ord.slice(d).concat(ord.slice(0, d)); };
-  stg.addEventListener('click', e => { const m = e.target.closest('.mini'); if (m) { front(+m.dataset.go); place(); return; } const p = e.target.closest('.sh'); if (!p || e.target.closest('.hit')) return; const k = +p.dataset.k; if (flat) return; if (ord[0] === k) flat = true; else front(k); place(); });
-  stg.addEventListener('keydown', e => { if (e.key !== 'Enter' || !e.target.classList.contains('sh')) return; const k = +e.target.dataset.k; if (ord[0] === k) flat = !flat; else front(k); place(); });
-  stg.addEventListener('pointermove', e => { const h = e.target.closest ? e.target.closest('.hit') : null; if (!h) return; const b = h.getBoundingClientRect(); cursor(+h.dataset.k, Math.max(0, Math.min(N - 1, Math.round((e.clientX - b.left) / b.width * (N - 1))))); });
-  stg.addEventListener('pointerout', e => { const h = e.target.closest ? e.target.closest('.hit') : null; if (h) cursor(+h.dataset.k, N - 1); });
-  el.addEventListener('pointermove', e => { const r = el.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; tx = mx / r.width * 2 - 1; ty = my / r.height * 2 - 1; });
-  el.addEventListener('pointerleave', () => { mx = my = -1e4; tx = ty = 0; });
-  $('#lv-tg').addEventListener('click', () => { flat = !flat; place(); });
-  $('#lv-next').addEventListener('click', () => { ord = ord.slice(1).concat(ord[0]); place(); }); $('#lv-prev').addEventListener('click', () => { ord = [ord[5]].concat(ord.slice(0, 5)); place(); });
-
-  /* 配色：把變數寫到外層，原型和樣張一起換 */
-  function demo() {
-    const P = PAL[pal], ramp = P.ramp || PRAMP[th];
-    // 多條線
-    const b1 = $('#cs-1'), w1 = b1.clientWidth || 300, h1 = 170, MR = 92, Rv = D.lv; let lo = 1e9, hi = -1e9; Rv.forEach(r => [1, 2, 3, 4, 5].forEach(c => { if (r[c] != null) { lo = Math.min(lo, r[c]); hi = Math.max(hi, r[c]); } }));
-    const X1 = t => (t - Rv[0][0]) / (Rv[Rv.length - 1][0] - Rv[0][0]) * (w1 - MR), Y1 = v => 8 + (1 - (v - lo) / (hi - lo)) * (h1 - 16), SR = [[5, '市場均價', 'var(--c5)', '2 3'], [4, '短期成本', 'var(--c4)', '4 3'], [3, '50 週', 'var(--c3)', ''], [2, '200 日', 'var(--ac)', ''], [1, '收盤', 'var(--ink)', '']];
-    let s1 = '', ends = []; SR.forEach(q => { const pts = Rv.filter(r => r[q[0]] != null); s1 += `<path d="${PATH(pts.map(r => [X1(r[0]), Y1(r[q[0]])]))}" fill="none" stroke="${q[2]}" stroke-width="${q[0] === 1 ? 1.7 : 1.4}"${q[3] ? ` stroke-dasharray="${q[3]}"` : ''}/>`; ends.push({ y: Y1(pts[pts.length - 1][q[0]]), t: q[1], c: q[2] }); });
-    ends.sort((a, b) => a.y - b.y); for (let i = 1; i < ends.length; i++) if (ends[i].y - ends[i - 1].y < 14) ends[i].y = ends[i - 1].y + 14; ends.forEach(e => { s1 += `<text class="el" x="${w1 - MR + 8}" y="${(e.y + 4).toFixed(1)}" style="fill:${e.c}">${e.t}</text>`; });
-    b1.innerHTML = `<svg width="${w1}" height="${h1}" viewBox="0 0 ${w1} ${h1}" role="img" aria-label="五條線的用色">${s1}</svg>`;
-    // 漲跌
-    const b2 = $('#cs-2'), w2 = b2.clientWidth || 300, E = D.etf, mxv = Math.max(...E.map(e => Math.abs(e[1]))), bw = w2 / E.length, y0 = h1 / 2;
-    b2.innerHTML = `<svg width="${w2}" height="${h1}" viewBox="0 0 ${w2} ${h1}" role="img" aria-label="漲跌的用色"><line x1="0" x2="${w2}" y1="${y0}" y2="${y0}" stroke="var(--ink)" stroke-opacity=".25"/>` + E.map((e, k) => { const hh = Math.max(1, Math.abs(e[1]) / mxv * (h1 / 2 - 6)); return `<rect x="${(k * bw + bw * .18).toFixed(1)}" y="${(e[1] >= 0 ? y0 - hh : y0).toFixed(1)}" width="${(bw * .64).toFixed(1)}" height="${hh.toFixed(1)}" rx="1.5" fill="${e[1] >= 0 ? 'var(--up)' : 'var(--dn)'}"/>`; }).join('') + '</svg>';
-    // 階段與熱度
-    const b3 = $('#cs-3'), w3 = b3.clientWidth || 300, hs = 96, st = 4, n3 = Math.ceil(WN / st), cw = w3 / n3; let s3 = ''; for (let k = 0; k < n3; k++) { const hv = WK.heat[Math.min(WN - 1, k * st)]; s3 += `<rect x="${(k * cw).toFixed(2)}" y="${(hs - 8 - hv / 100 * (hs - 12)).toFixed(1)}" width="${(cw + .4).toFixed(2)}" height="${(8 + hv / 100 * (hs - 12)).toFixed(1)}" fill="${rampAt(ramp, hv / 100)}"/>`; }
-    b3.innerHTML = `<svg width="${w3}" height="${hs}" viewBox="0 0 ${w3} ${hs}" role="img" aria-label="週期熱度 2013 年至今的用色">${s3}</svg><div class="stg5">${[['深夜', 0], ['入夜', 1], ['破曉', 2], ['白晝', 3], ['黃昏', 4]].map(q => `<span><i style="background:${ramp[q[1]]}"></i>${q[0]}</span>`).join('')}</div>`;
-    // 重點與其餘
-    const b4 = $('#cs-4'), w4 = b4.clientWidth || 300, U = D.urpd, UB = U.band.filter(b => b[0] >= U.price * .78 && b[0] < U.price * 1.35), um = Math.max(...UB.map(b => b[1])), ub = w4 / UB.length, inR = (p, r) => p >= r[0] && p < r[1];
-    b4.innerHTML = `<svg width="${w4}" height="${h1}" viewBox="0 0 ${w4} ${h1}" role="img" aria-label="重點上色、其餘暗掉">` + UB.map((b, k) => { const hh = Math.max(1, b[1] / um * (h1 - 26)); return `<rect x="${(k * ub + ub * .16).toFixed(1)}" y="${(h1 - hh).toFixed(1)}" width="${(ub * .68).toFixed(1)}" height="${hh.toFixed(1)}" rx="2" fill="${inR(b[0], U.thick) ? 'var(--ac)' : inR(b[0], U.thin) ? 'var(--up)' : 'var(--ink)'}"${inR(b[0], U.thick) || inR(b[0], U.thin) ? '' : ' fill-opacity=".16"'}/>`; }).join('') + `<text class="el" x="${((U.thick[0] + U.thick[1]) / 2 - UB[0][0]) / U.w * ub}" y="12" text-anchor="middle" style="fill:var(--ac)">最厚</text><text class="el" x="${Math.max(18, ((U.thin[0] + U.thin[1]) / 2 - UB[0][0]) / U.w * ub)}" y="12" text-anchor="middle" style="fill:var(--up)">最薄</text></svg>`;
-    $('#cs-sw').innerHTML = [['底', 'var(--bg)'], ['紙片', 'var(--sheet)'], ['文字', 'var(--ink)'], ['次要文字', 'var(--k2)'], ['重點', 'var(--ac)'], ['漲', 'var(--up)'], ['跌', 'var(--dn)'], ['系列三', 'var(--c3)'], ['系列四', 'var(--c4)'], ['系列五', 'var(--c5)']].map(q => `<span><i style="background:${q[1]}"></i>${q[0]}</span>`).join('');
-  }
-  function paint() {
-    const P = PAL[pal], b = PBASE[th], c = P[th]; rgb = b.rgb;
-    Object.entries({ '--bg': b.bg, '--sheet': b.sheet, '--ink': b.ink, '--k2': b.k2, '--shadow': b.shadow, '--ac': c.ac, '--up': c.up, '--dn': c.dn, '--c3': c.c3, '--c4': c.c4, '--c5': c.c5, '--shim': th === 'd' ? '#FFFFFF' : c.ac }).forEach(e => wrap.style.setProperty(e[0], e[1]));
-    $$('#lv-pal .pchip').forEach(x => x.setAttribute('aria-pressed', x.dataset.p === pal)); $$('#lv-th .pchip').forEach(x => x.setAttribute('aria-pressed', x.dataset.t === th)); $$('#lv-lay .pchip').forEach(x => x.setAttribute('aria-pressed', x.dataset.l === lay));
-    demo(); if (reduce || flat) field(0);
-  }
-  /* 字體與粗細：只換數字用的字體，中文一律 Noto Sans TC，小標籤維持等寬字 */
-  const FN = {
-    it: { nm: 'Inter Tight', f: '"Inter Tight"', w: [300, 400, 500], ls: '-.05em', st: '100%', note: '上一版用的字體，只是加粗了。窄一點、中性，最不搶戲。' },
-    ge: { nm: 'Geist', f: '"Geist"', w: [300, 400, 500], ls: '-.055em', st: '100%', note: '圓一點、比較現代。小字的數字最清楚。' },
-    ar: { nm: 'Archivo 窄體', f: '"Archivo"', w: [400, 500, 600], ls: '-.02em', st: '78%', note: '窄而高。同樣的寬度可以放更大的數字，有份量但不笨重。' },
-    so: { nm: 'Sora', f: '"Sora"', w: [300, 400, 500], ls: '-.06em', st: '100%', note: '寬、幾何感最強。數字佔的寬度最多，長數字會擠。' },
-    sg: { nm: 'Space Grotesk', f: '"Space Grotesk"', w: [300, 400, 500], ls: '-.05em', st: '100%', note: '數字有個性，辨識度高，但看久了比較花。' },
-    mo: { nm: '等寬', f: '"Geist Mono"', w: [400, 500, 600], ls: '-.07em', st: '100%', note: '每個數字一樣寬，像儀器的讀數。最有技術感，也最不像一般網站。' },
-  };
-  let fn = 'it', fw = 2;
-  function type() {
-    const F = FN[fn], WN3 = ['細', '中', '粗'];
-    wrap.style.setProperty('--fn', F.f + ', "Noto Sans TC", sans-serif'); wrap.style.setProperty('--fw', F.w[fw]); wrap.style.setProperty('--fst', F.st); wrap.style.setProperty('--fls', F.ls);
-    $$('#lv-fn .pchip').forEach(x => x.setAttribute('aria-pressed', x.dataset.f === fn)); $$('#lv-fw .pchip').forEach(x => x.setAttribute('aria-pressed', +x.dataset.w === fw));
-    $('#lv-note').textContent = F.nm + '：' + F.note;
-    $('#cs-ty').innerHTML = F.w.map((w, k) => `<button type="button" data-w="${k}" aria-pressed="${k === fw}"><span class="t">${WN3[k]}　${w}</span><span class="n" style="font-weight:${w}">$${n0(D.price)}</span><span class="m" style="font-weight:${w}">−4.26%　1.03×　0123456789</span></button>`).join('');
-  }
-  $('#lv-fn').innerHTML = '<span class="mono">數字字體</span>' + Object.keys(FN).map(k => `<button class="pchip" type="button" data-f="${k}">${FN[k].nm}</button>`).join('');
-  $('#lv-fn').addEventListener('click', e => { const b = e.target.closest('.pchip'); if (b) { fn = b.dataset.f; type(); } });
-  $('#lv-fw').addEventListener('click', e => { const b = e.target.closest('.pchip'); if (b) { fw = +b.dataset.w; type(); } });
-  $('#cs-ty').addEventListener('click', e => { const b = e.target.closest('button'); if (b) { fw = +b.dataset.w; type(); } });
-  $('#lv-pal').innerHTML = '<span class="mono">配色</span>' + Object.keys(PAL).map(k => `<button class="pchip" type="button" data-p="${k}"><i style="background:${PAL[k].chip || PAL[k].d.ac}"></i>${PAL[k].nm}</button>`).join('');
-  $('#lv-pal').addEventListener('click', e => { const b = e.target.closest('.pchip'); if (b) { pal = b.dataset.p; paint(); } });
-  $('#lv-th').addEventListener('click', e => { const b = e.target.closest('.pchip'); if (b) { th = b.dataset.t; paint(); place(true); } });
-  $('#lv-lay').addEventListener('click', e => { const b = e.target.closest('.pchip'); if (b) { lay = b.dataset.l; flat = false; paint(); place(); setTimeout(() => SH.forEach((p, k) => draw(k)), 940); } });
-
-  function layout(first) {
-    const r = el.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1); W = r.width || 1200; H = r.height || 760; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    g = W < 600 ? 18 : 22; cols = Math.ceil(W / g); rows = Math.ceil(H / g); B = new Float32Array(cols * rows); R = new Float32Array(cols * rows); ghost(); R.set(B); field(0); if (first !== true) { SH.forEach((p, k) => draw(k)); demo(); place(true); }
-  }
-  $('#lv-date').textContent = D.date.replace(/-/g, '.') + ' 收盤';
-  layout(true); paint(); type(); place(true);
-  if ('IntersectionObserver' in window) new IntersectionObserver(en => { vis = en[0].isIntersecting; wake(); }).observe(el);
-  return () => layout();
-}
-
-/* ══ 鏈上內頁：總覽＋四個問題。一個問題＝一張主圖＋佐證；點佐證就換成主圖；全部共用一條時間游標。
-   主圖照現有網站的畫法：多條線、依正負或門檻分色、柱狀、色帶、門檻線、標記、K 線、籌碼柱、背離連線，一樣都不少 ══ */
 function initOC() {
   const sec = $('#oc-sec'), el = $('#oc'), stg = $('#oc-st'), cv = $('#oc-f'), ctx = cv.getContext('2d'), ST = D.site, PX = ST.px, KW = ST.kw, CH = ST.chapters;
   let ci = Math.max(0, CH.findIndex(c => c.id === 'today')), O = CH[ci], G = O.groups;
+  /* 背景預載用（見下面 load 那一段）：手機、慢網路只抓前後兩頁。放在這裡是因為 goCh 在初始化時就可能被呼叫 */
+  const LITE = (() => { const cn = navigator.connection; return matchMedia('(max-width: 700px)').matches || !!(cn && /(^|-)(2g|3g)$/.test(cn.effectiveType || '')); })();
+  const nbr = i => { const cn = navigator.connection; if (SHARE || (cn && cn.saveData)) return; [i + 1, i - 1].forEach(j => { if (CH[j] && CH[j].lz) loadCh(j).catch(() => {}); }); };
   /* 分享模式（⑮）：?share＝16:9、?share=45＝4:5，&k=圖代號 直接打開那張圖。動畫全關、字放大 */
   const QS = new URLSearchParams(location.search), SHARE = QS.has('share') ? (QS.get('share') === '45' ? '45' : '169') : '', SHK = QS.get('k') || '', FSC = SHARE ? 1.3 : 1;
   if (SHARE) { document.documentElement.classList.add('share'); document.documentElement.dataset.ratio = SHARE; }
@@ -3973,7 +2808,7 @@ function initOC() {
       s.onload = () => { const g = (window.DAYBREAK_CH || {})[c.id]; if (g) { c.groups = g; delete c.lz; ok(); } else { delete LZ[c.id]; no(new Error('no data ' + c.id)); } };
       s.onerror = () => { delete LZ[c.id]; s.remove(); no(new Error('load ' + c.id)); }; document.head.appendChild(s); })); };
   const loadAll = () => Promise.all(CH.map((c, i) => loadCh(i)));
-  function goCh(i) { if (i !== ci && CH[i] && !CH[i].todo && CH[i].lz) { lzWant = i; el.classList.add('lzw'); loadCh(i).then(() => { el.classList.remove('lzw'); if (lzWant === i) goCh(i); }, () => el.classList.remove('lzw')); return; } lzWant = i; SEEN.clear();
+  function goCh(i) { if (i !== ci && LITE) setTimeout(() => nbr(i), 1500); if (i !== ci && CH[i] && !CH[i].todo && CH[i].lz) { lzWant = i; el.classList.add('lzw'); loadCh(i).then(() => { el.classList.remove('lzw'); if (lzWant === i) goCh(i); }, () => el.classList.remove('lzw')); return; } lzWant = i; SEEN.clear();
     if (i === ci || !CH[i] || CH[i].todo) return; const mf0 = agMorphHook ? agMorphHook(i) : null; const old = stg.querySelector('.os[data-k="' + ci + '"] .os-b'); if (old) old.remove(); closeFx();
     ci = i; O = CH[ci]; G = O.groups; REG = {}; ord = order(); place(); headBody(); renderBar(); renderOv(); poster(); hx(); place(); if (mf0) mf0();
     const sc = $('#oc-secs'); sc.classList.add('sw'); setTimeout(() => { renderSecs(); sc.classList.remove('sw'); }, reduce ? 0 : 170);
@@ -4185,7 +3020,10 @@ function initOC() {
     const day = d == null ? tE : typeof d === 'number' ? d : Date.parse(d) / 864e5, Yf = pane === 'p' ? L.Yp : L.Y;
     return { x: bb.left + L.X(day) * sx, y: v == null || !Yf ? null : bb.top + Yf(v) * sy, box: rect, t0: ymd(L.t0), t1: ymd(tE), lo: L.lo, hi: L.hi, tf: L.tfn, ticks: L.tk };
   };
-  if (!SHARE) addEventListener('load', () => setTimeout(() => { const cn = navigator.connection; if (cn && cn.saveData) return; let q = Promise.resolve(); CH.forEach((c, i) => { if (c.lz) q = q.then(() => loadCh(i)).catch(() => {}); }); }, 1800), { once: true });
+  /* 背景預載（2026-11-16 改）：電腦照舊開頁 1.8 秒後把每一頁的資料依序抓下來；手機、省流量或慢網路只抓目前這一頁的前後兩頁（左右滑就是到這兩頁），
+     換頁時再抓新的前後兩頁，手指按到分頁鈕時先抓那一頁。原本手機只看「今天」也會在背景下載約 1.1 MB、解析時畫面會卡。省流量模式完全不預載 */
+  if (!SHARE) addEventListener('load', () => setTimeout(() => { const cn = navigator.connection; if (cn && cn.saveData) return; if (LITE) { nbr(ci); return; } let q = Promise.resolve(); CH.forEach((c, i) => { if (c.lz) q = q.then(() => loadCh(i)).catch(() => {}); }); }, 1800), { once: true });
+  if (!SHARE) document.addEventListener('pointerdown', e => { const b = e.target.closest && e.target.closest('#oc-tab [data-ch], #oc-crumb [data-ch]'); if (b && CH[+b.dataset.ch] && CH[+b.dataset.ch].lz) loadCh(+b.dataset.ch).catch(() => {}); }, { passive: true, capture: true });
   /* 2026-11-16 直接打開某張圖的網址（運營回覆別人時附連結用）：?k=<代號> 會切到那一頁、打開那張圖的放大檢視；可以加 &lang=en、&m=<第幾個檢視> */
   if (!SHARE && SHK) addEventListener('load', () => { for (let i = 0; i < CH.length; i++) { const gs = CH[i].groups || []; for (let j = 0; j < gs.length; j++) { const n = (gs[j].charts || []).findIndex(x => x.k === SHK); if (n < 0) continue;
       loadCh(i).then(() => { const c9 = CH[i].groups[j].charts[n], mq = QS.get('m'); if (mq != null && mq !== '' && c9.modes) { const mi = mq === 'd3' ? (c9.d3 ? 1 : 0) : +mq; if (mi >= 0 && mi < c9.modes.length) c9._m = mi; }
@@ -4196,57 +3034,6 @@ function initOC() {
 }
 
 /* ══ 第八輪：整站架構。搬家圖（每張圖從哪一版搬到哪個問題）＋價位地圖原型 ══ */
-const MV_O = { ov: ['頭版', '#EDEDE8'], nw: ['消息', '#8F8F8A'], cy: ['週期', '#E8D9A0'], oc: ['鏈上', '#FF4F1F'], mk: ['價格', '#5CE1E6'], fl: ['資金', '#C6FF3D'], dv: ['衍生品', '#8C9BFF'], ex: ['出場框架', '#FF9A6B'], ot: ['往期／方法', '#5E5E5A'] };
-const MV = [
-  { t: '今天', q: '今天發生什麼、要注意什麼', hd: '頭部：晨報', g: [
-    ['晨報', [['號外：今天的結論', 'ov'], ['今天變了什麼', 'ov'], ['行動與要盯的價位', 'ov'], ['接下來的日期', 'ov']]],
-    ['六個問題各一句（三份摘要併成一份）', [['訊號總表', 'ov'], ['我們的看法', 'ov'], ['今日數據帶', 'ov'], ['今日發現與異動', 'ov']]],
-    ['消息', [['今日要聞', 'ov'], ['新聞卡片', 'nw'], ['權威研報怎麼看', 'nw']]]] },
-  { t: '週期', q: '現在在週期的哪裡', hd: '頭部：週期儀', g: [
-    ['現在的階段', [['市場階段（含六盞證據燈）', 'cy'], ['週線多空分數', 'cy'], ['晨昏指數', 'cy']]],
-    ['估值冷熱', [['長短期持有者 NUPL', 'cy'], ['相對未實現獲利', 'cy'], ['AVIV', 'cy'], ['儲備風險', 'cy'], ['頂部三指標與走勢', 'cy'], ['冪律', 'cy']]],
-    ['頂部訊號', [['MVRV ÷ 前一輪高點', 'cy'], ['頂部雷達', 'cy'], ['Pi Cycle', 'mk'], ['Tidemark 綜合訊號', 'cy'], ['Tidemark 歷史', 'cy']]],
-    ['底部訊號', [['長期持有者虧損比例', 'oc'], ['一年累計淨實現損益', 'oc'], ['依持有時間的持幣成本', 'oc'], ['Hash Ribbons', 'oc']]],
-    ['和歷史比', [['和前幾輪比', 'cy'], ['每輪資金效率', 'cy'], ['長期路徑', 'cy'], ['價格長期走勢', 'mk'], ['月度報酬', 'mk']]]] },
-  { t: '價位', q: '價格站在哪些成本和關卡上', hd: '頭部：價位地圖', g: [
-    ['成本線', [['成本線與均線', 'mk'], ['價格與均線', 'mk'], ['短期持有者成本帶', 'oc'], ['供給分位成本線', 'oc'], ['ETF 持有者成本', 'fl']]],
-    ['籌碼在哪', [['籌碼分布 URPD', 'oc'], ['長短期持有者籌碼', 'oc'], ['籌碼集中度', 'oc']]],
-    ['短線的牆', [['關鍵價位', 'mk'], ['近 20 天 K 線', 'mk'], ['履約價分布', 'dv'], ['Gamma 曝險', 'dv'], ['清算熱力圖', 'dv'], ['掛單簿', 'dv']]],
-    ['這一段行情', [['目前這一段行情', 'mk'], ['價格近一年', 'ov']]]] },
-  { t: '賣壓', q: '賣壓出清了沒', hd: '頭部：回調壓力清單', g: [
-    ['總表', [['回調壓力清單', 'oc'], ['賣壓累積與動能品質', 'mk']]],
-    ['誰套牢', [['短期持有者獲利比例', 'oc']]],
-    ['賣的人賺還是賠', [['短期持有者賣出時的盈虧', 'oc'], ['短期持有者實現獲利與虧損', 'oc'], ['對趨勢的信心', 'oc'], ['淨實現損益', 'oc'], ['依持有時間的實現損益', 'oc'], ['aSOPR／LTH-SOPR 走勢', 'oc']]],
-    ['衰竭', [['實現獲利 ÷ 虧損', 'oc'], ['每日實現虧損', 'oc'], ['賣方風險比', 'oc'], ['賣方衰竭常數', 'oc'], ['鏈上勢能', 'oc'], ['長期持有者已實現虧損', 'oc']]],
-    ['礦工', [['算力與 hashprice', 'oc']]]] },
-  { t: '買盤', q: '誰在買、錢從哪裡來', hd: '頭部：現貨和永續誰在帶', g: [
-    ['機構', [['現貨 ETF 淨流量', 'fl'], ['CME 機構持倉', 'fl']]],
-    ['各地買盤', [['三地溢價', 'fl'], ['韓國溢價', 'fl'], ['交易所淨流量', 'fl'], ['交易所存量', 'oc']]],
-    ['鏈上需求', [['表觀需求', 'fl'], ['現貨 vs 永續需求', 'fl'], ['循環資金流', 'fl'], ['資金與價格梯度', 'fl'], ['實現市值 30 日變化', 'fl'], ['穩定幣總供給', 'fl']]],
-    ['大戶與長期持有者', [['鯨魚與大戶動向', 'oc'], ['長期持有者淨部位', 'oc'], ['長短期供給比變化', 'oc'], ['短期持有者供給變化', 'oc'], ['Dormancy', 'oc'], ['流動／非流動供給', 'oc']]],
-    ['主動買賣', [['現貨主動買賣差', 'dv'], ['現貨與永續主動買賣', 'dv']]],
-    ['大環境', [['BTC 對美股', 'fl'], ['利率、美元、相關性', 'fl']]]] },
-  { t: '槓桿', q: '槓桿和情緒擠不擠', hd: '頭部：擁擠程度', g: [
-    ['槓桿', [['資金費率歷史', 'dv'], ['期貨基差曲線', 'dv'], ['全市場未平倉量', 'dv'], ['多空帳戶比', 'dv'], ['每日多空清算量', 'dv']]],
-    ['波動', [['隱含 vs 實際波動', 'dv'], ['隱含波動期限結構', 'dv']]],
-    ['選擇權', [['各到期未平倉', 'dv'], ['買方權利金差', 'dv']]],
-    ['情緒', [['恐懼貪婪指數', 'fl'], ['維基百科瀏覽量', 'fl']]]] },
-  { t: '出場', q: '那我該怎麼做', hd: '頭部：離出場線多遠', g: [
-    ['規則', [['離出場線還多遠', 'ov'], ['現在離每條規則多遠', 'ex'], ['出場模擬器', 'ex'], ['鏈上觸發', 'ex'], ['其他規則', 'ex']]]] },
-  { t: '紀錄', q: '以前說過什麼、怎麼算的', hd: '', g: [
-    ['往期', [['發現戰績', 'ot'], ['往期', 'ot']]],
-    ['方法', [['這是什麼', 'ot'], ['資料來源', 'ot'], ['資料狀態', 'ov']]]] }
-];
-function initR8() {
-  const mv = $('#mv'), ff = $('#mv-f'), gg = $('#mv-g'), sm = $('#mv-s'); if (!mv) return;
-  const esc = s => String(s).replace(/[<>&]/g, ''), cnt = {}; let tot = 0, cur = '';
-  MV.forEach(c => c.g.forEach(g => g[1].forEach(p => { cnt[p[1]] = (cnt[p[1]] || 0) + 1; tot++; })));
-  ff.innerHTML = Object.keys(MV_O).map(k => `<button type="button" data-o="${k}" aria-pressed="false" style="--o:${MV_O[k][1]}"><i></i>${MV_O[k][0]}<em>${cnt[k] || 0}</em></button>`).join('');
-  gg.innerHTML = MV.map((c, i) => `<article class="mv-c"><span class="mv-k">${i === 0 ? '每天先看' : i === MV.length - 1 ? '附錄' : '問題 ' + i}</span><h3>${esc(c.t)}</h3><p class="q">${esc(c.q)}</p>${c.hd ? `<span class="hd">${esc(c.hd)}</span>` : ''}${c.g.map(g => `<div class="mv-s"><b>${esc(g[0])}</b>${g[1].map(p => `<span data-o="${p[1]}" style="--o:${MV_O[p[1]][1]}"><i></i>${esc(p[0])}</span>`).join('')}</div>`).join('')}<span class="mv-n">${c.g.reduce((a, g) => a + g[1].length, 0)} 項</span></article>`).join('');
-  const say = () => { if (!cur) { sm.textContent = '共 ' + tot + ' 項（一張圖或一個區塊算一項）。點上面任何一個來源，看它的內容各自去了哪個問題。'; return; } const parts = MV.map(c => [c.t, c.g.reduce((a, g) => a + g[1].filter(p => p[1] === cur).length, 0)]).filter(x => x[1]); sm.textContent = '現在的「' + MV_O[cur][0] + '」有 ' + cnt[cur] + ' 項 → ' + parts.map(x => x[0] + ' ' + x[1]).join('、') + '。'; };
-  ff.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; cur = cur === b.dataset.o ? '' : b.dataset.o; $$('button', ff).forEach(x => x.setAttribute('aria-pressed', x.dataset.o === cur)); mv.classList.toggle('f', !!cur); $$('.mv-s span', gg).forEach(x => x.classList.toggle('on', x.dataset.o === cur)); say(); });
-  say();
-}
 /* 價位地圖：所有「某個價位有什麼」的東西掛在同一條直的價格軸上。獨立的原型和「價位」那一片的總覽共用這一個函式 */
 function pmChart(box, rd, rgb) {
   const P = D.pm; if (!box || !P) return null; let rg = 1, G = null;
@@ -4288,7 +3075,6 @@ function pmChart(box, rd, rgb) {
   rgb.addEventListener('click', e => { const b = e.target.closest('button'); if (!b) return; e.stopPropagation(); rg = +b.dataset.i; $$('button', rgb).forEach(x => x.setAttribute('aria-pressed', +x.dataset.i === rg)); draw(); });
   rd.textContent = HINT; draw(); return draw;
 }
-function initPM() { return pmChart($('#pm-c'), $('#pm-r'), $('#pm-g')); }
 
 [initOC].forEach(f => { try { const r = f(); if (r) redraw.push(r); } catch (e) { console.error(f.name, e); } });
 let rz = 0; window.addEventListener('resize', () => { clearTimeout(rz); rz = setTimeout(() => redraw.forEach(f => { try { f(); } catch (e) { console.error(e); } }), 150); });
