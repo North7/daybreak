@@ -3,7 +3,7 @@
 規則（page.html ㉞-7，使用者照建議）：每張卡一句結論（40 字內）＋最多三條事實（每條 50 字內）＋收起的「怎麼讀」三行。
 數字都從 data/latest.json（L）讀；回測的統計在資料流程裡已經算好（collect.py、oc_extra.py 等），這裡只組句子。
 「怎麼讀這張圖」是固定說明，從舊版凍結在 how.json，不再每天從舊版抽。
-做好的頁：買盤（reads_buy）、週期（reads_cycle）、賣壓（reads_sell）；say_data.attach 遇到 say['own'] 的卡片就不再掛舊版的讀數（資料來源、異動照舊）。只作讀值。"""
+做好的頁：買盤（reads_buy）、週期（reads_cycle）、賣壓（reads_sell）、價位（reads_lv）、槓桿（reads_lev）；say_data.attach 遇到 say['own'] 的卡片就不再掛舊版的讀數（資料來源、異動照舊）。只作讀值。"""
 import json, os, datetime as dt
 HERE = os.path.dirname(os.path.abspath(__file__))
 HOW = json.load(open(os.path.join(HERE, 'how.json'), encoding='utf-8')) if os.path.exists(os.path.join(HERE, 'how.json')) else {}
@@ -49,9 +49,9 @@ def say(k, sz, se, items):
 
 def apply(chapters, L):
     """把做好的頁的讀數掛到卡片上；某一張出錯就跳過那一張（照舊用舊版的），不影響其他"""
-    import reads_buy, reads_cycle, reads_sell
+    import reads_buy, reads_cycle, reads_sell, reads_lv, reads_lev
     F = {}; X = {}
-    for m_ in (reads_buy, reads_cycle, reads_sell):
+    for m_ in (reads_buy, reads_cycle, reads_sell, reads_lv, reads_lev):
         F.update(m_.CARDS); HOWX.update(getattr(m_, 'HOWX', {}))
     for ch in chapters:
         for g in ch['groups']:
