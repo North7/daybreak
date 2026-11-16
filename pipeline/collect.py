@@ -225,6 +225,9 @@ try:
                          top_puts=[[K, round(q['P'])] for K, q in sorted(v['k'].items(), key=lambda z: -z[1]['P'])[:3]],
                          call_80k=round(v['k'].get(80000, {}).get('C', 0))))
     R['options'] = dict(total_oi=round(tot), expiries=rows)
+    try:   # 2026-11-16 立體檢視要的整張表（到期日 × 履約價，見 opt_grid.py）；失敗只是沒有立體檢視
+        import opt_grid; R['options']['grid'] = opt_grid.build(opt['result'], ix, now.date())
+    except Exception as e: errors.append(f'opt_grid {e}')
     # 真 25Δ RR。2026-10-12 改為 30 天固定期限：取 30 天前後最近的兩個到期（各自 OI ≥ 1000 顆、DTE ≥ 7），
     #   各自求 25Δ 買權／賣權與 ATM 的隱含波動，再以總變異數（σ²T）線性內插到 30 天。舊規則只取 DTE 20–45 的單一到期，
     #   月度到期之間（例如 18 天與 46 天）每月約一週算不出來。兩側缺一時退回舊規則。

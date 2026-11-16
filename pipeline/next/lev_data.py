@@ -149,6 +149,12 @@ def build(L, N, E, dn, X):
           de='At-the-money implied volatility for each expiry, against days to expiry. Longer-dated above near-dated is the calm-market shape; near-dated above longer-dated is an inversion, meaning the market sees more risk in the next few days. Now 7 days is %.1f%% and 90 days %.1f%%, %s%s' % (
               tv(7), tv(90), ST[1], '.' if S[:-1] else '; the curve has been saved daily since %s, and the curves from 7 and 30 days ago will be overlaid once they exist.' % (x.get('since') or '')))
         if X['ivt']['xy']['ref'] is None: del X['ivt']['xy']['ref']
+        og = (d.get('options') or {}).get('grid'); oe = [e for e in (og or {}).get('exps') or [] if e['dte'] >= 7 and sum(v is not None for v in e['iv']) >= 8]
+        if og and len(oe) >= 3:   # 曲面（2026-11-16，規則見 page.html ㉛）：同一張卡多一個檢視；到期不到 7 天的不畫，兩端會爆高、把其他的壓扁
+            X['ivt']['modes'] = [dict(mz='期限結構', me='Term structure'), dict(mz='曲面', me='Surface')]
+            X['ivt']['d3'] = dict(kind='iv', spot=og['spot'], ivx=og['ivx'], exps=[{k: e[k] for k in ('d', 'dte', 'f', 'iv', 'atm', 'tc', 'tp')} for e in oe],
+                                  srcz='曲面用每個履約價價外那一邊的標記隱含波動率，只畫 $%dk 到 $%dk、到期 7 天以上的到期日。沿著到期日的那條粗線是平值，就是「期限結構」那條線換個角度看；平面是其中一個到期日的微笑曲線。' % (og['ivx']['k0'] // 1000, (og['ivx']['k0'] + og['ivx']['n'] * og['ivx']['kw']) // 1000),
+                                  srce='The surface uses the out-of-the-money mark implied volatility at each strike, from $%dk to $%dk, for expiries at least 7 days out. The bold line running across expiries is at the money: the term-structure line seen from another angle. The flat view is one expiry\'s smile.' % (og['ivx']['k0'] // 1000, (og['ivx']['k0'] + og['ivx']['n'] * og['ivx']['kw']) // 1000))
     else:
         na('ivt', '隱含波動率期限結構', 'Implied volatility term structure', 'deriv.ivterm', 'Deribit', '這張圖畫各到期日價平選擇權的隱含波動：今天、7 天前、30 天前各一條。', 'This chart shows at-the-money implied volatility by expiry: today, 7 days ago and 30 days ago.')
 
