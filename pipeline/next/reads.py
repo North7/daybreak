@@ -63,4 +63,20 @@ def apply(chapters, L):
             r = fn(L)
             if r: X[k]['say'] = say(k, *r); done.append(k)
         except Exception as e: bad.append('%s: %s' % (k, e))
-    return dict(done=len(done), bad=bad)
+    nl = lean(X, L)
+    return dict(done=len(done), bad=bad, lean=nl)
+
+def lean(X, L):
+    """每張指標卡的偏向（leans.py，2026-11-17 使用者：「指標偏多還是空要有」）：放成讀數裡的「我們的看法」（view＝1），排在最前面；原本的看法換掉"""
+    import leans
+    n, bad = 0, []
+    for k, fn in leans.FN.items():
+        c = X.get(k)
+        if c is None or not c.get('say') or c['say'].get('copy'): continue
+        try: v = fn(L)
+        except Exception as e: bad.append('%s: %s' % (k, e)); continue
+        if not v: continue
+        t, vz, ve, dz, de, cz, ce = v
+        y = c['say']; y['items'] = [q for q in y.get('items') or [] if not q.get('view')]
+        y['items'].insert(0, dict(kz='我們的看法', ke='Our view', vz=vz, ve=ve, tone=t if t in ('up', 'down') else 'neu', dz=dz, de=de, cz=cz, ce=ce, view=1, hm='', hme='')); n += 1
+    return dict(n=n, bad=bad)

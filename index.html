@@ -1311,13 +1311,16 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
 /* ㉞ 手機長頁（2026-11-17，使用者三件都照建議；「對於交互，動效，還是要保留原本的精華」）：寬 700px 以下，週期、價位、賣壓、買盤、槓桿五頁每段只畫第一張（主卡），其他收成清單列；今天、出場兩頁和電腦版不變。
    1 清單一列＝圖名、一句白話、最新值、迷你走勢；點了打開全螢幕放大檢視（從那一列長出來，和點卡片一樣），左右滑換同一段的下一張。今天有訊號的列前面一顆會呼吸的訊號點，訊號膠囊照樣數得到、點得到。
    2 主卡瘦身（.fc.ph）：大數字下面直接接一句結論（拿掉「讀數」小標和重複的標題）；按鈕併成一排可左右捲，「分／疊」在手機上拿掉；圖例只留主角那條線，其他的點「＋N」才展開；底部統計和 30 天對比收起來，放大檢視裡都在。
-   3 動效：主卡照舊由 AI 游標畫出來、數字滾動；清單列一列一列落下、迷你走勢由左往右掃開、數字滾動，旁邊一個游標順著清單往下走；按下去彈簧壓扁、放開彈回。減少動態時全部直接出現。 */
+   3 動效：主卡照舊由 AI 游標畫出來、數字滾動；清單列一列一列落下、迷你走勢由左往右掃開、數字滾動，旁邊一個游標順著清單往下走；按下去彈簧壓扁、放開彈回。減少動態時全部直接出現。
+   8 偏向（同一天，使用者：「指標偏多還是空要有」）：每張指標卡在讀數裡都有「我們的看法 · 偏多／偏空／中性」（pipeline/next/leans.py，判定規則寫在那支開頭：有回測照回測、沒有的照定義、不指方向的寫中性）。
+     電腦版卡片：一句結論照樣顯示，下面接看法（立場、理由、會改變看法）；手機主卡：看法只留一行（偏向＋立場）；清單列：一句白話前面標偏向，綠＝偏多、紅＝偏空、灰＝中性。分享模式和社群配圖照舊藏看法。 */
 .frl { display: grid; border-top: 1px solid var(--rule); margin-top: 2px; } .fg > .frl { flex: 1 1 100%; min-width: 0; }
 .fr { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto 58px 12px; align-items: center; column-gap: 10px; min-height: 58px; padding: 9px 4px 9px 8px; border: 0; border-bottom: 1px solid var(--rule); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 10px; -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: transform .5s var(--spring, cubic-bezier(.3, 1.4, .5, 1)), background-color .25s; }
 .fr:active { transform: scale(.97); background: color-mix(in srgb, var(--ink) 6%, transparent); transition-duration: .12s; }
 .fr:focus-visible { outline: 2px solid var(--ac); outline-offset: -2px; }
 .fr-a { min-width: 0; display: grid; gap: 1px; }
 .fr-n { display: flex; align-items: center; gap: 7px; min-width: 0; font-weight: 600; font-size: 14px; line-height: 1.3; } .fr-n span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.fr-l { font-style: normal; font: 600 10.5px/1.3 var(--f-mono); letter-spacing: .06em; margin-right: 6px; }   /* ㉞-8 清單列前面的偏向 */
 .fr-t { font-size: 12px; line-height: 1.4; color: var(--soft, var(--k2)); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .fr-v { font-family: var(--fn, "Inter Tight"), "Noto Sans TC", sans-serif; font-stretch: var(--fst, 100%); font-weight: 600; font-size: 14px; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .fr-s { position: relative; width: 58px; height: 24px; } .fr-s svg { display: block; width: 100%; height: 100%; overflow: visible; }
@@ -1331,6 +1334,7 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
 @keyframes m-rise-s { from { opacity: 0; transform: translate3d(0, 11px, 0); } }
 @media (prefers-reduced-motion: reduce) { .oc.io .frl .fr, .oc.io .frl .fr-s::after { animation: none !important; } .oc.io .frl:not(.in) .fr { opacity: 1; } .oc.io .frl:not(.in) .fr-s::after { transform: scaleX(0); } .fr, .fr:active { transition: none; transform: none; } }
 .fc.ph .sy-h, .fc.ph .ol-sx, .fc.ph .ol-pair, .fc.ph .md.ly, .fc.ph .ol-ctl .more { display: none; }
+.fc.ph .sy-view .sy-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; } .fc.ph .sy-view .sy-d, .fc.ph .sy-view .sy-c { display: none; } .fc.ph .sy-view { padding-top: 8px; }   /* ㉞-8 手機主卡：看法只留一行（偏向＋立場） */
 .fc.ph .sy-d { margin-top: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .fc.ph .ol-ctl { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .fc.ph .ol-ctl::-webkit-scrollbar { display: none; } .fc.ph .ol-ctl .md { flex: none; }
 .fc.ph:not(.lg-all) .ol-lg > span:not(.h) { display: none; }
@@ -1462,7 +1466,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=32b135a931"></script>
+<script src="data/next.js?v=03b037eb35"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -2353,7 +2357,7 @@ function initOC() {
     const y = c.say; if (!y) return ''; const its = y.items || [], vw = its.find(q => q.view), rd = its.find(q => !q.view && q.tone !== 'neu') || its.find(q => !q.view), one = L2(y.sz, y.se);
     const row = q => { const t2 = TN[q.tone] || TN.neu; return `<div class="sy-r${q.view ? ' view' : ''}"><span class="sy-k">${esc(L2(q.kz, q.ke))}</span><b>${esc(L2(q.vz, q.ve))}</b>${q.tone !== 'neu' ? `<i style="color:var(--${t2[2]})">${T(t2[0], t2[1])}</i>` : ''}<p>${esc(L2(q.dz, q.de))}${q.cz ? ' ' + T('會改變看法：', 'What would change it: ') + esc(L2(q.cz, q.ce)) : ''}</p></div>`; };
     let read = '';
-    if (rd) { const t2 = TN[rd.tone] || TN.neu, hm = rd.hm && L2(rd.hm, rd.hme); read = `<div class="sy-read" style="--sc:var(--${t2[2]})"><div class="sy-h"><span class="sy-t">${T('讀數', 'Reading')}${hm ? ' · ' + esc(L2(rd.kz, rd.ke)) + ' ' + esc(L2(rd.vz, rd.ve)) : ''}</span><b>${esc(hm || L2(rd.kz, rd.ke) + T('：', ': ') + L2(rd.vz, rd.ve))}</b></div>${vw ? '' : `<p class="sy-d">${esc(one || L2(rd.dz, rd.de))}</p>`}</div>`; }
+    if (rd) { const t2 = TN[rd.tone] || TN.neu, hm = rd.hm && L2(rd.hm, rd.hme); read = `<div class="sy-read" style="--sc:var(--${t2[2]})"><div class="sy-h"><span class="sy-t">${T('讀數', 'Reading')}${hm ? ' · ' + esc(L2(rd.kz, rd.ke)) + ' ' + esc(L2(rd.vz, rd.ve)) : ''}</span><b>${esc(hm || L2(rd.kz, rd.ke) + T('：', ': ') + L2(rd.vz, rd.ve))}</b></div><p class="sy-d">${esc(one || L2(rd.dz, rd.de))}</p></div>`; }   /* ㉞-8 有看法時一句結論照樣顯示 */
     else if (one) read = `<div class="sy-read" style="--sc:var(--k2)"><div class="sy-h"><span class="sy-t">${T('讀數', 'Reading')}</span></div><p class="sy-d">${esc(one)}</p></div>`;
     const view = vw ? (t2 => `<div class="sy-view" style="--vc:var(--${t2[2]})"><div class="sy-h"><span class="sy-t">${T('我們的看法', 'Our view')} · ${T(t2[0], t2[1])}</span><b>${esc(L2(vw.vz, vw.ve))}</b></div><p class="sy-d">${esc(L2(vw.dz, vw.de))}</p>${vw.cz ? `<p class="sy-c"><i>${T('會改變看法', 'What would change it')}</i>${esc(L2(vw.cz, vw.ce))}</p>` : ''}</div>`)(TN[vw.tone] || TN.neu) : '';
     if (!read && !view) return ''; const rest = its.filter(q => q !== vw && q !== rd), sc = (TN[(rd || vw || {}).tone] || TN.neu)[2];
@@ -2376,7 +2380,7 @@ function initOC() {
     const V = g.charts.map(c => [c, vOf(c)]).filter(x => x[1] && !(x[0].say && x[0].say.copy)), q0 = T(g.sz, g.se); if (!V.length) return `<span class="sub">${esc(q0)}</span>`;
     const n = { up: 0, down: 0, warn: 0, neu: 0 }; V.forEach(x => { n[x[1].tone] = (n[x[1].tone] || 0) + 1; });
     const lean = n.down > n.up ? 'down' : n.up > n.down ? 'up' : n.warn ? 'warn' : 'neu', tn = TN[lean], first = t => { const m = /^(.*?[。.!?！？])(\s|$)/.exec(t); return m ? m[1] : t; };
-    const pri = x => (x[1].view ? 0 : 2) + (x[1].tone === lean ? 0 : x[1].tone === 'neu' ? 3 : 1), say1 = x => (x[1].view ? first(x[1].body) : x[1].head || first(x[1].body)).replace(/[。.]$/, ''), seen = {}, top = V.slice().sort((a, b) => pri(a) - pri(b)).filter(x => { const t = say1(x); if (seen[t]) return false; seen[t] = 1; return true; }).slice(0, 2).filter((x, i) => i === 0 || x[1].tone === lean);
+    const pri = x => (x[1].view ? 0 : 2) + (x[1].tone === lean ? 0 : x[1].tone === 'neu' ? 3 : 1), say1 = x => (x[1].head || first(x[1].body)).replace(/[。.]$/, '')   /* ㉞-8 看法用立場短句 */, seen = {}, top = V.slice().sort((a, b) => pri(a) - pri(b)).filter(x => { const t = say1(x); if (seen[t]) return false; seen[t] = 1; return true; }).slice(0, 2).filter((x, i) => i === 0 || x[1].tone === lean || (lean === 'neu' && n.up && n.up === n.down));   /* 偏多偏空打平：兩邊各講一句 */
     const txt = top.map(say1).join(T('；', '; ')) + T('。', '.');
     const tl = ['up', 'down', 'warn', 'neu'].filter(k => n[k]).map(k => T(TN[k][0], TN[k][1]) + ' ' + n[k]).join(' · ');
     const row = x => { const t2 = TN[x[1].tone] || TN.neu; return `<button type="button" class="fs-r" data-jump="${x[0].k}"><span class="sy-t" style="color:var(--${t2[2]})">${T(t2[0], t2[1])}</span><span class="fs-rb"><small>${esc(T(x[0].zh, x[0].en))}</small>${x[1].head ? `<b>${esc(x[1].head)}</b>` : ''}<span class="fs-rp">${esc(x[1].body)}</span></span></button>`; };
@@ -2445,11 +2449,12 @@ function initOC() {
   const PHC = { cycle: 1, lv: 1, sell: 1, buy: 1, lev: 1 }, PHQ = window.matchMedia ? matchMedia('(max-width: 700px)') : null;
   const phOn = () => !SHARE && !!(PHQ && PHQ.matches) && !!PHC[O.id];
   const rowVal = c => { if (c.na) return '—'; if (!isT(c)) return sval(c); const q = SP(c), hh = hero(q), r = atv(q.rows, hh.c, null); return fm(hh.f || q.f, r[hh.c]); };
+  const rowLean = c => { const v = ((c.say || {}).items || []).find(q => q.view); if (!v) return ''; const t2 = TN[v.tone] || TN.neu; return `<i class="fr-l" style="color:var(--${t2[2]})">${T(t2[0], t2[1])}</i>`; };
   const rowLine = c => { if (c.na) return T(c.na.zh, c.na.en).split(/[。.]/)[0]; const y = c.say, one = y ? L2(y.sz, y.se) : '', v = vOf(c), t = one || (v ? (v.head || v.body) : '') || T(c.dz, c.de) || ''; const m = /^(.*?[。！？；]|.*?[.!?;](\s|$))/.exec(t); return (m ? m[1] : t).replace(/[。；;]$/, ''); };
   function renderRows(k) {
     const g = G[k - 1], box = $('#oc-g' + k), t0 = tE - 365;
     box.innerHTML = `<article class="fc ph${g.charts[0].wide ? ' w' : ''}" data-k="${esc(g.charts[0].k)}" style="--i:0"><div class="ol" id="oc-ol${k}_0"></div></article><div class="frl" data-k="_rows${k}" style="--i:1">` +
-      g.charts.slice(1).map((c, j) => { const i = j + 1, sg = c.sig && c.sig.length; return `<button type="button" class="fr${sg ? ' sg' : ''}" data-fx="${k}_${i}" data-k="${esc(c.k)}" style="--j:${j}" aria-label="${esc(T(c.zh, c.en) + T('：打開這張圖', ': open this chart'))}"><span class="fr-a"><b class="fr-n">${sg ? '<span class="ag-sig" aria-hidden="true"><i></i></span>' : ''}<span>${esc(T(c.zh, c.en))}</span></b><span class="fr-t">${esc(rowLine(c))}</span></span><span class="fr-v" id="oc-v${k}-r${i}">${esc(rowVal(c))}</span><span class="fr-s" id="oc-s${k}-r${i}"></span><span class="fr-go" aria-hidden="true">${IC('go')}</span></button>`; }).join('') + '</div>';
+      g.charts.slice(1).map((c, j) => { const i = j + 1, sg = c.sig && c.sig.length; return `<button type="button" class="fr${sg ? ' sg' : ''}" data-fx="${k}_${i}" data-k="${esc(c.k)}" style="--j:${j}" aria-label="${esc(T(c.zh, c.en) + T('：打開這張圖', ': open this chart'))}"><span class="fr-a"><b class="fr-n">${sg ? '<span class="ag-sig" aria-hidden="true"><i></i></span>' : ''}<span>${esc(T(c.zh, c.en))}</span></b><span class="fr-t">${rowLean(c)}${esc(rowLine(c))}</span></span><span class="fr-v" id="oc-v${k}-r${i}">${esc(rowVal(c))}</span><span class="fr-s" id="oc-s${k}-r${i}"></span><span class="fr-go" aria-hidden="true">${IC('go')}</span></button>`; }).join('') + '</div>';
     if (IO) box.querySelectorAll('.fc, .frl').forEach(el => { if (SEEN.has(seenK(el))) el.classList.add('in'); else IO.observe(el); });
     const R = fill($('#oc-ol' + k + '_0'), g.charts[0], k + '_0', true); cur1(R, null); pcur1(R, null); SEC[k] = [R];
     g.charts.slice(1).forEach((c, j) => { try { mkItem(c, $('#oc-v' + k + '-r' + (j + 1)), $('#oc-s' + k + '-r' + (j + 1)), t0); } catch (e) {} });
