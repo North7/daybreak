@@ -881,7 +881,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .oc-fx .fx-x:hover { background: var(--ink); color: var(--sheet); border-color: var(--ink); }
 .oc-fx #oc-fxl { margin-left: auto; }
 .oc-fx .og { grid-template-columns: minmax(0, 1fr); grid-template-rows: minmax(0, 1fr) auto; gap: 12px; }
-.oc-fx .ol { gap: 14px; overflow-y: auto; scrollbar-width: none; }
+.oc-fx .ol { gap: 14px; overflow-y: auto; scrollbar-width: none; overscroll-behavior: contain; }
 .oc-fx .ol[data-kind="t"] { height: auto; max-height: 100%; }
 .oc-fx .ol[data-kind="t"] .ol-c { flex: none; height: clamp(280px, 36vw, 56vh); min-height: 0; }
 .oc-fx .ol-c { min-height: 260px; }
@@ -1466,7 +1466,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=0bde3c8ff7"></script>
+<script src="data/next.js?v=b529886c93"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -2954,9 +2954,9 @@ function initOC() {
     el.addEventListener('pointerdown', hide); window.addEventListener('scroll', hide, { passive: true });
   })();
   (function () { const box = $('#oc-fx'), os = box.querySelector('.os'); let st = null;
-    box.addEventListener('pointerdown', e => { if (!fx || e.button || e.target.closest('button, a, summary, details, input, .ol-c, .or')) return; st = { x: e.clientX, y: e.clientY, t: performance.now(), dx: 0, dy: 0, sc: 1, on: false }; });
-    window.addEventListener('pointermove', e => { if (!st) return; st.dx = (e.clientX - st.x) * .85; st.dy = (e.clientY - st.y) * .85; const d = Math.hypot(st.dx, st.dy); if (!st.on && d < 9) return; if (!st.on && e.pointerType === 'touch' && Math.abs(st.dx) > Math.abs(st.dy) * 1.4) { st = null; return; }   /* ㉒ 5 */ st.on = true; const k = Math.min(1, d / 620); st.sc = 1 - k * .3; os.style.transform = `translate(${F1(st.dx)}px, ${F1(st.dy)}px) scale(${st.sc.toFixed(3)})`; os.style.borderRadius = F1(26 * Math.min(1, d / 110)) + 'px'; box.style.setProperty('--dim', (1 - k * .85).toFixed(2)); });
-    const end = () => { if (!st) return; const s0 = st; st = null; if (!s0.on) return; box.dataset.drag = '1'; setTimeout(() => { delete box.dataset.drag; }, 80); const d = Math.hypot(s0.dx, s0.dy), v = d / Math.max(1, performance.now() - s0.t), far = d > 120 || v > .8, VW = window.innerWidth, VH = window.innerHeight;
+    box.addEventListener('pointerdown', e => { if (!fx || e.button || e.target.closest('button, a, summary, details, input, .ol-c, .or')) return; const ol0 = box.querySelector('.ol'); st = { x: e.clientX, y: e.clientY, t: performance.now(), dx: 0, dy: 0, sc: 1, on: false, touch: e.pointerType !== 'mouse', top: !ol0 || ol0.scrollTop <= 1 }; });
+    window.addEventListener('pointermove', e => { if (!st) return; st.dx = (e.clientX - st.x) * .85; st.dy = (e.clientY - st.y) * .85; const d = Math.hypot(st.dx, st.dy); if (!st.on && d < 9) return; if (!st.on && st.touch && !(st.top && st.dy > 0 && st.dy > Math.abs(st.dx) * 1.8)) { st = null; return; }   /* ㉒ 5：手機只有「內容在最頂、明確往下拉」才拖卡片，其他都交給捲動和左右換圖 */ if (st.touch) st.dx = 0; st.on = true; const k = Math.min(1, d / 620); st.sc = 1 - k * .3; os.style.transform = `translate(${F1(st.dx)}px, ${F1(st.dy)}px) scale(${st.sc.toFixed(3)})`; os.style.borderRadius = F1(26 * Math.min(1, d / 110)) + 'px'; box.style.setProperty('--dim', (1 - k * .85).toFixed(2)); });
+    const end = () => { if (!st) return; const s0 = st; st = null; if (!s0.on) return; box.dataset.drag = '1'; setTimeout(() => { delete box.dataset.drag; }, 80); const d = Math.hypot(s0.dx, s0.dy), v = d / Math.max(1, performance.now() - s0.t), far = s0.touch ? (s0.dy > 150 || (v > .9 && s0.dy > 70)) : (d > 120 || v > .8), VW = window.innerWidth, VH = window.innerHeight;
       box.style.removeProperty('--dim'); os.style.borderRadius = '';
       if (far) { os.style.transform = ''; closeFx({ x: s0.dx + VW * (1 - s0.sc) / 2, y: s0.dy + VH * (1 - s0.sc) / 2, s: s0.sc }); }
       else { const fr = SPR(200, 15); os.animate(fr.map(p1 => ({ transform: `translate(${F1(s0.dx * (1 - p1))}px, ${F1(s0.dy * (1 - p1))}px) scale(${(s0.sc + (1 - s0.sc) * p1).toFixed(4)})` })), { duration: fr.length / 60 * 1000, easing: 'linear' }); os.style.transform = ''; } };
@@ -2999,12 +2999,14 @@ function initOC() {
   /* 放大檢視換到同一段的第 i 張（點下面的小圖、左右滑共用） */
   const fxGo = i => { if (!fx || i === fx.i || !G[fx.k - 1].charts[i]) return; const ol = $('#oc-olF'), orx = $('#oc-orF') || document.querySelector('#oc-fx .or'); ol.classList.add('sw'); fx.i = i; if (orx) Array.prototype.forEach.call(orx.querySelectorAll('.or-r'), b2 => { const on = +b2.dataset.i === i; b2.setAttribute('aria-pressed', on); if (on && b2.scrollIntoView) b2.scrollIntoView({ block: 'nearest', inline: 'nearest' }); }); setTimeout(() => { renderLead('F'); ol.classList.remove('sw'); }, reduce ? 0 : 160); };
   /* ㉒ 手機左右滑（2026-11-11，使用者：「手機上左右滑能不能加功能」，兩個都做）。整套規則：
-     1. 只認觸控的單指橫滑：橫向至少 64px、橫向是直向的 2 倍以上、700 毫秒內放開。直向捲動、斜滑、慢慢拖都不算。
+     1. 只認觸控的單指橫滑：橫向至少 72px、橫向是直向的 2.5 倍以上、700 毫秒內放開（2026-11-17 從 64px、2 倍收緊）。直向捲動、斜滑、慢慢拖都不算。
      2. 頁面上：往左滑到下一頁、往右滑回上一頁，順序和底部分頁一樣；第一頁往右、最後一頁往左沒有動作（不繞回去）。換頁的動作和點分頁完全一樣（navCh）。
      3. 放大檢視裡：往左滑看同一段的下一張、往右滑看上一張，到頭不繞回去。和點下面的小圖是同一個動作（fxGo）。
      4. 不搶別人的手勢：手指落在圖上（.ol-c，左右滑是十字線）、放大檢視下面的小圖列、能左右捲的區塊（次導覽、表格）、滑桿和輸入框、
         自己處理觸控的元件（touch-action 不是 auto 的，例如頂部的小卡片、日夜鍵）、找圖，都不觸發。螢幕左右邊緣 24px 內起手也不觸發（那是瀏覽器的上一頁）。
-     5. 放大檢視原本「拖著卡片甩出去就收回」的手勢：觸控時如果一開始就是橫向，讓給換圖，卡片不跟著動；直向拖照舊收回。
+     5. 放大檢視原本「拖著卡片甩出去就收回」的手勢（2026-11-17 使用者：「不太容易上下滑，總是會觸發左右方向讓卡片往側面移動，幅度滑動太多時卡片還會被關閉」）：
+        手機上只有內容已經捲到最頂、而且一開始就明確往下拉（直向是橫向的 1.8 倍以上）才拖卡片，卡片只跟著上下動、不左右飄；往下拉超過 150px 或快速下拉 70px 以上才收回。
+        其他方向一律交給捲動和左右換圖，卡片不動。電腦上用滑鼠照舊可以往任何方向甩出去收回。
      6. 沒有另外加提示或動畫：換頁用原本的淡入、底部分頁的橫條會滑過去；換圖用原本的淡入。 */
   (function () {
     let s0 = null;
@@ -3012,7 +3014,7 @@ function initOC() {
     el.addEventListener('touchstart', e => { s0 = null; if (e.touches.length !== 1) return; const t = e.touches[0]; if (t.clientX < 24 || t.clientX > window.innerWidth - 24 || !e.target.closest || !own(e.target)) return; s0 = { x: t.clientX, y: t.clientY, t: performance.now() }; }, { passive: true });
     el.addEventListener('touchmove', e => { if (s0 && e.touches.length !== 1) s0 = null; }, { passive: true });
     el.addEventListener('touchcancel', () => { s0 = null; }, { passive: true });
-    el.addEventListener('touchend', e => { const a = s0; s0 = null; if (!a || e.touches.length || !e.changedTouches[0]) return; const t = e.changedTouches[0], dx = t.clientX - a.x, dy = t.clientY - a.y; if (Math.abs(dx) < 64 || Math.abs(dx) < Math.abs(dy) * 2 || performance.now() - a.t > 700) return; const d = dx < 0 ? 1 : -1;
+    el.addEventListener('touchend', e => { const a = s0; s0 = null; if (!a || e.touches.length || !e.changedTouches[0]) return; const t = e.changedTouches[0], dx = t.clientX - a.x, dy = t.clientY - a.y; if (Math.abs(dx) < 72 || Math.abs(dx) < Math.abs(dy) * 2.5 || performance.now() - a.t > 700) return; const d = dx < 0 ? 1 : -1;
       if (fx) { fxGo(fx.i + d); return; } if (!$('#oc-map').hidden) return; let j = ci + d; while (CH[j] && CH[j].todo) j += d; if (CH[j]) navCh(j); }, { passive: true });
   })();
   el.addEventListener('keydown', e => { if (e.key === 'Escape' && fx) closeFx(); if (fx && (e.key === 'ArrowRight' || e.key === 'ArrowLeft')) { const n = G[fx.k - 1].charts.length; fx.i = (fx.i + (e.key === 'ArrowRight' ? 1 : n - 1)) % n; renderLead('F'); e.preventDefault(); } if (e.key === 'Enter' && e.target.classList && e.target.classList.contains('os') && stg.contains(e.target)) goCh(+e.target.dataset.k); });
