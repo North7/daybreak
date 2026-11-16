@@ -506,7 +506,8 @@ def render(L, fonts_dir):
 # ======================================================================================
 # 第二版（2026-11-06 使用者：「每日推薦圖表沒什麼意義」）：一天一張、網站原圖、回答一個問題
 #   原因：舊版三天都推同三張（短期持有者成本、籌碼、Coinbase 溢價），解說只是把數字念一遍，圖是重畫的簡化版，和日報講同一件事。
-#   新版：① 每天只推 1 張，從網站的面板裡挑（PANELS），截網站深色原圖（ops/post/site_shot.py clean 模式），上方加一句問句標題；
+#   新版：① 每天只推 1 張，從網站的面板裡挑（PANELS），截網站深色原圖，上方加一句問句標題；
+#        （2026-11-16 起截新版首頁的分享模式：ops/post/next_shot.py，見 NEW_MISS 那段；之前是舊版 classic.html 經 site_shot.py）
 #        ② 最近 7 天推過的不再推（data/picks/history.json），長貼文用過的也避開（data/longposts.json 的 charts 欄，可選）；
 #        ③ 帶出場框架線、或本身是預測的面板不推（SKIP_PANELS）；
 #        ④ 解說三件事：現在的讀值、過去同樣情況之後怎樣（勝率照實寫）、這代表什麼。不寫買賣點、目標價。
@@ -592,6 +593,34 @@ SKIP_PANELS = {
     'cycle/capeff': '每輪資金效率：是表格，截圖只截到空白（要用的話另外截整個面板）',
     'deriv/oi': '各到期未平倉：單看沒有故事，併在履約價分布裡講',
 }
+
+
+# 2026-11-16 舊版（classic.html）停用第二步：推薦圖表改截新版首頁的分享模式（ops/post/next_shot.py，?share&k=圖代號）。
+#   PANELS 的鍵（cycle/dawn 這種）照舊當 id 用（picks.json、history.json 都是這個）；sel 是舊版的圖 id，
+#   對到新版圖代號靠 data/next.js 的 old 表（網站 build.py 產生，舊網址轉新版也用同一張表），網站改對照就跟著改。
+#   對不到新版、新版目前沒資料、不能放大（分享模式開不了）或在出場分頁的面板不推（NEW_MISS，plan 的 skip 裡列出原因）。
+def _next_catalog():
+    try:
+        s = open(P('data', 'next.js'), encoding='utf-8').read(); D = json.loads(s[s.index('{'):s.rindex('}') + 1])
+    except Exception as e:
+        print('讀不到 data/next.js：', repr(e), file=sys.stderr); return {}, {}
+    cat = {}
+    for c in D['site']['chapters']:
+        for gr in c.get('groups') or []:
+            for x in gr.get('charts') or []: cat[x['k']] = dict(ch=c['id'], na=bool(x.get('na')), fx=not x.get('nofx'))
+    return D.get('old') or {}, cat
+
+
+NEW_MISS = {}
+_OLD, _CAT = _next_catalog()
+for _k, _p in PANELS.items():
+    _n = _OLD.get(_p['sel'][3:]); _c = _CAT.get(_n)
+    if not _n or not _c: NEW_MISS[_k] = '新版首頁沒有對應的圖'
+    elif _c['na']: NEW_MISS[_k] = f'新版的圖（{_n}）目前沒有資料'
+    elif not _c['fx']: NEW_MISS[_k] = f'新版的圖（{_n}）不能放大，分享模式截不了'
+    elif _c['ch'] == 'exit' or _n.startswith('x_'): NEW_MISS[_k] = f'新版的圖（{_n}）在出場分頁'
+    else: _p['k'] = _n
+link_of = lambda pid: f'https://daybreak.aronlab.dev/?k={PANELS[pid]["k"]}' if PANELS[pid].get('k') else f'https://daybreak.aronlab.dev/#{pid}'
 SIG_TO_PANEL = {}
 for _k, _p in PANELS.items():
     SIG_TO_PANEL.setdefault(_k.split('/')[1], _k)
@@ -640,11 +669,11 @@ def candidates2(L, notes=None):
         for f in notes.get('findings') or []:
             k = SIG_TO_PANEL.get(f.get('chart') or '')
             if k: fchart.setdefault(k, f.get('title'))
-    order = sorted(PANELS, key=lambda k: (-(by[k][0].get('score') or 0) if k in by else (0 if k in fchart else 1), list(PANELS).index(k)))
+    order = sorted((k for k in PANELS if k not in NEW_MISS), key=lambda k: (-(by[k][0].get('score') or 0) if k in by else (0 if k in fchart else 1), list(PANELS).index(k)))
     out = []
     for k in order:
         p = PANELS[k]
-        out.append(dict(id=k, name=T(p['zh'], p['en']), link=f'https://daybreak.aronlab.dev/#{k}',
+        out.append(dict(id=k, name=T(p['zh'], p['en']), link=link_of(k),
                         used=used.get(k), finding=fchart.get(k),
                         signals=[dict(title=s.get('title'), fig=s.get('fig'), means=s.get('means'), hist=s.get('hist'), score=s.get('score')) for s in by.get(k, [])[:3]],
                         data={path: _compact(g(L, path)) for path in p.get('data', []) if g(L, path) is not None}))
@@ -660,7 +689,7 @@ def plan2(L):
     if not hint or hint.get('bar') != g(L, 'meta.bar_date'): hint = None
     return dict(date=g(L, 'meta.bar_date'), notes_date=(notes or {}).get('date'),
                 suggest=ok[0]['id'] if ok else None, hint=hint,
-                recent={x['id']: x['used'] for x in c if x['used']}, skip=SKIP_PANELS,
+                recent={x['id']: x['used'] for x in c if x['used']}, skip={**SKIP_PANELS, **NEW_MISS},
                 note=('每日任務：挑 1 張（不限 suggest），先想「讀者今天在問什麼」，再挑最能回答的面板；recent 裡的（最近 7 天用過）不能挑。'
                       '寫 data/picks.json：q_zh／q_en 是圖上的問句標題，zh／en 是解說：現在的讀值、過去同樣情況之後怎樣（勝率照實寫）、這代表什麼。'
                       '數字只能用這裡 data／signals 或當期 notes 有的；不寫出場框架、買賣點、目標價。'),
@@ -682,6 +711,7 @@ def check2(L, pk):
         i = p.get('id')
         if i in SKIP_PANELS: errs.append(f'{i}: 不推（{SKIP_PANELS[i]}）'); continue
         if i not in PANELS: errs.append(f'{i}: 不是網站面板（看 plan 的 candidates）'); continue
+        if i in NEW_MISS: errs.append(f'{i}: 不推（{NEW_MISS[i]}）'); continue
         if cand[i]['used']: errs.append(f'{i}: {cand[i]["used"]} 已經用過，最近 {RECENT_DAYS} 天不重複')
         for k, want in (('chart', f'data/picks/{slug(i)}.png'), ('chart_en', f'data/picks/{slug(i)}-en.png')):
             if p.get(k) != want: errs.append(f'{i}: {k} 應為 {want}')
@@ -704,21 +734,30 @@ def check2(L, pk):
 
 
 def shoot(items, lang, out_dir):
-    """用 ops/post/site_shot.py 截網站面板（深色、clean）。回傳 {out: 路徑}；Chrome 不在或失敗就回空。"""
+    """用 ops/post/next_shot.py 截新版首頁的分享模式（16:9、深色，網站自己藏了按鈕和「我們的看法」）。回傳 {out: 路徑}；Chrome 不在或失敗就回空。
+    2026-11-16 起不再截舊版 classic.html（site_shot.py）。"""
     import subprocess, tempfile
-    jobs = dict(lang=lang, theme='dark', width=1440, items=[dict(page=k.split('/')[0], sel=PANELS[k]['sel'], out=o, clean=1, **({'html': 1} if PANELS[k].get('html') else {})) for k, o in items])
+    jobs = dict(lang=lang, items=[dict(k=PANELS[k]['k'], out=o, view='share') for k, o in items if PANELS[k].get('k')])
+    if not jobs['items']: return {}
     jf = os.path.join(tempfile.mkdtemp(prefix='picks-'), 'jobs.json'); json.dump(jobs, open(jf, 'w'))
-    try: subprocess.run([sys.executable, P('ops', 'post', 'site_shot.py'), jf, out_dir], check=True, timeout=240)
-    except Exception as e: print('截圖失敗', repr(e), file=sys.stderr); return {}
+    for n in range(2):   # next_shot.py 自己會重試 3 次（截到不對的畫面就重來）；整支失敗（Chrome 沒起來之類）再從頭跑一次
+        try: subprocess.run([sys.executable, P('ops', 'post', 'next_shot.py'), jf, out_dir], check=True, timeout=240); break
+        except Exception as e: print('截圖失敗', repr(e), file=sys.stderr)
+    else: return {}
     return {o: os.path.join(out_dir, o + '.png') for _, o in items if os.path.exists(os.path.join(out_dir, o + '.png'))}
 
 
 def card2(L, notes, shot, q, lang, Fn, out):
-    """深色卡：今日圖表標籤與期數 → 問句標題 → 網站原圖 → 頁尾。寬度跟截圖一樣（2 倍畫，存成一半）。"""
+    """深色卡：今日圖表標籤與期數 → 問句標題 → 分隔線 → 網站分享模式原圖（2 倍畫，存成一半）。
+    2026-11-16 改截新版分享模式：圖本身已有圖名、讀數、資料來源和 Daybreak 頁尾，所以這裡不再畫頁尾（不重複品牌）；
+    原圖 3200 寬縮成 2280，整張卡和舊版一樣 1212 寬。"""
     from PIL import Image, ImageDraw
     import share_card as SC
-    BG, INK_, INK3_, LINE_ = (12, 12, 13), '#F2F0EA', '#9C978E', '#3A3936'
-    im = Image.open(shot).convert('RGB'); Pd = 72; Wc = im.width + 2 * Pd
+    BG, INK_, INK3_, LINE_ = (6, 6, 7), '#F2F0EA', '#9C978E', '#3A3936'
+    im = Image.open(shot).convert('RGB'); Pd = 72; SW = 2280
+    if im.width != SW: im = im.resize((SW, round(im.height * SW / im.width)), Image.LANCZOS)
+    BG = im.getpixel((4, 4)) or BG   # 底色跟網站分享模式一樣，接縫看不出來
+    Wc = SW + 2 * Pd
     tf = Fn['cjk'](36, 900) if lang == 'zh' else Fn['mono'](34, 800)
     tag = '今日圖表' if lang == 'zh' else 'CHART OF THE DAY'
     bd = dt.date.fromisoformat(g(L, 'meta.bar_date')); ed = (notes or {}).get('edition', 0) if (notes or {}).get('date') == g(L, 'meta.bar_date') else 0
@@ -726,7 +765,7 @@ def card2(L, notes, shot, q, lang, Fn, out):
     for size in range(96, 56, -4):   # 問句標題：自動縮字，最多 2 行
         hf = Fn['head'](size) if lang == 'zh' else Fn['num'](int(size * 1.1)); lines = SC.wrap(q, hf, Wc - 2 * Pd)
         if len(lines) <= 2: break
-    lh = int(size * 1.3); top = 56; ty = top + 64 + 44; H = ty + lh * len(lines) + 48 + im.height + 40 + 140
+    lh = int(size * 1.3); top = 56; ty = top + 64 + 44; H = ty + lh * len(lines) + 40 + im.height + 24
     img = Image.new('RGB', (Wc, H), BG); d = ImageDraw.Draw(img)
     tw = d.textlength(tag, font=tf); d.rounded_rectangle([Pd, top, Pd + tw + 44, top + 64], radius=32, fill=RED)
     d.text((Pd + 22 + tw / 2, top + 32), tag, font=tf, fill='#FFFFFF', anchor='mm')
@@ -736,11 +775,8 @@ def card2(L, notes, shot, q, lang, Fn, out):
         x = Pd
         for a, red in ln: d.text((x, y), a, font=hf, fill=RED if red else INK_); x += hf.getlength(a)
         y += lh
-    y += 48; img.paste(im, (Pd, y))
-    fy = H - 70; d.line([Pd, fy - 52, Wc - Pd, fy - 52], fill=LINE_, width=2)
-    d.arc([Pd, fy - 26, Pd + 52, fy + 26], 180, 360, fill=RED, width=8); d.line([Pd - 8, fy, Pd + 60, fy], fill=INK_, width=8)
-    d.text((Pd + 84, fy), 'DAYBREAK', font=Fn['cjk'](38, 900) if lang == 'zh' else Fn['mono'](38, 800), fill=INK_, anchor='lm')
-    d.text((Wc - Pd, fy), 'X @songpu717', font=Fn['mono'](34), fill=INK3_, anchor='rm')
+    y += 24; d.line([Pd, y, Wc - Pd, y], fill=LINE_, width=2); y += 16
+    img.paste(im, (Pd, y))
     img.resize((Wc // 2, H // 2), Image.LANCZOS).save(out, optimize=True)
     print('wrote', os.path.relpath(out, ROOT), (Wc // 2, H // 2))
 
@@ -750,7 +786,7 @@ def render2(L, fonts_dir):
     Fn = SC.fonts(fonts_dir); bar = g(L, 'meta.bar_date')
     notes, notes_en, pk = load('notes.json'), load('notes.en.json'), load('picks.json')
     cur = bool(pk and pk.get('date') == bar and pk.get('picks'))
-    if cur and pk['picks'][0].get('id') in PANELS:
+    if cur and pk['picks'][0].get('id') in PANELS and (PANELS[pk['picks'][0]['id']].get('k') or PANELS[pk['picks'][0]['id']].get('old')):
         p = pk['picks'][0]; pid = p['id']; q = {'zh': p.get('q_zh'), 'en': p.get('q_en')}
         print('picks.json', bar, pid)
     else:
@@ -768,7 +804,7 @@ def render2(L, fonts_dir):
             print('改用舊版圖', PANELS[pid]['old'])
             card(L, notes if lang == 'zh' else notes_en, spec(L, PANELS[pid]['old']), q.get(lang) or name[lang], lang, Fn, os.path.join(od, fn)); keep.add(fn)
         else: print('這張畫不出來', pid, lang)
-    done = [dict(id=pid, chart=f'data/picks/{s}.png', chart_en=f'data/picks/{s}-en.png', name=name, link=f'https://daybreak.aronlab.dev/#{pid}')] if f'{s}.png' in keep else []
+    done = [dict(id=pid, chart=f'data/picks/{s}.png', chart_en=f'data/picks/{s}-en.png', name=name, link=link_of(pid))] if f'{s}.png' in keep else []
     json.dump(dict(date=bar, captions=cur, picks=done), open(os.path.join(od, 'index.json'), 'w'), ensure_ascii=False, indent=1)
     if done:   # 記下這天推了哪張，之後 7 天不重複（只留 60 天）
         h = load('picks/history.json') or {'items': []}

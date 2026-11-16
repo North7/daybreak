@@ -15,7 +15,10 @@ jobs.json: {"lang": "zh"|"en", "width": 1440, "height": 1000,
          每個鍵都可省；空 dict {} 就是預設的立體斜看。要錄成影片用 ops/post/d3_video.py
          11/16 #177 起還有 xr＝"50000,110000"（只畫這段價位／履約價）、yr＝"2024-11-01,2025-08-31"（只畫這段週／到期日）、fit＝1（照當下角度撐滿）、zoom＝1.4（倍率，超出會裁掉）。
          建議 xr＋fit；再加 zoom 容易切掉邊上的刻度。帶了範圍，圖下說明會自動補「這張只畫…」，別裁掉
-輸出：<out>.png（2 倍解析度）與 <out>.json（圖上文字位置，CSS px，給 annotate.py）
+  xy     只有 view=share／share45：[["YYYY-MM-DD", 數值, "p"|""], …]，截圖當下用網站的 window.daybreakXY(圖代號, 日期, 數值, pane) 換成座標，
+         寫進 <out>.json 的 xy（CSS px，左上角＝截圖左上角；pane "p"＝上格價格）。annotate.py 會自己帶這個，通常不用手寫（2026-11-16）
+輸出：<out>.png（2 倍解析度）與 <out>.json（card／fx：圖上文字位置；share：xy 座標；CSS px，給 annotate.py）
+分享模式截圖前會檢查畫面上沒有首頁大數字下的階段標籤（「…・持有」「… · hold」這種動作結論），有就不截。
 只有深色（新版預設深夜，沒有存主題）。動畫用 prefers-reduced-motion 關掉（進場動畫、數字翻牌、五個 AI 游標都不會出現）。
 出場框架的卡片（出場分頁全部、今天分頁的「行動與要盯的價位」「出場」）不截：社群內容不放出場框架。
 有任何一張沒截成就印 ERROR、不寫那張的檔案，最後結束碼 1。
@@ -26,6 +29,7 @@ sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import site_shot as S
 
 SITE = 'http://127.0.0.1:8790/index.html'
+STAGE_RE = r'/・\s*持有|·\s*hold\b/i'   # 首頁大數字下的階段標籤（「深夜・持有」「Night · hold」）：動作結論，截圖錄影都不能露（2026-11-12 規則）
 BLOCK = lambda ch_id, k: ch_id == 'exit' or k.startswith('x_') or k in ('t_act', 'q_exit')   # 出場框架不進社群配圖
 
 
@@ -73,8 +77,20 @@ def d3_query(it):
     return '&m=d3' + ''.join(f'&{key}={quote(str(v), safe=",")}' for key, v in d.items() if v is not None)   # 鍵照原樣帶進網址，網站之後加的參數（放大、價格範圍…）不用改這裡
 
 
-def shoot_share(ws, view, k, it):
-    """分享模式：視窗設成 16:9（1600×900）或 4:5（1080×1350），開 index.html?share&k=…，整個畫面就是那張圖。回傳 (png, 尺寸說明) 或 (None, 原因)"""
+# 2026-11-16 一次截 61 張時有兩張截到首頁「今天」（含出場框架的字）、一張畫面平鋪成好幾份：連續切換視窗尺寸時的競態。
+# 截圖前後都確認：分享框開著、是這張圖、蓋滿視窗、視窗尺寸和網址都對；不對就整張重來（main 最多 3 次）
+SANE_JS = '''(function(k, W, H){var f=document.querySelector("#oc-fx");
+    if (!f || f.hidden || !f.classList.contains("on")) return "分享框沒開";
+    if (!f.querySelector('#oc-olF[data-ck="' + k + '"]')) return "分享框裡不是這張圖";
+    if (innerWidth !== W || innerHeight !== H || devicePixelRatio !== 2) return "視窗 " + innerWidth + "x" + innerHeight + " @" + devicePixelRatio;
+    var r = f.getBoundingClientRect(); if (r.left > 2 || r.top > 2 || r.width < W - 4 || r.height < H - 4) return "分享框沒蓋滿視窗";
+    var q = new URLSearchParams(location.search); if (!q.has("share") || q.get("k") !== k) return "網址不是這張圖的分享模式";
+    return "";})(%s, %d, %d)'''
+
+
+def shoot_share(ws, view, k, it, geo=None):
+    """分享模式：視窗設成 16:9（1600×900）或 4:5（1080×1350），開 index.html?share&k=…，整個畫面就是那張圖。回傳 (png, 尺寸說明) 或 (None, 原因)。
+    geo 給一個 dict 就填進座標資料（dpr、尺寸、it['xy'] 換出來的座標），給 <out>.json／annotate.py 用；site_cards.py 不用帶"""
     r45 = it.get('view') == 'share45'; W, H = (1080, int(it.get('h') or 1350)) if r45 else (1600, 900)   # h：4:5 模式的視窗高度（site_cards.py 要在上面加標題，留出那一段）
     ws.call('Emulation.setDeviceMetricsOverride', width=W, height=H, deviceScaleFactor=2, mobile=False)
     try:
@@ -94,10 +110,19 @@ def shoot_share(ws, view, k, it):
         if not S.wait(ws, f'(function(){{var e=document.querySelector({q}); return !!(e && e.querySelector("svg,canvas,.rl") && (!document.fonts || document.fonts.status==="loaded"));}})()', 20): return None, '分享模式的圖沒畫出來'
         if 'd3' in it and not S.wait(ws, '!!(window.__d3 && window.__d3.ready)', 20): return None, '立體檢視沒畫出來（__d3.ready 一直是 false）'
         time.sleep(1.2)
+        if ws.js(f'{STAGE_RE}.test((document.querySelector("#oc-fx")||document.body).innerText)'): return None, '畫面上有階段標籤（…・持有／· hold），動作結論不進社群配圖'
+        xy = []
+        for d, v, *pane in it.get('xy') or []:   # 圖代號、日期、數值 → 視窗座標（分享模式整個視窗就是截圖，不用再位移）
+            r = ws.js(f'(function(){{var r=window.daybreakXY({json.dumps(k)}, {json.dumps(d)}, {json.dumps(v)}, {json.dumps((pane or [""])[0] or None)}); return r ? {{x:r.x, y:r.y, t0:r.t0, t1:r.t1, lo:r.lo, hi:r.hi}} : null;}})()')
+            if not r or r.get('x') is None or r.get('y') is None: return None, f'daybreakXY 換不出座標：{d} {v} {pane}（日期超出圖的範圍？上格價格要帶 "p"）'
+            xy.append(dict(d=d, v=v, pane=(pane or [''])[0], x=r['x'], y=r['y'], t0=r.get('t0'), t1=r.get('t1')))
+        bad = ws.js(SANE_JS % (json.dumps(k), W, H))
+        if bad: return None, f'截圖前檢查沒過：{bad}'
         r = ws.call('Page.captureScreenshot', format='png')
-        # 2026-11-16：截完再核對一次還停在這張圖（網址的 k 和放大檢視的 data-ck 都要對）。頁面中途被換掉就不交出這張，免得把別張圖或首頁當成配圖
-        same = ws.js(f'(function(){{var m=location.search.match(/[?&]k=([^&]+)/); return !!(m && decodeURIComponent(m[1])==={json.dumps(k)} && document.querySelector({q}));}})()')
-        if not same: return None, '截圖當下頁面已經不是這張圖（被別的程式切走？），這張不算'
+        # 2026-11-16（#186）：截完再核對一次還停在這張圖，頁面中途被換掉（例如除錯埠被別的程式佔走）就不交出這張；SANE_JS 同時核對網址的 k、放大檢視的 data-ck、視窗尺寸
+        bad = ws.js(SANE_JS % (json.dumps(k), W, H))
+        if bad: return None, f'截圖後檢查沒過：{bad}'
+        if geo is not None: geo.update(dpr=2, k=k, view=it.get('view'), w=W, h=H, xy=xy)
         return base64.b64decode(r['data']), f'{W} x {H}（分享模式 {"4:5" if r45 else "16:9"}）'
     finally:
         ws.call('Emulation.setDeviceMetricsOverride', **view); time.sleep(0.3)
@@ -120,9 +145,13 @@ def main():
             if c['na']: fail('這張卡片目前沒有資料'); continue
             if (fx or share) and not c['fx']: fail('這張卡片不能放大，改用 view=card'); continue
             if share:
-                png, why = shoot_share(ws, view, k, it)
+                for _ in range(3):
+                    geo = {}; png, why = shoot_share(ws, view, k, it, geo)
+                    if png is not None or '檢查沒過' not in why and '沒打開' not in why and '沒畫出來' not in why: break
+                    print('重試', name, why, file=sys.stderr); time.sleep(1)
                 if png is None: fail(why); continue
-                fn = os.path.join(out, name + '.png'); open(fn, 'wb').write(png); print('wrote', fn, why); continue
+                fn = os.path.join(out, name + '.png'); open(fn, 'wb').write(png); print('wrote', fn, why)
+                json.dump(geo, open(os.path.join(out, name + '.json'), 'w'), ensure_ascii=False); continue
             sel = open_card(ws, c, lang)
             if not sel: fail('切到分頁後找不到卡片'); continue
             if not S.settle(ws): print('注意：版面 10 秒內高度沒穩定，照樣往下', k, file=sys.stderr)
