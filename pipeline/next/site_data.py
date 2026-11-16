@@ -109,7 +109,30 @@ def build(L, N, E, dn):
     if X.get('conc') and _c5.get('in_profit') is not None:   # 2026-11-16 集中度改用 Bitview 的現成序列後多出來的讀數
         X['conc']['dz'] += '現價上下 5%% 內的幣裡，獲利的佔供給 %s、虧損的 %s；短期持有者自己的集中度是 %s、長期持有者 %s。走勢是 Bitview 每天一筆（2018 年起）。' % (_p1(_c5['in_profit']), _p1(_c5['in_loss']), _p1(_c5['sth']), _p1(_c5['lth']))
         X['conc']['de'] += ' Of the coins within 5%% of price, those in profit are %s of supply and those at a loss %s; short-term holders\' own concentration is %s and long-term holders\' %s. The history is one Bitview reading a day since 2018.' % (_p1(_c5['in_profit']), _p1(_c5['in_loss']), _p1(_c5['sth']), _p1(_c5['lth']))
-    if not L['flows'].get('etfcost'):
+    ec = L['flows'].get('etfcost') or {}
+    if len(ec.get('rows') or []) > 200:   # 2026-11-16 補上：原本只有「沒資料」時的佔位卡，有資料時這張圖反而不在（舊版有，運營回覆用過）。舊版停用前要先補齊
+        from say_data import own as _own2
+        e_md = lambda d_: '%d/%d' % (int(d_[5:7]), int(d_[8:10])); e_ym = lambda d_: d_.replace('-', '/'); e_p = lambda v: ('%.1f%%' % abs(v)); e_up = lambda v: '上方 ' + e_p(v) if v >= 0 else '下方 ' + e_p(v); e_ue = lambda v: e_p(v) + (' above' if v >= 0 else ' below')
+        e_fl = ec['flow30']; e_fz = ('流入 ' if e_fl >= 0 else '流出 ') + ('%.1f 億美元' % (abs(e_fl) / 100) if abs(e_fl) >= 100 else '%d 百萬美元' % abs(e_fl)); e_fe = ('inflow of ' if e_fl >= 0 else 'outflow of ') + ('$%.2fB' % (abs(e_fl) / 1000) if abs(e_fl) >= 1000 else '$%dM' % abs(e_fl))
+        X['etfcost'] = dict(k='etfcost', zh='ETF 持有者成本', en='ETF holder cost basis', hz='ETF 買家的平均成本（推算）', he='Average cost of ETF buyers (estimated)', one=1, f='usd0', hero=1, rows=[[r[0], r[1], r[2], r[3]] for r in ec['rows']],
+          ser=[ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.4), ser(2, zh='ETF 平均成本', en='ETF average cost', col='ac', w=2), ser(3, zh='持有（千顆）', en='Held (thousand BTC)', hide=1, f='n1')],
+          src='CoinMarketCap · ' + e_md(ec['date']), srce='CoinMarketCap · ' + e_md(ec['date']),
+          dz='美國現貨 ETF（不含 GBTC）的買家平均成本：每天的淨流量 ÷ 當天收盤＝那天買進或賣出的顆數，用平均成本法累計（流出依當時的平均成本移出）。GBTC 轉換成 ETF 前就持有約 62 萬顆，那些幣的成本不是流量買出來的，所以不算。'
+             'ETF 流量晚一天公布，所以成本線停在前一個交易日。這是推算，不是 ETF 自己公布的數字，也不是支撐位。只作讀值。',
+          de='The average cost of US spot ETF buyers (excluding GBTC): each day\'s net flow divided by that day\'s close gives the BTC bought or sold, accumulated with the average-cost method (outflows leave at the average cost at the time). GBTC held about 620K BTC before it converted to an ETF; that cost was not bought through flows, so it is left out. '
+             'ETF flows are published a day late, so the cost line stops at the previous trading day. This is an estimate, not a figure the ETFs publish, and it is not support. A reading only.')
+        X['etfcost']['say'] = _own2([
+            ('ETF 平均成本', 'ETF average cost', usd(ec['cost']), usd(ec['cost']), 'warn' if ec['gap_now'] < 0 else 'neu',
+             '截至 %s，不含 GBTC 的現貨 ETF 買家平均成本 %s。%s 收盤 %s，在它的%s%s。' % (e_md(ec['date']), usd(ec['cost']), e_md(ec['px_date']), usd(ec['px_now']), e_up(ec['gap_now']), '，連續 %d 個交易日收在下面' % ec['run'] if ec['run'] else ''),
+             'As of %s, the average cost of spot ETF buyers excluding GBTC is %s. The %s close of %s is %s it%s.' % (ec['date'][5:], usd(ec['cost']), ec['px_date'][5:], usd(ec['px_now']), e_ue(ec['gap_now']), ', the %d%s trading day below' % (ec['run'], 'th' if ec['run'] > 3 else ['', 'st', 'nd', 'rd'][ec['run']]) if ec['run'] else '')),
+            ('上市以來收在成本下', 'Days below cost since launch', '%d／%d 天' % (ec['days_below'], ec['n_days']), '%d of %d days' % (ec['days_below'], ec['n_days']), 'neu',
+             '%s 以來 %d 個交易日裡，%d 天收在成本下面，價格穿越成本線 %d 次，最近一次是 %s。最深是 %s，低 %s。' % (e_ym(ec['since']), ec['n_days'], ec['days_below'], ec['n_cross'], e_ym(ec['last_cross']) if ec.get('last_cross') else '—', e_ym(ec['min_date']), e_p(ec['min_gap'])),
+             'Since %s, %d of %d trading days closed below cost, and price crossed the cost line %d times, most recently on %s. The deepest was %s, %s below.' % (ec['since'], ec['days_below'], ec['n_days'], ec['n_cross'], ec.get('last_cross') or '—', ec['min_date'], e_p(ec['min_gap']))),
+            ('近 30 天淨流量', '30-day net flow', e_fz, e_fe, 'warn' if e_fl < 0 else 'neu',
+             '不含 GBTC 的現貨 ETF 近 30 天淨%s；這些 ETF 合計持有約 %s 萬顆（推算，不含 GBTC 原本的 62 萬顆）。' % (e_fz, '%.0f' % (ec['held'] / 1e4)),
+             'Spot ETFs excluding GBTC saw a net %s over 30 days; together they hold about %sK BTC (estimated, excluding GBTC\'s original 620K).' % (e_fe, '{:,}'.format(round(ec['held'] / 1e3))))],
+            '收盤在 ETF 買家平均成本 %s 的%s。' % (usd(ec['cost']), e_up(ec['gap_now'])), 'The close is %s the ETF buyers\' average cost of %s.' % (e_ue(ec['gap_now']), usd(ec['cost'])))
+    if not ec.get('rows'):
         err = [e for e in (L.get('meta', {}).get('errors') or []) if 'etfcost' in str(e)]
         X['etfcost'] = dict(k='etfcost', zh='ETF 持有者成本', en='ETF holder cost basis', na=dict(zh='今天沒有資料。' + ('來源（The Block）回傳 410，表示這份資料已經下架，需要換來源。' if err and '410' in str(err[0]) else '來源沒有回應。') + '這張圖用每天的 ETF 淨流量乘上當天收盤，估計 ETF 買家的平均成本。', en='No data today: the source (The Block) returned 410, meaning the feed has been withdrawn and needs replacing. This chart estimates the average cost of ETF buyers from daily net flows times each day\'s close.'))
     # ── 價位 › 籌碼在哪（分布型：橫條掛在直的價格軸上）──
