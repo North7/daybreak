@@ -287,6 +287,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-16** 舊版網站（classic.html）對外下線：部署時不再上傳舊版頁面、舊版程式（`assets/app.js`、`app.css`、`i18n-en.js`）和舊版資料檔（`data/site.json`、`site.prev.json`），`/classic` 轉回首頁。舊網址（`#onchain/sthsig` 這種）由首頁轉到新版對應的那張圖（`?k=`）；對照表 `D.old` 由 `pipeline/next/build.py` 從舊版面板和讀數對照表產生，196 個舊代號裡 163 個對得到新版的圖，其他的轉到對應的那一頁（規則 ㉝）。倉庫裡的舊版照舊保留：新版有 78 張卡的白話讀數每天從它抽出來（`extract_interp.py`），運營的推薦圖表、回覆卡片工具也還在截它。
 - **2026-11-16** 手機載入速度（模擬慢速手機：處理器慢 4 倍、1.6 Mbps）：第一個畫面 2.4 → 0.9 秒、主要內容 5.2 → 2.3 秒，一次造訪的下載量 1.7 MB → 0.6 MB。做了四件事：
   - 字型：思源黑體四個字重本來就共用同一批檔案，網址改寫成字重範圍，擋住第一個畫面的字型樣式表從 136 KB 降到 35 KB；下載的字型檔不變。
   - 背景預載：手機（或慢網路）只先抓目前這一頁的前後兩頁，換頁時再抓新的前後兩頁，手指按到分頁鈕時先抓那一頁；電腦照舊全部抓；省流量模式完全不抓。
@@ -703,6 +704,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-16** The old site (classic.html) is off the public site: deploys no longer upload the old page, its script (`assets/app.js`, `app.css`, `i18n-en.js`) or its data file (`data/site.json`, `site.prev.json`), and `/classic` redirects to the homepage. Old links (`#onchain/sthsig` and the like) are sent by the homepage to the matching new chart (`?k=`); the map `D.old` is built by `pipeline/next/build.py` from the old panels and the readings map, with 163 of 196 old codes matching a new chart and the rest going to the matching page (rule ㉝). The old site stays in the repo: 78 new cards still take their plain-language readings from it each day (`extract_interp.py`), and the ops recommended-chart and reply-card tools still capture it.
 - **2026-11-16** Phone load speed (simulated slow phone: 4× slower CPU, 1.6 Mbps): first paint 2.4 → 0.9 s, main content 5.2 → 2.3 s, data per visit 1.7 MB → 0.6 MB. Four changes:
   - Fonts: Noto Sans TC's four weights were already one set of files, so the URL now asks for a weight range; the render-blocking font stylesheet drops from 136 KB to 35 KB, with the same font files.
   - Background prefetch: phones (or slow connections) fetch only the pages either side of the current one, then the new neighbours on each page change, and a page as soon as its tab is touched; desktops still fetch everything; Save-Data fetches nothing.
