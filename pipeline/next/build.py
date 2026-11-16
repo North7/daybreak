@@ -1,20 +1,15 @@
 # -*- coding: utf-8 -*-
-"""新版首頁（2026-11-11 起取代舊版，舊版搬到 classic.html）的建置：
-1. 先用無頭 Chrome 跑舊版 classic.html，抽出每個面板的白話讀值（extract_interp.py → interp.zh.json／interp.en.json；失敗就沿用上一次的檔案）。
-2. 從 data/latest.json、data/notes*.json 組出每一頁、每張圖要用的資料（site_data.py 和各頁的 *_data.py）。
+"""首頁的建置（2026-11-11 起取代舊版；舊版 2026-11-17 從倉庫刪除，讀數全部由 reads.py 產生）：
+1. 從 data/latest.json、data/notes*.json 組出每一頁、每張圖要用的資料（site_data.py 和各頁的 *_data.py）。
 3. 寫 data/next.js（window.DAYBREAK_NEXT），並把 page.html 寫成倉庫根目錄的 index.html（只換資料檔的版本號）。
    2026-11-15 瘦身：卡片多的頁（週期、價位、賣壓、買盤、槓桿）的卡片另外寫成 data/next-<頁>.js，點到那一頁才載（頁面閒下來時也會先在背景載）。
    data/next.js 裡這幾頁只留每張卡的代號、名稱這些小欄位（ops/post/next_shot.py 的目錄照樣讀得到），和每頁的主圖（桌機分頁卡片上的小圖要用）。
-用法：python3 pipeline/next/build.py [--no-interp]
+用法：python3 pipeline/next/build.py（舊的 --no-interp 參數照收，不再有作用）
 每日資料流程（daily.yml）和日報推送後（share.yml）都會跑一次。"""
 import json, os, sys, datetime as dt, bisect
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 REPO = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', '..'))
 import subprocess, hashlib
-if '--no-interp' not in sys.argv:
-    for _a in ([], ['en']):
-        try: subprocess.run([sys.executable, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'extract_interp.py')] + _a, check=True, timeout=240)
-        except Exception as _e: print('extract_interp', _a, '失敗，沿用上一次的讀值：', _e)
 HERE = os.path.dirname(os.path.abspath(__file__))
 L = json.load(open(os.path.join(REPO, 'data', 'latest.json'), encoding='utf-8'))
 N = json.load(open(os.path.join(REPO, 'data', 'notes.json'), encoding='utf-8'))
@@ -78,15 +73,7 @@ print('say', say_data.attach(SITE['chapters'], L))
 # 2026-11-16 舊版（classic.html）對外下線：舊網址 #頁/代號 的「代號」是舊版的面板（pn-…）或圖（c-…），對到新版的圖代號，頁面讀到就轉過去（page.html ㉝）
 def _old_map():
     have = {c['k'] for ch in SITE['chapters'] for g in ch.get('groups') or [] for c in g.get('charts') or []}
-    Z = json.load(open(os.path.join(HERE, 'interp.zh.json'), encoding='utf-8')); out = {}
-    for pn in Z:
-        pid = pn['id'][3:] if pn['id'].startswith('pn-') else pn['id']; ks = [k for k in say_data.MAP.get(pid, []) if k in have]
-        if not ks: continue
-        for a in [pid] + list(pn.get('charts') or []): out.setdefault(a, ks[0])
-    for a, k in {'cbp': 'pr-us', 'cost': 'levels', 'oc-sth-sopr': 'sopr', 'oc-puell-multiple': 'p6v', 'stkrel': 'stk', 'sthband': 'sthgap', 'lthc': 'lthnet', 'cd': 'k20', 'ev-tmm': 'levels', 'ov-px': 'levels',
-                 'cycle-11': 'p6v', 'oc-mvrv-zscore': 'p6v', 'oc-nupl': 'p6v', 'oc-lth-mvrv-zscore': 'p6v', 'oc-supply-in-profit-pct': 'p6v', 'oc-lth-net-position-change-30d-btc': 'lthnet',
-                 'oc-asopr': 'soprf', 'oc-lth-sopr': 'soprf', 'oc-illiquid-supply': 'supliq', 'oc-highly-liquid-supply': 'supliq', 'flows-1': 'etf', 'deriv-1': 'vol', 'sim': 'x_sim', 'exit-1': 'x_now'}.items():   # 舊版的別名、改了名的、舊版的小圖併進新版某張圖的
-        if k in have: out[a] = k
+    out = {a: k for a, k in json.load(open(os.path.join(HERE, 'old.json'), encoding='utf-8')).items() if k in have}   # 2026-11-17 從舊版凍結的對照（舊面板、舊圖 id、別名 → 新版圖代號）
     for k in have: out.setdefault(k, k)   # 舊版和新版同名的
     return out
 OLD = _old_map(); print('old links', len(OLD))

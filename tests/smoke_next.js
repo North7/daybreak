@@ -1,4 +1,4 @@
-/* 新版首頁冒煙測試（2026-11-11，首頁 index.html 換成新版；舊版的測試是 tests/smoke.js，跑 classic.html）。
+/* 首頁冒煙測試（2026-11-11 首頁 index.html 換成新版；舊版 classic.html 和它的 tests/smoke.js 2026-11-17 已刪除）。
    中文／英文 × 桌面／手機：首頁要載得出來、七頁都切得過去而且每頁有卡片、不能有 JS 錯誤、不能橫向捲動；
    另外檢查舊網址（#onchain/sthsig 這種）會轉到新版對應的圖（2026-11-16 起，規則 ㉝），以及分享模式（?share&k=oih）。
    用法：先在倉庫根目錄起靜態伺服器（python3 -m http.server 8765），再執行 node tests/smoke_next.js。 */

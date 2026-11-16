@@ -1,16 +1,15 @@
 # 新版首頁（2026-11-11 上線）
 
-網站首頁 `index.html` 從這裡產生。舊版首頁搬到 `classic.html`，2026-11-16 起不再部署到網站（倉庫裡保留：每天抽讀數、運營截圖還在用）；舊版的網址（`/#onchain/sthsig` 這種）由首頁轉到新版對應的圖（`D.old`，規則 ㉝）。
+網站首頁 `index.html` 從這裡產生。舊版首頁 `classic.html` 2026-11-16 起不再部署，2026-11-17 從倉庫刪除（連同 `assets/app.js`、`app.css`、`i18n-en.js`、`data/site.json`）；舊版的網址（`/#onchain/sthsig` 這種）由首頁轉到新版對應的圖（`D.old`，規則 ㉝）。
 
 ## 怎麼產生
 
 ```
-python3 pipeline/next/build.py            # 完整：先抽舊版的白話讀值，再組資料
-python3 pipeline/next/build.py --no-interp # 只改版面時：沿用上一次的讀值，不開 Chrome
+python3 pipeline/next/build.py
 ```
 
-1. `extract_interp.py`：用無頭 Chrome 開 `classic.html`，把每個面板的白話讀值抽成 `interp.zh.json`／`interp.en.json`（新版每張圖的「結論」從這裡來）。失敗就沿用上一次提交的檔案。
-2. `build.py` 讀 `data/latest.json`、`data/notes.json`、`data/notes.en.json`，交給 `site_data.py` 和各頁的 `*_data.py`（今天、週期、價位、賣壓、買盤、槓桿、出場），`say_data.py` 把讀值接到每張圖。
+1. `build.py` 讀 `data/latest.json`、`data/notes.json`、`data/notes.en.json`，交給 `site_data.py` 和各頁的 `*_data.py`（今天、週期、價位、賣壓、買盤、槓桿、出場）。
+2. 讀數：`reads.py` 加上各頁的 `reads_buy.py`、`reads_cycle.py`、`reads_sell.py`、`reads_lv.py`、`reads_lev.py`（一句結論＋最多三條事實；「怎麼讀」凍結在 `how.json`，舊版沒有的在各模組的 `HOWX`）。`say_data.py` 掛當天的異動訊號（`sigmap.json`：訊號的舊圖 id → 新版代號）和資料來源（`src_lab.py`＋`src.json`，日期每天換成資料日）。舊網址對照在 `old.json`。這三個 JSON 是 2026-11-17 刪舊版前凍結的。
 3. 寫出 `data/next.js`（`window.DAYBREAK_NEXT` = 整包資料，約 2.3 MB）和根目錄的 `index.html`（＝`page.html`，只換 `data/next.js?v=` 的版本號）。
 
 ## 什麼時候會重建
@@ -55,7 +54,7 @@ python3 pipeline/next/build.py --no-interp # 只改版面時：沿用上一次�
 
 - 這裡的 `site_data.py` 和 `pipeline/site_data.py` 同名但無關；`build.py` 會先找這個資料夾裡的模組。
 - 數字格式只能用 `page.html` 裡 `FM` 有定義的（例如 `n1`、`n3`、`pct1`；沒有 `n2`），寫錯會整頁報錯。
-- 每日推薦圖表（`pipeline/picks.py`）和回覆卡片用 `ops/post/site_shot.py` 截舊版 `classic.html` 的面板。長文配圖從 2026-11-11 起改用 `ops/post/next_shot.py` 截這裡的新版卡片。
+- 每日推薦圖表（`pipeline/picks.py`）、回覆卡片、長文配圖都用 `ops/post/next_shot.py` 截這裡的新版卡片（`site_shot.py` 只剩共用的開瀏覽器、截圖流程）。
 - `next_shot.py` 靠下面這些掛點找卡片。改名或拿掉的話，它會報 ERROR、結束碼 1：
   - `data/next.js`：`site.chapters[].groups[].charts[]` 的 `k`、`id`、`zh`／`en`、`nofx`、`na`
   - 分頁：`#oc-crumb button[data-ch="N"]`

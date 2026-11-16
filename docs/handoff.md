@@ -2,7 +2,7 @@
 
 給接手「破曉 Daybreak」網站／管線工作的 Claude session。最後更新：2026-11-05（原 session：claude.ai/code 的「數據分析方案」）。
 
-> **2026-11-11 首頁換成新版**（`pipeline/next/`，說明見 `pipeline/next/README.md`）。舊版首頁搬到 `classic.html`：以下內容講的都是舊版，檔案和流程不變，只是網址從 `index.html` 變成 `classic.html`；舊網址 `/#page/key` 會轉過去。改舊版後的檢查照舊，另外多一支 `node tests/smoke_next.js` 測新版。
+> **2026-11-11 首頁換成新版**（`pipeline/next/`，說明見 `pipeline/next/README.md`）。舊版首頁 `classic.html` 2026-11-17 已從倉庫刪除（連同 `assets/app.js`、`app.css`、`i18n-en.js`、`data/site.json`、`tests/smoke.js`）：以下講 `assets/app.js` 的內容只剩歷史參考。現在的檢查是 `python3 pipeline/next/build.py` 加 `node tests/smoke_next.js`。
 
 ## 1. 專案是什麼
 
@@ -36,11 +36,9 @@
 ## 3. 改完要跑的檢查
 
 ```bash
-python3 pipeline/stamp_assets.py          # 改了 assets 一定要跑（換快取版本號）
-python3 pipeline/check_i18n.py            # 「不在翻譯函式裡的中文字串」必須是 0
+python3 pipeline/next/build.py            # 重建首頁和資料
 python3 -m http.server 8765 &             # 本機預覽
-BASE=http://localhost:8765/ node tests/smoke.js        # 中英 × 1280／390，十個版面 0 錯誤
-BASE=https://daybreak.aronlab.dev/ node tests/smoke.js   # 上線後再跑一次
+node tests/smoke_next.js                  # 新版各頁 × 中英 × 桌機／手機
 ```
 
 - Playwright 與 Chromium 已裝好（`require('playwright')`）；截圖看圖再交差，日刊、夜刊、手機（390px）都要看。

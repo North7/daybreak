@@ -17,7 +17,7 @@ image 範例：
   舊寫法（page＋sel）照樣能用：sel 會用 data/next.js 的 old 對照表自動換成新版代號（#c-sthband → sthgap）。
   對不到新版的（例如 #c-etfcost）、或帶了 pre／box 的（舊版才有的收合區），還是截舊版，並印「仍截舊版」；舊版從倉庫拿掉之前要把這些換掉。
   新版用網站的分享模式 4:5 截（next_shot.py 的 share45），上面加大標題，整張剛好 1080×1350；頁尾是網站自己的（Daybreak、網址、資料來源、日期）。
-  --classic：全部照舊截舊版（新版有問題時退回用）。
+  （2026-11-17 舊版 classic.html 已從倉庫刪除，--classic 退路拿掉了。）
 usage（倉庫根目錄）: python3 ops/replies/site_cards.py --fonts <字型資料夾> [--only 3,7]
 """
 import argparse, io, json, os, sys, time
@@ -158,21 +158,18 @@ def compose(png, title, lang, Fn, out, mobile=True):
 def main():
     ap = argparse.ArgumentParser(); ap.add_argument('--fonts', required=True); ap.add_argument('--only', default='')
     ap.add_argument('--desktop', action='store_true', help='用桌面寬度截（2026-11-08 前的做法）'); ap.add_argument('--out', default=OUT, help='輸出資料夾（試圖用）')
-    ap.add_argument('--classic', action='store_true', help='全部照舊截舊版 classic.html（新版有問題時退回用）')
     a = ap.parse_args()
     import share_card as SC
     Fn = SC.fonts(a.fonts); only = {int(x) for x in a.only.split(',') if x}
     rp = json.load(open(os.path.join(ROOT, 'data', 'replies.json'))); os.makedirs(OUT, exist_ok=True)
-    todo = {'zh': [], 'en': []}; new = {'zh': [], 'en': []}; meta = {}; old = {} if a.classic else old_map(); want = set()
+    todo = {'zh': [], 'en': []}; new = {'zh': [], 'en': []}; meta = {}; old = old_map(); want = set()
     for it in rp['items']:
         im = it.get('image') or {}
         if not im.get('site') or (only and it['n'] not in only): continue
-        lang = 'zh' if it['lang'] == 'zh' else 'en'; st = im['site']; k = None if a.classic else resolve(st, old); want.add(it['n'])
+        lang = 'zh' if it['lang'] == 'zh' else 'en'; st = im['site']; k = resolve(st, old); want.add(it['n'])
         if k: new[lang].append((it['n'], k, st, im['title']))
-        else:
-            if not a.classic: print('仍截舊版', it['n'], st.get('sel'), '（新版沒有對應的圖，或用了 pre／box）')
-            if not st.get('sel'): print('ERROR', it['n'], 'site 只有 k、沒有 sel，不能截舊版'); continue
-            todo[lang].append((it['n'], st))
+        else:   # 2026-11-17 舊版 classic.html 已刪除，沒有對應新版代號的不能截
+            print('ERROR', it['n'], st.get('sel') or st.get('k'), '新版沒有對應的圖（用 python3 ops/post/next_shot.py --list 查代號，寫成 {"k": …}）'); continue
         meta[it['n']] = (im['title'], lang)
     done = set()
     for lang, items in new.items():

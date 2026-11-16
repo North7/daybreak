@@ -5,7 +5,7 @@
   - 顏色和每日分享圖同一套深色「破曉漸層」（share_card.py 的 PAPER…，改那邊這裡會跟著變），右下角是放大的 logo（地平線上的日出）。
   - 品牌名中英文都只寫 DAYBREAK；副標列的是新版首頁的幾個分頁（週期、價位、賣壓、買盤、槓桿），不寫出場框架（X 上只放資訊）。
   - X 會把標題疊在圖的左下角，所以左下 150px 不放字。
-  - 改了圖要把 index.html／classic.html 裡 og:image 後面的 ?v= 換掉，X 才會重抓。
+  - 改了圖要把 pipeline/next/page.html 裡 og:image 後面的 ?v= 換掉，X 才會重抓。
 字型與分享圖相同，由 --fonts 指定。用法：python3 pipeline/og_card.py --fonts <字型資料夾>"""
 import os, argparse
 from PIL import Image, ImageDraw
