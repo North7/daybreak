@@ -3,11 +3,12 @@
 規則（page.html ㉞-7，使用者照建議）：每張卡一句結論（40 字內）＋最多三條事實（每條 50 字內）＋收起的「怎麼讀」三行。
 數字都從 data/latest.json（L）讀；回測的統計在資料流程裡已經算好（collect.py、oc_extra.py 等），這裡只組句子。
 「怎麼讀這張圖」是固定說明，從舊版凍結在 how.json，不再每天從舊版抽。
-做好的頁在 PAGES 裡；say_data.attach 遇到 say['own'] 的卡片就不再掛舊版的讀數（資料來源、異動照舊）。只作讀值。"""
+做好的頁：買盤（reads_buy）、週期（reads_cycle）；say_data.attach 遇到 say['own'] 的卡片就不再掛舊版的讀數（資料來源、異動照舊）。只作讀值。"""
 import json, os, datetime as dt
 HERE = os.path.dirname(os.path.abspath(__file__))
 HOW = json.load(open(os.path.join(HERE, 'how.json'), encoding='utf-8')) if os.path.exists(os.path.join(HERE, 'how.json')) else {}
 M = '−'
+HOWX = {}   # 各頁模組補的「怎麼讀」（舊版沒有的卡片）
 def sg(v, d=1):
     s = ('%.' + str(d) + 'f') % abs(v); return ('+' if v > 0 and float(s) else M if v < 0 and float(s) else '') + s
 def pc(v, d=1): return sg(v, d) + '%'
@@ -43,13 +44,15 @@ def say(k, sz, se, items):
     for q in items[:3]:
         hm, hme = heads(wz(q['dz']), q['de'])
         out.append(dict(kz=q['kz'], ke=q['ke'], vz=wz(q['vz']), ve=q['ve'], tone=q['tone'] if q['tone'] in ('up', 'down', 'warn') else 'neu', dz=wz(q['dz']), de=q['de'], cz=q['cz'], ce=q['ce'], view=q['view'], hm=hm, hme=hme))
-    h = HOW.get(k) or {}
+    h = HOW.get(k) or ({'hz': HOWX[k][0], 'he': HOWX[k][1]} if k in HOWX else {})
     return dict(items=out, sz=wz(sz), se=se, hz=list(h.get('hz') or []), he=list(h.get('he') or []), own=1)
 
 def apply(chapters, L):
     """把做好的頁的讀數掛到卡片上；某一張出錯就跳過那一張（照舊用舊版的），不影響其他"""
-    import reads_buy
-    F = dict(reads_buy.CARDS); X = {}
+    import reads_buy, reads_cycle
+    F = {}; X = {}
+    for m_ in (reads_buy, reads_cycle):
+        F.update(m_.CARDS); HOWX.update(getattr(m_, 'HOWX', {}))
     for ch in chapters:
         for g in ch['groups']:
             for c in g['charts']: X.setdefault(c['k'], c)
