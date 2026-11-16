@@ -603,6 +603,26 @@
    "sources": "CoinMetrics CapMVRVCur（community API，日線）：頂部後第 405 天 2013 輪 0.71、2017 輪 0.80、2021 輪 0.84；首次跌破 1 分別在頂部後 304、337、217 天。這輪（2025-10-06 頂）11/15 為 1.214，頂部後最低 2026-06-30 的 1.103。Daybreak cycle.cm（11/14）：MVRV 1.188、實現價格 53,730；11/15 收 65,189，距 53,730 約 −17.6%",
    "image": null,
    "note": "接話（我們引用蓝狐那則底下，to 2122227432082268185）。他回關我們、9.2K 粉不配圖。他的 13 天應是指月線收盤，我們沒有那條趨勢線不碰，只補 MVRV 這個他提到的角度"
+  },
+  {
+   "n": 29,
+   "order": 29,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/_bitview_/status/2122235620076478480",
+   "id": "2122235620076478480",
+   "author": "_bitview_",
+   "name": "Bitview",
+   "followers": 634,
+   "posted": "2026-11-16T07:46:00Z",
+   "lang": "en",
+   "angle": "接話（Bitview 官方問我們）：承認混用、馬上全改 Bitview，推算部分等他的 diff",
+   "style": "口語版",
+   "summary": "Bitview 官方（開發者 nym21 本人）在我們回 TradoorDub 那則底下問：為什麼現在用 CheckOnChain、之前用 Bitview，不兩邊都用 Bitview？CheckOnChain 本來就用 Bitview；「推算」沒必要，整個 UTXO set 和每個區塊的變化都拿得到；他要替 urpd 加 diff",
+   "reply": "Fair point, CheckOnChain was the first feed we wired for the live split and Bitview came later for the 30-day-ago side\nSwitching both to Bitview now\nThe estimate is only the flow (who sold vs who aged into LTH), diff support on urpd would let us drop it",
+   "sources": "daybreak pipeline/cohort_urpd.py：「現在」＝CheckOnChain coc.get_cohort（10/28 起），「約 30 天前」＝bitview.urpd_rows（11/04 起），flow＝IPF 推算。11/15 同日對照：STH 總量 CheckOnChain 3,869,959、Bitview 3,870,066，但分格差 44 萬顆（約 11%），例如 62K 格 39.9 萬 vs 46.3 萬",
+   "image": null,
+   "note": "接話：Bitview 官方第一次回我們（只關注 4 個帳號），使用者 11/16 同意網站「現在」也改 Bitview、CheckOnChain 留備援，回覆說馬上改。改好後再回他一則附新圖"
   }
  ]
 }
