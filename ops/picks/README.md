@@ -16,10 +16,10 @@
 | 時間 | 誰做 | 做什麼 | 產出 |
 |---|---|---|---|
 | 08:15 | Claude 每日任務（`docs/CLAUDE_DAILY.md` 步驟 9a） | `python3 pipeline/picks.py plan` 看候選面板 → 想讀者今天在問什麼 → 挑 1 張、寫問句標題與解說 → `python3 pipeline/picks.py check` | `data/picks.json` |
-| 推送後 | GitHub Actions `share.yml` | `python3 pipeline/picks.py render --fonts ~/fonts`：用 `ops/post/site_shot.py` 截網站深色原圖（clean 模式），上方加今日圖表標籤、期數和問句標題 | `data/picks/<id>.png`、`<id>-en.png`、`index.json`、`history.json` |
+| 推送後 | GitHub Actions `share.yml` | `python3 pipeline/picks.py render --fonts ~/fonts`：用 `ops/post/next_shot.py` 截新版首頁那張圖的分享模式（16:9，2026-11-16 起；之前截舊版 classic.html），上方加今日圖表標籤、期數和問句標題；分享模式自己有 Daybreak 頁尾和資料來源，圖卡不另畫頁尾 | `data/picks/<id>.png`、`<id>-en.png`、`index.json`、`history.json` |
 | 你 | 手機開發文小幫手 | 分享（圖＋解說）、存圖、複製解說；「網站這張圖」連到網站面板 | <https://daybreak.aronlab.dev/ops/post/> |
 
-- **候選面板**：`pipeline/picks.py` 的 `PANELS`（網站面板 id `#page/key`、截圖用的圖、讀值在 `latest.json` 的位置）。今天有異動的排前面，每張附異動的白話含意（`means`）、過去同樣情況（`hist`）和面板的讀值（`data`，新指標多半帶回測）。
+- **候選面板**：`pipeline/picks.py` 的 `PANELS`（面板 id `page/key` 沿用舊版的鍵、舊版的圖 id、讀值在 `latest.json` 的位置）。新版圖代號由 `data/next.js` 的 `old` 對照表自動換（舊網址轉新版也用這張表）；對不到、新版沒資料或不能放大的面板不推，列在 plan 的 `skip`（2026-11-16 起 62 個都對得到）。連結改成新版的 `?k=圖代號`。今天有異動的排前面，每張附異動的白話含意（`means`）、過去同樣情況（`hist`）和面板的讀值（`data`，新指標多半帶回測）。
 - **不重複**：最近 7 天推過的面板（`data/picks/history.json`，render 自動記）和長貼文用過的面板（`data/longposts.json` 每則的 `charts` 欄，寫長貼文時順手填）都不能挑。
 - **不推**（`SKIP_PANELS`）：MVRV ÷ 前一輪高點（0.75 線）、短期持有者獲利比例（97.5% 賣出線）、長期路徑（推估）、掛單簿（快照）、各到期未平倉。
 - **截圖失敗時**：有對應舊版圖的面板（成本線、籌碼、溢價、ETF、穩定幣、SOPR、實現損益、波動、資金流入）改畫第一版的簡化圖；沒有的就這天沒圖。
