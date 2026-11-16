@@ -21,7 +21,19 @@ import shutil
 CHROME = os.environ.get('CHROME') or next((c for c in ('/Applications/Google Chrome.app/Contents/MacOS/Google Chrome',) if os.path.exists(c)), None) \
     or shutil.which('google-chrome') or shutil.which('google-chrome-stable') or shutil.which('chromium') or shutil.which('chromium-browser') \
     or '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-PORT = 9333
+PORT = 9333   # Chrome 遠端除錯埠的首選；被佔用時 browser() 會改用系統給的空埠（見 debug_port）
+
+
+def debug_port():
+    """2026-11-16：兩個 session 同時截圖時都連到 9333 上的同一個 Chrome 分頁，互相把對方的頁面切走，截到別張圖或首頁。
+    9333 沒人用就用它，被佔了就跟系統要一個空的埠。"""
+    import socket
+    for want in (PORT, 0):
+        sk = socket.socket()
+        try: sk.bind(('127.0.0.1', want)); return sk.getsockname()[1]
+        except OSError: continue
+        finally: sk.close()
+    return PORT
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # 倉庫根目錄（本機的網站檔案）
 SITE = 'http://127.0.0.1:8790/classic.html'   # 2026-11-11 首頁換成新版，舊版（截圖用的面板都在這裡）搬到 classic.html
 
@@ -178,16 +190,17 @@ def browser(W, H=1000, dpr=2, mobile=False, theme='light', lang='zh'):
     """開本機網站伺服器與無頭 Chrome，設好視窗、深淺色、語言；yield (ws, view)。
     view 是 Emulation.setDeviceMetricsOverride 的參數，shoot() 加高視窗後用它還原。site_cards.py 也用這個（2026-11-10 抽出來共用）"""
     srv = serve(); prof = tempfile.mkdtemp(prefix='daybreak-chrome-')   # 暫存的 Chrome 設定檔，不寫進倉庫
-    p = subprocess.Popen([CHROME, '--headless=new', f'--remote-debugging-port={PORT}', f'--user-data-dir={prof}', '--hide-scrollbars'] + (['--no-sandbox'] if sys.platform.startswith('linux') else []) + [
+    port = debug_port()
+    p = subprocess.Popen([CHROME, '--headless=new', f'--remote-debugging-port={port}', f'--user-data-dir={prof}', '--hide-scrollbars'] + (['--no-sandbox'] if sys.platform.startswith('linux') else []) + [
                           '--no-first-run', '--no-default-browser-check', f'--window-size={W},{H}', 'about:blank'],
                          stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     try:
         # 2026-11-09：GitHub Actions 上 Chrome 第一次啟動有時超過 10 秒，中文圖排第一個就截不到（tg 沒值）；等到 30 秒，等不到就講清楚
         tg = None
         for _ in range(150):
-            try: tg = json.load(urllib.request.urlopen(f'http://127.0.0.1:{PORT}/json')); break
+            try: tg = json.load(urllib.request.urlopen(f'http://127.0.0.1:{port}/json')); break
             except Exception: time.sleep(0.2)
-        if tg is None: raise RuntimeError(f'Chrome 30 秒內沒開好 remote debugging（port {PORT}）')
+        if tg is None: raise RuntimeError(f'Chrome 30 秒內沒開好 remote debugging（port {port}）')
         ws = WS(next(t for t in tg if t['type'] == 'page')['webSocketDebuggerUrl'])
         ws.call('Page.enable'); ws.call('Runtime.enable')
         view = dict(width=W, height=H, deviceScaleFactor=dpr, mobile=mobile)
