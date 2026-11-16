@@ -49,6 +49,20 @@ def build(L, N, E, dn):
       ser=[ser(1, zh='獲利比例', en='In profit', col='c4', fill=1)], refs=[dict(v=50, col='k2'), dict(v=97.5, col='dn', zh='97.5% 賣出線', en='97.5% sell line')], zones=[dict(lo=97.5, hi=100, col='dn', zh='高於 97.5% 賣出線', en='Above the 97.5% sell line', nz='97.5% 賣出線', ne='the 97.5% sell line')],
       leg=[['up', '週 K 收漲', 'Weekly candle up', 'box'], ['dn', '週 K 收跌', 'Weekly candle down', 'box']],
       dz='短期持有者手上的幣，有多少比例現在是賺的。上格是 BTC 週 K（對數刻度）。', de='The share of short-term holder coins currently in profit. Top pane: BTC weekly candles (log scale).')
+    # 2026-11-16 使用者看了一張外面的圖（價格線照短期持有者獲利比例上色）後要求加的第二個檢視。比例取近 5 天的平均（資料每 2 天一點，取 3 點），顏色用全站的熱度色階
+    try:
+        _pp = {r[0]: r[1] for r in ch.get('conc_hist') or []}; _pr = ch['viz']['profit']; _hr = []
+        for _i, _r in enumerate(_pr):
+            _d = next((_k for _k in (_r[0], _r[0] - 1, _r[0] - 2, _r[0] - 3) if _k in _pp), None); _w = [x[1] for x in _pr[max(0, _i - 2):_i + 1] if x[1] is not None]
+            if _d is not None and _w and _i >= 2: _hr.append([_r[0], _pp[_d], round(sum(_w) / len(_w), 1)])
+        if len(_hr) > 300 and _hr[-1][0] == _pr[-1][0]:
+            c_profit['modes'] = [dict(mz='獲利比例', me='Share'),
+                dict(mz='塗在價格上', me='On the price', one=1, kw=0, dom=None, f='usd0', hero=1, hz='短期持有者獲利比例（5 日平均）', he='Short-term holders in profit (5-day average)', rows=_hr, refs=[], zones=[],
+                     ser=[ser(1, zh='BTC 價格', en='BTC price', t='ramp', rc=2, heat=1), ser(2, hide=1, f='p1')],
+                     leg=[['c3', '幾乎都在賠', 'Almost all at a loss', 'box'], ['up', '一半在賺', 'About half in profit', 'box'], ['ac', '幾乎都在賺', 'Almost all in profit', 'box']])]
+            c_profit['dz'] += '「塗在價格上」把同一個比例（近 5 天的平均）變成價格線的顏色：越暖代表越多短期持有者在賺，越冷代表越多在賠。趨勢行情裡可以連續好幾個月都是暖色，暖色不等於頂，冷色也不等於底。只作讀值。'
+            c_profit['de'] += ' "On the price" turns the same share (averaged over the last 5 days) into the colour of the price line: warmer means more short-term holders in profit, cooler more at a loss. In a trending market it can stay warm for months, so warm is not a top and cool is not a bottom. A reading only.'
+    except Exception as _e: print('profit heat view skipped', _e)
     av = o['aviv']
     c_aviv = dict(k='aviv', zh='價格 ÷ 真實市場均價', en='Price ÷ true market mean', f='x2', rows=av['rows'], p=1, log=1, ser=[ser(2, zh='AVIV', en='AVIV', col='ac', w=1.8)],
       zones=[dict(lo=None, hi=1, col='c4', zh='低於 1', en='Below 1', nz='1 以下', ne='below 1')], refs=[dict(v=1, col='c4')], leg=[['c4', '1 以下', 'Below 1', 'box']],

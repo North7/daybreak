@@ -698,6 +698,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .ol-lg i.dash { background: repeating-linear-gradient(90deg, var(--c) 0 4px, transparent 4px 7px); }
 .ol-lg i.ring { width: 8px; height: 8px; border-radius: 50%; background: none; border: 1.5px solid var(--c); }
 .ol-lg i.ramp { width: 22px; height: 3px; background: linear-gradient(90deg, var(--dn), var(--k2), var(--up)); }
+.ol-lg i.ramp.heat { background: linear-gradient(90deg, var(--c3), var(--c4), var(--up), var(--c5), var(--ac)); }   /* 熱度色階，和 heatCol 同一組 */
 .ol-lg b { color: var(--ink); font-weight: 500; font-variant-numeric: tabular-nums; margin-left: 2px; }
 @container (max-width: 560px) {
   .og, .ov { grid-template-columns: minmax(0, 1fr); gap: 10px; }
@@ -2836,7 +2837,9 @@ function initOC() {
         Object.keys(B).forEach(cc => { g += `<g fill="${cc}">${B[cc]}</g>`; });
         const z = atv(rows, col, null); ends.push([X(z[0]), Y(z[col]), heatCol(z[col]), 1, tg(q, z[col])]); dots.push({ c: col, Y, col: 'ink' }); return;
       }
-      if (q.t === 'ramp') { const B = ['', '', '', '', '', '', '', '', '']; for (let j = 1; j < rows.length; j++) { const r0 = rows[j - 1], r1 = rows[j]; if (r1[col] == null || r0[col] == null) continue; const n = Math.max(0, Math.min(8, Math.round((r1[q.rc] || 0) / q.clip * 4) + 4)); B[n] += `M${F1(X(r0[0]))},${F1(Y(r0[col]))}L${F1(X(r1[0]))},${F1(Y(r1[col]))}`; } B.forEach((d, n) => { if (d) g += `<path d="${d}" fill="none" stroke="${RAMP(n)}" stroke-width="2.3" stroke-linecap="round"/>`; }); const z = atv(rows, col, null), nz = Math.max(0, Math.min(8, Math.round((z[q.rc] || 0) / q.clip * 4) + 4)); ends.push([X(z[0]), Y(z[col]), RAMP(nz), 1, tg(q, z[col])]); dots.push({ c: col, Y }); return; }
+      if (q.t === 'ramp') { const B = {}, rcol = v => q.heat ? heatCol(v) : RAMP(Math.max(0, Math.min(8, Math.round((v || 0) / q.clip * 4) + 4)));   /* 價格線照另一欄上色：預設以 0 為中心（紅、灰、綠，clip 是兩端）；heat＝1 時那一欄是 0–100，用全站的熱度色階（2026-11-16，短期持有者獲利比例的第二個檢視） */
+        for (let j = 1; j < rows.length; j++) { const r0 = rows[j - 1], r1 = rows[j]; if (r1[col] == null || r0[col] == null || (q.heat && r1[q.rc] == null)) continue; const cc = rcol(r1[q.rc]); B[cc] = (B[cc] || '') + `M${F1(X(r0[0]))},${F1(Y(r0[col]))}L${F1(X(r1[0]))},${F1(Y(r1[col]))}`; }
+        Object.keys(B).forEach(cc => { g += `<path d="${B[cc]}" fill="none" stroke="${cc}" stroke-width="2.3" stroke-linecap="round"/>`; }); const z = atv(rows, col, null); ends.push([X(z[0]), Y(z[col]), rcol(z[q.rc]), 1, tg(q, z[col])]); dots.push({ c: col, Y }); return; }
       const d = pth(rows, col, X, Y);
       if (q.t === 'sign' || q.t === 'split') {
         const yz = cl(Y(q.base || 0)), ca = id + 'a' + i, cb = id + 'b' + i, h1 = q.hi || 'up', l1 = q.lo || 'dn'; defs += `<clipPath id="${ca}"><rect x="0" y="${y1 - 3}" width="${pw}" height="${F1(yz - y1 + 3)}"/></clipPath><clipPath id="${cb}"><rect x="0" y="${F1(yz)}" width="${pw}" height="${F1(yb - yz + 3)}"/></clipPath>`;
@@ -2875,7 +2878,7 @@ function initOC() {
     const add = (kind, c1, c2, label, get) => { const idv = get ? `oc-l${k}-${n++}` : ''; L.push({ html: `<span>${sw(kind, c1, c2)}${esc(label)}${get ? `<b id="${idv}"></b>` : ''}</span>`, id: idv, get }); };
     if (!s.one) add(s.kw ? 'box' : 'line', 'k2', s.kw ? 'k2' : null, s.kw ? (s.kwr ? T('BTC 月 K', 'BTC monthly') : T('BTC 週 K', 'BTC weekly')) : T('BTC 價格', 'BTC price'), day => fm('usd0', pxAt(s, day)));
     (s.top || []).forEach(q => add('line', q.col, null, T(q.zh, q.en), day => fm('usd0', atv(s.rows, q.c, day)[q.c])));
-    s.ser.forEach(q => { if (q.hide) return; const t2 = two(q) || q.t === 'cand', kind = q.t === 'bar' || q.t === 'cand' ? 'box' : q.t === 'ramp' ? 'ramp' : q.dash ? 'dash' : 'line'; add(kind, t2 ? (q.hi || 'up') : q.nb != null ? 'up' : q.col, t2 ? (q.lo || 'dn') : q.nb != null ? 'dn' : null, T(q.zh, q.en), day => fm(q.f || s.f, atv(s.rows, q.c, day)[q.vc != null ? q.vc : q.c])); });
+    s.ser.forEach(q => { if (q.hide) return; const t2 = two(q) || q.t === 'cand', kind = q.t === 'bar' || q.t === 'cand' ? 'box' : q.t === 'ramp' ? (q.heat ? 'ramp heat' : 'ramp') : q.dash ? 'dash' : 'line'; add(kind, t2 ? (q.hi || 'up') : q.nb != null ? 'up' : q.col, t2 ? (q.lo || 'dn') : q.nb != null ? 'dn' : null, T(q.zh, q.en), day => fm(q.f || s.f, atv(s.rows, q.c, day)[q.vc != null ? q.vc : q.c])); });
     (s.leg || []).forEach(q => add(q[3] || 'box', q[0], null, T(q[1], q[2]), null));
     (s.zones || []).forEach(z => { if (z.zh && !(s.leg || []).some(q => q[0] === z.col && (q[3] || 'box') === 'box')) add('box', z.col, null, T(z.zh, z.en), null); });
     return L;
@@ -3087,6 +3090,7 @@ function initOC() {
       const S = Scene(box, c, key, ZS, function (S) {
         const cx = S.ctx, A = S.A, m = S.m, aF = cl(m * 2.4), a2 = cl(1 - m * 2.6), aS = cl(1 - (m - .3) * 4), small = S.W < 520, top = S.pit > 1.3, o = order(S), Yj = j => -A + 2 * A * j / (ny - 1), dy = 2 * A / (ny - 1), fog = fogger(S);
         const hw = 1 / (nx - 1) * lerp(.56, .9, m);          /* ㉛-3：柱子的半寬 */
+        const LW = small ? 2 : 2.6;          /* 切面線、選到那一根沿時間的頂線：白線的粗細（CSS px），底下都墊一條底色 */
         const zAt = (p, j) => GG[j][cl(Math.round((p - Q.p0) / Q.w - .5), 0, nx - 1)] / mx * ZS;
         const TL = [], TR = [], BL = [], BR = [];          /* 每一根柱子在每一週的四個角 */
         for (let j = 0; j < ny; j++) { const y = Yj(j), a = TL[j] = [], b = TR[j] = [], d = BL[j] = [], e = BR[j] = []; for (let i = 0; i < nx; i++) { const x = XI(i), z = GG[j][i] / mx * ZS; a.push(S.proj(x - hw, y, z)); b.push(S.proj(x + hw, y, z)); d.push(S.proj(x - hw, y, 0)); e.push(S.proj(x + hw, y, 0)); } }
@@ -3102,7 +3106,7 @@ function initOC() {
         fronts(cut, aS, m < .3);          /* 平面圖那一刀：攤開的前半段蓋在最上面，之後淡出，換成立體裡真正的位置 */
         const path = Q.px.map((p, j) => S.proj(XP(p), Yj(j), zAt(p, j) + .012));
         if (top) { let run = []; Q.px.forEach((p, j) => { if (inX(p)) run.push(path[j]); else { if (run.length > 1) line(cx, run, rgb(P.ink, .95), 1.6); run = []; } }); if (run.length > 1) line(cx, run, rgb(P.ink, .95), 1.6); }
-        if (cut !== last && m > .05) { const pr = []; for (let i = 0; i < nx; i++) pr.push(TL[cut][i], TR[cut][i]); line(cx, pr, rgb(P.ink, .95 * aF), top ? 1.6 : 1.2); }          /* ㉛-7 */
+        if (cut !== last && m > .05) { const pr = []; for (let i = 0; i < nx; i++) pr.push(TL[cut][i], TR[cut][i]); line(cx, pr, rgb(P.bg, .85 * aF), LW + 2.4); line(cx, pr, rgb(P.ink, .97 * aF), LW); }          /* ㉛-7；2026-11-16 加粗並墊一條底色（運營回報：1px 的白線壓在萊姆綠上看不到）。這條線畫在所有柱子上面，不會被前面的柱子擋住 */
         ticks(S, xt, yt, aF);
         const mid = (j, i) => [(TL[j][i][0] + TR[j][i][0]) / 2, (TL[j][i][1] + TR[j][i][1]) / 2], h = S.hov;
         /* 原圖標的最厚、最薄兩段（㉛-1）：在最新那一刀的底線下面畫一條同色的線，字標在那一段最高的柱子上 */
@@ -3110,7 +3114,7 @@ function initOC() {
         if (!top) HL.forEach((q, n) => { const a = S.proj(XP(Math.max(q[0], Q.p0)) - hw, Yj(last), 0), b = S.proj(XP(Math.min(q[1], Q.p0 + nx * Q.w)) - hw, Yj(last), 0), col = P[q[2]] || P.ink; line(cx, [[a[0], a[1] + 4], [b[0], b[1] + 4]], rgb(col), 2.5);
           const y0 = (small ? 22 : 7) + n * 16; cx.fillStyle = rgb(col); cx.fillRect(1, y0 - 2, 8, 3); label(S, T(q[3], q[4]), 15, y0, { px: small ? 10 : 11, al: 'left', col: rgb(P.ink), halo: false, fix: 1 }); });          /* 字固定在左上角，前面一小段同色的線對到柱子底下那一條 */
         if (h) {
-          if (m > .3) { const pr = []; for (let j = 0; j < ny; j++) pr.push(mid(j, h[0])); line(cx, pr, rgb(P.bg, .9), 3.2); line(cx, pr, rgb(P.ink), 1.4); }
+          if (m > .3) { const pr = []; for (let j = 0; j < ny; j++) pr.push(mid(j, h[0])); line(cx, pr, rgb(P.bg, .9), LW + 2.6); line(cx, pr, rgb(P.ink), LW); }
           ring(S, top ? [TL[h[1]][h[0]], TR[h[1]][h[0]], TR[Math.max(0, h[1] - 1)][h[0]], TL[Math.max(0, h[1] - 1)][h[0]]] : face(h[0], h[1])); S.pinXY = mid(h[1], h[0]);
         } else {
           if (!top && !HL.length) { const it = iTopOf(cut); note(S, mid(cut, it), T('最厚 ', 'Thickest ') + bt(GG[cut][it] * 100), { up: small ? 20 : 26, dx: 26 }); }
