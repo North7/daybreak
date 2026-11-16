@@ -206,13 +206,33 @@ def build(L, N, E, dn, X):
 
     for fn in (pullback, sx, agepl, soprf, miners, sthsig):
         c = fn(); X[c['k']] = c
+    # ── 2026-11-16 老幣移動（Bitview，pipeline/bv_more.py；使用者看過目錄盤點後決定做）──
+    od = ((L.get('onchain') or {}).get('bvx') or {}).get('old')
+    if od and len(od.get('rows') or []) > 200:
+        from say_data import own
+        bxd = L['onchain']['bvx']['date']; mdd = '%d/%d' % (int(bxd[5:7]), int(bxd[8:10])); n0 = lambda v: format(int(round(v)), ','); y1, y5 = od['y1'], od['y5']; yr0 = int(od['since'][:4])
+        om = lambda mz, me, a, b, hz, he: dict(mz=mz, me=me, hz=hz, he=he, f='btc0', p=1, log=1, hero=1, rows=[[r[0], r[1], r[a], r[b]] for r in od['rows']],
+                                               ser=[ser(2, zh='7 日平均', en='7-day average', col='c3', w=.9, op=.55), ser(3, zh='30 日平均', en='30-day average', col='ac', w=1.8)])   # 和 Dormancy 同一組顏色：細的藍紫是短平均，粗的橘是 30 日
+        X['oldc'] = dict(k='oldc', zh='老幣移動', en='Old coins on the move', modes=[om('1 年以上', 'Over 1 year', 2, 3, '放了 1 年以上的幣，每天移動', 'Coins held over 1 year, moved per day'), om('5 年以上', 'Over 5 years', 4, 5, '放了 5 年以上的幣，每天移動', 'Coins held over 5 years, moved per day')],
+          src='Bitview · ' + mdd, srce='Bitview · ' + mdd,
+          dz='放了 1 年以上、5 年以上沒動的幣，每天有多少顆在鏈上移動（7 日和 30 日平均）。Dormancy 是所有被花掉的幣的平均年紀，這張直接數老幣的顆數。老幣大量移動通常出現在漲勢後段，是長期持有者在出貨；但換錢包、交易所和託管機構整理冷錢包也會算進來，不等於賣出，單日的尖峰尤其要小心。逐筆 UTXO、沒有做實體調整。只作讀值。',
+          de='How many coins that had sat unmoved for over 1 year, and over 5 years, move on-chain each day (7-day and 30-day averages). Dormancy is the average age of all spent coins; this counts the old coins directly. Heavy movement of old coins has tended to come late in a rally, as long-term holders distribute; but wallet migrations and cold-wallet reshuffles by exchanges and custodians count too, so it is not the same as selling, and single-day spikes need particular care. Per UTXO, not entity-adjusted. A reading only.')
+        X['oldc']['say'] = own([
+            ('1 年以上', 'Over 1 year', n0(y1['a30']) + ' 顆／日', n0(y1['a30']) + ' BTC/day', 'warn' if y1['pct'] >= 85 else 'neu',
+             '放了 1 年以上的幣，近 30 天平均每天移動 %s 顆，在 %d 年以來的 %d 分位（中位數 %s 顆）；30 天前是 %s 顆。' % (n0(y1['a30']), yr0, y1['pct'], n0(y1['med']), n0(y1['a30_prev'])),
+             'Coins held over 1 year moved %s BTC a day on average over the last 30 days, the %dth percentile since %d (median %s); it was %s thirty days ago.' % (n0(y1['a30']), y1['pct'], yr0, n0(y1['med']), n0(y1['a30_prev']))),
+            ('5 年以上', 'Over 5 years', n0(y5['a30']) + ' 顆／日', n0(y5['a30']) + ' BTC/day', 'warn' if y5['pct'] >= 85 else 'neu',
+             '放了 5 年以上的幣，近 30 天平均每天移動 %s 顆，在 %d 年以來的 %d 分位（中位數 %s 顆）；30 天前是 %s 顆。歷史最高是 %s 的 %s 顆。' % (n0(y5['a30']), yr0, y5['pct'], n0(y5['med']), n0(y5['a30_prev']), y5['max_d'][:7].replace('-', '/'), n0(y5['max'])),
+             'Coins held over 5 years moved %s BTC a day on average over the last 30 days, the %dth percentile since %d (median %s); it was %s thirty days ago. The record is %s a day in %s.' % (n0(y5['a30']), y5['pct'], yr0, n0(y5['med']), n0(y5['a30_prev']), n0(y5['max']), y5['max_d'][:7]))],
+            '1 年以上的老幣每天移動 %s 顆（%d 分位），5 年以上的 %s 顆（%d 分位）。' % (n0(y1['a30']), y1['pct'], n0(y5['a30']), y5['pct']),
+            'Coins over 1 year old are moving at %s BTC a day (%dth percentile), coins over 5 years at %s (%dth percentile).' % (n0(y1['a30']), y1['pct'], n0(y5['a30']), y5['pct']))
     def old(k):   # 沿用的圖；萬一沒有，出一張「沒有資料」，不要整張消失
         return X[k] if X.get(k) else nodata(k, REUSE[k][0], REUSE[k][1], '今天沒有這張圖的資料。', 'No data for this chart today.')
     grp = lambda id_, zh, en, sz, se, keys: dict(id=id_, zh=zh, en=en, sz=sz, se=se, charts=[old(k) if k in REUSE else X[k] for k in keys])
     return [
         grp('sum', '總表', 'Summary', '五盞燈亮了幾盞，弱勢拖了多久', 'How many of the five lights are lit, and how long weakness has dragged on', ['pullback', 'sx']),
         grp('who', '誰套牢', 'Who is underwater', '最近買進的人有多少還在賺', 'How many recent buyers are still in profit', ['profit']),
-        grp('pnl', '賣的人賺還是賠', 'Are sellers in profit or at a loss', '賣出的人是獲利了結還是認賠，是哪一群人在賣', 'Whether sellers are taking profit or cutting losses, and which holders are selling', ['sopr', 'pnlr', 'sthsig', 'conf', 'npl', 'agepl', 'soprf']),
+        grp('pnl', '賣的人賺還是賠', 'Are sellers in profit or at a loss', '賣出的人是獲利了結還是認賠，是哪一群人在賣', 'Whether sellers are taking profit or cutting losses, and which holders are selling', [k_ for k_ in ['sopr', 'pnlr', 'sthsig', 'conf', 'npl', 'agepl', 'oldc', 'soprf'] if k_ != 'oldc' or 'oldc' in X]),
         grp('exh', '衰竭', 'Exhaustion', '賣壓在加大還是快耗盡', 'Is selling building up or running dry', ['rpl', 'rloss', 'ssr', 'sec', 'mom', 'lthrl']),
         grp('miners', '礦工', 'Miners', '礦工有沒有被迫關機、賣幣', 'Are miners being forced to switch off and sell', ['miners']),
     ]

@@ -807,14 +807,27 @@ try:
 except Exception as e: errors.append(f'conc5 {e}')
 # G4d-2. 2026-11-05 使用者要求（籌碼結構＋集中度）：集中度改用 Bitview 全體 URPD（log1000 分格，見 bitview.conc_rows），歷史 2018 起；
 #   取得當天值時取代上面 CheckOnChain 的算法（原值留在 pct_checkonchain 對照）；取不到時沿用上面的。只作讀值
+# G4d-1b. 2026-11-16 使用者要求（Bitview 目錄盤點後「四項都做」，見 bv_more.py）：損失地板、賺賠分布、老幣移動，和集中度的現成序列（supply_density）。
+#   約 36 次請求、一分鐘。失敗只記 errors：三張新圖由 build.py 沿用前一天的，集中度退回下面自己從 URPD 算的
+BVX = None
+try:
+    import bv_more
+    BVX = bv_more.build(LAST); R['bvx'] = dict({k_: v_ for k_, v_ in BVX.items() if k_ != 'dens'}, dens={k_: v_ for k_, v_ in BVX['dens'].items() if k_ != 'rows'})
+except Exception as e: errors.append(f'bv_more {e}')
 try:
     import bitview as _bvm
-    _cr, _c1 = _bvm.conc_rows(LAST)
+    try: _cr, _c1 = _bvm.conc_rows(LAST)
+    except Exception as e:
+        if not BVX: raise
+        _cr, _c1 = None, None; errors.append(f'conc urpd {e}')
     if _c1 and _c1['date'] == LAST:
         _old = (R.get('murphy_flow') or {}).get('conc5') or {}
         R.setdefault('murphy_flow', {})['conc5'] = dict(urpd_date=LAST, price=round(_c1['close']), lo=round(_c1['close'] * 0.95), hi=round(_c1['close'] * 1.05), btc=_c1['btc5'], supply=_c1['supply'],
                                                        pct=_c1['c5'], pct10=_c1['c10'], pct_checkonchain=_old.get('pct'), src='Bitview',
                                                        note='Bitview 全體 URPD（log1000 分格）裡最後一次移動在收盤 ±5% 內的幣 ÷ 全部供給；2026-11-05 起取代 CheckOnChain 算法；只作讀值')
+    if BVX:   # 2026-11-16 集中度的歷史改用 Bitview 的 supply_density（2018 起每天一筆；原本自己從 URPD 算、每 3 天一點）。兩者平均差 0.01 個百分點。
+        _cr = BVX['dens']['rows']; _dn = BVX['dens']   # 今天的 ±10%、顆數仍來自上面的 URPD；pct 改成和走勢同一個來源，原值留在 pct_urpd
+        if (R.get('murphy_flow') or {}).get('conc5'): R['murphy_flow']['conc5'].update(pct_urpd=R['murphy_flow']['conc5'].get('pct'), pct=_dn['cur'], in_profit=_dn['profit'], in_loss=_dn['loss'], sth=_dn['sth'], lth=_dn['lth'], src='Bitview')
     R['conc_long'] = [[r[0], round(r[1]), r[2]] for r in _cr]
     # 歷史上集中度高之後的波動：前 10%（2018 起的分位）的日子 vs 其他，之後 30 天的最大單向變動；以及每次首次衝上前 10%（回到中位數以下才重新計）後 30 天漲跌
     _P = (BV or {}).get('px') or {}; _v = sorted(r[2] for r in _cr); _q = lambda p_: _v[int((len(_v) - 1) * p_)]
