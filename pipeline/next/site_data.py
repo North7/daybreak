@@ -55,6 +55,11 @@ def build(L, N, E, dn):
     X['urpd'] = dict(k='urpd', zh='籌碼分布（URPD）', en='Supply distribution (URPD)', hz='現價這一格佔流通量', he='Share of supply in the current bucket',
       dist=dict(kind='one', step=uv['width'], rows=uv['band'], hl=hl, base='color-mix(in srgb, var(--c3) 45%, var(--k2))', unit='btc', leg=[['c4', '現價附近最厚的一段', 'Thickest stretch near price'], ['c5', '另一側最薄的一段', 'Thinnest stretch on the other side'], ['color-mix(in srgb, var(--c3) 45%, var(--k2))', '其餘（每 $2,000 一格）', 'The rest ($2,000 buckets)']]),
       hs=dict(v=u['cur_pct'], f='p2'), dz='每一格是最後一次在那個價位移動的幣。厚的地方是很多人的成本，價格到那裡容易停；薄的地方沒什麼人的成本，價格容易快速穿過。', de='Each bucket holds the coins that last moved at that price. Thick zones are where many holders\' costs sit and price tends to stall; thin zones have few and price tends to move through quickly.')
+    ut = (L.get('chips') or {}).get('urpd_terr')
+    if ut and ut.get('g') and len(ut['g']) >= 26:   # 籌碼地形（2026-11-16 使用者要求，規則見 page.html ㉛）：同一張卡多一個檢視，原本的圖是第一個、打開時還是它
+        X['urpd']['modes'] = [dict(mz='分布', me='Distribution'), dict(mz='地形', me='Terrain')]
+        X['urpd']['d3'] = dict(kind='terr', date=ut['date'], w=ut['w'], p0=ut['p0'], nb=ut['nb'], dates=ut['dates'], px=ut['px'], tot=ut['tot'], g=ut['g'], hl=hl,
+                               srcz='地形的資料是 Bitview（每週一筆、每 $2,000 一格），和「分布」那張圖來源不同，同一格會差 1% 上下。', srce='The terrain uses Bitview data (weekly, $2,000 buckets), a different source from the distribution view; the same bucket can differ by about 1%.')
     uc = (L.get('chips') or {}).get('urpd_chg')
     if uc and uc.get('rows'):   # 籌碼搬家（2026-11-12 使用者要求）：近 7 天哪些價位變厚、變薄；顏色是方向（變厚 up、變薄 dn）
         from say_data import own

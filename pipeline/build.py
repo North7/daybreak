@@ -103,6 +103,7 @@ json.dump(idx, open(idx_f, 'w'), ensure_ascii=False, indent=0)
 # 2026-10-15：籌碼集中度（現價 ±5%）每日走勢 [天數, 收盤, 佔流通 %]，只作讀值
 out['chips']['conc_hist'] = [[dn(x['date']), x['close'], x['conc5']] for x in idx if x.get('conc5') is not None]
 out['chips']['urpd_chg'] = td.get('urpd_chg')   # 2026-11-12 籌碼搬家（urpd_chg.py）
+out['chips']['urpd_terr'] = td.get('urpd_terr')   # 2026-11-16 籌碼地形（urpd_terr.py）
 if td.get('conc_long'): out['chips']['conc_hist'] = [[dn(r[0]), r[1], r[2]] for r in td['conc_long']]
 if td.get('conc_stats'): out['chips']['conc_stats'] = td['conc_stats']
 if td.get('stress'): out['chips']['stress'] = td['stress']   # 2026-11-07 賣壓累積與動能品質（本站自製，取代 11/05 的短期壓力分數）

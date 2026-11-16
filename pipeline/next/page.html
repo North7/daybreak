@@ -845,6 +845,14 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .fc .ol-lg { font-size: 11.5px; gap: 3px 14px; }
 .fc .ol-pr { display: flex; font-size: 11.5px; }
 .fc .ol-c { height: 290px; flex: none; }
+/* ㉛ 立體檢視：畫布鋪滿圖的那一格；提示框、角落的提示字疊在上面；圖下面是滑桿和一行資料說明 */
+.fc .ol-c.d3 { height: 340px; } .oc-fx .ol-c.d3 { min-height: 340px; }
+.ol-c.d3 canvas { position: absolute; inset: 0; width: 100%; height: 100%; display: block; touch-action: pan-y; cursor: grab; } .ol-c.d3 canvas:active { cursor: grabbing; }
+.d3-hint { position: absolute; right: 0; top: 0; font: 500 10px var(--f-mono); letter-spacing: .06em; color: var(--k2); pointer-events: none; }
+.d3-tip { position: absolute; z-index: 3; pointer-events: none; display: flex; flex-direction: column; gap: 1px; padding: 7px 10px; background: color-mix(in srgb, var(--bg) 92%, transparent); border: 1px solid color-mix(in srgb, var(--ink) 24%, transparent); border-radius: 6px; font: 500 11px/1.5 var(--f-mono); color: var(--k2); white-space: nowrap; }
+.d3-tip b { color: var(--ink); font-weight: 500; font-size: 12px; }
+.d3-sc { display: flex; align-items: center; gap: 10px; font: 500 10.5px var(--f-mono); color: var(--k2); margin-top: 8px; } .d3-sc input { flex: 1; min-width: 0; accent-color: var(--ac); } .d3-sc output { color: var(--ink); min-width: 13ch; text-align: right; white-space: nowrap; }
+.d3-n { margin: 6px 0 0; font-size: max(11px, 1cqw); line-height: 1.5; color: var(--k2); }
 .fc .ol-na { min-height: 240px; }
 .ol-t .md + .md { margin-left: 4px; }
 .fx-b { margin-left: auto; flex: none; font: 500 10.5px var(--f-mono); letter-spacing: .05em; color: var(--k2); background: none; border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); border-radius: 999px; padding: 3px 10px; cursor: pointer; transition: color .2s, border-color .2s; }
@@ -861,7 +869,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
   .oc-ch { position: relative; inset: auto; max-width: 100%; overflow-x: auto; scrollbar-width: none; margin-left: -10px; }   /* inset: auto 不能省：上面那個 860px 區塊留了 top: 40px，而 .oc-ch 後來變成 position: relative，701–860px 時整排會往下掉 40px、壓在第二層上面（2026-11-12 修） */
   .oc-hd { height: 700px; } .oc-hd .os { left: 4%; width: 92%; top: 46px; height: 636px; }
   .fg { grid-template-columns: minmax(0, 1fr); } .fs-h { flex-wrap: wrap; row-gap: 2px; } .fs-h h3 { font-size: 20px; } .fs-h .sub { flex-basis: 100%; order: 3; }
-  .fc { padding: 14px 14px 10px; } .fc .ol-c { height: 250px; }
+  .fc { padding: 14px 14px 10px; } .fc .ol-c { height: 250px; } .fc .ol-c.d3 { height: 300px; }
   .oc-fx .os { width: 96vw; height: 92vh; }
 }
 /* 圖名是標題，不是小字 */
@@ -1142,8 +1150,8 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .ol-ctl .more { appearance: none; border: 0; background: none; padding: 2px 0; font: 500 var(--t-note)/1.4 "Inter Tight", "Noto Sans TC", sans-serif; color: var(--k2); text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
 .ol-ctl .more:hover { color: var(--ink); }
 .fc .ol-lg { font-size: var(--t-note); gap: 3px 14px; }
-@container (min-width: 1000px) { .fc .ol-c { height: 360px; } }
-@container (min-width: 1500px) { .fc .ol-c { height: 430px; } }
+@container (min-width: 1000px) { .fc .ol-c { height: 360px; } .fc .ol-c.d3 { height: 420px; } }
+@container (min-width: 1500px) { .fc .ol-c { height: 430px; } .fc .ol-c.d3 { height: 480px; } }
 /* 圖進到畫面時由左到右出現：一片和底色相同的遮板往右滑開（只動位置，不重畫圖）；觀察器沒有回報的環境（例如縮圖）不放遮板 */
 @keyframes wipe { from { transform: scaleX(1); } to { transform: scaleX(0); } }
 .oc.io .fc .ol-c::after, .oc-fx .ol-c::after { content: ""; position: absolute; inset: -3px; background: var(--sheet); transform-origin: 100% 50%; transform: scaleX(0); pointer-events: none; z-index: 2; }
@@ -2884,6 +2892,180 @@ function initOC() {
   const dAt = (d, p) => d.step ? d.rows.find(r => p >= r[0] && p < r[0] + d.step) : d.rows.map(r => [Math.abs(r[0] - p), r]).sort((a, b) => a[0] - b[0]).filter(x => x[0] < p * .012).map(x => x[1])[0];
   const dSay = (d, p) => { const r = dAt(d, p), u = dU[d.unit]; if (!r) return T('這個價位沒有資料', 'Nothing at this price'); const at = '$' + n0(r[0]) + (d.step ? '–' + n0(r[0] + d.step) : '') + T('：', ': ');
     return at + (d.kind === 'stack' ? T('短期 ', 'STH ') + u(r[1]) + T('、長期 ', ', LTH ') + u(r[2]) : d.kind === 'split' ? T(d.la[0], d.la[1]) + ' ' + u(r[2]) + T('、', ', ') + T(d.lb[0], d.lb[1]) + ' ' + u(r[1]) : d.kind === 'side' ? T(r[1] === 'b' ? '買單 ' : '賣單 ', r[1] === 'b' ? 'bids ' : 'asks ') + u(r[2]) : d.kind === 'pos' ? T(r[0] >= ST.close ? '空單清算，相對量 ' : '多單清算，相對量 ', r[0] >= ST.close ? 'short liquidations, relative ' : 'long liquidations, relative ') + u(r[1]) : u(r[1]) + (d.now && r[2] != null ? T('，現在 ', ', now ') + n0(r[2]) + T(' 顆', ' BTC') : '')); };
+  /* ㉛ 立體檢視（2026-11-16，使用者：「有沒有哪些如果用3D的方式從三圍的角度去表達資訊會更好」→ 125 張圖裡只有籌碼分布和選擇權真的有第三個變數；
+     「3d和2d 需要可以互相切換，需要有變形過程，才能理解2d和3d資訊維度是怎麼契合的」「籌碼圖感覺大家更習慣細柱狀」「柱子點上去或者 hover 上去需要能看到當前柱子所代表」
+     「3d圖需要可以360度旋轉」「原本圖上的資訊不能少」；配色他選「萊姆＋橘」，放法他選「加在原本卡片上」）。
+     1 放法：是原本那張卡多一個檢視（c.modes 第二個），打開時還是原本的圖；原本的數字、結論、說明、圖例、來源都留在卡片上，地形檢視另外把原圖標的最厚、最薄兩段和收盤一起標出來。
+     2 三個角度：平面／立體／俯瞰。平面是一張真的平面圖（某一週的籌碼分布，每 $2,000 一根細柱，有直軸刻度）；立體是每一根柱子沿著時間往後拉，最前面是今天；俯瞰是從正上方看，等於熱力圖。
+     3 變形：三個量各自用彈簧（yaw 左右轉、pit 俯角、m 攤開的程度）。m＝0 時深度壓成 0、正對著看、沒有透視、放大成一般圖表的大小；m＝1 是立體。平面圖就是立體圖的其中一刀，所以中間每一格都是同一份資料。
+       柱子平面時細、中間留縫（半寬 .56），立體時變寬（.9），縫剩一條線，才不會碎成一堆薄片。第一次捲到看得見時自己站起來一次；在平面圖上左右拖一下也會站起來。減少動態時直接跳到位。
+     4 顏色：成本在當週價格下方用 up（萊姆）、上方用 dn（橘），和全站「綠是活著、橘是壓力」同一個意思；兩色交界就是價格走過的路。越高越亮（低處也留四成以上的色相，最高處往白提亮），
+       側面比頂面暗，離鏡頭越遠越往底色靠。不用光暈、不用漸層色帶。
+     5 轉一整圈：yaw 不設限。遠的先畫：看前後和左右哪個方向離鏡頭的差比較大，那個方向當外圈，兩個方向各自從遠排到近；刻度字放在地板靠近看的人的那兩條邊外面，跟著地板轉。放手後順著再滑一小段。
+       手機單指左右拖是轉、上下拖還是捲頁面（touch-action: pan-y）；電腦上下拖可以改俯角。
+     6 點選：每一格畫的時候把多邊形和它代表的（價位, 週）記下來，指標落在哪個多邊形就是哪一根（後畫的在上面，所以從後往前找）。電腦是滑鼠移上去，手機是點一下、再點同一根收起來。
+       提示框寫：價位範圍、幣數和佔全部的比例、哪一週和當時的價格、成本在價格上方還是下方。選到的那一根用白框（外面墊一圈底色），立體時再把它沿著時間的頂線描出來。
+     7 切一刀：圖下面的滑桿選平面圖看的是哪一週；立體時把那一週的輪廓描出來。
+     8 資料是 Bitview 每週一筆（pipeline/urpd_terr.py），和「分布」那張（CheckOnChain）來源不同，圖下面寫明。不用任何外部函式庫，canvas 2D 自己投影；一格約 9,400 個四邊形。 */
+  const D3 = (function () {
+    const TAU = Math.PI * 2, reg = {};
+    const hex = h => { h = h.trim(); if (h.length === 4) h = '#' + h[1] + h[1] + h[2] + h[2] + h[3] + h[3]; return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); };
+    const mix = (a, b, t) => [0, 1, 2].map(i => a[i] + (b[i] - a[i]) * t);
+    const rgb = (c, a) => a == null ? 'rgb(' + c.map(Math.round).join(',') + ')' : 'rgba(' + c.map(Math.round).join(',') + ',' + a + ')';
+    const cl = (v, a, b) => Math.max(a == null ? 0 : a, Math.min(b == null ? 1 : b, v)), lerp = (a, b, t) => a + (b - a) * t;
+    const usd = v => '$' + n0(v), kk = v => '$' + (v / 1000) + 'k', ymd = d => d.replace(/-/g, '/'), md = d => +d.slice(5, 7) + '/' + +d.slice(8, 10);
+    const bt = v => lang === 'en' ? (v >= 1e6 ? (v / 1e6).toFixed(2) + 'M BTC' : v >= 1e4 ? Math.round(v / 1e3) + 'K BTC' : n0(v) + ' BTC') : (v >= 1e4 ? (v / 1e4).toFixed(v >= 1e5 ? 0 : 1) + ' 萬顆' : n0(v) + ' 顆');
+    let P = {};          /* 目前主題的顏色（從頁面的 CSS 變數讀）；卡片的底是 sheet，所以這裡的 bg＝sheet、地板再深一點 */
+    const readPal = () => { const cs = getComputedStyle(el); ['ink', 'k2', 'ac', 'up', 'dn', 'c3', 'c4', 'c5'].forEach(k => { P[k] = hex(cs.getPropertyValue('--' + k)); }); P.bg = hex(cs.getPropertyValue('--sheet')); P.dark = P.bg[0] < 128; P.floor = mix(P.bg, P.ink, P.dark ? .05 : .045); };
+    const PRE = { flat: [0, 0, 0], ob: [-.5, .56, 1], top: [0, 1.5, 1] };
+    const MONO = '"Geist Mono", "JetBrains Mono", ui-monospace, Menlo, monospace';
+    const label = (S, t, x, y, o) => { o = o || {}; const c = S.ctx, a = o.a == null ? 1 : o.a; if (a <= .02) return; c.save(); c.globalAlpha = a; c.font = '500 ' + (o.px || 10.5) + 'px ' + MONO; c.textAlign = o.al || 'center'; c.textBaseline = 'middle';
+      if (o.halo !== false) { c.lineWidth = 3.5; c.strokeStyle = rgb(P.bg, .88); c.lineJoin = 'round'; c.strokeText(t, x, y); } c.fillStyle = o.col || rgb(P.k2); c.fillText(t, x, y); c.restore(); };
+    const poly = (c, Q) => { c.beginPath(); c.moveTo(Q[0][0], Q[0][1]); for (let i = 1; i < Q.length; i++) c.lineTo(Q[i][0], Q[i][1]); c.closePath(); };
+    const line = (c, Q, col, w, dash) => { c.beginPath(); Q.forEach((p, q) => q ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.strokeStyle = col; c.lineWidth = w; c.lineJoin = c.lineCap = 'round'; if (dash) c.setLineDash(dash); c.stroke(); if (dash) c.setLineDash([]); };
+    const quad = (c, Q, col) => { poly(c, Q); c.fillStyle = c.strokeStyle = rgb(col); c.lineWidth = .6; c.fill(); c.stroke(); };
+    const seq = (n, asc) => { const a = []; for (let k = 0; k < n; k++) a.push(asc ? k : n - 1 - k); return a; };
+    const LIGHT = (() => { const v = [-.45, .5, .74], n = Math.hypot(v[0], v[1], v[2]); return v.map(x => x / n); })();
+    const order = S => { const cy = Math.cos(S.yaw), sy = Math.sin(S.yaw); return { rows: Math.abs(cy) >= Math.abs(sy), xa: sy > 0, ya: cy > 0, cy, sy }; };          /* ㉛-5 */
+    const each2 = (o, I, J, fn) => { if (o.rows) J.forEach(j => I.forEach(i => fn(i, j))); else I.forEach(i => J.forEach(j => fn(i, j))); };
+    const fogger = S => { const A = S.A, d = [[-1, -A], [1, -A], [1, A], [-1, A]].map(p => S.proj(p[0], p[1], 0)[2]), d0 = Math.min.apply(null, d), d1 = Math.max.apply(null, d), k = .2 * cl((1.45 - S.pit) / .5) + .3 * cl(1 - S.pit / .5); return dep => d1 > d0 ? k * cl((dep - d0) / (d1 - d0)) : 0; };
+    function Scene(box, c, key, zref, draw, info) {
+      const cv = document.createElement('canvas'), tip = document.createElement('div'), hint = document.createElement('span'), ctx = cv.getContext('2d'); tip.className = 'd3-tip'; tip.hidden = true; hint.className = 'd3-hint';
+      cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', T(c.zh, c.en)); box.innerHTML = ''; box.appendChild(cv); box.appendChild(hint); box.appendChild(tip);
+      let W = 0, H = 0, raf = 0, need = true, last = 0, spring = false, cur = 'flat', sc2 = 1, sc3 = 1, hits = [], dead = false, ro = null, io = null;
+      const V = [0, 0, 0], TG = [0, 0, 0], VEL = [0, 0, 0], grp = () => { const ol = box.closest('.ol'); return ol ? ol.querySelectorAll('[data-d3v]') : []; };
+      const S = { ctx, cv, A: .82, hov: null, get W() { return W; }, get H() { return H; }, get yaw() { return V[0]; }, get pit() { return V[1]; }, get m() { return cl(V[2]); },
+        proj(x, y, z) { const m = Math.max(0, V[2]), mm = cl(m), cy = Math.cos(V[0]), sy = Math.sin(V[0]), ce = Math.cos(V[1]), se = Math.sin(V[1]); y *= m; z *= S.zk;
+          const xr = x * cy - y * sy, yr = x * sy + y * cy, dep = -yr * ce - z * se, sc = S.sc / (1 + dep * .11 * mm); return [S.cx + xr * sc, S.cy + (yr * se - z * ce) * sc, dep]; },
+        hit(pts, id) { hits.push(pts, id); },
+        dirty() { need = true; if (!raf && !dead) raf = requestAnimationFrame(tick); },
+        peek(y, p, m) { V[0] = TG[0] = y; V[1] = TG[1] = p; V[2] = TG[2] = m; spring = false; S.dirty(); },          /* 檢查用：停在變形途中的某一格 */
+        go(p, jump) { cur = c._d3v = p; setHov(null); for (let i = 0; i < 3; i++) TG[i] = PRE[p][i]; TG[0] += TAU * Math.round((V[0] - TG[0]) / TAU);
+          if (jump || reduce) { for (let i = 0; i < 3; i++) { V[i] = TG[i]; VEL[i] = 0; } spring = false; } else spring = true; mark(); S.dirty(); },
+        kill() { dead = true; if (raf) cancelAnimationFrame(raf); if (ro) ro.disconnect(); if (io) io.disconnect(); } };
+      const mark = () => { grp().forEach(b => b.setAttribute('aria-pressed', b.dataset.d3v === cur)); hint.textContent = cur === 'flat' ? T('拖一下就站起來', 'Drag to stand it up') : T('拖曳可以轉一整圈', 'Drag to spin all the way round'); };
+      function size() { const r = box.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1); if (r.width < 20 || r.height < 20) return; W = r.width; H = r.height; cv.width = Math.round(W * d); cv.height = Math.round(H * d); ctx.setTransform(d, 0, 0, d, 0, 0);
+        sc3 = Math.min(W / (W < 520 ? 3.15 : 3.0), H / 1.92); sc2 = (W - (W < 520 ? 70 : 120)) / 2; S.z2 = .62 * H / sc2 / zref; S.dirty(); }
+      function frame() { const mm = cl(V[2]), e = mm * mm * (3 - 2 * mm); S.sc = lerp(sc2, sc3, e); S.zk = lerp(S.z2, 1, e); S.cx = W / 2 + lerp(W < 520 ? 18 : 24, 0, e);
+        S.cy = lerp(H * .84, H * .5 + sc3 * (.17 * Math.cos(V[1]) + .2 * Math.max(0, 1 - V[1] / .4)), e); }
+      function tick(t) { raf = 0; if (dead) return; const dt = Math.min(.033, last ? (t - last) / 1000 : .016); last = t;
+        if (spring) { const K = 95, C = 14; let rest = true; for (let i = 0; i < 3; i++) { VEL[i] += (K * (TG[i] - V[i]) - C * VEL[i]) * dt; V[i] += VEL[i] * dt; if (Math.abs(TG[i] - V[i]) > .0008 || Math.abs(VEL[i]) > .004) rest = false; }
+          V[1] = cl(V[1], 0, 1.54); V[2] = cl(V[2], 0, 1.06); if (rest) { for (let i = 0; i < 3; i++) { V[i] = TG[i]; VEL[i] = 0; } spring = false; } need = true; }
+        if (need && W) { need = false; frame(); ctx.clearRect(0, 0, W, H); hits = []; const t0 = performance.now(); draw(S); S.ms = performance.now() - t0; }
+        if (spring) raf = requestAnimationFrame(tick); else last = 0; }
+      const inside = (Q, x, y) => { let k = false; for (let i = 0, j = Q.length - 1; i < Q.length; j = i++) { const a = Q[i], b = Q[j]; if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) k = !k; } return k; };
+      const pick = (x, y) => { for (let k = hits.length - 2; k >= 0; k -= 2) if (inside(hits[k], x, y)) return hits[k + 1]; return null; };
+      const same = (a, b) => a === b || (a && b && a.join() === b.join());
+      function setHov(id, x, y) { if (!id && !S.hov) return; const ch = !same(id, S.hov); S.hov = id; if (!id) tip.hidden = true; else { if (ch) tip.innerHTML = info(id); tip.hidden = false; const tw = tip.offsetWidth, th = tip.offsetHeight; tip.style.left = cl(x - tw / 2, 2, Math.max(2, W - tw - 2)) + 'px'; tip.style.top = (y - th - 16 < 2 ? y + 20 : y - th - 16) + 'px'; } if (ch) S.dirty(); }
+      S.pickAt = (x, y) => { const id = pick(x, y); setHov(id, x, y); return id; };
+      const loc = e => { const r = cv.getBoundingClientRect(); return [e.clientX - r.left, e.clientY - r.top]; };
+      let drag = null, lastMove = null;
+      cv.addEventListener('pointerdown', e => { drag = { x: e.clientX, y: e.clientY, yaw: V[0], pit: V[1], touch: e.pointerType === 'touch', live: cur !== 'flat', moved: false }; lastMove = null; try { cv.setPointerCapture(e.pointerId); } catch (_) {} });
+      cv.addEventListener('pointermove', e => { if (!drag) { if (e.pointerType === 'mouse') { const p = loc(e); setHov(pick(p[0], p[1]), p[0], p[1]); } return; }
+        const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (!drag.moved && Math.abs(dx) + Math.abs(dy) < 6) return;
+        if (!drag.live) { if (Math.abs(dx) > 8) { drag = null; S.go('ob'); } return; }          /* 在平面圖上拖：直接站起來（㉛-3） */
+        if (!drag.moved) { drag.moved = true; setHov(null); spring = false; VEL[0] = VEL[1] = VEL[2] = 0; V[2] = TG[2] = 1; }
+        const now = performance.now(); if (lastMove) drag.v = (e.clientX - lastMove[0]) * .0062 / Math.max(.008, (now - lastMove[1]) / 1000); lastMove = [e.clientX, now];
+        V[0] = drag.yaw + dx * .0062; if (!drag.touch) V[1] = cl(drag.pit + dy * .0055, .05, 1.52); TG[0] = V[0]; TG[1] = V[1]; cur = ''; mark(); S.dirty(); });
+      cv.addEventListener('pointerup', e => { const d = drag; drag = null; if (!d) return;
+        if (!d.moved) { const p = loc(e), id = pick(p[0], p[1]); setHov(d.touch && same(id, S.hov) ? null : id, p[0], p[1]); return; }
+        if (d.v && lastMove && performance.now() - lastMove[1] < 80 && !reduce) { TG[0] = V[0] + cl(d.v, -7, 7) * .22; VEL[0] = cl(d.v, -7, 7); spring = true; S.dirty(); } });
+      cv.addEventListener('pointercancel', () => { drag = null; }); cv.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse' && !drag) setHov(null); });
+      if (window.ResizeObserver) { ro = new ResizeObserver(size); ro.observe(box); }
+      size(); S.go(c._d3v || 'flat', 1);
+      if (!c._d3v || c._d3v === 'flat') { if (reduce) { if (!c._d3i) { c._d3i = 1; S.go('ob', 1); } }          /* 第一次看到：先停在平面圖，再自己站起來一次 */
+        else if (!c._d3i && window.IntersectionObserver) { io = new IntersectionObserver(en => { if (en[0].isIntersecting) { io.disconnect(); io = null; c._d3i = 1; setTimeout(() => { if (!dead && cur === 'flat' && !S.hov) S.go('ob'); }, 900); } }, { threshold: .5 }); io.observe(cv); } }
+      return S;
+    }
+    function floor(S, xt, yt, a) {
+      const c = S.ctx, A = S.A, q = [[-1, -A], [1, -A], [1, A], [-1, A]].map(p => S.proj(p[0], p[1], 0)), yE = Math.cos(S.yaw) >= 0 ? A : -A;
+      if (a > .01) { c.save(); c.globalAlpha = a; poly(c, q); c.fillStyle = rgb(P.floor); c.fill(); c.strokeStyle = rgb(P.ink, .16); c.lineWidth = 1; c.stroke();
+        c.strokeStyle = rgb(P.ink, .07); xt.forEach(t => { const p = S.proj(t[0], -A, 0), r = S.proj(t[0], A, 0); c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(r[0], r[1]); c.stroke(); });
+        yt.forEach(t => { const p = S.proj(-1, t[0], 0), r = S.proj(1, t[0], 0); c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(r[0], r[1]); c.stroke(); }); c.restore(); }
+      line(c, [S.proj(-1, yE, 0), S.proj(1, yE, 0)], rgb(P.ink, .3), 1);
+    }
+    function ticks(S, xt, yt, a) {
+      const A = S.A, yE = Math.cos(S.yaw) >= 0 ? A : -A, xE = Math.sin(S.yaw) > 0 ? 1 : -1, px = S.W < 520 ? 9.5 : 10.5;
+      const put = (p, q, t, gap, al, col) => { let dx = q[0] - p[0], dy = q[1] - p[1], n = Math.hypot(dx, dy); if (n < .5) { dx = 0; dy = 1; n = 1; } dx /= n; dy /= n; label(S, t, p[0] + dx * gap, p[1] + dy * gap, { px, a: al, col, al: dx > .35 ? 'left' : dx < -.35 ? 'right' : 'center' }); };
+      xt.forEach(t => put(S.proj(t[0], yE, 0), S.proj(t[0], yE * 1.15, 0), t[1], 13));
+      if (S.pit > .22) yt.forEach(t => put(S.proj(xE, t[0], 0), S.proj(xE * 1.1, t[0], 0), t[1], 9, a, t[2] ? rgb(P.ink) : null));
+    }
+    function vaxis(S, y, vals, a) { if (a <= .02) return; const c = S.ctx; c.save(); c.globalAlpha = a; vals.forEach(v => { const p = S.proj(-1, y, v[0]), q = S.proj(1, y, v[0]); line(c, [p, q], rgb(P.ink, .09), 1); label(S, v[1], p[0] - 6, p[1], { px: S.W < 520 ? 9.5 : 10.5, al: 'right', halo: false }); }); c.restore(); }
+    /* 圖上的標註：一個點、一條引線、一行字；字不超出畫面 */
+    const note = (S, p, t, o) => { o = o || {}; const c = S.ctx, a = o.a == null ? 1 : o.a; if (a <= .02) return; const px = S.W < 520 ? 10 : 11; c.font = '500 ' + px + 'px ' + MONO; const hw = c.measureText(t).width / 2 + 4, up = o.up == null ? 26 : o.up, x = cl(p[0] + (o.dx || 0), hw, Math.max(hw, S.W - hw)), y = Math.max(10, p[1] - up), col = o.col || P.ink;
+      c.save(); c.globalAlpha = a; line(c, [p, [x, y + 7]], rgb(col, .6), 1); c.beginPath(); c.arc(p[0], p[1], (o.r || 2.6) + 1.6, 0, TAU); c.fillStyle = rgb(P.bg); c.fill(); c.beginPath(); c.arc(p[0], p[1], o.r || 2.6, 0, TAU); c.fillStyle = rgb(col); c.fill(); c.restore();
+      label(S, t, x, y, { px, col: rgb(col), a }); };
+    const ring = (S, pts) => { const c = S.ctx; poly(c, pts); c.strokeStyle = rgb(P.bg); c.lineWidth = 3.4; c.lineJoin = 'round'; c.stroke(); c.strokeStyle = rgb(P.ink); c.lineWidth = 1.6; c.stroke(); };
+
+    /* ── 籌碼地形（c.d3.kind＝'terr'）── */
+    function terr(box, c, key) {
+      const Q = c.d3, nx = Q.nb, ny = Q.dates.length, GG = Q.g, last = ny - 1, mx = Math.max.apply(null, GG.map(r => Math.max.apply(null, r))), ZS = .5;
+      const XP = p => -1 + 2 * ((p - Q.p0) / Q.w - .5) / (nx - 1), XI = i => -1 + 2 * i / (nx - 1);
+      let cut = c._d3c != null && c._d3c <= last ? c._d3c : last;
+      const iTopOf = j => GG[j].indexOf(Math.max.apply(null, GG[j]));
+      let eat = null; for (let i = 0; i < nx; i++) for (let j = 0; j < ny - 8; j++) { const d = GG[j][i] - GG[last][i]; if (GG[j][i] > mx * .45 && (!eat || d > eat.d)) eat = { i, j, d, v: GG[j][i] }; }          /* 被吃掉最多的一道牆 */
+      const pNow = Q.px[last], side = (i, j) => { const lo = Q.p0 + i * Q.w, p = Q.px[j]; return p >= lo + Q.w ? -1 : p < lo ? 1 : 0; };
+      const hot = (i, j) => Q.p0 + (i + 1) * Q.w > (Q.px[j] + Q.px[Math.min(last, j + 1)]) / 2;
+      const ramp = (t, i, j) => { const hue = P[hot(i, j) ? 'dn' : 'up'], s = Math.pow(cl(t), .55), lo = mix(P.bg, hue, P.dark ? .44 : .3); return s < .6 ? mix(lo, hue, s / .6) : mix(hue, P.dark ? [255, 255, 255] : mix(hue, P.ink, .5), (s - .6) / .4 * (P.dark ? .4 : .3)); };
+      const wk = j => j === last ? T('最新 ', 'Latest ') + md(Q.dates[j]) : ymd(Q.dates[j]) + T(' 那一週', ' week');
+      const info = id => { const i = id[0], j = id[1], lo = Q.p0 + i * Q.w, v = GG[j][i] * 100, sd = side(i, j);
+        return '<b>' + usd(lo) + '–' + usd(lo + Q.w) + '</b><span>' + bt(v) + T(' · 佔全部的 ', ' · ') + (v / (Q.tot[j] * 100) * 100).toFixed(1) + '%' + T('', ' of supply') + '</span><span>' + wk(j) + T(' · 收盤 ', ' · close ') + usd(Q.px[j]) + '</span><span>' + (sd > 0 ? T('成本在價格上方（套牢）', 'Cost above price (underwater)') : sd < 0 ? T('成本在價格下方（獲利）', 'Cost below price (in profit)') : T('價格就在這一格', 'Price is inside this bucket')) + '</span>'; };
+      const stepP = [10000, 20000, 25000, 50000].find(u => (Q.nb * Q.w) / u <= 5) || 50000, xt = []; for (let p = Math.ceil(Q.p0 / stepP) * stepP; p <= Q.p0 + Q.nb * Q.w; p += stepP) xt.push([XP(p - Q.w / 2), kk(p)]);
+      const yt = []; Q.dates.forEach((d, j) => { if (j < last && +d.slice(8, 10) <= 7 && [1, 7].indexOf(+d.slice(5, 7)) >= 0) yt.push([-.82 + 1.64 * j / (ny - 1), d.slice(2, 4) + '/' + d.slice(5, 7)]); }); yt.push([.82, T('最新', 'Latest'), 1]);
+      const stepV = [250000, 500000, 1000000, 2000000].find(u => mx * 100 / u <= 4) || 2000000, va = []; for (let v = 0; v <= mx * 100; v += stepV) va.push([v / 100 / mx * ZS, v ? (lang === 'en' ? (v / 1e6) + 'M' : v / 10000 + ' 萬') : '0']);
+      const S = Scene(box, c, key, ZS, function (S) {
+        const cx = S.ctx, A = S.A, m = S.m, aF = cl(m * 2.4), a2 = cl(1 - m * 2.6), aS = cl(1 - (m - .3) * 4), small = S.W < 520, top = S.pit > 1.3, o = order(S), Yj = j => -A + 2 * A * j / (ny - 1), dy = 2 * A / (ny - 1), fog = fogger(S);
+        const hw = 1 / (nx - 1) * lerp(.56, .9, m);          /* ㉛-3：柱子的半寬 */
+        const zAt = (p, j) => GG[j][cl(Math.round((p - Q.p0) / Q.w - .5), 0, nx - 1)] / mx * ZS;
+        const TL = [], TR = [], BL = [], BR = [];          /* 每一根柱子在每一週的四個角 */
+        for (let j = 0; j < ny; j++) { const y = Yj(j), a = TL[j] = [], b = TR[j] = [], d = BL[j] = [], e = BR[j] = []; for (let i = 0; i < nx; i++) { const x = XI(i), z = GG[j][i] / mx * ZS; a.push(S.proj(x - hw, y, z)); b.push(S.proj(x + hw, y, z)); d.push(S.proj(x - hw, y, 0)); e.push(S.proj(x + hw, y, 0)); } }
+        const I = seq(nx, o.xa), jEnd = o.ya ? last : 0, T_ = o.xa ? TR : TL, B_ = o.xa ? BR : BL, face = (i, j) => [TL[j][i], TR[j][i], BR[j][i], BL[j][i]];
+        const fronts = (j, a, hitIt) => { if (a <= .01 || top) return; cx.save(); cx.globalAlpha = a; I.forEach(i => { if (!GG[j][i]) return; const f = face(i, j); quad(cx, f, ramp(Math.max(GG[j][i] / mx, .36), i, j)); if (hitIt) S.hit(f, [i, j]); }); cx.restore(); };
+        floor(S, xt, yt, aF); vaxis(S, Yj(cut), va, a2);
+        if (aF > .01) { cx.save(); cx.globalAlpha = aF;
+          each2(o, I, seq(ny - 1, o.ya), (i, j) => { const g0 = GG[j][i], g1 = GG[j + 1][i]; if (!g0 && !g1) return; const jn = o.ya ? j + 1 : j, base = ramp((g0 + g1) / 2 / mx, i, j), nyv = -(g1 - g0) / mx * ZS / dy, lam = Math.max(0, (nyv * LIGHT[1] + LIGHT[2]) / Math.hypot(nyv, 1)), sh = top ? 1 : (P.dark ? .74 + .38 * lam : .86 + .2 * lam), f = fog(TL[j][i][2]);
+            if (!top) { const s = [T_[j][i], T_[j + 1][i], B_[j + 1][i], B_[j][i]]; quad(cx, s, mix(base.map(v => v * (P.dark ? .5 : .76)), P.bg, f)); S.hit(s, [i, jn]); }
+            const t = [TL[j][i], TR[j][i], TR[j + 1][i], TL[j + 1][i]]; quad(cx, t, mix(base.map(v => Math.min(255, v * sh)), P.bg, f)); S.hit(t, [i, jn]);
+            if (jn === jEnd && !top && GG[jEnd][i]) { const e = face(i, jEnd); quad(cx, e, ramp(Math.max(GG[jEnd][i] / mx, .36), i, jEnd)); S.hit(e, [i, jEnd]); } });
+          cx.restore(); }
+        fronts(cut, aS, m < .3);          /* 平面圖那一刀：攤開的前半段蓋在最上面，之後淡出，換成立體裡真正的位置 */
+        const path = Q.px.map((p, j) => S.proj(XP(p), Yj(j), zAt(p, j) + .012));
+        if (top) line(cx, path, rgb(P.ink, .95), 1.6);
+        if (cut !== last && m > .05) { const pr = []; for (let i = 0; i < nx; i++) pr.push(TL[cut][i], TR[cut][i]); line(cx, pr, rgb(P.ink, .95 * aF), top ? 1.6 : 1.2); }          /* ㉛-7 */
+        ticks(S, xt, yt, aF);
+        const mid = (j, i) => [(TL[j][i][0] + TR[j][i][0]) / 2, (TL[j][i][1] + TR[j][i][1]) / 2], h = S.hov;
+        /* 原圖標的最厚、最薄兩段（㉛-1）：在最新那一刀的底線下面畫一條同色的線，字標在那一段最高的柱子上 */
+        const HL = cut === last ? (Q.hl || []).filter(q => q[3] && q[1] > Q.p0 && q[0] < Q.p0 + nx * Q.w) : [];
+        if (!top) HL.forEach((q, n) => { const a = S.proj(XP(Math.max(q[0], Q.p0)) - hw, Yj(last), 0), b = S.proj(XP(Math.min(q[1], Q.p0 + nx * Q.w)) - hw, Yj(last), 0), col = P[q[2]] || P.ink; line(cx, [[a[0], a[1] + 4], [b[0], b[1] + 4]], rgb(col), 2.5);
+          const y0 = (small ? 22 : 7) + n * 16; cx.fillStyle = rgb(col); cx.fillRect(1, y0 - 2, 8, 3); label(S, T(q[3], q[4]), 15, y0, { px: small ? 10 : 11, al: 'left', col: rgb(P.ink), halo: false }); });          /* 字固定在左上角，前面一小段同色的線對到柱子底下那一條 */
+        if (h) {
+          if (m > .3) { const pr = []; for (let j = 0; j < ny; j++) pr.push(mid(j, h[0])); line(cx, pr, rgb(P.bg, .9), 3.2); line(cx, pr, rgb(P.ink), 1.4); }
+          ring(S, top ? [TL[h[1]][h[0]], TR[h[1]][h[0]], TR[Math.max(0, h[1] - 1)][h[0]], TL[Math.max(0, h[1] - 1)][h[0]]] : face(h[0], h[1]));
+        } else {
+          if (!top && !HL.length) { const it = iTopOf(cut); note(S, mid(cut, it), T('最厚 ', 'Thickest ') + bt(GG[cut][it] * 100), { up: small ? 20 : 26, dx: 26 }); }
+          if (eat && cut === last && !top) note(S, mid(eat.j, eat.i), T(Q.dates[eat.j].slice(2, 7).replace('-', '/') + ' 的牆 ' + bt(eat.v * 100) + '，現在剩 ' + bt(GG[last][eat.i] * 100), Q.dates[eat.j].slice(0, 7) + ' wall ' + bt(eat.v * 100) + ', now ' + bt(GG[last][eat.i] * 100)), { up: small ? 24 : 34, dx: small ? 0 : -30, a: cl((m - .6) * 3) * cl((S.pit - .25) * 6) });
+          note(S, path[cut], (cut === last ? T('收盤 ', 'Close ') : T('當週 ', 'That week ')) + usd(Q.px[cut]), { up: top ? -16 : (small ? 42 : 54), dx: -34, r: 3.4, col: P.ac });
+          if (cut !== last) note(S, path[last], T('收盤 ', 'Close ') + usd(pNow), { up: top ? -16 : 30, dx: 40, r: 3, a: aF, col: P.ac });
+        }
+      }, info);
+      /* 圖下面：切一刀的滑桿 */
+      const ol = box.closest('.ol'), old = ol && ol.querySelector('.d3-sc'); if (old) old.remove();
+      const sc = document.createElement('label'); sc.className = 'd3-sc'; sc.innerHTML = '<span>' + T('切一刀', 'Slice') + '</span><input type="range" min="0" max="' + last + '" step="1" value="' + cut + '" aria-label="' + T('選一週', 'Pick a week') + '"><output></output>';
+      box.insertAdjacentElement('afterend', sc); const rng = sc.querySelector('input'), out = sc.querySelector('output'), show = () => { out.textContent = wk(cut) + ' · ' + usd(Q.px[cut]); };
+      rng.addEventListener('input', () => { cut = c._d3c = +rng.value; show(); S.dirty(); }); show();
+      return S;
+    }
+    const KIND = { terr };
+    window.DAYBREAK_D3 = reg;          /* 檢查用（tests、主控台）：每張立體圖的場景 */
+    return {
+      mount(box, c, key) { if (reg[key]) reg[key].kill(); readPal(); return (reg[key] = KIND[c.d3.kind](box, c, key)); },
+      go(key, v) { const s = reg[key]; if (s) s.go(v); },
+      repaint() { readPal(); Object.keys(reg).forEach(k => { if (reg[k].cv.isConnected) reg[k].dirty(); else { reg[k].kill(); delete reg[k]; } }); },          /* 換頁之後不在畫面上的場景順手清掉 */
+      views: () => [['flat', '平面', 'Flat'], ['ob', '立體', '3D'], ['top', '俯瞰', 'Top']],
+      legend: c => c.d3.kind === 'terr' ? [['dn', '成本在當週價格上方（套牢）', 'Cost above that week\'s price (underwater)'], ['up', '成本在當週價格下方', 'Cost below that week\'s price']] : [],
+      reg
+    };
+  })();
   function distChart(box, c, k) {
     const d = c.dist, w = box.clientWidth || 520, h = box.clientHeight || 260, ML = Math.round(62 * FSC), MR = 10, pw = w - ML - MR, px = ST.close, prg = pgOf(c), lo = px * PRG[prg][0], hi = px * PRG[prg][1], la = Math.log(lo), lb = Math.log(hi), Y = v => 14 + (1 - (Math.log(v) - la) / (lb - la)) * (h - 24), inv = y => Math.exp(la + (1 - (y - 14) / (h - 24)) * (lb - la));
     const R = d.rows.filter(r => d.step ? r[0] + d.step > lo && r[0] < hi : r[0] >= lo && r[0] <= hi), mid = d.kind === 'split' || d.kind === 'sign', x0 = mid ? ML + pw / 2 : ML, full = mid ? pw / 2 : pw, mx = Math.max.apply(null, R.map(r => dMag(d, r)).concat([1e-9]));
@@ -3155,19 +3337,22 @@ function initOC() {
     const s = isT(c) ? SP(c) : c, t0 = isT(c) ? T0(s, c) : tE - 365, LG = isT(c) ? legend(s, key) : [];
     const md = c.modes ? `<span class="md" role="group">${c.modes.map((m, i) => `<button type="button" data-m="${i}" data-key="${key}" aria-pressed="${i === (c._m || 0)}">${esc(T(m.mz, m.me))}</button>`).join('')}</span>` : '';
     const lqb = c.dist && c.dist.heat && c.dist.heat.long ? `<span class="md" role="group" aria-label="${T('時間範圍', 'Time range')}">${[[0, '7 天', '7 days'], [1, '6 個月', '6 months']].map(q => `<button type="button" data-lq="${q[0]}" data-key="${key}" aria-pressed="${(c._lq && c._lqx ? 1 : 0) === q[0]}">${T(q[1], q[2])}</button>`).join('')}</span>` : '';   /* ㉓ */
-    const pg = c.dist && !c.dist.heat ? `<span class="md" role="group" aria-label="${T('價格範圍', 'Price range')}">${PRG.map((r, i) => `<button type="button" data-pg="${i}" data-key="${key}" aria-pressed="${i === pgOf(c)}">${T(r[2], r[3])}</button>`).join('')}</span>` : '';
+    const d3on = !!(c.d3 && (c._m || 0) === 1 && !c.na), d3b = d3on ? `<span class="md" role="group" aria-label="${T('看的角度', 'View angle')}">${D3.views().map(v => `<button type="button" data-d3v="${v[0]}" data-key="${key}" aria-pressed="false">${T(v[1], v[2])}</button>`).join('')}</span>` : '';   /* ㉛ */
+    const pg = c.dist && !c.dist.heat && !d3on ? `<span class="md" role="group" aria-label="${T('價格範圍', 'Price range')}">${PRG.map((r, i) => `<button type="button" data-pg="${i}" data-key="${key}" aria-pressed="${i === pgOf(c)}">${T(r[2], r[3])}</button>`).join('')}</span>` : '';
     const ro = isT(c) ? rgOpts(s) : [], rv = rgOf(c), re = ro.some(r => r[0] === rv) ? rv : 0, rgb = ro.length ? `<span class="md" role="group" aria-label="${T('時間範圍', 'Time range')}">${ro.map(r => `<button type="button" data-rg="${r[0]}" data-key="${key}" aria-pressed="${r[0] === re}">${T(r[1], r[2])}</button>`).join('')}</span>` : '';
     const hid = isT(c) && rv ? ['marks', 'links', 'spans', 'vl'].reduce((n, kk) => n + (s[kk] || []).filter(m => (m.b != null ? m.b : m.d) < t0).length, 0) : 0, more = hid ? `<button type="button" class="more" data-rg="0" data-key="${key}">${T('更早還有 ' + hid + ' 個標注', hid + ' earlier annotations')}${ICS('go')}</button>` : '';
     const lyv = c._ly || 'sp', lyb = isT(c) && !s.one ? `<span class="md ly" role="group" aria-label="${T('價格和指標的排法', 'Price and indicator layout')}"><button type="button" data-ly="sp" data-key="${key}" aria-pressed="${lyv === 'sp'}"${ib('價格和指標分成上下兩格', 'Price and indicator in two panes')}>${IC('split')}</button><button type="button" data-ly="ov" data-key="${key}" aria-pressed="${lyv === 'ov'}"${ib('價格和指標疊在同一格', 'Price and indicator overlaid')}>${IC('over')}</button></span>` : '';
     let tcv = null; try { if (isT(c) && !c.na) tcv = CV(tone(s, hero(s))); } catch (e0) { tcv = null; } const tcol = ''; ol.dataset.kind = ''; const sayH = c.na ? '' : sayHtml(s), sigH = c.na ? '' : sigHtml(c), howH = howHtml(c);
     const hk = c.na ? '' : s.hz ? T(s.hz, s.he) : isT(c) && hero(s).zh && hero(s).zh !== c.zh ? T(hero(s).zh, hero(s).en) : '';
-    const src = c.src ? T(c.src, c.srce) : '', e2 = enName(c), chi = /^q_/.test(c.k || '') ? CHI(c.k.slice(2)) : '', head = `<div class="ol-t${e2 ? ' e2' : ''}">${chi ? ICS(chi, 'ch') : ''}<h4 class="ol-n">${esc(T(c.zh, c.en))}</h4>${e2 ? `<span class="ol-e" lang="en">${esc(e2)}</span>` : ''}${src ? `<span class="ol-src" title="${esc(src)}">${esc(src)}</span><button type="button" class="src-b" data-src="${esc(T('資料來源：', 'Source: ') + src)}" aria-label="${esc(T('資料來源：', 'Source: ') + src)}">${IC('src')}</button>` : ''}${c.go ? `<button type="button" class="fx-b go" data-chid="${c.go}"${ib('看這一頁', 'Open this page')}>${IC('go')}</button>` : flat && !c.na && !c.nofx ? `<button type="button" class="fx-b" data-fx="${key}"${ib('展開這張圖', 'Expand this chart')}>${IC('expand')}</button>` : ''}</div>${md || pg || lqb || rgb || lyb ? `<div class="ol-ctl">${md}${pg}${lqb}${rgb}${lyb}${more}</div>` : ''}`, big = `${hk ? `<span class="ol-k">${esc(hk)}</span>` : ''}<div class="ol-big"${tcol}><span class="odo" id="oc-b${key}"></span><span class="ol-u" id="oc-u${key}"></span><small id="oc-d${key}"></small></div>${stat(s, c)}${pairHtml(s, c)}${sayH}${sxl(s, c)}`;
+    const src = c.src ? T(c.src, c.srce) : '', e2 = enName(c), chi = /^q_/.test(c.k || '') ? CHI(c.k.slice(2)) : '', head = `<div class="ol-t${e2 ? ' e2' : ''}">${chi ? ICS(chi, 'ch') : ''}<h4 class="ol-n">${esc(T(c.zh, c.en))}</h4>${e2 ? `<span class="ol-e" lang="en">${esc(e2)}</span>` : ''}${src ? `<span class="ol-src" title="${esc(src)}">${esc(src)}</span><button type="button" class="src-b" data-src="${esc(T('資料來源：', 'Source: ') + src)}" aria-label="${esc(T('資料來源：', 'Source: ') + src)}">${IC('src')}</button>` : ''}${c.go ? `<button type="button" class="fx-b go" data-chid="${c.go}"${ib('看這一頁', 'Open this page')}>${IC('go')}</button>` : flat && !c.na && !c.nofx ? `<button type="button" class="fx-b" data-fx="${key}"${ib('展開這張圖', 'Expand this chart')}>${IC('expand')}</button>` : ''}</div>${md || d3b || pg || lqb || rgb || lyb ? `<div class="ol-ctl">${md}${d3b}${pg}${lqb}${rgb}${lyb}${more}</div>` : ''}`, big = `${hk ? `<span class="ol-k">${esc(hk)}</span>` : ''}<div class="ol-big"${tcol}><span class="odo" id="oc-b${key}"></span><span class="ol-u" id="oc-u${key}"></span><small id="oc-d${key}"></small></div>${stat(s, c)}${pairHtml(s, c)}${sayH}${sxl(s, c)}`;
     let L = null;
     if (c.na) ol.innerHTML = head + `<div class="ol-na"><b>${ICS('nodata')}${T('資料沒來', 'No data')}</b><p>${esc(T(c.na.zh, c.na.en))}</p></div>`;
     else if (c.sim) simCard(ol, c, key, head);
     else if (c.list || c.grid || c.xy || c.strip) { ol.innerHTML = head + (c.hs ? big : c.hz ? `<span class="ol-k">${esc(T(c.hz, c.he))}</span>` : '') + `${howH}` + (c.list ? listHtml(c) : c.grid ? gridHtml(c) : c.strip ? stripHtml(c) : `<p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c" id="oc-c${key}"></div>`); tidy(ol, sayH, sigH); if (c.xy) xyChart($('#oc-c' + key), c, key); if (c.hs) { const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); } }
-    else if (c.dist) { const hlg = c.dist.heat ? `<span>${T('少', 'Less')}<i class="vir"></i>${T('多', 'More')}</span><span>${T('推算的待清算量：收盤下方是多單、上方是空單', 'Estimated BTC awaiting liquidation: longs below the close, shorts above')}</span><span><i class="box" style="--c:var(--up);--c2:var(--dn)"></i>${c._lq && c._lqx ? T('每日 K 線', 'Daily candles') : T('每小時 K 線', 'Hourly candles')}</span><span>${T('右欄：現在各價位的量', 'Right panel: amount at each price now')}</span>${(G9 => `<span><i style="--c:var(--up);--c2:var(--up)"></i>${T('空單累計（收盤往上到 ', 'Shorts, cumulative (close up to ') + PXL(G9.pHi) + T('）', ') ') + fm('btc0', Math.round(G9.totS))}</span><span><i style="--c:var(--dn);--c2:var(--dn)"></i>${T('多單累計（收盤往下到 ', 'Longs, cumulative (close down to ') + PXL(G9.pLo) + T('）', ') ') + fm('btc0', Math.round(G9.totL))}</span>`)(lqGeo(c._lq && c._lqx ? c._lqx : c.dist.heat))}` : c.dist.leg.map(q => `<span><i class="box" style="--c:${CV(q[0])};--c2:${CV(q[0])}"></i>${esc(T(q[1], q[2]))}</span>`).join('');
-      ol.innerHTML = head + big + `${howH}<div class="ol-lg">${hlg}</div><p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c${c.dist.heat ? ' lqh' : ''}" id="oc-c${key}"></div>`; tidy(ol, sayH, sigH); L = c.dist.heat ? liqHeat($('#oc-c' + key), c, key) : distChart($('#oc-c' + key), c, key); const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); }
+    else if (c.dist) { const hlg = c.dist.heat ? `<span>${T('少', 'Less')}<i class="vir"></i>${T('多', 'More')}</span><span>${T('推算的待清算量：收盤下方是多單、上方是空單', 'Estimated BTC awaiting liquidation: longs below the close, shorts above')}</span><span><i class="box" style="--c:var(--up);--c2:var(--dn)"></i>${c._lq && c._lqx ? T('每日 K 線', 'Daily candles') : T('每小時 K 線', 'Hourly candles')}</span><span>${T('右欄：現在各價位的量', 'Right panel: amount at each price now')}</span>${(G9 => `<span><i style="--c:var(--up);--c2:var(--up)"></i>${T('空單累計（收盤往上到 ', 'Shorts, cumulative (close up to ') + PXL(G9.pHi) + T('）', ') ') + fm('btc0', Math.round(G9.totS))}</span><span><i style="--c:var(--dn);--c2:var(--dn)"></i>${T('多單累計（收盤往下到 ', 'Longs, cumulative (close down to ') + PXL(G9.pLo) + T('）', ') ') + fm('btc0', Math.round(G9.totL))}</span>`)(lqGeo(c._lq && c._lqx ? c._lqx : c.dist.heat))}` : c.dist.leg.concat(d3on ? D3.legend(c) : []).map(q => `<span><i class="box" style="--c:${CV(q[0])};--c2:${CV(q[0])}"></i>${esc(T(q[1], q[2]))}</span>`).join('');
+      ol.innerHTML = head + big + `${howH}<div class="ol-lg">${hlg}</div><p class="ol-pr" id="oc-pr${key}"></p><div class="ol-c${c.dist.heat ? ' lqh' : ''}${d3on ? ' d3' : ''}" id="oc-c${key}"></div>`; tidy(ol, sayH, sigH);
+      if (d3on) { D3.mount($('#oc-c' + key), c, key); const sc9 = ol.querySelector('.d3-sc'); if (sc9 && c.d3.srcz) sc9.insertAdjacentHTML('afterend', `<p class="d3-n">${esc(T(c.d3.srcz, c.d3.srce))}</p>`); }   /* ㉛ 立體檢視：原本的數字、說明、圖例都還在，只換圖的那一格 */
+      else L = c.dist.heat ? liqHeat($('#oc-c' + key), c, key) : distChart($('#oc-c' + key), c, key); const v = split(sval(c)); odo($('#oc-b' + key), v[0]); $('#oc-u' + key).textContent = v[1]; $('#oc-d' + key).textContent = D.date.replace(/-/g, '/') + T('　最新', '  latest'); }
     else { ol.dataset.kind = 't'; ol.innerHTML = `<div class="ol-a">${head}${big}${howH}</div><div class="ol-b"><div class="ol-lg">${LG.map(e => e.html).join('')}</div><div class="ol-c" id="oc-c${key}"></div></div>`; tidy(ol, sayH, sigH); L = leadChart($('#oc-c' + key), c, key, t0); }
     { const art = ol.closest('.fc'); if (art) art.style.setProperty('--tc', tcv || 'var(--k2)'); }
     if (!c.na && !c.go) ol.insertAdjacentHTML('beforeend', `<p class="ol-brand"><b>Daybreak</b><span>daybreak.aronlab.dev</span><span>${src ? esc(T('資料：', 'Data: ') + src) + ' · ' : ''}${T('截至 ', 'As of ')}${D.date.replace(/-/g, '/')}</span></p>`);   /* 分享模式才顯示（⑮） */
@@ -3591,7 +3776,7 @@ function initOC() {
     const b0 = PBASE[th], c = PAL.fuse[th], v0 = tv == null ? (th === 'l' ? 1 : 0) : tv, amt = Math.max(0, Math.min(1, th === 'd' ? v0 / .5 : (1 - v0) / .5)), MID = th === 'd' ? { bg: '#16131F', sheet: '#211D2C' } : { bg: '#E4D8C8', sheet: '#F0E6D8' };
     const b = amt > .01 ? Object.assign({}, b0, { bg: mixHex(b0.bg, MID.bg, amt), sheet: mixHex(b0.sheet, MID.sheet, amt) }) : b0; rgb = b.rgb;
     Object.entries({ '--bg': b.bg, '--sheet': b.sheet, '--ink': b.ink, '--k2': b.k2, '--shadow': b.shadow, '--ac': c.ac, '--up': c.up, '--dn': c.dn, '--c3': c.c3, '--c4': c.c4, '--c5': c.c5, '--shim': th === 'd' ? '#FFFFFF' : c.ac, '--fn': '"Inter Tight"', '--fst': '100%', '--fw': 500 }).forEach(e => { el.style.setProperty(e[0], e[1]); const cm = $('#oc-cmp'); if (cm) cm.style.setProperty(e[0], e[1]); });
-    document.body.style.background = b.bg; el.dataset.th = th; const a = $('#oc-th'); a.classList.toggle('b', th === 'l'); const l = $('#oc-lg'); l.classList.toggle('b', lang === 'en'); $$('button', l).forEach(x => x.setAttribute('aria-pressed', x.dataset.l === lang));
+    document.body.style.background = b.bg; el.dataset.th = th; D3.repaint(); const a = $('#oc-th'); a.classList.toggle('b', th === 'l'); const l = $('#oc-lg'); l.classList.toggle('b', lang === 'en'); $$('button', l).forEach(x => x.setAttribute('aria-pressed', x.dataset.l === lang));
   }
   /* 日夜開關是一顆玻璃鍵。鍵上的圖示是一群點：晚上排成月亮，白天排成太陽，切換時先散開、再重新排好。
      鍵的邊上有一道光，會貼在靠近游標的那一邊，切換時沿著邊繞一圈。頁面則由一圈晨昏色的光從開關擴散出去，光圈過後就是另一種底色 */
@@ -3704,6 +3889,7 @@ function initOC() {
     if ((b = t.closest('[data-lq][data-key]'))) { const c = keyC(b.dataset.key), v = +b.dataset.lq, k9 = b.dataset.key; if (!c || !c.dist || !c.dist.heat) return; if (!v) { if (c._lq) { c._lq = 0; reOne(k9); } return; }   /* ㉓ 6 個月：第一次點才載入 */
       if (c._lq && c._lqx) return; b.classList.add('busy'); lqLong(c).then(() => { c._lq = 1; reOne(k9); }).catch(() => { b.classList.remove('busy'); toast(T('長期資料沒有載入，請再試一次', 'Could not load the long-range data — please try again')); }); return; }
     if ((b = t.closest('[data-pg][data-key]'))) { const c = keyC(b.dataset.key); if (c && c.dist && +b.dataset.pg !== pgOf(c)) { c._pg = +b.dataset.pg; reOne(b.dataset.key); } return; }
+    if ((b = t.closest('[data-d3v]'))) { D3.go(b.dataset.key, b.dataset.d3v); return; }   /* ㉛ 平面／立體／俯瞰 */
     if ((b = t.closest('[data-m]'))) { const c = keyC(b.dataset.key); if (c) { c._m = +b.dataset.m; reOne(b.dataset.key); } return; }
     if ((b = t.closest('.or-r')) && fx) { fxGo(+b.dataset.i); return; }
   });
