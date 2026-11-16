@@ -92,7 +92,7 @@ def attach(chapters, L):
         return dict(kz=z['k'], ke=e['k'], vz=wan(z['v']), ve=e['v'], tone=TONE.get(z['tone'], 'neu'), dz=wan(z['d']), de=e['d'], cz=wan(z.get('chg') or ''), ce=e.get('chg') or '', view=z['view'], **dict(zip(('hm', 'hme'), heads(wan(z['d']), e['d']))))
     def say(k):
         c = X.get(k)
-        if c is None: return None
+        if c is None or (c.get('say') or {}).get('own'): return None   # 2026-11-17 新版自己產生讀數的卡片（reads.py），不再掛舊版的
         return c.setdefault('say', dict(items=[], sz='', se='', hz=[], he=[]))
     chart2key = {}
     for z, e in zip(Z, E):

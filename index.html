@@ -1462,7 +1462,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=1c210fb19c"></script>
+<script src="data/next.js?v=cdf2ae4d53"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -1737,7 +1737,7 @@ function initOC() {
   }
   function legend(s, k) {
     const L = [], sw = (kind, c1, c2) => `<i class="${kind}" style="--c:${CV(c1)};--c2:${CV(c2 || c1)}"></i>`; let n = 0;
-    const hq0 = s.ser ? hero(s) : null; let hh = '';   /* ㉞ 主角那條線的圖例加 class h：手機主卡只留它 */
+    const hq0 = s.ser ? (h0 => h0 && !h0.hide ? h0 : s.ser.find(q => !q.hide))(hero(s)) : null; let hh = '';   /* 主角被設成不顯示（例如 ETF 的合計）時，標第一條看得到的線 */   /* ㉞ 主角那條線的圖例加 class h：手機主卡只留它 */
     const add = (kind, c1, c2, label, get) => { const idv = get ? `oc-l${k}-${n++}` : ''; L.push({ html: `<span${hh}>${sw(kind, c1, c2)}${esc(label)}${get ? `<b id="${idv}"></b>` : ''}</span>`, id: idv, get }); hh = ''; };
     if (!s.one) add(s.kw ? 'box' : 'line', 'k2', s.kw ? 'k2' : null, s.kw ? (s.kwr ? T('BTC 月 K', 'BTC monthly') : T('BTC 週 K', 'BTC weekly')) : T('BTC 價格', 'BTC price'), day => fm('usd0', pxAt(s, day)));
     (s.top || []).forEach(q => add('line', q.col, null, T(q.zh, q.en), day => fm('usd0', atv(s.rows, q.c, day)[q.c])));
