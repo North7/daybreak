@@ -22,6 +22,69 @@ def build(L, N, E, dn):
     qb = ([dict(a=qcol('55'), b=qcol('65'), col='c4', op=.12)] if '55' in qk and '65' in qk else []) + ([dict(a=qcol('75'), b=qcol('85'), col='c5', op=.12)] if '75' in qk and '85' in qk else [])   # 照現有網站：55–65% 之間、75–85% 之間各有一條淡色帶
     X['quant'] = dict(k='quant', zh='供給分位成本線', en='Supply cost-basis quantiles', hz='收盤', he='Close', one=1, f='usd0', rows=q['rows'], ser=qs, bands=qb,
       dz='把所有的幣依最後一次移動的價格排序，第 q% 的那個價格就是一條線。價格站在 q 線上，大約就是 q% 的幣在獲利。線在價格上面是壓力，在下面是支撐。顏色由冷到熱：藍色是低分位，橘色是高分位；65% 和 75% 兩條線比較粗，兩段淡色帶是 55–65% 和 75–85%。', de='Sort every coin by the price it last moved at; the q-th percentile is one line. With price on the q line, about q% of supply is in profit. Lines above price act as resistance, lines below as support. Colours run cold to hot: blue for low quantiles, orange for high. The 65% and 75% lines are heavier; the two tinted bands are 55–65% and 75–85%.')
+    # ── 2026-11-16 Bitview 的損失地板和賺賠分布（pipeline/bv_more.py；使用者看過目錄盤點後決定做）──
+    bx = (L.get('onchain') or {}).get('bvx') or {}; fl = bx.get('floors'); pn = bx.get('pnl')
+    from say_data import own as _own
+    _md = lambda d_: '%d/%d' % (int(d_[5:7]), int(d_[8:10])); _ym = lambda d_: d_[:7].replace('-', '/'); _p1 = lambda v: ('%.1f%%' % v); _pg = lambda v: ('%g%%' % v)
+    if fl and len(fl.get('rows') or []) > 200:
+        fc = fl['cur']; fpx = fl['px']; gap = (fpx / fc[0] - 1) * 100; deep = (fc[4] / fpx - 1) * 100; bv_nb = fl['below']
+        FC = ['c4', 'color-mix(in srgb, var(--c4) 72%, var(--c3))', 'color-mix(in srgb, var(--c4) 45%, var(--c3))', 'color-mix(in srgb, var(--c4) 20%, var(--c3))', 'c3']   # 淺的一層青、越深越偏藍紫：都是冷色（支撐在下面），和成本線的暖色分開
+        lowz = lambda q: '%s %s' % (_ym(q['d']), '五層全破' if q['broke'] == 5 else '破 %d 層' % q['broke'] if q['broke'] else '沒破')
+        lowe = lambda q: '%s: %s' % (q['d'][:7], 'all five broken' if q['broke'] == 5 else '%d broken' % q['broke'] if q['broke'] else 'none broken')
+        brk = [b for b in fl['breaks'] if b.get('y1') is not None]; w0 = max(b['worst'] for b in brk); w1 = min(b['worst'] for b in brk); wb = min(brk, key=lambda b: b['y1'])
+        X['floors'] = dict(k='floors', zh='損失地板', en='Loss floors', hz='第一層地板', he='First floor', one=1, f='usd0', hero=1, rows=fl['rows'],
+          ser=[ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.5)] + [ser(2 + i, zh='第 %d 層（最糟 %s）' % (i + 1, _pg(fl['pct'][i])), en='Floor %d (worst %s)' % (i + 1, _pg(fl['pct'][i])), col=FC[i], w=1.9 if i == 0 else 1.2) for i in range(5)],
+          bands=[dict(a=2, b=6, col='c4', op=.09)],
+          marks=[dict(d=q['dn'], v=q['px'], col='c5', up=0, zh=lowz(q), en=lowe(q)) for q in fl['lows'] if q['dn'] >= fl['rows'][0][0]],   # 圖從 2017 年畫起，更早的低點只寫在讀數裡
+          src='Bitview · ' + _md(bx['date']), srce='Bitview · ' + _md(bx['date']),
+          dz='價格跌到哪裡，虧損的幣佔全部供給的比例會到它自己歷史上最糟的水準。五條線由淺到深：最糟 5%%、2%%、1%%、0.5%%、0.1%%。門檻只用到當天為止的歷史，逐日累積，不是回頭用整段歷史算的。圓圈是歷次低點，標的是那天跌破了幾層。'
+             '地板標的是「痛到歷史等級」的區間，不是保證的底：%d 年以來 %s 的日子收在第一層下面；歷次第一次跌破第一層之後，一年內還再跌 %d%%–%d%%，%s 那次一年後還是 %d%%。每顆幣算一次、逐筆 UTXO，沒有排除遺失的幣和交易所內部移轉。只作讀值。'
+             % (int(fl['since'][:4]), _p1(fl['below1_pct']), abs(w0), abs(w1), _ym(wb['d']), wb['y1']),
+          de='The price at which the share of supply held at a loss would reach the worst levels in its own history. Five lines from shallow to deep: the worst 5%%, 2%%, 1%%, 0.5%% and 0.1%%. Each threshold uses only the history up to that day, so it accumulates and is not fitted in hindsight. Circles mark past lows, labelled with how many floors that day broke. '
+             'The floors mark a zone of historic pain, not a guaranteed bottom: since %d, %s of days closed below the first floor; after each first break of it, price went on to fall another %d%%–%d%% within a year, and after the %s break it was still %d%% a year later. Every coin counts once, per UTXO, with lost coins and exchange-internal transfers not excluded. A reading only.'
+             % (int(fl['since'][:4]), _p1(fl['below1_pct']), abs(w0), abs(w1), wb['d'][:7], wb['y1']))
+        X['floors']['say'] = _own([
+            ('第一層地板', 'First floor', usd(fc[0]), usd(fc[0]), 'warn' if bv_nb or gap < 5 else 'neu',
+             ('收盤 %s 已經在第一層下面 %s，連續 %d 天。' % (usd(fpx), _p1(-gap), fl['below_days']) if bv_nb else '收盤 %s，在第一層上方 %s。' % (usd(fpx), _p1(gap))) + '跌到第一層，虧損的幣會佔供給的 %s，是歷史最糟 5%% 的水準；現在是 %s。' % (_p1(fl['thr'][0]), _p1(fl['loss'])),
+             ('The close of %s is already %s below the first floor, for %d days running. ' % (usd(fpx), _p1(-gap), fl['below_days']) if bv_nb else 'The close of %s sits %s above the first floor. ' % (usd(fpx), _p1(gap))) + 'At the first floor, %s of supply would be held at a loss, a level seen in only the worst 5%% of history; it is %s now.' % (_p1(fl['thr'][0]), _p1(fl['loss']))),
+            ('現在破了幾層', 'Floors broken now', '%d 層' % bv_nb, '%d of 5' % bv_nb, 'warn' if bv_nb >= 2 else 'neu',
+             '五層依序是 %s。' % '、'.join(usd(v) for v in fc) + '最深一層比收盤低 %s，到那裡虧損的幣佔 %s。' % (_p1(-deep), _p1(fl['thr'][4])),
+             'The five floors are %s. ' % ', '.join(usd(v) for v in fc) + 'The deepest sits %s below the close, where %s of supply would be at a loss.' % (_p1(-deep), _p1(fl['thr'][4]))),
+            ('歷次低點', 'Past lows', '破 %d–%d 層' % (min(q['broke'] for q in fl['lows']), max(q['broke'] for q in fl['lows'])), '%d–%d broken' % (min(q['broke'] for q in fl['lows']), max(q['broke'] for q in fl['lows'])), 'neu',
+             '；'.join('%s 的低點 %s，%s' % (_ym(q['d']), usd(q['px']), lowz(q).split(' ', 1)[1]) for q in fl['lows']) + '。',
+             '; '.join('the %s low of %s, %s' % (q['d'][:7], usd(q['px']), lowe(q).split(': ', 1)[1]) for q in fl['lows']) + '.')],
+            ('收盤已經跌破 %d 層地板。' % bv_nb if bv_nb else '收盤在第一層地板上方 %s，五層都沒破。' % _p1(gap)), ('The close is below %d of the five floors.' % bv_nb if bv_nb else 'The close sits %s above the first floor; none of the five is broken.' % _p1(gap)))
+    if pn and all(len((pn.get(k_) or {}).get('rows') or []) > 200 for k_ in ('all', 'sth', 'lth')):
+        PC = ['k2', 'c5', 'ac', 'color-mix(in srgb, var(--ac) 50%, var(--dn))', 'dn']   # 越深越紅：虧損是有方向的，所以用到紅；最外面那條（所有在虧的）用灰色虛線當底
+        PN = [('在虧損的', 'At a loss'), ('虧 10% 以上', 'Down 10% or more'), ('虧 20% 以上', 'Down 20% or more'), ('虧 30% 以上', 'Down 30% or more'), ('虧 50% 以上', 'Down 50% or more')]
+        pser = [ser(2 + i, zh=PN[i][0], en=PN[i][1], col=PC[i], w=1.1 if i == 0 else 1.9 if i == 1 else 1.4, **(dict(dash='4 3') if i == 0 else {})) for i in range(5)]
+        bv_pm = lambda key, mz, me: dict(mz=mz, me=me, hz='虧 10% 以上的幣', he='Supply down 10% or more', f='p1', p=1, hero=1, rows=pn[key]['rows'], ser=pser)
+        bv_A, Sx, Lx = pn['all'], pn['sth'], pn['lth']; d_, d30, dl = bv_A['depth'], bv_A['depth30'], bv_A['depth_low22']; bv_g_ = bv_A['cur']; lw = _ym(pn['low22'])
+        X['pnlb'] = dict(k='pnlb', zh='賺賠分布：虧多深', en='Profit and loss spread: how deep the losses run', modes=[bv_pm('all', '全部的幣', 'All supply'), bv_pm('sth', '短期持有者', 'Short-term holders'), bv_pm('lth', '長期持有者', 'Long-term holders')],
+          src='Bitview · ' + _md(bx['date']), srce='Bitview · ' + _md(bx['date']),
+          dz='把每顆幣用「現在的價格比它最後一次移動時高或低多少」分組，看各組佔供給多少。五條線是累計的：所有在虧的、虧 10%% 以上、20%% 以上、30%% 以上、50%% 以上，所以線不會交叉，越下面的線虧得越深。籌碼分布回答成本在哪個價位，這張回答虧多深。'
+             '可以切換全部的幣、短期持有者（持有不到 155 天）、長期持有者，各自以自己那一群的幣為 100%%。逐筆 UTXO，沒有排除遺失的幣（很早期的幣會一直算在大賺那一組）和交易所內部移轉。只作讀值。',
+          de='Every coin is grouped by how far the current price sits above or below the price it last moved at, and each group is shown as a share of supply. The five lines are cumulative: everything at a loss, then down 10%%, 20%%, 30%% and 50%% or more, so they never cross and the lower the line, the deeper the loss. The supply distribution says where the cost is; this says how deep the loss is. '
+             'Switch between all supply, short-term holders (held under 155 days) and long-term holders; each is a share of its own group. Per UTXO, with lost coins (very early coins stay in the big-profit group) and exchange-internal transfers not excluded. A reading only.')
+        X['pnlb']['say'] = _own([
+            ('虧 10% 以上', 'Down 10% or more', _p1(d_[1]), _p1(d_[1]), 'warn' if bv_A['pct10'] >= 80 else 'neu',
+             '全部的幣裡 %s 在虧損：虧 10%% 以上的 %s、20%% 以上 %s、30%% 以上 %s、虧過半的 %s。%d 年以來 %d%% 的日子，虧 10%% 以上的比例比現在低。30 天前是 %s。' % (_p1(d_[0]), _p1(d_[1]), _p1(d_[2]), _p1(d_[3]), _p1(d_[4]), int(bv_A['pct_since'][:4]), bv_A['pct10'], _p1(d30[1])),
+             '%s of all supply is at a loss: %s is down 10%% or more, %s down 20%% or more, %s down 30%% or more and %s down by half or more. Since %d, the share down 10%% or more was lower than now on %d%% of days. Thirty days ago it was %s.' % (_p1(d_[0]), _p1(d_[1]), _p1(d_[2]), _p1(d_[3]), _p1(d_[4]), int(bv_A['pct_since'][:4]), bv_A['pct10'], _p1(d30[1]))),
+            ('短期持有者', 'Short-term holders', _p1(Sx['depth'][0]) + ' 在虧', _p1(Sx['depth'][0]) + ' at a loss', 'warn' if Sx['depth'][1] >= 50 else 'neu',
+             '持有不到 155 天的幣，%s 在虧損，%s 虧 10%% 以上，%s 虧 20%% 以上。長期持有者是 %s 在虧、%s 虧 30%% 以上。' % (_p1(Sx['depth'][0]), _p1(Sx['depth'][1]), _p1(Sx['depth'][2]), _p1(Lx['depth'][0]), _p1(Lx['depth'][3])),
+             'Of coins held under 155 days, %s are at a loss, %s down 10%% or more and %s down 20%% or more. For long-term holders, %s are at a loss and %s down 30%% or more.' % (_p1(Sx['depth'][0]), _p1(Sx['depth'][1]), _p1(Sx['depth'][2]), _p1(Lx['depth'][0]), _p1(Lx['depth'][3]))),
+            ('和 %s 低點比' % lw, 'Versus the %s low' % pn['low22'][:7], '虧過半 ' + _p1(d_[4]), _p1(d_[4]) + ' down by half', 'neu',
+             '%s 低點那天 %s 在虧，其中虧過半的佔供給 %s；現在在虧的比例是 %s，虧過半的 %s，虧得淺很多。' % (lw, _p1(dl[0]), _p1(dl[4]), _p1(d_[0]), _p1(d_[4])),
+             'On the day of the %s low, %s of supply was at a loss and %s was down by half or more; now %s is at a loss and %s is down by half, a much shallower loss.' % (pn['low22'][:7], _p1(dl[0]), _p1(dl[4]), _p1(d_[0]), _p1(d_[4]))),
+            ('賺的那一邊', 'The profit side', _p1(bv_g_[0]) + ' 賺一倍以上', _p1(bv_g_[0]) + ' up 100% or more', 'neu',
+             '賺一倍以上的幣佔 %s，賺 50%%–100%% 的 %s，賺 10%%–50%% 的 %s，賺不到 10%% 的 %s。30 天前賺 10%%–50%% 的有 %s。' % (_p1(bv_g_[0]), _p1(bv_g_[1]), _p1(bv_g_[2]), _p1(bv_g_[3]), _p1(bv_A['prev30'][2])),
+             '%s of supply is up 100%% or more, %s up 50%%–100%%, %s up 10%%–50%% and %s up less than 10%%. Thirty days ago %s was up 10%%–50%%.' % (_p1(bv_g_[0]), _p1(bv_g_[1]), _p1(bv_g_[2]), _p1(bv_g_[3]), _p1(bv_A['prev30'][2])))],
+            '%s 的幣在虧損，%s 虧 10%% 以上，沒有到 %s 低點那種虧過半的程度。' % (_p1(d_[0]), _p1(d_[1]), lw) if d_[4] < 1 else '%s 的幣在虧損，%s 虧 10%% 以上，%s 虧過半。' % (_p1(d_[0]), _p1(d_[1]), _p1(d_[4])),
+            '%s of supply is at a loss and %s is down 10%% or more, well short of the down-by-half depth of the %s low.' % (_p1(d_[0]), _p1(d_[1]), pn['low22'][:7]) if d_[4] < 1 else '%s of supply is at a loss, %s down 10%% or more and %s down by half.' % (_p1(d_[0]), _p1(d_[1]), _p1(d_[4])))
+    _c5 = ((L.get('chips') or {}).get('flow') or {}).get('conc5') or {}
+    if X.get('conc') and _c5.get('in_profit') is not None:   # 2026-11-16 集中度改用 Bitview 的現成序列後多出來的讀數
+        X['conc']['dz'] += '現價上下 5%% 內的幣裡，獲利的佔供給 %s、虧損的 %s；短期持有者自己的集中度是 %s、長期持有者 %s。走勢是 Bitview 每天一筆（2018 年起）。' % (_p1(_c5['in_profit']), _p1(_c5['in_loss']), _p1(_c5['sth']), _p1(_c5['lth']))
+        X['conc']['de'] += ' Of the coins within 5%% of price, those in profit are %s of supply and those at a loss %s; short-term holders\' own concentration is %s and long-term holders\' %s. The history is one Bitview reading a day since 2018.' % (_p1(_c5['in_profit']), _p1(_c5['in_loss']), _p1(_c5['sth']), _p1(_c5['lth']))
     if not L['flows'].get('etfcost'):
         err = [e for e in (L.get('meta', {}).get('errors') or []) if 'etfcost' in str(e)]
         X['etfcost'] = dict(k='etfcost', zh='ETF 持有者成本', en='ETF holder cost basis', na=dict(zh='今天沒有資料。' + ('來源（The Block）回傳 410，表示這份資料已經下架，需要換來源。' if err and '410' in str(err[0]) else '來源沒有回應。') + '這張圖用每天的 ETF 淨流量乘上當天收盤，估計 ETF 買家的平均成本。', en='No data today: the source (The Block) returned 410, meaning the feed has been withdrawn and needs replacing. This chart estimates the average cost of ETF buyers from daily net flows times each day\'s close.'))
@@ -185,8 +248,8 @@ def build(L, N, E, dn):
       chap('today', '今天', 'Today', '今天發生什麼、要注意什麼', 'What happened today and what to watch', brief=TDB, groups=TDG),
       chap('cycle', '週期', 'Cycle', '現在在週期的哪裡', 'Where we are in the cycle', mod='cycle', dial=CYD, groups=CYG),
       chap('lv', '價位', 'Levels', '價格站在哪些成本和關卡上', 'Which cost bases and levels price is standing on', mod='market', map=1, groups=[
-        grp('成本線', 'Cost lines', '各群人的成本和均線在哪裡', 'Where each group\'s cost and the moving averages sit', ['levels', 'sthgap', 'quant', 'etfcost']),
-        grp('籌碼在哪', 'Where supply sits', '哪些價位的籌碼厚、哪些薄', 'Which prices hold thick supply and which thin', ['urpd', 'urpdchg', 'cohort', 'conc']),
+        grp('成本線', 'Cost lines', '各群人的成本和均線在哪裡', 'Where each group\'s cost and the moving averages sit', [k_ for k_ in ['levels', 'sthgap', 'quant', 'floors', 'etfcost'] if k_ != 'floors' or 'floors' in X]),
+        grp('籌碼在哪', 'Where supply sits', '哪些價位的籌碼厚、哪些薄', 'Which prices hold thick supply and which thin', [k_ for k_ in ['urpd', 'urpdchg', 'cohort', 'conc', 'pnlb'] if k_ != 'pnlb' or 'pnlb' in X]),
         grp('短線的牆', 'Near-term walls', '選擇權、清算和掛單堆在哪裡', 'Where options, liquidations and resting orders pile up', ['strike', 'gex', 'liq', 'book']),
         grp('這一段行情', 'This leg', '現在這一段走了多遠、到哪裡算結束', 'How far this leg has run and where it ends', ['legs', 'k20'])]),
       chap('sell', '賣壓', 'Selling', '賣壓出清了沒', 'Has the selling been worked through', mod='onchain', groups=SLG, hl=(X.get('pullback') or {}).get('list', {}).get('rows'), hlz='回調壓力清單', hle='Pullback pressure checklist'),
