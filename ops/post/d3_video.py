@@ -5,7 +5,8 @@ usage（倉庫根目錄）: python3 ops/post/d3_video.py <job.json> <out.mp4>
 job.json: {"k": "urpd", "ratio": "45"|"169", "fps": 30, "dpr": 1, "lang": "zh",
            "keys": [{"t": 0, "yaw": 0, "pit": 0, "m": 0}, {"t": 2.5, "yaw": -29, "pit": 32, "m": 1}, ...],   # 關鍵格，中間用 ease-in-out 補
            "events": [{"t": 8, "sel": [96000, "2025-02-16"], "wk": "2025-02-16"}],                         # 到了這個時間點設一次（選柱子、切一刀；sel 給 null 取消）
-           "end": 11}                                                                                     # 總長（秒），最後一個關鍵格之後停住
+           "end": 11,                                                                                     # 總長（秒），最後一個關鍵格之後停住
+           "url": {"px": "50000,110000"}}                                                                 # 選填：額外的網址參數，照原樣帶
   yaw、pit 是度；m 是攤開的程度 0–1（0＝平面）。4:5 是 1080×1350、16:9 是 1600×900（dpr 1.2 就是 1920×1080）。
 需要 ffmpeg：PATH 上有就用，沒有就用 imageio_ffmpeg（pip install imageio-ffmpeg）。輸出放 ops/video/out/，不進 git。
 """
@@ -44,7 +45,8 @@ def main():
         ws.call('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': 'dark'}, {'name': 'prefers-reduced-motion', 'value': 'reduce'}])
         k0 = keys[0]
         ws.js('window.__old = 1; true')
-        ws.call('Page.navigate', url=f'{S.SITE}?{"share=45" if r45 else "share"}&k={k}&m=d3&yaw={k0["yaw"]}&pit={k0["pit"]}&ex={k0["m"]}&v={int(time.time() * 1000)}')
+        extra = ''.join(f'&{q}={v}' for q, v in job.get('url', {}).items())   # 只能從網址設的參數（例如價格範圍），鍵照原樣帶
+        ws.call('Page.navigate', url=f'{S.SITE}?{"share=45" if r45 else "share"}&k={k}&m=d3&yaw={k0["yaw"]}&pit={k0["pit"]}&ex={k0["m"]}{extra}&v={int(time.time() * 1000)}')
         S.wait(ws, '!window.__old'); S.wait(ws, S.LOADED)
         if not S.wait(ws, '!!(window.__d3 && window.__d3.ready && (!document.fonts || document.fonts.status==="loaded"))', 30): sys.exit('ERROR 立體檢視沒畫出來（__d3.ready 一直是 false）')
         ws.js('var st=document.createElement("style"); st.textContent="*{scrollbar-width:none!important} ::-webkit-scrollbar{display:none!important}"; document.head.appendChild(st); true')   # 右邊那條捲軸不進影片
@@ -55,8 +57,8 @@ def main():
         for i in range(n):
             t = i / fps; o = dict(cam(keys, t))
             while ei < len(events) and events[ei]['t'] <= t:
-                for q in ('sel', 'wk'):
-                    if q in events[ei]: o[q] = events[ei][q]
+                for q, v in events[ei].items():   # sel、wk，或網站之後加的其他 __d3.set 欄位
+                    if q != 't': o[q] = v
                 ei += 1
             if not ws.js(f'window.__d3.set({json.dumps(o)})'): sys.exit(f'ERROR 第 {i} 格 __d3.set 沒設到')
             png = base64.b64decode(ws.call('Page.captureScreenshot', format='png')['data'])

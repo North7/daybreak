@@ -68,7 +68,7 @@ def d3_query(it):
     d = it.get('d3')
     if d is None: return ''
     from urllib.parse import quote
-    return '&m=d3' + ''.join(f'&{key}={quote(str(d[key]), safe=",")}' for key in ('d3v', 'yaw', 'pit', 'ex', 'wk', 'sel') if d.get(key) is not None)
+    return '&m=d3' + ''.join(f'&{key}={quote(str(v), safe=",")}' for key, v in d.items() if v is not None)   # 鍵照原樣帶進網址，網站之後加的參數（放大、價格範圍…）不用改這裡
 
 
 def shoot_share(ws, view, k, it):
