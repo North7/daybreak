@@ -2938,7 +2938,12 @@ function initOC() {
      10 分享模式和錄影（同一天，運營「長文」轉達、使用者同意）：網址 ?share&k=<代號>&m=d3 直接開立體檢視（m 也可以是第幾個檢視）；
        再加 d3v＝flat／ob／top、yaw、pit（度）、ex（攤開 0–1）、wk（哪一週／哪個到期日）、sel（價位,週 或 履約價,到期日）就停在那個角度、框住那一根並顯示提示框，不會自己站起來也不會滑動。
        逐格錄影用 window.__d3.set({...})（同樣的欄位，m 是攤開的程度），設完當下就畫好；window.__d3.ready 和 canvas 的 data-ready 表示這一格畫完了。
-       分享模式藏掉滑桿和右上角的提示字，留下圖例、哪一週、資料來源那一行。 */
+       分享模式藏掉滑桿和右上角的提示字，留下圖例、哪一週、資料來源那一行。
+     11 放大和範圍（同一天，運營「長文」轉達、使用者同意）：平常的比例是照「轉一整圈都不會被切掉」留的邊，停在一個角度截圖時圖只佔六成寬。四個參數，網址和 __d3.set 都能帶，不帶就和以前完全一樣：
+       zoom＝倍率（以圖區中心放大）；fit＝1 照當下的角度把整個場景（柱子、地板、刻度字、提示框）撐滿圖區並置中，算一次之後鎖住，之後換角度不會跟著變，要重算就再帶一次 fit；
+       fit 也可以是一串角度 [{yaw, pit, m}]（只有 __d3.set 能帶），用這幾個角度合起來的範圍，錄旋轉的影片時大小才不會一直變。fit 和 zoom 一起帶時 zoom 乘在撐滿之後。
+       xr＝橫軸範圍（價位或履約價，例如 50000,110000）、yr＝前後範圍（週或到期日的日期，例如 2025-01-01,2025-06-30，一邊可以空著）：只畫這一段，柱子變寬、高度照這一段最高的重新算；
+       範圍太窄（橫的不到 4 格、前後不到 3 排）就當作沒帶。裁掉最新一週時不再寫「最新」「現在剩」；現價、最大痛點落在範圍外就不畫。圖下面那行說明會補一句這張只畫哪一段。 */
   const D3 = (function () {
     const TAU = Math.PI * 2, reg = {};
     const hex = h => { h = h.trim(); if (h.length === 4) h = '#' + h[1] + h[1] + h[2] + h[2] + h[3] + h[3]; return [1, 3, 5].map(i => parseInt(h.slice(i, i + 2), 16)); };
@@ -2952,6 +2957,7 @@ function initOC() {
     const PRE = { flat: [0, 0, 0], ob: [-.5, .56, 1], top: [0, 1.5, 1] };
     const MONO = '"Geist Mono", "JetBrains Mono", ui-monospace, Menlo, monospace';
     const label = (S, t, x, y, o) => { o = o || {}; const c = S.ctx, a = o.a == null ? 1 : o.a; if (a <= .02) return; c.save(); c.globalAlpha = a; c.font = '500 ' + (o.px || 10.5) + 'px ' + MONO; c.textAlign = o.al || 'center'; c.textBaseline = 'middle';
+      if (S.bbOn && !o.fix) { const w = c.measureText(t).width, h = (o.px || 10.5) * .7, x0 = c.textAlign === 'center' ? x - w / 2 : c.textAlign === 'right' ? x - w : x; S.ext(x0 - 2, y - h, x0 + w + 2, y + h); }          /* ㉛-11 撐滿時連字一起量 */
       if (o.halo !== false) { c.lineWidth = 3.5; c.strokeStyle = rgb(P.bg, .88); c.lineJoin = 'round'; c.strokeText(t, x, y); } c.fillStyle = o.col || rgb(P.k2); c.fillText(t, x, y); c.restore(); };
     const poly = (c, Q) => { c.beginPath(); c.moveTo(Q[0][0], Q[0][1]); for (let i = 1; i < Q.length; i++) c.lineTo(Q[i][0], Q[i][1]); c.closePath(); };
     const line = (c, Q, col, w, dash) => { c.beginPath(); Q.forEach((p, q) => q ? c.lineTo(p[0], p[1]) : c.moveTo(p[0], p[1])); c.strokeStyle = col; c.lineWidth = w; c.lineJoin = c.lineCap = 'round'; if (dash) c.setLineDash(dash); c.stroke(); if (dash) c.setLineDash([]); };
@@ -2964,12 +2970,12 @@ function initOC() {
     function Scene(box, c, key, zref, draw, info) {
       const cv = document.createElement('canvas'), tip = document.createElement('div'), hint = document.createElement('span'), ctx = cv.getContext('2d'); tip.className = 'd3-tip'; tip.hidden = true; hint.className = 'd3-hint';
       cv.setAttribute('role', 'img'); cv.setAttribute('aria-label', T(c.zh, c.en)); box.innerHTML = ''; box.appendChild(cv); box.appendChild(hint); box.appendChild(tip);
-      let W = 0, H = 0, raf = 0, need = true, last = 0, spring = false, cur = 'flat', sc2 = 1, sc3 = 1, hits = [], dead = false, ro = null, io = null, manual = false;
+      let W = 0, H = 0, raf = 0, need = true, last = 0, spring = false, cur = 'flat', sc2 = 1, sc3 = 1, hits = [], dead = false, ro = null, io = null, manual = false, ZM = 1, FK = 1, FOX = 0, FOY = 0, fitSpec = null, bb = null;          /* ㉛-11：ZM 放大倍率；FK、FOX、FOY 撐滿算出來的倍率和位移 */
       const V = [0, 0, 0], TG = [0, 0, 0], VEL = [0, 0, 0], grp = () => { const ol = box.closest('.ol'); return ol ? ol.querySelectorAll('[data-d3v]') : []; };
-      const S = { ctx, cv, A: .82, hov: null, get W() { return W; }, get H() { return H; }, get yaw() { return V[0]; }, get pit() { return V[1]; }, get m() { return cl(V[2]); },
+      const S = { ctx, cv, box, c, key, A: .82, hov: null, get bbOn() { return !!bb; }, ext(x0, y0, x1, y1) { if (bb) { if (x0 < bb[0]) bb[0] = x0; if (y0 < bb[1]) bb[1] = y0; if (x1 > bb[2]) bb[2] = x1; if (y1 > bb[3]) bb[3] = y1; } }, get W() { return W; }, get H() { return H; }, get yaw() { return V[0]; }, get pit() { return V[1]; }, get m() { return cl(V[2]); },
         proj(x, y, z) { const m = Math.max(0, V[2]), mm = cl(m), cy = Math.cos(V[0]), sy = Math.sin(V[0]), ce = Math.cos(V[1]), se = Math.sin(V[1]); y *= m; z *= S.zk;
           const xr = x * cy - y * sy, yr = x * sy + y * cy, dep = -yr * ce - z * se, sc = S.sc / (1 + dep * .11 * mm); return [S.cx + xr * sc, S.cy + (yr * se - z * ce) * sc, dep]; },
-        hit(pts, id) { hits.push(pts, id); },
+        hit(pts, id) { hits.push(pts, id); if (bb) for (let q = 0; q < pts.length; q++) S.ext(pts[q][0], pts[q][1], pts[q][0], pts[q][1]); },
         dirty() { need = true; if (!raf && !dead) raf = requestAnimationFrame(tick); },
         peek(y, p, m) { V[0] = TG[0] = y; V[1] = TG[1] = p; V[2] = TG[2] = m; spring = false; S.dirty(); },          /* 檢查用：停在變形途中的某一格 */
         go(p, jump) { cur = c._d3v = p; setHov(null); for (let i = 0; i < 3; i++) TG[i] = PRE[p][i]; TG[0] += TAU * Math.round((V[0] - TG[0]) / TAU);
@@ -2977,9 +2983,22 @@ function initOC() {
         kill() { dead = true; if (raf) cancelAnimationFrame(raf); if (ro) ro.disconnect(); if (io) io.disconnect(); } };
       const mark = () => { grp().forEach(b => b.setAttribute('aria-pressed', b.dataset.d3v === cur)); hint.textContent = cur === 'flat' ? T('拖一下就站起來', 'Drag to stand it up') : T('拖曳可以轉一整圈', 'Drag to spin all the way round'); };
       function size() { const r = box.getBoundingClientRect(), d = Math.min(2, window.devicePixelRatio || 1); if (r.width < 20 || r.height < 20) return; W = r.width; H = r.height; cv.width = Math.round(W * d); cv.height = Math.round(H * d); ctx.setTransform(d, 0, 0, d, 0, 0);
-        sc3 = Math.min(W / (W < 520 ? 3.15 : 3.0), H / 2.12);          /* 高度留多一點：轉到背面時靠近鏡頭的那個角比較低，不能被切掉 */ sc2 = (W - (W < 520 ? 70 : 120)) / 2; S.z2 = .62 * H / sc2 / zref; S.dirty(); }
+        sc3 = Math.min(W / (W < 520 ? 3.15 : 3.0), H / 2.12);          /* 高度留多一點：轉到背面時靠近鏡頭的那個角比較低，不能被切掉 */ sc2 = (W - (W < 520 ? 70 : 120)) / 2; S.z2 = .62 * H / sc2 / zref; if (fitSpec) refit(); S.dirty(); }
       function frame() { const mm = cl(V[2]), e = mm * mm * (3 - 2 * mm); S.sc = lerp(sc2, sc3, e); S.zk = lerp(S.z2, 1, e); S.cx = W / 2 + lerp(W < 520 ? 18 : 24, 0, e);
-        S.cy = lerp(H * .84, H * .5 + sc3 * (.17 * Math.cos(V[1]) + .2 * Math.max(0, 1 - V[1] / .4)), e); }
+        S.cy = lerp(H * .84, H * .5 + sc3 * (.17 * Math.cos(V[1]) + .2 * Math.max(0, 1 - V[1] / .4)), e);
+        const K = FK * ZM; if (K !== 1 || FOX || FOY) { S.sc *= K; S.cx = W / 2 + (S.cx - W / 2) * K + FOX * ZM; S.cy = H / 2 + (S.cy - H / 2) * K + FOY * ZM; } }          /* ㉛-11：整個畫面以圖區中心放大再平移，投影本身不變 */
+      /* ㉛-11 撐滿：把場景畫一次、量它佔的範圍（柱子、地板、字、提示框），算出放大倍率和位移；字不會跟著放大，所以多算幾次收斂。poses 是一串角度時用合起來的範圍 */
+      function measure(poses) { const keep = V.slice(), RAD = Math.PI / 180; bb = [1e9, 1e9, -1e9, -1e9];
+        (poses || [null]).forEach(p => { if (p) { if (p.yaw != null && isFinite(p.yaw)) V[0] = p.yaw * RAD; if (p.pit != null && isFinite(p.pit)) V[1] = cl(p.pit * RAD, 0, 1.54); if (p.m != null && isFinite(p.m)) V[2] = cl(+p.m); }
+          frame(); hits = []; S.pinXY = null; draw(S);
+          if (S.pin && S.hov && S.pinXY) { tip.innerHTML = info(S.hov); tip.hidden = false; const q = S.pinXY, tw = tip.offsetWidth, th = tip.offsetHeight; S.ext(q[0] - tw / 2, q[1] - th - 18, q[0] + tw / 2, q[1]); }
+          V[0] = keep[0]; V[1] = keep[1]; V[2] = keep[2]; });
+        const r = bb; bb = null; return r; }
+      function refit() { if (!fitSpec || !W) return; const zm = ZM, pad = 8; ZM = 1; FK = 1; FOX = FOY = 0;
+        for (let n = 0; n < 4; n++) { const b = measure(fitSpec === 1 ? null : fitSpec); if (!(b[2] - b[0] > 4 && b[3] - b[1] > 4)) break;
+          const K2 = cl(FK * Math.min((W - 2 * pad) / (b[2] - b[0]), (H - 2 * pad) / (b[3] - b[1])), .3, 6), k = K2 / FK;
+          FOX = -((b[0] + b[2]) / 2 - W / 2 - FOX) * k; FOY = -((b[1] + b[3]) / 2 - H / 2 - FOY) * k; FK = K2; }
+        ZM = zm; }
       function tick(t) { raf = 0; if (dead) return; const dt = Math.min(.033, last ? (t - last) / 1000 : .016); last = t;
         if (spring) { const K = 95, C = 14; let rest = true; for (let i = 0; i < 3; i++) { VEL[i] += (K * (TG[i] - V[i]) - C * VEL[i]) * dt; V[i] += VEL[i] * dt; if (Math.abs(TG[i] - V[i]) > .0008 || Math.abs(VEL[i]) > .004) rest = false; }
           V[1] = cl(V[1], 0, 1.54); V[2] = cl(V[2], 0, 1.06); if (rest) { for (let i = 0; i < 3; i++) { V[i] = TG[i]; VEL[i] = 0; } spring = false; } need = true; }
@@ -2995,7 +3014,13 @@ function initOC() {
         if (o.yaw != null && isFinite(o.yaw)) { V[0] = TG[0] = o.yaw * Math.PI / 180; cur = ''; } if (o.pit != null && isFinite(o.pit)) { V[1] = TG[1] = cl(o.pit * Math.PI / 180, 0, 1.54); cur = ''; } if (o.m != null && isFinite(o.m)) { V[2] = TG[2] = cl(+o.m); cur = ''; }
         if (o.wk != null && o.wk !== '' && S.setCut) S.setCut(o.wk);
         if ('sel' in o) { S.hov = o.sel && S.toId ? S.toId(o.sel) : null; S.pin = !!S.hov; if (!S.hov) tip.hidden = true; }
+        if (o.zoom != null && isFinite(o.zoom) && +o.zoom > 0) ZM = cl(+o.zoom, .3, 5);          /* ㉛-11 */
+        if (o.fit != null) { fitSpec = Array.isArray(o.fit) ? (o.fit.length ? o.fit : null) : (o.fit === true || +o.fit ? 1 : null); if (fitSpec) refit(); else { FK = 1; FOX = FOY = 0; } }
+        if (o._cur) cur = c._d3v = o._cur;
         mark(); render(); return S; };
+      S.state = () => ({ yaw: V[0] * 180 / Math.PI, pit: V[1] * 180 / Math.PI, m: V[2], zoom: ZM, _cur: cur, _fit: fitSpec, _lock: [FK, FOX, FOY] });          /* 換範圍重建場景時帶過去 */
+      S.lock = (sp, q) => { fitSpec = sp; FK = q[0]; FOX = q[1]; FOY = q[2]; };
+      S.view = () => ({ zoom: ZM, fit: fitSpec ? { k: +FK.toFixed(3), ox: Math.round(FOX), oy: Math.round(FOY) } : null, xr: (c._d3r || {}).x || null, yr: (c._d3r || {}).y || null });
       const inside = (Q, x, y) => { let k = false; for (let i = 0, j = Q.length - 1; i < Q.length; j = i++) { const a = Q[i], b = Q[j]; if ((a[1] > y) !== (b[1] > y) && x < (b[0] - a[0]) * (y - a[1]) / (b[1] - a[1]) + a[0]) k = !k; } return k; };
       const pick = (x, y) => { for (let k = hits.length - 2; k >= 0; k -= 2) if (inside(hits[k], x, y)) return hits[k + 1]; return null; };
       const same = (a, b) => a === b || (a && b && a.join() === b.join());
@@ -3022,6 +3047,7 @@ function initOC() {
     }
     function floor(S, xt, yt, a) {
       const c = S.ctx, A = S.A, q = [[-1, -A], [1, -A], [1, A], [-1, A]].map(p => S.proj(p[0], p[1], 0)), yE = Math.cos(S.yaw) >= 0 ? A : -A;
+      if (S.bbOn) q.forEach(p => S.ext(p[0], p[1], p[0], p[1]));
       if (a > .01) { c.save(); c.globalAlpha = a; poly(c, q); c.fillStyle = rgb(P.floor); c.fill(); c.strokeStyle = rgb(P.ink, .16); c.lineWidth = 1; c.stroke();
         c.strokeStyle = rgb(P.ink, .07); xt.forEach(t => { const p = S.proj(t[0], -A, 0), r = S.proj(t[0], A, 0); c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(r[0], r[1]); c.stroke(); });
         yt.forEach(t => { const p = S.proj(-1, t[0], 0), r = S.proj(1, t[0], 0); c.beginPath(); c.moveTo(p[0], p[1]); c.lineTo(r[0], r[1]); c.stroke(); }); c.restore(); }
@@ -3036,25 +3062,27 @@ function initOC() {
     function vaxis(S, y, vals, a) { if (a <= .02) return; const c = S.ctx; c.save(); c.globalAlpha = a; vals.forEach(v => { const p = S.proj(-1, y, v[0]), q = S.proj(1, y, v[0]); line(c, [p, q], rgb(P.ink, .09), 1); label(S, v[1], p[0] - 6, p[1], { px: S.W < 520 ? 9.5 : 10.5, al: 'right', halo: false }); }); c.restore(); }
     /* 圖上的標註：一個點、一條引線、一行字；字不超出畫面 */
     const note = (S, p, t, o) => { o = o || {}; const c = S.ctx, a = o.a == null ? 1 : o.a; if (a <= .02) return; const px = S.W < 520 ? 10 : 11; c.font = '500 ' + px + 'px ' + MONO; const hw = c.measureText(t).width / 2 + 4, up = o.up == null ? 26 : o.up, x = cl(p[0] + (o.dx || 0), hw, Math.max(hw, S.W - hw)), y = Math.max(10, p[1] - up), col = o.col || P.ink;
+      if (S.bbOn) S.ext(p[0] + (o.dx || 0) - hw, Math.min(p[1], p[1] - up) - px * .7, p[0] + (o.dx || 0) + hw, Math.max(p[1], p[1] - up) + px * .7);
       c.save(); c.globalAlpha = a; line(c, [p, [x, y + 7]], rgb(col, .6), 1); c.beginPath(); c.arc(p[0], p[1], (o.r || 2.6) + 1.6, 0, TAU); c.fillStyle = rgb(P.bg); c.fill(); c.beginPath(); c.arc(p[0], p[1], o.r || 2.6, 0, TAU); c.fillStyle = rgb(col); c.fill(); c.restore();
-      label(S, t, x, y, { px, col: rgb(col), a }); };
+      label(S, t, x, y, { px, col: rgb(col), a, fix: 1 }); };
     const ring = (S, pts) => { const c = S.ctx; poly(c, pts); c.strokeStyle = rgb(P.bg); c.lineWidth = 3.4; c.lineJoin = 'round'; c.stroke(); c.strokeStyle = rgb(P.ink); c.lineWidth = 1.6; c.stroke(); };
 
     /* ── 籌碼地形（c.d3.kind＝'terr'）── */
-    function terr(box, c, key) {
-      const Q = c.d3, nx = Q.nb, ny = Q.dates.length, GG = Q.g, last = ny - 1, mx = Math.max.apply(null, GG.map(r => Math.max.apply(null, r))), ZS = .5;
+    function terr(box, c, key, Q) {
+      const nx = Q.nb, ny = Q.dates.length, GG = Q.g, last = ny - 1, mx = Math.max.apply(null, GG.map(r => Math.max.apply(null, r))), ZS = .5;
       const XP = p => -1 + 2 * ((p - Q.p0) / Q.w - .5) / (nx - 1), XI = i => -1 + 2 * i / (nx - 1);
       let cut = c._d3c != null && c._d3c <= last ? c._d3c : last;
       const iTopOf = j => GG[j].indexOf(Math.max.apply(null, GG[j]));
       let eat = null; for (let i = 0; i < nx; i++) for (let j = 0; j < ny - 8; j++) { const d = GG[j][i] - GG[last][i]; if (GG[j][i] > mx * .45 && (!eat || d > eat.d)) eat = { i, j, d, v: GG[j][i] }; }          /* 被吃掉最多的一道牆 */
+      const now_ = Q.dates[last] === c.d3.dates[c.d3.dates.length - 1], inX = p => p >= Q.p0 && p <= Q.p0 + nx * Q.w;          /* ㉛-11：裁掉最新一週就不說「最新」；價格落在範圍外就不標 */
       const pNow = Q.px[last], side = (i, j) => { const lo = Q.p0 + i * Q.w, p = Q.px[j]; return p >= lo + Q.w ? -1 : p < lo ? 1 : 0; };
       const hot = (i, j) => Q.p0 + (i + 1) * Q.w > (Q.px[j] + Q.px[Math.min(last, j + 1)]) / 2;
       const ramp = (t, i, j) => { const hue = P[hot(i, j) ? 'dn' : 'up'], s = Math.pow(cl(t), .55), lo = mix(P.bg, hue, P.dark ? .44 : .3); return s < .6 ? mix(lo, hue, s / .6) : mix(hue, P.dark ? [255, 255, 255] : mix(hue, P.ink, .5), (s - .6) / .4 * (P.dark ? .4 : .3)); };
-      const wk = j => j === last ? T('最新 ', 'Latest ') + md(Q.dates[j]) : ymd(Q.dates[j]) + T(' 那一週', ' week');
+      const wk = j => j === last && now_ ? T('最新 ', 'Latest ') + md(Q.dates[j]) : ymd(Q.dates[j]) + T(' 那一週', ' week');
       const info = id => { const i = id[0], j = id[1], lo = Q.p0 + i * Q.w, v = GG[j][i] * 100, sd = side(i, j);
         return '<b>' + usd(lo) + '–' + usd(lo + Q.w) + '</b><span>' + bt(v) + T(' · 佔全部的 ', ' · ') + (v / (Q.tot[j] * 100) * 100).toFixed(1) + '%' + T('', ' of supply') + '</span><span>' + wk(j) + T(' · 收盤 ', ' · close ') + usd(Q.px[j]) + '</span><span>' + (sd > 0 ? T('成本在價格上方（套牢）', 'Cost above price (underwater)') : sd < 0 ? T('成本在價格下方（獲利）', 'Cost below price (in profit)') : T('價格就在這一格', 'Price is inside this bucket')) + '</span>'; };
       const stepP = [10000, 20000, 25000, 50000].find(u => (Q.nb * Q.w) / u <= 5) || 50000, xt = []; for (let p = Math.ceil(Q.p0 / stepP) * stepP; p <= Q.p0 + Q.nb * Q.w; p += stepP) xt.push([XP(p - Q.w / 2), kk(p)]);
-      const yt = []; Q.dates.forEach((d, j) => { if (j < last && +d.slice(8, 10) <= 7 && [1, 7].indexOf(+d.slice(5, 7)) >= 0) yt.push([-.82 + 1.64 * j / (ny - 1), d.slice(2, 4) + '/' + d.slice(5, 7)]); }); yt.push([.82, T('最新', 'Latest'), 1]);
+      const yt = []; Q.dates.forEach((d, j) => { if (j < last && +d.slice(8, 10) <= 7 && [1, 7].indexOf(+d.slice(5, 7)) >= 0) yt.push([-.82 + 1.64 * j / (ny - 1), d.slice(2, 4) + '/' + d.slice(5, 7)]); }); yt.push([.82, now_ ? T('最新', 'Latest') : Q.dates[last].slice(2, 4) + '/' + Q.dates[last].slice(5, 7), 1]);
       const stepV = [250000, 500000, 1000000, 2000000].find(u => mx * 100 / u <= 4) || 2000000, va = []; for (let v = 0; v <= mx * 100; v += stepV) va.push([v / 100 / mx * ZS, v ? (lang === 'en' ? (v / 1e6) + 'M' : v / 10000 + ' 萬') : '0']);
       const S = Scene(box, c, key, ZS, function (S) {
         const cx = S.ctx, A = S.A, m = S.m, aF = cl(m * 2.4), a2 = cl(1 - m * 2.6), aS = cl(1 - (m - .3) * 4), small = S.W < 520, top = S.pit > 1.3, o = order(S), Yj = j => -A + 2 * A * j / (ny - 1), dy = 2 * A / (ny - 1), fog = fogger(S);
@@ -3073,22 +3101,22 @@ function initOC() {
           cx.restore(); }
         fronts(cut, aS, m < .3);          /* 平面圖那一刀：攤開的前半段蓋在最上面，之後淡出，換成立體裡真正的位置 */
         const path = Q.px.map((p, j) => S.proj(XP(p), Yj(j), zAt(p, j) + .012));
-        if (top) line(cx, path, rgb(P.ink, .95), 1.6);
+        if (top) { let run = []; Q.px.forEach((p, j) => { if (inX(p)) run.push(path[j]); else { if (run.length > 1) line(cx, run, rgb(P.ink, .95), 1.6); run = []; } }); if (run.length > 1) line(cx, run, rgb(P.ink, .95), 1.6); }
         if (cut !== last && m > .05) { const pr = []; for (let i = 0; i < nx; i++) pr.push(TL[cut][i], TR[cut][i]); line(cx, pr, rgb(P.ink, .95 * aF), top ? 1.6 : 1.2); }          /* ㉛-7 */
         ticks(S, xt, yt, aF);
         const mid = (j, i) => [(TL[j][i][0] + TR[j][i][0]) / 2, (TL[j][i][1] + TR[j][i][1]) / 2], h = S.hov;
         /* 原圖標的最厚、最薄兩段（㉛-1）：在最新那一刀的底線下面畫一條同色的線，字標在那一段最高的柱子上 */
-        const HL = cut === last ? (Q.hl || []).filter(q => q[3] && q[1] > Q.p0 && q[0] < Q.p0 + nx * Q.w) : [];
+        const HL = cut === last && now_ ? (Q.hl || []).filter(q => q[3] && q[1] > Q.p0 && q[0] < Q.p0 + nx * Q.w) : [];
         if (!top) HL.forEach((q, n) => { const a = S.proj(XP(Math.max(q[0], Q.p0)) - hw, Yj(last), 0), b = S.proj(XP(Math.min(q[1], Q.p0 + nx * Q.w)) - hw, Yj(last), 0), col = P[q[2]] || P.ink; line(cx, [[a[0], a[1] + 4], [b[0], b[1] + 4]], rgb(col), 2.5);
-          const y0 = (small ? 22 : 7) + n * 16; cx.fillStyle = rgb(col); cx.fillRect(1, y0 - 2, 8, 3); label(S, T(q[3], q[4]), 15, y0, { px: small ? 10 : 11, al: 'left', col: rgb(P.ink), halo: false }); });          /* 字固定在左上角，前面一小段同色的線對到柱子底下那一條 */
+          const y0 = (small ? 22 : 7) + n * 16; cx.fillStyle = rgb(col); cx.fillRect(1, y0 - 2, 8, 3); label(S, T(q[3], q[4]), 15, y0, { px: small ? 10 : 11, al: 'left', col: rgb(P.ink), halo: false, fix: 1 }); });          /* 字固定在左上角，前面一小段同色的線對到柱子底下那一條 */
         if (h) {
           if (m > .3) { const pr = []; for (let j = 0; j < ny; j++) pr.push(mid(j, h[0])); line(cx, pr, rgb(P.bg, .9), 3.2); line(cx, pr, rgb(P.ink), 1.4); }
           ring(S, top ? [TL[h[1]][h[0]], TR[h[1]][h[0]], TR[Math.max(0, h[1] - 1)][h[0]], TL[Math.max(0, h[1] - 1)][h[0]]] : face(h[0], h[1])); S.pinXY = mid(h[1], h[0]);
         } else {
           if (!top && !HL.length) { const it = iTopOf(cut); note(S, mid(cut, it), T('最厚 ', 'Thickest ') + bt(GG[cut][it] * 100), { up: small ? 20 : 26, dx: 26 }); }
-          if (eat && cut === last && !top) note(S, mid(eat.j, eat.i), T(Q.dates[eat.j].slice(2, 7).replace('-', '/') + ' 的牆 ' + bt(eat.v * 100) + '，現在剩 ' + bt(GG[last][eat.i] * 100), Q.dates[eat.j].slice(0, 7) + ' wall ' + bt(eat.v * 100) + ', now ' + bt(GG[last][eat.i] * 100)), { up: small ? 24 : 34, dx: small ? 0 : -30, a: cl((m - .6) * 3) * cl((S.pit - .25) * 6) });
-          note(S, path[cut], (cut === last ? T('收盤 ', 'Close ') : T('當週 ', 'That week ')) + usd(Q.px[cut]), { up: top ? -16 : (small ? 42 : 54), dx: -34, r: 3.4, col: P.ac });
-          if (cut !== last) note(S, path[last], T('收盤 ', 'Close ') + usd(pNow), { up: top ? -16 : 30, dx: 40, r: 3, a: aF, col: P.ac });
+          if (eat && now_ && cut === last && !top) note(S, mid(eat.j, eat.i), T(Q.dates[eat.j].slice(2, 7).replace('-', '/') + ' 的牆 ' + bt(eat.v * 100) + '，現在剩 ' + bt(GG[last][eat.i] * 100), Q.dates[eat.j].slice(0, 7) + ' wall ' + bt(eat.v * 100) + ', now ' + bt(GG[last][eat.i] * 100)), { up: small ? 24 : 34, dx: small ? 0 : -30, a: cl((m - .6) * 3) * cl((S.pit - .25) * 6) });
+          if (inX(Q.px[cut])) note(S, path[cut], (cut === last && now_ ? T('收盤 ', 'Close ') : T('當週 ', 'That week ')) + usd(Q.px[cut]), { up: top ? -16 : (small ? 42 : 54), dx: -34, r: 3.4, col: P.ac });
+          if (cut !== last && inX(pNow)) note(S, path[last], (now_ ? T('收盤 ', 'Close ') : md(Q.dates[last]) + ' ') + usd(pNow), { up: top ? -16 : 30, dx: 40, r: 3, a: aF, col: P.ac });
         }
       }, info);
       /* 圖下面：切一刀的滑桿 */
@@ -3127,9 +3155,9 @@ function initOC() {
     const oi = v => lang === 'en' ? n0(v) + ' BTC' : (v >= 1e4 ? (v / 1e4).toFixed(1) + ' 萬顆' : n0(v) + ' 顆');
 
     /* ── 選擇權未平倉：履約價 × 到期日（c.d3.kind＝'opt'）。平面是一個到期日的履約價分布（賣權在下、買權疊在上），立體是每個到期日排成一排，最近到期的在最前面 ── */
-    function optOI(box, c, key) {
-      const Q = c.d3, E = Q.exps, ny = E.length, nk = Q.nk, A = .82, ZS = .62;
-      const XK = k => -1 + 2 * (k - Q.k0) / (nk * Q.kw), Yr = r => A - 2 * A * r / (ny - 1);
+    function optOI(box, c, key, Q) {
+      const E = Q.exps, ny = E.length, nk = Q.nk, A = .82, ZS = .62;
+      const XK = k => -1 + 2 * (k - Q.k0) / (nk * Q.kw), Yr = r => A - 2 * A * r / (ny - 1), inK = k => k >= Q.k0 && k <= Q.k0 + nk * Q.kw, spIn = inK(Q.spot);          /* ㉛-11：現價、最大痛點落在範圍外就不畫 */
       const mxo = Math.max.apply(null, E.map(e => Math.max.apply(null, e.c.map((v, i) => v + e.p[i])))) || 1;
       let big = null; E.forEach((e, r) => { if (e.top[1] >= Q.k0 && e.top[1] < Q.k0 + nk * Q.kw && (!big || e.top[0] > big.v)) big = { r, v: e.top[0], k: e.top[1], cp: e.top[2] }; });
       let rs = E.findIndex(e => e.d === (c._d3c || Q.sel)); if (rs < 0) rs = E.indexOf(E.reduce((a, e) => (e.tc + e.tp > a.tc + a.tp ? e : a)));
@@ -3140,9 +3168,9 @@ function initOC() {
         const cx = S.ctx, small = S.W < 520, top = S.pit > 1.3, m = S.m, aF = cl(m * 2.4), a2 = cl(1 - m * 2.6), ys = Yr(rs), o = order(S), yE = o.cy >= 0 ? A : -A, h = S.hov;
         const yt = E.map((e, r) => [Yr(r), md(e.d), r === rs]);
         floor(S, xt, yt, aF); vaxis(S, ys, vo, a2);
-        if (aF > .01) { cx.save(); cx.globalAlpha = aF; line(cx, [S.proj(XK(Q.spot), -A, 0), S.proj(XK(Q.spot), A, 0)], rgb(P.c4, .9), 1.2); cx.restore(); }          /* 現價：立體時是地板上一條線，平面時是一條直的虛線 */
-        if (a2 > .02) { cx.save(); cx.globalAlpha = a2; line(cx, [S.proj(XK(Q.spot), ys, 0), S.proj(XK(Q.spot), ys, ZS * .96)], rgb(P.c4, .9), 1.2, [4, 4]); cx.restore(); }
-        const pain = E.map((e, r) => S.proj(XK(e.pain), Yr(r), 0)); if (aF > .01) { cx.save(); cx.globalAlpha = aF; line(cx, pain, rgb(P.ink, .7), 1, [3, 3]); cx.restore(); }
+        if (aF > .01 && spIn) { cx.save(); cx.globalAlpha = aF; line(cx, [S.proj(XK(Q.spot), -A, 0), S.proj(XK(Q.spot), A, 0)], rgb(P.c4, .9), 1.2); cx.restore(); }          /* 現價：立體時是地板上一條線，平面時是一條直的虛線 */
+        if (a2 > .02 && spIn) { cx.save(); cx.globalAlpha = a2; line(cx, [S.proj(XK(Q.spot), ys, 0), S.proj(XK(Q.spot), ys, ZS * .96)], rgb(P.c4, .9), 1.2, [4, 4]); cx.restore(); }
+        const pain = E.map((e, r) => S.proj(XK(e.pain), Yr(r), 0)), painIn = pain.filter((q, r) => inK(E[r].pain)); if (aF > .01 && painIn.length > 1) { cx.save(); cx.globalAlpha = aF; line(cx, painIn, rgb(P.ink, .7), 1, [3, 3]); cx.restore(); }
         const hw = 2 / nk * .36, hd = 2 * A / (ny - 1) * .3, sx = o.xa ? 1 : -1, sy_ = o.ya ? 1 : -1; let topP = null, hovBox = null;
         const col3 = (x, y, z0, z1, col, id) => { const Pj = (a, b, z) => S.proj(x + a * hw, y + b * hd, z), f = (pts, sh) => { quad(cx, pts, col.map(v => Math.min(255, v * sh))); S.hit(pts, id); };
           if (!top) { if (m > .02) f([Pj(sx, -1, z0), Pj(sx, 1, z0), Pj(sx, 1, z1), Pj(sx, -1, z1)], P.dark ? .5 : .72); f([Pj(-1, sy_, z0), Pj(1, sy_, z0), Pj(1, sy_, z1), Pj(-1, sy_, z1)], lerp(1, P.dark ? .74 : .86, m)); }
@@ -3151,12 +3179,12 @@ function initOC() {
           cx.globalAlpha = a; if (p > 0) col3(x, y, 0, zp, P.dn, id); if (q > 0) col3(x, y, zp, zc, P.up, id); cx.globalAlpha = 1;
           if (h && h[0] === i && h[1] === r) { const Pj = (a, b, z) => S.proj(x + a * hw, y + b * hd, z); hovBox = top ? [Pj(-1, -1, zc), Pj(1, -1, zc), Pj(1, 1, zc), Pj(-1, 1, zc)] : [Pj(-1, sy_, 0), Pj(1, sy_, 0), Pj(1, sy_, zc), Pj(-1, sy_, zc)]; }
           if (big && r === big.r && Q.k0 + i * Q.kw <= big.k && big.k < Q.k0 + (i + 1) * Q.kw) topP = S.proj(x, y, zc); });
-        E.forEach((e, r) => { const a = r === rs ? 1 : aF; if (a <= .01) return; const pp = pain[r]; cx.save(); cx.globalAlpha = a; cx.beginPath(); cx.arc(pp[0], pp[1], r === rs ? 3 : 2.2, 0, TAU); cx.fillStyle = rgb(P.ink); cx.fill(); cx.restore(); });
+        E.forEach((e, r) => { const a = r === rs ? 1 : aF; if (a <= .01 || !inK(e.pain)) return; const pp = pain[r]; cx.save(); cx.globalAlpha = a; cx.beginPath(); cx.arc(pp[0], pp[1], r === rs ? 3 : 2.2, 0, TAU); cx.fillStyle = rgb(P.ink); cx.fill(); cx.restore(); });
         ticks(S, xt, yt, aF);
-        const pp = pain[rs]; label(S, T('最大痛點 ', 'Max pain ') + kk(E[rs].pain), pp[0], pp[1] + (small ? 26 : 27), { px: small ? 9.5 : 10.5, col: rgb(P.ink), a: a2 });
+        const pp = pain[rs]; if (inK(E[rs].pain)) label(S, T('最大痛點 ', 'Max pain ') + kk(E[rs].pain), pp[0], pp[1] + (small ? 26 : 27), { px: small ? 9.5 : 10.5, col: rgb(P.ink), a: a2 });
         if (hovBox) { ring(S, hovBox); S.pinXY = top ? hovBox[0] : [(hovBox[2][0] + hovBox[3][0]) / 2, Math.min(hovBox[2][1], hovBox[3][1])]; }
         else if (topP && !top && (m > .5 || rs === big.r)) note(S, topP, md(E[big.r].d) + ' ' + kk(big.k) + (big.cp === 'P' ? T(' 賣權 ', ' put ') : T(' 買權 ', ' call ')) + oi(big.v), { up: small ? 18 : 24, dx: small ? 10 : 40, a: rs === big.r ? 1 : aF });
-        const sp = S.proj(XK(Q.spot), yE, 0), st = S.proj(XK(Q.spot), ys, ZS * .96); label(S, T('現價 ', 'Spot ') + usd(Q.spot), lerp(sp[0], st[0], a2), lerp(sp[1] + (small ? 36 : 30), st[1] - 10, a2), { px: small ? 9.5 : 10.5, col: rgb(P.c4) });
+        const sp = S.proj(XK(Q.spot), yE, 0), st = S.proj(XK(Q.spot), ys, ZS * .96); if (spIn) label(S, T('現價 ', 'Spot ') + usd(Q.spot), lerp(sp[0], st[0], a2), lerp(sp[1] + (small ? 36 : 30), st[1] - 10, a2), { px: small ? 9.5 : 10.5, col: rgb(P.c4) });
       }, info);
       const sl = slider(box, '到期日', 'Expiry', ny - 1, rs, r => md(E[r].d) + T(' 到期 · ', ' · ') + oi(E[r].tc + E[r].tp), r => { rs = r; c._d3c = E[r].d; S.dirty(); });
       const exOf = w => { if (/^\d+$/.test(String(w)) && +w < ny) return +w; const r = E.findIndex(e => e.d === String(w)); return r < 0 ? rs : r; };          /* 到期日：第幾排，或日期 */
@@ -3166,9 +3194,9 @@ function initOC() {
     }
 
     /* ── 隱含波動率曲面（c.d3.kind＝'iv'）。平面是一個到期日的微笑曲線，立體是所有到期日排成曲面：左右是偏斜，前後是期限結構；白線是平值（就是原本那張圖的那條線） ── */
-    function optIV(box, c, key) {
-      const Q = c.d3, EI = Q.exps, ni = EI.length, IX = Q.ivx, A = .82, ZS = .62;
-      const XI = k => -1 + 2 * (k - IX.k0) / (IX.n * IX.kw), Yi = r => A - 2 * A * r / (ni - 1);
+    function optIV(box, c, key, Q) {
+      const EI = Q.exps, ni = EI.length, IX = Q.ivx, A = .82, ZS = .62;
+      const XI = k => -1 + 2 * (k - IX.k0) / (IX.n * IX.kw), Yi = r => A - 2 * A * r / (ni - 1), spIn = Q.spot >= IX.k0 && Q.spot <= IX.k0 + IX.n * IX.kw;
       const ivs = [].concat.apply([], EI.map(e => e.iv.filter(v => v != null))), ivLo = Math.floor(Math.min.apply(null, ivs) / 5) * 5, ivHi = Math.max(ivLo + 10, Math.ceil(Math.max.apply(null, ivs) / 5) * 5), ZI = v => (v - ivLo) / (ivHi - ivLo) * ZS;
       let rs = EI.findIndex(e => e.d === c._d3c); if (rs < 0) rs = EI.indexOf(EI.reduce((a, e) => (e.tc + e.tp > a.tc + a.tp ? e : a)));
       const info = id => { const e = EI[ni - 1 - id[1]], k = IX.k0 + id[0] * IX.kw, v = e.iv[id[0]]; return '<b>' + md(e.d) + T(' 到期 · ', ' expiry · ') + usd(k) + '</b><span>' + T('隱含波動率 ', 'Implied volatility ') + (v == null ? T('沒有報價', 'no quote') : v + '%') + '</span><span>' + T('這個到期日平值 ', 'At the money for this expiry ') + e.atm + '%</span>'; };
@@ -3179,8 +3207,8 @@ function initOC() {
         const cx = S.ctx, small = S.W < 520, top = S.pit > 1.3, m = S.m, aF = cl(m * 2.4), a2 = cl(1 - m * 2.6), ys = Yi(rs), o = order(S), yE = o.cy >= 0 ? A : -A, h = S.hov;
         const yt = EI.map((e, r) => [Yi(r), md(e.d), r === rs]);
         floor(S, xt, yt, aF); vaxis(S, ys, vi, a2);
-        if (aF > .01) { cx.save(); cx.globalAlpha = aF; line(cx, [S.proj(XI(Q.spot), -A, 0), S.proj(XI(Q.spot), A, 0)], rgb(P.c4, .9), 1.2); cx.restore(); }
-        if (a2 > .02) { cx.save(); cx.globalAlpha = a2; line(cx, [S.proj(XI(Q.spot), ys, 0), S.proj(XI(Q.spot), ys, ZS * .96)], rgb(P.c4, .9), 1.2, [4, 4]); cx.restore(); }
+        if (aF > .01 && spIn) { cx.save(); cx.globalAlpha = aF; line(cx, [S.proj(XI(Q.spot), -A, 0), S.proj(XI(Q.spot), A, 0)], rgb(P.c4, .9), 1.2); cx.restore(); }
+        if (a2 > .02 && spIn) { cx.save(); cx.globalAlpha = a2; line(cx, [S.proj(XI(Q.spot), ys, 0), S.proj(XI(Q.spot), ys, ZS * .96)], rgb(P.c4, .9), 1.2, [4, 4]); cx.restore(); }
         field(S, F, aF);
         const jr = ni - 1 - rs, pr = []; for (let i = 0; i <= IX.n; i++) if (F._OK[jr * F.nx + i]) pr.push(F._P[jr * F.nx + i]); if (pr.length > 1) line(cx, pr, rgb(P.ink), 1.7);          /* 選到的到期日：平面時就是那條微笑曲線 */
         if (m < .3) for (let i = 0; i < IX.n; i++) { if (!F._OK[jr * F.nx + i] || !F._OK[jr * F.nx + i + 1]) continue; S.hit([F._P[jr * F.nx + i], F._P[jr * F.nx + i + 1], S.proj(-1 + 2 * (i + 1) / IX.n, ys, 0), S.proj(-1 + 2 * i / IX.n, ys, 0)], [i, jr]); }          /* 平面時曲線下面整條直帶都可以點 */
@@ -3191,7 +3219,7 @@ function initOC() {
         if (h) { const p = F._P[h[1] * F.nx + h[0]]; S.pinXY = p; cx.beginPath(); cx.arc(p[0], p[1], 5.6, 0, TAU); cx.fillStyle = rgb(P.bg); cx.fill(); cx.beginPath(); cx.arc(p[0], p[1], 3.6, 0, TAU); cx.fillStyle = rgb(P.ink); cx.fill(); }
         else { note(S, atm[rs], md(e0.d) + T(' 平值 ', ' ATM ') + e0.atm + '%', { up: small ? 30 : 40, dx: 44 });
           if (!top && e0.iv[0] != null && e0.iv[IX.n] != null) { const pl = S.proj(-1, Yi(rs), ZI(e0.iv[0])), q = S.proj(1, Yi(rs), ZI(e0.iv[IX.n])); label(S, T('賣權端 ', 'Put wing ') + e0.iv[0] + '%', pl[0] + 34 * o.cy, pl[1] - 12, { px: small ? 9.5 : 10.5, col: rgb(P.ink) }); label(S, T('買權端 ', 'Call wing ') + e0.iv[IX.n] + '%', q[0] - 30 * o.cy, q[1] - 12, { px: small ? 9.5 : 10.5, col: rgb(P.ink) }); } }
-        const sp = S.proj(XI(Q.spot), yE, 0), st = S.proj(XI(Q.spot), ys, ZS * .96); label(S, T('現價 ', 'Spot ') + usd(Q.spot), lerp(sp[0], st[0], a2), lerp(sp[1] + (small ? 36 : 30), st[1] - 10, a2), { px: small ? 9.5 : 10.5, col: rgb(P.c4) });
+        const sp = S.proj(XI(Q.spot), yE, 0), st = S.proj(XI(Q.spot), ys, ZS * .96); if (spIn) label(S, T('現價 ', 'Spot ') + usd(Q.spot), lerp(sp[0], st[0], a2), lerp(sp[1] + (small ? 36 : 30), st[1] - 10, a2), { px: small ? 9.5 : 10.5, col: rgb(P.c4) });
       }, info);
       const sl = slider(box, '到期日', 'Expiry', ni - 1, rs, r => md(EI[r].d) + T(' 到期 · 平值 ', ' · ATM ') + EI[r].atm + '%', r => { rs = r; c._d3c = EI[r].d; S.dirty(); });
       const exOf = w => { if (/^\d+$/.test(String(w)) && +w < ni) return +w; const r = EI.findIndex(e => e.d === String(w)); return r < 0 ? rs : r; };
@@ -3200,18 +3228,40 @@ function initOC() {
       return S;
     }
     const KIND = { terr, opt: optOI, iv: optIV };
+    /* ㉛-11 只畫一段：r＝{x: [低, 高], y: [起, 迄]}。回傳裁過的一份（原本的 c.d3 不動）；太窄就不裁。_x、_y 是實際裁到的範圍，給說明那一行用 */
+    const pair = (v, num) => { if (v == null || v === '') return null; const a = Array.isArray(v) ? v : String(v).split(','); if (a.length < 2) return null;
+      if (num) { const lo = +a[0], hi = +a[1]; return a[0] !== '' && a[1] !== '' && isFinite(lo) && isFinite(hi) && hi > lo ? [lo, hi] : null; } const lo = String(a[0] || '').trim() || '0000', hi = String(a[1] || '').trim() || '9999'; return hi > lo ? [lo, hi] : null; };
+    const crop = (Q, r) => { if (!r || (!r.x && !r.y)) return Q; const o = Object.assign({}, Q), ci = (v, n) => cl(v, 0, n);
+      const rows = (D, min) => { if (!r.y) return null; const J = []; D.forEach((d, j) => { if (d >= r.y[0] && d <= r.y[1] + '\uffff') J.push(j); }); return J.length >= min && J.length < D.length ? [J[0], J[J.length - 1] + 1] : null; };
+      if (Q.kind === 'terr') { let i0 = 0, i1 = Q.nb; if (r.x) { const a = ci(Math.floor((r.x[0] - Q.p0) / Q.w), Q.nb), b = ci(Math.ceil((r.x[1] - Q.p0) / Q.w), Q.nb); if (b - a >= 4 && b - a < Q.nb) { i0 = a; i1 = b; o._x = [Q.p0 + a * Q.w, Q.p0 + b * Q.w]; } }
+        const R = rows(Q.dates, 3), j0 = R ? R[0] : 0, j1 = R ? R[1] : Q.dates.length; if (R) o._y = [Q.dates[j0], Q.dates[j1 - 1]];
+        o.p0 = Q.p0 + i0 * Q.w; o.nb = i1 - i0; o.dates = Q.dates.slice(j0, j1); o.px = Q.px.slice(j0, j1); o.tot = Q.tot.slice(j0, j1); o.g = Q.g.slice(j0, j1).map(g => g.slice(i0, i1)); return o; }
+      const R = rows(Q.exps.map(e => e.d), 3); let E = R ? Q.exps.slice(R[0], R[1]) : Q.exps; if (R) o._y = [E[0].d, E[E.length - 1].d];
+      if (Q.kind === 'opt') { if (r.x) { const a = ci(Math.floor((r.x[0] - Q.k0) / Q.kw), Q.nk), b = ci(Math.ceil((r.x[1] - Q.k0) / Q.kw), Q.nk); if (b - a >= 4 && b - a < Q.nk) { o.k0 = Q.k0 + a * Q.kw; o.nk = b - a; o._x = [o.k0, o.k0 + o.nk * Q.kw]; E = E.map(e => Object.assign({}, e, { c: e.c.slice(a, b), p: e.p.slice(a, b) })); } } o.exps = E; return o; }
+      const IX = Q.ivx; if (r.x) { const a = ci(Math.round((r.x[0] - IX.k0) / IX.kw), IX.n), b = ci(Math.round((r.x[1] - IX.k0) / IX.kw), IX.n); if (b - a >= 4 && b - a < IX.n) { o.ivx = { k0: IX.k0 + a * IX.kw, kw: IX.kw, n: b - a }; o._x = [o.ivx.k0, o.ivx.k0 + (b - a) * IX.kw]; E = E.map(e => Object.assign({}, e, { iv: e.iv.slice(a, b + 1) })); } }
+      o.exps = E.filter(e => e.iv.some(v => v != null)); if (o.exps.length < 3) return Q; return o; };
+    const build = (box, c, key) => { if (reg[key]) reg[key].kill(); const Qx = crop(c.d3, c._d3r); c._d3x = Qx._x || Qx._y ? { x: Qx._x || null, y: Qx._y || null } : null; return (reg[key] = KIND[c.d3.kind](box, c, key, Qx)); };
+    const noteText = c => { const x = c._d3x; return T(c.d3.srcz || '', c.d3.srce || '') + (x ? T('這張只畫 ', ' This image shows only ') + [x.x ? kk(x.x[0]) + '–' + kk(x.x[1]) : '', x.y ? ymd(x.y[0]) + '–' + ymd(x.y[1]) : ''].filter(Boolean).join(T('、', ', ')) + T('。', '.') : ''); };
+    /* 套用一組設定：範圍變了要重建場景（角度、放大、撐滿帶過去；選到的那一根是照格子記的，範圍變了就清掉，除非這次有帶 sel） */
+    const apply = (sc, o) => { o = o || {}; const c = sc.c;
+      if ('xr' in o || 'yr' in o) { const r = Object.assign({}, c._d3r || {}); if ('xr' in o) r.x = pair(o.xr, 1); if ('yr' in o) r.y = pair(o.yr, 0);
+        if (JSON.stringify(r) !== JSON.stringify(c._d3r || {})) { const st = sc.state(), box = sc.box, key = sc.key; c._d3r = r; if (c.d3.kind === 'terr') c._d3c = null; c._d3i = 1; sc = build(box, c, key); sc.lock(st._fit, st._lock); sc.set(st);
+          const n = box.closest('.ol') && box.closest('.ol').querySelector('.d3-n'); if (n) n.innerHTML = srcLink(esc(noteText(c))); } }
+      sc.set(o); return sc; };
     window.DAYBREAK_D3 = reg;          /* 檢查用（tests、主控台）：每張立體圖的場景 */
     /* ㉛-10 逐格控制（運營錄影、截圖用）：__d3.set({view, yaw, pit, m, wk, sel}) 設完當下就畫好，回傳有沒有設到；__d3.ready＝這一格畫完了沒。作用在放大檢視（分享模式）的那張，沒有就是畫面上第一張 */
     const live = () => { const k = Object.keys(reg).filter(q => reg[q].cv.isConnected); return k.length ? reg[k.indexOf('F') >= 0 ? 'F' : k[0]] : null; };
-    window.__d3 = { set(o) { const sc = live(); if (!sc) return false; sc.set(o); return true; }, get ready() { const sc = live(); return !!(sc && sc.ready); }, get scene() { return live(); } };
+    window.__d3 = { set(o) { const sc = live(); if (!sc) return false; apply(sc, o); return true; }, get view() { const sc = live(); return sc ? sc.view() : null; }, get ready() { const sc = live(); return !!(sc && sc.ready); }, get scene() { return live(); } };
     return {
-      mount(box, c, key) { if (reg[key]) reg[key].kill(); readPal(); const sc = reg[key] = KIND[c.d3.kind](box, c, key);
-        if (QS.get('k') === c.k) { const o = {}, num = n => QS.has(n) && QS.get(n) !== '' && isFinite(+QS.get(n)) ? +QS.get(n) : null;          /* ㉛-10 網址參數（只對 k 指定的那張圖）：d3v＝flat／ob／top，yaw、pit（度），ex（0–1），wk（週或到期日），sel（價位,週 或 履約價,到期日） */
-          if (QS.get('d3v')) o.view = QS.get('d3v'); o.yaw = num('yaw'); o.pit = num('pit'); o.m = num('ex'); if (QS.get('wk')) o.wk = QS.get('wk'); if (QS.get('sel')) o.sel = QS.get('sel').split(',');
-          if (o.view || o.yaw != null || o.pit != null || o.m != null || o.wk || o.sel) sc.set(o); }
+      mount(box, c, key) { readPal(); const mine = QS.get('k') === c.k; if (mine && c._d3r === undefined) c._d3r = { x: pair(QS.get('xr'), 1), y: pair(QS.get('yr'), 0) };          /* ㉛-11 xr、yr：只畫一段 */
+        const sc = build(box, c, key);
+        if (mine) { const o = {}, num = n => QS.has(n) && QS.get(n) !== '' && isFinite(+QS.get(n)) ? +QS.get(n) : null;          /* ㉛-10 網址參數（只對 k 指定的那張圖）：d3v＝flat／ob／top，yaw、pit（度），ex（0–1），wk（週或到期日），sel（價位,週 或 履約價,到期日） */
+          if (QS.get('d3v')) o.view = QS.get('d3v'); o.yaw = num('yaw'); o.pit = num('pit'); o.m = num('ex'); if (QS.get('wk')) o.wk = QS.get('wk'); if (QS.get('sel')) o.sel = QS.get('sel').split(','); o.zoom = num('zoom'); if (QS.get('fit') && QS.get('fit') !== '0') o.fit = 1;          /* ㉛-11 zoom＝倍率、fit＝1 撐滿 */
+          if (o.view || o.yaw != null || o.pit != null || o.m != null || o.wk || o.sel || o.zoom != null || o.fit) sc.set(o); }
         return sc; },
       go(key, v) { const s = reg[key]; if (s) s.go(v); },
       repaint() { readPal(); Object.keys(reg).forEach(k => { if (reg[k].cv.isConnected) reg[k].dirty(); else { reg[k].kill(); delete reg[k]; } }); },          /* 換頁之後不在畫面上的場景順手清掉 */
+      noteText,
       views: () => [['flat', '平面', 'Flat'], ['ob', '立體', '3D'], ['top', '俯瞰', 'Top']],
       legend: c => c.d3.kind === 'terr' ? [['dn', '成本在當週價格上方（套牢）', 'Cost above that week\'s price (underwater)'], ['up', '成本在當週價格下方', 'Cost below that week\'s price']]
         : c.d3.kind === 'opt' ? [['ink', '各到期日的最大痛點', 'Max pain by expiry'], ['c4', '現價', 'Spot']]
@@ -3499,7 +3549,7 @@ function initOC() {
     const hk = c.na ? '' : s.hz ? T(s.hz, s.he) : isT(c) && hero(s).zh && hero(s).zh !== c.zh ? T(hero(s).zh, hero(s).en) : '';
     const src = c.src ? T(c.src, c.srce) : '', e2 = enName(c), chi = /^q_/.test(c.k || '') ? CHI(c.k.slice(2)) : '', head = `<div class="ol-t${e2 ? ' e2' : ''}">${chi ? ICS(chi, 'ch') : ''}<h4 class="ol-n">${esc(T(c.zh, c.en))}</h4>${e2 ? `<span class="ol-e" lang="en">${esc(e2)}</span>` : ''}${src ? `<span class="ol-src" title="${esc(src)}">${srcLink(esc(src))}</span><button type="button" class="src-b" data-src="${esc(T('資料來源：', 'Source: ') + src)}" aria-label="${esc(T('資料來源：', 'Source: ') + src)}">${IC('src')}</button>` : ''}${c.go ? `<button type="button" class="fx-b go" data-chid="${c.go}"${ib('看這一頁', 'Open this page')}>${IC('go')}</button>` : flat && !c.na && !c.nofx ? `<button type="button" class="fx-b" data-fx="${key}"${ib('展開這張圖', 'Expand this chart')}>${IC('expand')}</button>` : ''}</div>${md || d3b || pg || lqb || rgb || lyb ? `<div class="ol-ctl">${md}${d3b}${pg}${lqb}${rgb}${lyb}${more}</div>` : ''}`, big = `${hk ? `<span class="ol-k">${esc(hk)}</span>` : ''}<div class="ol-big"${tcol}><span class="odo" id="oc-b${key}"></span><span class="ol-u" id="oc-u${key}"></span><small id="oc-d${key}"></small></div>${stat(s, c)}${pairHtml(s, c)}${sayH}${sxl(s, c)}`;
     const d3lg = d3on ? D3.legend(c).map(q => '<span><i class="box" style="--c:' + CV(q[0]) + ';--c2:' + CV(q[0]) + '"></i>' + esc(T(q[1], q[2])) + '</span>').join('') : '';
-    const d3Put = () => { D3.mount($('#oc-c' + key), c, key); const sc9 = ol.querySelector('.d3-sc'); if (sc9 && c.d3.srcz) sc9.insertAdjacentHTML('afterend', '<p class="d3-n">' + srcLink(esc(T(c.d3.srcz, c.d3.srce))) + '</p>'); };   /* ㉛ 立體檢視：原本的數字、說明、圖例都還在，只換圖的那一格 */
+    const d3Put = () => { D3.mount($('#oc-c' + key), c, key); const sc9 = ol.querySelector('.d3-sc'); if (sc9 && c.d3.srcz) sc9.insertAdjacentHTML('afterend', '<p class="d3-n">' + srcLink(esc(D3.noteText(c))) + '</p>'); };   /* ㉛ 立體檢視：原本的數字、說明、圖例都還在，只換圖的那一格 */
     let L = null;
     if (c.na) ol.innerHTML = head + `<div class="ol-na"><b>${ICS('nodata')}${T('資料沒來', 'No data')}</b><p>${esc(T(c.na.zh, c.na.en))}</p></div>`;
     else if (c.sim) simCard(ol, c, key, head);
