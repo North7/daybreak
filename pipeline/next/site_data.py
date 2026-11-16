@@ -81,6 +81,30 @@ def build(L, N, E, dn):
              '%s of supply is up 100%% or more, %s up 50%%–100%%, %s up 10%%–50%% and %s up less than 10%%. Thirty days ago %s was up 10%%–50%%.' % (_p1(bv_g_[0]), _p1(bv_g_[1]), _p1(bv_g_[2]), _p1(bv_g_[3]), _p1(bv_A['prev30'][2])))],
             '%s 的幣在虧損，%s 虧 10%% 以上，沒有到 %s 低點那種虧過半的程度。' % (_p1(d_[0]), _p1(d_[1]), lw) if d_[4] < 1 else '%s 的幣在虧損，%s 虧 10%% 以上，%s 虧過半。' % (_p1(d_[0]), _p1(d_[1]), _p1(d_[4])),
             '%s of supply is at a loss and %s is down 10%% or more, well short of the down-by-half depth of the %s low.' % (_p1(d_[0]), _p1(d_[1]), pn['low22'][:7]) if d_[4] < 1 else '%s of supply is at a loss, %s down 10%% or more and %s down by half.' % (_p1(d_[0]), _p1(d_[1]), _p1(d_[4])))
+    tc_t = bx.get('tiers')   # 2026-11-16 大戶地址的持幣成本（bv_more.py）：運營回覆用過自己畫的版本，使用者看了要求網站加
+    if tc_t and len(tc_t.get('rows') or []) > 200:
+        tc_c = tc_t['cur']; tc_g = tc_t['gap']; tc_px = tc_t['px']; tc_y = tc_t['year']; tc_lg = tc_t.get('longest'); tc_dp = tc_t.get('deep'); tc_nd = tc_t['below_days']; tc_md = lambda d_: '%d/%d' % (int(d_[5:7]), int(d_[8:10]))
+        tc_sg = lambda v: ('%+.1f%%' % v).replace('-', '−'); tc_up = lambda v: '上方 %.1f%%' % v if v >= 0 else '下方 %.1f%%' % -v; tc_ue = lambda v: '%.1f%% above' % v if v >= 0 else '%.1f%% below' % -v
+        tc_TN = [('100–1k 顆', '100–1K BTC', 'c5'), ('1k–10k 顆', '1K–10K BTC', 'c3'), ('10k–100k 顆', '10K–100K BTC', 'c4')]   # 顏色和「大戶 30 日淨變化」同一組：100–1k 黃、1k–10k 藍紫、1 萬以上青
+        tc_runs = '、'.join('%s%s' % (tc_md(r_['start']), '' if r_['days'] == 1 else '–' + tc_md(r_['end'])) + '（%d 天）' % r_['days'] for r_ in tc_t['runs']); tc_rune = ', '.join((r_['start'][5:] if r_['days'] == 1 else r_['start'][5:] + ' to ' + r_['end'][5:]) + ' (%d)' % r_['days'] for r_ in tc_t['runs'])
+        X['tiercost'] = dict(k='tiercost', zh='大戶地址的持幣成本', en='Cost basis of large-balance addresses', hz='1k–10k 顆這一層的成本', he='Cost of the 1K–10K BTC tier', one=1, f='usd0', hero=2, rng=365, rows=tc_t['rows'],
+          ser=[ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.3)] + [ser(2 + i_, zh=tc_TN[i_][0], en=tc_TN[i_][1], col=tc_TN[i_][2], w=2.1 if i_ == 1 else 1.5) for i_ in range(3)],
+          src='Bitview · ' + _md(bx['date']), srce='Bitview · ' + _md(bx['date']),
+          dz='把地址依餘額分成三層（100–1k 顆、1k–10k 顆、10k–100k 顆），每一層的已實現市值除以持幣量，就是這一層的幣平均是在什麼價格最後一次移動的。'
+             '這是依地址餘額分層，沒有做實體歸併：一個地址不等於一個人，餘額變了就會換層，1 萬顆以上那一層有不少交易所和託管機構，所以不要把它讀成某一群人的成本，也不是支撐位。這裡只記價格碰到之後待了幾天、多深。只作讀值。',
+          de='Addresses are split into three tiers by balance (100–1K, 1K–10K and 10K–100K BTC); each tier\'s realized cap divided by its supply is the average price at which its coins last moved. '
+             'The tiers are by address balance, not by entity: one address is not one holder, an address changes tier when its balance changes, and the 10K-plus tier holds many exchanges and custodians, so do not read a line as one group\'s cost, nor as support. This card only records how long and how far price went once it touched a line. A reading only.')
+        X['tiercost']['say'] = _own([
+            ('1k–10k 顆', '1K–10K BTC', usd(tc_c[1]), usd(tc_c[1]), 'warn' if tc_g[1] < 0 else 'neu',
+             '收盤 %s，在這一層成本的%s。30 天前這條線是 %s。' % (usd(tc_px), tc_up(tc_g[1]), usd(tc_t['prev30'][1])),
+             'The close of %s is %s this tier\'s cost. Thirty days ago the line was at %s.' % (usd(tc_px), tc_ue(tc_g[1]), usd(tc_t['prev30'][1]))),
+            ('另外兩層', 'The other two tiers', '%s／%s' % (usd(tc_c[0]), usd(tc_c[2])), '%s / %s' % (usd(tc_c[0]), usd(tc_c[2])), 'neu',
+             '100–1k 顆這一層 %s，收盤在它%s；10k–100k 顆這一層 %s，收盤在它%s。' % (usd(tc_c[0]), tc_up(tc_g[0]), usd(tc_c[2]), tc_up(tc_g[2])),
+             'The 100–1K tier is at %s, with the close %s it; the 10K–100K tier is at %s, with the close %s it.' % (usd(tc_c[0]), tc_ue(tc_g[0]), usd(tc_c[2]), tc_ue(tc_g[2]))),
+            ('%d 年收在 1k–10k 線下' % tc_y, 'Closes below the 1K–10K line in %d' % tc_y, '%d 天' % tc_nd, '%d days' % tc_nd, 'neu',
+             ('共 %d 天：%s。最長連續 %d 天；最深是 %s，收 %s 對成本 %s（%s）。' % (tc_nd, tc_runs, tc_lg['days'], tc_md(tc_dp['d']), usd(tc_dp['px']), usd(tc_dp['cost']), tc_sg(tc_dp['pct'])) if tc_nd else '今年還沒有一天收在這條線下面。'),
+             ('%d days in all: %s. The longest run was %d days; the deepest was %s, a close of %s against a cost of %s (%s).' % (tc_nd, tc_rune, tc_lg['days'], tc_dp['d'][5:], usd(tc_dp['px']), usd(tc_dp['cost']), tc_sg(tc_dp['pct'])) if tc_nd else 'No close below this line so far this year.'))],
+            '收盤在 1k–10k 顆這一層成本的%s，在 100–1k 顆那一層的%s。' % (tc_up(tc_g[1]), tc_up(tc_g[0])), 'The close is %s the 1K–10K tier\'s cost and %s the 100–1K tier\'s.' % (tc_ue(tc_g[1]), tc_ue(tc_g[0])))
     _c5 = ((L.get('chips') or {}).get('flow') or {}).get('conc5') or {}
     if X.get('conc') and _c5.get('in_profit') is not None:   # 2026-11-16 集中度改用 Bitview 的現成序列後多出來的讀數
         X['conc']['dz'] += '現價上下 5%% 內的幣裡，獲利的佔供給 %s、虧損的 %s；短期持有者自己的集中度是 %s、長期持有者 %s。走勢是 Bitview 每天一筆（2018 年起）。' % (_p1(_c5['in_profit']), _p1(_c5['in_loss']), _p1(_c5['sth']), _p1(_c5['lth']))
@@ -248,7 +272,7 @@ def build(L, N, E, dn):
       chap('today', '今天', 'Today', '今天發生什麼、要注意什麼', 'What happened today and what to watch', brief=TDB, groups=TDG),
       chap('cycle', '週期', 'Cycle', '現在在週期的哪裡', 'Where we are in the cycle', mod='cycle', dial=CYD, groups=CYG),
       chap('lv', '價位', 'Levels', '價格站在哪些成本和關卡上', 'Which cost bases and levels price is standing on', mod='market', map=1, groups=[
-        grp('成本線', 'Cost lines', '各群人的成本和均線在哪裡', 'Where each group\'s cost and the moving averages sit', [k_ for k_ in ['levels', 'sthgap', 'quant', 'floors', 'etfcost'] if k_ != 'floors' or 'floors' in X]),
+        grp('成本線', 'Cost lines', '各群人的成本和均線在哪裡', 'Where each group\'s cost and the moving averages sit', [k_ for k_ in ['levels', 'sthgap', 'quant', 'floors', 'tiercost', 'etfcost'] if k_ not in ('floors', 'tiercost') or k_ in X]),
         grp('籌碼在哪', 'Where supply sits', '哪些價位的籌碼厚、哪些薄', 'Which prices hold thick supply and which thin', [k_ for k_ in ['urpd', 'urpdchg', 'cohort', 'conc', 'pnlb'] if k_ != 'pnlb' or 'pnlb' in X]),
         grp('短線的牆', 'Near-term walls', '選擇權、清算和掛單堆在哪裡', 'Where options, liquidations and resting orders pile up', ['strike', 'gex', 'liq', 'book']),
         grp('這一段行情', 'This leg', '現在這一段走了多遠、到哪裡算結束', 'How far this leg has run and where it ends', ['legs', 'k20'])]),

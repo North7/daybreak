@@ -287,6 +287,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-16** 新圖「大戶地址的持幣成本」（價位 › 成本線，`tiercost`）：餘額 100–1k、1k–10k、10k–100k 顆三層地址各自的已實現市值 ÷ 持幣量，和價格疊在一起，預設看近一年。讀數列今天三條線的位置、收盤離中間那條多遠、今年收在中間那條下面幾天／最長連續幾天／最深多少。資料來自 Bitview（`bv_more.py` 多抓六條）。說明寫明這是依地址餘額分層、沒有做實體歸併，不是某一群人的成本，也不是支撐位。
 - **2026-11-16** 「短期持有者獲利比例」多一個檢視「塗在價格上」：價格線照這個比例（近 5 天的平均）用全站的熱度色階上色，越暖代表越多短期持有者在賺。說明裡寫明暖色不等於頂、冷色不等於底。上色的價格線（`t='ramp'`）多一個 `heat=1` 選項，原本的紅灰綠版（長期持有者 30 日淨部位變化）不變。
 - **2026-11-16** 籌碼地形的兩條白線加粗並墊底色（切一刀那一週的輪廓、選到那一根沿時間的頂線）：原本約 1px，壓在萊姆綠上幾乎看不到。
 - **2026-11-16** 從 Bitview 多接四組資料（`pipeline/bv_more.py`，每天約 36 次請求、一分鐘；使用者看過目錄盤點後決定）：
@@ -697,6 +698,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-16** New chart "Cost basis of large-balance addresses" (Levels › Cost lines, `tiercost`): realized cap divided by supply for addresses holding 100–1K, 1K–10K and 10K–100K BTC, drawn against price, one year by default. The readings give today's three lines, how far the close sits from the middle one, and this year's closes below it (days, longest run, deepest). Data from Bitview (six more series in `bv_more.py`). The note says the tiers are by address balance, not by entity, and are neither one group's cost nor support.
 - **2026-11-16** "Short-term holders in profit" gains a second view, "On the price": the price line coloured by that share (averaged over 5 days) on the site's heat scale, warmer meaning more short-term holders in profit. The note says warm is not a top and cool is not a bottom. The coloured price line (`t='ramp'`) takes a new `heat=1` option; the existing red-grey-green version is unchanged.
 - **2026-11-16** The two white lines on the supply terrain (the outline of the sliced week and the selected bar's line through time) are thicker and sit on a background-coloured underlay; at about 1px they were nearly invisible over lime.
 - **2026-11-16** Four more datasets from Bitview (`pipeline/bv_more.py`, about 36 requests and one minute a day):
