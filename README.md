@@ -287,6 +287,8 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-16** 「短期持有者獲利比例」多一個檢視「塗在價格上」：價格線照這個比例（近 5 天的平均）用全站的熱度色階上色，越暖代表越多短期持有者在賺。說明裡寫明暖色不等於頂、冷色不等於底。上色的價格線（`t='ramp'`）多一個 `heat=1` 選項，原本的紅灰綠版（長期持有者 30 日淨部位變化）不變。
+- **2026-11-16** 籌碼地形的兩條白線加粗並墊底色（切一刀那一週的輪廓、選到那一根沿時間的頂線）：原本約 1px，壓在萊姆綠上幾乎看不到。
 - **2026-11-16** 從 Bitview 多接四組資料（`pipeline/bv_more.py`，每天約 36 次請求、一分鐘；使用者看過目錄盤點後決定）：
   - **損失地板**（價位 › 成本線，`floors`）：價格跌到哪裡，虧損的幣佔供給的比例會到自己歷史最糟的 5%／2%／1%／0.5%／0.1%，共五條線。門檻逐日累積，不是回頭算的。圖上標歷次低點跌破了幾層；說明裡寫明它不是保證的底（第一次跌破第一層之後一年內還再跌 5%–60%）。
   - **賺賠分布：虧多深**（價位 › 籌碼在哪，`pnlb`）：把幣依現在的賺賠幅度分組，畫五條累計線（在虧的、虧 10%／20%／30%／50% 以上），可切全部、短期、長期持有者；讀數列出今天各組的比例，並和 30 天前、2022 年低點比。
@@ -695,6 +697,8 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-16** "Short-term holders in profit" gains a second view, "On the price": the price line coloured by that share (averaged over 5 days) on the site's heat scale, warmer meaning more short-term holders in profit. The note says warm is not a top and cool is not a bottom. The coloured price line (`t='ramp'`) takes a new `heat=1` option; the existing red-grey-green version is unchanged.
+- **2026-11-16** The two white lines on the supply terrain (the outline of the sliced week and the selected bar's line through time) are thicker and sit on a background-coloured underlay; at about 1px they were nearly invisible over lime.
 - **2026-11-16** Four more datasets from Bitview (`pipeline/bv_more.py`, about 36 requests and one minute a day):
   - **Loss floors** (Levels › Cost lines, `floors`): the price at which the share of supply held at a loss would reach the worst 5%, 2%, 1%, 0.5% and 0.1% of its own history. Thresholds accumulate day by day rather than being fitted in hindsight. Past lows are marked with how many floors they broke; the note says plainly that a floor is not a guaranteed bottom.
   - **Profit and loss spread: how deep the losses run** (Levels › Where supply sits, `pnlb`): coins grouped by how far price sits from where they last moved, drawn as five cumulative lines (at a loss, down 10%, 20%, 30%, 50% or more), for all supply, short-term or long-term holders, with today's groups compared against 30 days ago and the 2022 low.
