@@ -287,6 +287,7 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
   - 頂部三指標改用 CoinMetrics（只晚 1 天）；25Δ 風險逆轉改 30 天固定期限；頁首資料狀態。
 - **2026-10-15**
   - STH-SOPR 改用 CheckOnChain 公開圖表（晚約 1 天，原本 bitcoin-data 晚約 7 天），bitcoin-data 每日請求降為 13 次。
+- **2026-11-17** 舊版網站從倉庫刪除：`classic.html`、`assets/app.js`、`app.css`、`i18n-en.js`、`data/site.json`、`tests/smoke.js` 和抽讀值的 `extract_interp.py` 都拿掉；每日流程不再開 Chrome 跑舊版。舊版原本還供應的三樣東西改成新版自己的：資料來源標籤（`pipeline/next/src_lab.py`＋`src.json`，日期每天換成資料日）、異動訊號對照（`sigmap.json`）、舊網址對照（`old.json`）。刪除前後產生的 `data/next*.js` 逐欄比對完全相同。運營工具：`site_shot.py` 預設改成首頁、回覆卡片拿掉 `--classic`、標註一定要帶 `k`。
 - **2026-11-17** 手機長頁改版第二步・價位頁與槓桿頁：12＋12 張卡的讀數改由新版產生（`pipeline/next/reads_lv.py`、`reads_lev.py`）；掛單簿、看跌／看漲比補上「怎麼讀」。到這裡五頁的白話讀數都不再從舊版抽。
 - **2026-11-17** 手機長頁改版第二步・賣壓頁：16 張卡的讀數改由新版產生（`pipeline/next/reads_sell.py`），長期持有者已實現虧損不再借用虧損比例那張的結論；礦工卡補上「怎麼讀」；老幣移動英文的序數（83rd）修正。
 - **2026-11-17** 手機長頁改版第二步・週期頁：21 張卡的讀數改由新版產生（`pipeline/next/reads_cycle.py`），組成、走勢這類附屬卡沿用主卡的讀數；舊版沒有「怎麼讀」的 6 張（市場階段、相對未實現獲利、頂部三指標、Pi Cycle、Hash Ribbons、和前幾輪比）在模組裡補上。
@@ -710,6 +711,7 @@ This repository is public and its history is permanent. The site holds only mark
   - Top-3 indicators from CoinMetrics (1-day lag); 25Δ risk reversal at 30-day constant maturity; data-status bar.
 - **2026-10-15**
   - STH-SOPR now comes from CheckOnChain's public chart (about 1 day late, vs ~7 days at bitcoin-data); bitcoin-data use drops to 13 requests a day.
+- **2026-11-17** Old site removed from the repository: `classic.html`, `assets/app.js`, `app.css`, `i18n-en.js`, `data/site.json`, `tests/smoke.js` and the `extract_interp.py` reader are gone, and the daily run no longer opens the old page in Chrome. The three things it still supplied are now the new pipeline's own: source labels (`pipeline/next/src_lab.py` + `src.json`, dated to the data day), the signal map (`sigmap.json`) and the old-link map (`old.json`). The generated `data/next*.js` are identical field by field before and after. Ops tools: `site_shot.py` defaults to the homepage, reply cards drop `--classic`, annotations must carry `k`.
 - **2026-11-17** Phone page length, step two, Levels and Leverage pages: readings on 12 + 12 cards now come from the new pipeline (`pipeline/next/reads_lv.py`, `reads_lev.py`); the order book and put/call cards get how-to-read lines. No page takes its readings from the old site any more.
 - **2026-11-17** Phone page length, step two, Selling page: readings on 16 cards now come from the new pipeline (`pipeline/next/reads_sell.py`); long-term holder realized loss no longer borrows the loss-share card's conclusion; the miners card gets how-to-read lines; English ordinals on the old-coin card fixed (83rd).
 - **2026-11-17** Phone page length, step two, Cycle page: readings on 21 cards now come from the new pipeline (`pipeline/next/reads_cycle.py`); companion cards (components, history) reuse the main card's reading. The six cards that had no how-to-read lines on the old site (market stage, relative unrealized profit, top three indicators, Pi Cycle, Hash Ribbons, versus past cycles) get them in the module.

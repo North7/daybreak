@@ -1,5 +1,5 @@
 """新版首頁圖表截圖（2026-11-11 建立）：長文、貼文配圖改截新版首頁（index.html，pipeline/next/ 產生）的卡片。
-舊版面板（classic.html）照舊用 site_shot.py；這支只多一層「找到卡片、切到那一頁、整理畫面」，開瀏覽器和截圖沿用 site_shot.py。
+舊版 classic.html 2026-11-17 已刪除，截卡片都用這支；這支只多一層「找到卡片、切到那一頁、整理畫面」，開瀏覽器和截圖沿用 site_shot.py。
 usage（倉庫根目錄）: python3 ops/post/next_shot.py <jobs.json> <輸出資料夾>
        python3 ops/post/next_shot.py --list            # 列出每張圖的代號（k）、所在分頁、標題
 jobs.json: {"lang": "zh"|"en", "width": 1440, "height": 1000,

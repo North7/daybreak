@@ -35,7 +35,7 @@ def debug_port():
         finally: sk.close()
     return PORT
 REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))   # 倉庫根目錄（本機的網站檔案）
-SITE = 'http://127.0.0.1:8790/classic.html'   # 2026-11-11 首頁換成新版，舊版（截圖用的面板都在這裡）搬到 classic.html
+SITE = 'http://127.0.0.1:8790/index.html'   # 2026-11-17 舊版 classic.html 從倉庫刪除；這支只剩共用的開瀏覽器、本機伺服器、截圖流程（next_shot.py、site_cards.py、d3_video.py 用），截卡片請用 next_shot.py
 
 
 class WS:

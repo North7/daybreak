@@ -13,7 +13,7 @@ spec: {"<raw name>": {"axes": {"<axis>": {"kind": "lin"|"log", "unit": "%"|"", "
   {"<name>": {"k": "rup", "view": "share"|"share45", "lang": "zh"|"en", "m": 1, "rg": 365, "palette": {...},
               "marks": [{"date": "YYYY-MM-DD", "v": 34.4, "pane": ""|"p", "label": "...", "lv": <標籤放的數值>, "ldx": <CSS px>, ...}]}}
   pane "p"＝上格的價格（數值寫美元），不寫＝主圖。<截圖資料夾> 放原始截圖和座標（<name>.png／.json），<輸出資料夾> 放標好的圖。
-  m／rg／ly 跟 next_shot.py 一樣（切換檢視、區間、版面）。舊格式（沒有 k，讀 site_shot.py 存的刻度）照舊能用，但舊版頁面之後會刪掉。
+  m／rg／ly 跟 next_shot.py 一樣（切換檢視、區間、版面）。2026-11-17 舊版頁面已刪除：舊格式（沒有 k）不能再截，spec 一定要帶 k。
 """
 import datetime as dt, json, math, os, re, sys
 sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'pipeline'))
@@ -85,6 +85,8 @@ def draw(name, s, pts):
 
 shoot_new()
 for name, s in SPEC.items():
+    if not s.get('k') and not os.path.exists(os.path.join(rawdir, name + '.json')):
+        sys.exit('%s：舊格式（沒有 k）要截舊版 classic.html，2026-11-17 已刪除；請改寫成 {"k": 圖代號}（python3 ops/post/next_shot.py --list 查）' % name)
     g = json.load(open(os.path.join(rawdir, name + '.json'))); K = g['dpr']
     if s.get('k'):   # 新版：座標是網站算的（CSS px），乘上 dpr 就是圖片像素
         P2 = g['xy']; draw(name, s, [(P2[2 * i]['x'] * K, P2[2 * i]['y'] * K, P2[2 * i + 1]['y'] * K) for i in range(len(s['marks']))]); continue

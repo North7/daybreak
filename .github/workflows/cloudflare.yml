@@ -55,9 +55,7 @@ jobs:
           rsync -a --exclude='.git' --exclude='.github' --exclude='.claude' ./ "$RUNNER_TEMP/site/"
           # 舊網址是 north7.github.io/daybreak/…；有人在新網域打了 /daybreak/… 也導回正確位置
           printf '/daybreak /  301\n/daybreak/* /:splat 301\n' >> "$RUNNER_TEMP/site/_redirects"
-          # 2026-11-16 舊版（classic.html）對外下線：頁面、舊版程式、舊版資料檔不上傳，/classic 轉回首頁（網址 # 後面的舊代號由首頁轉到新版對應的圖）。
-          # 倉庫裡照舊保留：每天的流程用本機伺服器開舊版，抽出新版卡片的白話讀數（pipeline/next/extract_interp.py），運營的截圖工具也還在用
-          rm -f "$RUNNER_TEMP/site/classic.html" "$RUNNER_TEMP/site/assets/app.js" "$RUNNER_TEMP/site/assets/app.css" "$RUNNER_TEMP/site/assets/i18n-en.js" "$RUNNER_TEMP/site/data/site.json" "$RUNNER_TEMP/site/data/site.prev.json"
+          # 2026-11-16 舊版（classic.html）對外下線，2026-11-17 從倉庫刪除；/classic 轉回首頁（網址 # 後面的舊代號由首頁轉到新版對應的圖）
           printf '/classic /  301\n/classic.html /  301\n' >> "$RUNNER_TEMP/site/_redirects"
           echo "SITE_DIR=$RUNNER_TEMP/site" >> "$GITHUB_ENV"
           echo "files: $(find "$RUNNER_TEMP/site" -type f | wc -l)"
