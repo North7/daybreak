@@ -71,6 +71,35 @@ import say_data, reads
 _NE = json.load(open(os.path.join(REPO, 'data', 'notes.en.json'), encoding='utf-8')) if os.path.exists(os.path.join(REPO, 'data', 'notes.en.json')) else None
 print('reads', reads.apply(SITE['chapters'], L, N, _NE))   # 2026-11-17 新版自己產生的讀數（reads.py），做好的頁不再用舊版的
 print('say', say_data.attach(SITE['chapters'], L))
+def _lean_flip():
+    """2026-11-18 偏向翻牌（page.html ㉟ 1）：data/leans.json 記住每個資料日最後一次的偏向。換了資料日，前一天的那份變成「昨天」；
+    今天和昨天不一樣的卡，看法那一項帶 pt＝昨天的偏向、pd＝昨天的資料日，頁面上的偏向膠囊從昨天翻到今天。同一天重跑（share.yml）不動「昨天」"""
+    p = os.path.join(REPO, 'data', 'leans.json'); bd = L['meta']['bar_date']
+    try: S = json.load(open(p, encoding='utf-8'))
+    except Exception: S = {}
+    vw = {}
+    for ch in SITE['chapters']:
+        for g in ch.get('groups') or []:
+            for c in g.get('charts') or []:
+                v = next((q for q in (c.get('say') or {}).get('items') or [] if q.get('view')), None)
+                if v: vw[c['k']] = v
+    if S.get('date') != bd: S = dict(prev_date=S.get('date'), prev=S.get('today') or {}) if S.get('date') and S['date'] < bd else {}
+    S.update(date=bd, today={k: v['tone'] for k, v in vw.items()})
+    json.dump(S, open(p, 'w', encoding='utf-8'), ensure_ascii=False, sort_keys=True, separators=(',', ':'))
+    P = S.get('prev') or {}; n = 0
+    for k, v in vw.items():
+        if P.get(k) and P[k] != v['tone']: v['pt'] = P[k]; v['pd'] = S.get('prev_date'); n += 1
+    return dict(date=bd, prev=S.get('prev_date'), flips=n)
+print('lean flip', _lean_flip())
+def _sigs():
+    """2026-11-18 訊號清單（page.html ㉟ 6）：右下角的訊號提示點開是今天全部的訊號，其他頁的卡片資料是之後才載入的，所以清單先放在 next.js"""
+    out = []
+    for ch in SITE['chapters']:
+        for g in ch.get('groups') or []:
+            for c in g.get('charts') or []:
+                for q in c.get('sig') or []: out.append(dict(p=ch['id'], k=c['k'], zh=c.get('zh'), en=c.get('en'), tz=q['tz'], te=q['te'], new=q.get('new', 0)))
+    return out
+SIGS = _sigs(); print('sigs', len(SIGS))
 # 2026-11-16 舊版（classic.html）對外下線：舊網址 #頁/代號 的「代號」是舊版的面板（pn-…）或圖（c-…），對到新版的圖代號，頁面讀到就轉過去（page.html ㉝）
 def _old_map():
     have = {c['k'] for ch in SITE['chapters'] for g in ch.get('groups') or [] for c in g.get('charts') or []}
@@ -83,7 +112,7 @@ try:   # 2026-11-16 頁尾「資料來源」要寫每天從 Bitview 抓幾條序
     sys.path.insert(1, os.path.join(os.path.dirname(os.path.abspath(__file__)), '..')); import bitview as _bv; BVN = len(_bv.COLS)
 except Exception as e: print('bitview count failed', e); BVN = None
 D = dict(
-    site=SITE, pm=pm_data.build(L), bvn=BVN, old=OLD,
+    site=SITE, pm=pm_data.build(L), bvn=BVN, old=OLD, sigs=SIGS,
     date=L['meta']['bar_date'], issue=N.get('edition'), price=round(c), chg=L['price']['bar']['chg_pct'],
     headline=N['headline'], summary=N['summary'], stance=N.get('stance'), leads={k: m.get('lead') for k, m in N['modules'].items()},
     dawn=dict(heat=dw['heat'], stage=dw['stage'], weeks=dw['stage_weeks'], heat4=dw['heat4']),
