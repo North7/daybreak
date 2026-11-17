@@ -70,9 +70,12 @@ def apply(chapters, L, N=None, E=None):
     if N and N.get('date') == L['meta']['bar_date']:
         ce = (E or {}).get('cards') or {} if (E or {}).get('date') == N.get('date') else {}
         for k, z in (N.get('cards') or {}).items():
-            c = X.get(k)
+            c = X.get(k); ln = z.get('lean') if isinstance(z, dict) else None; z = z.get('text') if isinstance(z, dict) else z
             if c is None or not c.get('say') or not z: continue
             c['say']['sz'] = z; c['say']['se'] = ce.get(k) or c['say'].get('se') or z; c['say']['ai'] = 1; nc += 1
+            if ln in ('up', 'down', 'neu'):   # 判讀句自己的方向：卡片上的偏向膠囊和每段答案的統計都用它，不和句子打架（2026-11-17）
+                for q in c['say'].get('items') or []:
+                    if q.get('view'): q['tone'] = ln
     return dict(done=len(done), bad=bad, lean=nl, cards=nc)
 
 def lean(X, L):

@@ -215,6 +215,9 @@ def lint(n, en, bar_date):
             if p not in FRONT and not p.startswith('.cards'): continue   # 主卡判讀（cards）在分享圖上也看得到
             for m in TRADE.finditer(t): hit.setdefault(m.group(0), set()).add(p)
         for w, ps in hit.items(): bad.append(f'{tag}頭版有交易指令「{w}」（{"、".join(sorted(ps)[:3])}）：頭條、摘要、stance、watch 是對外的，只講市場的事實和距離（「連 5 天收在 200 日均線下」），不寫避險、減倉、賣幾 %、補回這類動作；框架提示寫在 actions、各版判讀')
+    for k, z in (n.get('cards') or {}).items():   # 2026-11-17 主卡判讀：{"lean": up|down|neu, "text": 一句}，英文版是字串
+        if not isinstance(z, dict) or z.get('lean') not in ('up', 'down', 'neu') or not z.get('text'): bad.append(f'cards.{k} 要寫成 {{"lean": "up|down|neu", "text": "…"}}')
+        elif en is not None and not ((en.get('cards') or {}).get(k)): bad.append(f'英文版缺 cards.{k}')
     names = {}
     for p, t in texts(n):
         if not p.endswith(SKIP):

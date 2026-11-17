@@ -8,7 +8,7 @@ jobs.json: {"lang": "zh"|"en", "width": 1440, "height": 1000,
   view   card（預設）＝分頁裡的那張卡片（半寬卡 678px、整排卡 1372px，width 1440 時）；fx＝點開的放大檢視（整個視窗寬，高度跟 height 走）；
          share＝網站的分享模式（2026-11-11 起，index.html?share&k=…）：固定 16:9（1600×900），字級放大、補坐標刻度、頁尾有網站名、資料來源和日期，
          直接就是一張發文用的圖，**長文配圖優先用這個**；share45＝分享模式 4:5（1080×1350）
-  clean  1＝藏掉按鈕（放大、區間、版面切換、說明）和「我們的看法」（.sy-view），發文用；share 模式網站自己就會藏
+  clean  1＝藏掉按鈕（放大、區間、版面切換、說明）和「我們的看法」（.sy-view；2026-11-17 起是判讀句前的偏向膠囊 .sy-tag 和「會改變看法」），發文用；share 模式網站自己就會藏
   nosay  1＝連讀數（.sy-read）也藏，整塊結論都不留（正文自己講的時候用）
   rg     區間：365＝1 年、1095＝3 年、0＝全部；m＝第幾個模式（卡片上的切換鈕，從 0 起）；ly＝sp 上下兩格／ov 疊在一格
   d3     立體檢視（只有 view=share／share45，圖：urpd、strike、ivt）：{"d3v": "ob", "yaw": -29, "pit": 32, "ex": 1, "wk": "2025-02-16", "sel": "96000,2025-02-16"}，
@@ -59,7 +59,7 @@ def open_card(ws, c, lang):
 CLEAN_JS = '''(function(sel, nosay){var r=document.querySelector(sel);
     r.querySelectorAll(".fx-b").forEach(function(e){e.style.visibility="hidden";});
     r.querySelectorAll(".ol-ctl,.ol-how,.sy-m").forEach(function(e){e.style.display="none";});
-    r.querySelectorAll(".sy-view").forEach(function(e){e.style.display="none";});   // 「我們的看法」「會改變看法」不進社群配圖
+    r.querySelectorAll(".sy-view, .sy-tag, .ol-say.v2 .sy-c").forEach(function(e){e.style.display="none";});   // 「我們的看法」「會改變看法」不進社群配圖
     if (nosay) r.querySelectorAll(".ol-say").forEach(function(e){e.style.display="none";});
     r.querySelectorAll('[id^="oc-pr"]').forEach(function(e){ if (/移動游標|Move across/.test(e.textContent)) e.style.display="none"; });   // 「在圖上移動游標…」的操作提示
     r.querySelectorAll(".ol-f").forEach(function(e){ if (!Array.prototype.some.call(e.children, function(c){return c.style.display!=="none" && c.getBoundingClientRect().height>0;})) e.style.display="none"; });   // 頁尾只剩說明鈕就整排收掉
@@ -104,7 +104,7 @@ def shoot_share(ws, view, k, it, geo=None):
                 hit = ws.js(f'(function(){{var b=document.querySelector({q}).querySelector(\'.ol-ctl button[data-{attr}="{it[attr]}"]\'); if(!b) return false; b.click(); return true;}})()')
                 if not hit: print(f'注意：{k} 沒有 {attr}={it[attr]} 這個按鈕，略過', file=sys.stderr)
                 time.sleep(0.8)
-        ws.js(f'document.querySelectorAll({q} + " .sy-view").forEach(function(e){{e.style.display="none";}}); true')   # 網站已經藏了，再保險一次
+        ws.js(f'document.querySelectorAll({q} + " .sy-view, " + {q} + " .sy-tag, " + {q} + " .ol-say.v2 .sy-c").forEach(function(e){{e.style.display="none";}}); true')   # 網站已經藏了，再保險一次
         if it.get('nosay'): ws.js(f'document.querySelectorAll({q} + " .ol-say").forEach(function(e){{e.style.display="none";}}); true')
         if it.get('pre'): ws.js(it['pre'])
         if not S.wait(ws, f'(function(){{var e=document.querySelector({q}); return !!(e && e.querySelector("svg,canvas,.rl") && (!document.fonts || document.fonts.status==="loaded"));}})()', 20): return None, '分享模式的圖沒畫出來'
