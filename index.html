@@ -1540,7 +1540,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=189e1ecb53"></script>
+<script src="data/next.js?v=a6f8577d3d"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -3048,7 +3048,7 @@ function initOC() {
     el.addEventListener('pointerdown', hide); window.addEventListener('scroll', hide, { passive: true });
   })();
   (function () { const box = $('#oc-fx'), os = box.querySelector('.os'); let st = null;
-    box.addEventListener('pointerdown', e => { if (!fx || e.button || e.target.closest('button, a, summary, details, input, .ol-c, .or')) return; const ol0 = box.querySelector('.ol'); st = { x: e.clientX, y: e.clientY, t: performance.now(), dx: 0, dy: 0, sc: 1, on: false, touch: e.pointerType !== 'mouse', top: !ol0 || ol0.scrollTop <= 1 }; });
+    box.addEventListener('pointerdown', e => { if (!fx || e.button || e.target.closest('button, a, summary, details, input, .ol-c, .or, .ol-lg span[data-s]')) return; const ol0 = box.querySelector('.ol'); st = { x: e.clientX, y: e.clientY, t: performance.now(), dx: 0, dy: 0, sc: 1, on: false, touch: e.pointerType !== 'mouse', top: !ol0 || ol0.scrollTop <= 1 }; });
     window.addEventListener('pointermove', e => { if (!st) return; st.dx = (e.clientX - st.x) * .85; st.dy = (e.clientY - st.y) * .85; const d = Math.hypot(st.dx, st.dy); if (!st.on && d < 9) return; if (!st.on && st.touch && !(st.top && st.dy > 0 && st.dy > Math.abs(st.dx) * 1.8)) { st = null; return; }   /* ㉒ 5：手機只有「內容在最頂、明確往下拉」才拖卡片，其他都交給捲動和左右換圖 */ if (st.touch) st.dx = 0; st.on = true; const k = Math.min(1, d / 620); st.sc = 1 - k * .3; os.style.transform = `translate(${F1(st.dx)}px, ${F1(st.dy)}px) scale(${st.sc.toFixed(3)})`; os.style.borderRadius = F1(26 * Math.min(1, d / 110)) + 'px'; box.style.setProperty('--dim', (1 - k * .85).toFixed(2)); });
     const end = () => { if (!st) return; const s0 = st; st = null; if (!s0.on) return; box.dataset.drag = '1'; setTimeout(() => { delete box.dataset.drag; }, 80); const d = Math.hypot(s0.dx, s0.dy), v = d / Math.max(1, performance.now() - s0.t), far = s0.touch ? (s0.dy > 150 || (v > .9 && s0.dy > 70)) : (d > 120 || v > .8), VW = window.innerWidth, VH = window.innerHeight;
       box.style.removeProperty('--dim'); os.style.borderRadius = '';
@@ -3070,7 +3070,7 @@ function initOC() {
     if ((b = t.closest('[data-chid]'))) { const ix = CH.findIndex(x => x.id === b.dataset.chid); if (ix >= 0 && !CH[ix].todo) { goCh(ix); hd.scrollIntoView({ behavior: 'instant', block: 'start' }); } return; }
     if ((b = t.closest('[data-src]'))) { toast(b.dataset.src, 1); return; }   /* ㉑ 4：手機點來源圖示 */
     if ((b = t.closest('.sy-d'))) { b.closest('.ol-say').classList.toggle('open'); return; }
-    if (fx && t.closest('#oc-fx') && !$('#oc-fx').dataset.drag && !t.closest('button, a, summary, details, input, .ol-c, .or')) { closeFx(); return; }
+    if (fx && t.closest('#oc-fx') && !$('#oc-fx').dataset.drag && !t.closest('button, a, summary, details, input, .ol-c, .or, .ol-lg span[data-s]')) { closeFx(); return; }   /* ㉟ 3 點圖例是單看一條，不是關掉放大檢視（2026-11-18 使用者：「一點卡片就被縮小關閉了」） */
     if (!fx && (b = t.closest('.fc')) && !t.closest('button, a, summary, details, input, .ol-c.d3, .d3-sc, .ol-lg span[data-s]')) {   /* ㉛ 立體圖上的點和拖是選柱子、轉角度，不是展開卡片 */ const q1 = b.querySelector('[data-chid]'), f1 = b.querySelector('[data-fx]'); if (q1) { q1.click(); return; } if (f1) { openFx(f1.dataset.fx); return; } }
     if (t.closest('[data-fxl]') && fx) { copyLink(G[fx.k - 1].charts[fx.i].k); return; }
     if (t.closest('[data-fxd]') && fx) { const c0 = G[fx.k - 1].charts[fx.i]; savePng(c0.k, T(c0.zh, c0.en)); return; }
