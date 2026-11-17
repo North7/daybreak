@@ -1473,7 +1473,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=76a6bc66ef"></script>
+<script src="data/next.js?v=4bd02ebc75"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -1740,7 +1740,8 @@ function initOC() {
       tags.forEach(t => { if (t[4] < y1 + 2) return; g += t[3] ? `<rect x="${pw + 6}" y="${F1(t[4] - th / 2 - .5)}" width="${MR - 7}" height="${F1(th + 1)}" rx="3" fill="${t[2]}"/><text x="${pw + 10}" y="${F1(t[4] + 3.6 * FSC)}" style="fill:var(--sheet);font-weight:600">${esc(t[1])}</text>` : `<rect x="${pw + 6}" y="${F1(t[4] - th / 2)}" width="${MR - 7}" height="${F1(th)}" fill="var(--sheet)"/><text x="${pw + 10}" y="${F1(t[4] + 3.6 * FSC)}" style="fill:${t[2]}">${esc(t[1])}</text>`; }); }
     /* 時間軸、游標 */
     g += xAxis(X, t0, tE, pw, y1, yb, h - 3);
-    g += `<g class="cx" visibility="hidden"><line y1="2" y2="${yb}" stroke="var(--ink)" stroke-opacity=".5"/>${dots.map(dd => `<circle r="${dd.p ? 3 : 3.4}" fill="${dd.p ? 'var(--ink)' : CV(dd.col)}" stroke="var(--sheet)" stroke-width="1.5"/>`).join('')}</g><rect class="hit" data-k="${k}" x="0" y="0" width="${pw}" height="${yb}" fill="transparent" style="cursor:crosshair;touch-action:pan-y"/>`;
+    g += `<g class="cx" visibility="hidden"><line y1="2" y2="${yb}" stroke="var(--ink)" stroke-opacity=".5"/>${dots.map(dd => `<circle r="${dd.p ? 3 : 3.4}" fill="${dd.p ? 'var(--ink)' : CV(dd.col)}" stroke="var(--sheet)" stroke-width="1.5"/>`).join('')}${MINI ? '' : `<g class="cxd" data-pw="${F1(pw)}"><rect y="1" height="${F1(16 * FSC)}" rx="${F1(8 * FSC)}" fill="var(--ink)"/><text y="${F1(1 + 12 * FSC)}" text-anchor="middle" style="fill:var(--sheet);font-weight:600"></text></g>`}</g>`;   /* 2026-11-17 使用者：「hover 的時候需要顯示數據對應的日期」：游標線頂端一個日期標籤（放底下會被手機和主卡的下方小圖列擋住） */
+    g += `<rect class="hit" data-k="${k}" x="0" y="0" width="${pw}" height="${yb}" fill="transparent" style="cursor:crosshair;touch-action:pan-y"/>`;
     if (MINI) g = g.replace(/<g class="pl">[\s\S]*?<\/g>/g, '').replace(/<text[\s\S]*?<\/text>/g, '').replace(/<circle class="pulse"[^>]*\/>/g, '').replace(/<rect class="hit"[^>]*\/>/, '').replace(/<path class="shim"[^>]*\/>/, '');
     box.innerHTML = `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="none" role="img" aria-label="${esc(T(c.zh, c.en))}"><defs>${defs}</defs>${g}</svg>`;
     const cx = box.querySelector('.cx'), ce = cx.querySelectorAll('circle'); dots.forEach((dd, i) => { dd.el = ce[i]; });
@@ -2530,8 +2531,9 @@ function initOC() {
   function cur1(R, day) {
     if (!isT(R.c)) return; const s = R.s, k = R.key, live = day == null, hq = hero(s), hr = atv(s.rows, hq.c, day), v = split(fm(hq.f || s.f, hr[hq.c]));
     odo($('#oc-b' + k), v[0]); $('#oc-u' + k).textContent = v[1]; $('#oc-d' + k).textContent = ymd(hr[0]) + (live ? T('　最新', '  latest') : '');
-    if (R.L) { const cx = R.L.cx, on = !live && day >= R.t0; cx.setAttribute('visibility', on ? 'visible' : 'hidden'); if (on) { const x = F1(R.L.X(day)), ln = cx.querySelector('line'); ln.setAttribute('x1', x); ln.setAttribute('x2', x); R.L.dots.forEach(dd => { const val = dd.p ? pxAt(s, day) : atv(s.rows, dd.c, day)[dd.c]; if (val == null || !(val > 0 || dd.Y !== R.L.Yp)) { dd.el.setAttribute('visibility', 'hidden'); return; } dd.el.setAttribute('visibility', 'inherit'); dd.el.setAttribute('cx', x); dd.el.setAttribute('cy', F1(dd.Y(val))); }); } }
-    R.lg.forEach(e => { e.el.textContent = e.get(day); });
+    if (R.L) { const cx = R.L.cx, on = !live && day >= R.t0; cx.setAttribute('visibility', on ? 'visible' : 'hidden'); if (on) { const x = F1(R.L.X(Math.max(hr[0], R.t0))), ln = cx.querySelector('line'); ln.setAttribute('x1', x); ln.setAttribute('x2', x);   /* 游標線對齊到讀數那一筆的日子（週末、休市、稀疏的資料都停在有數據的那天） */
+      const cd = cx.querySelector('.cxd'); if (cd) { const t9 = cd.querySelector('text'), r9 = cd.querySelector('rect'), wd = dOf(hr[0]).getUTCDay(); t9.textContent = ymd(hr[0]) + ' ' + T('週' + '日一二三四五六'[wd], ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][wd]); const w9 = (t9.getComputedTextLength ? t9.getComputedTextLength() : 80) + 14, pw9 = +cd.dataset.pw, c9 = Math.max(w9 / 2, Math.min(pw9 - w9 / 2, +x)); t9.setAttribute('x', F1(c9)); r9.setAttribute('x', F1(c9 - w9 / 2)); r9.setAttribute('width', F1(w9)); } R.L.dots.forEach(dd => { const val = dd.p ? pxAt(s, hr[0]) : atv(s.rows, dd.c, hr[0])[dd.c]; if (val == null || !(val > 0 || dd.Y !== R.L.Yp)) { dd.el.setAttribute('visibility', 'hidden'); return; } dd.el.setAttribute('visibility', 'inherit'); dd.el.setAttribute('cx', x); dd.el.setAttribute('cy', F1(dd.Y(val))); }); } }
+    R.lg.forEach(e => { e.el.textContent = e.get(live ? day : hr[0]); });   /* 圖例的數字也用同一天（例：ETF 週末停在週五，價格也是週五的） */
   }
   function cursor(k, day) {
     const R = REG[k]; if (!R) return; cur1(R, day);
