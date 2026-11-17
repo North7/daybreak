@@ -1316,6 +1316,26 @@
    "status": "send",
    "style": "口語版",
    "order": 0
+  },
+  {
+   "n": 107,
+   "kind": "followup",
+   "url": "https://x.com/liqingxing/status/2122664334128197954",
+   "id": "2122664334128197954",
+   "author": "liqingxing",
+   "name": "liqingxing",
+   "followers": 4489,
+   "posted": "2026-11-17T12:13:09Z",
+   "lang": "zh",
+   "angle": "接話：補一個他沒看到的事實",
+   "take": "2% 的條件昨天就先考過一次，BTC 撐住了；而且這陣子 2% 的跌法不罕見",
+   "summary": "在我們 Nvidia 財報長文底下：2% 這個門檻劃得挺清楚，等於先給拖下去定了個條件",
+   "reply": "這個條件昨天其實就先考過一次，Nasdaq 跌 2.5%，BTC 收盤只少 0.8%\n2% 以上的跌法 2023 年以來平均 20 個交易日一次，這個月已經 5 次了，不算罕見\n明早要看的反而是 BTC 能不能再撐一次",
+   "sources": "FRED NASDAQCOM：11/16 −2.49%；2023-01-01 起 972 個交易日 50 天 ≤ −2%（5.1%）；10/16 −2.1、10/22 −2.6、10/30 −2.9、11/05 −5.5、11/16 −2.5。BTC：latest.json chips.stress.rows 11/15 65,315 → 11/16 64,811（−0.77%）",
+   "note": "接話：我們原創（11/17 Nvidia 長文）底下，照回。4.5 千粉不配圖。同時段另外 3 則不接：liqingxing 自己串第 3 輪無問句、xuri1717 第 3 輪無問句、0xGummyBear 只回表情。",
+   "status": "send",
+   "style": "口語版",
+   "order": 0
   }
  ]
 }
