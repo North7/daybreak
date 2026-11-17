@@ -49,11 +49,12 @@ def fetch(names=NAMES, n=3):
     return S
 
 
-def build(last, S=None):
+def build(last, S=None, pxc=None):
     """last＝最新一個收完的日子（YYYY-MM-DD）。回傳 dict(date, floors, pnl, dens, old)；資料不夠丟錯"""
     S = S or fetch(); N = (dt.date.fromisoformat(last) - E0).days - START + 1
     if min(len(v) for v in S.values()) < N: raise RuntimeError(f'Bitview 還沒有 {last} 的資料')
-    px = S['price_close']; day = lambda i: (E0 + dt.timedelta(days=START + i)).isoformat(); ix = lambda d: (dt.date.fromisoformat(d) - E0).days - START; dnum = lambda i: (E0 - EP).days + START + i
+    day = lambda i: (E0 + dt.timedelta(days=START + i)).isoformat(); px = [(pxc or {}).get(day(i), v) for i, v in enumerate(S['price_close'])]   # 2026-11-17 有全站統一的收盤（collect.py 的 PXC）就用它，和其他卡同一天的收盤一致
+    day = lambda i: (E0 + dt.timedelta(days=START + i)).isoformat(); ix = lambda d: (dt.date.fromisoformat(d) - E0).days - START; dnum = lambda i: (E0 - EP).days + START + i
     if not px[N - 1]: raise RuntimeError('Bitview 最新一天沒有價格')
     samp = lambda a, keep=(): sorted(set(range(N - 1, a - 1, -4)) | {i for i in keep if a <= i < N})   # 每 4 天一點，從最新一天往回數（和供給分位成本線一樣）
     R0 = lambda v: None if v is None else round(v); R2 = lambda v: None if v is None else round(v, 2)

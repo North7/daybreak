@@ -20,7 +20,9 @@ EP = dt.date(1970, 1, 1)
 dn = lambda d: (dt.date.fromisoformat(d) - EP).days
 
 
-def build(last, S=None):
+def build(last, S=None, px=None):
+    """px＝全站統一的每日收盤（collect.py 的 PXC，Kraken 優先）；有就蓋過 Bitview 的價格，和其他卡同一天的收盤一致"""
+    px = px or {}
     S = S or bv_more.fetch(['price_close', 'difficulty', 'subsidy_sum_24h', 'fee_share_24h'])
     day = lambda i: (bv_more.E0 + dt.timedelta(days=bv_more.START + i)).isoformat()
     n = min(len(v) for v in S.values())
@@ -28,9 +30,9 @@ def build(last, S=None):
     for i in range(n):
         d = day(i)
         if d > last: break
-        px, df, sb, fs = (S[k][i] for k in ('price_close', 'difficulty', 'subsidy_sum_24h', 'fee_share_24h'))
-        if not (px and df and sb) or fs is None or fs >= 100: continue
-        D.append(d); P[d] = px; R[d] = ALPHA * df ** K / (sb / (1 - fs / 100))
+        pv, df, sb, fs = (S[k][i] for k in ('price_close', 'difficulty', 'subsidy_sum_24h', 'fee_share_24h'))
+        if not (pv and df and sb) or fs is None or fs >= 100: continue
+        D.append(d); P[d] = px.get(d, pv); R[d] = ALPHA * df ** K / (sb / (1 - fs / 100))
     if not D or D[-1] < (dt.date.fromisoformat(last) - dt.timedelta(days=3)).isoformat(): raise RuntimeError(f'Bitview 還沒有 {last} 的資料')
     C = {}
     for i in range(N - 1, len(D)): C[D[i]] = sum(R[D[j]] for j in range(i - N + 1, i + 1)) / N
