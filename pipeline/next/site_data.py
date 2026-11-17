@@ -27,7 +27,7 @@ def build(L, N, E, dn):
     from say_data import own as _own
     _md = lambda d_: '%d/%d' % (int(d_[5:7]), int(d_[8:10])); _ym = lambda d_: d_[:7].replace('-', '/'); _p1 = lambda v: ('%.1f%%' % v); _pg = lambda v: ('%g%%' % v)
     if fl and len(fl.get('rows') or []) > 200:
-        fc = fl['cur']; fpx = fl['px']; gap = (fpx / fc[0] - 1) * 100; deep = (fc[4] / fpx - 1) * 100; bv_nb = fl['below']
+        fc = fl['cur']; fpx = close if bx.get('date') == L['meta']['bar_date'] and close else fl['px']; gap = (fpx / fc[0] - 1) * 100; deep = (fc[4] / fpx - 1) * 100; bv_nb = sum(fpx < f for f in fc)   # 2026-11-17 運營回報：句子寫「收盤」就用全站統一的收盤（Kraken），不用 Bitview 自己的價格
         FC = ['c4', 'color-mix(in srgb, var(--c4) 72%, var(--c3))', 'color-mix(in srgb, var(--c4) 45%, var(--c3))', 'color-mix(in srgb, var(--c4) 20%, var(--c3))', 'c3']   # 淺的一層青、越深越偏藍紫：都是冷色（支撐在下面），和成本線的暖色分開
         lowz = lambda q: '%s %s' % (_ym(q['d']), '五層全破' if q['broke'] == 5 else '破 %d 層' % q['broke'] if q['broke'] else '沒破')
         lowe = lambda q: '%s: %s' % (q['d'][:7], 'all five broken' if q['broke'] == 5 else '%d broken' % q['broke'] if q['broke'] else 'none broken')
@@ -83,7 +83,8 @@ def build(L, N, E, dn):
             '%s of supply is at a loss and %s is down 10%% or more, well short of the down-by-half depth of the %s low.' % (_p1(d_[0]), _p1(d_[1]), pn['low22'][:7]) if d_[4] < 1 else '%s of supply is at a loss, %s down 10%% or more and %s down by half.' % (_p1(d_[0]), _p1(d_[1]), _p1(d_[4])))
     tc_t = bx.get('tiers')   # 2026-11-16 大戶地址的持幣成本（bv_more.py）：運營回覆用過自己畫的版本，使用者看了要求網站加
     if tc_t and len(tc_t.get('rows') or []) > 200:
-        tc_c = tc_t['cur']; tc_g = tc_t['gap']; tc_px = tc_t['px']; tc_y = tc_t['year']; tc_lg = tc_t.get('longest'); tc_dp = tc_t.get('deep'); tc_nd = tc_t['below_days']; tc_md = lambda d_: '%d/%d' % (int(d_[5:7]), int(d_[8:10]))
+        tc_c = tc_t['cur']; tc_px = close if bx.get('date') == L['meta']['bar_date'] and close else tc_t['px']; tc_g = [round((tc_px / c_ - 1) * 100, 1) for c_ in tc_c];   # 收盤用全站統一的（同損失地板）
+        tc_y = tc_t['year']; tc_lg = tc_t.get('longest'); tc_dp = tc_t.get('deep'); tc_nd = tc_t['below_days']; tc_md = lambda d_: '%d/%d' % (int(d_[5:7]), int(d_[8:10]))
         tc_sg = lambda v: ('%+.1f%%' % v).replace('-', '−'); tc_up = lambda v: '上方 %.1f%%' % v if v >= 0 else '下方 %.1f%%' % -v; tc_ue = lambda v: '%.1f%% above' % v if v >= 0 else '%.1f%% below' % -v
         tc_TN = [('100–1k 顆', '100–1K BTC', 'c5'), ('1k–10k 顆', '1K–10K BTC', 'c3'), ('10k–100k 顆', '10K–100K BTC', 'c4')]   # 顏色和「大戶 30 日淨變化」同一組：100–1k 黃、1k–10k 藍紫、1 萬以上青
         tc_runs = '、'.join('%s%s' % (tc_md(r_['start']), '' if r_['days'] == 1 else '–' + tc_md(r_['end'])) + '（%d 天）' % r_['days'] for r_ in tc_t['runs']); tc_rune = ', '.join((r_['start'][5:] if r_['days'] == 1 else r_['start'][5:] + ' to ' + r_['end'][5:]) + ' (%d)' % r_['days'] for r_ in tc_t['runs'])

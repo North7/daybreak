@@ -244,7 +244,7 @@ def build(L, N, E, dn, X):
           ser=[ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.4), ser(2, zh='生產成本', en='Production cost', col='c5', w=2)],
           spans=[dict(a=a_, b=max(b_, a_ + 2), col='c5', op=.16) for a_, b_ in runs],
           vl=[dict(d=dn(h), col='k2', dash='4 3', zh='減半', en='Halving') for h in hv],
-          marks=[dict(d=dn(e['d']), v=e['px'], col='c5', up=0, zh=ym(e['d']), en=e['d'][:7]) for e in pk['events']] +
+          marks=[dict(d=dn(e['d']), v=e['px'], col='c5', up=0, **(dict(zh=ym(e['d']), en=e['d'][:7]) if i_ == 0 or ym(pk['events'][i_ - 1]['d']) != ym(e['d']) else {})) for i_, e in enumerate(pk['events'])] +   # 同一個月的第二次只畫圈不寫字（運營：2026/06 的字壓在價格線上）
                 [dict(d=dn(q['d']), v=q['px'], col='k2', up=1, zh='%s 底：高於成本 %.1f%%' % (q['d'][:4], q['gap']), en='%s low: %.1f%% above cost' % (q['d'][:4], q['gap'])) for q in miss],
           leg=[['c5', '收盤低於成本的期間', 'Closes below cost', 'box'], ['c5', '跌破成本（%d 天內再跌破算同一次）' % 14, 'Break below cost (repeats within 14 days merged)', 'ring'], ['k2', '減半', 'Halving', 'dash']],
           src='Bitview · ' + pdd, srce='Bitview · ' + pdd,
