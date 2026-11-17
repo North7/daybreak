@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """檢查 data/replies.json（2026-11-04 建立）：欄位齊全、語言對（英文貼文回英文、中文貼文回繁體中文、其他語言跳過）、
-X 字數 280 以內、不談出場框架、配圖檔存在、數據日期是當期。有錯就以非零結束。
+X 字數 280 以內、不談出場框架、配圖檔存在、數據日期是當期、回別人貼文有先寫看法（take，2026-11-18 起）。有錯就以非零結束。
 用法（在倉庫根目錄）：python3 ops/replies/check.py"""
 import json, os, re, sys
 from collections import Counter
@@ -18,6 +18,26 @@ BAN = re.compile(r'出場|階梯|避險|賣出線|減碼|分批賣|exit (plan|la
 # 2026-11-12 使用者：品牌名中英文都只寫 Daybreak，中文也不寫「破曉」（譯名保留，但對外儘量用英文）。hashtag、網址不受影響（不會出現這兩字）
 BRAND = re.compile(r'破曉')
 NEED = ('n', 'order', 'status', 'url', 'id', 'author', 'followers', 'posted', 'lang', 'angle', 'summary', 'reply')
+# 2026-11-17 使用者：「目前我覺得回覆最大的問題就是缺乏觀點，大量的放了數據，但沒有對目標文的直接觀點輸出。需要先有觀點，你的數據才有意義」。
+# 回別人貼文（回覆和引用）動筆前先在 take 寫一句「他主張什麼、我怎麼看」，angle 寫看法的種類；「補數據」「交叉驗證」不再是角度。
+# 接話（kind followup）不用。從 TAKE_FROM 那天的 replies.json 起擋（11/17 當天已經發出的幾則沒有這個欄位）。只加不刪，regress() 會檢查這條還擋得住。
+TAKE_FROM = '2026-11-18'
+TAKE_MIN = 12
+DATA_ANGLE = re.compile(r'^\s*(補(充)?(一個|一組|個)?(數據|數字|深度|份量)|交叉驗證|補他沒有的)')
+
+
+def take_errors(it, date):
+    """沒有看法就不回：take 要寫、不能照抄回覆，angle 不能只是補數據。"""
+    if (date or '') < TAKE_FROM or it.get('status') == 'skip' or it.get('kind') == 'followup': return []
+    body = [x.strip() for x in (it.get('reply'), it.get('quote')) if x and x.strip()]
+    if not body: return []
+    tag, take, err = f'#{it.get("n")}', (it.get('take') or '').strip(), []
+    if len(take) < TAKE_MIN: err.append(f'{tag} 沒有看法（take）：先寫一句「他主張什麼、我怎麼看」再找數字；寫不出來就不回，改成 skip、note 寫「沒有看法」')
+    elif take in body: err.append(f'{tag} take 照抄了回覆：take 寫的是對他主張的看法（同意哪裡、不同意哪裡、他看錯什麼），不是回覆本身')
+    if DATA_ANGLE.search(it.get('angle') or ''): err.append(f'{tag} 角度是「{(it.get("angle") or "")[:12]}」：補數據不再是角度，angle 寫看法的種類（同意而且更進一步／只同意一半／不同意／他看錯地方／回答他的問題）')
+    return err
+
+
 HASH = re.compile(r'(^|\s)#[^\s#]+')   # hashtag：原創貼文（引用、快訊）要帶，回覆不帶
 # 太機械的寫法（README「要有人味」）：報告式開頭、自稱本站
 ROBOT = re.compile(r'^(補一個|補一組|補兩個|Daily data|Our .{0,40}estimate|Data shows)|本站', re.I)
@@ -143,6 +163,7 @@ def check():
             if not it.get('note'): err.append(f'{tag} 跳過要寫原因（note）')
             continue
         if it.get('lang') not in ('zh', 'en'): err.append(f'{tag} 原文是 {it.get("lang")}：只回中文和英文貼文，請改成 skip')
+        err += take_errors(it, R.get('date'))
         if not t and not (it.get('mode') == 'quote' and it.get('quote')): err.append(f'{tag} 沒有回覆內容')   # 只引用不回覆的可以留空（2026-11-06）
         if t and it.get('lang') == 'zh' and not it.get('posted') and REPLY_ONLY.search(t): err.append(f'{tag} 回覆 AI 腔（「說明」）：回覆直接把意思講出來，「說明」是長文的動作（voice.md 第四輪，2026-11-11）')
         rlim = 25000 if it.get('long') and not it.get('quote') else 280   # 2026-11-15 使用者要長篇回覆（Premium）：回覆也可以 "long": true，X 先露前 280 字左右，重點放前面
@@ -469,6 +490,8 @@ def regress():
     """去 AI 味不往回走：以前退過的句子和模板，現在的規則一定要還抓得到。"""
     err = [f'去 AI 味規則倒退了：「{t}」現在不會被擋（voice.md「不往回走」，擋的詞只能加不能刪）' for l, t in REGRESS if not text_errors('x', t, l)]
     err += [f'去 AI 味規則倒退了：回覆裡的「說明」不再被擋（「{t[:20]}…」）' for t in REGRESS_REPLY if not REPLY_ONLY.search(t)]
+    if not take_errors({'n': 0, 'status': 'send', 'reply': 'ETF 這 7 天流出換成幣約 2.7 萬顆', 'angle': '同意，而且更進一步'}, TAKE_FROM): err.append('看法檢查倒退了：沒有 take 的回覆不再被擋（2026-11-17 使用者：需要先有觀點）')
+    if not take_errors({'n': 0, 'status': 'send', 'reply': 'x', 'take': '他說缺新錢，我同意，而且穩定幣縮得比他寫的快', 'angle': '補數據：ETF 流出換成顆數'}, TAKE_FROM): err.append('看法檢查倒退了：角度寫「補數據」不再被擋（2026-11-17）')
     tn = '\n'.join(tone_notes([{'n': i + 1, 'reply': t, 'lang': 'zh', 'status': 'send'} for i, t in enumerate(REGRESS_BATCH)]))
     for k in ('三行以上', '條件句'):
         if k not in tn: err.append(f'去 AI 味規則倒退了：11/10 的四段模板整批不再被提醒「{k}」（voice.md「不往回走」）')
