@@ -32,6 +32,11 @@ AIW = (('泛指來源：說是誰（「X 上這兩天好幾則」、資料商名
 FOCUS = re.compile(r"分辨的方法是|要盯的是|要看的是|要注意的是|關鍵在於|關鍵是|的原因是|真正的(問題|差別|重點)是|What(?:'s| is) (?:missing|different|new|changed|interesting) is|The (?:tell|catch|difference|problem|key|short version) is", re.I)
 CONTRAST = re.compile(r"不是[^，。？\n]{1,24}[，,、 ]?(而)?是|不等於|\bnot (just |only )?an? [^,.]{1,30}, (but )?|, not an? |isn't [^,.]{1,30}[,.] it's|rather than", re.I)
 PET = {'比較像': 2, '真的': 3, '其實': 3, '我覺得': 3, 'to me': 2, 'though': 2}   # 一天全部解讀加起來的上限
+# 2026-11-17 使用者：「頭版不能直接寫要避險，這屬於交易指令了」「頭版是要對外的，網站內有提示沒問題，但是對外宣傳不能直接有交易指令」。
+# 頭版＝頭條（分享圖也用它）、摘要、stance、三個價位（watch）：只講市場的事實和距離，不寫買賣動作。網站裡的行動清單、各版判讀、出場頁照舊可以寫框架提示
+FRONT = ('.headline', '.summary', '.stance.label', '.stance.short', '.watch.label', '.watch.note')
+TRADE = re.compile(r"避險|減倉|減碼|補回(?!來)|清倉|建倉|抄底|停損|止損|該賣|該買|就賣|就買|賣出\s?\d|賣\s?\d+(\.\d+)?\s?%|減\s?\d+(\.\d+)?\s?%|照做|出場(?!框架|頁)|依框架|"
+                   r"\b(hedg(e|es|ed|ing)|de-?risk(ing)?|trim(ming)?|scale (in|out)|buy(ing)?[- ]back|add(ing)? back|sell \d+(\.\d+)?%|cut \d+(\.\d+)?%|take profits?|stop[- ]loss|per the plan)\b", re.I)
 EVENTS = {'CPI': 'CPI', 'FOMC': 'FOMC', '非農': '非農', '難度調整': '難度', 'Deribit 到期': 'Deribit', '月底路徑重估': '路徑'}
 
 
@@ -199,6 +204,13 @@ def lint(n, en, bar_date):
             if p.endswith(SKIP): continue
             for m in VAGUE.finditer(t): hit.setdefault(m.group(0), []).append(p)
         for w, ps in hit.items(): bad.append(f'{tag}有「{w}」（{"、".join(sorted(set(ps))[:3])}）：說重點，結論講成市場的事實、兩種走法直接講，見寫作規則')
+    for doc, tag in ((n, ''), (en, '英文版')):   # 2026-11-17 頭版不寫交易指令
+        if doc is None: continue
+        hit = {}
+        for p, t in texts(doc):
+            if p not in FRONT: continue
+            for m in TRADE.finditer(t): hit.setdefault(m.group(0), set()).add(p)
+        for w, ps in hit.items(): bad.append(f'{tag}頭版有交易指令「{w}」（{"、".join(sorted(ps)[:3])}）：頭條、摘要、stance、watch 是對外的，只講市場的事實和距離（「連 5 天收在 200 日均線下」），不寫避險、減倉、賣幾 %、補回這類動作；框架提示寫在 actions、各版判讀')
     names = {}
     for p, t in texts(n):
         if not p.endswith(SKIP):
@@ -227,6 +239,13 @@ if __name__ == '__main__':
     for doc, zh, pv in ((n, True, prev), (en, False, json.load(open(pen)) if os.path.exists(pen) else None)):
         if doc is None: continue
         b, w = lint_voice(doc, zh, pv); bad += b; warn += w
+    for f, keys in (('x_post.json', ('zh', 'en')), ('picks.json', None)):   # 2026-11-17 早報貼文、推薦圖文也是對外的
+        try: d = json.load(open(D(f)))
+        except Exception: continue
+        items = [d] if keys else (d.get('picks') or [])
+        for it in items:
+            for k in ('zh', 'en', 'q_zh', 'q_en'):
+                for m in TRADE.finditer(it.get(k) or ''): bad.append(f'{f} 的 {k} 有交易指令「{m.group(0)}」：對外貼文只講市場的事實和距離，不寫避險、減倉、賣幾 %、補回這類動作')
     for b in bad: print('✗', b)
     for w in warn: print('△', w)
     print(f"notes {n.get('date')} No.{n.get('edition')}：{'有 ' + str(len(bad)) + ' 項要修' if bad else '通過'}" + (f'；{len(warn)} 項提醒（△，看過再決定要不要改）' if warn else ''))
