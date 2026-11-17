@@ -20,10 +20,11 @@ BRAND = re.compile(r'破曉')
 NEED = ('n', 'order', 'status', 'url', 'id', 'author', 'followers', 'posted', 'lang', 'angle', 'summary', 'reply')
 # 2026-11-17 使用者：「目前我覺得回覆最大的問題就是缺乏觀點，大量的放了數據，但沒有對目標文的直接觀點輸出。需要先有觀點，你的數據才有意義」。
 # 回別人貼文（回覆和引用）動筆前先在 take 寫一句「他主張什麼、我怎麼看」，angle 寫看法的種類；「補數據」「交叉驗證」不再是角度。
-# 接話（kind followup）不用。從 TAKE_FROM 那天的 replies.json 起擋（11/17 當天已經發出的幾則沒有這個欄位）。只加不刪，regress() 會檢查這條還擋得住。
+# 接話（kind followup）不用；閒聊型（angle 寫「同感」或「閒聊」、沒有數字、沒有配圖）也不用。從 TAKE_FROM 那天的 replies.json 起擋（11/17 當天已經發出的幾則沒有這個欄位）。只加不刪，regress() 會檢查這條還擋得住。
 TAKE_FROM = '2026-11-18'
 TAKE_MIN = 12
 DATA_ANGLE = re.compile(r'^\s*(補(充)?(一個|一組|個)?(數據|數字|深度|份量)|交叉驗證|補他沒有的)')
+CHAT_ANGLE = re.compile(r'^\s*(同感|閒聊)')   # 對方發的是心情、爆倉故事、梗圖這類，我們只接一句人話：不用寫看法，但不能放數字、不能配圖
 
 
 def take_errors(it, date):
@@ -32,6 +33,9 @@ def take_errors(it, date):
     body = [x.strip() for x in (it.get('reply'), it.get('quote')) if x and x.strip()]
     if not body: return []
     tag, take, err = f'#{it.get("n")}', (it.get('take') or '').strip(), []
+    if CHAT_ANGLE.search(it.get('angle') or ''):
+        if it.get('image') or any(re.search(r'\d', x) for x in body): return [f'{tag} 角度是同感／閒聊，卻放了數字或配圖：閒聊型只接一句人話；要放數字就照一般回覆先寫看法（take）']
+        return []
     if len(take) < TAKE_MIN: err.append(f'{tag} 沒有看法（take）：先寫一句「他主張什麼、我怎麼看」再找數字；寫不出來就不回，改成 skip、note 寫「沒有看法」')
     elif take in body: err.append(f'{tag} take 照抄了回覆：take 寫的是對他主張的看法（同意哪裡、不同意哪裡、他看錯什麼），不是回覆本身')
     if DATA_ANGLE.search(it.get('angle') or ''): err.append(f'{tag} 角度是「{(it.get("angle") or "")[:12]}」：補數據不再是角度，angle 寫看法的種類（同意而且更進一步／只同意一半／不同意／他看錯地方／回答他的問題）')
@@ -491,6 +495,7 @@ def regress():
     err = [f'去 AI 味規則倒退了：「{t}」現在不會被擋（voice.md「不往回走」，擋的詞只能加不能刪）' for l, t in REGRESS if not text_errors('x', t, l)]
     err += [f'去 AI 味規則倒退了：回覆裡的「說明」不再被擋（「{t[:20]}…」）' for t in REGRESS_REPLY if not REPLY_ONLY.search(t)]
     if not take_errors({'n': 0, 'status': 'send', 'reply': 'ETF 這 7 天流出換成幣約 2.7 萬顆', 'angle': '同意，而且更進一步'}, TAKE_FROM): err.append('看法檢查倒退了：沒有 take 的回覆不再被擋（2026-11-17 使用者：需要先有觀點）')
+    if not take_errors({'n': 0, 'status': 'send', 'reply': '短期持有者有 100 萬顆擠在這裡', 'angle': '同感'}, TAKE_FROM): err.append('看法檢查倒退了：角度寫「同感」就能帶數字繞過（2026-11-17）')
     if not take_errors({'n': 0, 'status': 'send', 'reply': 'x', 'take': '他說缺新錢，我同意，而且穩定幣縮得比他寫的快', 'angle': '補數據：ETF 流出換成顆數'}, TAKE_FROM): err.append('看法檢查倒退了：角度寫「補數據」不再被擋（2026-11-17）')
     tn = '\n'.join(tone_notes([{'n': i + 1, 'reply': t, 'lang': 'zh', 'status': 'send'} for i, t in enumerate(REGRESS_BATCH)]))
     for k in ('三行以上', '條件句'):
