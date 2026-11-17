@@ -1,16 +1,16 @@
 {
- "date": "2026-11-15",
- "edition": 41,
+ "date": "2026-11-16",
+ "edition": 42,
  "picks": [
   {
-   "id": "cycle/dawn",
-   "chart": "data/picks/cycle-dawn.png",
-   "chart_en": "data/picks/cycle-dawn-en.png",
-   "why": "跌到 62K 隔天，讀者會問是不是底了；晨昏指數這週剛進入深夜，頭條講的是避險和認賠，不重複。",
-   "q_zh": "BTC 的估值跌到底部區了嗎？",
-   "q_en": "Has BTC's valuation reached the bottom zone?",
-   "zh": "BTC 的估值跌到底部區了嗎？\n到了：晨昏指數熱度 6.7（11/14），跌破 10 進入深夜，相對未實現獲利、冪律都在近 4 年第 2、第 4 百分位。\n過去在深夜的 62 週，一年後 98% 較高、中位數 +83%；趨勢那一半還朝下。熱度回到 10 以上，才算離開底部區。\n#比特幣 #BTC #鏈上數據",
-   "en": "Has BTC's valuation reached the bottom zone?\nYes: Dawn Index heat is 6.7 (Nov 14), under 10, so it's in Deep night.\nIn 62 past Deep night weeks, price was higher a year later 98% of the time, median +83%; the trend still points down. Heat above 10 ends it.\n#Bitcoin #BTC #onchain"
+   "id": "onchain/lthloss",
+   "chart": "data/picks/onchain-lthloss.png",
+   "chart_en": "data/picks/onchain-lthloss-en.png",
+   "why": "避險成立、價格在 64K 打轉，讀者會問長期持有者是不是也要投降；頭條講避險和短期持有者，這張講長期那一邊，不重複。",
+   "q_zh": "長期持有者的虧損比例破這輪高點了嗎？",
+   "q_en": "Has the long-term holder loss share broken this cycle's peak?",
+   "zh": "長期持有者的虧損比例破這輪高點了嗎？\n還沒：41.7%（11/16），比 6/30 的 45.4% 低；推算要跌到 60,500 才會超過（CheckOnChain）。\n前三輪底部的高點之後，這個比例都沒再創新高，3 次裡 3 次。收盤跌破 60,500，這個規律就破了。\n#比特幣 #BTC #鏈上數據",
+   "en": "Has the long-term holder loss share broken this cycle's peak?\nNot yet: 41.7% (Nov 16) vs 45.4% on Jun 30; an estimated 60,500 breaks it (CheckOnChain).\nIn the last 3 cycles it never topped its bottom peak again. A close below 60,500 ends that.\n#Bitcoin #BTC #onchain"
   }
  ]
 }
