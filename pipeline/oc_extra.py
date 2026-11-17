@@ -618,3 +618,54 @@ def pullback_viz(bv, px, last, sec=None, rloss=None):
     return dict(date=d1, items=items, n_ok=sum(1 for x in items if x['ok']), n=len(items), eps=eps[-10:], n_eps=len(eps), days=len(hit),
                 r30=_stat([e['r30'] for e in eps]), r90=_stat([e['r90'] for e in eps]), base30=_base(D, ix, P, 30, '2015-01-01'), base90=_base(D, ix, P, 90, '2015-01-01'),
                 src='Bitview', note='①–③ 每天可回測（2015 年起三項同時成立的日子，隔 30 天以上算新的一段）；④⑤ 只看現在；只作讀值、不是買點')
+
+
+# ---------- 實現獲利 ÷ 虧損（一年合計） ----------
+# 2026-11-17 使用者要求（看了一張「實現獲利 365 日均 ÷ 實現虧損 365 日均」的圖）：「實現獲利 ÷ 虧損」卡多一個一年的檢視。
+#   做法是全網每天的實現獲利、實現虧損（Bitview，美元，不是實體調整）各自加總 365 天再相除；原本 90 天那個檢視是 CheckOnChain 的每日比值取平均，
+#   平均法會被少數獲利特別大的日子拉高，這裡改用合計相除。各年齡組的實現獲利（ap1–ap6）加起來就是全網實現獲利，不多發請求。
+#   低於 1＝一整年認賠多於獲利。過去 2012、2015、2018–19、2022–23 四段都落在週期底部區；但比值的最低點落後價格的最低點，轉紅也不等於見底。只作讀值
+Y1_N, Y1_MIN = 365, 14
+
+
+def rpl365_viz(bv, px, last, block=4):
+    P = _P(bv, px); L = bv.get('rloss') or {}; G = [bv.get('ap%d' % i) or {} for i in range(1, 7)]
+    D = [d for d in sorted(L) if d <= last and P(d) and all(d in g for g in G)]
+    if len(D) < 2000: return None
+    pr = [sum(g[d] for g in G) for d in D]; lo = [L[d] for d in D]
+    cp, cl = [0], [0]
+    for a, b in zip(pr, lo): cp.append(cp[-1] + a); cl.append(cl[-1] + b)
+    m, sp, sl = {}, {}, {}
+    for i in range(Y1_N - 1, len(D)):
+        a, b = cp[i + 1] - cp[i + 1 - Y1_N], cl[i + 1] - cl[i + 1 - Y1_N]
+        if b > 0 and a > 0: m[D[i]], sp[D[i]], sl[D[i]] = a / b, a, b
+    M = [d for d in D if d in m and d >= '2012-01-01']; d1 = M[-1]; ix = {d: i for i, d in enumerate(D)}
+    reds, cur = [], None
+    for d in M:
+        if m[d] < 1:
+            if cur is None: cur = dict(start=d, end=d, low=m[d], low_date=d)
+            cur['end'] = d
+            if m[d] < cur['low']: cur['low'], cur['low_date'] = m[d], d
+        elif cur: reds.append(cur); cur = None
+    if cur: reds.append(dict(cur, open=True))
+    reds = [x for x in reds if dn(x['end']) - dn(x['start']) + 1 >= Y1_MIN]
+    for x in reds:
+        W = [d for d in M if x['start'] <= d <= x['end']]; pl = min(W, key=P)
+        x.update(days=dn(x['end']) - dn(x['start']) + 1, low=round(x['low'], 3), low_price=round(P(x['low_date'])), start_price=round(P(x['start'])),
+                 plow=pl, plow_price=round(P(pl)), dd=round((P(pl) / P(x['start']) - 1) * 100, 1), lag=round((P(x['low_date']) / P(pl) - 1) * 100, 1),
+                 r365=None if x.get('open') else _fwd(D, ix, P, x['low_date'], 365))
+    below = m[d1] < 1; k = len(M) - 1
+    while k > 0 and (m[M[k - 1]] < 1) == below: k -= 1
+    d30 = M[max(0, len(M) - 1 - 30)]
+    rows = []
+    for i in range(len(M) - 1, -1, -block):   # 每 block 天取一點；段內有低於 1 的日子取最低那天（同 stage_viz.rpl_viz）
+        seg = M[max(0, i - block + 1): i + 1]; lo_ = min(seg, key=m.get); d_ = lo_ if m[lo_] < 1 else seg[-1]
+        if i == len(M) - 1 and d_ != seg[-1]: rows.append([dn(seg[-1]), round(m[seg[-1]], 3), round(P(seg[-1]))])
+        rows.append([dn(d_), round(m[d_], 3), round(P(d_))])
+    rows.reverse()
+    done = [x for x in reds if not x.get('open')]
+    return dict(date=d1, value=round(m[d1], 3), price=round(P(d1)), below=below, since=M[k], since_days=dn(d1) - dn(M[k]), since_price=round(P(M[k])),
+                chg=round((P(d1) / P(M[k]) - 1) * 100, 1), v30=round(m[d30], 3), profit_b=round(sp[d1] / 1e9, 1), loss_b=round(sl[d1] / 1e9, 1),
+                reds=reds, past_low=[min(x['low'] for x in done), max(x['low'] for x in done)] if done else None,
+                r365=_stat([x['r365'] for x in done]), base365=_base(D, ix, P, 365, '2012-01-01'), rows=rows, src='Bitview',
+                note='全網每天的實現獲利、實現虧損（美元）各加總 365 天再相除；低於 1＝一整年認賠多於獲利；reds＝14 天以上低於 1 的期間（dd＝期間內最大跌幅、lag＝比值最低那天的價格比期間最低價高多少、r365＝比值最低那天之後一年）；只作讀值')

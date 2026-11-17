@@ -126,10 +126,22 @@ def build(L, N, E, dn):
       dz='把每天的淨實現損益換成顆數，加總 365 天。標記是歷次的高點和低點。', de='Daily net realized P&L converted to BTC and summed over 365 days. Markers show past highs and lows.')
     # ── 賣壓強弱與衰竭 ──
     rp = o['rpl']
-    c_rpl = dict(k='rpl', zh='實現獲利 ÷ 虧損（90 天）', en='Realized profit ÷ loss (90d)', f='x2', rows=rp['rows'], p=2, log=1, ser=[ser(1, zh='獲利 ÷ 虧損', en='Profit ÷ loss', t='split', base=1, w=1.6)],
+    c_rpl = dict(k='rpl', zh='實現獲利 ÷ 虧損', en='Realized profit ÷ loss', f='x2', rows=rp['rows'], p=2, log=1, ser=[ser(1, zh='獲利 ÷ 虧損', en='Profit ÷ loss', t='split', base=1, w=1.6)],
       refs=[dict(v=1, col='ink', solid=1)], spans=[dict(a=dn(e['start']), b=dn(e['end']), col='dn', op=.12, below=1) for e in rp['reds']],
       leg=[['up', '1 以上（獲利了結較多）', 'Above 1 (more profit-taking)', 'line'], ['dn', '1 以下（認賠較多）', 'Below 1 (more loss-taking)', 'line']],
       dz='全網 90 天平均的實現獲利，除以實現虧損。橘底是歷次跌到 1 以下的期間。', de='The 90-day average of network realized profit divided by realized loss. Orange bands mark past stays below 1.')
+    y1 = o.get('rpl365')
+    if y1:   # 2026-11-17 使用者要求：多一個一年的檢視（oc_extra.rpl365_viz，Bitview，合計相除）；原本 90 天的是第一個、打開時還是它
+        yl = lambda d_: d_[:7].replace('-', '/')
+        c_rpl['modes'] = [dict(mz='90 天', me='90 days'),
+                          dict(mz='一年', me='One year', src='Bitview · {d}', rows=y1['rows'], p=2, dom=[.2, 10], ser=[ser(1, zh='一年合計獲利 ÷ 虧損', en='One-year profit ÷ loss', t='split', base=1, w=1.6)],
+                               spans=[dict(a=dn(e['start']), b=dn(e['end']), col='dn', op=.12, below=1) for e in y1['reds']],
+                               marks=[dict(d=dn(e['low_date']), v=e['low'], col='dn', up=0, zh='%s %.2f' % (yl(e['low_date']), e['low']), en='%s %.2f' % (e['low_date'][:7], e['low'])) for e in y1['reds'] if not e.get('open')],
+                               leg=[['up', '1 以上（一年獲利較多）', 'Above 1 (more profit over the year)', 'line'], ['dn', '1 以下（一年認賠較多）', 'Below 1 (more loss over the year)', 'line'], ['dn', '每段的最低點', 'Low of each spell', 'ring']],
+                               dz='全網一年合計的實現獲利，除以一年合計的實現虧損（Bitview）。橘底是歷次跌到 1 以下的期間，標記是每段比值最低的那天。',
+                               de='Network realized profit summed over a year, divided by realized loss summed over the same year (Bitview). Orange bands mark past stays below 1; markers show the low of each spell.')]
+        c_rpl['dz'] = '全網 90 天平均的實現獲利，除以實現虧損（CheckOnChain，每日比值取平均）。橘底是歷次跌到 1 以下的期間。「一年」改用一年合計相除，看的是整個週期的位置。'
+        c_rpl['de'] = 'The 90-day average of network realized profit divided by realized loss (CheckOnChain, daily ratios averaged). Orange bands mark past stays below 1. "One year" divides one-year sums instead and shows where the cycle stands.'
     rl = o['rloss']; LK = dict(div=('c4', '', '背離', 'Divergence'), cap=('c5', '5 4', None, None)); LK['break'] = ('dn', '5 4', '打破', 'Broken')
     def links(lst, va, vb):
         lst = [x for x in lst if x['kind'] in LK]; out = []; lab = [x for x in lst if x['kind'] != 'cap'][-3:]
