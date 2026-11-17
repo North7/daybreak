@@ -212,7 +212,7 @@ def lint(n, en, bar_date):
         if doc is None: continue
         hit = {}
         for p, t in texts(doc):
-            if p not in FRONT: continue
+            if p not in FRONT and not p.startswith('.cards'): continue   # 主卡判讀（cards）在分享圖上也看得到
             for m in TRADE.finditer(t): hit.setdefault(m.group(0), set()).add(p)
         for w, ps in hit.items(): bad.append(f'{tag}頭版有交易指令「{w}」（{"、".join(sorted(ps)[:3])}）：頭條、摘要、stance、watch 是對外的，只講市場的事實和距離（「連 5 天收在 200 日均線下」），不寫避險、減倉、賣幾 %、補回這類動作；框架提示寫在 actions、各版判讀')
     names = {}

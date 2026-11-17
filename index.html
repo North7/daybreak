@@ -1335,7 +1335,7 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
 @media (prefers-reduced-motion: reduce) { .oc.io .frl .fr, .oc.io .frl .fr-s::after { animation: none !important; } .oc.io .frl:not(.in) .fr { opacity: 1; } .oc.io .frl:not(.in) .fr-s::after { transform: scaleX(0); } .fr, .fr:active { transition: none; transform: none; } }
 .fc.ph .sy-h, .fc.ph .ol-sx, .fc.ph .ol-pair, .fc.ph .md.ly, .fc.ph .ol-ctl .more { display: none; }
 .fc.ph .sy-view .sy-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; } .fc.ph .sy-view .sy-d, .fc.ph .sy-view .sy-c { display: none; } .fc.ph .sy-view { padding-top: 8px; }   /* ㉞-8 手機主卡：看法只留一行（偏向＋立場） */
-.fc.ph .sy-d { margin-top: 0; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.fc.ph .sy-d { margin-top: 0; display: -webkit-box; -webkit-line-clamp: 4;   /* 2026-11-17 主卡改成綜合判讀，句子比較長，3 行改 4 行 */  -webkit-box-orient: vertical; overflow: hidden; }
 .fc.ph .ol-ctl { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .fc.ph .ol-ctl::-webkit-scrollbar { display: none; } .fc.ph .ol-ctl .md { flex: none; }
 .fc.ph:not(.lg-all) .ol-lg > span:not(.h) { display: none; }
 .lg-x { border: 0; background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--k2); font: 500 11px/1 var(--f-mono, monospace); border-radius: 99px; padding: 4px 8px; cursor: pointer; transition: transform .45s var(--spring, ease); } .lg-x:active { transform: scale(.92); }
@@ -1466,7 +1466,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=f0eecac378"></script>
+<script src="data/next.js?v=a6c7d53cc4"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];

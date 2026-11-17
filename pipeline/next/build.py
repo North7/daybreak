@@ -68,7 +68,8 @@ E_ = json.load(open(os.path.join(REPO, 'data', 'notes.en.json'), encoding='utf-8
 import site_data
 SITE = site_data.build(L, N, E_, dn)
 import say_data, reads
-print('reads', reads.apply(SITE['chapters'], L))   # 2026-11-17 新版自己產生的讀數（reads.py），做好的頁不再用舊版的
+_NE = json.load(open(os.path.join(REPO, 'data', 'notes.en.json'), encoding='utf-8')) if os.path.exists(os.path.join(REPO, 'data', 'notes.en.json')) else None
+print('reads', reads.apply(SITE['chapters'], L, N, _NE))   # 2026-11-17 新版自己產生的讀數（reads.py），做好的頁不再用舊版的
 print('say', say_data.attach(SITE['chapters'], L))
 # 2026-11-16 舊版（classic.html）對外下線：舊網址 #頁/代號 的「代號」是舊版的面板（pn-…）或圖（c-…），對到新版的圖代號，頁面讀到就轉過去（page.html ㉝）
 def _old_map():
