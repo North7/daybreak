@@ -96,6 +96,10 @@
   {
    "date": "2026-11-15",
    "id": "cycle/dawn"
+  },
+  {
+   "date": "2026-11-16",
+   "id": "onchain/lthloss"
   }
  ]
 }
