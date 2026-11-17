@@ -1385,7 +1385,7 @@ html.share .fl-was { display: none !important; }
 .oc-hd.hda { height: auto !important; overflow: visible; }
 .oc-hd.hda .oc-st { position: relative; inset: auto; perspective: none; }
 .oc-hd.hda .os:not(.front) { display: none !important; }
-.oc-hd.hda .os.front { position: relative; left: auto !important; top: auto !important; width: auto !important; height: clamp(620px, 52vw, 780px) !important; margin: 30px clamp(16px, 2.4vw, 34px) 40px calc(clamp(16px, 2.4vw, 34px) + 40px); background: color-mix(in srgb, var(--bg) 86%, transparent); border: 0; border-radius: 0; box-shadow: none; transform: none !important; translate: none !important; rotate: none !important; filter: none !important; animation: none !important; cursor: auto; }
+.oc-hd.hda .os.front { position: relative; left: auto !important; top: auto !important; width: auto !important; height: auto !important; container-type: inline-size; margin: 30px clamp(16px, 2.4vw, 34px) 40px calc(clamp(16px, 2.4vw, 34px) + 40px); background: color-mix(in srgb, var(--bg) 86%, transparent); border: 0; border-radius: 0; box-shadow: none; transform: none !important; translate: none !important; rotate: none !important; filter: none !important; animation: none !important; cursor: auto; }
 .oc-hd.hda .os.front::before, .oc-hd.hda .os.front::after { content: none; }
 .oc-hd.hda .os.front .os-in { padding: 0; gap: min(1.5cqw, 2.4cqh); animation: none; }
 .oc-hd.hda .os.front .os-h { flex-wrap: wrap; align-items: baseline; gap: .3cqw 1.1cqw; white-space: normal; }
@@ -1395,7 +1395,14 @@ html.share .fl-was { display: none !important; }
 .oc-hd.hda .os.front .bp-top > span:first-of-type { display: none; }
 .oc-hd.hda .os.front .pp-h { border-bottom: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); }
 .oc-hd.hda .os.front .pp-hl { font: 700 clamp(18px, min(2.3cqw, 3.6cqh), 34px)/1.4 "Inter Tight", "Noto Sans TC", sans-serif; letter-spacing: 0; max-width: 62em; -webkit-line-clamp: 3; }
-.oc-hd.hda .os.front .dl-c { overflow-y: auto; scrollbar-width: thin; overscroll-behavior: contain; }   /* 右欄清單比較長的頁（賣壓）在欄內捲，最後幾列也看得到 */
+/* ㊱ 4（同一天，使用者：「又被遮擋，另外內部儘量避免出現內部滾動條」）：固定高度在寬螢幕上裝不下（買盤的流向圖、週期的圓盤底下被切，賣壓右欄要捲）。
+     改成高度跟著內容走：左欄、清單用自己的高度；會撐滿格子的圖（週期、價位、買盤、槓桿、出場）不算進高度（contain: size），
+     由左欄和最小高度決定這一排多高，圖再填滿。欄內不捲動。 */
+.oc-hd.hda .os.front .os-in { position: relative; inset: auto; }
+.oc-hd.hda .os.front .os-b, .oc-hd.hda .os.front .os-b.pp > .ov { flex: none; height: auto; }
+.oc-hd.hda .os.front .dl-c { max-height: none; overflow: visible; }
+.oc-hd.hda .os.front .os-b.pp .ol-big { font-size: min(12.5cqw, 150px); }
+@media (min-width: 701px) { .oc-hd.hda .os.front .ov-m:has(> .dl, > .ov-map, > .dl-r) { contain: size; min-height: clamp(440px, 32vw, 600px); } }
 .oc-hd.hda[data-pg="today"] .os.front .os-h .sub { font-size: clamp(22px, min(2.8cqw, 4.4cqh), 40px); }   /* 「今天」自己的判讀標題就是主角，問題小一號 */
 .oc-hd.hda .os.front .ov-m { border-left: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); padding-left: 2.4cqw; }
 @media (prefers-reduced-motion: no-preference) {
@@ -1579,7 +1586,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=b0714171c6"></script>
+<script src="data/next.js?v=709b3f261d"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
