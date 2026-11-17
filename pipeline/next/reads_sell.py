@@ -214,6 +214,8 @@ def miners(L):
 
 CARDS = dict(pullback=pullback, sx=sx, profit=profit, sopr=sopr, pnlr=pnlr, sthsig=sthsig, conf=conf, npl=npl, agepl=agepl, rpl=rpl, rloss=rloss, ssr=ssr, sec=sec, mom=mom, lthrl=lthrl, miners=miners)
 HOWX = {
+    'pcost': (['生產成本用挖礦難度估算礦工挖一顆幣花的錢：難度越高、每天發行越少，成本越高。', '價格跌到成本下面，礦工賣一顆就虧一顆，過去多半撐不久。', '減半那天發行量少一半，成本在之後 90 天內漲到約 2 倍，常讓價格「被動」落到成本下面。'],
+              ['Production cost uses mining difficulty to estimate what it costs miners to produce one coin: higher difficulty or lower issuance means a higher cost.', 'Below cost, miners lose money on every coin they sell, which has rarely lasted.', 'A halving cuts issuance in half, so cost roughly doubles over the next 90 days and often leaves price below it without any sell-off.']),
     'miners': (['算力是全網礦機的總運算量；一週掉 10% 以上，常是礦工在關機。', '電費兩平價是三種效率的礦機在不同電價下，賣幣剛好付得起電費的價格。', '難度每 2,016 個區塊調整一次，讓平均出塊時間回到 10 分鐘。'],
                ['Hashrate is the network\'s total mining power; a drop of 10% or more in a week often means miners are switching off.', 'Power break-even is the price at which three rig efficiencies just cover their electricity at different power costs.', 'Difficulty resets every 2,016 blocks to bring block times back to 10 minutes.']),
 }

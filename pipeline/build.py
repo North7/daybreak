@@ -113,6 +113,13 @@ if not out['onchain']['bvx']:
         _ob = (json.load(open(P('data', 'latest.json'))).get('onchain') or {}).get('bvx')
         if _ob and (dt.date.fromisoformat(td['bar_date']) - dt.date.fromisoformat(_ob['date'])).days <= 4: out['onchain']['bvx'] = dict(_ob, stale=True)
     except Exception as e: print('bvx fallback failed', e)
+# 2026-11-17 生產成本（pcost.py）：今天沒抓到就沿用上一份的（最多晚 4 天）
+out['onchain']['pcost'] = td.get('pcost')
+if not out['onchain']['pcost']:
+    try:
+        _op = (json.load(open(P('data', 'latest.json'))).get('onchain') or {}).get('pcost')
+        if _op and (dt.date.fromisoformat(td['bar_date']) - dt.date.fromisoformat(_op['date'])).days <= 4: out['onchain']['pcost'] = dict(_op, stale=True)
+    except Exception as e: print('pcost fallback failed', e)
 if td.get('stress'): out['chips']['stress'] = td['stress']   # 2026-11-07 賣壓累積與動能品質（本站自製，取代 11/05 的短期壓力分數）
 if out['flows'].get('premium3') is not None: out['flows']['premium3']['usdt_hist'] = [[dn(x['date']), x['usdt_prem']] for x in idx if x.get('usdt_prem') is not None]
 # 2026-11-08 清算熱力圖的長期範圍（約 200 KB）另存 data/liq_long.json，網頁點「2 年」才載入；這次沒取到就沿用舊檔。latest.json 只記它的時間（網頁用來避開瀏覽器快取）

@@ -355,6 +355,11 @@ def k20(L):
     if px < vp['va_low'] and px < m: return V('down', '短線偏弱', 'Weak near term', '收盤在價值區和 20 日均線下方。', 'The close is below the value area and the 20-day MA.', '站回 20 日均線', 'A close above the 20-day MA')
     if px > vp['va_high_outer'] and px > m: return V('up', '短線偏強', 'Strong near term', '收盤在價值區和 20 日均線上方。', 'The close is above the value area and the 20-day MA.', '跌回價值區', 'A drop back into the value area')
     return V('neu', '在價值區附近', 'Around the value area', '收盤在價值區裡或均線兩側。', 'The close is inside the value area or around the 20-day MA.')
+def pcost(L):   # 2026-11-17 生產成本（pipeline/pcost.py）：有回測，照回測；參數是同一段歷史擬合的，理由裡寫明
+    p = O(L)['pcost']; s, b = p['s90'], p['b90']
+    if p['below']: return V('up' if s['med'] - b['med'] >= 3 else 'neu', '跌破生產成本', 'Below production cost', '過去跌破後 90 天 %d/%d 上漲、中位數 %s，任一天 %s；但這條線是用同一段歷史擬合的。' % (s['up'], s['n'], pc(s['med'], 0), pc(b['med'], 0)),
+                            'In the past %d of %d breaks were higher 90 days later (median %s vs %s for any day), but the line was fitted on the same history.' % (s['up'], s['n'], pc(s['med'], 0), pc(b['med'], 0)), '收盤站回 %s 之上' % usd(p['cost']), 'A close back above %s' % usd(p['cost']))
+    return V('neu', '在生產成本上方', 'Above production cost', '收盤比成本高 %.1f%%；這張在跌破時才有方向。' % p['gap'], 'The close is %.1f%% above cost; this chart only gives direction on a break.' % p['gap'], '收盤跌破 %s' % usd(p['cost']), 'A close below %s' % usd(p['cost']))
 def floors(L):
     f = O(L)['bvx']['floors']
     if f['below']: return V('up', '跌破損失地板', 'Below a loss floor', '過去跌破地板多在週期底部附近（樣本少）。', 'Past breaks of the floors came near cycle bottoms (few cases).', '站回第一層之上', 'A move back above the first floor')

@@ -814,6 +814,10 @@ try:
     import bv_more
     BVX = bv_more.build(LAST); R['bvx'] = dict({k_: v_ for k_, v_ in BVX.items() if k_ != 'dens'}, dens={k_: v_ for k_, v_ in BVX['dens'].items() if k_ != 'rows'})
 except Exception as e: errors.append(f'bv_more {e}')
+# G4d-1c. 2026-11-17 使用者要求（看了社群的生產成本回測後說「做」，見 pcost.py）：難度、區塊獎勵、手續費佔比、價格，2 次請求。失敗只記 errors，build.py 沿用前一天的
+try:
+    import pcost; R['pcost'] = pcost.build(LAST)
+except Exception as e: errors.append(f'pcost {e}')
 try:
     import bitview as _bvm
     try: _cr, _c1 = _bvm.conc_rows(LAST)
