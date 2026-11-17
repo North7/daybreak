@@ -2,9 +2,9 @@
   "date": "2026-11-16",
   "written_utc": "2026-11-17T00:29:16Z",
   "edition": 42,
-  "stance": {"label": "Cycle bull · 5th close below the 200-day", "tone": "cold", "short": "5th day below the 200-day"},
-  "headline": "A 5th straight close below the 200-day average at 72,865; short-term holders are on day 7 of concentrated loss-taking.",
-  "summary": "Five straight closes below the 200-day average at 72,865; it would take a 12.4% rally to get back above. The MVRV Z 7-day average is 0.53, just 0.03 above 0.5. Short-term holders realized 5x more loss than profit, yet funding bounced to 6.5% in a day, so leveraged longs have not left.",
+  "stance": {"label": "Bearish near term · long term in the bottom zone", "tone": "cold", "short": "Bear near, bull long"},
+  "headline": "Bearish near term, cheap long term: selling and leverage haven't cleared, but valuations sit in past bottom zones; 62K is the line.",
+  "summary": "Near term, bearish: short-term holders are on day 7 of concentrated loss-taking, yet funding bounced to 6.5%, so leverage and ETF selling have not cleared. Long term, bullish: the Dawn–Dusk Index is in deep night and unrealized profit is at the cycle floor, levels followed by higher prices a year later every time so far. The key is 62K: holding it completes the handover; below it there is little supply until 58K.",
   "watch": [
     {"label": "200-day average", "value": 72865, "note": "5 straight closes below; a 12.4% rally would take it back above"},
     {"label": "MVRV 0.75 line", "value": 111762, "note": "72% away (CoinMetrics, Nov 15)"},

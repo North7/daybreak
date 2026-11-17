@@ -33,4 +33,20 @@ if co:
                                                       sth_spent_top=top(f.get('rows'), 1), lth_spent_top=top(f.get('rows'), 2), new_top=top(f.get('rows'), 3))
 if d.get('orderbook'):
     ob = d['orderbook']; out['orderbook'] = {k: ob.get(k) for k in ('ts', 'mid', 'walls', 'rounds', 'totals')}
+# 2026-11-17 使用者：「今日判讀只是在描述數據，並不是判讀，需要的是綜合所有數據後的判讀，需要有觀點」。
+# 給日報一份網站每張指標卡今天的偏向（pipeline/next/leans.py，和網站上「我們的看法」同一套），分頁統計，綜合判讀時當依據
+try:
+    sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), 'next')); import leans as _ln
+    _nx = open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'next.js'), encoding='utf-8').read(); _nx = json.loads(_nx[_nx.index('{'):_nx.rindex('}') + 1])
+    _pg = {c['k']: ch['id'] for ch in _nx['site']['chapters'] for g in ch.get('groups') or [] for c in g.get('charts') or []}
+    _lv = {}
+    for _k, _f in _ln.FN.items():
+        if _k not in _pg or _k in ('dawnc', 'regc', 'p6v', 'radarv', 'tm', 'soprf', 'avgdc', 'whalet'): continue   # 附屬卡和主卡同一個看法，不重複算
+        try: _v = _f(d)
+        except Exception: continue
+        if not _v: continue
+        _e = _lv.setdefault(_pg[_k], dict(up=0, down=0, neu=0, cards=[])); _e[_v[0]] += 1; _e['cards'].append([_k, _v[0], _v[1]])
+    out['leans'] = dict(note='每張指標卡今天的偏向（up 偏多／down 偏空／neu 中性）＋立場短句；cycle＝長線估值與週期，lv＝價位與籌碼，sell＝賣壓，buy＝買盤與資金，lev＝槓桿與情緒（短線）', pages=_lv)
+except Exception as _e:
+    out['leans'] = dict(error=repr(_e))
 print(json.dumps(out, ensure_ascii=False, separators=(',', ':')))
