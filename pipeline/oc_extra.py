@@ -627,6 +627,7 @@ def pullback_viz(bv, px, last, sec=None, rloss=None):
 #   低於 1＝一整年認賠多於獲利。過去 2012、2015、2018–19、2022–23 四段都落在週期底部區；但比值的最低點落後價格的最低點，轉紅也不等於見底。只作讀值
 Y1_N, Y1_MIN = 365, 14
 Y1_CONF, Y1_CONF_MAX = .10, .8   # 見底確認：比值從段內最低點回升 10%，而且那個最低點在 0.8 以下
+Y1_NEAR = 90   # 2026-11-17 跌破 1 前後找價格最低點的範圍（天）；只算週期底（那天是前後一年最低價）
 
 
 def rpl365_viz(bv, px, last, block=4):
@@ -663,6 +664,10 @@ def rpl365_viz(bv, px, last, block=4):
         if not c: continue
         lo_ = min(P(d) for d in M if x['start'] <= d <= c); fut = [P(d) for d in D if d > c]
         x.update(conf=c, conf_px=round(P(c)), conf_gain=round((P(c) / lo_ - 1) * 100, 1), conf_broken=bool(fut) and min(fut) < lo_)
+    for x in reds:   # 2026-11-17 使用者問「低於 1 的點、回升點和價格底部有什麼規律」：跌破 1 前後 Y1_NEAR 天內（到期間結束）價格最低的那天
+        W = [d for d in D if dn(x['start']) - Y1_NEAR <= dn(d) and d <= x['end']]; nl = min(W, key=P)
+        x.update(near=nl, near_price=round(P(nl)), near_gap=dn(nl) - dn(x['start']), near_rgap=dn(x['low_date']) - dn(nl),
+                 cyc=P(nl) <= min(P(d) for d in D if abs(dn(d) - dn(nl)) <= 365))   # 2012 那段不是週期底（2011/11 更低），不算
     below = m[d1] < 1; k = len(M) - 1
     while k > 0 and (m[M[k - 1]] < 1) == below: k -= 1
     d30 = M[max(0, len(M) - 1 - 30)]
@@ -678,6 +683,8 @@ def rpl365_viz(bv, px, last, block=4):
                 cur_low=round(reds[-1]['low'], 3) if reds and reds[-1].get('open') else None, conf_at=round(reds[-1]['low'] * (1 + Y1_CONF), 3) if reds and reds[-1].get('open') and reds[-1]['low'] < Y1_CONF_MAX else None,
                 confirmed=bool(reds and reds[-1].get('open') and reds[-1].get('conf')), conf_n=sum(1 for x in done if x.get('conf')), conf_ok=sum(1 for x in done if x.get('conf') and not x['conf_broken']),
                 conf_gain=[min(x['conf_gain'] for x in done if x.get('conf')), max(x['conf_gain'] for x in done if x.get('conf'))] if any(x.get('conf') for x in done) else None,
+                near=(lambda B: dict(n=len(B), gap=[min(x['near_gap'] for x in B), max(x['near_gap'] for x in B)], dd=min(x['dd'] for x in B),
+                                     rgap=[min(x['near_rgap'] for x in B), max(x['near_rgap'] for x in B)]) if B else None)([x for x in done if x['cyc']]),
                 reds=reds, past_low=[min(x['low'] for x in done), max(x['low'] for x in done)] if done else None,
                 r365=_stat([x['r365'] for x in done]), base365=_base(D, ix, P, 365, '2012-01-01'), rows=rows, src='Bitview',
                 note='全網每天的實現獲利、實現虧損（美元）各加總 365 天再相除；低於 1＝一整年認賠多於獲利；reds＝14 天以上低於 1 的期間（dd＝期間內最大跌幅、lag＝比值最低那天的價格比期間最低價高多少、r365＝比值最低那天之後一年）；只作讀值')
