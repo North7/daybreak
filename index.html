@@ -1378,6 +1378,45 @@ html.share .fl-was { display: none !important; }
 @media (prefers-reduced-motion: no-preference) { .sgp.on .sgp-r, .sgp.on .sgp-g { animation: m-rise-s .45s cubic-bezier(.16, 1, .3, 1) backwards; animation-delay: calc(140ms + var(--j, 0) * 40ms); } }
 @media (prefers-reduced-motion: reduce) { .sgp { transition: none; } }
 @media (max-width: 700px) { .sgp { right: 12px; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); } }
+/* ㊱ 報頭（2026-11-18，使用者：「每頁的頂部這樣設計感覺不是很穩重，而且看多了會有點煩」→ 三個方案選 A「報頭」；「只改頭部版面，網站其他動效還保留」「背景點還保留」）。
+     1 拿掉周圍六張小卡（換頁靠導覽列；各頁總覽在「今天」那一頁），這一頁那張也不再是卡片：沒有底色、框、圓角、陰影、傾斜、漂浮、視差、拖曳，直接排在底色上，左右和下面的段落對齊。
+     2 由上往下：一行小字（第幾頁、頁名）→ 大字是這一頁的問題 →「這一頁的答案」那一行細線和日期 → 一句答案 → 細線分欄（左：主角數字和這一頁的五段；右：主圖）。題目只出現一次（答案那一行原本重複的「01 / 06 問題」拿掉）。
+     3 背景點陣照舊，內容那一塊蓋 86% 的底色，點只淡淡透出來，不和字、主圖的點混在一起。動效：開站照舊由 AI 畫出來；換頁時題目、答案往上升起、主角數字從 0 滾到新的值、下面兩欄跟上（hdaIn）。其他地方的動效都不變。 */
+.oc-hd.hda { height: auto !important; overflow: visible; }
+.oc-hd.hda .oc-st { position: relative; inset: auto; perspective: none; }
+.oc-hd.hda .os:not(.front) { display: none !important; }
+.oc-hd.hda .os.front { position: relative; left: auto !important; top: auto !important; width: auto !important; height: clamp(620px, 52vw, 780px) !important; margin: 30px clamp(16px, 2.4vw, 34px) 40px calc(clamp(16px, 2.4vw, 34px) + 40px); background: color-mix(in srgb, var(--bg) 86%, transparent); border: 0; border-radius: 0; box-shadow: none; transform: none !important; translate: none !important; rotate: none !important; filter: none !important; animation: none !important; cursor: auto; }
+.oc-hd.hda .os.front::before, .oc-hd.hda .os.front::after { content: none; }
+.oc-hd.hda .os.front .os-in { padding: 0; gap: min(1.5cqw, 2.4cqh); animation: none; }
+.oc-hd.hda .os.front .os-h { flex-wrap: wrap; align-items: baseline; gap: .3cqw 1.1cqw; white-space: normal; }
+.oc-hd.hda .os.front .os-h .k { font: 500 max(11px, .95cqw) var(--f-mono); letter-spacing: .12em; color: var(--k2); }
+.oc-hd.hda .os.front .os-h h3 { font: 600 max(12px, 1.05cqw)/1.2 "Inter Tight", "Noto Sans TC", sans-serif; letter-spacing: .08em; color: var(--k2); }
+.oc-hd.hda .os.front .os-h .sub { display: block; flex-basis: 100%; margin-top: min(.5cqw, .8cqh); font: 900 clamp(30px, min(4.6cqw, 7.2cqh), 66px)/1.06 "Noto Sans TC", "Inter Tight", sans-serif; letter-spacing: -.01em; color: var(--ink); overflow: visible; text-overflow: clip; text-wrap: balance; }
+.oc-hd.hda .os.front .bp-top > span:first-of-type { display: none; }
+.oc-hd.hda .os.front .pp-h { border-bottom: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); }
+.oc-hd.hda .os.front .pp-hl { font: 700 clamp(18px, min(2.3cqw, 3.6cqh), 34px)/1.4 "Inter Tight", "Noto Sans TC", sans-serif; letter-spacing: 0; max-width: 62em; -webkit-line-clamp: 3; }
+.oc-hd.hda .os.front .dl-c { overflow-y: auto; scrollbar-width: thin; overscroll-behavior: contain; }   /* 右欄清單比較長的頁（賣壓）在欄內捲，最後幾列也看得到 */
+.oc-hd.hda[data-pg="today"] .os.front .os-h .sub { font-size: clamp(22px, min(2.8cqw, 4.4cqh), 40px); }   /* 「今天」自己的判讀標題就是主角，問題小一號 */
+.oc-hd.hda .os.front .ov-m { border-left: 1px solid color-mix(in srgb, var(--ink) 14%, transparent); padding-left: 2.4cqw; }
+@media (prefers-reduced-motion: no-preference) {
+  .oc-hd.hda.hin .os.front .os-h > *, .oc-hd.hda.hin .os.front .pp-h > * { animation: hda-up .62s cubic-bezier(.16, 1, .3, 1) backwards; }
+  .oc-hd.hda.hin .os.front .os-h > .sub { animation-delay: 60ms; } .oc-hd.hda.hin .os.front .pp-h > :nth-child(1) { animation-delay: 120ms; } .oc-hd.hda.hin .os.front .pp-h > :nth-child(2) { animation-delay: 180ms; }
+  .oc-hd.hda.hin .os.front .ov-l { animation: m-rise-s .6s cubic-bezier(.16, 1, .3, 1) .26s backwards; }
+  .oc-hd.hda.hin .os.front .ov-m { animation: hda-wipe .9s cubic-bezier(.2, .7, .2, 1) .32s backwards; }
+  @keyframes hda-up { from { opacity: 0; transform: translateY(.55em); clip-path: inset(0 0 100% 0); } to { clip-path: inset(0 0 -20% 0); } }
+  @keyframes hda-wipe { from { clip-path: inset(-4% 100% -4% 0); } to { clip-path: inset(-4% 0 -4% 0); } }
+}
+@media (max-width: 700px) {
+  .oc-hd.hda .os.front { height: auto !important; container-type: inline-size; margin: 20px 16px 28px; }   /* 手機：高度跟著內容走，不留固定高度的空白 */
+  .oc-hd.hda .os.front .os-in { position: relative; inset: auto; gap: 14px; }
+  .oc-hd.hda .os.front .os-b, .oc-hd.hda .os.front .os-b.pp > .ov { flex: none; height: auto; }
+  .oc-hd.hda .os.front .ov-ls { margin-top: 14px; }
+  .oc-hd.hda .os.front .ov-m > .dl-r { height: auto; }
+  .oc-hd.hda .os.front .ov-m:has(.ov-map) { height: 440px; }   /* 價位的階梯圖原本受卡片高度限制，平鋪後不要拉得太長 */
+  .oc-hd.hda .os.front .os-h .sub { font-size: clamp(26px, 8.2cqw, 34px); }
+  .oc-hd.hda .os.front .pp-hl { font-size: clamp(16px, 4.6cqw, 19px); }
+  .oc-hd.hda .os.front .ov-m { border-left: 0; padding-left: 0; }
+}
 /* ㉞ 手機長頁（2026-11-17，使用者三件都照建議；「對於交互，動效，還是要保留原本的精華」）：寬 700px 以下，週期、價位、賣壓、買盤、槓桿五頁每段只畫第一張（主卡），其他收成清單列；今天、出場兩頁和電腦版不變。
    1 清單一列＝圖名、一句白話、最新值、迷你走勢；點了打開全螢幕放大檢視（從那一列長出來，和點卡片一樣），左右滑換同一段的下一張。今天有訊號的列前面一顆會呼吸的訊號點，訊號膠囊照樣數得到、點得到。
    2 主卡瘦身（.fc.ph）：大數字下面直接接一句結論（拿掉「讀數」小標和重複的標題）；按鈕併成一排可左右捲，「分／疊」在手機上拿掉；圖例只留主角那條線，其他的點「＋N」才展開；底部統計和 30 天對比收起來，放大檢視裡都在。
@@ -1540,7 +1579,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=9b1bd2341c"></script>
+<script src="data/next.js?v=6d489be0a1"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -1624,6 +1663,7 @@ const PRAMP = { d: ['#4F6BEA', '#2CA0CF', '#19A56B', '#D69A1E', '#FF4A2E'], l: [
 function initOC() {
   const sec = $('#oc-sec'), el = $('#oc'), stg = $('#oc-st'), cv = $('#oc-f'), ctx = cv.getContext('2d'), ST = D.site, PX = ST.px, KW = ST.kw, CH = ST.chapters;
   let ci = Math.max(0, CH.findIndex(c => c.id === 'today')), O = CH[ci], G = O.groups;
+  const HDA = true;   /* ㊱ 報頭：頂部只排這一頁，不放周圍的小卡 */
   /* 背景預載用（見下面 load 那一段）：手機、慢網路只抓前後兩頁。放在這裡是因為 goCh 在初始化時就可能被呼叫 */
   const LITE = (() => { const cn = navigator.connection; return matchMedia('(max-width: 700px)').matches || !!(cn && /(^|-)(2g|3g)$/.test(cn.effectiveType || '')); })();
   const nbr = i => { const cn = navigator.connection; if (SHARE || (cn && cn.saveData)) return; [i + 1, i - 1].forEach(j => { if (CH[j] && CH[j].lz) loadCh(j).catch(() => {}); }); };
@@ -2691,7 +2731,7 @@ function initOC() {
       const hl = fr.querySelector('.br-h, .pp-h'), rh = hl ? relTo(hl, fr) : null; if (rh && !sl) H += agCur('txt', rh.x + 6, rh.y + rh.h * .5, rh.x + rh.w * .8, rh.y + rh.h * .8, 1000, 880, { sx: -100, sy: -60, ez: 'steps(16, end)' });
       const bb = fr.querySelector('.bp-big, .ol-big'), rb = bb ? relTo(bb, fr) : null; if (rb) { H += agCur('num', rb.x + rb.w * .3, rb.y + rb.h * .7, rb.x + rb.w * .3, rb.y + rb.h * .7, 700, 1150, { sx: G.w * .2, sy: G.h + 60 }); if (fr.querySelector('.bp-l') && !sl) H += agCur('cht', rb.x, rb.y + rb.h * .35, rb.x + rb.w - 6, rb.y + rb.h * .62, 1500, 950, { sx: G.w + 120, sy: 0, ez: 'cubic-bezier(.16, 1, .3, 1)' }); }
       H += agOk(2350);
-      $$('.os', stg).forEach(c2 => { if (c2.classList.contains('front') || sl) return; const k = +c2.dataset.k, so = TBS.slot[k] || 0, m = /translate3d\(([-\d.]+)px, ([-\d.]+)px/.exec(tbT(k, G)); c2.style.setProperty('--so', so); if (!m) return; const sw2 = G.w * G.sc, sh2 = G.h * G.sc, cx = +m[1] + G.w / 2, cy = +m[2] + G.h / 2, dl = 1000 + so * 110; H += agCur(so % 2 ? 'num' : 'lay', cx - sw2 * .5, cy - sh2 * .5 - 30, cx - sw2 * .2, cy - sh2 * .2, 620, dl, { sx: G.w / 2 - 40, sy: G.h * .3 }); });
+      $$('.os', stg).forEach(c2 => { if (c2.classList.contains('front') || sl || HDA) return; const k = +c2.dataset.k, so = TBS.slot[k] || 0, m = /translate3d\(([-\d.]+)px, ([-\d.]+)px/.exec(tbT(k, G)); c2.style.setProperty('--so', so); if (!m) return; const sw2 = G.w * G.sc, sh2 = G.h * G.sc, cx = +m[1] + G.w / 2, cy = +m[2] + G.h / 2, dl = 1000 + so * 110; H += agCur(so % 2 ? 'num' : 'lay', cx - sw2 * .5, cy - sh2 * .5 - 30, cx - sw2 * .2, cy - sh2 * .2, 620, dl, { sx: G.w / 2 - 40, sy: G.h * .3 }); });
       L.innerHTML = H; setTimeout(() => L.remove(), 3500); }
     agFxHook = key => { const box = $('#oc-fx'), a = document.getElementById('oc-ol' + key), f = a ? a.closest('.fc') : null, r = f ? f.getBoundingClientRect() : { left: innerWidth * .3, top: innerHeight * .3, right: innerWidth * .7, bottom: innerHeight * .7, width: innerWidth * .4, height: innerHeight * .4 }, VW = innerWidth, VH = innerHeight; if (!box) return;
       box.querySelectorAll('.ag-l').forEach(x => x.remove()); box.classList.add('agx'); const L = agL(box, 0, 0, VW, VH), tk = box._agk = (box._agk || 0) + 1;
@@ -2721,7 +2761,7 @@ function initOC() {
     /* 5 十字線吸附到標註點：上方跳出日期 */
     let snp = null, snD = null; agSnapHook = (m1, b, t0, ppd) => { if (!m1) { if (snp) snp.hidden = true; snD = null; return; } if (!snp) { snp = document.createElement('div'); snp.className = 'oc-snp'; el.appendChild(snp); } if (snD !== m1.d || snp.hidden) { snD = m1.d; snp.hidden = false; snp.textContent = (m1.zh || m1.en ? T(m1.zh, m1.en) : T('標註點', 'Marked point')) + '　' + ymd(m1.d); snp.style.animation = 'none'; void snp.offsetWidth; snp.style.animation = ''; } snp.style.left = F1(b.left + (m1.d - t0) * ppd) + 'px'; snp.style.top = F1(b.top - 6) + 'px'; };
     /* 6 小卡長成大卡：複製一份小卡原本的樣子，跟著同一條彈簧放大到大卡的位置，途中化開 */
-    agMorphHook = i => { const ge = stg.querySelector('.os[data-k="' + i + '"]'); if (!ge || ge.classList.contains('front') || !ge.style.transform || ge.style.transform === 'none') return null; const gh = ge.cloneNode(true), t0 = ge.style.transform; gh.removeAttribute('tabindex'); gh.classList.add('os-gh'); gh.classList.remove('drag'); gh.setAttribute('aria-hidden', 'true'); hd.appendChild(gh);
+    agMorphHook = i => { if (HDA) return null; const ge = stg.querySelector('.os[data-k="' + i + '"]'); if (!ge || ge.classList.contains('front') || !ge.style.transform || ge.style.transform === 'none') return null; const gh = ge.cloneNode(true), t0 = ge.style.transform; gh.removeAttribute('tabindex'); gh.classList.add('os-gh'); gh.classList.remove('drag'); gh.setAttribute('aria-hidden', 'true'); hd.appendChild(gh);
       return () => { let ez = getComputedStyle(el).getPropertyValue('--spring').trim() || 'cubic-bezier(.2, .9, .3, 1)', an = null; const kf = [{ transform: t0, opacity: 1, offset: 0 }, { opacity: 1, offset: .28 }, { opacity: 0, offset: .7 }, { transform: 'translate3d(0px, 0px, 0px) rotate(0deg) scale(1)', opacity: 0, offset: 1 }]; try { an = gh.animate(kf, { duration: 950, easing: ez, fill: 'forwards' }); } catch (e1) { try { an = gh.animate(kf, { duration: 950, easing: 'cubic-bezier(.2, .9, .3, 1)', fill: 'forwards' }); } catch (e2) {} } if (an) an.onfinish = an.oncancel = () => gh.remove(); else gh.remove(); setTimeout(() => gh.remove(), 1400); }; };
     /* 7 晨昏線：拖日夜鍵時，邊界跟著拖曳掃過頁面（左邊白天、右邊黑夜）；放手後收回 */
     let tm = null, tl = null, tmRaf = 0; agTermHook = on => { if (!tm) { tm = document.createElement('i'); tm.className = 'oc-term'; tl = document.createElement('i'); tl.className = 'oc-terml'; tm.hidden = tl.hidden = true; el.appendChild(tm); el.appendChild(tl); }
@@ -2777,10 +2817,10 @@ function initOC() {
     if ('IntersectionObserver' in window) new IntersectionObserver(es => { bvis = es[0].isIntersecting; bwake(); }).observe(el); else { bvis = true; bwake(); } }
   /* 桌面排列（寬度 ≥1240）：六個位置在大卡左右各三個，每個位置有自己的小偏移和角度；slot 記每一頁現在在哪個位置，off 是被使用者拖走的距離 */
   const TBS = { slot: {}, off: {}, hov: -1, drag: null, skip: 0 }, TBJ = [[.02, .02, -6], [-.01, -.01, 5], [.05, .01, 4], [-.04, .02, -5], [.0, -.01, 7], [-.03, .01, -8]];
-  const tbOn = () => true;
+  const tbOn = () => !HDA;
   function tbSlots() { const back = CH.map((c, i) => i).filter(i => !CH[i].todo && i !== ci), used = {}; delete TBS.slot[ci]; TBS.off[ci] = { x: 0, y: 0 }; back.forEach(k => { const q = TBS.slot[k]; if (q != null && !used[q]) used[q] = 1; else delete TBS.slot[k]; }); const free = [0, 1, 2, 3, 4, 5].filter(q => !used[q]); back.forEach(k => { if (TBS.slot[k] == null) TBS.slot[k] = free.length ? free.shift() : 0; if (!TBS.off[k]) TBS.off[k] = { x: 0, y: 0 }; }); }
   /* 大卡的版面位置（所有卡同一個框），和這個寬度下小卡的縮小比例 */
-  function tbG() { const sw = stg.clientWidth, sh = stg.clientHeight, f = stg.querySelector('.os'), w = f ? f.offsetWidth : sw * .64, h = f ? f.offsetHeight : sh * .8, x0 = f ? f.offsetLeft : (sw - w) / 2, y0 = f ? f.offsetTop : sh * .11, md = sw >= 1240 ? 'w' : sw >= 700 ? 'm' : 'n', m = (sw - w) / 2;
+  function tbG() { const sw = stg.clientWidth, sh = stg.clientHeight, f = stg.querySelector(HDA ? '.os.front' : '.os'), w = f ? f.offsetWidth : sw * .64, h = f ? f.offsetHeight : sh * .8, x0 = f ? f.offsetLeft : (sw - w) / 2, y0 = f ? f.offsetTop : sh * .11, md = sw >= 1240 ? 'w' : sw >= 700 ? 'm' : 'n', m = (sw - w) / 2;
     const sc = md === 'w' ? Math.min(m - 52, 310) / w : md === 'm' ? (sw * .93 / 6 - 16) / w : ((w - 16) / 3) / w; return { sw, sh, w, h, x0, y0, md, m, sc }; }
   function tbT(k, G0) { const G = G0 || tbG(), sl = TBS.slot[k] || 0, j = TBJ[sl], o = TBS.off[k] || { x: 0, y: 0 }, hv = TBS.hov === k || (TBS.drag && TBS.drag.k === k); let cx, cy, rot = j[2];
     if (G.md === 'w') { const L = sl % 2 === 0, row = (sl - sl % 2) / 2; cx = (L ? G.m / 2 : G.sw - G.m / 2) + j[0] * G.m; cy = G.sh * (.2 + row * .31 + j[1]); }
@@ -2803,7 +2843,7 @@ function initOC() {
   const order = () => { const b = CH.map((c, i) => i).filter(i => !CH[i].todo), p = b.indexOf(ci); return b.slice(p).concat(b.slice(0, p)); };
   function place() {
     const QT = W < 700 ? [[0, 0, 0, 0, 0], [-1.5, -1.6, -50, 0, 0], [1.8, -3, -100, 0, 0], [-1, -4.2, -150, 0, 0], [2.2, -5.2, -200, 0, 0], [-1.5, -6, -250, 0, 0], [1.5, -6.8, -300, 0, 0]] : window.innerWidth < 1240 ? [[0, 0, 0, 0, 0], [-4.5, -6.2, -170, 6, 1.5], [5.5, -10.6, -330, -8, 2], [-2.5, -16, -500, 5, 2.5], [6, -20, -680, -6, 3], [-5, -23, -840, 5, 3], [4, -26, -1000, -5, 3]] : [[0, 0, 0, 0, 0], [66, -38, -520, -13, 2], [-68, -34, -620, 15, 2], [72, 36, -700, -17, -3], [-72, 40, -780, 14, -3], [8, -70, -900, -3, 4], [-10, 74, -1000, 3, -4]];
-    const TB = tbOn(), TG = tbG(); if (TB) { tbSlots(); hd.classList.add('tb'); hd.style.setProperty('--tbk', (1 / TG.sc).toFixed(3)); }
+    hd.classList.toggle('hda', HDA); const TB = tbOn(), TG = tbG(); if (TB) { tbSlots(); hd.classList.add('tb'); hd.style.setProperty('--tbk', (1 / TG.sc).toFixed(3)); }
     $$('.os', stg).forEach(p => { const k = +p.dataset.k, d = ord.indexOf(k), q = QT[Math.min(d, 6)]; p.classList.toggle('front', d === 0); p.classList.remove('drag'); p.dataset.sd = q[0] > 0 ? 'r' : 'l'; p.style.zIndex = d ? 10 + (TBS.slot[k] || 0) : 30; p.style.transform = d ? (TB ? tbT(k, TG) : `translate3d(${q[0]}%, ${q[1]}%, ${q[2]}px) rotateY(${q[3]}deg) rotateX(${q[4]}deg)`) : 'none'; if (TB && d) p.dataset.sd = (TBS.slot[k] || 0) % 2 ? 'r' : 'l'; const br = 1 - Math.min(d, 4) * .055; p.style.filter = d && !TB ? `brightness(${(th === 'l' ? 1 - (1 - br) * .3 : br).toFixed(2)})` : 'none'; p.setAttribute('aria-label', T(CH[k].zh, CH[k].en) + (d ? T('（按 Enter 換到這一頁，或拖曳移動）', ' (Enter to open this page, or drag to move)') : '')); });
     $$('.os', stg).forEach(p1 => { p1.style.left = p1.style.top = p1.style.width = p1.style.height = ''; }); delete hd.dataset.sc; hd.dataset.pg = CH[ci].id; pvDraw(); fitBig(); fitNum();
     ghost(); if (reduce) field(0); wake();
@@ -2913,6 +2953,10 @@ function initOC() {
   /* 今天頁的大數字：把卡片剩下的高度用掉（寬度不超過 74%） */
   function fitBig() { const bx = document.getElementById('oc-bp'), nn = document.getElementById('oc-bpn'), bot = document.querySelector('#oc-or0 .bp-bot'); if (!bx || !nn || !bot) return; nn.style.fontSize = ''; const body = bx.closest('.os-b'); if (!body) return; const cur = parseFloat(getComputedStyle(nn).fontSize), tw0 = nn.getBoundingClientRect().width, free = body.getBoundingClientRect().bottom - bot.getBoundingClientRect().bottom - 4; if (!(cur > 0) || !(tw0 > 0) || free < 8) return; const k = Math.min((cur * .84 + free) / (cur * .84), bx.clientWidth * .74 / tw0); if (k > 1.03) nn.style.fontSize = F1(cur * k) + 'px'; }
   /* 六頁共用的海報版型：把這一頁的判讀那一句拉到最上面當大標題 */
+  /* ㊱ 報頭換頁：題目、答案一行一行從自己的位置升上來，主角數字從 0 滾到新的值，下面兩欄跟上 */
+  function hdaIn() { if (reduce) return; hd.classList.remove('hin'); void hd.offsetWidth; hd.classList.add('hin'); clearTimeout(hdaIn.t); hdaIn.t = setTimeout(() => hd.classList.remove('hin'), 1500);
+    const cs = $$('.os.front .ol-big .odc', stg), to = cs.map(c => c.style.transform); cs.forEach(c => { c.style.transition = 'none'; c.style.transform = 'translateY(0em)'; }); void hd.offsetWidth;
+    cs.forEach((c, i) => { c.style.transition = 'transform .9s cubic-bezier(.16, 1, .3, 1) ' + (i * 40 + 180) + 'ms'; c.style.transform = to[i]; }); setTimeout(() => cs.forEach(c => { c.style.transition = ''; }), 1600); }
   function poster() { const body = stg.querySelector('.os[data-k="' + ci + '"] .os-b'); if (!body || O.brief || body.querySelector('.pp-h')) return; const ov = body.querySelector('.ov'); if (!ov) return; const lead = ov.querySelector('.ov-lead'), txt = (lead ? lead.textContent : '') || T(O.lead_zh, O.lead_en) || T(O.qz, O.qe); if (lead) lead.remove();
     body.insertAdjacentHTML('afterbegin', `<div class="pp-h"><div class="bp-top"><b class="bp-tag">${T('這一頁的答案', 'THE ANSWER')}</b><span>${p2(ci)} / ${p2(CH.length - 1)}　${esc(T(O.qz, O.qe))}</span><i></i><span>${String(D.date).replace(/-/g, '.')} ${T('收盤版', 'close edition')}</span></div><h2 class="br-h pp-hl${(L0 => L0 > 78 ? ' xl' : L0 > 50 ? ' lg' : '')(txt.length * (lang === 'en' ? .5 : 1))}">${esc(txt)}</h2></div>`); body.classList.add('pp'); }
   /* 代表數字放到最大：寬度以左欄為限 */
@@ -2958,7 +3002,7 @@ function initOC() {
   const loadAll = () => Promise.all(CH.map((c, i) => loadCh(i)));
   function goCh(i) { if (i !== ci && LITE) setTimeout(() => nbr(i), 1500); if (i !== ci && CH[i] && !CH[i].todo && CH[i].lz) { lzWant = i; el.classList.add('lzw'); loadCh(i).then(() => { el.classList.remove('lzw'); if (lzWant === i) goCh(i); }, () => el.classList.remove('lzw')); return; } lzWant = i; SEEN.clear();
     if (i === ci || !CH[i] || CH[i].todo) return; const mf0 = agMorphHook ? agMorphHook(i) : null; const old = stg.querySelector('.os[data-k="' + ci + '"] .os-b'); if (old) old.remove(); closeFx();
-    ci = i; O = CH[ci]; G = O.groups; REG = {}; ord = order(); place(); headBody(); renderBar(); renderOv(); poster(); hx(); place(); if (mf0) mf0();
+    ci = i; O = CH[ci]; G = O.groups; REG = {}; ord = order(); place(); headBody(); renderBar(); renderOv(); poster(); hx(); place(); if (mf0) mf0(); if (HDA) hdaIn();
     const sc = $('#oc-secs'); sc.classList.add('sw'); setTimeout(() => { renderSecs(); sc.classList.remove('sw'); }, reduce ? 0 : 170);
   }
   function renderCmp() { const a = $('#oc-cmp1'), b = $('#oc-cmp2'), cy = [].concat.apply([], CH.map(x => [].concat.apply([], x.groups.map(q => q.charts)))).find(x => x.k === 'aviv' && !x.stub); if (!a || !b || !cy) return; const c = cy, keep = lay, t0 = T0(SP(c), c); lay = 'sp'; leadChart(a, c, 91, t0); lay = 'ov'; leadChart(b, c, 92, t0); lay = keep; $('#oc-cmpn').textContent = T(c.zh, c.en); }
