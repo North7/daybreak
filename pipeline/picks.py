@@ -728,6 +728,9 @@ def check2(L, pk):
                 miss = sorted(NUMS(x) - src)
                 if miss: errs.append(f'{i}.{tag}: 這些數字在 plan 的資料與當期 notes 裡找不到：{", ".join(miss)}')
             if lang == 'en' and re.search(r'[一-鿿]', q + t): errs.append(f'{i}.en: 有中文字')
+            ls = [x for x in t.split('\n') if x.strip()]
+            hard = re.findall(r'\d+(?:\.\d+)?%|\d{1,3}(?:,\d{3})+|\d+\.\d+', ls[1]) if len(ls) > 1 else []
+            if len(hard) >= 2: errs.append(f'{i}.{lang}: 第二行是觀點（這件事代表什麼、市場怎麼讀），不是讀值；數字留到第三行（現在 {len(hard)} 個：{"、".join(hard)}；2026-11-17 使用者：推薦圖表要有觀點為主）')
             if lang == 'zh' and '選擇權' in t and t.find('選擇權') != t.find('選擇權（期權）'):   # 2026-11-06 使用者：第一次出現寫「選擇權（期權）」
                 errs.append(f'{i}.zh: 選擇權第一次出現要寫「選擇權（期權）」（幣圈中文多半說期權）')
     return errs

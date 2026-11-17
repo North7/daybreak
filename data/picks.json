@@ -6,11 +6,11 @@
    "id": "onchain/lthloss",
    "chart": "data/picks/onchain-lthloss.png",
    "chart_en": "data/picks/onchain-lthloss-en.png",
-   "why": "避險成立、價格在 64K 打轉，讀者會問長期持有者是不是也要投降；頭條講避險和短期持有者，這張講長期那一邊，不重複。",
+   "why": "避險成立、價格在 64K 打轉，讀者會問長期持有者是不是也要投降；頭條講避險和短期持有者，這張講長期那一邊，不重複。；11/17 運營改寫成觀點為主（使用者：每天的推薦圖表也要有觀點為主）",
    "q_zh": "長期持有者的虧損比例破這輪高點了嗎？",
    "q_en": "Has the long-term holder loss share broken this cycle's peak?",
-   "zh": "長期持有者的虧損比例破這輪高點了嗎？\n還沒：41.7%（11/16），比 6/30 的 45.4% 低；推算要跌到 60,500 才會超過（CheckOnChain）。\n前三輪底部的高點之後，這個比例都沒再創新高，3 次裡 3 次。收盤跌破 60,500，這個規律就破了。\n#比特幣 #BTC #鏈上數據",
-   "en": "Has the long-term holder loss share broken this cycle's peak?\nNot yet: 41.7% (Nov 16) vs 45.4% on Jun 30; an estimated 60,500 breaks it (CheckOnChain).\nIn the last 3 cycles it never topped its bottom peak again. A close below 60,500 ends that.\n#Bitcoin #BTC #onchain"
+   "zh": "長期持有者的虧損比例破這輪高點了嗎？\n還沒，6 月那個底到現在還算數。\n這波跌，賣的主要是剛進場的人；放得久的那批 41.7% 套著，還沒 6/30 的 45.4% 痛。前三輪見底之後，這個比例都沒再創新高，3 次裡 3 次。\n收盤跌破 60,500 它才會破，到那時 6 月的底就得重看。\n#比特幣 #BTC #鏈上數據",
+   "en": "Has the long-term holder loss share broken this cycle's peak?\nNot yet. The June bottom still holds; newer buyers are the ones selling.\nLTHs: 41.7% underwater vs 45.4% on Jun 30. 3 of 3 past cycles never topped it again.\nA close below 60,500 breaks it.\n#Bitcoin #BTC #onchain"
   }
  ]
 }
