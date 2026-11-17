@@ -1797,7 +1797,7 @@ function initOC() {
      4 顏色：成本在當週價格下方用 up（萊姆）、上方用 dn（橘），和全站「綠是活著、橘是壓力」同一個意思；兩色交界就是價格走過的路。越高越亮（低處也留四成以上的色相，最高處往白提亮），
        側面比頂面暗，離鏡頭越遠越往底色靠。不用光暈、不用漸層色帶。
      5 轉一整圈：yaw 不設限。遠的先畫：看前後和左右哪個方向離鏡頭的差比較大，那個方向當外圈，兩個方向各自從遠排到近；刻度字放在地板靠近看的人的那兩條邊外面，跟著地板轉。放手後順著再滑一小段。
-       手機單指左右拖是轉、上下拖還是捲頁面（touch-action: pan-y）；電腦上下拖可以改俯角。
+       手機單指左右拖是轉、上下拖還是捲頁面（touch-action: pan-y）；電腦上下拖可以改俯角。左右拖跟著手指轉（2026-11-17 反過來：往右拖，靠近自己的那一面往右走）。
      6 點選：每一格畫的時候把多邊形和它代表的（價位, 週）記下來，指標落在哪個多邊形就是哪一根（後畫的在上面，所以從後往前找）。電腦是滑鼠移上去，手機是點一下、再點同一根收起來。
        提示框寫：價位範圍、幣數和佔全部的比例、哪一週和當時的價格、成本在價格上方還是下方。選到的那一根用白框（外面墊一圈底色），立體時再把它沿著時間的頂線描出來。
      7 切一刀：圖下面的滑桿選平面圖看的是哪一週；立體時把那一週的輪廓描出來。
@@ -1903,8 +1903,8 @@ function initOC() {
         const dx = e.clientX - drag.x, dy = e.clientY - drag.y; if (!drag.moved && Math.abs(dx) + Math.abs(dy) < 6) return;
         if (!drag.live) { if (Math.abs(dx) > 8) { drag = null; S.go('ob'); } return; }          /* 在平面圖上拖：直接站起來（㉛-3） */
         if (!drag.moved) { drag.moved = true; setHov(null); spring = false; VEL[0] = VEL[1] = VEL[2] = 0; V[2] = TG[2] = 1; }
-        const now = performance.now(); if (lastMove) drag.v = (e.clientX - lastMove[0]) * .0062 / Math.max(.008, (now - lastMove[1]) / 1000); lastMove = [e.clientX, now];
-        V[0] = drag.yaw + dx * .0062; if (!drag.touch) V[1] = cl(drag.pit + dy * .0055, .05, 1.52); TG[0] = V[0]; TG[1] = V[1]; cur = ''; mark(); S.dirty(); });
+        const now = performance.now(); if (lastMove) drag.v = -(e.clientX - lastMove[0]) * .0062 / Math.max(.008, (now - lastMove[1]) / 1000); lastMove = [e.clientX, now];
+        V[0] = drag.yaw - dx * .0062;   /* 2026-11-17 使用者：「地形的左右觸控方向和直覺是相反的」：改成跟著手指轉（往右拖，靠近自己的那一面往右走） */ if (!drag.touch) V[1] = cl(drag.pit + dy * .0055, .05, 1.52); TG[0] = V[0]; TG[1] = V[1]; cur = ''; mark(); S.dirty(); });
       cv.addEventListener('pointerup', e => { const d = drag; drag = null; if (!d) return;
         if (!d.moved) { const p = loc(e), id = pick(p[0], p[1]); setHov(d.touch && same(id, S.hov) ? null : id, p[0], p[1]); return; }
         if (d.v && lastMove && performance.now() - lastMove[1] < 80 && !reduce) { TG[0] = V[0] + cl(d.v, -7, 7) * .22; VEL[0] = cl(d.v, -7, 7); spring = true; S.dirty(); } });
