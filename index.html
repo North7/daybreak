@@ -1473,7 +1473,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=c85a2b8909"></script>
+<script src="data/next.js?v=32d778d851"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -2576,6 +2576,13 @@ function initOC() {
     el.appendChild(dock); new MutationObserver(() => { if (!q) q = setTimeout(() => { q = 0; draw(); }, 150); }).observe(secs, { childList: true, subtree: true }); setTimeout(draw, 0);   /* keyC 在後面才定義，第一次等這段程式跑完 */
   })();
   if (!reduce && 'IntersectionObserver' in window) (function () {
+    /* 2026-11-17 使用者：「AI 畫頁面可以更快一點嗎」：整段 AI 動畫加速 AGR 倍。
+       計時器：這一段裡的 setTimeout 全部除以 AGR（換階段、移除臨時層、忙碌狀態）。
+       CSS 動畫：AI 正在畫的那段時間（dkU 之前）新出現的有限次動畫，只要是在臨時層、正在畫的卡、開大圖、地圖、開場上，playbackRate 設成 AGR（延遲也一起縮短）；
+       無限循環的（漂浮、呼吸、訊號脈動）和其他互動不動。數字、彈簧等用 JS 算的不受影響。 */
+    const AGR = 1.8, setTimeout = (f, ms) => window.setTimeout(f, (ms || 0) / AGR), agSeen = new WeakSet();
+    let agQ = 0; const agSpeed = () => { agQ = 0; if (performance.now() > dkU + 200) return; el.getAnimations({ subtree: true }).forEach(a => { if (agSeen.has(a)) return; agSeen.add(a); const tg = a.effect && a.effect.target, tm = a.effect && a.effect.getTiming ? a.effect.getTiming() : null; if (!tg || !tg.closest || !tm || tm.iterations === Infinity) return; if (tg.closest('.ag-l, .fc.ag, .agx, .agm, .ag-boot, .fs-h.m-in, .frl.in')) a.playbackRate = AGR; }); };
+    new MutationObserver(() => { if (!agQ) agQ = requestAnimationFrame(agSpeed); }).observe(el, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
     el.classList.add('mo'); const secs = $('#oc-secs'), bar = $('#oc-bar'), prog = $('#oc-prog'); let scanQ = 0;
     const MIO = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; const t = e.target; MIO.unobserve(t); const run = () => { if (!t.isConnected) return; SEEN.add(seenK(t)); if (t.classList.contains('fs-h')) { t.classList.add('m-in'); agHead(t); } else if (t.classList.contains('frl')) { t.classList.add('in'); agRows(t); } else { agent(t); rollDigits(t.querySelector('.ol-big'), 1000 + (parseFloat(t.style.getPropertyValue('--i')) || 0) * 110); } }, wait = bootEnd - performance.now(); if (wait > 0) setTimeout(run, wait); else run(); }), { rootMargin: '0px 0px -6% 0px' });
     /* 五個 AI，各有分工；顏色是幾乎同一個灰，只差一點色相（⑲ 1） */
