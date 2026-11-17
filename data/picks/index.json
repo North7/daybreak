@@ -1,16 +1,16 @@
 {
- "date": "2026-11-15",
+ "date": "2026-11-16",
  "captions": true,
  "picks": [
   {
-   "id": "cycle/dawn",
-   "chart": "data/picks/cycle-dawn.png",
-   "chart_en": "data/picks/cycle-dawn-en.png",
+   "id": "onchain/lthloss",
+   "chart": "data/picks/onchain-lthloss.png",
+   "chart_en": "data/picks/onchain-lthloss-en.png",
    "name": {
-    "zh": "晨昏指數",
-    "en": "Dawn–Dusk Index"
+    "zh": "長期持有者虧損比例",
+    "en": "Long-term holders in loss"
    },
-   "link": "https://daybreak.aronlab.dev/?k=dawn"
+   "link": "https://daybreak.aronlab.dev/?k=lthloss"
   }
  ]
 }
