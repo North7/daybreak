@@ -140,6 +140,36 @@ def build(L, N, E, dn):
                                leg=[['up', '1 以上（一年獲利較多）', 'Above 1 (more profit over the year)', 'line'], ['dn', '1 以下（一年認賠較多）', 'Below 1 (more loss over the year)', 'line'], ['dn', '每段的最低點', 'Low of each spell', 'ring']],
                                dz='全網一年合計的實現獲利，除以一年合計的實現虧損（Bitview）。橘底是歷次跌到 1 以下的期間，標記是每段比值最低的那天。',
                                de='Network realized profit summed over a year, divided by realized loss summed over the same year (Bitview). Orange bands mark past stays below 1; markers show the low of each spell.')]
+        if y1.get('past_low') and y1.get('conf_gain'):   # 2026-11-17 運營回報：切到「一年」時結論句還是 90 天的，和大數字對不上；這個檢視有自己的結論和證據（同 ㉞-9 的版面）
+            from say_data import own
+            from reads import md as md_, mde as mde_
+            v, pl, cg, r_, b_ = y1['value'], y1['past_low'], y1['conf_gain'], y1['r365'], y1['base365']
+            sgp = lambda x: ('+' if x > 0 else '−') + '%.0f%%' % abs(x)
+            if not y1['below']:
+                vt, vz, ve, wz, we = 'neu', '不在底部區', 'Not in the bottom zone', '一年合計獲利多於認賠。', 'Over a year, profit outweighs loss.'
+                cz, ce = '跌回 1 以下', 'A drop back below 1'
+                sz = '一年合計 %.2f，獲利多於認賠：不在過去週期的底部區。' % v; se = 'One-year profit ÷ loss is %.2f: profit outweighs loss, so this is not the zone where past cycles bottomed.' % v
+            elif y1['confirmed']:
+                vt, vz, ve, wz, we = 'up', '底部確認', 'Bottom confirmed', '比值已從這段最低點回升一成，過去 %d/%d 次之後價格沒再破底。' % (y1['conf_ok'], y1['conf_n']), 'The ratio is 10%% off this spell\'s low; in %d of %d past cases price never made a new low afterwards.' % (y1['conf_ok'], y1['conf_n'])
+                cz, ce = '價格跌破這段的最低價', "Price breaking this spell's low"
+                sz = '一年合計 %.2f，比值已從最低點回升一成：照過去，底已經過了。' % v; se = 'One-year profit ÷ loss is %.2f and 10%% off its low: in past cycles, the bottom was already in by now.' % v
+            else:
+                vt, vz, ve = 'neu', '底部區、未確認', 'Bottom zone, unconfirmed'
+                wz = '一整年認賠多於獲利，過去都是週期底部區；但比值還沒從低點回升，底還沒確認。'; we = 'A full year of more loss than profit has always meant a cycle bottom zone, but the ratio has not turned up from its low yet.'
+                cz, ce = '比值回升到 %.2f（最低點 %.2f 的一成以上）' % (y1['conf_at'], y1['cur_low']), 'The ratio rising to %.2f (10%% above its %.2f low)' % (y1['conf_at'], y1['cur_low'])
+                sz = '一年合計 %.2f，%s 起低於 1：落在過去週期的底部區，但比值還在最低點、還沒回升，底還沒確認。' % (v, md_(y1['since']))
+                se = 'One-year profit ÷ loss is %.2f, below 1 since %s: the zone where past cycles bottomed, but the ratio has not turned up from its low, so no bottom is confirmed yet.' % (v, mde_(y1['since']))
+            my = own([('一年合計', 'One-year sum', '%.2f' % v, '%.2f' % v, 'down' if y1['below'] else 'up',
+                       ('%s 跌破 1（當天 $%.1fK），已 %d 天、價格 %s；過去四段最低 %.2f–%.2f。' % (md_(y1['since']), y1['since_price'] / 1000, y1['since_days'], sgp(y1['chg']), pl[0], pl[1])) if y1['below'] else ('在 1 以上；過去四段低於 1 時最低 %.2f–%.2f。' % tuple(pl)),
+                       ('Below 1 since %s (at $%.1fK), %d days, price %s; past spells bottomed at %.2f–%.2f.' % (mde_(y1['since']), y1['since_price'] / 1000, y1['since_days'], sgp(y1['chg']), pl[0], pl[1])) if y1['below'] else ('Above 1; past spells below 1 bottomed at %.2f–%.2f.' % tuple(pl))),
+                      ('回升一成之後', 'After a 10% turn up', '%d / %d 沒再破底' % (y1['conf_ok'], y1['conf_n']), '%d / %d no new low' % (y1['conf_ok'], y1['conf_n']), 'neu',
+                       '比值從段內最低點回升一成之後，過去每次價格都沒再跌破之前的最低價；但那時價格已比最低價高 %d–%d%%，確認來得晚。' % (cg[0], cg[1]),
+                       'After the ratio rose 10%% off its low, price never broke its prior low in any past case; but by then price was already %d–%d%% above that low, so the confirmation comes late.' % (cg[0], cg[1])),
+                      ('一年低於 1 之後', 'After a year below 1', '%d / %d 上漲' % (r_['up'], r_['n']), '%d / %d up' % (r_['up'], r_['n']), 'neu',
+                       '比值最低那天之後一年，中位數 %s（任一天 %s）。只有 4 段，只作讀值。' % (sgp(r_['med']), sgp(b_['med'])),
+                       'A year after the ratio\'s low: median %s (any day %s). Only four spells; a reading, not a signal.' % (sgp(r_['med']), sgp(b_['med'])))], sz, se)
+            my['items'].insert(0, dict(kz='我們的看法', ke='Our view', vz=vz, ve=ve, tone=vt, dz=wz, de=we, cz=cz, ce=ce, view=1, hm='', hme=''))
+            c_rpl['modes'][1]['say'] = my
         c_rpl['dz'] = '全網 90 天平均的實現獲利，除以實現虧損（CheckOnChain，每日比值取平均）。橘底是歷次跌到 1 以下的期間。「一年」改用一年合計相除，看的是整個週期的位置。'
         c_rpl['de'] = 'The 90-day average of network realized profit divided by realized loss (CheckOnChain, daily ratios averaged). Orange bands mark past stays below 1. "One year" divides one-year sums instead and shows where the cycle stands.'
     rl = o['rloss']; LK = dict(div=('c4', '', '背離', 'Divergence'), cap=('c5', '5 4', None, None)); LK['break'] = ('dn', '5 4', '打破', 'Broken')

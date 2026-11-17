@@ -626,6 +626,7 @@ def pullback_viz(bv, px, last, sec=None, rloss=None):
 #   平均法會被少數獲利特別大的日子拉高，這裡改用合計相除。各年齡組的實現獲利（ap1–ap6）加起來就是全網實現獲利，不多發請求。
 #   低於 1＝一整年認賠多於獲利。過去 2012、2015、2018–19、2022–23 四段都落在週期底部區；但比值的最低點落後價格的最低點，轉紅也不等於見底。只作讀值
 Y1_N, Y1_MIN = 365, 14
+Y1_CONF, Y1_CONF_MAX = .10, .8   # 見底確認：比值從段內最低點回升 10%，而且那個最低點在 0.8 以下
 
 
 def rpl365_viz(bv, px, last, block=4):
@@ -654,6 +655,14 @@ def rpl365_viz(bv, px, last, block=4):
         x.update(days=dn(x['end']) - dn(x['start']) + 1, low=round(x['low'], 3), low_price=round(P(x['low_date'])), start_price=round(P(x['start'])),
                  plow=pl, plow_price=round(P(pl)), dd=round((P(pl) / P(x['start']) - 1) * 100, 1), lag=round((P(x['low_date']) / P(pl) - 1) * 100, 1),
                  r365=None if x.get('open') else _fwd(D, ix, P, x['low_date'], 365))
+    for x in reds:   # 2026-11-17 見底確認：段內比值第一次從當時的最低點回升 10%（最低點在 0.8 以下）那天；之後價格有沒有再跌破那天以前的最低價
+        W = [d for d in M if x['start'] <= d <= x['end']]; run = 9; c = None
+        for d in W:
+            run = min(run, m[d])
+            if run < Y1_CONF_MAX and m[d] >= run * (1 + Y1_CONF): c = d; break
+        if not c: continue
+        lo_ = min(P(d) for d in M if x['start'] <= d <= c); fut = [P(d) for d in D if d > c]
+        x.update(conf=c, conf_px=round(P(c)), conf_gain=round((P(c) / lo_ - 1) * 100, 1), conf_broken=bool(fut) and min(fut) < lo_)
     below = m[d1] < 1; k = len(M) - 1
     while k > 0 and (m[M[k - 1]] < 1) == below: k -= 1
     d30 = M[max(0, len(M) - 1 - 30)]
@@ -666,6 +675,9 @@ def rpl365_viz(bv, px, last, block=4):
     done = [x for x in reds if not x.get('open')]
     return dict(date=d1, value=round(m[d1], 3), price=round(P(d1)), below=below, since=M[k], since_days=dn(d1) - dn(M[k]), since_price=round(P(M[k])),
                 chg=round((P(d1) / P(M[k]) - 1) * 100, 1), v30=round(m[d30], 3), profit_b=round(sp[d1] / 1e9, 1), loss_b=round(sl[d1] / 1e9, 1),
+                cur_low=round(reds[-1]['low'], 3) if reds and reds[-1].get('open') else None, conf_at=round(reds[-1]['low'] * (1 + Y1_CONF), 3) if reds and reds[-1].get('open') and reds[-1]['low'] < Y1_CONF_MAX else None,
+                confirmed=bool(reds and reds[-1].get('open') and reds[-1].get('conf')), conf_n=sum(1 for x in done if x.get('conf')), conf_ok=sum(1 for x in done if x.get('conf') and not x['conf_broken']),
+                conf_gain=[min(x['conf_gain'] for x in done if x.get('conf')), max(x['conf_gain'] for x in done if x.get('conf'))] if any(x.get('conf') for x in done) else None,
                 reds=reds, past_low=[min(x['low'] for x in done), max(x['low'] for x in done)] if done else None,
                 r365=_stat([x['r365'] for x in done]), base365=_base(D, ix, P, 365, '2012-01-01'), rows=rows, src='Bitview',
                 note='全網每天的實現獲利、實現虧損（美元）各加總 365 天再相除；低於 1＝一整年認賠多於獲利；reds＝14 天以上低於 1 的期間（dd＝期間內最大跌幅、lag＝比值最低那天的價格比期間最低價高多少、r365＝比值最低那天之後一年）；只作讀值')
