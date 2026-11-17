@@ -227,6 +227,48 @@ def build(L, N, E, dn, X):
              'Coins held over 5 years moved %s BTC a day on average over the last 30 days, the %s percentile since %d (median %s); it was %s thirty days ago. The record is %s a day in %s.' % (n0(y5['a30']), _ord(y5['pct']), yr0, n0(y5['med']), n0(y5['a30_prev']), n0(y5['max']), y5['max_d'][:7]))],
             '1 年以上的老幣每天移動 %s 顆（%d 分位），5 年以上的 %s 顆（%d 分位）。' % (n0(y1['a30']), y1['pct'], n0(y5['a30']), y5['pct']),
             'Coins over 1 year old are moving at %s BTC a day (%s percentile), coins over 5 years at %s (%s percentile).' % (n0(y1['a30']), _ord(y1['pct']), n0(y5['a30']), _ord(y5['pct'])))
+    # ── 2026-11-17 生產成本（pipeline/pcost.py；使用者看過社群的「生產成本」回測後說「做」）：價格和估計的每顆生產成本，跌破的期間鋪底、減半畫虛線 ──
+    pk = o.get('pcost')
+    if pk and len(pk.get('rows') or []) > 500:
+        from say_data import own as _own2
+        ym = lambda d_: d_[:7].replace('-', '/'); mdp = lambda d_: '%d/%d' % (int(d_[5:7]), int(d_[8:10])); pdd = mdp(pk['date']); s90, b90 = pk['s90'], pk['b90']
+        runs, a_ = [], None
+        for r in pk['rows']:
+            if r[1] < r[2] and a_ is None: a_ = r[0]
+            if r[1] >= r[2] and a_ is not None: runs.append((a_, r[0])); a_ = None
+        if a_ is not None: runs.append((a_, pk['rows'][-1][0]))
+        hv = [h for h in pk['halv'] if dn(h) >= pk['rows'][0][0]]
+        post = sorted({ym(e['d']) for e in pk['events'] if any(0 < dn(e['d']) - dn(h) <= 150 for h in pk['halv'])})
+        miss = [q for q in pk['lows'] if q['gap'] > 0]; wst = pk['worst']; gap = pk['gap']
+        X['pcost'] = dict(k='pcost', zh='生產成本', en='Production cost', hz='每顆的估計生產成本', he='Estimated cost per coin', one=1, f='usd0', hero=1, log=1, rows=pk['rows'],
+          ser=[ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.4), ser(2, zh='生產成本', en='Production cost', col='c5', w=2)],
+          spans=[dict(a=a_, b=max(b_, a_ + 2), col='c5', op=.16) for a_, b_ in runs],
+          vl=[dict(d=dn(h), col='k2', dash='4 3', zh='減半', en='Halving') for h in hv],
+          marks=[dict(d=dn(e['d']), v=e['px'], col='c5', up=0, zh=ym(e['d']), en=e['d'][:7]) for e in pk['events']] +
+                [dict(d=dn(q['d']), v=q['px'], col='k2', up=1, zh='%s 底：高於成本 %.1f%%' % (q['d'][:4], q['gap']), en='%s low: %.1f%% above cost' % (q['d'][:4], q['gap'])) for q in miss],
+          leg=[['c5', '收盤低於成本的期間', 'Closes below cost', 'box'], ['c5', '跌破成本（%d 天內再跌破算同一次）' % 14, 'Break below cost (repeats within 14 days merged)', 'ring'], ['k2', '減半', 'Halving', 'dash']],
+          src='Bitview · ' + pdd, srce='Bitview · ' + pdd,
+          dz='用挖礦難度和每天新發行的幣（區塊獎勵加手續費）估算挖一顆比特幣的成本：%g × 難度^%g ÷ 每天發行量，取 %d 天平均，模型和參數來自社群公開的指標。'
+             '橘底是收盤低於成本的期間，虛線是減半：發行量減半，成本在之後 %d 天內漲到約 2 倍。參數是拿同一段價格歷史擬合的，曲線本來就會貼在過去的低點下面，回測會偏好看；只作讀值。' % (pk['alpha'], pk['k'], pk['n'], pk['n']),
+          de='The estimated cost of mining one bitcoin from difficulty and daily issuance (block subsidy plus fees): %g × difficulty^%g ÷ daily issuance, averaged over %d days; the model and its parameters come from a public community indicator. '
+             'Orange bands mark closes below cost; dashed lines are halvings, after which cost roughly doubles over %d days. The parameters were fitted on the same price history, so the line naturally hugs past lows and the backtest flatters it; a reading, not a signal.' % (pk['alpha'], pk['k'], pk['n'], pk['n']))
+        X['pcost']['say'] = _own2([
+            ('生產成本', 'Production cost', usd(pk['cost']), usd(pk['cost']), 'warn' if pk['below'] else 'neu',
+             '收盤 %s，在成本%s %.1f%%；%s 起在成本%s，已 %d 天。30 天前成本是 %s。' % (usd(pk['price']), '下方' if pk['below'] else '上方', abs(gap), mdp(pk['since']), '下方' if pk['below'] else '上方', pk['run'], usd(pk['c30'])),
+             'The close of %s is %.1f%% %s cost, %s it since %s (%d days). Cost was %s thirty days ago.' % (usd(pk['price']), abs(gap), 'below' if pk['below'] else 'above', 'below' if pk['below'] else 'above', mdp(pk['since']), pk['run'], usd(pk['c30']))),
+            ('跌破之後 90 天', 'Ninety days after a break', '%d / %d 上漲' % (s90['up'], s90['n']), '%d / %d up' % (s90['up'], s90['n']), 'neu',
+             '%s 年起收盤跌破成本 %d 次，%d 天內再跌破算同一次，合成 %d 次：90 天後 %d/%d 上漲、中位數 %s；任一天是 %d%% 上漲、中位數 %s。用收盤價、跌破當天收盤進場算。' % (pk['events'][0]['d'][:4], pk['crosses'], 14, len(pk['events']), s90['up'], s90['n'], sg(s90['med']), b90['up'], sg(b90['med'])),
+             'Since %s the close fell below cost %d times; merging repeats within %d days gives %d: %d of %d were higher 90 days later, median %s, against %d%% and %s for any day. Closing prices, entering at the close of the break.' % (pk['events'][0]['d'][:4], pk['crosses'], 14, len(pk['events']), s90['up'], s90['n'], sg(s90['med']), b90['up'], sg(b90['med']))),
+            ('抓不到的', 'What it misses', ('%s 年沒跌破' % '、'.join(q['d'][:4] for q in miss)) if miss else '%d 天內再跌 %.0f%%' % (90, -wst['dd90']), ('No break in %s' % ', '.join(q['d'][:4] for q in miss)) if miss else 'Another %.0f%% within 90 days' % -wst['dd90'], 'neu',
+             ''.join('%s 年的週期底，收盤最低時還在成本上方 %.1f%%，那次沒有訊號。' % (q['d'][:4], q['gap']) for q in miss) + ('跌破之後也可能再跌：%s 跌破後 90 天內又跌了 %.0f%%。' % (ym(wst['d']), -wst['dd90']) if wst and wst['dd90'] < 0 else ''),
+             ''.join('At the %s cycle low the close stayed %.1f%% above cost, so there was no signal. ' % (q['d'][:4], q['gap']) for q in miss) + ('A break can still go lower: after the %s break price fell another %.0f%% within 90 days.' % (wst['d'][:7], -wst['dd90']) if wst and wst['dd90'] < 0 else '')),
+            ('減半', 'Halvings', '下次約 %s' % pk['next_halv'].replace('-', '/'), 'Next around %s' % pk['next_halv'], 'neu',
+             '每次減半，發行量少一半，成本在之後 %d 天內漲到約 2 倍；%s 那幾次跌破主要是這個原因，不是價格大跌。%s 年以來收盤低於成本的日子只有 %.1f%%。' % (pk['n'], '、'.join(post) if post else '過去', pk['events'][0]['d'][:4], pk['share']),
+             'Each halving cuts issuance in half, so cost roughly doubles over the next %d days; the breaks in %s came mostly from that, not from a sell-off. Since %s only %.1f%% of days closed below cost.' % (pk['n'], ', '.join(post) if post else 'the past', pk['events'][0]['d'][:4], pk['share']))],
+            ('收盤在估計生產成本下方 %.1f%%：過去跌破之後 90 天 %d/%d 上漲，但這條線是用同一段歷史擬合的，跌破後也可能再跌。' % (-gap, s90['up'], s90['n'])) if pk['below'] else
+            ('收盤比估計生產成本 %s 高 %.1f%%；過去跌破成本之後 90 天 %d/%d 上漲，但這條線是用同一段歷史擬合的。' % (usd(pk['cost']), gap, s90['up'], s90['n'])),
+            ('The close is %.1f%% below the estimated production cost: in the past %d of %d breaks were higher 90 days later, but the line was fitted on the same history and a break can go lower.' % (-gap, s90['up'], s90['n'])) if pk['below'] else
+            ('The close is %.1f%% above the estimated production cost of %s; past breaks below it were higher 90 days later in %d of %d cases, but the line was fitted on the same history.' % (gap, usd(pk['cost']), s90['up'], s90['n'])))
     def old(k):   # 沿用的圖；萬一沒有，出一張「沒有資料」，不要整張消失
         return X[k] if X.get(k) else nodata(k, REUSE[k][0], REUSE[k][1], '今天沒有這張圖的資料。', 'No data for this chart today.')
     grp = lambda id_, zh, en, sz, se, keys: dict(id=id_, zh=zh, en=en, sz=sz, se=se, charts=[old(k) if k in REUSE else X[k] for k in keys])
@@ -235,5 +277,5 @@ def build(L, N, E, dn, X):
         grp('who', '誰套牢', 'Who is underwater', '最近買進的人有多少還在賺', 'How many recent buyers are still in profit', ['profit']),
         grp('pnl', '賣的人賺還是賠', 'Are sellers in profit or at a loss', '賣出的人是獲利了結還是認賠，是哪一群人在賣', 'Whether sellers are taking profit or cutting losses, and which holders are selling', [k_ for k_ in ['sopr', 'pnlr', 'sthsig', 'conf', 'npl', 'agepl', 'oldc', 'soprf'] if k_ != 'oldc' or 'oldc' in X]),
         grp('exh', '衰竭', 'Exhaustion', '賣壓在加大還是快耗盡', 'Is selling building up or running dry', ['rpl', 'rloss', 'ssr', 'sec', 'mom', 'lthrl']),
-        grp('miners', '礦工', 'Miners', '礦工有沒有被迫關機、賣幣', 'Are miners being forced to switch off and sell', ['miners']),
+        grp('miners', '礦工', 'Miners', '礦工有沒有被迫關機、賣幣', 'Are miners being forced to switch off and sell', [k_ for k_ in ['miners', 'pcost'] if k_ in X]),
     ]
