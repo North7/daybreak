@@ -37,6 +37,9 @@ PET = {'比較像': 2, '真的': 3, '其實': 3, '我覺得': 3, 'to me': 2, 'th
 FRONT = ('.headline', '.summary', '.stance.label', '.stance.short', '.watch.label', '.watch.note')
 TRADE = re.compile(r"避險|減倉|減碼|補回(?!來)|清倉|建倉|抄底|停損|止損|該賣|該買|就賣|就買|賣出\s?\d|賣\s?\d+(\.\d+)?\s?%|減\s?\d+(\.\d+)?\s?%|照做|出場(?!框架|頁)|依框架|"
                    r"\b(hedg(e|es|ed|ing)|de-?risk(ing)?|trim(ming)?|scale (in|out)|buy(ing)?[- ]back|add(ing)? back|sell \d+(\.\d+)?%|cut \d+(\.\d+)?%|take profits?|stop[- ]loss|per the plan)\b", re.I)
+# 2026-11-17 使用者：「今日判讀…需要的是綜合所有數據後的判讀，需要有觀點」：頭條或摘要要有一個表態的詞
+VIEW_ZH = re.compile(r"偏多|偏空|看多|看空|中性|偏強|偏弱|轉強|轉弱|築底|見底|見頂|過熱|出清|便宜|偏貴|短空|長多|短多|長空")
+VIEW_EN = re.compile(r"\b(bullish|bearish|neutral|cheap|expensive|overheated|bottoming|topping|washed out|leans? (up|down))\b", re.I)
 EVENTS = {'CPI': 'CPI', 'FOMC': 'FOMC', '非農': '非農', '難度調整': '難度', 'Deribit 到期': 'Deribit', '月底路徑重估': '路徑'}
 
 
@@ -178,6 +181,7 @@ def lint(n, en, bar_date):
     if n.get('date') != bar_date: bad.append(f"date {n.get('date')} ≠ bar_date {bar_date}")
     h, s = n.get('headline', ''), n.get('summary', '')
     if not re.search(r'\d', h): bad.append('頭條沒有數字')
+    if not VIEW_ZH.search(h + s): bad.append('頭條和摘要沒有表態（偏多／偏空／中性／築底／見頂……）：今日判讀要綜合各版下判斷，不是數據摘要，見「今日判讀要有觀點」')
     if len(h) > HEAD_ZH: bad.append(f'頭條 {len(h)} 字，上限 {HEAD_ZH}')
     sents = [x for x in re.split(r'[。！？]', s) if x.strip()]
     if len(sents) > 3: bad.append(f'摘要 {len(sents)} 句，上限 3 句')
@@ -218,6 +222,7 @@ def lint(n, en, bar_date):
     if names: bad.append('中文版的常用名要用英文：' + '、'.join(f'{w}→{EN_NAMES[w]}（{"、".join(sorted(ps)[:2])}）' for w, ps in names.items()))
     if en is None: bad.append('缺 notes.en.json'); return bad
     if (en.get('date'), en.get('edition')) != (n.get('date'), n.get('edition')): bad.append('英文版 date／edition 和中文版不同')
+    if not VIEW_EN.search(en.get('headline', '') + ' ' + en.get('summary', '')): bad.append('英文頭條和摘要沒有表態（bullish／bearish／neutral／cheap……）')
     if len(en.get('headline', '')) > HEAD_EN: bad.append(f"英文頭條 {len(en.get('headline', ''))} 字元，上限 {HEAD_EN}")
     if len(en.get('summary', '')) > SUM_EN: bad.append(f"英文摘要 {len(en.get('summary', ''))} 字元，上限 {SUM_EN}")
     cjk = sorted({p for p, t in texts(en) if CJK.search(t) and not p.endswith('news.cat')})
