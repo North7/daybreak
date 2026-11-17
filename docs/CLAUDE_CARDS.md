@@ -1,0 +1,31 @@
+# Claude 每日主卡判讀任務（破曉 Daybreak）
+
+> 排程：每天 UTC 01:00（台北 09:00），模型 Opus 5.5。頭版和早報由 08:15 的每日判讀任務（`docs/CLAUDE_DAILY.md`，模型 Fable 5.2）先寫好；這個任務接在後面，只寫五頁每一段第一張卡（主卡）的判讀。
+> 2026-11-17 使用者看過試寫的 24 張後決定：「頭版升級：Fable 5.2 頭版、Opus 5.5 主卡」。
+
+## 任務指示
+
+你負責 破曉 Daybreak（GitHub 倉庫 `North7/daybreak`）每一段主卡的綜合判讀，中英各一份，寫進 `data/notes.json` 和 `data/notes.en.json` 的 `cards`。**你不改任何數字、不改網站程式、不動判讀檔的其他欄位。**
+
+### 隱私鐵則（最高優先）
+公開倉庫。任何檔案都不得出現任何人的實際持倉數量、個人買賣數量、資金或生活開支金額。
+
+### 步驟
+1. `git fetch origin && git checkout -B main origin/main`。
+2. 確認今天的頭版已經寫好：`data/notes.json` 的 `date` 要等於 `data/latest.json` 的 `meta.bar_date`。還沒好就每 3 分鐘 `git pull` 一次，最多等 45 分鐘；等不到就不寫，直接回報「頭版還沒寫好，主卡沒寫」。
+3. 執行 `python3 pipeline/cards_brief.py` 讀摘要（約 25KB）：今天頭版的判讀（`front`），以及每一段主卡（`leads`）——規則產生的一句結論（`rule_sentence`）、規則判的偏向和理由（`rule_view`）、事實列（`facts`）、同一段其他卡的結論和偏向（`siblings`）。需要更細的數字可以讀 `data/latest.json` 對應欄位，不要整份讀進來。
+4. 每一張主卡寫一句判讀（寫作規則見下），存成一個暫存檔，格式：
+   `{"date": 資料日, "cards": {"dawn": {"lean": "up|down|neu", "zh": "…", "en": "…"}, …}}`，`leads` 裡的每一個 `k` 都要有。
+5. `python3 pipeline/cards_write.py <暫存檔>` 寫回兩個判讀檔（它會保留手排格式、拒寫日期不對的）。
+6. `python3 pipeline/notes_lint.py`，要「通過」。不通過就改句子重寫，不要改檢查。
+7. 提交並推送：`git add data/notes.json data/notes.en.json && git commit -m "cards: <資料日>"`，`git push origin main`；被拒就 `git pull --rebase` 再推，最多三次。提交訊息照倉庫慣例加上 Co-Authored-By。
+8. 回報：寫了幾張、和規則偏向不同的有哪幾張（各一句理由）、有沒有沒寫成的。
+
+### 寫作規則
+- **一句判讀＝先表態、再講為什麼、最後是關鍵價位或什麼會改變它。** 例：「偏空，但已是換手後段：賠錢賣在加重，賣的多是近一個月高價進場的人，籌碼大多換到 64–65K；SOPR 回到 1 就代表換手完成。」
+- 中文 40–75 字，英文 120–220 字元。數字只當佐證，一句最多 3 個；所有數字都要在 `cards_brief` 或 `latest.json` 找得到，不推估。
+- **綜合，不是念數據**：從主卡自己那張圖出發，借同一段一兩張其他卡佐證（`siblings`），說出這一段在回答的問題（`question`）的答案。不要每張都重講頭版的大結論；24 張讀起來不能都一樣。
+- **方向**：`lean` 是你這句判讀的方向，網站會用它做卡片上的偏向膠囊和每一段的答案統計。和頭版的短線／長線觀點要接得起來；和 `rule_view` 不同可以，但句子裡要讓人看得出你為什麼不同，回報裡也列出來。只有 up（偏多）、down（偏空）、neu（中性）三種。
+- **不寫交易指令**（判讀句會出現在分享圖上）：不寫避險、減倉、賣幾 %、補回、進場、出場；寫市場會怎麼走、哪邊力量大。
+- 不寫價格預測、不把同時發生寫成因果、不用「很多人說」這類泛指來源。中文版裡有英文常用名的用英文（BTC、Nasdaq、Strategy）。
+- 英文版是同樣意思的英文，不是逐字翻譯；句首的方向詞照實寫（Bullish／Bearish／Neutral 或 Leaning…）。
