@@ -55,7 +55,7 @@ def build(L, N, E, dn):
              '; '.join('the %s low of %s, %s' % (q['d'][:7], usd(q['px']), lowe(q).split(': ', 1)[1]) for q in fl['lows']) + '.')],
             ('收盤已經跌破 %d 層地板。' % bv_nb if bv_nb else '收盤在第一層地板上方 %s，五層都沒破。' % _p1(gap)), ('The close is below %d of the five floors.' % bv_nb if bv_nb else 'The close sits %s above the first floor; none of the five is broken.' % _p1(gap)))
     if pn and all(len((pn.get(k_) or {}).get('rows') or []) > 200 for k_ in ('all', 'sth', 'lth')):
-        PC = ['k2', 'c5', 'ac', 'color-mix(in srgb, var(--ac) 50%, var(--dn))', 'dn']   # 越深越紅：虧損是有方向的，所以用到紅；最外面那條（所有在虧的）用灰色虛線當底
+        PC = ['k2', 'c5', 'color-mix(in srgb, var(--c5) 50%, var(--dn))', 'dn', 'color-mix(in srgb, var(--dn) 30%, #E0007A)']   # 越深越紅：黃 → 橘 → 橘紅 → 深桃紅；最外面那條（所有在虧的）用灰色虛線當底。2026-11-17 使用者：「都是紅色，區分不出來」——原本用 ac、ac 和 dn 的混色、dn，但 ac 和 dn 是同一個色（#FF4F1F），三條同色
         PN = [('在虧損的', 'At a loss'), ('虧 10% 以上', 'Down 10% or more'), ('虧 20% 以上', 'Down 20% or more'), ('虧 30% 以上', 'Down 30% or more'), ('虧 50% 以上', 'Down 50% or more')]
         pser = [ser(2 + i, zh=PN[i][0], en=PN[i][1], col=PC[i], w=1.1 if i == 0 else 1.9 if i == 1 else 1.4, **(dict(dash='4 3') if i == 0 else {})) for i in range(5)]
         bv_pm = lambda key, mz, me: dict(mz=mz, me=me, hz='虧 10% 以上的幣', he='Supply down 10% or more', f='p1', p=1, hero=1, rows=pn[key]['rows'], ser=pser)
