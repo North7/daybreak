@@ -132,9 +132,24 @@ def rpl(L):
     out = [it('90 天平均', '90-day average', '%.2f' % r['value'], '%.2f' % r['value'], 'up' if r['value'] >= 1 else 'down',
               '%s 回到 1 以上（%d 天）；上一段低於 1 是 %s–%s，%d 天。' % (md(r['since']), r['since_days'], ym(last['start']), last['end'][5:7], last['days']) if r['above'] else '%s 跌破 1，已 %d 天。' % (md(r['since']), r['since_days']),
               'Back above 1 on %s (%d days); the last spell below 1 ran %s–%s, %d days.' % (mde(r['since']), r['since_days'], yme(last['start']), yme(last['end']), last['days']) if r['above'] else 'Below 1 since %s, %d days.' % (mde(r['since']), r['since_days']))]
-    if r.get('proj') and r['above']:
+    y = L['onchain'].get('rpl365')
+    if y and y.get('past_low') and r.get('proj') and r['above']:   # 2026-11-17：卡片只顯示三行，有一年合計時把最近 7 天併進 90 天那一行
+        out[0]['dz'] = '%s 回到 1 以上（%d 天）；最近 7 天只有 %.2f，照這樣約 %s 跌回 1 以下。' % (md(r['since']), r['since_days'], r['last7'], ymd(r['proj']['date']))
+        out[0]['de'] = 'Back above 1 on %s (%d days); only %.2f over the last 7, which would take the average below 1 around %s.' % (mde(r['since']), r['since_days'], r['last7'], ymde(r['proj']['date']))
+    elif r.get('proj') and r['above']:
         out.append(it('最近 7 天', 'Last 7 days', '%.2f' % r['last7'], '%.2f' % r['last7'], 'down' if r['last7'] < 1 else 'up', '照這個水準，約 %s（%d 天後）跌回 1 以下。' % (ymd(r['proj']['date']), r['proj']['days']), 'At this pace the average drops below 1 around %s (%d days).' % (ymde(r['proj']['date']), r['proj']['days'])))
-    out.append(it('紅色結束之後', 'After long red spells', '%d / %d' % (len(rl), len(done)), '%d / %d' % (len(rl), len(done)), 'neu', '60 天以上低於 1 的段落結束後一年內，又跌回 1 以下的次數。', 'Spells of 60+ days below 1 that relapsed below 1 within a year of ending.'))
+    if y and y.get('past_low'):   # 2026-11-17 一年合計（oc_extra.rpl365_viz）
+        sz += ('一年合計 %.2f，%s 起低於 1。' if y['below'] else '一年合計 %.2f，在 1 以上。') % (y['value'], md(y['since']))
+        se += (' Over one year it is %.2f, below 1 since %s.' if y['below'] else ' Over one year it is %.2f, above 1.') % (y['value'], mde(y['since']))
+        pl = '過去四段最低 %.2f–%.2f' % tuple(y['past_low']); ple = 'past spells bottomed at %.2f–%.2f' % tuple(y['past_low'])
+        out.append(it('一年合計', 'One-year sum', '%.2f' % y['value'], '%.2f' % y['value'], 'down' if y['below'] else 'up',
+                      ('%s 跌破 1（當天 %s），已 %d 天、價格 %s；%s。' % (md(y['since']), kusd(y['since_price']), y['since_days'], pc(y['chg']), pl)) if y['below'] else ('%s 回到 1 以上，已 %d 天；%s。' % (md(y['since']), y['since_days'], pl)),
+                      ('Below 1 since %s (at %s), %d days, price %s; %s.' % (mde(y['since']), kusd(y['since_price']), y['since_days'], pc(y['chg']), ple)) if y['below'] else ('Back above 1 since %s, %d days; %s.' % (mde(y['since']), y['since_days'], ple))))
+        dn_ = [x for x in y['reds'] if not x.get('open')]; r_ = y['r365']; b_ = y['base365']
+        out.append(it('一年低於 1 之後', 'After a year below 1', '%d / %d' % (r_['up'], r_['n']), '%d / %d' % (r_['up'], r_['n']), 'neu',
+                      '比值最低那天之後一年都上漲，中位數 %s（任一天 %s）。但最低點落後價格，當時已比最低價高 %d–%d%%；跌破 1 之後期間內最多再跌 %.0f%%%s。' % (pc(r_['med'], 0), pc(b_['med'], 0), min(x['lag'] for x in dn_), max(x['lag'] for x in dn_), -min(x['dd'] for x in dn_), '，這次已跌 %.0f%%' % -y['reds'][-1]['dd'] if y['reds'][-1].get('open') and y['reds'][-1]['dd'] < 0 else ''),
+                      'A year after the ratio\'s low, price was up every time, median %s (any day %s). But the low lags price: by then price was %d–%d%% above its bottom; after dropping below 1, price fell at most another %.0f%%%s.' % (pc(r_['med'], 0), pc(b_['med'], 0), min(x['lag'] for x in dn_), max(x['lag'] for x in dn_), -min(x['dd'] for x in dn_), '; this time it is already down %.0f%%' % -y['reds'][-1]['dd'] if y['reds'][-1].get('open') and y['reds'][-1]['dd'] < 0 else '')))
+    if len(out) < 3: out.append(it('紅色結束之後', 'After long red spells', '%d / %d' % (len(rl), len(done)), '%d / %d' % (len(rl), len(done)), 'neu', '60 天以上低於 1 的段落結束後一年內，又跌回 1 以下的次數。', 'Spells of 60+ days below 1 that relapsed below 1 within a year of ending.'))
     return sz, se, out
 
 def rloss(L):

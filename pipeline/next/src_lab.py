@@ -32,6 +32,8 @@ def apply(X, L):
     """X＝{圖代號: 卡片}；回傳補上的張數"""
     d = _md(L['meta']['bar_date']); D = dyn(L); n = 0
     for k, c in X.items():
+        for m in c.get('modes') or []:   # 2026-11-17 檢視自己的來源（例：實現獲利 ÷ 虧損的「一年」是 Bitview）
+            if m.get('src'): m['src'], m['srce'] = m['src'].replace('{d}', d), (m.get('srce') or m['src']).replace('{d}', d)
         if c.get('src'): continue
         t = D.get(k) or SRC.get(k)
         if not t: continue

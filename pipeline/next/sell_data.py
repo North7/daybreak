@@ -16,7 +16,7 @@ PB_LAB = dict(sth=('① 價格回到短期持有者成本', '① Price back at s
 RL_KIND = dict(div=('背離', 'divergence'), cap=('投降', 'capitulation'), flat=('差不多', 'similar'))
 # 沿用的十一張圖，萬一 X 裡沒有，用這裡的名字出一張「沒有資料」
 REUSE = dict(profit=('短期持有者獲利比例', 'Short-term holders in profit'), sopr=('短期持有者賣出時的盈虧', 'Short-term holder SOPR'), pnlr=('短期持有者實現獲利與虧損', 'STH realized profit and loss'), conf=('對趨勢的信心', 'Confidence in the trend'),
-             npl=('淨實現損益', 'Net realized P&L'), rpl=('實現獲利 ÷ 虧損（90 天）', 'Realized profit ÷ loss (90d)'), rloss=('每日實現虧損', 'Daily realized loss'), ssr=('賣方風險比', 'Sell-side risk ratio'),
+             npl=('淨實現損益', 'Net realized P&L'), rpl=('實現獲利 ÷ 虧損', 'Realized profit ÷ loss'), rloss=('每日實現虧損', 'Daily realized loss'), ssr=('賣方風險比', 'Sell-side risk ratio'),
              sec=('賣方衰竭常數', 'Seller exhaustion constant'), mom=('鏈上勢能', 'On-chain momentum'), lthrl=('長期持有者已實現虧損', 'LTH realized loss'))
 
 def build(L, N, E, dn, X):
