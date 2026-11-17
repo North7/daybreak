@@ -1311,6 +1311,72 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
   .oc-fx .or-v { font-size: 14px; }
 }
 @media (prefers-reduced-motion: reduce) { .oc.io .fc.in { animation: none !important; } .oc .ol-c::after { display: none !important; } .oc.io .fc:not(.in) { opacity: 1; } }
+/* ㉟ 介面細節六項（2026-11-18，使用者看了 uberdesigner 介面元件庫的筆記後選的：「先做三個小的」，再加三個）。只借動作，外觀照全站：不發光、不用漸層、用全站的彈簧。減少動態時都直接到結果。
+     1 偏向翻牌：卡片的偏向膠囊和前一個資料日不一樣時（build.py 寫進 data/leans.json），卡片進到畫面後膠囊像翻牌一樣從昨天的翻到今天的，
+       後面留一個劃掉的舊偏向（滑上去看日期）；手機清單列只翻，不留舊的。同一張卡翻過一次，重畫時不再翻。分享模式照舊不顯示偏向。
+     2 分段切換（模式、時間範圍、分／疊）的底塊會滑：前緣先走、後緣跟上，跑的時候拉長，到了彈一下；和底部分頁列同一套手感（㉘）。
+     3 圖例：滑鼠移上去只亮那一條，其他線淡到 16%，主數字滾到那一條最新的值、日期前面寫線名；點一下固定，再點一下放開（手機用點的）。點圖例不會展開卡片。
+     4 換時間範圍：圖不是整張換掉，是起點從舊範圍一路滑到新範圍（對數內插，約 0.7 秒），每一格都是真的重畫，軸和刻度一起變。
+     5 手機放大鏡：手指按住圖約 0.26 秒，手指上方出一個圓形放大鏡（2.4 倍），中間一條游標線和讀值那一點，下面是日期；按住時可以左右拖，頁面不捲動；放開就收起。
+     6 訊號清單：右下角的訊號提示點一下，同一個形狀長成一張面板，列出今天全部有訊號的卡（這一頁的在最前面，其他頁標頁名），點一列就過去；點外面或 Esc 收回。 */
+.fl-w { display: inline-grid; vertical-align: top; perspective: 140px; }
+.fl-w > b { grid-area: 1 / 1; font: inherit; color: inherit; backface-visibility: hidden; transform-origin: 50% 50%; }
+.fl-o { visibility: hidden; }
+.fl.pre .fl-o { visibility: visible; } .fl.pre .fl-n { visibility: hidden; }
+.sy-tag.fl.pre { color: var(--oc); background: color-mix(in srgb, var(--oc) 16%, transparent); }
+.fr-l.fl.pre { color: var(--oc) !important; }
+.fl-was { margin: 0 9px 0 -4px; font: 500 10.5px/1.35 var(--f-mono); letter-spacing: .04em; color: var(--k2); text-decoration-thickness: 1px; vertical-align: 2px; cursor: help; }
+.fl.pre + .fl-was { opacity: 0; }
+html.share .fl-was { display: none !important; }
+@media (prefers-reduced-motion: no-preference) {
+  .fl.run .fl-o { visibility: visible; animation: fl-out .3s cubic-bezier(.5, 0, .75, 0) both; }
+  .fl.run .fl-n { animation: fl-in .7s var(--spring) .26s both; }
+  .sy-tag.fl.run { animation: fl-bg .45s ease .26s backwards; }
+  .fr-l.fl.run { animation: fl-c .45s ease .26s backwards; }
+  .fl.run + .fl-was { animation: fl-s .5s cubic-bezier(.16, 1, .3, 1) .8s backwards; }
+  @keyframes fl-out { from { transform: rotateX(0); } to { transform: rotateX(88deg); opacity: .3; } }
+  @keyframes fl-in { from { transform: rotateX(-88deg); } }
+  @keyframes fl-bg { from { color: var(--oc); background: color-mix(in srgb, var(--oc) 16%, transparent); } }
+  @keyframes fl-c { from { color: var(--oc); } }
+  @keyframes fl-s { from { opacity: 0; transform: translateY(-.45em); filter: blur(2px); } }
+}
+.md.pl { position: relative; isolation: isolate; }
+.md.pl > .sp { position: absolute; z-index: -1; left: 0; top: 0; width: 0; height: 0; border-radius: 999px; background: color-mix(in srgb, var(--ink) 15%, transparent); pointer-events: none; will-change: transform, width; }
+.oc .md.pl button[aria-pressed="true"], .md.pl button[aria-pressed="true"] { background: none; border-color: transparent; }
+.ol-c svg .sr { transition: opacity .25s; }
+.ol-c svg.iso .sr:not(.on) { opacity: .16; }
+.ol-lg span[data-s] { cursor: pointer; transition: opacity .2s, color .2s; -webkit-tap-highlight-color: transparent; }
+.ol-lg.iso span:not(.on) { opacity: .45; } .ol-lg span.on { color: var(--ink); }
+.ol.m-mo > *, .ol.m-mo .ol-c::after { animation: none !important; }
+.ol-c { -webkit-touch-callout: none; }
+.lp { position: fixed; left: 0; top: 0; z-index: 95; width: 116px; display: flex; flex-direction: column; align-items: center; gap: 7px; pointer-events: none; opacity: 0; transition: opacity .14s; }
+.lp.on { opacity: 1; }
+.lp-c { position: relative; width: 116px; height: 116px; border-radius: 50%; overflow: hidden; background: var(--sheet); border: 1px solid color-mix(in srgb, var(--ink) 24%, transparent); box-shadow: 0 10px 26px rgb(0 0 0 / .26); transform: scale(.55); transition: transform .4s var(--spring); }
+.lp.on .lp-c { transform: none; }
+.lp-v { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+.lp-v svg { display: block; overflow: visible; }
+.lp-v text { font: 500 10.5px var(--f-mono); fill: var(--k2); }
+.lp-x { position: absolute; left: 50%; top: 0; bottom: 0; width: 1px; margin-left: -.5px; background: color-mix(in srgb, var(--ink) 50%, transparent); }
+.lp-x::after { content: ""; position: absolute; left: -4px; top: calc(50% - 4.5px); width: 9px; height: 9px; box-sizing: border-box; border-radius: 50%; background: var(--ink); border: 2px solid var(--sheet); }
+.lp-d { font: 600 11px/1 var(--f-mono); color: var(--sheet); background: var(--ink); padding: 5px 9px; border-radius: 999px; white-space: nowrap; }
+@media (prefers-reduced-motion: reduce) { .lp-c { transform: none; transition: none; } }
+.sgp { position: fixed; right: 16px; bottom: 16px; z-index: 72; width: min(340px, calc(100vw - 24px)); max-height: min(62vh, 520px); display: flex; flex-direction: column; box-sizing: border-box; border-radius: 16px; background: color-mix(in srgb, var(--sheet) 96%, transparent); border: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); box-shadow: 0 14px 40px rgb(0 0 0 / .22); color: var(--ink);
+  clip-path: inset(var(--ct, 90%) var(--cr, 0px) var(--cb, 0px) var(--cl, 70%) round 999px); transition: clip-path .5s cubic-bezier(.3, 1.18, .5, 1), opacity .2s; opacity: 0; }
+.sgp.on { clip-path: inset(0 0 0 0 round 16px); opacity: 1; }
+.sgp-h { display: flex; align-items: center; justify-content: space-between; padding: 12px 10px 8px 16px; font: 600 13px/1.2 "Inter Tight", "Noto Sans TC", sans-serif; }
+.sgp-h u { text-decoration: none; margin-left: 4px; font: 600 12px/1 var(--f-mono); color: var(--ac); }
+.sgp-x { width: 30px; height: 30px; border: 0; border-radius: 50%; background: none; color: var(--k2); font: 400 20px/1 sans-serif; cursor: pointer; }
+.sgp-x:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--ink); }
+.sgp-l { overflow-y: auto; padding: 0 6px 8px; overscroll-behavior: contain; }
+.sgp-g { margin: 8px 10px 4px; font: 500 10.5px/1.2 var(--f-mono); letter-spacing: .06em; color: var(--k2); }
+.sgp-r { display: grid; grid-template-columns: 12px minmax(0, 1fr) 16px; align-items: center; gap: 10px; width: 100%; padding: 9px 10px; border: 0; border-radius: 10px; background: none; color: inherit; text-align: left; cursor: pointer; font: inherit; transition: transform .45s var(--spring), background-color .2s; }
+.sgp-r:hover { background: color-mix(in srgb, var(--ink) 7%, transparent); } .sgp-r:active { transform: scale(.97); transition-duration: .1s; }
+.sgp-t { display: grid; gap: 3px; min-width: 0; } .sgp-t b { font: 600 13px/1.3 "Inter Tight", "Noto Sans TC", sans-serif; } .sgp-t span { font: 400 12px/1.35 "Inter Tight", "Noto Sans TC", sans-serif; color: var(--k2); }
+.sgp-r .ic { color: var(--k2); }
+.ag-dock.x-open { opacity: 0 !important; pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) { .sgp.on .sgp-r, .sgp.on .sgp-g { animation: m-rise-s .45s cubic-bezier(.16, 1, .3, 1) backwards; animation-delay: calc(140ms + var(--j, 0) * 40ms); } }
+@media (prefers-reduced-motion: reduce) { .sgp { transition: none; } }
+@media (max-width: 700px) { .sgp { right: 12px; bottom: calc(80px + env(safe-area-inset-bottom, 0px)); } }
 /* ㉞ 手機長頁（2026-11-17，使用者三件都照建議；「對於交互，動效，還是要保留原本的精華」）：寬 700px 以下，週期、價位、賣壓、買盤、槓桿五頁每段只畫第一張（主卡），其他收成清單列；今天、出場兩頁和電腦版不變。
    1 清單一列＝圖名、一句白話、最新值、迷你走勢；點了打開全螢幕放大檢視（從那一列長出來，和點卡片一樣），左右滑換同一段的下一張。今天有訊號的列前面一顆會呼吸的訊號點，訊號膠囊照樣數得到、點得到。
    2 主卡瘦身（.fc.ph）：大數字下面直接接一句結論（拿掉「讀數」小標和重複的標題）；按鈕併成一排可左右捲，「分／疊」在手機上拿掉；圖例只留主角那條線，其他的點「＋N」才展開；底部統計和 30 天對比收起來，放大檢視裡都在。
@@ -1691,7 +1757,7 @@ function initOC() {
     /* 數列 */
     const nvis = S.filter(q => !q.hide).length, ends = [], dots = [], tags = [], tg = (q, v) => split(fm(q.f || af, v))[0]; let shim = '';
     if (Yp) { dots.push({ p: 1, Y: Yp }); (s.top || []).forEach(q => dots.push({ c: q.c, Y: Yp, col: q.col })); }
-    S.forEach((q, i) => {
+    S.forEach((q, i) => { const g0 = g.length; (() => {   /* ㉟ 3 每條線包成一組（.sr），圖例可以單獨點亮 */
       if (q.hide) return; const col = q.c, main = i === hi0 || (S[hi0].hide && i === 0), sw = Math.max(1.5, q.w || (main ? 2 : 1.6)), op = Math.max(.9, q.op || 1);
       if (q.t === 'bar') {
         const n = rows.length, gap = n > 1 ? (rows[n - 1][0] - rows[0][0]) / (n - 1) : 1, bw = Math.max(1, Math.min(9, gap / ((tE - t0) || 1) * pw * .74)), yz = Y(q.base || 0), P = {};
@@ -1723,7 +1789,7 @@ function initOC() {
         g += `<path d="${d}" fill="none" stroke="${CV(q.col)}" stroke-opacity="${op}" stroke-width="${sw}" stroke-linejoin="round"${q.dash ? ` stroke-dasharray="${q.dash}"` : ''}/>`;
       }
       if (main) shim = d; const z = atv(rows, col, null); if (z[col] != null && !q.dash) ends.push([X(z[0]), Y(z[col]), CV(tone(s, q)), main, s.notag ? null : tg(q, z[q.vc != null ? q.vc : col])]); dots.push({ c: col, Y, col: q.col });
-    });
+    })(); if (g.length > g0) g = g.slice(0, g0) + `<g class="sr" data-s="${i}">` + g.slice(g0) + '</g>'; });
     (s.segs || []).forEach(q => { const x0 = Math.max(0, X(q.a)); g += `<line x1="${F1(x0)}" x2="${pw}" y1="${F1(Y(q.v))}" y2="${F1(Y(q.v))}" stroke="${CV(q.col)}" stroke-dasharray="5 4" stroke-opacity=".9"/>`; });
     let ltx2 = '';
     (s.vl || []).forEach(q => { if (q.d < t0 || q.d > tE) return; const x = X(q.d), cc = CV(q.col || 'k2'), lb = T(q.zh, q.en), da = q.dash ? ` stroke-dasharray="${q.dash}"` : '', so = q.op || .7;
@@ -1750,10 +1816,10 @@ function initOC() {
   function legend(s, k) {
     const L = [], sw = (kind, c1, c2) => `<i class="${kind}" style="--c:${CV(c1)};--c2:${CV(c2 || c1)}"></i>`; let n = 0;
     const hq0 = s.ser ? (h0 => h0 && !h0.hide ? h0 : s.ser.find(q => !q.hide))(hero(s)) : null; let hh = '';   /* 主角被設成不顯示（例如 ETF 的合計）時，標第一條看得到的線 */   /* ㉞ 主角那條線的圖例加 class h：手機主卡只留它 */
-    const add = (kind, c1, c2, label, get) => { const idv = get ? `oc-l${k}-${n++}` : ''; L.push({ html: `<span${hh}>${sw(kind, c1, c2)}${esc(label)}${get ? `<b id="${idv}"></b>` : ''}</span>`, id: idv, get }); hh = ''; };
-    if (!s.one) add(s.kw ? 'box' : 'line', 'k2', s.kw ? 'k2' : null, s.kw ? (s.kwr ? T('BTC 月 K', 'BTC monthly') : T('BTC 週 K', 'BTC weekly')) : T('BTC 價格', 'BTC price'), day => fm('usd0', pxAt(s, day)));
+    const add = (kind, c1, c2, label, get, ds) => { const idv = get ? `oc-l${k}-${n++}` : ''; L.push({ html: `<span${hh}${ds != null ? ` data-s="${ds}"` : ''}>${sw(kind, c1, c2)}${esc(label)}${get ? `<b id="${idv}"></b>` : ''}</span>`, id: idv, get }); hh = ''; };
+    if (!s.one) add(s.kw ? 'box' : 'line', 'k2', s.kw ? 'k2' : null, s.kw ? (s.kwr ? T('BTC 月 K', 'BTC monthly') : T('BTC 週 K', 'BTC weekly')) : T('BTC 價格', 'BTC price'), day => fm('usd0', pxAt(s, day)), 'p');
     (s.top || []).forEach(q => add('line', q.col, null, T(q.zh, q.en), day => fm('usd0', atv(s.rows, q.c, day)[q.c])));
-    s.ser.forEach(q => { if (q.hide) return; if (q === hq0) hh = ' class="h"'; const t2 = two(q) || q.t === 'cand', kind = q.t === 'bar' || q.t === 'cand' ? 'box' : q.t === 'ramp' ? (q.heat ? 'ramp heat' : 'ramp') : q.dash ? 'dash' : 'line'; add(kind, t2 ? (q.hi || 'up') : q.nb != null ? 'up' : q.col, t2 ? (q.lo || 'dn') : q.nb != null ? 'dn' : null, T(q.zh, q.en), day => fm(q.f || s.f, atv(s.rows, q.c, day)[q.vc != null ? q.vc : q.c])); });
+    s.ser.forEach((q, qi) => { if (q.hide) return; if (q === hq0) hh = ' class="h"'; const t2 = two(q) || q.t === 'cand', kind = q.t === 'bar' || q.t === 'cand' ? 'box' : q.t === 'ramp' ? (q.heat ? 'ramp heat' : 'ramp') : q.dash ? 'dash' : 'line'; add(kind, t2 ? (q.hi || 'up') : q.nb != null ? 'up' : q.col, t2 ? (q.lo || 'dn') : q.nb != null ? 'dn' : null, T(q.zh, q.en), day => fm(q.f || s.f, atv(s.rows, q.c, day)[q.vc != null ? q.vc : q.c]), qi); });
     (s.leg || []).forEach(q => add(q[3] || 'box', q[0], null, T(q[1], q[2]), null));
     (s.zones || []).forEach(z => { if (z.zh && !(s.leg || []).some(q => q[0] === z.col && (q[3] || 'box') === 'box')) add('box', z.col, null, T(z.zh, z.en), null); });
     return L;
@@ -2359,6 +2425,10 @@ function initOC() {
   /* 一張圖的內容：名稱、大數字、說明、圖例、圖。平鋪的卡片和放大後的主圖都用這一個 */
   let fx = null, SEC = {};
   const TN = { up: ['偏多', 'Bullish', 'up'], down: ['偏空', 'Bearish', 'dn'], warn: ['留意', 'Watch', 'c5'], neu: ['中性', 'Neutral', 'k2'] }, L2 = (z, e) => T(z, e || z);
+  /* ㉟ 1 偏向翻牌：v.pt／v.pd 是 build.py 從 data/leans.json 比出來的昨天的偏向；row＝手機清單列（只翻，不留劃掉的舊偏向） */
+  let MORPH = null; const FLS = new Set(), flipTag = (c, v, t2, cls, row) => { const p = v.pt && TN[v.pt]; if (!p) return row ? `<i class="${cls}" style="color:var(--${t2[2]})">${T(t2[0], t2[1])}</i>` : `<span class="${cls}">${T(t2[0], t2[1])}</span>`;
+    const dd = v.pd ? v.pd.slice(5).replace('-', '/') : '', tip = T((dd || '前一天') + ' 是' + p[0] + '，今天' + t2[0], 'Was ' + p[1].toLowerCase() + (dd ? ' on ' + dd : ' the day before') + ', now ' + t2[1].toLowerCase()), w = `<span class="fl-w"><b class="fl-o">${T(p[0], p[1])}</b><b class="fl-n">${T(t2[0], t2[1])}</b></span>`;
+    return row ? `<i class="${cls} fl" data-fk="${esc(c.k)}" style="color:var(--${t2[2]});--oc:var(--${p[2]})" title="${esc(tip)}">${w}</i>` : `<span class="${cls} fl" data-fk="${esc(c.k)}" style="--oc:var(--${p[2]})" title="${esc(tip)}">${w}</span><s class="fl-was" title="${esc(tip)}">${T(p[0], p[1])}</s>`; };
   /* 卡片上的結論（⑮）：分成兩塊。讀數（.sy-read）＝資料在說什麼，標題用一句白話，不把大數字重講一遍；
      我們的看法（.sy-view）＝立場和「會改變看法」，社群配圖會藏掉這一塊（分享模式也藏） */
   function sayHtml(c) {
@@ -2370,7 +2440,7 @@ function initOC() {
     const view = vw ? (t2 => `<div class="sy-view" style="--vc:var(--${t2[2]})"><div class="sy-h"><span class="sy-t">${T('我們的看法', 'Our view')} · ${T(t2[0], t2[1])}</span><b>${esc(L2(vw.vz, vw.ve))}</b></div><p class="sy-d">${esc(L2(vw.dz, vw.de))}</p>${vw.cz ? `<p class="sy-c"><i>${T('會改變看法', 'What would change it')}</i>${esc(L2(vw.cz, vw.ce))}</p>` : ''}</div>`)(TN[vw.tone] || TN.neu) : '';
     if (vw && one) {   /* ㉞-9 2026-11-17 使用者：「都改」「主角要明顯一點」：判讀句是主角（標題級字、粗體），前面一個偏向膠囊；下面是會改變看法；其他都收進「證據」 */
       const t2 = TN[vw.tone] || TN.neu, ev = [`<div class="sy-r"><span class="sy-k">${T('依據', 'Basis')}</span><b>${esc(L2(vw.vz, vw.ve))}</b><p>${esc(L2(vw.dz, vw.de))}</p></div>`].concat(its.filter(q => !q.view).map(row));
-      return `<div class="ol-say v2" style="--sc:var(--${t2[2]})"><p class="sy-v"><span class="sy-tag">${T(t2[0], t2[1])}</span>${esc(one)}</p>${vw.cz ? `<p class="sy-c"><i>${T('會改變看法', 'What would change it')}</i>${esc(L2(vw.cz, vw.ce))}</p>` : ''}<details class="sy-m"><summary${ib('證據', 'Evidence')}>${IC('chev')}<span>${T('證據', 'Evidence')} ${ev.length}</span></summary>${ev.join('')}</details></div>`;
+      return `<div class="ol-say v2" style="--sc:var(--${t2[2]})"><p class="sy-v">${flipTag(c, vw, t2, 'sy-tag')}${esc(one)}</p>${vw.cz ? `<p class="sy-c"><i>${T('會改變看法', 'What would change it')}</i>${esc(L2(vw.cz, vw.ce))}</p>` : ''}<details class="sy-m"><summary${ib('證據', 'Evidence')}>${IC('chev')}<span>${T('證據', 'Evidence')} ${ev.length}</span></summary>${ev.join('')}</details></div>`;
     }
     if (!read && !view) return ''; const rest = its.filter(q => q !== vw && q !== rd), sc = (TN[(rd || vw || {}).tone] || TN.neu)[2];
     return `<div class="ol-say" style="--sc:var(--${sc})">${read}${view}${rest.length ? `<details class="sy-m"><summary${ib('全部讀值', 'All readings')}>${IC('chev')}<span>${rest.length}</span></summary>${rest.map(row).join('')}</details>` : ''}</div>`;
@@ -2420,6 +2490,7 @@ function initOC() {
     const sx = q('.ol-sx'), how = q('.ol-how'); if (sx || how) { const f = document.createElement('div'); f.className = 'ol-f'; [sx, how].forEach(e2 => { if (e2) f.appendChild(e2); }); ol.appendChild(f); }
   }
   function fill(ol, c, key, flat) {
+    ol.classList.toggle('m-mo', MORPH === key); ol._pin = ol._iso = null;   /* ㉟ 4 換範圍時這次重畫不重播進場動畫，圖自己變形過去 */
     const s = isT(c) ? SP(c) : c, t0 = isT(c) ? T0(s, c) : tE - 365, LG = isT(c) ? legend(s, key) : [];
     const md = c.modes ? `<span class="md" role="group">${c.modes.map((m, i) => `<button type="button" data-m="${i}" data-key="${key}" aria-pressed="${i === (c._m || 0)}">${esc(T(m.mz, m.me))}</button>`).join('')}</span>` : '';
     const lqb = c.dist && c.dist.heat && c.dist.heat.long ? `<span class="md" role="group" aria-label="${T('時間範圍', 'Time range')}">${[[0, '7 天', '7 days'], [1, '6 個月', '6 months']].map(q => `<button type="button" data-lq="${q[0]}" data-key="${key}" aria-pressed="${(c._lq && c._lqx ? 1 : 0) === q[0]}">${T(q[1], q[2])}</button>`).join('')}</span>` : '';   /* ㉓ */
@@ -2461,7 +2532,7 @@ function initOC() {
   const PHC = { cycle: 1, lv: 1, sell: 1, buy: 1, lev: 1 }, PHQ = window.matchMedia ? matchMedia('(max-width: 700px)') : null;
   const phOn = () => !SHARE && !!(PHQ && PHQ.matches) && !!PHC[O.id];
   const rowVal = c => { if (c.na) return '—'; if (!isT(c)) return sval(c); const q = SP(c), hh = hero(q), r = atv(q.rows, hh.c, null); return fm(hh.f || q.f, r[hh.c]); };
-  const rowLean = c => { const v = ((c.say || {}).items || []).find(q => q.view); if (!v) return ''; const t2 = TN[v.tone] || TN.neu; return `<i class="fr-l" style="color:var(--${t2[2]})">${T(t2[0], t2[1])}</i>`; };
+  const rowLean = c => { const v = ((c.say || {}).items || []).find(q => q.view); if (!v) return ''; const t2 = TN[v.tone] || TN.neu; return flipTag(c, v, t2, 'fr-l', 1); };
   const rowLine = c => { if (c.na) return T(c.na.zh, c.na.en).split(/[。.]/)[0]; const y = c.say, one = y ? L2(y.sz, y.se) : '', v = vOf(c), t = one || (v ? (v.head || v.body) : '') || T(c.dz, c.de) || ''; const m = /^(.*?[。！？；]|.*?[.!?;](\s|$))/.exec(t); return (m ? m[1] : t).replace(/[。；;]$/, ''); };
   function renderRows(k) {
     const g = G[k - 1], box = $('#oc-g' + k), t0 = tE - 365;
@@ -2529,8 +2600,8 @@ function initOC() {
   }
   /* 游標：時間型的圖共用「某一天」，分布型的圖共用「某個價位」 */
   function cur1(R, day) {
-    if (!isT(R.c)) return; const s = R.s, k = R.key, live = day == null, hq = hero(s), hr = atv(s.rows, hq.c, day), v = split(fm(hq.f || s.f, hr[hq.c]));
-    odo($('#oc-b' + k), v[0]); $('#oc-u' + k).textContent = v[1]; $('#oc-d' + k).textContent = ymd(hr[0]) + (live ? T('　最新', '  latest') : '');
+    if (!isT(R.c)) return; const s = R.s, k = R.key, live = day == null, iq = R.iso != null && R.iso !== 'p' ? s.ser[+R.iso] : null, hq = iq || hero(s), hr = atv(s.rows, hq.c, day), v = split(R.iso === 'p' ? fm('usd0', pxAt(s, hr[0])) : iq ? fm(iq.f || s.f, hr[iq.vc != null ? iq.vc : iq.c]) : fm(hq.f || s.f, hr[hq.c]));   /* ㉟ 3 圖例單獨看一條時，主數字換成那一條 */
+    odo($('#oc-b' + k), v[0]); $('#oc-u' + k).textContent = v[1]; $('#oc-d' + k).textContent = (R.iso != null ? (iq ? T(iq.zh, iq.en) : T('BTC 價格', 'BTC price')) + ' · ' : '') + ymd(hr[0]) + (live ? T('　最新', '  latest') : '');
     if (R.L) { const cx = R.L.cx, on = !live && day >= R.t0; cx.setAttribute('visibility', on ? 'visible' : 'hidden'); if (on) { const x = F1(R.L.X(Math.max(hr[0], R.t0))), ln = cx.querySelector('line'); ln.setAttribute('x1', x); ln.setAttribute('x2', x);   /* 游標線對齊到讀數那一筆的日子（週末、休市、稀疏的資料都停在有數據的那天） */
       const cd = cx.querySelector('.cxd'); if (cd) { const t9 = cd.querySelector('text'), r9 = cd.querySelector('rect'), wd = dOf(hr[0]).getUTCDay(); t9.textContent = ymd(hr[0]) + ' ' + T('週' + '日一二三四五六'[wd], ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][wd]); const w9 = (t9.getComputedTextLength ? t9.getComputedTextLength() : 80) + 14, pw9 = +cd.dataset.pw, c9 = Math.max(w9 / 2, Math.min(pw9 - w9 / 2, +x)); t9.setAttribute('x', F1(c9)); r9.setAttribute('x', F1(c9 - w9 / 2)); r9.setAttribute('width', F1(w9)); } R.L.dots.forEach(dd => { const val = dd.p ? pxAt(s, hr[0]) : atv(s.rows, dd.c, hr[0])[dd.c]; if (val == null || !(val > 0 || dd.Y !== R.L.Yp)) { dd.el.setAttribute('visibility', 'hidden'); return; } dd.el.setAttribute('visibility', 'inherit'); dd.el.setAttribute('cx', x); dd.el.setAttribute('cy', F1(dd.Y(val))); }); } }
     R.lg.forEach(e => { e.el.textContent = e.get(live ? day : hr[0]); });   /* 圖例的數字也用同一天（例：ETF 週末停在週五，價格也是週五的） */
@@ -2572,7 +2643,7 @@ function initOC() {
       dock.setAttribute('aria-label', T('這一頁今天 ' + n + ' 張有訊號，點一下到下一張', n + ' signal' + (n > 1 ? 's' : '') + ' on this page — go to the next one'));
       dock.innerHTML = '<span class="ag-sig" aria-hidden="true"></span><u aria-hidden="true">' + n + '</u><b aria-hidden="true">' + esc(T('張圖今天有訊號', n > 1 ? 'signals today' : 'signal today')) + '</b><svg class="ag-go" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg>';
       dock.classList.remove('rest'); clearTimeout(tm); tm = setTimeout(() => dock.classList.add('rest'), 5200); };
-    dock.addEventListener('click', () => { const cs = list(); if (!cs.length) return; k = (k + 1) % cs.length; cs[k].scrollIntoView({ block: 'center' }); const u = dock.querySelector('u'), b = dock.querySelector('b'); if (u) u.textContent = (k + 1) + '/' + cs.length; if (b) b.textContent = T('下一張訊號', 'Next signal'); dock.classList.remove('rest'); clearTimeout(tm); tm = setTimeout(() => dock.classList.add('rest'), 3200); });
+    dock.addEventListener('click', () => { if (sgOpen(dock)) return; const cs = list(); if (!cs.length) return; k = (k + 1) % cs.length; cs[k].scrollIntoView({ block: 'center' }); const u = dock.querySelector('u'), b = dock.querySelector('b'); if (u) u.textContent = (k + 1) + '/' + cs.length; if (b) b.textContent = T('下一張訊號', 'Next signal'); dock.classList.remove('rest'); clearTimeout(tm); tm = setTimeout(() => dock.classList.add('rest'), 3200); });
     el.appendChild(dock); new MutationObserver(() => { if (!q) q = setTimeout(() => { q = 0; draw(); }, 150); }).observe(secs, { childList: true, subtree: true }); setTimeout(draw, 0);   /* keyC 在後面才定義，第一次等這段程式跑完 */
   })();
   if (!reduce && 'IntersectionObserver' in window) (function () {
@@ -2637,10 +2708,10 @@ function initOC() {
       const t = b.closest('.fc'), c = t ? cOf(t) : null; if (!c) return; const sg = c.sig && c.sig[0] ? T(c.sig[0].tz, c.sig[0].te) : '', say = c.say ? T(c.say.sz, c.say.se) : ''; b.setAttribute('aria-expanded', 'true'); b.insertAdjacentHTML('afterend', '<div class="ag-note" role="note"><b>' + esc(T(AG.chk[0], AG.chk[1])) + '</b>' + (sg ? '<i>' + esc(sg) + '</i>' : '') + esc(say) + '</div>'); }, true);
     /* 2 狀態膠囊（⑲ 6）：畫的時候五個小點依序亮暗；畫完 2.4 秒收起成小點（有訊號留數字，點一下到下一張訊號卡），沒有訊號就淡出 */
     const dock = document.createElement('button'); dock.type = 'button'; dock.className = 'ag-dock'; dock.hidden = true; let dkN = -1, dkT = 0, dkU = 0;
-    function agDock() { const n = $$('.fc.sg, .fr.sg', secs).length, pg = String(ci); if (!dock.firstChild || +dock.dataset.n !== n || dock.dataset.l !== lang || dock.dataset.p !== pg) { const fresh = +dock.dataset.n !== n || dock.dataset.p !== pg; if (fresh) dkN = -1; dock.dataset.n = n; dock.dataset.l = lang; dock.dataset.p = pg; const tx = n ? T('這一頁今天 ' + n + ' 張有訊號', n + ' signal' + (n > 1 ? 's' : '') + ' on this page') : T('這一頁今天沒有訊號', 'No signals on this page'); dock.setAttribute('aria-label', tx + (n ? T('，點一下到下一張', ' — go to the next one') : '')); dock.innerHTML = n ? '<span class="ag-sig" aria-hidden="true"><i></i></span><u aria-hidden="true">' + (dkN >= 0 ? (dkN + 1) + '/' + n : n) + '</u><b aria-hidden="true">' + esc(dkN >= 0 ? T('下一張訊號', 'Next signal') : T('張圖今天有訊號', n > 1 ? 'signals today' : 'signal today')) + '</b><svg class="ag-go" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg>' : '<span class="ag-dt" aria-hidden="true">' + Object.keys(AG).map(k => '<i style="--agc:' + AG[k][2] + '"></i>').join('') + '</span><b aria-hidden="true">' + esc(tx) + '</b>'; if (n && fresh) { dock.classList.remove('pop'); void dock.offsetWidth; dock.classList.add('pop'); if (performance.now() >= dkU) { dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => dock.classList.add('rest'), 5200); } } } dock.classList.toggle('none', !n); dock.classList.toggle('has', !!n); }   /* 有訊號時的樣子和動效見 ⑲ 6 */
+    function agDock() { const n = $$('.fc.sg, .fr.sg', secs).length, pg = String(ci); if (!dock.firstChild || +dock.dataset.n !== n || dock.dataset.l !== lang || dock.dataset.p !== pg) { const fresh = +dock.dataset.n !== n || dock.dataset.p !== pg; if (fresh) dkN = -1; dock.dataset.n = n; dock.dataset.l = lang; dock.dataset.p = pg; const tx = n ? T('這一頁今天 ' + n + ' 張有訊號', n + ' signal' + (n > 1 ? 's' : '') + ' on this page') : T('這一頁今天沒有訊號', 'No signals on this page'); dock.setAttribute('aria-label', tx + (n ? T('，點一下看今天全部的訊號', ' — open today’s list') : '')); dock.innerHTML = n ? '<span class="ag-sig" aria-hidden="true"><i></i></span><u aria-hidden="true">' + (dkN >= 0 ? (dkN + 1) + '/' + n : n) + '</u><b aria-hidden="true">' + esc(dkN >= 0 ? T('下一張訊號', 'Next signal') : T('張圖今天有訊號', n > 1 ? 'signals today' : 'signal today')) + '</b><svg class="ag-go" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg>' : '<span class="ag-dt" aria-hidden="true">' + Object.keys(AG).map(k => '<i style="--agc:' + AG[k][2] + '"></i>').join('') + '</span><b aria-hidden="true">' + esc(tx) + '</b>'; if (n && fresh) { dock.classList.remove('pop'); void dock.offsetWidth; dock.classList.add('pop'); if (performance.now() >= dkU) { dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => dock.classList.add('rest'), 5200); } } } dock.classList.toggle('none', !n); dock.classList.toggle('has', !!n); }   /* 有訊號時的樣子和動效見 ⑲ 6 */
     function agBusy(ms) { const now = performance.now(); dkU = Math.max(dkU, now + ms); dock.classList.add('busy'); dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => { dock.classList.remove('busy'); dock.classList.add('rest'); }, dkU - now + 2400); }
     el.appendChild(dock); agDock(); agBusy(600);
-    dock.addEventListener('click', () => { const cs = $$('.fc.sg, .fr.sg', secs); if (!cs.length) return; dkN = (dkN + 1) % cs.length; const t = cs[dkN], who = 'chk'; if (t.classList.contains('fr')) { const l2 = t.closest('.frl'); if (l2) l2.classList.add('in'); t.classList.remove('hit'); void t.offsetWidth; t.classList.add('hit'); setTimeout(() => t.classList.remove('hit'), 2600); } t.scrollIntoView({ block: 'center', behavior: 'smooth' }); { const u = dock.querySelector('u'), b = dock.querySelector('b'); if (u) u.textContent = (dkN + 1) + '/' + cs.length; if (b) b.textContent = T('下一張訊號', 'Next signal'); dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => dock.classList.add('rest'), 3200); }
+    dock.addEventListener('click', () => { if (sgOpen(dock)) return; const cs = $$('.fc.sg, .fr.sg', secs); if (!cs.length) return; dkN = (dkN + 1) % cs.length; const t = cs[dkN], who = 'chk'; if (t.classList.contains('fr')) { const l2 = t.closest('.frl'); if (l2) l2.classList.add('in'); t.classList.remove('hit'); void t.offsetWidth; t.classList.add('hit'); setTimeout(() => t.classList.remove('hit'), 2600); } t.scrollIntoView({ block: 'center', behavior: 'smooth' }); { const u = dock.querySelector('u'), b = dock.querySelector('b'); if (u) u.textContent = (dkN + 1) + '/' + cs.length; if (b) b.textContent = T('下一張訊號', 'Next signal'); dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => dock.classList.add('rest'), 3200); }
       setTimeout(() => { const fg = t.parentNode; if (!fg || !t.isConnected) return; const w = t.offsetWidth, h = t.offsetHeight, L = agL(fg, t.offsetLeft, t.offsetTop, w, h); L.innerHTML = agBox(w, h, 0, AG[who][2]) + agCur(who, w * .5, h * .42, w * .5, h * .42, 1500, 0, { sx: w, sy: h + 80 }); setTimeout(() => L.remove(), 2700); }, 520); });
     /* 4 數字改稿：主數字變了，舊的劃掉往上飄，數據 AI 過來點一下 */
     agReHook = (ol, key, old) => { const nb = $('#oc-b' + key), t = ol.closest('.fc'); if (!nb || !t || !old || nb.textContent === old) return; const big = nb.closest('.ol-big') || nb, r = relTo(big, t); if (!r) return; const L = agL(t, 0, 0, t.offsetWidth, t.offsetHeight), cs = getComputedStyle(big); L.innerHTML = '<s class="ag-old" style="left:' + F1(r.x) + 'px;top:' + F1(r.y) + 'px;font:' + cs.font.replace(/"/g, "'") + ';letter-spacing:' + cs.letterSpacing + '">' + esc(old) + '</s>' + agCur('num', r.x + Math.min(r.w, 150), r.y + r.h * .7, r.x + Math.min(r.w, 150), r.y + r.h * .7, 900, 0, { sx: r.x + 260, sy: r.y + 120 }); setTimeout(() => L.remove(), 1300); };
@@ -2997,7 +3068,7 @@ function initOC() {
     if ((b = t.closest('[data-src]'))) { toast(b.dataset.src, 1); return; }   /* ㉑ 4：手機點來源圖示 */
     if ((b = t.closest('.sy-d'))) { b.closest('.ol-say').classList.toggle('open'); return; }
     if (fx && t.closest('#oc-fx') && !$('#oc-fx').dataset.drag && !t.closest('button, a, summary, details, input, .ol-c, .or')) { closeFx(); return; }
-    if (!fx && (b = t.closest('.fc')) && !t.closest('button, a, summary, details, input, .ol-c.d3, .d3-sc')) {   /* ㉛ 立體圖上的點和拖是選柱子、轉角度，不是展開卡片 */ const q1 = b.querySelector('[data-chid]'), f1 = b.querySelector('[data-fx]'); if (q1) { q1.click(); return; } if (f1) { openFx(f1.dataset.fx); return; } }
+    if (!fx && (b = t.closest('.fc')) && !t.closest('button, a, summary, details, input, .ol-c.d3, .d3-sc, .ol-lg span[data-s]')) {   /* ㉛ 立體圖上的點和拖是選柱子、轉角度，不是展開卡片 */ const q1 = b.querySelector('[data-chid]'), f1 = b.querySelector('[data-fx]'); if (q1) { q1.click(); return; } if (f1) { openFx(f1.dataset.fx); return; } }
     if (t.closest('[data-fxl]') && fx) { copyLink(G[fx.k - 1].charts[fx.i].k); return; }
     if (t.closest('[data-fxd]') && fx) { const c0 = G[fx.k - 1].charts[fx.i]; savePng(c0.k, T(c0.zh, c0.en)); return; }
     if (t.closest('[data-fxm]')) { const f = $('#oc-fx'); f.classList.toggle('max'); fxBtns(); renderLead('F'); return; }
@@ -3006,7 +3077,7 @@ function initOC() {
     if ((b = t.closest('[data-go]'))) { goSec(+b.dataset.go); return; }
     if ((b = t.closest('[data-fx]'))) { openFx(b.dataset.fx); return; }
     if ((b = t.closest('[data-ly]'))) { const c = keyC(b.dataset.key); if (c && (c._ly || 'sp') !== b.dataset.ly) { c._ly = b.dataset.ly; reOne(b.dataset.key); } return; }
-    if ((b = t.closest('[data-rg]'))) { const c = keyC(b.dataset.key); if (c) { c._rg = +b.dataset.rg; reOne(b.dataset.key); } return; }
+    if ((b = t.closest('[data-rg]'))) { const c = keyC(b.dataset.key); if (c) { const k9 = b.dataset.key, R9 = keyR(k9), o9 = R9 && R9.L && isT(c) && !R9.L.dist ? R9.t0 : null; c._rg = +b.dataset.rg; morphGo(k9, c, o9); } return; }
     if ((b = t.closest('[data-lq][data-key]'))) { const c = keyC(b.dataset.key), v = +b.dataset.lq, k9 = b.dataset.key; if (!c || !c.dist || !c.dist.heat) return; if (!v) { if (c._lq) { c._lq = 0; reOne(k9); } return; }   /* ㉓ 6 個月：第一次點才載入 */
       if (c._lq && c._lqx) return; b.classList.add('busy'); lqLong(c).then(() => { c._lq = 1; reOne(k9); }).catch(() => { b.classList.remove('busy'); toast(T('長期資料沒有載入，請再試一次', 'Could not load the long-range data — please try again')); }); return; }
     if ((b = t.closest('[data-pg][data-key]'))) { const c = keyC(b.dataset.key); if (c && c.dist && +b.dataset.pg !== pgOf(c)) { c._pg = +b.dataset.pg; reOne(b.dataset.key); } return; }
@@ -3047,6 +3118,86 @@ function initOC() {
   el.addEventListener('pointerout', e => { const h = e.target.closest ? e.target.closest('.hit') : null; if (!h) return; if (agSnapHook) agSnapHook(null); const key = h.dataset.k; if (key === 'F') { cursor('F', null); pcursor('F', null); } else { const sk = +key.split('_')[0]; curS(sk, null); pcurS(sk, null); } });
   hd.addEventListener('pointermove', e => { const r = hd.getBoundingClientRect(); mx = e.clientX - r.left; my = e.clientY - r.top; tx = mx / r.width * 2 - 1; ty = my / r.height * 2 - 1; const f = stg.querySelector('.os.front'); if (f) { const fr = f.getBoundingClientRect(); f.style.setProperty('--lx', ((e.clientX - fr.left) / fr.width * 100).toFixed(1) + '%'); } });
   hd.addEventListener('pointerleave', () => { mx = my = -1e4; tx = ty = 0; });
+  /* ㉟ 2 分段切換的底塊：前緣（往哪邊走的那一邊）彈簧硬、後緣軟，跑的時候自然拉長，到了彈一下。整張卡重畫時，從點之前的位置接著滑 */
+  const SEGF = {}, segSig = g => { const b = g.querySelector('button'); return (b && b.dataset.key || '') + '|' + (b ? ['m', 'rg', 'ly', 'pg'].find(a => b.hasAttribute('data-' + a)) || '' : '') + '|' + (g.getAttribute('aria-label') || ''); };
+  const segBox = g => { const b = g.querySelector('button[aria-pressed="true"]'); return b && b.offsetWidth ? { l: b.offsetLeft, r: b.offsetLeft + b.offsetWidth, t: b.offsetTop, h: b.offsetHeight } : null; };
+  const segPut = p => { p.el.style.transform = `translate3d(${F1(p.l)}px, ${F1(p.t)}px, 0)`; p.el.style.width = F1(Math.max(0, p.r - p.l)) + 'px'; p.el.style.height = p.h + 'px'; };
+  function segGo(g, from) { const p = g._sp, to = segBox(g); if (!p || !to) return; p.t = to.t; p.h = to.h; p.tl = to.l; p.tr = to.r;
+    if (!from || reduce || Math.abs(from.l - to.l) + Math.abs(from.r - to.r) < 1) { p.l = to.l; p.r = to.r; p.vl = p.vr = 0; segPut(p); return; }
+    if (!p.run) { p.l = from.l; p.r = from.r; p.vl = p.vr = 0; } const rt = to.l > p.l; p.kl = rt ? 160 : 460; p.kr = rt ? 460 : 160;
+    if (p.run) return; p.run = 1; let last = performance.now();
+    const step = now => { const dt = Math.min(.032, (now - last) / 1000); last = now; for (let i = 0; i < 3; i++) { const h = dt / 3; p.vl += ((p.tl - p.l) * p.kl - p.vl * 2 * Math.sqrt(p.kl) * .58) * h; p.l += p.vl * h; p.vr += ((p.tr - p.r) * p.kr - p.vr * 2 * Math.sqrt(p.kr) * .58) * h; p.r += p.vr * h; }
+      if (!g.isConnected) { p.run = 0; return; } if (Math.abs(p.tl - p.l) + Math.abs(p.tr - p.r) < .25 && Math.abs(p.vl) + Math.abs(p.vr) < 4) { p.l = p.tl; p.r = p.tr; segPut(p); p.run = 0; return; } segPut(p); requestAnimationFrame(step); };
+    requestAnimationFrame(step); }
+  function segInit(g) { if (g._sp || !g.querySelector('button[aria-pressed]')) return; const sp = document.createElement('i'); sp.className = 'sp'; sp.setAttribute('aria-hidden', 'true'); g.prepend(sp); g.classList.add('pl'); g._sp = { el: sp, l: 0, r: 0 };
+    const sig = segSig(g), f = SEGF[sig]; delete SEGF[sig]; segGo(g, f && Date.now() - f.at < 2500 ? f : null);
+    if (window.ResizeObserver) { const ro = new ResizeObserver(() => { if (!g.isConnected) { ro.disconnect(); return; } if (!g._sp.run) segGo(g, null); }); ro.observe(g); } }
+  el.addEventListener('click', e => { const b = e.target.closest ? e.target.closest('.md.pl > button') : null; if (!b) return; const g = b.parentNode, p = g._sp; if (p && p.r > p.l) SEGF[segSig(g)] = { l: p.l, r: p.r, at: Date.now() }; }, true);
+  /* ㉟ 1 翻牌：卡片進到畫面、內容大致畫好之後才翻 */
+  const FIO = !reduce && 'IntersectionObserver' in window ? new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; const t = e.target; FIO.unobserve(t); setTimeout(() => { if (!t.isConnected) return; FLS.add(t.dataset.fk); t.classList.remove('pre'); t.classList.add('run'); }, t.classList.contains('fr-l') ? 700 : 1300); }), { rootMargin: '0px 0px -15% 0px' }) : null;
+  function flInit(t) { t.classList.add('fs'); if (!FIO || FLS.has(t.dataset.fk)) return; t.classList.add('pre'); FIO.observe(t); }
+  let uiQ = 0; const uiScan = () => { uiQ = 0; $$('.md:not(.pl)', el).forEach(segInit); $$('.fl:not(.fs)', el).forEach(flInit); };
+  new MutationObserver(ms => { for (const m of ms) { if (m.type === 'attributes') { const g = m.target.parentNode; if (g && g._sp && m.target.getAttribute('aria-pressed') === 'true') segGo(g, g._sp.r > g._sp.l ? { l: g._sp.l, r: g._sp.r } : null); } else if (!uiQ) uiQ = requestAnimationFrame(uiScan); } })
+    .observe(el, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-pressed'] });
+  uiScan();
+  /* ㉟ 3 圖例：移上去預覽、點一下固定 */
+  function iso(ol, ds) { const R = keyR(ol.id.slice(5)), svg = ol.querySelector('.ol-c svg'), lg = ol.querySelector('.ol-lg'); if (!R || !svg || !lg) return; const on = ds != null;
+    svg.classList.toggle('iso', on); svg.querySelectorAll('.sr').forEach(n => n.classList.toggle('on', on && n.dataset.s === ds)); lg.classList.toggle('iso', on); lg.querySelectorAll('span[data-s]').forEach(n => n.classList.toggle('on', on && n.dataset.s === ds)); R.iso = on ? ds : null; cur1(R, null); }
+  const lgSp = t => t && t.closest ? t.closest('.ol-lg span[data-s]') : null;
+  el.addEventListener('pointerover', e => { if (e.pointerType !== 'mouse') return; const sp = lgSp(e.target), ol = sp && sp.closest('.ol'); if (!ol || ol._pin != null || ol._iso === sp.dataset.s) return; ol._iso = sp.dataset.s; iso(ol, ol._iso); });
+  el.addEventListener('pointerout', e => { if (e.pointerType !== 'mouse') return; const sp = lgSp(e.target); if (!sp || lgSp(e.relatedTarget)) return; const ol = sp.closest('.ol'); if (ol && ol._pin == null && ol._iso != null) { ol._iso = null; iso(ol, null); } });
+  el.addEventListener('click', e => { const sp = lgSp(e.target), ol = sp && sp.closest('.ol'); if (!ol) return; const ds = sp.dataset.s; if (ol._pin === ds) { ol._pin = ol._iso = null; iso(ol, null); } else { ol._pin = ol._iso = ds; iso(ol, ds); } });
+  /* ㉟ 4 換時間範圍的變形 */
+  function morphGo(key, c, o0) {
+    if (o0 == null || reduce) { reOne(key); return; }
+    MORPH = key; try { reOne(key); } finally { MORPH = null; }
+    const R = keyR(key), box = $('#oc-c' + key); if (!R || !R.L || !box || R.t0 === o0) return;
+    const n0 = R.t0, a = Math.log(Math.max(1, tE - o0)), z = Math.log(Math.max(1, tE - n0)), st = performance.now(), dur = 700;
+    R.L = leadChart(box, c, key, o0); R.L.cx.setAttribute('visibility', 'hidden');
+    const step = now => { if (!box.isConnected || keyR(key) !== R) return; const u = Math.min(1, (now - st) / dur), e = 1 - Math.pow(1 - u, 3);
+      R.L = leadChart(box, c, key, u < 1 ? Math.round(tE - Math.exp(a + (z - a) * e)) : n0); if (u < 1) { R.L.cx.setAttribute('visibility', 'hidden'); requestAnimationFrame(step); } else cur1(R, null); };
+    requestAnimationFrame(step);
+  }
+  /* ㉟ 5 手機放大鏡 */
+  (function () {
+    if (!('ontouchstart' in window) || SHARE) return; let lp = null, hold = null, tm = 0; const K = 2.4, RAD = 58;
+    const tmv = e => { if (!hold || !hold.on) return; e.preventDefault(); const t = e.touches[0]; if (t) move(t.clientX, t.clientY); };
+    function start() { const h = hold.h, key = h.dataset.k, R1 = keyR(key), svg = h.ownerSVGElement; if (!R1 || !R1.L || R1.L.dist || !svg || !isT(R1.c)) { hold = null; return; }
+      if (!lp) { lp = document.createElement('div'); lp.className = 'lp'; lp.setAttribute('aria-hidden', 'true'); lp.innerHTML = '<div class="lp-c"><div class="lp-v"></div><i class="lp-x"></i></div><b class="lp-d"></b>'; el.appendChild(lp); }
+      const v = lp.querySelector('.lp-v'), cl = svg.cloneNode(true); cl.querySelectorAll('.hit, .cx, .pulse, .shim').forEach(n => n.remove()); cl.removeAttribute('role'); cl.style.width = svg.clientWidth + 'px'; cl.style.height = svg.clientHeight + 'px'; v.innerHTML = ''; v.appendChild(cl);
+      Object.assign(hold, { on: true, key, svg }); window.addEventListener('touchmove', tmv, { passive: false }); if (navigator.vibrate) try { navigator.vibrate(8); } catch (e1) {} move(hold.x, hold.y); lp.classList.add('on'); }
+    function move(x, y) { const key = hold.key, svg = hold.svg, b = svg.getBoundingClientRect(), R0 = keyR(key); if (!R0 || !R0.L) return; const day = Math.round(R0.t0 + Math.max(0, Math.min(1, (x - b.left) / b.width)) * (tE - R0.t0)); if (key === 'F') cursor('F', day); else curS(+key.split('_')[0], day);
+      const L = keyR(key).L, vb = svg.viewBox.baseVal, sx = b.width / (vb.width || b.width), sy = b.height / (vb.height || b.height), px = +L.cx.querySelector('line').getAttribute('x1'), hc = hero(R0.s).c, hd = L.dots.find(dd => !dd.p && dd.c === hc && dd.el.getAttribute('visibility') !== 'hidden' && dd.el.getAttribute('cy'));
+      const py = hd ? +hd.el.getAttribute('cy') : (y - b.top) / sy; lp.querySelector('.lp-v').style.transform = `translate(${F1(RAD - px * sx * K)}px, ${F1(RAD - py * sy * K)}px) scale(${K})`;
+      const ct = L.cx.querySelector('.cxd text'), vv = $('#oc-b' + key), uu = $('#oc-u' + key); lp.querySelector('.lp-d').textContent = (ct ? ct.textContent.replace(/ \S+$/, '') : '') + (vv && vv._s ? '  ' + vv._s + (uu ? uu.textContent : '') : '');   /* 日期＋讀值（滾動數字記在 _s） */
+      const cx = Math.max(RAD + 8, Math.min(innerWidth - RAD - 8, x)), cy = Math.max(RAD + 8, y - RAD - 60); lp.style.transform = `translate3d(${F1(cx - RAD)}px, ${F1(cy - RAD)}px, 0)`; }
+    function end() { clearTimeout(tm); window.removeEventListener('touchmove', tmv); if (hold && hold.on) { lp.classList.remove('on'); if (hold.key === 'F') { cursor('F', null); pcursor('F', null); } else { const sk = +hold.key.split('_')[0]; curS(sk, null); pcurS(sk, null); } } hold = null; }
+    el.addEventListener('touchstart', e => { end(); const h = e.target.closest ? e.target.closest('rect.hit') : null; if (!h || e.touches.length !== 1) return; const t = e.touches[0]; hold = { x: t.clientX, y: t.clientY, on: false, h }; tm = setTimeout(() => { if (hold && !hold.on) start(); }, 260); }, { passive: true });
+    el.addEventListener('touchmove', e => { if (!hold || hold.on) return; const t = e.touches[0]; if (!t || Math.hypot(t.clientX - hold.x, t.clientY - hold.y) > 9) end(); }, { passive: true });
+    el.addEventListener('touchend', end, { passive: true }); el.addEventListener('touchcancel', end, { passive: true });
+    el.addEventListener('contextmenu', e => { if (hold && hold.on) e.preventDefault(); });
+  })();
+  /* ㉟ 6 訊號清單：右下角的提示長成面板（clip-path 從提示的那一塊攤開，形狀接著變） */
+  let sgp = null, sgDock = null;
+  function sgClose() { if (!sgp || !sgp.classList.contains('on')) return; sgp.classList.remove('on'); if (sgDock) { sgDock.classList.remove('x-open'); sgDock.setAttribute('aria-expanded', 'false'); } setTimeout(() => { if (sgp && !sgp.classList.contains('on')) sgp.hidden = true; }, reduce ? 0 : 480); }
+  function sgOpen(dock) {
+    const ix = id => CH.findIndex(c => c.id === id), all = (D.sigs || []).filter(q => ix(q.p) >= 0); if (!all.length) return false; sgDock = dock;
+    if (!sgp) { sgp = document.createElement('div'); sgp.className = 'sgp'; sgp.hidden = true; sgp.setAttribute('role', 'dialog'); el.appendChild(sgp);
+      sgp.addEventListener('click', e => { const b = e.target.closest('[data-sgk]'); if (b) { sgGo(b.dataset.sgp, b.dataset.sgk); return; } if (e.target.closest('.sgp-x')) sgClose(); });
+      document.addEventListener('pointerdown', e => { if (sgp.classList.contains('on') && !sgp.contains(e.target) && !(sgDock && sgDock.contains(e.target))) sgClose(); }, true);
+      document.addEventListener('keydown', e => { if (e.key === 'Escape') sgClose(); }); }
+    if (sgp.classList.contains('on')) { sgClose(); return true; }
+    const eh = x => String(x).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'), cur = O.id, L = all.slice().sort((a, b) => (b.p === cur) - (a.p === cur) || ix(a.p) - ix(b.p)); let last = null;
+    const rows = L.map((q, j) => (q.p !== last ? (last = q.p, `<p class="sgp-g" style="--j:${j}">${esc(q.p === cur ? T('這一頁', 'This page') : T(CH[ix(q.p)].zh, CH[ix(q.p)].en))}</p>`) : '') + `<button type="button" class="sgp-r" data-sgp="${esc(q.p)}" data-sgk="${esc(q.k)}" style="--j:${j}"><span class="ag-sig" aria-hidden="true"><i></i></span><span class="sgp-t"><b>${eh(T(q.zh, q.en))}</b><span>${eh(T(q.tz, q.te))}</span></span>${IC('go')}</button>`).join('');
+    sgp.innerHTML = `<div class="sgp-h"><b>${T('今天的訊號', 'Today’s signals')}<u>${L.length}</u></b><button type="button" class="sgp-x" aria-label="${T('收起', 'Close')}">×</button></div><div class="sgp-l">${rows}</div>`; sgp.setAttribute('aria-label', T('今天的訊號', 'Today’s signals'));
+    sgp.classList.remove('on'); sgp.style.transition = 'none'; sgp.hidden = false; const db = dock.getBoundingClientRect(), pb = sgp.getBoundingClientRect();
+    [['--ct', db.top - pb.top], ['--cl', db.left - pb.left], ['--cr', pb.right - db.right], ['--cb', pb.bottom - db.bottom]].forEach(q => sgp.style.setProperty(q[0], F1(Math.max(0, q[1])) + 'px'));
+    void sgp.offsetWidth; sgp.style.transition = ''; void sgp.offsetWidth; sgp.classList.add('on'); dock.classList.add('x-open'); dock.setAttribute('aria-expanded', 'true'); const f = sgp.querySelector('.sgp-r'); if (f) setTimeout(() => f.focus({ preventScroll: true }), 60); return true;
+  }
+  function sgGo(p, k) { sgClose(); const i2 = CH.findIndex(c => c.id === p); if (i2 < 0) return; if (fx) closeFx(); const far = i2 !== ci; if (far) goCh(i2); let n = 0;
+    const go = () => { const t = $('#oc-secs').querySelector('.fc[data-k="' + k + '"], .fr[data-k="' + k + '"]'); if (!t) { if (++n < 30) setTimeout(go, 120); return; } if (t.classList.contains('fr')) { const l2 = t.closest('.frl'); if (l2) l2.classList.add('in'); } else t.classList.add('in');
+      t.scrollIntoView({ block: 'center', behavior: reduce ? 'auto' : 'smooth' }); t.classList.remove('hit'); void t.offsetWidth; t.classList.add('hit'); setTimeout(() => t.classList.remove('hit'), 2600); };
+    setTimeout(go, far ? 460 : 60); }
   function layout() {
     const r = hd.getBoundingClientRect(), dpr = Math.min(2, window.devicePixelRatio || 1), wChg = Math.round(r.width || 1200) !== Math.round(W); W = r.width || 1200; H = r.height || 760;   /* 只有寬度變了才重建卡片（⑱）：手機捲動時網址列伸縮只改高度 */ cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     g = W < 600 ? 18 : 22; cols = Math.ceil(W / g); rows = Math.ceil(H / g); B = new Float32Array(cols * rows); R = new Float32Array(cols * rows); el.style.setProperty('--fy', (((r.top - el.getBoundingClientRect().top) % g + g) % g).toFixed(1) + 'px'); bsize(); if (wChg) renderAll(); R.set(B); field(0);
