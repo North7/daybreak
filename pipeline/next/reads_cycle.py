@@ -233,7 +233,7 @@ def path(L):
     rv = (m.get('reviews') or [{}])[-1]
     return sz, se, [
         it('權重', 'Weights', '/'.join('%d' % v for v in w.values()), '/'.join('%d' % v for v in w.values()), 'neu', '、'.join('%s %d%%' % (k, v) for k, v in w.items()) + '。', ', '.join('%s %d%%' % (PN.get(k, k).capitalize() if i == 0 else PN.get(k, k), v) for i, (k, v) in enumerate(w.items())) + '.'),
-        it('頂部模型', 'Top model', usd(t['median']), usd(t['median']), 'neu', '八成區間 %s–%s，時間 %s。' % (usd(t['p10']), usd(t['p90']), t['timing']), '80%% range %s–%s, timed for %s.' % (usd(t['p10']), usd(t['p90']), t.get('timing_en') or t['timing'])),
+        it('頂部模型', 'Top model', usd(t['median']), usd(t['median']), 'neu', '80%% 區間 %s–%s，時間 %s。' % (usd(t['p10']), usd(t['p90']), t['timing']), '80%% range %s–%s, timed for %s.' % (usd(t['p10']), usd(t['p90']), t.get('timing_en') or t['timing'])),
         it('下次檢討', 'Next review', md(m['next_review']), mde(m['next_review']), 'neu', '每月底依收盤重新加權%s。' % ('；%s 收 %s' % (md(rv['close_date']), usd(rv['close'])) if rv.get('close') else ''),
            'Re-weighted on each month-end close%s.' % ('; %s closed at %s' % (mde(rv['close_date']), usd(rv['close'])) if rv.get('close') else ''))]
 
@@ -257,7 +257,7 @@ CARDS = dict(dawn=dawn, stage=stage, regime=regime, hnupl=hnupl, rup=rup, aviv=a
 HOWX = {
     'stage': (['熊市 → 轉換期 → 牛市，只看價格和 200 日均線，加上投降有沒有出現過。', '牛市一旦成立就鎖定，要在下降的均線下待滿 30 天才退回熊市。', '佐證燈只顯示，不參與判定；這是標籤，不是買賣訊號。'],
               ['Bear → transition → bull, judged only by price against the 200-day MA and whether a capitulation has happened.', 'Once bull, it is locked until price spends 30 days under a falling average.', 'The supporting lights are for reference and do not decide the stage. It is a label, not a trade signal.']),
-    'rup': (['未實現獲利 ÷ 市值：還沒賣的幣整體賺了市值的幾成。', '35% 是歷次熊市底部附近的地板，35–37.5% 是近地板區。', '近地板區之後一年多半較高，但進來後幾個月內常再跌一段。'],
+    'rup': (['未實現獲利 ÷ 市值：還沒賣的幣整體賺了市值的百分之幾。', '35% 是歷次熊市底部附近的地板，35–37.5% 是近地板區。', '近地板區之後一年多半較高，但進來後幾個月內常再跌一段。'],
             ['Unrealized profit ÷ market cap: how much of the market cap is paper profit.', '35% has been the floor near past bear bottoms; 35–37.5% is the near-floor zone.', 'A year after the near-floor zone was usually higher, but price often fell further in the months after entering it.']),
     'p6': (['三個估值指標各自和過去四年比的百分位，80 以上算熱。', '任兩個到 80 以上才算進入頂部區。', '只看估值，不看時間；只作讀值。'],
            ['Three valuation indicators, each ranked against the past four years; 80 or above is hot.', 'Any two at 80 or above count as the top zone.', 'Valuation only, not timing. Reading only.']),

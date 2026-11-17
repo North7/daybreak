@@ -214,6 +214,6 @@ def miners(L):
 
 CARDS = dict(pullback=pullback, sx=sx, profit=profit, sopr=sopr, pnlr=pnlr, sthsig=sthsig, conf=conf, npl=npl, agepl=agepl, rpl=rpl, rloss=rloss, ssr=ssr, sec=sec, mom=mom, lthrl=lthrl, miners=miners)
 HOWX = {
-    'miners': (['算力是全網礦機的總運算量；一週掉一成以上，常是礦工在關機。', '電費兩平價是三種效率的礦機在不同電價下，賣幣剛好付得起電費的價格。', '難度每 2,016 個區塊調整一次，讓平均出塊時間回到 10 分鐘。'],
+    'miners': (['算力是全網礦機的總運算量；一週掉 10% 以上，常是礦工在關機。', '電費兩平價是三種效率的礦機在不同電價下，賣幣剛好付得起電費的價格。', '難度每 2,016 個區塊調整一次，讓平均出塊時間回到 10 分鐘。'],
                ['Hashrate is the network\'s total mining power; a drop of 10% or more in a week often means miners are switching off.', 'Power break-even is the price at which three rig efficiencies just cover their electricity at different power costs.', 'Difficulty resets every 2,016 blocks to bring block times back to 10 minutes.']),
 }

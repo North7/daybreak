@@ -98,7 +98,10 @@ def lint_voice(doc, zh, prev=None):
         if w[0].isascii() == zh: continue
         k = len(re.findall(r'\bthough(?=[,.;!?]|$)' if w == 'though' else (r'\b' + re.escape(w) + r'\b' if w[0].isascii() else re.escape(w)), allt, re.I | re.M))
         if k > mx: pets.append(f'{w} {k} 次（上限 {mx}）')
-    if pets: warn.append(f'{tag}口頭禪：' + '、'.join(pets) + '，判斷詞換著用（就是／八成／應該是／看起來像／多半；looks like／my guess is／probably）')
+    if pets: warn.append(f'{tag}口頭禪：' + '、'.join(pets) + '，判斷詞換著用（就是／應該是／看起來像／多半；looks like／my guess is／probably）')
+    if zh:   # 2026-11-17 使用者：「以後幾成這種表達方式都換成百分數表達方式」（長文、回覆、推薦圖表、圖上的字都一樣）
+        ch = sorted({m.group(0) for m in re.finditer(r'[一兩二三四五六七八九半幾]成(?=[以左上下的在多少內時，。、；）\s]|$)', allt)})
+        if ch: warn.append(f'{tag}用了「{"、".join(ch)}」：幾成一律寫成百分數（一成→10%、兩成→20%）')
     ss = [x for _, ts in U for t in ts if t for x in _sents(t, zh)]
     so = sum(1 for x in ss if re.match(r'所以' if zh else r'So\b', x))
     if so > 4: warn.append(f'{tag}「{"所以" if zh else "So"}」開頭的句子 {so} 句：一天最多三四次，結論已經在前面')

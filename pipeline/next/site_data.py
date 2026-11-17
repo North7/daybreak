@@ -62,9 +62,9 @@ def build(L, N, E, dn):
         bv_A, Sx, Lx = pn['all'], pn['sth'], pn['lth']; d_, d30, dl = bv_A['depth'], bv_A['depth30'], bv_A['depth_low22']; bv_g_ = bv_A['cur']; lw = _ym(pn['low22'])
         X['pnlb'] = dict(k='pnlb', zh='賺賠分布：虧多深', en='Profit and loss spread: how deep the losses run', modes=[bv_pm('all', '全部的幣', 'All supply'), bv_pm('sth', '短期持有者', 'Short-term holders'), bv_pm('lth', '長期持有者', 'Long-term holders')],
           src='Bitview · ' + _md(bx['date']), srce='Bitview · ' + _md(bx['date']),
-          dz='把每顆幣用「現在的價格比它最後一次移動時高或低多少」分組，看各組佔供給多少。五條線是累計的：所有在虧的、虧 10%% 以上、20%% 以上、30%% 以上、50%% 以上，所以線不會交叉，越下面的線虧得越深。籌碼分布回答成本在哪個價位，這張回答虧多深。'
-             '可以切換全部的幣、短期持有者（持有不到 155 天）、長期持有者，各自以自己那一群的幣為 100%%。逐筆 UTXO，沒有排除遺失的幣（很早期的幣會一直算在大賺那一組）和交易所內部移轉。只作讀值。',
-          de='Every coin is grouped by how far the current price sits above or below the price it last moved at, and each group is shown as a share of supply. The five lines are cumulative: everything at a loss, then down 10%%, 20%%, 30%% and 50%% or more, so they never cross and the lower the line, the deeper the loss. The supply distribution says where the cost is; this says how deep the loss is. '
+          dz='把每顆幣用「現在的價格比它最後一次移動時高或低多少」分組，看各組佔供給多少。五條線是累計的：所有在虧的、虧 10% 以上、20% 以上、30% 以上、50% 以上，所以線不會交叉，越下面的線虧得越深。籌碼分布回答成本在哪個價位，這張回答虧多深。'
+             '可以切換全部的幣、短期持有者（持有不到 155 天）、長期持有者，各自以自己那一群的幣為 100%。逐筆 UTXO，沒有排除遺失的幣（很早期的幣會一直算在大賺那一組）和交易所內部移轉。只作讀值。',
+          de='Every coin is grouped by how far the current price sits above or below the price it last moved at, and each group is shown as a share of supply. The five lines are cumulative: everything at a loss, then down 10%, 20%, 30% and 50% or more, so they never cross and the lower the line, the deeper the loss. The supply distribution says where the cost is; this says how deep the loss is. '
              'Switch between all supply, short-term holders (held under 155 days) and long-term holders; each is a share of its own group. Per UTXO, with lost coins (very early coins stay in the big-profit group) and exchange-internal transfers not excluded. A reading only.')
         X['pnlb']['say'] = _own([
             ('虧 10% 以上', 'Down 10% or more', _p1(d_[1]), _p1(d_[1]), 'warn' if bv_A['pct10'] >= 80 else 'neu',
@@ -251,7 +251,7 @@ def build(L, N, E, dn):
       ser=[ser(4, t='cand', o=1, h=2, l=3, zh='日 K', en='Daily candles')],
       refs=[dict(v=round(L['price']['ma']['sma20']), col='ac', zh='20 日均線', en='20-day MA')] + ([dict(v=vp['va_high_outer'], col='dn', zh='價值區上緣', en='Value area top'), dict(v=vp['poc'], col='k2', zh='成交最密 ' + usd(vp['poc']), en='Point of control ' + usd(vp['poc']))] if vp else []),   # 照現有網站：20 日均線橘、價值區上緣紅、成交最密灰
       leg=[['up', '收漲', 'Up day', 'box'], ['dn', '收跌', 'Down day', 'box']],
-      dz='最近 20 根日 K，加上這 20 天成交最密的價位和價值區（七成成交量所在的範圍）。', de='The last 20 daily candles, with the price where most volume traded over those 20 days and the value area holding about 70% of it.')
+      dz='最近 20 根日 K，加上這 20 天成交最密的價位和價值區（70% 成交量所在的範圍）。', de='The last 20 daily candles, with the price where most volume traded over those 20 days and the value area holding about 70% of it.')
     md = lambda key, f: ((N['modules'].get(key) or {}).get(f), ((E or {}).get('modules', {}).get(key) or {}).get(f))
     grp = lambda zh, en, sz, se, keys: dict(zh=zh, en=en, sz=sz, se=se, charts=[X[k] for k in keys if k in X])
     def chap(id, zh, en, qz, qe, groups=None, mod=None, hero=None, **kw):

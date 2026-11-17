@@ -317,8 +317,8 @@ def build(L, N, E, dn, X):
           ser=[ser(1, zh='永續對現貨（7 日平均）', en='Perpetual vs spot (7-day average)', col='c5', w=1.8)], refs=[dict(v=0, col='k2', solid=1)],
           zones=[dict(lo=q70, hi=None, col='up', zh='比平常貴：多單願意付溢價追價', en='Richer than usual: longs are paying up to chase', nz='比平常貴的那條線', ne='the richer-than-usual line'),
                  dict(lo=None, hi=q30, col='dn', zh='比平常便宜：槓桿偏空或在避險', en='Cheaper than usual: leverage leans short or is hedging')],
-          leg=[['up', '近 %d 天最高的三成' % len(rs), 'Top 30%% of the last %d days' % len(rs), 'box'], ['dn', '最低的三成', 'Bottom 30%', 'box']],
-          dz='OKX 永續合約的價格除以現貨價格再減 1，取 7 日平均。永續平常就略低於現貨，所以和自己的歷史比：落在近 %d 天最高的三成是比平常貴，多單願意付溢價追價；落在最低的三成是比平常便宜，槓桿偏空或在避險。' % len(rs),
+          leg=[['up', '近 %d 天最高的 30%%' % len(rs), 'Top 30%% of the last %d days' % len(rs), 'box'], ['dn', '最低的 30%', 'Bottom 30%', 'box']],
+          dz='OKX 永續合約的價格除以現貨價格再減 1，取 7 日平均。永續平常就略低於現貨，所以和自己的歷史比：落在近 %d 天最高的 30%% 是比平常貴，多單願意付溢價追價；落在最低的 30%% 是比平常便宜，槓桿偏空或在避險。' % len(rs),
           de='The OKX perpetual price divided by spot, minus 1, as a 7-day average. Perpetuals usually sit slightly below spot, so the line is judged against its own history: in the top 30%% of the last %d days it is richer than usual (longs paying up to chase); in the bottom 30%% it is cheaper than usual (leverage leaning short or hedging).' % len(rs))
 
     def c_kp():   # 顏色：drawKp（每日 ink-3→k2 細線；7 日平均 溢價綠、折價紅；5% 線 warn→c5；壓縮刻度）
@@ -339,7 +339,7 @@ def build(L, N, E, dn, X):
           ser=[ser(3, zh='30 天合計', en='30-day sum', t='sign', base=0, hi='dn', lo='up', w=1.6)], spans=vb(x.get('out_eps'), 'up') + vb(x.get('in_eps'), 'dn'),
           leg=[['up', '淨流出：幣在離開交易所', 'Net outflow: coins leaving exchanges', 'line'], ['dn', '淨流入：幣在流向交易所', 'Net inflow: coins arriving at exchanges', 'line'],
                ['up', '強流出（近 4 年最低 10%）', 'Strong outflow (4-year bottom 10%)', 'box'], ['dn', '強流入（近 4 年最高 10%）', 'Strong inflow (4-year top 10%)', 'box']],
-          dz='流入交易所的幣減掉流出的幣，30 天合計。負值（綠）是幣在離開交易所，正值（橘紅）是幣在流向交易所。底色是 30 天合計落在近 4 年最低一成（強流出）或最高一成（強流入）的期間。',
+          dz='流入交易所的幣減掉流出的幣，30 天合計。負值（綠）是幣在離開交易所，正值（橘紅）是幣在流向交易所。底色是 30 天合計落在近 4 年最低 10%（強流出）或最高 10%（強流入）的期間。',
           de='Coins flowing into exchanges minus coins flowing out, summed over 30 days. Negative (green) means coins are leaving exchanges; positive (orange-red) means coins are arriving. Shading marks periods when the 30-day sum was in the lowest tenth (strong outflow) or highest tenth (strong inflow) of the past four years.')
 
     def c_exch():   # 現有網站只有讀數（ocInterp：減少偏多→綠、增加是潛在賣壓→紅），沒有走勢圖，所以是清單卡

@@ -143,7 +143,7 @@ def k20(L):
     r = L['price']['rows20']; up = sum(1 for x in r if x[4] >= x[1])
     return sz, se, [
         it('20 日均線', '20-day MA', usd(m20), usd(m20), 'neu', '收盤%s %.1f%%。' % ('低' if px < m20 else '高', abs(px / m20 - 1) * 100), 'The close is %.1f%% %s it.' % (abs(px / m20 - 1) * 100, 'below' if px < m20 else 'above')),
-        it('價值區', 'Value area', '%s–%s' % (kusd(lo), kusd(hi)), '%s–%s' % (kusd(lo), kusd(hi)), 'neu', '這 20 天七成成交量的範圍。', 'Where about 70% of the last 20 days\' volume traded.'),
+        it('價值區', 'Value area', '%s–%s' % (kusd(lo), kusd(hi)), '%s–%s' % (kusd(lo), kusd(hi)), 'neu', '這 20 天 70% 成交量的範圍。', 'Where about 70% of the last 20 days\' volume traded.'),
         it('收漲的天數', 'Up days', '%d / %d' % (up, len(r)), '%d / %d' % (up, len(r)), 'neu', '這 20 根日 K 裡收漲的根數。', 'Up candles among the last 20.')]
 
 CARDS = dict(levels=levels, sthgap=sthgap, quant=quant, urpd=urpd, cohort=cohort, conc=conc, strike=strike, gex=gex, liq=liq, book=book, legs=legs, k20=k20)
