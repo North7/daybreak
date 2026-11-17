@@ -50,8 +50,8 @@ def kp(L):
     return V('neu', '韓國沒有過熱', 'No Korean froth', '溢價在常態範圍，散戶沒有追價。', 'The premium is in its normal range: no retail chase.', '7 日平均衝上 5%', 'A 7-day average above 5%')
 def exflow(L):
     x = F(L)['exflow']
-    if x['pct4'] <= 10 and x['out_r90']['med'] > x['base90']['med']: return V('up', '幣在大量離開交易所', 'Coins are leaving exchanges fast', '30 天淨流出在近 4 年最低一成；過去這種時候 90 天後中位數 %s，好過任一天的 %s。' % (pc(x['out_r90']['med']), pc(x['base90']['med'])), 'The 30-day outflow is in the lowest tenth of four years; past cases had a 90-day median of %s versus %s on any day.' % (pc(x['out_r90']['med']), pc(x['base90']['med'])), '轉為淨流入', 'A turn to net inflows')
-    if x['pct4'] >= 90: return V('down', '幣在大量流入交易所', 'Coins are flooding exchanges', '30 天淨流入在近 4 年最高一成：潛在賣壓增加。', 'The 30-day inflow is in the top tenth of four years: more coins ready to sell.', '轉為淨流出', 'A turn to net outflows')
+    if x['pct4'] <= 10 and x['out_r90']['med'] > x['base90']['med']: return V('up', '幣在大量離開交易所', 'Coins are leaving exchanges fast', '30 天淨流出在近 4 年最低 10%%；過去這種時候 90 天後中位數 %s，好過任一天的 %s。' % (pc(x['out_r90']['med']), pc(x['base90']['med'])), 'The 30-day outflow is in the lowest tenth of four years; past cases had a 90-day median of %s versus %s on any day.' % (pc(x['out_r90']['med']), pc(x['base90']['med'])), '轉為淨流入', 'A turn to net inflows')
+    if x['pct4'] >= 90: return V('down', '幣在大量流入交易所', 'Coins are flooding exchanges', '30 天淨流入在近 4 年最高 10%：潛在賣壓增加。', 'The 30-day inflow is in the top tenth of four years: more coins ready to sell.', '轉為淨流出', 'A turn to net outflows')
     return V('neu', '流量在平常範圍', 'Flows are ordinary', '30 天淨流量不極端；流量本身分不出方向。', 'The 30-day net flow is not extreme; flows alone do not set direction.')
 def exch(L):
     c = O(L)['exchange']['exchange_supply_chg30_pct']
@@ -143,7 +143,7 @@ def hnupl(L):
 def rup(L):
     r = O(L)['rup']; n = r['near']
     if r['value'] <= n['hi']: return V('up', '接近週期地板', 'Near the cycle floor', '近地板區之後一年 %d%% 較高（任一天 %d%%）；但 90 天內常再跌一段。' % (n['s365']['up'], n['b365']['up']), '%d%% were higher a year after the near-floor zone (any day: %d%%), though another drop within 90 days was common.' % (n['s365']['up'], n['b365']['up']), '升回 40% 以上', 'A move back above 40%')
-    if r['value'] >= 60: return V('down', '獲利很厚', 'Profits are fat', '未實現獲利佔市值六成以上，歷來接近頂部。', 'Paper profit above 60% of market cap has come near past tops.', '回到 50% 以下', 'A drop below 50%')
+    if r['value'] >= 60: return V('down', '獲利很厚', 'Profits are fat', '未實現獲利佔市值 60% 以上，歷來接近頂部。', 'Paper profit above 60% of market cap has come near past tops.', '回到 50% 以下', 'A drop below 50%')
     return V('neu', '中間區段', 'Middle zone', '離地板和頂部都還遠。', 'Far from both the floor and the top zone.')
 def aviv(L):
     a = O(L)['aviv']
@@ -153,7 +153,7 @@ def aviv(L):
 def rrisk(L):
     r = O(L)['rrisk']
     if r['pct4'] <= 10: return V('neu', '便宜，但過去結果不一', 'Cheap, mixed record', '低檔區之後一年 %d/%d 段上漲、中位數 %s，不比任一天好。' % (r['r365']['up'], r['r365']['n'], pc(r['r365']['med'])), 'After the low zone, %d of %d stretches were higher a year on, median %s: no better than any day.' % (r['r365']['up'], r['r365']['n'], pc(r['r365']['med'])), '離開低檔區', 'Leaving the low zone')
-    if r['pct4'] >= 90: return V('down', '偏貴', 'Rich', '近 4 年最高一成，歷來接近頂部。', 'In the top tenth of four years, as near past tops.', '回到中間', 'A return to the middle')
+    if r['pct4'] >= 90: return V('down', '偏貴', 'Rich', '近 4 年最高 10%，歷來接近頂部。', 'In the top tenth of four years, as near past tops.', '回到中間', 'A return to the middle')
     return V('neu', '中間區段', 'Middle zone', '儲備風險在近 4 年的中間。', 'Reserve risk is in the middle of its four-year range.')
 def pl(L):
     p = C(L)['powerlaw']; lo, hi = p['bottom_band']
@@ -266,9 +266,9 @@ def npl(L):
     return V('up', '整體在獲利了結', 'Net profit-taking', '近 7 天淨實現損益為正：賣出的人整體有賺，趨勢健康。', 'Net realized P&L is positive over 7 days: sellers are in profit, a healthy trend.', '7 天轉負', 'A negative 7-day total')
 def agepl(L):
     a = O(L)['agepl']
-    if a['lth_prof'] >= 60: return V('down', '老手在獲利了結', 'Old hands are taking profit', '6 個月以上的人佔實現獲利六成以上。', 'Holders of 6+ months take over 60% of realized profit.', '比重回到一半以下', 'The share back under half')
-    if a['lth_loss'] >= 60: return V('neu', '老手也在認賠', 'Old hands are capitulating too', '6 個月以上的人佔實現虧損六成以上，常是投降的尾段。', 'Holders of 6+ months take over 60% of realized loss, often the tail of a capitulation.')
-    return V('neu', '認賠在新手', 'Losses sit with newcomers', '認賠主要是近期進場的人，老手沒有大量出手。', 'Loss-taking is mostly recent buyers; old hands are not moving much.', '老手的實現獲利比重升過六成', 'Old hands taking over 60% of profit')
+    if a['lth_prof'] >= 60: return V('down', '老手在獲利了結', 'Old hands are taking profit', '6 個月以上的人佔實現獲利 60% 以上。', 'Holders of 6+ months take over 60% of realized profit.', '比重回到一半以下', 'The share back under half')
+    if a['lth_loss'] >= 60: return V('neu', '老手也在認賠', 'Old hands are capitulating too', '6 個月以上的人佔實現虧損 60% 以上，常是投降的尾段。', 'Holders of 6+ months take over 60% of realized loss, often the tail of a capitulation.')
+    return V('neu', '認賠在新手', 'Losses sit with newcomers', '認賠主要是近期進場的人，老手沒有大量出手。', 'Loss-taking is mostly recent buyers; old hands are not moving much.', '老手的實現獲利比重升過 60%', 'Old hands taking over 60% of profit')
 def rpl(L):
     r = O(L)['rpl']
     if r['value'] < 1: return V('down', '認賠多於獲利', 'Losses outweigh profits', '90 天平均低於 1。', 'The 90-day average is below 1.', '回到 1 以上', 'A move back above 1')
@@ -278,7 +278,7 @@ def rloss(L):
     r = O(L)['rloss']; c = (r.get('chain') or [{}])[-1]; k = c.get('kind')
     if k == 'break': return V('down', '背離被打破', 'Divergence broken', '價格更低、認賠反而更多：賣壓還在加重。', 'A lower price with bigger losses: pressure is still building.', '下一個峰值認賠變少', 'Smaller losses at the next peak')
     if k == 'div': return V('up', '認賠背離', 'Loss divergence', '價格更低、認賠卻更少：賣方在衰竭。', 'A lower price with smaller losses: sellers are tiring.', '背離被打破', 'The divergence breaking')
-    if k == 'cap': return V(better(r['back']['cap']['r30'], r['base30']), '投降', 'Capitulation', '認賠比前一個峰值多一成以上；過去投降之後 30 天中位數 %s。' % pc(r['back']['cap']['r30']['med']), 'Losses 10%%+ above the prior peak; past capitulations had a 30-day median of %s.' % pc(r['back']['cap']['r30']['med']))
+    if k == 'cap': return V(better(r['back']['cap']['r30'], r['base30']), '投降', 'Capitulation', '認賠比前一個峰值多 10%% 以上；過去投降之後 30 天中位數 %s。' % pc(r['back']['cap']['r30']['med']), 'Losses 10%%+ above the prior peak; past capitulations had a 30-day median of %s.' % pc(r['back']['cap']['r30']['med']))
     return V('neu', '峰值差不多', 'Similar peaks', '最近兩個認賠峰值差不多。', 'The last two loss peaks are similar.')
 def ssr(L):
     s = O(L)['ssr']
@@ -304,8 +304,8 @@ def miners(L):
     return V('neu', '舊礦機在虧', 'Old rigs are losing', '主流礦機還有利潤，最舊的那一批在虧電費。', 'Mainstream rigs are profitable; only the oldest are under water.', '跌破 20 J/TH 兩平價', 'A drop below the 20 J/TH break-even')
 def oldc(L):
     y5 = O(L)['bvx']['old']['y5']
-    if y5['pct'] >= 90: return V('down', '老幣大量移動', 'Old coins are moving', '5 年以上的幣移動量在 2016 年以來最高一成。', '5-year-old coins are moving at a top-tenth pace since 2016.', '回到平常', 'A return to normal')
-    return V('neu', '老幣移動在平常範圍', 'Old-coin moves are ordinary', '5 年以上的幣第 %d 分位，不算多。' % y5['pct'], '5-year-old coins at the %dth percentile: not heavy.' % y5['pct'], '升到最高一成', 'A move into the top tenth')
+    if y5['pct'] >= 90: return V('down', '老幣大量移動', 'Old coins are moving', '5 年以上的幣移動量在 2016 年以來最高 10%。', '5-year-old coins are moving at a top-tenth pace since 2016.', '回到平常', 'A return to normal')
+    return V('neu', '老幣移動在平常範圍', 'Old-coin moves are ordinary', '5 年以上的幣第 %d 分位，不算多。' % y5['pct'], '5-year-old coins at the %dth percentile: not heavy.' % y5['pct'], '升到最高 10%', 'A move into the top tenth')
 
 # ══ 價位 ══
 def levels(L):
@@ -314,7 +314,7 @@ def levels(L):
            V('up', '在多空分界上方', 'Above the bull–bear line', '收盤在真實市場均價 %s 上方。' % usd(tm['value']), 'The close is above the true market mean of %s.' % usd(tm['value']), '跌破 %s' % usd(tm['value']), 'A close below %s' % usd(tm['value']))
 def sthgap(L):
     z = O(L)['sth_bands']['now']['z']
-    if z <= -1: return V('up', '短線超賣', 'Short-term oversold', '−1 標準差以下近 4 年只有不到一成的日子，賣壓多半已集中釋放。', 'Below −1 standard deviation on under a tenth of days in four years: selling has largely been released.', '跌到 −2 標準差', 'A drop to −2 standard deviations')
+    if z <= -1: return V('up', '短線超賣', 'Short-term oversold', '−1 標準差以下近 4 年只有不到 10% 的日子，賣壓多半已集中釋放。', 'Below −1 standard deviation on under a tenth of days in four years: selling has largely been released.', '跌到 −2 標準差', 'A drop to −2 standard deviations')
     if z >= 1: return V('down', '短線過熱', 'Short-term overheated', '+1 標準差以上，短期持有者獲利豐厚、容易獲利了結。', 'Above +1: short-term holders are well in profit and apt to sell.', '回到 +0.5 以下', 'A drop below +0.5')
     return V('up' if z > 0 else 'down', '在成本%s' % ('上方' if z > 0 else '下方'), '%s cost' % ('Above' if z > 0 else 'Below'), '收盤在短期持有者成本帶的%s半部。' % ('上' if z > 0 else '下'), 'The close is in the %s half of the band.' % ('upper' if z > 0 else 'lower'), '穿過成本線', 'A cross of the cost line')
 def quant(L):
@@ -338,7 +338,7 @@ def gex(L):
     return V('neu', '波動會%s' % ('被放大' if g['total'] < 0 else '被壓住'), 'Moves %s' % ('amplified' if g['total'] < 0 else 'damped'), '合計 Gamma 為%s：說的是波動大小，不是方向；這是推算。' % ('負' if g['total'] < 0 else '正'), 'Total gamma is %s: it speaks to volatility, not direction, and it is an estimate.' % ('negative' if g['total'] < 0 else 'positive'))
 def liq(L):
     w = D(L)['liq_heat'].get('within5') or {}; a, b = w.get('above') or 0, w.get('below') or 0
-    if b > a * 1.3: return V('down', '下方多單較多', 'More longs below', '下方 5% 內待清算的多單多 %.1f 倍：跌下去容易連環強平。' % (b / max(a, 1)), '%.1fx more longs to liquidate within 5%% below: a fall could cascade.' % (b / max(a, 1)), '下方多單被清掉', 'Longs below being flushed')
+    if b > a * 1.3: return V('down', '下方多單較多', 'More longs below', '下方 5%% 內待清算的多單多 %.1f 倍：跌下去容易連環強平。' % (b / max(a, 1)), '%.1fx more longs to liquidate within 5%% below: a fall could cascade.' % (b / max(a, 1)), '下方多單被清掉', 'Longs below being flushed')
     if a > b * 1.3: return V('up', '上方空單較多', 'More shorts above', '上方 5% 內待清算的空單較多：漲上去容易軋空。', 'More shorts to liquidate within 5% above: a rise could squeeze.', '上方空單被清掉', 'Shorts above being flushed')
     return V('neu', '兩邊差不多', 'Balanced', '上下 5% 內的待清算量差不多。', 'Liquidations within 5% are balanced on both sides.')
 def book(L):
@@ -441,7 +441,7 @@ def treasury(L):
 def pr_neg(L): return pr_us(L)
 def usdt_usd(L):
     u = F(L)['cb_premium']['usdt']
-    if u['disc7_pct_own'] <= 10: return V('down', '穩定幣在換回美元', 'Stablecoins are being cashed out', 'USDT 7 日平均折價在近四年最低一成：有人把穩定幣換回美元，場外資金在退。', 'USDT\'s 7-day discount is in its lowest tenth of four years: holders are swapping back to dollars.', '折價收斂到 −0.05% 以內', 'The discount narrowing inside −0.05%')
+    if u['disc7_pct_own'] <= 10: return V('down', '穩定幣在換回美元', 'Stablecoins are being cashed out', 'USDT 7 日平均折價在近四年最低 10%：有人把穩定幣換回美元，場外資金在退。', 'USDT\'s 7-day discount is in its lowest tenth of four years: holders are swapping back to dollars.', '折價收斂到 −0.05% 以內', 'The discount narrowing inside −0.05%')
     return V('neu', '穩定幣貼近 1 美元', 'Stablecoins near $1', 'USDT 折價不深。', 'USDT\'s discount is shallow.')
 def whstrip(L):
     T = {t['key']: t for t in O(L)['whales']['strip']['tiers']}; a, b = T['1k_10k']['up'], T['100_1k']['up']

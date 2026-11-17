@@ -73,13 +73,13 @@ def build(L, N, E, dn, X):
     x = d.get('ls_acct')
     if has(x):
         p90, p10 = x['p90'], x['p10']
-        zs = near([dict(lo=p90, hi=None, col='dn', zh='在最高的一成：做多的帳戶很擠', en='In the top 10%: long accounts are crowded', nz='最高一成的門檻', ne='the top-10% line'),
-                   dict(lo=None, hi=p10, col='up', zh='在最低的一成：做多的帳戶很少', en='In the bottom 10%: few accounts are long', nz='最低一成的門檻', ne='the bottom-10% line')], x.get('binance'))
+        zs = near([dict(lo=p90, hi=None, col='dn', zh='在最高的 10%：做多的帳戶很擠', en='In the top 10%: long accounts are crowded', nz='最高 10% 的門檻', ne='the top-10% line'),
+                   dict(lo=None, hi=p10, col='up', zh='在最低的 10%：做多的帳戶很少', en='In the bottom 10%: few accounts are long', nz='最低 10% 的門檻', ne='the bottom-10% line')], x.get('binance'))
         X['lsa'] = dict(k='lsa', zh='多空帳戶比', en='Long/short account ratio', hz='Binance 持多單的帳戶占比', he='Share of Binance accounts that are long', f='p1', rng=365, rows=x['rows'], p=1, hero=1,
           ser=[ser(3, zh='Bybit', en='Bybit', col='c5', w=1.2), ser(2, zh='Binance', en='Binance', col='c3', w=1.5)],
           refs=[dict(v=50, col='k2', zh='50%', en='50%')], zones=zs,
-          leg=[['dn', 'Binance 最高的一成（≥ %.1f%%）' % p90, 'Binance top 10%% (≥ %.1f%%)' % p90, 'box'], ['up', 'Binance 最低的一成（≤ %.1f%%）' % p10, 'Binance bottom 10%% (≤ %.1f%%)' % p10, 'box']],
-          dz='BTCUSDT 永續合約上，持多單的帳戶佔全部有部位帳戶的比例。算的是帳戶數、不是部位大小，比較像散戶的情緒，常當反向參考：大家都做多的時候，容易往下洗。紅色帶和綠色帶是 Binance 在 %s 以來最高和最低的一成。' % ym(x['from_']),
+          leg=[['dn', 'Binance 最高的 10%%（≥ %.1f%%）' % p90, 'Binance top 10%% (≥ %.1f%%)' % p90, 'box'], ['up', 'Binance 最低的 10%%（≤ %.1f%%）' % p10, 'Binance bottom 10%% (≤ %.1f%%)' % p10, 'box']],
+          dz='BTCUSDT 永續合約上，持多單的帳戶佔全部有部位帳戶的比例。算的是帳戶數、不是部位大小，比較像散戶的情緒，常當反向參考：大家都做多的時候，容易往下洗。紅色帶和綠色帶是 Binance 在 %s 以來最高和最低的 10%%。' % ym(x['from_']),
           de='The share of accounts holding longs among all accounts with a BTCUSDT perpetual position. It counts accounts, not position size, so it reads like retail sentiment and is used as a contrarian gauge: when everyone is long, price tends to flush them. The red and green bands are the top and bottom tenth of Binance readings since %s.' % ym(x['from_']))
     else:
         na('lsa', '多空帳戶比', 'Long/short account ratio', 'deriv.ls_acct', 'Coinalyze', '這張圖畫 Binance 和 Bybit 上持多單的帳戶占比。', 'This chart shows the share of accounts that are long on Binance and Bybit.')
@@ -174,7 +174,7 @@ def build(L, N, E, dn, X):
             rows.append(row('%s 到期（%d 天後）' % (ymd(e[0]), e[1]), '%s (%dd)' % (e[0], e[1]), '買 %s · 賣 %s' % (n0(e[2]), n0(e[3])), ve='C %s · P %s' % (n0(e[2]), n0(e[3])), seg=[[clip(e[2] / mx * 100), 'up'], [clip(e[3] / mx * 100), 'dn']], col=col if tot >= mx else None,
                             nz='佔全部 %d%% · 賣權 ÷ 買權 %s · 最大痛點 $%s' % (round(tot / al * 100), '—' if pcr_ is None else '%.2f' % pcr_, n0(e[4])), ne='%d%% of all · put ÷ call %s · max pain $%s' % (round(tot / al * 100), '—' if pcr_ is None else '%.2f' % pcr_, n0(e[4]))))
         X['oi'] = dict(k='oi', zh='各到期未平倉', en='Open interest by expiry', hz='選擇權未平倉合計', he='Options open interest, total', hs=dict(v=op.get('total') or (ca + pa), f='btc0'), list=dict(rows=rows),
-          dz='每個到期日還沒平倉的買權和賣權（顆），橫條綠色那段是買權、橘紅色那段是賣權，總長是那個到期日的未平倉量，量越大、到期前對價格的牽動越大。量最大的那個到期日，數字會依賣權 ÷ 買權上色：不到七成是綠色（偏押上漲），超過一是橘紅色（偏避險）。佔全部不到 1% 的到期日不列。',
+          dz='每個到期日還沒平倉的買權和賣權（顆），橫條綠色那段是買權、橘紅色那段是賣權，總長是那個到期日的未平倉量，量越大、到期前對價格的牽動越大。量最大的那個到期日，數字會依賣權 ÷ 買權上色：不到 0.7 是綠色（偏押上漲），超過 1 是橘紅色（偏避險）。佔全部不到 1% 的到期日不列。',
           de='Open calls and puts for each expiry (BTC); in each bar the green part is calls and the orange-red part puts; total length is that expiry\'s open interest, and the bigger it is, the more it can pull on price into expiry. For the largest expiry the figure is coloured by put ÷ call: green under 0.7 (leaning to upside bets), orange-red above 1 (leaning to hedges). Expiries under 1% of the total are left out.')
     else:
         na('oi', '各到期未平倉', 'Open interest by expiry', 'deriv.viz.options.expiries', 'Deribit', '這張卡列出每個到期日的買權和賣權未平倉量。', 'This card lists call and put open interest for each expiry.')

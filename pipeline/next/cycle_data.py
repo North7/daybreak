@@ -143,13 +143,13 @@ def build(L, N, E, dn, X):
              '九條裡排名最高的是%s，第 %d 百分位，%s。' % (zs(AVN[hi_['key']][0]), round(hi_['pct']), cline(hi_)),
              'The highest of the nine is the %s, at percentile %d, with %s.' % (AVN[hi_['key']][1], round(hi_['pct']), cline(hi_, True))),
             ('低於 10 的', 'Below 10', '%d 條' % n10, '%d of 9' % n10, 'neu',
-             '九條線裡有 %d 條排在歷史最低的一成。' % n10, '%d of the nine lines rank in the bottom tenth of history.' % n10)],
+             '九條線裡有 %d 條排在歷史最低的 10%%。' % n10, '%d of the nine lines rank in the bottom tenth of history.' % n10)],
           '最低的是%s（第 %d 百分位）' % (zs(AVN[lo_['key']][0]).rstrip(), round(lo_['pct'])), 'Lowest is the %s (percentile %d)' % (AVN[lo_['key']][1], round(lo_['pct'])))
     rr = o['rrisk']
     X['rrisk'] = dict(k='rrisk', zh='儲備風險', en='Reserve risk', f='n5', rows=rr['rows'], p=1, log=1, hero=2,
       ser=[ser(3, zh='近 4 年最低 10%', en='4-year bottom 10%', col='c4', dash='4 3', w=1), ser(4, zh='近 4 年最高 10%', en='4-year top 10%', col='c5', dash='4 3', w=1), ser(2, zh='儲備風險', en='Reserve risk', col='c3', w=1.8)],
       spans=[dict(a=dn(e['start']), b=dn(e['end']), col='c4', op=.18) for e in rr['eps']], leg=[['c4', '在低檔區的期間', 'Time in the low zone', 'box']],
-      dz='價格相對長期持有者的信心。數值低代表價格便宜、而持有者不願意賣。青色區塊是歷次落在近四年最低一成的期間。', de='Price relative to long-term holder conviction. Low readings mean price is cheap while holders refuse to sell. Cyan bands mark past stays in the bottom tenth of the last four years.')
+      dz='價格相對長期持有者的信心。數值低代表價格便宜、而持有者不願意賣。青色區塊是歷次落在近四年最低 10% 的期間。', de='Price relative to long-term holder conviction. Low readings mean price is cheap while holders refuse to sell. Cyan bands mark past stays in the bottom tenth of the last four years.')
     p6 = cy['p6']; hot = lambda v: 'ac' if v >= 80 else 'c5'
     X['p6'] = dict(k='p6', zh='頂部三指標', en='Top three indicators', hz='進入頂部區的有幾個', he='How many are in the top zone', hs=dict(v=sum(1 for v in p6.values() if v >= 80), f='n0'),
       list=dict(rows=[row('MVRV Z', 'MVRV Z', p6['mvrv_z'], f='n0', bar=p6['mvrv_z'], mk=80, bc='ac', nz='四年百分位', ne='4-year percentile'), row('NUPL', 'NUPL', p6['nupl'], f='n0', bar=p6['nupl'], mk=80, bc='ac', nz='四年百分位', ne='4-year percentile'),
@@ -286,7 +286,7 @@ def build(L, N, E, dn, X):
     X['path'] = dict(k='path', zh='長期路徑：四種走法', en='Long-term paths: four scenarios', hz='頂部模型的中位數', he='Top-model median', hs=dict(v=md['top_model']['median'], f='usd0'),
       xy=dict(xk='ym', log=1, f='usd0', series=[dict(zh='%s %d%%' % (n, md['weights'][n]), en='%s %d%%' % (PN.get(n, n), md['weights'][n]), col=PC.get(n, 'k2'), w=1.4, op=.9, dash='5 4', rows=[[ym(a[0], a[1]), a[2]] for a in rows]) for i, (n, rows) in enumerate(md['nodes'].items())] + [dict(zh='已實現', en='Realized', col='ink', w=2.4, rows=[[ym(a[0], a[1]), a[2]] for a in md['realized']])],
               band=[md['top_model']['p10'], md['top_model']['p90'], 'dn'], vl=[dict(x=int(nh[:4]) + (int(nh[5:7]) - 1 + (int(nh[8:10]) - 1) / 30.0) / 12.0, col='k2', zh='下一次減半（估）', en='Next halving (est.)')], ref=dict(v=md['top_model']['median'], col='dn', zh='頂部中位 $%s' % format(md['top_model']['median'], ','), en='Top median $%s' % format(md['top_model']['median'], ','))),
-      dz='四種可能的走法和各自的權重，每個月依實際價格重新加權。橘色底是頂部模型的八成區間，時間落在 %s。下次檢討 %s。' % (md['top_model']['timing'], md['next_review'].replace('-', '/')), de='Four possible paths with their weights, re-weighted each month against the actual price. The orange band is the top model\'s 80%% range, timed for %s. Next review %s.' % (md['top_model']['timing_en'], md['next_review']))
+      dz='四種可能的走法和各自的權重，每個月依實際價格重新加權。橘色底是頂部模型的 80%% 區間，時間落在 %s。下次檢討 %s。' % (md['top_model']['timing'], md['next_review'].replace('-', '/')), de='Four possible paths with their weights, re-weighted each month against the actual price. The orange band is the top model\'s 80%% range, timed for %s. Next review %s.' % (md['top_model']['timing_en'], md['next_review']))
     hv = [dn(h) for h in cy['halvings']]; px = [[r[0], r[1]] for r in L['chips']['stress']['rows']]
     X['long'] = dict(k='long', zh='價格長期走勢', en='Long-term price', hz='收盤', he='Close', one=1, f='usd0', rng=0, rows=px, ser=[ser(1, zh='BTC 價格', en='BTC price', col='ac', w=1.5)],
       marks=[dict(d=dn(t[0]), v=t[1], on=0, col='dn', up=1, zh='%s 頂' % yr(t[0]), en='%s top' % yr(t[0])) for t in cy['tops']] + [dict(d=dn(t[0]), v=t[1], on=0, col='dn' if t[1] > 50000 else 'c3', up=0, zh='%s 底' % yr(t[0]), en='%s low' % yr(t[0])) for t in cy['bottoms']],
@@ -294,7 +294,7 @@ def build(L, N, E, dn, X):
       dz='全部歷史的收盤，對數刻度：同樣的高度代表同樣的漲跌比例。過去幾輪的頂部大約在減半後 12 到 18 個月，底部大約在頂部後一年。', de='All closes on a log scale, where equal heights are equal percentage moves. Past tops came roughly 12–18 months after a halving, and bottoms about a year after the top.')
     mo = p['monthly']
     X['mon'] = dict(k='mon', zh='月度報酬', en='Monthly returns', hz='今年到現在', he='Year to date', hs=dict(v=mo['ytd'], f='pct1'), grid=dict(rows=mo['rows'], stats=mo['stats'], ystat=mo.get('ystat'), month=mo.get('month')),
-      dz='每個月月底對上個月月底的漲跌 %%，%d 年起。下面兩列是每個月的中位數，和歷年裡上漲的比例（五成以上綠色）；加框的是這個月。' % mo['since'], de='Month-end to month-end returns in %%, since %d. The two bottom rows give each month\'s median and the share of years it rose (green at half or more); the outlined cell is the current month.' % mo['since'])
+      dz='每個月月底對上個月月底的漲跌 %%，%d 年起。下面兩列是每個月的中位數，和歷年裡上漲的比例（50%% 以上綠色）；加框的是這個月。' % mo['since'], de='Month-end to month-end returns in %%, since %d. The two bottom rows give each month\'s median and the share of years it rose (green at half or more); the outlined cell is the current month.' % mo['since'])
     grp = lambda zh, en, sz, se, keys: dict(zh=zh, en=en, sz=sz, se=se, charts=[X[k_] for k_ in keys if k_ in X])
     G = [grp('現在的階段', 'Where we are', '熊市、過渡還是牛市，偏多還是偏空', 'Bear, transition or bull; leaning long or short', ['dawn', 'dawnc', 'stage', 'regime', 'regc']),
          grp('估值冷熱', 'Valuation heat', '和過去比，現在算貴還是便宜', 'Rich or cheap against history', ['avgd', 'avgdc', 'hnupl', 'rup', 'aviv', 'rrisk', 'pl', 'p6', 'p6v']),
