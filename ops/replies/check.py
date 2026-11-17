@@ -13,6 +13,7 @@ from x_len import weight   # noqa: E402
 
 CJK = re.compile(r'[㐀-鿿]')
 SIMP = set('这们说为来对时国会个过还没发么从动场实现价币机构资线买卖盘关头应该开间觉进处净链亿万点涨')
+CHENG = re.compile(r'[一二三四五六七八九十兩幾]成(?![功立為長熟本員交績型不])')   # 2026-11-17 使用者：「以後幾成這種表達方式都換成百分數表達方式」
 BAN = re.compile(r'出場|階梯|避險|賣出線|減碼|分批賣|exit (plan|ladder|framework)|sell (signal|trigger)|take profit', re.I)
 # 2026-11-12 使用者：品牌名中英文都只寫 Daybreak，中文也不寫「破曉」（譯名保留，但對外儘量用英文）。hashtag、網址不受影響（不會出現這兩字）
 BRAND = re.compile(r'破曉')
@@ -110,6 +111,7 @@ def check_longposts():
             if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
             if not it.get('posted') and BRAND.search(t + (it.get('title') or '')): err.append(f'{tag} 品牌名寫 Daybreak，不寫「破曉」（2026-11-12 使用者）')
             if lang == 'zh' and not it.get('posted') and '網站' in t + (it.get('title') or ''): err.append(f'{tag} 「網站」改寫「Daybreak 上」（2026-11-15 使用者：文章裡的「網站裡」都改為「Daybreak 上」）')
+            if lang == 'zh' and not it.get('posted') and CHENG.search(t + (it.get('title') or '')): err.append(f'{tag} 「{CHENG.search(t + (it.get("title") or "")).group(0)}」改成百分數（2026-11-17 使用者：幾成都換成百分數）')
             if lang == 'zh' and set(t) & SIMP: err.append(f'{tag} 有簡體字：{"".join(sorted(set(t) & SIMP))}')
             if lang == 'zh' and not it.get('posted') and EN_NAME.search(t): err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(sorted(set(EN_NAME.findall(t)))) + '（voice.md 用詞，2026-11-09）')
             notes += sentence_notes(tag, t)
@@ -144,7 +146,7 @@ def check():
         if not t and not (it.get('mode') == 'quote' and it.get('quote')): err.append(f'{tag} 沒有回覆內容')   # 只引用不回覆的可以留空（2026-11-06）
         if t and it.get('lang') == 'zh' and not it.get('posted') and REPLY_ONLY.search(t): err.append(f'{tag} 回覆 AI 腔（「說明」）：回覆直接把意思講出來，「說明」是長文的動作（voice.md 第四輪，2026-11-11）')
         rlim = 25000 if it.get('long') and not it.get('quote') else 280   # 2026-11-15 使用者要長篇回覆（Premium）：回覆也可以 "long": true，X 先露前 280 字左右，重點放前面
-        if t: err += [e for e in text_errors(tag + ' 回覆', t, it.get('lang'), rlim) if not (it.get('posted') and ('英文常用名' in e or 'AI 腔' in e))]   # 已發出的不用改（規則是發出之後才加的，2026-11-09）
+        if t: err += [e for e in text_errors(tag + ' 回覆', t, it.get('lang'), rlim) if not (it.get('posted') and ('英文常用名' in e or 'AI 腔' in e or '改成百分數' in e))]   # 已發出的不用改（規則是發出之後才加的，2026-11-09）
         if t and not it.get('long') and ONE_LINE.search(t): err.append(f'{tag} 回覆一行裡有兩句（「{ONE_LINE.search(t).group(0)}」）：每句話換一行，見 voice.md 2026-11-08')
         if HASH.search(t): err.append(f'{tag} 回覆不加 hashtag（引用文和快訊才加）')
         q = it.get('quote')
@@ -251,6 +253,7 @@ def text_errors(tag, t, lang, lim=280):
     if lang == 'zh' and EN_NAME.search(t):
         w = sorted(set(EN_NAME.findall(t))); err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(f'{x}→{EN_NAMES[x]}' for x in w) + '（voice.md 用詞，2026-11-09）')
     if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
+    if lang == 'zh' and CHENG.search(t): err.append(f'{tag} 「{CHENG.search(t).group(0)}」改成百分數（2026-11-17 使用者：幾成都換成百分數）')
     if BRAND.search(t): err.append(f'{tag} 品牌名寫 Daybreak，不寫「破曉」（2026-11-12 使用者）')
     if ROBOT.search(t): err.append(f'{tag} 太機械（「{ROBOT.search(t).group(0)}」）：先回應對方、用「我」，見 README「要有人味」')
     if AI_WORDS.search(t): err.append(f'{tag} AI 腔（「{AI_WORDS.search(t).group(0)}」）：見 voice.md「真人說話，不要 AI 腔」')
