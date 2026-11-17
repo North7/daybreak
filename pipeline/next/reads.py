@@ -47,7 +47,7 @@ def say(k, sz, se, items):
     h = HOW.get(k) or ({'hz': HOWX[k][0], 'he': HOWX[k][1]} if k in HOWX else {})
     return dict(items=out, sz=wz(sz), se=se, hz=list(h.get('hz') or []), he=list(h.get('he') or []), own=1)
 
-def apply(chapters, L):
+def apply(chapters, L, N=None, E=None):
     """把做好的頁的讀數掛到卡片上；某一張出錯就跳過那一張（照舊用舊版的），不影響其他"""
     import reads_buy, reads_cycle, reads_sell, reads_lv, reads_lev
     F = {}; X = {}
@@ -64,7 +64,16 @@ def apply(chapters, L):
             if r: X[k]['say'] = say(k, *r); done.append(k)
         except Exception as e: bad.append('%s: %s' % (k, e))
     nl = lean(X, L)
-    return dict(done=len(done), bad=bad, lean=nl)
+    # 2026-11-17 使用者：「先把今天的主卡用 Opus 5.5 更新一遍，我看看效果」。判讀檔的 cards＝每段主卡的綜合判讀（AI 寫，日期要等於資料日），
+    # 蓋掉規則產生的一句結論；沒有或過期就照舊用規則的句子。偏向（我們的看法）照舊由 leans.py 決定
+    nc = 0
+    if N and N.get('date') == L['meta']['bar_date']:
+        ce = (E or {}).get('cards') or {} if (E or {}).get('date') == N.get('date') else {}
+        for k, z in (N.get('cards') or {}).items():
+            c = X.get(k)
+            if c is None or not c.get('say') or not z: continue
+            c['say']['sz'] = z; c['say']['se'] = ce.get(k) or c['say'].get('se') or z; c['say']['ai'] = 1; nc += 1
+    return dict(done=len(done), bad=bad, lean=nl, cards=nc)
 
 def lean(X, L):
     """每張指標卡的偏向（leans.py，2026-11-17 使用者：「指標偏多還是空要有」）：放成讀數裡的「我們的看法」（view＝1），排在最前面；原本的看法換掉"""
