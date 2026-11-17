@@ -1315,7 +1315,7 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
      1 偏向翻牌：卡片的偏向膠囊和前一個資料日不一樣時（build.py 寫進 data/leans.json），卡片進到畫面後膠囊像翻牌一樣從昨天的翻到今天的，
        後面留一個劃掉的舊偏向（滑上去看日期）；手機清單列只翻，不留舊的。同一張卡翻過一次，重畫時不再翻。分享模式照舊不顯示偏向。
      2 分段切換（模式、時間範圍、分／疊）的底塊會滑：前緣先走、後緣跟上，跑的時候拉長，到了彈一下；和底部分頁列同一套手感（㉘）。
-     3 圖例：滑鼠移上去只亮那一條，其他線淡到 16%，主數字滾到那一條最新的值、日期前面寫線名；點一下固定，再點一下放開（手機用點的）。點圖例不會展開卡片。
+     3 圖例：滑鼠移上去只亮那一條，其他線（連同上面的價格那一格、線尾的點和標籤）淡到 10%，只有兩樣以上可以分開看的卡圖例才可以點，移上去有底色（2026-11-18 使用者：「這個不知道怎麼看出效果」），主數字滾到那一條最新的值、日期前面寫線名；點一下固定，再點一下放開（手機用點的）。點圖例不會展開卡片。
      4 換時間範圍：圖不是整張換掉，是起點從舊範圍一路滑到新範圍（對數內插，約 0.7 秒），每一格都是真的重畫，軸和刻度一起變。
      5 手機放大鏡：手指按住圖約 0.26 秒，手指上方出一個圓形放大鏡（2.4 倍），中間一條游標線和讀值那一點，下面是日期；按住時可以左右拖，頁面不捲動；放開就收起。
      6 訊號清單：右下角的訊號提示點一下，同一個形狀長成一張面板，列出今天全部有訊號的卡（這一頁的在最前面，其他頁標頁名），點一列就過去；點外面或 Esc 收回。 */
@@ -1344,9 +1344,10 @@ html.share .fl-was { display: none !important; }
 .md.pl > .sp { position: absolute; z-index: -1; left: 0; top: 0; width: 0; height: 0; border-radius: 999px; background: color-mix(in srgb, var(--ink) 15%, transparent); pointer-events: none; will-change: transform, width; }
 .oc .md.pl button[aria-pressed="true"], .md.pl button[aria-pressed="true"] { background: none; border-color: transparent; }
 .ol-c svg .sr { transition: opacity .25s; }
-.ol-c svg.iso .sr:not(.on) { opacity: .16; }
-.ol-lg span[data-s] { cursor: pointer; transition: opacity .2s, color .2s; -webkit-tap-highlight-color: transparent; }
-.ol-lg.iso span:not(.on) { opacity: .45; } .ol-lg span.on { color: var(--ink); }
+.ol-c svg.iso .sr:not(.on), .ol-c svg.iso:not(.ish) .mk { opacity: .1; } .ol-c svg .mk { transition: opacity .25s; } .ol-num > .ol-k.on { color: var(--ink); } .ol-c svg.iso:not(.ish) .shim { display: none; }
+.ol-lg span[data-s] { cursor: pointer; border-radius: 999px; padding: 2px 8px; margin: -2px -8px; transition: opacity .2s, color .2s, background-color .2s; -webkit-tap-highlight-color: transparent; }
+.ol-lg span[data-s]:hover { background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--ink); }
+.ol-lg.iso span:not(.on) { opacity: .4; } .ol-lg span.on { color: var(--ink); background: color-mix(in srgb, var(--ink) 13%, transparent); }
 .ol.m-mo > *, .ol.m-mo .ol-c::after { animation: none !important; }
 .ol-c { -webkit-touch-callout: none; }
 .lp { position: fixed; left: 0; top: 0; z-index: 95; width: 116px; display: flex; flex-direction: column; align-items: center; gap: 7px; pointer-events: none; opacity: 0; transition: opacity .14s; }
@@ -1539,7 +1540,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=7689b56a88"></script>
+<script src="data/next.js?v=2e4f53b02d"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -1749,7 +1750,7 @@ function initOC() {
     (s.zones || []).forEach(q => { const ya = q.hi == null ? y1 : cl(Y(q.hi)), yz = q.lo == null ? yb : cl(Y(q.lo)); if (yz - ya < 1) return; g += `<rect x="0" y="${F1(ya)}" width="${pw}" height="${F1(yz - ya)}" fill="${CV(q.col)}" fill-opacity="${q.op || .19}"/>`; });
     (s.bands || []).forEach(q => { if (q.col2) { const P = {}; for (let j = 1; j < rows.length; j++) { const r0 = rows[j - 1], r1 = rows[j]; if ([r0[q.a], r0[q.b], r1[q.a], r1[q.b]].some(v => v == null)) continue; const key = r1[q.a] >= r1[q.b] ? q.col : q.col2, xa = F1(X(r0[0])), xb = F1(X(r1[0])); P[key] = (P[key] || '') + `M${xa},${F1(Y(r0[q.a]))}L${xb},${F1(Y(r1[q.a]))}L${xb},${F1(Y(r1[q.b]))}L${xa},${F1(Y(r0[q.b]))}Z`; } Object.keys(P).forEach(key => { g += `<path d="${P[key]}" fill="${CV(key)}" fill-opacity="${Math.max(.3, q.op || .32)}"/>`; }); return; }
       let d1 = ''; const back = []; rows.forEach(r => { if (r[q.a] == null || r[q.b] == null) return; d1 += (d1 ? 'L' : 'M') + F1(X(r[0])) + ',' + F1(Y(r[q.a])); back.push(F1(X(r[0])) + ',' + F1(Y(r[q.b]))); }); if (d1) g += `<path d="${d1}L${back.reverse().join('L')}Z" fill="${CV(q.col)}" fill-opacity="${Math.max(.2, q.op || .22)}"/>`; });
-    g += top;
+    g += top ? `<g class="sr" data-s="p">${top}</g>` : '';   /* ㉟ 3 價格那一格也是一組：只看指標時它也變淡 */
     const tfn = s.tf || (s.log || one ? 'log' : 'lin'), tkv = s.ax || TICKS(lo, hi, tfn, Y), ryv = (s.refs || []).filter(r => !r.nt).map(r => Y(r.v)).filter(y => y >= y1 - 1 && y <= yb + 1);   /* 刻度（⑮）：參考線的數字優先，刻度讓開 */
     tkv.forEach(v => { const y = Y(v); if (y < y1 - 1 || y > yb + 1) return; g += `<line x1="0" x2="${pw}" y1="${F1(y)}" y2="${F1(y)}" stroke="var(--ink)" stroke-opacity=".07"/>`; if (!ryv.some(ry => Math.abs(ry - y) < 11 * FSC)) g += `<text x="${pw + 12}" y="${F1(y + 3.5)}">${TKL(af, v)}</text>`; });
     (s.refs || []).forEach(r => { const y = Y(r.v); if (y < y1 - 1 || y > yb + 1) return; const xa = r.a != null ? Math.max(0, X(r.a)) : 0; if (xa >= pw - 1) return; const cc = CV(r.col); g += `<line x1="${F1(xa)}" x2="${pw}" y1="${F1(y)}" y2="${F1(y)}" stroke="${cc}" stroke-opacity="${r.solid ? .7 : .95}"${r.solid ? '' : ' stroke-dasharray="4 3"'}/>`; if (!r.nt) g += `<text x="${pw + 12}" y="${F1(y + 3.5)}" style="fill:${cc}">${TKL(af, r.v)}</text>`; const lb = T(r.zh, r.en); if (lb) g += r.a != null ? `${PL(xa - 5, y + 4, lb, cc, 'end', 0, [0, pw])}` : `${PL(3, y - 7, lb, cc, 'start', 0, [0, pw])}`; });   /* 2026-11-17 運營回報：只屬於某一段的參考線（a＝起點）從那天畫到現在、標籤接在線的起點左邊；nt＝軸上不另寫數字（標籤已經有，和現值標籤擠在一起） */
@@ -1757,7 +1758,7 @@ function initOC() {
     /* 數列 */
     const nvis = S.filter(q => !q.hide).length, ends = [], dots = [], tags = [], tg = (q, v) => split(fm(q.f || af, v))[0]; let shim = '';
     if (Yp) { dots.push({ p: 1, Y: Yp }); (s.top || []).forEach(q => dots.push({ c: q.c, Y: Yp, col: q.col })); }
-    S.forEach((q, i) => { const g0 = g.length; (() => {   /* ㉟ 3 每條線包成一組（.sr），圖例可以單獨點亮 */
+    S.forEach((q, i) => { const g0 = g.length, e0 = ends.length; (() => {   /* ㉟ 3 每條線包成一組（.sr），圖例可以單獨點亮 */
       if (q.hide) return; const col = q.c, main = i === hi0 || (S[hi0].hide && i === 0), sw = Math.max(1.5, q.w || (main ? 2 : 1.6)), op = Math.max(.9, q.op || 1);
       if (q.t === 'bar') {
         const n = rows.length, gap = n > 1 ? (rows[n - 1][0] - rows[0][0]) / (n - 1) : 1, bw = Math.max(1, Math.min(9, gap / ((tE - t0) || 1) * pw * .74)), yz = Y(q.base || 0), P = {};
@@ -1789,7 +1790,7 @@ function initOC() {
         g += `<path d="${d}" fill="none" stroke="${CV(q.col)}" stroke-opacity="${op}" stroke-width="${sw}" stroke-linejoin="round"${q.dash ? ` stroke-dasharray="${q.dash}"` : ''}/>`;
       }
       if (main) shim = d; const z = atv(rows, col, null); if (z[col] != null && !q.dash) ends.push([X(z[0]), Y(z[col]), CV(tone(s, q)), main, s.notag ? null : tg(q, z[q.vc != null ? q.vc : col])]); dots.push({ c: col, Y, col: q.col });
-    })(); if (g.length > g0) g = g.slice(0, g0) + `<g class="sr" data-s="${i}">` + g.slice(g0) + '</g>'; });
+    })(); if (g.length > g0) g = g.slice(0, g0) + `<g class="sr" data-s="${i}">` + g.slice(g0) + '</g>'; for (let j = e0; j < ends.length; j++) ends[j].si = i; });
     (s.segs || []).forEach(q => { const x0 = Math.max(0, X(q.a)); g += `<line x1="${F1(x0)}" x2="${pw}" y1="${F1(Y(q.v))}" y2="${F1(Y(q.v))}" stroke="${CV(q.col)}" stroke-dasharray="5 4" stroke-opacity=".9"/>`; });
     let ltx2 = '';
     (s.vl || []).forEach(q => { if (q.d < t0 || q.d > tE) return; const x = X(q.d), cc = CV(q.col || 'k2'), lb = T(q.zh, q.en), da = q.dash ? ` stroke-dasharray="${q.dash}"` : '', so = q.op || .7;
@@ -1799,11 +1800,12 @@ function initOC() {
     /* 連線（背離）：上格連價格、下格連數值 */
     let ltxt = ''; const lkept = []; (s.links || []).slice().reverse().forEach(q => { if (q.b < t0) return; const cc = CV(q.col), da = q.dash ? ` stroke-dasharray="${q.dash}"` : '', xa = X(Math.max(q.a, t0)), xb = X(q.b); if (Yp && q.a >= t0) g += `<line x1="${F1(xa)}" y1="${F1(Yp(q.pa))}" x2="${F1(xb)}" y2="${F1(Yp(q.pb))}" stroke="${cc}" stroke-width="1.2"${da}/><circle cx="${F1(xa)}" cy="${F1(Yp(q.pa))}" r="2.2" fill="${cc}"/><circle cx="${F1(xb)}" cy="${F1(Yp(q.pb))}" r="2.2" fill="${cc}"/>`; if (q.a >= t0) g += `<line x1="${F1(xa)}" y1="${F1(Y(q.va))}" x2="${F1(xb)}" y2="${F1(Y(q.vb))}" stroke="${cc}" stroke-width="1.8"${da}/><circle cx="${F1(xa)}" cy="${F1(Y(q.va))}" r="2.4" fill="${cc}"/><circle cx="${F1(xb)}" cy="${F1(Y(q.vb))}" r="2.4" fill="${cc}"/>`; const lb = T(q.zh, q.en); if (lb) { const wd = tw(lb) + 16, tx = Math.max(wd, Math.min(pw - 4, xb + 2)); let ty = Math.max(y1 + 10, Math.min(Y(q.va), Y(q.vb)) - 8); const hitL = () => lkept.some(o => Math.abs(o[1] - ty) < 12 && tx - wd < o[0] && o[0] - o[2] < tx); while (hitL() && ty > y1 + 22) ty -= 13; if (hitL()) return; lkept.push([tx, ty, wd]); ltxt += `${PL(tx, ty, lb, cc, 'end', 1, [0, pw])}`; } });
     /* 標記：空心圓＋文字；文字太擠就只留比較新的 */
-    const kept = []; (s.marks || []).filter(m => m.d >= t0 && m.d <= tE).sort((p, q) => q.d - p.d).forEach(m => { const onP = m.on === 'p', Ym = onP ? Yp : Y; if (!Ym) return; const x = X(m.d), y = Ym(m.v), cc = CV(m.col), lb = T(m.zh, m.en); g += `<circle cx="${F1(x)}" cy="${F1(y)}" r="3.6" fill="var(--sheet)" stroke="${cc}" stroke-width="1.5"/>`; if (!lb) return; const wd = tw(lb) + 18, side = m.up ? 1 : 0, tx = Math.max(wd / 2, Math.min(pw - wd / 2, x)); if (kept.some(q => q[2] === side && Math.abs(q[0] - tx) < (q[1] + wd) / 2)) return; kept.push([tx, wd, side]); const ty = m.up ? Math.max((onP ? 10 : y1 + 10), y - 9) : Math.min(yb - 3, y + 15); ltxt += `${PL(tx, ty, lb, cc, 'middle', 1, [0, pw])}`; });
+    const gm0 = g.length, lm0 = ltxt.length; const kept = []; (s.marks || []).filter(m => m.d >= t0 && m.d <= tE).sort((p, q) => q.d - p.d).forEach(m => { const onP = m.on === 'p', Ym = onP ? Yp : Y; if (!Ym) return; const x = X(m.d), y = Ym(m.v), cc = CV(m.col), lb = T(m.zh, m.en); g += `<circle cx="${F1(x)}" cy="${F1(y)}" r="3.6" fill="var(--sheet)" stroke="${cc}" stroke-width="1.5"/>`; if (!lb) return; const wd = tw(lb) + 18, side = m.up ? 1 : 0, tx = Math.max(wd / 2, Math.min(pw - wd / 2, x)); if (kept.some(q => q[2] === side && Math.abs(q[0] - tx) < (q[1] + wd) / 2)) return; kept.push([tx, wd, side]); const ty = m.up ? Math.max((onP ? 10 : y1 + 10), y - 9) : Math.min(yb - 3, y + 15); ltxt += `${PL(tx, ty, lb, cc, 'middle', 1, [0, pw])}`; });
+    if (g.length > gm0) g = g.slice(0, gm0) + '<g class="mk">' + g.slice(gm0) + '</g>'; if (ltxt.length > lm0) ltxt = ltxt.slice(0, lm0) + '<g class="mk">' + ltxt.slice(lm0) + '</g>';   /* ㉟ 3 標記是主角那條的：單看別條時一起變淡 */
     g += ltxt + ltx2; if (shim) g += `<path class="shim" pathLength="1000" d="${shim}"/>`;
-    ends.forEach(e => { if (e[3]) g += `<circle class="pulse" style="stroke:${e[2]}" cx="${F1(e[0])}" cy="${F1(e[1])}" r="5"/>`; g += `<circle cx="${F1(e[0])}" cy="${F1(e[1])}" r="${e[3] ? 4 : 2.6}" fill="${e[2]}"/>`; if (e[4] != null) tags.push([e[1], e[4], e[2], e[3]]); });
+    ends.forEach(e => { const ga = e.si != null ? `<g class="sr" data-s="${e.si}">` : '', gz = ga ? '</g>' : ''; g += ga; if (e[3]) g += `<circle class="pulse" style="stroke:${e[2]}" cx="${F1(e[0])}" cy="${F1(e[1])}" r="5"/>`; g += `<circle cx="${F1(e[0])}" cy="${F1(e[1])}" r="${e[3] ? 4 : 2.6}" fill="${e[2]}"/>` + gz; if (e[4] != null) tags.push(Object.assign([e[1], e[4], e[2], e[3]], { si: e.si })); });
     { const th = 14 * FSC; tags.sort((p1, p2) => p1[0] - p2[0]); let ly = -1e9; tags.forEach(t => { t[4] = Math.max(t[0], ly + th, y1 + 8); ly = t[4]; }); let uy = yb - 7; for (let i = tags.length - 1; i >= 0; i--) { tags[i][4] = Math.min(tags[i][4], uy); uy = tags[i][4] - th; }
-      tags.forEach(t => { if (t[4] < y1 + 2) return; g += t[3] ? `<rect x="${pw + 6}" y="${F1(t[4] - th / 2 - .5)}" width="${MR - 7}" height="${F1(th + 1)}" rx="3" fill="${t[2]}"/><text x="${pw + 10}" y="${F1(t[4] + 3.6 * FSC)}" style="fill:var(--sheet);font-weight:600">${esc(t[1])}</text>` : `<rect x="${pw + 6}" y="${F1(t[4] - th / 2)}" width="${MR - 7}" height="${F1(th)}" fill="var(--sheet)"/><text x="${pw + 10}" y="${F1(t[4] + 3.6 * FSC)}" style="fill:${t[2]}">${esc(t[1])}</text>`; }); }
+      tags.forEach(t => { if (t[4] < y1 + 2) return; if (t.si != null) g += `<g class="sr" data-s="${t.si}">`; g += t[3] ? `<rect x="${pw + 6}" y="${F1(t[4] - th / 2 - .5)}" width="${MR - 7}" height="${F1(th + 1)}" rx="3" fill="${t[2]}"/><text x="${pw + 10}" y="${F1(t[4] + 3.6 * FSC)}" style="fill:var(--sheet);font-weight:600">${esc(t[1])}</text>` : `<rect x="${pw + 6}" y="${F1(t[4] - th / 2)}" width="${MR - 7}" height="${F1(th)}" fill="var(--sheet)"/><text x="${pw + 10}" y="${F1(t[4] + 3.6 * FSC)}" style="fill:${t[2]}">${esc(t[1])}</text>`; if (t.si != null) g += '</g>'; }); }
     /* 時間軸、游標 */
     g += xAxis(X, t0, tE, pw, y1, yb, h - 3);
     g += `<g class="cx" visibility="hidden"><line y1="2" y2="${yb}" stroke="var(--ink)" stroke-opacity=".5"/>${dots.map(dd => `<circle r="${dd.p ? 3 : 3.4}" fill="${dd.p ? 'var(--ink)' : CV(dd.col)}" stroke="var(--sheet)" stroke-width="1.5"/>`).join('')}${MINI ? '' : `<g class="cxd" data-pw="${F1(pw)}"><rect y="1" height="${F1(16 * FSC)}" rx="${F1(8 * FSC)}" fill="var(--ink)"/><text y="${F1(1 + 12 * FSC)}" text-anchor="middle" style="fill:var(--sheet);font-weight:600"></text></g>`}</g>`;   /* 2026-11-17 使用者：「hover 的時候需要顯示數據對應的日期」：游標線頂端一個日期標籤（放底下會被手機和主卡的下方小圖列擋住） */
@@ -1816,7 +1818,8 @@ function initOC() {
   function legend(s, k) {
     const L = [], sw = (kind, c1, c2) => `<i class="${kind}" style="--c:${CV(c1)};--c2:${CV(c2 || c1)}"></i>`; let n = 0;
     const hq0 = s.ser ? (h0 => h0 && !h0.hide ? h0 : s.ser.find(q => !q.hide))(hero(s)) : null; let hh = '';   /* 主角被設成不顯示（例如 ETF 的合計）時，標第一條看得到的線 */   /* ㉞ 主角那條線的圖例加 class h：手機主卡只留它 */
-    const add = (kind, c1, c2, label, get, ds) => { const idv = get ? `oc-l${k}-${n++}` : ''; L.push({ html: `<span${hh}${ds != null ? ` data-s="${ds}"` : ''}>${sw(kind, c1, c2)}${esc(label)}${get ? `<b id="${idv}"></b>` : ''}</span>`, id: idv, get }); hh = ''; };
+    const nIso = (s.one ? 0 : 1) + s.ser.filter(q => !q.hide).length, isoT = T('只看這一條（點一下固定，再點取消）', 'Show only this line (click to pin, click again to release)');   /* ㉟ 3：可以分開看的不到兩樣（只有一條線）就不給點 */
+    const add = (kind, c1, c2, label, get, ds) => { const idv = get ? `oc-l${k}-${n++}` : ''; L.push({ html: `<span${hh}${ds != null && nIso > 1 ? ` data-s="${ds}" title="${isoT}"` : ''}>${sw(kind, c1, c2)}${esc(label)}${get ? `<b id="${idv}"></b>` : ''}</span>`, id: idv, get }); hh = ''; };
     if (!s.one) add(s.kw ? 'box' : 'line', 'k2', s.kw ? 'k2' : null, s.kw ? (s.kwr ? T('BTC 月 K', 'BTC monthly') : T('BTC 週 K', 'BTC weekly')) : T('BTC 價格', 'BTC price'), day => fm('usd0', pxAt(s, day)), 'p');
     (s.top || []).forEach(q => add('line', q.col, null, T(q.zh, q.en), day => fm('usd0', atv(s.rows, q.c, day)[q.c])));
     s.ser.forEach((q, qi) => { if (q.hide) return; if (q === hq0) hh = ' class="h"'; const t2 = two(q) || q.t === 'cand', kind = q.t === 'bar' || q.t === 'cand' ? 'box' : q.t === 'ramp' ? (q.heat ? 'ramp heat' : 'ramp') : q.dash ? 'dash' : 'line'; add(kind, t2 ? (q.hi || 'up') : q.nb != null ? 'up' : q.col, t2 ? (q.lo || 'dn') : q.nb != null ? 'dn' : null, T(q.zh, q.en), day => fm(q.f || s.f, atv(s.rows, q.c, day)[q.vc != null ? q.vc : q.c]), qi); });
@@ -2601,7 +2604,7 @@ function initOC() {
   /* 游標：時間型的圖共用「某一天」，分布型的圖共用「某個價位」 */
   function cur1(R, day) {
     if (!isT(R.c)) return; const s = R.s, k = R.key, live = day == null, iq = R.iso != null && R.iso !== 'p' ? s.ser[+R.iso] : null, hq = iq || hero(s), hr = atv(s.rows, hq.c, day), v = split(R.iso === 'p' ? fm('usd0', pxAt(s, hr[0])) : iq ? fm(iq.f || s.f, hr[iq.vc != null ? iq.vc : iq.c]) : fm(hq.f || s.f, hr[hq.c]));   /* ㉟ 3 圖例單獨看一條時，主數字換成那一條 */
-    odo($('#oc-b' + k), v[0]); $('#oc-u' + k).textContent = v[1]; $('#oc-d' + k).textContent = (R.iso != null ? (iq ? T(iq.zh, iq.en) : T('BTC 價格', 'BTC price')) + ' · ' : '') + ymd(hr[0]) + (live ? T('　最新', '  latest') : '');
+    odo($('#oc-b' + k), v[0]); $('#oc-u' + k).textContent = v[1]; $('#oc-d' + k).textContent = ymd(hr[0]) + (live ? T('　最新', '  latest') : '');
     if (R.L) { const cx = R.L.cx, on = !live && day >= R.t0; cx.setAttribute('visibility', on ? 'visible' : 'hidden'); if (on) { const x = F1(R.L.X(Math.max(hr[0], R.t0))), ln = cx.querySelector('line'); ln.setAttribute('x1', x); ln.setAttribute('x2', x);   /* 游標線對齊到讀數那一筆的日子（週末、休市、稀疏的資料都停在有數據的那天） */
       const cd = cx.querySelector('.cxd'); if (cd) { const t9 = cd.querySelector('text'), r9 = cd.querySelector('rect'), wd = dOf(hr[0]).getUTCDay(); t9.textContent = ymd(hr[0]) + ' ' + T('週' + '日一二三四五六'[wd], ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'][wd]); const w9 = (t9.getComputedTextLength ? t9.getComputedTextLength() : 80) + 14, pw9 = +cd.dataset.pw, c9 = Math.max(w9 / 2, Math.min(pw9 - w9 / 2, +x)); t9.setAttribute('x', F1(c9)); r9.setAttribute('x', F1(c9 - w9 / 2)); r9.setAttribute('width', F1(w9)); } R.L.dots.forEach(dd => { const val = dd.p ? pxAt(s, hr[0]) : atv(s.rows, dd.c, hr[0])[dd.c]; if (val == null || !(val > 0 || dd.Y !== R.L.Yp)) { dd.el.setAttribute('visibility', 'hidden'); return; } dd.el.setAttribute('visibility', 'inherit'); dd.el.setAttribute('cx', x); dd.el.setAttribute('cy', F1(dd.Y(val))); }); } }
     R.lg.forEach(e => { e.el.textContent = e.get(live ? day : hr[0]); });   /* 圖例的數字也用同一天（例：ETF 週末停在週五，價格也是週五的） */
@@ -3142,7 +3145,8 @@ function initOC() {
   uiScan();
   /* ㉟ 3 圖例：移上去預覽、點一下固定 */
   function iso(ol, ds) { const R = keyR(ol.id.slice(5)), svg = ol.querySelector('.ol-c svg'), lg = ol.querySelector('.ol-lg'); if (!R || !svg || !lg) return; const on = ds != null;
-    svg.classList.toggle('iso', on); svg.querySelectorAll('.sr').forEach(n => n.classList.toggle('on', on && n.dataset.s === ds)); lg.classList.toggle('iso', on); lg.querySelectorAll('span[data-s]').forEach(n => n.classList.toggle('on', on && n.dataset.s === ds)); R.iso = on ? ds : null; cur1(R, null); }
+    svg.classList.toggle('iso', on); svg.classList.toggle('ish', on && ds === String(R.s.hero || 0)); svg.querySelectorAll('.sr').forEach(n => n.classList.toggle('on', on && n.dataset.s === ds)); lg.classList.toggle('iso', on); lg.querySelectorAll('span[data-s]').forEach(n => n.classList.toggle('on', on && n.dataset.s === ds)); R.iso = on ? ds : null; cur1(R, null);
+    const kl = ol.querySelector('.ol-num > .ol-k'); if (kl) { if (kl.dataset.k0 == null) kl.dataset.k0 = kl.textContent; const q = on && ds !== 'p' ? R.s.ser[+ds] : null; kl.textContent = !on ? kl.dataset.k0 : q ? T(q.zh, q.en) : T('BTC 價格', 'BTC price'); kl.classList.toggle('on', on); } }   /* 大數字上面的小標跟著換成那一條的名字 */
   const lgSp = t => t && t.closest ? t.closest('.ol-lg span[data-s]') : null;
   el.addEventListener('pointerover', e => { if (e.pointerType !== 'mouse') return; const sp = lgSp(e.target), ol = sp && sp.closest('.ol'); if (!ol || ol._pin != null || ol._iso === sp.dataset.s) return; ol._iso = sp.dataset.s; iso(ol, ol._iso); });
   el.addEventListener('pointerout', e => { if (e.pointerType !== 'mouse') return; const sp = lgSp(e.target); if (!sp || lgSp(e.relatedTarget)) return; const ol = sp.closest('.ol'); if (ol && ol._pin == null && ol._iso != null) { ol._iso = null; iso(ol, null); } });
