@@ -750,6 +750,9 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .sy-d { margin: 0; font-size: var(--t-body); line-height: 1.65; color: var(--soft); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer; }
 .ol-say.open .sy-d { -webkit-line-clamp: unset; display: block; }
 .sy-c { margin: 0; font-size: var(--t-note); line-height: 1.6; color: var(--soft); }
+.sy-v { margin: 0; font: 650 var(--t-head)/1.55 "Inter Tight", "Noto Sans TC", sans-serif; color: var(--ink); text-wrap: pretty; }   /* ㉞-9 判讀句＝主角 */
+.sy-tag { display: inline-block; margin: 0 9px 0 0; padding: 2px 8px 2px; border-radius: 999px; font: 700 11.5px/1.35 var(--f-mono); letter-spacing: .06em; vertical-align: 2px; color: var(--sc); background: color-mix(in srgb, var(--sc) 16%, transparent); }
+.ol-say.v2 { gap: 8px; } .ol-say.v2 .sy-c { margin-top: -1px; } .ol-say.v2 .sy-m { margin-top: 2px; }
 .sy-c i { font-style: normal; font-weight: 600; color: var(--ink); margin-right: 8px; }
 .sy-r { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; column-gap: 10px; align-items: baseline; padding: 9px 0 2px; margin-top: 8px; border-top: 1px solid var(--rule); }
 .sy-k { font-size: var(--t-note); color: var(--k2); }
@@ -891,7 +894,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .oc-fx .ol-big small { margin-top: 6px; font-size: 11px; }
 .oc-fx .ol-st, .oc-fx .ol-lg { font-size: var(--t-note); }
 .oc-fx .ol-hl { column-gap: 44px; row-gap: 12px; }
-.oc-fx .sy-h b { font-size: 19px; }
+.oc-fx .sy-h b { font-size: 19px; } .oc-fx .sy-v { font-size: 19px; max-width: 46em; }
 .oc-fx .sy-d { -webkit-line-clamp: unset; display: block; font-size: 14.5px; max-width: 70em; }
 .oc-fx .or { flex-direction: row; overflow-x: auto; overflow-y: hidden; border-top: 1px solid var(--rule); scrollbar-width: none; }
 .oc-fx .or-r { flex: 0 0 clamp(190px, 17vw, 270px); min-height: 68px; column-gap: 12px; padding: 8px 12px; border-left: 0; border-bottom: 2px solid transparent; border-right: 1px solid var(--rule); cursor: pointer; }
@@ -1313,7 +1316,10 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
    2 主卡瘦身（.fc.ph）：大數字下面直接接一句結論（拿掉「讀數」小標和重複的標題）；按鈕併成一排可左右捲，「分／疊」在手機上拿掉；圖例只留主角那條線，其他的點「＋N」才展開；底部統計和 30 天對比收起來，放大檢視裡都在。
    3 動效：主卡照舊由 AI 游標畫出來、數字滾動；清單列一列一列落下、迷你走勢由左往右掃開、數字滾動，旁邊一個游標順著清單往下走；按下去彈簧壓扁、放開彈回。減少動態時全部直接出現。
    8 偏向（同一天，使用者：「指標偏多還是空要有」）：每張指標卡在讀數裡都有「我們的看法 · 偏多／偏空／中性」（pipeline/next/leans.py，判定規則寫在那支開頭：有回測照回測、沒有的照定義、不指方向的寫中性）。
-     電腦版卡片：一句結論照樣顯示，下面接看法（立場、理由、會改變看法）；手機主卡：看法只留一行（偏向＋立場）；清單列：一句白話前面標偏向，綠＝偏多、紅＝偏空、灰＝中性。分享模式和社群配圖照舊藏看法。 */
+     電腦版卡片：一句結論照樣顯示，下面接看法（立場、理由、會改變看法）；手機主卡：看法只留一行（偏向＋立場）；清單列：一句白話前面標偏向，綠＝偏多、紅＝偏空、灰＝中性。分享模式和社群配圖照舊藏看法。
+   9 卡片結論區改版（同一天，使用者看了晨昏指數那張卡：「這些你覺得都需要保留嗎」→「都改」「主角要明顯一點」）：有看法的卡只留三層——
+     判讀句（主角：標題級字、粗體、主文字色；前面一個偏向膠囊，綠偏多、紅偏空、灰中性）、會改變看法（一行）、收起來的「證據 N」（看法的依據＋原本的事實列）。
+     拿掉原本的「讀數 · ○○」標題（程式挑一條事實當標題，常和判讀打架）和「我們的看法」整塊（偏向變成膠囊，回測數字進證據）。手機主卡判讀完整顯示（它是主角，不截斷），會改變看法最多 2 行；AI 判讀的偏向膠囊用判讀句自己的方向（判讀檔 cards 的 lean），不用規則的；分享模式和社群配圖只顯示判讀句，偏向膠囊、會改變看法、證據都藏（照舊：「我們的看法」不進社群配圖）。 */
 .frl { display: grid; border-top: 1px solid var(--rule); margin-top: 2px; } .fg > .frl { flex: 1 1 100%; min-width: 0; }
 .fr { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto 58px 12px; align-items: center; column-gap: 10px; min-height: 58px; padding: 9px 4px 9px 8px; border: 0; border-bottom: 1px solid var(--rule); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 10px; -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: transform .5s var(--spring, cubic-bezier(.3, 1.4, .5, 1)), background-color .25s; }
 .fr:active { transform: scale(.97); background: color-mix(in srgb, var(--ink) 6%, transparent); transition-duration: .12s; }
@@ -1335,6 +1341,7 @@ svg.lq { position: absolute; left: 0; display: block; overflow: visible; pointer
 @media (prefers-reduced-motion: reduce) { .oc.io .frl .fr, .oc.io .frl .fr-s::after { animation: none !important; } .oc.io .frl:not(.in) .fr { opacity: 1; } .oc.io .frl:not(.in) .fr-s::after { transform: scaleX(0); } .fr, .fr:active { transition: none; transform: none; } }
 .fc.ph .sy-h, .fc.ph .ol-sx, .fc.ph .ol-pair, .fc.ph .md.ly, .fc.ph .ol-ctl .more { display: none; }
 .fc.ph .sy-view .sy-h { display: flex; flex-wrap: wrap; align-items: baseline; gap: 2px 8px; } .fc.ph .sy-view .sy-d, .fc.ph .sy-view .sy-c { display: none; } .fc.ph .sy-view { padding-top: 8px; }   /* ㉞-8 手機主卡：看法只留一行（偏向＋立場） */
+.fc.ph .sy-v { font-size: 16px; } .fc.ph .ol-say.v2 .sy-c { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }   /* ㉞-9 手機主卡 */
 .fc.ph .sy-d { margin-top: 0; display: -webkit-box; -webkit-line-clamp: 4;   /* 2026-11-17 主卡改成綜合判讀，句子比較長，3 行改 4 行 */  -webkit-box-orient: vertical; overflow: hidden; }
 .fc.ph .ol-ctl { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .fc.ph .ol-ctl::-webkit-scrollbar { display: none; } .fc.ph .ol-ctl .md { flex: none; }
 .fc.ph:not(.lg-all) .ol-lg > span:not(.h) { display: none; }
@@ -1400,12 +1407,12 @@ html.share .ol-t.e2 > .ol-e { font-size: 15px; }
 .ol-brand { display: none; }
 html.share *, html.share *::before, html.share *::after { animation: none !important; transition: none !important; }
 html.share .oc.io .fc:not(.in) { opacity: 1 !important; }
-html.share .ol-ctl, html.share .fx-b, html.share .ol-how, html.share .sy-m, html.share .sy-view, html.share .ol-pr, html.share .ol-sig, html.share .more { display: none !important; }
+html.share .ol-ctl, html.share .fx-b, html.share .ol-how, html.share .sy-m, html.share .sy-view, html.share .ol-say.v2 .sy-c, html.share .sy-tag, html.share .ol-pr, html.share .ol-sig, html.share .more { display: none !important; }
 html.share .sy-d { -webkit-line-clamp: unset; display: block; cursor: auto; }
 html.share .ol-c text { font-size: 13.6px !important; }
 html.share .ol-n { font-size: 1.3em; }
 html.share .ol-lg, html.share .ol-st, html.share .ol-sx, html.share .ol-pair, html.share .sy-d, html.share .sy-c, html.share .ol-k { font-size: 15px; }
-html.share .sy-h b { font-size: 1.15em; }
+html.share .sy-h b { font-size: 1.15em; } html.share .sy-v { font-size: 19px; }
 html.share .sy-t, html.share .ol-pair em, html.share .ol-pair i { font-size: 12.5px; }
 html.share .ol-src { font-size: 12.5px; max-width: 60%; }
 html.share .ol-brand { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 16px; margin: 0; padding-top: 10px; border-top: 1px solid color-mix(in srgb, var(--ink) 12%, transparent); font: 500 12.5px/1.4 var(--f-mono); color: var(--k2); }
@@ -2360,6 +2367,10 @@ function initOC() {
     if (rd) { const t2 = TN[rd.tone] || TN.neu, hm = rd.hm && L2(rd.hm, rd.hme); read = `<div class="sy-read" style="--sc:var(--${t2[2]})"><div class="sy-h"><span class="sy-t">${T('讀數', 'Reading')}${hm ? ' · ' + esc(L2(rd.kz, rd.ke)) + ' ' + esc(L2(rd.vz, rd.ve)) : ''}</span><b>${esc(hm || L2(rd.kz, rd.ke) + T('：', ': ') + L2(rd.vz, rd.ve))}</b></div><p class="sy-d">${esc(one || L2(rd.dz, rd.de))}</p></div>`; }   /* ㉞-8 有看法時一句結論照樣顯示 */
     else if (one) read = `<div class="sy-read" style="--sc:var(--k2)"><div class="sy-h"><span class="sy-t">${T('讀數', 'Reading')}</span></div><p class="sy-d">${esc(one)}</p></div>`;
     const view = vw ? (t2 => `<div class="sy-view" style="--vc:var(--${t2[2]})"><div class="sy-h"><span class="sy-t">${T('我們的看法', 'Our view')} · ${T(t2[0], t2[1])}</span><b>${esc(L2(vw.vz, vw.ve))}</b></div><p class="sy-d">${esc(L2(vw.dz, vw.de))}</p>${vw.cz ? `<p class="sy-c"><i>${T('會改變看法', 'What would change it')}</i>${esc(L2(vw.cz, vw.ce))}</p>` : ''}</div>`)(TN[vw.tone] || TN.neu) : '';
+    if (vw && one) {   /* ㉞-9 2026-11-17 使用者：「都改」「主角要明顯一點」：判讀句是主角（標題級字、粗體），前面一個偏向膠囊；下面是會改變看法；其他都收進「證據」 */
+      const t2 = TN[vw.tone] || TN.neu, ev = [`<div class="sy-r"><span class="sy-k">${T('依據', 'Basis')}</span><b>${esc(L2(vw.vz, vw.ve))}</b><p>${esc(L2(vw.dz, vw.de))}</p></div>`].concat(its.filter(q => !q.view).map(row));
+      return `<div class="ol-say v2" style="--sc:var(--${t2[2]})"><p class="sy-v"><span class="sy-tag">${T(t2[0], t2[1])}</span>${esc(one)}</p>${vw.cz ? `<p class="sy-c"><i>${T('會改變看法', 'What would change it')}</i>${esc(L2(vw.cz, vw.ce))}</p>` : ''}<details class="sy-m"><summary${ib('證據', 'Evidence')}>${IC('chev')}<span>${T('證據', 'Evidence')} ${ev.length}</span></summary>${ev.join('')}</details></div>`;
+    }
     if (!read && !view) return ''; const rest = its.filter(q => q !== vw && q !== rd), sc = (TN[(rd || vw || {}).tone] || TN.neu)[2];
     return `<div class="ol-say" style="--sc:var(--${sc})">${read}${view}${rest.length ? `<details class="sy-m"><summary${ib('全部讀值', 'All readings')}>${IC('chev')}<span>${rest.length}</span></summary>${rest.map(row).join('')}</details>` : ''}</div>`;
   }
