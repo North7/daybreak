@@ -427,9 +427,37 @@ def build(L, N, E, dn, X):
         umk = runmarks(rows, 2, 60, 5, lambda r: '')   # 金額視角的圓圈：同樣是每一段連續增加或減少的最大值，至少 50 億美元才標
         for q in umk: q['zh'] = ym(q['d']) + ' ' + mi('%+.0f' % (q['v'] * 10)) + ' 億'; q['en'] = ym(q['d']) + ' ' + mi('%+.1f' % q['v']).replace('+', '+$').replace('−', '−$') + 'B'
         LG = [['up', '增加：場外美元變多', 'Rising: more dollars on the sidelines', 'box'], ['dn', '減少：場外美元萎縮', 'Falling: sidelined dollars shrinking', 'box']]
+        def tb_mode():   # 2026-11-18 使用者要求（Glassnode 週報：穩定幣在美債殖利率上升時縮減；規則見 page.html ㊲ 第二個縱軸）：穩定幣 90 天增減 vs 3 個月美債殖利率 90 天變化（倒過來畫）
+            import bisect, math
+            tb = (f.get('tbill') or {}).get('rows') or []
+            if len(tb) < 500: return []
+            T = {dn(r[0]): r[1] for r in tb}; tk = sorted(T)
+            def tat(d_):
+                i = bisect.bisect_right(tk, d_) - 1; return T[tk[i]] if i >= 0 and d_ - tk[i] <= 5 else None
+            r3 = []
+            for d_, v_ in sorted(m.items()):
+                b_ = next((m[d_ - k] for k in (90, 89, 91, 88, 92, 87, 93) if m.get(d_ - k)), None); t1, t0 = tat(d_), tat(d_ - 90)
+                if b_ and t1 is not None and t0 is not None and d_ >= dn('2022-01-01'): r3.append([d_, round((v_ / b_ - 1) * 100, 2), round((t1 - t0) * 100)])
+            if len(r3) < 200: return []
+            nx, last = [], -999
+            for r_ in r3:
+                if r_[0] - last >= 90: nx.append(r_); last = r_[0]
+            def corr(a_, b_):
+                ma, mb = sum(a_) / len(a_), sum(b_) / len(b_); c_ = sum((x - ma) * (y - mb) for x, y in zip(a_, b_))
+                return c_ / math.sqrt(sum((x - ma) ** 2 for x in a_) * sum((y - mb) ** 2 for y in b_))
+            cr = corr([r_[1] for r_ in nx], [-r_[2] for r_ in nx]); ag = sum((r_[1] < 0) == (r_[2] > 0) for r_ in r3) * 100 / len(r3); z = r3[-1]
+            return [dict(mz='對美債殖利率', me='vs T-bill yield', hz='90 天增減', he='90-day change', f='ps2', rng=0, rows=r3,
+                         ser=[ser(1, zh='穩定幣 90 天增減', en='Stablecoins, 90-day change', t='sign', base=0, w=1.5), ser(2, y2=1, inv=1, f='sbp', zh='3 個月美債殖利率 90 天變化（倒過來）', en='3-month T-bill yield, 90-day change (inverted)', col='ink', w=1.4)],
+                         leg=LG[:1] + LG[1:] + [['ink', '3 個月美債殖利率的 90 天變化，倒過來畫（往下＝殖利率上升），刻度在左邊', '3-month T-bill yield, 90-day change, inverted (down = yields rising), scale on the left', 'line']],
+                         dz='穩定幣不付利息，發行商拿著背後的美債賺殖利率；殖利率往上走時，有人會把穩定幣換成美債或貨幣基金。這個檢視把穩定幣的 90 天增減，和 3 個月美債殖利率的 90 天變化（倒過來畫、刻度在左邊）放在一起。'
+                            '2022 年起兩條同方向的日子約 %.0f%%，每 90 天取一點的相關係數 %.2f：殖利率是其中一個原因，但加密市場自己的需求也在推。現在穩定幣 90 天 %s，殖利率 90 天 %s 個基點。資料：穩定幣同上，殖利率是 FRED（DTB3）。' % (
+                              ag, cr, ('%+.1f%%' % z[1]).replace('-', '−'), ('%+d' % z[2]).replace('-', '−')),
+                         de='Stablecoins pay their holders nothing while issuers earn the yield on the bills behind them, so when yields climb some holders swap stablecoins for bills or money market funds. This view sets the 90-day change in stablecoins against the 90-day change in the 3-month T-bill yield (inverted, scale on the left). '
+                            'Since 2022 the two have moved the same way on about %.0f%% of days, with a correlation of %.2f on non-overlapping 90-day points: yields are one driver, crypto demand is another. Now stablecoins are %s over 90 days and the yield is %s basis points. Data: stablecoins as above, yields from FRED (DTB3).' % (
+                              ag, cr, ('%+.1f%%' % z[1]).replace('-', '−'), ('%+d' % z[2]).replace('-', '−')))]
         return dict(k='stab', zh='穩定幣總供給', en='Total stablecoin supply',
           modes=[dict(mz='百分比', me='Percent', hz=hz_, he=he_, f='ps2', rows=thin([r[:2] for r in rows], 1), ser=[ser(1, zh='30 天增減', en='30-day change', t='sign', base=0, w=1.5)], marks=runmarks(rows, 1, 60, 2, lambda r: ym(r[0]) + ' ' + pc(r[1], 1)), leg=LG),
-                 dict(mz='金額', me='Dollars', hz=hz_, he=he_, f='usdB', rows=thin([[r[0], r[2]] for r in rows], 1), ser=[ser(1, zh='30 天增減', en='30-day change', t='sign', base=0, w=1.5)], marks=umk, leg=LG)],
+                 dict(mz='金額', me='Dollars', hz=hz_, he=he_, f='usdB', rows=thin([[r[0], r[2]] for r in rows], 1), ser=[ser(1, zh='30 天增減', en='30-day change', t='sign', base=0, w=1.5)], marks=umk, leg=LG)] + tb_mode(),
           dz='全部美元穩定幣流通量的 30 天增減，可以切換看百分比或金額。穩定幣是加密市場裡等著進場的美元：增加代表場外的錢變多，減少代表在萎縮。圓圈是每一段連續增加或減少期間的最大值。總量一直在變大，同樣的金額在幾年前佔的比例高得多，所以跨年比較看百分比，講當下少了多少錢看金額。',
           de='The 30-day change in all US-dollar stablecoins in circulation, as a percentage or in dollars. Stablecoins are the dollars waiting on the sidelines of crypto: a rise means more of them, a fall means they are shrinking. Circles mark the extreme of each run of growth or contraction. Total supply keeps growing, so the same dollar amount was a much bigger share a few years ago: compare across years in percent, and use dollars for how much has left right now.')
 

@@ -420,6 +420,16 @@ for sid in ('NASDAQCOM', 'DTWEXBGS', 'DGS10'):
         R.setdefault('fred', {})[sid] = out
     except Exception as e: errors.append(f'fred {sid} {e}')
 
+# 2026-11-18 使用者要求（Glassnode 週報〈Capitulation Meets Support〉：穩定幣在美債殖利率上升時縮減）：3 個月美債殖利率（FRED DTB3，每個交易日），
+#   給「穩定幣總供給」的第三個檢視算 90 天變化。失敗只是沒有那個檢視
+try:
+    raw = get('https://fred.stlouisfed.org/graph/fredgraph.csv?id=DTB3')
+    _tb = [(l.split(',')[0], float(l.split(',')[1])) for l in raw.splitlines()[1:] if len(l.split(',')) > 1 and l.split(',')[1] not in ('.', '')]
+    _tb = [x for x in _tb if x[0] >= '2019-01-01']
+    if len(_tb) < 500: raise RuntimeError('只有 %d 筆' % len(_tb))
+    R['tbill'] = dict(date=_tb[-1][0], last=_tb[-1][1], rows=[[d_, v] for d_, v in _tb], src='FRED DTB3', note='3 個月美國國庫券殖利率（%，次級市場、貼現基礎），每個交易日一筆')
+except Exception as e: errors.append(f'tbill {e}')
+
 # 2026-11-12 使用者要求（Glassnode 週報的做法）：2 年期美債殖利率減聯準會目標利率上限（rates2y.py；財政部與紐約聯準銀行的官方資料，不用 FRED）
 try:
     import rates2y as _r2y
