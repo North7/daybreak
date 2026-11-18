@@ -298,21 +298,21 @@
   },
   {
    "d": "2026-11-17",
-   "musd": -29.7,
+   "musd": -242.8,
    "partial": false
   }
  ],
  "source": "CoinMarketCap",
  "source_url": "https://coinmarketcap.com/etf/bitcoin/",
- "updated_utc": "2026-11-18T00:56:12+00:00",
+ "updated_utc": "2026-11-18T21:40:14+00:00",
  "last_complete": "2026-11-17",
  "roll20": {
   "date": "2026-11-17",
   "n": 20,
   "th": -1500,
-  "sum": -2650,
+  "sum": -2864,
   "prev5": -1874,
-  "pct_own": 10.1,
+  "pct_own": 8.1,
   "in_stretch": true,
   "stretches": [
    {
@@ -352,7 +352,7 @@
    },
    {
     "a": "2026-11-09",
-    "min": -2650,
+    "min": -2864,
     "min_d": "2026-11-17",
     "n": 7,
     "b": "2026-11-17",
@@ -3135,7 +3135,7 @@
    ],
    [
     20774,
-    -2650
+    -2864
    ]
   ]
  }
