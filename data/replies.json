@@ -4,6 +4,71 @@
  "edition": 43,
  "items": [
   {
+   "url": "https://x.com/Murphychen888/status/2122906949654360168",
+   "id": "2122906949654360168",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82333,
+   "posted": "2026-11-18T04:17:13Z",
+   "lang": "zh",
+   "angle": "這條線今年是被磨的，不是一碰就彈；大幅擊穿換成價位",
+   "take": "剔掉老幣後的成本線今年兩次都有收破，6 月最深 9%；比那更深才是今年沒見過的",
+   "summary": "BTC 落在 <10y RP（剔除 10 年以上沒動的幣後的市場平均換手成本）附近；今年 2 月和 6 月兩次回到這裡都沒再深跌，持有人在成本線下惜售；希望這次也這樣，大幅擊穿會傷信心",
+   "reply": "這條線今年比較像被磨，不是一碰就彈\n照 Bitview 收盤算，剔掉 10 年以上沒動的 360 萬顆，現在在 65K 左右，全部算進來只有 54K\n2 月最多收破 4%，6 月到 7 月中大多收在下面，最深破 9%\n6 月那種深度換到今天大概是 59K，收到那下面才是今年沒見過的\nhttps://x.com/songpu717/status/2121886085085290712",
+   "image": null,
+   "sources": "Bitview day1（到 11/17）：realized_cap、realized_price、age_10y_to_12y／12y_to_15y／over_15y 的 realized_cap 與 supply；<10y 成本＝(全部實現市值−10 年以上實現市值)÷(全部供給−10 年以上供給)，11/17 65,207（10 年以上 360 萬顆；整體實現價格 53,552）。2/5 收 63,961 對線 66,648（−4.0%），2/24 63,949（−2.9%）；6/3 起大多收在線下，6/14–6/16 短暫站上，6/30 收 58,367 對 64,433（−9.4%），7/14 站回、8 月中前在 ±1% 內來回。65,207×0.906≈59.1K",
+   "note": "★ 1 小時內，截止台北 13:17（使用者 12:2x 貼網址）。Murphy 不受額度限制。引用 11/15 五年篇（同方向：老幣和遺失的幣把整體成本拉低、抱兩年以上的人還在賺沒急著賣），所以不配圖。他是 Glassnode 口徑，我們是 Bitview 收盤，講成補充不是反駁；不問問題。",
+   "n": 22,
+   "status": "send",
+   "style": "口語版",
+   "order": 0
+  },
+  {
+   "url": "https://x.com/A9dengbo/status/2122886678599844090",
+   "id": "2122886678599844090",
+   "author": "A9dengbo",
+   "name": "邓博",
+   "followers": 25466,
+   "posted": "2026-11-18T02:56:40Z",
+   "lang": "zh",
+   "angle": "現金不只沒回流，是剛轉成往外走",
+   "take": "同意趨勢看回流的現金，而且現金剛開始往外走",
+   "summary": "輝達財報雙超預期，但他的「反彈驗收三問」（量能、資金、情緒）都沒過：BTC 24h 只 +0.1%、ETF 連續淨流出、FNG 11；結論：決定幣圈趨勢的是回流的現金（原文另有個人分批建倉計劃，不接）",
+   "reply": "現金這條我同意，而且不只是沒回流，是剛轉成往外走\n實現市值 30 天已經轉負，停止流入才第 4 天，上一次從 5 月底停到 8 月下旬\n三問裡你會先看哪一個翻過來？",
+   "image": {
+    "site": {
+     "k": "rcliq"
+    },
+    "title": "實現市值 30 日變化：新資金停止流入"
+   },
+   "sources": "next-buy.js rcliq：30 天 −0.44%、90 天 +2.01%、停止流入第 4 天；上一次 2026/05/28–2026/08/22（87 天）",
+   "note": "固定名單（4c），1.6 小時內，2.5 萬粉配圖。接他的核心句「決定趨勢的是回流的現金」；不接 ZEC、SOL 和他的 6 萬分批建倉計劃。ETF、穩定幣今天 Dragonhau66 用過，換實現市值。",
+   "status": "send",
+   "style": "口語版",
+   "n": 23,
+   "order": 1
+  },
+  {
+   "kind": "followup",
+   "url": "https://x.com/XueCheng1041604/status/2122905308812935672",
+   "id": "2122905308812935672",
+   "author": "XueCheng1041604",
+   "name": "XueCheng",
+   "followers": 911,
+   "posted": "2026-11-18T04:10:41Z",
+   "lang": "zh",
+   "angle": "CoinMarketCap 那邊已標完整",
+   "take": "差距應該不大，兩家本來就會差幾百萬",
+   "summary": "他回我們：790 萬本來就只是一天；Farside 11/17 已披露部分合計約淨流出 3,040 萬，但 IBIT 還沒報，先別當完整日數據",
+   "reply": "CoinMarketCap 那邊 11/17 已經標完整，合計 −2,970 萬\n跟 Farside 常差個幾百萬，IBIT 補完應該也在這附近",
+   "sources": "data/etf.json（CoinMarketCap）2026-11-17 −29.7M、partial=false、last_complete 2026-11-17；_about：CoinMarketCap 沒有 MSBT，和 Farside 偶爾差幾百萬美元",
+   "note": "接話（別人貼文底下第 2 輪）。他補了 Farside 口徑，回一則口徑說明，不爭。",
+   "status": "send",
+   "style": "口語版",
+   "n": 24,
+   "order": 2
+  },
+  {
    "url": "https://x.com/ai_9684xtpa/status/2122885181644128527",
    "id": "2122885181644128527",
    "author": "ai_9684xtpa",
@@ -26,7 +91,7 @@
    "n": 9,
    "status": "send",
    "style": "口語版",
-   "order": 0
+   "order": 3
   },
   {
    "url": "https://x.com/Pladizow/status/2122887377190277354",
@@ -51,7 +116,7 @@
    "n": 10,
    "status": "send",
    "style": "口語版",
-   "order": 1
+   "order": 4
   },
   {
    "mode": "quote",
@@ -78,7 +143,7 @@
    "n": 11,
    "status": "send",
    "style": "口語版",
-   "order": 2
+   "order": 5
   },
   {
    "url": "https://x.com/K2coinking/status/2122752125914796420",
@@ -103,7 +168,7 @@
    "n": 12,
    "status": "send",
    "style": "口語版",
-   "order": 3
+   "order": 6
   },
   {
    "url": "https://x.com/bubblegold2/status/2122882794246512890",
@@ -122,7 +187,7 @@
    "n": 13,
    "status": "send",
    "style": "口語版",
-   "order": 4
+   "order": 7
   },
   {
    "url": "https://x.com/Sirilee2026/status/2122864506263240823",
@@ -141,7 +206,7 @@
    "n": 14,
    "status": "send",
    "style": "口語版",
-   "order": 5
+   "order": 8
   },
   {
    "url": "https://x.com/XueCheng1041604/status/2122874482385682808",
@@ -160,7 +225,7 @@
    "n": 15,
    "status": "send",
    "style": "口語版",
-   "order": 6
+   "order": 9
   },
   {
    "url": "https://x.com/mcf0310/status/2122864457676464382",
@@ -179,7 +244,7 @@
    "n": 16,
    "status": "send",
    "style": "口語版",
-   "order": 7
+   "order": 10
   },
   {
    "url": "https://x.com/528btc/status/2122857890524336513",
@@ -198,7 +263,7 @@
    "n": 17,
    "status": "send",
    "style": "口語版",
-   "order": 8
+   "order": 11
   },
   {
    "url": "https://x.com/heimao1778/status/2122861265676816465",
@@ -217,7 +282,7 @@
    "n": 18,
    "status": "send",
    "style": "口語版",
-   "order": 9
+   "order": 12
   },
   {
    "url": "https://x.com/serlo123/status/2122864870140023079",
@@ -236,7 +301,7 @@
    "n": 19,
    "status": "send",
    "style": "口語版",
-   "order": 10
+   "order": 13
   },
   {
    "url": "https://x.com/paulxue1979/status/2122829430305517853",
@@ -255,7 +320,7 @@
    "n": 20,
    "status": "send",
    "style": "口語版",
-   "order": 11
+   "order": 14
   },
   {
    "kind": "followup",
@@ -275,7 +340,7 @@
    "n": 21,
    "status": "send",
    "style": "口語版",
-   "order": 12
+   "order": 15
   },
   {
    "url": "https://x.com/FrankAFetter/status/2122858478960050612",
@@ -300,7 +365,7 @@
    "n": 1,
    "status": "send",
    "style": "口語版",
-   "order": 13
+   "order": 16
   },
   {
    "url": "https://x.com/Dragonhau66/status/2122875774046753176",
@@ -325,7 +390,7 @@
    "n": 2,
    "status": "send",
    "style": "口語版",
-   "order": 14
+   "order": 17
   },
   {
    "url": "https://x.com/NickTrader8801/status/2122718906632867857",
@@ -344,7 +409,7 @@
    "n": 3,
    "status": "send",
    "style": "口語版",
-   "order": 15
+   "order": 18
   },
   {
    "url": "https://x.com/z2810358647/status/2122719675675181322",
@@ -369,7 +434,7 @@
    "n": 4,
    "status": "send",
    "style": "口語版",
-   "order": 16
+   "order": 19
   },
   {
    "url": "https://x.com/market_beggar/status/2122868839616840100",
@@ -394,7 +459,7 @@
    "n": 5,
    "status": "send",
    "style": "口語版",
-   "order": 17
+   "order": 20
   },
   {
    "url": "https://x.com/silenceisduck/status/2122835744939000194",
@@ -413,7 +478,7 @@
    "n": 6,
    "status": "send",
    "style": "口語版",
-   "order": 18
+   "order": 21
   },
   {
    "url": "https://x.com/Jack57972945/status/2122855624660984246",
@@ -432,7 +497,7 @@
    "n": 7,
    "status": "send",
    "style": "口語版",
-   "order": 19
+   "order": 22
   },
   {
    "url": "https://x.com/rota_maria/status/2122856469217628210",
@@ -451,27 +516,7 @@
    "n": 8,
    "status": "send",
    "style": "口語版",
-   "order": 20
-  },
-  {
-   "url": "https://x.com/Murphychen888/status/2122906949654360168",
-   "id": "2122906949654360168",
-   "author": "Murphychen888",
-   "name": "Murphy",
-   "followers": 82333,
-   "posted": "2026-11-18T04:17:13Z",
-   "lang": "zh",
-   "angle": "這條線今年是被磨的，不是一碰就彈；大幅擊穿換成價位",
-   "take": "剔掉老幣後的成本線今年兩次都有收破，6 月最深 9%；比那更深才是今年沒見過的",
-   "summary": "BTC 落在 <10y RP（剔除 10 年以上沒動的幣後的市場平均換手成本）附近；今年 2 月和 6 月兩次回到這裡都沒再深跌，持有人在成本線下惜售；希望這次也這樣，大幅擊穿會傷信心",
-   "reply": "這條線今年比較像被磨，不是一碰就彈\n照 Bitview 收盤算，剔掉 10 年以上沒動的 360 萬顆，現在在 65K 左右，全部算進來只有 54K\n2 月最多收破 4%，6 月到 7 月中大多收在下面，最深破 9%\n6 月那種深度換到今天大概是 59K，收到那下面才是今年沒見過的\nhttps://x.com/songpu717/status/2121886085085290712",
-   "image": null,
-   "sources": "Bitview day1（到 11/17）：realized_cap、realized_price、age_10y_to_12y／12y_to_15y／over_15y 的 realized_cap 與 supply；<10y 成本＝(全部實現市值−10 年以上實現市值)÷(全部供給−10 年以上供給)，11/17 65,207（10 年以上 360 萬顆；整體實現價格 53,552）。2/5 收 63,961 對線 66,648（−4.0%），2/24 63,949（−2.9%）；6/3 起大多收在線下，6/14–6/16 短暫站上，6/30 收 58,367 對 64,433（−9.4%），7/14 站回、8 月中前在 ±1% 內來回。65,207×0.906≈59.1K",
-   "note": "★ 1 小時內，截止台北 13:17（使用者 12:2x 貼網址）。Murphy 不受額度限制。引用 11/15 五年篇（同方向：老幣和遺失的幣把整體成本拉低、抱兩年以上的人還在賺沒急著賣），所以不配圖。他是 Glassnode 口徑，我們是 Bitview 收盤，講成補充不是反駁；不問問題。",
-   "n": 22,
-   "status": "send",
-   "style": "口語版",
-   "order": 21
+   "order": 23
   }
  ]
 }
