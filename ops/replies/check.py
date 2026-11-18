@@ -84,6 +84,9 @@ def sentence_notes(tag, t):
 
 # 2026-11-10 第三輪（voice.md「把人寫回來」）：兩輪去 AI 味之後文字太平。有沒有一處自己的反應、有沒有對著人講話，只提醒不擋。
 # 11/04–11/09：有情緒或語氣詞的回覆互動率 4.2%、對方回話 32%（沒有的 1.4%、17%）；數字開頭的回覆有互動的只有 29%（其他 45%）。
+# 2026-11-18 使用者：「你寫文章的結構，用語，每篇文章都太像了，什麼先講結論，我有點不舒服，我沒想到，一把尺，我回來對一次。每篇文章都一個結構。太假了」
+# 沒發的中文長文出現就擋。只加不刪；同義的新套話被退稿時加進來。
+STOCK = re.compile(r"先講結論|結論先講|我回來對一次|回來對一次|我回來對|有點不舒服|我沒想到|沒想到的是|老實說|老實講|這把尺|一把尺|同一把尺|哪把尺|兩把尺|兩邊都只說對|兩邊拿的都是|弱點也講清楚|邊界也講清楚|也講清楚")
 EMO = re.compile(r"哈|欸|啊|吧|啦|蠻|老實講|說真的|沒想到|我以為|本來以為|原本以為|原本也是|才發現|有點不舒服|居然|竟然|難受|不舒服|還好|佩服|我服|誇張|又是|偏偏|結果呢|"
                  r"honestly|\bhuh\b|ouch|\bfair\b|\bha\b|\bwild\b|didn't expect|surpris|not gonna", re.I)
 PERSON = re.compile(r"你|我|？|\byou\b|\bI\b|\bI'|\?", re.I)
@@ -109,7 +112,7 @@ def longpost_notes(tag, t, lang, posted=None):
     if short > 2: out.append(f'{tag} {short} 段都用一句短的收尾：一篇一兩處就好，其他段用數字或細節收')
     head = ''.join(paras)[:280]
     if head and not PERSON.search(head): out.append(f'{tag} 前 280 字裡沒有人（沒有「你／我」、沒有問句）：X 只露出這一段，第一句用鉤子開，對著讀者或用自己的反應講（voice.md 第三輪）')
-    if not EMO.search(body): out.append(f'{tag} 全篇沒有一處自己的反應（意外、吐槽、不安、鬆口氣、自嘲）：挑一個具體事實掛上去，不演（voice.md 第三輪）')
+    # 2026-11-18 拿掉「全篇沒有一處自己的反應」的提醒：它讓每篇都硬塞一句「老實說／我有點不舒服／差點寫成」，使用者說太假。有真的反應才寫，沒有就不寫
     if lang == 'zh' and not posted and re.search(r'老實(說|講)', body): out.append(f'{tag} 「老實說／老實講」：最近幾乎每篇都用，變成口頭禪了（2026-11-18 使用者：「不要總說：老實說」）。反應直接講事實，不用先宣告')
     if not TRADE.search(body): out.append(f'{tag} 沒看到「對交易來說這代表什麼」的句子：是不是訊號（跟隨便挑一天比，帶次數）、什麼價位／數字翻過去讀法就換、風險偏哪邊、哪種感覺是雜訊，挑一種寫（voice.md「要有交易上的意義」2026-11-09）')
     return out
@@ -131,9 +134,11 @@ def check_longposts():
             if not it.get('posted') and BRAND.search(t + (it.get('title') or '')): err.append(f'{tag} 品牌名寫 Daybreak，不寫「破曉」（2026-11-12 使用者）')
             if lang == 'zh' and not it.get('posted') and '網站' in t + (it.get('title') or ''): err.append(f'{tag} 「網站」改寫「Daybreak 上」（2026-11-15 使用者：文章裡的「網站裡」都改為「Daybreak 上」）')
             if lang == 'zh' and not it.get('posted') and CHENG.search(t + (it.get('title') or '')): err.append(f'{tag} 「{CHENG.search(t + (it.get("title") or "")).group(0)}」改成百分數（2026-11-17 使用者：幾成都換成百分數）')
-            if lang == 'zh' and not it.get('posted'):   # 2026-11-18 使用者：「長文控制在1000字以內」（正文到 hashtag 前、不算空白）
-                n = len(re.sub(r'\s', '', re.sub(r'#\S+', '', t)))
-                if n > 1000: err.append(f'{tag} 正文 {n} 字，超過 1000 字（2026-11-18 使用者：長文控制在 1000 字以內）。先刪重複的數字、講第二遍的話和圖上看得到的細節')
+            if lang == 'zh' and not it.get('posted'):   # 2026-11-18 使用者：「長文控制在1000字以內」。算法跟發文小幫手顯示的一樣：標題＋空一行＋全文，空白、標點、hashtag 都算（11/18 晚上：原本只算正文不算空白，920 字的稿子小幫手顯示 1,131，使用者：「昨天我說了，長文內容控制在1000字以內」）
+                tt = (it.get('title') or '').strip(); full = t if re.sub(r'\s', '', t).startswith(re.sub(r'\s', '', tt)) else tt + '\n\n' + t
+                n = len(full)
+                if n > 1000: err.append(f'{tag} 全文 {n} 字（含標題、空白、hashtag，和小幫手顯示的一樣），超過 1000 字。先刪重複的數字、講第二遍的話和圖上看得到的細節')
+                for w in STOCK.findall(tt + '\n' + t): err.append(f'{tag} 套話「{w}」：最近每篇都出現，使用者 2026-11-18：「每篇文章都一個結構。太假了」。整句拿掉或換成這篇才有的說法，不要換一個同義的套話')
             if lang == 'zh' and set(t) & SIMP: err.append(f'{tag} 有簡體字：{"".join(sorted(set(t) & SIMP))}')
             if lang == 'zh' and not it.get('posted') and EN_NAME.search(t): err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(sorted(set(EN_NAME.findall(t)))) + '（voice.md 用詞，2026-11-09）')
             notes += sentence_notes(tag, t)
