@@ -1,16 +1,16 @@
 {
- "date": "2026-11-16",
- "edition": 42,
+ "date": "2026-11-17",
+ "edition": 43,
  "picks": [
   {
-   "id": "onchain/lthloss",
-   "chart": "data/picks/onchain-lthloss.png",
-   "chart_en": "data/picks/onchain-lthloss-en.png",
-   "why": "避險成立、價格在 64K 打轉，讀者會問長期持有者是不是也要投降；頭條講避險和短期持有者，這張講長期那一邊，不重複。；11/17 運營改寫成觀點為主（使用者：每天的推薦圖表也要有觀點為主）",
-   "q_zh": "長期持有者的虧損比例破這輪高點了嗎？",
-   "q_en": "Has the long-term holder loss share broken this cycle's peak?",
-   "zh": "長期持有者的虧損比例破這輪高點了嗎？\n還沒，6 月那個底到現在還算數。\n這波跌，賣的主要是剛進場的人；放得久的那批 41.7% 套著，還沒 6/30 的 45.4% 痛。前三輪見底之後，這個比例都沒再創新高，3 次裡 3 次。\n收盤跌破 60,500 它才會破，到那時 6 月的底就得重看。\n#比特幣 #BTC #鏈上數據",
-   "en": "Has the long-term holder loss share broken this cycle's peak?\nNot yet. The June bottom still holds; newer buyers are the ones selling.\nLTHs: 41.7% underwater vs 45.4% on Jun 30. 3 of 3 past cycles never topped it again.\nA close below 60,500 breaks it.\n#Bitcoin #BTC #onchain"
+   "id": "deriv/gex",
+   "chart": "data/picks/deriv-gex.png",
+   "chart_en": "data/picks/deriv-gex-en.png",
+   "why": "價格三天停在 64K，讀者會問為什麼不動；頭條講 ETF 與新錢，這張講期權對沖把價格吸住，不重複。plan 沒有 hint，gex 不在 recent。",
+   "q_zh": "為什麼 BTC 這三天黏在 64K？",
+   "q_en": "Why has BTC been stuck at 64K for three days?",
+   "zh": "為什麼 BTC 這三天黏在 64K？\n多半是選擇權（期權）的對沖把價格吸住了，還看不出有新買盤。\n推算做市商在 64,000 這檔是正 Gamma：價格每動 1% 要反向對沖 $18.4M，漲了賣、跌了買，波動被壓小。\n往上 65,000、66,000 和往下 60,000 都是負 Gamma，走出 64,000 波動會放大。\n#比特幣 #BTC #期權",
+   "en": "Why has BTC been stuck at 64K for three days?\nMostly options dealers pinning it, not fresh demand.\nEstimated dealer gamma at 64,000 is positive, $18.4M per 1% move: they fade both ways.\n65,000, 66,000 and 60,000 are negative: past them swings grow.\n#Bitcoin #BTC #options"
   }
  ]
 }
