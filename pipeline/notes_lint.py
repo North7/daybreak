@@ -270,6 +270,11 @@ if __name__ == '__main__':
         if doc is None: continue
         b, w = lint_voice(doc, zh, pv); bad += b; warn += w
     bad += lint_head(n, en, prev, json.load(open(pen)) if pen and os.path.exists(pen) else None)
+    try:   # 2026-11-18 使用者：「每日的日報配圖已經是頭版標題，文字就可以改為下面的詳細說明那段」：貼文正文＝當期 summary
+        xp = json.load(open(D('x_post.json'))); sq = lambda t: re.sub(r'\s+', '', t or '')
+        for k, doc in (('zh', n), ('en', en)):
+            if doc and xp.get('date') == n.get('date') and sq(doc.get('summary')) not in sq(xp.get(k)): bad.append(f'x_post.json 的 {k} 正文要照抄當期 summary（只在句號後換行），見 CLAUDE_DAILY.md 第 9 步')
+    except Exception as e: bad.append(f'x_post.json 讀不到：{e}')
     for f, keys in (('x_post.json', ('zh', 'en')), ('picks.json', None)):   # 2026-11-17 早報貼文、推薦圖文也是對外的
         try: d = json.load(open(D(f)))
         except Exception: continue
