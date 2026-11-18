@@ -13,6 +13,17 @@ import subprocess, hashlib
 HERE = os.path.dirname(os.path.abspath(__file__))
 L = json.load(open(os.path.join(REPO, 'data', 'latest.json'), encoding='utf-8'))
 N = json.load(open(os.path.join(REPO, 'data', 'notes.json'), encoding='utf-8'))
+# 2026-11-18 使用者：「右邊寫 17 日收盤版，但看起來判讀內容沒變」。整期一起換（2026-11-06 的規則，舊版 app.js 的 HELD；新版漏了）：
+#   資料管線先寫好新一天的 latest.json，日報判讀約 15–30 分鐘後才提交。這段時間判讀還是上一期，就整期沿用上一份數字（latest.prev.json，
+#   pipeline/build.py 換日前存的），日期、價格、卡片都和判讀對得上；判讀一提交（share.yml 重建）就整期換新
+HELD = None
+try:
+    _pf = os.path.join(REPO, 'data', 'latest.prev.json')
+    if N.get('date') != L['meta']['bar_date'] and os.path.exists(_pf):
+        _P = json.load(open(_pf, encoding='utf-8'))
+        if _P['meta']['bar_date'] == N.get('date'): HELD = L['meta']['bar_date']; L = _P
+except Exception as e: print('held check failed', e)
+print('held', HELD and '%s data waiting for notes; showing %s' % (HELD, L['meta']['bar_date']))
 EP = dt.date(1970, 1, 1); dn = lambda s: (dt.date.fromisoformat(s) - EP).days; ymd = lambda n: (EP + dt.timedelta(n)).isoformat()
 
 dw = L['cycle']['dawn']; R = dw['rows']                       # [day, heat, price, stage, dir]
@@ -90,7 +101,7 @@ def _lean_flip():
     for k, v in vw.items():
         if P.get(k) and P[k] != v['tone']: v['pt'] = P[k]; v['pd'] = S.get('prev_date'); n += 1
     return dict(date=bd, prev=S.get('prev_date'), flips=n)
-print('lean flip', _lean_flip())
+print('lean flip', _lean_flip() if not HELD else 'skipped (held)')   # 沿用上一期時不動 leans.json，免得把新一天的紀錄蓋回前一天
 def _sigs():
     """2026-11-18 訊號清單（page.html ㉟ 6）：右下角的訊號提示點開是今天全部的訊號，其他頁的卡片資料是之後才載入的，所以清單先放在 next.js"""
     out = []

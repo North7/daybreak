@@ -140,7 +140,7 @@ try:
 except Exception as e:
     print('signals failed', e); out['meta']['errors'] = out['meta']['errors'] + [f'signals {e}']
 # 2026-11-06 使用者要求（「不然有一段時間就會出現數字和判讀對不上的情況」）：整期一起換。新的一天的資料寫進來之前，
-#   把上一份存成 latest.prev.json；網站發現判讀還是上一期時，先顯示上一份數字配上一期判讀，判讀寫好再整期換新（見 app.js 的 HELD）。
+#   把上一份存成 latest.prev.json；網站發現判讀還是上一期時，先顯示上一份數字配上一期判讀，判讀寫好再整期換新（2026-11-18 起在 pipeline/next/build.py 的 HELD；舊版 app.js 已刪）。
 #   同一天重建不覆蓋（prev 一直是前一天那份）
 try:
     _lf = P('data', 'latest.json')
