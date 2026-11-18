@@ -4,6 +4,192 @@
  "edition": 43,
  "items": [
   {
+   "n": 33,
+   "mode": "quote",
+   "url": "https://x.com/BTCtreasuries/status/2122913941676499182",
+   "id": "2122913941676499182",
+   "author": "BTCtreasuries",
+   "name": "BitcoinTreasuries.NET",
+   "followers": 42031,
+   "posted": "2026-11-18T04:45:00Z",
+   "lang": "en",
+   "angle": "洗出是真的，洗完了沒還要看下一個峰值",
+   "take": "賣家被洗出這件事數據上看得到，但認賠還在放大、沒收斂",
+   "summary": "James Check 說底部已到、熊市洗出了大部分賣家，但回到新高不會很快很順",
+   "reply": "",
+   "quote": "James Check says the bear has flushed out most of its sellers\nThe flush shows up in realized losses: $1.89B on Nov 16, about double the Nov 3 peak, at a price 16% lower\nWhat it hasn't shown yet is a smaller spike on the next leg down\n#Bitcoin #BTC #onchain",
+   "image": {
+    "site": {
+     "k": "rloss"
+    },
+    "title": "Realized losses: Nov 16 doubled the Nov 3 peak"
+   },
+   "sources": "next-sell.js rloss say：11/3 9.63 億美元 → 11/16 18.86 億美元，價格 77.3K → 64.8K（−16%）；看法「背離被打破」偏空、cz「下一個峰值認賠變少」",
+   "note": "★ 引用（4.2 萬粉），今天第 2 則引用；引用 2 小時窗到台北 14:45。Grok inbox 1305 表二 #1。不說底到了沒，用網站看法的 cz 當最後一句。",
+   "style": "口語版",
+   "status": "send",
+   "order": 0
+  },
+  {
+   "n": 32,
+   "url": "https://x.com/TheMoonShow/status/2122919581648027873",
+   "id": "2122919581648027873",
+   "author": "TheMoonShow",
+   "name": "The Moon Show",
+   "followers": 21431,
+   "posted": "2026-11-18T05:07:24Z",
+   "lang": "en",
+   "angle": "這是賠錢在賣",
+   "take": "IBIT 這筆流出平均來說是認賠，不是獲利了結",
+   "summary": "BlackRock IBIT 客戶賣出 2.095 億美元的 BTC",
+   "reply": "Mostly at a loss, the estimated average ETF buyer cost is about $79K and the 11/17 close was 17.8% under it",
+   "image": {
+    "site": {
+     "k": "etfcost"
+    },
+    "title": "ETF buyers' average cost: $78,971"
+   },
+   "sources": "flows.etfcost 11/17：cost 78,971、price 64,877、gap −17.8%、run 9（推算、不含 GBTC）；網站看法「ETF 買家在虧損」偏空",
+   "note": "Grok inbox 1305 #10。英文 2 小時窗到台北 15:07。2.1 萬粉配圖（etfcost 英文今天第一次用）。",
+   "style": "口語版",
+   "status": "send",
+   "order": 1
+  },
+  {
+   "n": 28,
+   "url": "https://x.com/Grace_Invest11/status/2122905166911336591",
+   "id": "2122905166911336591",
+   "author": "Grace_Invest11",
+   "name": "Grace",
+   "followers": 1447,
+   "posted": "2026-11-18T04:10:08Z",
+   "lang": "zh",
+   "angle": "Wintermute 的條件資金那半沒達到",
+   "take": "她等的 IBIT 補上了，是流出，Wintermute 要的 ETF 流入那半週二沒有",
+   "summary": "週二 ETF 還缺 IBIT；週一 Farside +790 萬；BTC 64.2K 低於 200 週均線 68K；Wintermute 要等收回 200 週均線＋ETF 淨流入才重新考慮；問反彈會停在這裡嗎",
+   "reply": "IBIT 補上來了，−2.1 億，週二合計 −2.4 億\n你引的 Wintermute 那兩個條件，資金這半週二就落空",
+   "sources": "Farside 11/17 合計 −239.9M、IBIT −209.5M（新聞數字，經 Grok 1305 與 TheMoonShow 報導對照）",
+   "note": "Grok inbox 1305 #3。1.4 千粉不配圖。200 週均線 Daybreak 沒有，不碰。",
+   "style": "口語版",
+   "status": "send",
+   "order": 2
+  },
+  {
+   "n": 30,
+   "url": "https://x.com/xiaoguodunzhou/status/2122907586270003233",
+   "id": "2122907586270003233",
+   "author": "xiaoguodunzhou",
+   "name": "xiaoguodunzhou",
+   "followers": 2026,
+   "posted": "2026-11-18T04:19:44Z",
+   "lang": "zh",
+   "angle": "一個月掉 41 點，第一次進極度恐懼",
+   "take": "同意一天流入扭不動，情緒掉得太快，第一次掉進去以前多半還沒完",
+   "summary": "ETF 七連流出 19.1 億後 11/16 流入 790 萬；BTC 64.6K；200 週均線失守；恐懼貪婪 12；一天流入扭轉不了情緒",
+   "reply": "一天哪扭得動，情緒是一個月從 53 直接掉到 12\n以前第一次掉進極度恐懼，30 天後多半更低",
+   "sources": "flows.fng_hist 11/17：12、d30 53；next-lev.js fng say：極度恐懼之後 30 天 4/16 上漲、中位數 −6.1%，看法偏空",
+   "note": "Grok inbox 1305 #6。2 千粉不配圖。方向跟網站一致（極度恐懼偏空）。",
+   "style": "口語版",
+   "status": "send",
+   "order": 3
+  },
+  {
+   "n": 26,
+   "url": "https://x.com/Hawk_Daflykc/status/2122891373477310562",
+   "id": "2122891373477310562",
+   "author": "Hawk_Daflykc",
+   "name": "Hawk",
+   "followers": 1403,
+   "posted": "2026-11-18T03:15:19Z",
+   "lang": "zh",
+   "angle": "看 7 天，不看 30 天",
+   "take": "要判斷是不是回流，30 天太慢，7 天還在縮就是還沒回來",
+   "summary": "穆薩萊姆說可能多次升息；穩定幣總市值 2,500 億、30 天 −5%；ETF 週一 +790 萬；問穩定幣縮水是離場還是去認購 Anthropic、怎麼判斷",
+   "reply": "看 7 天的就好，到 11/17 還在少 1.35%，回流會先在這裡翻正",
+   "sources": "flows.stables 11/17（DefiLlama，全部美元穩定幣 2,864 億）：7 天 −1.35%、30 天 −5.31%（2021 年以來第 2 百分位）",
+   "note": "Grok inbox 1305 #1。他直接問看哪個數據。1.4 千粉不配圖。Anthropic 那半不碰。",
+   "style": "口語版",
+   "status": "send",
+   "order": 4
+  },
+  {
+   "n": 25,
+   "kind": "followup",
+   "url": "https://x.com/mcf0310/status/2122910182921703784",
+   "id": "2122910182921703784",
+   "author": "mcf0310",
+   "name": "mcf0310",
+   "followers": 1767,
+   "posted": "2026-11-18T04:30:04Z",
+   "lang": "zh",
+   "angle": "大單倒是先跑了",
+   "take": "",
+   "summary": "原作者回我們：確實，7 次見低小單都先跑，這次還沒翻過來",
+   "reply": "大單倒是先跑了，這 30 天淨賣 3.6 億",
+   "sources": "flows.cvd_size（到 11/16）d30 大單 −359.5M",
+   "note": "接話：原作者第 1 次回我們（#16 底下），閒聊型同意，短短補一個他沒有的數字。",
+   "style": "口語版",
+   "status": "send",
+   "order": 5
+  },
+  {
+   "n": 29,
+   "url": "https://x.com/yangye01/status/2122873000446066912",
+   "id": "2122873000446066912",
+   "author": "yangye01",
+   "name": "yangye01",
+   "followers": 11255,
+   "posted": "2026-11-18T02:02:19Z",
+   "lang": "zh",
+   "angle": "撐場面只撐了一天",
+   "take": "同意看反轉還早，隔天貝萊德自己就轉流出",
+   "summary": "IBIT 週一 +7,650 萬，終結 11 連流出 23.5 億；全市場只 +790 萬，全靠貝萊德撐；BTC 64,450，看反轉還早",
+   "reply": "貝萊德也只撐一天，週二 IBIT 自己流出 2.1 億，把週一那筆吃掉快 3 倍",
+   "sources": "Farside 11/17 IBIT −209.5M（新聞數字）；11/16 IBIT +76.5M（原文）；209.5 ÷ 76.5 ≈ 2.7",
+   "note": "Grok inbox 1305 #4。1.1 萬粉，etfcost、etf20 中文今天都用過，沒有別張對得上，不配圖。",
+   "style": "口語版",
+   "status": "send",
+   "order": 6
+  },
+  {
+   "n": 31,
+   "url": "https://x.com/lee1990US/status/2122873740107370948",
+   "id": "2122873740107370948",
+   "author": "lee1990US",
+   "name": "lee1990US",
+   "followers": 1696,
+   "posted": "2026-11-18T02:05:15Z",
+   "lang": "zh",
+   "angle": "62K 撐不撐看上面那格籌碼",
+   "take": "比起清算單，62K 上面這格籌碼才是厚的，往下確實變薄",
+   "summary": "62,006 七月以來最低；7 天跌 12%；恐懼 12；59.5–62.6K 堆清算單；62K 守不住下一站 6 萬以下；問抄底還是等",
+   "reply": "撐不撐主要看 6.2 到 6.4 萬這格，堆了 73 萬顆\n再往下一格只剩一半不到\n你那張清算圖是哪一家的？",
+   "sources": "chips.viz.urpd 11/16（2,000 美元一格）：62–64K 733,613 顆、60–62K 339,877、58–60K 151,284",
+   "note": "Grok inbox 1305 #7。1.7 千粉不配圖。不說守不守得住、不答抄底。",
+   "style": "口語版",
+   "status": "send",
+   "order": 7
+  },
+  {
+   "n": 27,
+   "url": "https://x.com/keytonoxu/status/2122872861333561363",
+   "id": "2122872861333561363",
+   "author": "keytonoxu",
+   "name": "keytonoxu",
+   "followers": 1046,
+   "posted": "2026-11-18T02:01:45Z",
+   "lang": "zh",
+   "angle": "單日夠格，累積還不像投降",
+   "take": "說投降只有單日夠格，30 天累積量離以前的投降還差很遠",
+   "summary": "62–66K 吸收 6.6 萬枚拋壓；Glassnode 已實現虧損回到 2018、2020、2022 底部水平；幣安被盜地址換 BTC；問底部還是再洗",
+   "reply": "要說投降，現在只有單日夠格\n上週有一天淨認賠 17 億，這個月加起來卻只佔市值 0.45%，以前投降要到 1.4% 左右",
+   "sources": "onchain.npl 11/16：−1,713.4M、rank_1y 2.5；next-sell.js npl say：30 天累計 −58.08 億、佔市值 −0.45%，過去投降約 −1.4%；看法「整體在認賠」偏空",
+   "note": "Grok inbox 1305 #2。1 千粉不配圖。不答抄不抄、5 字頭。發文 6 小時窗到台北 16:01。",
+   "style": "口語版",
+   "status": "send",
+   "order": 8
+  },
+  {
    "url": "https://x.com/Murphychen888/status/2122906949654360168",
    "id": "2122906949654360168",
    "author": "Murphychen888",
@@ -21,7 +207,7 @@
    "n": 22,
    "status": "send",
    "style": "口語版",
-   "order": 0
+   "order": 9
   },
   {
    "url": "https://x.com/A9dengbo/status/2122886678599844090",
@@ -46,7 +232,7 @@
    "status": "send",
    "style": "口語版",
    "n": 23,
-   "order": 1
+   "order": 10
   },
   {
    "kind": "followup",
@@ -57,16 +243,16 @@
    "followers": 911,
    "posted": "2026-11-18T04:10:41Z",
    "lang": "zh",
-   "angle": "CoinMarketCap 那邊已標完整",
-   "take": "差距應該不大，兩家本來就會差幾百萬",
+   "angle": "認錯：CMC 漏了 IBIT",
+   "take": "他提醒得對，CMC 標完整其實漏了 IBIT",
    "summary": "他回我們：790 萬本來就只是一天；Farside 11/17 已披露部分合計約淨流出 3,040 萬，但 IBIT 還沒報，先別當完整日數據",
-   "reply": "CoinMarketCap 那邊 11/17 已經標完整，合計 −2,970 萬\n跟 Farside 常差個幾百萬，IBIT 補完應該也在這附近",
-   "sources": "data/etf.json（CoinMarketCap）2026-11-17 −29.7M、partial=false、last_complete 2026-11-17；_about：CoinMarketCap 沒有 MSBT，和 Farside 偶爾差幾百萬美元",
-   "note": "接話（別人貼文底下第 2 輪）。他補了 Farside 口徑，回一則口徑說明，不爭。",
+   "reply": "講錯了，IBIT 後來補上是 −2.1 億，Farside 合計 −2.4 億\nCoinMarketCap 那邊標了完整卻漏掉 IBIT，2,970 萬那個數別用",
+   "sources": "Farside 11/17 合計 −239.9M、IBIT −209.5M（Grok inbox 1305 讀 Farside 05:00 UTC；TheMoonShow、TheMoneyApe 同樣報 IBIT −209.5M；Farside 網站本機被 Cloudflare 擋，沒直接讀到）；data/etf.json（CoinMarketCap）11/17 −29.7M 標 partial=false，看起來沒含 IBIT",
+   "note": "接話（別人貼文底下第 2 輪）。13:27 那輪改寫：原稿說 IBIT 補完也在 −2,970 萬附近，結果 IBIT 單檔 −2.1 億，直接認。#15、#2 已發的「11/17 流出 2,970 萬」改不了。",
    "status": "send",
    "style": "口語版",
    "n": 24,
-   "order": 2
+   "order": 11
   },
   {
    "url": "https://x.com/ai_9684xtpa/status/2122885181644128527",
@@ -91,7 +277,7 @@
    "n": 9,
    "status": "send",
    "style": "口語版",
-   "order": 3
+   "order": 12
   },
   {
    "url": "https://x.com/Pladizow/status/2122887377190277354",
@@ -116,7 +302,7 @@
    "n": 10,
    "status": "send",
    "style": "口語版",
-   "order": 4
+   "order": 13
   },
   {
    "mode": "quote",
@@ -143,7 +329,7 @@
    "n": 11,
    "status": "send",
    "style": "口語版",
-   "order": 5
+   "order": 14
   },
   {
    "url": "https://x.com/K2coinking/status/2122752125914796420",
@@ -168,7 +354,7 @@
    "n": 12,
    "status": "send",
    "style": "口語版",
-   "order": 6
+   "order": 15
   },
   {
    "url": "https://x.com/bubblegold2/status/2122882794246512890",
@@ -187,7 +373,7 @@
    "n": 13,
    "status": "send",
    "style": "口語版",
-   "order": 7
+   "order": 16
   },
   {
    "url": "https://x.com/Sirilee2026/status/2122864506263240823",
@@ -206,7 +392,7 @@
    "n": 14,
    "status": "send",
    "style": "口語版",
-   "order": 8
+   "order": 17
   },
   {
    "url": "https://x.com/XueCheng1041604/status/2122874482385682808",
@@ -225,7 +411,7 @@
    "n": 15,
    "status": "send",
    "style": "口語版",
-   "order": 9
+   "order": 18
   },
   {
    "url": "https://x.com/mcf0310/status/2122864457676464382",
@@ -244,7 +430,7 @@
    "n": 16,
    "status": "send",
    "style": "口語版",
-   "order": 10
+   "order": 19
   },
   {
    "url": "https://x.com/528btc/status/2122857890524336513",
@@ -263,7 +449,7 @@
    "n": 17,
    "status": "send",
    "style": "口語版",
-   "order": 11
+   "order": 20
   },
   {
    "url": "https://x.com/heimao1778/status/2122861265676816465",
@@ -282,7 +468,7 @@
    "n": 18,
    "status": "send",
    "style": "口語版",
-   "order": 12
+   "order": 21
   },
   {
    "url": "https://x.com/serlo123/status/2122864870140023079",
@@ -301,7 +487,7 @@
    "n": 19,
    "status": "send",
    "style": "口語版",
-   "order": 13
+   "order": 22
   },
   {
    "url": "https://x.com/paulxue1979/status/2122829430305517853",
@@ -320,7 +506,7 @@
    "n": 20,
    "status": "send",
    "style": "口語版",
-   "order": 14
+   "order": 23
   },
   {
    "kind": "followup",
@@ -340,7 +526,7 @@
    "n": 21,
    "status": "send",
    "style": "口語版",
-   "order": 15
+   "order": 24
   },
   {
    "url": "https://x.com/FrankAFetter/status/2122858478960050612",
@@ -365,7 +551,7 @@
    "n": 1,
    "status": "send",
    "style": "口語版",
-   "order": 16
+   "order": 25
   },
   {
    "url": "https://x.com/Dragonhau66/status/2122875774046753176",
@@ -390,7 +576,7 @@
    "n": 2,
    "status": "send",
    "style": "口語版",
-   "order": 17
+   "order": 26
   },
   {
    "url": "https://x.com/NickTrader8801/status/2122718906632867857",
@@ -409,7 +595,7 @@
    "n": 3,
    "status": "send",
    "style": "口語版",
-   "order": 18
+   "order": 27
   },
   {
    "url": "https://x.com/z2810358647/status/2122719675675181322",
@@ -434,7 +620,7 @@
    "n": 4,
    "status": "send",
    "style": "口語版",
-   "order": 19
+   "order": 28
   },
   {
    "url": "https://x.com/market_beggar/status/2122868839616840100",
@@ -459,7 +645,7 @@
    "n": 5,
    "status": "send",
    "style": "口語版",
-   "order": 20
+   "order": 29
   },
   {
    "url": "https://x.com/silenceisduck/status/2122835744939000194",
@@ -478,7 +664,7 @@
    "n": 6,
    "status": "send",
    "style": "口語版",
-   "order": 21
+   "order": 30
   },
   {
    "url": "https://x.com/Jack57972945/status/2122855624660984246",
@@ -497,7 +683,7 @@
    "n": 7,
    "status": "send",
    "style": "口語版",
-   "order": 22
+   "order": 31
   },
   {
    "url": "https://x.com/rota_maria/status/2122856469217628210",
@@ -516,7 +702,7 @@
    "n": 8,
    "status": "send",
    "style": "口語版",
-   "order": 23
+   "order": 32
   }
  ]
 }
