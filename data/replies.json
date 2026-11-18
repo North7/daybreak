@@ -703,6 +703,34 @@
    "status": "send",
    "style": "口語版",
    "order": 32
+  },
+  {
+   "n": 34,
+   "mode": "quote",
+   "url": "https://x.com/glassnode/status/2122731152418951461",
+   "id": "2122731152418951461",
+   "author": "glassnode",
+   "name": "glassnode",
+   "followers": null,
+   "posted": "2026-11-17T16:38:00Z",
+   "lang": "zh",
+   "angle": "同一把尺 Daybreak 上也有；這張今年 2 月也過過線，之後還跌到 6 月底",
+   "take": "認賠重是真的，過線說明割得重，不說明割完",
+   "summary": "Glassnode The Week On-chain 第 46 週〈Capitulation Meets Support〉第一張圖：7 日平均實現虧損 ÷ 過去一年實現獲利（實體調整），超過歷史 95 百分位，只在 2018、2020、2022、2023 年初低點附近見過，這次是 2023 以來第一次",
+   "reply": "",
+   "quote": "Glassnode 週報第一張圖：認賠重到只有過去幾次低點附近才見過\nDaybreak 上有同一把尺：每天認賠 ÷ 過去一年賺的錢，超過歷史 95 百分位就算重。11/17 是 71.3，2023 年 4 月以來最高\n不一樣的在今年 2 月：這張 2 月也過了線，之後還跌到 6 月底才見低\n#比特幣 #BTC #鏈上數據",
+   "image": {
+    "site": {
+     "k": "rloss",
+     "m": 2
+    },
+    "title": "認賠 ÷ 一年獲利：2023 年 4 月以來最高"
+   },
+   "sources": "next-sell.js rloss m:2（÷ 一年獲利）；latest.json onchain.rloss.cap：11/17 71.3、門檻 46.1、hi_since 2023-04-05；eps 2026-02-05 起過線、2/7 峰值 65.2（價 62,858）；之後低點 2026-06-30 58,532（−6.9%）。Glassnode 是實體調整、我們是 Bitview 逐筆 UTXO，數值不同、方向一樣",
+   "note": "★ 使用者指定引用 Glassnode 週報（11/18 台北 13:4x 貼網址，說額度可忽略：今天第 3 則引用、發文已 13 小時）。同一張卡今天 BTCtreasuries 引用用的是預設檢視（每日金額），這則用 m:2；knife 長文 19:30 的圖4 也是 m:2，講法不同（那篇講接刀，這則講 2 月過線後還跌）。",
+   "style": "口語版",
+   "status": "send",
+   "order": 0
   }
  ]
 }
