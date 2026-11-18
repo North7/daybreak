@@ -4,6 +4,66 @@
  "edition": 43,
  "items": [
   {
+   "n": 37,
+   "kind": "followup",
+   "url": "https://x.com/serlo123/status/2122939034536387042",
+   "id": "2122939034536387042",
+   "author": "serlo123",
+   "name": "serlo123",
+   "followers": 9425,
+   "posted": "2026-11-18T06:24:42Z",
+   "lang": "zh",
+   "angle": "58K 就是 6 月低點",
+   "take": "守住的話這輪的底在 6 月、只是熊市淺",
+   "summary": "在我們翻舊帳長文（5 萬已超時）底下留言：應該不會跌破 58K，跌破了時間週期就對不上",
+   "reply": "你說的 58K 就是 6 月底那次低點\n年底前都守住的話，這輪的底八成就在那裡，只是熊市淺很多",
+   "sources": "cycle.tidemark.cycle_test（low 2026-06-30 $58,525、decisive_date 2026-12-19）",
+   "note": "接話：我們原創底下的留言，有內容一定回；數字寫完整 58,525，跟 #21 的「5.85 萬」錯開說法。",
+   "style": "口語版",
+   "status": "send",
+   "order": 0
+  },
+  {
+   "n": 36,
+   "kind": "followup",
+   "url": "https://x.com/heimao1778/status/2122933075466478010",
+   "id": "2122933075466478010",
+   "author": "heimao1778",
+   "name": "heimao1778",
+   "followers": 537,
+   "posted": "2026-11-18T06:01:02Z",
+   "lang": "zh",
+   "angle": "跟著 Nasdaq 走",
+   "take": "",
+   "summary": "原作者回我們（#18 底下）：是的，老黃（輝達）的影響還在",
+   "reply": "還在，這個月幣幾乎是跟著 Nasdaq 走，相關係數快 0.7",
+   "sources": "flows.fred.NASDAQCOM.corr30 0.685（到 11/16）",
+   "note": "接話：原作者第 1 次回我們，閒聊型，短短補一個數字；跟 #14 的說法錯開。",
+   "style": "口語版",
+   "status": "send",
+   "order": 1
+  },
+  {
+   "n": 35,
+   "kind": "followup",
+   "url": "https://x.com/Jack57972945/status/2122928177224032355",
+   "id": "2122928177224032355",
+   "author": "Jack57972945",
+   "name": "Jack57972945",
+   "followers": 7553,
+   "posted": "2026-11-18T05:41:34Z",
+   "lang": "zh",
+   "angle": "下一張照片 2 月中",
+   "take": "",
+   "summary": "原作者回我們（#7 底下）：確實，持倉披露會有滯後",
+   "reply": "下一張照片要等 2 月中，那時才看得到年底的部位",
+   "sources": "13F 季報：Q4（12/31）部位 45 天內申報，2027-02-14 前",
+   "note": "接話：原作者第 1 次回我們，同意型，一句補下一次披露的時間，不放數字。",
+   "style": "口語版",
+   "status": "send",
+   "order": 2
+  },
+  {
    "n": 33,
    "mode": "quote",
    "url": "https://x.com/BTCtreasuries/status/2122913941676499182",
@@ -28,7 +88,7 @@
    "note": "★ 引用（4.2 萬粉），今天第 2 則引用；引用 2 小時窗到台北 14:45。Grok inbox 1305 表二 #1。不說底到了沒，用網站看法的 cz 當最後一句。",
    "style": "口語版",
    "status": "send",
-   "order": 0
+   "order": 3
   },
   {
    "n": 32,
@@ -53,7 +113,7 @@
    "note": "Grok inbox 1305 #10。英文 2 小時窗到台北 15:07。2.1 萬粉配圖（etfcost 英文今天第一次用）。",
    "style": "口語版",
    "status": "send",
-   "order": 1
+   "order": 4
   },
   {
    "n": 28,
@@ -72,7 +132,7 @@
    "note": "Grok inbox 1305 #3。1.4 千粉不配圖。200 週均線 Daybreak 沒有，不碰。",
    "style": "口語版",
    "status": "send",
-   "order": 2
+   "order": 5
   },
   {
    "n": 30,
@@ -91,7 +151,7 @@
    "note": "Grok inbox 1305 #6。2 千粉不配圖。方向跟網站一致（極度恐懼偏空）。",
    "style": "口語版",
    "status": "send",
-   "order": 3
+   "order": 6
   },
   {
    "n": 26,
@@ -110,7 +170,7 @@
    "note": "Grok inbox 1305 #1。他直接問看哪個數據。1.4 千粉不配圖。Anthropic 那半不碰。",
    "style": "口語版",
    "status": "send",
-   "order": 4
+   "order": 7
   },
   {
    "n": 25,
@@ -130,7 +190,7 @@
    "note": "接話：原作者第 1 次回我們（#16 底下），閒聊型同意，短短補一個他沒有的數字。",
    "style": "口語版",
    "status": "send",
-   "order": 5
+   "order": 8
   },
   {
    "n": 29,
@@ -149,7 +209,7 @@
    "note": "Grok inbox 1305 #4。1.1 萬粉，etfcost、etf20 中文今天都用過，沒有別張對得上，不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 6
+   "order": 9
   },
   {
    "n": 31,
@@ -168,7 +228,7 @@
    "note": "Grok inbox 1305 #7。1.7 千粉不配圖。不說守不守得住、不答抄底。",
    "style": "口語版",
    "status": "send",
-   "order": 7
+   "order": 10
   },
   {
    "n": 27,
@@ -187,7 +247,7 @@
    "note": "Grok inbox 1305 #2。1 千粉不配圖。不答抄不抄、5 字頭。發文 6 小時窗到台北 16:01。",
    "style": "口語版",
    "status": "send",
-   "order": 8
+   "order": 11
   },
   {
    "url": "https://x.com/Murphychen888/status/2122906949654360168",
@@ -207,7 +267,7 @@
    "n": 22,
    "status": "send",
    "style": "口語版",
-   "order": 9
+   "order": 12
   },
   {
    "url": "https://x.com/A9dengbo/status/2122886678599844090",
@@ -232,7 +292,7 @@
    "status": "send",
    "style": "口語版",
    "n": 23,
-   "order": 10
+   "order": 13
   },
   {
    "kind": "followup",
@@ -252,7 +312,7 @@
    "status": "send",
    "style": "口語版",
    "n": 24,
-   "order": 11
+   "order": 14
   },
   {
    "url": "https://x.com/ai_9684xtpa/status/2122885181644128527",
@@ -277,7 +337,7 @@
    "n": 9,
    "status": "send",
    "style": "口語版",
-   "order": 12
+   "order": 15
   },
   {
    "url": "https://x.com/Pladizow/status/2122887377190277354",
@@ -302,7 +362,7 @@
    "n": 10,
    "status": "send",
    "style": "口語版",
-   "order": 13
+   "order": 16
   },
   {
    "mode": "quote",
@@ -329,7 +389,7 @@
    "n": 11,
    "status": "send",
    "style": "口語版",
-   "order": 14
+   "order": 17
   },
   {
    "url": "https://x.com/K2coinking/status/2122752125914796420",
@@ -354,7 +414,7 @@
    "n": 12,
    "status": "send",
    "style": "口語版",
-   "order": 15
+   "order": 18
   },
   {
    "url": "https://x.com/bubblegold2/status/2122882794246512890",
@@ -373,7 +433,7 @@
    "n": 13,
    "status": "send",
    "style": "口語版",
-   "order": 16
+   "order": 19
   },
   {
    "url": "https://x.com/Sirilee2026/status/2122864506263240823",
@@ -392,7 +452,7 @@
    "n": 14,
    "status": "send",
    "style": "口語版",
-   "order": 17
+   "order": 20
   },
   {
    "url": "https://x.com/XueCheng1041604/status/2122874482385682808",
@@ -411,7 +471,7 @@
    "n": 15,
    "status": "send",
    "style": "口語版",
-   "order": 18
+   "order": 21
   },
   {
    "url": "https://x.com/mcf0310/status/2122864457676464382",
@@ -430,7 +490,7 @@
    "n": 16,
    "status": "send",
    "style": "口語版",
-   "order": 19
+   "order": 22
   },
   {
    "url": "https://x.com/528btc/status/2122857890524336513",
@@ -449,7 +509,7 @@
    "n": 17,
    "status": "send",
    "style": "口語版",
-   "order": 20
+   "order": 23
   },
   {
    "url": "https://x.com/heimao1778/status/2122861265676816465",
@@ -468,7 +528,7 @@
    "n": 18,
    "status": "send",
    "style": "口語版",
-   "order": 21
+   "order": 24
   },
   {
    "url": "https://x.com/serlo123/status/2122864870140023079",
@@ -487,7 +547,7 @@
    "n": 19,
    "status": "send",
    "style": "口語版",
-   "order": 22
+   "order": 25
   },
   {
    "url": "https://x.com/paulxue1979/status/2122829430305517853",
@@ -506,7 +566,7 @@
    "n": 20,
    "status": "send",
    "style": "口語版",
-   "order": 23
+   "order": 26
   },
   {
    "kind": "followup",
@@ -526,7 +586,7 @@
    "n": 21,
    "status": "send",
    "style": "口語版",
-   "order": 24
+   "order": 27
   },
   {
    "url": "https://x.com/FrankAFetter/status/2122858478960050612",
@@ -551,7 +611,7 @@
    "n": 1,
    "status": "send",
    "style": "口語版",
-   "order": 25
+   "order": 28
   },
   {
    "url": "https://x.com/Dragonhau66/status/2122875774046753176",
@@ -576,7 +636,7 @@
    "n": 2,
    "status": "send",
    "style": "口語版",
-   "order": 26
+   "order": 29
   },
   {
    "url": "https://x.com/NickTrader8801/status/2122718906632867857",
@@ -595,7 +655,7 @@
    "n": 3,
    "status": "send",
    "style": "口語版",
-   "order": 27
+   "order": 30
   },
   {
    "url": "https://x.com/z2810358647/status/2122719675675181322",
@@ -620,7 +680,7 @@
    "n": 4,
    "status": "send",
    "style": "口語版",
-   "order": 28
+   "order": 31
   },
   {
    "url": "https://x.com/market_beggar/status/2122868839616840100",
@@ -645,7 +705,7 @@
    "n": 5,
    "status": "send",
    "style": "口語版",
-   "order": 29
+   "order": 32
   },
   {
    "url": "https://x.com/silenceisduck/status/2122835744939000194",
@@ -664,7 +724,7 @@
    "n": 6,
    "status": "send",
    "style": "口語版",
-   "order": 30
+   "order": 33
   },
   {
    "url": "https://x.com/Jack57972945/status/2122855624660984246",
@@ -683,7 +743,7 @@
    "n": 7,
    "status": "send",
    "style": "口語版",
-   "order": 31
+   "order": 34
   },
   {
    "url": "https://x.com/rota_maria/status/2122856469217628210",
@@ -702,7 +762,7 @@
    "n": 8,
    "status": "send",
    "style": "口語版",
-   "order": 32
+   "order": 35
   },
   {
    "n": 34,
@@ -730,7 +790,7 @@
    "note": "★ 使用者指定引用 Glassnode 週報（11/18 台北 13:4x 貼網址，說額度可忽略：今天第 3 則引用、發文已 13 小時）。同一張卡今天 BTCtreasuries 引用用的是預設檢視（每日金額），這則用 m:2；knife 長文 19:30 的圖4 也是 m:2，講法不同（那篇講接刀，這則講 2 月過線後還跌）。",
    "style": "口語版",
    "status": "send",
-   "order": 0
+   "order": 3
   }
  ]
 }
