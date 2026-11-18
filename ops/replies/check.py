@@ -84,12 +84,12 @@ def sentence_notes(tag, t):
 
 # 2026-11-10 第三輪（voice.md「把人寫回來」）：兩輪去 AI 味之後文字太平。有沒有一處自己的反應、有沒有對著人講話，只提醒不擋。
 # 11/04–11/09：有情緒或語氣詞的回覆互動率 4.2%、對方回話 32%（沒有的 1.4%、17%）；數字開頭的回覆有互動的只有 29%（其他 45%）。
-EMO = re.compile(r"哈|欸|啊|吧|啦|蠻|老實講|說真的|沒想到|我以為|居然|竟然|難受|不舒服|還好|佩服|我服|誇張|又是|偏偏|結果呢|"
+EMO = re.compile(r"哈|欸|啊|吧|啦|蠻|老實講|說真的|沒想到|我以為|本來以為|原本以為|原本也是|才發現|有點不舒服|居然|竟然|難受|不舒服|還好|佩服|我服|誇張|又是|偏偏|結果呢|"
                  r"honestly|\bhuh\b|ouch|\bfair\b|\bha\b|\bwild\b|didn't expect|surpris|not gonna", re.I)
 PERSON = re.compile(r"你|我|？|\byou\b|\bI\b|\bI'|\?", re.I)
 
 
-def longpost_notes(tag, t, lang):
+def longpost_notes(tag, t, lang, posted=None):
     """單篇長貼文的結構提醒（不擋，voice.md「去 AI 味第二輪」2026-11-09）：小標數、段落長度都一樣、對比句、每段短句收尾。
     lieflat 配對實測：人寫的長文一篇 0–1 個小標（AI 1.26 個／千字）、段落長度 CV 人類 0.83（AI 0.31）、「不是 A 而是 B」人類 0.22 次／千字（AI 0.94）。"""
     body = re.sub(r'（數據：[^）]*）|\(Data:[^)]*\)|#\S+|https?://\S+', '', t)
@@ -110,6 +110,9 @@ def longpost_notes(tag, t, lang):
     head = ''.join(paras)[:280]
     if head and not PERSON.search(head): out.append(f'{tag} 前 280 字裡沒有人（沒有「你／我」、沒有問句）：X 只露出這一段，第一句用鉤子開，對著讀者或用自己的反應講（voice.md 第三輪）')
     if not EMO.search(body): out.append(f'{tag} 全篇沒有一處自己的反應（意外、吐槽、不安、鬆口氣、自嘲）：挑一個具體事實掛上去，不演（voice.md 第三輪）')
+    if lang == 'zh' and not posted and re.search(r'老實(說|講)', body): out.append(f'{tag} 「老實說／老實講」：最近幾乎每篇都用，變成口頭禪了（2026-11-18 使用者：「不要總說：老實說」）。反應直接講事實，不用先宣告')
+    n = len(re.sub(r'\s', '', body.rsplit('#', 4)[0])) if lang == 'zh' else 0
+    if n > 900 and not posted: out.append(f'{tag} 正文 {n} 字，偏長（2026-11-18 使用者：「最近的文章字數是不是稍微長了一點」；11/12–11/17 是 500–800 字）。先刪重複的數字和講第二遍的話，主題真的需要才超過')
     if not TRADE.search(body): out.append(f'{tag} 沒看到「對交易來說這代表什麼」的句子：是不是訊號（跟隨便挑一天比，帶次數）、什麼價位／數字翻過去讀法就換、風險偏哪邊、哪種感覺是雜訊，挑一種寫（voice.md「要有交易上的意義」2026-11-09）')
     return out
 
@@ -133,7 +136,7 @@ def check_longposts():
             if lang == 'zh' and set(t) & SIMP: err.append(f'{tag} 有簡體字：{"".join(sorted(set(t) & SIMP))}')
             if lang == 'zh' and not it.get('posted') and EN_NAME.search(t): err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(sorted(set(EN_NAME.findall(t)))) + '（voice.md 用詞，2026-11-09）')
             notes += sentence_notes(tag, t)
-            notes += longpost_notes(tag, t, lang)
+            notes += longpost_notes(tag, t, lang, it.get('posted'))
     closers = [it.get('id') for it in items if CLOSER.search((it.get('zh') or '') + (it.get('en') or ''))]
     if len(closers) >= 2: notes.append(f'長貼文 {len(closers)} 篇都用「這週看幾件事」收尾：{closers}，連著幾篇就是模板，併進結論段或換個寫法')
     return err, notes
