@@ -451,5 +451,31 @@
     "meaning": "Its supply gap matches ours: very little below 62K. None of its three recovery conditions is met today, with one ETF inflow day and STH-SOPR at 0.970."
    }
   ]
- }
+ },
+  "cards": {
+    "dawn": "Bullish on a one-year view: heat is 8, deep in the Night (bottom) zone, and every past week here was higher a year later; the weekly score just turned negative, and dawn needs heat back above 45.",
+    "avgd": "Bullish, but this marks cheap territory rather than a bottom: the nine-line average percentile fell to 17.4 in a week and the 200-week MA ranks 6th; one past drop below 10 still fell much further.",
+    "p20": "Bullish, no top in sight: MVRV is 0.44x the prior cycle peak and Pi Cycle and Tidemark show no top signal; price would need +72% to reach the 0.75 line, so the risk now sits below.",
+    "lthloss": "Bullish, this looks like past bear-market floors: 41.9% of long-term holders are underwater; a close below about $60,500 would top this cycle's 45.4% high and mean the bottom is not in yet.",
+    "cyccmp": "Neutral; old cycle timelines don't fit: at the same point after the top this cycle is only −48.0%, against below −75% before, so a return to the top needn't take the old 847+ days.",
+    "levels": "Bearish, price is below the bull-bear line: the close sits 15.6% under the true market mean and ETF buyers are underwater too; the STH band is oversold at −1.3 SD, and $76,898 must be reclaimed.",
+    "urpd": "Neutral, price is sitting on its chip support: the 62K–64K pile is the first floor and last week's moves were mostly at a loss; below it supply is thin to 58K, while 76K–78K holds break-even sellers.",
+    "strike": "Neutral; options only mark the walls: puts cluster at $60,000 and calls at $80,000, the brightest liquidation band is $60.8K–$62.0K, and bids are thicker below; the pull toward max pain is weak.",
+    "legs": "Bearish, the down leg is still running: it has fallen as much as 26.0% since 9/21, deeper than most past legs, with no turning close yet; only a close back at $73,732 would end it.",
+    "pullback": "Bearish, though the pressure is late-stage: three lights have been on for 18 days and past runs had a lower 90-day median; seller pressure has hit 100, and two of the three lights must clear.",
+    "profit": "Leaning bullish for a month: 72.4% of short-term holders are underwater, a level usually followed by gains; this stretch already hit 88.3%, and above 90% it turns into bear-market capitulation.",
+    "sopr": "Bearish, the handover isn't done: STH SOPR is 0.970, a deeper break than on 10/30, with losses taken mostly by recent buyers; a move back above 1 would mark the handover complete.",
+    "rpl": "Bearish, selling isn't exhausted: last week realized profit was only 0.24x losses, long-term holders are realizing losses too, and the exhaustion constant is above 0.13; the yearly low tends to lag price.",
+    "miners": "Neutral, miners aren't capitulating: hashrate is 979 EH/s and rising, with difficulty set for +10.8%; only the oldest rigs lose money, and forced selling starts below the $62,279 breakeven.",
+    "etf": "Bearish, institutions are stepping back: spot ETFs lost $566M over 5 trading days and price is 14.0% under Strategy's cost; it takes several straight days of inflows to bring buyers back.",
+    "pr-us": "Neutral, US demand matches offshore: ex-USDT, the Coinbase premium is just −0.002%, and the visible discount is almost all USDT's 0.10% gap; the weak spot is stablecoins converting back to dollars.",
+    "ad": "Bearish, no new money is arriving: 30-day apparent demand is −240K BTC, stablecoins fell $16.1B in 30 days, and realized cap stopped growing; 30-day demand must turn positive.",
+    "whale": "Bearish, whales are still reducing: 100–10K BTC wallets shed 51K BTC in 30 days and kept selling last week, as coins move from long- to short-term holders; a 30-day net gain would flip it.",
+    "svd": "Neutral, the buying is small-ticket: OKX net taker buying is +1,531 BTC over 7 days, but large orders are selling and Coinbase spot is unusually heavy; one venue can't set direction until big orders buy.",
+    "stk": "Bearish, macro isn't helping: BTC is −15.0% over two months, weaker than the Nasdaq and gold, markets price a 97% chance of a hike, and BTC tracks the Nasdaq closely; it must catch up to stocks.",
+    "fh": "Bearish, funding is mild but longs are crowded: funding runs only +4.7% annualized, yet 72.4% of Binance accounts are long and open interest grew into a falling price; negative funding would clear it.",
+    "vol": "Neutral, volatility is fairly priced: DVOL 43.3 sits near realized 44.1, but the term structure is inverted with near-dated options richer; the tension eases only when that inversion unwinds.",
+    "oi": "Bearish, options money is defensive: the 25-delta risk reversal is −5.04 with puts richer, and premium has favored puts for 20 days; Dec 25 holds 38% of open interest, and max-pain pull is unreliable.",
+    "fng": "Bearish, fear hasn't turned into a bottom: Fear & Greed is 12, and past extreme-fear readings saw a −6.1% 30-day median, since the first drop rarely marks the low; above 25, sentiment steadies."
+  }
 }
