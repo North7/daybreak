@@ -111,8 +111,6 @@ def longpost_notes(tag, t, lang, posted=None):
     if head and not PERSON.search(head): out.append(f'{tag} 前 280 字裡沒有人（沒有「你／我」、沒有問句）：X 只露出這一段，第一句用鉤子開，對著讀者或用自己的反應講（voice.md 第三輪）')
     if not EMO.search(body): out.append(f'{tag} 全篇沒有一處自己的反應（意外、吐槽、不安、鬆口氣、自嘲）：挑一個具體事實掛上去，不演（voice.md 第三輪）')
     if lang == 'zh' and not posted and re.search(r'老實(說|講)', body): out.append(f'{tag} 「老實說／老實講」：最近幾乎每篇都用，變成口頭禪了（2026-11-18 使用者：「不要總說：老實說」）。反應直接講事實，不用先宣告')
-    n = len(re.sub(r'\s', '', body.rsplit('#', 4)[0])) if lang == 'zh' else 0
-    if n > 900 and not posted: out.append(f'{tag} 正文 {n} 字，偏長（2026-11-18 使用者：「最近的文章字數是不是稍微長了一點」；11/12–11/17 是 500–800 字）。先刪重複的數字和講第二遍的話，主題真的需要才超過')
     if not TRADE.search(body): out.append(f'{tag} 沒看到「對交易來說這代表什麼」的句子：是不是訊號（跟隨便挑一天比，帶次數）、什麼價位／數字翻過去讀法就換、風險偏哪邊、哪種感覺是雜訊，挑一種寫（voice.md「要有交易上的意義」2026-11-09）')
     return out
 
@@ -133,6 +131,9 @@ def check_longposts():
             if not it.get('posted') and BRAND.search(t + (it.get('title') or '')): err.append(f'{tag} 品牌名寫 Daybreak，不寫「破曉」（2026-11-12 使用者）')
             if lang == 'zh' and not it.get('posted') and '網站' in t + (it.get('title') or ''): err.append(f'{tag} 「網站」改寫「Daybreak 上」（2026-11-15 使用者：文章裡的「網站裡」都改為「Daybreak 上」）')
             if lang == 'zh' and not it.get('posted') and CHENG.search(t + (it.get('title') or '')): err.append(f'{tag} 「{CHENG.search(t + (it.get("title") or "")).group(0)}」改成百分數（2026-11-17 使用者：幾成都換成百分數）')
+            if lang == 'zh' and not it.get('posted'):   # 2026-11-18 使用者：「長文控制在1000字以內」（正文到 hashtag 前、不算空白）
+                n = len(re.sub(r'\s', '', re.sub(r'#\S+', '', t)))
+                if n > 1000: err.append(f'{tag} 正文 {n} 字，超過 1000 字（2026-11-18 使用者：長文控制在 1000 字以內）。先刪重複的數字、講第二遍的話和圖上看得到的細節')
             if lang == 'zh' and set(t) & SIMP: err.append(f'{tag} 有簡體字：{"".join(sorted(set(t) & SIMP))}')
             if lang == 'zh' and not it.get('posted') and EN_NAME.search(t): err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(sorted(set(EN_NAME.findall(t)))) + '（voice.md 用詞，2026-11-09）')
             notes += sentence_notes(tag, t)
