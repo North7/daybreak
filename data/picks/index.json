@@ -1,16 +1,16 @@
 {
- "date": "2026-11-16",
+ "date": "2026-11-17",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/lthloss",
-   "chart": "data/picks/onchain-lthloss.png",
-   "chart_en": "data/picks/onchain-lthloss-en.png",
+   "id": "deriv/gex",
+   "chart": "data/picks/deriv-gex.png",
+   "chart_en": "data/picks/deriv-gex-en.png",
    "name": {
-    "zh": "長期持有者虧損比例",
-    "en": "Long-term holders in loss"
+    "zh": "選擇權 Gamma 曝險（推算）",
+    "en": "Options gamma exposure (estimate)"
    },
-   "link": "https://daybreak.aronlab.dev/?k=lthloss"
+   "link": "https://daybreak.aronlab.dev/?k=gex"
   }
  ]
 }

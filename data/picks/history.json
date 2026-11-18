@@ -100,6 +100,10 @@
   {
    "date": "2026-11-16",
    "id": "onchain/lthloss"
+  },
+  {
+   "date": "2026-11-17",
+   "id": "deriv/gex"
   }
  ]
 }
