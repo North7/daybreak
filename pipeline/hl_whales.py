@@ -8,7 +8,9 @@
 清算價在收盤 ±BAND_PCT 內的帳戶按 BAND_W 美元一格彙總成 bands，每格要同時滿足：
   ① 至少 BAND_MIN 個帳戶；② 最大一個帳戶佔該格顆數不超過 BAND_TOP（避免一格其實就是一個人）。
 不符合的格子不畫，只併進 hidden（不畫的部分按多空各給一個合計，同樣要 ≥ BAND_MIN 個帳戶且最大一個不超過一半才給顆數）。這是實際清算價，不是推算。
-限制：只有 Hyperliquid；大帳戶可能是做市或避險（空單多不一定代表看空）；排行榜每天更新一次；清算價會隨保證金和價格變動。"""
+限制：只有 Hyperliquid；大帳戶可能是做市或避險（空單多不一定代表看空）；排行榜每天更新一次；清算價會隨保證金和價格變動。
+2026-11-18 使用者要求（「加」）：同一次掃描另外彙總「歷來賺錢的帳戶」（排行榜的 allTime pnl > 0）的多空合計（prof），不多發請求。
+當天試掃：全部淨空 1,756 顆、賺錢的帳戶淨空 5,418 顆、排除高週轉帳戶淨空 318 顆；「聰明錢」的數字很看定義，所以只當另一個檢視，不取代原本的合計。"""
 import json, os, subprocess, time
 from concurrent.futures import ThreadPoolExecutor
 
@@ -52,6 +54,10 @@ def build(close, asof):
     fails = sum(1 for x in res if x is None)
     if fails > TOP * 0.2: raise RuntimeError(f'Hyperliquid 查詢失敗 {fails}/{TOP}')
     pos = [p for x in res if x for p in x]
+    def _pnl(r):
+        try: return float(dict(r['windowPerformances'])['allTime']['pnl'])
+        except Exception: return None
+    posP = [p for r, x in zip(top, res) if x and (_pnl(r) or 0) > 0 for p in x]   # 歷來賺錢的帳戶（2026-11-18）
 
     def grp(P):
         n = len(P); g = dict(n=n)
@@ -60,6 +66,7 @@ def build(close, asof):
             g.update(btc=round(sum(abs(x[0]) for x in P)), usd_m=round(v / 1e6))
         return g
     L = [x for x in pos if x[0] > 0]; S = [x for x in pos if x[0] < 0]
+    LP = [x for x in posP if x[0] > 0]; SP = [x for x in posP if x[0] < 0]
     nl = [x for x in L if x[2] and close * (1 - NEAR) <= x[2] < close]; ns = [x for x in S if x[2] and close < x[2] <= close * (1 + NEAR)]
 
     def grp_near(P):   # 2026-11-05：清算價附近的組通常只有幾個帳戶，改用和熱力圖白條同一個標準（≥ BAND_MIN 個帳戶、最大一個不超過一半）才給數量
@@ -87,6 +94,7 @@ def build(close, asof):
         return g
     hidden = dict(n=len(hid['long']) + len(hid['short']), long=safe(hid['long']), short=safe(hid['short']))
     return dict(asof=asof, scanned=len(top) - fails, floor_usd_m=round(floor / 1e6, 1), with_btc=len(pos), long=grp(L), short=grp(S),
+                prof=dict(rule='allTime pnl > 0', long=grp(LP), short=grp(SP)),
                 near=dict(pct=round(NEAR * 100), long=grp_near(nl), short=grp_near(ns)),
                 bands=dict(w=BAND_W, pct=round(BAND_PCT * 100), min_n=BAND_MIN, max_share=BAND_TOP, rows=bands, hidden=hidden),
                 note=f'Hyperliquid 帳戶淨值前 {TOP} 名的 BTC 永續部位彙總；不列個別帳戶，少於 {MIN_N} 個帳戶的組只給帳戶數；'
@@ -99,13 +107,15 @@ def hist_load():
 
 
 def hist_update(snap, bar_date, close):
-    """把今天的彙總接到歷史後面，回傳全部的列：[收盤日, 收盤, 多單顆數, 空單顆數, 多單帳戶數, 空單帳戶數]。
+    """把今天的彙總接到歷史後面，回傳全部的列：[收盤日, 收盤, 多單顆數, 空單顆數, 多單帳戶數, 空單帳戶數, 賺錢帳戶的多單顆數, 空單顆數, 多單帳戶數, 空單帳戶數]。
+    後四欄 2026-11-18 起才有（之前的列只有六欄），哪一邊不夠 MIN_N 個帳戶就記 None。
     Hyperliquid 查不到帳戶過去的部位，歷史只能每天存一筆；2026-11-04～13 這十筆是從每天提交的 data/latest.json 還原的。
     只收掃滿 TOP 名、多空都有顆數的快照（掃的名數不同，數字不能比）；同一個收盤日重跑就覆寫。只有合計，沒有個別帳戶。"""
     rows = hist_load(); L, S = snap.get('long') or {}, snap.get('short') or {}
     if snap.get('scanned', 0) >= TOP * 0.8 and L.get('btc') is not None and S.get('btc') is not None:
-        rows = [r for r in rows if r[0] != bar_date] + [[bar_date, round(close), L['btc'], S['btc'], L['n'], S['n']]]
+        P = snap.get('prof') or {}; PL, PS = P.get('long') or {}, P.get('short') or {}
+        rows = [r for r in rows if r[0] != bar_date] + [[bar_date, round(close), L['btc'], S['btc'], L['n'], S['n'], PL.get('btc'), PS.get('btc'), PL.get('n'), PS.get('n')]]
         rows.sort(key=lambda r: r[0])
         os.makedirs(os.path.dirname(HIST), exist_ok=True)
-        json.dump(dict(note='Hyperliquid 帳戶淨值前 %d 名的 BTC 永續部位，每日一筆合計：收盤日、收盤、多單顆數、空單顆數、多單帳戶數、空單帳戶數' % TOP, rows=rows), open(HIST, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
+        json.dump(dict(note='Hyperliquid 帳戶淨值前 %d 名的 BTC 永續部位，每日一筆合計：收盤日、收盤、多單顆數、空單顆數、多單帳戶數、空單帳戶數；2026-11-18 起多四欄：歷來賺錢帳戶（allTime pnl > 0）的多單顆數、空單顆數、多單帳戶數、空單帳戶數' % TOP, rows=rows), open(HIST, 'w', encoding='utf-8'), ensure_ascii=False, separators=(',', ':'))
     return rows
