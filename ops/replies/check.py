@@ -114,6 +114,9 @@ def longpost_notes(tag, t, lang, posted=None):
     if head and not PERSON.search(head): out.append(f'{tag} 前 280 字裡沒有人（沒有「你／我」、沒有問句）：X 只露出這一段，第一句用鉤子開，對著讀者或用自己的反應講（voice.md 第三輪）')
     # 2026-11-18 拿掉「全篇沒有一處自己的反應」的提醒：它讓每篇都硬塞一句「老實說／我有點不舒服／差點寫成」，使用者說太假。有真的反應才寫，沒有就不寫
     if lang == 'zh' and not posted and re.search(r'老實(說|講)', body): out.append(f'{tag} 「老實說／老實講」：最近幾乎每篇都用，變成口頭禪了（2026-11-18 使用者：「不要總說：老實說」）。反應直接講事實，不用先宣告')
+    if lang == 'zh' and not posted and paras:   # 2026-11-18 深夜使用者：「第一句話，都還是列數據，講解數據。而不是解答大家心裡對交易的問題。大家需要的是對交易有價值的鉤子」
+        first = re.split(r'[。？！\n]', paras[0])[0]
+        if len(re.findall(r'\d[\d,.]*\s*(?:%|億|萬|美元|顆|倍|天|次|百分位)', first)) >= 2: out.append(f'{tag} 第一句在列數據（「{first[:24]}…」）：開頭先接交易的人心裡的問題（是不是底、支撐還算不算、該等什麼訊號、這個消息要不要當回事）並直接答，數字和指標解釋放後面')
     if not TRADE.search(body): out.append(f'{tag} 沒看到「對交易來說這代表什麼」的句子：是不是訊號（跟隨便挑一天比，帶次數）、什麼價位／數字翻過去讀法就換、風險偏哪邊、哪種感覺是雜訊，挑一種寫（voice.md「要有交易上的意義」2026-11-09）')
     return out
 
