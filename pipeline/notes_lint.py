@@ -237,6 +237,25 @@ def lint(n, en, bar_date):
     return bad
 
 
+
+# 2026-11-18 使用者：「怎麼感覺和昨天內容很接近，短線偏空，長線便宜，而且怎麼又開始只說數據，收盤連 6 天在 200 日均線下，所以呢？」
+# 頭條要回答「所以呢」（見 docs/CLAUDE_DAILY.md「今日判讀要有觀點」）：不用 stance 的標籤開頭、不沿用上一期的開頭、讀值不堆在頭條
+LABEL_ZH = re.compile(r'^\s*短線[^：:，,、；;]{0,6}[、，,]\s*長線')
+LABEL_EN = re.compile(r'^\s*(short|near)[- ]term [a-z]+,\s*(long|longer)[- ]term', re.I)
+HEAD_NUM = 2
+def _lead(h): return re.split(r'[：:；;]', h or '')[0].strip().lower()
+def lint_head(n, en, prev, pen):
+    bad = []
+    for doc, pv, lab, tag in ((n, prev, LABEL_ZH, '頭條'), (en, pen, LABEL_EN, '英文頭條')):
+        if not doc: continue
+        h = doc.get('headline', '')
+        if lab.search(h): bad.append(f'{tag}用「短線X、長線Y」開頭：那是 stance 和摘要第一句的工作，頭條直接寫判斷（「止跌還不是見底：……」）')
+        if pv and pv.get('date') != doc.get('date') and _lead(h) and _lead(h) == _lead(pv.get('headline')):
+            bad.append(f'{tag}的第一段「{_lead(h)}」和上一期一樣：從今天的變化出發，寫它讓看法更強還是更弱')
+    k = len(re.findall(r'\d+(?:[.,]\d+)*', n.get('headline', '')))
+    if k > HEAD_NUM: bad.append(f'頭條有 {k} 個數字，上限 {HEAD_NUM}：頭條寫判斷，讀值（連 N 天、流入多少）放摘要、changes、watch')
+    return bad
+
 if __name__ == '__main__':
     D = lambda f: os.path.join(ROOT, 'data', f)
     n = json.load(open(D('notes.json'))); en = json.load(open(D('notes.en.json'))) if os.path.exists(D('notes.en.json')) else None
@@ -250,6 +269,7 @@ if __name__ == '__main__':
     for doc, zh, pv in ((n, True, prev), (en, False, json.load(open(pen)) if os.path.exists(pen) else None)):
         if doc is None: continue
         b, w = lint_voice(doc, zh, pv); bad += b; warn += w
+    bad += lint_head(n, en, prev, json.load(open(pen)) if pen and os.path.exists(pen) else None)
     for f, keys in (('x_post.json', ('zh', 'en')), ('picks.json', None)):   # 2026-11-17 早報貼文、推薦圖文也是對外的
         try: d = json.load(open(D(f)))
         except Exception: continue
