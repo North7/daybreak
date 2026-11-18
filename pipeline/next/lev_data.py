@@ -342,6 +342,7 @@ def build(L, N, E, dn, X):
         rows = [[dn(r[0]), r[1], r[2] - r[3], r[2], r[3]] for r in hh]; top_ = hw.get('scanned') or 2000; fl_ = hw.get('floor_usd_m')
         fz = '（淨值約 %s 萬美元以上）' % format(int(round(fl_ * 100)), ',') if fl_ else ''; fe = ' (about $%.1fM in equity and up)' % fl_ if fl_ else ''
         NST = [['淨多', 'Net long'], ['淨空', 'Net short']]
+        rp_ = [r for r in hh if len(r) >= 10 and r[6] is not None and r[7] is not None]; pz_ = rp_[-1] if rp_ and rp_[-1][0] == z[0] else None   # 2026-11-18 起：歷來賺錢的帳戶
         from say_data import own   # 2026-11-15 新版自己的圖，直接寫讀值
         y_ = hh[-2]; dn_ = net - (y_[2] - y_[3]); dl_, ds_ = z[2] - y_[2], z[3] - y_[3]; d0_ = net - (a0[2] - a0[3])
         sgc = lambda v: ('+' if v >= 0 else '−') + cm(v); side = lambda v, en=False: (('Net long ' if v > 0 else 'Net short ') if en else ('淨多 ' if v > 0 else '淨空 ')) + cm(v)
@@ -353,14 +354,21 @@ def build(L, N, E, dn, X):
              '和 %s 比，多單%s %s 顆、空單%s %s 顆。' % (md_(y_[0]), '增加' if dl_ >= 0 else '減少', cm(dl_), '增加' if ds_ >= 0 else '減少', cm(ds_)),
              'Since %s, longs %s %s BTC and shorts %s %s BTC.' % (y_[0], 'rose' if dl_ >= 0 else 'fell', cm(dl_), 'rose' if ds_ >= 0 else 'fell', cm(ds_))),
             ('從 %s 起' % md_(a0[0]), 'Since %s' % a0[0], sgc(d0_) + ' 顆', sgc(d0_) + ' BTC', 'neu',
-             '歷史從 %s 開始，只有 %d 天；淨部位這段期間變化 %s 顆。' % (md_(a0[0]), days_ + 1, sgc(d0_)), 'History starts %s and covers %d days; the net position changed by %s BTC over that span.' % (a0[0], days_ + 1, sgc(d0_)))],
+             '歷史從 %s 開始，只有 %d 天；淨部位這段期間變化 %s 顆。' % (md_(a0[0]), days_ + 1, sgc(d0_)), 'History starts %s and covers %d days; the net position changed by %s BTC over that span.' % (a0[0], days_ + 1, sgc(d0_)))]
+          + ([('賺錢的帳戶', 'Profitable accounts', side(pz_[6] - pz_[7]) + ' 顆', side(pz_[6] - pz_[7], True) + ' BTC', 'neu',
+               '其中歷來賺錢的帳戶（排行榜累計損益為正）：多單 %s 顆（%d 個帳戶）、空單 %s 顆（%d 個帳戶）。%s 起才記，「聰明錢」換個定義數字就差很多，只作讀值。' % (cm(pz_[6]), pz_[8] or 0, cm(pz_[7]), pz_[9] or 0, md_(rp_[0][0])),
+               'Of these, accounts with a positive all-time profit on the leaderboard: longs %s BTC (%d accounts), shorts %s BTC (%d accounts). Recorded since %s; "smart money" numbers swing a lot with the definition, so a reading only.' % (cm(pz_[6]), pz_[8] or 0, cm(pz_[7]), pz_[9] or 0, rp_[0][0]))] if pz_ else []),
           '%s 顆，比前一天%s %s 顆' % (side(net), '多' if dn_ >= 0 else '少', cm(dn_)), '%s BTC, %s %s BTC from the day before' % (side(net, True), 'up' if dn_ >= 0 else 'down', cm(dn_)))
         X['hlw'] = dict(k='hlw', zh='Hyperliquid 大戶部位', en='Hyperliquid big accounts', rng=0, say=hsay, src='Hyperliquid · %s' % md_(z[0]), srce='Hyperliquid · %s' % md_(z[0]),
           modes=[dict(mz='淨部位', me='Net', hz='多單減空單', he='Longs minus shorts', f='sbtc', rows=rows, p=1, npc=1, ser=[ser(2, zh='淨部位', en='Net position', t='split', base=0, st=NST, w=1.8)], refs=[dict(v=0, col='k2', solid=1, zh='0：多空一樣多', en='0: longs equal shorts')]),   # 只畫線不填色：長期淨空，填色會變成一整塊紅
-                 dict(mz='多單和空單', me='Longs and shorts', hz='多單合計', he='Total longs', f='cbtc', rows=rows, p=1, npc=1, hero=1, ser=[ser(4, zh='空單', en='Shorts', col='dn', w=1.8), ser(3, zh='多單', en='Longs', col='up', w=1.8)])],
-          dz='Hyperliquid 帳戶淨值前 %s 名%s的 BTC 永續部位，每天收盤後掃一次、只記合計。%s：多單 %s 顆（%d 個帳戶）、空單 %s 顆（%d 個帳戶）。這些是實際部位，不是推算。大帳戶裡有做市和對沖的（現貨買、永續空），長期偏空是常態，所以看的是變化，不是水位。歷史從 %s 開始、目前只有 %d 天，Hyperliquid 查不到更早的部位；別家用不同方式定義「鯨魚」，數字不會一樣。只有這一家交易所，只作讀值。'
+                 dict(mz='多單和空單', me='Longs and shorts', hz='多單合計', he='Total longs', f='cbtc', rows=rows, p=1, npc=1, hero=1, ser=[ser(4, zh='空單', en='Shorts', col='dn', w=1.8), ser(3, zh='多單', en='Longs', col='up', w=1.8)])]
+                + ([dict(mz='賺錢的帳戶', me='Profitable accounts', hz='歷來賺錢的帳戶：多單減空單', he='Accounts with all-time profit: longs minus shorts', f='sbtc', p=1, npc=1,
+                         rows=[[dn(r[0]), r[1], r[6] - r[7], r[2] - r[3]] for r in rp_],
+                         ser=[ser(2, zh='賺錢的帳戶', en='Profitable accounts', t='split', base=0, st=NST, w=1.8), ser(3, zh='全部大帳戶', en='All big accounts', col='k2', w=1.2, dash='4 3')],
+                         refs=[dict(v=0, col='k2', solid=1, zh='0：多空一樣多', en='0: longs equal shorts')])] if len(rp_) >= 2 else []),
+          dz='Hyperliquid 帳戶淨值前 %s 名%s的 BTC 永續部位，每天收盤後掃一次、只記合計。%s：多單 %s 顆（%d 個帳戶）、空單 %s 顆（%d 個帳戶）。這些是實際部位，不是推算。大帳戶裡有做市和對沖的（現貨買、永續空），長期偏空是常態，所以看的是變化，不是水位。歷史從 %s 開始、目前只有 %d 天，Hyperliquid 查不到更早的部位；別家用不同方式定義「鯨魚」，數字不會一樣。「賺錢的帳戶」是其中排行榜累計損益為正的帳戶，2026/11/18 起才記：那天試算，全部淨空 1,756 顆、賺錢的帳戶淨空 5,418 顆、排除像做市的高週轉帳戶只淨空 318 顆，「聰明錢」的數字很看怎麼定義。只有這一家交易所，只作讀值。'
              % (format(top_, ','), fz, md_(z[0]), cm(z[2]), z[4], cm(z[3]), z[5], a0[0].replace('-', '/'), days_ + 1),
-          de='BTC perpetual positions of the top %s Hyperliquid accounts by equity%s, scanned once after each daily close and stored as totals only. %s: longs %s BTC (%d accounts), shorts %s BTC (%d accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts %s and covers only %d days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. One exchange only. A reading only.'
+          de='BTC perpetual positions of the top %s Hyperliquid accounts by equity%s, scanned once after each daily close and stored as totals only. %s: longs %s BTC (%d accounts), shorts %s BTC (%d accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts %s and covers only %d days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. "Profitable accounts" are those with a positive all-time profit on the leaderboard, recorded since 2026-11-18: on that day all accounts were net short 1,756 BTC, profitable ones 5,418 BTC, and excluding high-turnover, market-maker-like accounts only 318 BTC, so "smart money" figures depend heavily on the definition. One exchange only. A reading only.'
              % (format(top_, ','), fe, z[0], cm(z[2]), z[4], cm(z[3]), z[5], a0[0], days_ + 1))
     else:
         na('hlw', 'Hyperliquid 大戶部位', 'Hyperliquid big accounts', 'deriv.hl_whales', 'Hyperliquid', '這張圖畫 Hyperliquid 帳戶淨值前 2,000 名的 BTC 永續多單、空單和淨部位。', 'This chart shows BTC perpetual longs, shorts and the net position of the top 2,000 Hyperliquid accounts by equity.')
