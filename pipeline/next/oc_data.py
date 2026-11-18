@@ -196,6 +196,21 @@ def build(L, N, E, dn):
                   leg=[['k2', '搬家日', 'Internal-transfer day', 'box'], ['c4', '背離', 'Divergence', 'line'], ['dn', '背離被打破', 'Divergence broken', 'dash'], ['c5', '認賠放大', 'Loss grows', 'dash']]),
              dict(mz='全部歷史', me='Full history', rows=rl['hist'], p=1, tf='sqrt', f='bp', ser=[ser(2, zh='實現虧損 ÷ 市值', en='Realized loss ÷ market cap', col='dn', fill=1, w=1.1)], links=links(rl['hlinks'], 'ra', 'rb'),
                   leg=[['c4', '背離', 'Divergence', 'line'], ['dn', '背離被打破', 'Divergence broken', 'dash'], ['c5', '認賠放大', 'Loss grows', 'dash']])])
+    cp_ = rl.get('cap')
+    if cp_ and cp_.get('rows'):   # 2026-11-18 使用者要求（Glassnode 週報那張「虧損到了只有週期低點才見過的程度」，見 oc_extra._rl_cap）：第三個檢視，用一年的獲利當分母
+        bk = cp_['back']; r6, r18, d18 = bk['r60'], bk['r180'], bk['dd180']; ymz = lambda d: d[:7].replace('-', '/')
+        sg = lambda v: ('%+.0f%%' % v).replace('-', '−')
+        now_z = ('現在 %.1f，超過門檻 %.1f' % (cp_['v'], cp_['q']) + ('，是 %s 以來最高' % ymz(cp_['hi_since']) if cp_.get('hi_since') else '，是有資料以來最高')) if cp_['above'] else '現在 %.1f，在門檻 %.1f 以下' % (cp_['v'], cp_['q'])
+        now_e = ('Now %.1f, above the %.1f line' % (cp_['v'], cp_['q']) + (', the highest since %s' % ymz(cp_['hi_since']) if cp_.get('hi_since') else ', the highest on record')) if cp_['above'] else 'Now %.1f, below the %.1f line' % (cp_['v'], cp_['q'])
+        c_rloss['modes'].append(dict(mz='÷ 一年獲利', me='÷ 1-year profit', rows=cp_['rows'], p=1, tf='sqrt', f='bp', rng=0, hz='7 日平均 ÷ 一年獲利（萬分之／天）', he='7-day average ÷ 1-year profit (bp per day)',
+          ser=[ser(2, zh='虧損 ÷ 一年獲利', en='Loss ÷ 1-year profit', col='dn', fill=1, w=1.1), ser(3, zh='門檻：歷史第 95 百分位', en='Line: 95th percentile to date', col='k2', dash='4 3', w=1)],
+          marks=[dict(d=dn(e['peak']), v=e['peak_v'], col='dn', up=1, zh=ymz(e['peak']), en=ymz(e['peak'])) for e in cp_['eps'] if e['peak_v'] >= 90 or e is cp_['eps'][-1] or e['peak'] >= '2022-01-01'],
+          dz='7 天平均的每日實現虧損，除以過去一年的實現獲利合計，單位是萬分之（每天）。用一年的獲利當分母，不同年代可以放在同一把尺上比：超過虛線（到當天為止的歷史第 95 百分位）代表認賠的規模，大到只有過去幾次低點附近才見過。%s。'
+             '2014 年起超過 %d 次：60 天後 %d 次較高，中位數 %s；180 天後 %d 次較高，中位數 %s，但這 180 天內中途最深的回落中位數 %s，熊市裡的幾次（2018/02、2019/09、2022/05、2022/06）之後還跌了 18%% 到 39%%。資料是 Bitview，不是實體調整。只作讀值。' % (
+              now_z, cp_['n'], r6['up'], sg(r6['med']), r18['up'], sg(r18['med']), sg(d18['med'])),
+          de='The 7-day average of daily realized loss divided by realized profit over the past year, in basis points per day. Using a year of profit as the base puts different eras on one scale: above the dashed line (the 95th percentile of history up to that day) the losses are as large as only past lows have seen. %s. '
+             'It crossed %d times since 2014: higher 60 days later %d times, median %s; higher 180 days later %d times, median %s, though the median drawdown along the way was %s, and in bear markets (2018/02, 2019/09, 2022/05, 2022/06) price still fell 18%% to 39%% afterwards. Bitview data, not entity-adjusted. A reading, not a signal.' % (
+              now_e, cp_['n'], r6['up'], sg(r6['med']), r18['up'], sg(r18['med']), sg(d18['med']))))
     ss = o['ssr']; pc = lambda v: None if v is None else round(v * 100, 4)
     c_ssr = dict(k='ssr', zh='賣方風險比', en='Sell-side risk ratio', f='p2', rows=[[r[0], r[1], pc(r[2]), pc(r[3]), pc(r[4]), pc(r[5])] for r in ss['rows']], p=1, log=1, hero=3,
       ser=[ser(5, zh='近 4 年最低 10%', en='4y bottom 10%', col='c4', dash='4 3', w=1), ser(4, zh='長期持有者', en='Long-term holders', col='c3', w=1, op=.65), ser(3, zh='短期持有者', en='Short-term holders', col='ac', w=1, op=.65), ser(2, zh='全網', en='Network', col='c5', w=1.8)],

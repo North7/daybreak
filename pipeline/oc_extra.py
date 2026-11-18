@@ -225,6 +225,47 @@ def _chain(D, P, rel, L, since, W=3, k=1.3, tol=0.02):
     return [d for _, d in pk], links
 
 
+# 2026-11-18 使用者要求（Glassnode 週報〈Capitulation Meets Support〉那張「虧損到了只有週期低點才見過的程度」）：
+#   7 日平均的每日實現虧損 ÷ 過去 365 天的實現獲利合計（萬分之／天）。用一年的獲利當分母，不同年代可以放在同一把尺上比。
+#   門檻是到當天為止的全部歷史的第 95 百分位（不偷看未來）；超過門檻、和上一次超過隔 20 天以上算新的一次。
+#   Bitview 逐筆 UTXO、不是實體調整，搬家日的虧損不算；獲利是 6 個持有時間組的實現獲利加總。只作讀值
+CAP_Q, CAP_GAP, CAP_FROM = .95, 20, '2014-01-01'
+
+
+def _rl_cap(bv, D, P, L, skip, ix, step=4):
+    G = [bv.get('ap%d' % i) or {} for i in range(1, 7)]
+    D = [d for d in D if all(d in g for g in G)]
+    if len(D) < 2000: return None
+    pr = [sum(g[d] for g in G) for d in D]; lo = [0 if d in skip else L[d] for d in D]; cp = [0]
+    for a in pr: cp.append(cp[-1] + a)
+    v = {}
+    for i in range(365, len(D)):
+        p365 = cp[i + 1] - cp[i - 364]
+        if p365 > 0: v[D[i]] = sum(lo[i - 6:i + 1]) / 7 / p365 * 1e4
+    V = [d for d in D if d in v]; hist, q = [], {}
+    for d in V:
+        if d >= CAP_FROM and len(hist) > 300: q[d] = hist[int(len(hist) * CAP_Q)]
+        bisect.insort(hist, v[d])
+    Q = [d for d in V if d in q]; d1 = Q[-1]; eps, last = [], None
+    for d in Q:
+        if v[d] <= q[d]: continue
+        if last is None or dn(d) - dn(last) > CAP_GAP: eps.append(dict(start=d, peak=d))
+        if v[d] > v[eps[-1]['peak']]: eps[-1]['peak'] = d
+        eps[-1]['end'] = last = d
+    for e in eps:
+        e.update(peak_v=round(v[e['peak']], 1), q=round(q[e['start']], 1), price=round(P(e['start'])), r60=_fwd(D, ix, P, e['start'], 60), r180=_fwd(D, ix, P, e['start'], 180),
+                 dd180=_dd(D, ix, P, e['start'], 180) if dn(d1) - dn(e['start']) >= 180 else None)
+    rows = []
+    for i in range(0, len(Q), step):
+        m = max(Q[i:i + step], key=v.get); rows.append([dn(m), round(P(m)), round(v[m], 1), round(q[m], 1)])
+    if rows[-1][0] != dn(d1): rows.append([dn(d1), round(P(d1)), round(v[d1], 1), round(q[d1], 1)])
+    hi = next((d for d in reversed(Q) if d < d1 and v[d] > v[d1]), None)
+    done = [e for e in eps if e['r180'] is not None]
+    return dict(date=d1, v=round(v[d1], 1), q=round(q[d1], 1), above=v[d1] > q[d1], hi_since=hi, eps=eps, n=len(eps),
+                back=dict(r60=_stat([e['r60'] for e in eps]), r180=_stat([e['r180'] for e in done]), dd180=_stat([e['dd180'] for e in done])), rows=rows,
+                note='7 日平均的每日實現虧損 ÷ 過去 365 天實現獲利合計（萬分之／天）；門檻＝到當天為止的歷史第 95 百分位；Bitview，不是實體調整；只作讀值')
+
+
 def rloss_viz(bv, px, last, transfers=(), days=420, show=150):
     P = _P(bv, px); L = bv.get('rloss') or {}
     D = [d for d in sorted(L) if d <= last and P(d) and _supply(bv, d)]
@@ -277,7 +318,7 @@ def rloss_viz(bv, px, last, transfers=(), days=420, show=150):
     return dict(date=d1, usd_m=round(L[d1] / 1e6), bp=round(rel[d1], 2), usd7_m=round(sum(L[D[k]] for k in range(len(D) - 7, len(D))) / 1e6),
                 lows=[x for x in lows if dn(d1) - dn(x['date']) <= days], pairs=pairs[-12:], cur=cur, back=back,
                 base30=_base(D, ix, P, 30, RL_FROM), base90=_base(D, ix, P, 90, RL_FROM), n_div=sum(p['kind'] == 'div' for p in pairs), n_cap=sum(p['kind'] == 'cap' for p in pairs),
-                peaks=peaks[-8:], chain=chain, chain_back=chain_back, hist=hist, hlinks=hlinks, skip=sorted(skip), rows=rows, src='Bitview',
+                peaks=peaks[-8:], chain=chain, chain_back=chain_back, hist=hist, hlinks=hlinks, skip=sorted(skip), rows=rows, src='Bitview', cap=_rl_cap(bv, D, P, L, skip, ix),
                 note='全網每日實現虧損（Bitview，美元，逐筆 UTXO、不是實體調整）÷ 市值；擺動低點＝前後 7 天最低且比之前 30 天最高跌 ≥ 6%；搬家日不算；只作讀值')
 
 

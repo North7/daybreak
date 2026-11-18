@@ -161,6 +161,42 @@ def build(L, N, E, dn, X):
     # ══ 選擇權 ══
     # 各到期未平倉（V.deriv.after 的 c-oi）：網站是每個到期日一根柱子，買權綠、賣權橘紅疊起來。
     # 橫軸是未來的到期日，不是時間序列，所以做成清單：橫條長度是那個到期日的未平倉量
+    # 選擇權推算的價格區間（2026-11-18 使用者要求，Glassnode 週報那張扇形圖；規則見 page.html ㊲）：每個到期日的風險中性分布（opt_grid._dist），
+    #   深色是 25–75 百分位、淺色是 15–85，中間的線是中位數；參考線是實現價格、短期持有者成本、真實市場均價。這是選擇權的定價，不是預測
+    og = (d.get('options') or {}).get('grid') or {}; oe = [e for e in og.get('exps') or [] if e.get('dist')]
+    if len(oe) >= 4 and og.get('qk'):
+        t0 = dn(og['date']); sp = og['spot']; QK = og['qk']; iq = {p: i for i, p in enumerate(og['qs'])}
+        lv = {x['key']: x['value'] for x in ((L.get('cycle') or {}).get('levels') or {}).get('levels') or [] if x.get('value')}
+        def pb(e, k):   # 到期時在 k 以下的機率（qk 之間線性內插）
+            c = e['dist']['cdf']
+            if k <= QK[0]: return c[0]
+            if k >= QK[-1]: return c[-1]
+            j = next(i for i in range(1, len(QK)) if QK[i] >= k); return c[j - 1] + (c[j] - c[j - 1]) * (k - QK[j - 1]) / (QK[j] - QK[j - 1])
+        q = lambda e, p: e['dist']['q'][iq[p]]
+        fan = lambda a_, b_: [[t0, sp, sp]] + [[dn(e['d']), q(e, a_), q(e, b_)] for e in oe]
+        far = oe[-1]; mid = min(oe, key=lambda e: abs(e['dte'] - 90)); rp, sth, tmm = lv.get('rp'), lv.get('sth'), lv.get('tmm')
+        kf = lambda v: '$%sK' % ('%.1f' % (v / 1000)).rstrip('0').rstrip('.')
+        md_ = lambda s_: '%d/%d/%d' % (int(s_[:4]), int(s_[5:7]), int(s_[8:]))
+        refs = [dict(v=v, col=c_, zh='%s %s' % (z, kf(v)), en='%s %s' % (e_, kf(v))) for v, c_, z, e_ in ((rp, 'k2', '實現價格', 'Realized price'), (sth, 'ac', '短期持有者成本', 'STH cost'), (tmm, 'c4', '真實市場均價', 'True market mean')) if v]
+        p_rp = pb(far, rp) * 100 if rp else None; p_sth = (1 - pb(far, sth)) * 100 if sth else None
+        X['orng'] = dict(k='orng', zh='選擇權推算的價格區間', en='Options-implied price range', hz='%s 到期，在實現價格（%s）以下的機率' % (md_(far['d']), kf(rp)) if rp else '%s 到期的中位數' % md_(far['d']),
+          he='Chance of settling below the realized price (%s) at the %s expiry' % (kf(rp), far['d'].replace('-', '/')) if rp else 'Median at the %s expiry' % far['d'].replace('-', '/'),
+          hs=dict(v=round(p_rp, 1), f='p0') if rp else dict(v=q(far, 50), f='usd0'),
+          xy=dict(xk='dt', f='usd0', pxd=120, fans=[dict(rows=fan(15, 85), col='c3', op=.16), dict(rows=fan(25, 75), col='c3', op=.3)], refs=refs,
+                  series=[dict(zh='中位數', en='Median', col='c3', w=2, rows=[[t0, sp]] + [[dn(e['d']), q(e, 50)] for e in oe])] +
+                         [dict(zh=z, en=e_, col='c3', hide=1, rows=[[t0, sp]] + [[dn(e['d']), q(e, p)] for e in oe]) for p, z, e_ in ((85, '85分位', 'P85'), (75, '75分位', 'P75'), (25, '25分位', 'P25'), (15, '15分位', 'P15'))],
+                  vl=[dict(x=t0, zh='今天', en='Today', col='k2')],
+                  leg=[['c3', '25–75 百分位（一半的機率落在這裡）', '25th–75th percentile (half the odds)', 'box'], ['c3', '15–85 百分位', '15th–85th percentile', 'box'], ['c3', '中位數', 'Median', 'line'], ['ink', 'BTC 價格（近 120 天）', 'BTC price (last 120 days)', 'line']]),
+          dz='把 Deribit 每個到期日的選擇權價格，換算成「到期時價格落在哪裡」的機率：深色是 25–75 百分位（一半的機率在這裡面），淺色是 15–85。'
+             '%s 到期（約 %d 天後）25–75 是 %s 到 %s；%s 到期中位數 %s，%s%s。'
+             '這是選擇權的定價（風險中性），包含避險的成本，不是預測；最外圍的履約價以外用最後一檔的隱含波動率外推。' % (
+              md_(mid['d']), mid['dte'], kf(q(mid, 25)), kf(q(mid, 75)), md_(far['d']), kf(q(far, 50)),
+              ('收在實現價格 %s 以下的機率 %.0f%%' % (kf(rp), p_rp)) if rp else '', ('、站回短期持有者成本 %s 以上的機率 %.0f%%' % (kf(sth), p_sth)) if sth else ''),
+          de='Deribit option prices for each expiry, turned into odds of where price settles: the dark band is the 25th–75th percentile (half the odds), the light band the 15th–85th. '
+             'At the %s expiry (about %d days out) the 25–75 range is %s to %s; at the %s expiry the median is %s%s%s. '
+             'This is what options price (risk-neutral, including the cost of hedging), not a forecast; beyond the outermost strikes the last implied volatility is carried out.' % (
+              mid['d'].replace('-', '/'), mid['dte'], kf(q(mid, 25)), kf(q(mid, 75)), far['d'].replace('-', '/'), kf(q(far, 50)),
+              (', with a %.0f%% chance of settling below the realized price %s' % (p_rp, kf(rp))) if rp else '', (' and %.0f%% of settling above the STH cost %s' % (p_sth, kf(sth))) if sth else ''))
     op = vz.get('options') or {}; ex = op.get('expiries')
     if ex:
         tt = op.get('totals') or {}; ca = tt.get('call_btc') or sum(e[2] for e in ex); pa = tt.get('put_btc') or sum(e[3] for e in ex); al = (ca + pa) or 1; mx = max(e[2] + e[3] for e in ex) or 1
@@ -329,7 +365,7 @@ def build(L, N, E, dn, X):
     else:
         na('hlw', 'Hyperliquid 大戶部位', 'Hyperliquid big accounts', 'deriv.hl_whales', 'Hyperliquid', '這張圖畫 Hyperliquid 帳戶淨值前 2,000 名的 BTC 永續多單、空單和淨部位。', 'This chart shows BTC perpetual longs, shorts and the net position of the top 2,000 Hyperliquid accounts by equity.')
     return [grp('槓桿', 'Leverage', '做多的槓桿擠不擠，最近是誰在被清算', 'How crowded leveraged longs are, and who has been getting liquidated', ['fh', 'basis', 'oih', 'oieth', 'lsa', 'bfx', 'hlw', 'lqv']),
-            grp('波動', 'Volatility', '選擇權市場預期接下來會動多大', 'How big a move the options market is pricing', ['vol', 'ivt']),
+            grp('波動', 'Volatility', '選擇權市場預期接下來會動多大', 'How big a move the options market is pricing', ['vol', 'ivt', 'orng']),
             grp('選擇權', 'Options', '未平倉堆在哪個到期日，錢押在哪一邊', 'Which expiries hold the open interest, and which side money is paying for', ['oi', 'prem', 'pcr']),
             grp('情緒', 'Sentiment', '大家是害怕還是貪心，新手有沒有湧進來', 'Whether the crowd is fearful or greedy, and whether newcomers are pouring in', ['fng', 'wiki'])]
 
