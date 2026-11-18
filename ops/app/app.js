@@ -132,7 +132,7 @@
       var d = { key: 'daily:' + xp.date, type: 'daily', when: at(TODAY, '08:30'), title: 'No.' + String(xp.edition || 0).padStart(3, '0') + ' 日報', sub: md(xp.date) + ' 收盤', langs: {} };
       [['zh', xp.image_zh], ['en', xp.image_en]].forEach(function (L) {
         if (!xp[L[0]]) return; var sp = splitLink(xp[L[0]]);
-        d.langs[L[0]] = { text: sp[0], link: sp[1], imgs: L[1] ? [img(L[1])] : [], names: ['daybreak-' + xp.date + '-' + L[0] + '.png'], lim: 280 };
+        d.langs[L[0]] = { text: sp[0], link: sp[1], imgs: L[1] ? [img(L[1])] : [], names: ['daybreak-' + xp.date + '-' + L[0] + '.png'], lim: 25000, long: true };
       });
       out.push(d);
     }
