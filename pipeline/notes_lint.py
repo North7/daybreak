@@ -270,10 +270,12 @@ if __name__ == '__main__':
         if doc is None: continue
         b, w = lint_voice(doc, zh, pv); bad += b; warn += w
     bad += lint_head(n, en, prev, json.load(open(pen)) if pen and os.path.exists(pen) else None)
-    try:   # 2026-11-18 使用者：「每日的日報配圖已經是頭版標題，文字就可以改為下面的詳細說明那段」：貼文正文＝當期 summary
+    try:   # 2026-11-18 使用者：原本的日報格式照舊（開頭兩句、市場階段、ETF 兩行），下面再接當期 summary 全文（「基本的日報格式還是要有，我只是說加入下面那段更詳細的分析說明」）
         xp = json.load(open(D('x_post.json'))); sq = lambda t: re.sub(r'\s+', '', t or '')
         for k, doc in (('zh', n), ('en', en)):
-            if doc and xp.get('date') == n.get('date') and sq(doc.get('summary')) not in sq(xp.get(k)): bad.append(f'x_post.json 的 {k} 正文要照抄當期 summary（只在句號後換行），見 CLAUDE_DAILY.md 第 9 步')
+            if doc and xp.get('date') == n.get('date') and sq(doc.get('summary')) not in sq(xp.get(k)): bad.append(f'x_post.json 的 {k} 要接上當期 summary 全文（只在句號後換行），見 CLAUDE_DAILY.md 第 9 步')
+        for k, mk in (('zh', ('・市場階段', '・ETF')), ('en', ('・Market stage', '・ETF'))):
+            if xp.get('date') == n.get('date') and xp.get(k) and not all(m in xp[k] for m in mk): bad.append(f'x_post.json 的 {k} 少了原本日報格式的「{mk[0]}」「{mk[1]}」兩行，見 CLAUDE_DAILY.md 第 9 步')
     except Exception as e: bad.append(f'x_post.json 讀不到：{e}')
     for f, keys in (('x_post.json', ('zh', 'en')), ('picks.json', None)):   # 2026-11-17 早報貼文、推薦圖文也是對外的
         try: d = json.load(open(D(f)))
