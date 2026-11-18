@@ -14,7 +14,7 @@
    "angle": "He says expect gutter sentiment at −1sd; we're already below it",
    "take": "Not approaching −1sd, already past it",
    "summary": "STH-MVRV 是看市場情緒最近的指標，價格在短期持有者成本 −1sd 時情緒會在谷底",
-   "reply": "Already past it\nSTH cost is $74.1K and −1sd is $67.5K, so the 11/17 close at $64.9K sits around −1.3sd\nOnly ~8% of days in the last 4 years closed below −1sd",
+   "reply": "Already past it, the 11/17 close at $64.9K sits around −1.3sd from the STH cost ($74.1K)\nOnly ~8% of days in the last 4 years closed below −1sd",
    "image": {
     "site": {
      "k": "sthgap"
@@ -133,7 +133,7 @@
    "angle": "一半對得上",
    "take": "幣在換手對得上，接的是不是散戶難講",
    "summary": "數據都表明散戶通過 BTC 和相關股票接盤了對衝基金，所以不太可能再拉新高讓散戶離場",
-   "reply": "幣在換手對得上，100 到 1 萬顆的地址 30 天少了 5.1 萬顆，長期持有者 30 天也淨賣了 12.5 萬顆\n接的是不是散戶就難講了，1 萬顆以上那層同期多了 3.9 萬，那層多半是交易所和託管",
+   "reply": "幣在換手對得上，接的是不是散戶就難講了，1 萬顆以上的地址 30 天多了 3.9 萬顆，那層多半是交易所和託管",
    "sources": "next-buy.js whstrip：100–10K 30 天 −50,592、≥10K +38,969；latest.json lth-net-position-change-30d −124,736",
    "note": "1 萬粉以下不配圖。地址不等於人，已寫明 1 萬顆以上多半是交易所和託管。不接後市。",
    "n": 6,
