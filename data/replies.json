@@ -868,6 +868,101 @@
    "style": "口語版",
    "status": "send",
    "order": 7
+  },
+  {
+   "lang": "en",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "stab"
+    },
+    "title": "Stablecoin supply: −5.3% in 30 days, still falling this week"
+   },
+   "url": "https://x.com/david_eng_mba/status/2122936606315454702",
+   "author": "david_eng_mba",
+   "name": "David",
+   "followers": 26515,
+   "posted": "2026-11-18T06:15:03Z",
+   "angle": "買方那邊還沒開始改善，至少穩定幣還沒",
+   "take": "他說只要買賣平衡改善；場內美元 30 天和 7 天都還在少",
+   "summary": "賣壓極端、下一輪牛市從這裡開始：30 日動量 −2.05σ、30 日核心資金流 −87 億、ETF 年累計 −21 億；每天改善 2.9 億就能抹平；反轉還沒確認",
+   "reply": "Buyers haven't started to improve yet, at least not in stablecoins\nSupply is down 5.3% in 30 days, a 1.6th-percentile move, and still −1.35% this week\nThat 7-day line is where new dollars would show up first\nWhich of your inputs do you expect to turn first?",
+   "sources": "latest.json flows.stables（DefiLlama 11/17）：286.4B、chg30 −5.31%、pct30 1.6（n30 2,147）、chg7 −1.35%",
+   "note": "★ 英文 2 小時窗，台北 16:15 前。2.6 萬粉配 stab（英文今天第一次）。不接「下一輪牛市從這裡開始」，順著他「要等平衡改善」補買方還沒動；ETF 年累計不用本站流量對。",
+   "n": 42,
+   "order": 40,
+   "id": "2122936606315454702"
+  },
+  {
+   "lang": "en",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "pnlr"
+    },
+    "title": "STH realized loss vs profit: losses dominate"
+   },
+   "url": "https://x.com/Darkfost_Coc/status/2122946799023333593",
+   "author": "Darkfost_Coc",
+   "name": "Darkfost",
+   "followers": 12441,
+   "posted": "2026-11-18T06:55:33Z",
+   "angle": "洗盤傷的是留下來的人，30 天累計還不夠格",
+   "take": "短線認賠是真的，成本 74K、收盤低 12%；30 天淨實現虧損只有市值 0.45%，以前的底超過 1.4%",
+   "summary": "STH（<155 天）投降階段：11/5 起轉進交易所的幣多半虧損；24h 淨虧損約 1,600 BTC；周末洗盤傷需求、成交量低",
+   "reply": "Feels like the flush hurt the holders more than the price\nSTH cost basis is 74.1K, 12% over where we closed, and their loss-side flows ran almost 6x the profit side\nThe 30-day net realized loss is only 0.45% of market cap though, past bottoms went past 1.4%",
+   "sources": "cycle.levels sth 74,056（Bitview 11/17），收盤 64,877 低 12.4%；onchain.sth_pnl（CheckOnChain 11/17 平滑）profit 1,953／loss 11,169，ratio 0.17；onchain.npl.cum30 −0.445%（到 11/16），thr −1.438%",
+   "note": "★ 英文 2 小時窗，台北 16:55 前。1.2 萬粉配 pnlr。順著他講投降，補 30 天累計還沒到以前的底；問口徑是友善請教。",
+   "n": 43,
+   "order": 41,
+   "id": "2122946799023333593"
+  },
+  {
+   "lang": "en",
+   "style": "口語版",
+   "status": "send",
+   "image": null,
+   "url": "https://x.com/OnchainIns5699/status/2122947327031660971",
+   "author": "OnchainIns5699",
+   "name": "Onchain Insights",
+   "followers": 545,
+   "posted": "2026-11-18T06:57:39Z",
+   "angle": "deeply 是對的，而且一週內才變這麼深",
+   "take": "STH 送出的幣賠的是賺的近 6 倍，一週前只有 1.6 倍",
+   "summary": "STH 送上交易所的盈虧：11 月初以來大多為負，最新幾根深度虧損；需要先穩定才會出底",
+   "reply": "Deeply is the right word, and it got there in a week\nOn 11/17 the loss side was about 11.2K BTC vs 2K in profit, a 0.17 ratio, from 0.61 on 11/10\nThe whole STH group sits under its 74.1K cost basis, so there isn't much profit left to take",
+   "sources": "onchain.sth_pnl（CheckOnChain 11/17 平滑）profit 1,953／loss 11,169／0.17；d7 11/10 profit 2,726／loss 4,503／0.61；cycle.levels sth 74,056",
+   "note": "★ 英文 2 小時窗，台北 16:57 前。545 粉不配圖、不問。放寬條件加的。",
+   "n": 44,
+   "order": 42,
+   "id": "2122947327031660971"
+  },
+  {
+   "lang": "en",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "liq"
+    },
+    "title": "Estimated liquidations: far more shorts stacked above price"
+   },
+   "url": "https://x.com/CW8900/status/2122951986190643467",
+   "author": "CW8900",
+   "name": "CW",
+   "followers": 27786,
+   "posted": "2026-11-18T07:16:10Z",
+   "angle": "又是多單在爆，但剩下的大多疊在上面",
+   "take": "7 天清算 82% 是多單；推算待清算量上方空單 8.8 萬顆、下方多單 2.7 萬顆",
+   "summary": "過去 24h 99,460 人被清算、總額 3.99 億；最大單筆 Hyperliquid BTC 539 萬",
+   "reply": "Longs again, 82% of BTC liquidations over the past 7 days were long side\nWhat's left is mostly stacked above price now, about 88K BTC of estimated shorts up to 78.5K vs 27K of longs down to 60K\nWas that $5.39M one a long too?",
+   "sources": "deriv.liq_vol d7 long 970／short 208.7 → 82.3%（Coinalyze 11/17）；liq 圖（Coinalyze 推算，11/18 00:00 UTC 快照，收盤 64,921）：空單累計到 78.5K 88.4K BTC、多單累計到 60K 27K BTC",
+   "note": "★ 英文 2 小時窗，台北 17:16 前。2.8 萬粉配 liq（英文今天第一次）。他是盤中 24h 總額，不對 11/17 日值。",
+   "n": 45,
+   "order": 43,
+   "id": "2122951986190643467"
   }
  ]
 }
