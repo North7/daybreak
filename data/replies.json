@@ -2501,6 +2501,98 @@
     },
     "title": "這段從 9/21 跌了 27%，比中位數深一截"
    }
+  },
+  {
+   "n": 124,
+   "order": 118,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123383271018975713",
+   "url": "https://x.com/Wealthmanager/status/2123383271018975713",
+   "author": "Wealthmanager",
+   "followers": 26349,
+   "posted": "2026-11-19T11:49:57Z",
+   "lang": "en",
+   "angle": "順著他：連陰少見，日線那把尺也一樣",
+   "take": "週線連陰之外，價格也離 200 日均線很遠",
+   "summary": "再 3 天就收第 7 根週線連陰，2022 熊市以來最長；Imagine if history repeats itself",
+   "reply": "Seven red weeks, and the daily chart is just as ugly\nPrice has closed under the 200-day all week, about 15% below it\nWhat kind of weekly close would make you say the streak is broken?",
+   "sources": [
+    "data/latest.json exit.status（below_sma200_run 7、sma200 72,720；11/18 收盤 62,985，要漲 15.5% 才回到線上）"
+   ],
+   "note": "Grok 2105 #26（曝光型 2.6 萬粉，英文窗到 21:49）。順著講，不預測會不會重演。1 萬粉以上配成本線與均線",
+   "image": {
+    "site": {
+     "k": "levels"
+    },
+    "title": "BTC vs the 200-day average: about 15% below"
+   }
+  },
+  {
+   "n": 125,
+   "order": 119,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123387184237760557",
+   "url": "https://x.com/BitCornerPod/status/2123387184237760557",
+   "author": "BitCornerPod",
+   "followers": 4167,
+   "posted": "2026-11-19T12:05:30Z",
+   "lang": "en",
+   "angle": "兩個都看，成本訊號說便宜、認賠還沒停",
+   "take": "成本訊號只說便宜，不說賣的人賣完了",
+   "summary": "CryptoQuant：活躍交易者平均成本下水約 −20%，7/1 以來最深；value zone 但底部要 2 個月以上；問信成本訊號還是只信價格",
+   "reply": "Both, but the cost signal only tells me it's cheap, not that the sellers are done\nShort-term holders have been dumping at a loss in a concentrated way for 9 days straight\nIf price goes flat and that selling fades, would you count that as the bottom starting?",
+   "sources": [
+    "data/latest.json onchain.sthsig.cap（on、days 9、zl 3.65，11/10–11/18）"
+   ],
+   "note": "Grok 2105 #27。1 萬粉以下不配圖。原文的 −20% 是 CryptoQuant 的數字，不當本站讀值"
+  },
+  {
+   "n": 126,
+   "order": 120,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123394965195677782",
+   "url": "https://x.com/TheMoonShow/status/2123394965195677782",
+   "author": "TheMoonShow",
+   "followers": 21420,
+   "posted": "2026-11-19T12:36:25Z",
+   "lang": "en",
+   "angle": "熟帳號、順著他：這週更一面倒",
+   "take": "多單被清得最多，而且這週更偏",
+   "summary": "9/21 以來多單清算 42.3 億美元，Binance 占 20.1 億，多單是空單 20.4 億的兩倍多",
+   "reply": "This week got even more one-sided\nLongs were over 80% of all liquidations in the last 7 days\nIs the Binance share just as heavy if you only look at this week?",
+   "sources": [
+    "data/latest.json deriv.liq_vol.d7（long 1,009.2M、short 201.9M、share 83.3%，11/18）"
+   ],
+   "note": "Grok 2105 #25（熟）。沒用 Grok 建議的清算帶，那是推算價位、資料已更新；改用實際清算量。1 萬粉以上配每日多空清算量",
+   "image": {
+    "site": {
+     "k": "lqv"
+    },
+    "title": "Longs: 76% of liquidations this month, over 80% this week"
+   }
+  },
+  {
+   "n": 127,
+   "order": 121,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123399677005672500",
+   "url": "https://x.com/abdurraouf07/status/2123399677005672500",
+   "author": "abdurraouf07",
+   "followers": 4006,
+   "posted": "2026-11-19T12:55:08Z",
+   "lang": "en",
+   "angle": "兩種讀法都留著很好；時間長了，底部燈還沒亮",
+   "take": "時間夠長，但綜合底部讀數還沒到",
+   "summary": "史上最長也最淺的熊市：2015 406 天 −85%、2018 364 天 −83%、2022 378 天 −77%、現在 409 天 −53%；兩種讀法，他偏多、看週收",
+   "reply": "Keeping both readings open feels right to me\nTime says it's late, but our combined bottom gauge is only at 38, still short of the 50 line\nWhich would sway you more toward the deeper-flush camp, a bad weekly close or another leg of forced selling?",
+   "sources": [
+    "data/latest.json cycle.tidemark.bottom（signal 38.1、level none，11/18）"
+   ],
+   "note": "Grok 2105 #23。1 萬粉以下不配圖。不驗證他的 409 天和各輪跌幅，不給方向"
   }
  ]
 }
