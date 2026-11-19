@@ -242,6 +242,45 @@ def build(L, N, E, dn, X):
       list=dict(rows=[row('現在的比值', 'Ratio now', hr['ratio'], f='n3', col='c5' if hr['capitulation'] else None, nz='低於 1 是礦工投降' if not hr['capitulation'] else '礦工投降中', ne='Below 1 means miner capitulation'),
                       row('這個狀態已經', 'In this state for', '%d 天' % hr['state_days'], ve='%d days' % hr['state_days']), row('上次交叉', 'Last cross', hr['last_cross'].replace('-', '/'), ve=hr['last_cross']), row('近 90 天最低', '90-day low', hr['min_ratio_90d'], f='n3')]),
       dz='算力的 30 日平均跌到 60 日平均下面，代表礦工在關機，過去常出現在底部附近；重新站回上面是投降結束。現有網站只有讀數、沒有圖，這裡照樣只放讀數。', de='When the 30-day hashrate average drops below the 60-day average, miners are switching off, which has often come near bottoms; crossing back above ends the capitulation. The live site shows readings only, and so does this card.')
+    # ── 2026-11-19 獲利供給：全體 vs 扣掉十年老幣（pipeline/bv_more.py 第 6 項；使用者看了白仙女〈浮盈籌碼佔比，剔除休眠超過 10 年的幣〉的研究後說「加這張卡」）──
+    #   只放讀值和歷次熊底，不放對方的分檔建倉規則（網站不給操作建議）；他的 36%／40% 兩條線只有最近兩輪碰過，也不畫
+    q_ = (o.get('bvx') or {}).get('psx')
+    if q_ and len(q_.get('rows') or []) > 300:
+        from say_data import own
+        P1 = lambda v: '%.1f%%' % v; YM = lambda d_: d_[:7].replace('-', '/'); lw = q_['lows']; lc = lw[-1]
+        done = [c_ for c_ in q_['cross45'] if c_['y1'] is not None]; nup = sum(1 for c_ in done if c_['y1'] > 0); wst = min(c_['worst'] for c_ in done) if done else 0
+        ml = lambda w, k: '' if w[k]['d'][:4] == '2020' else P1(w[k]['v'])   # 圖上只寫數字（年份看橫軸，手機上才放得下）；2020 年 3 月的急跌離 2018 太近，只畫圈，數字在讀數裡
+        pmk = [dict(d=w['ex']['dn'], v=w['ex']['v'], col='c5', up=0, zh=ml(w, 'ex'), en=ml(w, 'ex')) for w in lw] + \
+              [dict(d=w['raw']['dn'], v=w['raw']['v'], col='c3', up=1, zh=ml(w, 'raw'), en=ml(w, 'raw')) for w in lw if w['raw']['v'] - w['ex']['v'] >= 1]
+        X['psx'] = dict(k='psx', zh='獲利供給：全體 vs 扣掉十年老幣', en='Supply in profit: all vs excluding 10-year-old coins',
+          modes=[dict(mz='兩條比較', me='Both', hz='扣掉十年老幣，在獲利的比例', he='In profit, excluding 10-year-old coins', f='p1', rng=0, p=4, npc=1, hero=1, dom=[25, 100], rows=q_['rows'],
+                      ser=[ser(1, zh='全體', en='All supply', col='c3', w=1.5), ser(2, zh='扣掉十年老幣', en='Excluding 10-year-old coins', col='c5', w=2)],
+                      refs=[dict(v=50, col='k2', zh='50%', en='50%')], marks=pmk,
+                      leg=[['c5', '扣掉十年老幣：歷次熊底', 'Excluding old coins: past bear lows', 'ring'], ['c3', '全體：歷次熊底（2020 年起兩條才分開）', 'All supply: past bear lows (the lines split from 2020)', 'ring']]),
+                 dict(mz='十年老幣佔流通量', me='Share of 10-year-old coins', hz='放了 10 年以上的幣佔流通量', he='Coins unmoved for 10+ years, share of supply', f='p1', rng=0, p=4, npc=1, hero=0, rows=q_['rows'],
+                      ser=[ser(3, zh='10 年以上的幣佔流通量', en='10+ year coins, share of supply', col='c4', w=2)])],
+          src='Bitview · %d/%d' % (int(L['onchain']['bvx']['date'][5:7]), int(L['onchain']['bvx']['date'][8:10])), srce='Bitview · ' + L['onchain']['bvx']['date'][5:].replace('-', '/'),
+          dz='在獲利的幣（現價比它最後一次移動時的價格高）佔供給的比例，7 日平均。一條是全體，一條扣掉放了 10 年以上沒動的幣（含中本聰時期的幣，現在佔流通量 %s，%s 年才開始有）。'
+             '這些幣成本極低、幾乎永遠算在獲利，而且越積越多，會把全體的比例墊高：不扣的話熊底一輪比一輪高，扣掉之後反過來一輪比一輪低，所以兩種都沒有一條固定的線能跨輪通用。圓圈是歷次熊底那段的最低點。'
+             '第二個檢視是 10 年以上的幣佔流通量多少。老幣不一定是遺失的，哪天動了就會回到計算裡。逐筆 UTXO，沒有排除交易所內部移轉。只作讀值。' % (P1(q_['old']), q_['old_first'][:4]),
+          de='The share of supply in profit (price above where each coin last moved), as a 7-day average. One line is all supply; the other leaves out coins unmoved for 10+ years (Satoshi-era coins included; %s of supply now, and none before %s). '
+             'Those coins cost almost nothing, sit in profit nearly always and keep piling up, which props up the all-supply share: left in, each bear bottom sits higher than the last; taken out, each sits lower. Neither version has a fixed line that works across cycles. Circles mark the low of each bear phase. '
+             'The second view shows how much of supply has been still for 10+ years. Old coins are not necessarily lost; any that move rejoin the count. Per UTXO, with exchange-internal transfers not excluded. A reading only.' % (P1(q_['old']), q_['old_first'][:4]))
+        X['psx']['say'] = own([
+            ('扣掉十年老幣', 'Excluding 10-year-old coins', P1(q_['ex']), P1(q_['ex']), 'up' if q_['ex'] <= 45 else 'neu',
+             '扣掉放了 10 年以上沒動的幣，在獲利的比例 7 日平均 %s，30 天前是 %s；%s 年以來只有 %s 的日子比現在低。' % (P1(q_['ex']), P1(q_['ex30']), q_['since'][:4], P1(q_['pct'])),
+             'Leaving out coins unmoved for 10+ years, %s of supply is in profit on a 7-day average, against %s 30 days ago; since %s only %s of days were lower.' % (P1(q_['ex']), P1(q_['ex30']), q_['since'][:4], P1(q_['pct']))),
+            ('全體', 'All supply', P1(q_['raw']), P1(q_['raw']), 'neu',
+             '不扣的話是 %s，30 天前 %s。差的 %.1f 個百分點來自老幣：它們佔流通量 %s，幾乎全部算在獲利。' % (P1(q_['raw']), P1(q_['raw30']), q_['raw'] - q_['ex'], P1(q_['old'])),
+             'With them left in it is %s, against %s 30 days ago. The %.1f-point gap comes from the old coins: %s of supply, nearly all of it in profit.' % (P1(q_['raw']), P1(q_['raw30']), q_['raw'] - q_['ex'], P1(q_['old']))),
+            ('歷次熊底', 'Past bear lows', '這一輪 ' + P1(lc['ex']['v']), 'This cycle ' + P1(lc['ex']['v']), 'neu',
+             '扣掉老幣的最低點：%s，這一輪是 %s 的 %s。不扣的話：%s。' % ('、'.join('%s 年 %s' % (w['ex']['d'][:4], P1(w['ex']['v'])) for w in lw[:-1]), YM(lc['ex']['d']), P1(lc['ex']['v']), '、'.join('%s 年 %s' % (w['raw']['d'][:4], P1(w['raw']['v'])) for w in lw)),
+             'Lows excluding old coins: %s; this cycle %s on %s. With them left in: %s.' % (', '.join('%s in %s' % (P1(w['ex']['v']), w['ex']['d'][:4]) for w in lw[:-1]), P1(lc['ex']['v']), lc['ex']['d'].replace('-', '/'), ', '.join('%s in %s' % (P1(w['raw']['v']), w['raw']['d'][:4]) for w in lw))),
+            ('第一次跌破 45%', 'First drop below 45%', '%d 次裡 %d 次一年後漲' % (len(done), nup), '%d of %d up a year on' % (nup, len(done)), 'neu',
+             '扣掉老幣的比例每一段第一次跌破 45%%（回到 60%% 以上才算新的一段）：%s。滿一年的 %d 次，一年後 %d 次是漲的；但跌破之後一年內最多再跌 %d%%。次數少，只作讀值。' % ('、'.join('%s（一年後 %+d%%）' % (YM(c_['d']), c_['y1']) if c_['y1'] is not None else '%s（還沒滿一年）' % YM(c_['d']) for c_ in q_['cross45']), len(done), nup, abs(wst)),
+             'Each first drop of the excluded share below 45%% (a new episode starts only after a return above 60%%): %s. Of the %d with a full year since, %d were up a year later, but price fell as much as another %d%% within that year. Few cases; a reading only.' % (', '.join('%s (%+d%% a year on)' % (c_['d'][:7], c_['y1']) if c_['y1'] is not None else '%s (under a year ago)' % c_['d'][:7] for c_ in q_['cross45']), len(done), nup, abs(wst)))],
+            '扣掉十年老幣，%s 的幣在獲利，%s 年以來只有 %s 的日子比現在低。' % (P1(q_['ex']), q_['since'][:4], P1(q_['pct'])),
+            'Excluding 10-year-old coins, %s of supply is in profit; since %s only %s of days were lower.' % (P1(q_['ex']), q_['since'][:4], P1(q_['pct'])))
     # ── 和歷史比 ──
     cc = cy['cycle_cmp']; CCOL = ['k2', 'c3', 'c4', 'ac']; NC = len(cy['cycle_cmp']['cycles'])
     X['cyccmp'] = dict(k='cyccmp', zh='和前幾輪比：頂部之後', en='Versus past cycles: after the top', hz='現在比這一輪頂部', he='Now, versus this cycle\'s top', hs=dict(v=(cc['cycles'][-1]['rows'][-1][1] - 1) * 100, f='pct1'),
@@ -299,7 +338,7 @@ def build(L, N, E, dn, X):
     G = [grp('現在的階段', 'Where we are', '熊市、過渡還是牛市，偏多還是偏空', 'Bear, transition or bull; leaning long or short', ['dawn', 'dawnc', 'stage', 'regime', 'regc']),
          grp('估值冷熱', 'Valuation heat', '和過去比，現在算貴還是便宜', 'Rich or cheap against history', ['avgd', 'avgdc', 'hnupl', 'rup', 'aviv', 'rrisk', 'pl', 'p6', 'p6v']),
          grp('頂部訊號', 'Top signals', '離頂部有多近', 'How close to a top', ['p20', 'radar', 'radarv', 'pi', 'tm', 'tmh']),
-         grp('底部訊號', 'Bottom signals', '過去的底部長什麼樣，現在像不像', 'What past bottoms looked like, and whether this resembles one', ['lthloss', 'npl365', 'agecost', 'hashr']),
+         grp('底部訊號', 'Bottom signals', '過去的底部長什麼樣，現在像不像', 'What past bottoms looked like, and whether this resembles one', [k_ for k_ in ['lthloss', 'npl365', 'psx', 'agecost', 'hashr'] if k_ != 'psx' or 'psx' in X]),
          grp('和歷史比', 'Against history', '和前幾輪、和模型比', 'Against past cycles and models', ['cyccmp', 'dd', 'capeff', 'path', 'long', 'mon'])]
     s1 = dw['stats'][k] if k < len(dw['stats']) else {}
     hvs = [dn(h) for h in cy['halvings']] + [dn(cy['next_halving_est'])]
