@@ -242,6 +242,27 @@ def build(L, N, E, dn, X):
       list=dict(rows=[row('現在的比值', 'Ratio now', hr['ratio'], f='n3', col='c5' if hr['capitulation'] else None, nz='低於 1 是礦工投降' if not hr['capitulation'] else '礦工投降中', ne='Below 1 means miner capitulation'),
                       row('這個狀態已經', 'In this state for', '%d 天' % hr['state_days'], ve='%d days' % hr['state_days']), row('上次交叉', 'Last cross', hr['last_cross'].replace('-', '/'), ve=hr['last_cross']), row('近 90 天最低', '90-day low', hr['min_ratio_90d'], f='n3')]),
       dz='算力的 30 日平均跌到 60 日平均下面，代表礦工在關機，過去常出現在底部附近；重新站回上面是投降結束。現有網站只有讀數、沒有圖，這裡照樣只放讀數。', de='When the 30-day hashrate average drops below the 60-day average, miners are switching off, which has often come near bottoms; crossing back above ends the capitulation. The live site shows readings only, and so does this card.')
+    # ── 2026-11-19 Hash Ribbons 改成圖（bv_more.py 第 7 項；使用者傳 Capriole 的 TradingView 圖：「可以做出這種線嗎？提示買入時間」，看過回測後「做，照實標」）──
+    #   上格價格，下格算力 30／60 日均線（對數），兩線之間 30 日在上綠、在下紅；投降期塗淡紅底；原版買點畫在價格上：一年後漲綠圈、跌紅圈、還不到一年用青色（不和結局同色，㉝）
+    hb = (o.get('bvx') or {}).get('hrib')
+    if hb and len(hb.get('rows') or []) > 300:
+        SG_ = lambda v: ('+%d%%' % v) if v >= 0 else ('−%d%%' % -v)
+        YMD = lambda d_: d_.replace('-', '/'); bys = hb['buys']; pre, post, bp = hb['pre'], hb['post'], hb['base_post']
+        bcol = lambda b: 'c4' if b['r365'] is None else 'up' if b['r365'] > 0 else 'dn'
+        yr0 = L['meta']['bar_date'][:4]; ty = [b for b in bys if b['d'][:4] == yr0]; lb = bys[-1] if bys else None
+        X['hashr'] = dict(k='hashr', zh='Hash Ribbons', en='Hash Ribbons', hz='30 日均算力', he='30-day average hashrate', f='ehs', tf='log', p=4, npc=1, hero=1, rng=1095, rows=hb['rows'],
+          ser=[ser(2, zh='60 日均線', en='60-day average', col='k2', w=1.2), ser(1, zh='30 日均線', en='30-day average', col='up', w=1.7)],
+          bands=[dict(a=1, b=2, col='up', col2='dn', op=.3)],
+          spans=[dict(a=a_, b=b_, col='dn', soft=1) for a_, b_ in hb['spans']],
+          marks=[dict(d=b['dn'], v=b['px'], on='p', col=bcol(b), up=1, zh='' if b['r365'] is None else '一年 ' + SG_(b['r365']), en='' if b['r365'] is None else '1y ' + SG_(b['r365'])) for b in bys],
+          leg=[['dn', '投降期（30 日均在 60 日均下面）', 'Capitulation (30-day below 60-day)', 'box'], ['up', '原版買點：一年後漲', 'Original buy: up a year later', 'ring'], ['dn', '原版買點：一年後跌', 'Original buy: down a year later', 'ring'], ['c4', '原版買點：還不到一年，不知道是哪一種', 'Original buy: under a year, outcome unknown', 'ring']],
+          src='Bitview · %d/%d' % (int(o['bvx']['date'][5:7]), int(o['bvx']['date'][8:10])), srce='Bitview · ' + o['bvx']['date'][5:].replace('-', '/'),
+          dz='算力的 30 日平均跌到 60 日平均下面，代表礦工在關機（投降期，淡紅底）。Capriole 原版的買點：投降結束之後，價格 10 日均線第一次站上 20 日均線那天，圖上用圓圈標在價格上。'
+             '這裡只算持續 %d 天以上的投降。回測：2021 年以前 %d 次，一年後 %d 次漲，中位數 %s；2021 年以後滿一年的 %d 次，%d 次漲，中位數 %s，同期隨便一天買進一年後漲的機率 %d%%、中位數 %s，差不多。'
+             '礦機效率、託管和算力出租改變了礦工關機的原因，投降和價格的關係比以前弱。只作讀值。' % (hb['min_eps'], pre['n'], pre['up'], SG_(pre['med']), post['n'], post['up'], SG_(post['med']), bp['up'], SG_(bp['med'])),
+          de='When the 30-day hashrate average drops below the 60-day, miners are switching off (capitulation, red shade). Capriole\'s original buy: after capitulation ends, the first day the 10-day price average crosses above the 20-day; circles mark it on price. '
+             'Only capitulations of %d days or more count here. Backtest: before 2021, %d signals, %d up a year later, median %s; since 2021, %d with a full year, %d up, median %s, against %d%% up and a %s median for buying on any day in that span, about the same. '
+             'Rig efficiency, hosting and hashrate rental have changed why miners switch off, so the link to price is weaker than it was. A reading only.' % (hb['min_eps'], pre['n'], pre['up'], SG_(pre['med']), post['n'], post['up'], SG_(post['med']), bp['up'], SG_(bp['med'])))
     # ── 2026-11-19 獲利供給：全體 vs 扣掉十年老幣（pipeline/bv_more.py 第 6 項；使用者看了白仙女〈浮盈籌碼佔比，剔除休眠超過 10 年的幣〉的研究後說「加這張卡」）──
     #   只放讀值和歷次熊底，不放對方的分檔建倉規則（網站不給操作建議）；他的 36%／40% 兩條線只有最近兩輪碰過，也不畫
     q_ = (o.get('bvx') or {}).get('psx')

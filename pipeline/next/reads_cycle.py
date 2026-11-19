@@ -198,7 +198,29 @@ def agecost(L):
         it('過去%s叉到%s叉' % (('死', '金') if lc['kind'] == 'death' else ('金', '死')), 'Past %s to %s crosses' % ((('death', 'golden') if lc['kind'] == 'death' else ('golden', 'death'))), '%d–%d 天' % (min(dc), max(dc)), '%d–%d days' % (min(dc), max(dc)), 'neu',
            '這兩條是半年到一年半前的買價，比價格落後很多。', 'Both lines are what people paid six to eighteen months ago, so they lag price a long way.')]
 
+def hashr_bv(L, hb):   # 2026-11-19 Hash Ribbons 改成圖（bv_more.py 第 7 項）：讀值照回測，用 Bitview 的算力，和圖同一份
+    SG_ = lambda v: ('+%d%%' % v) if v >= 0 else ('−%d%%' % -v)
+    YMD = lambda d_: d_.replace('-', '/'); bys = hb['buys']; pre, post, bp = hb['pre'], hb['post'], hb['base_post']
+    yr0 = L['meta']['bar_date'][:4]; ty = [b for b in bys if b['d'][:4] == yr0]; lb = bys[-1] if bys else None
+    items = [
+        it('現在', 'Now', '投降中' if hb['cap'] else '沒有投降', 'Capitulating' if hb['cap'] else 'No capitulation', 'neu',
+         '30 日均算力 %s EH/s，60 日均 %s EH/s，比值 %.3f，這個狀態已經 %d 天。%s' % (format(hb['m30'], ',.0f'), format(hb['m60'], ',.0f'), hb['ratio'], hb['run'], ('上一次原版買點是 %s（收盤 $%s）。' % (YMD(lb['d']), format(lb['px'], ','))) if lb else ''),
+         'The 30-day average hashrate is %s EH/s against %s EH/s for the 60-day, a ratio of %.3f, %d days in this state. %s' % (format(hb['m30'], ',.0f'), format(hb['m60'], ',.0f'), hb['ratio'], hb['run'], ('The last original buy was on %s (close $%s).' % (lb['d'], format(lb['px'], ','))) if lb else '')),
+        it('2021 年以前', 'Before 2021', '%d 次裡 %d 次漲' % (pre['n'], pre['up']), '%d of %d up' % (pre['up'], pre['n']), 'neu',
+         '原版買點一年後的漲跌：%s。' % '、'.join('%s %s' % (b['d'][:7].replace('-', '/'), SG_(b['r365'])) for b in bys if b['d'] < '2021' and b['r365'] is not None),
+         'A year after each original buy: %s.' % ', '.join('%s %s' % (b['d'][:7], SG_(b['r365'])) for b in bys if b['d'] < '2021' and b['r365'] is not None)),
+        it('2021 年以後', 'Since 2021', '%d 次裡 %d 次漲' % (post['n'], post['up']), '%d of %d up' % (post['up'], post['n']), 'neu',
+         '滿一年的：%s，中位數 %s。同期隨便一天買進，一年後漲的機率 %d%%、中位數 %s。' % ('、'.join('%s %s' % (b['d'][:7].replace('-', '/'), SG_(b['r365'])) for b in bys if b['d'] >= '2021' and b['r365'] is not None), SG_(post['med']), bp['up'], SG_(bp['med'])),
+         'With a full year: %s; median %s. Buying on any day in that span was up a year later %d%% of the time, median %s.' % (', '.join('%s %s' % (b['d'][:7], SG_(b['r365'])) for b in bys if b['d'] >= '2021' and b['r365'] is not None), SG_(post['med']), bp['up'], SG_(bp['med']))),
+        it('%s 年' % yr0, 'In %s' % yr0, '%d 次買點' % len(ty), '%d buys' % len(ty), 'neu',
+         '今年投降、恢復來回好幾次：%s（括號是到現在最近一個滿 90／180 天的漲跌）。' % '、'.join('%s（%s）' % (YMD(b['d'])[5:], SG_(b['r180']) + '／180 天' if b['r180'] is not None else SG_(b['r90']) + '／90 天' if b['r90'] is not None else '還不到 90 天') for b in ty),
+         'Capitulation came and went several times this year: %s (in brackets, the latest 90- or 180-day result so far).' % ', '.join('%s (%s)' % (b['d'][5:], SG_(b['r180']) + ' at 180d' if b['r180'] is not None else SG_(b['r90']) + ' at 90d' if b['r90'] is not None else 'under 90 days') for b in ty))]
+    sz = '%s；原版買點 2021 年以後一年後 %d 次裡 %d 次漲，和隨便一天差不多。' % ('礦工在投降' if hb['cap'] else '30 日均算力在 60 日均上面，沒有投降', post['n'], post['up'])
+    se = '%s; since 2021 the original buy was up a year later %d times out of %d, about the same as any day.' % ('Miners are capitulating' if hb['cap'] else 'The 30-day hashrate is above the 60-day: no capitulation', post['up'], post['n'])
+    return sz, se, items
 def hashr(L):
+    hb = (L['onchain'].get('bvx') or {}).get('hrib')
+    if hb: return hashr_bv(L, hb)
     h = L['onchain']['hash_ribbons']; g = (h['ratio'] - 1) * 100
     sz = ('30 日均算力比 60 日均%s %.1f%%，已 %d 天：%s。' % ('高' if g >= 0 else '低', abs(g), h['state_days'], '礦工在投降' if h['capitulation'] else '礦工沒有投降'))
     se = 'The 30-day average hashrate is %.1f%% %s the 60-day, for %d days: %s.' % (abs(g), 'above' if g >= 0 else 'below', h['state_days'], 'miners are capitulating' if h['capitulation'] else 'no miner capitulation')
@@ -263,8 +285,8 @@ HOWX = {
            ['Three valuation indicators, each ranked against the past four years; 80 or above is hot.', 'Any two at 80 or above count as the top zone.', 'Valuation only, not timing. Reading only.']),
     'pi': (['111 日均線 ÷（350 日均線 × 2）；到 1 代表短期均線追上長期均線的兩倍。', '過去幾次到 1 都在頂部附近，但每一輪的頂部不一定都會碰到。', '只用價格，和鏈上指標一起看。'],
            ['111-day MA ÷ (350-day MA × 2); 1 means the short average has caught up with twice the long one.', 'Past touches of 1 came near tops, but not every top has reached it.', 'It uses price alone; read it with the on-chain gauges.']),
-    'hashr': (['算力 30 日均 ÷ 60 日均；低於 1 代表算力在下降，礦工在投降。', '從投降恢復（重新回到 1 以上）歷來常在底部附近，但不是每次都準。', '只看礦工，和其他指標一起看。'],
-              ['30-day ÷ 60-day average hashrate; below 1 means hashrate is falling and miners are capitulating.', 'Recoveries back above 1 have often come near bottoms, though not every time.', 'It only covers miners; read it with the rest.']),
+    'hashr': (['算力 30 日均 ÷ 60 日均；低於 1 代表算力在下降，礦工在投降。', '原版買點（投降結束後價格轉強）2021 年以前很準，2021 年以後和隨便一天差不多。', '只看礦工，和其他指標一起看。'],
+              ['30-day ÷ 60-day average hashrate; below 1 means hashrate is falling and miners are capitulating.', 'The original buy (price turning up after capitulation) worked well before 2021; since then it has done about as well as any day.', 'It only covers miners; read it with the rest.']),
     'cyccmp': (['每條線是一輪頂部之後每天的收盤，和那一輪頂部比跌了多少。', '橫軸是頂部後第幾天，可以直接和前幾輪同一天比。', '只有三輪樣本，這輪的走法不一定一樣。'],
                ['Each line is the daily close after a cycle top, as a drop from that top.', 'The x-axis is days since the top, so today lines up with the same day in past cycles.', 'Only three past cycles; this one need not follow them.']),
 }

@@ -12,6 +12,9 @@
 6 獲利供給：全體 vs 扣掉十年老幣（2026-11-19 使用者看了白仙女〈浮盈籌碼佔比，剔除休眠超過 10 年的幣〉的研究後要求）：
   全體＝supply_in_profit ÷ circulating_supply；扣掉＝（獲利供給 − 10 年以上的幣裡在獲利的）÷（流通量 − 10 年以上的幣），各取 7 日平均。
   10 年以上的幣 2019 年才開始有，成本極低、幾乎永遠在獲利，不扣的話熊底一輪比一輪高；扣掉之後反過來一輪比一輪低，沒有一條固定的線能跨輪通用。
+7 Hash Ribbons 的線和原版買點（2026-11-19 使用者傳 Capriole 那張 TradingView 圖：「可以做出這種線嗎？提示買入時間」→ 看過回測後「做，照實標」）：
+  算力（hashrate，EH/s）的 30 日、60 日均線；30 日跌到 60 日下面是投降期。原版買點：投降結束（30 日回到 60 日上面）之後，價格 10 日均線第一次站上 20 日均線那天。
+  只算持續 14 天以上的投降（短的來回太多）。回測照實存：2021 年以前和以後分開，加上同期隨便一天買進的對照。
 5 大戶地址的持幣成本（2026-11-16 使用者看了運營回覆用的圖後要求）：餘額 100–1k、1k–10k、10k–100k 顆三層地址各自的已實現市值 ÷ 持幣量。
   Bitview 沒有現成的成本序列，自己除。依地址餘額分層、沒有做實體歸併；一個地址的餘額變了就換層，1 萬顆以上那層有不少交易所和託管機構。
 全部只作讀值。Bitview 改序列名稱時（https://bitview.space/api 的 What changed）整組會失敗，collect.py 只記 errors，build.py 沿用前一天的。"""
@@ -32,7 +35,7 @@ NAMES = ['price_close'] + ['bedrock_unweighted_floor_' + p for p in FP] + ['bedr
     + ['supply_density', 'supply_density_in_profit', 'supply_density_in_loss', 'sth_supply_density', 'lth_supply_density'] \
     + ['age_%s_transfer_volume_sum_24h' % a for a in A1 + A5] \
     + ['balance_%s_btc_%s' % (t, m) for t in TIERS for m in ('realized_cap', 'supply')] \
-    + ['supply_in_profit', 'circulating_supply'] + ['%s_supply%s' % (a, x) for a in OLD10 for x in ('', '_in_profit')]
+    + ['supply_in_profit', 'circulating_supply'] + ['%s_supply%s' % (a, x) for a in OLD10 for x in ('', '_in_profit')] + ['hashrate']
 
 
 def _curl(url):
@@ -155,10 +158,42 @@ def build(last, S=None, pxc=None):
     ok = [x for x in e7[a12:] if x is not None]
     psx = dict(ex=R2(e7[N - 1]), raw=R2(r7[N - 1]), ex30=R2(e7[N - 31]), raw30=R2(r7[N - 31]), old=R2(osh[N - 1]), old_first=next(day(i) for i in range(a12, N) if osh[i]), pct=round(sum(1 for x in ok if x < e7[N - 1]) / len(ok) * 100, 1), since='2012-01-01',
                lows=plows, cross45=cr, rows=[[dnum(i), R2(r7[i]), R2(e7[i]), R2(osh[i]), R0(px[i])] for i in samp(a12, [ix(q[k]['d']) for q in plows for k in ('ex', 'raw')]) if e7[i] is not None])
-    return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx,
+    # ── 7 Hash Ribbons ──
+    hv = [(v / 1e18 if v else None) for v in S['hashrate'][:N]]
+    def sm(v, i, n):
+        w = v[i - n + 1:i + 1] if i >= n - 1 else None; return None if not w or None in w else sum(w) / n
+    h30 = [sm(hv, i, 30) for i in range(N)]; h60 = [sm(hv, i, 60) for i in range(N)]; p10 = [sm(px, i, 10) for i in range(N)]; p20 = [sm(px, i, 20) for i in range(N)]
+    if None in (h30[N - 1], h60[N - 1]): raise RuntimeError('Bitview 算力最新一天缺值')
+    capd = [h30[i] is not None and h60[i] is not None and h30[i] < h60[i] for i in range(N)]
+    eps, i = [], a12
+    while i < N:
+        if capd[i]:
+            s0 = i
+            while i < N and capd[i]: i += 1
+            eps.append((s0, i - 1))
+        else: i += 1
+    fw = lambda k, h: round((px[k + h] / px[k] - 1) * 100) if k + h < N and px[k + h] else None
+    buys = []
+    for s0, e0 in eps:
+        if e0 - s0 + 1 < 14: continue
+        k = e0 + 1
+        while k < N and not capd[k] and not (p10[k] and p20[k] and p10[k] > p20[k]): k += 1
+        if k < N and not capd[k]: buys.append(dict(d=day(k), dn=dnum(k), px=R0(px[k]), cap0=day(s0), cap1=day(e0), days=e0 - s0 + 1, r90=fw(k, 90), r180=fw(k, 180), r365=fw(k, 365)))
+    def bt(L):
+        v = sorted(b['r365'] for b in L if b['r365'] is not None); return dict(n=len(v), up=sum(1 for x in v if x > 0), med=v[len(v) // 2] if v else None)
+    def anyd(a):
+        v = sorted(fw(k, 365) for k in range(a, N) if fw(k, 365) is not None); return dict(n=len(v), up=round(sum(1 for x in v if x > 0) / len(v) * 100), med=v[len(v) // 2])
+    run = 0
+    while run < N and capd[N - 1 - run] == capd[N - 1]: run += 1
+    R3 = lambda v: None if v is None else round(v, 3 if v < 10 else 1)
+    hrib = dict(m30=R3(h30[N - 1]), m60=R3(h60[N - 1]), ratio=round(h30[N - 1] / h60[N - 1], 4), cap=capd[N - 1], run=run, min_eps=14, since=day(a12),
+                buys=buys, pre=bt([b for b in buys if b['d'] < '2021']), post=bt([b for b in buys if b['d'] >= '2021']), base_post=anyd(ix('2021-01-01')), base_all=anyd(a12),
+                spans=[[dnum(a), dnum(b)] for a, b in eps],
+                rows=[[dnum(k), R3(h30[k]), R3(h60[k]), round(h30[k] / h60[k], 4), R0(px[k])] for k in samp(a12, set(range(N - 1100, N)) | {b['dn'] - dnum(0) for b in buys}) if h30[k] and h60[k]])
+    return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx, hrib=hrib,
                 note='損失地板：虧損的幣佔供給的比例到歷史最糟 5%／2%／1%／0.5%／0.1% 時的價格，門檻逐日累積；賺賠分布：各賺賠幅度佔供給 %；集中度：現價 ±5% 內的幣佔供給 %；老幣移動：1 年以上、5 年以上的幣每天移動的顆數（7 日、30 日平均）；獲利供給：全體和扣掉 10 年以上的幣，在獲利的比例（7 日平均）；只作讀值')
 
 
 if __name__ == '__main__':
     import sys
-    d = build(sys.argv[1]); print({k: v for k, v in d['psx'].items() if k != 'rows'}, len(d['psx']['rows'])); print({k: v for k, v in d['tiers'].items() if k != 'rows'}, len(d['tiers']['rows'])); print(json.dumps({k: (v if k not in ('rows',) else len(v)) for k, v in d['floors'].items()}, ensure_ascii=False)); print({k: d['pnl']['all'][k] for k in ('cur', 'prev30', 'low22', 'depth', 'pct10')}); print({k: v for k, v in d['dens'].items() if k != 'rows'}, len(d['dens']['rows'])); print(d['old']['y1'], d['old']['y5'], len(d['old']['rows'])); print('bytes', len(json.dumps(d)))
+    d = build(sys.argv[1]); print({k: v for k, v in d['hrib'].items() if k not in ('rows', 'spans')}, len(d['hrib']['rows'])); print({k: v for k, v in d['psx'].items() if k != 'rows'}, len(d['psx']['rows'])); print({k: v for k, v in d['tiers'].items() if k != 'rows'}, len(d['tiers']['rows'])); print(json.dumps({k: (v if k not in ('rows',) else len(v)) for k, v in d['floors'].items()}, ensure_ascii=False)); print({k: d['pnl']['all'][k] for k in ('cur', 'prev30', 'low22', 'depth', 'pct10')}); print({k: v for k, v in d['dens'].items() if k != 'rows'}, len(d['dens']['rows'])); print(d['old']['y1'], d['old']['y5'], len(d['old']['rows'])); print('bytes', len(json.dumps(d)))
