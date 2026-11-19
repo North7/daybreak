@@ -4,6 +4,165 @@
  "edition": 44,
  "items": [
   {
+   "n": 8,
+   "url": "https://x.com/IamRamenPanda/status/2123223653882228938",
+   "id": "2123223653882228938",
+   "author": "IamRamenPanda",
+   "followers": 95481,
+   "posted": "2026-11-19T01:15:00Z",
+   "lang": "zh",
+   "angle": "接他的 cosplay 聊：同意，跌的時候倒是很入戲",
+   "take": "同意 BTC 跟不上 Nasdaq，而且是跌得更深",
+   "summary": "接他的 cosplay 聊：同意，跌的時候倒是很入戲",
+   "reply": "cosplay 這詞太準了 😂\n漲的時候演不像，跌的時候倒是很入戲\n9/18 到 11/17，BTC 跌了 22%，Nasdaq 才 8%",
+   "sources": [
+    "data/latest.json flows.btc_vs_stocks（9/18 起到 11/17：BTC −22.12%、Nasdaq −8.27%）"
+   ],
+   "note": "Grok 0905 #2。★ 1 小時內（3 萬粉以上今天第 1 則），45 分鐘窗到 10:00。閒聊型，順著他。",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "stk"
+    },
+    "title": "BTC 和美股、黃金比：9/18 起"
+   },
+   "order": 0
+  },
+  {
+   "n": 9,
+   "url": "https://x.com/blackwidowbtc/status/2123209009830465990",
+   "id": "2123209009830465990",
+   "author": "blackwidowbtc",
+   "followers": 23470,
+   "posted": "2026-11-19T00:17:00Z",
+   "lang": "en",
+   "angle": "Fair approach, but this bear isn't shaped like the ones the playbook came from",
+   "take": "4 年劇本的時間對得上，深度對不上",
+   "summary": "Fair approach, but this bear isn't shaped like the ones the playbook came from",
+   "reply": "Fair approach, just keep in mind this bear isn't shaped like the ones the 4-year playbook came from\nSame day after the top, this one is down about half, the last three were down three quarters or more\nDo you scale in on time or on price?",
+   "sources": [
+    "data/latest.json cycle.cycle_cmp（day 408：本輪 −49.5%，前三輪 −81.7%／−82.5%／−75.1%）"
+   ],
+   "note": "Grok 0905 #22。英文 2 小時窗到 10:17。",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "cyccmp"
+    },
+    "title": "Versus past cycles: same day after the top"
+   },
+   "order": 1
+  },
+  {
+   "n": 10,
+   "url": "https://x.com/freeearningidea/status/2123213544414237104",
+   "id": "2123213544414237104",
+   "author": "freeearningidea",
+   "followers": 13617,
+   "posted": "2026-11-19T00:35:00Z",
+   "lang": "en",
+   "angle": "我們的清算圖讀法不同：近的那塊是多單",
+   "take": "近的那塊其實在下面",
+   "summary": "我們的清算圖讀法不同：近的那塊是多單",
+   "reply": "Our map reads the near side the other way, the closer cluster is longs, around $61–62K\nAnd the last week of liquidations was already mostly longs, so that side is the one still loaded",
+   "sources": [
+    "data/notes.json（清算帶 60.8–62.0K，收盤下方 2.6%，比上方 65.4–67.1K 的空單帶近）",
+    "data/latest.json deriv.liq_vol（7 天多單 83.3%）"
+   ],
+   "note": "Grok 0905 #23。英文 2 小時窗到 10:35。不給方向。",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "liq"
+    },
+    "title": "Estimated liquidation levels: longs are the closer cluster"
+   },
+   "order": 2
+  },
+  {
+   "n": 11,
+   "url": "https://x.com/backquant/status/2123217245870657981",
+   "id": "2123217245870657981",
+   "author": "backquant",
+   "followers": 4201,
+   "posted": "2026-11-19T00:50:00Z",
+   "lang": "en",
+   "angle": "同意選擇權偏防守，60K 那個位置的 gamma 會放大",
+   "take": "同意，而且 60K 是會加速的位置",
+   "summary": "同意選擇權偏防守，60K 那個位置的 gamma 會放大",
+   "reply": "Defensive for sure, and 60K is the strike to watch, dealer gamma is most negative there",
+   "sources": [
+    "data/latest.json deriv.gex（60000 最負 −19.5）"
+   ],
+   "note": "Grok 0905 #24。英文 2 小時窗到 10:50；4.2K 粉不配圖。",
+   "style": "口語版",
+   "status": "send",
+   "order": 3
+  },
+  {
+   "n": 12,
+   "url": "https://x.com/Xiaohe085/status/2123058232453378428",
+   "id": "2123058232453378428",
+   "author": "Xiaohe085",
+   "followers": 6308,
+   "posted": "2026-11-18T14:18:00Z",
+   "lang": "zh",
+   "angle": "流量寫得很完整，我更在意的是這些人是賠著走",
+   "take": "ETF 買家現在是賠著走",
+   "summary": "流量寫得很完整，我更在意的是這些人是賠著走",
+   "reply": "這波流出幾乎都是賠著賣的\nETF 買家平均成本推算在 7.9 萬附近，現在價格低了 20%\n好奇你覺得 IBIT 這批還能撐多久",
+   "sources": [
+    "data/latest.json etfcost（11/17 推算成本 78,971；11/18 收盤低約 20%）"
+   ],
+   "note": "Grok 0905 #21。12 小時窗到 10:18；6.3K 粉不配圖。",
+   "style": "口語版",
+   "status": "send",
+   "order": 4
+  },
+  {
+   "n": 13,
+   "url": "https://x.com/MindfrogCrypto/status/2123060724067139670",
+   "id": "2123060724067139670",
+   "author": "MindfrogCrypto",
+   "followers": 1145,
+   "posted": "2026-11-18T14:28:00Z",
+   "lang": "zh",
+   "angle": "同意抽水機，而且不是財報後才開始抽",
+   "take": "利率抽水不是這週才開始",
+   "summary": "同意抽水機，而且不是財報後才開始抽",
+   "reply": "抽水機這比喻很到位，只是不是財報後才開始抽，2 年期殖利率從 4 月起就一直壓在聯準會利率上面",
+   "sources": [
+    "data/latest.json flows.rates2y（side_since 2026-04-21、gap 0.8）"
+   ],
+   "note": "Grok 0905 #20。12 小時窗到 10:28；1.1K 粉不配圖。",
+   "style": "口語版",
+   "status": "send",
+   "order": 5
+  },
+  {
+   "n": 14,
+   "url": "https://x.com/xiaomusg/status/2123066176935014842",
+   "id": "2123066176935014842",
+   "author": "xiaomusg",
+   "followers": 7907,
+   "posted": "2026-11-18T14:49:00Z",
+   "lang": "zh",
+   "angle": "同意缺錢，幣圈自己的現金也在走",
+   "take": "缺錢不只看金價，幣圈內部也一樣",
+   "summary": "同意缺錢，幣圈自己的現金也在走",
+   "reply": "缺錢這點幣圈裡面看得更清楚，穩定幣這 30 天少了 160 億美元\n你覺得金價這波是被賣去補哪裡的缺口？",
+   "sources": [
+    "data/latest.json flows.stables（11/18：30 天 −162 億美元、−5.36%、第 1.5 百分位，n=2,148）"
+   ],
+   "note": "Grok 0905 #18。12 小時窗到 10:49；7.9K 粉不配圖；#19 同題跳過。",
+   "style": "口語版",
+   "status": "send",
+   "order": 6
+  },
+  {
    "n": 1,
    "url": "https://x.com/gaah_im/status/2123204722719080667",
    "id": "2123204722719080667",
@@ -28,7 +187,7 @@
    "note": "固定名單（1.3 小時、1.3 萬粉、英文 2 小時窗到台北 10:00），配 soprf。",
    "style": "口語版",
    "status": "send",
-   "order": 0
+   "order": 7
   },
   {
    "n": 2,
@@ -48,7 +207,7 @@
    "note": "固定名單（1.8 小時、4.4K 粉不配圖）。他講折扣、長期布局，回覆不接操作。",
    "style": "口語版",
    "status": "send",
-   "order": 1
+   "order": 8
   },
   {
    "n": 3,
@@ -69,7 +228,7 @@
    "note": "接話第 2 輪，有內容就接；觀點為主、不放新數字。",
    "style": "口語版",
    "status": "send",
-   "order": 2
+   "order": 9
   },
   {
    "n": 4,
@@ -88,7 +247,7 @@
    "note": "閒聊（2026-11-18 使用者：也可以有閒聊）；不接持倉、不給操作。",
    "style": "口語版",
    "status": "send",
-   "order": 3
+   "order": 10
   },
   {
    "n": 5,
@@ -107,7 +266,7 @@
    "note": "閒聊；他昨天回追過。",
    "style": "口語版",
    "status": "send",
-   "order": 4
+   "order": 11
   },
   {
    "n": 6,
@@ -126,7 +285,7 @@
    "note": "按讚就好：純稱讚。",
    "style": "口語版",
    "status": "skip",
-   "order": 5
+   "order": 12
   },
   {
    "n": 7,
@@ -145,7 +304,7 @@
    "note": "按讚就好：他的帖底下第 3 輪、沒問問題。",
    "style": "口語版",
    "status": "skip",
-   "order": 6
+   "order": 13
   }
  ]
 }
