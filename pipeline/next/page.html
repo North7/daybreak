@@ -1424,6 +1424,13 @@ html.share .fl-was { display: none !important; }
   .oc-hd.hda .os.front .pp-hl { font-size: clamp(16px, 4.6cqw, 19px); }
   .oc-hd.hda .os.front .ov-m { border-left: 0; padding-left: 0; }
 }
+/* ㊳ 頁首不截斷（2026-11-19，使用者：「這裡顯示不全？」，首頁那段短線／長線總結第 4 行後面被截成「…」）。
+     規則：沒有「展開」可以點的字，不設行數上限，高度跟著字走（同 ㊱ 的「內容不能被切」）。適用頁首的答案（.pp-hl）、首頁總結（.br-s）、數字下面的小字（.bp-k small）。
+     點了會展開的照舊收起來：卡片讀法 .sy-d、手機清單列 .fs-rp、手機主卡。 */
+.ov.br .br-s, .bp-k small, .pp-hl, .oc-hd.hda .os.front .pp-hl { display: block; -webkit-line-clamp: unset; overflow: visible; }
+/* ㊳-2 同一天：手機頂部的字標也被切成「DAYBREA」（右邊三顆按鈕 200px，字標那一格只剩 131px，字要 147px）。窄螢幕把字寬、字距、圖示和按鈕間距收一點，字標整個看得到 */
+@media (max-width: 420px) { .oc-top b.oc-logo { font-size: clamp(13px, 3.9vw, 16px); font-stretch: 100%; letter-spacing: .02em; gap: 7px; } .oc-top b.oc-logo svg { width: 22px; height: 22px; } .oc-top > .r { gap: 6px; } }
+@media (max-width: 350px) { .oc-top b.oc-logo { font-size: 0; gap: 0; } }   /* 320px 這種窄機：右邊按鈕就佔掉大半，字標放不下，只留日出圖示，不要切成半個字 */
 /* ㉞ 手機長頁（2026-11-17，使用者三件都照建議；「對於交互，動效，還是要保留原本的精華」）：寬 700px 以下，週期、價位、賣壓、買盤、槓桿五頁每段只畫第一張（主卡），其他收成清單列；今天、出場兩頁和電腦版不變。
    1 清單一列＝圖名、一句白話、最新值、迷你走勢；點了打開全螢幕放大檢視（從那一列長出來，和點卡片一樣），左右滑換同一段的下一張。今天有訊號的列前面一顆會呼吸的訊號點，訊號膠囊照樣數得到、點得到。
    2 主卡瘦身（.fc.ph）：大數字下面直接接一句結論（拿掉「讀數」小標和重複的標題）；按鈕併成一排可左右捲，「分／疊」在手機上拿掉；圖例只留主角那條線，其他的點「＋N」才展開；底部統計和 30 天對比收起來，放大檢視裡都在。
