@@ -33,6 +33,11 @@ document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant'
 <meta name="twitter:image" content="https://daybreak.aronlab.dev/assets/og-en.png?v=20261112">
 <meta name="theme-color" content="#F2F0EA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0C0C0D" media="(prefers-color-scheme: dark)">
+<!-- 2026-11-19 SEO：同一頁、語言由網址 ?lang= 或瀏覽器決定；canonical 指首頁，hreflang 標出兩種語言的網址 -->
+<link rel="canonical" href="https://daybreak.aronlab.dev/">
+<link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/?lang=zh">
+<link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://daybreak.aronlab.dev/">
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="Daybreak">
@@ -154,7 +159,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 
 .n3 .lb { font: 500 10.5px var(--f-mono); letter-spacing: .08em; color: var(--ink3); text-transform: uppercase; }
 
-.odo { display: inline-flex; align-items: flex-end; line-height: 1; }
+.odo { display: inline-flex; align-items: flex-end; line-height: 1; position: relative; }
 .odo .od { display: inline-block; height: 1em; line-height: 1; overflow: hidden; }
 .odo .odc { display: block; transition: transform .28s cubic-bezier(.2, .8, .2, 1); }
 .odo .odc i { display: block; height: 1em; line-height: 1; font-style: normal; }
@@ -289,6 +294,8 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .ol-big { font-family: var(--fn, "Inter Tight"), "Noto Sans TC", sans-serif; font-stretch: var(--fst, 100%); font-weight: var(--fw, 500); font-size: 7.2cqw; line-height: 1; letter-spacing: -.045em; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .oc .odo .oc { height: auto; background: none; transition: none; font-family: inherit; color: inherit; }
 .odo .oc { white-space: pre; }
+.odo .odr { display: inline-flex; align-items: flex-end; -webkit-user-select: none; user-select: none; }
+.odo .odv { position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0; overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0; }
 .ol-u { font-size: .3em; font-weight: 500; letter-spacing: .02em; margin-left: .45em; color: var(--k2); }
 .ol-big small { display: block; margin-top: .7cqw; font: 500 max(10.5px, 1cqw) var(--f-mono); letter-spacing: .04em; color: var(--k2); }
 .ol-d { font-size: max(12px, 1.2cqw); line-height: 1.65; color: color-mix(in srgb, var(--ink) 68%, var(--sheet)); max-width: 34em; }
@@ -1602,11 +1609,14 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-map" id="oc-map" hidden><div class="mp-in"><div class="mp-h"><h3 id="oc-mapt"></h3><label class="mp-q"><span id="oc-mapi"></span><input id="oc-mapq" type="search" autocomplete="off" spellcheck="false"></label><span class="mp-n" id="oc-mapn"></span><button type="button" class="fx-x" id="oc-mapx" data-mapx="1"></button></div><div class="mp-b" id="oc-mapg"></div></div></div>
     <nav class="oc-tab" id="oc-tab" aria-label="今天和六個問題"></nav>
     <nav class="oc-side" id="oc-side" aria-label="這一頁的小問題"></nav>
-    <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
+    <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1"></button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1"></button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1"></button><button type="button" class="fx-x" id="oc-fxx" data-x="1"></button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
+<!--STATIC-->
 <script src="data/next.js?v=__V__"></script>
 <script>
+/* 2026-11-19 SEO：#oc-static 是 build.py 寫進 HTML 的當期結論（給不跑 JS 的爬蟲和 AI 讀），頁面跑起來就藏起來，畫面上看到的是互動版 */
+(function () { var n = document.getElementById('oc-static'); if (n) n.hidden = true; })();
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
 const dOf = n => new Date(n * 864e5), p2 = v => String(v).padStart(2, '0');
@@ -1649,10 +1659,11 @@ const p3 = v => String(v).padStart(3, '0');
 /* 2 晨線：夜、日兩層疊在一起，日那一層用斜線裁掉；線停在 1 − 熱度 的位置，拖動放開後彈回 */
 
 /* 3 儀表：一條時間游標，所有讀數用里程表的方式滾到那一週；點一格讀數，它進到主圖下半格 */
-function odo(el, str) {
-  if (el._s === str) return; const old = el._s || '', isD = ch => ch >= '0' && ch <= '9', a = [...str], b = [...old]; el._s = str;
-  if (a.length !== b.length || a.some((ch, j) => isD(ch) !== isD(b[j]))) { el.innerHTML = a.map(ch => isD(ch) ? `<span class="od"><span class="odc" style="transform:translateY(-${ch}em)"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span>` : `<span class="oc">${ch}</span>`).join(''); return; }
-  a.forEach((ch, j) => { const c = el.children[j]; if (isD(ch)) c.firstChild.style.transform = `translateY(-${ch}em)`; else if (c.textContent !== ch) c.textContent = ch; });
+function odo(el, str) {   /* 2026-11-19：滾輪每位數字底下有 0–9 十個字，閱讀器會整串念、複製會複製到一串數字。滾輪整組 aria-hidden、不能選取，旁邊放一份真正的數值（.odv，看不見但念得到、複製得到） */
+  if (el._s === str) return; const old = el._s || '', isD = ch => ch >= '0' && ch <= '9', a = [...str], b = [...old]; el._s = str; const oe = t => String(t).replace(/[&<>]/g, x => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;' })[x]);
+  if (!el.firstChild || !el.firstChild.classList || !el.firstChild.classList.contains('odv') || a.length !== b.length || a.some((ch, j) => isD(ch) !== isD(b[j]))) { el.innerHTML = `<span class="odv">${oe(str)}</span><span class="odr" aria-hidden="true">` + a.map(ch => isD(ch) ? `<span class="od"><span class="odc" style="transform:translateY(-${ch}em)"><i>0</i><i>1</i><i>2</i><i>3</i><i>4</i><i>5</i><i>6</i><i>7</i><i>8</i><i>9</i></span></span>` : `<span class="oc">${oe(ch)}</span>`).join('') + '</span>'; return; }
+  el.firstChild.textContent = str; const r = el.lastChild;
+  a.forEach((ch, j) => { const c = r.children[j]; if (isD(ch)) c.firstChild.style.transform = `translateY(-${ch}em)`; else if (c.textContent !== ch) c.textContent = ch; });
 }
 
 const redraw = [];
@@ -3000,7 +3011,10 @@ function initOC() {
     body.insertAdjacentHTML('afterbegin', `<div class="pp-h"><div class="bp-top"><b class="bp-tag">${T('這一頁的答案', 'THE ANSWER')}</b><span>${p2(ci)} / ${p2(CH.length - 1)}　${esc(T(O.qz, O.qe))}</span><i></i><span>${String(D.date).replace(/-/g, '.')} ${T('收盤版', 'close edition')}</span></div><h2 class="br-h pp-hl${(L0 => L0 > 78 ? ' xl' : L0 > 50 ? ' lg' : '')(txt.length * (lang === 'en' ? .5 : 1))}">${esc(txt)}</h2></div>`); body.classList.add('pp'); }
   /* 代表數字放到最大：寬度以左欄為限 */
   function fitNum() { if (O.brief) return; const big = document.querySelector('#oc-ol0 .ol-big'); if (!big) return; big.style.fontSize = ''; const cur = parseFloat(getComputedStyle(big).fontSize); if (cur > 0 && big.scrollWidth > big.clientWidth + 1) big.style.fontSize = F1(cur * big.clientWidth / big.scrollWidth * .97) + 'px'; }
-  function renderAll() {
+  /* 2026-11-19：寫死在 HTML 裡的說明（aria-label）跟著語言換；英文版原本念出中文 */
+  const A11Y = { '#oc-th': ['日夜（可以拖曳，停在中間是黃昏或清晨）', 'Day and night (drag it; the middle is dusk or dawn)'], '#oc-ctl': ['畫法和時間範圍', 'Chart style and time range'], '#oc-crumb': ['今天和六個問題', 'Today and the six questions'], '#oc-tab': ['今天和六個問題', 'Today and the six questions'], '#oc-side': ['這一頁的小問題', 'Questions on this page'], '#oc-lg': ['語言', 'Language'] };
+  const a11y = () => { Object.entries(A11Y).forEach(([q, t]) => { const n = $(q); if (n) n.setAttribute('aria-label', T(t[0], t[1])); }); };
+  function renderAll() { a11y();
     $('#oc-date').textContent = D.date.replace(/-/g, '.') + T(' 收盤', ' close');
     $('#oc-ft1').textContent = T('在任何一張圖上移動游標，同一段的圖會一起跟著。每張圖右上角可以放大。', 'Move across any chart and the others in the same section follow. Each chart can be expanded from its top-right corner.'); $('#oc-ft2').textContent = ''; $('#oc-srcs').innerHTML = srcsHtml();
     stg.innerHTML = CH.map((c, i) => c.todo ? '' : `<article class="os" data-k="${i}" tabindex="0" style="--dl:${(-i * 1.7).toFixed(1)}s"><div class="os-in"><div class="os-h"><span class="k">${p2(i)}</span><h3>${esc(T(c.zh, c.en))}</h3><span class="sub">${esc(T(c.qz, c.qe))}</span></div><div class="os-pw"><span class="pw-k">${esc(hv(c)[0])}</span><div class="pw-n">${esc(hv(c)[1])}</div><p class="pw-l">${esc(T(c.lead_zh, c.lead_en) || T(c.qz, c.qe))}</p><div class="pw-c"></div></div></div></article>`).join('');
