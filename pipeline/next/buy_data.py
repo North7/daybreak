@@ -489,6 +489,17 @@ def build(L, N, E, dn, X):
                 pz += '每一段結束後 30 天的漲跌：%s，好壞都有；只有 %d 段，不能當訊號。' % ('、'.join(pc(a) for a in ok), len(ok))
                 pe += 'The 30 days after each ended: %s, a mixed record; only %d cases, so not a signal.' % (', '.join(pc(a) for a in ok), len(ok))
             items.append(('和過去的流出比', 'Against past outflows', '%d 段' % len(past), '%d stretches' % len(past), 'neu', pz, pe))
+        fv = f.get('etf_fvr'); fmode = []   # 2026-11-19 第二個檢視：淨流入佔成交（近 30 個交易日淨流量 ÷ 成交額；和 Glassnode 的 ETF 淨流入成交比對得上）
+        if has(fv, 'rows', 60):
+            sp = lambda a: ('%+.1f%%' % a).replace('-', '−'); lo = fv['lo60']; u = fv['v']
+            fz = '近 30 個交易日成交 %s 億美元，淨%s約佔 %.1f%%（到 %s）。比上市以來 %.0f%% 的日子%s；近 60 天最低是 %s 的 %s，5 個交易日前是 %s。這個比例跟著過去一個多月的價格走，和之後漲跌的關係很弱，只作讀值。' % (
+                format(int(round(fv['vol_musd'] / 100)), ','), '流入' if u >= 0 else '流出', abs(u), md(fv['date']), 100 - fv['pct_own'] if u < 0 else fv['pct_own'], '低' if u < 0 else '高', md(lo['d']), sp(lo['v']), sp(fv['prev5']))
+            fe = 'Over the last 30 sessions the ETFs traded $%sB, and net %s came to about %.1f%% of that (through %s). %s than on %.0f%% of days since launch; the 60-day low was %s on %s, and five sessions ago it was %s. The ratio tracks the past month or so of price and says little about what comes next; a reading only.' % (
+                format(int(round(fv['vol_musd'] / 1000)), ','), 'inflow' if u >= 0 else 'outflow', abs(u), md(fv['date']), 'Lower' if u < 0 else 'Higher', 100 - fv['pct_own'] if u < 0 else fv['pct_own'], sp(lo['v']), md(lo['d']), sp(fv['prev5']))
+            items.append(('淨流入佔成交', 'Net flow / volume', sp(u), sp(u), 'down' if u < 0 else 'up', fz, fe))
+            fmode = [dict(mz='佔成交', me='Share of volume', hz='近 30 個交易日淨流入佔成交額', he='30-session net flow as a share of volume', f='pct1', rows=[[r[0], r[1], pxm.get(r[0])] for r in fv['rows']], p=2, hero=0,
+                          ser=[ser(1, zh='淨流入佔成交', en='Net flow / volume', t='sign', base=0, w=1.5)], refs=[dict(v=0, col='k2', solid=1, zh='0：進出一樣多', en='0: inflows equal outflows')], zones=[], marks=[],
+                          leg=[['up', '淨流入', 'Net inflow', 'box'], ['dn', '淨流出', 'Net outflow', 'box']])]
         thz = '流出段落線 ' + bn(th); the = 'Outflow-stretch line ' + ben(th)
         return dict(k='etf20', zh='現貨 ETF 近 20 個交易日合計', en='Spot ETF 20-session net flow', hz='近 20 個交易日合計淨流量', he='Net flow over the last 20 sessions', f='usdM', rows=rows, p=2, hero=0, rng=1095,
           ser=[ser(1, zh='近 20 個交易日合計', en='20-session net flow', t='sign', base=0, w=1.5)],
@@ -496,9 +507,10 @@ def build(L, N, E, dn, X):
           zones=[dict(lo=None, hi=th, col='dn', zh='在流出段落裡', en='In an outflow stretch', nz='流出段落線', ne='the outflow-stretch line')],
           marks=[dict(d=dn(q['min_d']), v=q['min'], col='dn', up=0, zh='%s %s' % (ymz(q['min_d']), bn(q['min'])), en='%s %s' % (ymz(q['min_d']), ben(q['min']))) for q in past],
           leg=[['up', '合計淨流入', 'Net inflow', 'box'], ['dn', '合計淨流出', 'Net outflow', 'box'], ['dn', '圓圈：每一段流出最深的那一天', 'Circles: the deepest day of each outflow stretch', 'ring']],
-          src='CoinMarketCap · ' + md(d1), srce='CoinMarketCap · ' + md(d1), say=own(items, now_z, now_e),
-          dz='美國現貨 ETF 每個交易日的淨流量，往回加 20 個交易日（大約一個月）。單日的流量很跳，加起來才看得出這一段是在進還是在出。合計低於 %s 算一段流出；圓圈是過去每一段最深的那一天。資料從 2024 年 1 月 ETF 上市起，來源是 CoinMarketCap 的逐檔數字（只算美國現貨 ETF）。流出段落只有幾段，只作讀值。' % bn(th),
-          de='Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below %s counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap\'s per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only.' % ben(th))
+          **({'modes': [dict(mz='合計', me='Sum')] + fmode} if fmode else {}),
+          src='CoinMarketCap · ' + md(d1) + (' · Yahoo' if fmode else ''), srce='CoinMarketCap · ' + md(d1) + (' · Yahoo' if fmode else ''), say=own(items, now_z, now_e),
+          dz='美國現貨 ETF 每個交易日的淨流量，往回加 20 個交易日（大約一個月）。單日的流量很跳，加起來才看得出這一段是在進還是在出。合計低於 %s 算一段流出；圓圈是過去每一段最深的那一天。資料從 2024 年 1 月 ETF 上市起，來源是 CoinMarketCap 的逐檔數字（只算美國現貨 ETF）。流出段落只有幾段，只作讀值。' % bn(th) + ('「佔成交」檢視把近 30 個交易日的淨流量除以同期的成交額：成交裡有多少留下來變成淨買（正）或淨賣（負）。ETF 的成交規模一直在變大，用比例跨年比較公平。它和淨流量合計幾乎同步（相關係數 0.94），水位跟著過去一個多月的價格走；回測 2024 年到現在，從 0 以下快速回升只出現過 4 次，之後 3 次漲、1 次跌，不能當訊號。成交額是 Yahoo 各檔的成交量乘當天均價。' if fmode else ''),
+          de='Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below %s counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap\'s per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only.' % ben(th) + (' The "Share of volume" view divides the 30-session net flow by the dollar volume traded over the same sessions: how much of the trading stayed behind as net buying (positive) or net selling (negative). ETF trading has grown a lot, so the ratio compares fairer across years. It moves almost in step with the flow sum (correlation 0.94) and tracks the past month or so of price; since 2024 a fast rebound from below zero has happened only 4 times, followed by 3 rises and 1 fall, so it is not a signal. Volume is each fund\'s Yahoo share volume times the day\'s average price.' if fmode else ''))
 
     # ════ 4. 大戶與長期持有者 ════
     wh = o.get('whales') or {}

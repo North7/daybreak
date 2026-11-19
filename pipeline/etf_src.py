@@ -47,6 +47,32 @@ def fetch():
     return out, sorted(funds)
 
 
+YUA = {'User-Agent': 'Mozilla/5.0 (daybreak-reader)', 'Accept': 'application/json'}
+
+
+def fetch_vol(funds):
+    """各檔每日成交額（美元，2026-11-19 起；ETF 淨流入佔成交用）。Yahoo 的日線：成交量 ×（高＋低＋收）÷ 3，免金鑰。
+    回傳 {日期: 美元合計}，只含每一檔都抓到的日子以後；任何一檔抓不到就丟例外，呼叫端沿用舊數字。"""
+    out = {}
+    for t in funds:
+        js = None
+        for k in range(3):
+            try:
+                js = json.load(urllib.request.urlopen(urllib.request.Request('https://query1.finance.yahoo.com/v8/finance/chart/%s?range=10y&interval=1d' % t, headers=YUA), timeout=40)); break
+            except Exception:
+                if k == 2: raise
+                time.sleep(3 * (k + 1))
+        r = js['chart']['result'][0]; q = r['indicators']['quote'][0]
+        for i, ts in enumerate(r.get('timestamp') or []):
+            h, l, c, v = q['high'][i], q['low'][i], q['close'][i], q['volume'][i]
+            if None in (h, l, c, v): continue
+            d = dt.datetime.fromtimestamp(ts, dt.timezone.utc).date().isoformat()
+            out[d] = out.get(d, 0) + v * (h + l + c) / 3
+        time.sleep(0.4)
+    if len(out) < 300: raise RuntimeError(f'Yahoo 成交額只有 {len(out)} 天')
+    return out
+
+
 if __name__ == '__main__':
     F, funds = fetch(); D = sorted(F)
     print(f'{len(funds)} 檔：{funds}；{D[0]}–{D[-1]}，{len(D)} 天；最近：', [(d, round(sum(F[d].values()) / 1e6, 1)) for d in D[-5:]])
