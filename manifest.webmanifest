@@ -2,7 +2,7 @@
   "name": "Daybreak",
   "short_name": "Daybreak",
   "description": "每天清晨的第一份比特幣簡報 · The first Bitcoin brief of the morning",
-  "start_url": "./",
+  "start_url": "./app/",
   "scope": "./",
   "display": "standalone",
   "background_color": "#F2F0EA",

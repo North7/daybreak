@@ -2,7 +2,8 @@
 """介紹頁（/intro/）的建置。2026-11-19 新增。
 讀首頁已經建好的 data/next.js、data/next-*.js、data/leans.json、data/notes.en.json，寫出：
   data/intro.js     window.DAYBREAK_INTRO：每張圖的表態、資料種類、所屬的頁、極簡小圖，加上當期的期數、收盤、頭條、判讀（中英）
-  intro/index.html  pipeline/intro/page.html 換上資料檔的版本號
+  index.html        根目錄（2026-11-20 起根網址就是介紹頁）：pipeline/intro/page.html 換上資料檔的版本號
+  intro/index.html 是固定的轉址檔（舊的 /intro/ 連結轉到 /?intro），不在這裡寫
 圖的張數、每頁幾張、每種資料幾張都從資料算，不寫死（使用者：「圖的數量可能會一直增加」）。
 用法：python3 pipeline/intro/build.py（pipeline/next/build.py 跑完會接著呼叫；失敗不影響首頁）"""
 import json, glob, math, os, hashlib
@@ -123,7 +124,6 @@ js = 'window.DAYBREAK_INTRO=' + json.dumps(OUT, ensure_ascii=False, separators=(
 open(D_('intro.js'), 'w', encoding='utf-8').write(js)
 ver = hashlib.sha1(js.encode('utf-8')).hexdigest()[:10]
 page = open(os.path.join(HERE, 'page.html'), encoding='utf-8').read()
-assert page.count('../data/intro.js?v=__V__') == 1
-os.makedirs(os.path.join(REPO, 'intro'), exist_ok=True)
-open(os.path.join(REPO, 'intro', 'index.html'), 'w', encoding='utf-8').write(page.replace('../data/intro.js?v=__V__', '../data/intro.js?v=' + ver))
-print('wrote data/intro.js', len(js), 'bytes;', len(CH), 'charts,', sum(1 for m in MINI if m), 'with mini charts; intro/index.html v=' + ver)
+assert page.count('data/intro.js?v=__V__') == 1
+open(os.path.join(REPO, 'index.html'), 'w', encoding='utf-8').write(page.replace('data/intro.js?v=__V__', 'data/intro.js?v=' + ver))
+print('wrote data/intro.js', len(js), 'bytes;', len(CH), 'charts,', sum(1 for m in MINI if m), 'with mini charts; index.html v=' + ver)

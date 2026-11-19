@@ -620,7 +620,7 @@ for _k, _p in PANELS.items():
     elif not _c['fx']: NEW_MISS[_k] = f'新版的圖（{_n}）不能放大，分享模式截不了'
     elif _c['ch'] == 'exit' or _n.startswith('x_'): NEW_MISS[_k] = f'新版的圖（{_n}）在出場分頁'
     else: _p['k'] = _n
-link_of = lambda pid: f'https://daybreak.aronlab.dev/?k={PANELS[pid]["k"]}' if PANELS[pid].get('k') else f'https://daybreak.aronlab.dev/#{pid}'
+link_of = lambda pid: f'https://daybreak.aronlab.dev/app/?k={PANELS[pid]["k"]}' if PANELS[pid].get('k') else f'https://daybreak.aronlab.dev/app/#{pid}'
 SIG_TO_PANEL = {}
 for _k, _p in PANELS.items():
     SIG_TO_PANEL.setdefault(_k.split('/')[1], _k)

@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """首頁的建置（2026-11-11 起取代舊版；舊版 2026-11-17 從倉庫刪除，讀數全部由 reads.py 產生）：
 1. 從 data/latest.json、data/notes*.json 組出每一頁、每張圖要用的資料（site_data.py 和各頁的 *_data.py）。
-3. 寫 data/next.js（window.DAYBREAK_NEXT），並把 page.html 寫成倉庫根目錄的 index.html（只換資料檔的版本號）。
+3. 寫 data/next.js（window.DAYBREAK_NEXT），並把 page.html 寫成 app/index.html（只換資料檔的版本號）。
+   2026-11-20 根網址改放介紹頁（pipeline/intro/build.py 寫根目錄的 index.html），數據頁搬到 /app/。
    2026-11-15 瘦身：卡片多的頁（週期、價位、賣壓、買盤、槓桿）的卡片另外寫成 data/next-<頁>.js，點到那一頁才載（頁面閒下來時也會先在背景載）。
    data/next.js 裡這幾頁只留每張卡的代號、名稱這些小欄位（ops/post/next_shot.py 的目錄照樣讀得到），和每頁的主圖（桌機分頁卡片上的小圖要用）。
 用法：python3 pipeline/next/build.py（舊的 --no-interp 參數照收，不再有作用）
@@ -163,7 +164,7 @@ js = json.dumps(D, ensure_ascii=False, separators=(',', ':'))
 open(os.path.join(REPO, 'data', 'next.js'), 'w', encoding='utf-8').write('window.DAYBREAK_NEXT=' + js + ';\n')
 print('split:', ', '.join('%s %d KB' % (f, os.path.getsize(os.path.join(REPO, 'data', f)) // 1024) for f in sorted(keep)))
 ver = hashlib.sha1(js.encode('utf-8')).hexdigest()[:10]
-page = open(os.path.join(HERE, 'page.html'), encoding='utf-8').read(); assert page.count('data/next.js?v=__V__') == 1
+page = open(os.path.join(HERE, 'page.html'), encoding='utf-8').read(); assert page.count('../data/next.js?v=__V__') == 1
 # 2026-11-19 SEO（使用者同意 Gemini 的建議）：頁面內容全靠 JS 畫，原始 HTML 裡沒有今天的結論，爬蟲幾乎抓不到字。
 #   把當期日期、頭條、摘要（中英）直接寫進 HTML（#oc-static，頁面跑起來就藏起來），另外寫 sitemap.xml
 import html as _h
@@ -173,18 +174,19 @@ def _static():
     zh = '<section lang="zh-Hant"><h2>%s 收盤版 No.%s</h2><p><strong>%s</strong></p><p>%s</p>%s</section>' % (d0.replace('-', '/'), N.get('edition'), _h.escape(N['headline']), _h.escape(N['summary']), '<p>%s</p>' % _h.escape(st['label']) if st.get('label') else '')
     en = ('<section lang="en"><h2>%s %d close edition, No.%s</h2><p><strong>%s</strong></p><p>%s</p>%s</section>' % (_MON[m_ - 1], d_, N.get('edition'), _h.escape(NE_['headline']), _h.escape(NE_.get('summary') or ''), '<p>%s</p>' % _h.escape(ste['label']) if ste.get('label') else '')) if NE_.get('headline') else ''
     return ('<main id="oc-static"><h1>Daybreak</h1><p>每天清晨的第一份比特幣簡報：週期、關鍵價位、誰在賣、誰在買、槓桿。 The first Bitcoin brief of the morning: cycle, key levels, who is selling, who is buying, leverage.</p>'
-            + zh + en + '<p><a href="intro/">Daybreak 是什麼 · What is Daybreak</a> · <a href="case-study/">Case study</a></p></main>')
+            + zh + en + '<p><a href="../?intro">Daybreak 是什麼 · What is Daybreak</a> · <a href="../case-study/">Case study</a></p></main>')
 assert page.count('<!--STATIC-->') == 1
 page = page.replace('<!--STATIC-->', _static())
 open(os.path.join(REPO, 'sitemap.xml'), 'w', encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
     + ''.join('<url><loc>%s</loc><lastmod>%s</lastmod>%s</url>\n' % (u, lm, x) for u, lm, x in (
         ('https://daybreak.aronlab.dev/', L['meta']['bar_date'], '<changefreq>daily</changefreq><xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/?lang=zh"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/?lang=en"/>'),
-        ('https://daybreak.aronlab.dev/intro/', L['meta']['bar_date'], '<xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/intro/?lang=zh"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/intro/?lang=en"/>'),
+        ('https://daybreak.aronlab.dev/app/', L['meta']['bar_date'], '<changefreq>daily</changefreq><xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/app/?lang=zh"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/app/?lang=en"/>'),
         ('https://daybreak.aronlab.dev/case-study/', '2026-11-19', ''), ('https://daybreak.aronlab.dev/case-study/en/', '2026-11-19', '')))
     + '</urlset>\n')
-open(os.path.join(REPO, 'index.html'), 'w', encoding='utf-8').write(page.replace('data/next.js?v=__V__', 'data/next.js?v=' + ver))
-print('wrote data/next.js', len(js), 'bytes; index.html', len(page), 'bytes; v=' + ver, '| bar', D['date'], '| notes', N.get('date'))
-# 2026-11-19 介紹頁（/intro/）用剛寫好的 data/next*.js 重建；失敗只印出來，不影響首頁
+os.makedirs(os.path.join(REPO, 'app'), exist_ok=True)
+open(os.path.join(REPO, 'app', 'index.html'), 'w', encoding='utf-8').write(page.replace('../data/next.js?v=__V__', '../data/next.js?v=' + ver))
+print('wrote data/next.js', len(js), 'bytes; app/index.html', len(page), 'bytes; v=' + ver, '| bar', D['date'], '| notes', N.get('date'))
+# 2026-11-19 介紹頁用剛寫好的 data/next*.js 重建（2026-11-20 起它就是根目錄的 index.html）；失敗只印出來，不影響數據頁，根目錄留著上一版
 try:
     subprocess.run([sys.executable, os.path.join(REPO, 'pipeline', 'intro', 'build.py')], check=True)
 except Exception as e:
