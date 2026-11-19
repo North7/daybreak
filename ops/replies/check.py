@@ -377,7 +377,7 @@ def tone_notes(items):
     if len(rr) >= 5 and len(en) / len(rr) > 0.3: out.append(f'英文回覆 {len(en)}/{len(rr)} 則，超過三成：英文只回 2 小時內、網站有圖能回應的，其餘改找中文')
     qn = [it['n'] for it in live if it.get('mode') == 'quote']
     if len(qn) > 2: out.append(f'引用 {len(qn)} 則：{qn}，一天最多 2 則')
-    if len(live) > 40: out.append(f'今天已經 {len(live)} 則（不含按讚就好的）：一天 35–40 則，之後只做接話')
+    # 2026-11-19 使用者：「不設定上限」，每日則數不再提醒
     im = sum(1 for it in R if it.get('image')) / n
     if im > 0.5: out.append(f'配圖 {im:.0%}：只有圖本身就是重點時才配')
     SITE = {'rpl': 'onchain #c-rpl', 'sec': 'onchain #c-sec', 'ad': 'flows #c-ad', 'lthloss': 'onchain #c-lthloss', 'bands': 'onchain #c-sthband',
