@@ -55,7 +55,7 @@ AI_WORDS = re.compile(r'(算法|演算法|公式|算的方式)(不一樣|不同|
                       r"Great (point|post|thread|analysis|chart|call)|Well said|Spot on|Nice (breakdown|work|chart|call)|Thanks for sharing|Love this)\b|"
                       r'很多人說|不少人說|大家都說|某種程度|一定程度上|本質上|換句話說|不難發現|毋庸置疑|顯而易見|凸顯了?|彰顯|體現了|只能當個?參考|說得好|好文|感謝分享|謝謝分享|受教了|學到了|兩堆|分堆|幾堆|那堆|這堆|第[一二三]堆|——|—', re.I)   # 2026-11-09 使用者：「分成兩堆，沒人會用堆來形容」→ 分類寫「兩種走法」；「一堆多單」這種量詞不擋
 # 只提醒、不擋：一天裡出現太多次才是問題
-CONTRAST = re.compile(r'不是[^，。？\n]{1,24}[，,、 ]?(而)?是|不等於|\bnot (just |only )?an? [^,.]{1,30}, (but )?|, not an? |isn\'t [^,.]{1,30}[,.] it\'s|rather than', re.I)
+CONTRAST = re.compile(r'不是[^，。？\n]{1,24}[，,、 ]?(而)?是|不等於|兩回事|\bnot (just |only )?an? [^,.]{1,30}, (but )?|, not an? |isn\'t [^,.]{1,30}[,.] it\'s|rather than', re.I)
 # 2026-11-20 Gemini 三篇改稿學到的（voice.md「去 AI 味第五輪」）：只提醒、不擋
 SELFQA_SHORT = re.compile(r'[^。？！\n]{2,30}？[^。？！\n？]{1,8}。')   # 問完自己馬上短答：「是誰砸出來的？長期持有者。」
 SELFQA = re.compile(SELFQA_SHORT.pattern + r'|(?:^|\n)[^。？！\n]{0,6}(?:那|所以)?[^。？！\n]{2,20}(?:嗎|呢|什麼樣|怎麼樣)？')   # 長文段落用問句破題；回覆不用這條（回覆問對方是對的，見 ask-friendly-question）
@@ -270,6 +270,11 @@ ECHO = re.compile(r'我這邊(也|的數據也|看到的也|算的也)?|跟你(�
                   r'\b(same|too|agreed?|either|as well|matches|lines? up|backs? (you|that|it) up)\b|^(yep|yeah|exactly|true|right)\b', re.I)
 
 
+# 2026-11-20 使用者（貼 11/19 165 則角度分析）：AI 味在「同意＋補充」，第一句先幫原文打分數（這個觀察很準、拆出來很有用、這個說法我同意、好問題、只同意一半）。直接講自己的看法，見 voice.md「回覆角度的 AI 指紋」
+PRAISE = re.compile(r'^(好問題|只同意一半|同意)|(觀察|說法|拆法|對照|比喻|設計|問題|角度|分法|比較|整理|提醒|快照|習慣)[^，,\n]{0,4}?(做得|寫得|抓得)?(很|真|挺|蠻|超)?(準|好|妙|有用|貼切|實在|誠實|到位|完整|清楚)|(說法|觀點|看法|結論|這句)[^，,\n]{0,3}我(很|也)?(同意|認同|喜歡)|我(很|也)?(同意|認同)(你|他)?(的|這|說)|我(很)?喜歡(這|你)|'
+                    r'^(great|good|fair|solid|nice) (point|question|call|take|catch)|\b(love|like) (this|the|your) (framing|take|breakdown|point)', re.I)
+
+
 # 2026-11-08 使用者：「以後回覆，每句話換一行」。句號／問號／驚嘆號後面還有字就是兩句擠一行；句尾不加「。」。
 ONE_LINE = re.compile(r'[。！？][^\n]|(?<!vs)(?<!e\.g)(?<!i\.e)(?<!U\.S)[.!?] +(?=[A-Z0-9$"“(])|。$', re.M)
 
@@ -306,6 +311,8 @@ def text_errors(tag, t, lang, lim=280):
     if AI_WORDS.search(t): err.append(f'{tag} AI 腔（「{AI_WORDS.search(t).group(0)}」）：見 voice.md「真人說話，不要 AI 腔」')
     m = ECHO.search(first_clause(t))
     if m: err.append(f'{tag} 開頭先附和（「{m.group(0)}」）：第一句直接講新東西，見 voice.md 2026-11-08')
+    m = PRAISE.search(first_clause(t))
+    if m: err.append(f'{tag} 開頭先幫原文打分數（「{m.group(0)}」）：不先肯定再補充，直接講自己的看法（voice.md「回覆角度的 AI 指紋」，2026-11-20）')
     return err
 
 
@@ -342,7 +349,14 @@ def tone_notes(items):
         hit = [it.get('n') for it in R if rx.search(it['reply'])]
         if hit: out.append(f'{name}：{hit}，直接講（voice.md「去 AI 味第五輪」）')
     c = [it['n'] for it in R if CONTRAST.search(it['reply'])]
-    if len(c) > max(2, n // 8): out.append(f'對比句（不是 X 是 Y／X 不等於 Y／not X）{len(c)} 則：{c}，一天一兩次就好')
+    if len(c) > max(1, n // 10): out.append(f'對比句（不是 X 是 Y／X 和 Y 是兩回事／not X）{len(c)} 則：{c}，一批裡偶爾一兩次，其他改直述（2026-11-20）')
+    # 2026-11-20 使用者（11/19 角度分析）：長度要亂，不少回覆只要一句、20 字上下；角度別都寫成「同意＋補」；方向題別都縮回「不替人答」
+    one = [it for it in R if len([x for x in it['reply'].strip().split('\n') if x.strip()]) == 1 and (len(re.sub(r'\s', '', it['reply'])) <= 25 if it.get('lang') != 'en' else len(it['reply']) <= 90)]
+    if n >= 10 and len(one) / n < 0.3: out.append(f'一句話的短回覆（中文 25 字、英文 90 字內）只有 {len(one)}/{n} 則：不少回覆可以像滑手機隨手回的一句（voice.md「回覆角度的 AI 指紋」第 4 條，提醒不擋）')
+    ang = [it['n'] for it in R if it.get('kind') != 'followup' and re.search(r'同意|補|順著', it.get('angle') or '')]
+    if len(ang) > max(3, n * 3 // 10): out.append(f'角度寫成「同意／補／順著」{len(ang)} 則：{ang[:15]}…，角度寫態度（吐槽、心涼、好笑、哪點講對、想知道他什麼），不要每則都補一層數據')
+    dodge = [it['n'] for it in R if re.search(r'不替人答|不猜|不答|兩種讀法都', it['reply'])]
+    if len(dodge) > 2: out.append(f'「不替人答／不猜」{len(dodge)} 則：{dodge}，方向題可以給一句帶感受的看法（這位置誰都不敢喊），不給價位和買賣就好''')
     if share(lambda t: len(DECIMAL.findall(t)) >= 1) > 0.3: out.append(f'帶小數的回覆 {share(lambda t: DECIMAL.search(t)):.0%}，超過三成：能取整就取整')
     # 2026-11-08 使用者：回覆要有深度、嚴謹、有態度、有觀點。「短回覆約三分之一」只看接話；回別人原創太短的另外列出來。
     F = [it['reply'] for it in R if it.get('kind') == 'followup']
@@ -352,7 +366,7 @@ def tone_notes(items):
     many = [it['n'] for it in R if len(NUM.findall(re.sub(r'https?://\S+', '', it['reply']))) > 3]
     if many: out.append(f'數字超過 3 個：{many}，第一行先講判斷，數字留一兩個撐它就好（voice.md「觀點為主、數據為輔」）')
     q = share(lambda t: QEND.search(t))
-    if q > 0.3: out.append(f'問句收尾 {q:.0%}：只在真的想知道時問')
+    if q > 0.15: out.append(f'問句收尾 {q:.0%}：不為互動硬塞問句，真的想知道答案才問（2026-11-20 起，取代 11/17「能問就問」）')
     if share(lambda t: re.search(r'[。.]\s*$', t)) > 0.5: out.append('超過一半句尾有句號：手機上打字通常不加')
     # 2026-11-09 第二輪（voice.md「去 AI 味第二輪」）：11/08 禁掉附和開頭之後，第一行長出「X 是真的，但」這種讓步開頭（當天 26%）；第三行「所以」收結論（26%）；口頭禪；長度、行數太整齊
     CONCEDE = re.compile(r'是真的|沒錯|說得對|說得通|對得上|這點你|is real|isn\'t the only|isn\'t wrong|fair,? but|^(True|Fair)\b|\bthough$', re.I)
@@ -438,8 +452,7 @@ def tone_notes(items):
     orig = [it for it in R if it.get('kind') != 'followup']   # 第三輪：回原創的回覆整批太平就提醒
     if len(orig) >= 6:
         q = [it['n'] for it in orig if re.search(r'[？?]', re.sub(r'https?://\S+', '', it['reply']))]
-        if not q: out.append('整批回覆沒有一個問句：三四則一次，問一個只有對方答得出來的問題（口徑、他那筆單、接下來盯哪個數字）')
-        elif len(q) / len(orig) > 0.5: out.append(f'問句 {len(q)}/{len(orig)} 則，太多了：三四則一次就好，不想知道就不問')
+        if len(q) / len(orig) > 0.2: out.append(f'問句 {len(q)}/{len(orig)} 則，太多了：不想知道就不問（2026-11-20）')
         num = [it['n'] for it in orig if re.match(r"\s*[\d$]", it['reply'])]
         if len(num) > max(1, len(orig) // 5): out.append(f'數字開頭的回覆 {len(num)} 則：{num}，第一行先講反應或判斷（數字開頭實測偏弱）')
     for it in R: heads.setdefault(it['reply'][:3].lower(), []).append(it['n'])
@@ -472,6 +485,8 @@ def check_flash():
 # 倒退樣本：使用者退過、或規則定案時實際寫出來過的句子。每次執行先跑一遍，哪一句不再被抓到，就是有人把規則放寬了，直接報錯。
 # 擋的詞只能加不能刪；要刪先問使用者，並在 voice.md「不往回走」那張表和改稿紀錄寫清楚。新的退稿句子照樣加進來。
 REGRESS = [
+    ('zh', '群裡不聊行情這個觀察很準，安靜比吵鬧好讀'),   # 2026-11-20 先打分數再補充
+    ('zh', '好問題，固定數量的話墊子就沒了'),
     ('zh', '這跟 2026-11-16-1 那則發現對得上'),   # 2026-11-19 發現代號
     ('zh', 'Coinbase 那條重得很，排在 2021 年以來最低的 4%'),   # 2026-11-11 使用者看不懂：「那條」指誰不清楚、淨賣講「最低」方向反
     ('zh', '月還沒過半，歷史只說 11 月漲多跌少，說不了這個月'),
