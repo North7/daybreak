@@ -147,7 +147,8 @@ def check_longposts():
             if lang == 'zh' and set(t) & SIMP: err.append(f'{tag} 有簡體字：{"".join(sorted(set(t) & SIMP))}')
             if lang == 'zh' and not it.get('posted') and EN_NAME.search(t): err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(sorted(set(EN_NAME.findall(t)))) + '（voice.md 用詞，2026-11-09）')
             notes += sentence_notes(tag, t)
-            notes += longpost_notes(tag, t, lang, it.get('posted'))
+            tt0 = (it.get('title') or '').strip(); tl = t if (not tt0 or re.sub(r'\s', '', t).startswith(re.sub(r'\s', '', tt0))) else tt0 + '\n' + t   # longpost_notes 把第一行當標題跳過；zh 只放正文時要先補上標題，不然第一段會被漏掉（2026-11-19）
+            notes += longpost_notes(tag, tl, lang, it.get('posted'))
     closers = [it.get('id') for it in items if CLOSER.search((it.get('zh') or '') + (it.get('en') or ''))]
     if len(closers) >= 2: notes.append(f'長貼文 {len(closers)} 篇都用「這週看幾件事」收尾：{closers}，連著幾篇就是模板，併進結論段或換個寫法')
     return err, notes
