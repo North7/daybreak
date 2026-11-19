@@ -15,7 +15,8 @@ def weight(text):
 if __name__ == '__main__':
     post = json.load(open(os.path.join(ROOT, 'data', 'x_post.json')))
     bad = False
-    for k in ('zh', 'en'):
+    for k in ('zh', 'en'):   # 2026-11-20 英文日報不再發：en 沒有就跳過，只有中文必填
+        if k == 'en' and not post.get(k): continue
         w = weight(post.get(k, '')); bad |= not post.get(k)
         print(f'{k}: {w}/280' + ('  空白' if not post.get(k) else '  超過 280：用長貼文發' if w > 280 else ''))
     sys.exit(1 if bad else 0)

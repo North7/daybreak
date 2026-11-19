@@ -26,11 +26,11 @@
 6. 查研報：先用 WebFetch 打開 Glassnode 研報列表 https://research.glassnode.com （The Week On-chain 約每週二／三、Market Pulse 每週日、Macro Special 不定期），找出最近 7 天的每一期並打開原文讀重點；再查 The Block Research、K33、Coinbase Institutional 週評，以及其他具名研究機構最近 7 天的新研報／週報。每一期的 `date` 寫原文發布日、`url` 寫原文網址。確認列表上真的沒有新一期，才沿用最近一期並在 `research.summary` 寫明「無新一期」。
 7. 寫 `data/notes.json`（格式見下）。`edition` 為上一期 +1（若上一期的 `date` 已等於 `meta.bar_date`，代表是同一天重寫，`edition` 不變）；`date` 等於 `meta.bar_date`；`written_utc` 寫實際的 UTC 時間（用 `date -u` 取得，不要估）。寫完後另寫英文版 `data/notes.en.json`（見「英文版」）。
 8. 驗證：執行 `python3 pipeline/notes_lint.py`，檢查格式、各項數量、頭條與摘要長度、制式提醒句次數、事件表必備項目、英文版沒有中文字、「說重點」擋掉的固定說法與中文常用名、「去 AI 味」擋掉的泛指來源／填充詞／固定收尾句（2026-11-09）；有任何一項 ✗ 沒過就改到通過才提交。△ 是提醒（焦點後置、對比句、口頭禪、「所以」開頭、短句收尾、同一句收尾），不影響結束碼，看過再決定改不改。再用 python 掃描兩個檔，確認沒有違反隱私鐵則的內容。
-9. X 貼文草稿（中英各一則）：寫 `data/x_post.json` = `{"date": bar_date, "edition", "zh", "en", "image_zh": "https://daybreak.aronlab.dev/data/share.png", "image_en": "https://daybreak.aronlab.dev/data/share-en.png", "link": "https://daybreak.aronlab.dev/?utm_source=x"}`。分享圖由 GitHub Actions 在你推送後自動產生（`pipeline/share_card.py`，用 headline 與資料），你不用畫。
+9. X 貼文草稿（只寫中文，2026-11-20 起）：寫 `data/x_post.json` = `{"date": bar_date, "edition", "zh", "image_zh": "https://daybreak.aronlab.dev/data/share.png", "image_en": "https://daybreak.aronlab.dev/data/share-en.png", "link": "https://daybreak.aronlab.dev/?utm_source=x"}`。分享圖由 GitHub Actions 在你推送後自動產生（`pipeline/share_card.py`，用 headline 與資料），你不用畫。
    - **格式（2026-11-18 起）：原本的日報格式照舊，下面再接當期 `summary` 全文**。使用者：「每日日報內容基本的日報格式還是要有，我只是說加入下面那段更詳細的分析說明，我的發文字數沒有限制必須短文」（同一天早上一度改成只放 summary，這是更正）。中文：
      ```
-     <開頭：今天最意外的一個數字，一句白話：誰、做了什麼、多少、跟什麼時候比>
-     <第二句：這個數字代表什麼（今天最重要 finding 的結論）>
+     <第一句：今天最反常的一個變化，白話、1–2 個數字，加一個有感的比較（上次這樣是什麼時候、週期裡第幾次）>
+     <第二句：我們的看法，它對拿現貨的人代表什麼；不重複第一句的數字>
 
      ・市場階段：牛市（第 40 天）
      ・ETF 7 個交易日（至 11/16）：−12.86 億美元
@@ -42,14 +42,20 @@
      Daybreak No.043｜11/17 完整解讀 👉 https://daybreak.aronlab.dev/?utm_source=x
      #比特幣 #BTC #<主題>
      ```
-     英文同結構（`・Market stage: bull (day 40)`、`・ETF 7 trading days to Nov 16: −$1.29B`，摘要用 `notes.en.json` 的 summary），最後一行用 `Daybreak No.043 | Nov 17 👉 <網址>`。範例：11/17（No.043）的 `data/x_post.json`。
+     **英文版不再寫**（2026-11-20 使用者：英文只做大帳號引用）：`x_post.json` 不放 `en`，`notes_lint.py` 不再查英文貼文。`notes.en.json` 照寫（網站英文版要用）。範例：11/18（No.044）的 `data/x_post.json`。
      品牌名中英文都只寫 Daybreak，不寫「破曉」（2026-11-12 使用者；X 貼文是社群內容）。
-   - 開頭怎麼寫：從 headline 和 findings 裡挑**最讓人意外的一個數字**（不是最重要的那一條），寫成看得懂的一句話；能加時間對比更好（「一天」「9/6 以來天天」「今年最低」）。第二句寫這個數字代表什麼。不用【】、不用問句釣讀者、不堆 emoji、不寫「震驚」「重磅」這類字。
+   - **開頭兩句怎麼寫**（2026-11-20 使用者：「每天發，但內容調整一下」。11/04–11/19 的日報多半 23–45 瀏覽，只有 11/15（62）和 11/18（107）有起色，那兩天的第一句都是一個很具體、帶週期歷史的數字）：
+     - 第一句：今天**最反常的一個變化**，白話、1–2 個數字，加一個有感的比較（上次這樣是什麼時候、2012 年起第幾次、這輪週期第幾次）。不要寫成狀態總結（✗「短線偏空、長線估值在底部區」）。
+       ✓ 11/15「全體未實現獲利只剩市值的 34.1%，2012 年起只有週期底部附近到過」；✓ 11/18「ETF 連 7 個交易日流出後，11/16 只回來 940 萬美元」。
+     - 第二句：給一個看法，講它對拿現貨的人代表什麼，不重複第一句的數字。紅線照舊：不寫買賣動作，不提出場框架。
+     - 句型避開（運營 11/20 的去 AI 味規則，`daybreak-ops-private/ops/brand/voice.md`「去 AI 味第五輪」）：不用「問句？＋秒答」、不用「不是 A，是 B」；不寫直譯腔（「比較高」「讀不出」「以上是讀數」）；不寫讀者心聲鋪墊（「手上有部位的人最想知道的是」）。
+     - **每天的開法要換**：先看前三天的 `x_post.json`（`git log -p -3 -- data/x_post.json`），不要連幾天都同一種形狀（都用數字開頭接「2012 年起」、都用「誰做了什麼」）。
+     - 不用【】、不堆 emoji、不寫「震驚」「重磅」這類字。
    - 數字一律取自 brief 與當期 notes，不新增查不到出處的數字；市場階段天數＝bar_date 減 `cycle.stage.since` 加 1；ETF 那一行＝`flows.etf` 最後 7 個非暫定日合計，括號寫最後一個非暫定日（英文 `・ETF 7 trading days to Oct 9: −$558M`），與分享圖一致；不寫「近 7 日」，因為 The Block 常晚一到兩個交易日，頭條若寫更新的暫定值，讀者會以為兩個數字矛盾。
    - 摘要那段：summary 照抄、一字不改，只在每個句號後換行。`notes_lint.py` 會檢查正文裡有當期 summary，也有市場階段、ETF 兩行。
    - 語氣照運營的 voice.md（2026-11-08 起在私人倉庫 `daybreak-ops-private/ops/brand/voice.md`，本機放在公開倉庫旁邊；讀不到就照這裡寫的規則）（寫給拿現貨的中文持有者、一起看盤的同行、用詞中英固定）。
    - 長度：沒有字數限制（使用者用 X 的長貼文發），不要為了短而刪內容。`python3 pipeline/x_len.py` 照樣印出加權字數，超過 280 只提醒、不擋。
-   - 結尾帶 2–3 個 hashtag 關鍵詞（2026-11-04 使用者要求，讓貼文搜得到）：中文固定 `#比特幣 #BTC`、英文固定 `#Bitcoin #BTC`，再加 1 個當天主題（中文例如 `#ETF`、`#鏈上數據`、`#資金費率`；英文例如 `#ETF`、`#onchain`、`#funding`）。不喊單、不寫價格目標或「該買／該賣」；出場框架只用百分比；隱私鐵則同樣適用。
+   - 結尾帶 2–3 個 hashtag 關鍵詞（2026-11-04 使用者要求，讓貼文搜得到）：固定 `#比特幣 #BTC`，再加 1 個當天主題（例如 `#ETF`、`#鏈上數據`、`#資金費率`）。不喊單、不寫價格目標或「該買／該賣」；出場框架只用百分比；隱私鐵則同樣適用。
 9a. 今日推薦圖表（2026-11-06 改第二版：**一天一張網站原圖，回答一個讀者會問的問題**；規劃見 `ops/picks/README.md`）：寫完 notes 之後執行 `python3 pipeline/picks.py plan`。它列出網站上可以推的面板（`candidates`：今天有異動的排前面，附異動的白話含意 `means` 與過去同樣情況 `hist`，以及該面板在 `latest.json` 的讀值 `data`，新指標多半帶回測），`recent` 是最近 7 天推過或長貼文用過的面板（不能挑），`skip` 是帶出場框架線或本身是推估的面板（不推）。
    - **plan 有 `hint` 時先照它**（2026-11-08 起：運營那邊前一晚和使用者講好的方向，寫在 `ops/picks/hint.json`，只在 `bar` 等於當天 `bar_date` 時出現）：用它的 `id`、問句和角度，數字一樣只能用 plan／notes 裡的；`hint.if` 說的情況成立（例如讀值已經不支持那個問題）就改用 `fallback` 或照平常自己挑，並在 `why` 寫原因。
    - **先想讀者今天在問什麼，再挑最能回答的那一張**（不限 `suggest`）。例如大跌隔天：「還會不會跌」「怎麼一直在 76K 打轉」「以前這樣之後怎麼走」。不要挑和日報頭條講同一件事的圖；同一個面板 7 天內不重複。
