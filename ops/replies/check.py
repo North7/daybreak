@@ -118,6 +118,11 @@ def longpost_notes(tag, t, lang, posted=None):
     if lang == 'zh' and not posted and paras:   # 2026-11-18 深夜使用者：「第一句話，都還是列數據，講解數據。而不是解答大家心裡對交易的問題。大家需要的是對交易有價值的鉤子」
         first = re.split(r'[。？！\n]', paras[0])[0]
         if len(re.findall(r'\d[\d,.]*\s*(?:%|億|萬|美元|顆|倍|天|次|百分位)', first)) >= 2: out.append(f'{tag} 第一句在列數據（「{first[:24]}…」）：開頭先接交易的人心裡的問題（是不是底、支撐還算不算、該等什麼訊號、這個消息要不要當回事）並直接答，數字和指標解釋放後面')
+    if lang == 'zh' and not posted:   # 2026-11-20 使用者貼 Gemini 改稿：自問自答、「還有一件事」這種過渡、「是這個：」揭曉都是簡報腔
+        qa = re.findall(r'[^。？！\n]{2,30}？[^。？！\n]{1,8}。', body) + re.findall(r'(?:^|\n)[^。？！\n]{0,6}(?:那|所以)?[^。？！\n]{2,20}(?:嗎|呢|什麼樣|怎麼樣)？', body)
+        if qa: out.append(f'{tag} 自問自答 {len(qa)} 處（「{qa[0].strip()[:20]}」）：直接講答案，問句留給讀者心裡的問題，正文不要自己問自己答')
+        tr = re.findall(r'還有一件事|順帶一提|更(?:扎心|重要|關鍵|有意思|可怕|諷刺)的是|說到這裡|換句話說|是這個：|看得到來源：|答案是', body)
+        if tr: out.append(f'{tag} 簡報式過渡 {"、".join(dict.fromkeys(tr))}：拿掉，直接接下一件事')
     if not TRADE.search(body): out.append(f'{tag} 沒看到「對交易來說這代表什麼」的句子：是不是訊號（跟隨便挑一天比，帶次數）、什麼價位／數字翻過去讀法就換、風險偏哪邊、哪種感覺是雜訊，挑一種寫（voice.md「要有交易上的意義」2026-11-09）')
     return out
 
