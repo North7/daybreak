@@ -1,5 +1,4 @@
-{"m": "illiquid-supply", "fetched_utc": "2026-11-18T03:49:24+00:00", "rows": [
-{"d":"2022-11-18","illiquidSupply":16739949.3524,"liquidSupply":2470950.6476},
+{"m": "illiquid-supply", "fetched_utc": "2026-11-19T00:49:30+00:00", "rows": [
 {"d":"2022-11-19","illiquidSupply":16738474.906,"liquidSupply":2473325.094},
 {"d":"2022-11-20","illiquidSupply":16734784.1874,"liquidSupply":2478015.8126},
 {"d":"2022-11-21","illiquidSupply":16728975.6627,"liquidSupply":2484624.3373},
