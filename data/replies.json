@@ -4,6 +4,338 @@
  "edition": 44,
  "items": [
   {
+   "n": 15,
+   "url": "https://x.com/linjiu321/status/2123222071941452129",
+   "id": "2123222071941452129",
+   "author": "linjiu321",
+   "followers": 4376,
+   "posted": "2026-11-19T01:09:24Z",
+   "lang": "zh",
+   "angle": "槓桿洗乾淨這點保留：金額低是價格跌，顆數反而在加",
+   "take": "槓桿沒洗乾淨，是逆勢在加",
+   "summary": "槓桿洗乾淨這點保留：金額低是價格跌，顆數反而在加",
+   "reply": "槓桿洗乾淨這點我有點保留，金額低是價格跌了，換成顆數這 30 天反而多了 6%",
+   "sources": [
+    "data/latest.json deriv.oi_hist（11/18：30 天 +5.9%、同期價格 −23%）"
+   ],
+   "note": "Grok 0905 #1。熟帳號、4.4K 不配圖；價位那段不接。",
+   "style": "口語版",
+   "status": "send",
+   "order": 0
+  },
+  {
+   "n": 16,
+   "url": "https://x.com/Zhouqi2013/status/2123216680713359374",
+   "id": "2123216680713359374",
+   "author": "Zhouqi2013",
+   "followers": 17497,
+   "posted": "2026-11-19T00:47:58Z",
+   "lang": "zh",
+   "angle": "同意漲多才跌多，所以這輪跌得淺",
+   "take": "漲得沒那麼瘋，跌得也淺",
+   "summary": "同意漲多才跌多，所以這輪跌得淺",
+   "reply": "漲多才跌多，這個邏輯我同意\n也因為這輪漲得沒那麼瘋，頂部後同一天才跌一半，前幾輪這時候都跌掉 75% 以上了",
+   "sources": [
+    "data/latest.json cycle.cycle_cmp（day 408：本輪 −49.5%，前三輪 −81.7%／−82.5%／−75.1%）"
+   ],
+   "note": "Grok 0905 #3。1.7 萬粉配 cyccmp。",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "cyccmp"
+    },
+    "title": "和前幾輪比：頂部後同一天"
+   },
+   "order": 1
+  },
+  {
+   "n": 17,
+   "url": "https://x.com/fan_xiansh74976/status/2123209873387319447",
+   "id": "2123209873387319447",
+   "author": "fan_xiansh74976",
+   "followers": 3144,
+   "posted": "2026-11-19T00:20:55Z",
+   "lang": "zh",
+   "angle": "最對的是「拋壓釋放完畢不等於掉頭」；賣壓輪到老手",
+   "take": "賣壓已經從新手輪到老手",
+   "summary": "最對的是「拋壓釋放完畢不等於掉頭」；賣壓輪到老手",
+   "reply": "這篇最對的是那句：拋壓釋放完不等於掉頭\n而且賣的人換了一批\n長期持有者這幾天也開始賠著賣，以前這種時候通常不太會動的那群",
+   "sources": [
+    "data/latest.json onchain.metrics.lth-sopr（11/18 0.73，4 年第 6.8 百分位）"
+   ],
+   "note": "Grok 0905 #4。熟帳號、3.1K 不配圖；不評 Armstrong。",
+   "style": "口語版",
+   "status": "send",
+   "order": 2
+  },
+  {
+   "n": 18,
+   "url": "https://x.com/VoltBuddy/status/2123203097019474084",
+   "id": "2123203097019474084",
+   "author": "VoltBuddy",
+   "followers": 2936,
+   "posted": "2026-11-18T23:54:00Z",
+   "lang": "zh",
+   "angle": "接他的飯店比喻：客人又回來了，喘氣很短",
+   "take": "難度下調的喘息很短",
+   "summary": "接他的飯店比喻：客人又回來了，喘氣很短",
+   "reply": "飯店那個比喻很到位，只是這條街的客人又回來了\n算力這週已經回升，下次難度估計要往上調 10% 左右\n你那邊看到的二手礦機價格有在鬆嗎？",
+   "sources": [
+    "data/latest.json onchain.mining（hash7 +3.33%、diff_next_pct +10.2%、11/26）"
+   ],
+   "note": "Grok 0905 #5。礦工題 1/3；2.9K 不配圖。",
+   "style": "口語版",
+   "status": "send",
+   "order": 3
+  },
+  {
+   "n": 19,
+   "url": "https://x.com/hongweijie3366/status/2123196997939437966",
+   "id": "2123196997939437966",
+   "author": "hongweijie3366",
+   "followers": 3014,
+   "posted": "2026-11-18T23:29:46Z",
+   "lang": "zh",
+   "angle": "危機是真的，但不是關機，是價格貼著打平價",
+   "take": "礦工的壓力是成本被價格追上",
+   "summary": "危機是真的，但不是關機，是價格貼著打平價",
+   "reply": "「加速」我覺得說早了一點\n算力這週還在漲，礦工其實沒在關機\n卡住他們的是價格追上了成本，20J 的機器打平價差不多就在現價\n這種時候比較怕的是礦工自己的賣幣，不是算力",
+   "sources": [
+    "data/latest.json onchain.mining（breakeven 20J@0.06 62,426；11/18 收盤 62,985）"
+   ],
+   "note": "Grok 0905 #6。礦工題 2/3；3K 不配圖。",
+   "style": "口語版",
+   "status": "send",
+   "order": 4
+  },
+  {
+   "n": 20,
+   "url": "https://x.com/0x99DaDa/status/2123193973242225079",
+   "id": "2123193973242225079",
+   "author": "0x99DaDa",
+   "followers": 26807,
+   "posted": "2026-11-18T23:17:44Z",
+   "lang": "zh",
+   "angle": "等利空落地，債市一直不信",
+   "take": "債市早就押了不只一次",
+   "summary": "等利空落地，債市一直不信",
+   "reply": "等利空落地這件事，債市一直都不信\n2 年期殖利率比聯準會利率高 0.8 個百分點，等於還押著再加三次左右",
+   "sources": [
+    "data/latest.json flows.rates2y（11/18：y2 4.8、ff 4.0、gap 0.8）"
+   ],
+   "note": "Grok 0905 #7。加息題 2/3；2.7 萬粉配 r2y。",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "r2y"
+    },
+    "title": "2 年期殖利率減聯準會利率"
+   },
+   "order": 5
+  },
+  {
+   "n": 21,
+   "url": "https://x.com/super55668/status/2123191840828719506",
+   "id": "2123191840828719506",
+   "author": "super55668",
+   "followers": 11273,
+   "posted": "2026-11-18T23:09:16Z",
+   "lang": "zh",
+   "angle": "槓桿尚未出清最關鍵：情緒在怕，部位沒走",
+   "take": "情緒怕了，多單沒走",
+   "summary": "槓桿尚未出清最關鍵：情緒在怕，部位沒走",
+   "reply": "最後那句最關鍵，恐懼已經 11 了，Binance 持多單的帳戶還有 73%",
+   "sources": [
+    "data/latest.json deriv.ls_acct（11/18 Binance 73.5%、2021 年以來第 93 百分位）",
+    "flows.fng_hist 11"
+   ],
+   "note": "Grok 0905 #8。1.1 萬粉配 lsa；不接跌破看 5 萬。",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "lsa"
+    },
+    "title": "多空帳戶比：持多單的帳戶還有 73%"
+   },
+   "order": 6
+  },
+  {
+   "n": 22,
+   "url": "https://x.com/DrHashClub/status/2123190630386188308",
+   "id": "2123190630386188308",
+   "author": "DrHashClub",
+   "followers": 23796,
+   "posted": "2026-11-18T23:04:27Z",
+   "lang": "zh",
+   "angle": "投降用在現貨很準，去槓桿還沒看到",
+   "take": "現貨投降、槓桿沒去",
+   "summary": "投降用在現貨很準，去槓桿還沒看到",
+   "reply": "投降這兩個字用在現貨很準，賠著賣的程度是一年來最重\n去槓桿倒還沒看到",
+   "sources": [
+    "data/latest.json chips.viz.sopr／soprf 卡（aSOPR 7 日均 0.964、一年百分位 1）",
+    "deriv.oi_hist 30 天 +5.9%"
+   ],
+   "note": "Grok 0905 #9。熟帳號、2.4 萬粉配 soprf；交易建議那段不接。",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "soprf"
+    },
+    "title": "aSOPR：賠著賣的程度一年來最重"
+   },
+   "order": 7
+  },
+  {
+   "n": 23,
+   "url": "https://x.com/Dewei009/status/2123183834560966980",
+   "id": "2123183834560966980",
+   "author": "Dewei009",
+   "followers": 13679,
+   "posted": "2026-11-18T22:37:27Z",
+   "lang": "zh",
+   "angle": "接他的提問聊：大家要的是現金，不是避險",
+   "take": "這時候大家要現金",
+   "summary": "接他的提問聊：大家要的是現金，不是避險",
+   "reply": "這種時候大家要的是現金，什麼都先賣了再說\n之後會怎樣沒人說得準\n只是極度恐懼過後的一個月，以前多數時候價格還更低",
+   "sources": [
+    "data/latest.json flows.fng_hist（11/18 值 11；過去極度恐懼 16 段完整的裡 4 段 30 天後上漲）"
+   ],
+   "note": "Grok 0905 #10。閒聊型、1.4 萬粉配 fng；不預測。",
+   "style": "口語版",
+   "status": "send",
+   "image": {
+    "site": {
+     "k": "fng"
+    },
+    "title": "恐懼貪婪指數：極度恐懼"
+   },
+   "order": 8
+  },
+  {
+   "n": 24,
+   "url": "https://x.com/CryptoBlockABC/status/2123175742942965913",
+   "id": "2123175742942965913",
+   "author": "CryptoBlockABC",
+   "followers": 8042,
+   "posted": "2026-11-18T22:05:18Z",
+   "lang": "zh",
+   "angle": "一天 2.4 億看著嚇人，拉長看還沒 6 月深",
+   "take": "這段 ETF 流出還不算最深",
+   "summary": "一天 2.4 億看著嚇人，拉長看還沒 6 月深",
+   "reply": "一天 2.4 億看著嚇人，不過拉長看，這段流出大概只有 6 月那次的一半\n你那邊有在追 IBIT 單家的累積嗎？",
+   "sources": [
+    "data/latest.json flows.etf20（近 20 個交易日 −28.64 億；6 月那段最深 −56.38 億）"
+   ],
+   "note": "Grok 0905 #11。熟帳號、ETF 題 2/3；8K 不配圖。",
+   "style": "口語版",
+   "status": "send",
+   "order": 9
+  },
+  {
+   "n": 25,
+   "url": "https://x.com/alphacue/status/2123175019584917941",
+   "id": "2123175019584917941",
+   "author": "alphacue",
+   "followers": 8261,
+   "posted": "2026-11-18T22:02:26Z",
+   "lang": "zh",
+   "angle": "紀要說的債市早寫進價格，等到的是確認",
+   "take": "等到的是確認不是新消息",
+   "summary": "紀要說的債市早寫進價格，等到的是確認",
+   "reply": "哈，紀要講的，債市早就寫在價格裡了\n「靴子沒落地」那句我倒覺得，這隻靴子 4 月就落了，只是大家沒聽到",
+   "sources": [
+    "data/latest.json flows.rates2y（side_since 2026-04-21）"
+   ],
+   "note": "Grok 0905 #12。加息題 3/3；8.3K 不配圖；不碰抄底。",
+   "style": "口語版",
+   "status": "send",
+   "order": 10
+  },
+  {
+   "n": 26,
+   "url": "https://x.com/hajiMVP/status/2123152612577161259",
+   "id": "2123152612577161259",
+   "author": "hajiMVP",
+   "followers": 3422,
+   "posted": "2026-11-18T20:33:23Z",
+   "lang": "zh",
+   "angle": "同意減半影響變小，但 ETF 那條流也沒想像中理性",
+   "take": "ETF 買家也是看心情",
+   "summary": "同意減半影響變小，但 ETF 那條流也沒想像中理性",
+   "reply": "減半的影響在變小我同意，只是 ETF 那條流也沒想像中理性\n買家整體現在賠 20%，賣起來一樣看心情\n你還有在看哪個比減半更準的？",
+   "sources": [
+    "data/latest.json etfcost（推算成本 78,971；11/18 收盤低約 20%）"
+   ],
+   "note": "Grok 0905 #14。3.4K 不配圖。",
+   "style": "口語版",
+   "status": "send",
+   "order": 11
+  },
+  {
+   "n": 27,
+   "url": "https://x.com/lumaochaoren/status/2123144870013653088",
+   "id": "2123144870013653088",
+   "author": "lumaochaoren",
+   "followers": 2329,
+   "posted": "2026-11-18T20:02:37Z",
+   "lang": "zh",
+   "angle": "接是真的，只是接的人也在水下",
+   "take": "下面接的人現在也在賠",
+   "summary": "接是真的，只是接的人也在水下",
+   "reply": "下面接的人是有，只是他們現在也在賠\n這週堆最多的 6.4 萬那格，收盤已經在它下面了",
+   "sources": [
+    "data/notes.json／urpdchg（這 7 天 64K 那格多了約 27 萬顆；11/18 收盤 62,985）"
+   ],
+   "note": "Grok 0905 #15。2.3K 不配圖。",
+   "style": "口語版",
+   "status": "send",
+   "order": 12
+  },
+  {
+   "n": 28,
+   "url": "https://x.com/MarsBit2022/status/2123144210232791101",
+   "id": "2123144210232791101",
+   "author": "MarsBit2022",
+   "followers": 14909,
+   "posted": "2026-11-18T20:00:00Z",
+   "lang": "zh",
+   "angle": "跌得淺同意，但位置已經到近一年最低那段",
+   "take": "淺歸淺，位置已經很低",
+   "summary": "跌得淺同意，但位置已經到近一年最低那段",
+   "reply": "跌得淺、槓桿先清這兩點我同意\n只是淺歸淺，位置已經在近一年最低的那 6% 裡面了",
+   "sources": [
+    "data/notes.json market（近一年第 6.3 百分位，跌破 10% 分位線 63,542）"
+   ],
+   "note": "Grok 0905 #16。媒體帳號、熟；不配圖。",
+   "style": "口語版",
+   "status": "send",
+   "order": 13
+  },
+  {
+   "n": 29,
+   "url": "https://x.com/mozige080/status/2123091273531981951",
+   "id": "2123091273531981951",
+   "author": "mozige080",
+   "followers": 572,
+   "posted": "2026-11-18T16:29:39Z",
+   "lang": "zh",
+   "angle": "同意拿 6 月低點當參照，它自己也還沒被確認",
+   "take": "參照點本身還在被測",
+   "summary": "同意拿 6 月低點當參照，它自己也還沒被確認",
+   "reply": "拿 6 月低點當參照我同意，只是它自己也還沒被確認\nDaybreak 上 6/30 那個低點還標著測試中，要撐到 12/19 才算數",
+   "sources": [
+    "data/latest.json cycle.tidemark cycle_test（status testing、low 58,525 2026-06-30、decisive_date 2026-12-19）"
+   ],
+   "note": "Grok 0905 #17。572 粉放寬，論點完整；12 小時窗到 12:29。",
+   "style": "口語版",
+   "status": "send",
+   "order": 14
+  },
+  {
    "n": 8,
    "url": "https://x.com/IamRamenPanda/status/2123223653882228938",
    "id": "2123223653882228938",
@@ -27,7 +359,7 @@
     },
     "title": "BTC 和美股、黃金比：9/18 起"
    },
-   "order": 0
+   "order": 15
   },
   {
    "n": 9,
@@ -53,7 +385,7 @@
     },
     "title": "Versus past cycles: same day after the top"
    },
-   "order": 1
+   "order": 16
   },
   {
    "n": 10,
@@ -80,7 +412,7 @@
     },
     "title": "Estimated liquidation levels: longs are the closer cluster"
    },
-   "order": 2
+   "order": 17
   },
   {
    "n": 11,
@@ -100,7 +432,7 @@
    "note": "Grok 0905 #24。英文 2 小時窗到 10:50；4.2K 粉不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 3
+   "order": 18
   },
   {
    "n": 12,
@@ -120,7 +452,7 @@
    "note": "Grok 0905 #21。12 小時窗到 10:18；6.3K 粉不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 4
+   "order": 19
   },
   {
    "n": 13,
@@ -140,7 +472,7 @@
    "note": "Grok 0905 #20。12 小時窗到 10:28；1.1K 粉不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 5
+   "order": 20
   },
   {
    "n": 14,
@@ -160,7 +492,7 @@
    "note": "Grok 0905 #18。12 小時窗到 10:49；7.9K 粉不配圖；#19 同題跳過。",
    "style": "口語版",
    "status": "send",
-   "order": 6
+   "order": 21
   },
   {
    "n": 1,
@@ -187,7 +519,7 @@
    "note": "固定名單（1.3 小時、1.3 萬粉、英文 2 小時窗到台北 10:00），配 soprf。",
    "style": "口語版",
    "status": "send",
-   "order": 7
+   "order": 22
   },
   {
    "n": 2,
@@ -207,7 +539,7 @@
    "note": "固定名單（1.8 小時、4.4K 粉不配圖）。他講折扣、長期布局，回覆不接操作。",
    "style": "口語版",
    "status": "send",
-   "order": 8
+   "order": 23
   },
   {
    "n": 3,
@@ -228,7 +560,7 @@
    "note": "接話第 2 輪，有內容就接；觀點為主、不放新數字。",
    "style": "口語版",
    "status": "send",
-   "order": 9
+   "order": 24
   },
   {
    "n": 4,
@@ -247,7 +579,7 @@
    "note": "閒聊（2026-11-18 使用者：也可以有閒聊）；不接持倉、不給操作。",
    "style": "口語版",
    "status": "send",
-   "order": 10
+   "order": 25
   },
   {
    "n": 5,
@@ -266,7 +598,7 @@
    "note": "閒聊；他昨天回追過。",
    "style": "口語版",
    "status": "send",
-   "order": 11
+   "order": 26
   },
   {
    "n": 6,
@@ -285,7 +617,7 @@
    "note": "按讚就好：純稱讚。",
    "style": "口語版",
    "status": "skip",
-   "order": 12
+   "order": 27
   },
   {
    "n": 7,
@@ -304,7 +636,7 @@
    "note": "按讚就好：他的帖底下第 3 輪、沒問問題。",
    "style": "口語版",
    "status": "skip",
-   "order": 13
+   "order": 28
   }
  ]
 }
