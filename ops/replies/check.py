@@ -129,6 +129,15 @@ def longpost_notes(tag, t, lang, posted=None):
         if qa: out.append(f'{tag} 自問自答 {len(qa)} 處（「{qa[0].strip()[:20]}」）：直接講答案，問句留給讀者心裡的問題，正文不要自己問自己答')
         tr = BRIDGE.findall(body)
         if tr: out.append(f'{tag} 簡報式過渡 {"、".join(dict.fromkeys(tr))}：拿掉，直接接下一件事')
+        title = (t.split('\n')[0] if t else '').strip()   # 2026-11-20 Gemini 看主頁：5 篇有 4 篇標題「問句→秒答」、「不是 A，是 B」當標題公式、第一段寫讀者心聲鋪墊
+        if re.search(r'？\s*\S', title.split('｜')[0]): out.append(f'{tag} 標題是「問句＋秒答」（「{title[:24]}…」）：主頁連著看最像同一個 Prompt 產的。換成直接給反直覺的結論，或第一人稱「我把…拆開看」')
+        if CONTRAST.search(title): out.append(f'{tag} 標題用「不是 A，是 B」：已經是帳號最明顯的 Claude 指紋，標題一律不用')
+        p0 = paras[0] if paras else ''
+        rv = re.search(r'最想知道的是|你是不是(?:還|又)?在想|你手上的[^，。？]{0,8}是不是|很多人在問|很多人覺得', p0)
+        if rv: out.append(f'{tag} 第一段在寫讀者心聲鋪墊（「{rv.group(0)}」）：刪掉，第一句直接進數據、自己的發現，或吐槽市場共識')
+        if re.search(r'？[^？\n]{4,}', p0) and not rv: out.append(f'{tag} 第一段問完馬上自己答：問句留著就讓它懸著（連珠炮問讀者的焦慮可以），答案放下一段')
+        hd = re.findall(r'我個人(?:覺得|認為|也這樣看|看法)', body)
+        if hd: out.append(f'{tag} 緩衝詞「我個人覺得」{len(hd)} 處：刪掉，觀點直接講')
         fy = FANYI.findall(body)
         if fy: out.append(f'{tag} 直譯腔 {"、".join(dict.fromkeys(fy))}：換成講行情的人會說的（比較高→高過當時／漲回來；讀不出方向→看它猜不出；有一塊看得到→明牌的…擺著）')
     if not TRADE.search(body): out.append(f'{tag} 沒看到「對交易來說這代表什麼」的句子：是不是訊號（跟隨便挑一天比，帶次數）、什麼價位／數字翻過去讀法就換、風險偏哪邊、哪種感覺是雜訊，挑一種寫（voice.md「要有交易上的意義」2026-11-09）')
@@ -162,6 +171,9 @@ def check_longposts():
             notes += sentence_notes(tag, t)
             tt0 = (it.get('title') or '').strip(); tl = t if (not tt0 or re.sub(r'\s', '', t).startswith(re.sub(r'\s', '', tt0))) else tt0 + '\n' + t   # longpost_notes 把第一行當標題跳過；zh 只放正文時要先補上標題，不然第一段會被漏掉（2026-11-19）
             notes += longpost_notes(tag, tl, lang, it.get('posted'))
+    zh5 = sorted([it for it in items if it.get('zh') and it.get('title') and it.get('lang', 'zh') == 'zh'], key=lambda it: it.get('time') or '')[-5:]
+    qt = [it['id'] for it in zh5 if '？' in it['title'].split('｜')[0]]
+    if len(qt) >= 2 and any(not it.get('posted') for it in zh5 if it['id'] in qt): notes.append(f'主頁最近 5 篇中文長文有 {len(qt)} 篇標題是問句：{qt}。連著看就是模板（2026-11-20 Gemini 看主頁），換成反直覺結論或第一人稱拆解')
     closers = [it.get('id') for it in items if CLOSER.search((it.get('zh') or '') + (it.get('en') or ''))]
     if len(closers) >= 2: notes.append(f'長貼文 {len(closers)} 篇都用「這週看幾件事」收尾：{closers}，連著幾篇就是模板，併進結論段或換個寫法')
     return err, notes
@@ -527,6 +539,8 @@ REGRESS_LONG = [   # 2026-11-20 Gemini 三篇改稿前的原句：longpost_notes
     ('簡報式過渡', '它能說的只有一件事：拿 0.4 當門檻會晚很多。'), ('簡報式過渡', '更扎心的是，那 17 次裡 Nasdaq 有 13 次是漲的。'),
     ('直譯腔', '三個月後只有 6 次比較高。'), ('直譯腔', '所以美股漲不漲，讀不出 BTC 的方向。'), ('直譯腔', '賣壓有一塊看得到，ETF 淨流出。'),
     ('結尾改成', '以上是讀數，不是買賣建議。'),
+    ('讀者心聲鋪墊', 'BTC 收到 200 週均線下面，手上有部位的人最想知道的是：這條講了好幾年的長期支撐，破了代表什麼？'),
+    ('緩衝詞', '我個人覺得這不是真的恐慌，費率還是正的。'),
 ]
 REGRESS_REPLY = ['週日那次爆倉完，年化費率隔天不降反升，說明被清掉的位置馬上有人補回去']   # 11/11 回覆裡的「說明」
 # 11/10 的四段模板（宣告反應→數據→說明→條件句），整批放進 tone_notes 一定要被點名
@@ -541,7 +555,7 @@ REGRESS_BATCH = ['你要看的兩點，費率那條我先潑個冷水\n週日那
 def regress():
     """去 AI 味不往回走：以前退過的句子和模板，現在的規則一定要還抓得到。"""
     err = [f'去 AI 味規則倒退了：「{t}」現在不會被擋（voice.md「不往回走」，擋的詞只能加不能刪）' for l, t in REGRESS if not text_errors('x', t, l)]
-    err += [f'去 AI 味規則倒退了：長文「{t[:16]}…」不再被提醒「{k}」（voice.md「去 AI 味第五輪」）' for k, t in REGRESS_LONG if not any(k in x for x in longpost_notes('x', '標題\n\n我看了。\n' + t, 'zh'))]
+    err += [f'去 AI 味規則倒退了：長文「{t[:16]}…」不再被提醒「{k}」（voice.md「去 AI 味第五輪」）' for k, t in REGRESS_LONG if not any(k in x for x in longpost_notes('x', '標題\n\n' + t + '\n\n我看了。', 'zh'))]
     err += [f'去 AI 味規則倒退了：回覆裡的「說明」不再被擋（「{t[:20]}…」）' for t in REGRESS_REPLY if not REPLY_ONLY.search(t)]
     if not take_notes([{'n': 1, 'status': 'send', 'reply': 'ETF 這 7 天流出換成幣約 2.7 萬顆', 'angle': '補數據：流出換成顆數'}]): err.append('看法提醒倒退了：看不到看法的回覆不再被列出來（2026-11-17 使用者：需要先有觀點；只提醒、不擋）')
     tn = '\n'.join(tone_notes([{'n': i + 1, 'reply': t, 'lang': 'zh', 'status': 'send'} for i, t in enumerate(REGRESS_BATCH)]))
