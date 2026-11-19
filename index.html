@@ -1436,11 +1436,11 @@ html.share .fl-was { display: none !important; }
      卡片內距：電腦 26×32（原本 22×24）、手機 20（原本 16）。放大卡片上緣留 20–36px（原本 14）。分享圖（html.share）不動：那是固定比例的圖，內距另算。 */
 :root { --gx: clamp(22px, 4vw, 56px); }
 .oc-bar, .oc-secs, .oc .oc-ft { padding-left: var(--gx); padding-right: var(--gx); }
-@media (min-width: 701px) { .oc-secs { padding-left: calc(var(--gx) + 40px); } }
+@media (min-width: 701px) { .oc-secs { padding-left: calc(var(--gx) + 40px); padding-right: calc(var(--gx) + 40px); } }   /* ㊴-2 同一天，使用者：「右邊需要和左邊邊距一樣」：左邊多留的 40px（側邊段落圓環）右邊也留，內容左右對稱 */
 .fc { padding: 26px 32px 20px; }
 @media (max-width: 700px) { .fc { padding: 20px 20px 14px; } }
 html:not(.share) .oc-fx .os-in { padding: clamp(20px, 2.4vw, 36px) var(--gx) clamp(16px, 2vw, 28px); gap: 14px; }
-.oc-hd.hda .os.front { margin-left: calc(var(--gx) + 40px); margin-right: var(--gx); }
+.oc-hd.hda .os.front { margin-left: calc(var(--gx) + 40px); margin-right: calc(var(--gx) + 40px); }
 html .oc-srcs { padding-left: var(--gx); padding-right: var(--gx); }
 @media (max-width: 700px) { .oc-hd.hda .os.front { margin-left: var(--gx); margin-right: var(--gx); } }
 /* ㉞ 手機長頁（2026-11-17，使用者三件都照建議；「對於交互，動效，還是要保留原本的精華」）：寬 700px 以下，週期、價位、賣壓、買盤、槓桿五頁每段只畫第一張（主卡），其他收成清單列；今天、出場兩頁和電腦版不變。
@@ -1605,7 +1605,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=5b307fec56"></script>
+<script src="data/next.js?v=f5b780c6cb"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
