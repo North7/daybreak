@@ -173,13 +173,19 @@ def _static():
     zh = '<section lang="zh-Hant"><h2>%s 收盤版 No.%s</h2><p><strong>%s</strong></p><p>%s</p>%s</section>' % (d0.replace('-', '/'), N.get('edition'), _h.escape(N['headline']), _h.escape(N['summary']), '<p>%s</p>' % _h.escape(st['label']) if st.get('label') else '')
     en = ('<section lang="en"><h2>%s %d close edition, No.%s</h2><p><strong>%s</strong></p><p>%s</p>%s</section>' % (_MON[m_ - 1], d_, N.get('edition'), _h.escape(NE_['headline']), _h.escape(NE_.get('summary') or ''), '<p>%s</p>' % _h.escape(ste['label']) if ste.get('label') else '')) if NE_.get('headline') else ''
     return ('<main id="oc-static"><h1>Daybreak</h1><p>每天清晨的第一份比特幣簡報：週期、關鍵價位、誰在賣、誰在買、槓桿。 The first Bitcoin brief of the morning: cycle, key levels, who is selling, who is buying, leverage.</p>'
-            + zh + en + '<p><a href="case-study/">Case study</a></p></main>')
+            + zh + en + '<p><a href="intro/">Daybreak 是什麼 · What is Daybreak</a> · <a href="case-study/">Case study</a></p></main>')
 assert page.count('<!--STATIC-->') == 1
 page = page.replace('<!--STATIC-->', _static())
 open(os.path.join(REPO, 'sitemap.xml'), 'w', encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
     + ''.join('<url><loc>%s</loc><lastmod>%s</lastmod>%s</url>\n' % (u, lm, x) for u, lm, x in (
         ('https://daybreak.aronlab.dev/', L['meta']['bar_date'], '<changefreq>daily</changefreq><xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/?lang=zh"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/?lang=en"/>'),
+        ('https://daybreak.aronlab.dev/intro/', L['meta']['bar_date'], '<xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/intro/?lang=zh"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/intro/?lang=en"/>'),
         ('https://daybreak.aronlab.dev/case-study/', '2026-11-19', ''), ('https://daybreak.aronlab.dev/case-study/en/', '2026-11-19', '')))
     + '</urlset>\n')
 open(os.path.join(REPO, 'index.html'), 'w', encoding='utf-8').write(page.replace('data/next.js?v=__V__', 'data/next.js?v=' + ver))
 print('wrote data/next.js', len(js), 'bytes; index.html', len(page), 'bytes; v=' + ver, '| bar', D['date'], '| notes', N.get('date'))
+# 2026-11-19 介紹頁（/intro/）用剛寫好的 data/next*.js 重建；失敗只印出來，不影響首頁
+try:
+    subprocess.run([sys.executable, os.path.join(REPO, 'pipeline', 'intro', 'build.py')], check=True)
+except Exception as e:
+    print('intro build failed:', e)
