@@ -1,16 +1,16 @@
 {
- "date": "2026-11-17",
+ "date": "2026-11-18",
  "captions": true,
  "picks": [
   {
-   "id": "deriv/gex",
-   "chart": "data/picks/deriv-gex.png",
-   "chart_en": "data/picks/deriv-gex-en.png",
+   "id": "onchain/quant",
+   "chart": "data/picks/onchain-quant.png",
+   "chart_en": "data/picks/onchain-quant-en.png",
    "name": {
-    "zh": "選擇權 Gamma 曝險（推算）",
-    "en": "Options gamma exposure (estimate)"
+    "zh": "供給分位成本線",
+    "en": "Supply quantile cost lines"
    },
-   "link": "https://daybreak.aronlab.dev/?k=gex"
+   "link": "https://daybreak.aronlab.dev/?k=quant"
   }
  ]
 }
