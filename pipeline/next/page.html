@@ -493,6 +493,7 @@ html.share .d3-hint, html.share .d3-sc input, html.share .d3-sc span { display: 
 .ol-t .md + .md { margin-left: 4px; }
 .fx-b { margin-left: auto; flex: none; font: 500 10.5px var(--f-mono); letter-spacing: .05em; color: var(--k2); background: none; border: 1px solid color-mix(in srgb, var(--ink) 16%, transparent); border-radius: 999px; padding: 3px 10px; cursor: pointer; transition: color .2s, border-color .2s; }
 .fx-b:hover { color: var(--ink); border-color: color-mix(in srgb, var(--ink) 44%, transparent); }
+.oc-ft a { pointer-events: auto; color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--line, rgba(127,127,127,.3)); white-space: nowrap; } .oc-ft a:hover { color: var(--ac); }
 .oc .oc-ft { position: static; left: auto; right: auto; bottom: auto; display: flex; justify-content: space-between; gap: 16px; padding: 6px clamp(16px, 2.4vw, 34px) 26px; }
 .oc-fx { position: fixed; inset: 0; z-index: 90; background: color-mix(in srgb, var(--bg) 80%, transparent); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); }
 .oc-fx[hidden] { display: none; }
@@ -3016,7 +3017,7 @@ function initOC() {
   const a11y = () => { Object.entries(A11Y).forEach(([q, t]) => { const n = $(q); if (n) n.setAttribute('aria-label', T(t[0], t[1])); }); };
   function renderAll() { a11y();
     $('#oc-date').textContent = D.date.replace(/-/g, '.') + T(' 收盤', ' close');
-    $('#oc-ft1').textContent = T('在任何一張圖上移動游標，同一段的圖會一起跟著。每張圖右上角可以放大。', 'Move across any chart and the others in the same section follow. Each chart can be expanded from its top-right corner.'); $('#oc-ft2').textContent = ''; $('#oc-srcs').innerHTML = srcsHtml();
+    $('#oc-ft1').textContent = T('在任何一張圖上移動游標，同一段的圖會一起跟著。每張圖右上角可以放大。', 'Move across any chart and the others in the same section follow. Each chart can be expanded from its top-right corner.'); $('#oc-ft2').innerHTML = `<a href="intro/${lang === 'en' ? '?lang=en' : ''}">${T('Daybreak 是什麼', 'What is Daybreak')} →</a>`;   /* 2026-11-19 介紹頁入口 */ $('#oc-srcs').innerHTML = srcsHtml();
     stg.innerHTML = CH.map((c, i) => c.todo ? '' : `<article class="os" data-k="${i}" tabindex="0" style="--dl:${(-i * 1.7).toFixed(1)}s"><div class="os-in"><div class="os-h"><span class="k">${p2(i)}</span><h3>${esc(T(c.zh, c.en))}</h3><span class="sub">${esc(T(c.qz, c.qe))}</span></div><div class="os-pw"><span class="pw-k">${esc(hv(c)[0])}</span><div class="pw-n">${esc(hv(c)[1])}</div><p class="pw-l">${esc(T(c.lead_zh, c.lead_en) || T(c.qz, c.qe))}</p><div class="pw-c"></div></div></div></article>`).join('');
     ord = order(); headBody(); renderBar(); renderOv(); poster(); hx(); keep(renderSecs); place(); renderCmp(); if (fx) openFx(fx.k + '_' + fx.i);
   }
