@@ -15,6 +15,7 @@ from x_len import weight   # noqa: E402
 CJK = re.compile(r'[㐀-鿿]')
 SIMP = set('这们说为来对时国会个过还没发么从动场实现价币机构资线买卖盘关头应该开间觉进处净链亿万点涨')
 CHENG = re.compile(r'[一二三四五六七八九十兩幾]成(?![功立為長熟本員交績型不])')   # 2026-11-17 使用者：「以後幾成這種表達方式都換成百分數表達方式」
+FINDING_ID = re.compile(r'(?<![\d-])20\d\d-\d\d-\d\d-\d{1,2}(?![\d-])')   # 2026-11-19 網站 #235：發現不寫原始代號（2026-11-16-1），寫「11/16 第一則發現」或直接寫結論
 BAN = re.compile(r'出場|階梯|避險|賣出線|減碼|分批賣|exit (plan|ladder|framework)|sell (signal|trigger)|take profit', re.I)
 # 2026-11-12 使用者：品牌名中英文都只寫 Daybreak，中文也不寫「破曉」（譯名保留，但對外儘量用英文）。hashtag、網址不受影響（不會出現這兩字）
 BRAND = re.compile(r'破曉')
@@ -134,6 +135,7 @@ def check_longposts():
             tag = f'長貼文 {it.get("id")} {lang}'
             if AI_WORDS.search(t): err.append(f'{tag} AI 腔（「{AI_WORDS.search(t).group(0)}」）')
             if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
+            if not it.get('posted') and FINDING_ID.search(t + (it.get('title') or '')): err.append(f'{tag} 寫了發現的原始代號「{FINDING_ID.search(t + (it.get("title") or "")).group(0)}」：改成「11/16 第一則發現」或直接寫結論（網站 #235，2026-11-19）')
             if not it.get('posted') and BRAND.search(t + (it.get('title') or '')): err.append(f'{tag} 品牌名寫 Daybreak，不寫「破曉」（2026-11-12 使用者）')
             if lang == 'zh' and not it.get('posted') and '網站' in t + (it.get('title') or ''): err.append(f'{tag} 「網站」改寫「Daybreak 上」（2026-11-15 使用者：文章裡的「網站裡」都改為「Daybreak 上」）')
             if lang == 'zh' and not it.get('posted') and CHENG.search(t + (it.get('title') or '')): err.append(f'{tag} 「{CHENG.search(t + (it.get("title") or "")).group(0)}」改成百分數（2026-11-17 使用者：幾成都換成百分數）')
@@ -283,6 +285,7 @@ def text_errors(tag, t, lang, lim=280):
     if lang == 'zh' and EN_NAME.search(t):
         w = sorted(set(EN_NAME.findall(t))); err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(f'{x}→{EN_NAMES[x]}' for x in w) + '（voice.md 用詞，2026-11-09）')
     if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
+    if FINDING_ID.search(t): err.append(f'{tag} 寫了發現的原始代號「{FINDING_ID.search(t).group(0)}」：改成「11/16 第一則發現」／"finding 1 of Nov 16"，或直接寫結論（網站 #235，2026-11-19）')
     if lang == 'zh' and CHENG.search(t): err.append(f'{tag} 「{CHENG.search(t).group(0)}」改成百分數（2026-11-17 使用者：幾成都換成百分數）')
     if BRAND.search(t): err.append(f'{tag} 品牌名寫 Daybreak，不寫「破曉」（2026-11-12 使用者）')
     if ROBOT.search(t): err.append(f'{tag} 太機械（「{ROBOT.search(t).group(0)}」）：先回應對方、用「我」，見 README「要有人味」')
@@ -452,6 +455,7 @@ def check_flash():
 # 倒退樣本：使用者退過、或規則定案時實際寫出來過的句子。每次執行先跑一遍，哪一句不再被抓到，就是有人把規則放寬了，直接報錯。
 # 擋的詞只能加不能刪；要刪先問使用者，並在 voice.md「不往回走」那張表和改稿紀錄寫清楚。新的退稿句子照樣加進來。
 REGRESS = [
+    ('zh', '這跟 2026-11-16-1 那則發現對得上'),   # 2026-11-19 發現代號
     ('zh', 'Coinbase 那條重得很，排在 2021 年以來最低的 4%'),   # 2026-11-11 使用者看不懂：「那條」指誰不清楚、淨賣講「最低」方向反
     ('zh', '月還沒過半，歷史只說 11 月漲多跌少，說不了這個月'),
     ('zh', '它的節奏跟 Glassnode 的 BRS 也很像，今年三次到 100 前後只差幾天。算法不一樣，抓的是同一件事'),   # 2026-11-11 賣壓滿格長文，BRS 算法沒公開   # 2026-11-11 推薦圖表，使用者看不懂
