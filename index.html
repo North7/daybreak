@@ -1431,6 +1431,18 @@ html.share .fl-was { display: none !important; }
 /* ㊳-2 同一天：手機頂部的字標也被切成「DAYBREA」（右邊三顆按鈕 200px，字標那一格只剩 131px，字要 147px）。窄螢幕把字寬、字距、圖示和按鈕間距收一點，字標整個看得到 */
 @media (max-width: 420px) { .oc-top b.oc-logo { font-size: clamp(13px, 3.9vw, 16px); font-stretch: 100%; letter-spacing: .02em; gap: 7px; } .oc-top b.oc-logo svg { width: 22px; height: 22px; } .oc-top > .r { gap: 6px; } }
 @media (max-width: 350px) { .oc-top b.oc-logo { font-size: 0; gap: 0; } }   /* 320px 這種窄機：右邊按鈕就佔掉大半，字標放不下，只留日出圖示，不要切成半個字 */
+/* ㊴ 內邊距（2026-11-19，使用者：「頁面的內邊距再大一點，字離邊有點太近，壓迫感有點強」）。
+     規則：全站左右留白用同一個變數 --gx：手機 22px（原本 16）、電腦隨寬度到 56px（原本最多 34）；頂部列、各段、頁尾、全螢幕放大的卡片都用它，字和邊的距離一致。
+     卡片內距：電腦 26×32（原本 22×24）、手機 20（原本 16）。放大卡片上緣留 20–36px（原本 14）。分享圖（html.share）不動：那是固定比例的圖，內距另算。 */
+:root { --gx: clamp(22px, 4vw, 56px); }
+.oc-bar, .oc-secs, .oc .oc-ft { padding-left: var(--gx); padding-right: var(--gx); }
+@media (min-width: 701px) { .oc-secs { padding-left: calc(var(--gx) + 40px); } }
+.fc { padding: 26px 32px 20px; }
+@media (max-width: 700px) { .fc { padding: 20px 20px 14px; } }
+html:not(.share) .oc-fx .os-in { padding: clamp(20px, 2.4vw, 36px) var(--gx) clamp(16px, 2vw, 28px); gap: 14px; }
+.oc-hd.hda .os.front { margin-left: calc(var(--gx) + 40px); margin-right: var(--gx); }
+html .oc-srcs { padding-left: var(--gx); padding-right: var(--gx); }
+@media (max-width: 700px) { .oc-hd.hda .os.front { margin-left: var(--gx); margin-right: var(--gx); } }
 /* ㉞ 手機長頁（2026-11-17，使用者三件都照建議；「對於交互，動效，還是要保留原本的精華」）：寬 700px 以下，週期、價位、賣壓、買盤、槓桿五頁每段只畫第一張（主卡），其他收成清單列；今天、出場兩頁和電腦版不變。
    1 清單一列＝圖名、一句白話、最新值、迷你走勢；點了打開全螢幕放大檢視（從那一列長出來，和點卡片一樣），左右滑換同一段的下一張。今天有訊號的列前面一顆會呼吸的訊號點，訊號膠囊照樣數得到、點得到。
    2 主卡瘦身（.fc.ph）：大數字下面直接接一句結論（拿掉「讀數」小標和重複的標題）；按鈕併成一排可左右捲，「分／疊」在手機上拿掉；圖例只留主角那條線，其他的點「＋N」才展開；底部統計和 30 天對比收起來，放大檢視裡都在。
@@ -1593,7 +1605,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
     <div class="oc-fx" id="oc-fx" hidden><article class="os front"><div class="os-in"><div class="os-h"><span class="k" id="oc-fxk"></span><h3 id="oc-fxt"></h3><span class="sub" id="oc-fxq"></span><span class="rg" id="oc-fxc" role="group"></span><button type="button" class="fx-x" id="oc-fxl" data-fxl="1">複製連結</button><button type="button" class="fx-x" id="oc-fxd" data-fxd="1">下載圖片</button><button type="button" class="fx-x" id="oc-fxm" data-fxm="1">只看圖</button><button type="button" class="fx-x" id="oc-fxx" data-x="1">關閉</button></div><div class="os-b"><div class="og"><div class="ol" id="oc-olF"></div><div class="or" id="oc-orF"></div></div></div></div></article></div>
   </div>
 </section>
-<script src="data/next.js?v=8b6cfcc450"></script>
+<script src="data/next.js?v=2577d1de5d"></script>
 <script>
 const D = window.DAYBREAK_NEXT;
 const $ = (s, r = document) => r.querySelector(s), $$ = (s, r = document) => [...r.querySelectorAll(s)];
