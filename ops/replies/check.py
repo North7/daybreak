@@ -221,6 +221,11 @@ def check():
             if not HASH.search(q): err.append(f'{tag} 引用文結尾要帶 hashtag 關鍵詞（見 README「hashtag」）')
         if it.get('mode') not in (None, 'reply', 'quote'): err.append(f'{tag} mode 只能是 reply／quote')
         if it.get('mode') == 'quote' and not q: err.append(f'{tag} mode 是 quote 但沒有 quote 文字')
+        # 2026-11-20 使用者：英文「只引用」（Gemini 看歷史：英文回覆和英文自說自話的短文 31–115 瀏覽，只有回大帳號的引用有量）。
+        # 英文只做引用：表二的大帳號（5 萬粉以上）、mode quote；別人回我們的英文接話（kind followup）照常回
+        if (R.get('date') or '') >= '2026-11-20' and it.get('lang') == 'en' and it.get('kind') != 'followup' and it.get('status') != 'skip':
+            if it.get('mode') != 'quote' or not q: err.append(f'{tag} 英文只做引用（2026-11-20 使用者：「只引用」）：改成 mode "quote"，或不回')
+            elif (it.get('followers') or 0) < 50000: err.append(f'{tag} 英文引用只引大帳號（5 萬粉以上，跟表二同一條）：@{it.get("author")} {it.get("followers") or 0:,} 粉，不引')
         if it.get('image') and not os.path.exists(os.path.join(ROOT, 'data', 'replies', f'{it["n"]}.png')):
             err.append(f'{tag} 有 image 但 data/replies/{it["n"]}.png 不存在（先跑 cards.py）')
     err += repeat_errors(R.get('items', []))
