@@ -204,7 +204,7 @@ def check():
         if not t and not (it.get('mode') == 'quote' and it.get('quote')): err.append(f'{tag} 沒有回覆內容')   # 只引用不回覆的可以留空（2026-11-06）
         if t and it.get('lang') == 'zh' and not it.get('posted') and REPLY_ONLY.search(t): err.append(f'{tag} 回覆 AI 腔（「說明」）：回覆直接把意思講出來，「說明」是長文的動作（voice.md 第四輪，2026-11-11）')
         rlim = 25000 if it.get('long') and not it.get('quote') else 280   # 2026-11-15 使用者要長篇回覆（Premium）：回覆也可以 "long": true，X 先露前 280 字左右，重點放前面
-        if t: err += [e for e in text_errors(tag + ' 回覆', t, it.get('lang'), rlim) if not (it.get('posted') and ('英文常用名' in e or 'AI 腔' in e or '改成百分數' in e))]   # 已發出的不用改（規則是發出之後才加的，2026-11-09）
+        if t: err += [e for e in text_errors(tag + ' 回覆', t, it.get('lang'), rlim) if not (it.get('posted') and ('英文常用名' in e or 'AI 腔' in e or '改成百分數' in e)) and not ('打分數' in e and R.get('date', '') < PRAISE_FROM)]   # 11/20 的新擋只管規則訂了之後寫的；replies.json 沒有「已發出」的標記，用檔案日期分   # 已發出的不用改（規則是發出之後才加的，2026-11-09）
         if t and not it.get('long') and ONE_LINE.search(t): err.append(f'{tag} 回覆一行裡有兩句（「{ONE_LINE.search(t).group(0)}」）：每句話換一行，見 voice.md 2026-11-08')
         if HASH.search(t): err.append(f'{tag} 回覆不加 hashtag（引用文和快訊才加）')
         q = it.get('quote')
@@ -283,6 +283,7 @@ ECHO = re.compile(r'我這邊(也|的數據也|看到的也|算的也)?|跟你(�
 
 
 # 2026-11-20 使用者（貼 11/19 165 則角度分析）：AI 味在「同意＋補充」，第一句先幫原文打分數（這個觀察很準、拆出來很有用、這個說法我同意、好問題、只同意一半）。直接講自己的看法，見 voice.md「回覆角度的 AI 指紋」
+PRAISE_FROM = '2026-11-20'   # 這天以前的 replies.json（多半已發出）不擋 PRAISE
 PRAISE = re.compile(r'^(好問題|只同意一半|同意)|(觀察|說法|拆法|對照|比喻|設計|問題|角度|分法|比較|整理|提醒|快照|習慣)[^，,\n]{0,4}?(做得|寫得|抓得)?(很|真|挺|蠻|超)?(準|好|妙|有用|貼切|實在|誠實|到位|完整|清楚)|(說法|觀點|看法|結論|這句)[^，,\n]{0,3}我(很|也)?(同意|認同|喜歡)|我(很|也)?(同意|認同)(你|他)?(的|這|說)|我(很)?喜歡(這|你)|'
                     r'^(great|good|fair|solid|nice) (point|question|call|take|catch)|\b(love|like) (this|the|your) (framing|take|breakdown|point)', re.I)
 
