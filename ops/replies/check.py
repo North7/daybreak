@@ -56,6 +56,11 @@ AI_WORDS = re.compile(r'(算法|演算法|公式|算的方式)(不一樣|不同|
                       r'很多人說|不少人說|大家都說|某種程度|一定程度上|本質上|換句話說|不難發現|毋庸置疑|顯而易見|凸顯了?|彰顯|體現了|只能當個?參考|說得好|好文|感謝分享|謝謝分享|受教了|學到了|兩堆|分堆|幾堆|那堆|這堆|第[一二三]堆|——|—', re.I)   # 2026-11-09 使用者：「分成兩堆，沒人會用堆來形容」→ 分類寫「兩種走法」；「一堆多單」這種量詞不擋
 # 只提醒、不擋：一天裡出現太多次才是問題
 CONTRAST = re.compile(r'不是[^，。？\n]{1,24}[，,、 ]?(而)?是|不等於|\bnot (just |only )?an? [^,.]{1,30}, (but )?|, not an? |isn\'t [^,.]{1,30}[,.] it\'s|rather than', re.I)
+# 2026-11-20 Gemini 三篇改稿學到的（voice.md「去 AI 味第五輪」）：只提醒、不擋
+SELFQA_SHORT = re.compile(r'[^。？！\n]{2,30}？[^。？！\n？]{1,8}。')   # 問完自己馬上短答：「是誰砸出來的？長期持有者。」
+SELFQA = re.compile(SELFQA_SHORT.pattern + r'|(?:^|\n)[^。？！\n]{0,6}(?:那|所以)?[^。？！\n]{2,20}(?:嗎|呢|什麼樣|怎麼樣)？')   # 長文段落用問句破題；回覆不用這條（回覆問對方是對的，見 ask-friendly-question）
+BRIDGE = re.compile(r'還有一件事|順帶一提|更(?:扎心|重要|關鍵|有意思|可怕|諷刺)的是|說到這裡|是這個：|看得到來源：|答案是|只有一件事：|只有一種：|能說的只有|問題出在|最常被點名的是|？因為|結果呢？')
+FANYI = re.compile(r'(?:後|之後|那天)[^，。\n]{0,10}比較(?:高|低)|讀不出|有一塊看得到|最常被點名|它告訴你|告訴我們|值得一看的是')
 DECIMAL = re.compile(r'\d\.\d')
 QEND = re.compile(r'[？?]\s*$')
 # 2026-11-06 依 @lieflat_3 配對實測（voice.md AI 腔清單）：逐句提醒、不擋
@@ -120,10 +125,12 @@ def longpost_notes(tag, t, lang, posted=None):
         if len(re.findall(r'\d[\d,.]*\s*(?:%|億|萬|美元|顆|倍|天|次|百分位)', first)) >= 2: out.append(f'{tag} 第一句在列數據（「{first[:24]}…」）：開頭先接交易的人心裡的問題（是不是底、支撐還算不算、該等什麼訊號、這個消息要不要當回事）並直接答，數字和指標解釋放後面')
     if lang == 'zh' and not posted and '以上是讀數' in body: out.append(f'{tag} 結尾改成「純看數據，不是買賣建議」（2026-11-20 使用者：「讀數」是直譯腔）')
     if lang == 'zh' and not posted:   # 2026-11-20 使用者貼 Gemini 改稿：自問自答、「還有一件事」這種過渡、「是這個：」揭曉都是簡報腔
-        qa = re.findall(r'[^。？！\n]{2,30}？[^。？！\n]{1,8}。', body) + re.findall(r'(?:^|\n)[^。？！\n]{0,6}(?:那|所以)?[^。？！\n]{2,20}(?:嗎|呢|什麼樣|怎麼樣)？', body)
+        qa = SELFQA.findall(body)
         if qa: out.append(f'{tag} 自問自答 {len(qa)} 處（「{qa[0].strip()[:20]}」）：直接講答案，問句留給讀者心裡的問題，正文不要自己問自己答')
-        tr = re.findall(r'還有一件事|順帶一提|更(?:扎心|重要|關鍵|有意思|可怕|諷刺)的是|說到這裡|換句話說|是這個：|看得到來源：|答案是|只有一件事：|只有一種：|能說的只有|問題出在|最常被點名的是|？因為', body)
+        tr = BRIDGE.findall(body)
         if tr: out.append(f'{tag} 簡報式過渡 {"、".join(dict.fromkeys(tr))}：拿掉，直接接下一件事')
+        fy = FANYI.findall(body)
+        if fy: out.append(f'{tag} 直譯腔 {"、".join(dict.fromkeys(fy))}：換成講行情的人會說的（比較高→高過當時／漲回來；讀不出方向→看它猜不出；有一塊看得到→明牌的…擺著）')
     if not TRADE.search(body): out.append(f'{tag} 沒看到「對交易來說這代表什麼」的句子：是不是訊號（跟隨便挑一天比，帶次數）、什麼價位／數字翻過去讀法就換、風險偏哪邊、哪種感覺是雜訊，挑一種寫（voice.md「要有交易上的意義」2026-11-09）')
     return out
 
@@ -331,6 +338,9 @@ def tone_notes(items):
     if len(R) < 5: return []
     n = len(R); out = []
     def share(f): return sum(1 for it in R if f(it['reply'])) / n
+    for name, rx in (('自問自答', SELFQA_SHORT), ('簡報式過渡', BRIDGE), ('直譯腔', FANYI)):   # 2026-11-20 Gemini 三篇改稿
+        hit = [it.get('n') for it in R if rx.search(it['reply'])]
+        if hit: out.append(f'{name}：{hit}，直接講（voice.md「去 AI 味第五輪」）')
     c = [it['n'] for it in R if CONTRAST.search(it['reply'])]
     if len(c) > max(2, n // 8): out.append(f'對比句（不是 X 是 Y／X 不等於 Y／not X）{len(c)} 則：{c}，一天一兩次就好')
     if share(lambda t: len(DECIMAL.findall(t)) >= 1) > 0.3: out.append(f'帶小數的回覆 {share(lambda t: DECIMAL.search(t)):.0%}，超過三成：能取整就取整')
@@ -496,6 +506,13 @@ REGRESS = [
     ('en', 'At the end of the day, nobody is buying'),
     ('en', 'Lots of people read this as capitulation'),
 ]
+REGRESS_LONG = [   # 2026-11-20 Gemini 三篇改稿前的原句：longpost_notes 要一直提醒得到（擋的只能加不能刪）
+    ('自問自答', '那種很深的更低點是誰砸出來的？長期持有者。'), ('自問自答', '那接下來會補漲嗎？2018 年以來，有 17 次。'),
+    ('簡報式過渡', '還有一件事。那 20 次裡，先漲的有 12 次。'), ('簡報式過渡', '問題出在 0.4 是什麼時候出現的。'),
+    ('簡報式過渡', '它能說的只有一件事：拿 0.4 當門檻會晚很多。'), ('簡報式過渡', '更扎心的是，那 17 次裡 Nasdaq 有 13 次是漲的。'),
+    ('直譯腔', '三個月後只有 6 次比較高。'), ('直譯腔', '所以美股漲不漲，讀不出 BTC 的方向。'), ('直譯腔', '賣壓有一塊看得到，ETF 淨流出。'),
+    ('結尾改成', '以上是讀數，不是買賣建議。'),
+]
 REGRESS_REPLY = ['週日那次爆倉完，年化費率隔天不降反升，說明被清掉的位置馬上有人補回去']   # 11/11 回覆裡的「說明」
 # 11/10 的四段模板（宣告反應→數據→說明→條件句），整批放進 tone_notes 一定要被點名
 REGRESS_BATCH = ['你要看的兩點，費率那條我先潑個冷水\n週日那次爆倉完，費率隔天不降反升\n今晚的要等明天才看得到，要是又沒降就得打問號',
@@ -509,6 +526,7 @@ REGRESS_BATCH = ['你要看的兩點，費率那條我先潑個冷水\n週日那
 def regress():
     """去 AI 味不往回走：以前退過的句子和模板，現在的規則一定要還抓得到。"""
     err = [f'去 AI 味規則倒退了：「{t}」現在不會被擋（voice.md「不往回走」，擋的詞只能加不能刪）' for l, t in REGRESS if not text_errors('x', t, l)]
+    err += [f'去 AI 味規則倒退了：長文「{t[:16]}…」不再被提醒「{k}」（voice.md「去 AI 味第五輪」）' for k, t in REGRESS_LONG if not any(k in x for x in longpost_notes('x', '標題\n\n我看了。\n' + t, 'zh'))]
     err += [f'去 AI 味規則倒退了：回覆裡的「說明」不再被擋（「{t[:20]}…」）' for t in REGRESS_REPLY if not REPLY_ONLY.search(t)]
     if not take_notes([{'n': 1, 'status': 'send', 'reply': 'ETF 這 7 天流出換成幣約 2.7 萬顆', 'angle': '補數據：流出換成顆數'}]): err.append('看法提醒倒退了：看不到看法的回覆不再被列出來（2026-11-17 使用者：需要先有觀點；只提醒、不擋）')
     tn = '\n'.join(tone_notes([{'n': i + 1, 'reply': t, 'lang': 'zh', 'status': 'send'} for i, t in enumerate(REGRESS_BATCH)]))
