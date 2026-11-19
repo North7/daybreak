@@ -987,6 +987,94 @@
    "style": "口語版",
    "status": "skip",
    "order": 45
+  },
+  {
+   "n": 48,
+   "order": 0,
+   "status": "send",
+   "url": "https://x.com/A9dengbo/status/2123246293791436976",
+   "id": "2123246293791436976",
+   "author": "A9dengbo",
+   "followers": 25460,
+   "posted": "2026-11-19T02:45:39Z",
+   "lang": "zh",
+   "angle": "同意他的分法，補幣圈裡那條流",
+   "summary": "BTC 盤中跌穿 6.3 萬；資金三模式：增量簡單、存量難、流出地獄；ETF 淨流出、穩定幣沒擴表，還在流出檔",
+   "take": "不只沒擴表，穩定幣是在縮，而且縮得很快",
+   "reply": "「流出是地獄模式」這個分法很好用\n而且穩定幣不只是沒擴表，這 30 天少了 162 億美元，2020 年以來很少縮這麼快\n你那三檔裡，從流出切回存量，會先看哪一條？",
+   "sources": [
+    "data/latest.json stables（286.3B，30 天 −16.2B，落在 2020 年以來第 1.5 百分位，11/18）"
+   ],
+   "note": "固定名單 4c，發文 10:45。他文中的分批建倉計畫不接。配穩定幣總供給。問句是請教他的框架",
+   "image": {
+    "site": {
+     "k": "stab"
+    },
+    "title": "穩定幣 30 天少了 162 億美元"
+   },
+   "style": "口語版"
+  },
+  {
+   "n": 49,
+   "kind": "followup",
+   "order": 1,
+   "status": "send",
+   "url": "https://x.com/serlo123/status/2123263589050134944",
+   "id": "2123263589050134944",
+   "author": "serlo123",
+   "followers": 9481,
+   "posted": "2026-11-19T03:54:22Z",
+   "lang": "zh",
+   "angle": "接話：整體還賺是不是因為屯幣黨多",
+   "take": "屯幣的人有，但主因是這輪漲得沒那麼瘋",
+   "summary": "整體是賺，是不是因為屯幣黨多、不在乎漲跌？再 10 天沒新低大概率熬過去，新低看 57K 左右",
+   "reply": "10 天這個時間點我記下了 😂\n屯幣的人是一部分，不過這輪本來就漲得沒那麼瘋，大家的成本沒墊得很高",
+   "sources": [
+    "data/latest.json cycle_cmp（頂部後第 408 天 −49.5%，前三輪 −75% 到 −83%）"
+   ],
+   "note": "接話第 2 輪。他推的 57K 不接",
+   "style": "口語版"
+  },
+  {
+   "n": 50,
+   "kind": "followup",
+   "order": 2,
+   "status": "send",
+   "url": "https://x.com/serlo123/status/2123264162751209955",
+   "id": "2123264162751209955",
+   "author": "serlo123",
+   "followers": 9481,
+   "posted": "2026-11-19T03:56:39Z",
+   "lang": "zh",
+   "angle": "接話：他問 62K 到位了沒",
+   "take": "不猜底，講 62K 這裡疊了什麼",
+   "summary": "看宏觀 54K 也合理，最多插針破前底；覺得 62K 已經到位，你覺得呢？",
+   "reply": "我不太猜底 😂\n62K 這裡剛好疊了兩樣東西，新款礦機的關機價在這附近，下面一點就是多單清算最密的那段\n疊在一起，這裡應該會吵一陣子",
+   "sources": [
+    "data/latest.json miners breakeven 20J@0.06 = 62,426",
+    "data/latest.json deriv.liq_heat below 60,800–62,000（15,136 BTC，推算）"
+   ],
+   "note": "接話，在長文底下。不給方向、不接他的 54K",
+   "style": "口語版"
+  },
+  {
+   "n": 51,
+   "kind": "followup",
+   "order": 3,
+   "status": "skip",
+   "url": "https://x.com/Kelly88Eth/status/2123262932201144636",
+   "id": "2123262932201144636",
+   "author": "Kelly88Eth",
+   "followers": 5780,
+   "posted": "2026-11-19T03:51:46Z",
+   "lang": "zh",
+   "angle": "按讚就好",
+   "take": "",
+   "summary": "確實是補票，日線早就先破了",
+   "reply": "",
+   "sources": [],
+   "note": "按讚就好：附和、沒有新東西可接。",
+   "style": "口語版"
   }
  ]
 }
