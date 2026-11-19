@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://daybreak.aronlab.dev/sitemap.xml

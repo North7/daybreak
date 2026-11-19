@@ -13,6 +13,17 @@ import subprocess, hashlib
 HERE = os.path.dirname(os.path.abspath(__file__))
 L = json.load(open(os.path.join(REPO, 'data', 'latest.json'), encoding='utf-8'))
 N = json.load(open(os.path.join(REPO, 'data', 'notes.json'), encoding='utf-8'))
+# 2026-11-19 使用者同意 Gemini 的建議：發現與追蹤的文字裡出現「2026-11-16-1」這種原始代號，讀者看不懂。顯示時換成「11/16 第 1 則發現」／"finding 1 of Nov 16"
+#   （id、since 欄位本身不動；notes_lint 也會擋，這裡是寫漏時的保險）
+import re as _re
+_RID = _re.compile(r'( ?)(?<![\d-])(20\d\d)-(\d\d)-(\d\d)-(\d{1,2})(?![\d-])( ?)')   # 中文：前面的空格留著（數字前），後面的拿掉（換成的字以中文結尾）
+_MON = 'Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec'.split()
+def _rid(o, en, k=''):
+    if isinstance(o, dict): return {k_: (v if k_ in ('id', 'since') else _rid(v, en, k_)) for k_, v in o.items()}
+    if isinstance(o, list): return [_rid(v, en, k) for v in o]
+    if isinstance(o, str): return _RID.sub((lambda m: '%sfinding %d of %s %d%s' % (m[1], int(m[5]), _MON[int(m[3]) - 1], int(m[4]), m[6])) if en else (lambda m: '%s%d/%d 第 %d 則發現' % (m[1], int(m[3]), int(m[4]), int(m[5]))), o)
+    return o
+N = _rid(N, False)
 # 2026-11-18 使用者：「右邊寫 17 日收盤版，但看起來判讀內容沒變」。整期一起換（2026-11-06 的規則，舊版 app.js 的 HELD；新版漏了）：
 #   資料管線先寫好新一天的 latest.json，日報判讀約 15–30 分鐘後才提交。這段時間判讀還是上一期，就整期沿用上一份數字（latest.prev.json，
 #   pipeline/build.py 換日前存的），日期、價格、卡片都和判讀對得上；判讀一提交（share.yml 重建）就整期換新
@@ -75,11 +86,11 @@ full = [e for e in L['flows']['etf'] if not e.get('partial')]
 sc = L['flows']['stables']; stg = L['cycle']['stage']; fl = L['chips']['flow']
 brk = [b for b in w50['breaks'] if b.get('weeks') is not None]
 import oc_data
-E_ = json.load(open(os.path.join(REPO, 'data', 'notes.en.json'), encoding='utf-8')) if os.path.exists(os.path.join(REPO, 'data', 'notes.en.json')) else None
+E_ = _rid(json.load(open(os.path.join(REPO, 'data', 'notes.en.json'), encoding='utf-8')), True) if os.path.exists(os.path.join(REPO, 'data', 'notes.en.json')) else None
 import site_data
 SITE = site_data.build(L, N, E_, dn)
 import say_data, reads
-_NE = json.load(open(os.path.join(REPO, 'data', 'notes.en.json'), encoding='utf-8')) if os.path.exists(os.path.join(REPO, 'data', 'notes.en.json')) else None
+_NE = E_
 print('reads', reads.apply(SITE['chapters'], L, N, _NE))   # 2026-11-17 新版自己產生的讀數（reads.py），做好的頁不再用舊版的
 print('say', say_data.attach(SITE['chapters'], L))
 def _lean_flip():
@@ -153,5 +164,22 @@ open(os.path.join(REPO, 'data', 'next.js'), 'w', encoding='utf-8').write('window
 print('split:', ', '.join('%s %d KB' % (f, os.path.getsize(os.path.join(REPO, 'data', f)) // 1024) for f in sorted(keep)))
 ver = hashlib.sha1(js.encode('utf-8')).hexdigest()[:10]
 page = open(os.path.join(HERE, 'page.html'), encoding='utf-8').read(); assert page.count('data/next.js?v=__V__') == 1
+# 2026-11-19 SEO（使用者同意 Gemini 的建議）：頁面內容全靠 JS 畫，原始 HTML 裡沒有今天的結論，爬蟲幾乎抓不到字。
+#   把當期日期、頭條、摘要（中英）直接寫進 HTML（#oc-static，頁面跑起來就藏起來），另外寫 sitemap.xml
+import html as _h
+def _static():
+    NE_ = E_ or {}; st = N.get('stance') or {}; ste = NE_.get('stance') or {}
+    d0 = L['meta']['bar_date']; m_, d_ = int(d0[5:7]), int(d0[8:10])
+    zh = '<section lang="zh-Hant"><h2>%s 收盤版 No.%s</h2><p><strong>%s</strong></p><p>%s</p>%s</section>' % (d0.replace('-', '/'), N.get('edition'), _h.escape(N['headline']), _h.escape(N['summary']), '<p>%s</p>' % _h.escape(st['label']) if st.get('label') else '')
+    en = ('<section lang="en"><h2>%s %d close edition, No.%s</h2><p><strong>%s</strong></p><p>%s</p>%s</section>' % (_MON[m_ - 1], d_, N.get('edition'), _h.escape(NE_['headline']), _h.escape(NE_.get('summary') or ''), '<p>%s</p>' % _h.escape(ste['label']) if ste.get('label') else '')) if NE_.get('headline') else ''
+    return ('<main id="oc-static"><h1>Daybreak</h1><p>每天清晨的第一份比特幣簡報：週期、關鍵價位、誰在賣、誰在買、槓桿。 The first Bitcoin brief of the morning: cycle, key levels, who is selling, who is buying, leverage.</p>'
+            + zh + en + '<p><a href="case-study/">Case study</a></p></main>')
+assert page.count('<!--STATIC-->') == 1
+page = page.replace('<!--STATIC-->', _static())
+open(os.path.join(REPO, 'sitemap.xml'), 'w', encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
+    + ''.join('<url><loc>%s</loc><lastmod>%s</lastmod>%s</url>\n' % (u, lm, x) for u, lm, x in (
+        ('https://daybreak.aronlab.dev/', L['meta']['bar_date'], '<changefreq>daily</changefreq><xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/?lang=zh"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/?lang=en"/>'),
+        ('https://daybreak.aronlab.dev/case-study/', '2026-11-19', ''), ('https://daybreak.aronlab.dev/case-study/en/', '2026-11-19', '')))
+    + '</urlset>\n')
 open(os.path.join(REPO, 'index.html'), 'w', encoding='utf-8').write(page.replace('data/next.js?v=__V__', 'data/next.js?v=' + ver))
 print('wrote data/next.js', len(js), 'bytes; index.html', len(page), 'bytes; v=' + ver, '| bar', D['date'], '| notes', N.get('date'))

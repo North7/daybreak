@@ -148,6 +148,11 @@ def lint_findings(n, en, L, prev):
     fu = n.get('followups') or []; have = {f.get('id') for f in fu}
     miss = [x for x in pf if x not in have]
     if miss: bad.append(f'followups 缺上一期的：{miss}（每則上期 finding 與 open 的追蹤都要列一筆）')
+    # 2026-11-19：文字裡不寫原始代號（「和 2026-11-16-1 同一組條件」讀者看不懂），寫「11/16 第一則發現」或直接寫那則的結論；id、since 欄位不算
+    for doc, tag in ((n, ''), (en or {}, '英文版 ')):
+        for p, t in texts({k: v for k, v in doc.items() if k in ('findings', 'followups', 'summary', 'headline', 'actions', 'changes', 'modules', 'cards')}):
+            if p.endswith(('.id', '.since')): continue
+            for m in re.finditer(r'(?<![\d-])20\d\d-\d\d-\d\d-\d{1,2}(?![\d-])', t): bad.append(f'{tag}{p} 寫了原始代號 {m.group(0)}：改寫成「{int(m.group(0)[5:7])}/{int(m.group(0)[8:10])} 第 {int(m.group(0)[11:])} 則發現」或直接寫那則的結論')
     for f in fu:
         if f.get('status') not in STATUS: bad.append(f'followup {f.get("id")} status 要是 {"／".join(STATUS)}')
         if not f.get('say'): bad.append(f'followup {f.get("id")} 缺 say')
