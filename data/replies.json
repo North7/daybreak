@@ -4,8 +4,50 @@
  "edition": 44,
  "items": [
   {
-   "n": 36,
+   "n": 46,
    "order": 0,
+   "status": "send",
+   "url": "https://x.com/BidaoOfficial/status/2123249799382126654",
+   "id": "2123249799382126654",
+   "author": "BidaoOfficial",
+   "followers": 33254,
+   "posted": "2026-11-19T02:59:34Z",
+   "lang": "zh",
+   "angle": "順著補充",
+   "summary": "ETF 資金面與排雷日曆：現貨 BTC ETF 仍在失血，最新一天淨流出 2.399 億美元、IBIT 佔 87%，11 月累計淨贖回約 25.8 億；另列今晚宏觀數據、Anthropic 掛牌、Deribit 交割時間",
+   "take": "這不是哪一天突然失血，是連著一個月慢慢流的",
+   "reply": "這波不是哪一天突然失血，是連著一個月慢慢流出來的\n近 20 個交易日加起來流出 28.6 億美元，機構買盤沒回來這句沒說錯",
+   "sources": "現貨 ETF 近 20 個交易日合計 −$2,864M（etf20，到 11/17），11/9 起低於 −$1,500M · CMC",
+   "note": "★ 1 小時內（發文 10:59，截止 11:59）。inbox 1105 #1，3.3 萬粉曝光型，今天第 2 則大帳號。配 ETF 近 20 個交易日合計",
+   "image": {
+    "site": {
+     "k": "etf20"
+    },
+    "title": "ETF 不是一天失血，是流了一個月"
+   },
+   "style": "口語版"
+  },
+  {
+   "n": 47,
+   "order": 1,
+   "status": "send",
+   "url": "https://x.com/ProfitHusky/status/2123241160596402247",
+   "id": "2123241160596402247",
+   "author": "ProfitHusky",
+   "followers": 2019,
+   "posted": "2026-11-19T02:25:15Z",
+   "lang": "en",
+   "angle": "補一個讀法",
+   "summary": "No bull run till spring 2027; day 407, Bitcoin holding above summer lows perfectly; boredom and 'crypto is dead' posts are bottom signals; study 2015, 2018, 2022",
+   "take": "守是守住了，但墊子很薄，而且那個低點還在測試期",
+   "reply": "Holding so far, with about 7% of cushion over the June 30 low\nOn the cycle model I follow, that low is still flagged as being tested, and the window runs to Dec 19",
+   "sources": "6/30 低點 $58,525，11/18 收盤 62,985（+7.6%）；Tidemark（tm）：到 2026/12/19 都沒跌破 $58,525 才支持「這個低點是週期底部」",
+   "note": "inbox 1105 #18，英文，發文 10:25，12:25 前回。2027 的預測不評。不配圖（2 千粉）",
+   "style": "口語版"
+  },
+  {
+   "n": 36,
+   "order": 2,
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2123251605026066903",
    "id": "2123251605026066903",
@@ -23,7 +65,7 @@
   },
   {
    "n": 37,
-   "order": 1,
+   "order": 3,
    "status": "send",
    "url": "https://x.com/lidmhun171644/status/2123242148447584561",
    "id": "2123242148447584561",
@@ -42,7 +84,7 @@
   },
   {
    "n": 38,
-   "order": 2,
+   "order": 4,
    "status": "send",
    "url": "https://x.com/moorechain/status/2123248780443365408",
    "id": "2123248780443365408",
@@ -60,7 +102,7 @@
   },
   {
    "n": 39,
-   "order": 3,
+   "order": 5,
    "status": "send",
    "url": "https://x.com/linjiu321/status/2123252314739753051",
    "id": "2123252314739753051",
@@ -79,7 +121,7 @@
   },
   {
    "n": 40,
-   "order": 4,
+   "order": 6,
    "status": "send",
    "url": "https://x.com/serlo123/status/2123250639740580232",
    "id": "2123250639740580232",
@@ -97,7 +139,7 @@
   },
   {
    "n": 41,
-   "order": 5,
+   "order": 7,
    "status": "send",
    "url": "https://x.com/erichsu_eth/status/2123224756443140226",
    "id": "2123224756443140226",
@@ -115,7 +157,7 @@
   },
   {
    "n": 42,
-   "order": 6,
+   "order": 8,
    "status": "send",
    "url": "https://x.com/xiaoxiaoli0/status/2123234188942102941",
    "id": "2123234188942102941",
@@ -133,7 +175,7 @@
   },
   {
    "n": 43,
-   "order": 7,
+   "order": 9,
    "status": "send",
    "url": "https://x.com/Anonymous1Net/status/2123232622243717151",
    "id": "2123232622243717151",
@@ -151,7 +193,7 @@
   },
   {
    "n": 44,
-   "order": 8,
+   "order": 10,
    "status": "send",
    "url": "https://x.com/Kelly88Eth/status/2123216670680564109",
    "id": "2123216670680564109",
@@ -169,7 +211,7 @@
   },
   {
    "n": 45,
-   "order": 9,
+   "order": 11,
    "status": "send",
    "url": "https://x.com/keliusea/status/2123227256222888186",
    "id": "2123227256222888186",
@@ -208,7 +250,7 @@
     },
     "title": "收盤在短期持有者成本下面快 15%"
    },
-   "order": 10
+   "order": 12
   },
   {
    "n": 31,
@@ -229,7 +271,7 @@
    "note": "我們原創底下，不設輪數上限；接回長文自己的論點，不放數字。",
    "style": "口語版",
    "status": "send",
-   "order": 11
+   "order": 13
   },
   {
    "n": 32,
@@ -248,7 +290,7 @@
    "note": "原作者接話第 1 輪，閒聊短短接一句、不放數字。他 10:02 的 Line 2 帖和 09:42 的加倉帖不另外寫（同一作者今天已有 #2；加倉帖是買賣動作）。",
    "style": "口語版",
    "status": "send",
-   "order": 12
+   "order": 14
   },
   {
    "n": 33,
@@ -269,7 +311,7 @@
    "note": "原作者接話第 1 輪，短短接一句。",
    "style": "口語版",
    "status": "send",
-   "order": 13
+   "order": 15
   },
   {
    "n": 34,
@@ -290,7 +332,7 @@
    "note": "原作者接話第 1 輪，一句就好；接話不算進英文三成。",
    "style": "口語版",
    "status": "send",
-   "order": 14
+   "order": 16
   },
   {
    "n": 35,
@@ -309,7 +351,7 @@
    "note": "按讚就好：話題轉到 NAT（山寨幣），不接。",
    "style": "口語版",
    "status": "skip",
-   "order": 44
+   "order": 46
   },
   {
    "n": 15,
@@ -329,7 +371,7 @@
    "note": "Grok 0905 #1。熟帳號、4.4K 不配圖；價位那段不接。",
    "style": "口語版",
    "status": "send",
-   "order": 15
+   "order": 17
   },
   {
    "n": 16,
@@ -355,7 +397,7 @@
     },
     "title": "和前幾輪比：頂部後同一天"
    },
-   "order": 16
+   "order": 18
   },
   {
    "n": 17,
@@ -375,7 +417,7 @@
    "note": "Grok 0905 #4。熟帳號、3.1K 不配圖；不評 Armstrong。",
    "style": "口語版",
    "status": "send",
-   "order": 17
+   "order": 19
   },
   {
    "n": 18,
@@ -395,7 +437,7 @@
    "note": "Grok 0905 #5。礦工題 1/3；2.9K 不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 18
+   "order": 20
   },
   {
    "n": 19,
@@ -415,7 +457,7 @@
    "note": "Grok 0905 #6。礦工題 2/3；3K 不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 19
+   "order": 21
   },
   {
    "n": 20,
@@ -441,7 +483,7 @@
     },
     "title": "2 年期殖利率減聯準會利率"
    },
-   "order": 20
+   "order": 22
   },
   {
    "n": 21,
@@ -468,7 +510,7 @@
     },
     "title": "多空帳戶比：持多單的帳戶還有 73%"
    },
-   "order": 21
+   "order": 23
   },
   {
    "n": 22,
@@ -495,7 +537,7 @@
     },
     "title": "aSOPR：賠著賣的程度一年來最重"
    },
-   "order": 22
+   "order": 24
   },
   {
    "n": 23,
@@ -521,7 +563,7 @@
     },
     "title": "恐懼貪婪指數：極度恐懼"
    },
-   "order": 23
+   "order": 25
   },
   {
    "n": 24,
@@ -541,7 +583,7 @@
    "note": "Grok 0905 #11。熟帳號、ETF 題 2/3；8K 不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 24
+   "order": 26
   },
   {
    "n": 25,
@@ -561,7 +603,7 @@
    "note": "Grok 0905 #12。加息題 3/3；8.3K 不配圖；不碰抄底。",
    "style": "口語版",
    "status": "send",
-   "order": 25
+   "order": 27
   },
   {
    "n": 26,
@@ -581,7 +623,7 @@
    "note": "Grok 0905 #14。3.4K 不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 26
+   "order": 28
   },
   {
    "n": 27,
@@ -601,7 +643,7 @@
    "note": "Grok 0905 #15。2.3K 不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 27
+   "order": 29
   },
   {
    "n": 28,
@@ -621,7 +663,7 @@
    "note": "Grok 0905 #16。媒體帳號、熟；不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 28
+   "order": 30
   },
   {
    "n": 29,
@@ -641,7 +683,7 @@
    "note": "Grok 0905 #17。572 粉放寬，論點完整；12 小時窗到 12:29。",
    "style": "口語版",
    "status": "send",
-   "order": 29
+   "order": 31
   },
   {
    "n": 8,
@@ -667,7 +709,7 @@
     },
     "title": "BTC 和美股、黃金比：9/18 起"
    },
-   "order": 30
+   "order": 32
   },
   {
    "n": 9,
@@ -693,7 +735,7 @@
     },
     "title": "Versus past cycles: same day after the top"
    },
-   "order": 31
+   "order": 33
   },
   {
    "n": 10,
@@ -720,7 +762,7 @@
     },
     "title": "Estimated liquidation levels: longs are the closer cluster"
    },
-   "order": 32
+   "order": 34
   },
   {
    "n": 11,
@@ -740,7 +782,7 @@
    "note": "Grok 0905 #24。英文 2 小時窗到 10:50；4.2K 粉不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 33
+   "order": 35
   },
   {
    "n": 12,
@@ -760,7 +802,7 @@
    "note": "Grok 0905 #21。12 小時窗到 10:18；6.3K 粉不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 34
+   "order": 36
   },
   {
    "n": 13,
@@ -780,7 +822,7 @@
    "note": "Grok 0905 #20。12 小時窗到 10:28；1.1K 粉不配圖。",
    "style": "口語版",
    "status": "send",
-   "order": 35
+   "order": 37
   },
   {
    "n": 14,
@@ -800,7 +842,7 @@
    "note": "Grok 0905 #18。12 小時窗到 10:49；7.9K 粉不配圖；#19 同題跳過。",
    "style": "口語版",
    "status": "send",
-   "order": 36
+   "order": 38
   },
   {
    "n": 1,
@@ -827,7 +869,7 @@
    "note": "固定名單（1.3 小時、1.3 萬粉、英文 2 小時窗到台北 10:00），配 soprf。",
    "style": "口語版",
    "status": "send",
-   "order": 37
+   "order": 39
   },
   {
    "n": 2,
@@ -847,7 +889,7 @@
    "note": "固定名單（1.8 小時、4.4K 粉不配圖）。他講折扣、長期布局，回覆不接操作。",
    "style": "口語版",
    "status": "send",
-   "order": 38
+   "order": 40
   },
   {
    "n": 3,
@@ -868,7 +910,7 @@
    "note": "接話第 2 輪，有內容就接；觀點為主、不放新數字。",
    "style": "口語版",
    "status": "send",
-   "order": 39
+   "order": 41
   },
   {
    "n": 4,
@@ -887,7 +929,7 @@
    "note": "閒聊（2026-11-18 使用者：也可以有閒聊）；不接持倉、不給操作。",
    "style": "口語版",
    "status": "send",
-   "order": 40
+   "order": 42
   },
   {
    "n": 5,
@@ -906,7 +948,7 @@
    "note": "閒聊；他昨天回追過。",
    "style": "口語版",
    "status": "send",
-   "order": 41
+   "order": 43
   },
   {
    "n": 6,
@@ -925,7 +967,7 @@
    "note": "按讚就好：純稱讚。",
    "style": "口語版",
    "status": "skip",
-   "order": 42
+   "order": 44
   },
   {
    "n": 7,
@@ -944,7 +986,7 @@
    "note": "按讚就好：他的帖底下第 3 輪、沒問問題。",
    "style": "口語版",
    "status": "skip",
-   "order": 43
+   "order": 45
   }
  ]
 }
