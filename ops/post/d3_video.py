@@ -42,7 +42,7 @@ def main():
     k = job['k']; r45 = job.get('ratio', '45') == '45'; W, H = (1080, 1350) if r45 else (1600, 900)
     fps = job.get('fps', 30); dpr = job.get('dpr', 1); keys = sorted(job['keys'], key=lambda x: x['t'])
     events = sorted(job.get('events', []), key=lambda x: x['t']); end = job.get('end', keys[-1]['t'] + 2)
-    S.SITE = 'http://127.0.0.1:8790/index.html'
+    S.SITE = 'http://127.0.0.1:8790/app/index.html'   # 2026-11-20 數據頁搬到 /app/
     with S.browser(W, H=H, dpr=dpr, theme='dark', lang=job.get('lang', 'zh')) as (ws, view):
         ws.call('Emulation.setEmulatedMedia', features=[{'name': 'prefers-color-scheme', 'value': 'dark'}, {'name': 'prefers-reduced-motion', 'value': 'reduce'}])
         k0 = keys[0]

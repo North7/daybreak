@@ -28,7 +28,7 @@ import base64, json, os, sys, time
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 import site_shot as S
 
-SITE = 'http://127.0.0.1:8790/index.html'
+SITE = 'http://127.0.0.1:8790/app/index.html'   # 2026-11-20 數據頁搬到 /app/
 STAGE_RE = r'/・\s*持有|·\s*hold\b/i'   # 首頁大數字下的階段標籤（「深夜・持有」「Night · hold」）：動作結論，截圖錄影都不能露（2026-11-12 規則）
 BLOCK = lambda ch_id, k: ch_id == 'exit' or k.startswith('x_') or k in ('t_act', 'q_exit')   # 出場框架不進社群配圖
 

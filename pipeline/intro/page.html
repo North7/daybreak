@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Daybreak · 比特幣多維判讀</title>
 <script>
+/* 2026-11-20 根網址＝介紹頁，數據頁在 /app/。這段在最前面跑，下面三種情況直接轉去 /app/（網址參數、#錨點原封帶過去）：
+   1. 舊連結：帶 #（#onchain/sthsig 這種）或數據頁的參數（?share&k=…、?k=…、?m= 等，X 貼文、分享圖、運營截圖工具都在用）
+   2. 來過數據頁的人（數據頁會記 daybreak.seen），天天來的人不用每次看一遍動畫
+   3. 網址帶 ?intro 的（數據頁頁尾「Daybreak 是什麼」）不轉 */
+(function () { var s = location.search, h = location.hash, q = new URLSearchParams(s); if (q.has('intro')) return;
+  var go = /^#./.test(h) || ['share', 'k', 'm', 'sel', 'wk', 'fit', 'xr', 'yr', 'd3v'].some(function (k) { return q.has(k); });
+  if (!go) try { go = !!localStorage.getItem('daybreak.seen'); } catch (e) {}
+  if (go) { window.DAYBREAK_GO = 1; location.replace('app/' + s + h); } })();
+</script>
+<script>
 /* 語言：和首頁同一套規則（daybreak.lang 共用）。網址帶 ?lang= 就用那個語言，只管這一次 */
 window.DAYBREAK_LANG = (function () { var q = /[?&]lang=(zh|en)(&|$)/.exec(location.search); if (q) return q[1];
   var ls = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, p = ls('daybreak.lang'); if (p === 'zh' || p === 'en') return p;
@@ -18,21 +28,21 @@ document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant'
 <meta property="og:title" content="Daybreak · Bitcoin, read across every dimension">
 <meta property="og:description" content="100+ original and public Bitcoin indicators across on-chain, price structure, derivatives, flows and macro, read every day into one verdict. Every chart takes a side.">
 <meta property="og:image" content="https://daybreak.aronlab.dev/assets/og-en.png?v=20261112">
-<meta property="og:url" content="https://daybreak.aronlab.dev/intro/">
+<meta property="og:url" content="https://daybreak.aronlab.dev/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:image" content="https://daybreak.aronlab.dev/assets/og-en.png?v=20261112">
 <meta name="theme-color" content="#050506">
-<link rel="canonical" href="https://daybreak.aronlab.dev/intro/">
-<link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/intro/?lang=zh">
-<link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/intro/?lang=en">
-<link rel="alternate" hreflang="x-default" href="https://daybreak.aronlab.dev/intro/">
-<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
-<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
+<link rel="canonical" href="https://daybreak.aronlab.dev/">
+<link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/?lang=zh">
+<link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://daybreak.aronlab.dev/">
+<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter+Tight:wght@300..800&family=Geist+Mono:wght@400..600&family=Noto+Sans+TC:wght@400..900&display=swap">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-<script src="../data/intro.js?v=__V__"></script>
+<script src="data/intro.js?v=__V__"></script>
 <style>
 /* 介紹頁（2026-11-19，提案原型 claude.ai artifact 1Bh4EumRBdesZRMbDJpVdG 第 18 版定案）
    01 首屏：近景斜角的環形神經網路，前後化成光斑；橘色的放電在網上走；每張圖自己的小圖在四周忽隱忽現，像抽絲一樣被拉進它的神經元
@@ -128,7 +138,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Inter 
   <div><span class="tg"><i></i><span id="t-tag"></span></span><h1 id="t-h1"></h1></div>
   <div class="rt"><b id="cls"></b><span id="t-close"></span></div>
 </div>
-<header class="top"><div class="pill"><a class="lg" href="../" style="text-decoration:none"><svg viewBox="0 0 64 64"><path d="M18 40a14 14 0 0 1 28 0" fill="none" stroke="#FF4F1F" stroke-width="5"/><path d="M6 40h52" stroke="#EDEDE8" stroke-width="5"/></svg>DAYBREAK</a><span class="lv"><i></i><span id="t-upd"></span></span><span class="ix" id="clk"></span><span class="lgs" id="lgs"><button data-l="zh">中</button><button data-l="en">EN</button></span><a class="go" id="go" href="../"></a></div></header>
+<header class="top"><div class="pill"><a class="lg" href="app/" style="text-decoration:none"><svg viewBox="0 0 64 64"><path d="M18 40a14 14 0 0 1 28 0" fill="none" stroke="#FF4F1F" stroke-width="5"/><path d="M6 40h52" stroke="#EDEDE8" stroke-width="5"/></svg>DAYBREAK</a><span class="lv"><i></i><span id="t-upd"></span></span><span class="ix" id="clk"></span><span class="lgs" id="lgs"><button data-l="zh">中</button><button data-l="en">EN</button></span><a class="go" id="go" href="app/"></a></div></header>
 <a class="cue" id="cue" href="#"><span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6l4 4 4-4"/></svg><b id="t-cue" style="font-weight:inherit"></b></span><i></i></a>
 <div class="pn" id="pn"></div>
 <nav class="prog" id="prog"></nav>
@@ -150,7 +160,7 @@ let HOME, GO, dShow, LOG, PCS, pcs = [];
 /* 換語言時整頁的字重寫一遍（不重新載入，和首頁一樣原地換） */
 function paintLang() {
 setD(); LAYN = layN(); LMAX = Math.max(1, ...LAYN.map(l => l[1]));
-HOME = '../' + (LG ? '?lang=en' : ''); GO = T('打開今天的數據', "Open today's data");
+HOME = 'app/' + (LG ? '?lang=en' : ''); GO = T('打開今天的數據', "Open today's data");
 dShow = LG ? new Date(D.date + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : D.date;
 document.title = T('Daybreak · 比特幣多維判讀', 'Daybreak · Bitcoin, read across every dimension');
 $('#t-tag').textContent = T(`第 ${D.issue} 期 · 比特幣多維判讀`, `Issue ${D.issue} · Bitcoin, read across every dimension`);
@@ -606,6 +616,12 @@ function frame(now) {
   requestAnimationFrame(frame);
 }
 build(); makePoints(); requestAnimationFrame(frame);
+</script>
+<script>
+/* 訪客統計 GoatCounter（和數據頁同一個站點代號；不用 cookie、不收個資），只在正式網址、沒有轉走時計數 */
+(function () { if (window.DAYBREAK_GO || location.hostname !== 'daybreak.aronlab.dev') return;
+  var s = document.createElement('script'); s.async = true; s.src = 'https://gc.zgo.at/count.js';
+  s.setAttribute('data-goatcounter', 'https://daybreak.goatcounter.com/count'); document.head.appendChild(s); })();
 </script>
 </body>
 </html>

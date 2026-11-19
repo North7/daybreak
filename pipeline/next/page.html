@@ -5,6 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Daybreak</title>
 <script>
+/* 2026-11-20 根網址改放介紹頁，數據頁搬到 /app/。來過數據頁的人記一筆，之後打開根網址直接轉來這裡（介紹頁開頭的轉址） */
+try { localStorage.setItem('daybreak.seen', String(Date.now())); } catch (e) {}
 /* 2026-11-16 舊版（classic.html）對外下線：舊網址（#onchain/sthsig 這種）由主程式轉到新版對應的圖，見 ㉝ */
 /* 語言：使用者在任一版選過就沿用（daybreak.lang，和舊版共用）；沒選過看舊版查到的國家（快取 7 天），再沒有就看瀏覽器語言 */
 window.DAYBREAK_LANG = (function () { var q = /[?&]lang=(zh|en)(&|$)/.exec(location.search); if (q) return q[1];   /* 2026-11-16：網址帶 ?lang=en／zh 就用那個語言（只管這一次，不改記住的選擇）；給別人連結時用 */
@@ -25,7 +27,7 @@ document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant'
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Daybreak — the first Bitcoin brief of the morning">
-<meta property="og:url" content="https://daybreak.aronlab.dev/">
+<meta property="og:url" content="https://daybreak.aronlab.dev/app/">
 <meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:site" content="@songpu717">
 <meta name="twitter:title" content="Daybreak · The first Bitcoin brief of the morning">
@@ -34,14 +36,14 @@ document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant'
 <meta name="theme-color" content="#F2F0EA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0C0C0D" media="(prefers-color-scheme: dark)">
 <!-- 2026-11-19 SEO：同一頁、語言由網址 ?lang= 或瀏覽器決定；canonical 指首頁，hreflang 標出兩種語言的網址 -->
-<link rel="canonical" href="https://daybreak.aronlab.dev/">
-<link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/?lang=zh">
-<link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/?lang=en">
-<link rel="alternate" hreflang="x-default" href="https://daybreak.aronlab.dev/">
-<link rel="manifest" href="manifest.webmanifest">
-<link rel="apple-touch-icon" href="assets/apple-touch-icon.png">
+<link rel="canonical" href="https://daybreak.aronlab.dev/app/">
+<link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/app/?lang=zh">
+<link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/app/?lang=en">
+<link rel="alternate" hreflang="x-default" href="https://daybreak.aronlab.dev/app/">
+<link rel="manifest" href="../manifest.webmanifest">
+<link rel="apple-touch-icon" href="../assets/apple-touch-icon.png">
 <meta name="apple-mobile-web-app-title" content="Daybreak">
-<link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="../assets/favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Inter+Tight:wght@200..800&family=Geist:wght@300..700&family=Geist+Mono:wght@400..600&family=Noto+Sans+TC:wght@400..900&display=swap">
@@ -1038,7 +1040,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
   .oc.io .fc.in.ag.m-re .ol > * { animation-delay: calc(var(--j, 0) * 34ms); }
   .oc.io .fc.in.ag .ol-c::after { animation-delay: calc(var(--i, 0) * 110ms + 1.12s); }
   .oc.io .fc.in.ag:not(.m-re) .ol-n { animation: ag-type .5s steps(16, end) backwards; animation-delay: calc(var(--i, 0) * 110ms + .92s); }
-  .oc.mo .fs-h.m-in > h3 { animation: m-rise .95s var(--spring) .1s backwards, ag-type .75s steps(18, end) .12s backwards; }
+  .oc.agv.mo .fs-h.m-in > h3 { animation: m-rise .95s var(--spring) .1s backwards, ag-type .75s steps(18, end) .12s backwards; }   /* 2026-11-20 起 AI 畫頁面關掉（AGV），只在 .agv 時打字 */
   /* 更逼真：輸入游標、外框上方的圖層名稱、畫圖前先拉格線 */
   .ag-car { position: absolute; left: 0; top: 0; width: 2px; height: var(--ch, 18px); margin-top: calc(var(--ch, 18px) * -.86); background: var(--agc); animation: ag-car var(--dur, .7s) var(--dly, 0ms) both; }
   @keyframes ag-car { 0% { transform: translate3d(var(--x1), var(--y1), 0); opacity: 0; } 20% { opacity: 1; } 22% { transform: translate3d(var(--x1), var(--y1), 0); animation-timing-function: var(--ez, linear); } 82% { transform: translate3d(var(--x2), var(--y2), 0); opacity: 1; } 90% { opacity: 0; } 95% { opacity: 1; } 100% { transform: translate3d(var(--x2), var(--y2), 0); opacity: 0; } }
@@ -1052,17 +1054,17 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
   /* 打開大圖也畫出來 */
   .oc-fx .ag-l { position: fixed; inset: 0; width: auto !important; height: auto !important; z-index: 5; }
   .oc-fx .ag-ok { top: 66px; right: 18px; }
-  .oc-fx.agx .fx-gh { outline: 1px solid color-mix(in srgb, var(--fxc, var(--ag-lay)) 55%, transparent); outline-offset: -3px; }
+  .oc.agv .oc-fx.agx .fx-gh { outline: 1px solid color-mix(in srgb, var(--fxc, var(--ag-lay)) 55%, transparent); outline-offset: -3px; }
   /* 手機上每張卡只留外框、一個游標、打字游標、格線和上色（⑲ 4） */
   @media (max-width: 700px) { .ag-cur em, .ag-box b, .ag-nm, .ag-g, .ag-ok span { display: none; } .ag-ok { padding: 3px; } }
-  .oc-fx.agx #oc-fxt { animation: ag-type .6s steps(14, end) .42s backwards; }
+  .oc.agv .oc-fx.agx #oc-fxt { animation: ag-type .6s steps(14, end) .42s backwards; }
   .oc-fx.agx .or-r { animation: m-rise-s .45s cubic-bezier(.16, 1, .3, 1) backwards; animation-delay: .85s; } .oc-fx.agx .or-r:nth-child(2) { animation-delay: .92s; } .oc-fx.agx .or-r:nth-child(3) { animation-delay: .99s; } .oc-fx.agx .or-r:nth-child(4) { animation-delay: 1.06s; } .oc-fx.agx .or-r:nth-child(n+5) { animation-delay: 1.13s; }
   /* 打開圖表地圖也畫出來 */
   .oc-map .ag-l { position: fixed; inset: 8px; width: auto !important; height: auto !important; z-index: 5; }
   .oc-map .ag-ok { top: 64px; right: 14px; }
   .oc-map.agm .mp-t { animation: m-rise-s .42s cubic-bezier(.16, 1, .3, 1) var(--md, 0ms) backwards; }
   .oc-map.agm .mp-t .mp-s { animation: m-wipe .6s cubic-bezier(.2, .7, .2, 1) calc(var(--md, 0ms) + 170ms) backwards; }
-  .oc-map.agm #oc-mapt { animation: ag-type .5s steps(6, end) .3s backwards; }
+  .oc.agv .oc-map.agm #oc-mapt { animation: ag-type .5s steps(6, end) .3s backwards; }
   /* 載入：第一次看到這一區時，從頂部列開始一樣一樣擺上去；下面的卡片等頂部畫完（程式會延後） */
   .oc.ag-boot { --bt: .72s; }
   .oc.ag-boot .oc-logo { animation: m-rise-s .5s cubic-bezier(.16, 1, .3, 1) .05s backwards; }
@@ -1071,9 +1073,10 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
   .oc.ag-boot .oc-top .r > * { animation: m-rise-s .45s cubic-bezier(.16, 1, .3, 1) backwards; } .oc.ag-boot .oc-top .r > :nth-child(1) { animation-delay: .5s; } .oc.ag-boot .oc-top .r > :nth-child(2) { animation-delay: .58s; } .oc.ag-boot .oc-top .r > :nth-child(3) { animation-delay: .66s; } .oc.ag-boot .oc-top .r > :nth-child(n+4) { animation-delay: .74s; }
   .oc.ag-boot .oc-ch > svg.lq { animation: m-fade .4s .7s backwards; }
   .oc.ag-boot .oc-hd .os.front { animation: m-fade .35s .6s backwards; }
-  .oc.ag-boot .oc-hd .os.front .br-h, .oc.ag-boot .oc-hd .os.front .pp-h { animation: m-rise .85s var(--spring) calc(var(--bt) + .15s) backwards, ag-type .7s steps(20, end) calc(var(--bt) + .2s) backwards; }
+  .oc.ag-boot .oc-hd .os.front .br-h, .oc.ag-boot .oc-hd .os.front .pp-h { animation: m-rise .85s var(--spring) calc(var(--bt) + .15s) backwards; }
+  .oc.agv.ag-boot .oc-hd .os.front .br-h, .oc.agv.ag-boot .oc-hd .os.front .pp-h { animation: m-rise .85s var(--spring) calc(var(--bt) + .15s) backwards, ag-type .7s steps(20, end) calc(var(--bt) + .2s) backwards; }
   .oc.ag-boot .oc-hd.tb .os:not(.front) { animation: m-float 8s ease-in-out infinite, ag-drop .7s var(--spring) backwards; animation-delay: var(--dl, 0s), calc(1.05s + var(--so, 0) * 110ms); }
-  .oc.ag-boot.io .fc.in:not(.ag) { opacity: 0; animation: none; }
+  .oc.agv.ag-boot.io .fc.in:not(.ag) { opacity: 0; animation: none; }
   /* 按鈕：按下先縮、放開彈回；導航項目被選到時彈一下 */
   .oc button { transition: scale .5s var(--spring); }
   .oc button:active { scale: .94; transition-duration: .09s; }
@@ -1614,7 +1617,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
   </div>
 </section>
 <!--STATIC-->
-<script src="data/next.js?v=__V__"></script>
+<script src="../data/next.js?v=__V__"></script>
 <script>
 /* 2026-11-19 SEO：#oc-static 是 build.py 寫進 HTML 的當期結論（給不跑 JS 的爬蟲和 AI 讀），頁面跑起來就藏起來，畫面上看到的是互動版 */
 (function () { var n = document.getElementById('oc-static'); if (n) n.hidden = true; })();
@@ -2346,7 +2349,7 @@ function initOC() {
     best(0, jc, 'long'); best(jc + 1, nb, 'short');
     return { t0: j.t0 + (j.days - N) * 864e5, n: N, cd: 1, lo: j.lo, step: j.step, nb, cap: j.cap, top, U, candles: j.candles.slice(-N), close: h.close, bands, long: h.long };
   }
-  function lqLong(c) { const h = c.dist.heat; if (c._lqx) return Promise.resolve(); return fetch('data/liq_long.json?v=' + encodeURIComponent(h.long.asof)).then(r => { if (!r.ok) throw new Error('http'); return r.json(); }).then(j => { c._lqx = lqLongX(j, h); }); }
+  function lqLong(c) { const h = c.dist.heat; if (c._lqx) return Promise.resolve(); return fetch('../data/liq_long.json?v=' + encodeURIComponent(h.long.asof)).then(r => { if (!r.ok) throw new Error('http'); return r.json(); }).then(j => { c._lqx = lqLongX(j, h); }); }
   /* 取景的價格範圍、收盤在哪一格、從收盤往上（空單）和往下（多單）的累計顆數 */
   function lqGeo(x) {
     let G = LQG.get(x); if (G) return G; const U = lqU(x), nb = x.nb, K = x.candles, last = (x.n - 1) * nb, BT = v => v / 255 * x.cap;
@@ -2745,23 +2748,26 @@ function initOC() {
        計時器：這一段裡的 setTimeout 全部除以 AGR（換階段、移除臨時層、忙碌狀態）。
        CSS 動畫：AI 正在畫的那段時間（dkU 之前）新出現的有限次動畫，只要是在臨時層、正在畫的卡、開大圖、地圖、開場上，playbackRate 設成 AGR（延遲也一起縮短）；
        無限循環的（漂浮、呼吸、訊號脈動）和其他互動不動。數字、彈簧等用 JS 算的不受影響。 */
+    /* 2026-11-20 使用者：「取消AI畫頁面的過程」（根網址改放介紹頁那天）。AGV＝false：五個 AI 的游標、外框、打字、改稿、開站等外框拉完都不再出現，
+       卡片照一般的淡入、數字照樣滾動；留言圖釘、訊號膠囊、訊號卡的光、開大圖和地圖的進場照舊。要恢復把 AGV 改回 true */
+    const AGV = false;
     const AGR = 1.8, setTimeout = (f, ms) => window.setTimeout(f, (ms || 0) / AGR), agSeen = new WeakSet();
     let agQ = 0; const agSpeed = () => { agQ = 0; if (performance.now() > dkU + 200) return; el.getAnimations({ subtree: true }).forEach(a => { if (agSeen.has(a)) return; agSeen.add(a); const tg = a.effect && a.effect.target, tm = a.effect && a.effect.getTiming ? a.effect.getTiming() : null; if (!tg || !tg.closest || !tm || tm.iterations === Infinity) return; if (tg.closest('.ag-l, .fc.ag, .agx, .agm, .ag-boot, .fs-h.m-in, .frl.in')) a.playbackRate = AGR; }); };
     new MutationObserver(() => { if (!agQ) agQ = requestAnimationFrame(agSpeed); }).observe(el, { childList: true, subtree: true, attributes: true, attributeFilter: ['class'] });
-    el.classList.add('mo'); const secs = $('#oc-secs'), bar = $('#oc-bar'), prog = $('#oc-prog'); let scanQ = 0;
+    el.classList.add('mo'); if (AGV) el.classList.add('agv'); const secs = $('#oc-secs'), bar = $('#oc-bar'), prog = $('#oc-prog'); let scanQ = 0;
     const MIO = new IntersectionObserver(es => es.forEach(e => { if (!e.isIntersecting) return; const t = e.target; MIO.unobserve(t); const run = () => { if (!t.isConnected) return; SEEN.add(seenK(t)); if (t.classList.contains('fs-h')) { t.classList.add('m-in'); agHead(t); } else if (t.classList.contains('frl')) { t.classList.add('in'); agRows(t); } else { agent(t); rollDigits(t.querySelector('.ol-big'), 1000 + (parseFloat(t.style.getPropertyValue('--i')) || 0) * 110); } }, wait = bootEnd - performance.now(); if (wait > 0) setTimeout(run, wait); else run(); }), { rootMargin: '0px 0px -6% 0px' });
     /* 五個 AI，各有分工；顏色是幾乎同一個灰，只差一點色相（⑲ 1） */
     const AG = { lay: ['排版 AI', 'Layout AI', 'var(--ag-lay)', 'var(--agp-lay)'], txt: ['文案 AI', 'Copy AI', 'var(--ag-txt)', 'var(--agp-txt)'], num: ['數據 AI', 'Data AI', 'var(--ag-num)', 'var(--agp-num)'], cht: ['圖表 AI', 'Chart AI', 'var(--ag-cht)', 'var(--agp-cht)'], chk: ['校對 AI', 'Review AI', 'var(--ag-chk)'] };
     const slim = () => innerWidth <= 700;   /* 手機：每張卡只留一個游標（⑲ 4） */
     const ARW = '<svg viewBox="0 0 16 16" width="17" height="17"><path d="M2 1.5v12l3.4-3.1 2.2 4.6 2-.9-2.2-4.5 4.6-.3z"/></svg>';
-    const agL = (host, x, y, w, h) => { const L = document.createElement('div'); L.className = 'ag-l'; L.setAttribute('aria-hidden', 'true'); L.style.cssText = 'left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px'; host.appendChild(L); return L; };
+    const agL = (host, x, y, w, h) => { const L = document.createElement('div'); L.className = 'ag-l'; L.setAttribute('aria-hidden', 'true'); L.style.cssText = 'left:' + x + 'px;top:' + y + 'px;width:' + w + 'px;height:' + h + 'px'; if (AGV) host.appendChild(L); return L; };   /* AGV 關著：臨時層不放進頁面 */
     const agCur = (who, x1, y1, x2, y2, dur, dly, o) => '<i class="ag-cur" style="--agc:' + (AG[who][3] || AG[who][2]) + ';--x1:' + F1(x1) + 'px;--y1:' + F1(y1) + 'px;--x2:' + F1(x2) + 'px;--y2:' + F1(y2) + 'px;--dur:' + dur + 'ms;--dly:' + Math.round(dly) + 'ms' + (o && o.sx != null ? ';--sx:' + o.sx + 'px;--sy:' + o.sy + 'px' : '') + (o && o.ez ? ';--ez:' + o.ez : '') + '">' + ARW + '<em>' + esc(T(AG[who][0], AG[who][1])) + '</em></i>';
     const agCar = (x1, y1, x2, y2, dur, dly, ch, ez, col) => '<i class="ag-car" style="--agc:' + (col || AG.txt[3]) + ';--x1:' + F1(x1) + 'px;--y1:' + F1(y1) + 'px;--x2:' + F1(x2) + 'px;--y2:' + F1(y2) + 'px;--dur:' + dur + 'ms;--dly:' + Math.round(dly) + 'ms;--ch:' + F1(ch) + 'px' + (ez ? ';--ez:' + ez : '') + '"></i>';
     const OWN = ['lay', 'num', 'cht', 'txt'], agBox = (w, h, dly, col) => '<i class="ag-box" style="--agc:' + (col || AG.lay[2]) + ';--dly:' + Math.round(dly) + 'ms"><b>' + Math.round(w) + ' × ' + Math.round(h) + '</b></i>';
     const agOk = dly => '<i class="ag-ok" style="--agc:' + AG.chk[2] + ';--dly:' + Math.round(dly) + 'ms"><svg viewBox="0 0 16 16"><path d="M3 8.5l3.2 3.2L13 4.8"/></svg><span>' + esc(T(AG.chk[0], AG.chk[1])) + '</span></i>';
     const relTo = (e2, root) => { let x = 0, y = 0, n = e2; while (n && n !== root) { x += n.offsetLeft; y += n.offsetTop; n = n.offsetParent; } return n === root && e2.offsetWidth ? { x, y, w: e2.offsetWidth, h: e2.offsetHeight } : null; };
     let agN = 0, bootEnd = 0;
-    function agent(t) { const fg = t.parentNode; if (!fg || !fg.classList || !fg.classList.contains('fg')) return; const w = t.offsetWidth, h = t.offsetHeight; if (w < 40 || h < 40) return; const i = parseFloat(t.style.getPropertyValue('--i')) || 0, D = i * 110, L = agL(fg, t.offsetLeft, t.offsetTop, w, h), ol = t.querySelector('.ol'), sl = slim(); t.classList.add('ag'); agN++; agBusy(3300 + D);
+    function agent(t) { const fg = t.parentNode; if (!fg || !fg.classList || !fg.classList.contains('fg')) return; const w = t.offsetWidth, h = t.offsetHeight; if (w < 40 || h < 40) return; const i = parseFloat(t.style.getPropertyValue('--i')) || 0, D = i * 110, L = agL(fg, t.offsetLeft, t.offsetTop, w, h), ol = t.querySelector('.ol'), sl = slim(); if (AGV) { t.classList.add('ag'); agBusy(3300 + D); } agN++;
       const ow = OWN[agN % 4], oc = AG[ow][2]; const slT = sl && !!t.querySelector('.ol-n'); let H = agBox(w, h, D, oc) + (slT ? '' : agCur(ow, 0, 0, w, h, 680, D, { sx: agN % 2 ? -150 : w + 90, sy: agN % 3 ? -80 : 130 }));   /* 手機：那一個游標改跟著圖名（⑲ 10） */
       const bl = ol ? Array.prototype.slice.call(ol.children, 0, 5).map(c => { const r = relTo(c, t); if (r) r.c = c.classList.contains('ol-c') || c.querySelector('.ol-c') ? AG.cht[2] : c.classList.contains('ol-big') || c.querySelector('.ol-big') ? AG.num[2] : c.querySelector('.ol-n') ? AG.txt[2] : oc; return r; }).filter(Boolean) : [];
       bl.forEach((r, j) => { const d2 = D + 540 + j * 75; H += '<i class="ag-sk" style="--agc:' + r.c + ';--dly:' + d2 + 'ms;left:' + F1(r.x) + 'px;top:' + F1(r.y) + 'px;width:' + F1(r.w) + 'px;height:' + F1(r.h) + 'px"></i>'; if (j === 0 || j === bl.length - 1) H += '<i class="ag-g v" style="--agc:' + r.c + ';--dly:' + d2 + 'ms;left:' + F1(r.x) + 'px"></i><i class="ag-g hz" style="--agc:' + r.c + ';--dly:' + d2 + 'ms;top:' + F1(r.y) + 'px"></i>'; });
@@ -2769,14 +2775,14 @@ function initOC() {
       const tn = t.querySelector('.ol-n'), rt = tn ? relTo(tn, t) : null; H += '<b class="ag-nm" style="--agc:' + oc + ';--dly:' + D + 'ms">' + esc(tn ? tn.textContent : '') + '</b>'; if (rt) H += agCar(rt.x, rt.y + rt.h, rt.x + Math.min(rt.w, 240), rt.y + rt.h, 720, D + 800, rt.h, 'steps(10, end)', sl ? AG[ow][3] : '') + (sl && !slT ? '' : agCur(sl ? ow : 'txt', rt.x + 6, rt.y + rt.h * .8, rt.x + Math.min(rt.w, 240) + 6, rt.y + rt.h * .8, 720, D + 800, { sx: -90, sy: -50, ez: 'steps(10, end)' }));
       const bg = t.querySelector('.ol-big'), rb = bg ? relTo(bg, t) : null; if (rb && !sl) H += agCur('num', rb.x + Math.min(rb.w, 170) + 6, rb.y + rb.h * .8, rb.x + Math.min(rb.w, 170) + 6, rb.y + rb.h * .8, 620, D + 960, { sx: w * .3, sy: h + 40 });
       const cc = t.querySelector('.ol-c'), rc = cc ? relTo(cc, t) : null; if (rc && rc.w > 80) [.25, .5, .75].forEach((q, k2) => { H += '<i class="ag-gl" style="--agc:' + AG.cht[2] + ';--dly:' + (D + 820 + k2 * 70) + 'ms;left:' + F1(rc.x) + 'px;top:' + F1(rc.y + rc.h * q) + 'px;width:' + F1(rc.w) + 'px"></i>'; }); if (rc && rc.w > 80 && !sl) H += agCur('cht', rc.x, rc.y + rc.h * .5, rc.x + rc.w - 8, rc.y + rc.h * .36, 1300, D + 950, { sx: w + 100, sy: -40, ez: 'cubic-bezier(.2, .7, .2, 1)' });
-      if (rc && rc.w > 80) H += '<i class="ag-gray" style="--agc:' + AG.cht[2] + ';--dly:' + (D + 1750) + 'ms;left:' + F1(rc.x) + 'px;top:' + F1(rc.y) + 'px;width:' + F1(rc.w) + 'px;height:' + F1(rc.h) + 'px"></i>' + (sl ? '' : agCur('cht', rc.x, rc.y + rc.h * .72, rc.x + rc.w - 8, rc.y + rc.h * .64, 1500, D + 1420, { sx: F1(rc.x - 50), sy: F1(rc.y + rc.h + 30), ez: 'cubic-bezier(.3, .7, .2, 1)' })); H += agOk(D + 2300); L.innerHTML = H; setTimeout(() => L.remove(), 3300 + D); agPin(t, D + 2550); return D; }
+      if (rc && rc.w > 80) H += '<i class="ag-gray" style="--agc:' + AG.cht[2] + ';--dly:' + (D + 1750) + 'ms;left:' + F1(rc.x) + 'px;top:' + F1(rc.y) + 'px;width:' + F1(rc.w) + 'px;height:' + F1(rc.h) + 'px"></i>' + (sl ? '' : agCur('cht', rc.x, rc.y + rc.h * .72, rc.x + rc.w - 8, rc.y + rc.h * .64, 1500, D + 1420, { sx: F1(rc.x - 50), sy: F1(rc.y + rc.h + 30), ez: 'cubic-bezier(.3, .7, .2, 1)' })); H += agOk(D + 2300); L.innerHTML = H; setTimeout(() => L.remove(), 3300 + D); agPin(t, AGV ? D + 2550 : D + 450); return D; }
     /* ㉞ 清單列：排版 AI 從清單頂端順著往下走，每一列的數字滾動 */
-    function agRows(t) { const fg = t.parentNode; if (!fg || !t.offsetHeight) return; const w = t.offsetWidth, h = t.offsetHeight, L = agL(fg, t.offsetLeft, t.offsetTop, w, h); agBusy(1400 + t.children.length * 55); L.innerHTML = agCur('lay', w - 70, 6, w - 70, h - 18, 360 + t.children.length * 70, 150, { sx: w + 60, sy: -40, ez: 'cubic-bezier(.3, .2, .3, 1)' });
+    function agRows(t) { const fg = t.parentNode; if (!fg || !t.offsetHeight) return; const w = t.offsetWidth, h = t.offsetHeight, L = agL(fg, t.offsetLeft, t.offsetTop, w, h); if (AGV) agBusy(1400 + t.children.length * 55); L.innerHTML = agCur('lay', w - 70, 6, w - 70, h - 18, 360 + t.children.length * 70, 150, { sx: w + 60, sy: -40, ez: 'cubic-bezier(.3, .2, .3, 1)' });
       Array.prototype.forEach.call(t.querySelectorAll('.fr-v'), (v, j) => rollDigits(v, 360 + j * 55)); setTimeout(() => L.remove(), 1700 + t.children.length * 70); }
     /* 段落標題：文案 AI 跟著標題打字 */
-    function agHead(hh) { const h3 = hh.querySelector('h3'), r = h3 ? relTo(h3, hh) : null; if (!r) return; const L = agL(hh, 0, 0, hh.offsetWidth, hh.offsetHeight); agBusy(1500); L.innerHTML = agCar(r.x, r.y + r.h * .92, r.x + r.w, r.y + r.h * .92, 1000, 60, r.h * .8, 'steps(14, end)') + (slim() ? '' : agCur('txt', r.x + 8, r.y + r.h * .7, r.x + r.w + 8, r.y + r.h * .7, 1000, 60, { sx: -110, sy: -40, ez: 'steps(14, end)' })); setTimeout(() => L.remove(), 1500); }
+    function agHead(hh) { const h3 = hh.querySelector('h3'), r = h3 ? relTo(h3, hh) : null; if (!r) return; const L = agL(hh, 0, 0, hh.offsetWidth, hh.offsetHeight); if (AGV) agBusy(1500); L.innerHTML = agCar(r.x, r.y + r.h * .92, r.x + r.w, r.y + r.h * .92, 1000, 60, r.h * .8, 'steps(14, end)') + (slim() ? '' : agCur('txt', r.x + 8, r.y + r.h * .7, r.x + r.w + 8, r.y + r.h * .7, 1000, 60, { sx: -110, sy: -40, ez: 'steps(14, end)' })); setTimeout(() => L.remove(), 1500); }
     /* 載入：頂部列和頂部從頭畫一次 */
-    function boot() { if (bootEnd) return; bootEnd = performance.now() + 2500; el.classList.add('ag-boot'); agBusy(3500); const sl = slim(); setTimeout(() => el.classList.remove('ag-boot'), 3600);
+    function boot() { if (bootEnd) return; bootEnd = performance.now() + (AGV ? 2500 : 1); el.classList.add('ag-boot'); if (AGV) agBusy(3500); const sl = slim(); setTimeout(() => el.classList.remove('ag-boot'), 3600);
       const tp = bar.querySelector('.oc-top'); if (tp) { const lg = tp.querySelector('.oc-logo'), nvb = $('#oc-crumb'), L = agL(bar, 0, 0, bar.offsetWidth, bar.offsetHeight), y0 = tp.offsetTop + tp.offsetHeight * .62, x0 = lg ? lg.offsetLeft + lg.offsetWidth : 60, x1 = nvb && nvb.offsetWidth ? nvb.offsetLeft + nvb.offsetWidth : bar.offsetWidth * .5; L.style.zIndex = 70; L.innerHTML = agCur('lay', x0, y0, x1, y0, 900, 80, { sx: -40, sy: 60 }) + (sl ? '' : agCur('txt', x0 + 30, y0 + tp.offsetHeight * .8, x1 * .8, y0 + tp.offsetHeight * .8, 760, 520, { sx: 200, sy: 90, ez: 'steps(8, end)' })); setTimeout(() => L.remove(), 2200); }
       const G = tbG(), fr = stg.querySelector('.os.front'); if (!fr) return; const L = agL(stg, G.x0, G.y0, G.w, G.h); L.style.zIndex = 80; let H = agBox(G.w, G.h, 120, AG.num[2]) + agCur('num', 0, 0, G.w, G.h, 680, 120, { sx: -160, sy: -90 });
       const hl = fr.querySelector('.br-h, .pp-h'), rh = hl ? relTo(hl, fr) : null; if (rh && !sl) H += agCur('txt', rh.x + 6, rh.y + rh.h * .5, rh.x + rh.w * .8, rh.y + rh.h * .8, 1000, 880, { sx: -100, sy: -60, ez: 'steps(16, end)' });
@@ -2804,7 +2810,7 @@ function initOC() {
     const dock = document.createElement('button'); dock.type = 'button'; dock.className = 'ag-dock'; dock.hidden = true; let dkN = -1, dkT = 0, dkU = 0;
     function agDock() { const n = $$('.fc.sg, .fr.sg', secs).length, pg = String(ci); if (!dock.firstChild || +dock.dataset.n !== n || dock.dataset.l !== lang || dock.dataset.p !== pg) { const fresh = +dock.dataset.n !== n || dock.dataset.p !== pg; if (fresh) dkN = -1; dock.dataset.n = n; dock.dataset.l = lang; dock.dataset.p = pg; const tx = n ? T('這一頁今天 ' + n + ' 張有訊號', n + ' signal' + (n > 1 ? 's' : '') + ' on this page') : T('這一頁今天沒有訊號', 'No signals on this page'); dock.setAttribute('aria-label', tx + (n ? T('，點一下看今天全部的訊號', ' — open today’s list') : '')); dock.innerHTML = n ? '<span class="ag-sig" aria-hidden="true"><i></i></span><u aria-hidden="true">' + (dkN >= 0 ? (dkN + 1) + '/' + n : n) + '</u><b aria-hidden="true">' + esc(dkN >= 0 ? T('下一張訊號', 'Next signal') : T('張圖今天有訊號', n > 1 ? 'signals today' : 'signal today')) + '</b><svg class="ag-go" viewBox="0 0 12 12" aria-hidden="true"><path d="M3 4.5 6 7.5 9 4.5"/></svg>' : '<span class="ag-dt" aria-hidden="true">' + Object.keys(AG).map(k => '<i style="--agc:' + AG[k][2] + '"></i>').join('') + '</span><b aria-hidden="true">' + esc(tx) + '</b>'; if (n && fresh) { dock.classList.remove('pop'); void dock.offsetWidth; dock.classList.add('pop'); if (performance.now() >= dkU) { dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => dock.classList.add('rest'), 5200); } } } dock.classList.toggle('none', !n); dock.classList.toggle('has', !!n); }   /* 有訊號時的樣子和動效見 ⑲ 6 */
     function agBusy(ms) { const now = performance.now(); dkU = Math.max(dkU, now + ms); dock.classList.add('busy'); dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => { dock.classList.remove('busy'); dock.classList.add('rest'); }, dkU - now + 2400); }
-    el.appendChild(dock); agDock(); agBusy(600);
+    el.appendChild(dock); agDock(); if (AGV) agBusy(600);
     dock.addEventListener('click', () => { if (sgOpen(dock)) return; const cs = $$('.fc.sg, .fr.sg', secs); if (!cs.length) return; dkN = (dkN + 1) % cs.length; const t = cs[dkN], who = 'chk'; if (t.classList.contains('fr')) { const l2 = t.closest('.frl'); if (l2) l2.classList.add('in'); t.classList.remove('hit'); void t.offsetWidth; t.classList.add('hit'); setTimeout(() => t.classList.remove('hit'), 2600); } t.scrollIntoView({ block: 'center', behavior: 'smooth' }); { const u = dock.querySelector('u'), b = dock.querySelector('b'); if (u) u.textContent = (dkN + 1) + '/' + cs.length; if (b) b.textContent = T('下一張訊號', 'Next signal'); dock.classList.remove('rest'); clearTimeout(dkT); dkT = setTimeout(() => dock.classList.add('rest'), 3200); }
       setTimeout(() => { const fg = t.parentNode; if (!fg || !t.isConnected) return; const w = t.offsetWidth, h = t.offsetHeight, L = agL(fg, t.offsetLeft, t.offsetTop, w, h); L.innerHTML = agBox(w, h, 0, AG[who][2]) + agCur(who, w * .5, h * .42, w * .5, h * .42, 1500, 0, { sx: w, sy: h + 80 }); setTimeout(() => L.remove(), 2700); }, 520); });
     /* 4 數字改稿：主數字變了，舊的劃掉往上飄，數據 AI 過來點一下 */
@@ -3017,7 +3023,7 @@ function initOC() {
   const a11y = () => { Object.entries(A11Y).forEach(([q, t]) => { const n = $(q); if (n) n.setAttribute('aria-label', T(t[0], t[1])); }); };
   function renderAll() { a11y();
     $('#oc-date').textContent = D.date.replace(/-/g, '.') + T(' 收盤', ' close');
-    $('#oc-ft1').textContent = T('在任何一張圖上移動游標，同一段的圖會一起跟著。每張圖右上角可以放大。', 'Move across any chart and the others in the same section follow. Each chart can be expanded from its top-right corner.'); $('#oc-ft2').innerHTML = `<a href="intro/${lang === 'en' ? '?lang=en' : ''}">${T('Daybreak 是什麼', 'What is Daybreak')} →</a>`;   /* 2026-11-19 介紹頁入口 */ $('#oc-srcs').innerHTML = srcsHtml();
+    $('#oc-ft1').textContent = T('在任何一張圖上移動游標，同一段的圖會一起跟著。每張圖右上角可以放大。', 'Move across any chart and the others in the same section follow. Each chart can be expanded from its top-right corner.'); $('#oc-ft2').innerHTML = `<a href="../?intro${lang === 'en' ? '&lang=en' : ''}">${T('Daybreak 是什麼', 'What is Daybreak')} →</a>`;   /* 2026-11-19 介紹頁入口 */ $('#oc-srcs').innerHTML = srcsHtml();
     stg.innerHTML = CH.map((c, i) => c.todo ? '' : `<article class="os" data-k="${i}" tabindex="0" style="--dl:${(-i * 1.7).toFixed(1)}s"><div class="os-in"><div class="os-h"><span class="k">${p2(i)}</span><h3>${esc(T(c.zh, c.en))}</h3><span class="sub">${esc(T(c.qz, c.qe))}</span></div><div class="os-pw"><span class="pw-k">${esc(hv(c)[0])}</span><div class="pw-n">${esc(hv(c)[1])}</div><p class="pw-l">${esc(T(c.lead_zh, c.lead_en) || T(c.qz, c.qe))}</p><div class="pw-c"></div></div></div></article>`).join('');
     ord = order(); headBody(); renderBar(); renderOv(); poster(); hx(); keep(renderSecs); place(); renderCmp(); if (fx) openFx(fx.k + '_' + fx.i);
   }
@@ -3050,7 +3056,7 @@ function initOC() {
   /* 2026-11-15 瘦身：卡片多的頁另外放在 data/next-<頁>.js（build.py），點到才載；首頁閒下來後在背景依序先載（省流量模式不先載） */
   const LZ = {}; let lzWant = -1;
   const loadCh = i => { const c = CH[i]; if (!c || !c.lz) return Promise.resolve(); if (LZ[c.id]) return LZ[c.id];
-    return (LZ[c.id] = new Promise((ok, no) => { const s = document.createElement('script'); s.src = 'data/next-' + c.id + '.js?v=' + c.lz; s.async = true;
+    return (LZ[c.id] = new Promise((ok, no) => { const s = document.createElement('script'); s.src = '../data/next-' + c.id + '.js?v=' + c.lz; s.async = true;
       s.onload = () => { const g = (window.DAYBREAK_CH || {})[c.id]; if (g) { c.groups = g; delete c.lz; ok(); } else { delete LZ[c.id]; no(new Error('no data ' + c.id)); } };
       s.onerror = () => { delete LZ[c.id]; s.remove(); no(new Error('load ' + c.id)); }; document.head.appendChild(s); })); };
   const loadAll = () => Promise.all(CH.map((c, i) => loadCh(i)));

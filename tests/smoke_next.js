@@ -3,7 +3,7 @@
    另外檢查舊網址（#onchain/sthsig 這種）會轉到新版對應的圖（2026-11-16 起，規則 ㉝），以及分享模式（?share&k=oih）。
    用法：先在倉庫根目錄起靜態伺服器（python3 -m http.server 8765），再執行 node tests/smoke_next.js。 */
 const { chromium } = require(process.env.PW || 'playwright');
-const ROOT = process.env.ROOT || 'http://localhost:8765/';
+const ROOT = process.env.ROOT || 'http://localhost:8765/app/';   // 2026-11-20 數據頁搬到 /app/
 (async () => {
   const b = await chromium.launch(process.env.CHROMIUM ? { executablePath: process.env.CHROMIUM } : {}); let fail = 0;
   const bad = m => { console.log('✗ ' + m); fail++; };

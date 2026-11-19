@@ -1,6 +1,6 @@
 # 新版首頁（2026-11-11 上線）
 
-網站首頁 `index.html` 從這裡產生。舊版首頁 `classic.html` 2026-11-16 起不再部署，2026-11-17 從倉庫刪除（連同 `assets/app.js`、`app.css`、`i18n-en.js`、`data/site.json`）；舊版的網址（`/#onchain/sthsig` 這種）由首頁轉到新版對應的圖（`D.old`，規則 ㉝）。
+網站的數據頁 `app/index.html`（網址 /app/）從這裡產生；2026-11-20 起根目錄的 `index.html` 是介紹頁（`pipeline/intro/`），舊連結和來過的人會由它轉到 /app/。舊版首頁 `classic.html` 2026-11-16 起不再部署，2026-11-17 從倉庫刪除（連同 `assets/app.js`、`app.css`、`i18n-en.js`、`data/site.json`）；舊版的網址（`/#onchain/sthsig` 這種）由首頁轉到新版對應的圖（`D.old`，規則 ㉝）。
 
 ## 怎麼產生
 
@@ -10,7 +10,7 @@ python3 pipeline/next/build.py
 
 1. `build.py` 讀 `data/latest.json`、`data/notes.json`、`data/notes.en.json`，交給 `site_data.py` 和各頁的 `*_data.py`（今天、週期、價位、賣壓、買盤、槓桿、出場）。
 2. 讀數：`reads.py` 加上各頁的 `reads_buy.py`、`reads_cycle.py`、`reads_sell.py`、`reads_lv.py`、`reads_lev.py`（一句結論＋最多三條事實；「怎麼讀」凍結在 `how.json`，舊版沒有的在各模組的 `HOWX`）。`say_data.py` 掛當天的異動訊號（`sigmap.json`：訊號的舊圖 id → 新版代號）和資料來源（`src_lab.py`＋`src.json`，日期每天換成資料日）。舊網址對照在 `old.json`。這三個 JSON 是 2026-11-17 刪舊版前凍結的。
-3. 寫出 `data/next.js`（`window.DAYBREAK_NEXT` = 整包資料，約 2.3 MB）和根目錄的 `index.html`（＝`page.html`，只換 `data/next.js?v=` 的版本號）。
+3. 寫出 `data/next.js`（`window.DAYBREAK_NEXT` = 整包資料，約 2.3 MB）和 `app/index.html`（＝`page.html`，只換 `../data/next.js?v=` 的版本號）。
 
 ## 什麼時候會重建
 
@@ -69,7 +69,7 @@ python3 pipeline/next/build.py
 
 ## 分享模式
 
-網址加 `?share`（16:9）或 `?share=45`（4:5），再加 `&k=圖代號` 就直接打開那張圖的放大檢視，例如 `index.html?share&k=oih`。分享模式會：
+網址加 `?share`（16:9）或 `?share=45`（4:5），再加 `&k=圖代號` 就直接打開那張圖的放大檢視，例如 `app/index.html?share&k=oih`。分享模式會：
 - 字級放大 1.3 倍，圖上的刻度、標註一起放大
 - 藏掉按鈕、放大檢視上面的導覽列、下面那排同段的圖、「我們的看法」
 - 每張卡片底下加一行：網站名、網址、資料來源、資料日期
