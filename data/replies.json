@@ -2593,6 +2593,420 @@
     "data/latest.json cycle.tidemark.bottom（signal 38.1、level none，11/18）"
    ],
    "note": "Grok 2105 #23。1 萬粉以下不配圖。不驗證他的 409 天和各輪跌幅，不給方向"
+  },
+  {
+   "n": 128,
+   "order": 122,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123401686349734191",
+   "url": "https://x.com/PumpVaultBase/status/2123401686349734191",
+   "author": "PumpVaultBase",
+   "followers": 2365,
+   "posted": "2026-11-19T13:03:07Z",
+   "lang": "zh",
+   "angle": "順著「別急著喊底」：期權那邊還在花錢防跌",
+   "take": "情緒到底了，期權還沒跟上",
+   "summary": "Anthropic 最大 IPO 同天 BTC 6.3 萬、奔第 7 週收跌、恐貪 10；極度恐懼像情緒底，但沒資金接力別急著喊底；問 IPO 的錢會不會回流",
+   "reply": "情緒看起來到底了，期權那邊還沒跟上\n30 天的下跌保護比上漲貴 6.5 個波動點，大家還在花錢防跌\nIPO 那筆錢，你覺得會先回美股，還是要等利率鬆一點才輪到幣？",
+   "sources": [
+    "data/latest.json deriv.rr25（30 天 rr −6.52，put_iv 48.26、call_iv 41.74，Deribit）"
+   ],
+   "note": "Grok 2105 #1。1 萬粉以下不配圖"
+  },
+  {
+   "n": 129,
+   "order": 123,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123400916485431481",
+   "url": "https://x.com/ItaminV35496/status/2123400916485431481",
+   "author": "ItaminV35496",
+   "followers": 8144,
+   "posted": "2026-11-19T13:00:04Z",
+   "lang": "zh",
+   "angle": "閒聊：不猜 4 萬，講拿最久的人也在賠",
+   "take": "價位不猜，老手也在水下",
+   "summary": "「BTC 這個趨勢跌下去，不會真的看到 4 萬吧？？？」",
+   "reply": "4 萬我不猜\n比較讓我在意的是，拿最久的那群人現在也快一半在賠，接近這輪最多的時候\n你是怕價位，還是怕這種一直磨的感覺？",
+   "sources": [
+    "data/latest.json onchain.lthloss（11/18 43.8%，這輪最高 44.8%，CheckOnChain）"
+   ],
+   "note": "Grok 2105 #2。閒聊、不給價位、不放數字；1 萬粉以下不配圖"
+  },
+  {
+   "n": 130,
+   "order": 124,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123400905991070123",
+   "url": "https://x.com/Xingge888668/status/2123400905991070123",
+   "author": "Xingge888668",
+   "followers": 3129,
+   "posted": "2026-11-19T13:00:01Z",
+   "lang": "zh",
+   "angle": "心理題：群裡安靜好讀；大戶在動但多是賠著換手",
+   "take": "鏈上在動，但不像進場",
+   "summary": "恐慌指數趴在 10 附近反而沒那麼慌；群裡不聊行情；只看鏈上大戶動沒動、翻自己的計劃；操作越多錯得越多",
+   "reply": "群裡不聊行情這個觀察很準，安靜比吵鬧好讀\n你說看大戶動沒動，這週鏈上確實動得不少，但有 39 萬顆是賠著被移動的\n這種換手我也是看著就好，不急著解讀成誰在進場",
+   "sources": [
+    "data/notes.json 11/18：這 7 天約 39 萬顆在虧損時移動（Bitview）"
+   ],
+   "note": "Grok 2105 #3。1 萬粉以下不配圖。不說大戶進場與否"
+  },
+  {
+   "n": 131,
+   "order": 125,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123400316792066307",
+   "url": "https://x.com/MagicPower21M/status/2123400316792066307",
+   "author": "MagicPower21M",
+   "followers": 10215,
+   "posted": "2026-11-19T12:57:41Z",
+   "lang": "zh",
+   "angle": "答他的問題：站「無聊是優點」，熱度計也冷",
+   "take": "大家喊無聊時，熱度計也冷到底",
+   "summary": "Arca 的 Jeff Dorman 說比特幣太無聊；熊市第 400 多天；問無聊是缺點還是優點",
+   "reply": "我站優點那邊，至少對看週期的人來說\n大家喊無聊的時候，晨昏指數的熱度也掉到 6 左右，滿分 100\n你自己是從什麼時候開始覺得它無聊的？",
+   "sources": [
+    "data/latest.json cycle.dawn（11/18 heat 5.6，冷線 10）"
+   ],
+   "note": "Grok 2105 #4。熱度用現值 5.6（Grok 寫 7.3 是舊值）；不配圖：晨昏指數今天用過（#89）"
+  },
+  {
+   "n": 132,
+   "order": 126,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123401595035791612",
+   "url": "https://x.com/Bouza11Juan/status/2123401595035791612",
+   "author": "Bouza11Juan",
+   "followers": 2742,
+   "posted": "2026-11-19T13:02:45Z",
+   "lang": "zh",
+   "angle": "閒聊：黃金這種跌法少見，那天是美元在壓",
+   "take": "避險和風險一起被賣",
+   "summary": "黃金跌破 3,700，從反彈高點 4,690 跌了 1,000",
+   "reply": "一段跌 1,000 美元，放在黃金身上很少見\n那天美元升到 19 個月高點，黃金和風險資產被一起賣，BTC 也沒躲掉\n壓力是從美元那一側來的，不只是黃金自己的事",
+   "sources": [
+    "data/notes.json 11/18 news：美元升到 19 個月高點，黃金跌 3.51%（The Motley Fool）"
+   ],
+   "note": "Grok 2105 #6。1 萬粉以下不配圖。同題黃金一輪 3 則（#6、#7、#8）"
+  },
+  {
+   "n": 133,
+   "order": 127,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123401438483136614",
+   "url": "https://x.com/ZoXinkun2O26/status/2123401438483136614",
+   "author": "ZoXinkun2O26",
+   "followers": 1597,
+   "posted": "2026-11-19T13:02:08Z",
+   "lang": "zh",
+   "angle": "順著：不是黃金失靈，是升息被定價到很滿",
+   "take": "升息幾乎被定價完",
+   "summary": "黃金跌跌不休的導火線是 Fed 官員釋放升息訊號、美元走強；金價失守 3,700、14 個月首次；黃金不再是避險天堂？",
+   "reply": "我傾向不是黃金失靈，是升息被定價到很滿了，Polymarket 押 12 月升息到 97.7%，BTC 吃的也是同一個利率壓力",
+   "sources": [
+    "data/notes.json 11/18 news：Polymarket 押 12 月升息 97.7%"
+   ],
+   "note": "Grok 2105 #7。1 萬粉以下不配圖"
+  },
+  {
+   "n": 134,
+   "order": 128,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123359838683922521",
+   "url": "https://x.com/joy555leung/status/2123359838683922521",
+   "author": "joy555leung",
+   "followers": 1835,
+   "posted": "2026-11-19T10:16:50Z",
+   "lang": "zh",
+   "angle": "2008 對照很好；BTC 這邊套利利差也被利率吃掉",
+   "take": "利率高，賺基差的錢也不回來",
+   "summary": "黃金從收盤高點跌近 30%，和 2008 的 29.7% 相當；2008 後 Fed 買債金價漲 168%，這次 Fed 反方向、12 月升息機率 95%",
+   "reply": "2008 那個對照很好，差別就在 Fed 往哪邊走\nBTC 這邊也看得到：期貨基差只比 3 個月國庫券多 1 個百分點左右，賺套利的錢沒什麼理由回來",
+   "sources": [
+    "data/latest.json deriv.deriv.basis_median 5.1%（Deribit）；data/notes.json 11/18：3 個月國庫券 4.15%"
+   ],
+   "note": "Grok 2105 #8。1 萬粉以下不配圖。基差用現值 5.1%（Grok 寫 5.34% 是 11/18 版）"
+  },
+  {
+   "n": 135,
+   "order": 129,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123397811387429035",
+   "url": "https://x.com/0xnut6/status/2123397811387429035",
+   "author": "0xnut6",
+   "followers": 1071,
+   "posted": "2026-11-19T12:47:43Z",
+   "lang": "zh",
+   "angle": "把 IBIT 拆出來很好；補節奏：轉正那天沒接上",
+   "take": "回來的那天沒有延續",
+   "summary": "11/2–11/18 共 13 個交易日現貨 ETF 淨流出 28.86 億，IBIT 自己 24 億；10 月 IBIT 還淨流入 9.32 億，11 月連它都在走",
+   "reply": "把 IBIT 單獨拆出來很有用，10 月它還在撐、11 月連它都走了，這個轉向才是重點\n中間 11/16 轉正過一天，隔天又流出 2.4 億美元，沒接上\n要看到連著幾天流入，我才會覺得錢回來了",
+   "sources": [
+    "data/etf.json（11/16 +940 萬、11/17 −2.428 億美元，CMC）"
+   ],
+   "note": "Grok 2105 #9。1 萬粉以下不配圖。原文 28.86 億、24 億是 Farside 數字，不當本站讀值"
+  },
+  {
+   "n": 136,
+   "order": 130,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123399044542108151",
+   "url": "https://x.com/BulentSoyuer/status/2123399044542108151",
+   "author": "BulentSoyuer",
+   "followers": 1278,
+   "posted": "2026-11-19T12:52:37Z",
+   "lang": "zh",
+   "angle": "喜歡這個實驗設計；加一個觀察點：ETF",
+   "take": "實驗再加一個觀察點",
+   "summary": "Anthropic 上市日是流動性實驗：錢從加密抽，幣會異常大跌；從股票和貨基抽，只是跟紀要常規下跌；明晚收尾",
+   "reply": "這個實驗設計我喜歡，我會再加一個觀察點：ETF\n掛牌前一天現貨 ETF 已經流出 3 億美元，要是明晚之後還在流，抽水就不只是傳統市場的事",
+   "sources": [
+    "data/etf.json 11/18 −3.065 億美元（CMC，和 Farside 一致）"
+   ],
+   "note": "Grok 2105 #10。1 萬粉以下不配圖"
+  },
+  {
+   "n": 137,
+   "order": 131,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123395867759579576",
+   "url": "https://x.com/znghurn199623/status/2123395867759579576",
+   "author": "znghurn199623",
+   "followers": 6857,
+   "posted": "2026-11-19T12:40:00Z",
+   "lang": "zh",
+   "angle": "熟帳號、順著聊心理：理由之外再記一條時間",
+   "take": "理由成立和撐得住要分開記",
+   "summary": "每次在 6 萬 2 附近想賣都翻當初為什麼買；理由一條沒變，變的只有價格和耐心；耐心快用完；問當初買的理由還成立嗎",
+   "reply": "把理由寫下來再回頭看，這個習慣比什麼指標都管用\n我會另外記一條：這筆錢能放多久\n耐心用完，常常不是理由錯了，是這一條沒想清楚",
+   "sources": [],
+   "note": "Grok 2105 #11（熟）。心理閒聊、不放數字；1 萬粉以下不配圖"
+  },
+  {
+   "n": 138,
+   "order": 132,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123311823730688362",
+   "url": "https://x.com/Yunxibtc/status/2123311823730688362",
+   "author": "Yunxibtc",
+   "followers": 11823,
+   "posted": "2026-11-19T07:06:02Z",
+   "lang": "zh",
+   "angle": "閒聊接梗：宏觀經濟學家上線；問空倉派",
+   "take": "接梗、反問空倉派",
+   "summary": "行情好人人是投資大師，一跌人人成宏觀經濟學家；牛市考驗膽量，熊市考驗錢包；問抄底派還是空倉看戲派",
+   "reply": "這兩天滿版都是紀要和 IPO，宏觀經濟學家確實全上線了\n我兩派都不太算，算看圖派，跌的時候先看是誰在賣\n你身邊的空倉派，是空倉，還是嘴上空倉？",
+   "sources": [],
+   "note": "Grok 2105 #12。不配圖：閒聊題，沒有對得上的圖。不放數字"
+  },
+  {
+   "n": 139,
+   "order": 133,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123399214122319932",
+   "url": "https://x.com/bio1098895/status/2123399214122319932",
+   "author": "bio1098895",
+   "followers": 7287,
+   "posted": "2026-11-19T12:53:18Z",
+   "lang": "zh",
+   "angle": "閒聊：上車不替人答；期權大家在買下跌保護",
+   "take": "市場在買的是下跌保護",
+   "summary": "大餅保持在 6.3 萬震盪磨人；你覺得現在是上車位置了嗎",
+   "reply": "上不上車我不替人答\n倒是期權那邊，12/4 到期最大的一檔是 6 萬的賣權\n市場現在願意花錢買的，是下跌保護",
+   "sources": [
+    "data/notes.json 11/18：12/4 到期的 60,000 賣權 5,761 顆，該到期最大（Deribit；未平倉不分買賣方）"
+   ],
+   "note": "Grok 2105 #14。1 萬粉以下不配圖。不給買賣意見"
+  },
+  {
+   "n": 140,
+   "order": 134,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123401534222578054",
+   "url": "https://x.com/ShortingAltcoin/status/2123401534222578054",
+   "author": "ShortingAltcoin",
+   "followers": 880,
+   "posted": "2026-11-19T13:02:31Z",
+   "lang": "zh",
+   "angle": "同意流動性踩踏；期權也在搶短天期保護",
+   "take": "大家怕的是接下來這幾天",
+   "summary": "避險資產和風險資產一起砸盤，這不是恐慌，是流動性踩踏",
+   "reply": "流動性踩踏這個說法我同意，期權那邊也是同一個樣子\n短天期的隱含波動比長天期還貴，大家怕的是接下來這幾天",
+   "sources": [
+    "data/latest.json deriv.ivterm（state inv；7 天 43.57%、90 天 42.5%，Deribit）"
+   ],
+   "note": "Grok 2105 #15。1 萬粉以下不配圖。不放數字（Grok 的 45.8／42.3 是舊值）"
+  },
+  {
+   "n": 141,
+   "order": 135,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123400157480071665",
+   "url": "https://x.com/aicoding1515/status/2123400157480071665",
+   "author": "aicoding1515",
+   "followers": 4320,
+   "posted": "2026-11-19T12:57:03Z",
+   "lang": "zh",
+   "angle": "閒聊：位置沒變，底下換手變多",
+   "take": "原地不等於沒事",
+   "summary": "一天沒上 X、一天沒看 BTC，結果它還在這位置",
+   "reply": "位置沒變，底下倒是挺熱鬧，11/18 成交量是 20 日平均的 1.3 倍",
+   "sources": [
+    "data/notes.json 11/18：成交量是 20 日平均的 1.3 倍"
+   ],
+   "note": "Grok 2105 #16。閒聊；1 萬粉以下不配圖"
+  },
+  {
+   "n": 142,
+   "order": 136,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123398085946827150",
+   "url": "https://x.com/angus5788/status/2123398085946827150",
+   "author": "angus5788",
+   "followers": 772,
+   "posted": "2026-11-19T12:48:49Z",
+   "lang": "zh",
+   "angle": "跟他一樣先看；明天週到期的痛點太遠",
+   "take": "最大痛點太遠，不當方向",
+   "summary": "美股盤前和 BTC 都在漲；問加倉、持有，還是先看盤前能撐多久",
+   "reply": "我也是先看\n明天台北下午 4 點 Deribit 週到期，最大痛點 71,000 離現價太遠\n那種拉力我不太信，盤前的漲也要等開盤後才算數",
+   "sources": [
+    "data/notes.json events：11/20 Deribit 週到期（台北 16:00，占 8.4%、最大痛點 71,000）"
+   ],
+   "note": "Grok 2105 #17。1 萬粉以下不配圖。不給加倉持有意見"
+  },
+  {
+   "n": 143,
+   "order": 137,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123397419383574586",
+   "url": "https://x.com/zc88866/status/2123397419383574586",
+   "author": "zc88866",
+   "followers": 2270,
+   "posted": "2026-11-19T12:46:10Z",
+   "lang": "zh",
+   "angle": "閒聊接梗：把守不住／突破換成收盤在哪",
+   "take": "接梗",
+   "summary": "擬人吐槽：看 K 線的兄弟熊市只會說守不住 8w 就去 7w，牛市只會說突破 8w 就去 9w；腦子裡只有站穩、突破、防守",
+   "reply": "這個兄弟我好像也認識\n把「守不住」「突破」換成「收盤在哪」，一半的喊單就安靜了",
+   "sources": [],
+   "note": "Grok 2105 #18。閒聊；沒用 Grok 建議的本段結束線（像價位目標）；1 萬粉以下不配圖"
+  },
+  {
+   "n": 144,
+   "order": 138,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123385806060753003",
+   "url": "https://x.com/xiaoxu66669a/status/2123385806060753003",
+   "author": "xiaoxu66669a",
+   "followers": 1831,
+   "posted": "2026-11-19T12:00:01Z",
+   "lang": "zh",
+   "angle": "順著他 ETF「只用了一半」：20 日合計是這段最深",
+   "take": "流出這段最深，但還沒到 6 月",
+   "summary": "熊了 407 天、週期論可以扔是結論太快；時鐘和跌幅分開看；ETF 錢能進也能出、要看持續回流；長期持有者成本 4.86 萬還在往下",
+   "reply": "你說 ETF 那段只看了一半，我很同意\n20 個交易日合計現在是這段最深的時候，不過還沒到 6 月那次的深度\n回流我也會等它連著幾天，不看單日",
+   "sources": [
+    "data/latest.json flows etf roll20（11/18 −36.95 億美元，這段最深；6 月 −56.38 億，CMC）"
+   ],
+   "note": "Grok 2105 #19。1 萬粉以下不配圖。沒用 Grok 建議的近一年分位前例"
+  },
+  {
+   "n": 145,
+   "order": 139,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123384759422452085",
+   "url": "https://x.com/peifuqing/status/2123384759422452085",
+   "author": "peifuqing",
+   "followers": 1928,
+   "posted": "2026-11-19T11:55:51Z",
+   "lang": "zh",
+   "angle": "同意最怕槓桿踩踏：資金費率還是正的",
+   "take": "做多的人還在付錢",
+   "summary": "恐懼指數釘在 10–15、BTC 卡 6 萬多、ETF 還在跑；最怕的不是跌，是槓桿踩踏",
+   "reply": "槓桿到現在還沒真正退\n價格跌成這樣，主要交易所的加權資金費率還是正的，做多的人還在付錢\n踩踏的燃料，看起來還沒清乾淨",
+   "sources": [
+    "data/latest.json deriv.funding_multi.weighted_now 3.94%（年化，未平倉加權）"
+   ],
+   "note": "Grok 2105 #20。1 萬粉以下不配圖。不放數字、不給方向"
+  },
+  {
+   "n": 146,
+   "order": 140,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123374680296026331",
+   "url": "https://x.com/sharwowwow/status/2123374680296026331",
+   "author": "sharwowwow",
+   "followers": 1682,
+   "posted": "2026-11-19T11:15:48Z",
+   "lang": "zh",
+   "angle": "沒人說得準很實在；認虧擴到長期持有者",
+   "take": "認虧從新手擴到老手",
+   "summary": "BTC 6.3 萬出頭、離高點腰斬、恐懼 10；24h 爆倉 1.8 億多、多單 1.4 億；鏈上認虧到過去幾次底部附近；是底還是半山腰沒人說得準",
+   "reply": "沒人說得準這句很實在\n鏈上能補的是誰在賣：這次連拿超過半年的人都在賠著賣，長期持有者賣出時的盈虧比掉到 0.73",
+   "sources": [
+    "data/latest.json onchain.metrics.lth-sopr（11/18 0.7317，四年百分位 6.8，Bitview）"
+   ],
+   "note": "Grok 2105 #21。1 萬粉以下不配圖。底不底不下結論"
+  },
+  {
+   "n": 147,
+   "order": 141,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123336401009938446",
+   "url": "https://x.com/liuqianwei19/status/2123336401009938446",
+   "author": "liuqianwei19",
+   "followers": 1608,
+   "posted": "2026-11-19T08:43:42Z",
+   "lang": "zh",
+   "angle": "同步殺跌沒錯，但幣跌得最深",
+   "take": "先跌、跌得深的都是幣",
+   "summary": "全球跨資產同步殺跌：AI 晶片股蒸發近 6 兆美元、BTC 20 天 8 萬到 6.4 萬、黃金破 3,900；美債 5.1%；普通人守兩個信號",
+   "reply": "同步殺跌沒錯，但跌幅一點都不同步\n近兩個月 BTC 跌的幅度是 Nasdaq 的快 3 倍，先跌、跌得深的都是幣",
+   "sources": [
+    "data/notes.json 11/18：近兩個月 BTC −22.1%、Nasdaq −8.3%"
+   ],
+   "note": "Grok 2105 #22。1 萬粉以下不配圖。不接他的英特爾數字和兩階段操作"
+  },
+  {
+   "n": 148,
+   "order": 142,
+   "status": "send",
+   "style": "口語版",
+   "id": "2123400208469889304",
+   "url": "https://x.com/BlockScholes/status/2123400208469889304",
+   "author": "BlockScholes",
+   "followers": 2554,
+   "posted": "2026-11-19T12:57:15Z",
+   "lang": "en",
+   "angle": "接他 ETF 七天連出：20 日合計是這段最深",
+   "take": "最深，但還沒到 6 月",
+   "summary": "Daily Comment 11/19：紀要後 12 月升 1 碼機率 93.9%；BTC 62.2K 是 7 月中以來最低小時線；現貨 ETF 七天連出 19.1 億",
+   "reply": "The outflow streak is the part I'd keep an eye on after the minutes\nOur 20-day ETF total is now the deepest of this leg, though still well short of June's\nDo you see flows easing once a hike is fully priced, or does that usually take the actual meeting?",
+   "sources": [
+    "data/latest.json flows etf roll20（11/18 −36.95 億美元；6 月 −56.38 億，CMC）"
+   ],
+   "note": "scan.py 固定名單 #9（英文 2 小時內，到台北 22:57）。1 萬粉以下不配圖"
   }
  ]
 }
