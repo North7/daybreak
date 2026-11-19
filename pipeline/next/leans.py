@@ -198,6 +198,13 @@ def agecost(L):
     return V('up', '站上近期買家成本', 'Above recent buyers\' cost', '收盤在 3–6 個月買家成本 %s 之上，這批人有獲利。' % usd(c['cost']), 'The close is above the 3–6 month buyers\' cost of %s: they are in profit.' % usd(c['cost']), '跌回 %s 以下' % usd(c['cost']), 'A close below %s' % usd(c['cost'])) if c['above'] else \
            V('down', '在近期買家成本下方', 'Below recent buyers\' cost', '收盤在 3–6 個月買家成本 %s 之下，這批人在虧損，反彈容易遇到解套賣壓。' % usd(c['cost']), 'The close is below the 3–6 month buyers\' cost of %s: rallies meet break-even selling.' % usd(c['cost']), '站回 %s' % usd(c['cost']), 'A close above %s' % usd(c['cost']))
 def hashr(L):
+    hb = (O(L).get('bvx') or {}).get('hrib')
+    if hb:   # 2026-11-19 照回測：2021 年以後原版買點和隨便一天差不多，不管在不在投降都標中性
+        q, b = hb['post'], hb['base_post']
+        return V('neu', '礦工在投降' if hb['cap'] else '近年不比隨便一天好', 'Miners are capitulating' if hb['cap'] else 'No better than any day lately',
+                 '2021 年以後原版買點一年後 %d 次裡 %d 次漲、中位數 %+d%%；隨便一天 %d%% 漲、中位數 %+d%%。' % (q['n'], q['up'], q['med'], b['up'], b['med']),
+                 'Since 2021 the original buy was up a year later %d of %d times, median %+d%%; any day was up %d%% of the time, median %+d%%.' % (q['up'], q['n'], q['med'], b['up'], b['med']),
+                 '買點之後的勝率明顯高過隨便一天', 'Buys clearly beating any day')
     h = O(L)['hash_ribbons']
     if h['capitulation']: return V('neu', '礦工在投降', 'Miners are capitulating', '投降期本身不是買點，等它恢復。', 'Capitulation itself is not the signal; the recovery is.', '30 日均回到 60 日均之上', '30-day back above the 60-day')
     if h['state_days'] <= 30: return V('up', '剛從投降恢復', 'Just recovered', '從投降恢復歷來常在底部附近，但不是每次都準。', 'Recoveries have often come near bottoms, though not every time.', '再次跌回投降', 'A relapse into capitulation')
