@@ -302,6 +302,11 @@ def miners(L):
     if px < be['20J@0.06']: return V('down', '礦工在虧電費', 'Miners are losing money', '收盤低於主流礦機的電費兩平價，礦工被迫賣幣的壓力大。', 'The close is below break-even for mainstream rigs: miners may be forced sellers.', '價格回到兩平價之上', 'Price back above break-even')
     if px > be['25J@0.07']: return V('up', '礦工有利潤', 'Miners are profitable', '收盤高於三種礦機的兩平價。', 'The close is above break-even for all three rig types.', '跌破 20 J/TH 兩平價', 'A drop below the 20 J/TH break-even')
     return V('neu', '舊礦機在虧', 'Old rigs are losing', '主流礦機還有利潤，最舊的那一批在虧電費。', 'Mainstream rigs are profitable; only the oldest are under water.', '跌破 20 J/TH 兩平價', 'A drop below the 20 J/TH break-even')
+def psx(L):   # 2026-11-19 獲利供給扣掉十年老幣（bv_more.py 第 6 項）：照「第一次跌破 45%」的回測；高的一端牛市初期也常到，不指方向
+    q = O(L)['bvx']['psx']; done = [c for c in q['cross45'] if c['y1'] is not None]; nup = sum(1 for c in done if c['y1'] > 0); wst = abs(min(c['worst'] for c in done)) if done else 0
+    if q['ex'] <= 45 and done and nup == len(done): return V('up', '接近歷次熊底', 'Near past bear lows', '扣掉十年老幣後 %.1f%% 在獲利；過去 %d 次第一次跌破 45%%，一年後都是漲的，但一年內最多再跌 %d%%。' % (q['ex'], len(done), wst), '%.1f%% in profit excluding 10-year-old coins; all %d past first drops below 45%% were up a year later, though price fell up to another %d%% within that year.' % (q['ex'], len(done), wst), '回到 60% 以上', 'A return above 60%')
+    if q['ex'] >= 95: return V('neu', '幾乎全部獲利', 'Nearly all in profit', '95% 以上在牛市初期也常出現，之後還大漲，不能單獨當頂部訊號。', 'Readings above 95% also show up early in bull markets, before big gains: not a top signal on its own.', '跌破 45%', 'A drop below 45%')
+    return V('neu', '中間區段', 'Middle zone', '扣掉十年老幣後 %.1f%% 在獲利，不在熊底區也不在高檔。' % q['ex'], '%.1f%% in profit excluding 10-year-old coins: neither bear-bottom nor top territory.' % q['ex'], '跌破 45%', 'A drop below 45%')
 def oldc(L):
     y5 = O(L)['bvx']['old']['y5']
     if y5['pct'] >= 90: return V('down', '老幣大量移動', 'Old coins are moving', '5 年以上的幣移動量在 2016 年以來最高 10%。', '5-year-old coins are moving at a top-tenth pace since 2016.', '回到平常', 'A return to normal')

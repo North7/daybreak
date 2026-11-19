@@ -9,6 +9,9 @@
   存成「虧損的」「虧 10%／20%／30%／50% 以上的」五條累計線，加上今天、30 天前、2022 年低點那天的分組。
 3 籌碼集中度（supply_density）：最後一次移動價格在當天價格 ±5% 內的幣佔供給的比例。和 bitview.conc_rows 自己從 URPD 算的平均差 0.01 個百分點。
 4 老幣移動（age_*_transfer_volume_sum_24h）：放了 1 年以上、5 年以上的幣每天在鏈上移動的顆數。換錢包、交易所整理冷錢包也算，不等於賣出。
+6 獲利供給：全體 vs 扣掉十年老幣（2026-11-19 使用者看了白仙女〈浮盈籌碼佔比，剔除休眠超過 10 年的幣〉的研究後要求）：
+  全體＝supply_in_profit ÷ circulating_supply；扣掉＝（獲利供給 − 10 年以上的幣裡在獲利的）÷（流通量 − 10 年以上的幣），各取 7 日平均。
+  10 年以上的幣 2019 年才開始有，成本極低、幾乎永遠在獲利，不扣的話熊底一輪比一輪高；扣掉之後反過來一輪比一輪低，沒有一條固定的線能跨輪通用。
 5 大戶地址的持幣成本（2026-11-16 使用者看了運營回覆用的圖後要求）：餘額 100–1k、1k–10k、10k–100k 顆三層地址各自的已實現市值 ÷ 持幣量。
   Bitview 沒有現成的成本序列，自己除。依地址餘額分層、沒有做實體歸併；一個地址的餘額變了就換層，1 萬顆以上那層有不少交易所和託管機構。
 全部只作讀值。Bitview 改序列名稱時（https://bitview.space/api 的 What changed）整組會失敗，collect.py 只記 errors，build.py 沿用前一天的。"""
@@ -22,12 +25,14 @@ PB = ['profit_over_1000', 'profit_500_to_1000', 'profit_300_to_500', 'profit_200
 COH = [('all', ''), ('sth', 'sth_'), ('lth', 'lth_')]
 A1 = ['1y_to_18m', '18m_to_2y', '2y_to_3y', '3y_to_4y', '4y_to_5y']; A5 = ['5y_to_6y', '6y_to_7y', '7y_to_8y', '8y_to_10y', '10y_to_12y', '12y_to_15y', 'over_15y']
 TIERS = ['100_to_1k', '1k_to_10k', '10k_to_100k']
+OLD10 = ['age_10y_to_12y', 'age_12y_to_15y', 'age_over_15y']   # 放了 10 年以上沒動的幣（含中本聰時期的幣）
 LOWS = [('2014-06-01', '2015-12-31'), ('2018-06-01', '2019-06-30'), ('2020-01-01', '2020-06-30'), ('2022-06-01', '2023-03-31')]   # 歷次低點所在的區間，低點取區間裡的最低收盤
 NAMES = ['price_close'] + ['bedrock_unweighted_floor_' + p for p in FP] + ['bedrock_unweighted_supply_in_loss_share_threshold_' + p for p in FP] + ['supply_in_loss_share'] \
     + ['%s%s_percent_supply_share' % (pre, b) for _, pre in COH for b in PB] \
     + ['supply_density', 'supply_density_in_profit', 'supply_density_in_loss', 'sth_supply_density', 'lth_supply_density'] \
     + ['age_%s_transfer_volume_sum_24h' % a for a in A1 + A5] \
-    + ['balance_%s_btc_%s' % (t, m) for t in TIERS for m in ('realized_cap', 'supply')]
+    + ['balance_%s_btc_%s' % (t, m) for t in TIERS for m in ('realized_cap', 'supply')] \
+    + ['supply_in_profit', 'circulating_supply'] + ['%s_supply%s' % (a, x) for a in OLD10 for x in ('', '_in_profit')]
 
 
 def _curl(url):
@@ -125,10 +130,35 @@ def build(last, S=None, pxc=None):
     tiers = dict(keys=TIERS, cur=[R0(c[N - 1]) for c in C], prev30=[R0(c[N - 31]) for c in C], px=R0(px[N - 1]), gap=[round((px[N - 1] / c[N - 1] - 1) * 100, 1) for c in C],
                  year=int(last[:4]), below_days=sum(r['days'] for r in runs), runs=runs, longest=max(runs, key=lambda r: r['days']) if runs else None, deep=deep,
                  rows=[[dnum(i), R0(px[i])] + [R0(c[i]) for c in C] for i in samp(a17, keep) if all(c[i] for c in C)])
-    return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers,
-                note='損失地板：虧損的幣佔供給的比例到歷史最糟 5%／2%／1%／0.5%／0.1% 時的價格，門檻逐日累積；賺賠分布：各賺賠幅度佔供給 %；集中度：現價 ±5% 內的幣佔供給 %；老幣移動：1 年以上、5 年以上的幣每天移動的顆數（7 日、30 日平均）；只作讀值')
+    # ── 6 獲利供給：全體 vs 扣掉十年老幣 ──
+    sip, cs = S['supply_in_profit'], S['circulating_supply']
+    oq = lambda i, x: sum((S['%s_supply%s' % (a, x)][i] or 0) for a in OLD10)
+    a12 = ix('2012-01-01'); raw, exr, osh = [None] * N, [None] * N, [None] * N
+    for i in range(a12 - 7, N):
+        if not sip[i] or not cs[i]: continue
+        o_, op_ = oq(i, ''), oq(i, '_in_profit'); raw[i] = sip[i] / cs[i] * 100; exr[i] = (sip[i] - op_) / (cs[i] - o_) * 100; osh[i] = o_ / cs[i] * 100
+    def m7(v, i):
+        w = v[i - 6:i + 1]; return None if None in w else sum(w) / 7
+    r7 = [m7(raw, i) if i >= a12 else None for i in range(N)]; e7 = [m7(exr, i) if i >= a12 else None for i in range(N)]
+    if None in (r7[N - 1], e7[N - 1], r7[N - 31], e7[N - 31]): raise RuntimeError('Bitview 獲利供給最新一天缺值')
+    top = max(range(ix('2024-01-01'), N), key=lambda q: px[q] or 0)   # 這一輪的頂部（2024 年以來最高收盤），之後的最低點算「這一輪」
+    def low(a, b, v):
+        k = min((q for q in range(ix(a), min(N, ix(b) + 1)) if v[q] is not None), key=lambda q: v[q]); return dict(d=day(k), dn=dnum(k), v=R2(v[k]))
+    pw = [(a, b) for a, b in LOWS] + [(day(top), last)]
+    plows = [dict(ex=low(a, b, e7), raw=low(a, b, r7)) for a, b in pw]
+    cr, arm = [], True   # 扣掉老幣的 7 日平均第一次跌破 45%（回到 60% 以上才算新的一段）：之後一年的漲跌、一年內最深再跌多少
+    for i in range(a12, N):
+        if e7[i] is None: continue
+        if arm and e7[i] < 45:
+            w = [x for x in px[i:min(N, i + 366)] if x]; cr.append(dict(d=day(i), px=R0(px[i]), worst=round((min(w) / px[i] - 1) * 100), y1=round((px[i + 365] / px[i] - 1) * 100) if i + 365 < N and px[i + 365] else None)); arm = False
+        if e7[i] > 60: arm = True
+    ok = [x for x in e7[a12:] if x is not None]
+    psx = dict(ex=R2(e7[N - 1]), raw=R2(r7[N - 1]), ex30=R2(e7[N - 31]), raw30=R2(r7[N - 31]), old=R2(osh[N - 1]), old_first=next(day(i) for i in range(a12, N) if osh[i]), pct=round(sum(1 for x in ok if x < e7[N - 1]) / len(ok) * 100, 1), since='2012-01-01',
+               lows=plows, cross45=cr, rows=[[dnum(i), R2(r7[i]), R2(e7[i]), R2(osh[i]), R0(px[i])] for i in samp(a12, [ix(q[k]['d']) for q in plows for k in ('ex', 'raw')]) if e7[i] is not None])
+    return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx,
+                note='損失地板：虧損的幣佔供給的比例到歷史最糟 5%／2%／1%／0.5%／0.1% 時的價格，門檻逐日累積；賺賠分布：各賺賠幅度佔供給 %；集中度：現價 ±5% 內的幣佔供給 %；老幣移動：1 年以上、5 年以上的幣每天移動的顆數（7 日、30 日平均）；獲利供給：全體和扣掉 10 年以上的幣，在獲利的比例（7 日平均）；只作讀值')
 
 
 if __name__ == '__main__':
     import sys
-    d = build(sys.argv[1]); print({k: v for k, v in d['tiers'].items() if k != 'rows'}, len(d['tiers']['rows'])); print(json.dumps({k: (v if k not in ('rows',) else len(v)) for k, v in d['floors'].items()}, ensure_ascii=False)); print({k: d['pnl']['all'][k] for k in ('cur', 'prev30', 'low22', 'depth', 'pct10')}); print({k: v for k, v in d['dens'].items() if k != 'rows'}, len(d['dens']['rows'])); print(d['old']['y1'], d['old']['y5'], len(d['old']['rows'])); print('bytes', len(json.dumps(d)))
+    d = build(sys.argv[1]); print({k: v for k, v in d['psx'].items() if k != 'rows'}, len(d['psx']['rows'])); print({k: v for k, v in d['tiers'].items() if k != 'rows'}, len(d['tiers']['rows'])); print(json.dumps({k: (v if k not in ('rows',) else len(v)) for k, v in d['floors'].items()}, ensure_ascii=False)); print({k: d['pnl']['all'][k] for k in ('cur', 'prev30', 'low22', 'depth', 'pct10')}); print({k: v for k, v in d['dens'].items() if k != 'rows'}, len(d['dens']['rows'])); print(d['old']['y1'], d['old']['y5'], len(d['old']['rows'])); print('bytes', len(json.dumps(d)))
