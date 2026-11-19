@@ -1,16 +1,16 @@
 {
- "date": "2026-11-17",
- "edition": 43,
+ "date": "2026-11-18",
+ "edition": 44,
  "picks": [
   {
-   "id": "deriv/gex",
-   "chart": "data/picks/deriv-gex.png",
-   "chart_en": "data/picks/deriv-gex-en.png",
-   "why": "價格三天停在 64K，讀者會問為什麼不動；頭條講 ETF 與新錢，這張講期權對沖把價格吸住，不重複。plan 沒有 hint，gex 不在 recent。",
-   "q_zh": "為什麼 BTC 這三天黏在 64K？",
-   "q_en": "Why has BTC been stuck at 64K for three days?",
-   "zh": "為什麼 BTC 這三天黏在 64K？\n多半是選擇權（期權）的對沖把價格吸住了，還看不出有新買盤。\n推算做市商在 64,000 這檔是正 Gamma：價格每動 1% 要反向對沖 $18.4M，漲了賣、跌了買，波動被壓小。\n往上 65,000、66,000 和往下 60,000 都是負 Gamma，走出 64,000 波動會放大。\n#比特幣 #BTC #期權",
-   "en": "Why has BTC been stuck at 64K for three days?\nMostly options dealers pinning it, not fresh demand.\nEstimated dealer gamma at 64,000 is positive, $18.4M per 1% move: they fade both ways.\n65,000, 66,000 and 60,000 are negative: past them swings grow.\n#Bitcoin #BTC #options"
+   "id": "onchain/quant",
+   "chart": "data/picks/onchain-quant.png",
+   "chart_en": "data/picks/onchain-quant-en.png",
+   "why": "新低那天讀者會問「這裡算便宜了嗎」；頭條講認賠蔓延和 62K，這張講獲利供給跌破一半的估值位置，不重複。plan 沒有 hint，quant 不在 recent。",
+   "q_zh": "BTC 跌到這裡，算便宜了嗎？",
+   "q_en": "Is BTC cheap down here?",
+   "zh": "BTC 跌到這裡，算便宜了嗎？\n算，已經是前幾輪熊市底部區才有的價位。\n獲利的供給剩 46.36%，一個月前 68.38%；過半的幣在虧損，前幾輪都在熊市底部區，但一待 21 到 243 天，便宜不等於馬上止跌。\n收盤回到 63,930 之上，才算短暫跌進去。\n#比特幣 #BTC #鏈上數據",
+   "en": "Is BTC cheap down here?\nYes: this is bear-bottom-zone pricing.\nSupply in profit is 46.36%, from 68.38% a month ago. Under half was always a bottom zone, lasting 21 to 243 days.\nBack above 63,930 = a brief dip.\n#Bitcoin #BTC #onchain"
   }
  ]
 }
