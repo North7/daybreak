@@ -1,16 +1,16 @@
 {
- "date": "2026-11-18",
- "edition": 44,
+ "date": "2026-11-19",
+ "edition": 45,
  "picks": [
   {
-   "id": "onchain/quant",
-   "chart": "data/picks/onchain-quant.png",
-   "chart_en": "data/picks/onchain-quant-en.png",
-   "why": "新低那天讀者會問「這裡算便宜了嗎」；頭條講認賠蔓延和 62K，這張講獲利供給跌破一半的估值位置，不重複。plan 沒有 hint，quant 不在 recent。",
-   "q_zh": "BTC 跌到這裡，算便宜了嗎？",
-   "q_en": "Is BTC cheap down here?",
-   "zh": "BTC 跌到這裡，算便宜了嗎？\n算，已經是前幾輪熊市底部區才有的價位。\n獲利的供給剩 46.36%，一個月前 68.38%；過半的幣在虧損，前幾輪都在熊市底部區，但一待 21 到 243 天，便宜不等於馬上止跌。\n收盤回到 63,930 之上，才算短暫跌進去。\n#比特幣 #BTC #鏈上數據",
-   "en": "Is BTC cheap down here?\nYes: this is bear-bottom-zone pricing.\nSupply in profit is 46.36%, from 68.38% a month ago. Under half was always a bottom zone, lasting 21 to 243 days.\nBack above 63,930 = a brief dip.\n#Bitcoin #BTC #onchain"
+   "id": "flows/etfcost",
+   "chart": "data/picks/flows-etfcost.png",
+   "chart_en": "data/picks/flows-etfcost-en.png",
+   "why": "跌破 62K 那天讀者會問「ETF 那批機構買家虧多少、會不會賣」；頭條講籌碼和 62K，這張講 ETF 持有者成本，不重複。plan 沒有 hint，etfcost 不在 recent。",
+   "q_zh": "ETF 買家現在虧多少，會跟著賣嗎？",
+   "q_en": "How deep underwater are ETF buyers, and are they selling?",
+   "zh": "ETF 買家現在虧多少，會跟著賣嗎？\n已經在賣，痛的程度還沒到 6 月那麼深。\n推算 ETF 持有者平均成本 78,971，最新收盤在成本下方 21.6%，連 10 天在水下；6/30 最深到 −26.4%。成本不含 GBTC，是推算。\nETF 轉成連續淨流入，這個答案才會變。\n#比特幣 #BTC #ETF",
+   "en": "How deep underwater are ETF buyers, and are they selling?\nThey are selling; the pain is short of June's.\nEstimated ETF holder cost is 78,971; price is 21.6% below it, 10 days under. Jun 30 hit −26.4%. Excludes GBTC.\nA run of net inflows would change this.\n#Bitcoin #BTC #ETF"
   }
  ]
 }
