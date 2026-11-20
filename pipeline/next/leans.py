@@ -277,6 +277,15 @@ def agepl(L):
     if a['lth_loss'] >= 60: return V('neu', '老手也在認賠', 'Old hands are capitulating too', '6 個月以上的人佔實現虧損 60% 以上，常是投降的尾段。', 'Holders of 6+ months take over 60% of realized loss, often the tail of a capitulation.')
     return V('neu', '認賠在新手', 'Losses sit with newcomers', '認賠主要是近期進場的人，老手沒有大量出手。', 'Loss-taking is mostly recent buyers; old hands are not moving much.', '老手的實現獲利比重升過 60%', 'Old hands taking over 60% of profit')
 def rpl(L):
+    y = O(L).get('rpl365') or {}; w, s7 = y.get('w90'), y.get('s7')
+    if w and s7:   # 2026-11-20 卡片打開是一年合計（使用者：判讀和大數字不能打架）；近期用最近 7 天合計（同一份 Bitview，合計相除）
+        cz, ce = ('比值回升到 %.2f（最低點 %.2f 的 10%% 以上）' % (y['conf_at'], y['cur_low']), 'The ratio rising to %.2f (10%% above its %.2f low)' % (y['conf_at'], y['cur_low'])) if y.get('conf_at') else ('一年合計回到 1 以上', 'The one-year sum back above 1')
+        if y['below'] and y.get('confirmed'): return V('up', '底部確認', 'Bottom confirmed', '一年合計低於 1，比值已從這一段最低點回升 10%；過去之後價格都沒再破底。', 'Below 1 over a year and already 10% off its low; in the past price never made a new low after that.', '價格跌破這一段的最低價', "Price breaking this spell's low")
+        if y['below'] and s7 < 1: return V('down', '底部區、認賠還在加重', 'Bottom zone, losses still building', '一年合計低於 1，是過去週期的底部區；但最近 7 天認賠是獲利的 %.0f 倍，比值還沒從低點回升。' % (1 / s7), 'Below 1 over a year, where past cycles bottomed; but losses were %.0fx profits over the last 7 days and the ratio has not turned up from its low.' % (1 / s7), cz, ce)
+        if y['below']: return V('neu', '底部區、未確認', 'Bottom zone, unconfirmed', '一年合計低於 1，過去都是週期底部區；最近 7 天獲利多於認賠，但比值還沒從低點回升 10%。', 'Below 1 over a year, a past cycle-bottom zone; profits led over the last 7 days, but the ratio is not yet 10% off its low.', cz, ce)
+        if w['value'] < 1: return V('down', '認賠多於獲利', 'Losses outweigh profits', '一年合計在 1 以上，但 90 天合計已低於 1。', 'Above 1 over a year, but the 90-day sum is below 1.', '90 天合計回到 1 以上', 'The 90-day sum back above 1')
+        if s7 < 1: return V('down', '短期轉弱', 'Weakening near term', '一年和 90 天合計在 1 以上，但最近 7 天認賠多於獲利。', 'Above 1 over a year and 90 days, but losses led over the last 7.', '7 天合計回到 1 以上', 'The 7-day sum back above 1')
+        return V('up', '獲利多於認賠', 'Profits outweigh losses', '一年、90 天和最近 7 天合計都在 1 以上。', 'Above 1 over a year, 90 days and the last 7.', '7 天合計跌回 1 以下', 'The 7-day sum falling below 1')
     r = O(L)['rpl']
     if r['value'] < 1: return V('down', '認賠多於獲利', 'Losses outweigh profits', '90 天平均低於 1。', 'The 90-day average is below 1.', '回到 1 以上', 'A move back above 1')
     if r['last7'] < 1: return V('down', '短期轉弱', 'Weakening near term', '90 天還在 1 以上，但最近 7 天認賠多於獲利。', 'Still above 1 over 90 days, but losses led over the last 7.', '每日比值回到 1 以上', 'Daily readings back above 1')

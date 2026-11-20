@@ -547,7 +547,7 @@ PANELS = {
     'onchain/sthpnl': dict(zh='短期持有者實現獲利與虧損', en='Short-term holder realized profit and loss', sel='#c-sthpnl', data=['onchain.sth_pnl'], sig=['sthpnl'], old='sthpnl'),
     'onchain/sthsig': dict(zh='短期持有者集中止盈與認賠', en='Short-term holder profit-taking and capitulation spikes', sel='#c-sthsig', data=['onchain.sthsig'], sig=['sthsig']),   # 2026-11-11
     'onchain/npl':    dict(zh='每日淨實現損益', en='Daily net realized profit/loss', sel='#c-npl', data=['onchain.npl'], sig=['npl'], old='npl'),
-    'onchain/rpl':    dict(zh='實現獲利 ÷ 實現虧損', en='Realized profit ÷ realized loss', sel='#c-rpl', data=['onchain.rpl']),
+    'onchain/rpl':    dict(zh='實現獲利 ÷ 實現虧損', en='Realized profit ÷ realized loss', sel='#c-rpl', data=['onchain.rpl365', 'onchain.rpl']),   # 2026-11-20 卡片打開是一年合計（rpl365；90 天檢視是 rpl365.w90）
     'onchain/rloss':  dict(zh='實現虧損：峰值背離', en='Realized loss: peak divergence', sel='#c-rloss', data=['onchain.rloss']),
     'onchain/sec':    dict(zh='賣方衰竭常數', en='Seller exhaustion constant', sel='#c-sec', data=['onchain.sec']),
     'onchain/mom':    dict(zh='鏈上勢能', en='On-chain momentum', sel='#c-mom', data=['onchain.mom']),

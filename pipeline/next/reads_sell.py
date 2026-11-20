@@ -125,6 +125,7 @@ def agepl(L):
            '30 天實現虧損 %s，其次是 %s（%.0f%%）。' % (yi(a['loss_m'], False), AGN[G[tl[1]]][0], a['loss'][tl[1]]), '%s of realized loss over 30 days; next is %s (%.0f%%).' % (bn(a['loss_m'], False), AGN[G[tl[1]]][1], a['loss'][tl[1]]))]
 
 def rpl(L):
+    if (L['onchain'].get('rpl365') or {}).get('w90') and L['onchain']['rpl365'].get('s7'): return None   # 2026-11-20 一年是預設、90 天改合計相除：讀數在 oc_data 組（兩個檢視各一份）
     r = L['onchain']['rpl']; maj = [x for x in r['reds'] if x['major']]; done = [x for x in maj[:-1] if x.get('relapse') is not None]; last = maj[-1]
     rl = [x for x in done if x['relapse']]
     sz = ('90 天實現獲利是虧損的 %.2f 倍，但最近 7 天只有 %.2f。' if r['last7'] < 1 <= r['value'] else '90 天實現獲利是虧損的 %.2f 倍，最近 7 天 %.2f。') % (r['value'], r['last7'])

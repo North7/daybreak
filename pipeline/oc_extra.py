@@ -719,7 +719,29 @@ def rpl365_viz(bv, px, last, block=4):
         rows.append([dn(d_), round(m[d_], 3), round(P(d_))])
     rows.reverse()
     done = [x for x in reds if not x.get('open')]
-    return dict(date=d1, value=round(m[d1], 3), price=round(P(d1)), below=below, since=M[k], since_days=dn(d1) - dn(M[k]), since_price=round(P(M[k])),
+    # 2026-11-20 使用者（運營轉來）：「90 天」原本是 CheckOnChain 每日比值取平均，單日極端值（90 天裡最大一天 20 倍）把它拉到 2.28，
+    #   合計相除只有 1.32，和卡片上「最近 7 天 0.17」的判讀打架。90 天和 7、30 天都改成同一份 Bitview 資料的合計相除
+    sr = lambda n, i: (lambda a, b: round(a / b, 3) if a > 0 and b > 0 else None)(cp[i + 1] - cp[i + 1 - n], cl[i + 1] - cl[i + 1 - n])
+    iz = len(D) - 1; s7, s30 = sr(7, iz), sr(30, iz)
+    m9 = {D[i]: v for i in range(89, len(D)) for v in [sr(90, i)] if v}
+    M9 = [d for d in D if d in m9 and d >= '2012-01-01']; r9, cur = [], None
+    for d in M9:
+        if m9[d] < 1:
+            if cur is None: cur = dict(start=d, end=d)
+            cur['end'] = d
+        elif cur: r9.append(cur); cur = None
+    if cur: r9.append(dict(cur, open=True))
+    r9 = [x for x in r9 if dn(x['end']) - dn(x['start']) + 1 >= 5]
+    ab9 = m9[M9[-1]] >= 1; k9 = len(M9) - 1
+    while k9 > 0 and (m9[M9[k9 - 1]] >= 1) == ab9: k9 -= 1
+    rw9 = []
+    for i in range(len(M9) - 1, -1, -block):
+        seg = M9[max(0, i - block + 1): i + 1]; lo_ = min(seg, key=m9.get); d_ = lo_ if m9[lo_] < 1 else seg[-1]
+        if i == len(M9) - 1 and d_ != seg[-1]: rw9.append([dn(seg[-1]), m9[seg[-1]], round(P(seg[-1]))])
+        rw9.append([dn(d_), m9[d_], round(P(d_))])
+    rw9.reverse()
+    w90 = dict(value=m9[M9[-1]], above=ab9, since=M9[k9], since_days=dn(M9[-1]) - dn(M9[k9]), v10=m9[M9[max(0, len(M9) - 11)]], reds=r9, rows=rw9)
+    return dict(date=d1, value=round(m[d1], 3), price=round(P(d1)), below=below, s7=s7, s30=s30, w90=w90, since=M[k], since_days=dn(d1) - dn(M[k]), since_price=round(P(M[k])),
                 chg=round((P(d1) / P(M[k]) - 1) * 100, 1), v30=round(m[d30], 3), profit_b=round(sp[d1] / 1e9, 1), loss_b=round(sl[d1] / 1e9, 1),
                 cur_low=round(reds[-1]['low'], 3) if reds and reds[-1].get('open') else None, conf_at=round(reds[-1]['low'] * (1 + Y1_CONF), 3) if reds and reds[-1].get('open') and reds[-1]['low'] < Y1_CONF_MAX else None,
                 confirmed=bool(reds and reds[-1].get('open') and reds[-1].get('conf')), conf_n=sum(1 for x in done if x.get('conf')), conf_ok=sum(1 for x in done if x.get('conf') and not x['conf_broken']),

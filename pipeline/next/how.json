@@ -265,14 +265,14 @@
 },
 "rpl": {
 "hz": [
-"圖上：上格是 BTC 價格，下格是全網實現獲利 ÷ 實現虧損的 90 天平均（都是對數刻度）；1 以上綠、以下紅，紅底是低於 1 的期間。",
-"怎麼看：低於 1＝賣出的人整體在認賠，大段紅色都出現在熊市；回到 1 以上代表賣出的人又開始賺錢。歷史上大段紅色結束後，多半到週期頂部都沒再跌回 1 以下。",
-"小心：不是保證：2019/5 回到 1 以上後，2019/12–2020/1 又跌回 37 天。90 天平均反應慢，要搭配最近 7 天的每日比值看。"
+"圖上：上格是 BTC 價格，下格是全網實現獲利 ÷ 實現虧損，都是一段期間合計相除（對數刻度）；打開是一年合計，「90 天」轉得比較快。1 以上綠、以下紅，橘底是低於 1 的期間。",
+"怎麼看：一年合計低於 1＝一整年賣出的人整體在認賠，過去四次都落在週期底部區；比值從那一段的最低點回升 10%，過去之後價格都沒再破底。90 天合計回到 1 以上，代表賣出的人又開始賺錢。",
+"小心：比值的最低點落後價格，確認來得晚；最近 7 天合計最早看出轉向，但一週的數字起伏大。"
 ],
 "he": [
-"WhatTop: BTC price; bottom: network-wide realized profit ÷ realized loss, 90-day average (both log scale). Green above 1, red below; red bands mark the stretches below 1.",
-"ReadingBelow 1 means sellers as a whole are realizing losses; long red stretches all came in bear markets. Moving back above 1 means sellers are taking profits again; historically, after a long red stretch it mostly stayed above 1 until the cycle top.",
-"CaveatNot a guarantee: after returning above 1 in May 2019 it fell back below for 37 days in Dec 2019–Jan 2020. The 90-day average is slow; read it with the last 7 daily values."
+"WhatTop: BTC price; bottom: network realized profit ÷ realized loss, each summed over a period and then divided (log scale). It opens on the one-year sum; \"90 days\" turns faster. Green above 1, red below; orange bands mark stretches below 1.",
+"ReadingA one-year sum below 1 means sellers realized losses on balance for a whole year; all four past cases fell in cycle bottom zones, and once the ratio rose 10% off that spell’s low, price never made a new low. A 90-day sum back above 1 means sellers are taking profits again.",
+"CaveatThe ratio’s low lags price, so confirmation comes late; the last 7 days show a turn first, but a single week is noisy."
 ]
 },
 "rloss": {

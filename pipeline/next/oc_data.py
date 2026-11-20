@@ -131,7 +131,7 @@ def build(L, N, E, dn):
       leg=[['up', '1 以上（獲利了結較多）', 'Above 1 (more profit-taking)', 'line'], ['dn', '1 以下（認賠較多）', 'Below 1 (more loss-taking)', 'line']],
       dz='全網 90 天平均的實現獲利，除以實現虧損。橘底是歷次跌到 1 以下的期間。', de='The 90-day average of network realized profit divided by realized loss. Orange bands mark past stays below 1.')
     y1 = o.get('rpl365')
-    if y1:   # 2026-11-17 使用者要求：多一個一年的檢視（oc_extra.rpl365_viz，Bitview，合計相除）；原本 90 天的是第一個、打開時還是它
+    if y1:   # 2026-11-17 使用者要求：多一個一年的檢視（oc_extra.rpl365_viz，Bitview，合計相除）
         yl = lambda d_: d_[:7].replace('-', '/')
         c_rpl['modes'] = [dict(mz='90 天', me='90 days'),
                           dict(mz='一年', me='One year', src='Bitview · {d}', rows=y1['rows'], p=2, dom=[.2, 10], ser=[ser(1, zh='一年合計獲利 ÷ 虧損', en='One-year profit ÷ loss', t='split', base=1, w=1.6)],
@@ -163,7 +163,10 @@ def build(L, N, E, dn):
             my = own([('一年合計', 'One-year sum', '%.2f' % v, '%.2f' % v, 'down' if y1['below'] else 'up',
                        ('%s 跌破 1（當天 $%.1fK），已 %d 天、價格 %s；過去四段最低 %.2f–%.2f。' % (md_(y1['since']), y1['since_price'] / 1000, y1['since_days'], sgp(y1['chg']), pl[0], pl[1])) if y1['below'] else ('在 1 以上；過去四段低於 1 時最低 %.2f–%.2f。' % tuple(pl)),
                        ('Below 1 since %s (at $%.1fK), %d days, price %s; past spells bottomed at %.2f–%.2f.' % (mde_(y1['since']), y1['since_price'] / 1000, y1['since_days'], sgp(y1['chg']), pl[0], pl[1])) if y1['below'] else ('Above 1; past spells below 1 bottomed at %.2f–%.2f.' % tuple(pl))),
-                     ] + ([(lambda nr, cu: ('跌破 1 和價格底', 'Cross vs price low', '前 %d～後 %d 天' % (-nr['gap'][0], nr['gap'][1]) if nr['gap'][0] < 0 else '後 %d–%d 天' % tuple(nr['gap']),
+                     ] + ([('最近 7 天合計', 'Last 7 days', '%.2f' % y1['s7'], '%.2f' % y1['s7'], 'down' if y1['s7'] < 1 else 'up',
+                        '最近 7 天合計的實現獲利是虧損的 %.2f 倍，30 天合計 %.2f%s。' % (y1['s7'], y1['s30'], '：認賠還在加重' if y1['s7'] < y1['s30'] < 1 else ''),
+                        'Over the last 7 days realized profit was %.2f times realized loss; %.2f over 30 days%s.' % (y1['s7'], y1['s30'], ': loss-taking is still building' if y1['s7'] < y1['s30'] < 1 else ''))] if y1.get('s7') and y1.get('s30') else [])
+                     + ([(lambda nr, cu: ('跌破 1 和價格底', 'Cross vs price low', '前 %d～後 %d 天' % (-nr['gap'][0], nr['gap'][1]) if nr['gap'][0] < 0 else '後 %d–%d 天' % tuple(nr['gap']),
                         ('%+d to %+d days' % tuple(nr['gap'])).replace('-', '−'), 'neu',
                         '過去 %d 次週期底，價格最低點在跌破 1 前 %d 天到後 %d 天之間，從跌破當天算最多再跌 %.0f%%；比值自己的最低點又晚約 %d–%d 個月（價格都用每日收盤價）。' % (nr['n'], -min(nr['gap'][0], 0), nr['gap'][1], -nr['dd'], round(nr['rgap'][0] / 30.4), round(nr['rgap'][1] / 30.4))
                         + (('這次收盤最低的 $%.1fK 在 %s，%s；跌破後收盤最多跌 %.0f%%，%s' % (cu['near_price'] / 1000, md_(cu['near']), ('比跌破早 %d 天' % -cu['near_gap']) if cu['near_gap'] < 0 else ('跌破後 %d 天' % cu['near_gap']), -cu['dd'],
@@ -180,8 +183,40 @@ def build(L, N, E, dn):
                        'A year after the ratio\'s low: median %s (any day %s). Only four spells; a reading, not a signal.' % (sgp(r_['med']), sgp(b_['med'])))], sz, se)
             my['items'].insert(0, dict(kz='我們的看法', ke='Our view', vz=vz, ve=ve, tone=vt, dz=wz, de=we, cz=cz, ce=ce, view=1, hm='', hme=''))
             c_rpl['modes'][1]['say'] = my
-        c_rpl['dz'] = '全網 90 天平均的實現獲利，除以實現虧損（CheckOnChain，每日比值取平均）。橘底是歷次跌到 1 以下的期間。「一年」改用一年合計相除，看的是整個週期的位置。'
-        c_rpl['de'] = 'The 90-day average of network realized profit divided by realized loss (CheckOnChain, daily ratios averaged). Orange bands mark past stays below 1. "One year" divides one-year sums instead and shows where the cycle stands.'
+        w9 = y1.get('w90')
+        if w9 and y1.get('s7') and c_rpl['modes'][1].get('say'):
+            # 2026-11-20 使用者（運營轉來截圖）：打開看到 90 天平均 2.28、綠色「在 1 以上 73 天」，判讀卻是偏空（最近 7 天 0.17、一年合計 1 以下），讀者會以為獲利的比認賠的多。
+            #   1 打開改成「一年」（和判讀、運營長文一致）：卡片本身換成一年的資料，c._m＝1；檢視順序不動，分享連結的 m＝0／1 意思照舊
+            #   2「90 天」改成 Bitview 合計相除（原本 CheckOnChain 每日比值取平均，單日極端值把它拉到 2.28，合計相除 1.32）
+            #   3 兩個檢視的讀數都帶最近 7 天合計
+            ym = c_rpl['modes'][1]; from say_data import own as own_
+            v9, s7, s30 = w9['value'], y1['s7'], y1['s30']
+            sx9 = '%d/%d' % tuple(int(x) for x in w9['since'][5:].split('-'))
+            if v9 < 1: vt9, vz9, ve9, wz9, we9, cz9, ce9 = 'down', '認賠多於獲利', 'Losses outweigh profits', '90 天合計低於 1。', 'The 90-day sum is below 1.', '回到 1 以上', 'A move back above 1'
+            elif s7 < 1: vt9, vz9, ve9, wz9, we9, cz9, ce9 = 'down', '短期轉弱', 'Weakening near term', '90 天合計還在 1 以上，但最近 7 天認賠多於獲利。', 'Still above 1 over 90 days, but losses led over the last 7.', '7 天合計回到 1 以上', 'The 7-day sum back above 1'
+            else: vt9, vz9, ve9, wz9, we9, cz9, ce9 = 'up', '獲利多於認賠', 'Profits outweigh losses', '90 天和最近 7 天合計都在 1 以上。', 'Above 1 over both 90 days and the last 7.', '7 天合計跌回 1 以下', 'The 7-day sum falling below 1'
+            sy9 = own_([('90 天合計', '90-day sum', '%.2f' % v9, '%.2f' % v9, 'up' if v9 >= 1 else 'down',
+                         ('%s 起在 1 以上（%d 天）；10 天前是 %.2f。' if w9['above'] else '%s 起低於 1（%d 天）；10 天前是 %.2f。') % (sx9, w9['since_days'], w9['v10']),
+                         ('Above 1 since %s (%d days); %.2f ten days ago.' if w9['above'] else 'Below 1 since %s (%d days); %.2f ten days ago.') % (mde_(w9['since']), w9['since_days'], w9['v10'])),
+                        ('最近 7 天合計', 'Last 7 days', '%.2f' % s7, '%.2f' % s7, 'down' if s7 < 1 else 'up', '30 天合計 %.2f。' % s30, '%.2f over 30 days.' % s30)],
+                       ('90 天合計 %.2f，%s，但最近 7 天只有 %.2f：認賠在追上獲利。' % (v9, '還在 1 以上' if v9 >= 1 else '已經低於 1', s7)) if s7 < 1 <= v9 else '90 天合計 %.2f，最近 7 天 %.2f。' % (v9, s7),
+                       ('The 90-day sum is %.2f, still above 1, but only %.2f over the last 7 days: losses are catching up with profits.' % (v9, s7)) if s7 < 1 <= v9 else 'The 90-day sum is %.2f; %.2f over the last 7 days.' % (v9, s7))
+            sy9['items'].insert(0, dict(kz='我們的看法', ke='Our view', vz=vz9, ve=ve9, tone=vt9, dz=wz9, de=we9, cz=cz9, ce=ce9, view=1, hm='', hme=''))
+            from reads import HOW as HOW_
+            for y_ in (sy9, ym['say']): y_['hz'], y_['he'] = list((HOW_.get('rpl') or {}).get('hz') or []), list((HOW_.get('rpl') or {}).get('he') or [])
+            v90 = dict(mz='90 天', me='90 days', src='Bitview · {d}', rows=w9['rows'], p=2, dom=None, marks=[], ser=[ser(1, zh='90 天合計獲利 ÷ 虧損', en='90-day profit ÷ loss', t='split', base=1, w=1.6)],
+                       refs=[dict(v=1, col='ink', solid=1)], spans=[dict(a=dn(e['start']), b=dn(e['end']), col='dn', op=.12, below=1) for e in w9['reds']],
+                       leg=[['up', '1 以上（獲利了結較多）', 'Above 1 (more profit-taking)', 'line'], ['dn', '1 以下（認賠較多）', 'Below 1 (more loss-taking)', 'line']],
+                       dz='全網 90 天合計的實現獲利，除以 90 天合計的實現虧損（Bitview）。用合計相除：單日比值可以到 20 倍，每日比值直接平均會被少數幾天拉高。橘底是歷次跌到 1 以下的期間。',
+                       de='Network realized profit summed over 90 days, divided by realized loss summed over the same 90 days (Bitview). Sums are divided rather than daily ratios averaged: a single day can reach 20x, and an average of daily ratios gets pulled up by a few days. Orange bands mark past stays below 1.',
+                       say=sy9)
+            for k_ in ('rows', 'p', 'dom', 'ser', 'refs', 'spans', 'marks', 'leg', 'dz', 'de', 'say'): c_rpl[k_] = ym[k_]
+            c_rpl['src'] = 'Bitview · {d}'
+            c_rpl['modes'] = [v90, dict(mz='一年', me='One year', src='Bitview · {d}')]
+            c_rpl['_m'] = 1
+        else:
+          c_rpl['dz'] = '全網 90 天平均的實現獲利，除以實現虧損（CheckOnChain，每日比值取平均）。橘底是歷次跌到 1 以下的期間。「一年」改用一年合計相除，看的是整個週期的位置。'
+          c_rpl['de'] = 'The 90-day average of network realized profit divided by realized loss (CheckOnChain, daily ratios averaged). Orange bands mark past stays below 1. "One year" divides one-year sums instead and shows where the cycle stands.'
     rl = o['rloss']; LK = dict(div=('c4', '', '背離', 'Divergence'), cap=('c5', '5 4', None, None)); LK['break'] = ('dn', '5 4', '打破', 'Broken')
     def links(lst, va, vb):
         lst = [x for x in lst if x['kind'] in LK]; out = []; lab = [x for x in lst if x['kind'] != 'cap'][-3:]
