@@ -1,0 +1,61 @@
+name: Chart images
+
+# 2026-11-20 GEO：每張圖的靜態小圖（pipeline/chart_img.js 用網站的分享模式截，中英各一張），給 charts/<k>/ 單頁和它的 og:image。
+# 每天日報上線後（Share cards 跑完）截一次，打包放在 Release「chart-img」（覆蓋），部署時 cloudflare.yml 下載回 charts-img/。
+# 圖不進程式庫：一天兩百多張，放進去倉庫會一直變大。
+# PR 改到截圖程式時也跑一次，只把圖當成 artifact 留著檢查，不更新 Release。
+
+on:
+  workflow_run:
+    workflows: ["Share cards"]
+    types: [completed]
+  workflow_dispatch:
+  pull_request:
+    paths: ["pipeline/chart_img.js", ".github/workflows/chart-img.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: chart-img
+  cancel-in-progress: true
+
+jobs:
+  shoot:
+    # ubuntu-latest 已是 26.04，Playwright 1.56.1 裝不了 chromium（和 check.yml 一樣固定在 24.04）
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event_name == 'pull_request' && github.head_ref || 'main' }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: 安裝瀏覽器
+        run: |
+          npm i --no-save playwright@1.56.1
+          npx playwright install --with-deps chromium || npx playwright install chromium
+          sudo apt-get install -y -qq fonts-noto-cjk >/dev/null || true
+      - name: 截圖
+        run: |
+          python3 -m http.server 8765 >/dev/null 2>&1 &
+          sleep 1
+          python3 pipeline/next/pages.py --img-list > "$RUNNER_TEMP/list.json"
+          node pipeline/chart_img.js "$RUNNER_TEMP/list.json" "$RUNNER_TEMP/img"
+          du -sh "$RUNNER_TEMP/img"
+          tar -C "$RUNNER_TEMP/img" -cf "$RUNNER_TEMP/chart-img.tar" .
+      - name: 留給 PR 檢查
+        if: github.event_name == 'pull_request'
+        uses: actions/upload-artifact@v4
+        with:
+          name: chart-img
+          path: ${{ runner.temp }}/img
+          retention-days: 3
+      - name: 更新 Release「chart-img」
+        if: github.event_name != 'pull_request'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release view chart-img >/dev/null 2>&1 || gh release create chart-img --title "每張圖的靜態小圖（每天覆蓋，不放進程式庫）" --notes "pipeline/chart_img.js 每天產生，cloudflare.yml 部署時下載到 charts-img/。" --latest=false
+          gh release upload chart-img "$RUNNER_TEMP/chart-img.tar" --clobber

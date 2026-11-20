@@ -17,7 +17,7 @@ on:
   push:
     branches: [main]
   workflow_run:
-    workflows: ["Daily data", "ETF flows", "Prefetch on-chain", "Share cards"]
+    workflows: ["Daily data", "ETF flows", "Prefetch on-chain", "Share cards", "Chart images"]
     types: [completed]
   workflow_dispatch:
 
@@ -49,6 +49,8 @@ jobs:
 
       - name: 準備上傳的網站資料夾
         if: env.HAS_TOKEN == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           # 跟 GitHub Pages 一樣，倉庫裡的檔案都上線（.git、.github 除外）
           mkdir -p "$RUNNER_TEMP/site"
@@ -58,6 +60,9 @@ jobs:
           # 2026-11-16 舊版（classic.html）對外下線，2026-11-17 從倉庫刪除；/classic 轉回首頁（網址 # 後面的舊代號由首頁轉到新版對應的圖）
           printf '/classic /  301\n/classic.html /  301\n' >> "$RUNNER_TEMP/site/_redirects"
           echo "SITE_DIR=$RUNNER_TEMP/site" >> "$GITHUB_ENV"
+          # 2026-11-20 每張圖的靜態小圖（chart-img.yml 每天截好放在 Release「chart-img」）解到 charts-img/，單頁才會放圖；還沒有或下載失敗就不放圖
+          mkdir -p "$RUNNER_TEMP/site/charts-img"
+          gh release download chart-img --repo "${{ github.repository }}" -p chart-img.tar -D "$RUNNER_TEMP" --clobber && tar -C "$RUNNER_TEMP/site/charts-img" -xf "$RUNNER_TEMP/chart-img.tar" || echo "::warning::no chart images"
           # 2026-11-20 GEO 第二批：每張圖一頁、每天的簡報一頁（中英），sitemap.xml 加上這些網址。只寫進上傳的資料夾，不進程式庫
           python3 pipeline/next/pages.py --out "$RUNNER_TEMP/site" || echo "::warning::pages.py failed; deploying without chart/brief pages"
           echo "files: $(find "$RUNNER_TEMP/site" -type f | wc -l)"

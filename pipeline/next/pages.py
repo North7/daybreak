@@ -56,6 +56,7 @@ h2{font:650 19px/1.4 var(--f-head);margin:0 0 10px}
 .pill{display:inline-flex;align-items:center;gap:7px;font:600 13px/1 var(--f-sans);padding:7px 12px 7px 10px;border-radius:999px;border:1px solid currentColor}
 .pill:before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
 .pill.up{color:var(--up)}.pill.dn{color:var(--dn)}.pill.nu{color:var(--nu)}
+.fig{display:block;margin:0 0 22px;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#060607;transition:transform .3s cubic-bezier(.3,1.5,.5,1)}.fig:hover{transform:translateY(-2px)}.fig img{display:block;width:100%;height:auto}
 .read{font:500 clamp(18px,2.6vw,21px)/1.65 var(--f-sans);margin:0 0 22px}
 .cta{display:inline-flex;align-items:center;gap:8px;background:var(--ink);color:var(--bg);text-decoration:none;font:600 14px/1 var(--f-sans);padding:13px 18px;border-radius:999px;transition:transform .25s cubic-bezier(.3,1.6,.5,1)}
 .cta:hover{transform:translateY(-2px)}.cta:active{transform:scale(.96)}
@@ -73,7 +74,7 @@ ul.pts{margin:0 0 8px;padding-left:1.15em}ul.pts li{margin:0 0 8px;color:var(--i
 .pn{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}.pn a{text-decoration:none}.pn a:hover{text-decoration:underline}
 .f{border-top:1px solid var(--line);padding:20px 0 0;margin-top:22px}.f h3{font:600 16px/1.45 var(--f-sans);margin:0 0 6px}
 footer{padding-top:36px;padding-bottom:48px;color:var(--ink3);font-size:13.5px}footer a{color:var(--ink2)}
-@media (prefers-reduced-motion:reduce){.cta{transition:none}}"""
+@media (prefers-reduced-motion:reduce){.cta,.fig{transition:none}}"""
 
 FONTS = ('<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>'
          '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@500..700&family=Geist:wght@400..600&family=Geist+Mono:wght@500;600&family=Noto+Sans+TC:wght@400..700&display=swap">')
@@ -92,7 +93,7 @@ def ld(graph):
     return '<script type="application/ld+json">%s</script>' % s.replace('</', '<\\/')
 
 
-def shell(en, path_zh, path_en, title, desc, body, graph):
+def shell(en, path_zh, path_en, title, desc, body, graph, og=None):
     """一頁的外框。path_zh／path_en 是兩個語言的網址（不含網域，結尾斜線）；沒有另一個語言的版本就傳 None"""
     me = path_en if en else path_zh
     alt = ''.join('<link rel="alternate" hreflang="%s" href="%s%s">' % (hl, SITE, p) for hl, p in (('zh-Hant', path_zh), ('en', path_en)) if p)
@@ -103,12 +104,12 @@ def shell(en, path_zh, path_en, title, desc, body, graph):
     return ('<!doctype html><html lang="%s"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
             '<title>%s</title><meta name="description" content="%s"><link rel="canonical" href="%s%s">%s'
             '<meta property="og:type" content="article"><meta property="og:site_name" content="Daybreak"><meta property="og:title" content="%s"><meta property="og:description" content="%s">'
-            '<meta property="og:url" content="%s%s"><meta property="og:image" content="%sassets/og-en.png?v=20261112"><meta name="twitter:card" content="summary_large_image">'
+            '<meta property="og:url" content="%s%s"><meta property="og:image" content="%s"><meta name="twitter:card" content="summary_large_image">'
             '<meta name="theme-color" content="#F2F0EA" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#060607" media="(prefers-color-scheme: dark)">'
             '<link rel="icon" href="%sassets/favicon.svg" type="image/svg+xml">%s<style>%s</style>%s</head><body>'
             '<header><a class="lg" href="%sapp/%s">%sDAYBREAK</a><nav class="lang" aria-label="%s">%s</nav></header><main>%s</main>'
             '<footer>%s</footer></body></html>') % (
-        'en' if en else 'zh-Hant', esc(title), esc(desc), SITE, me, alt, esc(title), esc(desc), SITE, me, SITE,
+        'en' if en else 'zh-Hant', esc(title), esc(desc), SITE, me, alt, esc(title), esc(desc), SITE, me, og or SITE + 'assets/og-en.png?v=20261112',
         up, FONTS, CSS, ld(graph), up, '?lang=en' if en else '?lang=zh', LOGO, 'Language' if en else '語言', lang, body, footer(en, up))
 
 
@@ -131,6 +132,27 @@ def crumbs(graph_id, items):
 
 
 # ---------- 每張圖一頁 ----------
+IMG_DIR = None
+
+
+def img(k, en):
+    """那張圖的靜態小圖（部署時從 Release「chart-img」解開到 charts-img/），有就回傳網站根目錄起的路徑（帶日期，換日就換網址）"""
+    rel = 'charts-img/%s/%s.jpg' % ('en' if en else 'zh', k)
+    return (rel + '?v=' + DATE) if IMG_DIR and os.path.exists(os.path.join(os.path.dirname(IMG_DIR), rel)) else None
+
+
+def img_wh(k, en):
+    """chart_img.js 寫的 sizes.json（清單型的卡會裁短）；沒有就當 16:9"""
+    global IMG_WH
+    if IMG_WH is None:
+        try: IMG_WH = json.load(open(os.path.join(IMG_DIR, 'sizes.json'), encoding='utf-8'))
+        except Exception: IMG_WH = {}
+    return tuple(IMG_WH.get('%s/%s' % ('en' if en else 'zh', k)) or (1200, 675))
+
+
+IMG_WH = None
+
+
 def how(k, en):
     """how.json：圖上／怎麼看／小心（英文是 What／Reading／Caveat 直接接內文）"""
     out = {}
@@ -159,7 +181,12 @@ def chart_page(c, en):
     if lean and prev and prev != lean and prev in TN and lean in TN:
         chg = ('<span class="mono">Changed today from %s</span>' % TN[prev][1].lower()) if en else ('<span class="mono">今天由%s轉%s</span>' % (TN[prev][0], TN[lean][0]))
     b.append('<div class="lean">%s<span class="mono">%s</span>%s</div>' % (pill(lean, en), ('%s close' % den(DATE)) if en else ('%s 收盤' % dzh(DATE)), chg))
-    if rd: b.append('<p class="read">%s</p>' % esc(re.sub(r'^(偏多|偏空|中性)：|^(Bullish|Bearish|Neutral): ', '', rd)))   # 膠囊已經寫了表態；有限定（「偏多（長線）：」）的照留
+    if rd:
+        r2 = re.sub(r'^(偏多|偏空|中性)：|^(Bullish|Bearish|Neutral): ', '', rd); r2 = r2[:1].upper() + r2[1:]   # 英文拿掉「Bearish: 」後句首補大寫
+        b.append('<p class="read">%s</p>' % esc(r2))   # 膠囊已經寫了表態；有限定（「偏多（長線）：」）的照留
+    im = img(k, en)
+    if im:   # 2026-11-20 靜態小圖（chart_img.js 用分享模式截的），點了打開互動圖
+        b.append('<a class="fig" href="%sapp/?k=%s&amp;lang=%s"><img src="%s%s" width="%d" height="%d" alt="%s" decoding="async"></a>' % (up, k, 'en' if en else 'zh', up, im, *img_wh(k, en), esc('%s · %s' % (nm, ('%s close' % den(DATE)) if en else ('%s 收盤' % dzh(DATE))))))
     b.append('<a class="cta" href="%sapp/?k=%s&amp;lang=%s">%s →</a>' % (up, k, 'en' if en else 'zh', 'Open the interactive chart' if en else '打開互動圖'))
     its = [it for it in (say.get('items') or []) if (it.get('ve') if en else it.get('vz'))]
     if its:
@@ -187,9 +214,9 @@ def chart_page(c, en):
     graph = [WEBSITE, PERSON,
              {'@type': 'Article', '@id': pg_id, 'url': SITE + pz, 'headline': '%s: %s' % (nm, rd)[:110] if rd else nm, 'description': desc, 'inLanguage': 'en' if en else 'zh-Hant',
               'datePublished': DATE, 'dateModified': DATE, 'author': {'@id': PERSON['@id']}, 'publisher': {'@id': PERSON['@id']}, 'isPartOf': {'@id': WEBSITE['@id']},
-              'about': [{'@type': 'Thing', 'name': 'Bitcoin', 'sameAs': 'https://en.wikipedia.org/wiki/Bitcoin'}, {'@type': 'Thing', 'name': c.get('en') or nm}]},
+              'about': [{'@type': 'Thing', 'name': 'Bitcoin', 'sameAs': 'https://en.wikipedia.org/wiki/Bitcoin'}, {'@type': 'Thing', 'name': c.get('en') or nm}]} | ({'image': SITE + im} if im else {}),
              crumbs(SITE + pz + '#crumbs', [('Daybreak', 'app/'), ('All charts' if en else '所有圖', 'en/charts/' if en else 'charts/'), (nm, pz)])]
-    return shell(en, 'charts/%s/' % k, 'en/charts/%s/' % k, title, desc, ''.join(b), graph)
+    return shell(en, 'charts/%s/' % k, 'en/charts/%s/' % k, title, desc, ''.join(b), graph, og=(SITE + im) if im else None)
 
 
 def charts_index(en):
@@ -294,8 +321,12 @@ def write(out, path, s):
 
 
 def main():
-    ap = argparse.ArgumentParser(); ap.add_argument('--out', required=True); o = ap.parse_args()
+    global IMG_DIR
+    ap = argparse.ArgumentParser(); ap.add_argument('--out'); ap.add_argument('--img-list', action='store_true'); o = ap.parse_args()
+    if o.img_list:   # chart_img.js 要截的圖：分享模式打得開的（不能放大的清單型圖沒有分享模式）
+        print(json.dumps([c['k'] for c in geo.ALL if not c.get('nofx') and not c.get('na')])); return
     out = os.path.abspath(o.out); urls = []   # (zh 網址, en 網址, lastmod)
+    IMG_DIR = os.path.join(out, 'charts-img')
     for c in geo.ALL:
         for en in (False, True): write(out, ('en/charts/%s' if en else 'charts/%s') % c['k'], chart_page(c, en))
         urls.append(('charts/%s/' % c['k'], 'en/charts/%s/' % c['k'], DATE))
