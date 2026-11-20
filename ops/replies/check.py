@@ -398,7 +398,7 @@ def tone_notes(items):
             return bool(re.search(r'\d', t))
         bare = [it for it in zh if not has_num(it['reply'])]
         b = len(bare) / len(zh)
-        if b > 0.12: out.append(f'中文回覆 {len(bare)}/{len(zh)} 則（{b:.0%}）沒有數字，目標 10% 左右：{[it["n"] for it in bare]}。除了閒聊和短接話，看法後面帶一個對方沒有的讀數撐它、翻成白話、帶口徑（例如長期持有者認賠多少、ETF 這個月累計流出多少），形容詞能換成數字就換（2026-11-20）')
+        if b > 0.12: out.append(f'中文回覆 {len(bare)}/{len(zh)} 則（{b:.0%}）沒有數字，目標 10% 左右：{[it["n"] for it in bare]}。除了閒聊和短接話，原句和吐槽留著，數字接在後面補一個對方沒有的讀數、帶口徑（「ETF 一路在往外流，淨流出快 27 億美元」），不拿數字換掉有語氣的半句（2026-11-20）')
     q = share(lambda t: QEND.search(t))
     if q > 0.15: out.append(f'問句收尾 {q:.0%}：不為互動硬塞問句，真的想知道答案才問（2026-11-20 起，取代 11/17「能問就問」）')
     if share(lambda t: re.search(r'[。.]\s*$', t)) > 0.5: out.append('超過一半句尾有句號：手機上打字通常不加')
