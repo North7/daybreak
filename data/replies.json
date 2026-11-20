@@ -4,8 +4,122 @@
  "edition": 45,
  "items": [
   {
+   "n": 118,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "kind": "followup",
+   "url": "https://x.com/lser88/status/2123673812839604565",
+   "id": "2123673812839604565",
+   "author": "lser88",
+   "name": "lser88",
+   "followers": 3480,
+   "posted": "2026-11-20T07:04:27Z",
+   "angle": "他問對不對：對，是事後的尺",
+   "take": "這指標確認用，猜底會晚",
+   "summary": "問一年賺賠比是不是更適合確認底部已過",
+   "reply": "對，它是事後的尺\n前三輪等它真掉到 0.4，離價格見底都過了半年上下\n現在 0.75 這一帶，見底那天也在附近，但光看它分不出是底還是半山腰",
+   "sources": "一年賺賠比 0.75；前三輪見底當天 0.7–1.07、掉到 0.4 晚半年上下 · 長文 2026-11-21-rpl365／voice.md 定稿句",
+   "note": "接話：我們原創（一年賺賠比長文）底下，對方問問題",
+   "order": 1
+  },
+  {
+   "n": 119,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "kind": "followup",
+   "url": "https://x.com/ByteHunterHQ/status/2123674619509129369",
+   "id": "2123674619509129369",
+   "author": "ByteHunterHQ",
+   "name": "ByteHunterHQ",
+   "followers": 1822,
+   "posted": "2026-11-20T07:07:39Z",
+   "angle": "接他的順序：價格先、錢後",
+   "take": "照他的順序，現在兩邊都還沒動",
+   "summary": "回我們：價格動了資金才可能回流",
+   "reply": "照這個順序就還早，價格沒止跌，穩定幣 30 天也還少了 164 億美元",
+   "sources": "穩定幣流通量 30 天 −164 億美元（−5.4%），DefiLlama · latest.flows.stables",
+   "note": "接話第 2 輪，他回答了我們上一輪的問題",
+   "order": 2
+  },
+  {
+   "n": 120,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "kind": "followup",
+   "url": "https://x.com/xuri1717/status/2123677995064000683",
+   "id": "2123677995064000683",
+   "author": "xuri1717",
+   "name": "xuri1717",
+   "followers": 1449,
+   "posted": "2026-11-20T07:21:04Z",
+   "angle": "吐槽：買單的人越跌越多",
+   "take": "",
+   "summary": "編故事的吃肉，講故事的喝湯，聽故事的買單",
+   "reply": "買單的還越跌越多，Binance 多單帳戶這個月衝到 78%😂",
+   "sources": "Binance 持多單帳戶占比 78.3%（30 天前 62.4%），Coinalyze · latest.deriv.ls_acct",
+   "note": "接話第 2 輪，閒聊吐槽接一句",
+   "order": 3
+  },
+  {
+   "n": 121,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "kind": "followup",
+   "url": "https://x.com/lumaouncle/status/2123681591885271076",
+   "id": "2123681591885271076",
+   "author": "lumaouncle",
+   "name": "lumaouncle",
+   "followers": 6761,
+   "posted": "2026-11-20T07:35:22Z",
+   "angle": "順著罵，給一個這輪跌多深",
+   "take": "",
+   "summary": "跌的惨无人道",
+   "reply": "9 月那波高點下來已經少了 28%，整輪最深就是這兩天",
+   "sources": "這一輪高點 2026-09-21 收盤 86,594，11/19 收盤 61,914，−28.5%（這輪最深） · latest.onchain.dd.cyc",
+   "note": "接話第 2 輪，短接一句",
+   "order": 4
+  },
+  {
+   "n": 122,
+   "status": "skip",
+   "lang": "zh",
+   "kind": "followup",
+   "url": "https://x.com/yangyue992125/status/2123670339192492536",
+   "id": "2123670339192492536",
+   "author": "yangyue992125",
+   "name": "yangyue992125",
+   "followers": 5435,
+   "posted": "2026-11-20T06:50:39Z",
+   "angle": "按讚就好",
+   "reply": "",
+   "note": "按讚就好：「过了今天才有明天」是收尾的附和，別人的帖底下第 2 輪，沒有新內容",
+   "order": 5,
+   "summary": "回我們：过了今天才有明天"
+  },
+  {
+   "n": 123,
+   "status": "skip",
+   "lang": "zh",
+   "kind": "followup",
+   "url": "https://x.com/lidmhun171644/status/2123675705993240892",
+   "id": "2123675705993240892",
+   "author": "lidmhun171644",
+   "name": "lidmhun171644",
+   "followers": 57,
+   "posted": "2026-11-20T07:11:58Z",
+   "angle": "按讚就好",
+   "reply": "",
+   "note": "按讚就好：57 粉、貼 AI 幫他總結的框架，沒有問題要接",
+   "order": 6,
+   "summary": "貼 AI 總結的宏觀／敘事／鏈上框架"
+  },
+  {
    "n": 91,
-   "order": 1,
+   "order": 7,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -30,7 +144,7 @@
   },
   {
    "n": 92,
-   "order": 2,
+   "order": 8,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -49,7 +163,7 @@
   },
   {
    "n": 93,
-   "order": 3,
+   "order": 9,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -74,7 +188,7 @@
   },
   {
    "n": 94,
-   "order": 4,
+   "order": 10,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -93,7 +207,7 @@
   },
   {
    "n": 95,
-   "order": 5,
+   "order": 11,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -112,7 +226,7 @@
   },
   {
    "n": 96,
-   "order": 6,
+   "order": 12,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -131,7 +245,7 @@
   },
   {
    "n": 97,
-   "order": 7,
+   "order": 13,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -156,7 +270,7 @@
   },
   {
    "n": 98,
-   "order": 8,
+   "order": 14,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -181,7 +295,7 @@
   },
   {
    "n": 99,
-   "order": 9,
+   "order": 15,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -200,7 +314,7 @@
   },
   {
    "n": 100,
-   "order": 10,
+   "order": 16,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -219,7 +333,7 @@
   },
   {
    "n": 101,
-   "order": 11,
+   "order": 17,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -244,7 +358,7 @@
   },
   {
    "n": 102,
-   "order": 12,
+   "order": 18,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -269,7 +383,7 @@
   },
   {
    "n": 103,
-   "order": 13,
+   "order": 19,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -288,7 +402,7 @@
   },
   {
    "n": 104,
-   "order": 14,
+   "order": 20,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -307,7 +421,7 @@
   },
   {
    "n": 105,
-   "order": 15,
+   "order": 21,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -326,7 +440,7 @@
   },
   {
    "n": 106,
-   "order": 16,
+   "order": 22,
    "status": "skip",
    "lang": "zh",
    "style": "口語版",
@@ -346,7 +460,7 @@
   },
   {
    "n": 50,
-   "order": 17,
+   "order": 23,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -365,7 +479,7 @@
   },
   {
    "n": 51,
-   "order": 18,
+   "order": 24,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -390,7 +504,7 @@
   },
   {
    "n": 52,
-   "order": 19,
+   "order": 25,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -415,7 +529,7 @@
   },
   {
    "n": 53,
-   "order": 20,
+   "order": 26,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -440,7 +554,7 @@
   },
   {
    "n": 54,
-   "order": 21,
+   "order": 27,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -459,7 +573,7 @@
   },
   {
    "n": 55,
-   "order": 22,
+   "order": 28,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -478,7 +592,7 @@
   },
   {
    "n": 56,
-   "order": 23,
+   "order": 29,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -497,7 +611,7 @@
   },
   {
    "n": 57,
-   "order": 24,
+   "order": 30,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -516,7 +630,7 @@
   },
   {
    "n": 58,
-   "order": 25,
+   "order": 31,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -535,7 +649,7 @@
   },
   {
    "n": 59,
-   "order": 26,
+   "order": 32,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -554,7 +668,7 @@
   },
   {
    "n": 60,
-   "order": 27,
+   "order": 33,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -573,7 +687,7 @@
   },
   {
    "n": 61,
-   "order": 28,
+   "order": 34,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -592,7 +706,7 @@
   },
   {
    "n": 62,
-   "order": 29,
+   "order": 35,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -618,7 +732,7 @@
   },
   {
    "n": 63,
-   "order": 30,
+   "order": 36,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -637,7 +751,7 @@
   },
   {
    "n": 64,
-   "order": 31,
+   "order": 37,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -656,7 +770,7 @@
   },
   {
    "n": 65,
-   "order": 32,
+   "order": 38,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -675,7 +789,7 @@
   },
   {
    "n": 66,
-   "order": 33,
+   "order": 39,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -694,7 +808,7 @@
   },
   {
    "n": 67,
-   "order": 34,
+   "order": 40,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -713,7 +827,7 @@
   },
   {
    "n": 68,
-   "order": 35,
+   "order": 41,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -733,7 +847,7 @@
   },
   {
    "n": 69,
-   "order": 36,
+   "order": 42,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -753,7 +867,7 @@
   },
   {
    "n": 70,
-   "order": 37,
+   "order": 43,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -773,7 +887,7 @@
   },
   {
    "n": 42,
-   "order": 38,
+   "order": 44,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -798,7 +912,7 @@
   },
   {
    "n": 43,
-   "order": 39,
+   "order": 45,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -817,7 +931,7 @@
   },
   {
    "n": 44,
-   "order": 40,
+   "order": 46,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -836,7 +950,7 @@
   },
   {
    "n": 45,
-   "order": 41,
+   "order": 47,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -855,7 +969,7 @@
   },
   {
    "n": 46,
-   "order": 42,
+   "order": 48,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -874,7 +988,7 @@
   },
   {
    "n": 47,
-   "order": 43,
+   "order": 49,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -893,7 +1007,7 @@
   },
   {
    "n": 48,
-   "order": 44,
+   "order": 50,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -912,7 +1026,7 @@
   },
   {
    "n": 49,
-   "order": 45,
+   "order": 51,
    "status": "skip",
    "lang": "zh",
    "style": "口語版",
@@ -931,7 +1045,7 @@
   },
   {
    "n": 1,
-   "order": 46,
+   "order": 52,
    "status": "send",
    "url": "https://x.com/trader1sz/status/2123583127058853965",
    "id": "2123583127058853965",
@@ -958,7 +1072,7 @@
   },
   {
    "n": 2,
-   "order": 47,
+   "order": 53,
    "status": "send",
    "url": "https://x.com/serlo123/status/2123590381430612220",
    "id": "2123590381430612220",
@@ -977,7 +1091,7 @@
   },
   {
    "n": 3,
-   "order": 48,
+   "order": 54,
    "status": "send",
    "url": "https://x.com/DKFK1688/status/2123570606205759995",
    "id": "2123570606205759995",
@@ -1002,7 +1116,7 @@
   },
   {
    "n": 4,
-   "order": 49,
+   "order": 55,
    "status": "send",
    "url": "https://x.com/yonghao131419/status/2123579353271525616",
    "id": "2123579353271525616",
@@ -1021,7 +1135,7 @@
   },
   {
    "n": 5,
-   "order": 50,
+   "order": 56,
    "status": "send",
    "url": "https://x.com/liwei7194211781/status/2123573038209999253",
    "id": "2123573038209999253",
@@ -1046,7 +1160,7 @@
   },
   {
    "n": 6,
-   "order": 51,
+   "order": 57,
    "status": "send",
    "url": "https://x.com/ningningluffy/status/2123573632224071724",
    "id": "2123573632224071724",
@@ -1065,7 +1179,7 @@
   },
   {
    "n": 7,
-   "order": 52,
+   "order": 58,
    "status": "send",
    "url": "https://x.com/zx_hey/status/2123567515708301658",
    "id": "2123567515708301658",
@@ -1084,7 +1198,7 @@
   },
   {
    "n": 8,
-   "order": 53,
+   "order": 59,
    "status": "send",
    "url": "https://x.com/Cloud2005n/status/2123583573097890228",
    "id": "2123583573097890228",
@@ -1103,7 +1217,7 @@
   },
   {
    "n": 9,
-   "order": 54,
+   "order": 60,
    "status": "send",
    "url": "https://x.com/0xHui888/status/2123571273813131396",
    "id": "2123571273813131396",
@@ -1122,7 +1236,7 @@
   },
   {
    "n": 10,
-   "order": 55,
+   "order": 61,
    "status": "send",
    "url": "https://x.com/laban_li/status/2123568160284782969",
    "id": "2123568160284782969",
@@ -1147,7 +1261,7 @@
   },
   {
    "n": 11,
-   "order": 56,
+   "order": 62,
    "status": "send",
    "url": "https://x.com/VoltBuddy/status/2123565485077962987",
    "id": "2123565485077962987",
@@ -1166,7 +1280,7 @@
   },
   {
    "n": 12,
-   "order": 57,
+   "order": 63,
    "status": "send",
    "url": "https://x.com/Yxnh8023/status/2123564547370012898",
    "id": "2123564547370012898",
@@ -1185,7 +1299,7 @@
   },
   {
    "n": 13,
-   "order": 58,
+   "order": 64,
    "status": "send",
    "url": "https://x.com/Xingge888668/status/2123559561021767877",
    "id": "2123559561021767877",
@@ -1204,7 +1318,7 @@
   },
   {
    "n": 14,
-   "order": 59,
+   "order": 65,
    "status": "send",
    "url": "https://x.com/xiaoguodunzhou/status/2123577470473703699",
    "id": "2123577470473703699",
@@ -1223,7 +1337,7 @@
   },
   {
    "n": 15,
-   "order": 60,
+   "order": 66,
    "status": "send",
    "url": "https://x.com/VVane178/status/2123571291949072647",
    "id": "2123571291949072647",
@@ -1242,7 +1356,7 @@
   },
   {
    "n": 16,
-   "order": 61,
+   "order": 67,
    "status": "send",
    "url": "https://x.com/pigclean66/status/2123582849660195032",
    "id": "2123582849660195032",
@@ -1261,7 +1375,7 @@
   },
   {
    "n": 17,
-   "order": 62,
+   "order": 68,
    "status": "send",
    "url": "https://x.com/lumaouncle/status/2123577823646585320",
    "id": "2123577823646585320",
@@ -1280,7 +1394,7 @@
   },
   {
    "n": 18,
-   "order": 63,
+   "order": 69,
    "status": "send",
    "url": "https://x.com/Taranluckyday/status/2123567695270457358",
    "id": "2123567695270457358",
@@ -1299,7 +1413,7 @@
   },
   {
    "n": 19,
-   "order": 64,
+   "order": 70,
    "status": "send",
    "url": "https://x.com/PepeUnbound/status/2123581827311178093",
    "id": "2123581827311178093",
@@ -1318,7 +1432,7 @@
   },
   {
    "n": 20,
-   "order": 65,
+   "order": 71,
    "status": "send",
    "url": "https://x.com/lea_coste/status/2123579536885604725",
    "id": "2123579536885604725",
@@ -1337,7 +1451,7 @@
   },
   {
    "n": 21,
-   "order": 66,
+   "order": 72,
    "status": "send",
    "url": "https://x.com/AussTalk/status/2123536812442349612",
    "id": "2123536812442349612",
@@ -1356,7 +1470,7 @@
   },
   {
    "n": 22,
-   "order": 67,
+   "order": 73,
    "status": "send",
    "url": "https://x.com/zgjncw2024/status/2123539896090665380",
    "id": "2123539896090665380",
@@ -1381,7 +1495,7 @@
   },
   {
    "n": 23,
-   "order": 68,
+   "order": 74,
    "status": "send",
    "url": "https://x.com/yu1089899/status/2123512535987179675",
    "id": "2123512535987179675",
@@ -1400,7 +1514,7 @@
   },
   {
    "n": 24,
-   "order": 69,
+   "order": 75,
    "status": "send",
    "url": "https://x.com/youngstockuser/status/2123546358921769065",
    "id": "2123546358921769065",
@@ -1419,7 +1533,7 @@
   },
   {
    "n": 25,
-   "order": 70,
+   "order": 76,
    "status": "send",
    "url": "https://x.com/MacroYuvo/status/2123552250433794405",
    "id": "2123552250433794405",
@@ -1445,7 +1559,7 @@
   },
   {
    "n": 26,
-   "order": 71,
+   "order": 77,
    "status": "send",
    "url": "https://x.com/joke_henry/status/2123559086189162670",
    "id": "2123559086189162670",
@@ -1470,7 +1584,7 @@
   },
   {
    "n": 27,
-   "order": 72,
+   "order": 78,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/xh126192/status/2123504850982015196",
@@ -1489,7 +1603,7 @@
   },
   {
    "n": 28,
-   "order": 73,
+   "order": 79,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/bio1098895/status/2123441398720663859",
@@ -1508,7 +1622,7 @@
   },
   {
    "n": 29,
-   "order": 74,
+   "order": 80,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/bio1098895/status/2123441076484878763",
@@ -1527,7 +1641,7 @@
   },
   {
    "n": 30,
-   "order": 75,
+   "order": 81,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/ZoXinkun2O26/status/2123444522629677223",
@@ -1546,7 +1660,7 @@
   },
   {
    "n": 31,
-   "order": 76,
+   "order": 82,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/DrHashClub/status/2123452438917398656",
@@ -1565,7 +1679,7 @@
   },
   {
    "n": 32,
-   "order": 77,
+   "order": 83,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/OnlyJettTian/status/2123453357591527558",
@@ -1584,7 +1698,7 @@
   },
   {
    "n": 33,
-   "order": 78,
+   "order": 84,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/HHY0310/status/2123455559445942480",
@@ -1603,7 +1717,7 @@
   },
   {
    "n": 34,
-   "order": 79,
+   "order": 85,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/MoonMoon2289/status/2123497403806339367",
@@ -1622,7 +1736,7 @@
   },
   {
    "n": 35,
-   "order": 80,
+   "order": 86,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/juliaandai/status/2123525832643854782",
@@ -1641,7 +1755,7 @@
   },
   {
    "n": 36,
-   "order": 81,
+   "order": 87,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/aotudapingyuan/status/2123573289255891319",
@@ -1660,7 +1774,7 @@
   },
   {
    "n": 37,
-   "order": 82,
+   "order": 88,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/aotudapingyuan/status/2123578051682525288",
@@ -1679,7 +1793,7 @@
   },
   {
    "n": 38,
-   "order": 83,
+   "order": 89,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/minke3338611/status/2123588745672933452",
@@ -1698,7 +1812,7 @@
   },
   {
    "n": 39,
-   "order": 84,
+   "order": 90,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/rota_maria/status/2123559235846062188",
@@ -1717,7 +1831,7 @@
   },
   {
    "n": 40,
-   "order": 85,
+   "order": 91,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/yi33101/status/2123563385518231555",
@@ -1736,7 +1850,7 @@
   },
   {
    "n": 41,
-   "order": 86,
+   "order": 92,
    "status": "skip",
    "kind": "followup",
    "url": "https://x.com/web3yezhu/status/2123555162400632863",
@@ -1755,7 +1869,7 @@
   },
   {
    "n": 71,
-   "order": 87,
+   "order": 93,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1780,7 +1894,7 @@
   },
   {
    "n": 72,
-   "order": 88,
+   "order": 94,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1805,7 +1919,7 @@
   },
   {
    "n": 73,
-   "order": 89,
+   "order": 95,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1824,7 +1938,7 @@
   },
   {
    "n": 74,
-   "order": 90,
+   "order": 96,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1843,7 +1957,7 @@
   },
   {
    "n": 75,
-   "order": 91,
+   "order": 97,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1862,7 +1976,7 @@
   },
   {
    "n": 76,
-   "order": 92,
+   "order": 98,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1881,7 +1995,7 @@
   },
   {
    "n": 77,
-   "order": 93,
+   "order": 99,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1900,7 +2014,7 @@
   },
   {
    "n": 78,
-   "order": 94,
+   "order": 100,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1919,7 +2033,7 @@
   },
   {
    "n": 79,
-   "order": 95,
+   "order": 101,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1938,7 +2052,7 @@
   },
   {
    "n": 80,
-   "order": 96,
+   "order": 102,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1957,7 +2071,7 @@
   },
   {
    "n": 81,
-   "order": 97,
+   "order": 103,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1976,7 +2090,7 @@
   },
   {
    "n": 82,
-   "order": 98,
+   "order": 104,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1995,7 +2109,7 @@
   },
   {
    "n": 83,
-   "order": 99,
+   "order": 105,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -2014,7 +2128,7 @@
   },
   {
    "n": 84,
-   "order": 100,
+   "order": 106,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -2033,7 +2147,7 @@
   },
   {
    "n": 85,
-   "order": 101,
+   "order": 107,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -2052,7 +2166,7 @@
   },
   {
    "n": 86,
-   "order": 102,
+   "order": 108,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2072,7 +2186,7 @@
   },
   {
    "n": 87,
-   "order": 103,
+   "order": 109,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2092,7 +2206,7 @@
   },
   {
    "n": 88,
-   "order": 104,
+   "order": 110,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2112,7 +2226,7 @@
   },
   {
    "n": 89,
-   "order": 105,
+   "order": 111,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2132,7 +2246,7 @@
   },
   {
    "n": 90,
-   "order": 106,
+   "order": 112,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -2151,7 +2265,7 @@
   },
   {
    "n": 107,
-   "order": 107,
+   "order": 113,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2171,7 +2285,7 @@
   },
   {
    "n": 108,
-   "order": 108,
+   "order": 114,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2191,7 +2305,7 @@
   },
   {
    "n": 109,
-   "order": 109,
+   "order": 115,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2211,7 +2325,7 @@
   },
   {
    "n": 110,
-   "order": 110,
+   "order": 116,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2231,7 +2345,7 @@
   },
   {
    "n": 111,
-   "order": 111,
+   "order": 117,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2251,7 +2365,7 @@
   },
   {
    "n": 112,
-   "order": 112,
+   "order": 118,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2271,7 +2385,7 @@
   },
   {
    "n": 113,
-   "order": 113,
+   "order": 119,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2291,7 +2405,7 @@
   },
   {
    "n": 114,
-   "order": 114,
+   "order": 120,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -2311,7 +2425,7 @@
   },
   {
    "n": 115,
-   "order": 115,
+   "order": 121,
    "status": "skip",
    "kind": "followup",
    "lang": "zh",
@@ -2331,7 +2445,7 @@
   },
   {
    "n": 116,
-   "order": 116,
+   "order": 122,
    "status": "skip",
    "kind": "followup",
    "lang": "zh",
@@ -2351,7 +2465,7 @@
   },
   {
    "n": 117,
-   "order": 117,
+   "order": 123,
    "status": "skip",
    "kind": "followup",
    "lang": "zh",
