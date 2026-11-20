@@ -123,6 +123,9 @@ def longpost_notes(tag, t, lang, posted=None):
     if lang == 'zh' and not posted and paras:   # 2026-11-18 深夜使用者：「第一句話，都還是列數據，講解數據。而不是解答大家心裡對交易的問題。大家需要的是對交易有價值的鉤子」
         first = re.split(r'[。？！\n]', paras[0])[0]
         if len(re.findall(r'\d[\d,.]*\s*(?:%|億|萬|美元|顆|倍|天|次|百分位)', first)) >= 2: out.append(f'{tag} 第一句在列數據（「{first[:24]}…」）：開頭先接交易的人心裡的問題（是不是底、支撐還算不算、該等什麼訊號、這個消息要不要當回事）並直接答，數字和指標解釋放後面')
+    if lang == 'zh' and not posted:   # 2026-11-20 使用者：「長文不要再加系列名字了。比如翻舊帳這種，看起來太死板」
+        sx = re.findall(r'(?:^|｜|#)(翻舊帳|對帳|本週帳本|拆指標)(?=｜|\s|$)', t.split('\n')[0] + '\n' + ' '.join(re.findall(r'#\S+', t)))
+        if sx: out.append(f'{tag} 系列名「{"、".join(dict.fromkeys(sx))}」：標題和 hashtag 都不放系列名（2026-11-20 使用者：看起來太死板）')
     if lang == 'zh' and not posted and '以上是讀數' in body: out.append(f'{tag} 結尾改成「純看數據，不是買賣建議」（2026-11-20 使用者：「讀數」是直譯腔）')
     if lang == 'zh' and not posted:   # 2026-11-20 使用者貼 Gemini 改稿：自問自答、「還有一件事」這種過渡、「是這個：」揭曉都是簡報腔
         qa = SELFQA.findall(body)
@@ -566,6 +569,7 @@ REGRESS_LONG = [   # 2026-11-20 Gemini 三篇改稿前的原句：longpost_notes
     ('兩種人在吵', '痛夠了沒？這兩天時間軸上有兩種人在吵。一種說恐懼指數都到 10 了。'),
     ('科普段', '你可以把挖礦想成一場抽獎，算力越多抽越多次。'),
     ('免責疊甲', '樣本只有三次。這個讀法有兩個弱點。它也回答不了會跌到哪裡。'),
+    ('系列名', '#比特幣 #BTC #割肉 #翻舊帳'),
 ]
 REGRESS_REPLY = ['週日那次爆倉完，年化費率隔天不降反升，說明被清掉的位置馬上有人補回去']   # 11/11 回覆裡的「說明」
 # 11/10 的四段模板（宣告反應→數據→說明→條件句），整批放進 tone_notes 一定要被點名
