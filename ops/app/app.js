@@ -144,6 +144,7 @@
         var nm = (names[q.id] || {}).name || {}, p = { key: 'pick:' + date + ':' + q.id, type: 'pick', when: at(TODAY, (q.post_at || '12:00').slice(0, 5)),
           title: q.q_zh || nm.zh || q.id, sub: nm.zh || '', note: q.why, link: (names[q.id] || {}).link, langs: {} };
         ['zh', 'en'].forEach(function (lang) {
+          if (withText && !q[lang]) return;   // 2026-11-20 #243 起推薦圖表只寫中文：沒有英文解說就不建英文分頁
           var ch = lang === 'zh' ? (q.chart || 'data/picks/' + q.id + '.png') : (q.chart_en || 'data/picks/' + q.id + '-en.png');
           p.langs[lang] = { text: (withText && q[lang]) || '', imgs: [img(ch)], names: ['daybreak-' + date + '-' + q.id + (lang === 'en' ? '-en' : '') + '.png'], lim: 280 };
         });
