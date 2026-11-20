@@ -33,6 +33,8 @@ jobs:
           python3 -c "import json,glob;[json.load(open(f)) for f in glob.glob('data/*.json')+['manifest.webmanifest']]"
           # 2026-11-20 GEO：兩頁都要有給爬蟲的文字版和結構化資料，llms.txt、latest*.md 要在（pipeline/next/geo.py）
           python3 -c "import json,re,os;[(lambda s,f:(re.search(r'<main id=\"(oc|seo)-static\">',s) or exit(f+' 沒有文字版')) and [json.loads(m) for m in re.findall(r'<script type=\"application/ld\+json\">(.*?)</script>',s)] or exit(f+' 沒有結構化資料'))(open(f,encoding='utf-8').read(),f) for f in ('app/index.html','index.html')];[os.path.getsize(f)>500 or exit(f+' 太小') for f in ('llms.txt','latest.md','latest.en.md')]"
+          # 2026-11-20 GEO 第二批：每張圖、每天簡報的頁面產生得出來（部署時才寫，這裡寫到暫存資料夾檢查）
+          mkdir -p /tmp/geo && cp sitemap.xml /tmp/geo/ && python3 pipeline/next/pages.py --out /tmp/geo && test -s /tmp/geo/charts/dawn/index.html && test -s /tmp/geo/en/charts/index.html && test -s /tmp/geo/brief/index.html && test "$(grep -c '<url>' /tmp/geo/sitemap.xml)" -gt 200
       - name: Render every section (zh/en × desktop/mobile)
         run: |
           npm i --no-save playwright@1.56.1

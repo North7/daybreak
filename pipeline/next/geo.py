@@ -112,8 +112,8 @@ def _sec_html(en):
         li = []
         for c in charts(q['id']):
             src = c.get('srce' if en else 'src') or ''
-            li.append('<li><strong>%s</strong>%s：%s%s</li>' % (esc(name(c, en)), '' if en else '（%s）' % esc(c.get('en') or ''), esc(read(c, en)), (' <small>%s</small>' % esc(src)) if src else '')
-                      if not en else '<li><strong>%s</strong>: %s%s</li>' % (esc(name(c, en)), esc(read(c, en)), (' <small>%s</small>' % esc(src)) if src else ''))
+            li.append('<li><a href="../charts/%s/"><strong>%s</strong></a>%s：%s%s</li>' % (c['k'], esc(name(c, en)), '' if en else '（%s）' % esc(c.get('en') or ''), esc(read(c, en)), (' <small>%s</small>' % esc(src)) if src else '')
+                      if not en else '<li><a href="../en/charts/%s/"><strong>%s</strong></a>: %s%s</li>' % (c['k'], esc(name(c, en)), esc(read(c, en)), (' <small>%s</small>' % esc(src)) if src else ''))
         h.append('<ul>%s</ul></section>' % ''.join(li))
     h.append('</section>')
     return ''.join(h)
@@ -122,7 +122,7 @@ def _sec_html(en):
 def static_app():
     return ('<main id="oc-static"><h1>Daybreak · 比特幣每日判讀 · Daily Bitcoin brief</h1><p lang="zh-Hant">%s</p><p lang="en">%s</p>' % (esc(INTRO_ZH), esc(INTRO_EN))
             + _sec_html(False) + _sec_html(True)
-            + '<p><a href="../?intro">Daybreak 是什麼 · What is Daybreak</a> · <a href="../case-study/">Case study</a> · <a href="../latest.md">latest.md</a> · <a href="../latest.en.md">latest.en.md</a></p></main>')
+            + '<p><a href="../?intro">Daybreak 是什麼 · What is Daybreak</a> · <a href="../case-study/">Case study</a> · <a href="../charts/">所有圖</a> · <a href="../en/charts/">All charts</a> · <a href="../brief/">每日簡報</a> · <a href="../en/brief/">Daily briefs</a> · <a href="../latest.md">latest.md</a> · <a href="../latest.en.md">latest.en.md</a></p></main>')
 
 
 def static_intro():
@@ -135,7 +135,7 @@ def static_intro():
     h += ['<section lang="zh-Hant"><p>%s</p>' % esc(INTRO_ZH),
           '<h2>六個問題</h2><ul>%s</ul>' % ''.join('<li><a href="app/#%s">%s</a>：%s</li>' % (q['id'], esc(q['zh']), esc(q['qz'])) for q in QS),
           '<h2>最新一期：%s 收盤版 No.%s</h2><p><strong>%s</strong></p><p>%s</p><p>%s</p></section>' % (DZH, ED, esc(BR.get('hz') or ''), esc(BR.get('sz') or ''), tz),
-          '<p><a href="app/">Open Daybreak · 打開 Daybreak</a> · <a href="case-study/">Case study</a> · <a href="llms.txt">llms.txt</a> · <a href="latest.md">latest.md</a> · <a href="latest.en.md">latest.en.md</a></p></main>']
+          '<p><a href="app/">Open Daybreak · 打開 Daybreak</a> · <a href="case-study/">Case study</a> · <a href="charts/">所有圖</a> · <a href="en/charts/">All charts</a> · <a href="brief/">每日簡報</a> · <a href="en/brief/">Daily briefs</a> · <a href="llms.txt">llms.txt</a> · <a href="latest.md">latest.md</a> · <a href="latest.en.md">latest.en.md</a></p></main>']
     return ''.join(h)
 
 
@@ -196,6 +196,7 @@ def md(en):
             d = c.get('de' if en else 'dz') or ''
             if d and (c.get('say') or {}).get('se' if en else 'sz'): o += [('What it shows: ' if en else '這張圖：') + d, '']
             if src: o += [('Source: ' if en else '資料來源：') + src, '']
+            o += [('Page: %sen/charts/%s/' if en else '單頁：%scharts/%s/') % (SITE, c['k']), '']
     o += ['---', '', 'Daybreak makes no trade calls. Readings are for information only.' if en else 'Daybreak 不給交易建議，判讀僅供參考。', '']
     return '\n'.join(o)
 
@@ -210,6 +211,8 @@ def llms():
           '## Pages', '',
           '- [Daybreak app](%sapp/): the daily brief and all %d charts, interactive (needs JavaScript); add ?lang=en or ?lang=zh' % (SITE, NCH)]
     o += ['- [%s](%sapp/#%s): %s' % (q['en'], SITE, q['id'], q['qe']) for q in QS]
+    o += ['- [All charts](%sen/charts/): every chart on one page, grouped by the six questions, with today’s lean and reason; each chart also has its own page at /en/charts/<code>/ (中文：%scharts/)' % (SITE, SITE),
+          '- [Daily briefs](%sen/brief/): one page per day since Oct 2026 (headline, overall lean, levels to watch, findings) at /en/brief/YYYY-MM-DD/ (中文：%sbrief/)' % (SITE, SITE)]
     o += ['- [Case study](%scase-study/en/): how Daybreak was designed and built, and how it checks its own calls (中文版：%scase-study/)' % (SITE, SITE), '',
           '## Method', '',
           '- Data: free public sources (Bitview, CheckOnChain, CoinMetrics, Coinalyze, Binance, OKX, Deribit, Coinbase, Kraken, DefiLlama, FRED and others); each chart names its source and date.',
