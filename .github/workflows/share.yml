@@ -59,7 +59,7 @@ jobs:
           git config user.email "apogee-bot@users.noreply.github.com"
           git add data/share.png data/share-en.png 2>/dev/null || true
           git add -A data/picks 2>/dev/null || true
-          git add -A -- data/next.js 'data/next-*.js' data/intro.js index.html app/index.html sitemap.xml 2>/dev/null || true
+          git add -A -- data/next.js 'data/next-*.js' data/intro.js index.html app/index.html sitemap.xml llms.txt latest.md latest.en.md 2>/dev/null || true
           git diff --cached --quiet && echo "no changes" && exit 0
           git commit -m "share: $(python3 -c "import json;print(json.load(open('data/notes.json'))['date'])")"
           git pull --rebase --autostash

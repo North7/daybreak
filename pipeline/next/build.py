@@ -185,16 +185,8 @@ ver = hashlib.sha1(js.encode('utf-8')).hexdigest()[:10]
 page = open(os.path.join(HERE, 'page.html'), encoding='utf-8').read(); assert page.count('../data/next.js?v=__V__') == 1
 # 2026-11-19 SEO（使用者同意 Gemini 的建議）：頁面內容全靠 JS 畫，原始 HTML 裡沒有今天的結論，爬蟲幾乎抓不到字。
 #   把當期日期、頭條、摘要（中英）直接寫進 HTML（#oc-static，頁面跑起來就藏起來），另外寫 sitemap.xml
-import html as _h
-def _static():
-    NE_ = E_ or {}; st = N.get('stance') or {}; ste = NE_.get('stance') or {}
-    d0 = L['meta']['bar_date']; m_, d_ = int(d0[5:7]), int(d0[8:10])
-    zh = '<section lang="zh-Hant"><h2>%s 收盤版 No.%s</h2><p><strong>%s</strong></p><p>%s</p>%s</section>' % (d0.replace('-', '/'), N.get('edition'), _h.escape(N['headline']), _h.escape(N['summary']), '<p>%s</p>' % _h.escape(st['label']) if st.get('label') else '')
-    en = ('<section lang="en"><h2>%s %d close edition, No.%s</h2><p><strong>%s</strong></p><p>%s</p>%s</section>' % (_MON[m_ - 1], d_, N.get('edition'), _h.escape(NE_['headline']), _h.escape(NE_.get('summary') or ''), '<p>%s</p>' % _h.escape(ste['label']) if ste.get('label') else '')) if NE_.get('headline') else ''
-    return ('<main id="oc-static"><h1>Daybreak</h1><p>每天清晨的第一份比特幣簡報：週期、關鍵價位、誰在賣、誰在買、槓桿。 The first Bitcoin brief of the morning: cycle, key levels, who is selling, who is buying, leverage.</p>'
-            + zh + en + '<p><a href="../?intro">Daybreak 是什麼 · What is Daybreak</a> · <a href="../case-study/">Case study</a></p></main>')
-assert page.count('<!--STATIC-->') == 1
-page = page.replace('<!--STATIC-->', _static())
+#   2026-11-20 GEO 第一批：文字版擴大成每張圖的表態和理由、加結構化資料，改由 geo.py 在介紹頁建好之後填（<!--STATIC-->、<!--LDJSON--> 兩個記號留在 HTML 裡給它換）
+assert page.count('<!--STATIC-->') == 1 and page.count('<!--LDJSON-->') == 1
 open(os.path.join(REPO, 'sitemap.xml'), 'w', encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
     + ''.join('<url><loc>%s</loc><lastmod>%s</lastmod>%s</url>\n' % (u, lm, x) for u, lm, x in (
         ('https://daybreak.aronlab.dev/', L['meta']['bar_date'], '<changefreq>daily</changefreq><xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/?lang=zh"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/?lang=en"/>'),
@@ -209,3 +201,8 @@ try:
     subprocess.run([sys.executable, os.path.join(REPO, 'pipeline', 'intro', 'build.py')], check=True)
 except Exception as e:
     print('intro build failed:', e)
+# 2026-11-20 GEO：數據頁和介紹頁的文字版、結構化資料，llms.txt、latest.md、latest.en.md（見 geo.py）。失敗只印出來，頁面照常上線
+try:
+    subprocess.run([sys.executable, os.path.join(HERE, 'geo.py')], check=True)
+except Exception as e:
+    print('geo build failed:', e)
