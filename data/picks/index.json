@@ -1,16 +1,16 @@
 {
- "date": "2026-11-18",
+ "date": "2026-11-19",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/quant",
-   "chart": "data/picks/onchain-quant.png",
-   "chart_en": "data/picks/onchain-quant-en.png",
+   "id": "flows/etfcost",
+   "chart": "data/picks/flows-etfcost.png",
+   "chart_en": "data/picks/flows-etfcost-en.png",
    "name": {
-    "zh": "供給分位成本線",
-    "en": "Supply quantile cost lines"
+    "zh": "ETF 持有者成本",
+    "en": "ETF holder cost basis"
    },
-   "link": "https://daybreak.aronlab.dev/app/?k=quant"
+   "link": "https://daybreak.aronlab.dev/app/?k=etfcost"
   }
  ]
 }

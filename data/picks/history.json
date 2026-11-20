@@ -108,6 +108,10 @@
   {
    "date": "2026-11-18",
    "id": "onchain/quant"
+  },
+  {
+   "date": "2026-11-19",
+   "id": "flows/etfcost"
   }
  ]
 }
