@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """介紹頁（/intro/）的建置。2026-11-19 新增。
 讀首頁已經建好的 data/next.js、data/next-*.js、data/leans.json、data/notes.en.json，寫出：
-  data/intro.js     window.DAYBREAK_INTRO：每張圖的表態、資料種類、所屬的頁、極簡小圖，加上當期的期數、收盤、頭條、判讀（中英）
+  data/intro.js     window.DAYBREAK_INTRO：每張圖的表態、資料種類、所屬的頁、中英圖名（第 02 段掃描用）、極簡小圖，加上當期的期數、收盤、頭條、判讀（中英）
   index.html        根目錄（2026-11-20 起根網址就是介紹頁）：pipeline/intro/page.html 換上資料檔的版本號
   intro/index.html 是固定的轉址檔（舊的 /intro/ 連結轉到 /?intro），不在這裡寫
 圖的張數、每頁幾張、每種資料幾張都從資料算，不寫死（使用者：「圖的數量可能會一直增加」）。
@@ -23,6 +23,7 @@ for f in glob.glob(D_('next-*.js')):
     PAGES[t[t.index('["') + 2:t.index('"]')]] = json.loads(t[t.index(']=') + 2:].rstrip().rstrip(';'))
 ORDER = ['today', 'cycle', 'lv', 'sell', 'buy', 'lev', 'exit']
 ORDER = [p for p in ORDER if p in PAGES] + [p for p in PAGES if p not in ORDER]
+PGN = {c['id']: [c.get('zh') or c['id'], c.get('en') or c['id']] for c in NX['site']['chapters']}
 LEANS = json.load(open(D_('leans.json'), encoding='utf-8')).get('today', {})
 try:
     EN = json.load(open(D_('notes.en.json'), encoding='utf-8'))
@@ -103,11 +104,14 @@ def mini(c):
         if len(v) >= 4 and m > 0: return ['b', [round(x / m, 2) for x in v]]
     return None
 
-CH, MINI = [], []
+CH, MINI, NM = [], [], []
 for pid in ORDER:
     for g in PAGES[pid]:
         for c in g['charts']:
-            CH.append([c['k'], LEANS.get(c['k'], ''), layer(pid, c), ORDER.index(pid)])
+            # 第 5 欄：「今天」頁的六個問題各自對應哪一頁（第 02 段讀完那一頁的圖就點亮它），其他圖是 -1
+            go = ORDER.index(c['go']) if pid == 'today' and c.get('go') in ORDER else -1
+            CH.append([c['k'], LEANS.get(c['k'], ''), layer(pid, c), ORDER.index(pid), go])
+            NM.append([c.get('zh') or c['k'], c.get('en') or c.get('zh') or c['k']])
             try:
                 MINI.append(mini(c))
             except Exception:
@@ -118,7 +122,7 @@ OUT = {
     'date': NX['date'], 'issue': NX.get('issue'), 'close': NX.get('price'), 'n': len(CH),
     'head': [NX.get('headline') or '', EN.get('headline') or ''],
     'stance': [st.get('short') or st.get('label') or '', (EN.get('stance') or {}).get('short') or (EN.get('stance') or {}).get('label') or ''],
-    'lay': LAY, 'pg': ORDER, 'ch': CH, 'mini': MINI,
+    'lay': LAY, 'pg': ORDER, 'pgn': [PGN.get(p, [p, p]) for p in ORDER], 'ch': CH, 'nm': NM, 'mini': MINI,
 }
 js = 'window.DAYBREAK_INTRO=' + json.dumps(OUT, ensure_ascii=False, separators=(',', ':')) + ';\n'
 open(D_('intro.js'), 'w', encoding='utf-8').write(js)

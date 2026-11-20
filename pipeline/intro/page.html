@@ -130,10 +130,40 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Inter 
 @keyframes cueb { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(3px); } }
 @media (max-width: 700px) { .cue { bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); } .cue i { height: 26px; } .hud { bottom: calc(var(--gut) * .8 + 64px); } }
 @media (prefers-reduced-motion: reduce) { .cue i::after, .cue span svg { animation: none; } }
+/* 02 讀圖（2026-11-20，參考使用者給的「節點讀資訊」影片）：掃描點一張一張讀，掛圖名和表態；面板是六個問題的讀取進度和即時紀錄 */
+#rdx { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0; }
+#rdx canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+.rl { position: absolute; left: 0; top: 0; display: none; align-items: center; gap: 7px; white-space: nowrap; font: 500 11.5px/1 var(--disp); color: var(--ink); will-change: transform, opacity; text-shadow: 0 0 3px #050506, 0 0 8px #050506; }
+.rl.t { padding: 4px 8px; border-radius: 999px; background: rgba(5,5,6,.6); }
+.rl.h, .rl.p { text-shadow: none; }
+.rl i, .rl em, .rl u { font: 500 10px/1 var(--mono); font-style: normal; text-decoration: none; letter-spacing: .05em; }
+.rl.h { height: 24px; padding: 0 10px 0 9px; border-radius: 999px; background: var(--lc); color: #060607; font-weight: 700; font-size: 12.5px; }
+.rl.h i { opacity: .62; } .rl.h em { font-weight: 600; }
+.rl.h.pop { animation: rlp .38s var(--spr); }
+@keyframes rlp { from { scale: .55; opacity: 0; } }
+.rl.p { height: 28px; padding: 0 11px; border-radius: 999px; background: rgba(12,12,14,.74); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); border: 1px solid rgba(237,237,232,.42); font-weight: 800; font-size: 13.5px; gap: 9px; }
+.rl.p u { font-size: 11px; font-weight: 600; }
+.up2 { color: var(--up); } .dn2 { color: var(--ac); } .nu2 { color: #9A9A96; }
+.rdr { margin-top: 13px; display: grid; gap: 7px; }
+.rr { display: grid; grid-template-columns: var(--lw, 34px) 1fr 22px; align-items: center; gap: 10px; font: 600 12px/1 var(--disp); color: var(--k2); transition: color .3s; }
+.rr.ok { color: var(--ink); }
+.rr em { font: 500 10.5px/1 var(--mono); font-style: normal; text-align: right; }
+.sg { display: flex; gap: 2px; height: 9px; }
+.sg i { flex: 1; min-width: 0; border-radius: 1px; background: rgba(237,237,232,.1); transition: background .25s; }
+.sg i.up { background: var(--up); } .sg i.down { background: var(--ac); } .sg i.neu { background: #9A9A96; } .sg i.ro { background: rgba(237,237,232,.42); }
+.sg i.cur { background: var(--ink); }
+.rdlog { margin-top: 13px; padding-top: 9px; border-top: 1px solid var(--line); font: 400 11.5px/1.85 var(--mono); color: var(--k2); }
+#rd-log { height: calc(1.85em * 5); overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; }
+#rd-log > div { display: grid; grid-template-columns: 30px minmax(0, 1fr) auto; gap: 10px; white-space: nowrap; }
+.rdlog div span { overflow: hidden; text-overflow: ellipsis; color: color-mix(in srgb, var(--ink) 80%, transparent); font-family: var(--disp); font-size: 12px; }
+.rdlog div.q span { color: var(--ink); font-weight: 700; } .rdlog div.end span { color: var(--up); }
+.pc .k b { color: var(--ink); font-weight: 600; }
+@media (max-width: 700px) { .rdr { gap: 5px; margin-top: 10px; } .rr { font-size: 11px; } .sg { height: 7px; } .rdlog { font-size: 11px; line-height: 1.8; margin-top: 10px; padding-top: 7px; } #rd-log { height: calc(1.8em * 3); } .rdlog div span { font-size: 11px; } .rl.h { font-size: 11.5px; height: 22px; } .rl.p { font-size: 12px; height: 25px; } }
 </style>
 </head>
 <body>
 <div id="gl"></div>
+<div id="rdx" aria-hidden="true"><canvas></canvas></div>
 <div class="hud">
   <div><span class="tg"><i></i><span id="t-tag"></span></span><h1 id="t-h1"></h1></div>
   <div class="rt"><b id="cls"></b><span id="t-close"></span></div>
@@ -157,6 +187,8 @@ const layN = () => D.lay.map((n, i) => [n, D.ch.filter(c => c[2] === i).length])
 const LAYCOL = ['#7C8BFF', '#FFC43D', '#FF4F1F', '#C6FF3D', '#2FE0F0', '#EDEDE8'];
 const ARR = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
 let HOME, GO, dShow, LOG, PCS, pcs = [];
+/* 02 讀圖的面板：每一頁一列（「今天」頁放最後），一張圖一格。RX 是掃描狀態（後面才建，先用 var 免得換語言時還沒建好） */
+var RX = null; const TDY = D0.pg.indexOf('today'), RROWS = D0.pg.map((_, r) => r).filter(r => r !== TDY).concat(TDY >= 0 ? [TDY] : []);
 /* 換語言時整頁的字重寫一遍（不重新載入，和首頁一樣原地換） */
 function paintLang() {
 setD(); LAYN = layN(); LMAX = Math.max(1, ...LAYN.map(l => l[1]));
@@ -177,7 +209,7 @@ LOG = LG
   ? [['00:05', `fetch data from <b>17 sources</b>`, '✓'], ['00:25', `recompute <b>${D.n} charts</b>`, '✓'], ['00:28', `compare with readings since <b>2013</b>`, '✓'], ['00:31', `take a side <span class="ok">bullish ${LEAN.up}</span> · <span class="w">bearish ${LEAN.down}</span> · neutral ${LEAN.neu}`, ''], ['00:33', `write issue <b>${D.issue}</b>`, '✓']]
   : [['00:05', `抓資料 <b>17 個來源</b>`, '✓'], ['00:25', `重算 <b>${D.n} 張圖</b>`, '✓'], ['00:28', `比對 <b>2013 年以來</b>的同類讀數`, '✓'], ['00:31', `表態 <span class="ok">偏多 ${LEAN.up}</span> · <span class="w">偏空 ${LEAN.down}</span> · 中性 ${LEAN.neu}`, ''], ['00:33', `寫好第 <b>${D.issue}</b> 期判讀`, '✓']];
 PCS = [
-  { s: 1, h: `<div class="tg"><b>02</b> · THE READER</div><h2>${T(`每天，它把<br>${D.n} 張圖讀一遍。`, `Every day it reads<br>all ${D.n} charts.`)}</h2><p>${T('鏈上籌碼、持有成本、衍生品槓桿、ETF 與穩定幣資金、宏觀利率。自建指標加上公開資料，全部重算、比對歷史，再寫成一句白話。', 'On-chain supply, holder cost, derivatives leverage, ETF and stablecoin flows, macro rates. Original indicators and public data, all recomputed and checked against history, then written up in plain words.')}</p><div class="gc"><div class="k">${T('每天更新的那一小時 · UTC', 'The daily update hour · UTC')}</div><div class="log">${LOG.map((l, i) => `<div style="transition-delay:${.15 + i * .12}s">${l[0]}  ${l[1]} <span class="ok">${l[2]}</span></div>`).join('')}</div></div>` },
+  { s: 1, h: `<div class="tg"><b>02</b> · THE READER</div><h2>${T(`每天，它把<br>${D.n} 張圖讀一遍。`, `Every day it reads<br>all ${D.n} charts.`)}</h2><p>${T('鏈上籌碼、持有成本、衍生品槓桿、ETF 與穩定幣資金、宏觀利率。自建指標加上公開資料，全部重算、比對歷史，再寫成一句白話。', 'On-chain supply, holder cost, derivatives leverage, ETF and stablecoin flows, macro rates. Original indicators and public data, all recomputed and checked against history, then written up in plain words.')}</p><div class="gc"><div class="k"><span id="rd-k"></span><span><b id="rd-n">0</b> / ${D.n}</span></div><div class="rdr" style="--lw:${LG ? 62 : 34}px">${RROWS.map(r => `<div class="rr" data-r="${r}"><span>${D0.pgn[r][LG]}</span><div class="sg">${D.ch.map((c, j) => c[3] === r ? `<i data-j="${j}"></i>` : '').join('')}</div><em>${D.ch.filter(c => c[3] === r).length}</em></div>`).join('')}</div><div class="rdlog"><div id="rd-log"></div></div></div>` },
   { s: 2, h: `<div class="tg"><b>03</b> · SIX LAYERS</div><h2>${T('六種資料，<br>一層一層剖開。', 'Six kinds of data,<br>peeled layer by layer.')}</h2><p>${T('鏈上、價格結構、衍生品、資金流、宏觀情緒，加上綜合判讀。每一層各自轉動。', 'On-chain, price structure, derivatives, flows, macro and sentiment, plus the composite read. Each layer turns on its own.')}</p><div class="gc"><div class="k">${T('每層有幾張圖', 'Charts per layer')}</div>${LAYN.map(([n, c], i) => `<div class="rowl">${n}<i style="width:${c / LMAX * 100}%;background:${LAYCOL[i]}"></i><span>${c}</span></div>`).join('')}</div>` },
   { s: 3, lf: 1, h: `<div class="tg"><b>04</b> · ${D.n} SERIES</div><h2>${T(`${D.n} 張圖，<br>各走各的軌跡。`, `${D.n} charts,<br>each on its own path.`)}</h2><p>${T('每一道軌跡是一張圖，顏色是它今天的表態。不只擺數字，每張都寫明偏多、偏空還是中性。', "Each path is one chart, coloured by today's lean. Not just numbers: every chart says bullish, bearish or neutral.")}</p><div class="gc"><div class="k">${T('今天', 'Today')}</div><div class="big3"><div><b style="color:var(--up)">${LEAN.up}</b><span>${T('偏多', 'BULLISH')}</span></div><div><b style="color:var(--ac)">${LEAN.down}</b><span>${T('偏空', 'BEARISH')}</span></div><div><b style="color:var(--k2)">${LEAN.neu}</b><span>${T('中性', 'NEUTRAL')}</span></div><div><b>${D.n - LEAN.up - LEAN.down - LEAN.neu}</b><span>${T('只作讀值', 'READING ONLY')}</span></div></div></div>` },
   { s: 4, h: `<div class="tg"><b>05</b> · ONE VERDICT</div><h2>${T('最後，收斂成<br>一個判讀。', 'Finally, it all<br>comes down to one read.')}</h2><div class="gc"><div class="k">${T(`第 ${D.issue} 期 · ${dShow} · ${D.stance}`, `Issue ${D.issue} · ${dShow} · ${D.stance}`)}</div><p class="vd">${D.head}</p></div><a class="cta" href="${HOME}">${GO} ${ARR}</a>` }
@@ -185,6 +217,7 @@ PCS = [
 const on = pcs.map(p => p.classList.contains('on'));
 $('#pn').innerHTML = PCS.map(p => `<div class="pc${p.lf ? ' lf' : ''}">${p.h}</div>`).join('');
 pcs = [...document.querySelectorAll('.pc')]; pcs.forEach((p, i) => on[i] && p.classList.add('on'));
+if (RX) rdPaint();
 const lb = $('#lgs'); lb.classList.toggle('b', LG === 1); [...lb.querySelectorAll('button')].forEach(x => x.setAttribute('aria-pressed', x.dataset.l === (LG ? 'en' : 'zh')));
 }
 paintLang();
@@ -195,7 +228,7 @@ const mixg = (s, k, out) => { let o = ''; for (let i = 0; i < s.length; i++) { c
 let busy = false;
 function scramble(fn) {
   if (RM) { fn(); return; } if (busy) return; busy = true;
-  const prep = () => { const out = [], w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) { const pe = n.parentElement; if (!n.nodeValue.trim() || !pe || pe.closest('.lgs, #clk, #cls, #gl, script, style')) continue; const r = pe.getBoundingClientRect(); out.push({ n, s: n.nodeValue, d: clamp(r.left / (innerWidth || 1), 0, 1) }); } return out; };
+  const prep = () => { const out = [], w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) { const pe = n.parentElement; if (!n.nodeValue.trim() || !pe || pe.closest('.lgs, #clk, #cls, #gl, #rdx, #rd-log, #rd-n, script, style')) continue; const r = pe.getBoundingClientRect(); out.push({ n, s: n.nodeValue, d: clamp(r.left / (innerWidth || 1), 0, 1) }); } return out; };
   const run = (list, dur, wave, out, done) => { const t0 = performance.now(); let last = -99; const step = now => { const t = now - t0, end = t >= dur + wave; if (now - last > 40 || end) { last = now; list.forEach(o => { const p = clamp((t - o.d * wave) / dur, 0, 1); o.n.nodeValue = mixg(o.s, Math.round(p * o.s.length), out); }); } if (end) done(); else requestAnimationFrame(step); }; requestAnimationFrame(step); };
   const l0 = prep(); run(l0, 200, 200, true, () => { fn(); l0.forEach(o => { if (o.n.isConnected) o.n.nodeValue = o.s; }); const list = prep(); list.forEach(o => { o.n.nodeValue = mixg(o.s, 0, false); }); run(list, 380, 340, false, () => { list.forEach(o => { o.n.nodeValue = o.s; }); busy = false; }); });
 }
@@ -575,9 +608,9 @@ const CAMH = { p: [2.5, -1.4, 5.2], l: [.45, -.05, 0], ox: -.12 }, CAMHP = { p: 
 // 各段的景深強度（光圈）：首屏、貼近、六層、軌跡、弧
 const AP = [1.3, .97, .85, .5, .7], APH = 1.0, LF = [.3, 2.2, 2.2, 2.2, 2.2];
 const v1 = new THREE.Vector3(), v2 = new THREE.Vector3(), lk = new THREE.Vector3(), ray = new THREE.Raycaster(), mv2 = new THREE.Vector2(), pl = new THREE.Plane(new THREE.Vector3(0, 0, 1), -.5), hp = new THREE.Vector3(), pj = new THREE.Vector3();
-let pT = 0, pS = 0, mx = 0, my = 0, mxs = 0, mys = 0, ms = 0, msS = 0, t0 = performance.now(), last2 = t0, nMode = 1, hv = 1, hvS = 1;
+let rdA = 0, pT = 0, pS = 0, mx = 0, my = 0, mxs = 0, mys = 0, ms = 0, msS = 0, t0 = performance.now(), last2 = t0, nMode = 1, hv = 1, hvS = 1;
 const hud = $('.hud');
-const rdS = Array.from({ length: 4 }, () => ({ j: 0, t0: -99 })), rdCyc = new Int32Array(NC).fill(-1); let rdK = 0, rdOn = false;
+const rdS = Array.from({ length: 4 }, () => ({ j: 0, n: 0, t0: -99 })), rdCyc = new Int32Array(NC).fill(-1); let rdK = 0, rdOn = false;
 const sp = () => { const h = document.getElementById('scroll').offsetHeight - innerHeight; return clamp(scrollY / h * 4.5, 0, 4.5); };
 addEventListener('scroll', () => { pT = sp(); }, { passive: true });
 addEventListener('pointermove', e => { mx = e.clientX / W * 2 - 1; my = -(e.clientY / H * 2 - 1); ms = 1; }, { passive: true });
@@ -596,14 +629,15 @@ function frame(now) {
   const ox = co(k) + (co(k2) - co(k)) * f, ap = i => i ? AP[i] : AP[0] + (APH - AP[0]) * hvS;
   cam.position.set(v1.x + mxs * .45, v1.y + mys * .25, v1.z); cam.lookAt(lk);
   cam.setViewOffset(W, H, ox * W, 0, W, H); cam.updateMatrixWorld();
+  rdA = sm(.55, .85, s) * (1 - sm(1.2, 1.45, s));
   const fadeM = 1 - sm(1.25, 1.75, s), H3 = U.uH.value, HI = U.uHI.value, on = sm(.6, 1, U.uIn.value);
   H3[0].fromArray(plexJS(shell(t * .22, 2.35 + .45 * Math.sin(t * .4), 1), t)); HI[0] = (.45 + .15 * Math.sin(t * 1.3)) * on; HI[1] = 0;
   mv2.set(mxs, mys); ray.setFromCamera(mv2, cam); if (ray.ray.intersectPlane(pl, hp)) H3[2].copy(hp); HI[2] = msS * .9 * on * (1 - sm(.5, 1, s));
   if (blobs) { const bp = blobs.geometry.attributes.position, bi = blobs.geometry.attributes.ii; for (let i = 0; i < 3; i++) { bp.setXYZ(i, H3[i].x, H3[i].y, H3[i].z); bi.setX(i, HI[i] * (i === 2 ? .5 : .7)); } bp.needsUpdate = bi.needsUpdate = true; }
   // 幽靈圖收進神經元的那一刻：那個點亮一下，訊號從那裡傳出去
-  if (t > 2.6) { for (let j = 0; j < NC; j++) { const off = GOFF[j]; if (off < 0) continue; const q = t * (.042 + .02 * ((off * 5.3) % 1)) + off, cyc = Math.floor(q); if (q - cyc >= .262 && rdCyc[j] !== cyc) { rdCyc[j] = cyc; if (rdOn && ((cyc * .61803 + off * 7.31) % 1) < U.uAct.value) { const sl = rdS[rdK++ % 4]; sl.j = j; sl.t0 = t; } } } rdOn = true; }
+  if (t > 2.6) { for (let j = 0; j < NC; j++) { const off = GOFF[j]; if (off < 0) continue; const q = t * (.042 + .02 * ((off * 5.3) % 1)) + off, cyc = Math.floor(q); if (q - cyc >= .262 && rdCyc[j] !== cyc) { rdCyc[j] = cyc; if (rdOn && rdA < .3 && ((cyc * .61803 + off * 7.31) % 1) < U.uAct.value) { const sl = rdS[rdK++ % 4]; sl.j = j; sl.n = j; sl.t0 = t; } } } rdOn = true; }
   U.uGf.value = on * (1 - sm(.45, .9, s));
-  rdS.forEach((sl, i) => { U.uRd.value[i].fromArray(plexJS(NODE[sl.j], t)); U.uRdA.value[i] = t - sl.t0; const lc = LCOL[D.ch[sl.j][1] || '']; U.uRdC.value[i].set(Math.max(lc[0], .5), Math.max(lc[1], .5), Math.max(lc[2], .5)); });
+  rdS.forEach((sl, i) => { U.uRd.value[i].fromArray(plexJS(NODE[sl.n], t)); U.uRdA.value[i] = t - sl.t0; const lc = LCOL[D.ch[sl.j][1] || '']; U.uRdC.value[i].set(Math.max(lc[0], .5), Math.max(lc[1], .5), Math.max(lc[2], .5)); });
   U.uFade.value = fadeM; U.uDof.value = fadeM + (1 - fadeM) * uN; U.uFocus.value = cam.position.distanceTo(lk) - (s < .5 ? .6 : 0); U.uAp.value = ap(k) + (ap(k2) - ap(k)) * f; U.uLf.value = LF[k] + (LF[k2] - LF[k]) * f; // 每一段都有景深：近處和遠處的點變成光斑
   if (rings) rings.material.opacity = .08 * fadeM * on;
   ghosts.forEach(m => m.visible = U.uGf.value > .002);
@@ -611,9 +645,101 @@ function frame(now) {
   if (pts) pts.rotation.y = s > 1.5 && s < 2.6 ? t * .03 * (1 - uN) : 0;
   U.uMs.value += ((ph ? 0 : ms) - U.uMs.value) * Math.min(1, dt * 4); U.uM.value.set(mxs, mys);
   R.render(sc, cam);
+  rdFrame(t, s, dt);
   pcs.forEach((p, i) => p.classList.toggle('on', Math.abs(s - PCS[i].s) < .42 || (i === 3 && s > 3.6)));
   const cur = Math.round(clamp(s, 0, 4)); pgi.forEach((g, i) => g.classList.toggle('on', i === cur));
   requestAnimationFrame(frame);
+}
+/* ── 02 讀圖：掃描點一張一張讀（2026-11-20，參考使用者給的節點讀資訊影片） ──
+   順序：週期→價位→賣壓→買盤→槓桿→出場，每讀完一頁就點亮「今天」頁對應的那個問題（標籤留著，寫那一頁偏多／偏空／中性各幾張），最後讀「今天」頁其他的圖。
+   每讀一張：在網上挑一個對到焦、沒被面板擋住的神經元，掛上圖名和今天的表態；前面幾張的名字漸淡，讀過的點留一顆表態色的小點，神經元本身放一圈波。
+   讀完寫「第 N 期判讀」，停幾秒再從頭讀。減少動態時直接顯示讀完的樣子。 */
+const SEQ = []; RROWS.forEach(r => { if (r === TDY) return; D.ch.forEach((c, j) => { if (c[3] === r) SEQ.push([j, 0]); }); const q = D.ch.findIndex(c => c[4] === r); if (q >= 0) SEQ.push([q, r]); });
+D.ch.forEach((c, j) => { if (c[3] === TDY && !(c[4] >= 0)) SEQ.push([j, 0]); });
+const LKEY = { up: 'up', down: 'down', neu: 'neu', '': 'ro' }, LHEX = { up: '#C6FF3D', down: '#FF4F1F', neu: '#9A9A96', '': '#EDEDE8' };
+const lword = l => ({ up: T('偏多', 'BULLISH'), down: T('偏空', 'BEARISH'), neu: T('中性', 'NEUTRAL'), '': T('讀值', 'READING') })[l || ''];
+const qname = j => D0.nm[j][LG].split(/[：:]/)[0];
+const rdc = $('#rdx canvas'), rx = rdc.getContext('2d'), rdx = $('#rdx');
+const HN = ph ? 3 : 6, POOL = Array.from({ length: HN + 2 + 8 }, () => { const e = document.createElement('div'); e.className = 'rl'; rdx.appendChild(e); return { e, k: null, w: 0, hh: 0 }; });
+RX = { i: 0, wait: .4, hold: 0, idle: 0, hist: [], picks: [], dots: [], used: [], head: null, hx: W * .35, hy: H * .5, log: [], done: 0 };
+const pv = new THREE.Vector3(), pcp = new THREE.Vector3();
+function proj(n, t) { const p = plexJS(NODE[n], t); pv.set(p[0], p[1], p[2]); const d = pv.distanceTo(cam.position); pv.project(cam); return { x: (pv.x + 1) / 2 * W, y: (1 - pv.y) / 2 * H, z: pv.z, d }; }
+function rdNode(t, big) {
+  const B = pcs[0].getBoundingClientRect(), f = U.uFocus.value; let best = -1, bs = -1e9;
+  for (let k = 0; k < 140; k++) { const n = (rnd() * M) | 0; if (RX.used.includes(n)) continue; const q = proj(n, t);
+    if (q.z > 1 || q.x < 30 || q.x > W - 30 || q.y < 80 || q.y > H - 50) continue;
+    if (q.x > B.left - 40 && q.x < B.right + 20 && q.y > B.top - 30 && q.y < B.bottom + 20) continue;
+    const dd = Math.abs(q.d - f); if (dd > (big ? .8 : 1.2)) continue;
+    let sc = -dd * 1.6 + rnd() * .7; const g = Math.hypot(q.x - RX.hx, q.y - RX.hy); sc -= Math.abs(g - (ph ? 80 : 150)) / 220;
+    if (big) { sc -= Math.hypot(q.x - Math.min(W * .4, B.left * .5), q.y - H * .5) / 700; RX.picks.forEach(o => { if (o.q) sc -= Math.max(0, (ph ? 110 : 180) - Math.hypot(q.x - o.q.x, q.y - o.q.y)) / 60; }); }
+    if (sc > bs) { bs = sc; best = n; } }
+  if (best < 0) best = (rnd() * M) | 0; RX.used.push(best); if (RX.used.length > 50) RX.used.shift(); return best;
+}
+function tally(r) { const o = { up: 0, down: 0, neu: 0 }; D.ch.forEach(c => { if (c[3] === r && o[c[1]] !== undefined) o[c[1]]++; }); return o; }
+function logLine(it) { const c = D.ch[it.j];
+  if (it.r) { const o = tally(it.r); return `<div class="q"><i>✓</i><span>${T(`${D0.pgn[it.r][LG]}讀完 ${D.ch.filter(c => c[3] === it.r).length} 張`, `${D0.pgn[it.r][LG]}: ${D.ch.filter(c => c[3] === it.r).length} read`)}</span><b><b class="up2">${o.up}</b> <b class="dn2">${o.down}</b> <b class="nu2">${o.neu}</b></b></div>`; }
+  return `<div><i>${String(it.no).padStart(3, '0')}</i><span>${D0.nm[it.j][LG]}</span><b class="${{ up: 'up2', down: 'dn2', neu: 'nu2' }[c[1]] || ''}" style="font-weight:500">${lword(c[1])}</b></div>`; }
+function rdPaint() { // 面板整個重畫（換語言、從頭讀的時候）
+  const k = $('#rd-k'); if (!k) return; k.textContent = RX.done ? T(`讀完 · 第 ${D.issue} 期`, `Done · issue ${D.issue}`) : T(`正在讀 · 第 ${D.issue} 期`, `Reading · issue ${D.issue}`);
+  $('#rd-n').textContent = RX.i; RX.cells = []; document.querySelectorAll('.sg i').forEach(e => { RX.cells[+e.dataset.j] = e; });
+  RX.dots.forEach(it => { const e = RX.cells[it.j]; if (e) e.className = LKEY[D.ch[it.j][1] || '']; });
+  RROWS.forEach(r => { const e = document.querySelector(`.rr[data-r="${r}"]`); if (e) e.classList.toggle('ok', RX.picks.some(p => p.r === r) || (r === TDY && RX.done)); });
+  $('#rd-log').innerHTML = RX.log.map(logLine).join('') + (RX.done ? `<div class="end"><i>✓</i><span>${T(`寫好第 ${D.issue} 期判讀`, `Issue ${D.issue} written`)}</span><b></b></div>` : '');
+  POOL.forEach(p => { p.k = null; p.e.style.display = 'none'; });
+}
+function rdStep(t) {
+  if (RX.i >= SEQ.length) { RX.done = 1; RX.head = null; RX.hold = 4.2; rdPaint(); return; }
+  const [j, r] = SEQ[RX.i++], n = RX.fast ? 0 : rdNode(t, r > 0), it = { j, n, r, t, no: RX.i };
+  if (!RX.fast) { const q = proj(n, t); RX.hx = q.x; RX.hy = q.y; }
+  RX.dots.push(it); if (r) RX.picks.push(it); else { RX.hist.push(it); if (RX.hist.length > HN + 1) RX.hist.shift(); }
+  RX.head = r ? null : it; RX.log.push(it); if (RX.log.length > 6) RX.log.shift();
+  if (!RX.fast && (r || RX.i % 3 === 0)) { const sl = rdS[rdK++ % 4]; sl.j = j; sl.n = n; sl.t0 = t; }
+  if (RX.fast) return;
+  const prev = RX.cells && RX.cells.find(e => e && e.classList.contains('cur')); if (prev) prev.classList.remove('cur');
+  const e = RX.cells && RX.cells[j]; if (e) e.className = LKEY[D.ch[j][1] || ''];
+  if (r) { const row = document.querySelector(`.rr[data-r="${r}"]`); if (row) row.classList.add('ok'); }
+  $('#rd-n').textContent = RX.i; $('#rd-log').innerHTML = RX.log.map(logLine).join('');
+  RX.wait = r ? .62 : (ph ? .13 : .105);
+}
+function rdReset() { RX.i = 0; RX.done = 0; RX.hist = []; RX.picks = []; RX.dots = []; RX.log = []; RX.head = null; RX.wait = .35; rdPaint(); }
+if (RM) { RX.fast = 1; while (RX.i < SEQ.length) rdStep(0); RX.fast = 0; RX.done = 1; RX.picks = []; }
+rdPaint();
+function lab(slot, key, html, cls, lc) { const p = POOL[slot]; if (p.k !== key) { p.k = key; p.e.className = 'rl ' + cls; p.e.innerHTML = html; if (lc) p.e.style.setProperty('--lc', lc); p.e.style.display = 'flex'; p.w = p.e.offsetWidth; p.hh = p.e.offsetHeight; } return p; }
+// 標籤擺在點的右上；撞到面板、螢幕邊或這一格已經擺好的標籤，就換到左上、右下、左下（記住上一次的位置，免得來回跳）
+let PLC = [];
+function place(p, x, y, o, B) { const C = [[1, -1], [-1, -1], [1, 1], [-1, 1]], hit = (l, t) => l < 8 || l + p.w > W - 8 || t < 66 || t + p.hh > H - 8 || (l < B.right + 8 && l + p.w > B.left - 8 && t < B.bottom + 8 && t + p.hh > B.top - 8) || PLC.some(r => l < r[2] + 4 && l + p.w > r[0] - 4 && t < r[3] + 3 && t + p.hh > r[1] - 3);
+  const at = c => [c[0] > 0 ? x + 13 : x - 13 - p.w, c[1] < 0 ? y - p.hh - 7 : y + 8]; let ci = p.ci || 0;
+  if (hit(...at(C[ci]))) { const k = [0, 1, 2, 3].find(i => !hit(...at(C[i]))); ci = k === undefined ? (p.ci || 0) : k; }
+  p.ci = ci; let [lx, ly] = at(C[ci]); lx = clamp(lx, 8, W - 8 - p.w); PLC.push([lx, ly, lx + p.w, ly + p.hh]);
+  p.e.style.transform = `translate3d(${lx.toFixed(1)}px,${ly.toFixed(1)}px,0)`; p.e.style.opacity = o.toFixed(3); return [C[ci][0] > 0 ? lx : lx + p.w, ly + p.hh / 2]; }
+function rdFrame(t, s, dt) {
+  const D2 = Math.min(2, devicePixelRatio || 1); if (rdc.width !== Math.round(W * D2)) { rdc.width = Math.round(W * D2); rdc.height = Math.round(H * D2); }
+  rdx.style.opacity = rdA.toFixed(3); if (RM) return;
+  rx.setTransform(D2, 0, 0, D2, 0, 0); rx.clearRect(0, 0, W, H);
+  if (rdA < .02) { RX.idle += dt; if (RX.idle > 3 && RX.i) rdReset(); POOL.forEach(p => { if (p.k) { p.k = null; p.e.style.display = 'none'; } }); return; }
+  RX.idle = 0;
+  if (rdA > .5) { if (RX.done) { RX.hold -= dt; if (RX.hold <= 0) rdReset(); } else { RX.wait -= dt; let g = 0; while (RX.wait <= 0 && !RX.done && g++ < 3) rdStep(t); } }
+  const fo = RX.done ? clamp(RX.hold / .6, 0, 1) : 1, B = pcs[0].getBoundingClientRect(), used = new Set();
+  // 讀過的點：表態色的小點
+  RX.dots.forEach(it => { const q = proj(it.n, t); it.q = q; if (q.z > 1) return; const a = clamp((t - it.t) * 5, 0, 1) * fo; rx.globalAlpha = a * (it.r ? 1 : .9); rx.fillStyle = it.r ? '#EDEDE8' : LHEX[D.ch[it.j][1] || '']; rx.beginPath(); rx.arc(q.x, q.y, it.r ? 3.4 : 2.5, 0, TAU); rx.fill(); });
+  // 掃描的路徑：最近幾張連成一條細線
+  const hs = RX.hist.filter(it => it.q && it.q.z < 1); rx.lineWidth = 1; for (let k = 1; k < hs.length; k++) { const a = hs[k - 1].q, b = hs[k].q; rx.globalAlpha = .34 * Math.exp(-(t - hs[k].t) * 1.6) * fo; rx.strokeStyle = '#EDEDE8'; rx.beginPath(); rx.moveTo(a.x, a.y); rx.lineTo(b.x, b.y); rx.stroke(); }
+  PLC = [];
+  // 正在讀的這張：圈、引線、實心標籤
+  const h = RX.head; if (h && h.q && h.q.z < 1) { const c = D.ch[h.j][1] || '', age = t - h.t, rr = 7 + 9 * Math.exp(-age * 9);
+    rx.globalAlpha = fo; rx.strokeStyle = LHEX[c]; rx.lineWidth = 1.5; rx.beginPath(); rx.arc(h.q.x, h.q.y, rr, 0, TAU); rx.stroke();
+    const p = lab(0, 'c' + h.no, `<i>${String(h.no).padStart(3, '0')}</i>${D0.nm[h.j][LG]}<em>${lword(c)}</em>`, 'h' + (RM ? '' : ' pop'), LHEX[c]);
+    const [ax, ay] = place(p, h.q.x, h.q.y, fo, B); rx.globalAlpha = .55 * fo; rx.strokeStyle = '#EDEDE8'; rx.lineWidth = 1; rx.beginPath(); rx.moveTo(h.q.x + (ax > h.q.x ? 5 : -5), h.q.y + (ay > h.q.y ? 5 : -5)); rx.lineTo(ax, ay); rx.stroke(); used.add(0); }
+  // 讀完一頁的問題：雙圈和留著的標籤
+  RX.picks.forEach((it, k) => { if (!it.q || it.q.z > 1 || 2 + HN + k >= POOL.length) return; const age = t - it.t, o = clamp(age * 4, 0, 1) * fo;
+    rx.globalAlpha = o; rx.strokeStyle = '#EDEDE8'; rx.lineWidth = 1.2; rx.beginPath(); rx.arc(it.q.x, it.q.y, 9, 0, TAU); rx.stroke();
+    rx.globalAlpha = o * Math.exp(-age * 2.2); rx.beginPath(); rx.arc(it.q.x, it.q.y, 9 + age * 70, 0, TAU); rx.stroke();
+    const ta = tally(it.r), p = lab(2 + HN + k, 'p' + it.r + LG, `${qname(it.j)}<u class="up2">${ta.up}</u><u class="dn2">${ta.down}</u><u class="nu2">${ta.neu}</u>`, 'p');
+    const [ax, ay] = place(p, it.q.x, it.q.y, o, B); rx.globalAlpha = .6 * o; rx.lineWidth = 1; rx.beginPath(); rx.moveTo(it.q.x + (ax > it.q.x ? 7 : -7), it.q.y + (ay > it.q.y ? 6 : -6)); rx.lineTo(ax, ay); rx.stroke(); used.add(2 + HN + k); });
+  // 讀過的名字漸淡
+  let sl = 0; RX.hist.forEach(it => { if (it === RX.head || !it.q || it.q.z > 1) return; const o = .78 * Math.exp(-(t - it.t) * 1.15) * fo; if (o < .05 || sl >= HN) return; const p = lab(2 + sl, 'h' + it.no, D0.nm[it.j][LG], 't'); place(p, it.q.x, it.q.y, o, B); used.add(2 + sl); sl++; });
+  rx.globalAlpha = 1;
+  POOL.forEach((p, i) => { if (!used.has(i) && p.k) { p.k = null; p.e.style.display = 'none'; } });
 }
 build(); makePoints(); requestAnimationFrame(frame);
 </script>
