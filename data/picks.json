@@ -6,11 +6,9 @@
    "id": "flows/etfcost",
    "chart": "data/picks/flows-etfcost.png",
    "chart_en": "data/picks/flows-etfcost-en.png",
-   "why": "跌破 62K 那天讀者會問「ETF 那批機構買家虧多少、會不會賣」；頭條講籌碼和 62K，這張講 ETF 持有者成本，不重複。plan 沒有 hint，etfcost 不在 recent。",
-   "q_zh": "ETF 買家現在虧多少，會跟著賣嗎？",
-   "q_en": "How deep underwater are ETF buyers, and are they selling?",
-   "zh": "ETF 買家現在虧多少，會跟著賣嗎？\n已經在賣，痛的程度還沒到 6 月那麼深。\n推算 ETF 持有者平均成本 78,971，最新收盤在成本下方 21.6%，連 10 天在水下；6/30 最深到 −26.4%。成本不含 GBTC，是推算。\nETF 轉成連續淨流入，這個答案才會變。\n#比特幣 #BTC #ETF",
-   "en": "How deep underwater are ETF buyers, and are they selling?\nThey are selling; the pain is short of June's.\nEstimated ETF holder cost is 78,971; price is 21.6% below it, 10 days under. Jun 30 hit −26.4%. Excludes GBTC.\nA run of net inflows would change this.\n#Bitcoin #BTC #ETF"
+   "why": "跌破 62K 那天讀者會想知道 ETF 那批機構買家套多深、會不會跟著賣；頭條講籌碼和 62K，這張講 ETF 持有者成本，不重複。11/20 照新語言規則改寫：標題不用問句、只寫中文。",
+   "q_zh": "ETF 買家已經在認賠，痛還沒到 6 月那麼深",
+   "zh": "收盤比 ETF 持有者的推算平均成本低 21.6%，連 10 天在水下；2024 年 1 月有資料以來，最深是 6/30 的 −26.4%。\n對拿現貨的人來說，這條成本線現在是頭上的賣壓，價格漲回 78,971 附近，就會碰上一整批等著解套的 ETF 買家。\n近 30 天 ETF 是淨流出；成本不含 GBTC，是推算。\n#比特幣 #BTC #ETF"
   }
  ]
 }

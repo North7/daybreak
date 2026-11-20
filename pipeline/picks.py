@@ -691,7 +691,7 @@ def plan2(L):
                 suggest=ok[0]['id'] if ok else None, hint=hint,
                 recent={x['id']: x['used'] for x in c if x['used']}, skip={**SKIP_PANELS, **NEW_MISS},
                 note=('每日任務：挑 1 張（不限 suggest），先想「讀者今天在問什麼」，再挑最能回答的面板；recent 裡的（最近 7 天用過）不能挑。'
-                      '寫 data/picks.json：q_zh／q_en 是圖上的問句標題，zh／en 是解說：現在的讀值、過去同樣情況之後怎樣（勝率照實寫）、這代表什麼。'
+                      '寫 data/picks.json（2026-11-20 起只寫中文）：q_zh 是圖上的標題，一句看法、不用問句；zh 是解說：第一句今天最反常的變化（1–2 個數字＋歷史比較），第二句對拿現貨的人代表什麼，再用過去同樣情況撐（次數照寫）。'
                       '數字只能用這裡 data／signals 或當期 notes 有的；不寫出場框架、買賣點、目標價。'),
                 candidates=c)
 
@@ -715,7 +715,8 @@ def check2(L, pk):
         if cand[i]['used']: errs.append(f'{i}: {cand[i]["used"]} 已經用過，最近 {RECENT_DAYS} 天不重複')
         for k, want in (('chart', f'data/picks/{slug(i)}.png'), ('chart_en', f'data/picks/{slug(i)}-en.png')):
             if p.get(k) != want: errs.append(f'{i}: {k} 應為 {want}')
-        for lang in ('zh', 'en'):
+        for lang in ('zh', 'en'):   # 2026-11-20 英文不再發（英文只做大帳號引用）：只有中文必填，英文有寫才查
+            if lang == 'en' and not (p.get('q_en') or p.get('en')): continue
             q, t = p.get('q_' + lang) or '', p.get(lang) or ''
             if not q: errs.append(f'{i}.q_{lang}: 圖上的問句標題空白')
             if not t: errs.append(f'{i}.{lang}: 解說空白'); continue
@@ -730,7 +731,16 @@ def check2(L, pk):
             if lang == 'en' and re.search(r'[一-鿿]', q + t): errs.append(f'{i}.en: 有中文字')
             ls = [x for x in t.split('\n') if x.strip()]
             hard = re.findall(r'\d+(?:\.\d+)?%|\d{1,3}(?:,\d{3})+|\d+\.\d+', ls[1]) if len(ls) > 1 else []
-            if len(hard) >= 2: errs.append(f'{i}.{lang}: 第二行是觀點（這件事代表什麼、市場怎麼讀），不是讀值；數字留到第三行（現在 {len(hard)} 個：{"、".join(hard)}；2026-11-17 使用者：推薦圖表要有觀點為主）')
+            if len(hard) >= 2: errs.append(f'{i}.{lang}: 第二句是看法（對拿現貨的人代表什麼），不是讀值；數字留到後面（現在 {len(hard)} 個：{"、".join(hard)}；2026-11-17 使用者：推薦圖表要有觀點為主）')
+            if lang == 'zh':   # 2026-11-20 語言規則（運營 voice.md「不往回走」、日報第 9 步「開頭兩句怎麼寫」）：標題不用問句、開頭兩句擋同一組句型
+                if re.search(r'[？?]', q): errs.append(f'{i}.q_zh: 標題是問句（「{q[:20]}」）：「問句＋秒答」是帳號最明顯的 AI 指紋，改成一句直接的看法')
+                hd = '\n'.join(ls[:2])
+                for why, rx in (('問句（自問自答）', r'[？?]'), ('「不是 A，是 B」', r'不是[^，。\n]{1,24}[，,]\s?(而)?是'),
+                                ('直譯腔', r'比較高|比較低|讀不出|以上是讀數'), ('讀者心聲鋪墊', r'最想知道|最關心的是|你可能(會)?(想|問)')):
+                    for x, tag in ((q, 'q_zh'), (hd, 'zh 開頭兩句')):
+                        if why != '問句（自問自答）' or tag != 'q_zh':
+                            if re.search(rx, x): errs.append(f'{i}.{tag}: 用了{why}，見 CLAUDE_DAILY.md 9a')
+                if ls and q and ls[0].strip() == q.strip(): errs.append(f'{i}.zh: 第一句照抄了標題：第一句寫今天最反常的變化（帶數字和歷史比較），標題是看法')
             if lang == 'zh' and '選擇權' in t and t.find('選擇權') != t.find('選擇權（期權）'):   # 2026-11-06 使用者：第一次出現寫「選擇權（期權）」
                 errs.append(f'{i}.zh: 選擇權第一次出現要寫「選擇權（期權）」（幣圈中文多半說期權）')
     return errs
