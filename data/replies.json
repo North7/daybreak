@@ -4,8 +4,349 @@
  "edition": 45,
  "items": [
   {
-   "n": 50,
+   "n": 91,
    "order": 1,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/joke_henry/status/2123632961287508396",
+   "id": "2123632961287508396",
+   "author": "joke_henry",
+   "name": "joke_henry",
+   "followers": 10005,
+   "posted": "2026-11-20T04:22:07Z",
+   "angle": "40 倍走鋼索，他站在少數那邊",
+   "take": "大戶整體還在加空，這把是逆著大戶押",
+   "summary": "AguilaTrades 40 倍 1500 顆多單，清算價離現價不到 3%",
+   "reply": "40 倍掛在離清算 3% 的地方，看得人手心冒汗😂\nHyperliquid 大戶昨天反而又加了 600 多顆空單，他這把是逆著押",
+   "sources": "Hyperliquid 大戶淨空 3,992 顆；比前一天空單 +633、多單 −286 · next-lev hlw",
+   "note": "1 萬粉，配圖；固定名單 4c；熟帳號（今天第 3 則）；網站看法是大帳戶淨空是常態、看變化，所以只講昨天的變化",
+   "image": {
+    "site": {
+     "k": "hlw"
+    },
+    "title": "Hyperliquid 大戶淨空快 4 千顆"
+   }
+  },
+  {
+   "n": 92,
+   "order": 2,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/paulxue1979/status/2123635083873792397",
+   "id": "2123635083873792397",
+   "author": "paulxue1979",
+   "name": "paulxue1979",
+   "followers": 4437,
+   "posted": "2026-11-20T04:30:33Z",
+   "angle": "45.48% 還被老幣撐著",
+   "take": "扣掉老幣已經比 2019 那個低點還低",
+   "summary": "PSIP 45.48% 逼近歷次熊市低位、減半前 500 天窗口",
+   "reply": "45.48% 還算客氣，那是把放十年沒動的老幣也算進去\n扣掉它們，在賺的只剩 39.1%，已經比 2019 那次的 39.42% 還低一點",
+   "sources": "扣掉十年老幣獲利供給 39.1%（7 日平均）；老幣佔流通 17.9%，全體 50.0% · next-cycle psx",
+   "note": "4.4K 粉，不配圖；固定名單 4c；熟帳號（今天第 2 則，另一則礦企帖跳過）"
+  },
+  {
+   "n": 93,
+   "order": 3,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/FishLabs/status/2123626008888627583",
+   "id": "2123626008888627583",
+   "author": "FishLabs",
+   "name": "FishLabs",
+   "followers": 12814,
+   "posted": "2026-11-20T03:54:30Z",
+   "angle": "礦工越賭越大，成本線還會往上抬",
+   "take": "難度上調會讓成本線再抬高，礦工這關還沒過完",
+   "summary": "BTC 跌破平均挖礦成本 62,862，算力不降反升",
+   "reply": "礦工越賭越大\n11/27 難度預計還要再上調 9% 多\n同樣的電費挖到的幣更少，這條成本線會跟著往上抬",
+   "sources": "下次難度調整 +9.4%（11/27 預計）；電費兩平價 $63,102；算力 993 EH/s · next-sell miners",
+   "note": "1.3 萬粉，配圖；熟帳號；inbox 1205",
+   "image": {
+    "site": {
+     "k": "miners"
+    },
+    "title": "11/27 難度預計 +9.4%"
+   }
+  },
+  {
+   "n": 94,
+   "order": 4,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/fuzishu/status/2123628998765039878",
+   "id": "2123628998765039878",
+   "author": "fuzishu",
+   "name": "fuzishu",
+   "followers": 4169,
+   "posted": "2026-11-20T04:06:23Z",
+   "angle": "Q3 那一把現在全在水下",
+   "take": "季末加碼的機構帳上是虧的",
+   "summary": "13F：機構 Q3 淨買 ETF 折合 49,229 枚",
+   "reply": "富國那三萬顆八成也是 8 萬上下買的，ETF 推算成本 7.9 萬\n四季度的 13F 會很難看😅",
+   "sources": "ETF 持有者推算成本約 $79K · next-lv etfcost",
+   "note": "4.2K 粉，不配圖；熟帳號；inbox 1205"
+  },
+  {
+   "n": 95,
+   "order": 5,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/AnnaWalletV/status/2123629498709233897",
+   "id": "2123629498709233897",
+   "author": "AnnaWalletV",
+   "name": "AnnaWalletV",
+   "followers": 1893,
+   "posted": "2026-11-20T04:08:22Z",
+   "angle": "槓桿那塊最沒消化",
+   "take": "連環清算之後未平倉還在高位",
+   "summary": "三重壓力：宏觀緊縮＋流動性抽血＋技術破位清算",
+   "reply": "三個裡面最沒消化的是槓桿\n未平倉還堆在 2021 年以來第 95 百分位\n爆了幾輪也沒退多少",
+   "sources": "永續未平倉 33.4 萬顆、約 $20.7B，2021 年以來第 95 百分位 · next-lev oih",
+   "note": "1.9K 粉，不配圖；整理型長文（放寬）；inbox 1205"
+  },
+  {
+   "n": 96,
+   "order": 6,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/AI_huangmao/status/2123631258357969221",
+   "id": "2123631258357969221",
+   "author": "AI_huangmao",
+   "name": "AI_huangmao",
+   "followers": 5343,
+   "posted": "2026-11-20T04:15:21Z",
+   "angle": "63K 上面全是等回本的人",
+   "take": "阻力位上方籌碼很厚",
+   "summary": "4 小時點位：支撐 61,290、阻力 63,336／65,447",
+   "reply": "63K 上面那格躺了 88 萬顆，彈上去全是等回本的人😅",
+   "sources": "上方最近大堆 62K–64K 87.98 萬顆 · next-lv urpd",
+   "note": "5.3K 粉，不配圖；inbox 1205"
+  },
+  {
+   "n": 97,
+   "order": 7,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/Carter_BTC777/status/2123632302937026781",
+   "id": "2123632302937026781",
+   "author": "Carter_BTC777",
+   "name": "Carter_BTC777",
+   "followers": 27857,
+   "posted": "2026-11-20T04:19:30Z",
+   "angle": "躲不掉",
+   "take": "BTC 現在跟 Nasdaq 綁很緊",
+   "summary": "加密跟美股科技強相關，AI 預期降溫、聯準會偏鷹",
+   "reply": "哈，躲不掉的，跟 Nasdaq 30 天相關都 0.66 了",
+   "sources": "BTC–Nasdaq 30 日相關 0.66；BTC–美元 −0.21 · next-buy macro",
+   "note": "2.8 萬粉，配圖；熟帳號；inbox 1205",
+   "image": {
+    "site": {
+     "k": "macro"
+    },
+    "title": "BTC 和 Nasdaq 30 日相關 0.66"
+   }
+  },
+  {
+   "n": 98,
+   "order": 8,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/K2coinking/status/2123630412773970191",
+   "id": "2123630412773970191",
+   "author": "K2coinking",
+   "name": "K2coinking",
+   "followers": 11275,
+   "posted": "2026-11-20T04:12:00Z",
+   "angle": "機會成本那塊現在最直白",
+   "take": "市場把升息幾乎押滿了",
+   "summary": "美元走強、美債殖利率下不來，無息資產機會成本上升",
+   "reply": "嗯，機會成本這塊市場已經押滿了，12 月升息的機率 98%",
+   "sources": "預測市場 12 月升息 98%（7 天前 96%）· next-buy fedmkt",
+   "note": "1.1 萬粉，配圖；熟帳號；inbox 1205",
+   "image": {
+    "site": {
+     "k": "fedmkt"
+    },
+    "title": "12 月升息機率 98%"
+   }
+  },
+  {
+   "n": 99,
+   "order": 9,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/lcaqcla/status/2123631741143597348",
+   "id": "2123631741143597348",
+   "author": "lcaqcla",
+   "name": "lcaqcla",
+   "followers": 1109,
+   "posted": "2026-11-20T04:17:16Z",
+   "angle": "美股還算克制，幣圈先到底了",
+   "take": "兩邊恐慌程度差很多",
+   "summary": "美股六連跌、VIX 28.56、10 年期 5.05%",
+   "reply": "欸 VIX 28 美股還算克制，幣圈恐懼指數都掉到 10 了",
+   "sources": "恐懼貪婪 10，一個月前 55，2018 年以來第 1 百分位 · next-lev fng",
+   "note": "1.1K 粉，不配圖；inbox 1205"
+  },
+  {
+   "n": 100,
+   "order": 10,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/Simoncuocuo/status/2123631819040149777",
+   "id": "2123631819040149777",
+   "author": "Simoncuocuo",
+   "name": "Simoncuocuo",
+   "followers": 8652,
+   "posted": "2026-11-20T04:17:35Z",
+   "angle": "BTC 就是最好賣的那個",
+   "take": "大戶也在賣",
+   "summary": "全球拋售一切換現金，黃金也重挫",
+   "reply": "最好賣的就是 BTC\n大戶一週倒了 4.6 萬顆",
+   "sources": "100–1K 顆 7 天 −1.2 萬、1K–10K 顆 7 天 −3.4 萬，合計約 −4.6 萬 · next-buy whale",
+   "note": "8.7K 粉，不配圖；inbox 1205"
+  },
+  {
+   "n": 101,
+   "order": 11,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/TianbaoSu/status/2123628437839708581",
+   "id": "2123628437839708581",
+   "author": "TianbaoSu",
+   "name": "TianbaoSu",
+   "followers": 11459,
+   "posted": "2026-11-20T04:04:09Z",
+   "angle": "叫危機還早，幣圈自己先乾了",
+   "take": "場內需求已經很弱",
+   "summary": "股票、黃金、加密全跌，認為全球流動性危機",
+   "reply": "叫全球危機還早一點，幣圈自己的需求倒是先乾了\n30 天表觀需求 −27.9 萬顆\n2020 年以來第 6 百分位",
+   "sources": "30 天表觀需求 −27.9 萬顆，第 6 百分位 · next-buy ad",
+   "note": "1.1 萬粉，配圖；inbox 1205",
+   "image": {
+    "site": {
+     "k": "ad"
+    },
+    "title": "30 天表觀需求 −27.9 萬顆"
+   }
+  },
+  {
+   "n": 102,
+   "order": 12,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/borejuexing888/status/2123625205860008104",
+   "id": "2123625205860008104",
+   "author": "borejuexing888",
+   "name": "borejuexing888",
+   "followers": 13586,
+   "posted": "2026-11-20T03:51:18Z",
+   "angle": "六個崩盤像念訃聞，情緒先縮到底",
+   "take": "情緒已經到極端，但價格還沒跟著停",
+   "summary": "股票、加密、黃金、白銀、銅、石油全在崩，問之後會怎樣",
+   "reply": "六個全寫崩盤，看著像在念訃聞😅 BTC 恐懼指數已經 10，2018 年以來最低那 1%\n價格倒還沒跟著停",
+   "sources": "恐懼貪婪 10，2018 年以來第 1 百分位；網站看法：第一次掉進極度恐懼常不是底 · next-lev fng",
+   "note": "1.4 萬粉，配圖；方向題只給感受，不答崩盤或反彈；inbox 1205",
+   "image": {
+    "site": {
+     "k": "fng"
+    },
+    "title": "恐懼指數 10，2018 年以來最低 1%"
+   }
+  },
+  {
+   "n": 103,
+   "order": 13,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/BTC_985/status/2123630111392141373",
+   "id": "2123630111392141373",
+   "author": "BTC_985",
+   "name": "BTC_985",
+   "followers": 2389,
+   "posted": "2026-11-20T04:10:48Z",
+   "angle": "老手在買保險",
+   "take": "期權的錢押下跌保護",
+   "summary": "還敢做多的多半沒經歷過週期，虧了就補倉直到爆",
+   "reply": "補倉補到爆的看過太多，期權那邊倒是連 22 天在買下跌保險，你身邊還在補的人多嗎？",
+   "sources": "權利金連 22 天偏向賣權、風險逆轉 −7.77 · next-lev oi",
+   "note": "2.4K 粉，不配圖；inbox 1205"
+  },
+  {
+   "n": 104,
+   "order": 14,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/S2OT3/status/2123625631300612393",
+   "id": "2123625631300612393",
+   "author": "S2OT3",
+   "name": "S2OT3",
+   "followers": 1370,
+   "posted": "2026-11-20T03:53:00Z",
+   "angle": "+36% 還行，難受的是中間那趟",
+   "take": "五年報酬還行，難熬的是過程",
+   "summary": "五年對比：黃金 +100%、標普 +50%、BTC +36%",
+   "reply": "五年 +36% 看起來還行\n難受的是中間那趟 12 萬😅",
+   "sources": "（無讀數，用他的數字）",
+   "note": "1.4K 粉，不配圖；閒聊式短接（沒數字）；inbox 1205"
+  },
+  {
+   "n": 105,
+   "order": 15,
+   "status": "send",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/yangyue992125/status/2123629668180095054",
+   "id": "2123629668180095054",
+   "author": "yangyue992125",
+   "name": "yangyue992125",
+   "followers": 5432,
+   "posted": "2026-11-20T04:09:02Z",
+   "angle": "閒聊：接他今晚的心情",
+   "take": "",
+   "summary": "十年交易長文，最後 1.7 萬 U、求睡個好覺",
+   "reply": "中幣鎖了 70 個 ETH 那段看得心一緊\n今晚先睡個好覺，行情明天還在",
+   "sources": "（閒聊，無讀數）",
+   "note": "5.4K 粉，不配圖；心態長文，只接情緒不放數字；inbox 1205"
+  },
+  {
+   "n": 106,
+   "order": 16,
+   "status": "skip",
+   "lang": "zh",
+   "style": "口語版",
+   "url": "https://x.com/juliaandai/status/2123633732527767566",
+   "id": "2123633732527767566",
+   "author": "juliaandai",
+   "name": "juliaandai",
+   "followers": 2022,
+   "posted": "2026-11-20T04:25:11Z",
+   "angle": "按讚就好",
+   "take": "",
+   "summary": "他：我們是同路人",
+   "reply": "",
+   "sources": "",
+   "note": "按讚就好：別人貼文底下第 3 輪、沒問問題",
+   "kind": "followup"
+  },
+  {
+   "n": 50,
+   "order": 17,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -24,7 +365,7 @@
   },
   {
    "n": 51,
-   "order": 2,
+   "order": 18,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -49,7 +390,7 @@
   },
   {
    "n": 52,
-   "order": 3,
+   "order": 19,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -74,7 +415,7 @@
   },
   {
    "n": 53,
-   "order": 4,
+   "order": 20,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -99,7 +440,7 @@
   },
   {
    "n": 54,
-   "order": 5,
+   "order": 21,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -118,7 +459,7 @@
   },
   {
    "n": 55,
-   "order": 6,
+   "order": 22,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -137,7 +478,7 @@
   },
   {
    "n": 56,
-   "order": 7,
+   "order": 23,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -156,7 +497,7 @@
   },
   {
    "n": 57,
-   "order": 8,
+   "order": 24,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -175,7 +516,7 @@
   },
   {
    "n": 58,
-   "order": 9,
+   "order": 25,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -194,7 +535,7 @@
   },
   {
    "n": 59,
-   "order": 10,
+   "order": 26,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -213,7 +554,7 @@
   },
   {
    "n": 60,
-   "order": 11,
+   "order": 27,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -232,7 +573,7 @@
   },
   {
    "n": 61,
-   "order": 12,
+   "order": 28,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -251,7 +592,7 @@
   },
   {
    "n": 62,
-   "order": 13,
+   "order": 29,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -277,7 +618,7 @@
   },
   {
    "n": 63,
-   "order": 14,
+   "order": 30,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -296,7 +637,7 @@
   },
   {
    "n": 64,
-   "order": 15,
+   "order": 31,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -315,7 +656,7 @@
   },
   {
    "n": 65,
-   "order": 16,
+   "order": 32,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -334,7 +675,7 @@
   },
   {
    "n": 66,
-   "order": 17,
+   "order": 33,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -353,7 +694,7 @@
   },
   {
    "n": 67,
-   "order": 18,
+   "order": 34,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -372,7 +713,7 @@
   },
   {
    "n": 68,
-   "order": 19,
+   "order": 35,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -392,7 +733,7 @@
   },
   {
    "n": 69,
-   "order": 20,
+   "order": 36,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -412,7 +753,7 @@
   },
   {
    "n": 70,
-   "order": 21,
+   "order": 37,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -432,7 +773,7 @@
   },
   {
    "n": 42,
-   "order": 22,
+   "order": 38,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -457,7 +798,7 @@
   },
   {
    "n": 43,
-   "order": 23,
+   "order": 39,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -476,7 +817,7 @@
   },
   {
    "n": 44,
-   "order": 24,
+   "order": 40,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -495,7 +836,7 @@
   },
   {
    "n": 45,
-   "order": 25,
+   "order": 41,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -514,7 +855,7 @@
   },
   {
    "n": 46,
-   "order": 26,
+   "order": 42,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -533,7 +874,7 @@
   },
   {
    "n": 47,
-   "order": 27,
+   "order": 43,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -552,7 +893,7 @@
   },
   {
    "n": 48,
-   "order": 28,
+   "order": 44,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -571,7 +912,7 @@
   },
   {
    "n": 49,
-   "order": 29,
+   "order": 45,
    "status": "skip",
    "lang": "zh",
    "style": "口語版",
@@ -590,7 +931,7 @@
   },
   {
    "n": 1,
-   "order": 30,
+   "order": 46,
    "status": "send",
    "url": "https://x.com/trader1sz/status/2123583127058853965",
    "id": "2123583127058853965",
@@ -617,7 +958,7 @@
   },
   {
    "n": 2,
-   "order": 31,
+   "order": 47,
    "status": "send",
    "url": "https://x.com/serlo123/status/2123590381430612220",
    "id": "2123590381430612220",
@@ -636,7 +977,7 @@
   },
   {
    "n": 3,
-   "order": 32,
+   "order": 48,
    "status": "send",
    "url": "https://x.com/DKFK1688/status/2123570606205759995",
    "id": "2123570606205759995",
@@ -661,7 +1002,7 @@
   },
   {
    "n": 4,
-   "order": 33,
+   "order": 49,
    "status": "send",
    "url": "https://x.com/yonghao131419/status/2123579353271525616",
    "id": "2123579353271525616",
@@ -680,7 +1021,7 @@
   },
   {
    "n": 5,
-   "order": 34,
+   "order": 50,
    "status": "send",
    "url": "https://x.com/liwei7194211781/status/2123573038209999253",
    "id": "2123573038209999253",
@@ -705,7 +1046,7 @@
   },
   {
    "n": 6,
-   "order": 35,
+   "order": 51,
    "status": "send",
    "url": "https://x.com/ningningluffy/status/2123573632224071724",
    "id": "2123573632224071724",
@@ -724,7 +1065,7 @@
   },
   {
    "n": 7,
-   "order": 36,
+   "order": 52,
    "status": "send",
    "url": "https://x.com/zx_hey/status/2123567515708301658",
    "id": "2123567515708301658",
@@ -743,7 +1084,7 @@
   },
   {
    "n": 8,
-   "order": 37,
+   "order": 53,
    "status": "send",
    "url": "https://x.com/Cloud2005n/status/2123583573097890228",
    "id": "2123583573097890228",
@@ -762,7 +1103,7 @@
   },
   {
    "n": 9,
-   "order": 38,
+   "order": 54,
    "status": "send",
    "url": "https://x.com/0xHui888/status/2123571273813131396",
    "id": "2123571273813131396",
@@ -781,7 +1122,7 @@
   },
   {
    "n": 10,
-   "order": 39,
+   "order": 55,
    "status": "send",
    "url": "https://x.com/laban_li/status/2123568160284782969",
    "id": "2123568160284782969",
@@ -806,7 +1147,7 @@
   },
   {
    "n": 11,
-   "order": 40,
+   "order": 56,
    "status": "send",
    "url": "https://x.com/VoltBuddy/status/2123565485077962987",
    "id": "2123565485077962987",
@@ -825,7 +1166,7 @@
   },
   {
    "n": 12,
-   "order": 41,
+   "order": 57,
    "status": "send",
    "url": "https://x.com/Yxnh8023/status/2123564547370012898",
    "id": "2123564547370012898",
@@ -844,7 +1185,7 @@
   },
   {
    "n": 13,
-   "order": 42,
+   "order": 58,
    "status": "send",
    "url": "https://x.com/Xingge888668/status/2123559561021767877",
    "id": "2123559561021767877",
@@ -863,7 +1204,7 @@
   },
   {
    "n": 14,
-   "order": 43,
+   "order": 59,
    "status": "send",
    "url": "https://x.com/xiaoguodunzhou/status/2123577470473703699",
    "id": "2123577470473703699",
@@ -882,7 +1223,7 @@
   },
   {
    "n": 15,
-   "order": 44,
+   "order": 60,
    "status": "send",
    "url": "https://x.com/VVane178/status/2123571291949072647",
    "id": "2123571291949072647",
@@ -901,7 +1242,7 @@
   },
   {
    "n": 16,
-   "order": 45,
+   "order": 61,
    "status": "send",
    "url": "https://x.com/pigclean66/status/2123582849660195032",
    "id": "2123582849660195032",
@@ -920,7 +1261,7 @@
   },
   {
    "n": 17,
-   "order": 46,
+   "order": 62,
    "status": "send",
    "url": "https://x.com/lumaouncle/status/2123577823646585320",
    "id": "2123577823646585320",
@@ -939,7 +1280,7 @@
   },
   {
    "n": 18,
-   "order": 47,
+   "order": 63,
    "status": "send",
    "url": "https://x.com/Taranluckyday/status/2123567695270457358",
    "id": "2123567695270457358",
@@ -958,7 +1299,7 @@
   },
   {
    "n": 19,
-   "order": 48,
+   "order": 64,
    "status": "send",
    "url": "https://x.com/PepeUnbound/status/2123581827311178093",
    "id": "2123581827311178093",
@@ -977,7 +1318,7 @@
   },
   {
    "n": 20,
-   "order": 49,
+   "order": 65,
    "status": "send",
    "url": "https://x.com/lea_coste/status/2123579536885604725",
    "id": "2123579536885604725",
@@ -996,7 +1337,7 @@
   },
   {
    "n": 21,
-   "order": 50,
+   "order": 66,
    "status": "send",
    "url": "https://x.com/AussTalk/status/2123536812442349612",
    "id": "2123536812442349612",
@@ -1015,7 +1356,7 @@
   },
   {
    "n": 22,
-   "order": 51,
+   "order": 67,
    "status": "send",
    "url": "https://x.com/zgjncw2024/status/2123539896090665380",
    "id": "2123539896090665380",
@@ -1040,7 +1381,7 @@
   },
   {
    "n": 23,
-   "order": 52,
+   "order": 68,
    "status": "send",
    "url": "https://x.com/yu1089899/status/2123512535987179675",
    "id": "2123512535987179675",
@@ -1059,7 +1400,7 @@
   },
   {
    "n": 24,
-   "order": 53,
+   "order": 69,
    "status": "send",
    "url": "https://x.com/youngstockuser/status/2123546358921769065",
    "id": "2123546358921769065",
@@ -1078,7 +1419,7 @@
   },
   {
    "n": 25,
-   "order": 54,
+   "order": 70,
    "status": "send",
    "url": "https://x.com/MacroYuvo/status/2123552250433794405",
    "id": "2123552250433794405",
@@ -1104,7 +1445,7 @@
   },
   {
    "n": 26,
-   "order": 55,
+   "order": 71,
    "status": "send",
    "url": "https://x.com/joke_henry/status/2123559086189162670",
    "id": "2123559086189162670",
@@ -1129,7 +1470,7 @@
   },
   {
    "n": 27,
-   "order": 56,
+   "order": 72,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/xh126192/status/2123504850982015196",
@@ -1148,7 +1489,7 @@
   },
   {
    "n": 28,
-   "order": 57,
+   "order": 73,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/bio1098895/status/2123441398720663859",
@@ -1167,7 +1508,7 @@
   },
   {
    "n": 29,
-   "order": 58,
+   "order": 74,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/bio1098895/status/2123441076484878763",
@@ -1186,7 +1527,7 @@
   },
   {
    "n": 30,
-   "order": 59,
+   "order": 75,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/ZoXinkun2O26/status/2123444522629677223",
@@ -1205,7 +1546,7 @@
   },
   {
    "n": 31,
-   "order": 60,
+   "order": 76,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/DrHashClub/status/2123452438917398656",
@@ -1224,7 +1565,7 @@
   },
   {
    "n": 32,
-   "order": 61,
+   "order": 77,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/OnlyJettTian/status/2123453357591527558",
@@ -1243,7 +1584,7 @@
   },
   {
    "n": 33,
-   "order": 62,
+   "order": 78,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/HHY0310/status/2123455559445942480",
@@ -1262,7 +1603,7 @@
   },
   {
    "n": 34,
-   "order": 63,
+   "order": 79,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/MoonMoon2289/status/2123497403806339367",
@@ -1281,7 +1622,7 @@
   },
   {
    "n": 35,
-   "order": 64,
+   "order": 80,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/juliaandai/status/2123525832643854782",
@@ -1300,7 +1641,7 @@
   },
   {
    "n": 36,
-   "order": 65,
+   "order": 81,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/aotudapingyuan/status/2123573289255891319",
@@ -1319,7 +1660,7 @@
   },
   {
    "n": 37,
-   "order": 66,
+   "order": 82,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/aotudapingyuan/status/2123578051682525288",
@@ -1338,7 +1679,7 @@
   },
   {
    "n": 38,
-   "order": 67,
+   "order": 83,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/minke3338611/status/2123588745672933452",
@@ -1357,7 +1698,7 @@
   },
   {
    "n": 39,
-   "order": 68,
+   "order": 84,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/rota_maria/status/2123559235846062188",
@@ -1376,7 +1717,7 @@
   },
   {
    "n": 40,
-   "order": 69,
+   "order": 85,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/yi33101/status/2123563385518231555",
@@ -1395,7 +1736,7 @@
   },
   {
    "n": 41,
-   "order": 70,
+   "order": 86,
    "status": "skip",
    "kind": "followup",
    "url": "https://x.com/web3yezhu/status/2123555162400632863",
@@ -1414,7 +1755,7 @@
   },
   {
    "n": 71,
-   "order": 71,
+   "order": 87,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1439,7 +1780,7 @@
   },
   {
    "n": 72,
-   "order": 72,
+   "order": 88,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1464,7 +1805,7 @@
   },
   {
    "n": 73,
-   "order": 73,
+   "order": 89,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1483,7 +1824,7 @@
   },
   {
    "n": 74,
-   "order": 74,
+   "order": 90,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1502,7 +1843,7 @@
   },
   {
    "n": 75,
-   "order": 75,
+   "order": 91,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1521,7 +1862,7 @@
   },
   {
    "n": 76,
-   "order": 76,
+   "order": 92,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1540,7 +1881,7 @@
   },
   {
    "n": 77,
-   "order": 77,
+   "order": 93,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1559,7 +1900,7 @@
   },
   {
    "n": 78,
-   "order": 78,
+   "order": 94,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1578,7 +1919,7 @@
   },
   {
    "n": 79,
-   "order": 79,
+   "order": 95,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1597,7 +1938,7 @@
   },
   {
    "n": 80,
-   "order": 80,
+   "order": 96,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1616,7 +1957,7 @@
   },
   {
    "n": 81,
-   "order": 81,
+   "order": 97,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1635,7 +1976,7 @@
   },
   {
    "n": 82,
-   "order": 82,
+   "order": 98,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1654,7 +1995,7 @@
   },
   {
    "n": 83,
-   "order": 83,
+   "order": 99,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1673,7 +2014,7 @@
   },
   {
    "n": 84,
-   "order": 84,
+   "order": 100,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1692,7 +2033,7 @@
   },
   {
    "n": 85,
-   "order": 85,
+   "order": 101,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
@@ -1711,7 +2052,7 @@
   },
   {
    "n": 86,
-   "order": 86,
+   "order": 102,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -1731,7 +2072,7 @@
   },
   {
    "n": 87,
-   "order": 87,
+   "order": 103,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -1751,7 +2092,7 @@
   },
   {
    "n": 88,
-   "order": 88,
+   "order": 104,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -1771,7 +2112,7 @@
   },
   {
    "n": 89,
-   "order": 89,
+   "order": 105,
    "status": "send",
    "kind": "followup",
    "lang": "zh",
@@ -1791,7 +2132,7 @@
   },
   {
    "n": 90,
-   "order": 90,
+   "order": 106,
    "status": "send",
    "lang": "zh",
    "style": "口語版",
