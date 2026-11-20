@@ -128,7 +128,9 @@ def dawn(L):
     return V(t, '%s：%s' % (nm, {'up': '估值便宜', 'down': '估值偏貴', 'neu': '中間地帶'}[t]), '%s: %s' % (ne.capitalize(), {'up': 'cheap', 'down': 'rich', 'neu': 'middling'}[t]),
              '過去這個階段之後一年中位數 %s，任一週 %s。' % (pc(st['y1']['med'], 0), pc(d['base']['med'], 0)), 'After this stage the one-year median was %s, versus %s for any week.' % (pc(st['y1']['med'], 0), pc(d['base']['med'], 0)), '熱度升到 45 以上（破曉）', 'Heat above 45 (daybreak)' if t == 'up' else 'A change of stage')
 def stage(L):
-    s = C(L)['stage']['stage']
+    S = C(L)['stage']; s = S['stage']; px = L['price']['bar']['c']; gap = (px / S['sma200'] - 1) * 100
+    # 2026-11-20：牛市成立後鎖定，標籤反應慢。收盤跌回 200 日均線下時，標籤還是牛市但趨勢已經不支持，偏向改中性（原本一律偏多，和卡上的數字打架）
+    if s == '牛市' and gap < 0: return V('neu', '牛市標籤鎖定中', 'Bull label, locked', '牛市成立後鎖定，要在下降的 200 日均線下連 30 天才退回熊市，標籤反應慢；收盤已在均線下 %.0f%%，趨勢不支持偏多。' % -gap, 'Bull is locked once set and only reverts after 30 days under a falling 200-day MA, so the label is slow; the close is %.0f%% below the MA, so the trend no longer supports a bullish lean.' % -gap, '收盤站回 200 日均線之上', 'A close back above the 200-day MA')
     if s == '牛市': return V('up', '牛市階段', 'Bull stage', '投降出現過、價格曾在上升的 200 日均線上站滿 30 天；跌在下降的均線下 30 天才退回熊市。', 'A capitulation happened and price held 30 days above a rising 200-day MA; it takes 30 days under a falling MA to revert.', '在下降的 200 日均線下 30 天', '30 days under a falling 200-day MA')
     if s == '熊市': return V('down', '熊市階段', 'Bear stage', '還沒有投降加站上上升的 200 日均線。', 'No capitulation plus close above a rising 200-day MA yet.', '收盤站上上升的 200 日均線', 'A close above a rising 200-day MA')
     return V('neu', '轉換期', 'Transition', '介於熊市和牛市之間。', 'Between bear and bull.', '站上均線 30 天或跌回 5 天', '30 days above or 5 below the average')

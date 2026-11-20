@@ -35,8 +35,24 @@ def build(L, N, E, dn, X):
         v = e.get('value'); u = e.get('unit') or ''
         return '—' if v is None else (('%+.1f%%' % v).replace('-', '−') if u == '%' else ('$' + format(int(v), ',') if v > 1000 else '%.2f' % v))
     STN = {'牛市': 'Bull market', '熊市': 'Bear market', '過渡': 'Transition', '過渡期': 'Transition'}
-    X['stage'] = dict(k='stage', zh='市場階段', en='Market stage', hz='從 %s 起' % st['since'].replace('-', '/'), he='Since ' + st['since'], hs=dict(v=st['stage'], f='txt', ve=STN.get(st['stage'], st['stage'])),
-      list=dict(rows=[row(e['label'], EVN.get(e['id'], e['label']), evv(e), ve=evv(e), col='up' if e['ok'] else 'k2', nz=('成立：' if e['ok'] else '不成立：') + e['cond'], ne='Met' if e['ok'] else 'Not met') for e in st['evidence']['items']]),
+    # 2026-11-20 使用者：「『階段鎖定』的說明換個位置放」。原本「牛市一旦成立就鎖定」只藏在「證據」和右下的說明裡，卡上只看到大字「牛市」加偏多，
+    #   和收盤已在下降的 200 日均線下 15% 打架。現在鎖定直接寫在大字上方（hz），清單第一列是「退回／前進到下一階段」的進度條，佐證燈排在後面
+    bb = st.get('bear_back') or {}; bn = (st.get('bull_need') or {}).get('run', 30); ar = st.get('above_rising_run', 0)
+    if st['stage'] == '牛市':
+        n_, N_ = st.get('below_falling_run', 0), bb.get('bull_below_falling_run', 30)
+        prog = [row('退回熊市的進度', 'Progress back to bear', '%d / %d 天' % (n_, N_), ve='%d / %d days' % (n_, N_), bar=n_ / N_ * 100, col='dn' if n_ else 'k2',
+                    nz='牛市成立後鎖定：收盤要在下降中的 200 日均線下連 %d 天才退回熊市。收盤已在均線下 %d 天，%s。' % (N_, st.get('below_run', 0), '均線還在上升，還沒開始算' if st.get('sma200_rising') else '均線轉成下降後算到第 %d 天' % n_),
+                    ne='Bull is locked once set: it takes %d straight closes under a falling 200-day MA to go back to bear. The close has been under the MA for %d days; %s.' % (N_, st.get('below_run', 0), 'the MA is still rising, so the count has not started' if st.get('sma200_rising') else 'since the MA turned down, this is day %d' % n_))]
+    elif st['stage'] in ('過渡', '過渡期', '轉換期'):
+        b_, N2 = st.get('below_run', 0), bb.get('transition_below_run', 5)
+        prog = [row('成為牛市的進度', 'Progress to bull', '%d / %d 天' % (ar, bn), ve='%d / %d days' % (ar, bn), bar=ar / bn * 100, col='up' if ar else 'k2', nz='收盤在上升的 200 日均線上連 %d 天成為牛市。' % bn, ne='%d straight closes above a rising 200-day MA make it bull.' % bn),
+                row('退回熊市的進度', 'Progress back to bear', '%d / %d 天' % (b_, N2), ve='%d / %d days' % (b_, N2), bar=b_ / N2 * 100, col='dn' if b_ else 'k2', nz='連 %d 天收在均線下退回熊市。' % N2, ne='%d straight closes below the MA send it back to bear.' % N2)]
+    else:
+        cs = st.get('capitulation_seen'); k_ = (1 if cs else 0) + (1 if ar else 0)
+        prog = [row('進入過渡的條件', 'To enter transition', '%d / 2' % k_, ve='%d / 2' % k_, bar=k_ / 2 * 100, col='up' if k_ else 'k2',
+                    nz='投降訊號%s；收盤%s上升的 200 日均線。' % ('出現過' if cs else '還沒出現', '站上' if ar else '還沒站上'), ne='Capitulation %s; the close is %s a rising 200-day MA.' % ('seen' if cs else 'not seen yet', 'above' if ar else 'not yet above'))]
+    X['stage'] = dict(k='stage', zh='市場階段', en='Market stage', hz=('從 %s 起・鎖定中' if st['stage'] == '牛市' else '從 %s 起') % st['since'].replace('-', '/'), he=('Since %s, locked' if st['stage'] == '牛市' else 'Since %s') % st['since'], hs=dict(v=st['stage'], f='txt', ve=STN.get(st['stage'], st['stage'])),
+      list=dict(rows=prog + [row(e['label'], EVN.get(e['id'], e['label']), evv(e), ve=evv(e), col='up' if e['ok'] else 'k2', nz=('成立：' if e['ok'] else '不成立：') + e['cond'], ne='Met' if e['ok'] else 'Not met') for e in st['evidence']['items']]),
       dz='三個階段：熊市、過渡、牛市。見過投降訊號、而且收盤站上還在上升的 200 日均線，進入過渡；這樣連續 30 天，進入牛市並鎖定。下面六盞燈只是佐證，不參與判定。', de='Three stages: bear, transition, bull. A capitulation signal plus a close above a rising 200-day average starts the transition; 30 straight days of that locks in a bull market. The six lights below are supporting evidence only.')
     rg = cy['regime']
     # 照現有網站 regStages：每週分到五個階段之一。≥ +4 過熱、≤ −4 極熊、分數為負是熊；空方滿 26 週後翻多的頭 26 週是初牛，其餘是牛

@@ -14,3 +14,5 @@ ops/log/*.json
 ops/replies/*.md
 !ops/replies/README.md
 ops/replies/watchlist.json
+# 2026-11-20：本機短影片和預覽圖的暫存，不進程式庫（舊檔搬到 daybreak-ops/ops/video/out/）
+media/
