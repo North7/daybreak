@@ -221,9 +221,42 @@ def build(L, N, E, dn):
                 lleg = ['k2', '週期價格低點（收盤）', 'Cycle price lows (close)', 'dash']
                 c_rpl['marks'] = c_rpl['marks'] + lmk('y1'); c_rpl['vl'] = lvl; c_rpl['leg'] = c_rpl['leg'] + [lleg]
                 v90.update(marks=lmk('r90'), vl=lvl, leg=v90['leg'] + [lleg])
+            wh = y1.get('w180')
+            if wh and wh.get('zones'):   # 2026-11-20 使用者：「加到卡片上」：半年＋30 天同時很低（oc_extra.H_LO／H_S30）。三個檢視的證據都加一條，另外多一個「半年」檢視
+                zs = wh['zones']; dz_ = [z for z in zs if not z.get('open')] or zs
+                ym_ = lambda d_: '%s/%d' % (d_[:4], int(d_[5:7]))
+                lz = (min(z['lead'] for z in zs), max(z['lead'] for z in zs)); dd_ = (min(-z['dd'] for z in zs), max(-z['dd'] for z in zs)); cur = zs[-1]
+                r1 = [z['r365'] for z in zs if z.get('r365') is not None]
+                zi = dict(kz='半年＋30 天同時很低', ke='Half-year and 30-day both low', vz='%d 段都在低點前' % len(zs), ve='%d spells, all before a low' % len(zs), tone='neu',
+                          dz='半年合計低於 %.1f、同時 30 天合計低於 %.1f：%s 年起每輪只亮一段（%s），價格最低點都在第一次亮起後 %d–%d 天，亮起後價格還再跌 %.0f–%.0f%%%s。現在半年 %.2f、30 天 %.2f，%s。' % (
+                              wh['lo'], wh['s30_lo'], zs[0]['start'][:4], '、'.join(ym_(z['start']) for z in zs), lz[0], lz[1], dd_[0], dd_[1],
+                              '；一年後 %d 次都漲（%s）' % (len(r1), '、'.join('%+.0f%%' % x for x in r1)) if r1 and all(x > 0 for x in r1) else '', wh['value'], wh['s30'], '正在區間裡' if wh['on'] else '不在區間'),
+                          de='Half-year sum below %.1f while the 30-day sum is below %.1f: since %s it lit once per cycle (%s); the price low came %d–%d days after the first day, and price still fell %.0f–%.0f%% after it%s. Now the half-year sum is %.2f and the 30-day %.2f: %s.' % (
+                              wh['lo'], wh['s30_lo'], zs[0]['start'][:4], ', '.join(z['start'][:7] for z in zs), lz[0], lz[1], dd_[0], dd_[1],
+                              '; a year later price was up every time (%s)' % ', '.join('%+.0f%%' % x for x in r1) if r1 and all(x > 0 for x in r1) else '', wh['value'], wh['s30'], 'inside the zone' if wh['on'] else 'outside the zone'),
+                          cz='', ce='', view=0, hm='', hme='')
+                for y_ in (c_rpl['say'], v90['say']): y_['items'].append(dict(zi))
+                if wh['on']: vth, vzh, veh, wzh, weh, czh, ceh = 'neu', '低點附近', 'Near a low', '半年和 30 天合計同時很低，過去都落在週期價格低點前後；但亮起後價格還再跌過 %.0f–%.0f%%。' % dd_, 'Both sums are low at once, which has always come around a cycle price low; but price fell another %.0f–%.0f%% after it lit in the past.' % dd_, '30 天合計回到 %.1f 以上' % wh['s30_lo'], 'The 30-day sum back above %.1f' % wh['s30_lo']
+                else: vth, vzh, veh, wzh, weh, czh, ceh = 'neu', '不在低點區間', 'Not in the low zone', '半年和 30 天合計沒有同時很低；過去週期價格低點前後都會同時很低。', 'The two sums are not low at the same time; around past cycle price lows they always were.', '半年跌破 %.1f 且 30 天跌破 %.1f' % (wh['lo'], wh['s30_lo']), 'Half-year below %.1f and 30-day below %.1f' % (wh['lo'], wh['s30_lo'])
+                syh = own_([('半年合計', 'Half-year sum', '%.2f' % wh['value'], '%.2f' % wh['value'], 'up' if wh['value'] >= 1 else 'down', '門檻 %.1f。' % wh['lo'], 'Threshold %.1f.' % wh['lo']),
+                            ('30 天合計', '30-day sum', '%.2f' % wh['s30'], '%.2f' % wh['s30'], 'up' if wh['s30'] >= 1 else 'down', '門檻 %.1f；最近 7 天 %.2f。' % (wh['s30_lo'], s7), 'Threshold %.1f; %.2f over the last 7 days.' % (wh['s30_lo'], s7))],
+                           ('半年合計 %.2f、30 天合計 %.2f，%s：過去週期的價格低點前後，兩個都會同時很低。' % (wh['value'], wh['s30'], '同時很低' if wh['on'] else '沒有同時很低')),
+                           ('The half-year sum is %.2f and the 30-day %.2f, %s: around past cycle price lows both were low at once.' % (wh['value'], wh['s30'], 'both low' if wh['on'] else 'not both low')))
+                syh['items'].insert(0, dict(kz='我們的看法', ke='Our view', vz=vzh, ve=veh, tone=vth, dz=wzh, de=weh, cz=czh, ce=ceh, view=1, hm='', hme=''))
+                syh['items'].append(dict(zi)); syh['hz'], syh['he'] = list(c_rpl['say'].get('hz') or []), list(c_rpl['say'].get('he') or [])
+                vh = dict(mz='半年', me='Half year', o=1, src='Bitview · {d}', rows=wh['rows'], p=2, dom=None, marks=lmk('r180') if lw else [], vl=lvl if lw else [],
+                          ser=[ser(1, zh='半年合計獲利 ÷ 虧損', en='Half-year profit ÷ loss', t='split', base=1, w=1.6), ser(3, zh='30 天合計', en='30-day sum', col='k2', w=.9)],
+                          refs=[dict(v=1, col='ink', solid=1), dict(v=wh['lo'], col='c3', zh='半年 %.1f' % wh['lo'], en='Half-year %.1f' % wh['lo']), dict(v=wh['s30_lo'], col='k2', zh='30 天 %.1f' % wh['s30_lo'], en='30-day %.1f' % wh['s30_lo'])],
+                          spans=[dict(a=dn(z['start']), b=dn(z['end']), col='c3', op=.2) for z in zs],
+                          leg=[['up', '1 以上', 'Above 1', 'line'], ['dn', '1 以下', 'Below 1', 'line'], ['c3', '兩個同時很低', 'Both low at once', 'box']] + ([lleg] if lw else []),
+                          dz='全網半年（180 天）合計的實現獲利，除以同期合計的實現虧損（Bitview），細線是 30 天合計。青綠底是兩個同時很低的期間（半年 < %.1f、30 天 < %.1f），過去每輪只亮一段，都在週期價格低點前後；門檻是看過歷史才定的，只有 %d 段，只作讀值。' % (wh['lo'], wh['s30_lo'], len(zs)),
+                          de='Network realized profit summed over half a year (180 days), divided by realized loss over the same period (Bitview); the thin line is the 30-day sum. Teal bands mark when both were low at once (half-year < %.1f, 30-day < %.1f): once per cycle in the past, always around a cycle price low. The thresholds were set after looking at history and there are only %d spells: a reading, not a signal.' % (wh['lo'], wh['s30_lo'], len(zs)),
+                          say=syh)
+
             c_rpl['src'] = 'Bitview · {d}'
             c_rpl['modes'] = [v90, dict(mz='一年', me='One year', src='Bitview · {d}')]
             c_rpl['_m'] = 1
+            if wh and wh.get('zones'): c_rpl['modes'][0]['o'], c_rpl['modes'][1]['o'] = 0, 2; c_rpl['modes'].append(vh)   # 檢視順序：90 天、半年、一年（m＝0／1 的意思不變，半年是 m＝2）
         else:
           c_rpl['dz'] = '全網 90 天平均的實現獲利，除以實現虧損（CheckOnChain，每日比值取平均）。橘底是歷次跌到 1 以下的期間。「一年」改用一年合計相除，看的是整個週期的位置。'
           c_rpl['de'] = 'The 90-day average of network realized profit divided by realized loss (CheckOnChain, daily ratios averaged). Orange bands mark past stays below 1. "One year" divides one-year sums instead and shows where the cycle stands.'

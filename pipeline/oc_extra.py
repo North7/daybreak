@@ -668,6 +668,8 @@ def pullback_viz(bv, px, last, sec=None, rloss=None):
 #   低於 1＝一整年認賠多於獲利。過去 2012、2015、2018–19、2022–23 四段都落在週期底部區；但比值的最低點落後價格的最低點，轉紅也不等於見底。只作讀值
 Y1_N, Y1_MIN = 365, 14
 Y1_CONF, Y1_CONF_MAX = .10, .8   # 見底確認：比值從段內最低點回升 10%，而且那個最低點在 0.8 以下
+H_N, H_LO, H_S30 = 180, .6, .3   # 2026-11-20 使用者：「能結合一年的低點和90天的低點找出尋找價格低點的規律嗎？或者再加其他時間維度」→「加到卡片上」：
+#   半年合計 < 0.6 而且 30 天合計 < 0.3＝兩個窗口同時很低；2011 年起每輪只亮一段，都在週期價格低點前後。門檻是看過歷史才定的（換 0.5–0.6／0.25–0.30 結果差不多），只作讀值
 Y1_NEAR = 90   # 2026-11-17 跌破 1 前後找價格最低點的範圍（天）；只算週期底（那天是前後一年最低價）
 
 
@@ -740,10 +742,29 @@ def rpl365_viz(bv, px, last, block=4, bottoms=()):
         if i == len(M9) - 1 and d_ != seg[-1]: rw9.append([dn(seg[-1]), m9[seg[-1]], round(P(seg[-1]))])
         rw9.append([dn(d_), m9[d_], round(P(d_))])
     rw9.reverse()
+    # 半年＋30 天：每天的兩個比值、同時很低的期間（第一次亮起、之後 180 天內的最低價、再跌多少、一年後）
+    hz_ = {D[i]: (sr(H_N, i), sr(30, i)) for i in range(H_N - 1, len(D))}; MH = [d for d in D if d in hz_ and hz_[d][0] and hz_[d][1]]
+    onz = lambda d: hz_[d][0] < H_LO and hz_[d][1] < H_S30
+    zs, last_ = [], None
+    for d in MH:
+        if onz(d):
+            if last_ is None or dn(d) - dn(last_) > 90: zs.append(dict(start=d, end=d, days=0))
+            zs[-1]['end'] = d; zs[-1]['days'] += 1; last_ = d
+    for z in zs:
+        W_ = [d for d in D if z['start'] <= d and dn(d) <= dn(z['end']) + 180]; lo_ = min(W_, key=P)
+        z.update(px=round(P(z['start'])), low=lo_, low_px=round(P(lo_)), lead=dn(lo_) - dn(z['start']), dd=round((P(lo_) / P(z['start']) - 1) * 100, 1),
+                 r365=_fwd(D, ix, P, z['start'], 365), open=dn(D[-1]) - dn(z['end']) < 180)
+    rwh = []
+    for i in range(len(MH) - 1, -1, -block):
+        seg = MH[max(0, i - block + 1): i + 1]; lo_ = min(seg, key=lambda d: hz_[d][0]); d_ = lo_ if hz_[lo_][0] < 1 else seg[-1]
+        if i == len(MH) - 1 and d_ != seg[-1]: rwh.append([dn(seg[-1]), hz_[seg[-1]][0], round(P(seg[-1])), hz_[seg[-1]][1]])
+        rwh.append([dn(d_), hz_[d_][0], round(P(d_)), hz_[d_][1]])
+    rwh.reverse()
+    w180 = dict(value=hz_[MH[-1]][0], s30=hz_[MH[-1]][1], on=onz(MH[-1]), lo=H_LO, s30_lo=H_S30, zones=zs, rows=rwh)
     w90 = dict(value=m9[M9[-1]], above=ab9, since=M9[k9], since_days=dn(M9[-1]) - dn(M9[k9]), v10=m9[M9[max(0, len(M9) - 11)]], reds=r9, rows=rw9)
     # 2026-11-20 使用者（運營轉來）：圖上畫歷次週期的價格低點（data/model.json 的 cycle_bottoms，和網站其他地方同一套），讓人看到價格見底那天比值還沒到最低
-    lows = [dict(d=b[0], px=round(P(b[0])), y1=round(m[b[0]], 3) if b[0] in m else None, r90=m9.get(b[0])) for b in bottoms if b[0] in ix and P(b[0])]
-    return dict(date=d1, value=round(m[d1], 3), price=round(P(d1)), below=below, s7=s7, s30=s30, w90=w90, lows=lows, since=M[k], since_days=dn(d1) - dn(M[k]), since_price=round(P(M[k])),
+    lows = [dict(d=b[0], px=round(P(b[0])), y1=round(m[b[0]], 3) if b[0] in m else None, r90=m9.get(b[0]), r180=(hz_.get(b[0]) or (None,))[0]) for b in bottoms if b[0] in ix and P(b[0])]
+    return dict(date=d1, value=round(m[d1], 3), price=round(P(d1)), below=below, s7=s7, s30=s30, w90=w90, w180=w180, lows=lows, since=M[k], since_days=dn(d1) - dn(M[k]), since_price=round(P(M[k])),
                 chg=round((P(d1) / P(M[k]) - 1) * 100, 1), v30=round(m[d30], 3), profit_b=round(sp[d1] / 1e9, 1), loss_b=round(sl[d1] / 1e9, 1),
                 cur_low=round(reds[-1]['low'], 3) if reds and reds[-1].get('open') else None, conf_at=round(reds[-1]['low'] * (1 + Y1_CONF), 3) if reds and reds[-1].get('open') and reds[-1]['low'] < Y1_CONF_MAX else None,
                 confirmed=bool(reds and reds[-1].get('open') and reds[-1].get('conf')), conf_n=sum(1 for x in done if x.get('conf')), conf_ok=sum(1 for x in done if x.get('conf') and not x['conf_broken']),
