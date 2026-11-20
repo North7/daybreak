@@ -211,6 +211,16 @@ def build(L, N, E, dn):
                        de='Network realized profit summed over 90 days, divided by realized loss summed over the same 90 days (Bitview). Sums are divided rather than daily ratios averaged: a single day can reach 20x, and an average of daily ratios gets pulled up by a few days. Orange bands mark past stays below 1.',
                        say=sy9)
             for k_ in ('rows', 'p', 'dom', 'ser', 'refs', 'spans', 'marks', 'leg', 'dz', 'de', 'say'): c_rpl[k_] = ym[k_]
+            lw = [x for x in y1.get('lows') or [] if x.get('px')]
+            if lw:   # 2026-11-20 使用者（運營轉來）：「價格低點的垂直線也按照運營配圖那樣在圖上畫出來」：灰色虛線貫穿上下兩格，價格和比值上各一顆點，比值旁寫當天的值
+                lyz = lambda d_: '%s/%d' % (d_[:4], int(d_[5:7])); lye = lambda d_: d_[:7]
+                def lmk(col_):
+                    return ([dict(d=dn(x['d']), v=x['px'], on='p', col='k2', up=0) for x in lw] +
+                            [dict(d=dn(x['d']), v=x[col_], col='k2', up=1, zh='%s 價格低點 %.2f' % (lyz(x['d']), x[col_]), en='%s price low %.2f' % (lye(x['d']), x[col_])) for x in lw if x.get(col_)])
+                lvl = [dict(d=dn(x['d']), col='k2', dash='5 4', op=.75) for x in lw]
+                lleg = ['k2', '週期價格低點（收盤）', 'Cycle price lows (close)', 'dash']
+                c_rpl['marks'] = c_rpl['marks'] + lmk('y1'); c_rpl['vl'] = lvl; c_rpl['leg'] = c_rpl['leg'] + [lleg]
+                v90.update(marks=lmk('r90'), vl=lvl, leg=v90['leg'] + [lleg])
             c_rpl['src'] = 'Bitview · {d}'
             c_rpl['modes'] = [v90, dict(mz='一年', me='One year', src='Bitview · {d}')]
             c_rpl['_m'] = 1

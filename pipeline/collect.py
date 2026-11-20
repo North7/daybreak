@@ -950,7 +950,7 @@ if BV:
                         ('dd', lambda: oc_extra.dd_viz(BV, _pxc, LAST, _md2['cycle_bottoms'], _md2['cycle_tops'])),   # 2026-11-13 離高點的回撤
                         ('avgd', lambda: oc_extra.avg_viz(BV, _pxc, LAST, _md2['cycle_tops'])),   # 2026-11-15 離成本線和均線多遠
                         ('sthosc', lambda: oc_extra.sthosc_viz(BV, _pxc, LAST, _md2['cycle_bottoms'], _md2['cycle_tops'])),   # 2026-11-15 短期持有者成本帶的短期震盪
-                        ('rpl365', lambda: oc_extra.rpl365_viz(BV, _pxc, LAST)),   # 2026-11-17 實現獲利 ÷ 虧損的一年合計
+                        ('rpl365', lambda: oc_extra.rpl365_viz(BV, _pxc, LAST, bottoms=_md2['cycle_bottoms'])),   # 2026-11-17 實現獲利 ÷ 虧損的一年合計
                         ('grad', lambda: oc_extra.grad_viz(BV, _pxc, LAST)), ('mom', lambda: oc_extra.mom_viz(BV, _pxc, LAST)),
                         ('pullback', lambda: oc_extra.pullback_viz(BV, _pxc, LAST, R.get('sec'), R.get('rloss')))):
             try: R[_k] = _fn()
