@@ -141,6 +141,18 @@ def img(k, en):
     return (rel + '?v=' + DATE) if IMG_DIR and os.path.exists(os.path.join(os.path.dirname(IMG_DIR), rel)) else None
 
 
+def img_wh(k, en):
+    """chart_img.js 寫的 sizes.json（清單型的卡會裁短）；沒有就當 16:9"""
+    global IMG_WH
+    if IMG_WH is None:
+        try: IMG_WH = json.load(open(os.path.join(IMG_DIR, 'sizes.json'), encoding='utf-8'))
+        except Exception: IMG_WH = {}
+    return tuple(IMG_WH.get('%s/%s' % ('en' if en else 'zh', k)) or (1200, 675))
+
+
+IMG_WH = None
+
+
 def how(k, en):
     """how.json：圖上／怎麼看／小心（英文是 What／Reading／Caveat 直接接內文）"""
     out = {}
@@ -172,7 +184,7 @@ def chart_page(c, en):
     if rd: b.append('<p class="read">%s</p>' % esc(re.sub(r'^(偏多|偏空|中性)：|^(Bullish|Bearish|Neutral): ', '', rd)))   # 膠囊已經寫了表態；有限定（「偏多（長線）：」）的照留
     im = img(k, en)
     if im:   # 2026-11-20 靜態小圖（chart_img.js 用分享模式截的），點了打開互動圖
-        b.append('<a class="fig" href="%sapp/?k=%s&amp;lang=%s"><img src="%s%s" width="1200" height="675" alt="%s" decoding="async"></a>' % (up, k, 'en' if en else 'zh', up, im, esc('%s · %s' % (nm, ('%s close' % den(DATE)) if en else ('%s 收盤' % dzh(DATE))))))
+        b.append('<a class="fig" href="%sapp/?k=%s&amp;lang=%s"><img src="%s%s" width="%d" height="%d" alt="%s" decoding="async"></a>' % (up, k, 'en' if en else 'zh', up, im, *img_wh(k, en), esc('%s · %s' % (nm, ('%s close' % den(DATE)) if en else ('%s 收盤' % dzh(DATE))))))
     b.append('<a class="cta" href="%sapp/?k=%s&amp;lang=%s">%s →</a>' % (up, k, 'en' if en else 'zh', 'Open the interactive chart' if en else '打開互動圖'))
     its = [it for it in (say.get('items') or []) if (it.get('ve') if en else it.get('vz'))]
     if its:
