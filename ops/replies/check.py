@@ -389,6 +389,16 @@ def tone_notes(items):
     NUM = re.compile(r'(?<![\d/.])(?!(?:19|20)\d\d(?![\d,]))\d[\d,]*(?:\.\d+)?(?![\d/])(?!-day|-week| ?(?:日|週)均線| ?天)')   # 年份、200 日均線、30 天這種名稱不算
     many = [it['n'] for it in R if len(NUM.findall(re.sub(r'https?://\S+', '', it['reply']))) > 3]
     if many: out.append(f'數字超過 3 個：{many}，第一行先講判斷，數字留一兩個撐它就好（voice.md「觀點為主、數據為輔」）')
+    # 2026-11-20 使用者：「現在的回覆好像又幾乎沒有數據了，走到另一個灌水的極端」「按照 10% 的比例調整」。沒數字的中文回覆 11/19 是 55%。
+    # 方向：大部分帶一個對方沒有的讀數撐看法、翻成白話；沒數字的（閒聊、短接話）抓 10% 左右。只提醒、不擋。日期、年份不算數字，「連 192 天」算。
+    zh = [it for it in R if it.get('lang') == 'zh']
+    if len(zh) >= 8:
+        def has_num(t):
+            t = re.sub(r'https?://\S+|@\w+|\d+/\d+|(?<!\d)(?:19|20)\d\d(?![\d,.%])\s*年?', '', t)
+            return bool(re.search(r'\d', t))
+        bare = [it for it in zh if not has_num(it['reply'])]
+        b = len(bare) / len(zh)
+        if b > 0.12: out.append(f'中文回覆 {len(bare)}/{len(zh)} 則（{b:.0%}）沒有數字，目標 10% 左右：{[it["n"] for it in bare]}。除了閒聊和短接話，原句和吐槽留著，數字接在後面補一個對方沒有的讀數、帶口徑（「ETF 一路在往外流，淨流出快 27 億美元」），不拿數字換掉有語氣的半句（2026-11-20）')
     q = share(lambda t: QEND.search(t))
     if q > 0.15: out.append(f'問句收尾 {q:.0%}：不為互動硬塞問句，真的想知道答案才問（2026-11-20 起，取代 11/17「能問就問」）')
     if share(lambda t: re.search(r'[。.]\s*$', t)) > 0.5: out.append('超過一半句尾有句號：手機上打字通常不加')
