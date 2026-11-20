@@ -181,7 +181,9 @@ def chart_page(c, en):
     if lean and prev and prev != lean and prev in TN and lean in TN:
         chg = ('<span class="mono">Changed today from %s</span>' % TN[prev][1].lower()) if en else ('<span class="mono">今天由%s轉%s</span>' % (TN[prev][0], TN[lean][0]))
     b.append('<div class="lean">%s<span class="mono">%s</span>%s</div>' % (pill(lean, en), ('%s close' % den(DATE)) if en else ('%s 收盤' % dzh(DATE)), chg))
-    if rd: b.append('<p class="read">%s</p>' % esc(re.sub(r'^(偏多|偏空|中性)：|^(Bullish|Bearish|Neutral): ', '', rd)))   # 膠囊已經寫了表態；有限定（「偏多（長線）：」）的照留
+    if rd:
+        r2 = re.sub(r'^(偏多|偏空|中性)：|^(Bullish|Bearish|Neutral): ', '', rd); r2 = r2[:1].upper() + r2[1:]   # 英文拿掉「Bearish: 」後句首補大寫
+        b.append('<p class="read">%s</p>' % esc(r2))   # 膠囊已經寫了表態；有限定（「偏多（長線）：」）的照留
     im = img(k, en)
     if im:   # 2026-11-20 靜態小圖（chart_img.js 用分享模式截的），點了打開互動圖
         b.append('<a class="fig" href="%sapp/?k=%s&amp;lang=%s"><img src="%s%s" width="%d" height="%d" alt="%s" decoding="async"></a>' % (up, k, 'en' if en else 'zh', up, im, *img_wh(k, en), esc('%s · %s' % (nm, ('%s close' % den(DATE)) if en else ('%s 收盤' % dzh(DATE))))))
