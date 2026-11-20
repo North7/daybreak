@@ -122,20 +122,19 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Inter 
 .pill .lgs::before { content: ""; position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 999px; background: var(--ink); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
 .pill .lgs.b::before { transform: translateX(100%); }
 .pill .lgs button:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
-/* 往下滑的提示（2026-11-19 加；2026-11-20 使用者：「可以往下滑動的提示再明顯一點」）
-   每一段停好、動畫開始後彈出來（最後一段不出現），切換中先收起來。品牌橘的圓裡一個會跳的箭頭，旁邊寫第幾段 */
-.cue { position: fixed; z-index: 6; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 22px); transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 10px; color: var(--ink); text-decoration: none; transition: opacity .4s, translate .7s var(--spr), scale .7s var(--spr); }
-.cue span { display: inline-flex; align-items: center; gap: 12px; height: 44px; padding: 0 6px 0 20px; border-radius: 999px; background: rgba(20,20,22,.78); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); border: 1px solid color-mix(in srgb, var(--ac) 60%, transparent); font: 700 15px/1 var(--disp); letter-spacing: .04em; }
-.cue span em { font: 500 11px/1 var(--mono); font-style: normal; letter-spacing: .08em; color: var(--k2); }
-.cue span u { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 50%; background: var(--ac); color: #060607; }
-.cue span svg { width: 16px; height: 16px; animation: cueb 1.4s var(--spr) infinite; }
-.cue i { position: relative; width: 1px; height: 46px; background: rgba(237,237,232,.2); overflow: hidden; }
-.cue i::after { content: ""; position: absolute; left: -1px; top: -16px; width: 3px; height: 16px; border-radius: 2px; background: var(--ac); animation: cuel 1.4s cubic-bezier(.6, 0, .3, 1) infinite; }
-.cue:hover span { border-color: var(--ac); }
-.cue.off { opacity: 0; translate: 0 18px; scale: .8; pointer-events: none; }
+/* 往下滑的提示（2026-11-19 加；11-20「再明顯一點」→「不要寫文字，用 icon 就好」「和畫面有點違和」）
+   和畫面同一種語言：細線圓圈裡一個輕輕跳的箭頭，下面一條細線，有一道品牌橘的光往下流（像纖維上流動的光）。沒有實心底、沒有字。
+   每一段停好、動畫開始後浮出來，移動中收起，最後一段不出現 */
+.cue { position: fixed; z-index: 6; left: 50%; bottom: calc(env(safe-area-inset-bottom, 0px) + 18px); transform: translateX(-50%); display: flex; flex-direction: column; align-items: center; gap: 8px; color: var(--ink); text-decoration: none; transition: opacity .5s, translate .8s var(--spr); }
+.cue span { display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; border: 1.6px solid rgba(237,237,232,.82); background: rgba(5,5,6,.5); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: border-color .3s; }
+.cue span svg { width: 20px; height: 20px; animation: cueb 1.6s var(--spr) infinite; }
+.cue i { position: relative; width: 2px; height: 58px; border-radius: 1px; background: rgba(237,237,232,.34); overflow: hidden; }
+.cue i::after { content: ""; position: absolute; left: 0; top: -20px; width: 2px; height: 20px; border-radius: 2px; background: linear-gradient(to bottom, transparent, var(--ac)); animation: cuel 1.6s cubic-bezier(.6, 0, .3, 1) infinite; }
+.cue:hover span { border-color: var(--ink); }
+.cue.off { opacity: 0; translate: 0 14px; pointer-events: none; }
 @keyframes cuel { to { top: 100%; } }
-@keyframes cueb { 0%, 100% { transform: translateY(-2px); } 50% { transform: translateY(3px); } }
-@media (max-width: 700px) { .cue { bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); } .cue span { height: 40px; font-size: 14px; } .cue i { display: none; } .hud { bottom: calc(var(--gut) * .8 + 64px); } .pn { bottom: calc(env(safe-area-inset-bottom, 0px) + 66px); } }
+@keyframes cueb { 0%, 100% { transform: translateY(-2px); opacity: .75; } 50% { transform: translateY(3px); opacity: 1; } }
+@media (max-width: 700px) { .cue { bottom: calc(env(safe-area-inset-bottom, 0px) + 12px); } .cue span { width: 42px; height: 42px; } .cue i { display: none; } .hud { bottom: calc(var(--gut) * .8 + 64px); } .pn { bottom: calc(env(safe-area-inset-bottom, 0px) + 62px); } }
 @media (prefers-reduced-motion: reduce) { .cue i::after, .cue span svg { animation: none; } }
 /* 02 讀圖（2026-11-20，參考使用者給的「節點讀資訊」影片）：掃描點一張一張讀，掛圖名和表態；面板是六個問題的讀取進度和即時紀錄 */
 #rdx, .rdx2 { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0; }
@@ -176,7 +175,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Inter 
   <div class="rt"><b id="cls"></b><span id="t-close"></span></div>
 </div>
 <header class="top"><div class="pill"><a class="lg" href="app/" style="text-decoration:none"><svg viewBox="0 0 64 64"><path d="M18 40a14 14 0 0 1 28 0" fill="none" stroke="#FF4F1F" stroke-width="5"/><path d="M6 40h52" stroke="#EDEDE8" stroke-width="5"/></svg>DAYBREAK</a><span class="lv"><i></i><span id="t-upd"></span></span><span class="ix" id="clk"></span><span class="lgs" id="lgs"><button data-l="zh">中</button><button data-l="en">EN</button></span><a class="go" id="go" href="app/"></a></div></header>
-<a class="cue off" id="cue" href="#"><span><b id="t-cue" style="font-weight:inherit"></b><em id="t-cue-n"></em><u><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v9M4 8.5l4 4 4-4"/></svg></u></span><i></i></a>
+<a class="cue off" id="cue" href="#"><span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5l4 4 4-4"/></svg></span><i></i></a>
 <div class="pn" id="pn"></div>
 <nav class="prog" id="prog"></nav>
 <div id="scroll"></div>
@@ -206,7 +205,7 @@ $('#t-tag').textContent = T(`第 ${D.issue} 期 · 比特幣多維判讀`, `Issu
 $('#t-h1').innerHTML = T(`一個讀完 ${D.n} 張圖的 AI，<span>拆開比特幣的每一個維度。</span>`, `An AI that reads ${D.n} charts, <span>taking Bitcoin apart dimension by dimension.</span>`);
 $('#cls').textContent = fmt(D.close); $('#t-close').textContent = T(`BTC 收盤 · ${dShow}`, `BTC close · ${dShow}`);
 $('#t-upd').textContent = T('今天已更新', 'Updated today'); $('#go').textContent = GO; $('#go').href = HOME; document.querySelector('.pill .lg').href = HOME;
-$('#t-cue').textContent = T('往下滑動', 'Scroll down');
+$('#cue').setAttribute('aria-label', T('下一段', 'Next section'));
 $('#t-f1').textContent = T('DAYBREAK · 比特幣多維判讀 · 由 Aron 製作', 'DAYBREAK · Bitcoin, read across every dimension · made by Aron');
 $('#t-f2').textContent = T('資料來源：Bitview、CoinMetrics、Deribit、Coinalyze 等 17 家 · 不是投資建議', 'Data: Bitview, CoinMetrics, Deribit, Coinalyze and 13 more · Not investment advice');
 
@@ -272,7 +271,7 @@ $('#cue').onclick = e => { e.preventDefault(); goStage(nearest() + 1); };
 // 停在某一段（不是最後一段）一下子之後，提示彈出來；移動中收起來
 let cueT = 0;
 function cueSync() { const c = $('#cue'), k = nearest(), at = !gAnim && Math.abs(scrollY - stageY(k)) < 4; clearTimeout(cueT);
-  if (!at || k >= 4) { c.classList.add('off'); return; } $('#t-cue-n').textContent = `${k + 1} / 5`; cueT = setTimeout(() => c.classList.remove('off'), k ? 1300 : 900); }
+  if (!at || k >= 4) { c.classList.add('off'); return; } cueT = setTimeout(() => c.classList.remove('off'), k ? 1300 : 900); }
 addEventListener('scroll', cueSync, { passive: true }); addEventListener('resize', cueSync); cueSync();
 $('#prog').innerHTML = Array.from({ length: 5 }, () => '<i></i>').join(''); const pgi = [...document.querySelectorAll('#prog i')];
 [...pgi].forEach((g, i) => g.onclick = () => goStage(i));
