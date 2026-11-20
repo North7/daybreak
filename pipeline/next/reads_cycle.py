@@ -37,7 +37,8 @@ def dawn(L):
 
 def stage(L):
     s = L['cycle']['stage']; e = s['evidence']; ok = [x for x in e['items'] if x['ok']]; px = L['price']['bar']['c']; gap = (px / s['sma200'] - 1) * 100
-    sz = '市場階段：%s（%s 起），收盤在 200 日均線%s %.0f%%。' % (s['stage'], md(s['since']), '上' if gap >= 0 else '下', abs(gap)); se = 'Market stage: %s (since %s), with the close %.0f%% %s the 200-day MA.' % (STN.get(s['stage'], s['stage']).lower(), mde(s['since']), abs(gap), 'above' if gap >= 0 else 'below')
+    lk = s['stage'] == '牛市'   # 2026-11-20：牛市是鎖定的標籤，一句結論就講清楚，鎖定的規則和進度在卡上第一列（cycle_data.py），證據裡不再重講
+    sz = '市場階段：%s（%s 起%s），收盤在 200 日均線%s %.0f%%。' % (s['stage'], md(s['since']), '，鎖定中' if lk else '', '上' if gap >= 0 else '下', abs(gap)); se = 'Market stage: %s (since %s%s), with the close %.0f%% %s the 200-day MA.' % (STN.get(s['stage'], s['stage']).lower(), mde(s['since']), ', locked' if lk else '', abs(gap), 'above' if gap >= 0 else 'below')
     if s['stage'] == '牛市':
         rz, re_ = '牛市鎖定；要在下降的 200 日均線下連 30 天才退回熊市。', 'Bull is locked in; it takes 30 days under a falling 200-day MA to go back to bear.'
     elif s['stage'] == '轉換期':
@@ -45,7 +46,7 @@ def stage(L):
     else:
         rz, re_ = '投降出現過、收盤站上上升的 200 日均線，才進入轉換期。', 'It needs a capitulation and a close above a rising 200-day MA to enter transition.'
     return sz, se, [
-        it('階段', 'Stage', s['stage'], STN.get(s['stage'], s['stage']), 'neu', rz, re_),
+        *([] if lk else [it('階段', 'Stage', s['stage'], STN.get(s['stage'], s['stage']), 'neu', rz, re_)]),
         it('200 日均線', '200-day MA', usd(s['sma200']), usd(s['sma200']), 'neu', '收盤%s均線 %.1f%%；均線%s（30 天前 %s）。' % ('高於' if gap >= 0 else '低於', abs(gap), '還在上升' if s['sma200_rising'] else '在下降', usd(s['sma200_30d_ago'])),
            'The close is %.1f%% %s it; the average is %s (%s 30 days ago).' % (abs(gap), 'above' if gap >= 0 else 'below', 'still rising' if s['sma200_rising'] else 'falling', usd(s['sma200_30d_ago']))),
         it('佐證燈', 'Supporting lights', '%d / %d' % (len(ok), e['n']), '%d / %d' % (len(ok), e['n']), 'neu', ('亮的：%s。' % '、'.join(x['label'] for x in ok) if ok else '一盞都沒亮。') + '只作佐證，不參與判定。',

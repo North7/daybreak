@@ -8,19 +8,24 @@ def build(L, N, E, dn, pm):
     row = lambda zh, en_, **k: dict(zh=zh, en=en_, **k)
     md = lambda s: s[5:].replace('-', '/') if s else ''
     MZ = N['modules']; ME = E.get('modules') or {}
-    close = pm['px']; dw = L['cycle']['dawn']; fl = L['chips']['flow']; dv = L['deriv']; ex = L['exit']['status']
-    # ── 六個問題各一句 ──
+    close = pm['px']; dw = L['cycle']['dawn']; fl = L['chips']['flow']; dv = L['deriv']; ex = L['exit']['status']; fw = L['exit']['framework']
+    # ── 六個問題各一句（page.html 規則 ㊵，2026-11-20 使用者：「六張概覽卡內容重複，要整理」）──
+    # 一張卡只有四樣：問題、一個大數字、那一版的 lead 一句、這一頁的偏向統計（build.py 的 _qa_tally 補）。
+    # 各版的 points 只放在那一頁的頭部，不再搬到這裡（原本四行重點和頭版摘要、彼此之間一再重複）。
+    # 大數字不能和頭部重複：頭部已經有收盤價和「要盯的價位」（200 日均線、MVRV 0.75 線、出場第一階），所以價位卡不用收盤、出場卡不用離第一階多遠
+    sb = (L['onchain'].get('sth_bands') or {}).get('rows') or []; sbg = (sb[-1][1] / sb[-1][2] - 1) * 100 if sb and sb[-1][2] else None
+    e20 = (L.get('flows') or {}).get('etf20') or {}; nh = len(ex.get('steps_hit') or []); nl = len(fw.get('ladder') or [])
     Q = [('cycle', '週期', 'Cycle', '現在在週期的哪裡', 'Where we are in the cycle', 'cycle', dict(v=dw['heat'], f='n1'), '晨昏指數的熱度', 'Dawn–Dusk heat'),
-         ('lv', '價位', 'Levels', '價格站在哪些成本和關卡上', 'Which cost bases and levels price is standing on', 'market', dict(v=close, f='usd0'), '收盤', 'Close'),
+         ('lv', '價位', 'Levels', '價格站在哪些成本和關卡上', 'Which cost bases and levels price is standing on', 'market', dict(v=round(sbg, 1), f='pct1') if sbg is not None else None, '收盤離短期持有者成本', 'Close vs short-term holder cost'),
          ('sell', '賣壓', 'Selling', '賣壓出清了沒', 'Has the selling been worked through', 'onchain', dict(v=fl['sth_in_profit_pct']['value'], f='p1'), '短期持有者獲利比例', 'Short-term holders in profit'),
-         ('buy', '買盤', 'Demand', '誰在買、錢從哪裡來', 'Who is buying and where the money comes from', 'flows', None, None, None),
+         ('buy', '買盤', 'Demand', '誰在買、錢從哪裡來', 'Who is buying and where the money comes from', 'flows', dict(v=e20['sum'], f='usdM') if e20.get('sum') is not None else None, '現貨 ETF 近 %d 個交易日淨流' % e20.get('n', 20), 'Spot ETF net flow, last %d trading days' % e20.get('n', 20)),
          ('lev', '槓桿', 'Leverage', '槓桿和情緒擠不擠', 'How crowded leverage and sentiment are', 'deriv', dict(v=dv['fund_hist']['value'], f='p1'), '資金費率（年化）', 'Funding rate (annualized)'),
-         ('exit', '出場', 'Exit', '那我該怎麼做', 'So what do I do', 'exit', dict(v=ex['next_step_dist_pct'], f='pct1'), '離出場第一階', 'Distance to the first exit step')]
+         ('exit', '出場', 'Exit', '那我該怎麼做', 'So what do I do', 'exit', dict(v='%d / %d' % (nh, nl), f='txt', ve='%d / %d' % (nh, nl)) if nl else None, '出場梯子已觸發的階數', 'Exit ladder steps triggered')]
     qc = []
     for cid, zh, en_, qz, qe, mod, hs, hz, he in Q:
-        m = MZ.get(mod) or {}; me = ME.get(mod) or {}; pz = m.get('points') or []; pe = me.get('points') or []
+        m = MZ.get(mod) or {}; me = ME.get(mod) or {}
         c = dict(k='q_' + cid, zh=zh + '：' + qz, en=en_ + ': ' + qe, dz=m.get('lead') or '', de=me.get('lead') or m.get('lead') or '', go=cid, nofx=1,
-                 list=dict(rows=[row(p, pe[i] if i < len(pe) else p, nv=1) for i, p in enumerate(pz)]))
+                 qa=dict(n={}) if cid != 'exit' else dict(n={}, nz='出場照規則行動，不表態多空。', ne='Exit follows its rules; it takes no side on direction.'))
         if hs: c['hs'] = hs; c['hz'] = hz; c['he'] = he
         qc.append(c)
     # ── 今天要做什麼 ──

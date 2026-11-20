@@ -94,6 +94,24 @@ import say_data, reads
 _NE = E_
 print('reads', reads.apply(SITE['chapters'], L, N, _NE))   # 2026-11-17 新版自己產生的讀數（reads.py），做好的頁不再用舊版的
 print('say', say_data.attach(SITE['chapters'], L))
+def _qa_tally():
+    """㊵ 今天頁六張概覽卡的偏向：數那一頁每張圖「我們的看法」的方向（和每段答案同一套：AI 判讀的 lean 已經蓋上去），偏空多就偏空、偏多多就偏多、打平是中性"""
+    CH = {ch['id']: ch for ch in SITE['chapters']}; out = {}
+    for g in (CH.get('today') or {}).get('groups') or []:
+        for c in g.get('charts') or []:
+            if 'qa' not in c: continue
+            n = {}
+            for g2 in (CH.get(c.get('go')) or {}).get('groups') or []:
+                for c2 in g2.get('charts') or []:
+                    y = c2.get('say') or {}
+                    if y.get('copy'): continue
+                    v = next((q for q in y.get('items') or [] if q.get('view')), None)
+                    if v: n[v['tone']] = n.get(v['tone'], 0) + 1
+            if n and not c['qa'].get('nz'):
+                c['qa']['n'] = n; c['qa']['tone'] = 'down' if n.get('down', 0) > n.get('up', 0) else 'up' if n.get('up', 0) > n.get('down', 0) else 'neu'
+            out[c['k']] = n
+    return out
+print('qa', _qa_tally())
 def _lean_flip():
     """2026-11-18 偏向翻牌（page.html ㉟ 1）：data/leans.json 記住每個資料日最後一次的偏向。換了資料日，前一天的那份變成「昨天」；
     今天和昨天不一樣的卡，看法那一項帶 pt＝昨天的偏向、pd＝昨天的資料日，頁面上的偏向膠囊從昨天翻到今天。同一天重跑（share.yml）不動「昨天」"""
