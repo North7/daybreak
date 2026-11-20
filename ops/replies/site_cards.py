@@ -16,7 +16,8 @@ image 範例：
   {"site": {"k": "profit", "m": 1, "rg": 365}, "title": "…"}  m＝第幾個檢視、rg＝區間（365／1095／0），同 next_shot.py
   舊寫法（page＋sel）照樣能用：sel 會用 data/next.js 的 old 對照表自動換成新版代號（#c-sthband → sthgap）。
   對不到新版的（例如 #c-etfcost）、或帶了 pre／box 的（舊版才有的收合區），還是截舊版，並印「仍截舊版」；舊版從倉庫拿掉之前要把這些換掉。
-  新版用網站的分享模式 4:5 截（next_shot.py 的 share45），上面加大標題，整張剛好 1080×1350；頁尾是網站自己的（Daybreak、網址、資料來源、日期）。
+  新版用網站的分享模式 4:5 截（next_shot.py 的 share45），上面加大標題，整張最高 1080×1350；頁尾是網站自己的（Daybreak、網址、資料來源、日期）。
+  2026-11-20：比 4:5 矮的卡片（例如 whstrip），網站會把內容和頁尾排在上面、下面整片空白；合成時把頁尾以下的空白裁掉，只留 BOTTOM 那段邊距，不再補成 1350。
   （2026-11-17 舊版 classic.html 已從倉庫刪除，--classic 退路拿掉了。）
 usage（倉庫根目錄）: python3 ops/replies/site_cards.py --fonts <字型資料夾> [--only 3,7]
 """
@@ -26,7 +27,7 @@ ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)
 sys.path.insert(0, os.path.join(ROOT, 'ops', 'post')); sys.path.insert(0, os.path.join(ROOT, 'pipeline'))
 import site_shot as SS
 import next_shot as NS
-from PIL import Image, ImageDraw
+from PIL import Image, ImageChops, ImageDraw
 
 OUT = os.path.join(ROOT, 'data', 'replies')
 CLEAN = '''(function(p, keep){
@@ -119,10 +120,23 @@ def shoot_next(items, lang, Fn):
     return got
 
 
+BOTTOM = 72   # 2 倍解析度：頁尾文字下面留的邊距（約 36px）
+
+
+def trim_bottom(im, bg, tol=10):
+    """把截圖最下面一段純底色裁掉，留 BOTTOM 的邊距；省不到 BOTTOM 的（卡片本來就排滿）原樣回傳。"""
+    diff = ImageChops.difference(im, Image.new('RGB', im.size, bg)).convert('L').point(lambda v: 255 if v > tol else 0)
+    box = diff.getbbox()
+    if not box: return im
+    keep = min(im.height, box[3] + BOTTOM)
+    return im.crop((0, 0, im.width, keep)) if im.height - keep >= BOTTOM else im
+
+
 def compose_next(png, title, Fn, out):
     """上：紅色短線＋大標題；下：網站分享圖（已經有 Daybreak、網址、資料來源的頁尾）。輸出 1080 寬。"""
     RED, INK = '#FF3B1F', '#F2F0EA'
     im = Image.open(io.BytesIO(png)).convert('RGB'); bg = im.getpixel((8, 8)); lines, tf, band, pad = title_layout(title, Fn, im.width)
+    im = trim_bottom(im, bg)
     img = Image.new('RGB', (im.width, band + im.height), bg); d = ImageDraw.Draw(img)
     d.rectangle([pad, 36, pad + 110, 46], fill=RED)
     for i, t in enumerate(lines): d.text((pad, TITLE_TOP + i * TITLE_LH + TITLE_LH / 2), t, font=tf, fill=INK, anchor='lm')
