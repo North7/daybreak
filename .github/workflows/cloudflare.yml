@@ -85,3 +85,9 @@ jobs:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
           command: pages deploy ${{ env.SITE_DIR }} --project-name=${{ env.PROJECT }} --branch=main --commit-dirty=true
+
+      - name: 通知搜尋引擎（IndexNow）
+        # 2026-11-20 GEO：每天日報上線那次部署（接在 Share cards 之後）才送，一天一次；失敗不影響部署
+        if: env.HAS_TOKEN == 'true' && github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Share cards'
+        continue-on-error: true
+        run: python3 pipeline/indexnow.py
