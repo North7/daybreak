@@ -671,7 +671,7 @@ Y1_CONF, Y1_CONF_MAX = .10, .8   # 見底確認：比值從段內最低點回升
 Y1_NEAR = 90   # 2026-11-17 跌破 1 前後找價格最低點的範圍（天）；只算週期底（那天是前後一年最低價）
 
 
-def rpl365_viz(bv, px, last, block=4):
+def rpl365_viz(bv, px, last, block=4, bottoms=()):
     P = _P(bv, px); L = bv.get('rloss') or {}; G = [bv.get('ap%d' % i) or {} for i in range(1, 7)]
     D = [d for d in sorted(L) if d <= last and P(d) and all(d in g for g in G)]
     if len(D) < 2000: return None
@@ -741,7 +741,9 @@ def rpl365_viz(bv, px, last, block=4):
         rw9.append([dn(d_), m9[d_], round(P(d_))])
     rw9.reverse()
     w90 = dict(value=m9[M9[-1]], above=ab9, since=M9[k9], since_days=dn(M9[-1]) - dn(M9[k9]), v10=m9[M9[max(0, len(M9) - 11)]], reds=r9, rows=rw9)
-    return dict(date=d1, value=round(m[d1], 3), price=round(P(d1)), below=below, s7=s7, s30=s30, w90=w90, since=M[k], since_days=dn(d1) - dn(M[k]), since_price=round(P(M[k])),
+    # 2026-11-20 使用者（運營轉來）：圖上畫歷次週期的價格低點（data/model.json 的 cycle_bottoms，和網站其他地方同一套），讓人看到價格見底那天比值還沒到最低
+    lows = [dict(d=b[0], px=round(P(b[0])), y1=round(m[b[0]], 3) if b[0] in m else None, r90=m9.get(b[0])) for b in bottoms if b[0] in ix and P(b[0])]
+    return dict(date=d1, value=round(m[d1], 3), price=round(P(d1)), below=below, s7=s7, s30=s30, w90=w90, lows=lows, since=M[k], since_days=dn(d1) - dn(M[k]), since_price=round(P(M[k])),
                 chg=round((P(d1) / P(M[k]) - 1) * 100, 1), v30=round(m[d30], 3), profit_b=round(sp[d1] / 1e9, 1), loss_b=round(sl[d1] / 1e9, 1),
                 cur_low=round(reds[-1]['low'], 3) if reds and reds[-1].get('open') else None, conf_at=round(reds[-1]['low'] * (1 + Y1_CONF), 3) if reds and reds[-1].get('open') and reds[-1]['low'] < Y1_CONF_MAX else None,
                 confirmed=bool(reds and reds[-1].get('open') and reds[-1].get('conf')), conf_n=sum(1 for x in done if x.get('conf')), conf_ok=sum(1 for x in done if x.get('conf') and not x['conf_broken']),
