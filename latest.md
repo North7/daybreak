@@ -33,6 +33,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：週期熱度 0–100 · 五項估值＋四項趨勢 · 2013 起 · 每週 · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/dawn/
+
 ### 晨昏指數的組成（What the Dawn–Dusk Index is made of）
 
 偏多（長線）：熱度掉到 6，五項估值裡未實現獲利 ÷ 市值最低，已在歷來的底部區；但週線分數剛轉負，短線還在跌，熱度升回 45 才算破曉。
@@ -40,6 +42,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：五項熱度來源的四年百分位，平均就是熱度；直線是黃昏的門檻 80。四項方向來源的平均決定多空，直線是零。
 
 資料來源：週期熱度 0–100 · 五項估值＋四項趨勢 · 2013 起 · 每週 · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/dawnc/
 
 ### 市場階段（Market stage）
 
@@ -49,6 +53,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：P23 · 熊市 → 轉換期 → 牛市
 
+單頁：https://daybreak.aronlab.dev/charts/stage/
+
 ### 週線多空分數（Weekly regime score）
 
 偏空：分數 −1.32，轉負第 2 週；再 2 週才翻空（9/24 起是多方）。
@@ -56,6 +62,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：六個項目各自和自己的中位數比，合成 −6 到 +6 的分數。柱子的顏色是當週的階段：分數為負是熊，空方滿 26 週之後翻多的頭 26 週是初牛，之後是牛，到 +4 以上是過熱、−4 以下是極熊。
 
 資料來源：六項合成 · 2013 起 · 每週 · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/regime/
 
 ### 週線多空分數的組成（What the regime score is made of）
 
@@ -65,17 +73,23 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：六項合成 · 2013 起 · 每週 · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/regc/
+
 ### 離成本線和均線多遠（Distance from cost bases and averages）
 
 偏多：價格離九條成本線和均線的平均百分位一週掉到 14.5，進入歷來的便宜區，冪律也落在底部帶；但便宜區之後常先再跌一段，這張只標便宜，沒有標底。
 
 這張圖：價格和九條線各比一次，看今天的距離在到當天為止的全部歷史裡排第幾 %，九個取平均；越低代表價格比這些線低得越罕見。圓圈是每一輪熊市的最低讀值：前幾輪是 3.1、4.9、5.2，這一輪到目前最低 11.7（2026/02）。第一次跌到 10 以下共 4 次，一年後 3 次上漲，但其中最深的一次之後一年內還再跌 46.6%，所以它標的是便宜區，不是底。讀值低於 15 的日子，一年後上漲的佔 93%（所有日子 68%），樣本只有幾輪週期。它拿全部歷史排名，而每一輪的波動都比上一輪小，近年的低點比較難排到最前面；大方向和晨昏指數的熱度相同。「快和慢」把九條線分成兩組：快線比慢線低，代表最近跌得急。只作讀值。
 
+單頁：https://daybreak.aronlab.dev/charts/avgd/
+
 ### 九條線各自排第幾（Where price ranks against each line）
 
 偏多：最低的是 200 週均線（第 4 百分位）
 
 這張圖：每一條線：價格離它的距離在全部歷史裡排第幾 %（0 是歷史上最低的位置，100 是最高），九個的平均就是「離成本線和均線多遠」的讀值。小字是這條線現在的價位，和價格比它高或低多少。鏈上均價是這段期間全網鏈上轉帳的金額除以顆數。
+
+單頁：https://daybreak.aronlab.dev/charts/avgdc/
 
 ### 長短期持有者 NUPL（Long- and short-term holder NUPL）
 
@@ -85,6 +99,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/hnupl/
+
 ### 相對未實現獲利（Relative unrealized profit）
 
 偏多：相對未實現獲利 33.6%，在 35% 地板之下（第 6 天）。
@@ -92,6 +108,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：全體持有者帳面上的獲利，佔市值的比例。青色區塊是歷次跌進地板區的期間，淺黃區塊是近地板區（35–37.5%）：過去只在熊市後段到復甦初期出現。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/rup/
 
 ### 價格 ÷ 真實市場均價（Price ÷ true market mean）
 
@@ -101,6 +119,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/aviv/
+
 ### 儲備風險（Reserve risk）
 
 中性：儲備風險 0.98‰，近 4 年第 4 百分位，在低檔區第 6 天。
@@ -108,6 +128,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：價格相對長期持有者的信心。數值低代表價格便宜、而持有者不願意賣。青色區塊是歷次落在近四年最低 10% 的期間。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/rrisk/
 
 ### 冪律：通道位置與倍數（Power law: channel position and multiple）
 
@@ -117,6 +139,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：每天只用當天以前資料擬合
 
+單頁：https://daybreak.aronlab.dev/charts/pl/
+
 ### 頂部三指標（Top three indicators）
 
 偏多：頂部三指標 0 項到 80；任兩項到 80 才算頂部區。
@@ -124,6 +148,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：三個指標各自在過去四年的百分位，直線是 80。任兩個到 80 以上算進入頂部區。只作讀值。
 
 資料來源：11/19 · 四年百分位
+
+單頁：https://daybreak.aronlab.dev/charts/p6/
 
 ### 頂部三指標的走勢（Top three indicators over time）
 
@@ -133,6 +159,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：11/19 · 四年百分位
 
+單頁：https://daybreak.aronlab.dev/charts/p6v/
+
 ### MVRV ÷ 前一輪高點（MVRV ÷ prior-cycle peak）
 
 偏多（離頂部很遠）：MVRV 只有前一輪高點的 0.42 倍，Pi Cycle、頂部雷達也離觸發很遠；價格要到約 $111K 才碰 0.75 線。
@@ -140,6 +168,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：現在的 MVRV 除以上一輪的最高 MVRV。連五天站上 0.75 是出場框架的第一個鏈上賣點，0.80 是第二個。
 
 資料來源：CoinMetrics · 2021 起
+
+單頁：https://daybreak.aronlab.dev/charts/p20/
 
 ### 頂部雷達（Top radar）
 
@@ -149,6 +179,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：2022/11 起本輪百分位
 
+單頁：https://daybreak.aronlab.dev/charts/radar/
+
 ### 頂部雷達的走勢（Top radar over time）
 
 偏多：三項裡最高的是長期持有者 MVRV Z，第 33 百分位
@@ -157,11 +189,15 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：2022/11 起本輪百分位
 
+單頁：https://daybreak.aronlab.dev/charts/radarv/
+
 ### Pi Cycle（Pi Cycle）
 
 偏多：Pi Cycle 0.51，離觸發（1）還遠。
 
 這張圖：111 日均線追上兩倍的 350 日均線時，過去幾輪都在頂部附近。比值離 1 越近越接近。
+
+單頁：https://daybreak.aronlab.dev/charts/pi/
 
 ### Tidemark 綜合訊號（Tidemark composite signal）
 
@@ -171,6 +207,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：第三方模型 · 2011 起每週、近一年每日 · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/tm/
+
 ### Tidemark 歷史（Tidemark history）
 
 偏多：頂部訊號 0、底部訊號 39：兩邊都還沒到 50。
@@ -178,6 +216,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：兩個視角。頂部：橘是頂部訊號、沙金是熱度、灰虛線是時機，橫線是 50 窗口和 70 警戒。底部：綠是底部訊號、藍是冷度，橫線是 50 底部區。
 
 資料來源：第三方模型 · 2011 起每週、近一年每日 · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/tmh/
 
 ### 長期持有者虧損比例（Long-term holders at a loss）
 
@@ -187,6 +227,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CheckOnChain · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/lthloss/
+
 ### 一年累計淨實現損益（One-year net realized P&L）
 
 偏空：近一年淨實現損益 −92.2 萬顆：整體在認賠，還在加深。
@@ -194,6 +236,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：把每天的淨實現損益換成顆數，加總 365 天。標記是歷次的高點和低點。
 
 資料來源：CoinMetrics · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/npl365/
 
 ### 獲利供給：全體 vs 扣掉十年老幣（Supply in profit: all vs excluding 10-year-old coins）
 
@@ -203,11 +247,15 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/psx/
+
 ### 依持有時間的持幣成本（Holder cost by coin age）
 
 把幣依持有時間分組，各組的平均成本。第一個視角：橘線（6–12 個月）跌到藍紫線（12–18 個月）下面，過去都在熊市底部附近；重新穿回上面，大約是主升段的開始。另外兩個視角各看一組成本和價格的關係。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/agecost/
 
 ### Hash Ribbons（Hash Ribbons）
 
@@ -217,6 +265,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/hashr/
+
 ### 和前幾輪比：頂部之後（Versus past cycles: after the top）
 
 中性：頂部後第 409 天只跌 50.4%，前幾輪同一天都在 −75% 以下；這輪淺得多，見底時間表套不上，要看籌碼和估值。
@@ -225,11 +275,15 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：統一收盤 · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/cyccmp/
+
 ### 離高點的回撤（Drawdown from the high）
 
 中性：離這一輪高點 −28.5%，前四輪只有 15% 的日子比現在深
 
 這張圖：收盤比高點低多少，兩個視角。「這一輪低點以來」：每一輪從底部起算，和這段期間的最高收盤比，只畫底部到頂部；這一輪從 2026/06/30 的低點（$58,532）起算，高點是 2026/09/21 的 $86,594，如果之後跌破那個低點，這一段就要重算。前四輪從底到頂的日子裡，一半比 −10.9% 淺，15% 比現在深。「歷史高點」：和歷史最高收盤（2025/10/06 的 $124,766）比，圓圈是每一輪的底部。只作讀值。
+
+單頁：https://daybreak.aronlab.dev/charts/dd/
 
 ### 每輪資金效率（Capital efficiency by cycle）
 
@@ -239,6 +293,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CoinMetrics · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/capeff/
+
 ### 長期路徑：四種走法（Long-term paths: four scenarios）
 
 偏多：四種走法權重 21–27%，差不多；頂部模型中位 $172,000。
@@ -246,6 +302,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：四種可能的走法和各自的權重，每個月依實際價格重新加權。橘色底是頂部模型的 80% 區間，時間落在 2029 年 5–10 月。下次檢討 2026/11/30。
 
 資料來源：每月底重估 · 下次 2026-11-30
+
+單頁：https://daybreak.aronlab.dev/charts/path/
 
 ### 價格長期走勢（Long-term price）
 
@@ -255,6 +313,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CoinMetrics · 對數刻度
 
+單頁：https://daybreak.aronlab.dev/charts/long/
+
 ### 月度報酬（Monthly returns）
 
 中性：11 月至今 −20.1%；過去 13 年有 8 年上漲，中位數 +8.9%。
@@ -262,6 +322,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：每個月月底對上個月月底的漲跌 %，2013 年起。下面兩列是每個月的中位數，和歷年裡上漲的比例（50% 以上綠色）；加框的是這個月。
 
 資料來源：每月最後一天收盤 · 2013 年起 · 到 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/mon/
 
 ## 價位：價格站在哪些成本和關卡上
 
@@ -279,6 +341,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：均線：統一收盤 · 成本線：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/levels/
+
 ### 短期持有者成本帶（Short-term holder cost bands）
 
 偏多：收盤在短期持有者成本帶 −1.5 標準差，近 4 年只有 8% 的日子這麼低。
@@ -286,6 +350,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：短期持有者是持有不到 155 天的幣。橘線是他們的平均成本，上下六條線是成本乘上近 4 年「價格 ÷ 成本」的平均加減幾個標準差。「短期震盪」把同一個比值（價格 ÷ 成本）改成和最近 140 天比：偏離平均幾個「2 倍標準差」，跌破 −1 是短期超賣，升破 +1 是短期過熱；看的是最近跌得急不急，成本帶看的是四年裡的位置。2013 年以來第一次跌破 −1 共 19 次：牛市段 12 次，30 天後 10 次上漲、中位數 +12.2%；熊市段 7 次，30 天後 2 次上漲、中位數 −5.6%，之後 30 天內中位數再跌 15.7%。合起來 63% 上漲，和任何一天（56%）差不多。牛熊用事後才知道的週期頂底來分。只作讀值。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/sthgap/
 
 ### 供給分位成本線（Supply cost-basis quantiles）
 
@@ -295,6 +361,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/quant/
+
 ### 損失地板（Loss floors）
 
 偏多：收盤已經跌破 1 層地板。
@@ -302,6 +370,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：價格跌到哪裡，虧損的幣佔全部供給的比例會到它自己歷史上最糟的水準。五條線由淺到深：最糟 5%、2%、1%、0.5%、0.1%。門檻只用到當天為止的歷史，逐日累積，不是回頭用整段歷史算的。圓圈是歷次低點，標的是那天跌破了幾層。地板標的是「痛到歷史等級」的區間，不是保證的底：2012 年以來 6.9% 的日子收在第一層下面；歷次第一次跌破第一層之後，一年內還再跌 0%–52%，2014/04 那次一年後還是 -36%。每顆幣算一次、逐筆 UTXO，沒有排除遺失的幣和交易所內部移轉。只作讀值。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/floors/
 
 ### 大戶地址的持幣成本（Cost basis of large-balance addresses）
 
@@ -311,6 +381,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/tiercost/
+
 ### ETF 持有者成本（ETF holder cost basis）
 
 偏空：收盤在 ETF 買家平均成本 $78,971 的下方 21.6%。
@@ -318,6 +390,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：美國現貨 ETF（不含 GBTC）的買家平均成本：每天的淨流量 ÷ 當天收盤＝那天買進或賣出的顆數，用平均成本法累計（流出依當時的平均成本移出）。GBTC 轉換成 ETF 前就持有約 62 萬顆，那些幣的成本不是流量買出來的，所以不算。ETF 流量晚一天公布，所以成本線停在前一個交易日。這是推算，不是 ETF 自己公布的數字，也不是支撐位。只作讀值。
 
 資料來源：CoinMarketCap · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/etfcost/
 
 ### 籌碼分布（URPD）（Supply distribution (URPD)）
 
@@ -327,6 +401,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：11/19 · 每 2,000 美元一格
 
+單頁：https://daybreak.aronlab.dev/charts/urpd/
+
 ### 籌碼搬家：近 7 天哪裡變厚、哪裡變薄（Supply on the move: 7-day change by price）
 
 中性：66.2 萬顆換了價位：賠錢移動 55.3 萬、賺錢移動 2.4 萬
@@ -334,6 +410,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：籌碼分布（URPD）今天減 7 天前，每 $1,000 一格。往右的綠色是變厚，往左的紅色是變薄；灰底是這 7 天的價格範圍。幣一移動，原本的那一格變薄、移動當時價位的那一格變厚，所以變厚的格子都在灰底裡。看變薄的格子在哪，就知道這些幣原本的成本：在灰底上方的，是比現在貴的時候買的，移動時是賠的；在灰底下方的，移動時是賺的。鏈上移動不一定是買賣，交易所整理錢包、換地址也算；資料是逐筆 UTXO，沒有做實體歸併，和「籌碼分布」那張每 $2,000 一格的來源不同，數字會有小差異。只作讀值。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/urpdchg/
 
 ### 長短期持有者籌碼（Long- vs short-term holder supply）
 
@@ -343,6 +421,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/cohort/
+
 ### 籌碼集中度（Supply concentration）
 
 中性：現價 ±5% 內的籌碼佔供給 10.4%（2018 年以來第 66 百分位）。
@@ -350,6 +430,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：最後一次移動在現價上下 5% 內的幣，佔流通量的比例。上格右邊的橫條是各價位的籌碼：紫是長期持有者、橘是短期持有者。現價上下 5% 內的幣裡，獲利的佔供給 2.3%、虧損的 8.1%；短期持有者自己的集中度是 31.9%、長期持有者 5.2%。走勢是 Bitview 每天一筆（2018 年起）。
 
 資料來源：Bitview · 2018 起 · 只作讀值
+
+單頁：https://daybreak.aronlab.dev/charts/conc/
 
 ### 賺賠分布：虧多深（Profit and loss spread: how deep the losses run）
 
@@ -359,6 +441,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/pnlb/
+
 ### 履約價分布（Open interest by strike）
 
 中性：年底到期的買權堆在 $80,000、賣權堆在 $60,000，兩端是關卡；Gamma 在現價下方為負，跌向賣權那端時波動會放大。
@@ -366,6 +450,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：主要到期日在各個履約價的未平倉量，左邊是賣權、右邊是買權。量大的履約價在到期前常常變成關卡。
 
 資料來源：12/25 · Max Pain 74K · 全部到期：買權 13.0B／賣權 10.6B 美元
+
+單頁：https://daybreak.aronlab.dev/charts/strike/
 
 ### Gamma 曝險（推算）（Gamma exposure (estimated)）
 
@@ -375,6 +461,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Deribit · 11-20 13:59 UTC
 
+單頁：https://daybreak.aronlab.dev/charts/gex/
+
 ### 清算價位（推算）（Liquidation levels (estimated)）
 
 偏空：清算最亮的帶：下方 $59.8K–$61.1K、上方 $65.4K–$67.4K。
@@ -382,6 +470,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：業界常見的清算熱力圖（類似 CoinGlass）。橫軸是最近 7 天、每小時一欄，縱軸是價格；越亮代表推算的待清算量越多，收盤下方是多單、上方是空單，價格走過的亮帶就算清掉了。右邊窄欄是現在這一刻各價位的量，最亮的上下兩段直接標出價位和顆數。做法：多家交易所永續合約的未平倉量增加當成新開倉，假設 5–100 倍槓桿算出清算價。圖上方可以切到「6 個月」：每天一欄、每格 $500，看得到離現價比較遠的大團。這是模型，不是交易所的實際資料。
 
 資料來源：Coinalyze · 7 家交易所永續 · 快照 11/20 14:00 UTC
+
+單頁：https://daybreak.aronlab.dev/charts/liq/
 
 ### 掛單簿（Order book）
 
@@ -391,6 +481,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：13 個交易所 · ±15% · 快照 11-20 14:02 UTC
 
+單頁：https://daybreak.aronlab.dev/charts/book/
+
 ### 目前這一段行情（The current leg）
 
 偏空：這段下跌已走 28.5%，比近年多數跌段深，但還沒結束：收盤要回到 $71,201 才轉成上漲段，K 線也還壓在價值區下方。
@@ -399,6 +491,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：收盤價 15% 反轉 · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/legs/
+
 ### 近 20 天 K 線（Last 20 daily candles）
 
 偏空：收盤在價值區下方，比成交最密的 $63,750 低 2.9%。
@@ -406,6 +500,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：最近 20 根日 K，加上這 20 天成交最密的價位和價值區（70% 成交量所在的範圍）。
 
 資料來源：Kraken 日線 · UTC
+
+單頁：https://daybreak.aronlab.dev/charts/k20/
 
 ## 賣壓：賣壓出清了沒
 
@@ -424,6 +520,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · CheckOnChain · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/pullback/
+
 ### 賣壓累積與動能品質（Sell Pressure Index and momentum quality）
 
 偏多：賣壓 100、動能 0.08：底部組合成立（賣壓到 100 第 10 天）。
@@ -431,6 +529,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：本站自製，只用每日收盤。動能品質＝近 21 天日報酬的平均 ÷ 標準差 × √21，用常態分布換成 0–1（圖上乘以 100）：漲得又快又穩接近 1、跌得又快又穩接近 0。賣壓累積是兩條線各佔一半。慢線用另一個比較短的動能來加減：日報酬的指數加權平均 ÷ 指數加權標準差（跨度 10 天，越近的日子權重越大），同樣換成 0–1；低於 0.45 時每天往上加（離得越遠加越多）、高於 0.45 時以同樣速度往下減。快線看「當天漲跌 ÷ 近 30 天波動」的 5 天平均：平均為負就往上加、為正就往下減，大跌當天就會加很多。兩條都夾在 0–100，反彈當天就會回落；要兩條都到 100，賣壓累積才是 100，所以急跌一兩天不會馬上到 100。賣壓到 100 而且動能品質低於 0.3 叫底部組合，青色底是從組合出現到賣壓歸零的期間。賣壓到 100 只說明短線跌得夠久；離週期底部近不近，再看相對未實現獲利：2012 年起賣壓在 100 的日子，相對未實現獲利在 37.5% 以下的一年後 100% 上漲，37.5% 以上的只有 34%（熊市前半段也常到 100）。回測只有二十次左右，換一個收盤價來源或參數稍微調一下，次數和勝率就會變幾次。2026-11-11 起賣壓累積改成這個算法，歷史讀數一併重算。只作讀值，不是買賣訊號。
 
 資料來源：本站自製 · 每日收盤 · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/sx/
 
 ### 短期持有者獲利比例（Short-term holders in profit）
 
@@ -440,6 +540,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：2025 頂部 97.7%
 
+單頁：https://daybreak.aronlab.dev/charts/profit/
+
 ### 短期持有者賣出時的盈虧（Short-term holder SOPR）
 
 偏空：短期持有者賠錢賣連 14 天，跌破比上次更深，實現獲利只剩虧損的 0.15 倍；賣的多是近期買的人，SOPR 回到 1 才算換手完成。
@@ -447,6 +549,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：短期持有者賣出的價格除以買進的價格。低於 1 是賠錢賣。圓圈是每次跌破 1 的低點，和上一次比是加重還是遞減。
 
 資料來源：CheckOnChain · 晚約 1 天 · 近 1 年
+
+單頁：https://daybreak.aronlab.dev/charts/sopr/
 
 ### 短期持有者實現獲利與虧損（STH realized profit and loss）
 
@@ -456,6 +560,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CheckOnChain · 晚約 1 天 · 近 1 年
 
+單頁：https://daybreak.aronlab.dev/charts/pnlr/
+
 ### 短期持有者集中止盈與認賠（Short-term holder profit-taking and capitulation spikes）
 
 偏空：集中認賠第 10 天：認賠強度 3.4。
@@ -463,6 +569,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：本站自製，資料 Bitview（逐筆 UTXO、不是實體調整）。取持有未滿 6 個月的幣每天的實現獲利和實現虧損（美元），各自除以短期持有者的實現市值，5 日指數平均後和自己近 105 天比（z 分數）。綠線是止盈強度，往上；紅線是認賠強度，畫成負值、往下；超過 ±2 的期間鋪底色。集中止盈常出現在反彈的後段，集中認賠常出現在急跌的後段，但兩者都可以連續出現很多天。只作讀值，不是買賣訊號。
 
 資料來源：本站自製 · Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/sthsig/
 
 ### 對趨勢的信心（Confidence in the trend）
 
@@ -472,6 +580,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 7 日平均 · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/conf/
+
 ### 淨實現損益（Net realized P&L）
 
 偏空：最新一天淨實現損益 −14.50 億美元，近一年第 3 百分位。
@@ -479,6 +589,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：全網每天實現的獲利減掉虧損。上格價格線上的圓圈大小是當天的金額。可以切換成 30 日累計。
 
 資料來源：CoinMetrics 推算 · 晚約 1 天
+
+單頁：https://daybreak.aronlab.dev/charts/npl/
 
 ### 依持有時間的實現獲利／虧損（Realized profit and loss by holding time）
 
@@ -488,6 +600,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/agepl/
+
 ### 老幣移動（Old coins on the move）
 
 中性：1 年以上的老幣每天移動 1.02 萬顆（72 分位），5 年以上的 1,300 顆（82 分位）。
@@ -495,6 +609,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：放了 1 年以上、5 年以上沒動的幣，每天有多少顆在鏈上移動（7 日和 30 日平均）。Dormancy 是所有被花掉的幣的平均年紀，這張直接數老幣的顆數。老幣大量移動通常出現在漲勢後段，是長期持有者在出貨；但換錢包、交易所和託管機構整理冷錢包也會算進來，不等於賣出，單日的尖峰尤其要小心。逐筆 UTXO、沒有做實體調整。只作讀值。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/oldc/
 
 ### SOPR：全網、長期、短期（SOPR: network, long-term, short-term）
 
@@ -504,6 +620,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CheckOnChain · 晚約 1 天 · 近 1 年
 
+單頁：https://daybreak.aronlab.dev/charts/soprf/
+
 ### 實現獲利 ÷ 虧損（Realized profit ÷ loss）
 
 偏空：最近 7 天實現獲利只有虧損的 0.17 倍，一年合計也在 1 以下；過去這種低點之後一年都漲，但最低點落後價格，賣方衰竭常數也還沒到衰竭線。
@@ -511,6 +629,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：全網一年合計的實現獲利，除以一年合計的實現虧損（Bitview）。橘底是歷次跌到 1 以下的期間，標記是每段比值最低的那天。綠色虛線是這一段（9/5 起）的確認線：比值從這一段最低點回升 10%；最低點再往下，線也跟著往下。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/rpl/
 
 ### 每日實現虧損（Daily realized loss）
 
@@ -520,6 +640,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/rloss/
+
 ### 賣方風險比（Sell-side risk ratio）
 
 中性：賣方風險比 1.05%，近 4 年第 68 百分位：平常水準。
@@ -527,6 +649,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：7 天實現的獲利加虧損，佔實現市值的比例，分成全網、短期和長期持有者三條。越低代表越少人願意在這個價位賣。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/ssr/
 
 ### 賣方衰竭常數（Seller exhaustion constant）
 
@@ -536,6 +660,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CheckOnChain · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/sec/
+
 ### 鏈上勢能（On-chain momentum）
 
 偏空：鏈上勢能 −176：賣出的幣整體在認賠。
@@ -543,6 +669,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：（全網 SOPR − 1）乘上每日銷毀的幣天數，取 14 日平均。虛線是頂背離：價格創新高，勢能的高點卻比較低。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/mom/
 
 ### 長期持有者已實現虧損（LTH realized loss）
 
@@ -552,11 +680,15 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CheckOnChain · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/lthrl/
+
 ### 礦工：算力、收入與難度（Miners: hashrate, revenue and difficulty）
 
 偏空：收盤低於主流礦機的電費兩平價 $63,102，但算力一週還升 5.9%、沒有投降；下一條礦工成本線是生產成本 $59,612。
 
 這張圖：礦工的收入不夠付電費時會關機、賣幣，是另一種賣壓來源。算力的 30 日平均跌到 60 日平均下面叫礦工投降，過去常出現在底部附近。現有網站這幾項只有讀數、沒有走勢圖，這裡照樣只放讀數。
+
+單頁：https://daybreak.aronlab.dev/charts/miners/
 
 ### 生產成本（Production cost）
 
@@ -565,6 +697,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：用挖礦難度和每天新發行的幣（區塊獎勵加手續費）估算挖一顆比特幣的成本：12 × 難度^0.45 ÷ 每天發行量，取 90 天平均，模型和參數來自社群公開的指標。橘底是收盤低於成本的期間，虛線是減半：發行量減半，成本在之後 90 天內漲到約 2 倍。參數是拿同一段價格歷史擬合的，曲線本來就會貼在過去的低點下面，回測會偏好看；只作讀值。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/pcost/
 
 ## 買盤：誰在買、錢從哪裡來
 
@@ -583,6 +717,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CoinMarketCap（美國現貨 ETF，沒有 MSBT）· 百萬美元 · 淡色＝暫定或尚未完整
 
+單頁：https://daybreak.aronlab.dev/charts/etf/
+
 ### 現貨 ETF 近 20 個交易日合計（Spot ETF 20-session net flow）
 
 偏空：近 20 個交易日合計淨流出 $3,689M（到 11/19）。11/9 起低於 −$1,500M，算進入一段流出，到今天第 9 個交易日。
@@ -591,11 +727,15 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CoinMarketCap · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/etf20/
+
 ### 上市公司持幣（Public-company holdings）
 
 偏空：收盤比 Strategy 的平均成本低 17.9%
 
 這張圖：持有比特幣最多的幾家上市公司。長條是這家佔所有上市公司持幣的比例，下面一行是它的平均買進成本（買進總成本除以持幣量；有的公司沒有公開）。Strategy 的平均成本也畫在「價位」頁的成本線那張圖上。來源只有現在的數字，沒有歷史。只作讀值。
+
+單頁：https://daybreak.aronlab.dev/charts/treasury/
 
 ### CME 機構持倉（CME institutional positioning）
 
@@ -605,6 +745,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CFTC · 每週 · 11/10 持倉
 
+單頁：https://daybreak.aronlab.dev/charts/cot/
+
 ### 美國現貨：Coinbase 溢價（US spot: Coinbase premium）
 
 中性：扣掉 USDT 後 Coinbase 溢價只有 −0.002%，美國買盤和海外差不多；看到的負溢價幾乎都是 USDT 低於 1 美元造成的。
@@ -613,17 +755,23 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Coinbase · OKX 場外 · OKX 永續
 
+單頁：https://daybreak.aronlab.dev/charts/pr-us/
+
 ### Coinbase 溢價連負：扣掉 USDT 還剩多少（Coinbase premium negative runs: what is left net of USDT）
 
 中性：連負 75 天，平均 −0.089% 裡有 −0.083% 是 USDT 低於 1 美元
 
 這張圖：每一列是一段「沒扣 USDT 的每日溢價連續 19 天以上小於 0」的期間，最新的在最上面。長條的長度是這段期間沒扣的平均溢價，越長越負：藍紫色是 USDT 低於 1 美元造成的部分，紅色是扣掉之後還剩的負值，沒有紅色代表扣完是 0 或正的。右邊的數字是扣掉 USDT 之後的平均，低於 −0.01% 標紅。下面一行是沒扣的平均、其中 USDT 那一塊，和期間價格從多少到多少。資料從 2022/10 開始。次數不多，只作讀值。
 
+單頁：https://daybreak.aronlab.dev/charts/pr-neg/
+
 ### USDT、USDC 對美元（USDT and USDC vs the dollar）
 
 偏空：USDT 比 1 美元低 0.10%（7 日平均）
 
 這張圖：穩定幣對美元的價格減 1，可以切換 USDT（Coinbase 的價格）和 USDC（Bitstamp 的價格；Coinbase 上 USDC 和美元是 1:1 互換，沒有成交價）。低於 0（折價）是賣 USDT 換美元的人比較多，通常代表有人把穩定幣換回美元；高於 0（溢價）是搶著換進 USDT 的人比較多。藍紫色的面積是 7 日平均，和 Coinbase 溢價「拆開看」裡 USDT 那一塊是同一條。虛線是近四年 7 日平均最低 5% 的位置（−0.119%），圓圈是歷次跌破後最深的那一天，旁邊是跌破那天起 30 天的漲跌。這是 Coinbase 一個交易所的價格，別的地方會有小差異；和「亞洲：場外 USDT 溢價」不一樣，那張是 USDT 對人民幣。2023/03 的大幅溢價是 USDC 脫鉤時資金湧進 USDT。只作讀值。 USDC 那一頁的面積是青色，畫法相同。
+
+單頁：https://daybreak.aronlab.dev/charts/usdt-usd/
 
 ### 亞洲：場外 USDT 溢價（Asia: OTC USDT premium）
 
@@ -633,6 +781,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Coinbase · OKX 場外 · OKX 永續
 
+單頁：https://daybreak.aronlab.dev/charts/pr-asia/
+
 ### 槓桿：永續對現貨（Leverage: perpetual vs spot）
 
 中性：OKX 永續對現貨 −0.051%（7 日平均），和平常差不多，槓桿沒有明顯偏向。
@@ -640,6 +790,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：OKX 永續合約的價格除以現貨價格再減 1，取 7 日平均。永續平常就略低於現貨，所以和自己的歷史比：落在近 299 天最高的 30% 是比平常貴，多單願意付溢價追價；落在最低的 30% 是比平常便宜，槓桿偏空或在避險。
 
 資料來源：Coinbase · OKX 場外 · OKX 永續
+
+單頁：https://daybreak.aronlab.dev/charts/pr-perp/
 
 ### 韓國溢價（Korea premium）
 
@@ -649,6 +801,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Upbit · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/kp/
+
 ### 交易所淨流量（Exchange netflow）
 
 中性：幣在離開交易所：30 天合計 −8.2 萬顆，已連續 152 天淨流出。
@@ -657,11 +811,15 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CoinMetrics · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/exflow/
+
 ### 交易所供給（Exchange supply）
 
 偏空：交易所供給 13.47%，30 天 +1.07%（幣在流入交易所）。
 
 這張圖：交易所地址持有的幣。減少代表幣離開交易所、可賣的現貨變少；增加代表幣流入交易所、潛在賣壓增加。地址歸屬會事後修正，看方向不看小數；現有網站沒有這一項的歷史走勢，這裡只放讀數。
+
+單頁：https://daybreak.aronlab.dev/charts/exch/
 
 ### 表觀需求（30 天與 1 年）（Apparent demand (30 days and 1 year)）
 
@@ -671,6 +829,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CheckOnChain HODL Waves · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/ad/
+
 ### 現貨需求和永續需求（Spot vs perpetual demand）
 
 偏空：現貨和永續的需求都在減，兩邊都沒有新買盤。
@@ -678,6 +838,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：現貨是表觀需求的 30 天合計（顆），永續是 OKX 合約 30 天主動買減主動賣（美元）。兩條單位不同，各自除以近一年絕對值的最大值，只比方向和相對強弱。圓圈是現貨需求由負轉正的日子，旁邊是之後 60 天的漲跌。
 
 資料來源：表觀需求 · OKX · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/dmd/
 
 ### 循環資金流：投機和長線（Cycle capital flows: speculation vs conviction）
 
@@ -687,6 +849,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/capflow/
+
 ### 資金與價格增量梯度（Capital vs price momentum）
 
 中性：近 30 天價格跌得比資金撤出快很多；120 天大致同步（−0.31 個標準差）。
@@ -694,6 +858,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：價格 N 天的漲跌，減掉實現價格（全體的平均買進成本）N 天的漲跌，再除以自己過去 4 年的標準差。正值代表價格跑得比真正進場的資金快。虛線是 120 日那條的背離：價格創新高或新低，梯度卻沒有跟上。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/grad/
 
 ### 資金流入：實現市值 30 日變化（Capital inflow: realized cap, 30-day change）
 
@@ -703,6 +869,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：CoinMetrics · 11/19 · 2019 起 · 紅底＝≤0
 
+單頁：https://daybreak.aronlab.dev/charts/rcliq/
+
 ### 穩定幣總供給（Total stablecoin supply）
 
 偏空：穩定幣 2,852 億美元，30 天少 164 億（−5.43%），場外美元在萎縮。
@@ -710,6 +878,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：全部美元穩定幣流通量的 30 天增減，可以切換看百分比或金額。穩定幣是加密市場裡等著進場的美元：增加代表場外的錢變多，減少代表在萎縮。圓圈是每一段連續增加或減少期間的最大值。總量一直在變大，同樣的金額在幾年前佔的比例高得多，所以跨年比較看百分比，講當下少了多少錢看金額。
 
 資料來源：DefiLlama · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/stab/
 
 ### 大戶 30 日淨變化（Big holders, 30-day net change）
 
@@ -719,6 +889,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/whale/
+
 ### 各層地址的持幣變化（Holdings by address tier）
 
 偏空：30 天持幣增加 5 層、減少 1 層；100–1K 顆減最多（−4.4 萬顆）。
@@ -726,6 +898,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：每一層地址 30 天的淨增減，橫條是這個數字在近 4 年的百分位，直線是中間值 50。下面小字是持幣量，和 7 天、90 天、這一段行情（2026/09/21 起）以來的增減。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/whalet/
 
 ### 各層地址 7 日持幣變化（7-day balance change by wallet tier）
 
@@ -735,6 +909,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/whstrip/
+
 ### 長期持有者 30 日淨部位變化（LTH 30-day net position change）
 
 中性：長期持有者從 8/4 起淨減 107 天，同期價格 −2%。
@@ -742,6 +918,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：價格線的顏色，是長期持有者 30 天淨增減了多少顆：橘是在減、灰是持平、綠是在增。
 
 資料來源：bitcoin-data · 長期持有者 30 日淨部位 · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/lthnet/
 
 ### 長短期供給比 30 日變化（LTH/STH supply ratio, 30-day change）
 
@@ -751,6 +929,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/lsrchg/
+
 ### 短期持有者供給 90 天變化（STH supply, 90-day change）
 
 偏空：短期持有者供給 90 天 +50.5 萬顆：舊幣在換手。
@@ -758,6 +938,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：短期持有者手上的幣，90 天增減了多少。增加代表舊幣在換手。標記是歷次週期頂部附近的高點。
 
 資料來源：Bitview · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/sthd/
 
 ### Dormancy（Dormancy）
 
@@ -767,11 +949,15 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Bitview · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/dorm/
+
 ### 流動性供給（Supply by liquidity）
 
 偏多：非流動性供給 30 天增加、高流動性供給增加
 
 這張圖：依錢包的花費習慣分類。非流動性供給是長期不動的錢包持有的幣，增加代表囤幣、浮動籌碼變少；高流動性供給是常在交易的錢包持有的幣，增加代表可交易的籌碼變多。分類是估算的，會事後修正。
+
+單頁：https://daybreak.aronlab.dev/charts/supliq/
 
 ### 現貨主動買賣差（OKX）（Spot taker buy − sell (OKX)）
 
@@ -781,11 +967,15 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：OKX · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/svd/
+
 ### 依成交單大小分的買賣差（Buy/sell imbalance by trade size）
 
 偏空：近 30 天小單、中單在買，大單在賣
 
 這張圖：Binance BTCUSDT 現貨的每一筆成交，依金額分成小單、中單、大單，各自把「主動買進減主動賣出」從圖上第一天開始累加（百萬美元；可以切換近 90 天、近 1 年、全部，資料從 2023/11/01 開始）。線往上是這一級的單子淨買進，往下是淨賣出。常見的讀法：價格漲的時候如果只有小單在買、大單在賣，漲勢比較虛；大單由賣轉買，才比較像有份量的資金進場。限制有三個：只有 Binance 一家的現貨；一張大的市價單吃掉好幾個價位會被拆成好幾筆，大單會被低估；大戶也可以故意把單拆小。前一天的資料隔天才有，這張圖可能比別張晚一天。只作讀值。
+
+單頁：https://daybreak.aronlab.dev/charts/cvdsz/
 
 ### 現貨與永續的主動買賣（Spot vs perpetual taker flow）
 
@@ -795,6 +985,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Coinalyze · Binance · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/tk/
+
 ### BTC 對美股和黃金（BTC vs stocks and gold）
 
 偏空：近兩個月 BTC 跌 23.8%，落後美股和黃金，又和 Nasdaq 高度同步；市場押升息 98%，美股止跌前 BTC 很難單獨走強。
@@ -802,6 +994,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：第一頁是近兩個月 BTC、S&P 500、那斯達克和黃金各自的漲跌。第二頁是近 90 個美股交易日裡，BTC 當天漲幅大於 S&P 500 的比例，高於 50% 代表 BTC 贏的天數比較多。黃金用一枚代表一盎司黃金的代幣代替。
 
 資料來源：FRED · Kraken · 11/18
+
+單頁：https://daybreak.aronlab.dev/charts/stk/
 
 ### 2 年期殖利率減聯準會利率（2-year yield minus the Fed rate）
 
@@ -811,17 +1005,23 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：美國財政部 · 紐約聯準銀行 · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/r2y/
+
 ### 預測市場：聯準會下次決議（Prediction market: next Fed decision）
 
 偏空：市場給升息 96% 的機率
 
 這張圖：Polymarket 上「聯準會下一次會議會怎麼決定」的市場。每個結果的價格就是市場認為它發生的機率，這裡併成升息、不變、降息三條線。同一張圖只看同一次會議：會開完之後換成下一次，線會重新開始。利率的預期變了，風險資產通常會跟著動，所以放在大環境。只作讀值。
 
+單頁：https://daybreak.aronlab.dev/charts/fedmkt/
+
 ### 利率、美元與相關性（Rates, the dollar and correlations）
 
 偏空：BTC 和那斯達克高度同步（30 天相關 0.66）；美元不是現在的主要驅動。
 
 這張圖：BTC 和那斯達克、美元指數的 30 日相關係數，加上 10 年期美債的實質利率和名目殖利率。相關係數高於 0.5 代表同漲同跌；實質利率越高，持有不生息資產的機會成本越高。現有網站沒有這幾項的走勢圖，這裡只放讀數。
+
+單頁：https://daybreak.aronlab.dev/charts/macro/
 
 ## 槓桿：槓桿和情緒擠不擠
 
@@ -840,6 +1040,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Coinalyze · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/fh/
+
 ### 期貨基差曲線（Futures basis curve）
 
 中性：各期限年化基差 3.2–5.7%，遠月較高；水準中性。
@@ -847,6 +1049,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：期貨比現貨貴多少，換成年化；橫軸是離到期還有幾天（不含 7 天內到期的）。基差高代表大家願意多付錢用期貨做多：3–15% 算常態，超過 15% 是槓桿偏熱，低於 3% 是做多的需求冷淡。現在各到期日在 3.2–5.7%，在常態範圍內；永續資金費率年化 −2.4%。
 
 資料來源：年化 % · 排除 7 天內到期
+
+單頁：https://daybreak.aronlab.dev/charts/basis/
 
 ### 全市場未平倉量（Total open interest）
 
@@ -856,11 +1060,15 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Coinalyze · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/oih/
+
 ### 槓桿在 ETH 還是 BTC（Leverage: ETH or BTC）
 
 中性：ETH 佔 35.1%，30 天降 2.1 個百分點
 
 這張圖：同樣 7 家交易所、同樣那幾個永續合約，ETH 的未平倉除以 BTC 加 ETH 的未平倉（都換成美元）。比例上升代表新開的槓桿比較多押在 ETH，通常是市場願意冒更多風險；下降代表 ETH 這邊的槓桿相對在退。要注意價格本身會改變比例：ETH 漲得比 BTC 多，就算沒有人加倉，比例也會上升。合約陸續上線，資料從 2022/10 開始。只作讀值。
+
+單頁：https://daybreak.aronlab.dev/charts/oieth/
 
 ### 多空帳戶比（Long/short account ratio）
 
@@ -870,6 +1078,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Coinalyze · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/lsa/
+
 ### Bitfinex 保證金多單（Bitfinex margin longs）
 
 中性：多單 30 天 +1.4%，價格 −25.3%
@@ -877,6 +1087,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：Bitfinex 上借美元買 BTC 的保證金多單總量（顆），每天取 UTC 最後一筆。這家交易所的保證金多單長期由少數大戶持有，常被拿來看「大戶有沒有借錢買」：價格跌的時候多單增加，是有人逢低加碼；價格漲的時候多單減少，是在獲利了結。空單一直很小，不看多空比。只有一家交易所，而且多單增減也可能是在做套利或避險的另一隻腳，所以只作讀值。資料從 2022/10 開始。
 
 資料來源：Bitfinex · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/bfx/
 
 ### Hyperliquid 大戶部位（Hyperliquid big accounts）
 
@@ -886,6 +1098,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Hyperliquid · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/hlw/
+
 ### 每日多空清算量（Daily long and short liquidations）
 
 偏多：近 30 天被清算的多單佔 77%（多單 $2.35B、空單 $701M）。
@@ -893,6 +1107,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：每天被交易所強制平倉的 BTC 永續多單和空單（百萬美元），是實際紀錄、不是推算。多單被清算多，是下跌時被迫賣出的多；空單多，是上漲時被迫買回的多。交易所公開的清算資料會少報，所以看多空的比例，不要看總額；近 30 天多單 $2.35B、空單 $701M。
 
 資料來源：Coinalyze · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/lqv/
 
 ### 隱含波動 vs 實際波動（Implied vs realized volatility）
 
@@ -902,6 +1118,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Deribit DVOL · Kraken RV30 · 近一年
 
+單頁：https://daybreak.aronlab.dev/charts/vol/
+
 ### 隱含波動率期限結構（Implied volatility term structure）
 
 偏空：7 天 49.5%、90 天 43.7%，相差 +5.8 點（倒掛：近月較貴）。
@@ -910,9 +1128,13 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Deribit 標記隱含波動 · 價平 · 快照 2026-11-20 13:59 UTC
 
+單頁：https://daybreak.aronlab.dev/charts/ivt/
+
 ### 選擇權推算的價格區間（Options-implied price range）
 
 把 Deribit 每個到期日的選擇權價格，換算成「到期時價格落在哪裡」的機率：深色是 25–75 百分位（一半的機率在這裡面），淺色是 15–85。2027/1/29 到期（約 70 天後）25–75 是 $55.2K 到 $70K；2027/9/24 到期中位數 $62.3K，收在實現價格 $53.4K 以下的機率 34%、站回短期持有者成本 $73.6K 以上的機率 32%。這是選擇權的定價（風險中性），包含避險的成本，不是預測；最外圍的履約價以外用最後一檔的隱含波動率外推。
+
+單頁：https://daybreak.aronlab.dev/charts/orng/
 
 ### 各到期未平倉（Open interest by expiry）
 
@@ -922,6 +1144,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：買權 / 賣權（顆）
 
+單頁：https://daybreak.aronlab.dev/charts/oi/
+
 ### 選擇權買方權利金差（Options buyer premium: calls − puts）
 
 偏空：權利金差 7 日平均 −$23.7M，偏買賣權已 22 天。
@@ -930,11 +1154,15 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：Deribit · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/prem/
+
 ### 看跌／看漲比與風險逆轉（Put/call ratio and risk reversal）
 
 偏空：25Δ 風險逆轉 −8.59：賣權較貴，市場在買下跌保護；看跌／看漲比 0.81。
 
 這張圖：兩個看選擇權市場偏哪一邊的讀數。賣權 ÷ 買權大於 1（直線的位置），代表避險或看空的部位比看漲的多；風險逆轉是同樣距離的買權和賣權誰比較貴，負的是賣權貴、市場在買下跌保護。這兩個數字從 2026/11/08 起每天存一筆，目前 12 筆，累積夠了才畫走勢。
+
+單頁：https://daybreak.aronlab.dev/charts/pcr/
 
 ### 恐懼貪婪指數（Fear & Greed Index）
 
@@ -944,6 +1172,8 @@ BTC 收盤 $61,914 (-1.7%)
 
 資料來源：alternative.me · 2018 起 · 11/19
 
+單頁：https://daybreak.aronlab.dev/charts/fng/
+
 ### 散戶關注度：維基百科瀏覽量（Retail attention: Wikipedia page views）
 
 中性：維基百科瀏覽量是一年中位數的 1.29 倍（每天約 4,392 次）。
@@ -951,6 +1181,8 @@ BTC 收盤 $61,914 (-1.7%)
 這張圖：英文維基百科「Bitcoin」條目每天的瀏覽量，取 7 日平均，再除以自己過去一年的中位數，看關注度有沒有突然升溫。大量新手湧進來的時候會暴增，頂部和急跌都會出現；它只代表有人在查，不分買賣。2016/06 以來到 2.5 倍以上只有 4 次。
 
 資料來源：Wikimedia · 英文版 · 11/19
+
+單頁：https://daybreak.aronlab.dev/charts/wiki/
 
 ## 出場：那我該怎麼做
 
@@ -963,17 +1195,25 @@ BTC 收盤 $61,914 (-1.7%)
 
 每條規則現在的位置。橫條是離觸發多近，直線是觸發點。以「100% ＝ 本週期打算賣出的全部持倉」計，不涉及任何人的實際持倉。
 
+單頁：https://daybreak.aronlab.dev/charts/x_now/
+
 ### 出場模擬器（Exit simulator）
 
 拖動價格，看價格階梯會賣掉多少。階梯一共 8 階，每階 12.5%，從 $125,000 到 $215,000。鏈上觸發和避險是另外算的，不在這裡。
+
+單頁：https://daybreak.aronlab.dev/charts/x_sim/
 
 ### 鏈上觸發（On-chain triggers）
 
 三條和價格無關、看鏈上估值的賣點。走勢圖在「週期」那一頁的頂部訊號。
 
+單頁：https://daybreak.aronlab.dev/charts/x_oc/
+
 ### 其他規則（Other rules）
 
 價格階梯和鏈上觸發以外的三條。Daybreak 出場框架 v3
+
+單頁：https://daybreak.aronlab.dev/charts/x_other/
 
 ---
 
