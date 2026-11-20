@@ -87,7 +87,9 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Inter 
 .pc.on .log div { opacity: 1; transform: none; }
 .log b { color: var(--ink); font-weight: 500; } .log .ok { color: var(--up); } .log .w { color: var(--ac); }
 .rowl { display: grid; grid-template-columns: 74px 1fr 30px; align-items: center; gap: 10px; margin-top: 10px; font: 600 13px/1 var(--disp); }
-.rowl i { height: 6px; border-radius: 3px; }
+.rowl i { height: 6px; border-radius: 3px; transition: width .3s var(--spr); }
+.rowl { transition: color .3s; } .rowl.wt { color: var(--k2); }
+#vd span { color: rgba(237,237,232,.16); transition: color .6s; } #vd span.on { color: var(--ink); }
 .rowl span { font: 500 11px/1 var(--mono); color: var(--k2); text-align: right; }
 .big3 { display: flex; gap: 22px; margin-top: 14px; }
 .big3 b { display: block; font: 900 46px/1 var(--num); font-stretch: 62%; }
@@ -131,8 +133,8 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Inter 
 @media (max-width: 700px) { .cue { bottom: calc(env(safe-area-inset-bottom, 0px) + 14px); } .cue i { height: 26px; } .hud { bottom: calc(var(--gut) * .8 + 64px); } }
 @media (prefers-reduced-motion: reduce) { .cue i::after, .cue span svg { animation: none; } }
 /* 02 讀圖（2026-11-20，參考使用者給的「節點讀資訊」影片）：掃描點一張一張讀，掛圖名和表態；面板是六個問題的讀取進度和即時紀錄 */
-#rdx { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0; }
-#rdx canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
+#rdx, .rdx2 { position: fixed; inset: 0; z-index: 2; pointer-events: none; opacity: 0; }
+#rdx canvas, .rdx2 canvas { position: absolute; inset: 0; width: 100%; height: 100%; }
 .rl { position: absolute; left: 0; top: 0; display: none; align-items: center; gap: 7px; white-space: nowrap; font: 500 11.5px/1 var(--disp); color: var(--ink); will-change: transform, opacity; text-shadow: 0 0 3px #050506, 0 0 8px #050506; }
 .rl.t { padding: 4px 8px; border-radius: 999px; background: rgba(5,5,6,.6); }
 .rl.h, .rl.p { text-shadow: none; }
@@ -188,7 +190,7 @@ const LAYCOL = ['#7C8BFF', '#FFC43D', '#FF4F1F', '#C6FF3D', '#2FE0F0', '#EDEDE8'
 const ARR = '<svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M3 8h10M9 4l4 4-4 4"/></svg>';
 let HOME, GO, dShow, LOG, PCS, pcs = [];
 /* 02 讀圖的面板：每一頁一列（「今天」頁放最後），一張圖一格。RX 是掃描狀態（後面才建，先用 var 免得換語言時還沒建好） */
-var RX = null; const TDY = D0.pg.indexOf('today'), RROWS = D0.pg.map((_, r) => r).filter(r => r !== TDY).concat(TDY >= 0 ? [TDY] : []);
+var RX = null, PR = null; const TDY = D0.pg.indexOf('today'), RROWS = D0.pg.map((_, r) => r).filter(r => r !== TDY).concat(TDY >= 0 ? [TDY] : []);
 /* 換語言時整頁的字重寫一遍（不重新載入，和首頁一樣原地換） */
 function paintLang() {
 setD(); LAYN = layN(); LMAX = Math.max(1, ...LAYN.map(l => l[1]));
@@ -210,14 +212,14 @@ LOG = LG
   : [['00:05', `抓資料 <b>17 個來源</b>`, '✓'], ['00:25', `重算 <b>${D.n} 張圖</b>`, '✓'], ['00:28', `比對 <b>2013 年以來</b>的同類讀數`, '✓'], ['00:31', `表態 <span class="ok">偏多 ${LEAN.up}</span> · <span class="w">偏空 ${LEAN.down}</span> · 中性 ${LEAN.neu}`, ''], ['00:33', `寫好第 <b>${D.issue}</b> 期判讀`, '✓']];
 PCS = [
   { s: 1, h: `<div class="tg"><b>02</b> · THE READER</div><h2>${T(`每天，它把<br>${D.n} 張圖讀一遍。`, `Every day it reads<br>all ${D.n} charts.`)}</h2><p>${T('鏈上籌碼、持有成本、衍生品槓桿、ETF 與穩定幣資金、宏觀利率。自建指標加上公開資料，全部重算、比對歷史，再寫成一句白話。', 'On-chain supply, holder cost, derivatives leverage, ETF and stablecoin flows, macro rates. Original indicators and public data, all recomputed and checked against history, then written up in plain words.')}</p><div class="gc"><div class="k"><span id="rd-k"></span><span><b id="rd-n">0</b> / ${D.n}</span></div><div class="rdr" style="--lw:${LG ? 62 : 34}px">${RROWS.map(r => `<div class="rr" data-r="${r}"><span>${D0.pgn[r][LG]}</span><div class="sg">${D.ch.map((c, j) => c[3] === r ? `<i data-j="${j}"></i>` : '').join('')}</div><em>${D.ch.filter(c => c[3] === r).length}</em></div>`).join('')}</div><div class="rdlog"><div id="rd-log"></div></div></div>` },
-  { s: 2, h: `<div class="tg"><b>03</b> · SIX LAYERS</div><h2>${T('六種資料，<br>一層一層剖開。', 'Six kinds of data,<br>peeled layer by layer.')}</h2><p>${T('鏈上、價格結構、衍生品、資金流、宏觀情緒，加上綜合判讀。每一層各自轉動。', 'On-chain, price structure, derivatives, flows, macro and sentiment, plus the composite read. Each layer turns on its own.')}</p><div class="gc"><div class="k">${T('每層有幾張圖', 'Charts per layer')}</div>${LAYN.map(([n, c], i) => `<div class="rowl">${n}<i style="width:${c / LMAX * 100}%;background:${LAYCOL[i]}"></i><span>${c}</span></div>`).join('')}</div>` },
-  { s: 3, lf: 1, h: `<div class="tg"><b>04</b> · ${D.n} SERIES</div><h2>${T(`${D.n} 張圖，<br>各走各的軌跡。`, `${D.n} charts,<br>each on its own path.`)}</h2><p>${T('每一道軌跡是一張圖，顏色是它今天的表態。不只擺數字，每張都寫明偏多、偏空還是中性。', "Each path is one chart, coloured by today's lean. Not just numbers: every chart says bullish, bearish or neutral.")}</p><div class="gc"><div class="k">${T('今天', 'Today')}</div><div class="big3"><div><b style="color:var(--up)">${LEAN.up}</b><span>${T('偏多', 'BULLISH')}</span></div><div><b style="color:var(--ac)">${LEAN.down}</b><span>${T('偏空', 'BEARISH')}</span></div><div><b style="color:var(--k2)">${LEAN.neu}</b><span>${T('中性', 'NEUTRAL')}</span></div><div><b>${D.n - LEAN.up - LEAN.down - LEAN.neu}</b><span>${T('只作讀值', 'READING ONLY')}</span></div></div></div>` },
-  { s: 4, h: `<div class="tg"><b>05</b> · ONE VERDICT</div><h2>${T('最後，收斂成<br>一個判讀。', 'Finally, it all<br>comes down to one read.')}</h2><div class="gc"><div class="k">${T(`第 ${D.issue} 期 · ${dShow} · ${D.stance}`, `Issue ${D.issue} · ${dShow} · ${D.stance}`)}</div><p class="vd">${D.head}</p></div><a class="cta" href="${HOME}">${GO} ${ARR}</a>` }
+  { s: 2, h: `<div class="tg"><b>03</b> · SIX LAYERS</div><h2>${T('六種資料，<br>一層一層剖開。', 'Six kinds of data,<br>peeled layer by layer.')}</h2><p>${T('鏈上、價格結構、衍生品、資金流、宏觀情緒，加上綜合判讀。每一層各自轉動。', 'On-chain, price structure, derivatives, flows, macro and sentiment, plus the composite read. Each layer turns on its own.')}</p><div class="gc"><div class="k">${T('每層有幾張圖', 'Charts per layer')}</div>${LAYN.map(([n, c], i) => `<div class="rowl" data-l="${i}">${n}<i style="width:${c / LMAX * 100}%;background:${LAYCOL[i]}"></i><span>${c}</span></div>`).join('')}</div>` },
+  { s: 3, lf: 1, h: `<div class="tg"><b>04</b> · ${D.n} SERIES</div><h2>${T(`${D.n} 張圖，<br>各走各的軌跡。`, `${D.n} charts,<br>each on its own path.`)}</h2><p>${T('每一道軌跡是一張圖，顏色是它今天的表態。不只擺數字，每張都寫明偏多、偏空還是中性。', "Each path is one chart, coloured by today's lean. Not just numbers: every chart says bullish, bearish or neutral.")}</p><div class="gc"><div class="k">${T('今天', 'Today')}</div><div class="big3"><div><b data-v="up" style="color:var(--up)">${LEAN.up}</b><span>${T('偏多', 'BULLISH')}</span></div><div><b data-v="down" style="color:var(--ac)">${LEAN.down}</b><span>${T('偏空', 'BEARISH')}</span></div><div><b data-v="neu" style="color:var(--k2)">${LEAN.neu}</b><span>${T('中性', 'NEUTRAL')}</span></div><div><b data-v="">${D.n - LEAN.up - LEAN.down - LEAN.neu}</b><span>${T('只作讀值', 'READING ONLY')}</span></div></div></div>` },
+  { s: 4, h: `<div class="tg"><b>05</b> · ONE VERDICT</div><h2>${T('最後，收斂成<br>一個判讀。', 'Finally, it all<br>comes down to one read.')}</h2><div class="gc"><div class="k">${T(`第 ${D.issue} 期 · ${dShow} · ${D.stance}`, `Issue ${D.issue} · ${dShow} · ${D.stance}`)}</div><p class="vd" id="vd">${D.head}</p></div><a class="cta" href="${HOME}">${GO} ${ARR}</a>` }
 ];
 const on = pcs.map(p => p.classList.contains('on'));
 $('#pn').innerHTML = PCS.map(p => `<div class="pc${p.lf ? ' lf' : ''}">${p.h}</div>`).join('');
 pcs = [...document.querySelectorAll('.pc')]; pcs.forEach((p, i) => on[i] && p.classList.add('on'));
-if (RX) rdPaint();
+if (RX) rdPaint(); if (PR) prPaint();
 const lb = $('#lgs'); lb.classList.toggle('b', LG === 1); [...lb.querySelectorAll('button')].forEach(x => x.setAttribute('aria-pressed', x.dataset.l === (LG ? 'en' : 'zh')));
 }
 paintLang();
@@ -228,7 +230,7 @@ const mixg = (s, k, out) => { let o = ''; for (let i = 0; i < s.length; i++) { c
 let busy = false;
 function scramble(fn) {
   if (RM) { fn(); return; } if (busy) return; busy = true;
-  const prep = () => { const out = [], w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) { const pe = n.parentElement; if (!n.nodeValue.trim() || !pe || pe.closest('.lgs, #clk, #cls, #gl, #rdx, #rd-log, #rd-n, script, style')) continue; const r = pe.getBoundingClientRect(); out.push({ n, s: n.nodeValue, d: clamp(r.left / (innerWidth || 1), 0, 1) }); } return out; };
+  const prep = () => { const out = [], w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) { const pe = n.parentElement; if (!n.nodeValue.trim() || !pe || pe.closest('.lgs, #clk, #cls, #gl, #rdx, .rdx2, #rd-log, #rd-n, #vd, .big3, .rowl span, script, style')) continue; const r = pe.getBoundingClientRect(); out.push({ n, s: n.nodeValue, d: clamp(r.left / (innerWidth || 1), 0, 1) }); } return out; };
   const run = (list, dur, wave, out, done) => { const t0 = performance.now(); let last = -99; const step = now => { const t = now - t0, end = t >= dur + wave; if (now - last > 40 || end) { last = now; list.forEach(o => { const p = clamp((t - o.d * wave) / dur, 0, 1); o.n.nodeValue = mixg(o.s, Math.round(p * o.s.length), out); }); } if (end) done(); else requestAnimationFrame(step); }; requestAnimationFrame(step); };
   const l0 = prep(); run(l0, 200, 200, true, () => { fn(); l0.forEach(o => { if (o.n.isConnected) o.n.nodeValue = o.s; }); const list = prep(); list.forEach(o => { o.n.nodeValue = mixg(o.s, 0, false); }); run(list, 380, 340, false, () => { list.forEach(o => { o.n.nodeValue = o.s; }); busy = false; }); });
 }
@@ -297,6 +299,8 @@ for (let L = 0; L + 1 < SHN.length; L++) SHN[L].forEach(a => { if (rnd() > .1) r
 const cntL = LAYN.map(() => 0), CH2 = D.ch.map(c => { const L = c[2], ns = SHN[L]; return ns[Math.floor((cntL[L]++ + .5) * ns.length / Math.max(1, LAYN[L][1])) % ns.length]; });
 // 每張圖一條軸突：七個問題各一列
 const TRK = D.ch.map((c, j) => { const row = ROWS[c[3]], k = row.indexOf(j); return { y: (D.pg.length / 2 - .5 - c[3]) * .72, z: (k / Math.max(1, row.length - 1) - .5) * 5.2, ph: PHS[j], col: LCOL[c[1] || ''] }; });
+// 04 表態的順序：一列一列、每列由近到遠，「今天」那一列（第 0 列，多半只作讀值）放最後。TIDX＝第幾條被描，著色器用每列的起點和張數算回同一個號碼
+const ROWSEQ = ROWS.slice(1).concat(ROWS.slice(0, 1)).flat(), TIDX = D.ch.map((_, j) => ROWSEQ.indexOf(j)), RSTART = ROWS.map(r => r.length ? ROWSEQ.indexOf(r[0]) : 0), STP4 = ph ? .085 : .07;
 const trk = (j, x) => { const t = TRK[j]; return [x, t.y + Math.sin(.7246 * x + 4.71 + t.ph) * .22, t.z + Math.cos(.577 * x + 3.75 + t.ph * 1.3) * .22]; };
 const XL3 = [], XLJ = D.ch.map(() => []);
 ROWS.forEach(row => { for (let k = 0; k + 1 < row.length; k++) for (let q = 0; q < (ph ? 3 : 5); q++) { const x = (rnd() - .5) * 12.4, a = trk(row[k], x), b = trk(row[k + 1], x + gs() * .5); XLJ[row[k]].push(XL3.length); XL3.push({ a, b, c: [(a[0] + b[0]) / 2 + gs() * .08, (a[1] + b[1]) / 2 + gs() * .12, (a[2] + b[2]) / 2], j: row[k], x }); } });
@@ -351,7 +355,7 @@ const ECOL = [1, .34, .1]; // 能量色：品牌橘；圖的神經元放電時�
 const U = { uP: { value: 0 }, uT: { value: 0 }, uIn: { value: 0 }, uPx: { value: (ph ? 20 : 19) * DPR }, uM: { value: new THREE.Vector2(9, 9) }, uMs: { value: 0 }, uAsp: { value: W / H }, uTb: { value: RM ? 0 : 1 },
   uH: { value: [V3(), V3(), V3()] }, uHI: { value: [0, 0, 0] }, uFocus: { value: 10 }, uAp: { value: .4 }, uDof: { value: 1 }, uFade: { value: 1 }, uBl: { value: 30 * DPR },
   uPer: { value: maxD + 7 }, uE: { value: new THREE.Vector3(...ECOL) }, uLean: { value: 1 }, uN: { value: 1 },
-  uRd: { value: [V3(), V3(), V3(), V3()] }, uRdA: { value: [99, 99, 99, 99] }, uRdC: { value: [V3(), V3(), V3(), V3()] }, uLf: { value: .3 } };
+  uRd: { value: [V3(), V3(), V3(), V3()] }, uRdA: { value: [99, 99, 99, 99] }, uRdC: { value: [V3(), V3(), V3(), V3()] }, uLy: { value: LAYN.map(() => 0) }, uRv: { value: -99 }, uRs: { value: RSTART }, uRn: { value: ROWS.map(r => r.length) }, uStp: { value: STP4 }, uPg: { value: D.pg.length }, uCv: { value: 0 }, uLf: { value: .3 } };
 const PLEX = `
   uniform float uT, uPer; uniform vec3 uH[3]; uniform float uHI[3]; uniform vec3 uE;
   uniform vec3 uRd[4]; uniform float uRdA[4]; uniform vec3 uRdC[4];
@@ -396,6 +400,7 @@ function makePoints() {
       #define c4 c4w.xyz
       #define q4 vec2(p4w.w, c4w.w)
       uniform float uP, uIn, uPx, uMs, uAsp, uTb, uFocus, uAp, uDof, uBl, uLean, uN; uniform vec2 uM;
+      uniform float uLy[${LAYN.length}], uRv, uPg, uCv, uRs[${D.pg.length}], uRn[${D.pg.length}], uStp; // 03 每層分進來幾成、04 描到第幾條、05 弧從兩端收斂到哪
       varying vec3 vC; varying float vA; varying float vB;
       float gHot, gFire, gA, gU, gY; vec3 gRead;
       vec3 mind(){ vec3 p = position; if (rb.y > 6.5) return p; if (rb.y > 2.5) return p + vec3(sin(uT*.2 + mt.x*20.), cos(uT*.17 + mt.w*20.), sin(uT*.13 + mt.z*20.)) * .35; return plexD(p); }
@@ -439,10 +444,13 @@ function makePoints() {
       vec3 Cn(float k){
         if (k < 1.5) return C0f(); if (rb.y > 2.5) return c0;
         float node = rb.y < .5 ? 1. : 0., big = rb.x > 2. && rb.y < .5 ? 1. : 0., base = rb.y < .5 ? (big > .5 ? 1. : .75) : (rb.y < 1.5 ? c0.r : .3), gain = rb.y < .5 ? 1.7 : (rb.y < 1.5 ? .95 : 2.);
-        if (k < 2.5) { vec3 col = mix(vec3(1.), yc, .85); return col * base + heat(col, band(u2of(n2), .11, 5.)) * gain; }
-        if (k < 3.5) { vec3 col = big > .5 ? max(lc, vec3(.45)) : lc; return col * base + heat(col, band(n3.x / 13. * 2. + th.w / 6.2832, .16, 4.5)) * gain; }
+        if (k < 2.5) { float fl = uLy[int(mt.y + .5)]; vec3 col = mix(vec3(1.), yc, .85 * fl); return (col * base + heat(col, band(u2of(n2), .11, 5.)) * gain) * (.45 + .55 * fl); }
+        if (k < 3.5) { int r = int(floor(uPg * .5 - .5 - th.y / .72 + .5)); float idx = uRs[r] + floor((th.z / 5.2 + .5) * max(1., uRn[r] - 1.) + .5), dr = clamp((uRv - idx) * uStp / .6, 0., 1.), xf = (n3.x + 6.5) / 13.;
+          float rv = smoothstep(xf - .03, xf, dr), fr = exp(-sq((dr - xf) * 16.)) * step(.002, dr) * step(dr, .998); // 表態色從軌跡一端描到另一端，筆尖最亮
+          vec3 col = mix(vec3(.55), big > .5 ? max(lc, vec3(.45)) : lc, rv); return col * base * (.72 + .28 * rv) + heat(col, band(n3.x / 13. * 2. + th.w / 6.2832, .16, 4.5) * (.3 + .7 * rv) + fr * 1.4) * gain; }
         vec3 q = n4p();
-        if (n4.z > 50.) { vec3 col = rb.y < .5 || rb.y > 1.5 ? max(lc, vec3(.5)) : vec3(1., .36, .12); return col * (base + .25) + heat(col, band(atan(q.y + .9, q.x) / 3.14159, .1, 5.)) * gain; }
+        if (n4.z > 50.) { vec3 col = rb.y < .5 || rb.y > 1.5 ? max(lc, vec3(.5)) : vec3(1., .36, .12); float de = 1. - abs(atan(q.y + .9, q.x) / 3.14159 * 2. - 1.), lit = step(de, uCv), fr = exp(-sq((uCv - de) * 9.)) * step(uCv, .999);
+          return (col * (base + .25) + heat(col, band(atan(q.y + .9, q.x) / 3.14159, .1, 5.)) * gain) * (.28 + .72 * lit) + heat(col, fr) * gain; }
         float dg = length(vec2(abs(q.x) - 1.9, q.z)); return vec3(.62, .6, .57) * base + heat(uE, band(dg * .22, .1, 5.) * exp(-dg * .25)) * gain * .7;
       }
       float Sn(float k){ if (k < 1.5 || rb.y > 2.5) return S0f(); if (rb.y < .5) return rb.x; if (rb.y < 1.5) return .58; return .8 + rb.x * .5; }
@@ -501,22 +509,22 @@ function makePoints() {
   })); lines.frustumCulled = false; sc.add(lines);
 
   // 後段三張網的纖維（神經網路版）
-  const mkNet = (stg, P, Cc, Ee) => { const g2 = new THREE.BufferGeometry(); g2.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g2.setAttribute('col', new THREE.Float32BufferAttribute(Cc, 3)); g2.setAttribute('e', new THREE.Float32BufferAttribute(Ee, 2));
+  const mkNet = (stg, P, Cc, Ee, Kq) => { const g2 = new THREE.BufferGeometry(); g2.setAttribute('position', new THREE.Float32BufferAttribute(P, 3)); g2.setAttribute('col', new THREE.Float32BufferAttribute(Cc, 3)); g2.setAttribute('e', new THREE.Float32BufferAttribute(Ee, 2)); g2.setAttribute('kq', new THREE.Float32BufferAttribute(Kq || new Array(P.length / 3).fill(0), 1));
     const m = new THREE.LineSegments(g2, new THREE.ShaderMaterial({ uniforms: U, defines: { STG: stg }, transparent: true, depthWrite: false, depthTest: false, blending: THREE.AdditiveBlending,
       vertexShader: PLEX + `
-        attribute vec3 col; attribute vec2 e; uniform float uP, uN, uFocus, uAp; varying vec3 vCol; varying vec2 vE; varying float vF;
-        void main(){ vec3 p = position; float w;
+        attribute vec3 col; attribute vec2 e; attribute float kq; uniform float uP, uN, uFocus, uAp, uLy[${LAYN.length}], uRv, uCv, uStp; varying vec3 vCol; varying vec2 vE; varying float vF, vR;
+        void main(){ vec3 p = position; float w; vR = 1.;
           #if STG == 2
-            p = N2m(p); w = smoothstep(1.7, 2., uP) * (1. - smoothstep(2.02, 2.25, uP));
+            p = N2m(p); w = smoothstep(1.7, 2., uP) * (1. - smoothstep(2.02, 2.25, uP)); vR = uLy[int(kq + .5)];
           #elif STG == 3
-            p = N3m(p); w = smoothstep(2.7, 3., uP) * (1. - smoothstep(3.02, 3.25, uP));
+            p = N3m(p); w = smoothstep(2.7, 3., uP) * (1. - smoothstep(3.02, 3.25, uP)); float xf = fract(kq) / .98; vR = smoothstep(xf - .03, xf, clamp((uRv - floor(kq)) * uStp / .6, 0., 1.));
           #else
-            p = N4m(p); w = smoothstep(3.7, 4., uP);
+            p = N4m(p); w = smoothstep(3.7, 4., uP); vR = e.y > .5 ? 1. : step(1. - abs(e.x * 2. - 1.), uCv);
           #endif
           vec4 mv = modelViewMatrix * vec4(p, 1.); gl_Position = projectionMatrix * mv; vCol = col; vE = e;
           float coc = abs(-mv.z - uFocus) * uAp; vF = w * uN * smoothstep(30., 6., -mv.z) / (1. + coc * coc * .4); }`,
       fragmentShader: PLEX + `
-        varying vec3 vCol; varying vec2 vE; varying float vF;
+        varying vec3 vCol; varying vec2 vE; varying float vF, vR;
         void main(){ float f;
           #if STG == 2
             f = band(vE.x, .11, 5.);
@@ -525,15 +533,15 @@ function makePoints() {
           #else
             f = band(vE.x, .1, 5.) * (vE.y > .5 ? .5 : 1.);
           #endif
-          gl_FragColor = vec4((vCol * (vE.y > 1.5 ? .16 : .3) + heat(vCol, f) * 1.5) * vF, 1.); }`
+          vec3 cc = mix(vec3(dot(vCol, vec3(.33))) * .7, vCol, vR); gl_FragColor = vec4((cc * (vE.y > 1.5 ? .16 : .3) + heat(cc, f) * 1.5 * (.3 + .7 * vR)) * vF * (.55 + .45 * vR), 1.); }`
     })); m.frustumCulled = false; sc.add(m); nets.push(m); };
   { const P = [], Cc = [], Ee = [], u2 = p => ((Math.hypot(...p) - .7) / .42 + .5) / 6 + .04 * Math.sin(2 * Math.atan2(p[2], p[0]));
-    CUR2.forEach(c => { const lc = hex(LAYCOL[c.L % LAYCOL.length]), dimL = Math.pow(.66, c.L), col = [(1 - .85 * (1 - lc[0])) * dimL, (1 - .85 * (1 - lc[1])) * dimL, (1 - .85 * (1 - lc[2])) * dimL]; for (let k = 0; k < 5; k++) { const a = bez(c, k / 5), b = bez(c, (k + 1) / 5); P.push(...a, ...b); Cc.push(...col, ...col); Ee.push(u2(a), 0, u2(b), 0); } });
-    mkNet(2, P, Cc, Ee); }
-  { const P = [], Cc = [], Ee = [], TS = ph ? 40 : 64;
-    TRK.forEach((t, j) => { for (let k = 0; k < TS; k++) { const x0 = -6.5 + 13 * k / TS, x1 = -6.5 + 13 * (k + 1) / TS; P.push(...trk(j, x0), ...trk(j, x1)); Cc.push(...t.col, ...t.col); Ee.push(x0 / 13 * 2 + t.ph / TAU, 0, x1 / 13 * 2 + t.ph / TAU, 0); } });
-    XL3.forEach(c => { const t = TRK[c.j]; for (let k = 0; k < 4; k++) { P.push(...bez(c, k / 4), ...bez(c, (k + 1) / 4)); Cc.push(...t.col, ...t.col); const e = c.x / 13 * 2 + t.ph / TAU; Ee.push(e, 2, e, 2); } });
-    mkNet(3, P, Cc, Ee.map((v, i) => i % 2 ? v : v)); }
+    const K = []; CUR2.forEach(c => { const lc = hex(LAYCOL[c.L % LAYCOL.length]), dimL = Math.pow(.66, c.L), col = [(1 - .85 * (1 - lc[0])) * dimL, (1 - .85 * (1 - lc[1])) * dimL, (1 - .85 * (1 - lc[2])) * dimL]; for (let k = 0; k < 5; k++) { const a = bez(c, k / 5), b = bez(c, (k + 1) / 5); P.push(...a, ...b); Cc.push(...col, ...col); Ee.push(u2(a), 0, u2(b), 0); K.push(c.L, c.L); } });
+    mkNet(2, P, Cc, Ee, K); }
+  { const P = [], Cc = [], Ee = [], K = [], TS = ph ? 40 : 64;
+    TRK.forEach((t, j) => { for (let k = 0; k < TS; k++) { const x0 = -6.5 + 13 * k / TS, x1 = -6.5 + 13 * (k + 1) / TS; P.push(...trk(j, x0), ...trk(j, x1)); Cc.push(...t.col, ...t.col); Ee.push(x0 / 13 * 2 + t.ph / TAU, 0, x1 / 13 * 2 + t.ph / TAU, 0); K.push(TIDX[j] + (x0 + 6.5) / 13 * .98, TIDX[j] + (x1 + 6.5) / 13 * .98); } });
+    XL3.forEach(c => { const t = TRK[c.j]; for (let k = 0; k < 4; k++) { P.push(...bez(c, k / 4), ...bez(c, (k + 1) / 4)); Cc.push(...t.col, ...t.col); const e = c.x / 13 * 2 + t.ph / TAU; Ee.push(e, 2, e, 2); const kx = TIDX[c.j] + clamp((c.x + 6.5) / 13, 0, 1) * .98; K.push(kx, kx); } });
+    mkNet(3, P, Cc, Ee, K); }
   { const P = [], Cc = [], Ee = [], AS = ph ? 60 : 90, org = [1, .36, .12], gr = [.62, .6, .57];
     FB.forEach(f => { for (let k = 0; k < AS; k++) { const a0 = Math.PI * k / AS, a1 = Math.PI * (k + 1) / AS; P.push(...arch(f, a0), ...arch(f, a1)); Cc.push(...org, ...org); Ee.push(a0 / Math.PI, 0, a1 / Math.PI, 0); } });
     CUR4.forEach(c => { for (let k = 0; k < 4; k++) { const a = bez(c, k / 4), b = bez(c, (k + 1) / 4), dg = p => Math.hypot(Math.abs(p[0]) - 1.9, p[2]) * .22; P.push(...a, ...b); Cc.push(...gr, ...gr); Ee.push(dg(a), 1, dg(b), 1); } });
@@ -602,7 +610,7 @@ function frame(now) {
   if (pts) pts.rotation.y = s > 1.5 && s < 2.6 ? t * .03 * (1 - uN) : 0;
   U.uMs.value += ((ph ? 0 : ms) - U.uMs.value) * Math.min(1, dt * 4); U.uM.value.set(mxs, mys);
   R.render(sc, cam);
-  rdFrame(t, s, dt);
+  rdFrame(t, s, dt); prFrame(t, s, dt);
   pcs.forEach((p, i) => p.classList.toggle('on', Math.abs(s - PCS[i].s) < .42 || (i === 3 && s > 3.6)));
   const cur = Math.round(clamp(s, 0, 4)); pgi.forEach((g, i) => g.classList.toggle('on', i === cur));
   requestAnimationFrame(frame);
@@ -662,7 +670,7 @@ function rdStep(t) {
 function rdReset() { RX.i = 0; RX.done = 0; RX.hist = []; RX.picks = []; RX.dots = []; RX.log = []; RX.head = null; RX.wait = .35; rdPaint(); }
 if (RM) { RX.fast = 1; while (RX.i < SEQ.length) rdStep(0); RX.fast = 0; RX.done = 1; RX.picks = []; }
 rdPaint();
-function lab(slot, key, html, cls, lc) { const p = POOL[slot]; if (p.k !== key) { p.k = key; p.e.className = 'rl ' + cls; p.e.innerHTML = html; if (lc) p.e.style.setProperty('--lc', lc); p.e.style.display = 'flex'; p.w = p.e.offsetWidth; p.hh = p.e.offsetHeight; } return p; }
+function lab(slot, key, html, cls, lc, pool = POOL) { const p = pool[slot]; if (p.k !== key) { p.k = key; p.e.className = 'rl ' + cls; p.e.innerHTML = html; if (lc) p.e.style.setProperty('--lc', lc); p.e.style.display = 'flex'; p.w = p.e.offsetWidth; p.hh = p.e.offsetHeight; } return p; }
 // 標籤擺在點的右上；撞到面板、螢幕邊或這一格已經擺好的標籤，就換到左上、右下、左下（記住上一次的位置，免得來回跳）
 let PLC = [];
 function place(p, x, y, o, B) { const C = [[1, -1], [-1, -1], [1, 1], [-1, 1]], hit = (l, t) => l < 8 || l + p.w > W - 8 || t < 66 || t + p.hh > H - 8 || (l < B.right + 8 && l + p.w > B.left - 8 && t < B.bottom + 8 && t + p.hh > B.top - 8) || PLC.some(r => l < r[2] + 4 && l + p.w > r[0] - 4 && t < r[3] + 3 && t + p.hh > r[1] - 3);
@@ -698,6 +706,64 @@ function rdFrame(t, s, dt) {
   let sl = 0; RX.hist.forEach(it => { if (it === RX.head || !it.q || it.q.z > 1) return; const o = .78 * Math.exp(-(t - it.t) * 1.15) * fo; if (o < .05 || sl >= HN) return; const p = lab(2 + sl, 'h' + it.no, D0.nm[it.j][LG], 't'); place(p, it.q.x, it.q.y, o, B); used.add(2 + sl); sl++; });
   rx.globalAlpha = 1;
   POOL.forEach((p, i) => { if (!used.has(i) && p.k) { p.k = null; p.e.style.display = 'none'; } });
+}
+/* ── 03–05 也演出處理的過程（2026-11-20，使用者：「這種表達過程的動效設計理念，可以沿用在後面幾個畫面嗎？」）──
+   同一套規則：每一段演 Daybreak 每天的一個步驟；畫面上的東西被處理到才上色，標籤是真的圖名，面板的數字從 0 長到今天的值；做完停在結果上。
+   03 分類：一張一張圖歸到它那一層，那層的球面隨著分進來的張數亮起來、染上那層的顏色
+   04 表態：一列一列掃過軌跡，掃到的那條才從灰變成它今天的表態色，偏多／偏空／中性的大數字跟著數
+   05 收斂：纖維從弧的兩端往頂點亮，兩邊各一個讀頭；頭條的字跟著收斂一個個從點字解出來，到頂點寫出這一期的判讀 */
+const rYj = (v, a) => { const c = Math.cos(a), s = Math.sin(a); return [c * v[0] + s * v[2], v[1], -s * v[0] + c * v[2]]; };
+const rXj = (v, a) => { const c = Math.cos(a), s = Math.sin(a); return [v[0], c * v[1] - s * v[2], s * v[1] + c * v[2]]; };
+const POS = [null, null,
+  (j, t) => { const p = CH2[j], Lf = (Math.hypot(...p) - .7) / .42; return rXj(rYj(p, t * .035 + .22 * Math.sin(t * .3 + Lf * 1.3)), .35); },
+  (j, t) => { const p = trk(j, CHX[j]); return rYj([p[0], p[1] + Math.sin(p[0] * .8 + t * .6 + p[2]) * .04, p[2] + Math.cos(p[0] * .6 + t * .5) * .03], -.38); },
+  (j, t) => { const p = arch(FB[j % FB.length], (j + .5) / NC * Math.PI); return [p[0], p[1] + Math.sin(p[0] * 1.6 + t) * .006, p[2]]; }];
+const projW = w => { pv.set(w[0], w[1], w[2]); pv.project(cam); return { x: (pv.x + 1) / 2 * W, y: (1 - pv.y) / 2 * H, z: pv.z }; };
+const STG = [2, 3, 4].map(k => { const el = document.createElement('div'); el.className = 'rdx2'; el.setAttribute('aria-hidden', 'true'); document.body.insertBefore(el, rdx.nextSibling); const cv = document.createElement('canvas'); el.appendChild(cv);
+  return { k, el, cv, cx: cv.getContext('2d'), pool: k === 4 ? [0].map(() => { const e = document.createElement('div'); e.className = 'rl'; el.appendChild(e); return { e, k: null, w: 0, hh: 0 }; }) : [], u: 0, i: 0, idle: 0, done: 0, cnt: {}, fl: [] }; });
+const [S3, S4, S5] = STG, DUR3 = .8, STP3 = ph ? .085 : .07, STP5 = ph ? .1 : .085;
+const esc = x => x.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+function stReset(S) { S.u = 0; S.i = 0; S.done = 0; S.cnt = {}; S.fl = []; S.tDone = 0; if (S === S3) U.uLy.value = LAYN.map(() => 0); if (S === S4) U.uRv.value = -99; if (S === S5) U.uCv.value = 0; prPaint(S); }
+function stFinish(S) { S.u = 1e4; S.i = NC; S.done = 1; S.fl = []; S.cnt = {}; D.ch.forEach(c => { const key = S === S3 ? c[2] : (c[1] || ''); S.cnt[key] = (S.cnt[key] || 0) + 1; });
+  if (S === S3) U.uLy.value = LAYN.map(() => 1); if (S === S4) U.uRv.value = 1e4; if (S === S5) U.uCv.value = 1; prPaint(S); }
+// 03 分類：每張圖一顆光點，從最外圈往內落到它那一層；落地才算數（那層亮一點、面板長一格）
+// 04 表態：每條軌跡輪到時，表態色從一端描到另一端（著色器做），數字跟著數
+// 05 收斂：弧從兩端往頂點亮，頭條的字跟著一個個亮起來；到頂點留一個判讀標籤
+function stRun(S, t, dt) {
+  if (S === S3) { S.u += dt / STP3; while (S.i < Math.min(NC, Math.floor(S.u))) { const j = S.i++; S.fl.push({ j, L: D.ch[j][2], t0: t, landed: 0 }); }
+    S.fl.forEach(f => { if (!f.landed && t - f.t0 >= DUR3) { f.landed = t; S.cnt[f.L] = (S.cnt[f.L] || 0) + 1; U.uLy.value[f.L] = S.cnt[f.L] / Math.max(1, LAYN[f.L][1]); prPaint(S3); } });
+    S.fl = S.fl.filter(f => !f.landed || t - f.landed < .6); if (S.i >= NC && !S.fl.some(f => !f.landed)) { S.done = 1; } }
+  if (S === S4) { S.u += dt / STP4; U.uRv.value = S.u; let ch = 0; while (S.i < Math.min(NC, Math.floor(S.u))) { const l = D.ch[ROWSEQ[S.i++]][1] || ''; S.cnt[l] = (S.cnt[l] || 0) + 1; ch = 1; } if (ch) prPaint(S4); if (S.u > NC + .6 / STP4 + 1) S.done = 1; }
+  if (S === S5) { S.u += dt / STP5; U.uCv.value = Math.min(1, 2 * S.u / NC); prPaint(S5); if (U.uCv.value >= 1) { S.done = 1; S.tDone = t; } }
+}
+function prPaint(only) { // 面板跟著進度（換語言重畫時三段都補回來）
+  if (!only || only === S3) document.querySelectorAll('.rowl[data-l]').forEach(e => { const L = +e.dataset.l, c = S3.cnt[L] || 0; e.querySelector('i').style.width = (c / LMAX * 100) + '%'; e.querySelector('span').textContent = c; e.classList.toggle('wt', !c); });
+  if (!only || only === S4) document.querySelectorAll('.big3 b[data-v]').forEach(e => { e.textContent = S4.cnt[e.dataset.v] || 0; });
+  if (!only || only === S5) { const e = $('#vd'); if (e) { const h = D.head; if (e.dataset.h !== h) { e.innerHTML = [...h].map(c => `<span>${esc(c)}</span>`).join(''); e.dataset.h = h; e.lit = -1; }
+    const n = S5.done ? h.length : Math.round(h.length * clamp(U.uCv.value, 0, 1)); if (n !== e.lit) { e.lit = n; [...e.children].forEach((x, i) => x.classList.toggle('on', i < n)); } } }
+}
+PR = 1;
+if (RM) STG.forEach(stFinish); else prPaint();
+const STW = [s => sm(1.65, 1.9, s) * (1 - sm(2.15, 2.4, s)), s => sm(2.65, 2.9, s) * (1 - sm(3.15, 3.4, s)), s => sm(3.65, 3.9, s)];
+function prFrame(t, s, dt) {
+  STG.forEach((S, si) => {
+    const w = STW[si](s); S.el.style.opacity = w.toFixed(3);
+    const D2 = Math.min(2, devicePixelRatio || 1); if (S.cv.width !== Math.round(W * D2)) { S.cv.width = Math.round(W * D2); S.cv.height = Math.round(H * D2); }
+    const cx = S.cx; cx.setTransform(D2, 0, 0, D2, 0, 0);
+    if (w < .02) { if (S.drawn) { cx.clearRect(0, 0, W, H); S.drawn = 0; S.pool.forEach(p => { if (p.k) { p.k = null; p.e.style.display = 'none'; } }); } S.idle += dt; if (S.idle > 3 && S.u && !RM) stReset(S); return; }
+    S.idle = 0; S.drawn = 1; cx.clearRect(0, 0, W, H);
+    if (!RM && w > .5 && !S.done) stRun(S, t, dt);
+    if (S === S3) S.fl.forEach(f => { const col = LAYCOL[f.L % LAYCOL.length], end = POS[2](f.j, t), rr = Math.hypot(...end) || 1, k0 = (rr + 1.5) / rr, at = e => { const m = k0 + (1 - k0) * e; return projW([end[0] * m, end[1] * m, end[2] * m]); };
+      if (!f.landed) { const k = clamp((t - f.t0) / DUR3, 0, 1), ez = x => 1 - Math.pow(1 - clamp(x, 0, 1), 3), a = at(ez(k - .22)), b = at(ez(k)); if (b.z > 1) return;
+        const g = cx.createLinearGradient(a.x, a.y, b.x, b.y); g.addColorStop(0, col + '00'); g.addColorStop(1, col); cx.globalAlpha = w; cx.strokeStyle = g; cx.lineWidth = 1.8; cx.beginPath(); cx.moveTo(a.x, a.y); cx.lineTo(b.x, b.y); cx.stroke();
+        cx.fillStyle = col; cx.beginPath(); cx.arc(b.x, b.y, 2.8, 0, TAU); cx.fill(); }
+      else { const q = at(1), g = (t - f.landed) / .6; if (q.z > 1) return; cx.globalAlpha = (1 - g) * .9 * w; cx.strokeStyle = col; cx.lineWidth = 1.2; cx.beginPath(); cx.arc(q.x, q.y, 3 + g * 11, 0, TAU); cx.stroke(); } });
+    if (S === S5 && S.done && !RM) { const q = projW([0, -.9 + 1.9, 0]), age = t - S.tDone, o = clamp((age - .1) * 3, 0, 1), B = pcs[3].getBoundingClientRect(); PLC = [];
+      if (q.z < 1 && o > 0) { cx.strokeStyle = '#EDEDE8'; cx.lineWidth = 1.2; [10, 10 + Math.min(1, age) * 18].forEach((r, i) => { cx.globalAlpha = o * (i ? Math.max(0, 1 - age) : 1); cx.beginPath(); cx.arc(q.x, q.y, r, 0, TAU); cx.stroke(); });
+        const p = lab(0, 'v' + LG, `${T(`第 ${D.issue} 期`, `Issue ${D.issue}`)}<u>${D.stance}</u>`, 'p', null, S.pool); place(p, q.x, q.y, o, B); } }
+    else S.pool.forEach(p => { if (p.k) { p.k = null; p.e.style.display = 'none'; } });
+    cx.globalAlpha = 1;
+  });
 }
 build(); makePoints(); requestAnimationFrame(frame);
 </script>
