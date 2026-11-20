@@ -102,6 +102,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Inter 
 .prog i { cursor: pointer; width: 2px; height: 22px; border-radius: 1px; background: rgba(237,237,232,.18); transition: background .3s, height .5s var(--spr); }
 .prog i.on { background: var(--ac); height: 40px; }
 #scroll { position: relative; z-index: 0; height: 600vh; }
+
 .foot { position: relative; z-index: 5; padding: 26px var(--gut) calc(env(safe-area-inset-bottom, 0px) + 30px); display: flex; justify-content: space-between; gap: 20px; flex-wrap: wrap; font: 500 11px/1.6 var(--mono); letter-spacing: .08em; color: var(--k2); border-top: 1px solid var(--line); background: var(--bg); }
 @media (max-width: 700px) {
   .hud { flex-direction: column; align-items: flex-start; gap: 12px; } .hud .rt { text-align: left; }
@@ -239,10 +240,34 @@ $('#lgs').addEventListener('click', e => { const b = e.target.closest('button');
   try { localStorage.setItem('daybreak.lang', to); } catch (e0) {} window.DAYBREAK_LANG = to; document.documentElement.lang = to === 'en' ? 'en' : 'zh-Hant';
   if (/[?&]lang=/.test(location.search)) try { history.replaceState(null, '', location.pathname + '?lang=' + to + location.hash); } catch (e1) {}
   scramble(() => { LG = to === 'en' ? 1 : 0; paintLang(); }); });
-$('#cue').onclick = e => { e.preventDefault(); const h = document.getElementById('scroll').offsetHeight - innerHeight; scrollTo({ top: h / 4.5, behavior: RM ? 'auto' : 'smooth' }); };
+/* 一次手勢走一段（2026-11-20，使用者：「不容易磁吸固定到可以激活動畫的位置，有的時候會滑不到位，動畫不會開始，有的時候不小心滑過，動畫沒看到就過了」）
+   CSS 的強制吸附試過：小幅度滑動會被吸回原段，反而更滑不到位，所以改成 JS 分頁：
+   滾輪、觸控、鍵盤、進度點都是「往那個方向走一段」，平順移到那一段的動畫位置（和 sp() 同一個公式，s 剛好是整數）；
+   移動中和剛停下時的慣性滾動不算，等手停了才接受下一次，所以不會一次滑過兩段。拉捲軸停下來會自己滑到最近的一段。第 5 站是頁尾。 */
+const scrH = () => document.getElementById('scroll').offsetHeight - innerHeight;
+const stageY = k => k <= 4 ? scrH() * k / 4.5 : document.documentElement.scrollHeight - innerHeight;
+const nearest = () => { let b = 0, bd = 1e9; for (let k = 0; k <= 5; k++) { const d = Math.abs(scrollY - stageY(k)); if (d < bd) { bd = d; b = k; } } return b; };
+let cur = 0, gAnim = 0, quiet = 0, lastIn = 0, wAcc = 0, settleT = 0;
+function goStage(k) { k = clamp(k, 0, 5); cur = k; const y0 = scrollY, y1 = stageY(k), t0 = performance.now(), dur = RM ? 0 : clamp(Math.abs(y1 - y0) / innerHeight * 520, 650, 1300);
+  gAnim = 1; quiet = 1; cancelAnimationFrame(goStage.f);
+  const step = now => { const f = dur ? clamp((now - t0) / dur, 0, 1) : 1, e = f < .5 ? 4 * f * f * f : 1 - Math.pow(-2 * f + 2, 3) / 2; scrollTo(0, y0 + (y1 - y0) * e); if (f < 1) goStage.f = requestAnimationFrame(step); else { gAnim = 0; lastIn = performance.now(); } };
+  goStage.f = requestAnimationFrame(step); }
+const busyIn = () => { const now = performance.now(); if (gAnim) { lastIn = now; return true; } if (quiet && now - lastIn < 200) { lastIn = now; return true; } quiet = 0; lastIn = now; return false; };
+addEventListener('wheel', e => { if (e.ctrlKey) return; e.preventDefault(); const dy = e.deltaMode ? e.deltaY * 40 : e.deltaY; if (busyIn()) { wAcc = 0; return; }
+  wAcc += dy; if (Math.abs(wAcc) > 24) { const d = Math.sign(wAcc); wAcc = 0; goStage(nearest() + d); } }, { passive: false });
+let tY = null;
+addEventListener('touchstart', e => { tY = e.touches.length === 1 ? e.touches[0].clientY : null; }, { passive: true });
+addEventListener('touchmove', e => { if (tY !== null && !(e.target.closest && e.target.closest('a, button'))) e.preventDefault(); }, { passive: false });
+addEventListener('touchend', e => { if (tY === null) return; const dy = tY - e.changedTouches[0].clientY; tY = null; if (Math.abs(dy) > 36 && !gAnim) goStage(nearest() + Math.sign(dy)); }, { passive: true });
+addEventListener('keydown', e => { if ((e.target.closest && e.target.closest('input, textarea')) || e.metaKey || e.ctrlKey || e.altKey) return; const m = { ArrowDown: 1, PageDown: 1, ' ': 1, ArrowUp: -1, PageUp: -1 }[e.key];
+  if (m) { e.preventDefault(); if (!gAnim) goStage(nearest() + (e.shiftKey && e.key === ' ' ? -1 : m)); } else if (e.key === 'Home' || e.key === 'End') { e.preventDefault(); goStage(e.key === 'Home' ? 0 : 5); } });
+// 拉捲軸或瀏覽器自己捲（重新整理後回到原位置）停下來時，滑到最近的一段
+addEventListener('scroll', () => { if (gAnim) return; clearTimeout(settleT); settleT = setTimeout(() => { if (!gAnim && Math.abs(scrollY - stageY(nearest())) > 3) goStage(nearest()); }, 240); }, { passive: true });
+addEventListener('resize', () => { if (!gAnim) scrollTo(0, stageY(cur)); });
+$('#cue').onclick = e => { e.preventDefault(); goStage(1); };
 addEventListener('scroll', () => $('#cue').classList.toggle('off', scrollY > 40), { passive: true });
 $('#prog').innerHTML = Array.from({ length: 5 }, () => '<i></i>').join(''); const pgi = [...document.querySelectorAll('#prog i')];
-[...pgi].forEach((g, i) => g.onclick = () => { const h = document.getElementById('scroll').offsetHeight - innerHeight; scrollTo({ top: h * i / 4.5, behavior: RM ? 'auto' : 'smooth' }); });
+[...pgi].forEach((g, i) => g.onclick = () => goStage(i));
 
 /* ── 粒子 ── */
 const host = $('#gl'); let W = innerWidth, H = innerHeight, ph = W < 700;
