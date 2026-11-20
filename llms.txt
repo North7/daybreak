@@ -22,6 +22,8 @@ Built and maintained by Aron (Aron Lab, https://aronlab.dev/). Bilingual: Tradit
 - [Demand](https://daybreak.aronlab.dev/app/#buy): Who is buying and where the money comes from
 - [Leverage](https://daybreak.aronlab.dev/app/#lev): How crowded leverage and sentiment are
 - [Exit](https://daybreak.aronlab.dev/app/#exit): So what do I do
+- [All charts](https://daybreak.aronlab.dev/en/charts/): every chart on one page, grouped by the six questions, with today’s lean and reason; each chart also has its own page at /en/charts/<code>/ (中文：https://daybreak.aronlab.dev/charts/)
+- [Daily briefs](https://daybreak.aronlab.dev/en/brief/): one page per day since Oct 2026 (headline, overall lean, levels to watch, findings) at /en/brief/YYYY-MM-DD/ (中文：https://daybreak.aronlab.dev/brief/)
 - [Case study](https://daybreak.aronlab.dev/case-study/en/): how Daybreak was designed and built, and how it checks its own calls (中文版：https://daybreak.aronlab.dev/case-study/)
 
 ## Method

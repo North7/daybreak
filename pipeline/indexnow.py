@@ -7,7 +7,13 @@ import json, urllib.request
 
 KEY = 'f4af452c772ca762ae6ba9c8a566e5c5'
 HOST = 'daybreak.aronlab.dev'
-URLS = ['/', '/app/', '/llms.txt', '/latest.md', '/latest.en.md']
+URLS = ['/', '/app/', '/llms.txt', '/latest.md', '/latest.en.md', '/charts/', '/en/charts/', '/brief/', '/en/brief/']
+# 2026-11-20 GEO 第二批：當天的簡報頁（每張圖的頁每天也會變，但一次送 240 頁太多；它們靠 sitemap 和索引頁的連結被找到）
+import glob, os
+_A = sorted(glob.glob(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'archive', '20??-??-??.json')))
+if _A:
+    _d = os.path.basename(_A[-1])[:10]; URLS.append('/brief/%s/' % _d)
+    if os.path.exists(_A[-1][:-5] + '.en.json'): URLS.append('/en/brief/%s/' % _d)
 
 body = json.dumps({'host': HOST, 'key': KEY, 'keyLocation': 'https://%s/%s.txt' % (HOST, KEY), 'urlList': ['https://' + HOST + u for u in URLS]}).encode()
 try:
