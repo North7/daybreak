@@ -27,7 +27,7 @@ from geo import esc, SITE, PERSON, WEBSITE, TN, QS, PAGES, LEANS, NX, _MON
 
 REPO = geo.REPO
 DATE = geo.DATE
-PREV = json.load(open(os.path.join(REPO, 'data', 'leans.json'), encoding='utf-8')).get('prev', {})
+_LJ = json.load(open(os.path.join(REPO, 'data', 'leans.json'), encoding='utf-8')); PREV = _LJ.get('prev', {}); LEANS_DATE = _LJ.get('date')
 HOW = json.load(open(os.path.join(HERE, 'how.json'), encoding='utf-8'))
 PG = {q['id']: q for q in QS}
 CHART_PG = {c['k']: q['id'] for q in QS for c in geo.charts(q['id'])}
@@ -106,11 +106,11 @@ def shell(en, path_zh, path_en, title, desc, body, graph, og=None):
             '<meta property="og:type" content="article"><meta property="og:site_name" content="Daybreak"><meta property="og:title" content="%s"><meta property="og:description" content="%s">'
             '<meta property="og:url" content="%s%s"><meta property="og:image" content="%s"><meta name="twitter:card" content="summary_large_image">'
             '<meta name="theme-color" content="#F2F0EA" media="(prefers-color-scheme: light)"><meta name="theme-color" content="#060607" media="(prefers-color-scheme: dark)">'
-            '<link rel="icon" href="%sassets/favicon.svg" type="image/svg+xml">%s<style>%s</style>%s</head><body>'
+            '<link rel="icon" href="%sassets/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/atom+xml" title="%s" href="%s%s">%s<style>%s</style>%s</head><body>'
             '<header><a class="lg" href="%sapp/%s">%sDAYBREAK</a><nav class="lang" aria-label="%s">%s</nav></header><main>%s</main>'
             '<footer>%s</footer></body></html>') % (
         'en' if en else 'zh-Hant', esc(title), esc(desc), SITE, me, alt, esc(title), esc(desc), SITE, me, og or SITE + 'assets/og-en.png?v=20261112',
-        up, FONTS, CSS, ld(graph), up, '?lang=en' if en else '?lang=zh', LOGO, 'Language' if en else '語言', lang, body, footer(en, up))
+        up, 'Daybreak · Daily Bitcoin brief' if en else 'Daybreak · 比特幣每日簡報', SITE, 'en/feed.xml' if en else 'feed.xml', FONTS, CSS, ld(graph), up, '?lang=en' if en else '?lang=zh', LOGO, 'Language' if en else '語言', lang, body, footer(en, up))
 
 
 def footer(en, up):
@@ -245,7 +245,38 @@ def archive():
         except Exception as ex:
             print('archive skip', d, ex); continue
         if z.get('headline'): out[d] = (z, e if e and e.get('headline') else None)
+    # 2026-11-21：當天的判讀要等當天稍晚第二次跑資料（archive.py snapshot）才進封存，這段時間用 data/notes*.json 先出當天的簡報頁
+    try:
+        n = json.load(open(os.path.join(REPO, 'data', 'notes.json'), encoding='utf-8')); d = n.get('date')
+        if d and d not in out and n.get('headline'):
+            try: e = json.load(open(os.path.join(REPO, 'data', 'notes.en.json'), encoding='utf-8'))
+            except Exception: e = None
+            if LEANS_DATE == d: n['cards'] = {k: {'lean': v} for k, v in LEANS.items()}
+            out[d] = (n, e if e and e.get('date') == d and e.get('headline') else None)
+    except Exception as ex:
+        print('notes fallback skipped', ex)
     return out
+
+
+def feed(A, ds, en):
+    """每日簡報的 Atom feed（最近 30 期）：feed.xml（中文）、en/feed.xml（英文）"""
+    x = lambda t: html.escape(t or '', quote=False)
+    me = 'en/feed.xml' if en else 'feed.xml'; idx = SITE + ('en/brief/' if en else 'brief/')
+    items = [(d, A[d]) for d in reversed(ds) if not en or A[d][1]][:30]
+    o = ['<?xml version="1.0" encoding="utf-8"?>', '<feed xmlns="http://www.w3.org/2005/Atom" xml:lang="%s">' % ('en' if en else 'zh-Hant'),
+         '<title>%s</title>' % ('Daybreak · Daily Bitcoin brief' if en else 'Daybreak · 比特幣每日簡報'),
+         '<subtitle>%s</subtitle>' % x(geo.INTRO_EN if en else geo.INTRO_ZH), '<id>%s</id>' % idx,
+         '<link rel="alternate" type="text/html" href="%s"/>' % idx, '<link rel="self" type="application/atom+xml" href="%s%s"/>' % (SITE, me),
+         '<updated>%s</updated>' % ((items[0][1][0].get('written_utc') or items[0][0] + 'T00:00:00Z') if items else DATE + 'T00:00:00Z'),
+         '<author><name>Aron</name><uri>https://aronlab.dev/</uri></author>', '<icon>%sassets/favicon.svg</icon>' % SITE]
+    for d, (z, e) in items:
+        a = e if en else z; u = SITE + ('en/brief/%s/' % d if en else 'brief/%s/' % d)
+        st = (a.get('stance') or {}).get('label') or ''
+        o.append('<entry><title>%s</title><link rel="alternate" type="text/html" href="%s"/><id>%s</id><published>%sT00:00:00Z</published><updated>%s</updated>'
+                 '<summary>%s</summary></entry>' % (x(('%s: %s' % (den(d), a['headline'])) if en else ('%s：%s' % (dzh(d), a['headline']))), u, u, d,
+                                                    z.get('written_utc') or d + 'T00:00:00Z', x(((st + ' — ') if st else '') + (a.get('summary') or ''))))
+    o.append('</feed>')
+    return '\n'.join(o) + '\n'
 
 
 def brief_page(d, A, ds, en):
@@ -338,6 +369,9 @@ def main():
         if A[d][1]: write(out, 'en/brief/%s' % d, brief_page(d, A, ds, True))
         urls.append(('brief/%s/' % d, 'en/brief/%s/' % d if A[d][1] else None, d))
     for en in (False, True): write(out, 'en/brief' if en else 'brief', brief_index(A, ds, en))
+    for en in (False, True):
+        fp = os.path.join(out, 'en', 'feed.xml') if en else os.path.join(out, 'feed.xml'); os.makedirs(os.path.dirname(fp), exist_ok=True)
+        open(fp, 'w', encoding='utf-8').write(feed(A, ds, en))
     urls.append(('brief/', 'en/brief/', ds[-1] if ds else DATE))
     sm = os.path.join(out, 'sitemap.xml'); s = open(sm, encoding='utf-8').read()
     add = []

@@ -147,7 +147,10 @@ WEBSITE = {'@type': 'WebSite', '@id': SITE + '#site', 'name': 'Daybreak', 'alter
 
 def _ld(graph):
     s = json.dumps({'@context': 'https://schema.org', '@graph': graph}, ensure_ascii=False, separators=(',', ':'))
-    return '<script type="application/ld+json">%s</script>' % s.replace('</', '<\\/')
+    # 2026-11-21 每日簡報的 Atom feed（pipeline/next/pages.py 部署時寫）
+    return ('<link rel="alternate" type="application/atom+xml" title="Daybreak · 比特幣每日簡報" href="%sfeed.xml">'
+            '<link rel="alternate" type="application/atom+xml" title="Daybreak · Daily Bitcoin brief" href="%sen/feed.xml">' % (SITE, SITE)
+            + '<script type="application/ld+json">%s</script>' % s.replace('</', '<\\/'))
 
 
 def ld_intro():
@@ -219,7 +222,8 @@ def llms():
           '- Code computes every number and every rule. AI writes the daily explanation from those numbers; it does not calculate and does not decide.',
           '- Every chart is marked bullish, bearish or neutral with a one-line reason. The site makes no trade calls.', '',
           '## Optional', '',
-          '- [Sitemap](%ssitemap.xml)' % SITE, '']
+          '- [Sitemap](%ssitemap.xml)' % SITE,
+          '- [Daily brief feed, English (Atom)](%sen/feed.xml) · [中文](%sfeed.xml)' % (SITE, SITE), '']
     return '\n'.join(o)
 
 
