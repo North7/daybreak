@@ -112,6 +112,10 @@
   {
    "date": "2026-11-19",
    "id": "flows/etfcost"
+  },
+  {
+   "date": "2026-11-20",
+   "id": "deriv/lqv"
   }
  ]
 }

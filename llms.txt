@@ -4,11 +4,11 @@
 
 Daybreak 是 Aron 做的免費比特幣每日判讀。每天台北時間早上 08:30 前更新，用 133 張自建與公開的指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，回答六個問題：現在在週期的哪裡？價格站在哪些成本和關卡上？賣壓出清了沒？誰在買、錢從哪裡來？槓桿和情緒擠不擠？那我該怎麼做？每張圖都表態偏多、偏空或中性，並寫出理由。數字由程式計算，AI 只負責解釋，不計算也不做決定；不給交易建議。
 
-Built and maintained by Aron (Aron Lab, https://aronlab.dev/). Bilingual: Traditional Chinese and English. Latest edition: Nov 19, 2026 close, No.45.
+Built and maintained by Aron (Aron Lab, https://aronlab.dev/). Bilingual: Traditional Chinese and English. Latest edition: Nov 20, 2026 close, No.46.
 
 ## Latest reading
 
-62K broke on a close: the thickest short-term holder layer failed, coins are thin down to the prior low near 58.5K, and this leg is not done. — Short-term bearish: the close broke 62K, ETFs lost another $310M on Nov 18, US stocks keep falling and more accounts hold longs, not fewer. Long-term bullish: only 45% of supply is in profit and unrealized profit relative to market cap matches the 2022 bottom's lowest reading, a bottom-zone valuation. A close below 60.5K takes long-term holder losses to a cycle high, with the prior low at 58.5K next; a floor needs ETF flows to turn net positive first.
+Sellers are hurting more than at the June low and money is still leaving; loss-taking alone will not hold the prior low at 58.5K. — Short-term bearish: ETFs lost $632M on Nov 19 and stablecoins are down $17.9B in 30 days, so buyers are leaving while longs are only partly flushed. Long-term bullish: one-day realized losses relative to market cap are nearly double the June low's peak and unrealized profit is below the 2022 bottom, pain seen only in cycle-bottom zones. A close below 58,525 is a new cycle low, with the realized price at 53.3K next; a floor needs ETF or stablecoin flows to turn net positive.
 
 - [Full latest reading, English (Markdown)](https://daybreak.aronlab.dev/latest.en.md): headline, six questions, every chart with its lean, reason and source
 - [完整最新判讀，中文（Markdown）](https://daybreak.aronlab.dev/latest.md)

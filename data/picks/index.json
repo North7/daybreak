@@ -1,16 +1,16 @@
 {
- "date": "2026-11-19",
+ "date": "2026-11-20",
  "captions": true,
  "picks": [
   {
-   "id": "flows/etfcost",
-   "chart": "data/picks/flows-etfcost.png",
-   "chart_en": "data/picks/flows-etfcost-en.png",
+   "id": "deriv/lqv",
+   "chart": "data/picks/deriv-lqv.png",
+   "chart_en": "data/picks/deriv-lqv-en.png",
    "name": {
-    "zh": "ETF 持有者成本",
-    "en": "ETF holder cost basis"
+    "zh": "每日多空清算量",
+    "en": "Daily long and short liquidations"
    },
-   "link": "https://daybreak.aronlab.dev/app/?k=etfcost"
+   "link": "https://daybreak.aronlab.dev/app/?k=lqv"
   }
  ]
 }
