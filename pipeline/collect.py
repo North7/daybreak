@@ -615,6 +615,47 @@ try:
                              zero_now=bool(zero_now), state_run_days=run, last_episode=eps[-1] if eps else None, episodes=eps, rows=rows,
                              note='CoinMetrics community 市值 ÷ MVRV 推得；只作資金背景讀值，不作買賣訊號')
 except Exception as e: errors.append(f'rc_liquidity {e}')
+# G1b-2. 2026-11-21 使用者要求：Checkonchain「Realised Cap Liquidity Cycle」的 Liquidity Index（實現市值卡的第二個檢視）。
+#   反推並逐日驗證（誤差 0）：每個視窗算實現市值落在「過去 N 天最低～最高」的哪裡（最低＝0、最高＝1），N＝30、90、365（他的圖例寫 180-day，實際是 365 天），三個取平均。
+#   指數＝0 ⟺ 實現市值創 365 天新低（同時也是 30、90 天新低）。2013 起只有 3 段（2015、2018–19、2022），都在週期底部附近；只作讀值。
+try:
+    if 'rc_liquidity' in R:
+        _li_ep = dt.date(1970, 1, 1)
+        def _li_win(j, n):   # 以日期回推 n 天（含當天）的實現市值區間位置
+            a_ = bisect.bisect_left(_d, (_dd[j] - dt.timedelta(days=n - 1)).isoformat()); w_ = _rc[a_:j + 1]; lo_, hi_ = min(w_), max(w_)
+            return (_rc[j] - lo_) / (hi_ - lo_) if hi_ > lo_ else 0.0
+        LI = [None] * len(_d); LC = [None] * len(_d)
+        for j in range(len(_d)):
+            if (_dd[j] - _dd[0]).days < 365: continue
+            c3 = [_li_win(j, n) for n in (30, 90, 365)]; LC[j] = c3; LI[j] = sum(c3) / 3
+        def _fw(j, h):
+            t_ = (_dd[j] + dt.timedelta(days=h)).isoformat(); b_ = bisect.bisect_left(_d, t_)
+            return _p[b_] / _p[j] - 1 if b_ < len(_d) else None
+        s13 = bisect.bisect_left(_d, '2013-01-01'); cl = []; s_ = None
+        for j in range(s13, len(_d)):   # 指數＝0 的日子，相隔 30 天內的併成一段
+            if LI[j] is not None and LI[j] < 1e-6:
+                if cl and (_dd[j] - _dd[cl[-1][1]]).days <= 30: cl[-1][1] = j
+                else: cl.append([j, j])
+        ath = 0; athm = {}
+        for j in range(len(_d)): ath = max(ath, _p[j]); athm[j] = ath
+        zeps = []
+        for a_, b_ in cl:
+            e_ = bisect.bisect_left(_d, (_dd[b_] + dt.timedelta(days=365)).isoformat()); lw = min(range(a_, min(len(_d), e_ + 1)), key=lambda q: _p[q])
+            f3 = _fw(a_, 365)
+            zeps.append(dict(start=_d[a_], end=_d[b_], days0=sum(1 for q in range(a_, b_ + 1) if LI[q] is not None and LI[q] < 1e-6), px=round(_p[a_]),
+                             dd_ath=round((_p[a_] / athm[a_] - 1) * 100), low=_d[lw], low_px=round(_p[lw]), low_pct=round((_p[lw] / _p[a_] - 1) * 100),
+                             fwd365=None if f3 is None else round(f3 * 100), ongoing=b_ >= len(_d) - 2))
+        BK = [(0, 1e-6), (1e-6, .2), (.2, .4), (.4, .6), (.6, .8), (.8, .999), (.999, 1.01)]; bks = []
+        for lo_, hi_ in BK:   # 2013 起，各區間之後 180 天的漲跌（相鄰日子重疊，只作參考）
+            r_ = [x for x in (_fw(j, 180) for j in range(s13, len(_d)) if LI[j] is not None and lo_ <= LI[j] < hi_) if x is not None]
+            r_.sort(); bks.append(dict(lo=lo_, hi=hi_, n=len(r_), med180=round(r_[len(r_) // 2] * 100) if r_ else None, up180=round(sum(1 for x in r_ if x > 0) * 100 / len(r_)) if r_ else None))
+        a365 = bisect.bisect_left(_d, (_dd[k] - dt.timedelta(days=364)).isoformat()); w365 = _rc[a365:k + 1]; m365 = min(range(len(w365)), key=lambda q: w365[q])
+        s12 = bisect.bisect_left(_d, '2012-01-01')
+        R['rc_liquidity']['li'] = dict(date=_d[k], idx=round(LI[k], 3), c30=round(LC[k][0], 3), c90=round(LC[k][1], 3), c365=round(LC[k][2], 3),
+                                       prev7=round(LI[_back(7)], 3), low365=_d[a365 + m365], gap365_pct=round((_rc[k] / w365[m365] - 1) * 100, 2),
+                                       zero_eps=zeps, buckets=bks, rows=[[(_dd[j] - _li_ep).days, round(LI[j], 3), round(_p[j], 2 if _p[j] < 100 else 0)] for j in range(s12, len(_d)) if LI[j] is not None],
+                                       note='Checkonchain Liquidity Index：實現市值在過去 30／90／365 天區間的位置取平均；0＝實現市值創一年新低。只作讀值')
+except Exception as e: errors.append(f'rc_liquidity li {e}')
 # G1c. 2026-10-12 使用者要求：短週期＝目前這一段行情。收盤價 15% 反轉才算新的一段（zigzag），只作讀值、不連動任何規則。
 #   價格：CoinMetrics 每日（自 2010）＋ Kraken 已收盤日線補到 LAST；本輪＝2022-11-21 低點起的完成段落。
 try:
