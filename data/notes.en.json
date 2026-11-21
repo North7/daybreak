@@ -538,5 +538,31 @@
     "meaning": "A week on, \"less crowded\" did not hold: another $1B of longs was liquidated this week and 77.5% of Binance accounts still hold longs. The next Market Pulse is due Nov 22."
    }
   ]
- }
+ },
+  "cards": {
+    "dawn": "Leaning bullish on a long view: heat has sunk into the deep-night zone, with unrealized profit the coldest gauge, but the weekly score just turned negative; dawn needs heat back above 45.",
+    "avgd": "Bullish on value: price sits unusually far below nine cost lines and averages, and long-term holders' profit is thin. It marks a cheap zone, not a bottom; after 2014 it still fell 46.6%.",
+    "p20": "Bullish on cycle room: MVRV is nowhere near the prior-peak threshold, and Pi Cycle and the top radar are low too; price would need about $111K to touch the 0.75 line. The risk now is below.",
+    "lthloss": "Neutral: long-term holders' loss share sits in the range of past bear bottoms, yet the close is under the $60.5K line; topping 45.4% would break the pattern of no new highs after a bottom.",
+    "cyccmp": "Neutral: this cycle is down only about half from its top while past ones were past 75% by now, so old timelines don't fit; the top-weighted path is a double bottom, and the June low is being retested.",
+    "levels": "Bearish: price is below the true market mean and short-term holder cost, so active investors are underwater; below lies only the $53.3K realized price, and $76.5K is the line back to the bull side.",
+    "urpd": "Neutral, tilting weak: about a million coins sit at 62K–64K, so any bounce meets break-even supply; this week far more coins moved at a loss than at a profit as high buyers hand off lower.",
+    "strike": "Neutral: the $60K strike with the heaviest puts is the nearest wall; negative gamma amplifies moves, and a long-liquidation band near $57K means a break lower could accelerate.",
+    "legs": "Bearish: this down leg is already deeper than 92% of the last 12, deep but not finished; candles close below the busiest volume level, and only a close back at $67.6K turns it into an up leg.",
+    "pullback": "Bearish: three pressure lights have been on together for three weeks, and past runs saw a −1.4% median 90 days later; the selling-pressure gauge already shows a bottom combo, so it is near exhaustion.",
+    "profit": "Leaning bullish: nearly every short-term holder is underwater; past moves above 60% in loss saw a +8.4% median 30 days on. Such one-sided pain sits near short-term lows, though bears can linger.",
+    "sopr": "Bearish: short-term holders have sold at a loss for over two weeks, deeper than the Oct 30 dip, with losses concentrated in recent buyers; this handoff is done only when SOPR is back above 1.",
+    "rpl": "Bearish for now: the yearly ratio is in past cycles' bottom zone, but 7-day losses run 9x profits and it hasn't turned up; past bottoms were confirmed only once it rose back above 0.81.",
+    "miners": "Bearish: price is below the $64K power breakeven for mainstream rigs while hashrate keeps rising and difficulty heads higher, squeezing margins; no shutdowns yet, but sell pressure is building.",
+    "etf": "Bearish: spot ETFs shed about $3.7B over 20 sessions, and their buyers' average cost of $79K sits far above price, so trapped money is still leaving; it takes several straight inflow days to stop it.",
+    "pr-us": "Neutral: net of the USDT discount, US demand matches offshore, and the visible negative premium is mostly USDT under $1; that discount itself shows stablecoins being cashed out, so money is leaving.",
+    "ad": "Bearish: apparent demand is negative short and long term, so new buying can't absorb supply; realized cap has stalled and stablecoins shrank $17.9B in a month. It holds until 30-day demand turns up.",
+    "whale": "Bearish: both whale tiers from 100 to 10K coins shrank this week, and long-term holders have been net sellers for over three months; sellers have the upper hand until the 30-day change turns positive.",
+    "svd": "Neutral: OKX taker buying leads slightly over 7 days but flipped to sellers in the last 24 hours, while large orders sell over 30 days and Coinbase spot sells heavily; one venue can't set direction.",
+    "stk": "Bearish: BTC has trailed Nasdaq and gold for two months while its 30-day correlation with Nasdaq stays high, falling with stocks but not rising with them; markets price a hike, so rates are a headwind.",
+    "fh": "Bearish: funding looks calm, but open interest rose while price fell 30% in 30 days and most Binance accounts are still long; longs are only partly flushed, with room for more before funding turns negative.",
+    "vol": "Neutral: implied vol runs above realized and front months price above back months, an inverted curve that expects a big move soon; it shows size, not direction, and calm returns once the inversion clears.",
+    "oi": "Bearish: option buyers have favored puts for 23 days and risk reversals price puts richer, so the money sits on downside protection; the defensive stance fades only when risk reversals return near 0.",
+    "fng": "Bearish: sentiment fell from greed to extreme fear within a month, and past first drops saw a −6.1% median 30 days later, rarely the low; Wikipedia views are only mildly elevated. Calm returns above 25."
+  }
 }
