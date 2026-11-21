@@ -1,5 +1,4 @@
-{"fetched_utc": "2026-11-21T00:06:59+00:00", "source": "https://charts.checkonchain.com/btconchain/realised/realisedpnl_bycohort_2/realisedpnl_bycohort_2_light.html", "rows": [
-["2022-10-13", 2378.61, 5361.31],
+{"fetched_utc": "2026-11-21T15:31:17+00:00", "source": "https://charts.checkonchain.com/btconchain/realised/realisedpnl_bycohort_2/realisedpnl_bycohort_2_light.html", "rows": [
 ["2022-10-14", 2628.97, 5337.96],
 ["2022-10-15", 2360.95, 4957.45],
 ["2022-10-16", 2100.03, 4404.26],
@@ -1498,5 +1497,6 @@
 ["2026-11-17", 1948.66, 11149.3],
 ["2026-11-18", 1860.59, 11580.71],
 ["2026-11-19", 1797.73, 12084.23],
-["2026-11-20", 1631.64, 12913.6]
+["2026-11-20", 1708.18, 14699.98],
+["2026-11-21", 1732.79, 17794.19]
 ]}

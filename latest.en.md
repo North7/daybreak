@@ -14,7 +14,7 @@ Overall: Short-term bearish · long-term in the bottom zone, prior low under tes
 
 BTC close $58,806 (-5.0%)
 
-133 charts. Today: 31 bullish, 48 bearish, 35 neutral, 19 reference charts without a lean.
+133 charts. Today: 32 bullish, 47 bearish, 35 neutral, 19 reference charts without a lean.
 
 ## Cycle: Where we are in the cycle
 
@@ -57,7 +57,7 @@ Page: https://daybreak.aronlab.dev/en/charts/stage/
 
 ### Weekly regime score
 
-Bearish: The score is −1.32, 2 weeks on the negative side; 2 more and it flips short (long since Sep 24).
+Bearish: The score is −1.61, 2 weeks on the negative side; 2 more and it flips short (long since Sep 18).
 
 What it shows: Six inputs, each measured against its own median, combined into a score from −6 to +6. Bars take the colour of that week's stage: negative is bear; the first 26 weeks after a bear run of 26 weeks or more is early bull, then bull; +4 and above is overheated, −4 and below extreme bear.
 
@@ -67,7 +67,7 @@ Page: https://daybreak.aronlab.dev/en/charts/regime/
 
 ### What the regime score is made of
 
-Bearish: The score is −1.32, 2 weeks on the negative side; 2 more and it flips short (long since Sep 24).
+Bearish: The score is −1.61, 2 weeks on the negative side; 2 more and it flips short (long since Sep 18).
 
 What it shows: Each of the six inputs scored from −1 to +1, with the tick at zero. At +0.15 or more an input counts as bullish (green), at −0.15 or less bearish (red), in between flat (grey). Their sum is the regime score.
 
@@ -133,7 +133,7 @@ Page: https://daybreak.aronlab.dev/en/charts/rrisk/
 
 ### Power law: channel position and multiple
 
-Bullish: Price is 0.42 times its power-law fair value, inside the band of past bottoms (0.24–0.48×).
+Bullish: Price is 0.40 times its power-law fair value, inside the band of past bottoms (0.24–0.48×).
 
 What it shows: Price has followed a power-law trend over the long run; that trend is taken as fair value. Channel position: 0% is the line through past bottoms, 100% the falling line through past tops, and the line changes colour across five bands. Multiple: price divided by fair value; past bottoms fell between 0.24× and 0.48×.
 
@@ -201,7 +201,7 @@ Page: https://daybreak.aronlab.dev/en/charts/pi/
 
 ### Tidemark composite signal
 
-Bullish: Top signal 0, bottom signal 39: neither has reached 50.
+Bullish: Top signal 0, bottom signal 40: neither has reached 50.
 
 What it shows: A third-party composite: on-chain valuation, flows, leverage and sentiment combined into two 0–100 scores, one for tops and one for bottoms.
 
@@ -211,7 +211,7 @@ Page: https://daybreak.aronlab.dev/en/charts/tm/
 
 ### Tidemark history
 
-Bullish: Top signal 0, bottom signal 39: neither has reached 50.
+Bullish: Top signal 0, bottom signal 40: neither has reached 50.
 
 What it shows: Two views. Top: orange is the top signal, sand is heat, grey dashed is timing. Bottom: green is the bottom signal, blue is cold. Dashed lines mark the 50 and 70 thresholds.
 
@@ -231,7 +231,7 @@ Page: https://daybreak.aronlab.dev/en/charts/lthloss/
 
 ### One-year net realized P&L
 
-Bearish: Net realized profit and loss over a year is −922K BTC: holders are taking losses on balance, and it is still deepening.
+Bearish: Net realized profit and loss over a year is −958K BTC: holders are taking losses on balance, and it is still deepening.
 
 What it shows: Daily net realized P&L converted to BTC and summed over 365 days. Markers show past highs and lows.
 
@@ -287,7 +287,7 @@ Page: https://daybreak.aronlab.dev/en/charts/dd/
 
 ### Capital efficiency by cycle
 
-Neutral: 142 days into this cycle: +$10.1B in and 1.06 times the price.
+Neutral: 143 days into this cycle: +$7.3B in and 1.01 times the price.
 
 What it shows: For each cycle from bottom to top: how much realized cap was added (capital in) and what price multiple it bought. Two bars per row, on a log scale: cyan for capital in, gold for the price multiple. The bigger the market, the less each dollar moves it.
 
@@ -389,7 +389,7 @@ Bearish: The close is 25.5% below the ETF buyers' average cost of $78,971.
 
 What it shows: The average cost of US spot ETF buyers (excluding GBTC): each day's net flow divided by that day's close gives the BTC bought or sold, accumulated with the average-cost method (outflows leave at the average cost at the time). GBTC held about 620K BTC before it converted to an ETF; that cost was not bought through flows, so it is left out. ETF flows are published a day late, so the cost line stops at the previous trading day. This is an estimate, not a figure the ETFs publish, and it is not support. A reading only.
 
-Source: CoinMarketCap · 11/19
+Source: CoinMarketCap · 11/20
 
 Page: https://daybreak.aronlab.dev/en/charts/etfcost/
 
@@ -415,7 +415,7 @@ Page: https://daybreak.aronlab.dev/en/charts/urpdchg/
 
 ### Long- vs short-term holder supply
 
-Bearish: Short-term holders hold 3.87M BTC at an average cost of $72,319; the close is 18.7% below.
+Bearish: Short-term holders hold 3.87M BTC at an average cost of $72,322; the close is 18.7% below.
 
 What it shows: The same distribution split by holding time, back to back: short-term holders on the left, long-term on the right. Short-term holder coins above price are underwater sellers; below price they form the first support.
 
@@ -449,37 +449,37 @@ Neutral: the $60K strike with the heaviest puts is the nearest wall; negative ga
 
 What it shows: Open interest by strike for the main expiry: puts on the left, calls on the right. Strikes with large open interest often act as levels into expiry.
 
-Source: 12/25 · Max Pain 72K · all expiries: calls $12.8B / puts $10.7B
+Source: 12/25 · Max Pain 72K · all expiries: calls $13.2B / puts $11.0B
 
 Page: https://daybreak.aronlab.dev/en/charts/strike/
 
 ### Gamma exposure (estimated)
 
-Neutral: Total gamma within 45 days is −$23M: −$5M above price and −$18M below.
+Neutral: Total gamma within 45 days is −$10M: +$2M above price and −$12M below.
 
 What it shows: Dealer gamma by strike. Where it is positive, dealers trade against the move and price tends to pin; where negative, they trade with it and moves are amplified. Estimated, not actual positions.
 
-Source: Deribit · 11-21 00:06 UTC
+Source: Deribit · 11-21 15:30 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/gex/
 
 ### Liquidation levels (estimated)
 
-Bearish: The brightest band below is $57.1K–$57.7K (−2.6%) and above $65.4K–$67.1K (+12.5%).
+Bullish: The brightest band below is $53.7K–$55.1K (−9.8%) and above $65.4K–$67.6K (+10.3%).
 
 What it shows: The industry-standard liquidation heatmap (CoinGlass-style). Time runs across the last 7 days, one column per hour; price runs up the side. Brighter means more estimated BTC awaiting liquidation: longs below the close, shorts above; bands that price trades through are cleared. The strip on the right is the amount at each price right now, with the brightest band above and below labelled. Method: rises in perpetual open interest across several exchanges count as new positions, with leverage assumed between 5x and 100x. The switch above the chart changes to six months: one column per day in $500 buckets, which shows the large clusters further from price. A model, not exchange data.
 
-Source: Coinalyze · perpetuals on 7 exchanges · snapshot 11/21 00:00 UTC
+Source: Coinalyze · perpetuals on 7 exchanges · snapshot 11/21 15:00 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/liq/
 
 ### Order book
 
-Bullish: Within ±15%: $562M of bids and $452M of asks, a ratio of 1.24: thicker support below.
+Bullish: Within ±15%: $506M of bids and $374M of asks, a ratio of 1.36: thicker support below.
 
 What it shows: Resting orders per $1,000 bucket across seven venues, in $ millions. A snapshot at 00:05 UTC each day; orders can be pulled at any time, so read it for rough location only.
 
-Source: 13 exchanges · ±15% · snapshot 11-21 00:10 UTC
+Source: 13 exchanges · ±15% · snapshot 11-21 15:34 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/book/
 
@@ -554,7 +554,7 @@ Page: https://daybreak.aronlab.dev/en/charts/sopr/
 
 ### STH realized profit and loss
 
-Bearish: Short-term holders realized 0.13 times as much profit as loss (0.31 a week ago), mostly because loss-taking rose.
+Bearish: Short-term holders realized 0.10 times as much profit as loss (0.27 a week ago), mostly because loss-taking rose.
 
 What it shows: Profit and loss realized by short-term holders each day (BTC, log scale). Orange above green means more loss-taking.
 
@@ -584,7 +584,7 @@ Page: https://daybreak.aronlab.dev/en/charts/conf/
 
 ### Net realized P&L
 
-Bearish: Net realized P&L on the latest day was −$1.45B, the 3rd percentile of the year.
+Bearish: Net realized P&L on the latest day was −$2.85B, the 0th percentile of the year.
 
 What it shows: Network-wide profit realized each day minus losses. Bubbles on the price line are sized by that day's amount. Switch to the 30-day total for the longer view.
 
@@ -654,7 +654,7 @@ Page: https://daybreak.aronlab.dev/en/charts/ssr/
 
 ### Seller exhaustion constant
 
-Neutral: The seller exhaustion constant is 0.216 (the 12th percentile), not below 0.13.
+Neutral: The seller exhaustion constant is 0.219 (the 13th percentile), not below 0.13.
 
 What it shows: Supply in profit times 30-day volatility. When both are low, sellers are running out of force. Circles mark past lows inside the extreme zone.
 
@@ -721,11 +721,11 @@ Page: https://daybreak.aronlab.dev/en/charts/etf/
 
 ### Spot ETF 20-session net flow
 
-Bearish: Net outflow of $3,689M over the last 20 sessions (through 11/19). It fell below −$1,500M on 11/9, which starts an outflow stretch; this is session 9.
+Bearish: Net outflow of $3,674M over the last 20 sessions (through 11/20). It fell below −$1,500M on 11/9, which starts an outflow stretch; this is session 10.
 
 What it shows: Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below −$1,500M counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap's per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only.
 
-Source: CoinMarketCap · 11/19
+Source: CoinMarketCap · 11/20
 
 Page: https://daybreak.aronlab.dev/en/charts/etf20/
 
@@ -775,7 +775,7 @@ Page: https://daybreak.aronlab.dev/en/charts/usdt-usd/
 
 ### Asia: OTC USDT premium
 
-Bullish: The Asian OTC USDT premium is +0.99%, above the exchange rate: Asian buyers are keen.
+Bullish: The Asian OTC USDT premium is +0.78%, above the exchange rate: Asian buyers are keen.
 
 What it shows: The mid price of USDT against the yuan on OKX's OTC desk, divided by the USD/CNY rate, minus 1. Above +0.3% means buyers are rushing into USDT; below −0.3% means more people are cashing out to yuan; in between is flat. One snapshot a day, recorded since 2026-11-02 (19 days so far).
 
@@ -805,7 +805,7 @@ Page: https://daybreak.aronlab.dev/en/charts/kp/
 
 ### Exchange netflow
 
-Neutral: Coins are leaving exchanges: −81.9K BTC over 30 days, net outflows for 152 days.
+Neutral: Coins are leaving exchanges: −75.3K BTC over 30 days, net outflows for 153 days.
 
 What it shows: Coins flowing into exchanges minus coins flowing out, summed over 30 days. Negative (green) means coins are leaving exchanges; positive (orange-red) means coins are arriving. Shading marks periods when the 30-day sum was in the lowest tenth (strong outflow) or highest tenth (strong inflow) of the past four years.
 
@@ -815,7 +815,7 @@ Page: https://daybreak.aronlab.dev/en/charts/exflow/
 
 ### Exchange supply
 
-Bearish: Exchange supply is 13.47%, +1.07% over 30 days (coins are moving onto exchanges).
+Bearish: Exchange supply is 13.47%, +1.30% over 30 days (coins are moving onto exchanges).
 
 What it shows: Coins held at exchange addresses. A fall means coins are leaving and less spot is for sale; a rise means coins are arriving and potential selling grows. Address attribution is revised later, so read the direction, not the decimals; the live site has no history for this, so the card shows readings only.
 
@@ -863,7 +863,7 @@ Page: https://daybreak.aronlab.dev/en/charts/grad/
 
 ### Capital inflow: realized cap, 30-day change
 
-Bearish: Realized cap is −0.88% over 30 days: new money stopped coming in 7 days ago.
+Bearish: Realized cap is −1.20% over 30 days: new money stopped coming in 8 days ago.
 
 What it shows: Realized cap values every coin at the price it last moved at, so it is roughly the total cost of all holders. A 30-day change above 0 means new money is paying higher prices; at or below 0 (orange-red shading) means inflows have stalled. Background only, not a trading signal.
 
@@ -971,7 +971,7 @@ Page: https://daybreak.aronlab.dev/en/charts/svd/
 
 ### Buy/sell imbalance by trade size
 
-Bearish: Small and mid-size trades net buying; large trades net selling over 30 days
+Bearish: Mid-size trades net buying; small and large trades net selling over 30 days
 
 What it shows: Every trade in Binance BTCUSDT spot, split by dollar size into small, mid-size and large; for each group, taker buys minus taker sells are added up from the first day shown (in $ millions; switch between the last 90 days, the last year and everything, with data from 2023-11-01). A rising line means that size of trade is net buying; a falling line, net selling. A common reading: a rally with only small trades buying while large trades sell is fragile; large trades turning from selling to buying looks more like serious money arriving. Three limits: Binance spot only; a big market order that sweeps several price levels is recorded as several smaller trades, so large trades are understated; and big players can split orders on purpose. The previous day's data arrives a day later, so this chart can lag the others by a day. A reading only.
 
@@ -1009,7 +1009,7 @@ Page: https://daybreak.aronlab.dev/en/charts/r2y/
 
 ### Prediction market: next Fed decision
 
-Bearish: The market prices a hike at 91%
+Bearish: The market prices a hike at 90%
 
 What it shows: The Polymarket market on what the Fed will decide at its next meeting. The price of each outcome is the probability the market gives it; here they are grouped into three lines: a hike, no change, a cut. One chart covers one meeting: after the decision it switches to the next meeting and the lines start again. Risk assets usually move when rate expectations shift, which is why this sits under Macro. A reading only.
 
@@ -1044,9 +1044,9 @@ Page: https://daybreak.aronlab.dev/en/charts/fh/
 
 ### Futures basis curve
 
-Neutral: Annualized basis runs 4.1–5.8% across expiries, higher further out; the level is neutral.
+Neutral: Annualized basis runs 1.1–5.5% across expiries, higher further out; the level is neutral.
 
-What it shows: How much futures trade above spot, annualized; the horizontal axis is days to expiry (expiries within 7 days are left out). A high basis means traders pay up to be long through futures: 3–15% is normal, above 15% is hot, below 3% is cold. Expiries now sit at 4.1–5.8%, inside the normal range; perpetual funding is −3.0% annualized.
+What it shows: How much futures trade above spot, annualized; the horizontal axis is days to expiry (expiries within 7 days are left out). A high basis means traders pay up to be long through futures: 3–15% is normal, above 15% is hot, below 3% is cold. Expiries now sit at 1.1–5.5%, which is very low: little demand to be long; perpetual funding is −0.1% annualized.
 
 Source: annualized % · excludes expiries within 7 days
 
@@ -1092,9 +1092,9 @@ Page: https://daybreak.aronlab.dev/en/charts/bfx/
 
 ### Hyperliquid big accounts
 
-Neutral: Net short 3,655 BTC, up 1,875 BTC from the day before
+Neutral: Net short 2,988 BTC, up 2,542 BTC from the day before
 
-What it shows: BTC perpetual positions of the top 2,000 Hyperliquid accounts by equity (about $1.2M in equity and up), scanned once after each daily close and stored as totals only. 2026-11-20: longs 7,752 BTC (122 accounts), shorts 11,407 BTC (128 accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts 2026-11-04 and covers only 17 days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. "Profitable accounts" are those with a positive all-time profit on the leaderboard, recorded since 2026-11-18: on that day all accounts were net short 1,756 BTC, profitable ones 5,418 BTC, and excluding high-turnover, market-maker-like accounts only 318 BTC, so "smart money" figures depend heavily on the definition. One exchange only. A reading only.
+What it shows: BTC perpetual positions of the top 2,000 Hyperliquid accounts by equity (about $1.2M in equity and up), scanned once after each daily close and stored as totals only. 2026-11-20: longs 8,461 BTC (124 accounts), shorts 11,449 BTC (120 accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts 2026-11-04 and covers only 17 days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. "Profitable accounts" are those with a positive all-time profit on the leaderboard, recorded since 2026-11-18: on that day all accounts were net short 1,756 BTC, profitable ones 5,418 BTC, and excluding high-turnover, market-maker-like accounts only 318 BTC, so "smart money" figures depend heavily on the definition. One exchange only. A reading only.
 
 Source: Hyperliquid · 11/20
 
@@ -1122,17 +1122,17 @@ Page: https://daybreak.aronlab.dev/en/charts/vol/
 
 ### Implied volatility term structure
 
-Bearish: 7-day 53.1%, 90-day 45.4%: a +7.7-point gap (inverted: the front is dearer).
+Bearish: 7-day 60.6%, 90-day 49.7%: a +10.8-point gap (inverted: the front is dearer).
 
-What it shows: At-the-money implied volatility for each expiry, against days to expiry. Longer-dated above near-dated is the calm-market shape; near-dated above longer-dated is an inversion, meaning the market sees more risk in the next few days. Now 7 days is 53.1% and 90 days 45.4%, near-dated is pricier: inverted.
+What it shows: At-the-money implied volatility for each expiry, against days to expiry. Longer-dated above near-dated is the calm-market shape; near-dated above longer-dated is an inversion, meaning the market sees more risk in the next few days. Now 7 days is 60.6% and 90 days 49.7%, near-dated is pricier: inverted.
 
-Source: Deribit mark IV · at the money · snapshot 2026-11-21 00:06 UTC
+Source: Deribit mark IV · at the money · snapshot 2026-11-21 15:30 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/ivt/
 
 ### Options-implied price range
 
-Deribit option prices for each expiry, turned into odds of where price settles: the dark band is the 25th–75th percentile (half the odds), the light band the 15th–85th. At the 2027/01/29 expiry (about 69 days out) the 25–75 range is $52.2K to $66.9K; at the 2027/09/24 expiry the median is $59.3K, with a 39% chance of settling below the realized price $53.3K and 28% of settling above the STH cost $73.1K. This is what options price (risk-neutral, including the cost of hedging), not a forecast; beyond the outermost strikes the last implied volatility is carried out.
+Deribit option prices for each expiry, turned into odds of where price settles: the dark band is the 25th–75th percentile (half the odds), the light band the 15th–85th. At the 2027/01/29 expiry (about 69 days out) the 25–75 range is $52.7K to $68.7K; at the 2027/09/24 expiry the median is $59.9K, with a 40% chance of settling below the realized price $53.3K and 30% of settling above the STH cost $73.1K. This is what options price (risk-neutral, including the cost of hedging), not a forecast; beyond the outermost strikes the last implied volatility is carried out.
 
 Page: https://daybreak.aronlab.dev/en/charts/orng/
 
@@ -1158,7 +1158,7 @@ Page: https://daybreak.aronlab.dev/en/charts/prem/
 
 ### Put/call ratio and risk reversal
 
-Bearish: 25-delta risk reversal −9.30: puts are dearer, so the market is buying downside protection; put/call ratio 0.83.
+Bearish: 25-delta risk reversal −12.88: puts are dearer, so the market is buying downside protection; put/call ratio 0.83.
 
 What it shows: Two readings of which way the options market leans. A put ÷ call ratio above 1 (the tick) means more hedging or bearish positions than bullish ones; the risk reversal compares equally distant calls and puts, and negative means puts cost more, so the market is buying downside protection. Both have been saved daily since 2026-11-08 (13 readings so far); a history chart needs more of them.
 
@@ -1176,9 +1176,9 @@ Page: https://daybreak.aronlab.dev/en/charts/fng/
 
 ### Retail attention: Wikipedia page views
 
-Neutral: Wikipedia views are 1.29 times the one-year median (about 4,392 a day).
+Neutral: Wikipedia views are 1.31 times the one-year median (about 4,462 a day).
 
-What it shows: Daily views of the English Wikipedia "Bitcoin" article as a 7-day average, divided by its own past-year median, to see whether attention is suddenly heating up. It spikes when newcomers pour in, at tops and in crashes alike; it only shows people looking things up, not whether they buy or sell. It has reached 2.5× only 4 times since 2016-06.
+What it shows: Daily views of the English Wikipedia "Bitcoin" article as a 7-day average, divided by its own past-year median, to see whether attention is suddenly heating up. It spikes when newcomers pour in, at tops and in crashes alike; it only shows people looking things up, not whether they buy or sell. It has reached 2.5× only 4 times since 2016-07.
 
 Source: Wikimedia · English · 11/20
 

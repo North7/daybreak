@@ -695,13 +695,13 @@
 "date": "2026-11-20",
 "close": 58806.3,
 "chg_pct": -5.02,
-"p20": 0.4174,
-"pl_ratio": 0.423,
+"p20": 0.398,
+"pl_ratio": 0.402,
 "dvol": 52.54,
 "tm_top": 0.0,
-"tm_bottom": 39.1,
+"tm_bottom": 39.6,
 "conc5": 4.35,
 "conc5_urpd": "2026-11-20",
-"usdt_prem": 0.99
+"usdt_prem": 0.78
 }
 ]
