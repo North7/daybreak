@@ -83,9 +83,9 @@ def name(c, en):
     return (c.get('en') if en else c.get('zh')) or c.get('zh') or c['k']
 
 
-INTRO_ZH = ('Daybreak 是 Aron 做的免費比特幣每日判讀。每天台北時間早上 08:30 前更新，用 %d 張自建與公開的指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，'
+INTRO_ZH = ('Daybreak（daybreak.aronlab.dev）是 Aron 做的免費比特幣每日判讀。每天台北時間早上 08:30 前更新，用 %d 張自建與公開的指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，'
             '回答六個問題：%s每張圖都表態偏多、偏空或中性，並寫出理由。數字由程式計算，AI 只負責解釋，不計算也不做決定；不給交易建議。') % (NCH, ''.join(q['qz'] + '？' for q in QS))   # 問題本身有頓號（誰在買、錢從哪裡來），用問號隔開
-INTRO_EN = ('Daybreak is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading %d original and public indicators across on-chain data, '
+INTRO_EN = ('Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading %d original and public indicators across on-chain data, '
             'price structure, derivatives, fund flows and macro sentiment to answer six questions: %s. Every chart takes a side (bullish, bearish or neutral) and says why. '
             'Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.') % (NCH, '; '.join(q['qe'] for q in QS))
 
@@ -153,6 +153,10 @@ FAQ = [
      'Daybreak 不是資料終端：沒有 API，不能自訂圖表或下載原始資料。它把一百多張圖整理成六個問題，每天替每張圖寫出偏多、偏空或中性和理由，再收斂成一份簡報。需要原始資料、API 或自訂指標，Glassnode 這類資料平台比較合適；想每天直接看一份讀好的判讀，Daybreak 比較省事。'),
     ('Does Daybreak give buy or sell signals?', 'Daybreak 會給買賣建議嗎？',
      'No. It reports where each indicator leans and why; it makes no trade calls.', '不會。它只寫每個指標偏向哪邊、為什麼，不給交易建議。'),
+    # 2026-11-21 使用者問 ChatGPT「BTC 數據分析平台 Daybreak 是什麼」（沒給網址），它只找到同名的 Daybreak Markets、daybreak.fi：寫明無關
+    ('Is this Daybreak related to Daybreak Markets or daybreak.fi?', '這個 Daybreak 和 Daybreak Markets、daybreak.fi 有關嗎？',
+     'No. Daybreak at daybreak.aronlab.dev is an independent Bitcoin analysis website by Aron. It has no token and offers no trading, signals or automated trading; it is not related to other crypto projects named Daybreak.',
+     '無關。daybreak.aronlab.dev 的 Daybreak 是 Aron 個人做的比特幣分析網站，沒有代幣，也不提供交易、訊號或自動交易，和其他同名的加密貨幣專案沒有關係。'),
     ('Who makes Daybreak?', '誰做的？', 'Aron, an independent builder (Aron Lab, https://aronlab.dev/). Code computes every number; AI only writes the explanation.',
      'Aron（Aron Lab，https://aronlab.dev/）。數字由程式計算，AI 只負責寫解釋。'),
 ]
@@ -186,7 +190,8 @@ def static_intro():
 
 # ---------- 結構化資料 ----------
 PERSON = {'@type': 'Person', '@id': 'https://aronlab.dev/#aron', 'name': 'Aron', 'url': 'https://aronlab.dev/'}
-WEBSITE = {'@type': 'WebSite', '@id': SITE + '#site', 'name': 'Daybreak', 'alternateName': ['Daybreak 比特幣多維判讀', 'Daybreak Bitcoin brief'], 'url': SITE,
+WEBSITE = {'@type': 'WebSite', '@id': SITE + '#site', 'name': 'Daybreak', 'alternateName': ['Daybreak 比特幣多維判讀', 'Daybreak Bitcoin brief', 'daybreak.aronlab.dev', 'Daybreak (Aron Lab)'], 'url': SITE,
+           'disambiguatingDescription': 'Free Bitcoin on-chain and market analysis website by Aron at daybreak.aronlab.dev. No token, no trading or signal service; not related to other crypto projects named Daybreak.',
            'inLanguage': ['zh-Hant', 'en'], 'description': INTRO_EN, 'creator': {'@id': PERSON['@id']}, 'publisher': {'@id': PERSON['@id']}}
 
 
