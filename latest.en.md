@@ -723,9 +723,9 @@ Page: https://daybreak.aronlab.dev/en/charts/etf/
 
 Bearish: Net outflow of $3,689M over the last 20 sessions (through 11/19). It fell below −$1,500M on 11/9, which starts an outflow stretch; this is session 9.
 
-What it shows: Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below −$1,500M counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap's per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only.
+What it shows: Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below −$1,500M counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap's per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only. The "Share of volume" view divides the 30-session net flow by the dollar volume traded over the same sessions: how much of the trading stayed behind as net buying (positive) or net selling (negative). ETF trading has grown a lot, so the ratio compares fairer across years. It moves almost in step with the flow sum (correlation 0.94) and tracks the past month or so of price; since 2024 a fast rebound from below zero has happened only 4 times, followed by 3 rises and 1 fall, so it is not a signal. Volume is each fund's Yahoo share volume times the day's average price.
 
-Source: CoinMarketCap · 11/19
+Source: CoinMarketCap · 11/19 · Yahoo
 
 Page: https://daybreak.aronlab.dev/en/charts/etf20/
 
