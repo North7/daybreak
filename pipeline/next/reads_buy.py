@@ -127,23 +127,33 @@ def rcliq(L):
     se = ('Realized cap is %s over 30 days: new money stopped coming in %d days ago.' % (pc(r['chg30_pct'], 2), r['state_run_days']) if z else 'Realized cap is %s over 30 days: new money is still coming in.' % pc(r['chg30_pct'], 2))
     return sz, se, [
         it('30 天變化', '30-day change', pc(r['chg30_pct'], 2), pc(r['chg30_pct'], 2), 'down' if z else 'up', '90 天 %s、180 天 %s。只是資金背景，不是買賣訊號。' % (pc(r['chg90_pct'], 2), pc(r['chg180_pct'], 2)), '%s over 90 days and %s over 180. Background, not a trade signal.' % (pc(r['chg90_pct'], 2), pc(r['chg180_pct'], 2))),
-        it('上一次停止流入', 'Last stall', '%d 天' % e['days'], '%d days' % e['days'], 'neu', '%s–%s。' % (ymd(e['start']), ymd(e['end'])), '%s to %s.' % (ymde(e['start']), ymde(e['end'])))] + _li_item(r.get('li'))
+        it('上一次停止流入', 'Last stall', '%d 天' % e['days'], '%d days' % e['days'], 'neu', '%s–%s。' % (ymd(e['start']), ymd(e['end'])), '%s to %s.' % (ymde(e['start']), ymde(e['end'])))]
 
-def _li_item(li):   # 2026-11-21 第二個檢視「流動性週期」的讀數（Checkonchain Liquidity Index；collect.py G1b-2）
-    if not li or li.get('idx') is None: return []
+def rlc(L):   # 2026-11-22 獨立的卡「流動性週期」（Checkonchain Liquidity Index；collect.py G1b-2）
+    li = L['flows']['rc_liq']['li']
     v = '%.2f' % li['idx']; z0 = li['idx'] < 1e-6; yrs = sorted({e['start'][:4] for e in li.get('zero_eps') or [] if not e.get('ongoing')})
     bk = next((b for b in li.get('buckets') or [] if b['lo'] <= li['idx'] < b['hi']), None)
-    hz = he = ''
-    if bk and bk['n'] and not z0 and bk['lo'] > 0:
-        hz = '2013 年以來指數在 %.1f–%.1f 時，之後 180 天中位數 %s、上漲的日子 %d%%（相鄰日子重疊，只作參考）。' % (bk['lo'], min(1, bk['hi']), pc(bk['med180']), bk['up180'])
-        he = ' Since 2013, with the index at %.1f–%.1f, the next 180 days had a median of %s and rose %d%% of the time (overlapping days; a reference only).' % (bk['lo'], min(1, bk['hi']), pc(bk['med180']), bk['up180'])
     if z0:
-        sz = '30、90、365 天三個位置都是 0：實現市值創一年新低。2013 年以來只有 %s 這幾輪出現過，都在週期底部附近，但碰到後價格還可能再跌。' % '、'.join(yrs)
-        se = 'All three positions are 0: realized cap is at a one-year low. Since 2013 this happened only in %s, each near a cycle bottom, though price could still fall after the first touch.' % ', '.join(yrs)
+        sz = '流動性指數 0：實現市值創一年新低。2013 年以來只有 %s 出現過，都在週期底部附近，但碰到後價格還可能再跌。' % '、'.join(yrs)
+        se = 'Liquidity index at 0: realized cap is at a one-year low. Since 2013 this happened only in %s, each near a cycle bottom, though price could still fall after the first touch.' % ', '.join(yrs)
     else:
-        sz = '30 天位置 %.2f、90 天 %.2f、365 天 %.2f；實現市值離 %s 的一年低點還有 %s，跌破就是指數 0（2013 年以來只有 %s）。' % (li['c30'], li['c90'], li['c365'], ymd(li['low365']), pc(li['gap365_pct'], 1).lstrip('+'), '、'.join(yrs)) + hz
-        se = 'Positions: 30-day %.2f, 90-day %.2f, 365-day %.2f. Realized cap is %s above its one-year low of %s; breaking it would put the index at 0 (since 2013 only in %s).' % (li['c30'], li['c90'], li['c365'], pc(li['gap365_pct'], 1).lstrip('+'), ymde(li['low365']), ', '.join(yrs)) + he
-    return [it('流動性指數', 'Liquidity index', v, v, 'neu', sz, se)]
+        sz = '流動性指數 %s，實現市值離 %s 的一年低點還有 %s，跌破就是 0。' % (v, ymd(li['low365']), pc(li['gap365_pct'], 1).lstrip('+'))
+        se = 'Liquidity index %s; realized cap is %s above its one-year low of %s, and a break below it puts the index at 0.' % (v, pc(li['gap365_pct'], 1).lstrip('+'), ymde(li['low365']))
+    fst = {}
+    for e in li.get('zero_eps') or []:
+        if not e.get('ongoing'): fst.setdefault(e['start'][:4], e)   # 2015 有兩小段，算一輪、用第一段
+    ez = [fst[y] for y in sorted(fst)]
+    items = [it('30／90／365 天位置', '30 / 90 / 365-day', '%.2f / %.2f / %.2f' % (li['c30'], li['c90'], li['c365']), '%.2f / %.2f / %.2f' % (li['c30'], li['c90'], li['c365']), 'neu',
+                '每一個是實現市值在那段期間最低～最高之間的位置（0＝最低、1＝最高），指數是三個的平均。一週前指數 %.2f。' % li['prev7'], 'Each is where realized cap sits between that window\'s low and high (0 = low, 1 = high); the index is their average. A week ago it was %.2f.' % li['prev7'])]
+    if bk and bk['n'] and not z0:
+        rz = '%.1f–%.1f' % (bk['lo'], min(1, bk['hi'])) if bk['hi'] < 1 else '1'
+        items.append(it('指數在 %s 之後 180 天' % rz, '180 days after %s' % rz, pc(bk['med180']), pc(bk['med180']), 'neu',
+                        '2013 年以來的中位數，上漲的日子 %d%%（平常是約 62%%）。相鄰日子重疊，樣本不獨立，只作參考。' % bk['up180'], 'Median since 2013; up on %d%% of days (about 62%% normally). Overlapping days, so not independent; a reference only.' % bk['up180']))
+    if ez:
+        items.append(it('過去到 0 的時候', 'Past touches of 0', '%d 輪' % len(ez), '%d cycles' % len(ez), 'neu',
+                        '%s：第一次碰到 0 時價格離高點 %s，之後最多再跌 %s，一年後 %s。' % ('、'.join(e['start'][:4] for e in ez), '、'.join(pc(e['dd_ath']) for e in ez), '、'.join(pc(e['low_pct']) if e['low_pct'] else '0%' for e in ez), '、'.join(pc(e['fwd365']) for e in ez if e['fwd365'] is not None)),
+                        '%s: at the first touch price was %s from its high, then fell at most a further %s, and was %s a year later.' % (', '.join(e['start'][:4] for e in ez), ', '.join(pc(e['dd_ath']) for e in ez), ', '.join(pc(e['low_pct']) if e['low_pct'] else '0%' for e in ez), ', '.join(pc(e['fwd365']) for e in ez if e['fwd365'] is not None))))
+    return sz, se, items
 
 def stab(L):
     s = L['flows']['stables']; dn = s['chg30_pct'] < 0
@@ -242,5 +252,5 @@ def macro(L):
         it('BTC–美元', 'BTC–dollar', sg(dx, 2), sg(dx, 2), 'neu', '關係不明顯。' if abs(dx) < .3 else ('美元走強時 BTC 偏弱。' if dx < 0 else '和美元同向。'), 'No clear link.' if abs(dx) < .3 else ('BTC tends to weaken as the dollar strengthens.' if dx < 0 else 'Moves with the dollar.')),
         it('10 年期實質利率', '10-year real yield', '%.2f%%' % ri['value'], '%.2f%%' % ri['value'], 'neu', ('2%% 以上偏緊，持有不生息資產的機會成本高；近 20 天 %s 個基點。' if ri['value'] >= 2 else '近 20 天 %s 個基點。') % sg(ri['chg_20obs_bp'], 0), ('Above 2%% is tight: holding a non-yielding asset costs more; %s bp over 20 days.' if ri['value'] >= 2 else '%s bp over 20 days.') % sg(ri['chg_20obs_bp'], 0))]
 
-CARDS = {'etf': etf, 'cot': cot, 'pr-us': pr_us, 'pr-asia': pr_asia, 'pr-perp': pr_perp, 'kp': kp, 'exflow': exflow, 'exch': exch, 'ad': ad, 'dmd': dmd, 'capflow': capflow, 'grad': grad, 'rcliq': rcliq, 'stab': stab,
+CARDS = {'etf': etf, 'cot': cot, 'pr-us': pr_us, 'pr-asia': pr_asia, 'pr-perp': pr_perp, 'kp': kp, 'exflow': exflow, 'exch': exch, 'ad': ad, 'dmd': dmd, 'capflow': capflow, 'grad': grad, 'rcliq': rcliq, 'rlc': rlc, 'stab': stab,
          'whale': whale, 'whalet': whalet, 'lthnet': lthnet, 'lsrchg': lsrchg, 'sthd': sthd, 'dorm': dorm, 'svd': svd, 'tk': tk, 'stk': stk, 'macro': macro}

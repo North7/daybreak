@@ -79,6 +79,12 @@ def grad(L):
 def rcliq(L):
     r = F(L)['rc_liq']
     return V('down', '新資金停止流入', 'New money has stalled', '實現市值 30 天沒有增加，新資金沒進來。', 'Realized cap has not grown in 30 days: no new money is coming in.', '30 天轉為增加', 'A 30-day increase') if r['chg30_pct'] <= 0 else V('up', '新資金在流入', 'New money is arriving', '實現市值 30 天在增加。', 'Realized cap grew over 30 days.', '30 天轉為減少', 'A 30-day decline')
+def rlc(L):   # 2026-11-22 流動性週期（Checkonchain Liquidity Index）。2013 起之後 180 天：0＝中位數 +81%、全部上漲（只有 3 輪）；1＝+36%、68%；0.2–1 之間＝+3%、51%（平常 +26%、62%），所以中間不指方向
+    li = F(L)['rc_liq'].get('li') or {}; v = li.get('idx')
+    if v is None: return V('neu', '沒有資料', 'No data', '', '')
+    if v < 1e-6: return V('up', '資金底部區', 'Capital bottom zone', '實現市值創一年新低；2013 年以來只有 3 輪，都在週期底部附近，但碰到後價格還再跌 0% 到 −19%。', 'Realized cap is at a one-year low; since 2013 only 3 cycles, each near a cycle bottom, though price fell a further 0% to −19% after the first touch.', '指數離開 0 且實現市值回升', 'The index leaving 0 as realized cap recovers')
+    if v >= .999: return V('up', '資金持續流入', 'Capital keeps arriving', '實現市值在 30、90、365 天裡都是最高：新資金一直進來。', 'Realized cap is at its 30-, 90- and 365-day highs: new money keeps arriving.', '指數從 1 掉下來', 'The index dropping from 1')
+    return V('neu', '不指方向', 'No direction', '2013 年以來指數在 0.2 到 1 之間時，之後 180 天差不多一半漲一半跌（中位數 +3%，平常是 +26%），不指方向；要看它往 0 還是往 1 走。', 'Since 2013, with the index between 0.2 and 1, the next 180 days rose about half the time (median +3%, against +26% normally): no direction. Watch whether it heads for 0 or 1.', '跌到 0（實現市值一年新低）或回到 1', 'A drop to 0 (realized cap at a one-year low) or a return to 1')
 def stab(L):
     s = F(L)['stables']
     return V('down', '場外美元在萎縮', 'Sideline dollars are shrinking', '穩定幣供給 30 天減少，能進場的錢變少。', 'Stablecoin supply shrank over 30 days: less dry powder.', '30 天轉為增加', 'A 30-day increase') if s['chg30_pct'] < 0 else V('up', '場外美元在增加', 'Sideline dollars are growing', '穩定幣供給 30 天增加，能進場的錢變多。', 'Stablecoin supply grew over 30 days: more dry powder.', '30 天轉為減少', 'A 30-day decrease')
