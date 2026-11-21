@@ -127,7 +127,23 @@ def rcliq(L):
     se = ('Realized cap is %s over 30 days: new money stopped coming in %d days ago.' % (pc(r['chg30_pct'], 2), r['state_run_days']) if z else 'Realized cap is %s over 30 days: new money is still coming in.' % pc(r['chg30_pct'], 2))
     return sz, se, [
         it('30 天變化', '30-day change', pc(r['chg30_pct'], 2), pc(r['chg30_pct'], 2), 'down' if z else 'up', '90 天 %s、180 天 %s。只是資金背景，不是買賣訊號。' % (pc(r['chg90_pct'], 2), pc(r['chg180_pct'], 2)), '%s over 90 days and %s over 180. Background, not a trade signal.' % (pc(r['chg90_pct'], 2), pc(r['chg180_pct'], 2))),
-        it('上一次停止流入', 'Last stall', '%d 天' % e['days'], '%d days' % e['days'], 'neu', '%s–%s。' % (ymd(e['start']), ymd(e['end'])), '%s to %s.' % (ymde(e['start']), ymde(e['end'])))]
+        it('上一次停止流入', 'Last stall', '%d 天' % e['days'], '%d days' % e['days'], 'neu', '%s–%s。' % (ymd(e['start']), ymd(e['end'])), '%s to %s.' % (ymde(e['start']), ymde(e['end'])))] + _li_item(r.get('li'))
+
+def _li_item(li):   # 2026-11-21 第二個檢視「流動性週期」的讀數（Checkonchain Liquidity Index；collect.py G1b-2）
+    if not li or li.get('idx') is None: return []
+    v = '%.2f' % li['idx']; z0 = li['idx'] < 1e-6; yrs = sorted({e['start'][:4] for e in li.get('zero_eps') or [] if not e.get('ongoing')})
+    bk = next((b for b in li.get('buckets') or [] if b['lo'] <= li['idx'] < b['hi']), None)
+    hz = he = ''
+    if bk and bk['n'] and not z0 and bk['lo'] > 0:
+        hz = '2013 年以來指數在 %.1f–%.1f 時，之後 180 天中位數 %s、上漲的日子 %d%%（相鄰日子重疊，只作參考）。' % (bk['lo'], min(1, bk['hi']), pc(bk['med180']), bk['up180'])
+        he = ' Since 2013, with the index at %.1f–%.1f, the next 180 days had a median of %s and rose %d%% of the time (overlapping days; a reference only).' % (bk['lo'], min(1, bk['hi']), pc(bk['med180']), bk['up180'])
+    if z0:
+        sz = '30、90、365 天三個位置都是 0：實現市值創一年新低。2013 年以來只有 %s 這幾輪出現過，都在週期底部附近，但碰到後價格還可能再跌。' % '、'.join(yrs)
+        se = 'All three positions are 0: realized cap is at a one-year low. Since 2013 this happened only in %s, each near a cycle bottom, though price could still fall after the first touch.' % ', '.join(yrs)
+    else:
+        sz = '30 天位置 %.2f、90 天 %.2f、365 天 %.2f；實現市值離 %s 的一年低點還有 %s，跌破就是指數 0（2013 年以來只有 %s）。' % (li['c30'], li['c90'], li['c365'], ymd(li['low365']), pc(li['gap365_pct'], 1).lstrip('+'), '、'.join(yrs)) + hz
+        se = 'Positions: 30-day %.2f, 90-day %.2f, 365-day %.2f. Realized cap is %s above its one-year low of %s; breaking it would put the index at 0 (since 2013 only in %s).' % (li['c30'], li['c90'], li['c365'], pc(li['gap365_pct'], 1).lstrip('+'), ymde(li['low365']), ', '.join(yrs)) + he
+    return [it('流動性指數', 'Liquidity index', v, v, 'neu', sz, se)]
 
 def stab(L):
     s = L['flows']['stables']; dn = s['chg30_pct'] < 0

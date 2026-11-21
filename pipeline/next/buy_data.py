@@ -405,6 +405,28 @@ def build(L, N, E, dn, X):
           dz='價格 N 天的漲跌，減掉實現價格（全體的平均買進成本）N 天的漲跌，再除以自己過去 4 年的標準差。正值代表價格跑得比真正進場的資金快。虛線是 120 日那條的背離：價格創新高或新低，梯度卻沒有跟上。',
           de='The N-day change in price minus the N-day change in realized price (the average cost of all coins), divided by its own 4-year standard deviation. Positive means price is running ahead of the money actually coming in. Dashed lines are divergences on the 120-day line: price makes a new high or low and the gauge does not follow.')
 
+    def li_mode(li):   # 2026-11-21 使用者要求：第二個檢視＝Checkonchain「Realised Cap Liquidity Cycle」的 Liquidity Index（算法見 collect.py G1b-2）。
+        # 顏色：主線 ac（萊姆，和全站主角線同色）；指數＝0（實現市值創一年新低）的過去期間用 c4 底色；還在進行中的那一段用 k2，不和過去的結局同色
+        rr = li['rows']; keep = 1100; old = rr[:-keep]; th = []
+        for i in range(0, len(old), 3): th.append(min(old[i:i + 3], key=lambda r: r[1]))   # 早年每 3 天留一筆，留指數最低的那天（0 不會被抽掉）
+        rows = th + rr[-keep:]; zs = li.get('zero_eps') or []
+        sp_ = [dict(a=dn(e['start']), b=dn(e['end']) + 1, col='k2' if e.get('ongoing') else 'c4', op=.2, zh=('這一次' if e.get('ongoing') else e['start'][:4]), en=('Now' if e.get('ongoing') else e['start'][:4])) for e in zs]
+        past = [e for e in zs if not e.get('ongoing')]; yrs = sorted({e['start'][:4] for e in past})
+        p0 = lambda v: pc(v) if v else '0%'
+        rg = lambda vs, e_: ('%s 到 %s' if not e_ else '%s to %s') % (p0(max(vs)), p0(min(vs))) if vs else '—'
+        A = [e['dd_ath'] for e in past]; Lw = [e['low_pct'] for e in past]; Fw = [e['fwd365'] for e in past if e['fwd365'] is not None]
+        fz = ('%s 到 %s' % (pc(min(Fw)), pc(max(Fw)))) if Fw else '—'; fe = ('%s to %s' % (pc(min(Fw)), pc(max(Fw)))) if Fw else '—'
+        dz = ('實現市值在過去 30、90、365 天的高低區間裡各落在哪裡（最低＝0、最高＝1），三個取平均。三個都在 1 代表資金持續流入、實現市值一直創新高；掉到 0 代表實現市值創一年新低，持有者的總成本在縮水。'
+              '2013 年以來指數到 0 只有 %s 年（深色底），都在週期底部附近：第一次碰到 0 時價格已經離高點 %s，之後還再跌 %s，一年後 %s。只有 %d 輪，只作讀值，不是買點。'
+              '算法照 Checkonchain 的 Realised Cap Liquidity Cycle 逐日核對過；他的圖例寫 180 天，實際用的是 365 天，這裡照實寫。資料：CoinMetrics 市值 ÷ MVRV。') % ('、'.join(yrs), rg(A, 0), rg(Lw, 0), fz, len(yrs))
+        de = ('Where realized cap sits within its own range over the past 30, 90 and 365 days (low = 0, high = 1), averaged. All three at 1 means capital keeps arriving and realized cap keeps making new highs; a drop to 0 means realized cap is at a one-year low and holders\' total cost basis is shrinking. '
+              'Since 2013 the index has reached 0 only in %s (dark shading), each time near a cycle bottom: at the first touch price was already %s from its high, fell a further %s, and was %s a year later. Only %d cycles, so a reading only, not a buy point. '
+              'The method follows Checkonchain\'s Realised Cap Liquidity Cycle, checked day by day; his legend says 180-day but the window is 365 days, labelled as such here. Data: CoinMetrics market cap ÷ MVRV.') % (', '.join(yrs), rg(A, 1), rg(Lw, 1), fe, len(yrs))
+        return [dict(mz='流動性週期', me='Liquidity cycle', hz='流動性指數（0＝實現市值一年新低）', he='Liquidity index (0 = realized cap at a one-year low)', f='n2', rng=0, rows=rows, p=2, hero=0, dom=[0, 1],
+                     ser=[ser(1, zh='流動性指數（30、90、365 天位置的平均）', en='Liquidity index (average of the 30-, 90- and 365-day positions)', col='ac', w=2, fill=1)], spans=sp_, marks=[], refs=[],
+                     leg=[['c4', '指數到 0 的期間（實現市值一年新低）', 'Index at 0 (realized cap at a one-year low)', 'box']],
+                     src='CoinMetrics · Checkonchain 算法', srce='CoinMetrics · Checkonchain method', dz=dz, de=de)]
+
     def c_rcliq():   # 顏色：V.flows.after 裡 #c-rcliq 的 oxPane（30 日變化 split:[up, down]＝>0 綠、≤0 紅；≤0 的期間底色 down→dn）
         x = f.get('rc_liq')
         if not has(x): return NA('rcliq', '資金流入：實現市值 30 日變化', 'Capital inflow: realized cap, 30-day change', '實現市值（flows.rc_liq）', 'the realized cap series (flows.rc_liq)')
@@ -413,6 +435,7 @@ def build(L, N, E, dn, X):
           f='ps2', rng=0, rows=thin(rows, 1), ser=[ser(1, zh='30 日變化', en='30-day change', t='sign', base=0, w=1.5)],
           spans=[dict(a=max(t0, dn(e['start'])), b=dn(e['end']) + 1, col='dn', op=.08) for e in x.get('episodes') or [] if dn(e['end']) >= t0],
           marks=runmarks(rows, 1, 60, 4, lambda r: ym(r[0]) + ' ' + pc(r[1])), leg=[['dn', '小於等於 0 的期間', 'Periods at or below 0', 'box']],
+          **({'modes': [dict(mz='30 日變化', me='30-day change')] + li_mode(x.get('li'))} if (x.get('li') or {}).get('rows') else {}),
           dz='實現市值是每顆幣用最後一次移動時的價格計價後的加總，可以看成全體持有者的總成本。30 日變化大於 0 代表有新資金用更高的價格接手；小於等於 0（橘紅底色）代表新資金停止流入。這只是資金背景，不是買賣訊號。',
           de='Realized cap values every coin at the price it last moved at, so it is roughly the total cost of all holders. A 30-day change above 0 means new money is paying higher prices; at or below 0 (orange-red shading) means inflows have stalled. Background only, not a trading signal.')
 
