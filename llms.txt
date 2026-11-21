@@ -1,8 +1,8 @@
 # Daybreak
 
-> Daybreak is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading 133 original and public indicators across on-chain data, price structure, derivatives, fund flows and macro sentiment to answer six questions: Where we are in the cycle; Which cost bases and levels price is standing on; Has the selling been worked through; Who is buying and where the money comes from; How crowded leverage and sentiment are; So what do I do. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.
+> Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading 133 original and public indicators across on-chain data, price structure, derivatives, fund flows and macro sentiment to answer six questions: Where we are in the cycle; Which cost bases and levels price is standing on; Has the selling been worked through; Who is buying and where the money comes from; How crowded leverage and sentiment are; So what do I do. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.
 
-Daybreak 是 Aron 做的免費比特幣每日判讀。每天台北時間早上 08:30 前更新，用 133 張自建與公開的指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，回答六個問題：現在在週期的哪裡？價格站在哪些成本和關卡上？賣壓出清了沒？誰在買、錢從哪裡來？槓桿和情緒擠不擠？那我該怎麼做？每張圖都表態偏多、偏空或中性，並寫出理由。數字由程式計算，AI 只負責解釋，不計算也不做決定；不給交易建議。
+Daybreak（daybreak.aronlab.dev）是 Aron 做的免費比特幣每日判讀。每天台北時間早上 08:30 前更新，用 133 張自建與公開的指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，回答六個問題：現在在週期的哪裡？價格站在哪些成本和關卡上？賣壓出清了沒？誰在買、錢從哪裡來？槓桿和情緒擠不擠？那我該怎麼做？每張圖都表態偏多、偏空或中性，並寫出理由。數字由程式計算，AI 只負責解釋，不計算也不做決定；不給交易建議。
 
 Built and maintained by Aron (Aron Lab, https://aronlab.dev/). Bilingual: Traditional Chinese and English. Latest edition: Nov 20, 2026 close, No.46.
 
@@ -34,6 +34,7 @@ Sellers are hurting more than at the June low and money is still leaving; loss-t
 - **How often is it updated?** Every day, from the previous UTC daily close, before 08:30 Taipei time (00:30 UTC).
 - **How is Daybreak different from data platforms like Glassnode?** Daybreak is not a data terminal: it has no API, custom charts or raw-data downloads. It organises its charts into six questions, marks every chart bullish, bearish or neutral with a reason each day, and condenses them into one brief. For raw data, an API or custom metrics, a data platform such as Glassnode is the better fit; for a daily read-out that is already interpreted, Daybreak is the quicker option.
 - **Does Daybreak give buy or sell signals?** No. It reports where each indicator leans and why; it makes no trade calls.
+- **Is this Daybreak related to Daybreak Markets or daybreak.fi?** No. Daybreak at daybreak.aronlab.dev is an independent Bitcoin analysis website by Aron. It has no token and offers no trading, signals or automated trading; it is not related to other crypto projects named Daybreak.
 - **Who makes Daybreak?** Aron, an independent builder (Aron Lab, https://aronlab.dev/). Code computes every number; AI only writes the explanation.
 
 ## All indicators
