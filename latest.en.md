@@ -1,6 +1,6 @@
 # Daybreak · Nov 20, 2026 close edition, No.46
 
-> Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading 133 original and public indicators across on-chain data, price structure, derivatives, fund flows and macro sentiment to answer six questions: Where we are in the cycle; Which cost bases and levels price is standing on; Has the selling been worked through; Who is buying and where the money comes from; How crowded leverage and sentiment are; So what do I do. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.
+> Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading 134 original and public indicators across on-chain data, price structure, derivatives, fund flows and macro sentiment to answer six questions: Where we are in the cycle; Which cost bases and levels price is standing on; Has the selling been worked through; Who is buying and where the money comes from; How crowded leverage and sentiment are; So what do I do. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.
 
 Source: https://daybreak.aronlab.dev/app/?lang=en · by Aron · updated 2026-11-20
 
@@ -14,7 +14,7 @@ Overall: Short-term bearish · long-term in the bottom zone, prior low under tes
 
 BTC close $58,806 (-5.0%)
 
-133 charts. Today: 32 bullish, 47 bearish, 35 neutral, 19 reference charts without a lean.
+134 charts. Today: 32 bullish, 47 bearish, 36 neutral, 19 reference charts without a lean.
 
 ## Cycle: Where we are in the cycle
 
@@ -870,6 +870,16 @@ What it shows: Realized cap values every coin at the price it last moved at, so 
 Source: CoinMetrics · 11/20 · since 2019 · red shading = ≤0
 
 Page: https://daybreak.aronlab.dev/en/charts/rcliq/
+
+### Liquidity cycle: realized cap within its range
+
+Neutral: Liquidity index 0.20; realized cap is 1.4% above its one-year low of Aug 18, 2026, and a break below it puts the index at 0.
+
+What it shows: Where realized cap sits within its own range over the past 30, 90 and 365 days (low = 0, high = 1), averaged. All three at 1 means capital keeps arriving and realized cap keeps making new highs; a drop to 0 means realized cap is at a one-year low and holders' total cost basis is shrinking. Since 2013 the index has reached 0 only in 2015, 2018, 2022 (dark shading), each time near a cycle bottom: at the first touch price was already −71% to −81% from its high, fell a further 0% to −19%, and was +43% to +175% a year later. Only 3 cycles, so a reading only, not a buy point. The method follows Checkonchain's Realised Cap Liquidity Cycle, checked day by day; his legend says 180-day but the window is 365 days, labelled as such here. Data: CoinMetrics market cap ÷ MVRV.
+
+Source: CoinMetrics · Checkonchain method · 11/20
+
+Page: https://daybreak.aronlab.dev/en/charts/rlc/
 
 ### Total stablecoin supply
 
