@@ -125,16 +125,61 @@ def static_app():
             + '<p><a href="../?intro">Daybreak 是什麼 · What is Daybreak</a> · <a href="../case-study/">Case study</a> · <a href="../charts/">所有圖</a> · <a href="../en/charts/">All charts</a> · <a href="../brief/">每日簡報</a> · <a href="../en/brief/">Daily briefs</a> · <a href="../latest.md">latest.md</a> · <a href="../latest.en.md">latest.en.md</a></p></main>')
 
 
+# 2026-11-21 使用者貼 ChatGPT 的回答：它找到網站，但說「無法完整讀取指標清單、資料來源和免費使用限制」（問的是 Glassnode 免費替代）。
+#   首頁文字版補上指標一覽、資料來源、常見問題（FAQPage 結構化資料），llms.txt 也同步。資料來源從每張圖的 src 欄位比對，不寫死
+VENDORS = ['Bitview', 'CheckOnChain', 'CoinMetrics', 'Coinalyze', 'Binance', 'OKX', 'Bybit', 'Deribit', 'Coinbase', 'Kraken', 'Bitfinex', 'Hyperliquid', 'DefiLlama',
+           'CoinMarketCap', 'CoinGecko', 'Farside', 'SoSoValue', 'CFTC', 'FRED', 'alternative.me', 'mempool', 'Upbit', 'bitcoin-data']
+_ST = ' '.join((c.get('src') or '') + ' ' + (c.get('srce') or '') + ' ' + (c.get('dz') or '') + ' ' + (c.get('de') or '') for c in ANY)
+SRCS = [v for v in VENDORS if v.lower() in _ST.lower()]
+_HAVE = ' '.join((c.get('en') or '') for c in ANY).lower()
+_KNOWN = [(w, z) for w, z, key in (('MVRV', 'MVRV', 'mvrv'), ('SOPR (network, long- and short-term holders)', 'SOPR（全網、長期、短期持有者）', 'sopr'), ('NUPL by holder group', '長短期持有者 NUPL', 'nupl'),
+          ('holder cost bases and realized price', '各群持有者成本與實現價', 'cost basis'), ('supply distribution (URPD)', '籌碼分布（URPD）', 'urpd'), ('exchange netflow and exchange supply', '交易所淨流量與交易所供給', 'exchange'),
+          ('spot ETF flows', '現貨 ETF 淨流量', 'etf'), ('stablecoin supply', '穩定幣供給', 'stablecoin'), ('funding rates', '資金費率', 'funding'), ('options and implied volatility', '選擇權與隱含波動', 'volatility'),
+          ('Pi Cycle', 'Pi Cycle', 'pi cycle'), ('Reserve Risk', '儲備風險', 'reserve risk'), ('Hash Ribbons and miners', 'Hash Ribbons 與礦工', 'hash ribbons')) if key in _HAVE]
+FAQ = [
+    ('Is Daybreak free? Do I need an account?', 'Daybreak 要付費嗎？要登入嗎？',
+     'Yes, it is free. There is no sign-up, login, paywall or usage limit. The app, every chart page, the daily briefs and the RSS feeds are public.',
+     '免費，不用註冊或登入，沒有付費牆，也沒有使用次數限制。網站、每張圖的單頁、每日簡報和 RSS 都公開。'),
+    ('Which indicators does Daybreak cover?', 'Daybreak 有哪些指標？',
+     '%d charts, including %s. The full list, with today\'s lean for each chart, is at %sen/charts/.' % (NCH, ', '.join(e for e, _ in _KNOWN), SITE),
+     '%d 張圖，包括%s。完整清單和每張圖今天的表態在 %scharts/。' % (NCH, '、'.join(z for _, z in _KNOWN), SITE)),
+    ('Where does the data come from?', '資料從哪裡來？',
+     'Free public sources: %s. Each chart names its source and the date of its latest data.' % ', '.join(SRCS),
+     '免費的公開來源：%s。每張圖都寫出資料來源和最新資料的日期。' % '、'.join(SRCS)),
+    ('How often is it updated?', '多久更新一次？',
+     'Every day, from the previous UTC daily close, before 08:30 Taipei time (00:30 UTC).', '每天一次，用前一天的收盤（UTC），台北時間早上 08:30 前更新完。'),
+    ('How is Daybreak different from data platforms like Glassnode?', 'Daybreak 和 Glassnode 這類資料平台有什麼不同？',
+     'Daybreak is not a data terminal: it has no API, custom charts or raw-data downloads. It organises its charts into six questions, marks every chart bullish, bearish or neutral with a reason each day, and condenses them into one brief. For raw data, an API or custom metrics, a data platform such as Glassnode is the better fit; for a daily read-out that is already interpreted, Daybreak is the quicker option.',
+     'Daybreak 不是資料終端：沒有 API，不能自訂圖表或下載原始資料。它把一百多張圖整理成六個問題，每天替每張圖寫出偏多、偏空或中性和理由，再收斂成一份簡報。需要原始資料、API 或自訂指標，Glassnode 這類資料平台比較合適；想每天直接看一份讀好的判讀，Daybreak 比較省事。'),
+    ('Does Daybreak give buy or sell signals?', 'Daybreak 會給買賣建議嗎？',
+     'No. It reports where each indicator leans and why; it makes no trade calls.', '不會。它只寫每個指標偏向哪邊、為什麼，不給交易建議。'),
+    ('Who makes Daybreak?', '誰做的？', 'Aron, an independent builder (Aron Lab, https://aronlab.dev/). Code computes every number; AI only writes the explanation.',
+     'Aron（Aron Lab，https://aronlab.dev/）。數字由程式計算，AI 只負責寫解釋。'),
+]
+
+
+def _catalog(en):
+    """首頁文字版的指標一覽：六個問題各一行，圖名連到各自的單頁"""
+    return ''.join('<h3>%s</h3><p>%s</p>' % (esc(q['qe'] if en else q['qz']), (', ' if en else '、').join(
+        '<a href="%scharts/%s/">%s</a>' % ('en/' if en else '', c['k'], esc(name(c, en))) for c in charts(q['id']))) for q in QS)
+
+
+def _faq(en):
+    return ''.join('<h3>%s</h3><p>%s</p>' % (esc(qe if en else qz), esc(ae if en else az)) for qe, qz, ae, az in FAQ)
+
+
 def static_intro():
     tz, te = tally(False), tally(True)
     h = ['<main id="seo-static"><h1>Daybreak · 比特幣多維判讀 · Bitcoin, read across every dimension</h1>',
          '<section lang="en"><p>%s</p>' % esc(INTRO_EN),
          '<h2>The six questions</h2><ul>%s</ul>' % ''.join('<li><a href="app/#%s">%s</a>: %s</li>' % (q['id'], esc(q['en']), esc(q['qe'])) for q in QS)]
     if HE: h.append('<h2>Latest: %s close, No.%s</h2><p><strong>%s</strong></p><p>%s</p>' % (DEN, ED, esc(HE), esc(SE)))
-    h.append('<p>%s</p></section>' % te)
+    h.append('<p>%s</p>' % te)
+    h.append('<h2>All indicators</h2>%s<h2>Data sources</h2><p>%s. Each chart names its source and date.</p><h2>FAQ</h2>%s</section>' % (_catalog(True), esc(', '.join(SRCS)), _faq(True)))
     h += ['<section lang="zh-Hant"><p>%s</p>' % esc(INTRO_ZH),
           '<h2>六個問題</h2><ul>%s</ul>' % ''.join('<li><a href="app/#%s">%s</a>：%s</li>' % (q['id'], esc(q['zh']), esc(q['qz'])) for q in QS),
-          '<h2>最新一期：%s 收盤版 No.%s</h2><p><strong>%s</strong></p><p>%s</p><p>%s</p></section>' % (DZH, ED, esc(BR.get('hz') or ''), esc(BR.get('sz') or ''), tz),
+          '<h2>最新一期：%s 收盤版 No.%s</h2><p><strong>%s</strong></p><p>%s</p><p>%s</p>' % (DZH, ED, esc(BR.get('hz') or ''), esc(BR.get('sz') or ''), tz),
+          '<h2>指標一覽</h2>%s<h2>資料來源</h2><p>%s。每張圖都寫出資料來源和日期。</p><h2>常見問題</h2>%s</section>' % (_catalog(False), esc('、'.join(SRCS)), _faq(False)),
           '<p><a href="app/">Open Daybreak · 打開 Daybreak</a> · <a href="case-study/">Case study</a> · <a href="charts/">所有圖</a> · <a href="en/charts/">All charts</a> · <a href="brief/">每日簡報</a> · <a href="en/brief/">Daily briefs</a> · <a href="llms.txt">llms.txt</a> · <a href="latest.md">latest.md</a> · <a href="latest.en.md">latest.en.md</a></p></main>']
     return ''.join(h)
 
@@ -154,7 +199,9 @@ def _ld(graph):
 
 
 def ld_intro():
-    return _ld([WEBSITE, PERSON])
+    faq = {'@type': 'FAQPage', '@id': SITE + '#faq', 'url': SITE, 'isPartOf': {'@id': WEBSITE['@id']},
+           'mainEntity': [{'@type': 'Question', 'name': q, 'inLanguage': l, 'acceptedAnswer': {'@type': 'Answer', 'text': a}} for qe, qz, ae, az in FAQ for q, a, l in ((qe, ae, 'en'), (qz, az, 'zh-Hant'))]}
+    return _ld([WEBSITE, PERSON, faq])
 
 
 def ld_app():
@@ -217,6 +264,8 @@ def llms():
     o += ['- [All charts](%sen/charts/): every chart on one page, grouped by the six questions, with today’s lean and reason; each chart also has its own page at /en/charts/<code>/ (中文：%scharts/)' % (SITE, SITE),
           '- [Daily briefs](%sen/brief/): one page per day since Oct 2026 (headline, overall lean, levels to watch, findings) at /en/brief/YYYY-MM-DD/ (中文：%sbrief/)' % (SITE, SITE)]
     o += ['- [Case study](%scase-study/en/): how Daybreak was designed and built, and how it checks its own calls (中文版：%scase-study/)' % (SITE, SITE), '',
+          '## FAQ', ''] + ['- **%s** %s' % (qe, ae) for qe, qz, ae, az in FAQ] + ['',
+          '## All indicators', ''] + ['- %s: %s' % (q['qe'], ', '.join('[%s](%sen/charts/%s/)' % (name(c, True), SITE, c['k']) for c in charts(q['id']))) for q in QS] + ['',
           '## Method', '',
           '- Data: free public sources (Bitview, CheckOnChain, CoinMetrics, Coinalyze, Binance, OKX, Deribit, Coinbase, Kraken, DefiLlama, FRED and others); each chart names its source and date.',
           '- Code computes every number and every rule. AI writes the daily explanation from those numbers; it does not calculate and does not decide.',
