@@ -35,3 +35,4 @@ Sellers are hurting more than at the June low and money is still leaving; loss-t
 ## Optional
 
 - [Sitemap](https://daybreak.aronlab.dev/sitemap.xml)
+- [Daily brief feed, English (Atom)](https://daybreak.aronlab.dev/en/feed.xml) · [中文](https://daybreak.aronlab.dev/feed.xml)
