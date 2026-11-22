@@ -7,6 +7,7 @@ on:
 
 permissions:
   contents: write
+  actions: write   # 2026-11-22 推了新提交後呼叫 cloudflare.yml 部署（GITHUB_TOKEN 推送不會觸發 push 事件）
 
 concurrency:
   group: daily-data
@@ -21,6 +22,7 @@ jobs:
       - name: Update ETF flows from CoinMarketCap
         run: python3 pipeline/etf.py
       - name: Commit
+        id: commit
         run: |
           git config user.name "apogee-bot"
           git config user.email "apogee-bot@users.noreply.github.com"
@@ -29,3 +31,10 @@ jobs:
           git commit -m "etf: $(python3 -c "import json;print(json.load(open('data/etf.json')).get('last_complete'))")"
           git pull --rebase --autostash
           git push
+          echo "pushed=true" >> "$GITHUB_OUTPUT"
+      - name: 部署到 Cloudflare（有推新提交才呼叫）
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh workflow run cloudflare.yml --repo "${{ github.repository }}" --ref main -f from=etf

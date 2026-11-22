@@ -5,10 +5,15 @@ name: Deploy to Cloudflare Pages
 # 2026-11-16 使用者決定提前收掉並行：GitHub Pages 的來源改成 pages-redirect 分支，只剩一頁轉址，舊網址都帶到 daybreak.aronlab.dev 的同一個位置。
 #
 # 觸發：
-#   - push 到 main（PR 合併、日報等用個人帳號推上來的提交）
-#   - workflow_run：Daily data / ETF flows / Prefetch on-chain / Share cards 跑完之後。
-#     這幾個流程用內建 GITHUB_TOKEN 推送，GitHub 不會因此觸發 push 事件，所以要另外接。
+#   - push 到 main（PR 合併、日報、回覆／長文等用個人帳號推上來的提交）
+#   - workflow_dispatch：Daily data / ETF flows / Share cards / Chart images 真的推了新提交（或更新了截圖）才在最後一步呼叫，
+#     帶 from=<來源>。這幾個流程用內建 GITHUB_TOKEN 推送，GitHub 不會因此觸發 push 事件；GITHUB_TOKEN 可以觸發 workflow_dispatch。
+#     2026-11-22 原本用 workflow_run，來源每跑一次（含「已更新、直接結束」的備援排程）就部署一次；改成有變才部署，省 Actions 分鐘數
+#     （使用者考慮把倉庫改私有，私有庫的 Actions 要算額度）。Prefetch on-chain 只更新 pipeline/bd_cache（Daily data 的輸入），不必部署。
 #   - 手動 workflow_dispatch
+# push 略過的路徑：只動到這些檔案的推送不在這裡部署——
+#   data/notes*.json、data/picks.json、pipeline/next/**：Share cards 會被同一個推送觸發，重建後再呼叫部署（不然同一份內容部署兩次）
+#   .github/run-daily：Daily data 跑完會呼叫部署；pipeline/bd_cache/**：只是資料快取
 #
 # 需要倉庫 Secrets：CLOUDFLARE_API_TOKEN（權限 Account › Cloudflare Pages › Edit）、CLOUDFLARE_ACCOUNT_ID。
 # 還沒設定時整個工作直接略過，不會失敗。
@@ -16,17 +21,22 @@ name: Deploy to Cloudflare Pages
 on:
   push:
     branches: [main]
-  workflow_run:
-    workflows: ["Daily data", "ETF flows", "Prefetch on-chain", "Share cards", "Chart images"]
-    types: [completed]
+    paths-ignore: ["data/notes.json", "data/notes.en.json", "data/picks.json", "pipeline/next/**", ".github/run-daily", "pipeline/bd_cache/**"]
   workflow_dispatch:
+    inputs:
+      from:
+        description: "誰呼叫的（daily / etf / share / chart-img），手動可留空"
+        required: false
+        default: ""
 
 permissions:
   contents: read
 
+# 2026-11-22 改成不取消進行中的部署：連續推送時進行中的那次跑完，後面只留一個排隊（GitHub 會把更早排隊的取消，不算分鐘數），
+# 排隊的那次一樣部署 main 最新內容。原本 cancel-in-progress 會把跑到一半的部署砍掉，那段時間白算。
 concurrency:
   group: cloudflare-pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 env:
   PROJECT: daybreak
@@ -45,7 +55,7 @@ jobs:
       - uses: actions/checkout@v4
         if: env.HAS_TOKEN == 'true'
         with:
-          ref: main   # workflow_run 也一律部署 main 最新的內容
+          ref: main   # 由其他流程呼叫時也一律部署 main 最新的內容
 
       - name: 準備上傳的網站資料夾
         if: env.HAS_TOKEN == 'true'
@@ -94,7 +104,7 @@ jobs:
           command: pages deploy ${{ env.SITE_DIR }} --project-name=${{ env.PROJECT }} --branch=main --commit-dirty=true
 
       - name: 通知搜尋引擎（IndexNow）
-        # 2026-11-20 GEO：每天日報上線那次部署（接在 Share cards 之後）才送，一天一次；失敗不影響部署
-        if: env.HAS_TOKEN == 'true' && github.event_name == 'workflow_run' && github.event.workflow_run.name == 'Share cards'
+        # 2026-11-20 GEO：日報上線那次部署（Share cards 呼叫的）才送；失敗不影響部署
+        if: env.HAS_TOKEN == 'true' && github.event_name == 'workflow_dispatch' && inputs.from == 'share'
         continue-on-error: true
         run: python3 pipeline/indexnow.py
