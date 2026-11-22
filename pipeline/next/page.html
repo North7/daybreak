@@ -474,7 +474,7 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .fs-h .sub { font-size: 14px; color: var(--k2); min-width: 0; }
 .fs-h .n { margin-left: auto; font: 500 11px var(--f-mono); color: var(--k2); white-space: nowrap; }
 .fg { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-.fc { container-type: inline-size; min-width: 0; background: var(--sheet); border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 14px; padding: 16px 18px 12px; box-shadow: 0 30px 60px -44px var(--shadow); transition: background-color .5s, border-color .3s; }
+.fc { container-type: inline-size; min-width: 0; background: var(--sheet); border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 14px; padding: 16px 18px 12px; box-shadow: 0 30px 60px -44px var(--shadow); transition: background-color .5s, border-color .3s, opacity .45s; }
 .fc:hover { border-color: color-mix(in srgb, var(--ink) 22%, transparent); }
 .fc .ol { gap: 8px; height: 100%; }
 .fc .ol-big { font-size: clamp(30px, 7.2cqw, 44px); }
@@ -631,7 +631,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
         ⑪ 段落標題下面那一行是答案，不是問題：綜合這一段每張圖的結論，可以展開看每張圖各自說了什麼
         ⑫ 圖的顏色要鮮豔（會被截去當配圖）：色票用高飽和度，線不透明、夠粗，柱子不透明，色帶夠深；要壓暗的只有「重點上色」規則裡的其餘部分
         ⑬ 頭部的代表數字和今天頁的大標題用展示字（Archivo 壓窄 900／思源黑體 900），卡片裡的數字維持 Inter Tight
-        ⑩ 找圖地圖（頂部九宮格鍵或按 /）：每張圖一格縮小版，可搜尋，點了就定位到那張圖
+        ⑩ 找圖地圖（頂部九宮格鍵或按 /）：每張圖一格縮小版，可搜尋，點了就定位到那張圖（手機收成清單列的就定位到那一列；放在導覽列和底部分頁列之間的正中間，停穩才亮強調色外框，其他圖淡下去，見 seek()）
    ════════════════════════════════════════════════════════════════════ */
 .oc { --t-sec: clamp(32px, 4.4vw, 66px); --t-hero: clamp(52px, 5cqw, 78px); --t-num: clamp(32px, 7cqw, 44px); --t-head: 17px; --t-body: 14px; --t-note: 12px;
   --rule: color-mix(in srgb, var(--ink) 11%, transparent); --soft: color-mix(in srgb, var(--ink) 78%, var(--sheet));
@@ -714,7 +714,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .oc.io .fc:not(.in) { opacity: 0; }
 .oc.io .fc.in { animation: fcin .95s var(--spring) backwards; animation-delay: calc(var(--i, 0) * 80ms); }
 @media (hover: hover) {
-  .fc { transition: transform .6s var(--spring), border-color .3s, background-color .5s; }
+  .fc { transition: transform .6s var(--spring), border-color .3s, background-color .5s, opacity .45s; }
   .fc:hover { transform: translateY(-3px); border-color: color-mix(in srgb, var(--ink) 20%, transparent); }
   /* 邊上一小段光跟著游標（墨色，不帶顏色） */
   .fc::before { content: ""; position: absolute; inset: -1px; border-radius: inherit; padding: 1.5px; background: radial-gradient(260px circle at var(--mx, -999px) var(--my, -999px), color-mix(in srgb, var(--ink) 70%, transparent), transparent 70%); -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite: xor; mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); mask-composite: exclude; opacity: 0; transition: opacity .35s; pointer-events: none; z-index: 2; }
@@ -1216,9 +1216,14 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .mp-nm { font-size: 12.5px; font-weight: 600; line-height: 1.3; min-height: 2.6em; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .mp-v { font-size: var(--t-note); color: var(--k2); font-variant-numeric: tabular-nums; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; min-height: 1.3em; }
 .mp-e { margin: 40px 0; font-size: var(--t-body); color: var(--k2); }
-/* 從地圖跳過去的那張圖：邊框閃兩下 */
-@keyframes hitp { 0%, 100% { box-shadow: 0 0 0 0 transparent; border-color: var(--rule); } 50% { box-shadow: 0 0 0 3px var(--ink); border-color: var(--ink); } }
-.fc.hit { animation: hitp 1.1s ease-in-out 2; }
+/* 從找圖（或「看那張圖」）跳過去的那張圖（2026-11-22 使用者：「手機版不能準確定位到圖表，電腦版只能定位到大概位置，還是需要仔細對比才能找到在哪」）：
+   捲到、停穩之後才亮（原本一點就閃，長距離捲動 2.5 秒，到了已經閃完；而且 .oc.io .fc.in 的進場動畫權重比較高，閃框其實沒播出來）。
+   亮法：外框換強調色、外面一圈淡淡的同色環，停 2 秒再退；同時同一頁其他的圖和段落標題淡到 30%，一眼看出是哪一張。框畫在 ::after 上，不碰卡片本身的進場動畫。 */
+@keyframes hitp { 0% { box-shadow: 0 0 0 0 transparent; } 10%, 72% { box-shadow: 0 0 0 2px var(--ac), 0 0 0 8px color-mix(in srgb, var(--ac) 20%, transparent); } 100% { box-shadow: 0 0 0 0 transparent; } }
+.fc.hit::after, .fr.hit::after { content: ""; position: absolute; inset: -1px; border-radius: inherit; pointer-events: none; z-index: 3; animation: hitp 2.8s cubic-bezier(.2, .7, .2, 1) both; }
+.fr.hit::after { inset: 0; }
+#oc-secs .fs-h { transition: opacity .45s; }
+#oc-secs.spot .fc.in:not(.hit), #oc-secs.spot .frl.in .fr:not(.hit), #oc-secs.spot .fs-h { opacity: .3; }
 /* ㉘ 液態分頁（2026-11-12，使用者給了一段液態分頁列的錄影：「這種物理特性可以做嗎」→ 試作三種手感，選「彈跳」，並要電腦上也有）。
    用在第一層「今天和六個問題」（手機底部分頁列 .oc-tab、電腦頂部 .oc-ch）。第二層的段落導航後來搬到側邊（㉚），用的是同一個 LQ 的直向版。
    1 形狀：一條線上鼓起一個包，包的頂用 --ac 描邊、兩腳淡出（就是 logo 裡地平線上的太陽）；線本身是 --ink 13% 的細線。沒有光暈、沒有漸層底、沒有毛玻璃以外的東西。
@@ -1479,7 +1484,7 @@ html .oc-srcs { padding-left: var(--gx); padding-right: var(--gx); }
      判讀句（主角：標題級字、粗體、主文字色；前面一個偏向膠囊，綠偏多、紅偏空、灰中性）、會改變看法（一行）、收起來的「證據 N」（看法的依據＋原本的事實列）。
      拿掉原本的「讀數 · ○○」標題（程式挑一條事實當標題，常和判讀打架）和「我們的看法」整塊（偏向變成膠囊，回測數字進證據）。手機主卡判讀完整顯示（它是主角，不截斷），會改變看法最多 2 行；AI 判讀的偏向膠囊用判讀句自己的方向（判讀檔 cards 的 lean），不用規則的；分享模式和社群配圖只顯示判讀句，偏向膠囊、會改變看法、證據都藏（照舊：「我們的看法」不進社群配圖）。 */
 .frl { display: grid; border-top: 1px solid var(--rule); margin-top: 2px; } .fg > .frl { flex: 1 1 100%; min-width: 0; }
-.fr { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto 58px 12px; align-items: center; column-gap: 10px; min-height: 58px; padding: 9px 4px 9px 8px; border: 0; border-bottom: 1px solid var(--rule); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 10px; -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: transform .5s var(--spring, cubic-bezier(.3, 1.4, .5, 1)), background-color .25s; }
+.fr { position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto 58px 12px; align-items: center; column-gap: 10px; min-height: 58px; padding: 9px 4px 9px 8px; border: 0; border-bottom: 1px solid var(--rule); background: none; color: inherit; font: inherit; text-align: left; cursor: pointer; border-radius: 10px; -webkit-tap-highlight-color: transparent; touch-action: manipulation; transition: transform .5s var(--spring, cubic-bezier(.3, 1.4, .5, 1)), background-color .25s, opacity .45s; }
 .fr:active { transform: scale(.97); background: color-mix(in srgb, var(--ink) 6%, transparent); transition-duration: .12s; }
 .fr:focus-visible { outline: 2px solid var(--ac); outline-offset: -2px; }
 .fr-a { min-width: 0; display: grid; gap: 1px; }
@@ -1494,7 +1499,6 @@ html .oc-srcs { padding-left: var(--gx); padding-right: var(--gx); }
 .oc.io .frl:not(.in) .fr { opacity: 0; } .oc.io .frl:not(.in) .fr-s::after { transform: scaleX(1); }
 .oc.io .frl.in .fr { animation: m-rise-s .62s var(--spring, cubic-bezier(.16, 1, .3, 1)) backwards; animation-delay: calc(var(--j, 0) * 55ms + 120ms); }
 .oc.io .frl.in .fr-s::after { animation: wipe .9s cubic-bezier(.2, .7, .2, 1) backwards; animation-delay: calc(var(--j, 0) * 55ms + 260ms); }
-.fr.hit { animation: hitr 1.1s ease-in-out 2; } @keyframes hitr { 50% { background: color-mix(in srgb, var(--ac) 14%, transparent); } }
 @keyframes m-rise-s { from { opacity: 0; transform: translate3d(0, 11px, 0); } }
 @media (prefers-reduced-motion: reduce) { .oc.io .frl .fr, .oc.io .frl .fr-s::after { animation: none !important; } .oc.io .frl:not(.in) .fr { opacity: 1; } .oc.io .frl:not(.in) .fr-s::after { transform: scaleX(0); } .fr, .fr:active { transition: none; transform: none; } }
 .fc.ph .sy-h, .fc.ph .ol-sx, .fc.ph .ol-pair, .fc.ph .md.ly, .fc.ph .ol-ctl .more { display: none; }
@@ -3001,7 +3005,7 @@ function initOC() {
   function headBody() { const f = stg.querySelector('.os[data-k="' + ci + '"] .os-in'); if (f) f.insertAdjacentHTML('beforeend', `<div class="os-b"><div class="${O.brief ? 'ov br' : O.map || O.dial || O.flow || O.crowd ? 'ov mp' : 'ov gn'}"><div class="ov-l" id="oc-ol0"></div><div class="ov-m" id="oc-or0"></div></div></div>`); }
   function renderSecs() {
     SEC = {}; $('#oc-secs').innerHTML = G.map((x, j) => `<section class="fs" id="oc-s${j + 1}"><div class="fs-h"><span class="k">${p2(j + 1)} / ${p2(G.length)}</span><h3>${esc(T(x.zh, x.en))}</h3><span class="n" role="img" aria-label="${x.charts.length} ${T('張圖', 'charts')}">${ICS('chart')}${x.charts.length}</span>${secHtml(x)}</div><div class="fg" id="oc-g${j + 1}"></div></section>`).join('');
-    G.forEach((x, i) => renderFlat(i + 1));
+    G.forEach((x, i) => renderFlat(i + 1)); $('#oc-secs').dataset.ci = ci;   /* 找圖要等新的一頁畫好才找目標（舊頁的 id 一樣） */
     const av = CH.map((c, i) => i).filter(i => !CH[i].todo), at = av.indexOf(ci), pv = at > 0 ? av[at - 1] : null, nx = at < av.length - 1 ? av[at + 1] : null, pb = (i, cls, lab) => i == null ? '<span></span>' : `<button type="button" class="${cls}" data-ch="${i}"><small>${lab}</small><b>${esc(T(CH[i].zh, CH[i].en))}</b><span>${esc(T(CH[i].qz, CH[i].qe))}</span></button>`;
     $('#oc-secs').insertAdjacentHTML('beforeend', `<nav class="pn" aria-label="${T('上一頁和下一頁', 'Previous and next page')}">${pb(pv, 'pv', IC('back'))}${pb(nx, 'nx', IC('go'))}</nav>`); spy();
   }
@@ -3158,8 +3162,26 @@ function initOC() {
     m.hidden = false; m.scrollTop = 0; void m.offsetWidth; m.classList.add('on'); mapFilter(); if (window.innerWidth >= 701) setTimeout(() => inp.focus(), 60);
   }
   function closeMap() { const m = $('#oc-map'); if (m.hidden) return; m.classList.remove('on'); setTimeout(() => { if (!m.classList.contains('on')) m.hidden = true; }, reduce ? 0 : 220); }
+  /* 定位到一張圖（找圖、「看那張圖」共用；2026-11-22 使用者：「手機版不能準確定位到圖表，電腦版只能定位到大概位置」）：
+     1 目標：電腦是那張卡；手機收成清單列的頁，第二張以後是那一列（原本只找卡片，手機上找不到就什麼都不做）。
+     2 捲法：離很遠先瞬間跳到目標前一個畫面，再順滑捲完最後一段（原本從頁首順滑捲一萬多 px，要 2.5 秒）；停穩後再量一次，偏了超過 24px 就補捲，補兩次還不到就直接跳（上面的卡片進場、圖畫好會改高度）。
+     3 位置：放在頂部導覽列和手機底部分頁列之間的正中間；比這段還高的卡，頂端貼導覽列下方 12px。
+     4 停穩才亮框，同時其他圖淡下去（CSS .hit、#oc-secs.spot）。 */
+  let seekN = 0;
+  function seek(t) { if (!t) return; const n0 = ++seekN, se = document.scrollingElement || document.documentElement, bar = $('#oc-bar'), tab = $('#oc-tab'), sc = $('#oc-secs');
+    const want = () => { const vh = window.innerHeight, top = bar ? bar.offsetHeight : 0, tr = tab && tab.offsetParent ? tab.getBoundingClientRect() : null, bot = tr && tr.top < vh && tr.bottom > vh - 4 ? tr.top : vh, h = t.offsetHeight, room = bot - top, off = h + 24 > room ? top + 12 : top + (room - h) / 2; let y0 = 0; for (let e = t; e; e = e.offsetParent) y0 += e.offsetTop; return Math.max(0, Math.min(se.scrollHeight - vh, y0 - off)); };   /* 用版面位置（offsetTop），不用 getBoundingClientRect：卡片進場動畫的位移會讓量到的位置偏 30 幾 px */
+    const go = (y, sm) => window.scrollTo({ top: y, behavior: sm && !reduce ? 'smooth' : 'instant' });
+    let y = want(); const d = y - window.scrollY, vh = window.innerHeight; if (Math.abs(d) > vh * 1.4) go(y - Math.sign(d) * vh * .9, 0); y = want(); go(y, 1);
+    let last = -1, still = 0, n = 0, fix = 0; const tick = () => { if (n0 !== seekN) return; n++; const s0 = window.scrollY; still = Math.abs(s0 - last) < .5 ? still + 1 : 0; last = s0; if (still < 4 && n < 100) { setTimeout(tick, 40); return; }
+      const y2 = want(); if (Math.abs(y2 - s0) > 24) { if (fix < 2) { fix++; still = 0; n = 0; go(y2, 1); setTimeout(tick, 40); return; } go(y2, 0); }   /* 補兩次還沒到（瀏覽器沒播順滑捲動）就直接跳過去，不在畫面外亮框 */
+      t.classList.remove('hit'); void t.offsetWidth; t.classList.add('hit'); if (sc) sc.classList.add('spot'); spyK = -1; spy();
+      setTimeout(() => { if (n0 === seekN && sc) sc.classList.remove('spot'); }, 1900); setTimeout(() => t.classList.remove('hit'), 3000); };
+    setTimeout(tick, 40); }
+  /* 使用者自己捲、點、按鍵就收掉淡化，不擋他 */
+  ['wheel', 'touchstart', 'keydown', 'pointerdown'].forEach(ev => window.addEventListener(ev, () => { const sc = $('#oc-secs'), on = sc && sc.classList.contains('spot'); if (on || ev === 'wheel' || ev === 'touchstart') seekN++; if (on) sc.classList.remove('spot'); }, { passive: true }));   /* 捲到一半使用者自己滑，就不再補捲 */
+  const seekEl = (gk, i, key) => { const o2 = document.getElementById('oc-ol' + gk + '_' + i), card = o2 ? o2.closest('.fc') : null; if (card) { card.classList.add('in'); return card; } const rw = $('#oc-secs .fr[data-fx="' + gk + '_' + i + '"]') || (key ? $('#oc-secs .fr[data-k="' + key + '"]') : null); if (rw) { const l = rw.closest('.frl'); if (l) l.classList.add('in'); } return rw; };
   function mapGo(idx) { const it = MAP[idx]; if (!it) return; closeMap(); if (fx) closeFx(); const far = it.ci !== ci; if (far) goCh(it.ci);
-    setTimeout(() => { const o2 = document.getElementById('oc-ol' + (it.gi + 1) + '_' + it.i), card = o2 ? o2.closest('.fc') : null; if (!card) return; card.classList.add('in'); card.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); card.classList.remove('hit'); void card.offsetWidth; card.classList.add('hit'); setTimeout(() => card.classList.remove('hit'), 2600); spyK = -1; setTimeout(spy, 500); }, far ? 460 : 80); }
+    const t0 = performance.now(), sc = $('#oc-secs'), find = () => { if (ci !== it.ci) { if (performance.now() - t0 < 8000) setTimeout(find, 80); return; } const t = +sc.dataset.ci === it.ci && !sc.classList.contains('sw') ? seekEl(it.gi + 1, it.i, it.c.k) : null; if (t) { seek(t); return; } if (performance.now() - t0 < 8000) setTimeout(find, 60); }; setTimeout(find, far ? 200 : 40); }
   document.addEventListener('keydown', e => { const m = $('#oc-map'); if (!m) return;
     if (m.hidden) { if (e.key === '/' && !e.metaKey && !e.ctrlKey && !/^(INPUT|TEXTAREA|SELECT)$/.test((e.target.tagName || '')) && !fx && el.getBoundingClientRect().bottom > 80 && el.getBoundingClientRect().top < window.innerHeight - 80) { e.preventDefault(); openMap(); } return; }
     if (e.key === 'Escape') { e.preventDefault(); closeMap(); } else if (e.key === 'Enter') { const f1 = MAP.find(it => it.el && !it.el.hidden); if (f1) mapGo(MAP.indexOf(f1)); } });
@@ -3188,8 +3210,8 @@ function initOC() {
     if ((b = t.closest('.os')) && stg.contains(b) && +b.dataset.k !== ci) { if (!(TBS.skip && performance.now() - TBS.skip < 450)) goCh(+b.dataset.k); return; }
     if ((b = t.closest('[data-ch]'))) { navCh(+b.dataset.ch); return; }
     if ((b = t.closest('.lg-x'))) { const cd = b.closest('.fc'); const on = cd.classList.toggle('lg-all'); b.setAttribute('aria-expanded', on); b.textContent = on ? T('收起', 'Less') : b.textContent; if (!on) phLgRe(cd); return; }
-    if ((b = t.closest('[data-jump]'))) { const rw = $('#oc-secs .fr[data-k="' + b.dataset.jump + '"]'); if (rw) { rw.closest('.frl').classList.add('in'); rw.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); rw.classList.remove('hit'); void rw.offsetWidth; rw.classList.add('hit'); setTimeout(() => rw.classList.remove('hit'), 2600); return; }   /* ㉞ 手機上那張圖收成了清單列 */
-      let key = null; Object.keys(SEC).forEach(k => (SEC[k] || []).forEach(R1 => { if (R1.c.k === b.dataset.jump) key = R1.key; })); const tg = key ? $('#oc-ol' + key) : null; if (tg) { const cd = tg.closest('.fc'); cd.classList.add('in'); cd.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'center' }); cd.classList.remove('hit'); void cd.offsetWidth; cd.classList.add('hit'); setTimeout(() => cd.classList.remove('hit'), 2600); } return; }
+    if ((b = t.closest('[data-jump]'))) { const rw = $('#oc-secs .fr[data-k="' + b.dataset.jump + '"]'); if (rw) { rw.closest('.frl').classList.add('in'); seek(rw); return; }   /* ㉞ 手機上那張圖收成了清單列 */
+      let key = null; Object.keys(SEC).forEach(k => (SEC[k] || []).forEach(R1 => { if (R1.c.k === b.dataset.jump) key = R1.key; })); const tg = key ? $('#oc-ol' + key) : null; if (tg) { const cd = tg.closest('.fc'); cd.classList.add('in'); seek(cd); } return; }
     if ((b = t.closest('[data-chid]'))) { const ix = CH.findIndex(x => x.id === b.dataset.chid); if (ix >= 0 && !CH[ix].todo) { goCh(ix); hd.scrollIntoView({ behavior: 'instant', block: 'start' }); } return; }
     if ((b = t.closest('[data-src]'))) { toast(b.dataset.src, 1); return; }   /* ㉑ 4：手機點來源圖示 */
     if ((b = t.closest('.sy-d'))) { b.closest('.ol-say').classList.toggle('open'); return; }
