@@ -4,8 +4,31 @@
  "edition": 47,
  "items": [
   {
-   "n": 98,
+   "n": 102,
    "order": 1,
+   "status": "send",
+   "url": "https://x.com/Murphychen888/status/2124393533809549765",
+   "id": "2124393533809549765",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82097,
+   "posted": "2026-11-22T06:44:22Z",
+   "lang": "zh",
+   "angle": "他說的第二條路（往下找藍綠兩線）換成價格就是這輪第一次跌破實現價；補前三輪大底的倍數和這輪最低",
+   "summary": "減半後 MVRV 重疊曲線：兩條路，在這裡震盪到 27 年 1–2 月，或下探到前兩輪的藍綠線；兩條都能完成首次三線合一，大週期盈虧比越來越有吸引力",
+   "reply": "你說的第二條路，就是這輪第一次跌破實現價、全市場平均在賠錢\n前三輪大底都破過，最淺也到 0.75 倍\n這輪最低也還有 1.10 倍，5.32 萬一天都沒破過，我反而好奇是不是 ETF 把底墊高了",
+   "sources": "收盤÷實現價（Bitview，到 11/21）：2015/1 0.57、2018/12 0.70、2022/11 0.75、2026/6/30 1.10、11/21 1.13（60,089÷53,206）；長文 2026-11-22-bottom-rp 圖1",
+   "note": "使用者點名（貼網址）。他的圖是 Glassnode MVRV，前兩輪藍綠線在 0.8 上下，跟我們的收盤÷實現價同一把尺。對得上的自己文章是 11/23 19:30 才發的 bottom-rp，還沒發不能引用，改配它的圖1（裁掉「圖1」標籤，custom）。同向補充，不唱反調。",
+   "style": "口語版",
+   "take": "第二條路＝這輪第一次全市場平均在賠錢",
+   "image": {
+    "custom": true,
+    "title": "前三輪大底都跌破實現價，這輪最低只到 1.10 倍"
+   }
+  },
+  {
+   "n": 98,
+   "order": 2,
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2124331225058034025",
    "id": "2124331225058034025",
@@ -24,7 +47,7 @@
   },
   {
    "n": 99,
-   "order": 2,
+   "order": 3,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/hiply0625/status/2124384346127946023",
@@ -43,7 +66,7 @@
   },
   {
    "n": 100,
-   "order": 3,
+   "order": 4,
    "status": "skip",
    "kind": "followup",
    "url": "https://x.com/nirox0216/status/2124382882894639250",
@@ -62,7 +85,7 @@
   },
   {
    "n": 101,
-   "order": 4,
+   "order": 5,
    "status": "skip",
    "kind": "followup",
    "url": "https://x.com/GaoNew3/status/2124382310598656376",
@@ -81,7 +104,7 @@
   },
   {
    "n": 26,
-   "order": 5,
+   "order": 6,
    "status": "send",
    "url": "https://x.com/CryptoTrix1/status/2124350658719449551",
    "id": "2124350658719449551",
@@ -100,7 +123,7 @@
   },
   {
    "n": 27,
-   "order": 6,
+   "order": 7,
    "status": "send",
    "url": "https://x.com/xiaolongxiaai/status/2124347156106760266",
    "id": "2124347156106760266",
@@ -119,7 +142,7 @@
   },
   {
    "n": 28,
-   "order": 7,
+   "order": 8,
    "status": "send",
    "url": "https://x.com/SDW73061693/status/2124356334544109906",
    "id": "2124356334544109906",
@@ -138,7 +161,7 @@
   },
   {
    "n": 29,
-   "order": 8,
+   "order": 9,
    "status": "send",
    "url": "https://x.com/dizhu818/status/2124352806836732211",
    "id": "2124352806836732211",
@@ -157,7 +180,7 @@
   },
   {
    "n": 30,
-   "order": 9,
+   "order": 10,
    "status": "send",
    "url": "https://x.com/hou_ge90191/status/2124351817538851145",
    "id": "2124351817538851145",
@@ -176,7 +199,7 @@
   },
   {
    "n": 31,
-   "order": 10,
+   "order": 11,
    "status": "send",
    "url": "https://x.com/A9touyan/status/2124350931454341565",
    "id": "2124350931454341565",
@@ -195,7 +218,7 @@
   },
   {
    "n": 32,
-   "order": 11,
+   "order": 12,
    "status": "send",
    "url": "https://x.com/zzcdsg11/status/2124349966868984034",
    "id": "2124349966868984034",
@@ -214,7 +237,7 @@
   },
   {
    "n": 33,
-   "order": 12,
+   "order": 13,
    "status": "send",
    "url": "https://x.com/XueCheng1041604/status/2124356577335631921",
    "id": "2124356577335631921",
@@ -233,7 +256,7 @@
   },
   {
    "n": 34,
-   "order": 13,
+   "order": 14,
    "status": "send",
    "url": "https://x.com/TDCCPCA/status/2124356657178464751",
    "id": "2124356657178464751",
@@ -252,7 +275,7 @@
   },
   {
    "n": 35,
-   "order": 14,
+   "order": 15,
    "status": "send",
    "url": "https://x.com/alphacue/status/2124352850171953598",
    "id": "2124352850171953598",
@@ -271,7 +294,7 @@
   },
   {
    "n": 36,
-   "order": 15,
+   "order": 16,
    "status": "send",
    "url": "https://x.com/hiply0625/status/2124355119705944230",
    "id": "2124355119705944230",
@@ -290,7 +313,7 @@
   },
   {
    "n": 37,
-   "order": 16,
+   "order": 17,
    "status": "send",
    "url": "https://x.com/Obsixy/status/2124353171351015820",
    "id": "2124353171351015820",
@@ -309,7 +332,7 @@
   },
   {
    "n": 38,
-   "order": 17,
+   "order": 18,
    "status": "send",
    "url": "https://x.com/Crypto_pikou/status/2124356380899655910",
    "id": "2124356380899655910",
@@ -328,7 +351,7 @@
   },
   {
    "n": 39,
-   "order": 18,
+   "order": 19,
    "status": "send",
    "url": "https://x.com/KKisiyo/status/2124351447806640204",
    "id": "2124351447806640204",
@@ -347,7 +370,7 @@
   },
   {
    "n": 25,
-   "order": 19,
+   "order": 20,
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2124341242767311115",
    "id": "2124341242767311115",
@@ -366,7 +389,7 @@
   },
   {
    "n": 20,
-   "order": 20,
+   "order": 21,
    "status": "send",
    "url": "https://x.com/btc_nightwatch/status/2124326273623400609",
    "id": "2124326273623400609",
@@ -385,7 +408,7 @@
   },
   {
    "n": 21,
-   "order": 21,
+   "order": 22,
    "status": "send",
    "url": "https://x.com/Xingge888668/status/2124322906142576653",
    "id": "2124322906142576653",
@@ -404,7 +427,7 @@
   },
   {
    "n": 22,
-   "order": 22,
+   "order": 23,
    "status": "send",
    "url": "https://x.com/huifan518/status/2124321582424391959",
    "id": "2124321582424391959",
@@ -423,7 +446,7 @@
   },
   {
    "n": 23,
-   "order": 23,
+   "order": 24,
    "status": "send",
    "url": "https://x.com/Yxnh8023/status/2124321385715847497",
    "id": "2124321385715847497",
@@ -442,7 +465,7 @@
   },
   {
    "n": 24,
-   "order": 24,
+   "order": 25,
    "status": "optional",
    "url": "https://x.com/joke_henry/status/2124335464568213608",
    "id": "2124335464568213608",
@@ -467,7 +490,7 @@
   },
   {
    "n": 1,
-   "order": 25,
+   "order": 26,
    "status": "send",
    "url": "https://x.com/kid_gongjingyu/status/2124313848543076850",
    "id": "2124313848543076850",
@@ -486,7 +509,7 @@
   },
   {
    "n": 2,
-   "order": 26,
+   "order": 27,
    "status": "send",
    "url": "https://x.com/MacArthur0X/status/2124179410748379284",
    "id": "2124179410748379284",
@@ -505,7 +528,7 @@
   },
   {
    "n": 3,
-   "order": 27,
+   "order": 28,
    "status": "send",
    "url": "https://x.com/bludr5/status/2124300637550645313",
    "id": "2124300637550645313",
@@ -524,7 +547,7 @@
   },
   {
    "n": 4,
-   "order": 28,
+   "order": 29,
    "status": "send",
    "url": "https://x.com/ThomasNg2008/status/2124164753849466902",
    "id": "2124164753849466902",
@@ -543,7 +566,7 @@
   },
   {
    "n": 90,
-   "order": 94,
+   "order": 95,
    "status": "skip",
    "url": "https://x.com/aotudapingyuan/status/2124142740795748428",
    "id": "2124142740795748428",
@@ -562,7 +585,7 @@
   },
   {
    "n": 91,
-   "order": 95,
+   "order": 96,
    "status": "skip",
    "url": "https://x.com/cangjiang216758/status/2124166735658111438",
    "id": "2124166735658111438",
@@ -581,7 +604,7 @@
   },
   {
    "n": 92,
-   "order": 96,
+   "order": 97,
    "status": "skip",
    "url": "https://x.com/cangjiang216758/status/2124166932203180328",
    "id": "2124166932203180328",
@@ -600,7 +623,7 @@
   },
   {
    "n": 5,
-   "order": 29,
+   "order": 30,
    "status": "send",
    "url": "https://x.com/LucKyiC01N/status/2124304930949497273",
    "id": "2124304930949497273",
@@ -619,7 +642,7 @@
   },
   {
    "n": 6,
-   "order": 30,
+   "order": 31,
    "status": "send",
    "url": "https://x.com/nirox0216/status/2124309386717983080",
    "id": "2124309386717983080",
@@ -638,7 +661,7 @@
   },
   {
    "n": 7,
-   "order": 31,
+   "order": 32,
    "status": "send",
    "url": "https://x.com/NICOLASYANGX/status/2124309826939564041",
    "id": "2124309826939564041",
@@ -657,7 +680,7 @@
   },
   {
    "n": 8,
-   "order": 32,
+   "order": 33,
    "status": "send",
    "url": "https://x.com/huifan518/status/2124309648987873788",
    "id": "2124309648987873788",
@@ -676,7 +699,7 @@
   },
   {
    "n": 9,
-   "order": 33,
+   "order": 34,
    "status": "send",
    "url": "https://x.com/carp518888/status/2124308883363746135",
    "id": "2124308883363746135",
@@ -695,7 +718,7 @@
   },
   {
    "n": 10,
-   "order": 34,
+   "order": 35,
    "status": "send",
    "url": "https://x.com/Yxnh8023/status/2124307726511820841",
    "id": "2124307726511820841",
@@ -714,7 +737,7 @@
   },
   {
    "n": 11,
-   "order": 35,
+   "order": 36,
    "status": "send",
    "url": "https://x.com/Oscarccg3/status/2124309807138279930",
    "id": "2124309807138279930",
@@ -733,7 +756,7 @@
   },
   {
    "n": 12,
-   "order": 36,
+   "order": 37,
    "status": "send",
    "url": "https://x.com/LFQ3524/status/2124305012784615659",
    "id": "2124305012784615659",
@@ -752,7 +775,7 @@
   },
   {
    "n": 13,
-   "order": 37,
+   "order": 38,
    "status": "send",
    "url": "https://x.com/akafish00/status/2124304986125554006",
    "id": "2124304986125554006",
@@ -771,7 +794,7 @@
   },
   {
    "n": 14,
-   "order": 38,
+   "order": 39,
    "status": "send",
    "url": "https://x.com/GaoNew3/status/2124309414727619059",
    "id": "2124309414727619059",
@@ -790,7 +813,7 @@
   },
   {
    "n": 15,
-   "order": 39,
+   "order": 40,
    "status": "send",
    "url": "https://x.com/Xingge888668/status/2124310645067878537",
    "id": "2124310645067878537",
@@ -809,7 +832,7 @@
   },
   {
    "n": 16,
-   "order": 40,
+   "order": 41,
    "status": "send",
    "url": "https://x.com/yayajj666/status/2124308945527599117",
    "id": "2124308945527599117",
@@ -828,7 +851,7 @@
   },
   {
    "n": 17,
-   "order": 41,
+   "order": 42,
    "status": "send",
    "url": "https://x.com/Cheese_Ghostfox/status/2124307923606401298",
    "id": "2124307923606401298",
@@ -847,7 +870,7 @@
   },
   {
    "n": 18,
-   "order": 42,
+   "order": 43,
    "status": "send",
    "url": "https://x.com/serlo123/status/2124311078280815034",
    "id": "2124311078280815034",
@@ -866,7 +889,7 @@
   },
   {
    "n": 19,
-   "order": 43,
+   "order": 44,
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2124298236588687837",
    "id": "2124298236588687837",
@@ -885,7 +908,7 @@
   },
   {
    "n": 93,
-   "order": 97,
+   "order": 98,
    "status": "skip",
    "url": "https://x.com/LFQ3524/status/2124328566108348482",
    "id": "2124328566108348482",
@@ -904,7 +927,7 @@
   },
   {
    "n": 94,
-   "order": 98,
+   "order": 99,
    "status": "skip",
    "url": "https://x.com/LFQ3524/status/2124334277123047530",
    "id": "2124334277123047530",
@@ -923,7 +946,7 @@
   },
   {
    "n": 95,
-   "order": 99,
+   "order": 100,
    "status": "skip",
    "url": "https://x.com/ThomasNg2008/status/2124336206020550662",
    "id": "2124336206020550662",
@@ -942,7 +965,7 @@
   },
   {
    "n": 96,
-   "order": 100,
+   "order": 101,
    "status": "skip",
    "url": "https://x.com/kid_gongjingyu/status/2124344924074324174",
    "id": "2124344924074324174",
@@ -961,7 +984,7 @@
   },
   {
    "n": 97,
-   "order": 101,
+   "order": 102,
    "status": "skip",
    "url": "https://x.com/huifan518/status/2124345355781468292",
    "id": "2124345355781468292",
