@@ -2,15 +2,25 @@ name: Site checks
 
 # 2026-10-12：PR 合併前自動檢查，避免把網站弄壞。資料管線每天直接推 main，不經過這裡
 # 2026-10-21：網站更新大多直接推 main（10/13 之後約 10 次都沒跑過檢查），推送有動到程式時也檢查；只動資料的推送不觸發
+# 2026-11-22 省 Actions 分鐘數（考慮改私有庫）：
+#   - PR 合併進 main 的那次推送不再重跑（PR 上已經檢查過；squash 合併的訊息結尾是「(#編號)」），一週約 80 次
+#   - 推送路徑拿掉 ops/**：回覆／長文工具的改動，這裡的檢查本來就沒測到
+#   - 同一個 PR 連續推送，舊的那次取消
+#   - Playwright 的瀏覽器放快取，不用每次下載
 on:
   pull_request:
   push:
     branches: [main]
-    paths: ["assets/**", "index.html", "llms.txt", "latest.md", "latest.en.md", "app/**", "intro/**", "post.html", "ops/**", "manifest.webmanifest", "pipeline/**.py", "tests/**", ".github/workflows/check.yml"]
+    paths: ["assets/**", "index.html", "llms.txt", "latest.md", "latest.en.md", "app/**", "intro/**", "post.html", "manifest.webmanifest", "pipeline/**.py", "tests/**", ".github/workflows/check.yml"]
   workflow_dispatch: {}
+
+concurrency:
+  group: check-${{ github.event_name == 'pull_request' && github.head_ref || github.sha }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   check:
+    if: github.event_name != 'push' || !contains(github.event.head_commit.message, '(#')
     # 2026-10-21：ubuntu-latest 已是 26.04，Playwright 1.56.1 不支援（裝不了 chromium），固定在 24.04
     runs-on: ubuntu-24.04
     timeout-minutes: 15   # 2026-11-06：新圖變多，安裝 Playwright 慢的時候冒煙測試會超過 10 分鐘被取消（#53 連兩次）
@@ -35,12 +45,19 @@ jobs:
           python3 -c "import json,re,os;[(lambda s,f:(re.search(r'<main id=\"(oc|seo)-static\">',s) or exit(f+' 沒有文字版')) and [json.loads(m) for m in re.findall(r'<script type=\"application/ld\+json\">(.*?)</script>',s)] or exit(f+' 沒有結構化資料'))(open(f,encoding='utf-8').read(),f) for f in ('app/index.html','index.html')];[os.path.getsize(f)>500 or exit(f+' 太小') for f in ('llms.txt','latest.md','latest.en.md')]"
           # 2026-11-20 GEO 第二批：每張圖、每天簡報的頁面產生得出來（部署時才寫，這裡寫到暫存資料夾檢查）
           mkdir -p /tmp/geo && cp sitemap.xml /tmp/geo/ && python3 pipeline/next/pages.py --out /tmp/geo && test -s /tmp/geo/charts/dawn/index.html && test -s /tmp/geo/en/charts/index.html && test -s /tmp/geo/brief/index.html && test "$(grep -c '<url>' /tmp/geo/sitemap.xml)" -gt 200
+      - name: Playwright browser cache
+        id: pw
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-1.56.1-chromium-ubuntu-24.04
       - name: Render every section (zh/en × desktop/mobile)
         run: |
           npm i --no-save playwright@1.56.1
           # 2026-11-11：執行機有時連不到 Ubuntu 套件站（apt 解析失敗），--with-deps 會整個失敗。
           # 失敗時改成只裝瀏覽器本身（執行機已經有 Chrome 需要的系統套件）；瀏覽器開不起來的話，下面的渲染測試一樣會失敗。
-          npx playwright install --with-deps chromium || npx playwright install chromium
+          # 2026-11-22 快取裡有瀏覽器就不再裝（系統套件執行機本來就有，同上）
+          if [ "${{ steps.pw.outputs.cache-hit }}" != "true" ]; then npx playwright install --with-deps chromium || npx playwright install chromium; fi
           python3 -m http.server 8765 >/dev/null 2>&1 &
           sleep 1
           node tests/smoke_next.js
