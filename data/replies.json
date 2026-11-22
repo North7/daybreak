@@ -4,8 +4,27 @@
  "edition": 47,
  "items": [
   {
-   "n": 20,
+   "n": 25,
    "order": 1,
+   "status": "send",
+   "url": "https://x.com/paulxue1979/status/2124341242767311115",
+   "id": "2124341242767311115",
+   "author": "paulxue1979",
+   "name": "paulxue1979",
+   "followers": 4516,
+   "posted": "2026-11-22T03:16:35Z",
+   "lang": "zh",
+   "angle": "時間對得上，跌的深度差太多",
+   "summary": "引用 serlo123 的「減半前 500 天買入」：窗口只剩一週、BTC 回到 6 萬；他說四年週期適合當時間座標，這輪有機構和 ETF，歷史未必機械複製",
+   "reply": "舊時間表難套，前幾輪這天都跌 75% 以上，這輪才 52%",
+   "sources": "和前幾輪比：頂部之後第 411 天 −51.8%，前幾輪同一天 −81%、−83%、−75%（統一收盤 11/21，data/next-cycle.js cyccmp）",
+   "note": "4c 固定名單；熟帳號，今天第 2 則（另一則 n19 是別的貼文）。同作者 03:27 的五層定價總結那則沒寫（同作者這輪只寫一則）。4,516 粉不配圖。方向跟網站 cyccmp 的看法一致（中性：淺週期、時間表不適用）",
+   "style": "口語版",
+   "take": "時間窗口對得上，但這輪跌得淺，舊時間表不能直接套"
+  },
+  {
+   "n": 20,
+   "order": 2,
    "status": "send",
    "url": "https://x.com/btc_nightwatch/status/2124326273623400609",
    "id": "2124326273623400609",
@@ -24,7 +43,7 @@
   },
   {
    "n": 21,
-   "order": 2,
+   "order": 3,
    "status": "send",
    "url": "https://x.com/Xingge888668/status/2124322906142576653",
    "id": "2124322906142576653",
@@ -43,7 +62,7 @@
   },
   {
    "n": 22,
-   "order": 3,
+   "order": 4,
    "status": "send",
    "url": "https://x.com/huifan518/status/2124321582424391959",
    "id": "2124321582424391959",
@@ -62,7 +81,7 @@
   },
   {
    "n": 23,
-   "order": 4,
+   "order": 5,
    "status": "send",
    "url": "https://x.com/Yxnh8023/status/2124321385715847497",
    "id": "2124321385715847497",
@@ -81,7 +100,7 @@
   },
   {
    "n": 24,
-   "order": 5,
+   "order": 6,
    "status": "optional",
    "url": "https://x.com/joke_henry/status/2124335464568213608",
    "id": "2124335464568213608",
@@ -106,7 +125,7 @@
   },
   {
    "n": 1,
-   "order": 6,
+   "order": 7,
    "status": "send",
    "url": "https://x.com/kid_gongjingyu/status/2124313848543076850",
    "id": "2124313848543076850",
@@ -125,7 +144,7 @@
   },
   {
    "n": 2,
-   "order": 7,
+   "order": 8,
    "status": "send",
    "url": "https://x.com/MacArthur0X/status/2124179410748379284",
    "id": "2124179410748379284",
@@ -144,7 +163,7 @@
   },
   {
    "n": 3,
-   "order": 8,
+   "order": 9,
    "status": "send",
    "url": "https://x.com/bludr5/status/2124300637550645313",
    "id": "2124300637550645313",
@@ -163,7 +182,7 @@
   },
   {
    "n": 4,
-   "order": 9,
+   "order": 10,
    "status": "send",
    "url": "https://x.com/ThomasNg2008/status/2124164753849466902",
    "id": "2124164753849466902",
@@ -239,7 +258,7 @@
   },
   {
    "n": 5,
-   "order": 10,
+   "order": 11,
    "status": "send",
    "url": "https://x.com/LucKyiC01N/status/2124304930949497273",
    "id": "2124304930949497273",
@@ -258,7 +277,7 @@
   },
   {
    "n": 6,
-   "order": 11,
+   "order": 12,
    "status": "send",
    "url": "https://x.com/nirox0216/status/2124309386717983080",
    "id": "2124309386717983080",
@@ -277,7 +296,7 @@
   },
   {
    "n": 7,
-   "order": 12,
+   "order": 13,
    "status": "send",
    "url": "https://x.com/NICOLASYANGX/status/2124309826939564041",
    "id": "2124309826939564041",
@@ -296,7 +315,7 @@
   },
   {
    "n": 8,
-   "order": 13,
+   "order": 14,
    "status": "send",
    "url": "https://x.com/huifan518/status/2124309648987873788",
    "id": "2124309648987873788",
@@ -315,7 +334,7 @@
   },
   {
    "n": 9,
-   "order": 14,
+   "order": 15,
    "status": "send",
    "url": "https://x.com/carp518888/status/2124308883363746135",
    "id": "2124308883363746135",
@@ -334,7 +353,7 @@
   },
   {
    "n": 10,
-   "order": 15,
+   "order": 16,
    "status": "send",
    "url": "https://x.com/Yxnh8023/status/2124307726511820841",
    "id": "2124307726511820841",
@@ -353,7 +372,7 @@
   },
   {
    "n": 11,
-   "order": 16,
+   "order": 17,
    "status": "send",
    "url": "https://x.com/Oscarccg3/status/2124309807138279930",
    "id": "2124309807138279930",
@@ -372,7 +391,7 @@
   },
   {
    "n": 12,
-   "order": 17,
+   "order": 18,
    "status": "send",
    "url": "https://x.com/LFQ3524/status/2124305012784615659",
    "id": "2124305012784615659",
@@ -391,7 +410,7 @@
   },
   {
    "n": 13,
-   "order": 18,
+   "order": 19,
    "status": "send",
    "url": "https://x.com/akafish00/status/2124304986125554006",
    "id": "2124304986125554006",
@@ -410,7 +429,7 @@
   },
   {
    "n": 14,
-   "order": 19,
+   "order": 20,
    "status": "send",
    "url": "https://x.com/GaoNew3/status/2124309414727619059",
    "id": "2124309414727619059",
@@ -429,7 +448,7 @@
   },
   {
    "n": 15,
-   "order": 20,
+   "order": 21,
    "status": "send",
    "url": "https://x.com/Xingge888668/status/2124310645067878537",
    "id": "2124310645067878537",
@@ -448,7 +467,7 @@
   },
   {
    "n": 16,
-   "order": 21,
+   "order": 22,
    "status": "send",
    "url": "https://x.com/yayajj666/status/2124308945527599117",
    "id": "2124308945527599117",
@@ -467,7 +486,7 @@
   },
   {
    "n": 17,
-   "order": 22,
+   "order": 23,
    "status": "send",
    "url": "https://x.com/Cheese_Ghostfox/status/2124307923606401298",
    "id": "2124307923606401298",
@@ -486,7 +505,7 @@
   },
   {
    "n": 18,
-   "order": 23,
+   "order": 24,
    "status": "send",
    "url": "https://x.com/serlo123/status/2124311078280815034",
    "id": "2124311078280815034",
@@ -505,7 +524,7 @@
   },
   {
    "n": 19,
-   "order": 24,
+   "order": 25,
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2124298236588687837",
    "id": "2124298236588687837",
@@ -573,6 +592,44 @@
    "lang": "zh",
    "angle": "按讚就好",
    "summary": "他：這只是開頭菜，洗盤陸續有來",
+   "reply": "",
+   "sources": "",
+   "note": "按讚就好：別人貼文底下同一人第三輪、沒問問題",
+   "style": "口語版",
+   "kind": "followup"
+  },
+  {
+   "n": 96,
+   "order": 96,
+   "status": "skip",
+   "url": "https://x.com/kid_gongjingyu/status/2124344924074324174",
+   "id": "2124344924074324174",
+   "author": "kid_gongjingyu",
+   "name": "kid_gongjingyu",
+   "followers": 155,
+   "posted": "2026-11-22T03:31:12Z",
+   "lang": "zh",
+   "angle": "按讚就好",
+   "summary": "他：感謝！",
+   "reply": "",
+   "sources": "",
+   "note": "按讚就好：純道謝",
+   "style": "口語版",
+   "kind": "followup"
+  },
+  {
+   "n": 97,
+   "order": 97,
+   "status": "skip",
+   "url": "https://x.com/huifan518/status/2124345355781468292",
+   "id": "2124345355781468292",
+   "author": "huifan518",
+   "name": "huifan518",
+   "followers": 5068,
+   "posted": "2026-11-22T03:32:55Z",
+   "lang": "zh",
+   "angle": "按讚就好",
+   "summary": "他：快沒得玩了",
    "reply": "",
    "sources": "",
    "note": "按讚就好：別人貼文底下同一人第三輪、沒問問題",
