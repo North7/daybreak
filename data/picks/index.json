@@ -1,16 +1,16 @@
 {
- "date": "2026-11-21",
+ "date": "2026-11-22",
  "captions": true,
  "picks": [
   {
-   "id": "deriv/sx",
-   "chart": "data/picks/deriv-sx.png",
-   "chart_en": "data/picks/deriv-sx-en.png",
+   "id": "flows/stkrel",
+   "chart": "data/picks/flows-stkrel.png",
+   "chart_en": "data/picks/flows-stkrel-en.png",
    "name": {
-    "zh": "賣壓累積與動能品質",
-    "en": "Selling pressure and momentum quality"
+    "zh": "BTC 對美股",
+    "en": "BTC vs US stocks"
    },
-   "link": "https://daybreak.aronlab.dev/app/?k=sx"
+   "link": "https://daybreak.aronlab.dev/app/?k=stk"
   }
  ]
 }
