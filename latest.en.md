@@ -14,7 +14,7 @@ Overall: Short-term bearish, leverage flushed; long-term in the bottom zone
 
 BTC close $60,089 (+2.2%)
 
-134 charts. Today: 32 bullish, 45 bearish, 38 neutral, 19 reference charts without a lean.
+134 charts. Today: 33 bullish, 44 bearish, 38 neutral, 19 reference charts without a lean.
 
 ## Cycle: Where we are in the cycle
 
@@ -724,9 +724,9 @@ Page: https://daybreak.aronlab.dev/en/charts/etf/
 
 Bearish: Net outflow of $3,674M over the last 20 sessions (through 11/20). It fell below −$1,500M on 11/9, which starts an outflow stretch; this is session 10.
 
-What it shows: Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below −$1,500M counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap's per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only.
+What it shows: Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below −$1,500M counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap's per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only. The "Share of volume" view divides the 30-session net flow by the dollar volume traded over the same sessions: how much of the trading stayed behind as net buying (positive) or net selling (negative). ETF trading has grown a lot, so the ratio compares fairer across years. It moves almost in step with the flow sum (correlation 0.94) and tracks the past month or so of price; since 2024 a fast rebound from below zero has happened only 4 times, followed by 3 rises and 1 fall, so it is not a signal. Volume is each fund's Yahoo share volume times the day's average price.
 
-Source: CoinMarketCap · 11/20
+Source: CoinMarketCap · 11/20 · Yahoo
 
 Page: https://daybreak.aronlab.dev/en/charts/etf20/
 
@@ -972,7 +972,7 @@ Page: https://daybreak.aronlab.dev/en/charts/supliq/
 
 ### Spot taker buy − sell (OKX)
 
-Neutral: OKX taker buys only slightly lead over 7 days and sellers led the latest day. Large orders are selling and Coinbase spot is unusually heavy, so one venue's small net buying proves little.
+Bullish: Neutral: OKX taker buys only slightly lead over 7 days and sellers led the latest day. Large orders are selling and Coinbase spot is unusually heavy, so one venue's small net buying proves little.
 
 What it shows: Market buys minus market sells of spot BTC on OKX. During a drop, taker selling that fades and turns to net buying means fewer people are dumping and someone has started to buy actively. OKX only; daily bars use UTC+8 days, and the hourly view covers the last 7 days with each bar placed at the end of its hour.
 
@@ -1149,7 +1149,7 @@ Page: https://daybreak.aronlab.dev/en/charts/orng/
 
 ### Open interest by expiry
 
-Bearish: option buyers have favored puts for 24 days and risk reversals price puts richer, so money is in downside protection. Max pain for 12/25 sits 20% above, but its pull is weak.
+Neutral: Bearish: option buyers have favored puts for 24 days and risk reversals price puts richer, so money is in downside protection. Max pain for 12/25 sits 20% above, but its pull is weak.
 
 What it shows: Open calls and puts for each expiry (BTC); in each bar the green part is calls and the orange-red part puts; total length is that expiry's open interest, and the bigger it is, the more it can pull on price into expiry. For the largest expiry the figure is coloured by put ÷ call: green under 0.7 (leaning to upside bets), orange-red above 1 (leaning to hedges). Expiries under 1% of the total are left out.
 
