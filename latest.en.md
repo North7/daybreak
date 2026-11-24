@@ -14,7 +14,7 @@ Overall: Short-term bearish, bounce meets a break-even wall; long-term in the bo
 
 BTC close $61,170 (+1.8%)
 
-134 charts. Today: 31 bullish, 47 bearish, 37 neutral, 19 reference charts without a lean.
+134 charts. Today: 33 bullish, 44 bearish, 38 neutral, 19 reference charts without a lean.
 
 ## Cycle: Where we are in the cycle
 
@@ -396,7 +396,7 @@ Page: https://daybreak.aronlab.dev/en/charts/etfcost/
 
 ### Supply distribution (URPD)
 
-Bearish: Leaning bearish short term: the thickest pile sits just above at 62–64K, where buyers get back to breakeven; this week's moved coins mostly moved at a loss. A close above 64K would mean it's absorbed.
+Neutral: Leaning bearish short term: the thickest pile sits just above at 62–64K, where buyers get back to breakeven; this week's moved coins mostly moved at a loss. A close above 64K would mean it's absorbed.
 
 What it shows: Each bucket holds the coins that last moved at that price. Thick zones are where many holders' costs sit and price tends to stall; thin zones have few and price tends to move through quickly.
 
@@ -724,9 +724,9 @@ Page: https://daybreak.aronlab.dev/en/charts/etf/
 
 Bearish: Net outflow of $3,674M over the last 20 sessions (through 11/20). It fell below −$1,500M on 11/9, which starts an outflow stretch; this is session 10.
 
-What it shows: Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below −$1,500M counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap's per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only.
+What it shows: Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below −$1,500M counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap's per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only. The "Share of volume" view divides the 30-session net flow by the dollar volume traded over the same sessions: how much of the trading stayed behind as net buying (positive) or net selling (negative). ETF trading has grown a lot, so the ratio compares fairer across years. It moves almost in step with the flow sum (correlation 0.94) and tracks the past month or so of price; since 2024 a fast rebound from below zero has happened only 4 times, followed by 3 rises and 1 fall, so it is not a signal. Volume is each fund's Yahoo share volume times the day's average price.
 
-Source: CoinMarketCap · 11/20
+Source: CoinMarketCap · 11/20 · Yahoo
 
 Page: https://daybreak.aronlab.dev/en/charts/etf20/
 
@@ -972,7 +972,7 @@ Page: https://daybreak.aronlab.dev/en/charts/supliq/
 
 ### Spot taker buy − sell (OKX)
 
-Bearish: OKX spot takers still sell more than they buy, large orders are selling and only mid-size ones absorb; Coinbase spot is unusually heavy. A buyer-led 7 days would show spot joining the bounce.
+Bullish: Bearish: OKX spot takers still sell more than they buy, large orders are selling and only mid-size ones absorb; Coinbase spot is unusually heavy. A buyer-led 7 days would show spot joining the bounce.
 
 What it shows: Market buys minus market sells of spot BTC on OKX. During a drop, taker selling that fades and turns to net buying means fewer people are dumping and someone has started to buy actively. OKX only; daily bars use UTC+8 days, and the hourly view covers the last 7 days with each bar placed at the end of its hour.
 
@@ -1065,7 +1065,7 @@ Page: https://daybreak.aronlab.dev/en/charts/basis/
 
 ### Total open interest
 
-Bearish: Open interest is about 324.8K BTC, +0.3% over 30 days (price −24.5%): new positions against the move, leverage building.
+Bullish: Open interest is about 324.8K BTC, +0.3% over 30 days (price −24.5%): new positions against the move, leverage building.
 
 What it shows: Open positions in 11 BTC perpetual contracts on 7 venues, in BTC, now higher than on 90% of days since 2021/01. Read it against price: over 30 days price is −24.5% and open interest +0.3%. Price down with open interest up means new positions against the move: leverage is building, and one side tends to get liquidated later.
 
@@ -1083,7 +1083,7 @@ Page: https://daybreak.aronlab.dev/en/charts/oieth/
 
 ### Long/short account ratio
 
-Neutral: 68.6% of Binance accounts are long (the 80th percentile since 2021).
+Bearish: 68.6% of Binance accounts are long (the 80th percentile since 2021).
 
 What it shows: The share of accounts holding longs among all accounts with a BTCUSDT perpetual position. It counts accounts, not position size, so it reads like retail sentiment and is used as a contrarian gauge: when everyone is long, price tends to flush them. The red and green bands are the top and bottom tenth of Binance readings since 2021/01.
 
@@ -1149,7 +1149,7 @@ Page: https://daybreak.aronlab.dev/en/charts/orng/
 
 ### Open interest by expiry
 
-Bearish: Leaning bearish: money is on the downside, with buyers' premium tilted to puts for 25 days and risk reversals favoring puts; the far-above year-end max pain has weak pull, so downside protection dominates.
+Neutral: Leaning bearish: money is on the downside, with buyers' premium tilted to puts for 25 days and risk reversals favoring puts; the far-above year-end max pain has weak pull, so downside protection dominates.
 
 What it shows: Open calls and puts for each expiry (BTC); in each bar the green part is calls and the orange-red part puts; total length is that expiry's open interest, and the bigger it is, the more it can pull on price into expiry. For the largest expiry the figure is coloured by put ÷ call: green under 0.7 (leaning to upside bets), orange-red above 1 (leaning to hedges). Expiries under 1% of the total are left out.
 

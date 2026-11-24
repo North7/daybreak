@@ -1,4 +1,4 @@
-{"fetched_utc": "2026-11-23T00:06:50+00:00", "source": "https://charts.checkonchain.com/btconchain/realised/realisedpnl_ratio_all/realisedpnl_ratio_all_light.html", "rows": [
+{"fetched_utc": "2026-11-24T00:06:58+00:00", "source": "https://charts.checkonchain.com/btconchain/realised/realisedpnl_ratio_all/realisedpnl_ratio_all_light.html", "rows": [
 ["2010-07-17", 1.0, 0.05],
 ["2010-07-18", 1.0, 0.09],
 ["2010-07-19", 1.0, 0.08],
@@ -5971,5 +5971,6 @@
 ["2026-11-19", 0.1306, 61911.17],
 ["2026-11-20", 0.0617, 58811.55],
 ["2026-11-21", 0.1066, 60086.0],
-["2026-11-22", 0.2416, 60921.77]
+["2026-11-22", 0.2483, 61163.02],
+["2026-11-23", 0.2484, 61357.49]
 ]}
