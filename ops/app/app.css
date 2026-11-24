@@ -130,3 +130,30 @@ dialog ul { padding-left:18px; margin:4px 0; }
 .toast { position:fixed; left:50%; bottom:22px; transform:translateX(-50%) translateY(20px); opacity:0; pointer-events:none; z-index:20;
   background:var(--ink); color:var(--card); font-size:14px; font-weight:700; padding:10px 16px; border-radius:10px; max-width:calc(100% - 32px); transition:.2s; }
 .toast.show { opacity:1; transform:translateX(-50%); }
+
+/* ---- 圖還沒更新（2026-11-24）：文字已是新一期、圖還在畫。要醒目：主色粗框、圖本身壓暗糊掉、按鈕停用；動效是一顆太陽在地平線上升起又落下（等的是「破曉」的圖） ---- */
+.state.wait { border-color:var(--red); background:var(--red); color:#fff; }
+.wait-banner { display:flex; align-items:center; gap:12px; margin:0 0 12px; padding:12px 14px; border:2px solid var(--red); border-radius:12px;
+  background:color-mix(in srgb, var(--red) 9%, var(--card)); position:relative; animation:waitpop .5s cubic-bezier(.3,1.6,.5,1) both; }
+.wait-banner::after { content:""; position:absolute; inset:-2px; border:2px solid var(--red); border-radius:12px; pointer-events:none; animation:waitring 1.6s ease-out 3; opacity:0; }
+.wait-banner b { display:block; font-size:16px; line-height:1.4; color:var(--ink); }
+.wait-banner span { display:block; font-size:13px; color:var(--ink2); margin-top:2px; }
+.wait-banner .sunrise { flex:none; width:44px; }
+.imgs.wait { position:relative; min-height:230px; }
+.imgs.wait img, .imgs.wait video { filter:blur(9px) grayscale(.8); opacity:.22; }
+.wait-ov { position:absolute; inset:10px 0 0; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; text-align:center;
+  padding:16px; border:2.5px solid var(--red); border-radius:8px; background:color-mix(in srgb, var(--paper) 62%, transparent); }
+.wait-ov b { font-size:19px; line-height:1.35; color:var(--ink); max-width:22em; }
+.wait-ov > span { font-size:13px; color:var(--ink2); max-width:30em; }
+.wait-ov .late { color:var(--red); font-weight:700; }
+.wait-ov .linkish { margin-top:6px; }
+.wait-ov .sunrise { width:64px; }
+.acts.waiting .btn.primary[disabled] { opacity:1; background:transparent; color:var(--red); border-style:dashed; }
+.sunrise { display:block; height:auto; overflow:hidden; }
+.sunrise .sun { fill:none; stroke:var(--red); stroke-width:2.2; stroke-linecap:round; animation:rise 2.8s ease-in-out infinite; }
+.sunrise .sun circle { fill:var(--red); }
+.sunrise .hz { stroke:var(--ink); stroke-width:2.2; stroke-linecap:round; }
+@keyframes rise { 0%, 100% { transform:translateY(13px); } 45%, 60% { transform:translateY(0); } }
+@keyframes waitpop { from { transform:scale(.94); opacity:0; } to { transform:none; opacity:1; } }
+@keyframes waitring { 0% { opacity:.7; transform:scale(1); } 100% { opacity:0; transform:scale(1.04, 1.25); } }
+@media (prefers-reduced-motion: reduce) { .sunrise .sun { animation:none; transform:translateY(5px); } .wait-banner, .wait-banner::after { animation:none; } }

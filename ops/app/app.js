@@ -29,6 +29,7 @@
   function media(u) { return mime(u) === 'video/mp4' ? '<video src="' + u + '" muted loop playsinline autoplay controls preload="metadata"></video>' : '<img src="' + u + '" alt="" loading="lazy">'; }
   function img(path) { return ROOT + String(path).replace(/^https:\/\/(north7\.github\.io\/daybreak|daybreak\.aronlab\.dev)\//, '')   /* 2026-11-12：網站搬到 daybreak.aronlab.dev，新舊網址都轉成站內路徑 */ + '?t=' + T; }
   function getJSON(u) { return fetch(ROOT + u + '?t=' + T).then(function (r) { if (!r.ok) throw r.status; return r.json(); }); }
+  function getText(u) { return fetch(ROOT + u + '?t=' + T).then(function (r) { if (!r.ok) throw r.status; return r.text(); }); }
   function copy(t) { try { return navigator.clipboard.writeText(t); } catch (e) { return Promise.reject(e); } }
   var toastT;
   function toast(msg) { var el = document.getElementById('toast'); el.textContent = msg; el.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(function () { el.classList.remove('show'); }, 2200); }
@@ -112,6 +113,10 @@
         '<a class="btn ghost" href="' + u + '" download="' + esc(names[i]) + '">下載' + n + '</a>';
     }).join('');
   }
+  function imgWait(imgs) {   // 圖還沒更新時，存圖類的按鈕先停用
+    if (MOBILE) return '<button class="btn" disabled>存圖</button>';
+    return imgs.map(function (u, i) { var n = imgs.length > 1 ? ' ' + (i + 1) : ''; return (window.ClipboardItem && mime(u) === 'image/png' ? '<button class="btn" disabled>複製圖片' + n + '</button>' : '') + '<button class="btn ghost" disabled>下載' + n + '</button>'; }).join('');
+  }
   function textBlock(t, foldable) {
     var long = t.length > 420 || (foldable && t.split('\n').length > 9);
     return '<pre class="txt' + (long ? ' fold' : '') + '">' + esc(t) + '</pre>' + (long ? '<button class="linkish" data-act="unfold">展開全文</button>' : '');
@@ -126,8 +131,45 @@
   var POSTS = [];
   var TYPE = { daily: ['日報', 't-daily'], pick: ['推薦圖表', 't-pick'], long: ['長貼文', 't-long'], flash: ['快訊', 't-flash'] };
 
-  function buildPosts(xp, fl, lp, pj, ix) {
+  // ---------- 圖還沒更新（2026-11-24） ----------
+  // 網站每天 08:26 左右先推解讀（x_post.json、picks.json 換成新的一期），share.yml 08:35 左右才把分享圖、推薦圖表畫好推上來。
+  // 中間這幾分鐘小幫手會拿舊圖配新文字（11/24 No.049 的文字配 No.048 的圖，差點發出去）。
+  // 分享圖本身沒有日期：同一個 share 提交一定會一起寫 data/picks/index.json（picks.py）和 data/intro.js（首頁重建），
+  // 兩個的日期有一個追上 x_post.json 就算圖到了（兩步都設 continue-on-error，所以看兩個）。推薦圖表看 index.json 有沒有追上 picks.json。
+  // 圖沒到：圖上蓋提示、發文和存圖的按鈕先停用，每 45 秒重抓一次，到了自動換上。真的卡住可以按「我看過圖是新的」放行這一張。
+  var WAIT = { daily: false, pick: false, have: '', poll: 0, at: 0 }, FORCE = {};
+  function introOf(js) {
+    if (!js) return null;
+    var d = /"date":"(\d{4}-\d\d-\d\d)"/.exec(js), n = /"issue":(\d+)/.exec(js);
+    return d ? { date: d[1], issue: n ? +n[1] : 0 } : null;
+  }
+  function judge(xp, pj, ix, intro) {
+    var got = [ix && ix.date, intro && intro.date].filter(Boolean).sort().pop() || '';   // 現在線上的圖是哪一天的
+    WAIT.have = got;
+    WAIT.daily = !!(xp && got && got < xp.date);   // 兩個都讀不到就不知道，不擋
+    WAIT.pick = !!(pj && pj.picks && pj.picks.length && ix && ix.date < pj.date);
+  }
+  function waitOn(k) { return !FORCE[k.split('|')[0]] && (k.indexOf('daily:') === 0 ? WAIT.daily : k.indexOf('pick:') === 0 ? WAIT.pick : false); }
+  function late() { return Date.now() > at(TODAY, '08:55').getTime(); }
+  var SUN = '<svg class="sunrise" viewBox="0 0 40 21" aria-hidden="true"><g class="sun"><circle cx="20" cy="19.5" r="6"/><path d="M20 8.5v-3M12.2 11.7l-2.1-2.1M27.8 11.7l2.1-2.1M9 19.5H6M34 19.5h-3"/></g><path class="hz" d="M3 19.5h34"/></svg>';   // 地平線以下由 svg 邊界裁掉
+  function waitOverlay(k) {
+    return '<div class="wait-ov" role="alert">' + SUN +
+      '<b>圖還在產生（約 08:35 完成），先別發</b>' +
+      '<span>' + (WAIT.have ? '網站上的圖還是 ' + md(WAIT.have) + ' 的，' : '') + '每 45 秒自動重抓，好了會自己換上<span class="at">' + (WAIT.at ? ' · 上次 ' + hm(WAIT.at) : '') + '</span></span>' +
+      (late() ? '<span class="late">比平常晚很多，可能卡住了：<a href="https://github.com/North7/daybreak/actions/workflows/share.yml" target="_blank" rel="noopener">看 share.yml ↗</a></span>' : '') +
+      '<button class="linkish" data-act="force" data-k="' + esc(k.split('|')[0]) + '">我看過圖是新的，照樣用</button></div>';
+  }
+  function waitBanner() {
+    var w = POSTS.filter(function (p) { return !isDone(p.key) && !isSkip(p.key) && waitOn(p.key); });
+    if (!w.length) return '';
+    var names = []; if (w.some(function (p) { return p.type === 'daily'; })) names.push('日報'); if (w.some(function (p) { return p.type === 'pick'; })) names.push('推薦圖表');
+    return '<div class="wait-banner" role="alert">' + SUN + '<div><b>' + names.join('、') + '的圖還沒更新，先別發</b>' +
+      '<span>文字已經是新的一期，網站約 08:35 才把圖畫好；每 45 秒自動重抓，換上新圖後這條會消失。' + (late() ? '已經比平常晚很多，可能卡住了。' : '') + '</span></div></div>';
+  }
+
+  function buildPosts(xp, fl, lp, pj, ix, intro) {
     var out = [];
+    judge(xp, pj, ix, intro);
     if (xp) {   // 日報：每天早上日報出來就發
       var d = { key: 'daily:' + xp.date, type: 'daily', when: at(TODAY, '08:30'), title: 'No.' + String(xp.edition || 0).padStart(3, '0') + ' 日報', sub: md(xp.date) + ' 收盤', langs: {} };
       [['zh', xp.image_zh], ['en', xp.image_en]].forEach(function (L) {
@@ -136,8 +178,8 @@
       });
       out.push(d);
     }
-    if (pj || ix) {   // 推薦圖表：解說和圖同一天才放解說
-      var withText = pj && pj.picks && pj.picks.length && (!ix || ix.date === pj.date);
+    if (pj || ix) {   // 推薦圖表：解說和圖同一天才放解說；解說比圖新（圖還在畫）就先放新解說、圖等著（2026-11-24，之前會改放前一天的舊圖）
+      var withText = pj && pj.picks && pj.picks.length && (!ix || ix.date === pj.date || WAIT.pick);
       var list = withText ? pj.picks : (ix && ix.picks) || [], date = withText ? pj.date : ix && ix.date;
       var names = {}; ((ix && ix.picks) || []).forEach(function (x) { names[x.id] = x; });
       list.forEach(function (q) {
@@ -178,7 +220,7 @@
 
   function postCard(p) {
     var dn = isDone(p.key), sk = isSkip(p.key), langs = Object.keys(p.langs), first = langs[0], now = Date.now();
-    var day = tpe(p.when), st = dn ? '<span class="state ok">已發</span>' : sk ? '<span class="state">不發</span>' : p.when.getTime() <= now ? '<span class="state due">該發了</span>' : '<span class="state">稍後</span>';
+    var day = tpe(p.when), st = dn ? '<span class="state ok">已發</span>' : sk ? '<span class="state">不發</span>' : waitOn(p.key) ? '<span class="state wait">等新圖</span>' : p.when.getTime() <= now ? '<span class="state due">該發了</span>' : '<span class="state">稍後</span>';
     var tl = day === TODAY ? hm(p.when) : (day < TODAY ? '之前 ' : '') + md(day) + ' ' + hm(p.when);
     var h = '<button class="card-h stack" data-act="toggle"><span class="row1"><span class="time">' + tl + '</span><span class="chip ' + TYPE[p.type][1] + '">' + TYPE[p.type][0] + '</span>' +
       '<span class="sp"></span>' + st + '<span class="chev">›</span></span><span class="title">' + esc(p.title) + (p.sub ? '<small>' + esc(p.sub) + '</small>' : '') + '</span></button>';
@@ -187,11 +229,12 @@
     b += langs.map(function (l) {
       var o = p.langs[l], k = p.key + '|' + l;
       var body = o.text ? countLine(o.text, o.lim, o.long) + textBlock(o.text, o.long) : '<p class="note">解說還沒寫好，先只有圖。</p>';
+      var wt = o.imgs.length && waitOn(k);   // 圖還沒更新：圖上蓋提示，發文、打開 App、複製圖片、下載、存圖都先停用（複製文字照常）
       return '<div class="lp" data-lang="' + l + '"' + (l === first ? '' : ' hidden') + '>' + body +
-        (o.imgs.length ? '<div class="imgs">' + o.imgs.map(media).join('') + '</div>' : '') +
-        '<div class="acts"><button class="btn primary" data-act="post" data-k="' + k + '"' + (o.text ? '' : ' disabled') + '>' + (MOBILE ? '分享到 X' : '發到 X') + '</button>' +
-        (o.text && MOBILE ? '<a class="btn" data-act="app" data-k="' + k + '" href="twitter://post?message=' + encodeURIComponent(o.text.length <= 1500 ? o.text : '') + '">打開 X App</a>' : '') +
-        (o.text ? '<button class="btn" data-act="copy" data-k="' + k + '">複製文字</button>' : '') + imgActs(k, o.imgs, o.names) + '</div>' +
+        (o.imgs.length ? '<div class="imgs' + (wt ? ' wait' : '') + '">' + o.imgs.map(media).join('') + (wt ? waitOverlay(k) : '') + '</div>' : '') +
+        '<div class="acts' + (wt ? ' waiting' : '') + '"><button class="btn primary" data-act="post" data-k="' + k + '"' + (o.text && !wt ? '' : ' disabled') + '>' + (wt ? '等新圖中…' : MOBILE ? '分享到 X' : '發到 X') + '</button>' +
+        (o.text && MOBILE && !wt ? '<a class="btn" data-act="app" data-k="' + k + '" href="twitter://post?message=' + encodeURIComponent(o.text.length <= 1500 ? o.text : '') + '">打開 X App</a>' : '') +
+        (o.text ? '<button class="btn" data-act="copy" data-k="' + k + '">複製文字</button>' : '') + (wt ? imgWait(o.imgs) : imgActs(k, o.imgs, o.names)) + '</div>' +
         (o.link ? (TEXT[k + ':link'] = o.link, '<div class="sub-box"><p>發完後，在自己這則底下回覆這行連結（正文帶連結曝光少約四成）</p><pre>' + esc(o.link) + '</pre><button class="btn ghost" data-act="copy" data-k="' + k + ':link">複製連結</button></div>') : '') +
         '</div>';
     }).join('');
@@ -204,9 +247,9 @@
     var byT = function (a, b) { return a.when - b.when; };
     var todo = POSTS.filter(function (p) { return !isDone(p.key) && !isSkip(p.key); }).sort(byT);
     var done = POSTS.filter(function (p) { return isDone(p.key); }).sort(byT), skipped = POSTS.filter(function (p) { return isSkip(p.key); }).sort(byT);
-    var due = todo.filter(function (p) { return p.when.getTime() <= Date.now(); }).length;
+    var due = todo.filter(function (p) { return p.when.getTime() <= Date.now() && !waitOn(p.key); }).length;   // 等新圖的不算「該發了」
     document.getElementById('b-today').textContent = todo.length; document.getElementById('b-today').classList.toggle('zero', !todo.length);
-    el.innerHTML = '<div class="summary"><span>待發 <b>' + todo.length + '</b></span>' + (due ? '<span class="warn">該發了 ' + due + '</span>' : '') + '<span>已發 <b>' + done.length + '</b></span>' + (skipped.length ? '<span>不發 <b>' + skipped.length + '</b></span>' : '') + '<span>' + md(TODAY) + ' 台北</span>' + syncNote() + '</div>' +
+    el.innerHTML = '<div class="summary"><span>待發 <b>' + todo.length + '</b></span>' + (due ? '<span class="warn">該發了 ' + due + '</span>' : '') + '<span>已發 <b>' + done.length + '</b></span>' + (skipped.length ? '<span>不發 <b>' + skipped.length + '</b></span>' : '') + '<span>' + md(TODAY) + ' 台北</span>' + syncNote() + '</div>' + waitBanner() +
       (todo.length ? todo.map(postCard).join('') : '<p class="empty">今天的都處理完了</p>') +
       (done.length ? '<div class="group-h">已完成</div>' + done.map(postCard).join('') : '') +
       (skipped.length ? '<details class="group"><summary>不發 ' + skipped.length + ' 則</summary>' + skipped.map(postCard).join('') + '</details>' : '');
@@ -345,6 +388,7 @@
       navigator.clipboard.write([new ClipboardItem({ 'image/png': fs[+(b.dataset.i || 0)] })]).then(function () { toast('圖片已複製，貼到 X 發文框'); }, function () { toast('複製失敗，改用下載'); });
       return;
     }
+    if (act === 'force') { FORCE[b.dataset.k] = 1; rerenderToday(); toast('這張先放行；發之前再看一眼圖上的日期'); return; }
     if (act === 'done' || act === 'skip') { mark(card, act); return; }
   });
   function nudge(card) { var d = card && card.querySelector('.done-btn'); if (d && !d.classList.contains('on')) { d.classList.remove('nudge'); void d.offsetWidth; d.classList.add('nudge'); } }
@@ -434,11 +478,36 @@
   setTab(TAB);
   window.addEventListener('hashchange', function () { var h = location.hash.replace('#', ''); if (h && h !== TAB) setTab(h); });
   var soft = function (p) { return p.catch(function () { return null; }); };
-  var loadP = Promise.all([soft(getJSON('data/x_post.json')), soft(getJSON('data/flash.json')), soft(getJSON('data/longposts.json')), soft(getJSON('data/picks.json')), soft(getJSON('data/picks/index.json'))]).then(function (r) {
-    if (r[0]) document.getElementById('meta').textContent = 'No.' + String(r[0].edition || 0).padStart(3, '0') + ' · ' + md(r[0].date) + ' 收盤';
-    POSTS = buildPosts(r[0], r[1], r[2], r[3], r[4]); applyX();   // 先用存在這台裝置的 X 紀錄收起已發的
-    renderPosts(); openFirst('v-today');
-  });
+  function loadToday() {
+    return Promise.all([soft(getJSON('data/x_post.json')), soft(getJSON('data/flash.json')), soft(getJSON('data/longposts.json')), soft(getJSON('data/picks.json')), soft(getJSON('data/picks/index.json')), soft(getText('data/intro.js'))]).then(function (r) {
+      if (r[0]) document.getElementById('meta').textContent = 'No.' + String(r[0].edition || 0).padStart(3, '0') + ' · ' + md(r[0].date) + ' 收盤';
+      POSTS = buildPosts(r[0], r[1], r[2], r[3], r[4], introOf(r[5])); applyX();   // 先用存在這台裝置的 X 紀錄收起已發的
+      WAIT.at = Date.now(); waitPoll();
+    });
+  }
+  function rerenderToday() {   // 只重畫今天發文，保留正在看的卡片
+    var open = Array.prototype.map.call(document.querySelectorAll('#v-today .card.open'), function (c) { return c.dataset.key; });
+    renderPosts();
+    var still = 0;
+    open.forEach(function (k) { var c = document.querySelector('#v-today .card[data-key="' + CSS.escape(k) + '"]'); if (c && !c.classList.contains('done')) { openCard(c, true); still++; } });
+    if (open.length && !still) openFirst('v-today');
+  }
+  function waiting() { return WAIT.daily || WAIT.pick; }
+  function waitPoll() {   // 圖還沒更新就每 45 秒重抓一次（網址換新的時間參數，避開快取）；到了就停
+    clearTimeout(WAIT.poll); if (!waiting()) return;
+    WAIT.poll = setTimeout(function () { if (document.hidden) { waitPoll(); return; } recheck(); }, 45e3);
+  }
+  function recheck() {
+    var was = waiting(), sig = function () { return [WAIT.daily, WAIT.pick, WAIT.have, late(), POSTS.map(function (p) { return p.key; }).join()].join('|'); }, s0 = sig();
+    T = Date.now();
+    return loadToday().then(function () {
+      if (sig() !== s0) rerenderToday();   // 沒變就只更新「上次重抓」的時間，不重畫（不然展開的全文會被收回去）
+      else Array.prototype.forEach.call(document.querySelectorAll('.wait-ov .at'), function (e) { e.textContent = ' · 上次 ' + hm(WAIT.at); });
+      if (was && !waiting()) toast('新圖到了，已經換上，可以發了');
+    });
+  }
+  document.addEventListener('visibilitychange', function () { if (!document.hidden && waiting() && Date.now() - WAIT.at > 15e3) recheck(); });   // 切回來馬上再看一次
+  var loadP = loadToday().then(function () { renderPosts(); openFirst('v-today'); });
   var loadR = getJSON('data/replies.json').then(function (j) { R = j; applyX(); renderReplies(); openFirst('v-replies'); })
     .catch(function () { document.getElementById('v-replies').innerHTML = '<p class="empty">讀取失敗：data/replies.json</p>'; });
   Promise.all([loadP, loadR]).then(syncX);
