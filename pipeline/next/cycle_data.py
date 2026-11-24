@@ -318,6 +318,48 @@ def build(L, N, E, dn, X):
              'Each first drop of the excluded share below 45%% (a new episode starts only after a return above 60%%): %s. Of the %d with a full year since, %d were up a year later, but price fell as much as another %d%% within that year. Few cases; a reading only.' % (', '.join('%s (%+d%% a year on)' % (c_['d'][:7], c_['y1']) if c_['y1'] is not None else '%s (under a year ago)' % c_['d'][:7] for c_ in q_['cross45']), len(done), nup, abs(wst)))],
             '扣掉十年老幣，%s 的幣在獲利，%s 年以來只有 %s 的日子比現在低。' % (P1(q_['ex']), q_['since'][:4], P1(q_['pct'])),
             'Excluding 10-year-old coins, %s of supply is in profit; since %s only %s of days were lower.' % (P1(q_['ex']), q_['since'][:4], P1(q_['pct'])))
+    # ── 2026-11-24 CVDD（pipeline/bv_more.py 第 8 項；使用者看了一篇用 CVDD 找熊底的研究後說「做新卡」）──
+    #   價格對數座標配 CVDD 線，第二個檢視是收盤高出 CVDD 多少；照實寫：常數是事後調的、只有四輪
+    cq = (o.get('bvx') or {}).get('cvdd')
+    if cq and len(cq.get('rows') or []) > 300:
+        from say_data import own
+        Uc = lambda v: '$' + format(int(round(v)), ','); P1 = lambda v: '%.1f%%' % v; SGc = lambda v: ('+%d%%' % v) if v >= 0 else ('−%d%%' % -v); YM = lambda d_: d_[:7].replace('-', '/'); MDc = lambda d_: '%d/%d' % (int(d_[5:7]), int(d_[8:10]))
+        cl, cn = cq['lows'], cq['now']; done = [e for e in cq['eps'] if e['y1'] is not None]; nup = sum(1 for e in done if e['y1'] > 0); wst = abs(min(e['worst'] for e in done)) if done else 0
+        z, an = cq['z25'], cq['any180']; bd = (int(cq['date'][5:7]), int(cq['date'][8:10])) if cq.get('date') else None
+        bvd = o['bvx']['date']; rg = '%s–%s' % (P1(min(w['prem'] for w in cl)), P1(max(w['prem'] for w in cl)))
+        X['cvdd'] = dict(k='cvdd', zh='CVDD：歷次熊底的長期地板', en='CVDD: the long-run floor under past bear lows',
+          modes=[dict(mz='價格與 CVDD', me='Price and CVDD', hz='CVDD（累計價值幣天銷毀）', he='CVDD (cumulative value-days destroyed)', one=1, f='usd0', log=1, rng=0, hero=2, rows=cq['rows'],
+                      ser=[ser(3, zh='BTC 價格', en='BTC price', col='ink', w=1.3, op=.7), ser(2, zh='CVDD 高出 25%', en='CVDD +25%', col='c4', dash='4 3', w=1), ser(1, zh='CVDD', en='CVDD', col='c5', w=2)],
+                      marks=[dict(d=w['dn'], v=w['px'], on=0, col='c5', up=0, zh='+' + P1(w['prem']), en='+' + P1(w['prem'])) for w in cl] + [dict(d=cn['dn'], v=cn['px'], on=0, col='ac', up=0, zh='+' + P1(cn['prem']), en='+' + P1(cn['prem']))],
+                      leg=[['c5', '歷次熊底離 CVDD 最近的一天（收盤高出多少）', 'Closest close to CVDD in each past bear (premium)', 'ring'], ['ac', '這一輪到目前最近的一天', 'This cycle\'s closest so far', 'ring']]),
+                 dict(mz='價格是它的幾倍', me='Price ÷ CVDD', hz='價格 ÷ CVDD', he='Price ÷ CVDD', f='x2', log=1, rng=0, p=3, npc=1, hero=0, rows=cq['rows'],   # 用倍數配對數座標：2013、2017 年的高峰（上千 %）和靠近地板的 1.0x 倍都看得清楚
+                      ser=[ser(5, zh='價格 ÷ CVDD', en='Price ÷ CVDD', col='c5', w=1.8)],
+                      refs=[dict(v=1.25, col='c4', zh='高出 25%', en='25% above'), dict(v=1, col='dn', zh='CVDD', en='CVDD')],
+                      marks=[dict(d=w['dn'], v=round(1 + w['prem'] / 100, 3), col='c5', up=0, zh=P1(w['prem']), en=P1(w['prem'])) for w in cl] + [dict(d=cn['dn'], v=round(1 + cn['prem'] / 100, 3), col='ac', up=0, zh=P1(cn['prem']), en=P1(cn['prem']))])],
+          src='Bitview · %d/%d' % (int(bvd[5:7]), int(bvd[8:10])), srce='Bitview · ' + bvd[5:].replace('-', '/'),
+          dz='CVDD（累計價值幣天銷毀）：每天被移動的幣「放了幾天 × 當天價格」從 2009 年累加，再除以市場運行的天數和一個常數 600 萬。'
+             '它幾乎只往上走（過去一年 %s），不太受短期漲跌影響。2014 年以來四次熊底，收盤最接近時都還高出它 %s，沒有跌破過。'
+             '要保留的地方：600 萬這個常數是原作者事後調出來、讓過去的低點剛好碰到線，所以「沒跌破過」有一部分是調出來的；而且只有四輪。用收盤價，算最低價的話會更近一點。只作讀值。' % (SGc(cq['grow']), rg),
+          de='CVDD (cumulative value-days destroyed): each day\'s coin-days destroyed times that day\'s price, summed from 2009, then divided by market age in days and a constant of 6 million. '
+             'It almost only rises (%s over the past year) and barely reacts to short swings. In the four bear lows since 2014, the closest close was still %s above it; it has never closed below. '
+             'Caveats: the 6 million constant was tuned after the fact so past lows touch the line, so "never broken" is partly by design, and there are only four cycles. Closing prices; intraday lows come a little closer. A reading only.' % (SGc(cq['grow']), rg))
+        X['cvdd']['say'] = own([
+            ('高出 CVDD', 'Above CVDD', P1(cq['prem']), P1(cq['prem']), 'up' if cq['prem'] < 25 else 'neu',
+             '收盤 %s，CVDD %s，高出 %s；30 天前高出 %s。這一輪到目前最近的是 %s，高出 %s。' % (Uc(cq['px']), Uc(cq['v']), P1(cq['prem']), P1(cq['prem30']), MDc(cn['d']), P1(cn['prem'])),
+             'Close %s, CVDD %s: %s above; 30 days ago %s. This cycle\'s closest so far was %s, at %s.' % (Uc(cq['px']), Uc(cq['v']), P1(cq['prem']), P1(cq['prem30']), cn['d'][5:].replace('-', '/'), P1(cn['prem']))),
+            ('歷次熊底', 'Past bear lows', '中位數 ' + P1(cq['low_med']), 'Median ' + P1(cq['low_med']), 'neu',
+             '收盤最接近 CVDD 時高出：%s，中位數 %s。照今天的 CVDD 換算，高出 %s 是 %s，高出 25%% 是 %s。' % ('、'.join('%s 年 %s' % (w['d'][:4], P1(w['prem'])) for w in cl), P1(cq['low_med']), P1(cq['low_med']), Uc(cq['at_med']), Uc(cq['at25'])),
+             'Closest closes above CVDD: %s; median %s. On today\'s CVDD, %s above is %s and 25%% above is %s.' % (', '.join('%s in %s' % (P1(w['prem']), w['d'][:4]) for w in cl), P1(cq['low_med']), P1(cq['low_med']), Uc(cq['at_med']), Uc(cq['at25']))),
+            ('第一次高出不到 25%', 'First time under 25%', '%d 次裡 %d 次一年後漲' % (len(done), nup), '%d of %d up a year on' % (nup, len(done)), 'neu',
+             '每一段第一次高出不到 25%%（回到 60%% 以上才算新的一段）：%s。之後一年內最多再跌 %d%%。2014 年以來高出不到 25%% 的 %d 天，之後 180 天 %d%% 是漲的、中位數 %s（隨便一天是 %d%%、%s）；只有四輪，只作讀值。'
+             % ('、'.join('%s（一年後 %s）' % (YM(e['d']), SGc(e['y1'])) if e['y1'] is not None else '%s（還沒滿一年）' % YM(e['d']) for e in cq['eps']), wst, z['n'], z['up'], SGc(z['med']), an['up'], SGc(an['med'])),
+             'Each first close under 25%% above (a new episode starts after a return above 60%%): %s. Price fell up to another %d%% within the year after. Since 2014, %d days under 25%%: %d%% were up 180 days later, median %s (any day: %d%%, %s). Only four cycles; a reading only.'
+             % (', '.join('%s (%s a year on)' % (e['d'][:7], SGc(e['y1'])) if e['y1'] is not None else '%s (under a year ago)' % e['d'][:7] for e in cq['eps']), wst, z['n'], z['up'], SGc(z['med']), an['up'], SGc(an['med']))),
+            ('地板在往上', 'The floor keeps rising', SGc(cq['grow']) + '／年', SGc(cq['grow']) + ' a year', 'neu',
+             'CVDD 一年前 %s，現在 %s，一年 %s。橫盤越久，同樣的距離對應的價格越高：底部不一定要跌到今天算出來的價位。' % (Uc(cq['v365']), Uc(cq['v']), SGc(cq['grow'])),
+             'CVDD was %s a year ago and is %s now, %s in a year. The longer price moves sideways, the higher the same distance sits: a bottom need not reach today\'s numbers.' % (Uc(cq['v365']), Uc(cq['v']), SGc(cq['grow'])))],
+            '收盤高出 CVDD %s；過去四次熊底最近時高出 %s，中位數換算今天約 %s。' % (P1(cq['prem']), rg, Uc(cq['at_med'])),
+            'The close is %s above CVDD; past bear lows came within %s, and the median on today\'s CVDD is about %s.' % (P1(cq['prem']), rg, Uc(cq['at_med'])))
     # ── 和歷史比 ──
     cc = cy['cycle_cmp']; CCOL = ['k2', 'c3', 'c4', 'ac']; NC = len(cy['cycle_cmp']['cycles'])
     X['cyccmp'] = dict(k='cyccmp', zh='和前幾輪比：頂部之後', en='Versus past cycles: after the top', hz='現在比這一輪頂部', he='Now, versus this cycle\'s top', hs=dict(v=(cc['cycles'][-1]['rows'][-1][1] - 1) * 100, f='pct1'),
@@ -375,7 +417,7 @@ def build(L, N, E, dn, X):
     G = [grp('現在的階段', 'Where we are', '熊市、過渡還是牛市，偏多還是偏空', 'Bear, transition or bull; leaning long or short', ['dawn', 'dawnc', 'stage', 'regime', 'regc']),
          grp('估值冷熱', 'Valuation heat', '和過去比，現在算貴還是便宜', 'Rich or cheap against history', ['avgd', 'avgdc', 'hnupl', 'rup', 'aviv', 'rrisk', 'pl', 'p6', 'p6v']),
          grp('頂部訊號', 'Top signals', '離頂部有多近', 'How close to a top', ['p20', 'radar', 'radarv', 'pi', 'tm', 'tmh']),
-         grp('底部訊號', 'Bottom signals', '過去的底部長什麼樣，現在像不像', 'What past bottoms looked like, and whether this resembles one', [k_ for k_ in ['lthloss', 'npl365', 'psx', 'agecost', 'hashr'] if k_ != 'psx' or 'psx' in X]),
+         grp('底部訊號', 'Bottom signals', '過去的底部長什麼樣，現在像不像', 'What past bottoms looked like, and whether this resembles one', [k_ for k_ in ['lthloss', 'npl365', 'psx', 'cvdd', 'agecost', 'hashr'] if k_ not in ('psx', 'cvdd') or k_ in X]),
          grp('和歷史比', 'Against history', '和前幾輪、和模型比', 'Against past cycles and models', ['cyccmp', 'dd', 'capeff', 'path', 'long', 'mon'])]
     s1 = dw['stats'][k] if k < len(dw['stats']) else {}
     hvs = [dn(h) for h in cy['halvings']] + [dn(cy['next_halving_est'])]
