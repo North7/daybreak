@@ -4,6 +4,145 @@
  "edition": 48,
  "items": [
   {
+   "n": 8,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/Murphychen888/status/2124887430402871517",
+   "id": "2124887430402871517",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82086,
+   "posted": "2026-11-23T15:26:00Z",
+   "lang": "zh",
+   "angle": "跟著他笑，補一格籌碼",
+   "take": "長期持有者手上還多",
+   "summary": "Murphy 回我們「趕快一次倒乾淨吧」：可不能，LTH 還有很多籌碼😂（訂閱區）",
+   "reply": "也是，光 62K 那一格長期持有者就還壓著 44 萬顆😂",
+   "sources": "長期持有者 62,000 那格 44.2 萬顆 · 2026-11-23 · Bitview（notes.json 2026-11-23-1）",
+   "note": "原作者第 1 輪接話（訂閱區，fxtwitter 讀不到、瀏覽器補看）；no_quota",
+   "style": "口語版",
+   "order": 1
+  },
+  {
+   "n": 9,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/DoggieKing_eth/status/2125021333771927562",
+   "id": "2125021333771927562",
+   "author": "DoggieKing_eth",
+   "name": "DK.DoggieKing",
+   "followers": 1169,
+   "posted": "2026-11-24T00:19:01Z",
+   "lang": "zh",
+   "angle": "閒聊，不答自己的部位",
+   "take": "冠軍是他",
+   "summary": "回撤大賽原作者回我們：問我們在哪個戰場，自己 DRAM 槓桿從 64 扛到 33，昨天緩了一口",
+   "reply": "我只負責看數據，64 扛到 33 這種冠軍讓給你😂",
+   "sources": "",
+   "note": "原作者第 2 輪接話，他問了問題；不透露自己的部位，閒聊不帶數字",
+   "style": "口語版",
+   "order": 2
+  },
+  {
+   "n": 12,
+   "status": "send",
+   "url": "https://x.com/paulxue1979/status/2125025432315785619",
+   "id": "2125025432315785619",
+   "author": "paulxue1979",
+   "name": "Paul Xue",
+   "followers": 4559,
+   "posted": "2026-11-24T00:35:18Z",
+   "lang": "zh",
+   "angle": "回答他：兩邊都被收",
+   "take": "多空雙向收割，往上推的是槓桿",
+   "summary": "黃仁勳回歸，週末插到 55K、消息後插到 64.5K 又回 61K：是有人押中消息，還是多空被雙向收割？",
+   "reply": "多空都被收了，週六插 55K 那天多單爆了 2.7 億多，空單也爆掉一半\n週一往上那根換空單爆，推上去的是永續，現貨還在淨賣",
+   "sources": "每日多空清算 11/21 多 2.75 億、空 1.37 億，11/23 空 1.02 億美元；11/23 永續三家淨主動買 10,873 顆、現貨三家淨賣 1,188 顆 · Coinalyze（latest.json deriv.liq_vol、taker）",
+   "note": "固定名單 4c，熟帳號；他點名問爆倉數據，直接答；4,559 粉不配圖",
+   "style": "口語版",
+   "order": 3
+  },
+  {
+   "n": 13,
+   "status": "send",
+   "url": "https://x.com/laban_li/status/2125028823335055494",
+   "id": "2125028823335055494",
+   "author": "laban_li",
+   "name": "laban_li",
+   "followers": 26073,
+   "posted": "2026-11-24T00:48:47Z",
+   "lang": "zh",
+   "angle": "站不穩的原因在籌碼",
+   "take": "62K 是解套牆，站不穩不意外",
+   "summary": "輝達利好只插針到 64.6K，沒站穩 62K，大概率二探做雙底",
+   "reply": "62K 站不穩不意外，那一格短期持有者壓著 62 萬多顆，週一衝進去，解套的人就順手賣回來了",
+   "sources": "短期持有者 62,000 那格 62.6 萬顆、11/23 盤中 64,520 收 61,214 · Bitview、Kraken（notes.json 2026-11-23-1）",
+   "note": "固定名單 4c（2.6 萬粉，1 萬以上配圖）；不接他的雙底和價位",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "cohort"
+    },
+    "title": "62K 那一格，短期持有者壓著 62 萬顆"
+   },
+   "order": 4
+  },
+  {
+   "n": 16,
+   "status": "send",
+   "url": "https://x.com/huangmi12916508/status/2125035935373111558",
+   "id": "2125035935373111558",
+   "author": "huangmi12916508",
+   "name": "老哥",
+   "followers": 4487,
+   "posted": "2026-11-24T01:17:02Z",
+   "lang": "zh",
+   "angle": "不同意「期貨洗得差不多」",
+   "take": "槓桿沒洗掉，縮的是幣價",
+   "summary": "週五 Deribit 66 億期權到期、最大痛點 7.3–7.4 萬；說期貨未平倉 10 天少三成、洗得差不多了",
+   "reply": "期貨洗得差不多這段我不太買單\n未平倉換成顆數算，30 天才少不到 3%，價格同期跌 24%，縮掉的多半是幣價\n週一一拉，多單又衝回來，費率跟著跳上去",
+   "sources": "多家交易所 BTC 未平倉 31.7 萬顆、30 天 −2.6%，價格 30 天 −24.2% · 2026-11-23 · Coinalyze（latest.json deriv.oi_hist）；加權資金費率 11/23 由 1.41% 升到 4.78%（年化）· Coinalyze",
+   "note": "固定名單 4c，熟帳號（常回我們）；4,487 粉不配圖",
+   "style": "口語版",
+   "order": 5
+  },
+  {
+   "n": 10,
+   "status": "skip",
+   "kind": "followup",
+   "url": "https://x.com/GPPY666/status/2125023815101227124",
+   "id": "2125023815101227124",
+   "author": "GPPY666",
+   "name": "Yee",
+   "followers": 1185,
+   "posted": "2026-11-24T00:28:53Z",
+   "lang": "zh",
+   "angle": "按讚就好",
+   "summary": "永續 1 萬多顆對現貨 1475，反差大，謝謝分享",
+   "reply": "",
+   "note": "按讚就好：道謝收尾，這串已第 3 輪",
+   "style": "口語版",
+   "order": 6
+  },
+  {
+   "n": 11,
+   "status": "skip",
+   "kind": "followup",
+   "url": "https://x.com/sea_two_go/status/2124853855653609755",
+   "id": "2124853855653609755",
+   "author": "sea_two_go",
+   "name": "SiteSea",
+   "followers": 1206,
+   "posted": "2026-11-23T13:13:31Z",
+   "lang": "zh",
+   "angle": "按讚就好",
+   "summary": "重述我們的穩定幣 30 天 −161 億、7 天 −1.35%，轉正才算確認",
+   "reply": "",
+   "note": "按讚就好：重述我們的數字，已超過 12 小時（fxtwitter 漏抓，通知頁補看）",
+   "style": "口語版",
+   "order": 7
+  },
+  {
    "lang": "zh",
    "style": "口語版",
    "kind": "followup",
@@ -23,7 +162,7 @@
    "n": 1,
    "url": "https://x.com/YoooJJ8cm/status/2124894974936547590",
    "name": "YoooJJ8cm",
-   "order": 1
+   "order": 8
   },
   {
    "lang": "zh",
@@ -45,7 +184,7 @@
    "n": 2,
    "url": "https://x.com/paulxue1979/status/2125012381722083818",
    "name": "paulxue1979",
-   "order": 2
+   "order": 9
   },
   {
    "lang": "zh",
@@ -66,7 +205,7 @@
    "n": 3,
    "url": "https://x.com/Randeng26/status/2125013285523374090",
    "name": "Randeng26",
-   "order": 3
+   "order": 10
   },
   {
    "lang": "zh",
@@ -87,7 +226,7 @@
    "n": 4,
    "url": "https://x.com/yuechen166/status/2124843530166399347",
    "name": "yuechen166",
-   "order": 4
+   "order": 11
   },
   {
    "lang": "zh",
@@ -108,7 +247,7 @@
    "n": 5,
    "url": "https://x.com/huoxuan56367/status/2124850070613020960",
    "name": "huoxuan56367",
-   "order": 5
+   "order": 12
   },
   {
    "lang": "zh",
@@ -129,7 +268,7 @@
    "n": 6,
    "url": "https://x.com/i0008887/status/2124857184840519813",
    "name": "i0008887",
-   "order": 6
+   "order": 13
   },
   {
    "lang": "zh",
@@ -150,7 +289,7 @@
    "n": 7,
    "url": "https://x.com/Letlbl/status/2124882854509502952",
    "name": "Letlbl",
-   "order": 7
+   "order": 14
   }
  ]
 }
