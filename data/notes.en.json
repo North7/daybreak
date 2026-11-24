@@ -647,5 +647,31 @@
     "meaning": "Of its three pieces of bottom evidence, funding has already reversed: 4.78% today, positive on all three large venues. No newer issue is on the listing."
    }
   ]
- }
+ },
+  "cards": {
+    "dawn": "Leaning bullish long term: heat fell from mid-range into the Midnight bottom zone within a month, and every past stretch here was higher a year on; the weekly score flips bearish in 2 more weeks.",
+    "avgd": "Bullish on value: the distance below the nine cost lines slid further into the low end of history this week; past bear lows went near 5 and this cycle's 11.7 low still holds. Cheap zone, not a bottom.",
+    "p20": "Bullish: no top in sight. Price would need about $110,776 to touch the 0.75 line; Pi Cycle and the top radar sit low and Tidemark leans to the bottom side, so the open question is how deep the low goes.",
+    "lthloss": "Leaning bullish, on the edge: the long-term holder loss share eased off its 11/20 cycle high and stays in the past bear-bottom range; a close under about $58,500 would set a new high and break the pattern.",
+    "cyccmp": "Neutral: on day 413 after the top this drawdown is barely past half of what past cycles showed on the same day, all below −75%; a shallow cycle means the old bottom timetable does not transfer.",
+    "levels": "Bearish: price sits under the true market mean and the ETF buyers' cost, with several averages and the short-term holder cost packed at $72K–$74K overhead; below, the next line is the realized price at $53.1K.",
+    "urpd": "Bearish near term: the thick supply cluster at 62–64K sits right overhead and today's push into it was sold back; this week's coins moved mostly at a loss, and only a close above 64K clears that wall.",
+    "strike": "Neutral: the year-end max pain sits above with weak evidence of pull; the nearer markers are the $60,000 put pile and $80,000 call pile, and negative gamma below spot would amplify a break under 60K.",
+    "legs": "Bearish: this down leg's deepest drop already exceeds most of the last 12 declines, and today's bounce stalled below the $63,750 volume node; it only turns into an up leg on a close at $67,627.",
+    "pullback": "Bearish: three pullback lights have been on together for 24 days, and past runs like this had a negative 90-day median; selling pressure is maxed and the bottom combo is set, but two lights must go out first.",
+    "profit": "Bullish, contrarian: nearly all short-term holders are underwater, and after losses topped 60% BTC rose 12 of 16 times over 30 days; their average cost near $71,861 means break-even selling on the way up.",
+    "sopr": "Bearish: short-term holders have sold at a loss for nearly three weeks, the deepest day went below the 10/30 dip, and clustered loss-taking is on day 14; SOPR back above 1 marks the handover done.",
+    "rpl": "Bearish: the one-year ratio is in past cycles' bottom zone, but the last 7 days booked about 7 times more loss than profit and the ratio hugs its low; past lows held only after a rebound to 0.76.",
+    "miners": "Bearish: price is under the $66,605 power break-even for mainstream rigs while hashrate still rose this week and difficulty is set to climb; a drop below the $59,412 production cost would force selling.",
+    "etf": "Bearish: this ETF outflow run equals about 21,000 BTC, 11.9 times what miners produced, and the 20-day sum is in an outflow stretch; with price under Strategy's cost, institutions are not absorbing supply.",
+    "pr-us": "Neutral: net of USDT, US buying matches offshore; the negative premium is almost all USDT trading below $1. Asia's OTC premium runs high, and US spot has not joined until the premium turns positive.",
+    "ad": "Bearish: new demand lags coins going dormant, spot and perp demand both shrink, stablecoins fell 5.96% in a month and realized cap inflows stopped 10 days ago; no new money backs a bounce until 30-day demand turns up.",
+    "whale": "Bearish: both whale tiers are shrinking this month and sped up this week, long-term holders have been net sellers for 111 days and coins keep moving to short-term hands; bounces meet supply until that reverses.",
+    "svd": "Bearish: OKX spot shows net taker selling over 7 days; the last day and 24 hours turned to buyers, but large orders still sell and only mid-size ones buy. Spot catches up only when the 7-day sum flips.",
+    "stk": "Bearish: US stocks rallied hard today while BTC closed flat, extending two months of lagging the S&P 500, Nasdaq and gold; the 2-year yield sits above the Fed cap and markets price a 97% hike chance.",
+    "fh": "Neutral: funding is positive but low, so longs are not crowded; perp longs chased today, yet open interest is down over a month and longs were 75% of liquidations. A move to 30% or below zero gives direction.",
+    "vol": "Neutral: implied volatility is high for the year, rich to realized and inverted at the front, so the market pays up for a big near-term move; direction rests on whether 64K or the 58.5K low breaks first.",
+    "oi": "Bearish: money is positioned for downside, with buyer premium tilted to puts for 26 days and puts priced richer in the risk reversal; the year-end max pain at $72,000 has little pull, protection dominates.",
+    "fng": "Bearish: sentiment has sat in extreme fear for a while after a neutral reading a month ago; past drops into this zone rose only 4 of 16 times over 30 days, and the fear is not digested until it climbs back above 25."
+  }
 }
