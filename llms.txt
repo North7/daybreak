@@ -4,11 +4,11 @@
 
 Daybreak（daybreak.aronlab.dev）是 Aron 做的免費比特幣每日判讀。每天台北時間早上 08:30 前更新，用 134 張自建與公開的指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，回答六個問題：現在在週期的哪裡？價格站在哪些成本和關卡上？賣壓出清了沒？誰在買、錢從哪裡來？槓桿和情緒擠不擠？那我該怎麼做？每張圖都表態偏多、偏空或中性，並寫出理由。數字由程式計算，AI 只負責解釋，不計算也不做決定；不給交易建議。
 
-Built and maintained by Aron (Aron Lab, https://aronlab.dev/). Bilingual: Traditional Chinese and English. Latest edition: Nov 22, 2026 close, No.48.
+Built and maintained by Aron (Aron Lab, https://aronlab.dev/). Bilingual: Traditional Chinese and English. Latest edition: Nov 23, 2026 close, No.49.
 
 ## Latest reading
 
-This bounce has little room: 3% higher sit 600K BTC of underwater short-term holder coins, and the buying came from perps while spot stayed away. — Short-term bearish: Sunday's bounce was bought with perpetuals, funding turned positive, spot and ETFs did not follow, and 600K BTC of underwater short-term holder coins sit overhead at $62,000–$64,000. Long-term bullish: capitulation is large enough to push realized cap down 1.5% in 30 days, with valuation in the historical bottom zone. A close above $64,000 would show someone absorbing the break-even supply; a close below $58,525 is a new cycle low.
+On a huge day for US stocks, BTC hit the $62–64K break-even wall and closed flat; leverage did the chasing, and those longs are tested next. — Short-term bearish: US stocks surged, yet BTC was sold straight back after entering the $62,000–$64,000 break-even wall, with loss-taking spot coins sold into perpetual longs. Long-term bullish: even long-term holders are selling at an average 33% loss and total unrealized profit is down to 33.5% of market cap, in the historical bottom zone. A close above $64,000 would show the wall absorbed; a close below $58,525 is a new cycle low.
 
 - [Full latest reading, English (Markdown)](https://daybreak.aronlab.dev/latest.en.md): headline, six questions, every chart with its lean, reason and source
 - [完整最新判讀，中文（Markdown）](https://daybreak.aronlab.dev/latest.md)

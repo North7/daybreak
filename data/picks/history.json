@@ -124,6 +124,10 @@
   {
    "date": "2026-11-22",
    "id": "flows/stkrel"
+  },
+  {
+   "date": "2026-11-23",
+   "id": "onchain/agepl"
   }
  ]
 }
