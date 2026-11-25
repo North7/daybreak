@@ -1590,6 +1590,6 @@ except Exception as e: errors.append(f'ndx_cap {e}')
 R.pop('_sig5', None); R.pop('_sig1', None)
 R['bd_rotation'] = R_bd
 R['errors'] = errors
-json.dump(R, open('today.json', 'w'), ensure_ascii=False, indent=1)
+with open('today.json', 'w') as _fo: json.dump(R, _fo, ensure_ascii=False, indent=1)   # 2026-11-25 用 with 確實關檔（原本靠垃圾回收關，計時的取樣執行緒抓著 frame 時檔案沒寫完整）
 print(json.dumps({k_: R[k_] for k_ in ('bar_date', 'bar', 'mayer', 'baserate') if k_ in R}, ensure_ascii=False))
 print('t5_baserate', R.get('t5_baserate')); print('errors', errors)
