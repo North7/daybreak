@@ -691,7 +691,7 @@ def plan2(L):
                 suggest=ok[0]['id'] if ok else None, hint=hint,
                 recent={x['id']: x['used'] for x in c if x['used']}, skip={**SKIP_PANELS, **NEW_MISS},
                 note=('每日任務：挑 1 張（不限 suggest），先想「讀者今天在問什麼」，再挑最能回答的面板；recent 裡的（最近 7 天用過）不能挑。'
-                      '寫 data/picks.json（2026-11-20 起只寫中文）：q_zh 是圖上的標題，一句看法、不用問句；zh 是解說：第一句今天最反常的變化（1–2 個數字＋歷史比較），第二句對拿現貨的人代表什麼，再用過去同樣情況撐（次數照寫）。'
+                      '寫 data/picks.json（2026-11-20 起只寫中文）：q_zh 是圖上的標題，也是貼文第一行（發文小幫手自動加在解說前面，280 算整則）：一句有鉤子的看法，讓人想看下去，不只擺數據（最多一個數字）、不用問句；zh 是解說：第一句今天最反常的變化（1–2 個數字＋歷史比較），第二句對拿現貨的人代表什麼，再用過去同樣情況撐（次數照寫）。'
                       '數字只能用這裡 data／signals 或當期 notes 有的；不寫出場框架、買賣點、目標價。'),
                 candidates=c)
 
@@ -721,7 +721,12 @@ def check2(L, pk):
             if not q: errs.append(f'{i}.q_{lang}: 圖上的問句標題空白')
             if not t: errs.append(f'{i}.{lang}: 解說空白'); continue
             if q and weight(q) > (56 if lang == 'zh' else 70): errs.append(f'{i}.q_{lang}: 標題太長（{weight(q)}），圖上放不下')
-            if weight(t) > 280: errs.append(f'{i}.{lang}: {weight(t)}/280 超過')
+            # 2026-11-25 使用者：「推薦圖表的標題不在正文內，小助手發文會丟失標題」：發文小幫手把標題放在貼文第一行（空一行接解說），280 算整則
+            full = (q + '\n\n' + t) if q else t
+            if weight(full) > 280: errs.append(f'{i}.{lang}: 標題＋解說 {weight(full)}/280 超過（標題會放在貼文第一行，解說要再短 {weight(full) - 280}）')
+            # 同一天使用者：「標題不要只擺數據，要有鉤子性質的觀點說出來」：標題最多一個數字
+            qn = re.findall(r'\d[\d,]*(?:\.\d+)?', q)
+            if len(qn) >= 2: errs.append(f'{i}.q_{lang}: 標題只擺數據（{len(qn)} 個數字：{"、".join(qn)}）：標題要說出看法、讓人想點開，最多一個數字，讀值放解說第一句')
             for x, tag in ((q, 'q_' + lang), (t, lang)):
                 if BAN.search(x): errs.append(f'{i}.{tag}: 提到出場框架或買賣（{BAN.search(x).group(0)}）')
                 if AI_WORDS and AI_WORDS.search(x): errs.append(f'{i}.{tag}: AI 腔或不用的詞（{AI_WORDS.search(x).group(0)}，見運營 voice.md）')
