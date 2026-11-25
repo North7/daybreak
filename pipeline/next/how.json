@@ -325,14 +325,14 @@
 },
 "lthrl": {
 "hz": [
-"圖上：上格是 BTC 價格，下格是長期持有者（持有 ≥155 天）帳面虧損的比例；紅圈是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這輪高點。",
-"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高，回升（價格回調）時常是牛初的加碼段。跌破虛線那一天，等於這個規律被打破。",
-"小心：不只受價格影響：最近高價買進的短期持有者滿 155 天後會被算成長期持有者，價格不漲也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
+"圖上：上格是 BTC 價格，下格是長期持有者（幣放了 155 天以上沒動的人）帳面虧損的比例；紅點是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這一輪到目前的高點。",
+"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高。比例超過虛線那一天，等於這個規律被打破。",
+"小心：不只受價格影響：幾個月前高價買幣的人滿 155 天後會被算成長期持有者，價格不跌也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
 ],
 "he": [
-"WhatTop: BTC price; bottom: the share of long-term holder (155+ days) supply at a loss. Red circles mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak.",
-"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high, and its rebounds (price pullbacks) were often early-bull buying windows. A move above the dashed line would break that pattern.",
-"CaveatNot price alone: recent high-priced buyers become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
+"WhatTop: BTC price; bottom: the share of long-term holder supply (coins unmoved for 155+ days) at a paper loss. Red dots mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak so far.",
+"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high. A move above the dashed line would break that pattern.",
+"CaveatNot price alone: people who bought high a few months ago become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
 ]
 },
 "sthgap": {
@@ -505,62 +505,62 @@
 },
 "p20": {
 "hz": [
-"圖上：上格是 BTC 價格；下格是 MVRV 除以前一輪週期高點（只用當時已知的資料），紅線 0.75／0.80 是出場框架的鏈上賣點，0.75 以上淡紅底。",
-"怎麼看：比值越高越接近上一輪的狂熱程度；連 5 天站上 0.75 啟動第一個鏈上賣出。",
-"小心：每輪頂部的 MVRV 越來越低，所以用相對前一輪的比例。"
+"圖上：上格是 BTC 價格；下格是 MVRV（價格 ÷ 所有幣的平均成本）除以前一輪頂部時的最高 MVRV，只用當時已知的資料。紅線 0.75／0.80 是警戒線，0.75 以上塗淡紅。",
+"怎麼看：比值 1 就是和前一輪頂部一樣熱；越高越接近那時的狂熱，連 5 天站上 0.75 才算到了警戒線。",
+"小心：每輪頂部的 MVRV 一輪比一輪低，所以用相對前一輪的比例；這張圖 2021 年起才有，只經過兩次頂部。"
 ],
 "he": [
-"WhatTop: BTC price. Bottom: MVRV divided by the previous cycle's peak (using only data known at the time); red lines at 0.75/0.80 are the exit framework's on-chain sell points, shaded above 0.75.",
-"ReadingThe higher the ratio, the closer to last cycle's euphoria; 5 straight days above 0.75 trigger the first on-chain sale.",
-"CaveatMVRV peaks lower each cycle, hence the ratio to the previous peak."
+"WhatTop: BTC price. Bottom: MVRV (price ÷ the average cost of all coins) divided by the previous cycle's peak MVRV, using only data known at the time. The red lines at 0.75/0.80 are warning lines, shaded above 0.75.",
+"ReadingA ratio of 1 would be as hot as the last top; the higher it is, the closer to that euphoria, and five straight days above 0.75 count as reaching the warning line.",
+"CaveatMVRV peaks lower each cycle, hence the ratio to the previous peak; the chart starts in 2021 and has seen only two tops."
 ]
 },
 "tmh": {
 "hz": [
-"圖上：上格 BTC 價格（對數）；下格是 Tidemark 的 0–100 訊號，2011 起每週、近一年每日。頂部視角：紅＝頂部訊號（粗線）、琥珀＝熱度、灰虛線＝時機，直虛線是歷次週期頂部；底部視角：綠＝底部訊號、藍＝冷度，直虛線是歷次週期底部、綠點線是本輪候選低點。點圖例可以開關每條線，滑過圖時上方那一行跟著顯示當天數字。",
-"怎麼看：頂部訊號 ≥50 進入窗口、≥70 警戒；底部訊號 ≥50 進入底部區。看過去幾次頂部、底部前後訊號升到多高、提前多久亮，再對照現在的位置。",
+"圖上：上格 BTC 價格（對數）；下格是外部模型 Tidemark 的 0–100 分數，2011 起每週、近一年每日。頂部視角：粗線＝頂部分數、另一條實線＝熱度（估值多貴）、灰虛線＝時間，直虛線是歷次週期頂部；底部視角：粗的綠線＝底部分數、藍線＝冷度（估值多便宜），直虛線是歷次週期底部、綠點線是這一輪到目前的低點。點圖例可以開關每條線，滑過圖時上方那一行跟著顯示當天數字。",
+"怎麼看：頂部分數 50 以上進入窗口、70 以上警戒；底部分數 50 以上進入底部區。看過去幾次頂部、底部前後分數升到多高、提前多久亮，再對照現在的位置。",
 "小心：第三方模型，規則與權重由 Tidemark 決定、可能改版；歷史是用目前的規則回算的，不是當時的即時讀數；部分指標 2012 年底以後才有，之前只有熱度。只作讀值。"
 ],
 "he": [
-"WhatPrice on top (log); below, Tidemark's 0–100 signals, weekly since 2011 and daily for the past year. Top view: red = top signal (thick), amber = heat, grey dashed = timing, with vertical dashes at past cycle tops. Bottom view: green = bottom signal, blue = cold, vertical dashes at past cycle bottoms and a green dotted line at this cycle's candidate low. Click a legend item to hide or show a line; hovering updates the readout row above.",
-"ReadingA top signal of 50 or more opens the window and 70 is the alert; a bottom signal of 50 or more is the bottom zone. See how high the signals rose around past tops and bottoms, and how early, then compare with now.",
+"WhatPrice on top (log); below, the outside model Tidemark's 0–100 scores, weekly since 2011 and daily for the past year. Top view: thick line = top score, the other solid line = heat (how expensive), grey dashes = timing, with vertical dashes at past cycle tops. Bottom view: thick green line = bottom score, blue = cold (how cheap), vertical dashes at past cycle bottoms and a green dotted line at this cycle's low so far. Click a legend item to hide or show a line; hovering updates the readout row above.",
+"ReadingA top score of 50 or more opens the window and 70 is the alert; a bottom score of 50 or more is the bottom zone. See how high the scores rose around past tops and bottoms, and how early, then compare with now.",
 "CaveatA third-party model whose rules and weights Tidemark sets and may change; the history is back-calculated under today's rules, not live readings at the time; some inputs start in late 2012, before which only heat exists. Reading only."
 ]
 },
 "lthloss": {
 "hz": [
-"圖上：上格是 BTC 價格，下格是長期持有者（持有 ≥155 天）帳面虧損的比例；紅圈是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這輪高點。",
-"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高，回升（價格回調）時常是牛初的加碼段。跌破虛線那一天，等於這個規律被打破。",
-"小心：不只受價格影響：最近高價買進的短期持有者滿 155 天後會被算成長期持有者，價格不漲也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
+"圖上：上格是 BTC 價格，下格是長期持有者（幣放了 155 天以上沒動的人）帳面虧損的比例；紅點是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這一輪到目前的高點。",
+"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高。比例超過虛線那一天，等於這個規律被打破。",
+"小心：不只受價格影響：幾個月前高價買幣的人滿 155 天後會被算成長期持有者，價格不跌也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
 ],
 "he": [
-"WhatTop: BTC price; bottom: the share of long-term holder (155+ days) supply at a loss. Red circles mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak.",
-"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high, and its rebounds (price pullbacks) were often early-bull buying windows. A move above the dashed line would break that pattern.",
-"CaveatNot price alone: recent high-priced buyers become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
+"WhatTop: BTC price; bottom: the share of long-term holder supply (coins unmoved for 155+ days) at a paper loss. Red dots mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak so far.",
+"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high. A move above the dashed line would break that pattern.",
+"CaveatNot price alone: people who bought high a few months ago become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
 ]
 },
 "npl365": {
 "hz": [
-"圖上：下格是近 365 天淨實現損益的合計，換成顆數：綠＝一年內整體獲利了結、紅＝整體認賠。膠囊是歷次頂部前後的最高與熊市底部前後的最深。",
-"怎麼看：過去熊市底部都出現在這條線很深的負值附近：一年裡大量的幣被賠錢賣出、籌碼換到新買家手上。翻回正值，通常代表最難熬的認賠期結束。",
+"圖上：下格是近 365 天淨實現損益的合計（賺錢賣出減掉賠錢賣出），換成顆數：綠＝一年合計賺錢賣出比較多、紅＝賠錢賣出比較多。膠囊是歷次頂部前後的最高與熊市底部前後的最深。",
+"怎麼看：過去熊市底部都出現在這條線很深的負值附近：一年裡大量的幣被賠錢賣出、換到新買家手上。它是一整年的加總，最深處通常在價格見底之後幾個月；翻回正值，通常代表最難熬的認賠期結束。",
 "小心：這一輪的負值比前幾輪淺很多，可能是持有結構改變，也可能是還沒走完；以顆計可跨時代比，但交易所整理錢包也會被算成實現損益。"
 ],
 "he": [
-"WhatBottom: the past 365 days of net realized profit/loss in coins, green = net profit-taking over the year, red = net loss-taking. Capsules mark the highs around tops and the lows around bear-market bottoms.",
-"ReadingPast bear-market bottoms came near deep negative readings: a year of heavy loss-selling that moved coins to new hands. Turning back positive usually marks the end of the hardest loss-taking.",
-"CaveatThis cycle's reading is far shallower than past ones — a changed holder base, or not finished yet. Counting in coins compares across eras, but exchange wallet reshuffles also register as realized P/L."
+"WhatBottom: the past 365 days of net realized profit and loss (coins sold at a profit minus at a loss), in coins: green = more sold at a profit over the year, red = more at a loss. Capsules mark the highs around tops and the lows around bear-market bottoms.",
+"ReadingPast bear-market bottoms came near deep negative readings: a year of heavy loss-selling that moved coins to new hands. It sums a whole year, so its deepest point usually comes a few months after price bottoms; turning back positive usually marks the end of the hardest loss-taking.",
+"CaveatThis cycle's reading is far shallower than past ones: a changed holder base, or not finished yet. Counting in coins compares across eras, but exchange wallet reshuffles also register as realized P/L."
 ]
 },
 "agecost": {
 "hz": [
-"圖上：可以切換兩種看法（對數刻度）：3–6 個月持幣成本（橘）配價格，綠點是熊市後第一次站回、灰點是其他站回；6–12 個月（橘）與 12–18 個月（紫）持幣成本，紅點死叉、綠點金叉。",
-"怎麼看：6–12 個月線跌破 12–18 個月線＝近一年買的人比更早一批便宜，過去大致在熊底附近；重新升過＝新進場的成本拉高，過去在主升段前後。從死叉到金叉：2019 約 11 個月、2023 約 12 個月。",
-"小心：兩條線比價格落後半年以上，交叉時價格往往已經走了一段；樣本只有 3–4 輪，2020 年有一次疫情後的短暫交叉。"
+"圖上：三種看法（對數刻度）：6–12 個月（橘）與 12–18 個月（紫）前買的人的平均成本，紅點是較新的一批跌到下面、綠點是翻回上面；近 3–6 個月買家的成本（橘）配價格，綠圈是熊市後第一次站回、灰圈是其他站回；1 週到 1 個月前買的人的成本。",
+"怎麼看：6–12 個月線跌破 12–18 個月線＝近一年買的人比更早一批便宜，過去大致在熊底附近；重新升過＝新買家的成本拉高，過去在主升段前後。價格在近 3–6 個月買家的成本下面時，反彈到那裡容易遇到想解套的賣壓。",
+"小心：這些線比價格落後幾個月以上，交叉時價格往往已經走了一段；樣本只有 3–4 輪，2020 年有一次疫情後的短暫交叉。"
 ],
 "he": [
-"WhatTwo views (log scale): the 3–6 month holder cost (orange) with price, green dots marking the first cross back above after a bear market and grey dots other crosses; and the cost of coins aged 6–12 months (orange) and 12–18 months (purple), red dots death crosses, green dots golden crosses.",
-"ReadingThe 6–12 month line dropping below the 12–18 month line means last year's buyers paid less than the earlier group, historically near bear-market bottoms; crossing back above means new money is paying up, historically around the main bull leg. Death to golden took about 11 months in 2019 and 12 in 2023.",
-"CaveatBoth lines lag price by six months or more, so price has usually moved a lot by the cross; only 3–4 cycles, plus a brief post-pandemic cross in 2020."
+"WhatThree views (log scale): the average cost of coins bought 6–12 months ago (orange) and 12–18 months ago (purple), red dots where the newer group drops below, green dots where it crosses back above; the 3–6 month buyers' cost (orange) with price, green rings marking the first reclaim after a bear market and grey rings other reclaims; and the cost of coins bought one week to one month ago.",
+"ReadingThe 6–12 month line dropping below the 12–18 month line means last year's buyers paid less than the earlier group, historically near bear-market bottoms; crossing back above means new buyers are paying up, historically around the main bull leg. With price below the 3–6 month buyers' cost, rallies back to it tend to meet break-even selling.",
+"CaveatThese lines lag price by months, so price has usually moved a lot by the cross; only 3–4 cycles, plus a brief post-pandemic cross in 2020."
 ]
 },
 "capeff": {

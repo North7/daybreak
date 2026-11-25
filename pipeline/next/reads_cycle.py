@@ -231,97 +231,183 @@ def p6(L):
     return sz, se, [it(z, e, '%d' % round(p[k]), '%d' % round(p[k]), 'warn' if p[k] >= 80 else 'neu', '%s；%s。' % (wz, '排名已經到了 80，算熱' if p[k] >= 80 else '排名離 80 還差 %d' % round(80 - p[k])),
                        '%s; %s.' % (we[0].upper() + we[1:], 'its rank has reached 80, so it counts as hot' if p[k] >= 80 else 'its rank is %d short of 80' % round(80 - p[k]))) for z, e, k, wz, we in P6N]
 
-def p20(L):
-    c = L['cycle']['cm']; v = c['mvrv_vs_prior']; up = (c['k075_price'] / L['price']['bar']['c'] - 1) * 100
-    sz = 'MVRV 是前一輪高點的 %.2f 倍，%s 0.75 線。' % (v, '已站上' if v >= .75 else '還沒到'); se = 'MVRV is %.2f of the prior cycle\'s peak, %s the 0.75 line.' % (v, 'above' if v >= .75 else 'well short of')
-    return sz, se, [
-        it('現在', 'Now', '%.3f' % v, '%.3f' % v, 'neu', 'MVRV %.3f ÷ 前一輪高點 %.3f。' % (c['mvrv'], c['prior_cycle_peak']), 'MVRV %.3f ÷ the prior peak of %.3f.' % (c['mvrv'], c['prior_cycle_peak'])),
-        it('0.75 線', 'The 0.75 line', usd(c['k075_price']), usd(c['k075_price']), 'neu', '價格約要到這裡（比收盤高 %.0f%%）；連 5 天站上才算觸發。' % up, 'Price would need to reach about here (%.0f%% above the close); it counts after five days above.' % up),
-        it('0.80 線', 'The 0.80 line', usd(c['k080_price']), usd(c['k080_price']), 'neu', '比收盤高 %.0f%%。' % ((c['k080_price'] / L['price']['bar']['c'] - 1) * 100), '%.0f%% above the close.' % ((c['k080_price'] / L['price']['bar']['c'] - 1) * 100))]
+def p20tops(L):   # 這張圖 2021 年起才有：2021、2025 兩次頂部前比值的最高（leans.py 也用）
+    rs = [r for r in (L['cycle'].get('p20') or {}).get('rows') or [] if r[1] is not None]; e = lambda d: (dt.date.fromisoformat(d) - dt.date(1970, 1, 1)).days
+    a = [r[1] for r in rs if r[0] < e('2022-01-01')]; b = [r[1] for r in rs if e('2024-01-01') <= r[0] < e('2026-01-01')]
+    return [max(a), max(b)] if a and b else []
 
-def pi(L):
+def p20(L):   # 2026-11-25 改寫（WRITING.md）：先講 MVRV 是什麼、比值代表離前一輪頂部的熱度多遠；0.75 是警戒線，不寫交易用語
+    c = L['cycle']['cm']; v = c['mvrv_vs_prior']; px = L['price']['bar']['c']; up = (c['k075_price'] / px - 1) * 100; tk = p20tops(L)
+    if v >= .75:
+        sz = '市場的熱度（MVRV）到了前一輪頂部時的 %.0f%%，站上警戒線：照這張圖，已經接近前一輪頂部的熱度。' % (v * 100)
+        se = 'Market heat (MVRV) is at %.0f%% of the last top\'s, above the warning line: on this chart it is close to last cycle\'s peak heat.' % (v * 100)
+    elif v >= .65:
+        sz = '市場的熱度（MVRV）到了前一輪頂部時的 %.0f%%：照這張圖，開始接近頂部的熱度，價格再漲 %.0f%% 就碰到警戒線。' % (v * 100, up)
+        se = 'Market heat (MVRV) is at %.0f%% of the last top\'s: on this chart it is getting close, and another %.0f%% rise would reach the warning line.' % (v * 100, up)
+    else:
+        sz = '市場的熱度（MVRV）只有前一輪頂部時的 %.0f%%：照這張圖，離頂部還很遠，價格要再漲 %.0f%% 才會碰到警戒線。' % (v * 100, up)
+        se = 'Market heat (MVRV) is only %.0f%% of the last top\'s: on this chart a top is far off, and price would need to rise another %.0f%% to reach the warning line.' % (v * 100, up)
+    out = [
+        it('現在有多熱', 'How hot now', '%.2f' % v, '%.2f' % v, 'warn' if v >= .75 else 'neu',
+           '現在價格是所有幣平均成本的 %.2f 倍（這就是 MVRV），前一輪頂部時是 %.2f 倍；兩個相除，1 就是和那時一樣熱。' % (c['mvrv'], c['prior_cycle_peak']),
+           'Price is now %.2f× the average cost of all coins (that is MVRV); at the last top it was %.2f×. Divide one by the other: 1 would be as hot as then.' % (c['mvrv'], c['prior_cycle_peak'])),
+        it('警戒線在哪', 'Where the warning line is', usd(c['k075_price']), usd(c['k075_price']), 'neu',
+           '照今天的成本，比值到 0.75 的價格約在這裡，要連 5 天站上才算數；0.80 線約 %s。' % usd(c['k080_price']),
+           'On today\'s cost base, a ratio of 0.75 is about here, and it counts only after five straight days above; the 0.80 line is about %s.' % usd(c['k080_price']))]
+    if tk: out.append(it('過去的頂部', 'Past tops', '兩次都到 %.2f' % min(tk), 'Both reached %.2f' % min(tk), 'neu',
+                         '這張圖 2021 年起才有：2021 和 2025 年兩次頂部前，比值最高%s。只有兩次，警戒線也是看過去的頂部定的。' % (('都到 %.2f' % tk[0]) if '%.2f' % tk[0] == '%.2f' % tk[1] else '到 %.2f 和 %.2f' % tuple(tk)),
+                         'This chart starts in 2021: before the 2021 and 2025 tops the ratio peaked at %s. Only two tops, and the warning line was set by looking at them.' % (('%.2f both times' % tk[0]) if '%.2f' % tk[0] == '%.2f' % tk[1] else '%.2f and %.2f' % tuple(tk))))
+    return sz, se, out
+
+def pi(L):   # 2026-11-25 改寫（WRITING.md）：先講兩條均線在量什麼，再講過去碰到 1 的時候
     v = L['price']['pi_cycle']
-    sz = 'Pi Cycle %.2f，%s。' % (v, '已到 1，觸發頂部訊號' if v >= 1 else '離觸發（1）還遠' if v < .8 else '接近觸發（1）'); se = 'Pi Cycle is %.2f, %s.' % (v, 'at 1: the top signal has fired' if v >= 1 else 'far from the trigger at 1' if v < .8 else 'close to the trigger at 1')
-    return sz, se, [it('Pi Cycle', 'Pi Cycle', '%.2f' % v, '%.2f' % v, 'warn' if v >= .9 else 'neu', '111 日均線是 350 日均線兩倍的 %.0f%%；到 1 才觸發，只看價格。' % (v * 100), 'The 111-day MA is %.0f%% of twice the 350-day MA; it fires at 1, and uses price alone.' % (v * 100))]
+    if v >= 1:
+        sz = '短期漲得太快，到了過去頂部出現的位置：Pi Cycle 碰到 1，前三輪頂部都在這前後。'; se = 'Price has run up too fast, to where past tops appeared: Pi Cycle has reached 1, as it did around the last three tops.'
+    elif v >= .8:
+        sz = '短期漲得很快，接近過去頂部出現的位置：Pi Cycle %.2f，到 1 才算碰到。' % v; se = 'Price has run up fast, close to where past tops appeared: Pi Cycle is %.2f and reaches the mark at 1.' % v
+    else:
+        sz = '離頂部還遠：Pi Cycle 只有 %.2f，過去頂部出現時是 1，而且上一輪頂部根本沒碰到。' % v; se = 'A top is far off: Pi Cycle is only %.2f, past tops came at 1, and the last top never reached it.' % v
+    return sz, se, [
+        it('短期漲得多快', 'How stretched', '%.2f' % v, '%.2f' % v, 'warn' if v >= .9 else 'neu',
+           '111 日均線（大約最近四個月的平均價）只有 350 日均線兩倍（大約一年平均價的兩倍）的 %.0f%%。兩者相等，代表價格幾個月內漲得遠遠超過一年的平均。' % (v * 100),
+           'The 111-day average (roughly the last four months) is only %.0f%% of twice the 350-day average (roughly twice the one-year average). When they meet, price has run far above its yearly average within months.' % (v * 100)),
+        it('過去碰到 1 的時候', 'Past touches of 1', '3 輪碰到、1 輪沒有', '3 cycles yes, 1 no', 'neu',
+           '2013、2017 和 2021 年 4 月的頂部，都在碰到 1 的前後不久；2025 年的頂部沒碰到。沒碰到不代表沒有頂部，它只看價格。',
+           'The 2013, 2017 and April 2021 tops all came soon around a touch of 1; the 2025 top never reached it. No touch does not mean no top, and it uses price alone.')]
 
 def tmh(L):
-    t = L['cycle']['tidemark']; tp, bt = t['top'], t['bottom']; ct = t.get('cycle_test') or {}
-    sz = '頂部訊號 %.0f、底部訊號 %.0f：%s。' % (tp['signal'], bt['signal'], '兩邊都還沒到 50' if max(tp['signal'], bt['signal']) < 50 else '底部訊號到了 50' if bt['signal'] >= 50 else '頂部訊號到了 50')
-    se = 'Top signal %.0f, bottom signal %.0f: %s.' % (tp['signal'], bt['signal'], 'neither has reached 50' if max(tp['signal'], bt['signal']) < 50 else 'the bottom signal is at 50 or more' if bt['signal'] >= 50 else 'the top signal is at 50 or more')
-    out = [it('頂部', 'Top', '%.0f' % tp['signal'], '%.0f' % tp['signal'], 'warn' if tp['signal'] >= 50 else 'neu', '熱度 %.0f、時間 %.0f；50 是頂部窗口、70 高度警戒。' % (tp['heat'], tp['timing']), 'Heat %.0f, timing %.0f; 50 opens the top window and 70 is high alert.' % (tp['heat'], tp['timing'])),
-           it('底部', 'Bottom', '%.0f' % bt['signal'], '%.0f' % bt['signal'], 'neu', '冷度 %.0f、時間 %.0f；50 是底部區、70 強烈底部。' % (bt['cold'], bt['timing']), 'Cold %.0f, timing %.0f; 50 is the bottom zone and 70 a strong bottom.' % (bt['cold'], bt['timing']))]
+    # 2026-11-25 改寫（WRITING.md）：Tidemark 是第三方綜合模型，先講兩個分數在量什麼、現在偏哪一邊；條目最多三條
+    t = L['cycle']['tidemark']; tp, bt = t['top'], t['bottom']; ct = t.get('cycle_test') or {}; T, B = tp['signal'], bt['signal']
+    if B >= 70: sz, se = '這個外部模型認為已經進入強烈底部區：底部分數 %.0f，過了 70。' % B, 'This outside model puts us in its strong-bottom zone: a bottom score of %.0f, above 70.' % B
+    elif B >= 50: sz, se = '這個外部模型認為已經進入底部區：底部分數 %.0f，過了 50 的門檻；它不保證這就是最低點。' % B, 'This outside model puts us in its bottom zone: a bottom score of %.0f, past the line at 50. That does not make this the exact low.' % B
+    elif T >= 70: sz, se = '這個外部模型發出頂部高度警戒：頂部分數 %.0f，過了 70。' % T, 'This outside model is on high top alert: a top score of %.0f, above 70.' % T
+    elif T >= 50: sz, se = '這個外部模型認為進入頂部窗口：頂部分數 %.0f，過了 50 的門檻。' % T, 'This outside model sees a top window: a top score of %.0f, past the line at 50.' % T
+    elif B - T >= 30: sz, se = '這個外部模型認為現在偏向底部，但還沒進入它的底部區：底部分數 %.0f，到 50 才算。' % B, 'This outside model leans toward a bottom but is not in its bottom zone yet: a bottom score of %.0f, with the line at 50.' % B
+    elif T - B >= 30: sz, se = '這個外部模型認為現在偏向頂部，但還沒進入頂部窗口：頂部分數 %.0f，到 50 才算。' % T, 'This outside model leans toward a top but has not opened its top window: a top score of %.0f, with the line at 50.' % T
+    else: sz, se = '這個外部模型看不出偏向：頂部和底部分數都在 50 以下，差距不大。', 'This outside model shows no lean: both scores are under 50 and close together.'
+    lag = '時間已經到了，便宜程度還差一點' if bt['timing'] >= 70 and bt['cold'] < 50 else '便宜程度夠了，時間還沒到' if bt['cold'] >= 50 and bt['timing'] < 50 else '兩邊差不多'
+    lage = 'the timing is there, the cheapness not quite' if bt['timing'] >= 70 and bt['cold'] < 50 else 'it is cheap enough, but too early' if bt['cold'] >= 50 and bt['timing'] < 50 else 'the two are about even'
+    out = [it('離底部多近', 'How close to a bottom', '%.0f' % B, '%.0f' % B, 'up' if B >= 50 else 'neu',
+              '底部分數由兩部分合成：估值有多便宜（冷度 %.0f）、離上一輪頂部的時間是否到了以前見底的時候（時間 %.0f）。%s。50 是底部區、70 強烈底部。' % (bt['cold'], bt['timing'], lag),
+              'The bottom score combines how cheap valuations are (cold, %.0f) and whether the time since the last top matches past bottoms (timing, %.0f): %s. 50 is the bottom zone, 70 a strong bottom.' % (bt['cold'], bt['timing'], lage)),
+           it('離頂部多近', 'How close to a top', '%.0f' % T, '%.0f' % T, 'warn' if T >= 50 else 'neu',
+              '%s頂部分數由熱度（估值多貴，%.0f）和時間（離以前頂部出現的時間多近，%.0f）合成；50 進入頂部窗口、70 高度警戒。' % ('幾乎是零。' if T < 5 else '', tp['heat'], tp['timing']),
+              '%sThe top score combines heat (how expensive, %.0f) and timing (how close to when past tops came, %.0f); 50 opens the top window, 70 is high alert.' % ('Close to zero. ' if T < 5 else '', tp['heat'], tp['timing']))]
     if ct.get('status') == 'testing':
-        out.append(it('本輪低點', 'This cycle\'s low', '驗證中', 'Testing', 'neu', '到 %s 都沒跌破 %s（%s），就支持「這個低點是週期底部」。' % (ymd(ct['decisive_date']), usd(ct['low_price']), md(ct['low_date'])),
-                      'If %s (%s) holds through %s, that supports this low being the cycle bottom.' % (usd(ct['low_price']), mde(ct['low_date']), ymde(ct['decisive_date']))))
+        out.append(it('這輪低點的驗證', 'Testing this cycle\'s low', '驗證中', 'Testing', 'neu', '模型自己的檢驗：到 %s 都沒跌破 %s 的 %s，它就認為那是這一輪的底部；跌破就算判斷錯。' % (ymd(ct['decisive_date']), md(ct['low_date']), usd(ct['low_price'])),
+                      'The model\'s own test: if the %s low of %s holds through %s, it counts that as this cycle\'s bottom; a break means it was wrong.' % (mde(ct['low_date']), usd(ct['low_price']), ymde(ct['decisive_date']))))
     return sz, se, out
 
 def lthloss(L):
-    x = L['onchain']['lthloss']; pk = x['peaks'][-1]; pm = x.get('post_min'); co = x.get('cohort') or {}; prev = x['peaks'][:-1]
-    sz = '長期持有者 %.1f%% 在虧損%s。' % (x['value'], '；跌破約 %s 就超過這輪高點' % usd(co['break_price']) if co.get('break_price') else '')
-    se = '%.1f%% of long-term holder coins are underwater%s.' % (x['value'], '; below about %s it would top this cycle\'s peak of %.1f%%' % (usd(co['break_price']), pk['value']) if co.get('break_price') else '')
-    out = [it('現在', 'Now', pu(x['value']), pu(x['value']), 'neu', '這輪高點 %s（%s）%s。' % (pu(pk['value']), md(pk['date']), '，之後最低 %s（%s）' % (pu(pm['value']), md(pm['date'])) if pm else ''),
-              'This cycle\'s peak was %s (%s)%s.' % (pu(pk['value']), mde(pk['date']), ', and the low since %s (%s)' % (pu(pm['value']), mde(pm['date'])) if pm else ''))]
+    # 2026-11-25 改寫（WRITING.md）：長期持有者＝幣放了 155 天以上沒動的人；先講現在套牢多少、在不在歷次熊底的範圍，再講規律和分界價
+    x = L['onchain']['lthloss']; pk = x['peaks'][-1]; pm = x.get('post_min'); co = x.get('cohort') or {}; prev = x['peaks'][:-1]; v = x['value']
+    near = pk['value'] - v < 2
+    if v > pk['value']:
+        sz = '長期持有者有 %.1f%% 套牢，超過這一輪的高點：過去脫離底部之後都沒發生過，底部的規律被打破了。' % v
+        se = '%.1f%% of long-term holders\' coins are underwater, above this cycle\'s peak: that never happened after past bottoms, so the bottom pattern is broken.' % v
+    elif v >= 40:
+        sz = '長期持有者有 %.1f%% 套牢，和歷次熊底差不多：照這張圖，這是底部區間，%s' % (v, '但比例還貼著這一輪的高點，底部可能還在磨。' if near else '而且已經從這一輪的高點回落。')
+        se = '%.1f%% of long-term holders\' coins are underwater, about where past bear bottoms were: on this chart that is bottom territory, %s' % (v, 'though the share is still pressed against this cycle\'s peak, so the bottom may still be forming.' if near else 'and the share has come off this cycle\'s peak.')
+    else:
+        sz = '長期持有者只有 %.1f%% 套牢，大多還在賺錢：離歷次熊底的範圍還遠。' % v
+        se = 'Only %.1f%% of long-term holders\' coins are underwater; most are still in profit, far from past bear-bottom territory.' % v
+    out = [it('現在有多少人套牢', 'How many are underwater', pu(v), pu(v), 'up' if 40 <= v <= pk['value'] else 'neu',
+              '這一輪到目前最高是 %s 的 %s%s。' % (md(pk['date']), pu(pk['value']), '，之後最低回到 %s 的 %s' % (md(pm['date']), pu(pm['value'])) if pm else ''),
+              'This cycle\'s high so far was %s on %s%s.' % (pu(pk['value']), mde(pk['date']), ', and the lowest since was %s on %s' % (pu(pm['value']), mde(pm['date'])) if pm else ''))]
     if co.get('break_price'):
-        out.append(it('分界', 'The line', '≈ %s' % usd(co['break_price']), '≈ %s' % usd(co['break_price']), 'neu', '照現在的籌碼推算，跌到這裡會打破「脫離底部後不再創新高」；每天重算。',
-                      'From today\'s coin distribution; below here would break the pattern of no new high after the bottom. Recomputed daily.'))
-    out.append(it('前幾輪', 'Past cycles', '/'.join('%.0f%%' % p['value'] for p in prev), '/'.join('%.0f%%' % p['value'] for p in prev), 'neu', '熊市底部的高點；脫離底部後最高只到 %s，都沒再創新高。' % '、'.join('%.0f%%' % p['after_max']['value'] for p in prev if p.get('after_max')),
-                  'Peaks at past bear bottoms; afterwards they only reached %s, never a new high.' % ', '.join('%.0f%%' % p['after_max']['value'] for p in prev if p.get('after_max'))))
+        out.append(it('分界價', 'The line', '≈ %s' % usd(co['break_price']), '≈ %s' % usd(co['break_price']), 'neu', '照長期持有者現在的持有成本推算，收盤跌破這裡，套牢比例就會超過這一輪的高點，「脫離底部後不再創新高」的規律就被打破。每天重算。',
+                      'From long-term holders\' current cost basis: a close below here would push the share above this cycle\'s peak and break the pattern of no new high after the bottom. Recomputed daily.'))
+    am = [p['after_max']['value'] for p in prev if p.get('after_max')]
+    out.append(it('前幾輪', 'Past cycles', '%d 輪都沒再創新高' % len(am), 'No new high in %d of %d' % (len(am), len(am)), 'neu',
+                  '前 %d 輪熊底時，這個比例的高點在 %.0f–%.0f%%；脫離底部之後最高只回到 %.0f–%.0f%%，都沒再超過。只有 %d 輪，是事後看出的規律。' % (len(prev), min(p['value'] for p in prev), max(p['value'] for p in prev), min(am), max(am), len(prev)),
+                  'At the past %d bear bottoms the share peaked at %.0f–%.0f%%; after leaving the bottom it only got back to %.0f–%.0f%%, never above. Only %d cycles, and a pattern seen in hindsight.' % (len(prev), min(p['value'] for p in prev), max(p['value'] for p in prev), min(am), max(am), len(prev))))
     return sz, se, out
 
 def npl365(L):
     n = L['onchain']['npl365']; v = n['value'] * 1000; v30 = n['v30'] * 1000; pb = [b['value'] * 1000 for b in n['bottoms'] if not b['now']]; tp = [t['value'] * 1000 for t in n['tops']]
-    deeper = v < v30
-    sz = '近一年淨實現損益 %s：整體在%s，%s。' % (wan(v), '認賠' if v < 0 else '獲利了結', '還在加深' if (deeper and v < 0) or (not deeper and v > 0) else '比 30 天前收斂')
-    se = 'Net realized profit and loss over a year is %s: holders are %s on balance, %s.' % (kb(v), 'taking losses' if v < 0 else 'taking profit', 'and it is still deepening' if (deeper and v < 0) or (not deeper and v > 0) else 'though less than 30 days ago')
-    out = [it('近一年', 'Past year', wan(v), kb(v), 'down' if v < 0 else 'up', '%s30 天前 %s。' % ('%s 起轉負；' % md(n['neg_since']) if n.get('neg_since') and v < 0 else '', wan(v30)), '%s%s thirty days ago.' % ('Negative since %s; ' % mde(n['neg_since']) if n.get('neg_since') and v < 0 else '', kb(v30)))]
+    # 2026-11-25 改寫（WRITING.md）：先講這條線是一整年的賺錢賣出減賠錢賣出，再講和以前的熊底、頂部比；統一寫「賺錢賣出／賠錢賣出」
+    deeper = v < v30; grow = (deeper and v < 0) or (not deeper and v > 0)
     if v < 0:
-        out.append(it('和熊市底部比', 'Against past bear bottoms', '%d%%' % round(v / pb[-1] * 100), '%d%%' % round(v / pb[-1] * 100), 'neu', '約上一輪的 %d%%；前三輪最深 %s。' % (round(v / pb[-1] * 100), wl(pb)),
-                      'About %d%% of the last cycle; the past three bottomed at %s.' % (round(v / pb[-1] * 100), ml(pb))))
-    out.append(it('頂部前後', 'Around tops', wan(tp[-1]), kb(tp[-1]), 'neu', '頂部前後半年的最高：%s，最近一輪最少。' % wl(tp), 'The highest within six months of each top: %s; the latest was the smallest.' % ml(tp)))
+        sz = '過去一年市場整體在賠錢賣出，%s' % ('而且還在加深：照這張圖，認賠還沒走完，但深度遠不如以前的熊底。' if grow else '但比 30 天前少：最重的認賠可能過了，深度也遠不如以前的熊底。')
+        se = 'Over the past year the market has sold at a loss on balance, %s' % ('and it is still deepening: on this chart the loss-taking is not done, though it is far shallower than past bear bottoms.' if grow else 'but less than 30 days ago: the heaviest loss-taking may be past, and it is far shallower than past bear bottoms.')
+    else:
+        r = v / tp[-1] * 100
+        sz = '過去一年市場整體在賺錢賣出，%s：%s' % ('而且越賣越多' if grow else '但比 30 天前少', '已經接近上一輪頂部前後的水準。' if r >= 80 else '還遠不到以前頂部前後的程度。')
+        se = 'Over the past year the market has sold at a profit on balance, %s: %s' % ('and more and more of it' if grow else 'but less than 30 days ago', 'close to the level around the last top.' if r >= 80 else 'nowhere near the levels around past tops.')
+    dv = v - v30; W = lambda q: ('+' if q > 0 else M if q < 0 else '') + n0(abs(q) / 1e4) + ' 萬顆'   # 整數萬顆，大數字才好讀
+    out = [it('過去一年合計', 'Past year in total', wan(v), kb(v), 'down' if v < 0 else 'up',
+              '%s30 天前是 %s，一個月裡%s了 %s。' % ('%s 起轉成負的，賠錢賣出比賺錢賣出多；' % ymd(n['neg_since']) if n.get('neg_since') and v < 0 else '', wan(v30), '又多' if (dv < 0) == (v < 0) else '少', wan(abs(dv), False)),
+              '%s%s thirty days ago, %s %s in a month.' % ('Negative since %s: more coins sold at a loss than at a profit; ' % ymde(n['neg_since']) if n.get('neg_since') and v < 0 else '', kb(v30), 'another' if (dv < 0) == (v < 0) else 'down by', kb(abs(dv), False)))]
+    if v < 0:
+        out.append(it('和以前的熊底比', 'Against past bear bottoms', '上一輪的 %d%%' % round(v / pb[-1] * 100), '%d%% of the last' % round(v / pb[-1] * 100), 'neu',
+                      '前 %d 輪熊底，一年合計最深在 %s到 %s之間，這一輪淺得多。' % (len(pb), W(max(pb)), W(min(pb))),
+                      'At the past %d bear bottoms the one-year total sank to between %s and %s; this cycle is far shallower.' % (len(pb), kb(max(pb)), kb(min(pb)))))
+    i = max(range(len(tp)), key=lambda j: tp[j]); ty = [t['top'][:4] for t in n['tops']]
+    out.append(it('頂部前後', 'Around tops', '上一輪最少', 'Smallest last time', 'neu',
+                  '頂部前後半年，一年合計的賺錢賣出最多是 %s 年的 %s，上一輪只有 %s。' % (ty[i], W(tp[i]), W(tp[-1])),
+                  'Around tops, the one-year total of profit-taking peaked at %s in %s; last cycle it reached only %s.' % (kb(tp[i]), ty[i], kb(tp[-1]))))
     return sz, se, out
 
 def agecost(L):
-    a = L['cycle']['age_cost']; c = a['c36']; lc = a['last_cross']; px = a['price']
+    # 2026-11-25 改寫（WRITING.md）：補上標題（舊版 c36['since'] 是 None 時整張卡沒有讀數）；先講近期買家賺還是賠，再講兩條長線的交叉
+    a = L['cycle']['age_cost']; c = a['c36']; lc = a['last_cross']; px = a['price']; dth = lc['kind'] == 'death'
     dc = [x['days_to_next'] for x in a['crosses'] if x['kind'] == lc['kind'] and x.get('days_to_next')]
-    sz = '3–6 個月成本 %s，收盤%s；更早買的兩批%s。' % (usd(c['cost']), '高 %.1f%%' % c['gap_pct'] if c['above'] else '低 %.1f%%' % abs(c['gap_pct']), '都還在虧損' if px < min(a['c612'], a['c1218']) else '有獲利' if px > max(a['c612'], a['c1218']) else '一賺一賠')
-    se = 'The 3–6 month cost is %s, with the close %.1f%% %s it; the 6–12 and 12–18 month groups are %s.' % (usd(c['cost']), abs(c['gap_pct']), 'above' if c['above'] else 'below', 'both still underwater' if px < min(a['c612'], a['c1218']) else 'both in profit' if px > max(a['c612'], a['c1218']) else 'split')
-    return sz, se, [
-        it('3–6 個月', '3–6 months', usd(c['cost']), usd(c['cost']), 'up' if c['above'] else 'down', '收盤%s，%s 起 %d 天；30 天%s %s。' % ('在上方' if c['above'] else '在下方', md(c['since']['date']), c['since']['days'], '下降' if c['chg30'] < 0 else '上升', usd(abs(c['chg30']))),
-           'The close has been %s it since %s, %d days; it %s %s in 30 days.' % ('above' if c['above'] else 'below', mde(c['since']['date']), c['since']['days'], 'fell' if c['chg30'] < 0 else 'rose', usd(abs(c['chg30'])))),
-        it('兩條長線', 'The two longer lines', '%s / %s' % (kusd(a['c612']), kusd(a['c1218'])), '%s / %s' % (kusd(a['c612']), kusd(a['c1218'])), 'neu',
-           '6–12 個月比 12–18 個月%s %.1f%%；%s %s叉，至今 %d 天。' % ('低' if a['gap_pct'] < 0 else '高', abs(a['gap_pct']), md(lc['date']), '死' if lc['kind'] == 'death' else '金', a['days_since']),
-           '6–12 months is %.1f%% %s 12–18 months; a %s cross on %s, %d days ago.' % (abs(a['gap_pct']), 'below' if a['gap_pct'] < 0 else 'above', lc['kind'], mde(lc['date']), a['days_since'])),
-        it('過去%s叉到%s叉' % (('死', '金') if lc['kind'] == 'death' else ('金', '死')), 'Past %s to %s crosses' % ((('death', 'golden') if lc['kind'] == 'death' else ('golden', 'death'))), '%d–%d 天' % (min(dc), max(dc)), '%d–%d days' % (min(dc), max(dc)), 'neu',
-           '這兩條是半年到一年半前的買價，比價格落後很多。', 'Both lines are what people paid six to eighteen months ago, so they lag price a long way.')]
+    both = '更早買的兩批也都在虧損' if px < min(a['c612'], a['c1218']) else '更早買的兩批都有賺錢' if px > max(a['c612'], a['c1218']) else '更早買的兩批一賺一賠'
+    bothe = 'and the two earlier groups are underwater too' if px < min(a['c612'], a['c1218']) else 'while the two earlier groups are in profit' if px > max(a['c612'], a['c1218']) else 'and of the two earlier groups one is up, one down'
+    if c['above']:
+        sz = '價格比近 3–6 個月買幣的人的成本高 %.1f%%，這批人有賺錢，%s：照這張圖，近期買家撐得住，反彈比較不會遇到解套賣壓。' % (c['gap_pct'], both)
+        se = 'Price is %.1f%% above what buyers of the last 3–6 months paid, so they are in profit, %s: on this chart recent buyers are holding up, and rallies meet less break-even selling.' % (c['gap_pct'], bothe)
+    else:
+        sz = '價格比近 3–6 個月買幣的人的成本低 %.1f%%，%s：照這張圖，還是熊市裡的樣子，反彈到他們的成本附近容易遇到想解套的賣壓。' % (abs(c['gap_pct']), both)
+        se = 'Price is %.1f%% below what buyers of the last 3–6 months paid, %s: on this chart it still looks like a bear market, and a rally back to their cost is likely to meet break-even selling.' % (abs(c['gap_pct']), bothe)
+    s_ = c.get('since'); sd, sn = (s_['date'], s_['days']) if isinstance(s_, dict) else (s_, c.get('days')) if s_ else (None, None)
+    up_ = [u for u in c.get('ups') or [] if u['date'] <= a['date']]; lu = up_[-1] if up_ else None
+    tail = ('，%s 起 %d 天' % (ymd(sd), sn)) if sd and sn else ''; taile = (', since %s, %d days' % (ymde(sd), sn)) if sd and sn else ''
+    out = [it('近 3–6 個月的買家', 'Buyers of the last 3–6 months', usd(c['cost']), usd(c['cost']), 'up' if c['above'] else 'down',
+              '這是他們的平均成本，收盤在它%s%s。這條線 30 天%s了 %s。' % ('上面' if c['above'] else '下面', tail, '下降' if c['chg30'] < 0 else '上升', usd(abs(c['chg30']))),
+              'This is their average cost; the close is %s it%s. The line %s %s in 30 days.' % ('above' if c['above'] else 'below', taile, 'fell' if c['chg30'] < 0 else 'rose', usd(abs(c['chg30']))))]
+    out.append(it('半年到一年半前的買家', 'Buyers 6–18 months ago', '%s / %s' % (kusd(a['c612']), kusd(a['c1218'])), '%s / %s' % (kusd(a['c612']), kusd(a['c1218'])), 'neu',
+                  '6–12 個月前買的平均成本，比 12–18 個月前買的%s %.1f%%，%s 交叉%s。%s' % ('低' if a['gap_pct'] < 0 else '高', abs(a['gap_pct']), ym(lc['date']), '往下' if dth else '往上',
+                      '較新的一批買得比較便宜，過去出現在熊市底部附近。' if dth else '較新的一批買得比較貴，過去大約是主升段開始的時候。'),
+                  'Coins bought 6–12 months ago cost %.1f%% %s those bought 12–18 months ago; the lines crossed %s in %s. %s' % (abs(a['gap_pct']), 'less than' if a['gap_pct'] < 0 else 'more than', 'down' if dth else 'up', yme(lc['date']),
+                      'The newer group bought cheaper, which has come near past bear-market bottoms.' if dth else 'The newer group paid more, which has roughly marked the start of the main bull leg.')))
+    if dc: out.append(it('過去要多久翻回來' if dth else '過去要多久翻下去', 'How long it took to flip back', '%d–%d 天' % (min(dc), max(dc)), '%d–%d days' % (min(dc), max(dc)), 'neu',
+                         '過去 %d 次從交叉%s到重新%s花的時間；這一輪才過了 %d 天。兩條線是半年到一年半前的買價，比價格落後很多，交叉時價格往往已經走了一段。' % (len(dc), '往下' if dth else '往上', '翻上去' if dth else '翻下去', a['days_since']),
+                         'The time it took in %d past cases to go from this cross back the other way; this cycle is %d days in. Both lines are what people paid six to eighteen months ago, so they lag price a long way, and price has usually moved by the time they cross.' % (len(dc), a['days_since'])))
+    return sz, se, out
 
 def hashr_bv(L, hb):   # 2026-11-19 Hash Ribbons 改成圖（bv_more.py 第 7 項）：讀值照回測，用 Bitview 的算力，和圖同一份
     SG_ = lambda v: ('+%d%%' % v) if v >= 0 else ('−%d%%' % -v)
     YMD = lambda d_: d_.replace('-', '/'); bys = hb['buys']; pre, post, bp = hb['pre'], hb['post'], hb['base_post']
     yr0 = L['meta']['bar_date'][:4]; ty = [b for b in bys if b['d'][:4] == yr0]; lb = bys[-1] if bys else None
+    # 2026-11-25 改寫（WRITING.md）：先講礦工現在在不在關機，再講 Capriole 原版訊號以前準、近年不準；Capriole 原作者的叫法卡上一律寫成「原版訊號」；條目併成三條
+    pr = [b['r365'] for b in bys if b['d'] >= '2021' and b['r365'] is not None]
+    gap = abs(hb['m30'] / hb['m60'] - 1) * 100
     items = [
-        it('現在', 'Now', '投降中' if hb['cap'] else '沒有投降', 'Capitulating' if hb['cap'] else 'No capitulation', 'neu',
-         '30 日均算力 %s EH/s，60 日均 %s EH/s，比值 %.3f，這個狀態已經 %d 天。%s' % (format(hb['m30'], ',.0f'), format(hb['m60'], ',.0f'), hb['ratio'], hb['run'], ('上一次原版買點是 %s（收盤 $%s）。' % (YMD(lb['d']), format(lb['px'], ','))) if lb else ''),
-         'The 30-day average hashrate is %s EH/s against %s EH/s for the 60-day, a ratio of %.3f, %d days in this state. %s' % (format(hb['m30'], ',.0f'), format(hb['m60'], ',.0f'), hb['ratio'], hb['run'], ('The last original buy was on %s (close $%s).' % (lb['d'], format(lb['px'], ','))) if lb else '')),
-        it('2021 年以前', 'Before 2021', '%d 次裡 %d 次漲' % (pre['n'], pre['up']), '%d of %d up' % (pre['up'], pre['n']), 'neu',
-         '原版買點一年後的漲跌：%s。' % '、'.join('%s %s' % (b['d'][:7].replace('-', '/'), SG_(b['r365'])) for b in bys if b['d'] < '2021' and b['r365'] is not None),
-         'A year after each original buy: %s.' % ', '.join('%s %s' % (b['d'][:7], SG_(b['r365'])) for b in bys if b['d'] < '2021' and b['r365'] is not None)),
-        it('2021 年以後', 'Since 2021', '%d 次裡 %d 次漲' % (post['n'], post['up']), '%d of %d up' % (post['up'], post['n']), 'neu',
-         '滿一年的：%s，中位數 %s。同期隨便一天買進，一年後漲的機率 %d%%、中位數 %s。' % ('、'.join('%s %s' % (b['d'][:7].replace('-', '/'), SG_(b['r365'])) for b in bys if b['d'] >= '2021' and b['r365'] is not None), SG_(post['med']), bp['up'], SG_(bp['med'])),
-         'With a full year: %s; median %s. Buying on any day in that span was up a year later %d%% of the time, median %s.' % (', '.join('%s %s' % (b['d'][:7], SG_(b['r365'])) for b in bys if b['d'] >= '2021' and b['r365'] is not None), SG_(post['med']), bp['up'], SG_(bp['med']))),
-        it('%s 年' % yr0, 'In %s' % yr0, '%d 次買點' % len(ty), '%d buys' % len(ty), 'neu',
-         '今年投降、恢復來回好幾次：%s（括號是到現在最近一個滿 90／180 天的漲跌）。' % '、'.join('%s（%s）' % (YMD(b['d'])[5:], SG_(b['r180']) + '／180 天' if b['r180'] is not None else SG_(b['r90']) + '／90 天' if b['r90'] is not None else '還不到 90 天') for b in ty),
-         'Capitulation came and went several times this year: %s (in brackets, the latest 90- or 180-day result so far).' % ', '.join('%s (%s)' % (b['d'][5:], SG_(b['r180']) + ' at 180d' if b['r180'] is not None else SG_(b['r90']) + ' at 90d' if b['r90'] is not None else 'under 90 days') for b in ty))]
-    sz = '%s；原版買點 2021 年以後一年後 %d 次裡 %d 次漲，和隨便一天差不多。' % ('礦工在投降' if hb['cap'] else '30 日均算力在 60 日均上面，沒有投降', post['n'], post['up'])
-    se = '%s; since 2021 the original buy was up a year later %d times out of %d, about the same as any day.' % ('Miners are capitulating' if hb['cap'] else 'The 30-day hashrate is above the 60-day: no capitulation', post['up'], post['n'])
+        it('礦工現在', 'Miners now', '投降中' if hb['cap'] else '沒有投降', 'Capitulating' if hb['cap'] else 'No capitulation', 'neu',
+         '30 日平均算力 %s EH/s，比 60 日平均%s %.1f%%，這個狀態已經 %d 天。%s' % (format(hb['m30'], ',.0f'), '低' if hb['m30'] < hb['m60'] else '高', gap, hb['run'], ('上一次 Capriole 原版訊號是 %s（收盤 $%s）。' % (YMD(lb['d']), format(lb['px'], ','))) if lb else ''),
+         'The 30-day average hashrate is %s EH/s, %.1f%% %s the 60-day, %d day%s in this state. %s' % (format(hb['m30'], ',.0f'), gap, 'below' if hb['m30'] < hb['m60'] else 'above', hb['run'], '' if hb['run'] == 1 else 's', ('The last original Capriole signal was on %s (close $%s).' % (lb['d'], format(lb['px'], ','))) if lb else '')),
+        it('2021 年以前', 'Before 2021', '%d 次裡 %d 次較高' % (pre['n'], pre['up']), '%d of %d higher' % (pre['up'], pre['n']), 'neu',
+         '原版訊號之後一年，價格 %d 次裡 %d 次比當時高，中位數 %s。' % (pre['n'], pre['up'], SG_(pre['med'])),
+         'A year after the original signal, price was higher %d times out of %d, median %s.' % (pre['up'], pre['n'], SG_(pre['med']))),
+        it('2021 年以後', 'Since 2021', '%d 次裡 %d 次較高' % (post['n'], post['up']), '%d of %d higher' % (post['up'], post['n']), 'neu',
+         '滿一年的 %d 次，最好 %s、最差 %s，中位數 %s；同期隨便一天，一年後較高的機率 %d%%、中位數 %s，差不多。%s 年已經出現 %d 次原版訊號，投降、恢復來回好幾次。' % (post['n'], SG_(max(pr)) if pr else '—', SG_(min(pr)) if pr else '—', SG_(post['med']), bp['up'], SG_(bp['med']), yr0, len(ty)),
+         'Of the %d with a full year, the best was %s and the worst %s, median %s; any day in that span was higher a year later %d%% of the time, median %s, about the same. %s has already had %d original signals as capitulation came and went.' % (post['n'], SG_(max(pr)) if pr else '—', SG_(min(pr)) if pr else '—', SG_(post['med']), bp['up'], SG_(bp['med']), yr0, len(ty)))]
+    if hb['cap']:
+        sz = '礦工正在關機（投降）：以前這常出現在底部附近，但近幾年它之後的走勢和隨便一天差不多，只能當背景。'
+        se = 'Miners are switching off (capitulation): that used to come near bottoms, but in recent years what followed was about the same as any day, so it is background only.'
+    else:
+        sz = '算力在增加，礦工沒有投降：這張現在不提供方向，近幾年它的訊號也和隨便一天差不多。'
+        se = 'Hashrate is rising and miners are not capitulating: the chart gives no direction now, and in recent years its signal has done about as well as any day.'
     return sz, se, items
 def hashr(L):
     hb = (L['onchain'].get('bvx') or {}).get('hrib')
     if hb: return hashr_bv(L, hb)
     h = L['onchain']['hash_ribbons']; g = (h['ratio'] - 1) * 100
-    sz = ('30 日均算力比 60 日均%s %.1f%%，已 %d 天：%s。' % ('高' if g >= 0 else '低', abs(g), h['state_days'], '礦工在投降' if h['capitulation'] else '礦工沒有投降'))
-    se = 'The 30-day average hashrate is %.1f%% %s the 60-day, for %d days: %s.' % (abs(g), 'above' if g >= 0 else 'below', h['state_days'], 'miners are capitulating' if h['capitulation'] else 'no miner capitulation')
-    return sz, se, [it('算力帶', 'Ribbon ratio', '%.3f' % h['ratio'], '%.3f' % h['ratio'], 'down' if h['capitulation'] else 'neu', '上次%s在 %s；近 90 天最低 %.3f。' % ('進入投降' if h['capitulation'] else '從投降恢復', md(h['last_cross']), h['min_ratio_90d']),
-                       'Last %s on %s; the 90-day low is %.3f.' % ('entered capitulation' if h['capitulation'] else 'recovered from capitulation', mde(h['last_cross']), h['min_ratio_90d']))]
+    sz = ('%s：30 日平均算力比 60 日平均%s %.1f%%，已經 %d 天。' % ('礦工正在關機（投降）' if h['capitulation'] else '礦工沒有投降，這張現在不提供方向', '高' if g >= 0 else '低', abs(g), h['state_days']))
+    se = '%s: the 30-day average hashrate is %.1f%% %s the 60-day, for %d days.' % ('Miners are switching off (capitulation)' if h['capitulation'] else 'No miner capitulation, so the chart gives no direction now', abs(g), 'above' if g >= 0 else 'below', h['state_days'])
+    return sz, se, [it('兩條算力均線', 'The two hashrate averages', '%.3f' % h['ratio'], '%.3f' % h['ratio'], 'down' if h['capitulation'] else 'neu', '30 日平均 ÷ 60 日平均，低於 1 是投降。上次%s在 %s；近 90 天最低 %.3f。' % ('進入投降' if h['capitulation'] else '從投降恢復', md(h['last_cross']), h['min_ratio_90d']),
+                       '30-day ÷ 60-day average; below 1 is capitulation. Last %s on %s; the 90-day low is %.3f.' % ('entered capitulation' if h['capitulation'] else 'recovered from capitulation', mde(h['last_cross']), h['min_ratio_90d']))]
 
 def cyccmp(L):
     c = L['cycle']['cycle_cmp']; cur = next(x for x in c['cycles'] if x['now']); prev = [x for x in c['cycles'] if not x['now']]; bk = [x['back_day'] for x in prev if x.get('back_day')]
@@ -379,10 +465,10 @@ HOWX = {
             ['Paper profit on unsold coins as a share of market cap (gains only, losses not netted).', '35% has been the floor near the end of past bear markets; 35–37.5% is the near-floor zone.', 'A year after reaching this zone price was usually higher, but it often fell further in the months after.']),
     'p6': (['三個找頂部的指標，各自和近 4 年比排名：0 最冷、100 最熱，80 以上算熱。', '任兩項到 80 以上，才算進入頂部區。', '只看估值，不看時間；很冷不代表已經到底。'],
            ['Three top-finding indicators, each ranked against the last four years: 0 is coldest, 100 hottest, 80 and above is hot.', 'Any two at 80 or above count as the top zone.', 'Valuation only, not timing; cold does not mean the bottom is in.']),
-    'pi': (['111 日均線 ÷（350 日均線 × 2）；到 1 代表短期均線追上長期均線的兩倍。', '過去幾次到 1 都在頂部附近，但每一輪的頂部不一定都會碰到。', '只用價格，和鏈上指標一起看。'],
-           ['111-day MA ÷ (350-day MA × 2); 1 means the short average has caught up with twice the long one.', 'Past touches of 1 came near tops, but not every top has reached it.', 'It uses price alone; read it with the on-chain gauges.']),
-    'hashr': (['算力 30 日均 ÷ 60 日均；低於 1 代表算力在下降，礦工在投降。', '原版買點（投降結束後價格轉強）2021 年以前很準，2021 年以後和隨便一天差不多。', '只看礦工，和其他指標一起看。'],
-              ['30-day ÷ 60-day average hashrate; below 1 means hashrate is falling and miners are capitulating.', 'The original buy (price turning up after capitulation) worked well before 2021; since then it has done about as well as any day.', 'It only covers miners; read it with the rest.']),
+    'pi': (['圖上：大數字和橫條是 111 日均線（約四個月的平均價）÷ 350 日均線的兩倍（約一年平均價的兩倍），橫條上的刻度是 1。', '怎麼看：越接近 1，代表價格幾個月內漲得越遠超過一年的平均；2013、2017、2021 年的頂部都在碰到 1 的前後不久。', '小心：2025 年的頂部沒碰到 1，頂部一輪比一輪溫和，以後可能更難碰到；它只看價格，和鏈上指標一起看。'],
+           ['On the chart: the big number and bar are the 111-day average (about four months) ÷ twice the 350-day average (about twice the one-year average); the tick on the bar is 1.', 'Reading it: the closer to 1, the further price has run above its yearly average within months; the 2013, 2017 and 2021 tops all came soon around a touch of 1.', 'Caveat: the 2025 top never reached 1, and as tops get milder it may get harder to reach; it uses price alone, so read it with the on-chain gauges.']),
+    'hashr': (['圖上：上格是價格，圓圈是 Capriole 原版訊號那天（一年後較高是綠、較低是紅、還不到一年另一色）；下格是算力的 30 日和 60 日平均，淡紅底是投降期。', '怎麼看：30 日平均跌到 60 日平均下面，代表有礦工在關機；原版訊號是投降結束後、價格開始轉強的那天。2021 年以前之後一年都較高，2021 年以後和隨便一天差不多。', '小心：礦機效率、託管和算力出租改變了礦工關機的原因；它只看礦工，和其他指標一起看。'],
+              ['On the chart: price on top, with circles on the days of Capriole\'s original signal (green if higher a year later, red if lower, another colour if under a year); below, the 30- and 60-day hashrate averages, with capitulation shaded red.', 'Reading it: the 30-day average falling below the 60-day means miners are switching off; the original signal is the day price turns up after capitulation ends. Before 2021 price was always higher a year later; since then it has done about as well as any day.', 'Caveat: rig efficiency, hosting and hashrate rental have changed why miners switch off; it only covers miners, so read it with the rest.']),
     'cyccmp': (['每條線是一輪頂部之後每天的收盤，和那一輪頂部比跌了多少。', '橫軸是頂部後第幾天，可以直接和前幾輪同一天比。', '只有三輪樣本，這輪的走法不一定一樣。'],
                ['Each line is the daily close after a cycle top, as a drop from that top.', 'The x-axis is days since the top, so today lines up with the same day in past cycles.', 'Only three past cycles; this one need not follow them.']),
 }

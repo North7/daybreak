@@ -95,11 +95,16 @@ def build(L, N, E, dn):
       leg=[['c3', '長期持有者籌碼', 'Long-term holder supply', 'box'], ['ac', '短期持有者籌碼', 'Short-term holder supply', 'box'], ['c4', '現價 ±5% 區間', '±5% of price', 'box'], ['c5', '前 10% 高水位', 'Top-10% line', 'dash']],
       dz='最後一次移動在現價上下 5% 內的幣，佔流通量的比例。上格右邊的橫條是各價位的籌碼：紫是長期持有者、橘是短期持有者。', de='Coins that last moved within 5% of the current price, as a share of supply. The bars at the right of the top pane show supply by price: violet for long-term holders, orange for short-term.')
     ll = o['lthloss']; pk = ll['peaks']
-    c_lthloss = dict(k='lthloss', zh='長期持有者虧損比例', en='Long-term holders at a loss', f='p1', rows=ll['rows'], p=2, ser=[ser(1, zh='長期持有者虧損比例', en='LTH supply in loss', col='c4', w=1.5)],
+    c_lthloss = dict(k='lthloss', zh='長期持有者有多少在虧損', en='How many long-term holders are underwater', f='p1', rows=ll['rows'], p=2, ser=[ser(1, zh='長期持有者虧損比例', en='LTH supply in loss', col='c4', w=1.5)],
       zones=[dict(lo=42, hi=48, col='dn', zh='在歷輪底部區', en='In the past-bottoms zone', nz='歷輪底部區', ne='the past-bottoms zone')], leg=[['dn', '歷輪底部區 42–48%', 'Past bottoms 42–48%', 'box'], ['dn', '這輪高點', "This cycle's peak", 'dash']],
       marks=[dict(d=dn(p['date']), v=p['value'], col='dn', up=1, zh='%s %.1f%%' % (p['date'][:7].replace('-', '/'), p['value']), en='%s %.1f%%' % (p['date'][:7].replace('-', '/'), p['value'])) for p in pk],
       segs=[dict(a=dn(pk[-1]['date']), v=pk[-1]['value'], col='dn')] if pk else [],
-      dz='持有超過 155 天的幣裡，現在帳面虧損的比例。過去幾輪底部都落在 42–48%。', de='The share of coins held over 155 days that are currently at a loss. Past cycle bottoms fell in the 42–48% zone.')
+      dz='這是什麼：長期持有者是手上的幣放了 155 天以上沒動的人，通常是最不容易被嚇跑的一群。這張是他們的幣裡，現在價格低於持有成本（帳面虧損）的比例。熊市底部時，連這群人也大多套牢，比例會衝到高點。'
+         '怎麼看：紅底是 2019 年以來歷輪熊底的高點區（42–48%），紅點標出各輪的高點，虛線是這一輪到目前的高點。過去脫離底部之後，這個比例都沒再超過那一輪的高點；超過虛線，等於這個規律被打破。'
+         '要保留的地方：不只受價格影響，幾個月前高價買幣的人放滿 155 天也會被算進來，價格不跌比例也會升；只有 3–4 輪，是事後看出的規律。',
+      de='What it is: long-term holders are those whose coins have sat unmoved for 155+ days, usually the group least easily shaken out. This chart is the share of their coins now worth less than they paid (at a paper loss). At bear-market bottoms even this group is mostly underwater, and the share spikes. '
+         'Reading it: the red band is where past bear bottoms peaked since 2019 (42–48%), red dots mark each cycle\'s peak, and the dashed line is this cycle\'s peak so far. After leaving past bottoms the share never went back above that cycle\'s peak; a move above the dashed line would break the pattern. '
+         'Caveats: not price alone: people who bought high a few months ago become long-term holders after 155 days, lifting the share even when price stalls; only 3–4 cycles, and a pattern seen in hindsight.')
     lx_ = (o.get('bvx') or {}).get('lthx')
     if lx_ and len(lx_.get('rows') or []) > 300:   # 2026-11-25 使用者「加，附上口徑說明」：第二個檢視，扣掉放了 10 年以上的幣（bv_more 第 9 段）；扣法會墊高比例，口徑說明和固定扣法的對照一起寫
         from say_data import own
@@ -114,29 +119,34 @@ def build(L, N, E, dn):
                ser=[ser(2, zh='不扣', en='All long-term holders', col='c3', w=1, op=.7), ser(3, zh='扣掉十年老幣', en='Excluding 10-year-old coins', col='c5', w=1.8)],
                marks=[dict(d=q['ex']['dn'], v=q['ex']['v'], col='c5', up=1, zh=P1(q['ex']['v']), en=P1(q['ex']['v'])) for q in pk_],
                leg=[['c5', '扣掉十年老幣：各輪熊底的高點', 'Excluding old coins: peak at each bear bottom', 'ring']],
-               dz='持有超過 155 天的幣裡帳面虧損的比例，扣掉放了 10 年以上沒動的幣（現在 %s顆，全部在獲利）；細線是不扣的。'
-                  '口徑：扣掉之後%s，但這有一部分是扣法造成的。10 年以上的幣 %s 年才開始有，一輪比一輪多，又幾乎永遠算在獲利，扣得越多，比例就被墊得越高；2015 年根本沒有這種幣，兩條線是同一條。%s。'
-                  '所以「比前幾輪都痛」要看怎麼扣。資料是 Bitview 每日值，長期持有者的算法和預設檢視的 CheckOnChain 略有不同。只作讀值。' % (
+               dz='這是什麼：同一張圖，但扣掉放了 10 年以上沒動的幣（現在 %s顆，全部在賺錢）；細線是不扣的。'
+                  '怎麼看：圓圈標出各輪熊底時的高點。扣掉之後%s。'
+                  '要保留的地方：這有一部分是扣法造成的。10 年以上的幣 %s 年才開始有，一輪比一輪多，又幾乎永遠在賺錢，扣得越多比例就被墊得越高；2015 年根本沒有這種幣，兩條線是同一條。%s。所以「比前幾輪都痛」要看怎麼扣。資料是 Bitview，長期持有者的算法和預設檢視（CheckOnChain）略有不同。只作讀值。' % (
                     wan_(lx_['old']), '現在比前三輪熊底都高' if rec else '現在還沒超過前幾輪熊底', lx_['old_first'][:4], fz),
-               de='The share of coins held over 155 days that are at a loss, leaving out coins unmoved for 10+ years (%s coins now, all in profit); the thin line leaves them in. '
-                  'How it is counted: excluded this way it is %s, but part of that comes from the method. Coins aged 10+ years only appear from %s, grow each cycle and sit in profit almost always, so the more you take out, the higher the share is pushed; in 2015 there were none, and the two lines are the same. %s. '
-                  'So "more pain than past cycles" depends on what you exclude. Bitview daily data; its long-term holder definition differs slightly from the CheckOnChain default view. A reading only.' % (
+               de='What it is: the same chart, leaving out coins unmoved for 10+ years (%s coins now, all in profit); the thin line leaves them in. '
+                  'Reading it: circles mark each cycle\'s peak at the bear bottom. Excluded this way it is %s. '
+                  'Caveats: part of that comes from the method. Coins aged 10+ years only appear from %s, grow each cycle and sit in profit almost always, so the more you take out, the higher the share is pushed; in 2015 there were none, and the two lines are the same. %s. So "more pain than past cycles" depends on what you exclude. Bitview data; its long-term holder definition differs slightly from the CheckOnChain default view. A reading only.' % (
                     mil_(lx_['old']), 'above all three past bear bottoms now' if rec else 'not yet above past bear bottoms', lx_['old_first'][:4], fe))]
+        # 2026-11-25 改寫（WRITING.md）：條目併成三條；標題先講現在的位置，再講「要看怎麼扣」
+        if rec and not frec:
+            lsz = '扣掉十年老幣後，長期持有者有 %s 套牢，比前三輪熊底都高；但換一種扣法就不是最高，「比以前都痛」要打折看。' % P1(lx_['ex'])
+            lse = 'Excluding 10-year-old coins, %s of long-term holders\' coins are underwater, above all three past bear bottoms; counted another way it is not the highest, so "more pain than ever" needs a discount.' % P1(lx_['ex'])
+        elif rec:
+            lsz = '扣掉十年老幣後，長期持有者有 %s 套牢，比前三輪熊底都高，換一種扣法也一樣：這一輪長期持有者比以前更痛。' % P1(lx_['ex'])
+            lse = 'Excluding 10-year-old coins, %s of long-term holders\' coins are underwater, above all three past bear bottoms, and the other way of counting agrees: this cycle hurts long-term holders more.' % P1(lx_['ex'])
+        else:
+            lsz = '扣掉十年老幣後，長期持有者有 %s 套牢，還沒超過前幾輪熊底的高點。' % P1(lx_['ex'])
+            lse = 'Excluding 10-year-old coins, %s of long-term holders\' coins are underwater, not yet above past bear-bottom peaks.' % P1(lx_['ex'])
         c_lthloss['modes'][1]['say'] = own([
-            ('扣掉十年老幣', 'Excluding 10-year-old coins', P1(lx_['ex']), P1(lx_['ex']), 'neu',
-             '扣掉之後 %s 在虧損，%s；30 天前 %s，這輪最高 %s（%s）。' % (P1(lx_['ex']), '比前三輪熊底的高點都高' if rec else '還沒超過前幾輪熊底的高點', P1(lx_['ex30']), P1(cur_['ex']['v']), cur_['ex']['d'][5:].replace('-', '/')),
-             'Excluding them, %s is at a loss, %s; %s 30 days ago, and this cycle peaked at %s (%s).' % (P1(lx_['ex']), 'above all three past bear-bottom peaks' if rec else 'not yet above past bear-bottom peaks', P1(lx_['ex30']), P1(cur_['ex']['v']), cur_['ex']['d'][5:].replace('-', '/'))),
-            ('虧損的幣', 'Coins at a loss', '%s顆' % wan_(lx_['coins']), mil_(lx_['coins']), 'neu',
-             '長期持有者手上帳面虧損的幣約 %s顆；放了 10 年以上的 %s顆全部在獲利，不在裡面。' % (wan_(lx_['coins']), wan_(lx_['old'])),
-             'About %s long-term holder coins are underwater; the %s coins aged 10+ years are all in profit and not among them.' % (mil_(lx_['coins']), mil_(lx_['old']))),
-            ('歷輪熊底', 'Past bear bottoms', '/'.join('%.0f%%' % q['ex']['v'] for q in pv), '/'.join('%.0f%%' % q['ex']['v'] for q in pv), 'neu',
-             '扣掉老幣的高點：%s。不扣的話：%s，這輪 %s。' % ('、'.join('%s 年 %s' % (q['ex']['d'][:4], P1(q['ex']['v'])) for q in pv), '、'.join('%s 年 %s' % (q['raw']['d'][:4], P1(q['raw']['v'])) for q in pv), P1(cur_['raw']['v'])),
-             'Peaks excluding old coins: %s. Left in: %s, and %s this cycle.' % (', '.join('%s in %s' % (P1(q['ex']['v']), q['ex']['d'][:4]) for q in pv), ', '.join('%s in %s' % (P1(q['raw']['v']), q['raw']['d'][:4]) for q in pv), P1(cur_['raw']['v']))),
-            ('口徑', 'How it is counted', '扣法決定高低', 'Depends on the method', 'neu',
-             '扣掉的 %s顆老幣一輪比一輪多，又全部在獲利，會把比例墊高。%s。' % (wan_(lx_['old']), fz),
-             'The %s old coins taken out grow each cycle and are all in profit, which pushes the share up. %s.' % (mil_(lx_['old']), fe))],
-            sz='這有一部分是扣法造成的：扣掉的老幣一輪比一輪多，又全部在獲利；換成每個時點都扣同一批幣，現在%s。' % ('也是最高' if frec else '就不是最高'),
-            se='Part of that comes from the method: the old coins taken out grow each cycle and are all in profit; excluding the same coins at every point, it %s.' % ('is still the highest' if frec else 'is not the highest'))
+            ('扣掉老幣之後', 'Excluding old coins', P1(lx_['ex']), P1(lx_['ex']), 'neu',
+             '長期持有者手上約 %s顆在虧損；放了 10 年以上的 %s顆全部在賺錢，扣掉之後比例就變高。30 天前是 %s。' % (wan_(lx_['coins']), wan_(lx_['old']), P1(lx_['ex30'])),
+             'About %s long-term holder coins are underwater; the %s coins aged 10+ years are all in profit, so taking them out raises the share. It was %s 30 days ago.' % (mil_(lx_['coins']), mil_(lx_['old']), P1(lx_['ex30']))),
+            ('和前幾輪熊底比', 'Against past bear bottoms', '這一輪最高 ' + P1(cur_['ex']['v']), 'This cycle\'s high ' + P1(cur_['ex']['v']), 'neu',
+             '同樣扣法，前 %d 輪熊底的高點在 %s–%s；這一輪的高點在 %s。不扣的話這一輪是 %s，和以前差不多。' % (len(pv), P1(min(q['ex']['v'] for q in pv)), P1(max(q['ex']['v'] for q in pv)), cur_['ex']['d'][5:].replace('-', '/'), P1(cur_['raw']['v'])),
+             'Counted the same way, the past %d bear-bottom peaks were %s–%s; this cycle\'s came on %s. Left in, this cycle is %s, about the same as before.' % (len(pv), P1(min(q['ex']['v'] for q in pv)), P1(max(q['ex']['v'] for q in pv)), cur_['ex']['d'][5:].replace('-', '/'), P1(cur_['raw']['v']))),
+            ('換一種扣法', 'Counted another way', '也是最高' if frec else '就不是最高', 'Still the highest' if frec else 'Not the highest', 'neu',
+             '老幣一輪比一輪多，扣得越多比例被墊得越高。%s。' % fz, 'Old coins grow each cycle, and the more you take out the higher the share is pushed. %s.' % fe)],
+            sz=lsz, se=lse)
     # ── 賣出的人賺還是賠 ──
     so = ch['viz']['sopr']; KD = dict(easing=('up', '賣壓遞減', 'Easing'), heavier=('dn', '賣壓加重', 'Heavier'), flat=('k2', '持平', 'Flat'))
     def dip(d):
@@ -166,10 +176,15 @@ def build(L, N, E, dn):
                   leg=[['up', '30 日累計淨獲利', '30-day net profit', 'box'], ['dn', '30 日累計淨認賠', '30-day net loss', 'box'], ['ac', '首次觸發', 'First trigger', 'ring']])])
     n3 = o['npl365']; wan = lambda v: ('+' if v > 0 else '−') + ('%.0f' % abs(v / 10))
     c_n365 = dict(k='npl365', zh='一年累計淨實現損益', en='One-year net realized P&L', f='kbtc', rows=n3['rows'], p=1,
-      ser=[ser(2, zh='一年累計', en='One-year sum', t='sign', base=0)], leg=[['up', '獲利了結', 'Profit-taking', 'box'], ['dn', '認賠', 'Loss-taking', 'box']],
+      ser=[ser(2, zh='一年累計', en='One-year sum', t='sign', base=0)], leg=[['up', '賺錢賣出比較多', 'More sold at a profit', 'box'], ['dn', '賠錢賣出比較多', 'More sold at a loss', 'box']],
       marks=[dict(d=dn(t['date']), v=t['value'], col='up', up=1, zh=yr(t['date']) + ' ' + wan(t['value']) + ' 萬', en=yr(t['date']) + ' ' + ('%+.0fK' % t['value'])) for t in n3['tops']] +
             [dict(d=dn(t['date']), v=t['value'], col='dn', up=0, zh=yr(t['date']) + ' ' + wan(t['value']) + ' 萬', en=yr(t['date']) + ' ' + ('%+.0fK' % t['value'])) for t in n3['bottoms']],
-      dz='把每天的淨實現損益換成顆數，加總 365 天。標記是歷次的高點和低點。', de='Daily net realized P&L converted to BTC and summed over 365 days. Markers show past highs and lows.')
+      dz='這是什麼：每天有人把幣賣掉或轉走，賣價高於當初的買價算賺錢（實現獲利），低於就是認賠。把每天的賺賠相抵、換成顆數，再加總一整年，就知道過去一年市場整體是在賺錢賣出還是賠錢賣出。熊市底部前後，通常是一年裡大量的幣被賠錢賣掉、換到新買家手上。'
+         '怎麼看：綠色是一年合計在賺錢賣出、紅色是在賠錢賣出；標記是歷次頂部前後的最高和熊底前後的最深（萬顆）。這是一整年的加總，最深的時候通常落在價格見底之後幾個月。'
+         '要保留的地方：交易所整理錢包也會被算進去；這一輪的負值比前幾輪淺很多，可能是持有結構變了，也可能是還沒走完。',
+      de='What it is: every day some coins are sold or moved; above the price paid counts as profit (realized profit), below as a loss. Netting each day\'s profit against loss, converting to coins and summing a whole year shows whether the market has been selling at a profit or at a loss on balance. Around bear-market bottoms, typically a year of heavy loss-selling moves a lot of coins to new buyers. '
+         'Reading it: green means the one-year total is net profit-taking, red net loss-taking; markers show the highs around past tops and the lows around bear bottoms. It sums a whole year, so its deepest point usually comes a few months after price bottoms. '
+         'Caveats: exchange wallet reshuffles count too; this cycle\'s negative reading is far shallower than past ones, either because the holder base has changed or because it is not finished.')
     # ── 賣壓強弱與衰竭 ──
     rp = o['rpl']
     c_rpl = dict(k='rpl', zh='實現獲利 ÷ 虧損', en='Realized profit ÷ loss', f='x2', rows=rp['rows'], p=2, log=1, ser=[ser(1, zh='獲利 ÷ 虧損', en='Profit ÷ loss', t='split', base=1, w=1.6)],
