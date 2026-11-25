@@ -44,18 +44,21 @@ def _sec(line):
 
 
 def _where(f):
-    """主執行緒現在的位置 → (collect.py 的區段, 它呼叫進去的模組)"""
-    called = None
+    """主執行緒現在的位置 → (collect.py 頂層那一行所在的區段, 它呼叫進去的模組)。
+    區段看最外層的 collect.py 那一行（2026-11-25 第一版看最內層，經過 get() 的請求全算到 get() 定義的「開頭」）"""
+    called, line, seen = None, None, None
     while f is not None:
         fn = f.f_code.co_filename
         if os.path.abspath(fn) == _SCRIPT:
-            return _sec(f.f_lineno), called or os.path.basename(_SCRIPT)
-        if os.path.dirname(os.path.abspath(fn)) == _HERE and not fn.endswith('run_timing.py'):
-            called = os.path.basename(fn)   # 往上走，最後留下的是 collect.py 直接呼叫的那個模組
+            line = f.f_lineno
+            if seen is None: seen = called   # collect.py 最內層那一行呼叫進去的模組
+        elif os.path.dirname(os.path.abspath(fn)) == _HERE and not fn.endswith('run_timing.py'):
+            called = os.path.basename(fn)
         elif called is None:
             called = '（%s）' % os.path.basename(fn)   # 標準庫：subprocess、json、ssl…
         f = f.f_back
-    return '（collect.py 之外）', called or '?'
+    if line is None: return '（collect.py 之外）', called or '?'
+    return _sec(line), seen or 'collect.py'
 
 
 def _sampler():
@@ -63,7 +66,10 @@ def _sampler():
         _sleep(DT)
         f = sys._current_frames().get(_MAIN)
         if f is None: continue
-        s, m = _where(f)
+        try:
+            s, m = _where(f)
+        finally:
+            del f   # 2026-11-25 不能抓著主執行緒的 frame：會讓還沒關的檔案（collect.py 的 today.json）結束時沒寫完整
         by_sec[s] += DT; by_mod[(s, m)] += DT
 
 
