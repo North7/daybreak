@@ -6,6 +6,7 @@
 口徑與日報 _conventions 相同：ATR 為簡單平均、RV 用 ddof=1 年化 √365、EMA 以 SMA 播種、
 算力 7 日均＝最後 7 個完整日、hashprice＝144 塊獎勵×收盤÷PH/s、P8 分桶凍結邊界 p67=1.063（至 2026-10-20）。
 """
+import run_timing   # 2026-11-25 計時：結束時印出各區段、各網站、主動等待各花多少秒（pipeline/run_timing.py），只記時間不改結果
 import json, math, statistics as st, datetime as dt, subprocess, sys, re, argparse
 from statistics import NormalDist
 N = NormalDist().cdf
