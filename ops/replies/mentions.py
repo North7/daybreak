@@ -7,8 +7,12 @@
 3. 已經接過的不列：我們有一則回覆的對象就是那則留言、或 data/replies.json 裡已經有那則留言的 id。
 4. 算「第幾輪」：從我們那則往上追，同一串裡我們已經回過幾次（同串最多兩輪，見 README「X 演算法的限制」）。
 
+2026-11-25 補：只看最近 30 小時的貼文，會漏掉舊原創和置頂文底下的留言（11/12 置頂介紹文 11/21–11/24 有 3 則留言沒接，
+使用者在手機上看到才發現）。現在另外掃：最近 --orig-days 天的原創（不含回覆）＋ EVERGREEN 列的置頂、宣傳文，
+這些貼文底下最近 --orig-reply-hours 小時的留言也列出來。換置頂時更新 EVERGREEN。
+
 用法（在倉庫根目錄）：
-  python3 ops/replies/mentions.py                 # 我們最近 30 小時的貼文底下、最近 12 小時的新留言
+  python3 ops/replies/mentions.py                 # 我們最近 30 小時的貼文底下、最近 12 小時的新留言；加上 7 天內原創＋置頂文底下最近 72 小時的
   python3 ops/replies/mentions.py --since-hours 48 --reply-hours 24 --json out.json
 只讀不寫；寫回覆照 README「接續對話」。"""
 import argparse, json, os, sys, time, urllib.parse, urllib.request
@@ -17,6 +21,8 @@ HANDLE = 'songpu717'
 ROOT = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 UA = {'User-Agent': 'daybreak-ops/1.0'}
 _cache = {}
+# 置頂、宣傳文：發很久了還會有人留言，固定每輪都掃（2026-11-25）
+EVERGREEN = ['2120733066939482177']   # 11/12 One minute every morning to see where BTC stands（置頂）
 
 
 def fetch(url):
@@ -45,9 +51,12 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument('--since-hours', type=float, default=30, help='看我們多久以內發的貼文底下')
     ap.add_argument('--reply-hours', type=float, default=12, help='只列多久以內的新留言')
+    ap.add_argument('--orig-days', type=float, default=7, help='另外掃多少天內的原創（不含回覆）')
+    ap.add_argument('--orig-reply-hours', type=float, default=72, help='舊原創和置頂文底下，列多久以內的留言')
     ap.add_argument('--json', help='另外存成 JSON')
     a = ap.parse_args()
     now = time.time(); t0 = now - a.since_hours * 3600; r0 = now - a.reply_hours * 3600
+    o0 = now - a.orig_days * 86400; ro = now - a.orig_reply_hours * 3600
 
     ours, cur = [], None
     # 2026-11-08：fxtwitter 每頁不是照時間排（第 2 頁還會有比第 1 頁最舊那則更新的），
@@ -64,8 +73,26 @@ def main():
         if not res or not cur: break
         old_pages = old_pages + 1 if max(t.get('created_timestamp') or 0 for t in res) < t0 else 0
         if old_pages >= 2: break
+    answered = {parent_of(t) for t in ours if parent_of(t)}   # 翻到的全部回覆都算（舊留言可能是更早接的）
     ours = list({t['id']: t for t in ours if (t.get('created_timestamp') or 0) >= t0}.values())
-    answered = {parent_of(t) for t in ours if parent_of(t)}
+    for t in ours: t['_r0'] = r0
+    # 舊原創（不含回覆）＋置頂文：留言窗口放寬到 --orig-reply-hours
+    olds, cur, have = [], None, {t['id'] for t in ours}
+    for _ in range(6):
+        q = 'count=50' + (f'&cursor={urllib.parse.quote(cur)}' if cur else '')
+        try: d = fetch(f'https://api.fxtwitter.com/2/profile/{HANDLE}/statuses?{q}')
+        except Exception as e: print('讀取原創失敗', e, file=sys.stderr); break
+        res = [t for t in d.get('results') or [] if (t.get('author') or {}).get('screen_name', '').lower() == HANDLE.lower() and not parent_of(t)]
+        olds += res
+        cur = ((d.get('cursor') or {}).get('bottom'))
+        if not res or not cur or max(t.get('created_timestamp') or 0 for t in res) < o0: break
+    for i in EVERGREEN:
+        t = status(i)
+        if t: olds.append(t)
+    for t in olds:
+        if t['id'] in have: continue
+        if t['id'] not in EVERGREEN and (t.get('created_timestamp') or 0) < o0: continue
+        _cache[t['id']] = t; t['_r0'] = ro; ours.append(t); have.add(t['id'])
     try:
         done = {str(i.get('id')) for i in json.load(open(os.path.join(ROOT, 'data', 'replies.json'), encoding='utf-8')).get('items', [])}
     except Exception:
@@ -84,8 +111,11 @@ def main():
             au = r.get('author') or {}
             if au.get('screen_name', '').lower() == HANDLE.lower(): continue
             if parent_of(r) and parent_of(r) != p['id']: continue          # 只要直接回我們這則的
-            if (r.get('created_timestamp') or 0) < r0: continue
+            if (r.get('created_timestamp') or 0) < p.get('_r0', r0): continue
             if r['id'] in answered or r['id'] in done: continue
+            # 舊貼文的留言：我們可能是很早以前接的、不在翻到的那幾頁，再看一次這則留言底下有沒有我們
+            if p.get('_r0') == ro and any((x.get('author') or {}).get('screen_name', '').lower() == HANDLE.lower() and parent_of(x) == r['id']
+                                          for x in conv.get('replies') or []): continue
             # 往上追：同一串我們已經回過幾次
             rounds, x, seen = 0, p, 0
             while x and seen < 8:
@@ -106,7 +136,7 @@ def main():
     out.sort(key=lambda o: o.get('posted') or '')
     if a.json:
         json.dump(out, open(a.json, 'w', encoding='utf-8'), ensure_ascii=False, indent=1)
-    print(f'我們最近 {a.since_hours:g} 小時的 {len(ours)} 則貼文底下，最近 {a.reply_hours:g} 小時有 {len(out)} 則還沒接的留言\n')
+    print(f'我們最近 {a.since_hours:g} 小時的貼文（最近 {a.reply_hours:g} 小時的留言）＋{a.orig_days:g} 天內原創和置頂文（最近 {a.orig_reply_hours:g} 小時的留言），共 {len(ours)} 則貼文，有 {len(out)} 則還沒接的留言\n')
     for i, o in enumerate(out, 1):
         tag = '原創底下' if o['is_original'] else f'我們已回 {o["our_rounds"]} 輪'
         print(f'#{i} @{o["author"]}（{o["followers"] or 0:,} 粉{"，藍勾" if o["verified"] else ""}）{o["posted"]}  {tag}  {o["url"]}')
