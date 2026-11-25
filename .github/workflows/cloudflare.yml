@@ -74,7 +74,8 @@ jobs:
           mkdir -p "$RUNNER_TEMP/site/charts-img"
           gh release download chart-img --repo "${{ github.repository }}" -p chart-img.tar -D "$RUNNER_TEMP" --clobber && tar -C "$RUNNER_TEMP/site/charts-img" -xf "$RUNNER_TEMP/chart-img.tar" || echo "::warning::no chart images"
           # 2026-11-20 GEO 第二批：每張圖一頁、每天的簡報一頁（中英），sitemap.xml 加上這些網址。只寫進上傳的資料夾，不進程式庫
-          # 2026-11-25 主題頁的簡體版要 OpenCC（pipeline/next/hans.py）；裝不起來就只出繁體和英文
+          # 2026-11-25 簡體版（主題頁、每張圖、每日簡報、zh-hans/feed.xml、latest.zh-hans.md）要 OpenCC（pipeline/next/hans.py）；裝不起來就只出繁體和英文
+          # （首頁和數據頁的簡體是瀏覽器裡轉的，用倉庫裡的 assets/hans.js，不靠這一步）
           python3 -m pip install --quiet --break-system-packages opencc-python-reimplemented==0.1.7 || echo "::warning::opencc not installed; no zh-Hans pages"
           python3 pipeline/next/pages.py --out "$RUNNER_TEMP/site" || echo "::warning::pages.py failed; deploying without chart/brief pages"
           echo "files: $(find "$RUNNER_TEMP/site" -type f | wc -l)"

@@ -9,6 +9,8 @@ AI 搜尋引用的是「直接回答一個問題」的頁面（「比特幣 MVRV
   brief/<日期>/      每天的簡報（data/archive）：頭條、整體、摘要、要盯的價位、各版結論、今日發現；英文封存有的日期才有 en/brief/<日期>/
   brief/、en/brief/  簡報索引
   sitemap.xml        在原本的 4 個網址後面加上以上全部（含 hreflang 中英對照）
+  zh-hans/…          2026-11-25 以上中文頁（單頁、索引、簡報、feed.xml）都另出一份簡體：繁體頁寫好後整頁用 hans.py 轉，網址前面加 zh-hans/；
+                     三個語言互標 hreflang，右上角「繁／简／EN」。另寫 latest.zh-hans.md（latest.md 的簡體）。沒裝 OpenCC 就只有繁體和英文
 
 這些頁面不進程式庫：每次部署時（cloudflare.yml）寫進上傳的資料夾，每天跟著資料更新，也不會讓每天的提交多出幾百個檔。
 本機預覽：python3 pipeline/next/pages.py --out <資料夾>（資料夾裡要先有網站的其他檔，sitemap.xml 會被改寫）。
@@ -23,6 +25,7 @@ import json, glob, os, sys, re, html, argparse
 HERE = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, HERE)
 import geo   # 讀好的資料（NX、PAGES、LEANS、QS…）和一張圖的一句話（geo.read）
+import hans as HANS   # 2026-11-25 簡體版（zh-hans/…）
 from geo import esc, SITE, PERSON, WEBSITE, TN, QS, PAGES, LEANS, NX, _MON
 
 REPO = geo.REPO
@@ -93,10 +96,36 @@ def ld(graph):
     return '<script type="application/ld+json">%s</script>' % s.replace('</', '<\\/')
 
 
+# 2026-11-25 簡體版：main() 寫完繁體頁後把 _H 設成 True，再呼叫同一個函式一次；shell 看到 _H 就把那一頁寫成 zh-hans/<繁體網址>（見 hans_page）
+_H = False
+HANS_PRE = ('charts/', 'brief/', 'feed.xml', 'bitcoin-')   # 有簡體版的網址（從網站根目錄算）；其他（app/、assets/、charts-img/…）簡體頁也連回原本那個
+
+
+def relink(body, path_zh):
+    """繁體頁的內文（連結照繁體頁的位置寫）搬到 zh-hans/ 下面一層：有簡體版的連到簡體版，其他多退一層；打開數據頁的 ?lang=zh 換成 ?lang=hans"""
+    import posixpath
+
+    def fix(m):
+        v = m.group(2)
+        if re.match(r'^(https?:|#|mailto:|data:|/)', v): return m.group(0)
+        pv = v.split('?')[0].split('#')[0]
+        tgt = posixpath.normpath(posixpath.join(path_zh, pv)) + ('/' if pv.endswith('/') else '')   # normpath 會吃掉結尾的斜線
+        nv = v if tgt.startswith(HANS_PRE) and not tgt.startswith('..') else '../' + v
+        return '%s="%s"' % (m.group(1), nv.replace('lang=zh', 'lang=hans'))
+    return re.sub(r'(href|src)="([^"]*)"', fix, body)
+
+
 def shell(en, path_zh, path_en, title, desc, body, graph, og=None, path_hans=None, hans=False):
     """一頁的外框。path_zh／path_en 是兩個語言的網址（不含網域，結尾斜線）；沒有另一個語言的版本就傳 None。
     2026-11-25 主題頁多一個簡體版：path_hans 是它的網址（三個語言互相標 hreflang，右上角變成「繁／简／EN」）；hans=True 寫的就是簡體版那一頁
     （內容照繁體寫，topics.py 寫完整頁再用 hans.py 轉）"""
+    auto = _H and not en and path_hans is None   # 自動的簡體版（單頁、索引、簡報）；主題頁自己傳 path_hans、自己轉
+    if path_hans is None and path_zh and HANS.available(): path_hans = 'zh-hans/' + path_zh
+    if auto:
+        hans = True; body = relink(body, path_zh)
+        g = json.dumps(graph, ensure_ascii=False).replace('"inLanguage": "zh-Hant"', '"inLanguage": "zh-Hans"')
+        for x in HANS_PRE: g = g.replace('"%s%s' % (SITE, x), '"%szh-hans/%s' % (SITE, x))
+        graph = json.loads(g)
     me = path_en if en else (path_hans if hans else path_zh)
     alt = ''.join('<link rel="alternate" hreflang="%s" href="%s%s">' % (hl, SITE, p) for hl, p in (('zh-Hant', path_zh), ('zh-Hans', path_hans), ('en', path_en)) if p)
     if path_zh and path_en: alt += '<link rel="alternate" hreflang="x-default" href="%s%s">' % (SITE, path_en)
@@ -115,7 +144,7 @@ def shell(en, path_zh, path_en, title, desc, body, graph, og=None, path_hans=Non
             '<header><a class="lg" href="%sapp/%s">%sDAYBREAK</a><nav class="lang" aria-label="%s">%s</nav></header><main>%s</main>'
             '<footer>%s</footer></body></html>') % (
         'en' if en else ('zh-Hans' if hans else 'zh-Hant'), esc(title), esc(desc), SITE, me, alt, esc(title), esc(desc), SITE, me, og or SITE + 'assets/og-en.png?v=20261112',
-        up, 'Daybreak · Daily Bitcoin brief' if en else 'Daybreak · 比特幣每日簡報', SITE, 'en/feed.xml' if en else 'feed.xml', FONTS, CSS, ld(graph), up, '?lang=en' if en else '?lang=zh', LOGO, 'Language' if en else '語言', lang, body, footer(en, up, hans))
+        up, 'Daybreak · Daily Bitcoin brief' if en else 'Daybreak · 比特幣每日簡報', SITE, 'en/feed.xml' if en else ('zh-hans/feed.xml' if hans else 'feed.xml'), FONTS, CSS, ld(graph), up, '?lang=en' if en else ('?lang=hans' if hans else '?lang=zh'), LOGO, 'Language' if en else '語言', lang, body, footer(en, up, hans))
 
 
 def footer(en, up, hans=False):
@@ -123,9 +152,10 @@ def footer(en, up, hans=False):
         return ('Daybreak, by Aron. Code computes every number; AI only explains them. Daybreak makes no trade calls; readings are for information only.<br>'
                 '<a href="%sapp/?lang=en">Daybreak app</a> · <a href="%sen/charts/">All charts</a> · <a href="%sen/brief/">Daily briefs</a> · <a href="%scase-study/en/">Case study</a><br>'
                 '<a href="%sen/bitcoin-cycle/">Cycle analysis</a> · <a href="%sen/bitcoin-onchain/">On-chain analysis</a> · <a href="%sen/bitcoin-macro/">Macro and flows</a> · <a href="%sen/bitcoin-derivatives/">Derivatives data</a>') % ((up,) * 8)
+    h = 'zh-hans/' if hans else ''
     return ('Daybreak，Aron 製作。數字由程式計算，AI 只負責解釋；不給交易建議，判讀僅供參考。<br>'
-            '<a href="%sapp/?lang=zh">打開 Daybreak</a> · <a href="%scharts/">所有圖</a> · <a href="%sbrief/">每日簡報</a> · <a href="%scase-study/">Case study</a><br>'
-            '<a href="%s%sbitcoin-cycle/">週期分析</a> · <a href="%s%sbitcoin-onchain/">鏈上數據分析</a> · <a href="%s%sbitcoin-macro/">宏觀與資金流</a> · <a href="%s%sbitcoin-derivatives/">衍生品數據</a>') % ((up,) * 4 + sum(((up, 'zh-hans/' if hans else ''),) * 4, ()))
+            '<a href="%sapp/?lang=%s">打開 Daybreak</a> · <a href="%s%scharts/">所有圖</a> · <a href="%s%sbrief/">每日簡報</a> · <a href="%scase-study/">Case study</a><br>'
+            '<a href="%s%sbitcoin-cycle/">週期分析</a> · <a href="%s%sbitcoin-onchain/">鏈上數據分析</a> · <a href="%s%sbitcoin-macro/">宏觀與資金流</a> · <a href="%s%sbitcoin-derivatives/">衍生品數據</a>') % ((up, 'hans' if hans else 'zh', up, h, up, h, up) + sum(((up, h),) * 4, ()))
 
 
 def pill(lean, en):
@@ -286,6 +316,20 @@ def feed(A, ds, en):
     return '\n'.join(o) + '\n'
 
 
+def feed_hans(A, ds):
+    """zh-hans/feed.xml：中文 feed 轉簡體，連結指向簡體的簡報頁"""
+    x = feed(A, ds, False).replace('xml:lang="zh-Hant"', 'xml:lang="zh-Hans"').replace(SITE + 'brief/', SITE + 'zh-hans/brief/').replace(SITE + 'feed.xml', SITE + 'zh-hans/feed.xml')
+    return HANS.convert(x)
+
+
+def hans_page(fn, *a):
+    """同一個產生函式再跑一次，寫成簡體版（shell 看 _H）；整頁轉簡體"""
+    global _H
+    _H = True
+    try: return HANS.convert(fn(*a))
+    finally: _H = False
+
+
 def brief_page(d, A, ds, en):
     z, e = A[d]; a = e if en else z; i = ds.index(d)
     pz, pe = 'brief/%s/' % d, ('en/brief/%s/' % d if e else None)
@@ -365,21 +409,33 @@ def main():
         print(json.dumps([c['k'] for c in geo.ALL if not c.get('nofx') and not c.get('na')])); return
     out = os.path.abspath(o.out); urls = []   # (zh 網址, en 網址, lastmod)
     IMG_DIR = os.path.join(out, 'charts-img')
+    H = HANS.available(); hz = lambda p: ('zh-hans/' + p) if H else None   # 2026-11-25 簡體版
     for c in geo.ALL:
         for en in (False, True): write(out, ('en/charts/%s' if en else 'charts/%s') % c['k'], chart_page(c, en))
-        urls.append(('charts/%s/' % c['k'], 'en/charts/%s/' % c['k'], DATE))
+        if H: write(out, 'zh-hans/charts/%s' % c['k'], hans_page(chart_page, c, False))
+        urls.append(('charts/%s/' % c['k'], 'en/charts/%s/' % c['k'], DATE, hz('charts/%s/' % c['k'])))
     for en in (False, True): write(out, 'en/charts' if en else 'charts', charts_index(en))
-    urls.append(('charts/', 'en/charts/', DATE))
+    if H: write(out, 'zh-hans/charts', hans_page(charts_index, False))
+    urls.append(('charts/', 'en/charts/', DATE, hz('charts/')))
     A = archive(); ds = sorted(A)
     for d in ds:
         write(out, 'brief/%s' % d, brief_page(d, A, ds, False))
         if A[d][1]: write(out, 'en/brief/%s' % d, brief_page(d, A, ds, True))
-        urls.append(('brief/%s/' % d, 'en/brief/%s/' % d if A[d][1] else None, d))
+        if H: write(out, 'zh-hans/brief/%s' % d, hans_page(brief_page, d, A, ds, False))
+        urls.append(('brief/%s/' % d, 'en/brief/%s/' % d if A[d][1] else None, d, hz('brief/%s/' % d)))
     for en in (False, True): write(out, 'en/brief' if en else 'brief', brief_index(A, ds, en))
+    if H: write(out, 'zh-hans/brief', hans_page(brief_index, A, ds, False))
     for en in (False, True):
         fp = os.path.join(out, 'en', 'feed.xml') if en else os.path.join(out, 'feed.xml'); os.makedirs(os.path.dirname(fp), exist_ok=True)
         open(fp, 'w', encoding='utf-8').write(feed(A, ds, en))
-    urls.append(('brief/', 'en/brief/', ds[-1] if ds else DATE))
+    if H:
+        os.makedirs(os.path.join(out, 'zh-hans'), exist_ok=True); open(os.path.join(out, 'zh-hans', 'feed.xml'), 'w', encoding='utf-8').write(feed_hans(A, ds))
+        try:   # 當期判讀的 Markdown（給 AI 讀）；裡面的連結換成簡體版
+            md = open(os.path.join(REPO, 'latest.md'), encoding='utf-8').read().replace(SITE + 'app/?lang=zh', SITE + 'app/?lang=hans')
+            for x in HANS_PRE: md = md.replace(SITE + x, SITE + 'zh-hans/' + x)
+            open(os.path.join(out, 'latest.zh-hans.md'), 'w', encoding='utf-8').write(HANS.convert(md))
+        except Exception as ex: print('latest.zh-hans.md skipped', ex)
+    urls.append(('brief/', 'en/brief/', ds[-1] if ds else DATE, hz('brief/')))
     import topics   # 2026-11-25 GEO 主題頁：週期分析、鏈上數據分析、宏觀與資金流、衍生品（見 topics.py）
     urls += topics.write_all(out, sys.modules[__name__])
     sm = os.path.join(out, 'sitemap.xml'); s = open(sm, encoding='utf-8').read()
@@ -391,7 +447,7 @@ def main():
             if p: add.append('<url><loc>%s%s</loc><lastmod>%s</lastmod>%s</url>\n' % (SITE, p, lm, alt))
     s = s.replace('</urlset>', ''.join(add) + '</urlset>')
     open(sm, 'w', encoding='utf-8').write(s)
-    print('pages: %d charts ×2, %d briefs (%d en), %d sitemap urls added -> %s' % (len(geo.ALL), len(ds), sum(1 for d in ds if A[d][1]), len(add), out))
+    print('pages: %d charts ×%d, %d briefs (%d en), %d sitemap urls added%s -> %s' % (len(geo.ALL), 3 if H else 2, len(ds), sum(1 for d in ds if A[d][1]), len(add), ', zh-hans on' if H else ', no zh-hans (opencc missing)', out))
 
 
 if __name__ == '__main__':

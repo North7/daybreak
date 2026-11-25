@@ -189,12 +189,16 @@ page = open(os.path.join(HERE, 'page.html'), encoding='utf-8').read(); assert pa
 assert page.count('<!--STATIC-->') == 1 and page.count('<!--LDJSON-->') == 1
 open(os.path.join(REPO, 'sitemap.xml'), 'w', encoding='utf-8').write('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">\n'
     + ''.join('<url><loc>%s</loc><lastmod>%s</lastmod>%s</url>\n' % (u, lm, x) for u, lm, x in (
-        ('https://daybreak.aronlab.dev/', L['meta']['bar_date'], '<changefreq>daily</changefreq><xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/?lang=zh"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/?lang=en"/>'),
-        ('https://daybreak.aronlab.dev/app/', L['meta']['bar_date'], '<changefreq>daily</changefreq><xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/app/?lang=zh"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/app/?lang=en"/>'),
+        ('https://daybreak.aronlab.dev/', L['meta']['bar_date'], '<changefreq>daily</changefreq><xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/?lang=zh"/><xhtml:link rel="alternate" hreflang="zh-Hans" href="https://daybreak.aronlab.dev/?lang=hans"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/?lang=en"/>'),
+        ('https://daybreak.aronlab.dev/app/', L['meta']['bar_date'], '<changefreq>daily</changefreq><xhtml:link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/app/?lang=zh"/><xhtml:link rel="alternate" hreflang="zh-Hans" href="https://daybreak.aronlab.dev/app/?lang=hans"/><xhtml:link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/app/?lang=en"/>'),
         ('https://daybreak.aronlab.dev/case-study/', '2026-11-19', ''), ('https://daybreak.aronlab.dev/case-study/en/', '2026-11-19', '')))
     + '</urlset>\n')
 os.makedirs(os.path.join(REPO, 'app'), exist_ok=True)
-open(os.path.join(REPO, 'app', 'index.html'), 'w', encoding='utf-8').write(page.replace('../data/next.js?v=__V__', '../data/next.js?v=' + ver))
+def hans_ver():   # 2026-11-25 簡體轉換器（assets/hans.js，pipeline/next/hans.py --js 產生）的版本號；兩頁都用
+    try: return hashlib.sha1(open(os.path.join(REPO, 'assets', 'hans.js'), 'rb').read()).hexdigest()[:10]
+    except Exception: return 'x'
+assert page.count('hans.js?v=__HV__') == 1
+open(os.path.join(REPO, 'app', 'index.html'), 'w', encoding='utf-8').write(page.replace('../data/next.js?v=__V__', '../data/next.js?v=' + ver).replace('hans.js?v=__HV__', 'hans.js?v=' + hans_ver()))
 print('wrote data/next.js', len(js), 'bytes; app/index.html', len(page), 'bytes; v=' + ver, '| bar', D['date'], '| notes', N.get('date'))
 # 2026-11-19 介紹頁用剛寫好的 data/next*.js 重建（2026-11-20 起它就是根目錄的 index.html）；失敗只印出來，不影響數據頁，根目錄留著上一版
 try:

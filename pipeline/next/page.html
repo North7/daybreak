@@ -8,12 +8,19 @@
 /* 2026-11-20 根網址改放介紹頁，數據頁搬到 /app/。來過數據頁的人記一筆，之後打開根網址直接轉來這裡（介紹頁開頭的轉址） */
 try { localStorage.setItem('daybreak.seen', String(Date.now())); } catch (e) {}
 /* 2026-11-16 舊版（classic.html）對外下線：舊網址（#onchain/sthsig 這種）由主程式轉到新版對應的圖，見 ㉝ */
-/* 語言：使用者在任一版選過就沿用（daybreak.lang，和舊版共用）；沒選過看舊版查到的國家（快取 7 天），再沒有就看瀏覽器語言 */
-window.DAYBREAK_LANG = (function () { var q = /[?&]lang=(zh|en)(&|$)/.exec(location.search); if (q) return q[1];   /* 2026-11-16：網址帶 ?lang=en／zh 就用那個語言（只管這一次，不改記住的選擇）；給別人連結時用 */
-  var ls = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, p = ls('daybreak.lang'); if (p === 'zh' || p === 'en') return p;
-  try { var g = JSON.parse(ls('daybreak.geo') || 'null'); if (g && g.cc && Date.now() - g.t < 7 * 864e5) return ['TW', 'HK', 'MO', 'CN', 'SG'].indexOf(String(g.cc).toUpperCase()) >= 0 ? 'zh' : 'en'; } catch (e) {}
-  return /^zh/i.test(navigator.language || '') ? 'zh' : 'en'; })();
-document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant';
+/* 語言：使用者在任一版選過就沿用（daybreak.lang，和舊版共用）；沒選過看舊版查到的國家（快取 7 天），再沒有就看瀏覽器語言
+   2026-11-25 加簡體（'hans'）：網址 ?lang=hans（也收 zh-hans、zh-cn、sc）；沒選過時，中國大陸、新加坡和瀏覽器是 zh-CN／zh-SG／zh-Hans 的人預設簡體。
+   簡體不是另一份文案：頁面照繁體畫，assets/hans.js 在瀏覽器裡轉（見 pipeline/next/hans_rt.js）；選了簡體就在這裡先載入，第一個畫面就是簡體 */
+window.DAYBREAK_LANG = (function () { var q = /[?&]lang=(zh|en|hans|zh-hans|zh-cn|sc)(&|$)/i.exec(location.search); if (q) { q = q[1].toLowerCase(); return q === 'zh' || q === 'en' ? q : 'hans'; }   /* 2026-11-16：網址帶 ?lang=en／zh 就用那個語言（只管這一次，不改記住的選擇）；給別人連結時用 */
+  var ls = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, p = ls('daybreak.lang'); if (p === 'zh' || p === 'en' || p === 'hans') return p;
+  try { var g = JSON.parse(ls('daybreak.geo') || 'null'); if (g && g.cc && Date.now() - g.t < 7 * 864e5) { var cc = String(g.cc).toUpperCase(); return cc === 'CN' || cc === 'SG' ? 'hans' : ['TW', 'HK', 'MO'].indexOf(cc) >= 0 ? 'zh' : 'en'; } } catch (e) {}
+  var nl = navigator.language || ''; return /^zh-(cn|sg|hans)/i.test(nl) ? 'hans' : /^zh/i.test(nl) ? 'zh' : 'en'; })();
+document.documentElement.lang = { en: 'en', hans: 'zh-Hans' }[window.DAYBREAK_LANG] || 'zh-Hant';
+window.DAYBREAK_HANS = '../assets/hans.js?v=__HV__';
+if (window.DAYBREAK_LANG === 'hans') document.write('<script src="' + window.DAYBREAK_HANS + '"><\/script>');
+</script>
+<script>
+if (window.DAYBREAK_LANG === 'hans') { if (window.DaybreakHans) window.DaybreakHans.on(); else { window.DAYBREAK_LANG = 'zh'; document.documentElement.lang = 'zh-Hant'; } }   /* 轉換器沒載到就照繁體 */
 </script>
 <meta name="description" content="Daybreak：每天清晨的第一份比特幣簡報。用一百多張鏈上數據、資金流、衍生品和宏觀指標，回答週期走到哪、關鍵價位、誰在賣、誰在買、槓桿擠不擠，每天更新。">
 <!-- 連結預覽卡（X 等）預設英文（2026-10-13）；中文版圖卡 assets/og.png 保留。2026-11-12 重畫成深色、品牌名只寫 Daybreak；圖改了要換 ?v=，X 才會重抓（pipeline/og_card.py） -->
@@ -35,9 +42,10 @@ document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant'
 <meta name="twitter:image" content="https://daybreak.aronlab.dev/assets/og-en.png?v=20261112">
 <meta name="theme-color" content="#F2F0EA" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#0C0C0D" media="(prefers-color-scheme: dark)">
-<!-- 2026-11-19 SEO：同一頁、語言由網址 ?lang= 或瀏覽器決定；canonical 指首頁，hreflang 標出兩種語言的網址 -->
+<!-- 2026-11-19 SEO：同一頁、語言由網址 ?lang= 或瀏覽器決定；canonical 指首頁，hreflang 標出各語言的網址（2026-11-25 加簡體 ?lang=hans） -->
 <link rel="canonical" href="https://daybreak.aronlab.dev/app/">
 <link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/app/?lang=zh">
+<link rel="alternate" hreflang="zh-Hans" href="https://daybreak.aronlab.dev/app/?lang=hans">
 <link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/app/?lang=en">
 <link rel="alternate" hreflang="x-default" href="https://daybreak.aronlab.dev/app/">
 <link rel="manifest" href="../manifest.webmanifest">
@@ -274,6 +282,11 @@ ol.steps li b { color: var(--ink); font-weight: 600; }
 .tgl::before { content: ""; position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 999px; background: var(--ink); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
 .tgl.b::before { transform: translateX(100%); }
 .tgl button:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
+/* 2026-11-25 三段（繁／简／EN）：同一顆滑塊，寬三分之一，data-i 是第幾段；滑動的曲線和兩段時一樣 */
+.tgl.t3::before { width: calc((100% - 4px) / 3); }
+.tgl.t3[data-i="1"]::before { transform: translateX(100%); }
+.tgl.t3[data-i="2"]::before { transform: translateX(200%); }
+.tgl button.busy { opacity: .5; }
 
 .oc-st { position: absolute; inset: 0; perspective: 1600px; perspective-origin: 60% 0%; }
 .os { position: absolute; left: 16%; top: 20%; width: 81.5%; height: 70%; container-type: inline-size; background: var(--sheet); border: 1px solid color-mix(in srgb, var(--ink) 10%, transparent); border-radius: 16px; box-shadow: 0 60px 100px -50px var(--shadow); overflow: hidden; outline: none;
@@ -1142,6 +1155,7 @@ svg.fl .fl-s { cursor: pointer; } svg.fl .fl-s:hover text.n { fill: var(--ac); }
 .oc-top b.oc-logo svg { width: 26px; height: 26px; flex: none; overflow: visible; }
 /* 語言鍵和日夜鍵同樣大小；日夜鍵可以拖（滑塊的位置由程式寫在 style 上） */
 .oc-top .tgl, .oc-top .dn { box-sizing: border-box; width: 76px; height: 32px; flex: none; }
+.oc-top .tgl.t3 { width: 102px; }
 .oc-top .tgl button { flex: 1; height: 100%; padding: 0; display: grid; place-items: center; }
 .oc-top .dn { touch-action: none; cursor: grab; } .oc-top .dn.drag { cursor: grabbing; }
 .oc-top .dn-b { left: 4.5px; top: 2px; width: 65px; height: 26px; }
@@ -1446,6 +1460,8 @@ html.share .fl-was { display: none !important; }
 .ov.br .br-s, .bp-k small, .pp-hl, .oc-hd.hda .os.front .pp-hl { display: block; -webkit-line-clamp: unset; overflow: visible; }
 /* ㊳-2 同一天：手機頂部的字標也被切成「DAYBREA」（右邊三顆按鈕 200px，字標那一格只剩 131px，字要 147px）。窄螢幕把字寬、字距、圖示和按鈕間距收一點，字標整個看得到 */
 @media (max-width: 420px) { .oc-top b.oc-logo { font-size: clamp(13px, 3.9vw, 16px); font-stretch: 100%; letter-spacing: .02em; gap: 7px; } .oc-top b.oc-logo svg { width: 22px; height: 22px; } .oc-top > .r { gap: 6px; } }
+/* 2026-11-25 語言切換變成三段（繁／简／EN）後右邊多佔 26px：手機上切換縮成 84px（每段 28px），字標的字級照螢幕寬度算（375px 約 13px、390px 以上和原本差不多），360px 的機子也放得下整個 DAYBREAK */
+@media (max-width: 420px) { .oc-top .tgl.t3 { width: 84px; } .oc-top b.oc-logo { font-size: clamp(11px, calc((100vw - 289px) / 6.5), 16px); } }
 @media (max-width: 350px) { .oc-top b.oc-logo { font-size: 0; gap: 0; } }   /* 320px 這種窄機：右邊按鈕就佔掉大半，字標放不下，只留日出圖示，不要切成半個字 */
 /* ㊴ 內邊距（2026-11-19，使用者：「頁面的內邊距再大一點，字離邊有點太近，壓迫感有點強」）。
      規則：全站左右留白用同一個變數 --gx：手機 22px（原本 16）、電腦隨寬度到 56px（原本最多 34）；頂部列、各段、頁尾、全螢幕放大的卡片都用它，字和邊的距離一致。
@@ -1623,7 +1639,7 @@ html, body { margin: 0; } body { background: #060607; } [hidden] { display: none
         <span class="r"><span class="live"><i></i><span id="oc-date"></span></span>
           <button type="button" class="ib" id="oc-mapb"></button>
           <button type="button" class="dn" id="oc-th" role="slider" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="日夜（可以拖曳，停在中間是黃昏或清晨）"><canvas class="dn-b" width="120" height="48" aria-hidden="true"></canvas><span class="dn-k"><canvas width="84" height="84"></canvas></span></button>
-          <span class="tgl" id="oc-lg" role="group" aria-label="語言"><button type="button" data-l="zh">中</button><button type="button" data-l="en">EN</button></span></span></div>
+          <span class="tgl t3" id="oc-lg" role="group" aria-label="語言"><button type="button" data-l="zh" aria-label="繁體中文" data-nohans>繁</button><button type="button" data-l="hans" aria-label="简体中文">简</button><button type="button" data-l="en" aria-label="English">EN</button></span></span></div>
       <span class="rg" id="oc-ctl" role="group" aria-label="畫法和時間範圍" hidden></span>
     </div>
     <div class="oc-hd" id="oc-hd"><canvas class="oc-f" id="oc-f" aria-hidden="true"></canvas><div class="oc-st" id="oc-st"></div></div>
@@ -1740,7 +1756,7 @@ function initOC() {
   const srcsHtml = () => { const bv = srcA('Bitview', 'https://bitview.space'), brk = srcA('Bitcoin Research Kit', 'https://bitview.space/brk/'), n = D.bvn ? '<b>' + D.bvn + '</b>' : '';
     return '<h3>' + T('資料來源', 'Data sources') + '</h3><p>' + T(bv + '：鏈上資料的主要來源。Daybreak 每天從它抓 ' + n + ' 條序列，再加上籌碼分布（全部、短期、長期持有者）和籌碼集中度。Bitview 是開源的（' + brk + '，程式 MIT、資料 CC BY 4.0），由 nym21 開發、OpenSats 支持。',
       bv + ': the main source for on-chain data. Daybreak pulls ' + n + ' series from it every day, plus supply distributions (all, short-term and long-term holders) and supply concentration. Bitview is open source (' + brk + '; code MIT, data CC BY 4.0), developed by nym21 and supported by OpenSats.') + '</p><p>' + T('其他：', 'Also: ') + SRCS.map(q => srcA(q[0], q[1])).join(' · ') + '</p><p>' + T('每張圖用的來源寫在圖名旁邊。只作讀值，不是投資建議。', 'Each chart names its source next to its title. For reading only, not investment advice.') + '</p>'; };
-  let lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh', th = 'd', ord = [0].concat(G.map((x, i) => i + 1)), lead = G.map(() => 0), rng = 1095, lay = 'sp', rgb = PBASE.d.rgb, REG = {}, W = 0, H = 0, UID = 0;
+  let lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh', hz = window.DAYBREAK_LANG === 'hans', th = 'd', ord = [0].concat(G.map((x, i) => i + 1)), lead = G.map(() => 0), rng = 1095, lay = 'sp', rgb = PBASE.d.rgb, REG = {}, W = 0, H = 0, UID = 0;
   /* ⑳ 中文版圖名下面的英文名：沒有就回空字串 */
   const enName = c => { if (lang !== 'zh' || !c || !c.en || c.en === c.zh || /^[qtx]_/.test(c.k || '')) return ''; const m = /^(.*\S)\s*\(([^()]+)\)$/.exec(c.en); return m && String(c.zh).indexOf('（' + m[2] + '）') >= 0 ? m[1] : c.en; };
   const tE = PX[PX.length - 1][0], T = (zh, en) => lang === 'en' ? (en != null ? en : zh) : zh, CV = n => !n ? 'var(--ink)' : /^[a-z0-9]+$/i.test(n) ? 'var(--' + n + ')' : n, F1 = v => (+v).toFixed(1);
@@ -3046,7 +3062,7 @@ function initOC() {
   const a11y = () => { Object.entries(A11Y).forEach(([q, t]) => { const n = $(q); if (n) n.setAttribute('aria-label', T(t[0], t[1])); }); };
   function renderAll() { a11y();
     $('#oc-date').textContent = D.date.replace(/-/g, '.') + T(' 收盤', ' close');
-    $('#oc-ft1').textContent = T('在任何一張圖上移動游標，同一段的圖會一起跟著。每張圖右上角可以放大。', 'Move across any chart and the others in the same section follow. Each chart can be expanded from its top-right corner.'); $('#oc-ft2').innerHTML = `<a href="../?intro${lang === 'en' ? '&lang=en' : ''}">${T('Daybreak 是什麼', 'What is Daybreak')} →</a>`;   /* 2026-11-19 介紹頁入口 */ $('#oc-srcs').innerHTML = srcsHtml();
+    $('#oc-ft1').textContent = T('在任何一張圖上移動游標，同一段的圖會一起跟著。每張圖右上角可以放大。', 'Move across any chart and the others in the same section follow. Each chart can be expanded from its top-right corner.'); $('#oc-ft2').innerHTML = `<a href="../?intro${lang === 'en' ? '&lang=en' : hz ? '&lang=hans' : ''}">${T('Daybreak 是什麼', 'What is Daybreak')} →</a>`;   /* 2026-11-19 介紹頁入口 */ $('#oc-srcs').innerHTML = srcsHtml();
     stg.innerHTML = CH.map((c, i) => c.todo ? '' : `<article class="os" data-k="${i}" tabindex="0" style="--dl:${(-i * 1.7).toFixed(1)}s"><div class="os-in"><div class="os-h"><span class="k">${p2(i)}</span><h3>${esc(T(c.zh, c.en))}</h3><span class="sub">${esc(T(c.qz, c.qe))}</span></div><div class="os-pw"><span class="pw-k">${esc(hv(c)[0])}</span><div class="pw-n">${esc(hv(c)[1])}</div><p class="pw-l">${esc(T(c.lead_zh, c.lead_en) || T(c.qz, c.qe))}</p><div class="pw-c"></div></div></div></article>`).join('');
     ord = order(); headBody(); renderBar(); renderOv(); poster(); hx(); keep(renderSecs); place(); renderCmp(); if (fx) openFx(fx.k + '_' + fx.i);
   }
@@ -3095,7 +3111,7 @@ function initOC() {
     const b0 = PBASE[th], c = PAL.fuse[th], v0 = tv == null ? (th === 'l' ? 1 : 0) : tv, amt = Math.max(0, Math.min(1, th === 'd' ? v0 / .5 : (1 - v0) / .5)), MID = th === 'd' ? { bg: '#16131F', sheet: '#211D2C' } : { bg: '#E4D8C8', sheet: '#F0E6D8' };
     const b = amt > .01 ? Object.assign({}, b0, { bg: mixHex(b0.bg, MID.bg, amt), sheet: mixHex(b0.sheet, MID.sheet, amt) }) : b0; rgb = b.rgb;
     Object.entries({ '--bg': b.bg, '--sheet': b.sheet, '--ink': b.ink, '--k2': b.k2, '--shadow': b.shadow, '--ac': c.ac, '--up': c.up, '--dn': c.dn, '--c3': c.c3, '--c4': c.c4, '--c5': c.c5, '--shim': th === 'd' ? '#FFFFFF' : c.ac, '--fn': '"Inter Tight"', '--fst': '100%', '--fw': 500 }).forEach(e => { el.style.setProperty(e[0], e[1]); const cm = $('#oc-cmp'); if (cm) cm.style.setProperty(e[0], e[1]); });
-    document.body.style.background = b.bg; el.dataset.th = th; D3.repaint(); const a = $('#oc-th'); a.classList.toggle('b', th === 'l'); const l = $('#oc-lg'); l.classList.toggle('b', lang === 'en'); $$('button', l).forEach(x => x.setAttribute('aria-pressed', x.dataset.l === lang));
+    document.body.style.background = b.bg; el.dataset.th = th; D3.repaint(); const a = $('#oc-th'); a.classList.toggle('b', th === 'l'); lgSync(hz ? 'hans' : lang);
   }
   /* 日夜開關是一顆玻璃鍵。鍵上的圖示是一群點：晚上排成月亮，白天排成太陽，切換時先散開、再重新排好。
      鍵的邊上有一道光，會貼在靠近游標的那一邊，切換時沿著邊繞一圈。頁面則由一圈晨昏色的光從開關擴散出去，光圈過後就是另一種底色 */
@@ -3133,11 +3149,18 @@ function initOC() {
   let busy = false;
   function scramble(fn) {
     if (reduce) { fn(); return; } if (busy) return; busy = true;
-    const prep = () => { const er = el.getBoundingClientRect(), out = [], w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) { const pe = n.parentElement; if (!n.nodeValue.trim() || !pe || pe.closest('.odo, .tgl, .dn, .or-s, .ov-s, script, style')) continue; const r = pe.getBoundingClientRect(); out.push({ n, s: n.nodeValue, d: Math.max(0, Math.min(1, (r.left - er.left) / (er.width || 1))) }); } return out; };
+    const prep = () => { const er = el.getBoundingClientRect(), out = [], w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) { const pe = n.parentElement; if (!n.nodeValue.trim() || !pe || pe.closest('.odo, .tgl, .dn, .or-s, .ov-s, script, style')) continue; const r = pe.getBoundingClientRect(); out.push({ n, raw: n.nodeValue, s: hz && window.DaybreakHans ? window.DaybreakHans.conv(n.nodeValue) : n.nodeValue, d: Math.max(0, Math.min(1, (r.left - er.left) / (er.width || 1))) }); } return out; };
     const run = (list, dur, wave, out, done) => { const t0 = performance.now(); let last = -99; const step = now => { const t = now - t0, end = t >= dur + wave; if (now - last > 40 || end) { last = now; list.forEach(o => { const p = Math.max(0, Math.min(1, (t - o.d * wave) / dur)); o.n.nodeValue = mixg(o.s, Math.round(p * o.s.length), out); }); } if (end) done(); else requestAnimationFrame(step); }; requestAnimationFrame(step); };
-    const l0 = prep(); run(l0, 200, 200, true, () => { fn(); l0.forEach(o => { if (o.n.isConnected) o.n.nodeValue = o.s; }); const list = prep(); list.forEach(o => { o.n.nodeValue = mixg(o.s, 0, false); }); run(list, 380, 340, false, () => { list.forEach(o => { o.n.nodeValue = o.s; }); busy = false; }); });
+    const l0 = prep(); run(l0, 200, 200, true, () => { l0.forEach(o => { if (o.n.isConnected) o.n.nodeValue = o.raw; }); fn(); const list = prep(); list.forEach(o => { o.n.nodeValue = mixg(o.s, 0, false); }); run(list, 380, 340, false, () => { list.forEach(o => { o.n.nodeValue = o.s; }); busy = false; }); });
   }
-  $('#oc-lg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || b.dataset.l === lang || busy) return; const to = b.dataset.l, l = $('#oc-lg'); l.classList.toggle('b', to === 'en'); $$('button', l).forEach(x => x.setAttribute('aria-pressed', x.dataset.l === to)); try { localStorage.setItem('daybreak.lang', to); } catch (e0) {} document.documentElement.lang = to === 'en' ? 'en' : 'zh-Hant'; scramble(() => { lang = to; paint(); renderAll(); }); });
+  /* 2026-11-25 三種語言：繁、简、EN。简＝繁體畫好再由 assets/hans.js 轉（hz），所以 lang 仍是 'zh'；切到简時轉換器還沒載就先載（約 27 KB） */
+  const LGX = { zh: 0, hans: 1, en: 2 }, lgSync = to => { const l = $('#oc-lg'); l.dataset.i = LGX[to] || 0; $$('button', l).forEach(x => x.setAttribute('aria-pressed', x.dataset.l === to)); };
+  const hansLoad = () => window.DaybreakHans ? Promise.resolve() : new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = window.DAYBREAK_HANS; sc.onload = () => window.DaybreakHans ? ok() : no(); sc.onerror = no; document.head.appendChild(sc); });
+  $('#oc-lg').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || busy) return; const to = b.dataset.l; if (to === (hz ? 'hans' : lang)) return;
+    const go = () => { lgSync(to); try { localStorage.setItem('daybreak.lang', to); } catch (e0) {} window.DAYBREAK_LANG = to; document.documentElement.lang = { en: 'en', hans: 'zh-Hans' }[to] || 'zh-Hant';
+      if (/[?&]lang=/.test(location.search)) try { const q = new URLSearchParams(location.search); q.set('lang', to); history.replaceState(null, '', location.pathname + '?' + q.toString() + location.hash); } catch (e1) {}   /* 網址帶了 ?lang= 就跟著換，複製網址給別人時是現在的語言 */
+      scramble(() => { const HZ = window.DaybreakHans; hz = to === 'hans'; if (HZ) { if (hz) HZ.on(); else HZ.off(); } lang = to === 'en' ? 'en' : 'zh'; paint(); renderAll(); }); };
+    if (to === 'hans' && !window.DaybreakHans) { b.classList.add('busy'); hansLoad().then(() => { b.classList.toggle('busy', false); go(); }, () => { b.classList.toggle('busy', false); lgSync(hz ? 'hans' : lang); toast('简体没有载入，请再试一次'); }); } else go(); });
   aim(th, false); PT.forEach(p => { p.x = p.tx; p.y = p.ty; p.a = p.ta; }); icDraw();
   /* 點擊：換頁、跳到某一段、放大、切換畫法和範圍 */
   const keyR = key => key === 'F' ? REG.F : (SEC[+key.split('_')[0]] || [])[+key.split('_')[1]], keyC = key => key === 'F' ? (fx ? G[fx.k - 1].charts[fx.i] : null) : (G[+String(key).split('_')[0] - 1] || { charts: [] }).charts[+String(key).split('_')[1]];
@@ -3150,7 +3173,7 @@ function initOC() {
   let MAP = [];
   const mapVal = c => { try { if (isT(c)) { const s0 = SP(c), q0 = hero(s0); return fm(q0.f || s0.f, atv(s0.rows, q0.c, null)[q0.c]); } return c.hs ? sval(c) : ''; } catch (e0) { return ''; } };
   function mapDraw() { const list = MAP.filter(it => it.el && !it.el.hidden && !it.ok); let i = 0; const step = () => { if ($('#oc-map').hidden) return; for (let n = 0; n < 7 && i < list.length; n++, i++) { const it = list[i], bx = it.el.querySelector('.mp-s'), c = it.c; if (it.ok || !document.contains(bx)) continue; try { if (isT(c)) mini(bx, c, 2.4); else if (c.dist) dspark(bx, c); else if (c.list) lspark(bx, c); else if (c.grid) gspark(bx, c); else if (c.xy) xspark(bx, c); else if (c.strip) sspark(bx, c); } catch (e0) {} it.ok = 1; } if (i < list.length) requestAnimationFrame(step); }; requestAnimationFrame(step); }
-  function mapFilter() { const q = ($('#oc-mapq').value || '').trim().toLowerCase(); let n = 0; MAP.forEach(it => { const hit = !q || it.key.indexOf(q) >= 0; it.el.hidden = !hit; if (hit) n++; }); $$('.mp-sec', $('#oc-mapg')).forEach(sec => { sec.hidden = !sec.querySelector('.mp-t:not([hidden])'); }); $('#oc-mapn').textContent = q ? T(n + ' 張符合', n + ' match' + (n === 1 ? '' : 'es')) : T('共 ' + MAP.length + ' 張圖', MAP.length + ' charts'); const em = $('#oc-mape'); if (em) em.hidden = n > 0; mapDraw(); }
+  function mapFilter() { const q = ($('#oc-mapq').value || '').trim().toLowerCase(); let n = 0; MAP.forEach(it => { const hit = !q || it.key.indexOf(q) >= 0 || (hz && window.DaybreakHans && (it.hk || (it.hk = window.DaybreakHans.conv(it.key))).indexOf(q) >= 0); it.el.hidden = !hit; if (hit) n++; }); $$('.mp-sec', $('#oc-mapg')).forEach(sec => { sec.hidden = !sec.querySelector('.mp-t:not([hidden])'); }); $('#oc-mapn').textContent = q ? T(n + ' 張符合', n + ' match' + (n === 1 ? '' : 'es')) : T('共 ' + MAP.length + ' 張圖', MAP.length + ' charts'); const em = $('#oc-mape'); if (em) em.hidden = n > 0; mapDraw(); }
   function openMap() {
     const m = $('#oc-map'); if (!m.hidden) return; if (CH.some(c => c.lz)) { el.classList.add('lzw'); loadAll().then(() => { el.classList.remove('lzw'); openMap(); }, () => el.classList.remove('lzw')); return; } MAP = [];
     $('#oc-mapt').textContent = T('找圖', 'Find a chart'); $('#oc-mapi').innerHTML = IC('find'); const inp = $('#oc-mapq'); inp.value = ''; inp.placeholder = T('輸入圖名，例如「溢價」「SOPR」', 'Type a name, e.g. “premium”, “SOPR”'); inp.setAttribute('aria-label', T('搜尋圖名', 'Search chart names'));

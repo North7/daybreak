@@ -123,6 +123,8 @@ def answer(keys, en, A, P):
 def hub_page(h, en, P, hans=False):
     """hans=True：簡體版（zh-hans/<主題>/），內容照繁體寫，最後整頁用 hans.py 轉"""
     A = _all(); up = '../../' if (en or hans) else '../'
+    # 2026-11-25 圖和簡報的單頁也有簡體版了（pages.py）：簡體主題頁連到簡體的單頁、打開數據頁時帶 ?lang=hans
+    CP = 'en/charts/' if en else ('zh-hans/charts/' if hans else 'charts/'); BP = 'en/brief/' if en else ('zh-hans/brief/' if hans else 'brief/'); LGP = 'en' if en else ('hans' if hans else 'zh')
     pre = 'en/' if en else ('zh-hans/' if hans else '')
     me = pre + '%s/' % h['id']
     secs = [(sz, se, [A[k] for k in ks if k in A]) for sz, se, ks in h['secs']]
@@ -133,28 +135,28 @@ def hub_page(h, en, P, hans=False):
     if en and not geo.EN: lead = ''
     cz = '%s 收盤 · 這頁 %d 張圖：偏多 %d、偏空 %d、中性 %d' % (P.dzh(geo.DATE), len(cs), n['up'], n['down'], n['neu'])
     ce = '%s close · %d charts here: %d bullish, %d bearish, %d neutral' % (P.den(geo.DATE), len(cs), n['up'], n['down'], n['neu'])
-    b = ['<p class="mono crumb"><a href="%sapp/?lang=%s">Daybreak</a> / %s</p>' % (up, 'en' if en else 'zh', esc(h['ne'] if en else h['nz'])),
+    b = ['<p class="mono crumb"><a href="%sapp/?lang=%s">Daybreak</a> / %s</p>' % (up, LGP, esc(h['ne'] if en else h['nz'])),
          '<p class="mono" style="margin:14px 0 0">%s</p>' % esc(ce if en else cz),
          '<h1 class="long">%s</h1>' % esc(h['h1e'] if en else h['h1z'])]
     if lead: b.append('<p class="read">%s</p>' % esc(lead))
     b.append('<p class="dim">%s</p>' % esc(h['ie'] if en else h['iz']))
-    b.append('<a class="cta" href="%sapp/?lang=%s">%s →</a>' % (up, 'en' if en else 'zh', 'Open the interactive Daybreak' if en else '打開互動版 Daybreak'))
+    b.append('<a class="cta" href="%sapp/?lang=%s">%s →</a>' % (up, LGP, 'Open the interactive Daybreak' if en else '打開互動版 Daybreak'))
     faq = [(qe if en else qz, answer(ks, en, A, P), ks) for qz, qe, ks in h['faq']]
     faq = [f for f in faq if f[1]]
     if faq:
         b.append('<section><h2>%s</h2>%s</section>' % ('Questions people ask' if en else '常見問題', ''.join(
             '<div class="f"><h3>%s</h3><p>%s</p><p class="src">%s</p></div>' % (esc(qq), '<br>'.join(esc(x) for x in aa), ' · '.join(
-                '<a href="%s%s%s/">%s</a>' % (up, 'en/charts/' if en else 'charts/', k, esc(geo.name(A[k], en))) for k in ks if k in A)) for qq, aa, ks in faq)))
+                '<a href="%s%s%s/">%s</a>' % (up, CP, k, esc(geo.name(A[k], en))) for k in ks if k in A)) for qq, aa, ks in faq)))
     for sz, se, l in secs:
         if not l: continue
         b.append('<section><h2>%s</h2><ul class="list">%s</ul></section>' % (esc(se if en else sz), ''.join(
-            '<li>%s<a class="t" href="%s%s%s/">%s</a><p>%s</p></li>' % (P.pill(LEANS.get(c['k']), en), up, 'en/charts/' if en else 'charts/', c['k'], esc(geo.name(c, en)), esc(_reason(c, en))) for c in l)))
+            '<li>%s<a class="t" href="%s%s%s/">%s</a><p>%s</p></li>' % (P.pill(LEANS.get(c['k']), en), up, CP, c['k'], esc(geo.name(c, en)), esc(_reason(c, en))) for c in l)))
     oth = [x for x in HUBS if x['id'] != h['id']]
     b.append('<section><h2>%s</h2><ul class="list">%s<li><a class="t" href="%s%s">%s</a></li><li><a class="t" href="%s%s">%s</a></li></ul></section>' % (
         'More from Daybreak' if en else 'Daybreak 的其他主題',
         ''.join('<li><a class="t" href="%s%s%s/">%s</a></li>' % (up, pre, x['id'], esc(x['h1e'] if en else x['h1z'])) for x in oth),
-        up, 'en/charts/' if en else 'charts/', 'Bitcoin indicators: every chart and where it leans today' if en else '比特幣指標數據：每一張圖和它今天的表態',
-        up, 'en/brief/' if en else 'brief/', 'Daily Bitcoin analysis' if en else '比特幣每日分析'))
+        up, CP, 'Bitcoin indicators: every chart and where it leans today' if en else '比特幣指標數據：每一張圖和它今天的表態',
+        up, BP, 'Daily Bitcoin analysis' if en else '比特幣每日分析'))
     title = '%s · Daybreak' % (h['h1e'] if en else h['h1z'])
     desc = (h['ie'] if en else h['iz'])
     pid = SITE + me
@@ -163,7 +165,7 @@ def hub_page(h, en, P, hans=False):
               'keywords': h['ke'] if en else ((h['kz'] + ', ' + h['kh']) if hans else h['kz']),
               'inLanguage': 'en' if en else ('zh-Hans' if hans else 'zh-Hant'), 'dateModified': geo.DATE, 'isPartOf': {'@id': WEBSITE['@id']}, 'author': {'@id': PERSON['@id']},
               'about': {'@type': 'Thing', 'name': 'Bitcoin', 'sameAs': 'https://en.wikipedia.org/wiki/Bitcoin'},
-              'hasPart': [{'@type': 'WebPage', 'url': '%s%s%s/' % (SITE, 'en/charts/' if en else 'charts/', c['k']), 'name': geo.name(c, en)} for c in cs]},
+              'hasPart': [{'@type': 'WebPage', 'url': '%s%s%s/' % (SITE, CP, c['k']), 'name': geo.name(c, en)} for c in cs]},
              P.crumbs(pid + '#crumbs', [('Daybreak', 'app/'), (h['ne'] if en else h['nz'], me)])]
     if faq:
         graph.append({'@type': 'FAQPage', '@id': pid + '#faq', 'url': pid, 'inLanguage': 'en' if en else ('zh-Hans' if hans else 'zh-Hant'),

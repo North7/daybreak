@@ -262,15 +262,17 @@ def llms():
          '## Latest reading', '']
     if HE: o += ['%s — %s' % (HE, SE), '']
     o += ['- [Full latest reading, English (Markdown)](%slatest.en.md): headline, six questions, every chart with its lean, reason and source' % SITE,
-          '- [完整最新判讀，中文（Markdown）](%slatest.md)' % SITE, '',
+          '- [完整最新判讀，中文（Markdown）](%slatest.md)' % SITE,
+          '- [完整最新判读，简体中文（Markdown）](%slatest.zh-hans.md)' % SITE, '',
           '## Pages', '',
-          '- [Daybreak app](%sapp/): the daily brief and all %d charts, interactive (needs JavaScript); add ?lang=en or ?lang=zh' % (SITE, NCH)]
+          '- [Daybreak app](%sapp/): the daily brief and all %d charts, interactive (needs JavaScript); add ?lang=en, ?lang=zh (Traditional Chinese) or ?lang=hans (Simplified Chinese)' % (SITE, NCH)]
     o += ['- [%s](%sapp/#%s): %s' % (q['en'], SITE, q['id'], q['qe']) for q in QS]
     o += ['- [Bitcoin cycle analysis](%sen/bitcoin-cycle/): where Bitcoin is in its four-year cycle, stage, valuation, top and bottom indicators, with today’s answers (中文：%sbitcoin-cycle/)' % (SITE, SITE),
           '- [Bitcoin on-chain data analysis](%sen/bitcoin-onchain/): holder cost bases, MVRV, SOPR, NUPL, supply distribution, whales, exchange flows, miners (中文：%sbitcoin-onchain/)' % (SITE, SITE),
           '- [Bitcoin macro and fund flows](%sen/bitcoin-macro/): spot ETF flows, stablecoins, rates, the dollar, stocks, liquidity (中文：%sbitcoin-macro/)' % (SITE, SITE),
           '- [Bitcoin derivatives data](%sen/bitcoin-derivatives/): funding rates, open interest, long/short ratio, liquidations, options (中文：%sbitcoin-derivatives/)' % (SITE, SITE),
-          '- 简体中文 (Simplified Chinese) versions of the four topic pages: %szh-hans/bitcoin-cycle/ · %szh-hans/bitcoin-onchain/ · %szh-hans/bitcoin-macro/ · %szh-hans/bitcoin-derivatives/' % ((SITE,) * 4)]
+          '- 简体中文 (Simplified Chinese) versions of the four topic pages: %szh-hans/bitcoin-cycle/ · %szh-hans/bitcoin-onchain/ · %szh-hans/bitcoin-macro/ · %szh-hans/bitcoin-derivatives/' % ((SITE,) * 4),
+          '- 简体中文 (Simplified Chinese) versions of every chart page and daily brief: %szh-hans/charts/ · %szh-hans/brief/ · feed %szh-hans/feed.xml' % ((SITE,) * 3)]
     o += ['- [All charts](%sen/charts/): every chart on one page, grouped by the six questions, with today’s lean and reason; each chart also has its own page at /en/charts/<code>/ (中文：%scharts/)' % (SITE, SITE),
           '- [Daily briefs](%sen/brief/): one page per day since Oct 2026 (headline, overall lean, levels to watch, findings) at /en/brief/YYYY-MM-DD/ (中文：%sbrief/)' % (SITE, SITE)]
     o += ['- [Case study](%scase-study/en/): how Daybreak was designed and built, and how it checks its own calls (中文版：%scase-study/)' % (SITE, SITE), '',
