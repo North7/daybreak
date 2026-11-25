@@ -14,7 +14,7 @@ Overall: Short-term bearish, spot sold while leverage stepped aside; long-term i
 
 BTC close $59,741 (-2.4%)
 
-136 charts. Today: 32 bullish, 45 bearish, 40 neutral, 19 reference charts without a lean.
+136 charts. Today: 32 bullish, 46 bearish, 40 neutral, 18 reference charts without a lean.
 
 ## Cycle: Where we are in the cycle
 
@@ -29,7 +29,7 @@ Valuation pressed a little lower: the share of long-term holders at a loss is ba
 
 Bullish on the long view: heat sits in the late-night zone, led by cheap unrealized profit. But the weekly score turned negative 2 weeks ago and flips bearish in 2 more.
 
-What it shows: One cycle as one day. Heat is the average 4-year percentile of five valuation measures; direction comes from four trend measures, and together they give five stages. The heat line below and the price line above both take the colour of the stage at the time: deep night (bottom zone), nightfall (falling), daybreak (early rise), daylight (rising), dusk (overheated). Circles mark past cycle tops and bottoms.
+What it shows: What it is: the Dawn–Dusk Index treats a cycle as one day, from deep night (cheapest) to dusk (overheated). It looks at two things. Heat: five valuation measures (such as how much paper profit holders have, or how far price is from its long-run trend), each ranked against the last four years and averaged into 0–100, where 0 is the cheapest of those years. Direction: whether four trend measures, taken together, point up or down. Together they give five stages: heat at 10 or below is deep night (bottom zone), 80 or above is dusk (overheated); in between, a downward direction is nightfall (falling), an upward one with heat under 50 is daybreak (early rise), and 50 or more is daylight (rising). How to read it: the lower panel is weekly heat and the upper one price, both coloured by the stage at the time; circles mark past cycle tops and bottoms, with the heat then. Caveats: heat is only ranked against four years, so every cycle has a "cheapest" stretch that is not cheap in absolute terms; in the last two cycles valuations peaked before price, so dusk tends to come early; there are only about three cycles since 2013, so the statistics describe history.
 
 Source: Cycle heat 0–100 · five valuation + four trend inputs · since 2013 · weekly · 11/24
 
@@ -39,7 +39,7 @@ Page: https://daybreak.aronlab.dev/en/charts/dawn/
 
 Bullish on the long view: heat sits in the late-night zone, led by cheap unrealized profit. But the weekly score turned negative 2 weeks ago and flips bearish in 2 more.
 
-What it shows: The five heat inputs as 4-year percentiles; their average is the heat, and the tick marks the dusk threshold at 80. The four trend inputs set the direction; their tick is zero.
+What it shows: What it is: the Dawn–Dusk Index taken apart. The first five rows feed the heat, the last four the direction. How to read it: each valuation row is ranked against the last four years (0 = the cheapest of those years, 100 = the richest); their average is the heat, and the tick on the bar marks the dusk line at 80. In the four trend rows, right (green) is up and left (red) is down, the tick is 0, and together they set the direction. Caveats: these are only the parts; the position call is on the Dawn–Dusk card, and the ranks only cover four years.
 
 Source: Cycle heat 0–100 · five valuation + four trend inputs · since 2013 · weekly · 11/24
 
@@ -47,9 +47,9 @@ Page: https://daybreak.aronlab.dev/en/charts/dawnc/
 
 ### Market stage
 
-Neutral: Market stage: bull market (since Oct 9, locked), with the close 17% below the 200-day MA.
+Neutral: The label still says bull, but only because it is locked: the close is 17% below the 200-day MA and the trend has weakened; if the close stays under the falling average, it reverts to bear in 24 more days.
 
-What it shows: Three stages: bear, transition, bull. A capitulation signal plus a close above a rising 200-day average starts the transition; 30 straight days of that locks in a bull market. The six lights below are supporting evidence only.
+What it shows: What it is: the simplest possible label for the market, using only price against the 200-day MA (the average close of the past 200 days, often used as the long-run trend line) and whether a capitulation (heavy loss-taking after a big fall) has happened. Three stages: bear → transition → bull. A capitulation plus a close above a still-rising 200-day MA starts the transition; 30 straight days of that makes it bull, and it locks. How to read it: the big text is the current stage; the first row is progress toward the next stage, and the six rows after it are other checks, green when met, shown for reference only. Caveats: the lock keeps a brief dip from flipping the label, at the cost of speed: after price breaks below the average, the card can still say bull for quite a while.
 
 Source: P23 · bear → transition → bull
 
@@ -57,9 +57,9 @@ Page: https://daybreak.aronlab.dev/en/charts/stage/
 
 ### Weekly regime score
 
-Bearish: The score is −1.82, 3 weeks on the negative side; 1 more and it flips short (long since Sep 22).
+Bearish: The weekly score has been negative for 3 weeks; 1 more and it officially flips short: most of the six inputs have weakened and the medium-term trend is turning down.
 
-What it shows: Six inputs, each measured against its own median, combined into a score from −6 to +6. Bars take the colour of that week's stage: negative is bear; the first 26 weeks after a bear run of 26 weeks or more is early bull, then bull; +4 and above is overheated, −4 and below extreme bear.
+What it shows: What it is: our own medium-term score. Six inputs (price against the 200-day MA, the one-year change, market value against holders' cost, money flowing in, coins on exchanges, and whether sellers are taking profits or losses) are each compared with their own history and combined into a score from −6 to +6: positive means the medium-term trend is up, negative down; it takes four weeks on the other side to flip. How to read it: each bar is a week, coloured by that week's stage: negative is bear; the first 26 positive weeks after a bear run of 26 weeks or more are early bull, then bull; +4 and above is overheated, −4 and below extreme bear. Caveats: the four-week rule makes turns show up late; near 0 (−1 to +1) the score flips easily, and some past long flips were followed by lower prices a year on.
 
 Source: Six inputs · since 2013 · weekly · 11/24
 
@@ -67,9 +67,9 @@ Page: https://daybreak.aronlab.dev/en/charts/regime/
 
 ### What the regime score is made of
 
-Bearish: The score is −1.82, 3 weeks on the negative side; 1 more and it flips short (long since Sep 22).
+Bearish: The weekly score has been negative for 3 weeks; 1 more and it officially flips short: most of the six inputs have weakened and the medium-term trend is turning down.
 
-What it shows: Each of the six inputs scored from −1 to +1, with the tick at zero. At +0.15 or more an input counts as bullish (green), at −0.15 or less bearish (red), in between flat (grey). Their sum is the regime score.
+What it shows: What it is: the weekly regime score split into its six inputs, each compared with its own history and scaled from −1 to +1. How to read it: right leans long, left leans short, the tick is 0; +0.15 or more counts as long (green), −0.15 or less as short (red), in between flat (grey). The six add up to the score. Caveats: single inputs swing back and forth; it matters when several point the same way.
 
 Source: Six inputs · since 2013 · weekly · 11/24
 
@@ -79,23 +79,23 @@ Page: https://daybreak.aronlab.dev/en/charts/regc/
 
 Bullish: Leaning bullish on value, though only a cheap zone: the average rank across nine lines is below 20, deepest versus the 200-week MA. Under this cycle's low of 11.7 means colder than H1.
 
-What it shows: Price is compared with nine lines; for each, today's distance is ranked against all history up to that day, and the nine percentiles are averaged. The lower the reading, the rarer it is for price to sit this far below the lines. Circles mark the lowest reading of each bear market: 3.2, 4.9, 5.3 in earlier ones, and 11.7 so far in this one (2026-02). The reading first fell to 10 or below 4 times; a year later price was higher 3 times, but after the worst of them it fell another 46.6% within the year, so this marks a cheap zone, not a bottom. On days below 15, price was higher a year later 93% of the time (68% for all days); the sample is only a few cycles. It ranks against all history, and each cycle swings less than the one before, so recent lows rarely reach the very bottom of the ranking; its broad direction matches the Dawn–Dusk heat. "Fast and slow" splits the nine lines into two groups: fast below slow means the recent fall was quick. A reading only.
+What it shows: What it is: price is compared with nine common cost lines and averages (such as the average cost of all coins, the short-term holder cost, the 200-week MA and the long-run trend price); for each, today's distance is ranked against all history up to that day (0 = the lowest ever, 100 = the highest), and the nine ranks are averaged. The lower the number, the rarer it is for price to sit this far below the lines, so the cheaper it is. How to read it: "Overall" is the average of the nine; circles mark the lowest reading of each bear market, and the dashed line is 10. "Fast and slow" splits the lines in two: the fast ones (short-term holder cost, 90-day on-chain average price, 200-day MA) react quickly, and fast below slow means the recent fall was quick. Caveats: it ranks against all history, and each cycle swings less than the one before, so recent lows rarely reach the very bottom of the ranking; there are only a few cycles, and its broad direction matches the Dawn–Dusk heat.
 
 Page: https://daybreak.aronlab.dev/en/charts/avgd/
 
 ### Where price ranks against each line
 
-Bullish: Lowest is the 200-week MA (percentile 4)
+Bullish: 4 of the nine lines are already in the lowest 10% of history; the cheapest is the 200-week MA
 
-What it shows: For each line: where today's distance between price and the line ranks in all history (0 is the lowest ever, 100 the highest). The average of the nine is the reading of "Distance from cost bases and averages". The small print gives the line's current level and how far price is above or below it. The on-chain average price is the dollar value of all on-chain transfers in the period divided by the coins moved.
+What it shows: What it is: "Distance from cost bases and averages" split into its nine lines. Each number is where price's distance from that line ranks in all history (0 = the lowest ever, 100 = the highest); the average of the nine is the reading on that chart. How to read it: the small print gives the line's current level and how far price is above or below it; "slow" lines move slowly (such as the average cost of all coins or the 200-week MA), "fast" lines react quickly. The on-chain average price is the dollar value of on-chain transfers in the period divided by the coins moved, roughly the average price at which coins changed hands. Caveats: price being above a line does not mean that line ranks high, because each line has swung by different amounts in the past.
 
 Page: https://daybreak.aronlab.dev/en/charts/avgdc/
 
-### Long- and short-term holder NUPL
+### Paper profit of long- and short-term holders (NUPL)
 
-Bullish: Long-term holder NUPL is 0.191 and short-term −0.213: recent buyers are underwater as a group.
+Bullish: Long-term holders' paper profit is thin (NUPL 0.19), in the range seen from late bear markets into bottoms; but this cycle's bottom sat higher than earlier ones, so it need not turn into a loss.
 
-What it shows: NUPL is paper profit or loss as a share of market cap. The shading marks five bands of long-term holder NUPL, cold to hot; the thin orange line is short-term holders, above or below zero.
+What it shows: What it is: NUPL is paper profit or loss as a share of market cap: for every unsold coin, gains minus losses at today's price, divided by market cap. It is split into long-term holders (coins unmoved for 150+ days) and short-term holders (under 150 days, mostly recent buyers). The fatter long-term holders' paper profit, the nearer a top; the thinner, the nearer a bottom. How to read it: the thick line is long-term holders and the thin orange line short-term holders; orange above 0 means recent buyers are in profit as a group, below 0 at a loss. The shading marks five long-term holder bands, cold to hot: below 0 capitulation, 0–0.25 hope, 0.25–0.5 optimism, 0.5–0.75 belief, above 0.75 overheated; circles mark readings at past tops and bottoms. Caveats: top readings fall every cycle, and this cycle's long-term holders never went underwater at the bottom; the bands are a common convention, not a law.
 
 Source: Bitview · 11/24
 
@@ -103,19 +103,19 @@ Page: https://daybreak.aronlab.dev/en/charts/hnupl/
 
 ### Relative unrealized profit
 
-Bullish: Relative unrealized profit is 33.2%, under the 35% floor (day 11).
+Bullish: Paper profit on unsold coins is down to 33% of market cap, under the 35% cycle floor: this has only happened late in bear markets, though price often fell further after breaking it.
 
-What it shows: Paper profit of all holders as a share of market cap. Cyan bands mark past stays in the floor zone; pale-yellow bands mark the near-floor zone (35–37.5%), seen only from late bear markets to early recoveries.
+What it shows: What it is: for every unsold bitcoin, the paper gain at today's price, as a share of market cap (gains only, losses not netted). Bear markets eat into those gains and the share falls; near the end of every past bear market it dropped to about 35% or lower, called the cycle floor here. How to read it: the line is the share; cyan bands mark past stays below the floor; pale-yellow bands mark the 35–37.5% near-floor zone (seen only from late bear markets into early recoveries); circles mark the low of each stay. Caveats: the floor and near-floor zone are set by this site from history since 2012, only four or five cycles; price often fell further after getting here.
 
 Source: Bitview · 11/24
 
 Page: https://daybreak.aronlab.dev/en/charts/rup/
 
-### Price ÷ true market mean
+### Price as a multiple of active investors' cost
 
-Neutral: Price is 0.784 times the true market mean, below 1 for 20 days: active investors are underwater as a group.
+Neutral: Price is only 0.78× the average cost of active investors, who have been underwater as a group for 20 days: a typical bear-market spot, though past bear markets stayed below cost for over a year.
 
-What it shows: The true market mean is the average cost of active investors, excluding long-dormant coins. Below 1 means price is under it. Markers show past cycle highs and lows.
+What it shows: What it is: the true market mean is roughly what investors still active in the market paid on average: coins that have not moved for a very long time (some likely lost) are left out, and the average cost of the rest is worked out (the Cointime method). Price divided by it is above 1 when they are in profit as a group and below 1 when they are at a loss. How to read it: the line is price as a multiple of that cost (log scale); shading below 1 means a loss overall; markers show past cycle tops and bottoms. Caveats: the cost is modelled and differs from the usual realized price; bear markets can stay below 1 for more than a year.
 
 Source: Bitview · 11/24
 
@@ -123,9 +123,9 @@ Page: https://daybreak.aronlab.dev/en/charts/aviv/
 
 ### Reserve risk
 
-Neutral: Reserve risk is 0.95‰, the 3rd percentile of four years, day 11 in the low zone.
+Neutral: Reserve risk is in the lowest 10% of four years (day 11): price is cheap against long-term holders' conviction, bottom territory, though what followed past stays was mixed.
 
-What it shows: Price relative to long-term holder conviction. Low readings mean price is cheap while holders refuse to sell. Cyan bands mark past stays in the bottom tenth of the last four years.
+What it shows: What it is: reserve risk compares price with long-term holders' conviction. The longer seasoned holders sit on their coins and the lower the price, the lower the reading: price is cheap relative to holders' conviction. When price runs up and they start selling, it rises. The unit ‰ means per thousand. How to read it: the solid line is reserve risk (log scale); the two dashed lines are the lowest-10% and highest-10% marks of the last four years, moving daily; cyan bands mark stays in the lowest 10%. Caveats: tops fall every cycle and squash the line, so it is compared with four years, not all history; the 2018 bear bottom never reached the lowest 10%, so this gauge alone can miss a bottom.
 
 Source: Bitview · 11/24
 
@@ -143,9 +143,9 @@ Page: https://daybreak.aronlab.dev/en/charts/pl/
 
 ### Top three indicators
 
-Bullish: 0 of the top three indicators are at 80; any two at 80 make a top zone.
+Bullish: All three top indicators are cold, far from the top zone. This card only measures distance from a top, not where the bottom is.
 
-What it shows: Each indicator as a percentile of the past four years; the tick is 80. Any two at 80 or above count as the top zone. Reading only.
+What it shows: What it is: three indicators commonly used to spot cycle tops. MVRV Z: how far market value sits above the average cost of all coins (scaled against its usual swings); NUPL: all holders' paper profit or loss as a share of market value; Puell multiple: miners' income today against their one-year average. Each is ranked against its own last four years, 0 coldest, 100 hottest. How to read it: bars show the rank and the tick is 80 (the hottest 20% of four years); any two at 80 or above count as the top zone. Caveats: valuation only, not timing; it only measures distance from a top, and cold does not mean the bottom is in.
 
 Source: 11/24 · 4-yr percentile
 
@@ -153,9 +153,9 @@ Page: https://daybreak.aronlab.dev/en/charts/p6/
 
 ### Top three indicators over time
 
-Bullish: 0 of the top three indicators are at 80; any two at 80 make a top zone.
+Bullish: All three top indicators are cold, far from the top zone. This card only measures distance from a top, not where the bottom is.
 
-What it shows: Raw values over the past year. The red dashed line is each one's 80th percentile of the last four years.
+What it shows: What it is: the raw values of the three top indicators over the past year, one at a time: MVRV Z (how far value sits above average cost), NUPL (all holders' paper profit as a share of value) and the Puell multiple (miner income against its one-year average). How to read it: the red dashed line is each one's hot line for the last four years (only 20% of days were higher); when the line touches it, that indicator counts as hot. Caveats: the hot line moves with the four-year window; it is not a fixed number.
 
 Source: 11/24 · 4-yr percentile
 
@@ -165,17 +165,17 @@ Page: https://daybreak.aronlab.dev/en/charts/p6v/
 
 Bullish: the top is far away. MVRV needs 0.75x of the prior peak to trigger, roughly $110,664 in price, and Pi Cycle and the three top gauges are nowhere near either.
 
-What it shows: Today's MVRV divided by the previous cycle's peak MVRV. Five straight days above 0.75 is the exit plan's first on-chain sell; 0.80 is the second.
+What it shows: What it is: MVRV is price divided by the average cost of all coins (the price when each coin last moved). 1× means holders are break-even on average; the higher it is, the more they are up and the hotter the market. Each cycle's top comes at a lower MVRV, so this chart compares today's MVRV with the last top's peak; a ratio of 1 would be as hot as then. Reading it: the line is that ratio; the red lines at 0.75 and 0.80 are warning lines, shaded above 0.75, and they count only after five straight days above. The red dot is the ratio at the 2025 top. Caveats: the chart starts in 2021 and has seen only two tops, 2021 and 2025; the warning lines were set by looking at them.
 
 Source: CoinMetrics · since 2021
 
 Page: https://daybreak.aronlab.dev/en/charts/p20/
 
-### Top radar
+### Top radar: three gauges that lit up at the 2025 top
 
-Bullish: Highest of the three: LTH MVRV Z, percentile 29
+Bullish: A top is far off: none of the three gauges that lit up at the 2025 top is warming.
 
-What it shows: Three measures that hit extremes near the 2025 top. Bars show the percentile since November 2022.
+What it shows: What it is: near the 2025 top three gauges hit extremes together: long-term holders (coins unmoved for 155+ days) sat on unusually large paper profits (MVRV Z: their profit against its history, in standard deviations), almost every coin was in profit, and long-term holders sold or moved a lot within a month. This card puts the three side by side to show how far today is from that. Reading it: each row is one gauge; the big number is today's value, the bar its rank since November 2022 (longer means fewer days were higher), and the note gives its extreme near the 2025 top. Caveats: the three were picked after the fact and checked against only one top; for the long-term holder selling row the top reading was a large negative number, so a short bar is the more top-like one.
 
 Source: Percentile this cycle (since 2022/11)
 
@@ -183,47 +183,47 @@ Page: https://daybreak.aronlab.dev/en/charts/radar/
 
 ### Top radar over time
 
-Bullish: Highest of the three: LTH MVRV Z, percentile 29
+Bullish: A top is far off: none of the three gauges that lit up at the 2025 top is warming.
 
-What it shows: Raw values over the past year. The red dashed line is the extreme reached near the 2025 top.
+What it shows: What it is: the three top-radar gauges over the past year, one per view. Reading it: the red dashed line is the extreme near the 2025 top; the closer the line, the more today resembles then. Caveat: checked against only one top.
 
 Source: Percentile this cycle (since 2022/11)
 
 Page: https://daybreak.aronlab.dev/en/charts/radarv/
 
-### Pi Cycle
+### Pi Cycle: has price run up too fast
 
-Bullish: Pi Cycle is 0.51, far from the trigger at 1.
+Bullish: A top is far off: Pi Cycle is only 0.51, past tops came at 1, and the last top never reached it.
 
-What it shows: When the 111-day average catches up with twice the 350-day average, past cycles were near their top. The closer the ratio is to 1, the nearer that point.
+What it shows: What it is: two price averages compared: the 111-day average (roughly the last four months) and twice the 350-day average (roughly twice the one-year average). When the short one catches up with twice the long one, price has run far above its yearly average within months; the 2013, 2017 and 2021 tops all came soon around that. Reading it: the big number and the bar are the ratio of the two; the tick on the bar is 1, where past tops appeared. Caveats: it uses price alone, and the 2025 top never reached 1; tops are getting milder, so it may get harder to reach.
 
 Page: https://daybreak.aronlab.dev/en/charts/pi/
 
-### Tidemark composite signal
+### Tidemark: an outside model's top and bottom scores
 
-Bullish: Top signal 0, bottom signal 43: neither has reached 50.
+Bullish: This outside model leans toward a bottom but is not in its bottom zone yet: a bottom score of 43, with the line at 50.
 
-What it shows: A third-party composite: on-chain valuation, flows, leverage and sentiment combined into two 0–100 scores, one for tops and one for bottoms.
+What it shows: What it is: Tidemark is an outside composite model, not one of ours. It scores on-chain valuation, holder behaviour, flows, leverage and sentiment, adds how long it has been since the last top or bottom, and combines them into two 0–100 scores: the top score for how close a top is, the bottom score for how close a bottom is. Reading it: each row is one score, and the ticks on the bars are the lines: 50 opens the top window and 70 is high alert; 50 is the bottom zone and 70 a strong bottom. The rows below are its categories (higher is hotter); any without data today are marked. Caveats: Tidemark sets the rules and weights and may change them; we copy its daily scores and have not backtested them ourselves.
 
 Source: third-party model · weekly since 2011, daily for the past year · 11/24
 
 Page: https://daybreak.aronlab.dev/en/charts/tm/
 
-### Tidemark history
+### Tidemark scores over time
 
-Bullish: Top signal 0, bottom signal 43: neither has reached 50.
+Bullish: This outside model leans toward a bottom but is not in its bottom zone yet: a bottom score of 43, with the line at 50.
 
-What it shows: Two views. Top: orange is the top signal, sand is heat, grey dashed is timing. Bottom: green is the bottom signal, blue is cold. Dashed lines mark the 50 and 70 thresholds.
+What it shows: What it is: the history of the two scores from the outside model Tidemark (see the previous card), weekly since 2011 and daily for the past year, to see how high they rose around past tops and bottoms and how early. Reading it: in the top view the thick line is the top score, the other solid line is heat (how expensive) and the grey dashes are timing (how close to when past tops came); horizontal lines mark the 50 window and 70 alert, vertical dashes past tops. In the bottom view the thick green line is the bottom score and the blue line is cold (how cheap); the horizontal line is the 50 bottom zone, vertical dashes past bottoms, and the green dotted line this cycle's low so far. Caveats: the history is back-calculated under today's rules, not what it showed at the time; some inputs start in late 2012, before which only heat exists.
 
 Source: third-party model · weekly since 2011, daily for the past year · 11/24
 
 Page: https://daybreak.aronlab.dev/en/charts/tmh/
 
-### Long-term holders at a loss
+### How many long-term holders are underwater
 
 Bullish but on the edge: long-term holders' loss share sits in the range of past bear bottoms and below this cycle's high. A close under about $58,500 sets a new high and breaks the pattern.
 
-What it shows: The share of coins held over 155 days that are currently at a loss. Past cycle bottoms fell in the 42–48% zone.
+What it shows: What it is: long-term holders are those whose coins have sat unmoved for 155+ days, usually the group least easily shaken out. This chart is the share of their coins now worth less than they paid (at a paper loss). At bear-market bottoms even this group is mostly underwater, and the share spikes. Reading it: the red band is where past bear bottoms peaked since 2019 (42–48%), red dots mark each cycle's peak, and the dashed line is this cycle's peak so far. After leaving past bottoms the share never went back above that cycle's peak; a move above the dashed line would break the pattern. Caveats: not price alone: people who bought high a few months ago become long-term holders after 155 days, lifting the share even when price stalls; only 3–4 cycles, and a pattern seen in hindsight.
 
 Source: CheckOnChain · 11/24
 
@@ -231,9 +231,9 @@ Page: https://daybreak.aronlab.dev/en/charts/lthloss/
 
 ### One-year net realized P&L
 
-Bearish: Net realized profit and loss over a year is −1.10M BTC: holders are taking losses on balance, and it is still deepening.
+Bearish: Over the past year the market has sold at a loss on balance, and it is still deepening: on this chart the loss-taking is not done, though it is far shallower than past bear bottoms.
 
-What it shows: Daily net realized P&L converted to BTC and summed over 365 days. Markers show past highs and lows.
+What it shows: What it is: every day some coins are sold or moved; above the price paid counts as profit (realized profit), below as a loss. Netting each day's profit against loss, converting to coins and summing a whole year shows whether the market has been selling at a profit or at a loss on balance. Around bear-market bottoms, typically a year of heavy loss-selling moves a lot of coins to new buyers. Reading it: green means the one-year total is net profit-taking, red net loss-taking; markers show the highs around past tops and the lows around bear bottoms. It sums a whole year, so its deepest point usually comes a few months after price bottoms. Caveats: exchange wallet reshuffles count too; this cycle's negative reading is far shallower than past ones, either because the holder base has changed or because it is not finished.
 
 Source: CoinMetrics · 11/24
 
@@ -241,9 +241,9 @@ Page: https://daybreak.aronlab.dev/en/charts/npl365/
 
 ### Supply in profit: all vs excluding 10-year-old coins
 
-Bullish: Excluding 10-year-old coins, 33.4% of supply is in profit; since 2012 only 0.0% of days were lower.
+Bullish: Excluding 10-year-old coins, only 33.4% of supply is in profit, below every past bear bottom: on this chart that is long-run bottom territory, though cheap is not the same as the low.
 
-What it shows: The share of supply in profit (price above where each coin last moved), as a 7-day average. One line is all supply; the other leaves out coins unmoved for 10+ years (Satoshi-era coins included; 17.9% of supply now, and none before 2019). Those coins cost almost nothing, sit in profit nearly always and keep piling up, which props up the all-supply share: left in, each bear bottom sits higher than the last; taken out, each sits lower. Neither version has a fixed line that works across cycles. Circles mark the low of each bear phase. The second view shows how much of supply has been still for 10+ years. Old coins are not necessarily lost; any that move rejoin the count. Per UTXO, with exchange-internal transfers not excluded. A reading only.
+What it shows: What it is: a coin is in profit when today's price is above the price when it last moved; this chart is the share of all coins in profit (7-day average). At bear-market bottoms most coins are underwater. One line is all supply; the other leaves out coins unmoved for 10+ years (Satoshi-era coins included; 17.9% of supply now, and none before 2019): they cost almost nothing, sit in profit nearly always and keep piling up, which props up the all-supply share. Reading it: circles mark the low of each bear phase. Left in, each bear bottom sits higher than the last; taken out, each sits lower, so neither version has a fixed line that works across cycles: compare with past bear lows instead. The second view shows how much of supply has been still for 10+ years. Caveats: old coins are not necessarily lost; any that move rejoin the count. Per UTXO, with exchange-internal transfers not excluded. A reading only.
 
 Source: Bitview · 11/24
 
@@ -251,9 +251,9 @@ Page: https://daybreak.aronlab.dev/en/charts/psx/
 
 ### CVDD: the long-run floor under past bear lows
 
-Bullish: The close is 21.6% above CVDD; past bear lows came within 4.1%–20.2%, and the median on today's CVDD is about $54,260.
+Bullish: Price is only 21.6% above CVDD, the long-run floor: on this chart that is where past bear bottoms were, though all of the past 4 came closer to the floor.
 
-What it shows: CVDD (cumulative value-days destroyed): each day's coin-days destroyed times that day's price, summed from 2009, then divided by market age in days and a constant of 6 million. It almost only rises (+12% over the past year) and barely reacts to short swings. In the four bear lows since 2014, the closest close was still 4.1%–20.2% above it; it has never closed below. Caveats: the 6 million constant was tuned after the fact so past lows touch the line, so "never broken" is partly by design, and there are only four cycles. Closing prices; intraday lows come a little closer. A reading only.
+What it shows: What it is: CVDD (cumulative value-days destroyed) takes each day's coins moved, times how long they sat, times that day's price, sums it from 2009, then divides by Bitcoin's age in days and a constant of 6 million. The result is a line that almost only rises (+12% over the past year); in the four bear lows since 2014 the closest close was still 4.1%–20.2% above it and it has never closed below, which is why it is used as a long-run floor under bear bottoms. Reading it: the first view shows price (log scale) and CVDD, with a dashed line 25% above it and circles marking the closest day in each past bear and in this cycle, with how far above it was. The second view is price divided by CVDD: 1× is touching the floor. Caveats: the 6 million constant was tuned after the fact so past lows touch the line, so "never broken" is partly by design, and there are only four cycles. Closing prices; intraday lows come a little closer. A reading only.
 
 Source: Bitview · 11/24
 
@@ -261,9 +261,9 @@ Page: https://daybreak.aronlab.dev/en/charts/cvdd/
 
 ### VDD Multiple: are long-held coins moving
 
-Neutral: Price is down 29% in 60 days while the VDD Multiple is 1.51× its level then: the loose divergence is on, though it has done no better than any day; the strict one (2×) is not.
+Neutral: Price is down 29% in two months while old coins move more: a weak bottom divergence, which has done no better than any day; only the strong 2× kind has shown up solely at bear lows.
 
-What it shows: VDD (value-days destroyed): each day's coins moved, weighted by how long they sat and by that day's price. The multiple is its 30-day average ÷ its 365-day average; above 1 means long-held coins moved more this month than in a usual day of the past year. Heat bands follow the Checkonchain original (2.9 / 1.4 / 0.75). Bottom divergence: the close within 3% of its 60-day low and down 10% or more on 60 days earlier, while the multiple rose to 1.5× its level 60 days earlier (loose; circles on price, coloured by the move a year later) or 2× (strict; circled on the multiple); one count per 60 days. Backtest since 2012: the strict version fired 3 times, 3 up a year later; the loose version 10 times with a full year, 7 up, median +93%, against 71% up and a +85% median for any day, about the same. A rising multiple only means old, high-value coins are moving: long-term holders capitulating or still distributing, wallet reshuffles and exchange cold-storage moves included. Coin-days from Bitview, within about 5% of Checkonchain in recent years and further apart early on. A reading only.
+What it shows: What it is: VDD (value-days destroyed) is each day's coins moved, times how long they sat, times that day's price: the older and more valuable the coins that move, the bigger it gets. The multiple is its 30-day average ÷ its one-year average; above 1 means long-held coins moved more than usual lately. One common pattern around bear bottoms is a "bottom divergence": price still falling while old coins move heavily (veterans capitulating, coins changing hands). Reading it: the line is the multiple (log scale), with bands from the Checkonchain original: cold below 0.75, warm 1.4–2.9, hot above 2.9. Circles on price are the loose divergence (the close within 3% of its 60-day low and down 10% or more on 60 days earlier while the multiple reached 1.5× its level then; one count per 60 days), coloured by whether price was higher or lower a year later; circles on the multiple are the strict version (2× or more). Caveats: since 2012 the strict version fired only 3 times, 3 higher a year later; the loose version 10 times with a full year, 7 higher, median +93%, about the same as any day (71% higher, median +85%). A rising multiple only means old coins are moving: capitulation or continued distribution, wallet reshuffles and exchange cold-storage moves included. Coin-days from Bitview, within about 5% of Checkonchain in recent years and further apart early on. A reading only.
 
 Source: Bitview · 11/24
 
@@ -271,17 +271,19 @@ Page: https://daybreak.aronlab.dev/en/charts/vddm/
 
 ### Holder cost by coin age
 
-Coins grouped by holding time, with each group's average cost. First view: the orange line (6–12 months) falling below the violet line (12–18 months) has come near bear-market bottoms; crossing back above has roughly marked the main bull leg. The other two views each set one group's cost against price.
+Bearish: Price is 8.8% below what buyers of the last 3–6 months paid, and the two earlier groups are underwater too: on this chart it still looks like a bear market, and a rally back to their cost is likely to meet break-even selling.
+
+What it shows: What it is: coins grouped by when they were bought (last moved), with each group's average cost. Price below a group's cost means that group is underwater, and rallies back to their cost tend to meet people selling to break even. Reading it: the first view shows the cost of coins bought 6–12 months ago and 12–18 months ago; the newer group falling below the older one (red dots) means new buyers paid less, which has come near bear-market bottoms, and crossing back above (green dots) has roughly marked the start of the main bull leg. The second view sets the 3–6 month buyers' cost against price: green rings are the first reclaim after a bear market, grey rings other reclaims. The third view is coins bought one week to one month ago. Caveats: these lines are what people paid months ago, so they lag price a long way and price has usually moved by the time they cross; only 3–4 cycles, plus a brief post-pandemic cross in 2020.
 
 Source: Bitview · 11/24
 
 Page: https://daybreak.aronlab.dev/en/charts/agecost/
 
-### Hash Ribbons
+### Hash Ribbons: are miners capitulating
 
-Neutral: Miners are capitulating; since 2021 the original buy was up a year later 3 times out of 5, about the same as any day.
+Neutral: Miners are switching off (capitulation): that used to come near bottoms, but in recent years what followed was about the same as any day, so it is background only.
 
-What it shows: When the 30-day hashrate average drops below the 60-day, miners are switching off (capitulation, red shade). Capriole's original buy: after capitulation ends, the first day the 10-day price average crosses above the 20-day; circles mark it on price. Only capitulations of 14 days or more count here. Backtest: before 2021, 9 signals, 9 up a year later, median +266%; since 2021, 5 with a full year, 3 up, median +25%, against 52% up and a +14% median for buying on any day in that span, about the same. Rig efficiency, hosting and hashrate rental have changed why miners switch off, so the link to price is weaker than it was. A reading only.
+What it shows: What it is: hashrate is the total computing power of all mining rigs. When its 30-day average drops below the 60-day, miners are switching off, usually because mining no longer pays and they are forced to sell (miner capitulation, red shade). Capriole's original version (from the author of Hash Ribbons) takes as its signal the first day after capitulation ends that the 10-day price average crosses above the 20-day; circles mark it on price. Reading it: the lower pane shows the two hashrate averages, green between them while the 30-day is on top and red while it is below. Circles are coloured by whether price was higher (green) or lower (red) a year later; those under a year old get another colour. Only capitulations of 14 days or more count here. Caveats: before 2021 there were 9 signals and price was higher a year later 9 times; since 2021 only 3 of the 5 with a full year were higher, median +25%, about the same as any day in that span (52% higher, median +14%). Rig efficiency, hosting and hashrate rental have changed why miners switch off, so the link to price is weaker than it was. A reading only.
 
 Source: Bitview · 11/24
 
@@ -291,7 +293,7 @@ Page: https://daybreak.aronlab.dev/en/charts/hashr/
 
 Neutral: this cycle has fallen about half from the top while earlier cycles were down over 75% by the same day, so their bottom and recovery timelines don't map. Path models still point up.
 
-What it shows: Each cycle aligned at its top on day 0, showing how far every later close sits above or below that top (−50% means half gone). Orange is this cycle, now 414 days past its top.
+What it shows: What it is: every bull-market top is lined up on the same day (day 0), showing how far each later close sat below that top, so this cycle can be compared with past ones at the same point in time. Past cycles lost three quarters or more after the top, bottomed about a year later and took another two or three years to get back; that is where the familiar "four-year cycle timetable" comes from. How to read it: each line is one cycle; the thick orange line is this one, now 414 days past its top (the "Today" line). The x-axis is days since the top, the y-axis how far below the top (−50% means half gone), and the "Top close" line is the top price itself. Caveats: there are only three cycles to compare, and this one has fallen much less and looks different, so their timetable does not simply carry over.
 
 Source: standard close · 11/24
 
@@ -299,17 +301,17 @@ Page: https://daybreak.aronlab.dev/en/charts/cyccmp/
 
 ### Drawdown from the high
 
-Neutral: −31.0% from this cycle's high; only 13% of past bottom-to-top days were deeper
+Neutral: 31% below this cycle's high: a fairly deep pullback for an upswing in past cycles, and only 2% above the 2026-06 low; a break below it would mean this is no upswing at all.
 
-What it shows: How far the close sits below the high, in two views. "Since the cycle low": each cycle is measured from its bottom against the highest close since then, drawn from bottom to top only. This cycle starts at the 2026-06-30 low ($58,532) and its high is $86,594 on 2026-09-21; if that low breaks, this stretch has to be redrawn. Across the past four cycles, half of all bottom-to-top days were shallower than −10.9% and 13% were deeper than now. "All-time high": measured against the highest close on record ($124,766 on 2025-10-06); circles mark each cycle bottom. A reading only.
+What it shows: What it is: how far the close sits below the highest close before it, known as a drawdown. "From this cycle's low" starts at the 2026-06 low and measures against the highest close since, to show how deep pullbacks get within an upswing; "Against the all-time high" measures against the highest close on record. How to read it: the lower the line, the further below the high; 0% means right at the high. "From this cycle's low" draws only each cycle's climb from bottom to top; the grey dashed line is the median of the past four upswings and red circles mark each cycle's deepest pullback. In "Against the all-time high", circles mark each cycle bottom and the red one is this cycle's low so far. Caveats: the first view assumes the 2026-06 low is this cycle's bottom; if it breaks, the whole stretch is redrawn. The chart says how deep the fall is, not where price goes next.
 
 Page: https://daybreak.aronlab.dev/en/charts/dd/
 
 ### Capital efficiency by cycle
 
-Neutral: 147 days into this cycle: +$4.1B in and 1.02 times the price.
+Neutral: Since this cycle's bottom, price has barely moved (1.02×), slower than every past cycle at this point. And the bigger Bitcoin gets, the smaller each cycle's run: this chart is context only.
 
-What it shows: For each cycle from bottom to top: how much realized cap was added (capital in) and what price multiple it bought. Two bars per row, on a log scale: cyan for capital in, gold for the price multiple. The bigger the market, the less each dollar moves it.
+What it shows: What it is: for each cycle from bear-market bottom to bull-market top, how much money came in and how many times the price rose. Money in is the increase in realized cap: every coin valued at the price it last moved, which can be read as the money actually put into the market. How to read it: one row per cycle, the last row being this cycle so far (the big number is how many times price has risen from its bottom). The cyan bar is money in and the gold bar the price multiple, on a log scale so numbers hundreds of times apart fit side by side. The bigger the market, the less the same money moves it, so the cyan bars grow and the gold bars shrink cycle after cycle. Caveats: only four cycles; bottom and top dates follow this site's cycle split; exchange wallet reshuffles and lost coins both affect realized cap, so read it for orders of magnitude.
 
 Source: CoinMetrics · 11/24
 
@@ -317,9 +319,9 @@ Page: https://daybreak.aronlab.dev/en/charts/capeff/
 
 ### Long-term paths: four scenarios
 
-Bullish: The four paths are weighted 0–36%, base-case double bottom highest; the top model's median is $172,000.
+Bullish: Price has dropped below the lowest of the four paths: weaker than our model expected in the near term; in the long run all four still head for a higher top than last cycle, median about $172,000.
 
-What it shows: Four possible paths with their weights, re-weighted each month against the actual price. The orange band is the top model's 80% range, timed for May–Oct 2029. Next review 2026-11-30.
+What it shows: What it is: this site's own long-run path model, drawing four possible routes from here to the next top. Direct recovery heads straight up without looking back; shallow pullback dips a little first, then rises; base-case double bottom falls back near this cycle's low, makes a second bottom, then rises; delayed new low breaks below this cycle's low first and pushes the whole cycle later. Each path has a weight, our estimate of how likely it is; the four add up to 100%. How to read it: the dashed lines are the four paths (the legend gives names and weights), the thick solid line the actual month-end closes. The orange band is where the top model puts the next top with 80% probability, timed for May–Oct 2029; the grey vertical line is the next halving (estimated). Weights are adjusted at each month-end close: the closer the close is to a path, the more its weight goes up, and a close below $61,000 rules out direct recovery. Next re-check 2026-11-30. Caveats: this is an estimate, not a precise forecast, and the shapes of the four lines are drawn by hand; beyond 2028 read only the order of magnitude.
 
 Source: Re-estimated at each month-end · next 2026-11-30
 
@@ -327,9 +329,9 @@ Page: https://daybreak.aronlab.dev/en/charts/path/
 
 ### Long-term price
 
-Neutral: The close is 52.1% below the last cycle top; 948 days since the last halving.
+Neutral: Price is 52% below the last cycle top: on the old rhythm the top is behind us, with the next halving about 17 months away. This chart is context only.
 
-What it shows: All closes on a log scale, where equal heights are equal percentage moves. Past tops came roughly 12–18 months after a halving, and bottoms about a year after the top.
+What it shows: What it is: every Bitcoin close on record, with each cycle's top, bottom and halving marked. A halving cuts the new bitcoin paid to miners in half, about every four years. Past tops came roughly 12–18 months after a halving and bottoms about a year after the top; that is the familiar "four-year cycle". How to read it: the price axis is logarithmic, so equal heights are equal percentage moves (10k to 20k looks as tall as 50k to 100k). Circles mark each cycle's top and bottom (colours in the legend); grey dashed verticals are the halvings. Caveats: only three or four cycles, so the timing need not repeat; this cycle has fallen less from its top than before, so the rhythm may already be different.
 
 Source: CoinMetrics · log scale
 
@@ -337,9 +339,9 @@ Page: https://daybreak.aronlab.dev/en/charts/long/
 
 ### Monthly returns
 
-Neutral: November so far: −22.9%; in 13 past Novembers it rose 8 times, median +8.9%.
+Neutral: November so far: −22.9%. Past Novembers mostly rose, but with so few years the calendar cannot tell you how this month will end.
 
-What it shows: Month-end to month-end returns in %, since 2013. The two bottom rows give each month's median and the share of years it rose (green at half or more); the outlined cell is the current month.
+What it shows: What it is: how much each month rose or fell from the previous month-end, one row per year since 2013, to see whether some months tend to rise or fall (seasonality). How to read it: each cell is a month, green up and red down, darker for bigger moves; the outlined cell is this month, up to the latest close. The bottom two rows are each month's median (half the years did better, half worse) and the share of years it rose (green at 50% or more). Caveats: each month has only a dozen or so samples, and one or two extreme years can flip the result; seasonality describes the past and cannot tell you which way this month or the next will go.
 
 Source: Month-end closes · since 2013 · to 11/24
 
