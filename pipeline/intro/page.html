@@ -15,12 +15,18 @@
   if (go) { window.DAYBREAK_GO = 1; location.replace('app/' + s + h); } })();
 </script>
 <script>
-/* 語言：和首頁同一套規則（daybreak.lang 共用）。網址帶 ?lang= 就用那個語言，只管這一次 */
-window.DAYBREAK_LANG = (function () { var q = /[?&]lang=(zh|en)(&|$)/.exec(location.search); if (q) return q[1];
-  var ls = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, p = ls('daybreak.lang'); if (p === 'zh' || p === 'en') return p;
-  try { var g = JSON.parse(ls('daybreak.geo') || 'null'); if (g && g.cc && Date.now() - g.t < 7 * 864e5) return ['TW', 'HK', 'MO', 'CN', 'SG'].indexOf(String(g.cc).toUpperCase()) >= 0 ? 'zh' : 'en'; } catch (e) {}
-  return /^zh/i.test(navigator.language || '') ? 'zh' : 'en'; })();
-document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant';
+/* 語言：和首頁同一套規則（daybreak.lang 共用）。網址帶 ?lang= 就用那個語言，只管這一次
+   2026-11-25 加簡體（'hans'，?lang=hans）：和數據頁同一套，字照繁體寫，assets/hans.js 在瀏覽器裡轉（pipeline/next/hans_rt.js） */
+window.DAYBREAK_LANG = (function () { var q = /[?&]lang=(zh|en|hans|zh-hans|zh-cn|sc)(&|$)/i.exec(location.search); if (q) { q = q[1].toLowerCase(); return q === 'zh' || q === 'en' ? q : 'hans'; }
+  var ls = function (k) { try { return localStorage.getItem(k); } catch (e) { return null; } }, p = ls('daybreak.lang'); if (p === 'zh' || p === 'en' || p === 'hans') return p;
+  try { var g = JSON.parse(ls('daybreak.geo') || 'null'); if (g && g.cc && Date.now() - g.t < 7 * 864e5) { var cc = String(g.cc).toUpperCase(); return cc === 'CN' || cc === 'SG' ? 'hans' : ['TW', 'HK', 'MO'].indexOf(cc) >= 0 ? 'zh' : 'en'; } } catch (e) {}
+  var nl = navigator.language || ''; return /^zh-(cn|sg|hans)/i.test(nl) ? 'hans' : /^zh/i.test(nl) ? 'zh' : 'en'; })();
+document.documentElement.lang = { en: 'en', hans: 'zh-Hans' }[window.DAYBREAK_LANG] || 'zh-Hant';
+window.DAYBREAK_HANS = 'assets/hans.js?v=__HV__';
+if (window.DAYBREAK_LANG === 'hans' && !window.DAYBREAK_GO) document.write('<script src="' + window.DAYBREAK_HANS + '"><\/script>');
+</script>
+<script>
+if (window.DAYBREAK_LANG === 'hans') { if (window.DaybreakHans) window.DaybreakHans.on(); else { window.DAYBREAK_LANG = 'zh'; document.documentElement.lang = 'zh-Hant'; } }   /* 轉換器沒載到就照繁體 */
 </script>
 <meta name="description" content="Daybreak 是免費的比特幣（BTC）數據分析網站：一百多張自建與公開的比特幣指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，每天更新判讀，每張圖都表態偏多、偏空或中性。">
 <meta property="og:type" content="website">
@@ -34,6 +40,7 @@ document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant'
 <meta name="theme-color" content="#050506">
 <link rel="canonical" href="https://daybreak.aronlab.dev/">
 <link rel="alternate" hreflang="zh-Hant" href="https://daybreak.aronlab.dev/?lang=zh">
+<link rel="alternate" hreflang="zh-Hans" href="https://daybreak.aronlab.dev/?lang=hans">
 <link rel="alternate" hreflang="en" href="https://daybreak.aronlab.dev/?lang=en">
 <link rel="alternate" hreflang="x-default" href="https://daybreak.aronlab.dev/">
 <link rel="icon" href="assets/favicon.svg" type="image/svg+xml">
@@ -116,12 +123,17 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Inter 
 }
 @media (prefers-reduced-motion: reduce) { .pc, .log div { transition: none; } }
 /* 中英切換：和首頁 .tgl 同一套，墨色藥丸滑過去（.45s），字從左到右變成點字再解回另一種語言 */
-.pill .lgs { box-sizing: border-box; width: 76px; height: 30px; padding: 2px; gap: 0; position: relative; border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent); }
+.pill .lgs { box-sizing: border-box; width: 102px; height: 30px; padding: 2px; gap: 0; position: relative; border: 1px solid color-mix(in srgb, var(--ink) 22%, transparent); }
 .pill .lgs button { flex: 1; height: 100%; padding: 0; display: grid; place-items: center; border: 0; border-radius: 999px; background: none; color: var(--k2); font: 500 11px var(--mono); letter-spacing: .06em; cursor: pointer; position: relative; z-index: 1; transition: color .3s; }
 .pill .lgs button[aria-pressed="true"] { color: var(--bg); }
-.pill .lgs::before { content: ""; position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc(50% - 2px); border-radius: 999px; background: var(--ink); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
-.pill .lgs.b::before { transform: translateX(100%); }
+.pill .lgs::before { content: ""; position: absolute; top: 2px; bottom: 2px; left: 2px; width: calc((100% - 4px) / 3); border-radius: 999px; background: var(--ink); transition: transform .45s cubic-bezier(.2, .8, .2, 1); }
+/* 2026-11-25 三段：data-i 是第幾段（繁 0、简 1、EN 2） */
+.pill .lgs[data-i="1"]::before { transform: translateX(100%); }
+.pill .lgs[data-i="2"]::before { transform: translateX(200%); }
+.pill .lgs button.busy { opacity: .5; }
 .pill .lgs button:focus-visible { outline: 1px solid var(--ink); outline-offset: 2px; }
+/* 2026-11-25 三段後手機上（375px）右邊的「打開今天的數據」會被擠成兩行：切換縮成 84px、字標和按鈕的左右留白收一點，按鈕字不換行 */
+@media (max-width: 420px) { .pill .lgs { width: 84px; } .pill .lg { padding: 0 8px; } .pill a.go { padding: 0 10px; white-space: nowrap; } }
 /* 往下滑的提示（2026-11-19 加；11-20「再明顯一點」→「不要寫文字，用 icon 就好」「和畫面有點違和」）
    和畫面同一種語言：細線圓圈裡一個輕輕跳的箭頭，下面一條細線，有一道品牌橘的光往下流（像纖維上流動的光）。沒有實心底、沒有字。
    每一段停好、動畫開始後浮出來，移動中收起，最後一段不出現 */
@@ -177,7 +189,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Inter 
   <div><span class="tg"><i></i><span id="t-tag"></span></span><h1 id="t-h1"></h1></div>
   <div class="rt"><b id="cls"></b><span id="t-close"></span></div>
 </div>
-<header class="top"><div class="pill"><a class="lg" href="app/" style="text-decoration:none"><svg viewBox="0 0 64 64"><path d="M18 40a14 14 0 0 1 28 0" fill="none" stroke="#FF4F1F" stroke-width="5"/><path d="M6 40h52" stroke="#EDEDE8" stroke-width="5"/></svg>DAYBREAK</a><span class="lv"><i></i><span id="t-upd"></span></span><span class="ix" id="clk"></span><span class="lgs" id="lgs"><button data-l="zh">中</button><button data-l="en">EN</button></span><a class="go" id="go" href="app/"></a></div></header>
+<header class="top"><div class="pill"><a class="lg" href="app/" style="text-decoration:none"><svg viewBox="0 0 64 64"><path d="M18 40a14 14 0 0 1 28 0" fill="none" stroke="#FF4F1F" stroke-width="5"/><path d="M6 40h52" stroke="#EDEDE8" stroke-width="5"/></svg>DAYBREAK</a><span class="lv"><i></i><span id="t-upd"></span></span><span class="ix" id="clk"></span><span class="lgs" id="lgs"><button data-l="zh" aria-label="繁體中文" data-nohans>繁</button><button data-l="hans" aria-label="简体中文">简</button><button data-l="en" aria-label="English">EN</button></span><a class="go" id="go" href="app/"></a></div></header>
 <a class="cue off" id="cue" href="#"><span><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round"><path d="M4 6.5l4 4 4-4"/></svg></span><i></i></a>
 <div class="pn" id="pn"></div>
 <nav class="prog" id="prog"></nav>
@@ -186,7 +198,7 @@ body { margin: 0; background: var(--bg); color: var(--ink); font-family: "Inter 
 
 <script>
 /* 資料（data/intro.js，每天重建）和語言 */
-const D0 = window.DAYBREAK_INTRO, T = (zh, en) => LG ? en : zh; let LG = window.DAYBREAK_LANG === 'en' ? 1 : 0, D;
+const D0 = window.DAYBREAK_INTRO, T = (zh, en) => LG ? en : zh; let LG = window.DAYBREAK_LANG === 'en' ? 1 : 0, HZ = window.DAYBREAK_LANG === 'hans', D;
 const setD = () => { D = { ...D0, lay: D0.lay.map(l => l[LG]), head: D0.head[LG] || D0.head[0], stance: D0.stance[LG] || D0.stance[0] }; }; setD();
 const $ = s => document.querySelector(s), fmt = n => Math.round(n).toLocaleString('en-US');
 const RM = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -201,7 +213,7 @@ var RX = null, PR = null; const TDY = D0.pg.indexOf('today'), RROWS = D0.pg.map(
 /* 換語言時整頁的字重寫一遍（不重新載入，和首頁一樣原地換） */
 function paintLang() {
 setD(); LAYN = layN(); LMAX = Math.max(1, ...LAYN.map(l => l[1]));
-HOME = 'app/' + (LG ? '?lang=en' : ''); GO = T('打開今天的數據', "Open today's data");
+HOME = 'app/' + (LG ? '?lang=en' : HZ ? '?lang=hans' : ''); GO = T('打開今天的數據', "Open today's data");
 dShow = LG ? new Date(D.date + 'T00:00:00Z').toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', timeZone: 'UTC' }) : D.date;
 document.title = T('Daybreak · 比特幣多維判讀', 'Daybreak · Bitcoin, read across every dimension');
 $('#t-tag').textContent = T(`第 ${D.issue} 期 · 比特幣多維判讀`, `Issue ${D.issue} · Bitcoin, read across every dimension`);
@@ -227,8 +239,9 @@ const on = pcs.map(p => p.classList.contains('on'));
 $('#pn').innerHTML = PCS.map(p => `<div class="pc${p.lf ? ' lf' : ''}">${p.h}</div>`).join('');
 pcs = [...document.querySelectorAll('.pc')]; pcs.forEach((p, i) => on[i] && p.classList.add('on'));
 if (RX) rdPaint(); if (PR) prPaint();
-const lb = $('#lgs'); lb.classList.toggle('b', LG === 1); [...lb.querySelectorAll('button')].forEach(x => x.setAttribute('aria-pressed', x.dataset.l === (LG ? 'en' : 'zh')));
+lgSync(LG ? 'en' : HZ ? 'hans' : 'zh');
 }
+function lgSync(to) { const lb = $('#lgs'); lb.dataset.i = { zh: 0, hans: 1, en: 2 }[to] || 0; [...lb.querySelectorAll('button')].forEach(x => x.setAttribute('aria-pressed', x.dataset.l === to)); }
 paintLang();
 const tick = () => { $('#clk').textContent = new Date().toISOString().slice(11, 19) + ' UTC'; }; tick(); setInterval(tick, 1000);
 /* 語言：和首頁同一套。字先從左到右變成點字（全站網點的同一種東西），再從左到右解回另一種語言 */
@@ -237,15 +250,17 @@ const mixg = (s, k, out) => { let o = ''; for (let i = 0; i < s.length; i++) { c
 let busy = false;
 function scramble(fn) {
   if (RM) { fn(); return; } if (busy) return; busy = true;
-  const prep = () => { const out = [], w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) { const pe = n.parentElement; if (!n.nodeValue.trim() || !pe || pe.closest('.lgs, #clk, #cls, #gl, #rdx, .rdx2, #rd-log, #rd-n, #vd, .big3, .rowl span, script, style')) continue; const r = pe.getBoundingClientRect(); out.push({ n, s: n.nodeValue, d: clamp(r.left / (innerWidth || 1), 0, 1) }); } return out; };
+  const prep = () => { const out = [], w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT); let n; while ((n = w.nextNode())) { const pe = n.parentElement; if (!n.nodeValue.trim() || !pe || pe.closest('.lgs, #clk, #cls, #gl, #rdx, .rdx2, #rd-log, #rd-n, #vd, .big3, .rowl span, script, style')) continue; const r = pe.getBoundingClientRect(); out.push({ n, raw: n.nodeValue, s: HZ && window.DaybreakHans ? window.DaybreakHans.conv(n.nodeValue) : n.nodeValue, d: clamp(r.left / (innerWidth || 1), 0, 1) }); } return out; };
   const run = (list, dur, wave, out, done) => { const t0 = performance.now(); let last = -99; const step = now => { const t = now - t0, end = t >= dur + wave; if (now - last > 40 || end) { last = now; list.forEach(o => { const p = clamp((t - o.d * wave) / dur, 0, 1); o.n.nodeValue = mixg(o.s, Math.round(p * o.s.length), out); }); } if (end) done(); else requestAnimationFrame(step); }; requestAnimationFrame(step); };
-  const l0 = prep(); run(l0, 200, 200, true, () => { fn(); l0.forEach(o => { if (o.n.isConnected) o.n.nodeValue = o.s; }); const list = prep(); list.forEach(o => { o.n.nodeValue = mixg(o.s, 0, false); }); run(list, 380, 340, false, () => { list.forEach(o => { o.n.nodeValue = o.s; }); busy = false; }); });
+  const l0 = prep(); run(l0, 200, 200, true, () => { l0.forEach(o => { if (o.n.isConnected) o.n.nodeValue = o.raw; }); fn(); const list = prep(); list.forEach(o => { o.n.nodeValue = mixg(o.s, 0, false); }); run(list, 380, 340, false, () => { list.forEach(o => { o.n.nodeValue = o.s; }); busy = false; }); });
 }
-$('#lgs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || busy) return; const to = b.dataset.l; if (to === (LG ? 'en' : 'zh')) return;
-  const lb = $('#lgs'); lb.classList.toggle('b', to === 'en'); [...lb.querySelectorAll('button')].forEach(x => x.setAttribute('aria-pressed', x.dataset.l === to));
-  try { localStorage.setItem('daybreak.lang', to); } catch (e0) {} window.DAYBREAK_LANG = to; document.documentElement.lang = to === 'en' ? 'en' : 'zh-Hant';
-  if (/[?&]lang=/.test(location.search)) try { history.replaceState(null, '', location.pathname + '?lang=' + to + location.hash); } catch (e1) {}
-  scramble(() => { LG = to === 'en' ? 1 : 0; paintLang(); }); });
+const hansLoad = () => window.DaybreakHans ? Promise.resolve() : new Promise((ok, no) => { const sc = document.createElement('script'); sc.src = window.DAYBREAK_HANS; sc.onload = () => window.DaybreakHans ? ok() : no(); sc.onerror = no; document.head.appendChild(sc); });
+$('#lgs').addEventListener('click', e => { const b = e.target.closest('button'); if (!b || busy) return; const to = b.dataset.l; if (to === (LG ? 'en' : HZ ? 'hans' : 'zh')) return;
+  const go = () => { lgSync(to);
+    try { localStorage.setItem('daybreak.lang', to); } catch (e0) {} window.DAYBREAK_LANG = to; document.documentElement.lang = { en: 'en', hans: 'zh-Hans' }[to] || 'zh-Hant';
+    if (/[?&]lang=/.test(location.search)) try { history.replaceState(null, '', location.pathname + '?lang=' + to + location.hash); } catch (e1) {}
+    scramble(() => { const H = window.DaybreakHans; HZ = to === 'hans'; if (H) { if (HZ) H.on(); else H.off(); } LG = to === 'en' ? 1 : 0; paintLang(); }); };
+  if (to === 'hans' && !window.DaybreakHans) { b.classList.add('busy'); hansLoad().then(() => { b.classList.toggle('busy', false); go(); }, () => { b.classList.toggle('busy', false); lgSync(LG ? 'en' : HZ ? 'hans' : 'zh'); }); } else go(); });
 /* 一次手勢走一段（2026-11-20，使用者：「不容易磁吸固定到可以激活動畫的位置，有的時候會滑不到位，動畫不會開始，有的時候不小心滑過，動畫沒看到就過了」）
    CSS 的強制吸附試過：小幅度滑動會被吸回原段，反而更滑不到位，所以改成 JS 分頁：
    滾輪、觸控、鍵盤、進度點都是「往那個方向走一段」，平順移到那一段的動畫位置（和 sp() 同一個公式，s 剛好是整數）；

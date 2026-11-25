@@ -39,13 +39,16 @@ jobs:
           node --check data/next.js
           for f in data/next-*.js; do node --check "$f"; done   # 2026-11-15 各頁的卡片拆成獨立檔
           node --check data/intro.js   # 2026-11-19 介紹頁的資料
+          node --check assets/hans.js   # 2026-11-25 簡體轉換器（兩頁選「简」時載入）
           python3 -c "import re;s=open('index.html',encoding='utf-8').read();assert re.search(r'\"data/intro.js\?v=[0-9a-f]{10}',s) and 'daybreak.seen' in s,'根目錄 index.html 不是介紹頁（請執行 python3 pipeline/intro/build.py）'"
           python3 -c "import json,glob;[json.load(open(f)) for f in glob.glob('data/*.json')+['manifest.webmanifest']]"
           # 2026-11-20 GEO：兩頁都要有給爬蟲的文字版和結構化資料，llms.txt、latest*.md 要在（pipeline/next/geo.py）
           python3 -c "import json,re,os;[(lambda s,f:(re.search(r'<main id=\"(oc|seo)-static\">',s) or exit(f+' 沒有文字版')) and [json.loads(m) for m in re.findall(r'<script type=\"application/ld\+json\">(.*?)</script>',s)] or exit(f+' 沒有結構化資料'))(open(f,encoding='utf-8').read(),f) for f in ('app/index.html','index.html')];[os.path.getsize(f)>500 or exit(f+' 太小') for f in ('llms.txt','latest.md','latest.en.md')]"
           # 2026-11-20 GEO 第二批：每張圖、每天簡報的頁面產生得出來（部署時才寫，這裡寫到暫存資料夾檢查）
           python3 -m pip install --quiet --break-system-packages opencc-python-reimplemented==0.1.7   # 2026-11-25 主題頁簡體版
-          mkdir -p /tmp/geo && cp sitemap.xml /tmp/geo/ && python3 pipeline/next/pages.py --out /tmp/geo && test -s /tmp/geo/charts/dawn/index.html && test -s /tmp/geo/en/charts/index.html && test -s /tmp/geo/brief/index.html && test -s /tmp/geo/zh-hans/bitcoin-cycle/index.html && test -s /tmp/geo/en/bitcoin-cycle/index.html && test "$(grep -c '<url>' /tmp/geo/sitemap.xml)" -gt 200
+          # 2026-11-25 assets/hans.js 要和 pipeline/next/hans.py（字典調整、TERMS）同一版：改了 hans.py 忘了重產就擋下來
+          python3 pipeline/next/hans.py --js && git diff --exit-code --stat assets/hans.js || { echo '::error::assets/hans.js 不是最新，請執行 python3 pipeline/next/hans.py --js 再提交'; exit 1; }
+          mkdir -p /tmp/geo && cp sitemap.xml /tmp/geo/ && python3 pipeline/next/pages.py --out /tmp/geo && test -s /tmp/geo/charts/dawn/index.html && test -s /tmp/geo/en/charts/index.html && test -s /tmp/geo/brief/index.html && test -s /tmp/geo/zh-hans/bitcoin-cycle/index.html && test -s /tmp/geo/en/bitcoin-cycle/index.html && test "$(grep -c '<url>' /tmp/geo/sitemap.xml)" -gt 200 && test -s /tmp/geo/zh-hans/charts/dawn/index.html && test -s /tmp/geo/zh-hans/brief/index.html && test -s /tmp/geo/zh-hans/feed.xml   # 2026-11-25 單頁、簡報、feed 的簡體版
       - name: Playwright browser cache
         id: pw
         uses: actions/cache@v4

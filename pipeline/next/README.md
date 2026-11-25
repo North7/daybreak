@@ -50,6 +50,16 @@ python3 pipeline/next/build.py
 
 中文版每張圖的圖名下面有一行英文名（`.ol-e`），就是這張圖資料裡的 `en`；英文版不變。由 `page.html` 的 `enName(c)` 決定要不要加：中英文同名的不加、代號是 `q_`／`t_`／`x_` 開頭的（「今天」頁文字卡片、出場規則卡片）不加、英文尾巴的括號中文名已經有了（URPD）就拿掉。段落標題、頁名、清單、地圖小格、內文都維持中文。新加的圖只要照常填 `zh`／`en` 就會有。
 
+### 簡體中文（2026-11-25）
+
+右上角語言切換是三段「繁／简／EN」（`#oc-lg`，介紹頁是 `#lgs`，同一顆滑塊、同一個點字動畫）。簡體不是另一份文案：
+- 頁面照繁體畫（`lang` 仍是 `'zh'`，另有 `hz`），選了简就載入 `assets/hans.js`（約 46 KB，gzip 27 KB），在瀏覽器裡把畫面上的字、title／aria-label 這類屬性、canvas 上畫的字轉成簡體，之後新畫上去的也轉（MutationObserver）；切回繁體或英文時換回原本的字。中文字型換成 Noto Sans SC（把它的字型檔登記成「Noto Sans TC」，CSS 不用改）。
+- 轉法是 OpenCC 的 tw2sp（台灣正體 → 大陸簡體，含用詞），再套 `hans.py` 的金融用詞表 `TERMS`（聯準會→美联储……）。OpenCC 的台灣→大陸用詞表是給電腦軟體用的，`hans.py` 的 `DROP`／`TWO` 把在這裡意思不同的詞拿掉或改掉（「價格線上」不能變「价格在线」、「指標」不能變「指针」）。`assets/hans.js` 的演算法逐行照 Python 版移植，結果和部署時產生的簡體單頁一字不差。
+- 改了 `hans.py`（TERMS、DROP、TWO）或 `hans_rt.js` 要重產：`python3 pipeline/next/hans.py --js`，再跑 `build.py`（兩頁的 `hans.js?v=` 由 build 換成檔案的雜湊）。檢查流程會重產一次，和提交的不一樣就擋下來。`python3 pipeline/next/hans.py --check` 列出網站上用到的台灣用語各轉成什麼。
+- 網址：`?lang=hans`（也收 `zh-hans`、`zh-cn`、`sc`），和 `?lang=zh／en` 一樣只管這一次；選過的記在 `daybreak.lang = 'hans'`。沒選過時，瀏覽器是 zh-CN／zh-SG／zh-Hans 的人預設簡體。
+- 給搜尋引擎的靜態頁（`pages.py`，部署時寫）：每張圖、索引、每日簡報、主題頁都有 `zh-hans/…` 一份，`zh-hans/feed.xml`、`latest.zh-hans.md`，三個語言互標 hreflang，sitemap 也有。
+- 不轉的：`<script>`、`<style>`、輸入框、標了 `data-nohans` 的元素；分享圖（`share_card.py`）、運營截圖（`next_shot.py`）照舊只有繁體和英文。
+
 ## 注意
 
 - 這裡的 `site_data.py` 和 `pipeline/site_data.py` 同名但無關；`build.py` 會先找這個資料夾裡的模組。

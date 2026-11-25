@@ -71,5 +71,8 @@ open(D_('intro.js'), 'w', encoding='utf-8').write(js)
 ver = hashlib.sha1(js.encode('utf-8')).hexdigest()[:10]
 page = open(os.path.join(HERE, 'page.html'), encoding='utf-8').read()
 assert page.count('data/intro.js?v=__V__') == 1
-open(os.path.join(REPO, 'index.html'), 'w', encoding='utf-8').write(page.replace('data/intro.js?v=__V__', 'data/intro.js?v=' + ver))
+assert page.count('hans.js?v=__HV__') == 1   # 2026-11-25 簡體轉換器（assets/hans.js）的版本號
+try: hv = hashlib.sha1(open(os.path.join(REPO, 'assets', 'hans.js'), 'rb').read()).hexdigest()[:10]
+except Exception: hv = 'x'
+open(os.path.join(REPO, 'index.html'), 'w', encoding='utf-8').write(page.replace('data/intro.js?v=__V__', 'data/intro.js?v=' + ver).replace('hans.js?v=__HV__', 'hans.js?v=' + hv))
 print('wrote data/intro.js', len(js), 'bytes;', len(CH), 'charts; index.html v=' + ver)
