@@ -1,16 +1,16 @@
 {
- "date": "2026-11-23",
+ "date": "2026-11-24",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/agepl",
-   "chart": "data/picks/onchain-agepl.png",
-   "chart_en": "data/picks/onchain-agepl-en.png",
+   "id": "onchain/lthloss",
+   "chart": "data/picks/onchain-lthloss.png",
+   "chart_en": "data/picks/onchain-lthloss-en.png",
    "name": {
-    "zh": "依持有時間的實現獲利／虧損",
-    "en": "Realized profit/loss by holding age"
+    "zh": "長期持有者虧損比例",
+    "en": "Long-term holders in loss"
    },
-   "link": "https://daybreak.aronlab.dev/app/?k=agepl"
+   "link": "https://daybreak.aronlab.dev/app/?k=lthloss"
   }
  ]
 }
