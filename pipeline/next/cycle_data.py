@@ -360,6 +360,57 @@ def build(L, N, E, dn, X):
              'CVDD was %s a year ago and is %s now, %s in a year. The longer price moves sideways, the higher the same distance sits: a bottom need not reach today\'s numbers.' % (Uc(cq['v365']), Uc(cq['v']), SGc(cq['grow'])))],
             '收盤高出 CVDD %s；過去四次熊底最近時高出 %s，中位數換算今天約 %s。' % (P1(cq['prem']), rg, Uc(cq['at_med'])),
             'The close is %s above CVDD; past bear lows came within %s, and the median on today\'s CVDD is about %s.' % (P1(cq['prem']), rg, Uc(cq['at_med'])))
+    # ── 2026-11-25 VDD 倍數（pipeline/bv_more.py 第 10 項；使用者傳了 Checkonchain 那張加註「底背离」的圖，看過回測後說「加成新卡」）──
+    #   上格價格，下格倍數（對數），熱度分區照原圖；底背離放寬版標在價格上、照一年後的結果上色，嚴格版（倍數翻倍）圈在倍數上；照實寫放寬版和隨便一天差不多
+    vq = (o.get('bvx') or {}).get('vddm')
+    if vq and len(vq.get('rows') or []) > 300:
+        from say_data import own
+        N2 = lambda v: '%.2f' % v; SGv = lambda v: ('+%d%%' % v) if v >= 0 else ('−%d%%' % -v); YM = lambda d_: d_[:7].replace('-', '/')
+        ZN = lambda v: ('冷', 'cold') if v < .75 else ('涼', 'cool') if v < 1.4 else ('溫', 'warm') if v < 2.9 else ('熱', 'hot')
+        vs, vl, bs, bl, bb = vq['strict'], vq['loose'], vq['bs'], vq['bl'], vq['base']; bvd = o['bvx']['date']
+        ecol = lambda e: 'c4' if e['r365'] is None else 'up' if e['r365'] > 0 else 'dn'
+        fails = [e for e in vl if e['r365'] is not None and e['r365'] <= 0]; lf = fails[-1] if fails else None
+        dv = vq['div']; st = 2 if dv is not None and dv >= 2 else 1 if dv is not None and dv >= 1.5 else 0
+        X['vddm'] = dict(k='vddm', zh='VDD 倍數：放久的幣動得多不多', en='VDD Multiple: are long-held coins moving',
+          hz='VDD 倍數（30 日 ÷ 365 日）', he='VDD Multiple (30-day ÷ 365-day)', f='n2', log=1, p=2, npc=1, hero=0, rng=0, rows=vq['rows'],
+          ser=[ser(1, zh='VDD 倍數', en='VDD Multiple', col='c5', w=1.6)],
+          zones=[dict(lo=None, hi=.75, col='c3', zh='冷：低於 0.75', en='Cold: below 0.75', nz='冷區 0.75', ne='the 0.75 cold line'), dict(lo=1.4, hi=2.9, col='c5', zh='溫：1.4–2.9', en='Warm: 1.4–2.9', nz='溫區 1.4', ne='the 1.4 warm line'), dict(lo=2.9, hi=None, col='ac', zh='熱：高於 2.9', en='Hot: above 2.9', nz='熱區 2.9', ne='the 2.9 hot line')],
+          refs=[dict(v=1, col='k2', zh='一年平均', en='1-year average')],
+          marks=[dict(d=e['dn'], v=e['px'], on='p', col=ecol(e), up=0, zh='' if e['r365'] is None else '一年 ' + SGv(e['r365']), en='' if e['r365'] is None else '1y ' + SGv(e['r365'])) for e in vl]
+                + [dict(d=e['dn'], v=e['m'], col='ink', up=1, zh='×%.1f' % e['x'], en='×%.1f' % e['x']) for e in vs],
+          leg=[['up', '底背離（放寬版）：一年後漲', 'Divergence (loose): up a year later', 'ring'], ['dn', '底背離（放寬版）：一年後跌', 'Divergence (loose): down a year later', 'ring'],
+               ['c4', '還不到一年，不知道是哪一種', 'Under a year, outcome unknown', 'ring'], ['ink', '嚴格版：倍數到 60 天前的 2 倍以上', 'Strict: multiple at 2× its level 60 days earlier', 'ring']],
+          src='Bitview · %d/%d' % (int(bvd[5:7]), int(bvd[8:10])), srce='Bitview · ' + bvd[5:].replace('-', '/'),
+          dz='VDD（價值幣天銷毀）：每天被移動的幣「放了幾天 × 當天價格」。倍數是它的 30 日平均 ÷ 365 日平均，高於 1 代表最近一個月放久的幣動得比過去一年平常多。熱度分區照 Checkonchain 原圖（2.9／1.4／0.75）。'
+             '底背離：收盤在 60 日低點 3%% 以內、比 60 天前跌 10%% 以上，倍數卻升到 60 天前的 1.5 倍以上（放寬版，圓圈畫在價格上，照一年後漲跌上色）或 2 倍以上（嚴格版，圈在倍數上），前後 60 天只算一次。'
+             '回測（%s 年起）：嚴格版 %d 次，一年後 %d 次漲；放寬版滿一年的 %d 次，%d 次漲、中位數 %s，同期隨便一天一年後漲的機率 %d%%、中位數 %s，差不多。'
+             '倍數升高只代表放得久、價值高的幣在移動，可能是長期持有者認賠投降，也可能是還在出貨，換錢包和交易所整理冷錢包也算。幣天數用 Bitview，和 Checkonchain 近年差 5%% 上下、早年差得多。只作讀值。'
+             % (vq['since'][:4], bs['n'], bs['up'], bl['n'], bl['up'], SGv(bl['med']), bb['up'], SGv(bb['med'])),
+          de='VDD (value-days destroyed): each day\'s coins moved, weighted by how long they sat and by that day\'s price. The multiple is its 30-day average ÷ its 365-day average; above 1 means long-held coins moved more this month than in a usual day of the past year. Heat bands follow the Checkonchain original (2.9 / 1.4 / 0.75). '
+             'Bottom divergence: the close within 3%% of its 60-day low and down 10%% or more on 60 days earlier, while the multiple rose to 1.5× its level 60 days earlier (loose; circles on price, coloured by the move a year later) or 2× (strict; circled on the multiple); one count per 60 days. '
+             'Backtest since %s: the strict version fired %d times, %d up a year later; the loose version %d times with a full year, %d up, median %s, against %d%% up and a %s median for any day, about the same. '
+             'A rising multiple only means old, high-value coins are moving: long-term holders capitulating or still distributing, wallet reshuffles and exchange cold-storage moves included. Coin-days from Bitview, within about 5%% of Checkonchain in recent years and further apart early on. A reading only.'
+             % (vq['since'][:4], bs['n'], bs['up'], bl['n'], bl['up'], SGv(bl['med']), bb['up'], SGv(bb['med'])))
+        hz_ = ('價格 60 天跌了 %d%%，VDD 倍數反而升到 60 天前的 %.2f 倍：%s' % (abs(vq['chg60']), vq['x60'], '嚴格版的底背離成立' if st == 2 else '放寬版的底背離成立，嚴格版（2 倍）還沒到' if st == 1 else '還不算底背離')) if vq['chg60'] < 0 and vq['x60'] > 1 else \
+              ('VDD 倍數 %s，60 天前 %s；價格 60 天 %s，沒有底背離' % (N2(vq['v']), N2(vq['v60']), SGv(vq['chg60'])))
+        he_ = ('Price fell %d%% in 60 days while the VDD Multiple rose to %.2f× its level then: %s' % (abs(vq['chg60']), vq['x60'], 'the strict divergence is on' if st == 2 else 'the loose divergence is on, the strict one (2×) is not' if st == 1 else 'not a divergence yet')) if vq['chg60'] < 0 and vq['x60'] > 1 else \
+              ('VDD Multiple %s, %s 60 days ago; price %s over 60 days, no bottom divergence' % (N2(vq['v']), N2(vq['v60']), SGv(vq['chg60'])))
+        X['vddm']['say'] = own([
+            ('底背離', 'Bottom divergence', '嚴格版成立' if st == 2 else '放寬版成立' if st == 1 else '沒有', 'Strict, on' if st == 2 else 'Loose, on' if st == 1 else 'None', 'up' if st == 2 else 'neu',
+             hz_ + '。', he_ + '.'),
+            ('VDD 倍數', 'VDD Multiple', N2(vq['v']), N2(vq['v']), 'neu',
+             '%s（%s區），30 天前 %s、60 天前 %s；%s 年以來 %s 的日子比現在低。' % (N2(vq['v']), ZN(vq['v'])[0], N2(vq['v30']), N2(vq['v60']), vq['since'][:4], '%.1f%%' % vq['pct']),
+             '%s (%s), against %s 30 days ago and %s 60 days ago; since %s, %s of days were lower.' % (N2(vq['v']), ZN(vq['v'])[1], N2(vq['v30']), N2(vq['v60']), vq['since'][:4], '%.1f%%' % vq['pct'])),
+            ('嚴格版', 'Strict version', '%d 次裡 %d 次一年後漲' % (bs['n'], bs['up']), '%d of %d up a year on' % (bs['up'], bs['n']), 'neu',
+             '倍數到 60 天前 2 倍以上：%s，都在熊底附近，但只有 %d 次。' % ('、'.join('%s（×%.1f，一年後 %s）' % (YM(e['d']), e['x'], SGv(e['r365'])) if e['r365'] is not None else '%s（×%.1f，還沒滿一年）' % (YM(e['d']), e['x']) for e in vs), len(vs)),
+             'Multiple at 2× or more: %s, all near bear lows, but only %d cases.' % (', '.join('%s (×%.1f, %s a year on)' % (e['d'][:7], e['x'], SGv(e['r365'])) if e['r365'] is not None else '%s (×%.1f, under a year ago)' % (e['d'][:7], e['x']) for e in vs), len(vs))),
+            ('放寬版', 'Loose version', '%d 次裡 %d 次一年後漲' % (bl['n'], bl['up']), '%d of %d up a year on' % (bl['up'], bl['n']), 'neu',
+             '倍數到 1.5 倍以上：滿一年的 %d 次，%d 次漲、中位數 %s；隨便一天一年後漲的機率 %d%%、中位數 %s，差不多。%s' % (bl['n'], bl['up'], SGv(bl['med']), bb['up'], SGv(bb['med']), ('最近一次跌的是 %s，之後一年 %s、一年內最多跌 %d%%。' % (YM(lf['d']), SGv(lf['r365']), abs(lf['worst']))) if lf else ''),
+             'At 1.5× or more: %d with a full year, %d up, median %s; any day: %d%% up, median %s, about the same.%s' % (bl['n'], bl['up'], SGv(bl['med']), bb['up'], SGv(bb['med']), (' The latest miss was %s: %s a year on, down as much as %d%% within it.' % (lf['d'][:7], SGv(lf['r365']), abs(lf['worst']))) if lf else ''))],
+            ('價格 60 天跌 %d%%、VDD 倍數升到 60 天前的 %.2f 倍：%s' % (abs(vq['chg60']), vq['x60'], '嚴格版底背離成立，過去 %d 次都在熊底，但只有 %d 次。' % (bs['n'], bs['n']) if st == 2 else '放寬版底背離成立，但這一版過去和隨便一天差不多；嚴格版（2 倍）還沒到。')) if st else
+            'VDD 倍數 %s（%s區），沒有底背離；嚴格版過去 %d 次都在熊底。' % (N2(vq['v']), ZN(vq['v'])[0], bs['n']),
+            ('Price is down %d%% in 60 days while the VDD Multiple is %.2f× its level then: %s' % (abs(vq['chg60']), vq['x60'], 'the strict divergence is on; all %d past cases were at bear lows, but there are only %d.' % (bs['n'], bs['n']) if st == 2 else 'the loose divergence is on, though it has done no better than any day; the strict one (2×) is not.')) if st else
+            'VDD Multiple %s (%s), no bottom divergence; all %d strict cases were at bear lows.' % (N2(vq['v']), ZN(vq['v'])[1], bs['n']))
     # ── 和歷史比 ──
     cc = cy['cycle_cmp']; CCOL = ['k2', 'c3', 'c4', 'ac']; NC = len(cy['cycle_cmp']['cycles'])
     X['cyccmp'] = dict(k='cyccmp', zh='和前幾輪比：頂部之後', en='Versus past cycles: after the top', hz='現在比這一輪頂部', he='Now, versus this cycle\'s top', hs=dict(v=(cc['cycles'][-1]['rows'][-1][1] - 1) * 100, f='pct1'),
@@ -417,7 +468,7 @@ def build(L, N, E, dn, X):
     G = [grp('現在的階段', 'Where we are', '熊市、過渡還是牛市，偏多還是偏空', 'Bear, transition or bull; leaning long or short', ['dawn', 'dawnc', 'stage', 'regime', 'regc']),
          grp('估值冷熱', 'Valuation heat', '和過去比，現在算貴還是便宜', 'Rich or cheap against history', ['avgd', 'avgdc', 'hnupl', 'rup', 'aviv', 'rrisk', 'pl', 'p6', 'p6v']),
          grp('頂部訊號', 'Top signals', '離頂部有多近', 'How close to a top', ['p20', 'radar', 'radarv', 'pi', 'tm', 'tmh']),
-         grp('底部訊號', 'Bottom signals', '過去的底部長什麼樣，現在像不像', 'What past bottoms looked like, and whether this resembles one', [k_ for k_ in ['lthloss', 'npl365', 'psx', 'cvdd', 'agecost', 'hashr'] if k_ not in ('psx', 'cvdd') or k_ in X]),
+         grp('底部訊號', 'Bottom signals', '過去的底部長什麼樣，現在像不像', 'What past bottoms looked like, and whether this resembles one', [k_ for k_ in ['lthloss', 'npl365', 'psx', 'cvdd', 'vddm', 'agecost', 'hashr'] if k_ not in ('psx', 'cvdd', 'vddm') or k_ in X]),
          grp('和歷史比', 'Against history', '和前幾輪、和模型比', 'Against past cycles and models', ['cyccmp', 'dd', 'capeff', 'path', 'long', 'mon'])]
     s1 = dw['stats'][k] if k < len(dw['stats']) else {}
     hvs = [dn(h) for h in cy['halvings']] + [dn(cy['next_halving_est'])]
