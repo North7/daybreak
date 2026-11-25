@@ -59,7 +59,35 @@ def build(L, N, E, dn, pm):
     SN = dict(open=('追蹤中', 'Open', 'c5', 'pend'), confirmed=('成立', 'Held', 'up', 'ok'), refuted=('不成立', 'Failed', 'dn', 'close'))
     c_fol = dict(k='t_fol', zh='之前的發現，現在怎樣', en='Earlier findings, checked', nofx=1, dz='前幾天記下來的發現，今天回頭看有沒有成立。', de='Findings recorded on earlier days, checked again today.',
       list=dict(rows=[row(x.get('title') or '', en(FUE, i, 'title', x.get('title') or ''), v=SN.get(x.get('status'), SN['open'])[0], ve=SN.get(x.get('status'), SN['open'])[1], col=SN.get(x.get('status'), SN['open'])[2], ic=SN.get(x.get('status'), SN['open'])[3], nz=x.get('say') or '', ne=en(FUE, i, 'say', x.get('say') or '')) for i, x in enumerate(FU)]))
-    G = [dict(zh='六個問題各一句', en='The six questions, one line each', sz='每個問題今天的結論，點進去看證據', se="Today's verdict on each question; open the page for the evidence", charts=qc),
+    # ── 跟昨天比（2026-11-25，讀者建議「標出跟昨天比的變化，不只是水位」；deltas.py）：幾個關鍵讀數的日變化，變化大的排前面，每個都說平常算不算大 ──
+    import deltas
+    DL = deltas.build(L); c_dlt = None
+    if DL and DL['rows']:
+        MI = lambda v: v.replace('-', '−')
+        def dv(x):   # 右邊的變化量
+            if x.get('flow'): return MI('%+.1f 億美元' % (x['t'] / 100)), MI('%+.0fM USD' % x['t'])
+            if x['unit'] == '%': return MI('%+.1f%%' % x['ch']), MI('%+.1f%%' % x['ch'])
+            if x['unit'] == 'pt': return MI('%+.3f 個百分點' % x['ch'] if abs(x['ch']) < .01 else '%+.2f 個百分點' % x['ch']), MI('%+.3f pt' % x['ch'] if abs(x['ch']) < .01 else '%+.2f pt' % x['ch'])
+            return ('持平', 'Flat') if not x['ch'] else (MI('%+d' % x['ch']), MI('%+d' % x['ch']))
+        LV = [('變化平常', 'An ordinary move'), ('變化偏大', 'A larger move than usual'), ('變化很大', 'A big move')]
+        def dz(x):
+            q = '' if x['p'] is None else ('（過去一年只有 %d%% 的日子動得比這多）' % (100 - x['p']) if x['lvl'] else '')
+            qe = '' if x['p'] is None else (' (only %d%% of days in the past year moved more)' % (100 - x['p']) if x['lvl'] else '')
+            if x.get('flow'):
+                yz = ('淨流入' if x['y'] > 0 else '淨流出') + ' %.1f 億美元' % (abs(x['y']) / 100); tz = ('淨流入' if x['t'] > 0 else '淨流出') + ' %.1f 億美元' % (abs(x['t']) / 100)
+                tr = ('流出變少' if abs(x['t']) < abs(x['y']) else '流出變多') if x['t'] < 0 and x['y'] < 0 else ('流入變多' if x['t'] > x['y'] else '流入變少') if x['t'] > 0 and x['y'] > 0 else ('從流出轉成流入' if x['t'] > 0 else '從流入轉成流出')
+                ye = ('in' if x['y'] > 0 else 'out') + 'flow of $%.0fM' % abs(x['y']); te = ('in' if x['t'] > 0 else 'out') + 'flow of $%.0fM' % abs(x['t'])
+                tre = ('smaller outflow' if abs(x['t']) < abs(x['y']) else 'bigger outflow') if x['t'] < 0 and x['y'] < 0 else ('bigger inflow' if x['t'] > x['y'] else 'smaller inflow') if x['t'] > 0 and x['y'] > 0 else ('flipped to inflow' if x['t'] > 0 else 'flipped to outflow')
+                return ('%s %s，前一天%s：%s。%s%s。' % (md(x['d']), tz, yz, tr, LV[x['lvl']][0], q)), ('%s: net %s, after a net %s the day before: %s. %s%s.' % (md(x['d']), te, ye, tre, LV[x['lvl']][1], qe))
+            if not x['lvl']: return ('昨天 %s → 今天 %s，變化平常。' % (MI(x['fz'](x['y'])), MI(x['fz'](x['t'])))), ('%s yesterday, %s today: an ordinary move.' % (MI(x['fe'](x['y'])), MI(x['fe'](x['t']))))   # 平常的小波動不替它講意思，免得把雜訊講成訊號
+            return ('昨天 %s → 今天 %s：%s。%s%s。' % (MI(x['fz'](x['y'])), MI(x['fz'](x['t'])), x['mz'], LV[x['lvl']][0], q)), ('%s yesterday, %s today: %s. %s%s.' % (MI(x['fe'](x['y'])), MI(x['fe'](x['t'])), x['me'], LV[x['lvl']][1], qe))
+        big = [x for x in DL['rows'] if x['lvl']]
+        c_dlt = dict(k='t_dlt', zh='跟昨天比', en='Since yesterday', nofx=1, wide=1,
+          dz='幾個關鍵讀數今天和前一天（%s）比變了多少，變化大的排前面。「平常算不算大」是和這個讀數過去一年每天的變化比；只有變化偏大的才上色，平常的小波動不用太在意。%s' % (md(DL['d0']), ('今天動得比平常大的是' + '、'.join(x['zh'].split('（')[0] for x in big) + '。') if big else '今天沒有哪一項動得比平常大。'),
+          de='How much a few key readings moved since the previous day (%s), biggest moves first. "Usual or not" compares today\'s move with every day of the past year; only larger-than-usual moves are coloured, ordinary wiggles are not worth much attention. %s' % (md(DL['d0']), ('Moving more than usual today: ' + ', '.join(x['en'].split(' (')[0] for x in big) + '.') if big else 'Nothing moved more than usual today.'),
+          list=dict(rows=[row(x['zh'], x['en'], v=dv(x)[0], ve=dv(x)[1], col='ac' if x['lvl'] == 2 else 'c5' if x['lvl'] == 1 else 'k2', nz=dz(x)[0], ne=dz(x)[1]) for x in DL['rows']]))
+    G = ([dict(zh='跟昨天比', en='Since yesterday', sz='幾個關鍵讀數今天變了多少，變化大的排前面', se='How key readings moved since yesterday, biggest first', charts=[c_dlt])] if c_dlt else []) + \
+        [dict(zh='六個問題各一句', en='The six questions, one line each', sz='每個問題今天的結論，點進去看證據', se="Today's verdict on each question; open the page for the evidence", charts=qc),
          dict(zh='今天要做什麼', en='What to do today', sz='行動、變化、接下來的日子', se='Actions, changes and dates ahead', charts=[c_act, c_chg, c_evt]),
          dict(zh='消息', en='News', sz='新聞、研報、今天的發現', se="News, research and today's findings", charts=[c_news, c_res, c_find, c_fol])]
     st = N.get('stance') or {}; ste = E.get('stance') or {}; W = N.get('watch') or []; WE = E.get('watch') or []
