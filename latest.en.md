@@ -1,6 +1,6 @@
 # Daybreak · Nov 24, 2026 close edition, No.50
 
-> Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading 136 original and public indicators across on-chain data, price structure, derivatives, fund flows and macro sentiment to answer six questions: Where we are in the cycle; Which cost bases and levels price is standing on; Has the selling been worked through; Who is buying and where the money comes from; How crowded leverage and sentiment are; So what do I do. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.
+> Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading 137 original and public indicators across on-chain data, price structure, derivatives, fund flows and macro sentiment to answer six questions: Where we are in the cycle; Which cost bases and levels price is standing on; Has the selling been worked through; Who is buying and where the money comes from; How crowded leverage and sentiment are; So what do I do. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.
 
 Source: https://daybreak.aronlab.dev/app/?lang=en · by Aron · updated 2026-11-24
 
@@ -14,7 +14,7 @@ Overall: Short-term bearish, spot sold while leverage stepped aside; long-term i
 
 BTC close $59,741 (-2.4%)
 
-136 charts. Today: 32 bullish, 46 bearish, 40 neutral, 18 reference charts without a lean.
+137 charts. Today: 32 bullish, 46 bearish, 40 neutral, 19 reference charts without a lean.
 
 ## Cycle: Where we are in the cycle
 
