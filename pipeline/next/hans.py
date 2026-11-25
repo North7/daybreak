@@ -20,7 +20,8 @@ try:
                 for _k in DROP: _m.pop(_k, None)
                 _m.update(TWO)
 except Exception as e:   # 沒裝套件：不出簡體版
-    print('hans: opencc not available, skipping zh-Hans pages:', e)
+    # 2026-11-25 印到 stderr：pages.py --img-list 的 stdout 要是純 JSON（chart-img.yml、daily.yml 會接著解析），沒裝 opencc 的執行機印到 stdout 會讓截圖壞掉
+    print("hans: opencc not available, skipping zh-Hans pages:", e, file=__import__("sys").stderr)
     _CC = None
 
 # 轉完之後再換的詞（左邊是 tw2sp 轉出來的樣子）。長的放前面，避免被短的先換掉
