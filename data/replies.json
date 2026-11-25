@@ -3056,6 +3056,29 @@
    "sources": "收盤在短期持有者成本帶 −1.65 個標準差、−2 標準差在 56,479 · notes.json 11/24 收盤版（edition 50） market（Bitview）。不答抄不抄",
    "note": "Grok 2205 #12。 1 萬粉以下不配圖。",
    "image": null
+  },
+  {
+   "n": 150,
+   "order": 150,
+   "kind": "followup",
+   "lang": "zh",
+   "style": "口語版",
+   "status": "send",
+   "mode": "reply",
+   "url": "https://x.com/Crypto_Alpha18/status/2125613518175285294",
+   "id": "2125613518175285294",
+   "author": "Crypto_Alpha18",
+   "name": "Crypto_Alpha18",
+   "followers": 640,
+   "posted": "2026-11-25T15:32:09Z",
+   "angle": "接話：他說 ETF 高成本籌碼撐著實現價、認賠會讓實現價下移",
+   "take": "誰認賠都會拉低實現價，ETF 要等贖回才動",
+   "summary": "他在我們週期指標長文底下：ETF 107 萬顆成本 7.9 萬、佔供給 5.3%，把實現價往上錨；這批認賠出場，5.31 萬會跟著往下移、目標線不是固定的；今晚 PCE 偏熱、穩定幣一個月少 172 億；建議先看 ETF 那批籌碼動不動",
+   "reply": "對，誰認賠都會把實現價往下拉，不只 ETF 那批\n只是 ETF 的幣要等贖回才會動，這個月流出那麼多，實現價一個月也才少了 1.6%",
+   "quote": "",
+   "sources": "實現市值 30 日變化 −1.63% · notes.json 11/24 收盤版 followups。不接他的 107 萬顆、7.9 萬、172 億",
+   "image": null,
+   "note": "使用者說有人回覆、要回。我們原創底下第 1 輪；他今天在別串回過我們（#75 已接）。"
   }
  ]
 }
