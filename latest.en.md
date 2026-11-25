@@ -133,7 +133,7 @@ Page: https://daybreak.aronlab.dev/en/charts/rrisk/
 
 ### Power law: Bitcoin's long-run trend price
 
-Bullish: Bitcoin is down to 0.41× its long-run trend price, below the line through past bear bottoms: historically a zone to buy in stages for the long run, though buyers may have to sit through more downside.
+Bullish: Bitcoin is down to 0.41× its long-run trend price, below the line through past bear bottoms: on this chart that is long-run bottom territory, though price can fall further inside it and stay there a long time.
 
 What it shows: What a power law is: plot Bitcoin's price since 2010 on a log chart and it keeps climbing along a curve that flattens over time. That curve is the power-law trend: roughly what Bitcoin is worth today if it keeps growing at its past pace, called the trend price here (each day fitted only on prices up to that day, so no hindsight). Price swings around it: bull-market tops reach several times the trend, bear-market bottoms fall to 0.24–0.48× of it. Place in the channel: past bear bottoms are joined into a bottom line and past bull tops into a top line; 0% is on the bottom line (below it also shows 0%) and 100% is at the top line, coloured from cool to hot in five bands. Multiple of trend: price divided by the trend price; 1× is exactly on trend. Caveats: the bottom and top lines join past lows and highs after the fact, and there are only four cycles. As Bitcoin grows its swings may shrink, and cheap can stay cheap for a long time.
 
