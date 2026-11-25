@@ -163,11 +163,14 @@ def rrisk(L):
     if r['pct4'] <= 10: return V('neu', '便宜，但過去結果不一', 'Cheap, mixed record', '低檔區之後一年 %d/%d 段上漲、中位數 %s，不比任一天好。' % (r['r365']['up'], r['r365']['n'], pc(r['r365']['med'])), 'After the low zone, %d of %d stretches were higher a year on, median %s: no better than any day.' % (r['r365']['up'], r['r365']['n'], pc(r['r365']['med'])), '離開低檔區', 'Leaving the low zone')
     if r['pct4'] >= 90: return V('down', '偏貴', 'Rich', '近 4 年最高 10%，歷來接近頂部。', 'In the top tenth of four years, as near past tops.', '回到中間', 'A return to the middle')
     return V('neu', '中間區段', 'Middle zone', '儲備風險在近 4 年的中間。', 'Reserve risk is in the middle of its four-year range.')
-def pl(L):
-    p = C(L)['powerlaw']; lo, hi = p['bottom_band']
-    if p['ratio'] <= hi: return V('up', '長期很便宜', 'Cheap on the long trend', '價格落在歷次底部的倍數帶（%.2f–%.2f 倍）。' % (lo, hi), 'Price sits in the band of past bottoms (%.2f–%.2f×).' % (lo, hi), '回到 0.7 倍以上', 'A move above 0.7×')
-    if p['ratio'] >= p['next_top_ratio'][0]: return V('down', '接近推估的頂部倍數', 'Near the projected top multiple', '倍數進入下一輪頂部的推估區。', 'The multiple is inside the projected range for the next top.', '回到推估區以下', 'A drop below that range')
-    return V('neu', '趨勢下方的中間', 'Below trend, mid-range', '比冪律合理價低，但不在底部帶。', 'Below fair value but outside the bottom band.')
+def pl(L):   # 2026-11-25 改成交易觀點（使用者：「給出可以指導交易的觀點」）；依據 pl_bt.py 的回測：倍數 0.45 以下買進，一年後過去都漲，但一年內最多再跌四成多
+    import pl_bt
+    p = C(L)['powerlaw']; lo, hi = p['bottom_band']; q = pl_bt.bt(L); low = round(p['fair'] * lo / 1000) * 1000
+    if p['ratio'] <= hi and q: return V('up', '長線分批買區', 'Long-run zone to buy in stages', '過去 %d 次跌到這個倍數，一年後都%s、中位數 %+d%%；但進場後最多還再跌 %d%%，所以分批買、留現金，不要一次買滿。' % (q['eps'], '漲' if q['up'] == q['n'] else '漲多跌少', q['med'], abs(q['worst'])),
+                                        'In the past %d episodes at this multiple, price was %s a year later, median %+d%%, but price fell up to another %d%% after entry: buy in stages and keep cash, rather than all at once.' % (q['eps'], 'up every time' if q['up'] == q['n'] else 'mostly up', q['med'], abs(q['worst'])),
+                                        '跌到趨勢價的 %.2f 倍（約 $%s，歷史最低倍數）以下，這條規律就被打破' % (lo, format(low, ',')), 'A fall below %.2f× of trend (about $%s, the lowest multiple on record) would break the pattern' % (lo, format(low, ',')))
+    if p['ratio'] >= p['next_top_ratio'][0]: return V('down', '長線分批獲利區', 'Long-run zone to take profit in stages', '倍數進入下一輪頂部的推估區；過去頂部都出現在趨勢價的好幾倍，而且一輪比一輪低。', 'The multiple is inside the projected range for the next top; past tops came at several times trend, each lower than the last.', '回到推估區以下', 'A drop below that range')
+    return V('neu', '不便宜也不貴', 'Neither cheap nor rich', '比趨勢價低，但還沒跌進歷次熊底的範圍；照這張圖不急著加碼也不急著賣。', 'Below trend but not yet in past bear-bottom territory: no rush to add or sell on this chart.', '跌進 %.2f 倍以下' % hi, 'A drop below %.2f×' % hi)
 def _top(name_z, name_e, hot, near, far_z, far_e, why_z, why_e):
     if hot: return V('down', '頂部跡象出現', 'Top signs are showing', why_z, why_e, '回到門檻以下', 'A drop back below the line')
     if near: return V('neu', '接近頂部門檻', 'Close to the top line', why_z, why_e, '跨過門檻', 'Crossing the line')
