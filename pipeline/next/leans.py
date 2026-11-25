@@ -128,41 +128,64 @@ def macro(L):
     return V('neu', '總經中性', 'Macro is neutral', '實質利率在中間，BTC 主要跟著美股走。', 'Real yields are middling; BTC mostly follows US stocks.')
 
 # ══ 週期 ══
-def dawn(L):
-    d = C(L)['dawn']; st = next(x for x in d['stats'] if x['stage'] == d['stage']); t = better(st['y1'], d['base'], gap=10)
-    nm = ['深夜', '入夜', '破曉', '白晝', '黃昏'][d['stage']]; ne = ['deep night', 'nightfall', 'daybreak', 'daylight', 'dusk'][d['stage']]
-    return V(t, '%s：%s' % (nm, {'up': '估值便宜', 'down': '估值偏貴', 'neu': '中間地帶'}[t]), '%s: %s' % (ne.capitalize(), {'up': 'cheap', 'down': 'rich', 'neu': 'middling'}[t]),
-             '過去這個階段之後一年中位數 %s，任一週 %s。' % (pc(st['y1']['med'], 0), pc(d['base']['med'], 0)), 'After this stage the one-year median was %s, versus %s for any week.' % (pc(st['y1']['med'], 0), pc(d['base']['med'], 0)), '熱度升到 45 以上（破曉）', 'Heat above 45 (daybreak)' if t == 'up' else 'A change of stage')
+def dawn(L):   # 2026-11-25 照 WRITING.md：標籤寫位置，理由寫過去這一段之後一年怎麼走（dawn.py 的回測），會改變看法寫離開這一段的條件
+    d = C(L)['dawn']; k = d['stage']; st = next(x for x in d['stats'] if x['stage'] == k); t = better(st['y1'], d['base'], gap=10); th = d['th']
+    nz = ['深夜', '入夜', '破曉', '白晝', '黃昏'][k]; ne = ['deep night', 'nightfall', 'daybreak', 'daylight', 'dusk'][k]
+    lz = ['週期的底部區', '下跌段，還沒到最便宜', '初升段，估值還偏低', '上升段，估值中上', '過熱段，接近頂部'][k]
+    le = ['Bottom of the cycle', 'Falling leg, not the cheapest yet', 'Early rise, valuations still low', 'Rising leg, valuations mid-to-high', 'Overheated, near a top'][k]
+    cz = ['熱度回到 %d 以上，就離開深夜' % th['cold'], '熱度跌到 %d 以下（深夜），或趨勢翻回往上（破曉）' % th['cold'], '趨勢翻成往下（入夜），或熱度升過 %d（白晝）' % th['mid'],
+          '熱度升到 %d（黃昏），或趨勢翻成往下（入夜）' % th['hot'], '熱度跌回 %d 以下' % th['hot']][k]
+    ce = ['Heat back above %d, leaving deep night' % th['cold'], 'Heat below %d (deep night), or the trend turning up (daybreak)' % th['cold'], 'The trend turning down (nightfall), or heat above %d (daylight)' % th['mid'],
+          'Heat reaching %d (dusk), or the trend turning down (nightfall)' % th['hot'], 'Heat back below %d' % th['hot']][k]
+    return V(t, lz, le, '2013 年以來落在%s的週，一年後 %d%% 比當時高、中位數 %s；隨便挑一週則是 %d%%、中位數 %s。只有三輪多的週期可比。' % (nz, st['y1']['up'], pc(st['y1']['med'], 0), d['base']['up'], pc(d['base']['med'], 0)),
+             'Of the weeks in %s since 2013, %d%% were higher a year later, median %s; for any week it was %d%%, median %s. Only about three cycles to compare.' % (ne, st['y1']['up'], pc(st['y1']['med'], 0), d['base']['up'], pc(d['base']['med'], 0)), cz, ce)
 def stage(L):
     S = C(L)['stage']; s = S['stage']; px = L['price']['bar']['c']; gap = (px / S['sma200'] - 1) * 100
     # 2026-11-20：牛市成立後鎖定，標籤反應慢。收盤跌回 200 日均線下時，標籤還是牛市但趨勢已經不支持，偏向改中性（原本一律偏多，和卡上的數字打架）
-    if s == '牛市' and gap < 0: return V('neu', '牛市標籤鎖定中', 'Bull label, locked', '牛市成立後鎖定，要在下降的 200 日均線下連 30 天才退回熊市，標籤反應慢；收盤已在均線下 %.0f%%，趨勢不支持偏多。' % -gap, 'Bull is locked once set and only reverts after 30 days under a falling 200-day MA, so the label is slow; the close is %.0f%% below the MA, so the trend no longer supports a bullish lean.' % -gap, '收盤站回 200 日均線之上', 'A close back above the 200-day MA')
-    if s == '牛市': return V('up', '牛市階段', 'Bull stage', '投降出現過、價格曾在上升的 200 日均線上站滿 30 天；跌在下降的均線下 30 天才退回熊市。', 'A capitulation happened and price held 30 days above a rising 200-day MA; it takes 30 days under a falling MA to revert.', '在下降的 200 日均線下 30 天', '30 days under a falling 200-day MA')
-    if s == '熊市': return V('down', '熊市階段', 'Bear stage', '還沒有投降加站上上升的 200 日均線。', 'No capitulation plus close above a rising 200-day MA yet.', '收盤站上上升的 200 日均線', 'A close above a rising 200-day MA')
-    return V('neu', '轉換期', 'Transition', '介於熊市和牛市之間。', 'Between bear and bull.', '站上均線 30 天或跌回 5 天', '30 days above or 5 below the average')
-def regime(L):
-    r = C(L)['regime']
-    return V('up' if r['value'] > 0 else 'down', '週線分數為%s' % ('正' if r['value'] > 0 else '負'), 'Weekly score is %s' % ('positive' if r['value'] > 0 else 'negative'), '六項合成分數 %s；連 4 週在另一邊才正式翻轉。' % ('%+.2f' % r['value']).replace('-', '−'), 'The six-input score is %s; it takes four weeks on the other side to flip.' % ('%+.2f' % r['value']).replace('-', '−'), '分數回到%s' % ('負值' if r['value'] > 0 else '正值'), 'The score crossing back')
-def hnupl(L):
-    s = O(L)['hnupl']['stage']
-    if s in ('cap', 'hope'): return V('up', '長期持有者獲利很薄', 'LTH profit is thin', '長期持有者的帳面獲利在歷來底部附近的區間。', 'Long-term holder paper profit is in the range seen near past bottoms.', '升到 0.5 以上', 'A rise above 0.5')
-    if s in ('belief', 'euph'): return V('down', '長期持有者獲利很厚', 'LTH profit is fat', '長期持有者的帳面獲利在歷來頂部附近的區間。', 'Long-term holder paper profit is in the range seen near past tops.', '回到 0.5 以下', 'A drop below 0.5')
-    return V('neu', '中間區段', 'Middle zone', '長期持有者在「樂觀／焦慮」區，不在底部也不在頂部。', 'Long-term holders sit in the optimism/anxiety zone: neither bottom nor top.', '跌破 0.25 或升破 0.5', 'Below 0.25 or above 0.5')
-def rup(L):
-    r = O(L)['rup']; n = r['near']
-    if r['value'] <= n['hi']: return V('up', '接近週期地板', 'Near the cycle floor', '近地板區之後一年 %d%% 較高（任一天 %d%%）；但 90 天內常再跌一段。' % (n['s365']['up'], n['b365']['up']), '%d%% were higher a year after the near-floor zone (any day: %d%%), though another drop within 90 days was common.' % (n['s365']['up'], n['b365']['up']), '升回 40% 以上', 'A move back above 40%')
-    if r['value'] >= 60: return V('down', '獲利很厚', 'Profits are fat', '未實現獲利佔市值 60% 以上，歷來接近頂部。', 'Paper profit above 60% of market cap has come near past tops.', '回到 50% 以下', 'A drop below 50%')
-    return V('neu', '中間區段', 'Middle zone', '離地板和頂部都還遠。', 'Far from both the floor and the top zone.')
-def aviv(L):
-    a = O(L)['aviv']
-    if a['value'] >= 1.5: return V('down', '活躍投資人獲利很厚', 'Active investors are well in profit', '1.5 倍以上歷來接近頂部。', 'Readings above 1.5 have come near past tops.', '回到 1.2 以下', 'A drop below 1.2')
-    if a['below']: return V('neu', '虧損，但不是買點', 'Underwater, not a buy signal', '低於 1 之後一年 %d/%d 次上漲，比任一天（%d%%）還差：熊市裡會在 1 以下待很久。' % (a['r365']['up'], a['r365']['n'], a['base365']['up']), 'After falling below 1, %d of %d were higher a year on, worse than any day (%d%%): bears can sit below 1 for long.' % (a['r365']['up'], a['r365']['n'], a['base365']['up']), '站回 1 以上', 'A move back above 1')
-    return V('up', '站在 1 以上', 'Above 1', '活躍投資人整體有獲利，趨勢在多方。', 'Active investors are in profit as a group: the trend is up.', '跌破 1', 'A drop below 1')
-def rrisk(L):
-    r = O(L)['rrisk']
-    if r['pct4'] <= 10: return V('neu', '便宜，但過去結果不一', 'Cheap, mixed record', '低檔區之後一年 %d/%d 段上漲、中位數 %s，不比任一天好。' % (r['r365']['up'], r['r365']['n'], pc(r['r365']['med'])), 'After the low zone, %d of %d stretches were higher a year on, median %s: no better than any day.' % (r['r365']['up'], r['r365']['n'], pc(r['r365']['med'])), '離開低檔區', 'Leaving the low zone')
-    if r['pct4'] >= 90: return V('down', '偏貴', 'Rich', '近 4 年最高 10%，歷來接近頂部。', 'In the top tenth of four years, as near past tops.', '回到中間', 'A return to the middle')
-    return V('neu', '中間區段', 'Middle zone', '儲備風險在近 4 年的中間。', 'Reserve risk is in the middle of its four-year range.')
+    if s == '牛市' and gap < 0: return V('neu', '牛市標籤還在，趨勢已轉弱', 'Bull label, weakening trend', '牛市成立後要在往下走的 200 日均線下連 30 天，才會退回熊市，所以標籤反應慢；收盤已經在均線下，趨勢不支持偏多。', 'Once set, bull only reverts after 30 days under a falling 200-day MA, so the label is slow; the close is already below the average, so the trend does not support a bullish lean.', '收盤站回 200 日均線之上，或在往下走的均線下待滿 30 天（退回熊市）', 'A close back above the 200-day MA, or 30 days under a falling one (back to bear)')
+    if s == '牛市': return V('up', '牛市，長期趨勢往上', 'Bull, long-run trend up', '投降出現過，價格也在往上走的 200 日均線上站滿了 30 天：長期趨勢往上。這張沒有回測，看的是規則本身。', 'A capitulation happened and price held 30 days above a rising 200-day MA: the long-run trend is up. There is no backtest here; it is the rule itself.', '在往下走的 200 日均線下連 30 天，就退回熊市', '30 days under a falling 200-day MA sends it back to bear')
+    if s == '熊市': return V('down', '熊市，長期趨勢往下', 'Bear, long-run trend down', '還沒同時看到投降、和收盤站上往上走的 200 日均線：長期趨勢還在往下。這張沒有回測，看的是規則本身。', 'There has not yet been both a capitulation and a close above a rising 200-day MA: the long-run trend is still down. No backtest; it is the rule itself.', '投降出現，收盤又站上往上走的 200 日均線', 'A capitulation plus a close above a rising 200-day MA')
+    return V('neu', '過渡期，兩邊都還沒確定', 'Transition, not settled either way', '從熊市往牛市走的半路：可能站穩成為牛市，也可能退回熊市。', 'Halfway from bear to bull: it can settle into bull or slip back to bear.', '站穩均線 30 天成為牛市；跌回 5 天退回熊市', '30 days above makes it bull; 5 below sends it back to bear')
+def regime(L):   # 理由用過去同方向翻轉之後一年的結果（regime.flips 的 r52）
+    r = C(L)['regime']; pos = r['value'] > 0; on = r['regime'] > 0
+    fl = [f for f in r['flips'] if f['dir'] == (1 if pos else -1) and f.get('r52') is not None]; ok = sum(1 for f in fl if (f['r52'] > 0) == pos)
+    lz = ('中期趨勢往上' if on else '中期趨勢在轉強，快翻多') if pos else ('中期趨勢在轉弱，快翻空' if on else '中期趨勢往下')
+    le = ('Medium-term trend up' if on else 'Strengthening, close to flipping long') if pos else ('Weakening, close to flipping short' if on else 'Medium-term trend down')
+    return V('up' if pos else 'down', lz, le, '過去分數翻成%s %d 次，%d 次一年後價格比當時%s；但翻轉要連 4 週才算，所以常晚幾週。' % ('多方' if pos else '空方', len(fl), ok, '高' if pos else '低'),
+             'The score has flipped %s %d times before; %d times price was %s a year later. A flip needs four weeks, so it often comes late.' % ('long' if pos else 'short', len(fl), ok, 'higher' if pos else 'lower'),
+             '分數跌回 0 以下' if pos else '分數回到 0 以上', 'The score back below 0' if pos else 'The score back above 0')
+def hnupl(L):   # 長期持有者的區間沒有回測，照位置；理由寫歷次頂和底的讀數
+    h = O(L)['hnupl']; s = h['stage']; tmin = min(x['value'] for x in h['tops'])
+    if s in ('cap', 'hope'): return V('up', '老手獲利很薄，接近底部區', 'Thin profits, near bottom territory', '長期持有者的帳面獲利，過去只在熊市後段和底部才這麼薄。這張沒有回測之後的漲跌，看的是位置。',
+                                      'Long-term holders\' paper profit has only been this thin late in bear markets and at bottoms. There is no backtest of what followed; this is about position.', '升到 0.25 以上，離開底部那一端', 'A rise above 0.25, leaving the bottom end')
+    if s in ('belief', 'euph'): return V('down', '老手獲利很厚，接近頂部區', 'Fat profits, near top territory', '過去四輪頂部，長期持有者 NUPL 都在 %.2f 以上，現在已在這個範圍。這張沒有回測之後的漲跌，看的是位置。' % tmin,
+                                         'At the past four tops long-term holder NUPL was %.2f or higher, and it is in that range now. No backtest of what followed; this is about position.' % tmin, '回到 0.5 以下', 'A drop below 0.5')
+    return V('neu', '中間，不在底也不在頂', 'Mid-range, neither bottom nor top', '長期持有者在「樂觀／焦慮」區：離歷次底部和頂部的讀數都還遠。', 'Long-term holders sit in the optimism/anxiety zone, far from both past bottom and top readings.', '跌破 0.25 或升破 0.5', 'Below 0.25 or above 0.5')
+def rup(L):   # 依據 oc_extra 的近地板區回測（near.waves）
+    r = O(L)['rup']; n = r['near']; wv = [w for w in n['waves'] if w.get('r365') is not None]; wu = sum(1 for w in wv if w['r365'] > 0)
+    if r['value'] <= n['hi']: return V('up', '週期地板附近，底部區', 'Near the cycle floor: bottom territory', '過去 %d 波跌到這一帶，一年後價格%s；但每一波進來後半年內都還再跌過一段：地板不等於最低點。' % (len(wv), '都比當時高' if wu == len(wv) else '有 %d 波比當時高' % wu),
+                                      'In the past %d waves into this zone price was %s a year later, but every wave fell further within six months: the floor is not the exact low.' % (len(wv), 'higher every time' if wu == len(wv) else 'higher in %d' % wu), '帳面獲利升回市值的 40% 以上，離開底部區', 'Paper profit back above 40% of market cap, leaving bottom territory')
+    tmin = min(x['value'] for x in r['tops'])
+    if r['value'] >= 60: return V('down', '帳面獲利很厚，接近頂部區', 'Fat paper profits, near top territory', '過去四輪頂部附近，帳面獲利都在市值的 %.0f%% 以上，現在已在這個範圍。' % tmin, 'Near the past four tops paper profit was %.0f%% of market cap or more, and it is in that range now.' % tmin, '回到 50% 以下', 'A drop below 50%')
+    return V('neu', '不在底部也不在頂部', 'Neither bottom nor top', '離 %.0f%% 的週期地板和過去頂部的水準都還遠。' % r['floor'], 'Far from both the %.0f%% cycle floor and past-top levels.' % r['floor'])
+def aviv(L):   # 依據跌破 1 之後一年的回測（aviv.r365）
+    a = O(L)['aviv']; r = a['r365']; b = a['base365']
+    if a['value'] >= 1.5:
+        lo_, hi_ = min(x['value'] for x in a['tops']), max(x['value'] for x in a['tops'])
+        return V('down', '活躍投資人賺很多，接近頂部區', 'Active investors well in profit, near top territory', '過去頂部是平均成本的 %.1f 到 %.1f 倍，現在已在這個範圍。' % (lo_, hi_), 'Past tops came at %.1f to %.1f times the average cost, and price is in that range now.' % (lo_, hi_), '回到 1.2 倍以下', 'A drop below 1.2×')
+    if a['below']:
+        worse = r['up'] * 100.0 / max(1, r['n']) < b['up']
+        return V('neu', '活躍投資人在賠，熊市位置', 'Active investors underwater: bear-market ground', ('過去跌到成本下面之後，一年後比較高的機率%s隨便一天：熊市會在這裡待很久，跌破本身不是底。' % ('還不如' if worse else '只略高於')),
+                 'After past breaks below cost, the odds of being higher a year on were %s any day: bear markets can sit here a long time, and the break itself is not a bottom.' % ('worse than' if worse else 'only slightly better than'), '價格站回活躍投資人的平均成本之上', 'Price back above active investors\' average cost')
+    return V('up', '在成本上面，趨勢偏多', 'Above cost, trend on the up side', '活躍投資人整體在賺；這張沒有回測，看的是價格在成本的哪一邊。', 'Active investors are in profit as a group. No backtest here; it is about which side of cost price is on.', '跌回成本下面', 'A fall back below cost')
+def rrisk(L):   # 依據進入低檔區之後一年的回測（rrisk.r365）
+    r = O(L)['rrisk']; e = r['r365']
+    if r['pct4'] <= 10:
+        worse = e['up'] * 100.0 / max(1, e['n']) <= r['base365']['up']
+        return V('neu', '便宜區，之後好壞參半', 'Cheap zone, mixed record', ('過去掉進這一區的幾段，一年後有漲有跌，整體不比隨便一天好：便宜可以更便宜。' if worse else '過去掉進這一區的幾段，一年後多半比當時高，但只有幾段。'),
+                 ('Past stays in this zone were followed by gains and losses alike, no better than any day: cheap can get cheaper.' if worse else 'After past stays in this zone price was mostly higher a year on, but there are only a few.'), '離開近 4 年最低的 10%', 'Leaving the lowest 10% of four years')
+    if r['pct4'] >= 90: return V('down', '偏貴，接近頂部區', 'Rich, near top territory', '在近 4 年最高的 10%，歷來接近頂部。', 'In the top 10% of four years, as near past tops.', '回到中間', 'A return to the middle')
+    return V('neu', '中間，不便宜也不貴', 'Mid-range, neither cheap nor rich', '儲備風險在近 4 年的中間。', 'Reserve risk is in the middle of its four-year range.')
 def pl(L):   # 2026-11-25 表態寫成區間判斷（使用者：不能寫「分批買」這種交易指令，用「長期的底部區間」表達；買不買、怎麼買是用戶自己決定）；依據 pl_bt.py 的回測
     import pl_bt
     p = C(L)['powerlaw']; lo, hi = p['bottom_band']; q = pl_bt.bt(L); low = round(p['fair'] * lo / 1000) * 1000
@@ -177,7 +200,7 @@ def _top(name_z, name_e, hot, near, far_z, far_e, why_z, why_e):
     return V('up', '離頂部還遠', 'Far from a top', far_z, far_e, '升到門檻附近', 'A move near the line')
 def p6(L):
     p = C(L)['p6']; v = sorted(p.values()); hot = sum(1 for x in v if x >= 80) >= 2
-    return _top('', '', hot, v[-2] >= 65, '三個指標都離 80 很遠，沒有頂部跡象；它只能說離頂部多遠，不說底部。', 'All three are far below 80: no top signs. It only measures distance from a top, not from a bottom.', '任兩項到 80 才算頂部區。', 'Any two at 80 make a top zone.')
+    return _top('', '', hot, v[-2] >= 65, '三個指標都遠低於 80 的門檻（近 4 年最熱的 20%），看不到頂部跡象。', 'All three are well below 80 (the hottest 20% of four years): no sign of a top.', '任兩項到 80（近 4 年最熱的 20%）才算頂部區。', 'Any two at 80 (the hottest 20% of four years) make a top zone.')
 def p20(L):
     v = C(L)['cm']['mvrv_vs_prior']
     return _top('', '', v >= .75, v >= .65, 'MVRV 只有前一輪高點的 %.2f 倍，離 0.75 很遠。' % v, 'MVRV is only %.2f of the prior peak, far from 0.75.' % v, '0.75 是頂部警戒線。', '0.75 is the top warning line.')
@@ -235,11 +258,14 @@ def long(L): return V('neu', '長期背景', 'Long-run context', '這張是全�
 def mon(L):
     m = L['price']['monthly']['cur']
     return V('neu', '季節性很弱', 'Seasonality is weak', '只有 %d 個樣本，月份效應不能當方向。' % m['n'], 'Only %d samples: month effects are not a direction.' % m['n'])
-def avgd(L):
-    a = O(L)['avgd']; v = a['value']
-    if v <= 20: return V('up', '離成本線很遠的便宜區', 'Deep below cost lines', '九條線的平均百分位在 20 以下：歷來屬於便宜區（不是底）。', 'The average percentile is under 20: historically a cheap zone, not a bottom.', '升回 40 以上', 'A move above 40')
-    if v >= 80: return V('down', '離成本線很遠的貴區', 'Far above cost lines', '平均百分位 80 以上，歷來接近頂部。', 'Above 80, as near past tops.', '回到 60 以下', 'A drop below 60')
-    return V('neu', '中間區段', 'Middle zone', '平均百分位在中間。', 'The average percentile is mid-range.')
+def avgd(L):   # 2026-11-25 理由用 oc_extra.avg_viz 的回測（bk：讀值低於 15 的日子一年後）
+    a = O(L)['avgd']; v = a['value']; bk = a.get('bk') or {}; lo, al = bk.get('lo'), bk.get('all')
+    if v <= 20:
+        rz = ('過去讀數在 15 以下的日子，一年後 %d%% 比當時高（隨便一天 %d%%）；但只有幾輪週期，而且第一次跌破 10 之後還可能再跌一段。' % (lo['up'], al['up'])) if lo and al else '歷來屬於便宜區，但不是底。'
+        re_ = ('On days below 15, %d%% were higher a year later (any day: %d%%), but there are only a few cycles, and price could still fall after first breaking 10.' % (lo['up'], al['up'])) if lo and al else 'Historically a cheap zone, not a bottom.'
+        return V('up', '便宜區，還不是底', 'Cheap zone, not a bottom yet', rz, re_, '平均排名回到 40 以上（歷史中段）', 'The average rank back above 40 (mid-history)')
+    if v >= 80: return V('down', '貴區，接近頂部', 'Rich, near a top', '價格高出這些線的程度，歷史上很少比現在更多，歷來接近頂部。', 'Price has rarely been further above these lines, as near past tops.', '回到 60 以下', 'A drop below 60')
+    return V('neu', '中間，不便宜也不貴', 'Mid-range, neither cheap nor rich', '價格離這些線的距離在歷史中段。', 'Price\'s distance from these lines is mid-range for history.')
 
 # ══ 賣壓 ══
 def pullback(L):
