@@ -111,7 +111,7 @@ def shoot_next(items, lang, Fn):
                        else '這張卡片目前沒有資料' if c['na'] else '這張卡片不能放大' if not c['fx'] else '')
                 if why: print('ERROR', n, k, why); continue
                 band = title_layout(title, Fn)[2]
-                it = dict(view='share45', h=1350 - round(band / 2), **{a: st[a] for a in ('m', 'rg', 'ly', 'd3') if a in st})
+                it = dict(view='share45', h=1350 - round(band / 2), **{a: st[a] for a in ('m', 'rg', 'ly', 'd3', 'nosay') if a in st})
                 png, why = NS.shoot_share(ws, view, k, it)
                 if png is None: print('ERROR', n, k, why); continue
                 got[n] = png; print('shot', n, lang, k, why)
