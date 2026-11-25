@@ -1,14 +1,14 @@
 {
 "dawn": {
 "hz": [
-"圖上：每週的週期熱度（0–100），以 50 為中線：熱度高於 50 往上長成暖色的山（琥珀 → 越接近頂越紅），低於 50 往下長成冷色的谷（淺藍 → 越接近底越深藍）；顏色和週線多空分數的階段色同一套。網點越靠中線越大越密。上方細線指的是歷次頂，下方指的是歷次底。熱度 ≥ 80 黃昏、≤ 10 深夜；滑過去看那一週的熱度、方向與價格。",
-"怎麼看：熱度是估值，回答「離頂部、底部多遠」；方向是趨勢，回答「現在往哪走」。熱度低又翻多（破曉）歷史上之後一年最好；熱度高（黃昏）之後一年大約持平、下跌機率接近一半。",
-"小心：近兩輪鏈上估值都比價格先見頂，黃昏常提早出現；只有三輪多完整週期，統計只是歷史描述，不是訊號。"
+"圖上：每週的熱度（0–100），以 50 為中線：高於 50 往上長成暖色的山（越接近頂越紅），低於 50 往下長成冷色的谷（越接近底越深藍）。上方細線指的是歷次頂，下方指的是歷次底；滑過去看那一週的熱度、方向和價格。",
+"怎麼看：熱度回答「現在貴還是便宜」，方向回答「現在往哪走」。熱度 10 以下是深夜（底部區），80 以上是黃昏（過熱）。熱度低、方向又轉上（破曉），過去之後一年最好；黃昏之後一年大約持平，下跌的機會略高於一半。",
+"小心：熱度只和近 4 年比，不代表絕對便宜或絕對貴；近兩輪估值都比價格先見頂，黃昏常提早出現；只有三輪多的週期，統計只是歷史描述。"
 ],
 "he": [
-"WhatWeekly cycle heat (0–100) around a midline at 50: above 50 it grows up into warm hills (amber, turning red near tops), below 50 down into cool valleys (light blue, turning deep blue near bottoms); the colours are the same stage colours as the weekly regime score. Dots get larger and denser toward the midline. Lines above point to past tops, lines below to past bottoms. Heat ≥ 80 is Dusk, ≤ 10 Deep night; hover for that week's heat, trend and price.",
-"ReadingHeat is valuation, answering \"how far from a top or bottom\"; trend answers \"which way now\". Low heat with a bullish flip (Daybreak) has had the best year ahead; high heat (Dusk) has been roughly flat a year later, with close to even odds of a fall.",
-"CaveatIn the last two cycles valuations peaked before price, so Dusk tends to come early; with only three-plus full cycles the stats describe history and are not a signal."
+"WhatWeekly heat (0–100) around a midline at 50: above 50 it grows into warm hills (redder near tops), below 50 into cool valleys (deeper blue near bottoms). Lines above point to past tops, lines below to past bottoms; hover for that week's heat, direction and price.",
+"ReadingHeat answers \"is it cheap or rich now\"; direction answers \"which way is it going\". Heat at 10 or below is deep night (bottom zone), 80 or above is dusk (overheated). Low heat with the direction turning up (daybreak) has had the best year ahead; a year after dusk price has been roughly flat, with slightly better than even odds of a fall.",
+"CaveatHeat is only ranked against four years, so it is not cheap or rich in absolute terms; in the last two cycles valuations peaked before price, so dusk tends to come early; with only about three cycles, the statistics describe history."
 ]
 },
 "levels": {
@@ -325,14 +325,14 @@
 },
 "lthrl": {
 "hz": [
-"圖上：上格是 BTC 價格，下格是長期持有者（持有 ≥155 天）帳面虧損的比例；紅圈是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這輪高點。",
-"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高，回升（價格回調）時常是牛初的加碼段。跌破虛線那一天，等於這個規律被打破。",
-"小心：不只受價格影響：最近高價買進的短期持有者滿 155 天後會被算成長期持有者，價格不漲也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
+"圖上：上格是 BTC 價格，下格是長期持有者（幣放了 155 天以上沒動的人）帳面虧損的比例；紅點是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這一輪到目前的高點。",
+"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高。比例超過虛線那一天，等於這個規律被打破。",
+"小心：不只受價格影響：幾個月前高價買幣的人滿 155 天後會被算成長期持有者，價格不跌也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
 ],
 "he": [
-"WhatTop: BTC price; bottom: the share of long-term holder (155+ days) supply at a loss. Red circles mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak.",
-"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high, and its rebounds (price pullbacks) were often early-bull buying windows. A move above the dashed line would break that pattern.",
-"CaveatNot price alone: recent high-priced buyers become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
+"WhatTop: BTC price; bottom: the share of long-term holder supply (coins unmoved for 155+ days) at a paper loss. Red dots mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak so far.",
+"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high. A move above the dashed line would break that pattern.",
+"CaveatNot price alone: people who bought high a few months ago become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
 ]
 },
 "sthgap": {
@@ -445,170 +445,170 @@
 },
 "regime": {
 "hz": [
-"圖上：上格是 BTC 價格，下格是每週的多空分數（−6 到 +6），柱子按階段上色：≥ +4 過熱（紅）、熊市後轉正的頭 26 週初牛（綠）、其餘正值牛（琥珀）、負值熊（淺藍）、≤ −4 極熊（深藍）。",
-"怎麼看：把六個看趨勢、估值、資金和獲利了結的訊號合成一個數字：正值對應牛市、負值對應熊市；柱子越長，六項越一致。分數在零軸附近（絕對值小於 1）代表訊號互相矛盾。",
-"小心：是本站自己的合成方法，不是任何不公開指標的複製。翻轉要連續 4 週才算，所以會晚幾週；2014/6、2021/8 的翻多一年後價格反而較低。"
+"圖上：上格是比特幣價格，下格是每週的多空分數（−6 到 +6），柱子按階段上色：+4 以上過熱（紅）、熊市後轉正的頭 26 週是初牛（綠）、其他正值是牛（琥珀）、負值是熊（淺藍）、−4 以下是極熊（深藍）。",
+"怎麼看：六個看趨勢、估值、資金和賣壓的項目合成一個數字：正的時候大多是牛市，負的時候大多是熊市；柱子越長，六項越一致。分數在 0 附近（−1 到 +1）代表項目互相矛盾。",
+"小心：這是本站自己的合成方法。翻轉要連 4 週才算，所以會晚幾週；2014 年 6 月、2021 年 8 月翻多之後，一年後價格反而更低。"
 ],
 "he": [
-"WhatTop: BTC price; bottom: the weekly regime score (−6 to +6), bars coloured by stage: ≥ +4 overheated (red), the first 26 positive weeks after a real bear early bull (green), other positive bull (amber), negative bear (light blue), ≤ −4 extreme bear (deep blue).",
-"ReadingSix trend, valuation, capital-flow and profit-taking signals combined into one number: positive stretches match bull markets, negative ones bear markets; longer bars mean the six agree more. Near zero (under 1 in size) the signals conflict.",
-"CaveatOur own composite, not a copy of any unpublished indicator. A flip needs 4 straight weeks, so it lags; the bullish flips of Jun 2014 and Aug 2021 saw lower prices a year later."
+"WhatTop: Bitcoin's price; bottom: the weekly score (−6 to +6), bars coloured by stage: +4 and above overheated (red), the first 26 positive weeks after a real bear early bull (green), other positive weeks bull (amber), negative bear (light blue), −4 and below extreme bear (deep blue).",
+"ReadingSix inputs covering trend, valuation, money flows and selling are combined into one number: positive stretches have mostly been bull markets, negative ones bear markets; longer bars mean the six agree more. Near 0 (−1 to +1) the inputs contradict each other.",
+"CaveatThis is our own composite. A flip needs four straight weeks, so it lags; after the long flips of June 2014 and August 2021, price was lower a year on."
 ]
 },
 "hnupl": {
 "hz": [
-"圖上：紫是長期持有者 NUPL、橘是短期持有者 NUPL；底色是長期持有者的五個階段（藍＝投降，往上依序到紅＝狂熱）。膠囊是歷次頂部、底部的讀數。",
-"怎麼看：長期持有者進到信念、狂熱（0.5 以上）是週期後段；跌回希望或投降是熊市。短期持有者在 0 附近上下，代表新進場的人在成本附近拉鋸。",
-"小心：頂部讀數一輪比一輪低、這一輪底部長期持有者沒有跌到虧損，階段門檻是常見分法、不是這一輪的定律。"
+"圖上：粗線是長期持有者（幣放超過 150 天）的 NUPL，細的橘線是短期持有者；底色是長期持有者的五個區間（投降、希望、樂觀、信念、過熱，由冷到熱）。圓圈是歷次頂部、底部的讀數。",
+"怎麼看：NUPL＝帳面賺賠佔市值的比例。長期持有者到 0.5 以上（信念、過熱）是週期後段；跌回希望或投降是熊市。短期持有者在 0 附近上下，代表最近買的人在成本附近拉鋸。",
+"小心：頂部讀數一輪比一輪低，這一輪底部長期持有者也沒有跌成虧損；區間的界線是常見分法，不是定律。"
 ],
 "he": [
-"WhatPurple is long-term holder NUPL, orange short-term holder NUPL; the shading marks the five long-term holder stages (blue = capitulation up to red = euphoria). Capsules show readings at past tops and bottoms.",
-"ReadingLong-term holders in belief or euphoria (above 0.5) is late cycle; falling back to hope or capitulation is a bear market. Short-term holders hovering around 0 means recent buyers are fighting at cost.",
-"CaveatTop readings fall each cycle and this cycle's long-term holders never went underwater at the bottom; the stage lines are a convention, not a law for this cycle."
+"WhatThe thick line is NUPL for long-term holders (coins unmoved for 150+ days), the thin orange line for short-term holders; the shading marks the five long-term holder bands (capitulation, hope, optimism, belief, overheated, cold to hot). Circles show readings at past tops and bottoms.",
+"ReadingNUPL is paper profit or loss as a share of market cap. Long-term holders above 0.5 (belief or overheated) is late cycle; falling back to hope or capitulation is a bear market. Short-term holders hovering around 0 means recent buyers are wrestling around their cost.",
+"CaveatTop readings fall every cycle, and this cycle's long-term holders never went underwater at the bottom; the bands are a common convention, not a law."
 ]
 },
 "aviv": {
 "hz": [
-"圖上：AVIV＝價格 ÷ 真實市場均價（對數刻度）；青綠底是 1 以下，膠囊是歷次頂部與底部。",
-"怎麼看：高於 1＝活躍投資人整體獲利，越高越接近過熱；低於 1＝活躍投資人整體虧損，熊市大多待在這裡。頂部一輪比一輪低、底部一輪比一輪高。",
-"小心：真實市場均價是推算的活躍資本成本（Cointime 模型），和一般的實現價格不同。"
+"圖上：線是價格 ÷ 真實市場均價（活躍投資人的平均成本），對數刻度；1 以下有底色，標記是歷次頂部和底部。",
+"怎麼看：高於 1＝活躍投資人整體在賺，越高越接近過熱；低於 1＝整體在賠，熊市大多待在這裡。頂部一輪比一輪低，底部一輪比一輪高。",
+"小心：真實市場均價是 Cointime 模型推算的活躍資金成本，和一般的實現價不同。"
 ],
 "he": [
-"WhatAVIV = price ÷ the true market mean (log scale); teal shading is below 1, capsules the past tops and bottoms.",
-"ReadingAbove 1 = active investors in profit, higher means closer to overheating; below 1 = active investors at a loss, where bear markets mostly sit. Tops fall and bottoms rise each cycle.",
-"CaveatThe true market mean is a modelled cost of active capital (Cointime), different from the ordinary realized price."
+"WhatThe line is price ÷ the true market mean (the average cost of active investors), on a log scale; shading below 1, markers at past tops and bottoms.",
+"ReadingAbove 1 = active investors in profit as a group, and the higher the closer to overheating; below 1 = a loss overall, where bear markets mostly sit. Tops fall and bottoms rise each cycle.",
+"CaveatThe true market mean is a modelled cost of active money (Cointime), different from the ordinary realized price."
 ]
 },
 "rrisk": {
 "hz": [
-"圖上：儲備風險（對數刻度，千分之）；青綠虛線是近 4 年最低 10% 的門檻（逐日變動）、琥珀色虛線是最高 10%，青綠底是落在低檔區的期間。",
-"怎麼看：低＝價格相對長期持有者的信心便宜，過去都在熊市底部附近；高＝價格跑在信心前面，頂部區。",
-"小心：頂部一輪比一輪低、整條線被壓扁，所以用近 4 年比，不用全部歷史；2018 年底的熊市底部也只到近 4 年第 26 百分位，單看這一項會漏掉底部。"
+"圖上：儲備風險（對數刻度，單位 ‰＝千分之一）；兩條虛線是近 4 年最低 10% 和最高 10% 的門檻（每天移動），青色底是落在最低 10% 的期間。",
+"怎麼看：低＝價格相對長期持有者的信心便宜，過去都出現在熊市底部附近；高＝價格跑在信心前面，是頂部區。",
+"小心：頂部一輪比一輪低，整條線被壓扁，所以和近 4 年比；2018 年底的熊底沒有掉進近 4 年最低的 10%，單看這一項會漏掉底部。"
 ],
 "he": [
-"WhatReserve risk (log scale, per mille); the teal dashed line is the rolling 4-year bottom-10% threshold, the amber one the top 10%; teal shading marks time in the low zone.",
-"ReadingLow = price is cheap relative to long-term holder conviction, historically near bear-market bottoms; high = price running ahead of conviction, the top zone.",
-"CaveatTops fall each cycle and flatten the series, so it is compared with the last 4 years, not all history; the late-2018 bottom only reached the 26th percentile, so this gauge alone can miss a bottom."
+"WhatReserve risk (log scale, in ‰ = per thousand); the two dashed lines are the lowest-10% and highest-10% marks of the last four years (moving daily), and cyan shading marks time in the lowest 10%.",
+"ReadingLow = price is cheap relative to long-term holders' conviction, historically near bear-market bottoms; high = price running ahead of conviction, the top zone.",
+"CaveatTops fall each cycle and squash the line, so it is compared with four years; the late-2018 bottom never reached the lowest 10% of its four years, so this gauge alone can miss a bottom."
 ]
 },
 "pl": {
 "hz": [
-"圖上：上格是 BTC 價格和冪律合理價（灰虛線），通道模式另畫出頂部線（紅虛線）和底部線（藍虛線）。下格兩種看法。通道位置：0%＝歷次底部的連線、100%＝歷次頂部的連線（頂部一輪比一輪低，上緣逐輪下降），線的顏色按位置分五段：底部區 < 15%、偏低、中段、偏高、頂部區 ≥ 75%。倍數：價格除以冪律合理價（對數刻度），藍帶是歷史底部區，紅點頂、藍點底。",
-"怎麼看：通道位置把「每輪頂部越來越低」算進去：歷次頂部都在 75% 以上、底部都在 15% 以下。倍數越高越貴。",
-"小心：冪律每天只用當天以前的資料擬合；但通道的上下緣是用全部 4 個頂／底擬合的，歷史段是事後畫的，樣本也只有 4 輪。只作讀值。"
+"圖上：上格是比特幣價格和趨勢價（灰虛線：照過去的成長速度，今天大概值多少）；「在通道裡的高低」另外畫出頂線（紅虛線，歷次牛頂連成）和底線（藍虛線，歷次熊底連成）。下格兩種看法。通道位置：0%＝貼著底線（跌破也顯示 0%），100%＝碰到頂線，線的顏色分五段，15% 以下是底部區、75% 以上是頂部區。倍數：價格除以趨勢價（對數刻度），藍帶是歷次熊底的範圍。",
+"怎麼看：頂線一輪比一輪低，通道位置已經把「頂部越來越低」算進去：過去的頂部都在 75% 以上，底部都在 15% 以下。倍數越低越便宜，1 倍就是剛好在趨勢價上。",
+"小心：趨勢價每天只用當天以前的價格算；但頂線和底線是事後把過去 4 個頂和底連起來的，只有 4 輪。"
 ],
 "he": [
-"WhatTop: BTC price and the power-law fair value (grey dashes); the channel view also draws the top line (red dashes) and bottom line (blue dashes). Bottom, two views. Channel: 0% is the line through past bottoms, 100% the line through past tops (falling each cycle); the line is coloured in five stages: bottom zone < 15%, low, middle, high, top zone ≥ 75%. Multiple: price divided by the power-law fair value (log scale); the blue band is the historical bottom zone, red dots tops, blue dots bottoms.",
-"ReadingThe channel builds in the shrinking tops: every past top sat above 75% and every bottom below 15%. Higher multiples mean more expensive.",
-"CaveatThe power law uses only data up to each day, but the channel edges are fitted through all four tops and bottoms, so the history is drawn after the fact, from only four cycles. Read-only."
+"WhatTop: Bitcoin's price and the trend price (grey dashes: roughly what it is worth today at its past growth pace); \"Place in the channel\" also draws the top line (red dashes, through past bull tops) and the bottom line (blue dashes, through past bear bottoms). Bottom, two views. Channel position: 0% = on the bottom line (below it also shows 0%), 100% = at the top line, coloured in five bands, with under 15% the bottom zone and 75% or more the top zone. Multiple: price divided by the trend price (log scale); the blue band is the range of past bear bottoms.",
+"ReadingThe top line falls every cycle, so the channel position already builds in shrinking tops: every past top sat above 75% and every bottom below 15%. The lower the multiple the cheaper, and 1× is exactly on trend.",
+"CaveatThe trend price only uses prices up to each day, but the top and bottom lines join the past four tops and bottoms after the fact, from only four cycles."
 ]
 },
 "p20": {
 "hz": [
-"圖上：上格是 BTC 價格；下格是 MVRV 除以前一輪週期高點（只用當時已知的資料），紅線 0.75／0.80 是出場框架的鏈上賣點，0.75 以上淡紅底。",
-"怎麼看：比值越高越接近上一輪的狂熱程度；連 5 天站上 0.75 啟動第一個鏈上賣出。",
-"小心：每輪頂部的 MVRV 越來越低，所以用相對前一輪的比例。"
+"圖上：上格是 BTC 價格；下格是 MVRV（價格 ÷ 所有幣的平均成本）除以前一輪頂部時的最高 MVRV，只用當時已知的資料。紅線 0.75／0.80 是警戒線，0.75 以上塗淡紅。",
+"怎麼看：比值 1 就是和前一輪頂部一樣熱；越高越接近那時的狂熱，連 5 天站上 0.75 才算到了警戒線。",
+"小心：每輪頂部的 MVRV 一輪比一輪低，所以用相對前一輪的比例；這張圖 2021 年起才有，只經過兩次頂部。"
 ],
 "he": [
-"WhatTop: BTC price. Bottom: MVRV divided by the previous cycle's peak (using only data known at the time); red lines at 0.75/0.80 are the exit framework's on-chain sell points, shaded above 0.75.",
-"ReadingThe higher the ratio, the closer to last cycle's euphoria; 5 straight days above 0.75 trigger the first on-chain sale.",
-"CaveatMVRV peaks lower each cycle, hence the ratio to the previous peak."
+"WhatTop: BTC price. Bottom: MVRV (price ÷ the average cost of all coins) divided by the previous cycle's peak MVRV, using only data known at the time. The red lines at 0.75/0.80 are warning lines, shaded above 0.75.",
+"ReadingA ratio of 1 would be as hot as the last top; the higher it is, the closer to that euphoria, and five straight days above 0.75 count as reaching the warning line.",
+"CaveatMVRV peaks lower each cycle, hence the ratio to the previous peak; the chart starts in 2021 and has seen only two tops."
 ]
 },
 "tmh": {
 "hz": [
-"圖上：上格 BTC 價格（對數）；下格是 Tidemark 的 0–100 訊號，2011 起每週、近一年每日。頂部視角：紅＝頂部訊號（粗線）、琥珀＝熱度、灰虛線＝時機，直虛線是歷次週期頂部；底部視角：綠＝底部訊號、藍＝冷度，直虛線是歷次週期底部、綠點線是本輪候選低點。點圖例可以開關每條線，滑過圖時上方那一行跟著顯示當天數字。",
-"怎麼看：頂部訊號 ≥50 進入窗口、≥70 警戒；底部訊號 ≥50 進入底部區。看過去幾次頂部、底部前後訊號升到多高、提前多久亮，再對照現在的位置。",
+"圖上：上格 BTC 價格（對數）；下格是外部模型 Tidemark 的 0–100 分數，2011 起每週、近一年每日。頂部視角：粗線＝頂部分數、另一條實線＝熱度（估值多貴）、灰虛線＝時間，直虛線是歷次週期頂部；底部視角：粗的綠線＝底部分數、藍線＝冷度（估值多便宜），直虛線是歷次週期底部、綠點線是這一輪到目前的低點。點圖例可以開關每條線，滑過圖時上方那一行跟著顯示當天數字。",
+"怎麼看：頂部分數 50 以上進入窗口、70 以上警戒；底部分數 50 以上進入底部區。看過去幾次頂部、底部前後分數升到多高、提前多久亮，再對照現在的位置。",
 "小心：第三方模型，規則與權重由 Tidemark 決定、可能改版；歷史是用目前的規則回算的，不是當時的即時讀數；部分指標 2012 年底以後才有，之前只有熱度。只作讀值。"
 ],
 "he": [
-"WhatPrice on top (log); below, Tidemark's 0–100 signals, weekly since 2011 and daily for the past year. Top view: red = top signal (thick), amber = heat, grey dashed = timing, with vertical dashes at past cycle tops. Bottom view: green = bottom signal, blue = cold, vertical dashes at past cycle bottoms and a green dotted line at this cycle's candidate low. Click a legend item to hide or show a line; hovering updates the readout row above.",
-"ReadingA top signal of 50 or more opens the window and 70 is the alert; a bottom signal of 50 or more is the bottom zone. See how high the signals rose around past tops and bottoms, and how early, then compare with now.",
+"WhatPrice on top (log); below, the outside model Tidemark's 0–100 scores, weekly since 2011 and daily for the past year. Top view: thick line = top score, the other solid line = heat (how expensive), grey dashes = timing, with vertical dashes at past cycle tops. Bottom view: thick green line = bottom score, blue = cold (how cheap), vertical dashes at past cycle bottoms and a green dotted line at this cycle's low so far. Click a legend item to hide or show a line; hovering updates the readout row above.",
+"ReadingA top score of 50 or more opens the window and 70 is the alert; a bottom score of 50 or more is the bottom zone. See how high the scores rose around past tops and bottoms, and how early, then compare with now.",
 "CaveatA third-party model whose rules and weights Tidemark sets and may change; the history is back-calculated under today's rules, not live readings at the time; some inputs start in late 2012, before which only heat exists. Reading only."
 ]
 },
 "lthloss": {
 "hz": [
-"圖上：上格是 BTC 價格，下格是長期持有者（持有 ≥155 天）帳面虧損的比例；紅圈是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這輪高點。",
-"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高，回升（價格回調）時常是牛初的加碼段。跌破虛線那一天，等於這個規律被打破。",
-"小心：不只受價格影響：最近高價買進的短期持有者滿 155 天後會被算成長期持有者，價格不漲也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
+"圖上：上格是 BTC 價格，下格是長期持有者（幣放了 155 天以上沒動的人）帳面虧損的比例；紅點是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這一輪到目前的高點。",
+"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高。比例超過虛線那一天，等於這個規律被打破。",
+"小心：不只受價格影響：幾個月前高價買幣的人滿 155 天後會被算成長期持有者，價格不跌也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
 ],
 "he": [
-"WhatTop: BTC price; bottom: the share of long-term holder (155+ days) supply at a loss. Red circles mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak.",
-"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high, and its rebounds (price pullbacks) were often early-bull buying windows. A move above the dashed line would break that pattern.",
-"CaveatNot price alone: recent high-priced buyers become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
+"WhatTop: BTC price; bottom: the share of long-term holder supply (coins unmoved for 155+ days) at a paper loss. Red dots mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak so far.",
+"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high. A move above the dashed line would break that pattern.",
+"CaveatNot price alone: people who bought high a few months ago become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
 ]
 },
 "npl365": {
 "hz": [
-"圖上：下格是近 365 天淨實現損益的合計，換成顆數：綠＝一年內整體獲利了結、紅＝整體認賠。膠囊是歷次頂部前後的最高與熊市底部前後的最深。",
-"怎麼看：過去熊市底部都出現在這條線很深的負值附近：一年裡大量的幣被賠錢賣出、籌碼換到新買家手上。翻回正值，通常代表最難熬的認賠期結束。",
+"圖上：下格是近 365 天淨實現損益的合計（賺錢賣出減掉賠錢賣出），換成顆數：綠＝一年合計賺錢賣出比較多、紅＝賠錢賣出比較多。膠囊是歷次頂部前後的最高與熊市底部前後的最深。",
+"怎麼看：過去熊市底部都出現在這條線很深的負值附近：一年裡大量的幣被賠錢賣出、換到新買家手上。它是一整年的加總，最深處通常在價格見底之後幾個月；翻回正值，通常代表最難熬的認賠期結束。",
 "小心：這一輪的負值比前幾輪淺很多，可能是持有結構改變，也可能是還沒走完；以顆計可跨時代比，但交易所整理錢包也會被算成實現損益。"
 ],
 "he": [
-"WhatBottom: the past 365 days of net realized profit/loss in coins, green = net profit-taking over the year, red = net loss-taking. Capsules mark the highs around tops and the lows around bear-market bottoms.",
-"ReadingPast bear-market bottoms came near deep negative readings: a year of heavy loss-selling that moved coins to new hands. Turning back positive usually marks the end of the hardest loss-taking.",
-"CaveatThis cycle's reading is far shallower than past ones — a changed holder base, or not finished yet. Counting in coins compares across eras, but exchange wallet reshuffles also register as realized P/L."
+"WhatBottom: the past 365 days of net realized profit and loss (coins sold at a profit minus at a loss), in coins: green = more sold at a profit over the year, red = more at a loss. Capsules mark the highs around tops and the lows around bear-market bottoms.",
+"ReadingPast bear-market bottoms came near deep negative readings: a year of heavy loss-selling that moved coins to new hands. It sums a whole year, so its deepest point usually comes a few months after price bottoms; turning back positive usually marks the end of the hardest loss-taking.",
+"CaveatThis cycle's reading is far shallower than past ones: a changed holder base, or not finished yet. Counting in coins compares across eras, but exchange wallet reshuffles also register as realized P/L."
 ]
 },
 "agecost": {
 "hz": [
-"圖上：可以切換兩種看法（對數刻度）：3–6 個月持幣成本（橘）配價格，綠點是熊市後第一次站回、灰點是其他站回；6–12 個月（橘）與 12–18 個月（紫）持幣成本，紅點死叉、綠點金叉。",
-"怎麼看：6–12 個月線跌破 12–18 個月線＝近一年買的人比更早一批便宜，過去大致在熊底附近；重新升過＝新進場的成本拉高，過去在主升段前後。從死叉到金叉：2019 約 11 個月、2023 約 12 個月。",
-"小心：兩條線比價格落後半年以上，交叉時價格往往已經走了一段；樣本只有 3–4 輪，2020 年有一次疫情後的短暫交叉。"
+"圖上：三種看法（對數刻度）：6–12 個月（橘）與 12–18 個月（紫）前買的人的平均成本，紅點是較新的一批跌到下面、綠點是翻回上面；近 3–6 個月買家的成本（橘）配價格，綠圈是熊市後第一次站回、灰圈是其他站回；1 週到 1 個月前買的人的成本。",
+"怎麼看：6–12 個月線跌破 12–18 個月線＝近一年買的人比更早一批便宜，過去大致在熊底附近；重新升過＝新買家的成本拉高，過去在主升段前後。價格在近 3–6 個月買家的成本下面時，反彈到那裡容易遇到想解套的賣壓。",
+"小心：這些線比價格落後幾個月以上，交叉時價格往往已經走了一段；樣本只有 3–4 輪，2020 年有一次疫情後的短暫交叉。"
 ],
 "he": [
-"WhatTwo views (log scale): the 3–6 month holder cost (orange) with price, green dots marking the first cross back above after a bear market and grey dots other crosses; and the cost of coins aged 6–12 months (orange) and 12–18 months (purple), red dots death crosses, green dots golden crosses.",
-"ReadingThe 6–12 month line dropping below the 12–18 month line means last year's buyers paid less than the earlier group, historically near bear-market bottoms; crossing back above means new money is paying up, historically around the main bull leg. Death to golden took about 11 months in 2019 and 12 in 2023.",
-"CaveatBoth lines lag price by six months or more, so price has usually moved a lot by the cross; only 3–4 cycles, plus a brief post-pandemic cross in 2020."
+"WhatThree views (log scale): the average cost of coins bought 6–12 months ago (orange) and 12–18 months ago (purple), red dots where the newer group drops below, green dots where it crosses back above; the 3–6 month buyers' cost (orange) with price, green rings marking the first reclaim after a bear market and grey rings other reclaims; and the cost of coins bought one week to one month ago.",
+"ReadingThe 6–12 month line dropping below the 12–18 month line means last year's buyers paid less than the earlier group, historically near bear-market bottoms; crossing back above means new buyers are paying up, historically around the main bull leg. With price below the 3–6 month buyers' cost, rallies back to it tend to meet break-even selling.",
+"CaveatThese lines lag price by months, so price has usually moved a lot by the cross; only 3–4 cycles, plus a brief post-pandemic cross in 2020."
 ]
 },
 "capeff": {
 "hz": [
-"圖上：每一列是一輪週期，從熊市底部到頂部：青綠是流進來的資金（實現市值增加）、金色是價格倍數，長條用對數長度；最後一列是這一輪到現在。",
-"怎麼看：比特幣越大，推動同樣的漲幅要越多錢：流入一輪比一輪多，倍數一輪比一輪小。拿這一輪和前幾輪同一天比，可以看資金進來的速度與價格的反應。",
-"小心：底部與頂部日期沿用本站的週期模型；實現市值逐筆 UTXO 計算，交易所整理錢包、遺失的幣都會影響，看的是數量級。"
+"圖上：每一列是一輪，從熊市底部到牛市頂部；青色橫條是流進來的錢（實現市值增加多少：每顆幣按最後一次移動時的價格加總，可以當成市場真正投入的資金），金色橫條是價格漲了幾倍，長度用對數刻度；最後一列是這一輪到現在。",
+"怎麼看：比特幣越大，同樣的漲幅要越多錢：流進來的錢一輪比一輪多，漲的倍數一輪比一輪小。這張用來調整對下一輪漲幅的期待，不說接下來的方向。",
+"小心：底部和頂部的日期用本站的週期劃分；交易所整理錢包、遺失的幣都會影響實現市值，只看數量級。"
 ],
 "he": [
-"WhatEach row is one cycle from bear-market bottom to top: teal is the money that came in (realized cap added), gold the price multiple, with logarithmic bar lengths; the last row is this cycle so far.",
-"ReadingThe bigger bitcoin gets, the more money the same gain needs: inflows grow each cycle while multiples shrink. Comparing this cycle with past ones on the same day shows how fast money arrives and how price responds.",
-"CaveatBottom and top dates follow this site's cycle model; realized cap is per UTXO and affected by exchange reshuffles and lost coins, so read it for orders of magnitude."
+"WhatEach row is one cycle from bear-market bottom to bull-market top. The cyan bar is money in (the rise in realized cap: every coin valued at the price it last moved, which can be read as the money actually put into the market); the gold bar is how many times the price rose; bar lengths are on a log scale. The last row is this cycle so far.",
+"ReadingThe bigger Bitcoin gets, the more money the same gain takes: money in grows every cycle while the multiple shrinks. Use it to temper expectations for the next run; it says nothing about direction.",
+"CaveatBottom and top dates follow this site's cycle split; exchange wallet reshuffles and lost coins both affect realized cap, so read it for orders of magnitude."
 ]
 },
 "path": {
 "hz": [
-"圖上：四種長期走法（虛線，本站的預測）與已實現價格（實線）；橘色帶是頂部模型的 80% 區間。",
-"怎麼看：看實線貼近哪一條。每月底自動重估：起點換成月底收盤，權重依收盤離各路徑多遠做貝氏更新；收盤連 10 天超出四條路徑上下 12% 才重畫形狀。",
-"小心：2028 年以後只供量級參考。"
+"圖上：四條虛線是本站自己畫的四種長期走法（直接修復、淺回檔、基準雙底、延後新低），圖例寫著各自的權重；粗實線是每個月底實際的收盤；橘色帶是頂部模型估計下一輪頂部 80% 機會落在的範圍。",
+"怎麼看：看實線貼近哪一條。權重是我們估計每種走法發生的機會，每個月底用收盤調整：收盤越接近哪一條，那條的權重就調高；收盤連 10 天超出四條走法的範圍 12% 以上，才重畫走法本身。",
+"小心：這是推估，不是準確的預測；2028 年以後只能看大概的數量級。"
 ],
 "he": [
-"WhatFour long-term paths (dashed, our forecasts) and the realized price (solid); the orange band is the top model's 80% range.",
-"ReadingSee which path the solid line is tracking. Re-estimated automatically each month end: the start moves to the month-end close and weights get a Bayesian update from how far the close is from each path; shapes are re-drawn only after 10 straight closes more than 12% outside all four.",
-"CaveatBeyond 2028, treat it as order-of-magnitude only."
+"WhatThe four dashed lines are this site's own long-run paths (direct recovery, shallow pullback, base-case double bottom, delayed new low), with their weights in the legend; the thick solid line is the actual month-end close; the orange band is where the top model puts the next top with 80% probability.",
+"ReadingSee which path the solid line is tracking. The weights are our estimate of how likely each path is, adjusted at each month-end close: the closer the close is to a path, the more its weight goes up. The paths themselves are redrawn only after 10 straight closes more than 12% outside all four.",
+"CaveatThis is an estimate, not a precise forecast; beyond 2028 read only the order of magnitude."
 ]
 },
 "long": {
 "hz": [
-"圖上：全部歷史收盤（對數刻度）；橘點是週期頂、藍點是週期底，虛直線是減半日。",
-"怎麼看：對數刻度下同樣高度＝同樣的漲跌比例；過去幾輪頂部大約在減半後 12–18 個月，底部約在頂部後一年。",
-"小心：只有 3–4 輪樣本，時間規律不保證重演。"
+"圖上：比特幣全部歷史的收盤，縱軸是對數刻度；圓圈標出每一輪的頂部和底部，灰色虛直線是減半日（大約每四年一次，礦工新挖出的比特幣減少一半）。",
+"怎麼看：對數刻度下，同樣的高度代表同樣的漲跌比例；過去幾輪頂部大約在減半後 12–18 個月，底部大約在頂部後一年。",
+"小心：只有三四輪，時間規律不保證重演；這張只是背景，不說接下來的方向。"
 ],
 "he": [
-"WhatAll closes on a log scale; orange dots are cycle tops, blue dots cycle bottoms, dashed verticals the halvings.",
+"WhatEvery Bitcoin close on record, on a log price axis; circles mark each cycle's top and bottom, and grey dashed verticals the halvings (about every four years, cutting the new bitcoin paid to miners in half).",
 "ReadingOn a log scale equal heights are equal percentage moves; past tops came roughly 12–18 months after a halving, and bottoms about a year after the top.",
-"CaveatOnly 3–4 cycles of history; the timing pattern may not repeat."
+"CaveatOnly three or four cycles, so the timing need not repeat. It is context, not direction."
 ]
 },
 "mon": {
 "hz": [
 "圖上：每格是一個月的漲跌：上個月最後一天收盤到這個月最後一天收盤。綠漲紅跌，顏色越深幅度越大；框起來的是本月，到最新收盤為止。",
 "怎麼看：最下面兩列是各月的中位數和上漲比例（2013 年起、不含本月）。用中位數是因為 2013 年 3 月、11 月都漲超過一倍，會把平均拉得很高。",
-"小心：每個月只有十幾個樣本，季節性只描述過去，不代表今年會照走；拿來看「這個月目前算不算特別」比拿來預測合適。只作讀值。"
+"小心：每個月只有十幾個樣本，季節性只描述過去，不代表今年會照走，不能拿來猜這個月或下個月的方向；拿來看「這個月目前算不算特別」比較合適。"
 ],
 "he": [
 "WhatEach cell is one month: from the last close of the previous month to the last close of this one. Green up, red down, darker for bigger moves; the outlined cell is this month, up to the latest close.",
 "ReadingThe bottom two rows are each month’s median and share of up months (since 2013, excluding this month). Medians, because March and November 2013 each more than doubled and would drag an average far up.",
-"CaveatEach month has only a dozen or so cases. Seasonality describes the past, not what this year will do; it is better for judging whether this month is unusual so far than for forecasting. Reading only."
+"CaveatEach month has only a dozen or so cases. Seasonality describes the past, not what this year will do, and cannot tell you which way this month or the next will go; it is better for judging whether this month is unusual so far."
 ]
 },
 "cot": {
