@@ -1580,6 +1580,12 @@ try:
                               rel=dict(start=_d0.isoformat(), rows=_rel, last=dict(zip(('btc', 'spx', 'ndq', 'gold'), _rel[-1][1:]))),
                               note='勝率＝近 90 個美股交易日裡 BTC 漲幅大於 S&P 500 的比例；超額＝每日平均差（百分點）；BTC 用 UTC 收盤、美股紐約收盤；黃金用 PAXG；只作讀值')
 except Exception as e: errors.append(f'btc_vs_stocks {e}')
+# G9h-2. 2026-11-25 使用者要求（Glassnode 週報〈The Canary in the Coal Mine〉）：BTC 對那斯達克 100「跟漲少、跟跌多」與之後 60 天的回測（ndx_capture.py）。
+#   那斯達克 100 用 FRED NASDAQ100（常晚幾天）；BTC 用 PXC（Kraken 收盤，更早的 CoinMetrics）。失敗只是沒有這個檢視
+try:
+    import ndx_capture
+    R['ndx_cap'] = ndx_capture.build(globals().get('PXC') or {b_['d']: b_['c'] for b_ in bars}, _fred('NASDAQ100'), LAST)
+except Exception as e: errors.append(f'ndx_cap {e}')
 R.pop('_sig5', None); R.pop('_sig1', None)
 R['bd_rotation'] = R_bd
 R['errors'] = errors

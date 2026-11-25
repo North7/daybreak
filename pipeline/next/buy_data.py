@@ -643,10 +643,26 @@ def build(L, N, E, dn, X):
             modes.append(dict(mz='贏過 S&P 500 的比例', me='Win rate vs S&P 500', hz='近 90 個交易日，BTC 漲幅大於 S&P 500 的比例', he='Share of the last 90 sessions BTC beat the S&P 500', f='p1', rows=x['rows'],
               ser=[ser(1, zh='90 日勝率', en='90-session win rate', col='c5', fill=1, w=1.6)], refs=[dict(v=50, col='k2', zh='50%', en='50%')],
               zones=[dict(lo=50, hi=None, col='up', zh='高於 50%：BTC 贏的天數比較多', en='Above 50%: BTC wins on more days', nz='50% 線', ne='the 50% line')]))
+        nc = f.get('ndx_cap') or {}
+        if has(nc):   # 2026-11-25 使用者要求（Glassnode〈The Canary in the Coal Mine〉）：跟漲少、跟跌多（pipeline/ndx_capture.py）。上格價格、塗色＝那段期間、柱子＝進入之後 60 天的漲跌
+            bk, bs = nc['back'], nc['base']; pz = lambda v: ('%+.1f%%' % v).replace('-', '−')
+            st_z = ('現在是「跟漲少、跟跌多」（%s 起）' % md(nc['since']) if nc.get('since') else '現在是「跟漲少、跟跌多」') if nc['on'] else '現在不是「跟漲少、跟跌多」'
+            st_e = ('Now in the "rises less, falls more" state (since %s)' % nc['since'] if nc.get('since') else 'Now in the "rises less, falls more" state') if nc['on'] else 'Not in the "rises less, falls more" state now'
+            modes.append(dict(mz='跟漲少、跟跌多', me='Rises less, falls more', hz='近 60 個交易日，那斯達克 100 跌的日子 BTC 跌了它的多少', he='Last 60 sessions: BTC\'s fall as a share of the Nasdaq 100\'s on down days',
+              f='pct1', rows=nc['rows'], p=1, rng=0, hero=1, notag=1,
+              ser=[ser(4, zh='柱子：進入之後 60 天的漲跌', en='Bars: next 60 days after entry', t='bar', bw=7), ser(3, hide=1, zh='跌的日子跟到', en='Down-day capture', f='p1'), ser(2, hide=1, zh='漲的日子跟到', en='Up-day capture', f='p1')],
+              refs=[dict(v=0, col='k2', solid=1)], spans=[dict(a=a, b=b, col='dn', op=.16) for a, b in nc['spans']],
+              leg=[['dn', '塗色：跟漲少、跟跌多的期間', 'Shaded: rising less and falling more than the Nasdaq', 'box']],
+              dz='近 60 個美股交易日裡，那斯達克 100 漲的日子 BTC 平均漲了它的百分之多少、跌的日子又跌了它的百分之多少。漲的日子不到 100%%、跌的日子超過 100%%，就是「跟漲少、跟跌多」，圖上塗色。%s：漲的日子跟到 %.1f%%，跌的日子跌了 %.1f%%（美股資料到 %s）。'
+                 '%s 年起進入過 %d 次（相隔 45 天內不另算），走完 60 天的 %d 次裡 %d 次比進入時低，中位數 %s；同期任意一天之後 60 天比較低的是 %d%%，中位數 %s。BTC 用每日收盤、美股用紐約收盤，差約 3 小時。只作讀值。' % (
+                   st_z, nc['uc'], nc['dc'], md(nc['date']), nc['eps'][0]['start'][:4], len(nc['eps']), bk['n'], bk['lower'], pz(bk['med']), bs['lower'], pz(bs['med'])),
+              de='Over the last 60 US sessions: how much of the Nasdaq 100\'s gain BTC kept on up days, and how much of its fall BTC took on down days. Under 100%% on up days and over 100%% on down days is "rises less, falls more", shaded on the chart. %s: %.1f%% on up days, %.1f%% on down days (stock data to %s). '
+                 'Since %s it entered %d times (re-entries within 45 days not counted); of the %d that have run 60 days, %d ended lower, median %s; from any day over the same years, %d%% ended lower 60 days later, median %s. BTC uses the daily close, stocks the New York close, about 3 hours apart. A reading, not a signal.' % (
+                   st_e, nc['uc'], nc['dc'], nc['date'], nc['eps'][0]['start'][:4], len(nc['eps']), bk['n'], bk['lower'], pz(bk['med']), bs['lower'], pz(bs['med']))))
         if not modes: return NA('stk', 'BTC 對美股和黃金', 'BTC vs stocks and gold', 'BTC 和美股、黃金的比較（flows.btc_vs_stocks）', 'the BTC vs stocks and gold comparison (flows.btc_vs_stocks)')
         return dict(k='stk', zh='BTC 對美股和黃金', en='BTC vs stocks and gold', modes=modes,
-          dz='第一頁是近兩個月 BTC、S&P 500、那斯達克和黃金各自的漲跌。第二頁是近 90 個美股交易日裡，BTC 當天漲幅大於 S&P 500 的比例，高於 50% 代表 BTC 贏的天數比較多。黃金用一枚代表一盎司黃金的代幣代替。',
-          de='The first view shows how BTC, the S&P 500, the Nasdaq and gold have each moved over the last two months. The second is the share of the last 90 US sessions in which BTC rose more than the S&P 500; above 50% means BTC won on more days. Gold is proxied by a token backed by one ounce of gold.')
+          dz='第一頁是近兩個月 BTC、S&P 500、那斯達克和黃金各自的漲跌。第二頁是近 90 個美股交易日裡，BTC 當天漲幅大於 S&P 500 的比例，高於 50% 代表 BTC 贏的天數比較多。第三頁「跟漲少、跟跌多」看 BTC 跟那斯達克 100 漲跌的力道，附過去每次之後 60 天的漲跌。黃金用一枚代表一盎司黃金的代幣代替。',
+          de='The first view shows how BTC, the S&P 500, the Nasdaq and gold have each moved over the last two months. The second is the share of the last 90 US sessions in which BTC rose more than the S&P 500; above 50% means BTC won on more days. The third, "rises less, falls more", measures how much of the Nasdaq 100\'s moves BTC follows, with what happened over the 60 days after each past episode. Gold is proxied by a token backed by one ounce of gold.')
 
     def c_r2y():   # 2026-11-12 新圖（舊版沒有）：2 年期殖利率減聯準會目標利率。差距為正＝債市押加息（對風險資產是逆風）用紅，為負＝押降息用綠
         from say_data import own
