@@ -1,0 +1,80 @@
+name: Deploy to Cloudflare Pages (shared steps)
+description: >
+  部署 main 最新內容到 Cloudflare Pages。cloudflare.yml（push、手動）和 Daily data／ETF flows／Share cards／Chart images 的最後一步共用。
+  2026-11-25 從 cloudflare.yml 抽出來：原本資料流程推送後再呼叫另一個部署工作，GitHub 每個工作至少算 1 分鐘，部署本身只要 30 秒左右；
+  直接接在原本的工作後面，省掉那 1 分鐘（倉庫考慮改私有，Actions 要算額度）。
+
+inputs:
+  api-token:
+    description: secrets.CLOUDFLARE_API_TOKEN（權限 Account › Cloudflare Pages › Edit）
+    required: true
+  account-id:
+    description: secrets.CLOUDFLARE_ACCOUNT_ID
+    required: true
+  github-token:
+    description: github.token（下載 Release 裡的截圖和影片）
+    required: true
+  indexnow:
+    description: "'true' = 部署完通知搜尋引擎（日報上線那次，Share cards 傳）"
+    required: false
+    default: "false"
+  project:
+    description: Cloudflare Pages 專案名稱（2026-11-11 建好了；原本每次部署前的「確認專案存在」拿掉，省一次安裝 wrangler）
+    required: false
+    default: daybreak
+
+runs:
+  using: composite
+  steps:
+    - name: 準備上傳的網站資料夾（main 最新內容）
+      shell: bash
+      env:
+        GH_TOKEN: ${{ inputs.github-token }}
+        CF_API: ${{ inputs.api-token }}
+        CF_ACC: ${{ inputs.account-id }}
+        REPO: ${{ github.repository }}
+      run: |
+        if [ -z "$CF_API" ] || [ -z "$CF_ACC" ]; then
+          echo "CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID 還沒設定，這次不部署。"; echo "CF_SKIP=1" >> "$GITHUB_ENV"; exit 0
+        fi
+        # 另外取一份乾淨的 main：資料流程的工作目錄裡有暫存檔；而且部署前再抓一次，部署的一定是當下最新的 main
+        SRC="$RUNNER_TEMP/cf-src"; SITE="$RUNNER_TEMP/site"
+        rm -rf "$SRC" "$SITE"; git worktree prune || true
+        git fetch -q --depth=1 origin main
+        git worktree add -f --detach "$SRC" FETCH_HEAD
+        echo "部署 main $(git -C "$SRC" rev-parse --short HEAD)"
+        # 跟 GitHub Pages 一樣，倉庫裡的檔案都上線（.git、.github、.claude 除外；functions/ 是 Cloudflare 的伺服器端程式，不當靜態檔）
+        mkdir -p "$SITE"
+        rsync -a --exclude='.git' --exclude='.github' --exclude='.claude' --exclude='functions' "$SRC/" "$SITE/"
+        # 舊網址是 north7.github.io/daybreak/…；有人在新網域打了 /daybreak/… 也導回正確位置
+        printf '/daybreak /  301\n/daybreak/* /:splat 301\n' >> "$SITE/_redirects"
+        # 2026-11-16 舊版（classic.html）對外下線，2026-11-17 從倉庫刪除；/classic 轉回首頁（網址 # 後面的舊代號由首頁轉到新版對應的圖）
+        printf '/classic /  301\n/classic.html /  301\n' >> "$SITE/_redirects"
+        # 2026-11-20 每張圖的靜態小圖（chart-img.yml 截好放在 Release「chart-img」）解到 charts-img/，單頁才會放圖；還沒有或下載失敗就不放圖
+        mkdir -p "$SITE/charts-img"
+        gh release download chart-img --repo "$REPO" -p chart-img.tar -D "$RUNNER_TEMP" --clobber && tar -C "$SITE/charts-img" -xf "$RUNNER_TEMP/chart-img.tar" || echo "::warning::no chart images"
+        # 2026-11-20 GEO 第二批：每張圖一頁、每天的簡報一頁（中英），sitemap.xml 加上這些網址。只寫進上傳的資料夾，不進程式庫
+        # 2026-11-25 簡體版要 OpenCC（pipeline/next/hans.py）；裝不起來就只出繁體和英文（首頁和數據頁的簡體是瀏覽器裡轉的，不靠這一步）
+        python3 -m pip install --quiet --break-system-packages opencc-python-reimplemented==0.1.7 || echo "::warning::opencc not installed; no zh-Hans pages"
+        (cd "$SRC" && python3 pipeline/next/pages.py --out "$SITE") || echo "::warning::pages.py failed; deploying without chart/brief pages"
+        # 2026-11-15 使用者：「影片移出程式庫」。案例頁的展示影片放在 Release「media」，部署時下載回原本的路徑，網址不變
+        gh release download media --repo "$REPO" -p showcase.mp4 -D "$SITE/case-study/img" --clobber
+        test -s "$SITE/case-study/img/showcase.mp4"
+        echo "files: $(find "$SITE" -type f | wc -l)"
+        echo "CF_SRC=$SRC" >> "$GITHUB_ENV"; echo "SITE_DIR=$SITE" >> "$GITHUB_ENV"
+
+    - name: 部署
+      if: env.CF_SKIP != '1'
+      uses: cloudflare/wrangler-action@v3
+      with:
+        apiToken: ${{ inputs.api-token }}
+        accountId: ${{ inputs.account-id }}
+        # 在乾淨的 main 裡執行：wrangler 會把那裡的 functions/ 一起部署（2026-11-25 /ops-live/，回覆／長文小幫手即時讀資料）
+        workingDirectory: ${{ env.CF_SRC }}
+        command: pages deploy ${{ env.SITE_DIR }} --project-name=${{ inputs.project }} --branch=main --commit-dirty=true
+
+    - name: 通知搜尋引擎（IndexNow）
+      # 2026-11-20 GEO：日報上線那次部署（Share cards）才送；失敗不影響部署
+      if: env.CF_SKIP != '1' && inputs.indexnow == 'true'
+      shell: bash
+      run: (cd "$CF_SRC" && python3 pipeline/indexnow.py) || echo "::warning::IndexNow failed"

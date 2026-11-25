@@ -1,10 +1,9 @@
 name: Prefetch on-chain
 
 on:
-  schedule:
-    - cron: "40 22 * * *"   # 每天 UTC 22:40（台北 06:40），比 Daily data 00:05 早 85 分鐘，避開 bitcoin-data 每小時 10 次上限
-    - cron: "0 23 * * *"    # 備援：GitHub 排程可能被丟掉；今天這組已抓過就直接結束
-  # 2026-10-12：由 cron-job.org 在 UTC 22:40 準時呼叫（event_type: prefetch），見 docs/CRON_JOB.md；schedule 保留當備援
+  # 2026-11-25 拿掉 GitHub 自己的排程（原本 22:40 加 23:00 備援）：cron-job.org 準時呼叫才是主力；漏了這天也只是 Daily data 沿用前一天抓的那組
+  # （bd_rotation.py 輪替抓，沒抓到的下次補）。每次「已抓過、直接結束」也算 1 分鐘。
+  # 2026-10-12：由 cron-job.org 在 UTC 22:40 準時呼叫（event_type: prefetch），見 docs/CRON_JOB.md
   repository_dispatch:
     types: [prefetch]
   workflow_dispatch:
