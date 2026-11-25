@@ -173,9 +173,18 @@ IMG_DIR = None
 
 
 def img(k, en):
-    """那張圖的靜態小圖（部署時從 Release「chart-img」解開到 charts-img/），有就回傳網站根目錄起的路徑（帶日期，換日就換網址）"""
+    """那張圖的靜態小圖（部署時從 Release「chart-img」解開到 charts-img/），有就回傳網站根目錄起的路徑。
+    網址帶截圖日期（chart-img.yml 寫的 date.txt；2026-11-25 改成每週截一次，圖沒換網址就不換，爬蟲和分享預覽不用天天重抓）；舊包沒有 date.txt 就用今天"""
+    global IMG_V
     rel = 'charts-img/%s/%s.jpg' % ('en' if en else 'zh', k)
-    return (rel + '?v=' + DATE) if IMG_DIR and os.path.exists(os.path.join(os.path.dirname(IMG_DIR), rel)) else None
+    if not (IMG_DIR and os.path.exists(os.path.join(os.path.dirname(IMG_DIR), rel))): return None
+    if IMG_V is None:
+        try: IMG_V = open(os.path.join(IMG_DIR, 'date.txt'), encoding='utf-8').read().strip() or DATE
+        except Exception: IMG_V = DATE
+    return rel + '?v=' + IMG_V
+
+
+IMG_V = None
 
 
 def img_wh(k, en):
