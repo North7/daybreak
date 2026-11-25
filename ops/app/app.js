@@ -267,7 +267,8 @@
 
   // ---------- 回覆 ----------
   var R = null, RFILTER = 'all', RFETCHED = {};
-  function replyKey(x) { return 'reply:' + x.id; }
+  // 同一則貼文可能先回覆、再引用（2026-11-25 LegoLiew #129／#136）：只引用的那張卡另外算，不跟回覆共用「已回」
+  function replyKey(x) { return 'reply:' + x.id + (x.mode === 'quote' && !x.reply ? ':q' : ''); }
   function rfilter(x) {
     return RFILTER === 'all' || (RFILTER === 'follow' && x.kind === 'followup') || (RFILTER === 'new' && x.kind !== 'followup') || (RFILTER === 'quote' && (x.mode === 'quote' || (x.quote && !x.reply)));
   }
@@ -429,7 +430,7 @@
     function set(k, ts) { if (ts && !ONX[k]) { ONX[k] = ts; hit++; } }
     ((R && R.items) || []).forEach(function (x) {
       if (x.status === 'skip') return;
-      set(replyKey(x), XC.rep[x.id] || (x.quote ? XC.quo[x.id] : 0) || byText(x.reply) || byText(x.quote));
+      set(replyKey(x), x.mode === 'quote' && !x.reply ? (XC.quo[x.id] || byText(x.quote)) : (XC.rep[x.id] || (x.quote ? XC.quo[x.id] : 0) || byText(x.reply) || byText(x.quote)));
     });
     (POSTS || []).forEach(function (p) { Object.keys(p.langs).forEach(function (l) { set(p.key, byText(p.langs[l].text)); }); });
     return hit;
