@@ -24,6 +24,10 @@
   不扣＝lth_supply_in_loss ÷ lth_supply；扣掉＝（長期持有者虧損供給 − 10 年以上的幣裡在虧損的）÷（長期持有者供給 − 10 年以上的幣），每日值。
   扣掉的那一堆 2019 年才開始有、一輪比一輪多、又幾乎永遠在獲利，所以扣掉版本會一輪比一輪被墊高。對照：每個時點都扣同一批幣
   （vintage 2009–2012：最後一次移動在 2012 年以前、到那天還沒動的幣；2014 年起價格都高於它們的成本，全部在獲利），存在 fix，網站拿來寫口徑說明。
+10 VDD 倍數（2026-11-25 使用者傳了一張 Checkonchain「Value Days Destroyed Multiple」加註「底背离」的圖，看過回測後說「加成新卡」）：
+  VDD＝每天銷毀的幣天數 × 當天收盤；倍數＝30 日平均 ÷ 365 日平均。和 Checkonchain 的數值比，近年差 4% 上下、早年差到五成（他的幣天數來源不同），
+  熱度分區照他的 2.9／1.4／0.75。底背離：收盤在 60 日低點 3% 以內、比 60 天前跌 10% 以上、倍數是 60 天前的 2 倍以上（嚴格版）或 1.5 倍以上（放寬版），
+  前後 60 天內只算一次。嚴格版只有 2015-01、2018-12、2022-11 三次，都在熊底；放寬版一年後的漲跌和隨便一天差不多，照實寫。
 全部只作讀值。Bitview 改序列名稱時（https://bitview.space/api 的 What changed）整組會失敗，collect.py 只記 errors，build.py 沿用前一天的。"""
 import datetime as dt, json, subprocess, time
 
@@ -236,10 +240,42 @@ def build(last, S=None, pxc=None):
                 lows=clows, now=cnow, eps=ep, low_med=round(pmed, 1), at_med=R0(cv[N - 1] * (1 + pmed / 100)), at25=R0(cv[N - 1] * 1.25),
                 z25=bstat(lambda v: v < 25, 180), any180=bstat(lambda v: True, 180), since='2014-01-01',
                 rows=[[dnum(i), R0(cv[i]), R0(cv[i] * 1.25), R0(px[i]), R2(pm[i]), round(px[i] / cv[i], 3)] for i in samp(a12, set(range(N - 1100, N)) | {w['dn'] - dnum(0) for w in clows + [cnow]} | {e['dn'] - dnum(0) for e in ep}) if cv[i] and pm[i] is not None])
-    return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx, lthx=lthx, hrib=hrib, cvdd=cvdd,
-                note='損失地板：虧損的幣佔供給的比例到歷史最糟 5%／2%／1%／0.5%／0.1% 時的價格，門檻逐日累積；賺賠分布：各賺賠幅度佔供給 %；集中度：現價 ±5% 內的幣佔供給 %；老幣移動：1 年以上、5 年以上的幣每天移動的顆數（7 日、30 日平均）；獲利供給：全體和扣掉 10 年以上的幣，在獲利的比例（7 日平均）；CVDD：累計（銷毀幣天數 × 價格）÷（創世起天數 × 600 萬）；只作讀值')
+    # ── 10 VDD 倍數 ──
+    vd = [(cdd[i] or 0) * (bpx[i] or 0) for i in range(N)]; cs = [0.0]
+    for v in vd: cs.append(cs[-1] + v)
+    vm = [None] * N
+    for i in range(364, N):
+        b = (cs[i + 1] - cs[i - 364]) / 365; vm[i] = (cs[i + 1] - cs[i - 29]) / 30 / b if b else None
+    if vm[N - 1] is None: raise RuntimeError('VDD 倍數最新一天缺值')
+    def dv(i):   # 那一天的背離條件：收盤離 60 日低點不到 3%、比 60 天前跌 10% 以上；回傳倍數是 60 天前的幾倍（不成立回傳 None）
+        if i < 424 or not px[i] or not px[i - 60] or vm[i] is None or not vm[i - 60]: return None
+        w = [x for x in px[i - 59:i + 1] if x]
+        return vm[i] / vm[i - 60] if px[i] <= min(w) * 1.03 and px[i] / px[i - 60] - 1 <= -0.10 else None
+    def vev(k):
+        ev, lst = [], -999
+        for i in range(a12, N):
+            r = dv(i)
+            if r is not None and r >= k:
+                if i - lst > 60:
+                    w = [x for x in px[i:min(N, i + 366)] if x]
+                    ev.append(dict(d=day(i), dn=dnum(i), px=R0(px[i]), m=round(vm[i], 3), m60=round(vm[i - 60], 3), x=round(r, 2), worst=round((min(w) / px[i] - 1) * 100),
+                                   r90=None if fwd(i, 90) is None else round(fwd(i, 90)), r180=None if fwd(i, 180) is None else round(fwd(i, 180)), r365=None if fwd(i, 365) is None else round(fwd(i, 365))))
+                lst = i
+        return ev
+    def vbt(L):
+        v = sorted(e['r365'] for e in L if e['r365'] is not None); return dict(n=len(v), up=sum(1 for x in v if x > 0), med=v[len(v) // 2] if v else None)
+    vs, vl = vev(2), vev(1.5); va = sorted(fwd(k, 365) for k in range(a12, N) if fwd(k, 365) is not None)
+    zn = [v for v in vm[a12:] if v is not None]; rn = dv(N - 1)
+    vddm = dict(v=round(vm[N - 1], 3), v30=round(vm[N - 31], 3), v60=round(vm[N - 61], 3), x60=round(vm[N - 1] / vm[N - 61], 2), px=R0(px[N - 1]), px60=R0(px[N - 61]),
+                chg60=round((px[N - 1] / px[N - 61] - 1) * 100, 1), div=None if rn is None else round(rn, 2), strict=vs, loose=vl, bs=vbt(vs), bl=vbt(vl),
+                base=dict(n=len(va), up=round(sum(1 for x in va if x > 0) / len(va) * 100), med=round(va[len(va) // 2])), since='2012-01-01',
+                hot=round(sum(1 for v in zn if v > 2.9) / len(zn) * 100, 1), cold=round(sum(1 for v in zn if v < .75) / len(zn) * 100, 1),
+                pct=round(sum(1 for v in zn if v < vm[N - 1]) / len(zn) * 100, 1),
+                rows=[[dnum(i), round(vm[i], 3), R0(px[i])] for i in samp(a12, set(range(N - 1100, N)) | {ix(e['d']) for e in vl + vs}) if vm[i] is not None and px[i]])
+    return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx, lthx=lthx, hrib=hrib, cvdd=cvdd, vddm=vddm,
+                note='損失地板：虧損的幣佔供給的比例到歷史最糟 5%／2%／1%／0.5%／0.1% 時的價格，門檻逐日累積；賺賠分布：各賺賠幅度佔供給 %；集中度：現價 ±5% 內的幣佔供給 %；老幣移動：1 年以上、5 年以上的幣每天移動的顆數（7 日、30 日平均）；獲利供給：全體和扣掉 10 年以上的幣，在獲利的比例（7 日平均）；CVDD：累計（銷毀幣天數 × 價格）÷（創世起天數 × 600 萬）；VDD 倍數：（銷毀幣天數 × 價格）30 日均 ÷ 365 日均；只作讀值')
 
 
 if __name__ == '__main__':
     import sys
-    d = build(sys.argv[1]); print({k: v for k, v in d['cvdd'].items() if k != 'rows'}, len(d['cvdd']['rows'])); print({k: v for k, v in d['hrib'].items() if k not in ('rows', 'spans')}, len(d['hrib']['rows'])); print({k: v for k, v in d['psx'].items() if k != 'rows'}, len(d['psx']['rows'])); print({k: v for k, v in d['tiers'].items() if k != 'rows'}, len(d['tiers']['rows'])); print(json.dumps({k: (v if k not in ('rows',) else len(v)) for k, v in d['floors'].items()}, ensure_ascii=False)); print({k: d['pnl']['all'][k] for k in ('cur', 'prev30', 'low22', 'depth', 'pct10')}); print({k: v for k, v in d['dens'].items() if k != 'rows'}, len(d['dens']['rows'])); print(d['old']['y1'], d['old']['y5'], len(d['old']['rows'])); print('bytes', len(json.dumps(d)))
+    d = build(sys.argv[1]); print({k: v for k, v in d['vddm'].items() if k != 'rows'}, len(d['vddm']['rows'])); print({k: v for k, v in d['cvdd'].items() if k != 'rows'}, len(d['cvdd']['rows'])); print({k: v for k, v in d['hrib'].items() if k not in ('rows', 'spans')}, len(d['hrib']['rows'])); print({k: v for k, v in d['psx'].items() if k != 'rows'}, len(d['psx']['rows'])); print({k: v for k, v in d['tiers'].items() if k != 'rows'}, len(d['tiers']['rows'])); print(json.dumps({k: (v if k not in ('rows',) else len(v)) for k, v in d['floors'].items()}, ensure_ascii=False)); print({k: d['pnl']['all'][k] for k in ('cur', 'prev30', 'low22', 'depth', 'pct10')}); print({k: v for k, v in d['dens'].items() if k != 'rows'}, len(d['dens']['rows'])); print(d['old']['y1'], d['old']['y5'], len(d['old']['rows'])); print('bytes', len(json.dumps(d)))
