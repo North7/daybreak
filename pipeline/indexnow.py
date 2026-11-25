@@ -8,6 +8,8 @@ import json, urllib.request
 KEY = 'f4af452c772ca762ae6ba9c8a566e5c5'
 HOST = 'daybreak.aronlab.dev'
 URLS = ['/', '/app/', '/llms.txt', '/latest.md', '/latest.en.md', '/charts/', '/en/charts/', '/brief/', '/en/brief/']
+# 2026-11-25 主題頁（pipeline/next/topics.py）：常見問題的答案每天跟著換
+URLS += ['/%s%s/' % (l, h) for h in ('bitcoin-cycle', 'bitcoin-onchain', 'bitcoin-macro', 'bitcoin-derivatives') for l in ('', 'en/')]
 # 2026-11-20 GEO 第二批：當天的簡報頁（每張圖的頁每天也會變，但一次送 240 頁太多；它們靠 sitemap 和索引頁的連結被找到）
 import os
 try:   # 2026-11-21 當天的簡報頁用當期判讀（notes.json）的日期，封存要晚大半天才寫
