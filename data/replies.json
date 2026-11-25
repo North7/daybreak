@@ -2741,25 +2741,25 @@
   {
    "n": 136,
    "order": 136,
-   "kind": "followup",
+   "kind": "reply",
    "lang": "en",
    "style": "口語版",
    "status": "send",
-   "mode": "reply",
-   "url": "https://x.com/songpu717/status/2125597179683418423",
-   "id": "2125597179683418423",
-   "author": "songpu717",
-   "name": "Aron_ · Crypto Data",
-   "followers": 0,
-   "posted": "2026-11-25T14:27:13Z",
-   "angle": "跟進 LegoLiew：他建議的「跟昨天比」已經上線（#284）",
+   "mode": "quote",
+   "url": "https://x.com/LegoLiew/status/2125147894319902953",
+   "id": "2125147894319902953",
+   "author": "LegoLiew",
+   "name": "LegoLiew",
+   "followers": 826,
+   "posted": "2026-11-24T08:41:56Z",
+   "angle": "引用 LegoLiew 的建議：他要的「跟昨天比」已上線（#284）",
    "take": "",
    "summary": "接在我們回 LegoLiew 那則底下（#129 已發）：他 11/24 建議標出跟昨天比的變化，網站 #284 已做在今天頁最上面",
-   "reply": "Update: it's live, top of the Today page\nSeven readings, yesterday → today, the biggest moves sorted first\nhttps://daybreak.aronlab.dev/app/",
-   "quote": "",
+   "reply": "",
+   "quote": "A reader asked to see what changed vs yesterday, not just the levels\nIt's live now: top of the Today page, seven readings from ETF flows to funding and OI, biggest moves first\n#Bitcoin #BTC",
    "sources": "網站 #284（t_dlt，今天頁第一段）",
    "image": null,
-   "note": "使用者 11/25 要再回一則。回在我們自己那則（2125597179683418423）底下，會通知他。附網址：回應他的產品建議，算四種情況之一。"
+   "note": "使用者 11/25 要改成引用他的留言（#129 回覆已發）。純文字：t_dlt 是讀數清單、不是圖，next_shot 截不了（分享模式不能放大、卡片模式圖高 0）。使用者點名，不查英文只引大帳號的限制。"
   }
  ]
 }
