@@ -565,50 +565,50 @@
 },
 "capeff": {
 "hz": [
-"圖上：每一列是一輪週期，從熊市底部到頂部：青綠是流進來的資金（實現市值增加）、金色是價格倍數，長條用對數長度；最後一列是這一輪到現在。",
-"怎麼看：比特幣越大，推動同樣的漲幅要越多錢：流入一輪比一輪多，倍數一輪比一輪小。拿這一輪和前幾輪同一天比，可以看資金進來的速度與價格的反應。",
-"小心：底部與頂部日期沿用本站的週期模型；實現市值逐筆 UTXO 計算，交易所整理錢包、遺失的幣都會影響，看的是數量級。"
+"圖上：每一列是一輪，從熊市底部到牛市頂部；青色橫條是流進來的錢（實現市值增加多少：每顆幣按最後一次移動時的價格加總，可以當成市場真正投入的資金），金色橫條是價格漲了幾倍，長度用對數刻度；最後一列是這一輪到現在。",
+"怎麼看：比特幣越大，同樣的漲幅要越多錢：流進來的錢一輪比一輪多，漲的倍數一輪比一輪小。這張用來調整對下一輪漲幅的期待，不說接下來的方向。",
+"小心：底部和頂部的日期用本站的週期劃分；交易所整理錢包、遺失的幣都會影響實現市值，只看數量級。"
 ],
 "he": [
-"WhatEach row is one cycle from bear-market bottom to top: teal is the money that came in (realized cap added), gold the price multiple, with logarithmic bar lengths; the last row is this cycle so far.",
-"ReadingThe bigger bitcoin gets, the more money the same gain needs: inflows grow each cycle while multiples shrink. Comparing this cycle with past ones on the same day shows how fast money arrives and how price responds.",
-"CaveatBottom and top dates follow this site's cycle model; realized cap is per UTXO and affected by exchange reshuffles and lost coins, so read it for orders of magnitude."
+"WhatEach row is one cycle from bear-market bottom to bull-market top. The cyan bar is money in (the rise in realized cap: every coin valued at the price it last moved, which can be read as the money actually put into the market); the gold bar is how many times the price rose; bar lengths are on a log scale. The last row is this cycle so far.",
+"ReadingThe bigger Bitcoin gets, the more money the same gain takes: money in grows every cycle while the multiple shrinks. Use it to temper expectations for the next run; it says nothing about direction.",
+"CaveatBottom and top dates follow this site's cycle split; exchange wallet reshuffles and lost coins both affect realized cap, so read it for orders of magnitude."
 ]
 },
 "path": {
 "hz": [
-"圖上：四種長期走法（虛線，本站的預測）與已實現價格（實線）；橘色帶是頂部模型的 80% 區間。",
-"怎麼看：看實線貼近哪一條。每月底自動重估：起點換成月底收盤，權重依收盤離各路徑多遠做貝氏更新；收盤連 10 天超出四條路徑上下 12% 才重畫形狀。",
-"小心：2028 年以後只供量級參考。"
+"圖上：四條虛線是本站自己畫的四種長期走法（直接修復、淺回檔、基準雙底、延後新低），圖例寫著各自的權重；粗實線是每個月底實際的收盤；橘色帶是頂部模型估計下一輪頂部 80% 機會落在的範圍。",
+"怎麼看：看實線貼近哪一條。權重是我們估計每種走法發生的機會，每個月底用收盤調整：收盤越接近哪一條，那條的權重就調高；收盤連 10 天超出四條走法的範圍 12% 以上，才重畫走法本身。",
+"小心：這是推估，不是準確的預測；2028 年以後只能看大概的數量級。"
 ],
 "he": [
-"WhatFour long-term paths (dashed, our forecasts) and the realized price (solid); the orange band is the top model's 80% range.",
-"ReadingSee which path the solid line is tracking. Re-estimated automatically each month end: the start moves to the month-end close and weights get a Bayesian update from how far the close is from each path; shapes are re-drawn only after 10 straight closes more than 12% outside all four.",
-"CaveatBeyond 2028, treat it as order-of-magnitude only."
+"WhatThe four dashed lines are this site's own long-run paths (direct recovery, shallow pullback, base-case double bottom, delayed new low), with their weights in the legend; the thick solid line is the actual month-end close; the orange band is where the top model puts the next top with 80% probability.",
+"ReadingSee which path the solid line is tracking. The weights are our estimate of how likely each path is, adjusted at each month-end close: the closer the close is to a path, the more its weight goes up. The paths themselves are redrawn only after 10 straight closes more than 12% outside all four.",
+"CaveatThis is an estimate, not a precise forecast; beyond 2028 read only the order of magnitude."
 ]
 },
 "long": {
 "hz": [
-"圖上：全部歷史收盤（對數刻度）；橘點是週期頂、藍點是週期底，虛直線是減半日。",
-"怎麼看：對數刻度下同樣高度＝同樣的漲跌比例；過去幾輪頂部大約在減半後 12–18 個月，底部約在頂部後一年。",
-"小心：只有 3–4 輪樣本，時間規律不保證重演。"
+"圖上：比特幣全部歷史的收盤，縱軸是對數刻度；圓圈標出每一輪的頂部和底部，灰色虛直線是減半日（大約每四年一次，礦工新挖出的比特幣減少一半）。",
+"怎麼看：對數刻度下，同樣的高度代表同樣的漲跌比例；過去幾輪頂部大約在減半後 12–18 個月，底部大約在頂部後一年。",
+"小心：只有三四輪，時間規律不保證重演；這張只是背景，不說接下來的方向。"
 ],
 "he": [
-"WhatAll closes on a log scale; orange dots are cycle tops, blue dots cycle bottoms, dashed verticals the halvings.",
+"WhatEvery Bitcoin close on record, on a log price axis; circles mark each cycle's top and bottom, and grey dashed verticals the halvings (about every four years, cutting the new bitcoin paid to miners in half).",
 "ReadingOn a log scale equal heights are equal percentage moves; past tops came roughly 12–18 months after a halving, and bottoms about a year after the top.",
-"CaveatOnly 3–4 cycles of history; the timing pattern may not repeat."
+"CaveatOnly three or four cycles, so the timing need not repeat. It is context, not direction."
 ]
 },
 "mon": {
 "hz": [
 "圖上：每格是一個月的漲跌：上個月最後一天收盤到這個月最後一天收盤。綠漲紅跌，顏色越深幅度越大；框起來的是本月，到最新收盤為止。",
 "怎麼看：最下面兩列是各月的中位數和上漲比例（2013 年起、不含本月）。用中位數是因為 2013 年 3 月、11 月都漲超過一倍，會把平均拉得很高。",
-"小心：每個月只有十幾個樣本，季節性只描述過去，不代表今年會照走；拿來看「這個月目前算不算特別」比拿來預測合適。只作讀值。"
+"小心：每個月只有十幾個樣本，季節性只描述過去，不代表今年會照走，不能拿來猜這個月或下個月的方向；拿來看「這個月目前算不算特別」比較合適。"
 ],
 "he": [
 "WhatEach cell is one month: from the last close of the previous month to the last close of this one. Green up, red down, darker for bigger moves; the outlined cell is this month, up to the latest close.",
 "ReadingThe bottom two rows are each month’s median and share of up months (since 2013, excluding this month). Medians, because March and November 2013 each more than doubled and would drag an average far up.",
-"CaveatEach month has only a dozen or so cases. Seasonality describes the past, not what this year will do; it is better for judging whether this month is unusual so far than for forecasting. Reading only."
+"CaveatEach month has only a dozen or so cases. Seasonality describes the past, not what this year will do, and cannot tell you which way this month or the next will go; it is better for judging whether this month is unusual so far."
 ]
 },
 "cot": {

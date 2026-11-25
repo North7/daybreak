@@ -220,21 +220,39 @@ def hashr(L):
     if h['capitulation']: return V('neu', '礦工在投降', 'Miners are capitulating', '投降期本身不是買點，等它恢復。', 'Capitulation itself is not the signal; the recovery is.', '30 日均回到 60 日均之上', '30-day back above the 60-day')
     if h['state_days'] <= 30: return V('up', '剛從投降恢復', 'Just recovered', '從投降恢復歷來常在底部附近，但不是每次都準。', 'Recoveries have often come near bottoms, though not every time.', '再次跌回投降', 'A relapse into capitulation')
     return V('neu', '礦工健康', 'Miners are healthy', '算力穩定，這張圖現在不提供方向。', 'Hashrate is steady: the chart gives no direction now.', '跌進投降期', 'A drop into capitulation')
-def cyccmp(L):
-    c = C(L)['cycle_cmp']; cur = next(x for x in c['cycles'] if x['now'])
-    return V('neu', '淺週期，時間表不適用', 'A shallow cycle', '這輪跌幅 %s，前幾輪都在 −75%% 以下，前幾輪的時間表不能直接套。' % pc(cur['at']['pct']), 'This drawdown is %s versus below −75%% before, so past timelines may not apply.' % pc(cur['at']['pct']))
-def dd(L):
-    x = O(L)['dd']['cyc']
-    if x['past']['deeper'] <= 10: return V('up', '回撤少見地深', 'An unusually deep pullback', '前四輪從底到頂的日子只有 %d%% 比現在深。' % x['past']['deeper'], 'Only %d%% of bottom-to-top days in past cycles were deeper.' % x['past']['deeper'], '跌破這輪底部', 'A break of the cycle low')
-    return V('neu', '牛市裡的一般回撤', 'An ordinary pullback', '前四輪從底到頂的日子有 %d%% 比現在深，不算極端。' % x['past']['deeper'], '%d%% of bottom-to-top days in past cycles were deeper: not extreme.' % x['past']['deeper'])
-def capeff(L): return V('neu', '背景，不指方向', 'Context only', '這張比的是每輪資金推動價格的效率，說明漲幅會越來越小，不說接下來的方向。', 'It compares how efficiently money lifts price each cycle: gains shrink, but it says nothing about direction.')
-def path(L):
-    m = C(L)['model']; t = m['top_model']; px = L['price']['bar']['c']
-    return V('up', '長期路徑向上', 'The long path points up', '四種走法的終點都在現價之上，頂部模型中位 %s（%s）；短期路線各有不同。' % (usd(t['median']), t['timing']), 'All four paths end above today\'s price; the top model\'s median is %s (%s). Near-term routes differ.' % (usd(t['median']), t.get('timing_en') or t['timing']), '跌破延後新低那條路線', 'Falling below the delayed-new-low path') if t['median'] > px * 1.3 else V('neu', '接近模型頂部', 'Near the model top', '價格接近頂部模型的區間。', 'Price is near the top model\'s range.')
-def long(L): return V('neu', '長期背景', 'Long-run context', '這張是全部歷史和減半時間點，給背景，不給方向。', 'All of history with halvings marked: context, not direction.')
+def cyccmp(L):   # 2026-11-25 改寫（WRITING.md）：背景圖，講這輪和前幾輪的時間表差在哪
+    c = C(L)['cycle_cmp']; cur = next(x for x in c['cycles'] if x['now']); prev = [x for x in c['cycles'] if not x['now']]
+    if cur['at']['pct'] > max(x['at']['pct'] for x in prev) + 10:
+        return V('neu', '這輪跌得淺，舊時間表套不上', 'A shallow fall; the old timetable doesn\'t fit', '前幾輪頂部後都跌掉四分之三以上、大約一年後見底；這輪跌得淺得多。跌得淺可能代表這輪的底比較高，也可能還沒跌完，這張圖分不出來，只當背景。',
+                 'Past cycles lost three quarters or more after the top and bottomed about a year later; this one has fallen far less. That could mean a higher bottom this time, or that the fall is not over. This chart cannot tell which, so treat it as context.')
+    return V('neu', '只是背景，不指方向', 'Context only', '這輪頂部後的跌幅和前幾輪同一時間差不多或更深；但只有三輪可以比，時間表只當參考。', 'This cycle\'s fall since the top is about as deep as past cycles by the same day, or deeper; with only three to compare, the timetable is a guide at most.')
+def dd(L):   # 2026-11-25 改寫：前提是這輪的低點守住，跌破就要重算
+    x = O(L)['dd']['cyc']; bp = x['bottom_px']; more = sum(1 for d in x['past']['deep'] if d['v'] < x['value'])
+    bz = x['bottom'][:7].replace('-', '/'); be = x['bottom'][:7]
+    cz = '收盤跌破 %s 的低點 %s：這段就不算上升段，要重算' % (bz, usd(bp)); ce = 'A close below the %s low of %s: this would no longer count as an upswing and gets redrawn' % (be, usd(bp))
+    if x['value'] > x['past']['p25']: return V('neu', '上升段裡一般的回檔', 'A typical pullback for an upswing', '前四輪的上升段裡，這種幅度的回檔很常見；這張只說明現在跌得多深，不說接下來的方向，而且前提是這輪的低點守住。',
+                                               'Pullbacks of this size were common in the upswings of the past four cycles. This chart only says how deep the fall is, not where price goes next, and it assumes this cycle\'s low holds.', cz, ce)
+    if x['past']['deeper'] <= 10: return V('up', '上升段裡少見的深回檔', 'A rare pullback for an upswing', '放在前四輪的上升段裡，這麼深的回檔很少見，過去出現時多半還在上升段中途；前提是這輪的低點守住。',
+                                           'Pullbacks this deep were rare in the upswings of the past four cycles, and when they came the upswing was usually not over. That assumes this cycle\'s low holds.', cz, ce)
+    return V('neu', '回撤偏深，但不算少見', 'Deep, but not unheard of',
+             ('前四輪裡有 %d 輪的上升段出現過比現在更深的回檔。' % more if more else '前四輪上升段裡，比現在深的日子不少。') + '這張只說明現在跌得多深，不說接下來的方向，而且前提是這輪的低點守住。',
+             ('In %d of the past four cycles the upswing saw a deeper pullback than this. ' % more if more else 'Past upswings had plenty of days deeper than this. ') + 'This chart only says how deep the fall is, not where price goes next, and it assumes this cycle\'s low holds.', cz, ce)
+def capeff(L): return V('neu', '只是背景，不指方向', 'Context only', '比特幣越大，每一輪能漲的倍數越小、同樣的錢推得越少：這張幫你調低對下一輪漲幅的期待，但不說接下來往哪走。',
+                        'The bigger Bitcoin gets, the smaller each cycle\'s run and the less each dollar moves it: useful for tempering hopes for the next run, but it says nothing about direction.')
+def path(L):   # 2026-11-25 改寫：這是本站自己的推估；「會改變看法」寫白話
+    m = C(L)['model']; t = m['top_model']; px = L['price']['bar']['c']; f = m.get('fan') or {}; need = f.get('need') or 10
+    ends = all(ns[-1][2] > px for ns in m['nodes'].values())
+    if t['median'] > px * 1.3: return V('up', '模型的長期路徑向上', 'Our long-run paths point up',
+                                        '%s這是本站自己的推估，短期怎麼走四種各不相同。' % ('四種走法最後都比現價高；但' if ends else ''),
+                                        '%shis is our own estimate, and the four paths differ on the way there.' % ('All four paths end above today\'s price, but t' if ends else 'T'),
+                                        '收盤掉到四種走法最低那條的下方 12%% 以上、連 %d 天：四種走法都要重畫' % need, 'Closes more than 12%% below the lowest path for %d straight days: all four would need redrawing' % need)
+    return V('neu', '接近模型估計的頂部', 'Near the modelled top', '價格已經接近頂部模型估計的下一輪頂部區間（%s–%s）。' % (usd(t['p10']), usd(t['p90'])), 'Price is close to the top model\'s range for the next top (%s–%s).' % (usd(t['p10']), usd(t['p90'])))
+def long(L): return V('neu', '只是背景，不指方向', 'Context only', '這張讓你看現在落在全部歷史的哪裡、上一輪頂部離現在多遠。但頂部、底部和減半之間的時間規律只有三四輪，這輪又跌得比以前淺，不能拿來推下一步。',
+                      'It shows where today sits in the whole history and how far back the last top was. But the timing between tops, bottoms and halvings rests on three or four cycles, and this one has fallen less than before, so it cannot predict the next move.')
 def mon(L):
     m = L['price']['monthly']['cur']
-    return V('neu', '季節性很弱', 'Seasonality is weak', '只有 %d 個樣本，月份效應不能當方向。' % m['n'], 'Only %d samples: month effects are not a direction.' % m['n'])
+    return V('neu', '只是背景，不指方向', 'Context only', '每個月份只有 %d 個樣本，一兩個極端年份就能把數字拉偏：季節性只描述過去，不能拿來判斷這個月或下個月的方向。' % m['n'],
+             'Each month has only %d samples, and one or two extreme years can skew them: seasonality describes the past and cannot tell you which way this month or the next will go.' % m['n'])
 def avgd(L):
     a = O(L)['avgd']; v = a['value']
     if v <= 20: return V('up', '離成本線很遠的便宜區', 'Deep below cost lines', '九條線的平均百分位在 20 以下：歷來屬於便宜區（不是底）。', 'The average percentile is under 20: historically a cheap zone, not a bottom.', '升回 40 以上', 'A move above 40')

@@ -413,9 +413,15 @@ def build(L, N, E, dn, X):
             'VDD Multiple %s (%s), no bottom divergence; all %d strict cases were at bear lows.' % (N2(vq['v']), ZN(vq['v'])[1], bs['n']))
     # ── 和歷史比 ──
     cc = cy['cycle_cmp']; CCOL = ['k2', 'c3', 'c4', 'ac']; NC = len(cy['cycle_cmp']['cycles'])
-    X['cyccmp'] = dict(k='cyccmp', zh='和前幾輪比：頂部之後', en='Versus past cycles: after the top', hz='現在比這一輪頂部', he='Now, versus this cycle\'s top', hs=dict(v=(cc['cycles'][-1]['rows'][-1][1] - 1) * 100, f='pct1'),
+    ccsh = cc['cycles'][-1]['at']['pct'] > max(x_['at']['pct'] for x_ in cc['cycles'][:-1]) + 10   # 這輪比前幾輪同一天淺 10 個百分點以上
+    X['cyccmp'] = dict(k='cyccmp', zh='和前幾輪比：頂部之後', en='Versus past cycles: after the top', hz='現在離這一輪頂部多遠', he='Now, below this cycle\'s top', hs=dict(v=(cc['cycles'][-1]['rows'][-1][1] - 1) * 100, f='pct1'),
       xy=dict(xk='days', log=1, f='xpct', series=[dict(zh=yr(c['top']) + (' 這一輪' if c['now'] else ''), en=yr(c['top']) + (' (now)' if c['now'] else ''), col=CCOL[(i + 4 - NC) % 4], w=2.4 if c['now'] else 1.4, op=1 if c['now'] else .8, rows=c['rows']) for i, c in enumerate(cc['cycles'])], ref=dict(v=1, col='k2', zh='頂部收盤', en='Top close'), vl=[dict(x=cc['day_now'], col='k2', zh='今天', en='Today')]),
-      dz='把每一輪的頂部對齊在第 0 天，看頂部之後每天的收盤比頂部高或低多少（−50%% 是跌掉一半）。橘色是這一輪，現在是頂部後第 %d 天。' % cc['day_now'], de='Each cycle aligned at its top on day 0, showing how far every later close sits above or below that top (−50%% means half gone). Orange is this cycle, now %d days past its top.' % cc['day_now'])
+      dz='這是什麼：把每一輪牛市的頂部對齊在同一天（第 0 天），看頂部之後每天的收盤比頂部低多少，這樣就能拿這一輪和前幾輪「同一個時間點」比。前幾輪頂部後都跌掉四分之三以上、大約一年後見底，再花兩三年回到頂部價，常聽到的「四年週期時間表」就是從這裡來的。'
+         '怎麼看這張圖：每條線是一輪，粗的橘線是這一輪，現在是頂部後第 %d 天（「今天」那條直線）；橫軸是頂部後第幾天，縱軸是比頂部低多少（−50%% 是跌掉一半），「頂部收盤」那條橫線就是頂部的價格。'
+         '要保留的地方：只有三輪可以比%s，前幾輪的時間表不能直接套。' % (cc['day_now'], '，而且這輪跌得淺得多、形狀不像' if ccsh else ''),
+      de='What it is: every bull-market top is lined up on the same day (day 0), showing how far each later close sat below that top, so this cycle can be compared with past ones at the same point in time. Past cycles lost three quarters or more after the top, bottomed about a year later and took another two or three years to get back; that is where the familiar "four-year cycle timetable" comes from. '
+         'How to read it: each line is one cycle; the thick orange line is this one, now %d days past its top (the "Today" line). The x-axis is days since the top, the y-axis how far below the top (−50%% means half gone), and the "Top close" line is the top price itself. '
+         'Caveats: there are only three cycles to compare%s, so their timetable does not simply carry over.' % (cc['day_now'], ', and this one has fallen much less and looks different' if ccsh else ''))
     ddv = o.get('dd')   # 2026-11-13 離高點的回撤（oc_extra.dd_viz）：兩個視角，週期的頂底沿用全站同一套
     if ddv:
         dc, da = ddv['cyc'], ddv['ath']; ps = dc['past']; ymz = lambda s_: s_[:7].replace('-', '/'); sl = lambda s_: s_.replace('-', '/'); mn = lambda v: ('%.0f%%' % v).replace('-', '−'); mn1 = lambda v: ('%.1f%%' % v).replace('-', '−')
@@ -423,47 +429,71 @@ def build(L, N, E, dn, X):
         dmk = [dict(d=dn(x['d']), v=x['v'], col='dn', up=0, zh='%s %s' % (ymz(x['d']), mn(x['v'])), en='%s %s' % (x['d'][:7], mn(x['v']))) for x in ps['deep']]
         amk = [dict(d=dn(x['d']), v=x['v'], col='dn' if x['d'] == dc['bottom'] else 'c3', up=0, zh='%s 底 %s' % (yr(x['d']), mn(x['v'])), en='%s low %s' % (yr(x['d']), mn(x['v']))) for x in da['bottoms']]
         X['dd'] = dict(k='dd', zh='離高點的回撤', en='Drawdown from the high',
-          modes=[dict(mz='這一輪低點以來', me='Since the cycle low', hz='離這一輪的高點', he="From this cycle's high", f='pct1', rows=[[r[0], r[1], r[2]] for r in ddv['rows']], p=2, npc=1,
+          modes=[dict(mz='從這輪低點起算', me="From this cycle's low", hz='比這輪的高點低多少', he="Below this cycle's high", f='pct1', rows=[[r[0], r[1], r[2]] for r in ddv['rows']], p=2, npc=1,
                       ser=[ser(1, zh='離這一輪高點', en="From the cycle's high", t='sign', base=0, st=DST, w=1.5)], refs=[dict(v=ps['med'], col='k2')],
                       marks=dmk, leg=[['k2', '前四輪的中位數 %s' % mn1(ps['med']), 'Median of the past four, %s' % mn1(ps['med']), 'dash'], ['dn', '每一輪最深的一次', 'Deepest pullback of each cycle', 'ring']]),
-                 dict(mz='歷史高點', me='All-time high', hz='離歷史高點', he='From the all-time high', f='pct1', rng=0, rows=[[r[0], r[3], r[2]] for r in ddv['rows']], p=2, npc=1,
+                 dict(mz='和歷史高點比', me='Against the all-time high', hz='比歷史高點低多少', he='Below the all-time high', f='pct1', rng=0, rows=[[r[0], r[3], r[2]] for r in ddv['rows']], p=2, npc=1,
                       ser=[ser(1, zh='離歷史高點', en='From the all-time high', t='split', base=0, st=DST, w=1.5)], refs=[dict(v=0, col='k2', solid=1)],
                       marks=amk, leg=[['c3', '週期底部', 'Cycle bottoms', 'ring'], ['dn', '這一輪目前的低點', "This cycle's low so far", 'ring']])],
-          dz='收盤比高點低多少，兩個視角。「這一輪低點以來」：每一輪從底部起算，和這段期間的最高收盤比，只畫底部到頂部；這一輪從 %s 的低點（$%s）起算，高點是 %s 的 $%s，如果之後跌破那個低點，這一段就要重算。前四輪從底到頂的日子裡，一半比 %s 淺，%d%% 比現在深。「歷史高點」：和歷史最高收盤（%s 的 $%s）比，圓圈是每一輪的底部。只作讀值。'
-             % (sl(dc['bottom']), format(dc['bottom_px'], ','), sl(dc['high']), format(dc['high_px'], ','), mn1(ps['med']), ps['deeper'], sl(da['high']), format(da['high_px'], ',')),
-          de='How far the close sits below the high, in two views. "Since the cycle low": each cycle is measured from its bottom against the highest close since then, drawn from bottom to top only. This cycle starts at the %s low ($%s) and its high is $%s on %s; if that low breaks, this stretch has to be redrawn. Across the past four cycles, half of all bottom-to-top days were shallower than %s and %d%% were deeper than now. "All-time high": measured against the highest close on record ($%s on %s); circles mark each cycle bottom. A reading only.'
-             % (dc['bottom'], format(dc['bottom_px'], ','), format(dc['high_px'], ','), dc['high'], mn1(ps['med']), ps['deeper'], format(da['high_px'], ','), da['high']))
-        from say_data import own   # 2026-11-15 新版自己的圖，直接寫讀值
+          dz='這是什麼：收盤比之前的最高收盤低多少，叫回撤。「從這輪低點起算」把這輪 %s 的低點當成起點，和之後的最高收盤比，用來看上升段裡的回檔有多深；「和歷史高點比」直接和歷史最高收盤比。'
+             '怎麼看這張圖：線越往下，離高點越遠，0%% 就是剛好在高點。「從這輪低點起算」只畫每一輪從底部漲到頂部的那一段，灰色虛線是前四輪上升段的中位數，紅圈是每一輪最深的一次回檔；「和歷史高點比」的圓圈是每一輪的底部，紅圈是這一輪目前的低點。'
+             '要保留的地方：第一個看法的前提是 %s 的低點就是這輪的底，跌破的話整段要重算；這張只說明跌得多深，不說接下來往哪走。' % (ymz(dc['bottom']), ymz(dc['bottom'])),
+          de='What it is: how far the close sits below the highest close before it, known as a drawdown. "From this cycle\'s low" starts at the %s low and measures against the highest close since, to show how deep pullbacks get within an upswing; "Against the all-time high" measures against the highest close on record. '
+             'How to read it: the lower the line, the further below the high; 0%% means right at the high. "From this cycle\'s low" draws only each cycle\'s climb from bottom to top; the grey dashed line is the median of the past four upswings and red circles mark each cycle\'s deepest pullback. In "Against the all-time high", circles mark each cycle bottom and the red one is this cycle\'s low so far. '
+             'Caveats: the first view assumes the %s low is this cycle\'s bottom; if it breaks, the whole stretch is redrawn. The chart says how deep the fall is, not where price goes next.' % (dc['bottom'][:7], dc['bottom'][:7]))
+        from say_data import own   # 2026-11-15 新版自己的圖，直接寫讀值；2026-11-25 改寫（WRITING.md）
+        dpx = L['price']['bar']['c']; dgap = (dpx / dc['bottom_px'] - 1) * 100; dlo = [abs(x['v']) for x in ps['deep']]; dwr = all(x['v'] > dc['value'] for x in ps['deep']); dhv = dc['value'] <= ps['p25']
         X['dd']['say'] = own([
-            ('離這一輪高點', "From this cycle's high", mn1(dc['value']), mn1(dc['value']), 'warn' if dc['value'] <= ps['p25'] else 'neu',
-             '收盤比這一輪的高點（%s 的 $%s）低 %s。前四輪從底到頂的日子裡，只有 %d%% 比現在深。' % (sl(dc['high']), format(dc['high_px'], ','), mn1(abs(dc['value'])), ps['deeper']),
-             "The close is %s below this cycle's high ($%s on %s). Across the past four cycles, only %d%% of bottom-to-top days were deeper than now." % (mn1(abs(dc['value'])), format(dc['high_px'], ','), dc['high'], ps['deeper'])),
-            ('前四輪的中位數', 'Median of the past four', mn1(ps['med']), mn1(ps['med']), 'neu',
-             '前四輪從底部到頂部的日子，一半的時候回撤比 %s 淺；最淺的四分之三在 %s 以內。' % (mn1(abs(ps['med'])), mn1(abs(ps['p25']))),
-             'On half of all bottom-to-top days in the past four cycles the pullback was shallower than %s; three quarters stayed within %s.' % (mn1(abs(ps['med'])), mn1(abs(ps['p25'])))),
+            ('比這輪的高點低多少', "Below this cycle's high", mn1(dc['value']), mn1(dc['value']), 'warn' if dhv else 'neu',
+             '這一輪從 %s 的低點起算，最高收盤是 %s 的 $%s。前四輪從底部漲到頂部的那幾年裡，只有 %d%% 的日子回檔比現在深。' % (sl(dc['bottom']), sl(dc['high']), format(dc['high_px'], ','), ps['deeper']),
+             "Counting from this cycle's low on %s, the highest close was $%s on %s. In the climbs from bottom to top of the past four cycles, only %d%% of days saw a deeper pullback than now." % (dc['bottom'], format(dc['high_px'], ','), dc['high'], ps['deeper'])),
+            ('上升段裡一般的回檔', 'A typical pullback in an upswing', mn1(ps['med']), mn1(ps['med']), 'neu',
+             '前四輪上升段裡，一半的日子回檔比這個淺，四分之三在 %s 以內；每一輪最深的一次落在 %s 到 %s。%s' % (mn1(abs(ps['p25'])), mn(min(dlo)), mn(max(dlo)), '現在比每一輪最深的都深。' if dwr else ''),
+             'In the past four upswings, half of all days had a shallower pullback than this and three quarters stayed within %s; each cycle\'s deepest fell %s to %s.%s' % (mn1(abs(ps['p25'])), mn(min(dlo)), mn(max(dlo)), ' Today is deeper than every one of them.' if dwr else '')),
             ('離歷史高點', 'From the all-time high', mn1(da['value']), mn1(da['value']), 'neu',
-             '收盤比歷史最高收盤（%s 的 $%s）低 %s，已經 %d 天。' % (sl(da['high']), format(da['high_px'], ','), mn1(abs(da['value'])), da['days']),
-             'The close is %s below the record close ($%s on %s), %d days on.' % (mn1(abs(da['value'])), format(da['high_px'], ','), da['high'], da['days']))],
-          '離這一輪高點 %s，前四輪只有 %d%% 的日子比現在深' % (mn1(dc['value']), ps['deeper']), "%s from this cycle's high; only %d%% of past bottom-to-top days were deeper" % (mn1(dc['value']), ps['deeper']))
+             '收盤比 %s 的歷史最高收盤 $%s 低這麼多，已經 %d 天沒有回到那裡。' % (sl(da['high']), format(da['high_px'], ','), da['days']),
+             'The close is this far below the record close of $%s on %s, and has not been back for %d days.' % (format(da['high_px'], ','), da['high'], da['days']))],
+          '比這輪的高點低 %s：放在前幾輪的上升段裡算%s的回檔%s' % (mn(abs(dc['value'])), '偏深' if dhv else '一般', '，而且只比 %s 的低點高 %.0f%%，跌破的話這段就不算上升段' % (ymz(dc['bottom']), dgap) if 0 < dgap < 10 else '') + '。',
+          "%s below this cycle's high: %s for an upswing in past cycles%s" % (mn(abs(dc['value'])), 'a fairly deep pullback' if dhv else 'an ordinary pullback', ', and only %.0f%% above the %s low; a break below it would mean this is no upswing at all' % (dgap, dc['bottom'][:7]) if 0 < dgap < 10 else '') + '.')
     ce = o['capeff']; cema = max(math.log10(1 + max(0, c_['add_b'])) for c_ in ce['cycles'] + [ce['cur']]) or 1; cemm = max(math.log10(max(1, c_['mult'])) for c_ in ce['cycles'] + [ce['cur']]) or 1
-    X['capeff'] = dict(k='capeff', zh='每輪資金效率', en='Capital efficiency by cycle', hz='這一輪到現在的價格倍數', he='This cycle\'s price multiple so far', hs=dict(v=ce['cur']['mult'], f='x2'),
+    X['capeff'] = dict(k='capeff', zh='每輪資金效率', en='Capital efficiency by cycle', hz='這一輪從底部漲了幾倍', he='This cycle\'s multiple from its bottom', hs=dict(v=ce['cur']['mult'], f='x2'),
       list=dict(rows=[row('%s → %s' % (yr(c['bottom']), yr(c['top'])) if not now_ else '%s → 現在' % yr(c['bottom']), '%s → %s' % (yr(c['bottom']), yr(c['top'])) if not now_ else '%s → now' % yr(c['bottom']), ('%.0f×' % c['mult']) if c['mult'] >= 20 else ('%.1f×' % c['mult']) if c['mult'] >= 10 else ('%.2f×' % c['mult']),
                           col='c4' if now_ else None, bar=math.log10(1 + max(0, c['add_b'])) / cema * 100, bc='c4', bar2=math.log10(max(1, c['mult'])) / cemm * 100, bc2='c5',
                           nz='流入 %s 億美元 · %d 天' % (format(int(round(c['add_b'] * 10)), ','), c.get('days') or 0), ne='$%sB in · %d days' % (format(c['add_b'], ',.1f'), c.get('days') or 0)) for c, now_ in [(c_, 0) for c_ in ce['cycles']] + [(ce['cur'], 1)]]),
-      dz='每一輪從底到頂，實現市值增加了多少（流入的資金），換來幾倍的價格。每列兩條橫條：青色是流入的資金、金色是價格倍數，長度是對數。市場越大，同樣的資金推得越少。', de='For each cycle from bottom to top: how much realized cap was added (capital in) and what price multiple it bought. Two bars per row, on a log scale: cyan for capital in, gold for the price multiple. The bigger the market, the less each dollar moves it.')
+      dz='這是什麼：每一輪從熊市底部到牛市頂部，流進來多少錢、價格漲了幾倍。流進來的錢用實現市值的增加來算：實現市值是每顆幣按它最後一次移動時的價格加總，可以當成市場真正投入的資金。'
+         '怎麼看這張圖：每一列是一輪，最後一列是這一輪到現在（大數字是這一輪從底部漲了幾倍）；青色橫條是流進來的錢，金色橫條是價格倍數，長度用對數刻度，才能把差上百倍的數字放在一起比。市場越大，同樣的錢推得越少，所以青色一輪比一輪長、金色一輪比一輪短。'
+         '要保留的地方：只有四輪；底部和頂部的日期用本站的週期劃分；交易所整理錢包、遺失的幣都會影響實現市值，只看數量級。',
+      de='What it is: for each cycle from bear-market bottom to bull-market top, how much money came in and how many times the price rose. Money in is the increase in realized cap: every coin valued at the price it last moved, which can be read as the money actually put into the market. '
+         'How to read it: one row per cycle, the last row being this cycle so far (the big number is how many times price has risen from its bottom). The cyan bar is money in and the gold bar the price multiple, on a log scale so numbers hundreds of times apart fit side by side. The bigger the market, the less the same money moves it, so the cyan bars grow and the gold bars shrink cycle after cycle. '
+         'Caveats: only four cycles; bottom and top dates follow this site\'s cycle split; exchange wallet reshuffles and lost coins both affect realized cap, so read it for orders of magnitude.')
     md = cy['model']; ym = lambda y, m: y + (m - 1) / 12.0; PN = {'直接修復': 'Direct recovery', '淺回檔': 'Shallow pullback', '基準雙底': 'Base case: double bottom', '延後新低': 'Delayed new low'}; PC = {'直接修復': 'c5', '淺回檔': 'c3', '基準雙底': 'ac', '延後新低': 'c4'}; nh = cy['next_halving_est']
     X['path'] = dict(k='path', zh='長期路徑：四種走法', en='Long-term paths: four scenarios', hz='頂部模型的中位數', he='Top-model median', hs=dict(v=md['top_model']['median'], f='usd0'),
       xy=dict(xk='ym', log=1, f='usd0', series=[dict(zh='%s %d%%' % (n, md['weights'][n]), en='%s %d%%' % (PN.get(n, n), md['weights'][n]), col=PC.get(n, 'k2'), w=1.4, op=.9, dash='5 4', rows=[[ym(a[0], a[1]), a[2]] for a in rows]) for i, (n, rows) in enumerate(md['nodes'].items())] + [dict(zh='已實現', en='Realized', col='ink', w=2.4, rows=[[ym(a[0], a[1]), a[2]] for a in md['realized']])],
               band=[md['top_model']['p10'], md['top_model']['p90'], 'dn'], vl=[dict(x=int(nh[:4]) + (int(nh[5:7]) - 1 + (int(nh[8:10]) - 1) / 30.0) / 12.0, col='k2', zh='下一次減半（估）', en='Next halving (est.)')], ref=dict(v=md['top_model']['median'], col='dn', zh='頂部中位 $%s' % format(md['top_model']['median'], ','), en='Top median $%s' % format(md['top_model']['median'], ','))),
-      dz='四種可能的走法和各自的權重，每個月依實際價格重新加權。橘色底是頂部模型的 80%% 區間，時間落在 %s。下次檢討 %s。' % (md['top_model']['timing'], md['next_review'].replace('-', '/')), de='Four possible paths with their weights, re-weighted each month against the actual price. The orange band is the top model\'s 80%% range, timed for %s. Next review %s.' % (md['top_model']['timing_en'], md['next_review']))
+      dz='這是什麼：本站自己的長期路徑模型，畫出從現在到下一輪頂部的四種可能走法：「直接修復」不回頭、直接往上；「淺回檔」先小跌一段再往上；「基準雙底」先跌回這輪的低點附近、做出第二個底再往上；「延後新低」先跌破這輪的低點，整輪往後延。每種走法都有權重，代表我們估計它發生的機會，四個加起來 100%%。'
+         '怎麼看這張圖：虛線是四種走法（圖例寫著名稱和權重），粗實線是每個月底實際的收盤；橘色帶是頂部模型估計下一輪頂部 80%% 機會落在的範圍，時間在 %s，灰色直線是下一次減半（估計）。每個月底用收盤調整權重：收盤越接近哪一條，那條的權重就調高；收盤跌破 $61,000 時「直接修復」就判定失效。下次調整 %s。'
+         '要保留的地方：這是推估，不是準確的預測，四條線的形狀是人畫的；2028 年以後只能看大概的數量級。' % (md['top_model']['timing'], md['next_review'].replace('-', '/')),
+      de='What it is: this site\'s own long-run path model, drawing four possible routes from here to the next top. Direct recovery heads straight up without looking back; shallow pullback dips a little first, then rises; base-case double bottom falls back near this cycle\'s low, makes a second bottom, then rises; delayed new low breaks below this cycle\'s low first and pushes the whole cycle later. Each path has a weight, our estimate of how likely it is; the four add up to 100%%. '
+         'How to read it: the dashed lines are the four paths (the legend gives names and weights), the thick solid line the actual month-end closes. The orange band is where the top model puts the next top with 80%% probability, timed for %s; the grey vertical line is the next halving (estimated). Weights are adjusted at each month-end close: the closer the close is to a path, the more its weight goes up, and a close below $61,000 rules out direct recovery. Next re-check %s. '
+         'Caveats: this is an estimate, not a precise forecast, and the shapes of the four lines are drawn by hand; beyond 2028 read only the order of magnitude.' % (md['top_model']['timing_en'], md['next_review']))
     hv = [dn(h) for h in cy['halvings']]; px = [[r[0], r[1]] for r in L['chips']['stress']['rows']]
     X['long'] = dict(k='long', zh='價格長期走勢', en='Long-term price', hz='收盤', he='Close', one=1, f='usd0', rng=0, rows=px, ser=[ser(1, zh='BTC 價格', en='BTC price', col='ac', w=1.5)],
       marks=[dict(d=dn(t[0]), v=t[1], on=0, col='dn', up=1, zh='%s 頂' % yr(t[0]), en='%s top' % yr(t[0])) for t in cy['tops']] + [dict(d=dn(t[0]), v=t[1], on=0, col='dn' if t[1] > 50000 else 'c3', up=0, zh='%s 底' % yr(t[0]), en='%s low' % yr(t[0])) for t in cy['bottoms']],
       vl=[dict(d=h, col='k2', dash='4 3') for h in hv], leg=[['dn', '週期頂部', 'Cycle tops', 'ring'], ['c3', '週期底部', 'Cycle bottoms', 'ring'], ['k2', '減半日', 'Halvings', 'dash']],
-      dz='全部歷史的收盤，對數刻度：同樣的高度代表同樣的漲跌比例。過去幾輪的頂部大約在減半後 12 到 18 個月，底部大約在頂部後一年。', de='All closes on a log scale, where equal heights are equal percentage moves. Past tops came roughly 12–18 months after a halving, and bottoms about a year after the top.')
+      dz='這是什麼：比特幣全部歷史的收盤，標出每一輪的頂部、底部和減半日。減半是大約每四年一次、礦工新挖出的比特幣減少一半；過去幾輪的頂部大約在減半後 12 到 18 個月，底部大約在頂部後一年，常聽到的「四年週期」就是這個節奏。'
+         '怎麼看這張圖：縱軸是對數刻度，同樣的高度代表同樣的漲跌比例（從 1 萬漲到 2 萬，和從 5 萬漲到 10 萬一樣高）；圓圈標出每一輪的頂部和底部（顏色見圖例），灰色虛直線是減半日。'
+         '要保留的地方：只有三四輪，時間規律不保證重演；這輪從頂部跌得比以前淺，節奏可能已經不一樣。',
+      de='What it is: every Bitcoin close on record, with each cycle\'s top, bottom and halving marked. A halving cuts the new bitcoin paid to miners in half, about every four years. Past tops came roughly 12–18 months after a halving and bottoms about a year after the top; that is the familiar "four-year cycle". '
+         'How to read it: the price axis is logarithmic, so equal heights are equal percentage moves (10k to 20k looks as tall as 50k to 100k). Circles mark each cycle\'s top and bottom (colours in the legend); grey dashed verticals are the halvings. '
+         'Caveats: only three or four cycles, so the timing need not repeat; this cycle has fallen less from its top than before, so the rhythm may already be different.')
     mo = p['monthly']
     X['mon'] = dict(k='mon', zh='月度報酬', en='Monthly returns', hz='今年到現在', he='Year to date', hs=dict(v=mo['ytd'], f='pct1'), grid=dict(rows=mo['rows'], stats=mo['stats'], ystat=mo.get('ystat'), month=mo.get('month')),
-      dz='每個月月底對上個月月底的漲跌 %%，%d 年起。下面兩列是每個月的中位數，和歷年裡上漲的比例（50%% 以上綠色）；加框的是這個月。' % mo['since'], de='Month-end to month-end returns in %%, since %d. The two bottom rows give each month\'s median and the share of years it rose (green at half or more); the outlined cell is the current month.' % mo['since'])
+      dz='這是什麼：每個月月底和上個月月底比漲跌了多少，%d 年起每一年排成一列，用來看某些月份是不是特別容易漲或跌（季節性）。'
+         '怎麼看這張圖：每一格是一個月，綠色是漲、紅色是跌，顏色越深幅度越大；加框的是這個月，算到最新收盤。最下面兩列是每個月的中位數（一半的年份比它好、一半比它差），和歷年裡上漲的比例（50%% 以上是綠色）。'
+         '要保留的地方：每個月只有十幾個樣本，一兩個極端年份就能改變結論；季節性只描述過去，不能拿來猜這個月或下個月的方向。' % mo['since'],
+      de='What it is: how much each month rose or fell from the previous month-end, one row per year since %d, to see whether some months tend to rise or fall (seasonality). '
+         'How to read it: each cell is a month, green up and red down, darker for bigger moves; the outlined cell is this month, up to the latest close. The bottom two rows are each month\'s median (half the years did better, half worse) and the share of years it rose (green at 50%% or more). '
+         'Caveats: each month has only a dozen or so samples, and one or two extreme years can flip the result; seasonality describes the past and cannot tell you which way this month or the next will go.' % mo['since'])
     grp = lambda zh, en, sz, se, keys: dict(zh=zh, en=en, sz=sz, se=se, charts=[X[k_] for k_ in keys if k_ in X])
     G = [grp('現在的階段', 'Where we are', '熊市、過渡還是牛市，偏多還是偏空', 'Bear, transition or bull; leaning long or short', ['dawn', 'dawnc', 'stage', 'regime', 'regc']),
          grp('估值冷熱', 'Valuation heat', '和過去比，現在算貴還是便宜', 'Rich or cheap against history', ['avgd', 'avgdc', 'hnupl', 'rup', 'aviv', 'rrisk', 'pl', 'p6', 'p6v']),
