@@ -1012,7 +1012,7 @@ Page: https://daybreak.aronlab.dev/en/charts/tk/
 
 Bearish: BTC has fallen harder than stocks and gold over two months and still tracks Nasdaq closely. Markets price a 96% hike chance and 2-year yields sit 63bp over the Fed ceiling.
 
-What it shows: The first view shows how BTC, the S&P 500, the Nasdaq and gold have each moved over the last two months. The second is the share of the last 90 US sessions in which BTC rose more than the S&P 500; above 50% means BTC won on more days. Gold is proxied by a token backed by one ounce of gold.
+What it shows: The first view shows how BTC, the S&P 500, the Nasdaq and gold have each moved over the last two months. The second is the share of the last 90 US sessions in which BTC rose more than the S&P 500; above 50% means BTC won on more days. The third, "rises less, falls more", measures how much of the Nasdaq 100's moves BTC follows, with what happened over the 60 days after each past episode. Gold is proxied by a token backed by one ounce of gold.
 
 Source: FRED · Kraken · 11/23
 
