@@ -91,6 +91,43 @@ def build(L, N, E, dn):
       marks=[dict(d=dn(p['date']), v=p['value'], col='dn', up=1, zh='%s %.1f%%' % (p['date'][:7].replace('-', '/'), p['value']), en='%s %.1f%%' % (p['date'][:7].replace('-', '/'), p['value'])) for p in pk],
       segs=[dict(a=dn(pk[-1]['date']), v=pk[-1]['value'], col='dn')] if pk else [],
       dz='持有超過 155 天的幣裡，現在帳面虧損的比例。過去幾輪底部都落在 42–48%。', de='The share of coins held over 155 days that are currently at a loss. Past cycle bottoms fell in the 42–48% zone.')
+    lx_ = (o.get('bvx') or {}).get('lthx')
+    if lx_ and len(lx_.get('rows') or []) > 300:   # 2026-11-25 使用者「加，附上口徑說明」：第二個檢視，扣掉放了 10 年以上的幣（bv_more 第 9 段）；扣法會墊高比例，口徑說明和固定扣法的對照一起寫
+        from say_data import own
+        P1 = lambda v: '%.1f%%' % v; pk_ = lx_['peaks']; pv, cur_ = pk_[:-1], pk_[-1]; rec = lx_['ex'] > max(q['ex']['v'] for q in pv)
+        fx = [q for q in pv if q['fix']['d'] >= '2018-01-01']; fhi = max(fx, key=lambda q: q['fix']['v']); frec = lx_['fix'] > fhi['fix']['v']
+        wan_ = lambda v: '%d 萬' % round(v / 1e4); mil_ = lambda v: '%.2fM' % (v / 1e6)
+        fz = '改成每個時點都扣同一批幣（2012 年以前最後一次移動、之後沒動的），現在 %s，%s%s' % (P1(lx_['fix']), '、'.join('%s 年熊底 %s' % (q['fix']['d'][:4], P1(q['fix']['v'])) for q in fx), '，現在也是最高' if frec else '，現在就不是最高')
+        fe = 'Excluding the same coins at every point instead (last moved before 2013 and still unmoved), it is %s now against %s at past bear bottoms%s' % (P1(lx_['fix']), ' and '.join('%s in %s' % (P1(q['fix']['v']), q['fix']['d'][:4]) for q in fx), ', so it is the highest that way too' if frec else ', so it is not the highest that way')
+        c_lthloss['modes'] = [dict(mz='全部長期持有者', me='All long-term holders'),
+          dict(mz='扣掉十年老幣', me='Excluding 10-year-old coins', hz='扣掉放了 10 年以上的幣，長期持有者虧損比例', he='Long-term holders at a loss, excluding coins unmoved for 10+ years', src='Bitview · {d}',
+               f='p1', rng=0, p=1, hero=1, rows=lx_['rows'], zones=[], segs=[],
+               ser=[ser(2, zh='不扣', en='All long-term holders', col='c3', w=1, op=.7), ser(3, zh='扣掉十年老幣', en='Excluding 10-year-old coins', col='c5', w=1.8)],
+               marks=[dict(d=q['ex']['dn'], v=q['ex']['v'], col='c5', up=1, zh=P1(q['ex']['v']), en=P1(q['ex']['v'])) for q in pk_],
+               leg=[['c5', '扣掉十年老幣：各輪熊底的高點', 'Excluding old coins: peak at each bear bottom', 'ring']],
+               dz='持有超過 155 天的幣裡帳面虧損的比例，扣掉放了 10 年以上沒動的幣（現在 %s顆，全部在獲利）；細線是不扣的。'
+                  '口徑：扣掉之後%s，但這有一部分是扣法造成的。10 年以上的幣 %s 年才開始有，一輪比一輪多，又幾乎永遠算在獲利，扣得越多，比例就被墊得越高；2015 年根本沒有這種幣，兩條線是同一條。%s。'
+                  '所以「比前幾輪都痛」要看怎麼扣。資料是 Bitview 每日值，長期持有者的算法和預設檢視的 CheckOnChain 略有不同。只作讀值。' % (
+                    wan_(lx_['old']), '現在比前三輪熊底都高' if rec else '現在還沒超過前幾輪熊底', lx_['old_first'][:4], fz),
+               de='The share of coins held over 155 days that are at a loss, leaving out coins unmoved for 10+ years (%s coins now, all in profit); the thin line leaves them in. '
+                  'How it is counted: excluded this way it is %s, but part of that comes from the method. Coins aged 10+ years only appear from %s, grow each cycle and sit in profit almost always, so the more you take out, the higher the share is pushed; in 2015 there were none, and the two lines are the same. %s. '
+                  'So "more pain than past cycles" depends on what you exclude. Bitview daily data; its long-term holder definition differs slightly from the CheckOnChain default view. A reading only.' % (
+                    mil_(lx_['old']), 'above all three past bear bottoms now' if rec else 'not yet above past bear bottoms', lx_['old_first'][:4], fe))]
+        c_lthloss['modes'][1]['say'] = own([
+            ('扣掉十年老幣', 'Excluding 10-year-old coins', P1(lx_['ex']), P1(lx_['ex']), 'neu',
+             '扣掉之後 %s 在虧損，%s；30 天前 %s，這輪最高 %s（%s）。' % (P1(lx_['ex']), '比前三輪熊底的高點都高' if rec else '還沒超過前幾輪熊底的高點', P1(lx_['ex30']), P1(cur_['ex']['v']), cur_['ex']['d'][5:].replace('-', '/')),
+             'Excluding them, %s is at a loss, %s; %s 30 days ago, and this cycle peaked at %s (%s).' % (P1(lx_['ex']), 'above all three past bear-bottom peaks' if rec else 'not yet above past bear-bottom peaks', P1(lx_['ex30']), P1(cur_['ex']['v']), cur_['ex']['d'][5:].replace('-', '/'))),
+            ('虧損的幣', 'Coins at a loss', '%s顆' % wan_(lx_['coins']), mil_(lx_['coins']), 'neu',
+             '長期持有者手上帳面虧損的幣約 %s顆；放了 10 年以上的 %s顆全部在獲利，不在裡面。' % (wan_(lx_['coins']), wan_(lx_['old'])),
+             'About %s long-term holder coins are underwater; the %s coins aged 10+ years are all in profit and not among them.' % (mil_(lx_['coins']), mil_(lx_['old']))),
+            ('歷輪熊底', 'Past bear bottoms', '/'.join('%.0f%%' % q['ex']['v'] for q in pv), '/'.join('%.0f%%' % q['ex']['v'] for q in pv), 'neu',
+             '扣掉老幣的高點：%s。不扣的話：%s，這輪 %s。' % ('、'.join('%s 年 %s' % (q['ex']['d'][:4], P1(q['ex']['v'])) for q in pv), '、'.join('%s 年 %s' % (q['raw']['d'][:4], P1(q['raw']['v'])) for q in pv), P1(cur_['raw']['v'])),
+             'Peaks excluding old coins: %s. Left in: %s, and %s this cycle.' % (', '.join('%s in %s' % (P1(q['ex']['v']), q['ex']['d'][:4]) for q in pv), ', '.join('%s in %s' % (P1(q['raw']['v']), q['raw']['d'][:4]) for q in pv), P1(cur_['raw']['v']))),
+            ('口徑', 'How it is counted', '扣法決定高低', 'Depends on the method', 'neu',
+             '扣掉的 %s顆老幣一輪比一輪多，又全部在獲利，會把比例墊高。%s。' % (wan_(lx_['old']), fz),
+             'The %s old coins taken out grow each cycle and are all in profit, which pushes the share up. %s.' % (mil_(lx_['old']), fe))],
+            sz='這有一部分是扣法造成的：扣掉的老幣一輪比一輪多，又全部在獲利；換成每個時點都扣同一批幣，現在%s。' % ('也是最高' if frec else '就不是最高'),
+            se='Part of that comes from the method: the old coins taken out grow each cycle and are all in profit; excluding the same coins at every point, it %s.' % ('is still the highest' if frec else 'is not the highest'))
     # ── 賣出的人賺還是賠 ──
     so = ch['viz']['sopr']; KD = dict(easing=('up', '賣壓遞減', 'Easing'), heavier=('dn', '賣壓加重', 'Heavier'), flat=('k2', '持平', 'Flat'))
     def dip(d):
