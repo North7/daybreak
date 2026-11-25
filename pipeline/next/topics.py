@@ -12,6 +12,7 @@
 固定說明的文字照 aron-style 的中文文案規則寫（第一句就是內容，不自問自答，不用「不是 A，是 B」）。"""
 import re
 import geo
+import hans as HANS   # 2026-11-25 簡體版：整頁轉換
 from geo import esc, SITE, PERSON, WEBSITE, TN, LEANS
 
 HUBS = [
@@ -19,6 +20,7 @@ HUBS = [
          nz='週期分析', ne='Cycle analysis',
          h1z='比特幣週期分析：現在走到週期的哪裡', h1e='Bitcoin cycle analysis: where Bitcoin is in its cycle',
          kz='比特幣週期分析, BTC 週期, 四年週期, 減半週期, 牛熊週期, 鏈上數據與宏觀週期, 比特幣抄底指標, 比特幣頂部指標',
+         kh='比特币周期分析, BTC 周期, 比特币四年周期, 减半周期, 牛熊周期, 比特币抄底指标, 比特币逃顶指标, 比特币见底了吗',
          ke='Bitcoin cycle analysis, BTC cycle, four-year cycle, halving cycle, bull and bear market, cycle top indicators, cycle bottom indicators',
          iz='比特幣大約每四年走完一輪牛熊，時間和減半大致對得上，但每一輪的長短和漲跌幅都不一樣。這一頁把 Daybreak 跟週期有關的圖放在一起：現在是哪個階段、估值離歷來的底和頂多遠、頂部和底部指標各自怎麼說。每張圖每天用前一天的收盤更新，都寫出偏多、偏空或中性和理由。',
          ie='Bitcoin has moved through a bull and bear market roughly every four years, loosely in step with the halving, though each cycle has run a different length and size. This page gathers the Daybreak charts that track the cycle: which stage Bitcoin is in, how far valuation sits from past bottoms and tops, and what the top and bottom indicators say. Every chart updates daily from the previous close and is marked bullish, bearish or neutral with a reason.',
@@ -34,6 +36,7 @@ HUBS = [
          nz='鏈上數據分析', ne='On-chain analysis',
          h1z='比特幣鏈上數據分析：持有者成本、獲利與籌碼', h1e='Bitcoin on-chain data analysis: holder cost, profit and supply',
          kz='比特幣鏈上數據分析, BTC 鏈上數據, 鏈上指標, MVRV, SOPR, NUPL, 實現價格, 短期持有者成本, 長期持有者, 籌碼分布, 大戶, 交易所淨流量',
+         kh='比特币链上数据分析, BTC 链上数据, 链上指标, MVRV, SOPR, NUPL, 已实现价格, 短期持有者成本, 长期持有者, 筹码分布, 巨鲸, 交易所净流入',
          ke='Bitcoin on-chain analysis, BTC on-chain data, on-chain indicators, MVRV, SOPR, NUPL, realized price, short-term holder cost basis, long-term holders, URPD, whales, exchange netflow',
          iz='鏈上數據看的是比特幣在區塊鏈上的實際移動：每一枚幣上次換手的價格、誰拿著、拿了多久、賣出時是賺是賠。這一頁把 Daybreak 的鏈上圖分成四組：持有者成本與籌碼、獲利與虧損、持有者在做什麼、礦工。資料主要來自 Bitview、CheckOnChain 和 CoinMetrics，每張圖每天更新，都寫出表態和理由。',
          ie='On-chain data tracks how bitcoin actually moves on the blockchain: the price each coin last changed hands at, who holds it, for how long, and whether it was sold at a profit or a loss. This page groups the Daybreak on-chain charts into holder cost and supply, profit and loss, what holders are doing, and miners. Data comes mainly from Bitview, CheckOnChain and CoinMetrics; every chart updates daily and is marked bullish, bearish or neutral with a reason.',
@@ -50,6 +53,7 @@ HUBS = [
          nz='宏觀與資金流', ne='Macro and flows',
          h1z='比特幣宏觀與資金流：ETF、穩定幣、利率與美元', h1e='Bitcoin macro and fund flows: ETFs, stablecoins, rates and the dollar',
          kz='比特幣宏觀, 比特幣 ETF 資金流, 現貨 ETF 淨流入, 穩定幣供給, 利率, 美元, 美股相關性, 流動性週期, 聯準會',
+         kh='比特币宏观, 比特币 ETF 资金流, 现货 ETF 净流入, 稳定币, 美联储, 美债收益率, 美元指数, 美股, 流动性',
          ke='Bitcoin macro, Bitcoin ETF flows, spot ETF net flows, stablecoin supply, interest rates, US dollar, correlation with stocks, liquidity cycle, Fed',
          iz='比特幣的價格不只看鏈上，也看錢從哪裡進來：現貨 ETF 每天的申購贖回、穩定幣的供給、美國和亞洲買盤的溢價，以及利率、美元和美股的方向。這一頁把這些圖放在一起，每張圖每天更新，都寫出表態和理由。',
          ie='Bitcoin\'s price also depends on where the money comes from: daily creations and redemptions in spot ETFs, stablecoin supply, the premiums paid by US and Asian buyers, and the direction of rates, the dollar and stocks. This page puts those charts together; every chart updates daily and is marked bullish, bearish or neutral with a reason.',
@@ -66,6 +70,7 @@ HUBS = [
          nz='衍生品數據', ne='Derivatives data',
          h1z='比特幣衍生品數據：資金費率、未平倉、多空比與清算', h1e='Bitcoin derivatives data: funding, open interest, long/short ratio and liquidations',
          kz='比特幣資金費率, 比特幣未平倉量, 多空比, 比特幣清算, 清算價位, 選擇權, 隱含波動率, 看跌看漲比, 恐懼貪婪指數',
+         kh='比特币资金费率, 比特币持仓量, 多空比, 比特币爆仓, 清算地图, 期权, 隐含波动率, 恐惧贪婪指数',
          ke='Bitcoin funding rate, Bitcoin open interest, long/short ratio, Bitcoin liquidations, liquidation levels, options, implied volatility, put/call ratio, fear and greed index',
          iz='永續合約、期貨和選擇權的部位，常常決定短線的波動有多大。這一頁看槓桿擠不擠：資金費率、未平倉量、多空帳戶比、清算量和推算的清算價位，以及選擇權市場的隱含波動和看跌看漲比。資料來自 Coinalyze、Deribit、OKX、Binance 等，每張圖每天更新，都寫出表態和理由。',
          ie='Positioning in perpetual swaps, futures and options often sets how violent short-term moves get. This page checks how crowded leverage is: funding rates, open interest, the long/short account ratio, liquidation volume and estimated liquidation levels, plus implied volatility and the put/call ratio in options. Data comes from Coinalyze, Deribit, OKX, Binance and others; every chart updates daily and is marked bullish, bearish or neutral with a reason.',
@@ -115,9 +120,11 @@ def answer(keys, en, A, P):
     return [head] + [p if p.endswith(('.', '。')) else p + ('.' if en else '。') for p in parts]   # 網頁上一行一張圖，結構化資料接成一段
 
 
-def hub_page(h, en, P):
-    A = _all(); up = '../../' if en else '../'
-    me = ('en/%s/' if en else '%s/') % h['id']
+def hub_page(h, en, P, hans=False):
+    """hans=True：簡體版（zh-hans/<主題>/），內容照繁體寫，最後整頁用 hans.py 轉"""
+    A = _all(); up = '../../' if (en or hans) else '../'
+    pre = 'en/' if en else ('zh-hans/' if hans else '')
+    me = pre + '%s/' % h['id']
     secs = [(sz, se, [A[k] for k in ks if k in A]) for sz, se, ks in h['secs']]
     cs = [c for _, _, l in secs for c in l]
     n = {t: sum(1 for c in cs if LEANS.get(c['k']) == t) for t in ('up', 'down', 'neu')}
@@ -145,29 +152,33 @@ def hub_page(h, en, P):
     oth = [x for x in HUBS if x['id'] != h['id']]
     b.append('<section><h2>%s</h2><ul class="list">%s<li><a class="t" href="%s%s">%s</a></li><li><a class="t" href="%s%s">%s</a></li></ul></section>' % (
         'More from Daybreak' if en else 'Daybreak 的其他主題',
-        ''.join('<li><a class="t" href="%s%s%s/">%s</a></li>' % (up, 'en/' if en else '', x['id'], esc(x['h1e'] if en else x['h1z'])) for x in oth),
+        ''.join('<li><a class="t" href="%s%s%s/">%s</a></li>' % (up, pre, x['id'], esc(x['h1e'] if en else x['h1z'])) for x in oth),
         up, 'en/charts/' if en else 'charts/', 'Bitcoin indicators: every chart and where it leans today' if en else '比特幣指標數據：每一張圖和它今天的表態',
         up, 'en/brief/' if en else 'brief/', 'Daily Bitcoin analysis' if en else '比特幣每日分析'))
     title = '%s · Daybreak' % (h['h1e'] if en else h['h1z'])
     desc = (h['ie'] if en else h['iz'])
     pid = SITE + me
     graph = [WEBSITE, PERSON,
-             {'@type': 'CollectionPage', '@id': pid + '#page', 'url': pid, 'name': h['h1e'] if en else h['h1z'], 'description': desc, 'keywords': h['ke'] if en else h['kz'],
-              'inLanguage': 'en' if en else 'zh-Hant', 'dateModified': geo.DATE, 'isPartOf': {'@id': WEBSITE['@id']}, 'author': {'@id': PERSON['@id']},
+             {'@type': 'CollectionPage', '@id': pid + '#page', 'url': pid, 'name': h['h1e'] if en else h['h1z'], 'description': desc,
+              'keywords': h['ke'] if en else ((h['kz'] + ', ' + h['kh']) if hans else h['kz']),
+              'inLanguage': 'en' if en else ('zh-Hans' if hans else 'zh-Hant'), 'dateModified': geo.DATE, 'isPartOf': {'@id': WEBSITE['@id']}, 'author': {'@id': PERSON['@id']},
               'about': {'@type': 'Thing', 'name': 'Bitcoin', 'sameAs': 'https://en.wikipedia.org/wiki/Bitcoin'},
               'hasPart': [{'@type': 'WebPage', 'url': '%s%s%s/' % (SITE, 'en/charts/' if en else 'charts/', c['k']), 'name': geo.name(c, en)} for c in cs]},
              P.crumbs(pid + '#crumbs', [('Daybreak', 'app/'), (h['ne'] if en else h['nz'], me)])]
     if faq:
-        graph.append({'@type': 'FAQPage', '@id': pid + '#faq', 'url': pid, 'inLanguage': 'en' if en else 'zh-Hant',
+        graph.append({'@type': 'FAQPage', '@id': pid + '#faq', 'url': pid, 'inLanguage': 'en' if en else ('zh-Hans' if hans else 'zh-Hant'),
                       'mainEntity': [{'@type': 'Question', 'name': qq, 'acceptedAnswer': {'@type': 'Answer', 'text': ' '.join(aa)}} for qq, aa, _ in faq]})
-    return P.shell(en, '%s/' % h['id'], 'en/%s/' % h['id'], title, desc, ''.join(b), graph)
+    page = P.shell(en, '%s/' % h['id'], 'en/%s/' % h['id'], title, desc, ''.join(b), graph,
+                   path_hans=('zh-hans/%s/' % h['id']) if HANS.available() else None, hans=hans)
+    return HANS.convert(page) if hans else page
 
 
 def write_all(out, P):
-    """pages.py 的 main 呼叫：寫出四個主題頁（中英），回傳 sitemap 要加的 (zh 網址, en 網址, lastmod)"""
+    """pages.py 的 main 呼叫：寫出四個主題頁（繁、簡、英），回傳 sitemap 要加的 (繁體網址, 英文網址, lastmod, 簡體網址)"""
     urls = []
     for h in HUBS:
         for en in (False, True):
             P.write(out, ('en/%s' if en else '%s') % h['id'], hub_page(h, en, P))
-        urls.append(('%s/' % h['id'], 'en/%s/' % h['id'], geo.DATE))
+        if HANS.available(): P.write(out, 'zh-hans/%s' % h['id'], hub_page(h, False, P, hans=True))
+        urls.append(('%s/' % h['id'], 'en/%s/' % h['id'], geo.DATE, ('zh-hans/%s/' % h['id']) if HANS.available() else None))
     return urls

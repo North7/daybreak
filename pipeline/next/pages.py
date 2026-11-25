@@ -93,13 +93,18 @@ def ld(graph):
     return '<script type="application/ld+json">%s</script>' % s.replace('</', '<\\/')
 
 
-def shell(en, path_zh, path_en, title, desc, body, graph, og=None):
-    """一頁的外框。path_zh／path_en 是兩個語言的網址（不含網域，結尾斜線）；沒有另一個語言的版本就傳 None"""
-    me = path_en if en else path_zh
-    alt = ''.join('<link rel="alternate" hreflang="%s" href="%s%s">' % (hl, SITE, p) for hl, p in (('zh-Hant', path_zh), ('en', path_en)) if p)
+def shell(en, path_zh, path_en, title, desc, body, graph, og=None, path_hans=None, hans=False):
+    """一頁的外框。path_zh／path_en 是兩個語言的網址（不含網域，結尾斜線）；沒有另一個語言的版本就傳 None。
+    2026-11-25 主題頁多一個簡體版：path_hans 是它的網址（三個語言互相標 hreflang，右上角變成「繁／简／EN」）；hans=True 寫的就是簡體版那一頁
+    （內容照繁體寫，topics.py 寫完整頁再用 hans.py 轉）"""
+    me = path_en if en else (path_hans if hans else path_zh)
+    alt = ''.join('<link rel="alternate" hreflang="%s" href="%s%s">' % (hl, SITE, p) for hl, p in (('zh-Hant', path_zh), ('zh-Hans', path_hans), ('en', path_en)) if p)
     if path_zh and path_en: alt += '<link rel="alternate" hreflang="x-default" href="%s%s">' % (SITE, path_en)
     up = '../' * me.count('/')   # 回到網站根目錄的相對路徑
-    if en: lang = ('<a href="%s%s" hreflang="zh-Hant">中</a>' % (up, path_zh) if path_zh else '') + '<b>EN</b>'
+    if path_hans:   # 三個語言：目前這個加粗，其他是連結
+        cur = 'en' if en else ('zh-Hans' if hans else 'zh-Hant')
+        lang = ''.join(('<b>%s</b>' % lb) if hl == cur else ('<a href="%s%s" hreflang="%s">%s</a>' % (up, p, hl, lb)) for hl, lb, p in (('zh-Hant', '繁', path_zh), ('zh-Hans', '简', path_hans), ('en', 'EN', path_en)) if p)
+    elif en: lang = ('<a href="%s%s" hreflang="zh-Hant">中</a>' % (up, path_zh) if path_zh else '') + '<b>EN</b>'
     else: lang = '<b>中</b>' + ('<a href="%s%s" hreflang="en">EN</a>' % (up, path_en) if path_en else '')
     return ('<!doctype html><html lang="%s"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">'
             '<title>%s</title><meta name="description" content="%s"><link rel="canonical" href="%s%s">%s'
@@ -109,18 +114,18 @@ def shell(en, path_zh, path_en, title, desc, body, graph, og=None):
             '<link rel="icon" href="%sassets/favicon.svg" type="image/svg+xml"><link rel="alternate" type="application/atom+xml" title="%s" href="%s%s">%s<style>%s</style>%s</head><body>'
             '<header><a class="lg" href="%sapp/%s">%sDAYBREAK</a><nav class="lang" aria-label="%s">%s</nav></header><main>%s</main>'
             '<footer>%s</footer></body></html>') % (
-        'en' if en else 'zh-Hant', esc(title), esc(desc), SITE, me, alt, esc(title), esc(desc), SITE, me, og or SITE + 'assets/og-en.png?v=20261112',
-        up, 'Daybreak · Daily Bitcoin brief' if en else 'Daybreak · 比特幣每日簡報', SITE, 'en/feed.xml' if en else 'feed.xml', FONTS, CSS, ld(graph), up, '?lang=en' if en else '?lang=zh', LOGO, 'Language' if en else '語言', lang, body, footer(en, up))
+        'en' if en else ('zh-Hans' if hans else 'zh-Hant'), esc(title), esc(desc), SITE, me, alt, esc(title), esc(desc), SITE, me, og or SITE + 'assets/og-en.png?v=20261112',
+        up, 'Daybreak · Daily Bitcoin brief' if en else 'Daybreak · 比特幣每日簡報', SITE, 'en/feed.xml' if en else 'feed.xml', FONTS, CSS, ld(graph), up, '?lang=en' if en else '?lang=zh', LOGO, 'Language' if en else '語言', lang, body, footer(en, up, hans))
 
 
-def footer(en, up):
+def footer(en, up, hans=False):
     if en:
         return ('Daybreak, by Aron. Code computes every number; AI only explains them. Daybreak makes no trade calls; readings are for information only.<br>'
                 '<a href="%sapp/?lang=en">Daybreak app</a> · <a href="%sen/charts/">All charts</a> · <a href="%sen/brief/">Daily briefs</a> · <a href="%scase-study/en/">Case study</a><br>'
                 '<a href="%sen/bitcoin-cycle/">Cycle analysis</a> · <a href="%sen/bitcoin-onchain/">On-chain analysis</a> · <a href="%sen/bitcoin-macro/">Macro and flows</a> · <a href="%sen/bitcoin-derivatives/">Derivatives data</a>') % ((up,) * 8)
     return ('Daybreak，Aron 製作。數字由程式計算，AI 只負責解釋；不給交易建議，判讀僅供參考。<br>'
             '<a href="%sapp/?lang=zh">打開 Daybreak</a> · <a href="%scharts/">所有圖</a> · <a href="%sbrief/">每日簡報</a> · <a href="%scase-study/">Case study</a><br>'
-            '<a href="%sbitcoin-cycle/">週期分析</a> · <a href="%sbitcoin-onchain/">鏈上數據分析</a> · <a href="%sbitcoin-macro/">宏觀與資金流</a> · <a href="%sbitcoin-derivatives/">衍生品數據</a>') % ((up,) * 8)
+            '<a href="%s%sbitcoin-cycle/">週期分析</a> · <a href="%s%sbitcoin-onchain/">鏈上數據分析</a> · <a href="%s%sbitcoin-macro/">宏觀與資金流</a> · <a href="%s%sbitcoin-derivatives/">衍生品數據</a>') % ((up,) * 4 + sum(((up, 'zh-hans/' if hans else ''),) * 4, ()))
 
 
 def pill(lean, en):
@@ -379,9 +384,10 @@ def main():
     urls += topics.write_all(out, sys.modules[__name__])
     sm = os.path.join(out, 'sitemap.xml'); s = open(sm, encoding='utf-8').read()
     add = []
-    for z, e, lm in urls:
-        alt = ''.join('<xhtml:link rel="alternate" hreflang="%s" href="%s%s"/>' % (hl, SITE, p) for hl, p in (('zh-Hant', z), ('en', e)) if p and e)
-        for p in (z, e):
+    for z, e, lm, *hs in urls:   # 主題頁多一個簡體網址（第 4 欄）
+        hs = hs[0] if hs else None
+        alt = ''.join('<xhtml:link rel="alternate" hreflang="%s" href="%s%s"/>' % (hl, SITE, p) for hl, p in (('zh-Hant', z), ('zh-Hans', hs), ('en', e)) if p and (e or hs))
+        for p in (z, e, hs):
             if p: add.append('<url><loc>%s%s</loc><lastmod>%s</lastmod>%s</url>\n' % (SITE, p, lm, alt))
     s = s.replace('</urlset>', ''.join(add) + '</urlset>')
     open(sm, 'w', encoding='utf-8').write(s)
