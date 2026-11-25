@@ -121,20 +121,40 @@ def rrisk(L):
         it('進入低檔區之後', 'After entering the low zone', '%d / %d' % (e['up'], e['n']), '%d / %d' % (e['up'], e['n']), 'neu', '走完一年的 %d 段，一年後上漲的次數，中位數 %s；樣本少、結果不一。' % (e['n'], pc(e['med'])),
            'Of the %d stretches with a full year after, those higher a year on; median %s. Few samples, mixed results.' % (e['n'], pc(e['med'])))]
 
-def pl(L):
-    p = L['cycle']['powerlaw']; lo, hi = p['bottom_band']; a, b = p['next_top_ratio']; ta, tb = p['next_top_price']
-    import math   # 通道底部線：和 cycle_data.py 冪律圖同一條（歷次底部倍數對 log10(創世起天數) 做直線擬合），換算成今天的價格
-    g0 = dt.date(2009, 1, 3); lx = lambda d: math.log10((dt.date.fromisoformat(d) - g0).days)
-    xs = [lx(q[0]) for q in p['bottoms']]; ys = [math.log10(q[1]) for q in p['bottoms']]; mx = sum(xs) / len(xs); my = sum(ys) / len(ys)
+def pl(L):   # 2026-11-25 改寫：使用者「不要把讀者都想的那麼專業」「給出可以指導交易的觀點」——先講冪律是什麼、0% 和倍數代表什麼，再講歷史上之後怎麼走
+    import math, pl_bt
+    p = L['cycle']['powerlaw']; lo, hi = p['bottom_band']; a, b = p['next_top_ratio']; ta, tb = p['next_top_price']; q = pl_bt.bt(L)
+    g0 = dt.date(2009, 1, 3); lx = lambda d: math.log10((dt.date.fromisoformat(d) - g0).days)   # 底線：和 cycle_data.py 冪律圖同一條（歷次底部倍數對 log10(創世起天數) 直線擬合）
+    xs = [lx(t[0]) for t in p['bottoms']]; ys = [math.log10(t[1]) for t in p['bottoms']]; mx = sum(xs) / len(xs); my = sum(ys) / len(ys)
     bs_ = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs); blp = p['fair'] * 10 ** (my + bs_ * (lx(p['date']) - mx))
-    zone = ('落在歷次底部帶（%.2f–%.2f 倍）' % (lo, hi), 'inside the band of past bottoms (%.2f–%.2f×)' % (lo, hi)) if p['ratio'] <= hi else ('高於歷次底部帶', 'above the band of past bottoms')
-    return '價格是冪律合理價的 %.2f 倍，%s。' % (p['ratio'], zone[0]), 'Price is %.2f times its power-law fair value, %s.' % (p['ratio'], zone[1]), [
-        it('倍數', 'Multiple', '%.2f×' % p['ratio'], '%.2f×' % p['ratio'], 'neu', '合理價（OLS 擬合整段價格）%s，價格%s它 %.0f%%。通道底部線（歷次底部的連線，常說的支撐線）今天 %s，比合理價低 %.0f%%，價格%s底部線 %.0f%%。' % (
-               usd(p['fair']), '低於' if p['ratio'] < 1 else '高於', abs(p['ratio'] - 1) * 100, usd(blp), (1 - blp / p['fair']) * 100, '高於' if p['price'] >= blp else '低於', abs(p['price'] / blp - 1) * 100),
-           'Fair value (an OLS fit to all prices) is %s; price is %.0f%% %s it. The channel bottom (the line through past bottoms, often called support) is %s today, %.0f%% below fair value; price is %.0f%% %s it.' % (
-               usd(p['fair']), abs(p['ratio'] - 1) * 100, 'below' if p['ratio'] < 1 else 'above', usd(blp), (1 - blp / p['fair']) * 100, abs(p['price'] / blp - 1) * 100, 'above' if p['price'] >= blp else 'below')),
-        it('歷次頂部', 'Past tops', '→'.join('%.1f' % t[1] for t in p['tops']), '→'.join('%.1f' % t[1] for t in p['tops']), 'neu', '頂部倍數一輪比一輪小；底部在 %.2f–%.2f 倍之間。' % (lo, hi), 'Each top a smaller multiple than the last; bottoms sat between %.2f× and %.2f×.' % (lo, hi)),
-        it('下一輪頂部', 'Next top', '%.2f–%.2f×' % (a, b), '%.2f–%.2f×' % (a, b), 'neu', '照縮小的速度推，約 %s–%s；樣本只有 4 輪。' % (usd(ta), usd(tb)), 'At the same rate of shrinkage, about %s–%s. Only four cycles to go on.' % (usd(ta), usd(tb)))]
+    r = p['ratio']; px = L['price']['bar']['c']; under = px < blp   # 顯示用全站統一收盤
+    if r <= hi:
+        sz = '比特幣跌到長期趨勢價的 %.2f 倍%s：歷史上這裡是長線分批買的區域，但買了可能還要再忍一段跌。' % (r, '，比歷次熊底連成的底線還低' if under else '，落在歷次熊底的範圍')
+        se = 'Bitcoin is down to %.2f× its long-run trend price%s: historically a zone to buy in stages for the long run, though buyers may have to sit through more downside.' % (r, ', below the line through past bear bottoms' if under else ', inside the range of past bear bottoms')
+    elif r >= a:
+        sz = '比特幣到了長期趨勢價的 %.2f 倍，進入推估的下一輪頂部區：歷史上這裡是長線分批獲利的區域。' % r
+        se = 'Bitcoin is at %.2f× its long-run trend price, inside the projected zone for the next top: historically a place to take long-run profits in stages.' % r
+    else:
+        sz = '比特幣在長期趨勢價的 %.2f 倍，不在歷次熊底的便宜區，也還沒到頂部區：照這張圖，長線不急著加碼也不急著賣。' % r
+        se = 'Bitcoin is at %.2f× its long-run trend price, neither in past bear-bottom territory nor near a top: on this chart there is no rush to add or to sell.' % r
+    pos = ('「通道位置」顯示 0%%，意思是價格已經跌破歷次熊底連成的底線（今天約 %s），比那條線還低 %.0f%%。' % (usd(blp), (1 - px / blp) * 100)) if under else \
+          ('歷次熊底連成的底線今天約 %s，價格高出它 %.0f%%。' % (usd(blp), (px / blp - 1) * 100))
+    pose = ('"Place in the channel" reads 0%% because price has fallen through the line joining past bear bottoms (about %s today), %.0f%% below it.' % (usd(blp), (1 - px / blp) * 100)) if under else \
+           ('The line through past bear bottoms is about %s today; price is %.0f%% above it.' % (usd(blp), (px / blp - 1) * 100))
+    cz = ('這一輪 %s 就跌進這區，到現在價格%s：便宜可以維持很久。' % (ym(str(dt.date(1970, 1, 1) + dt.timedelta(q['cur']))), '還在原地' if abs(q['cur_chg']) < 5 else '又%s %d%%' % ('漲了' if q['cur_chg'] > 0 else '跌了', abs(q['cur_chg'])))) if q and q['cur'] else ''
+    ce = (' This cycle entered the zone in %s and price is %s since: cheap can stay cheap for a long time.' % (yme(str(dt.date(1970, 1, 1) + dt.timedelta(q['cur']))), 'about where it was' if abs(q['cur_chg']) < 5 else '%s %d%%' % ('up' if q['cur_chg'] > 0 else 'down', abs(q['cur_chg'])))) if q and q['cur'] else ''
+    return sz, se, [
+        it('現在有多便宜', 'How cheap', '%.2f×' % r, '%.2f×' % r, 'up' if r <= hi else 'neu',
+           '照過去 15 年的成長速度，比特幣今天的趨勢價約 %s，現在 %s，是它的 %.0f%%。2012 年以來只有 %d%% 的日子比現在便宜。%s' % (usd(p['fair']), usd(px), r * 100, q['cheaper'] if q else 0, pos),
+           'At its past 15-year growth pace, Bitcoin\'s trend price today is about %s; at %s it trades at %.0f%% of that. Only %d%% of days since 2012 were cheaper. %s' % (usd(p['fair']), usd(px), r * 100, q['cheaper'] if q else 0, pose)),
+        it('跌到這裡之後', 'What came next', '%d 次一年後都漲' % q['eps'] if q and q['up'] == q['n'] else '—', 'Up a year on, %d of %d' % (q['eps'], q['eps']) if q and q['up'] == q['n'] else '—', 'neu',
+           ('過去倍數跌到 %.2f 以下有 %d 次（%s 年）。在那段期間任何一天買進，一年後都是%s的，中位數 %+d%%；但買進後一年內最多還會再跌 %d%%（一半的時候只再跌 %d%% 以內）。%s只有 %d 次，不保證這次一樣。' % (
+               q['th'], q['eps'], '、'.join(str(y) for y in q['years']), '漲' if q['up'] == q['n'] else '漲多跌少', q['med'], abs(q['worst']), abs(q['dmed']), cz, q['eps'])) if q else '',
+           ('The multiple has fallen below %.2f %d times before (%s). Buying on any of those days was %s a year later, median %+d%%, but price fell as much as another %d%% within that year (half the time no more than %d%%).%s Only %d episodes, so no guarantee.' % (
+               q['th'], q['eps'], ', '.join(str(y) for y in q['years']), 'up' if q['up'] == q['n'] else 'mostly up', q['med'], abs(q['worst']), abs(q['dmed']), ce, q['eps'])) if q else ''),
+        it('頂部一輪比一輪低', 'Each top is lower', '下一輪 %.2f–%.2f×' % (a, b), 'Next %.2f–%.2f×' % (a, b), 'neu',
+           '每輪牛市頂部是當時趨勢價的幾倍：%s，一輪比一輪小。比特幣越大，漲幅越溫和；照這個速度，下一輪頂部大約只到趨勢價的 %.2f–%.2f 倍。趨勢價自己會繼續往上（2029 年 10 月約 %s），換算約 %s–%s。別拿以前「一輪漲十倍」的經驗來期待。' % ('、'.join('%s 年 %.1f 倍' % (t[0][:4], t[1]) for t in p['tops']), a, b, usd(p['fair_2029_10']), usd(ta), usd(tb)),
+           'Each bull top as a multiple of the trend at the time: %s, smaller every time. The bigger Bitcoin gets, the milder its runs; at that pace the next top reaches only about %.2f–%.2f× of trend. The trend itself keeps rising (about %s by October 2029), so that is roughly %s–%s. Don\'t expect the tenfold runs of the past.' % (', '.join('%.1f× in %s' % (t[1], t[0][:4]) for t in p['tops']), a, b, usd(p['fair_2029_10']), usd(ta), usd(tb)))]
 
 def p6(L):
     p = L['cycle']['p6']; R = [('MVRV Z', 'MVRV Z', p['mvrv_z']), ('NUPL', 'NUPL', p['nupl']), ('Puell 倍數', 'Puell multiple', p['puell'])]; hot = sum(1 for r in R if r[2] >= 80)
