@@ -122,7 +122,7 @@ def _sec_html(en):
 def static_app():
     return ('<main id="oc-static"><h1>Daybreak · 比特幣每日判讀 · Daily Bitcoin brief</h1><p lang="zh-Hant">%s</p><p lang="en">%s</p>' % (esc(INTRO_ZH), esc(INTRO_EN))
             + _sec_html(False) + _sec_html(True)
-            + '<p><a href="../?intro">Daybreak 是什麼 · What is Daybreak</a> · <a href="../case-study/">Case study</a> · <a href="../charts/">所有圖</a> · <a href="../en/charts/">All charts</a> · <a href="../brief/">每日簡報</a> · <a href="../en/brief/">Daily briefs</a> · <a href="../latest.md">latest.md</a> · <a href="../latest.en.md">latest.en.md</a></p></main>')
+            + '<p><a href="../?intro">Daybreak 是什麼 · What is Daybreak</a> · <a href="../case-study/">Case study</a> · <a href="../bitcoin-cycle/">比特幣週期分析</a> · <a href="../bitcoin-onchain/">比特幣鏈上數據分析</a> · <a href="../bitcoin-macro/">宏觀與資金流</a> · <a href="../bitcoin-derivatives/">衍生品數據</a> · <a href="../en/bitcoin-cycle/">Bitcoin cycle analysis</a> · <a href="../en/bitcoin-onchain/">Bitcoin on-chain analysis</a> · <a href="../charts/">所有圖</a> · <a href="../en/charts/">All charts</a> · <a href="../brief/">每日簡報</a> · <a href="../en/brief/">Daily briefs</a> · <a href="../latest.md">latest.md</a> · <a href="../latest.en.md">latest.en.md</a></p></main>')
 
 
 # 2026-11-21 使用者貼 ChatGPT 的回答：它找到網站，但說「無法完整讀取指標清單、資料來源和免費使用限制」（問的是 Glassnode 免費替代）。
@@ -184,7 +184,7 @@ def static_intro():
           '<h2>六個問題</h2><ul>%s</ul>' % ''.join('<li><a href="app/#%s">%s</a>：%s</li>' % (q['id'], esc(q['zh']), esc(q['qz'])) for q in QS),
           '<h2>最新一期：%s 收盤版 No.%s</h2><p><strong>%s</strong></p><p>%s</p><p>%s</p>' % (DZH, ED, esc(BR.get('hz') or ''), esc(BR.get('sz') or ''), tz),
           '<h2>指標一覽</h2>%s<h2>資料來源</h2><p>%s。每張圖都寫出資料來源和日期。</p><h2>常見問題</h2>%s</section>' % (_catalog(False), esc('、'.join(SRCS)), _faq(False)),
-          '<p><a href="app/">Open Daybreak · 打開 Daybreak</a> · <a href="case-study/">Case study</a> · <a href="charts/">所有圖</a> · <a href="en/charts/">All charts</a> · <a href="brief/">每日簡報</a> · <a href="en/brief/">Daily briefs</a> · <a href="llms.txt">llms.txt</a> · <a href="latest.md">latest.md</a> · <a href="latest.en.md">latest.en.md</a></p></main>']
+          '<p><a href="app/">Open Daybreak · 打開 Daybreak</a> · <a href="case-study/">Case study</a> · <a href="bitcoin-cycle/">比特幣週期分析</a> · <a href="bitcoin-onchain/">比特幣鏈上數據分析</a> · <a href="bitcoin-macro/">宏觀與資金流</a> · <a href="bitcoin-derivatives/">衍生品數據</a> · <a href="en/bitcoin-cycle/">Bitcoin cycle analysis</a> · <a href="en/bitcoin-onchain/">Bitcoin on-chain analysis</a> · <a href="charts/">所有圖</a> · <a href="en/charts/">All charts</a> · <a href="brief/">每日簡報</a> · <a href="en/brief/">Daily briefs</a> · <a href="llms.txt">llms.txt</a> · <a href="latest.md">latest.md</a> · <a href="latest.en.md">latest.en.md</a></p></main>']
     return ''.join(h)
 
 
@@ -266,6 +266,10 @@ def llms():
           '## Pages', '',
           '- [Daybreak app](%sapp/): the daily brief and all %d charts, interactive (needs JavaScript); add ?lang=en or ?lang=zh' % (SITE, NCH)]
     o += ['- [%s](%sapp/#%s): %s' % (q['en'], SITE, q['id'], q['qe']) for q in QS]
+    o += ['- [Bitcoin cycle analysis](%sen/bitcoin-cycle/): where Bitcoin is in its four-year cycle, stage, valuation, top and bottom indicators, with today’s answers (中文：%sbitcoin-cycle/)' % (SITE, SITE),
+          '- [Bitcoin on-chain data analysis](%sen/bitcoin-onchain/): holder cost bases, MVRV, SOPR, NUPL, supply distribution, whales, exchange flows, miners (中文：%sbitcoin-onchain/)' % (SITE, SITE),
+          '- [Bitcoin macro and fund flows](%sen/bitcoin-macro/): spot ETF flows, stablecoins, rates, the dollar, stocks, liquidity (中文：%sbitcoin-macro/)' % (SITE, SITE),
+          '- [Bitcoin derivatives data](%sen/bitcoin-derivatives/): funding rates, open interest, long/short ratio, liquidations, options (中文：%sbitcoin-derivatives/)' % (SITE, SITE)]
     o += ['- [All charts](%sen/charts/): every chart on one page, grouped by the six questions, with today’s lean and reason; each chart also has its own page at /en/charts/<code>/ (中文：%scharts/)' % (SITE, SITE),
           '- [Daily briefs](%sen/brief/): one page per day since Oct 2026 (headline, overall lean, levels to watch, findings) at /en/brief/YYYY-MM-DD/ (中文：%sbrief/)' % (SITE, SITE)]
     o += ['- [Case study](%scase-study/en/): how Daybreak was designed and built, and how it checks its own calls (中文版：%scase-study/)' % (SITE, SITE), '',
