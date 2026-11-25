@@ -91,5 +91,24 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh workflow run cloudflare.yml --repo "${{ github.repository }}" --ref main -f from=daily
-          # 2026-11-22 每張圖的靜態小圖一天截一次：資料更新之後（原本 Share cards 每跑一次就截一次，一天五次）
-          gh workflow run chart-img.yml --repo "${{ github.repository }}" --ref main
+      - name: 每張圖的靜態小圖（滿 7 天或有新圖才重截）
+        # 2026-11-22 原本 Share cards 每跑一次就截（一天五次），改成資料更新後一次。
+        # 2026-11-25 使用者：只是給 GEO（單頁的圖、分享預覽）用，改成每週一次——上次截圖滿 7 天，或清單裡有上次沒截的新圖才呼叫。
+        # 補跑資料也不會再多截。查不到就照舊呼叫，失敗不影響資料提交。
+        if: steps.commit.outputs.pushed == 'true'
+        continue-on-error: true
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          why=""
+          upd=$(gh release view chart-img --repo "${{ github.repository }}" --json assets --jq '.assets[]|select(.name=="chart-img.tar")|.updatedAt' 2>/dev/null || true)
+          if [ -z "$upd" ]; then why="還沒有小圖"; else
+            age=$(( ( $(date -u +%s) - $(date -u -d "$upd" +%s) ) / 86400 ))
+            if [ "$age" -ge 7 ]; then why="上次截圖已 $age 天"; else
+              gh release download chart-img --repo "${{ github.repository }}" -p chart-img.tar -D "$RUNNER_TEMP" --clobber
+              tar -xOf "$RUNNER_TEMP/chart-img.tar" ./list.json > "$RUNNER_TEMP/shot.json" 2>/dev/null || echo '[]' > "$RUNNER_TEMP/shot.json"
+              new=$(python3 pipeline/next/pages.py --img-list | python3 -c 'import json,sys;S=set(json.load(open(sys.argv[1])));print(" ".join(k for k in json.load(sys.stdin) if k not in S))' "$RUNNER_TEMP/shot.json")
+              [ -n "$new" ] && why="新圖：$new"
+            fi
+          fi
+          if [ -n "$why" ]; then echo "重截：$why"; gh workflow run chart-img.yml --repo "${{ github.repository }}" --ref main; else echo "小圖 $age 天前截的、沒有新圖，這次不截"; fi

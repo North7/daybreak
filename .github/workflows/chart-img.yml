@@ -1,12 +1,13 @@
 name: Chart images
 
 # 2026-11-20 GEO：每張圖的靜態小圖（pipeline/chart_img.js 用網站的分享模式截，中英各一張），給 charts/<k>/ 單頁和它的 og:image。
-# 每天資料更新後（Daily data 推送後呼叫）截一次，打包放在 Release「chart-img」（覆蓋），部署時 cloudflare.yml 下載回 charts-img/。
+# 每週截一次（2026-11-25 起：Daily data 推送後檢查，上次截圖滿 7 天或有新圖才呼叫），打包放在 Release「chart-img」（覆蓋），部署時 cloudflare.yml 下載回 charts-img/。
 # 圖不進程式庫：一天兩百多張，放進去倉庫會一直變大。
 # PR 改到截圖程式時也跑一次，只把圖當成 artifact 留著檢查，不更新 Release。
 
 on:
-  # 2026-11-22 改由 Daily data 推了新資料後呼叫（workflow_dispatch），一天一次；原本接在 Share cards 後面，一天跑五次
+  # 2026-11-22 改由 Daily data 推了新資料後呼叫（workflow_dispatch）；原本接在 Share cards 後面，一天跑五次
+  # 2026-11-25 改成每週一次（Daily data 判斷：滿 7 天或清單有新圖）
   workflow_dispatch:
   pull_request:
     paths: ["pipeline/chart_img.js", ".github/workflows/chart-img.yml"]
@@ -42,6 +43,9 @@ jobs:
           sleep 1
           python3 pipeline/next/pages.py --img-list > "$RUNNER_TEMP/list.json"
           node pipeline/chart_img.js "$RUNNER_TEMP/list.json" "$RUNNER_TEMP/img"
+          # 2026-11-25 一起打包：這次截了哪些（Daily data 用來判斷有沒有新圖）、截圖日期（pages.py 用在小圖網址，圖沒換網址就不換）
+          cp "$RUNNER_TEMP/list.json" "$RUNNER_TEMP/img/list.json"
+          date -u +%F > "$RUNNER_TEMP/img/date.txt"
           du -sh "$RUNNER_TEMP/img"
           tar -C "$RUNNER_TEMP/img" -cf "$RUNNER_TEMP/chart-img.tar" .
       - name: 留給 PR 檢查
