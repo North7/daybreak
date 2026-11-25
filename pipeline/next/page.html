@@ -15,7 +15,7 @@ window.DAYBREAK_LANG = (function () { var q = /[?&]lang=(zh|en)(&|$)/.exec(locat
   return /^zh/i.test(navigator.language || '') ? 'zh' : 'en'; })();
 document.documentElement.lang = window.DAYBREAK_LANG === 'en' ? 'en' : 'zh-Hant';
 </script>
-<meta name="description" content="Daybreak：每天清晨的第一份比特幣簡報。週期走到哪、關鍵價位、誰在賣、誰在買、槓桿擠不擠，一百多張圖每天更新。">
+<meta name="description" content="Daybreak：每天清晨的第一份比特幣簡報。用一百多張鏈上數據、資金流、衍生品和宏觀指標，回答週期走到哪、關鍵價位、誰在賣、誰在買、槓桿擠不擠，每天更新。">
 <!-- 連結預覽卡（X 等）預設英文（2026-10-13）；中文版圖卡 assets/og.png 保留。2026-11-12 重畫成深色、品牌名只寫 Daybreak；圖改了要換 ?v=，X 才會重抓（pipeline/og_card.py） -->
 <meta property="og:type" content="website">
 <meta property="og:site_name" content="Daybreak">
