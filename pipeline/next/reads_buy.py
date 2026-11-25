@@ -32,10 +32,12 @@ def cot(L):
 
 def pr_us(L):
     p = L['flows']['cb_premium']; u = p['usdt']; r = p['raw']; lo, hi = p['band']
+    v_ = [q[1] for q in p['rows']]; a7 = [sum(v_[i - 6:i + 1]) / 7 for i in range(6, len(v_))]; rk = 1 + sum(1 for a in a7[:-1] if a < a7[-1])   # 7 日平均在資料起點以來排第幾低（和 cb_premium.py 同一份每日值）
     st = ('比海外弱' if p['avg7'] < lo else '比海外積極' if p['avg7'] > hi else '和海外差不多'); ste = ('weaker than offshore' if p['avg7'] < lo else 'stronger than offshore' if p['avg7'] > hi else 'about the same as offshore')
     sz = '扣掉 USDT 後，兩地價差 7 日平均 %s：美國買盤%s。' % (pc(p['avg7'], 3), st); se = 'Net of USDT, the 7-day average gap is %s: US buying is %s.' % (pc(p['avg7'], 3), ste)
     return sz, se, [
-        it('7 日平均', '7-day average', pc(p['avg7'], 3), pc(p['avg7'], 3), 'neu', '扣掉 USDT 後；30 日平均 %s，近四年第 %d 百分位。' % (pc(p['avg30'], 3), round(p['avg30_pct_own'])), 'Net of USDT; the 30-day average is %s, the %s percentile over four years.' % (pc(p['avg30'], 3), ord_en(p['avg30_pct_own']))),
+        it('7 日平均', '7-day average', pc(p['avg7'], 3), pc(p['avg7'], 3), 'down' if rk <= len(a7) * .05 else 'neu', '扣掉 USDT 後；%s 以來 %d 天裡排第 %d 低（第 %d 百分位）。30 日平均 %s，第 %d 百分位。' % (ym(p['since']), len(a7), rk, round(p['avg7_pct_own']), pc(p['avg30'], 3), round(p['avg30_pct_own'])),
+           'Net of USDT; the %s lowest of %d days since %s (the %s percentile). The 30-day average is %s, the %s percentile.' % (ord_en(rk), len(a7), yme(p['since']), ord_en(p['avg7_pct_own']), pc(p['avg30'], 3), ord_en(p['avg30_pct_own']))),
         it('一般看到的溢價', 'The usual premium', pc(r['avg7'], 3), pc(r['avg7'], 3), 'neu', '沒扣 USDT 的 7 日平均；其中 %s 是 USDT 自己不等於 1 美元。' % pc(u['disc7'], 3), 'The 7-day average before netting out USDT; %s of it is USDT itself trading off $1.' % pc(u['disc7'], 3)),
         it('USDT 對美元', 'USDT vs the dollar', '%.4f' % u['px'], '$%.4f' % u['px'], 'neu', '7 日平均 %s，近四年只有 %d%% 的日子更低；折價代表有人把穩定幣換回美元。' % (pc(u['disc7'], 2), round(u['disc7_pct_own'])),
            '7-day average %s; lower on only %d%% of days in four years. A discount means stablecoins are being swapped back into dollars.' % (pc(u['disc7'], 2), round(u['disc7_pct_own'])))]
