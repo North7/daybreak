@@ -188,7 +188,10 @@
         ['zh', 'en'].forEach(function (lang) {
           if (withText && !q[lang]) return;   // 2026-11-20 #243 起推薦圖表只寫中文：沒有英文解說就不建英文分頁
           var ch = lang === 'zh' ? (q.chart || 'data/picks/' + q.id + '.png') : (q.chart_en || 'data/picks/' + q.id + '-en.png');
-          p.langs[lang] = { text: (withText && q[lang]) || '', imgs: [img(ch)], names: ['daybreak-' + date + '-' + q.id + (lang === 'en' ? '-en' : '') + '.png'], lim: 280 };
+          // 2026-11-25 使用者：「推薦圖表的標題不在正文內，小助手發文會丟失標題」：複製的貼文第一行放標題，空一行接解說（解說開頭已經是標題就不重複；280 由網站 picks.py check 算整則）
+          var body = (withText && q[lang]) || '', tt = ((lang === 'zh' ? q.q_zh : q.q_en) || '').trim();
+          if (body && tt && body.replace(/\s+/g, '').indexOf(tt.replace(/\s+/g, '').replace(/[。.]$/, '')) !== 0) body = tt + '\n\n' + body;
+          p.langs[lang] = { text: body, imgs: [img(ch)], names: ['daybreak-' + date + '-' + q.id + (lang === 'en' ? '-en' : '') + '.png'], lim: 280 };
         });
         out.push(p);
       });
