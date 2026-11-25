@@ -4,6 +4,46 @@
  "edition": 49,
  "items": [
   {
+   "kind": "followup",
+   "status": "send",
+   "url": "https://x.com/huangmi12916508/status/2125445843453124669",
+   "id": "2125445843453124669",
+   "author": "huangmi12916508",
+   "name": "huangmi12916508",
+   "followers": 4602,
+   "posted": "2026-11-25T04:25:52Z",
+   "lang": "zh",
+   "angle": "照實講那格的量沒有，給他整體的成交方向",
+   "take": "單一履約價的成交量我們沒有，整體成交還一面倒在賣權",
+   "summary": "他追問：Deribit 58K 那格這次是還在換手，還是量也縮了",
+   "reply": "那一格的量我們沒有，只看得到整個 Deribit\n整體成交還是一面倒在賣權，24 小時賣權是買權的 1.5 倍",
+   "sources": "Deribit 24 小時成交賣權／買權 1.51（data/latest.json deriv.pcr.vol_pcr，11/24）；單一履約價只有未平倉、沒有成交量（next-lv.js strike 卡）",
+   "note": "接話（dingding_TW666 貼文底下第 5 輪），他問了問題所以回。單一履約價成交量沒有，照實講，只補整體成交比。",
+   "style": "口語版",
+   "n": 50,
+   "order": 1
+  },
+  {
+   "kind": "followup",
+   "status": "send",
+   "url": "https://x.com/huangmi12916508/status/2125446393531961613",
+   "id": "2125446393531961613",
+   "author": "huangmi12916508",
+   "name": "huangmi12916508",
+   "followers": 4602,
+   "posted": "2026-11-25T04:28:03Z",
+   "lang": "zh",
+   "angle": "順著他「賠到不想認」補一句：還是有人在割",
+   "take": "大多數不認賠，但每天還是有人撐不住",
+   "summary": "原作者接話：94% 套著、割一刀就是認賠，動不了是賠到不想認",
+   "reply": "還是有人下得去手啦，昨天一天賠著賣出去的就快 13 億美元",
+   "sources": "實現虧損 11/24 單日 12.74 億美元（data/latest.json onchain.rloss.usd_m 1274）",
+   "note": "接話（他自己貼文底下，原作者第 1 輪接我們 #29），作者接話所以回一句短的。",
+   "style": "口語版",
+   "n": 51,
+   "order": 2
+  },
+  {
    "status": "send",
    "url": "https://x.com/Murphychen888/status/2125439180872491390",
    "id": "2125439180872491390",
@@ -26,7 +66,7 @@
    "note": "★ 1 小時內（82,087 粉、11:59 發，截止 12:59）。Murphy 不佔額度。log 最近 14 天沒有講 LTH 淨部位／ETF 籌碼轉 Coinbase 的原創，改配網站圖 lthnet（他用的就是 LTH 淨持倉）；網站看法「換手中」中性，回覆只講賠著賣、不講方向。不問問題。",
    "style": "口語版",
    "n": 36,
-   "order": 1
+   "order": 3
   },
   {
    "status": "send",
@@ -51,7 +91,7 @@
    "note": "★ 1 小時內（96,014 粉、11:56 發，截止 12:56）。今天 3 萬粉以上第 2 則（額度滿）。配圖 levels；不接他的支撐阻力位，只給均線距離。",
    "style": "口語版",
    "n": 37,
-   "order": 2
+   "order": 4
   },
   {
    "status": "send",
@@ -70,7 +110,7 @@
    "note": "inbox 1205 #1。2,039 粉不配圖。",
    "style": "口語版",
    "n": 38,
-   "order": 3
+   "order": 5
   },
   {
    "status": "send",
@@ -89,7 +129,7 @@
    "note": "inbox 1205 #2。3,276 粉不配圖；不替他答是不是底。",
    "style": "口語版",
    "n": 39,
-   "order": 4
+   "order": 6
   },
   {
    "status": "send",
@@ -108,7 +148,7 @@
    "note": "inbox 1205 #3。1,834 粉不配圖；沒用 Bitview 生產成本 0.4%（今天 #31 用過）。",
    "style": "口語版",
    "n": 40,
-   "order": 5
+   "order": 7
   },
   {
    "status": "send",
@@ -133,7 +173,7 @@
    "note": "inbox 1205 #4。11,366 粉配圖 miners。沒用 30／60 日均比較（hashr 卡寫投降中 1 天、notes 寫燈號熄了，兩邊對不上）。",
    "style": "口語版",
    "n": 41,
-   "order": 6
+   "order": 8
   },
   {
    "status": "send",
@@ -152,7 +192,7 @@
    "note": "inbox 1205 #5。不替他答機會不機會；「兩年新低」沒核對，不接。",
    "style": "口語版",
    "n": 42,
-   "order": 7
+   "order": 9
   },
   {
    "status": "send",
@@ -171,7 +211,7 @@
    "note": "inbox 1205 #6。梗文照規則不放數字；Grok 建議的 50.1% 沒用。",
    "style": "口語版",
    "n": 43,
-   "order": 8
+   "order": 10
   },
   {
    "status": "send",
@@ -196,7 +236,7 @@
    "note": "inbox 1205 #7。29,363 粉配情緒圖 hnupl；不接他的積分活動。",
    "style": "口語版",
    "n": 44,
-   "order": 9
+   "order": 11
   },
   {
    "status": "send",
@@ -221,7 +261,7 @@
    "note": "inbox 1205 #8。26,543 粉配圖 macro（stk 今天 #32 用過）。",
    "style": "口語版",
    "n": 45,
-   "order": 10
+   "order": 12
   },
   {
    "status": "send",
@@ -240,7 +280,7 @@
    "note": "inbox 1205 #11。放寬：晨報挑一個點接。",
    "style": "口語版",
    "n": 46,
-   "order": 11
+   "order": 13
   },
   {
    "status": "send",
@@ -259,7 +299,7 @@
    "note": "inbox 1205 #12。草案還要過國會那句拿掉，留一句。",
    "style": "口語版",
    "n": 47,
-   "order": 12
+   "order": 14
   },
   {
    "status": "send",
@@ -278,7 +318,7 @@
    "note": "4c 固定名單（7,413 粉、11:33 發）。不接 2027 抄底、6 個月那句。",
    "style": "口語版",
    "n": 48,
-   "order": 13
+   "order": 15
   },
   {
    "status": "send",
@@ -303,7 +343,7 @@
    "note": "★ 1 小時內（34,062 粉、10:27 發，截止 11:27）。今天 3 萬粉以上第 1 則。配圖 liq；不接他的 52–54K 目標和抄底那句，只補下方的強平帶，方向跟他和網站看法一致。",
    "style": "口語版",
    "n": 30,
-   "order": 14
+   "order": 16
   },
   {
    "kind": "followup",
@@ -323,7 +363,7 @@
    "note": "接話（我們原創底下第 1 輪）。",
    "style": "口語版",
    "n": 31,
-   "order": 15
+   "order": 17
   },
   {
    "kind": "followup",
@@ -343,7 +383,7 @@
    "note": "接話（他貼文底下第 2 輪，閒聊），短接一句。",
    "style": "口語版",
    "n": 32,
-   "order": 16
+   "order": 18
   },
   {
    "status": "send",
@@ -362,7 +402,7 @@
    "note": "固定名單 4c（9,830 粉、0.6 小時），1 萬粉以下不配圖。跟今天 12:00 CVDD 長文同一個讀法，沒附連結。",
    "style": "口語版",
    "n": 33,
-   "order": 17
+   "order": 19
   },
   {
    "status": "send",
@@ -381,7 +421,7 @@
    "note": "固定名單 4c（5,006 粉、0.2 小時），1 萬粉以下不配圖。不評 43,800 準不準，只講它的前提。",
    "style": "口語版",
    "n": 34,
-   "order": 18
+   "order": 20
   },
   {
    "kind": "followup",
@@ -401,7 +441,7 @@
    "note": "接話（我們原創底下第 1 輪，閒聊），短接一句不帶數字。",
    "style": "口語版",
    "n": 24,
-   "order": 19
+   "order": 21
   },
   {
    "kind": "followup",
@@ -421,7 +461,7 @@
    "note": "接話（他貼文底下第 2 輪），補一個他沒講的口徑。",
    "style": "口語版",
    "n": 25,
-   "order": 20
+   "order": 22
   },
   {
    "kind": "followup",
@@ -441,7 +481,7 @@
    "note": "接話（dingding_TW666 貼文底下第 5 輪），他問了問題所以回。沒有數據就照實講，不硬湊數字。",
    "style": "口語版",
    "n": 26,
-   "order": 21
+   "order": 23
   },
   {
    "kind": "followup",
@@ -461,7 +501,7 @@
    "note": "接話（我們原創底下第 1 輪，接他的比喻），閒聊不帶數字。",
    "style": "口語版",
    "n": 27,
-   "order": 22
+   "order": 24
   },
   {
    "status": "send",
@@ -486,7 +526,7 @@
    "note": "固定名單 4c（21,877 粉、發文 0.5 小時），1 萬粉以上配圖 rloss。方向跟網站看法一致（投降、偏多）；不接他的抄底區、鐵底。",
    "style": "口語版",
    "n": 28,
-   "order": 23
+   "order": 25
   },
   {
    "status": "send",
@@ -505,7 +545,7 @@
    "note": "固定名單 4c（4,598 粉、發文 0.6 小時），交易心理帖，第一行心理判斷；1 萬粉以下不配圖。不答買賣。",
    "style": "口語版",
    "n": 29,
-   "order": 24
+   "order": 26
   },
   {
    "n": 6,
@@ -524,11 +564,11 @@
    "sources": "美國現貨 BTC ETF 20 個交易日淨流量合計 −43.54 億美元（到 11/23）；之前兩段最低 −47.13 億（2025-03-11）、−47.10 億（2025-11-25）· data/etf.json roll20（CoinMarketCap）",
    "note": "固定名單 4c（4,586 粉，發文 0.2 小時），1 萬粉以下不配圖。不答未來 30 天會不會買回。他今天另一則金叉夭折帖不另回（一個帳號今天已有接話＋這則）。",
    "style": "口語版",
-   "order": 25
+   "order": 27
   },
   {
    "n": 7,
-   "order": 26,
+   "order": 28,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/XXshaun_gavi934/status/2125393976975069271",
@@ -548,7 +588,7 @@
   },
   {
    "n": 8,
-   "order": 27,
+   "order": 29,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2125385071427522814",
@@ -568,7 +608,7 @@
   },
   {
    "n": 9,
-   "order": 28,
+   "order": 30,
    "kind": "followup",
    "status": "skip",
    "url": "https://x.com/Xingge888668/status/2125396961444417643",
@@ -587,7 +627,7 @@
   },
   {
    "n": 1,
-   "order": 29,
+   "order": 31,
    "status": "send",
    "url": "https://x.com/Xingge888668/status/2125381993781403919",
    "id": "2125381993781403919",
@@ -606,7 +646,7 @@
   },
   {
    "n": 2,
-   "order": 30,
+   "order": 32,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/Seanblockc/status/2125255007263990159",
@@ -626,7 +666,7 @@
   },
   {
    "n": 3,
-   "order": 31,
+   "order": 33,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/Lcxxx_Lee/status/2125310750608773259",
@@ -646,7 +686,7 @@
   },
   {
    "n": 4,
-   "order": 32,
+   "order": 34,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/huangmi12916508/status/2125229653929656544",
@@ -666,7 +706,7 @@
   },
   {
    "n": 5,
-   "order": 33,
+   "order": 35,
    "kind": "followup",
    "status": "skip",
    "url": "https://x.com/0xm0reyu/status/2125236691917271250",
@@ -700,7 +740,7 @@
    "sources": "ETF 11/23 淨流出 5.697 億美元，IBIT 佔 5.09 億（89%），連 5 個交易日流出 · notes.json 11/24 收盤版（edition 50） news 第 1 則（CoinMarketCap／Farside）",
    "note": "Grok 0905 #1。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 34
+   "order": 36
   },
   {
    "n": 11,
@@ -719,7 +759,7 @@
    "sources": "Strategy 普通股週二跌約 7% 到 78.50 美元，盤中 77.89 是 2024 年初以來最低；靠發普通股付特別股股息 · notes.json 11/24 收盤版（edition 50） news 第 4 則",
    "note": "Grok 0905 #2。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 35
+   "order": 37
   },
   {
    "n": 12,
@@ -738,7 +778,7 @@
    "sources": "11/24 全天多單強平 5,650 萬美元；永續三家淨主動賣 656 顆，現貨三家淨主動賣 1,897 顆 · notes.json 11/24 收盤版（edition 50） 第一則發現（Coinalyze）。他的一週爆倉 58 億本站沒有可核對的數字，不接",
    "note": "Grok 0905 #3。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 36
+   "order": 38
   },
   {
    "n": 13,
@@ -757,7 +797,7 @@
    "sources": "Coinbase 現貨 7 天淨主動賣 6,674 顆，前一天 4,820 顆 · notes.json 11/24 收盤版（edition 50） flows 模組（Coinalyze）。Grok 寫的「2021 年 8 月以來最重」notes.json 沒有，不用",
    "note": "Grok 0905 #4。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 37
+   "order": 39
   },
   {
    "n": 14,
@@ -776,7 +816,7 @@
    "sources": "Polymarket 12 月升息機率 96.0%，2 年期美債殖利率 4.63% · notes.json 11/24 收盤版（edition 50） flows 模組。他講倉位和止損是他自己的做法，不接",
    "note": "Grok 0905 #5。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 38
+   "order": 40
   },
   {
    "n": 15,
@@ -795,7 +835,7 @@
    "sources": "網站 pcr 卡 24 小時成交賣權÷買權 1.51×、25Δ 風險逆轉 −9.50（11/24，Deribit）；notes.json 寫 1.70 倍，和卡片不同，照卡片",
    "note": "Grok 0905 #6。1 萬粉以上配圖。",
    "style": "口語版",
-   "order": 39,
+   "order": 41,
    "image": {
     "site": {
      "k": "pcr"
@@ -820,7 +860,7 @@
    "sources": "11 月 ETF 累計流出 47.1 億，超過 6 月的 45.1 億，單月紀錄；11/24 收 59,741 · notes.json 11/24 收盤版（edition 50） flows 模組（Farside 口徑）",
    "note": "Grok 0905 #7。1 萬粉以下不配圖。Grok 串（原文 @grok）。",
    "style": "口語版",
-   "order": 40
+   "order": 42
   },
   {
    "n": 17,
@@ -839,7 +879,7 @@
    "sources": "30 天淨實現虧損 186 億美元、佔市值 1.51%，跌破週期級別觸發線，這輪第三次；近 7 天認賠還在放大 · notes.json 11/24 收盤版（edition 50） 第二則發現（CoinMetrics 11/23）",
    "note": "Grok 0905 #8。1 萬粉以下不配圖。Grok 串（原文 @grok）。",
    "style": "口語版",
-   "order": 41
+   "order": 43
   },
   {
    "n": 18,
@@ -858,7 +898,7 @@
    "sources": "扣掉 USDT 折價後的 Coinbase 溢價 −0.012%；USDT 7 日平均折價 0.161%，2022/10 有資料以來最深的 0.5% · notes.json 11/24 收盤版（edition 50） flows 模組",
    "note": "Grok 0905 #9。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 42
+   "order": 44
   },
   {
    "n": 19,
@@ -877,7 +917,7 @@
    "sources": "恐懼貪婪 11，極度恐懼第 12 天；11 月到目前 −22.9%，2013 年起最差的 11 月是 2018 年 −37.0% · notes.json 11/24 收盤版（edition 50） overview 模組；網站 fng 卡寫「已經 11 天」、notes 寫第 12 天，回覆寫「快兩週」不寫天數",
    "note": "Grok 0905 #10。1 萬粉以上配圖。",
    "style": "口語版",
-   "order": 43,
+   "order": 45,
    "image": {
     "site": {
      "k": "fng"
@@ -902,7 +942,7 @@
    "sources": "收盤比估算的生產成本 59,496 高 0.4%，前一天 3.0% · notes.json 11/24 收盤版（edition 50） changes 第 5 則（Bitview）。不評他的定投、不接九神指數",
    "note": "Grok 0905 #11。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 44
+   "order": 46
   },
   {
    "n": 21,
@@ -921,7 +961,7 @@
    "sources": "近 60 個交易日 Nasdaq 漲的日子 BTC 漲幅只有它的 93.2%，跌的日子是 131.4%（美股資料到 11/19）· 網站 stk 卡「跟漲少、跟跌多」（#267）；週一 BTC 沒跟漲、週二跟跌 · notes.json 11/24 收盤版（edition 50） news 第 2 則",
    "note": "Grok 0905 #12。1 萬粉以上配圖。",
    "style": "口語版",
-   "order": 45,
+   "order": 47,
    "image": {
     "site": {
      "k": "stk",
@@ -947,7 +987,7 @@
    "sources": "近兩個月 BTC −29.2%、黃金 −16.9%；週二黃金跌 2.64%，比 BTC 多 · notes.json 11/24 收盤版（edition 50） news 第 7 則。數字沒放進回覆",
    "note": "Grok 0905 #13。1 萬粉以下不配圖。Grok 串（原文 @grok）。閒聊短接，不帶讀數（他要求必選一個，不替他選）。",
    "style": "口語版",
-   "order": 46
+   "order": 48
   },
   {
    "n": 23,
@@ -966,7 +1006,7 @@
    "sources": "這 7 天移進最多籌碼的是 59,000–61,000 三格，共 40 萬顆；鏈上移動不一定是買賣 · notes.json 11/24 收盤版（edition 50） market 模組（Bitview）。不接他的 6 萬支撐和合約提醒",
    "note": "Grok 0905 #14。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 47
+   "order": 49
   },
   {
    "n": 35,
@@ -985,7 +1025,7 @@
    "sources": "30 天實際波動 47.72%、過去一年分位 81.4%、一年最低 22.0%（2026-08-15）· data/latest.json price.vol（rv30、rv30_pct1y、rv30_min1y）",
    "note": "使用者點名（長文 session 轉交），不查額度和時效。角度 A，使用者同意；順著他的框架補，不唱反調。不引用他文中的幣安被盜、Warsh、Anthropic IPO；不換算熊市底價位。1 萬粉以上配圖。",
    "style": "口語版",
-   "order": 48,
+   "order": 50,
    "image": {
     "site": {
      "k": "vol"
@@ -995,7 +1035,7 @@
   },
   {
    "n": 49,
-   "order": 49,
+   "order": 51,
    "kind": "reply",
    "lang": "en",
    "style": "口語版",
