@@ -4,6 +4,109 @@
  "edition": 49,
  "items": [
   {
+   "status": "send",
+   "url": "https://x.com/Dragonhau66/status/2125416039588442390",
+   "id": "2125416039588442390",
+   "author": "Dragonhau66",
+   "name": "Dragonhau66",
+   "followers": 34062,
+   "posted": "2026-11-25T02:27:26Z",
+   "lang": "zh",
+   "angle": "順著他的買盤真空，講下面還埋著什麼",
+   "take": "58K 下面不只是買盤空，還有一包多單等著被強平",
+   "summary": "跌破 6 萬後的風險提醒：58,800、55,100 兩道緩衝，56–58K 買盤真空，58K 破了會跌很快",
+   "reply": "58K 下面空的不只是買盤，還埋著一包多單\n推算收盤下方 2% 左右就堆了 1.4 萬顆待強平",
+   "sources": "推算多單清算帶 57.3–59.2K 約 1.4 萬顆、在收盤 −2.3%（網站看法：下方多單較多、偏空，跟他同向） · data/next-lv.js liq、notes.json deriv",
+   "image": {
+    "site": {
+     "k": "liq"
+    },
+    "title": "收盤下方 2% 左右，推算有 1.4 萬顆多單待強平"
+   },
+   "note": "★ 1 小時內（34,062 粉、10:27 發，截止 11:27）。今天 3 萬粉以上第 1 則。配圖 liq；不接他的 52–54K 目標和抄底那句，只補下方的強平帶，方向跟他和網站看法一致。",
+   "style": "口語版",
+   "n": 30,
+   "order": 1
+  },
+  {
+   "kind": "followup",
+   "status": "send",
+   "url": "https://x.com/XueCheng1041604/status/2125417831995150582",
+   "id": "2125417831995150582",
+   "author": "XueCheng1041604",
+   "name": "XueCheng1041604",
+   "followers": 1375,
+   "posted": "2026-11-25T02:34:34Z",
+   "lang": "zh",
+   "angle": "他等的溢價收窄其實已經到了，卡住的是另一件",
+   "take": "溢價已經不是問題，問題是 Coinbase 還在主動賣",
+   "summary": "在我們 6 萬被現貨賣穿那則原創底下：要看 Coinbase 溢價和 ETF 流出什麼時候收窄，58,525 守不住現貨接力會更弱",
+   "reply": "溢價早就收窄了，扣掉 USDT 幾乎是 0，還在放大的是 Coinbase 的主動賣，7 天快 6,700 顆",
+   "sources": "扣掉 USDT 折價的 Coinbase 溢價 11/24 −0.012%；Coinbase 現貨 7 天淨主動賣 6,674 顆，前一天 4,820 · data/latest.json flows.cb_premium、notes.json flows",
+   "note": "接話（我們原創底下第 1 輪）。",
+   "style": "口語版",
+   "n": 31,
+   "order": 2
+  },
+  {
+   "kind": "followup",
+   "status": "send",
+   "url": "https://x.com/paulxue1979/status/2125418032885637127",
+   "id": "2125418032885637127",
+   "author": "paulxue1979",
+   "name": "paulxue1979",
+   "followers": 4593,
+   "posted": "2026-11-25T02:35:22Z",
+   "lang": "zh",
+   "angle": "跟著他吐槽",
+   "take": "",
+   "summary": "在他貼文底下第 2 輪：ETF 就是上漲和下跌的催化劑 🤣",
+   "reply": "跌的時候催得特別起勁😂 光 11 月 ETF 就流出 47 億美元，單月紀錄",
+   "sources": "Farside 口徑 11 月累計淨流出 47.1 億美元，超過 6 月的 45.1 億 · notes.json flows",
+   "note": "接話（他貼文底下第 2 輪，閒聊），短接一句。",
+   "style": "口語版",
+   "n": 32,
+   "order": 3
+  },
+  {
+   "status": "send",
+   "url": "https://x.com/serlo123/status/2125419478658027652",
+   "id": "2125419478658027652",
+   "author": "serlo123",
+   "name": "serlo123",
+   "followers": 9830,
+   "posted": "2026-11-25T02:41:06Z",
+   "lang": "zh",
+   "angle": "他列了破和不破兩種，我猜是中間那種",
+   "take": "這輪大概會破實現價，但破不深，下面 CVDD 頂著",
+   "summary": "以往熊市都跌破實現價和 LTH 實現價（53,149、48,350），這輪會不會重演？破了跟四年週期時間對不上，不破就是規律失效",
+   "reply": "我猜會是中間那種：破，但破不深\n實現價 5.3 萬往下 8% 就撞到 CVDD，2014 年以來收盤沒在它下面待過一天",
+   "sources": "實現價 53,152（CoinMetrics）、CVDD 49,124（Bitview），夾層 8%，2012 年以來最窄；2014 年以來收盤沒有一天在 CVDD 下面 · data/latest.json cycle.cm、onchain.bvx.cvdd、next-cycle.js cvdd",
+   "note": "固定名單 4c（9,830 粉、0.6 小時），1 萬粉以下不配圖。跟今天 12:00 CVDD 長文同一個讀法，沒附連結。",
+   "style": "口語版",
+   "n": 33,
+   "order": 4
+  },
+  {
+   "status": "send",
+   "url": "https://x.com/real_sirwoody/status/2125426147521450381",
+   "id": "2125426147521450381",
+   "author": "real_sirwoody",
+   "name": "real_sirwoody",
+   "followers": 5006,
+   "posted": "2026-11-25T03:07:36Z",
+   "lang": "zh",
+   "angle": "這個底要成立的前提很硬",
+   "take": "43,800 要成立，得先跌穿一條 12 年沒破的線",
+   "summary": "21Shares 推算這輪底在 43,800：實現價 53,250 再往下 18%",
+   "reply": "這個底要成立，得先把 CVDD 跌穿 11%，那條線 12 年來收盤一天都沒破過",
+   "sources": "CVDD 49,124（Bitview），43,800 在它下方 10.8%；2014 年以來收盤沒有一天低於 CVDD · data/latest.json onchain.bvx.cvdd、next-cycle.js cvdd",
+   "note": "固定名單 4c（5,006 粉、0.2 小時），1 萬粉以下不配圖。不評 43,800 準不準，只講它的前提。",
+   "style": "口語版",
+   "n": 34,
+   "order": 5
+  },
+  {
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/Grace_Invest11/status/2125397655308194070",
@@ -21,7 +124,7 @@
    "note": "接話（我們原創底下第 1 輪，閒聊），短接一句不帶數字。",
    "style": "口語版",
    "n": 24,
-   "order": 1
+   "order": 6
   },
   {
    "kind": "followup",
@@ -41,7 +144,7 @@
    "note": "接話（他貼文底下第 2 輪），補一個他沒講的口徑。",
    "style": "口語版",
    "n": 25,
-   "order": 2
+   "order": 7
   },
   {
    "kind": "followup",
@@ -61,7 +164,7 @@
    "note": "接話（dingding_TW666 貼文底下第 5 輪），他問了問題所以回。沒有數據就照實講，不硬湊數字。",
    "style": "口語版",
    "n": 26,
-   "order": 3
+   "order": 8
   },
   {
    "kind": "followup",
@@ -81,7 +184,7 @@
    "note": "接話（我們原創底下第 1 輪，接他的比喻），閒聊不帶數字。",
    "style": "口語版",
    "n": 27,
-   "order": 4
+   "order": 9
   },
   {
    "status": "send",
@@ -106,7 +209,7 @@
    "note": "固定名單 4c（21,877 粉、發文 0.5 小時），1 萬粉以上配圖 rloss。方向跟網站看法一致（投降、偏多）；不接他的抄底區、鐵底。",
    "style": "口語版",
    "n": 28,
-   "order": 5
+   "order": 10
   },
   {
    "status": "send",
@@ -125,7 +228,7 @@
    "note": "固定名單 4c（4,598 粉、發文 0.6 小時），交易心理帖，第一行心理判斷；1 萬粉以下不配圖。不答買賣。",
    "style": "口語版",
    "n": 29,
-   "order": 6
+   "order": 11
   },
   {
    "n": 6,
@@ -144,11 +247,11 @@
    "sources": "美國現貨 BTC ETF 20 個交易日淨流量合計 −43.54 億美元（到 11/23）；之前兩段最低 −47.13 億（2025-03-11）、−47.10 億（2025-11-25）· data/etf.json roll20（CoinMarketCap）",
    "note": "固定名單 4c（4,586 粉，發文 0.2 小時），1 萬粉以下不配圖。不答未來 30 天會不會買回。他今天另一則金叉夭折帖不另回（一個帳號今天已有接話＋這則）。",
    "style": "口語版",
-   "order": 7
+   "order": 12
   },
   {
    "n": 7,
-   "order": 8,
+   "order": 13,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/XXshaun_gavi934/status/2125393976975069271",
@@ -168,7 +271,7 @@
   },
   {
    "n": 8,
-   "order": 9,
+   "order": 14,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2125385071427522814",
@@ -188,7 +291,7 @@
   },
   {
    "n": 9,
-   "order": 10,
+   "order": 15,
    "kind": "followup",
    "status": "skip",
    "url": "https://x.com/Xingge888668/status/2125396961444417643",
@@ -207,7 +310,7 @@
   },
   {
    "n": 1,
-   "order": 11,
+   "order": 16,
    "status": "send",
    "url": "https://x.com/Xingge888668/status/2125381993781403919",
    "id": "2125381993781403919",
@@ -226,7 +329,7 @@
   },
   {
    "n": 2,
-   "order": 12,
+   "order": 17,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/Seanblockc/status/2125255007263990159",
@@ -246,7 +349,7 @@
   },
   {
    "n": 3,
-   "order": 13,
+   "order": 18,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/Lcxxx_Lee/status/2125310750608773259",
@@ -266,7 +369,7 @@
   },
   {
    "n": 4,
-   "order": 14,
+   "order": 19,
    "kind": "followup",
    "status": "send",
    "url": "https://x.com/huangmi12916508/status/2125229653929656544",
@@ -286,7 +389,7 @@
   },
   {
    "n": 5,
-   "order": 15,
+   "order": 20,
    "kind": "followup",
    "status": "skip",
    "url": "https://x.com/0xm0reyu/status/2125236691917271250",
@@ -320,7 +423,7 @@
    "sources": "ETF 11/23 淨流出 5.697 億美元，IBIT 佔 5.09 億（89%），連 5 個交易日流出 · notes.json 11/24 收盤版（edition 50） news 第 1 則（CoinMarketCap／Farside）",
    "note": "Grok 0905 #1。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 16
+   "order": 21
   },
   {
    "n": 11,
@@ -339,7 +442,7 @@
    "sources": "Strategy 普通股週二跌約 7% 到 78.50 美元，盤中 77.89 是 2024 年初以來最低；靠發普通股付特別股股息 · notes.json 11/24 收盤版（edition 50） news 第 4 則",
    "note": "Grok 0905 #2。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 17
+   "order": 22
   },
   {
    "n": 12,
@@ -358,7 +461,7 @@
    "sources": "11/24 全天多單強平 5,650 萬美元；永續三家淨主動賣 656 顆，現貨三家淨主動賣 1,897 顆 · notes.json 11/24 收盤版（edition 50） 第一則發現（Coinalyze）。他的一週爆倉 58 億本站沒有可核對的數字，不接",
    "note": "Grok 0905 #3。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 18
+   "order": 23
   },
   {
    "n": 13,
@@ -377,7 +480,7 @@
    "sources": "Coinbase 現貨 7 天淨主動賣 6,674 顆，前一天 4,820 顆 · notes.json 11/24 收盤版（edition 50） flows 模組（Coinalyze）。Grok 寫的「2021 年 8 月以來最重」notes.json 沒有，不用",
    "note": "Grok 0905 #4。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 19
+   "order": 24
   },
   {
    "n": 14,
@@ -396,7 +499,7 @@
    "sources": "Polymarket 12 月升息機率 96.0%，2 年期美債殖利率 4.63% · notes.json 11/24 收盤版（edition 50） flows 模組。他講倉位和止損是他自己的做法，不接",
    "note": "Grok 0905 #5。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 20
+   "order": 25
   },
   {
    "n": 15,
@@ -415,7 +518,7 @@
    "sources": "網站 pcr 卡 24 小時成交賣權÷買權 1.51×、25Δ 風險逆轉 −9.50（11/24，Deribit）；notes.json 寫 1.70 倍，和卡片不同，照卡片",
    "note": "Grok 0905 #6。1 萬粉以上配圖。",
    "style": "口語版",
-   "order": 21,
+   "order": 26,
    "image": {
     "site": {
      "k": "pcr"
@@ -440,7 +543,7 @@
    "sources": "11 月 ETF 累計流出 47.1 億，超過 6 月的 45.1 億，單月紀錄；11/24 收 59,741 · notes.json 11/24 收盤版（edition 50） flows 模組（Farside 口徑）",
    "note": "Grok 0905 #7。1 萬粉以下不配圖。Grok 串（原文 @grok）。",
    "style": "口語版",
-   "order": 22
+   "order": 27
   },
   {
    "n": 17,
@@ -459,7 +562,7 @@
    "sources": "30 天淨實現虧損 186 億美元、佔市值 1.51%，跌破週期級別觸發線，這輪第三次；近 7 天認賠還在放大 · notes.json 11/24 收盤版（edition 50） 第二則發現（CoinMetrics 11/23）",
    "note": "Grok 0905 #8。1 萬粉以下不配圖。Grok 串（原文 @grok）。",
    "style": "口語版",
-   "order": 23
+   "order": 28
   },
   {
    "n": 18,
@@ -478,7 +581,7 @@
    "sources": "扣掉 USDT 折價後的 Coinbase 溢價 −0.012%；USDT 7 日平均折價 0.161%，2022/10 有資料以來最深的 0.5% · notes.json 11/24 收盤版（edition 50） flows 模組",
    "note": "Grok 0905 #9。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 24
+   "order": 29
   },
   {
    "n": 19,
@@ -497,7 +600,7 @@
    "sources": "恐懼貪婪 11，極度恐懼第 12 天；11 月到目前 −22.9%，2013 年起最差的 11 月是 2018 年 −37.0% · notes.json 11/24 收盤版（edition 50） overview 模組；網站 fng 卡寫「已經 11 天」、notes 寫第 12 天，回覆寫「快兩週」不寫天數",
    "note": "Grok 0905 #10。1 萬粉以上配圖。",
    "style": "口語版",
-   "order": 25,
+   "order": 30,
    "image": {
     "site": {
      "k": "fng"
@@ -522,7 +625,7 @@
    "sources": "收盤比估算的生產成本 59,496 高 0.4%，前一天 3.0% · notes.json 11/24 收盤版（edition 50） changes 第 5 則（Bitview）。不評他的定投、不接九神指數",
    "note": "Grok 0905 #11。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 26
+   "order": 31
   },
   {
    "n": 21,
@@ -541,7 +644,7 @@
    "sources": "近 60 個交易日 Nasdaq 漲的日子 BTC 漲幅只有它的 93.2%，跌的日子是 131.4%（美股資料到 11/19）· 網站 stk 卡「跟漲少、跟跌多」（#267）；週一 BTC 沒跟漲、週二跟跌 · notes.json 11/24 收盤版（edition 50） news 第 2 則",
    "note": "Grok 0905 #12。1 萬粉以上配圖。",
    "style": "口語版",
-   "order": 27,
+   "order": 32,
    "image": {
     "site": {
      "k": "stk",
@@ -567,7 +670,7 @@
    "sources": "近兩個月 BTC −29.2%、黃金 −16.9%；週二黃金跌 2.64%，比 BTC 多 · notes.json 11/24 收盤版（edition 50） news 第 7 則。數字沒放進回覆",
    "note": "Grok 0905 #13。1 萬粉以下不配圖。Grok 串（原文 @grok）。閒聊短接，不帶讀數（他要求必選一個，不替他選）。",
    "style": "口語版",
-   "order": 28
+   "order": 33
   },
   {
    "n": 23,
@@ -586,7 +689,7 @@
    "sources": "這 7 天移進最多籌碼的是 59,000–61,000 三格，共 40 萬顆；鏈上移動不一定是買賣 · notes.json 11/24 收盤版（edition 50） market 模組（Bitview）。不接他的 6 萬支撐和合約提醒",
    "note": "Grok 0905 #14。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 29
+   "order": 34
   }
  ]
 }
