@@ -6,7 +6,7 @@
 - 2 年期殖利率：美國財政部每日殖利率曲線（home.treasury.gov，一年一個 CSV，2021 年起每天抓 6 個左右的小檔）。
 - 聯準會目標利率：紐約聯準銀行的 EFFR API，每天附目標區間（targetRateTo＝上限）；最新幾天還沒公布時沿用上一個值。
 本機連不到 FRED 的時候也能驗算，所以不用 FRED。任何一邊取不到就整項不出（頁面顯示沒有資料），不推估。只作讀值。"""
-import bisect, csv, datetime as dt, io, json
+import bisect, csv, datetime as dt, io, json, os
 
 START = '2021-06-01'
 _EP = dt.date(1970, 1, 1)
@@ -30,10 +30,22 @@ def parse_effr(js):
     return {x['effectiveDate']: float(x['targetRateTo']) for x in (js or {}).get('refRates') or [] if x.get('targetRateTo') is not None}
 
 
+# 2026-11-25 過去幾年的殖利率存起來，每天只抓今年那個檔：財政部網站一個檔要 15–20 秒，原本每天重抓 2021 年起全部（約 110 秒，
+# 每日資料最慢的一段之一；倉庫考慮改私有，Actions 要算額度）。舊年度的數字不會再變；過完年 10 天才存，年底最後幾天和修正都出來了
+CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'coc_cache', 'tsy2y.json')
+
+
 def fetch(get, last):
     """get＝collect.py 的 get(url)（JSON 回傳物件、其他回傳文字）。回傳 (2 年期殖利率, 目標利率上限)，都是 {日期: %}。"""
-    y2 = {}
-    for y in range(2021, int(last[:4]) + 1): y2.update(parse_tsy(get(TSY % (y, y))))
+    try: C = json.load(open(CACHE, encoding='utf-8'))
+    except Exception: C = {}
+    y2, ly, new = {}, int(last[:4]), False
+    for y in range(2021, ly + 1):
+        if str(y) in C and y < ly: y2.update(C[str(y)]); continue
+        d = parse_tsy(get(TSY % (y, y))); y2.update(d)
+        if y < ly and len(d) > 200 and last >= '%d-01-10' % (y + 1): C[str(y)] = d; new = True
+    if new:
+        with open(CACHE, 'w', encoding='utf-8') as f: json.dump(C, f, separators=(',', ':'), sort_keys=True)
     return y2, parse_effr(get(EFFR % last))
 
 

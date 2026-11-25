@@ -1503,6 +1503,15 @@ try:
     try: R['pcr'] = sentiment.pcr_update(opt['result'], LAST, R.get('rr25'))
     except Exception as e: errors.append(f'pcr {e}')
 except Exception as e: errors.append(f'sentiment {e}')
+# 2026-11-25 Hyperliquid 大戶掃描（G9g，排行榜前 2,000 個帳戶、約 2,000 次請求、100 秒左右）從這裡開始在背景跑，
+#   和下面 Coinalyze 的限流等待（每分鐘 38 次，一天約等 100 秒）重疊（倉庫考慮改私有，Actions 要算額度）。
+#   放在這裡而不是更早：上面的掛單簿、資金費率也打 Hyperliquid，同時掃描可能撞到它每分鐘的請求上限；這之後就沒有其他 Hyperliquid 請求。
+#   參數和原本一樣（收盤、開始時間），結果在 G9g 取回，內容不變
+try:
+    import concurrent.futures as _cf_hl, hl_whales
+    _hl_fut = _cf_hl.ThreadPoolExecutor(max_workers=1).submit(hl_whales.build, c, now.isoformat(timespec='minutes'))
+except Exception as e:
+    _hl_fut = None; errors.append(f'hl_whales 背景啟動 {e}')
 # G9f. 2026-11-02 使用者要求：清算熱力圖（推算；未平倉量＋假設槓桿，見 liq_heat.py）。不佔 bitcoin-data 額度
 #   2026-11-08 起用 Coinalyze 多家交易所（約 50 次、受每分鐘 40 次限制要 1–2 分鐘）；沒有 key 或失敗時照舊用 OKX（約 30 次）
 try:
@@ -1546,9 +1555,10 @@ try:
         except Exception as e: errors.append(f'{k_} {e}')
 except Exception as e: errors.append(f'six {e}')
 # G9g. 2026-11-04 使用者要求：Hyperliquid 大戶（帳戶淨值前 300 名）的 BTC 部位彙總（見 hl_whales.py；不列個別帳戶）。約 300 次 Hyperliquid 請求、2–3 分鐘
+#   （2026-11-05 起前 2,000 名；2026-11-25 起在 G9f 之前就在背景開始掃，這裡只取回結果）
 try:
     import hl_whales
-    R['hl_whales'] = hl_whales.build(c, now.isoformat(timespec='minutes'))
+    R['hl_whales'] = _hl_fut.result() if _hl_fut else hl_whales.build(c, now.isoformat(timespec='minutes'))   # 2026-11-25 G9f 之前就在背景跑了，這裡取回（失敗會在這裡丟出，照舊走下面的 except）
     R['hl_whales']['hist'] = hl_whales.hist_update(R['hl_whales'], LAST, c)   # 2026-11-14 每日一筆的歷史（新版首頁「Hyperliquid 大戶部位」）
 except Exception as e:
     errors.append(f'hl_whales {e}')
