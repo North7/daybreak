@@ -123,10 +123,16 @@ def rrisk(L):
 
 def pl(L):
     p = L['cycle']['powerlaw']; lo, hi = p['bottom_band']; a, b = p['next_top_ratio']; ta, tb = p['next_top_price']
+    import math   # 通道底部線：和 cycle_data.py 冪律圖同一條（歷次底部倍數對 log10(創世起天數) 做直線擬合），換算成今天的價格
+    g0 = dt.date(2009, 1, 3); lx = lambda d: math.log10((dt.date.fromisoformat(d) - g0).days)
+    xs = [lx(q[0]) for q in p['bottoms']]; ys = [math.log10(q[1]) for q in p['bottoms']]; mx = sum(xs) / len(xs); my = sum(ys) / len(ys)
+    bs_ = sum((x - mx) * (y - my) for x, y in zip(xs, ys)) / sum((x - mx) ** 2 for x in xs); blp = p['fair'] * 10 ** (my + bs_ * (lx(p['date']) - mx))
     zone = ('落在歷次底部帶（%.2f–%.2f 倍）' % (lo, hi), 'inside the band of past bottoms (%.2f–%.2f×)' % (lo, hi)) if p['ratio'] <= hi else ('高於歷次底部帶', 'above the band of past bottoms')
     return '價格是冪律合理價的 %.2f 倍，%s。' % (p['ratio'], zone[0]), 'Price is %.2f times its power-law fair value, %s.' % (p['ratio'], zone[1]), [
-        it('倍數', 'Multiple', '%.2f×' % p['ratio'], '%.2f×' % p['ratio'], 'neu', '合理價 %s，價格%s趨勢 %.0f%%。' % (usd(p['fair']), '低於' if p['ratio'] < 1 else '高於', abs(p['ratio'] - 1) * 100),
-           'Fair value is %s; price is %.0f%% %s the trend.' % (usd(p['fair']), abs(p['ratio'] - 1) * 100, 'below' if p['ratio'] < 1 else 'above')),
+        it('倍數', 'Multiple', '%.2f×' % p['ratio'], '%.2f×' % p['ratio'], 'neu', '合理價（OLS 擬合整段價格）%s，價格%s它 %.0f%%。通道底部線（歷次底部的連線，常說的支撐線）今天 %s，比合理價低 %.0f%%，價格%s底部線 %.0f%%。' % (
+               usd(p['fair']), '低於' if p['ratio'] < 1 else '高於', abs(p['ratio'] - 1) * 100, usd(blp), (1 - blp / p['fair']) * 100, '高於' if p['price'] >= blp else '低於', abs(p['price'] / blp - 1) * 100),
+           'Fair value (an OLS fit to all prices) is %s; price is %.0f%% %s it. The channel bottom (the line through past bottoms, often called support) is %s today, %.0f%% below fair value; price is %.0f%% %s it.' % (
+               usd(p['fair']), abs(p['ratio'] - 1) * 100, 'below' if p['ratio'] < 1 else 'above', usd(blp), (1 - blp / p['fair']) * 100, abs(p['price'] / blp - 1) * 100, 'above' if p['price'] >= blp else 'below')),
         it('歷次頂部', 'Past tops', '→'.join('%.1f' % t[1] for t in p['tops']), '→'.join('%.1f' % t[1] for t in p['tops']), 'neu', '頂部倍數一輪比一輪小；底部在 %.2f–%.2f 倍之間。' % (lo, hi), 'Each top a smaller multiple than the last; bottoms sat between %.2f× and %.2f×.' % (lo, hi)),
         it('下一輪頂部', 'Next top', '%.2f–%.2f×' % (a, b), '%.2f–%.2f×' % (a, b), 'neu', '照縮小的速度推，約 %s–%s；樣本只有 4 輪。' % (usd(ta), usd(tb)), 'At the same rate of shrinkage, about %s–%s. Only four cycles to go on.' % (usd(ta), usd(tb)))]
 
