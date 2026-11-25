@@ -16,7 +16,7 @@ CJK = re.compile(r'[㐀-鿿]')
 SIMP = set('这们说为来对时国会个过还没发么从动场实现价币机构资线买卖盘关头应该开间觉进处净链亿万点涨')
 CHENG = re.compile(r'[一二三四五六七八九十兩幾]成(?![功立為長熟本員交績型不])')   # 2026-11-17 使用者：「以後幾成這種表達方式都換成百分數表達方式」
 FINDING_ID = re.compile(r'(?<![\d-])20\d\d-\d\d-\d\d-\d{1,2}(?![\d-])')   # 2026-11-19 網站 #235：發現不寫原始代號（2026-11-16-1），寫「11/16 第一則發現」或直接寫結論
-BAN = re.compile(r'出場|階梯|避險|賣出線|減碼|分批賣|exit (plan|ladder|framework)|sell (signal|trigger)|take profit', re.I)
+BAN = re.compile(r'出場|階梯|避險|賣出線|減碼|加碼|分批賣|分批買|留現金|買進後|exit (plan|ladder|framework)|sell (signal|trigger)|take profit', re.I)
 # 2026-11-12 使用者：品牌名中英文都只寫 Daybreak，中文也不寫「破曉」（譯名保留，但對外儘量用英文）。hashtag、網址不受影響（不會出現這兩字）
 BRAND = re.compile(r'破曉')
 NEED = ('n', 'order', 'status', 'url', 'id', 'author', 'followers', 'posted', 'lang', 'angle', 'summary', 'reply')
