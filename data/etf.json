@@ -304,7 +304,7 @@
  ],
  "source": "CoinMarketCap",
  "source_url": "https://coinmarketcap.com/etf/bitcoin/",
- "updated_utc": "2026-11-25T13:35:37+00:00",
+ "updated_utc": "2026-11-25T22:52:41+00:00",
  "last_complete": "2026-11-24",
  "roll20": {
   "date": "2026-11-24",
@@ -3170,7 +3170,7 @@
    "d": "2026-11-24",
    "v": -5.84
   },
-  "vol_musd": 77426,
+  "vol_musd": 77432,
   "rows": [
    [
     19776,
