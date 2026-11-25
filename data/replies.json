@@ -992,6 +992,35 @@
     },
     "title": "30 天實際波動 48%，過去一年 81% 的日子比現在平靜"
    }
+  },
+  {
+   "n": 49,
+   "order": 49,
+   "kind": "reply",
+   "lang": "en",
+   "style": "口語版",
+   "status": "send",
+   "url": "https://x.com/TheRealPlanC/status/2125441027989291260",
+   "id": "2125441027989291260",
+   "author": "TheRealPlanC",
+   "name": "Plan C",
+   "followers": 216221,
+   "posted": "2026-11-25T04:06:44Z",
+   "angle": "他說冪律沒壞、是 OLS 把合理價抬太高；補：就算用他批評的那條 OLS 線，價格也只有趨勢的 0.42 倍，在歷次底部帶裡、比 6 月低點時還低",
+   "take": "兩種模型讀法一樣：相對長期趨勢，現在是歷史低點",
+   "summary": "冪律沒有壞，是 OLS 價格對時間的模型高估了合理價（OLS 趨勢 $146,725，他的分位數回歸模型合理價 $98,517）；照他的模型 BTC 在第 1 百分位，5,974 個日收盤只有約 60 天更低、0.1 百分位 $55,185 只收破過 6 天；分位數回歸＞OLS、協議時間＞日曆時間",
+   "reply": "",
+   "quote": "Plan C says the power law isn't broken, OLS just set fair value too high\nEven on that OLS line, BTC is 0.42× trend: inside the 0.24–0.48× band of past bottoms, and below June's low (0.44×) though price is higher now\n#Bitcoin #BTC #PowerLaw",
+   "mode": "quote",
+   "sources": "冪律合理價 $146,558、價格 $61,253、倍數 0.418×；歷次底部 2015-01 0.24、2018-12 0.48、2022-11 0.36、2026-06-30 0.44，底部帶 0.24–0.48 · 2026-11-23 · data/latest.json cycle.powerlaw（CoinMetrics，log 價對 log 天數，每天只用當天以前的資料擬合）／next-cycle.js pl 卡；卡片（Kraken 收盤）合理價 $146,471、價格 $61,214、0.42×、在底部帶第 11 天",
+   "note": "使用者點名，不查額度和時效。英文只做引用（21.6 萬粉）；今天第 1 則引用。不評他的模型好壞、不用他的 0.1 百分位價位當支撐；不換算底部價位。",
+   "image": {
+    "site": {
+     "k": "pl",
+     "m": 1
+    },
+    "title": "Price ÷ power-law trend: 0.42×, inside the band of past bottoms"
+   }
   }
  ]
 }
