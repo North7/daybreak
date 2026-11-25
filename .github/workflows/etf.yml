@@ -7,7 +7,6 @@ on:
 
 permissions:
   contents: write
-  actions: write   # 2026-11-22 推了新提交後呼叫 cloudflare.yml 部署（GITHUB_TOKEN 推送不會觸發 push 事件）
 
 concurrency:
   group: daily-data
@@ -32,9 +31,12 @@ jobs:
           git pull --rebase --autostash
           git push
           echo "pushed=true" >> "$GITHUB_OUTPUT"
-      - name: 部署到 Cloudflare（有推新提交才呼叫）
+      - name: 部署到 Cloudflare（有推新提交才部署）
+        # 2026-11-25 直接接在這個工作後面（.github/actions/deploy-cf），不另開部署工作
         if: steps.commit.outputs.pushed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh workflow run cloudflare.yml --repo "${{ github.repository }}" --ref main -f from=etf
+        uses: ./.github/actions/deploy-cf
+        with:
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          github-token: ${{ github.token }}
+          indexnow: "false"

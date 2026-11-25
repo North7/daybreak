@@ -6,14 +6,17 @@ name: Deploy to Cloudflare Pages
 #
 # 觸發：
 #   - push 到 main（PR 合併、日報、回覆／長文等用個人帳號推上來的提交）
-#   - workflow_dispatch：Daily data / ETF flows / Share cards / Chart images 真的推了新提交（或更新了截圖）才在最後一步呼叫，
-#     帶 from=<來源>。這幾個流程用內建 GITHUB_TOKEN 推送，GitHub 不會因此觸發 push 事件；GITHUB_TOKEN 可以觸發 workflow_dispatch。
-#     2026-11-22 原本用 workflow_run，來源每跑一次（含「已更新、直接結束」的備援排程）就部署一次；改成有變才部署，省 Actions 分鐘數
-#     （使用者考慮把倉庫改私有，私有庫的 Actions 要算額度）。Prefetch on-chain 只更新 pipeline/bd_cache（Daily data 的輸入），不必部署。
 #   - 手動 workflow_dispatch
+# Daily data / ETF flows / Share cards / Chart images 推了新提交（或更新了截圖）後，在自己的工作最後一步直接部署
+#   （共用 .github/actions/deploy-cf；這幾個流程用內建 GITHUB_TOKEN 推送，不會觸發這裡的 push）。
+#   2026-11-22 原本用 workflow_run，來源每跑一次（含「已更新、直接結束」的備援排程）就部署一次，改成有變才呼叫這裡；
+#   2026-11-25 再改成直接接在原本的工作後面：另開一個部署工作至少算 1 分鐘，部署本身只要 30 秒左右（倉庫考慮改私有，Actions 要算額度）。
+#   Prefetch on-chain 只更新 pipeline/bd_cache（Daily data 的輸入），不必部署。
 # push 略過的路徑：只動到這些檔案的推送不在這裡部署——
 #   data/notes*.json、data/picks.json、pipeline/next/**：Share cards 會被同一個推送觸發，重建後再呼叫部署（不然同一份內容部署兩次）
-#   .github/run-daily：Daily data 跑完會呼叫部署；pipeline/bd_cache/**：只是資料快取
+#   .github/run-daily：Daily data 跑完會部署；pipeline/bd_cache/**：只是資料快取
+#   2026-11-25 data/replies*、data/longposts*（運營每天推約 30 次）：回覆／長文小幫手改從 /ops-live/ 即時讀 GitHub 上的最新版
+#     （functions/ops-live/），不必為它們整站部署，下一次別的部署會一起帶上；ops 底下的 .py、.md 是運營在本機跑的工具和說明，網站用不到
 #
 # 需要倉庫 Secrets：CLOUDFLARE_API_TOKEN（權限 Account › Cloudflare Pages › Edit）、CLOUDFLARE_ACCOUNT_ID。
 # 還沒設定時整個工作直接略過，不會失敗。
@@ -21,13 +24,14 @@ name: Deploy to Cloudflare Pages
 on:
   push:
     branches: [main]
-    paths-ignore: ["data/notes.json", "data/notes.en.json", "data/picks.json", "pipeline/next/**", ".github/run-daily", "pipeline/bd_cache/**"]
+    paths-ignore: ["data/notes.json", "data/notes.en.json", "data/picks.json", "pipeline/next/**", ".github/run-daily", "pipeline/bd_cache/**",
+                   "data/replies.json", "data/replies/**", "data/longposts.json", "data/longposts/**", "data/img_seen.json", "ops/**/*.py", "ops/**/*.md"]
   workflow_dispatch:
     inputs:
-      from:
-        description: "誰呼叫的（daily / etf / share / chart-img），手動可留空"
-        required: false
-        default: ""
+      indexnow:
+        description: "部署完通知搜尋引擎（IndexNow）"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -38,76 +42,18 @@ concurrency:
   group: cloudflare-pages
   cancel-in-progress: false
 
-env:
-  PROJECT: daybreak
 
 jobs:
   deploy:
     runs-on: ubuntu-latest
     timeout-minutes: 10
-    env:
-      HAS_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN != '' && secrets.CLOUDFLARE_ACCOUNT_ID != '' }}
     steps:
-      - name: Secrets 還沒設定就略過
-        if: env.HAS_TOKEN != 'true'
-        run: echo "CLOUDFLARE_API_TOKEN / CLOUDFLARE_ACCOUNT_ID 還沒設定，這次不部署。"
-
       - uses: actions/checkout@v4
-        if: env.HAS_TOKEN == 'true'
         with:
-          ref: main   # 由其他流程呼叫時也一律部署 main 最新的內容
-
-      - name: 準備上傳的網站資料夾
-        if: env.HAS_TOKEN == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          # 跟 GitHub Pages 一樣，倉庫裡的檔案都上線（.git、.github 除外）
-          mkdir -p "$RUNNER_TEMP/site"
-          rsync -a --exclude='.git' --exclude='.github' --exclude='.claude' ./ "$RUNNER_TEMP/site/"
-          # 舊網址是 north7.github.io/daybreak/…；有人在新網域打了 /daybreak/… 也導回正確位置
-          printf '/daybreak /  301\n/daybreak/* /:splat 301\n' >> "$RUNNER_TEMP/site/_redirects"
-          # 2026-11-16 舊版（classic.html）對外下線，2026-11-17 從倉庫刪除；/classic 轉回首頁（網址 # 後面的舊代號由首頁轉到新版對應的圖）
-          printf '/classic /  301\n/classic.html /  301\n' >> "$RUNNER_TEMP/site/_redirects"
-          echo "SITE_DIR=$RUNNER_TEMP/site" >> "$GITHUB_ENV"
-          # 2026-11-20 每張圖的靜態小圖（chart-img.yml 每天截好放在 Release「chart-img」）解到 charts-img/，單頁才會放圖；還沒有或下載失敗就不放圖
-          mkdir -p "$RUNNER_TEMP/site/charts-img"
-          gh release download chart-img --repo "${{ github.repository }}" -p chart-img.tar -D "$RUNNER_TEMP" --clobber && tar -C "$RUNNER_TEMP/site/charts-img" -xf "$RUNNER_TEMP/chart-img.tar" || echo "::warning::no chart images"
-          # 2026-11-20 GEO 第二批：每張圖一頁、每天的簡報一頁（中英），sitemap.xml 加上這些網址。只寫進上傳的資料夾，不進程式庫
-          # 2026-11-25 簡體版（主題頁、每張圖、每日簡報、zh-hans/feed.xml、latest.zh-hans.md）要 OpenCC（pipeline/next/hans.py）；裝不起來就只出繁體和英文
-          # （首頁和數據頁的簡體是瀏覽器裡轉的，用倉庫裡的 assets/hans.js，不靠這一步）
-          python3 -m pip install --quiet --break-system-packages opencc-python-reimplemented==0.1.7 || echo "::warning::opencc not installed; no zh-Hans pages"
-          python3 pipeline/next/pages.py --out "$RUNNER_TEMP/site" || echo "::warning::pages.py failed; deploying without chart/brief pages"
-          echo "files: $(find "$RUNNER_TEMP/site" -type f | wc -l)"
-
-      - name: 放回不進程式庫的大檔
-        # 2026-11-15 使用者：「影片移出程式庫」。案例頁的展示影片放在 Release「media」，部署時下載回原本的路徑，網址不變
-        if: env.HAS_TOKEN == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh release download media --repo "${{ github.repository }}" -p showcase.mp4 -D "$SITE_DIR/case-study/img" --clobber
-          test -s "$SITE_DIR/case-study/img/showcase.mp4"
-
-      - name: 確認 Pages 專案存在（第一次會建立）
-        if: env.HAS_TOKEN == 'true'
-        continue-on-error: true
-        uses: cloudflare/wrangler-action@v3
+          ref: main
+      - uses: ./.github/actions/deploy-cf
         with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages project create ${{ env.PROJECT }} --production-branch=main
-
-      - name: 部署
-        if: env.HAS_TOKEN == 'true'
-        uses: cloudflare/wrangler-action@v3
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy ${{ env.SITE_DIR }} --project-name=${{ env.PROJECT }} --branch=main --commit-dirty=true
-
-      - name: 通知搜尋引擎（IndexNow）
-        # 2026-11-20 GEO：日報上線那次部署（Share cards 呼叫的）才送；失敗不影響部署
-        if: env.HAS_TOKEN == 'true' && github.event_name == 'workflow_dispatch' && inputs.from == 'share'
-        continue-on-error: true
-        run: python3 pipeline/indexnow.py
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          github-token: ${{ github.token }}
+          indexnow: ${{ inputs.indexnow && 'true' || 'false' }}

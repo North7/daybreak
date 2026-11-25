@@ -14,7 +14,6 @@ on:
 
 permissions:
   contents: write
-  actions: write   # 2026-11-22 更新截圖後呼叫 cloudflare.yml 部署
 
 concurrency:
   group: chart-img
@@ -62,4 +61,12 @@ jobs:
         run: |
           gh release view chart-img >/dev/null 2>&1 || gh release create chart-img --title "每張圖的靜態小圖（每天覆蓋，不放進程式庫）" --notes "pipeline/chart_img.js 每天產生，cloudflare.yml 部署時下載到 charts-img/。" --latest=false
           gh release upload chart-img "$RUNNER_TEMP/chart-img.tar" --clobber
-          gh workflow run cloudflare.yml --repo "${{ github.repository }}" --ref main -f from=chart-img
+      - name: 部署到 Cloudflare（新截圖上線）
+        # 2026-11-25 直接接在這個工作後面（.github/actions/deploy-cf），不另開部署工作
+        if: github.event_name != 'pull_request'
+        uses: ./.github/actions/deploy-cf
+        with:
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          github-token: ${{ github.token }}
+          indexnow: "false"

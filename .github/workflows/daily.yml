@@ -1,15 +1,12 @@
 name: Daily data
 
 on:
-  schedule:
-    - cron: "5 0 * * *"    # 每天 UTC 00:05（台北 08:05），日線收盤後；Claude 日報 UTC 00:15（台北 08:15）接手（2026-11-06 起，原本 00:30）
-    # GitHub 高負載時排程可能延遲或整次被丟掉（2026-10-08 22:50／00:20 兩個排程都沒觸發），多排幾個備援時間；已更新就直接結束
-    # 2026-11-22 備援從四個減到兩個（cron-job.org 準時呼叫才是主力；已更新的備援每次也算一分鐘）
-    - cron: "45 0 * * *"
-    - cron: "5 1 * * *"
+  # 2026-11-25 拿掉 GitHub 自己的排程（原本 00:05 加 00:45、01:05 兩個備援）：準時觸發靠 cron-job.org（下面的 repository_dispatch），
+  # 漏了的話 08:15 的 Claude 日報發現資料沒更新會推 .github/run-daily 觸發（下面的 push）。GitHub 排程常晚好幾小時，
+  # 而且每次「已更新、直接結束」也算 1 分鐘（倉庫考慮改私有，Actions 要算額度）。
   workflow_dispatch: {}
   # 2026-10-12：GitHub 自己的排程每天晚 5–7 小時，改由 cron-job.org 準時呼叫 repository_dispatch（event_type: daily-data）。
-  # 設定方法見 docs/CRON_JOB.md；上面的 schedule 與下面的 push 觸發保留當備援
+  # 設定方法見 docs/CRON_JOB.md；下面的 push 觸發是備援
   repository_dispatch:
     types: [daily-data]
   # GitHub 定時排程常延遲數小時（2026-10-08 實測：00:45 的排程 06:14 才跑）。08:15 的 Claude 日報發現資料還沒更新時，
@@ -20,7 +17,7 @@ on:
 
 permissions:
   contents: write
-  actions: write   # 2026-11-22 推了新提交後呼叫 cloudflare.yml 部署（GITHUB_TOKEN 推送不會觸發 push 事件）
+  actions: write   # 呼叫 chart-img.yml（每張圖的靜態小圖）
 
 concurrency:
   group: daily-data
@@ -85,12 +82,15 @@ jobs:
           git pull --rebase --autostash
           git push
           echo "pushed=true" >> "$GITHUB_OUTPUT"
-      - name: 部署到 Cloudflare（有推新提交才呼叫）
+      - name: 部署到 Cloudflare（有推新提交才部署）
+        # 2026-11-25 直接接在這個工作後面（.github/actions/deploy-cf），不另開部署工作
         if: steps.commit.outputs.pushed == 'true'
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh workflow run cloudflare.yml --repo "${{ github.repository }}" --ref main -f from=daily
+        uses: ./.github/actions/deploy-cf
+        with:
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          github-token: ${{ github.token }}
+          indexnow: "false"
       - name: 每張圖的靜態小圖（滿 7 天或有新圖才重截）
         # 2026-11-22 原本 Share cards 每跑一次就截（一天五次），改成資料更新後一次。
         # 2026-11-25 使用者：只是給 GEO（單頁的圖、分享預覽）用，改成每週一次——上次截圖滿 7 天，或清單裡有上次沒截的新圖才呼叫。

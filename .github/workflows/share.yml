@@ -10,7 +10,6 @@ on:
 
 permissions:
   contents: write
-  actions: write   # 2026-11-22 推了新提交後呼叫 cloudflare.yml 部署（GITHUB_TOKEN 推送不會觸發 push 事件）
 
 concurrency:
   group: share-cards
@@ -66,7 +65,11 @@ jobs:
           git pull --rebase --autostash
           git push
       - name: 部署到 Cloudflare
-        # 2026-11-22 觸發這次的推送（notes／picks／pipeline/next）cloudflare.yml 不會自己部署，一律由這裡呼叫，沒有新提交也要
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: gh workflow run cloudflare.yml --repo "${{ github.repository }}" --ref main -f from=share
+        # 2026-11-22 觸發這次的推送（notes／picks／pipeline/next）cloudflare.yml 不會自己部署，一律在這裡部署，沒有新提交也要；日報上線這次順便通知搜尋引擎
+        # 2026-11-25 直接接在這個工作後面（.github/actions/deploy-cf），不另開部署工作
+        uses: ./.github/actions/deploy-cf
+        with:
+          api-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          github-token: ${{ github.token }}
+          indexnow: "true"
