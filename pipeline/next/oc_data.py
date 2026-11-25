@@ -64,19 +64,28 @@ def build(L, N, E, dn):
             c_profit['de'] += ' "On the price" turns the same share (averaged over the last 5 days) into the colour of the price line: warmer means more short-term holders in profit, cooler more at a loss. In a trending market it can stay warm for months, so warm is not a top and cool is not a bottom. A reading only.'
     except Exception as _e: print('profit heat view skipped', _e)
     av = o['aviv']
-    c_aviv = dict(k='aviv', zh='價格 ÷ 真實市場均價', en='Price ÷ true market mean', f='x2', rows=av['rows'], p=1, log=1, ser=[ser(2, zh='AVIV', en='AVIV', col='ac', w=1.8)],
+    c_aviv = dict(k='aviv', zh='價格是活躍投資人成本的幾倍', en='Price as a multiple of active investors\' cost', f='x2', rows=av['rows'], p=1, log=1, ser=[ser(2, zh='價格 ÷ 真實市場均價', en='Price ÷ true market mean', col='ac', w=1.8)],
       zones=[dict(lo=None, hi=1, col='c4', zh='低於 1', en='Below 1', nz='1 以下', ne='below 1')], refs=[dict(v=1, col='c4')], leg=[['c4', '1 以下', 'Below 1', 'box']],
       marks=[dict(d=dn(t['date']), v=t['value'], col='c5', up=1, zh=yr(t['date']) + ' ' + ('%.2f' % t['value']), en=yr(t['date']) + ' ' + ('%.2f' % t['value'])) for t in av['tops']] +
             [dict(d=dn(t['date']), v=t['value'], col='c4', up=0, zh=yr(t['date']) + ' ' + ('%.2f' % t['value']), en=yr(t['date']) + ' ' + ('%.2f' % t['value'])) for t in av['bottoms']],
-      dz='真實市場均價是排除長期不動的幣之後，活躍投資人的平均成本。低於 1 是在成本下方。標記是歷次週期的高點和低點。', de='The true market mean is the average cost of active investors, excluding long-dormant coins. Below 1 means price is under it. Markers show past cycle highs and lows.')
+      dz='這是什麼：真實市場均價是「還在市場裡活動的投資人，平均買在多少」：先排除放了很久沒動、可能已經遺失的幣，再算剩下的人的平均成本（Cointime 的算法）。價格除以它，大於 1 是這些人整體在賺，小於 1 是整體在賠。'
+         '怎麼看：線是價格是成本的幾倍（對數刻度），1 以下的底色代表整體在賠；標記是歷次週期的頂和底。'
+         '要保留的地方：平均成本是模型推算的，和一般說的「實現價」不同；熊市可以在 1 以下待一年以上。',
+      de='What it is: the true market mean is roughly what investors still active in the market paid on average: coins that have not moved for a very long time (some likely lost) are left out, and the average cost of the rest is worked out (the Cointime method). Price divided by it is above 1 when they are in profit as a group and below 1 when they are at a loss. '
+         'How to read it: the line is price as a multiple of that cost (log scale); shading below 1 means a loss overall; markers show past cycle tops and bottoms. '
+         'Caveats: the cost is modelled and differs from the usual realized price; bear markets can stay below 1 for more than a year.')
     ru = o['rup']; fl = ru['floor']; nr = ru.get('near') or {}; nh = nr.get('hi')   # 2026-11-11 近地板區（地板以上、37.5% 以下），舊資料沒有這一欄
     c_rup = dict(k='rup', zh='相對未實現獲利', en='Relative unrealized profit', f='p1', rows=ru['rows'], p=1, ser=[ser(2, zh='相對未實現獲利', en='Relative unrealized profit', col='c3', fill=1, w=1.8)],
       zones=[dict(lo=None, hi=fl, col='c4', zh='在地板區', en='In the floor zone', nz='地板區', ne='the floor zone')] + ([dict(lo=fl, hi=nh, col='c5', op=.13, zh='在近地板區', en='In the near-floor zone', nz='近地板區', ne='the near-floor zone')] if nh else []),
       refs=[dict(v=fl, col='c4', zh='地板 %g%%' % fl, en='Floor %g%%' % fl)], leg=[['c4', '地板區（≤ %g%%）' % fl, 'Floor zone (≤ %g%%)' % fl, 'box']] + ([['c5', '近地板區（%g–%g%%）' % (fl, nh), 'Near-floor zone (%g–%g%%)' % (fl, nh), 'box']] if nh else []),
       spans=[dict(a=dn(e['start']), b=dn(e['end']), col='c5', op=.16) for e in nr.get('eps') or []] + [dict(a=dn(e['start']), b=dn(e['end']), col='c4', op=.16) for e in ru['eps']],
       marks=[dict(d=dn(e['min_date']), v=e['min'], col='c4', up=0, zh='%s %.1f%%' % (yr(e['min_date']), e['min']), en='%s %.1f%%' % (yr(e['min_date']), e['min'])) for e in ru['eps']],
-      dz='全體持有者帳面上的獲利，佔市值的比例。青色區塊是歷次跌進地板區的期間' + ('，淺黃區塊是近地板區（%g–%g%%）：過去只在熊市後段到復甦初期出現。' % (fl, nh) if nh else '。'),
-      de='Paper profit of all holders as a share of market cap. Cyan bands mark past stays in the floor zone' + ('; pale-yellow bands mark the near-floor zone (%g–%g%%), seen only from late bear markets to early recoveries.' % (fl, nh) if nh else '.'))
+      dz='這是什麼：所有還沒賣的比特幣，照現在的價格算，帳面上賺的錢佔市值多少（只算賺的，不扣賠的）。熊市裡大家的獲利被吃掉，這個比例就往下掉；歷次熊市尾聲都跌到 %g%% 左右或更低，這裡叫週期地板。' % fl +
+         '怎麼看：線是這個比例；青色區塊是歷次跌破地板的期間' + ('，淺黃區塊是 %g–%g%% 的近地板區（過去只在熊市後段到復甦初期出現）' % (fl, nh) if nh else '') + '，圓圈是每一次跌破時的最低點。'
+         '要保留的地方：地板和近地板區是本站照 2012 年以來的歷史訂的，只有四五輪；跌進來之後常再跌一段。',
+      de='What it is: for every unsold bitcoin, the paper gain at today\'s price, as a share of market cap (gains only, losses not netted). Bear markets eat into those gains and the share falls; near the end of every past bear market it dropped to about %g%% or lower, called the cycle floor here. ' % fl +
+         'How to read it: the line is the share; cyan bands mark past stays below the floor' + ('; pale-yellow bands mark the %g–%g%% near-floor zone (seen only from late bear markets into early recoveries)' % (fl, nh) if nh else '') + '; circles mark the low of each stay. '
+         'Caveats: the floor and near-floor zone are set by this site from history since 2012, only four or five cycles; price often fell further after getting here.')
     cs = ch['conc_stats']; co = ch['cohort']; pr = co['price']
     c_conc = dict(k='conc', zh='籌碼集中度', en='Supply concentration', f='p1', rng=365, rows=[[r[0], r[1], R(r[2], 2)] for r in ch['conc_hist']], p=1, ph=.46, hero=0,
       ser=[ser(2, zh='集中度', en='Concentration', col='c4', fill=1, w=1.6)], refs=[dict(v=cs['p90'], col='c5', zh='前 10%%（%.1f%%）' % cs['p90'], en='top 10%% (%.1f%%)' % cs['p90'])],

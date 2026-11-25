@@ -53,7 +53,12 @@ def build(L, N, E, dn, X):
                     nz='投降訊號%s；收盤%s上升的 200 日均線。' % ('出現過' if cs else '還沒出現', '站上' if ar else '還沒站上'), ne='Capitulation %s; the close is %s a rising 200-day MA.' % ('seen' if cs else 'not seen yet', 'above' if ar else 'not yet above'))]
     X['stage'] = dict(k='stage', zh='市場階段', en='Market stage', hz=('從 %s 起・鎖定中' if st['stage'] == '牛市' else '從 %s 起') % st['since'].replace('-', '/'), he=('Since %s, locked' if st['stage'] == '牛市' else 'Since %s') % st['since'], hs=dict(v=st['stage'], f='txt', ve=STN.get(st['stage'], st['stage'])),
       list=dict(rows=prog + [row(e['label'], EVN.get(e['id'], e['label']), evv(e), ve=evv(e), col='up' if e['ok'] else 'k2', nz=('成立：' if e['ok'] else '不成立：') + e['cond'], ne='Met' if e['ok'] else 'Not met') for e in st['evidence']['items']]),
-      dz='三個階段：熊市、過渡、牛市。見過投降訊號、而且收盤站上還在上升的 200 日均線，進入過渡；這樣連續 30 天，進入牛市並鎖定。下面六盞燈只是佐證，不參與判定。', de='Three stages: bear, transition, bull. A capitulation signal plus a close above a rising 200-day average starts the transition; 30 straight days of that locks in a bull market. The six lights below are supporting evidence only.')
+      dz='這是什麼：用最簡單的規則替市場貼標籤，只看價格和 200 日均線（過去 200 天收盤的平均，常被當成長期趨勢線），加上「投降」有沒有出現過（大跌之後大量認賠賣出）。三個階段：熊市 → 過渡 → 牛市。投降出現過、收盤又站上還在往上走的 200 日均線，進入過渡；這樣連 30 天，成為牛市並鎖定。'
+         '怎麼看：大字是現在的階段；第一列是往下一個階段走的進度，後面六項是其他佐證，綠色代表成立，只作參考、不參與判定。'
+         '要保留的地方：鎖定是為了不被短暫跌破洗掉標籤，代價是反應慢：價格跌破均線之後，還會顯示牛市好一段時間。',
+      de='What it is: the simplest possible label for the market, using only price against the 200-day MA (the average close of the past 200 days, often used as the long-run trend line) and whether a capitulation (heavy loss-taking after a big fall) has happened. Three stages: bear → transition → bull. A capitulation plus a close above a still-rising 200-day MA starts the transition; 30 straight days of that makes it bull, and it locks. '
+         'How to read it: the big text is the current stage; the first row is progress toward the next stage, and the six rows after it are other checks, green when met, shown for reference only. '
+         'Caveats: the lock keeps a brief dip from flipping the label, at the cost of speed: after price breaks below the average, the card can still say bull for quite a while.')
     rg = cy['regime']
     # 照現有網站 regStages：每週分到五個階段之一。≥ +4 過熱、≤ −4 極熊、分數為負是熊；空方滿 26 週後翻多的頭 26 週是初牛，其餘是牛
     RSN = [['極熊', 'Extreme bear'], ['熊', 'Bear'], ['初牛', 'Early bull'], ['牛', 'Bull'], ['過熱', 'Overheated']]; HOT, EARLY = 4, 26
@@ -69,9 +74,14 @@ def build(L, N, E, dn, X):
     X['regime'] = dict(k='regime', zh='週線多空分數', en='Weekly regime score', f='s2', rows=rrows, p=2, dom=[-6, 6],
       ser=[ser(1, zh='多空分數', en='Regime score', t='bar', base=0, cc=3, cols=SC, names=RSN)], refs=[dict(v=4, col='ac', zh='過熱 ≥ +4', en='Overheated ≥ +4'), dict(v=-4, col='c3', zh='極熊 ≤ −4', en='Extreme bear ≤ −4')],
       leg=[[SC[i_], RSN[i_][0], RSN[i_][1], 'box'] for i_ in range(5)],
-      dz='六個項目各自和自己的中位數比，合成 −6 到 +6 的分數。柱子的顏色是當週的階段：分數為負是熊，空方滿 26 週之後翻多的頭 26 週是初牛，之後是牛，到 +4 以上是過熱、−4 以下是極熊。', de='Six inputs, each measured against its own median, combined into a score from −6 to +6. Bars take the colour of that week\'s stage: negative is bear; the first 26 weeks after a bear run of 26 weeks or more is early bull, then bull; +4 and above is overheated, −4 and below extreme bear.')
-    RGN = dict(d200=('價格 ÷ 200 日均線', 'Price ÷ 200-day MA'), mom12=('12 個月動能', '12-month momentum'), mvrv1y=('MVRV 對一年均值', 'MVRV vs 1-year mean'), rc30=('實現市值 30 日', 'Realized cap, 30-day'), xs90=('交易所供給 90 日', 'Exchange supply, 90-day'), rpl=('實現獲利 ÷ 虧損 90 日', 'Realized profit ÷ loss, 90-day'),
-               sth=('價格 ÷ 短期持有者成本', 'Price ÷ STH cost'), asopr=('aSOPR 30 日', 'aSOPR, 30-day'), lnupl=('長期持有者 NUPL', 'LTH NUPL'), rup=('未實現獲利 ÷ 市值', 'Unrealized profit ÷ market cap'), pl=('冪律殘差', 'Power-law residual'), rr=('儲備風險', 'Reserve risk'), mvz=('MVRV-Z', 'MVRV-Z'))
+      dz='這是什麼：本站自己的中期多空分數。把六個項目（價格對 200 日均線、一年來的漲跌、市值對持有成本、流入的資金、交易所裡的幣、賣出的人賺多還是賠多）各自和自己的歷史比，合成一個 −6 到 +6 的分數：正的代表中期趨勢往上，負的代表往下；要連 4 週在另一邊才算翻轉。'
+         '怎麼看：每根柱子是一週，顏色是當週的階段：分數為負是熊；熊市滿 26 週之後翻正的頭 26 週是初牛，之後是牛；到 +4 以上是過熱，−4 以下是極熊。'
+         '要保留的地方：連 4 週才算翻轉，所以轉折會晚幾週；分數在 0 附近（−1 到 +1）容易來回翻，過去也有翻多之後一年反而更低的時候。',
+      de='What it is: our own medium-term score. Six inputs (price against the 200-day MA, the one-year change, market value against holders\' cost, money flowing in, coins on exchanges, and whether sellers are taking profits or losses) are each compared with their own history and combined into a score from −6 to +6: positive means the medium-term trend is up, negative down; it takes four weeks on the other side to flip. '
+         'How to read it: each bar is a week, coloured by that week\'s stage: negative is bear; the first 26 positive weeks after a bear run of 26 weeks or more are early bull, then bull; +4 and above is overheated, −4 and below extreme bear. '
+         'Caveats: the four-week rule makes turns show up late; near 0 (−1 to +1) the score flips easily, and some past long flips were followed by lower prices a year on.')
+    RGN = dict(d200=('價格對 200 日均線', 'Price vs 200-day MA'), mom12=('一年來的漲跌', 'One-year change'), mvrv1y=('市值對成本（比一年平均）', 'Value vs cost, against its 1-year mean'), rc30=('流入的資金（30 日）', 'Money flowing in, 30-day'), xs90=('交易所裡的幣（90 日）', 'Coins on exchanges, 90-day'), rpl=('賣出的人賺多還是賠多（90 日）', 'Sellers\' profit vs loss, 90-day'),
+               sth=('價格對短期持有者成本', 'Price vs short-term holder cost'), asopr=('賣出的幣賺還是賠（30 日）', 'Coins sold at a profit or loss, 30-day'), lnupl=('長期持有者的帳面獲利', 'Long-term holders\' paper profit'), rup=('帳面獲利佔市值', 'Paper profit ÷ market cap'), pl=('價格對長期趨勢價', 'Price vs long-run trend'), rr=('儲備風險', 'Reserve risk'), mvz=('市值對成本（MVRV-Z）', 'Value vs cost (MVRV-Z)'))
     zbar = lambda z: dict(bar=max(0, min(100, 50 + z * 50)), mk=50, col='up' if z > 0 else 'dn')
     dw = cy['dawn']; k = dw['stage']; th = dw['th']
     hv_ = [r[1] for r in dw['rows']]; hS = gsm(hv_, 5); hC = gsm(hv_, 11); drows = [list(r[:5]) + [hS[i], hC[i]] for i, r in enumerate(dw['rows'])]
@@ -90,20 +100,39 @@ def build(L, N, E, dn, X):
       refs=[dict(v=th['hot'], col='ac', zh='黃昏 ≥ %d' % th['hot'], en='Dusk ≥ %d' % th['hot']), dict(v=50, col='k2'), dict(v=th['cold'], col='c3', zh='深夜 ≤ %d' % th['cold'], en='Deep night ≤ %d' % th['cold'])],
       marks=[dict(d=dn(m['date']), v=m['heat'], col='ac' if m['kind'] == 'top' else 'c3', up=1 if m['kind'] == 'top' else 0, zh='%s %s %d' % (yr(m['date']), '頂' if m['kind'] == 'top' else '底', m['heat']), en='%s %s %d' % (yr(m['date']), 'top' if m['kind'] == 'top' else 'low', m['heat'])) for m in dw['marks']],
       leg=[[s_[4], s_[0] + '（' + s_[2] + '）', s_[1] + ' (' + s_[3] + ')', 'line'] for s_ in SG],
-      dz='把一輪週期當成一天。熱度是五項估值和過去四年比的百分位平均；方向看四項趨勢，兩個合起來分成五個階段。下格的熱度線和上格的價格線都用當時那個階段的顏色：深夜（底部區）、入夜（下跌）、破曉（初升）、白晝（上升）、黃昏（過熱）。圓圈是歷次週期的頂和底。', de='One cycle as one day. Heat is the average 4-year percentile of five valuation measures; direction comes from four trend measures, and together they give five stages. The heat line below and the price line above both take the colour of the stage at the time: deep night (bottom zone), nightfall (falling), daybreak (early rise), daylight (rising), dusk (overheated). Circles mark past cycle tops and bottoms.')
-    comp = [row(RGN[c['key']][0], RGN[c['key']][1], c['pct'], f='n0', bar=c['pct'], mk=th['hot'], col=hcol(c['pct']), nz='熱度來源 · 四年百分位', ne='Heat input · 4-year percentile') for c in dw['heat_c']] + \
-           [row(RGN[c['key']][0], RGN[c['key']][1], c['z'], f='s2', nz='方向來源', ne='Trend input', **zbar(c['z'])) for c in dw['trend_c']]
+      dz=('這是什麼：晨昏指數把一輪週期比成一天，從深夜（最便宜）走到黃昏（過熱）。它看兩件事。熱度：五項估值（例如持有者帳面賺多少、價格離長期趨勢多遠）各自和近 4 年比排第幾，平均成 0 到 100，0 是近 4 年最便宜。方向：四項趨勢指標合起來往上還是往下。'
+          '兩個合起來分五段：熱度 %d 以下是深夜（底部區），%d 以上是黃昏（過熱）；中間方向往下是入夜（下跌），方向往上、熱度低於 %d 是破曉（初升），%d 以上是白晝（上升）。'
+          '怎麼看：下格是每週的熱度，上格是價格，兩條線都用當時那一段的顏色；圓圈是歷次週期的頂和底，旁邊是當時的熱度。'
+          '要保留的地方：熱度只和近 4 年比，所以每一輪都會有「最便宜」的時候，不代表絕對便宜；近兩輪估值都比價格先見頂，黃昏常提早出現；2013 年以來只有三輪多，統計只是歷史描述。') % (th['cold'], th['hot'], th['mid'], th['mid']),
+      de=('What it is: the Dawn–Dusk Index treats a cycle as one day, from deep night (cheapest) to dusk (overheated). It looks at two things. Heat: five valuation measures (such as how much paper profit holders have, or how far price is from its long-run trend), each ranked against the last four years and averaged into 0–100, where 0 is the cheapest of those years. Direction: whether four trend measures, taken together, point up or down. '
+          'Together they give five stages: heat at %d or below is deep night (bottom zone), %d or above is dusk (overheated); in between, a downward direction is nightfall (falling), an upward one with heat under %d is daybreak (early rise), and %d or more is daylight (rising). '
+          'How to read it: the lower panel is weekly heat and the upper one price, both coloured by the stage at the time; circles mark past cycle tops and bottoms, with the heat then. '
+          'Caveats: heat is only ranked against four years, so every cycle has a "cheapest" stretch that is not cheap in absolute terms; in the last two cycles valuations peaked before price, so dusk tends to come early; there are only about three cycles since 2013, so the statistics describe history.') % (th['cold'], th['hot'], th['mid'], th['mid']))
+    comp = [row(RGN[c['key']][0], RGN[c['key']][1], c['pct'], f='n0', bar=c['pct'], mk=th['hot'], col=hcol(c['pct']), nz='估值 · 和近 4 年比的排名', ne='Valuation · rank against four years') for c in dw['heat_c']] + \
+           [row(RGN[c['key']][0], RGN[c['key']][1], c['z'], f='s2', nz='趨勢 · 正的往上、負的往下', ne='Trend · positive up, negative down', **zbar(c['z'])) for c in dw['trend_c']]
     X['dawnc'] = dict(k='dawnc', zh='晨昏指數的組成', en='What the Dawn–Dusk Index is made of', hz='熱度', he='Heat', hs=dict(v=dw['heat'], f='n1'), list=dict(rows=comp),
-      dz='五項熱度來源的四年百分位，平均就是熱度；直線是黃昏的門檻 %d。四項方向來源的平均決定多空，直線是零。' % th['hot'], de='The five heat inputs as 4-year percentiles; their average is the heat, and the tick marks the dusk threshold at %d. The four trend inputs set the direction; their tick is zero.' % th['hot'])
+      dz=('這是什麼：把晨昏指數拆開來看。前五列是熱度的來源，後四列是方向的來源。'
+          '怎麼看：估值那五列，每一項和近 4 年比排第幾（0＝近 4 年最便宜，100＝最貴），五個的平均就是熱度，橫條上的直線是黃昏的門檻 %d。趨勢那四列，往右（綠）是往上、往左（紅）是往下，直線是 0，四個合起來決定方向。'
+          '要保留的地方：這張只是拆開的數字，位置判斷看晨昏指數那張；排名只和近 4 年比。') % th['hot'],
+      de=('What it is: the Dawn–Dusk Index taken apart. The first five rows feed the heat, the last four the direction. '
+          'How to read it: each valuation row is ranked against the last four years (0 = the cheapest of those years, 100 = the richest); their average is the heat, and the tick on the bar marks the dusk line at %d. In the four trend rows, right (green) is up and left (red) is down, the tick is 0, and together they set the direction. '
+          'Caveats: these are only the parts; the position call is on the Dawn–Dusk card, and the ranks only cover four years.') % th['hot'])
     X['regc'] = dict(k='regc', zh='週線多空分數的組成', en='What the regime score is made of', hz='分數', he='Score', hs=dict(v=rg['value'], f='s2'),
-      list=dict(rows=[row(RGN[c['key']][0], RGN[c['key']][1], c['val'], f='s2', bar=max(0, min(100, 50 + c['val'] * 50)), mk=50, col='up' if c['val'] >= .15 else 'dn' if c['val'] <= -.15 else 'k2') for c in rg['comps']]), dz='六個項目各自的分數，範圍 −1 到 +1，直線是零。+0.15 以上算偏多（綠）、−0.15 以下算偏空（紅），中間是持平（灰）。加總就是多空分數。', de='Each of the six inputs scored from −1 to +1, with the tick at zero. At +0.15 or more an input counts as bullish (green), at −0.15 or less bearish (red), in between flat (grey). Their sum is the regime score.')
+      list=dict(rows=[row(RGN[c['key']][0], RGN[c['key']][1], c['val'], f='s2', bar=max(0, min(100, 50 + c['val'] * 50)), mk=50, col='up' if c['val'] >= .15 else 'dn' if c['val'] <= -.15 else 'k2') for c in rg['comps']]),
+      dz='這是什麼：把週線多空分數拆成六項，每一項和自己的歷史比，換成 −1 到 +1。怎麼看：往右是偏多、往左是偏空，直線是 0；+0.15 以上算偏多（綠）、−0.15 以下算偏空（紅），中間算持平（灰）。六項加起來就是多空分數。要保留的地方：單一項目常來回，幾項同一邊才有意義。',
+      de='What it is: the weekly regime score split into its six inputs, each compared with its own history and scaled from −1 to +1. How to read it: right leans long, left leans short, the tick is 0; +0.15 or more counts as long (green), −0.15 or less as short (red), in between flat (grey). The six add up to the score. Caveats: single inputs swing back and forth; it matters when several point the same way.')
     # ── 估值冷熱 ──
     hn = o['hnupl']
-    X['hnupl'] = dict(k='hnupl', zh='長短期持有者 NUPL', en='Long- and short-term holder NUPL', hz='長期持有者 NUPL', he='LTH NUPL', f='n3', rows=hn['rows'], p=1, hero=1,
-      ser=[ser(3, zh='短期持有者 NUPL', en='STH NUPL', col='ac', w=1, op=.7), ser(2, zh='長期持有者 NUPL', en='LTH NUPL', col='c3', w=1.9)],
-      zones=[dict(lo=None, hi=0, col='c3', zh='低於 0：整體虧損', en='Below 0: at a loss'), dict(lo=0, hi=.25, col='c4', zh='0–0.25', en='0–0.25'), dict(lo=.25, hi=.5, col='up', zh='0.25–0.5', en='0.25–0.5'), dict(lo=.5, hi=.75, col='c5', zh='0.5–0.75', en='0.5–0.75'), dict(lo=.75, hi=None, col='ac', zh='高於 0.75：過熱', en='Above 0.75: overheated')],
+    X['hnupl'] = dict(k='hnupl', zh='長期和短期持有者的帳面賺賠（NUPL）', en='Paper profit of long- and short-term holders (NUPL)', hz='長期持有者 NUPL', he='Long-term holder NUPL', f='n3', rows=hn['rows'], p=1, hero=1,
+      ser=[ser(3, zh='短期持有者 NUPL', en='Short-term holder NUPL', col='ac', w=1, op=.7), ser(2, zh='長期持有者 NUPL', en='Long-term holder NUPL', col='c3', w=1.9)],
+      zones=[dict(lo=None, hi=0, col='c3', zh='低於 0：投降（整體虧損）', en='Below 0: capitulation (a loss overall)'), dict(lo=0, hi=.25, col='c4', zh='0–0.25：希望', en='0–0.25: hope'), dict(lo=.25, hi=.5, col='up', zh='0.25–0.5：樂觀', en='0.25–0.5: optimism'), dict(lo=.5, hi=.75, col='c5', zh='0.5–0.75：信念', en='0.5–0.75: belief'), dict(lo=.75, hi=None, col='ac', zh='高於 0.75：過熱', en='Above 0.75: overheated')],
       marks=[dict(d=dn(t['date']), v=t['value'], col='ac', up=1, zh='%s %.2f' % (yr(t['date']), t['value']), en='%s %.2f' % (yr(t['date']), t['value'])) for t in hn['tops']] + [dict(d=dn(t['date']), v=t['value'], col='c3', up=0, zh='%s %.2f' % (yr(t['date']), t['value']), en='%s %.2f' % (yr(t['date']), t['value'])) for t in hn['bottoms']],
-      dz='NUPL 是帳面損益佔市值的比例。底色是長期持有者 NUPL 的五個區間，由冷到熱；細的橘線是短期持有者，在零的上面還是下面代表最近買的人賺還是賠。', de='NUPL is paper profit or loss as a share of market cap. The shading marks five bands of long-term holder NUPL, cold to hot; the thin orange line is short-term holders, above or below zero.')
+      dz='這是什麼：NUPL 是「帳面賺賠佔市值的比例」：所有還沒賣的幣，照現在的價格算，賺的減掉賠的，再除以市值。這裡分成長期持有者（幣放超過 150 天沒動）和短期持有者（不到 150 天，多半是最近買的人）。長期持有者的帳面獲利越厚，越接近頂部；越薄，越接近底部。'
+         '怎麼看：粗線是長期持有者，細的橘線是短期持有者，橘線在 0 上面代表最近買的人整體在賺、下面是在賠。底色是長期持有者的五個區間，由冷到熱：0 以下投降、0–0.25 希望、0.25–0.5 樂觀、0.5–0.75 信念、0.75 以上過熱；圓圈是歷次頂和底的讀數。'
+         '要保留的地方：頂部的讀數一輪比一輪低，這一輪底部長期持有者也沒有跌成虧損；區間的界線是常見分法，不是定律。',
+      de='What it is: NUPL is paper profit or loss as a share of market cap: for every unsold coin, gains minus losses at today\'s price, divided by market cap. It is split into long-term holders (coins unmoved for 150+ days) and short-term holders (under 150 days, mostly recent buyers). The fatter long-term holders\' paper profit, the nearer a top; the thinner, the nearer a bottom. '
+         'How to read it: the thick line is long-term holders and the thin orange line short-term holders; orange above 0 means recent buyers are in profit as a group, below 0 at a loss. The shading marks five long-term holder bands, cold to hot: below 0 capitulation, 0–0.25 hope, 0.25–0.5 optimism, 0.5–0.75 belief, above 0.75 overheated; circles mark readings at past tops and bottoms. '
+         'Caveats: top readings fall every cycle, and this cycle\'s long-term holders never went underwater at the bottom; the bands are a common convention, not a law.')
     av = o.get('avgd')   # 2026-11-15 離成本線和均線多遠（oc_extra.avg_viz）：走勢一張（綜合／快和慢），九條線各自的百分位一張
     if av:
         AVN = dict(pl=('冪律', 'Power law'), ctp=('Cointime 價格', 'Cointime price'), tmm=('真實市場均價', 'True market mean'), rp=('實現價', 'Realized price'), v365=('365 天鏈上均價', '365-day on-chain average price'),
@@ -114,68 +143,87 @@ def build(L, N, E, dn, X):
         ev = [e_ for e_ in av['ev10'] if e_['f365'] is not None]; eup = sum(e_['f365'] > 0 for e_ in ev); edd = min([e_['dd365'] for e_ in ev] or [0]); bk = av['bk']
         aleg = [['c3', '每一輪熊市的最低讀值', 'Lowest reading of each bear market', 'ring']] + ([['k2', '10：前幾輪熊市都跌破過', '10: broken in every earlier bear market', 'dash']] if past and all(x['v'] < 10 for x in past) else [])
         X['avgd'] = dict(k='avgd', zh='離成本線和均線多遠', en='Distance from cost bases and averages', f='n1', rows=av['rows'], p=2, dom=[0, 100], rng=0,
-          modes=[dict(mz='綜合', me='Overall', hz='九條線的平均百分位', he='Average percentile, nine lines', ser=[ser(1, zh='平均百分位', en='Average percentile', col='c3', w=1.8)],
+          modes=[dict(mz='綜合', me='Overall', hz='九條線的平均排名（0＝歷史最低，100＝最高）', he='Average rank of the nine lines (0 = lowest ever, 100 = highest)', ser=[ser(1, zh='平均排名', en='Average rank', col='c3', w=1.8)],
                       refs=[dict(v=10, col='k2')], marks=amk, leg=aleg),
-                 dict(mz='快和慢', me='Fast and slow', hz='快線（三條）的平均百分位', he='Average percentile, three fast lines', hero=1, rng=1095,
+                 dict(mz='快和慢', me='Fast and slow', hz='快線（三條）的平均排名', he='Average rank, three fast lines', hero=1, rng=1095,
                       ser=[ser(3, zh='慢線（六條）', en='Slow lines (six)', col='c3', w=1.7), ser(4, zh='快線（三條）', en='Fast lines (three)', col='c5', w=1.4)])],
-          dz='價格和九條線各比一次，看今天的距離在到當天為止的全部歷史裡排第幾 %%，九個取平均；越低代表價格比這些線低得越罕見。圓圈是每一輪熊市的最低讀值：前幾輪是 %s%s。'
-             '第一次跌到 10 以下共 %d 次，一年後 %d 次上漲，但其中最深的一次之後一年內還再跌 %s，所以它標的是便宜區，不是底。讀值低於 15 的日子，一年後上漲的佔 %d%%（所有日子 %d%%），樣本只有幾輪週期。'
-             '它拿全部歷史排名，而每一輪的波動都比上一輪小，近年的低點比較難排到最前面；大方向和晨昏指數的熱度相同。「快和慢」把九條線分成兩組：快線比慢線低，代表最近跌得急。只作讀值。'
-             % ('、'.join(an1(x['v']) for x in past), ('，這一輪到目前最低 %s（%s）' % (an1(cur['v']), aym(cur['d']))) if cur else '', len(ev), eup, apc(edd), bk['lo']['up'], bk['all']['up']),
-          de='Price is compared with nine lines; for each, today\'s distance is ranked against all history up to that day, and the nine percentiles are averaged. The lower the reading, the rarer it is for price to sit this far below the lines. Circles mark the lowest reading of each bear market: %s in earlier ones%s. '
-             'The reading first fell to 10 or below %d times; a year later price was higher %d times, but after the worst of them it fell another %s within the year, so this marks a cheap zone, not a bottom. On days below 15, price was higher a year later %d%% of the time (%d%% for all days); the sample is only a few cycles. '
-             'It ranks against all history, and each cycle swings less than the one before, so recent lows rarely reach the very bottom of the ranking; its broad direction matches the Dawn–Dusk heat. "Fast and slow" splits the nine lines into two groups: fast below slow means the recent fall was quick. A reading only.'
-             % (', '.join(an1(x['v']) for x in past), (', and %s so far in this one (%s)' % (an1(cur['v']), cur['d'][:7])) if cur else '', len(ev), eup, apc(edd), bk['lo']['up'], bk['all']['up']))
+          dz='這是什麼：把價格和九條常見的成本線、均線各比一次（例如所有幣的平均成本、短期持有者成本、200 週均線、長期趨勢價），看今天的距離在到當天為止的全部歷史裡排第幾（0＝歷史上最低，100＝最高），九個取平均。數字越低，代表價格比這些線低得越少見，也就是越便宜。'
+             '怎麼看：「綜合」是九條的平均，圓圈是每一輪熊市的最低讀值，虛線是 10。「快和慢」把九條分成兩組：快線（短期持有者成本、90 天鏈上均價、200 日均線）跟得快，快線比慢線低，代表最近跌得急。'
+             '要保留的地方：它拿全部歷史排名，而每一輪的波動都比上一輪小，近年的低點比較難排到最前面；樣本只有幾輪週期，大方向和晨昏指數的熱度一樣。',
+          de='What it is: price is compared with nine common cost lines and averages (such as the average cost of all coins, the short-term holder cost, the 200-week MA and the long-run trend price); for each, today\'s distance is ranked against all history up to that day (0 = the lowest ever, 100 = the highest), and the nine ranks are averaged. The lower the number, the rarer it is for price to sit this far below the lines, so the cheaper it is. '
+             'How to read it: "Overall" is the average of the nine; circles mark the lowest reading of each bear market, and the dashed line is 10. "Fast and slow" splits the lines in two: the fast ones (short-term holder cost, 90-day on-chain average price, 200-day MA) react quickly, and fast below slow means the recent fall was quick. '
+             'Caveats: it ranks against all history, and each cycle swings less than the one before, so recent lows rarely reach the very bottom of the ranking; there are only a few cycles, and its broad direction matches the Dawn–Dusk heat.')
         arow = lambda c_: row(AVN[c_['key']][0], AVN[c_['key']][1], c_['pct'], f='n0', bar=c_['pct'], col=hcol(c_['pct']),
                               nz='%s · 線在 $%s · 價格比它%s %s' % ('慢' if c_['grp'] == 's' else '快', format(c_['line'], ','), '低' if c_['dist'] < 0 else '高', apc(c_['dist'])),
                               ne='%s · line at $%s · price %s %s' % ('Slow' if c_['grp'] == 's' else 'Fast', format(c_['line'], ','), apc(c_['dist']), 'below' if c_['dist'] < 0 else 'above'))
         X['avgdc'] = dict(k='avgdc', zh='九條線各自排第幾', en='Where price ranks against each line', hz='平均', he='Average', hs=dict(v=av['value'], f='n1'), list=dict(rows=[arow(c_) for c_ in av['comps']]),
-          dz='每一條線：價格離它的距離在全部歷史裡排第幾 %（0 是歷史上最低的位置，100 是最高），九個的平均就是「離成本線和均線多遠」的讀值。小字是這條線現在的價位，和價格比它高或低多少。鏈上均價是這段期間全網鏈上轉帳的金額除以顆數。',
-          de='For each line: where today\'s distance between price and the line ranks in all history (0 is the lowest ever, 100 the highest). The average of the nine is the reading of "Distance from cost bases and averages". The small print gives the line\'s current level and how far price is above or below it. The on-chain average price is the dollar value of all on-chain transfers in the period divided by the coins moved.')
+          dz='這是什麼：把「離成本線和均線多遠」拆成九條線各自來看。每一條的數字是價格離它的距離在全部歷史裡排第幾（0＝歷史上最低的位置，100＝最高），九個的平均就是那張圖的讀數。'
+             '怎麼看：小字是這條線現在在多少錢，和價格比它高或低多少；「慢」的線變得慢（例如所有幣的平均成本、200 週均線），「快」的線跟得快。鏈上均價是這段期間鏈上轉帳的金額除以顆數，可以想成這段期間換手的平均價格。'
+             '要保留的地方：價格在某條線上面，不代表那條線的排名就高：每條線的歷史擺幅不一樣。',
+          de='What it is: "Distance from cost bases and averages" split into its nine lines. Each number is where price\'s distance from that line ranks in all history (0 = the lowest ever, 100 = the highest); the average of the nine is the reading on that chart. '
+             'How to read it: the small print gives the line\'s current level and how far price is above or below it; "slow" lines move slowly (such as the average cost of all coins or the 200-week MA), "fast" lines react quickly. The on-chain average price is the dollar value of on-chain transfers in the period divided by the coins moved, roughly the average price at which coins changed hands. '
+             'Caveats: price being above a line does not mean that line ranks high, because each line has swung by different amounts in the past.')
         from say_data import own   # 2026-11-15 這兩張是新版自己的圖，舊版沒有讀值可以接，直接寫
         zs = lambda t: (' ' if t[:1].isascii() else '') + t + (' ' if t[-1:].isascii() else '')   # 中文句子裡夾英文、數字開頭的名稱，前後留空格
         v0, v7 = av['value'], av.get('prev7'); evy = [e_ for e_ in ev if e_['f365'] is not None]; worst = min(evy, key=lambda e_: e_['dd365']) if evy else None
+        # 2026-11-25 照 WRITING.md：標題講位置（便宜區、貴區、中間），百分位改成「歷史上只有 X% 的日子更低」，同一個數字只出現一次
+        deeper = past and all(x['v'] < v0 for x in past)
+        if v0 <= 20:
+            asz = '和九條成本線、均線比，平均來說歷史上只有約 %d%% 的日子價格比現在更低：這是便宜區；%s。' % (round(v0), '但前幾輪熊底都比現在更低，還有往下的空間' if deeper else '已經和前幾輪熊底差不多低，但便宜區不等於最低點')
+            ase = 'Against nine cost lines and averages, on average only about %d%% of days in history had price lower than now: a cheap zone, %s.' % (round(v0), 'though past bear bottoms all went lower, so there is room to fall' if deeper else 'about as low as past bear bottoms, though a cheap zone is not the exact low')
+        elif v0 >= 80:
+            asz = '和九條成本線、均線比，平均來說歷史上只有約 %d%% 的日子價格比現在更高：這是貴區，接近過去頂部的位置。' % round(100 - v0)
+            ase = 'Against nine cost lines and averages, on average only about %d%% of days in history had price higher than now: a rich zone, where past tops sat.' % round(100 - v0)
+        else:
+            asz = '和九條成本線、均線比，價格在歷史的中段（平均排名 %d，0＝最低、100＝最高）：不便宜也不貴。' % round(v0)
+            ase = 'Against nine cost lines and averages, price is mid-history (average rank %d, 0 = lowest, 100 = highest): neither cheap nor rich.' % round(v0)
         X['avgd']['say'] = own([
-            ('現在', 'Now', an1(v0), an1(v0), 'up' if v0 <= 15 else 'warn' if v0 >= 85 else 'neu',
-             '價格離九條成本線和均線的距離，平均排在全部歷史的第 %s 百分位：越低代表價格比這些線低得越少見。' % an1(v0),
-             "Price's distance from nine cost bases and averages ranks, on average, at percentile %s of all history: the lower, the rarer it is for price to sit this far below them." % an1(v0)),
-            ('一週前', 'A week ago', an1(v7) if v7 is not None else '—', an1(v7) if v7 is not None else '—', 'neu',
-             '一週前是 %s，這一週%s了 %s。' % (an1(v7), '降' if v0 < v7 else '升', an1(abs(v0 - v7))) if v7 is not None else '沒有一週前的讀值。',
-             'It was %s a week ago, %s %s this week.' % (an1(v7), 'down' if v0 < v7 else 'up', an1(abs(v0 - v7))) if v7 is not None else 'No reading from a week ago.'),
             ('這一輪最低', "This cycle's low", an1(cur['v']) if cur else '—', an1(cur['v']) if cur else '—', 'neu',
-             '這一輪到目前最低 %s（%s）；前幾輪熊市最低是 %s。每一輪波動都比上一輪小，近年的低點比較難排到最前面。' % (an1(cur['v']), aym(cur['d']), '、'.join(an1(x['v']) for x in past)) if cur else '這一輪還沒有低點。',
-             'The lowest so far in this cycle is %s (%s); earlier bear markets bottomed at %s. Each cycle swings less than the one before, so recent lows rarely reach the very bottom of the ranking.' % (an1(cur['v']), cur['d'][:7], ', '.join(an1(x['v']) for x in past)) if cur else 'No low yet in this cycle.'),
-            ('跌破 10 之後一年', 'A year after first breaking 10', '%d 次中 %d 次上漲' % (len(evy), eup), 'Up %d of %d times' % (eup, len(evy)), 'neu',
-             '第一次跌到 10 以下共 %d 次，一年後 %d 次上漲；但 %s 那次之後一年內還再跌 %s。它標的是便宜區，不是底。' % (len(evy), eup, aym(worst['d']), apc(worst['dd365'])) if worst else '還沒有跌到 10 以下的紀錄。',
-             'It first fell below 10 %d times and price was higher a year later %d times, but after the %s case it fell another %s within the year. It marks a cheap zone, not a bottom.' % (len(evy), eup, worst['d'][:7], apc(worst['dd365'])) if worst else 'No break below 10 on record.')],
-          '九條線的平均百分位 %s，一週前 %s' % (an1(v0), an1(v7) if v7 is not None else '—'), 'Average percentile of the nine lines: %s, from %s a week ago' % (an1(v0), an1(v7) if v7 is not None else '—'))
+             '這一輪到目前最低是在 %s；前幾輪熊底是 %s。每一輪波動都比上一輪小，近年的低點比較難排到最前面。' % (aym(cur['d']), '、'.join(an1(x['v']) for x in past)) if cur else '這一輪還沒有低點。',
+             'This cycle\'s lowest so far came in %s; earlier bear markets bottomed at %s. Each cycle swings less than the one before, so recent lows rarely reach the very bottom of the ranking.' % (cur['d'][:7], ', '.join(an1(x['v']) for x in past)) if cur else 'No low yet in this cycle.'),
+            ('第一次跌破 10 之後', 'After first breaking 10', '%d 次裡 %d 次一年後漲' % (len(evy), eup), 'Up a year on: %d of %d' % (eup, len(evy)), 'neu',
+             '過去第一次跌到 10 以下的那幾次，%s；但 %s 那次之後一年內還再跌了 %s：這是便宜區，不是底。' % ('多半一年後比當時高' if eup * 2 > len(evy) else '一年後比當時高的不到一半', aym(worst['d']), apc(worst['dd365'])) if worst else '還沒有跌到 10 以下的紀錄。',
+             '%s first breaks below 10 were followed by a higher price a year on, but after the %s case price fell another %s within the year: a cheap zone, not a bottom.' % ('Most' if eup * 2 > len(evy) else 'Fewer than half of', worst['d'][:7], apc(worst['dd365'])) if worst else 'No break below 10 on record.'),
+            ('一週前', 'A week ago', an1(v7) if v7 is not None else '—', an1(v7) if v7 is not None else '—', 'neu',
+             '這一週%s了 %s：%s。' % ('降' if v0 < v7 else '升', an1(abs(v0 - v7)), '價格離這些線更遠、更便宜' if v0 < v7 else '價格往這些線靠近了一些') if v7 is not None else '沒有一週前的讀值。',
+             '%s %s this week: %s.' % ('Down' if v0 < v7 else 'Up', an1(abs(v0 - v7)), 'price moved further below the lines, cheaper' if v0 < v7 else 'price moved a little closer to the lines') if v7 is not None else 'No reading from a week ago.')],
+          asz, ase)
         cs_ = sorted(av['comps'], key=lambda c_: c_['pct']); lo_, hi_ = cs_[0], cs_[-1]; n10 = sum(1 for c_ in cs_ if c_['pct'] < 10)
-        cline = lambda c_, en=False: (('price %s %s' % (apc(c_['dist']), 'below' if c_['dist'] < 0 else 'above')) if en else ('價格比它%s %s' % ('低' if c_['dist'] < 0 else '高', apc(c_['dist']))))
+        cline = lambda c_, en=False: (('price is %s %s it' % (apc(c_['dist']), 'below' if c_['dist'] < 0 else 'above')) if en else ('價格比它%s %s' % ('低' if c_['dist'] < 0 else '高', apc(c_['dist']))))
+        rk = lambda c_: ('歷史上沒有一天，價格相對這條線比現在更低' if round(c_['pct']) <= 0 else '歷史上%s %d%% 的日子，價格相對這條線比現在更低' % ('只有' if c_['pct'] < 50 else '有', round(c_['pct'])))
+        rke = lambda c_: ('no day in history had price lower against this line' if round(c_['pct']) <= 0 else '%s%d%% of days in history had price lower against this line' % ('only ' if c_['pct'] < 50 else '', round(c_['pct'])))
         X['avgdc']['say'] = own([
-            ('最低的一條', 'Lowest line', '%s %d' % (AVN[lo_['key']][0], round(lo_['pct'])), '%s %d' % (AVN[lo_['key']][1], round(lo_['pct'])), 'neu',
-             '價格離%s的距離，排在全部歷史的第 %d 百分位，%s。' % (zs(AVN[lo_['key']][0]), round(lo_['pct']), cline(lo_)),
-             "Price's distance from the %s ranks at percentile %d of all history, with %s." % (AVN[lo_['key']][1], round(lo_['pct']), cline(lo_, True))),
-            ('最高的一條', 'Highest line', '%s %d' % (AVN[hi_['key']][0], round(hi_['pct'])), '%s %d' % (AVN[hi_['key']][1], round(hi_['pct'])), 'neu',
-             '九條裡排名最高的是%s，第 %d 百分位，%s。' % (zs(AVN[hi_['key']][0]), round(hi_['pct']), cline(hi_)),
-             'The highest of the nine is the %s, at percentile %d, with %s.' % (AVN[hi_['key']][1], round(hi_['pct']), cline(hi_, True))),
-            ('低於 10 的', 'Below 10', '%d 條' % n10, '%d of 9' % n10, 'neu',
-             '九條線裡有 %d 條排在歷史最低的 10%%。' % n10, '%d of the nine lines rank in the bottom tenth of history.' % n10)],
-          '最低的是%s（第 %d 百分位）' % (zs(AVN[lo_['key']][0]).rstrip(), round(lo_['pct'])), 'Lowest is the %s (percentile %d)' % (AVN[lo_['key']][1], round(lo_['pct'])))
+            ('最便宜的一條', 'Cheapest line', AVN[lo_['key']][0], AVN[lo_['key']][1], 'neu', '%s；%s。' % (rk(lo_), cline(lo_)), '%s; %s.' % (rke(lo_)[0].upper() + rke(lo_)[1:], cline(lo_, True))),
+            ('最貴的一條', 'Richest line', AVN[hi_['key']][0], AVN[hi_['key']][1], 'neu', '九條裡最不便宜的是這條：%s；%s。' % (rk(hi_), cline(hi_)), 'The least cheap of the nine: %s; %s.' % (rke(hi_), cline(hi_, True)))],
+          ('九條線裡有 %d 條已經排到歷史最低的 10%% 以內，最便宜的是%s' % (n10, zs(AVN[lo_['key']][0]).rstrip()) if n10 else '九條線都還沒排到歷史最低的 10%% 以內，最便宜的是%s' % zs(AVN[lo_['key']][0]).rstrip()),
+          ('%d of the nine lines are already in the lowest 10%% of history; the cheapest is the %s' % (n10, AVN[lo_['key']][1]) if n10 else 'None of the nine lines is in the lowest 10%% of history yet; the cheapest is the %s' % AVN[lo_['key']][1]))
     rr = o['rrisk']
     X['rrisk'] = dict(k='rrisk', zh='儲備風險', en='Reserve risk', f='n5', rows=rr['rows'], p=1, log=1, hero=2,
       ser=[ser(3, zh='近 4 年最低 10%', en='4-year bottom 10%', col='c4', dash='4 3', w=1), ser(4, zh='近 4 年最高 10%', en='4-year top 10%', col='c5', dash='4 3', w=1), ser(2, zh='儲備風險', en='Reserve risk', col='c3', w=1.8)],
       spans=[dict(a=dn(e['start']), b=dn(e['end']), col='c4', op=.18) for e in rr['eps']], leg=[['c4', '在低檔區的期間', 'Time in the low zone', 'box']],
-      dz='價格相對長期持有者的信心。數值低代表價格便宜、而持有者不願意賣。青色區塊是歷次落在近四年最低 10% 的期間。', de='Price relative to long-term holder conviction. Low readings mean price is cheap while holders refuse to sell. Cyan bands mark past stays in the bottom tenth of the last four years.')
+      dz='這是什麼：儲備風險比的是價格和長期持有者的信心。老手把幣放著不賣的時間越久、價格又越低，數值越低，代表「現在的價格相對持有者的信心很便宜」；價格衝高、老手開始賣，數值就變高。單位 ‰ 是千分之一。'
+         '怎麼看：實線是儲備風險（對數刻度）；兩條虛線是近 4 年最低 10% 和最高 10% 的門檻，每天跟著移動；青色區塊是落在最低 10% 的期間。'
+         '要保留的地方：頂部一輪比一輪低，整條線被壓扁，所以和近 4 年比，不和全部歷史比；2018 年的熊底沒有掉進最低 10%，單看這張會漏掉底部。',
+      de='What it is: reserve risk compares price with long-term holders\' conviction. The longer seasoned holders sit on their coins and the lower the price, the lower the reading: price is cheap relative to holders\' conviction. When price runs up and they start selling, it rises. The unit ‰ means per thousand. '
+         'How to read it: the solid line is reserve risk (log scale); the two dashed lines are the lowest-10% and highest-10% marks of the last four years, moving daily; cyan bands mark stays in the lowest 10%. '
+         'Caveats: tops fall every cycle and squash the line, so it is compared with four years, not all history; the 2018 bear bottom never reached the lowest 10%, so this gauge alone can miss a bottom.')
     p6 = cy['p6']; hot = lambda v: 'ac' if v >= 80 else 'c5'
     X['p6'] = dict(k='p6', zh='頂部三指標', en='Top three indicators', hz='進入頂部區的有幾個', he='How many are in the top zone', hs=dict(v=sum(1 for v in p6.values() if v >= 80), f='n0'),
-      list=dict(rows=[row('MVRV Z', 'MVRV Z', p6['mvrv_z'], f='n0', bar=p6['mvrv_z'], mk=80, bc='ac', nz='四年百分位', ne='4-year percentile'), row('NUPL', 'NUPL', p6['nupl'], f='n0', bar=p6['nupl'], mk=80, bc='ac', nz='四年百分位', ne='4-year percentile'),
-                      row('Puell 倍數', 'Puell multiple', p6['puell'], f='n0', bar=p6['puell'], mk=80, bc='ac', nz='四年百分位', ne='4-year percentile')]),
-      dz='三個指標各自在過去四年的百分位，直線是 80。任兩個到 80 以上算進入頂部區。只作讀值。', de='Each indicator as a percentile of the past four years; the tick is 80. Any two at 80 or above count as the top zone. Reading only.')
+      list=dict(rows=[row('MVRV Z', 'MVRV Z', p6['mvrv_z'], f='n0', bar=p6['mvrv_z'], mk=80, bc='ac', nz='市值對成本 · 和近 4 年比的排名', ne='Value vs cost · rank against four years'), row('NUPL', 'NUPL', p6['nupl'], f='n0', bar=p6['nupl'], mk=80, bc='ac', nz='帳面賺賠 · 和近 4 年比的排名', ne='Paper profit · rank against four years'),
+                      row('Puell 倍數', 'Puell multiple', p6['puell'], f='n0', bar=p6['puell'], mk=80, bc='ac', nz='礦工收入 · 和近 4 年比的排名', ne='Miner income · rank against four years')]),
+      dz='這是什麼：三個常用來找週期頂部的指標。MVRV Z：市值比所有幣的平均成本高多少（換算成和平常相比的倍數）；NUPL：全體帳面賺賠佔市值的比例；Puell 倍數：礦工今天的收入是過去一年平均的幾倍。每一項都和自己近 4 年比排第幾，0 最冷、100 最熱。'
+         '怎麼看：橫條是排名，直線是 80（近 4 年最熱的 20%）；任兩項到 80 以上，算進入頂部區。'
+         '要保留的地方：只看估值，不看時間；而且只說離頂部多遠，很冷不代表已經到底。',
+      de='What it is: three indicators commonly used to spot cycle tops. MVRV Z: how far market value sits above the average cost of all coins (scaled against its usual swings); NUPL: all holders\' paper profit or loss as a share of market value; Puell multiple: miners\' income today against their one-year average. Each is ranked against its own last four years, 0 coldest, 100 hottest. '
+         'How to read it: bars show the rank and the tick is 80 (the hottest 20% of four years); any two at 80 or above count as the top zone. '
+         'Caveats: valuation only, not timing; it only measures distance from a top, and cold does not mean the bottom is in.')
     vz = o['viz']
     def vmode(key, zh, en, f, rz, re_, col='c3'):
         v = vz[key]; return dict(mz=zh, me=en, rows=v['rows'], f=f, ser=[ser(1, zh=zh, en=en, col=col, w=1.6)], refs=[dict(v=v['ref']['y'], col='dn', zh=rz, en=re_)] if v.get('ref') else [])
-    X['p6v'] = dict(k='p6v', zh='頂部三指標的走勢', en='Top three indicators over time', dz='近一年的原始數值。紅色虛線是各自四年來的第 80 百分位。', de='Raw values over the past year. The red dashed line is each one\'s 80th percentile of the last four years.',
-      modes=[vmode('mvrv-zscore', 'MVRV Z', 'MVRV Z', 'n3', '四年第 80 百分位', '80th percentile'), vmode('nupl', 'NUPL', 'NUPL', 'n3', '四年第 80 百分位', '80th percentile'), vmode('puell-multiple', 'Puell 倍數', 'Puell multiple', 'n3', '四年第 80 百分位', '80th percentile', 'c5')])
+    X['p6v'] = dict(k='p6v', zh='頂部三指標的走勢', en='Top three indicators over time',
+      dz='這是什麼：頂部三指標近一年的原始數值，可以切換：MVRV Z（市值比平均成本高多少）、NUPL（全體帳面賺賠佔市值）、Puell 倍數（礦工收入對一年平均）。怎麼看：紅色虛線是各自近 4 年的熱門檻（只有 20% 的日子比它高），線碰到虛線，那一項就算「熱」。要保留的地方：門檻每天跟著近 4 年移動，不是固定的數字。',
+      de='What it is: the raw values of the three top indicators over the past year, one at a time: MVRV Z (how far value sits above average cost), NUPL (all holders\' paper profit as a share of value) and the Puell multiple (miner income against its one-year average). How to read it: the red dashed line is each one\'s hot line for the last four years (only 20% of days were higher); when the line touches it, that indicator counts as hot. Caveats: the hot line moves with the four-year window; it is not a fixed number.',
+      modes=[vmode('mvrv-zscore', 'MVRV Z', 'MVRV Z', 'n3', '近 4 年的熱門檻', 'Four-year hot line'), vmode('nupl', 'NUPL', 'NUPL', 'n3', '近 4 年的熱門檻', 'Four-year hot line'), vmode('puell-multiple', 'Puell 倍數', 'Puell multiple', 'n3', '近 4 年的熱門檻', 'Four-year hot line', 'c5')])
     pl = cy['powerlaw']; bb = pl['bottom_band']
     import math
     g0 = dn('2009-01-03')
