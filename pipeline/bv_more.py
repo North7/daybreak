@@ -20,6 +20,10 @@
 8 CVDD（累計價值幣天銷毀，2026-11-24 使用者看了一篇用它找熊底的研究後說「做新卡」）：每天銷毀的幣天數 × 當天收盤價，從 2009 年累加，
   除以（2009-01-03 創世區塊起的天數 × 6,000,000）。2011 年以前的部分用常數 CVDD_PRE（價格不到 0.3 美元，影響小於百萬分之一）。
   和外部公開數值驗算：2026-11-22 差 0.4%。6,000,000 這個常數是原作者事後調的（讓歷次低點剛好碰到線），所以「從沒跌破」有一部分是調出來的，網站照實寫。
+9 長期持有者虧損比例：扣掉十年老幣（2026-11-25 使用者看了一張「扣掉持有 10 年以上的幣」的長期持有者虧損圖後說「加，附上口徑說明」）：
+  不扣＝lth_supply_in_loss ÷ lth_supply；扣掉＝（長期持有者虧損供給 − 10 年以上的幣裡在虧損的）÷（長期持有者供給 − 10 年以上的幣），每日值。
+  扣掉的那一堆 2019 年才開始有、一輪比一輪多、又幾乎永遠在獲利，所以扣掉版本會一輪比一輪被墊高。對照：每個時點都扣同一批幣
+  （vintage 2009–2012：最後一次移動在 2012 年以前、到那天還沒動的幣；2014 年起價格都高於它們的成本，全部在獲利），存在 fix，網站拿來寫口徑說明。
 全部只作讀值。Bitview 改序列名稱時（https://bitview.space/api 的 What changed）整組會失敗，collect.py 只記 errors，build.py 沿用前一天的。"""
 import datetime as dt, json, subprocess, time
 
@@ -39,7 +43,8 @@ NAMES = ['price_close'] + ['bedrock_unweighted_floor_' + p for p in FP] + ['bedr
     + ['supply_density', 'supply_density_in_profit', 'supply_density_in_loss', 'sth_supply_density', 'lth_supply_density'] \
     + ['age_%s_transfer_volume_sum_24h' % a for a in A1 + A5] \
     + ['balance_%s_btc_%s' % (t, m) for t in TIERS for m in ('realized_cap', 'supply')] \
-    + ['supply_in_profit', 'circulating_supply'] + ['%s_supply%s' % (a, x) for a in OLD10 for x in ('', '_in_profit')] + ['hashrate'] + ['coindays_destroyed_sum_24h']
+    + ['supply_in_profit', 'circulating_supply'] + ['%s_supply%s' % (a, x) for a in OLD10 for x in ('', '_in_profit')] + ['hashrate'] + ['coindays_destroyed_sum_24h'] \
+    + ['lth_supply', 'lth_supply_in_loss'] + ['vintage_%d_supply' % y for y in range(2009, 2013)]
 
 
 def _curl(url):
@@ -162,6 +167,19 @@ def build(last, S=None, pxc=None):
     ok = [x for x in e7[a12:] if x is not None]
     psx = dict(ex=R2(e7[N - 1]), raw=R2(r7[N - 1]), ex30=R2(e7[N - 31]), raw30=R2(r7[N - 31]), old=R2(osh[N - 1]), old_first=next(day(i) for i in range(a12, N) if osh[i]), pct=round(sum(1 for x in ok if x < e7[N - 1]) / len(ok) * 100, 1), since='2012-01-01',
                lows=plows, cross45=cr, rows=[[dnum(i), R2(r7[i]), R2(e7[i]), R2(osh[i]), R0(px[i])] for i in samp(a12, [ix(q[k]['d']) for q in plows for k in ('ex', 'raw')]) if e7[i] is not None])
+    # ── 9 長期持有者虧損比例：扣掉十年老幣 ──
+    ls_, ll_ = S['lth_supply'], S['lth_supply_in_loss']; vq = lambda i: sum((S['vintage_%d_supply' % y][i] or 0) for y in range(2009, 2013))
+    a14 = ix('2014-06-01'); lr, lx, lf = [None] * N, [None] * N, [None] * N
+    for i in range(a14, N):
+        if not ls_[i] or ll_[i] is None: continue
+        o_ = oq(i, ''); ol = o_ - oq(i, '_in_profit'); lr[i] = ll_[i] / ls_[i] * 100; lx[i] = (ll_[i] - ol) / (ls_[i] - o_) * 100; lf[i] = ll_[i] / (ls_[i] - vq(i)) * 100
+    if None in (lr[N - 1], lx[N - 1], lx[N - 31]): raise RuntimeError('Bitview 長期持有者虧損最新一天缺值')
+    def hi(a, b, v):
+        k = max((q for q in range(a, min(N, b + 1)) if v[q] is not None), key=lambda q: v[q]); return dict(d=day(k), dn=dnum(k), v=R2(v[k]))
+    lw_ = [(ix(a), ix(b)) for a, b in [('2014-06-01', '2016-06-01'), ('2018-06-01', '2019-12-31'), ('2022-06-01', '2023-06-01')]] + [(top, N - 1)]   # 歷輪熊底那段的最高點，最後一段是這一輪（2024 年以來的頂部之後）
+    lpk = [dict(ex=hi(a, b, lx), raw=hi(a, b, lr), fix=hi(a, b, lf)) for a, b in lw_]
+    lthx = dict(ex=R2(lx[N - 1]), raw=R2(lr[N - 1]), fix=R2(lf[N - 1]), ex30=R2(lx[N - 31]), coins=R0(ll_[N - 1]), old=R0(oq(N - 1, '')), old_first=next(day(i) for i in range(a14, N) if oq(i, '')), since='2014-06-01',
+                peaks=lpk, rows=[[dnum(i), R0(px[i]), R2(lr[i]), R2(lx[i])] for i in samp(a14, [ix(q[k]['d']) for q in lpk for k in ('ex', 'raw')]) if lx[i] is not None and px[i]])
     # ── 7 Hash Ribbons ──
     hv = [(v / 1e18 if v else None) for v in S['hashrate'][:N]]
     def sm(v, i, n):
@@ -218,7 +236,7 @@ def build(last, S=None, pxc=None):
                 lows=clows, now=cnow, eps=ep, low_med=round(pmed, 1), at_med=R0(cv[N - 1] * (1 + pmed / 100)), at25=R0(cv[N - 1] * 1.25),
                 z25=bstat(lambda v: v < 25, 180), any180=bstat(lambda v: True, 180), since='2014-01-01',
                 rows=[[dnum(i), R0(cv[i]), R0(cv[i] * 1.25), R0(px[i]), R2(pm[i]), round(px[i] / cv[i], 3)] for i in samp(a12, set(range(N - 1100, N)) | {w['dn'] - dnum(0) for w in clows + [cnow]} | {e['dn'] - dnum(0) for e in ep}) if cv[i] and pm[i] is not None])
-    return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx, hrib=hrib, cvdd=cvdd,
+    return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx, lthx=lthx, hrib=hrib, cvdd=cvdd,
                 note='損失地板：虧損的幣佔供給的比例到歷史最糟 5%／2%／1%／0.5%／0.1% 時的價格，門檻逐日累積；賺賠分布：各賺賠幅度佔供給 %；集中度：現價 ±5% 內的幣佔供給 %；老幣移動：1 年以上、5 年以上的幣每天移動的顆數（7 日、30 日平均）；獲利供給：全體和扣掉 10 年以上的幣，在獲利的比例（7 日平均）；CVDD：累計（銷毀幣天數 × 價格）÷（創世起天數 × 600 萬）；只作讀值')
 
 
