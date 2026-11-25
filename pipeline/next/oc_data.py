@@ -280,13 +280,15 @@ def build(L, N, E, dn):
         sg = lambda v: ('%+.0f%%' % v).replace('-', '−')
         now_z = ('現在 %.1f，超過門檻 %.1f' % (cp_['v'], cp_['q']) + ('，是 %s 以來最高' % ymz(cp_['hi_since']) if cp_.get('hi_since') else '，是有資料以來最高')) if cp_['above'] else '現在 %.1f，在門檻 %.1f 以下' % (cp_['v'], cp_['q'])
         now_e = ('Now %.1f, above the %.1f line' % (cp_['v'], cp_['q']) + (', the highest since %s' % ymz(cp_['hi_since']) if cp_.get('hi_since') else ', the highest on record')) if cp_['above'] else 'Now %.1f, below the %.1f line' % (cp_['v'], cp_['q'])
-        c_rloss['modes'].append(dict(mz='÷ 一年獲利', me='÷ 1-year profit', rows=cp_['rows'], p=1, tf='sqrt', f='bp', rng=0, hz='7 日平均 ÷ 一年獲利（萬分之／天）', he='7-day average ÷ 1-year profit (bp per day)',
-          ser=[ser(2, zh='虧損 ÷ 一年獲利', en='Loss ÷ 1-year profit', col='dn', fill=1, w=1.1), ser(3, zh='門檻：歷史第 95 百分位', en='Line: 95th percentile to date', col='k2', dash='4 3', w=1)],
+        c_rloss['modes'].append(dict(mz='÷ 一年獲利', me='÷ 1-year profit', rows=[r + ([1, -round(r[2] - r[3], 1)] if r[2] > r[3] else [0, None]) for r in cp_['rows']], bub=dict(c=5, rank=6, r=7),   # 2026-11-25 使用者「要，標紅」：第 4 欄＝當天超過門檻，上格價格線那幾段畫成紅色；第 5 欄給價格上的紅點（大小＝超過門檻多少，最大半徑 7；畫圖照正負上色，存成負值才是紅色），照 Glassnode 那張的價格標紅
+          p=1, tf='sqrt', f='bp', rng=0, hz='7 日平均 ÷ 一年獲利（萬分之／天）', he='7-day average ÷ 1-year profit (bp per day)',
+          ser=[ser(2, zh='虧損 ÷ 一年獲利', en='Loss ÷ 1-year profit', col='dn', fill=1, w=1.1, cc=4, cols={1: 'dn'}), ser(3, zh='門檻：歷史第 95 百分位', en='Line: 95th percentile to date', col='k2', dash='4 3', w=1)],
           marks=[dict(d=dn(e['peak']), v=e['peak_v'], col='dn', up=1, zh=ymz(e['peak']), en=ymz(e['peak'])) for e in cp_['eps'] if e['peak_v'] >= 90 or e is cp_['eps'][-1] or e['peak'] >= '2022-01-01'],
-          dz='7 天平均的每日實現虧損，除以過去一年的實現獲利合計，單位是萬分之（每天）。用一年的獲利當分母，不同年代可以放在同一把尺上比：超過虛線（到當天為止的歷史第 95 百分位）代表認賠的規模，大到只有過去幾次低點附近才見過。%s。'
+          leg=[['dn', '價格上的紅點：超過門檻的日子（越大超過越多）', 'Red dots on price: days above the line (bigger = further above)', 'ring']],
+          dz='7 天平均的每日實現虧損，除以過去一年的實現獲利合計，單位是萬分之（每天）。用一年的獲利當分母，不同年代可以放在同一把尺上比：超過虛線（到當天為止的歷史第 95 百分位）代表認賠的規模，大到只有過去幾次低點附近才見過，上格價格上的紅點就是這些日子，點越大超過門檻越多。%s。'
              '2014 年起超過 %d 次：60 天後 %d 次較高，中位數 %s；180 天後 %d 次較高，中位數 %s，但這 180 天內中途最深的回落中位數 %s，熊市裡的幾次（2018/02、2019/09、2022/05、2022/06）之後還跌了 18%% 到 39%%。資料是 Bitview，不是實體調整。只作讀值。' % (
               now_z, cp_['n'], r6['up'], sg(r6['med']), r18['up'], sg(r18['med']), sg(d18['med'])),
-          de='The 7-day average of daily realized loss divided by realized profit over the past year, in basis points per day. Using a year of profit as the base puts different eras on one scale: above the dashed line (the 95th percentile of history up to that day) the losses are as large as only past lows have seen. %s. '
+          de='The 7-day average of daily realized loss divided by realized profit over the past year, in basis points per day. Using a year of profit as the base puts different eras on one scale: above the dashed line (the 95th percentile of history up to that day) the losses are as large as only past lows have seen; those days are the red dots on the price above, bigger the further above the line. %s. '
              'It crossed %d times since 2014: higher 60 days later %d times, median %s; higher 180 days later %d times, median %s, though the median drawdown along the way was %s, and in bear markets (2018/02, 2019/09, 2022/05, 2022/06) price still fell 18%% to 39%% afterwards. Bitview data, not entity-adjusted. A reading, not a signal.' % (
               now_e, cp_['n'], r6['up'], sg(r6['med']), r18['up'], sg(r18['med']), sg(d18['med']))))
     ss = o['ssr']; pc = lambda v: None if v is None else round(v * 100, 4)
