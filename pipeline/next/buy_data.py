@@ -659,6 +659,52 @@ def build(L, N, E, dn, X):
               de='Over the last 60 US sessions: how much of the Nasdaq 100\'s gain BTC kept on up days, and how much of its fall BTC took on down days. Under 100%% on up days and over 100%% on down days is "rises less, falls more", shaded on the chart. %s: %.1f%% on up days, %.1f%% on down days (stock data to %s). '
                  'Since %s it entered %d times (re-entries within 45 days not counted); of the %d that have run 60 days, %d ended lower, median %s; from any day over the same years, %d%% ended lower 60 days later, median %s. BTC uses the daily close, stocks the New York close, about 3 hours apart. A reading, not a signal.' % (
                    st_e, nc['uc'], nc['dc'], nc['date'], nc['eps'][0]['start'][:4], len(nc['eps']), bk['n'], bk['lower'], pz(bk['med']), bs['lower'], pz(bs['med']))))
+        nd = f.get('ndx_dd') or {}
+        if has(nd, 'years'):   # 2026-11-26 使用者看了 Murphy 一則貼文說「都加」（pipeline/ndx_dd.py）：那斯達克歷年回撤、那斯達克再跌時 BTC 同期最深跌多少
+            from say_data import own
+            cu, sc = nd['cur'], nd['sc']; a_ = sc['any']; G_ = {g['id']: g for g in sc['groups']}; pz = lambda v: ('%+.1f%%' % v).replace('-', '−'); p0 = lambda v: ('%d%%' % v).replace('-', '−')
+            wy = min((x for x in nd['years'] if x['y'] < cu['y']), key=lambda x: x['dd'])
+            cmp_z = '比過去 %d 年的中位數（%.1f%%）深' % (nd['n'], abs(nd['med'])) if cu['dd'] < nd['med'] else '比過去 %d 年的中位數（%.1f%%）淺' % (nd['n'], abs(nd['med']))
+            cmp_e = 'deeper than the %d-year median (%.1f%%)' % (nd['n'], abs(nd['med'])) if cu['dd'] < nd['med'] else 'shallower than the %d-year median (%.1f%%)' % (nd['n'], abs(nd['med']))
+            ma = dict(mz='那斯達克歷年回撤', me='Nasdaq yearly drawdowns', hz='那斯達克今年最深跌了多少', he='The Nasdaq\'s deepest fall this year', hs=dict(v=cu['dd'], f='pct1'), src='FRED NASDAQCOM · {d}',
+              xy=dict(xk='ym', f='p1', series=[dict(zh='當年最深跌幅', en='Deepest fall that year', col='c3', w=1.6, rows=[[x['y'] + .5, abs(x['dd'])] for x in nd['years'] if x['y'] < cu['y']]),
+                                             dict(zh='今年 %.1f%%' % abs(cu['dd']), en='This year %.1f%%' % abs(cu['dd']), col='ac', w=2.6, rows=[[cu['y'] - .5, abs(next(x['dd'] for x in nd['years'] if x['y'] == cu['y'] - 1))], [cu['y'] + .5, abs(cu['dd'])]])],
+                      ref=dict(v=abs(nd['med']), col='k2', zh='%d 年中位數 %.1f%%' % (nd['n'], abs(nd['med'])), en='%d-year median %.1f%%' % (nd['n'], abs(nd['med']))),
+                      leg=[['c3', '每年從當年高點最深跌了多少', 'Deepest fall from each year\'s high', 'line'], ['ac', '今年（還沒過完）', 'This year (not over yet)', 'line'], ['k2', '虛線：%d 年中位數' % nd['n'], 'Dashed: %d-year median' % nd['n'], 'dash']]),
+              dz='這是什麼：那斯達克綜合指數每一年裡，從當年最高的收盤到之後最低的收盤跌了多少。美股是 BTC 最常一起被拿來比的風險資產，這張用來看今年美股的回檔在歷史上算大還是小。'
+                 '怎麼看：橫軸是年份，縱軸是那一年最深跌了幾 %%，越高跌得越深；虛線是 %d–%d 年這 %d 個完整年的中位數，橘線接到今年（還沒過完，數字還可能變）。'
+                 '要保留的地方：一年切一刀是人為的，跨年的大跌會被切成兩段；這張只講美股本身，和 BTC 的關係看「BTC 跟著跌多少」那個檢視。' % (nd['y0'], nd['y1'], nd['n']),
+              de='What it is: for each year, how far the Nasdaq Composite fell from that year\'s highest close to its lowest close afterwards. US stocks are the risk asset BTC is most often compared with; this shows whether this year\'s pullback is large or small by history. '
+                 'How to read it: years run across, and the height is how far that year fell at its worst, so higher means deeper; the dashed line is the median of the %d full years %d–%d, and the orange line runs to this year (not over, so it can still change). '
+                 'Caveats: cutting at calendar years is arbitrary, so a fall that spans New Year is split in two; this is about stocks alone; for BTC see the "How far BTC fell with it" view.' % (nd['n'], nd['y0'], nd['y1']))
+            ma['say'] = own([
+                ('今年', 'This year', pz(cu['dd']), pz(cu['dd']), 'neu', '%s 高點 %s 點，%s 收盤最低；現在離高點 %s。' % (md(cu['pk']), format(cu['ypv'], ','), md(cu['lo']), pz(cu['now'])),
+                 'From the %s high of %s to the %s low; now %s from the high.' % (cu['pk'], format(cu['ypv'], ','), cu['lo'], pz(cu['now']))),
+                ('過去 %d 年' % nd['n'], 'The past %d years' % nd['n'], '中位數 %s' % pz(nd['med']), 'Median %s' % pz(nd['med']), 'neu',
+                 '%d 年跌超過 20%%、%d 年超過 30%%，最深是 %d 年的 %s。' % (nd['n20'], nd['n30'], wy['y'], pz(wy['dd'])), '%d years fell more than 20%% and %d more than 30%%; the deepest was %s in %d.' % (nd['n20'], nd['n30'], pz(wy['dd']), wy['y']))],
+                '那斯達克今年最深跌了 %.1f%%，%s，但這 %d 年裡有 %d 年跌得更深。' % (abs(cu['dd']), cmp_z, nd['n'], nd['deeper']),
+                'The Nasdaq\'s deepest fall this year is %.1f%%, %s, but %d of those %d years fell further.' % (abs(cu['dd']), cmp_e, nd['deeper'], nd['n']))
+            modes.append(ma)
+            gm = lambda g: '最深跌幅中位數 %s；跌 20%% 以上的佔 %d%%。' % (p0(g['med']), g['p20'])
+            ge = lambda g: 'Median deepest fall %s; 20%% or more in %d%% of cases.' % (p0(g['med']), g['p20'])
+            lrow = lambda g, z, e, col: row(z, e, '%d%%' % g['p10'], ve='%d%%' % g['p10'], col=col, bar=g['p10'], mk=a_['p10'], nz=gm(g), ne=ge(g))
+            mb = dict(mz='BTC 跟著跌多少', me='How far BTC fell with it', hz='BTC 之後約 4 個月內，最深跌過 10% 的比例（任何一天起算）', he='Share of days BTC then fell 10% or more within about 4 months (from any day)',
+              hs=dict(v=a_['p10'], f='p0'), src='FRED NASDAQCOM · {d}', notag=1,
+              list=dict(rows=[lrow(a_, '任何一天', 'Any day', 'ink')] + [lrow(G_[k], G_[k]['zh'], G_[k]['en'], c_) for k, c_ in (('none', 'k2'), ('mid', 'c5'), ('big', 'dn'))]),
+              dz='這是什麼：%s 年以來的每一天，看之後 %d 天（約 4 個月）裡 BTC 最深跌了多少，再照同一段時間那斯達克最深跌了多少分成三組。'
+                 '怎麼看：每一列的數字和長條是「BTC 最深跌過 10%% 以上」的比例，長條上的細線是「任何一天」的比例（%d%%），拿來對照；下面一行是最深跌幅的中位數和跌 20%% 以上的比例。'
+                 '要保留的地方：分組用的是那斯達克「之後」實際跌了多少，事前不會知道，所以這是「如果那斯達克這樣跌，BTC 通常跟著跌多少」的對照，不是預測。每天都算一次，相鄰的日子重疊很多，實際獨立的樣本少很多；早年 BTC 的波動比現在大。' % (sc['since'][:4], sc['H'], a_['p10']),
+              de='What it is: for every day since %s, how far BTC fell at its worst over the next %d days (about 4 months), grouped by how far the Nasdaq fell at its worst over the same stretch. '
+                 'How to read it: each row\'s number and bar is the share of days when BTC fell 10%% or more; the thin mark on the bar is the any-day share (%d%%) for comparison; the line below gives the median deepest fall and the share falling 20%% or more. '
+                 'Caveats: the groups use how far the Nasdaq actually fell afterwards, which nobody knows in advance, so this shows "if the Nasdaq falls this much, how far BTC usually falls with it", not a forecast. Every day counts once, so neighbouring days overlap heavily and the truly independent sample is much smaller; BTC was more volatile in its early years.' % (sc['since'][:4], sc['H'], a_['p10']))
+            mb['say'] = own([
+                (G_['mid']['zh'], G_['mid']['en'], '%d%%' % G_['mid']['p10'], '%d%%' % G_['mid']['p10'], 'neu', 'BTC 最深跌幅中位數 %s，跌 20%% 以上的 %d%%，和任何一天（%d%%）差不多。' % (p0(G_['mid']['med']), G_['mid']['p20'], a_['p20']),
+                 'BTC\'s median deepest fall was %s, with 20%%+ falls in %d%% of cases, about the same as any day (%d%%).' % (p0(G_['mid']['med']), G_['mid']['p20'], a_['p20'])),
+                (G_['big']['zh'], G_['big']['en'], '%d%%' % G_['big']['p10'], '%d%%' % G_['big']['p10'], 'neu', 'BTC 最深跌幅中位數 %s，跌 20%% 以上的 %d%%。' % (p0(G_['big']['med']), G_['big']['p20']),
+                 'BTC\'s median deepest fall was %s, with 20%%+ falls in %d%% of cases.' % (p0(G_['big']['med']), G_['big']['p20']))],
+                'BTC 四個月內跌掉 10%% 本來就常見：%s 年以來從任何一天起算，%d%% 的時候都跌過；那斯達克同期再跌 10%% 以上時升到 %d%%。' % (sc['since'][:4], a_['p10'], G_['big']['p10']),
+                'A 10%% drop for BTC within four months is common anyway: from any day since %s it happened %d%% of the time, rising to %d%% when the Nasdaq fell 10%% or more over the same stretch.' % (sc['since'][:4], a_['p10'], G_['big']['p10']))
+            modes.append(mb)
         if not modes: return NA('stk', 'BTC 對美股和黃金', 'BTC vs stocks and gold', 'BTC 和美股、黃金的比較（flows.btc_vs_stocks）', 'the BTC vs stocks and gold comparison (flows.btc_vs_stocks)')
         return dict(k='stk', zh='BTC 對美股和黃金', en='BTC vs stocks and gold', modes=modes,
           dz='第一頁是近兩個月 BTC、S&P 500、那斯達克和黃金各自的漲跌。第二頁是近 90 個美股交易日裡，BTC 當天漲幅大於 S&P 500 的比例，高於 50% 代表 BTC 贏的天數比較多。第三頁「跟漲少、跟跌多」看 BTC 跟那斯達克 100 漲跌的力道，附過去每次之後 60 天的漲跌。黃金用一枚代表一盎司黃金的代幣代替。',

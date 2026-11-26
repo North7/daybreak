@@ -1597,6 +1597,11 @@ try:
     import ndx_capture
     R['ndx_cap'] = ndx_capture.build(globals().get('PXC') or {b_['d']: b_['c'] for b_ in bars}, _fred('NASDAQ100'), LAST)
 except Exception as e: errors.append(f'ndx_cap {e}')
+# G9h-3. 2026-11-26 使用者看了 Murphy 一則貼文（納指年內回撤、再跌時 BTC 跌幅）說「都加」：那斯達克歷年回撤、那斯達克再跌時 BTC 同期最深跌多少（ndx_dd.py）
+try:
+    import ndx_dd
+    R['ndx_dd'] = ndx_dd.build(globals().get('_ndq') or _fred('NASDAQCOM'), globals().get('PXC') or {b_['d']: b_['c'] for b_ in bars}, LAST)
+except Exception as e: errors.append(f'ndx_dd {e}')
 R.pop('_sig5', None); R.pop('_sig1', None)
 R['bd_rotation'] = R_bd
 R['errors'] = errors
