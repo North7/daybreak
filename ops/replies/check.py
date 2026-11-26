@@ -257,7 +257,9 @@ def repeat_errors(items):
     def chart_key(im):
         """同一張圖不管用新寫法（site.k）還是舊寫法（site.sel）都算同一張：舊代號用 data/next.js 的 old 對照表換成新版代號（2026-11-16 改截新版）"""
         st = im.get('site') or {}
-        if st.get('k') or im.get('k'): return st.get('k') or im.get('k')
+        if st.get('k') or im.get('k'):
+            k = st.get('k') or im.get('k'); m = st.get('m', im.get('m'))
+            return f'{k}:m{m}' if m not in (None, 0) else k   # 2026-11-26：同一張卡的不同檢視（例：stk m=4 分組長條 vs 預設走勢）畫面不同，算不同的圖
         if st.get('sel'): return OLD.get(st['sel'].replace('#c-', '')) or st['sel']
         return im.get('chart')
     free = no_quota_accounts()   # 2026-11-15 使用者：no_quota 的帳號（Murphy）不受「同一張圖一天一次」限制，也不佔別人的那一次
