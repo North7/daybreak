@@ -679,5 +679,31 @@
     "meaning": "Its funding condition moved further away today: the weighted rate is 6.34% with a 7-day average of 2.09%, as longs returned quickly. Its list shows no newer issue."
    }
   ]
- }
+ },
+  "cards": {
+    "dawn": "Bullish on the long view: valuation sits in the cycle's coldest zone, with unrealized profit at a 4-year low. But the weekly score flips bearish in 1 more week, and this zone can last months.",
+    "avgd": "Leaning bullish: price is far below all nine cost lines and averages, a historically cheap zone led by the 200-week MA. Prior bear lows ranked lower, and after 2014's dip it fell 46.6% more.",
+    "p20": "Bullish: the top is far off. Market heat is under half the prior peak's, with the warning line near $110,555; Pi Cycle and the top gauges are cold too. It says nothing about the bottom.",
+    "lthloss": "Leaning bullish: the share of long-term holders underwater is in past bear-bottom range, but still hugging the 11/20 high. A close below about $58,000 sets a new high and breaks the pattern.",
+    "cyccmp": "Neutral: this cycle has fallen far less from its top than prior ones, which were down 76–83% by now. The bottom may be higher, or not in yet; a break of the June low pushes it later.",
+    "levels": "Bearish: price sits below most cost lines, so active investors and ETF buyers are underwater. First overhead is the 200-day MA near $72K; reclaiming the $76,044 true market mean restores the bulls.",
+    "urpd": "Neutral: a thick pile of coins sits just above at 62K–64K, where buyers break even and tend to sell. Coins moving this month mostly moved at a loss, as high buyers hand supply down lower.",
+    "strike": "Neutral: December's big expiry has the most puts at $60,000, right where price sits, while calls stack far off at $80,000. Negative gamma below can amplify drops; pull toward max pain is weakly evidenced.",
+    "legs": "Bearish: the down leg is already deeper than 92% of the last 12 declines, yet not over. Only a close back at $67,627 turns it into an up leg; bounces before that stay inside this leg.",
+    "pullback": "Bearish: pullback pressure is still maxed, with three conditions met for nearly a month. Past cases saw a −1.4% median 90 days on, common mid-bear; it eases once two of the three clear.",
+    "profit": "Leaning bullish, contrarian: almost every recent buyer is underwater. Past moves above 60% saw a +8.4% median a month later, but in bear markets the share can sit above 90% for long stretches.",
+    "sopr": "Bearish: recent buyers have sold at a loss for 20 days, deeper than the late-October dip. The handover of these coins is done only when sellers as a whole get back to breaking even.",
+    "rpl": "Bearish for now: a year of losses outweighing profits puts this in past bottom territory, but 7-day losses still run 7x profits and the ratio hasn't turned. A rebound to 0.75 confirms the low.",
+    "miners": "Bearish: miners are losing money on power, with price below the $66,222 break-even for mainstream rigs, yet difficulty is set to rise 9.1%. Price is only 1.5% above estimated production cost.",
+    "etf": "Bearish: institutions keep stepping back. ETFs saw 6 straight days of outflows, about 9.7x what miners mined over the span, and price is 20% under Strategy's average cost.",
+    "pr-us": "Neutral: US and offshore demand look about even; most of the Coinbase discount is USDT trading under $1. Still, stablecoins are being swapped back to dollars and Coinbase spot sells heavier than usual.",
+    "ad": "Bearish: new demand isn't absorbing supply. Both 30-day and 1-year apparent demand are negative, new capital stopped flowing in 12 days ago, and stablecoins shrank $17.7B in a month.",
+    "whale": "Bearish: whales cut holdings this month, led by the 100–1K BTC tier, and kept selling last week. Long-term holders are net sellers too; whales ease off only when the 30-day total turns up.",
+    "svd": "Bearish: sellers still take the initiative in spot. OKX shows more market sells over 7 days and big orders sold over 30. Coinbase selling is easing, but buyers must lead on 7 days to count.",
+    "stk": "Bearish: BTC is the weakest asset of the past two months, down more than Nasdaq and gold while tracking Nasdaq closely. Markets price a 96% chance of a hike, so the backdrop isn't helping.",
+    "fh": "Neutral: leverage isn't crowded but is coming back. Funding stays low on a weekly basis yet jumped several-fold in a day, and 72% of Binance accounts are long. Above 30% usually brings a flush.",
+    "vol": "Neutral: options price bigger moves than recently seen, with implied vol near a 1-year high and front months 4.9 points over 90-day. Volatility says how far, not which way.",
+    "oi": "Leaning bearish: the biggest open-interest block expires 12/25, premium has favored puts for 28 days and puts trade richer than calls. Evidence that price gets pulled up to max pain is thin.",
+    "fng": "Bearish short term: sentiment sits in extreme fear, up from neutral a month ago. Past first drops into it saw a −6.1% median 30 days on, often not the low; back above 25 means panic is fading."
+  }
 }
