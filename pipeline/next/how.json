@@ -325,14 +325,14 @@
 },
 "lthrl": {
 "hz": [
-"圖上：上格是 BTC 價格，下格是長期持有者（幣放了 155 天以上沒動的人）帳面虧損的比例；紅點是歷輪熊市底部的高點，紅底是 42–48% 區，虛線是這一輪到目前的高點。",
-"怎麼看：熊市底部時比例衝到高點（2019、2022、2026 都在 42–48%）；脫離底部後，之前幾輪都沒有再創新高。比例超過虛線那一天，等於這個規律被打破。",
-"小心：不只受價格影響：幾個月前高價買幣的人滿 155 天後會被算成長期持有者，價格不跌也會把比例推高。只有 3–4 輪樣本，是事後看出的規律。"
+"圖上：上格是 BTC 價格，下格是長期持有者（幣放了 155 天以上沒動的人）7 天賠錢賣出的金額，佔整個比特幣市值的比例。",
+"怎麼看：比例衝高＝連最能撐的人都在認賠。「歷次高峰」標出 2013 年以來每次大規模認賠，「退潮對齊」看這一波退得多快，「之後的價格」看歷次退潮後價格怎麼走。",
+"小心：2013 年以來只有 8 次；退潮的形狀每次都差不多，光看退了沒分不出之後會怎麼走。"
 ],
 "he": [
-"WhatTop: BTC price; bottom: the share of long-term holder supply (coins unmoved for 155+ days) at a paper loss. Red dots mark peaks at past bear-market bottoms, the red band is 42–48%, the dashed line this cycle's peak so far.",
-"ReadingIt peaks at bear-market bottoms (2019, 2022 and 2026 all at 42–48%); after leaving the bottom, earlier cycles never made a new high. A move above the dashed line would break that pattern.",
-"CaveatNot price alone: people who bought high a few months ago become long-term holders after 155 days, which lifts the share even if price stalls. Only 3–4 cycles, and a pattern seen in hindsight."
+"WhatTop: BTC price; bottom: what long-term holders (coins unmoved for 155+ days) sold at a loss over 7 days, as a share of bitcoin's market cap.",
+"ReadingA spike means even the most patient holders are selling at a loss. \"Past peaks\" marks every large loss peak since 2013, \"Retreats aligned\" shows how fast this wave is fading, and \"Price after the peak\" shows what price did after each one.",
+"CaveatOnly eight cases since 2013; the retreats look alike every time, so whether it retreated says little about what came next."
 ]
 },
 "sthgap": {

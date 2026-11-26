@@ -28,6 +28,11 @@
   VDD＝每天銷毀的幣天數 × 當天收盤；倍數＝30 日平均 ÷ 365 日平均。和 Checkonchain 的數值比，近年差 4% 上下、早年差到五成（他的幣天數來源不同），
   熱度分區照他的 2.9／1.4／0.75。底背離：收盤在 60 日低點 3% 以內、比 60 天前跌 10% 以上、倍數是 60 天前的 2 倍以上（嚴格版）或 1.5 倍以上（放寬版），
   前後 60 天內只算一次。嚴格版只有 2015-01、2018-12、2022-11 三次，都在熊底；放寬版一年後的漲跌和隨便一天差不多，照實寫。
+11 長期持有者認賠退潮（2026-11-26 長文 session 轉告使用者「整理成需求，給產品」：讓讀者自己追「退了沒、像哪一次」）：
+  認賠＝長期持有者已實現虧損（lth_realized_loss_sum_24h）7 日合計 ÷ 市值（收盤 × 流通量）。觸發＝這個比例 ≥0.15% 而且是一年新高；
+  觸發之間隔 90 天以內算同一次，高峰取那一次裡最高的一天；退潮＝高峰之後第一次掉到高峰的 1/3 以下。套著＝高峰那天長期持有者虧損比例（不扣老幣）。
+  2013 年起 8 次。分組照套著 40%：完整走完的 ≥40% 有 4 次，3 次退潮後半年內只再低 2%–9%，2014-12（40.1%）又跌了 53%；<40% 的 3 次再低 15%–52%。
+  長文研究挑的 8 個日期有 3 個不同（2014-10、2025-11、2026-07，逐次挑的），網站照這裡的機械規則。只作讀值。
 全部只作讀值。Bitview 改序列名稱時（https://bitview.space/api 的 What changed）整組會失敗，collect.py 只記 errors，build.py 沿用前一天的。"""
 import datetime as dt, json, subprocess, time
 
@@ -48,7 +53,7 @@ NAMES = ['price_close'] + ['bedrock_unweighted_floor_' + p for p in FP] + ['bedr
     + ['age_%s_transfer_volume_sum_24h' % a for a in A1 + A5] \
     + ['balance_%s_btc_%s' % (t, m) for t in TIERS for m in ('realized_cap', 'supply')] \
     + ['supply_in_profit', 'circulating_supply'] + ['%s_supply%s' % (a, x) for a in OLD10 for x in ('', '_in_profit')] + ['hashrate'] + ['coindays_destroyed_sum_24h'] \
-    + ['lth_supply', 'lth_supply_in_loss'] + ['vintage_%d_supply' % y for y in range(2009, 2013)]
+    + ['lth_supply', 'lth_supply_in_loss'] + ['vintage_%d_supply' % y for y in range(2009, 2013)] + ['lth_realized_loss_sum_24h']
 
 
 def _curl(url):
@@ -272,7 +277,53 @@ def build(last, S=None, pxc=None):
                 hot=round(sum(1 for v in zn if v > 2.9) / len(zn) * 100, 1), cold=round(sum(1 for v in zn if v < .75) / len(zn) * 100, 1),
                 pct=round(sum(1 for v in zn if v < vm[N - 1]) / len(zn) * 100, 1),
                 rows=[[dnum(i), round(vm[i], 3), R0(px[i])] for i in samp(a12, set(range(N - 1100, N)) | {ix(e['d']) for e in vl + vs}) if vm[i] is not None and px[i]])
-    return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx, lthx=lthx, hrib=hrib, cvdd=cvdd, vddm=vddm,
+    # ── 11 長期持有者認賠退潮 ──
+    lrl, cir = S['lth_realized_loss_sum_24h'], S['circulating_supply']; rl = [None] * N
+    for i in range(6, N):
+        if px[i] and cir[i]: rl[i] = sum((lrl[k] or 0) for k in range(i - 6, i + 1)) / (px[i] * cir[i]) * 100
+    u7m = lambda i: R0(sum((lrl[k] or 0) for k in range(i - 6, i + 1)) / 1e6)
+    lsh = lambda i: ll_[i] / ls_[i] * 100 if ls_[i] and ll_[i] is not None else None
+    if rl[N - 1] is None or lsh(N - 1) is None: raise RuntimeError('Bitview 長期持有者認賠最新一天缺值')
+    a13 = ix('2013-01-01'); y1 = lambda i: max((rl[k] for k in range(max(6, i - 365), i) if rl[k] is not None), default=0)
+    trg = [i for i in range(a13, N) if rl[i] is not None and rl[i] >= .15 and rl[i] >= y1(i)]
+    eps_ = []
+    for i in trg:
+        if eps_ and i - eps_[-1][-1] <= 90: eps_[-1].append(i)
+        else: eps_.append([i])
+    def retr(pk):
+        return next((j for j in range(pk + 1, N) if rl[j] is not None and rl[j] < rl[pk] / 3), None)
+    def lowp(a, h):
+        w = [px[k] for k in range(a, min(N, a + h + 1)) if px[k]]; return round((min(w) / px[a] - 1) * 100) if w else None
+    fwd_ = lambda a, h: round((px[a + h] / px[a] - 1) * 100) if a + h < N and px[a + h] else None
+    k30 = N - 30; wn = max((k for k in range(k30, N) if rl[k] is not None), key=lambda k: rl[k])   # 現在這一波：近 30 天最高的那天
+    ev11 = []
+    for e in eps_:
+        pk = max(e, key=lambda k: rl[k])
+        if pk >= k30: continue   # 高峰在近 30 天內的算「現在這一波」，不放進歷次
+        r = retr(pk); sh = lsh(pk)
+        ev11.append(dict(d=day(pk), dn=dnum(pk), rel=round(rl[pk], 3), usd_m=u7m(pk), ls=round(sh, 1), hi=sh >= 40, start=day(e[0]),
+                         ret=day(r) if r is not None else None, ret_dn=dnum(r) if r is not None else None, rdays=None if r is None else r - pk,
+                         low180=None if r is None else lowp(r, 180), r90=None if r is None else fwd_(r, 90), r180=None if r is None else fwd_(r, 180),
+                         full=r is not None and r + 180 < N, i=pk))
+    rn = retr(wn); yb = max((k for k in range(max(6, wn - 365), wn) if rl[k] is not None), key=lambda k: rl[k])
+    now11 = dict(d=day(wn), dn=dnum(wn), rel_pk=round(rl[wn], 3), usd_m=u7m(wn), rel=round(rl[N - 1], 3), usd_now=u7m(N - 1), frac=round(rl[N - 1] / rl[wn] * 100), days=N - 1 - wn,
+                 ret=day(rn) if rn is not None else None, ls_pk=round(lsh(wn), 1), ls=round(lsh(N - 1), 1), y1=round(rl[yb], 3), y1_d=day(yb), is_hi=rl[wn] >= .15 and rl[wn] >= rl[yb],
+                 big=rl[wn] >= .15)
+    def al(pk, a, b, f):
+        return [[d, f(pk + d)] for d in range(a, b + 1) if 0 <= pk + d < N and f(pk + d) is not None]
+    lr_ = lambda pk: (lambda k: None if rl[k] is None else round(rl[k] / rl[pk] * 100, 1))
+    pr_ = lambda pk: (lambda k: None if not px[k] else round(px[k] / px[pk], 4))
+    for x_ in ev11 + [now11]:
+        pk = ix(x_['d']); x_['al_l'] = al(pk, -20, 60, lr_(pk)); x_['al_p'] = al(pk, -20, 180, pr_(pk))
+    for x_ in ev11: x_.pop('i')
+    keep = {ix(x_['d']) for x_ in ev11 + [now11]} | {ix(x_['ret']) for x_ in ev11 + [now11] if x_['ret']} | set(range(N - 400, N))
+    rows11 = []
+    for i in range(a13, N, 3):   # 每 3 天取最高的一天，尖峰不會被抽樣抽掉；高峰、退潮那天和最近 400 天每天都留
+        blk = [k for k in range(i, min(N, i + 3)) if rl[k] is not None and px[k]]
+        if not blk: continue
+        for k in sorted(set([max(blk, key=lambda q: rl[q])]) | {k for k in blk if k in keep}): rows11.append([dnum(k), round(rl[k], 3), R0(px[k])])
+    lthw = dict(since='2013-01-01', th=.15, gap=90, eps=ev11, now=now11, rows=rows11)
+    return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx, lthx=lthx, hrib=hrib, cvdd=cvdd, vddm=vddm, lthw=lthw,
                 note='損失地板：虧損的幣佔供給的比例到歷史最糟 5%／2%／1%／0.5%／0.1% 時的價格，門檻逐日累積；賺賠分布：各賺賠幅度佔供給 %；集中度：現價 ±5% 內的幣佔供給 %；老幣移動：1 年以上、5 年以上的幣每天移動的顆數（7 日、30 日平均）；獲利供給：全體和扣掉 10 年以上的幣，在獲利的比例（7 日平均）；CVDD：累計（銷毀幣天數 × 價格）÷（創世起天數 × 600 萬）；VDD 倍數：（銷毀幣天數 × 價格）30 日均 ÷ 365 日均；只作讀值')
 
 
