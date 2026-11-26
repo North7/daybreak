@@ -4,6 +4,102 @@
  "edition": 51,
  "items": [
   {
+   "n": 16,
+   "status": "send",
+   "kind": "reply",
+   "url": "https://x.com/Dragonhau66/status/2125750897771003968",
+   "id": "2125750897771003968",
+   "author": "Dragonhau66",
+   "name": "Dragonhau66",
+   "followers": 34591,
+   "posted": "2026-11-26T00:38:03Z",
+   "lang": "zh",
+   "angle": "他說拉盤的是空頭平倉；空頭其實還沒平完",
+   "take": "空頭還沒平乾淨，上面那條空單帶比下面的多單帶厚好幾倍",
+   "summary": "BTC 從 5.73 萬拉回 6.1 萬，他認為是空頭平倉加假期流動性稀薄，不是買家回來；ETF 11 月流出 47.1 億創單月紀錄，恐懼指數 9–11",
+   "reply": "空頭也還沒平完啦\n上面 6.5 萬附近還壓著 3.2 萬顆空單沒清\n下面最亮那帶多單才 6,680 顆",
+   "sources": "最亮帶：上方 $64.6K–$67.1K（+9.0%）空單 3.21 萬顆、下方 $54.3K–$55.1K（−9.5%）多單 6,680 顆（data/next-lv.js liq 卡，Coinalyze 推算，快照 11/26 00:00 UTC，收盤 60,430）",
+   "note": "★ 1 小時內（00:38 UTC 發，截止 09:38 台北）。3 萬粉以上今天第 2 則。不唱反調，順著他「空頭在平倉」補空單還堆在上面；liq 卡看法上方空單較多（tone up），沒寫方向。配 liq。",
+   "image": {
+    "site": {
+     "k": "liq"
+    },
+    "title": "上方 6.46–6.71 萬：空單 3.2 萬顆，下方最亮帶多單 6,680 顆"
+   },
+   "style": "口語版",
+   "order": 1
+  },
+  {
+   "n": 15,
+   "status": "send",
+   "mode": "quote",
+   "kind": "reply",
+   "url": "https://x.com/ki_young_ju/status/2125753662580351083",
+   "id": "2125753662580351083",
+   "author": "ki_young_ju",
+   "name": "Ki Young Ju",
+   "followers": 434130,
+   "posted": "2026-11-26T00:49:02Z",
+   "lang": "en",
+   "angle": "他說軋空風險在空頭那邊；我們的清算圖也偏同一側，補現貨買盤沒跟上",
+   "take": "槓桿堆在上面是真的，但現貨買盤還沒回來",
+   "summary": "Short squeeze risk: $16B in potential short liquidations between $60K and $100K vs under $5B long liquidations below",
+   "reply": "",
+   "quote": "Ki says the squeeze risk sits with shorts, and our liquidation map leans that way too\n~17K BTC of shorts within 5% above the close, ~3K of longs within 5% below\nSpot isn't helping yet, US ETFs bled $1.9B in 5 sessions\n#Bitcoin #BTC",
+   "sources": "收盤上下 5% 內待清算 3,280／1.74 萬顆、最亮帶上方 $64.6K–$67.1K（data/next-lv.js liq 卡，Coinalyze 推算，11/25）；ETF 近 5 個交易日 −18.69 億美元（next-buy.js etf 卡，到 11/24）",
+   "note": "25 萬粉以上只能引用；英文引用今天第 1 則（5 萬粉以上、2 小時內、網站 liq 圖接得上，截止 10:49 台北）。liq 卡看法「上方空單較多」tone up，跟他同向，不唱反調；不寫會不會漲。",
+   "image": {
+    "site": {
+     "k": "liq"
+    },
+    "title": "Within 5%: ~17K BTC shorts above, ~3K longs below"
+   },
+   "style": "口語版",
+   "order": 2
+  },
+  {
+   "n": 17,
+   "status": "skip",
+   "kind": "reply",
+   "url": "https://x.com/paulxue1979/status/2125751027244863868",
+   "id": "2125751027244863868",
+   "author": "paulxue1979",
+   "name": "paulxue1979",
+   "followers": 4640,
+   "posted": "2026-11-26T00:38:34Z",
+   "lang": "zh",
+   "angle": "反彈沒力，算一半在 ETF 頭上",
+   "take": "反彈沒力有一大塊是 ETF 還在賣",
+   "summary": "昨天又插針被拉回，像在磨底：跌下去有人接、反彈沒力，覺得要橫盤一段，底部還沒確定",
+   "reply": "反彈沒力有一半要算 ETF 頭上，連 6 個交易日淨流出，加起來快 19 億美元",
+   "sources": "ETF 連 6 個交易日淨流出、近 5 個交易日 −18.69 億美元（data/next-buy.js etf 卡，到 11/24）",
+   "note": "跳過：今天非接話回覆熟帳號已超過三成（7/7），4c 規則停；回覆稿留著備用。固定名單 3 萬粉以下（4c），1 萬粉以下不配圖。今天另一則回他的是不同貼文。",
+   "image": null,
+   "style": "口語版",
+   "order": 3
+  },
+  {
+   "n": 14,
+   "status": "send",
+   "kind": "followup",
+   "url": "https://x.com/paulxue1979/status/2125759433146044864",
+   "id": "2125759433146044864",
+   "author": "paulxue1979",
+   "name": "paulxue1979",
+   "followers": 4640,
+   "posted": "2026-11-26T01:11:58Z",
+   "lang": "zh",
+   "angle": "作者回我們，順著他說跌幅變小",
+   "take": "跌幅越來越淺看起來是真的",
+   "summary": "他回我們：是啊，可能跌幅就會越來越小了🤣",
+   "reply": "應該是，這輪從歷史高點算到現在 −52%，上兩輪都跌掉 75% 以上",
+   "sources": "收盤比歷史最高收盤 −51.6%（latest.json onchain.dd.ath，124,766→60,369，11/25）；2018 −84%、2022 −77%（公開歷史）",
+   "note": "接話：原作者本人回我們（第 2 輪，他接的話），回一句短的。",
+   "image": null,
+   "style": "口語版",
+   "order": 4
+  },
+  {
    "n": 1,
    "status": "send",
    "url": "https://x.com/Wuming_Mr_/status/2125743552562872353",
@@ -26,7 +122,7 @@
     "title": "9/24 以來：BTC −29%，Nasdaq −12%"
    },
    "style": "口語版",
-   "order": 1
+   "order": 5
   },
   {
    "n": 2,
@@ -45,7 +141,7 @@
    "sources": "Binance BTCUSDT 永續多單帳戶 72%，2021 年起第 90 百分位（latest.json deriv.ls_acct，Coinalyze，11/25）",
    "note": "scan 4c（固定名單，3 千粉）。他列了恐懼 13 和費率，沒講帳戶比例。1 萬粉以下不配圖。",
    "style": "口語版",
-   "order": 2
+   "order": 6
   },
   {
    "n": 3,
@@ -64,7 +160,7 @@
    "sources": "美國現貨 ETF 近 20 個交易日合計 −47.6 億美元（latest.json flows.etf20，CoinMarketCap，至 11/24）",
    "note": "scan 4c（固定名單，7 千粉）。他問 grok 看多看空，不替人答方向，講錢的流向。不配圖。",
    "style": "口語版",
-   "order": 3
+   "order": 7
   },
   {
    "n": 4,
@@ -83,7 +179,7 @@
    "sources": "美元穩定幣 30 天 −177 億美元（−5.89%），2021 年以來第 2 百分位（latest.json flows.stables，DefiLlama，11/25；stab 卡 11/24 為 −172 億）",
    "note": "scan 4c（固定名單，8.7 千粉）。不碰「底部還早」的方向判斷，只接流動性那段。不配圖。",
    "style": "口語版",
-   "order": 4
+   "order": 8
   },
   {
    "n": 5,
@@ -102,7 +198,7 @@
    "sources": "頂部 2025/10/06 收 124,766，至 11/25 第 415 天；前三輪頂到最低收盤第 364–406 天（Daybreak cyccmp，11/18 長文同口徑）",
    "note": "scan 4c（熟帳號，4.6 千粉）。他問大家看法，給一個時間的讀法。不配圖。",
    "style": "口語版",
-   "order": 5
+   "order": 9
   },
   {
    "n": 6,
@@ -121,7 +217,7 @@
    "sources": "實現價÷CVDD−1 180 天前 17.0%、現在約 8%（11/25 CVDD 長文 note，Bitview）",
    "note": "接話：我們原創（11/25 CVDD 長文）底下第 1 輪，有內容所以回。只講兩條線的距離，不把線寫成價位目標。",
    "style": "口語版",
-   "order": 6
+   "order": 10
   },
   {
    "n": 7,
@@ -140,7 +236,7 @@
    "sources": "",
    "note": "接話第 2 輪（原作者在他的貼文底下回我們），閒聊短接一句、不放數字。",
    "style": "口語版",
-   "order": 7
+   "order": 11
   },
   {
    "n": 8,
@@ -159,7 +255,7 @@
    "sources": "",
    "note": "接話：我們原創底下，他問了問題。英文接話照回。",
    "style": "口語版",
-   "order": 8
+   "order": 12
   },
   {
    "n": 9,
@@ -175,7 +271,7 @@
    "reply": "",
    "summary": "",
    "note": "按讚就好：置頂文底下的謝關注（11/23）。開新一天帶過來，還沒按的話按一下。",
-   "order": 9,
+   "order": 13,
    "posted": "2026-11-23T02:38:23Z"
   },
   {
@@ -192,7 +288,7 @@
    "reply": "",
    "summary": "",
    "note": "按讚就好：他只回「是的」（昨天 #127 已判斷）。開新一天帶過來，還沒按的話按一下。",
-   "order": 10,
+   "order": 14,
    "posted": "2026-11-25T13:05:07Z"
   },
   {
@@ -209,7 +305,7 @@
    "reply": "",
    "summary": "",
    "note": "按讚就好：簡體上線那則底下的稱讚，10 粉（昨天 #128）。開新一天帶過來，還沒按的話按一下。",
-   "order": 11,
+   "order": 15,
    "posted": "2026-11-25T13:12:36Z"
   },
   {
@@ -226,7 +322,7 @@
    "reply": "",
    "summary": "",
    "note": "按讚就好：只回「ai可以」，第 2 輪不硬接（昨天 #134）。開新一天帶過來，還沒按的話按一下。",
-   "order": 12,
+   "order": 16,
    "posted": "2026-11-25T14:04:27Z"
   },
   {
@@ -243,7 +339,7 @@
    "reply": "",
    "summary": "",
    "note": "按讚就好：他貼文底下第 3 輪、沒問問題（昨天 #149）。開新一天帶過來，還沒按的話按一下。",
-   "order": 13,
+   "order": 17,
    "posted": "2026-11-25T14:30:10Z"
   }
  ]
