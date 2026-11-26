@@ -1,16 +1,16 @@
 {
- "date": "2026-11-24",
+ "date": "2026-11-25",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/lthloss",
-   "chart": "data/picks/onchain-lthloss.png",
-   "chart_en": "data/picks/onchain-lthloss-en.png",
+   "id": "onchain/rpl",
+   "chart": "data/picks/onchain-rpl.png",
+   "chart_en": "data/picks/onchain-rpl-en.png",
    "name": {
-    "zh": "長期持有者虧損比例",
-    "en": "Long-term holders in loss"
+    "zh": "實現獲利 ÷ 實現虧損",
+    "en": "Realized profit ÷ realized loss"
    },
-   "link": "https://daybreak.aronlab.dev/app/?k=lthloss"
+   "link": "https://daybreak.aronlab.dev/app/?k=rpl"
   }
  ]
 }

@@ -132,6 +132,10 @@
   {
    "date": "2026-11-24",
    "id": "onchain/lthloss"
+  },
+  {
+   "date": "2026-11-25",
+   "id": "onchain/rpl"
   }
  ]
 }
