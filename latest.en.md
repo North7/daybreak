@@ -448,9 +448,9 @@ Page: https://daybreak.aronlab.dev/en/charts/cohort/
 
 ### Supply concentration
 
-Neutral: Coins within 5% of price are 8.6% of supply (the 49th percentile since 2018).
+Neutral: Supply near the price has spread out since the Oct 28 high: concentration (7-day average) is down to 8.1%, not yet 6%.
 
-What it shows: Coins that last moved within 5% of the current price, as a share of supply. The bars at the right of the top pane show supply by price: violet for long-term holders, orange for short-term. Of the coins within 5% of price, those in profit are 3.9% of supply and those at a loss 4.7%; short-term holders' own concentration is 26.1% and long-term holders' 4.3%. The history is one Bitview reading a day since 2018.
+What it shows: What it is: coins whose last move happened within 5% of the current price, as a share of all supply. A high share means many holders' costs are packed around the current price, so a move out of this band changes a lot of people's profit or loss and swings tend to grow; a falling share means supply has spread out above and below. How to read it: the thick line is the 7-day average (the daily value is jumpy; the thin line is daily). The yellow dashed line is the top 10% since 2018 (13.8%), the blue-violet dashed line is 6%; yellow circles mark each wave's high, blue-violet circles the first drop below 6% afterwards. The bars at the right of the top pane show supply by price: violet for long-term holders, orange for short-term. Caveats: concentration says whether swings grow, not which way; the 6% line is one analyst's rule of thumb, which the site backtested on data since 2018: only 12 cases. Of the coins within 5% of price, those in profit are 3.9% of supply and those at a loss 4.7%; short-term holders' own concentration is 26.1% and long-term holders' 4.3%. The history is one Bitview reading a day since 2018.
 
 Source: Bitview · since 2018 · reading only
 
