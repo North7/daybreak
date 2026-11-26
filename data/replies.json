@@ -965,6 +965,44 @@
    "style": "口語版",
    "n": 47,
    "order": 0
+  },
+  {
+   "status": "send",
+   "kind": "followup",
+   "mode": "reply",
+   "url": "https://x.com/Murphychen888/status/2125814622829846934",
+   "id": "2125814622829846934",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82061,
+   "posted": "2026-11-26T04:51:00Z",
+   "lang": "zh",
+   "angle": "悲觀那檔的意思＋這層在往上擠",
+   "take": "45–50 等於收盤跌穿 CVDD，12 年來沒有過；而且 CVDD 一年漲 12%，時間拖越久這層越往上",
+   "summary": "他接我們 #41：樂觀 5.5 萬以上，中心 5–5.5 萬，悲觀 4.5–5 萬",
+   "reply": "悲觀那檔就是收盤跌穿 CVDD，12 年來還沒有過\n而且這層在往上擠，CVDD 一年漲了 12%，照最近半年的速度，明年上半年就會跟實現價交叉",
+   "sources": "onchain.bvx.cvdd v 49,143、grow 12.3（一年）；11/25 cvdd 長文 note：夾層 30／60／90／180 天前 11.2／11.7／11.6／17.0%，照這些速度交叉在 2027/2–2027/6；2014 起收盤沒低於 CVDD",
+   "note": "使用者點名（截圖）。Murphy 回我們 #41 的第 2 輪，直接補答案、不問。他寫「5-55」應是 50–55。同向補充，不說悲觀那檔不會發生。",
+   "style": "口語版",
+   "n": 48,
+   "order": 0
+  },
+  {
+   "status": "skip",
+   "kind": "followup",
+   "url": "https://x.com/serlo123/status/2125808477021053399",
+   "id": "2125808477021053399",
+   "author": "serlo123",
+   "name": "wander",
+   "followers": 9851,
+   "posted": "2026-11-26T04:26:51Z",
+   "lang": "zh",
+   "angle": "按讚就好",
+   "reply": "",
+   "summary": "",
+   "note": "按讚就好：下篇底下附和「收盤守住 6/30 低點」，沒問問題（他是固定名單，熟帳號，不硬接）。",
+   "n": 49,
+   "order": 40
   }
  ]
 }
