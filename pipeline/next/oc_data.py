@@ -87,13 +87,23 @@ def build(L, N, E, dn):
          'How to read it: the line is the share; cyan bands mark past stays below the floor' + ('; pale-yellow bands mark the %g–%g%% near-floor zone (seen only from late bear markets into early recoveries)' % (fl, nh) if nh else '') + '; circles mark the low of each stay. '
          'Caveats: the floor and near-floor zone are set by this site from history since 2012, only four or five cycles; price often fell further after getting here.')
     cs = ch['conc_stats']; co = ch['cohort']; pr = co['price']
-    c_conc = dict(k='conc', zh='籌碼集中度', en='Supply concentration', f='p1', rng=365, rows=[[r[0], r[1], R(r[2], 2)] for r in ch['conc_hist']], p=1, ph=.46, hero=0,
-      ser=[ser(2, zh='集中度', en='Concentration', col='c4', fill=1, w=1.6)], refs=[dict(v=cs['p90'], col='c5', zh='前 10%%（%.1f%%）' % cs['p90'], en='top 10%% (%.1f%%)' % cs['p90'])],
-      marks=[dict(d=dn(e[0]), v=e[1], col='c5', up=1) for e in cs['episodes']],
-      zones=[dict(lo=cs['p90'], hi=None, col='c5', zh='在前 10% 高水位', en='In the top 10%', nz='前 10% 高水位', ne='the top-10% line')],
+    from conc_bt import bt as conc_bt   # 2026-11-26 使用者「加」（Murphy：集中度最好回落到 6% 以下）：7 日平均線、6% 線、高檔之後第一次降到 6% 以下的回測
+    ch_ = ch['conc_hist']; cb = conc_bt(ch_); import datetime as _dt; cmd = lambda n: (lambda t: '%d/%d' % (t.month, t.day))(_dt.date(1970, 1, 1) + _dt.timedelta(int(n)))
+    c_conc = dict(k='conc', zh='籌碼集中度', en='Supply concentration', f='p1', rng=365, rows=[[r[0], r[1], R(r[2], 2), cb['ma'][i_]] for i_, r in enumerate(ch_)], p=1, ph=.46, hero=0,
+      ser=[ser(3, zh='7 日平均', en='7-day average', col='c4', fill=1, w=1.8), ser(2, zh='每日', en='Daily', col='c4', w=.8, op=.45)],
+      refs=[dict(v=cb['p90'], col='c5', zh='前 10%%（%.1f%%）' % cb['p90'], en='top 10%% (%.1f%%)' % cb['p90']), dict(v=cb['lo'], col='c3', zh='6%', en='6%')],
+      marks=[dict(d=e['pk_dn'], v=e['pk'], col='c5', up=1) for e in cb['ev']] + [dict(d=e['dn'], v=e['v'], col='c3', up=0) for e in cb['ev']] +
+            ([dict(d=cb['cur']['pk_dn'], v=cb['cur']['pk'], col='c5', up=1, zh='%s %.1f%%' % (cmd(cb['cur']['pk_dn']), cb['cur']['pk']), en='%s %.1f%%' % (cmd(cb['cur']['pk_dn']), cb['cur']['pk']))] if cb['cur'] else []),
+      zones=[dict(lo=cb['p90'], hi=None, col='c5', zh='在前 10% 高水位', en='In the top 10%', nz='前 10% 高水位', ne='the top-10% line')],
       hist=dict(w=co['width'], bins=[[r[0], round(r[1]), round(r[2])] for r in co['rows']]), pbox=[(L['chips'].get('flow', {}).get('conc5') or {}).get('lo') or round(pr * .95), (L['chips'].get('flow', {}).get('conc5') or {}).get('hi') or round(pr * 1.05)],
-      leg=[['c3', '長期持有者籌碼', 'Long-term holder supply', 'box'], ['ac', '短期持有者籌碼', 'Short-term holder supply', 'box'], ['c4', '現價 ±5% 區間', '±5% of price', 'box'], ['c5', '前 10% 高水位', 'Top-10% line', 'dash']],
-      dz='最後一次移動在現價上下 5% 內的幣，佔流通量的比例。上格右邊的橫條是各價位的籌碼：紫是長期持有者、橘是短期持有者。', de='Coins that last moved within 5% of the current price, as a share of supply. The bars at the right of the top pane show supply by price: violet for long-term holders, orange for short-term.')
+      leg=[['c3', '長期持有者籌碼', 'Long-term holder supply', 'box'], ['ac', '短期持有者籌碼', 'Short-term holder supply', 'box'], ['c4', '現價 ±5% 區間', '±5% of price', 'box'],
+           ['c5', '前 10% 高水位，圓圈＝那一波的高點', 'Top-10% line; circles mark each wave\'s high', 'dash'], ['c3', '6%，圓圈＝高檔之後第一次降到這裡', '6%; circles mark the first drop here after a high', 'dash']],
+      dz='這是什麼：最後一次移動的價格落在現價上下 5%% 內的幣，佔全部供給的比例。比例高，代表很多人的成本擠在現價附近，價格一離開這一帶，賺賠變化大的人很多，波動容易放大；比例降下來，代表籌碼已經往上下散開。'
+         '怎麼看：粗線是 7 日平均（每日值很跳，細線是每日）。黃色虛線是 2018 年以來的前 10%% 高水位（%.1f%%），藍紫色虛線是 6%%；黃圈是每一波衝上高檔的高點，藍紫圈是之後第一次降到 6%% 以下。上格右邊的橫條是各價位的籌碼：紫是長期持有者、橘是短期持有者。'
+         '要保留的地方：集中度只說波動會不會放大，不說往哪邊；6%% 這條線來自一位分析師的經驗值，網站拿 2018 年以來的資料回測過，只有 %d 次。' % (cb['p90'], len(cb['ev'])),
+      de='What it is: coins whose last move happened within 5%% of the current price, as a share of all supply. A high share means many holders\' costs are packed around the current price, so a move out of this band changes a lot of people\'s profit or loss and swings tend to grow; a falling share means supply has spread out above and below. '
+         'How to read it: the thick line is the 7-day average (the daily value is jumpy; the thin line is daily). The yellow dashed line is the top 10%% since 2018 (%.1f%%), the blue-violet dashed line is 6%%; yellow circles mark each wave\'s high, blue-violet circles the first drop below 6%% afterwards. The bars at the right of the top pane show supply by price: violet for long-term holders, orange for short-term. '
+         'Caveats: concentration says whether swings grow, not which way; the 6%% line is one analyst\'s rule of thumb, which the site backtested on data since 2018: only %d cases.' % (cb['p90'], len(cb['ev'])))
     ll = o['lthloss']; pk = ll['peaks']
     c_lthloss = dict(k='lthloss', zh='長期持有者有多少在虧損', en='How many long-term holders are underwater', f='p1', rows=ll['rows'], p=2, ser=[ser(1, zh='長期持有者虧損比例', en='LTH supply in loss', col='c4', w=1.5)],
       zones=[dict(lo=42, hi=48, col='dn', zh='在歷輪底部區', en='In the past-bottoms zone', nz='歷輪底部區', ne='the past-bottoms zone')], leg=[['dn', '歷輪底部區 42–48%', 'Past bottoms 42–48%', 'box'], ['dn', '這輪高點', "This cycle's peak", 'dash']],
