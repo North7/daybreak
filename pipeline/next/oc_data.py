@@ -392,7 +392,50 @@ def build(L, N, E, dn):
       dz='每顆被花掉的幣平均沉睡了幾天。高代表老幣在動。標記是歷次週期頂部的水位。', de='The average number of days each spent coin had been dormant. High means old coins are moving. Markers show the level at past cycle tops.')
     lr = o['lthrl']
     c_lthrl = dict(k='lthrl', zh='長期持有者已實現虧損', en='LTH realized loss', f='p3', rows=lr['rows'], p=2, ser=[ser(1, zh='已實現虧損 ÷ 市值', en='Realized loss ÷ market cap', col='c3', w=1.5)],
-      dz='長期持有者 7 天賠錢賣出的金額，相對市值的大小。', de='What long-term holders sold at a loss over 7 days, relative to market cap.')
+      dz='這是什麼：長期持有者是幣放了 155 天以上沒動的人。這張是他們最近 7 天賠錢賣出的金額，佔整個比特幣市值的比例；比例越高，代表連最能撐的人都在認賠出場。'
+         '怎麼看：上格是 BTC 價格，下格是這個比例。另外三個檢視看歷次「認賠高峰」和之後怎麼走。',
+      de='What it is: long-term holders are those whose coins sat unmoved for 155+ days. This is what they sold at a loss over the last 7 days, as a share of bitcoin\'s market cap; higher means even the most patient holders are selling at a loss. '
+         'How to read it: price on top, the share below. The other three views show each past loss peak and what followed.')
+    lw_ = (o.get('bvx') or {}).get('lthw')
+    if lw_ and lw_.get('eps'):   # 2026-11-26 長文 session 轉告使用者「整理成需求，給產品」：歷次認賠退潮對照，讀者自己追「退了沒、像哪一次」（bv_more 第 11 段）
+        EP_, NW_ = lw_['eps'], lw_['now']; GC = lambda e: 'c3' if e['hi'] else 'c4'; ym_ = lambda d: '%s/%d' % (d[:4], int(d[5:7]))
+        lab = lambda e: '%s %.0f%%' % (ym_(e['d']), e['ls']); nlab = ('現在 %.0f%%' % NW_['ls_pk'], 'Now %.0f%%' % NW_['ls_pk'])
+        slab = lambda e: '%.0f%%' % e['ls']   # 圖上標籤只放套著比例（年份看橫軸），標籤太長會互相擠掉
+        emk = [dict(d=e['dn'], v=e['rel'], col=GC(e), up=1, zh=slab(e), en=slab(e)) for e in EP_] + ([dict(d=NW_['dn'], v=NW_['rel_pk'], col='ac', up=1, zh=nlab[0], en=nlab[1])] if NW_['big'] else [])
+        cat_ = lambda t: next((1 if e['hi'] else 2 for e in EP_ if e['ret_dn'] and e['ret_dn'] <= t <= e['ret_dn'] + 180), 0)   # 價格線：退潮後 180 天照分組上色
+        lrows = [r + [cat_(r[0])] for r in lw_['rows']]
+        GLEG = [['c3', '高峰那天套著 40% 以上', 'Peak day: 40%+ underwater', 'ring'], ['c4', '套著不到 40%', 'Under 40% underwater', 'ring'], ['ac', '現在這一波（還沒有結果）', 'This wave (no outcome yet)', 'ring']]
+        pend = lambda x: '%+.0f%%' % ((x['al_p'][-1][1] - 1) * 100) if x['al_p'] else ''
+        aser = lambda key: [dict(zh=lab(e) if key == 'al_l' else '%s %s' % (ym_(e['d']), pend(e)), en=lab(e) if key == 'al_l' else '%s %s' % (ym_(e['d']), pend(e)), col=GC(e), w=1.3, op=.75, rows=e[key]) for e in EP_] + [dict(zh=nlab[0] if key == 'al_l' else '現在 %s' % pend(NW_), en=nlab[1] if key == 'al_l' else 'Now %s' % pend(NW_), col='ac', w=2.6, op=1, rows=NW_[key])]
+        nd_ = NW_['days']; pnow = NW_['al_p'][-1][1] if NW_['al_p'] else 1
+        DEF = '認賠高峰的定義：7 天認賠 ÷ 市值到 0.15% 以上、而且是一年來最高，就算一次；前後 90 天內的併成同一次，取最高那天。退潮＝之後第一次掉到高峰的 1/3 以下。'
+        DEFE = 'Loss peak: the 7-day loss ÷ market cap reaches 0.15% or more and is a one-year high; any within 90 days of each other count as one, using the highest day. Retreat: the first day afterwards below one third of that peak. '
+        c_lthrl['modes'] = [dict(mz='認賠走勢', me='Recent'),
+          dict(mz='歷次高峰', me='Past peaks', hz='長期持有者 7 天認賠 ÷ 市值（2013 年起）', he='Long-term holder 7-day losses ÷ market cap (since 2013)', src='Bitview · {d}',
+               f='p3', rng=0, p=2, hero=0, tf='sqrt', rows=lrows, ser=[ser(1, zh='7 天認賠 ÷ 市值', en='7-day loss ÷ market cap', col='ink', w=1.1, op=.7, cc=3, cols=[None, 'c3', 'c4'])], marks=emk,
+               leg=GLEG + [['c3', '價格上色：退潮後 180 天', 'Coloured price: 180 days after the retreat', 'line']],
+               dz='這是什麼：2013 年以來，長期持有者每一次大規模認賠的高峰（%d 次）。' % len(EP_) + DEF +
+                  '怎麼看：圓圈是高峰，標的是高峰那天長期持有者有多少比例的幣套著（不扣老幣）；上格價格線上色的那段是退潮之後的 180 天，看價格在那段怎麼走。藍紫色是套著 40%% 以上，藍綠色是不到 40%%，橘色是現在這一波。'
+                  '要保留的地方：只有 %d 次，40%% 這條線是看著這幾次分的；2014 年底那次（40.1%%）是單日一筆大額認賠撐起來的。' % len(EP_),
+               de='What it is: every large loss peak among long-term holders since 2013 (%d of them). ' % len(EP_) + DEFE +
+                  'How to read it: circles are the peaks, labelled with the share of long-term holder coins underwater that day (old coins included); the coloured stretches of the price line are the 180 days after each retreat. Blue-violet is 40%% or more underwater, teal under 40%%, orange this wave. '
+                  'Caveats: only %d cases, and the 40%% line was drawn by looking at them; the late-2014 case (40.1%%) rests on one large single-day loss.' % len(EP_)),
+          dict(mz='退潮對齊', me='Retreats aligned', hz='這一波的認賠，現在是高峰的', he='This wave\'s losses, as a share of its peak', hs=dict(v=NW_['frac'], f='p0'), src='Bitview · {d}',
+               xy=dict(xk='days', f='p0', z0=['高峰', 'Peak', 'peak'], series=aser('al_l'), ref=dict(v=100 / 3, col='k2', zh='高峰的 1/3（退潮）', en='1/3 of the peak (retreat)'), leg=GLEG),
+               dz='這是什麼：把歷次認賠高峰對齊在同一天（第 0 天），看之後認賠退得多快。縱軸是「還剩高峰的幾 %」。' + DEF +
+                  '怎麼看：每條線是一次，粗的橘線是現在這一波（高峰後第 %d 天）。線掉到 1/3 那條橫線以下就是退潮；以前大多在高峰後一週左右，因為最重的那幾天滾出了 7 天的計算窗口。'
+                  '要保留的地方：退潮的形狀每次都差不多，光看退了沒分不出之後會怎麼走，要配「退潮後的價格」那個檢視一起看。' % nd_,
+               de='What it is: past loss peaks lined up on the same day (day 0), to see how fast the losses faded. The y-axis is the share of the peak still left. ' + DEFE +
+                  'How to read it: each line is one case; the thick orange line is this wave (day %d after its peak). Dropping below the one-third line is the retreat; in the past it usually took about a week, as the heaviest days rolled out of the 7-day window. '
+                  'Caveats: the retreats look alike every time, so whether it retreated says little about what came next; read it with the "Price after the peak" view.' % nd_),
+          dict(mz='之後的價格', me='Price after the peak', hz='高峰那天收盤到現在', he='From the peak-day close to now', hs=dict(v=round((pnow - 1) * 100, 1), f='pct1'), src='Bitview · {d}',
+               xy=dict(xk='days', log=1, f='xpct', z0=['高峰', 'Peak', 'peak'], series=aser('al_p'), ref=dict(v=1, col='k2', zh='', en=''), leg=GLEG),
+               dz='這是什麼：同樣把歷次認賠高峰對齊在第 0 天，這次看價格：之後 180 天每天的收盤，比高峰那天高或低多少。'
+                  '怎麼看：藍紫色是高峰那天長期持有者套著 40%% 以上的幾次，藍綠色是不到 40%%，粗的橘線是現在這一波。中間的虛線是高峰那天的收盤；線尾標的是那一次 180 天後比高峰那天高或低多少（還沒滿 180 天的畫到今天）。'
+                  '要保留的地方：只有 %d 次；套著 40%% 以上的也有例外（2014 年底之後又跌了一半）。這張是讓你對照「現在像哪一次」，不是預測。' % len(EP_),
+               de='What it is: the same loss peaks lined up on day 0, this time showing price: how far each close over the next 180 days sat above or below the peak-day close. '
+                  'How to read it: blue-violet lines are cases with 40%%+ of long-term holder coins underwater at the peak, teal under 40%%, the thick orange line this wave. The dashed line is the peak-day close; line ends show how far above or below it each case was after 180 days (or today, if not yet 180 days). '
+                  'Caveats: only %d cases, and the 40%%+ group has an exception (late 2014 fell by half again). This is for comparing "which case does now resemble", not a forecast.' % len(EP_))]
     G = [
       dict(id='cost', zh='成本與位置', en='Cost and position', sz='價格相對各群人的成本在哪裡', se="Where price sits against each group's cost", charts=[c_sth, c_profit, c_aviv, c_rup, c_conc, c_lthloss]),
       dict(id='pnl', zh='賣出的人賺還是賠', en='Are sellers in profit or at a loss', sz='短期持有者和全市場賣出時是獲利還是認賠', se='Whether short-term holders, and the market as a whole, sell at a profit or a loss', charts=[c_sopr, c_pnl, c_conf, c_npl, c_n365]),

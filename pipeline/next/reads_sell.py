@@ -194,13 +194,46 @@ def mom(L):
         it('頂背離之後', 'After top divergences', pc(m['dd60_med'], 0), pc(m['dd60_med'], 0), 'neu', '%d 次，60 天內最大跌幅中位數 %s（任一天 %s）。' % (m['n'], pc(m['dd60_med']), pc(m['base_dd60'])), '%d cases; median worst drop within 60 days %s (any day: %s).' % (m['n'], pc(m['dd60_med']), pc(m['base_dd60']))),
         it('最近一次頂背離', 'Last top divergence', ym(ld['date']), yme(ld['date']), 'neu', '%s，之後 60 天最多跌 %s。' % (ymd(ld['date']), pc(ld['dd60'], 0)), '%s; it fell as much as %s over the next 60 days.' % (ymde(ld['date']), pc(ld['dd60'], 0)))]
 
-def lthrl(L):
-    x = L['onchain']['lthrl']; lw = x['lows_now']; pb = [b['max'] for b in x['bears'][:-1]]
-    return '長期持有者 7 天認賠 %s，佔市值 %.2f%%。' % (yi(x['usd7_m'], False), x['rel']), 'Long-term holders realized %s of losses over 7 days, %.2f%% of market cap (the %s percentile).' % (bn(x['usd7_m'], False), x['rel'], ord_en(x['pct'])), [
-        it('現在', 'Now', '%.2f%%' % x['rel'], '%.2f%%' % x['rel'], 'neu', '2015 年以來第 %d 百分位：現價附近仍有長期持有者認賠。' % round(x['pct']), 'The %s percentile since 2015: some long-term holders are still selling at a loss here.' % ord_en(x['pct'])),
-        it('本輪各低點', 'This cycle\'s lows', '/'.join('%.2f' % l['rel'] for l in lw) + '%', '/'.join('%.2f' % l['rel'] for l in lw) + '%', 'neu', '%s 三個低點前後 7 天的最大值。' % '、'.join(ym(l['date']) for l in lw), 'The 7-day max around the lows of %s.' % ', '.join(yme(l['date']) for l in lw)),
-        it('歷輪熊市', 'Past bear markets', '/'.join('%.2f' % b['rel'] for b in pb) + '%', '/'.join('%.2f' % b['rel'] for b in pb) + '%', 'neu', '前三輪最大的一次；這輪最多 %.2f%%，沒有大規模投降。' % max(l['rel'] for l in lw),
-           'The largest in each of the past three; this cycle peaked at %.2f%%, with no mass capitulation.' % max(l['rel'] for l in lw))]
+def lthrl(L):   # 2026-11-26 改寫（WRITING.md）：長文 session 轉告的需求，讀數講「這一波退了沒、像哪一次」（bv_more 第 11 段）
+    x = L['onchain']['lthrl']; w = (L['onchain'].get('bvx') or {}).get('lthw')
+    if not w or not w.get('eps'):
+        return '長期持有者 7 天認賠 %s，佔市值 %.2f%%。' % (yi(x['usd7_m'], False), x['rel']), 'Long-term holders realized %s of losses over 7 days, %.2f%% of market cap.' % (bn(x['usd7_m'], False), x['rel']), []
+    n = w['now']; E = w['eps']; yz = lambda m: '%.0f 億美元' % (m / 100); ye = lambda m: '$%.1fB' % (m / 1000)
+    ymz = lambda d: '%s/%d' % (d[:4], int(d[5:7])); yme_ = lambda d: '%s %s' % (MONS[int(d[5:7]) - 1], d[:4])
+    hi = [e for e in E if e['hi'] and e['full']]; hok = [e for e in hi if e['low180'] >= -10]; hbad = [e for e in hi if e['low180'] < -10]; hopen = [e for e in E if e['hi'] and not e['full']]
+    lo = [e for e in E if not e['hi'] and e['full']]
+    rng = lambda L_: '%d%%–%d%%' % (min(abs(e['low180']) for e in L_), max(abs(e['low180']) for e in L_)) if L_ else ''
+    side = '在 40% 以上' if n['ls_pk'] >= 40 else '不到 40%'; sidee = 'above 40%' if n['ls_pk'] >= 40 else 'under 40%'
+    if not n['big']:
+        sz = '長期持有者最近認賠不多：7 天 %s，沒有出現認賠高峰。' % yz(n['usd_now']); se = 'Long-term holder losses are small: %s over 7 days, no loss peak.' % ye(n['usd_now'])
+    elif n['ret']:
+        sz = '這一波長期持有者的認賠已經退潮（%s 的高峰退到 1/3 以下）；高峰那天他們有 %.0f%% 的幣套著，%s。' % (md(n['d']), n['ls_pk'], side)
+        se = 'This wave of long-term holder losses has retreated (below a third of the %s peak); %.0f%% of their coins were underwater that day, %s.' % (mde(n['d']), n['ls_pk'], sidee)
+    else:
+        sz = '這一波長期持有者的認賠還沒退潮：還在 %s 高峰的 %d%%；高峰那天他們有 %.0f%% 的幣套著，%s。' % (md(n['d']), n['frac'], n['ls_pk'], side)
+        se = 'This wave of long-term holder losses has not retreated: still %d%% of the %s peak; %.0f%% of their coins were underwater that day, %s.' % (n['frac'], mde(n['d']), n['ls_pk'], sidee)
+    out = []
+    if n['big']:
+        hz_ = '' if n['is_hi'] else '比例還沒超過 %s 那次的高峰，照規則還不算新的一次；' % ymz(n['y1_d'])
+        he_ = '' if n['is_hi'] else 'the ratio is still below the %s peak, so by the rule it is not a new one yet; ' % yme_(n['y1_d'])
+        out.append(it('這一波', 'This wave', '高峰的 %d%%' % n['frac'], '%d%% of peak' % n['frac'], 'neu',
+                      '%s 那 7 天認賠 %s；%s退到高峰的 1/3 以下才算退潮，以前大多在一週左右。' % (md(n['d']), yz(n['usd_m']), hz_),
+                      'The 7 days to %s saw %s of losses; %sit counts as retreated below a third of the peak, which used to take about a week.' % (mde(n['d']), ye(n['usd_m']), he_)))
+    if hi:
+        tz = '%s 退潮後半年內最深只再低 %s' % ('、'.join(ymz(e['d']) for e in hok), rng(hok)) if hok else ''
+        bz = '；%s（套著 %.1f%%）之後又跌了 %d%%' % ('、'.join(ymz(e['d']) for e in hbad), hbad[0]['ls'], abs(hbad[0]['low180'])) if hbad else ''
+        oz = '；%s 那次退潮後還沒滿半年' % '、'.join(ymz(e['d']) for e in hopen) if hopen else ''
+        te = '%s: no more than %s lower within six months of the retreat' % (', '.join(yme_(e['d']) for e in hok), rng(hok)) if hok else ''
+        be = '; %s (%.1f%% underwater) fell another %d%%' % (', '.join(yme_(e['d']) for e in hbad), hbad[0]['ls'], abs(hbad[0]['low180'])) if hbad else ''
+        oe = '; %s is not yet six months past its retreat' % ', '.join(yme_(e['d']) for e in hopen) if hopen else ''
+        out.append(it('套著 40% 以上的幾次', '40%+ underwater', '%d 次' % (len(hi) + len(hopen)), '%d cases' % (len(hi) + len(hopen)), 'neu', tz + bz + oz + '。', te + be + oe + '.'))
+    if lo:
+        out.append(it('套著不到 40% 的幾次', 'Under 40% underwater', '%d 次' % len(lo), '%d cases' % len(lo), 'neu',
+                      '%s 退潮後半年內又跌了 %s。2013 年以來一共只有 %d 次，看的是之後價格怎麼走，不是預測。' % ('、'.join(ymz(e['d']) for e in lo), rng(lo), len(E)),
+                      '%s fell another %s within six months of the retreat. Only %d cases since 2013: this is what price did afterwards, not a forecast.' % (', '.join(yme_(e['d']) for e in lo), rng(lo), len(E))))
+    return sz, se, out
+
+MONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
 
 def miners(L):
     m = L['onchain']['mining']; h = L['onchain']['hash_ribbons']; px = L['price']['bar']['c']; be = m['breakeven']; mt = m['block_time_s'] / 60
