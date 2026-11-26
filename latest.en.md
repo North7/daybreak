@@ -697,9 +697,9 @@ Page: https://daybreak.aronlab.dev/en/charts/mom/
 
 ### LTH realized loss
 
-Bearish: Long-term holders realized $4.38B of losses over 7 days, 0.36% of market cap (the 92nd percentile).
+Bearish: Long-term holders realized $4.38B of losses over 7 days, 0.36% of market cap.
 
-What it shows: What long-term holders sold at a loss over 7 days, relative to market cap.
+What it shows: What it is: long-term holders are those whose coins sat unmoved for 155+ days. This is what they sold at a loss over the last 7 days, as a share of bitcoin's market cap; higher means even the most patient holders are selling at a loss. How to read it: price on top, the share below. The other three views show each past loss peak and what followed.
 
 Source: CheckOnChain · 11/25
 
