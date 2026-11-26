@@ -810,6 +810,27 @@
    "note": "按讚就好：他貼文底下第 3 輪、沒問問題（昨天 #149）。開新一天帶過來，還沒按的話按一下。",
    "order": 40,
    "posted": "2026-11-25T14:30:10Z"
+  },
+  {
+   "status": "send",
+   "kind": "reply",
+   "mode": "reply",
+   "url": "https://x.com/Murphychen888/status/2125799225032331315",
+   "id": "2125799225032331315",
+   "author": "Murphychen888",
+   "name": "Murphy",
+   "followers": 82080,
+   "posted": "2026-11-26T03:50:00Z",
+   "lang": "zh",
+   "angle": "他的 4.8–5.4 萬剛好是實現價和 CVDD 中間那層",
+   "take": "他從 Nasdaq 推出來的區間，就是我們 11/25 長文講的夾層；只有下緣 4.8 萬會穿過 CVDD",
+   "summary": "Nasdaq 再跌 5–10% 對應 BTC 再跌 10–20%，$54,000–48,000，和他的鏈上成本分位、三線合一、AVIV、CVDD 熊底溢價推的區間吻合",
+   "reply": "這個區間幾乎就是實現價 5.3 萬和 CVDD 4.9 萬中間那層，前四次熊底都落在這兩條線之間\n只有下緣 4.8 萬會跌穿 CVDD，那條線收盤還沒破過\nhttps://x.com/songpu717/status/2125409595388772735",
+   "sources": "data/latest.json cycle.cm.realized_price 53,099、onchain.bvx.cvdd.v 49,143（夾層 8.0%）；2014 起收盤沒低於 CVDD、前四次熊底都在兩線之間（11/25 cvdd 長文 note：熊底高出 CVDD 4–20%、低於實現價 10–43%）",
+   "note": "使用者點名。Murphy 順序第 1 步：11/25 CVDD 長文（1.2K 瀏覽）跟他的區間同向，最後一行附網址當引用卡，不配圖。同向補充，不反駁他的 Nasdaq 推算。",
+   "style": "口語版",
+   "n": 41,
+   "order": 0
   }
  ]
 }
