@@ -385,14 +385,14 @@
 },
 "conc": {
 "hz": [
-"圖上：上格是 BTC 價格，右緣是當天的籌碼分布（每 2,000 美元一格，紫＝長期持有者、橙＝短期持有者，越長越多），青綠色帶是現價 ±5%。下格是集中度：最後一次移動在當天收盤 ±5% 內的幣佔全部供給的比例（Bitview，2018 起），黃虛線以上是歷史前 10%，黃圈是每次首次衝上前 10%。",
-"怎麼看：比例上升＝越多人的成本擠在現價附近；價格離開這一帶時，買在這裡的人容易一起停損或一起解套，波動常放大。",
-"小心：只說波動可能變大，不說方向。URPD 以 2,000 美元一格估算、晚約 1 天；本站從 2026-10-01 才有紀錄，樣本太短，不設門檻。"
+"圖上：上格是 BTC 價格，右緣是當天的籌碼分布（每 2,000 美元一格，紫＝長期持有者、橙＝短期持有者，越長越多），青綠色帶是現價 ±5%。下格是集中度：最後一次移動在當天收盤 ±5% 內的幣佔全部供給的比例（Bitview，2018 起），粗線是 7 日平均、細線是每日值。",
+"怎麼看：比例上升＝越多人的成本擠在現價附近，價格離開這一帶時波動常放大。黃虛線以上是 2018 年以來的前 10%，黃圈是每一波的高點；藍紫虛線是 6%，藍紫圈是高檔之後第一次降到 6% 以下，代表籌碼已經往上下散開。",
+"小心：只說波動可能變大，不說方向。6% 是一位分析師的經驗值，網站回測過但只有十幾次；每日值很跳，看 7 日平均。"
 ],
 "he": [
-"WhatTop: BTC price, with the day's supply distribution on the right edge ($2,000 buckets; purple long-term holders, orange short-term holders; longer = more) and the ±5% band in teal. Bottom: concentration, the share of supply last moved within ±5% of that day's close (Bitview, since 2018); above the yellow dashed line is the historical top 10%, yellow rings mark each first entry.",
-"ReadingA rising share means more holders' cost basis is crowded near price; when price leaves the band they tend to cut or sell at break-even together, and volatility often expands.",
-"CaveatIt flags bigger moves, not direction. URPD uses $2,000 buckets and lags about a day; our record starts 2026-10-01, too short to set any threshold."
+"WhatTop: BTC price, with the day's supply distribution on the right edge ($2,000 buckets; purple long-term holders, orange short-term holders; longer = more) and the ±5% band in teal. Bottom: concentration, the share of supply last moved within ±5% of that day's close (Bitview, since 2018); the thick line is the 7-day average, the thin line daily.",
+"ReadingA rising share means more holders' cost basis is crowded near price, and swings often grow when price leaves the band. Above the yellow dashed line is the top 10% since 2018, with yellow rings at each wave's high; the blue-violet dashed line is 6%, with blue-violet rings at the first drop below it after a high, meaning supply has spread out.",
+"CaveatIt flags bigger moves, not direction. 6% is one analyst's rule of thumb; the site backtested it, but there are only about a dozen cases. The daily value is jumpy, so read the 7-day average."
 ]
 },
 "strike": {

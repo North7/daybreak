@@ -74,16 +74,30 @@ def cohort(L):
         out.append(it('驗證', 'Check', pc(v['diff_pct'], 2), pc(v['diff_pct'], 2), 'neu', '推算的短期持有者成本 %s，Bitview 公布 %s：拆分可信。' % (usd(v['ours']), usd(v['bd'])), 'Our estimated short-term cost is %s against Bitview\'s %s, so the split holds up.' % (usd(v['ours']), usd(v['bd']))))
     return sz, se, out
 
-def conc(L):
-    c5 = L['chips']['flow']['conc5']; s = L['chips']['conc_stats']; h = L['chips']['conc_hist']; w = h[-8][2] if len(h) >= 8 else None; hi = c5['pct'] >= s['p90']
-    sz = '現價 ±5%% 內的籌碼佔供給 %.1f%%（2018 年以來第 %d 百分位）%s。' % (c5['pct'], round(s['pct_now']), '，在前 10%' if hi else ''); se = 'Coins within 5%% of price are %.1f%% of supply (the %s percentile since 2018)%s.' % (c5['pct'], ord_en(s['pct_now']), ', in the top 10%' if hi else '')
-    return sz, se, [
-        it('±5% 籌碼', 'Within ±5%', pu(c5['pct']), pu(c5['pct']), 'warn' if hi else 'neu', '%s（%s–%s）%s。' % (wan(c5['btc'], False), kusd(c5['lo']), kusd(c5['hi']), '；7 天前 %.1f%%' % w if w is not None else ''),
-           '%s (%s–%s)%s.' % (kb(c5['btc'], False), kusd(c5['lo']), kusd(c5['hi']), '; %.1f%% a week ago' % w if w is not None else '')),
-        it('高集中之後', 'After high concentration', '%.0f%% / %.0f%%' % (s['hi_med30'], s['lo_med30']), '%.0f%% / %.0f%%' % (s['hi_med30'], s['lo_med30']), 'neu', '前 10%%（≥ %.1f%%）之後 30 天最大波動中位數 %.1f%%，其他日子 %.1f%%；不指方向。' % (s['p90'], s['hi_med30'], s['lo_med30']),
-           'After the top 10%% (≥ %.1f%%), the median biggest 30-day swing was %.1f%%, versus %.1f%% otherwise. It does not say which way.' % (s['p90'], s['hi_med30'], s['lo_med30'])),
-        it('帶內誰的幣', 'Whose coins', '%.1f%% / %.1f%%' % (c5['in_profit'], c5['in_loss']), '%.1f%% / %.1f%%' % (c5['in_profit'], c5['in_loss']), 'neu', '獲利、虧損的各佔供給；短期持有者自己的集中度 %.1f%%。' % c5['sth'],
-           'In profit and at a loss, as shares of supply; short-term holders\' own concentration is %.1f%%.' % c5['sth'])]
+def conc(L):   # 2026-11-26 改寫（WRITING.md）：加 7 日平均、從高點回落到哪、6% 回測（conc_bt.py）
+    from conc_bt import bt
+    c5 = L['chips']['flow']['conc5']; s = L['chips']['conc_stats']; h = L['chips']['conc_hist']; w = h[-8][2] if len(h) >= 8 else None; cb = bt(h); cu = cb['cur']; b, a = cb['bt'], cb['base']
+    import datetime as _dt
+    dd_ = lambda n: _dt.date(1970, 1, 1) + _dt.timedelta(int(n)); mz = lambda n: '%d/%d' % (dd_(n).month, dd_(n).day); me = lambda n: '%s %d' % (['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][dd_(n).month - 1], dd_(n).day)
+    if cu and not cu['below_dn']:
+        sz = '現價附近的籌碼從 %s 的高點散開，集中度（7 日平均）降到 %.1f%%，還沒到 6%%。' % (mz(cu['pk_dn']), cb['now'])
+        se = 'Supply near the price has spread out since the %s high: concentration (7-day average) is down to %.1f%%, not yet 6%%.' % (me(cu['pk_dn']), cb['now'])
+    elif cu:
+        sz = '現價附近的籌碼從 %s 的高點散開，集中度（7 日平均）%s 已經降到 6%% 以下，現在 %.1f%%。' % (mz(cu['pk_dn']), mz(cu['below_dn']), cb['now'])
+        se = 'Supply near the price has spread out since the %s high: concentration (7-day average) fell below 6%% on %s and is %.1f%% now.' % (me(cu['pk_dn']), me(cu['below_dn']), cb['now'])
+    elif cb['now'] >= cb['p90']:
+        sz = '現價附近的籌碼很集中：7 日平均 %.1f%%，在 2018 年以來的前 10%%，價格一離開這一帶波動容易放大。' % cb['now']; se = 'Supply is packed around the price: the 7-day average is %.1f%%, in the top 10%% since 2018, so a move out of this band tends to be large.' % cb['now']
+    else:
+        sz = '現價附近的籌碼集中度（7 日平均）%.1f%%，不高也不低。' % cb['now']; se = 'Supply concentration near the price (7-day average) is %.1f%%, neither high nor low.' % cb['now']
+    out = [it('今天', 'Today', pu(c5['pct']), pu(c5['pct']), 'warn' if c5['pct'] >= s['p90'] else 'neu', '每日值：現價 ±5%%（%s–%s）內 %s；在賺的佔供給 %.1f%%、在賠的 %.1f%%%s。' % (kusd(c5['lo']), kusd(c5['hi']), wan(c5['btc'], False), c5['in_profit'], c5['in_loss'], '；7 天前 %.1f%%' % w if w is not None else ''),
+              'Daily value: %s within ±5%% (%s–%s); %.1f%% of supply in profit and %.1f%% at a loss%s.' % (kb(c5['btc'], False), kusd(c5['lo']), kusd(c5['hi']), c5['in_profit'], c5['in_loss'], '; %.1f%% a week ago' % w if w is not None else '')),
+           it('很集中的時候', 'When it is high', '%.0f%% / %.0f%%' % (s['hi_med30'], s['lo_med30']), '%.0f%% / %.0f%%' % (s['hi_med30'], s['lo_med30']), 'neu', '在前 10%% 時，之後 30 天價格最多往一邊走 %.0f%%（中位數），其他日子 %.0f%%；只說波動會變大，不說往哪邊。' % (s['hi_med30'], s['lo_med30']),
+              'In the top 10%%, price moved up to %.0f%% one way over the next 30 days (median), versus %.0f%% on other days; it says swings grow, not which way.' % (s['hi_med30'], s['lo_med30']))]
+    if b:
+        out.append(it('降到 6% 以下之後', 'After dropping below 6%', '%d/%d 次較高' % (b['up'], b['n']), '%d of %d higher' % (b['up'], b['n']), 'neu',
+                      '2018 年以來，衝上高檔後第一次降到 6%% 以下有 %d 次：%d 天後 %d 次比當時高、中位數 %s，期間最深中位數 %s；隨便一天是 %d%% 較高、%s、%s。次數很少。' % (b['n'], cb['h'], b['up'], pc(b['med'], 0), pc(b['dd'], 0), round(a['up'] / a['n'] * 100), pc(a['med'], 0), pc(a['dd'], 0)),
+                      'Since 2018, the first drop below 6%% after a high happened %d times: %d days later price was higher %d times, median %s, with a median worst dip of %s; any day: %d%% higher, %s, %s. Very few cases.' % (b['n'], cb['h'], b['up'], pc(b['med'], 0), pc(b['dd'], 0), round(a['up'] / a['n'] * 100), pc(a['med'], 0), pc(a['dd'], 0))))
+    return sz, se, out
 
 def strike(L):
     s = L['deriv']['viz']['options']['strikes']; r = s['rows']; c = max(r, key=lambda x: x[1]); p = max(r, key=lambda x: x[2]); px = close(L); ex = next((e for e in L['deriv']['options']['expiries'] if e['expiry'] == s['expiry']), None)
