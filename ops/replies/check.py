@@ -404,11 +404,14 @@ def tone_notes(items):
         bare = [it for it in zh if not has_num(it['reply'])]
         b = len(bare) / len(zh)
         if b > 0.12: out.append(f'中文回覆 {len(bare)}/{len(zh)} 則（{b:.0%}）沒有數字，目標 10% 左右：{[it["n"] for it in bare]}。除了閒聊和短接話，原句和吐槽留著，數字接在後面補一個對方沒有的讀數、帶口徑（「ETF 一路在往外流，淨流出快 27 億美元」），不拿數字換掉有語氣的半句（2026-11-20）')
+    # 2026-11-26 使用者轉 Gemini 評語（#81 AiCoinzh）：「你看 A，還是看 B？」二選一反問收尾是硬塞互動
+    ab = [it['n'] for it in R if re.search(r'還是[^\n？?]{1,30}[？?]\s*$|\bor\b[^\n?]{1,40}\?\s*$', it['reply'])]
+    if ab: out.append(f'二選一反問收尾（是 A 還是 B？）{len(ab)} 則：{ab}，想知道就直接問一件事，不想知道就停在上一句（voice.md 2026-11-26）')
     q = share(lambda t: QEND.search(t))
     if q > 0.15: out.append(f'問句收尾 {q:.0%}：不為互動硬塞問句，真的想知道答案才問（2026-11-20 起，取代 11/17「能問就問」）')
     if share(lambda t: re.search(r'[。.]\s*$', t)) > 0.5: out.append('超過一半句尾有句號：手機上打字通常不加')
     # 2026-11-09 第二輪（voice.md「去 AI 味第二輪」）：11/08 禁掉附和開頭之後，第一行長出「X 是真的，但」這種讓步開頭（當天 26%）；第三行「所以」收結論（26%）；口頭禪；長度、行數太整齊
-    CONCEDE = re.compile(r'是真的|沒錯|說得對|說得通|對得上|這點你|is real|isn\'t the only|isn\'t wrong|fair,? but|^(True|Fair)\b|\bthough$', re.I)
+    CONCEDE = re.compile(r'是真的|沒錯|說得對|說得通|對得上|這點你|這點同意|同意這點|is real|isn\'t the only|isn\'t wrong|fair,? but|^(True|Fair)\b|\bthough$', re.I)
     cc = [it['n'] for it in R if CONCEDE.search(it['reply'].strip().split('\n')[0])]
     if len(cc) > max(2, n // 6): out.append(f'第一行讓步開頭（是真的，但／沒錯／說得對／isn\'t the only／though）{len(cc)} 則：{cc}，一天兩三則就好，直接講不同意的點或新東西')
     so = [it['n'] for it in R if re.search(r'(^|\n)(所以|So\b)', it['reply'])]
