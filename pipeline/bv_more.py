@@ -57,6 +57,7 @@ OLD10 = ['age_10y_to_12y', 'age_12y_to_15y', 'age_over_15y']   # 放了 10 年�
 CVDD_PRE = 27260845   # 2009-01-01 到 2010-12-31 的「銷毀幣天數 × 收盤價」合計（Bitview 從第 0 天抓一次算的；bulk 只從 2011 年抓）
 LOWS = [('2014-06-01', '2015-12-31'), ('2018-06-01', '2019-06-30'), ('2020-01-01', '2020-06-30'), ('2022-06-01', '2023-03-31')]   # 歷次低點所在的區間，低點取區間裡的最低收盤
 NAMES = ['price_close'] + ['bedrock_unweighted_floor_' + p for p in FP] + ['bedrock_unweighted_supply_in_loss_share_threshold_' + p for p in FP] + ['supply_in_loss_share'] \
+    + ['bedrock_awake_floor_' + p for p in FP] + ['bedrock_awake_supply_in_loss_share_threshold_' + p for p in FP] + ['awake_supply_in_loss_share'] \
     + ['%s%s_percent_supply_share' % (pre, b) for _, pre in COH for b in PB] \
     + ['supply_density', 'supply_density_in_profit', 'supply_density_in_loss', 'sth_supply_density', 'lth_supply_density'] \
     + ['age_%s_transfer_volume_sum_24h' % a for a in A1 + A5] \
@@ -93,26 +94,36 @@ def build(last, S=None, pxc=None):
     if not px[N - 1]: raise RuntimeError('Bitview 最新一天沒有價格')
     samp = lambda a, keep=(): sorted(set(range(N - 1, a - 1, -4)) | {i for i in keep if a <= i < N})   # 每 4 天一點，從最新一天往回數（和供給分位成本線一樣）
     R0 = lambda v: None if v is None else round(v); R2 = lambda v: None if v is None else round(v, 2)
-    # ── 1 損失地板 ──
-    F = [S['bedrock_unweighted_floor_' + p] for p in FP]; TH = [S['bedrock_unweighted_supply_in_loss_share_threshold_' + p] for p in FP]
-    cur = [F[k][N - 1] for k in range(5)]
-    if not all(cur) or not all(cur[k] >= cur[k + 1] for k in range(4)): raise RuntimeError(f'Bitview 損失地板不完整或順序不對：{cur}')
-    a12 = ix('2012-01-01'); ok = [i for i in range(a12, N) if F[0][i] and px[i]]
-    lows = []
-    for a, b in LOWS:
-        i = min(range(ix(a), ix(b) + 1), key=lambda q: px[q]); lows.append(dict(d=day(i), dn=dnum(i), px=R0(px[i]), broke=sum(1 for k in range(5) if F[k][i] and px[i] < F[k][i]), floors=[R0(F[k][i]) for k in range(5)]))
-    brk, lastb = [], -999
-    for i in ok:
-        if px[i] < F[0][i]:
-            if i - lastb > 120:
-                w = px[i:min(N, i + 366)]; brk.append(dict(d=day(i), px=R0(px[i]), worst=round((min(w) / px[i] - 1) * 100), y1=round((px[i + 365] / px[i] - 1) * 100) if i + 365 < N else None))
-            lastb = i
-    a17 = ix('2017-01-01'); below = sum(1 for i in ok if px[i] < F[0][i])
-    run = 0
-    while run < N and px[N - 1 - run] < F[0][N - 1 - run]: run += 1
-    floors = dict(cur=[R0(v) for v in cur], pct=FPCT, thr=[R2(TH[k][N - 1]) for k in range(5)], loss=R2(S['supply_in_loss_share'][N - 1]), px=R0(px[N - 1]),
-                  below=sum(1 for v in cur if px[N - 1] < v), below_days=run, below1_pct=round(below / len(ok) * 100, 1), since='2012-01-01', lows=lows, breaks=brk,
-                  rows=[[dnum(i), R0(px[i])] + [R0(F[k][i]) for k in range(5)] for i in samp(a17, [ix(q['d']) for q in lows])])
+    # ── 1 損失地板 ──（不加權；2026-11-28 加權版 awake 一起算，見 flo）
+    a12 = ix('2012-01-01'); a17 = ix('2017-01-01')
+    FL = LOWS + [('2025-10-06', last)]   # 歷次低點＋這一輪頂部之後到目前的最低收盤（open：還會變）
+    def flo(w, loss):
+        F = [S['bedrock_%s_floor_' % w + p] for p in FP]; TH = [S['bedrock_%s_supply_in_loss_share_threshold_' % w + p] for p in FP]
+        cur = [F[k][N - 1] for k in range(5)]
+        if not all(cur) or not all(cur[k] >= cur[k + 1] for k in range(4)): raise RuntimeError(f'Bitview 損失地板（{w}）不完整或順序不對：{cur}')
+        ok = [i for i in range(a12, N) if F[0][i] and px[i]]
+        lows = []
+        for a, b in FL:
+            i = min(range(ix(a), ix(b) + 1), key=lambda q: px[q]); lows.append(dict(d=day(i), dn=dnum(i), px=R0(px[i]), open=b == last, broke=sum(1 for k in range(5) if F[k][i] and px[i] < F[k][i]), floors=[R0(F[k][i]) for k in range(5)]))
+        brk, lastb = [], -999
+        for i in ok:
+            if px[i] < F[0][i]:
+                if i - lastb > 120:
+                    w_ = px[i:min(N, i + 366)]; brk.append(dict(d=day(i), px=R0(px[i]), worst=round((min(w_) / px[i] - 1) * 100), y1=round((px[i + 365] / px[i] - 1) * 100) if i + 365 < N else None))
+                lastb = i
+        below = sum(1 for i in ok if px[i] < F[0][i])
+        run = 0
+        while run < N and px[N - 1 - run] < F[0][N - 1 - run]: run += 1
+        return dict(cur=[R0(v) for v in cur], pct=FPCT, thr=[R2(TH[k][N - 1]) for k in range(5)], loss=R2(S[loss][N - 1]), px=R0(px[N - 1]),
+                    below=sum(1 for v in cur if px[N - 1] < v), below_days=run, below1_pct=round(below / len(ok) * 100, 1), since='2012-01-01', lows=lows, breaks=brk,
+                    rows=[[dnum(i), R0(px[i])] + [R0(F[k][i]) for k in range(5)] for i in samp(a17, [ix(q['d']) for q in lows])])
+    floors = flo('unweighted', 'supply_in_loss_share')
+    # 2026-11-28 使用者看了 Bitview Bottoms 排名後要加「加權地板」檢視：awake＝還常動的幣算得重、久放不動的幾乎不算（Bitview 的定義）。
+    # 他的排名把加權最糟 1% 排第 2（2018、2022、2026 三次底部碰到後最多再跌 10%），但同樣算法套到 2015/1 的底部要再跌 61%：存起來寫進說明
+    floors['aw'] = flo('awake', 'awake_supply_in_loss_share')
+    pl15 = [S['bedrock_awake_floor_p99'][i] for i in range(N)]; i0, i1 = ix('2013-12-04'), ix('2015-01-14')
+    t15 = next((t for t in range(i0 + 1, i1 + 1) if min(px[t - 1], px[t]) <= (pl15[t - 1] or 0)), None)
+    if t15: v15 = min(pl15[t15 - 1], px[t15 - 1]); floors['aw']['t15'] = dict(d=day(t15), v=R0(v15), miss=round((1 - px[i1] / v15) * 100))
     # ── 2 賺賠分布 ──
     def grp(v):   # 25 格併成 9 組：賺 100% 以上、50–100%、10–50%、0–10%；虧 0–10%、10–20%、20–30%、30–50%、50% 以上
         g = lambda keys: round(sum(v[PB.index(k)] or 0 for k in keys), 2)
@@ -120,14 +131,14 @@ def build(last, S=None, pxc=None):
     def depth(v):   # 累計：虧損的、虧 10%／20%／30%／50% 以上的
         L = [v[PB.index('loss_%d_to_%d' % (a, a + 10))] or 0 for a in range(0, 100, 10)]
         return [round(sum(L[k:]), 2) for k in (0, 1, 2, 3, 5)]
-    pnl = dict(groups=['p100', 'p50', 'p10', 'p0', 'l0', 'l10', 'l20', 'l30', 'l50'], low22=lows[-1]['d'])
+    pnl = dict(groups=['p100', 'p50', 'p10', 'p0', 'l0', 'l10', 'l20', 'l30', 'l50'], low22=floors['lows'][len(LOWS) - 1]['d'])
     for nm, pre in COH:
         V = [S['%s%s_percent_supply_share' % (pre, b)] for b in PB]; at = lambda i: [V[k][i] for k in range(25)]
         tot = sum(x or 0 for x in at(N - 1))
         if abs(tot - 100) > 1.5: raise RuntimeError(f'Bitview 賺賠分布 {nm} 合計 {tot:.1f}%，不是 100%')
         dser = [depth(at(i)) if V[14][i] is not None or V[15][i] is not None else None for i in range(N)]; a13 = ix('2013-01-01')
         pc = lambda k: round(sum(1 for i in range(a13, N) if dser[i] and dser[i][k] < dser[N - 1][k]) / max(1, sum(1 for i in range(a13, N) if dser[i])) * 100)
-        pnl[nm] = dict(cur=grp(at(N - 1)), prev30=grp(at(N - 31)), low22=grp(at(ix(lows[-1]['d']))), depth=dser[N - 1], depth30=dser[N - 31], depth_low22=dser[ix(lows[-1]['d'])],
+        pnl[nm] = dict(cur=grp(at(N - 1)), prev30=grp(at(N - 31)), low22=grp(at(ix(floors['lows'][len(LOWS) - 1]['d']))), depth=dser[N - 1], depth30=dser[N - 31], depth_low22=dser[ix(floors['lows'][len(LOWS) - 1]['d'])],
                        pct10=pc(1), pct_since='2013-01-01', rows=[[dnum(i), R0(px[i])] + dser[i] for i in samp(a17) if dser[i]])
     # ── 3 籌碼集中度 ──
     sd = S['supply_density']; a18 = ix('2018-01-01')
