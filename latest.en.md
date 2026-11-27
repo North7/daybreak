@@ -14,7 +14,7 @@ Overall: Short-term bearish, nobody followed the bid at the prior low and ETF re
 
 BTC close $60,499 (+0.2%)
 
-137 charts. Today: 31 bullish, 47 bearish, 40 neutral, 19 reference charts without a lean.
+137 charts. Today: 30 bullish, 47 bearish, 41 neutral, 19 reference charts without a lean.
 
 ## Cycle: Where we are in the cycle
 
@@ -472,37 +472,37 @@ Neutral: max pain for the biggest expiry sits above price, but evidence of a pul
 
 What it shows: Open interest by strike for the main expiry: puts on the left, calls on the right. Strikes with large open interest often act as levels into expiry.
 
-Source: 12/25 · Max Pain 70K · all expiries: calls $11.2B / puts $9.0B
+Source: 12/25 · Max Pain 70K · all expiries: calls $11.4B / puts $9.1B
 
 Page: https://daybreak.aronlab.dev/en/charts/strike/
 
 ### Gamma exposure (estimated)
 
-Neutral: Total gamma within 45 days is −$7M: +$5M above price and −$12M below.
+Neutral: Total gamma within 45 days is −$14M: +$4M above price and −$17M below.
 
 What it shows: Dealer gamma by strike. Where it is positive, dealers trade against the move and price tends to pin; where negative, they trade with it and moves are amplified. Estimated, not actual positions.
 
-Source: Deribit · 11-27 08:30 UTC
+Source: Deribit · 11-27 17:36 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/gex/
 
 ### Liquidation map (estimated)
 
-Bullish: The brightest band below is $55.7K–$57.3K (−8.3%) and above $64.6K–$67.6K (+7.3%).
+Neutral: The brightest band below is $54.3K–$55.1K (−8.7%) and above $64.6K–$67.6K (+10.3%).
 
 What it shows: The industry-standard liquidation heatmap (CoinGlass-style). Time runs across the last 7 days, one column per hour; price runs up the side. Brighter means more estimated BTC awaiting liquidation: longs below the close, shorts above; bands that price trades through are cleared. The strip on the right is the amount at each price right now, with the brightest band above and below labelled. Method: rises in perpetual open interest across several exchanges count as new positions, with leverage assumed between 5x and 100x. The switch above the chart changes to six months: one column per day in $500 buckets, which shows the large clusters further from price. A model, not exchange data.
 
-Source: Coinalyze · perpetuals on 7 exchanges · snapshot 11/27 08:00 UTC
+Source: Coinalyze · perpetuals on 7 exchanges · snapshot 11/27 17:00 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/liq/
 
 ### Order book
 
-Bullish: Within ±15%: $566M of bids and $427M of asks, a ratio of 1.33: thicker support below.
+Bullish: Within ±15%: $581M of bids and $460M of asks, a ratio of 1.26: thicker support below.
 
 What it shows: Resting orders per $1,000 bucket across seven venues, in $ millions. A snapshot at 00:05 UTC each day; orders can be pulled at any time, so read it for rough location only.
 
-Source: 13 exchanges · ±15% · snapshot 11-27 08:32 UTC
+Source: 13 exchanges · ±15% · snapshot 11-27 17:38 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/book/
 
@@ -577,7 +577,7 @@ Page: https://daybreak.aronlab.dev/en/charts/sopr/
 
 ### Short-Term Holder Realized Profit and Loss
 
-Bearish: Short-term holders realized 0.24 times as much profit as loss (0.12 a week ago), mostly because profit-taking rose.
+Bearish: Short-term holders realized 0.23 times as much profit as loss (0.12 a week ago), mostly because profit-taking rose.
 
 What it shows: Profit and loss realized by short-term holders each day (BTC, log scale). Orange above green means more loss-taking.
 
@@ -774,7 +774,7 @@ Page: https://daybreak.aronlab.dev/en/charts/cot/
 
 Neutral: US buying is roughly in line with offshore. Most of the visible negative premium is just USDT trading below $1; the real signal is stablecoins being swapped back into dollars.
 
-What it shows: How much more Coinbase's USD price costs than Binance's USDT price; above 0 means US buyers are keener than offshore. Most charts divide one price by the other, which assumes 1 USDT is worth $1; when USDT trades below $1 that number turns negative for a reason that has nothing to do with US demand. The Breakdown view splits it in two: the blue-violet area is how far USDT sits above or below $1 on Coinbase, the cyan line is the spread that is left once that is netted out, and the sand line is the premium as usually shown; all three are 7-day averages. Grey bands mark periods when the unadjusted daily premium stayed negative for 19 days or more. A USDT discount means holders are swapping stablecoins back into dollars; the line that is left is the part that compares US buyers with offshore. The Net only view zooms in on that line: bars are daily values, and a 7-day average below −0.012% (its lowest 5% in four years) counts as a deep discount; circles mark each break, labelled with the price change 30 days later. The cases are few and the results mixed; a reading only.
+What it shows: How much more Coinbase's USD price costs than Binance's USDT price; above 0 means US buyers are keener than offshore. Most charts divide one price by the other, which assumes 1 USDT is worth $1; when USDT trades below $1 that number turns negative for a reason that has nothing to do with US demand. The Breakdown view splits it in two: the blue-violet area is how far USDT sits above or below $1 on Coinbase, the cyan line is the spread that is left once that is netted out, and the sand line is the premium as usually shown; all three are 7-day averages. Grey bands mark periods when the unadjusted daily premium stayed negative for 19 days or more. A USDT discount means holders are swapping stablecoins back into dollars; the line that is left is the part that compares US buyers with offshore. The Net only view zooms in on that line: bars are daily values, and a 7-day average below −0.013% (its lowest 5% in four years) counts as a deep discount; circles mark each break, labelled with the price change 30 days later. The cases are few and the results mixed; a reading only.
 
 Source: Coinbase · OKX OTC · OKX perps
 
@@ -782,7 +782,7 @@ Page: https://daybreak.aronlab.dev/en/charts/pr-us/
 
 ### Coinbase premium negative runs: what is left net of USDT
 
-Neutral: Negative for 82 days; of the −0.096% average, −0.089% is USDT trading below $1
+Neutral: Negative for 82 days; of the −0.170% average, −0.090% is USDT trading below $1
 
 What it shows: Each row is a period when the unadjusted daily premium stayed below 0 for 19 days or more, newest first. Bar length is the average unadjusted premium over the period (longer = more negative): the blue-violet part is what USDT trading below $1 accounts for, the red part is the negative that remains after netting it out, and no red means the remainder was zero or positive. The number on the right is the average net of USDT, in red when below −0.01%. The line underneath gives the unadjusted average, the USDT part, and where price started and ended. Data starts in 2022-10. Few cases; a reading only.
 
@@ -798,7 +798,7 @@ Page: https://daybreak.aronlab.dev/en/charts/usdt-usd/
 
 ### Asia: OTC USDT premium
 
-Neutral: The Asian OTC USDT premium is +0.09%, close to the exchange rate: buying and selling in Asia are balanced.
+Neutral: The Asian OTC USDT premium is −0.10%, close to the exchange rate: buying and selling in Asia are balanced.
 
 What it shows: The mid price of USDT against the yuan on OKX's OTC desk, divided by the USD/CNY rate, minus 1. Above +0.3% means buyers are rushing into USDT; below −0.3% means more people are cashing out to yuan; in between is flat. One snapshot a day, recorded since 2026-11-02 (25 days so far).
 
@@ -1026,7 +1026,7 @@ Bearish: BTC is the weakest major asset, down more than the S&P 500, Nasdaq and 
 
 What it shows: The first view shows how BTC, the S&P 500, the Nasdaq and gold have each moved over the last two months. The second is the share of the last 90 US sessions in which BTC rose more than the S&P 500; above 50% means BTC won on more days. The third, "rises less, falls more", measures how much of the Nasdaq 100's moves BTC follows, with what happened over the 60 days after each past episode. Gold is proxied by a token backed by one ounce of gold.
 
-Source: FRED · Kraken · 11/24
+Source: FRED · Kraken · 11/25
 
 Page: https://daybreak.aronlab.dev/en/charts/stk/
 
@@ -1042,7 +1042,7 @@ Page: https://daybreak.aronlab.dev/en/charts/r2y/
 
 ### Prediction market: next Fed decision
 
-Bearish: The market prices a hike at 97%
+Bearish: The market prices a hike at 96%
 
 What it shows: The Polymarket market on what the Fed will decide at its next meeting. The price of each outcome is the probability the market gives it; here they are grouped into three lines: a hike, no change, a cut. One chart covers one meeting: after the decision it switches to the next meeting and the lines start again. Risk assets usually move when rate expectations shift, which is why this sits under Macro. A reading only.
 
@@ -1077,9 +1077,9 @@ Page: https://daybreak.aronlab.dev/en/charts/fh/
 
 ### Futures basis curve
 
-Neutral: Annualized basis runs 2.2–5.4% across expiries, higher further out; the level is neutral.
+Neutral: Annualized basis runs 2.5–5.5% across expiries, higher further out; the level is neutral.
 
-What it shows: How much futures trade above spot, annualized; the horizontal axis is days to expiry (expiries within 7 days are left out). A high basis means traders pay up to be long through futures: 3–15% is normal, above 15% is hot, below 3% is cold. Expiries now sit at 2.2–5.4%, which is very low: little demand to be long; perpetual funding is +0.6% annualized.
+What it shows: How much futures trade above spot, annualized; the horizontal axis is days to expiry (expiries within 7 days are left out). A high basis means traders pay up to be long through futures: 3–15% is normal, above 15% is hot, below 3% is cold. Expiries now sit at 2.5–5.5%, which is very low: little demand to be long; perpetual funding is −0.6% annualized.
 
 Source: annualized % · excludes expiries within 7 days
 
@@ -1125,9 +1125,9 @@ Page: https://daybreak.aronlab.dev/en/charts/bfx/
 
 ### Hyperliquid big accounts
 
-Neutral: Net short 1,119 BTC, up 153 BTC from the day before
+Neutral: Net short 3,243 BTC, down 1,971 BTC from the day before
 
-What it shows: BTC perpetual positions of the top 2,000 Hyperliquid accounts by equity (about $1.3M in equity and up), scanned once after each daily close and stored as totals only. 2026-11-26: longs 7,974 BTC (117 accounts), shorts 9,093 BTC (124 accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts 2026-11-04 and covers only 23 days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. "Profitable accounts" are those with a positive all-time profit on the leaderboard, recorded since 2026-11-18: on that day all accounts were net short 1,756 BTC, profitable ones 5,418 BTC, and excluding high-turnover, market-maker-like accounts only 318 BTC, so "smart money" figures depend heavily on the definition. One exchange only. A reading only.
+What it shows: BTC perpetual positions of the top 2,000 Hyperliquid accounts by equity (about $1.2M in equity and up), scanned once after each daily close and stored as totals only. 2026-11-26: longs 7,605 BTC (119 accounts), shorts 10,848 BTC (120 accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts 2026-11-04 and covers only 23 days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. "Profitable accounts" are those with a positive all-time profit on the leaderboard, recorded since 2026-11-18: on that day all accounts were net short 1,756 BTC, profitable ones 5,418 BTC, and excluding high-turnover, market-maker-like accounts only 318 BTC, so "smart money" figures depend heavily on the definition. One exchange only. A reading only.
 
 Source: Hyperliquid · 11/26
 
@@ -1155,17 +1155,17 @@ Page: https://daybreak.aronlab.dev/en/charts/vol/
 
 ### Implied volatility term structure
 
-Bearish: 7-day 49.2%, 90-day 45.7%: a +3.5-point gap (inverted: the front is dearer).
+Bearish: 7-day 49.9%, 90-day 46.4%: a +3.5-point gap (inverted: the front is dearer).
 
-What it shows: At-the-money implied volatility for each expiry, against days to expiry. Longer-dated above near-dated is the calm-market shape; near-dated above longer-dated is an inversion, meaning the market sees more risk in the next few days. Now 7 days is 49.2% and 90 days 45.7%, near-dated is pricier: inverted.
+What it shows: At-the-money implied volatility for each expiry, against days to expiry. Longer-dated above near-dated is the calm-market shape; near-dated above longer-dated is an inversion, meaning the market sees more risk in the next few days. Now 7 days is 49.9% and 90 days 46.4%, near-dated is pricier: inverted.
 
-Source: Deribit mark IV · at the money · snapshot 2026-11-27 08:30 UTC
+Source: Deribit mark IV · at the money · snapshot 2026-11-27 17:36 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/ivt/
 
 ### Options-implied price range
 
-Deribit option prices for each expiry, turned into odds of where price settles: the dark band is the 25th–75th percentile (half the odds), the light band the 15th–85th. At the 2027/01/29 expiry (about 63 days out) the 25–75 range is $55K to $69.7K; at the 2027/09/24 expiry the median is $62K, with a 35% chance of settling below the realized price $53K and 34% of settling above the STH cost $72.1K. This is what options price (risk-neutral, including the cost of hedging), not a forecast; beyond the outermost strikes the last implied volatility is carried out.
+Deribit option prices for each expiry, turned into odds of where price settles: the dark band is the 25th–75th percentile (half the odds), the light band the 15th–85th. At the 2027/01/29 expiry (about 63 days out) the 25–75 range is $53.2K to $67.3K; at the 2027/09/24 expiry the median is $60.1K, with a 38% chance of settling below the realized price $53K and 31% of settling above the STH cost $72.1K. This is what options price (risk-neutral, including the cost of hedging), not a forecast; beyond the outermost strikes the last implied volatility is carried out.
 
 Page: https://daybreak.aronlab.dev/en/charts/orng/
 
@@ -1191,7 +1191,7 @@ Page: https://daybreak.aronlab.dev/en/charts/prem/
 
 ### Put/call ratio and risk reversal
 
-Bearish: 25-delta risk reversal −7.26: puts are dearer, so the market is buying downside protection; put/call ratio 0.80.
+Bearish: 25-delta risk reversal −8.05: puts are dearer, so the market is buying downside protection; put/call ratio 0.80.
 
 What it shows: Two readings of which way the options market leans. A put ÷ call ratio above 1 (the tick) means more hedging or bearish positions than bullish ones; the risk reversal compares equally distant calls and puts, and negative means puts cost more, so the market is buying downside protection. Both have been saved daily since 2026-11-08 (19 readings so far); a history chart needs more of them.
 
