@@ -60,7 +60,7 @@ def exflow_viz(cmj, px, last, step=3):
 #   兩條單位不同，圖上各除以自己近一年絕對值的最大值（−1 到 1），只看方向與相對強弱。回測：現貨需求 30 天合計由負轉正（隔 60 天以上）之後 60 天的漲跌
 def demand_viz(ad, perp, px, last):
     if not ad or not ad.get('rows'): return None
-    A = [(r[0], r[1], r[3]) for r in ad['rows'] if r[1] is not None]   # (x, 30 天表觀需求, 價格)；每 3 天一點
+    A = [(r[0], r[5] if len(r) > 5 and r[5] is not None else r[1], r[3]) for r in ad['rows'] if r[1] is not None]   # (x, 30 天表觀需求, 價格)；每 3 天一點；2026-11-27 起用扣掉搬家和回音的版本（stage_viz.ad_viz 第 6 欄）
     Ad = {r[0]: r[1] for r in A}; Pd = {r[0]: r[2] for r in A}
     flips, prev = [], None
     for (x0, a0, _), (x1, a1, p1) in zip(A, A[1:]):

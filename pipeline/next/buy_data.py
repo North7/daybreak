@@ -361,12 +361,15 @@ def build(L, N, E, dn, X):
     def c_ad():   # 顏色：drawAd（30 天柱 ≥0 綠、<0 紅；它的 30 日平均 ink-2→ink 虛線；1 年版 s3→c4，乘 30/365 放在同一個刻度；疑似搬家 warn→c5）
         x = o.get('ad')
         if not has(x): return NA('ad', '表觀需求（30 天與 1 年）', 'Apparent demand (30 days and 1 year)', '表觀需求（onchain.ad）', 'the apparent demand series (onchain.ad)')
-        rows = [[r[0], r[1], r[2], r[3], None if len(r) < 5 or r[4] is None else round(r[4] * 30 / 365)] for r in x['rows']]; y1 = any(r[4] is not None for r in rows[-5:])
-        return dict(k='ad', zh='表觀需求（30 天與 1 年）', en='Apparent demand (30 days and 1 year)', hz='30 天合計', he='30-day sum', f='btc', rows=thin(rows, 1), p=3,
-          ser=[ser(1, zh='表觀需求（30 天）', en='Apparent demand (30 days)', t='bar'), ser(2, zh='它的 30 日平均', en='Its 30-day average', col='ink', dash='4 3', w=1.3)] + ([ser(4, zh='1 年版（換算成每 30 天）', en='1-year version (per 30 days)', col='c4', w=1.6)] if y1 else []),
-          vl=[dict(d=dn(m['start']), col='c5', dash='2 4', only='v', op=.95) for m in x.get('moves') or []], leg=[['c5', '疑似搬家（交易所或託管整理錢包）', 'Likely wallet reshuffle (exchange or custodian)', 'dash']],
-          dz='30 天新挖出的幣，減掉「一年以上沒動過的供給」30 天的變化：舊幣醒來被市場接走時是正的，滿一年沒動的幣增加得比新挖出的快時是負的。虛線是它的 30 日平均，青線是同樣算法的 365 天合計，換算成每 30 天。沙金色的直條是疑似交易所或託管整理錢包的日子，不是真的需求。',
-          de='Coins mined in 30 days minus the 30-day change in supply unmoved for a year or more: positive when old coins wake up and are absorbed, negative when coins reaching one year unmoved outpace new issuance. The dashed line is its 30-day average; the cyan line is the same sum over 365 days, scaled to a 30-day rate. Sand bars mark days that look like exchange or custodian wallet reshuffles, not real demand.')
+        rows = [[r[0], r[1], r[2], r[3], None if len(r) < 5 or r[4] is None else round(r[4] * 30 / 365), r[5] if len(r) > 5 else None] for r in x['rows']]; y1 = any(r[4] is not None for r in rows[-5:]); xa = any(r[5] is not None for r in rows[-5:])
+        on_ = xa and (x.get('adj') or {}).get('on30')   # 2026-11-27 搬家或回音落在最近 30 天時，大數字改用扣掉它們的版本（藍紫線）
+        return dict(k='ad', zh='表觀需求（30 天與 1 年）', en='Apparent demand (30 days and 1 year)', hz='30 天合計，扣掉搬家回音' if on_ else '30 天合計', he='30-day sum, excluding reshuffle echoes' if on_ else '30-day sum',
+          hero=(3 if y1 else 2) if on_ else 0, f='btc', rows=thin(rows, 1), p=3,
+          ser=[ser(1, zh='表觀需求（30 天）', en='Apparent demand (30 days)', t='bar'), ser(2, zh='它的 30 日平均', en='Its 30-day average', col='ink', dash='4 3', w=1.3)] + ([ser(4, zh='1 年版（換算成每 30 天）', en='1-year version (per 30 days)', col='c4', w=1.6)] if y1 else []) + ([ser(5, zh='扣掉搬家和回音（30 天）', en='Excluding reshuffles and echoes (30 days)', col='c3', w=1.4)] if xa else []),
+          vl=[dict(d=dn(m['start']), col='c5', dash='2 4', only='v', op=.95) for m in x.get('moves') or []] + [dict(d=dn(m['echo']), col='c5', dash='1 3', only='v', op=.6) for m in x.get('moves') or [] if m.get('echo_adj')],
+          leg=[['c5', '疑似搬家（交易所或託管整理錢包），淡的是一年後的回音', 'Likely wallet reshuffle (exchange or custodian); fainter lines are the echo a year later', 'dash']],
+          dz='30 天新挖出的幣，減掉「一年以上沒動過的供給」30 天的變化：舊幣醒來被市場接走時是正的，滿一年沒動的幣增加得比新挖出的快時是負的。虛線是它的 30 日平均，青線是同樣算法的 365 天合計，換算成每 30 天。沙金色的直條是疑似交易所或託管整理錢包的日子，不是真的需求；這批幣一年後會一起「滿一年」，讓讀數一下變很差（淡的直條是這個回音）。藍紫線是把搬家和回音都扣掉的 30 天版，搬家或回音落在最近 30 天時，看這條比較準。',
+          de='Coins mined in 30 days minus the 30-day change in supply unmoved for a year or more: positive when old coins wake up and are absorbed, negative when coins reaching one year unmoved outpace new issuance. The dashed line is its 30-day average; the cyan line is the same sum over 365 days, scaled to a 30-day rate. Sand bars mark days that look like exchange or custodian wallet reshuffles, not real demand; a year later those coins all pass the one-year mark together and drag the reading down (the fainter bars mark this echo). The violet line is the 30-day version with both the reshuffles and their echoes taken out; when either falls within the last 30 days, that line is the better read.')
 
     def c_dmd():   # 顏色：drawDmd（現貨 s3→c4 粗線、永續 s2→ac；現貨轉正的標記 s3→c4）
         x = o.get('dmd')
