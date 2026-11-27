@@ -2626,6 +2626,32 @@
    "reply": "22 算客氣了，Daybreak 上的恐懼貪婪是 11，極度恐懼第 14 天",
    "sources": "恐懼貪婪 11、極度恐懼第 14 天（notes.json 11/26 版 overview）；來源口徑不同",
    "note": "Grok 1505 #11。不答抄底、不答 U 還是幣。"
+  },
+  {
+   "n": 127,
+   "order": 126,
+   "status": "send",
+   "kind": "reply",
+   "author": "AiCoinzh",
+   "name": "AiCoin",
+   "followers": 25477,
+   "lang": "zh",
+   "style": "性格版",
+   "id": "2126254716971876832",
+   "url": "https://x.com/AiCoinzh/status/2126254716971876832",
+   "posted": "2026-11-27T10:00:03Z",
+   "angle": "賣幣和關機是兩件事",
+   "take": "礦企在賣幣養機器，算力還沒退",
+   "summary": "",
+   "reply": "賣幣和關機是兩件事，礦企現在只做了前一件\n主流礦機的電費線在 6.6 萬，價格已經在下面，7 日平均算力一週還多了 5.2%\nHash Ribbons 是亮了，可是機器還在往上加，賣幣比較像在養機器",
+   "sources": "20 J/TH、電價 $0.06 的電費兩平價 66,265；算力 7 日平均 1,044 EH/s、一週 +5.2%（前一週 993）；Hash Ribbons 0.992（next-sell miners 卡，11/26，mempool.space）",
+   "note": "使用者點名（AiCoin 原帖，Riot、MARA 賣幣＋JPMorgan 8.6 萬成本＋影片賣關子）。不猜他影片裡的那個數、不答「還會賣多久」。miners 今天 #49 用過，11/27 起可重複用。",
+   "image": {
+    "site": {
+     "k": "miners"
+    },
+    "title": "價格在電費線下，算力還在加"
+   }
   }
  ]
 }
