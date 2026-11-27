@@ -6,7 +6,7 @@ from reads import sg, pc, pu, n0, sn0, wan, kb, md, ymd, ym, ord_en, it, M, mde,
 SG = [('深夜', 'Deep night', '底部區', 'bottom zone'), ('入夜', 'Nightfall', '下跌', 'falling'), ('破曉', 'Daybreak', '初升', 'early rise'), ('白晝', 'Daylight', '上升', 'rising'), ('黃昏', 'Dusk', '過熱', 'overheated')]
 HEAT = dict(lnupl=('長期持有者的帳面獲利（NUPL）', 'long-term holders\' paper profit (NUPL)'), rup=('帳面獲利佔市值', 'paper profit as a share of market cap'), pl=('價格對長期趨勢價', 'price against the long-run trend'), rr=('儲備風險', 'reserve risk'), mvz=('市值對成本（MVRV-Z）', 'value vs cost (MVRV-Z)'))
 STN = {'熊市': 'Bear market', '轉換期': 'Transition', '牛市': 'Bull market'}
-EVN = dict(mom12='12-month momentum', mvrv1y='MVRV vs its one-year mean', rcgrowth='Capital inflow', xs90='Exchange supply', sth='Short-term holder cost', tmm='STH cost vs true market mean')
+EVN = dict(mom12='12-month momentum', mvrv1y='MVRV vs its one-year mean', rcgrowth='Capital inflow', xs90='Exchange Balance', sth='Short-term holder cost', tmm='STH cost vs true market mean')
 RGN = dict(d200=('價格對 200 日均線', 'price vs the 200-day MA'), mom12=('一年來的漲跌', 'the one-year change'), mvrv1y=('市值對成本（和一年平均比）', 'market value vs cost (against its one-year mean)'), rc30=('流入的資金', 'money flowing in'), xs90=('交易所裡的幣', 'coins on exchanges'), rpl=('賣出的人賺多還是賠多', 'whether sellers take profits or losses'))
 LNS = dict(cap=('投降', 'Capitulation'), hope=('希望／恐懼', 'Hope / fear'), opt=('樂觀／焦慮', 'Optimism / anxiety'), belief=('信念／否認', 'Belief / denial'), euph=('興奮／貪婪', 'Euphoria / greed'))
 MFZ = '一二三四五六七八九十'
@@ -433,7 +433,7 @@ def cyccmp(L):   # 2026-11-25 改寫（WRITING.md）：先講這輪跌得比前�
            '前幾輪從頂部算起，要這麼久才重新站回頂部價。%s' % ('這輪跌得淺，不一定要那麼久，也不保證比較快。' if sh else '這輪不一定照走。'),
            'How long past cycles took, counting from the top, to close above it again. %s' % ('This one fell less, so it may not take that long, but there is no guarantee it will be faster.' if sh else 'This cycle need not follow.'))]
 
-def capeff(L):   # 2026-11-25 改寫：先解釋實現市值，一串倍數只留頭尾
+def capeff(L):   # 2026-11-25 改寫：先解釋已實現市值，一串倍數只留頭尾
     c = L['onchain']['capeff']; cy = c['cycles']; cu = c['cur']; sm = [x['same'] for x in cy]
     mm = lambda m: ('%.0f' % m) if m >= 20 else ('%.1f' % m)
     lo, hi = min(s['mult'] for s in sm), max(s['mult'] for s in sm); flat = abs(cu['mult'] - 1) < .1
@@ -447,8 +447,8 @@ def capeff(L):   # 2026-11-25 改寫：先解釋實現市值，一串倍數只�
            '從熊市底部漲到牛市頂部的倍數一輪比一輪小：最早一輪 %s 倍，上一輪只剩這麼多；流進來的錢卻一輪比一輪多，上一輪約 %s 億美元。' % (mm(cy[0]['mult']), n0(cy[-1]['add_b'] * 10)),
            'The climb from bear bottom to bull top shrinks every cycle: %s× in the first, only this much in the last, even though more money came in each time (about $%sB last cycle).' % (mm(cy[0]['mult']), n0(cy[-1]['add_b']))),
         it('前幾輪同一時間', 'Past cycles at this point', '%.2f–%.2f×' % (lo, hi), '%.2f–%.2f×' % (lo, hi), 'neu',
-           ('前幾輪從底部起算 %d 天時，價格已經是底部的這麼多倍，實現市值卻幾乎沒增加；這一輪多流進 %s，價格反而漲得比較少。' % (cu['days'], yiz(abs(cu['add_b'])).lstrip('+'))) if more else
-           ('前幾輪從底部起算 %d 天時，價格是底部的這麼多倍；同一時間實現市值的變化在 %s 到 %s 之間。' % (cu['days'], yiz(min(s['add_b'] for s in sm)), yiz(max(s['add_b'] for s in sm)))),
+           ('前幾輪從底部起算 %d 天時，價格已經是底部的這麼多倍，已實現市值卻幾乎沒增加；這一輪多流進 %s，價格反而漲得比較少。' % (cu['days'], yiz(abs(cu['add_b'])).lstrip('+'))) if more else
+           ('前幾輪從底部起算 %d 天時，價格是底部的這麼多倍；同一時間已實現市值的變化在 %s 到 %s 之間。' % (cu['days'], yiz(min(s['add_b'] for s in sm)), yiz(max(s['add_b'] for s in sm)))),
            ('%d days after their bottoms, past cycles were already this many times higher, with almost no realized cap added; this cycle has taken in %s and risen less.' % (cu['days'], bb(abs(cu['add_b'])))) if more else
            ('%d days after their bottoms, past cycles were this many times higher; realized cap changed by %s to %s over the same stretch.' % (cu['days'], bbs(min(s['add_b'] for s in sm)), bbs(max(s['add_b'] for s in sm))))),
         it('每流入 1 美元', 'Per $1 that came in', '$%.1f' % cy[-1]['lev'], '$%.1f' % cy[-1]['lev'], 'neu',

@@ -133,7 +133,7 @@ _ST = ' '.join((c.get('src') or '') + ' ' + (c.get('srce') or '') + ' ' + (c.get
 SRCS = [v for v in VENDORS if v.lower() in _ST.lower()]
 _HAVE = ' '.join((c.get('en') or '') for c in ANY).lower()
 _KNOWN = [(w, z) for w, z, key in (('MVRV', 'MVRV', 'mvrv'), ('SOPR (network, long- and short-term holders)', 'SOPR（全網、長期、短期持有者）', 'sopr'), ('NUPL by holder group', '長短期持有者 NUPL', 'nupl'),
-          ('holder cost bases and realized price', '各群持有者成本與實現價', 'cost basis'), ('supply distribution (URPD)', '籌碼分布（URPD）', 'urpd'), ('exchange netflow and exchange supply', '交易所淨流量與交易所供給', 'exchange'),
+          ('holder cost bases and realized price', '各群持有者成本與實現價', 'cost basis'), ('supply distribution (URPD)', 'UTXO 已實現價格分布（URPD）', 'urpd'), ('exchange netflow and exchange supply', '交易所淨流量與交易所供給', 'exchange'),
           ('spot ETF flows', '現貨 ETF 淨流量', 'etf'), ('stablecoin supply', '穩定幣供給', 'stablecoin'), ('funding rates', '資金費率', 'funding'), ('options and implied volatility', '選擇權與隱含波動', 'volatility'),
           ('Pi Cycle', 'Pi Cycle', 'pi cycle'), ('Reserve Risk', '儲備風險', 'reserve risk'), ('Hash Ribbons and miners', 'Hash Ribbons 與礦工', 'hash ribbons')) if key in _HAVE]
 FAQ = [

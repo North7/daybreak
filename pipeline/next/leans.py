@@ -80,13 +80,13 @@ def grad(L):
     return V('neu', '價格和資金同步', 'In step with capital', '120 日尺度上價格和資金大致同步。', 'On the 120-day scale price and capital are roughly in step.')
 def rcliq(L):
     r = F(L)['rc_liq']
-    return V('down', '新資金停止流入', 'New money has stalled', '實現市值 30 天沒有增加，新資金沒進來。', 'Realized cap has not grown in 30 days: no new money is coming in.', '30 天轉為增加', 'A 30-day increase') if r['chg30_pct'] <= 0 else V('up', '新資金在流入', 'New money is arriving', '實現市值 30 天在增加。', 'Realized cap grew over 30 days.', '30 天轉為減少', 'A 30-day decline')
+    return V('down', '新資金停止流入', 'New money has stalled', '已實現市值 30 天沒有增加，新資金沒進來。', 'Realized cap has not grown in 30 days: no new money is coming in.', '30 天轉為增加', 'A 30-day increase') if r['chg30_pct'] <= 0 else V('up', '新資金在流入', 'New money is arriving', '已實現市值 30 天在增加。', 'Realized cap grew over 30 days.', '30 天轉為減少', 'A 30-day decline')
 def rlc(L):   # 2026-11-22 流動性週期（Checkonchain Liquidity Index）。2013 起之後 180 天：0＝中位數 +81%、全部上漲（只有 3 輪）；1＝+36%、68%；0.2–1 之間＝+3%、51%（平常 +26%、62%），所以中間不指方向
     li = F(L)['rc_liq'].get('li') or {}; v = li.get('idx')
     if v is None: return V('neu', '沒有資料', 'No data', '', '')
-    if v < 1e-6: return V('up', '資金底部區', 'Capital bottom zone', '實現市值創一年新低；2013 年以來只有 3 輪，都在週期底部附近，但碰到後價格還再跌 0% 到 −19%。', 'Realized cap is at a one-year low; since 2013 only 3 cycles, each near a cycle bottom, though price fell a further 0% to −19% after the first touch.', '指數離開 0 且實現市值回升', 'The index leaving 0 as realized cap recovers')
-    if v >= .999: return V('up', '資金持續流入', 'Capital keeps arriving', '實現市值在 30、90、365 天裡都是最高：新資金一直進來。', 'Realized cap is at its 30-, 90- and 365-day highs: new money keeps arriving.', '指數從 1 掉下來', 'The index dropping from 1')
-    return V('neu', '不指方向', 'No direction', '2013 年以來指數在 0.2 到 1 之間時，之後 180 天差不多一半漲一半跌（中位數 +3%，平常是 +26%），不指方向；要看它往 0 還是往 1 走。', 'Since 2013, with the index between 0.2 and 1, the next 180 days rose about half the time (median +3%, against +26% normally): no direction. Watch whether it heads for 0 or 1.', '跌到 0（實現市值一年新低）或回到 1', 'A drop to 0 (realized cap at a one-year low) or a return to 1')
+    if v < 1e-6: return V('up', '資金底部區', 'Capital bottom zone', '已實現市值創一年新低；2013 年以來只有 3 輪，都在週期底部附近，但碰到後價格還再跌 0% 到 −19%。', 'Realized cap is at a one-year low; since 2013 only 3 cycles, each near a cycle bottom, though price fell a further 0% to −19% after the first touch.', '指數離開 0 且已實現市值回升', 'The index leaving 0 as realized cap recovers')
+    if v >= .999: return V('up', '資金持續流入', 'Capital keeps arriving', '已實現市值在 30、90、365 天裡都是最高：新資金一直進來。', 'Realized cap is at its 30-, 90- and 365-day highs: new money keeps arriving.', '指數從 1 掉下來', 'The index dropping from 1')
+    return V('neu', '不指方向', 'No direction', '2013 年以來指數在 0.2 到 1 之間時，之後 180 天差不多一半漲一半跌（中位數 +3%，平常是 +26%），不指方向；要看它往 0 還是往 1 走。', 'Since 2013, with the index between 0.2 and 1, the next 180 days rose about half the time (median +3%, against +26% normally): no direction. Watch whether it heads for 0 or 1.', '跌到 0（已實現市值一年新低）或回到 1', 'A drop to 0 (realized cap at a one-year low) or a return to 1')
 def stab(L):
     s = F(L)['stables']
     return V('down', '場外美元在萎縮', 'Sideline dollars are shrinking', '穩定幣供給 30 天減少，能進場的錢變少。', 'Stablecoin supply shrank over 30 days: less dry powder.', '30 天轉為增加', 'A 30-day increase') if s['chg30_pct'] < 0 else V('up', '場外美元在增加', 'Sideline dollars are growing', '穩定幣供給 30 天增加，能進場的錢變多。', 'Stablecoin supply grew over 30 days: more dry powder.', '30 天轉為減少', 'A 30-day decrease')
@@ -349,13 +349,13 @@ def conf(L):
     return V('neu', '轉換期', 'Transition', '±%g 之間，方向還不明確。' % nb, 'Between ±%g: no clear direction.' % nb, '離開 ±%g' % nb, 'Leaving ±%g' % nb)
 def npl(L):
     n = O(L)['npl']
-    if n['sum7_usd_m'] < 0: return V('down', '整體在認賠', 'Net loss-taking', '近 7 天淨實現損益為負。', 'Net realized P&L is negative over 7 days.', '7 天轉正', 'A positive 7-day total')
-    return V('up', '整體在獲利了結', 'Net profit-taking', '近 7 天淨實現損益為正：賣出的人整體有賺，趨勢健康。', 'Net realized P&L is positive over 7 days: sellers are in profit, a healthy trend.', '7 天轉負', 'A negative 7-day total')
+    if n['sum7_usd_m'] < 0: return V('down', '整體在認賠', 'Net loss-taking', '近 7 天淨已實現損益為負。', 'Net realized P&L is negative over 7 days.', '7 天轉正', 'A positive 7-day total')
+    return V('up', '整體在獲利了結', 'Net profit-taking', '近 7 天淨已實現損益為正：賣出的人整體有賺，趨勢健康。', 'Net realized P&L is positive over 7 days: sellers are in profit, a healthy trend.', '7 天轉負', 'A negative 7-day total')
 def agepl(L):
     a = O(L)['agepl']
-    if a['lth_prof'] >= 60: return V('down', '老手在獲利了結', 'Old hands are taking profit', '6 個月以上的人佔實現獲利 60% 以上。', 'Holders of 6+ months take over 60% of realized profit.', '比重回到一半以下', 'The share back under half')
-    if a['lth_loss'] >= 60: return V('neu', '老手也在認賠', 'Old hands are capitulating too', '6 個月以上的人佔實現虧損 60% 以上，常是投降的尾段。', 'Holders of 6+ months take over 60% of realized loss, often the tail of a capitulation.')
-    return V('neu', '認賠在新手', 'Losses sit with newcomers', '認賠主要是近期進場的人，老手沒有大量出手。', 'Loss-taking is mostly recent buyers; old hands are not moving much.', '老手的實現獲利比重升過 60%', 'Old hands taking over 60% of profit')
+    if a['lth_prof'] >= 60: return V('down', '老手在獲利了結', 'Old hands are taking profit', '6 個月以上的人佔已實現獲利 60% 以上。', 'Holders of 6+ months take over 60% of realized profit.', '比重回到一半以下', 'The share back under half')
+    if a['lth_loss'] >= 60: return V('neu', '老手也在認賠', 'Old hands are capitulating too', '6 個月以上的人佔已實現虧損 60% 以上，常是投降的尾段。', 'Holders of 6+ months take over 60% of realized loss, often the tail of a capitulation.')
+    return V('neu', '認賠在新手', 'Losses sit with newcomers', '認賠主要是近期進場的人，老手沒有大量出手。', 'Loss-taking is mostly recent buyers; old hands are not moving much.', '老手的已實現獲利比重升過 60%', 'Old hands taking over 60% of profit')
 def rpl(L):
     y = O(L).get('rpl365') or {}; w, s7 = y.get('w90'), y.get('s7')
     if w and s7:   # 2026-11-20 卡片打開是一年合計（使用者：判讀和大數字不能打架）；近期用最近 7 天合計（同一份 Bitview，合計相除）

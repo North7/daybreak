@@ -30,7 +30,7 @@ def build(L, N, E, dn, X):
     yr = lambda s: s[:4]
     row = lambda zh, en, v, **k: dict(zh=zh, en=en, v=v, **k)
     # ── 現在的階段 ──
-    st = cy['stage']; EVN = dict(mom12='12-month momentum', mvrv1y='MVRV vs its 1-year mean', rcgrowth='Capital inflow', xs90='Exchange supply', sth='Short-term holder cost', tmm='STH cost vs true market mean')
+    st = cy['stage']; EVN = dict(mom12='12-month momentum', mvrv1y='MVRV vs its 1-year mean', rcgrowth='Capital inflow', xs90='Exchange Balance', sth='Short-term holder cost', tmm='STH cost vs true market mean')
     def evv(e):
         v = e.get('value'); u = e.get('unit') or ''
         return '—' if v is None else (('%+.1f%%' % v).replace('-', '−') if u == '%' else ('$' + format(int(v), ',') if v > 1000 else '%.2f' % v))
@@ -81,7 +81,7 @@ def build(L, N, E, dn, X):
          'How to read it: each bar is a week, coloured by that week\'s stage: negative is bear; the first 26 positive weeks after a bear run of 26 weeks or more are early bull, then bull; +4 and above is overheated, −4 and below extreme bear. '
          'Caveats: the four-week rule makes turns show up late; near 0 (−1 to +1) the score flips easily, and some past long flips were followed by lower prices a year on.')
     RGN = dict(d200=('價格對 200 日均線', 'Price vs 200-day MA'), mom12=('一年來的漲跌', 'One-year change'), mvrv1y=('市值對成本（比一年平均）', 'Value vs cost, against its 1-year mean'), rc30=('流入的資金（30 日）', 'Money flowing in, 30-day'), xs90=('交易所裡的幣（90 日）', 'Coins on exchanges, 90-day'), rpl=('賣出的人賺多還是賠多（90 日）', 'Sellers\' profit vs loss, 90-day'),
-               sth=('價格對短期持有者成本', 'Price vs short-term holder cost'), asopr=('賣出的幣賺還是賠（30 日）', 'Coins sold at a profit or loss, 30-day'), lnupl=('長期持有者的帳面獲利', 'Long-term holders\' paper profit'), rup=('帳面獲利佔市值', 'Paper profit ÷ market cap'), pl=('價格對長期趨勢價', 'Price vs long-run trend'), rr=('儲備風險', 'Reserve risk'), mvz=('市值對成本（MVRV-Z）', 'Value vs cost (MVRV-Z)'))
+               sth=('價格對短期持有者成本', 'Price vs short-term holder cost'), asopr=('賣出的幣賺還是賠（30 日）', 'Coins sold at a profit or loss, 30-day'), lnupl=('長期持有者的帳面獲利', 'Long-term holders\' paper profit'), rup=('帳面獲利佔市值', 'Paper profit ÷ market cap'), pl=('價格對長期趨勢價', 'Price vs long-run trend'), rr=('儲備風險', 'Reserve Risk'), mvz=('市值對成本（MVRV-Z）', 'Value vs cost (MVRV-Z)'))
     zbar = lambda z: dict(bar=max(0, min(100, 50 + z * 50)), mk=50, col='up' if z > 0 else 'dn')
     dw = cy['dawn']; k = dw['stage']; th = dw['th']
     hv_ = [r[1] for r in dw['rows']]; hS = gsm(hv_, 5); hC = gsm(hv_, 11); drows = [list(r[:5]) + [hS[i], hC[i]] for i, r in enumerate(dw['rows'])]
@@ -123,7 +123,7 @@ def build(L, N, E, dn, X):
       de='What it is: the weekly regime score split into its six inputs, each compared with its own history and scaled from −1 to +1. How to read it: right leans long, left leans short, the tick is 0; +0.15 or more counts as long (green), −0.15 or less as short (red), in between flat (grey). The six add up to the score. Caveats: single inputs swing back and forth; it matters when several point the same way.')
     # ── 估值冷熱 ──
     hn = o['hnupl']
-    X['hnupl'] = dict(k='hnupl', zh='長期和短期持有者的帳面賺賠（NUPL）', en='Paper profit of long- and short-term holders (NUPL)', hz='長期持有者 NUPL', he='Long-term holder NUPL', f='n3', rows=hn['rows'], p=1, hero=1,
+    X['hnupl'] = dict(k='hnupl', zh='長短期持有者淨未實現損益（NUPL）', en='LTH and STH Net Unrealized Profit/Loss (NUPL)', hz='長期持有者 NUPL', he='Long-term holder NUPL', f='n3', rows=hn['rows'], p=1, hero=1,
       ser=[ser(3, zh='短期持有者 NUPL', en='Short-term holder NUPL', col='ac', w=1, op=.7), ser(2, zh='長期持有者 NUPL', en='Long-term holder NUPL', col='c3', w=1.9)],
       zones=[dict(lo=None, hi=0, col='c3', zh='低於 0：投降（整體虧損）', en='Below 0: capitulation (a loss overall)'), dict(lo=0, hi=.25, col='c4', zh='0–0.25：希望', en='0–0.25: hope'), dict(lo=.25, hi=.5, col='up', zh='0.25–0.5：樂觀', en='0.25–0.5: optimism'), dict(lo=.5, hi=.75, col='c5', zh='0.5–0.75：信念', en='0.5–0.75: belief'), dict(lo=.75, hi=None, col='ac', zh='高於 0.75：過熱', en='Above 0.75: overheated')],
       marks=[dict(d=dn(t['date']), v=t['value'], col='ac', up=1, zh='%s %.2f' % (yr(t['date']), t['value']), en='%s %.2f' % (yr(t['date']), t['value'])) for t in hn['tops']] + [dict(d=dn(t['date']), v=t['value'], col='c3', up=0, zh='%s %.2f' % (yr(t['date']), t['value']), en='%s %.2f' % (yr(t['date']), t['value'])) for t in hn['bottoms']],
@@ -198,8 +198,8 @@ def build(L, N, E, dn, X):
           ('九條線裡有 %d 條已經排到歷史最低的 10%% 以內，最便宜的是%s' % (n10, zs(AVN[lo_['key']][0]).rstrip()) if n10 else '九條線都還沒排到歷史最低的 10%% 以內，最便宜的是%s' % zs(AVN[lo_['key']][0]).rstrip()),
           ('%d of the nine lines are already in the lowest 10%% of history; the cheapest is the %s' % (n10, AVN[lo_['key']][1]) if n10 else 'None of the nine lines is in the lowest 10%% of history yet; the cheapest is the %s' % AVN[lo_['key']][1]))
     rr = o['rrisk']
-    X['rrisk'] = dict(k='rrisk', zh='儲備風險', en='Reserve risk', f='n5', rows=rr['rows'], p=1, log=1, hero=2,
-      ser=[ser(3, zh='近 4 年最低 10%', en='4-year bottom 10%', col='c4', dash='4 3', w=1), ser(4, zh='近 4 年最高 10%', en='4-year top 10%', col='c5', dash='4 3', w=1), ser(2, zh='儲備風險', en='Reserve risk', col='c3', w=1.8)],
+    X['rrisk'] = dict(k='rrisk', zh='儲備風險', en='Reserve Risk', f='n5', rows=rr['rows'], p=1, log=1, hero=2,
+      ser=[ser(3, zh='近 4 年最低 10%', en='4-year bottom 10%', col='c4', dash='4 3', w=1), ser(4, zh='近 4 年最高 10%', en='4-year top 10%', col='c5', dash='4 3', w=1), ser(2, zh='儲備風險', en='Reserve Risk', col='c3', w=1.8)],
       spans=[dict(a=dn(e['start']), b=dn(e['end']), col='c4', op=.18) for e in rr['eps']], leg=[['c4', '在低檔區的期間', 'Time in the low zone', 'box']],
       dz='這是什麼：儲備風險比的是價格和長期持有者的信心。老手把幣放著不賣的時間越久、價格又越低，數值越低，代表「現在的價格相對持有者的信心很便宜」；價格衝高、老手開始賣，數值就變高。單位 ‰ 是千分之一。'
          '怎麼看：實線是儲備風險（對數刻度）；兩條虛線是近 4 年最低 10% 和最高 10% 的門檻，每天跟著移動；青色區塊是落在最低 10% 的期間。'
@@ -335,7 +335,7 @@ def build(L, N, E, dn, X):
     # ── 底部訊號 ──
     ac = cy['age_cost']; cr = ac['crosses']
     apx = ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.3, op=.7); c36 = ac.get('c36') or {}
-    X['agecost'] = dict(k='agecost', zh='依持有時間的持幣成本', en='Holder cost by coin age',
+    X['agecost'] = dict(k='agecost', zh='各幣齡已實現價格', en='Realized Price by Coin Age',
       modes=[dict(mz='6–12 與 12–18 個月', me='6–12 vs 12–18 months', hz='收盤', he='Close', one=1, f='usd0', rows=ac['rows'], ser=[apx, ser(3, zh='持有 12–18 個月的成本', en='Cost of coins held 12–18 months', col='c3', w=2), ser(2, zh='持有 6–12 個月的成本', en='Cost of coins held 6–12 months', col='ac', w=2)],
                   marks=[dict(d=dn(x['date']), v=x['cost'], on=0, col='up' if x['kind'] == 'golden' else 'dn', up=1 if x['kind'] == 'golden' else 0, zh=x['date'][:7].replace('-', '/') + (' 上穿' if x['kind'] == 'golden' else ' 下穿'), en=x['date'][:7] + (' cross up' if x['kind'] == 'golden' else ' cross down')) for x in cr]),
              dict(mz='3–6 個月', me='3–6 months', hz='收盤', he='Close', one=1, f='usd0', rows=ac['rows'], ser=[apx, ser(4, zh='持有 3–6 個月的成本', en='Cost of coins held 3–6 months', col='ac', w=2)],
@@ -564,9 +564,9 @@ def build(L, N, E, dn, X):
       list=dict(rows=[row('%s → %s' % (yr(c['bottom']), yr(c['top'])) if not now_ else '%s → 現在' % yr(c['bottom']), '%s → %s' % (yr(c['bottom']), yr(c['top'])) if not now_ else '%s → now' % yr(c['bottom']), ('%.0f×' % c['mult']) if c['mult'] >= 20 else ('%.1f×' % c['mult']) if c['mult'] >= 10 else ('%.2f×' % c['mult']),
                           col='c4' if now_ else None, bar=math.log10(1 + max(0, c['add_b'])) / cema * 100, bc='c4', bar2=math.log10(max(1, c['mult'])) / cemm * 100, bc2='c5',
                           nz='流入 %s 億美元 · %d 天' % (format(int(round(c['add_b'] * 10)), ','), c.get('days') or 0), ne='$%sB in · %d days' % (format(c['add_b'], ',.1f'), c.get('days') or 0)) for c, now_ in [(c_, 0) for c_ in ce['cycles']] + [(ce['cur'], 1)]]),
-      dz='這是什麼：每一輪從熊市底部到牛市頂部，流進來多少錢、價格漲了幾倍。流進來的錢用實現市值的增加來算：實現市值是每顆幣按它最後一次移動時的價格加總，可以當成市場真正投入的資金。'
+      dz='這是什麼：每一輪從熊市底部到牛市頂部，流進來多少錢、價格漲了幾倍。流進來的錢用已實現市值的增加來算：已實現市值是每顆幣按它最後一次移動時的價格加總，可以當成市場真正投入的資金。'
          '怎麼看這張圖：每一列是一輪，最後一列是這一輪到現在（大數字是這一輪從底部漲了幾倍）；青色橫條是流進來的錢，金色橫條是價格倍數，長度用對數刻度，才能把差上百倍的數字放在一起比。市場越大，同樣的錢推得越少，所以青色一輪比一輪長、金色一輪比一輪短。'
-         '要保留的地方：只有四輪；底部和頂部的日期用本站的週期劃分；交易所整理錢包、遺失的幣都會影響實現市值，只看數量級。',
+         '要保留的地方：只有四輪；底部和頂部的日期用本站的週期劃分；交易所整理錢包、遺失的幣都會影響已實現市值，只看數量級。',
       de='What it is: for each cycle from bear-market bottom to bull-market top, how much money came in and how many times the price rose. Money in is the increase in realized cap: every coin valued at the price it last moved, which can be read as the money actually put into the market. '
          'How to read it: one row per cycle, the last row being this cycle so far (the big number is how many times price has risen from its bottom). The cyan bar is money in and the gold bar the price multiple, on a log scale so numbers hundreds of times apart fit side by side. The bigger the market, the less the same money moves it, so the cyan bars grow and the gold bars shrink cycle after cycle. '
          'Caveats: only four cycles; bottom and top dates follow this site\'s cycle split; exchange wallet reshuffles and lost coins both affect realized cap, so read it for orders of magnitude.')

@@ -102,6 +102,8 @@ def lint_voice(doc, zh, prev=None):
     if zh:   # 2026-11-17 使用者：「以後幾成這種表達方式都換成百分數表達方式」（長文、回覆、推薦圖表、圖上的字都一樣）
         ch = sorted({m.group(0) for m in re.finditer(r'[一兩二三四五六七八九半幾]成(?=[以左上下的在多少內時，。、；）\s]|$)', allt)})
         if ch: warn.append(f'{tag}用了「{"、".join(ch)}」：幾成一律寫成百分數（一成→10%、兩成→20%）')
+        tm = sorted({m.group(0) for m in re.finditer(r'(?<![已未])實現(獲利|虧損|市值|價格|損益)|淨認賠|認賠分界線', allt)})   # 2026-11-27 使用者：指標名照業界正式說法
+        if tm: warn.append(f'{tag}用了「{"、".join(tm)}」：指標名照業界正式說法，「已實現」是固定前綴（已實現虧損、淨已實現損益），「認賠」不當指標名（pipeline/next/WRITING.md 第 0 節）')
     ss = [x for _, ts in U for t in ts if t for x in _sents(t, zh)]
     so = sum(1 for x in ss if re.match(r'所以' if zh else r'So\b', x))
     if so > 4: warn.append(f'{tag}「{"所以" if zh else "So"}」開頭的句子 {so} 句：一天最多三四次，結論已經在前面')

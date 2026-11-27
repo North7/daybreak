@@ -88,7 +88,7 @@ def build(L, N, E, dn):
         tc_sg = lambda v: ('%+.1f%%' % v).replace('-', '−'); tc_up = lambda v: '上方 %.1f%%' % v if v >= 0 else '下方 %.1f%%' % -v; tc_ue = lambda v: '%.1f%% above' % v if v >= 0 else '%.1f%% below' % -v
         tc_TN = [('100–1k 顆', '100–1K BTC', 'c5'), ('1k–10k 顆', '1K–10K BTC', 'c3'), ('10k–100k 顆', '10K–100K BTC', 'c4')]   # 顏色和「大戶 30 日淨變化」同一組：100–1k 黃、1k–10k 藍紫、1 萬以上青
         tc_runs = '、'.join('%s%s' % (tc_md(r_['start']), '' if r_['days'] == 1 else '–' + tc_md(r_['end'])) + '（%d 天）' % r_['days'] for r_ in tc_t['runs']); tc_rune = ', '.join((r_['start'][5:] if r_['days'] == 1 else r_['start'][5:] + ' to ' + r_['end'][5:]) + ' (%d)' % r_['days'] for r_ in tc_t['runs'])
-        X['tiercost'] = dict(k='tiercost', zh='大戶地址的持幣成本', en='Cost basis of large-balance addresses', hz='1k–10k 顆這一層的成本', he='Cost of the 1K–10K BTC tier', one=1, f='usd0', hero=2, rng=365, rows=tc_t['rows'],
+        X['tiercost'] = dict(k='tiercost', zh='大戶地址的已實現價格', en='Realized Price of Large-Balance Addresses', hz='1k–10k 顆這一層的成本', he='Cost of the 1K–10K BTC tier', one=1, f='usd0', hero=2, rng=365, rows=tc_t['rows'],
           ser=[ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.3)] + [ser(2 + i_, zh=tc_TN[i_][0], en=tc_TN[i_][1], col=tc_TN[i_][2], w=2.1 if i_ == 1 else 1.5) for i_ in range(3)],
           src='Bitview · ' + _md(bx['date']), srce='Bitview · ' + _md(bx['date']),
           dz='把地址依餘額分成三層（100–1k 顆、1k–10k 顆、10k–100k 顆），每一層的已實現市值除以持幣量，就是這一層的幣平均是在什麼價格最後一次移動的。'
@@ -163,7 +163,7 @@ def build(L, N, E, dn):
         if len(out) > 1: out[1][2] = 'c5'
         return out
     hl = pick(uv['band'], uv['width'], uv.get('price') or close)
-    X['urpd'] = dict(k='urpd', zh='籌碼分布（URPD）', en='Supply distribution (URPD)', hz='現價這一格佔流通量', he='Share of supply in the current bucket',
+    X['urpd'] = dict(k='urpd', zh='UTXO 已實現價格分布（URPD）', en='UTXO Realized Price Distribution (URPD)', hz='現價這一格佔流通量', he='Share of supply in the current bucket',
       dist=dict(kind='one', step=uv['width'], rows=uv['band'], hl=hl, base='color-mix(in srgb, var(--c3) 45%, var(--k2))', unit='btc', leg=[['c4', '現價附近最厚的一段', 'Thickest stretch near price'], ['c5', '另一側最薄的一段', 'Thinnest stretch on the other side'], ['color-mix(in srgb, var(--c3) 45%, var(--k2))', '其餘（每 $2,000 一格）', 'The rest ($2,000 buckets)']]),
       hs=dict(v=u['cur_pct'], f='p2'), dz='每一格是最後一次在那個價位移動的幣。厚的地方是很多人的成本，價格到那裡容易停；薄的地方沒什麼人的成本，價格容易快速穿過。', de='Each bucket holds the coins that last moved at that price. Thick zones are where many holders\' costs sit and price tends to stall; thin zones have few and price tends to move through quickly.')
     ut = (L.get('chips') or {}).get('urpd_terr')
@@ -205,7 +205,7 @@ def build(L, N, E, dn):
           say=own(it, '%s 萬顆換了價位：賠錢移動 %s 萬、賺錢移動 %s 萬' % (wz(out_), wz(lo_), wz(ga_)), '%sK BTC changed price: %sK at a loss, %sK at a profit' % (ke(out_), ke(lo_), ke(ga_))),
           dz='籌碼分布（URPD）今天減 7 天前，每 $1,000 一格。往右的綠色是變厚，往左的紅色是變薄；灰底是這 7 天的價格範圍。幣一移動，原本的那一格變薄、移動當時價位的那一格變厚，所以變厚的格子都在灰底裡。看變薄的格子在哪，就知道這些幣原本的成本：在灰底上方的，是比現在貴的時候買的，移動時是賠的；在灰底下方的，移動時是賺的。鏈上移動不一定是買賣，交易所整理錢包、換地址也算；資料是逐筆 UTXO，沒有做實體歸併，和「籌碼分布」那張每 $2,000 一格的來源不同，數字會有小差異。只作讀值。',
           de='Today\'s supply distribution (URPD) minus the one from 7 days ago, in $1,000 buckets. Green bars to the right thickened, red bars to the left thinned; the grey band is the price range of these 7 days. When a coin moves, its old bucket thins and the bucket at the price of the move thickens, so the thickening sits inside the grey band. Where the thinning sits tells you what those coins cost: above the band they were bought higher and moved at a loss; below it they moved at a profit. On-chain moves are not all sales: exchange wallet reshuffles and address changes count too. The data is per UTXO with no entity adjustment and comes from a different source than the $2,000-bucket distribution chart, so figures differ slightly. A reading only.')
-    X['cohort'] = dict(k='cohort', zh='長短期持有者籌碼', en='Long- vs short-term holder supply', hz='短期持有者平均成本', he='STH average cost',
+    X['cohort'] = dict(k='cohort', zh='長短期持有者供給', en='Long- vs short-term holder supply', hz='短期持有者平均成本', he='STH average cost',
       dist=dict(kind='split', cl='ac', cr='c3', la=['短期持有者', 'Short-term'], lb=['長期持有者', 'Long-term'], zone=([co['window']['lo'], co['window']['hi'], '近 155 天的價格範圍', 'Price range of the last 155 days'] if co.get('window') else None), step=co['width'], rows=[[r[0], round(r[2]), round(r[1])] for r in co['rows']], unit='btc', leg=[['c3', '長期持有者（155 天以上）', 'Long-term holders (155d+)'], ['ac', '短期持有者', 'Short-term holders']]),
       hs=dict(v=co['tot']['sth_cost'], f='usd0'), dz='同一張籌碼分布，依持有時間分成兩群，背對背放：左邊是短期持有者，右邊是長期持有者。短期持有者的幣在現價上方，是套牢的賣壓；在現價下方，是第一層支撐。', de='The same distribution split by holding time, back to back: short-term holders on the left, long-term on the right. Short-term holder coins above price are underwater sellers; below price they form the first support.')
     _cs = co.get('src'); _cn = 'Bitview' if _cs == 'bitview' else 'CheckOnChain' if _cs == 'checkonchain' else None   # 2026-11-16：「現在」那張的來源寫在卡片上（Bitview；抓不到時是 CheckOnChain，再不行是推算）
@@ -229,7 +229,7 @@ def build(L, N, E, dn):
     w5 = lh.get('within5') or {}
     nz_ = sorted(v for v in hb_ if v); htop = max(1, nz_[int(len(nz_) * .998)]) if nz_ else 255   # 色階上限：整份快照的 99.8 百分位（照舊版 liqTopOf）
     hbands = [dict(b, side='long') for b in (lh.get('below') or [])[:1]] + [dict(b, side='short') for b in (lh.get('above') or [])[:1]]
-    X['liq'] = dict(k='liq', zh='清算價位（推算）', en='Liquidation levels (estimated)', hz='現價下方 5% 內的多單清算，顆', he='Long liquidations within 5% below, BTC',
+    X['liq'] = dict(k='liq', zh='清算地圖（推算）', en='Liquidation map (estimated)', hz='現價下方 5% 內的多單清算，顆', he='Long liquidations within 5% below, BTC',
       dist=dict(kind='pos', pg=0, step=lh['step'] * 5, rows=[[lh['lo'] + i * lh['step'], sum(last[i:i + 5])] for i in range(0, lh['nb'], 5)], unit='rel', leg=[['up', '現價上方：空單會被清算', 'Above price: shorts get liquidated'], ['dn', '現價下方：多單會被清算', 'Below price: longs get liquidated']],
         heat=dict(t0=lh['t0'], n=lh['hours'], hr=lh.get('hr'), lo=lh['lo'], step=lh['step'], nb=lh['nb'], cap=lh['cap'], top=htop, heat=lh['heat'], candles=lh['candles'], close=lh['close'], bands=hbands, long=lh.get('long'))), wide=1,
       hs=dict(v=w5.get('below'), f='btc0'), dz='業界常見的清算熱力圖（類似 CoinGlass）。橫軸是最近 7 天、每小時一欄，縱軸是價格；越亮代表推算的待清算量越多，收盤下方是多單、上方是空單，價格走過的亮帶就算清掉了。右邊窄欄是現在這一刻各價位的量，最亮的上下兩段直接標出價位和顆數。做法：多家交易所永續合約的未平倉量增加當成新開倉，假設 5–100 倍槓桿算出清算價。圖上方可以切到「6 個月」：每天一欄、每格 $500，看得到離現價比較遠的大團。這是模型，不是交易所的實際資料。', de='The industry-standard liquidation heatmap (CoinGlass-style). Time runs across the last 7 days, one column per hour; price runs up the side. Brighter means more estimated BTC awaiting liquidation: longs below the close, shorts above; bands that price trades through are cleared. The strip on the right is the amount at each price right now, with the brightest band above and below labelled. Method: rises in perpetual open interest across several exchanges count as new positions, with leverage assumed between 5x and 100x. The switch above the chart changes to six months: one column per day in $500 buckets, which shows the large clusters further from price. A model, not exchange data.')
@@ -279,8 +279,8 @@ def build(L, N, E, dn):
         v = rows[-1][1]; hist = sorted(abs(r[1]) for r in rows if r[0] >= tE_ - 365) or [abs(v)]
         p90 = hist[min(len(hist) - 1, int(len(hist) * .9))] or 1e-9
         return dict(k=key, zh=zh, en=en, v=v, f=f, dir=(1 if v > 0 else -1 if v < 0 else 0) * (-1 if inv else 1), st=round(max(0.0, min(1.0, abs(v) / p90)), 2), side=side)
-    FS = [fsrc('etf', '現貨 ETF', 'Spot ETFs', 'L'), fsrc('pr-us', '美國現貨溢價', 'US spot premium', 'L'), fsrc('pr-asia', '亞洲場外溢價', 'Asia OTC premium', 'L'), fsrc('kp', '韓國溢價', 'Korea premium', 'L'), fsrc('exflow', '交易所淨流量', 'Exchange netflow', 'L', 1), fsrc('svd', '現貨主動買賣', 'Spot taker flow', 'L'),
-          fsrc('ad', '表觀需求', 'Apparent demand', 'R'), fsrc('rcliq', '實現市值 30 日', 'Realized cap, 30-day', 'R'), fsrc('stab', '穩定幣供給', 'Stablecoin supply', 'R'), fsrc('whale', '大戶 30 日', 'Whales, 30-day', 'R'), fsrc('lthnet', '長期持有者 30 日', 'Long-term holders, 30-day', 'R')]
+    FS = [fsrc('etf', '現貨 ETF', 'Spot ETFs', 'L'), fsrc('pr-us', '美國現貨溢價', 'US spot premium', 'L'), fsrc('pr-asia', '亞洲場外溢價', 'Asia OTC premium', 'L'), fsrc('kp', '韓國溢價', 'Korea premium', 'L'), fsrc('exflow', '交易所淨流量', 'Exchange Netflow', 'L', 1), fsrc('svd', '現貨主動買賣', 'Spot taker flow', 'L'),
+          fsrc('ad', '表觀需求', 'Apparent demand', 'R'), fsrc('rcliq', '已實現市值 30 日', 'Realized cap, 30-day', 'R'), fsrc('stab', '穩定幣供給', 'Stablecoin supply', 'R'), fsrc('whale', '大戶 30 日', 'Whales, 30-day', 'R'), fsrc('lthnet', '長期持有者 30 日', 'Long-term holders, 30-day', 'R')]
     FS = [x for x in FS if x]; FLOW = dict(src=FS, nb=sum(1 for x in FS if x['dir'] > 0), ns=sum(1 for x in FS if x['dir'] < 0)) if len(FS) >= 4 else None
     def crow(key, zh, en):
         rows, f = hrows(LX.get(key)); rows = [r for r in rows if r[0] >= tE_ - 365]

@@ -79,16 +79,16 @@ SERIES = [
     ('rv30', 'RV30（實際波動）', 'RV30 (realized vol)', 'vol', 'deriv', 'vol', lambda L: _rows(L, 'deriv.viz.vol.rows', 2), 1, 'ej', 'diff', None),
     ('ivrv', 'IV − RV30', 'IV − RV30', 'vol', 'deriv', 'vol', _ivrv, 1, 'ej', 'diff', None),
     ('sth-sopr', '短期持有者 SOPR', 'STH-SOPR', 'holders', 'onchain', 'sopr', lambda L: _rows(L, 'chips.viz.sopr.rows', 1), 4, 'ej', 'diff', T('日線，盤中集中認賠會被同一天的獲利賣出平均掉', 'daily; intraday capitulation gets averaged with same-day profit taking')),
-    ('sth-profit', '短期持有者實現獲利', 'STH realized profit', 'holders', 'onchain', 'sthpnl', lambda L: _rows(L, 'onchain.sth_pnl.rows', 1), 'btc', 'ej', 'rel', SM),
-    ('sth-loss', '短期持有者實現虧損', 'STH realized loss', 'holders', 'onchain', 'sthpnl', lambda L: _rows(L, 'onchain.sth_pnl.rows', 2), 'btc', 'ej', 'rel', SM),
+    ('sth-profit', '短期持有者已實現獲利', 'STH realized profit', 'holders', 'onchain', 'sthpnl', lambda L: _rows(L, 'onchain.sth_pnl.rows', 1), 'btc', 'ej', 'rel', SM),
+    ('sth-loss', '短期持有者已實現虧損', 'STH realized loss', 'holders', 'onchain', 'sthpnl', lambda L: _rows(L, 'onchain.sth_pnl.rows', 2), 'btc', 'ej', 'rel', SM),
     ('sth-plr', '短期持有者獲利 ÷ 虧損', 'STH profit ÷ loss', 'holders', 'onchain', 'sthpnl', _ratio_rows, 2, 'ej', 'rel', SM),
-    ('npl', '每日淨實現損益', 'Daily net realized P/L', 'holders', 'onchain', 'npl', lambda L: _rows(L, 'onchain.npl.rows', 2), 'musd', 'e', None, None),
-    ('npl-cum30', '30 日累計淨實現損益（占市值）', '30-day net realized P/L (% of market cap)', 'holders', 'onchain', 'npl', lambda L: _rows(L, 'onchain.npl.cum30.rows', 2), 'spct', 'e4', None, None),
-    ('sth-in-profit', '短期持有者獲利比例', 'STH supply in profit', 'holders', 'onchain', 'profit', lambda L: [(r[0], r[1]) for r in g(L, 'chips.viz.profit') or []], 'pct', 'ej', 'diff', None),
+    ('npl', '每日淨已實現損益', 'Daily net realized P/L', 'holders', 'onchain', 'npl', lambda L: _rows(L, 'onchain.npl.rows', 2), 'musd', 'e', None, None),
+    ('npl-cum30', '30 日累計淨已實現損益（占市值）', '30-day net realized P/L (% of market cap)', 'holders', 'onchain', 'npl', lambda L: _rows(L, 'onchain.npl.cum30.rows', 2), 'spct', 'e4', None, None),
+    ('sth-in-profit', '短期持有者獲利供給佔比', 'STH supply in profit', 'holders', 'onchain', 'profit', lambda L: [(r[0], r[1]) for r in g(L, 'chips.viz.profit') or []], 'pct', 'ej', 'diff', None),
     ('sth-lth', '短期 ÷ 長期持有者供給', 'STH ÷ LTH supply', 'holders', 'onchain', 'cohort', lambda L: [(r[0], r[1]) for r in g(L, 'chips.viz.ratio') or []], 4, 'j', 'diff', None),
     ('cbp', 'Coinbase 溢價（7 日均）', 'Coinbase premium (7-day avg)', 'flows', 'flows', 'pr-us', lambda L: _ma7(_rows(L, 'flows.cb_premium.rows', 1)), 3, 'ej', 'diff', None),
     ('stables', '穩定幣供給', 'Stablecoin supply', 'flows', 'flows', 'stab', lambda L: _rows(L, 'flows.stables.rows', 1), 'busd', 'j', 'rel', None),
-    ('rcliq', '實現市值 30 日變化', 'Realized cap 30-day change', 'flows', 'flows', 'rcliq', lambda L: _rows(L, 'flows.rc_liq.rows', 1), 'spct', 'ej', 'diff', None),
+    ('rcliq', '已實現市值 30 日變化', 'Realized cap 30-day change', 'flows', 'flows', 'rcliq', lambda L: _rows(L, 'flows.rc_liq.rows', 1), 'spct', 'ej', 'diff', None),
     ('p20', 'MVRV ÷ 前一輪高點', 'MVRV ÷ prior cycle peak', 'cycle', 'cycle', 'p20', lambda L: _rows(L, 'cycle.p20.rows', 1), 3, 'j', 'diff', None),
 ] + [('oc-' + k, zh, en, th, 'cycle' if k in OC_TOP else 'onchain', 'oc-' + k, (lambda k: lambda L: _rows(L, 'onchain.viz.' + k + '.rows', 1))(k), f, rule, chg, None) for k, zh, en, th, f, rule, chg in (
     ('mvrv-zscore', 'MVRV Z', 'MVRV Z', 'cycle', 2, 'ej', 'diff'), ('nupl', 'NUPL', 'NUPL', 'cycle', 3, 'ej', 'diff'), ('puell-multiple', 'Puell 倍數', 'Puell multiple', 'cycle', 2, 'ej', 'diff'),
@@ -231,7 +231,7 @@ def states(L):
     rc = g(L, 'flows.rc_liq.chg30_pct'); put('rcliq_pos', None if rc is None else rc > 0)
     cb = g(L, 'flows.cb_premium.avg30'); put('cbp_pos', None if cb is None else cb > 0)   # 2026-11-12：扣掉 USDT 後 7 日平均常在 0 上下跳（四年翻 109 次），翻轉改看 30 日平均（25 次）
     put('hash_cap', g(L, 'onchain.hash_ribbons.capitulation'))
-    put('sth_tp', g(L, 'onchain.sthsig.tp.on')); put('sth_cap', g(L, 'onchain.sthsig.cap.on'))   # 2026-11-11 短期持有者集中止盈／集中認賠（stage_viz.sthsig_viz）
+    put('sth_tp', g(L, 'onchain.sthsig.tp.on')); put('sth_cap', g(L, 'onchain.sthsig.cap.on'))   # 2026-11-11 短期持有者已實現獲利尖峰／集中認賠（stage_viz.sthsig_viz）
     fg = g(L, 'flows.fear_greed.value'); put('fg_zone', None if fg is None else 'xfear' if fg < 25 else 'xgreed' if fg > 75 else 'mid')
     put('stage', g(L, 'cycle.stage.stage'))
     for it in g(L, 'cycle.stage.evidence.items') or []: put('light_' + it['id'], bool(it.get('ok')))
@@ -251,11 +251,11 @@ FLIP = {
     'iv_gt_rv': ('vol', 'deriv', 'vol', T('隱含波動回到實際波動之上', 'Implied vol back above realized'), T('隱含波動跌到實際波動之下', 'Implied vol fell below realized')),
     'rr_pos': ('vol', 'deriv', None, T('25Δ 風險逆轉翻正（買權較貴）', '25Δ risk reversal turned positive (calls richer)'), T('25Δ 風險逆轉翻負（賣權較貴）', '25Δ risk reversal turned negative (puts richer)')),
     'sopr_ge1': ('holders', 'onchain', 'sopr', T('短期持有者 SOPR 回到 1 之上', 'STH-SOPR back above 1'), T('短期持有者 SOPR 跌破 1（轉為賠錢賣）', 'STH-SOPR fell below 1 (selling at a loss)')),
-    'npl7_pos': ('holders', 'onchain', 'npl', T('近 7 日淨實現損益轉為淨獲利', '7-day net realized P/L turned to net profit'), T('近 7 日淨實現損益轉為淨認賠', '7-day net realized P/L turned to net loss')),
-    'rcliq_pos': ('flows', 'flows', 'rcliq', T('實現市值 30 日變化轉正（資金回流）', 'Realized cap 30-day change turned positive'), T('實現市值 30 日變化轉負（資金流出）', 'Realized cap 30-day change turned negative')),
+    'npl7_pos': ('holders', 'onchain', 'npl', T('近 7 日淨已實現損益轉為淨獲利', '7-day net realized P/L turned to net profit'), T('近 7 日淨已實現損益轉為淨認賠', '7-day net realized P/L turned to net loss')),
+    'rcliq_pos': ('flows', 'flows', 'rcliq', T('已實現市值 30 日變化轉正（資金回流）', 'Realized cap 30-day change turned positive'), T('已實現市值 30 日變化轉負（資金流出）', 'Realized cap 30-day change turned negative')),
     'cbp_pos': ('flows', 'flows', 'pr-us', T('Coinbase 溢價 30 日均轉正', 'Coinbase premium 30-day average turned positive'), T('Coinbase 溢價 30 日均轉負', 'Coinbase premium 30-day average turned negative')),
-    'sth_tp': ('holders', 'onchain', 'sthsig', T('短期持有者集中止盈（止盈強度升破 2）', 'Short-term holder profit-taking spike (reading above 2)'), T('短期持有者集中止盈結束（止盈強度回到 2 以下）', 'Short-term holder profit-taking spike ended (reading back below 2)')),
-    'sth_cap': ('holders', 'onchain', 'sthsig', T('短期持有者集中認賠（認賠強度升破 2）', 'Short-term holder capitulation spike (reading above 2)'), T('短期持有者集中認賠結束（認賠強度回到 2 以下）', 'Short-term holder capitulation spike ended (reading back below 2)')),
+    'sth_tp': ('holders', 'onchain', 'sthsig', T('短期持有者已實現獲利尖峰（已實現獲利強度升破 2）', 'Short-term holder profit-taking spike (reading above 2)'), T('短期持有者已實現獲利尖峰結束（已實現獲利強度回到 2 以下）', 'Short-term holder profit-taking spike ended (reading back below 2)')),
+    'sth_cap': ('holders', 'onchain', 'sthsig', T('短期持有者已實現虧損尖峰（已實現虧損強度升破 2）', 'Short-term holder capitulation spike (reading above 2)'), T('短期持有者已實現虧損尖峰結束（已實現虧損強度回到 2 以下）', 'Short-term holder capitulation spike ended (reading back below 2)')),
     'hash_cap': ('cycle', 'onchain', None, T('算力帶進入礦工投降', 'Hash Ribbons: miner capitulation started'), T('算力帶脫離礦工投降', 'Hash Ribbons: miner capitulation ended')),
     'tm_top': ('cycle', 'cycle', None, T('Tidemark 頂部訊號站上 50', 'Tidemark top signal at or above 50'), T('Tidemark 頂部訊號跌回 50 之下', 'Tidemark top signal back below 50')),
     'tm_bottom': ('cycle', 'cycle', None, T('Tidemark 底部訊號站上 50', 'Tidemark bottom signal at or above 50'), T('Tidemark 底部訊號跌回 50 之下', 'Tidemark bottom signal back below 50')),
@@ -385,20 +385,20 @@ def _combos(L, sig, px):
         if rp is not None and rp >= CMB and dc is not None and dc < 0:
             out.append(dict(id='combo:profit-into-drop', kind='combo', key='profit-into-drop', dir='down', theme='holders', page='onchain', chart='sthpnl', date=ds(x), x=x, score=5,
                             title=T('短期持有者趁跌集中獲利了結', 'Short-term holders took profit into a down day'),
-                            fig=T(f'實現獲利 {F(pr[i][1], "btc", "zh")}（近一年第 {rp:.1f} 百分位），當天價格 {F(dc, "spct", "zh")}（{md(x)}）', f'realized profit {F(pr[i][1], "btc", "en")} (1-year percentile {rp:.1f}); price {F(dc, "spct", "en")} that day ({md(x)})'),
+                            fig=T(f'已實現獲利 {F(pr[i][1], "btc", "zh")}（近一年第 {rp:.1f} 百分位），當天價格 {F(dc, "spct", "zh")}（{md(x)}）', f'realized profit {F(pr[i][1], "btc", "en")} (1-year percentile {rp:.1f}); price {F(dc, "spct", "en")} that day ({md(x)})'),
                             caveat=SM, hist=_history(pr, lambda k: (lambda q: q is not None and q >= CMB and (day_chg(pr[k][0]) or 0) < 0)(_rank(pr, k)), px, i)))
         if len(ls) > MIN_N:
             j = len(ls) - 1; rl = _rank(ls, j); so = g(L, 'chips.viz.sopr.value')
             if rl is not None and rl >= CMB and so is not None and so < 1:
                 out.append(dict(id='combo:sth-capitulation', kind='combo', key='sth-capitulation', dir='down', theme='holders', page='onchain', chart='sthpnl', date=ds(ls[j][0]), x=ls[j][0], score=5,
-                                title=T('短期持有者集中認賠', 'Short-term holders capitulating'), fig=T(f'實現虧損 {F(ls[j][1], "btc", "zh")}（近一年第 {rl:.1f} 百分位），SOPR {so}', f'realized loss {F(ls[j][1], "btc", "en")} (1-year percentile {rl:.1f}), SOPR {so}'),
+                                title=T('短期持有者已實現虧損尖峰', 'Short-term holders capitulating'), fig=T(f'已實現虧損 {F(ls[j][1], "btc", "zh")}（近一年第 {rl:.1f} 百分位），SOPR {so}', f'realized loss {F(ls[j][1], "btc", "en")} (1-year percentile {rl:.1f}), SOPR {so}'),
                                 caveat=SM, hist=_history(ls, lambda k: (lambda q: q is not None and q >= CMB)(_rank(ls, k)), px, j)))
-    # SOPR 的變化拆成「獲利變多」還是「虧損變少」（STH 實現獲利／虧損兩條）
+    # SOPR 的變化拆成「獲利變多」還是「虧損變少」（STH 已實現獲利／虧損兩條）
     w = g(L, 'onchain.sth_pnl.d7'); sop = next((s for s in sig if s['key'] in ('sth-sopr', 'sopr_ge1')), None)
     if w and sop:
         up = g(L, 'onchain.sth_pnl.ratio', 0) >= w['ratio']
         dz, de = (('獲利了結變多', 'more profit taking') if up else ('獲利了結變少', 'less profit taking')) if w['drive'] == 'profit' else (('認賠變少', 'less loss selling') if up else ('認賠變多', 'more loss selling'))
-        sop['decomp'] = T(f'拆解：和 7 天前比，實現獲利 {F(w["profit_chg_pct"], "spct", "zh")}、實現虧損 {F(w["loss_chg_pct"], "spct", "zh")}，主要是{dz}', f'breakdown: versus 7 days ago, realized profit {F(w["profit_chg_pct"], "spct", "en")}, realized loss {F(w["loss_chg_pct"], "spct", "en")}; mainly {de}')
+        sop['decomp'] = T(f'拆解：和 7 天前比，已實現獲利 {F(w["profit_chg_pct"], "spct", "zh")}、已實現虧損 {F(w["loss_chg_pct"], "spct", "zh")}，主要是{dz}', f'breakdown: versus 7 days ago, realized profit {F(w["profit_chg_pct"], "spct", "en")}, realized loss {F(w["loss_chg_pct"], "spct", "en")}; mainly {de}')
     chg, fw = g(L, 'price.bar.chg_pct'), g(L, 'deriv.funding_multi.weighted_now')
     if chg is not None and fw is not None and chg >= 1 and fw < 0:
         out.append(dict(id='combo:squeeze', kind='combo', key='squeeze', dir='up', theme='vol', page='deriv', chart=None, score=4,
@@ -423,14 +423,14 @@ def _combos(L, sig, px):
             out.append(dict(id='combo:etf-price-div', kind='combo', key='etf-price-div', dir='up' if tot > 0 else 'down', theme='flows', page='flows', chart='etf', score=4,
                             title=T('ETF 資金和價格背離', 'ETF flows diverging from price'),
                             fig=T(f'近 5 個完整交易日 ETF {F(tot, "musd", "zh")}，同期價格 {F(pc, "spct", "zh")}（{e[0]["d"][5:]}–{e[-1]["d"][5:]}）', f'ETF {F(tot, "musd", "en")} over the last 5 complete days, price {F(pc, "spct", "en")} ({e[0]["d"][5:]}–{e[-1]["d"][5:]})')))
-    # 2026-11-06 使用者要求（指標擴充，oc_extra.py 已算好）：實現虧損峰值背離、資金與價格梯度背離、鏈上勢能頂背離、相對未實現獲利跌破地板。
+    # 2026-11-06 使用者要求（指標擴充，oc_extra.py 已算好）：已實現虧損峰值背離、資金與價格梯度背離、鏈上勢能頂背離、相對未實現獲利跌破地板。
     #   背離要等擺動點前後幾天才確認，所以確認後 7 天內都列出
     bd = dn(g(L, 'meta.bar_date')); fm = lambda v: f'{v:,.0f}'
     rl = g(L, 'onchain.rloss.cur')
     if rl and rl.get('kind') in ('div', 'cap') and bd - dn(rl['date']) <= 14:
         dv_ = rl['kind'] == 'div'
         out.append(dict(id='combo:rloss-' + rl['kind'], kind='combo', key='rloss-' + rl['kind'], dir='up' if dv_ else 'down', theme='holders', page='onchain', chart='rloss', score=3.5,
-                        title=T('實現虧損峰值背離：價格更低、認賠變少', 'Realized-loss divergence: lower price, smaller loss') if dv_ else T('認賠放大：價格更低、認賠更多', 'Loss-taking grows: lower price, bigger loss'),
+                        title=T('已實現虧損峰值背離：價格更低、認賠變少', 'Realized-loss divergence: lower price, smaller loss') if dv_ else T('認賠放大：價格更低、認賠更多', 'Loss-taking grows: lower price, bigger loss'),
                         fig=T(f'{rl["prev"][5:]} {fm(rl["prev_price"])} → {rl["date"][5:]} {fm(rl["price"])}；認賠峰值 {rl["prev_bp"]} → {rl["bp"]} bp（市值的萬分之）', f'{rl["prev"][5:]} {fm(rl["prev_price"])} → {rl["date"][5:]} {fm(rl["price"])}; loss peak {rl["prev_bp"]} → {rl["bp"]} bp of market cap'),
                         caveat=T('不是實體調整；樣本 2013 年起約 20 次', 'not entity-adjusted; about 20 cases since 2013')))
     for nn, path, w in (('120', 'onchain.grad.div120', 27), ('30', 'onchain.grad.div30', 17)):

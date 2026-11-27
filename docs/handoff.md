@@ -61,7 +61,7 @@ node tests/smoke_next.js                  # 新版各頁 × 中英 × 桌機／�
 | 月度報酬熱力表（2026-11-08，見 5e） | 價格版 | `price.monthly` |
 | 內容重組與導覽：三版新分組、四張需求圖與兩張價格類圖搬家、全站搜尋、側欄子目錄、手機目錄鈕（2026-11-08，見 5f） | 全站 | `grpH`、`buildFind`、`buildSubnav`、`grpSpy` |
 | 短期持有者供給 90 天變化（2026-11-08） | 鏈上版「長期持有者與大戶」 | `onchain.sthd`（`stage_viz.sthd_viz`，Bitview `sths`；rows 第 3 欄千顆） |
-| 短期持有者集中止盈與認賠（2026-11-11，本站自製） | 鏈上版「賣出的人賺還是賠」 | `onchain.sthsig`（`stage_viz.sthsig_viz`，Bitview `ap1`＋`ap2`、`al1`＋`al2` ÷ `sth`×`sths`；5 日指數平均、105 天 z 分數、門檻 2；rows＝[日, 收盤, 止盈強度, −認賠強度]）；異動 `sth_tp`、`sth_cap` |
+| 短期持有者集中止盈與認賠（2026-11-11，本站自製） | 鏈上版「賣出的人賺還是賠」 | `onchain.sthsig`（`stage_viz.sthsig_viz`，Bitview `ap1`＋`ap2`、`al1`＋`al2` ÷ `sth`×`sths`；5 日指數平均、105 天 z 分數、門檻 2；rows＝[日, 收盤, 止盈強度, −已實現虧損強度]）；異動 `sth_tp`、`sth_cap` |
 | 清算熱力圖改 Coinalyze 多家交易所（11 個合約，取不到退回 OKX）＋「2 年」範圍（2026-11-08） | 衍生品版「槓桿與清算」 | `deriv.liq_heat`（`model.src`＝Coinalyze／OKX；`long`＝2 年檔的時間）；`data/liq_long.json`（`liq_heat.build_long`，點了才載入） |
 | 晨昏指數（2026-11-08，和週線多空分數並列） | 週期版「現在的階段」、頭版「方向」 | `cycle.dawn`（`pipeline/dawn.py`；rows＝[天數, 熱度, 收盤, 階段 0–4, 方向 ±1]；candles＝月 K [月初天數, 開, 高, 低, 收]（`dawn.fetch_ohlc`，Bitview price_ohlc）；圖是網點上下模式 `drawDawn`（色票 `DW_VIV`、`dwCol`；樣稿與研究在本機 `.claude/research/dawn/`），不用五個階段色；stats＝各階段之後半年、一年；marks＝歷次頂底的熱度） |
 | 資金費率歷史、全市場未平倉量、多空帳戶比（2026-11-08，Coinalyze 日線） | 衍生品版「槓桿與清算」 | `deriv.fund_hist`、`deriv.oi_hist`、`deriv.ls_acct`（`pipeline/cz_viz.py`；rows 每 2 天一點） |
@@ -82,7 +82,7 @@ node tests/smoke_next.js                  # 新版各頁 × 中英 × 桌機／�
 ## 5b. 2026-11-06 指標擴充（`oc_extra.py`、`opt_flow.py`）
 
 - 參考資料是付費內容，**只存在本機** `.claude/research/subs/`（git 不追蹤）：`index.json`、`catalogue_group1-4.md`（逐張圖的說明）、`img/`。公開 repo、網站、PR、commit 都不能出現參考資料的原文、原圖或出處的人名。
-- 網站上只放用本站資料重做的版本：鏈上版（回調壓力清單、供給分位成本線、實現虧損峰值背離、鏈上勢能、長短期供給比 30 日變化、資金與價格增量梯度；籌碼分布加雙錨與缺口；短期持有者獲利比例加虧損比例的歷次）、週期版（相對未實現獲利的地板）、衍生品版（Gamma 曝險推算、買方權利金差、OKX 現貨主動買賣差）。每項都附回測，沒有優勢的照寫（例如回調壓力清單、短期持有者虧損 > 60%）。
+- 網站上只放用本站資料重做的版本：鏈上版（回調壓力清單、供給分位成本線、已實現虧損峰值背離、鏈上勢能、長短期供給比 30 日變化、資金與價格增量梯度；籌碼分布加雙錨與缺口；短期持有者獲利比例加虧損比例的歷次）、週期版（相對未實現獲利的地板）、衍生品版（Gamma 曝險推算、買方權利金差、OKX 現貨主動買賣差）。每項都附回測，沒有優勢的照寫（例如回調壓力清單、短期持有者虧損 > 60%）。
 - 做不到：BRS、BSS（Glassnode 付費 ML 模型）；交易所流量依轉帳金額分層、實體調整的指標（要付費的實體標籤）；他的 TradingView 付費腳本。
 - `coc_cache/deribit_flow.json`：Deribit 選擇權逐筆成交的每日權利金與每個未到期合約的主動方向淨量（Gamma 曝險的做市商方向靠它）。第一次在本機回補了一年（約 4,400 頁、45 分鐘）；每日管線只補前一天（約 12 頁）。**快取不見時每日管線只補 3 天**，Gamma 曝險的覆蓋率會很低，要在本機重跑 `python3 -c "import opt_flow as F; F.update_trades(backfill_days=366, max_pages=7000)"`（在 pipeline/ 底下）再提交。
 - `coc_cache/okx_taker.json`：OKX 日線（UTC+8 日界）會一直累積，API 本身只給 180 天。

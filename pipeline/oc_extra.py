@@ -2,7 +2,7 @@
 產品內不寫個人名字。每一項都照實寫回測（樣本數、勝率、和同期任一天比），只作讀值，不是買賣訊號。
 
 第一批：供給分位成本線（quant_viz）、短期持有者虧損比例的歷次（sthl_viz）、相對未實現獲利的地板（rup_viz）、
-       全網實現虧損峰值背離（rloss_viz）、長短期持有者供給比的 30 日變化（lsrchg_viz）。
+       全網已實現虧損峰值背離（rloss_viz）、長短期持有者供給比的 30 日變化（lsrchg_viz）。
 第二批：資金與價格增量梯度（grad_viz）、鏈上勢能（mom_viz）、回調壓力清單（pullback_viz）。
 bv＝bitview.cols(rows)：{欄位: {日期: 值}}；px＝統一收盤（PXC），缺日用 Bitview 自己的收盤。x 一律為 1970-01-01 起的天數。"""
 import bisect, math, statistics as st
@@ -194,8 +194,8 @@ def rup_viz(bv, px, last, tops=(), step=4):
                 note='相對未實現獲利＝全體未實現獲利 ÷ 市值（Bitview，逐筆 UTXO）；地板 35% 與近地板區 37.5% 是本站依 2012 年起的歷史設定；只作讀值')
 
 
-# ---------- 全網實現虧損：峰值背離 ----------
-# 每日實現虧損（Bitview realized_loss_sum_24h，美元，不是實體調整）÷ 市值。價格擺動低點（前後 7 天最低、比之前 30 天最高跌 ≥ 6%）
+# ---------- 全網已實現虧損：峰值背離 ----------
+# 每日已實現虧損（Bitview realized_loss_sum_24h，美元，不是實體調整）÷ 市值。價格擺動低點（前後 7 天最低、比之前 30 天最高跌 ≥ 6%）
 #   取前後 3 天內最大的認賠；和前一個擺動低點（75 天內）比：價格更低但認賠峰值小 20% 以上＝背離（想賣的人變少），更大＝投降。
 #   搬家日（同一實體內部轉帳，見 cohort_urpd.transfers）那天的虧損不算峰值。2013 年起回測寫在 back。只作讀值
 RL_W, RL_DD, RL_LOOK, RL_GAP, RL_FROM = 7, 0.06, 30, 75, '2013-01-01'
@@ -226,9 +226,9 @@ def _chain(D, P, rel, L, since, W=3, k=1.3, tol=0.02):
 
 
 # 2026-11-18 使用者要求（Glassnode 週報〈Capitulation Meets Support〉那張「虧損到了只有週期低點才見過的程度」）：
-#   7 日平均的每日實現虧損 ÷ 過去 365 天的實現獲利合計（萬分之／天）。用一年的獲利當分母，不同年代可以放在同一把尺上比。
+#   7 日平均的每日已實現虧損 ÷ 過去 365 天的已實現獲利合計（萬分之／天）。用一年的獲利當分母，不同年代可以放在同一把尺上比。
 #   門檻是到當天為止的全部歷史的第 95 百分位（不偷看未來）；超過門檻、和上一次超過隔 20 天以上算新的一次。
-#   Bitview 逐筆 UTXO、不是實體調整，搬家日的虧損不算；獲利是 6 個持有時間組的實現獲利加總。只作讀值
+#   Bitview 逐筆 UTXO、不是實體調整，搬家日的虧損不算；獲利是 6 個持有時間組的已實現獲利加總。只作讀值
 CAP_Q, CAP_GAP, CAP_FROM = .95, 20, '2014-01-01'
 
 
@@ -263,7 +263,7 @@ def _rl_cap(bv, D, P, L, skip, ix, step=4):
     done = [e for e in eps if e['r180'] is not None]
     return dict(date=d1, v=round(v[d1], 1), q=round(q[d1], 1), above=v[d1] > q[d1], hi_since=hi, eps=eps, n=len(eps),
                 back=dict(r60=_stat([e['r60'] for e in eps]), r180=_stat([e['r180'] for e in done]), dd180=_stat([e['dd180'] for e in done])), rows=rows,
-                note='7 日平均的每日實現虧損 ÷ 過去 365 天實現獲利合計（萬分之／天）；門檻＝到當天為止的歷史第 95 百分位；Bitview，不是實體調整；只作讀值')
+                note='7 日平均的每日已實現虧損 ÷ 過去 365 天已實現獲利合計（萬分之／天）；門檻＝到當天為止的歷史第 95 百分位；Bitview，不是實體調整；只作讀值')
 
 
 def rloss_viz(bv, px, last, transfers=(), days=420, show=150):
@@ -308,7 +308,7 @@ def rloss_viz(bv, px, last, transfers=(), days=420, show=150):
                       broken30=sum(brk(c) for c in d2 if dn(d1) - dn(c['b']) >= 30), done=sum(1 for c in d2 if dn(d1) - dn(c['b']) >= 30),
                       n1=sum(c['kind'] == 'div' for c in ch), nbreak=sum(c['kind'] == 'break' for c in ch))
     E2 = E[-show:]; chain = [c for c in ch if c['a'] >= E2[0]]
-    # 2026-11-06 使用者：「只有短期的？沒有長期的圖？」→ 全部歷史：每日實現虧損 ÷ 市值（萬分之，跨年份才能比），每 4 天取最大（尖峰不會被抽樣抽掉）；
+    # 2026-11-06 使用者：「只有短期的？沒有長期的圖？」→ 全部歷史：每日已實現虧損 ÷ 市值（萬分之，跨年份才能比），每 4 天取最大（尖峰不會被抽樣抽掉）；
     #   輔助線只畫回測用的兩種：二次以上背離、背離被打破
     H = [d for d in D if d >= RL_FROM]; hist = []
     for i in range(0, len(H), 4):
@@ -319,7 +319,7 @@ def rloss_viz(bv, px, last, transfers=(), days=420, show=150):
                 lows=[x for x in lows if dn(d1) - dn(x['date']) <= days], pairs=pairs[-12:], cur=cur, back=back,
                 base30=_base(D, ix, P, 30, RL_FROM), base90=_base(D, ix, P, 90, RL_FROM), n_div=sum(p['kind'] == 'div' for p in pairs), n_cap=sum(p['kind'] == 'cap' for p in pairs),
                 peaks=peaks[-8:], chain=chain, chain_back=chain_back, hist=hist, hlinks=hlinks, skip=sorted(skip), rows=rows, src='Bitview', cap=_rl_cap(bv, D, P, L, skip, ix),
-                note='全網每日實現虧損（Bitview，美元，逐筆 UTXO、不是實體調整）÷ 市值；擺動低點＝前後 7 天最低且比之前 30 天最高跌 ≥ 6%；搬家日不算；只作讀值')
+                note='全網每日已實現虧損（Bitview，美元，逐筆 UTXO、不是實體調整）÷ 市值；擺動低點＝前後 7 天最低且比之前 30 天最高跌 ≥ 6%；搬家日不算；只作讀值')
 
 
 # ---------- 長短期持有者供給比：30 日變化 ----------
@@ -574,7 +574,7 @@ def _divstat(divs):
 
 
 # ---------- 資金與價格增量梯度 ----------
-# x＝價格 N 天的對數漲跌 − 實現價格（全體平均買進成本）N 天的對數漲跌：正＝價格跑得比資金流入快（靠情緒），負＝價格跌得比資金撤出快。
+# x＝價格 N 天的對數漲跌 − 已實現價格（全體平均買進成本）N 天的對數漲跌：正＝價格跑得比資金流入快（靠情緒），負＝價格跌得比資金撤出快。
 #   除以 x 自己過去 4 年的標準差（無前視），N＝30 天（小級別）與 120 天（大級別）。背離：價格新低但梯度沒新低＝資金撤得比價格跌得慢。只作讀值
 GR_FROM, GR_Z = '2015-01-01', 1460
 
@@ -604,7 +604,7 @@ def grad_viz(bv, px, last, step=3):
     rows = thin([[dn(d), round(P(d)), round(z30[d], 2) if d in z30 else None, round(z120[d], 2) if d in z120 else None] for d in D if d >= '2017-01-01'], step)
     return dict(date=d1, z30=round(z30[d1], 2), z120=round(z120[d1], 2), div30=dv30[-12:], div120=[x for x in dv120 if x['date'] >= '2017-01-01'], back30=_divstat(dv30), back120=_divstat(dv120),
                 base30=_base(D, ix, P, 30, GR_FROM), base90=_base(D, ix, P, 90, GR_FROM), rows=rows, src='Bitview',
-                note='（價格 N 天對數漲跌 − 實現價格 N 天對數漲跌）÷ 自己過去 4 年的標準差；N＝30／120；背離＝價格擺動新高／新低而梯度沒有；只作讀值')
+                note='（價格 N 天對數漲跌 − 已實現價格 N 天對數漲跌）÷ 自己過去 4 年的標準差；N＝30／120；背離＝價格擺動新高／新低而梯度沒有；只作讀值')
 
 
 # ---------- 鏈上勢能 ----------
@@ -637,7 +637,7 @@ def mom_viz(bv, px, last, step=3):
 
 # ---------- 回調壓力清單 ----------
 # 過去熊牛過渡期回調的後段常同時出現的條件（只用本站每天有的資料，可回測的三項 + 兩項輔助）：
-#   ① 價格回到短期持有者成本 3% 以內或以下 ② 獲利供給 ≤ 65% ③ 短期持有者虧損 ≥ 50% ④ 賣方衰竭低於自己的極端區（輔助）⑤ 實現虧損峰值背離（輔助）。
+#   ① 價格回到短期持有者成本 3% 以內或以下 ② 獲利供給 ≤ 65% ③ 短期持有者虧損 ≥ 50% ④ 賣方衰竭低於自己的極端區（輔助）⑤ 已實現虧損峰值背離（輔助）。
 #   回測只用 ①–③：2015 年起三項同時成立的日子，之後 30／90 天漲跌（和同期任一天比）。只作讀值，不是買點
 def pullback_viz(bv, px, last, sec=None, rloss=None):
     P = _P(bv, px); sth, ps, sp = bv.get('sth') or {}, bv.get('psip') or {}, bv.get('sthp') or {}
@@ -661,10 +661,10 @@ def pullback_viz(bv, px, last, sec=None, rloss=None):
                 src='Bitview', note='①–③ 每天可回測（2015 年起三項同時成立的日子，隔 30 天以上算新的一段）；④⑤ 只看現在；只作讀值、不是買點')
 
 
-# ---------- 實現獲利 ÷ 虧損（一年合計） ----------
-# 2026-11-17 使用者要求（看了一張「實現獲利 365 日均 ÷ 實現虧損 365 日均」的圖）：「實現獲利 ÷ 虧損」卡多一個一年的檢視。
-#   做法是全網每天的實現獲利、實現虧損（Bitview，美元，不是實體調整）各自加總 365 天再相除；原本 90 天那個檢視是 CheckOnChain 的每日比值取平均，
-#   平均法會被少數獲利特別大的日子拉高，這裡改用合計相除。各年齡組的實現獲利（ap1–ap6）加起來就是全網實現獲利，不多發請求。
+# ---------- 已實現獲利 ÷ 虧損（一年合計） ----------
+# 2026-11-17 使用者要求（看了一張「已實現獲利 365 日均 ÷ 已實現虧損 365 日均」的圖）：「已實現獲利 ÷ 虧損」卡多一個一年的檢視。
+#   做法是全網每天的已實現獲利、已實現虧損（Bitview，美元，不是實體調整）各自加總 365 天再相除；原本 90 天那個檢視是 CheckOnChain 的每日比值取平均，
+#   平均法會被少數獲利特別大的日子拉高，這裡改用合計相除。各年齡組的已實現獲利（ap1–ap6）加起來就是全網已實現獲利，不多發請求。
 #   低於 1＝一整年認賠多於獲利。過去 2012、2015、2018–19、2022–23 四段都落在週期底部區；但比值的最低點落後價格的最低點，轉紅也不等於見底。只作讀值
 Y1_N, Y1_MIN = 365, 14
 Y1_CONF, Y1_CONF_MAX = .10, .8   # 見底確認：比值從段內最低點回升 10%，而且那個最低點在 0.8 以下
@@ -773,4 +773,4 @@ def rpl365_viz(bv, px, last, block=4, bottoms=()):
                                      rgap=[min(x['near_rgap'] for x in B), max(x['near_rgap'] for x in B)]) if B else None)([x for x in done if x['cyc']]),
                 reds=reds, past_low=[min(x['low'] for x in done), max(x['low'] for x in done)] if done else None,
                 r365=_stat([x['r365'] for x in done]), base365=_base(D, ix, P, 365, '2012-01-01'), rows=rows, src='Bitview',
-                note='全網每天的實現獲利、實現虧損（美元）各加總 365 天再相除；低於 1＝一整年認賠多於獲利；reds＝14 天以上低於 1 的期間（dd＝期間內最大跌幅、lag＝比值最低那天的價格比期間最低價高多少、r365＝比值最低那天之後一年）；只作讀值')
+                note='全網每天的已實現獲利、已實現虧損（美元）各加總 365 天再相除；低於 1＝一整年認賠多於獲利；reds＝14 天以上低於 1 的期間（dd＝期間內最大跌幅、lag＝比值最低那天的價格比期間最低價高多少、r365＝比值最低那天之後一年）；只作讀值')

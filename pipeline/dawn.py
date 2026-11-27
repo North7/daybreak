@@ -1,9 +1,9 @@
 """晨昏指數（Dawn–Dusk Index；2026-11-08 使用者要求「用現在所有數據做一個更準確的週期圖，新的我們自己取名」，和週線多空分數並列）。
 把一輪週期當成一天：深夜（底部區）→ 破曉（初升）→ 白晝（上升）→ 黃昏（過熱）→ 入夜（下跌）。
   熱度 0–100：五項估值各自和「過去 4 年」比的百分位，取平均。這五項是研究時約 20 個候選裡和事後週期位置最貼近的：
-    長期持有者 NUPL、未實現獲利 ÷ 市值、冪律殘差（log 價格 − 只用當天以前資料擬合的冪律）、儲備風險（log）、MVRV-Z（市值 − 實現市值，÷ 到當天為止的市值標準差）。
+    長期持有者 NUPL、未實現獲利 ÷ 市值、冪律殘差（log 價格 − 只用當天以前資料擬合的冪律）、儲備風險（log）、MVRV-Z（市值 − 已實現市值，÷ 到當天為止的市值標準差）。
   方向：四項趨勢各除以「到當天為止」的絕對值中位數取 tanh，平均；連續 4 週在另一邊才翻轉：
-    價格 ÷ 200 日均線、價格 ÷ 短期持有者成本、aSOPR 30 日平均、實現獲利 ÷ 虧損 90 日平均（log10）。
+    價格 ÷ 200 日均線、價格 ÷ 短期持有者成本、aSOPR 30 日平均、已實現獲利 ÷ 虧損 90 日平均（log10）。
   階段：熱度 ≥ 80 黃昏、≤ 10 深夜；其餘看方向：空方入夜；多方且熱度 < 50 破曉、≥ 50 白晝。
 所有標準化都只用當天以前的資料（不偷看未來）。研究（2013–2025，666 週）：熱度和事後週期位置的等級相關 0.82（週線多空分數 0.49）；
   熱度 ≥ 80 之後一年中位數約 −3%（週線多空分數的「過熱」之後 +89%）。近兩輪鏈上估值都比價格先見頂（2021、2025），黃昏常提早出現。只作讀值。"""
@@ -92,7 +92,7 @@ def candles(ohlc, last):
 
 
 def build(bv, cm, rpl, last, px_show=None, tops=(), bottoms=(), ohlc=None):
-    """bv：bitview.cols()；cm：CoinMetrics [(date, 價格, MVRV, 市值, 流通量, 交易所供給)]；rpl：CheckOnChain 實現獲利 ÷ 虧損 {date: 值 或 (值, 價格)}"""
+    """bv：bitview.cols()；cm：CoinMetrics [(date, 價格, MVRV, 市值, 流通量, 交易所供給)]；rpl：CheckOnChain 已實現獲利 ÷ 虧損 {date: 值 或 (值, 價格)}"""
     rows = [x for x in cm if x[0] <= last and x[1] and x[3]]
     D = [x[0] for x in rows]
     if len(D) < 2000: return None
@@ -112,7 +112,7 @@ def build(bv, cm, rpl, last, px_show=None, tops=(), bottoms=(), ohlc=None):
             b = (sxy - sx * sy / n) / (sxx - sx * sx / n); fit = (sy / n - b * sx / n, b)
         if fit: raw['pl'][d] = y - (fit[0] + fit[1] * x)
     s1 = s2 = 0.0; n = 0
-    for d in D:   # MVRV-Z：(市值 − 實現市值) ÷ 到當天為止的市值標準差
+    for d in D:   # MVRV-Z：(市值 − 已實現市值) ÷ 到當天為止的市值標準差
         m = mcap[d]; s1 += m; s2 += m * m; n += 1
         if n > 365 and d in rcap: raw['mvz'][d] = (m - rcap[d]) / math.sqrt(max(1e-9, s2 / n - (s1 / n) ** 2))
     m200 = _ma(px, 200, D); asopr30 = _ma(g('asopr'), 30, D)

@@ -120,7 +120,7 @@ def c_cbp(L, end):
 
 def c_sopr(L, end):
     s = g(L, 'chips.viz.sopr'); v7 = g(L, 'onchain.viz.sth-sopr.last')
-    return dict(kind='line', name=T('短期持有者 SOPR', 'Short-term holder SOPR'), sub=T('短期持有者賣出價 ÷ 買入價；低於 1＝整體賠錢賣', 'Sell price ÷ buy price of short-term holders; below 1 means selling at a loss'),
+    return dict(kind='line', name=T('短期持有者 SOPR', 'Short-Term Holder SOPR'), sub=T('短期持有者賣出價 ÷ 買入價；低於 1＝整體賠錢賣', 'Sell price ÷ buy price of short-term holders; below 1 means selling at a loss'),
                 series=[dict(name=T('STH-SOPR', 'STH-SOPR'), rows=[(r[0], r[1]) for r in s['rows']], color=S1, width=5)],
                 refs=[dict(y=1, label=T('1＝不賺不賠', '1 = break-even'))], yf=lambda v: f'{v:.2f}', src='CheckOnChain', asof=s['date'],
                 stats=[S(f'最新（{md(s["date"], "zh")}）', f'Latest ({md(s["date"], "en")})', f'{s["value"]:.4f}'),
@@ -159,9 +159,9 @@ def _etf_run(full):
 
 def c_sthpnl(L, end):
     p = g(L, 'onchain.sth_pnl')
-    return dict(kind='line', name=T('短期持有者實現獲利與虧損', 'Short-term holder realized profit and loss'), sub=T('短期持有者每天賣出時實現的獲利、虧損（顆，已平滑）', 'Profit and loss short-term holders realized on coins sold (BTC, smoothed)'),
-                series=[dict(name=T('實現獲利', 'Realized profit'), rows=[(r[0], r[1]) for r in p['rows'] if r[1] is not None], color=UP, width=6),
-                        dict(name=T('實現虧損', 'Realized loss'), rows=[(r[0], r[2]) for r in p['rows'] if r[2] is not None], color=RED, width=6)],
+    return dict(kind='line', name=T('短期持有者已實現獲利與已實現虧損', 'Short-Term Holder Realized Profit and Loss'), sub=T('短期持有者每天賣出時實現的獲利、虧損（顆，已平滑）', 'Profit and loss short-term holders realized on coins sold (BTC, smoothed)'),
+                series=[dict(name=T('已實現獲利', 'Realized profit'), rows=[(r[0], r[1]) for r in p['rows'] if r[1] is not None], color=UP, width=6),
+                        dict(name=T('已實現虧損', 'Realized loss'), rows=[(r[0], r[2]) for r in p['rows'] if r[2] is not None], color=RED, width=6)],
                 yf=lambda v: f'{v / 1e3:,.0f}K' if v >= 1e3 else f'{v:,.0f}', src='CheckOnChain', asof=p['date'],
                 stats=[S(f'獲利（{md(p["date"], "zh")}）', f'Profit ({md(p["date"], "en")})', btc(p['profit'], 'zh'), btc(p['profit'], 'en')),
                        S('虧損', 'Loss', btc(p['loss'], 'zh'), btc(p['loss'], 'en')), S('獲利 ÷ 虧損', 'Profit ÷ loss', f'{p["ratio"]:.2f}')])
@@ -178,8 +178,8 @@ def c_vol(L, end):
 
 def c_npl(L, end):
     n = g(L, 'onchain.npl')
-    return dict(kind='line', name=T('每日淨實現損益', 'Daily net realized profit/loss'), sub=T('全網當天賣出的幣：實現獲利 − 實現虧損（百萬美元）', 'Network-wide realized profit minus realized loss on coins moved ($M)'),
-                series=[dict(name=T('淨實現損益', 'Net realized P/L'), rows=[(r[0], r[2]) for r in n['rows'] if r[2] is not None], bars=True, signed=True)],
+    return dict(kind='line', name=T('每日淨已實現損益', 'Daily Net Realized Profit/Loss'), sub=T('全網當天賣出的幣：已實現獲利 − 已實現虧損（百萬美元）', 'Network-wide realized profit minus realized loss on coins moved ($M)'),
+                series=[dict(name=T('淨已實現損益', 'Net Realized Profit/Loss'), rows=[(r[0], r[2]) for r in n['rows'] if r[2] is not None], bars=True, signed=True)],
                 refs=[dict(y=0)], yf=lambda v: f'{v:,.0f}', src='CoinMetrics', asof=n['date'],
                 stats=[S(f'最新（{md(n["date"], "zh")}）', f'Latest ({md(n["date"], "en")})', musd(n['usd_m'], 'zh'), musd(n['usd_m'], 'en')),
                        S('近 7 日', 'Past 7 days', musd(n['sum7_usd_m'], 'zh'), musd(n['sum7_usd_m'], 'en')),
@@ -525,12 +525,12 @@ PANELS = {
     # 2026-11-06 PR #56 新增的 Bitview 六項（都沒有出場框架線；高檔區／低檔區是歷史百分位，NUPL 的分區是情緒階段，只是讀值）
     'cycle/hnupl':    dict(zh='長短期持有者 NUPL', en='STH and LTH NUPL', sel='#c-hnupl', data=['onchain.hnupl']),
     'cycle/aviv':     dict(zh='AVIV：價格 ÷ 真實市場均價', en='AVIV: price ÷ true market mean', sel='#c-aviv', data=['onchain.aviv']),
-    'cycle/rrisk':    dict(zh='儲備風險', en='Reserve risk', sel='#c-rrisk', data=['onchain.rrisk']),
-    'onchain/ssr':    dict(zh='賣方風險比', en='Sell-side risk ratio', sel='#c-ssr', data=['onchain.ssr']),
-    'onchain/agepl':  dict(zh='依持有時間的實現獲利／虧損', en='Realized profit/loss by holding age', sel='#c-agepl', data=['onchain.agepl']),
+    'cycle/rrisk':    dict(zh='儲備風險', en='Reserve Risk', sel='#c-rrisk', data=['onchain.rrisk']),
+    'onchain/ssr':    dict(zh='賣方風險比', en='Sell-Side Risk Ratio', sel='#c-ssr', data=['onchain.ssr']),
+    'onchain/agepl':  dict(zh='各幣齡已實現獲利／虧損', en='Realized profit/loss by holding age', sel='#c-agepl', data=['onchain.agepl']),
     'onchain/dorm':   dict(zh='Dormancy 與 Liveliness', en='Dormancy and Liveliness', sel='#c-dorm', data=['onchain.dorm']),
     # 2026-11-06 PR #58 新增（韓國溢價的 5% 線是「偏熱」參考線，不是出場框架）
-    'onchain/npl365': dict(zh='一年累計淨實現損益（顆）', en='1-year net realized profit/loss (BTC)', sel='#c-npl365', data=['onchain.npl365']),
+    'onchain/npl365': dict(zh='一年累計淨已實現損益（顆）', en='1-year net realized profit/loss (BTC)', sel='#c-npl365', data=['onchain.npl365']),
     'onchain/sthd': dict(zh='短期持有者供給 90 天變化', en='Short-term holder supply, 90-day change', sel='#c-sthd', data=['onchain.sthd']),
     'onchain/dmd':    dict(zh='現貨 vs 永續需求', en='Spot vs perp demand', sel='#c-dmd', data=['onchain.dmd']),
     'flows/etfcost':  dict(zh='ETF 持有者成本', en='ETF holder cost basis', sel='#c-etfcost', data=['flows.etfcost']),
@@ -540,18 +540,18 @@ PANELS = {
     'cycle/dawn':     dict(zh='晨昏指數', en='Dawn–Dusk Index', sel='#c-dawn', data=['cycle.dawn']),
     'cycle/tmh':      dict(zh='Tidemark 歷史：頂部與底部訊號', en='Tidemark history: top and bottom signals', sel='#c-tmh', data=['cycle.tidemark.hist']),
     'onchain/quant':  dict(zh='供給分位成本線', en='Supply quantile cost lines', sel='#c-quant', data=['onchain.quant']),
-    'onchain/urpd':   dict(zh='籌碼分布（URPD）', en='Supply distribution (URPD)', sel='#c-urpd', html=1, data=['chips.viz']),
-    'onchain/sthband': dict(zh='短期持有者成本帶', en='Short-term holder cost bands', sel='#c-sthband', data=['onchain.sth_bands', 'cycle.levels'], sig=['cost', 'ev-sth'], old='cost'),
-    'onchain/agecost': dict(zh='依持有時間的持幣成本', en='Cost basis by holding age', sel='#c-agecost', data=['cycle.age_cost']),
-    'onchain/sopr':   dict(zh='短期持有者認賠賣壓（STH-SOPR）', en='Short-term holder SOPR', sel='#c-sopr', data=['chips.viz'], sig=['sopr'], old='sopr'),
-    'onchain/sthpnl': dict(zh='短期持有者實現獲利與虧損', en='Short-term holder realized profit and loss', sel='#c-sthpnl', data=['onchain.sth_pnl'], sig=['sthpnl'], old='sthpnl'),
-    'onchain/sthsig': dict(zh='短期持有者集中止盈與認賠', en='Short-term holder profit-taking and capitulation spikes', sel='#c-sthsig', data=['onchain.sthsig'], sig=['sthsig']),   # 2026-11-11
-    'onchain/npl':    dict(zh='每日淨實現損益', en='Daily net realized profit/loss', sel='#c-npl', data=['onchain.npl'], sig=['npl'], old='npl'),
-    'onchain/rpl':    dict(zh='實現獲利 ÷ 實現虧損', en='Realized profit ÷ realized loss', sel='#c-rpl', data=['onchain.rpl365', 'onchain.rpl']),   # 2026-11-20 卡片打開是一年合計（rpl365；90 天檢視是 rpl365.w90）
-    'onchain/rloss':  dict(zh='實現虧損：峰值背離', en='Realized loss: peak divergence', sel='#c-rloss', data=['onchain.rloss']),
-    'onchain/sec':    dict(zh='賣方衰竭常數', en='Seller exhaustion constant', sel='#c-sec', data=['onchain.sec']),
+    'onchain/urpd':   dict(zh='UTXO 已實現價格分布（URPD）', en='UTXO Realized Price Distribution (URPD)', sel='#c-urpd', html=1, data=['chips.viz']),
+    'onchain/sthband': dict(zh='短期持有者已實現價格（成本帶）', en='Short-Term Holder Realized Price Bands', sel='#c-sthband', data=['onchain.sth_bands', 'cycle.levels'], sig=['cost', 'ev-sth'], old='cost'),
+    'onchain/agecost': dict(zh='各幣齡已實現價格', en='Realized Price by Coin Age', sel='#c-agecost', data=['cycle.age_cost']),
+    'onchain/sopr':   dict(zh='短期持有者 SOPR（已花費產出利潤率）', en='Short-Term Holder SOPR', sel='#c-sopr', data=['chips.viz'], sig=['sopr'], old='sopr'),
+    'onchain/sthpnl': dict(zh='短期持有者已實現獲利與已實現虧損', en='Short-Term Holder Realized Profit and Loss', sel='#c-sthpnl', data=['onchain.sth_pnl'], sig=['sthpnl'], old='sthpnl'),
+    'onchain/sthsig': dict(zh='短期持有者已實現獲利／虧損尖峰', en='Short-Term Holder Realized Profit/Loss Spikes', sel='#c-sthsig', data=['onchain.sthsig'], sig=['sthsig']),   # 2026-11-11
+    'onchain/npl':    dict(zh='每日淨已實現損益', en='Daily Net Realized Profit/Loss', sel='#c-npl', data=['onchain.npl'], sig=['npl'], old='npl'),
+    'onchain/rpl':    dict(zh='已實現獲利 ÷ 已實現虧損', en='Realized profit ÷ realized loss', sel='#c-rpl', data=['onchain.rpl365', 'onchain.rpl']),   # 2026-11-20 卡片打開是一年合計（rpl365；90 天檢視是 rpl365.w90）
+    'onchain/rloss':  dict(zh='已實現虧損：峰值背離', en='Realized loss: peak divergence', sel='#c-rloss', data=['onchain.rloss']),
+    'onchain/sec':    dict(zh='賣方衰竭常數', en='Seller Exhaustion Constant', sel='#c-sec', data=['onchain.sec']),
     'onchain/mom':    dict(zh='鏈上勢能', en='On-chain momentum', sel='#c-mom', data=['onchain.mom']),
-    'onchain/cohort': dict(zh='長短期持有者籌碼', en='Short- and long-term holder supply', sel='#c-cohort', html=1, data=['chips.cohort'], sig=['cohort'], old='cohort'),
+    'onchain/cohort': dict(zh='長短期持有者供給', en='Short- and long-term holder supply', sel='#c-cohort', html=1, data=['chips.cohort'], sig=['cohort'], old='cohort'),
     'onchain/lthc':   dict(zh='價格 × 長期持有者動向', en='Price × long-term holder flows', sel='#c-lthc', data=['onchain.lth_color']),
     'onchain/lsrchg': dict(zh='長短期持有者供給比：30 日變化', en='LTH/STH supply ratio: 30-day change', sel='#c-lsrchg', data=['onchain.lsrchg']),
     'onchain/lthloss': dict(zh='長期持有者虧損比例', en='Long-term holders in loss', sel='#c-lthloss', data=['onchain.lthloss', 'onchain.lthrl']),
@@ -567,7 +567,7 @@ PANELS = {
     'flows/stab':     dict(zh='穩定幣總供給', en='Stablecoin supply', sel='#c-stab', data=['flows.stables'], sig=['stab'], old='stab'),
     'flows/pr-us':    dict(zh='三地溢價：買盤從哪裡來', en='Premiums: where the bid comes from', sel='#c-pr-us', data=['flows.premium3', 'flows.cb_premium'], sig=['pr-us', 'cbp'], old='cbp'),
     'flows/stkrel':   dict(zh='BTC 對美股', en='BTC vs US stocks', sel='#c-stkrel', data=['flows.btc_vs_stocks']),
-    'flows/rcliq':    dict(zh='資金流入：實現市值 30 日變化', en='Capital inflow: realized cap 30-day change', sel='#c-rcliq', data=['flows.rc_liq'], sig=['rcliq'], old='rcliq'),
+    'flows/rcliq':    dict(zh='資金流入：已實現市值 30 日變化', en='Capital inflow: realized cap 30-day change', sel='#c-rcliq', data=['flows.rc_liq'], sig=['rcliq'], old='rcliq'),
     'deriv/vol':      dict(zh='隱含波動 vs 實際波動', en='Implied vs realized volatility', sel='#c-vol', data=['deriv.dvol', 'deriv.samesource'], sig=['vol'], old='vol'),
     'deriv/basis':    dict(zh='期貨基差曲線', en='Futures basis curve', sel='#c-basis', data=['deriv.deriv']),
     'deriv/liq':      dict(zh='清算熱力圖（推算）', en='Liquidation heatmap (estimate)', sel='#c-liq', data=['deriv.liq_heat']),
