@@ -403,9 +403,9 @@ def build(L, N, E, dn):
     lr = o['lthrl']
     c_lthrl = dict(k='lthrl', zh='長期持有者已實現虧損', en='Long-Term Holder Realized Loss', f='p3', rows=lr['rows'], p=2, ser=[ser(1, zh='已實現虧損 ÷ 市值', en='Realized loss ÷ market cap', col='c3', w=1.5)],
       dz='這是什麼：長期持有者是幣放了 155 天以上沒動的人。這張是他們最近 7 天賠錢賣出的金額，佔整個比特幣市值的比例；比例越高，代表連最能撐的人都在認賠出場。'
-         '怎麼看：上格是 BTC 價格，下格是這個比例。另外三個檢視看歷次「認賠高峰」和之後怎麼走，最後一個看賠錢賣的人裡長期持有者佔多少。',
+         '怎麼看：上格是 BTC 價格，下格是這個比例。另外三個檢視看歷次「認賠高峰」和之後怎麼走，再來看賠錢賣的人裡長期持有者佔多少，最後一個把短期和長期並排比先後和大小。',
       de='What it is: long-term holders are those whose coins sat unmoved for 155+ days. This is what they sold at a loss over the last 7 days, as a share of bitcoin\'s market cap; higher means even the most patient holders are selling at a loss. '
-         'How to read it: price on top, the share below. The next three views show each past loss peak and what followed; the last shows how much of all loss-selling comes from long-term holders.')
+         'How to read it: price on top, the share below. The next three views show each past loss peak and what followed, then how much of all loss-selling comes from long-term holders; the last puts short- and long-term holders side by side to compare timing and size.')
     lw_ = (o.get('bvx') or {}).get('lthw')
     if lw_ and lw_.get('eps'):   # 2026-11-26 長文 session 轉告使用者「整理成需求，給產品」：歷次認賠退潮對照，讀者自己追「退了沒、像哪一次」（bv_more 第 11 段）
         EP_, NW_ = lw_['eps'], lw_['now']; GC = lambda e: 'c3' if e['hi'] else 'c4'; ym_ = lambda d: '%s/%d' % (d[:4], int(d[5:7]))
@@ -482,6 +482,29 @@ def build(L, N, E, dn):
                  'How to read it: the share is below, with a dashed 50%% line; shaded stretches are where it sat above 50%% (a return within 60 days counts as the same stretch). Price is on top. %s'
                  'History (%d stretches since 2013): on entering, price was lower 90 days later in %d of %d cases (down %d%%–%d%%), and the 2015, 2018 and 2022 bear-market lows all fell inside a stretch; in the year after dropping back below 50%%, some cases rallied hard and some first fell another 40%% or more. So it describes how far a bear market has gone, not which way price goes next. '
                  'Caveats: only %d stretches; Glassnode merges addresses that belong to the same owner and Bitview does not, so our recent readings run lower than theirs.' % (nwe, len(E2), nd9, len(a9), min(a9), max(a9), len(E2))))
+        pr_ = lw_.get('pair')
+        if pr_ and pr_.get('cyc'):   # 2026-11-27 使用者看了長短期並排的示意圖說「加，這個可以看出長短期的先後關係，和相對幅度」（bv_more 第 13 段）
+            CY = pr_['cyc']; dn3 = [c for c in CY if not c['open']]; cu3 = next((c for c in CY if c['open']), None)
+            pf = lambda v: ('%.1f%%' if v >= 1 else '%.2f%%') % v; mo = lambda n: round(n / 30.4)
+            mk3 = [dict(d=c['sdn'], v=c['sv'], col='ac', up=1, zh='短 ' + pf(c['sv']), en='STH ' + pf(c['sv'])) for c in CY] + \
+                  [dict(d=c['ldn'], v=c['lv'], col='c3', up=0, zh='長 ' + pf(c['lv']), en='LTH ' + pf(c['lv'])) for c in CY]
+            lg3, pre3, rt3 = [mo(c['lag']) for c in dn3], [c['pre'] for c in dn3], [c['ratio'] for c in dn3]
+            yrs = '、'.join(c['sd'][:4] if c['sd'][:4] == c['ld'][:4] else '%s–%s' % (c['sd'][:4], c['ld'][2:4]) for c in dn3)
+            cz = ('這一輪（%s 頂部之後）：短期最高是 %s 的 %s，長期到目前最高是 %s 的 %s，是短期的 %d%%。' % (cu3['top'][:7].replace('-', '/'), cu3['sd'][:7].replace('-', '/'), pf(cu3['sv']), cu3['ld'][:7].replace('-', '/'), pf(cu3['lv']), cu3['ratio'])) if cu3 else ''
+            ce = ('This cycle (since the %s top): the short-term high is %s in %s; the long-term high so far is %s in %s, %d%% of the short-term one. ' % (cu3['top'][:7], pf(cu3['sv']), cu3['sd'][:7], pf(cu3['lv']), cu3['ld'][:7], cu3['ratio'])) if cu3 else ''
+            c_lthrl['modes'].append(dict(mz='長短期並排', me='STH vs LTH', hz='長期持有者 7 天已實現虧損 ÷ 市值（橘線是短期）', he='Long-term holder 7-day realized loss ÷ market cap (orange: short-term)', src='Bitview · {d}',
+              f='p2', rng=0, p=3, hero=1, rows=pr_['rows'], marks=mk3,
+              ser=[ser(1, zh='短期持有者', en='Short-term holders', col='ac', w=1.2, op=.85), ser(2, zh='長期持有者', en='Long-term holders', col='c3', w=1.6)],
+              spans=[dict(a=c['adn'], b=c['bdn'], col='k2', op=.1) for c in CY],
+              leg=[['k2', '灰底：每輪熊市（頂部到底部後 30 天）', 'Grey: each bear market (top to 30 days after the low)', 'box']],
+              dz='這是什麼：把短期持有者（幣放不到 155 天）和長期持有者的已實現虧損放在一起，兩條都是 7 天賠錢賣出的金額 ÷ 比特幣市值，可以直接比誰先、誰大。'
+                 '怎麼看：橘線是短期，藍紫線是長期；灰底是每輪熊市，標記是每輪兩條各自的最高點。上格是 BTC 價格。'
+                 '歷史上（%s 三輪熊市）：都是短期先到最高，長期的最高點晚 %d–%d 個月，落在週期底部前 %d–%d 天，大小是短期最高點的 %s%%。也就是新進場的人先認賠，最後才輪到老手。%s'
+                 '要保留的地方：只有三輪；長期的最高點要事後才知道是不是最高，這一輪的數字隨時會被新高取代。' % (yrs, min(lg3), max(lg3), min(pre3), max(pre3), '／'.join(str(r) for r in rt3), cz),
+              de='What it is: short-term holders (coins held under 155 days) and long-term holders side by side, both as 7-day realized loss ÷ bitcoin market cap, so you can compare who comes first and who is larger. '
+                 'How to read it: orange is short-term, blue-violet long-term; grey shading marks each bear market, and markers show each line\'s high in each one. Price is on top. '
+                 'History (%s, three bear markets): short-term losses peaked first every time; the long-term high came %d–%d months later, %d–%d days before the cycle low, at %s%% of the short-term high. Newer buyers sell at a loss first; seasoned holders come last. %s'
+                 'Caveats: only three cycles, and a long-term high is only known in hindsight; this cycle\'s figures can be replaced by a new high at any time.' % (yrs, min(lg3), max(lg3), min(pre3), max(pre3), '/'.join(str(r) for r in rt3), ce)))
     G = [
       dict(id='cost', zh='成本與位置', en='Cost and position', sz='價格相對各群人的成本在哪裡', se="Where price sits against each group's cost", charts=[c_sth, c_profit, c_aviv, c_rup, c_conc, c_lthloss]),
       dict(id='pnl', zh='賣出的人賺還是賠', en='Are sellers in profit or at a loss', sz='短期持有者和全市場賣出時是獲利還是認賠', se='Whether short-term holders, and the market as a whole, sell at a profit or a loss', charts=[c_sopr, c_pnl, c_conf, c_npl, c_n365]),

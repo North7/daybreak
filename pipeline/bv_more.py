@@ -38,8 +38,12 @@
   越過 50% 算一段，掉回 50% 以下不到 60 天又回來的併成同一段，不到 10 天的不算。歷次高峰和 Glassnode 對得上（85/84/95/79 vs 約 78/85/92/86），
   近幾週比他低（他有實體歸併、平滑天數不同）。2013 年起 6 段：剛進入時 6 次 90 天後都更低（−14% 到 −37%），三次熊底都在段裡面；
   掉回 50% 以下之後一年，各次差很多（+5% 到 +407%，之間最深 −4% 到 −48%）。不指方向，只描述階段。
+13 長短期持有者已實現虧損並排（2026-11-27 使用者看了短期、長期並排的示意圖後說「加，這個可以看出長短期的先後關係，和相對幅度」）：
+  短期＝全體已實現虧損 − 長期（Bitview 的 sth 序列和這個相減完全一樣，不必多抓），兩條都是 7 日合計 ÷ 市值。
+  每輪熊市（model.json 週期頂部到底部後 30 天）各取兩條的最高點：前三輪都是短期先到頂（2013-12、2018-02、2022-06），
+  長期的最高點晚 5–11 個月、在底部前 3–41 天，大小是短期最高點的 38%／78%／65%。只有三輪，長期的最高點也要事後才知道是不是最高；只作讀值。
 全部只作讀值。Bitview 改序列名稱時（https://bitview.space/api 的 What changed）整組會失敗，collect.py 只記 errors，build.py 沿用前一天的。"""
-import datetime as dt, json, subprocess, time
+import datetime as dt, json, os, subprocess, time
 
 BULK = 'https://bitview.space/api/series/bulk?series={}&index=day1&start={}'
 START = 730   # day1 第 730 筆＝2011-01-01
@@ -354,7 +358,31 @@ def build(last, S=None, pxc=None):
     ok12 = [v for v in sh12[a13:] if v is not None]
     shr = dict(win=W12, th=50, gap=60, v=round(sh12[N - 1], 1), v30=round(sh12[N - 31], 1), eps=e12, pct50=round(sum(1 for v in ok12 if v >= 50) / len(ok12) * 100),
                rows=[[dnum(i), round(sh12[i], 1), R0(px[i])] for i in sorted(set(range(ix('2014-01-01'), N, 3)) | set(range(N - 400, N))) if sh12[i] is not None and px[i]])
-    lthw = dict(since='2013-01-01', th=.15, gap=90, eps=ev11, now=now11, rows=rows11, shr=shr)
+    # ── 13 長短期持有者已實現虧損並排 ──
+    sl7 = [None] * N
+    for i in range(6, N):
+        if px[i] and cir[i]: sl7[i] = sum(max(0, (trl[k] or 0) - (lrl[k] or 0)) for k in range(i - 6, i + 1)) / (px[i] * cir[i]) * 100
+    if sl7[N - 1] is None: raise RuntimeError('Bitview 短期持有者認賠最新一天缺值')
+    md_ = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json')))
+    TP, BT = [t[0] for t in md_['cycle_tops']], [b[0] for b in md_['cycle_bottoms']]
+    cyc = []
+    for t_ in TP:
+        a_ = ix(t_); b0 = next((b for b in BT if b > t_), None)
+        if a_ < 6: continue
+        open_ = t_ == TP[-1]; bb = N - 1 if open_ else min(N - 1, ix(b0) + 30)   # 最後一個頂部之後算「這一輪」，一路算到今天（model.json 的底部是暫定的，之後的認賠也要算進來）
+        r_ = [k for k in range(a_, bb + 1) if sl7[k] is not None and rl[k] is not None]
+        ms, ml = max(r_, key=lambda k: sl7[k]), max(r_, key=lambda k: rl[k])
+        cyc.append(dict(top=t_, bot=b0, open=open_, sd=day(ms), sdn=dnum(ms), sv=round(sl7[ms], 3), ld=day(ml), ldn=dnum(ml), lv=round(rl[ml], 3),
+                        lag=ml - ms, ratio=round(rl[ml] / sl7[ms] * 100), pre=None if open_ or not b0 else ix(b0) - ml, adn=dnum(a_), bdn=dnum(bb)))
+    a13b = ix('2013-10-01'); keep13 = {ix(c['sd']) for c in cyc} | {ix(c['ld']) for c in cyc}; rows13 = []
+    for i in range(a13b, N - 400, 3):   # 每 3 天各取兩條的最高，尖峰不會被抽掉；最近 400 天每天都留
+        blk = [k for k in range(i, min(N - 400, i + 3)) if sl7[k] is not None and rl[k] is not None and px[k]]
+        if not blk: continue
+        hk = [k for k in blk if k in keep13]; k0 = hk[0] if hk else blk[-1]
+        rows13.append([dnum(k0), round(max(sl7[k] for k in blk), 3), round(max(rl[k] for k in blk), 3), R0(px[k0])])
+    rows13 += [[dnum(k), round(sl7[k], 3), round(rl[k], 3), R0(px[k])] for k in range(N - 400, N) if sl7[k] is not None and rl[k] is not None and px[k]]
+    pair = dict(win=7, s=round(sl7[N - 1], 3), l=round(rl[N - 1], 3), cyc=cyc, rows=rows13)
+    lthw = dict(since='2013-01-01', th=.15, gap=90, eps=ev11, now=now11, rows=rows11, shr=shr, pair=pair)
     return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx, lthx=lthx, hrib=hrib, cvdd=cvdd, vddm=vddm, lthw=lthw,
                 note='損失地板：虧損的幣佔供給的比例到歷史最糟 5%／2%／1%／0.5%／0.1% 時的價格，門檻逐日累積；賺賠分布：各賺賠幅度佔供給 %；集中度：現價 ±5% 內的幣佔供給 %；老幣移動：1 年以上、5 年以上的幣每天移動的顆數（7 日、30 日平均）；獲利供給：全體和扣掉 10 年以上的幣，在獲利的比例（7 日平均）；CVDD：累計（銷毀幣天數 × 價格）÷（創世起天數 × 600 萬）；VDD 倍數：（銷毀幣天數 × 價格）30 日均 ÷ 365 日均；只作讀值')
 
