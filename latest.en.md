@@ -848,7 +848,7 @@ Page: https://daybreak.aronlab.dev/en/charts/exch/
 
 Bearish: new demand isn't absorbing supply. Over a month and a year, fresh buying trails the pace of coins going dormant, and realized cap is shrinking; a positive 30-day reading would show new buyers.
 
-What it shows: Coins mined in 30 days minus the 30-day change in supply unmoved for a year or more: positive when old coins wake up and are absorbed, negative when coins reaching one year unmoved outpace new issuance. The dashed line is its 30-day average; the cyan line is the same sum over 365 days, scaled to a 30-day rate. Sand bars mark days that look like exchange or custodian wallet reshuffles, not real demand.
+What it shows: Coins mined in 30 days minus the 30-day change in supply unmoved for a year or more: positive when old coins wake up and are absorbed, negative when coins reaching one year unmoved outpace new issuance. The dashed line is its 30-day average; the cyan line is the same sum over 365 days, scaled to a 30-day rate. Sand bars mark days that look like exchange or custodian wallet reshuffles, not real demand; a year later those coins all pass the one-year mark together and drag the reading down (the fainter bars mark this echo). The violet line is the 30-day version with both the reshuffles and their echoes taken out; when either falls within the last 30 days, that line is the better read.
 
 Source: CheckOnChain HODL waves · 11/26
 
