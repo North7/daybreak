@@ -57,8 +57,10 @@ def exch(L):
     c = O(L)['exchange']['exchange_supply_chg30_pct']
     return V('up', '交易所存幣在減', 'Exchange balances are falling', '幣被提走保管，潛在賣壓變少。', 'Coins are being withdrawn, which lowers potential selling.', '30 天轉為增加', 'A 30-day increase') if c < 0 else V('down', '交易所存幣在增', 'Exchange balances are rising', '幣在流進交易所，潛在賣壓增加。', 'Coins are moving onto exchanges, which adds potential selling.', '30 天轉為減少', 'A 30-day decrease')
 def ad(L):
-    a = O(L)['ad']; y = a['y1']
-    if a['value'] < 0 and y['value'] < 0: return V('down', '需求偏弱', 'Demand is weak', '30 天和 1 年都是負的：新買盤追不上舊幣沉澱的速度。', 'Negative on both 30 days and a year: new buying cannot keep pace with coins settling.', '30 天轉正', 'The 30-day reading turning positive')
+    a = O(L)['ad']; y = a['y1']; x_ = a.get('adj') or {}   # 2026-11-27 搬家或回音落在窗口裡時，用扣掉它們的版本表態
+    a = dict(a, value=x_['value']) if x_.get('on30') else a; y = dict(y, value=x_['y1']) if x_.get('on1y') and x_.get('y1') is not None else y
+    xz, xe = ('扣掉搬家回音之後，', 'After taking out reshuffle echoes, ') if x_.get('on30') or x_.get('on1y') else ('', '')
+    if a['value'] < 0 and y['value'] < 0: return V('down', '需求偏弱', 'Demand is weak', xz + '30 天和 1 年都是負的：新買盤追不上舊幣沉澱的速度。', xe + ('n' if xe else 'N') + 'egative on both 30 days and a year: new buying cannot keep pace with coins settling.', '30 天轉正', 'The 30-day reading turning positive')
     if a['value'] > 0 and y['value'] > 0: return V('up', '需求接得住', 'Demand is holding', '30 天和 1 年都是正的：新買盤吃得下新挖和換手的幣。', 'Positive on both horizons: new buying absorbs issuance and turnover.', '30 天轉負', 'The 30-day reading turning negative')
     return V('neu', '兩個尺度不一致', 'Mixed horizons', '30 天和 1 年一正一負，需求還沒有明確方向。', 'One horizon is positive and the other negative: no clear direction yet.')
 def dmd(L):

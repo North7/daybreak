@@ -81,16 +81,28 @@ def exch(L):
         it('30 天', '30 days', pc(c30, 2), pc(c30, 2), 'neu', '流入代表潛在賣壓增加，流出代表幣被提走保管。' if c30 > 0 else '幣被提走保管，潛在賣壓減少。', 'Inflows add potential selling; outflows mean coins are being withdrawn.' if c30 > 0 else 'Coins are being withdrawn, which lowers potential selling.'),
         it('90 天', '90 days', pc(c90, 2), pc(c90, 2), 'neu', ('和 30 天方向相反，趨勢還不明確。' if (c30 > 0) != (c90 > 0) else '和 30 天同方向。'), ('The opposite direction to 30 days, so the trend is unclear.' if (c30 > 0) != (c90 > 0) else 'The same direction as 30 days.'))]
 
-def ad(L):
-    a = L['onchain']['ad']; y = a['y1']; cb = y['combo']; neg = a['value'] < 0 and y['value'] < 0
+def ad(L):   # 2026-11-27 搬家或它一年後的回音落在窗口裡時，讀數改用扣掉它們的版本（stage_viz.ad_viz 的 adj），原始數字放在說明裡
+    a = L['onchain']['ad']; y = a['y1']; cb = y['combo']; x = a.get('adj') or {}
+    o30 = bool(x.get('on30')); o1 = bool(x.get('on1y')) and x.get('y1') is not None
+    v30 = x['value'] if o30 else a['value']; v1 = x['y1'] if o1 else y['value']; neg = v30 < 0 and v1 < 0
+    mv = [m for m in a.get('moves') or [] if any(m['start'] <= d <= m['end'] for d in x.get('days30') or [])]
+    kz, ke = ('搬家', 'reshuffle') if mv else ('一年前搬家的回音', 'echo of a reshuffle a year ago')
+    dd = x.get('days30') or []; dz_ = md(dd[0]) + ('–' + md(dd[-1]) if len(dd) > 1 else '') if dd else ''; de_ = mde(dd[0]) + ('–' + mde(dd[-1]) if len(dd) > 1 else '') if dd else ''
+    tz = '扣掉%s之後還是負的。' % kz if o30 and neg else ''; te = ' Still negative after taking out the %s.' % ke if o30 and neg else ''
     view = it('我們的看法', 'Our read', '需求偏弱' if neg else '需求接得住', 'Demand is weak' if neg else 'Demand is holding', 'warn' if neg else 'neu',
-              ('30 天和 1 年都是負的：新買盤追不上舊幣沉澱的速度；30 天版有一部分是一年前換手的回音。' if neg else '至少有一個時間尺度是正的：新買盤還接得住沉澱的速度。'),
-              ('Both the 30-day and 1-year readings are negative: old coins being taken up cannot keep pace with coins ageing past a year. Part of the 30-day reading is an echo of turnover a year ago, but the 1-year reading is negative too.' if neg else 'At least one horizon is positive: new buying still keeps pace with coins settling.'), view=1)
-    sz = ('30 天和 1 年的表觀需求都是負的，新買盤偏弱。' if neg else '表觀需求 30 天 %s。' % wan(a['value'])); se = ('Apparent demand is negative over both 30 days and a year: new buying is weak.' if neg else 'Apparent demand over 30 days is %s.' % kb(a['value']))
-    out = [view, it('30 天', '30 days', wan(a['value']), kb(a['value']), 'warn' if a['value'] < 0 else 'neu', '新挖 %s，1 年以上沒動的幣多了 %s；%s 年以來第 %d 百分位。' % (wan(a['issued30'], False), wan(a['inact_chg30'], False), a['since'][:4], round(a['pct'])),
-                       '%s newly mined while coins unmoved for a year rose %s; the %s percentile since %s.' % (kb(a['issued30'], False), kb(a['inact_chg30'], False), ord_en(a['pct']), a['since'][:4])),
-           it('1 年', '1 year', wan(y['value']), kb(y['value']), 'neu', '%s 年以來這種組合 %d 天，之後 90 天 %d%% 上漲（任一天 %d%%）。' % (cb['since'][:4], cb['days'], cb['up90_pct'], cb['all_up90_pct']), 'This combination came on %d days since %s; %d%% rose over the next 90 days (any day: %d%%).' % (cb['days'], cb['since'][:4], cb['up90_pct'], cb['all_up90_pct']))]
-    return sz, se, out
+              ('30 天和 1 年都是負的：新買盤追不上舊幣沉澱的速度。' + tz if neg else '至少有一個時間尺度是正的：新買盤還接得住沉澱的速度。'),
+              ('Both the 30-day and 1-year readings are negative: old coins being taken up cannot keep pace with coins ageing past a year.' + te if neg else 'At least one horizon is positive: new buying still keeps pace with coins settling.'), view=1)
+    sz = ('30 天和 1 年的表觀需求都是負的，新買盤偏弱。' if neg else '表觀需求 30 天 %s。' % wan(v30)); se = ('Apparent demand is negative over both 30 days and a year: new buying is weak.' if neg else 'Apparent demand over 30 days is %s.' % kb(v30))
+    if o30:
+        i30 = it('30 天（扣掉%s）' % ('搬家' if mv else '回音'), '30 days (ex-%s)' % ('reshuffle' if mv else 'echo'), wan(v30), kb(v30), 'warn' if v30 < 0 else 'neu',
+                 '原始讀數 %s，看起來像 %s 年以來最差；其中 %s 是 %s %s（疑似交易所或託管整理錢包，不是真的需求）。扣掉之後是 %s 年以來 %d%% 的日子比現在低。' % (wan(a['value']), a['since'][:4], wan(abs(x['cut30']), False), dz_, kz, a['since'][:4], round(x['pct'])),
+                 'The raw reading is %s, which looks like the worst since %s; %s of it is the %s on %s (likely an exchange or custodian moving wallets, not real demand). Excluding it, %d%% of days since %s were lower.' % (kb(a['value']), a['since'][:4], kb(abs(x['cut30']), False), ke, de_, round(x['pct']), a['since'][:4]))
+    else:
+        i30 = it('30 天', '30 days', wan(a['value']), kb(a['value']), 'warn' if a['value'] < 0 else 'neu', '新挖 %s，1 年以上沒動的幣多了 %s；%s 年以來第 %d 百分位。' % (wan(a['issued30'], False), wan(a['inact_chg30'], False), a['since'][:4], round(a['pct'])),
+                 '%s newly mined while coins unmoved for a year rose %s; the %s percentile since %s.' % (kb(a['issued30'], False), kb(a['inact_chg30'], False), ord_en(a['pct']), a['since'][:4]))
+    cz = '%s 年以來這種組合 %d 天，之後 90 天 %d%% 上漲（任一天 %d%%）。' % (cb['since'][:4], cb['days'], cb['up90_pct'], cb['all_up90_pct']); ce = 'This combination came on %d days since %s; %d%% rose over the next 90 days (any day: %d%%).' % (cb['days'], cb['since'][:4], cb['up90_pct'], cb['all_up90_pct'])
+    if o1: cz = '已扣掉 %s 的搬家回音（原始 %s）。' % (wan(abs(x['cut1y']), False), wan(y['value'])) + cz; ce = 'Excludes %s of reshuffle echoes (raw %s). ' % (kb(abs(x['cut1y']), False), kb(y['value'])) + ce
+    return sz, se, [view, i30, it('1 年', '1 year', wan(v1), kb(v1), 'neu', cz, ce)]
 
 def dmd(L):
     d = L['onchain']['dmd']; r, b = d['r60'], d['base60']; f = d['flips'][-1]

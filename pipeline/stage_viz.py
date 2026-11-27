@@ -364,7 +364,7 @@ def regime_viz(cm, rpl, last, step=7, px=None):
 # 2026-11-03 使用者要求（CryptoQuant 的 Apparent Demand，@xwinfinance 的圖）：表觀需求（30 天合計）＝30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化。
 #   1 年以上供給取自 CheckOnChain HODL Waves（coc.get_hodl1y，逐筆 UTXO、不是實體調整）；新挖出的幣照減半時程 × 每天 144 個區塊估。
 #   單日 1 年以上供給掉超過 max(10 萬, 20 倍日變化中位數) 標成「疑似搬家」（交易所／託管整理錢包，CryptoQuant 的版本看不到這種尖峰），
-#   這批幣若一直不動會在一年後同一天滿一年、把數值拉低同樣的量（回音）。數字照實顯示、不修改。只作讀值
+#   這批幣若一直不動會在一年後同一天滿一年、把數值拉低同樣的量（回音）。原始數字照實顯示；2026-11-27 起另算扣掉搬家和回音的版本（adj）。只作讀值
 AD_FROM, AD_MOVE = '2020-01-01', 100000
 
 
@@ -397,9 +397,34 @@ def ad_viz(ser, last, step=3):
     for m in moves:   # 回音：一年後那幾天 1 年以上供給的最大單日增加（驗證過 2023-07-28 → 2024-07-27、2024-10-08 → 2025-10-08 都對得上）
         m['echo'] = ds(dn(m['start']) + 365)
         if m['echo'] <= last: m['echo_rise'] = round(max(dmap.get(ds(dn(m['echo']) + k), 0) for k in range(-2, 4)))
+    # 2026-11-27 長文 session 轉來使用者的需求：搬家和它一年後的回音會讓讀數一下很差、一下又像需求回來（2025-11-22 搬走 46.8 萬，2026-11-22 回音 +67 萬，
+    #   30 天讀數 −93.8 萬，扣掉約 −26 萬）。另算一條「扣掉搬家和回音」的版本：搬家那幾天的單日減少整筆扣掉；回音是一年後那幾天（搬家日 +364 到 +366 天）
+    #   比「搬家後一年裡 90% 的日子」還大的增加，超出的部分扣掉。回音常比原本搬走的多（一起被搬的還有不到一年的幣），所以用回音當天的增加去扣，不用原本搬走的量。
+    exc = {}
+    for m in moves:
+        for k in range(dn(m['start']), dn(m['end']) + 1):
+            v = dmap.get(ds(k), 0)
+            if v < 0: exc[ds(k)] = exc.get(ds(k), 0) + v
+        ea, eb = dn(m['start']) + 364, dn(m['end']) + 366
+        if ds(ea) > last: continue
+        ref = sorted(v for d, v in dl if dn(m['end']) < dn(d) < ea); base = ref[int(len(ref) * .9)] if ref else 0; er = 0
+        for k in range(ea, eb + 1):
+            v = dmap.get(ds(k))
+            if v is not None and v > base: exc[ds(k)] = exc.get(ds(k), 0) + v - base; er += v - base
+        m['echo_adj'] = round(er)
+    off, iva = 0.0, {}
+    for d in D: off += exc.get(d, 0); iva[d] = iv[d] - off
+    adx, adx1 = {}, {}
+    for k in range(30, len(D)):
+        d = D[k]; adx[d] = cs[k + 1] - cs[k - 29] - (iva[d] - iva[D[k - 30]])
+        if k >= 365: adx1[d] = cs[k + 1] - cs[k - 364] - (iva[d] - iva[D[k - 365]])
     d1 = A[-1]; w7 = A[-8] if len(A) > 8 else None
-    vals = sorted(ad[d] for d in A if d >= AD_FROM)
-    rows = [[dn(d), round(ad[d]), round(sma[d]) if d in sma else None, round(px[d]), round(ad1y[d]) if d in ad1y else None] for d in A if d >= AD_FROM][::-1][::step][::-1]
+    vals = sorted(ad[d] for d in A if d >= AD_FROM); valx = sorted(adx[d] for d in A if d >= AD_FROM)
+    win = lambda n: [d for d in D[ix[d1] - n + 1:ix[d1] + 1] if d in exc]
+    w30, w365 = win(30), win(365)
+    adj = dict(value=round(adx[d1]), y1=round(adx1[d1]) if d1 in adx1 else None, pct=round(sum(x < adx[d1] for x in valx) / len(valx) * 100, 1),
+               on30=bool(w30), on1y=bool(w365), cut30=round(sum(exc[d] for d in w30)), days30=w30, cut1y=round(sum(exc[d] for d in w365)))
+    rows = [[dn(d), round(ad[d]), round(sma[d]) if d in sma else None, round(px[d]), round(ad1y[d]) if d in ad1y else None, round(adx[d])] for d in A if d >= AD_FROM][::-1][::step][::-1]
     # 2026-11-05 使用者要求（補充指標 PDF）：1 年版。「30 天負、1 年正」常被說成牛市中的回調，照實列出 2016 起這種組合之後 90 天的價格變化
     v1 = sorted(ad1y[d] for d in A if d >= AD_FROM and d in ad1y)
     fw = [(px[D[ix[d] + 90]] / px[d] - 1) * 100 for d in A if d >= '2016-01-01' and d in ad1y and ad[d] < 0 < ad1y[d] and ix[d] + 90 < len(D)]
@@ -414,7 +439,7 @@ def ad_viz(ser, last, step=3):
     return dict(date=d1, value=round(ad[d1]), sma30=round(sma[d1]), d7=round(ad[w7]) if w7 else None, price=round(px[d1]),
                 inact=round(iv[d1]), inact_chg30=round(iv[d1] - iv[D[ix[d1] - 30]]), issued30=round(sum(_subsidy(D[j]) for j in range(ix[d1] - 29, ix[d1] + 1))),
                 pct=round(sum(x < ad[d1] for x in vals) / len(vals) * 100, 1), since=AD_FROM, moves=moves[-12:], echo_soon=up, in_window=rec, move_thr=round(thr),
-                y1=y1, rows=rows, note='rows 第 5 欄是 1 年版（365 天合計）；CryptoQuant 定義：30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化；1 年以上供給取自 CheckOnChain HODL Waves（逐筆 UTXO）；新挖出的幣照減半時程估；只作讀值')
+                y1=y1, adj=adj, rows=rows, note='rows 第 5 欄是 1 年版（365 天合計），第 6 欄是扣掉搬家和回音的 30 天版；CryptoQuant 定義：30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化；1 年以上供給取自 CheckOnChain HODL Waves（逐筆 UTXO）；新挖出的幣照減半時程估；只作讀值')
 
 
 # 2026-11-05 使用者要求（補充指標 PDF：LTH／STH Supply Ratio）：長短期持有者供給比＝長期持有者供給 ÷ 短期持有者供給（Bitview lth_supply／sth_supply）。
