@@ -243,6 +243,9 @@ CERTAIN = re.compile(r'底(早就|已經|已)?(到了|出現|確認)|週期底�
 BIG = 250000   # 2026-11-07：X 對 25 萬粉以上帳號底下的回覆跑 AI 檢查（"llm slop" 標籤，14–30 天，對方收不到通知）
 
 
+IMG_USE = {}   # (圖代號, 語言) → 今天用過的編號，repeat_errors 填、tone_notes 讀
+
+
 def repeat_errors(items):
     """同一天的回覆／引用不能一字不差重複自己的句子（X 的 copypasta／duplicate 標籤）；25 萬粉以上的回覆要使用者自己改寫。"""
     err = []
@@ -251,8 +254,7 @@ def repeat_errors(items):
         if (it.get('followers') or 0) >= BIG and it.get('mode') != 'quote' and it.get('reply') and it.get('status') != 'optional':
             err.append(f'#{it["n"]} @{it.get("author")} 有 {it["followers"]:,} 粉（25 萬以上）：回覆會被 X 跑 AI 檢查，改成 status "optional" 並在 note 請使用者用自己的話改寫，或改成引用（mode "quote"）')
     # 2026-11-08（帳號分析）：①有外推線／推算日期的圖不配（佐證圖 c-ev-* 畫「近 30 日速度外推」和「外推交叉 12/02」，等於在推未來日期）；
-    # ②同一張圖、同一種語言一天只給一則（11/05 兩則 DVOL 回覆圖文幾乎一樣、隔 21 分鐘）；③太肯定的階段斷言要改成帶前提的說法
-    imgs = {}
+    # ②（11/27 起改成提醒）同一張圖、同一種語言原本一天只給一則（11/05 兩則 DVOL 回覆圖文幾乎一樣、隔 21 分鐘）；③太肯定的階段斷言要改成帶前提的說法
     try:
         _t = open(os.path.join(ROOT, 'data', 'next.js'), encoding='utf-8').read(); OLD = json.loads(_t[_t.index('{'):_t.rindex('}') + 1]).get('old') or {}
     except Exception: OLD = {}
@@ -274,8 +276,8 @@ def repeat_errors(items):
         im = it['image']; key = (chart_key(im), 'zh' if it.get('lang') == 'zh' else 'en'); raw = (im.get('site') or {}).get('sel') or im.get('chart')
         if str(raw).startswith('#c-ev-'): err.append(f'#{it["n"]} 配圖 {raw} 有外推線和推算日期，不配（只放已經發生的走勢）')
         if key[0] is None: continue   # 自己畫的圖（custom、沒寫代號）沒辦法比
-        if key in imgs: err.append(f'#{it["n"]} 和 #{imgs[key]} 用同一張圖（{key[0]}，{key[1]}）：同一張圖同一種語言一天只給一則')
-        else: imgs[key] = it['n']
+        # 2026-11-27 使用者：「一個圖使用限制可以按需要增加」：同一張圖一天一次的硬擋拿掉，改在 tone_notes 第 4 次起提醒
+        IMG_USE.setdefault(key, []).append(it['n'])
     for it in items:
         if it.get('status') == 'skip': continue
         for k in ('reply', 'quote'):
@@ -450,7 +452,10 @@ def tone_notes(items):
     # 2026-11-13 使用者同意：配圖門檻從 3 萬粉降到 1 萬粉（依據見私人倉庫 ops/replies/README.md）
     mid = [it['n'] for it in live if it.get('kind') != 'followup' and it.get('mode') != 'quote' and 10000 <= (it.get('followers') or 0) < 30000
            and not it.get('image') and '不配圖' not in (it.get('note') or '')]
-    if mid: out.append(f'1 萬–3 萬粉的回覆沒配圖：{mid}，能配就配（對不上就在 note 寫「不配圖：原因」）')
+    if mid: out.append(f'1 萬–3 萬粉的回覆沒配圖：{mid}，能配就配；同一張圖今天用過也可以再用（11/27 起），真的沒有同向的圖才在 note 寫「不配圖：原因」')
+    if any(it.get('image') for it in items):
+        many = {k: v for k, v in IMG_USE.items() if len(v) > 3}
+        for (k, lang), ns in many.items(): out.append(f'同一張圖 {k}（{lang}）今天用了 {len(ns)} 次：{ns}，可以再用，但看看有沒有更貼的圖、文字別跟前幾則同一個讀法（11/27 使用者：用量按需要增加）')
     # 2026-11-15 使用者同意：回覆以中文為主，英文三成以內（依據見私人倉庫 ops/replies/README.md）
     rr = [it for it in live if it.get('kind') != 'followup' and it.get('mode') != 'quote']
     en = [it['n'] for it in rr if it.get('lang') == 'en']
