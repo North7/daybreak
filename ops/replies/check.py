@@ -133,9 +133,9 @@ def longpost_notes(tag, t, lang, posted=None):
         tr = BRIDGE.findall(body)
         if tr: out.append(f'{tag} 簡報式過渡 {"、".join(dict.fromkeys(tr))}：拿掉，直接接下一件事')
         title = (t.split('\n')[0] if t else '').strip()   # 2026-11-20 Gemini 看主頁：5 篇有 4 篇標題「問句→秒答」、「不是 A，是 B」當標題公式、第一段寫讀者心聲鋪墊
-        if re.search(r'？\s*\S', re.sub(r'（[上下]）\s*$', '', title.split('｜')[0])): out.append(f'{tag} 標題是「問句＋秒答」（「{title[:24]}…」）：主頁連著看最像同一個 Prompt 產的。換成直接給反直覺的結論，或第一人稱「我把…拆開看」')
+        if re.search(r'？\s*\S', re.sub(r'（[上中下]）\s*$', '', title.split('｜')[0])): out.append(f'{tag} 標題是「問句＋秒答」（「{title[:24]}…」）：主頁連著看最像同一個 Prompt 產的。換成直接給反直覺的結論，或第一人稱「我把…拆開看」')
         if CONTRAST.search(title): out.append(f'{tag} 標題用「不是 A，是 B」：已經是帳號最明顯的 Claude 指紋，標題一律不用')
-        tnum = re.findall(r'\d[\d,.]*\s*(?:%|萬|億|次|天|年|倍|顆|K)?', re.sub(r'（[上下]）', '', title))   # 2026-11-26 使用者看小幫手：「標題應該就一句話，要說到別人心裡那種…不是一堆數據。要有結論，一句話鉤子」
+        tnum = re.findall(r'\d[\d,.]*\s*(?:%|萬|億|次|天|年|倍|顆|K)?', re.sub(r'（[上中下]）', '', title))   # 2026-11-26 使用者看小幫手：「標題應該就一句話，要說到別人心裡那種…不是一堆數據。要有結論，一句話鉤子」
         tlen = len(re.sub(r'（[A-Za-z][^）]*）', '', title))   # 2026-11-27 使用者：標題的關鍵名詞也加括號英文，英文註解不算進標題長度
         if tlen > 30 or len(tnum) >= 2 or '：' in title: out.append(f'{tag} 標題太長或數字太多（{tlen} 字、{len(tnum)} 個數字{"、有冒號接第二句" if "：" in title else ""}）：標題只要一句話、有結論、說到讀者心裡，數字留在正文和圖上；上下篇用同一個標題加（上）（下）（2026-11-26 使用者）')
         p0 = paras[0] if paras else ''
@@ -187,7 +187,7 @@ def check_longposts():
             notes += longpost_notes(tag, tl, lang, it.get('posted'))
     zh5 = sorted([it for it in items if it.get('zh') and it.get('title') and it.get('lang', 'zh') == 'zh'], key=lambda it: it.get('time') or '')[-5:]
     qt = [it['id'] for it in zh5 if '？' in it['title'].split('｜')[0]]
-    if len({re.sub(r'（[上下]）\s*$', '', it['title']) for it in zh5 if it['id'] in qt}) >= 2 and any(not it.get('posted') for it in zh5 if it['id'] in qt): notes.append(f'主頁最近 5 篇中文長文有 {len(qt)} 篇標題是問句：{qt}。連著看就是模板（2026-11-20 Gemini 看主頁），換成反直覺結論或第一人稱拆解')
+    if len({re.sub(r'（[上中下]）\s*$', '', it['title']) for it in zh5 if it['id'] in qt}) >= 2 and any(not it.get('posted') for it in zh5 if it['id'] in qt): notes.append(f'主頁最近 5 篇中文長文有 {len(qt)} 篇標題是問句：{qt}。連著看就是模板（2026-11-20 Gemini 看主頁），換成反直覺結論或第一人稱拆解')
     closers = [it.get('id') for it in items if CLOSER.search((it.get('zh') or '') + (it.get('en') or ''))]
     if len(closers) >= 2: notes.append(f'長貼文 {len(closers)} 篇都用「這週看幾件事」收尾：{closers}，連著幾篇就是模板，併進結論段或換個寫法')
     return err, notes
