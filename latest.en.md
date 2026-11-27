@@ -201,7 +201,7 @@ Page: https://daybreak.aronlab.dev/en/charts/pi/
 
 ### Tidemark: an outside model's top and bottom scores
 
-Bullish: This outside model leans toward a bottom but is not in its bottom zone yet: a bottom score of 47, with the line at 50.
+Bullish: This outside model leans toward a bottom but is not in its bottom zone yet: a bottom score of 44, with the line at 50.
 
 What it shows: What it is: Tidemark is an outside composite model, not one of ours. It scores on-chain valuation, holder behaviour, flows, leverage and sentiment, adds how long it has been since the last top or bottom, and combines them into two 0–100 scores: the top score for how close a top is, the bottom score for how close a bottom is. Reading it: each row is one score, and the ticks on the bars are the lines: 50 opens the top window and 70 is high alert; 50 is the bottom zone and 70 a strong bottom. The rows below are its categories (higher is hotter); any without data today are marked. Caveats: Tidemark sets the rules and weights and may change them; we copy its daily scores and have not backtested them ourselves.
 
@@ -211,7 +211,7 @@ Page: https://daybreak.aronlab.dev/en/charts/tm/
 
 ### Tidemark scores over time
 
-Bullish: This outside model leans toward a bottom but is not in its bottom zone yet: a bottom score of 47, with the line at 50.
+Bullish: This outside model leans toward a bottom but is not in its bottom zone yet: a bottom score of 44, with the line at 50.
 
 What it shows: What it is: the history of the two scores from the outside model Tidemark (see the previous card), weekly since 2011 and daily for the past year, to see how high they rose around past tops and bottoms and how early. Reading it: in the top view the thick line is the top score, the other solid line is heat (how expensive) and the grey dashes are timing (how close to when past tops came); horizontal lines mark the 50 window and 70 alert, vertical dashes past tops. In the bottom view the thick green line is the bottom score and the blue line is cold (how cheap); the horizontal line is the 50 bottom zone, vertical dashes past bottoms, and the green dotted line this cycle's low so far. Caveats: the history is back-calculated under today's rules, not what it showed at the time; some inputs start in late 2012, before which only heat exists.
 
@@ -478,31 +478,31 @@ Page: https://daybreak.aronlab.dev/en/charts/strike/
 
 ### Gamma exposure (estimated)
 
-Neutral: Total gamma within 45 days is −$14M: +$12M above price and −$26M below.
+Neutral: Total gamma within 45 days is −$13M: +$13M above price and −$25M below.
 
 What it shows: Dealer gamma by strike. Where it is positive, dealers trade against the move and price tends to pin; where negative, they trade with it and moves are amplified. Estimated, not actual positions.
 
-Source: Deribit · 11-27 00:06 UTC
+Source: Deribit · 11-27 01:10 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/gex/
 
 ### Liquidation levels (estimated)
 
-Bullish: The brightest band below is $56.2K–$57.2K (−6.3%) and above $64.6K–$67.6K (+9.2%).
+Bullish: The brightest band below is $56.2K–$57.2K (−6.5%) and above $64.6K–$67.6K (+9.0%).
 
 What it shows: The industry-standard liquidation heatmap (CoinGlass-style). Time runs across the last 7 days, one column per hour; price runs up the side. Brighter means more estimated BTC awaiting liquidation: longs below the close, shorts above; bands that price trades through are cleared. The strip on the right is the amount at each price right now, with the brightest band above and below labelled. Method: rises in perpetual open interest across several exchanges count as new positions, with leverage assumed between 5x and 100x. The switch above the chart changes to six months: one column per day in $500 buckets, which shows the large clusters further from price. A model, not exchange data.
 
-Source: Coinalyze · perpetuals on 7 exchanges · snapshot 11/27 00:00 UTC
+Source: Coinalyze · perpetuals on 7 exchanges · snapshot 11/27 01:00 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/liq/
 
 ### Order book
 
-Bullish: Within ±15%: $546M of bids and $403M of asks, a ratio of 1.35: thicker support below.
+Bullish: Within ±15%: $551M of bids and $401M of asks, a ratio of 1.38: thicker support below.
 
 What it shows: Resting orders per $1,000 bucket across seven venues, in $ millions. A snapshot at 00:05 UTC each day; orders can be pulled at any time, so read it for rough location only.
 
-Source: 13 exchanges · ±15% · snapshot 11-27 00:08 UTC
+Source: 13 exchanges · ±15% · snapshot 11-27 01:12 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/book/
 
@@ -798,7 +798,7 @@ Page: https://daybreak.aronlab.dev/en/charts/usdt-usd/
 
 ### Asia: OTC USDT premium
 
-Neutral: The Asian OTC USDT premium is +0.12%, close to the exchange rate: buying and selling in Asia are balanced.
+Neutral: The Asian OTC USDT premium is +0.18%, close to the exchange rate: buying and selling in Asia are balanced.
 
 What it shows: The mid price of USDT against the yuan on OKX's OTC desk, divided by the USD/CNY rate, minus 1. Above +0.3% means buyers are rushing into USDT; below −0.3% means more people are cashing out to yuan; in between is flat. One snapshot a day, recorded since 2026-11-02 (25 days so far).
 
@@ -1077,9 +1077,9 @@ Page: https://daybreak.aronlab.dev/en/charts/fh/
 
 ### Futures basis curve
 
-Neutral: Annualized basis runs 2.9–5.5% across expiries, higher further out; the level is neutral.
+Neutral: Annualized basis runs 3.0–5.5% across expiries, higher further out; the level is neutral.
 
-What it shows: How much futures trade above spot, annualized; the horizontal axis is days to expiry (expiries within 7 days are left out). A high basis means traders pay up to be long through futures: 3–15% is normal, above 15% is hot, below 3% is cold. Expiries now sit at 2.9–5.5%, which is very low: little demand to be long; perpetual funding is +0.0% annualized.
+What it shows: How much futures trade above spot, annualized; the horizontal axis is days to expiry (expiries within 7 days are left out). A high basis means traders pay up to be long through futures: 3–15% is normal, above 15% is hot, below 3% is cold. Expiries now sit at 3.0–5.5%, inside the normal range; perpetual funding is +0.0% annualized.
 
 Source: annualized % · excludes expiries within 7 days
 
@@ -1125,9 +1125,9 @@ Page: https://daybreak.aronlab.dev/en/charts/bfx/
 
 ### Hyperliquid big accounts
 
-Neutral: Net short 2,746 BTC, down 1,474 BTC from the day before
+Neutral: Net short 2,749 BTC, down 1,477 BTC from the day before
 
-What it shows: BTC perpetual positions of the top 2,000 Hyperliquid accounts by equity (about $1.2M in equity and up), scanned once after each daily close and stored as totals only. 2026-11-26: longs 7,603 BTC (117 accounts), shorts 10,349 BTC (129 accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts 2026-11-04 and covers only 23 days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. "Profitable accounts" are those with a positive all-time profit on the leaderboard, recorded since 2026-11-18: on that day all accounts were net short 1,756 BTC, profitable ones 5,418 BTC, and excluding high-turnover, market-maker-like accounts only 318 BTC, so "smart money" figures depend heavily on the definition. One exchange only. A reading only.
+What it shows: BTC perpetual positions of the top 2,000 Hyperliquid accounts by equity (about $1.2M in equity and up), scanned once after each daily close and stored as totals only. 2026-11-26: longs 7,590 BTC (117 accounts), shorts 10,339 BTC (129 accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts 2026-11-04 and covers only 23 days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. "Profitable accounts" are those with a positive all-time profit on the leaderboard, recorded since 2026-11-18: on that day all accounts were net short 1,756 BTC, profitable ones 5,418 BTC, and excluding high-turnover, market-maker-like accounts only 318 BTC, so "smart money" figures depend heavily on the definition. One exchange only. A reading only.
 
 Source: Hyperliquid · 11/26
 
@@ -1155,17 +1155,17 @@ Page: https://daybreak.aronlab.dev/en/charts/vol/
 
 ### Implied volatility term structure
 
-Bearish: 7-day 49.1%, 90-day 46.3%: a +2.9-point gap (inverted: the front is dearer).
+Bearish: 7-day 48.7%, 90-day 46.1%: a +2.6-point gap (inverted: the front is dearer).
 
-What it shows: At-the-money implied volatility for each expiry, against days to expiry. Longer-dated above near-dated is the calm-market shape; near-dated above longer-dated is an inversion, meaning the market sees more risk in the next few days. Now 7 days is 49.1% and 90 days 46.3%, near-dated is pricier: inverted.
+What it shows: At-the-money implied volatility for each expiry, against days to expiry. Longer-dated above near-dated is the calm-market shape; near-dated above longer-dated is an inversion, meaning the market sees more risk in the next few days. Now 7 days is 48.7% and 90 days 46.1%, near-dated is pricier: inverted.
 
-Source: Deribit mark IV · at the money · snapshot 2026-11-27 00:06 UTC
+Source: Deribit mark IV · at the money · snapshot 2026-11-27 01:10 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/ivt/
 
 ### Options-implied price range
 
-Deribit option prices for each expiry, turned into odds of where price settles: the dark band is the 25th–75th percentile (half the odds), the light band the 15th–85th. At the 2027/01/29 expiry (about 63 days out) the 25–75 range is $53.8K to $68.4K; at the 2027/09/24 expiry the median is $60.6K, with a 37% chance of settling below the realized price $53K and 32% of settling above the STH cost $72.1K. This is what options price (risk-neutral, including the cost of hedging), not a forecast; beyond the outermost strikes the last implied volatility is carried out.
+Deribit option prices for each expiry, turned into odds of where price settles: the dark band is the 25th–75th percentile (half the odds), the light band the 15th–85th. At the 2027/01/29 expiry (about 63 days out) the 25–75 range is $54K to $68.7K; at the 2027/09/24 expiry the median is $60.8K, with a 36% chance of settling below the realized price $53K and 32% of settling above the STH cost $72.1K. This is what options price (risk-neutral, including the cost of hedging), not a forecast; beyond the outermost strikes the last implied volatility is carried out.
 
 Page: https://daybreak.aronlab.dev/en/charts/orng/
 
@@ -1191,7 +1191,7 @@ Page: https://daybreak.aronlab.dev/en/charts/prem/
 
 ### Put/call ratio and risk reversal
 
-Bearish: 25-delta risk reversal −6.93: puts are dearer, so the market is buying downside protection; put/call ratio 0.79.
+Bearish: 25-delta risk reversal −7.03: puts are dearer, so the market is buying downside protection; put/call ratio 0.79.
 
 What it shows: Two readings of which way the options market leans. A put ÷ call ratio above 1 (the tick) means more hedging or bearish positions than bullish ones; the risk reversal compares equally distant calls and puts, and negative means puts cost more, so the market is buying downside protection. Both have been saved daily since 2026-11-08 (19 readings so far); a history chart needs more of them.
 
