@@ -472,17 +472,17 @@ Neutral: max pain for the biggest expiry sits above price, but evidence of a pul
 
 What it shows: Open interest by strike for the main expiry: puts on the left, calls on the right. Strikes with large open interest often act as levels into expiry.
 
-Source: 12/25 · Max Pain 70K · all expiries: calls $14.9B / puts $11.8B
+Source: 12/25 · Max Pain 70K · all expiries: calls $14.9B / puts $11.9B
 
 Page: https://daybreak.aronlab.dev/en/charts/strike/
 
 ### Gamma exposure (estimated)
 
-Neutral: Total gamma within 45 days is −$13M: +$13M above price and −$25M below.
+Neutral: Total gamma within 45 days is −$13M: +$13M above price and −$26M below.
 
 What it shows: Dealer gamma by strike. Where it is positive, dealers trade against the move and price tends to pin; where negative, they trade with it and moves are amplified. Estimated, not actual positions.
 
-Source: Deribit · 11-27 01:10 UTC
+Source: Deribit · 11-27 01:28 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/gex/
 
@@ -498,11 +498,11 @@ Page: https://daybreak.aronlab.dev/en/charts/liq/
 
 ### Order book
 
-Bullish: Within ±15%: $551M of bids and $401M of asks, a ratio of 1.38: thicker support below.
+Bullish: Within ±15%: $558M of bids and $404M of asks, a ratio of 1.38: thicker support below.
 
 What it shows: Resting orders per $1,000 bucket across seven venues, in $ millions. A snapshot at 00:05 UTC each day; orders can be pulled at any time, so read it for rough location only.
 
-Source: 13 exchanges · ±15% · snapshot 11-27 01:12 UTC
+Source: 13 exchanges · ±15% · snapshot 11-27 01:30 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/book/
 
@@ -782,7 +782,7 @@ Page: https://daybreak.aronlab.dev/en/charts/pr-us/
 
 ### Coinbase premium negative runs: what is left net of USDT
 
-Neutral: Negative for 82 days; of the −0.096% average, −0.089% is USDT trading below $1
+Neutral: Negative for 82 days; of the −0.096% average, −0.090% is USDT trading below $1
 
 What it shows: Each row is a period when the unadjusted daily premium stayed below 0 for 19 days or more, newest first. Bar length is the average unadjusted premium over the period (longer = more negative): the blue-violet part is what USDT trading below $1 accounts for, the red part is the negative that remains after netting it out, and no red means the remainder was zero or positive. The number on the right is the average net of USDT, in red when below −0.01%. The line underneath gives the unadjusted average, the USDT part, and where price started and ended. Data starts in 2022-10. Few cases; a reading only.
 
@@ -798,7 +798,7 @@ Page: https://daybreak.aronlab.dev/en/charts/usdt-usd/
 
 ### Asia: OTC USDT premium
 
-Neutral: The Asian OTC USDT premium is +0.18%, close to the exchange rate: buying and selling in Asia are balanced.
+Neutral: The Asian OTC USDT premium is +0.09%, close to the exchange rate: buying and selling in Asia are balanced.
 
 What it shows: The mid price of USDT against the yuan on OKX's OTC desk, divided by the USD/CNY rate, minus 1. Above +0.3% means buyers are rushing into USDT; below −0.3% means more people are cashing out to yuan; in between is flat. One snapshot a day, recorded since 2026-11-02 (25 days so far).
 
@@ -1125,9 +1125,9 @@ Page: https://daybreak.aronlab.dev/en/charts/bfx/
 
 ### Hyperliquid big accounts
 
-Neutral: Net short 2,749 BTC, down 1,477 BTC from the day before
+Neutral: Net short 2,703 BTC, down 1,431 BTC from the day before
 
-What it shows: BTC perpetual positions of the top 2,000 Hyperliquid accounts by equity (about $1.2M in equity and up), scanned once after each daily close and stored as totals only. 2026-11-26: longs 7,590 BTC (117 accounts), shorts 10,339 BTC (129 accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts 2026-11-04 and covers only 23 days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. "Profitable accounts" are those with a positive all-time profit on the leaderboard, recorded since 2026-11-18: on that day all accounts were net short 1,756 BTC, profitable ones 5,418 BTC, and excluding high-turnover, market-maker-like accounts only 318 BTC, so "smart money" figures depend heavily on the definition. One exchange only. A reading only.
+What it shows: BTC perpetual positions of the top 2,000 Hyperliquid accounts by equity (about $1.2M in equity and up), scanned once after each daily close and stored as totals only. 2026-11-26: longs 7,630 BTC (119 accounts), shorts 10,333 BTC (128 accounts). These are actual positions, not estimates. Big accounts include market makers and hedgers (long spot, short perps), so a standing net short is normal: read the change, not the level. History starts 2026-11-04 and covers only 23 days so far, because Hyperliquid does not expose past positions; other providers define "whales" differently, so their numbers will not match. "Profitable accounts" are those with a positive all-time profit on the leaderboard, recorded since 2026-11-18: on that day all accounts were net short 1,756 BTC, profitable ones 5,418 BTC, and excluding high-turnover, market-maker-like accounts only 318 BTC, so "smart money" figures depend heavily on the definition. One exchange only. A reading only.
 
 Source: Hyperliquid · 11/26
 
@@ -1155,17 +1155,17 @@ Page: https://daybreak.aronlab.dev/en/charts/vol/
 
 ### Implied volatility term structure
 
-Bearish: 7-day 48.7%, 90-day 46.1%: a +2.6-point gap (inverted: the front is dearer).
+Bearish: 7-day 48.6%, 90-day 46.1%: a +2.5-point gap (inverted: the front is dearer).
 
-What it shows: At-the-money implied volatility for each expiry, against days to expiry. Longer-dated above near-dated is the calm-market shape; near-dated above longer-dated is an inversion, meaning the market sees more risk in the next few days. Now 7 days is 48.7% and 90 days 46.1%, near-dated is pricier: inverted.
+What it shows: At-the-money implied volatility for each expiry, against days to expiry. Longer-dated above near-dated is the calm-market shape; near-dated above longer-dated is an inversion, meaning the market sees more risk in the next few days. Now 7 days is 48.6% and 90 days 46.1%, near-dated is pricier: inverted.
 
-Source: Deribit mark IV · at the money · snapshot 2026-11-27 01:10 UTC
+Source: Deribit mark IV · at the money · snapshot 2026-11-27 01:28 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/ivt/
 
 ### Options-implied price range
 
-Deribit option prices for each expiry, turned into odds of where price settles: the dark band is the 25th–75th percentile (half the odds), the light band the 15th–85th. At the 2027/01/29 expiry (about 63 days out) the 25–75 range is $54K to $68.7K; at the 2027/09/24 expiry the median is $60.8K, with a 36% chance of settling below the realized price $53K and 32% of settling above the STH cost $72.1K. This is what options price (risk-neutral, including the cost of hedging), not a forecast; beyond the outermost strikes the last implied volatility is carried out.
+Deribit option prices for each expiry, turned into odds of where price settles: the dark band is the 25th–75th percentile (half the odds), the light band the 15th–85th. At the 2027/01/29 expiry (about 63 days out) the 25–75 range is $54K to $68.5K; at the 2027/09/24 expiry the median is $60.8K, with a 36% chance of settling below the realized price $53K and 32% of settling above the STH cost $72.1K. This is what options price (risk-neutral, including the cost of hedging), not a forecast; beyond the outermost strikes the last implied volatility is carried out.
 
 Page: https://daybreak.aronlab.dev/en/charts/orng/
 
