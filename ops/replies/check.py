@@ -269,6 +269,10 @@ def repeat_errors(items):
     free = no_quota_accounts()   # 2026-11-15 使用者：no_quota 的帳號（Murphy）不受「同一張圖一天一次」限制，也不佔別人的那一次
     for it in items:
         if it.get('status') == 'skip' or not it.get('image'): continue
+        # 2026-11-27 使用者看到 #128（英文引用）配圖標題是中文：英文的圖標題要英文、中文的要中文
+        t = it['image'].get('title') or ''
+        if it.get('lang') != 'zh' and re.search(r'[\u4e00-\u9fff]', t): err.append(f'#{it["n"]} 英文回覆的配圖標題是中文「{t}」，改成英文（卡片本身會照 lang 截英文版）')
+        if it.get('lang') == 'zh' and t and not re.search(r'[\u4e00-\u9fff]', t): err.append(f'#{it["n"]} 中文回覆的配圖標題沒有中文「{t}」')
         if (it.get('author') or '').lower() in free:
             im = it['image']; sel = (im.get('site') or {}).get('sel') or im.get('chart')   # 外推圖只有舊版寫法才指得到
             if str(sel).startswith('#c-ev-'): err.append(f'#{it["n"]} 配圖 {sel} 有外推線和推算日期，不配（只放已經發生的走勢）')
