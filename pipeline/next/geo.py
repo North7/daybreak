@@ -83,9 +83,9 @@ def name(c, en):
     return (c.get('en') if en else c.get('zh')) or c.get('zh') or c['k']
 
 
-INTRO_ZH = ('Daybreak（daybreak.aronlab.dev）是 Aron 做的免費比特幣每日判讀。每天台北時間早上 08:30 前更新，用 %d 張自建與公開的指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，'
+INTRO_ZH = ('Daybreak（daybreak.aronlab.dev）是 Aron 做的免費比特幣數據分析網站，每天出一份比特幣行情分析。每天台北時間早上 08:30 前更新，用 %d 張自建與公開的指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，'
             '回答六個問題：%s每張圖都表態偏多、偏空或中性，並寫出理由。數字由程式計算，AI 只負責解釋，不計算也不做決定；不給交易建議。') % (NCH, ''.join(q['qz'] + '？' for q in QS))   # 問題本身有頓號（誰在買、錢從哪裡來），用問號隔開
-INTRO_EN = ('Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading %d original and public indicators across on-chain data, '
+INTRO_EN = ('Daybreak (daybreak.aronlab.dev) is a free Bitcoin data analysis website and daily Bitcoin market brief built by Aron. It updates every morning before 08:30 Taipei time, reading %d original and public indicators across on-chain data, '
             'price structure, derivatives, fund flows and macro sentiment to answer six questions: %s. Every chart takes a side (bullish, bearish or neutral) and says why. '
             'Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.') % (NCH, '; '.join(q['qe'] for q in QS))
 
@@ -122,7 +122,7 @@ def _sec_html(en):
 def static_app():
     return ('<main id="oc-static"><h1>Daybreak · 比特幣每日判讀 · Daily Bitcoin brief</h1><p lang="zh-Hant">%s</p><p lang="en">%s</p>' % (esc(INTRO_ZH), esc(INTRO_EN))
             + _sec_html(False) + _sec_html(True)
-            + '<p><a href="../?intro">Daybreak 是什麼 · What is Daybreak</a> · <a href="../case-study/">Case study</a> · <a href="../bitcoin-cycle/">比特幣週期分析</a> · <a href="../bitcoin-onchain/">比特幣鏈上數據分析</a> · <a href="../bitcoin-macro/">宏觀與資金流</a> · <a href="../bitcoin-derivatives/">衍生品數據</a> · <a href="../en/bitcoin-cycle/">Bitcoin cycle analysis</a> · <a href="../en/bitcoin-onchain/">Bitcoin on-chain analysis</a> · <a href="../zh-hans/bitcoin-cycle/">比特币周期分析</a> · <a href="../zh-hans/bitcoin-onchain/">比特币链上数据分析</a> · <a href="../charts/">所有圖</a> · <a href="../en/charts/">All charts</a> · <a href="../brief/">每日簡報</a> · <a href="../en/brief/">Daily briefs</a> · <a href="../latest.md">latest.md</a> · <a href="../latest.en.md">latest.en.md</a></p></main>')
+            + '<p><a href="../?intro">Daybreak 是什麼 · What is Daybreak</a> · <a href="../case-study/">Case study</a> · <a href="../bitcoin-cycle/">比特幣週期分析</a> · <a href="../bitcoin-onchain/">比特幣鏈上數據分析</a> · <a href="../bitcoin-macro/">比特幣宏觀分析</a> · <a href="../bitcoin-etf/">比特幣 ETF 數據分析</a> · <a href="../bitcoin-derivatives/">比特幣衍生品數據</a> · <a href="../en/bitcoin-cycle/">Bitcoin cycle analysis</a> · <a href="../en/bitcoin-onchain/">Bitcoin on-chain analysis</a> · <a href="../zh-hans/bitcoin-cycle/">比特币周期分析</a> · <a href="../zh-hans/bitcoin-onchain/">比特币链上数据分析</a> · <a href="../charts/">比特幣數據與指標（所有圖）</a> · <a href="../en/charts/">All charts</a> · <a href="../brief/">比特幣行情分析（每日簡報）</a> · <a href="../en/brief/">Daily briefs</a> · <a href="../latest.md">latest.md</a> · <a href="../latest.en.md">latest.en.md</a></p></main>')
 
 
 # 2026-11-21 使用者貼 ChatGPT 的回答：它找到網站，但說「無法完整讀取指標清單、資料來源和免費使用限制」（問的是 Glassnode 免費替代）。
@@ -184,14 +184,19 @@ def static_intro():
           '<h2>六個問題</h2><ul>%s</ul>' % ''.join('<li><a href="app/#%s">%s</a>：%s</li>' % (q['id'], esc(q['zh']), esc(q['qz'])) for q in QS),
           '<h2>最新一期：%s 收盤版 No.%s</h2><p><strong>%s</strong></p><p>%s</p><p>%s</p>' % (DZH, ED, esc(BR.get('hz') or ''), esc(BR.get('sz') or ''), tz),
           '<h2>指標一覽</h2>%s<h2>資料來源</h2><p>%s。每張圖都寫出資料來源和日期。</p><h2>常見問題</h2>%s</section>' % (_catalog(False), esc('、'.join(SRCS)), _faq(False)),
-          '<p><a href="app/">Open Daybreak · 打開 Daybreak</a> · <a href="case-study/">Case study</a> · <a href="bitcoin-cycle/">比特幣週期分析</a> · <a href="bitcoin-onchain/">比特幣鏈上數據分析</a> · <a href="bitcoin-macro/">宏觀與資金流</a> · <a href="bitcoin-derivatives/">衍生品數據</a> · <a href="en/bitcoin-cycle/">Bitcoin cycle analysis</a> · <a href="en/bitcoin-onchain/">Bitcoin on-chain analysis</a> · <a href="zh-hans/bitcoin-cycle/">比特币周期分析</a> · <a href="zh-hans/bitcoin-onchain/">比特币链上数据分析</a> · <a href="zh-hans/bitcoin-macro/">比特币宏观与资金流</a> · <a href="zh-hans/bitcoin-derivatives/">比特币衍生品数据</a> · <a href="charts/">所有圖</a> · <a href="en/charts/">All charts</a> · <a href="brief/">每日簡報</a> · <a href="en/brief/">Daily briefs</a> · <a href="llms.txt">llms.txt</a> · <a href="latest.md">latest.md</a> · <a href="latest.en.md">latest.en.md</a></p></main>']
+          '<p><a href="app/">Open Daybreak · 打開 Daybreak</a> · <a href="case-study/">Case study</a> · <a href="bitcoin-cycle/">比特幣週期分析</a> · <a href="bitcoin-onchain/">比特幣鏈上數據分析</a> · <a href="bitcoin-macro/">比特幣宏觀分析</a> · <a href="bitcoin-etf/">比特幣 ETF 數據分析</a> · <a href="bitcoin-derivatives/">比特幣衍生品數據</a> · <a href="en/bitcoin-cycle/">Bitcoin cycle analysis</a> · <a href="en/bitcoin-onchain/">Bitcoin on-chain analysis</a> · <a href="zh-hans/bitcoin-cycle/">比特币周期分析</a> · <a href="zh-hans/bitcoin-onchain/">比特币链上数据分析</a> · <a href="zh-hans/bitcoin-macro/">比特币宏观分析</a> · <a href="zh-hans/bitcoin-etf/">比特币ETF数据分析</a> · <a href="zh-hans/bitcoin-derivatives/">比特币衍生品数据</a> · <a href="charts/">比特幣數據與指標（所有圖）</a> · <a href="en/charts/">All charts</a> · <a href="brief/">比特幣行情分析（每日簡報）</a> · <a href="en/brief/">Daily briefs</a> · <a href="llms.txt">llms.txt</a> · <a href="latest.md">latest.md</a> · <a href="latest.en.md">latest.en.md</a></p></main>']
     return ''.join(h)
 
 
 # ---------- 結構化資料 ----------
+# 2026-11-27 使用者給的搜尋詞（比特幣數據分析、鏈上分析、週期分析、ETF 數據分析、宏觀分析、行情分析、比特幣分析、比特幣數據）＋英文、簡體，放在 WebSite 的 keywords
+KEYWORDS = ('比特幣數據分析, BTC 數據分析, 比特幣數據, 比特幣分析, 比特幣行情分析, 比特幣鏈上數據分析, 比特幣鏈上分析, 比特幣週期分析, 比特幣 ETF 數據分析, 比特幣宏觀分析, 比特幣指標, '
+            '比特币数据分析, BTC 数据分析, 比特币数据, 比特币分析, 比特币行情分析, 比特币链上数据分析, 比特币周期分析, 比特币ETF数据分析, 比特币宏观分析, '
+            'Bitcoin data analysis, BTC data analysis, Bitcoin analysis, Bitcoin market analysis, Bitcoin on-chain analysis, Bitcoin cycle analysis, Bitcoin ETF data, Bitcoin macro analysis, Bitcoin indicators')
 PERSON = {'@type': 'Person', '@id': 'https://aronlab.dev/#aron', 'name': 'Aron', 'url': 'https://aronlab.dev/'}
 WEBSITE = {'@type': 'WebSite', '@id': SITE + '#site', 'name': 'Daybreak', 'alternateName': ['Daybreak 比特幣多維判讀', 'Daybreak Bitcoin brief', 'daybreak.aronlab.dev', 'Daybreak (Aron Lab)'], 'url': SITE,
-           'disambiguatingDescription': 'Free Bitcoin on-chain and market analysis website by Aron at daybreak.aronlab.dev. No token, no trading or signal service; not related to other crypto projects named Daybreak.',
+           'keywords': KEYWORDS,
+           'disambiguatingDescription': 'Free Bitcoin data analysis website (on-chain, cycle, ETF, macro, derivatives) by Aron at daybreak.aronlab.dev. No token, no trading or signal service; not related to other crypto projects named Daybreak.',
            'inLanguage': ['zh-Hant', 'en'], 'description': INTRO_EN, 'creator': {'@id': PERSON['@id']}, 'publisher': {'@id': PERSON['@id']}}
 
 
@@ -211,7 +216,7 @@ def ld_intro():
 
 def ld_app():
     g = [WEBSITE, PERSON,
-         {'@type': 'WebPage', '@id': SITE + 'app/#page', 'url': SITE + 'app/', 'name': 'Daybreak · The first Bitcoin brief of the morning', 'isPartOf': {'@id': WEBSITE['@id']},
+         {'@type': 'WebPage', '@id': SITE + 'app/#page', 'url': SITE + 'app/', 'name': 'Daybreak · 比特幣多維判讀 · Bitcoin data analysis', 'isPartOf': {'@id': WEBSITE['@id']},
           'inLanguage': ['zh-Hant', 'en'], 'dateModified': DATE, 'about': {'@type': 'Thing', 'name': 'Bitcoin', 'sameAs': 'https://en.wikipedia.org/wiki/Bitcoin'},
           'author': {'@id': PERSON['@id']}, 'mainEntity': {'@id': SITE + 'app/#data'}},
          {'@type': 'Dataset', '@id': SITE + 'app/#data', 'name': 'Daybreak Bitcoin indicators', 'url': SITE + 'app/',
@@ -269,9 +274,10 @@ def llms():
     o += ['- [%s](%sapp/#%s): %s' % (q['en'], SITE, q['id'], q['qe']) for q in QS]
     o += ['- [Bitcoin cycle analysis](%sen/bitcoin-cycle/): where Bitcoin is in its four-year cycle, stage, valuation, top and bottom indicators, with today’s answers (中文：%sbitcoin-cycle/)' % (SITE, SITE),
           '- [Bitcoin on-chain data analysis](%sen/bitcoin-onchain/): holder cost bases, MVRV, SOPR, NUPL, supply distribution, whales, exchange flows, miners (中文：%sbitcoin-onchain/)' % (SITE, SITE),
-          '- [Bitcoin macro and fund flows](%sen/bitcoin-macro/): spot ETF flows, stablecoins, rates, the dollar, stocks, liquidity (中文：%sbitcoin-macro/)' % (SITE, SITE),
+          '- [Bitcoin macro analysis](%sen/bitcoin-macro/): rates, the dollar, stocks, liquidity, stablecoins, fund flows (中文：%sbitcoin-macro/)' % (SITE, SITE),
+          '- [Bitcoin ETF data analysis](%sen/bitcoin-etf/): spot ETF daily and 20-session net flows, ETF holder cost basis, public-company holdings, CME positioning, US spot premium (中文：%sbitcoin-etf/)' % (SITE, SITE),
           '- [Bitcoin derivatives data](%sen/bitcoin-derivatives/): funding rates, open interest, long/short ratio, liquidations, options (中文：%sbitcoin-derivatives/)' % (SITE, SITE),
-          '- 简体中文 (Simplified Chinese) versions of the four topic pages: %szh-hans/bitcoin-cycle/ · %szh-hans/bitcoin-onchain/ · %szh-hans/bitcoin-macro/ · %szh-hans/bitcoin-derivatives/' % ((SITE,) * 4),
+          '- 简体中文 (Simplified Chinese) versions of the five topic pages: %szh-hans/bitcoin-cycle/ · %szh-hans/bitcoin-onchain/ · %szh-hans/bitcoin-macro/ · %szh-hans/bitcoin-etf/ · %szh-hans/bitcoin-derivatives/' % ((SITE,) * 5),
           '- 简体中文 (Simplified Chinese) versions of every chart page and daily brief: %szh-hans/charts/ · %szh-hans/brief/ · feed %szh-hans/feed.xml' % ((SITE,) * 3)]
     o += ['- [All charts](%sen/charts/): every chart on one page, grouped by the six questions, with today’s lean and reason; each chart also has its own page at /en/charts/<code>/ (中文：%scharts/)' % (SITE, SITE),
           '- [Daily briefs](%sen/brief/): one page per day since Oct 2026 (headline, overall lean, levels to watch, findings) at /en/brief/YYYY-MM-DD/ (中文：%sbrief/)' % (SITE, SITE)]

@@ -4,7 +4,8 @@
 每個主題一頁（中英各一），部署時由 pages.py 呼叫寫出（不進程式庫）：
   bitcoin-cycle/        比特幣週期分析（四年週期、減半、牛熊、見底了嗎、離頂多遠、鏈上數據與宏觀週期）
   bitcoin-onchain/      比特幣鏈上數據分析（持有者成本、MVRV／SOPR／NUPL、籌碼、大戶、交易所流量、礦工）
-  bitcoin-macro/        比特幣宏觀與資金流（現貨 ETF、穩定幣、利率、美元、美股、流動性）
+  bitcoin-macro/        比特幣宏觀分析（利率、美元、美股、流動性、穩定幣、ETF）
+  bitcoin-etf/          比特幣 ETF 數據分析（2026-11-27 加：現貨 ETF 資金流、ETF 持有成本、上市公司、CME 機構、美國現貨溢價）
   bitcoin-derivatives/  比特幣衍生品數據（資金費率、未平倉、多空比、清算、選擇權）
   en/<同上>/           英文版
 頁面由上往下：今天的結論 → 一段固定的說明 → 常見問題（答案是當天幾張圖的表態和理由，FAQPage 結構化資料）→ 相關圖分組列出（表態膠囊＋一句理由＋單頁連結）→ 其他主題。
@@ -19,7 +20,7 @@ HUBS = [
     dict(id='bitcoin-cycle', ch='cycle',
          nz='週期分析', ne='Cycle analysis',
          h1z='比特幣週期分析：現在走到週期的哪裡', h1e='Bitcoin cycle analysis: where Bitcoin is in its cycle',
-         kz='比特幣週期分析, BTC 週期, 四年週期, 減半週期, 牛熊週期, 鏈上數據與宏觀週期, 比特幣抄底指標, 比特幣頂部指標',
+         kz='比特幣週期分析, BTC 週期分析, BTC 週期, 四年週期, 減半週期, 牛熊週期, 鏈上數據與宏觀週期, 比特幣抄底指標, 比特幣頂部指標',
          kh='比特币周期分析, BTC 周期, 比特币四年周期, 减半周期, 牛熊周期, 比特币抄底指标, 比特币逃顶指标, 比特币见底了吗',
          ke='Bitcoin cycle analysis, BTC cycle, four-year cycle, halving cycle, bull and bear market, cycle top indicators, cycle bottom indicators',
          iz='比特幣大約每四年走完一輪牛熊，時間和減半大致對得上，但每一輪的長短和漲跌幅都不一樣。這一頁把 Daybreak 跟週期有關的圖放在一起：現在是哪個階段、估值離歷來的底和頂多遠、頂部和底部指標各自怎麼說。每張圖每天用前一天的收盤更新，都寫出偏多、偏空或中性和理由。',
@@ -35,10 +36,10 @@ HUBS = [
     dict(id='bitcoin-onchain', ch=None,
          nz='鏈上數據分析', ne='On-chain analysis',
          h1z='比特幣鏈上數據分析：持有者成本、獲利與籌碼', h1e='Bitcoin on-chain data analysis: holder cost, profit and supply',
-         kz='比特幣鏈上數據分析, BTC 鏈上數據, 鏈上指標, MVRV, SOPR, NUPL, 實現價格, 短期持有者成本, 長期持有者, 籌碼分布, 大戶, 交易所淨流量',
-         kh='比特币链上数据分析, BTC 链上数据, 链上指标, MVRV, SOPR, NUPL, 已实现价格, 短期持有者成本, 长期持有者, 筹码分布, 巨鲸, 交易所净流入',
+         kz='比特幣鏈上數據分析, 比特幣鏈上分析, BTC 鏈上分析, BTC 鏈上數據, 鏈上指標, MVRV, SOPR, NUPL, 實現價格, 短期持有者成本, 長期持有者, 籌碼分布, 大戶, 交易所淨流量',
+         kh='比特币链上数据分析, 比特币链上分析, BTC 链上数据, 链上指标, MVRV, SOPR, NUPL, 已实现价格, 短期持有者成本, 长期持有者, 筹码分布, 巨鲸, 交易所净流入',
          ke='Bitcoin on-chain analysis, BTC on-chain data, on-chain indicators, MVRV, SOPR, NUPL, realized price, short-term holder cost basis, long-term holders, URPD, whales, exchange netflow',
-         iz='鏈上數據看的是比特幣在區塊鏈上的實際移動：每一枚幣上次換手的價格、誰拿著、拿了多久、賣出時是賺是賠。這一頁把 Daybreak 的鏈上圖分成四組：持有者成本與籌碼、獲利與虧損、持有者在做什麼、礦工。資料主要來自 Bitview、CheckOnChain 和 CoinMetrics，每張圖每天更新，都寫出表態和理由。',
+         iz='比特幣鏈上分析看的是比特幣在區塊鏈上的實際移動：每一枚幣上次換手的價格、誰拿著、拿了多久、賣出時是賺是賠。這一頁把 Daybreak 的鏈上圖分成四組：持有者成本與籌碼、獲利與虧損、持有者在做什麼、礦工。資料主要來自 Bitview、CheckOnChain 和 CoinMetrics，每張圖每天更新，都寫出表態和理由。',
          ie='On-chain data tracks how bitcoin actually moves on the blockchain: the price each coin last changed hands at, who holds it, for how long, and whether it was sold at a profit or a loss. This page groups the Daybreak on-chain charts into holder cost and supply, profit and loss, what holders are doing, and miners. Data comes mainly from Bitview, CheckOnChain and CoinMetrics; every chart updates daily and is marked bullish, bearish or neutral with a reason.',
          secs=[('持有者成本與籌碼', 'Holder cost and supply', ['levels', 'sthgap', 'quant', 'floors', 'tiercost', 'urpd', 'urpdchg', 'cohort', 'conc', 'pnlb']),
                ('獲利與虧損：MVRV、SOPR、NUPL', 'Profit and loss: MVRV, SOPR, NUPL', ['hnupl', 'rup', 'p20', 'profit', 'psx', 'sopr', 'soprf', 'pnlr', 'npl', 'npl365', 'rpl', 'rloss', 'lthrl', 'agepl', 'sthsig']),
@@ -50,11 +51,11 @@ HUBS = [
               ('大戶在買還是在賣？', 'Are whales buying or selling?', ['whale', 'whalet']),
               ('交易所的比特幣在流入還是流出？', 'Is bitcoin flowing into or out of exchanges?', ['exflow', 'exch'])]),
     dict(id='bitcoin-macro', ch='buy',
-         nz='宏觀與資金流', ne='Macro and flows',
-         h1z='比特幣宏觀與資金流：ETF、穩定幣、利率與美元', h1e='Bitcoin macro and fund flows: ETFs, stablecoins, rates and the dollar',
-         kz='比特幣宏觀, 比特幣 ETF 資金流, 現貨 ETF 淨流入, 穩定幣供給, 利率, 美元, 美股相關性, 流動性週期, 聯準會',
-         kh='比特币宏观, 比特币 ETF 资金流, 现货 ETF 净流入, 稳定币, 美联储, 美债收益率, 美元指数, 美股, 流动性',
-         ke='Bitcoin macro, Bitcoin ETF flows, spot ETF net flows, stablecoin supply, interest rates, US dollar, correlation with stocks, liquidity cycle, Fed',
+         nz='宏觀分析', ne='Macro analysis',
+         h1z='比特幣宏觀分析：利率、美元、流動性與資金流', h1e='Bitcoin macro analysis: rates, the dollar, liquidity and fund flows',
+         kz='比特幣宏觀分析, BTC 宏觀分析, 比特幣宏觀, 比特幣 ETF 資金流, 現貨 ETF 淨流入, 穩定幣供給, 利率, 美元, 美股相關性, 流動性週期, 聯準會',
+         kh='比特币宏观分析, 比特币宏观, 比特币 ETF 资金流, 现货 ETF 净流入, 稳定币, 美联储, 美债收益率, 美元指数, 美股, 流动性',
+         ke='Bitcoin macro analysis, Bitcoin macro, Bitcoin ETF flows, spot ETF net flows, stablecoin supply, interest rates, US dollar, correlation with stocks, liquidity cycle, Fed',
          iz='比特幣的價格不只看鏈上，也看錢從哪裡進來：現貨 ETF 每天的申購贖回、穩定幣的供給、美國和亞洲買盤的溢價，以及利率、美元和美股的方向。這一頁把這些圖放在一起，每張圖每天更新，都寫出表態和理由。',
          ie='Bitcoin\'s price also depends on where the money comes from: daily creations and redemptions in spot ETFs, stablecoin supply, the premiums paid by US and Asian buyers, and the direction of rates, the dollar and stocks. This page puts those charts together; every chart updates daily and is marked bullish, bearish or neutral with a reason.',
          secs=[('機構與 ETF', 'Institutions and ETFs', ['etf', 'etf20', 'etfcost', 'treasury', 'cot']),
@@ -66,6 +67,23 @@ HUBS = [
               ('利率和美元現在對比特幣是什麼影響？', 'How are rates and the dollar affecting Bitcoin now?', ['macro', 'r2y', 'fedmkt']),
               ('比特幣現在和美股的關係如何？', 'How is Bitcoin trading relative to stocks?', ['stk']),
               ('市場的資金和流動性在增加還是減少？', 'Is money and liquidity flowing into the market or out of it?', ['rlc', 'stab', 'rcliq'])]),
+    dict(id='bitcoin-etf', ch='buy',
+         nz='ETF 數據分析', ne='ETF data',
+         h1z='比特幣 ETF 數據分析：資金流、持有成本與機構部位', h1e='Bitcoin ETF data analysis: flows, holder cost and institutional positioning',
+         kz='比特幣ETF數據分析, 比特幣 ETF 資金流, 比特幣 ETF 淨流入, 現貨比特幣 ETF, IBIT, ETF 持有者成本, 上市公司持幣, Strategy, CME 機構持倉, 機構資金',
+         kh='比特币ETF数据分析, 比特币 ETF 资金流, 比特币 ETF 净流入, 现货比特币 ETF, IBIT, ETF 持仓成本, 上市公司持币, 微策略, CME 机构持仓, 机构资金',
+         ke='Bitcoin ETF data analysis, Bitcoin ETF flows, spot Bitcoin ETF net inflows, IBIT, ETF holder cost basis, public company bitcoin holdings, Strategy, CME COT, institutional flows',
+         iz='現貨比特幣 ETF 在 2024 年 1 月上市後，成了美國資金進出比特幣最直接的管道。這一頁看機構的錢：ETF 每天的淨流入流出、近 20 個交易日的合計、ETF 買家的平均成本，以及上市公司持幣、CME 期貨的機構持倉和美國現貨的買盤溢價。ETF 數字來自 CoinMarketCap 的逐檔資料，每張圖每天更新，都寫出表態和理由。',
+         ie='Since spot Bitcoin ETFs launched in January 2024 they have become the most direct route for US money into and out of bitcoin. This page follows institutional money: daily ETF net flows, the 20-session total, the average cost of ETF buyers, plus public-company holdings, institutional positioning in CME futures and the premium US spot buyers pay. ETF figures come from per-fund data on CoinMarketCap; every chart updates daily and is marked bullish, bearish or neutral with a reason.',
+         secs=[('ETF 資金流', 'ETF flows', ['etf20', 'etf']),
+               ('ETF 買家的成本', 'What ETF buyers paid', ['etfcost']),
+               ('其他機構', 'Other institutions', ['treasury', 'cot']),
+               ('美國現貨買盤', 'US spot demand', ['pr-us', 'pr-neg'])],
+         faq=[('現貨比特幣 ETF 最近是淨流入還是淨流出？', 'Are spot Bitcoin ETFs seeing net inflows or outflows lately?', ['etf20', 'etf']),
+              ('ETF 買家的平均成本是多少？現在賺還是賠？', 'What did ETF buyers pay on average, and are they in profit?', ['etfcost']),
+              ('上市公司（Strategy）的持幣成本在哪？現在賺還是賠？', 'Where is the cost basis of public companies such as Strategy, and are they in profit?', ['treasury']),
+              ('CME 的機構在做多還是做空？', 'Are institutions on CME long or short?', ['cot']),
+              ('美國的現貨買盤強嗎？', 'How strong is US spot buying?', ['pr-us'])]),
     dict(id='bitcoin-derivatives', ch='lev',
          nz='衍生品數據', ne='Derivatives data',
          h1z='比特幣衍生品數據：資金費率、未平倉、多空比與清算', h1e='Bitcoin derivatives data: funding, open interest, long/short ratio and liquidations',
@@ -155,8 +173,8 @@ def hub_page(h, en, P, hans=False):
     b.append('<section><h2>%s</h2><ul class="list">%s<li><a class="t" href="%s%s">%s</a></li><li><a class="t" href="%s%s">%s</a></li></ul></section>' % (
         'More from Daybreak' if en else 'Daybreak 的其他主題',
         ''.join('<li><a class="t" href="%s%s%s/">%s</a></li>' % (up, pre, x['id'], esc(x['h1e'] if en else x['h1z'])) for x in oth),
-        up, CP, 'Bitcoin indicators: every chart and where it leans today' if en else '比特幣指標數據：每一張圖和它今天的表態',
-        up, BP, 'Daily Bitcoin analysis' if en else '比特幣每日分析'))
+        up, CP, 'Bitcoin data and indicators: every chart and where it leans today' if en else '比特幣數據與指標：每一張圖和它今天的表態',
+        up, BP, 'Bitcoin market analysis: the daily brief' if en else '比特幣行情分析：每日簡報'))
     title = '%s · Daybreak' % (h['h1e'] if en else h['h1z'])
     desc = (h['ie'] if en else h['iz'])
     pid = SITE + me
