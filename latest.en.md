@@ -1,6 +1,6 @@
 # Daybreak · Nov 25, 2026 close edition, No.51
 
-> Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading 137 original and public indicators across on-chain data, price structure, derivatives, fund flows and macro sentiment to answer six questions: Where we are in the cycle; Which cost bases and levels price is standing on; Has the selling been worked through; Who is buying and where the money comes from; How crowded leverage and sentiment are; So what do I do. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.
+> Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading 136 original and public indicators across on-chain data, price structure, derivatives, fund flows and macro sentiment to answer six questions: Where we are in the cycle; Which cost bases and levels price is standing on; Has the selling been worked through; Who is buying and where the money comes from; How crowded leverage and sentiment are; So what do I do. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.
 
 Source: https://daybreak.aronlab.dev/app/?lang=en · by Aron · updated 2026-11-25
 
@@ -14,7 +14,7 @@ Overall: Short-term bearish, the prior low drew one round of bids but not yet sp
 
 BTC close $60,369 (+1.1%)
 
-137 charts. Today: 30 bullish, 47 bearish, 41 neutral, 19 reference charts without a lean.
+136 charts. Today: 30 bullish, 47 bearish, 41 neutral, 18 reference charts without a lean.
 
 ## Cycle: Where we are in the cycle
 
@@ -744,11 +744,11 @@ Page: https://daybreak.aronlab.dev/en/charts/etf/
 
 ### Spot ETF 20-session net flow
 
-Bearish: Net outflow of $5,025M over the last 20 sessions (through 11/25). It fell below −$1,500M on 11/9, which starts an outflow stretch; this is session 13.
+Bearish: Net outflow of $5,354M over the last 20 sessions (through 11/25). It fell below −$1,500M on 11/9, which starts an outflow stretch; this is session 13.
 
-What it shows: Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below −$1,500M counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap's per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only.
+What it shows: Daily net flow of the US spot ETFs, summed over the last 20 sessions (about a month). Single days jump around; the sum shows whether money is coming in or leaving over a stretch. A sum below −$1,500M counts as an outflow stretch; circles mark the deepest day of each past one. Data starts with the ETF launch in January 2024 and comes from CoinMarketCap's per-fund figures (US spot ETFs only). There have been only a few stretches; a reading only. The "Share of volume" view divides the 30-session net flow by the dollar volume traded over the same sessions: how much of the trading stayed behind as net buying (positive) or net selling (negative). ETF trading has grown a lot, so the ratio compares fairer across years. It moves almost in step with the flow sum (correlation 0.94) and tracks the past month or so of price; since 2024 a fast rebound from below zero has happened only 4 times, followed by 3 rises and 1 fall, so it is not a signal. Volume is each fund's Yahoo share volume times the day's average price.
 
-Source: CoinMarketCap · 11/25
+Source: CoinMarketCap · 11/25 · Yahoo
 
 Page: https://daybreak.aronlab.dev/en/charts/etf20/
 
