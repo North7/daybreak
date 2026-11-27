@@ -790,11 +790,14 @@ try:
     except Exception: pass
     B = sorted((float(r['priceLower']), float(r['priceUpper']), float(r['btcSupply']), float(r.get('pctSupply') or 0)) for r in js); ud = js[-1].get('theDate'); MFS['urpd'] = B; MFS['urpd_date'] = ud
     cur = next(b for b in B if b[0] <= c < b[1])
-    below = next(((lo_, hi_, bs, pc) for lo_, hi_, bs, pc in reversed(B) if hi_ <= cur[0] and bs >= 5e5), None)
+    # 2026-11-27 修：往下找要限在現價 50% 以內、不含最底下 0–2K 那格（中本聰時期的老幣，190 萬顆）。之前下方 50 萬顆以上的格子都不在時，會一路找到 0–2K，讀數變成「下方大堆離 2925%」
+    BW = [b for b in B if b[1] <= cur[0] and b[0] >= c * .5 and b[0] > 0]
+    below = next(((lo_, hi_, bs, pc) for lo_, hi_, bs, pc in reversed(BW) if bs >= 5e5), None); bmax = max(BW, key=lambda b: b[2]) if BW else None
     above = next(((lo_, hi_, bs, pc) for lo_, hi_, bs, pc in B if lo_ >= cur[1] and bs >= 5e5), None)
     big = max(B, key=lambda b: b[2])
     R['murphy_flow']['urpd'] = dict(date=ud, bucket_width=cur[1] - cur[0], cur_bucket=[cur[0], cur[1]], cur_btc=round(cur[2]), cur_pct=round(cur[3], 2),
         below_cluster=dict(range=[below[0], below[1]], btc=round(below[2])) if below else None, above_cluster=dict(range=[above[0], above[1]], btc=round(above[2])) if above else None,
+        below_max=dict(range=[bmax[0], bmax[1]], btc=round(bmax[2])) if bmax else None,
         btc_price_to_120k=round(sum(bs for lo_, hi_, bs, pc in B if lo_ >= cur[1] and hi_ <= 120000)), largest=dict(range=[big[0], big[1]], btc=round(big[2])),
         top_buckets=[[b[0], b[1], round(b[2])] for b in sorted(B, key=lambda b: -b[2])[:6]])
 except Exception as e: errors.append(f'flow urpd: {e}')
