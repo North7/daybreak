@@ -1,16 +1,16 @@
 {
- "date": "2026-11-25",
+ "date": "2026-11-26",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/rpl",
-   "chart": "data/picks/onchain-rpl.png",
-   "chart_en": "data/picks/onchain-rpl-en.png",
+   "id": "onchain/sopr",
+   "chart": "data/picks/onchain-sopr.png",
+   "chart_en": "data/picks/onchain-sopr-en.png",
    "name": {
-    "zh": "實現獲利 ÷ 實現虧損",
-    "en": "Realized profit ÷ realized loss"
+    "zh": "短期持有者認賠賣壓（STH-SOPR）",
+    "en": "Short-term holder SOPR"
    },
-   "link": "https://daybreak.aronlab.dev/app/?k=rpl"
+   "link": "https://daybreak.aronlab.dev/app/?k=sopr"
   }
  ]
 }

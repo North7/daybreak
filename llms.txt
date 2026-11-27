@@ -1,14 +1,14 @@
 # Daybreak
 
-> Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading 136 original and public indicators across on-chain data, price structure, derivatives, fund flows and macro sentiment to answer six questions: Where we are in the cycle; Which cost bases and levels price is standing on; Has the selling been worked through; Who is buying and where the money comes from; How crowded leverage and sentiment are; So what do I do. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.
+> Daybreak (daybreak.aronlab.dev) is a free daily Bitcoin brief built by Aron. It updates every morning before 08:30 Taipei time, reading 137 original and public indicators across on-chain data, price structure, derivatives, fund flows and macro sentiment to answer six questions: Where we are in the cycle; Which cost bases and levels price is standing on; Has the selling been worked through; Who is buying and where the money comes from; How crowded leverage and sentiment are; So what do I do. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them, it does not calculate or decide. Daybreak makes no trade calls.
 
-Daybreak（daybreak.aronlab.dev）是 Aron 做的免費比特幣每日判讀。每天台北時間早上 08:30 前更新，用 136 張自建與公開的指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，回答六個問題：現在在週期的哪裡？價格站在哪些成本和關卡上？賣壓出清了沒？誰在買、錢從哪裡來？槓桿和情緒擠不擠？那我該怎麼做？每張圖都表態偏多、偏空或中性，並寫出理由。數字由程式計算，AI 只負責解釋，不計算也不做決定；不給交易建議。
+Daybreak（daybreak.aronlab.dev）是 Aron 做的免費比特幣每日判讀。每天台北時間早上 08:30 前更新，用 137 張自建與公開的指標，從鏈上、價格結構、衍生品、資金流、宏觀情緒拆開比特幣，回答六個問題：現在在週期的哪裡？價格站在哪些成本和關卡上？賣壓出清了沒？誰在買、錢從哪裡來？槓桿和情緒擠不擠？那我該怎麼做？每張圖都表態偏多、偏空或中性，並寫出理由。數字由程式計算，AI 只負責解釋，不計算也不做決定；不給交易建議。
 
-Built and maintained by Aron (Aron Lab, https://aronlab.dev/). Bilingual: Traditional Chinese and English. Latest edition: Nov 25, 2026 close, No.51.
+Built and maintained by Aron (Aron Lab, https://aronlab.dev/). Bilingual: Traditional Chinese and English. Latest edition: Nov 26, 2026 close, No.52.
 
 ## Latest reading
 
-The break of the prior low was bought back on volume; leverage returned first, funding up from 1.3% to 6.3% in a day, and spot money still lags. — Short-term bearish, with selling pressure a little lighter: price broke the low intraday and closed back above $60,000 on volume while Coinbase taker selling narrowed, yet the chasers were perp longs and the ETFs logged a 6th straight outflow. Long-term bullish: total unrealized profit is down to 33.4% of market cap and MVRV Z is the lowest since Jun 30. A close below $58,525 cancels today's bid; ETF inflows and a close above $64,000 would show spot taking over.
+Nobody followed the bid at the prior low: trading went quiet the next day while ETF redemptions grew to $453M; $60,000 holds only while sellers rest. — Short-term bearish: the day after the break was bought back drew no follow-through, with volume at 38% of the prior day, another $453M out of the ETFs on Nov 25 and some of the chasing longs gone. Long-term bullish: total unrealized profit is down to 33.4% of market cap and the share of long-term holders at a loss sits just under this cycle's high. A close below $58,525 loses the prior low; ETF inflows and a close above $64,000 would show spot taking over.
 
 - [Full latest reading, English (Markdown)](https://daybreak.aronlab.dev/latest.en.md): headline, six questions, every chart with its lean, reason and source
 - [完整最新判讀，中文（Markdown）](https://daybreak.aronlab.dev/latest.md)
@@ -16,7 +16,7 @@ The break of the prior low was bought back on volume; leverage returned first, f
 
 ## Pages
 
-- [Daybreak app](https://daybreak.aronlab.dev/app/): the daily brief and all 136 charts, interactive (needs JavaScript); add ?lang=en, ?lang=zh (Traditional Chinese) or ?lang=hans (Simplified Chinese)
+- [Daybreak app](https://daybreak.aronlab.dev/app/): the daily brief and all 137 charts, interactive (needs JavaScript); add ?lang=en, ?lang=zh (Traditional Chinese) or ?lang=hans (Simplified Chinese)
 - [Cycle](https://daybreak.aronlab.dev/app/#cycle): Where we are in the cycle
 - [Levels](https://daybreak.aronlab.dev/app/#lv): Which cost bases and levels price is standing on
 - [Selling](https://daybreak.aronlab.dev/app/#sell): Has the selling been worked through
@@ -36,7 +36,7 @@ The break of the prior low was bought back on volume; leverage returned first, f
 ## FAQ
 
 - **Is Daybreak free? Do I need an account?** Yes, it is free. There is no sign-up, login, paywall or usage limit. The app, every chart page, the daily briefs and the RSS feeds are public.
-- **Which indicators does Daybreak cover?** 136 charts, including MVRV, SOPR (network, long- and short-term holders), NUPL by holder group, holder cost bases and realized price, supply distribution (URPD), exchange netflow and exchange supply, spot ETF flows, stablecoin supply, funding rates, options and implied volatility, Pi Cycle, Reserve Risk, Hash Ribbons and miners. The full list, with today's lean for each chart, is at https://daybreak.aronlab.dev/en/charts/.
+- **Which indicators does Daybreak cover?** 137 charts, including MVRV, SOPR (network, long- and short-term holders), NUPL by holder group, holder cost bases and realized price, supply distribution (URPD), exchange netflow and exchange supply, spot ETF flows, stablecoin supply, funding rates, options and implied volatility, Pi Cycle, Reserve Risk, Hash Ribbons and miners. The full list, with today's lean for each chart, is at https://daybreak.aronlab.dev/en/charts/.
 - **Where does the data come from?** Free public sources: Bitview, CheckOnChain, CoinMetrics, Coinalyze, Binance, OKX, Bybit, Deribit, Coinbase, Kraken, Bitfinex, Hyperliquid, DefiLlama, CoinMarketCap, CFTC, FRED, alternative.me, Upbit, bitcoin-data. Each chart names its source and the date of its latest data.
 - **How often is it updated?** Every day, from the previous UTC daily close, before 08:30 Taipei time (00:30 UTC).
 - **How is Daybreak different from data platforms like Glassnode?** Daybreak is not a data terminal: it has no API, custom charts or raw-data downloads. It organises its charts into six questions, marks every chart bullish, bearish or neutral with a reason each day, and condenses them into one brief. For raw data, an API or custom metrics, a data platform such as Glassnode is the better fit; for a daily read-out that is already interpreted, Daybreak is the quicker option.
