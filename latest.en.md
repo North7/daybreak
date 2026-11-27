@@ -91,7 +91,7 @@ What it shows: What it is: "Distance from cost bases and averages" split into it
 
 Page: https://daybreak.aronlab.dev/en/charts/avgdc/
 
-### Paper profit of long- and short-term holders (NUPL)
+### LTH and STH Net Unrealized Profit/Loss (NUPL)
 
 Bullish: Long-term holders' paper profit is thin (NUPL 0.20), in the range seen from late bear markets into bottoms; but this cycle's bottom sat higher than earlier ones, so it need not turn into a loss.
 
@@ -101,7 +101,7 @@ Source: Bitview · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/hnupl/
 
-### Relative unrealized profit
+### Relative Unrealized Profit
 
 Bullish: Paper profit on unsold coins is down to 33% of market cap, under the 35% cycle floor: this has only happened late in bear markets, though price often fell further after breaking it.
 
@@ -111,7 +111,7 @@ Source: Bitview · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/rup/
 
-### Price as a multiple of active investors' cost
+### AVIV Ratio: price as a multiple of active investors' cost
 
 Neutral: Price is only 0.79× the average cost of active investors, who have been underwater as a group for 22 days: a typical bear-market spot, though past bear markets stayed below cost for over a year.
 
@@ -121,7 +121,7 @@ Source: Bitview · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/aviv/
 
-### Reserve risk
+### Reserve Risk
 
 Neutral: Reserve risk is in the lowest 10% of four years (day 13): price is cheap against long-term holders' conviction, bottom territory, though what followed past stays was mixed.
 
@@ -219,7 +219,7 @@ Source: third-party model · weekly since 2011, daily for the past year · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/tmh/
 
-### How many long-term holders are underwater
+### Long-Term Holder Supply in Loss (%)
 
 Bullish: Leaning bullish: nearly half of long-term holders are underwater, matching the peaks of the last 3 bear bottoms; a close under about $58,000 would set a new high and break that pattern.
 
@@ -229,7 +229,7 @@ Source: CheckOnChain · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/lthloss/
 
-### One-year net realized P&L
+### Net Realized Profit/Loss (1-year sum)
 
 Bearish: Over the past year the market has sold at a loss on balance, and it is still deepening: on this chart the loss-taking is not done, though it is far shallower than past bear bottoms.
 
@@ -269,7 +269,7 @@ Source: Bitview · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/vddm/
 
-### Holder cost by coin age
+### Realized Price by Coin Age
 
 Bearish: Price is 8.6% below what buyers of the last 3–6 months paid, and the two earlier groups are underwater too: on this chart it still looks like a bear market, and a rally back to their cost is likely to meet break-even selling.
 
@@ -366,7 +366,7 @@ Source: MAs: standard close · cost bases: Bitview · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/levels/
 
-### Short-term holder cost bands
+### Short-Term Holder Realized Price Bands
 
 Bullish: The close sits at −1.6 standard deviations on the short-term holder cost band; only 8% of days in four years were this low.
 
@@ -396,7 +396,7 @@ Source: Bitview · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/floors/
 
-### Cost basis of large-balance addresses
+### Realized Price of Large-Balance Addresses
 
 Bearish: The close is 0.9% below the 1K–10K tier's cost and 9.3% below the 100–1K tier's.
 
@@ -416,7 +416,7 @@ Source: CoinMarketCap · 11/25
 
 Page: https://daybreak.aronlab.dev/en/charts/etfcost/
 
-### Supply distribution (URPD)
+### UTXO Realized Price Distribution (URPD)
 
 Neutral: price sits inside thick supply. The nearest big pile above is 62K–64K, where buyers break even and tend to sell; recent coin moves were mostly at a loss, so high buyers are still rotating out.
 
@@ -486,7 +486,7 @@ Source: Deribit · 11-27 01:28 UTC
 
 Page: https://daybreak.aronlab.dev/en/charts/gex/
 
-### Liquidation levels (estimated)
+### Liquidation map (estimated)
 
 Bullish: The brightest band below is $56.2K–$57.2K (−6.5%) and above $64.6K–$67.6K (+9.0%).
 
@@ -555,7 +555,7 @@ Source: Ours · daily closes · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/sx/
 
-### Short-term holders in profit
+### Short-Term Holder Supply in Profit (%)
 
 Bullish: Leaning bullish: almost everyone who bought in recent months is underwater, a bear-market extreme; after such readings price rose 30 days later in 12 of 16 cases, though bears can keep it there long.
 
@@ -565,7 +565,7 @@ Source: 2025 top 97.7%
 
 Page: https://daybreak.aronlab.dev/en/charts/profit/
 
-### Short-term holder SOPR
+### Short-Term Holder SOPR
 
 Bearish: recent buyers have been selling at a loss for three weeks, and this dip went deeper than the last; only when they sell back at breakeven overall does this wave of capitulation end.
 
@@ -575,7 +575,7 @@ Source: CheckOnChain · ~1 day late · 1 year
 
 Page: https://daybreak.aronlab.dev/en/charts/sopr/
 
-### STH realized profit and loss
+### Short-Term Holder Realized Profit and Loss
 
 Bearish: Short-term holders realized 0.21 times as much profit as loss (0.15 a week ago), mostly because profit-taking rose.
 
@@ -585,7 +585,7 @@ Source: CheckOnChain · ~1 day late · 1 year
 
 Page: https://daybreak.aronlab.dev/en/charts/pnlr/
 
-### Short-term holder profit-taking and capitulation spikes
+### Short-Term Holder Realized Profit/Loss Spikes
 
 Bearish: Neither is concentrated: profit −0.7, loss 1.3.
 
@@ -605,7 +605,7 @@ Source: Bitview · 7-day average · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/conf/
 
-### Net realized P&L
+### Net Realized Profit/Loss
 
 Bearish: Net realized P&L on the latest day was −$1.04B, the 7th percentile of the year.
 
@@ -615,7 +615,7 @@ Source: Derived from CoinMetrics · ~1 day late
 
 Page: https://daybreak.aronlab.dev/en/charts/npl/
 
-### Realized profit and loss by holding time
+### Realized Profit/Loss by Coin Age
 
 Neutral: Holders of 6+ months account for 47% of realized profit and 37% of realized loss; most loss-taking is by recent buyers.
 
@@ -645,7 +645,7 @@ Source: CheckOnChain · ~1 day late · 1 year
 
 Page: https://daybreak.aronlab.dev/en/charts/soprf/
 
-### Realized profit ÷ loss
+### Realized Profit/Loss Ratio
 
 Bearish within a bottom zone: losses have outweighed gains over the past year, but the last 7 days still saw losses over 5 times gains; past bottoms were confirmed only after the ratio rose 10% off its low.
 
@@ -655,7 +655,7 @@ Source: Bitview · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/rpl/
 
-### Daily realized loss
+### Realized Loss (daily)
 
 Neutral: Daily realized loss is $540M (4.4 basis points of market cap), $9.70B over 7 days.
 
@@ -665,7 +665,7 @@ Source: Bitview · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/rloss/
 
-### Sell-side risk ratio
+### Sell-Side Risk Ratio
 
 Neutral: The sell-side risk ratio is 1.08%, the 70th percentile of four years: a normal level.
 
@@ -675,7 +675,7 @@ Source: Bitview · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/ssr/
 
-### Seller exhaustion constant
+### Seller Exhaustion Constant
 
 Neutral: The seller exhaustion constant is 0.231 (the 14th percentile), not below 0.13.
 
@@ -695,7 +695,7 @@ Source: Bitview · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/mom/
 
-### LTH realized loss
+### Long-Term Holder Realized Loss
 
 Bearish: This wave of long-term holder losses has not retreated: still 88% of the Nov 24 peak; 46% of their coins were underwater that day, above 40%.
 
@@ -826,7 +826,7 @@ Source: Upbit · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/kp/
 
-### Exchange netflow
+### Exchange Netflow
 
 Neutral: Coins are leaving exchanges: −83.1K BTC over 30 days, net outflows for 158 days.
 
@@ -836,7 +836,7 @@ Source: CoinMetrics · 11/26
 
 Page: https://daybreak.aronlab.dev/en/charts/exflow/
 
-### Exchange supply
+### Exchange Balance
 
 Bearish: Exchange supply is 13.48%, +0.69% over 30 days (coins are moving onto exchanges).
 

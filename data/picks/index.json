@@ -7,8 +7,8 @@
    "chart": "data/picks/onchain-sopr.png",
    "chart_en": "data/picks/onchain-sopr-en.png",
    "name": {
-    "zh": "短期持有者認賠賣壓（STH-SOPR）",
-    "en": "Short-term holder SOPR"
+    "zh": "短期持有者 SOPR（已花費產出利潤率）",
+    "en": "Short-Term Holder SOPR"
    },
    "link": "https://daybreak.aronlab.dev/app/?k=sopr"
   }
