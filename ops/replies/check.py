@@ -136,7 +136,8 @@ def longpost_notes(tag, t, lang, posted=None):
         if re.search(r'？\s*\S', re.sub(r'（[上下]）\s*$', '', title.split('｜')[0])): out.append(f'{tag} 標題是「問句＋秒答」（「{title[:24]}…」）：主頁連著看最像同一個 Prompt 產的。換成直接給反直覺的結論，或第一人稱「我把…拆開看」')
         if CONTRAST.search(title): out.append(f'{tag} 標題用「不是 A，是 B」：已經是帳號最明顯的 Claude 指紋，標題一律不用')
         tnum = re.findall(r'\d[\d,.]*\s*(?:%|萬|億|次|天|年|倍|顆|K)?', re.sub(r'（[上下]）', '', title))   # 2026-11-26 使用者看小幫手：「標題應該就一句話，要說到別人心裡那種…不是一堆數據。要有結論，一句話鉤子」
-        if len(title) > 30 or len(tnum) >= 2 or '：' in title: out.append(f'{tag} 標題太長或數字太多（{len(title)} 字、{len(tnum)} 個數字{"、有冒號接第二句" if "：" in title else ""}）：標題只要一句話、有結論、說到讀者心裡，數字留在正文和圖上；上下篇用同一個標題加（上）（下）（2026-11-26 使用者）')
+        tlen = len(re.sub(r'（[A-Za-z][^）]*）', '', title))   # 2026-11-27 使用者：標題的關鍵名詞也加括號英文，英文註解不算進標題長度
+        if tlen > 30 or len(tnum) >= 2 or '：' in title: out.append(f'{tag} 標題太長或數字太多（{tlen} 字、{len(tnum)} 個數字{"、有冒號接第二句" if "：" in title else ""}）：標題只要一句話、有結論、說到讀者心裡，數字留在正文和圖上；上下篇用同一個標題加（上）（下）（2026-11-26 使用者）')
         p0 = paras[0] if paras else ''
         rv = re.search(r'最想知道的是|你是不是(?:還|又)?在想|你手上的[^，。？]{0,8}是不是|很多人在問|很多人覺得', p0)
         if rv: out.append(f'{tag} 第一段在寫讀者心聲鋪墊（「{rv.group(0)}」）：刪掉，第一句直接進數據、自己的發現，或吐槽市場共識')
@@ -168,7 +169,7 @@ def check_longposts():
             tag = f'長貼文 {it.get("id")} {lang}'
             if AI_WORDS.search(t): err.append(f'{tag} AI 腔（「{AI_WORDS.search(t).group(0)}」）')
             if BAN.search(t): err.append(f'{tag} 提到出場框架或買賣動作：{BAN.search(t).group(0)}')
-            if lang == 'zh' and not it.get('posted') and it.get('id', '') >= '2026-11-27' and not re.search(r'（[A-Za-z][^）]*）', t): notes.append(f'{tag} 沒有括號英文：關鍵名詞（指標名、專有名詞）第一次出現加英文，例如「淨實現損益（Net Realized PnL）」（2026-11-27 使用者：不同地區的中文翻譯不一樣）')
+            if lang == 'zh' and not it.get('posted') and it.get('id', '') >= '2026-11-27' and not re.search(r'（[A-Za-z][^）]*）', t + (it.get('title') or '')): notes.append(f'{tag} 沒有括號英文：關鍵名詞（指標名、專有名詞）第一次出現加英文，例如「淨實現損益（Net Realized PnL）」，標題的也要加（2026-11-27 使用者：不同地區的中文翻譯不一樣）')
             if not it.get('posted') and FINDING_ID.search(t + (it.get('title') or '')): err.append(f'{tag} 寫了發現的原始代號「{FINDING_ID.search(t + (it.get("title") or "")).group(0)}」：改成「11/16 第一則發現」或直接寫結論（網站 #235，2026-11-19）')
             if not it.get('posted') and BRAND.search(t + (it.get('title') or '')): err.append(f'{tag} 品牌名寫 Daybreak，不寫「破曉」（2026-11-12 使用者）')
             if lang == 'zh' and not it.get('posted') and '網站' in t + (it.get('title') or ''): err.append(f'{tag} 「網站」改寫「Daybreak 上」（2026-11-15 使用者：文章裡的「網站裡」都改為「Daybreak 上」）')
