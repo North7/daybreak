@@ -29,13 +29,13 @@ def build(L, N, E, dn):
     if fl and len(fl.get('rows') or []) > 200:
         fc = fl['cur']; fpx = close if bx.get('date') == L['meta']['bar_date'] and close else fl['px']; gap = (fpx / fc[0] - 1) * 100; deep = (fc[4] / fpx - 1) * 100; bv_nb = sum(fpx < f for f in fc)   # 2026-11-17 運營回報：句子寫「收盤」就用全站統一的收盤（Kraken），不用 Bitview 自己的價格
         FC = ['c4', 'color-mix(in srgb, var(--c4) 72%, var(--c3))', 'color-mix(in srgb, var(--c4) 45%, var(--c3))', 'color-mix(in srgb, var(--c4) 20%, var(--c3))', 'c3']   # 淺的一層青、越深越偏藍紫：都是冷色（支撐在下面），和成本線的暖色分開
-        lowz = lambda q: '%s %s' % (_ym(q['d']), '五層全破' if q['broke'] == 5 else '破 %d 層' % q['broke'] if q['broke'] else '沒破')
-        lowe = lambda q: '%s: %s' % (q['d'][:7], 'all five broken' if q['broke'] == 5 else '%d broken' % q['broke'] if q['broke'] else 'none broken')
+        lowz = lambda q: '%s %s%s' % (_ym(q['d']), '五層全破' if q['broke'] == 5 else '破 %d 層' % q['broke'] if q['broke'] else '沒破', '（這一輪到目前）' if q.get('open') else '')
+        lowe = lambda q: '%s: %s%s' % (q['d'][:7], 'all five broken' if q['broke'] == 5 else '%d broken' % q['broke'] if q['broke'] else 'none broken', ' (this cycle so far)' if q.get('open') else '')
+        fser = lambda w0: [ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.5)] + [ser(2 + i, zh='第 %d 層（最糟 %s）' % (i + 1, _pg(fl['pct'][i])), en='Floor %d (worst %s)' % (i + 1, _pg(fl['pct'][i])), col=FC[i], w=w0 if i == 0 else 1.2) for i in range(5)]
+        fmk = lambda f_: [dict(d=q['dn'], v=q['px'], col='c5', up=0, zh=lowz(q), en=lowe(q)) for q in f_['lows'] if q['dn'] >= f_['rows'][0][0] and not q.get('open')]   # 圖從 2017 年畫起，更早的低點只寫在讀數裡；這一輪到目前的低點也只寫在文字裡（標在最右邊會被價格標籤蓋住）
         brk = [b for b in fl['breaks'] if b.get('y1') is not None]; w0 = max(b['worst'] for b in brk); w1 = min(b['worst'] for b in brk); wb = min(brk, key=lambda b: b['y1'])
         X['floors'] = dict(k='floors', zh='損失地板', en='Loss floors', hz='第一層地板', he='First floor', one=1, f='usd0', hero=1, rows=fl['rows'],
-          ser=[ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.5)] + [ser(2 + i, zh='第 %d 層（最糟 %s）' % (i + 1, _pg(fl['pct'][i])), en='Floor %d (worst %s)' % (i + 1, _pg(fl['pct'][i])), col=FC[i], w=1.9 if i == 0 else 1.2) for i in range(5)],
-          bands=[dict(a=2, b=6, col='c4', op=.09)],
-          marks=[dict(d=q['dn'], v=q['px'], col='c5', up=0, zh=lowz(q), en=lowe(q)) for q in fl['lows'] if q['dn'] >= fl['rows'][0][0]],   # 圖從 2017 年畫起，更早的低點只寫在讀數裡
+          ser=fser(1.9), bands=[dict(a=2, b=6, col='c4', op=.09)], marks=fmk(fl),
           src='Bitview · ' + _md(bx['date']), srce='Bitview · ' + _md(bx['date']),
           dz='價格跌到哪裡，虧損的幣佔全部供給的比例會到它自己歷史上最糟的水準。五條線由淺到深：最糟 5%%、2%%、1%%、0.5%%、0.1%%。門檻只用到當天為止的歷史，逐日累積，不是回頭用整段歷史算的。圓圈是歷次低點，標的是那天跌破了幾層。'
              '地板標的是「痛到歷史等級」的區間，不是保證的底：%d 年以來 %s 的日子收在第一層下面；歷次第一次跌破第一層之後，一年內還再跌 %d%%–%d%%，%s 那次一年後還是 %d%%。每顆幣算一次、逐筆 UTXO，沒有排除遺失的幣和交易所內部移轉。只作讀值。'
@@ -43,13 +43,27 @@ def build(L, N, E, dn):
           de='The price at which the share of supply held at a loss would reach the worst levels in its own history. Five lines from shallow to deep: the worst 5%%, 2%%, 1%%, 0.5%% and 0.1%%. Each threshold uses only the history up to that day, so it accumulates and is not fitted in hindsight. Circles mark past lows, labelled with how many floors that day broke. '
              'The floors mark a zone of historic pain, not a guaranteed bottom: since %d, %s of days closed below the first floor; after each first break of it, price went on to fall another %d%%–%d%% within a year, and after the %s break it was still %d%% a year later. Every coin counts once, per UTXO, with lost coins and exchange-internal transfers not excluded. A reading only.'
              % (int(fl['since'][:4]), _p1(fl['below1_pct']), abs(w0), abs(w1), wb['d'][:7], wb['y1']))
+        aw = fl.get('aw')
+        if aw and len(aw.get('rows') or []) > 200:   # 2026-11-28 使用者看了 Bitview Bottoms 排名後要的「加權地板」檢視（awake：常動的幣算得重）
+            ac_ = aw['cur']; aw_nb = sum(fpx < f for f in ac_); spread = (ac_[0] / ac_[4] - 1) * 100; t15 = aw.get('t15')
+            alz = '、'.join(lowz(q) for q in aw['lows']); ale = '; '.join(lowe(q) for q in aw['lows'])
+            X['floors']['modes'] = [dict(mz='每顆幣一樣', me='Unweighted'), dict(mz='常動的幣加重', me='Awake-weighted', rows=aw['rows'], ser=fser(1.9), marks=fmk(aw),
+              dz='一樣是五層地板，但每顆幣不再一樣重：還常移動的幣算得重，久放不動的老幣幾乎不算（Bitview 的 awake 加權：依幣所在幣齡帶的持有時間已經用掉多少來算）。所以這組看的是「還會動的那群人」虧到歷史最糟的哪裡。'
+                 '這群人現在 %s 在虧，不加權是 %s；五層也擠得很近，%s 到 %s 只差 %s，價格一動就連破好幾層。歷次低點：%s。' % (_p1(aw['loss']), _p1(fl['loss']), usd(ac_[4]), usd(ac_[0]), _p1(spread), alz)
+                 + ('Bitview 拿 2018、2022、2026 三次底部替 346 條價格線排名（11/27），第 3 層（最糟 1%%）排第 2，價格碰到後最多再跌 10%%；但同樣的算法套到 2015/1 的底部，價格 %s 在 %s 碰到它之後又跌了 %d%%。' % (_ym(t15['d']), usd(t15['v']), t15['miss']) if t15 else '')
+                 + '幾輪樣本，地板是痛的區間，不是保證的底。只作讀值。',
+              de='The same five floors, but coins no longer count equally: coins that still move weigh more and long-idle coins barely count (Bitview\'s awake weighting, by how much of its age band\'s holding time each coin has used). So these floors track how deep the losses of the coins that still move have gone against their own worst history. '
+                 '%s of that supply is at a loss now, against %s unweighted, and the five floors sit close together: %s to %s, only %s apart, so a small move breaks several. Past lows: %s. ' % (_p1(aw['loss']), _p1(fl['loss']), usd(ac_[4]), usd(ac_[0]), _p1(spread), ale)
+                 + ('Bitview ranked 346 price lines on the 2018, 2022 and 2026 bottoms (27 Nov): the third floor (worst 1%%) came 2nd, with price falling at most 10%% further after touching it. Under the same rules, at the January 2015 bottom price touched it at %s in %s and then fell another %d%%. ' % (usd(t15['v']), t15['d'][:7], t15['miss']) if t15 else '')
+                 + 'Few cycles; the floors mark a zone of pain, not a guaranteed bottom. A reading only.')]
+        else: aw = None
         X['floors']['say'] = _own([
             ('第一層地板', 'First floor', usd(fc[0]), usd(fc[0]), 'warn' if bv_nb or gap < 5 else 'neu',
              ('收盤 %s 已經在第一層下面 %s，連續 %d 天。' % (usd(fpx), _p1(-gap), fl['below_days']) if bv_nb else '收盤 %s，在第一層上方 %s。' % (usd(fpx), _p1(gap))) + '跌到第一層，虧損的幣會佔供給的 %s，是歷史最糟 5%% 的水準；現在是 %s。' % (_p1(fl['thr'][0]), _p1(fl['loss'])),
              ('The close of %s is already %s below the first floor, for %d days running. ' % (usd(fpx), _p1(-gap), fl['below_days']) if bv_nb else 'The close of %s sits %s above the first floor. ' % (usd(fpx), _p1(gap))) + 'At the first floor, %s of supply would be held at a loss, a level seen in only the worst 5%% of history; it is %s now.' % (_p1(fl['thr'][0]), _p1(fl['loss']))),
             ('現在破了幾層', 'Floors broken now', '%d 層' % bv_nb, '%d of 5' % bv_nb, 'warn' if bv_nb >= 2 else 'neu',
-             '五層依序是 %s。' % '、'.join(usd(v) for v in fc) + '最深一層比收盤低 %s，到那裡虧損的幣佔 %s。' % (_p1(-deep), _p1(fl['thr'][4])),
-             'The five floors are %s. ' % ', '.join(usd(v) for v in fc) + 'The deepest sits %s below the close, where %s of supply would be at a loss.' % (_p1(-deep), _p1(fl['thr'][4]))),
+             '五層依序是 %s。' % '、'.join(usd(v) for v in fc) + '最深一層比收盤低 %s，到那裡虧損的幣佔 %s。' % (_p1(-deep), _p1(fl['thr'][4])) + ('常動的幣加重的版本破 %d 層，這群幣 %s 在虧。' % (aw_nb, _p1(aw['loss'])) if aw else ''),
+             'The five floors are %s. ' % ', '.join(usd(v) for v in fc) + 'The deepest sits %s below the close, where %s of supply would be at a loss.' % (_p1(-deep), _p1(fl['thr'][4])) + (' The awake-weighted version has %d broken, with %s of that supply at a loss.' % (aw_nb, _p1(aw['loss'])) if aw else '')),
             ('歷次低點', 'Past lows', '破 %d–%d 層' % (min(q['broke'] for q in fl['lows']), max(q['broke'] for q in fl['lows'])), '%d–%d broken' % (min(q['broke'] for q in fl['lows']), max(q['broke'] for q in fl['lows'])), 'neu',
              '；'.join('%s 的低點 %s，%s' % (_ym(q['d']), usd(q['px']), lowz(q).split(' ', 1)[1]) for q in fl['lows']) + '。',
              '; '.join('the %s low of %s, %s' % (q['d'][:7], usd(q['px']), lowe(q).split(': ', 1)[1]) for q in fl['lows']) + '.')],
