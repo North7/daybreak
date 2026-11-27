@@ -435,8 +435,14 @@ def quant(L):
     if q['psip'] >= 95: return V('down', '幾乎全部獲利', 'Nearly all in profit', '獲利供給 95% 以上，獲利了結壓力大。', 'Over 95% in profit: heavy profit-taking pressure.', '回到 90% 以下', 'A drop below 90%')
     return V('neu', '中間區段', 'Middle zone', '獲利供給在中間。', 'Supply in profit is mid-range.')
 def urpd(L):
-    u = L['chips']['urpd']; px = L['price']['bar']['c']; b, a = u['below_cluster'], u['above_cluster']; db = px / b['range'][1] - 1; da = a['range'][0] / px - 1
-    return V('neu', '下有支撐、上有解套', 'Support below, supply above', '下方大堆離 %.0f%%、上方大堆離 %.0f%%；籌碼只說哪裡有人，不說方向。' % (db * 100, da * 100), 'The pile below is %.0f%% away and the one above %.0f%%; supply says where holders are, not direction.' % (db * 100, da * 100), '跌破下方大堆', 'A break of the pile below')
+    u = L['chips']['urpd']; px = L['price']['bar']['c']; b, a, m = u['below_cluster'], u['above_cluster'], u.get('below_max')   # 2026-11-27 下方 50% 內沒有大堆時照實寫「下方籌碼薄」
+    az = '上方大堆離 %.0f%%' % ((a['range'][0] / px - 1) * 100) if a else '上方沒有大堆'; ae = 'the pile above is %.0f%% away' % ((a['range'][0] / px - 1) * 100) if a else 'there is no big pile above'
+    kk = lambda r: '%gK–%gK' % (r[0] / 1000, r[1] / 1000)
+    if not b:
+        mz = '（最厚的是 %s，%.0f 萬顆）' % (kk(m['range']), m['btc'] / 1e4) if m else ''; me = ' (the thickest is %s, %.0fK BTC)' % (kk(m['range']), m['btc'] / 1e3) if m else ''
+        return V('neu', '下方籌碼薄', 'Thin supply below', '現價以下 50%% 內沒有 50 萬顆以上的大堆%s；%s。籌碼只說哪裡有人，不說方向。' % (mz, az), 'No pile of 500K BTC or more within 50%% below price%s; %s. Supply says where holders are, not direction.' % (me, ae), '下方出現新的大堆', 'A new big pile forming below')
+    db = px / b['range'][1] - 1
+    return V('neu', '下有支撐、上有解套', 'Support below, supply above', '下方大堆離 %.0f%%、%s；籌碼只說哪裡有人，不說方向。' % (db * 100, az), 'The pile below is %.0f%% away and %s; supply says where holders are, not direction.' % (db * 100, ae), '跌破下方大堆', 'A break of the pile below')
 def cohort(L):
     t = L['chips']['cohort']['tot']; px = L['chips']['cohort']['price']
     return V('down', '多數短期持有者套牢', 'Most short-term holders are underwater', '收盤在短期持有者平均成本 %s 下方，反彈容易遇到解套賣壓。' % usd(t['sth_cost']), 'The close is below their average cost of %s: rallies meet break-even selling.' % usd(t['sth_cost']), '站回 %s' % usd(t['sth_cost']), 'A close above %s' % usd(t['sth_cost'])) if px < t['sth_cost'] else \

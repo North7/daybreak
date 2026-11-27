@@ -54,10 +54,14 @@ def quant(L):
 def urpd(L):
     u = L['chips']['urpd']; sup = L['chips']['flow']['conc5']['supply']; a, b = u['above_cluster'], u['below_cluster']; cb = u['cur_bucket']
     sz = '現價這一格（%s）有 %s，佔供給 %.1f%%。' % (rng(*cb), wan(u['cur_btc'], False), u['cur_pct'])
-    se = 'The bucket at price (%s) holds %s (%.1f%%); the nearest big piles are at %s and %s.' % (rng(*cb), kb(u['cur_btc'], False), u['cur_pct'], rng(*b['range']), rng(*a['range']))
-    return sz, se, [
-        it('上方最近的大堆', 'Nearest pile above', rng(*a['range']), rng(*a['range']), 'neu', '%s：價格回到那裡時，那裡買的人剛好回本，常有解套賣壓。' % wan(a['btc'], False), '%s: buyers there break even if price returns, which often brings selling.' % kb(a['btc'], False)),
-        it('下方最近的大堆', 'Nearest pile below', rng(*b['range']), rng(*b['range']), 'neu', '%s，是第一道籌碼支撐。' % wan(b['btc'], False), '%s, the first layer of support.' % kb(b['btc'], False)),
+    se = 'The bucket at price (%s) holds %s (%.1f%%).' % (rng(*cb), kb(u['cur_btc'], False), u['cur_pct'])
+    m = u.get('below_max')   # 2026-11-27 下方 50% 內沒有 50 萬顆以上的格子時，照實寫籌碼薄，並列出最厚的一格
+    ib = it('下方最近的大堆', 'Nearest pile below', rng(*b['range']), rng(*b['range']), 'neu', '%s，是第一道籌碼支撐。' % wan(b['btc'], False), '%s, the first layer of support.' % kb(b['btc'], False)) if b else \
+         it('下方最近的大堆', 'Nearest pile below', '50% 內沒有', 'None within 50%', 'neu', '現價以下 50%% 內沒有 50 萬顆以上的一格，籌碼支撐薄%s。' % ('；最厚的是 %s，%s' % (rng(*m['range']), wan(m['btc'], False)) if m else ''),
+            'No bucket within 50%% below price holds 500K BTC or more, so supply support is thin%s.' % ('; the thickest is %s with %s' % (rng(*m['range']), kb(m['btc'], False)) if m else ''))
+    ia = it('上方最近的大堆', 'Nearest pile above', rng(*a['range']), rng(*a['range']), 'neu', '%s：價格回到那裡時，那裡買的人剛好回本，常有解套賣壓。' % wan(a['btc'], False), '%s: buyers there break even if price returns, which often brings selling.' % kb(a['btc'], False)) if a else \
+         it('上方最近的大堆', 'Nearest pile above', '沒有', 'None', 'neu', '現價以上沒有 50 萬顆以上的一格。', 'No bucket above price holds 500K BTC or more.')
+    return sz, se, [ia, ib,
         it('現價到 $120K', 'Price to $120K', wan(u['btc_price_to_120k'], False), kb(u['btc_price_to_120k'], False), 'neu', '這一段價位的籌碼合計，佔供給約 %.0f%%。' % (u['btc_price_to_120k'] / sup * 100), 'All coins last moved between here and $120K, about %.0f%% of supply.' % (u['btc_price_to_120k'] / sup * 100))]
 
 def cohort(L):
