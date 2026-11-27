@@ -177,7 +177,8 @@ def check_longposts():
             if lang == 'zh' and not it.get('posted'):   # 2026-11-18 使用者：「長文控制在1000字以內」。算法跟發文小幫手顯示的一樣：標題＋空一行＋全文，空白、標點、hashtag 都算（11/18 晚上：原本只算正文不算空白，920 字的稿子小幫手顯示 1,131，使用者：「昨天我說了，長文內容控制在1000字以內」）
                 tt = (it.get('title') or '').strip(); full = t if re.sub(r'\s', '', t).startswith(re.sub(r'\s', '', tt)) else tt + '\n\n' + t
                 n = len(full)
-                if n > 1000: err.append(f'{tag} 全文 {n} 字（含標題、空白、hashtag，和小幫手顯示的一樣），超過 1000 字。先刪重複的數字、講第二遍的話和圖上看得到的細節')
+                lim = it.get('max_len') or 1000   # 2026-11-27 使用者：上下篇「字數可以放寬」；只在使用者點頭的那篇加 max_len
+                if n > lim: err.append(f'{tag} 全文 {n} 字（含標題、空白、hashtag，和小幫手顯示的一樣），超過 {lim} 字。先刪重複的數字、講第二遍的話和圖上看得到的細節')
                 for w in STOCK.findall(tt + '\n' + t): err.append(f'{tag} 套話「{w}」：最近每篇都出現，使用者 2026-11-18：「每篇文章都一個結構。太假了」。整句拿掉或換成這篇才有的說法，不要換一個同義的套話')
             if lang == 'zh' and set(t) & SIMP: err.append(f'{tag} 有簡體字：{"".join(sorted(set(t) & SIMP))}')
             if lang == 'zh' and not it.get('posted') and EN_NAME.search(t): err.append(f'{tag} 有英文常用名的詞要用英文：' + '、'.join(sorted(set(EN_NAME.findall(t)))) + '（voice.md 用詞，2026-11-09）')
