@@ -219,18 +219,26 @@ def lthrl(L):   # 2026-11-26 改寫（WRITING.md）：長文 session 轉告的�
         out.append(it('這一波', 'This wave', '高峰的 %d%%' % n['frac'], '%d%% of peak' % n['frac'], 'neu',
                       '%s 那 7 天認賠 %s；%s退到高峰的 1/3 以下才算退潮，以前大多在一週左右。' % (md(n['d']), yz(n['usd_m']), hz_),
                       'The 7 days to %s saw %s of losses; %sit counts as retreated below a third of the peak, which used to take about a week.' % (mde(n['d']), ye(n['usd_m']), he_)))
-    if hi:
-        tz = '%s 退潮後半年內最深只再低 %s' % ('、'.join(ymz(e['d']) for e in hok), rng(hok)) if hok else ''
-        bz = '；%s（套著 %.1f%%）之後又跌了 %d%%' % ('、'.join(ymz(e['d']) for e in hbad), hbad[0]['ls'], abs(hbad[0]['low180'])) if hbad else ''
-        oz = '；%s 那次退潮後還沒滿半年' % '、'.join(ymz(e['d']) for e in hopen) if hopen else ''
-        te = '%s: no more than %s lower within six months of the retreat' % (', '.join(yme_(e['d']) for e in hok), rng(hok)) if hok else ''
-        be = '; %s (%.1f%% underwater) fell another %d%%' % (', '.join(yme_(e['d']) for e in hbad), hbad[0]['ls'], abs(hbad[0]['low180'])) if hbad else ''
-        oe = '; %s is not yet six months past its retreat' % ', '.join(yme_(e['d']) for e in hopen) if hopen else ''
-        out.append(it('套著 40% 以上的幾次', '40%+ underwater', '%d 次' % (len(hi) + len(hopen)), '%d cases' % (len(hi) + len(hopen)), 'neu', tz + bz + oz + '。', te + be + oe + '.'))
-    if lo:
-        out.append(it('套著不到 40% 的幾次', 'Under 40% underwater', '%d 次' % len(lo), '%d cases' % len(lo), 'neu',
-                      '%s 退潮後半年內又跌了 %s。2013 年以來一共只有 %d 次，看的是之後價格怎麼走，不是預測。' % ('、'.join(ymz(e['d']) for e in lo), rng(lo), len(E)),
-                      '%s fell another %s within six months of the retreat. Only %d cases since 2013: this is what price did afterwards, not a forecast.' % (', '.join(yme_(e['d']) for e in lo), rng(lo), len(E))))
+    if hi or lo:   # 2026-11-27 兩組併成一條（每張卡最多 3 條，讓位給長短期並排）
+        tz = '套著 40%% 以上：%s 半年內最深只再低 %s' % ('、'.join(ymz(e['d']) for e in hok), rng(hok)) if hok else ''
+        bz = '，%s（%.1f%%）又跌了 %d%%' % ('、'.join(ymz(e['d']) for e in hbad), hbad[0]['ls'], abs(hbad[0]['low180'])) if hbad else ''
+        oz = '，%s 還沒滿半年' % '、'.join(ymz(e['d']) for e in hopen) if hopen else ''
+        lz = '%s不到 40%%：%s 又跌了 %s' % ('；' if hi else '', '、'.join(ymz(e['d']) for e in lo), rng(lo)) if lo else ''
+        te = '40%%+ underwater: %s no more than %s lower within six months' % (', '.join(yme_(e['d']) for e in hok), rng(hok)) if hok else ''
+        be = ', %s (%.1f%%) fell another %d%%' % (', '.join(yme_(e['d']) for e in hbad), hbad[0]['ls'], abs(hbad[0]['low180'])) if hbad else ''
+        oe = ', %s not yet six months on' % ', '.join(yme_(e['d']) for e in hopen) if hopen else ''
+        le = '%sunder 40%%: %s fell another %s' % ('; ' if hi else '', ', '.join(yme_(e['d']) for e in lo), rng(lo)) if lo else ''
+        out.append(it('退潮後半年', 'Six months after the retreat', '%d 次' % len(E), '%d cases' % len(E), 'neu',
+                      tz + bz + oz + lz + '。看的是之後價格怎麼走，不是預測。', te + be + oe + le + '. This is what price did afterwards, not a forecast.'))
+    pr = w.get('pair')   # 2026-11-27 長短期並排（bv_more 第 13 段）：先後和相對大小
+    cu = next((c for c in pr['cyc'] if c['open']), None) if pr else None; dn = [c for c in pr['cyc'] if not c['open']] if pr else []
+    if cu and dn:
+        pf = lambda v: ('%.1f%%' if v >= 1 else '%.2f%%') % v; mo = lambda n: round(n / 30.4)
+        out.append(it('這一輪長期最高點是短期的', 'This cycle: LTH high vs STH high', '%d%%' % cu['ratio'], '%d%%' % cu['ratio'], 'neu',
+                      '短期 %s 最高 %s，長期到目前最高是 %s 的 %s。前三輪長期的最高點都晚短期 %d–%d 個月、在底部前 %d–%d 天，是短期的 %s；長期的最高點要事後才確定。'
+                      % (ymz(cu['sd']), pf(cu['sv']), ymz(cu['ld']), pf(cu['lv']), min(mo(c['lag']) for c in dn), max(mo(c['lag']) for c in dn), min(c['pre'] for c in dn), max(c['pre'] for c in dn), '／'.join('%d%%' % c['ratio'] for c in dn)),
+                      'Short-term losses peaked at %s in %s; the long-term high so far is %s in %s. In the past three cycles the long-term high came %d–%d months after the short-term one, %d–%d days before the low, at %s of it; a long-term high is only confirmed in hindsight.'
+                      % (pf(cu['sv']), yme_(cu['sd']), pf(cu['lv']), yme_(cu['ld']), min(mo(c['lag']) for c in dn), max(mo(c['lag']) for c in dn), min(c['pre'] for c in dn), max(c['pre'] for c in dn), '/'.join('%d%%' % c['ratio'] for c in dn))))
     return sz, se, out
 
 MONS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']
