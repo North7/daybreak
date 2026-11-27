@@ -699,7 +699,7 @@ Page: https://daybreak.aronlab.dev/en/charts/mom/
 
 Bearish: This wave of long-term holder losses has not retreated: still 88% of the Nov 24 peak; 46% of their coins were underwater that day, above 40%.
 
-What it shows: What it is: long-term holders are those whose coins sat unmoved for 155+ days. This is what they sold at a loss over the last 7 days, as a share of bitcoin's market cap; higher means even the most patient holders are selling at a loss. How to read it: price on top, the share below. The next three views show each past loss peak and what followed; the last shows how much of all loss-selling comes from long-term holders.
+What it shows: What it is: long-term holders are those whose coins sat unmoved for 155+ days. This is what they sold at a loss over the last 7 days, as a share of bitcoin's market cap; higher means even the most patient holders are selling at a loss. How to read it: price on top, the share below. The next three views show each past loss peak and what followed, then how much of all loss-selling comes from long-term holders; the last puts short- and long-term holders side by side to compare timing and size.
 
 Source: CheckOnChain · 11/26
 
