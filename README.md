@@ -1,22 +1,36 @@
-# 破曉 Daybreak
+# Daybreak · 比特幣多維判讀
 
 [![Daily data](https://github.com/North7/daybreak/actions/workflows/daily.yml/badge.svg)](https://github.com/North7/daybreak/actions/workflows/daily.yml)
 [![Site checks](https://github.com/North7/daybreak/actions/workflows/check.yml/badge.svg)](https://github.com/North7/daybreak/actions/workflows/check.yml)
 
-**每天清晨的第一份比特幣簡報。** 今日要聞與解讀、市場數據、週期位置，以及「週期頂部分批出場」的框架與距離。
+**免費的比特幣數據分析網站。** 每天台北時間早上 08:30 前更新，用一百多張自建與公開的比特幣指標（鏈上、價格結構、ETF 與資金流、衍生品、宏觀），回答六個問題：現在在週期的哪裡？價格站在哪些成本和關卡上？賣壓出清了沒？誰在買、錢從哪裡來？槓桿和情緒擠不擠？那我該怎麼做？每張圖都表態偏多、偏空或中性，並寫出理由。數字由程式計算，AI 只負責解釋；不給交易建議。
 
-網站：<https://daybreak.aronlab.dev/>（中文／英文；日刊／夜刊；可加到手機主畫面）
+- 網站：<https://daybreak.aronlab.dev/>（繁體中文／简体中文／English）
+- 作者：[Aron](https://aronlab.dev/)
+- 和 Daybreak Markets、daybreak.fi 等同名專案無關：沒有代幣，不做交易或訊號服務。
+- 給 AI 和程式讀的：[llms.txt](https://daybreak.aronlab.dev/llms.txt)、[latest.md](https://daybreak.aronlab.dev/latest.md)（最新判讀）、[feed.xml](https://daybreak.aronlab.dev/feed.xml)（每日簡報 RSS）
 
 ![Daybreak](assets/og-en.png)
+
+## 主題頁
+
+| 主題 | 繁體中文 | 简体中文 | English |
+|---|---|---|---|
+| 比特幣週期分析 | [bitcoin-cycle/](https://daybreak.aronlab.dev/bitcoin-cycle/) | [zh-hans/bitcoin-cycle/](https://daybreak.aronlab.dev/zh-hans/bitcoin-cycle/) | [en/bitcoin-cycle/](https://daybreak.aronlab.dev/en/bitcoin-cycle/) |
+| 比特幣鏈上數據分析 | [bitcoin-onchain/](https://daybreak.aronlab.dev/bitcoin-onchain/) | [zh-hans/bitcoin-onchain/](https://daybreak.aronlab.dev/zh-hans/bitcoin-onchain/) | [en/bitcoin-onchain/](https://daybreak.aronlab.dev/en/bitcoin-onchain/) |
+| 比特幣 ETF 數據分析 | [bitcoin-etf/](https://daybreak.aronlab.dev/bitcoin-etf/) | [zh-hans/bitcoin-etf/](https://daybreak.aronlab.dev/zh-hans/bitcoin-etf/) | [en/bitcoin-etf/](https://daybreak.aronlab.dev/en/bitcoin-etf/) |
+| 比特幣宏觀分析 | [bitcoin-macro/](https://daybreak.aronlab.dev/bitcoin-macro/) | [zh-hans/bitcoin-macro/](https://daybreak.aronlab.dev/zh-hans/bitcoin-macro/) | [en/bitcoin-macro/](https://daybreak.aronlab.dev/en/bitcoin-macro/) |
+| 比特幣衍生品數據 | [bitcoin-derivatives/](https://daybreak.aronlab.dev/bitcoin-derivatives/) | [zh-hans/bitcoin-derivatives/](https://daybreak.aronlab.dev/zh-hans/bitcoin-derivatives/) | [en/bitcoin-derivatives/](https://daybreak.aronlab.dev/en/bitcoin-derivatives/) |
+| 比特幣數據與指標（每張圖一頁） | [charts/](https://daybreak.aronlab.dev/charts/) | [zh-hans/charts/](https://daybreak.aronlab.dev/zh-hans/charts/) | [en/charts/](https://daybreak.aronlab.dev/en/charts/) |
+| 比特幣行情分析（每日簡報） | [brief/](https://daybreak.aronlab.dev/brief/) | [zh-hans/brief/](https://daybreak.aronlab.dev/zh-hans/brief/) | [en/brief/](https://daybreak.aronlab.dev/en/brief/) |
 
 **[繁體中文](#繁體中文) · [English](#english)**
 
 <a id="繁體中文"></a>
 
-
 ---
 
-> **2026-11-11 首頁換成新版。** `index.html` 由 `pipeline/next/build.py` 產生（說明見 `pipeline/next/README.md`）；下面描述的是舊版，搬到 `classic.html` 後照常每天更新，舊網址會自動轉過去。運營截圖、推薦圖表仍截舊版的面板。
+> **以下是開發文件。** 2026-11-11 起首頁是新版（`pipeline/next/build.py` 產生，說明見 `pipeline/next/README.md`），舊版 2026-11-17 已從倉庫刪除。「出場框架」以後的段落有些還是舊版的寫法，以程式和變更紀錄為準。
 
 ## 目錄
 
@@ -38,20 +52,10 @@
 
 ## 網站內容
 
-10 個版面。桌面依序疊成一頁、捲動切換（鍵盤 1–9、0 跳版）；手機一次一版，左右滑動切換。**全站搜尋**（⌘K／Ctrl+K／「/」，或頂部列的搜尋鈕）可以找圖名、組名與指標別名（SOPR、ETF、清算…），結果寫出在哪一版哪一組、現在的讀值，點了直接跳過去；資料版都分組，桌面側欄在目前版面底下列出各組並標出捲到哪一組，頂部列小標跟著換；手機捲下去後右下角有「目錄」鈕，寫著目前的組，點開是這一版的組與圖。5 個區塊以上的版面頂端有版內目錄；每格有圖的區塊可複製網址（`#版面/圖`，例如 `#onchain/sopr`）；長歷史的圖可切 1 年／3 年／全部；判讀文字裡的指標名可點、滑過有一句解釋。
-
-| # | 版面 | 看什麼 |
-|---|---|---|
-| 01 | **頭版** | 號外大標題、巨型收盤價（滑過可回看近 20 天）、立場與市場階段、要盯的三個價位、數據帶、資料狀態、今天該做什麼／今天變了什麼、**我們的看法**（7 張圖的傾向與會改變看法的條件，從長線到短線排，點了跳到那張圖）、**訊號總表**（方向：市場階段、週線多空分數、今日發現；離頂部多近：MVRV ÷ 前高、頂部三指標、Tidemark、頂部雷達、冪律；離出場多遠：價格階梯、200 日均線避險；條一律是「離觸發多近」）、**今日發現**（上期發現的後續只列今天結案的，追蹤中的收合；附自動偵測的異動）、今日要聞（側欄只列標題）、離出場線的跑道圖、價格近一年、接下來的日期 |
-| 02 | **消息** | 過去 24–36 小時的重要消息（依分類篩選），每則附「對 BTC 的意義」並對照本站數據；機構研報（Glassnode、K33 等）重點 |
-| 03 | **週期** | 分三組：**現在的階段**（市場階段：熊市 → 轉換期 → 牛市，規則化判定與佐證燈號，6 張佐證圖預設收起；週線多空分數；相對未實現獲利的地板；長短期持有者 NUPL）；**離頂部多近**（MVRV ÷ 前一輪高點、頂部三指標、AVIV、儲備風險、頂部雷達、兩者 6 項的近 3 年走勢）；**和歷史與模型比**（和前幾輪比：頂部之後、冪律合理價、Tidemark 綜合訊號、長期路徑四種走法） |
-| 04 | **鏈上** | 分五組（側欄與版內目錄都分組）：**成本與位置**（回調壓力清單、供給分位成本線、籌碼分布 URPD（附雙錨與缺口）、短期持有者獲利比例、短期持有者成本帶、依持有時間的持幣成本、籌碼結構與集中度）；**賣出的人賺還是賠**（STH-SOPR 與短期持有者實現損益並排、每日淨實現損益、一年累計淨實現損益）；**賣壓強弱與衰竭**（實現獲利 ÷ 虧損、實現虧損峰值背離、賣方風險比、賣方衰竭常數、鏈上勢能）；**長期持有者與大戶**（長短期持有者籌碼、價格 × 長期持有者動向、長短期持有者供給比 30 日變化、依持有時間的實現獲利／虧損、Dormancy 與 Liveliness、長期持有者虧損比例與已實現虧損、鯨魚與大戶）；**指標總表**（鏈上指標表與走勢小圖） |
-| 05 | **價格** | 分三組：**這一段行情**（短週期：起點、幅度、天數、與本輪中位數比較、本段結束線；近 20 天 K 線、關鍵價位、賣壓累積與動能品質）；**均線與成本線**（成本線與均線，附我們的看法；均線排列）；**長期與季節性**（長期走勢、月度報酬熱力表）。上方數字列有 ATR、實際波動、Mayer 倍數、Pi Cycle |
-| 06 | **資金** | 分四組：**ETF 與機構**（現貨 ETF 每日淨流量、ETF 持有者成本）；**買盤從哪裡來**（三地溢價：美國現貨 Coinbase、亞洲 USDT 場外、永續對現貨；韓國溢價；交易所淨流量）；**鏈上需求**（表觀需求、現貨 vs 永續需求、循環資金流、資金與價格增量梯度）；**流動性與宏觀**（穩定幣供給、實現市值 30 日變化、BTC 對美股）。上方數字列有 BTC 與那斯達克／美元相關、10 年期實質利率 |
-| 07 | **衍生品** | 分四組：**波動率**（DVOL 對實際波動、隱含波動率期限結構）；**槓桿與清算**（期貨基差曲線與資金費率、清算熱力圖）；**選擇權部位**（各到期未平倉、履約價分布、Gamma 曝險、買方權利金差）；**現貨訂單流**（OKX 現貨主動買賣差、掛單簿：13 個交易所 ±15% 全景與買賣牆）。上方數字列有 DVOL、IV − RV、永續資金費率（Deribit／OKX／Hyperliquid 以未平倉加權）、25Δ 風險逆轉 |
-| 08 | **出場框架** | 現在離每條出場規則多遠、出場模擬器（拖動價格看框架會賣多少）、鏈上觸發、200 日均線避險、頂部三指標（只作讀值）與時間停損 |
-| 09 | **往期** | 發現戰績（2026/10/23 起每則發現的最終結果：確認／推翻／到期／追蹤中；結案少於 30 則不算命中率）、往期列表（頭條、立場、當天收盤、到今天的漲跌） |
-| 10 | **方法** | 這是什麼、原則、限制、資料來源與更新時間 |
+- **首頁** `/`：Daybreak 是什麼、今天的結論。
+- **數據頁** `/app/`：「今天」加上六個問題各一頁（週期、價位、賣壓、買盤、槓桿、怎麼做），一百多張指標卡，每張有偏多／偏空／中性和理由；手機底部分頁列，桌面頂部分頁。
+- **單頁**：每張圖 `/charts/<代號>/`、每日簡報 `/brief/<日期>/`、上面的主題頁、RSS `/feed.xml`。部署時由 `pipeline/next/pages.py` 產生，不進倉庫；英文在 `/en/` 底下，簡體在 `/zh-hans/` 底下。
+- **語言**：繁／简／EN。數據頁的簡體由瀏覽器即時轉換（`assets/hans.js`），單頁和主題頁部署時轉好（`pipeline/next/hans.py`）。
 
 ## 出場框架
 
@@ -533,26 +537,33 @@ docs/CRON_JOB.md         cron-job.org 準時觸發的設定步驟
 
 ## English
 
-**The first Bitcoin brief of the morning.** The day's news with analysis, market and on-chain data, where we are in the cycle, and how far price is from each rule of a staged exit plan for a cycle top.
+**A free Bitcoin data analysis website.** Updated every morning before 08:30 Taipei time, it reads over a hundred original and public Bitcoin indicators (on-chain, price structure, ETFs and fund flows, derivatives, macro) to answer six questions: where is Bitcoin in its cycle, which cost bases and levels is price sitting on, has selling pressure cleared, who is buying and where is the money coming from, how crowded are leverage and sentiment, and what to do about it. Every chart takes a side (bullish, bearish or neutral) and says why. Code computes every number; AI only explains them. Daybreak makes no trade calls.
 
-Site: <https://daybreak.aronlab.dev/> (Chinese / English; light / dark; installable on the phone home screen)
+- Site: <https://daybreak.aronlab.dev/> (Traditional Chinese / Simplified Chinese / English)
+- Built by [Aron](https://aronlab.dev/)
+- Not related to Daybreak Markets, daybreak.fi or other projects named Daybreak: no token, no trading or signal service.
+- For AI and scripts: [llms.txt](https://daybreak.aronlab.dev/llms.txt), [latest.en.md](https://daybreak.aronlab.dev/latest.en.md) (latest reading), [en/feed.xml](https://daybreak.aronlab.dev/en/feed.xml) (daily brief feed)
+
+### Topic pages
+
+| Topic | 繁體中文 | 简体中文 | English |
+|---|---|---|---|
+| Bitcoin cycle analysis | [bitcoin-cycle/](https://daybreak.aronlab.dev/bitcoin-cycle/) | [zh-hans/bitcoin-cycle/](https://daybreak.aronlab.dev/zh-hans/bitcoin-cycle/) | [en/bitcoin-cycle/](https://daybreak.aronlab.dev/en/bitcoin-cycle/) |
+| Bitcoin on-chain data analysis | [bitcoin-onchain/](https://daybreak.aronlab.dev/bitcoin-onchain/) | [zh-hans/bitcoin-onchain/](https://daybreak.aronlab.dev/zh-hans/bitcoin-onchain/) | [en/bitcoin-onchain/](https://daybreak.aronlab.dev/en/bitcoin-onchain/) |
+| Bitcoin ETF data analysis | [bitcoin-etf/](https://daybreak.aronlab.dev/bitcoin-etf/) | [zh-hans/bitcoin-etf/](https://daybreak.aronlab.dev/zh-hans/bitcoin-etf/) | [en/bitcoin-etf/](https://daybreak.aronlab.dev/en/bitcoin-etf/) |
+| Bitcoin macro analysis | [bitcoin-macro/](https://daybreak.aronlab.dev/bitcoin-macro/) | [zh-hans/bitcoin-macro/](https://daybreak.aronlab.dev/zh-hans/bitcoin-macro/) | [en/bitcoin-macro/](https://daybreak.aronlab.dev/en/bitcoin-macro/) |
+| Bitcoin derivatives data | [bitcoin-derivatives/](https://daybreak.aronlab.dev/bitcoin-derivatives/) | [zh-hans/bitcoin-derivatives/](https://daybreak.aronlab.dev/zh-hans/bitcoin-derivatives/) | [en/bitcoin-derivatives/](https://daybreak.aronlab.dev/en/bitcoin-derivatives/) |
+| Bitcoin data and indicators (one page per chart) | [charts/](https://daybreak.aronlab.dev/charts/) | [zh-hans/charts/](https://daybreak.aronlab.dev/zh-hans/charts/) | [en/charts/](https://daybreak.aronlab.dev/en/charts/) |
+| Bitcoin market analysis (daily brief) | [brief/](https://daybreak.aronlab.dev/brief/) | [zh-hans/brief/](https://daybreak.aronlab.dev/zh-hans/brief/) | [en/brief/](https://daybreak.aronlab.dev/en/brief/) |
+
+> **What follows is developer documentation.** The new home page has been live since 2026-11-11 (built by `pipeline/next/build.py`, see `pipeline/next/README.md`); the old site was removed from the repository on 2026-11-17. Some sections from “The exit plan” on still describe the old site; the code and the changelog take precedence.
 
 ### What's on the site
 
-Ten sections. On desktop they stack into one page and switch as you scroll (keys 1–9 and 0 jump between them); on phones one section shows at a time and you swipe left/right. Sections with five or more blocks have an in-page table of contents; every block with a chart has a copyable link (`#section/chart`, e.g. `#onchain/sopr`); long-history charts switch between 1Y / 3Y / All; indicator names in the written commentary link to their chart with a one-line definition on hover. **Site search** (⌘K / Ctrl+K / “/”, or the search button in the top bar) finds charts, groups and indicator aliases (SOPR, ETF, liquidation…), shows where each lives and its current reading, and jumps straight there. Every data page is grouped: on desktop the sidebar lists the current page's groups and marks the one you are in, and the small title in the top bar follows along; on phones a “Contents” button appears once you scroll, naming the current group and opening the page's groups and charts.
-
-| # | Section | What you see |
-|---|---|---|
-| 01 | **Front page** | Headline, the giant closing price (hover to step back through 20 days), stance and market stage, three levels to watch, data tape, data-status bar, what to do / what changed, **our read** (the lean and what would change it for seven charts, long-term to short-term, each linking to its chart), the **signal board** (direction: market stage, weekly regime score, today's findings; how close to a top: MVRV ÷ prior peak, top-3 indicators, Tidemark, top radar, power law; how far from the exit rules: price ladder, 200-day MA hedge; every bar reads as “how close to its trigger”), **today's findings** (follow-ups show only those resolved today, the rest folded away; plus the auto-detected signals), today's news (headlines only in the side column), the runway to each exit line, the 12-month price chart, upcoming dates |
-| 02 | **News** | Key stories from the last 24–36 hours (filter by category), each with what it means for BTC checked against our data; institutional research (Glassnode, K33, …) |
-| 03 | **Cycle** | Three groups: **where we are** (market stage: bear → transition → bull, rule-based with supporting signals, the six evidence charts start folded; weekly regime score; the relative-unrealized-profit floor; long- and short-term holder NUPL); **how close to a top** (MVRV ÷ prior-cycle peak, top-3 indicators, AVIV, reserve risk, top radar, 3-year trends of all six); **against history and models** (versus past cycles after the top, power-law fair value, Tidemark composite, four long-term paths) |
-| 04 | **On-chain** | Five groups (grouped in the sidebar and the page index too): **cost and position** (pullback pressure checklist, supply-percentile cost lines, URPD with its anchors and gaps, STH supply in profit, STH cost bands, cost basis by holding age, supply structure and concentration); **are sellers in profit or at a loss** (STH-SOPR beside STH realized P/L, daily net realized P/L, one-year cumulative net realized P/L); **selling pressure and exhaustion** (realized profit ÷ loss, realized-loss peak divergence, sell-side risk ratio, seller exhaustion constant, on-chain momentum); **long-term holders and whales** (STH/LTH supply, price × LTH moves, STH/LTH supply ratio 30-day change, realized P/L by holding age, Dormancy and Liveliness, LTH supply in loss and realized loss, whales); **all metrics** (the on-chain table and small trend charts) |
-| 05 | **Price** | Three groups: **this leg** (the short cycle: start, size, length, versus this cycle's median, the line that would end it; 20 daily candles, key levels, the Sell Pressure Index and momentum quality); **moving averages and cost lines** (cost bases and averages, with our read; MA stack); **long run and seasonality** (long-term price, monthly returns heatmap). The figure row shows ATR, realized volatility, Mayer multiple and Pi Cycle |
-| 06 | **Flows** | Four groups: **ETFs and institutions** (spot ETF daily net flows, ETF holder cost); **where the buying comes from** (three-venue premiums: US spot on Coinbase, Asian USDT OTC, perps vs spot; the Korea premium; exchange net flows); **on-chain demand** (apparent demand, spot vs perp demand, capital rotation, capital vs price gradient); **liquidity and macro** (stablecoin supply, realized cap 30-day change, BTC vs stocks). The figure row shows BTC's correlation with the Nasdaq and the dollar and the 10-year real yield |
-| 07 | **Derivatives** | Four groups: **volatility** (DVOL vs realized volatility, the implied volatility term structure); **leverage and liquidations** (futures basis curve and funding, liquidation heatmap); **options positioning** (open interest by expiry, by strike, gamma exposure, buyer premium spread); **spot order flow** (OKX spot taker flow, the order book: 13 venues ±15% with bid and ask walls). The figure row shows DVOL, IV − RV, perp funding (Deribit / OKX / Hyperliquid, open-interest weighted) and the 25Δ risk reversal |
-| 08 | **Exit plan** | How far price is from each exit rule, an exit simulator (drag a price and see what the plan would have sold), on-chain triggers, 200-day MA hedge, top-3 indicators (reading only) and time stop |
-| 09 | **Archive** | Findings track record (every finding since 2026/10/23 and how it ended: confirmed / refuted / expired / still tracked; no hit rate until 30 are resolved) and past editions (headline, stance, that day's close, change since) |
-| 10 | **Method** | What this is, principles, limits, data sources and update times |
+- **Home** `/`: what Daybreak is and today's conclusion.
+- **Data app** `/app/`: “Today” plus one page for each of the six questions (cycle, levels, selling, demand, leverage, what to do), over a hundred indicator cards, each marked bullish, bearish or neutral with a reason; a bottom tab bar on phones, top tabs on desktop.
+- **Single pages**: one per chart at `/charts/<code>/`, one per daily brief at `/brief/<date>/`, the topic pages above, and the feed at `/feed.xml`. Written at deploy time by `pipeline/next/pages.py` and not committed; English lives under `/en/`, Simplified Chinese under `/zh-hans/`.
+- **Languages**: Traditional Chinese, Simplified Chinese, English. The app converts to Simplified in the browser (`assets/hans.js`); single and topic pages are converted at deploy time (`pipeline/next/hans.py`).
 
 ### The exit plan
 
