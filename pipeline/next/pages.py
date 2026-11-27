@@ -151,11 +151,11 @@ def footer(en, up, hans=False):
     if en:
         return ('Daybreak, by Aron. Code computes every number; AI only explains them. Daybreak makes no trade calls; readings are for information only.<br>'
                 '<a href="%sapp/?lang=en">Daybreak app</a> · <a href="%sen/charts/">All charts</a> · <a href="%sen/brief/">Daily briefs</a> · <a href="%scase-study/en/">Case study</a><br>'
-                '<a href="%sen/bitcoin-cycle/">Cycle analysis</a> · <a href="%sen/bitcoin-onchain/">On-chain analysis</a> · <a href="%sen/bitcoin-macro/">Macro and flows</a> · <a href="%sen/bitcoin-derivatives/">Derivatives data</a>') % ((up,) * 8)
+                '<a href="%sen/bitcoin-cycle/">Cycle analysis</a> · <a href="%sen/bitcoin-onchain/">On-chain analysis</a> · <a href="%sen/bitcoin-macro/">Macro analysis</a> · <a href="%sen/bitcoin-etf/">ETF data</a> · <a href="%sen/bitcoin-derivatives/">Derivatives data</a>') % ((up,) * 9)
     h = 'zh-hans/' if hans else ''
     return ('Daybreak，Aron 製作。數字由程式計算，AI 只負責解釋；不給交易建議，判讀僅供參考。<br>'
             '<a href="%sapp/?lang=%s">打開 Daybreak</a> · <a href="%s%scharts/">所有圖</a> · <a href="%s%sbrief/">每日簡報</a> · <a href="%scase-study/">Case study</a><br>'
-            '<a href="%s%sbitcoin-cycle/">週期分析</a> · <a href="%s%sbitcoin-onchain/">鏈上數據分析</a> · <a href="%s%sbitcoin-macro/">宏觀與資金流</a> · <a href="%s%sbitcoin-derivatives/">衍生品數據</a>') % ((up, 'hans' if hans else 'zh', up, h, up, h, up) + sum(((up, h),) * 4, ()))
+            '<a href="%s%sbitcoin-cycle/">週期分析</a> · <a href="%s%sbitcoin-onchain/">鏈上數據分析</a> · <a href="%s%sbitcoin-macro/">宏觀分析</a> · <a href="%s%sbitcoin-etf/">ETF 數據分析</a> · <a href="%s%sbitcoin-derivatives/">衍生品數據</a>') % ((up, 'hans' if hans else 'zh', up, h, up, h, up) + sum(((up, h),) * 5, ()))
 
 
 def pill(lean, en):
@@ -268,13 +268,13 @@ def chart_page(c, en):
 def charts_index(en):
     p = 'en/charts/' if en else 'charts/'; n = sum(1 for _ in geo.ALL)
     b = ['<p class="mono crumb">%s</p>' % (('%s close · %d charts' % (den(DATE), n)) if en else ('%s 收盤 · %d 張圖' % (dzh(DATE), n))),
-         '<h1>%s</h1>' % ('Bitcoin indicators: every Daybreak chart and where it leans today' if en else '比特幣指標數據：Daybreak 每一張圖和它今天的表態'),   # 2026-11-25 標題帶搜尋詞（比特幣指標數據）
+         '<h1>%s</h1>' % ('Bitcoin data and indicators: every Daybreak chart and where it leans today' if en else '比特幣數據與指標：Daybreak 每一張圖和它今天的表態'),   # 2026-11-25 標題帶搜尋詞（比特幣指標數據）
          '<p class="dim">%s</p>' % esc(geo.INTRO_EN if en else geo.INTRO_ZH)]
     for q in QS:
         lead = q.get('lead_en' if en else 'lead_zh') or ''
         li = ''.join('<li>%s<a class="t" href="%s/">%s</a><p>%s</p></li>' % (pill(LEANS.get(c['k']), en), c['k'], esc(geo.name(c, en)), esc(geo.read(c, en))) for c in geo.charts(q['id']))
         b.append('<section id="%s"><p class="mono">%s</p><h2>%s</h2>%s<ul class="list">%s</ul></section>' % (q['id'], esc(q['en'] if en else q['zh']), esc(q['qe'] if en else q['qz']), ('<p class="dim">%s</p>' % esc(lead)) if lead else '', li))
-    t = 'Bitcoin indicators and data: every chart · Daybreak' if en else '比特幣指標數據：所有指標圖今天的表態 · Daybreak'
+    t = 'Bitcoin data and indicators: every chart · Daybreak' if en else '比特幣數據與指標：所有指標圖今天的表態 · Daybreak'   # 2026-11-27 改成「比特幣數據」打頭（使用者給的關鍵字）；「比特幣指標數據」留在說明
     graph = [WEBSITE, PERSON, {'@type': 'CollectionPage', '@id': SITE + p + '#page', 'url': SITE + p, 'name': t, 'inLanguage': 'en' if en else 'zh-Hant', 'dateModified': DATE, 'isPartOf': {'@id': WEBSITE['@id']},
                                'author': {'@id': PERSON['@id']}}]
     return shell(en, 'charts/', 'en/charts/', t, geo.INTRO_EN if en else geo.INTRO_ZH, ''.join(b), graph)
@@ -380,13 +380,18 @@ def brief_page(d, A, ds, en):
     else: nav.append('<span></span>')
     if i + 1 < len(ds) and (not en or A[ds[i + 1]][1]): nav.append('<a href="../%s/">%s →</a>' % (ds[i + 1], den(ds[i + 1]) if en else dzh(ds[i + 1])))
     b.append('<section class="pn">%s</section>' % ''.join(nav))
-    t = ('Bitcoin, %s: %s' % (den(d), a['headline'])) if en else ('比特幣 %s：%s' % (dzh(d), a['headline']))
+    t = ('Bitcoin market analysis, %s: %s' % (den(d), a['headline'])) if en else ('比特幣行情分析 %s：%s' % (dzh(d), a['headline']))   # 2026-11-27 每天一頁都帶「比特幣行情分析」
     graph = [WEBSITE, PERSON,
              {'@type': 'Article', '@id': SITE + me + '#page', 'url': SITE + me, 'headline': a['headline'][:110], 'description': a.get('summary') or a['headline'], 'inLanguage': 'en' if en else 'zh-Hant',
               'datePublished': d, 'dateModified': (z.get('written_utc') or d)[:10], 'author': {'@id': PERSON['@id']}, 'publisher': {'@id': PERSON['@id']}, 'isPartOf': {'@id': WEBSITE['@id']},
               'about': {'@type': 'Thing', 'name': 'Bitcoin', 'sameAs': 'https://en.wikipedia.org/wiki/Bitcoin'}},
              crumbs(SITE + me + '#crumbs', [('Daybreak', 'app/'), ('Daily briefs' if en else '每日簡報', 'en/brief/' if en else 'brief/'), (dzh(d) if not en else den(d), me)])]
     return shell(en, pz, pe, t, a.get('summary') or a['headline'], ''.join(b), graph)
+
+
+# 2026-11-27 簡報索引的說明（頁面上那段和 meta description 同一句），帶「比特幣每日分析」「Daily Bitcoin analysis」
+DSC_B_ZH = '比特幣每日分析：每天收盤後一份判讀，寫頭條、整體偏向、要盯的價位，和鏈上、ETF、衍生品、宏觀各部分怎麼說。'
+DSC_B_EN = 'Daily Bitcoin analysis: one close-of-day reading every day, with the headline, the overall lean, the levels to watch and what on-chain data, ETFs, derivatives and macro say.'
 
 
 def brief_index(A, ds, en):
@@ -397,13 +402,13 @@ def brief_index(A, ds, en):
         a = e if en else z
         st = (a.get('stance') or {}).get('label') or ''
         li.append('<li><div class="mono">%s · No.%s%s</div><a class="t" href="%s/">%s</a></li>' % (den(d) if en else dzh(d), z.get('edition') or '', (' · ' + esc(st)) if st else '', d, esc(a['headline'])))
-    t = 'Daily Bitcoin analysis: every brief · Daybreak' if en else '比特幣每日分析：每日簡報 · Daybreak'
+    t = 'Bitcoin market analysis: every daily brief · Daybreak' if en else '比特幣行情分析：每日簡報 · Daybreak'   # 2026-11-27 原本「比特幣每日分析」，改主打「比特幣行情分析」，每日分析留在說明
     b = '<p class="mono crumb">%s</p><h1>%s</h1><p class="dim">%s</p><section><ul class="list">%s</ul></section>' % (
-        ('%d editions' % len(li)) if en else ('%d 期' % len(li)), 'Daily Bitcoin analysis' if en else '比特幣每日分析',
-        'One close-of-day reading every day: headline, overall lean, levels to watch and what each part of the market says.' if en else '每天收盤後一份判讀：頭條、整體偏向、要盯的價位，和市場各部分怎麼說。', ''.join(li))
+        ('%d editions' % len(li)) if en else ('%d 期' % len(li)), 'Bitcoin market analysis' if en else '比特幣行情分析',
+        DSC_B_EN if en else DSC_B_ZH, ''.join(li))
     p = 'en/brief/' if en else 'brief/'
     graph = [WEBSITE, PERSON, {'@type': 'CollectionPage', '@id': SITE + p + '#page', 'url': SITE + p, 'name': t, 'inLanguage': 'en' if en else 'zh-Hant', 'dateModified': ds[-1], 'isPartOf': {'@id': WEBSITE['@id']}}]
-    return shell(en, 'brief/', 'en/brief/', t, t, b, graph)
+    return shell(en, 'brief/', 'en/brief/', t, DSC_B_EN if en else DSC_B_ZH, b, graph)
 
 
 def write(out, path, s):

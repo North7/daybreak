@@ -48,7 +48,7 @@ jobs:
           python3 -m pip install --quiet --break-system-packages opencc-python-reimplemented==0.1.7   # 2026-11-25 主題頁簡體版
           # 2026-11-25 assets/hans.js 要和 pipeline/next/hans.py（字典調整、TERMS）同一版：改了 hans.py 忘了重產就擋下來
           python3 pipeline/next/hans.py --js && git diff --exit-code --stat assets/hans.js || { echo '::error::assets/hans.js 不是最新，請執行 python3 pipeline/next/hans.py --js 再提交'; exit 1; }
-          mkdir -p /tmp/geo && cp sitemap.xml /tmp/geo/ && python3 pipeline/next/pages.py --out /tmp/geo && test -s /tmp/geo/charts/dawn/index.html && test -s /tmp/geo/en/charts/index.html && test -s /tmp/geo/brief/index.html && test -s /tmp/geo/zh-hans/bitcoin-cycle/index.html && test -s /tmp/geo/en/bitcoin-cycle/index.html && test "$(grep -c '<url>' /tmp/geo/sitemap.xml)" -gt 200 && test -s /tmp/geo/zh-hans/charts/dawn/index.html && test -s /tmp/geo/zh-hans/brief/index.html && test -s /tmp/geo/zh-hans/feed.xml   # 2026-11-25 單頁、簡報、feed 的簡體版
+          mkdir -p /tmp/geo && cp sitemap.xml /tmp/geo/ && python3 pipeline/next/pages.py --out /tmp/geo && test -s /tmp/geo/charts/dawn/index.html && test -s /tmp/geo/en/charts/index.html && test -s /tmp/geo/brief/index.html && test -s /tmp/geo/zh-hans/bitcoin-cycle/index.html && test -s /tmp/geo/en/bitcoin-cycle/index.html && test -s /tmp/geo/bitcoin-etf/index.html && test -s /tmp/geo/zh-hans/bitcoin-etf/index.html && test "$(grep -c '<url>' /tmp/geo/sitemap.xml)" -gt 200 && test -s /tmp/geo/zh-hans/charts/dawn/index.html && test -s /tmp/geo/zh-hans/brief/index.html && test -s /tmp/geo/zh-hans/feed.xml   # 2026-11-25 單頁、簡報、feed 的簡體版
       - name: Playwright browser cache
         id: pw
         uses: actions/cache@v4
