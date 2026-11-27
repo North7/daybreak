@@ -1,5 +1,4 @@
-{"m": "lth-mvrv-zscore", "fetched_utc": "2026-11-26T22:40:41+00:00", "rows": [
-{"d":"2022-11-26","lthMvrvZscore":-0.1233},
+{"m": "lth-mvrv-zscore", "fetched_utc": "2026-11-27T22:40:41+00:00", "rows": [
 {"d":"2022-11-27","lthMvrvZscore":-0.1181},
 {"d":"2022-11-28","lthMvrvZscore":-0.1284},
 {"d":"2022-11-29","lthMvrvZscore":-0.1206},
@@ -1446,5 +1445,6 @@
 {"d":"2026-11-16","lthMvrvZscore":0.5222},
 {"d":"2026-11-17","lthMvrvZscore":0.5263},
 {"d":"2026-11-18","lthMvrvZscore":0.4628},
-{"d":"2026-11-19","lthMvrvZscore":0.4312}
+{"d":"2026-11-19","lthMvrvZscore":0.4312},
+{"d":"2026-11-20","lthMvrvZscore":0.3355}
 ]}
