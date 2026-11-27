@@ -6,6 +6,92 @@
   {
    "status": "send",
    "kind": "reply",
+   "mode": "quote",
+   "lang": "en",
+   "style": "口語版",
+   "author": "DaanCrypto",
+   "followers": 413862,
+   "id": "2126256151008326093",
+   "url": "https://x.com/DaanCrypto/status/2126256151008326093",
+   "posted": "2026-11-27T10:05:44Z",
+   "angle": "他講的價格脫鉤，6 月剛發生過一次",
+   "take": "價格先轉、流量後轉，6 月就是這樣",
+   "summary": "週三 ETF 大額流出、當天盤中反轉 5% 收紅；價格不再跟著流量走時要注意",
+   "reply": "",
+   "quote": "Daan's \"price stops following the flows\" has a fresh example.\nJune's ETF outflow ran 40 sessions and sank to −$5.6B over 20 days. The price low came on 6/30, three weeks before that stretch ended.\nThis one is at −$5.35B, 13 sessions in.\n#Bitcoin #BTC",
+   "sources": "data/etf.json roll20：近 20 日合計 −5,354 百萬（到 11/25）、第 13 個交易日；2026/06 那段 5/22–7/21、40 天、最深 −5,638（6/09）；價格 swing legs 6/30 收盤低 58,532。網站看法 etf20 down（流出段還沒結束），引用不寫成偏多",
+   "note": "★ 2 小時內（截止 20:05）。41 萬粉英文 → 只能引用，今天第 1 則引用。配 etf20（上面有價格對照，看得到 6 月那段）。不說現在是底，只講 6 月價格先轉。",
+   "image": {
+    "site": {
+     "k": "etf20"
+    },
+    "title": "現貨 ETF 近 20 個交易日合計"
+   },
+   "name": "DaanCrypto",
+   "n": 128,
+   "order": 0
+  },
+  {
+   "status": "send",
+   "kind": "reply",
+   "lang": "zh",
+   "style": "口語版",
+   "author": "0xGummyBear",
+   "followers": 4386,
+   "id": "2126250034673135921",
+   "url": "https://x.com/0xGummyBear/status/2126250034673135921",
+   "posted": "2026-11-27T09:41:26Z",
+   "angle": "他的 886 天對的是反彈高點",
+   "take": "從真正的頂算，時間已經走到以前見最低的那一段",
+   "summary": "減半週期玄學：前三輪 957/857/909 天觸頂、之後 66–100 天測試再上升；這輪 886 天觸頂，推 22–75 天後進上升期、剛好 1、2 月",
+   "reply": "886 天對到的是 9/21 那個 8.7 萬的反彈高點吧\n真正的頂 12.5 萬在去年 10/6，到今天 417 天，前三輪從頂走到最低是 360 多到 400 天出頭",
+   "sources": "data/latest.json price.swing：2025-10-06 收盤 124,766、2026-09-21 86,594（2024-04-20 減半 +886 天＝9/22）；前三輪頂到最低：2013-12→2015-01 約 406 天、2017-12→2018-12 約 363 天、2021-11→2022-11 約 376 天",
+   "note": "4c 固定名單。他今天回過我們兩次（#59、#124），熟帳號。4,386 粉不配圖。不接 1、2 月上升的預測，只講時間從哪天算。",
+   "name": "0xGummyBear",
+   "n": 129,
+   "order": 1
+  },
+  {
+   "status": "send",
+   "kind": "followup",
+   "lang": "zh",
+   "style": "口語版",
+   "author": "serlo123",
+   "followers": 9957,
+   "id": "2125808477021053399",
+   "url": "https://x.com/serlo123/status/2125808477021053399",
+   "posted": "2026-11-26T04:26:51Z",
+   "angle": "收盤還沒破，擦得很近",
+   "take": "",
+   "summary": "我們〈長期持有者開始投降了（下）〉底下：關鍵是收盤守住 6/30 的低點",
+   "reply": "收盤到現在都沒破，最低那天 11/20 收 58,806，比 6/30 只高不到 300 美元\n盤中倒是插到過 55,100",
+   "sources": "data/latest.json price.swing 6/30 收盤 58,532、本段最低收盤 11/20 58,806；rows20 11/21 盤中低 55,100",
+   "note": "接話：我們原創底下，只給收盤和盤中的位置，不寫守不守得住要怎麼做。",
+   "name": "serlo123",
+   "n": 130,
+   "order": 2
+  },
+  {
+   "status": "skip",
+   "kind": "followup",
+   "lang": "zh",
+   "style": "口語版",
+   "author": "Xingge888668",
+   "followers": 3149,
+   "id": "2126250155129094373",
+   "url": "https://x.com/Xingge888668/status/2126250155129094373",
+   "posted": "2026-11-27T09:41:55Z",
+   "angle": "按讚就好",
+   "reply": "",
+   "summary": "對，按年切確實把這輪切小了，我回頭把口徑標上",
+   "note": "按讚就好：他同意、說會改表，沒有新問題。",
+   "name": "Xingge888668",
+   "n": 131,
+   "order": 3
+  },
+  {
+   "status": "send",
+   "kind": "reply",
    "lang": "zh",
    "style": "口語版",
    "author": "Mo_InkNoir",
@@ -21,7 +107,7 @@
    "name": "Mo_InkNoir",
    "n": 111,
    "url": "https://x.com/Mo_InkNoir/status/2126243516846338190",
-   "order": 0
+   "order": 4
   },
   {
    "status": "send",
@@ -41,7 +127,7 @@
    "name": "TechUnderwire",
    "n": 112,
    "url": "https://x.com/TechUnderwire/status/2126221572273008829",
-   "order": 1
+   "order": 5
   },
   {
    "status": "send",
@@ -67,7 +153,7 @@
    "name": "LaoChenTalks",
    "n": 113,
    "url": "https://x.com/LaoChenTalks/status/2126240073540632986",
-   "order": 2
+   "order": 6
   },
   {
    "status": "send",
@@ -87,7 +173,7 @@
    "name": "CHENGYANG7T",
    "n": 114,
    "url": "https://x.com/CHENGYANG7T/status/2126239813028200818",
-   "order": 3
+   "order": 7
   },
   {
    "status": "send",
@@ -107,7 +193,7 @@
    "name": "JRpotato0522",
    "n": 115,
    "url": "https://x.com/JRpotato0522/status/2126231804805787710",
-   "order": 4
+   "order": 8
   },
   {
    "status": "send",
@@ -127,7 +213,7 @@
    "name": "SicanianSun",
    "n": 116,
    "url": "https://x.com/SicanianSun/status/2126232057307419066",
-   "order": 5
+   "order": 9
   },
   {
    "status": "send",
@@ -147,7 +233,7 @@
    "name": "Sumingbt",
    "n": 117,
    "url": "https://x.com/Sumingbt/status/2126237722335687125",
-   "order": 6
+   "order": 10
   },
   {
    "status": "send",
@@ -173,7 +259,7 @@
    "name": "BTC_strategy",
    "n": 118,
    "url": "https://x.com/BTC_strategy/status/2126202059045413374",
-   "order": 7
+   "order": 11
   },
   {
    "status": "send",
@@ -193,7 +279,7 @@
    "name": "shovondeyes",
    "n": 119,
    "url": "https://x.com/shovondeyes/status/2126207754050372006",
-   "order": 8
+   "order": 12
   },
   {
    "status": "send",
@@ -213,7 +299,7 @@
    "name": "hxtxlcb",
    "n": 120,
    "url": "https://x.com/hxtxlcb/status/2126199150781813016",
-   "order": 9
+   "order": 13
   },
   {
    "status": "send",
@@ -233,7 +319,7 @@
    "name": "DBEYRSOL",
    "n": 121,
    "url": "https://x.com/DBEYRSOL/status/2126224905347977692",
-   "order": 10
+   "order": 14
   },
   {
    "status": "send",
@@ -253,7 +339,7 @@
    "name": "offRobinoff",
    "n": 122,
    "url": "https://x.com/offRobinoff/status/2126242165068361871",
-   "order": 11
+   "order": 15
   },
   {
    "status": "send",
@@ -273,7 +359,7 @@
    "note": "接話：原作者第一輪接話，回一句短的，不斷言見底。",
    "name": "btc_vee",
    "n": 123,
-   "order": 12
+   "order": 16
   },
   {
    "status": "send",
@@ -293,7 +379,7 @@
    "note": "接話：我們原創底下，閒聊回一句。",
    "name": "0xGummyBear",
    "n": 124,
-   "order": 13
+   "order": 17
   },
   {
    "status": "skip",
@@ -311,7 +397,7 @@
    "note": "按讚就好：純道謝收尾，已回 2 輪。",
    "name": "Poli69748",
    "n": 125,
-   "order": 14
+   "order": 18
   },
   {
    "status": "skip",
@@ -329,11 +415,11 @@
    "note": "按讚就好：買賣觀點（加倉），別人的貼文底下，不接動作。",
    "name": "onegaventures",
    "n": 126,
-   "order": 15
+   "order": 19
   },
   {
    "n": 108,
-   "order": 16,
+   "order": 20,
    "status": "send",
    "kind": "reply",
    "author": "Wuming_Mr_",
@@ -359,7 +445,7 @@
   },
   {
    "n": 109,
-   "order": 17,
+   "order": 21,
    "status": "send",
    "kind": "reply",
    "author": "btc_vee",
@@ -379,7 +465,7 @@
   },
   {
    "n": 110,
-   "order": 18,
+   "order": 22,
    "status": "skip",
    "kind": "followup",
    "author": "Yxnh8023",
@@ -415,7 +501,7 @@
    "name": "hou_ge90191",
    "url": "https://x.com/hou_ge90191/status/2126202201223860406",
    "n": 94,
-   "order": 19
+   "order": 23
   },
   {
    "author": "Yxnh8023",
@@ -435,7 +521,7 @@
    "name": "Yxnh8023",
    "url": "https://x.com/Yxnh8023/status/2126205848167055786",
    "n": 95,
-   "order": 20
+   "order": 24
   },
   {
    "author": "huangmi12916508",
@@ -455,7 +541,7 @@
    "name": "huangmi12916508",
    "url": "https://x.com/huangmi12916508/status/2126200003324764640",
    "n": 96,
-   "order": 21
+   "order": 25
   },
   {
    "author": "Poli69748",
@@ -475,7 +561,7 @@
    "name": "Poli69748",
    "url": "https://x.com/Poli69748/status/2126197958614102492",
    "n": 83,
-   "order": 22
+   "order": 26
   },
   {
    "author": "Poli69748",
@@ -495,7 +581,7 @@
    "name": "Poli69748",
    "url": "https://x.com/Poli69748/status/2126197725125546331",
    "n": 84,
-   "order": 23
+   "order": 27
   },
   {
    "author": "l1d60999240",
@@ -515,7 +601,7 @@
    "name": "l1d60999240",
    "url": "https://x.com/l1d60999240/status/2126194144716734660",
    "n": 85,
-   "order": 24
+   "order": 28
   },
   {
    "author": "JiuHuangBuHuang",
@@ -535,7 +621,7 @@
    "name": "JiuHuangBuHuang",
    "url": "https://x.com/JiuHuangBuHuang/status/2126183648005324908",
    "n": 86,
-   "order": 25
+   "order": 29
   },
   {
    "kind": "reply",
@@ -555,7 +641,7 @@
    "name": "Xingge888668",
    "url": "https://x.com/Xingge888668/status/2126196572652294267",
    "n": 82,
-   "order": 26
+   "order": 30
   },
   {
    "kind": "followup",
@@ -575,7 +661,7 @@
    "name": "huangmi12916508",
    "url": "https://x.com/huangmi12916508/status/2126174543014441082",
    "n": 77,
-   "order": 28
+   "order": 32
   },
   {
    "kind": "reply",
@@ -595,7 +681,7 @@
    "name": "paulxue1979",
    "url": "https://x.com/paulxue1979/status/2126117936016548137",
    "n": 78,
-   "order": 29
+   "order": 33
   },
   {
    "kind": "followup",
@@ -615,7 +701,7 @@
    "name": "real_sirwoody",
    "url": "https://x.com/real_sirwoody/status/2126174818932289806",
    "n": 79,
-   "order": 30
+   "order": 34
   },
   {
    "kind": "followup",
@@ -635,7 +721,7 @@
    "name": "btc5767",
    "url": "https://x.com/btc5767/status/2126172956523135218",
    "n": 80,
-   "order": 31
+   "order": 35
   },
   {
    "kind": "followup",
@@ -655,7 +741,7 @@
    "name": "even366",
    "url": "https://x.com/even366/status/2126158589727526973",
    "n": 64,
-   "order": 32
+   "order": 36
   },
   {
    "kind": "followup",
@@ -675,7 +761,7 @@
    "name": "loAo319528",
    "url": "https://x.com/loAo319528/status/2126162436084604944",
    "n": 65,
-   "order": 33
+   "order": 37
   },
   {
    "kind": "reply",
@@ -695,7 +781,7 @@
    "name": "yeyu0i",
    "url": "https://x.com/yeyu0i/status/2126162403910090799",
    "n": 66,
-   "order": 34
+   "order": 38
   },
   {
    "kind": "reply",
@@ -715,7 +801,7 @@
    "name": "HTXResearch",
    "url": "https://x.com/HTXResearch/status/2126154225172574709",
    "n": 67,
-   "order": 35
+   "order": 39
   },
   {
    "kind": "reply",
@@ -735,7 +821,7 @@
    "name": "xiaopangxie",
    "url": "https://x.com/xiaopangxie/status/2126152018968600874",
    "n": 68,
-   "order": 36
+   "order": 40
   },
   {
    "kind": "reply",
@@ -755,7 +841,7 @@
    "name": "YaelC_03",
    "url": "https://x.com/YaelC_03/status/2126151485713244262",
    "n": 69,
-   "order": 37
+   "order": 41
   },
   {
    "kind": "reply",
@@ -775,7 +861,7 @@
    "name": "Traderxiao66",
    "url": "https://x.com/Traderxiao66/status/2126149420081426649",
    "n": 70,
-   "order": 38
+   "order": 42
   },
   {
    "kind": "reply",
@@ -795,7 +881,7 @@
    "name": "l1d60999240",
    "url": "https://x.com/l1d60999240/status/2126148136439861354",
    "n": 71,
-   "order": 39
+   "order": 43
   },
   {
    "kind": "reply",
@@ -815,7 +901,7 @@
    "name": "MceeyCare",
    "url": "https://x.com/MceeyCare/status/2126147093429707016",
    "n": 72,
-   "order": 40
+   "order": 44
   },
   {
    "kind": "reply",
@@ -835,7 +921,7 @@
    "name": "ianxintx",
    "url": "https://x.com/ianxintx/status/2126141704332026343",
    "n": 73,
-   "order": 41
+   "order": 45
   },
   {
    "kind": "reply",
@@ -855,7 +941,7 @@
    "name": "JiuHuangBuHuang",
    "url": "https://x.com/JiuHuangBuHuang/status/2126140942948368716",
    "n": 74,
-   "order": 42
+   "order": 46
   },
   {
    "kind": "reply",
@@ -881,7 +967,7 @@
     "title": "Strategy 平均成本 7.5 萬，在收盤上面"
    },
    "n": 75,
-   "order": 43
+   "order": 47
   },
   {
    "kind": "reply",
@@ -901,7 +987,7 @@
    "name": "real_sirwoody",
    "url": "https://x.com/real_sirwoody/status/2126158105624842299",
    "n": 76,
-   "order": 44
+   "order": 48
   },
   {
    "n": 53,
@@ -921,7 +1007,7 @@
    "sources": "data/latest.json onchain.top_radar.supply-in-profit-pct 11/25 46.54（2022-11 以來 0.5 百分位）；onchain.rloss.usd7_m 9,703（7 日實現虧損）",
    "note": "固定名單 4c。7.4 千粉不配圖。今天第 2 則回他（另一則 #11 是 4 年均價）。不接「大反彈」預測。",
    "style": "口語版",
-   "order": 45
+   "order": 49
   },
   {
    "kind": "followup",
@@ -941,7 +1027,7 @@
    "name": "huangmi12916508",
    "url": "https://x.com/huangmi12916508/status/2126147019341447463",
    "n": 54,
-   "order": 46
+   "order": 50
   },
   {
    "kind": "followup",
@@ -961,7 +1047,7 @@
    "name": "Grace202020",
    "url": "https://x.com/Grace202020/status/2126151513961865433",
    "n": 55,
-   "order": 47
+   "order": 51
   },
   {
    "kind": "followup",
@@ -981,7 +1067,7 @@
    "name": "Xingge888668",
    "url": "https://x.com/Xingge888668/status/2126142045886591109",
    "n": 56,
-   "order": 48
+   "order": 52
   },
   {
    "kind": "followup",
@@ -1001,7 +1087,7 @@
    "name": "btc5767",
    "url": "https://x.com/btc5767/status/2126142713997218062",
    "n": 57,
-   "order": 49
+   "order": 53
   },
   {
    "kind": "followup",
@@ -1021,7 +1107,7 @@
    "name": "serlo123",
    "url": "https://x.com/serlo123/status/2126126987353928033",
    "n": 58,
-   "order": 50
+   "order": 54
   },
   {
    "kind": "followup",
@@ -1041,7 +1127,7 @@
    "name": "0xGummyBear",
    "url": "https://x.com/0xGummyBear/status/2126138233478402131",
    "n": 59,
-   "order": 51
+   "order": 55
   },
   {
    "kind": "followup",
@@ -1061,7 +1147,7 @@
    "name": "AiCoinxiaobian",
    "url": "https://x.com/AiCoinxiaobian/status/2126152648642769229",
    "n": 60,
-   "order": 52
+   "order": 56
   },
   {
    "kind": "followup",
@@ -1081,7 +1167,7 @@
    "name": "jade_junyu",
    "url": "https://x.com/jade_junyu/status/2126148418016039416",
    "n": 61,
-   "order": 53
+   "order": 57
   },
   {
    "kind": "followup",
@@ -1101,7 +1187,7 @@
    "name": "azlY8BBgP399047",
    "url": "https://x.com/azlY8BBgP399047/status/2126148701739745515",
    "n": 62,
-   "order": 54
+   "order": 58
   },
   {
    "author": "Wuming_Mr_",
@@ -1127,7 +1213,7 @@
    "name": "Wuming_Mr_",
    "url": "https://x.com/Wuming_Mr_/status/2126130582975594728",
    "n": 14,
-   "order": 55
+   "order": 59
   },
   {
    "author": "market_beggar",
@@ -1153,7 +1239,7 @@
    "name": "market_beggar",
    "url": "https://x.com/market_beggar/status/2126130269375853010",
    "n": 15,
-   "order": 56
+   "order": 60
   },
   {
    "author": "paulxue1979",
@@ -1173,7 +1259,7 @@
    "name": "paulxue1979",
    "url": "https://x.com/paulxue1979/status/2126130675350937918",
    "n": 16,
-   "order": 57
+   "order": 61
   },
   {
    "author": "Louie_Usdt",
@@ -1193,7 +1279,7 @@
    "name": "Louie_Usdt",
    "url": "https://x.com/Louie_Usdt/status/2126133187965526336",
    "n": 17,
-   "order": 58
+   "order": 62
   },
   {
    "author": "jade_junyu",
@@ -1213,7 +1299,7 @@
    "name": "jade_junyu",
    "url": "https://x.com/jade_junyu/status/2126131077010080042",
    "n": 18,
-   "order": 59
+   "order": 63
   },
   {
    "author": "tinkaihou",
@@ -1233,7 +1319,7 @@
    "name": "tinkaihou",
    "url": "https://x.com/tinkaihou/status/2126128882604474648",
    "n": 19,
-   "order": 60
+   "order": 64
   },
   {
    "author": "N0St0r",
@@ -1253,7 +1339,7 @@
    "name": "N0St0r",
    "url": "https://x.com/N0St0r/status/2126126610965508372",
    "n": 20,
-   "order": 61
+   "order": 65
   },
   {
    "author": "AeonChunqiu",
@@ -1273,7 +1359,7 @@
    "name": "AeonChunqiu",
    "url": "https://x.com/AeonChunqiu/status/2126124704721457387",
    "n": 21,
-   "order": 62
+   "order": 66
   },
   {
    "author": "Drw3150",
@@ -1293,7 +1379,7 @@
    "name": "Drw3150",
    "url": "https://x.com/Drw3150/status/2126124581186666891",
    "n": 22,
-   "order": 63
+   "order": 67
   },
   {
    "author": "chessxyz",
@@ -1319,7 +1405,7 @@
    "name": "chessxyz",
    "url": "https://x.com/chessxyz/status/2126103738989613148",
    "n": 23,
-   "order": 64
+   "order": 68
   },
   {
    "author": "Fujianbx",
@@ -1339,7 +1425,7 @@
    "name": "Fujianbx",
    "url": "https://x.com/Fujianbx/status/2126100943955746975",
    "n": 24,
-   "order": 65
+   "order": 69
   },
   {
    "author": "NorrisChen1024",
@@ -1365,7 +1451,7 @@
    "name": "NorrisChen1024",
    "url": "https://x.com/NorrisChen1024/status/2126092499202834846",
    "n": 25,
-   "order": 66
+   "order": 70
   },
   {
    "author": "Poli69748",
@@ -1391,7 +1477,7 @@
    "name": "Poli69748",
    "url": "https://x.com/Poli69748/status/2126065101551894920",
    "n": 26,
-   "order": 67
+   "order": 71
   },
   {
    "author": "Felix_sgll",
@@ -1411,7 +1497,7 @@
    "name": "Felix_sgll",
    "url": "https://x.com/Felix_sgll/status/2126013868635824455",
    "n": 27,
-   "order": 68
+   "order": 72
   },
   {
    "author": "Grace202020",
@@ -1431,7 +1517,7 @@
    "name": "Grace202020",
    "url": "https://x.com/Grace202020/status/2125989548874449108",
    "n": 28,
-   "order": 69
+   "order": 73
   },
   {
    "author": "susanryanlin",
@@ -1457,7 +1543,7 @@
    "name": "susanryanlin",
    "url": "https://x.com/susanryanlin/status/2125976282685206540",
    "n": 29,
-   "order": 70
+   "order": 74
   },
   {
    "kind": "followup",
@@ -1477,7 +1563,7 @@
    "name": "huangmi12916508",
    "url": "https://x.com/huangmi12916508/status/2126127965759303830",
    "n": 30,
-   "order": 71
+   "order": 75
   },
   {
    "kind": "followup",
@@ -1497,7 +1583,7 @@
    "name": "BTC1000008",
    "url": "https://x.com/BTC1000008/status/2126124970778739065",
    "n": 31,
-   "order": 72
+   "order": 76
   },
   {
    "kind": "followup",
@@ -1517,7 +1603,7 @@
    "name": "serlo123",
    "url": "https://x.com/serlo123/status/2126127909169664126",
    "n": 32,
-   "order": 73
+   "order": 77
   },
   {
    "kind": "followup",
@@ -1537,7 +1623,7 @@
    "name": "Ahxiongweb3",
    "url": "https://x.com/Ahxiongweb3/status/2126126646558417062",
    "n": 33,
-   "order": 74
+   "order": 78
   },
   {
    "kind": "followup",
@@ -1556,7 +1642,7 @@
    "name": "paulxue1979",
    "url": "https://x.com/paulxue1979/status/2126127152420794498",
    "n": 34,
-   "order": 75
+   "order": 79
   },
   {
    "kind": "followup",
@@ -1575,7 +1661,7 @@
    "name": "fyfone",
    "url": "https://x.com/fyfone/status/2125959417300701385",
    "n": 35,
-   "order": 76
+   "order": 80
   },
   {
    "kind": "followup",
@@ -1594,7 +1680,7 @@
    "name": "aaronwalkerband",
    "url": "https://x.com/aaronwalkerband/status/2125483218279465046",
    "n": 36,
-   "order": 77
+   "order": 81
   },
   {
    "kind": "followup",
@@ -1613,7 +1699,7 @@
    "name": "zhiyuanGen17845",
    "url": "https://x.com/zhiyuanGen17845/status/2125578397996941606",
    "n": 37,
-   "order": 78
+   "order": 82
   },
   {
    "n": 9,
@@ -1633,7 +1719,7 @@
    "sources": "onchain.lthloss.peaks：2022 熊底 2022-11-21，虧損占比高點 2022-12-19 44.7%（價格 16,408）· data/latest.json",
    "note": "接話：原作者第 2 輪（我們回過 1 輪），回一句。不配圖。",
    "style": "口語版",
-   "order": 79
+   "order": 83
   },
   {
    "n": 10,
@@ -1653,7 +1739,7 @@
    "sources": "deriv.ls_acct 11/26：Binance 73.8%（近 5 年分位 94）· deriv.funding_multi：Binance 年化 10.79%、加權 6.36% · data/latest.json",
    "note": "固定名單 4c。4.6 千粉不配圖。借他的「柴火」比喻。 熟帳號比例今天已偏高（早上還沒有 inbox 新帳號），照前一輪做法先寫，比例等 inbox 拉回。",
    "style": "口語版",
-   "order": 80
+   "order": 84
   },
   {
    "n": 11,
@@ -1673,7 +1759,7 @@
    "sources": "cycle.levels 11/26：rp（實現價格）53,026，價格 60,499 · data/latest.json",
    "note": "固定名單 4c。7.4 千粉不配圖。 熟帳號比例今天已偏高（早上還沒有 inbox 新帳號），照前一輪做法先寫，比例等 inbox 拉回。",
    "style": "口語版",
-   "order": 81
+   "order": 85
   },
   {
    "n": 12,
@@ -1693,7 +1779,7 @@
    "sources": "flows.fear_greed 11/26：11，一年分位 8.8 · price.monthly：2025 −6.29%、2026 至今 −30.86%（兩年約 −35%）· data/latest.json",
    "note": "固定名單 4c。9.9 千粉，1 萬以下不配圖。 熟帳號比例今天已偏高（早上還沒有 inbox 新帳號），照前一輪做法先寫，比例等 inbox 拉回。",
    "style": "口語版",
-   "order": 82
+   "order": 86
   },
   {
    "n": 13,
@@ -1712,11 +1798,11 @@
    "sources": "",
    "note": "按讚就好：他的貼文底下第 3 輪、沒問問題。",
    "style": "口語版",
-   "order": 83
+   "order": 87
   },
   {
    "n": 1,
-   "order": 84,
+   "order": 88,
    "status": "send",
    "kind": "reply",
    "url": "https://x.com/Xingge888668/status/2126108421506109624",
@@ -1736,7 +1822,7 @@
   },
   {
    "n": 2,
-   "order": 85,
+   "order": 89,
    "status": "send",
    "kind": "reply",
    "url": "https://x.com/paulxue1979/status/2126097781244985714",
@@ -1756,7 +1842,7 @@
   },
   {
    "n": 3,
-   "order": 86,
+   "order": 90,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/looismes/status/2126102689469575559",
@@ -1776,7 +1862,7 @@
   },
   {
    "n": 4,
-   "order": 87,
+   "order": 91,
    "status": "send",
    "kind": "followup",
    "url": "https://x.com/Karl4456/status/2125987971648373033",
@@ -1796,7 +1882,7 @@
   },
   {
    "n": 5,
-   "order": 88,
+   "order": 92,
    "status": "skip",
    "kind": "followup",
    "url": "https://x.com/shibart2/status/2125974182228041928",
@@ -1815,7 +1901,7 @@
   },
   {
    "n": 6,
-   "order": 89,
+   "order": 93,
    "status": "skip",
    "kind": "followup",
    "url": "https://x.com/paulxue1979/status/2126092316649947206",
@@ -1834,7 +1920,7 @@
   },
   {
    "n": 7,
-   "order": 90,
+   "order": 94,
    "status": "skip",
    "kind": "followup",
    "url": "https://x.com/chaohaha6/status/2125547038670737439",
@@ -1853,7 +1939,7 @@
   },
   {
    "n": 8,
-   "order": 91,
+   "order": 95,
    "status": "send",
    "kind": "followup",
    "author": "Karl4456",
@@ -1873,7 +1959,7 @@
   },
   {
    "n": 38,
-   "order": 92,
+   "order": 96,
    "status": "send",
    "kind": "reply",
    "author": "ChainCatcher_",
@@ -1899,7 +1985,7 @@
   },
   {
    "n": 39,
-   "order": 93,
+   "order": 97,
    "status": "send",
    "kind": "reply",
    "author": "itsbac0201",
@@ -1925,7 +2011,7 @@
   },
   {
    "n": 40,
-   "order": 94,
+   "order": 98,
    "status": "send",
    "kind": "reply",
    "author": "Davidavid139",
@@ -1951,7 +2037,7 @@
   },
   {
    "n": 41,
-   "order": 95,
+   "order": 99,
    "status": "send",
    "kind": "reply",
    "author": "migosung",
@@ -1971,7 +2057,7 @@
   },
   {
    "n": 42,
-   "order": 96,
+   "order": 100,
    "status": "send",
    "kind": "reply",
    "author": "FrankIndie",
@@ -1991,7 +2077,7 @@
   },
   {
    "n": 43,
-   "order": 97,
+   "order": 101,
    "status": "send",
    "kind": "reply",
    "author": "X_52hertz",
@@ -2017,7 +2103,7 @@
   },
   {
    "n": 44,
-   "order": 98,
+   "order": 102,
    "status": "send",
    "kind": "reply",
    "author": "loAo319528",
@@ -2037,7 +2123,7 @@
   },
   {
    "n": 45,
-   "order": 99,
+   "order": 103,
    "status": "send",
    "kind": "reply",
    "author": "liruolan2",
@@ -2057,7 +2143,7 @@
   },
   {
    "n": 46,
-   "order": 100,
+   "order": 104,
    "status": "send",
    "kind": "reply",
    "author": "torsezhang",
@@ -2077,7 +2163,7 @@
   },
   {
    "n": 47,
-   "order": 101,
+   "order": 105,
    "status": "send",
    "kind": "reply",
    "author": "lmx2000",
@@ -2103,7 +2189,7 @@
   },
   {
    "n": 48,
-   "order": 102,
+   "order": 106,
    "status": "send",
    "kind": "reply",
    "author": "will081813",
@@ -2123,7 +2209,7 @@
   },
   {
    "n": 49,
-   "order": 103,
+   "order": 107,
    "status": "send",
    "kind": "reply",
    "author": "daxiang555",
@@ -2149,7 +2235,7 @@
   },
   {
    "n": 50,
-   "order": 104,
+   "order": 108,
    "status": "send",
    "kind": "reply",
    "author": "btc5767",
@@ -2169,7 +2255,7 @@
   },
   {
    "n": 51,
-   "order": 105,
+   "order": 109,
    "status": "send",
    "kind": "reply",
    "author": "Haisengbaobao",
@@ -2189,7 +2275,7 @@
   },
   {
    "n": 52,
-   "order": 106,
+   "order": 110,
    "status": "send",
    "kind": "reply",
    "author": "TechFlame_News",
@@ -2209,7 +2295,7 @@
   },
   {
    "n": 63,
-   "order": 107,
+   "order": 111,
    "status": "send",
    "kind": "reply",
    "author": "AiCoinzh",
@@ -2236,7 +2322,7 @@
   },
   {
    "n": 81,
-   "order": 27,
+   "order": 31,
    "status": "send",
    "kind": "reply",
    "author": "Murphychen888",
@@ -2257,7 +2343,7 @@
   },
   {
    "n": 87,
-   "order": 108,
+   "order": 112,
    "status": "send",
    "kind": "reply",
    "author": "BtcTraderax",
@@ -2277,7 +2363,7 @@
   },
   {
    "n": 88,
-   "order": 109,
+   "order": 113,
    "status": "send",
    "kind": "reply",
    "author": "bqssc",
@@ -2297,7 +2383,7 @@
   },
   {
    "n": 89,
-   "order": 110,
+   "order": 114,
    "status": "send",
    "kind": "reply",
    "author": "flashcard1122",
@@ -2317,7 +2403,7 @@
   },
   {
    "n": 90,
-   "order": 111,
+   "order": 115,
    "status": "send",
    "kind": "reply",
    "author": "yangqisniper",
@@ -2343,7 +2429,7 @@
   },
   {
    "n": 91,
-   "order": 112,
+   "order": 116,
    "status": "send",
    "kind": "reply",
    "author": "ALEXX2140",
@@ -2363,7 +2449,7 @@
   },
   {
    "n": 92,
-   "order": 113,
+   "order": 117,
    "status": "send",
    "kind": "reply",
    "author": "BitTheOnly",
@@ -2383,7 +2469,7 @@
   },
   {
    "n": 93,
-   "order": 114,
+   "order": 118,
    "status": "send",
    "kind": "reply",
    "author": "nimi1896327",
@@ -2403,7 +2489,7 @@
   },
   {
    "n": 97,
-   "order": 115,
+   "order": 119,
    "status": "send",
    "kind": "reply",
    "author": "LoneTraveler111",
@@ -2429,7 +2515,7 @@
   },
   {
    "n": 98,
-   "order": 116,
+   "order": 120,
    "status": "send",
    "kind": "reply",
    "author": "wuruhu18",
@@ -2449,7 +2535,7 @@
   },
   {
    "n": 99,
-   "order": 117,
+   "order": 121,
    "status": "send",
    "kind": "reply",
    "author": "ColdWaterDai",
@@ -2469,7 +2555,7 @@
   },
   {
    "n": 100,
-   "order": 118,
+   "order": 122,
    "status": "send",
    "kind": "reply",
    "author": "Arrowuppz",
@@ -2489,7 +2575,7 @@
   },
   {
    "n": 101,
-   "order": 119,
+   "order": 123,
    "status": "send",
    "kind": "reply",
    "author": "lsx6tx7",
@@ -2509,7 +2595,7 @@
   },
   {
    "n": 102,
-   "order": 120,
+   "order": 124,
    "status": "send",
    "kind": "reply",
    "author": "JasonGaoG1",
@@ -2529,7 +2615,7 @@
   },
   {
    "n": 103,
-   "order": 121,
+   "order": 125,
    "status": "send",
    "kind": "reply",
    "author": "necklace_btc",
@@ -2549,7 +2635,7 @@
   },
   {
    "n": 104,
-   "order": 122,
+   "order": 126,
    "status": "send",
    "kind": "reply",
    "author": "TechWongCrypto",
@@ -2569,7 +2655,7 @@
   },
   {
    "n": 105,
-   "order": 123,
+   "order": 127,
    "status": "send",
    "kind": "reply",
    "author": "haora43401",
@@ -2589,7 +2675,7 @@
   },
   {
    "n": 106,
-   "order": 124,
+   "order": 128,
    "status": "send",
    "kind": "reply",
    "author": "LuoH45ub",
@@ -2609,7 +2695,7 @@
   },
   {
    "n": 107,
-   "order": 125,
+   "order": 129,
    "status": "send",
    "kind": "reply",
    "author": "RuixiangZ06",
@@ -2629,7 +2715,7 @@
   },
   {
    "n": 127,
-   "order": 126,
+   "order": 130,
    "status": "send",
    "kind": "reply",
    "author": "AiCoinzh",
