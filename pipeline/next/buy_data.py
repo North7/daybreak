@@ -333,9 +333,9 @@ def build(L, N, E, dn, X):
 
     def c_exflow():   # 顏色：drawExf（30 天合計 split:[down, up]＝正值流入紅、負值流出綠；強流出期間底色 up、強流入期間底色 down）
         x = f.get('exflow')
-        if not has(x): return NA('exflow', '交易所淨流量', 'Exchange netflow', '交易所流入和流出（flows.exflow）', 'the exchange inflow and outflow feed (flows.exflow)')
+        if not has(x): return NA('exflow', '交易所淨流量', 'Exchange Netflow', '交易所流入和流出（flows.exflow）', 'the exchange inflow and outflow feed (flows.exflow)')
         t0 = x['rows'][0][0]; vb = lambda eps, col: [dict(a=dn(e['start']), b=dn(e['end']) + 2, col=col, op=.14) for e in eps or [] if dn(e['end']) >= t0]
-        return dict(k='exflow', zh='交易所淨流量', en='Exchange netflow', hz='30 天合計', he='30-day sum', f='btc', rows=thin(x['rows'], 3), p=1,
+        return dict(k='exflow', zh='交易所淨流量', en='Exchange Netflow', hz='30 天合計', he='30-day sum', f='btc', rows=thin(x['rows'], 3), p=1,
           ser=[ser(3, zh='30 天合計', en='30-day sum', t='sign', base=0, hi='dn', lo='up', w=1.6)], spans=vb(x.get('out_eps'), 'up') + vb(x.get('in_eps'), 'dn'),
           leg=[['up', '淨流出：幣在離開交易所', 'Net outflow: coins leaving exchanges', 'line'], ['dn', '淨流入：幣在流向交易所', 'Net inflow: coins arriving at exchanges', 'line'],
                ['up', '強流出（近 4 年最低 10%）', 'Strong outflow (4-year bottom 10%)', 'box'], ['dn', '強流入（近 4 年最高 10%）', 'Strong inflow (4-year top 10%)', 'box']],
@@ -344,13 +344,13 @@ def build(L, N, E, dn, X):
 
     def c_exch():   # 現有網站只有讀數（ocInterp：減少偏多→綠、增加是潛在賣壓→紅），沒有走勢圖，所以是清單卡
         x = o.get('exchange') or {}
-        if x.get('exchange_supply_share_pct') is None: return NA('exch', '交易所供給', 'Exchange supply', '交易所持幣量（onchain.exchange）', 'the exchange holdings reading (onchain.exchange)')
+        if x.get('exchange_supply_share_pct') is None: return NA('exch', '交易所餘額', 'Exchange Balance', '交易所持幣量（onchain.exchange）', 'the exchange holdings reading (onchain.exchange)')
         def chg(zh, en, key):
             v = x.get(key)
             if v is None: return row(zh, en, '—', ve='—')
             return row(zh, en, v, f='ps2', col='up' if v < 0 else 'dn' if v > 0 else 'k2', nz='幣在離開交易所，可賣的現貨變少' if v < 0 else '幣在流入交易所，潛在賣壓增加', ne='Coins are leaving exchanges: less spot for sale' if v < 0 else 'Coins are arriving at exchanges: more potential selling')
         b = x.get('exchange_supply_btc'); dt_ = x.get('exchange_supply_date') or ''
-        return dict(k='exch', zh='交易所供給', en='Exchange supply', hz='交易所持有的幣佔流通量', he='Share of supply held on exchanges', hs=dict(v=x['exchange_supply_share_pct'], f='p2'),
+        return dict(k='exch', zh='交易所餘額', en='Exchange Balance', hz='交易所持有的幣佔流通量', he='Share of supply held on exchanges', hs=dict(v=x['exchange_supply_share_pct'], f='p2'),
           list=dict(rows=([row('交易所持有的幣', 'Coins held on exchanges', '%.1f 萬顆' % (b / 1e4), ve='%.2fM BTC' % (b / 1e6), nz='資料日 ' + ymd(dt_), ne='As of ' + dt_)] if b else []) +
                     [row('佔流通量', 'Share of supply', x['exchange_supply_share_pct'], f='p2', bar=x['exchange_supply_share_pct'], col='c4'),
                      chg('7 天變化', '7-day change', 'exchange_supply_chg7_pct'), chg('30 天變化', '30-day change', 'exchange_supply_chg30_pct'), chg('90 天變化', '90-day change', 'exchange_supply_chg90_pct')]),
@@ -384,10 +384,10 @@ def build(L, N, E, dn, X):
 
     def c_capflow():   # 顏色：drawCapflow（CF_M1＝s2→ac 一個月內換手、CF_Y12＝s1→c3 一到兩年沒動；週期頂部底色 warn→c5、熊市底部底色 s3→c4；峰值標記用各自的線色）
         x = o.get('capflow')
-        if not has(x): return NA('capflow', '循環資金流：投機和長線', 'Cycle capital flows: speculation vs conviction', '各持有時間的實現市值佔比（onchain.capflow）', 'realized cap by holding time (onchain.capflow)')
+        if not has(x): return NA('capflow', '循環資金流：投機和長線', 'Cycle capital flows: speculation vs conviction', '各持有時間的已實現市值佔比（onchain.capflow）', 'realized cap by holding time (onchain.capflow)')
         pk = lambda p, col: dict(d=dn(p[0]), v=p[1], col=col, up=1, zh='%s %.0f%%' % (p[0][:4], p[1]), en='%s %.0f%%' % (p[0][:4], p[1]))
         band = lambda d, col: dict(a=dn(d) - 45, b=dn(d) + 45, col=col, op=.13, zh='頂' if col == 'c5' else '底', en='Top' if col == 'c5' else 'Low')
-        return dict(k='capflow', zh='循環資金流：投機和長線', en='Cycle capital flows: speculation vs conviction', hz='一到兩年沒動的幣，佔全體實現市值', he='Coins unmoved for 1–2 years, share of realized cap', f='p1', rng=0, rows=thin(x['rows'], 2), p=1, dom=[0, 70],
+        return dict(k='capflow', zh='循環資金流：投機和長線', en='Cycle capital flows: speculation vs conviction', hz='一到兩年沒動的幣，佔全體已實現市值', he='Coins unmoved for 1–2 years, share of realized cap', f='p1', rng=0, rows=thin(x['rows'], 2), p=1, dom=[0, 70],
           ser=[ser(3, zh='1–2 年沒動（長線）', en='Unmoved 1–2 years (conviction)', col='c3', fill=1, w=2), ser(2, zh='1 個月內換手（投機）', en='Moved within a month (speculation)', col='ac', fill=1, w=2)],
           spans=[band(t[0], 'c5') for t in cy.get('tops') or []] + [band(b[0], 'c4') for b in cy.get('bottoms') or []],
           marks=[pk(p, 'ac') for p in x.get('peaks_m1') or [] if p[1] >= 30] + [pk(p, 'c3') for p in x.get('peaks_y12') or [] if p[0] != x.get('date') and p[1] >= 40],
@@ -405,13 +405,13 @@ def build(L, N, E, dn, X):
           links=[dict(a=dn(d['prev']), b=dn(d['date']), pa=d['prev_price'], pb=d['price'], va=d['za'], vb=d['zb'], col=KD[d['kind']][0], dash='5 4',
                       zh=(KD[d['kind']][1] + ' ' + md(d['date'])) if d in dvs[-3:] else None, en=(KD[d['kind']][2] + ' ' + md(d['date'])) if d in dvs[-3:] else None) for d in dvs if d.get('kind') in KD],
           leg=[['c5', '頂背離', 'Bearish divergence', 'dash'], ['c4', '底背離', 'Bullish divergence', 'dash']],
-          dz='價格 N 天的漲跌，減掉實現價格（全體的平均買進成本）N 天的漲跌，再除以自己過去 4 年的標準差。正值代表價格跑得比真正進場的資金快。虛線是 120 日那條的背離：價格創新高或新低，梯度卻沒有跟上。',
+          dz='價格 N 天的漲跌，減掉已實現價格（全體的平均買進成本）N 天的漲跌，再除以自己過去 4 年的標準差。正值代表價格跑得比真正進場的資金快。虛線是 120 日那條的背離：價格創新高或新低，梯度卻沒有跟上。',
           de='The N-day change in price minus the N-day change in realized price (the average cost of all coins), divided by its own 4-year standard deviation. Positive means price is running ahead of the money actually coming in. Dashed lines are divergences on the 120-day line: price makes a new high or low and the gauge does not follow.')
 
-    def c_rlc():   # 2026-11-21 使用者要求加 Checkonchain「Realised Cap Liquidity Cycle」；11/22 使用者：「和30日那個完全沒什麼關係」，從實現市值卡的第二個檢視拆成獨立的卡。原本：Checkonchain「Realised Cap Liquidity Cycle」的 Liquidity Index（算法見 collect.py G1b-2）。
-        # 顏色：主線 ac（萊姆，和全站主角線同色）；指數＝0（實現市值創一年新低）的過去期間用 c4 底色；還在進行中的那一段用 k2，不和過去的結局同色
+    def c_rlc():   # 2026-11-21 使用者要求加 Checkonchain「Realised Cap Liquidity Cycle」；11/22 使用者：「和30日那個完全沒什麼關係」，從已實現市值卡的第二個檢視拆成獨立的卡。原本：Checkonchain「Realised Cap Liquidity Cycle」的 Liquidity Index（算法見 collect.py G1b-2）。
+        # 顏色：主線 ac（萊姆，和全站主角線同色）；指數＝0（已實現市值創一年新低）的過去期間用 c4 底色；還在進行中的那一段用 k2，不和過去的結局同色
         li = (f.get('rc_liq') or {}).get('li')
-        if not has(li, 'rows', 400): return NA('rlc', '流動性週期：實現市值在一年區間的位置', 'Liquidity cycle: realized cap within its range', '實現市值流動性指數（flows.rc_liq.li）', 'the realized cap liquidity index (flows.rc_liq.li)')
+        if not has(li, 'rows', 400): return NA('rlc', '流動性週期：已實現市值在一年區間的位置', 'Liquidity cycle: realized cap within its range', '已實現市值流動性指數（flows.rc_liq.li）', 'the realized cap liquidity index (flows.rc_liq.li)')
         rr = li['rows']; keep = 1100; old = rr[:-keep]; th = []
         for i in range(0, len(old), 3): th.append(min(old[i:i + 3], key=lambda r: r[1]))   # 早年每 3 天留一筆，留指數最低的那天（0 不會被抽掉）
         rows = th + rr[-keep:]; zs = li.get('zero_eps') or []
@@ -421,26 +421,26 @@ def build(L, N, E, dn, X):
         rg = lambda vs, e_: ('%s 到 %s' if not e_ else '%s to %s') % (p0(max(vs)), p0(min(vs))) if vs else '—'
         A = [e['dd_ath'] for e in past]; Lw = [e['low_pct'] for e in past]; Fw = [e['fwd365'] for e in past if e['fwd365'] is not None]
         fz = ('%s 到 %s' % (pc(min(Fw)), pc(max(Fw)))) if Fw else '—'; fe = ('%s to %s' % (pc(min(Fw)), pc(max(Fw)))) if Fw else '—'
-        dz = ('實現市值在過去 30、90、365 天的高低區間裡各落在哪裡（最低＝0、最高＝1），三個取平均。三個都在 1 代表資金持續流入、實現市值一直創新高；掉到 0 代表實現市值創一年新低，持有者的總成本在縮水。'
+        dz = ('已實現市值在過去 30、90、365 天的高低區間裡各落在哪裡（最低＝0、最高＝1），三個取平均。三個都在 1 代表資金持續流入、已實現市值一直創新高；掉到 0 代表已實現市值創一年新低，持有者的總成本在縮水。'
               '2013 年以來指數到 0 只有 %s 年（深色底），都在週期底部附近：第一次碰到 0 時價格已經離高點 %s，之後還再跌 %s，一年後 %s。只有 %d 輪，只作讀值，不是買點。'
               '算法照 Checkonchain 的 Realised Cap Liquidity Cycle 逐日核對過；他的圖例寫 180 天，實際用的是 365 天，這裡照實寫。資料：CoinMetrics 市值 ÷ MVRV。') % ('、'.join(yrs), rg(A, 0), rg(Lw, 0), fz, len(yrs))
         de = ('Where realized cap sits within its own range over the past 30, 90 and 365 days (low = 0, high = 1), averaged. All three at 1 means capital keeps arriving and realized cap keeps making new highs; a drop to 0 means realized cap is at a one-year low and holders\' total cost basis is shrinking. '
               'Since 2013 the index has reached 0 only in %s (dark shading), each time near a cycle bottom: at the first touch price was already %s from its high, fell a further %s, and was %s a year later. Only %d cycles, so a reading only, not a buy point. '
               'The method follows Checkonchain\'s Realised Cap Liquidity Cycle, checked day by day; his legend says 180-day but the window is 365 days, labelled as such here. Data: CoinMetrics market cap ÷ MVRV.') % (', '.join(yrs), rg(A, 1), rg(Lw, 1), fe, len(yrs))
-        return dict(k='rlc', zh='流動性週期：實現市值在一年區間的位置', en='Liquidity cycle: realized cap within its range', hz='流動性指數（0＝實現市值一年新低）', he='Liquidity index (0 = realized cap at a one-year low)', f='n2', rng=0, rows=rows, p=2, hero=0, dom=[0, 1],
+        return dict(k='rlc', zh='流動性週期：已實現市值在一年區間的位置', en='Liquidity cycle: realized cap within its range', hz='流動性指數（0＝已實現市值一年新低）', he='Liquidity index (0 = realized cap at a one-year low)', f='n2', rng=0, rows=rows, p=2, hero=0, dom=[0, 1],
                      ser=[ser(1, zh='流動性指數（30、90、365 天位置的平均）', en='Liquidity index (average of the 30-, 90- and 365-day positions)', col='ac', w=2, fill=1)], spans=sp_, marks=[], refs=[],
-                     leg=[['c4', '指數到 0 的期間（實現市值一年新低）', 'Index at 0 (realized cap at a one-year low)', 'box']],
+                     leg=[['c4', '指數到 0 的期間（已實現市值一年新低）', 'Index at 0 (realized cap at a one-year low)', 'box']],
                      src='CoinMetrics · Checkonchain 算法 · ' + md(li['date']), srce='CoinMetrics · Checkonchain method · ' + md(li['date']), dz=dz, de=de)
 
     def c_rcliq():   # 顏色：V.flows.after 裡 #c-rcliq 的 oxPane（30 日變化 split:[up, down]＝>0 綠、≤0 紅；≤0 的期間底色 down→dn）
         x = f.get('rc_liq')
-        if not has(x): return NA('rcliq', '資金流入：實現市值 30 日變化', 'Capital inflow: realized cap, 30-day change', '實現市值（flows.rc_liq）', 'the realized cap series (flows.rc_liq)')
+        if not has(x): return NA('rcliq', '資金流入：已實現市值 30 日變化', 'Capital inflow: realized cap, 30-day change', '已實現市值（flows.rc_liq）', 'the realized cap series (flows.rc_liq)')
         rows = x['rows']; t0 = rows[0][0]; cap = x.get('realized_cap_usd_b')
-        return dict(k='rcliq', zh='資金流入：實現市值 30 日變化', en='Capital inflow: realized cap, 30-day change', hz='30 日變化' + ('（實現市值 %.2f 兆美元）' % (cap / 1000) if cap else ''), he='30-day change' + (' (realized cap $%.2fT)' % (cap / 1000) if cap else ''),
+        return dict(k='rcliq', zh='資金流入：已實現市值 30 日變化', en='Capital inflow: realized cap, 30-day change', hz='30 日變化' + ('（已實現市值 %.2f 兆美元）' % (cap / 1000) if cap else ''), he='30-day change' + (' (realized cap $%.2fT)' % (cap / 1000) if cap else ''),
           f='ps2', rng=0, rows=thin(rows, 1), ser=[ser(1, zh='30 日變化', en='30-day change', t='sign', base=0, w=1.5)],
           spans=[dict(a=max(t0, dn(e['start'])), b=dn(e['end']) + 1, col='dn', op=.08) for e in x.get('episodes') or [] if dn(e['end']) >= t0],
           marks=runmarks(rows, 1, 60, 4, lambda r: ym(r[0]) + ' ' + pc(r[1])), leg=[['dn', '小於等於 0 的期間', 'Periods at or below 0', 'box']],
-          dz='實現市值是每顆幣用最後一次移動時的價格計價後的加總，可以看成全體持有者的總成本。30 日變化大於 0 代表有新資金用更高的價格接手；小於等於 0（橘紅底色）代表新資金停止流入。這只是資金背景，不是買賣訊號。',
+          dz='已實現市值是每顆幣用最後一次移動時的價格計價後的加總，可以看成全體持有者的總成本。30 日變化大於 0 代表有新資金用更高的價格接手；小於等於 0（橘紅底色）代表新資金停止流入。這只是資金背景，不是買賣訊號。',
           de='Realized cap values every coin at the price it last moved at, so it is roughly the total cost of all holders. A 30-day change above 0 means new money is paying higher prices; at or below 0 (orange-red shading) means inflows have stalled. Background only, not a trading signal.')
 
     def c_stab():   # 顏色：drawFlowCharts 裡 #c-stab 的 oxPane（30 天增減 split:[up, down]＝增加綠、減少紅）

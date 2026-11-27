@@ -10,7 +10,7 @@ def build(L, N, E, dn):
     # ── 成本與位置 ──
     sb = o['sth_bands']['rows']; KS = [2, 1, .5, -.5, -1, -2]
     sb_rows = [[r[0], r[1], r[2]] + [round(r[2] * (r[3] + k * r[4])) for k in KS] + [R((r[1] / r[2] - 1) * 100, 2) if r[2] else None] for r in sb]
-    c_sth = dict(k='sthgap', zh='短期持有者成本帶', en='Short-term holder cost bands', hz='收盤離短期持有者成本', he='Close vs short-term holder cost', one=1, f='usd0', rows=sb_rows, hero=8,
+    c_sth = dict(k='sthgap', zh='短期持有者已實現價格（成本帶）', en='Short-Term Holder Realized Price Bands', hz='收盤離短期持有者成本', he='Close vs short-term holder cost', one=1, f='usd0', rows=sb_rows, hero=8,
       ser=[ser(1, zh='BTC 價格', en='BTC price', col='ink', w=1.3, op=.7), ser(3, zh='+2 標準差', en='+2σ', col='c3', dash='5 4', w=1.1), ser(4, zh='+1 標準差', en='+1σ', col='c5', w=1.1), ser(5, zh='+0.5 標準差', en='+0.5σ', col='c5', dash='2 3', w=.9),
            ser(6, zh='−0.5 標準差', en='−0.5σ', col='c4', dash='2 3', w=.9), ser(7, zh='−1 標準差', en='−1σ', col='c4', w=1.1), ser(8, zh='−2 標準差', en='−2σ', col='dn', dash='5 4', w=1.1), ser(2, zh='短期持有者成本', en='STH cost', col='ac', w=2),
            ser(9, hide=1, f='pct1')],
@@ -45,7 +45,7 @@ def build(L, N, E, dn):
                         'Since 2013 it first fell below −1 %d times: %d in bull phases, with price higher 30 days later %d times and a median of %s%%; %d in bear phases, higher %d times with a median of %s%%, and a median further fall of %s%% within those 30 days. '
                         'Taken together price was higher %d%% of the time, about the same as any day (%d%%). Bull and bear are split by cycle tops and bottoms, which are only known afterwards. A reading only.'
                         % (so['window'], so['k'], sa['n'], sbu['n'], sbu['up'], sgn(sbu['med'], 1), sbe['n'], sbe['up'], sgn(sbe['med'], 1), ('%.1f' % abs(sbe['dd'])), round(sa['up'] / (sa['n'] or 1) * 100), S_['base']['up']))
-    c_profit = dict(k='profit', zh='短期持有者獲利比例', en='Short-term holders in profit', f='p1', rows=ch['viz']['profit'], kw=1, ph=.4, dom=[0, 100],
+    c_profit = dict(k='profit', zh='短期持有者獲利供給佔比', en='Short-Term Holder Supply in Profit (%)', f='p1', rows=ch['viz']['profit'], kw=1, ph=.4, dom=[0, 100],
       ser=[ser(1, zh='獲利比例', en='In profit', col='c4', fill=1)], refs=[dict(v=50, col='k2'), dict(v=97.5, col='dn', zh='97.5% 賣出線', en='97.5% sell line')], zones=[dict(lo=97.5, hi=100, col='dn', zh='高於 97.5% 賣出線', en='Above the 97.5% sell line', nz='97.5% 賣出線', ne='the 97.5% sell line')],
       leg=[['up', '週 K 收漲', 'Weekly candle up', 'box'], ['dn', '週 K 收跌', 'Weekly candle down', 'box']],
       dz='短期持有者手上的幣，有多少比例現在是賺的。上格是 BTC 週 K（對數刻度）。', de='The share of short-term holder coins currently in profit. Top pane: BTC weekly candles (log scale).')
@@ -64,7 +64,7 @@ def build(L, N, E, dn):
             c_profit['de'] += ' "On the price" turns the same share (averaged over the last 5 days) into the colour of the price line: warmer means more short-term holders in profit, cooler more at a loss. In a trending market it can stay warm for months, so warm is not a top and cool is not a bottom. A reading only.'
     except Exception as _e: print('profit heat view skipped', _e)
     av = o['aviv']
-    c_aviv = dict(k='aviv', zh='價格是活躍投資人成本的幾倍', en='Price as a multiple of active investors\' cost', f='x2', rows=av['rows'], p=1, log=1, ser=[ser(2, zh='價格 ÷ 真實市場均價', en='Price ÷ true market mean', col='ac', w=1.8)],
+    c_aviv = dict(k='aviv', zh='AVIV 比率：價格是活躍投資人成本的幾倍', en='AVIV Ratio: price as a multiple of active investors\' cost', f='x2', rows=av['rows'], p=1, log=1, ser=[ser(2, zh='價格 ÷ 真實市場均價', en='Price ÷ true market mean', col='ac', w=1.8)],
       zones=[dict(lo=None, hi=1, col='c4', zh='低於 1', en='Below 1', nz='1 以下', ne='below 1')], refs=[dict(v=1, col='c4')], leg=[['c4', '1 以下', 'Below 1', 'box']],
       marks=[dict(d=dn(t['date']), v=t['value'], col='c5', up=1, zh=yr(t['date']) + ' ' + ('%.2f' % t['value']), en=yr(t['date']) + ' ' + ('%.2f' % t['value'])) for t in av['tops']] +
             [dict(d=dn(t['date']), v=t['value'], col='c4', up=0, zh=yr(t['date']) + ' ' + ('%.2f' % t['value']), en=yr(t['date']) + ' ' + ('%.2f' % t['value'])) for t in av['bottoms']],
@@ -75,7 +75,7 @@ def build(L, N, E, dn):
          'How to read it: the line is price as a multiple of that cost (log scale); shading below 1 means a loss overall; markers show past cycle tops and bottoms. '
          'Caveats: the cost is modelled and differs from the usual realized price; bear markets can stay below 1 for more than a year.')
     ru = o['rup']; fl = ru['floor']; nr = ru.get('near') or {}; nh = nr.get('hi')   # 2026-11-11 近地板區（地板以上、37.5% 以下），舊資料沒有這一欄
-    c_rup = dict(k='rup', zh='相對未實現獲利', en='Relative unrealized profit', f='p1', rows=ru['rows'], p=1, ser=[ser(2, zh='相對未實現獲利', en='Relative unrealized profit', col='c3', fill=1, w=1.8)],
+    c_rup = dict(k='rup', zh='相對未實現獲利', en='Relative Unrealized Profit', f='p1', rows=ru['rows'], p=1, ser=[ser(2, zh='相對未實現獲利', en='Relative Unrealized Profit', col='c3', fill=1, w=1.8)],
       zones=[dict(lo=None, hi=fl, col='c4', zh='在地板區', en='In the floor zone', nz='地板區', ne='the floor zone')] + ([dict(lo=fl, hi=nh, col='c5', op=.13, zh='在近地板區', en='In the near-floor zone', nz='近地板區', ne='the near-floor zone')] if nh else []),
       refs=[dict(v=fl, col='c4', zh='地板 %g%%' % fl, en='Floor %g%%' % fl)], leg=[['c4', '地板區（≤ %g%%）' % fl, 'Floor zone (≤ %g%%)' % fl, 'box']] + ([['c5', '近地板區（%g–%g%%）' % (fl, nh), 'Near-floor zone (%g–%g%%)' % (fl, nh), 'box']] if nh else []),
       spans=[dict(a=dn(e['start']), b=dn(e['end']), col='c5', op=.16) for e in nr.get('eps') or []] + [dict(a=dn(e['start']), b=dn(e['end']), col='c4', op=.16) for e in ru['eps']],
@@ -105,7 +105,7 @@ def build(L, N, E, dn):
          'How to read it: the thick line is the 7-day average (the daily value is jumpy; the thin line is daily). The yellow dashed line is the top 10%% since 2018 (%.1f%%), the blue-violet dashed line is 6%%; yellow circles mark each wave\'s high, blue-violet circles the first drop below 6%% afterwards. The bars at the right of the top pane show supply by price: violet for long-term holders, orange for short-term. '
          'Caveats: concentration says whether swings grow, not which way; the 6%% line is one analyst\'s rule of thumb, which the site backtested on data since 2018: only %d cases.' % (cb['p90'], len(cb['ev'])))
     ll = o['lthloss']; pk = ll['peaks']
-    c_lthloss = dict(k='lthloss', zh='長期持有者有多少在虧損', en='How many long-term holders are underwater', f='p1', rows=ll['rows'], p=2, ser=[ser(1, zh='長期持有者虧損比例', en='LTH supply in loss', col='c4', w=1.5)],
+    c_lthloss = dict(k='lthloss', zh='長期持有者虧損供給佔比', en='Long-Term Holder Supply in Loss (%)', f='p1', rows=ll['rows'], p=2, ser=[ser(1, zh='長期持有者虧損比例', en='LTH supply in loss', col='c4', w=1.5)],
       zones=[dict(lo=42, hi=48, col='dn', zh='在歷輪底部區', en='In the past-bottoms zone', nz='歷輪底部區', ne='the past-bottoms zone')], leg=[['dn', '歷輪底部區 42–48%', 'Past bottoms 42–48%', 'box'], ['dn', '這輪高點', "This cycle's peak", 'dash']],
       marks=[dict(d=dn(p['date']), v=p['value'], col='dn', up=1, zh='%s %.1f%%' % (p['date'][:7].replace('-', '/'), p['value']), en='%s %.1f%%' % (p['date'][:7].replace('-', '/'), p['value'])) for p in pk],
       segs=[dict(a=dn(pk[-1]['date']), v=pk[-1]['value'], col='dn')] if pk else [],
@@ -161,13 +161,13 @@ def build(L, N, E, dn):
     so = ch['viz']['sopr']; KD = dict(easing=('up', '賣壓遞減', 'Easing'), heavier=('dn', '賣壓加重', 'Heavier'), flat=('k2', '持平', 'Flat'))
     def dip(d):
         k = KD.get(d.get('kind'), ('k2', None, None)); return dict(d=d['x'], v=d['sopr'], col=k[0], up=0, zh=k[1], en=k[2])
-    c_sopr = dict(k='sopr', zh='短期持有者賣出時的盈虧', en='Short-term holder SOPR', f='n3', rows=so['rows'], p=2, ser=[ser(1, zh='STH-SOPR', en='STH-SOPR', col='c3', w=1.6)],
+    c_sopr = dict(k='sopr', zh='短期持有者 SOPR（已花費產出利潤率）', en='Short-Term Holder SOPR', f='n3', rows=so['rows'], p=2, ser=[ser(1, zh='STH-SOPR', en='STH-SOPR', col='c3', w=1.6)],
       zones=[dict(lo=.9, hi=1, col='dn', zh='低於 1，賠錢賣', en='Below 1: selling at a loss', nz='1 以下', ne='below 1')], refs=[dict(v=1, col='k2', zh='1.0＝賣在成本', en='1.0 = selling at cost')], marks=[dip(d) for d in so['dips']],
       leg=[['up', '賣壓遞減', 'Easing', 'ring'], ['dn', '賣壓加重', 'Heavier', 'ring']],
       dz='短期持有者賣出的價格除以買進的價格。低於 1 是賠錢賣。圓圈是每次跌破 1 的低點，和上一次比是加重還是遞減。', de='The price short-term holders sell at, divided by the price they paid. Below 1 means selling at a loss. Circles mark each dip below 1 and whether it was heavier or lighter than the one before.')
     sp = o['sth_pnl']['rows']
-    c_pnl = dict(k='pnlr', zh='短期持有者實現獲利與虧損', en='STH realized profit and loss', hz='獲利 ÷ 虧損', he='Profit ÷ loss', f='btc0', rows=[[r[0], r[1], r[2], r[3], R(r[1] / r[2], 3) if r[2] else None] for r in sp], p=3, log=1, hero=2,
-      ser=[ser(1, zh='實現獲利', en='Realized profit', col='up', w=1.6), ser(2, zh='實現虧損', en='Realized loss', col='dn', w=1.6), ser(4, hide=1, f='x2')],
+    c_pnl = dict(k='pnlr', zh='短期持有者已實現獲利與已實現虧損', en='Short-Term Holder Realized Profit and Loss', hz='獲利 ÷ 虧損', he='Profit ÷ loss', f='btc0', rows=[[r[0], r[1], r[2], r[3], R(r[1] / r[2], 3) if r[2] else None] for r in sp], p=3, log=1, hero=2,
+      ser=[ser(1, zh='已實現獲利', en='Realized profit', col='up', w=1.6), ser(2, zh='已實現虧損', en='Realized loss', col='dn', w=1.6), ser(4, hide=1, f='x2')],
       dz='短期持有者當天實現的獲利和虧損（顆，對數刻度）。橘線在綠線上面，就是認賠的比較多。', de='Profit and loss realized by short-term holders each day (BTC, log scale). Orange above green means more loss-taking.')
     cf = o['sthconf']; nb = cf.get('nb', .05)
     c_conf = dict(k='conf', zh='對趨勢的信心', en='Confidence in the trend', f='n3', rows=cf['rows'], p=1, ph=.38, minr=.15,
@@ -176,20 +176,20 @@ def build(L, N, E, dn):
       leg=[['up', '偏有信心（≥ +%g）' % nb, 'Confident (≥ +%g)' % nb, 'box'], ['dn', '信心不足（≤ −%g）' % nb, 'Lacking confidence (≤ −%g)' % nb, 'box'], ['c5', '轉換期', 'Transition', 'box']],
       dz='短期持有者這 7 天賣出的幣的成本，和他們整體成本的差，除以收盤。上格兩條線就是這兩個成本。', de='Cost of the coins short-term holders sold in 7 days, minus their overall cost, divided by the close. The two lines in the top pane are those two costs.')
     npl = o['npl']; c30 = npl['cum30']
-    c_npl = dict(k='npl', zh='淨實現損益', en='Net realized P&L', f='usdM', wide=1,   # 整排寬（2026-11-12 使用者：「這個圖需要比較寬的空間顯示」）：上格價格線上有圓圈、下格是每日柱子，半寬時 180 天擠在一起
+    c_npl = dict(k='npl', zh='淨已實現損益', en='Net Realized Profit/Loss', f='usdM', wide=1,   # 整排寬（2026-11-12 使用者：「這個圖需要比較寬的空間顯示」）：上格價格線上有圓圈、下格是每日柱子，半寬時 180 天擠在一起
        dz='全網每天實現的獲利減掉虧損。上格價格線上的圓圈大小是當天的金額。可以切換成 30 日累計。', de='Network-wide profit realized each day minus losses. Bubbles on the price line are sized by that day\'s amount. Switch to the 30-day total for the longer view.',
-      modes=[dict(mz='每日', me='Daily', rng=180, rows=npl['rows'], p=1, sym=1, bub=dict(c=2, rank=3), ser=[ser(2, zh='每日淨實現損益', en='Daily net realized P&L', t='bar')],
-                  leg=[['up', '淨獲利', 'Net profit', 'box'], ['dn', '淨認賠', 'Net loss', 'box']]),
-             dict(mz='30 日累計', me='30-day total', rng=1460, rows=[list(r_) + [None if r_[3] is None else round(-4 * r_[3], 3)] for r_ in c30['rows']], p=1, hero=2, f='ps2',
-                  ser=[ser(2, zh='30 日累計 ÷ 市值', en='30-day total ÷ market cap', t='bar'), ser(3, zh='認賠分界線：之前 4 年最大 30 日淨獲利 × −1/4', en='Loss line: −¼ × prior 4-year max 30-day net profit', col='dn', w=1.2), ser(6, zh='獲利分界線：之前 4 年最大 30 日淨獲利', en='Profit line: prior 4-year max 30-day net profit', col='up', w=1.2), ser(4, hide=1, f='usdM')],
+      modes=[dict(mz='每日', me='Daily', rng=180, rows=npl['rows'], p=1, sym=1, bub=dict(c=2, rank=3), ser=[ser(2, zh='每日淨已實現損益', en='Daily net realized P&L', t='bar')],
+                  leg=[['up', '淨獲利', 'Net profit', 'box'], ['dn', '淨已實現虧損', 'Net loss', 'box']]),
+             dict(mz='30 日累計', me='30-day total', rng=1460, rows=[list(r_) + [None if r_[3] is None else round(-4 * r_[3], 3)] for r_ in c30['rows']], p=1, hero=0, f='ps2',
+                  ser=[ser(2, zh='30 日累計 ÷ 市值', en='30-day total ÷ market cap', t='bar'), ser(3, zh='已實現虧損分界線：之前 4 年最大 30 日淨獲利 × −1/4', en='Loss line: −¼ × prior 4-year max 30-day net profit', col='dn', w=1.2), ser(6, zh='獲利分界線：之前 4 年最大 30 日淨獲利', en='Profit line: prior 4-year max 30-day net profit', col='up', w=1.2), ser(4, hide=1, f='usdM')],
                   marks=[dict(d=t['x'], v=t['price'], on='p', col='ac', up=1, zh=t['date'][:7], en=t['date'][:7]) for t in c30['trig']],
-                  leg=[['up', '30 日累計淨獲利', '30-day net profit', 'box'], ['dn', '30 日累計淨認賠', '30-day net loss', 'box'], ['ac', '首次觸發', 'First trigger', 'ring']])])
+                  leg=[['up', '30 日累計淨獲利', '30-day net profit', 'box'], ['dn', '30 日累計淨已實現虧損', '30-day net loss', 'box'], ['ac', '首次觸發', 'First trigger', 'ring']])])
     n3 = o['npl365']; wan = lambda v: ('+' if v > 0 else '−') + ('%.0f' % abs(v / 10))
-    c_n365 = dict(k='npl365', zh='一年累計淨實現損益', en='One-year net realized P&L', f='kbtc', rows=n3['rows'], p=1,
+    c_n365 = dict(k='npl365', zh='淨已實現損益（一年累計）', en='Net Realized Profit/Loss (1-year sum)', f='kbtc', rows=n3['rows'], p=1,
       ser=[ser(2, zh='一年累計', en='One-year sum', t='sign', base=0)], leg=[['up', '賺錢賣出比較多', 'More sold at a profit', 'box'], ['dn', '賠錢賣出比較多', 'More sold at a loss', 'box']],
       marks=[dict(d=dn(t['date']), v=t['value'], col='up', up=1, zh=yr(t['date']) + ' ' + wan(t['value']) + ' 萬', en=yr(t['date']) + ' ' + ('%+.0fK' % t['value'])) for t in n3['tops']] +
             [dict(d=dn(t['date']), v=t['value'], col='dn', up=0, zh=yr(t['date']) + ' ' + wan(t['value']) + ' 萬', en=yr(t['date']) + ' ' + ('%+.0fK' % t['value'])) for t in n3['bottoms']],
-      dz='這是什麼：每天有人把幣賣掉或轉走，賣價高於當初的買價算賺錢（實現獲利），低於就是認賠。把每天的賺賠相抵、換成顆數，再加總一整年，就知道過去一年市場整體是在賺錢賣出還是賠錢賣出。熊市底部前後，通常是一年裡大量的幣被賠錢賣掉、換到新買家手上。'
+      dz='這是什麼：每天有人把幣賣掉或轉走，賣價高於當初的買價算賺錢（已實現獲利），低於就是認賠。把每天的賺賠相抵、換成顆數，再加總一整年，就知道過去一年市場整體是在賺錢賣出還是賠錢賣出。熊市底部前後，通常是一年裡大量的幣被賠錢賣掉、換到新買家手上。'
          '怎麼看：綠色是一年合計在賺錢賣出、紅色是在賠錢賣出；標記是歷次頂部前後的最高和熊底前後的最深（萬顆）。這是一整年的加總，最深的時候通常落在價格見底之後幾個月。'
          '要保留的地方：交易所整理錢包也會被算進去；這一輪的負值比前幾輪淺很多，可能是持有結構變了，也可能是還沒走完。',
       de='What it is: every day some coins are sold or moved; above the price paid counts as profit (realized profit), below as a loss. Netting each day\'s profit against loss, converting to coins and summing a whole year shows whether the market has been selling at a profit or at a loss on balance. Around bear-market bottoms, typically a year of heavy loss-selling moves a lot of coins to new buyers. '
@@ -197,10 +197,10 @@ def build(L, N, E, dn):
          'Caveats: exchange wallet reshuffles count too; this cycle\'s negative reading is far shallower than past ones, either because the holder base has changed or because it is not finished.')
     # ── 賣壓強弱與衰竭 ──
     rp = o['rpl']
-    c_rpl = dict(k='rpl', zh='實現獲利 ÷ 虧損', en='Realized profit ÷ loss', f='x2', rows=rp['rows'], p=2, log=1, ser=[ser(1, zh='獲利 ÷ 虧損', en='Profit ÷ loss', t='split', base=1, w=1.6)],
+    c_rpl = dict(k='rpl', zh='已實現損益比（獲利 ÷ 虧損）', en='Realized Profit/Loss Ratio', f='x2', rows=rp['rows'], p=2, log=1, ser=[ser(1, zh='獲利 ÷ 虧損', en='Profit ÷ loss', t='split', base=1, w=1.6)],
       refs=[dict(v=1, col='ink', solid=1)], spans=[dict(a=dn(e['start']), b=dn(e['end']), col='dn', op=.12, below=1) for e in rp['reds']],
-      leg=[['up', '1 以上（獲利了結較多）', 'Above 1 (more profit-taking)', 'line'], ['dn', '1 以下（認賠較多）', 'Below 1 (more loss-taking)', 'line']],
-      dz='全網 90 天平均的實現獲利，除以實現虧損。橘底是歷次跌到 1 以下的期間。', de='The 90-day average of network realized profit divided by realized loss. Orange bands mark past stays below 1.')
+      leg=[['up', '1 以上（獲利了結較多）', 'Above 1 (more profit-taking)', 'line'], ['dn', '1 以下（已實現虧損較多）', 'Below 1 (more loss-taking)', 'line']],
+      dz='全網 90 天平均的已實現獲利，除以已實現虧損。橘底是歷次跌到 1 以下的期間。', de='The 90-day average of network realized profit divided by realized loss. Orange bands mark past stays below 1.')
     y1 = o.get('rpl365')
     if y1:   # 2026-11-17 使用者要求：多一個一年的檢視（oc_extra.rpl365_viz，Bitview，合計相除）
         yl = lambda d_: d_[:7].replace('-', '/')
@@ -209,8 +209,8 @@ def build(L, N, E, dn):
                                refs=[dict(v=1, col='ink', solid=1)] + ([dict(v=y1['conf_at'], a=dn(y1['since']), nt=1, col='up', zh='%.2f 回升 10%%＝底部確認' % y1['conf_at'] if not y1['confirmed'] else '%.2f 已回升 10%%' % y1['conf_at'], en='%.2f a 10%% turn up = bottom confirmed' % y1['conf_at'] if not y1['confirmed'] else '%.2f turned up 10%%' % y1['conf_at'])] if y1['below'] and y1.get('conf_at') else []),   # 2026-11-17 使用者要「回升 10%」確認線：這一段最低點 × 1.1，最低點再往下，線也跟著往下
                                spans=[dict(a=dn(e['start']), b=dn(e['end']), col='dn', op=.12, below=1) for e in y1['reds']],
                                marks=[dict(d=dn(e['low_date']), v=e['low'], col='dn', up=0, zh='%s %.2f' % (yl(e['low_date']), e['low']), en='%s %.2f' % (e['low_date'][:7], e['low'])) for e in y1['reds'] if not e.get('open')],
-                               leg=[['up', '1 以上（一年獲利較多）', 'Above 1 (more profit over the year)', 'line'], ['dn', '1 以下（一年認賠較多）', 'Below 1 (more loss over the year)', 'line'], ['dn', '每段的最低點', 'Low of each spell', 'ring']],
-                               dz='全網一年合計的實現獲利，除以一年合計的實現虧損（Bitview）。橘底是歷次跌到 1 以下的期間，標記是每段比值最低的那天。' + ('綠色虛線是這一段（%s 起）的確認線：比值從這一段最低點回升 10%%；最低點再往下，線也跟著往下。' % ('%d/%d' % tuple(int(x) for x in y1['since'][5:].split('-'))) if y1['below'] else ''),
+                               leg=[['up', '1 以上（一年獲利較多）', 'Above 1 (more profit over the year)', 'line'], ['dn', '1 以下（一年已實現虧損較多）', 'Below 1 (more loss over the year)', 'line'], ['dn', '每段的最低點', 'Low of each spell', 'ring']],
+                               dz='全網一年合計的已實現獲利，除以一年合計的已實現虧損（Bitview）。橘底是歷次跌到 1 以下的期間，標記是每段比值最低的那天。' + ('綠色虛線是這一段（%s 起）的確認線：比值從這一段最低點回升 10%%；最低點再往下，線也跟著往下。' % ('%d/%d' % tuple(int(x) for x in y1['since'][5:].split('-'))) if y1['below'] else ''),
                                de='Network realized profit summed over a year, divided by realized loss summed over the same year (Bitview). Orange bands mark past stays below 1; markers show the low of each spell.' + (' The green dashed line, drawn from the start of this spell, is its confirmation level: the ratio 10% off its low; it moves down if the low does.' if y1['below'] else ''))]
         if y1.get('past_low') and y1.get('conf_gain'):   # 2026-11-17 運營回報：切到「一年」時結論句還是 90 天的，和大數字對不上；這個檢視有自己的結論和證據（同 ㉞-9 的版面）
             from say_data import own
@@ -235,7 +235,7 @@ def build(L, N, E, dn):
                        ('%s 跌破 1（當天 $%.1fK），已 %d 天、價格 %s；過去四段最低 %.2f–%.2f。' % (md_(y1['since']), y1['since_price'] / 1000, y1['since_days'], sgp(y1['chg']), pl[0], pl[1])) if y1['below'] else ('在 1 以上；過去四段低於 1 時最低 %.2f–%.2f。' % tuple(pl)),
                        ('Below 1 since %s (at $%.1fK), %d days, price %s; past spells bottomed at %.2f–%.2f.' % (mde_(y1['since']), y1['since_price'] / 1000, y1['since_days'], sgp(y1['chg']), pl[0], pl[1])) if y1['below'] else ('Above 1; past spells below 1 bottomed at %.2f–%.2f.' % tuple(pl))),
                      ] + ([('最近 7 天合計', 'Last 7 days', '%.2f' % y1['s7'], '%.2f' % y1['s7'], 'down' if y1['s7'] < 1 else 'up',
-                        '最近 7 天合計的實現獲利是虧損的 %.2f 倍，30 天合計 %.2f%s。' % (y1['s7'], y1['s30'], '：認賠還在加重' if y1['s7'] < y1['s30'] < 1 else ''),
+                        '最近 7 天合計的已實現獲利是虧損的 %.2f 倍，30 天合計 %.2f%s。' % (y1['s7'], y1['s30'], '：認賠還在加重' if y1['s7'] < y1['s30'] < 1 else ''),
                         'Over the last 7 days realized profit was %.2f times realized loss; %.2f over 30 days%s.' % (y1['s7'], y1['s30'], ': loss-taking is still building' if y1['s7'] < y1['s30'] < 1 else ''))] if y1.get('s7') and y1.get('s30') else [])
                      + ([(lambda nr, cu: ('跌破 1 和價格底', 'Cross vs price low', '前 %d～後 %d 天' % (-nr['gap'][0], nr['gap'][1]) if nr['gap'][0] < 0 else '後 %d–%d 天' % tuple(nr['gap']),
                         ('%+d to %+d days' % tuple(nr['gap'])).replace('-', '−'), 'neu',
@@ -277,8 +277,8 @@ def build(L, N, E, dn):
             for y_ in (sy9, ym['say']): y_['hz'], y_['he'] = list((HOW_.get('rpl') or {}).get('hz') or []), list((HOW_.get('rpl') or {}).get('he') or [])
             v90 = dict(mz='90 天', me='90 days', src='Bitview · {d}', rows=w9['rows'], p=2, dom=None, marks=[], ser=[ser(1, zh='90 天合計獲利 ÷ 虧損', en='90-day profit ÷ loss', t='split', base=1, w=1.6)],
                        refs=[dict(v=1, col='ink', solid=1)], spans=[dict(a=dn(e['start']), b=dn(e['end']), col='dn', op=.12, below=1) for e in w9['reds']],
-                       leg=[['up', '1 以上（獲利了結較多）', 'Above 1 (more profit-taking)', 'line'], ['dn', '1 以下（認賠較多）', 'Below 1 (more loss-taking)', 'line']],
-                       dz='全網 90 天合計的實現獲利，除以 90 天合計的實現虧損（Bitview）。用合計相除：單日比值可以到 20 倍，每日比值直接平均會被少數幾天拉高。橘底是歷次跌到 1 以下的期間。',
+                       leg=[['up', '1 以上（獲利了結較多）', 'Above 1 (more profit-taking)', 'line'], ['dn', '1 以下（已實現虧損較多）', 'Below 1 (more loss-taking)', 'line']],
+                       dz='全網 90 天合計的已實現獲利，除以 90 天合計的已實現虧損（Bitview）。用合計相除：單日比值可以到 20 倍，每日比值直接平均會被少數幾天拉高。橘底是歷次跌到 1 以下的期間。',
                        de='Network realized profit summed over 90 days, divided by realized loss summed over the same 90 days (Bitview). Sums are divided rather than daily ratios averaged: a single day can reach 20x, and an average of daily ratios gets pulled up by a few days. Orange bands mark past stays below 1.',
                        say=sy9)
             for k_ in ('rows', 'p', 'dom', 'ser', 'refs', 'spans', 'marks', 'leg', 'dz', 'de', 'say'): c_rpl[k_] = ym[k_]
@@ -320,7 +320,7 @@ def build(L, N, E, dn):
                           refs=[dict(v=1, col='ink', solid=1), dict(v=wh['lo'], col='c3', zh='半年 %.1f' % wh['lo'], en='Half-year %.1f' % wh['lo']), dict(v=wh['s30_lo'], col='k2', zh='30 天 %.1f' % wh['s30_lo'], en='30-day %.1f' % wh['s30_lo'])],
                           spans=[dict(a=dn(z['start']), b=dn(z['end']), col='c3', op=.2) for z in zs],
                           leg=[['up', '1 以上', 'Above 1', 'line'], ['dn', '1 以下', 'Below 1', 'line'], ['c3', '兩個同時很低', 'Both low at once', 'box']] + ([lleg] if lw else []),
-                          dz='全網半年（180 天）合計的實現獲利，除以同期合計的實現虧損（Bitview），細線是 30 天合計。青綠底是兩個同時很低的期間（半年 < %.1f、30 天 < %.1f），過去每輪只亮一段，都在週期價格低點前後；門檻是看過歷史才定的，只有 %d 段，只作讀值。' % (wh['lo'], wh['s30_lo'], len(zs)),
+                          dz='全網半年（180 天）合計的已實現獲利，除以同期合計的已實現虧損（Bitview），細線是 30 天合計。青綠底是兩個同時很低的期間（半年 < %.1f、30 天 < %.1f），過去每輪只亮一段，都在週期價格低點前後；門檻是看過歷史才定的，只有 %d 段，只作讀值。' % (wh['lo'], wh['s30_lo'], len(zs)),
                           de='Network realized profit summed over half a year (180 days), divided by realized loss over the same period (Bitview); the thin line is the 30-day sum. Teal bands mark when both were low at once (half-year < %.1f, 30-day < %.1f): once per cycle in the past, always around a cycle price low. The thresholds were set after looking at history and there are only %d spells: a reading, not a signal.' % (wh['lo'], wh['s30_lo'], len(zs)),
                           say=syh)
 
@@ -329,7 +329,7 @@ def build(L, N, E, dn):
             c_rpl['_m'] = 1
             if wh and wh.get('zones'): c_rpl['modes'][0]['o'], c_rpl['modes'][1]['o'] = 0, 2; c_rpl['modes'].append(vh)   # 檢視順序：90 天、半年、一年（m＝0／1 的意思不變，半年是 m＝2）
         else:
-          c_rpl['dz'] = '全網 90 天平均的實現獲利，除以實現虧損（CheckOnChain，每日比值取平均）。橘底是歷次跌到 1 以下的期間。「一年」改用一年合計相除，看的是整個週期的位置。'
+          c_rpl['dz'] = '全網 90 天平均的已實現獲利，除以已實現虧損（CheckOnChain，每日比值取平均）。橘底是歷次跌到 1 以下的期間。「一年」改用一年合計相除，看的是整個週期的位置。'
           c_rpl['de'] = 'The 90-day average of network realized profit divided by realized loss (CheckOnChain, daily ratios averaged). Orange bands mark past stays below 1. "One year" divides one-year sums instead and shows where the cycle stands.'
     rl = o['rloss']; LK = dict(div=('c4', '', '背離', 'Divergence'), cap=('c5', '5 4', None, None)); LK['break'] = ('dn', '5 4', '打破', 'Broken')
     def links(lst, va, vb):
@@ -340,11 +340,11 @@ def build(L, N, E, dn):
             if z and not x.get('conf', True): z, e = z + '（暫定）', e + '?'
             out.append(dict(a=dn(x['a']), b=dn(x['b']), pa=x['pa'], pb=x['pb'], va=x[va], vb=x[vb], col=k[0], dash=k[1], zh=z if x in lab else None, en=e if x in lab else None))
         return out
-    c_rloss = dict(k='rloss', zh='每日實現虧損', en='Daily realized loss', f='usdM', dz='每天賠錢賣出的金額。連線是價格和認賠金額的關係：價格更低、認賠卻更少，叫背離。', de='The dollar amount sold at a loss each day. Lines link price lows and loss peaks: a lower price with smaller losses is a divergence.',
-      modes=[dict(mz='近 150 天', me='Last 150 days', rows=rl['rows'], p=1, ser=[ser(2, zh='每日實現虧損（百萬美元）', en='Daily realized loss ($M)', t='bar', col='dn', flag=4)], links=links(rl['chain'], 'ua', 'ub'),
-                  leg=[['k2', '搬家日', 'Internal-transfer day', 'box'], ['c4', '背離', 'Divergence', 'line'], ['dn', '背離被打破', 'Divergence broken', 'dash'], ['c5', '認賠放大', 'Loss grows', 'dash']]),
-             dict(mz='全部歷史', me='Full history', rows=rl['hist'], p=1, tf='sqrt', f='bp', ser=[ser(2, zh='實現虧損 ÷ 市值', en='Realized loss ÷ market cap', col='dn', fill=1, w=1.1)], links=links(rl['hlinks'], 'ra', 'rb'),
-                  leg=[['c4', '背離', 'Divergence', 'line'], ['dn', '背離被打破', 'Divergence broken', 'dash'], ['c5', '認賠放大', 'Loss grows', 'dash']])])
+    c_rloss = dict(k='rloss', zh='已實現虧損（每日）', en='Realized Loss (daily)', f='usdM', dz='每天賠錢賣出的金額。連線是價格和認賠金額的關係：價格更低、認賠卻更少，叫背離。', de='The dollar amount sold at a loss each day. Lines link price lows and loss peaks: a lower price with smaller losses is a divergence.',
+      modes=[dict(mz='近 150 天', me='Last 150 days', rows=rl['rows'], p=1, ser=[ser(2, zh='每日已實現虧損（百萬美元）', en='Daily realized loss ($M)', t='bar', col='dn', flag=4)], links=links(rl['chain'], 'ua', 'ub'),
+                  leg=[['k2', '搬家日', 'Internal-transfer day', 'box'], ['c4', '背離', 'Divergence', 'line'], ['dn', '背離被打破', 'Divergence broken', 'dash'], ['c5', '已實現虧損放大', 'Loss grows', 'dash']]),
+             dict(mz='全部歷史', me='Full history', rows=rl['hist'], p=1, tf='sqrt', f='bp', ser=[ser(2, zh='已實現虧損 ÷ 市值', en='Realized loss ÷ market cap', col='dn', fill=1, w=1.1)], links=links(rl['hlinks'], 'ra', 'rb'),
+                  leg=[['c4', '背離', 'Divergence', 'line'], ['dn', '背離被打破', 'Divergence broken', 'dash'], ['c5', '已實現虧損放大', 'Loss grows', 'dash']])])
     cp_ = rl.get('cap')
     if cp_ and cp_.get('rows'):   # 2026-11-18 使用者要求（Glassnode 週報那張「虧損到了只有週期低點才見過的程度」，見 oc_extra._rl_cap）：第三個檢視，用一年的獲利當分母
         bk = cp_['back']; r6, r18, d18 = bk['r60'], bk['r180'], bk['dd180']; ymz = lambda d: d[:7].replace('-', '/')
@@ -356,19 +356,19 @@ def build(L, N, E, dn):
           ser=[ser(2, zh='虧損 ÷ 一年獲利', en='Loss ÷ 1-year profit', col='dn', fill=1, w=1.1, cc=4, cols={1: 'dn'}), ser(3, zh='門檻：歷史第 95 百分位', en='Line: 95th percentile to date', col='k2', dash='4 3', w=1)],
           marks=[dict(d=dn(e['peak']), v=e['peak_v'], col='dn', up=1, zh=ymz(e['peak']), en=ymz(e['peak'])) for e in cp_['eps'] if e['peak_v'] >= 90 or e is cp_['eps'][-1] or e['peak'] >= '2022-01-01'],
           leg=[['dn', '價格上的紅點：超過門檻的日子（越大超過越多）', 'Red dots on price: days above the line (bigger = further above)', 'ring']],
-          dz='7 天平均的每日實現虧損，除以過去一年的實現獲利合計，單位是萬分之（每天）。用一年的獲利當分母，不同年代可以放在同一把尺上比：超過虛線（到當天為止的歷史第 95 百分位）代表認賠的規模，大到只有過去幾次低點附近才見過，上格價格上的紅點就是這些日子，點越大超過門檻越多。%s。'
+          dz='7 天平均的每日已實現虧損，除以過去一年的已實現獲利合計，單位是萬分之（每天）。用一年的獲利當分母，不同年代可以放在同一把尺上比：超過虛線（到當天為止的歷史第 95 百分位）代表認賠的規模，大到只有過去幾次低點附近才見過，上格價格上的紅點就是這些日子，點越大超過門檻越多。%s。'
              '2014 年起超過 %d 次：60 天後 %d 次較高，中位數 %s；180 天後 %d 次較高，中位數 %s，但這 180 天內中途最深的回落中位數 %s，熊市裡的幾次（2018/02、2019/09、2022/05、2022/06）之後還跌了 18%% 到 39%%。資料是 Bitview，不是實體調整。只作讀值。' % (
               now_z, cp_['n'], r6['up'], sg(r6['med']), r18['up'], sg(r18['med']), sg(d18['med'])),
           de='The 7-day average of daily realized loss divided by realized profit over the past year, in basis points per day. Using a year of profit as the base puts different eras on one scale: above the dashed line (the 95th percentile of history up to that day) the losses are as large as only past lows have seen; those days are the red dots on the price above, bigger the further above the line. %s. '
              'It crossed %d times since 2014: higher 60 days later %d times, median %s; higher 180 days later %d times, median %s, though the median drawdown along the way was %s, and in bear markets (2018/02, 2019/09, 2022/05, 2022/06) price still fell 18%% to 39%% afterwards. Bitview data, not entity-adjusted. A reading, not a signal.' % (
               now_e, cp_['n'], r6['up'], sg(r6['med']), r18['up'], sg(r18['med']), sg(d18['med']))))
     ss = o['ssr']; pc = lambda v: None if v is None else round(v * 100, 4)
-    c_ssr = dict(k='ssr', zh='賣方風險比', en='Sell-side risk ratio', f='p2', rows=[[r[0], r[1], pc(r[2]), pc(r[3]), pc(r[4]), pc(r[5])] for r in ss['rows']], p=1, log=1, hero=3,
+    c_ssr = dict(k='ssr', zh='賣方風險比', en='Sell-Side Risk Ratio', f='p2', rows=[[r[0], r[1], pc(r[2]), pc(r[3]), pc(r[4]), pc(r[5])] for r in ss['rows']], p=1, log=1, hero=3,
       ser=[ser(5, zh='近 4 年最低 10%', en='4y bottom 10%', col='c4', dash='4 3', w=1), ser(4, zh='長期持有者', en='Long-term holders', col='c3', w=1, op=.65), ser(3, zh='短期持有者', en='Short-term holders', col='ac', w=1, op=.65), ser(2, zh='全網', en='Network', col='c5', w=1.8)],
       spans=[dict(a=dn(e['start']), b=dn(e['end']), col='c4', op=.16) for e in ss['eps']], leg=[['c4', '在低檔區的期間', 'Time in the low zone', 'box']],
-      dz='7 天實現的獲利加虧損，佔實現市值的比例，分成全網、短期和長期持有者三條。越低代表越少人願意在這個價位賣。', de='Seven-day realized profit plus loss as a share of realized cap, split into the network, short-term and long-term holders. Lower means fewer holders are willing to sell here.')
+      dz='7 天實現的獲利加虧損，佔已實現市值的比例，分成全網、短期和長期持有者三條。越低代表越少人願意在這個價位賣。', de='Seven-day realized profit plus loss as a share of realized cap, split into the network, short-term and long-term holders. Lower means fewer holders are willing to sell here.')
     se = o['sec']; sth_ = se['th']
-    c_sec = dict(k='sec', zh='賣方衰竭常數', en='Seller exhaustion constant', f='n3', rows=se['rows'], p=2, log=1, ser=[ser(1, zh='賣方衰竭常數', en='Seller exhaustion constant', col='c3', w=1.5)],
+    c_sec = dict(k='sec', zh='賣方衰竭常數', en='Seller Exhaustion Constant', f='n3', rows=se['rows'], p=2, log=1, ser=[ser(1, zh='賣方衰竭常數', en='Seller Exhaustion Constant', col='c3', w=1.5)],
       zones=[dict(lo=None, hi=sth_, col='dn', zh='在極端區', en='In the extreme zone', nz='極端區', ne='the extreme zone')], refs=[dict(v=sth_, col='dn')], leg=[['dn', '極端區（低於 %g）' % sth_, 'Extreme zone (below %g)' % sth_, 'box']],
       marks=[dict(d=dn(h['low_date']), v=h['low'], col='dn', up=0, zh=h['low_date'][:7].replace('-', '/'), en=h['low_date'][:7].replace('-', '/')) for h in se['hits']],
       dz='獲利供給比例乘上 30 天波動率。兩個都低，代表賣方快沒力了。圓圈是歷次跌進極端區的低點。', de='Supply in profit times 30-day volatility. When both are low, sellers are running out of force. Circles mark past lows inside the extreme zone.')
@@ -377,7 +377,7 @@ def build(L, N, E, dn):
       links=[dict(a=dn(x['prev']), b=dn(x['date']), pa=x['prev_price'], pb=x['price'], va=x['za'], vb=x['zb'], col='c5', dash='5 4',
                   zh=('頂背離 %s %s%%' % (x['date'][5:].replace('-', '/'), ('%+.0f' % x['dd60']).replace('-', '−'))) if x in dv[-3:] and x.get('dd60') is not None else None,
                   en=('Bear div %s %s%%' % (x['date'][5:].replace('-', '/'), ('%+.0f' % x['dd60']).replace('-', '−'))) if x in dv[-3:] and x.get('dd60') is not None else None) for x in dv],
-      leg=[['up', '獲利了結（正）', 'Profit-taking (positive)', 'box'], ['dn', '認賠（負）', 'Loss-taking (negative)', 'box'], ['c5', '頂背離', 'Bearish divergence', 'dash']],
+      leg=[['up', '獲利了結（正）', 'Profit-taking (positive)', 'box'], ['dn', '已實現虧損（負）', 'Loss-taking (negative)', 'box'], ['c5', '頂背離', 'Bearish divergence', 'dash']],
       dz='（全網 SOPR − 1）乘上每日銷毀的幣天數，取 14 日平均。虛線是頂背離：價格創新高，勢能的高點卻比較低。', de='(Network SOPR − 1) times coin-days destroyed, 14-day average. Dashed lines are bearish divergences: price makes a new high while momentum peaks lower.')
     # ── 長期持有者與大戶 ──
     lc = o['lth_color']
@@ -396,12 +396,12 @@ def build(L, N, E, dn):
       leg=[['ac', '增加：舊幣換手', 'Rising: old coins changing hands', 'box'], ['c4', '減少：幣在沉澱', 'Falling: coins settling', 'box']],
       dz='短期持有者手上的幣，90 天增減了多少。增加代表舊幣在換手。標記是歷次週期頂部附近的高點。', de='How much short-term holder supply changed in 90 days. Rising means old coins are changing hands. Markers show the peaks near past cycle tops.')
     do = o['dorm']
-    c_dorm = dict(k='dorm', zh='Dormancy', en='Dormancy', f='d1', rows=[[r[0], r[1], r[2], r[3]] for r in do['rows']], p=1, log=1, hero=1,
+    c_dorm = dict(k='dorm', zh='休眠度（Dormancy）', en='Dormancy', f='d1', rows=[[r[0], r[1], r[2], r[3]] for r in do['rows']], p=1, log=1, hero=1,
       ser=[ser(2, zh='Dormancy（7 天）', en='Dormancy (7d)', col='c3', w=.9, op=.55), ser(3, zh='30 天平均', en='30-day average', col='ac', w=1.8)],
       marks=[dict(d=dn(t['date']), v=t['value'], on=1, col='c5', up=1, zh='頂 %s %.0f 天' % (yr(t['date']), t['value']), en='Top %s %.0fd' % (yr(t['date']), t['value'])) for t in do['tops']],
       dz='每顆被花掉的幣平均沉睡了幾天。高代表老幣在動。標記是歷次週期頂部的水位。', de='The average number of days each spent coin had been dormant. High means old coins are moving. Markers show the level at past cycle tops.')
     lr = o['lthrl']
-    c_lthrl = dict(k='lthrl', zh='長期持有者已實現虧損', en='LTH realized loss', f='p3', rows=lr['rows'], p=2, ser=[ser(1, zh='已實現虧損 ÷ 市值', en='Realized loss ÷ market cap', col='c3', w=1.5)],
+    c_lthrl = dict(k='lthrl', zh='長期持有者已實現虧損', en='Long-Term Holder Realized Loss', f='p3', rows=lr['rows'], p=2, ser=[ser(1, zh='已實現虧損 ÷ 市值', en='Realized loss ÷ market cap', col='c3', w=1.5)],
       dz='這是什麼：長期持有者是幣放了 155 天以上沒動的人。這張是他們最近 7 天賠錢賣出的金額，佔整個比特幣市值的比例；比例越高，代表連最能撐的人都在認賠出場。'
          '怎麼看：上格是 BTC 價格，下格是這個比例。另外三個檢視看歷次「認賠高峰」和之後怎麼走，最後一個看賠錢賣的人裡長期持有者佔多少。',
       de='What it is: long-term holders are those whose coins sat unmoved for 155+ days. This is what they sold at a loss over the last 7 days, as a share of bitcoin\'s market cap; higher means even the most patient holders are selling at a loss. '
@@ -437,9 +437,9 @@ def build(L, N, E, dn):
                ['ac', '現在這一波', 'This wave', 'line'], ['k2', '淡線：每一次', 'Faint lines: each case', 'line']]
         DEF = '認賠高峰的定義：7 天認賠 ÷ 市值到 0.15% 以上、而且是一年來最高，就算一次；前後 90 天內的併成同一次，取最高那天。退潮＝之後第一次掉到高峰的 1/3 以下。'
         DEFE = 'Loss peak: the 7-day loss ÷ market cap reaches 0.15% or more and is a one-year high; any within 90 days of each other count as one, using the highest day. Retreat: the first day afterwards below one third of that peak. '
-        c_lthrl['modes'] = [dict(mz='認賠走勢', me='Recent'),
-          dict(mz='歷次高峰', me='Past peaks', hz='長期持有者 7 天認賠 ÷ 市值（2013 年起）', he='Long-term holder 7-day losses ÷ market cap (since 2013)', src='Bitview · {d}',
-               f='p3', rng=0, p=2, hero=0, tf='sqrt', rows=lrows, ser=[ser(1, zh='7 天認賠 ÷ 市值', en='7-day loss ÷ market cap', col='ink', w=1.1, op=.7, cc=3, cols=[None, 'c3', 'c4'])], marks=emk,
+        c_lthrl['modes'] = [dict(mz='已實現虧損走勢', me='Recent'),
+          dict(mz='歷次高峰', me='Past peaks', hz='長期持有者 7 天已實現虧損 ÷ 市值（2013 年起）', he='Long-term holder 7-day losses ÷ market cap (since 2013)', src='Bitview · {d}',
+               f='p3', rng=0, p=2, hero=0, tf='sqrt', rows=lrows, ser=[ser(1, zh='7 天已實現虧損 ÷ 市值', en='7-day loss ÷ market cap', col='ink', w=1.1, op=.7, cc=3, cols=[None, 'c3', 'c4'])], marks=emk,
                leg=GLEG + [['c3', '價格上色：退潮後 180 天', 'Coloured price: 180 days after the retreat', 'line']],
                dz='這是什麼：2013 年以來，長期持有者每一次大規模認賠的高峰（%d 次）。' % len(EP_) + DEF +
                   '怎麼看：圓圈是高峰，標的是高峰那天長期持有者有多少比例的幣套著（不扣老幣）；上格價格線上色的那段是退潮之後的 180 天，看價格在那段怎麼走。藍紫色是套著 40%% 以上，藍綠色是不到 40%%，橘色是現在這一波。'
@@ -447,7 +447,7 @@ def build(L, N, E, dn):
                de='What it is: every large loss peak among long-term holders since 2013 (%d of them). ' % len(EP_) + DEFE +
                   'How to read it: circles are the peaks, labelled with the share of long-term holder coins underwater that day (old coins included); the coloured stretches of the price line are the 180 days after each retreat. Blue-violet is 40%% or more underwater, teal under 40%%, orange this wave. '
                   'Caveats: only %d cases, and the 40%% line was drawn by looking at them; the late-2014 case (40.1%%) rests on one large single-day loss.' % len(EP_)),
-          dict(mz='退潮對齊', me='Retreats aligned', hz='這一波的認賠，現在是高峰的', he='This wave\'s losses, as a share of its peak', hs=dict(v=NW_['frac'], f='p0'), src='Bitview · {d}',
+          dict(mz='退潮對齊', me='Retreats aligned', hz='這一波的已實現虧損，現在是高峰的', he='This wave\'s losses, as a share of its peak', hs=dict(v=NW_['frac'], f='p0'), src='Bitview · {d}',
                xy=dict(xk='days', f='p0', z0=['高峰', 'Peak', 'peak'], series=ser2, ref=dict(v=100 / 3, col='k2', zh='高峰的 1/3（退潮）', en='1/3 of the peak (retreat)'), leg=LG2),
                dz='這是什麼：把歷次認賠高峰對齊在同一天（第 0 天），看之後認賠退得多快。縱軸是「還剩高峰的幾 %」。' + DEF +
                   '怎麼看：淡線是每一次，不帶顏色的粗線是 %d 次的中位數，橘線是現在這一波（高峰後第 %d 天）。線掉到 1/3 那條橫線以下就是退潮；以前大多在高峰後一週左右，因為最重的那幾天滾出了 7 天的計算窗口。'
@@ -470,8 +470,8 @@ def build(L, N, E, dn):
             bw = [e for e in dn2 if e['b365'] is not None]; L_ = E2[-1]
             if L_['open']: nzw = '這一輪 %s 進入，現在還在 50%% 以上。' % dz2(L_['a']); nwe = 'This cycle entered on %s and is still above 50%%. ' % de2(L_['a'])
             else: nzw = '最近一段是 %s 到 %s，之後掉回 50%% 以下%s。' % (dz2(L_['a']), dz2(L_['b']), '，60 天內回到 50% 以上的話會併回同一段' if L_['fresh'] else ''); nwe = 'The latest stretch ran from %s to %s%s. ' % (de2(L_['a']), de2(L_['b']), '; a return above 50% within 60 days would join it back into the same stretch' if L_['fresh'] else '')
-            c_lthrl['modes'].append(dict(mz='佔全部認賠', me='Share of all losses', hz='賠錢賣的人裡，長期持有者佔多少（14 天合計）', he="Long-term holders' share of all realized losses (14-day sum)", src='Bitview · {d}',
-              f='p0', rng=0, p=2, hero=0, rows=sh_['rows'], ser=[ser(1, zh='長期持有者佔全部認賠', en='LTH share of realized loss', col='c3', w=1.3, fill=1)],
+            c_lthrl['modes'].append(dict(mz='佔全部已實現虧損', me='Share of all losses', hz='賠錢賣的人裡，長期持有者佔多少（14 天合計）', he="Long-term holders' share of all realized losses (14-day sum)", src='Bitview · {d}',
+              f='p0', rng=0, p=2, hero=0, rows=sh_['rows'], ser=[ser(1, zh='長期持有者佔全部已實現虧損', en='LTH share of realized loss', col='c3', w=1.3, fill=1)],
               refs=[dict(v=50, col='k2', zh='一半', en='Half')], spans=[dict(a=e['adn'], b=e['bdn'], col='c3', op=.14) for e in E2],
               leg=[['c3', '50% 以上的時段', 'Stretches above 50%', 'box']],
               dz='這是什麼：每天賠錢賣出的人裡，長期持有者（幣放了 155 天以上沒動）佔多少。算法是他們 14 天的已實現虧損，除以全市場 14 天的已實現虧損。超過一半，代表認賠的主力從新進場的人換成了老手，過去多半出現在熊市後段。'

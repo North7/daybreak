@@ -328,7 +328,7 @@ try:
     R['onchain']['sth-sopr'] = dict(_oc_stat('sth-sopr', _cs), source='CheckOnChain', source_url=coc.PAGE)
     if _cst != 'live': errors.append(f'checkonchain sth-sopr 用快取：{_cst}')
 except Exception as e: errors.append(f'checkonchain sth-sopr: {e}')
-# B3. 2026-10-23 使用者要求：短期持有者實現獲利／實現虧損分開兩條（CheckOnChain，BTC，已平滑），分辨 SOPR 升降是哪一邊帶動的
+# B3. 2026-10-23 使用者要求：短期持有者已實現獲利／已實現虧損分開兩條（CheckOnChain，BTC，已平滑），分辨 SOPR 升降是哪一邊帶動的
 _pnl = None
 try:
     import coc
@@ -350,7 +350,7 @@ try:
     _sec, _sest = coc.get_sec()
     if _sest != 'live': errors.append(f'checkonchain seller-exhaustion 用快取：{_sest}')
 except Exception as e: errors.append(f'checkonchain seller-exhaustion: {e}')
-# B6. 2026-11-02 使用者要求（Glassnode 的 Realized P/L 比率）：全網實現獲利 ÷ 實現虧損（CheckOnChain；90 天平均，見 coc.get_rpl、stage_viz.rpl_viz）
+# B6. 2026-11-02 使用者要求（Glassnode 的 Realized P/L 比率）：全網已實現獲利 ÷ 已實現虧損（CheckOnChain；90 天平均，見 coc.get_rpl、stage_viz.rpl_viz）
 try:
     import coc, stage_viz
     _rpl, _rpst = coc.get_rpl()
@@ -494,7 +494,7 @@ try:
                          note='CoinMetrics community；MVRV 口徑與 bitcoin-data 的 MVRV Z 不同，不相減、不混用。交易所供給為 CoinMetrics 自有地址歸屬')
 except Exception as e: errors.append(f'coinmetrics {e}')
 # G1a. 2026-10-12：頂部三指標（出場框架 P6）改用 CoinMetrics 自算，只晚 1 天（bitcoin-data 版晚約 6 天）。
-#   MVRV Z＝(市值−實現市值)÷市值的全歷史標準差（到當日為止）；NUPL＝(市值−實現市值)÷市值；Puell＝當日發行美元÷近 365 日平均。
+#   MVRV Z＝(市值−已實現市值)÷市值的全歷史標準差（到當日為止）；NUPL＝(市值−已實現市值)÷市值；Puell＝當日發行美元÷近 365 日平均。
 #   2026-10-05 同日對照 bitcoin-data：四年百分位 44.7／45.5／82.8 對 44.5／45.0／82.7。輸出欄位與原本 R['onchain'][m] 相同。
 try:
     iss = {x['time'][:10]: float(x['IssTotUSD']) for x in cmj if x.get('IssTotUSD')}
@@ -516,8 +516,8 @@ try:
                                chg7_pct=_dchg(ser, d_, 7, v_), chg30_pct=_dchg(ser, d_, 30, v_),
                                ma7=round(ma7, 4), ma7_pct_own=round(sum(x < ma7 for x in m7s) / len(m7s) * 100, 1), source='CoinMetrics')
 except Exception as e: errors.append(f'top3 coinmetrics {e}')
-# G1e. 2026-10-18 使用者要求：每日淨實現損益（Glassnode 的 Net Realized Profit/Loss 24h，只作讀值）。不另打 API：
-#   實現市值（市值 ÷ MVRV）當日變化 − 當日新發行美元＝當天移動的幣「賣價 − 上次移動價」的淨和。只有淨值，沒有獲利／認賠各自的總額。
+# G1e. 2026-10-18 使用者要求：每日淨已實現損益（Glassnode 的 Net Realized Profit/Loss 24h，只作讀值）。不另打 API：
+#   已實現市值（市值 ÷ MVRV）當日變化 − 當日新發行美元＝當天移動的幣「賣價 − 上次移動價」的淨和。只有淨值，沒有獲利／認賠各自的總額。
 #   2026-10-18 對照 Glassnode 圖：8/1 −0.98B、8/21 +1.89B、9/22 +2.11B、10/14 −0.20B，方向與大小相符。
 #   rank＝當日（÷ 市值）在之前 365 天的百分位；2015 起即時可行回測（每串取第一天）：≤2 的認賠高峰之後與平常無異；≥98 的獲利高峰之後 30 日多半續漲、逐輪減弱
 try:
@@ -532,7 +532,7 @@ try:
     R['npl'] = dict(date=last_[0], usd_m=round(last_[2] / 1e6, 1), rank_1y=rows_[-1][3], sum7_usd_m=round(sum(x[2] for x in _nd[-7:]) / 1e6), sum7_prev_usd_m=round(sum(x[2] for x in _nd[-14:-7]) / 1e6),
                     loss_spike_last=next((dict(date=_nd[j][0], usd_m=round(_nd[j][2] / 1e6), rank=_rank(j)) for j in range(len(_nd) - 1, len(_nd) - 366, -1) if (_rank(j) or 100) <= 2), None),
                     profit_spike_last=next((dict(date=_nd[j][0], usd_m=round(_nd[j][2] / 1e6), rank=_rank(j)) for j in range(len(_nd) - 1, len(_nd) - 366, -1) if (_rank(j) or 0) >= 98), None),
-                    rows=rows_, note='CoinMetrics 實現市值日變化 − 新發行；只有淨值；rank＝之前 365 天百分位（÷ 市值）；只作讀值')
+                    rows=rows_, note='CoinMetrics 已實現市值日變化 − 新發行；只有淨值；rank＝之前 365 天百分位（÷ 市值）；只作讀值')
     # 2026-10-18 使用者要求：30 日累計版（週期級別的認賠）。ratio＝30 日累計 ÷ 當日市值；trig＝ratio ≤ thr 的第一天（相隔 90 天以上才算新的一次）。
     # 2026-11-04 使用者決定：thr 由「之前 4 年第 3 百分位」改成「之前 4 年（1,460 天）最大 30 日淨獲利 × −1/4」。幅度每輪變小（最大獲利 15% → 10% → 5.75%），
     #   舊規則拿上一輪熊市的大認賠當標準，本輪最深 −2.28% 只到第 7 百分位、沒有觸發。新規則即時可行回測（2015 起）：2015-01、2018-11、2020-03、2022-05、
@@ -575,7 +575,7 @@ try:
           dict(id='rcgrowth', label='資金流入', ok=_rc[k] > _rc[j30], value=round((_rc[k] / _rc[j30] - 1) * 100, 2), unit='%', cond='已實現市值 30 日成長為正', date=_d[k])]
     cr = R.get('cm_radar') or {}
     if cr.get('exchange_supply_chg90_pct') is not None:
-        ev.append(dict(id='xs90', label='交易所供給', ok=cr['exchange_supply_chg90_pct'] < 0, value=cr['exchange_supply_chg90_pct'], unit='%', cond='90 日變化為負', date=cr.get('exchange_supply_date')))
+        ev.append(dict(id='xs90', label='交易所餘額', ok=cr['exchange_supply_chg90_pct'] < 0, value=cr['exchange_supply_chg90_pct'], unit='%', cond='90 日變化為負', date=cr.get('exchange_supply_date')))
     sth = sorted((_ST or SER.get('sth-realized-price') or {}).items())   # 2026-11-04 起 Bitview（B9），失敗時 bitcoin-data
     if sth:
         _src = _CSRC if _ST else 'bitcoin-data'
@@ -583,8 +583,8 @@ try:
     R['stage_evidence'] = dict(items=ev, ok=sum(e['ok'] for e in ev), n=len(ev),
                                note='只作佐證、不參與判定。樣本 3–4 輪，任何規則都無法避免 2019 年式的假突破')
 except Exception as e: errors.append(f'stage_evidence {e}')
-# G1b. 2026-10-12 使用者要求：實現市值 30 日變化（Checkonchain「Realised Cap Liquidity Cycle」的核心），只作資金背景讀值、不作買賣訊號、不連動任何規則。
-#   實現市值＝CoinMetrics 市值 ÷ MVRV（與 stage_evidence 的「資金流入」同一數字），不另外請求。回推一律以日期，不以列位置。
+# G1b. 2026-10-12 使用者要求：已實現市值 30 日變化（Checkonchain「Realised Cap Liquidity Cycle」的核心），只作資金背景讀值、不作買賣訊號、不連動任何規則。
+#   已實現市值＝CoinMetrics 市值 ÷ MVRV（與 stage_evidence 的「資金流入」同一數字），不另外請求。回推一律以日期，不以列位置。
 try:
     _ep0 = dt.date(1970, 1, 1); _dd = [dt.date.fromisoformat(x) for x in _d]
     def _ago(j, days):   # 第 j 天往前 days 天（含）最近一筆的索引；不足則 None
@@ -616,13 +616,13 @@ try:
                              zero_now=bool(zero_now), state_run_days=run, last_episode=eps[-1] if eps else None, episodes=eps, rows=rows,
                              note='CoinMetrics community 市值 ÷ MVRV 推得；只作資金背景讀值，不作買賣訊號')
 except Exception as e: errors.append(f'rc_liquidity {e}')
-# G1b-2. 2026-11-21 使用者要求：Checkonchain「Realised Cap Liquidity Cycle」的 Liquidity Index（實現市值卡的第二個檢視）。
-#   反推並逐日驗證（誤差 0）：每個視窗算實現市值落在「過去 N 天最低～最高」的哪裡（最低＝0、最高＝1），N＝30、90、365（他的圖例寫 180-day，實際是 365 天），三個取平均。
-#   指數＝0 ⟺ 實現市值創 365 天新低（同時也是 30、90 天新低）。2013 起只有 3 段（2015、2018–19、2022），都在週期底部附近；只作讀值。
+# G1b-2. 2026-11-21 使用者要求：Checkonchain「Realised Cap Liquidity Cycle」的 Liquidity Index（已實現市值卡的第二個檢視）。
+#   反推並逐日驗證（誤差 0）：每個視窗算已實現市值落在「過去 N 天最低～最高」的哪裡（最低＝0、最高＝1），N＝30、90、365（他的圖例寫 180-day，實際是 365 天），三個取平均。
+#   指數＝0 ⟺ 已實現市值創 365 天新低（同時也是 30、90 天新低）。2013 起只有 3 段（2015、2018–19、2022），都在週期底部附近；只作讀值。
 try:
     if 'rc_liquidity' in R:
         _li_ep = dt.date(1970, 1, 1)
-        def _li_win(j, n):   # 以日期回推 n 天（含當天）的實現市值區間位置
+        def _li_win(j, n):   # 以日期回推 n 天（含當天）的已實現市值區間位置
             a_ = bisect.bisect_left(_d, (_dd[j] - dt.timedelta(days=n - 1)).isoformat()); w_ = _rc[a_:j + 1]; lo_, hi_ = min(w_), max(w_)
             return (_rc[j] - lo_) / (hi_ - lo_) if hi_ > lo_ else 0.0
         LI = [None] * len(_d); LC = [None] * len(_d)
@@ -655,7 +655,7 @@ try:
         R['rc_liquidity']['li'] = dict(date=_d[k], idx=round(LI[k], 3), c30=round(LC[k][0], 3), c90=round(LC[k][1], 3), c365=round(LC[k][2], 3),
                                        prev7=round(LI[_back(7)], 3), low365=_d[a365 + m365], gap365_pct=round((_rc[k] / w365[m365] - 1) * 100, 2),
                                        zero_eps=zeps, buckets=bks, rows=[[(_dd[j] - _li_ep).days, round(LI[j], 3), round(_p[j], 2 if _p[j] < 100 else 0)] for j in range(s12, len(_d)) if LI[j] is not None],
-                                       note='Checkonchain Liquidity Index：實現市值在過去 30／90／365 天區間的位置取平均；0＝實現市值創一年新低。只作讀值')
+                                       note='Checkonchain Liquidity Index：已實現市值在過去 30／90／365 天區間的位置取平均；0＝已實現市值創一年新低。只作讀值')
 except Exception as e: errors.append(f'rc_liquidity li {e}')
 # G1c. 2026-10-12 使用者要求：短週期＝目前這一段行情。收盤價 15% 反轉才算新的一段（zigzag），只作讀值、不連動任何規則。
 #   價格：CoinMetrics 每日（自 2010）＋ Kraken 已收盤日線補到 LAST；本輪＝2022-11-21 低點起的完成段落。
@@ -917,7 +917,7 @@ try:
     try:
         if SER.get('lth-net-position-change-30d-btc'): R['lth_color'] = stage_viz.lth_color_viz(SER['lth-net-position-change-30d-btc'], PXC)
     except Exception as e: errors.append(f'lth_color {e}')
-    # 2026-11-03：週線多空分數（六項已有訊號合成；不另打 API，實現獲利 ÷ 虧損沿用 B6 的 _rpl）
+    # 2026-11-03：週線多空分數（六項已有訊號合成；不另打 API，已實現獲利 ÷ 虧損沿用 B6 的 _rpl）
     try:
         R['regime'] = stage_viz.regime_viz(cm, _rpl, LAST, px=PXC)
     except Exception as e: errors.append(f'regime {e}')
@@ -979,7 +979,7 @@ try:
 except Exception as e: errors.append(f'cohort {e}'); R['cohort'] = None
 
 # G4h. 2026-11-06 使用者要求（指標擴充，見 oc_extra.py、opt_flow.py；Bitview／Deribit／OKX 免費，不佔 bitcoin-data 額度）：
-#   第一、二批鏈上：供給分位成本線、短期持有者虧損比例的歷次、相對未實現獲利的地板、實現虧損峰值背離、長短期供給比 30 日變化、
+#   第一、二批鏈上：供給分位成本線、短期持有者虧損比例的歷次、相對未實現獲利的地板、已實現虧損峰值背離、長短期供給比 30 日變化、
 #   資金與價格增量梯度、鏈上勢能、回調壓力清單。第三批衍生品：Gamma 曝險（推算做市商部位）、選擇權買方權利金差、OKX 現貨主動買賣差。各項獨立，失敗只影響該項
 if BV:
     try:
@@ -992,13 +992,13 @@ if BV:
                         ('dd', lambda: oc_extra.dd_viz(BV, _pxc, LAST, _md2['cycle_bottoms'], _md2['cycle_tops'])),   # 2026-11-13 離高點的回撤
                         ('avgd', lambda: oc_extra.avg_viz(BV, _pxc, LAST, _md2['cycle_tops'])),   # 2026-11-15 離成本線和均線多遠
                         ('sthosc', lambda: oc_extra.sthosc_viz(BV, _pxc, LAST, _md2['cycle_bottoms'], _md2['cycle_tops'])),   # 2026-11-15 短期持有者成本帶的短期震盪
-                        ('rpl365', lambda: oc_extra.rpl365_viz(BV, _pxc, LAST, bottoms=_md2['cycle_bottoms'])),   # 2026-11-17 實現獲利 ÷ 虧損的一年合計
+                        ('rpl365', lambda: oc_extra.rpl365_viz(BV, _pxc, LAST, bottoms=_md2['cycle_bottoms'])),   # 2026-11-17 已實現獲利 ÷ 虧損的一年合計
                         ('grad', lambda: oc_extra.grad_viz(BV, _pxc, LAST)), ('mom', lambda: oc_extra.mom_viz(BV, _pxc, LAST)),
                         ('pullback', lambda: oc_extra.pullback_viz(BV, _pxc, LAST, R.get('sec'), R.get('rloss')))):
             try: R[_k] = _fn()
             except Exception as e: errors.append(f'oc_extra {_k} {e}')
     except Exception as e: errors.append(f'oc_extra {e}')
-    try:   # 2026-11-06 使用者要求（Bitview 推薦的都做，見 bv_extra.py）：賣方風險比、長短期持有者 NUPL、儲備風險、AVIV、依持有時間的實現損益、Dormancy／Liveliness
+    try:   # 2026-11-06 使用者要求（Bitview 推薦的都做，見 bv_extra.py）：賣方風險比、長短期持有者 NUPL、儲備風險、AVIV、依持有時間的已實現損益、Dormancy／Liveliness
         import bv_extra
         _md3 = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json'))); _T3, _B3 = _md3['cycle_tops'], _md3['cycle_bottoms']
         for _k, _fn in (('ssr', lambda: bv_extra.ssr_viz(BV, _pxc, LAST, _T3, _B3)), ('hnupl', lambda: bv_extra.nupl_viz(BV, _pxc, LAST, _T3, _B3)),
@@ -1028,7 +1028,7 @@ try:
 except Exception as e: errors.append(f'opt_flow {e}')
 
 # G4i. 2026-11-06 指標擴充（見 cq_extra.py；CoinMetrics／CoinMarketCap（2026-11-11 前是 The Block）／Upbit／OKX 免費，不佔 bitcoin-data 額度）：交易所淨流量、現貨 vs 永續需求、
-#   ETF 持有者成本、一年累計淨實現損益（顆）、韓國溢價、每輪資金效率。各項獨立，失敗只影響該項
+#   ETF 持有者成本、一年累計淨已實現損益（顆）、韓國溢價、每輪資金效率。各項獨立，失敗只影響該項
 try:
     import cq_extra
     _md4 = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'data', 'model.json'))); _pxc4 = globals().get('PXC') or {}

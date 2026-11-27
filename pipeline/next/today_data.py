@@ -17,7 +17,7 @@ def build(L, N, E, dn, pm):
     e20 = (L.get('flows') or {}).get('etf20') or {}; nh = len(ex.get('steps_hit') or []); nl = len(fw.get('ladder') or [])
     Q = [('cycle', '週期', 'Cycle', '現在在週期的哪裡', 'Where we are in the cycle', 'cycle', dict(v=dw['heat'], f='n1'), '晨昏指數的熱度', 'Dawn–Dusk heat'),
          ('lv', '價位', 'Levels', '價格站在哪些成本和關卡上', 'Which cost bases and levels price is standing on', 'market', dict(v=round(sbg, 1), f='pct1') if sbg is not None else None, '收盤離短期持有者成本', 'Close vs short-term holder cost'),
-         ('sell', '賣壓', 'Selling', '賣壓出清了沒', 'Has the selling been worked through', 'onchain', dict(v=fl['sth_in_profit_pct']['value'], f='p1'), '短期持有者獲利比例', 'Short-term holders in profit'),
+         ('sell', '賣壓', 'Selling', '賣壓出清了沒', 'Has the selling been worked through', 'onchain', dict(v=fl['sth_in_profit_pct']['value'], f='p1'), '短期持有者獲利供給佔比', 'Short-Term Holder Supply in Profit (%)'),
          ('buy', '買盤', 'Demand', '誰在買、錢從哪裡來', 'Who is buying and where the money comes from', 'flows', dict(v=e20['sum'], f='usdM') if e20.get('sum') is not None else None, '現貨 ETF 近 %d 個交易日淨流' % e20.get('n', 20), 'Spot ETF net flow, last %d trading days' % e20.get('n', 20)),
          ('lev', '槓桿', 'Leverage', '槓桿和情緒擠不擠', 'How crowded leverage and sentiment are', 'deriv', dict(v=dv['fund_hist']['value'], f='p1'), '資金費率（年化）', 'Funding rate (annualized)'),
          ('exit', '出場', 'Exit', '那我該怎麼做', 'So what do I do', 'exit', dict(v='%d / %d' % (nh, nl), f='txt', ve='%d / %d' % (nh, nl)) if nl else None, '出場梯子已觸發的階數', 'Exit ladder steps triggered')]

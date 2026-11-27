@@ -41,8 +41,8 @@ SERIES_MEANS = {
             T('Coinbase 比 Binance 便宜很多：美國現貨買盤疲弱、甚至在賣，美國資金觀望。', 'Coinbase trades well below Binance: US spot demand is weak or selling, and US money is on the sidelines.')),
     'stables': (T('穩定幣供給快速增加：場邊可以買幣的資金變多，是加密市場潛在的買盤。', 'Stablecoin supply is growing fast: more dry powder on the sidelines, potential buying power for crypto.'),
                 T('穩定幣供給快速減少：資金從加密市場撤出（贖回成美元），可以用來買幣的子彈變少。', 'Stablecoin supply is shrinking fast: money is leaving crypto (redeemed for dollars), leaving less dry powder to buy with.')),
-    'rcliq': (T('實現市值增加得快：新資金以較高的成本流進比特幣。', 'Realized cap is growing fast: new money is flowing into bitcoin at higher cost bases.'),
-              T('實現市值增加得慢甚至減少：新資金流入放緩，或有人在低於成本處賣出。', 'Realized cap is growing slowly or shrinking: inflows are fading, or coins are being sold below cost.')),
+    'rcliq': (T('已實現市值增加得快：新資金以較高的成本流進比特幣。', 'Realized cap is growing fast: new money is flowing into bitcoin at higher cost bases.'),
+              T('已實現市值增加得慢甚至減少：新資金流入放緩，或有人在低於成本處賣出。', 'Realized cap is growing slowly or shrinking: inflows are fading, or coins are being sold below cost.')),
     'p20': (T('MVRV 相對前一輪高點偏高：整體帳面獲利接近過去頂部的水準，離出場框架的鏈上賣點更近。', 'MVRV is high relative to the prior peak: aggregate paper profit is nearing past-top levels and the exit plan\'s on-chain sell point is closer.'),
             T('MVRV 相對前一輪高點偏低：整體帳面獲利很薄，離頂部區還遠。', 'MVRV is low relative to the prior peak: aggregate paper profit is thin and the top zone is far away.')),
     'oc-mvrv-zscore': (T('市值相對全體持有者的總成本偏高（估值熱）：帳面獲利大，歷來高檔接近週期頂部。', 'Market value is high relative to holders\' total cost (hot valuation): big paper gains; highs have historically been near cycle tops.'),
@@ -85,8 +85,8 @@ FLIP_MEANS = {
                  T('短期持有者整體轉為賠錢賣：短期持有者開始認賠，短線轉弱；在上漲趨勢中，1 常是回檔的支撐。', 'Short-term holders started selling at a loss: short-term holders are capitulating and the short term weakens; in uptrends, 1 often acts as pullback support.')),
     'npl7_pos': (T('近 7 天全網由淨認賠轉為淨獲利：持有者整體回到賺錢賣出，情緒回穩。', 'The 7-day network total flipped from net loss to net profit: holders are selling at a gain again and sentiment is steadier.'),
                  T('近 7 天全網由淨獲利轉為淨認賠：持有者整體在賠錢賣出，情緒轉弱。', 'The 7-day network total flipped from net profit to net loss: holders are selling at a loss and sentiment is weakening.')),
-    'rcliq_pos': (T('實現市值 30 天變化轉正：資金重新流入比特幣。', 'The 30-day change in realized cap turned positive: money is flowing back into bitcoin.'),
-                  T('實現市值 30 天變化轉負：資金淨流出，歷來多在熊市才出現。', 'The 30-day change in realized cap turned negative: net outflows, historically seen mostly in bear markets.')),
+    'rcliq_pos': (T('已實現市值 30 天變化轉正：資金重新流入比特幣。', 'The 30-day change in realized cap turned positive: money is flowing back into bitcoin.'),
+                  T('已實現市值 30 天變化轉負：資金淨流出，歷來多在熊市才出現。', 'The 30-day change in realized cap turned negative: net outflows, historically seen mostly in bear markets.')),
     'cbp_pos': (T('Coinbase 溢價轉正：美國買盤重新比海外積極。', 'The Coinbase premium turned positive: US buyers are again keener than offshore ones.'),
                 T('Coinbase 溢價轉負：美國買盤轉弱，海外相對積極。', 'The Coinbase premium turned negative: US demand has weakened relative to offshore.')),
     'sth_tp': (T('短期持有者賺錢賣出的量比近 105 天的平常多很多。2012 年起，收盤在 200 日均線上方時多半是行情延續；在均線下方時多半是反彈被拿來出貨（90 天後 23 次只有 7 次上漲）。', 'Short-term holders are taking profit far more than usual for the past 105 days. Since 2012, with the close above the 200-day average this has mostly meant continuation; below it, mostly a rally being sold into (only 7 of 23 were higher 90 days later).'),
@@ -120,7 +120,7 @@ OTHER_MEANS = {
             'down': T('ETF 連續淨流出：美國現貨需求轉弱，傳統資金在撤。', 'Consecutive ETF net outflows: US spot demand is fading as traditional money pulls back.')},
     'sopr-below': T('短期持有者連續多天賠錢賣：認賠潮延續，短期持有者的耐心在耗盡；歷來長段認賠之後常接近局部低點，但會持續多久不一定。', 'Short-term holders have sold at a loss for many days running: the capitulation is dragging on; long stretches like this have often been near local lows, but how long they last varies.'),
     'profit-into-drop': T('價格下跌的那天，短期持有者反而大量獲利了結：先前低價買進的人趁機出場，常見於上漲之後的第一次回檔。', 'Short-term holders took heavy profit on a down day: earlier, cheaper buyers are cashing out, common on the first pullback after a rally.'),
-    'sth-capitulation': T('短期持有者實現虧損很大、而且 SOPR 小於 1：短期持有者集中認賠出場，歷來常出現在局部低點附近。', 'Short-term holders realized heavy losses with SOPR below 1: short-term holders are capitulating together, historically often near local lows.'),
+    'sth-capitulation': T('短期持有者已實現虧損很大、而且 SOPR 小於 1：短期持有者集中認賠出場，歷來常出現在局部低點附近。', 'Short-term holders realized heavy losses with SOPR below 1: short-term holders are capitulating together, historically often near local lows.'),
     'squeeze': T('價格上漲、資金費率卻是負的：上漲主要由空方回補推動，不是新多單；回補結束後動能可能減弱。', 'Price rose while funding was negative: the move is driven by shorts covering rather than new longs; momentum can fade once covering ends.'),
     'leverage-chase': T('上漲伴隨很高的資金費率：多方用槓桿追價，價格回落時容易出現多單清算。', 'A rally with very high funding: longs are chasing with leverage, so a dip can trigger long liquidations.'),
     'vol-squeeze': T('隱含與實際波動同時在低檔：市場很平靜，這種壓縮之後常有一段大波動，但方向不定。', 'Implied and realized volatility are both low: the market is very calm, and such compression is often followed by a big move in either direction.'),
@@ -182,10 +182,10 @@ JUMP_MEANS = {
         T('選擇權定價的波動相對實際波動一週內回落，但還高於實際波動：避險需求在降溫。', 'Implied volatility fell sharply versus realized this week but is still above it: demand for protection is cooling.'),
         T('選擇權定價的波動一週內掉到實際波動以下：市場對風險變得放心，甚至可能低估。', 'Implied volatility fell below realized this week: traders are relaxed about risk, perhaps underpricing it.')),
     'rcliq': lambda up, v: _sided(up, v, 0,
-        T('實現市值的 30 日增速一週內明顯加快：新資金流進的速度變快。', 'Realized cap\'s 30-day growth sped up sharply this week: new money is flowing in faster.'),
-        T('實現市值的 30 日變化一週內明顯回升，但還是負的：資金流出在減緩。', 'Realized cap\'s 30-day change rebounded sharply this week but is still negative: outflows are slowing.'),
-        T('實現市值的 30 日增速一週內明顯放慢，但還是正的：新資金流入在變少。', 'Realized cap\'s 30-day growth slowed sharply this week but is still positive: inflows are thinning.'),
-        T('實現市值的 30 日變化一週內掉到負值（或更負）：資金在流出。', 'Realized cap\'s 30-day change turned (or went further) negative this week: money is leaving.')),
+        T('已實現市值的 30 日增速一週內明顯加快：新資金流進的速度變快。', 'Realized cap\'s 30-day growth sped up sharply this week: new money is flowing in faster.'),
+        T('已實現市值的 30 日變化一週內明顯回升，但還是負的：資金流出在減緩。', 'Realized cap\'s 30-day change rebounded sharply this week but is still negative: outflows are slowing.'),
+        T('已實現市值的 30 日增速一週內明顯放慢，但還是正的：新資金流入在變少。', 'Realized cap\'s 30-day growth slowed sharply this week but is still positive: inflows are thinning.'),
+        T('已實現市值的 30 日變化一週內掉到負值（或更負）：資金在流出。', 'Realized cap\'s 30-day change turned (or went further) negative this week: money is leaving.')),
     'oc-lth-net-position-change-30d-btc': lambda up, v: _sided(up, v, 0,
         T('長期持有者 30 日淨部位一週內明顯增加、而且是淨買：長期持有者在累積。', 'The LTH 30-day net position rose sharply this week and is net positive: long-term holders are accumulating.'),
         T('長期持有者 30 日淨部位一週內明顯回升，但還是淨減少：長期持有者的賣出在放緩。', 'The LTH 30-day net position rebounded sharply this week but is still net negative: long-term holder selling is slowing.'),
@@ -260,8 +260,8 @@ def _rule(s, ext, jmp, cmb, near, near_exit, four_year):
     if kind == 'streak':
         return T(f'同一方向連續 {s.get("run")} 天（5 天以上才列）。', f'{s.get("run")} days in a row in the same direction (listed from 5 days).')
     if kind == 'combo':
-        R = {'profit-into-drop': T(f'短期持有者實現獲利到近一年最高的 {100 - cmb}%，而且當天價格下跌。', f'Short-term holder realized profit in the top {100 - cmb}% of the past year on a day price fell.'),
-             'sth-capitulation': T(f'短期持有者實現虧損到近一年最高的 {100 - cmb}%，而且 SOPR 小於 1。', f'Short-term holder realized loss in the top {100 - cmb}% of the past year with SOPR below 1.'),
+        R = {'profit-into-drop': T(f'短期持有者已實現獲利到近一年最高的 {100 - cmb}%，而且當天價格下跌。', f'Short-term holder realized profit in the top {100 - cmb}% of the past year on a day price fell.'),
+             'sth-capitulation': T(f'短期持有者已實現虧損到近一年最高的 {100 - cmb}%，而且 SOPR 小於 1。', f'Short-term holder realized loss in the top {100 - cmb}% of the past year with SOPR below 1.'),
              'squeeze': T('單日漲 1% 以上，加權資金費率卻小於 0。', 'A daily gain of 1% or more with weighted funding below 0.'),
              'leverage-chase': T('單日漲 1.5% 以上，加權資金費率 20%（年化）以上。', 'A daily gain of 1.5% or more with weighted funding at 20% (annualized) or higher.'),
              'vol-squeeze': T('DVOL 在近一年第 20 百分位以下，RV30 也在近半年第 20 百分位以下。', 'DVOL at or below its 20th 1-year percentile and RV30 at or below its 20th 6-month percentile.'),
@@ -288,7 +288,7 @@ def _flip_rows(L, k, g, _rows, _ma7, _ivrv):
     if k == 'cbp_pos':   # 2026-11-12：改看 30 日平均（signals.py）
         r_ = _rows(L, 'flows.cb_premium.rows', 1); return [(r_[i][0], sum(v for _, v in r_[i - 29:i + 1]) / 30) for i in range(29, len(r_))], 0.0
     if k == 'iv_gt_rv': return _ivrv(L), 0.0
-    if k in ('sth_tp', 'sth_cap'):   # rows＝[日, 收盤, 止盈強度, −認賠強度]；門檻 2
+    if k in ('sth_tp', 'sth_cap'):   # rows＝[日, 收盤, 已實現獲利強度, −已實現虧損強度]；門檻 2
         rows = [(r[0], r[2] if k == 'sth_tp' else -r[3]) for r in g(L, 'onchain.sthsig.rows') or [] if len(r) > 3 and r[2] is not None and r[3] is not None]
         return rows, float(g(L, 'onchain.sthsig.prm.th') or 2)
     return None, None

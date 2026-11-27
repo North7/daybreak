@@ -71,19 +71,19 @@ def sopr(L):
 def pnlr(L):
     p = L['onchain']['sth_pnl']; d = p['d7']
     dz, de = ('主要是認賠變多', 'mostly because loss-taking rose') if d.get('drive') == 'loss' else ('主要是獲利了結變少', 'mostly because profit-taking fell') if p['ratio'] < d['ratio'] else ('主要是獲利了結變多', 'mostly because profit-taking rose')
-    return '短期持有者實現獲利是虧損的 %.2f 倍（7 天前 %.2f），%s。' % (p['ratio'], d['ratio'], dz), 'Short-term holders realized %.2f times as much profit as loss (%.2f a week ago), %s.' % (p['ratio'], d['ratio'], de), [
-        it('實現獲利', 'Realized profit', wan(p['profit'], False), kb(p['profit'], False), 'neu', '%s；7 天前 %s（%s）。' % (md(p['date']), wan(d['profit'], False), pc(d['profit_chg_pct'])), '%s; %s a week earlier (%s).' % (mde(p['date']), kb(d['profit'], False), pc(d['profit_chg_pct']))),
-        it('實現虧損', 'Realized loss', wan(p['loss'], False), kb(p['loss'], False), 'neu', '7 天前 %s（%s）。' % (wan(d['loss'], False), pc(d['loss_chg_pct'])), '%s a week earlier (%s).' % (kb(d['loss'], False), pc(d['loss_chg_pct'])))]
+    return '短期持有者已實現獲利是虧損的 %.2f 倍（7 天前 %.2f），%s。' % (p['ratio'], d['ratio'], dz), 'Short-term holders realized %.2f times as much profit as loss (%.2f a week ago), %s.' % (p['ratio'], d['ratio'], de), [
+        it('已實現獲利', 'Realized profit', wan(p['profit'], False), kb(p['profit'], False), 'neu', '%s；7 天前 %s（%s）。' % (md(p['date']), wan(d['profit'], False), pc(d['profit_chg_pct'])), '%s; %s a week earlier (%s).' % (mde(p['date']), kb(d['profit'], False), pc(d['profit_chg_pct']))),
+        it('已實現虧損', 'Realized loss', wan(p['loss'], False), kb(p['loss'], False), 'neu', '7 天前 %s（%s）。' % (wan(d['loss'], False), pc(d['loss_chg_pct'])), '%s a week earlier (%s).' % (kb(d['loss'], False), pc(d['loss_chg_pct'])))]
 
 def sthsig(L):
     x = L['onchain']['sthsig']; c = x['cap']; t = x['tp']; b = x['base']
-    if c['on']: sz, se = '集中認賠第 %d 天：認賠強度 %.1f。' % (c['days'], x['zl']), 'Concentrated loss-taking, day %d: loss intensity %.1f.' % (c['days'], x['zl'])
-    elif t['on']: sz, se = '集中止盈第 %d 天：止盈強度 %.1f。' % (t['days'], x['zp']), 'Concentrated profit-taking, day %d: profit intensity %.1f.' % (t['days'], x['zp'])
+    if c['on']: sz, se = '集中認賠第 %d 天：已實現虧損強度 %.1f。' % (c['days'], x['zl']), 'Concentrated loss-taking, day %d: loss intensity %.1f.' % (c['days'], x['zl'])
+    elif t['on']: sz, se = '集中止盈第 %d 天：已實現獲利強度 %.1f。' % (t['days'], x['zp']), 'Concentrated profit-taking, day %d: profit intensity %.1f.' % (t['days'], x['zp'])
     else: sz, se = '兩邊都不集中：止盈 %s、認賠 %s。' % (f1(x['zp']), f1(x['zl'])), 'Neither is concentrated: profit %s, loss %s.' % (f1(x['zp']), f1(x['zl']))
     g = c if (c['on'] or not t['on']) else t; nm, ne = ('集中認賠', 'concentrated loss-taking') if g is c else ('集中止盈', 'concentrated profit-taking')
     side = 'up' if x['above200'] else 'dn'; s30 = g[side]['f30']; b30 = b[side]['f30']
     return sz, se, [
-        it('現在', 'Now', '%s · %s' % (f1(x['zp']), f1(x['zl'])), '%s · %s' % (f1(x['zp']), f1(x['zl'])), 'neu', '止盈、認賠強度；7 天前 %s、%s，超過 2 算集中。' % (f1(x['zp7']), f1(x['zl7'])), 'Profit and loss intensity; %s and %s a week ago. Above 2 counts as concentrated.' % (f1(x['zp7']), f1(x['zl7']))),
+        it('現在', 'Now', '%s · %s' % (f1(x['zp']), f1(x['zl'])), '%s · %s' % (f1(x['zp']), f1(x['zl'])), 'neu', '止盈、已實現虧損強度；7 天前 %s、%s，超過 2 算集中。' % (f1(x['zp7']), f1(x['zl7'])), 'Profit and loss intensity; %s and %s a week ago. Above 2 counts as concentrated.' % (f1(x['zp7']), f1(x['zl7']))),
         it('%s之後' % nm, 'After %s' % ne, '%d / %d' % (g['all']['f90']['up'], g['all']['f90']['n']), '%d / %d' % (g['all']['f90']['up'], g['all']['f90']['n']), 'neu',
            '2012 年起 90 天後 %s（任一天 %d%%、%s）。' % (st(g['all']['f90']), b['all']['f90']['up'], pc(b['all']['f90']['med'])), 'Since 2012, 90 days on: %s (any day: %d%%, %s).' % (st(g['all']['f90'], False), b['all']['f90']['up'], pc(b['all']['f90']['med']))),
         it('均線%s（現在）' % ('上方' if x['above200'] else '下方'), '%s the 200-day MA (now)' % ('Above' if x['above200'] else 'Below'), '%d / %d' % (s30['up'], s30['n']), '%d / %d' % (s30['up'], s30['n']), 'neu',
@@ -104,31 +104,31 @@ def conf(L):
 
 def npl(L):
     n = L['onchain']['npl']; c = n['cum30']; ls = n['loss_spike_last']; v = n['usd_m']
-    sz = '最新一天淨實現損益 %s，近一年第 %d 百分位。' % (yi(v), round(n['rank_1y'])); se = 'Net realized P&L on the latest day was %s, the %s percentile of the year.' % (bn(v), ord_en(n['rank_1y']))
+    sz = '最新一天淨已實現損益 %s，近一年第 %d 百分位。' % (yi(v), round(n['rank_1y'])); se = 'Net realized P&L on the latest day was %s, the %s percentile of the year.' % (bn(v), ord_en(n['rank_1y']))
     w = n['sum7_usd_m'] < n['sum7_prev_usd_m']
     return sz, se, [
         it('近 7 天', 'Last 7 days', yi(n['sum7_usd_m']), bn(n['sum7_usd_m']), 'down' if n['sum7_usd_m'] < 0 else 'up', '前 7 天 %s：%s。' % (yi(n['sum7_prev_usd_m']), '認賠變多' if w and n['sum7_usd_m'] < 0 else '比前一週好'),
            'The week before: %s; %s.' % (bn(n['sum7_prev_usd_m']), 'more loss-taking' if w and n['sum7_usd_m'] < 0 else 'better than the week before')),
         it('30 天累計', '30-day total', pc(c['pct_mcap'], 2), pc(c['pct_mcap'], 2), 'neu', '%s，佔市值 %s；過去投降約在 %s。' % (yi(c['usd_m']), pc(c['pct_mcap'], 2), pc(c['thr_pct_mcap'], 1)),
            '%s, %s of market cap; past capitulations ran to about %s.' % (bn(c['usd_m']), pc(c['pct_mcap'], 2), pc(c['thr_pct_mcap'], 1))),
-        it('上次明顯認賠', 'Last big loss day', md(ls['date']), mde(ls['date']), 'neu', '%s %s，近一年最極端的 %d%%。' % (ymd(ls['date']), yi(ls['usd_m']), max(1, round(ls['rank'] + .5))), '%s on %s, in the most extreme %d%% of the year.' % (bn(ls['usd_m']), ymde(ls['date']), max(1, round(ls['rank'] + .5))))]
+        it('上次大額已實現虧損', 'Last big loss day', md(ls['date']), mde(ls['date']), 'neu', '%s %s，近一年最極端的 %d%%。' % (ymd(ls['date']), yi(ls['usd_m']), max(1, round(ls['rank'] + .5))), '%s on %s, in the most extreme %d%% of the year.' % (bn(ls['usd_m']), ymde(ls['date']), max(1, round(ls['rank'] + .5))))]
 
 def agepl(L):
     a = L['onchain']['agepl']; G = a['groups']
     tp = sorted(range(len(G)), key=lambda i: -a['prof'][i])[:2]; tl = sorted(range(len(G)), key=lambda i: -a['loss'][i])[:2]
-    sz = '6 個月以上的人佔實現獲利 %.0f%%、實現虧損 %.0f%%；認賠多是近期進場的人。' % (a['lth_prof'], a['lth_loss']) if a['lth_loss'] < 50 else '6 個月以上的人佔實現獲利 %.0f%%、實現虧損 %.0f%%。' % (a['lth_prof'], a['lth_loss'])
+    sz = '6 個月以上的人佔已實現獲利 %.0f%%、已實現虧損 %.0f%%；認賠多是近期進場的人。' % (a['lth_prof'], a['lth_loss']) if a['lth_loss'] < 50 else '6 個月以上的人佔已實現獲利 %.0f%%、已實現虧損 %.0f%%。' % (a['lth_prof'], a['lth_loss'])
     se = 'Holders of 6+ months account for %.0f%% of realized profit and %.0f%% of realized loss%s.' % (a['lth_prof'], a['lth_loss'], '; most loss-taking is by recent buyers' if a['lth_loss'] < 50 else '')
     return sz, se, [
         it('誰在獲利了結', 'Who takes profit', '%s %.0f%%' % (AGN[G[tp[0]]][0], a['prof'][tp[0]]), '%s %.0f%%' % (AGN[G[tp[0]]][1], a['prof'][tp[0]]), 'neu',
-           '30 天實現獲利 %s，其次是 %s（%.0f%%）。' % (yi(a['prof_m'], False), AGN[G[tp[1]]][0], a['prof'][tp[1]]), '%s of realized profit over 30 days; next is %s (%.0f%%).' % (bn(a['prof_m'], False), AGN[G[tp[1]]][1], a['prof'][tp[1]])),
+           '30 天已實現獲利 %s，其次是 %s（%.0f%%）。' % (yi(a['prof_m'], False), AGN[G[tp[1]]][0], a['prof'][tp[1]]), '%s of realized profit over 30 days; next is %s (%.0f%%).' % (bn(a['prof_m'], False), AGN[G[tp[1]]][1], a['prof'][tp[1]])),
         it('誰在認賠', 'Who takes losses', '%s %.0f%%' % (AGN[G[tl[0]]][0], a['loss'][tl[0]]), '%s %.0f%%' % (AGN[G[tl[0]]][1], a['loss'][tl[0]]), 'neu',
-           '30 天實現虧損 %s，其次是 %s（%.0f%%）。' % (yi(a['loss_m'], False), AGN[G[tl[1]]][0], a['loss'][tl[1]]), '%s of realized loss over 30 days; next is %s (%.0f%%).' % (bn(a['loss_m'], False), AGN[G[tl[1]]][1], a['loss'][tl[1]]))]
+           '30 天已實現虧損 %s，其次是 %s（%.0f%%）。' % (yi(a['loss_m'], False), AGN[G[tl[1]]][0], a['loss'][tl[1]]), '%s of realized loss over 30 days; next is %s (%.0f%%).' % (bn(a['loss_m'], False), AGN[G[tl[1]]][1], a['loss'][tl[1]]))]
 
 def rpl(L):
     if (L['onchain'].get('rpl365') or {}).get('w90') and L['onchain']['rpl365'].get('s7'): return None   # 2026-11-20 一年是預設、90 天改合計相除：讀數在 oc_data 組（兩個檢視各一份）
     r = L['onchain']['rpl']; maj = [x for x in r['reds'] if x['major']]; done = [x for x in maj[:-1] if x.get('relapse') is not None]; last = maj[-1]
     rl = [x for x in done if x['relapse']]
-    sz = ('90 天實現獲利是虧損的 %.2f 倍，但最近 7 天只有 %.2f。' if r['last7'] < 1 <= r['value'] else '90 天實現獲利是虧損的 %.2f 倍，最近 7 天 %.2f。') % (r['value'], r['last7'])
+    sz = ('90 天已實現獲利是虧損的 %.2f 倍，但最近 7 天只有 %.2f。' if r['last7'] < 1 <= r['value'] else '90 天已實現獲利是虧損的 %.2f 倍，最近 7 天 %.2f。') % (r['value'], r['last7'])
     se = ('Over 90 days realized profit is %.2f times loss, but only %.2f over the last 7.' if r['last7'] < 1 <= r['value'] else 'Over 90 days realized profit is %.2f times loss; %.2f over the last 7.') % (r['value'], r['last7'])
     out = [it('90 天平均', '90-day average', '%.2f' % r['value'], '%.2f' % r['value'], 'up' if r['value'] >= 1 else 'down',
               '%s 回到 1 以上（%d 天）；上一段低於 1 是 %s–%s，%d 天。' % (md(r['since']), r['since_days'], ym(last['start']), last['end'][5:7], last['days']) if r['above'] else '%s 跌破 1，已 %d 天。' % (md(r['since']), r['since_days']),
@@ -155,7 +155,7 @@ def rpl(L):
 
 def rloss(L):
     r = L['onchain']['rloss']; ch = r.get('chain') or []; cb = r['chain_back']; cp = r['back']['cap']['r30']
-    sz = '每日實現虧損 %s，7 天合計 %s。' % (yi(r['usd_m'], False), yi(r['usd7_m'], False)); se = 'Daily realized loss is %s (%.1f basis points of market cap), %s over 7 days.' % (bn(r['usd_m'], False), r['bp'], bn(r['usd7_m'], False))
+    sz = '每日已實現虧損 %s，7 天合計 %s。' % (yi(r['usd_m'], False), yi(r['usd7_m'], False)); se = 'Daily realized loss is %s (%.1f basis points of market cap), %s over 7 days.' % (bn(r['usd_m'], False), r['bp'], bn(r['usd7_m'], False))
     out = []
     if ch:
         c = ch[-1]; KN = dict(div=('背離', 'Divergence'), flat=('差不多', 'Similar'), cap=('投降', 'Capitulation'), brk=('背離被打破', 'Divergence broken'))

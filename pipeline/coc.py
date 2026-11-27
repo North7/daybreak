@@ -3,7 +3,7 @@ bitcoin-data 的 SOPR 系列晚約 7 天；CheckOnChain 的公開圖表（charts
 做法：每天讀一次圖表頁（約 7MB），從頁內 Plotly 資料取出「STH-SOPR > 1」與「STH-SOPR < 1」兩條（同一條 STH-SOPR 依 1 拆成兩段著色），合併回原序列。
 不佔 bitcoin-data 的每日額度。頁面改版或抓取失敗時，退回上一次成功存下的 coc_cache/sth-sopr.json（頁面照常顯示資料本身的日期）。
 資料屬 CheckOnChain（James Check），頁面標明來源並連回原圖；與 bitcoin-data 的 STH-SOPR 是不同資料商，不互相相減。
-2026-10-23 使用者要求：另讀「Realised Value [BTC]」圖（realisedpnl_bycohort_2，約 1.5MB）的短期持有者實現獲利、實現虧損兩條，
+2026-10-23 使用者要求：另讀「Realised Value [BTC]」圖（realisedpnl_bycohort_2，約 1.5MB）的短期持有者已實現獲利、已實現虧損兩條，
 用來分辨 STH-SOPR 的升降是獲利了結變多還是認賠變少。單位 BTC；數值已經 CheckOnChain 平滑（圖上沒標明視窗），快取在 coc_cache/sth-pnl.json。
 2026-10-28 使用者要求：讀「URPD 依長短期持有者拆分」圖（urpd_cohort，約 160KB，Bitcoin Research Kit 依每顆幣的實際幣齡算），
 併成本站的 2,000 美元一格，取代長短期持有者籌碼「現在」那一張的推算值。圖上沒有日期，資料日推定與同一輪讀到的 STH-SOPR 最新一天相同；快取在 coc_cache/urpd-cohort.json。"""
@@ -114,11 +114,11 @@ def get_cohort(date_hint):
 
 
 def fetch_pnl():
-    """{date: (實現獲利, 實現虧損)}，單位 BTC；虧損在原圖是負值，這裡轉成正的大小。"""
+    """{date: (已實現獲利, 已實現虧損)}，單位 BTC；虧損在原圖是負值，這裡轉成正的大小。"""
     traces = _traces(PNL_URL)
     pr, ls = _trace(traces, 'Realised Profit STH'), _trace(traces, 'Realised Loss STH')
     ser = {d: (pr[d], abs(ls[d])) for d in pr if d in ls}
-    if len(ser) < 1000: raise RuntimeError(f'CheckOnChain STH 實現損益只有 {len(ser)} 筆，格式可能改了')
+    if len(ser) < 1000: raise RuntimeError(f'CheckOnChain STH 已實現損益只有 {len(ser)} 筆，格式可能改了')
     return ser
 
 
@@ -161,7 +161,7 @@ def get_sec():
         return {d: (v, p) for d, v, p in cj['rows']}, f'cache {cj["fetched_utc"]}（{e}）'
 
 
-# 2026-11-02 使用者要求（Glassnode 的 Realized Profit / Realized Loss 比率圖）：全網實現獲利 ÷ 實現虧損。
+# 2026-11-02 使用者要求（Glassnode 的 Realized Profit / Realized Loss 比率圖）：全網已實現獲利 ÷ 已實現虧損。
 #   原圖把每日比值取 log10 後拆成正、負兩條（＋ve／−ve），這裡合併再還原成比值；90 天平均在 stage_viz.rpl_viz 算
 RPL_URL = 'https://charts-cdn.checkonchain.com/btconchain/realised/realisedpnl_ratio_all/realisedpnl_ratio_all_light.html'
 RPL_PAGE = 'https://charts.checkonchain.com/btconchain/realised/realisedpnl_ratio_all/realisedpnl_ratio_all_light.html'
@@ -169,11 +169,11 @@ RPL_CACHE = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'coc_cache'
 
 
 def fetch_rpl():
-    """{date: (實現獲利 ÷ 實現虧損 每日比值, 價格)}"""
+    """{date: (已實現獲利 ÷ 已實現虧損 每日比值, 價格)}"""
     traces = _traces(RPL_URL)
     pos, neg, px = _trace(traces, 'Realised Profit/Loss Ratio (+ve)'), _trace(traces, 'Realised Profit/Loss Ratio (-ve)'), _trace(traces, 'Price')
     ser = {d: (10 ** (pos[d] if pos[d] != 0 else neg.get(d, 0)), px[d]) for d in pos if d in px and px[d] > 0}
-    if len(ser) < 3000: raise RuntimeError(f'CheckOnChain 實現損益比只有 {len(ser)} 筆，格式可能改了')
+    if len(ser) < 3000: raise RuntimeError(f'CheckOnChain 已實現損益比只有 {len(ser)} 筆，格式可能改了')
     return ser
 
 

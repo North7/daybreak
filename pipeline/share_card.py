@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """每日分享圖（2026-10-13 建立）：號外風格 16:9 圖卡，給 X 貼文附圖用。
 讀 data/latest.json 與 data/notes.json（英文版讀 data/notes.en.json），輸出 data/share.png、data/share-en.png。
-頭條取自當期日報；標題裡的數字標號外紅（規則與網站相同）；底部三格固定為市場階段、ETF 7 個完整交易日（標明截至哪天）、短期持有者成本（STH 實現價格）與收盤在它上方或下方多少。
+頭條取自當期日報；標題裡的數字標號外紅（規則與網站相同）；底部三格固定為市場階段、ETF 7 個完整交易日（標明截至哪天）、短期持有者成本（STH 已實現價格）與收盤在它上方或下方多少。
 2026-11-08：第三格原為「離出場第一階」，X 貼文只放資訊、不放出場框架，改成短期持有者成本；網站本身的出場框架不變。
 字型與網站相同（Noto Sans TC 900、Archivo 窄體、JetBrains Mono），由 --fonts 指定的資料夾讀取。
 用法（在倉庫根目錄）：python3 pipeline/share_card.py --fonts <字型資料夾>"""

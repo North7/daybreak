@@ -6,7 +6,7 @@ bitcoin-data 過去一年一直高 0.6–2.1%，而且晚約 7 天。短期持�
 加 3–6 個月持幣成本、按地址餘額分層的持幣量（鯨魚分層，取代被 Cloudflare 擋下的 BitInfoCharts），
 以及任一天的長短期持有者籌碼分布（urpd_rows，給長短期持有者籌碼圖的「30 天前」用實際值）。
 做法：每條序列一次請求（day1，2011 起），只留已收完的日子（日期早於今天 UTC；當天的值是盤中）。
-6–12 個月成本＝6–9、9–12 個月兩段的實現市值合計 ÷ 供給合計；3–6 個月＝3–4、4–5、5–6 個月三段合計（Bitview 沒有這兩段）。
+6–12 個月成本＝6–9、9–12 個月兩段的已實現市值合計 ÷ 供給合計；3–6 個月＝3–4、4–5、5–6 個月三段合計（Bitview 沒有這兩段）。
 每天另讀 CheckOnChain 的真實市場均價驗算（collect.py 在兩家差超過 0.5% 時記進 errors）。
 失敗時用上一次成功的快取 coc_cache/bitview.json（超過 4 天不再沿用，見 coc._cache），collect.py 再看各項要不要退回 bitcoin-data。
 Bitview 會改序列名稱（API 0.13 版，改動列在 https://bitview.space/api 的 What changed）：抓不到時先查那裡。"""
@@ -22,7 +22,7 @@ AGE_G = [('under_1h', '1h_to_1d', '1d_to_1w', '1w_to_1m'), ('1m_to_2m', '2m_to_3
          ('1y_to_18m', '18m_to_2y'), ('2y_to_3y', '3y_to_4y', '4y_to_5y'), ('5y_to_6y', '6y_to_7y', '7y_to_8y', '8y_to_10y', '10y_to_12y', '12y_to_15y', 'over_15y')]   # 依持有時間的 6 組：1 個月內、1–6 個月、6–12 個月、1–2 年、2–5 年、5 年以上
 NEG = {'lnupl', 'snupl'}   # 可以是負值的欄位（其他欄位負值視為缺值）
 _band = lambda bands: ([f'age_{b}_realized_cap' for b in bands], [f'age_{b}_supply' for b in bands])
-# 快取每列：[日期] + COLS；每欄是 (Bitview 序列, 小數位數) 或 (實現市值序列, 供給序列) 合併算出的成本
+# 快取每列：[日期] + COLS；每欄是 (Bitview 序列, 小數位數) 或 (已實現市值序列, 供給序列) 合併算出的成本
 COLS = [('px', 'price_close', 2), ('sth', 'sth_realized_price', 2), ('tmm', 'true_market_mean', 2),
         ('c612', _band(('6m_to_9m', '9m_to_1y')), 2), ('c1218', 'age_1y_to_18m_realized_price', 2),
         ('lth', 'lth_realized_price', 2), ('asopr', 'adjusted_sopr_24h', 4), ('lsopr', 'lth_sopr_24h', 4),
@@ -30,20 +30,20 @@ COLS = [('px', 'price_close', 2), ('sth', 'sth_realized_price', 2), ('tmm', 'tru
         ('b1', 'balance_1_to_10_btc_supply', 0), ('b10', 'balance_10_to_100_btc_supply', 0), ('b100', 'balance_100_to_1k_btc_supply', 0),
         ('b1k', 'balance_1k_to_10k_btc_supply', 0), ('b10k', 'balance_10k_to_100k_btc_supply', 0), ('b100k', 'balance_over_100k_btc_supply', 0),
         ('sthp', 'sth_supply_in_profit_share', 2), ('rp', 'realized_price', 2),
-        # 2026-11-05：循環資金流（實現市值加權的幣齡：1 個月內、1–2 年各佔全體實現市值的 %）
+        # 2026-11-05：循環資金流（已實現市值加權的幣齡：1 個月內、1–2 年各佔全體已實現市值的 %）
         ('cf1m', ('share', ['age_under_1h_realized_cap', 'age_1h_to_1d_realized_cap', 'age_1d_to_1w_realized_cap', 'age_1w_to_1m_realized_cap'], 'realized_cap'), 2),
         ('cf12', ('share', ['age_1y_to_18m_realized_cap', 'age_18m_to_2y_realized_cap'], 'realized_cap'), 2),
         ('ssopr', 'sth_sopr_24h', 4),
         ('lthrl', 'lth_realized_loss_sum_24h', 0),
         ('act', 'active_price', 2), ('c1m', 'age_1w_to_1m_realized_price', 2),
         # 2026-11-06 使用者要求（指標擴充，見 oc_extra.py）：供給分位成本線（全體供給依最後一次移動價格排序的第 q 百分位）、
-        #   全體獲利供給 %、相對未實現獲利（未實現獲利 ÷ 市值 %）、全網每日實現虧損（美元）、每日銷毀幣天數、全網 SOPR
+        #   全體獲利供給 %、相對未實現獲利（未實現獲利 ÷ 市值 %）、全網每日已實現虧損（美元）、每日銷毀幣天數、全網 SOPR
         ('q45', 'cost_basis_by_coin_p45', 2), ('q50', 'cost_basis_by_coin_median', 2), ('q55', 'cost_basis_by_coin_p55', 2), ('q60', 'cost_basis_by_coin_p60', 2),
         ('q65', 'cost_basis_by_coin_p65', 2), ('q75', 'cost_basis_by_coin_p75', 2), ('q85', 'cost_basis_by_coin_p85', 2), ('q95', 'cost_basis_by_coin_p95', 2),
         ('psip', 'supply_in_profit_share', 2), ('rup', ('share', ['unrealized_profit'], 'market_cap'), 2),
         ('rloss', 'realized_loss_sum_24h', 0), ('cdd', 'coindays_destroyed_sum_24h', 0), ('sopr', 'sopr_24h', 4),
         # 2026-11-06 使用者要求（Bitview 推薦的都做）：賣方風險比（全網／短期／長期，7 日）、長短期持有者 NUPL（可為負，見 NEG）、儲備風險、AVIV（價格 ÷ 真實市場均價）、
-        #   Dormancy（7 日，賣出的幣平均放了幾天）、Liveliness；依持有時間的每日實現獲利／虧損（22 個年齡帶併成 6 組再存，快取不存原始帶）
+        #   Dormancy（7 日，賣出的幣平均放了幾天）、Liveliness；依持有時間的每日已實現獲利／虧損（22 個年齡帶併成 6 組再存，快取不存原始帶）
         ('ssr', 'sell_side_risk_ratio_1w', 6), ('ssr_s', 'sth_sell_side_risk_ratio_1w', 6), ('ssr_l', 'lth_sell_side_risk_ratio_1w', 6),
         ('lnupl', 'lth_nupl', 4), ('snupl', 'sth_nupl', 4), ('rr', 'reserve_risk', 7), ('aviv', 'aviv', 4), ('dorm', 'dormancy_1w', 3), ('live', 'liveliness', 5),
         # 2026-11-09 使用者要求（對趨勢的信心，見 bv_extra.conf_viz）：短期持有者每天賣出的幣的成本合計（美元）與賣出量（BTC），存原始合計，7 日平均時按賣出量加權

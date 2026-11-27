@@ -2,9 +2,9 @@
 ① 交易所淨流量（CoinMetrics 社群版 FlowInExNtv／FlowOutExNtv）
 ② 現貨 vs 永續需求（現貨＝表觀需求 ad；永續＝OKX 合約主動買 − 主動賣，rubik，快取 coc_cache/okx_taker.json 的 perp）
 ③ ETF 持有者成本（各檔 ETF 逐日淨流量 ÷ 當天收盤；2026-11-11 起資料來自 CoinMarketCap，見 etf_src.py，之前是 The Block，平均成本法；不含 GBTC：它在轉換前就持有約 62 萬顆，成本不是流量買出來的）
-④ 一年累計淨實現損益（顆）（CoinMetrics：實現市值當日變化 − 新發行，同 collect.py G1e，÷ 當天價格）
+④ 一年累計淨已實現損益（顆）（CoinMetrics：已實現市值當日變化 − 新發行，同 collect.py G1e，÷ 當天價格）
 ⑤ 韓國溢價（Upbit KRW-BTC ÷（美元收盤 × 美元兌韓元）− 1；匯率用歐洲央行參考匯率 Frankfurter，失敗退回 FRED DEXKOUS）
-⑥ 每輪資金效率（CoinMetrics 實現市值：每輪從底部到頂部流入多少資金、價格漲幾倍）
+⑥ 每輪資金效率（CoinMetrics 已實現市值：每輪從底部到頂部流入多少資金、價格漲幾倍）
 每項附回測或歷史對照，只作讀值、不是買賣訊號。x 一律為 1970-01-01 起的天數。"""
 import bisect, csv, datetime as dt, io, json, statistics as st, time, urllib.parse, urllib.request
 from stage_viz import dn, ds, thin
@@ -126,9 +126,9 @@ def etf_cost_viz(px, last, step=1):
                 note='不含 GBTC 的現貨 ETF：每天淨流量 ÷ 當天收盤＝買進（或賣出）的顆數，平均成本法；GBTC 轉換前就持有約 62 萬顆，成本不是流量買出來的，所以不算；推算、只作讀值')
 
 
-# ---------- ④ 一年累計淨實現損益（顆） ----------
+# ---------- ④ 一年累計淨已實現損益（顆） ----------
 def npl365_viz(nd, last, bottoms=(), tops=(), step=4):
-    """nd＝collect.py G1e 的 [(日期, 價格, 當日淨實現損益美元, 市值)]"""
+    """nd＝collect.py G1e 的 [(日期, 價格, 當日淨已實現損益美元, 市值)]"""
     B = {d: v / p for d, p, v, _ in nd if p and d <= last}; Px = {d: p for d, p, _, _ in nd}
     D = sorted(B); y = {}
     for j in range(364, len(D)):
@@ -155,7 +155,7 @@ def npl365_viz(nd, last, bottoms=(), tops=(), step=4):
         blk = Y[i:i + step]; m = min(blk, key=y.get); rows.append([dn(m), round(Px[m]), round(y[m] / 1e3, 1)])
     if rows[-1][0] != dn(d1): rows.append([dn(d1), round(Px[d1]), round(y[d1] / 1e3, 1)])
     return dict(date=d1, value=round(y[d1] / 1e3), v30=round(y[d30] / 1e3) if d30 else None, neg_since=neg_since, bottoms=bt, tops=tp, rows=rows, src='CoinMetrics',
-                note='每天的淨實現損益（實現市值變化 − 新發行，美元）÷ 當天價格，365 天合計（千顆）；CoinMetrics；只作讀值')
+                note='每天的淨已實現損益（已實現市值變化 − 新發行，美元）÷ 當天價格，365 天合計（千顆）；CoinMetrics；只作讀值')
 
 
 # ---------- ⑤ 韓國溢價 ----------
@@ -195,7 +195,7 @@ def kp_viz(px, last, step=3):
 
 
 # ---------- ⑥ 每輪資金效率 ----------
-# 每輪從熊市底部到週期頂部：實現市值增加多少（＝真正流入的資金）、價格漲幾倍；「每 10 億美元淨流入推升多少 %」一輪比一輪小
+# 每輪從熊市底部到週期頂部：已實現市值增加多少（＝真正流入的資金）、價格漲幾倍；「每 10 億美元淨流入推升多少 %」一輪比一輪小
 def capeff_viz(mv, last, tops=(), bottoms=()):
     """mv＝collect.py 的 [(日期, 價格, MVRV, 市值, 供給)]"""
     rc = {d: mc / m for d, p, m, mc, _ in mv if m and d <= last}; px = {d: p for d, p, *_ in mv}; mcap = {d: mc for d, p, m, mc, _ in mv}
@@ -219,4 +219,4 @@ def capeff_viz(mv, last, tops=(), bottoms=()):
         add = (rc[d1] - rc[lb]) / 1e9; mca = (mcap[d1] - mcap[lb]) / 1e9
         cur = dict(bottom=lb, date=d1, rc_b=round(rc[lb] / 1e9, 1), add_b=round(add, 1), mca_b=round(mca), lev=round(mca / add, 1) if add > 0 else None, mult=round(px[d1] / px[lb], 2), days=dn(d1) - dn(lb), rc_now=round(rc[d1] / 1e9))
     return dict(date=d1, cycles=cyc, cur=cur, src='CoinMetrics',
-                note='實現市值（市值 ÷ MVRV，CoinMetrics）由熊市底部到週期頂部的增加＝這一輪真正流入的資金；市值增加 ÷ 流入＝每 1 美元流入帶動多少市值；價格倍數同一段；只作讀值')
+                note='已實現市值（市值 ÷ MVRV，CoinMetrics）由熊市底部到週期頂部的增加＝這一輪真正流入的資金；市值增加 ÷ 流入＝每 1 美元流入帶動多少市值；價格倍數同一段；只作讀值')

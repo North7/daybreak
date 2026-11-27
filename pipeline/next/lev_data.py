@@ -162,7 +162,7 @@ def build(L, N, E, dn, X):
     # 各到期未平倉（V.deriv.after 的 c-oi）：網站是每個到期日一根柱子，買權綠、賣權橘紅疊起來。
     # 橫軸是未來的到期日，不是時間序列，所以做成清單：橫條長度是那個到期日的未平倉量
     # 選擇權推算的價格區間（2026-11-18 使用者要求，Glassnode 週報那張扇形圖；規則見 page.html ㊲）：每個到期日的風險中性分布（opt_grid._dist），
-    #   深色是 25–75 百分位、淺色是 15–85，中間的線是中位數；參考線是實現價格、短期持有者成本、真實市場均價。這是選擇權的定價，不是預測
+    #   深色是 25–75 百分位、淺色是 15–85，中間的線是中位數；參考線是已實現價格、短期持有者成本、真實市場均價。這是選擇權的定價，不是預測
     og = (d.get('options') or {}).get('grid') or {}; oe = [e for e in og.get('exps') or [] if e.get('dist')]
     if len(oe) >= 4 and og.get('qk'):
         t0 = dn(og['date']); sp = og['spot']; QK = og['qk']; iq = {p: i for i, p in enumerate(og['qs'])}
@@ -177,9 +177,9 @@ def build(L, N, E, dn, X):
         far = oe[-1]; mid = min(oe, key=lambda e: abs(e['dte'] - 90)); rp, sth, tmm = lv.get('rp'), lv.get('sth'), lv.get('tmm')
         kf = lambda v: '$%sK' % ('%.1f' % (v / 1000)).rstrip('0').rstrip('.')
         md_ = lambda s_: '%d/%d/%d' % (int(s_[:4]), int(s_[5:7]), int(s_[8:]))
-        refs = [dict(v=v, col=c_, zh='%s %s' % (z, kf(v)), en='%s %s' % (e_, kf(v))) for v, c_, z, e_ in ((rp, 'k2', '實現價格', 'Realized price'), (sth, 'ac', '短期持有者成本', 'STH cost'), (tmm, 'c4', '真實市場均價', 'True market mean')) if v]
+        refs = [dict(v=v, col=c_, zh='%s %s' % (z, kf(v)), en='%s %s' % (e_, kf(v))) for v, c_, z, e_ in ((rp, 'k2', '已實現價格', 'Realized price'), (sth, 'ac', '短期持有者成本', 'STH cost'), (tmm, 'c4', '真實市場均價', 'True market mean')) if v]
         p_rp = pb(far, rp) * 100 if rp else None; p_sth = (1 - pb(far, sth)) * 100 if sth else None
-        X['orng'] = dict(k='orng', zh='選擇權推算的價格區間', en='Options-implied price range', hz='%s 到期，在實現價格（%s）以下的機率' % (md_(far['d']), kf(rp)) if rp else '%s 到期的中位數' % md_(far['d']),
+        X['orng'] = dict(k='orng', zh='選擇權推算的價格區間', en='Options-implied price range', hz='%s 到期，在已實現價格（%s）以下的機率' % (md_(far['d']), kf(rp)) if rp else '%s 到期的中位數' % md_(far['d']),
           he='Chance of settling below the realized price (%s) at the %s expiry' % (kf(rp), far['d'].replace('-', '/')) if rp else 'Median at the %s expiry' % far['d'].replace('-', '/'),
           hs=dict(v=round(p_rp, 1), f='p0') if rp else dict(v=q(far, 50), f='usd0'),
           xy=dict(xk='dt', f='usd0', pxd=120, fans=[dict(rows=fan(15, 85), col='c3', op=.16), dict(rows=fan(25, 75), col='c3', op=.3)], refs=refs,
@@ -191,7 +191,7 @@ def build(L, N, E, dn, X):
              '%s 到期（約 %d 天後）25–75 是 %s 到 %s；%s 到期中位數 %s，%s%s。'
              '這是選擇權的定價（風險中性），包含避險的成本，不是預測；最外圍的履約價以外用最後一檔的隱含波動率外推。' % (
               md_(mid['d']), mid['dte'], kf(q(mid, 25)), kf(q(mid, 75)), md_(far['d']), kf(q(far, 50)),
-              ('收在實現價格 %s 以下的機率 %.0f%%' % (kf(rp), p_rp)) if rp else '', ('、站回短期持有者成本 %s 以上的機率 %.0f%%' % (kf(sth), p_sth)) if sth else ''),
+              ('收在已實現價格 %s 以下的機率 %.0f%%' % (kf(rp), p_rp)) if rp else '', ('、站回短期持有者成本 %s 以上的機率 %.0f%%' % (kf(sth), p_sth)) if sth else ''),
           de='Deribit option prices for each expiry, turned into odds of where price settles: the dark band is the 25th–75th percentile (half the odds), the light band the 15th–85th. '
              'At the %s expiry (about %d days out) the 25–75 range is %s to %s; at the %s expiry the median is %s%s%s. '
              'This is what options price (risk-neutral, including the cost of hedging), not a forecast; beyond the outermost strikes the last implied volatility is carried out.' % (

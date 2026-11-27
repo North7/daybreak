@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """「賣壓：賣壓出清了沒」這一頁的資料：五個小問題。十一張圖沿用 oc_data.py 已經做好的（X 裡），這裡補五張：
-回調壓力清單、賣壓累積與動能品質、依持有時間的實現獲利／虧損、SOPR 三個視角、礦工讀數。
+回調壓力清單、賣壓累積與動能品質、依持有時間的已實現獲利／虧損、SOPR 三個視角、礦工讀數。
 顏色照現有網站 assets/app.js：
   回調壓力清單 pbPanel ＋ app.css .light.on：成立＝--up→up，沒成立＝--ink-3→k2
   賣壓累積 drawSx：賣壓＝--down→dn、動能＝--s3→c4、動能 0.3 線和底部組合的底色＝--s3→c4、標記依之後 90 天漲跌 up／dn
@@ -12,12 +12,12 @@ AGE_COL = ['ac', 'c5', 'up', 'c4', 'color-mix(in srgb, var(--c4) 45%, var(--c3))
 AGE_NM = [('1 個月內', '< 1 month'), ('1–6 個月', '1–6 months'), ('6–12 個月', '6–12 months'), ('1–2 年', '1–2 years'), ('2–5 年', '2–5 years'), ('5 年以上', '5+ years')]
 def _ord(n): n = int(round(n)); return '%d%s' % (n, 'th' if 10 < n % 100 < 14 else {1: 'st', 2: 'nd', 3: 'rd'}.get(n % 10, 'th'))
 PB_LAB = dict(sth=('① 價格回到短期持有者成本', '① Price back at short-term holder cost'), psip=('② 獲利供給 ≤ 65%', '② Supply in profit ≤ 65%'), sthl=('③ 短期持有者虧損 ≥ 50%', '③ Short-term holders in loss ≥ 50%'),
-              sec=('④ 賣方衰竭進極端區', '④ Seller exhaustion in the extreme zone'), rloss=('⑤ 實現虧損峰值背離', '⑤ Realized-loss peak divergence'))
+              sec=('④ 賣方衰竭進極端區', '④ Seller exhaustion in the extreme zone'), rloss=('⑤ 已實現虧損峰值背離', '⑤ Realized-loss peak divergence'))
 RL_KIND = dict(div=('背離', 'divergence'), cap=('投降', 'capitulation'), flat=('差不多', 'similar'))
 # 沿用的十一張圖，萬一 X 裡沒有，用這裡的名字出一張「沒有資料」
-REUSE = dict(profit=('短期持有者獲利比例', 'Short-term holders in profit'), sopr=('短期持有者賣出時的盈虧', 'Short-term holder SOPR'), pnlr=('短期持有者實現獲利與虧損', 'STH realized profit and loss'), conf=('對趨勢的信心', 'Confidence in the trend'),
-             npl=('淨實現損益', 'Net realized P&L'), rpl=('實現獲利 ÷ 虧損', 'Realized profit ÷ loss'), rloss=('每日實現虧損', 'Daily realized loss'), ssr=('賣方風險比', 'Sell-side risk ratio'),
-             sec=('賣方衰竭常數', 'Seller exhaustion constant'), mom=('鏈上勢能', 'On-chain momentum'), lthrl=('長期持有者已實現虧損', 'LTH realized loss'))
+REUSE = dict(profit=('短期持有者獲利供給佔比', 'Short-Term Holder Supply in Profit (%)'), sopr=('短期持有者 SOPR（已花費產出利潤率）', 'Short-Term Holder SOPR'), pnlr=('短期持有者已實現獲利與已實現虧損', 'Short-Term Holder Realized Profit and Loss'), conf=('對趨勢的信心', 'Confidence in the trend'),
+             npl=('淨已實現損益', 'Net Realized Profit/Loss'), rpl=('已實現損益比（獲利 ÷ 虧損）', 'Realized Profit/Loss Ratio'), rloss=('已實現虧損（每日）', 'Realized Loss (daily)'), ssr=('賣方風險比', 'Sell-Side Risk Ratio'),
+             sec=('賣方衰竭常數', 'Seller Exhaustion Constant'), mom=('鏈上勢能', 'On-chain momentum'), lthrl=('長期持有者已實現虧損', 'Long-Term Holder Realized Loss'))
 
 def build(L, N, E, dn, X):
     o = L.get('onchain') or {}; ch = L.get('chips') or {}
@@ -33,7 +33,7 @@ def build(L, N, E, dn, X):
     # ── 1. 回調壓力清單（onchain.pullback）：五盞燈，一列一盞 ──
     def pullback():
         x = o.get('pullback')
-        if not x or not x.get('items'): return nodata('pullback', '回調壓力清單', 'Pullback pressure checklist', '今天沒有這份資料。這張清單看五個條件有幾個成立：價格回到短期持有者成本、獲利供給 65% 以下、短期持有者虧損 50% 以上、賣方衰竭進極端區、實現虧損峰值背離。',
+        if not x or not x.get('items'): return nodata('pullback', '回調壓力清單', 'Pullback pressure checklist', '今天沒有這份資料。這張清單看五個條件有幾個成立：價格回到短期持有者成本、獲利供給 65% 以下、短期持有者虧損 50% 以上、賣方衰竭進極端區、已實現虧損峰值背離。',
                                                   'No data today. The checklist counts how many of five conditions hold: price back at short-term holder cost, supply in profit at or below 65%, short-term holders in loss at or above 50%, seller exhaustion in its extreme zone, and a realized-loss divergence.')
         def cond(it):
             i = it['id']
@@ -99,10 +99,10 @@ def build(L, N, E, dn, X):
           dz='本站自製，只用每日收盤。動能品質＝近 21 天日報酬的平均 ÷ 標準差 × √21，用常態分布換成 0–1（圖上乘以 100）：漲得又快又穩接近 1、跌得又快又穩接近 0。賣壓累積是兩條線各佔一半。慢線用另一個比較短的動能來加減：日報酬的指數加權平均 ÷ 指數加權標準差（跨度 10 天，越近的日子權重越大），同樣換成 0–1；低於 %g 時每天往上加（離得越遠加越多）、高於 %g 時以同樣速度往下減。快線看「當天漲跌 ÷ 近 30 天波動」的 5 天平均：平均為負就往上加、為正就往下減，大跌當天就會加很多。兩條都夾在 0–100，反彈當天就會回落；要兩條都到 100，賣壓累積才是 100，所以急跌一兩天不會馬上到 100。賣壓到 100 而且動能品質低於 0.3 叫底部組合，青色底是從組合出現到賣壓歸零的期間。' % (th, th) + fz + '回測只有二十次左右，換一個收盤價來源或參數稍微調一下，次數和勝率就會變幾次。2026-11-11 起賣壓累積改成這個算法，歷史讀數一併重算。只作讀值，不是買賣訊號。',
           de='Home-made, from daily closes only. Momentum quality is the mean ÷ standard deviation of the last 21 daily returns × √21, mapped to 0–1 with the normal distribution (drawn × 100): near 1 for a fast, steady rise, near 0 for a fast, steady fall. The Sell Pressure Index is half a slow line and half a fast one. The slow line runs on a second, shorter momentum: the exponentially weighted mean ÷ standard deviation of daily returns (span 10 days, recent days weigh more), mapped to 0–1 the same way. It adds up each day that sits below %g (more the further below) and drains at the same rate when above. The fast line uses the 5-day average of each day’s move ÷ the 30-day volatility: it adds when that average is negative and drains when positive, so a big down day moves it at once. Both are capped at 0–100 and a bounce pulls them back the same day; pressure reads 100 only when both lines are there, so a one- or two-day drop does not take it to 100. Pressure at 100 with momentum quality under 0.3 is the bottom combination; cyan bands run from each one until pressure resets.' % th + fe + ' The backtest has only about twenty cases; a different close source or a small parameter change shifts the counts by a few. Since 2026-11-11 the index is calculated this way, and the history was recalculated. Reading only, not a trade signal.')
 
-    # ── 3. 依持有時間的實現獲利／虧損（onchain.agepl）：網站是堆疊面積，這裡的規格沒有堆疊，改成一組一條線，再加一條 6 個月以上合計 ──
+    # ── 3. 依持有時間的已實現獲利／虧損（onchain.agepl）：網站是堆疊面積，這裡的規格沒有堆疊，改成一組一條線，再加一條 6 個月以上合計 ──
     def agepl():
         x = o.get('agepl')
-        if not x or not x.get('rows'): return nodata('agepl', '依持有時間的實現獲利／虧損', 'Realized profit and loss by holding time', '今天沒有這份資料。這張圖把每天賣出的幣依持有多久分成六組，看 30 天的實現獲利和實現虧損各是哪幾組貢獻的。',
+        if not x or not x.get('rows'): return nodata('agepl', '各幣齡已實現獲利／虧損', 'Realized Profit/Loss by Coin Age', '今天沒有這份資料。這張圖把每天賣出的幣依持有多久分成六組，看 30 天的已實現獲利和已實現虧損各是哪幾組貢獻的。',
                                                       'No data today. This chart groups coins sold each day by how long they were held, showing which groups account for the 30-day realized profit and realized loss.')
         def mode(k, mz, me, hz, he, th, zz, ze):
             rows = []
@@ -117,15 +117,15 @@ def build(L, N, E, dn, X):
             od = x.get('old')
             if not od or not od.get('rows'): return []
             md_ = lambda n: '%d/%02d' % ((lambda t: (t.month, t.day))(__import__('datetime').date(1970, 1, 1) + __import__('datetime').timedelta(n)))
-            return [dict(mz='老幣每日金額', me='Old coins, daily', hz='持有 5 年以上，當天實現獲利', he='Coins held 5+ years, profit realized that day', f='usdM', dom=None, tf='sqrt', hero=1, rng=365, rows=od['rows'], notag=0,   # 開根號刻度：偶爾有一天幾十億（多半是託管換錢包），線性刻度會把其他日子壓成一條線
+            return [dict(mz='老幣每日金額', me='Old coins, daily', hz='持有 5 年以上，當天已實現獲利', he='Coins held 5+ years, profit realized that day', f='usdM', dom=None, tf='sqrt', hero=1, rng=365, rows=od['rows'], notag=0,   # 開根號刻度：偶爾有一天幾十億（多半是託管換錢包），線性刻度會把其他日子壓成一條線
                          ser=[ser(3, zh='持有 2 年以上', en='Held 2+ years', t='bar', base=0, col=AGE_COL[4]), ser(2, zh='其中 5 年以上', en='Of which 5+ years', t='bar', base=0, col=AGE_COL[5])],
                          marks=[dict(d=t[0], v=t[1], col='c3', up=1, zh='%s $%s' % (md_(t[0]), format(int(round(t[1])), ',')) + 'M', en='%s $%s' % (md_(t[0]), format(int(round(t[1])), ',')) + 'M') for t in (od.get('top5') or []) + ([od['m30']] if od.get('m30') and od['m30'][0] not in [q[0] for q in od.get('top5') or []] else [])],
                          leg=[['c3', '5 年以上：近一年最大的五天和近 30 天最大的一天', '5+ years: five largest days of the past year and the largest of the past 30 days', 'ring']])]
-        return dict(k='agepl', zh='依持有時間的實現獲利／虧損', en='Realized profit and loss by holding time', f='p1', p=1, dom=[0, 100], hero=6,
-          dz='每天賣出的幣依持有多久分成六組，色塊是各組在 30 天合計裡的佔比，疊起來是 100%，最老的在最下面；可以切換看實現獲利或實現虧損。大數字是持有 6 個月以上四組的合計：它在實現虧損裡升高，代表放了半年以上的人也開始認賠。資料是逐筆計算，交易所內部搬幣也會被算成一筆賣出。「老幣每日金額」是另一種看法：不做 30 天合計，直接看持有 2 年以上的幣每天實現多少獲利（百萬美元），前面深色的是其中 5 年以上的，圓圈是近一年最大的五天和近 30 天最大的一天。偶爾有一天幾十億，多半是搬錢包不是賣出（2024/05/28 的 96 億對得上 Mt. Gox 搬幣那天），所以縱軸用開根號刻度。這是依幣齡分，不是依錢包大小，分不出是不是大戶；只作讀值。',
+        return dict(k='agepl', zh='各幣齡已實現獲利／虧損', en='Realized Profit/Loss by Coin Age', f='p1', p=1, dom=[0, 100], hero=6,
+          dz='每天賣出的幣依持有多久分成六組，色塊是各組在 30 天合計裡的佔比，疊起來是 100%，最老的在最下面；可以切換看已實現獲利或已實現虧損。大數字是持有 6 個月以上四組的合計：它在已實現虧損裡升高，代表放了半年以上的人也開始認賠。資料是逐筆計算，交易所內部搬幣也會被算成一筆賣出。「老幣每日金額」是另一種看法：不做 30 天合計，直接看持有 2 年以上的幣每天實現多少獲利（百萬美元），前面深色的是其中 5 年以上的，圓圈是近一年最大的五天和近 30 天最大的一天。偶爾有一天幾十億，多半是搬錢包不是賣出（2024/05/28 的 96 億對得上 Mt. Gox 搬幣那天），所以縱軸用開根號刻度。這是依幣齡分，不是依錢包大小，分不出是不是大戶；只作讀值。',
           de='Coins sold each day are grouped by holding time; each layer is that group\'s share of the 30-day total, stacked to 100% with the oldest at the bottom. Switch between realized profit and realized loss. The headline figure is the four groups held 6+ months combined: when it rises in realized loss, holders of more than half a year are selling at a loss too. The data is per transaction output, so an exchange moving coins internally counts as a sale. "Old coins, daily" is a different cut: no 30-day sum, just how much profit coins held 2+ years realized each day (in $ millions), with the 5+ year part in front in the darker colour and rings on the five largest days of the past year and the largest of the past 30 days. An occasional day of several billion is usually a wallet move, not a sale (the $9.6B on 2024-05-28 matches the day Mt. Gox moved its coins), which is why the axis uses a square-root scale. It sorts by coin age, not wallet size, so it cannot tell whether the seller is a whale. A reading only.',
-          modes=[mode(2, '實現獲利', 'Realized profit', '6 個月以上佔實現獲利', '6+ months\' share of realized profit', 50, '獲利了結有一半以上來自持有 6 個月以上的人', 'Over half of profit-taking comes from coins held 6+ months'),
-                 mode(3, '實現虧損', 'Realized loss', '6 個月以上佔實現虧損', '6+ months\' share of realized loss', 40, '持有 6 個月以上的人也在認賠（佔 40% 以上）', 'Holders of 6+ months are selling at a loss too (40% or more)')] + old_mode())
+          modes=[mode(2, '已實現獲利', 'Realized profit', '6 個月以上佔已實現獲利', '6+ months\' share of realized profit', 50, '獲利了結有一半以上來自持有 6 個月以上的人', 'Over half of profit-taking comes from coins held 6+ months'),
+                 mode(3, '已實現虧損', 'Realized loss', '6 個月以上佔已實現虧損', '6+ months\' share of realized loss', 40, '持有 6 個月以上的人也在認賠（佔 40% 以上）', 'Holders of 6+ months are selling at a loss too (40% or more)')] + old_mode())
 
     # ── 4. SOPR 三個視角（onchain.viz）：照 drawOc，線 c3、參考線 dn ──
     def soprf():
@@ -189,20 +189,20 @@ def build(L, N, E, dn, X):
         else: c.update(hz='算力 30 日均 ÷ 60 日均', he='Hashrate 30-day ÷ 60-day average', hs=dict(v=hr['ratio'], f='n3'))
         return c
 
-    # ── 短期持有者集中止盈與認賠（onchain.sthsig）：照線上站 drawSthSig，止盈強度往上（up）、認賠強度畫成負值往下（dn），超過門檻的期間鋪底色 ──
+    # ── 短期持有者集中止盈與認賠（onchain.sthsig）：照線上站 drawSthSig，已實現獲利強度往上（up）、已實現虧損強度畫成負值往下（dn），超過門檻的期間鋪底色 ──
     def sthsig():
         x = o.get('sthsig')
-        if not x or not x.get('rows'): return nodata('sthsig', '短期持有者集中止盈與認賠', 'Short-term holder profit-taking and capitulation spikes', '今天沒有這份資料。這張圖看持有未滿 6 個月的幣，是不是正在集中獲利了結或集中認賠。', 'No data today. This chart shows whether coins held under 6 months are being sold in a burst of profit-taking or of loss-taking.')
+        if not x or not x.get('rows'): return nodata('sthsig', '短期持有者已實現獲利／虧損尖峰', 'Short-Term Holder Realized Profit/Loss Spikes', '今天沒有這份資料。這張圖看持有未滿 6 個月的幣，是不是正在集中獲利了結或集中認賠。', 'No data today. This chart shows whether coins held under 6 months are being sold in a burst of profit-taking or of loss-taking.')
         th = (x.get('prm') or {}).get('th', 2.0); rows = x['rows']; last = rows[-1][0]; runs = x.get('runs') or []
         def mk(r):
-            return dict(d=r[3], v=(r[4] if r[2] else -r[4]), up=1 if r[2] else 0, col='up' if r[2] else 'dn', zh=('集中止盈 ' if r[2] else '集中認賠 ') + ('%.1f' % r[4]), en=('Profit-taking ' if r[2] else 'Capitulation ') + ('%.1f' % r[4]))
-        return dict(k='sthsig', zh='短期持有者集中止盈與認賠', en='Short-term holder profit-taking and capitulation spikes', hz='認賠強度（畫成負值，−%g 以下＝集中認賠）' % th, he='Capitulation strength (drawn negative; below −%g = spike)' % th, f='n1', rng=365, rows=rows, p=1, hero=1,
-          ser=[ser(2, zh='止盈強度', en='Profit-taking strength', col='up', w=1.6), ser(3, zh='認賠強度（負值）', en='Capitulation strength (negative)', col='dn', w=1.6)],
-          refs=[dict(v=th, col='up', zh='止盈門檻 +%g' % th, en='Profit-taking threshold +%g' % th), dict(v=-th, col='dn', zh='認賠門檻 −%g' % th, en='Capitulation threshold −%g' % th), dict(v=0, col='k2')],
+            return dict(d=r[3], v=(r[4] if r[2] else -r[4]), up=1 if r[2] else 0, col='up' if r[2] else 'dn', zh=('獲利尖峰 ' if r[2] else '虧損尖峰 ') + ('%.1f' % r[4]), en=('Profit-taking ' if r[2] else 'Capitulation ') + ('%.1f' % r[4]))
+        return dict(k='sthsig', zh='短期持有者已實現獲利／虧損尖峰', en='Short-Term Holder Realized Profit/Loss Spikes', hz='已實現虧損強度（畫成負值，−%g 以下＝虧損尖峰）' % th, he='Capitulation strength (drawn negative; below −%g = spike)' % th, f='n1', rng=365, rows=rows, p=1, hero=1,
+          ser=[ser(2, zh='已實現獲利強度', en='Profit-taking strength', col='up', w=1.6), ser(3, zh='已實現虧損強度（負值）', en='Capitulation strength (negative)', col='dn', w=1.6)],
+          refs=[dict(v=th, col='up', zh='獲利門檻 +%g' % th, en='Profit-taking threshold +%g' % th), dict(v=-th, col='dn', zh='虧損門檻 −%g' % th, en='Capitulation threshold −%g' % th), dict(v=0, col='k2')],
           spans=[dict(a=r[0], b=max(r[1], r[0] + 1), col='up' if r[2] else 'dn', op=.16) for r in runs],
           marks=[mk(r) for r in runs if r[0] >= last - 400],
-          leg=[['up', '集中止盈（止盈強度超過 %g）' % th, 'Profit-taking spike (strength above %g)' % th, 'box'], ['dn', '集中認賠（認賠強度超過 %g）' % th, 'Capitulation spike (strength above %g)' % th, 'box']],
-          dz='本站自製，資料 Bitview（逐筆 UTXO、不是實體調整）。取持有未滿 6 個月的幣每天的實現獲利和實現虧損（美元），各自除以短期持有者的實現市值，5 日指數平均後和自己近 105 天比（z 分數）。綠線是止盈強度，往上；紅線是認賠強度，畫成負值、往下；超過 ±%g 的期間鋪底色。集中止盈常出現在反彈的後段，集中認賠常出現在急跌的後段，但兩者都可以連續出現很多天。只作讀值，不是買賣訊號。' % th,
+          leg=[['up', '獲利尖峰（已實現獲利強度超過 %g）' % th, 'Profit-taking spike (strength above %g)' % th, 'box'], ['dn', '虧損尖峰（已實現虧損強度超過 %g）' % th, 'Capitulation spike (strength above %g)' % th, 'box']],
+          dz='本站自製，資料 Bitview（逐筆 UTXO、不是實體調整）。取持有未滿 6 個月的幣每天的已實現獲利和已實現虧損（美元），各自除以短期持有者的已實現市值，5 日指數平均後和自己近 105 天比（z 分數）。綠線是已實現獲利強度，往上；紅線是已實現虧損強度，畫成負值、往下；超過 ±%g 的期間鋪底色。集中止盈常出現在反彈的後段，集中認賠常出現在急跌的後段，但兩者都可以連續出現很多天。只作讀值，不是買賣訊號。' % th,
           de='Home-made, from Bitview data (per UTXO, not entity-adjusted). It takes the profit and the loss realized each day on coins held under 6 months (USD), divides each by the short-term holder realized cap, smooths with a 5-day exponential average and compares it with its own last 105 days (z-score). Green is profit-taking strength, upward; red is capitulation strength, drawn negative, downward; periods beyond ±%g are shaded. Profit-taking spikes tend to come late in a bounce and capitulation spikes late in a sharp fall, but either can persist for many days. Reading only, not a trade signal.' % th)
 
     for fn in (pullback, sx, agepl, soprf, miners, sthsig):

@@ -36,7 +36,7 @@ HUBS = [
     dict(id='bitcoin-onchain', ch=None,
          nz='鏈上數據分析', ne='On-chain analysis',
          h1z='比特幣鏈上數據分析：持有者成本、獲利與籌碼', h1e='Bitcoin on-chain data analysis: holder cost, profit and supply',
-         kz='比特幣鏈上數據分析, 比特幣鏈上分析, BTC 鏈上分析, BTC 鏈上數據, 鏈上指標, MVRV, SOPR, NUPL, 實現價格, 短期持有者成本, 長期持有者, 籌碼分布, 大戶, 交易所淨流量',
+         kz='比特幣鏈上數據分析, 比特幣鏈上分析, BTC 鏈上分析, BTC 鏈上數據, 鏈上指標, MVRV, SOPR, NUPL, 已實現價格, 短期持有者成本, 長期持有者, 籌碼分布, 大戶, 交易所淨流量',
          kh='比特币链上数据分析, 比特币链上分析, BTC 链上数据, 链上指标, MVRV, SOPR, NUPL, 已实现价格, 短期持有者成本, 长期持有者, 筹码分布, 巨鲸, 交易所净流入',
          ke='Bitcoin on-chain analysis, BTC on-chain data, on-chain indicators, MVRV, SOPR, NUPL, realized price, short-term holder cost basis, long-term holders, URPD, whales, exchange netflow',
          iz='比特幣鏈上分析看的是比特幣在區塊鏈上的實際移動：每一枚幣上次換手的價格、誰拿著、拿了多久、賣出時是賺是賠。這一頁把 Daybreak 的鏈上圖分成四組：持有者成本與籌碼、獲利與虧損、持有者在做什麼、礦工。資料主要來自 Bitview、CheckOnChain 和 CoinMetrics，每張圖每天更新，都寫出表態和理由。',

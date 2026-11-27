@@ -1,5 +1,5 @@
 """2026-11-06 使用者要求（「Bitview 還有什麼圖表可以搬過來的」→「推薦的都做」）：用 Bitview（免費、不佔 bitcoin-data 額度）再做六項。
-賣方風險比（ssr_viz）、長短期持有者 NUPL（nupl_viz）、儲備風險（rr_viz）、AVIV（aviv_viz）、依持有時間的實現獲利／虧損（age_viz）、
+賣方風險比（ssr_viz）、長短期持有者 NUPL（nupl_viz）、儲備風險（rr_viz）、AVIV（aviv_viz）、依持有時間的已實現獲利／虧損（age_viz）、
 Dormancy 與 Liveliness（dorm_viz）。每項都附歷次頂部／底部的讀值與回測，只作讀值、不是買賣訊號。
 bv＝bitview.cols(rows)；px＝統一收盤（PXC），缺日用 Bitview 自己的收盤。x 一律為 1970-01-01 起的天數。"""
 import statistics as st
@@ -60,7 +60,7 @@ def _prep(bv, px, last, keys):
 
 
 # ---------- 賣方風險比 ----------
-# 賣方風險比＝7 天實現的獲利＋虧損 ÷ 實現市值（Bitview，全網／短期持有者／長期持有者）：賣出的人一共「兌現」了多少帳面損益。
+# 賣方風險比＝7 天實現的獲利＋虧損 ÷ 已實現市值（Bitview，全網／短期持有者／長期持有者）：賣出的人一共「兌現」了多少帳面損益。
 #   很低＝賣出的人很少、而且賣價接近成本，市場在找新的平衡（常在盤整末端、底部區）；很高＝大量獲利了結或認賠（頂部、恐慌）。
 #   低檔區＝2012 年起全網值最低的 10%（寫死、不回頭調）。頂部的高點一輪比一輪低（2013 0.70、2017 0.23、2021 0.14），只比相對位置
 def ssr_viz(bv, px, last, tops=(), bottoms=(), step=4):
@@ -81,7 +81,7 @@ def ssr_viz(bv, px, last, tops=(), bottoms=(), step=4):
     return dict(date=d1, all=a[d1], sth=s_[d1], lth=l_[d1], all30=a[d30] if d30 else None, pct=_pct(a, D, a[d1]), pct_s=_pct(s_, D, s_[d1]), pct_l=_pct(l_, D, l_[d1]),
                 pct4=p4.get(d1), lo4=l4.get(d1), n_recent=sum(1 for e in eps if e['start'] >= '2022-01-01'), lo=round(lo, 6), hi=round(hi, 6), run=run, eps=eps[-10:], n_eps=len(eps), r90=_stat([e['r90'] for e in eps]), r365=_stat([e['r365'] for e in eps]),
                 base90=_base(D, ix, P, 90, FROM), base365=_base(D, ix, P, 365, FROM), tops=tp, bottoms=bt, rows=rows, src='Bitview',
-                note='7 天實現獲利＋虧損 ÷ 實現市值（Bitview，逐筆 UTXO）；低檔區＝全網近 4 年滾動百分位 ≤ 10（頂部一輪比一輪低）；只作讀值')
+                note='7 天已實現獲利＋虧損 ÷ 已實現市值（Bitview，逐筆 UTXO）；低檔區＝全網近 4 年滾動百分位 ≤ 10（頂部一輪比一輪低）；只作讀值')
 
 
 # ---------- 長短期持有者 NUPL ----------
@@ -164,7 +164,7 @@ def aviv_viz(bv, px, last, tops=(), bottoms=(), step=4):
                 note='價格 ÷ 真實市場均價（Bitview aviv，Cointime）；低於 1＝活躍投資人整體虧損；只作讀值')
 
 
-# ---------- 依持有時間的實現獲利／虧損 ----------
+# ---------- 依持有時間的已實現獲利／虧損 ----------
 # 每天賣出的幣依「持有多久」分 6 組，各組實現的獲利與虧損（美元，Bitview 逐筆 UTXO）；看 30 天合計各組佔多少，回答「是老幣在賣還是短線在賣」
 AGE_LAB = ['lt1m', 'm1_6', 'm6_12', 'y1_2', 'y2_5', 'y5p']
 

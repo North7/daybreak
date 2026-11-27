@@ -47,7 +47,7 @@ def build(mv, ex, sth, tmm, last, src='bitcoin-data'):
     """mv：CoinMetrics (date, price, mvrv, mktcap, supply)；ex：(date, 交易所供給)；sth、tmm：{date: 美元}（src 那一家，2026-11-04 起是 Bitview）。"""
     d = [x[0] for x in mv]; p = [x[1] for x in mv]; m = [x[2] for x in mv]; rc = [x[3] / x[2] for x in mv]
     start = (dt.date.fromisoformat(d[-1]) - dt.timedelta(days=365 * YEARS)).isoformat(); i0 = bisect.bisect_left(d, start)
-    V = dict(start=start, step=STEP, source=f'價格與 MVRV、實現市值、交易所供給：CoinMetrics；短期持有者成本、真實市場均價：{src}', cost_src=src)
+    V = dict(start=start, step=STEP, source=f'價格與 MVRV、已實現市值、交易所供給：CoinMetrics；短期持有者成本、真實市場均價：{src}', cost_src=src)
     V['px'] = thin([[dn(d[k]), round(p[k])] for k in range(i0, len(d))])
     # 12 個月動能：一年前的價格（往後延伸 AHEAD 天：未來每一天要比的那個價格現在就已知道）
     ago = []
@@ -65,7 +65,7 @@ def build(mv, ex, sth, tmm, last, src='bitcoin-data'):
     # MVRV 與自己的一年均值（與燈號同算法：最近 365 筆平均）
     V['mvrv1y'] = dict(v=thin([[dn(d[k]), round(m[k], 3)] for k in range(i0, len(d))]),
                        ma=thin([[dn(d[k]), round(sum(m[k - 364:k + 1]) / 365, 3)] for k in range(max(i0, 364), len(d))]))
-    # 資金流入：實現市值 30 日變化（%）
+    # 資金流入：已實現市值 30 日變化（%）
     rg = []
     for k in range(i0, len(d)):
         j = _at_or_before(d, (dt.date.fromisoformat(d[k]) - dt.timedelta(days=30)).isoformat())
@@ -125,7 +125,7 @@ def sopr_viz(sopr, px, days=365, depth=0.995, near=0.04, within=60):
 
 
 def sth_pnl_viz(pnl, px, days=365):
-    """2026-10-23 使用者要求：短期持有者實現獲利與實現虧損（CheckOnChain，BTC，已平滑）。只作讀值、不連動任何規則。
+    """2026-10-23 使用者要求：短期持有者已實現獲利與已實現虧損（CheckOnChain，BTC，已平滑）。只作讀值、不連動任何規則。
     和 7 天前比，各自變化多少，用來分辨獲利 ÷ 虧損的升降是哪一邊帶動的（兩邊取對數變化比大小）。"""
     s = sorted(pnl.items())
     if len(s) < 30: return None
@@ -251,7 +251,7 @@ def sec_viz(ser, last, th=SEC_TH, block=4):
                 note='CheckOnChain 賣方衰竭常數＝獲利供給比例 × 30 天價格波動；刻度和 Glassnode 版不同；極端區＝低於 0.13（本身歷史最低約 1%）；只作讀值')
 
 
-# 2026-11-02 使用者要求（Glassnode 的 Realized P/L 比率圖）：全網實現獲利 ÷ 實現虧損，取 90 天平均（Glassnode 圖的做法），資料取自 CheckOnChain（coc.get_rpl）。
+# 2026-11-02 使用者要求（Glassnode 的 Realized P/L 比率圖）：全網已實現獲利 ÷ 已實現虧損，取 90 天平均（Glassnode 圖的做法），資料取自 CheckOnChain（coc.get_rpl）。
 #   低於 1＝認賠多於獲利（紅色）。歷史上大段紅色都在熊市；回到 1 以上之後多半到週期頂部都沒再跌破，但 2019/12–2020/1 例外。只作讀值
 RPL_N, RPL_FROM, RPL_MAJOR = 90, '2011-01-01', 60
 
@@ -297,12 +297,12 @@ def rpl_viz(ser, last, block=4):
     return dict(date=d1, value=round(m[d1], 3), price=round(px[d1]), above=above, since=M[k], since_days=dn(d1) - dn(M[k]),
                 first2=next((d for d in M[k:] if m[d] >= 2), None) if above else None,
                 daily=[[d, round(ser[d][0], 3)] for d in D[-14:]], last7=round(l7, 3), proj=proj, reds=reds, rows=rows,
-                note='CheckOnChain 全網實現獲利 ÷ 實現虧損，每日比值取 90 天平均；低於 1＝認賠多於獲利；試算假設每日比值維持最近 7 天平均；只作讀值')
+                note='CheckOnChain 全網已實現獲利 ÷ 已實現虧損，每日比值取 90 天平均；低於 1＝認賠多於獲利；試算假設每日比值維持最近 7 天平均；只作讀值')
 
 
 # 2026-11-03 使用者要求（CryptoPainter 的 JT_Regime_Osc 不公開，做我們自己的版本）：週線多空分數。
 #   用網站已有、可追溯到 2013 年的六個訊號合成一條以零為中心的柱狀圖，每一項都看得到原因：
-#   200 日均線位置、12 個月動能、MVRV 對一年均值、實現市值 30 日、交易所供給 90 日（減少為正）、實現獲利 ÷ 虧損 90 天平均（log10）。
+#   200 日均線位置、12 個月動能、MVRV 對一年均值、已實現市值 30 日、交易所供給 90 日（減少為正）、已實現獲利 ÷ 虧損 90 天平均（log10）。
 #   每項先除以自己 2013 年起絕對值的中位數再取 tanh（典型大小約 ±0.76、極端趨近 ±1），六項平均後乘 6，範圍 −6 到 +6。
 #   多空翻轉＝連續 4 週在另一邊才算（第一週為翻轉日），避免在零軸附近來回跳。只作讀值
 REG_KEYS = ('d200', 'mom12', 'mvrv1y', 'rc30', 'xs90', 'rpl')
@@ -310,7 +310,7 @@ REG_FROM, REG_CONFIRM = '2013-01-01', 4
 
 
 def regime_viz(cm, rpl, last, step=7, px=None):
-    """cm：CoinMetrics [(date, 價格, MVRV, 市值, 流通量, 交易所供給)]；rpl：{date: 每日實現獲利 ÷ 虧損 或 (比值, 價格)}。"""
+    """cm：CoinMetrics [(date, 價格, MVRV, 市值, 流通量, 交易所供給)]；rpl：{date: 每日已實現獲利 ÷ 虧損 或 (比值, 價格)}。"""
     rows = [x for x in cm if x[0] <= last and x[2]]
     D = [x[0] for x in rows]; P = [x[1] for x in rows]; MV = [x[2] for x in rows]; RC = [x[3] / x[2] for x in rows]; EX = [x[5] for x in rows]
     n = len(D)
@@ -333,7 +333,7 @@ def regime_viz(cm, rpl, last, step=7, px=None):
     sc = {}
     for k in REG_KEYS:
         a = sorted(abs(raw[d][k]) for d in days if raw[d][k] is not None)
-        sc[k] = (a[len(a) // 2] if a else 0) or 1e-9   # 2026-11-04：某一項整條缺（例如實現損益比沒抓到）時其餘五項照算，不讓整張消失
+        sc[k] = (a[len(a) // 2] if a else 0) or 1e-9   # 2026-11-04：某一項整條缺（例如已實現損益比沒抓到）時其餘五項照算，不讓整張消失
     def score(d):
         v = [math.tanh(raw[d][k] / sc[k]) for k in REG_KEYS if raw[d][k] is not None]
         return sum(v) / len(v) * len(REG_KEYS) if v else None
@@ -358,7 +358,7 @@ def regime_viz(cm, rpl, last, step=7, px=None):
                 since=last_f['date'] if last_f else None, weeks=(dn(d1) - dn(last_f['date'])) // 7 if last_f else None, pending=pend,
                 comps=[dict(key=k, raw=round(raw[d1][k], 4) if raw[d1][k] is not None else None, val=round(math.tanh(raw[d1][k] / sc[k]), 2) if raw[d1][k] is not None else None) for k in REG_KEYS],
                 scales={k: round(sc[k], 4) for k in REG_KEYS}, flips=flips, rows=[[dn(d), round(v, 2), round(pi[d])] for d, v in S],
-                note='六項（200 日均線位置、12 個月動能、MVRV 對一年均值、實現市值 30 日、交易所供給 90 日、實現獲利 ÷ 虧損 90 天）各除以自己的歷史中位數取 tanh 後平均 ×6；連續 4 週在另一邊才算翻轉；只作讀值')
+                note='六項（200 日均線位置、12 個月動能、MVRV 對一年均值、已實現市值 30 日、交易所供給 90 日、已實現獲利 ÷ 虧損 90 天）各除以自己的歷史中位數取 tanh 後平均 ×6；連續 4 週在另一邊才算翻轉；只作讀值')
 
 
 # 2026-11-03 使用者要求（CryptoQuant 的 Apparent Demand，@xwinfinance 的圖）：表觀需求（30 天合計）＝30 天新挖出的幣 − 30 天內 1 年以上未動供給的變化。
@@ -629,7 +629,7 @@ def sth_bands_viz(bv, px, last, step=3):
                 note='短期持有者成本（Bitview）×（近 4 年價格 ÷ 成本的平均 ± k 個標準差）；Glassnode 的同類模型；只作讀值')
 
 
-# 2026-11-04 使用者要求（6M–12M 與 12M–18M 成本線，原圖用 Bitview／BRK）：兩個年齡層的平均買價（實現價格）。資料 Bitview（bitview.get）。
+# 2026-11-04 使用者要求（6M–12M 與 12M–18M 成本線，原圖用 Bitview／BRK）：兩個年齡層的平均買價（已實現價格）。資料 Bitview（bitview.get）。
 #   6–12 個月線跌破 12–18 個月線（死叉）大致在熊底附近，重新上穿（金叉）在主升段前後；交叉日與間隔照實列出。只作讀值
 AC_FROM, AC_X = '2015-01-01', '2012-01-01'   # 圖從 2015 起（2014 年 12–18 個月線還在反映 2012–13 年的幣，會把刻度拉到 10 美元）
 
@@ -653,7 +653,7 @@ def age_cost_viz(bv, px, last, step=4):
     return dict(date=d1, src='Bitview', rows=rows, crosses=[x for x in xs if x['date'] >= AC_FROM], c612=round(a[d1]), c1218=round(b[d1]),
                 gap_pct=round((a[d1] / b[d1] - 1) * 100, 1), price=round(P(d1)), last_cross=lx, days_since=dn(d1) - dn(lx['date']) if lx else None,
                 c36=_c36_view(c3, P, D, d1), c1m=_c1m_view(c1, P, D, d1, bv.get('sth') or {}),
-                note='Bitview：6–12 個月＝6–9、9–12 個月兩段的實現市值合計 ÷ 供給合計；12–18 個月＝age_1y_to_18m_realized_price；3–6 個月＝3–4、4–5、5–6 個月三段合計；只作讀值')
+                note='Bitview：6–12 個月＝6–9、9–12 個月兩段的已實現市值合計 ÷ 供給合計；12–18 個月＝age_1y_to_18m_realized_price；3–6 個月＝3–4、4–5、5–6 個月三段合計；只作讀值')
 
 
 # 2026-11-05 使用者要求（X 帳號掃描：CryptoQuant 的 Trader Realized Price、短期持有者成本）：1 週–1 個月持幣成本（Bitview age_1w_to_1m_realized_price）＝最近一個月進場、
@@ -767,8 +767,8 @@ def levels_viz(bv, px, last, step=2):
                 note='價格、200／365 日均線、50 週均線（週收盤算法：最近 49 根週 K 收盤＋當天收盤）（統一收盤）與 Bitview 的短期持有者成本、真實市場均價、實現價、長期持有者成本、活躍投資人成本（rows 第 10 欄）；只作讀值')
 
 
-# 2026-11-05 使用者要求（Look Into Bitcoin〈Bitcoin Cycle Capital Flows〉）：實現市值加權的幣齡，1 個月內換手（投機、新錢）與 1–2 年沒動（長線、循環投資人）
-#   各佔全體實現市值的 %（Bitview）。頂部時 1 個月內的比例衝高（2017 年 66%、2021 年 51%），熊底時 1–2 年的比例最高（2019 年 42%、2022 年 47%）。只作讀值
+# 2026-11-05 使用者要求（Look Into Bitcoin〈Bitcoin Cycle Capital Flows〉）：已實現市值加權的幣齡，1 個月內換手（投機、新錢）與 1–2 年沒動（長線、循環投資人）
+#   各佔全體已實現市值的 %（Bitview）。頂部時 1 個月內的比例衝高（2017 年 66%、2021 年 51%），熊底時 1–2 年的比例最高（2019 年 42%、2022 年 47%）。只作讀值
 CF_FROM = '2015-06-01'
 
 
@@ -793,7 +793,7 @@ def capflow_viz(bv, px, last, step=3):
     return dict(date=d1, src='Bitview', price=round(P(d1)), m1=round(a[d1], 1), y12=round(b[d1], 1),
                 m1_30=round(a[d30], 1) if d30 else None, y12_30=round(b[d30], 1) if d30 else None, m1_1y=round(a[d365], 1) if d365 else None, y12_1y=round(b[d365], 1) if d365 else None,
                 peaks_m1=[[d, round(a[d], 1)] for d in _peaks(a, D, floor=15)], peaks_y12=[[d, round(b[d], 1)] for d in _peaks(b, D, floor=25)],
-                rows=rows, note='Bitview：1 個月內＝<1h、1h–1d、1d–1w、1w–1m 四段實現市值合計；1–2 年＝1y–18m、18m–2y；÷ 全體實現市值；只作讀值')
+                rows=rows, note='Bitview：1 個月內＝<1h、1h–1d、1d–1w、1w–1m 四段已實現市值合計；1–2 年＝1y–18m、18m–2y；÷ 全體已實現市值；只作讀值')
 
 
 # 2026-11-07 指標擴充（取代 2026-11-05 的四項短期持有者百分位版「短期壓力分數」）：本站自製的一對讀值，只用每日收盤。
@@ -913,9 +913,9 @@ def stress_viz(bv, px, last, step=3, keep=1095):
 
 
 # 2026-11-11 使用者要求：短期持有者集中止盈／集中認賠訊號（本站自製，Bitview 免費資料）。
-#   輸入：持有未滿 6 個月的幣每天的實現獲利、實現虧損（美元；Bitview 依持有時間分組，1 個月內＋1–6 個月兩組相加，比 155 天的短期持有者定義多出第 155–180 天的幣）
-#         ÷ 短期持有者實現市值（短期持有者成本 × 短期持有者供給）→ 每天賣出實現的獲利／虧損佔這群人總成本的比例，跨年份才能比。
-#   算法：5 日指數平均 → 和自己近 105 天比的 z 分數（今天 − 105 天平均）÷ 105 天標準差。止盈強度＝獲利那條的 z、認賠強度＝虧損那條的 z；圖上認賠畫成負值。
+#   輸入：持有未滿 6 個月的幣每天的已實現獲利、已實現虧損（美元；Bitview 依持有時間分組，1 個月內＋1–6 個月兩組相加，比 155 天的短期持有者定義多出第 155–180 天的幣）
+#         ÷ 短期持有者已實現市值（短期持有者成本 × 短期持有者供給）→ 每天賣出實現的獲利／虧損佔這群人總成本的比例，跨年份才能比。
+#   算法：5 日指數平均 → 和自己近 105 天比的 z 分數（今天 − 105 天平均）÷ 105 天標準差。已實現獲利強度＝獲利那條的 z、已實現虧損強度＝虧損那條的 z；圖上認賠畫成負值。
 #         強度 > 2＝集中止盈／集中認賠。相隔 14 天以上才算新的一次。
 #   2012 年起回測（2026-11-11）：集中認賠 64 次，30 天後 54% 上漲、中位 +1.7%，90 天後 56%、+10.6%，和任一天（57%、+3.0%；60%、+10.1%）沒有差別，不是低風險訊號。
 #     集中止盈 57 次，整體也不是壞事（90 天後 63% 上漲、+12.6%）；差別在位置：收盤在 200 日均線上方時 31 次裡 27 次 90 天後上漲（中位 +35%），
@@ -930,7 +930,7 @@ def sthsig_viz(bv, px, last, step=3, keep=1095):
     D = [d for d in sorted(sth) if '2011-06-01' <= d <= last and P_(d) and sths.get(d)]
     if len(D) < 1500 or not G('ap1') or not G('al1'): return None
     n = len(D); P = [P_(d) for d in D]; al = 2 / (SS_EMA + 1)
-    def ema(a, b, rel):   # 兩個年齡組相加；rel＝除以短期持有者實現市值（%），否則留美元
+    def ema(a, b, rel):   # 兩個年齡組相加；rel＝除以短期持有者已實現市值（%），否則留美元
         out, e = [None] * n, None
         for i, d in enumerate(D):
             x, y = G(a).get(d), G(b).get(d)
@@ -1002,8 +1002,8 @@ def sthsig_viz(bv, px, last, step=3, keep=1095):
                 above200=bool(reg['up'](k)), sma200=round(ma[k]) if ma[k] else None,
                 tp=tp, cap=cp, base=BASE, runs=sorted(runs), rows=rows, since=D[i0], src='Bitview',
                 prm=dict(ema=SS_EMA, win=SS_WIN, th=SS_TH, gap=SS_GAP),
-                note='本站自製（Bitview）：持有未滿 6 個月的幣每天的實現獲利／虧損 ÷ 短期持有者實現市值，5 日指數平均後和自己近 105 天比的 z 分數；zp＝止盈強度、zl＝認賠強度（正值，圖上畫成負的），> 2＝集中止盈／集中認賠；'
-                     'rows＝[日, 收盤, 止盈強度, −認賠強度]，近 3 年每天、更早每 3 天取最大；runs＝[起, 迄, 1 止盈／0 認賠, 峰值日, 峰值]；tp／cap 的 all／up／dn＝全部、收盤在 200 日均線上方、下方的訊號之後 30／90 天；只作讀值、不是買賣訊號')
+                note='本站自製（Bitview）：持有未滿 6 個月的幣每天的已實現獲利／虧損 ÷ 短期持有者已實現市值，5 日指數平均後和自己近 105 天比的 z 分數；zp＝已實現獲利強度、zl＝已實現虧損強度（正值，圖上畫成負的），> 2＝集中止盈／集中認賠；'
+                     'rows＝[日, 收盤, 已實現獲利強度, −已實現虧損強度]，近 3 年每天、更早每 3 天取最大；runs＝[起, 迄, 1 止盈／0 認賠, 峰值日, 峰值]；tp／cap 的 all／up／dn＝全部、收盤在 200 日均線上方、下方的訊號之後 30／90 天；只作讀值、不是買賣訊號')
 
 # 2026-11-05 使用者要求（X 帳號掃描：頂部後 13 個月前幾輪跌 71–80%、這輪約 35%；回到前高花的時間比跌下去久）：各輪週期頂部之後，
 #   每天收盤 ÷ 頂部收盤，畫在同一個「頂部後第幾天」的橫軸上。頂部用 model.json 的 cycle_tops（收盤價），價格用統一收盤。
