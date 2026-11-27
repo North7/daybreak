@@ -363,7 +363,7 @@ def known_accounts():
 
 
 def no_quota_accounts():
-    """私人 watchlist 標 no_quota 的帳號：不佔「3 萬粉以上一天 1–2 則」額度，也不算進熟帳號比例（2026-11-14 起）；同一張圖一天一次也不算他（2026-11-15）。讀不到就當沒有。"""
+    """私人 watchlist 標 no_quota 的帳號：（「3 萬粉以上一天 1–2 則」11/27 起取消），也不算進熟帳號比例（2026-11-14 起）；同一張圖一天一次也不算他（2026-11-15）。讀不到就當沒有。"""
     try:
         import opsprivate
         W = json.load(open(opsprivate.path('replies', 'watchlist.json'), encoding='utf-8'))
@@ -444,7 +444,7 @@ def tone_notes(items):
     free = no_quota_accounts()
     big = [it for it in live if it.get('kind') != 'followup' and it.get('mode') != 'quote' and (it.get('followers') or 0) >= 30000
            and (it.get('author') or '').lower() not in free]
-    if len(big) > 2: out.append(f'3 萬粉以上的回覆 {len(big)} 則（{", ".join("#" + str(it["n"]) for it in big)}）：一天 1–2 則就好，其餘回 1k–3 萬粉的博主')
+    # 2026-11-27 使用者：「大帳號不設限」，取消「3 萬粉以上一天 1–2 則」的提醒（1 小時內、一律配圖照舊）
     noimg = [it['n'] for it in big if not it.get('image')]
     if noimg: out.append(f'3 萬粉以上的回覆沒配圖：{noimg}，曝光型一律配網站圖（真的沒有就在 note 寫原因）')
     # 2026-11-13 使用者同意：配圖門檻從 3 萬粉降到 1 萬粉（依據見私人倉庫 ops/replies/README.md）
