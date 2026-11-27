@@ -403,9 +403,9 @@ def build(L, N, E, dn):
     lr = o['lthrl']
     c_lthrl = dict(k='lthrl', zh='長期持有者已實現虧損', en='LTH realized loss', f='p3', rows=lr['rows'], p=2, ser=[ser(1, zh='已實現虧損 ÷ 市值', en='Realized loss ÷ market cap', col='c3', w=1.5)],
       dz='這是什麼：長期持有者是幣放了 155 天以上沒動的人。這張是他們最近 7 天賠錢賣出的金額，佔整個比特幣市值的比例；比例越高，代表連最能撐的人都在認賠出場。'
-         '怎麼看：上格是 BTC 價格，下格是這個比例。另外三個檢視看歷次「認賠高峰」和之後怎麼走。',
+         '怎麼看：上格是 BTC 價格，下格是這個比例。另外三個檢視看歷次「認賠高峰」和之後怎麼走，最後一個看賠錢賣的人裡長期持有者佔多少。',
       de='What it is: long-term holders are those whose coins sat unmoved for 155+ days. This is what they sold at a loss over the last 7 days, as a share of bitcoin\'s market cap; higher means even the most patient holders are selling at a loss. '
-         'How to read it: price on top, the share below. The other three views show each past loss peak and what followed.')
+         'How to read it: price on top, the share below. The next three views show each past loss peak and what followed; the last shows how much of all loss-selling comes from long-term holders.')
     lw_ = (o.get('bvx') or {}).get('lthw')
     if lw_ and lw_.get('eps'):   # 2026-11-26 長文 session 轉告使用者「整理成需求，給產品」：歷次認賠退潮對照，讀者自己追「退了沒、像哪一次」（bv_more 第 11 段）
         EP_, NW_ = lw_['eps'], lw_['now']; GC = lambda e: 'c3' if e['hi'] else 'c4'; ym_ = lambda d: '%s/%d' % (d[:4], int(d[5:7]))
@@ -463,6 +463,25 @@ def build(L, N, E, dn):
                de='What it is: the same loss peaks lined up on day 0, this time showing price: how far each close over the next 180 days sat above or below the peak-day close. '
                   'How to read it: faint lines are the individual cases. The two thick lines are medians: blue-violet for cases with 40%%+ of long-term holder coins underwater at the peak, teal for under 40%%; only cases with a full 180 days count, others are faint lines only. The orange line is this wave. The dashed line is the peak-day close; line ends show how far above or below it the median was after 180 days. '
                   'Caveats: only %d cases, and a median hides exceptions: in the 40%%+ group, late 2014 fell by half again (the lowest faint line). This is for comparing "which case does now resemble", not a forecast.' % len(EP_))]
+        sh_ = lw_.get('shr')
+        if sh_ and sh_.get('eps'):   # 2026-11-27 使用者看了 Glassnode「Long-Term Holders Led the Losses」說「加成檢視」：認賠的人裡長期持有者佔多少（bv_more 第 12 段）
+            MONS_ = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; E2 = sh_['eps']; dz2 = lambda d: '%s/%d/%d' % (d[:4], int(d[5:7]), int(d[8:10])); de2 = lambda d: '%s %d, %s' % (MONS_[int(d[5:7]) - 1], int(d[8:10]), d[:4])
+            dn2 = [e for e in E2 if not e['open']]; a9 = [abs(e['a90']) for e in E2 if e['a90'] is not None]; nd9 = sum(1 for e in E2 if e['a90'] is not None and e['a90'] < 0)
+            bw = [e for e in dn2 if e['b365'] is not None]; L_ = E2[-1]
+            if L_['open']: nzw = '這一輪 %s 進入，現在還在 50%% 以上。' % dz2(L_['a']); nwe = 'This cycle entered on %s and is still above 50%%. ' % de2(L_['a'])
+            else: nzw = '最近一段是 %s 到 %s，之後掉回 50%% 以下%s。' % (dz2(L_['a']), dz2(L_['b']), '，60 天內回到 50% 以上的話會併回同一段' if L_['fresh'] else ''); nwe = 'The latest stretch ran from %s to %s%s. ' % (de2(L_['a']), de2(L_['b']), '; a return above 50% within 60 days would join it back into the same stretch' if L_['fresh'] else '')
+            c_lthrl['modes'].append(dict(mz='佔全部認賠', me='Share of all losses', hz='賠錢賣的人裡，長期持有者佔多少（14 天合計）', he="Long-term holders' share of all realized losses (14-day sum)", src='Bitview · {d}',
+              f='p0', rng=0, p=2, hero=0, rows=sh_['rows'], ser=[ser(1, zh='長期持有者佔全部認賠', en='LTH share of realized loss', col='c3', w=1.3, fill=1)],
+              refs=[dict(v=50, col='k2', zh='一半', en='Half')], spans=[dict(a=e['adn'], b=e['bdn'], col='c3', op=.14) for e in E2],
+              leg=[['c3', '50% 以上的時段', 'Stretches above 50%', 'box']],
+              dz='這是什麼：每天賠錢賣出的人裡，長期持有者（幣放了 155 天以上沒動）佔多少。算法是他們 14 天的已實現虧損，除以全市場 14 天的已實現虧損。超過一半，代表認賠的主力從新進場的人換成了老手，過去多半出現在熊市後段。'
+                 '怎麼看：下格是這個比例，虛線是 50%%；淡紫色是 50%% 以上的時段（掉回去不到 60 天又回來的算同一段）。上格是 BTC 價格。%s'
+                 '歷史上（2013 年起 %d 段）：剛進入這個時段時，%d 次裡 %d 次 90 天後價格更低（跌 %d%%–%d%%），2015、2018、2022 年的熊市底部都在段裡面；掉回 50%% 以下之後一年，有大漲的，也有先再跌四成以上的。所以它說的是熊市走到哪個階段，不指方向。'
+                 '要保留的地方：只有 %d 段；Glassnode 會把同一個人的多個地址合併計算，Bitview 沒有，最近幾週我們的讀數比他低。' % (nzw, len(E2), len(a9), nd9, min(a9), max(a9), len(E2)),
+              de="What it is: among everyone selling at a loss, how much comes from long-term holders (coins unmoved for 155+ days): their 14-day realized loss divided by the whole market's. Above half means the bulk of loss-selling has shifted from newer buyers to seasoned holders, which has mostly happened late in bear markets. "
+                 'How to read it: the share is below, with a dashed 50%% line; shaded stretches are where it sat above 50%% (a return within 60 days counts as the same stretch). Price is on top. %s'
+                 'History (%d stretches since 2013): on entering, price was lower 90 days later in %d of %d cases (down %d%%–%d%%), and the 2015, 2018 and 2022 bear-market lows all fell inside a stretch; in the year after dropping back below 50%%, some cases rallied hard and some first fell another 40%% or more. So it describes how far a bear market has gone, not which way price goes next. '
+                 'Caveats: only %d stretches; Glassnode merges addresses that belong to the same owner and Bitview does not, so our recent readings run lower than theirs.' % (nwe, len(E2), nd9, len(a9), min(a9), max(a9), len(E2))))
     G = [
       dict(id='cost', zh='成本與位置', en='Cost and position', sz='價格相對各群人的成本在哪裡', se="Where price sits against each group's cost", charts=[c_sth, c_profit, c_aviv, c_rup, c_conc, c_lthloss]),
       dict(id='pnl', zh='賣出的人賺還是賠', en='Are sellers in profit or at a loss', sz='短期持有者和全市場賣出時是獲利還是認賠', se='Whether short-term holders, and the market as a whole, sell at a profit or a loss', charts=[c_sopr, c_pnl, c_conf, c_npl, c_n365]),

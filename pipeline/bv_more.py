@@ -33,6 +33,11 @@
   觸發之間隔 90 天以內算同一次，高峰取那一次裡最高的一天；退潮＝高峰之後第一次掉到高峰的 1/3 以下。套著＝高峰那天長期持有者虧損比例（不扣老幣）。
   2013 年起 8 次。分組照套著 40%：完整走完的 ≥40% 有 4 次，3 次退潮後半年內只再低 2%–9%，2014-12（40.1%）又跌了 53%；<40% 的 3 次再低 15%–52%。
   長文研究挑的 8 個日期有 3 個不同（2014-10、2025-11、2026-07，逐次挑的），網站照這裡的機械規則。只作讀值。
+12 長期持有者佔全部認賠的比例（2026-11-27 使用者看了 Glassnode「Long-Term Holders Led the Losses, as in Past Bears」後說「加成檢視」）：
+  長期持有者已實現虧損 ÷ 全體已實現虧損（realized_loss_sum_24h），各取 14 天合計。50% 以上＝賠錢賣的主力是長期持有者；
+  越過 50% 算一段，掉回 50% 以下不到 60 天又回來的併成同一段，不到 10 天的不算。歷次高峰和 Glassnode 對得上（85/84/95/79 vs 約 78/85/92/86），
+  近幾週比他低（他有實體歸併、平滑天數不同）。2013 年起 6 段：剛進入時 6 次 90 天後都更低（−14% 到 −37%），三次熊底都在段裡面；
+  掉回 50% 以下之後一年，各次差很多（+5% 到 +407%，之間最深 −4% 到 −48%）。不指方向，只描述階段。
 全部只作讀值。Bitview 改序列名稱時（https://bitview.space/api 的 What changed）整組會失敗，collect.py 只記 errors，build.py 沿用前一天的。"""
 import datetime as dt, json, subprocess, time
 
@@ -53,7 +58,7 @@ NAMES = ['price_close'] + ['bedrock_unweighted_floor_' + p for p in FP] + ['bedr
     + ['age_%s_transfer_volume_sum_24h' % a for a in A1 + A5] \
     + ['balance_%s_btc_%s' % (t, m) for t in TIERS for m in ('realized_cap', 'supply')] \
     + ['supply_in_profit', 'circulating_supply'] + ['%s_supply%s' % (a, x) for a in OLD10 for x in ('', '_in_profit')] + ['hashrate'] + ['coindays_destroyed_sum_24h'] \
-    + ['lth_supply', 'lth_supply_in_loss'] + ['vintage_%d_supply' % y for y in range(2009, 2013)] + ['lth_realized_loss_sum_24h']
+    + ['lth_supply', 'lth_supply_in_loss'] + ['vintage_%d_supply' % y for y in range(2009, 2013)] + ['lth_realized_loss_sum_24h', 'realized_loss_sum_24h']
 
 
 def _curl(url):
@@ -322,7 +327,34 @@ def build(last, S=None, pxc=None):
         blk = [k for k in range(i, min(N, i + 3)) if rl[k] is not None and px[k]]
         if not blk: continue
         for k in sorted(set([max(blk, key=lambda q: rl[q])]) | {k for k in blk if k in keep}): rows11.append([dnum(k), round(rl[k], 3), R0(px[k])])
-    lthw = dict(since='2013-01-01', th=.15, gap=90, eps=ev11, now=now11, rows=rows11)
+    # ── 12 長期持有者佔全部認賠的比例 ──
+    trl = S['realized_loss_sum_24h']; W12 = 14; sh12 = [None] * N
+    for i in range(W12 - 1, N):
+        a_ = sum((lrl[k] or 0) for k in range(i - W12 + 1, i + 1)); b_ = sum((trl[k] or 0) for k in range(i - W12 + 1, i + 1))
+        if b_ > 0: sh12[i] = min(100, a_ / b_ * 100)
+    if sh12[N - 1] is None: raise RuntimeError('Bitview 全體認賠最新一天缺值')
+    raw12, on_ = [], None
+    for i in range(a13, N):
+        v = sh12[i]
+        if v is None: continue
+        if on_ is None and v >= 50: on_ = i
+        if on_ is not None and v < 50: raw12.append([on_, i]); on_ = None
+    if on_ is not None: raw12.append([on_, None])
+    sp12 = []
+    for a_, b_ in raw12:   # 掉回 50% 以下不到 60 天又回來的，併成同一段；不到 10 天的短暫越線不算
+        if sp12 and sp12[-1][1] is not None and a_ - sp12[-1][1] < 60: sp12[-1][1] = b_
+        else: sp12.append([a_, b_])
+    sp12 = [q for q in sp12 if (q[1] if q[1] is not None else N) - q[0] >= 10]
+    e12 = []
+    for a_, b_ in sp12:
+        bb = b_ if b_ is not None else N - 1; lo_ = min((k for k in range(a_, bb + 1) if px[k]), key=lambda k: px[k])
+        e12.append(dict(a=day(a_), adn=dnum(a_), b=day(b_) if b_ is not None else None, bdn=dnum(bb), days=bb - a_, open=b_ is None, fresh=b_ is not None and N - 1 - b_ < 60,
+                        pk=round(max(sh12[k] for k in range(a_, bb + 1) if sh12[k] is not None)), pxa=R0(px[a_]), a90=fwd_(a_, 90), low=day(lo_), lowp=round((px[lo_] / px[a_] - 1) * 100),
+                        pxb=None if b_ is None else R0(px[b_]), b365=None if b_ is None else fwd_(b_, 365), bwst=None if b_ is None else lowp(b_, 365)))
+    ok12 = [v for v in sh12[a13:] if v is not None]
+    shr = dict(win=W12, th=50, gap=60, v=round(sh12[N - 1], 1), v30=round(sh12[N - 31], 1), eps=e12, pct50=round(sum(1 for v in ok12 if v >= 50) / len(ok12) * 100),
+               rows=[[dnum(i), round(sh12[i], 1), R0(px[i])] for i in sorted(set(range(ix('2014-01-01'), N, 3)) | set(range(N - 400, N))) if sh12[i] is not None and px[i]])
+    lthw = dict(since='2013-01-01', th=.15, gap=90, eps=ev11, now=now11, rows=rows11, shr=shr)
     return dict(date=last, src='Bitview', link='https://bitview.space', n=len(NAMES), floors=floors, pnl=pnl, dens=dens, old=old, tiers=tiers, psx=psx, lthx=lthx, hrib=hrib, cvdd=cvdd, vddm=vddm, lthw=lthw,
                 note='損失地板：虧損的幣佔供給的比例到歷史最糟 5%／2%／1%／0.5%／0.1% 時的價格，門檻逐日累積；賺賠分布：各賺賠幅度佔供給 %；集中度：現價 ±5% 內的幣佔供給 %；老幣移動：1 年以上、5 年以上的幣每天移動的顆數（7 日、30 日平均）；獲利供給：全體和扣掉 10 年以上的幣，在獲利的比例（7 日平均）；CVDD：累計（銷毀幣天數 × 價格）÷（創世起天數 × 600 萬）；VDD 倍數：（銷毀幣天數 × 價格）30 日均 ÷ 365 日均；只作讀值')
 
