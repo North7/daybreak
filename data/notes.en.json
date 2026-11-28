@@ -647,5 +647,31 @@
     "meaning": "The funding item on its list is now positive: weighted 2.81%. No newer issue on the listing; separately, K33 told The Block on Nov 27 that recent mathematical breakthroughs have not shown Bitcoin's cryptography to be compromised."
    }
   ]
- }
+ },
+  "cards": {
+    "dawn": "Bullish long term: valuations sit in the cheapest stretch of the cycle, but the weekly trend score is a week from flipping bearish, so this zone can last months. Heat back above 10 ends it.",
+    "avgd": "Leaning bullish: price sits far below most cost lines and averages, a cheap zone, yet past bear bottoms ran colder still. Long-term holders' paper profit is thin. Back above 40 means mid-range again.",
+    "p20": "Bullish in that the top is far off: market heat is under half the last cycle peak, and the top radar and Pi Cycle are cool. The warning line sits near $110,417. It says nothing about the bottom.",
+    "lthloss": "Bullish: the share of long-term holders underwater matches the last 3 bear bottoms, and the CVDD floor is close. But it hugs this cycle's high; a close below about $58,000 breaks the pattern.",
+    "cyccmp": "Neutral: this cycle is down roughly half from the top, while past cycles were down 75-83% at the same point, so the old bottom-in-a-year timetable doesn't fit. Breaking the June low would push the bottom later.",
+    "levels": "Bearish: the close is below the true market mean, so active investors are underwater, with the 200-day average and short-term holder cost overhead near $72K. Reclaiming $75,953 flips this back.",
+    "urpd": "Neutral: a thick wall sits at 60K-62K where holders break even and may sell, while below price there's no large pile all the way to 38K-40K. Coins that moved this week mostly moved at a loss.",
+    "strike": "Neutral: the biggest expiry holds about half of open interest, with puts stacked at $60,000 and calls at $80,000 as the two walls. Negative gamma below can amplify a drop; the max-pain pull is weak.",
+    "legs": "Bearish: still in a down leg, deeper than over 90% of the last 12 declines, with price circling the busiest trading zone of the past 20 days. A close at $67,627 would end the leg.",
+    "pullback": "Bearish: pressure signals have stacked for about a month, and past episodes left price roughly flat 90 days later. Yet the sell-pressure gauge shows a bottoming combo. Pressure eases once two items clear.",
+    "profit": "Bullish lean: nearly every short-term holder is underwater, an extreme bear-market reading. After the loss share topped 60%, price was higher 30 days later in 12 of 16 cases, though it can linger here.",
+    "sopr": "Bearish: short-term holders still sell below cost, and this dip went deeper than on 10/30, though realized losses on the retest were under half the 11/20 level. Back to breakeven means the handover is done.",
+    "rpl": "Bearish for now: the ratio is in past cycles' bottom zone but still at its low, with losses about 4x profits over 7 days. A rebound to 0.74 never saw a new low in 4 cases, though it confirms late.",
+    "miners": "Bearish: price is below the power breakeven of mainstream rigs while hashrate keeps rising, so miners face selling pressure, and the close is just above production cost. Back above $65,275 eases it.",
+    "etf": "Bearish: spot ETFs keep bleeding, with this outflow streak roughly 10x the coins miners produced over the same span, and Strategy sits below its cost. A run of net inflow days would mark buyers returning.",
+    "pr-us": "Neutral: most of the negative Coinbase premium is USDT itself trading below $1; strip that out and the US-offshore gap is normal. The real signal is stablecoins being redeemed for dollars.",
+    "ad": "Bearish: even after removing a year-old wallet-shuffle echo, 30-day and 1-year apparent demand are negative, spot and perp demand are fading, and no new capital has flowed in for 14 days.",
+    "whale": "Bearish: the 100-10K BTC tiers are still shedding coins, long-term holders keep net selling, and coins are moving to short-term hands. Gains in 10K+ wallets are mostly exchanges and custody, not buyers.",
+    "svd": "Bearish: market sellers dominated most of the past 7 days, large orders are net selling, and Coinbase spot selling is much heavier than usual. A 7-day flip to net buying would show buyers taking over.",
+    "stk": "Bearish: BTC fell more than twice as much as the Nasdaq over two months, still moves closely with it, and bonds price a hike, so macro offers no help. A 90-day win rate back above 50% would change that.",
+    "fh": "Neutral: longs pay a modest funding rate, lower than a month ago, and recent liquidations hit mostly longs, so leverage is not crowded. Above 30% would signal crowding; a flip negative often preceded gains.",
+    "vol": "Neutral on direction: implied volatility runs above realized and near-dated options cost more than longer ones, so traders are paying up for a big near-term move. It sizes the swing, not its direction.",
+    "oi": "Neutral: open interest holds more calls than puts, yet for 30 days premium has mostly gone into downside protection and puts trade richer than calls. The pull toward max pain before year-end expiry is weak.",
+    "fng": "Bearish near term: sentiment sits in extreme fear, among the lowest readings since 2018, while retail attention is only average. A first drop into extreme fear has often not been the bottom; above 25 exits it."
+  }
 }
