@@ -25,14 +25,14 @@ _cache = {}
 EVERGREEN = ['2120733066939482177']   # 11/12 One minute every morning to see where BTC stands（置頂）
 
 
-def fetch(url):
-    for n in range(3):
+def fetch(url, tries=3):
+    for n in range(tries):
         try:
             time.sleep(0.35)
             return json.load(urllib.request.urlopen(urllib.request.Request(url, headers=UA), timeout=25))
         except Exception:
-            if n == 2: raise
-            time.sleep(2)
+            if n == tries - 1: raise
+            time.sleep(2 + n * 2)
 
 
 def status(i):
@@ -77,11 +77,16 @@ def main():
     ours = list({t['id']: t for t in ours if (t.get('created_timestamp') or 0) >= t0}.values())
     for t in ours: t['_r0'] = r0
     # 舊原創（不含回覆）＋置頂文：留言窗口放寬到 --orig-reply-hours
-    olds, cur, have = [], None, {t['id'] for t in ours}
-    for _ in range(6):
+    # 2026-11-28：原創一頁只回 20 則（約 2–3 天），第 2 頁常吃到 404，原本 3 次失敗就默默 break，
+    # 11/25 CVDD 長文底下 11/26–11/27 三則留言（MceeyCare、yinghong1388、zhoujinyuanfafa）因此一直沒接，使用者在手機上發現。
+    # 改成多試幾次（6 次、間隔拉長），真的讀不到就在輸出最後列出來，不再只印到 stderr。
+    olds, cur, have, olds_fail = [], None, {t['id'] for t in ours}, None
+    for page in range(6):
         q = 'count=50' + (f'&cursor={urllib.parse.quote(cur)}' if cur else '')
-        try: d = fetch(f'https://api.fxtwitter.com/2/profile/{HANDLE}/statuses?{q}')
-        except Exception as e: print('讀取原創失敗', e, file=sys.stderr); break
+        try: d = fetch(f'https://api.fxtwitter.com/2/profile/{HANDLE}/statuses?{q}', tries=6)
+        except Exception as e:
+            olds_fail = f'原創列表第 {page + 1} 頁讀取失敗（{e}），已讀到 {time.strftime("%m/%d %H:%M", time.localtime(min(t.get("created_timestamp") or now for t in olds))) if olds else "無"} 為止'
+            print('讀取原創失敗', e, file=sys.stderr); break
         res = [t for t in d.get('results') or [] if (t.get('author') or {}).get('screen_name', '').lower() == HANDLE.lower() and not parent_of(t)]
         olds += res
         cur = ((d.get('cursor') or {}).get('bottom'))
@@ -142,6 +147,8 @@ def main():
         print(f'#{i} @{o["author"]}（{o["followers"] or 0:,} 粉{"，藍勾" if o["verified"] else ""}）{o["posted"]}  {tag}  {o["url"]}')
         print('   他：' + (o['text'] or '').replace('\n', ' ')[:200])
         print('   我們：' + (o['our_text'] or '').replace('\n', ' ')[:120])
+    if olds_fail:
+        print(f'\n⚠ {olds_fail}：{a.orig_days:g} 天內更早的原創底下沒掃到，請重跑一次，或在瀏覽器打開 https://x.com/notifications/mentions 補看')
     if gaps:
         print(f'\n⚠ 這 {len(gaps)} 則 fxtwitter 可能漏了留言，請在瀏覽器打開看底下有沒有還沒接的（或看 https://x.com/notifications/mentions）：')
         for p, why in gaps:
