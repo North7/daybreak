@@ -1,16 +1,16 @@
 {
- "date": "2026-11-26",
+ "date": "2026-11-27",
  "captions": true,
  "picks": [
   {
-   "id": "onchain/sopr",
-   "chart": "data/picks/onchain-sopr.png",
-   "chart_en": "data/picks/onchain-sopr-en.png",
+   "id": "cycle/regime",
+   "chart": "data/picks/cycle-regime.png",
+   "chart_en": "data/picks/cycle-regime-en.png",
    "name": {
-    "zh": "短期持有者 SOPR（已花費產出利潤率）",
-    "en": "Short-Term Holder SOPR"
+    "zh": "週線多空分數",
+    "en": "Weekly regime score"
    },
-   "link": "https://daybreak.aronlab.dev/app/?k=sopr"
+   "link": "https://daybreak.aronlab.dev/app/?k=regime"
   }
  ]
 }
