@@ -628,11 +628,47 @@ def mom_viz(bv, px, last, step=3):
         pk = max(D[k:], key=m.get); hump = dict(start=D[k], peak=pk, peak_v=round(m[pk]))
     rows = thin([[dn(d), round(P(d)), round(m[d], 1)] for d in D if d >= '2017-01-01'], step)
     dd = [x['dd60'] for x in dv if x['dd60'] is not None]
-    return dict(date=d1, value=round(m[d1], 1), hump=hump, divs=[x for x in dv if x['date'] >= '2017-01-01'], n=len(dv), dd60_med=round(st.median(dd), 1) if dd else None,
+    w2 = _w2(D, ix, P, m)
+    return dict(date=d1, value=round(m[d1], 1), hump=hump, w2=w2, divs=[x for x in dv if x['date'] >= '2017-01-01'], n=len(dv), dd60_med=round(st.median(dd), 1) if dd else None,
                 dd60_q=[round(sorted(dd)[len(dd) // 4], 1), round(sorted(dd)[len(dd) * 3 // 4], 1)] if len(dd) >= 4 else None,
                 r30=_stat([x['r30'] for x in dv]), base_dd60=(lambda v: round(st.median(v), 1) if v else None)([x for d in D if d >= MO_FROM for x in [_dd(D, ix, P, d, 60)] if x is not None]),
                 base30=_base(D, ix, P, 30, MO_FROM), rows=rows, src='Bitview',
                 note='（全網 SOPR − 1）× 每日銷毀幣天數，14 日指數平均（千）；頂背離＝價格擺動新高而正值峰值較低；只作讀值')
+
+
+# 2026-11-28 使用者要求（看了一則「勢能先一個深谷、再一個較淺的第二谷，就是值得注意的位置」的讀法後說「加」）：第二個低谷。
+#   深谷＝勢能為負、落在自己過去一年最低 5% 以內，而且是前後 20 天最低；之後 10–75 天內出現較淺的負值低谷（前後 7 天最低），
+#   兩谷之間至少回升深谷深度的 30%；第二谷之後第 7 天勢能仍高於第二谷才算成立（標在那一天）。這個定義抓得到 2026 年 2 月、6 月那兩次。
+#   回測：2015 年起 15 次，90 天後較高 7 次，中位數 −8%，比任一天差；只有「極端深谷」（低於自己過去一年標準差的 −1 倍）那 8 次比較好，
+#   但那種深谷多半本身就在週期底部，這一輪還沒出現。門檻是看過歷史才定的，只作讀值
+W2_Q, W2_Z, W2_RISE, W2_LO, W2_HI, W2_K1, W2_K2, W2_CONF = .05, -1.0, .3, 10, 75, 20, 7, 7
+
+
+def _w2(D, ix, P, m):
+    import math
+    v = [m[d] for d in D]; N = len(D); th, sd = [None] * N, [None] * N
+    for i in range(365, N):
+        w = v[i - 365:i]; th[i] = sorted(w)[int(365 * W2_Q)]; mu = sum(w) / 365; sd[i] = math.sqrt(sum((x - mu) ** 2 for x in w) / 365)
+    lmin = lambda i, k: all(v[i] <= v[j] for j in range(max(0, i - k), min(N, i + k + 1)))
+
+    def scan(deep_ok):
+        ev, cur = [], None
+        for a in [i for i in range(365, N) if D[i] >= MO_FROM and v[i] < 0 and deep_ok(i) and lmin(i, W2_K1)]:
+            b2 = next((b for b in range(a + W2_LO, min(N, a + W2_HI)) if v[b] < 0 and v[b] > v[a] and lmin(b, W2_K2)
+                       and max(v[a:b]) - v[a] >= W2_RISE * -v[a] and max(v[a:b]) > v[b]), None)
+            if b2 is not None and b2 + W2_CONF < N and v[b2 + W2_CONF] > v[b2]:
+                s = b2 + W2_CONF
+                if not ev or ev[-1]['t2'] != D[b2]:
+                    ev.append(dict(t1=D[a], v1=round(v[a], 1), t2=D[b2], v2=round(v[b2], 1), date=D[s], v=round(v[s], 1), price=round(P(D[s])),
+                                   r90=_fwd(D, ix, P, D[s], 90), r180=_fwd(D, ix, P, D[s], 180), dd180=_dd(D, ix, P, D[s], 180), x=bool(sd[a] and v[a] / sd[a] <= W2_Z)))
+            elif N - 1 - a < W2_HI:   # 最近的深谷，第二谷還沒成立
+                cur = dict(t1=D[a], v1=round(v[a], 1), need=round(v[a] * (1 - W2_RISE), 1), hi=round(max(v[a:]), 1),
+                           risen=max(v[a:]) - v[a] >= W2_RISE * -v[a], days_left=W2_HI - (N - 1 - a), x=bool(sd[a] and v[a] / sd[a] <= W2_Z))
+        return ev, cur
+    ev, cur = scan(lambda i: v[i] <= th[i])
+    xe = [e for e in ev if e['x']]
+    return dict(eps=ev, cur=cur, r90=_stat([e['r90'] for e in ev]), r180=_stat([e['r180'] for e in ev]), dd180=[e['dd180'] for e in ev if e['dd180'] is not None],
+                x90=_stat([e['r90'] for e in xe]), base90=_base(D, ix, P, 90, MO_FROM))
 
 
 # ---------- 回調壓力清單 ----------

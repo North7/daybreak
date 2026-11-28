@@ -372,13 +372,25 @@ def build(L, N, E, dn):
       zones=[dict(lo=None, hi=sth_, col='dn', zh='在極端區', en='In the extreme zone', nz='極端區', ne='the extreme zone')], refs=[dict(v=sth_, col='dn')], leg=[['dn', '極端區（低於 %g）' % sth_, 'Extreme zone (below %g)' % sth_, 'box']],
       marks=[dict(d=dn(h['low_date']), v=h['low'], col='dn', up=0, zh=h['low_date'][:7].replace('-', '/'), en=h['low_date'][:7].replace('-', '/')) for h in se['hits']],
       dz='獲利供給比例乘上 30 天波動率。兩個都低，代表賣方快沒力了。圓圈是歷次跌進極端區的低點。', de='Supply in profit times 30-day volatility. When both are low, sellers are running out of force. Circles mark past lows inside the extreme zone.')
-    mo_ = o['mom']; dv = mo_['divs']
+    mo_ = o['mom']; dv = mo_['divs']; w2 = mo_['w2']; pz = lambda v: ('%+.0f%%' % v).replace('-', '−')
     c_mom = dict(k='mom', zh='鏈上勢能', en='On-chain momentum', f='s1', rows=mo_['rows'], p=1, tf='slog', ser=[ser(2, zh='鏈上勢能', en='On-chain momentum', t='sign', base=0, w=1.3)],
       links=[dict(a=dn(x['prev']), b=dn(x['date']), pa=x['prev_price'], pb=x['price'], va=x['za'], vb=x['zb'], col='c5', dash='5 4',
                   zh=('頂背離 %s %s%%' % (x['date'][5:].replace('-', '/'), ('%+.0f' % x['dd60']).replace('-', '−'))) if x in dv[-3:] and x.get('dd60') is not None else None,
                   en=('Bear div %s %s%%' % (x['date'][5:].replace('-', '/'), ('%+.0f' % x['dd60']).replace('-', '−'))) if x in dv[-3:] and x.get('dd60') is not None else None) for x in dv],
-      leg=[['up', '獲利了結（正）', 'Profit-taking (positive)', 'box'], ['dn', '已實現虧損（負）', 'Loss-taking (negative)', 'box'], ['c5', '頂背離', 'Bearish divergence', 'dash']],
-      dz='（全網 SOPR − 1）乘上每日銷毀的幣天數，取 14 日平均。虛線是頂背離：價格創新高，勢能的高點卻比較低。', de='(Network SOPR − 1) times coin-days destroyed, 14-day average. Dashed lines are bearish divergences: price makes a new high while momentum peaks lower.')
+      marks=[dict(d=dn(e['date']), v=e['v'], col='c3', up=0, zh='%s %s' % (e['date'][:7].replace('-', '/'), '—' if e['r90'] is None else ('%+.0f%%' % e['r90']).replace('-', '−')),
+                  en='%s %s' % (e['date'][:7].replace('-', '/'), '—' if e['r90'] is None else ('%+.0f%%' % e['r90']).replace('-', '−'))) for e in w2['eps'] if e['date'] >= '2017-01-01'],
+      leg=[['up', '獲利了結（正）', 'Profit-taking (positive)', 'box'], ['dn', '已實現虧損（負）', 'Loss-taking (negative)', 'box'], ['c5', '頂背離', 'Bearish divergence', 'dash'],
+           ['c3', '第二個低谷成立，旁邊是之後 90 天的漲跌', 'Second trough confirmed, with the 90-day change after', 'ring']],
+      dz='（全網 SOPR − 1）乘上每日銷毀的幣天數，取 14 日平均。虛線是頂背離：價格創新高，勢能的高點卻比較低。'
+         '圓圈是「第二個低谷」：勢能先跌到自己過去一年最低 5%% 以內的深谷，回升至少三成後，75 天內再出現一個比較淺的低谷，7 天後還在回升就算成立。'
+         '有人把它當成值得注意的位置。2015 年起 %d 次，90 天後較高 %d 次，中位數 %s；任一天是 %d%% 較高、中位數 %s。'
+         '其中深谷特別深的 %d 次（低於自己一年波動的一倍），%d 次 90 天後較高，但這種深谷多半本身就在週期底部，這一輪還沒出現過。門檻是看過歷史才定的，只作讀值。'
+         % (w2['r90']['n'], w2['r90']['up'], pz(w2['r90']['med']), w2['base90']['up'], pz(w2['base90']['med']), w2['x90']['n'], w2['x90']['up']),
+      de='(Network SOPR − 1) times coin-days destroyed, 14-day average. Dashed lines are bearish divergences: price makes a new high while momentum peaks lower. '
+         'Circles mark a "second trough": momentum first falls into its bottom 5%% of the past year, recovers at least 30%%, then makes a shallower low within 75 days that is still rising 7 days later. '
+         'Some read this as a spot worth watching. Since 2015 it happened %d times; price was higher 90 days later %d times, median %s, against %d%% higher and a median of %s for any day. '
+         'The %d cases with an extra-deep first trough (below −1 standard deviation of its past year) were higher %d times, but those troughs mostly sat at cycle lows themselves, and none has appeared this cycle. The thresholds were set after looking at history; reading only.'
+         % (w2['r90']['n'], w2['r90']['up'], pz(w2['r90']['med']), w2['base90']['up'], pz(w2['base90']['med']), w2['x90']['n'], w2['x90']['up']))
     # ── 長期持有者與大戶 ──
     lc = o['lth_color']
     c_lth = dict(k='lthnet', zh='長期持有者 30 日淨部位變化', en='LTH 30-day net position change', f='usd0', rows=lc['rows'], one=1, hero=1,
