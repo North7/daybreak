@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """賣壓頁的讀數（2026-11-17，取代舊版抽來的讀數；規則見 reads.py）。每個函式回傳 (一句結論中, 英, [最多三條事實])"""
+import datetime as dt
 from reads import sg, pc, pu, n0, sn0, wan, kb, yi, bn, md, ymd, ym, ord_en, it, M, mde, ymde, yme
 
 PBN = dict(sth=('回到短期成本', 'price back at short-term holder cost'), psip=('獲利供給 ≤65%', 'supply in profit ≤ 65%'), sthl=('短期虧損 ≥50%', 'short-term holders in loss ≥ 50%'),
@@ -189,10 +190,32 @@ def sec(L):
 def mom(L):
     m = L['onchain']['mom']; v = m['value']; ld = m['divs'][-1]
     sz = '鏈上勢能 %s：%s。' % (sg(v, 0), '賣出的幣整體在認賠' if v < 0 else '賣出的幣整體有獲利'); se = 'On-chain momentum is %s: %s.' % (sg(v, 0), 'coins sold are at a loss overall' if v < 0 else 'coins sold are in profit overall')
-    return sz, se, [
-        it('現在', 'Now', sg(v, 0), sg(v, 0), 'down' if v < 0 else 'up', '負值代表獲利了結的推力暫時消失。' if v < 0 else '正值代表獲利了結在推動。', 'Negative means the push from profit-taking has faded for now.' if v < 0 else 'Positive means profit-taking is driving it.'),
+    w = _w2(m) if v < 0 else []   # 讀數最多三條：負值時講第二個低谷，正值時講頂背離
+    now = it('現在', 'Now', sg(v, 0), sg(v, 0), 'down' if v < 0 else 'up', '負值代表獲利了結的推力暫時消失。' if v < 0 else '正值代表獲利了結在推動。', 'Negative means the push from profit-taking has faded for now.' if v < 0 else 'Positive means profit-taking is driving it.')
+    if w: return sz, se, [now] + w[:2]
+    return sz, se, [now,
         it('頂背離之後', 'After top divergences', pc(m['dd60_med'], 0), pc(m['dd60_med'], 0), 'neu', '%d 次，60 天內最大跌幅中位數 %s（任一天 %s）。' % (m['n'], pc(m['dd60_med']), pc(m['base_dd60'])), '%d cases; median worst drop within 60 days %s (any day: %s).' % (m['n'], pc(m['dd60_med']), pc(m['base_dd60']))),
         it('最近一次頂背離', 'Last top divergence', ym(ld['date']), yme(ld['date']), 'neu', '%s，之後 60 天最多跌 %s。' % (ymd(ld['date']), pc(ld['dd60'], 0)), '%s; it fell as much as %s over the next 60 days.' % (ymde(ld['date']), pc(ld['dd60'], 0)))]
+
+def _w2(m):   # 2026-11-28 第二個低谷（oc_extra._w2）：現在走到哪一步、歷次之後 90 天
+    w = m.get('w2')
+    if not w: return []
+    c, E, r, b = w['cur'], w['eps'], w['r90'], w['base90']; last = E[-1] if E else None; out = []
+    if last and dt.date.fromisoformat(m['date']) - dt.date.fromisoformat(last['date']) <= dt.timedelta(days=30):
+        out.append(it('第二個低谷', 'Second trough', '%s 成立' % md(last['date']), 'Confirmed %s' % mde(last['date']), 'neu',
+                      '深谷 %s（%s），第二谷 %s（%s）。' % (md(last['t1']), sg(last['v1'], 0), md(last['t2']), sg(last['v2'], 0)),
+                      'Deep trough %s (%s), second trough %s (%s).' % (mde(last['t1']), sg(last['v1'], 0), mde(last['t2']), sg(last['v2'], 0))))
+    elif c:
+        out.append(it('第二個低谷', 'Second trough', '還在第一個深谷' if not c['risen'] else '等第二個低谷', 'Still at the first trough' if not c['risen'] else 'Waiting for a second low', 'neu',
+                      ('%s 的深谷 %s，到現在最高只回到 %s，要先回到 %s 以上，之後再出現比較淺的低谷才算。' % (md(c['t1']), sg(c['v1'], 0), sg(c['hi'], 0), sg(c['need'], 0))) if not c['risen'] else
+                      ('%s 的深谷 %s 已經回升三成以上，接下來 %d 天內再出現比較淺的低谷就成立。' % (md(c['t1']), sg(c['v1'], 0), c['days_left'])),
+                      ('The %s trough was %s; the best since is %s. It must first get back above %s, then make a shallower low.' % (mde(c['t1']), sg(c['v1'], 0), sg(c['hi'], 0), sg(c['need'], 0))) if not c['risen'] else
+                      ('The %s trough at %s has recovered over 30%%; a shallower low within %d days would confirm it.' % (mde(c['t1']), sg(c['v1'], 0), c['days_left']))))
+    if r['n']:
+        out.append(it('第二個低谷之後', 'After second troughs', '%d / %d' % (r['up'], r['n']), '%d / %d' % (r['up'], r['n']), 'neu',
+                      '90 天後較高的次數，中位數 %s；任一天是 %d%% 較高、中位數 %s。不是見底訊號。' % (pc(r['med'], 0), b['up'], pc(b['med'], 0)),
+                      'Times higher 90 days later; median %s, against %d%% higher and a median of %s for any day. Not a bottom signal.' % (pc(r['med'], 0), b['up'], pc(b['med'], 0))))
+    return out
 
 def lthrl(L):   # 2026-11-26 改寫（WRITING.md）：長文 session 轉告的需求，讀數講「這一波退了沒、像哪一次」（bv_more 第 11 段）
     x = L['onchain']['lthrl']; w = (L['onchain'].get('bvx') or {}).get('lthw')
