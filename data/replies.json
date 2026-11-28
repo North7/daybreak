@@ -4,6 +4,1036 @@
  "edition": 53,
  "items": [
   {
+   "author": "Alton_50k",
+   "name": "",
+   "followers": 30111,
+   "id": "2126636744061665403",
+   "posted": "2026-11-28T11:18:05Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "期權到期是他列的第一個理由，到期後保險反而更貴",
+   "take": "到期不是壓力解除，下跌保險到期後更貴了",
+   "summary": "BTC 再跌破 6 萬、盤中 58,719；原因第一條是約 70 億美元期權集中到期，問先收復 6 萬還是去 57,000",
+   "reply": "到期一過，下跌保險反而更貴了\n賣權比買權貴得更多，風險逆轉到期前 −6.9，現在 −8.1\n花錢買保護的人沒在撤",
+   "sources": "notes deriv：25Δ 風險逆轉 −8.1，前一天日報 −6.9（Deribit，11/27）；next-lev pcr",
+   "note": "★ 2 小時內（19:18 發，截止 21:18）· Grok inbox 2005 #1 · 3 萬粉配圖 · 58,000 賣權今天已 3 次，拿掉；他問的價位不接",
+   "url": "https://x.com/Alton_50k/status/2126636744061665403",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "pcr"
+    },
+    "title": "到期後下跌保險更貴，風險逆轉 −8.1"
+   },
+   "n": 214,
+   "order": 1
+  },
+  {
+   "author": "GuoShenCN7",
+   "name": "",
+   "followers": 156154,
+   "id": "2126635044479303753",
+   "posted": "2026-11-28T11:11:20Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "2018 對照：估值對得上、跌幅對不上",
+   "take": "估值到了 2018 那種底部區，跌幅遠沒那麼深，這次的類比只對一半",
+   "summary": "拿 2018 中期選舉年類比：19,798 跌到 3,156、之後暴漲；說這輪 126,199 跌到 55,130，在 5.5 萬不會有第二次機會",
+   "reply": "估值跟 2018 底部是像的，MVRV Z 排到近四年第 7 百分位\n跌幅就差遠了，這輪最深砍掉一半多，2018 那輪是 84%",
+   "sources": "next-cycle p6：MVRV Z 近 4 年排名 6.8（CoinMetrics 11/26）；跌幅用他原文的 126,199→55,130、19,798→3,156 算",
+   "note": "★ 2 小時內（19:11 發，截止 21:11）· Grok inbox 2005 #2 · 15.6 萬粉（不到 25 萬）· 不唱反調，補一半對、一半不對；「暴漲」「不會有第二次機會」不接 · 67 天今天已 3 次，換 MVRV Z",
+   "url": "https://x.com/GuoShenCN7/status/2126635044479303753",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "p6"
+    },
+    "title": "估值三項都在近四年最低一檔"
+   },
+   "n": 215,
+   "order": 2
+  },
+  {
+   "author": "max_martin01",
+   "name": "",
+   "followers": 50174,
+   "id": "2126635867368555001",
+   "posted": "2026-11-28T11:14:36Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "恐慌在蔓延，賠錢賣的量反而在退",
+   "take": "情緒在擴散，鏈上肯認賠的人卻在變少",
+   "summary": "BTC 失守 60,000、ETH 回落 1,650，市場恐慌情緒仍在蔓延",
+   "reply": "恐慌是在擴散，肯賠錢賣的人倒是少了，全網一週已實現虧損 81 億美元，前一天還有 97 億",
+   "sources": "notes onchain：7 天合計已實現虧損 81.4 億，前一天 97.0 億（Bitview，11/27）",
+   "note": "★ 2 小時內（19:14 發，截止 21:14）· Grok 註 1 補寫（簡介導流，帖子本身正常） · 5 萬粉配圖",
+   "url": "https://x.com/max_martin01/status/2126635867368555001",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "rloss"
+    },
+    "title": "已實現虧損 7 天合計從 97 億降到 81 億"
+   },
+   "n": 253,
+   "order": 3
+  },
+  {
+   "author": "Foresight_News",
+   "name": "",
+   "followers": 62462,
+   "id": "2126636883656810524",
+   "posted": "2026-11-28T11:18:38Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "接近見底：帳面獲利對得上，但地板不等於最低點",
+   "take": "位置在底部區，只是以前進這區之後半年內還再跌過",
+   "summary": "CZ 在 Binance 區塊鏈週：市場已接近見底階段，本輪熊市比以往好很多；2022 低點 1.6 萬、2018 3,100、2015 150",
+   "reply": "接近見底這句，帳面獲利是對得上的，全體未實現獲利只剩市值 33%\n只是以前跌進這一帶，半年內都還再跌過一段",
+   "sources": "next-cycle rup say：全體未實現獲利佔市值 33.2%、一年來最低 33.1%；網站看法「週期地板附近，底部區」，但每一波進來後半年內都還再跌過",
+   "note": "★ 2 小時內（19:18 發，截止 21:18）· Grok 註 1 補寫（簡介導流，帖子本身正常） · 6.2 萬粉配圖",
+   "url": "https://x.com/Foresight_News/status/2126636883656810524",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "rup"
+    },
+    "title": "全體未實現獲利只剩市值 33%"
+   },
+   "n": 255,
+   "order": 4
+  },
+  {
+   "author": "Dolphintry",
+   "name": "",
+   "followers": 44784,
+   "id": "2126643414997606815",
+   "posted": "2026-11-28T11:44:35Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "熊市還在聊產品的人",
+   "take": "心態帖，順著接；恐慌數字給位置",
+   "summary": "BBW 現場感慨：BTC 6 萬、恐慌指數 10，大家問何時反彈，會場卻在聊穩定幣、RWA、AI+金融",
+   "reply": "恐懼到 10 還在會場聊產品的\n多半就是熊市會留下來的那批\n指數前一天是 12，排在 2018 年以來第 4 百分位",
+   "sources": "next-lev fng say：恐懼貪婪 12、2018 年以來第 4 百分位",
+   "note": "★ 2 小時內（19:44 發，截止 21:44）· Grok 註 1 補寫（簡介導流，帖子本身正常） · 4.5 萬粉配圖（fng 今天第 2 次，讀法和 #10 錯開）",
+   "url": "https://x.com/Dolphintry/status/2126643414997606815",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "fng"
+    },
+    "title": "恐懼貪婪 12，2018 年以來第 4 百分位"
+   },
+   "n": 256,
+   "order": 5
+  },
+  {
+   "author": "yabuliskiclub",
+   "name": "",
+   "followers": 1950,
+   "id": "2126647439763574920",
+   "posted": "2026-11-28T12:00:35Z",
+   "kind": "followup",
+   "status": "send",
+   "angle": "接英文留言：20 日合計",
+   "take": "",
+   "summary": "",
+   "reply": "Through 11/25 the 20-day total was already −$5.35B\nJune was the only deeper stretch since launch",
+   "sources": "data/etf.json roll20：11/25 20 日合計 −5,354 百萬美元；上市以來只有 2026-06-09 −5,638 更深",
+   "note": "接話 · 我們原創（CryptooIndia 英文引用）底下，原創串不設輪數；英文接話照回",
+   "url": "https://x.com/yabuliskiclub/status/2126647439763574920",
+   "lang": "en",
+   "style": "口語版",
+   "n": 210,
+   "order": 6
+  },
+  {
+   "author": "yabuliskiclub",
+   "name": "",
+   "followers": 1950,
+   "id": "2126646299244245493",
+   "posted": "2026-11-28T11:56:03Z",
+   "kind": "followup",
+   "status": "skip",
+   "angle": "按讚就好",
+   "take": "",
+   "summary": "",
+   "reply": "",
+   "sources": "",
+   "note": "按讚就好：附和我們上一則（週一 8 點收完再看），沒有新內容",
+   "url": "https://x.com/yabuliskiclub/status/2126646299244245493",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 211,
+   "order": 7
+  },
+  {
+   "author": "SwftSky",
+   "name": "",
+   "followers": 1700,
+   "id": "2126647324097257835",
+   "posted": "2026-11-28T12:00:07Z",
+   "kind": "followup",
+   "status": "skip",
+   "angle": "按讚就好",
+   "take": "",
+   "summary": "",
+   "reply": "",
+   "sources": "",
+   "note": "按讚就好：別人貼文底下第 3 輪、沒問問題（流動性被清算所以變淡）",
+   "url": "https://x.com/SwftSky/status/2126647324097257835",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 212,
+   "order": 8
+  },
+  {
+   "author": "SwftSky",
+   "name": "",
+   "followers": 1700,
+   "id": "2126647785336250549",
+   "posted": "2026-11-28T12:01:57Z",
+   "kind": "followup",
+   "status": "skip",
+   "angle": "按讚就好",
+   "take": "",
+   "summary": "",
+   "reply": "",
+   "sources": "",
+   "note": "按讚就好：別人貼文底下第 3 輪、貼的是清算熱力圖讀圖說明，沒問問題",
+   "url": "https://x.com/SwftSky/status/2126647785336250549",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 213,
+   "order": 9
+  },
+  {
+   "author": "Norman1577479",
+   "name": "",
+   "followers": 677,
+   "id": "2126645039094780033",
+   "posted": "2026-11-28T11:51:03Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "大戶在收是真的，老手整體在減",
+   "take": "鯨魚收貨和長期持有者淨減同時在發生，不是單純聰明錢接盤",
+   "summary": "K 線跟納指跌，鏈上卻割裂：交易所儲備一個月少 4.2 萬枚、ETF 流出、巨鯨提幣，紙手投降、聰明錢收貨",
+   "reply": "對，收是有人在收\n只是長期持有者這 30 天也淨減了 17.6 萬顆",
+   "sources": "notes onchain：長期持有者 30 日淨部位 −17.6 萬顆，連 115 天淨減（bitcoin-data，11/26）",
+   "note": "Grok inbox 2005 #3 · 1.5 萬顆今天已 3 次，換長期持有者淨部位",
+   "url": "https://x.com/Norman1577479/status/2126645039094780033",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 216,
+   "order": 10
+  },
+  {
+   "author": "i0008887",
+   "name": "",
+   "followers": 3342,
+   "id": "2126651142377812468",
+   "posted": "2026-11-28T12:15:18Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "交叉還沒到，價格早就在線下",
+   "take": "死亡交叉是落後的，價格在 200 日均線下已經半個多月",
+   "summary": "死亡交叉倒數：50 日只比 200 日高 3.45%；過去 13 次確認後中位數再跌 24%、推到 45,000",
+   "reply": "等交叉就晚了，價格已經連 16 天收在 200 日均線下",
+   "sources": "notes overview／watch：收盤連 16 天在 200 日均線 71,811 之下（11/27）",
+   "note": "Grok inbox 2005 #4（舊帳號）· 45,000 推算不接；「規則要連 30 天才退出牛市」那半是階段規則，不放",
+   "url": "https://x.com/i0008887/status/2126651142377812468",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 217,
+   "order": 11
+  },
+  {
+   "author": "klaus22466",
+   "name": "",
+   "followers": 561,
+   "id": "2126650572765815276",
+   "posted": "2026-11-28T12:13:02Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "錢一直出，老手賠錢賣倒是收手",
+   "take": "ETF 在出，但長期持有者認賠在放慢",
+   "summary": "標普週漲 5.6%，大餅黑五一小時從 61,460 砸到 59,083；ETF 週五流出 3.89 億、連 8 天",
+   "reply": "這週錢一直在出，老手賠錢賣倒是在收手\n長期持有者一週認賠的金額，從 40.8 億掉到 34.9 億美元\n最急的那批應該賣過了",
+   "sources": "notes onchain：長期持有者 7 天已實現虧損 34.9 億美元，前一天 40.8 億（CheckOnChain，11/27）；ETF 本站最新完整日 11/25",
+   "note": "Grok inbox 2005 #5（舊帳號）",
+   "url": "https://x.com/klaus22466/status/2126650572765815276",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 218,
+   "order": 12
+  },
+  {
+   "author": "Pudding20210820",
+   "name": "",
+   "followers": 1130,
+   "id": "2126649045611614275",
+   "posted": "2026-11-28T12:06:58Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "換月線看，這根月 K 本身就很難看",
+   "take": "月線還沒收，但這根已經是 2018 以後最差的 11 月之一",
+   "summary": "換月線看：月線刺穿斐波那契 0.618 又站回，起點 2022/11 低點 15,450；問最後一道防線還是要失守，A/B/C 投票",
+   "reply": "斐波那契先不管，這根 11 月 K 到 27 號已經 −22.7%\n比它爛的只有 2018 那根",
+   "sources": "notes overview：11 月到 11/27 收盤 −22.7%，2013 年起最差的 11 月是 2018 年的 −37.0%",
+   "note": "Grok inbox 2005 #6（舊帳號）· 斐波那契價位和投票不接",
+   "url": "https://x.com/Pudding20210820/status/2126649045611614275",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 219,
+   "order": 13
+  },
+  {
+   "author": "linjiu321",
+   "name": "",
+   "followers": 5135,
+   "id": "2126644461472202815",
+   "posted": "2026-11-28T11:48:45Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "鏈上搬動本來就看不出方向",
+   "take": "提幣跟換手一樣，看得到量、看不到方向",
+   "summary": "Abraxas 7 天提 21,520 枚、均價 59,739 是真的，但做市中性起家，提幣不等於裸多，可能另一邊掛空單對沖",
+   "reply": "鏈上也是一樣的毛病\n59K 到 61K 三格 7 天移進 44.8 萬顆\n誰在買誰在對沖，看不到",
+   "sources": "notes market：7 天裡 59,000、60,000、61,000 三格共移進 44.8 萬顆（Bitview，鏈上移動不一定是買賣）",
+   "note": "Grok inbox 2005 #7（舊帳號）",
+   "url": "https://x.com/linjiu321/status/2126644461472202815",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 220,
+   "order": 14
+  },
+  {
+   "author": "gc_xbt",
+   "name": "",
+   "followers": 2517,
+   "id": "2126647702884610287",
+   "posted": "2026-11-28T12:01:38Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "貨架上新，美國那邊淨申購還是負的",
+   "take": "上架是供給面，需求面美國那邊還在流出",
+   "summary": "瑞士首隻現貨 BTC ETF BBIT 在 SIX 上市；渠道擴容是供給、淨申購才是需求",
+   "reply": "上架歸上架\n美國那幾扇門的淨申購還是負的，到 11/25 連 7 個交易日流出，合計 25.7 億美元",
+   "sources": "data/etf.json：11/17–11/25 連 7 個交易日淨流出，合計約 25.7 億美元（CoinMarketCap，最新完整日 11/25）",
+   "note": "Grok inbox 2005 #8",
+   "url": "https://x.com/gc_xbt/status/2126647702884610287",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 221,
+   "order": 15
+  },
+  {
+   "author": "lxp720803",
+   "name": "",
+   "followers": 12160,
+   "id": "2126646873264214507",
+   "posted": "2026-11-28T11:58:20Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "15 分鐘血洗，槓桿那頭前一天其實在退",
+   "take": "短週期看是多殺多，費率看槓桿其實沒在加",
+   "summary": "纏論解盤：OKX 15 分鐘從 59,917 瀉到 59,054.9、跌近 4%，別急著抄底；後半是操作建議和點位診斷",
+   "reply": "15 分鐘看是瀑布，費率那頭倒沒在燒\n加權資金費率（funding rate）前一天從 4.4% 掉到 2.8%，追多的人已經少很多了",
+   "sources": "notes deriv：加權資金費率 2.81%，前一天日報 4.44%（Coinalyze，11/27）；今晚這段還沒進本站",
+   "note": "Grok inbox 2005 #9 · 1.2 萬粉配圖 · 操作建議、點位、纏論推演不接",
+   "url": "https://x.com/lxp720803/status/2126646873264214507",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "fh"
+    },
+    "title": "資金費率從 4.4% 掉到 2.8%"
+   },
+   "n": 222,
+   "order": 16
+  },
+  {
+   "author": "cheny71674110",
+   "name": "",
+   "followers": 11379,
+   "id": "2126646726589317240",
+   "posted": "2026-11-28T11:57:45Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "「或許」可以拿掉；但第一次進極度恐懼常不是底",
+   "take": "已經是極度恐懼，只是網站回測這區之後 30 天多半更低",
+   "summary": "CZ 在 Binance 區塊鏈週說 6 萬 BTC 市場或許接近極度恐懼；列 2015 年 150、2018 年 3,100、2022 年 1.6 萬，問跌到哪會買",
+   "reply": "不用或許了，恐懼貪婪指數 11/27 就只有 12\n可是掉進極度恐懼之後，30 天的中位數還是 −6.1%，通常不是一進來就見底",
+   "sources": "next-lev fng say：恐懼貪婪 12、2018 年以來第 4 百分位；極度恐懼之後 30 天中位數 −6.1%（任一天 +1.4%），網站看法 tone down",
+   "note": "Grok inbox 2005 #10 · 1.1 萬粉配圖 · 極度恐懼第 15 天今天已用滿，只留 12；他問跌到哪買不接",
+   "url": "https://x.com/cheny71674110/status/2126646726589317240",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "fng"
+    },
+    "title": "恐懼貪婪 12，極度恐懼之後 30 天多半更低"
+   },
+   "n": 223,
+   "order": 17
+  },
+  {
+   "author": "Haojiemyak",
+   "name": "",
+   "followers": 557,
+   "id": "2126643862919942253",
+   "posted": "2026-11-28T11:46:22Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "現貨只跌幾個點能炸 10 萬人，盤口本來就薄",
+   "take": "掛單牆撐不住小波動，炸的是槓桿",
+   "summary": "美股最好一週 BTC 卻跌破 6 萬；核對 CoinGlass：現價 5.92 萬、24h −3.9%、最低 58,750、10 萬人爆倉 4.1 億，現貨只跌幾個點",
+   "reply": "那道 59,000 的買單牆前一天掛了 2.42 億美元，今晚一下就穿過去了\n牆會撤，看著厚不代表跌下來還在",
+   "sources": "notes deriv：掛單簿 59,000 買單 2.42 億、60,000 賣單 2.24 億美元，都在 Hyperliquid 永續（11/27）",
+   "note": "Grok inbox 2005 #11",
+   "url": "https://x.com/Haojiemyak/status/2126643862919942253",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 224,
+   "order": 18
+  },
+  {
+   "author": "Yechenhenshuai",
+   "name": "",
+   "followers": 1113,
+   "id": "2126647418636664896",
+   "posted": "2026-11-28T12:00:30Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "最後一洗還是需求撐不住：需求這頭還是負的",
+   "take": "需求沒有回來，現在還分不出是最後一洗",
+   "summary": "BTC 週六重新跌破 6 萬，11 月 ETF 流出超過 50 億；大戶抄底、機構在撤，問最後一洗還是需求撐不住",
+   "reply": "需求這頭還沒看到回來，週線多空分數連三週負的，這週又掉到 −1.85\n分不出是最後一洗",
+   "sources": "notes cycle：週線多空分數 −1.85，上週 −1.32，連三週負（11/27）",
+   "note": "Grok inbox 2005 #12（舊帳號）· Coinbase 溢價今天已 3 次，換週線多空分數",
+   "url": "https://x.com/Yechenhenshuai/status/2126647418636664896",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 225,
+   "order": 19
+  },
+  {
+   "author": "Bouza11Juan",
+   "name": "",
+   "followers": 3007,
+   "id": "2126646681638732154",
+   "posted": "2026-11-28T11:57:34Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "先行指標這週看不出來，比較像沒跟上",
+   "take": "這週 BTC 沒有領先美股，是美股漲它沒跟",
+   "summary": "BTC 是 SPX 的先行指標，週末又跌；支撐 5 萬 8，破了往 5 萬去",
+   "reply": "哈，這週它比較像跟丟了\nS&P 漲 1.6% 那天，它反而從 62,139 被賣回來",
+   "sources": "notes overview：11/27 S&P 500 +1.6%、Nasdaq +2.3%（AP）；BTC 高點 62,139、收 59,864（Kraken）",
+   "note": "Grok inbox 2005 #13（舊帳號）· 5 萬 8／5 萬價位不接",
+   "url": "https://x.com/Bouza11Juan/status/2126646681638732154",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 226,
+   "order": 20
+  },
+  {
+   "author": "yyq_yyq_yyq_yyq",
+   "name": "",
+   "followers": 4793,
+   "id": "2126646447961768207",
+   "posted": "2026-11-28T11:56:39Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "接的人在接，價格離全體成本也近了",
+   "take": "鯨魚接、ETF 逃，價格已經被擠到離全體持有成本不遠",
+   "summary": "ETF 連 8 個交易日失血 34.4 億；1,000–10,000 顆鯨魚第四季多吃 12.1 萬顆；後段有預判和觀望偏空",
+   "reply": "誰比較聰明還分不出來\n兩邊打到現在，價格離全網平均持有成本 5.3 萬只剩 13%",
+   "sources": "latest.json cycle.cm：realized price 53,033（CoinMetrics，11/26）；收盤 59,864（11/27）→ 高 12.9%",
+   "note": "Grok inbox 2005 #14（舊帳號，繁中）· 33% 今天第 3 次留給 #56，這則換全體成本；他的預判區間、方向不接",
+   "url": "https://x.com/yyq_yyq_yyq_yyq/status/2126646447961768207",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 227,
+   "order": 21
+  },
+  {
+   "author": "fgchiu",
+   "name": "",
+   "followers": 6426,
+   "id": "2126520072181305455",
+   "posted": "2026-11-28T03:34:28Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "提款機好笑，賣的人多半在認賠",
+   "take": "不是提款，賣幣的人整體是賠錢在賣",
+   "summary": "那指大漲 2.3% 創一年最強單週，BTC 衝高後跌破 6 萬；說 BTC 成了 AI 股提款機，問預警還是黃金坑",
+   "reply": "提款機至少是賺了才提\n現在賣的人多半是賠著走，90 天已實現獲利 ÷ 虧損 0.963\n還在往下",
+   "sources": "notes onchain：90 天合計已實現獲利 ÷ 虧損 0.963，前一天 0.982（Bitview，11/27）",
+   "note": "Grok inbox 2005 #15（舊帳號，繁中）· 9 小時前 · 黃金坑那句不接",
+   "url": "https://x.com/fgchiu/status/2126520072181305455",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 228,
+   "order": 22
+  },
+  {
+   "author": "xbluev",
+   "name": "",
+   "followers": 4521,
+   "id": "2126645192413372796",
+   "posted": "2026-11-28T11:51:39Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "閒聊：睡得著的倉位",
+   "take": "心態帖，順著接一句",
+   "summary": "大餅又跌破 6 萬，24 小時爆倉 4 億多、10 萬人被強平；最值錢的是跌的時候還睡得著的倉位",
+   "reply": "睡得著的倉位多半就是沒開槓桿那種，今晚被抬走的大多是多單",
+   "sources": "心態帖，不放數字（5,910 萬今天已 3 次）",
+   "note": "Grok inbox 2005 #16 · 閒聊不放數字；他問抄底還是睡覺不接",
+   "url": "https://x.com/xbluev/status/2126645192413372796",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 229,
+   "order": 23
+  },
+  {
+   "author": "dpppps123",
+   "name": "",
+   "followers": 2963,
+   "id": "2126639029290750392",
+   "posted": "2026-11-28T11:27:10Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "保險金換穩定幣合理，整個盤子的穩定幣倒在縮",
+   "take": "SAFU 搬家是內部的事，市場上的子彈還在少",
+   "summary": "Binance 官宣 SAFU 7,500 枚 BTC 調回公司金庫、打進 5 億 USDC，說內部調倉不會賣；他覺得是對的",
+   "reply": "保險金放穩定幣才像保險\n只是外面整個盤子的穩定幣還在縮，總量 2,819 億美元，這週又少了一點",
+   "sources": "notes flows：穩定幣 2,819 億美元，7 天 −0.53%（DefiLlama，11/27）",
+   "note": "Grok inbox 2005 #17 · 0.53% 今天已 3 次，只留總量",
+   "url": "https://x.com/dpppps123/status/2126639029290750392",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 230,
+   "order": 24
+  },
+  {
+   "author": "jianyi99",
+   "name": "",
+   "followers": 18084,
+   "id": "2126616589453656420",
+   "posted": "2026-11-28T09:58:00Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "錢往 AI 跑，在價格上看得到",
+   "take": "AI 在吸風險偏好的錢，BTC 美股大漲那天還收跌",
+   "summary": "MSCI 換血：MSTR 被踢出、Anthropic 被納入全球指數；問是規則調整還是 AI 重新定價",
+   "reply": "風向在價格上看得到，美股半天交易大漲那天 BTC 還收跌 1%\nMSTR 被剔除是 MSCI 正式公告了嗎，還沒看到原文",
+   "sources": "notes overview／news：11/27 S&P +1.6%、Nasdaq +2.3%（AP）；BTC 收 59,864、當日 −1.05%（Kraken）",
+   "note": "Grok inbox 2005 #18 · 1.8 萬粉配圖 · 3 小時前 · 結尾問 MSCI 公告是真的想知道",
+   "url": "https://x.com/jianyi99/status/2126616589453656420",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "stk"
+    },
+    "title": "美股漲的日子，BTC 沒跟上"
+   },
+   "n": 231,
+   "order": 25
+  },
+  {
+   "author": "zhini1011",
+   "name": "",
+   "followers": 6162,
+   "id": "2126629106003673257",
+   "posted": "2026-11-28T10:47:44Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "折價時錢自然流去回購",
+   "take": "折價發股買幣不划算，買幣自然慢下來",
+   "summary": "Strategy 手握 85 萬枚、股價一度八八折：發普通股籌 8.7 億，2.1 億買幣、5.4 億回購優先股；每股淨 BTC 81 美元、股價 72",
+   "reply": "打折的時候發股買幣是稀釋自己，錢流去回購很合理\n買幣這條管子就細了，最近一週才買 457 顆\n差不多礦工一天挖的量",
+   "sources": "next-buy treasury：Strategy 最近一週買 457 顆；礦工一天新挖約 450 顆",
+   "note": "Grok inbox 2005 #19（無數據角度，補 treasury 讀數）",
+   "url": "https://x.com/zhini1011/status/2126629106003673257",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 232,
+   "order": 26
+  },
+  {
+   "author": "laoping666",
+   "name": "",
+   "followers": 901,
+   "id": "2126647962306531535",
+   "posted": "2026-11-28T12:02:40Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "心理：第二種耐心最難",
+   "take": "買入後的耐心最難，最近進場那批就卡在這",
+   "summary": "三種耐心：買入前等暴跌、分批；買入後 buy and hold；賣出後不再殺入",
+   "reply": "三種裡第二種最磨人\n最近這批進場的就卡在這，短期持有者 SOPR 0.985\n一直在賠著交出去",
+   "sources": "notes onchain：STH-SOPR 0.985、低於 1（CheckOnChain，11/27）",
+   "note": "Grok inbox 2005 #20（舊帳號）· 心態帖，心理判斷先；22 天今天已 3 次，拿掉",
+   "url": "https://x.com/laoping666/status/2126647962306531535",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 233,
+   "order": 27
+  },
+  {
+   "author": "LYkhq1kt",
+   "name": "",
+   "followers": 331,
+   "id": "2126637757187711229",
+   "posted": "2026-11-28T11:22:06Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "閒聊：熊鯨那堵牆，現在一檔就比它大",
+   "take": "以前 3 萬顆一堵牆嚇死人，現在一檔掛單就四千顆",
+   "summary": "2014 年熊鯨在 Bitstamp 掛 3 萬枚 300 美元賣單，最後被市場吃乾淨",
+   "reply": "那時 3 萬顆一堵牆全網盯著看\n現在光 Hyperliquid 59,000 一檔就掛 2.42 億美元，四千顆上下，沒人當回事",
+   "sources": "notes deriv：59,000 買單 2.42 億美元（Hyperliquid 永續，11/27）÷ 59,000 ≈ 4,100 顆",
+   "note": "Grok 註 1 補寫（已達 20 則） · 331 粉 · 2.42 億今天第 2 次",
+   "url": "https://x.com/LYkhq1kt/status/2126637757187711229",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 234,
+   "order": 28
+  },
+  {
+   "author": "edcyy666",
+   "name": "",
+   "followers": 566,
+   "id": "2126638588679094311",
+   "posted": "2026-11-28T11:25:25Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "門開了不等於錢進來，美國那頭一天就流好幾億",
+   "take": "新市場要很大才看得出來，美國一天的流出就是好幾億",
+   "summary": "馬來西亞首隻伊斯蘭合規現貨 BTC ETF 12/2 上市；美國 ETF 還在撤，問 @grok 會不會成中東東南亞增量",
+   "reply": "中東東南亞的錢就算進來也要很大才看得到，美國 11/25 單日就流出 4.53 億美元",
+   "sources": "data/etf.json：11/25 −453.0 百萬美元（CoinMarketCap）",
+   "note": "Grok 註 1 補寫（已達 20 則） · 566 粉 · 他問 Grok 的部分不代答，只補量級",
+   "url": "https://x.com/edcyy666/status/2126638588679094311",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 235,
+   "order": 29
+  },
+  {
+   "author": "817BIBI",
+   "name": "",
+   "followers": 11287,
+   "id": "2126477213394780287",
+   "posted": "2026-11-28T00:44:10Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "閒聊：規則寫死的人最省心",
+   "take": "規則寫死不看單日，這個月最省心",
+   "summary": "11/27 日線收盤約 59,800–60,100；核心 95% 美股 ETF 不動、衛星 5% BTC 照規則（日線收盤未站上 8 萬）",
+   "reply": "哈，規則寫死不看單日的人這個月最省心，天天盯盤的都被磨到沒脾氣",
+   "sources": "閒聊，不放數字；他的 8 萬規則是個人配置，不評",
+   "note": "Grok 註 1 補寫（已達 20 則） · 12 小時前 · 1.1 萬粉 · 不配圖：閒聊、他的規則是個人配置，沒有對得上又不碰他規則的圖",
+   "url": "https://x.com/817BIBI/status/2126477213394780287",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 236,
+   "order": 30
+  },
+  {
+   "author": "memelover6996",
+   "name": "",
+   "followers": 1417,
+   "id": "2126641552185565321",
+   "posted": "2026-11-28T11:37:11Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "350 顆放在美國的進出裡是零頭",
+   "take": "短期推不動價格這點，量級可以說得更白",
+   "summary": "瑞士第一隻手裡真放 BTC 的 ETF BBIT，持有約 350 枚；量推不動價格，但能合法買的人一國一國變多",
+   "reply": "350 顆，美國那邊一天流出就是它 20 倍以上\n門倒是一扇扇在開",
+   "sources": "data/etf.json：11/25 −453.0 百萬美元 ÷ 59,864 ≈ 7,570 顆；350 ÷ 7,570 ≈ 4.6%",
+   "note": "Grok 註 1 補寫（已達 20 則）",
+   "url": "https://x.com/memelover6996/status/2126641552185565321",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 237,
+   "order": 31
+  },
+  {
+   "author": "K2coinking",
+   "name": "",
+   "followers": 11919,
+   "id": "2126647302106349678",
+   "posted": "2026-11-28T12:00:02Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "搬去 Prime 跟 IBIT 流出對得上",
+   "take": "贖回要交的貨，搬去 Prime 不奇怪",
+   "summary": "BlackRock 半夜把 5,500 枚 BTC 加 40,710 枚 ETH 挪去 Coinbase Prime，合計 4.08 億，同一天 IBIT 還在流出，「自己品」",
+   "reply": "贖回要交貨，搬去 Prime 跟流出是同一件事\n11 月到 25 號，美國現貨 ETF 已經淨流出 47 億美元",
+   "sources": "data/etf.json：11/03–11/25 合計 −4,724 百萬美元（CoinMarketCap）",
+   "note": "Grok 註 1 補寫（已達 20 則） · 1.2 萬粉配圖",
+   "url": "https://x.com/K2coinking/status/2126647302106349678",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "etf"
+    },
+    "title": "11 月美國現貨 ETF 幾乎天天在流出"
+   },
+   "n": 238,
+   "order": 32
+  },
+  {
+   "author": "soap0718",
+   "name": "",
+   "followers": 22743,
+   "id": "2126651533349851285",
+   "posted": "2026-11-28T12:16:51Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "大額轉帳分不出方向，交易所淨流量也一樣",
+   "take": "單筆轉帳和 30 天淨流量都只說搬了多少",
+   "summary": "11/28 多筆大額 BTC 和穩定幣轉帳（1,000 枚以上、5,000 萬 USDC 鑄造），大額轉帳不等於馬上砸盤",
+   "reply": "拉長到 30 天也一樣\n交易所淨流出 6.9 萬顆，排到近四年第 10 百分位，搬得兇，方向照樣看不出來",
+   "sources": "next-buy exflow say：30 天淨流量 −6.9 萬顆、近 4 年第 10 百分位；網站看法「流量本身分不出方向」（neu）",
+   "note": "Grok 註 1 補寫（已達 20 則） · 2.3 萬粉配圖",
+   "url": "https://x.com/soap0718/status/2126651533349851285",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "exflow"
+    },
+    "title": "交易所 30 天淨流出 6.9 萬顆"
+   },
+   "n": 239,
+   "order": 33
+  },
+  {
+   "author": "Only_hold_one",
+   "name": "",
+   "followers": 12898,
+   "id": "2126642205737771413",
+   "posted": "2026-11-28T11:39:47Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "炸的是槓桿，期權也在加價",
+   "take": "現貨跌 3%、期權波動定價已經很高",
+   "summary": "集體跳水，10 萬人爆倉，BTC 跌超 3% 破 6 萬，和美股分化",
+   "reply": "現貨才跌 3%，期權早就在收恐慌錢了，DVOL 51.6，一年裡排第 83 百分位",
+   "sources": "next-lev vol say：DVOL 51.6、一年第 83 百分位、IV 比 RV30 高 4.1（Deribit，11/27）",
+   "note": "Grok 註 1 補寫（已達 20 則） · 1.3 萬粉配圖",
+   "url": "https://x.com/Only_hold_one/status/2126642205737771413",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "vol"
+    },
+    "title": "DVOL 51.6，隱含波動比實際高"
+   },
+   "n": 240,
+   "order": 34
+  },
+  {
+   "author": "wufang386",
+   "name": "",
+   "followers": 1732,
+   "id": "2126647303490687074",
+   "posted": "2026-11-28T12:00:03Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "兩派都看空，期權也站同一邊",
+   "take": "技術派一致看空，期權權利金也偏賣權",
+   "summary": "整理 Kayon（江恩）和 Wilson 狼部（形態）兩位對 BTC 的看法，都指向空頭，目標 57,300",
+   "reply": "時間派形態派都看空，期權那邊也一樣，權利金連 30 天偏賣權",
+   "sources": "notes deriv：買賣權的權利金連 30 天偏賣權（Deribit，11/27）",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 目標價、時間節點不接",
+   "url": "https://x.com/wufang386/status/2126647303490687074",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 241,
+   "order": 35
+  },
+  {
+   "author": "Bitebishuqin",
+   "name": "",
+   "followers": 24111,
+   "id": "2126644373328961882",
+   "posted": "2026-11-28T11:48:24Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "Nasdaq 出雙底，它也不一定跟",
+   "take": "美股回來 BTC 這週沒跟，看 Nasdaq 猜 BTC 沒那麼準",
+   "summary": "BTC 的嚴父 Nasdaq 走雙底、BTC 假跌破收回，看起來有反彈資本；後段是持有現貨或兩倍倉位",
+   "reply": "嚴父這週有點管不住它\nNasdaq 一週漲 6.7%，BTC 還跌了 3% 多",
+   "sources": "notes news：全週 Nasdaq +6.7%（AP）；BTC 週開 61,271 → 現約 59,200（原文他人報價），本站收盤 59,864",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 2.4 萬粉配圖 · 倉位建議（現貨、兩倍）不接",
+   "url": "https://x.com/Bitebishuqin/status/2126644373328961882",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "stk"
+    },
+    "title": "Nasdaq 漲的時候，BTC 沒跟上"
+   },
+   "n": 242,
+   "order": 36
+  },
+  {
+   "author": "zzhou1688",
+   "name": "",
+   "followers": 13931,
+   "id": "2126640197509214532",
+   "posted": "2026-11-28T11:31:48Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "週末沒人接，推價格的剩永續",
+   "take": "週末沒 ETF 沒美股，永續在主導",
+   "summary": "Hayes 週末警告應驗一半：BTC 從 62,249 跌回 59,200、隔夜低 58,792；聯準會靜默期開始、週末沒 ETF",
+   "reply": "週末 ETF 美股都休息，剩永續在推\n前一天永續淨主動賣 2,298 顆\n現貨那頭反而安靜",
+   "sources": "notes deriv：永續當天淨主動賣 2,298 顆（Coinalyze，11/27）；next-buy tk：永續 30 天 −14.3 萬顆、現貨 −2.6 萬顆",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 1.4 萬粉配圖 · 他問週末往哪不接",
+   "url": "https://x.com/zzhou1688/status/2126640197509214532",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "tk"
+    },
+    "title": "賣得兇的是永續，現貨相對安靜"
+   },
+   "n": 243,
+   "order": 37
+  },
+  {
+   "author": "0X_CPA",
+   "name": "",
+   "followers": 9976,
+   "id": "2126634734557995364",
+   "posted": "2026-11-28T11:10:06Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "閒聊：割完多單馬上反手",
+   "take": "交易員故事，接一句",
+   "summary": "AguilaTrades 多單 60,199 止損實虧約 350 萬，不到一天反手開 620 枚 BTC 空單",
+   "reply": "割完多單隔天就反手空，心臟是大",
+   "sources": "故事帖，不放數字",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 9,976 粉不配圖",
+   "url": "https://x.com/0X_CPA/status/2126634734557995364",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 244,
+   "order": 38
+  },
+  {
+   "author": "lishu7843",
+   "name": "",
+   "followers": 2946,
+   "id": "2126650815158886468",
+   "posted": "2026-11-28T12:14:00Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "調倉還是撤離，看 20 天合計",
+   "take": "20 天合計到上市以來數一數二深，不像只是調倉",
+   "summary": "ETF 連續第 8 天出逃，單日 3.89 億、11 月快 58 億；問階段性調倉還是趨勢性撤離",
+   "reply": "一兩天的叫調倉\n20 個交易日合計流出 53 億多就不太像了，上市以來只有 6 月那次更深",
+   "sources": "data/etf.json roll20：11/25 20 日合計 −5,354 百萬美元；上市以來只有 2026-06-09 的 −5,638 更深",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常）",
+   "url": "https://x.com/lishu7843/status/2126650815158886468",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 245,
+   "order": 39
+  },
+  {
+   "author": "kiss6780",
+   "name": "",
+   "followers": 12585,
+   "id": "2126650126706106737",
+   "posted": "2026-11-28T12:11:16Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "門開了，先進門的那批還套著",
+   "take": "ETF 新市場是好事，美國那批 ETF 買家帳上還是賠",
+   "summary": "馬來西亞批准首隻現貨 BTC ETF（伊斯蘭合規），12/2 上市",
+   "reply": "門多一扇是好事\n先進門的美國那批還套著，ETF 持有者平均成本 7.9 萬上下",
+   "sources": "next-lv etfcost：ETF 持有者成本約 78,971（推算，不是支撐位）",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 1.3 萬粉配圖",
+   "url": "https://x.com/kiss6780/status/2126650126706106737",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "etfcost"
+    },
+    "title": "美國 ETF 持有者成本 7.9 萬上下"
+   },
+   "n": 246,
+   "order": 40
+  },
+  {
+   "author": "fengzong1114",
+   "name": "",
+   "followers": 458,
+   "id": "2126649417570599195",
+   "posted": "2026-11-28T12:08:27Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "3.89 億比前一個交易日少，但方向沒變",
+   "take": "流出放慢一點，還是在流出",
+   "summary": "核過 Farside：11/27 全天淨流出 3.89 億、IBIT −3.272 億；17 日起連 8 個交易日，合計 34.41 億",
+   "reply": "比 25 號那天的 4.53 億少了一截\n慢是慢了，方向沒變",
+   "sources": "data/etf.json：11/25 −453.0 百萬美元（CoinMarketCap）；11/27 用他給的 Farside 數",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 458 粉",
+   "url": "https://x.com/fengzong1114/status/2126649417570599195",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 247,
+   "order": 41
+  },
+  {
+   "author": "ying12940",
+   "name": "",
+   "followers": 1399,
+   "id": "2126646329304850640",
+   "posted": "2026-11-28T11:56:10Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "閒聊：少一截不算回來",
+   "take": "放慢不等於回來",
+   "summary": "11/27 ETF 淨流出 3.89 億、IBIT 3.272 億，比 25 日 4.53 億少一截，IBIT 幾乎沒少；先等",
+   "reply": "IBIT 沒少才麻煩，最大那檔還在照樣出",
+   "sources": "接他自己的數字（IBIT 3.272 億），不另放讀數",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 閒聊短接",
+   "url": "https://x.com/ying12940/status/2126646329304850640",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 248,
+   "order": 42
+  },
+  {
+   "author": "VICOINDAO",
+   "name": "",
+   "followers": 11968,
+   "id": "2126645826135158827",
+   "posted": "2026-11-28T11:54:10Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "前提要更正：最近是在流出",
+   "take": "ETF 這陣子是淨流出，不是資金在進推不動",
+   "summary": "ETF 資金還在進、價格卻推不動，兩種可能：機構換手或份額做套利抵押",
+   "reply": "這陣子剛好反過來，ETF 到 11/25 連 7 個交易日都是淨流出，一天都沒進",
+   "sources": "data/etf.json：11/17–11/25 連 7 個交易日淨流出（CoinMarketCap）",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 1.2 萬粉配圖 · 他前提講反了，客氣更正",
+   "url": "https://x.com/VICOINDAO/status/2126645826135158827",
+   "lang": "zh",
+   "style": "口語版",
+   "image": {
+    "site": {
+     "k": "etf"
+    },
+    "title": "美國現貨 ETF 連 7 個交易日淨流出"
+   },
+   "n": 249,
+   "order": 43
+  },
+  {
+   "author": "thevernaldawn",
+   "name": "",
+   "followers": 3635,
+   "id": "2126643108339225018",
+   "posted": "2026-11-28T11:43:22Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "閒聊：券商戶能買很方便，首發量小",
+   "take": "方便是真的，量還小",
+   "summary": "瑞士現貨 BTC ETF BBIT 在 SIX 掛牌，首發 350 枚、年費 0.19%，傳統投資者用券商戶就能買",
+   "reply": "0.19% 是便宜，首發 350 顆放在美國一天的進出裡就是零頭",
+   "sources": "閒聊；350 顆對比 11/25 美國單日流出約 7,570 顆",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 今天第 3 則瑞士／馬來 ETF，說法錯開",
+   "url": "https://x.com/thevernaldawn/status/2126643108339225018",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 250,
+   "order": 44
+  },
+  {
+   "author": "Andragos_eth",
+   "name": "",
+   "followers": 1246,
+   "id": "2126560899100266948",
+   "posted": "2026-11-28T06:16:42Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "挑一點：AI 破解加密那條鏈上沒人在怕",
+   "take": "老幣沒在動，市場沒把 AI 破解當真",
+   "summary": "幣圈 & AI 午報：ETF 連 8 日流出、WLFI 砸盤、安全事件、AI 威脅加密成新敘事、馬來 ETF",
+   "reply": "AI 破解加密那條，鏈上看不到有人當真，放 5 年以上的老幣移動量還在平常範圍",
+   "sources": "next-sell oldc say：5 年以上的幣第 80 分位、網站看法「老幣移動在平常範圍」（neu）",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 6.5 小時前 · 晨報挑一點接；WLFI 那段不接",
+   "url": "https://x.com/Andragos_eth/status/2126560899100266948",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 251,
+   "order": 45
+  },
+  {
+   "author": "bitebao_Btc",
+   "name": "",
+   "followers": 7039,
+   "id": "2126651816662421575",
+   "posted": "2026-11-28T12:17:59Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "來回切的是少數，大部分人還站在多頭",
+   "take": "大戶在多空來回切，散戶帳戶多數還是多",
+   "summary": "40 倍做空 6,000 萬的大佬歷史虧 3,100 萬：昨晚割多單虧 345 萬、今天反手 40 倍空",
+   "reply": "哈，他在來回切\n大部分帳戶倒是一直站多頭，Binance 做多帳戶還有 71.4%",
+   "sources": "next-lev lsa say：Binance 多單帳戶 71.4%，30 天前 67.4%、中位數 60.4%（網站看法「帳戶多空平常」）",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 同一個 Aguila 故事 #39 也寫了，這則換多空帳戶比",
+   "url": "https://x.com/bitebao_Btc/status/2126651816662421575",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 252,
+   "order": 46
+  },
+  {
+   "author": "donghaifeixia",
+   "name": "",
+   "followers": 865,
+   "id": "2126622796243747179",
+   "posted": "2026-11-28T10:22:40Z",
+   "kind": "reply",
+   "status": "send",
+   "angle": "比現金，場外現金也在少",
+   "take": "比誰手裡現金多，整個市場的穩定幣也在縮",
+   "summary": "11.28 復盤：6 萬又丟、WLFI 與 USD1 脫錨、ETF 連 8 天流出、宏觀壞消息；一句話「比誰手裡現金多」",
+   "reply": "比現金的話，場外現金也在變少\n穩定幣總量 2,819 億，這週還在縮",
+   "sources": "notes flows：穩定幣 2,819 億美元，7 天 −0.53%（DefiLlama，11/27）",
+   "note": "Grok 註 1 補寫（簡介導流，帖子本身正常） · 復盤挑一點；WLFI／USD1 那段不接",
+   "url": "https://x.com/donghaifeixia/status/2126622796243747179",
+   "lang": "zh",
+   "style": "口語版",
+   "n": 254,
+   "order": 47
+  },
+  {
    "author": "paulxue1979",
    "name": "",
    "followers": 4731,
@@ -21,7 +1051,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 199,
-   "order": 1
+   "order": 48
   },
   {
    "author": "he_feng90578",
@@ -41,7 +1071,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 200,
-   "order": 2
+   "order": 49
   },
   {
    "author": "yangye01",
@@ -61,7 +1091,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 201,
-   "order": 3
+   "order": 50
   },
   {
    "author": "yangye01",
@@ -81,7 +1111,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 202,
-   "order": 4
+   "order": 51
   },
   {
    "author": "CyberMonk0x",
@@ -101,7 +1131,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 203,
-   "order": 5
+   "order": 52
   },
   {
    "author": "ruoxi01",
@@ -121,7 +1151,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 204,
-   "order": 6
+   "order": 53
   },
   {
    "author": "SwftSky",
@@ -141,7 +1171,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 205,
-   "order": 7
+   "order": 54
   },
   {
    "author": "happykiss359",
@@ -161,7 +1191,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 206,
-   "order": 8
+   "order": 55
   },
   {
    "author": "onegaventures",
@@ -181,7 +1211,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 207,
-   "order": 9
+   "order": 56
   },
   {
    "author": "Ben18724254",
@@ -201,7 +1231,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 208,
-   "order": 10
+   "order": 57
   },
   {
    "author": "CJDS1314",
@@ -221,7 +1251,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 209,
-   "order": 11
+   "order": 58
   },
   {
    "author": "serlo123",
@@ -247,7 +1277,7 @@
     "title": "長期持有者在賠錢賣，11/24 前 7 天認賠 46 億美元"
    },
    "n": 189,
-   "order": 12
+   "order": 59
   },
   {
    "author": "paulxue1979",
@@ -267,7 +1297,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 190,
-   "order": 13
+   "order": 60
   },
   {
    "author": "onegaventures",
@@ -287,7 +1317,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 191,
-   "order": 14
+   "order": 61
   },
   {
    "author": "iamironman0315",
@@ -307,7 +1337,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 192,
-   "order": 15
+   "order": 62
   },
   {
    "author": "guzibiji",
@@ -327,7 +1357,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 193,
-   "order": 16
+   "order": 63
   },
   {
    "author": "yabuliskiclub",
@@ -347,7 +1377,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 194,
-   "order": 17
+   "order": 64
   },
   {
    "author": "BTC15w",
@@ -367,7 +1397,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 195,
-   "order": 18
+   "order": 65
   },
   {
    "author": "themianoo",
@@ -387,7 +1417,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 196,
-   "order": 19
+   "order": 66
   },
   {
    "author": "yabuliskiclub",
@@ -407,7 +1437,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 197,
-   "order": 20
+   "order": 67
   },
   {
    "author": "skydancer121",
@@ -427,7 +1457,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 198,
-   "order": 21
+   "order": 68
   },
   {
    "author": "CryptoApprenti1",
@@ -454,7 +1484,7 @@
     "title": "放了 5 年以上的老幣，每天才動 1,268 顆"
    },
    "n": 143,
-   "order": 22
+   "order": 69
   },
   {
    "author": "CryptoYuXin",
@@ -480,7 +1510,7 @@
     "title": "現貨只比平常多賣一點，永續賣了兩倍多"
    },
    "n": 144,
-   "order": 23
+   "order": 70
   },
   {
    "author": "zhntosn1873",
@@ -507,7 +1537,7 @@
     "title": "美股跌它跟、漲它不跟"
    },
    "n": 145,
-   "order": 24
+   "order": 71
   },
   {
    "author": "CryptooIndia",
@@ -535,7 +1565,7 @@
    "mode": "quote",
    "quote": "Half-day session and still −$389M\n\nIf that number holds, it's 8 straight outflow days. The 7 before it, through 11/25, already added up to $2.57B\n\n#Bitcoin #BTC #ETF",
    "n": 146,
-   "order": 25
+   "order": 72
   },
   {
    "author": "ToniEdgeX",
@@ -555,7 +1585,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 147,
-   "order": 26
+   "order": 73
   },
   {
    "author": "ranranyk",
@@ -581,7 +1611,7 @@
     "title": "ETF 買家平均成本 78,971，價格在下面連 15 天"
    },
    "n": 148,
-   "order": 27
+   "order": 74
   },
   {
    "author": "Ben18724254",
@@ -607,7 +1637,7 @@
     "title": "賠錢賣的量，這幾天在退"
    },
    "n": 149,
-   "order": 28
+   "order": 75
   },
   {
    "author": "luopi66",
@@ -627,7 +1657,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 150,
-   "order": 29
+   "order": 76
   },
   {
    "author": "gupiaotoujizhi1",
@@ -647,7 +1677,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 151,
-   "order": 30
+   "order": 77
   },
   {
    "author": "niubainan",
@@ -667,7 +1697,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 152,
-   "order": 31
+   "order": 78
   },
   {
    "author": "brucexu_eth",
@@ -687,7 +1717,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 153,
-   "order": 32
+   "order": 79
   },
   {
    "author": "FishLabs",
@@ -713,7 +1743,7 @@
     "title": "美國現貨 ETF 每日淨流量"
    },
    "n": 154,
-   "order": 33
+   "order": 80
   },
   {
    "author": "Mo__Ye_",
@@ -739,7 +1769,7 @@
     "title": "短期持有者連 22 天賠錢賣"
    },
    "n": 155,
-   "order": 34
+   "order": 81
   },
   {
    "author": "yangye01",
@@ -765,7 +1795,7 @@
     "title": "近 20 天 K 線：昨天上下來回 3,400 美元"
    },
    "n": 156,
-   "order": 35
+   "order": 82
   },
   {
    "author": "jiewangsss",
@@ -791,7 +1821,7 @@
     "title": "Strategy 平均成本 75,446，收盤在下面"
    },
    "n": 157,
-   "order": 36
+   "order": 83
   },
   {
    "author": "CryptoBlockABC",
@@ -811,7 +1841,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 158,
-   "order": 37
+   "order": 84
   },
   {
    "author": "ZhaiBu27773",
@@ -831,7 +1861,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 159,
-   "order": 38
+   "order": 85
   },
   {
    "author": "btc30year",
@@ -851,7 +1881,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 160,
-   "order": 39
+   "order": 86
   },
   {
    "author": "lzw8874",
@@ -871,7 +1901,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 161,
-   "order": 40
+   "order": 87
   },
   {
    "author": "LengLianMeng417",
@@ -891,7 +1921,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 162,
-   "order": 41
+   "order": 88
   },
   {
    "author": "DGBLToken",
@@ -911,7 +1941,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 163,
-   "order": 42
+   "order": 89
   },
   {
    "author": "DengLou_Bth",
@@ -931,7 +1961,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 164,
-   "order": 43
+   "order": 90
   },
   {
    "author": "crypto1ven",
@@ -951,7 +1981,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 165,
-   "order": 44
+   "order": 91
   },
   {
    "author": "xiaofanfan4463",
@@ -971,7 +2001,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 166,
-   "order": 45
+   "order": 92
   },
   {
    "author": "parabolachart",
@@ -991,7 +2021,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 167,
-   "order": 46
+   "order": 93
   },
   {
    "author": "KlofL91123",
@@ -1011,7 +2041,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 168,
-   "order": 47
+   "order": 94
   },
   {
    "author": "falaofafa",
@@ -1031,7 +2061,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 169,
-   "order": 48
+   "order": 95
   },
   {
    "author": "0xN1o_Cheese",
@@ -1051,7 +2081,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 170,
-   "order": 49
+   "order": 96
   },
   {
    "author": "crypto_punkX",
@@ -1077,7 +2107,7 @@
     "title": "各層地址 7 日持幣變化：兩層大戶都在減"
    },
    "n": 171,
-   "order": 50
+   "order": 97
   },
   {
    "author": "blueice49810906",
@@ -1097,7 +2127,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 172,
-   "order": 51
+   "order": 98
   },
   {
    "author": "YikunChen1983",
@@ -1117,7 +2147,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 173,
-   "order": 52
+   "order": 99
   },
   {
    "author": "ZybZerobobo",
@@ -1137,7 +2167,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 174,
-   "order": 53
+   "order": 100
   },
   {
    "author": "LKK23688",
@@ -1157,7 +2187,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 175,
-   "order": 54
+   "order": 101
   },
   {
    "author": "shu8126",
@@ -1183,7 +2213,7 @@
     "title": "表觀需求 30 天還是負的"
    },
    "n": 176,
-   "order": 55
+   "order": 102
   },
   {
    "author": "Maddere7",
@@ -1209,7 +2239,7 @@
     "title": "美股漲這週，ETF 照樣連 7 天流出"
    },
    "n": 177,
-   "order": 56
+   "order": 103
   },
   {
    "author": "BlockcastNews",
@@ -1229,7 +2259,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 178,
-   "order": 57
+   "order": 104
   },
   {
    "author": "Sh_ooogh",
@@ -1249,7 +2279,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 179,
-   "order": 58
+   "order": 105
   },
   {
    "author": "CJDS1314",
@@ -1269,7 +2299,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 180,
-   "order": 59
+   "order": 106
   },
   {
    "author": "ruoxi01",
@@ -1289,7 +2319,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 181,
-   "order": 60
+   "order": 107
   },
   {
    "author": "happykiss359",
@@ -1309,7 +2339,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 182,
-   "order": 61
+   "order": 108
   },
   {
    "author": "broadchain_info",
@@ -1329,7 +2359,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 183,
-   "order": 62
+   "order": 109
   },
   {
    "author": "JRpotato0522",
@@ -1349,7 +2379,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 184,
-   "order": 63
+   "order": 110
   },
   {
    "author": "Javenzhan",
@@ -1369,7 +2399,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 185,
-   "order": 64
+   "order": 111
   },
   {
    "author": "chenke20266",
@@ -1389,7 +2419,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 186,
-   "order": 65
+   "order": 112
   },
   {
    "author": "wokaishiwule",
@@ -1409,7 +2439,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 187,
-   "order": 66
+   "order": 113
   },
   {
    "author": "gongyuanwai",
@@ -1429,7 +2459,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 188,
-   "order": 67
+   "order": 114
   },
   {
    "author": "HushCompound",
@@ -1449,7 +2479,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 139,
-   "order": 68
+   "order": 115
   },
   {
    "author": "yabuliskiclub",
@@ -1469,7 +2499,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 140,
-   "order": 69
+   "order": 116
   },
   {
    "author": "yabuliskiclub",
@@ -1489,7 +2519,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 141,
-   "order": 70
+   "order": 117
   },
   {
    "author": "skydancer121",
@@ -1509,7 +2539,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 142,
-   "order": 71
+   "order": 118
   },
   {
    "author": "MINGJUNBJ",
@@ -1535,7 +2565,7 @@
     "title": "回到前低，賠錢賣的少了一半"
    },
    "n": 119,
-   "order": 72
+   "order": 119
   },
   {
    "author": "CheeseKteo372",
@@ -1561,7 +2591,7 @@
     "title": "ETF 還在往外流"
    },
    "n": 120,
-   "order": 73
+   "order": 120
   },
   {
    "author": "ClickMens",
@@ -1587,7 +2617,7 @@
     "title": "新買盤還沒回來"
    },
    "n": 121,
-   "order": 74
+   "order": 121
   },
   {
    "author": "Ocean_Yu1",
@@ -1607,7 +2637,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 122,
-   "order": 75
+   "order": 122
   },
   {
    "author": "9ececo",
@@ -1633,7 +2663,7 @@
     "title": "礦工：算力、收入與難度"
    },
    "n": 123,
-   "order": 76
+   "order": 123
   },
   {
    "author": "themianoo",
@@ -1660,7 +2690,7 @@
     "title": "拿最久的那批，獲利也只剩薄薄一層"
    },
    "n": 124,
-   "order": 77
+   "order": 124
   },
   {
    "author": "dmdm8358",
@@ -1680,7 +2710,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 125,
-   "order": 78
+   "order": 125
   },
   {
    "author": "ant202013",
@@ -1700,7 +2730,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 126,
-   "order": 79
+   "order": 126
   },
   {
    "author": "chenke20266",
@@ -1726,7 +2756,7 @@
     "title": "錢都在買下跌保險"
    },
    "n": 127,
-   "order": 80
+   "order": 127
   },
   {
    "author": "0xhualuo",
@@ -1746,7 +2776,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 128,
-   "order": 81
+   "order": 128
   },
   {
    "author": "xiaowuxiaowu66",
@@ -1766,7 +2796,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 129,
-   "order": 82
+   "order": 129
   },
   {
    "author": "even366",
@@ -1786,7 +2816,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 130,
-   "order": 83
+   "order": 130
   },
   {
    "author": "zhengang1893",
@@ -1806,7 +2836,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 131,
-   "order": 84
+   "order": 131
   },
   {
    "author": "iamironman0315",
@@ -1826,7 +2856,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 132,
-   "order": 85
+   "order": 132
   },
   {
    "author": "kalilkalilkai",
@@ -1846,7 +2876,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 133,
-   "order": 86
+   "order": 133
   },
   {
    "author": "JPBTC777",
@@ -1866,7 +2896,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 134,
-   "order": 87
+   "order": 134
   },
   {
    "author": "wangjun10257",
@@ -1886,7 +2916,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 135,
-   "order": 88
+   "order": 135
   },
   {
    "author": "CyberMonk0x",
@@ -1906,7 +2936,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 136,
-   "order": 89
+   "order": 136
   },
   {
    "author": "guzibiji",
@@ -1926,7 +2956,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 137,
-   "order": 90
+   "order": 137
   },
   {
    "author": "zwasd5123jason",
@@ -1946,7 +2976,7 @@
    "lang": "zh",
    "style": "口語版",
    "n": 138,
-   "order": 91
+   "order": 138
   },
   {
    "author": "lengfeng88",
@@ -1966,7 +2996,7 @@
    "n": 107,
    "lang": "zh",
    "style": "口語版",
-   "order": 92
+   "order": 139
   },
   {
    "author": "GlmtFab",
@@ -1986,7 +3016,7 @@
    "n": 108,
    "lang": "zh",
    "style": "口語版",
-   "order": 93
+   "order": 140
   },
   {
    "author": "1783Dao",
@@ -2006,7 +3036,7 @@
    "n": 109,
    "lang": "zh",
    "style": "口語版",
-   "order": 94
+   "order": 141
   },
   {
    "author": "xxxxx20201221",
@@ -2026,7 +3056,7 @@
    "n": 110,
    "lang": "zh",
    "style": "口語版",
-   "order": 95
+   "order": 142
   },
   {
    "author": "LYSJingGe",
@@ -2046,7 +3076,7 @@
    "n": 111,
    "lang": "zh",
    "style": "口語版",
-   "order": 96
+   "order": 143
   },
   {
    "author": "wwww3566",
@@ -2066,7 +3096,7 @@
    "n": 112,
    "lang": "zh",
    "style": "口語版",
-   "order": 97
+   "order": 144
   },
   {
    "author": "BTC15w",
@@ -2086,7 +3116,7 @@
    "n": 113,
    "lang": "zh",
    "style": "口語版",
-   "order": 98
+   "order": 145
   },
   {
    "author": "Emmie0908",
@@ -2106,7 +3136,7 @@
    "n": 114,
    "lang": "zh",
    "style": "口語版",
-   "order": 99
+   "order": 146
   },
   {
    "author": "Feicccc",
@@ -2126,7 +3156,7 @@
    "n": 115,
    "lang": "zh",
    "style": "口語版",
-   "order": 100
+   "order": 147
   },
   {
    "author": "wokaishiwule",
@@ -2146,7 +3176,7 @@
    "n": 116,
    "lang": "zh",
    "style": "口語版",
-   "order": 101
+   "order": 148
   },
   {
    "author": "Jclub888",
@@ -2166,7 +3196,7 @@
    "n": 117,
    "lang": "zh",
    "style": "口語版",
-   "order": 102
+   "order": 149
   },
   {
    "author": "0xPopx",
@@ -2186,7 +3216,7 @@
    "n": 118,
    "lang": "zh",
    "style": "口語版",
-   "order": 103
+   "order": 150
   },
   {
    "author": "huangmi12916508",
@@ -2206,7 +3236,7 @@
    "n": 92,
    "lang": "zh",
    "style": "口語版",
-   "order": 104
+   "order": 151
   },
   {
    "author": "yabuliskiclub",
@@ -2226,7 +3256,7 @@
    "n": 93,
    "lang": "zh",
    "style": "口語版",
-   "order": 105
+   "order": 152
   },
   {
    "author": "happykiss359",
@@ -2246,7 +3276,7 @@
    "n": 94,
    "lang": "zh",
    "style": "口語版",
-   "order": 106
+   "order": 153
   },
   {
    "author": "parkly",
@@ -2266,7 +3296,7 @@
    "n": 95,
    "lang": "zh",
    "style": "口語版",
-   "order": 107
+   "order": 154
   },
   {
    "author": "Lai8372",
@@ -2286,7 +3316,7 @@
    "n": 96,
    "lang": "zh",
    "style": "口語版",
-   "order": 108
+   "order": 155
   },
   {
    "author": "HushCompound",
@@ -2306,7 +3336,7 @@
    "n": 97,
    "lang": "zh",
    "style": "口語版",
-   "order": 109
+   "order": 156
   },
   {
    "author": "Ethwanfeng",
@@ -2326,7 +3356,7 @@
    "n": 98,
    "lang": "zh",
    "style": "口語版",
-   "order": 110
+   "order": 157
   },
   {
    "author": "lxpzs11",
@@ -2346,7 +3376,7 @@
    "n": 99,
    "lang": "zh",
    "style": "口語版",
-   "order": 111
+   "order": 158
   },
   {
    "author": "HandschkeC",
@@ -2366,7 +3396,7 @@
    "n": 100,
    "lang": "zh",
    "style": "口語版",
-   "order": 112
+   "order": 159
   },
   {
    "author": "ToplayerNo8",
@@ -2386,7 +3416,7 @@
    "n": 101,
    "lang": "zh",
    "style": "口語版",
-   "order": 113
+   "order": 160
   },
   {
    "author": "Javenzhan",
@@ -2406,7 +3436,7 @@
    "n": 102,
    "lang": "zh",
    "style": "口語版",
-   "order": 114
+   "order": 161
   },
   {
    "author": "GX_wuyanzu",
@@ -2426,7 +3456,7 @@
    "n": 103,
    "lang": "zh",
    "style": "口語版",
-   "order": 115
+   "order": 162
   },
   {
    "author": "gongyuanwai",
@@ -2446,7 +3476,7 @@
    "n": 104,
    "lang": "zh",
    "style": "口語版",
-   "order": 116
+   "order": 163
   },
   {
    "author": "edyjayakarya",
@@ -2466,7 +3496,7 @@
    "n": 105,
    "lang": "zh",
    "style": "口語版",
-   "order": 117
+   "order": 164
   },
   {
    "author": "zhengfangwei2",
@@ -2486,7 +3516,7 @@
    "n": 106,
    "lang": "zh",
    "style": "口語版",
-   "order": 118
+   "order": 165
   },
   {
    "author": "abstract4567",
@@ -2512,7 +3542,7 @@
     "title": "賠錢賣的還壓著賺錢賣的"
    },
    "n": 82,
-   "order": 119
+   "order": 166
   },
   {
    "author": "idolxduo",
@@ -2532,7 +3562,7 @@
    "kind": "reply",
    "status": "send",
    "n": 83,
-   "order": 120
+   "order": 167
   },
   {
    "author": "Lai8372",
@@ -2552,7 +3582,7 @@
    "kind": "reply",
    "status": "send",
    "n": 84,
-   "order": 121
+   "order": 168
   },
   {
    "author": "AIInvestHK",
@@ -2572,7 +3602,7 @@
    "kind": "reply",
    "status": "send",
    "n": 85,
-   "order": 122
+   "order": 169
   },
   {
    "author": "0x_yunqing",
@@ -2598,7 +3628,7 @@
     "title": "Coinbase 這邊沒在急著賣"
    },
    "n": 86,
-   "order": 123
+   "order": 170
   },
   {
    "author": "Dong2922",
@@ -2618,7 +3648,7 @@
    "kind": "reply",
    "status": "send",
    "n": 87,
-   "order": 124
+   "order": 171
   },
   {
    "author": "liqing732676",
@@ -2638,7 +3668,7 @@
    "kind": "reply",
    "status": "send",
    "n": 88,
-   "order": 125
+   "order": 172
   },
   {
    "author": "broadchain_info",
@@ -2658,7 +3688,7 @@
    "kind": "reply",
    "status": "send",
    "n": 89,
-   "order": 126
+   "order": 173
   },
   {
    "author": "15395185wer",
@@ -2678,7 +3708,7 @@
    "kind": "reply",
    "status": "send",
    "n": 90,
-   "order": 127
+   "order": 174
   },
   {
    "author": "justwasm",
@@ -2698,7 +3728,7 @@
    "kind": "reply",
    "status": "send",
    "n": 91,
-   "order": 128
+   "order": 175
   },
   {
    "n": 73,
@@ -2718,7 +3748,7 @@
    "lang": "zh",
    "url": "https://x.com/huangmi12916508/status/2126542089135829503",
    "style": "口語版",
-   "order": 129
+   "order": 176
   },
   {
    "n": 74,
@@ -2738,7 +3768,7 @@
    "lang": "zh",
    "url": "https://x.com/caibaostock/status/2126547406556967100",
    "style": "口語版",
-   "order": 130
+   "order": 177
   },
   {
    "n": 75,
@@ -2758,7 +3788,7 @@
    "lang": "zh",
    "url": "https://x.com/caibaostock/status/2126547483623104935",
    "style": "口語版",
-   "order": 131
+   "order": 178
   },
   {
    "n": 76,
@@ -2778,7 +3808,7 @@
    "lang": "zh",
    "url": "https://x.com/Gold_Gold_X/status/2126543323091619878",
    "style": "口語版",
-   "order": 132
+   "order": 179
   },
   {
    "n": 77,
@@ -2798,7 +3828,7 @@
    "lang": "zh",
    "url": "https://x.com/XueCheng1041604/status/2126543597902455107",
    "style": "口語版",
-   "order": 133
+   "order": 180
   },
   {
    "n": 78,
@@ -2818,7 +3848,7 @@
    "lang": "zh",
    "url": "https://x.com/XueCheng1041604/status/2126544686752161797",
    "style": "口語版",
-   "order": 134
+   "order": 181
   },
   {
    "n": 79,
@@ -2838,7 +3868,7 @@
    "lang": "zh",
    "url": "https://x.com/even366/status/2126537223860560369",
    "style": "口語版",
-   "order": 135
+   "order": 182
   },
   {
    "n": 80,
@@ -2858,7 +3888,7 @@
    "lang": "zh",
    "url": "https://x.com/AvaLin88/status/2126545314438111601",
    "style": "口語版",
-   "order": 136
+   "order": 183
   },
   {
    "n": 81,
@@ -2878,7 +3908,7 @@
    "lang": "zh",
    "url": "https://x.com/yac720/status/2126543428951613878",
    "style": "口語版",
-   "order": 137
+   "order": 184
   },
   {
    "n": 65,
@@ -2904,7 +3934,7 @@
    "lang": "zh",
    "url": "https://x.com/Wuming_Mr_/status/2126528957927276822",
    "style": "口語版",
-   "order": 138
+   "order": 185
   },
   {
    "n": 66,
@@ -2924,7 +3954,7 @@
    "lang": "zh",
    "url": "https://x.com/Letlbl/status/2126519962676400343",
    "style": "口語版",
-   "order": 139
+   "order": 186
   },
   {
    "n": 67,
@@ -2944,7 +3974,7 @@
    "note": "原創（beincrypto 引用）底下，他問了問題；英文接話照回",
    "url": "https://x.com/QDJeffJia/status/2126521355378074084",
    "style": "口語版",
-   "order": 140
+   "order": 187
   },
   {
    "n": 68,
@@ -2964,7 +3994,7 @@
    "lang": "zh",
    "url": "https://x.com/huangmi12916508/status/2126530417897750798",
    "style": "口語版",
-   "order": 141
+   "order": 188
   },
   {
    "n": 69,
@@ -2984,7 +4014,7 @@
    "lang": "zh",
    "url": "https://x.com/rsrrcj777/status/2126529778383733063",
    "style": "口語版",
-   "order": 142
+   "order": 189
   },
   {
    "n": 54,
@@ -3010,7 +4040,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 143
+   "order": 190
   },
   {
    "n": 55,
@@ -3030,7 +4060,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 144
+   "order": 191
   },
   {
    "n": 56,
@@ -3050,7 +4080,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 145
+   "order": 192
   },
   {
    "n": 57,
@@ -3070,7 +4100,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 146
+   "order": 193
   },
   {
    "n": 58,
@@ -3090,7 +4120,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 147
+   "order": 194
   },
   {
    "n": 59,
@@ -3110,7 +4140,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 148
+   "order": 195
   },
   {
    "n": 60,
@@ -3130,7 +4160,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 149
+   "order": 196
   },
   {
    "n": 61,
@@ -3150,7 +4180,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 150
+   "order": 197
   },
   {
    "n": 62,
@@ -3170,7 +4200,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 151
+   "order": 198
   },
   {
    "n": 63,
@@ -3190,7 +4220,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 152
+   "order": 199
   },
   {
    "n": 64,
@@ -3210,7 +4240,7 @@
    "style": "口語版",
    "kind": "reply",
    "status": "send",
-   "order": 153
+   "order": 200
   },
   {
    "status": "send",
@@ -3231,11 +4261,11 @@
    "name": "Murphychen888",
    "n": 48,
    "mode": "reply",
-   "order": 154
+   "order": 201
   },
   {
    "n": 49,
-   "order": 155,
+   "order": 202,
    "status": "send",
    "url": "https://x.com/huangmi12916508/status/2126516158048489535",
    "id": "2126516158048489535",
@@ -3255,7 +4285,7 @@
   },
   {
    "n": 50,
-   "order": 156,
+   "order": 203,
    "status": "send",
    "url": "https://x.com/lumaochaoren/status/2126508871300853967",
    "id": "2126508871300853967",
@@ -3275,7 +4305,7 @@
   },
   {
    "n": 51,
-   "order": 157,
+   "order": 204,
    "status": "send",
    "url": "https://x.com/lucianilmendez/status/2126505069113659540",
    "id": "2126505069113659540",
@@ -3295,7 +4325,7 @@
   },
   {
    "n": 52,
-   "order": 158,
+   "order": 205,
    "status": "send",
    "url": "https://x.com/rsrrcj777/status/2126506027520786503",
    "id": "2126506027520786503",
@@ -3315,7 +4345,7 @@
   },
   {
    "n": 53,
-   "order": 159,
+   "order": 206,
    "status": "skip",
    "url": "https://x.com/paulxue1979/status/2126515271947223498",
    "id": "2126515271947223498",
@@ -3335,7 +4365,7 @@
   },
   {
    "n": 42,
-   "order": 160,
+   "order": 207,
    "status": "send",
    "url": "https://x.com/ai_9684xtpa/status/2126492408456339745",
    "id": "2126492408456339745",
@@ -3361,7 +4391,7 @@
   },
   {
    "n": 43,
-   "order": 161,
+   "order": 208,
    "status": "send",
    "url": "https://x.com/serlo123/status/2126499203090432017",
    "id": "2126499203090432017",
@@ -3381,7 +4411,7 @@
   },
   {
    "n": 44,
-   "order": 162,
+   "order": 209,
    "status": "send",
    "url": "https://x.com/XiaoJie8683/status/2126490264202326476",
    "id": "2126490264202326476",
@@ -3401,7 +4431,7 @@
   },
   {
    "n": 45,
-   "order": 163,
+   "order": 210,
    "status": "send",
    "url": "https://x.com/paulxue1979/status/2126501705651298439",
    "id": "2126501705651298439",
@@ -3421,7 +4451,7 @@
   },
   {
    "n": 46,
-   "order": 164,
+   "order": 211,
    "status": "send",
    "url": "https://x.com/huangmi12916508/status/2126502115204096311",
    "id": "2126502115204096311",
@@ -3441,7 +4471,7 @@
   },
   {
    "n": 47,
-   "order": 165,
+   "order": 212,
    "status": "skip",
    "url": "https://x.com/CHENGYANG7T/status/2126500332276494716",
    "id": "2126500332276494716",
@@ -3461,7 +4491,7 @@
   },
   {
    "n": 32,
-   "order": 166,
+   "order": 213,
    "status": "send",
    "url": "https://x.com/beincrypto/status/2126496300623421522",
    "id": "2126496300623421522",
@@ -3489,7 +4519,7 @@
   },
   {
    "n": 33,
-   "order": 167,
+   "order": 214,
    "status": "send",
    "url": "https://x.com/Yorbit_Ai/status/2126397649544954014",
    "id": "2126397649544954014",
@@ -3509,7 +4539,7 @@
   },
   {
    "n": 34,
-   "order": 168,
+   "order": 215,
    "status": "send",
    "url": "https://x.com/ihavenliu/status/2126474198986170819",
    "id": "2126474198986170819",
@@ -3529,7 +4559,7 @@
   },
   {
    "n": 35,
-   "order": 169,
+   "order": 216,
    "status": "send",
    "url": "https://x.com/parkly/status/2126495920812622020",
    "id": "2126495920812622020",
@@ -3549,7 +4579,7 @@
   },
   {
    "n": 36,
-   "order": 170,
+   "order": 217,
    "status": "send",
    "url": "https://x.com/caibaostock/status/2126486127586812255",
    "id": "2126486127586812255",
@@ -3569,7 +4599,7 @@
   },
   {
    "n": 37,
-   "order": 171,
+   "order": 218,
    "status": "send",
    "url": "https://x.com/garyche81636320/status/2126489649141219643",
    "id": "2126489649141219643",
@@ -3589,7 +4619,7 @@
   },
   {
    "n": 38,
-   "order": 172,
+   "order": 219,
    "status": "send",
    "url": "https://x.com/snlan2000/status/2126492682641908205",
    "id": "2126492682641908205",
@@ -3609,7 +4639,7 @@
   },
   {
    "n": 39,
-   "order": 173,
+   "order": 220,
    "status": "send",
    "url": "https://x.com/degenlinxi/status/2126485476161053069",
    "id": "2126485476161053069",
@@ -3629,7 +4659,7 @@
   },
   {
    "n": 40,
-   "order": 174,
+   "order": 221,
    "status": "send",
    "url": "https://x.com/alrex2en/status/2126484876669161689",
    "id": "2126484876669161689",
@@ -3649,7 +4679,7 @@
   },
   {
    "n": 41,
-   "order": 175,
+   "order": 222,
    "status": "send",
    "url": "https://x.com/wy_ones/status/2126485567366156394",
    "id": "2126485567366156394",
@@ -3685,7 +4715,7 @@
    "sources": "notes.json flows：ETF 最新完整日 11/25，連 7 個交易日流出、合計 25.7 億美元（CoinMarketCap）",
    "note": "接話：我們原創底下，不設輪數。不配圖。",
    "n": 16,
-   "order": 176
+   "order": 223
   },
   {
    "status": "send",
@@ -3705,7 +4735,7 @@
    "sources": "notes.json cycle：週線多空分數 −1.85，上週 −1.32，再一週就照規則翻回空方",
    "note": "接話：他的帖底下第 2 輪，原作者接話。不配圖。",
    "n": 17,
-   "order": 177
+   "order": 224
   },
   {
    "status": "skip",
@@ -3725,7 +4755,7 @@
    "sources": "",
    "note": "按讚就好：他的帖底下第 3 輪，沒問問題。",
    "n": 18,
-   "order": 178
+   "order": 225
   },
   {
    "status": "send",
@@ -3745,7 +4775,7 @@
    "sources": "notes.json onchain：1 萬顆以上的地址 7 天多 1.5 萬顆、100–1,000 顆的少 1.3 萬顆（Bitview）",
    "note": "固定名單 4c（熟帳號，今天第 2 則非接話）。他要二選一，回市場判斷、不答買賣。1 萬粉以下不配圖。",
    "n": 19,
-   "order": 179
+   "order": 226
   },
   {
    "status": "send",
@@ -3765,7 +4795,7 @@
    "sources": "notes.json flows：Polymarket 12 月升息機率 96.2%；2 年期比聯準會上限高 0.69 個百分點",
    "note": "固定名單 4c（今天第 2 則）。宏觀帖，接他的「降息空間」那一環。1 萬粉以下不配圖。",
    "n": 20,
-   "order": 180
+   "order": 227
   },
   {
    "status": "send",
@@ -3785,7 +4815,7 @@
    "sources": "notes.json watch：200 日均線 71,811，連 16 天收在線下",
    "note": "固定名單 4c。1 萬粉以下不配圖。",
    "n": 21,
-   "order": 181
+   "order": 228
   },
   {
    "status": "send",
@@ -3805,7 +4835,7 @@
    "sources": "notes.json onchain：全網單日已實現虧損 12.8 億美元，11/20 是 28.4 億（Bitview）",
    "note": "Grok inbox 0905。1 萬粉以下不配圖。",
    "n": 22,
-   "order": 182
+   "order": 229
   },
   {
    "status": "send",
@@ -3825,7 +4855,7 @@
    "sources": "notes.json market：60,000–64,000 兩格有 102 萬顆短期持有者籌碼（Bitview）；summary：全體未實現獲利只剩市值的 33.2%",
    "note": "Grok inbox 0905。1 萬粉以下不配圖。",
    "n": 23,
-   "order": 183
+   "order": 230
   },
   {
    "status": "send",
@@ -3845,7 +4875,7 @@
    "sources": "notes.json summary：全體未實現獲利只剩市值的 33.2%，MVRV Z 近四年最低 7%，都是歷來底部區的讀數",
    "note": "Grok inbox 0905。1 萬粉以下不配圖。Grok 串。",
    "n": 24,
-   "order": 184
+   "order": 231
   },
   {
    "status": "send",
@@ -3865,7 +4895,7 @@
    "sources": "notes.json deriv：掛單簿 59,000 買單 2.42 億、60,000 賣單 2.24 億美元（Hyperliquid 永續）",
    "note": "Grok inbox 0905。1 萬粉以下不配圖。不接「不動手」那半句。",
    "n": 25,
-   "order": 185
+   "order": 232
   },
   {
    "status": "send",
@@ -3885,7 +4915,7 @@
    "sources": "notes.json flows：穩定幣 2,819 億美元，7 天少 0.53%（約 15 億），前一天少 1.05%（DefiLlama）",
    "note": "Grok inbox 0905。1 萬粉以下不配圖。",
    "n": 26,
-   "order": 186
+   "order": 233
   },
   {
    "status": "send",
@@ -3905,7 +4935,7 @@
    "sources": "notes.json news：近 60 個美股交易日，Nasdaq 100 漲的日子 BTC 漲它的 83.1%，跌的日子跌它的 116.9%（到 11/25）",
    "note": "Grok inbox 0905。1 萬粉以下不配圖。不答拉沒拉完。",
    "n": 27,
-   "order": 187
+   "order": 234
   },
   {
    "status": "send",
@@ -3925,7 +4955,7 @@
    "sources": "notes.json overview／deriv：低點 58,729（Kraken）；全天多單強平 5,910 萬美元（Coinalyze）",
    "note": "Grok inbox 0905。1 萬粉以下不配圖。",
    "n": 28,
-   "order": 188
+   "order": 235
   },
   {
    "status": "send",
@@ -3945,7 +4975,7 @@
    "sources": "notes.json events：MSCI 把 Strategy 移出指數，11/30 收盤生效，同一批還有 Metaplanet",
    "note": "Grok inbox 0905。1 萬粉以下不配圖。",
    "n": 29,
-   "order": 189
+   "order": 236
   },
   {
    "status": "send",
@@ -3965,7 +4995,7 @@
    "sources": "notes.json events：MSCI 剔除 Strategy 11/30 收盤生效",
    "note": "Grok inbox 0905。1 萬粉以下不配圖。",
    "n": 30,
-   "order": 190
+   "order": 237
   },
   {
    "status": "send",
@@ -3985,7 +5015,7 @@
    "sources": "價格：11/27 高點 62,139、收盤 59,864（Kraken）",
    "note": "Grok inbox 0905。1 萬粉以下不配圖。閒聊不帶讀數。",
    "n": 31,
-   "order": 191
+   "order": 238
   },
   {
    "status": "send",
@@ -4005,7 +5035,7 @@
    "sources": "notes.json onchain：全網單日已實現虧損 12.8 億美元，11/20 是 28.4 億（Bitview）",
    "note": "固定名單 4c。整理型長文，挑他的結論那句接。1 萬粉以下不配圖。",
    "n": 14,
-   "order": 192
+   "order": 239
   },
   {
    "status": "send",
@@ -4025,7 +5055,7 @@
    "sources": "notes.json onchain：依地址餘額分層，1 萬顆以上 7 天 +1.5 萬顆、100–1,000 顆 −1.3 萬顆（Bitview，鏈上移動不一定是買賣）",
    "note": "固定名單 4c（熟帳號）。喊單味重的短文，只接他的數據說法。1 萬粉以下不配圖。",
    "n": 15,
-   "order": 193
+   "order": 240
   },
   {
    "status": "send",
@@ -4045,7 +5075,7 @@
    "sources": "notes.json cycle：週線多空分數 −1.85，上週 −1.32；連三週為負",
    "note": "固定名單 4c（熟帳號，昨天 #2 回過他的底背離帖，角度換成另一條週線）。1 萬粉以下不配圖。",
    "n": 13,
-   "order": 194
+   "order": 241
   },
   {
    "status": "send",
@@ -4065,7 +5095,7 @@
    "name": "CHENGYANG7T",
    "url": "https://x.com/CHENGYANG7T/status/2126458884135006714",
    "n": 1,
-   "order": 195
+   "order": 242
   },
   {
    "status": "send",
@@ -4085,7 +5115,7 @@
    "name": "jw1124520",
    "url": "https://x.com/jw1124520/status/2126340246103375883",
    "n": 2,
-   "order": 196
+   "order": 243
   },
   {
    "status": "send",
@@ -4105,7 +5135,7 @@
    "name": "jw1124520",
    "url": "https://x.com/jw1124520/status/2126341192824889357",
    "n": 3,
-   "order": 197
+   "order": 244
   },
   {
    "status": "skip",
@@ -4125,7 +5155,7 @@
    "name": "jw1124520",
    "url": "https://x.com/jw1124520/status/2126340708118536637",
    "n": 4,
-   "order": 198
+   "order": 245
   },
   {
    "status": "send",
@@ -4145,7 +5175,7 @@
    "name": "jw1124520",
    "url": "https://x.com/jw1124520/status/2126341767327027612",
    "n": 5,
-   "order": 199
+   "order": 246
   },
   {
    "status": "skip",
@@ -4165,7 +5195,7 @@
    "name": "Arrowuppz",
    "url": "https://x.com/Arrowuppz/status/2126340694235283486",
    "n": 6,
-   "order": 200
+   "order": 247
   },
   {
    "status": "skip",
@@ -4185,7 +5215,7 @@
    "name": "ChengYang0611",
    "url": "https://x.com/ChengYang0611/status/2126342380773396982",
    "n": 7,
-   "order": 201
+   "order": 248
   },
   {
    "status": "skip",
@@ -4205,7 +5235,7 @@
    "name": "mgmyc520",
    "url": "https://x.com/mgmyc520/status/2126329928014832029",
    "n": 8,
-   "order": 202
+   "order": 249
   },
   {
    "status": "skip",
@@ -4225,7 +5255,7 @@
    "name": "serlo123",
    "url": "https://x.com/serlo123/status/2125808477021053399",
    "n": 9,
-   "order": 203
+   "order": 250
   },
   {
    "status": "skip",
@@ -4245,7 +5275,7 @@
    "name": "aaronwalkerband",
    "url": "https://x.com/aaronwalkerband/status/2125483218279465046",
    "n": 10,
-   "order": 204
+   "order": 251
   },
   {
    "status": "skip",
@@ -4265,7 +5295,7 @@
    "name": "chaohaha6",
    "url": "https://x.com/chaohaha6/status/2125547038670737439",
    "n": 11,
-   "order": 205
+   "order": 252
   },
   {
    "status": "skip",
@@ -4285,7 +5315,7 @@
    "name": "zhiyuanGen17845",
    "url": "https://x.com/zhiyuanGen17845/status/2125578397996941606",
    "n": 12,
-   "order": 206
+   "order": 253
   },
   {
    "status": "send",
@@ -4305,7 +5335,7 @@
    "name": "MceeyCare",
    "url": "https://x.com/MceeyCare/status/2126224677467214316",
    "n": 70,
-   "order": 137
+   "order": 184
   },
   {
    "status": "send",
@@ -4325,7 +5355,7 @@
    "name": "yinghong1388",
    "url": "https://x.com/yinghong1388/status/2125936668960260210",
    "n": 71,
-   "order": 136
+   "order": 183
   },
   {
    "status": "send",
@@ -4345,7 +5375,7 @@
    "name": "zhoujinyuanfafa",
    "url": "https://x.com/zhoujinyuanfafa/status/2126118433985347889",
    "n": 72,
-   "order": 135
+   "order": 182
   }
  ]
 }
