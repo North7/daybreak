@@ -27,7 +27,7 @@ Valuation is still in the historical bottom zone while the medium-term trend evi
 
 ### Dawn–Dusk Index
 
-Bullish: The Dawn–Dusk Index is at deep night (heat 4 out of 100): valuations are at the cheapest stretch of the cycle, bottom territory, though this stage can last months, and six months on price was not always higher.
+Bullish long term: valuations sit in the cheapest stretch of the cycle, but the weekly trend score is a week from flipping bearish, so this zone can last months. Heat back above 10 ends it.
 
 What it shows: What it is: the Dawn–Dusk Index treats a cycle as one day, from deep night (cheapest) to dusk (overheated). It looks at two things. Heat: five valuation measures (such as how much paper profit holders have, or how far price is from its long-run trend), each ranked against the last four years and averaged into 0–100, where 0 is the cheapest of those years. Direction: whether four trend measures, taken together, point up or down. Together they give five stages: heat at 10 or below is deep night (bottom zone), 80 or above is dusk (overheated); in between, a downward direction is nightfall (falling), an upward one with heat under 50 is daybreak (early rise), and 50 or more is daylight (rising). How to read it: the lower panel is weekly heat and the upper one price, both coloured by the stage at the time; circles mark past cycle tops and bottoms, with the heat then. Caveats: heat is only ranked against four years, so every cycle has a "cheapest" stretch that is not cheap in absolute terms; in the last two cycles valuations peaked before price, so dusk tends to come early; there are only about three cycles since 2013, so the statistics describe history.
 
@@ -37,7 +37,7 @@ Page: https://daybreak.aronlab.dev/en/charts/dawn/
 
 ### What the Dawn–Dusk Index is made of
 
-Bullish: The Dawn–Dusk Index is at deep night (heat 4 out of 100): valuations are at the cheapest stretch of the cycle, bottom territory, though this stage can last months, and six months on price was not always higher.
+Bullish long term: valuations sit in the cheapest stretch of the cycle, but the weekly trend score is a week from flipping bearish, so this zone can last months. Heat back above 10 ends it.
 
 What it shows: What it is: the Dawn–Dusk Index taken apart. The first five rows feed the heat, the last four the direction. How to read it: each valuation row is ranked against the last four years (0 = the cheapest of those years, 100 = the richest); their average is the heat, and the tick on the bar marks the dusk line at 80. In the four trend rows, right (green) is up and left (red) is down, the tick is 0, and together they set the direction. Caveats: these are only the parts; the position call is on the Dawn–Dusk card, and the ranks only cover four years.
 
@@ -77,7 +77,7 @@ Page: https://daybreak.aronlab.dev/en/charts/regc/
 
 ### Distance from cost bases and averages
 
-Bullish: Against nine cost lines and averages, on average only about 14% of days in history had price lower than now: a cheap zone, though past bear bottoms all went lower, so there is room to fall.
+Bullish: Leaning bullish: price sits far below most cost lines and averages, a cheap zone, yet past bear bottoms ran colder still. Long-term holders' paper profit is thin. Back above 40 means mid-range again.
 
 What it shows: What it is: price is compared with nine common cost lines and averages (such as the average cost of all coins, the short-term holder cost, the 200-week MA and the long-run trend price); for each, today's distance is ranked against all history up to that day (0 = the lowest ever, 100 = the highest), and the nine ranks are averaged. The lower the number, the rarer it is for price to sit this far below the lines, so the cheaper it is. How to read it: "Overall" is the average of the nine; circles mark the lowest reading of each bear market, and the dashed line is 10. "Fast and slow" splits the lines in two: the fast ones (short-term holder cost, 90-day on-chain average price, 200-day MA) react quickly, and fast below slow means the recent fall was quick. Caveats: it ranks against all history, and each cycle swings less than the one before, so recent lows rarely reach the very bottom of the ranking; there are only a few cycles, and its broad direction matches the Dawn–Dusk heat.
 
@@ -163,7 +163,7 @@ Page: https://daybreak.aronlab.dev/en/charts/p6v/
 
 ### MVRV ÷ prior-cycle peak
 
-Bullish: Market heat (MVRV) is only 41% of the last top's: on this chart a top is far off, and price would need to rise another 84% to reach the warning line.
+Bullish in that the top is far off: market heat is under half the last cycle peak, and the top radar and Pi Cycle are cool. The warning line sits near $110,417. It says nothing about the bottom.
 
 What it shows: What it is: MVRV is price divided by the average cost of all coins (the price when each coin last moved). 1× means holders are break-even on average; the higher it is, the more they are up and the hotter the market. Each cycle's top comes at a lower MVRV, so this chart compares today's MVRV with the last top's peak; a ratio of 1 would be as hot as then. Reading it: the line is that ratio; the red lines at 0.75 and 0.80 are warning lines, shaded above 0.75, and they count only after five straight days above. The red dot is the ratio at the 2025 top. Caveats: the chart starts in 2021 and has seen only two tops, 2021 and 2025; the warning lines were set by looking at them.
 
@@ -221,7 +221,7 @@ Page: https://daybreak.aronlab.dev/en/charts/tmh/
 
 ### Long-Term Holder Supply in Loss (%)
 
-Bullish: 46.0% of long-term holders' coins are underwater, about where past bear bottoms were: on this chart that is bottom territory, though the share is still pressed against this cycle's peak, so the bottom may still be forming.
+Bullish: the share of long-term holders underwater matches the last 3 bear bottoms, and the CVDD floor is close. But it hugs this cycle's high; a close below about $58,000 breaks the pattern.
 
 What it shows: What it is: long-term holders are those whose coins have sat unmoved for 155+ days, usually the group least easily shaken out. This chart is the share of their coins now worth less than they paid (at a paper loss). At bear-market bottoms even this group is mostly underwater, and the share spikes. Reading it: the red band is where past bear bottoms peaked since 2019 (42–48%), red dots mark each cycle's peak, and the dashed line is this cycle's peak so far. After leaving past bottoms the share never went back above that cycle's peak; a move above the dashed line would break the pattern. Caveats: not price alone: people who bought high a few months ago become long-term holders after 155 days, lifting the share even when price stalls; only 3–4 cycles, and a pattern seen in hindsight.
 
@@ -291,7 +291,7 @@ Page: https://daybreak.aronlab.dev/en/charts/hashr/
 
 ### Versus past cycles: after the top
 
-Neutral: This cycle is 52% off its top, while past cycles were far deeper by the same day: it has fallen less, so the old timetable of a bottom a year after the top and two or three more years back to the top does not simply carry over.
+Neutral: this cycle is down roughly half from the top, while past cycles were down 75-83% at the same point, so the old bottom-in-a-year timetable doesn't fit. Breaking the June low would push the bottom later.
 
 What it shows: What it is: every bull-market top is lined up on the same day (day 0), showing how far each later close sat below that top, so this cycle can be compared with past ones at the same point in time. Past cycles lost three quarters or more after the top, bottomed about a year later and took another two or three years to get back; that is where the familiar "four-year cycle timetable" comes from. How to read it: each line is one cycle; the thick orange line is this one, now 417 days past its top (the "Today" line). The x-axis is days since the top, the y-axis how far below the top (−50% means half gone), and the "Top close" line is the top price itself. Caveats: there are only three cycles to compare, and this one has fallen much less and looks different, so their timetable does not simply carry over.
 
@@ -358,7 +358,7 @@ Both walls of the range were checked today: above, short-term holders at $60,000
 
 ### Cost bases and moving averages
 
-Bearish: The close is below 6 of 8 lines; the nearest is the 200-day MA (20.0% higher).
+Bearish: the close is below the true market mean, so active investors are underwater, with the 200-day average and short-term holder cost overhead near $72K. Reclaiming $75,953 flips this back.
 
 What it shows: Price against eight lines: three moving averages and the average cost of five groups. Above the active investor price is constructive; between it and the true market mean is a range; below the true market mean is bearish.
 
@@ -418,7 +418,7 @@ Page: https://daybreak.aronlab.dev/en/charts/etfcost/
 
 ### UTXO Realized Price Distribution (URPD)
 
-Neutral: The bucket at price (58K–60K) holds 378.5K BTC (1.8%).
+Neutral: a thick wall sits at 60K-62K where holders break even and may sell, while below price there's no large pile all the way to 38K-40K. Coins that moved this week mostly moved at a loss.
 
 What it shows: Each bucket holds the coins that last moved at that price. Thick zones are where many holders' costs sit and price tends to stall; thin zones have few and price tends to move through quickly.
 
@@ -468,7 +468,7 @@ Page: https://daybreak.aronlab.dev/en/charts/pnlb/
 
 ### Open interest by strike
 
-Neutral: Dec 25 expiry: max pain at $70,000 (17% above the close).
+Neutral: the biggest expiry holds about half of open interest, with puts stacked at $60,000 and calls at $80,000 as the two walls. Negative gamma below can amplify a drop; the max-pain pull is weak.
 
 What it shows: Open interest by strike for the main expiry: puts on the left, calls on the right. Strikes with large open interest often act as levels into expiry.
 
@@ -508,7 +508,7 @@ Page: https://daybreak.aronlab.dev/en/charts/book/
 
 ### The current leg
 
-Bearish: Day 67 of a down leg: −30.9% from $86,594 on Sep 21.
+Bearish: still in a down leg, deeper than over 90% of the last 12 declines, with price circling the busiest trading zone of the past 20 days. A close at $67,627 would end the leg.
 
 What it shows: A new leg starts only after a 15% reversal on closes. Shading shows each leg's direction; markers give its size and length. The dashed line ends this leg: a close below it and the leg is over.
 
@@ -537,7 +537,7 @@ Today's finding sits on this page: back near the prior low, fewer than half as m
 
 ### Pullback pressure checklist
 
-Bearish: 3 of five hold: price back at short-term holder cost, supply in profit ≤ 65%, short-term holders in loss ≥ 50%.
+Bearish: pressure signals have stacked for about a month, and past episodes left price roughly flat 90 days later. Yet the sell-pressure gauge shows a bottoming combo. Pressure eases once two items clear.
 
 What it shows: Five conditions that have tended to show up together late in pullbacks during past bear-to-bull transitions. The first three can be back-tested daily; the last two are current readings only. The list shows how far pullback pressure has been released, not a buy signal.
 
@@ -557,7 +557,7 @@ Page: https://daybreak.aronlab.dev/en/charts/sx/
 
 ### Short-Term Holder Supply in Profit (%)
 
-Bullish: Only 6.0% of short-term holder coins are in profit; 94.0% are at a loss (over half for 23 days).
+Bullish lean: nearly every short-term holder is underwater, an extreme bear-market reading. After the loss share topped 60%, price was higher 30 days later in 12 of 16 cases, though it can linger here.
 
 What it shows: The share of short-term holder coins currently in profit. Top pane: BTC weekly candles (log scale). "On the price" turns the same share (averaged over the last 5 days) into the colour of the price line: warmer means more short-term holders in profit, cooler more at a loss. In a trending market it can stay warm for months, so warm is not a top and cool is not a bottom. A reading only.
 
@@ -567,7 +567,7 @@ Page: https://daybreak.aronlab.dev/en/charts/profit/
 
 ### Short-Term Holder SOPR
 
-Bearish: Short-term holder SOPR is 0.985: selling at a loss for 22 days running.
+Bearish: short-term holders still sell below cost, and this dip went deeper than on 10/30, though realized losses on the retest were under half the 11/20 level. Back to breakeven means the handover is done.
 
 What it shows: The price short-term holders sell at, divided by the price they paid. Below 1 means selling at a loss. Circles mark each dip below 1 and whether it was heavier or lighter than the one before.
 
@@ -637,7 +637,7 @@ Page: https://daybreak.aronlab.dev/en/charts/oldc/
 
 ### SOPR: network, long-term, short-term
 
-Bearish: Short-term holder SOPR is 0.985: selling at a loss for 22 days running.
+Bearish: short-term holders still sell below cost, and this dip went deeper than on 10/30, though realized losses on the retest were under half the 11/20 level. Back to breakeven means the handover is done.
 
 What it shows: SOPR is the price coins are sold at divided by the price they were bought at, here as a 7-day average: above 1 is selling at a profit, below 1 at a loss. The three views are the whole network (excluding coins moved within an hour), long-term holders and short-term holders. Long-term holders dropping below 1 is rare and has mostly come deep in bear markets.
 
@@ -647,7 +647,7 @@ Page: https://daybreak.aronlab.dev/en/charts/soprf/
 
 ### Realized Profit/Loss Ratio
 
-Bearish: One-year profit ÷ loss is 0.67, below 1 since Sep 5: the zone where past cycles bottomed, but the ratio has not turned up from its low, so no bottom is confirmed yet.
+Bearish for now: the ratio is in past cycles' bottom zone but still at its low, with losses about 4x profits over 7 days. A rebound to 0.74 never saw a new low in 4 cases, though it confirms late.
 
 What it shows: Network realized profit summed over a year, divided by realized loss summed over the same year (Bitview). Orange bands mark past stays below 1; markers show the low of each spell. The green dashed line, drawn from the start of this spell, is its confirmation level: the ratio 10% off its low; it moves down if the low does.
 
@@ -707,7 +707,7 @@ Page: https://daybreak.aronlab.dev/en/charts/lthrl/
 
 ### Miners: hashrate, revenue and difficulty
 
-Bearish: Hashrate +1.9% this week (1,028 EH/s); the next difficulty adjustment is set for −4.8%.
+Bearish: price is below the power breakeven of mainstream rigs while hashrate keeps rising, so miners face selling pressure, and the close is just above production cost. Back above $65,275 eases it.
 
 What it shows: When revenue no longer covers power, miners switch off and sell coins, which is another source of selling. The 30-day hashrate average falling below the 60-day is called miner capitulation and has often come near bottoms. The live site has readings only for these, no chart, and so does this card.
 
@@ -734,7 +734,7 @@ There is no new ETF print; the Nov 27 half session shows up next edition. Every 
 
 ### Spot ETF daily net flow
 
-Bearish: Spot ETFs have seen 7 straight trading days of net outflows, $2.57B in all (to Nov 25).
+Bearish: spot ETFs keep bleeding, with this outflow streak roughly 10x the coins miners produced over the same span, and Strategy sits below its cost. A run of net inflow days would mark buyers returning.
 
 What it shows: Net money into or out of US spot ETFs each trading day ($M). Full-colour bars are the latest run of same-direction days and the largest day before it, both labelled with their amounts; other days are dimmed. A provisional latest day is drawn lighter too.
 
@@ -772,7 +772,7 @@ Page: https://daybreak.aronlab.dev/en/charts/cot/
 
 ### US spot: Coinbase premium
 
-Neutral: Net of USDT, the 7-day average gap is −0.006%: US buying is about the same as offshore.
+Neutral: most of the negative Coinbase premium is USDT itself trading below $1; strip that out and the US-offshore gap is normal. The real signal is stablecoins being redeemed for dollars.
 
 What it shows: How much more Coinbase's USD price costs than Binance's USDT price; above 0 means US buyers are keener than offshore. Most charts divide one price by the other, which assumes 1 USDT is worth $1; when USDT trades below $1 that number turns negative for a reason that has nothing to do with US demand. The Breakdown view splits it in two: the blue-violet area is how far USDT sits above or below $1 on Coinbase, the cyan line is the spread that is left once that is netted out, and the sand line is the premium as usually shown; all three are 7-day averages. Grey bands mark periods when the unadjusted daily premium stayed negative for 19 days or more. A USDT discount means holders are swapping stablecoins back into dollars; the line that is left is the part that compares US buyers with offshore. The Net only view zooms in on that line: bars are daily values, and a 7-day average below −0.012% (its lowest 5% in four years) counts as a deep discount; circles mark each break, labelled with the price change 30 days later. The cases are few and the results mixed; a reading only.
 
@@ -846,7 +846,7 @@ Page: https://daybreak.aronlab.dev/en/charts/exch/
 
 ### Apparent demand (30 days and 1 year)
 
-Bearish: Apparent demand is negative over both 30 days and a year: new buying is weak.
+Bearish: even after removing a year-old wallet-shuffle echo, 30-day and 1-year apparent demand are negative, spot and perp demand are fading, and no new capital has flowed in for 14 days.
 
 What it shows: Coins mined in 30 days minus the 30-day change in supply unmoved for a year or more: positive when old coins wake up and are absorbed, negative when coins reaching one year unmoved outpace new issuance. The dashed line is its 30-day average; the cyan line is the same sum over 365 days, scaled to a 30-day rate. Sand bars mark days that look like exchange or custodian wallet reshuffles, not real demand; a year later those coins all pass the one-year mark together and drag the reading down (the fainter bars mark this echo). The violet line is the 30-day version with both the reshuffles and their echoes taken out; when either falls within the last 30 days, that line is the better read.
 
@@ -916,7 +916,7 @@ Page: https://daybreak.aronlab.dev/en/charts/stab/
 
 ### Big holders, 30-day net change
 
-Bearish: Large holders (100–10K BTC addresses): −91.3K BTC over 30 days and −20.6K BTC over 7: trimming this month, still selling this week.
+Bearish: the 100-10K BTC tiers are still shedding coins, long-term holders keep net selling, and coins are moving to short-term hands. Gains in 10K+ wallets are mostly exchanges and custody, not buyers.
 
 What it shows: Addresses grouped by balance, showing how many BTC each tier gained or shed over 30 days. One address is not one person, and the 10K-plus tier is mostly exchanges and custodians; wallet reshuffles also move coins between tiers, so read the direction over 30 days or more, not single-day jumps.
 
@@ -994,7 +994,7 @@ Page: https://daybreak.aronlab.dev/en/charts/supliq/
 
 ### Spot taker buy − sell (OKX)
 
-Bearish: Over 7 days taker sells exceeded taker buys by 2,251 BTC; sellers have led for 3 days.
+Bearish: market sellers dominated most of the past 7 days, large orders are net selling, and Coinbase spot selling is much heavier than usual. A 7-day flip to net buying would show buyers taking over.
 
 What it shows: Market buys minus market sells of spot BTC on OKX. During a drop, taker selling that fades and turns to net buying means fewer people are dumping and someone has started to buy actively. OKX only; daily bars use UTC+8 days, and the hourly view covers the last 7 days with each bar placed at the end of its hour.
 
@@ -1022,7 +1022,7 @@ Page: https://daybreak.aronlab.dev/en/charts/tk/
 
 ### BTC vs stocks and gold
 
-Bearish: Over two months BTC is −29.1%, behind the S&P 500, the Nasdaq and gold.
+Bearish: BTC fell more than twice as much as the Nasdaq over two months, still moves closely with it, and bonds price a hike, so macro offers no help. A 90-day win rate back above 50% would change that.
 
 What it shows: The first view shows how BTC, the S&P 500, the Nasdaq and gold have each moved over the last two months. The second is the share of the last 90 US sessions in which BTC rose more than the S&P 500; above 50% means BTC won on more days. The third, "rises less, falls more", measures how much of the Nasdaq 100's moves BTC follows, with what happened over the 60 days after each past episode. Gold is proxied by a token backed by one ounce of gold.
 
@@ -1067,7 +1067,7 @@ The monthly expiry has passed and downside insurance did not get cheaper; skew i
 
 ### Funding rate history
 
-Neutral: Funding is +2.8% annualized (7-day average): longs are paying, at a modest level.
+Neutral: longs pay a modest funding rate, lower than a month ago, and recent liquidations hit mostly longs, so leverage is not crowded. Above 30% would signal crowding; a flip negative often preceded gains.
 
 What it shows: Funding on perpetuals across 4 venues, weighted by open interest, annualized and averaged over 7 days. Positive means longs pay shorts, and the higher it is, the more crowded leveraged longs are; negative means leverage leans short. It is now higher than on 23% of days since 2021/01; the dashed line is 30%, reached 8 times before, with price higher 90 days later in 4 of them.
 
@@ -1145,7 +1145,7 @@ Page: https://daybreak.aronlab.dev/en/charts/lqv/
 
 ### Implied vs realized volatility
 
-Neutral: DVOL is 51.6 (the 83rd percentile of the year), 4.1 points above realized.
+Neutral on direction: implied volatility runs above realized and near-dated options cost more than longer ones, so traders are paying up for a big near-term move. It sizes the swing, not its direction.
 
 What it shows: Implied volatility (DVOL) is the 30-day move the options market is pricing; realized volatility (RV30) is how much price actually moved over the last 30 days. Both are annualized. Implied above realized means the market is paying up for future movement; realized above implied means options underpriced it. DVOL is now 51.6%, at the 83rd percentile of the past year.
 
@@ -1171,7 +1171,7 @@ Page: https://daybreak.aronlab.dev/en/charts/orng/
 
 ### Open interest by expiry
 
-Neutral: The largest expiry is Dec 25, 2026 (48% of open interest), max pain $70,000.
+Neutral: open interest holds more calls than puts, yet for 30 days premium has mostly gone into downside protection and puts trade richer than calls. The pull toward max pain before year-end expiry is weak.
 
 What it shows: Open calls and puts for each expiry (BTC); in each bar the green part is calls and the orange-red part puts; total length is that expiry's open interest, and the bigger it is, the more it can pull on price into expiry. For the largest expiry the figure is coloured by put ÷ call: green under 0.7 (leaning to upside bets), orange-red above 1 (leaning to hedges). Expiries under 1% of the total are left out.
 
@@ -1199,7 +1199,7 @@ Page: https://daybreak.aronlab.dev/en/charts/pcr/
 
 ### Fear & Greed Index
 
-Bearish: Fear & Greed is 12 (extreme fear), from 12 a week ago; 30-day average 22.
+Bearish near term: sentiment sits in extreme fear, among the lowest readings since 2018, while retail attention is only average. A first drop into extreme fear has often not been the bottom; above 25 exits it.
 
 What it shows: A sentiment score built from volatility, volume, social activity and search trends: 0 is extreme fear, 100 extreme greed. Sentiment is a contrarian reference, not a trading signal: of the 16 past drops to 20 or below, price was higher 30 days later only 4 times, so the first dip into fear is not necessarily the low.
 
